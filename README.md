@@ -3,8 +3,8 @@ HaXe open-cross-library
 
 <h2>Sync → Async</h2>
 
-<code>
+<pre>
 class Text implements pony.magic.async.AsyncAutoAll {
 	//methods...
 }
-</code>
+</pre>
