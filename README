@@ -1,0 +1,6 @@
+Sync → Async
+------------
+
+class Text implements pony.magin.async.AsyncAutoAll {
+	//methods...
+}
