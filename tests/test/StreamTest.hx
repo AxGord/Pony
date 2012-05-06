@@ -11,7 +11,7 @@ import pony.Stream;
  * @author AxGord
  */
 
-class StreamTest 
+class StreamTest
 {
 	var data:Array<Int>;
 	var s1:Stream<Int>;

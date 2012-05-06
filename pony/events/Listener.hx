@@ -1,16 +1,16 @@
 /**
 * Copyright (c) 2012 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
-* 
+*
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
-* 
+*
 *   1. Redistributions of source code must retain the above copyright notice, this list of
 *      conditions and the following disclaimer.
-* 
+*
 *   2. Redistributions in binary form must reproduce the above copyright notice, this list
 *      of conditions and the following disclaimer in the documentation and/or other materials
 *      provided with the distribution.
-* 
+*
 * THIS SOFTWARE IS PROVIDED BY ALEXANDER GORDEYKO ``AS IS'' AND ANY EXPRESS OR IMPLIED
 * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
 * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL ALEXANDER GORDEYKO OR
@@ -20,7 +20,7 @@
 * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-* 
+*
 * The views and conclusions contained in the software and documentation are those of the
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
@@ -77,7 +77,7 @@ class Listener {
 	 * @param	delay Speed limit.
 	 * @see pony.events.Event
 	 */
-	public function new(?he:Event->Void, ?hd:Dynamic, count:Int = -2147483648, priority:Int = -2147483648, delay:Int = -2147483648) {
+	public function new(?he:Event->Void, ?hd:Dynamic, count:Int = Ultra.nullInt, priority:Int = Ultra.nullInt, delay:Int = Ultra.nullInt) {
 		
 		switch (Type.typeof(hd)) {
 			case ValueType.TInt:
@@ -87,9 +87,9 @@ class Listener {
 				hd = null;
 			default:
 		}
-		if (delay == -2147483648) delay = -1;
-		if (priority == -2147483648) priority = 0;
-		if (count == -2147483648) count = 0;
+		if (delay == Ultra.nullInt) delay = -1;
+		if (priority == Ultra.nullInt) priority = 0;
+		if (count == Ultra.nullInt) count = 0;
 		change(he, hd);
 		this.count = count;
 		_priority = priority;

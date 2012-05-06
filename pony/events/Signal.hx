@@ -94,7 +94,7 @@ class Signal implements ArgsArray
 	 * @see pony.events.Listener
 	 * @see pony.events.Event
 	 */
-	public function addListener(?l:Listener, ?he:Event->Void, ?hd:Dynamic, count:Int = -2147483648, priority:Int = -2147483648, delay:Int = -2147483648):Void {
+	public function addListener(?l:Listener, ?he:Event->Void, ?hd:Dynamic, count:Int = Ultra.nullInt, priority:Int = Ultra.nullInt, delay:Int = Ultra.nullInt):Void {
 		if (l.notNull()) {
 			if (pList.exists(l)) throw 'Listener exists';
 		} else {

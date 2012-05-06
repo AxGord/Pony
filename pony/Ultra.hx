@@ -47,8 +47,8 @@ using pony.Ultra;
 class Ultra {
 	#if neko
 	//todo: google it
-	public static inline var maxInt:Int = 1047483647;
-	public static inline var minInt:Int = -1047483647;
+	public static inline var maxInt:Int = 536870911;
+	public static inline var minInt:Int = -536870911;
 	#else
 	/**
 	 * The largest representable 32-bit signed integer, which is 2,147,483,647.

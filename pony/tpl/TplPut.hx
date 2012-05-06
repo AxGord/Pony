@@ -271,7 +271,7 @@ class TplPut<T1, T2> implements ITplPut, implements Declarator, implements Async
 			return parentShortTag(name, arg, kid);
 	}
 	
-	private inline function parentShortTag(name:String, arg:String, ?kid:ITplPut):String {
+	private function parentShortTag(name:String, arg:String, ?kid:ITplPut):String {
 		return parent.shortTag(name, arg, kid == null ? this : kid);
 	}
 	

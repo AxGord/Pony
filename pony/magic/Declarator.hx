@@ -114,12 +114,28 @@ interface Declarator { }
 				//trace(h);
 				//trace(s.t.get().constructor.get().type.fun().args);
 				var params:Array<Expr> = [];
-				for (arg in s.t.get().constructor.get().type.fun().args) {
-					var ct:ComplexType = arg.t.toComplexType();
-					if (h.exists(ct.typePath().name))
-						ct = h.get(ct.typePath().name);
-					cargs.push( { name: arg.name, opt: arg.opt, type: ct, value: null } );
-					params.push(EConst(CIdent(arg.name)).expr());
+				switch (s.t.get().constructor.get().type) {
+					case TFun(args, Void):
+						for (arg in args) {
+							var ct:ComplexType = arg.t.toComplexType();
+							if (h.exists(ct.typePath().name))
+								ct = h.get(ct.typePath().name);
+							cargs.push( { name: arg.name, opt: arg.opt, type: ct, value: null } );
+							params.push(EConst(CIdent(arg.name)).expr());
+						}
+					case TLazy(f):
+						switch(f()) {
+							case TFun(args, Void):
+								for (arg in args) {
+									var ct:ComplexType = arg.t.toComplexType();
+									if (h.exists(ct.typePath().name))
+										ct = h.get(ct.typePath().name);
+									cargs.push( { name: arg.name, opt: arg.opt, type: ct, value: null } );
+									params.push(EConst(CIdent(arg.name)).expr());
+								}
+							default:
+						}
+					default:
 				}
 				ce.push(ECall(EConst(CIdent('super')).expr(), params).expr());
 			}
