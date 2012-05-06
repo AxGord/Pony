@@ -1,0 +1,6 @@
+<project name="pony" url="https://github.com/AxGord/Pony" license="BSD">
+    <user name="AxGord"/>
+    <tag v="cross" />
+    <description>HaXe cross-library</description>
+    <version name="0.0.1">Good luck!</version>
+</project>
