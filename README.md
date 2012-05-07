@@ -1,5 +1,7 @@
 <h1>Pony</h1>
 HaXe open-cross-library
+<small>v0.0.1</small>
+<small><a href="http://axgord.github.com/Pony/docs">Reference book</a></small>
 
 <h2>Sync → Async</h2>
 
