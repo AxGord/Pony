@@ -26,7 +26,8 @@ class SimpleFileTest
 		trace(SimplePath.exists(f));
 		trace(SimpleFile.getContent(f));
 		*/
-		Assert.areEqual('SimpleFileTest.hx', SimpleDir.read(SimplePath.dir(Inform.file())).array()[2]);
+		//trace(SimpleDir.read(SimplePath.dir(Inform.file())).array());
+		Assert.areEqual('SimpleFileTest.hx', SimpleDir.read(SimplePath.dir(Inform.file())).array()[0]);
 	}
 	
 	@Test
