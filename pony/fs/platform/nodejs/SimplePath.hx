@@ -40,7 +40,12 @@ using Lambda;
 class SimplePath
 {
 	public static inline function exists(path:String):Bool return untyped Node.fs.existsSync(path)
-	public static inline function full(path:String):String return normalize(untyped __dirname + '/' + path)
+	public static inline function full(path:String):String {
+		if (path.indexOf(':') == -1)
+			return normalize(untyped __dirname + '/' + path);
+		else
+			return normalize(path);
+	}
 	public static inline function dir(path:String):String return Node.path.dirname(path) + '/'
 	public static inline function file(path:String):String return Node.path.basename(path)
 	public static inline function ext(path:String):String return Node.path.extname(path).substr(1)
@@ -49,6 +54,7 @@ class SimplePath
 	public static inline function isFile(path:String):Bool return Node.fs.statSync(path).isFile()
 	public static inline function rename(path:String, newPath:String):Void return Node.fs.renameSync(path, newPath)
 	public static inline function withoutExtension(f:String):String return Node.path.basename(f, '.'+ext(f))
+	public static inline function copy(src:String, dst:String):Void Node.require('fs.extra').copy(src, dst)
 	
 	public static function up(path:String):String {
 		var a:Array<String> = path.split('/');
@@ -80,10 +86,10 @@ class SimplePath
 			var s:Signal = new Signal();
 			s.haveListener = function() {
 				//trace('Watch file: ' + path);
-				var o:NodeWatchOpt = { persistant: true, interval: 500 };
+				var o:NodeWatchOpt = { persistent: true, interval: 500 };
 				var sl:SpeedLimit = new SpeedLimit(100);
 				var removed:Bool = false;
-				var w:NodeFSWatcher = Node.fs.watch(path, o, function(t:String):String {
+				var w:NodeFSWatcher = Node.fs.watch(path, o, function(t:String, d:String):Void {
 					sl.run(function(){
 						switch(t) {
 							case 'change':
@@ -103,7 +109,6 @@ class SimplePath
 							default: throw 'Unknown';
 						}
 					});
-					return null;
 				} );
 				s.lostListener = w.close;
 			};

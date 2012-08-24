@@ -133,7 +133,7 @@ class File
 	}
 	
 	private function getFullName():String {
-		return list.first;
+		return SimplePath.full(list.first);
 	}
 	
 	public function withoutExtension():String {
@@ -169,6 +169,17 @@ class File
 			if (SimplePath.exists(f) && SimplePath.isFile(f))
 				return f;
 		return null;
+	}
+	
+	/**
+	 * Copy this file to dest or new file
+	 */
+	public function copy(?dest:Dir, ?file:File):Void {
+		//trace(fullName + ' copy to ' + dest.full()+name);
+		if (dest != null)
+			SimplePath.copy(fullName, dest.full() + name);
+		else
+			SimplePath.copy(fullName, file.fullName);
 	}
 	
 	private function dispatchIfUpdate(a:FileAct):Void {

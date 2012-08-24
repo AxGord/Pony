@@ -29,6 +29,7 @@
 package pony.fs.platform.neko;
 
 import neko.FileSystem;
+import neko.io.File;
 import neko.io.Path;
 import pony.fs.SimplePath;
 
@@ -100,5 +101,7 @@ class SimplePath
 	
 	public static inline function watch(path:String, f:FileAct->Void):Void { }
 	public static inline function unwatch(path:String, f:FileAct->Void):Void { }
+	
+	public static inline function copy(src:String, dst:String):Void File.copy(src, dst)
 	
 }

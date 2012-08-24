@@ -37,6 +37,7 @@ using StringTools;
 using Lambda;
 
 /**
+ * Abstract directory object
  * @author AxGord
  */
 
@@ -52,6 +53,10 @@ class Dir
 	public var onAddFile:Signal;
 	public var onAddFileR:Signal;
 
+	/**
+	 * @param	?n Directory name
+	 * @param	?na Directories names
+	 */
 	public function new(?dir:String, ?dirs:Array<String>)
 	{
 		onAddDir = new Signal();
@@ -63,7 +68,8 @@ class Dir
 		onAddFileR = new Signal();
 		onAddFileR.haveListener = haveAddFileRListener;
 		onAddFileR.lostListener = lostAddFileRListener;
-		
+		if (dir == null && dirs == null)
+			dir = '';
 		list = new Priority<String>();
 		if (dir != null)
 			if (dir.endsWith('/'))
@@ -97,6 +103,11 @@ class Dir
 		return b;
 	}
 	
+	/**
+	 * @param	?n Directory name
+	 * @param	?na Directories names
+	 * @return Dir
+	 */
 	public function dir(?n:String, ?na:Array<String>):Dir {
 		if (n != null) {
 			return new Dir(_dir(n));
@@ -117,6 +128,11 @@ class Dir
 		return a;
 	}
 	
+	/**
+	 * @param	?er RegExp
+	 * @param	?ext Extension
+	 * @return Directories from this place
+	 */
 	public function dirs(?er:EReg, ?ext:String):Stream<Dir> {
 		var sended:List<String> = new List<String>();
 		var s:Stream<Dir> = new Stream<Dir>([]);
@@ -125,10 +141,10 @@ class Dir
 					SimpleDir.readDirs(e, er, ext),
 					function(s:String) return if (sended.indexOf(s) == -1) { sended.push(s); true; } else false,
 					function(s:String):Dir {
-						var d:Dir = new Dir();
+						var a:Array<String> = [];
 						for (e in list)
-							d.list.add(e + s);
-						return d;
+							a.push(e + s);
+						return new Dir(a);
 					}
 				));
 		return s;
@@ -173,6 +189,10 @@ class Dir
 		return n;
 	}
 	
+	/**
+	 * @param	n File name
+	 * @return File
+	 */
 	public function file(n:String):File {
 		var a:Array<String> = [];
 		for (d in list)
@@ -180,6 +200,9 @@ class Dir
 		return new File(a);
 	}
 	
+	/**
+	 * Create this directory
+	 */
 	public function create():Void {
 		if (!exists)
 			try {
@@ -190,6 +213,10 @@ class Dir
 			}
 	}
 	
+	/**
+	 * @param	n
+	 * @return true if n directory
+	 */
 	public function isDir(n:String):Bool {
 		for (d in list)
 			if (SimplePath.isDir(d + n))
@@ -197,6 +224,10 @@ class Dir
 		return false;
 	}
 	
+	/**
+	 * @param	n
+	 * @return true if n file
+	 */
 	public function isFile(n:String):Bool {
 		for (d in list)
 			if (SimplePath.isFile(d + n))
@@ -204,6 +235,11 @@ class Dir
 		return false;
 	}
 	
+	/**
+	 * @param	?er RegExp
+	 * @param	?ext Extension
+	 * @return Files
+	 */
 	public function files(?er:EReg, ?ext:String):Stream<File> {
 		var sended:List<String> = new List<String>();
 		var s:Stream<File> = new Stream<File>([]);
@@ -221,6 +257,12 @@ class Dir
 		return s;
 	}
 	
+	/**
+	 * @param	?er RegExp
+	 * @param	?ext Extension
+	 * @param	prefix
+	 * @return Files and files from sub folders
+	 */
 	public function filesR(?er:EReg, ?ext:String, prefix:String = ''):Stream<{ f: File, n: String}> {
 		var s:Stream<{f: File, n: String}> = new Stream<{f: File, n: String}>(
 				files(er, ext),
@@ -233,6 +275,9 @@ class Dir
 		return s;
 	}
 	
+	/**
+	 * @return Directories and files as String Stream
+	 */
 	public function content():Stream<String> {
 		var sended:List<String> = new List<String>();
 		var s:Stream<String> = new Stream<String>([]);
@@ -244,10 +289,52 @@ class Dir
 		return s;
 	}
 	
+	/**
+	 * Delete this directory
+	 */
 	public inline function delete():Void {
 		SimpleDir.delete(list.first);
 	}
 	
+	/**
+	 * Copy currect directory in dest
+	 * @param	dest
+	 */
+	public function copy(dest:Dir):Void {
+		var dd:Dir = dest.dir(name);
+		dd.create();
+		for (d in dirs()) d.copy(dd);
+		for (f in files()) f.copy(dd);
+	}
+	
+	/**
+	 * Copy all directories from current place
+	 * @param	dst - output directory
+	 */
+	public function copyDirs(dst:Dir):Void {
+		for (d in dirs()) d.copy(dst);
+	}
+	
+	/**
+	 * Copy all files from current directory
+	 * @param	dst - output directory
+	 */
+	public function copyFiles(dst:Dir):Void {
+		for (f in files()) f.copy(dst);
+	}
+	
+	/**
+	 * Copy all content from current directory
+	 * @param	dst - output directory
+	 */
+	public function copyContent(dst:Dir):Void {
+		copyDirs(dst);
+		copyFiles(dst);
+	}
+	
+	/**
+	 * @return Directory extension
+	 */
 	private inline function getExt():String {
 		return SimplePath.ext(list.first);
 	}
@@ -321,16 +408,18 @@ class Dir
 			d.onAddFileR.removeListener(dirUpdateAddFileRSub);
 	}
 	
-	private function dirUpdateAddFileR(f:File):Void {
+	private inline function dirUpdateAddFileR(f:File):Void {
 		onAddFileR.dispatch(name+'/'+f.name, f);
 	}
 	
-	private function dirUpdateAddFileRSub(n:String, f:File):Void {
+	private inline function dirUpdateAddFileRSub(n:String, f:File):Void {
 		onAddFileR.dispatch(name+'/'+n, f);
 	}
 	
-	
-	public function full():String {
+	/**
+	 * @return Full path
+	 */
+	public inline function full():String {
 		return SimplePath.full(list.first);
 	}
 	

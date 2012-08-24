@@ -54,7 +54,8 @@ class SimpleDir
 	
 	public static function readDirs(dir:String, ?er:EReg, ?ext:String):Stream<String> {
 		try {
-			if (!dir.endsWith('/')) dir += '/';
+			//if (!dir.endsWith('/')) dir += '/';
+			dir = SimplePath.full(dir);
 			return new Stream<String>(
 					Node.fs.readdirSync(dir),
 					if (ext == null)
@@ -70,7 +71,8 @@ class SimpleDir
 	
 	public static function readFiles(dir:String, ?er:EReg, ?ext:String):Stream<String> {
 		try {
-			if (!dir.endsWith('/')) dir += '/';
+			//if (!dir.endsWith('/')) dir += '/';
+			dir = SimplePath.full(dir);
 			return new Stream<String>(
 					Node.fs.readdirSync(dir),
 					if (ext == null)
@@ -83,5 +85,5 @@ class SimpleDir
 		}
 	}
 	
-	public static inline function create(dir:String):Void Node.fs.mkdirSync(dir, null)
+	public static inline function create(dir:String):Void Node.require('fs.extra').mkdirRecursiveSync(dir)
 }
