@@ -55,6 +55,7 @@ class SimplePath
 	public static inline function rename(path:String, newPath:String):Void return Node.fs.renameSync(path, newPath)
 	public static inline function withoutExtension(f:String):String return Node.path.basename(f, '.'+ext(f))
 	public static inline function copy(src:String, dst:String):Void Node.require('fs.extra').copy(src, dst)
+	public static inline function remove(src:String):Void Node.require('fs.extra').removeSync(src)
 	
 	public static function up(path:String):String {
 		var a:Array<String> = path.split('/');

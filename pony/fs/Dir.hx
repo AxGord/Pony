@@ -300,11 +300,30 @@ class Dir
 	 * Copy currect directory in dest
 	 * @param	dest
 	 */
+	public function softCopy(dest:Dir):Void {
+		var dd:Dir = dest.dir(name);
+		dd.create();
+		for (d in dirs()) d.copy(dd);
+		for (f in files()) f.softCopy(dd);
+	}
+	
+	/**
+	 * Copy currect directory in dest
+	 * @param	dest
+	 */
 	public function copy(dest:Dir):Void {
 		var dd:Dir = dest.dir(name);
 		dd.create();
 		for (d in dirs()) d.copy(dd);
 		for (f in files()) f.copy(dd);
+	}
+	
+	/**
+	 * Copy all directories from current place
+	 * @param	dst - output directory
+	 */
+	public function softCopyDirs(dst:Dir):Void {
+		for (d in dirs()) d.softCopy(dst);
 	}
 	
 	/**

@@ -174,12 +174,24 @@ class File
 	/**
 	 * Copy this file to dest or new file
 	 */
-	public function copy(?dest:Dir, ?file:File):Void {
+	public function softCopy(?dest:Dir, ?file:File):Void {
 		//trace(fullName + ' copy to ' + dest.full()+name);
 		if (dest != null)
 			SimplePath.copy(fullName, dest.full() + name);
 		else
 			SimplePath.copy(fullName, file.fullName);
+	}
+	
+	
+	/**
+	 * Copy this file to dest or new file
+	 */
+	public function copy(?dest:Dir, ?file:File):Void {
+		if (dest != null)
+			SimplePath.remove(dest.full() + name);
+		else
+			SimplePath.remove(file.fullName);
+		softCopy(dest, file);
 	}
 	
 	private function dispatchIfUpdate(a:FileAct):Void {
