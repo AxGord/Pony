@@ -33,7 +33,7 @@ package pony.net;
  * @author AxGord
  */
 #if flash
-typedef XSocket = pony.net.platform.XSocket;
+typedef XSocket = pony.net.platform.flash.XSocket;
 #else
 typedef XSocket = null;
 #end

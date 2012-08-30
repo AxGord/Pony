@@ -26,7 +26,8 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 
-package pony.net.platform;
+package pony.net.platform.flash;
+
 import flash.events.Event;
 import flash.events.IOErrorEvent;
 import flash.net.XMLSocket;
@@ -54,6 +55,10 @@ class XSocket extends Dispatcher, implements Binder
 	public var active:Bool = false;
 	private var socket:XMLSocket;
 	private var sl:SpeedLimit;
+	
+	/**
+	 * Reconnect timeout
+	 */
 	@bind public var retime:Int = sl.delay;
 	
 	//public static function SILENT:Bool = false;
