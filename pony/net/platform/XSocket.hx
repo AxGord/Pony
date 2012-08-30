@@ -28,19 +28,23 @@
 
 package pony.net.platform;
 import flash.events.Event;
+import flash.events.IOErrorEvent;
 import flash.net.XMLSocket;
+import flash.system.Security;
 import flash.xml.XML;
 import pony.events.Dispatcher;
+import pony.magic.Binder;
+import pony.SpeedLimit;
 import pony.Ultra;
 
 /**
  * @author AxGord
  */
  
-class XSocket extends Dispatcher
+class XSocket extends Dispatcher, implements Binder
 {
-	private var host:String = null;
-	private var port:Int = Ultra.nullInt;
+	@arg public var host:String = 'localhost';
+	@arg public var port:Int = Ultra.nullInt;
 	
 	static public var CONNECT:String = 'connect';
 	static public var CLOSE:String = 'close';
@@ -49,18 +53,23 @@ class XSocket extends Dispatcher
 	private var _enabled = false;
 	public var active:Bool = false;
 	private var socket:XMLSocket;
+	private var sl:SpeedLimit;
+	@bind public var retime:Int = sl.delay;
+	
+	//public static function SILENT:Bool = false;
 
-	public function new(?host:String, port:Int = Ultra.nullInt) 
+	public function new(_retime:Int=500, delay:Int=-1) 
 	{
-		this.host = host;
-		this.port = port;
-		if (port != Ultra.nullInt)
+		super(delay);
+		sl = new SpeedLimit(_retime);
+		if (port != Ultra.nullInt) {
 			_enabled = true;
+			Security.loadPolicyFile('xmlsocket://'+host+':'+port);
+		}
 		socket = new XMLSocket(host, port);
-		trace(host);
 		socket.addEventListener(Event.CONNECT, onConnect);
 		socket.addEventListener(Event.CLOSE, onClose);
-		super();
+		socket.addEventListener(IOErrorEvent.IO_ERROR, ioError);
 	}
 	
 	private function getEnabled():Bool {
@@ -89,10 +98,19 @@ class XSocket extends Dispatcher
 	
 	public inline function connect(?host:String, ?port:Int):Void
 	{
-		if (port != null) {
-			this.host = host;
-			this.port = port;
-		}
+		if (port != null) this.port = port;
+		if (host != null) this.host = host;
+		_enabled = true;
+		Security.loadPolicyFile('xmlsocket://'+host+':'+port);
+		_connect();
+	}
+	
+	private function ioError(event:IOErrorEvent):Void {
+		trace('Error, reconnect after '+sl.delay+' ms');
+		sl.run(_connect);
+	}
+	
+	private inline function _connect():Void {
 		socket.connect(host, port);
 	}
 	
