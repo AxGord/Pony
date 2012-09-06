@@ -26,38 +26,21 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 
-package pony.magic;
+package pony;
 
-#if macro
-import haxe.macro.Expr;
-import haxe.macro.Context;
-import haxe.macro.Type;
-import pony.macro.MacroTypes;
+import haxe.Log;
+import pony.magic.Declarator;
 
-using Lambda;
-using pony.macro.MacroExtensions;
 using pony.Ultra;
-#end
 
 /**
- * Add silint mode for class
- * @author AxGord
- */
-#if !macro
-@:autoBuild(pony.magic.SilencerBuilder.build())
-#end
-interface Silencer { }
-
-/**
+ * Messages for log
  * @author AxGord
  */
 
-@:macro class SilencerBuilder
+class Messages implements Declarator
 {
-	public static function build():Array<Field> {
-		var fields:Array<Field> = Context.getBuildFields();
-		//Todo
-		return fields;
-	}
-	
+	@arg public var silent:Bool = false;
+	public inline function message(text:String):Void if (!silent) Log.trace(classTitle() + ': ' + text, null)
+	public function classTitle():String return Type.getClassName(Type.getClass(this)).split('.').last()
 }

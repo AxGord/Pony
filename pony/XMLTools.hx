@@ -85,4 +85,24 @@ class XMLTools
 		return h;
 	}
 	*/
+	
+	public static function serialize(v:Dynamic):Xml {
+		if (Std.is(v, String) || Std.is(v, Int))
+			return Xml.createPCData(v);
+		if (Std.is(v, Bool))
+			return Xml.createPCData(v?'1':'0');
+		if (v == null)
+			return Xml.createPCData('');
+		trace(v);
+		throw 'Sorry, unrealized type';
+	}
+	
+	public static function unserialize(x:Xml):Dynamic {
+		if (x.nodeType + '' == 'element') {
+			trace(x);
+			throw 'Sorry, unrealized type';
+		} else
+			return x.toString();
+	}
+	
 }

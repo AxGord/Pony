@@ -26,54 +26,80 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 
-package pony.events;
-import pony.magic.ArgsArray;
+package pony;
+
 import pony.magic.Declarator;
-import pony.Messages;
 
 /**
- * Event Dispatcher
+ * @example [[2...7, 9...15, 64]]
  * @author AxGord
  */
 
-class Dispatcher implements ArgsArray, extends Messages//, implements Declarator
+class Intervals implements Declarator
 {
-	private var signals:Hash<Signal> = new Hash<Signal>();
-	@arg private var delay:Int = -1;
+	@arg private var v:Dynamic;
+	@arg private var d:Int = 1;
 	
-	public function getSignal(name:String):Signal {
-		if (!signals.exists(name))
-			signals.set(name, new Signal(this.delay));
-		return signals.get(name);
+	private var loopit:Iterator<Int>;
+
+	public function iterator():Iterator<Int> {
+		if (Std.is(v, Int)) {
+			var b:Bool = true;
+			return {
+				hasNext: function():Bool return b,
+				next: function():Int {
+					b = false;
+					return Std.int(v * d);
+				}
+			};
+		} else if (Std.is(v, IntIter)) {
+			var it:IntIter = new IntIter(v.min, v.max);
+			if (d == 1)
+				return it;
+			else
+				return {
+					hasNext: it.hasNext,
+					next: function():Int return Std.int(it.next() * d)
+				};
+		} else if (Std.is(v, Array)) {
+			var it:Iterator<Dynamic> = v.iterator();
+			var sub:Iterator<Dynamic> = null;
+			return {
+				hasNext: function():Bool {
+					return (sub != null && sub.hasNext()) || it.hasNext();
+				},
+				next: function():Int {
+					if (sub != null && sub.hasNext())
+						return sub.next();
+					else {
+						while (it.hasNext()) {
+							var n:Dynamic = it.next();
+							var iv:Intervals = Std.is(n, Intervals) ? n : new Intervals(n);
+							sub = iv.iterator();
+							if (sub.hasNext()) 
+								return Std.int(sub.next() * d);
+						}
+						throw 'Nothing next';
+					}
+				}
+			};
+		} else throw 'Unknown type';
 	}
 	
-	public function addListener(signal:String, ?l:Listener, ?he:Event->Void, ?hd:Dynamic, count:Int = Ultra.nullInt, priority:Int = Ultra.nullInt, delay:Int = Ultra.nullInt):Void {
-		getSignal(signal).addListener(l, he, hd, count, priority, delay);
+	public function loop():Int {
+		if (loopit == null)
+			loopit = iterator();
+		if (loopit.hasNext())
+			return loopit.next();
+		else {
+			loopit = iterator();
+			if (!loopit.hasNext()) throw 'Out';
+			return loopit.next();
+		}
 	}
 	
-	@ArgsArray public function dispatch(args:Array<Dynamic>):Event {
-		if (args.length == 0) throw 'Please, say name';
-		var name:String = args.shift();
-		if (!signals.exists(name)) return null;
-		return Reflect.callMethod(null, signals.get(name).dispatch, args);
-	}
-	
-	public function removeListener(signal:String, ?l:Listener, ?he:Event->Void, ?hd:Dynamic):Void {
-		if (!signals.exists(signal)) return;
-		signals.get(signal).removeListener(l, he, hd);
-	}
-	
-	public function changePriority(signal:String, ?l:Listener, ?he:Event->Void, ?hd:Dynamic, p:Int = 0):Void {
-		if (!signals.exists(signal)) return;
-		signals.get(signal).changePriority(l, he, hd, p);
-	}
-	
-	public function wait(signal:String, ?l:Listener, ?he:Event->Void, ?hd:Dynamic):Void {
-		getSignal(signal).wait(l, he, hd);
-	}
-	
-	public function waitAsync(signal:String, ok:Event->Void, ?error:Dynamic->Void):Void {
-		getSignal(signal).waitAsync(ok, error);
+	public function resetLoop():Void {
+		loopit = null;
 	}
 	
 }

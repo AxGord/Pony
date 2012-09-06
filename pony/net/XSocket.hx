@@ -1,39 +1,52 @@
-/**
-* Copyright (c) 2012 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
-*
-* Redistribution and use in source and binary forms, with or without modification, are
-* permitted provided that the following conditions are met:
-*
-*   1. Redistributions of source code must retain the above copyright notice, this list of
-*      conditions and the following disclaimer.
-*
-*   2. Redistributions in binary form must reproduce the above copyright notice, this list
-*      of conditions and the following disclaimer in the documentation and/or other materials
-*      provided with the distribution.
-*
-* THIS SOFTWARE IS PROVIDED BY ALEXANDER GORDEYKO ``AS IS'' AND ANY EXPRESS OR IMPLIED
-* WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
-* FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL ALEXANDER GORDEYKO OR
-* CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
-* ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-* NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-* ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*
-* The views and conclusions contained in the software and documentation are those of the
-* authors and should not be interpreted as representing official policies, either expressed
-* or implied, of Alexander Gordeyko <axgord@gmail.com>.
-**/
-
 package pony.net;
+import pony.net.SocketUnit;
+import pony.XMLTools;
 
 /**
- * Using XML Socket for remote call, get, set, listent, dispatch
+ * ...
  * @author AxGord
  */
-#if flash
-typedef XSocket = pony.net.platform.flash.XSocket;
-#else
-typedef XSocket = null;
-#end
+
+class XSocket extends Socket
+{
+	@arg public var target:Dynamic = null;
+	
+	public var xsockets(getXSockets, null):Array<XSocket>;
+
+	private var gw:Array<{n: String, f: String->Void}> = [];
+	
+	
+	override private function init() {
+		addListener(Socket.ACTIVE, onActive);
+	}
+	
+	private function getXSockets():Array<XSocket> return untyped sockets
+	
+	public function get(name:String, f:Dynamic->Void):Void {
+		if (active) {
+			var b:Bool = true;
+			for (x in xsockets)
+				x.get(name, function(v:String) if (b) {
+					b = false;
+					f(v);
+				});
+		} else
+			gw.push( { n:name, f:f } );
+	}
+	
+	override private function createSocket(o:Dynamic):SocketUnit 
+	{
+		var x:XSocketUnit = new XSocketUnit(sockets.length, untyped this, o);
+		return cast x;
+	}
+	
+	private function onActive():Void {
+		for (o in gw) get(o.n, o.f);
+	}
+	
+	public function xGet(v:String, f:Xml->Void):Void {
+		trace('get: ' + v);
+		f(XMLTools.serialize(Reflect.field(target, v)));
+	}
+	
+}

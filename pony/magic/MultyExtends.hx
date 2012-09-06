@@ -69,7 +69,8 @@ interface MultyExtends { }
 		for (m in meta.get()) {
 			if (m.name == 'extends') {
 				for (p in m.params) {
-					var c:String = p.expr.const().type();
+					//var c:String = p.expr.const().type();
+					var c:String = p.expr.const().ident();
 					exts.push(c);
 					ne.push(EConst(CString(c)).expr());
 				}
@@ -123,7 +124,12 @@ interface MultyExtends { }
 							type = TPath( { sub: null, params: [], pack: [], name: t.get().name } );
 						case TDynamic(Void):
 							type = MacroTypes._dynamic;
-							
+						//todo
+						case TEnum(Void, Void):
+							type = MacroTypes._dynamic;
+						case TLazy(Void):
+							type = MacroTypes._dynamic;
+						//end
 						default: throw 'Coming soon: '+f.type;
 					}
 					if (ft == null) {

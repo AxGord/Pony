@@ -103,5 +103,11 @@ class SimplePath
 	public static inline function unwatch(path:String, f:FileAct->Void):Void { }
 	
 	public static inline function copy(src:String, dst:String):Void File.copy(src, dst)
+	public static inline function remove(src:String):Void {
+		if (isDir(src))
+			FileSystem.deleteDirectory(src);
+		else
+			FileSystem.deleteFile(src);
+	}
 	
 }

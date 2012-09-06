@@ -26,54 +26,36 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 
-package pony.events;
-import pony.magic.ArgsArray;
-import pony.magic.Declarator;
-import pony.Messages;
+package pony;
+import pony.events.Dispatcher;
 
 /**
- * Event Dispatcher
+ * Can be enable or disable.
  * @author AxGord
  */
 
-class Dispatcher implements ArgsArray, extends Messages//, implements Declarator
+class Enabler extends Dispatcher
 {
-	private var signals:Hash<Signal> = new Hash<Signal>();
-	@arg private var delay:Int = -1;
+	static public var ON:String = 'on';
+	static public var OFF:String = 'off';
+
+	@arg private var _enabled:Bool = false;
 	
-	public function getSignal(name:String):Signal {
-		if (!signals.exists(name))
-			signals.set(name, new Signal(this.delay));
-		return signals.get(name);
-	}
+	public var enabled(getEnabled, setEnabled):Bool;
 	
-	public function addListener(signal:String, ?l:Listener, ?he:Event->Void, ?hd:Dynamic, count:Int = Ultra.nullInt, priority:Int = Ultra.nullInt, delay:Int = Ultra.nullInt):Void {
-		getSignal(signal).addListener(l, he, hd, count, priority, delay);
-	}
+	private function getEnabled():Bool return _enabled
 	
-	@ArgsArray public function dispatch(args:Array<Dynamic>):Event {
-		if (args.length == 0) throw 'Please, say name';
-		var name:String = args.shift();
-		if (!signals.exists(name)) return null;
-		return Reflect.callMethod(null, signals.get(name).dispatch, args);
-	}
-	
-	public function removeListener(signal:String, ?l:Listener, ?he:Event->Void, ?hd:Dynamic):Void {
-		if (!signals.exists(signal)) return;
-		signals.get(signal).removeListener(l, he, hd);
-	}
-	
-	public function changePriority(signal:String, ?l:Listener, ?he:Event->Void, ?hd:Dynamic, p:Int = 0):Void {
-		if (!signals.exists(signal)) return;
-		signals.get(signal).changePriority(l, he, hd, p);
-	}
-	
-	public function wait(signal:String, ?l:Listener, ?he:Event->Void, ?hd:Dynamic):Void {
-		getSignal(signal).wait(l, he, hd);
-	}
-	
-	public function waitAsync(signal:String, ok:Event->Void, ?error:Dynamic->Void):Void {
-		getSignal(signal).waitAsync(ok, error);
+	private function setEnabled(b:Bool):Bool {
+		if (b == _enabled) return b;
+		_enabled = b;
+		if (b) {
+			message('Enable');
+			dispatch(ON);
+		} else {
+			message('Disable');
+			dispatch(OFF);
+		}
+		return b;
 	}
 	
 }
