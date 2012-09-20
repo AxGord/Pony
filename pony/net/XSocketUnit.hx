@@ -1,17 +1,26 @@
 package pony.net;
 
 import haxe.xml.Fast;
+import pony.SpeedLimit;
 import pony.XMLTools;
 
 
 /**
- * ...
  * @author AxGord
  */
 
 class XSocketUnit extends SocketUnit
 {
+	private var xw:SpeedLimit = new SpeedLimit(500);
+	
 	private var getwaits:Hash<Array<Dynamic->Void>> = new Hash<Array<Dynamic->Void>>();
+	
+	override private function init():Void 
+	{
+		trace(321);
+		send('<?xsocket?>');
+		xw.run(close);
+	}
 	
 	public function get(name:String, f:Dynamic->Void):Void {
 		if (getwaits.exists(name)) {
@@ -26,6 +35,18 @@ class XSocketUnit extends SocketUnit
 	
 	override private function onData(d:String):Void 
 	{
+		if (xw != null) {
+			xw.abort();
+			xw = null;
+			if (d != '<?xsocket?>') {
+				close();
+				if (parent.mode == 'client')
+					parent.sockError();
+			}
+			else parent.socketInit(this);
+			return;
+		}
+		
 		var x:Xml;
 		try {
 			x = Xml.parse(d);

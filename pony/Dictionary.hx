@@ -26,20 +26,76 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 
-package pony.fs;
-
-
-enum FileAct {
-	Update; Remove; Create;
-}
-
+package pony;
+import pony.magic.Declarator;
+using Lambda;
 /**
+ * Dictionary
  * @author AxGord
  */
-#if neko
-typedef SimplePath = pony.fs.platform.neko.SimplePath;
-#elseif nodejs
-typedef SimplePath = pony.fs.platform.nodejs.SimplePath;
-//#else
-//#error "SimplePath are only for neko target."
-#end
+
+class Dictionary<K, V> implements Declarator
+{
+	public var ks:Array<K> = [];
+	public var vs:Array<V> = [];
+
+	public function set(k:K, v:V):Void {
+		var i:Int = ks.indexOf(k);
+		if (i != -1)
+			vs[i] = v;
+		else {
+			ks.push(k);
+			vs.push(v);
+		}
+	}
+	
+	public function get(k:K):V {
+		var i:Int = ks.indexOf(k);
+		if (i == -1)
+			return null;
+		else
+			return vs[i];
+	}
+	
+	public function exists(k:K):Bool {
+		return ks.indexOf(k) != -1;
+	}
+	
+	public function remove(k:K):Void {
+		var i:Int = ks.indexOf(k);
+		if (i != -1) {
+			ks.splice(i, 1);
+			vs.splice(i, 1);
+		}
+	}
+	
+	public function clear():Void {
+		ks = [];
+		vs = [];
+	}
+	
+	public function iterator():Iterator<V> {
+		return vs.iterator();
+	}
+	
+	public function keys():Iterator<K> {
+		return ks.iterator();
+	}
+	
+	public function toString():String {
+		var a:Array<String> = [];
+		for (k in keys()) {
+			a.push(k + ': ' + get(k));
+		}
+		return '[' + a.join(', ') + ']';
+	}
+	
+	public function removeValue(v:V):Void {
+		var i:Int = vs.indexOf(v);
+		if (i != -1) {
+			ks.splice(i, 1);
+			vs.splice(i, 1);
+		}
+	}
+	
+}

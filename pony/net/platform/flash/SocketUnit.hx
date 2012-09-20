@@ -1,8 +1,10 @@
-package pony.net.platform.nodejs;
+package pony.net.platform.flash;
 
-//import js.Node;
 import pony.events.Signal;
 import pony.magic.Declarator;
+import flash.events.Event;
+import flash.events.IOErrorEvent;
+import flash.events.ProgressEvent;
 
 /**
  * ...
@@ -11,18 +13,19 @@ import pony.magic.Declarator;
 
 class SocketUnit implements Declarator
 {
+
 	@arg public var id:Int;
 	@arg private var parent:pony.net.Socket;
-	@arg private var socket:Dynamic;// NodeNetSocket;
+	@arg private var socket:Dynamic;
 
 	public var DATA:Signal = new Signal();
 	public var CLOSE:Signal = new Signal();
 	
 	public function new() 
 	{
-		socket.on('data', _onData);
-		socket.on('close', onClose);
-		socket.on('error', close);
+		socket.addEventListener(Event.CLOSE, onClose);
+		socket.addEventListener(ProgressEvent.SOCKET_DATA, _onData);
+		socket.addEventListener(IOErrorEvent.IO_ERROR, _close);
 		init();
 	}
 	
@@ -30,8 +33,8 @@ class SocketUnit implements Declarator
 		parent.socketInit(this);
 	}
 	
-	private function _onData(d:Dynamic):Void {
-		onData(new String(d));
+	private function _onData(event:ProgressEvent):Void {
+		onData(new String(socket.readUTFBytes(socket.bytesAvailable)));
 	}
 	
 	private function onData(d:String):Void {
@@ -40,21 +43,24 @@ class SocketUnit implements Declarator
 	}
 	
 	public function send(data:String):Void {
-		if (socket != null)
-			socket.write(data);
+		if (socket != null) {
+			socket.writeUTFBytes(data);
+			socket.flush();
+		}
 	}
+	
+	public function _close(event:Dynamic):Void close()
 	
 	public function close():Void {
 		if (socket == null) return;
-		socket.end();
-		socket.destroy();
+		socket.close();
 		socket = null;
 		onClose();
 	}
 	
-	private function onClose():Void {
+	private function onClose(?event:Dynamic):Void {
 		CLOSE.dispatch();
-		parent.dispatch(pony.net.Socket.CLOSE_SOCKET, this);
+		parent.dispatch('closeSocket', this);
 	}
 	
 }

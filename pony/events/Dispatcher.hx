@@ -38,8 +38,14 @@ import pony.Messages;
 
 class Dispatcher implements ArgsArray, extends Messages//, implements Declarator
 {
-	private var signals:Hash<Signal> = new Hash<Signal>();
-	@arg private var delay:Int = -1;
+	private var signals:Hash<Signal>;
+	private var delay:Int = -1;
+	
+	public function new(_delay:Int = -1) {
+		this.delay = _delay;
+		signals = new Hash<Signal>();
+		super();
+	}
 	
 	public function getSignal(name:String):Signal {
 		if (!signals.exists(name))

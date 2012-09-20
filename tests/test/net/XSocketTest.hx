@@ -3,14 +3,14 @@ package net;
 import massive.munit.util.Timer;
 import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
-import pony.net.XSocket;
+//import pony.net.XSocket;
 
 /**
 * Auto generated MassiveUnit Test Class  for pony.net.XSocket 
 */
 class XSocketTest 
 {
-	var instance:XSocket; 
+	//var instance:XSocket; 
 	
 	public function new() 
 	{
@@ -41,7 +41,7 @@ class XSocketTest
 	@Test
 	public function testExample():Void
 	{
-		var x:XSocket = new XSocket();
-		x.bind(6001);
+		//var x:XSocket = new XSocket();
+		//x.bind(6001);
 	}
 }

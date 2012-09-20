@@ -39,7 +39,12 @@ class Enabler extends Dispatcher
 	static public var ON:String = 'on';
 	static public var OFF:String = 'off';
 
-	@arg private var _enabled:Bool = false;
+	private var _enabled:Bool;
+	
+	public function new(e:Bool=false, d:Int=-1) {
+		_enabled = e;
+		super(d);
+	}
 	
 	public var enabled(getEnabled, setEnabled):Bool;
 	

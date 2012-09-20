@@ -8,6 +8,8 @@ package pony.net;
 class Socket
 #if nodejs
 extends pony.net.platform.nodejs.Socket
+#elseif flash
+extends pony.net.platform.flash.Socket
 #end
 {
 	static public var DATA:String = 'data';

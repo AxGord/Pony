@@ -1,4 +1,5 @@
 package pony.net;
+
 import pony.net.SocketUnit;
 import pony.XMLTools;
 
@@ -9,14 +10,19 @@ import pony.XMLTools;
 
 class XSocket extends Socket
 {
-	@arg public var target:Dynamic = null;
+	public var target:Dynamic;
 	
 	public var xsockets(getXSockets, null):Array<XSocket>;
 
-	private var gw:Array<{n: String, f: String->Void}> = [];
+	private var gw:Array<{n: String, f: String->Void}>;
 	
+	public function new(_retime:Int=500, delay:Int=-1, ?target:Dynamic) {
+		this.target = target;
+		super(_retime, delay);
+	}
 	
 	override private function init() {
+		gw = [];
 		addListener(Socket.ACTIVE, onActive);
 	}
 	
@@ -34,10 +40,10 @@ class XSocket extends Socket
 			gw.push( { n:name, f:f } );
 	}
 	
-	override private function createSocket(o:Dynamic):SocketUnit 
+	override private function createSocket(o:Dynamic):Void 
 	{
 		var x:XSocketUnit = new XSocketUnit(sockets.length, untyped this, o);
-		return cast x;
+		//socketInit(cast x);
 	}
 	
 	private function onActive():Void {

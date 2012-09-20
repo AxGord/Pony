@@ -28,7 +28,7 @@ class Socket extends SocketBase
 	}
 	
 	private function listener(s:NodeNetSocket):Void {
-		socketUnit(createSocket(s));
+		createSocket(s);
 	}
 	
 	override private function servClose():Void {
@@ -41,7 +41,7 @@ class Socket extends SocketBase
 		s.on('error', sockError);
 		s.on('connect', function() {
 			if (enabled)
-				socketInit(createSocket(s));
+				createSocket(s);
 			else {
 				s.end();
 				s.destroy();

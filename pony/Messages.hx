@@ -38,9 +38,10 @@ using pony.Ultra;
  * @author AxGord
  */
 
-class Messages implements Declarator
+class Messages
 {
-	@arg public var silent:Bool = false;
+	public var silent:Bool = false;
+	public function new(silent:Bool=false) this.silent = silent
 	public inline function message(text:String):Void if (!silent) Log.trace(classTitle() + ': ' + text, null)
 	public function classTitle():String return Type.getClassName(Type.getClass(this)).split('.').last()
 }

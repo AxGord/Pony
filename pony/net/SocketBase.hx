@@ -13,7 +13,7 @@ import pony.SpeedLimit;
 class SocketBase extends Enabler, implements Binder
 {
 	public var mode(default, null):String = '';
-	public var sockets(default, null):Array<SocketUnit> = [];
+	public var sockets(default, null):Array<SocketUnit>;
 	
 	public var active(default, null):Bool = false;
 	
@@ -32,6 +32,7 @@ class SocketBase extends Enabler, implements Binder
 
 	public function new(_retime:Int=500, delay:Int=-1) 
 	{
+		sockets = [];
 		super(true, delay);
 		sl = new SpeedLimit(_retime);
 		addListener(Enabler.ON, onEnable);
@@ -54,7 +55,9 @@ class SocketBase extends Enabler, implements Binder
 	
 	private inline function bindn():Void bind(lastPort = portIt.next())
 	
-	private function bind(port:Int):Void {}
+	private function bind(port:Int):Void {
+		throw 'Not support on this platform';
+	}
 	
 	private function bindFail():Void {
 		if (portIt.hasNext()) {
@@ -120,7 +123,7 @@ class SocketBase extends Enabler, implements Binder
 	
 	private function _connect(host:String, port:Int):Void {}
 	
-	private function sockError():Void {
+	public function sockError():Void {
 		if (portIt.hasNext()) {
 			message('Error connect on ' + lastPort + ' port, try next port');
 			conNext();
@@ -131,7 +134,7 @@ class SocketBase extends Enabler, implements Binder
 		}
 	}
 	
-	private function socketInit(s:SocketUnit):Void {
+	public function socketInit(s:SocketUnit):Void {
 		socketUnit(s);
 		active = true;
 		dispatch('connect');
@@ -159,8 +162,8 @@ class SocketBase extends Enabler, implements Binder
 		wq = '';
 	}
 	
-	private function createSocket(o:Dynamic):SocketUnit {
-		return new SocketUnit(sockets.length, untyped this, o);
+	private function createSocket(o:Dynamic):Void {
+		socketInit(new SocketUnit(sockets.length, untyped this, o));
 	}
 	
 }

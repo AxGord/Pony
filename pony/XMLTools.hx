@@ -27,7 +27,9 @@
 **/
 package pony;
 import haxe.xml.Fast;
+#if !flash
 import pony.fs.File;
+#end
 
 using pony.Ultra;
 
@@ -39,7 +41,9 @@ using pony.Ultra;
 class XMLTools
 {
 
+	#if !flash
 	public static inline function fast(f:File):Fast return new Fast(Xml.parse(f.content)).elements.next()
+	#end
 	/*
 	public static function toObj(?x:Fast, ?f:File, fields:Array<String>, ?delemiter:String):Dynamic {
 		if (f != null) {

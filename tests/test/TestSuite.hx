@@ -1,6 +1,7 @@
 import massive.munit.TestSuite;
 
 import db.DBTest;
+import DictionaryTest;
 import events.DispatcherTest;
 import events.SignalTest;
 import events.WaiterTest;
@@ -30,6 +31,7 @@ class TestSuite extends massive.munit.TestSuite
 		super();
 
 		add(db.DBTest);
+		add(DictionaryTest);
 		add(events.DispatcherTest);
 		add(events.SignalTest);
 		add(events.WaiterTest);
