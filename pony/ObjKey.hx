@@ -27,79 +27,24 @@
 **/
 
 package pony;
-import pony.magic.Declarator;
-using Lambda;
+
+using pony.Ultra;
+
 /**
- * Dictionary
+ * Object keys for data sets
  * @author AxGord
  */
 
-class Dictionary<K, V> implements Declarator
+class ObjKey<K, V> extends Dictionary<K, V>
 {
-	public var ks:Array<K> = [];
-	public var vs:Array<V> = [];
-
-	private function getIndex(k:K):Int {
-		return ks.indexOf(k);
+	override private function getIndex(k:K):Int {
+		var fields:Array<String> = Reflect.fields(k);
+		return ks.search(function(o:K):Bool {
+			for (f in fields) {
+				if (!Reflect.hasField(o, f) || Reflect.field(k, f) != Reflect.field(o, f))
+					return false;
+			}
+			return true;
+		});
 	}
-	
-	public function set(k:K, v:V):Void {
-		var i:Int = getIndex(k);
-		if (i != -1)
-			vs[i] = v;
-		else {
-			ks.push(k);
-			vs.push(v);
-		}
-	}
-	
-	public function get(k:K):V {
-		var i:Int = getIndex(k);
-		if (i == -1)
-			return null;
-		else
-			return vs[i];
-	}
-	
-	public function exists(k:K):Bool {
-		return getIndex(k) != -1;
-	}
-	
-	public function remove(k:K):Void {
-		var i:Int = getIndex(k);
-		if (i != -1) {
-			ks.splice(i, 1);
-			vs.splice(i, 1);
-		}
-	}
-	
-	public function clear():Void {
-		ks = [];
-		vs = [];
-	}
-	
-	public function iterator():Iterator<V> {
-		return vs.iterator();
-	}
-	
-	public function keys():Iterator<K> {
-		return ks.iterator();
-	}
-	
-	public function toString():String {
-		var a:Array<String> = [];
-		for (k in keys()) {
-			a.push(k + ': ' + get(k));
-		}
-		return '[' + a.join(', ') + ']';
-	}
-	
-	public function removeValue(v:V):Void {
-		var i:Int = vs.indexOf(v);
-		if (i != -1) {
-			ks.splice(i, 1);
-			vs.splice(i, 1);
-		}
-	}
-	
 }

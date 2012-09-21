@@ -182,6 +182,11 @@ class ArrayExtensions
 		return a.map(function(s:String) return q + s + q );
 	}
 	
+	public static function search<A>(a:Array<A>, f:A->Bool):Int {
+		for (i in 0...a.length) if (f(a[i])) return i;
+		return -1;
+	}
+	
 }
 
 

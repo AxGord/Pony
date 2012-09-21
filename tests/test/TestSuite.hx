@@ -1,5 +1,6 @@
 import massive.munit.TestSuite;
 
+import ArrKeyTest;
 import db.DBTest;
 import DictionaryTest;
 import events.DispatcherTest;
@@ -13,6 +14,7 @@ import magic.AsyncTest;
 import magic.PolymorphTest;
 import net.WebServerTest;
 import net.XSocketTest;
+import ObjKeyTest;
 import PriorityTest;
 import SpeedLimitTest;
 import StreamTest;
@@ -30,6 +32,7 @@ class TestSuite extends massive.munit.TestSuite
 	{
 		super();
 
+		add(ArrKeyTest);
 		add(db.DBTest);
 		add(DictionaryTest);
 		add(events.DispatcherTest);
@@ -43,6 +46,7 @@ class TestSuite extends massive.munit.TestSuite
 		add(magic.PolymorphTest);
 		add(net.WebServerTest);
 		add(net.XSocketTest);
+		add(ObjKeyTest);
 		add(PriorityTest);
 		add(SpeedLimitTest);
 		add(StreamTest);

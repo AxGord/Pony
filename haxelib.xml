@@ -2,5 +2,5 @@
     <user name="AxGord"/>
     <tag v="cross" />
     <description>HaXe cross-library</description>
-    <version name="0.0.2">HaXe 2.09 ready</version>
+    <version name="0.0.3">Add Dictonary</version>
 </project>
