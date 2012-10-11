@@ -89,9 +89,10 @@ class Dir
 	}
 	
 	private function getExists():Bool {
-		for (d in list)
+		for (d in list) {
 			if (SimplePath.exists(d) && SimplePath.isDir(d))
 				return true;
+		}
 		return false;
 	}
 	

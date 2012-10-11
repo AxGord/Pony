@@ -44,7 +44,9 @@ class SimplePath
 
 	public static inline function exists(path:String):Bool
 	{
-		return FileSystem.exists(path);
+		var p:String = normalize(path);
+		if (p.endsWith('/')) p = p.substr(0, -1);
+		return FileSystem.exists(p);
 	}
 	
 	public static inline function full(path:String):String {
@@ -76,7 +78,9 @@ class SimplePath
 	}
 	
 	public static inline function isDir(path:String):Bool {
-		return FileSystem.isDirectory(path);
+		var p:String = normalize(path);
+		if (p.endsWith('/')) p = p.substr(0, -1);
+		return FileSystem.isDirectory(p);
 	}
 	
 	public static inline function isFile(path:String):Bool {
