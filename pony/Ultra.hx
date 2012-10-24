@@ -65,7 +65,7 @@ class Ultra {
 	/**
 	 * Just "null" not work in as3, use this all time and you no take problem. And use (minInt - 1) ;)
 	 */
-	#if flash9
+	#if (flash9||cs)
 	public static inline var nullInt:Int = minInt;
 	#else
 	public static inline var nullInt:Int = null;
@@ -196,7 +196,7 @@ class ArrayExtensions
  */
 
 class IntExtensions {
-	#if flash9
+	#if (flash9||cs)
 	public static inline function notNull(o:Int):Bool return o != Ultra.nullInt
 	public static inline function isNull(o:Int):Bool return o == Ultra.nullInt
 	#end
@@ -226,6 +226,7 @@ class DynamicExtensions {
 	
 	//public static function int(v:Dynamic):Int { return v; }
 	
+	#if !cs
 	/**
 	 * Make full copy.
 	 * @return Copy.
@@ -261,6 +262,7 @@ class DynamicExtensions {
 		}
 		return n;
 	}
+	#end
 	
 	public static function is(o:Dynamic, c:Class<Dynamic>):Bool {
 		if (Std.is(o, c)) return true;

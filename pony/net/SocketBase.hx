@@ -108,7 +108,7 @@ class SocketBase extends Enabler, implements Binder
 	
 	private function servClose():Void {}
 	
-	public function connect(host:String = 'localhost', port:Dynamic):Void {
+	public function connect(host:String = 'localhost', port:Dynamic=6001):Void {
 		if (mode == 'server') throw 'This server';
 		mode = 'client';
 		this.host = host;
@@ -144,8 +144,11 @@ class SocketBase extends Enabler, implements Binder
 	
 	private function onSocketClose(s:SocketUnit):Void {
 		message('Close socket #' + s.id);
-		if (mode == 'client') active = false;
 		sockets.remove(s);
+		if (mode == 'client') {
+			active = false;
+			sl.run(conNext);
+		}
 	}
 	
 	public function send(data:String):Void {
@@ -162,8 +165,5 @@ class SocketBase extends Enabler, implements Binder
 		wq = '';
 	}
 	
-	private function createSocket(o:Dynamic):Void {
-		socketInit(new SocketUnit(sockets.length, untyped this, o));
-	}
 	
 }

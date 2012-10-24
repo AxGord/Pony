@@ -49,4 +49,8 @@ class Socket extends SocketBase
 		});
 	}
 	
+	private function createSocket(o:NodeNetSocket):Void {
+		new SocketUnit(sockets.length, this, o);
+	}
+	
 }

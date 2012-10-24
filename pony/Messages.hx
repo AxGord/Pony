@@ -41,7 +41,13 @@ using pony.Ultra;
 class Messages
 {
 	public var silent:Bool = false;
-	public function new(silent:Bool=false) this.silent = silent
+	public function new(silent:Bool = false) this.silent = silent
+	#if cs
+	public inline function message(text:String):Void if (!silent) dotnet.system.Console.WriteLine(classTitle() + ': ' + text)
+	#elseif flash
+	public inline function message(text:String):Void if (!silent) untyped __global__["trace"](classTitle() + ': ' + text)
+	#else
 	public inline function message(text:String):Void if (!silent) Log.trace(classTitle() + ': ' + text, null)
+	#end
 	public function classTitle():String return Type.getClassName(Type.getClass(this)).split('.').last()
 }

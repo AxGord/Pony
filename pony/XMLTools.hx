@@ -27,7 +27,7 @@
 **/
 package pony;
 import haxe.xml.Fast;
-#if !flash
+#if !(flash||cs)
 import pony.fs.File;
 #end
 
@@ -41,7 +41,7 @@ using pony.Ultra;
 class XMLTools
 {
 
-	#if !flash
+	#if !(flash||cs)
 	public static inline function fast(f:File):Fast return new Fast(Xml.parse(f.content)).elements.next()
 	#end
 	/*
@@ -95,6 +95,8 @@ class XMLTools
 			return Xml.createPCData(v);
 		if (Std.is(v, Bool))
 			return Xml.createPCData(v?'1':'0');
+		if (Std.is(v, Int))
+			return Xml.createPCData(v.toString());
 		if (v == null)
 			return Xml.createPCData('');
 		trace(v);
@@ -102,7 +104,7 @@ class XMLTools
 	}
 	
 	public static function unserialize(x:Xml):Dynamic {
-		if (x.nodeType + '' == 'element') {
+		if ((x.nodeType + '').toLowerCase() == 'element') {
 			trace(x);
 			throw 'Sorry, unrealized type';
 		} else

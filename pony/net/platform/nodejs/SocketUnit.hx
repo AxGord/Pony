@@ -12,7 +12,7 @@ import pony.magic.Declarator;
 class SocketUnit implements Declarator
 {
 	@arg public var id:Int;
-	@arg private var parent:pony.net.Socket;
+	@arg private var parent:Socket;
 	@arg private var socket:Dynamic;// NodeNetSocket;
 
 	public var DATA:Signal = new Signal();

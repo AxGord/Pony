@@ -175,7 +175,7 @@ class Priority<T>
 	 */
 	public function clear():Void {
 		hash = new IntHash<Int>();
-		data = [];
+		data = new Array<T>();
 		counters = [0];
 	}
 	
@@ -199,6 +199,7 @@ class Priority<T>
 	 * @return Return true if element exists, false if not exists.
 	 */
 	public function exists(of:Dynamic):Bool {
+		if (data.length == 0) return false;
 		if (of.is(Array)) {
 			var a:Array<Dynamic> = of;
 			for (e in a)

@@ -4,7 +4,8 @@ import pony.net.SocketBase;
 import flash.events.Event;
 import flash.events.IOErrorEvent;
 import flash.events.ProgressEvent;
-
+import flash.events.SecurityErrorEvent;
+//import flash.system.Security;
 /**
  * ...
  * @author AxGord
@@ -23,6 +24,15 @@ class Socket extends SocketBase
 			}
 		});
 		s.addEventListener(IOErrorEvent.IO_ERROR, function(event:IOErrorEvent) sockError());
+        s.addEventListener(SecurityErrorEvent.SECURITY_ERROR, securityErrorHandler);
+	}
+	
+	private function securityErrorHandler(e:SecurityErrorEvent):Void {
+		trace('securityError(mb need focus?)');
+	}
+	
+	private function createSocket(o:flash.net.Socket ):Void {
+		new SocketUnit(sockets.length, this, o);
 	}
 	
 }

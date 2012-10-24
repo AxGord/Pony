@@ -121,7 +121,7 @@ class Signal implements ArgsArray
 	@ArgsArray public function dispatch(args:Array<Dynamic>):Event {
 		//trace(id);
 		var event:Event;
-		if (args.length == 0)
+		if (args == null || args.length == 0)
 			event = new Event();
 		else if (Std.is(args[0], Event)) {
 			event = args.shift();

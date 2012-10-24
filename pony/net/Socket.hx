@@ -10,6 +10,8 @@ class Socket
 extends pony.net.platform.nodejs.Socket
 #elseif flash
 extends pony.net.platform.flash.Socket
+#elseif cs
+extends pony.net.platform.cs._Socket
 #end
 {
 	static public var DATA:String = 'data';

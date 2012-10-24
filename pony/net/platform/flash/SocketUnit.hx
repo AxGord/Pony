@@ -15,7 +15,7 @@ class SocketUnit implements Declarator
 {
 
 	@arg public var id:Int;
-	@arg private var parent:pony.net.Socket;
+	@arg private var parent:pony.net.platform.flash.Socket;
 	@arg private var socket:Dynamic;
 
 	public var DATA:Signal = new Signal();
