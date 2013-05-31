@@ -1,8 +1,6 @@
 <project name="pony" url="https://github.com/AxGord/Pony" license="BSD">
     <user name="AxGord"/>
     <tag v="cross" />
-	<depends name="hoo"/>
-	<depends name="continuation"/>
     <description>HaXe cross-library</description>
-    <version name="0.0.5">FullPower</version>
+    <version name="0.1.0">haxe3 support</version>
 </project>
