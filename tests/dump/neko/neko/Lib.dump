@@ -1,0 +1,14 @@
+class neko.Lib{
+	static public load(method) : lib : String -> prim : String -> nargs : Int -> Dynamic
+
+	 = function(lib:String,prim:String,nargs:Int) = {
+		return __dollar__loader.loadprim((lib + "@" + prim).__s,nargs);
+	};
+
+	static public rethrow(method) : e : Dynamic -> Dynamic
+
+	 = function(e:Dynamic) = {
+		return __dollar__rethrow(e);
+	};
+
+}

@@ -1,0 +1,42 @@
+interface massive.munit.client.ExternalPrintClient{
+	public printSummary(method) : value : String -> Void;
+
+	public addCoverageSummary(method) : value : String -> Void;
+
+	public addCoverageReportSection(method) : name : String -> value : String -> Void;
+
+	public addMissingCoverageClass(method) : className : String -> ?percent : Float -> Void;
+
+	public createCoverageReport(method) : ?percent : Float -> Void;
+
+	public addTestClassCoverageItem(method) : value : String -> Void;
+
+	public addTestClassCoverage(method) : className : String -> ?percent : Float -> Void;
+
+	public addTestIgnore(method) : value : String -> Void;
+
+	public addTestError(method) : value : String -> Void;
+
+	public addTestFail(method) : value : String -> Void;
+
+	public addTestPass(method) : value : String -> Void;
+
+	public trace(method) : value : Dynamic -> Void;
+
+	public setTestClassResult(method) : resultType : Int -> Void;
+
+	public printToTestClassSummary(method) : value : String -> Void;
+
+	public createTestClass(method) : className : String -> Void;
+
+	public setResultBackground(method) : value : Bool -> Void;
+
+	public printLine(method) : value : String -> Void;
+
+	public print(method) : value : String -> Void;
+
+	public setResult(method) : value : Bool -> Void;
+
+	public queue(method) : methodName : String -> ?args : Dynamic -> Bool;
+
+}

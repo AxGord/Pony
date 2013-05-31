@@ -1,0 +1,54 @@
+class EReg{
+	public new(method) : r : String -> opt : String -> Void
+
+	 = function(r:String,opt:String) = {
+		var a = opt.split("g");
+		this.global = a.length > 1;
+		if ((this.global))opt = a.join(""));
+		this.r = EReg.regexp_new_options(r.__s,opt.__s);
+	};
+
+	public matchedPos(method) : Void -> { pos : Int, len : Int }
+
+	 = function() = {
+		return EReg.regexp_matched_pos(this.r,0);
+	};
+
+	public matched(method) : n : Int -> String
+
+	 = function(n:Int) = {
+		var m = EReg.regexp_matched(this.r,n);
+		return if ((m == null))null else new String(m));
+	};
+
+	public match(method) : s : String -> Bool
+
+	 = function(s:String) = {
+		var p = EReg.regexp_match(this.r,s.__s,0,s.length);
+		if ((p))this.last = s else this.last = null);
+		return p;
+	};
+
+	global(var) : Bool;
+
+	last(var) : String;
+
+	r(var) : Dynamic;
+
+	static regexp_new_options(var) : Unknown<5> -> Unknown<6> -> Unknown<4>
+
+	 = neko.Lib.load("regexp","regexp_new_options",2);
+
+	static regexp_match(var) : Dynamic -> Unknown<7> -> Int -> Int -> Bool
+
+	 = neko.Lib.load("regexp","regexp_match",4);
+
+	static regexp_matched(var) : Dynamic -> Int -> String
+
+	 = neko.Lib.load("regexp","regexp_matched",2);
+
+	static regexp_matched_pos(var) : Dynamic -> Int -> { pos : Int, len : Int }
+
+	 = neko.Lib.load("regexp","regexp_matched_pos",2);
+
+}

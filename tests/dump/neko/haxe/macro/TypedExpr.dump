@@ -1,0 +1,2 @@
+extern enum haxe.macro.TypedExpr {
+}

@@ -1,0 +1,20 @@
+class Lambda{
+	static public exists<A : exists.A>(method) : it : Iterable<exists.A> -> f : (exists.A -> Bool) -> Bool
+
+	 = function(it:Iterable<exists.A>,f:exists.A -> Bool) = {
+		for (x in it.iterator()) if ((f(x)))return true);
+		return false;
+	};
+
+	static public indexOf<T : indexOf.T>(method) : it : Iterable<indexOf.T> -> v : indexOf.T -> Int
+
+	 = function(it:Iterable<indexOf.T>,v:indexOf.T) = {
+		var i = 0;
+		for (v2 in it.iterator()) {
+			if ((v == v2))return i);
+			i ++;
+		};
+		return -1;
+	};
+
+}

@@ -1,0 +1,1 @@
+type haxe.macro.Var = { type : Null<haxe.macro.ComplexType>, name : String, expr : Null<haxe.macro.Expr> }

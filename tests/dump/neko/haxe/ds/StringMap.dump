@@ -1,0 +1,20 @@
+class haxe.ds.StringMap<T : haxe.ds.StringMap.T>{
+	public new(method) : Void -> Void
+
+	 = function() = {
+		this.h = __dollar__hnew(0);
+	};
+
+	public keys(method) : Void -> Iterator<String>
+
+	 = function() = {
+		var l = new List();
+		__dollar__hiter(this.h,function(k:String,_:Unknown<21>) = {
+			l.push(new String(k));
+		});
+		return l.iterator();
+	};
+
+	h(var) : Dynamic;
+
+}

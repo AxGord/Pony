@@ -1,0 +1,1 @@
+type haxe.macro.ClassField = { type : haxe.macro.Type, pos : haxe.macro.Position, params : Array<{ t : haxe.macro.Type, name : String }>, name : String, meta : haxe.macro.MetaAccess, kind : haxe.macro.FieldKind, isPublic : Bool, expr : Void -> Null<haxe.macro.TypedExpr>, doc : Null<String> }

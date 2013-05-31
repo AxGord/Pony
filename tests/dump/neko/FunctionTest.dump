@@ -1,0 +1,60 @@
+class FunctionTest{
+	public _cll(method) : a : Array<Int> -> Void
+
+	 = function(a:Array<Int>) = {
+		haxe.Log.trace(a,{fileName : "FunctionTest.hx",lineNumber : 55,className : "FunctionTest",methodName : "_cll"});
+	};
+
+	public multy(method) : Void -> Void
+
+	 = function() = {
+		this._cll([1,2,3,7,8]);
+		this._cll([]);
+	};
+
+	public lamda(method) : Void -> Void
+
+	 = function() = {
+		var b = false;
+		var f = {f : function(f:Bool) = {
+			b = f;
+		},count : 1,args : []};
+		massive.munit.Assert.isFalse(b,{fileName : "FunctionTest.hx",lineNumber : 40,className : "FunctionTest",methodName : "lamda"});
+		cast $call(f.f,null,f.args.concat([]).__neko());
+		massive.munit.Assert.isTrue(b,{fileName : "FunctionTest.hx",lineNumber : 42,className : "FunctionTest",methodName : "lamda"});
+		cast $call(f.f,null,f.args.concat([]).__neko());
+		massive.munit.Assert.isFalse(b,{fileName : "FunctionTest.hx",lineNumber : 44,className : "FunctionTest",methodName : "lamda"});
+	};
+
+	public arg3(method) : Void -> Void
+
+	 = function() = {
+		var f = {f : function(a:String,b:String,c:String) = {
+			return a + b + c;
+		},count : 3,args : []};
+		massive.munit.Assert.areEqual(cast $call(f.f,null,f.args.concat(["w","d"]).__neko()),"awd",{fileName : "FunctionTest.hx",lineNumber : 32,className : "FunctionTest",methodName : "arg3"});
+	};
+
+	public arg1(method) : Void -> Void
+
+	 = function() = {
+		var f = {f : function(s:String) = {
+			return s;
+		},count : 1,args : []};
+		massive.munit.Assert.areEqual(cast $call(f.f,null,f.args.concat([]).__neko()),"asd",{fileName : "FunctionTest.hx",lineNumber : 25,className : "FunctionTest",methodName : "arg1"});
+	};
+
+	public arg0(method) : Void -> Void
+
+	 = function() = {
+		var f = {f : function() = {
+			return "qwe";
+		},count : 0,args : []};
+		massive.munit.Assert.areEqual(cast $call(f.f,null,f.args.concat([]).__neko()),"qwe",{fileName : "FunctionTest.hx",lineNumber : 18,className : "FunctionTest",methodName : "arg0"});
+	};
+
+	static public __meta__(var) : Dynamic
+
+	 = {fields : {multy : {Test : null},lamda : {Test : null},arg3 : {Test : null},arg1 : {Test : null},arg0 : {Test : null}}};
+
+}

@@ -1,0 +1,52 @@
+private class sys.net._Socket.SocketInput extends haxe.io.Input{
+	public new(method) : s : sys.net._Socket.SocketHandle -> Void
+
+	 = function(s:sys.net._Socket.SocketHandle) = {
+		this.__s = s;
+	};
+
+	public close(method) : Void -> Void
+
+	 = function() = {
+		super.close();
+		if ((this.__s != null))sys.net._Socket.SocketInput.socket_close(this.__s));
+	};
+
+	public readBytes(method) : buf : haxe.io.Bytes -> pos : Int -> len : Int -> Int
+
+	 = function(buf:haxe.io.Bytes,pos:Int,len:Int) = {
+		var r;
+		try {
+			r = sys.net._Socket.SocketInput.socket_recv(this.__s,buf.b,pos,len);
+		}catch( e : Dynamic ) {
+			if ((e == "Blocking"))throw haxe.io.Error.Blocked else throw haxe.io.Error.Custom(e));
+		};
+		if ((r == 0))throw new haxe.io.Eof());
+		return r;
+	};
+
+	public readByte(method) : Void -> Int
+
+	 = function() = {
+		return try {
+			sys.net._Socket.SocketInput.socket_recv_char(this.__s);
+		}catch( e : Dynamic ) {
+			if ((e == "Blocking"))throw haxe.io.Error.Blocked else if ((this.__s == null))throw haxe.io.Error.Custom(e) else throw new haxe.io.Eof()));
+		};
+	};
+
+	__s(var) : sys.net._Socket.SocketHandle;
+
+	static socket_recv(var) : sys.net._Socket.SocketHandle -> haxe.io.BytesData -> Int -> Int -> Int
+
+	 = neko.Lib.load("std","socket_recv",4);
+
+	static socket_recv_char(var) : sys.net._Socket.SocketHandle -> Int
+
+	 = neko.Lib.load("std","socket_recv_char",1);
+
+	static socket_close(var) : sys.net._Socket.SocketHandle -> Unknown<32>
+
+	 = neko.Lib.load("std","socket_close",1);
+
+}

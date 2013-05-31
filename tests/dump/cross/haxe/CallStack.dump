@@ -1,0 +1,8 @@
+class haxe.CallStack{
+	static public exceptionStack(method) : Void -> Array<haxe.StackItem>
+
+	 = function() = {
+		return [];
+	};
+
+}

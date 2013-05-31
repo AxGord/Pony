@@ -27,17 +27,24 @@
 **/
 
 package pony;
-import pony.magic.Declarator;
+
 using Lambda;
 /**
  * Dictionary
  * @author AxGord
  */
 
-class Dictionary<K, V> implements Declarator
+class Dictionary<K, V>
 {
-	public var ks:Array<K> = [];
-	public var vs:Array<V> = [];
+	public var ks:Array<K>;
+	public var vs:Array<V>;
+	
+	public var count(get, null):Int;
+	
+	public function new() {
+		ks = [];
+		vs = [];
+	}
 
 	private function getIndex(k:K):Int {
 		return ks.indexOf(k);
@@ -65,12 +72,14 @@ class Dictionary<K, V> implements Declarator
 		return getIndex(k) != -1;
 	}
 	
-	public function remove(k:K):Void {
+	public function remove(k:K):Bool {
 		var i:Int = getIndex(k);
 		if (i != -1) {
 			ks.splice(i, 1);
 			vs.splice(i, 1);
-		}
+			return true;
+		} else
+			return false;
 	}
 	
 	public function clear():Void {
@@ -101,5 +110,7 @@ class Dictionary<K, V> implements Declarator
 			vs.splice(i, 1);
 		}
 	}
+	
+	private inline function get_count():Int return ks.length;
 	
 }

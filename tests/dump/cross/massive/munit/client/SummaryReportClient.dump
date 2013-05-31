@@ -1,0 +1,47 @@
+class massive.munit.client.SummaryReportClient extends massive.munit.client.AbstractTestResultClient{
+	public new(method) : Void -> Void
+
+	 = function() = {
+		super();
+		this.id = "summary";
+	};
+
+	printReports(method) : Void -> Void
+
+	 = function() = {
+	};
+
+	printOverallResult(method) : result : Bool -> Void
+
+	 = function(result:Bool) = {
+	};
+
+	printFinalStatistics(method) : result : Bool -> testCount : Int -> passCount : Int -> failCount : Int -> errorCount : Int -> ignoreCount : Int -> time : Float -> Void
+
+	 = function(result:Bool,testCount:Int,passCount:Int,failCount:Int,errorCount:Int,ignoreCount:Int,time:Float) = {
+		this.output = "";
+		this.output += "result:" + Std.string(result);
+		this.output += "\ncount:" + testCount;
+		this.output += "\npass:" + passCount;
+		this.output += "\nfail:" + failCount;
+		this.output += "\nerror:" + errorCount;
+		this.output += "\nignore:" + ignoreCount;
+		this.output += "\ntime:" + time;
+		this.output += "\n";
+		var resultCount = 0;
+		while ((this.totalResults.length > 0 && resultCount < 10)) {
+			var result1 = this.totalResults.shift();
+			if ((! result1.passed)){
+				this.output += "\n# " + result1.get_location();
+				resultCount ++;
+			});
+		};
+		var remainder = failCount + errorCount - resultCount;
+		if ((remainder > 0))this.output += "# ... plus " + remainder + " more");
+	};
+
+	static public DEFAULT_ID((inline,never)) : String
+
+	 = "summary";
+
+}

@@ -1,0 +1,11 @@
+class StringBuf{
+	public new(method) : Void -> Void
+
+	 = function() = {
+	};
+
+	b(var) : String
+
+	 = "";
+
+}

@@ -1,0 +1,8 @@
+class massive.haxe.util.ReflectUtil{
+	static public here(method) : ?info : haxe.PosInfos -> haxe.PosInfos
+
+	 = function(info:haxe.PosInfos = null) = {
+		return info;
+	};
+
+}

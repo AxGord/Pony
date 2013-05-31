@@ -1,0 +1,191 @@
+class massive.munit.client.RichPrintClient extends massive.munit.client.PrintClientBase{
+	public new(method) : Void -> Void
+
+	 = function() = {
+		super(null);
+		this.id = "RichPrintClient";
+	};
+
+	public printLine(method) : value : Dynamic -> ?indent : Int -> Void
+
+	 = function(value:Dynamic,indent:Int = 0) = {
+		super.printLine(value,indent);
+	};
+
+	public print(method) : value : Dynamic -> Void
+
+	 = function(value:Dynamic) = {
+		super.print(value);
+		Sys.print(value);
+	};
+
+	customTrace(method) : value : Unknown<24> -> ?info : haxe.PosInfos -> Void
+
+	 = function(value:Unknown<24>,info:haxe.PosInfos = null) = {
+		this.addTrace(value,info);
+		var traces = this.getTraces();
+		var t = traces[traces.length - 1];
+		this.external.trace(t);
+	};
+
+	printOverallResult(method) : result : Bool -> Void
+
+	 = function(result:Bool) = {
+		super.printOverallResult(result);
+		this.external.setResult(result);
+	};
+
+	printFinalStatistics(method) : result : Bool -> testCount : Int -> passCount : Int -> failCount : Int -> errorCount : Int -> ignoreCount : Int -> time : Float -> Void
+
+	 = function(result:Bool,testCount:Int,passCount:Int,failCount:Int,errorCount:Int,ignoreCount:Int,time:Float) = {
+		super.printFinalStatistics(result,testCount,passCount,failCount,errorCount,ignoreCount,time);
+		var resultString = if ((result))"PASSED" else "FAILED");
+		resultString += "\n" + "Tests: " + testCount + "  Passed: " + passCount + "  Failed: " + failCount + " Errors: " + errorCount + " Ignored: " + ignoreCount + " Time: " + massive.munit.util.MathUtil.round(time,5);
+		this.external.printSummary(resultString);
+	};
+
+	printReports(method) : Void -> Void
+
+	 = function() = {
+		super.printReports();
+	};
+
+	printMissingCoverage(method) : missingCoverageResults : Array<massive.munit.CoverageResult> -> Void
+
+	 = function(missingCoverageResults:Array<massive.munit.CoverageResult>) = {
+		if ((missingCoverageResults == null || missingCoverageResults.length == 0))return);
+		{
+			var _g = 0;
+			while ((_g < missingCoverageResults.length)) {
+				var result = missingCoverageResults[_g];
+				++ _g;
+				this.external.addMissingCoverageClass(result.className,result.percent);
+				{
+					var _g1 = 0,_g2 = result.blocks;
+					while ((_g1 < _g2.length)) {
+						var item = _g2[_g1];
+						++ _g1;
+						this.external.addTestClassCoverageItem(item);
+					};
+				};
+			};
+		};
+	};
+
+	trim(method) : output : String -> String
+
+	 = function(output:String) = {
+		while ((output.indexOf("\n",null) == 0)) output = output.substr(1,null);
+		while ((output.lastIndexOf("\n",null) == output.length - 2)) output = output.substr(0,output.length - 2);
+		return output;
+	};
+
+	public reportFinalCoverage(method) : ?percent : Float -> missingCoverageResults : Array<massive.munit.CoverageResult> -> summary : String -> ?classBreakdown : String -> ?packageBreakdown : String -> ?executionFrequency : String -> Void
+
+	 = function(percent:Float = 0,missingCoverageResults:Array<massive.munit.CoverageResult>,summary:String,classBreakdown:String = null,packageBreakdown:String = null,executionFrequency:String = null) = {
+		super.reportFinalCoverage(percent,missingCoverageResults,summary,classBreakdown,packageBreakdown,executionFrequency);
+		this.external.createCoverageReport(percent);
+		this.printMissingCoverage(missingCoverageResults);
+		if ((executionFrequency != null))this.external.addCoverageReportSection("Code Execution Frequency",this.trim(executionFrequency)));
+		if ((classBreakdown != null))this.external.addCoverageReportSection("Class Breakdown",this.trim(classBreakdown)));
+		if ((packageBreakdown != null))this.external.addCoverageReportSection("Package Breakdown",this.trim(packageBreakdown)));
+		if ((packageBreakdown != null))this.external.addCoverageReportSection("Summary",this.trim(summary)));
+	};
+
+	public setCurrentTestClassCoverage(method) : result : massive.munit.CoverageResult -> Void
+
+	 = function(result:massive.munit.CoverageResult) = {
+		super.setCurrentTestClassCoverage(result);
+		this.external.printToTestClassSummary(" [" + result.percent + "%]");
+		if ((result.percent == 100))return);
+		this.external.addTestClassCoverage(result.className,result.percent);
+		{
+			var _g = 0,_g1 = result.blocks;
+			while ((_g < _g1.length)) {
+				var item = _g1[_g];
+				++ _g;
+				this.external.addTestClassCoverageItem(item);
+			};
+		};
+	};
+
+	getTestClassResultType(method) : Void -> massive.munit.TestResultType
+
+	 = function() = {
+		if ((this.errorCount > 0))return massive.munit.TestResultType.ERROR else if ((this.failCount > 0))return massive.munit.TestResultType.FAIL else if ((this.ignoreCount > 0))return massive.munit.TestResultType.IGNORE else return massive.munit.TestResultType.PASS)));
+	};
+
+	finalizeTestClass(method) : Void -> Void
+
+	 = function() = {
+		super.finalizeTestClass();
+		this.testClassResultType = this.getTestClassResultType();
+		var code = {
+			var _g = this;
+			switch ((_g.testClassResultType)) {case PASS:0,case FAIL:1,case ERROR:2,case IGNORE:3,default: -1};
+		};
+		if ((code == -1))return);
+		this.external.setTestClassResult(code);
+	};
+
+	serializeTestResult(method) : result : massive.munit.TestResult -> String
+
+	 = function(result:massive.munit.TestResult) = {
+		var summary = result.name;
+		if ((result.description != null && result.description != ""))summary += " - " + result.description + " -");
+		summary += " (" + massive.munit.util.MathUtil.round(result.executionTime,4) + "s)";
+		var str = null;
+		if ((result.error != null))str = "Error: " + summary + "\n" + Std.string(result.error) else if ((result.failure != null))str = "Failure: " + summary + "\n" + Std.string(result.failure) else if ((result.ignore))str = "Ignore: " + summary else if ((result.passed)){
+		}))));
+		return str;
+	};
+
+	updateTestClass(method) : result : massive.munit.TestResult -> Void
+
+	 = function(result:massive.munit.TestResult) = {
+		super.updateTestClass(result);
+		var value = this.serializeTestResult(result);
+		{
+			var _g = result.get_type();
+			switch ((_g)) {case PASS:{
+				this.external.printToTestClassSummary(".");
+				this.external.addTestPass(value);
+			},case FAIL:{
+				this.external.printToTestClassSummary("!");
+				this.external.addTestFail(value);
+			},case ERROR:{
+				this.external.printToTestClassSummary("x");
+				this.external.addTestError(value);
+			},case IGNORE:{
+				this.external.printToTestClassSummary(",");
+				this.external.addTestIgnore(value);
+			},case UNKNOWN:null};
+		};
+	};
+
+	initializeTestClass(method) : Void -> Void
+
+	 = function() = {
+		super.initializeTestClass();
+		this.external.createTestClass(this.currentTestClass);
+		this.external.printToTestClassSummary("Class: " + this.currentTestClass + " ");
+	};
+
+	init(method) : Void -> Void
+
+	 = function() = {
+		super.init();
+		this.originalTrace = haxe.Log.trace;
+		haxe.Log.trace = this.customTrace;
+		this.external = new massive.munit.client.ExternalPrintClientJS();
+	};
+
+	external(var) : massive.munit.client.ExternalPrintClient;
+
+	testClassResultType(var) : massive.munit.TestResultType;
+
+	static public DEFAULT_ID((inline,never)) : String
+
+	 = "RichPrintClient";
+
+}

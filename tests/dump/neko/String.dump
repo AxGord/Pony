@@ -1,0 +1,173 @@
+class String{
+	public new(method) : string : String -> Void
+
+	 = function(string:String) = {
+		if ((__dollar__typeof(string) != __dollar__tstring))string = __dollar__string(string));
+		this.__s = string;
+		this.length = __dollar__ssize(string);
+	};
+
+	__radd(method) : s : Dynamic -> String
+
+	 = function(s:Dynamic) = {
+		return new String(__dollar__string(s) + this.__s);
+	};
+
+	__add(method) : s : Dynamic -> String
+
+	 = function(s:Dynamic) = {
+		return new String(this.__s + __dollar__string(s));
+	};
+
+	__compare(method) : o : String -> Int
+
+	 = function(o:String) = {
+		return __dollar__compare(this.__s,o.__s);
+	};
+
+	public toString(method) : Void -> String
+
+	 = function() = {
+		return this;
+	};
+
+	public toUpperCase(method) : Void -> String
+
+	 = function() = {
+		var s = this.__s;
+		var l = this.length;
+		var s2 = __dollar__scopy(s);
+		var i = 0;
+		while ((i < l)) {
+			var c = __dollar__sget(s,i);
+			if ((c >= 97 && c <= 122))__dollar__sset(s2,i,c - 97 + 65));
+			i ++;
+		};
+		return new String(s2);
+	};
+
+	public toLowerCase(method) : Void -> String
+
+	 = function() = {
+		var s = this.__s;
+		var l = this.length;
+		var s2 = __dollar__scopy(s);
+		var i = 0;
+		while ((i < l)) {
+			var c = __dollar__sget(s,i);
+			if ((c >= 65 && c <= 90))__dollar__sset(s2,i,c - 65 + 97));
+			i ++;
+		};
+		return new String(s2);
+	};
+
+	public substring(method) : startIndex : Int -> ?endIndex : Int -> String
+
+	 = function(startIndex:Int,endIndex:Int = null) = {
+		if ((endIndex == null))endIndex = this.length else if ((endIndex < 0))endIndex = 0 else if ((endIndex > this.length))endIndex = this.length)));
+		if ((startIndex < 0))startIndex = 0 else if ((startIndex > this.length))startIndex = this.length));
+		if ((startIndex > endIndex)){
+			var tmp = startIndex;
+			startIndex = endIndex;
+			endIndex = tmp;
+		});
+		return this.substr(startIndex,endIndex - startIndex);
+	};
+
+	public substr(method) : pos : Int -> ?len : Int -> String
+
+	 = function(pos:Int,len:Int = null) = {
+		if ((len == 0))return "");
+		var sl = this.length;
+		if ((len == null))len = sl);
+		if ((pos == null))pos = 0);
+		if ((pos != 0 && len < 0))return "");
+		if ((pos < 0)){
+			pos = sl + pos;
+			if ((pos < 0))pos = 0);
+		} else if ((len < 0))len = sl + len - pos));
+		if ((pos + len > sl))len = sl - pos);
+		if ((pos < 0 || len <= 0))return "");
+		return new String(__dollar__ssub(this.__s,pos,len));
+	};
+
+	public split(method) : delimiter : String -> Array<String>
+
+	 = function(delimiter:String) = {
+		var l = String.__split(this.__s,delimiter.__s);
+		var a = new Array();
+		if ((l == null)){
+			a.push("");
+			return a;
+		});
+		do ({
+			a.push(new String(l[0]));
+			l = l[1];
+		}) while((l != null));
+		return a;
+	};
+
+	public lastIndexOf(method) : str : String -> ?startIndex : Int -> Int
+
+	 = function(str:String,startIndex:Int = null) = {
+		var last = -1;
+		if ((startIndex == null))startIndex = __dollar__ssize(this.__s));
+		while ((true)) {
+			var p = try {
+				__dollar__sfind(this.__s,last + 1,str.__s);
+			}catch( e : Dynamic ) {
+				null;
+			};
+			if ((p == null || p > startIndex))return last);
+			last = p;
+		};
+		return null;
+	};
+
+	public indexOf(method) : str : String -> ?startIndex : Int -> Int
+
+	 = function(str:String,startIndex:Int = null) = {
+		var p = try {
+			__dollar__sfind(this.__s,if ((startIndex == null))0 else startIndex),str.__s);
+		}catch( e : Dynamic ) {
+			null;
+		};
+		if ((p == null))return -1);
+		return p;
+	};
+
+	public charCodeAt(method) : index : Int -> Null<Int>
+
+	 = function(index:Int) = {
+		return __dollar__sget(this.__s,index);
+	};
+
+	public charAt(method) : index : Int -> String
+
+	 = function(index:Int) = {
+		try {
+			var s = __dollar__smake(1);
+			__dollar__sset(s,0,__dollar__sget(this.__s,index));
+			return new String(s);
+		}catch( e : Dynamic ) {
+			return "";
+		};
+	};
+
+	public length((default,null)) : Int;
+
+	static __is_String(var) : Bool;
+
+	static __split(var) : Dynamic
+
+	 = neko.Lib.load("std","string_split",2);
+
+	static public fromCharCode(method) : code : Int -> String
+
+	 = function(code:Int) = {
+		var s = __dollar__smake(1);
+		__dollar__sset(s,0,code);
+		return new String(s);
+	};
+
+}

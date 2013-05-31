@@ -1,0 +1,9 @@
+class massive.munit.MUnitException extends massive.haxe.Exception{
+	public new(method) : message : String -> ?info : haxe.PosInfos -> Void
+
+	 = function(message:String,info:haxe.PosInfos = null) = {
+		super(message,info);
+		this.type = massive.haxe.util.ReflectUtil.here({fileName : "MUnitException.hx",lineNumber : 50,className : "massive.munit.MUnitException",methodName : "new"}).className;
+	};
+
+}

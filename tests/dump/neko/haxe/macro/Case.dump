@@ -1,0 +1,1 @@
+type haxe.macro.Case = { values : Array<haxe.macro.Expr>, ?guard : Null<haxe.macro.Expr>, expr : Null<haxe.macro.Expr> }

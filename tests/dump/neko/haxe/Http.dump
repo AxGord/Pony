@@ -1,0 +1,370 @@
+class haxe.Http{
+	public new(method) : url : String -> Void
+
+	 = function(url:String) = {
+		this.url = url;
+		this.headers = new haxe.ds.StringMap();
+		this.params = new haxe.ds.StringMap();
+		this.cnxTimeout = 10;
+	};
+
+	public onStatus(dynamic method) : status : Int -> Void
+
+	 = function(status:Int) = {
+	};
+
+	public onError(dynamic method) : msg : String -> Void
+
+	 = function(msg:String) = {
+	};
+
+	public onData(dynamic method) : data : String -> Void
+
+	 = function(data:String) = {
+	};
+
+	readChunk(method) : chunk_re : EReg -> api : haxe.io.Output -> buf : haxe.io.Bytes -> len : Int -> Bool
+
+	 = function(chunk_re:EReg,api:haxe.io.Output,buf:haxe.io.Bytes,len:Int) = {
+		if ((this.chunk_size == null)){
+			if ((this.chunk_buf != null)){
+				var b = new haxe.io.BytesBuffer();
+				StringBuf.__add(b.b,this.chunk_buf.b);
+				try {
+					StringBuf.__add_sub(b.b,buf.b,0,len);
+				}catch( e : Dynamic ) {
+					throw haxe.io.Error.OutsideBounds;
+				};
+				buf = b.getBytes();
+				len += this.chunk_buf.length;
+				this.chunk_buf = null;
+			});
+			if ((chunk_re.match(new String(cast buf.b)))){
+				var p = chunk_re.matchedPos();
+				if ((p.len <= len)){
+					var cstr = chunk_re.matched(1);
+					this.chunk_size = Std.parseInt("0x" + cstr);
+					if ((cstr == "0")){
+						this.chunk_size = null;
+						this.chunk_buf = null;
+						return false;
+					});
+					len -= p.len;
+					return this.readChunk(chunk_re,api,buf.sub(p.len,len),len);
+				});
+			});
+			if ((len > 10)){
+				this.onError("Invalid chunk");
+				return false;
+			});
+			this.chunk_buf = buf.sub(0,len);
+			return true;
+		});
+		if ((this.chunk_size > len)){
+			this.chunk_size -= len;
+			api.writeBytes(buf,0,len);
+			return true;
+		});
+		var end = this.chunk_size + 2;
+		if ((len >= end)){
+			if ((this.chunk_size > 0))api.writeBytes(buf,0,this.chunk_size));
+			len -= end;
+			this.chunk_size = null;
+			if ((len == 0))return true);
+			return this.readChunk(chunk_re,api,buf.sub(end,len),len);
+		});
+		if ((this.chunk_size > 0))api.writeBytes(buf,0,this.chunk_size));
+		this.chunk_size -= len;
+		return true;
+	};
+
+	readHttpResponse(method) : api : haxe.io.Output -> sock : haxe._Http.AbstractSocket -> Void
+
+	 = function(api:haxe.io.Output,sock:haxe._Http.AbstractSocket) = {
+		var b = new haxe.io.BytesBuffer();
+		var k = 4;
+		var s = haxe.io.Bytes.alloc(4);
+		sock.setTimeout(this.cnxTimeout);
+		while ((true)) {
+			var p = sock.input.readBytes(s,0,k);
+			while ((p != k)) p += sock.input.readBytes(s,p,k - p);
+			try {
+				StringBuf.__add_sub(b.b,s.b,0,k);
+			}catch( e : Dynamic ) {
+				throw haxe.io.Error.OutsideBounds;
+			};
+			switch ((k)) {case 1: {
+				var c = __dollar__sget(s.b,0);
+				if ((c == 10))break);
+				if ((c == 13))k = 3 else k = 4);
+			},case 2: {
+				var c = __dollar__sget(s.b,1);
+				if ((c == 10)){
+					if ((__dollar__sget(s.b,0) == 13))break);
+					k = 4;
+				} else if ((c == 13))k = 3 else k = 4));
+			},case 3: {
+				var c = __dollar__sget(s.b,2);
+				if ((c == 10)){
+					if ((__dollar__sget(s.b,1) != 13))k = 4 else if ((__dollar__sget(s.b,0) != 10))k = 2 else break));
+				} else if ((c == 13)){
+					if ((__dollar__sget(s.b,1) != 10 || __dollar__sget(s.b,0) != 13))k = 1 else k = 3);
+				} else k = 4));
+			},case 4: {
+				var c = __dollar__sget(s.b,3);
+				if ((c == 10)){
+					if ((__dollar__sget(s.b,2) != 13))continue else if ((__dollar__sget(s.b,1) != 10 || __dollar__sget(s.b,0) != 13))k = 2 else break));
+				} else if ((c == 13)){
+					if ((__dollar__sget(s.b,2) != 10 || __dollar__sget(s.b,1) != 13))k = 3 else k = 1);
+				}));
+			}};
+		};
+		var headers = new String(cast b.getBytes().b).split("\r\n");
+		var response = headers.shift();
+		var rp = response.split(" ");
+		var status = Std.parseInt(rp[1]);
+		if ((status == 0 || status == null))throw "Response status error");
+		headers.pop();
+		headers.pop();
+		this.responseHeaders = new haxe.ds.StringMap();
+		var size = null;
+		var chunked = false;
+		{
+			var _g = 0;
+			while ((_g < headers.length)) {
+				var hline = headers[_g];
+				++ _g;
+				var a = hline.split(": ");
+				var hname = a.shift();
+				var hval = if ((a.length == 1))a[0] else a.join(": "));
+				__dollar__hset(this.responseHeaders.h,hname.__s,hval,null);
+				{
+					var _g1 = hname.toLowerCase();
+					switch ((_g1)) {case "content-length": size = Std.parseInt(hval),case "transfer-encoding": chunked = hval.toLowerCase() == "chunked"};
+				};
+			};
+		};
+		this.onStatus(status);
+		var chunk_re = new EReg("^([0-9A-Fa-f]+)[ ]*\r\n","m");
+		this.chunk_size = null;
+		this.chunk_buf = null;
+		var bufsize = 1024;
+		var buf = haxe.io.Bytes.alloc(bufsize);
+		if ((size == null)){
+			if ((! this.noShutdown))sock.shutdown(false,true));
+			try {
+				while ((true)) {
+					var len = sock.input.readBytes(buf,0,bufsize);
+					if ((chunked)){
+						if ((! this.readChunk(chunk_re,api,buf,len)))break);
+					} else api.writeBytes(buf,0,len));
+				};
+			}catch( e : haxe.io.Eof ) {
+			};
+		} else {
+			api.prepare(size);
+			try {
+				while ((size > 0)) {
+					var len = sock.input.readBytes(buf,0,if ((size > bufsize))bufsize else size));
+					if ((chunked)){
+						if ((! this.readChunk(chunk_re,api,buf,len)))break);
+					} else api.writeBytes(buf,0,len));
+					size -= len;
+				};
+			}catch( e : haxe.io.Eof ) {
+				throw "Transfert aborted";
+			};
+		});
+		if ((chunked && (this.chunk_size != null || this.chunk_buf != null)))throw "Invalid chunk");
+		if ((status < 200 || status >= 400))throw "Http Error #" + status);
+		api.close();
+	};
+
+	public customRequest(method) : post : Bool -> api : haxe.io.Output -> ?sock : haxe._Http.AbstractSocket -> ?method : String -> Void
+
+	 = function(post:Bool,api:haxe.io.Output,sock:haxe._Http.AbstractSocket = null,method:String = null) = {
+		this.responseData = null;
+		var url_regexp = new EReg("^(https?://)?([a-zA-Z\\.0-9-]+)(:[0-9]+)?(.*)$","");
+		if ((! url_regexp.match(this.url))){
+			this.onError("Invalid URL");
+			return;
+		});
+		var secure = url_regexp.matched(1) == "https://";
+		if ((sock == null)){
+			if ((secure))throw "Https is only supported with -lib hxssl" else sock = new sys.net.Socket());
+		});
+		var host = url_regexp.matched(2);
+		var portString = url_regexp.matched(3);
+		var request = url_regexp.matched(4);
+		if ((request == ""))request = "/");
+		var port = if ((portString == null || portString == "")){
+			if ((secure))443 else 80);
+		} else Std.parseInt(portString.substr(1,portString.length - 1)));
+		var data;
+		var multipart = this.file != null;
+		var boundary = null;
+		var uri = null;
+		if ((multipart)){
+			post = true;
+			boundary = Std.string(Std.random(1000)) + Std.string(Std.random(1000)) + Std.string(Std.random(1000)) + Std.string(Std.random(1000));
+			while ((boundary.length < 38)) boundary = "-" + boundary;
+			var b = new StringBuf();
+			for (p in this.params.keys()) {
+				StringBuf.__add(b.b,"--");
+				StringBuf.__add(b.b,boundary);
+				StringBuf.__add(b.b,"\r\n");
+				StringBuf.__add(b.b,"Content-Disposition: form-data; name=\"");
+				StringBuf.__add(b.b,p);
+				StringBuf.__add(b.b,"\"");
+				StringBuf.__add(b.b,"\r\n");
+				StringBuf.__add(b.b,"\r\n");
+				StringBuf.__add(b.b,__dollar__hget(this.params.h,p.__s,null));
+				StringBuf.__add(b.b,"\r\n");
+			};
+			StringBuf.__add(b.b,"--");
+			StringBuf.__add(b.b,boundary);
+			StringBuf.__add(b.b,"\r\n");
+			StringBuf.__add(b.b,"Content-Disposition: form-data; name=\"");
+			StringBuf.__add(b.b,this.file.param);
+			StringBuf.__add(b.b,"\"; filename=\"");
+			StringBuf.__add(b.b,this.file.filename);
+			StringBuf.__add(b.b,"\"");
+			StringBuf.__add(b.b,"\r\n");
+			StringBuf.__add(b.b,"Content-Type: " + "application/octet-stream" + "\r\n" + "\r\n");
+			uri = new String(StringBuf.__to_string(b.b));
+		} else {
+			for (p in this.params.keys()) {
+				if ((uri == null))uri = "" else uri += "&");
+				uri += StringTools.urlEncode(p) + "=" + StringTools.urlEncode(__dollar__hget(this.params.h,p.__s,null));
+			};
+		});
+		var b = new StringBuf();
+		if ((method != null)){
+			StringBuf.__add(b.b,method);
+			StringBuf.__add(b.b," ");
+		} else if ((post))StringBuf.__add(b.b,"POST ") else StringBuf.__add(b.b,"GET ")));
+		if ((haxe.Http.PROXY != null)){
+			StringBuf.__add(b.b,"http://");
+			StringBuf.__add(b.b,host);
+			if ((port != 80)){
+				StringBuf.__add(b.b,":");
+				StringBuf.__add(b.b,port);
+			});
+		});
+		StringBuf.__add(b.b,request);
+		if ((! post && uri != null)){
+			if ((request.indexOf("?",0) >= 0))StringBuf.__add(b.b,"&") else StringBuf.__add(b.b,"?"));
+			StringBuf.__add(b.b,uri);
+		});
+		StringBuf.__add(b.b," HTTP/1.1\r\nHost: " + host + "\r\n");
+		if ((this.postData != null))StringBuf.__add(b.b,"Content-Length: " + this.postData.length + "\r\n") else if ((post && uri != null)){
+			if ((multipart || __dollar__hget(this.headers.h,"Content-Type".__s,null) == null)){
+				StringBuf.__add(b.b,"Content-Type: ");
+				if ((multipart)){
+					StringBuf.__add(b.b,"multipart/form-data");
+					StringBuf.__add(b.b,"; boundary=");
+					StringBuf.__add(b.b,boundary);
+				} else StringBuf.__add(b.b,"application/x-www-form-urlencoded"));
+				StringBuf.__add(b.b,"\r\n");
+			});
+			if ((multipart))StringBuf.__add(b.b,"Content-Length: " + (uri.length + this.file.size + boundary.length + 6) + "\r\n") else StringBuf.__add(b.b,"Content-Length: " + uri.length + "\r\n"));
+		}));
+		for (h in this.headers.keys()) {
+			StringBuf.__add(b.b,h);
+			StringBuf.__add(b.b,": ");
+			StringBuf.__add(b.b,__dollar__hget(this.headers.h,h.__s,null));
+			StringBuf.__add(b.b,"\r\n");
+		};
+		StringBuf.__add(b.b,"\r\n");
+		if ((this.postData != null))StringBuf.__add(b.b,this.postData) else if ((post && uri != null))StringBuf.__add(b.b,uri)));
+		try {
+			if ((haxe.Http.PROXY != null))sock.connect(new sys.net.Host(haxe.Http.PROXY.host),haxe.Http.PROXY.port) else sock.connect(new sys.net.Host(host),port));
+			sock.write(new String(StringBuf.__to_string(b.b)));
+			if ((multipart)){
+				var bufsize = 4096;
+				var buf = haxe.io.Bytes.alloc(bufsize);
+				while ((this.file.size > 0)) {
+					var size = if ((this.file.size > bufsize))bufsize else this.file.size);
+					var len = 0;
+					try {
+						len = this.file.io.readBytes(buf,0,size);
+					}catch( e : haxe.io.Eof ) {
+						break;
+					};
+					sock.output.writeFullBytes(buf,0,len);
+					this.file.size -= len;
+				};
+				sock.write("\r\n");
+				sock.write("--");
+				sock.write(boundary);
+				sock.write("--");
+			});
+			this.readHttpResponse(api,sock);
+			sock.close();
+		}catch( e : Dynamic ) {
+			try {
+				sock.close();
+			}catch( e1 : Dynamic ) {
+			};
+			this.onError(Std.string(e));
+		};
+	};
+
+	public request(method) : ?post : Bool -> Void
+
+	 = function(post:Bool = null) = {
+		var me = this;
+		var me1 = this;
+		var output = new haxe.io.BytesOutput();
+		var old = this.onError;
+		var err = false;
+		this.onError = function(e:String) = {
+			me1.responseData = new String(cast output.getBytes().b);
+			err = true;
+			old(e);
+		};
+		this.customRequest(post,output,null,null);
+		if ((! err))me1.onData(me1.responseData = new String(cast output.getBytes().b)));
+	};
+
+	public setParameter(method) : param : String -> value : String -> haxe.Http
+
+	 = function(param:String,value:String) = {
+		__dollar__hset(this.params.h,param.__s,value,null);
+		return this;
+	};
+
+	public setHeader(method) : header : String -> value : String -> haxe.Http
+
+	 = function(header:String,value:String) = {
+		__dollar__hset(this.headers.h,header.__s,value,null);
+		return this;
+	};
+
+	params(var) : haxe.ds.StringMap<String>;
+
+	headers(var) : haxe.ds.StringMap<String>;
+
+	postData(var) : String;
+
+	file(var) : { size : Int, param : String, io : haxe.io.Input, filename : String };
+
+	chunk_buf(var) : haxe.io.Bytes;
+
+	chunk_size(var) : Null<Int>;
+
+	public responseHeaders(var) : haxe.ds.StringMap<String>;
+
+	public cnxTimeout(var) : Float;
+
+	public noShutdown(var) : Bool;
+
+	public responseData((default,null)) : Null<String>;
+
+	public url(var) : String;
+
+	static public PROXY(var) : { port : Int, host : String, auth : { user : String, pass : String } }
+
+	 = null;
+
+}

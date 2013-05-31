@@ -1,0 +1,34 @@
+class sys.net.Host{
+	public new(method) : name : String -> Void
+
+	 = function(name:String) = {
+		this.ip = sys.net.Host.host_resolve(name.__s);
+	};
+
+	public reverse(method) : Void -> String
+
+	 = function() = {
+		return new String(sys.net.Host.host_reverse(this.ip));
+	};
+
+	public toString(method) : Void -> String
+
+	 = function() = {
+		return new String(sys.net.Host.host_to_string(this.ip));
+	};
+
+	public ip((default,null)) : Int;
+
+	static host_resolve(var) : Unknown<29> -> Int
+
+	 = neko.Lib.load("std","host_resolve",1);
+
+	static host_reverse(var) : Int -> String
+
+	 = neko.Lib.load("std","host_reverse",1);
+
+	static host_to_string(var) : Int -> String
+
+	 = neko.Lib.load("std","host_to_string",1);
+
+}

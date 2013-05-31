@@ -1,0 +1,46 @@
+class org.hamcrest.Exception{
+	public new(method) : ?message : String -> ?cause : Dynamic -> ?info : haxe.PosInfos -> Void
+
+	 = function(message:String = "",cause:Dynamic = null,info:haxe.PosInfos = null) = {
+		this.name = Type.getClassName(Type.getClass(this));
+		this.message = message;
+		this.cause = cause;
+		this.info = info;
+	};
+
+	public toString(method) : Void -> String
+
+	 = function() = {
+		var str = this.get_name() + ": " + this.get_message();
+		if ((this.info != null))str += " at " + this.info.className + "#" + this.info.methodName + " (" + this.info.lineNumber + ")");
+		if ((this.get_cause() != null))str += "\n\t Caused by: " + Std.string(this.get_cause()));
+		return str;
+	};
+
+	public info((default,null)) : haxe.PosInfos;
+
+	get_cause(method) : Void -> Dynamic
+
+	 = function() = {
+		return this.cause;
+	};
+
+	public cause((get_cause,null)) : Dynamic;
+
+	get_message(method) : Void -> String
+
+	 = function() = {
+		return this.message;
+	};
+
+	public message((get_message,null)) : String;
+
+	get_name(method) : Void -> String
+
+	 = function() = {
+		return this.name;
+	};
+
+	public name((get_name,null)) : String;
+
+}

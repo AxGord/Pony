@@ -1,0 +1,1 @@
+type haxe.macro.MetaAccess = { remove : name : String -> Void, has : name : String -> Bool, get : Void -> haxe.macro.Metadata, add : name : String -> params : Array<haxe.macro.Expr> -> pos : haxe.macro.Position -> Void }

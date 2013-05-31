@@ -1,0 +1,40 @@
+extern class Array<T : Array.T>{
+	public new(method) : Void -> Void;
+
+	public filter(method) : f : (Array.T -> Bool) -> Array<Array.T>;
+
+	public map<S : map.S>(method) : f : (Array.T -> map.S) -> Array<map.S>;
+
+	public iterator(method) : Void -> Iterator<Array.T>;
+
+	public copy(method) : Void -> Array<Array.T>;
+
+	public remove(method) : x : Array.T -> Bool;
+
+	public insert(method) : pos : Int -> x : Array.T -> Void;
+
+	public unshift(method) : x : Array.T -> Void;
+
+	public toString(method) : Void -> String;
+
+	public splice(method) : pos : Int -> len : Int -> Array<Array.T>;
+
+	public sort(method) : f : (Array.T -> Array.T -> Int) -> Void;
+
+	public slice(method) : pos : Int -> ?end : Null<Int> -> Array<Array.T>;
+
+	public shift(method) : Void -> Null<Array.T>;
+
+	public reverse(method) : Void -> Void;
+
+	public push(method) : x : Array.T -> Int;
+
+	public pop(method) : Void -> Null<Array.T>;
+
+	public join(method) : sep : String -> String;
+
+	public concat(method) : a : Array<Array.T> -> Array<Array.T>;
+
+	public length((default,null)) : Int;
+
+}

@@ -1,0 +1,224 @@
+class massive.munit.TestClassHelper{
+	public new(method) : type : Class<Dynamic> -> ?isDebug : Null<Bool> -> Void
+
+	 = function(type:Class<Dynamic>,isDebug:Null<Bool> = false) = {
+		this.type = type;
+		this.isDebug = isDebug;
+		this.tests = [];
+		this.index = 0;
+		this.className = Type.getClassName(type);
+		this.beforeClass = this.nullFunc;
+		this.afterClass = this.nullFunc;
+		this.before = this.nullFunc;
+		this.after = this.nullFunc;
+		this.parse(type);
+	};
+
+	nullFunc(method) : Void -> Void
+
+	 = function() = {
+	};
+
+	sortTestsByName(method) : x : massive.munit.TestCaseData -> y : massive.munit.TestCaseData -> Int
+
+	 = function(x:massive.munit.TestCaseData,y:massive.munit.TestCaseData) = {
+		if ((x.result.name == y.result.name))return 0);
+		if ((x.result.name > y.result.name))return 1 else return -1);
+	};
+
+	addTest(method) : field : String -> testFunction : Dynamic -> testInstance : Dynamic -> isAsync : Bool -> isIgnored : Bool -> description : String -> Void
+
+	 = function(field:String,testFunction:Dynamic,testInstance:Dynamic,isAsync:Bool,isIgnored:Bool,description:String) = {
+		var result = new massive.munit.TestResult();
+		result.async = isAsync;
+		result.ignore = isIgnored;
+		result.className = this.className;
+		result.description = description;
+		result.name = field;
+		var data = {test : testFunction,scope : testInstance,result : result};
+		this.tests.push(data);
+	};
+
+	searchForMatchingTags(method) : fieldName : String -> func : Dynamic -> funcMeta : Dynamic -> Void
+
+	 = function(fieldName:String,func:Dynamic,funcMeta:Dynamic) = {
+		var _g = 0,_g1 = massive.munit.TestClassHelper.META_TAGS;
+		while ((_g < _g1.length)) {
+			var tag = _g1[_g];
+			++ _g;
+			if ((Reflect.hasField(funcMeta,tag))){
+				var args = Reflect.field(funcMeta,tag);
+				var description = if ((args != null))args[0] else "");
+				var isAsync = args != null && description == "Async";
+				var isIgnored = Reflect.hasField(funcMeta,"Ignore");
+				if ((isAsync))description = "" else if ((isIgnored)){
+					args = Reflect.field(funcMeta,"Ignore");
+					description = if ((args != null))args[0] else "");
+				}));
+				switch ((tag)) {case "BeforeClass": this.beforeClass = func,case "AfterClass": this.afterClass = func,case "Before": this.before = func,case "After": this.after = func,case "AsyncTest": if ((! this.isDebug))this.addTest(fieldName,func,this.test,true,isIgnored,description)),case "Test": if ((! this.isDebug))this.addTest(fieldName,func,this.test,isAsync,isIgnored,description)),case "TestDebug": if ((this.isDebug))this.addTest(fieldName,func,this.test,isAsync,isIgnored,description))};
+			});
+		};
+	};
+
+	scanForTests(method) : fieldMeta : Dynamic -> Void
+
+	 = function(fieldMeta:Dynamic) = {
+		var fieldNames = Reflect.fields(fieldMeta);
+		{
+			var _g = 0;
+			while ((_g < fieldNames.length)) {
+				var fieldName = fieldNames[_g];
+				++ _g;
+				var f = Reflect.field(this.test,fieldName);
+				if ((Reflect.isFunction(f))){
+					var funcMeta = Reflect.field(fieldMeta,fieldName);
+					this.searchForMatchingTags(fieldName,f,funcMeta);
+				});
+			};
+		};
+	};
+
+	collateFieldMeta(method) : inherintanceChain : Array<Class<Dynamic>> -> Dynamic
+
+	 = function(inherintanceChain:Array<Class<Dynamic>>) = {
+		var meta = {};
+		while ((inherintanceChain.length > 0)) {
+			var clazz = inherintanceChain.pop();
+			var newMeta = haxe.rtti.Meta.getFields(clazz);
+			var markedFieldNames = Reflect.fields(newMeta);
+			{
+				var _g = 0;
+				while ((_g < markedFieldNames.length)) {
+					var fieldName = markedFieldNames[_g];
+					++ _g;
+					var recordedFieldTags = Reflect.field(meta,fieldName);
+					var newFieldTags = Reflect.field(newMeta,fieldName);
+					var newTagNames = Reflect.fields(newFieldTags);
+					if ((recordedFieldTags == null)){
+						var tagsCopy = {};
+						{
+							var _g1 = 0;
+							while ((_g1 < newTagNames.length)) {
+								var tagName = newTagNames[_g1];
+								++ _g1;
+								Reflect.setField(tagsCopy,tagName,Reflect.field(newFieldTags,tagName));
+							};
+						};
+						Reflect.setField(meta,fieldName,tagsCopy);
+					} else {
+						var ignored = false;
+						{
+							var _g1 = 0;
+							while ((_g1 < newTagNames.length)) {
+								var tagName = newTagNames[_g1];
+								++ _g1;
+								if ((tagName == "Ignore"))ignored = true);
+								if ((! ignored && (tagName == "Test" || tagName == "AsyncTest") && Reflect.hasField(recordedFieldTags,"Ignore")))Reflect.deleteField(recordedFieldTags,"Ignore"));
+								var tagValue = Reflect.field(newFieldTags,tagName);
+								Reflect.setField(recordedFieldTags,tagName,tagValue);
+							};
+						};
+					});
+				};
+			};
+		};
+		return meta;
+	};
+
+	getInheritanceChain(method) : clazz : Class<Dynamic> -> Array<Class<Dynamic>>
+
+	 = function(clazz:Class<Dynamic>) = {
+		var inherintanceChain = [clazz];
+		while (((clazz = Type.getSuperClass(clazz)) != null)) inherintanceChain.push(clazz);
+		return inherintanceChain;
+	};
+
+	parse(method) : type : Class<Dynamic> -> Void
+
+	 = function(type:Class<Dynamic>) = {
+		this.test = Type.createEmptyInstance(type);
+		var inherintanceChain = this.getInheritanceChain(type);
+		var fieldMeta = this.collateFieldMeta(inherintanceChain);
+		this.scanForTests(fieldMeta);
+		this.tests.sort(this.sortTestsByName);
+	};
+
+	public current(method) : Void -> Dynamic
+
+	 = function() = {
+		return if ((this.index <= 0))this.tests[0] else this.tests[this.index - 1]);
+	};
+
+	public next(method) : Void -> Dynamic
+
+	 = function() = {
+		return if ((this.hasNext()))this.tests[this.index ++] else null);
+	};
+
+	public hasNext(method) : Void -> Bool
+
+	 = function() = {
+		return this.index < this.tests.length;
+	};
+
+	isDebug(var) : Bool;
+
+	public className((default,null)) : String;
+
+	index(var) : Int;
+
+	tests(var) : Array<massive.munit.TestCaseData>;
+
+	public after((default,null)) : Dynamic;
+
+	public before((default,null)) : Dynamic;
+
+	public afterClass((default,null)) : Dynamic;
+
+	public beforeClass((default,null)) : Dynamic;
+
+	public test((default,null)) : Dynamic;
+
+	public type((default,null)) : Class<Dynamic>;
+
+	static public META_TAG_BEFORE_CLASS((inline,never)) : String
+
+	 = "BeforeClass";
+
+	static public META_TAG_AFTER_CLASS((inline,never)) : String
+
+	 = "AfterClass";
+
+	static public META_TAG_BEFORE((inline,never)) : String
+
+	 = "Before";
+
+	static public META_TAG_AFTER((inline,never)) : String
+
+	 = "After";
+
+	static public META_TAG_TEST((inline,never)) : String
+
+	 = "Test";
+
+	static public META_TAG_ASYNC_TEST((inline,never)) : String
+
+	 = "AsyncTest";
+
+	static public META_TAG_IGNORE((inline,never)) : String
+
+	 = "Ignore";
+
+	static public META_PARAM_ASYNC_TEST((inline,never)) : String
+
+	 = "Async";
+
+	static public META_TAG_TEST_DEBUG((inline,never)) : String
+
+	 = "TestDebug";
+
+	static public META_TAGS(var) : Array<String>
+
+	 = ["BeforeClass","AfterClass","Before","After","Test","AsyncTest","TestDebug"];
+
+}

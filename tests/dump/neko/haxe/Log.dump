@@ -1,0 +1,8 @@
+class haxe.Log{
+	static public trace(dynamic method) : v : Dynamic -> ?infos : haxe.PosInfos -> Void
+
+	 = function(v:Dynamic,infos:haxe.PosInfos = null) = {
+		__dollar__print(infos.fileName + ":" + infos.lineNumber + ": ",v,"\n");
+	};
+
+}

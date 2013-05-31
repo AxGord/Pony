@@ -1,0 +1,8 @@
+interface massive.munit.async.IAsyncDelegateObserver{
+	public asyncDelegateCreatedHandler(method) : delegate : massive.munit.async.AsyncDelegate -> Void;
+
+	public asyncTimeoutHandler(method) : delegate : massive.munit.async.AsyncDelegate -> Void;
+
+	public asyncResponseHandler(method) : delegate : massive.munit.async.AsyncDelegate -> Void;
+
+}

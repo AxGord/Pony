@@ -1,0 +1,9 @@
+class haxe.rtti.Meta{
+	static public getFields(method) : t : Dynamic -> Dynamic<Dynamic<Array<Dynamic>>>
+
+	 = function(t:Dynamic) = {
+		var meta = t.__meta__;
+		return if ((meta == null || meta.fields == null)){} else meta.fields);
+	};
+
+}

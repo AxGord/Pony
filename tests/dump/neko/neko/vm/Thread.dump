@@ -1,0 +1,52 @@
+class neko.vm.Thread{
+	new(method) : h : neko.vm.ThreadHandle -> Void
+
+	 = function(h:neko.vm.ThreadHandle) = {
+		this.handle = h;
+	};
+
+	public sendMessage(method) : msg : Dynamic -> Void
+
+	 = function(msg:Dynamic) = {
+		neko.vm.Thread.thread_send(this.handle,msg);
+	};
+
+	handle(var) : neko.vm.ThreadHandle;
+
+	static public current(method) : Void -> neko.vm.Thread
+
+	 = function() = {
+		return new neko.vm.Thread(neko.vm.Thread.thread_current());
+	};
+
+	static public create(method) : callb : (Void -> Void) -> neko.vm.Thread
+
+	 = function(callb:Void -> Void) = {
+		return new neko.vm.Thread(neko.vm.Thread.thread_create(function(_:Unknown<25>) = {
+			return callb();
+		},null));
+	};
+
+	static public readMessage(method) : block : Bool -> Dynamic
+
+	 = function(block:Bool) = {
+		return neko.vm.Thread.thread_read_message(block);
+	};
+
+	static thread_create(var) : (_ : Unknown<25> -> Void) -> Unknown<26> -> neko.vm.ThreadHandle
+
+	 = neko.Lib.load("std","thread_create",2);
+
+	static thread_current(var) : Void -> neko.vm.ThreadHandle
+
+	 = neko.Lib.load("std","thread_current",0);
+
+	static thread_send(var) : neko.vm.ThreadHandle -> Dynamic -> Unknown<27>
+
+	 = neko.Lib.load("std","thread_send",2);
+
+	static thread_read_message(var) : Bool -> Unknown<28>
+
+	 = neko.Lib.load("std","thread_read_message",1);
+
+}

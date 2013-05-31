@@ -1,0 +1,9 @@
+class massive.munit.async.AsyncTimeoutException extends massive.munit.MUnitException{
+	public new(method) : message : String -> ?info : haxe.PosInfos -> Void
+
+	 = function(message:String,info:haxe.PosInfos = null) = {
+		super(message,info);
+		this.type = massive.haxe.util.ReflectUtil.here({fileName : "AsyncTimeoutException.hx",lineNumber : 47,className : "massive.munit.async.AsyncTimeoutException",methodName : "new"}).className;
+	};
+
+}

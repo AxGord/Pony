@@ -1,127 +1,76 @@
-/**
-* Copyright (c) 2012 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
-*
-* Redistribution and use in source and binary forms, with or without modification, are
-* permitted provided that the following conditions are met:
-*
-*   1. Redistributions of source code must retain the above copyright notice, this list of
-*      conditions and the following disclaimer.
-*
-*   2. Redistributions in binary form must reproduce the above copyright notice, this list
-*      of conditions and the following disclaimer in the documentation and/or other materials
-*      provided with the distribution.
-*
-* THIS SOFTWARE IS PROVIDED BY ALEXANDER GORDEYKO ``AS IS'' AND ANY EXPRESS OR IMPLIED
-* WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
-* FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL ALEXANDER GORDEYKO OR
-* CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
-* ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-* NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-* ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*
-* The views and conclusions contained in the software and documentation are those of the
-* authors and should not be interpreted as representing official policies, either expressed
-* or implied, of Alexander Gordeyko <axgord@gmail.com>.
-**/
-
 package pony;
 
-import Type;
-
 using Lambda;
-using pony.Ultra;
-using Std;
 
 /**
- * This class help you build priority list. Example: [
- * var p:Priority<Int> = new Priority<Int>();
- * p.add(123);
- * p.add(22, -1);
- * p.toString();//[22, 123], 22 - first ]
+ * todo: get element priority
  * @author AxGord
  */
-
-class Priority<T>
-{
-	private var hash:IntHash<Int>;
-	private var data:Array<T>;
-	
-	private var counters:Array<Int>;
+class Priority<T> {
 	
 	/**
 	 * Total elements count.
 	 */
-	public var length(getLenght, null):Int;
+	public var length(get, null):Int;
 	
 	/**
 	 * Lowest priority number.
 	 */
-	public var min(getMin, null):Int;
+	public var min(get, null):Int;
 	
 	/**
 	 * Hightest priority number.
 	 */
-	public var max(getMax, null):Int;
+	public var max(get, null):Int;
 	
 	/**
 	 * First element.
 	 */
-	public var first(getFirst, null):T;
+	public var first(get, null):T;
 	
 	/**
 	 * Last element.
 	 */
-	public var last(getLast, null):T;
+	public var last(get, null):T;
+	
+	/**
+	 * is empty
+	 */
+	public var empty(get, null):Bool;
 	
 	/**
 	 * if true: [[1, 1, 3]] - normal. Default false.
 	 */
 	public var double:Bool;
 	
-	public var list(getList, setList):List<T>;
+	public var data(default,null):Array<T>;
 	
-	public var array(getArray, setArray):Array<T>;
-	
-	public function new(?e:T, ?ea:Array<T>)
-	{
+	private var hash:Map<Int, Int>;
+	private var counters:Array<Int>;
+
+	public function new(?data:Array<T>) {
 		double = false;
 		clear();
-		if (e != null)
-			add(e);
-		else if (ea != null)
-			add(ea);
+		if (data != null) this.data = data;
 	}
 	
 	/**
 	 * Add element in priority list with custom priority.
-	 * @param	oa Object for adding in list or objects array. Type T or Array&lt;T&gt;. I'm write Dynamic for flash platform. ?a:T - fail :(
+	 * @param	element elements for adding.
 	 * @param	priority priority, smalest first, bigest last, default 0 (0 - normal priority).
 	 */
-	public function add(ao:Dynamic, priority:Int = 0):Void {
-		if (ao.is(Array)) {
-			addArray(ao, priority);
-			return;
-		} else
-			addElement(ao, priority);
-	}
-	
-	public function addElement(o:T, priority:Int = 0):Void {
-		if (!double && exists(o)) return;
-		var s:Int;
-		if (!hash.exists(priority))
-			s = 0;
-		else
-			s = hash.get(priority);
+	public function addElement(e:T, priority:Int = 0):Priority<T> {
+		if (!double && existsElement(e)) return this;
+		var s:Int = hash.exists(priority) ? hash.get(priority) : 0;
 		var c:Int = 0;
 		for (k in hash.keys())
 			if (k < priority) c += hash.get(k);
 		c += s;
-		data.insert(c, o);
+		data.insert(c, e);
 		for (k in 0...counters.length)
 			if (c < counters[k]) counters[k]++;
 		hash.set(priority, s+1);
+		return this;
 	}
 	
 	/**
@@ -129,20 +78,10 @@ class Priority<T>
 	 * @param	a elements array for adding.
 	 * @param	priority priority, smalest first, bigest last, default 0 (0 - normal priority).
 	 */
-	public function addArray(a:Array<T>, priority:Int = 0):Void {
+	public function addArray(a:Array<T>, priority:Int = 0):Priority<T> {
 		for (e in a)
-			add(e, priority);
-	}
-	
-	private function getLenght():Int { return data.length; }
-	
-	private function getList():List<T> { return data.list(); }
-	
-	private function setList(l:List<T>):List<T> {
-		clear();
-		data = l.array();
-		hash.set(0, data.length);
-		return l;
+			addElement(e, priority);
+		return this;
 	}
 	
 	/**
@@ -158,8 +97,8 @@ class Priority<T>
 		var n:Int = counters.push(0)-1;
 		return {
 			hasNext: function():Bool {
-				if (counters[n].isNull()) counters[n] = 0;
-				if (data[counters[n]].notNull())
+				if (counters.length < n) counters.push(n);
+				if (data[counters[n]] != null)
 					return true;
 				else {
 					counters.splice(n, 1);
@@ -173,43 +112,21 @@ class Priority<T>
 	/**
 	 * Remove all elements
 	 */
-	public function clear():Void {
-		hash = new IntHash<Int>();
+	public function clear():Priority<T> {
+		hash = new Map<Int,Int>();
 		data = new Array<T>();
 		counters = [0];
+		return this;
 	}
 	
-	/* This not work for flash9 if T == TInt
-	public function exists(?o:T, ?f:T->Bool):Bool {
-		if ([o, f].boolSum() != 1)
-			throw 'Give me ONE argument, you send ' + [o, f].boolSum();
-			
-		if (o.notNull())
-			return data.exists(function(e:T):Bool return e == o);
-		else
-			return data.exists(f);
-	}*/
-		
-	/**
-	 * If argument T->Bool, function take first argument tested element and returt true for say: Search end, element exists.<br/>
-	 * Example:[
-	 * p.exists(function(a:Int):Bool return a == 3);
-	 * ] Also you can use Array
-	 * @param of T or T->Bool or Array&lt;T&gt; or Array&lt;T->Bool&gt;
-	 * @return Return true if element exists, false if not exists.
-	 */
-	public function exists(of:Dynamic):Bool {
-		if (data.length == 0) return false;
-		if (of.is(Array)) {
-			var a:Array<Dynamic> = of;
-			for (e in a)
-				if (exists(e))
-					return true;
-			return false;
-		} else if (Type.typeof(of) == ValueType.TFunction)
-			return data.exists(of);
-		else
-			return data.exists(function(e:T):Bool return e == of);
+	public inline function existsElement(element:T):Bool
+		return existsFunction(function(e:T):Bool return e == element);
+	
+	public inline function existsFunction(f:T->Bool):Bool return data.exists(f);
+	
+	public function existsArray(a:Array<T>):Bool {
+		for (e in a) if (existsElement(e)) return true;
+		return false;
 	}
 	
 	/**
@@ -217,7 +134,7 @@ class Priority<T>
 	 */
 	public function search(f:T->Bool):T {
 		var s:T = null;
-		data.exists(function(e:T):Bool {
+		existsFunction(function(e:T):Bool {
 			if (f(e)) {
 				s = e;
 				return true;
@@ -228,13 +145,14 @@ class Priority<T>
 	}
 	
 	/**
-	 * @param	o Elemnt for removing
+	 * @param	e Element for removing
 	 */
-	private function removeElement(o:T):Void {
-		var i:Int = data.indexOf(o);
+	public function removeElement(e:T):Bool {
+		var i:Int = data.indexOf(e);
+		if (i == -1) return false;
 		for (k in 0...counters.length)
 			if (i < counters[k]) counters[k]--;
-		data.remove(o);
+		data.remove(e);
 		var a:Array<Int> = [];
 		for (k in hash.keys())
 			a.push(k);
@@ -247,25 +165,20 @@ class Priority<T>
 				break;
 			}
 		}
-		if (double)
-			if (exists(o))
-				remove(o);
+		if (double) removeElement(e);
+		return true;
 	}
 	
-	/**
-	 * @param	oa T or Array&lt;T&gt; or T->Bool
-	 */
-	public function remove(oa:Dynamic):Void {
-		if (Type.typeof(oa) == ValueType.TFunction) {
-			var e:T = search(oa);
-			if (e.notNull())
-				removeElement(e);
-		} else if (oa.is(Array)) {
-			var a:Array<T> = oa;
-			for (e in a)
-				remove(e);
-		} else
-			removeElement(oa);
+	public function removeFunction(f:T->Bool):Bool {
+		var e:T = search(f);
+		return if (e != null) removeElement(e);
+		else false;
+	}
+	
+	public function removeArray(a:Array<T>):Bool {
+		var f:Bool = true;
+		for (e in a) if (!removeElement(e)) f = false;
+		return f;
 	}
 	
 	/**
@@ -273,42 +186,38 @@ class Priority<T>
 	 * @param	priority New priority, default 0
 	 */
 	public function repriority(priority:Int = 0):Void {
-		hash = new IntHash<Int>();
+		hash = new Map<Int,Int>();
 		hash.set(priority, data.length);
 	}
 	
-	/**
-	 * Change new prioriy for element.
-	 * @param	o T or Array&lt;T&gt; or T->Bool
-	 * @param	priority New priority, default 0
-	 */
-	public function change(o:Dynamic, priority:Int = 0):Void {
-		if (Type.typeof(o) == ValueType.TFunction) {
-			var e:T = search(o);
-			if (e.notNull()) {
-				removeElement(e);
-				add(e, priority);
-			}
-		} else {
-			remove(o);
-			add(o, priority);
-		}
+	public function changeElement(e:T, priority:Int = 0):Priority<T> {
+		if (removeElement(e)) addElement(e, priority);
+		else throw 'Element not exists';
+		return this;
 	}
 	
-	public function toString():String return data.toString()
+	public function changeFunction(f:T->Bool, priority:Int = 0):Priority<T> {
+		var e:T = search(f);
+		return changeElement(e, priority);
+	}
 	
-	private function getFirst():T return data[0]
+	public function changeArray(a:Array<T>, priority:Int = 0):Priority<T> {
+		for (e in a) changeElement(e, priority);
+		return this;
+	}
 	
-	private function getLast():T return data[data.length-1]
+	public inline function toString():String return data.toString();
+	
+	private inline function get_first():T return data[0];
+	
+	private inline function get_last():T return data[data.length - 1];
+	
+	private inline function get_length():Int return data.length;
 	
 	/**
 	 * @return True if priority list not have element and false if have.
 	 */
-	public function empty():Bool {
-		for (k in data)
-			return false;
-		return true;
-	}
+	private inline function get_empty():Bool return data.length == 0;
 	
 	/**
 	 * Make infinity loop. This good metod for devolopment UI.
@@ -316,7 +225,7 @@ class Priority<T>
 	 */
 	public function loop():T {
 		if (data[counters[0]] == null) {
-			if (empty()) return null;
+			if (empty) return null;
 			else counters[0] = 0;
 		}
 		return data[counters[0]++];
@@ -325,31 +234,24 @@ class Priority<T>
 	/**
 	 * Next time loop return first element.
 	 */
-	public function resetLoop():Void {
+	public inline function resetLoop():Priority<T> {
 		counters[0] = 0;
-	}
-		
-	private function getArray():Array<T> return data.copy()
-	
-	private function setArray(a:Array<T>):Array<T> {
-		clear();
-		data = a;
-		hash.set(0, data.length);
-		return a;
+		return this;
 	}
 	
-	private function getMin():Int {
-		var n:Int = Ultra.nullInt;
+	
+	private function get_min():Int {
+		var n:Null<Int> = null;
 		for (k in hash.keys())
-			if (n.isNull() || k < n)
+			if (n == null || k < n)
 				n = k;
 		return n;
 	}
 	
-	private function getMax():Int {
-		var n:Int = Ultra.nullInt;
+	private function get_max():Int {
+		var n:Null<Int> = null;
 		for (k in hash.keys())
-			if (n.isNull() || k > n)
+			if (n == null || k > n)
 				n = k;
 		return n;
 	}
@@ -358,12 +260,12 @@ class Priority<T>
 	 * Add element with lowest priority.
 	 * @param	o T or Array&lt;T&gt;.
 	 */
-	public function addToBegin(o:Dynamic):Void { add(o, min - 1); }
+	public function addElementToBegin(e:T):Void addElement(e, min - 1);
 	
 	/**
 	 * Add element with hightest priority.
 	 * @param	o T or Array&lt;T&gt;.
 	 */
-	public function addToEnd(o:Dynamic):Void add(o, max + 1)
+	public function addElementToEnd(e:T):Void addElement(e, max + 1);
 	
 }

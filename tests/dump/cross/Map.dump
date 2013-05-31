@@ -1,0 +1,1 @@
+abstract Map<K : Map.K,V : Map.V> {}

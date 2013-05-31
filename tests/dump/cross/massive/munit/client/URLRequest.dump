@@ -1,0 +1,35 @@
+class massive.munit.client.URLRequest{
+	public new(method) : url : String -> Void
+
+	 = function(url:String) = {
+		this.url = url;
+		this.createClient(url);
+		this.setHeader("Content-Type","text/plain");
+	};
+
+	public send(method) : Void -> Void
+
+	 = function() = {
+	};
+
+	public setHeader(method) : name : String -> value : String -> Void
+
+	 = function(name:String,value:String) = {
+	};
+
+	createClient(method) : url : String -> Void
+
+	 = function(url:String) = {
+	};
+
+	headers(var) : haxe.ds.StringMap<String>;
+
+	url(var) : String;
+
+	public data(var) : Dynamic;
+
+	public onError(var) : Dynamic -> Void;
+
+	public onData(var) : Dynamic -> Void;
+
+}

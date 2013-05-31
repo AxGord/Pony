@@ -1,0 +1,10 @@
+class Lambda{
+	static public filter<A : filter.A>(method) : it : Iterable<filter.A> -> f : (filter.A -> Bool) -> List<filter.A>
+
+	 = function(it:Iterable<filter.A>,f:filter.A -> Bool) = {
+		var l = new List();
+		for (x in it.iterator()) if ((f(x)))l.add(x));
+		return l;
+	};
+
+}

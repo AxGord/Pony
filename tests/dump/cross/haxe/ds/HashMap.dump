@@ -1,0 +1,1 @@
+abstract haxe.ds.HashMap<K : haxe.ds.HashMap.K,V : haxe.ds.HashMap.V> {}

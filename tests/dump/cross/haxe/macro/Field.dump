@@ -1,0 +1,1 @@
+type haxe.macro.Field = { pos : haxe.macro.Position, name : String, ?meta : haxe.macro.Metadata, kind : haxe.macro.FieldType, ?doc : Null<String>, ?access : Array<haxe.macro.Access> }

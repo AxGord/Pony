@@ -1,0 +1,1 @@
+type haxe.macro.Expr = { pos : haxe.macro.Position, expr : haxe.macro.ExprDef }

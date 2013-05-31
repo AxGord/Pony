@@ -1,0 +1,18 @@
+extern class haxe.ds.IntMap<T : haxe.ds.IntMap.T>{
+	public new(method) : Void -> Void;
+
+	public toString(method) : Void -> String;
+
+	public iterator(method) : Void -> Iterator<haxe.ds.IntMap.T>;
+
+	public keys(method) : Void -> Iterator<Int>;
+
+	public remove(method) : key : Int -> Bool;
+
+	public exists(method) : key : Int -> Bool;
+
+	public get(method) : key : Int -> Null<haxe.ds.IntMap.T>;
+
+	public set(method) : key : Int -> value : haxe.ds.IntMap.T -> Void;
+
+}

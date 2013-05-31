@@ -1,0 +1,54 @@
+class massive.munit.TestResult{
+	public new(method) : Void -> Void
+
+	 = function() = {
+		this.passed = false;
+		this.executionTime = 0.0f;
+		this.name = "";
+		this.className = "";
+		this.description = "";
+		this.async = false;
+		this.ignore = false;
+		this.error = null;
+		this.failure = null;
+	};
+
+	get_type(method) : Void -> massive.munit.TestResultType
+
+	 = function() = {
+		if ((this.error != null))return massive.munit.TestResultType.ERROR);
+		if ((this.failure != null))return massive.munit.TestResultType.FAIL);
+		if ((this.ignore == true))return massive.munit.TestResultType.IGNORE);
+		if ((this.passed == true))return massive.munit.TestResultType.PASS);
+		return massive.munit.TestResultType.UNKNOWN;
+	};
+
+	public type((get_type,null)) : massive.munit.TestResultType;
+
+	public error(var) : Dynamic;
+
+	public failure(var) : massive.munit.AssertionException;
+
+	public ignore(var) : Bool;
+
+	public async(var) : Bool;
+
+	get_location(method) : Void -> String
+
+	 = function() = {
+		return if ((this.name == "" && this.className == ""))"" else this.className + "#" + this.name);
+	};
+
+	public location((get_location,null)) : String;
+
+	public description(var) : String;
+
+	public className(var) : String;
+
+	public name(var) : String;
+
+	public executionTime(var) : Float;
+
+	public passed(var) : Bool;
+
+}

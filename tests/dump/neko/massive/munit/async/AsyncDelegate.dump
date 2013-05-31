@@ -1,0 +1,96 @@
+class massive.munit.async.AsyncDelegate{
+	public new(method) : testCase : Dynamic -> handler : Dynamic -> ?timeout : Int -> ?info : haxe.PosInfos -> Void
+
+	 = function(testCase:Dynamic,handler:Dynamic,timeout:Int = null,info:haxe.PosInfos = null) = {
+		var self = this;
+		this.testCase = testCase;
+		this.handler = handler;
+		this.delegateHandler = Reflect.makeVarArgs(this.responseHandler);
+		this.info = info;
+		this.params = [];
+		this.timedOut = false;
+		this.canceled = false;
+		if ((timeout == null || timeout <= 0))timeout = 400);
+		this.timeoutDelay = timeout;
+		this.timer = massive.munit.util.Timer.delay(this.timeoutHandler,this.timeoutDelay);
+	};
+
+	actualTimeoutHandler(method) : Void -> Void
+
+	 = function() = {
+		this.deferredTimer = null;
+		this.handler = null;
+		this.delegateHandler = null;
+		this.timedOut = true;
+		if ((this.observer != null)){
+			this.observer.asyncTimeoutHandler(this);
+			this.observer = null;
+		});
+	};
+
+	timeoutHandler(method) : Void -> Void
+
+	 = function() = {
+		this.actualTimeoutHandler();
+	};
+
+	delayActualResponseHandler(method) : Void -> Void
+
+	 = function() = {
+		this.observer.asyncResponseHandler(this);
+		this.observer = null;
+	};
+
+	responseHandler(method) : ?params : Array<Dynamic> -> Dynamic
+
+	 = function(params:Array<Dynamic> = null) = {
+		if ((this.timedOut || this.canceled))return null);
+		this.timer.stop();
+		if ((this.deferredTimer != null))this.deferredTimer.stop());
+		if ((params == null))params = []);
+		this.params = params;
+		if ((this.observer != null))massive.munit.util.Timer.delay(this.delayActualResponseHandler,1));
+		return null;
+	};
+
+	public cancelTest(method) : Void -> Void
+
+	 = function() = {
+		this.canceled = true;
+		this.timer.stop();
+		if ((this.deferredTimer != null))this.deferredTimer.stop());
+	};
+
+	public runTest(method) : Void -> Void
+
+	 = function() = {
+		cast $call(this.handler,this.testCase,this.params.__neko());
+	};
+
+	params(var) : Array<Dynamic>;
+
+	deferredTimer(var) : massive.munit.util.Timer;
+
+	public canceled((default,null)) : Bool;
+
+	timer(var) : massive.munit.util.Timer;
+
+	handler(var) : Dynamic;
+
+	testCase(var) : Dynamic;
+
+	public timedOut((default,null)) : Bool;
+
+	public timeoutDelay((default,null)) : Int;
+
+	public delegateHandler((default,null)) : Dynamic;
+
+	public info(var) : haxe.PosInfos;
+
+	public observer(var) : massive.munit.async.IAsyncDelegateObserver;
+
+	static public DEFAULT_TIMEOUT((inline,never)) : Int
+
+	 = 400;
+
+}

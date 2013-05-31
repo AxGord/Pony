@@ -1,0 +1,121 @@
+private class pony.events._Listener.ListenerImpl{
+	static flist(var) : Map<Int, pony.events.Listener>
+
+	 = new haxe.ds.IntMap();
+
+	static eflist(var) : pony.Dictionary<pony.events.Event -> Void, pony.events.Listener>
+
+	 = new pony.Dictionary();
+
+	static public _new(inline method) : f : pony.Function -> ?event : Bool -> ?count : Int -> pony.events.Listener_
+
+	 = function(f:pony.Function,event:Bool = false,count:Int = -1) = {
+		var this1;
+		haxe.Log.trace("cr_l",{fileName : "Listener.hx",lineNumber : 20,className : "pony.events._Listener.ListenerImpl",methodName : "_new"});
+		this1 = {f : f,count : count,event : event,prev : null,used : 0};
+		return this1;
+	};
+
+	static public fromEFunction(method) : f : (pony.events.Event -> Void) -> pony.events.Listener
+
+	 = function(f:pony.events.Event -> Void) = {
+		if ((pony.events._Listener.ListenerImpl.eflist.exists(f)))return pony.events._Listener.ListenerImpl.eflist.get(f) else {
+			var o = cast {
+				var this1;
+				haxe.Log.trace("cr_l",{fileName : "Listener.hx",lineNumber : 20,className : "pony.events._Listener.ListenerImpl",methodName : "_new"});
+				this1 = {f : pony._Function.FunctionImpl._new(f,1),count : -1,event : true,prev : null,used : 0};
+				this1;
+			};
+			pony.events._Listener.ListenerImpl.eflist.set(f,o);
+			return o;
+		});
+	};
+
+	static public fromFunction(method) : f : pony.Function -> pony.events.Listener
+
+	 = function(f:pony.Function) = {
+		if ((pony.events._Listener.ListenerImpl.flist.exists(f.id)))return pony.events._Listener.ListenerImpl.flist.get(f.id) else {
+			pony._Function.FunctionImpl.use(f);
+			haxe.Log.trace(pony._Function.FunctionImpl.unusedCount,{fileName : "Listener.hx",lineNumber : 39,className : "pony.events._Listener.ListenerImpl",methodName : "fromFunction"});
+			var o = cast {
+				var this1;
+				haxe.Log.trace("cr_l",{fileName : "Listener.hx",lineNumber : 20,className : "pony.events._Listener.ListenerImpl",methodName : "_new"});
+				this1 = {f : f,count : -1,event : false,prev : null,used : 0};
+				this1;
+			};
+			haxe.Log.trace(pony._Function.FunctionImpl.unusedCount,{fileName : "Listener.hx",lineNumber : 41,className : "pony.events._Listener.ListenerImpl",methodName : "fromFunction"});
+			pony.events._Listener.ListenerImpl.flist.set(f.id,o);
+			return o;
+		});
+	};
+
+	static public count(inline method) : this : pony.events.Listener_ -> Int
+
+	 = function(this1:pony.events.Listener_) = {
+		return this1.count;
+	};
+
+	static public call(inline method) : this : pony.events.Listener_ -> event : pony.events.Event -> Bool
+
+	 = function(this1:pony.events.Listener_,event:pony.events.Event) = {
+		this1.count --;
+		event.currentListener = this1;
+		var r = if ((this1.event))Reflect.callMethod(null,this1.f.f,this1.f.args.concat([event])) else Reflect.callMethod(null,this1.f.f,this1.f.args.concat(event.args.slice(0,this1.f.count))));
+		this1.prev = event;
+		return if ((r == null))true else r);
+	};
+
+	static public setCount(inline method) : this : pony.events.Listener_ -> count : Int -> pony.events.Listener
+
+	 = function(this1:pony.events.Listener_,count:Int) = {
+		return cast {
+			var this2;
+			haxe.Log.trace("cr_l",{fileName : "Listener.hx",lineNumber : 20,className : "pony.events._Listener.ListenerImpl",methodName : "_new"});
+			this2 = {f : this1.f,count : count,event : this1.event,prev : null,used : 0};
+			this2;
+		};
+	};
+
+	static public use(method) : this : pony.events.Listener_ -> Void
+
+	 = function(this1:pony.events.Listener_) = {
+		this1.used ++;
+	};
+
+	static public unuse(inline method) : this : pony.events.Listener_ -> Void
+
+	 = function(this1:pony.events.Listener_) = {
+		this1.used --;
+		if ((this1.used <= 0)){
+			if ((this1.event))pony.events._Listener.ListenerImpl.eflist.remove(this1.f.f) else {
+				pony.events._Listener.ListenerImpl.flist.remove(this1.f.id);
+				{
+					this1.f.used --;
+					if ((this1.f.used <= 0)){
+						pony._Function.FunctionImpl.list.splice(this1.f.id,1);
+						this1.f = null;
+						pony._Function.FunctionImpl.unusedCount --;
+						haxe.Log.trace(pony._Function.FunctionImpl.unusedCount,{fileName : "Function.hx",lineNumber : 81,className : "pony._Function.FunctionImpl",methodName : "unuse"});
+					});
+				};
+			});
+			this1 = null;
+		});
+	};
+
+	static public used(inline method) : this : pony.events.Listener_ -> Int
+
+	 = function(this1:pony.events.Listener_) = {
+		return this1.used;
+	};
+
+	static public unusedCount(method) : Void -> Int
+
+	 = function() = {
+		var c = 0;
+		for (l in pony.events._Listener.ListenerImpl.flist.iterator()) if ((l.used <= 0))c ++);
+		for (l in pony.events._Listener.ListenerImpl.eflist.iterator()) if ((l.used <= 0))c ++);
+		return c;
+	};
+
+}

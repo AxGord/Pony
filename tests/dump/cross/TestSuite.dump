@@ -1,0 +1,9 @@
+class TestSuite extends massive.munit.TestSuite{
+	public new(method) : Void -> Void
+
+	 = function() = {
+		super();
+		this.add(FunctionTest);
+	};
+
+}

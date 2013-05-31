@@ -1,0 +1,1 @@
+type haxe.macro.Catch = { type : haxe.macro.ComplexType, name : String, expr : haxe.macro.Expr }

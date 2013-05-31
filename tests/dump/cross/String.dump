@@ -1,0 +1,28 @@
+extern class String{
+	public new(method) : string : String -> Void;
+
+	public toString(method) : Void -> String;
+
+	public substring(method) : startIndex : Int -> ?endIndex : Null<Int> -> String;
+
+	public substr(method) : pos : Int -> ?len : Null<Int> -> String;
+
+	public split(method) : delimiter : String -> Array<String>;
+
+	public lastIndexOf(method) : str : String -> ?startIndex : Null<Int> -> Int;
+
+	public indexOf(method) : str : String -> ?startIndex : Null<Int> -> Int;
+
+	public charCodeAt(method) : index : Int -> Null<Int>;
+
+	public charAt(method) : index : Int -> String;
+
+	public toLowerCase(method) : Void -> String;
+
+	public toUpperCase(method) : Void -> String;
+
+	public length((default,null)) : Int;
+
+	static public fromCharCode(method) : code : Int -> String;
+
+}

@@ -1,0 +1,1 @@
+abstract Dynamic<T : Dynamic.T> {}

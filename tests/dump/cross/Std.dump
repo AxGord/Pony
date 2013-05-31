@@ -1,0 +1,14 @@
+extern class Std{
+	static public is(method) : v : Dynamic -> t : Dynamic -> Bool;
+
+	static public string(method) : s : Dynamic -> String;
+
+	static public int(method) : x : Float -> Int;
+
+	static public parseInt(method) : x : String -> Null<Int>;
+
+	static public parseFloat(method) : x : String -> Float;
+
+	static public random(method) : x : Int -> Int;
+
+}

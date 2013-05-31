@@ -1,0 +1,49 @@
+private class sys.net._Socket.SocketOutput extends haxe.io.Output{
+	public new(method) : s : sys.net._Socket.SocketHandle -> Void
+
+	 = function(s:sys.net._Socket.SocketHandle) = {
+		this.__s = s;
+	};
+
+	public close(method) : Void -> Void
+
+	 = function() = {
+		super.close();
+		if ((this.__s != null))sys.net._Socket.SocketOutput.socket_close(this.__s));
+	};
+
+	public writeBytes(method) : buf : haxe.io.Bytes -> pos : Int -> len : Int -> Int
+
+	 = function(buf:haxe.io.Bytes,pos:Int,len:Int) = {
+		return try {
+			sys.net._Socket.SocketOutput.socket_send(this.__s,buf.b,pos,len);
+		}catch( e : Dynamic ) {
+			if ((e == "Blocking"))throw haxe.io.Error.Blocked else throw haxe.io.Error.Custom(e));
+		};
+	};
+
+	public writeByte(method) : c : Int -> Void
+
+	 = function(c:Int) = {
+		try {
+			sys.net._Socket.SocketOutput.socket_send_char(this.__s,c);
+		}catch( e : Dynamic ) {
+			if ((e == "Blocking"))throw haxe.io.Error.Blocked else throw haxe.io.Error.Custom(e));
+		};
+	};
+
+	__s(var) : sys.net._Socket.SocketHandle;
+
+	static socket_close(var) : sys.net._Socket.SocketHandle -> Unknown<30>
+
+	 = neko.Lib.load("std","socket_close",1);
+
+	static socket_send_char(var) : sys.net._Socket.SocketHandle -> Int -> Unknown<31>
+
+	 = neko.Lib.load("std","socket_send_char",2);
+
+	static socket_send(var) : sys.net._Socket.SocketHandle -> haxe.io.BytesData -> Int -> Int -> Int
+
+	 = neko.Lib.load("std","socket_send",4);
+
+}

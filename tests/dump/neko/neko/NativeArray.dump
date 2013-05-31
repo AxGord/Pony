@@ -1,0 +1,2 @@
+class neko.NativeArray<T : neko.NativeArray.T> implements ArrayAccess<neko.NativeArray.T>{
+}

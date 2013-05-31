@@ -1,0 +1,6 @@
+enum haxe.io.Error {
+	Blocked : haxe.io.Error;
+	Overflow : haxe.io.Error;
+	OutsideBounds : haxe.io.Error;
+	Custom : e : Dynamic -> haxe.io.Error;
+}

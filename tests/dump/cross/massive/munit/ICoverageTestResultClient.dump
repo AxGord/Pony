@@ -1,0 +1,6 @@
+interface massive.munit.ICoverageTestResultClient implements massive.munit.IAdvancedTestResultClient{
+	public reportFinalCoverage(method) : ?percent : Null<Float> -> missingCoverageResults : Array<massive.munit.CoverageResult> -> summary : String -> ?classBreakdown : String -> ?packageBreakdown : String -> ?executionFrequency : String -> Void;
+
+	public setCurrentTestClassCoverage(method) : result : massive.munit.CoverageResult -> Void;
+
+}

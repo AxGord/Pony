@@ -1,0 +1,18 @@
+extern class haxe.ds.ObjectMap<K : haxe.ds.ObjectMap.K,V : haxe.ds.ObjectMap.V>{
+	public new(method) : ?weakKeys : Null<Bool> -> Void;
+
+	public toString(method) : Void -> String;
+
+	public iterator(method) : Void -> Iterator<haxe.ds.ObjectMap.V>;
+
+	public keys(method) : Void -> Iterator<haxe.ds.ObjectMap.K>;
+
+	public remove(method) : key : haxe.ds.ObjectMap.K -> Bool;
+
+	public exists(method) : key : haxe.ds.ObjectMap.K -> Bool;
+
+	public get(method) : key : haxe.ds.ObjectMap.K -> Null<haxe.ds.ObjectMap.V>;
+
+	public set(method) : key : haxe.ds.ObjectMap.K -> value : haxe.ds.ObjectMap.V -> Void;
+
+}

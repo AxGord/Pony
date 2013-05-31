@@ -1,0 +1,52 @@
+class massive.munit.client.PrintClient extends massive.munit.client.PrintClientBase{
+	public new(method) : ?includeIgnoredReport : Bool -> Void
+
+	 = function(includeIgnoredReport:Bool = true) = {
+		super(includeIgnoredReport);
+		this.id = "print";
+	};
+
+	public printLine(method) : value : Dynamic -> ?indent : Int -> Void
+
+	 = function(value:Dynamic,indent:Int = 0) = {
+		super.printLine(value,indent);
+	};
+
+	public print(method) : value : Dynamic -> Void
+
+	 = function(value:Dynamic) = {
+		super.print(value);
+		Sys.print(value);
+	};
+
+	public reportFinalStatistics(method) : testCount : Int -> passCount : Int -> failCount : Int -> errorCount : Int -> ignoreCount : Int -> time : Float -> Dynamic
+
+	 = function(testCount:Int,passCount:Int,failCount:Int,errorCount:Int,ignoreCount:Int,time:Float) = {
+		return super.reportFinalStatistics(testCount,passCount,failCount,errorCount,ignoreCount,time);
+	};
+
+	customTrace(method) : value : Unknown<23> -> ?info : haxe.PosInfos -> Void
+
+	 = function(value:Unknown<23>,info:haxe.PosInfos = null) = {
+		this.addTrace(value,info);
+	};
+
+	printOverallResult(method) : result : Bool -> Void
+
+	 = function(result:Bool) = {
+		super.printOverallResult(result);
+	};
+
+	init(method) : Void -> Void
+
+	 = function() = {
+		super.init();
+		this.originalTrace = haxe.Log.trace;
+		haxe.Log.trace = this.customTrace;
+	};
+
+	static public DEFAULT_ID((inline,never)) : String
+
+	 = "print";
+
+}

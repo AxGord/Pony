@@ -1,0 +1,304 @@
+class pony.Priority<T : pony.Priority.T>{
+	public new(method) : ?data : Array<pony.Priority.T> -> Void
+
+	 = function(data:Array<pony.Priority.T> = null) = {
+		this.double = false;
+		this.clear();
+		if ((data != null))this.data = data);
+	};
+
+	public addElementToEnd(method) : e : pony.Priority.T -> Void
+
+	 = function(e:pony.Priority.T) = {
+		this.addElement(e,this.get_max() + 1);
+	};
+
+	public addElementToBegin(method) : e : pony.Priority.T -> Void
+
+	 = function(e:pony.Priority.T) = {
+		this.addElement(e,this.get_min() - 1);
+	};
+
+	get_max(method) : Void -> Int
+
+	 = function() = {
+		var n = null;
+		for (k in this.hash.keys()) if ((n == null || k > n))n = k);
+		return n;
+	};
+
+	get_min(method) : Void -> Int
+
+	 = function() = {
+		var n = null;
+		for (k in this.hash.keys()) if ((n == null || k < n))n = k);
+		return n;
+	};
+
+	public resetLoop(inline method) : Void -> pony.Priority<pony.Priority.T>
+
+	 = function() = {
+		this.counters[0] = 0;
+		return this;
+	};
+
+	public loop(method) : Void -> pony.Priority.T
+
+	 = function() = {
+		if ((this.data[this.counters[0]] == null)){
+			if ((this.data.length == 0))return null else this.counters[0] = 0);
+		});
+		return this.data[this.counters[0] ++];
+	};
+
+	get_empty(inline method) : Void -> Bool
+
+	 = function() = {
+		return this.data.length == 0;
+	};
+
+	get_length(inline method) : Void -> Int
+
+	 = function() = {
+		return this.data.length;
+	};
+
+	get_last(inline method) : Void -> pony.Priority.T
+
+	 = function() = {
+		return this.data[this.data.length - 1];
+	};
+
+	get_first(inline method) : Void -> pony.Priority.T
+
+	 = function() = {
+		return this.data[0];
+	};
+
+	public toString(inline method) : Void -> String
+
+	 = function() = {
+		return this.data.toString();
+	};
+
+	public changeArray(method) : a : Array<pony.Priority.T> -> ?priority : Int -> pony.Priority<pony.Priority.T>
+
+	 = function(a:Array<pony.Priority.T>,priority:Int = 0) = {
+		{
+			var _g = 0;
+			while ((_g < a.length)) {
+				var e = a[_g];
+				++ _g;
+				this.changeElement(e,priority);
+			};
+		};
+		return this;
+	};
+
+	public changeFunction(method) : f : (pony.Priority.T -> Bool) -> ?priority : Int -> pony.Priority<pony.Priority.T>
+
+	 = function(f:pony.Priority.T -> Bool,priority:Int = 0) = {
+		var e = this.search(f);
+		return this.changeElement(e,priority);
+	};
+
+	public changeElement(method) : e : pony.Priority.T -> ?priority : Int -> pony.Priority<pony.Priority.T>
+
+	 = function(e:pony.Priority.T,priority:Int = 0) = {
+		if ((this.removeElement(e)))this.addElement(e,priority) else throw "Element not exists");
+		return this;
+	};
+
+	public repriority(method) : ?priority : Int -> Void
+
+	 = function(priority:Int = 0) = {
+		this.hash = new haxe.ds.IntMap();
+		this.hash.set(priority,this.data.length);
+	};
+
+	public removeArray(method) : a : Array<pony.Priority.T> -> Bool
+
+	 = function(a:Array<pony.Priority.T>) = {
+		var f = true;
+		{
+			var _g = 0;
+			while ((_g < a.length)) {
+				var e = a[_g];
+				++ _g;
+				if ((! this.removeElement(e)))f = false);
+			};
+		};
+		return f;
+	};
+
+	public removeFunction(method) : f : (pony.Priority.T -> Bool) -> Bool
+
+	 = function(f:pony.Priority.T -> Bool) = {
+		var e = this.search(f);
+		return if ((e != null))this.removeElement(e) else false);
+	};
+
+	public removeElement(method) : e : pony.Priority.T -> Bool
+
+	 = function(e:pony.Priority.T) = {
+		var i = Lambda.indexOf(this.data,e);
+		if ((i == -1))return false);
+		{
+			var _g1 = 0,_g = this.counters.length;
+			while ((_g1 < _g)) {
+				var k = _g1 ++;
+				if ((i < this.counters[k]))this.counters[k] --);
+			};
+		};
+		this.data.remove(e);
+		var a = [];
+		for (k in this.hash.keys()) a.push(k);
+		a.sort(function(x:Int,y:Int) = {
+			return x - y;
+		});
+		{
+			var _g = 0;
+			while ((_g < a.length)) {
+				var k = a[_g];
+				++ _g;
+				if ((i > 0))i -= this.hash.get(k) else {
+					this.hash.set(k,this.hash.get(k) - 1);
+					break;
+				});
+			};
+		};
+		if ((this.double))this.removeElement(e));
+		return true;
+	};
+
+	public search(method) : f : (pony.Priority.T -> Bool) -> pony.Priority.T
+
+	 = function(f:pony.Priority.T -> Bool) = {
+		var s = null;
+		Lambda.exists(this.data,function(e:pony.Priority.T) = {
+			if ((f(e))){
+				s = e;
+				return true;
+			} else return false);
+		});
+		return s;
+	};
+
+	public existsArray(method) : a : Array<pony.Priority.T> -> Bool
+
+	 = function(a:Array<pony.Priority.T>) = {
+		{
+			var _g = 0;
+			while ((_g < a.length)) {
+				var e = a[_g];
+				++ _g;
+				if (({
+					var element = e;
+					Lambda.exists(this.data,function(e1:pony.Priority.T) = {
+						return e1 == element;
+					});
+				}))return true);
+			};
+		};
+		return false;
+	};
+
+	public existsFunction(inline method) : f : (pony.Priority.T -> Bool) -> Bool
+
+	 = function(f:pony.Priority.T -> Bool) = {
+		return Lambda.exists(this.data,f);
+	};
+
+	public existsElement(inline method) : element : pony.Priority.T -> Bool
+
+	 = function(element:pony.Priority.T) = {
+		return Lambda.exists(this.data,function(e:pony.Priority.T) = {
+			return e == element;
+		});
+	};
+
+	public clear(method) : Void -> pony.Priority<pony.Priority.T>
+
+	 = function() = {
+		this.hash = new haxe.ds.IntMap();
+		this.data = new Array();
+		this.counters = [0];
+		return this;
+	};
+
+	public iterator(method) : Void -> Iterator<pony.Priority.T>
+
+	 = function() = {
+		var _g = this;
+		var n = this.counters.push(0) - 1;
+		return {hasNext : function() = {
+			if ((_g.counters.length < n))_g.counters.push(n));
+			if ((_g.data[_g.counters[n]] != null))return true else {
+				_g.counters.splice(n,1);
+				return false;
+			});
+		},next : function() = {
+			return _g.data[_g.counters[n] ++];
+		}};
+	};
+
+	public addArray(method) : a : Array<pony.Priority.T> -> ?priority : Int -> pony.Priority<pony.Priority.T>
+
+	 = function(a:Array<pony.Priority.T>,priority:Int = 0) = {
+		{
+			var _g = 0;
+			while ((_g < a.length)) {
+				var e = a[_g];
+				++ _g;
+				this.addElement(e,priority);
+			};
+		};
+		return this;
+	};
+
+	public addElement(method) : e : pony.Priority.T -> ?priority : Int -> pony.Priority<pony.Priority.T>
+
+	 = function(e:pony.Priority.T,priority:Int = 0) = {
+		if ((! this.double && {
+			var element = e;
+			Lambda.exists(this.data,function(e1:pony.Priority.T) = {
+				return e1 == element;
+			});
+		}))return this);
+		var s = if ((this.hash.exists(priority)))this.hash.get(priority) else 0);
+		var c = 0;
+		for (k in this.hash.keys()) if ((k < priority))c += this.hash.get(k));
+		c += s;
+		this.data.insert(c,e);
+		{
+			var _g1 = 0,_g = this.counters.length;
+			while ((_g1 < _g)) {
+				var k = _g1 ++;
+				if ((c < this.counters[k]))this.counters[k] ++);
+			};
+		};
+		this.hash.set(priority,s + 1);
+		return this;
+	};
+
+	counters(var) : Array<Int>;
+
+	hash(var) : Map<Int, Int>;
+
+	public data((default,null)) : Array<pony.Priority.T>;
+
+	public double(var) : Bool;
+
+	public empty((get_empty,null)) : Bool;
+
+	public last((get_last,null)) : pony.Priority.T;
+
+	public first((get_first,null)) : pony.Priority.T;
+
+	public max((get_max,null)) : Int;
+
+	public min((get_min,null)) : Int;
+
+	public length((get_length,null)) : Int;
+
+}

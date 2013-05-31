@@ -1,0 +1,30 @@
+class TestMain{
+	public new(method) : Void -> Void
+
+	 = function() = {
+		var suites = new Array();
+		suites.push(TestSuite);
+		var client = new massive.munit.client.RichPrintClient();
+		var httpClient = new massive.munit.client.HTTPClient(new massive.munit.client.SummaryReportClient(),null,null);
+		var runner = new massive.munit.TestRunner(client);
+		runner.addResultClient(httpClient);
+		runner.completionHandler = this.completionHandler;
+		runner.run(suites);
+	};
+
+	completionHandler(method) : successful : Bool -> Void
+
+	 = function(successful:Bool) = {
+		try {
+			Sys.exit(0);
+		}catch( e : Dynamic ) {
+		};
+	};
+
+	static main(method) : Void -> Void
+
+	 = function() = {
+		new TestMain();
+	};
+
+}

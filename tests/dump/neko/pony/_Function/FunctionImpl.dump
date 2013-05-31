@@ -1,0 +1,84 @@
+private class pony._Function.FunctionImpl{
+	static _new(inline method) : f : Dynamic -> count : Int -> ?args : Array<Dynamic> -> { f : Dynamic, count : Int, args : Array<Dynamic> }
+
+	 = function(f:Dynamic,count:Int,args:Array<Dynamic> = null) = {
+		return {f : f,count : count,args : if ((args == null))[] else args)};
+	};
+
+	static public from0<R : from0.R>(inline method) : f : (Void -> from0.R) -> pony.Function
+
+	 = function(f:Void -> from0.R) = {
+		return cast {f : f,count : 0,args : []};
+	};
+
+	static public from1<R : from1.R>(inline method) : f : (Dynamic -> from1.R) -> pony.Function
+
+	 = function(f:Dynamic -> from1.R) = {
+		return cast {f : f,count : 1,args : []};
+	};
+
+	static public from2<R : from2.R>(inline method) : f : (Dynamic -> Dynamic -> from2.R) -> pony.Function
+
+	 = function(f:Dynamic -> Dynamic -> from2.R) = {
+		return cast {f : f,count : 2,args : []};
+	};
+
+	static public from3<R : from3.R>(inline method) : f : (Dynamic -> Dynamic -> Dynamic -> from3.R) -> pony.Function
+
+	 = function(f:Dynamic -> Dynamic -> Dynamic -> from3.R) = {
+		return cast {f : f,count : 3,args : []};
+	};
+
+	static public from4<R : from4.R>(inline method) : f : (Dynamic -> Dynamic -> Dynamic -> Dynamic -> from4.R) -> pony.Function
+
+	 = function(f:Dynamic -> Dynamic -> Dynamic -> Dynamic -> from4.R) = {
+		return cast {f : f,count : 4,args : []};
+	};
+
+	static public from5<R : from5.R>(inline method) : f : (Dynamic -> Dynamic -> Dynamic -> Dynamic -> Dynamic -> from5.R) -> pony.Function
+
+	 = function(f:Dynamic -> Dynamic -> Dynamic -> Dynamic -> Dynamic -> from5.R) = {
+		return cast {f : f,count : 5,args : []};
+	};
+
+	static public from6<R : from6.R>(inline method) : f : (Dynamic -> Dynamic -> Dynamic -> Dynamic -> Dynamic -> Dynamic -> from6.R) -> pony.Function
+
+	 = function(f:Dynamic -> Dynamic -> Dynamic -> Dynamic -> Dynamic -> Dynamic -> from6.R) = {
+		return cast {f : f,count : 6,args : []};
+	};
+
+	static public from7<R : from7.R>(inline method) : f : (Dynamic -> Dynamic -> Dynamic -> Dynamic -> Dynamic -> Dynamic -> Dynamic -> from7.R) -> pony.Function
+
+	 = function(f:Dynamic -> Dynamic -> Dynamic -> Dynamic -> Dynamic -> Dynamic -> Dynamic -> from7.R) = {
+		return cast {f : f,count : 7,args : []};
+	};
+
+	static public _call(inline method) : this : { f : Dynamic, count : Int, args : Array<Dynamic> } -> args : Array<Dynamic> -> Dynamic
+
+	 = function(this1:{ f : Dynamic, count : Int, args : Array<Dynamic> },args:Array<Dynamic>) = {
+		return cast $call(this1.f,null,this1.args.concat(args).__neko());
+	};
+
+	static public count(inline method) : this : { f : Dynamic, count : Int, args : Array<Dynamic> } -> Int
+
+	 = function(this1:{ f : Dynamic, count : Int, args : Array<Dynamic> }) = {
+		return this1.count;
+	};
+
+	static public bind(inline method) : this : { f : Dynamic, count : Int, args : Array<Dynamic> } -> args : Array<Dynamic> -> pony.Function
+
+	 = function(this1:{ f : Dynamic, count : Int, args : Array<Dynamic> },args:Array<Dynamic>) = {
+		return {
+			var args1 = this1.args.concat(args);
+			{f : this1.f,count : this1.count - args.length,args : if ((args1 == null))[] else args1)};
+		};
+	};
+
+	static public setArgs(inline method) : this : { f : Dynamic, count : Int, args : Array<Dynamic> } -> args : Array<Dynamic> -> Void
+
+	 = function(this1:{ f : Dynamic, count : Int, args : Array<Dynamic> },args:Array<Dynamic>) = {
+		this1.count -= args.length;
+		this1.args = this1.args.concat(args);
+	};
+
+}

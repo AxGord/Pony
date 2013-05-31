@@ -1,0 +1,17 @@
+class StringTools{
+	static public htmlEscape(method) : s : String -> ?quotes : Null<Bool> -> String
+
+	 = function(s:String,quotes:Null<Bool> = null) = {
+		s = s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
+		return if ((quotes))s.split("\"").join("&quot;").split("'").join("&#039;") else s);
+	};
+
+	static public lpad(method) : s : String -> c : String -> l : Int -> String
+
+	 = function(s:String,c:String,l:Int) = {
+		if ((c.length <= 0))return s);
+		while ((s.length < l)) s = c + s;
+		return s;
+	};
+
+}

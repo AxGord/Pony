@@ -1,0 +1,13 @@
+class haxe.io.Eof{
+	public new(method) : Void -> Void
+
+	 = function() = {
+	};
+
+	toString(method) : Void -> String
+
+	 = function() = {
+		return "Eof";
+	};
+
+}

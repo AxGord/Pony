@@ -1,0 +1,19 @@
+class haxe.io.BytesBuffer{
+	public new(method) : Void -> Void
+
+	 = function() = {
+		this.b = StringBuf.__make();
+	};
+
+	public getBytes(method) : Void -> haxe.io.Bytes
+
+	 = function() = {
+		var str = StringBuf.__to_string(this.b);
+		var bytes = new haxe.io.Bytes(__dollar__ssize(str),str);
+		this.b = null;
+		return bytes;
+	};
+
+	b(var) : Dynamic;
+
+}

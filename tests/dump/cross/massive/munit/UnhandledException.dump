@@ -1,0 +1,35 @@
+class massive.munit.UnhandledException extends massive.munit.MUnitException{
+	public new(method) : source : Dynamic -> testLocation : String -> Void
+
+	 = function(source:Dynamic,testLocation:String) = {
+		super(Std.string(source.toString()) + this.formatLocation(source,testLocation),null);
+		this.type = massive.haxe.util.ReflectUtil.here({fileName : "UnhandledException.hx",lineNumber : 53,className : "massive.munit.UnhandledException",methodName : "new"}).className;
+	};
+
+	getStackTrace(method) : source : Dynamic -> String
+
+	 = function(source:Dynamic) = {
+		var s = "";
+		if ((s == "")){
+			var stack = haxe.CallStack.exceptionStack();
+			while ((stack.length > 0)) {
+				var _g = stack.shift();
+				switch ((_g)) {case FilePos(_,_g_eFilePos_1,_g_eFilePos_2):s += "\tat " + _g_eFilePos_1 + " (" + _g_eFilePos_2 + ")\n",case Module:{
+				},case Method(_g_eMethod_0,_g_eMethod_1):s += "\tat " + _g_eMethod_0 + "#" + _g_eMethod_1 + "\n",case Lambda:{
+				},case CFunction:{
+				}};
+			};
+		});
+		return s;
+	};
+
+	formatLocation(method) : source : Dynamic -> testLocation : String -> String
+
+	 = function(source:Dynamic,testLocation:String) = {
+		var stackTrace = " at " + testLocation;
+		var stack = this.getStackTrace(source);
+		if ((stack != ""))stackTrace += " " + stack.substr(1));
+		return stackTrace;
+	};
+
+}

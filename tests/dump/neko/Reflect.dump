@@ -1,0 +1,42 @@
+class Reflect{
+	static public hasField(method) : o : Dynamic -> field : String -> Bool
+
+	 = function(o:Dynamic,field:String) = {
+		return $typeof(o) == $tobject && $objfield(o,$fasthash(field.__s));
+	};
+
+	static public fields(method) : o : Dynamic -> Array<String>
+
+	 = function(o:Dynamic) = {
+		if (($typeof(o) != $tobject))return new Array() else {
+			var a = $objfields(o);
+			var i = 0;
+			var hasid = false;
+			var l = $asize(a);
+			while ((i < l)) {
+				var fid = a[i];
+				if ((fid == -190054693))hasid = true);
+				a[i] = new String($field(fid));
+				i ++;
+			};
+			var a1 = Array.new1(a,l);
+			if ((hasid))a1.remove("__id__"));
+			return a1;
+		});
+	};
+
+	static public isFunction(method) : f : Dynamic -> Bool
+
+	 = function(f:Dynamic) = {
+		return $typeof(f) == $tfunction;
+	};
+
+	static public makeVarArgs(method) : f : (Array<Dynamic> -> Dynamic) -> Dynamic
+
+	 = function(f:Array<Dynamic> -> Dynamic) = {
+		return $varargs(function(a:neko.NativeArray<Unknown<10>>) = {
+			return f(Array.new1(a,$asize(a)));
+		});
+	};
+
+}

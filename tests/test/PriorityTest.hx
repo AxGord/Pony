@@ -4,10 +4,6 @@ import massive.munit.util.Timer;
 import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
 import pony.Priority;
-import pony.Ultra;
-
-using pony.Ultra;
-
 /**
 * Auto generated MassiveUnit Test Class  for pony.Priority 
 */
@@ -22,20 +18,16 @@ class PriorityTest
 	{
 		p1 = new Priority<Int>();
 		p2 = new Priority<Int>();
-		p2.add(3, 0);
-		p2.add(4, 0);
-		p2.add(5, 1);
-		p2.add(6, 1);
-		p2.add(1, -1);
-		p2.add(2, -1);
+		p2.addElement(3, 0);
+		p2.addElement(4, 0);
+		p2.addElement(5, 1);
+		p2.addElement(6, 1);
+		p2.addElement(1, -1);
+		p2.addElement(2, -1);
 		p3 = new Priority<Int>();
-		p3.add(99, 0);
+		p3.addElement(99, 0);
 	}
 	
-	@After
-	public function tearDown():Void
-	{
-	}
 	
 	@Test
 	public function lenght():Void {
@@ -48,9 +40,9 @@ class PriorityTest
 	public function empty():Void {
 		for (e in p1)
 			Assert.fail('empty?');
-		Assert.isTrue(p1.empty());
-		Assert.isFalse(p2.empty());
-		Assert.isFalse(p3.empty());
+		Assert.isTrue(p1.empty);
+		Assert.isFalse(p2.empty);
+		Assert.isFalse(p3.empty);
 	}
 	
 	@Test
@@ -65,11 +57,11 @@ class PriorityTest
 	public function linean():Void {
 		var p:Priority<Int> = new Priority<Int>();
 		for (i in -50...50) {
-			p.add(i, i);
+			p.addElement(i, i);
 		}
-		var prev:Int = Ultra.nullInt;
+		var prev:Null<Int> = null;
 		for (e in p) {
-			if (prev.notNull() && prev > e)
+			if (prev != null && prev > e)
 				Assert.fail('Prev > now: '+prev+', '+e);
 			else
 				prev = e;
@@ -81,22 +73,20 @@ class PriorityTest
 		var p:Priority<Int> = new Priority<Int>();
 		for (i in 0...100) {
 			var r:Int = Math.round(Math.random()*10)-5;
-			p.add(r, r);
+			p.addElement(r, r);
 		}
-		var f:Bool = true;
-		var prev:Int = 0;
+		var prev:Null<Int> = null;
 		for (e in p) {
-			if (!f && prev > e)
+			if (prev != null && prev > e)
 				Assert.fail('Prev > now: '+prev+', '+e);
 			else
 				prev = e;
-			f = false;
 		}
 	}
 	
 	@Test
 	public function remove():Void {
-		p2.remove(5);
+		p2.removeElement(5);
 		Assert.areEqual(5, p2.length);
 		var i:Int = 1;
 		for (e in p2) {
@@ -107,8 +97,8 @@ class PriorityTest
 	
 	@Test
 	public function exists():Void {
-		Assert.isTrue(p2.exists(5));
-		Assert.isFalse(p2.exists(9));
+		Assert.isTrue(p2.existsElement(5));
+		Assert.isFalse(p2.existsElement(9));
 	}
 	
 	@Test
@@ -121,8 +111,8 @@ class PriorityTest
 	
 	@Test
 	public function search():Void {
-		Assert.isTrue(p2.exists(function(o:Int) return o == 2));
-		Assert.isFalse(p2.exists(function(o:Int) return o == -8));
+		Assert.isTrue(p2.existsFunction(function(o:Int) return o == 2));
+		Assert.isFalse(p2.existsFunction(function(o:Int) return o == -8));
 	}
 	
 	@Test
@@ -148,10 +138,10 @@ class PriorityTest
 	public function loop_add():Void {
 		Assert.areEqual(1, p2.loop());
 		Assert.areEqual(2, p2.loop());
-		p2.add(9, -1);
+		p2.addElement(9, -1);
 		Assert.areEqual(9, p2.loop());
 		Assert.areEqual(3, p2.loop());
-		p2.add(8, -2);
+		p2.addElement(8, -2);
 		Assert.areEqual(4, p2.loop());
 		Assert.areEqual(5, p2.loop());
 		Assert.areEqual(6, p2.loop());
@@ -165,10 +155,10 @@ class PriorityTest
 	public function loop_remove():Void {
 		Assert.areEqual(1, p2.loop());
 		Assert.areEqual(2, p2.loop());
-		p2.remove(3);
+		p2.removeElement(3);
 		Assert.areEqual(4, p2.loop());
 		Assert.areEqual(5, p2.loop());
-		p2.remove(1);
+		p2.removeElement(1);
 		Assert.areEqual(6, p2.loop());
 		Assert.areEqual(2, p2.loop());
 		Assert.areEqual(4, p2.loop());
@@ -181,11 +171,11 @@ class PriorityTest
 		for (e in p2) {
 			//trace(i + ' ' + e);
 			switch (i++) {
-				case 1: p2.remove(1);
+				case 1: p2.removeElement(1);
 				case 2: Assert.areEqual(2, e);
 				case 3:
 					Assert.areEqual(3, e);
-					p2.add(11, -2);
+					p2.addElement(11, -2);
 				case 4: Assert.areEqual(4, e);
 			}
 		}
@@ -194,21 +184,21 @@ class PriorityTest
 	
 	@Test
 	public function addToBegin():Void {
-		p2.addToBegin(78);
+		p2.addElementToBegin(78);
 		Assert.areEqual(78, p2.first);
 	}
 	
 	@Test
 	public function addToEnd():Void {
-		p2.addToEnd(45);
+		p2.addElementToEnd(45);
 		Assert.areEqual(45, p2.last);
 	}
 	
 	@Test
 	public function addArray():Void {
 		var p:Priority<Int> = new Priority<Int>();
-		p.add([4, 5, 6]);
-		p.add([1, 2, 3], -4);
+		p.addArray([4, 5, 6]);
+		p.addArray([1, 2, 3], -4);
 		var i:Int = 1;
 		for (e in p)
 			Assert.areEqual(i++, e);
@@ -217,8 +207,8 @@ class PriorityTest
 	
 	@Test
 	public function existsArray():Void {
-		Assert.isTrue(p2.exists([10, 6]));
-		Assert.isFalse(p2.exists([10, 11]));
+		Assert.isTrue(p2.existsArray([10, 6]));
+		Assert.isFalse(p2.existsArray([10, 11]));
 	}
 
 }

@@ -1,0 +1,53 @@
+class massive.munit.TestSuite{
+	public new(method) : Void -> Void
+
+	 = function() = {
+		this.tests = new Array();
+		this.index = 0;
+	};
+
+	sortByName(method) : x : Class<Dynamic> -> y : Class<Dynamic> -> Int
+
+	 = function(x:Class<Dynamic>,y:Class<Dynamic>) = {
+		var xName = Type.getClassName(x);
+		var yName = Type.getClassName(y);
+		if ((xName == yName))return 0);
+		if ((xName > yName))return 1 else return -1);
+	};
+
+	sortTests(method) : Void -> Void
+
+	 = function() = {
+		this.tests.sort(this.sortByName);
+	};
+
+	public repeat(method) : Void -> Void
+
+	 = function() = {
+		if ((this.index > 0))this.index --);
+	};
+
+	public next(method) : Void -> Class<Dynamic>
+
+	 = function() = {
+		return if ((this.hasNext()))this.tests[this.index ++] else null);
+	};
+
+	public hasNext(method) : Void -> Bool
+
+	 = function() = {
+		return this.index < this.tests.length;
+	};
+
+	public add(method) : test : Class<Dynamic> -> Void
+
+	 = function(test:Class<Dynamic>) = {
+		this.tests.push(test);
+		this.sortTests();
+	};
+
+	index(var) : Int;
+
+	tests(var) : Array<Dynamic>;
+
+}

@@ -1,0 +1,1 @@
+type haxe.macro.AbstractType = haxe.macro.BaseType

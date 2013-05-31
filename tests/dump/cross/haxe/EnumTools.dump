@@ -1,0 +1,32 @@
+extern class haxe.EnumTools{
+	static public getName<T : getName.T>(inline method) : e : Enum<getName.T> -> String
+
+	 = function(e:Enum<getName.T>) = {
+		return Type.getEnumName(e);
+	};
+
+	static public createByName<T : createByName.T>(inline method) : e : Enum<createByName.T> -> constr : String -> ?params : Array<Dynamic> -> createByName.T
+
+	 = function(e:Enum<createByName.T>,constr:String,params:Array<Dynamic> = null) = {
+		return Type.createEnum(e,constr,params);
+	};
+
+	static public createByIndex<T : createByIndex.T>(inline method) : e : Enum<createByIndex.T> -> index : Int -> ?params : Array<Dynamic> -> createByIndex.T
+
+	 = function(e:Enum<createByIndex.T>,index:Int,params:Array<Dynamic> = null) = {
+		return Type.createEnumIndex(e,index,params);
+	};
+
+	static public createAll<T : createAll.T>(inline method) : e : Enum<createAll.T> -> Array<createAll.T>
+
+	 = function(e:Enum<createAll.T>) = {
+		return Type.allEnums(e);
+	};
+
+	static public getConstructors<T : getConstructors.T>(inline method) : e : Enum<getConstructors.T> -> Array<String>
+
+	 = function(e:Enum<getConstructors.T>) = {
+		return Type.getEnumConstructs(e);
+	};
+
+}

@@ -1,0 +1,29 @@
+class haxe.io.Bytes{
+	new(method) : length : Int -> b : haxe.io.BytesData -> Void
+
+	 = function(length:Int,b:haxe.io.BytesData) = {
+		this.length = length;
+		this.b = b;
+	};
+
+	public sub(method) : pos : Int -> len : Int -> haxe.io.Bytes
+
+	 = function(pos:Int,len:Int) = {
+		return try {
+			new haxe.io.Bytes(len,__dollar__ssub(this.b,pos,len));
+		}catch( e : Dynamic ) {
+			throw haxe.io.Error.OutsideBounds;
+		};
+	};
+
+	b(var) : haxe.io.BytesData;
+
+	public length((default,null)) : Int;
+
+	static public alloc(method) : length : Int -> haxe.io.Bytes
+
+	 = function(length:Int) = {
+		return new haxe.io.Bytes(length,__dollar__smake(length));
+	};
+
+}

@@ -1,18 +1,11 @@
 <h1>Pony</h1>
 HaXe open-cross-library
-<p><small>v0.0.3</small></p>
+Ready for Haxe3
+<p><small>v0.1.1</small></p>
 <p><small><a href="http://axgord.github.com/Pony/docs">Reference book</a></small></p>
 
 <h2>Installation</h2>
 <pre>haxelib install Pony</pre>
-
-<h2>Sync → Async</h2>
-
-<pre>
-class Test implements pony.magic.async.AsyncAutoAll {
-	//methods...
-}
-</pre>
 
 <h2>ToDo</h2>
 Write documentation.

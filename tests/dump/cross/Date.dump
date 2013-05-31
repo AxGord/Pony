@@ -1,0 +1,28 @@
+extern class Date{
+	public new(method) : year : Int -> month : Int -> day : Int -> hour : Int -> min : Int -> sec : Int -> Void;
+
+	public toString(method) : Void -> String;
+
+	public getDay(method) : Void -> Int;
+
+	public getDate(method) : Void -> Int;
+
+	public getMonth(method) : Void -> Int;
+
+	public getFullYear(method) : Void -> Int;
+
+	public getSeconds(method) : Void -> Int;
+
+	public getMinutes(method) : Void -> Int;
+
+	public getHours(method) : Void -> Int;
+
+	public getTime(method) : Void -> Float;
+
+	static public now(method) : Void -> Date;
+
+	static public fromTime(method) : t : Float -> Date;
+
+	static public fromString(method) : s : String -> Date;
+
+}

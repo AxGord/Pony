@@ -1,0 +1,26 @@
+extern class haxe.EnumValueTools{
+	static public equals<T : equals.T>(inline method) : a : equals.T -> b : equals.T -> Bool
+
+	 = function(a:equals.T,b:equals.T) = {
+		return Type.enumEq(a,b);
+	};
+
+	static public getName(inline method) : e : EnumValue -> String
+
+	 = function(e:EnumValue) = {
+		return Type.enumConstructor(e);
+	};
+
+	static public getParameters(inline method) : e : EnumValue -> Array<Dynamic>
+
+	 = function(e:EnumValue) = {
+		return Type.enumParameters(e);
+	};
+
+	static public getIndex(inline method) : e : EnumValue -> Int
+
+	 = function(e:EnumValue) = {
+		return e.index;
+	};
+
+}

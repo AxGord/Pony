@@ -1,174 +1,85 @@
-/**
-* Copyright (c) 2012 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
-*
-* Redistribution and use in source and binary forms, with or without modification, are
-* permitted provided that the following conditions are met:
-*
-*   1. Redistributions of source code must retain the above copyright notice, this list of
-*      conditions and the following disclaimer.
-*
-*   2. Redistributions in binary form must reproduce the above copyright notice, this list
-*      of conditions and the following disclaimer in the documentation and/or other materials
-*      provided with the distribution.
-*
-* THIS SOFTWARE IS PROVIDED BY ALEXANDER GORDEYKO ``AS IS'' AND ANY EXPRESS OR IMPLIED
-* WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
-* FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL ALEXANDER GORDEYKO OR
-* CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
-* ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-* NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-* ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*
-* The views and conclusions contained in the software and documentation are those of the
-* authors and should not be interpreted as representing official policies, either expressed
-* or implied, of Alexander Gordeyko <axgord@gmail.com>.
-**/
-
 package pony.events;
 
-import pony.SpeedLimit;
+import pony.Dictionary;
 
-using pony.Ultra;
 using Lambda;
 
 /**
- * @see pony.events.Signal
- * @author AxGord <axgord@gmail.com>
+ * ...
+ * @author AxGord
  */
 
-class Listener {
-	/**
-	 * Handler Function, only get.
-	 */
-	public var handler(getHandler, null):Dynamic;
+typedef Listener_ = { f:Function, count:Int, event:Bool, prev:Event, used:Int }
+ 
+abstract Listener( Listener_ ) {
 	
-	/**
-	 * Listener priority, if set then update all signals priority.
-	 * @see pony.Priority
-	 */
-	public var priority(getPriority, setPriority):Int;
+	public static var flist:Map<Int, Listener> = new Map<Int, Listener>();
+	//public static var eflist:Dictionary<Event->Void, Listener> = new Dictionary<Event->Void, Listener>();
 	
-	/**
-	 * Count runs.
-	 */
-	public var count:Int;
-	
-	/**
-	 * Speed limit.
-	 * @see pony.SpeedLimit
-	 */
-	public var delay(getDelay, setDelay):Int;
-	
-	private var _handler:Dynamic;
-	private var _priority:Int;
-	private var sendEvent:Bool;
-	private var signals:List<Signal>;
-	
-	private var sl:SpeedLimit;
-	
-	/**
-	 * Create new event listener.
-	 * @param	?he Function listener with event argument.
-	 * @param	?hd Function listener without event argument.
-	 * @param	count Count runs.
-	 * @param	priority Listener priority
-	 * @param	delay Speed limit.
-	 * @see pony.events.Event
-	 */
-	public function new(?he:Event->Void, ?hd:Dynamic, count:Int = Ultra.nullInt, priority:Int = Ultra.nullInt, delay:Int = Ultra.nullInt) {
-		
-		switch (Type.typeof(hd)) {
-			case ValueType.TInt:
-				delay = priority;
-				priority = count;
-				count = hd;
-				hd = null;
-			default:
-		}
-		if (delay == Ultra.nullInt) delay = -1;
-		if (priority == Ultra.nullInt) priority = 0;
-		if (count == Ultra.nullInt) count = 0;
-		change(he, hd);
-		this.count = count;
-		_priority = priority;
-		sl = new SpeedLimit(delay);
-		signals = new List<Signal>();
+	inline public function new(f:Function, event:Bool = false, count:Int = -1) {
+		f._use();
+		this = {f:f, count:count, event:event, prev: null, used: 0}
 	}
 	
-	private function change(?he:Event->Void, ?hd:Dynamic):Void {
-		if ([he,hd].notNullCount() != 1)
-			throw 'Give me ONE function, you send '+[he,hd].notNullCount();
-		sendEvent = he.notNull();
-		if (sendEvent)
-			_handler = he;
+	@:from inline static public function fromEFunction(f:Event->Void):Listener
+		return _fromFunction(f, true);
+	
+	@:from inline static public function fromFunction(f:Function):Listener
+		return _fromFunction(f, false);
+	
+	static public function _fromFunction(f:Function, ev:Bool):Listener {
+		if (flist.exists(f.id())) {
+			return flist.get(f.id());
+		} else {
+			//trace(ev);
+			var o:Listener = new Listener(f, ev);
+			flist.set(f.id(), o);
+			return o;
+		}
+    }
+	
+	inline public function count():Int return this.count;
+	
+	public function call(event:Event):Bool {
+		this.count--;
+		event._setListener(this);
+		var r:Dynamic = null;
+		if (this.event)
+			r = this.f._call([event]);
 		else
-			_handler = hd;
+			r = this.f._call(event.args.slice(0, this.f.count()));
+		this.prev = event;
+		return r == null ? true : r;
 	}
 	
-	private function getHandler():Dynamic {
-		return _handler;
+	inline public function setCount(count:Int):Listener {
+		return new Listener(this.f, this.event,  count);
 	}
 	
-	private function getPriority():Int {
-		return _priority;
+	inline public function _use():Void {
+		this.used++;
 	}
 	
-	private function setPriority(p:Int):Int {
-		if (p == priority) return p;
-		for (s in signals)
-			s.changePriority(this, p);
-		return _priority = p;
-	}
-	
-	
-	/**
-	 * Call handler, not use this functions. Use Signal dispath.
-	 */
-	public function dispatch(event:Event):Void {
-		sl.run(function() {
-			//if (count != -1) {
-				event.listener = this;
-				if (sendEvent) {
-					handler(event);
-				} else
-					Reflect.callMethod(null, handler, event.args);
-				if (count == 1) {
-					remove();
-				}
+	inline public function unuse():Void {
+		this.used--;
+		if (this.used <= 0) {
+			//if (this.event) {
+			//	eflist.remove(this.f.get());
+			//} else {
+				flist.remove(this.f.id());
 			//}
-			
-		});
-	}
-	
-	/**
-	 * Add signal for event. Invert style.
-	 */
-	public function addSignal(s:Signal):Void {
-		if (signals.indexOf(s) != -1) return;
-		signals.push(s);
-		try {
-			s.addListener(this, count, priority, delay);
-		} catch (e:String) {}
-	}
-	
-	/**
-	 * Remove this listener from all signals.
-	 */
-	public function remove():Void {
-		for (s in signals) {
-			s.removeListener(this);
+			this.f.unuse();
+			this = null;
 		}
 	}
-
-	private function getDelay():Int { return sl.delay; }
 	
-	private function setDelay(d:Int):Int { return sl.delay = d; }
+	inline public function used():Int return this.used;
 	
-	/**
-	 * Not run next function after delay.
-	 */
-	public function abort():Void { sl.abort(); }
+	static public function unusedCount():Int {
+		var c:Int = 0;
+		for (l in flist) if (l.used() <= 0) c++;
+		//for (l in eflist) if (l.used() <= 0) c++;
+		return c;
+	}
 	
 }

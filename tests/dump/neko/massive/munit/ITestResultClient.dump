@@ -1,0 +1,16 @@
+interface massive.munit.ITestResultClient{
+	public reportFinalStatistics(method) : testCount : Int -> passCount : Int -> failCount : Int -> errorCount : Int -> ignoreCount : Int -> time : Float -> Dynamic;
+
+	public addIgnore(method) : result : massive.munit.TestResult -> Void;
+
+	public addError(method) : result : massive.munit.TestResult -> Void;
+
+	public addFail(method) : result : massive.munit.TestResult -> Void;
+
+	public addPass(method) : result : massive.munit.TestResult -> Void;
+
+	public id((default,null)) : String;
+
+	public completionHandler((never,never)) : massive.munit.ITestResultClient -> Void;
+
+}

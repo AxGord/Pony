@@ -1,0 +1,34 @@
+class Math{
+	static public PI((default,null)) : Float;
+
+	static public NaN((default,null)) : Float;
+
+	static public POSITIVE_INFINITY((default,null)) : Float;
+
+	static public NEGATIVE_INFINITY((default,null)) : Float;
+
+	static public round(method) : v : Float -> Int
+
+	 = function(v:Float) = {
+		return 0;
+	};
+
+	static public pow(method) : v : Float -> exp : Float -> Float
+
+	 = function(v:Float,exp:Float) = {
+		return 0.f;
+	};
+
+	static __rnd(var) : Unknown<8>;
+
+	static _rand_int(var) : Unknown<8> -> Int -> Unknown<9>
+
+	 = neko.Lib.load("std","random_int",2);
+
+	static public isNaN(method) : f : Float -> Bool
+
+	 = function(f:Float) = {
+		return __dollar__isnan(f);
+	};
+
+}

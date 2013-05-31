@@ -1,1 +1,0 @@
-<_languages=", "><_l to=%name%>%title%</_l></_languages>

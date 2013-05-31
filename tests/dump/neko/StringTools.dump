@@ -1,0 +1,27 @@
+class StringTools{
+	static public urlEncode(method) : s : String -> String
+
+	 = function(s:String) = {
+		return new String(StringTools._urlEncode(s.__s));
+	};
+
+	static public htmlEscape(method) : s : String -> ?quotes : Bool -> String
+
+	 = function(s:String,quotes:Bool = null) = {
+		s = s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
+		return if ((quotes))s.split("\"").join("&quot;").split("'").join("&#039;") else s);
+	};
+
+	static public lpad(method) : s : String -> c : String -> l : Int -> String
+
+	 = function(s:String,c:String,l:Int) = {
+		if ((c.length <= 0))return s);
+		while ((s.length < l)) s = c + s;
+		return s;
+	};
+
+	static _urlEncode(var) : Unknown<18> -> String
+
+	 = neko.Lib.load("std","url_encode",1);
+
+}

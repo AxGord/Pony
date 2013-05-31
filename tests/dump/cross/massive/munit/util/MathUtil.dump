@@ -1,0 +1,14 @@
+class massive.munit.util.MathUtil{
+	public new(method) : Void -> Void
+
+	 = function() = {
+	};
+
+	static public round(method) : value : Float -> precision : Int -> Float
+
+	 = function(value:Float,precision:Int) = {
+		value = value * Math.pow(10,precision);
+		return Math.round(value) / Math.pow(10,precision);
+	};
+
+}

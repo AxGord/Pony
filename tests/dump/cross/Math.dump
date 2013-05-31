@@ -1,0 +1,68 @@
+extern class Math{
+	static public PI((default,null)) : Float;
+
+	static public NEGATIVE_INFINITY((default,null)) : Float;
+
+	static public POSITIVE_INFINITY((default,null)) : Float;
+
+	static public NaN((default,null)) : Float;
+
+	static public abs(method) : v : Float -> Float;
+
+	static public min(method) : a : Float -> b : Float -> Float;
+
+	static public max(method) : a : Float -> b : Float -> Float;
+
+	static public sin(method) : v : Float -> Float;
+
+	static public cos(method) : v : Float -> Float;
+
+	static public tan(method) : v : Float -> Float;
+
+	static public asin(method) : v : Float -> Float;
+
+	static public acos(method) : v : Float -> Float;
+
+	static public atan(method) : v : Float -> Float;
+
+	static public atan2(method) : y : Float -> x : Float -> Float;
+
+	static public exp(method) : v : Float -> Float;
+
+	static public log(method) : v : Float -> Float;
+
+	static public pow(method) : v : Float -> exp : Float -> Float;
+
+	static public sqrt(method) : v : Float -> Float;
+
+	static public round(method) : v : Float -> Int;
+
+	static public floor(method) : v : Float -> Int;
+
+	static public ceil(method) : v : Float -> Int;
+
+	static public random(method) : Void -> Float;
+
+	static public ffloor(inline method) : v : Float -> Float
+
+	 = function(v:Float) = {
+		return Math.floor(v);
+	};
+
+	static public fceil(inline method) : v : Float -> Float
+
+	 = function(v:Float) = {
+		return Math.ceil(v);
+	};
+
+	static public fround(inline method) : v : Float -> Float
+
+	 = function(v:Float) = {
+		return Math.round(v);
+	};
+
+	static public isFinite(method) : f : Float -> Bool;
+
+	static public isNaN(method) : f : Float -> Bool;
+
+}

@@ -1,0 +1,30 @@
+class StringBuf{
+	public new(method) : Void -> Void
+
+	 = function() = {
+		this.b = StringBuf.__make();
+	};
+
+	b(var) : Dynamic;
+
+	static __make(var) : Dynamic
+
+	 = neko.Lib.load("std","buffer_new",0);
+
+	static __add(var) : Dynamic
+
+	 = neko.Lib.load("std","buffer_add",2);
+
+	static __add_char(var) : Dynamic
+
+	 = neko.Lib.load("std","buffer_add_char",2);
+
+	static __add_sub(var) : Dynamic
+
+	 = neko.Lib.load("std","buffer_add_sub",4);
+
+	static __to_string(var) : Dynamic
+
+	 = neko.Lib.load("std","buffer_string",1);
+
+}

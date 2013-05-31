@@ -1,24 +1,9 @@
 import massive.munit.TestSuite;
 
-import ArrKeyTest;
-import db.DBTest;
-import DictionaryTest;
-import events.DispatcherTest;
+import events.ListenerTest;
 import events.SignalTest;
-import events.WaiterTest;
-import ExampleTest;
-import fs.SimpleFileTest;
-import IntervalsTest;
-import magic.ArgsArrayTest;
-import magic.AsyncTest;
-import magic.PolymorphTest;
-import net.WebServerTest;
-import net.XSocketTest;
-import ObjKeyTest;
+import FunctionTest;
 import PriorityTest;
-import SpeedLimitTest;
-import StreamTest;
-import tpl.TplTest;
 
 /**
  * Auto generated Test Suite for MassiveUnit.
@@ -32,24 +17,9 @@ class TestSuite extends massive.munit.TestSuite
 	{
 		super();
 
-		add(ArrKeyTest);
-		add(db.DBTest);
-		add(DictionaryTest);
-		add(events.DispatcherTest);
+		add(events.ListenerTest);
 		add(events.SignalTest);
-		add(events.WaiterTest);
-		add(ExampleTest);
-		add(fs.SimpleFileTest);
-		add(IntervalsTest);
-		add(magic.ArgsArrayTest);
-		add(magic.AsyncTest);
-		add(magic.PolymorphTest);
-		add(net.WebServerTest);
-		add(net.XSocketTest);
-		add(ObjKeyTest);
+		add(FunctionTest);
 		add(PriorityTest);
-		add(SpeedLimitTest);
-		add(StreamTest);
-		add(tpl.TplTest);
 	}
 }

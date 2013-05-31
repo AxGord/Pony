@@ -1,0 +1,140 @@
+class neko.Boot{
+	static __tmp_str(method) : Void -> String
+
+	 = function() = {
+		return "<...>".__s;
+	};
+
+	static __enum_str(method) : e : Dynamic -> String
+
+	 = function(e:Dynamic) = {
+		if ((e.args == null))return e.tag);
+		var s = e.tag + "(".__s;
+		var i = 0;
+		var l = __dollar__asize(e.args);
+		var old = e.__string;
+		e.__string = neko.Boot.__tmp_str;
+		while ((i < l)) {
+			if ((i != 0))s += ",".__s);
+			try {
+				s += __dollar__string(e.args[i]);
+			}catch( err : Dynamic ) {
+				s += neko.Boot.__tmp_str();
+			};
+			i += 1;
+		};
+		e.__string = old;
+		return s + ")".__s;
+	};
+
+	static __interfLoop(method) : cc : Dynamic -> cl : Dynamic -> Bool
+
+	 = function(cc:Dynamic,cl:Dynamic) = {
+		if ((cc == null))return false);
+		if ((cc == cl))return true);
+		var intf = cc.__interfaces__;
+		if ((intf != null)){
+			var _g1 = 0,_g = cast intf.length;
+			while ((_g1 < _g)) {
+				var i = _g1 ++;
+				var i1 = intf[i];
+				if ((i1 == cl || neko.Boot.__interfLoop(i1,cl)))return true);
+			};
+		});
+		return neko.Boot.__interfLoop(cc.__super__,cl);
+	};
+
+	static __instanceof(method) : o : { __name__ : Unknown<13>, __enum__ : #Dynamic, __ename__ : Unknown<12>, __class__ : Unknown<11> } -> cl : #Dynamic -> Bool
+
+	 = function(o:{ __name__ : Unknown<13>, __enum__ : #Dynamic, __ename__ : Unknown<12>, __class__ : Unknown<11> },cl:#Dynamic) = {
+		if ((cl == Dynamic))return true);
+		{
+			var _g = __dollar__typeof(o);
+			switch ((_g)) {case 1: return cl == Int || cl == Float,case 2: return cl == Float || cl == Int && __dollar__int(o) == o,case 3: return cl == Bool,case 5: {
+				if ((cl == null))return false);
+				return neko.Boot.__interfLoop(o.__class__,cl) || o.__enum__ == cl || cl == Class && o.__name__ != null || cl == Enum && o.__ename__ != null;
+			},default: return false};
+		};
+	};
+
+	static __serialize(method) : o : { __enum__ : { __ename__ : { length : Int } }, __class__ : { __name__ : { length : Int } } } -> Array<Unknown<14>>
+
+	 = function(o:{ __enum__ : { __ename__ : { length : Int } }, __class__ : { __name__ : { length : Int } } }) = {
+		if ((o.__class__ != null)){
+			var n = o.__class__.__name__;
+			var x = __dollar__amake(n.length);
+			{
+				var _g1 = 0,_g = cast n.length;
+				while ((_g1 < _g)) {
+					var i = _g1 ++;
+					x[i] = n[i].__s;
+				};
+			};
+			return x;
+		});
+		if ((o.__enum__ != null)){
+			var n = o.__enum__.__ename__;
+			var x = __dollar__amake(n.length);
+			{
+				var _g1 = 0,_g = cast n.length;
+				while ((_g1 < _g)) {
+					var i = _g1 ++;
+					x[i] = n[i].__s;
+				};
+			};
+			return x;
+		});
+		throw "Can't serialize";
+	};
+
+	static __tagserialize(method) : o : { tag : Unknown<15>, __enum__ : { __ename__ : { length : Int } } } -> Array<Unknown<15>>
+
+	 = function(o:{ tag : Unknown<15>, __enum__ : { __ename__ : { length : Int } } }) = {
+		var n = o.__enum__.__ename__;
+		var x = __dollar__amake(n.length + 1);
+		{
+			var _g1 = 0,_g = cast n.length;
+			while ((_g1 < _g)) {
+				var i = _g1 ++;
+				x[i] = n[i].__s;
+			};
+		};
+		x[n.length] = o.tag;
+		return x;
+	};
+
+	static __unserialize(method) : v : Array<Unknown<17>> -> Unknown<16>
+
+	 = function(v:Array<Unknown<17>>) = {
+		if ((__dollar__typeof(v) != __dollar__tarray))throw "Invalid serialized class data");
+		{
+			var _g1 = 0,_g = cast __dollar__asize(v);
+			while ((_g1 < _g)) {
+				var i = _g1 ++;
+				if ((__dollar__typeof(v[i]) != __dollar__tstring))throw "Invalid serialized class data");
+			};
+		};
+		var cl = neko.Boot.__classes;
+		{
+			var _g1 = 0,_g = cast __dollar__asize(v);
+			while ((_g1 < _g)) {
+				var i = _g1 ++;
+				cl = __dollar__objget(cl,__dollar__hash(v[i]));
+				if ((cl == null))throw "Class not found " + Std.string(v));
+			};
+		};
+		if ((__dollar__typeof(cl) == __dollar__tobject)){
+			if ((cl.__name__ != null || cl.__ename__ != null))return cl.prototype);
+			if ((cl.__enum__ != null && __dollar__typeof(cl.tag) == __dollar__tstring))return cl);
+		});
+		throw "Invalid class " + Std.string(v);
+	};
+
+	static __init(method) : Void -> Void
+
+	 = function() = {
+		__dollar__exports.__unserialize = neko.Boot.__unserialize;
+		__dollar__exports.__classes = neko.Boot.__classes;
+	};
+
+}

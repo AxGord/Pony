@@ -1,0 +1,1 @@
+type haxe.io.BytesData = neko.NativeString

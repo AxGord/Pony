@@ -1,0 +1,1 @@
+private type _Map.Hashable = { hashCode : Void -> Int }

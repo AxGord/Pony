@@ -1,0 +1,171 @@
+class massive.munit.client.ExternalPrintClientJS implements massive.munit.client.ExternalPrintClient{
+	public new(method) : Void -> Void
+
+	 = function() = {
+	};
+
+	public serialiseToHTML(method) : value : Dynamic -> String
+
+	 = function(value:Dynamic) = {
+		var v = StringTools.htmlEscape(value);
+		v = v.split("\n").join("<br/>");
+		v = v.split(" ").join("&nbsp;");
+		v = v.split("\"").join("\\'");
+		return v;
+	};
+
+	public convertToJavaScript(method) : method : String -> ?args : Array<Dynamic> -> String
+
+	 = function(method:String,args:Array<Dynamic> = null) = {
+		var htmlArgs = [];
+		{
+			var _g = 0;
+			while ((_g < args.length)) {
+				var arg = args[_g];
+				++ _g;
+				var html = this.serialiseToHTML(Std.string(arg));
+				htmlArgs.push(html);
+			};
+		};
+		var jsCode;
+		if ((htmlArgs == null || htmlArgs.length == 0))jsCode = "addToQueue(\"" + method + "\")" else {
+			jsCode = "addToQueue(\"" + method + "\"";
+			{
+				var _g = 0;
+				while ((_g < htmlArgs.length)) {
+					var arg = htmlArgs[_g];
+					++ _g;
+					jsCode += ",\"" + arg + "\"";
+				};
+			};
+			jsCode += ")";
+		});
+		return jsCode;
+	};
+
+	public queue(method) : method : String -> ?args : Dynamic -> Bool
+
+	 = function(method:String,args:Dynamic = null) = {
+		var a = [];
+		if ((Std.is(args,Array)))a = a.concat(cast (args,Array)) else a.push(args));
+		return false;
+		var jsCode = this.convertToJavaScript(method,a);
+		return false;
+	};
+
+	public printSummary(method) : value : String -> Void
+
+	 = function(value:String) = {
+		this.queue("printSummary",value);
+	};
+
+	public addCoverageSummary(method) : value : String -> Void
+
+	 = function(value:String) = {
+		this.queue("addCoverageSummary",value);
+	};
+
+	public addCoverageReportSection(method) : name : String -> value : String -> Void
+
+	 = function(name:String,value:String) = {
+		this.queue("addCoverageReportSection",[name,value]);
+	};
+
+	public addMissingCoverageClass(method) : className : String -> ?percent : Float -> Void
+
+	 = function(className:String,percent:Float = 0) = {
+		this.queue("addMissingCoverageClass",[className,percent]);
+	};
+
+	public createCoverageReport(method) : ?percent : Float -> Void
+
+	 = function(percent:Float = 0) = {
+		this.queue("createCoverageReport",percent);
+	};
+
+	public addTestClassCoverageItem(method) : value : String -> Void
+
+	 = function(value:String) = {
+		this.queue("addTestCoverageItem",value);
+	};
+
+	public addTestClassCoverage(method) : className : String -> ?percent : Float -> Void
+
+	 = function(className:String,percent:Float = 0) = {
+		this.queue("addTestCoverageClass",[className,percent]);
+	};
+
+	public addTestIgnore(method) : value : String -> Void
+
+	 = function(value:String) = {
+		this.queue("addTestIgnore",value);
+	};
+
+	public addTestError(method) : value : String -> Void
+
+	 = function(value:String) = {
+		this.queue("addTestError",value);
+	};
+
+	public addTestFail(method) : value : String -> Void
+
+	 = function(value:String) = {
+		this.queue("addTestFail",value);
+	};
+
+	public addTestPass(method) : value : String -> Void
+
+	 = function(value:String) = {
+		if ((value == null))return);
+		this.queue("addTestPass",value);
+	};
+
+	public setTestClassResult(method) : resultType : Int -> Void
+
+	 = function(resultType:Int) = {
+		this.queue("setTestClassResult",resultType);
+	};
+
+	public printToTestClassSummary(method) : value : String -> Void
+
+	 = function(value:String) = {
+		this.queue("updateTestSummary",value);
+	};
+
+	public createTestClass(method) : className : String -> Void
+
+	 = function(className:String) = {
+		this.queue("createTestClass",className);
+	};
+
+	public trace(method) : value : Dynamic -> Void
+
+	 = function(value:Dynamic) = {
+		this.queue("munitTrace",value);
+	};
+
+	public setResultBackground(method) : value : Bool -> Void
+
+	 = function(value:Bool) = {
+		this.queue("setResultBackground",value);
+	};
+
+	public setResult(method) : value : Bool -> Void
+
+	 = function(value:Bool) = {
+		this.queue("setResult",value);
+	};
+
+	public printLine(method) : value : String -> Void
+
+	 = function(value:String) = {
+		this.queue("munitPrintLine",value);
+	};
+
+	public print(method) : value : String -> Void
+
+	 = function(value:String) = {
+		this.queue("munitPrint",value);
+	};
+
+}
