@@ -12,5 +12,5 @@ Write documentation.
 
 <h2>Tests</h2>
 <pre>
-Tests: 66  Passed: 66  Failed: 0 Errors: 0 Ignored: 0 Time: 0.831
+Tests: 31  Passed: 31  Failed: 0 Errors: 0 Ignored: 0 Time: 0.008
 </pre>

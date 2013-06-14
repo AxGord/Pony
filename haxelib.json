@@ -1,0 +1,12 @@
+{
+  "name": "pony",
+  "url": "https://github.com/AxGord/Pony",
+  "license": "BSD",
+  "tags": ["cross"],
+  "description": "HaXe cross-library",
+  "version": "0.1.1",
+  "releasenote": "haxe3 support",
+  "contributors": ["AxGord"],
+  "dependencies": {
+  }
+}
