@@ -44,7 +44,7 @@ class DeltaTime {
 		if (signal != null) signal.add(tick);
 	}
 	
-	public static function tick():Void {
+	private static function tick():Void {
 		update.dispatch(value = get());
 		set();
 	}

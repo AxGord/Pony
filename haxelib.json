@@ -4,8 +4,8 @@
   "license": "BSD",
   "tags": ["cross"],
   "description": "HaXe cross-library",
-  "version": "0.1.1",
-  "releasenote": "haxe3 support",
+  "version": "0.1.2",
+  "releasenote": "FlashDevelop: Include files marked as Always Compile",
   "contributors": ["AxGord"],
   "dependencies": {
   }
