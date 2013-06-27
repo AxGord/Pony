@@ -67,4 +67,14 @@ class FLExtends {
 	
 	public static function rect(r:Rectangle):Rect<Float> return { x: r.x, y: r.y, width: r.width, height: r.height };
 	
+	static public function border(rect:Rectangle, x:Float, ?y:Float):Rectangle {
+		var r = rect.clone();
+		if (y == null) y = x;
+		r.x += x;
+		r.y += y;
+		r.width -= x * 2;
+		r.height -= y * 2;
+		return r;
+	}
+	
 }
