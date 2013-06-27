@@ -18,6 +18,8 @@ class XSocketUnit extends SocketUnit
 	
 	private var xParent(getXparent, null):XSocket<Dynamic>;
 	
+	public var daddy:Bool = false;
+	
 	private function getXparent():XSocket<Dynamic> {
 		#if flash
 		return untyped __as__(parent, XSocket);
@@ -29,7 +31,7 @@ class XSocketUnit extends SocketUnit
 	override private function init():Void 
 	{
 		//trace(321);
-		send('<?xsocket?>');
+		send('<?xsocket:'+xParent.age+'?>');
 		xw.run(close);
 	}
 	
@@ -67,15 +69,28 @@ class XSocketUnit extends SocketUnit
 		if (xw != null) {
 			xw.abort();
 			xw = null;
-			if (d != '<?xsocket?>') {
+			//trace(d);
+			if (d.substr(0,9) != '<?xsocket' || d.substr(-2) != '?>') {
 				close();
 				if (parent.mode == 'client')
 					parent.sockError();
+			} else {
+				parent.socketInit(this);
+				var a:Array<String> = d.split(':');
+				if (a.length > 1) {
+					var age:Float = Std.parseFloat(a[1].substr(0, a[1].length - 2));
+					//trace(age);
+					//trace(xParent.age);
+					if (xParent.age < age)
+						parent.dispatch(XSocket.SYNC, this);
+					else
+						daddy = true;
+					//trace('ok');
+				}
 			}
-			else parent.socketInit(this);
 			return;
 		}
-		
+		//trace(d);
 		var x:Xml;
 		try {
 			x = Xml.parse(d);

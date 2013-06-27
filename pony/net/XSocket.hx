@@ -1,6 +1,7 @@
 package pony.net;
 
 import haxe.Serializer;
+import haxe.Timer;
 import haxe.Unserializer;
 import pony.net.SocketUnit;
 import pony.XMLTools;
@@ -12,13 +13,21 @@ import pony.XMLTools;
 
 class XSocket<T> extends Socket
 {
-	public var target:Dynamic;
+	public static var SYNC:String = 'sync';
+	
+	public var target:T;
 	
 	public var xsockets(getXSockets, null):Array<XSocketUnit>;
 
 	private var gw:Array<{n: String, f: Dynamic->Void}>;
 	private var sw:Array<{n: String, v: Dynamic}>;
 	private var cw:Array<{n: String, args:Array<Dynamic>, f: Dynamic->Void}>;
+	
+	public var age:Float;
+	
+	public var syncInterval(null, setSI):Int;
+	
+	private var syncTimer:Timer;
 	
 	public function new(_retime:Int=500, delay:Int=-1, ?target:T) {
 		this.target = target;
@@ -30,6 +39,24 @@ class XSocket<T> extends Socket
 		sw = [];
 		cw = [];
 		addListener(Socket.ACTIVE, onActive);
+		age = Timer.stamp();
+	}
+	
+	private function setSI(delay:Int):Int {
+		if (syncTimer != null) {
+			syncTimer.stop();
+			syncTimer = null;
+		}
+		if (delay > 0) {
+			syncTimer = new Timer(delay);
+			syncTimer.run = syncall;
+		}
+		return delay;
+	}
+	
+	public function syncall():Void {
+		for (u in xsockets)
+			if (!u.daddy) dispatch(SYNC, u);
 	}
 	
 	private function getXSockets():Array<XSocketUnit> return untyped sockets

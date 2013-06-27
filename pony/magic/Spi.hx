@@ -32,6 +32,7 @@ package pony.magic;
 import haxe.macro.Expr;
 import haxe.macro.Context;
 import pony.macro.MacroTool;
+import haxe.macro.Type;
 
 using Lambda;
 using pony.macro.MacroExtensions;
@@ -51,17 +52,20 @@ interface Spi implements Declarator { }
  * ...
  * @author AxGord
  */
-@:macro class SpiBuilder 
+class SpiBuilder 
 {
 
-	public static function build():Array<Field> {
+	@:macro public static function build():Array<Field> {
 		var fields:Array<Field> = Context.getBuildFields();
+		if (Context.getLocalClass().get().isInterface) return fields;
 		var prSignals:Array<Field> = [];
 		var pubSignals:Array<Field> = [];
 		var prObj:Array<{ field : String, expr : Expr}> = [];
 		var pubObj:Array<{ field : String, expr : Expr}> = [];
+		var fNames:Array<String> = [];
 		for (f in fields)
 		{
+			fNames.push(f.name);
 			switch(f.kind) {
 				case FVar(t, e):
 					for (m in f.meta)
@@ -120,10 +124,24 @@ interface Spi implements Declarator { }
 				default:
 			}
 		}
+		if (fieldExists('spi'))
 		fields.push( { pos: Context.currentPos(), name: 'spi', meta: [], kind: FVar(TAnonymous(prSignals), EObjectDecl(prObj).expr()), doc: null, access: [APublic] } );
+		if (fieldExists('SPI'))
 		fields.push( { pos: Context.currentPos(), name: 'SPI', meta: [], kind: FVar(TAnonymous(pubSignals), EObjectDecl(pubObj).expr()), doc: null, access: [APublic, AStatic] } );
 		
 		
 		return fields;
 	}
+	
+	#if macro
+	public static function fieldExists(field:String):Bool {
+		var c:ClassType = Context.getLocalClass().get();
+		for (f in c.fields.get()) if (f.name == field) return true;
+		while (c.superClass != null) {
+			c = c.superClass.t.get();
+			for (f in c.fields.get()) if (f.name == field) return true;
+		}
+		return false;
+	}
+	#end
 }

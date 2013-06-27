@@ -25,7 +25,7 @@ class _SocketUnit implements Declarator
 	public var DATA:Signal = new Signal();
 	public var CLOSE:Signal = new Signal();
 	
-	public var bufferSize:Int = 1024;
+	public var bufferSize:Int = 1024*10;
 	private var buffer:NativeArray<Byte> = new NativeArray<Byte>(bufferSize);
 	
 	private var closed:Bool = false;

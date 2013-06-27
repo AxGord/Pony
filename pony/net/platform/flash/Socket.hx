@@ -16,18 +16,32 @@ class Socket extends SocketBase
 
 	override private function _connect(host:String, port:Int):Void {
 		var s:flash.net.Socket = new flash.net.Socket(host, port);
-		s.addEventListener(Event.CONNECT, function(event:Event) {
-			if (enabled)
-				createSocket(s);
-			else {
-				s.close();
-			}
-		});
-		s.addEventListener(IOErrorEvent.IO_ERROR, function(event:IOErrorEvent) sockError());
+		s.addEventListener(Event.CONNECT, onConnect);
+		s.addEventListener(IOErrorEvent.IO_ERROR, ioError);
         s.addEventListener(SecurityErrorEvent.SECURITY_ERROR, securityErrorHandler);
 	}
 	
+	private function onConnect(event:Event):Void {
+		if (enabled)
+			createSocket(cast(event.target, flash.net.Socket));
+		else {
+			event.target.close();
+		}
+	}
+	
+	private function ioError(event:IOErrorEvent):Void {
+		removeListeners(cast(event.target, flash.net.Socket));
+		sockError();
+	}
+	
+	private function removeListeners(s:flash.net.Socket):Void {
+		s.removeEventListener(Event.CONNECT, onConnect);
+		s.removeEventListener(IOErrorEvent.IO_ERROR, ioError);
+        //s.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, securityErrorHandler);
+	}
+	
 	private function securityErrorHandler(e:SecurityErrorEvent):Void {
+		removeListeners(cast(e.target, flash.net.Socket));
 		trace('securityError(mb need focus?)');
 	}
 	

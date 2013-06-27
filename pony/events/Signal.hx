@@ -94,7 +94,7 @@ class Signal implements ArgsArray
 	 * @see pony.events.Listener
 	 * @see pony.events.Event
 	 */
-	public function addListener(?l:Listener, ?he:Event->Void, ?hd:Dynamic, count:Int = Ultra.nullInt, priority:Int = Ultra.nullInt, delay:Int = Ultra.nullInt):Void {
+	public function addListener(?l:Listener, ?he:Event->Void, ?hd:Dynamic, count:Int = Ultra.nullInt, priority:Int = Ultra.nullInt, delay:Int = Ultra.nullInt):Signal {
 		if (l.notNull()) {
 			if (pList.exists(l)) throw 'Listener exists';
 		} else {
@@ -110,6 +110,8 @@ class Signal implements ArgsArray
 		l.addSignal(this);
 		if (pList.array.length == 1)
 			haveListener();
+			
+		return this;
 	}
 	
 	/**
@@ -150,7 +152,7 @@ class Signal implements ArgsArray
 	/**
 	 * Send only one argument: Listener or Event->Void or Function
 	 */
-	public function removeListener(?l:Listener, ?he:Event->Void, ?hd:Dynamic):Void {
+	public function removeListener(?l:Listener, ?he:Event->Void, ?hd:Dynamic):Signal {
 		switch ([l, he, hd].argCase()) {
 			case 1: pList.remove(l);
 			case 2: pList.remove(function(l:Listener) return l.handler == he);
@@ -158,6 +160,7 @@ class Signal implements ArgsArray
 		}
 		if (pList.array.length == 1)
 			lostListener();
+		return this;
 	}
 	
 	/**
@@ -193,9 +196,10 @@ class Signal implements ArgsArray
 	dynamic public function haveListener():Void {}
 	dynamic public function lostListener():Void { }
 	
-	public function removeAllListeners():Void {
+	public function removeAllListeners():Signal {
 		pList.clear();
 		lostListener();
+		return this;
 	}
 	
 }

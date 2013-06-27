@@ -67,4 +67,5 @@ class MacroTool
 	public function string():String {
 		return result.string();
 	}
+	
 }

@@ -75,7 +75,7 @@ interface Listen { }
 					ret: null, params: [], expr: EBlock([]).expr(), args: []
 				}), doc: null, access: [APublic] } );
 			}
-			fNew.kind.fun().expr.expr.block().unshift(EBlock(block).expr());
+			fNew.kind.fun().expr.expr.block().push(EBlock(block).expr());
 		}
 		
 		if (staticBlock.length > 0) {

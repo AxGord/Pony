@@ -29,6 +29,7 @@ package pony.magic;
 #if macro
 import haxe.macro.Expr;
 import haxe.macro.Context;
+import pony.fs.SimpleFile;
 import pony.fs.SimplePath;
 
 using Reflect;
@@ -53,6 +54,11 @@ class Inform
 	}
 	//#end
 	
+	@:macro public static function dir():Expr
+	{
+		return {expr: EConst(CString(SimplePath.dir(Context.getPosInfos(Context.currentPos()).file))), pos: Context.currentPos()};
+	}
+	
 	/*
 	@:macro public static function params():Expr {
 		
@@ -60,4 +66,13 @@ class Inform
 		return { pos: Context.currentPos(), expr: EBlock([]) };
 	}
 	*/
+	
+	@:macro public static function fileContent(n:String):Expr {
+		return {expr: EConst(CString(SimpleFile.getContent(n))), pos: Context.currentPos()};
+	}
+	
+	@:macro public static function fileContentFromCurrentDir(n:String):Expr {
+		return {expr: EConst(CString(SimpleFile.getContent(SimplePath.dir(Context.getPosInfos(Context.currentPos()).file)+n))), pos: Context.currentPos()};
+	}
+	
 }
