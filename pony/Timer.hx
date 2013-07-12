@@ -67,12 +67,6 @@ class Timer extends Signal {
 		removeAllListeners();
 	}
 	
-	public function reset():Void {
-		if (t == null) return;
-		stop();
-		start();
-	}
-	
 	public inline function setTickCount(count:Int):Timer {
 		add(function() if (--count == 0) clear(), 10000);
 		return this;

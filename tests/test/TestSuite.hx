@@ -3,7 +3,9 @@ import massive.munit.TestSuite;
 import events.ListenerTest;
 import events.SignalTest;
 import FunctionTest;
+import physics.TermoTest;
 import PriorityTest;
+import ToolsTest;
 
 /**
  * Auto generated Test Suite for MassiveUnit.
@@ -20,6 +22,8 @@ class TestSuite extends massive.munit.TestSuite
 		add(events.ListenerTest);
 		add(events.SignalTest);
 		add(FunctionTest);
+		add(physics.TermoTest);
 		add(PriorityTest);
+		add(ToolsTest);
 	}
 }

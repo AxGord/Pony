@@ -52,6 +52,8 @@ class Tools {
 		return true;
 	}
 	
+	inline public static function percentCalc(p:Float, min:Float, max:Float):Float return (max - min) * p + min;
+	
 	
 }
 
@@ -82,12 +84,34 @@ class FloatTools {
 		else
 			return a[0] + '.' + a[1] + StringTls.repeat('0', n - a[1].length);
 	}
+	
+	inline public static function inRange(v:Float, min:Float, max:Float):Bool return min <= v && v <= max;
+	
+	inline public static function approximately(a:Float, b:Float, range:Float=1):Bool return inRange(a, b - range, b + range);
 }
 
 class StringTls {
+	
 	public static function repeat(s:String, count:Int):String {
 		var r:String = '';
 		while (count-->0) r += s;
 		return r;
 	}
+	
+	inline public static function isTrue(s:String):Bool return StringTools.trim(s.toLowerCase()) == 'true';
+	
+	public static function explode(s:String, delimiters:Array<String>):Array<String> {
+		var r:Array<String> = [s];
+		for (d in delimiters) {
+			var sr:Array<String> = [];
+			for ( e in r ) for ( se in e.split(d) ) if (se != '') sr.push(se);
+			r = sr;
+		}
+		return r;
+	}
+	
+}
+
+class XmlTools {
+	inline public static function isTrue(x:haxe.xml.Fast, name:String):Bool return x.has.resolve(name) && StringTls.isTrue(x.att.resolve(name));
 }

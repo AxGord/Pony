@@ -34,6 +34,7 @@ import pony.events.Signal;
  */
 class DeltaTime {
 
+	public static var speed:Float = 1;
 	public static var update(default,null):Signal = new Signal();
 	public static var value(default,null):Float = 0;
 	
@@ -51,6 +52,6 @@ class DeltaTime {
 	
 	private inline static function set():Void t = Date.now().getTime();
 	
-	private inline static function get():Float return (Date.now().getTime() - t) / 1000;
+	private inline static function get():Float return (Date.now().getTime() - t) * speed / 1000;
 	
 }
