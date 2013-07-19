@@ -26,58 +26,81 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony;
+import pony.events.Listener;
+import pony.events.Signal;
+
 using pony.Tools;
 /**
- * Word wrap
+ * ...
  * @author AxGord
  */
-class WordWrap {
-
-	public static var newLine:Int = '\n'.charCodeAt(0);
-	public static var def:Int = '-'.charCodeAt(0);
-	public static var space:Int = ' '.charCodeAt(0);
+class DTimer {
 	
-	public static var splitChars:Array<String> = [' ', '-', '\t'];
+	public var hour:Int;
+	public var min:Int;
+	public var sec:Int;
+	public var forward:Bool;
+	
+	public var update:Signal;
+	public var updateVisual:Signal;
+	
+	private var sumdt:Float;
 
-	public static function wordWrap(str:String, width:Int):String {
-		var words:Array<String> = StringTls.explode(str, splitChars);
-
-		var curLineLength:Int = 0;
-		var strBuilder:StringBuf = new StringBuf();
-		for (word in words)
-		{
-			// If adding the new word to the current line would be too long,
-			// then put it on a new line (and split it up if it's too long).
-			if (curLineLength + word.length > width)
-			{
-				// Only move down to a new line if we have text on the current line.
-				// Avoids situation where wrapped whitespace causes emptylines in text.
-				if (curLineLength > 0)
-				{
-					strBuilder.addChar(newLine);
-					curLineLength = 0;
-				}
-
-				// If the current word is too long to fit on a line even on it's own then
-				// split the word up.
-				while (word.length > width)
-				{
-					strBuilder.addSub(word, 0, width - 1);
-					strBuilder.addChar(def);
-					word = word.substr(width - 1);
-					strBuilder.addChar(newLine);
-				}
-
-				// Remove leading whitespace from the word so the new line starts flush to the left.
-				word = StringTools.ltrim(word);
-			}
-			strBuilder.add(word);
-			strBuilder.addChar(space);
-			curLineLength += word.length;
-		}
-
-		return strBuilder.toString();
+	public function new(hour:Int = 0, min:Int = 0, sec:Int = 0, forward:Bool = true) {
+		update = new Signal();
+		updateVisual = new Signal();
+		var l:Listener = visual;
+		updateVisual.takeListeners.add(update.add.bind(l));
+		updateVisual.lostListeners.add(update.remove.bind(l));
+		//update.add(visual);
+		setTime(hour, min, sec);
+		this.forward = forward;
+		DeltaTime.update.add(_update);
 	}
-
+	
+	private function enableVisual():Void {
+		//update.add(visual);
+	}
+	
+	private function disableVisual():Void {
+		update.remove(visual);
+	}
+	
+	public function setTime(hour:Int=0,min:Int=0,sec:Int=0) {
+		this.hour = hour;
+		this.min = min;
+		this.sec = sec;
+		update.dispatch(hour, min, sec);
+	}
+	
+	private function _update(dt:Float):Void {
+		sumdt += dt;
+		var updated:Bool = sumdt > 1;
+		while (sumdt > 1) {
+			sumdt--;
+			sec++;
+			if (sec > 59) {
+				min++;
+				sec = 0;
+				if (min > 59) {
+					hour++;
+					min = 0;
+					if (hour > 23)
+						hour = 0;
+				}
+			}
+		}
 		
+		if (updated)
+			update.dispatch(hour, min, sec);
+	}
+	
+	private function visual():Void {
+		updateVisual.dispatch(toString());
+	}
+	
+	public function toString():String {
+		return hour + ':' + min.toFixed('00') + ':' + sec.toFixed('00');
+	}
+	
 }

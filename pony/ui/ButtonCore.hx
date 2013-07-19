@@ -224,8 +224,12 @@ class ButtonCore {
 		}
 	}
 	
+	public inline function sendVisual():Void {
+		changeVisual.dispatch(visualState, mode, false);//arg3???
+	}
+	
 	private function changeState(event:Event):Void {
-		switch [event.prev == null ? Default : event.prev.args[0], event.args[0]] {
+		switch [event.prev == null ? Default : event.prev.args[0], cast(event.args[0], ButtonStates)] {
 			case [Press, s]:
 				if (s != Leave) click.dispatch(mode);
 				killTimer();
@@ -250,8 +254,8 @@ class ButtonCore {
 	}
 	
 	private inline function killTimer():Void {
-		if (timer == null) return;
-		timer.clear();
+		if (timer != null)
+			timer.clear();
 	}
 	
 	private function set_sw(a:Array<Int>):Array<Int> {

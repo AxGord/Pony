@@ -25,59 +25,62 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony;
-using pony.Tools;
+package pony.unity3d.ui;
+
+import pony.events.Event;
+import pony.ui.ButtonCore;
+import unityEngine.Color;
+import unityEngine.Texture;
+
+using UnityHelper;
 /**
- * Word wrap
+ * ...
  * @author AxGord
  */
-class WordWrap {
+class TintButton extends Button {
 
-	public static var newLine:Int = '\n'.charCodeAt(0);
-	public static var def:Int = '-'.charCodeAt(0);
-	public static var space:Int = ' '.charCodeAt(0);
+	private var tint:Single = 0.2;
+	private var pressedTexture:Texture;
+	private var secondState:Texture;
+	private var defaultTexture:Texture;
+	private var sclr:Color;
 	
-	public static var splitChars:Array<String> = [' ', '-', '\t'];
-
-	public static function wordWrap(str:String, width:Int):String {
-		var words:Array<String> = StringTls.explode(str, splitChars);
-
-		var curLineLength:Int = 0;
-		var strBuilder:StringBuf = new StringBuf();
-		for (word in words)
-		{
-			// If adding the new word to the current line would be too long,
-			// then put it on a new line (and split it up if it's too long).
-			if (curLineLength + word.length > width)
-			{
-				// Only move down to a new line if we have text on the current line.
-				// Avoids situation where wrapped whitespace causes emptylines in text.
-				if (curLineLength > 0)
-				{
-					strBuilder.addChar(newLine);
-					curLineLength = 0;
-				}
-
-				// If the current word is too long to fit on a line even on it's own then
-				// split the word up.
-				while (word.length > width)
-				{
-					strBuilder.addSub(word, 0, width - 1);
-					strBuilder.addChar(def);
-					word = word.substr(width - 1);
-					strBuilder.addChar(newLine);
-				}
-
-				// Remove leading whitespace from the word so the new line starts flush to the left.
-				word = StringTools.ltrim(word);
-			}
-			strBuilder.add(word);
-			strBuilder.addChar(space);
-			curLineLength += word.length;
-		}
-
-		return strBuilder.toString();
+	override function Start() {
+		super.Start();
+		defaultTexture = getGuiTexture().texture;
+		sclr = getGuiTexture().color;
+		core.changeVisual.add(change);
+		core.sendVisual();
 	}
-
+	
+	function change(event:Event) {
+		if (event.args[1] == 1) {
+			if (pressedTexture != null) {
+				getGuiTexture().texture = pressedTexture;
+				getGuiTexture().color = sclr;
+			} else
+				getGuiTexture().color = new Color(sclr.r - tint / 2, sclr.g - tint / 2, sclr.b - tint / 2);
+			return;
+		}
 		
+		if (event.args[1] == 2 && secondState != null) 
+			getGuiTexture().texture = secondState;
+		else if (pressedTexture != null || secondState != null) {
+			getGuiTexture().texture = defaultTexture;
+		}
+		switch (cast(event.args[0], ButtonStates)) {
+			case ButtonStates.Focus | ButtonStates.Leave:
+				getGuiTexture().color = new Color(sclr.r + tint, sclr.g + tint, sclr.b + tint);
+			case ButtonStates.Default:
+				getGuiTexture().color = sclr;
+			case ButtonStates.Press:
+				if (pressedTexture != null) {
+					getGuiTexture().texture = pressedTexture;
+					getGuiTexture().color = new Color(sclr.r - tint / 2, sclr.g - tint / 2, sclr.b - tint / 2);
+					
+				} else
+					getGuiTexture().color = new Color(sclr.r - tint, sclr.g - tint, sclr.b - tint);
+		}
+	}
+	
 }

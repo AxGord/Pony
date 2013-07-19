@@ -70,13 +70,14 @@ abstract Listener( Listener_ ) {
 	public function call(event:Event):Bool {
 		this.count--;
 		event._setListener(this);
-		var r:Dynamic = null;
-		if (this.event)
-			r = this.f._call([event]);
-		else
-			r = this.f._call(event.args.slice(0, this.f.count()));
+		var r:Bool = true;
+		if (this.event) {
+			if (this.f._call([event]) == false) r = false;
+		} else {
+			if (this.f._call(event.args.slice(0, this.f.count())) == false) r = false;
+		}
 		this.prev = event;
-		return r == null ? true : r;
+		return r;
 	}
 	
 	inline public function setCount(count:Int):Listener {

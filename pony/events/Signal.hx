@@ -55,7 +55,7 @@ class Signal {
 		takeListeners._init();
 	}
 	
-	public function _init():Void {
+	public inline function _init():Void {
 		listeners = new Priority<Listener>();
 	}
 	
@@ -78,7 +78,7 @@ class Signal {
 		listener._use();
 		var f:Bool = listeners.empty;
 		listeners.addElement(listener, priority);
-		if (f) takeListeners.dispatchArgs([]);
+		if (f && takeListeners != null) takeListeners.dispatchArgs([]);
 		return this;
 	}
 	
@@ -89,7 +89,7 @@ class Signal {
 		var f:Bool = listeners.empty;
 		listeners.removeElement(listener);
 		listener.unuse();
-		if (listeners.empty && !f) lostListeners.dispatchArgs([]);
+		if (listeners.empty && !f && lostListeners != null) lostListeners.dispatchArgs([]);
 		return this;
 	}
 	

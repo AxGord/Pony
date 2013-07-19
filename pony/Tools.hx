@@ -28,6 +28,7 @@
 package pony;
 
 import haxe.macro.Context;
+import haxe.macro.Expr;
 
 using Reflect;
 using Lambda;
@@ -73,16 +74,38 @@ class ArrayTools {
 }
 
 class FloatTools {
-	public static function toFixed(v:Float, n:Int):String {
+	
+	macro public static function toFixed(ex:Expr, mask:String):Expr {
+		var s:String;
+		if (mask.indexOf('.') != -1) {
+			s = '.';
+		} else if (mask.indexOf(',') != -1) {
+			s = ',';
+		} else s = '!';
+		var a:Array<String> = s == '!' ? [mask, ''] : mask.split(s);
+		if (s == '!') s = '.';
+		var beginS = a[0].length > 0 ? a[0].charAt(0) : '0';
+		var endS = a[1].length > 0 ? a[1].charAt(0) : '0';
+		return macro FloatTools._toFixed($a{[$ex, $v{a[1].length}, $v{a[0].length}, $v{s}, $v{beginS}, $v{endS}]});
+	}
+	
+	public static function _toFixed(v:Float, n:Int, begin:Int = 0, d:String='.', beginS:String='0', endS:String='0'):String {
+		if (begin != 0) {
+			var s:String = _toFixed(v, n, d, beginS, endS);
+			var a = s.split(d);
+			var d = begin - a[0].length;
+			return StringTls.repeat(beginS, d) + s;
+		}
+		
 		if (n == 0) return Std.string(Std.int(v));
 		var p:Float = Math.pow(10, n);
 		v = Std.int(v * p) / p;
 		var s:String = Std.string(v);
 		var a:Array<String> = s.split('.');
 		if (a.length <= 1)
-			return s + '.' + StringTls.repeat('0', n);
+			return s + d + StringTls.repeat(endS, n);
 		else
-			return a[0] + '.' + a[1] + StringTls.repeat('0', n - a[1].length);
+			return a[0] + d + a[1] + StringTls.repeat(endS, n - a[1].length);
 	}
 	
 	inline public static function inRange(v:Float, min:Float, max:Float):Bool return min <= v && v <= max;
