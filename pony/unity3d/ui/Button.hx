@@ -27,12 +27,13 @@
 **/
 package pony.unity3d.ui;
 
+import pony.DeltaTime;
 import pony.ui.ButtonCore;
-import unityEngine.Input;
-import unityEngine.MonoBehaviour;
-import unityEngine.Vector3;
+import pony.unity3d.Tooltip;
+import unityengine.Input;
+import unityengine.MonoBehaviour;
+import unityengine.Vector3;
 import pony.unity3d.Fixed2dCamera;
-using UnityHelper;
 
 /**
  * ...
@@ -41,6 +42,7 @@ using UnityHelper;
 
 class Button extends MonoBehaviour {
 	
+	public var tooltip:String = '';
 	private var autoSwith:Bool = false;
 	
 	public var core:ButtonCore;
@@ -55,6 +57,21 @@ class Button extends MonoBehaviour {
 		if (autoSwith) {
 			core.click.add(sw);
 		}
+		if (tooltip != '') {
+			core.change.sub([ButtonStates.Focus]).add(overDelay);
+			core.change.sub([ButtonStates.Default]).add(Tooltip.hideText);
+			core.change.sub([ButtonStates.Press]).add(Tooltip.hideText);
+			core.change.sub([ButtonStates.Leave]).add(Tooltip.hideText);
+			
+		}
+	}
+	
+	private function overDelay():Void {
+		DeltaTime.update.once(over);
+	}
+	
+	private function over():Void {
+		Tooltip.showText(tooltip, gameObject.layer, true);
 	}
 	
 	private function sw(mode:Int):Void {
@@ -62,7 +79,7 @@ class Button extends MonoBehaviour {
 	}
 	
 	function Update() {
-		var h = this.getGuiTexture().HitTest(new Vector3(Input.mousePosition.x - Fixed2dCamera.begin, Input.mousePosition.y));
+		var h = guiTexture.HitTest(new Vector3(Input.mousePosition.x - Fixed2dCamera.begin, Input.mousePosition.y));
 		var down = Input.GetMouseButton(0);
 		if (prevState != h) {
 			if (h) core.mouseOver(down);

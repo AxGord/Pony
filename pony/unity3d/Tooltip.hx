@@ -28,24 +28,24 @@
 package pony.unity3d;
 
 import cs.NativeArray;
+import pony.DeltaTime;
 import pony.WordWrap;
-import unityEngine.Color;
-import unityEngine.Font;
-import unityEngine.FontStyle;
-import unityEngine.GameObject;
-import unityEngine.GUIText;
-import unityEngine.GUITexture;
-import unityEngine.GUITexture;
-import unityEngine.MonoBehaviour;
-import unityEngine.Texture;
-import unityEngine.Time;
-import unityEngine.Resources;
-import unityEngine.Vector3;
-import unityEngine.Input;
-import unityEngine.Screen;
-import unityEngine.GUILayout;
-import unityEngine.Rect;
-using UnityHelper;
+import unityengine.Color;
+import unityengine.Font;
+import unityengine.FontStyle;
+import unityengine.GameObject;
+import unityengine.GUIText;
+import unityengine.GUITexture;
+import unityengine.GUITexture;
+import unityengine.MonoBehaviour;
+import unityengine.Texture;
+import unityengine.Time;
+import unityengine.Resources;
+import unityengine.Vector3;
+import unityengine.Input;
+import unityengine.Screen;
+import unityengine.GUILayout;
+import unityengine.Rect;
 
 /**
  * ...
@@ -55,7 +55,7 @@ using UnityHelper;
 class Tooltip extends MonoBehaviour {
 
 	public var text:String = 'tooltip';
-	public var lightPower:Single = 0.2;
+	public var colorMod:Color;
 	public var texture:Texture;
 	
 	public static var border:Single = 5;
@@ -66,18 +66,21 @@ class Tooltip extends MonoBehaviour {
 	public static var textObject:GameObject;
 	public static var guiTextObject:GUIText;
 	public static var guiTextureObject:GUITexture;
+	public static var r:Rect;
 	
 	private static var _texture:Texture;
+	private static var defaultColorMod:Color;
+	private static var _panel:Bool = false;
 	
 	private function Start():Void {
+		if (colorMod == null)
+			colorMod = defaultColorMod;
+		else
+			defaultColorMod = colorMod;
 		if (_texture == null) _texture = texture;
 	}
 	
 	private function Update():Void {
-		if (textObject != null) {
-			textObject.transform.position = new Vector3(Input.mousePosition.x/Screen.width, (Input.mousePosition.y+20)/Screen.height);
-			
-		}
 		if (overed == 0) return;
 		overed--;
 		if (overed == 0) {
@@ -90,7 +93,7 @@ class Tooltip extends MonoBehaviour {
 	private function OnMouseOver():Void {
 		if (overed == 2) return;
 		if (overed == 0) {
-			showText(text);
+			showText(text, gameObject.layer);
 			//trace('over');
 			lightUp();
 		}
@@ -99,53 +102,77 @@ class Tooltip extends MonoBehaviour {
 	
 	public function lightUp():Void {
 		if (savedColor != null) return;
-		savedColor = getRenderer().material.color;
-		getRenderer().material.color = new Color(savedColor.r+lightPower, savedColor.g+lightPower, savedColor.b+lightPower);
+		savedColor = renderer.material.color;
+		renderer.material.color = new Color(savedColor.r+colorMod.r, savedColor.g+colorMod.g, savedColor.b+colorMod.b);
 		
 	}
 	
 	public function lightDown():Void {
 		if (savedColor == null) return;
-		getRenderer().material.color = savedColor;
+		renderer.material.color = savedColor;
 		savedColor = null;
 	}
 	
 	
-	public static function showText(text:String):Void {
+	public static function showText(text:String, layer:Null<Int>, ?panel:Bool=false):Void {
 		if (textObject == null) {
-			
-			
 			textObject = new GameObject("GUIText Tooltip");
 			textObject.transform.position = new Vector3(0.5, 0.5);
-			guiTextObject = cast textObject.AddComponent('GUIText');
-			guiTextObject.material.color = new Color(1, 1, 1.0);
-			//guiTextObject.font = cast Resources.Load('ARIAL');
-			guiTextObject.fontSize = 18;
-			//guiTextObject.fontStyle = FontStyle.Bold;
+			
+			
 			
 			guiTextureObject = cast textObject.AddComponent('GUITexture');
 			guiTextureObject.texture = _texture;
-			guiTextureObject.color = new Color(0, 0, 0, 0.2);
+			//guiTextureObject.color = new Color(0, 0, 0, 0.2);
+			
+			guiTextObject = cast textObject.AddComponent('GUIText');
+			guiTextObject.material.color = new Color(0, 0, 0);
+			//guiTextObject.font = cast Resources.Load('ARIAL');
+			guiTextObject.fontSize = 14;
+			//guiTextObject.fontStyle = FontStyle.Bold;
+			
+			
 		}
+		_panel = panel;
+		if (layer != null)
+			textObject.layer = layer;
+				
 		guiTextObject.enabled = true;
 		guiTextureObject.enabled = true;
 		//guiTextObject.text = text;
 		guiTextObject.text = WordWrap.wordWrap(text, 10);
 		//formatGuiTextArea(guiTextObject, 100);
 		
-		var r:Rect = guiTextObject.GetScreenRect();
-		var w = Screen.width;
+		r = guiTextObject.GetScreenRect();
+		var w = _panel ? Fixed2dCamera.SIZE : Screen.width - Fixed2dCamera.SIZE;
 		var h = Screen.height;
-		guiTextureObject.pixelInset = new Rect(w/2-border,h/2 - r.height-border,-w + r.width + border*2,-h + r.height + border*2);
+		guiTextureObject.pixelInset = new Rect(w / 2 - border, h / 2 - r.height - border, -w + r.width + border * 2, -h + r.height + border * 2);
+		
+		if (_panel) {
+			DeltaTime.update.add(moveTextPanel);
+			moveTextPanel();
+		} else {
+			DeltaTime.update.add(moveText);
+			moveText();			
+		}
 	}
 	
+	private static function moveTextPanel():Void {
+		textObject.transform.position = new Vector3(1 - (Screen.width - Input.mousePosition.x + (r.width + border * 2)/2) / Fixed2dCamera.SIZE, (Input.mousePosition.y+r.height + border*2)/Screen.height, 500);
+	}
+	
+	private static function moveText():Void {
+		textObject.transform.position = new Vector3(Input.mousePosition.x / (Screen.width - Fixed2dCamera.SIZE), Input.mousePosition.y/Screen.height, 500);
+	}
 	
 	public static function hideText():Void {
 		if (textObject == null) return;
 		guiTextObject.enabled = false;
 		guiTextureObject.enabled = false;
+		DeltaTime.update.remove(moveText);
+		DeltaTime.update.remove(moveTextPanel);
 	}
-	
+	/*
 	private function OnGUI() {
 		if (overed > 0) {
 			GUILayout.BeginArea(new Rect(Input.mousePosition.x, Screen.height - Input.mousePosition.y, Screen.width, Screen.height));
@@ -155,5 +182,5 @@ class Tooltip extends MonoBehaviour {
 			GUILayout.EndArea();
 		}
 	}
-	
+	*/
 }

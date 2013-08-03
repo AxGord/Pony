@@ -29,10 +29,9 @@ package pony.unity3d.ui;
 
 import pony.events.Event;
 import pony.ui.ButtonCore;
-import unityEngine.Color;
-import unityEngine.Texture;
+import unityengine.Color;
+import unityengine.Texture;
 
-using UnityHelper;
 /**
  * ...
  * @author AxGord
@@ -47,8 +46,8 @@ class TintButton extends Button {
 	
 	override function Start() {
 		super.Start();
-		defaultTexture = getGuiTexture().texture;
-		sclr = getGuiTexture().color;
+		defaultTexture = guiTexture.texture;
+		sclr = guiTexture.color;
 		core.changeVisual.add(change);
 		core.sendVisual();
 	}
@@ -56,30 +55,30 @@ class TintButton extends Button {
 	function change(event:Event) {
 		if (event.args[1] == 1) {
 			if (pressedTexture != null) {
-				getGuiTexture().texture = pressedTexture;
-				getGuiTexture().color = sclr;
+				guiTexture.texture = pressedTexture;
+				guiTexture.color = sclr;
 			} else
-				getGuiTexture().color = new Color(sclr.r - tint / 2, sclr.g - tint / 2, sclr.b - tint / 2);
+				guiTexture.color = new Color(sclr.r - tint / 2, sclr.g - tint / 2, sclr.b - tint / 2);
 			return;
 		}
 		
 		if (event.args[1] == 2 && secondState != null) 
-			getGuiTexture().texture = secondState;
+			guiTexture.texture = secondState;
 		else if (pressedTexture != null || secondState != null) {
-			getGuiTexture().texture = defaultTexture;
+			guiTexture.texture = defaultTexture;
 		}
 		switch (cast(event.args[0], ButtonStates)) {
 			case ButtonStates.Focus | ButtonStates.Leave:
-				getGuiTexture().color = new Color(sclr.r + tint, sclr.g + tint, sclr.b + tint);
+				guiTexture.color = new Color(sclr.r + tint, sclr.g + tint, sclr.b + tint);
 			case ButtonStates.Default:
-				getGuiTexture().color = sclr;
+				guiTexture.color = sclr;
 			case ButtonStates.Press:
 				if (pressedTexture != null) {
-					getGuiTexture().texture = pressedTexture;
-					getGuiTexture().color = new Color(sclr.r - tint / 2, sclr.g - tint / 2, sclr.b - tint / 2);
+					guiTexture.texture = pressedTexture;
+					guiTexture.color = new Color(sclr.r - tint / 2, sclr.g - tint / 2, sclr.b - tint / 2);
 					
 				} else
-					getGuiTexture().color = new Color(sclr.r - tint, sclr.g - tint, sclr.b - tint);
+					guiTexture.color = new Color(sclr.r - tint, sclr.g - tint, sclr.b - tint);
 		}
 	}
 	

@@ -28,10 +28,9 @@
 package pony.unity3d.ui;
 
 import pony.DTimer;
-import unityEngine.GUIText;
-import unityEngine.MonoBehaviour;
-import unityEngine.Time;
-using UnityHelper;
+import unityengine.GUIText;
+import unityengine.MonoBehaviour;
+import unityengine.Time;
 
 /**
  * ...
@@ -51,7 +50,7 @@ class Clock extends MonoBehaviour {
 	}
 	
 	private function showTimer(t:String):Void {
-		getGuiText().text = t;
+		guiText.text = t;
 	}
 	
 }

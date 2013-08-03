@@ -28,6 +28,7 @@
 package pony;
 
 using Lambda;
+using pony.Tools;
 /**
  * Dictionary
  * @author AxGord
@@ -46,7 +47,8 @@ class Dictionary<K, V>
 	}
 
 	private function getIndex(k:K):Int {
-		return ks.indexOf(k);
+		//return ks.indexOf(k);
+		return ks.superIndexOf(k);
 	}
 	
 	public function set(k:K, v:V):Void {

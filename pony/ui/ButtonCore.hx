@@ -69,6 +69,7 @@ class ButtonCore {
 	public var up(default, null):Signal;
 	public var select(default, null):Signal;
 	public var unselect(default, null):Signal;
+	public var onMode(default, null):Signal;	
 	
 	public var sw(default, set):Array<Int>;
 	
@@ -87,6 +88,7 @@ class ButtonCore {
 		tick = new Signal();
 		down = new Signal();
 		up = new Signal();
+		onMode = new Signal();
 		change.add(changeState);
 		waitUp = false;
 	}
@@ -221,6 +223,9 @@ class ButtonCore {
 		if (prevVisual != visualState || f || pmm) {
 			prevVisual = visualState;
 			changeVisual.dispatch(visualState, mode, f);
+		}
+		if (pmm) {
+			onMode.dispatch(mode);
 		}
 	}
 	

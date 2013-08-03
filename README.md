@@ -1,7 +1,7 @@
 <h1>Pony</h1>
 HaXe open-cross-library
-Ready for Haxe3
-<p><small>v0.1.4</small></p>
+Ready for Haxe3 and HUGS
+<p><small>v0.1.5/small></p>
 <p><small><a href="http://axgord.github.com/Pony/docs">Reference book</a></small></p>
 
 <h2>Installation</h2>

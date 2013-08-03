@@ -86,10 +86,10 @@ class Signal {
 	 * Send only one argument: Listener or Event->Void or Function
 	 */
 	public function remove(listener:Listener):Signal {
-		var f:Bool = listeners.empty;
+		if (listeners.empty) return this;
 		listeners.removeElement(listener);
 		listener.unuse();
-		if (listeners.empty && !f && lostListeners != null) lostListeners.dispatchArgs([]);
+		if (listeners.empty && lostListeners != null) lostListeners.dispatchArgs([]);
 		return this;
 	}
 	
@@ -104,8 +104,7 @@ class Signal {
 	}
 	
 	public inline function once(listener:Listener, priority:Int = 0):Signal {
-		listeners.addElement(listener.setCount(1), priority);
-		return this;
+		return add(listener.setCount(1), priority);
 	}
 	
 	/**
@@ -128,14 +127,21 @@ class Signal {
 		event.signal = this;
 		if (silent) return this;
 		for (l in listeners.data.copy()) {
-			var br:Bool = l.call(event) == false || event._stopPropagation;
+			var r:Bool;
+			try {
+				r = l.call(event);
+			} catch (e:Dynamic) {
+				remove(l);
+				throw e;
+			}
+			var br:Bool = r == false || event._stopPropagation;
 			if (l.count() == 0) remove(l);
 			if (br) break;
 		}
 		return this;
 	}
 	
-	public inline function dispatchArgs(args:Array<Dynamic>):Signal {
+	public inline function dispatchArgs(?args:Array<Dynamic>):Signal {
 		dispatchEvent(new Event(args));
 		return this;
 	}

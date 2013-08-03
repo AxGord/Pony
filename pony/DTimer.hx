@@ -31,7 +31,8 @@ import pony.events.Signal;
 
 using pony.Tools;
 /**
- * ...
+ * DeltaTime Timer, can work as Clock
+ * todo: timer events
  * @author AxGord
  */
 class DTimer {
@@ -52,20 +53,10 @@ class DTimer {
 		var l:Listener = visual;
 		updateVisual.takeListeners.add(update.add.bind(l));
 		updateVisual.lostListeners.add(update.remove.bind(l));
-		//update.add(visual);
 		setTime(hour, min, sec);
 		this.forward = forward;
 		DeltaTime.update.add(_update);
 	}
-	
-	private function enableVisual():Void {
-		//update.add(visual);
-	}
-	
-	private function disableVisual():Void {
-		update.remove(visual);
-	}
-	
 	public function setTime(hour:Int=0,min:Int=0,sec:Int=0) {
 		this.hour = hour;
 		this.min = min;

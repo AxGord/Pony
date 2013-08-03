@@ -5,6 +5,7 @@ import events.SignalTest;
 import FunctionTest;
 import physics.TermoTest;
 import PriorityTest;
+import TextCoderTest;
 import ToolsTest;
 
 /**
@@ -24,6 +25,7 @@ class TestSuite extends massive.munit.TestSuite
 		add(FunctionTest);
 		add(physics.TermoTest);
 		add(PriorityTest);
+		add(TextCoderTest);
 		add(ToolsTest);
 	}
 }

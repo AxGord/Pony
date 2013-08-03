@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2013 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -26,30 +26,37 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.flash;
+import haxe.Log;
+import haxe.macro.Context;
+import haxe.macro.Expr;
 import pony.events.Signal;
+#if !macro
 import flash.external.ExternalInterface;
+#end
+
 /**
- * ...
+ * Interface for ExternalInterface
  * @author AxGord
  */
 class Exterface extends Signal implements Dynamic<Exterface> {
-
+	public var name(default, null):String;
+	
+	#if !macro
 	public static var get:Exterface = new Exterface();
 	private static var map:Map<String, Exterface> = new Map<String, Exterface>();
-	
-	public var name(default, null):String;
-	public var call:Dynamic;
 	
 	private function new(?name:String) {
 		if (name != null) {
 			super();
 			this.name = name;
+			#if debug
+			trace('Add callback: $name');
+			#else
 			ExternalInterface.addCallback(name, cb);
+			#end
 			map.set(name, this);
-			call = Reflect.makeVarArgs(cll);
 		}
 	}
-	
 	private function cb(v:Array<Dynamic>):Void dispatchArgs(v);
 	
 	public function resolve(field:String):Exterface {
@@ -57,9 +64,34 @@ class Exterface extends Signal implements Dynamic<Exterface> {
 		return map.exists(s) ? map.get(s) : new Exterface(s);
 	}
 	
-	private function cll(args:Array<Dynamic>):Dynamic {
-		args.unshift(name);
-		return Reflect.callMethod(null, ExternalInterface.call, args);
+	public function callEmpty():Void {
+		#if !debug
+		ExternalInterface.call(name);
+		#else
+		trace('Call $name');
+		#end
 	}
+	
+	#end
+	
+	
+	macro public function call(ethis : Expr, args:Array<Expr>):Expr {
+		#if debug
+		//var arr:Array<Expr> = [Context.makeExpr(args, Context.currentPos())];
+		//var ae:Expr = Context.makeExpr(arr, Context.currentPos());
+		//trace(ethis);
+		return { expr: ECall({expr:EField(ethis,'_trace'), pos:Context.currentPos()}, [Context.makeExpr(args.length, Context.currentPos())]), pos: Context.currentPos()};
+		#else
+		args.unshift(macro $ethis.name);
+		return macro flash.external.ExternalInterface.call($a { args } );
+		#end
+	}
+	
+	#if debug
+	public function _trace(t:Dynamic):Dynamic {
+		trace('Call $name: $t');
+		return null;
+	}
+	#end
 	
 }

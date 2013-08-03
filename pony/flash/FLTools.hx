@@ -37,6 +37,7 @@ import flash.display.DisplayObject;
 import flash.display.StageScaleMode;
 import flash.display.StageAlign;
 import flash.display.DisplayObjectContainer;
+import pony.events.Signal;
 
 /**
  * Flash tools
@@ -186,5 +187,15 @@ class FLTools
 		
 		Lib.current.addChild(sprite);
 	}
-	
+	/*
+	public static function nextTick(o:DisplayObject):Signal {
+		var s:Signal = new Signal();
+		var f:Event->Void = null;
+		f = function(_):Void {
+			o.removeEventListener(Event.ENTER_FRAME, f);
+			s.dispatch();
+		}
+		o.addEventListener(Event.ENTER_FRAME, 
+	}
+	*/
 }

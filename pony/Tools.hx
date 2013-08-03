@@ -47,10 +47,25 @@ class Tools {
 	
 	public static function equal(a:Dynamic, b:Dynamic):Bool {
 		if (a == b) return true;
+		if (Std.is(a, Array)) {
+			if (Std.is(b, Array))
+				return ArrayTools.equal(a, b);
+			else
+				return false;
+		}
 		for (f in a.fields())
 			if (!b.hasField(f) || a.field(f) != b.field(f))
 				return false;
 		return true;
+	}
+	
+	public static function superIndexOf<T>(it:Iterable<T>, v:T):Int {
+		var i:Int = 0;
+		for (e in it) {
+			if (equal(e, v)) return i;
+			i++;
+		}
+		return -1;
 	}
 	
 	inline public static function percentCalc(p:Float, min:Float, max:Float):Float return (max - min) * p + min;

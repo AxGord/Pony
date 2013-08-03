@@ -30,8 +30,20 @@ package pony;
 import haxe.macro.Expr;
 import haxe.macro.Context;
 import pony.macro.Tools;
-
 using Lambda;
+
+#if cs
+import dotnet.system.reflection.FieldInfo;
+import cs.system.Type;
+import cs.NativeArray;
+import cs.internal.Function;
+import hugs.HUGSWrapper;
+typedef CSHash = {
+	o:Dynamic,
+	n:String
+}
+#end
+
 /**
  * Any function type!
  * @author AxGord
@@ -40,8 +52,12 @@ using Lambda;
 abstract Function( { f:Dynamic, count:Int, args:Array<Dynamic>, id:Int, used:Int } ) {
 	
 	public static var unusedCount:Int = 0;
-	//public static var list:Map<Int,Dynamic> = new Map<Int,Dynamic>();
+	#if cs
+	public static var cslist:Dictionary<CSHash, Function> = new Dictionary<CSHash, Function>();
+	public static var list:Dictionary<CSHash, Function> = new Dictionary<CSHash, Function>();
+	#else
 	public static var list:Dictionary<Dynamic, Function> = new Dictionary<Dynamic, Function>();
+	#end
 	private static var counter:Int = -1;
 	
 	private static var searchFree:Bool = false;
@@ -63,6 +79,19 @@ abstract Function( { f:Dynamic, count:Int, args:Array<Dynamic>, id:Int, used:Int
 	
 	static public function from(f:Dynamic, argc:Int):Function {
 		//var i:Int = list.indexOf(f);
+		#if cs
+		var h:CSHash = buildCSHash(f);
+		//trace(h);
+		//trace(cslist.exists(h));
+		if (cslist.exists(h))
+			return cslist.get(h);
+		else {
+			unusedCount++;
+			var o:Function = new Function(f, argc);
+			cslist.set(h, o);
+			return o;
+		}
+		#else
 		if (list.exists(f))
 			return list.get(f);
 		else {
@@ -71,7 +100,26 @@ abstract Function( { f:Dynamic, count:Int, args:Array<Dynamic>, id:Int, used:Int
 			list.set(f, o);
 			return o;
 		}
+		#end
 	}
+	
+	#if cs
+	private static function buildCSHash(f:Dynamic):CSHash {
+		if (Std.is(f, Closure)) {
+			return {o:untyped f.obj, n:untyped f.field};
+		} else {
+			var key:String = Std.string(f);
+			//trace(f);
+			var t:Type = untyped f.GetType();
+			var a:NativeArray<FieldInfo> = untyped __cs__('t.GetFields()');
+			var data:Array<Dynamic> = [];
+			for (e in new NativeArrayIterator<FieldInfo>(a)) {
+				data.push(Reflect.field(f, e.Name));
+			}
+			return {o:data, n:key};
+		}
+	}
+	#end
 	
     @:from static public inline function from0<R>(f:Void->R)
         return from(f,0);
@@ -124,7 +172,14 @@ abstract Function( { f:Dynamic, count:Int, args:Array<Dynamic>, id:Int, used:Int
 	inline public function unuse():Void {
 		this.used--;
 		if (this.used <= 0) {
+			#if cs
+			if (Std.is(this.f, Closure))
+				cslist.remove( buildCSHash(this.f) );
+			else
+				list.remove( buildCSHash(this.f) );
+			#else
 			list.remove(this.f);
+			#end
 			this = null;
 			unusedCount--;
 		}

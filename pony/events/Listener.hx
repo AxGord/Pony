@@ -28,6 +28,7 @@
 package pony.events;
 
 import pony.Dictionary;
+import pony.Function;
 
 using Lambda;
 
@@ -49,7 +50,7 @@ abstract Listener( Listener_ ) {
 	}
 	
 	@:from static public function fromEFunction(f:Event->Void):Listener
-		return _fromFunction(f, true);
+		return _fromFunction(Function.from1(f), true);
 	
 	@:from static public function fromFunction(f:Function):Listener
 		return _fromFunction(f, false);

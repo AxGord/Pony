@@ -27,12 +27,10 @@
 **/
 package pony.unity3d;
 
-import unityEngine.Camera;
-import unityEngine.MonoBehaviour;
-import unityEngine.Rect;
-import unityEngine.Screen;
-using UnityHelper;
-
+import unityengine.Camera;
+import unityengine.MonoBehaviour;
+import unityengine.Rect;
+import unityengine.Screen;
 /**
  * ...
  * @author AxGord
@@ -42,13 +40,18 @@ class Fixed2dCamera extends MonoBehaviour {
 	
 	public static var begin:Single = 0;
 	
+	public static var SIZE:Int;
 	public var size:Int = 100;
 	public var mainCamera:Camera;
+	
+	public function Start() {
+		SIZE = size;
+	}
 	
 	private function Update():Void {
 		begin = Screen.width - size;
 		mainCamera.pixelRect = new Rect(0, 0, begin, mainCamera.pixelRect.height);
-		this.getCamera().pixelRect = new Rect(begin, 0, size ,mainCamera.pixelRect.height);
+		camera.pixelRect = new Rect(begin, 0, size ,mainCamera.pixelRect.height);
 	}
 	
 }
