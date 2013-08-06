@@ -1,6 +1,10 @@
 package;
 
 import pony.events.Signal;
+
+enum Test {
+	O; D;
+}
 /**
  * ...
  * @author AxGord
@@ -11,6 +15,8 @@ class Main{
 		var s = new Signal();
 		s.add(function() trace(123));
 		s.dispatch();
+		
+		Test.createByName
 	}
 	
 }

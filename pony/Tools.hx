@@ -29,6 +29,8 @@ package pony;
 
 import haxe.macro.Context;
 import haxe.macro.Expr;
+import haxe.xml.Fast;
+import sys.io.File;
 
 using Reflect;
 using Lambda;
@@ -69,7 +71,6 @@ class Tools {
 	}
 	
 	inline public static function percentCalc(p:Float, min:Float, max:Float):Float return (max - min) * p + min;
-	
 	
 }
 
@@ -125,7 +126,8 @@ class FloatTools {
 	
 	inline public static function inRange(v:Float, min:Float, max:Float):Bool return min <= v && v <= max;
 	
-	inline public static function approximately(a:Float, b:Float, range:Float=1):Bool return inRange(a, b - range, b + range);
+	inline public static function approximately(a:Float, b:Float, range:Float = 1):Bool return inRange(a, b - range, b + range);
+	
 }
 
 class StringTls {
@@ -148,8 +150,28 @@ class StringTls {
 		return r;
 	}
 	
+	
+	macro public static function includeFile(file:String):Expr {
+		var s:String = File.getContent(file);
+		return macro $v{s};
+	}
+	
+	inline public static function parseProcent(s:String):Float {
+		if (s.indexOf('%') != -1)
+			return Std.parseInt(s) / 100;
+		else
+			return Std.parseFloat(s);
+	}
 }
 
 class XmlTools {
 	inline public static function isTrue(x:haxe.xml.Fast, name:String):Bool return x.has.resolve(name) && StringTls.isTrue(x.att.resolve(name));
+	//inline public static function includeFast(f:String):haxe.xml.Fast return new haxe.xml.Fast(Xml.parse(StringTls.includeFile(f)));
+	/*
+	macro public static function includeFast(file:String):Expr {
+		var s:String = File.getContent(file);
+		//var f:haxe.xml.Fast = new haxe.xml.Fast(Xml.parse(s));
+		return macro new haxe.xml.Fast(Xml.parse($v{s}));
+	}*/
+	inline public static function fast(text:String):Fast return new haxe.xml.Fast(Xml.parse(text));
 }

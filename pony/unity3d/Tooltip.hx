@@ -27,91 +27,37 @@
 **/
 package pony.unity3d;
 
-import cs.NativeArray;
 import pony.DeltaTime;
+import pony.events.LV.LV;
 import pony.WordWrap;
 import unityengine.Color;
-import unityengine.Font;
-import unityengine.FontStyle;
 import unityengine.GameObject;
 import unityengine.GUIText;
 import unityengine.GUITexture;
-import unityengine.GUITexture;
-import unityengine.MonoBehaviour;
-import unityengine.Texture;
-import unityengine.Time;
-import unityengine.Resources;
-import unityengine.Vector3;
 import unityengine.Input;
-import unityengine.Screen;
-import unityengine.GUILayout;
 import unityengine.Rect;
+import unityengine.Screen;
+import unityengine.Texture;
+import unityengine.Vector3;
+
+using hugs.HUGSWrapper;
 
 /**
  * ...
  * @author AxGord
  */
 
-class Tooltip extends MonoBehaviour {
-
-	public var text:String = 'tooltip';
-	public var colorMod:Color;
-	public var texture:Texture;
+class Tooltip {
 	
 	public static var border:Single = 5;
-	
-	private var overed:Int = 0;
-	private var savedColor:Color;
-	
 	public static var textObject:GameObject;
 	public static var guiTextObject:GUIText;
 	public static var guiTextureObject:GUITexture;
 	public static var r:Rect;
 	
-	private static var _texture:Texture;
-	private static var defaultColorMod:Color;
-	private static var _panel:Bool = false;
-	
-	private function Start():Void {
-		if (colorMod == null)
-			colorMod = defaultColorMod;
-		else
-			defaultColorMod = colorMod;
-		if (_texture == null) _texture = texture;
-	}
-	
-	private function Update():Void {
-		if (overed == 0) return;
-		overed--;
-		if (overed == 0) {
-			hideText();
-			//trace('out');
-			lightDown();
-		}
-	}
-	
-	private function OnMouseOver():Void {
-		if (overed == 2) return;
-		if (overed == 0) {
-			showText(text, gameObject.layer);
-			//trace('over');
-			lightUp();
-		}
-		overed = 2;
-	}
-	
-	public function lightUp():Void {
-		if (savedColor != null) return;
-		savedColor = renderer.material.color;
-		renderer.material.color = new Color(savedColor.r+colorMod.r, savedColor.g+colorMod.g, savedColor.b+colorMod.b);
-		
-	}
-	
-	public function lightDown():Void {
-		if (savedColor == null) return;
-		renderer.material.color = savedColor;
-		savedColor = null;
-	}
+	public static var texture:Texture;
+	public static var defaultColorMod:LV<Color> = new LV(null);
+	public static var panel:Bool = false;
 	
 	
 	public static function showText(text:String, layer:Null<Int>, ?panel:Bool=false):Void {
@@ -122,7 +68,7 @@ class Tooltip extends MonoBehaviour {
 			
 			
 			guiTextureObject = cast textObject.AddComponent('GUITexture');
-			guiTextureObject.texture = _texture;
+			guiTextureObject.texture = texture;
 			//guiTextureObject.color = new Color(0, 0, 0, 0.2);
 			
 			guiTextObject = cast textObject.AddComponent('GUIText');
@@ -133,7 +79,7 @@ class Tooltip extends MonoBehaviour {
 			
 			
 		}
-		_panel = panel;
+		Tooltip.panel = panel;
 		if (layer != null)
 			textObject.layer = layer;
 				
@@ -144,11 +90,11 @@ class Tooltip extends MonoBehaviour {
 		//formatGuiTextArea(guiTextObject, 100);
 		
 		r = guiTextObject.GetScreenRect();
-		var w = _panel ? Fixed2dCamera.SIZE : Screen.width - Fixed2dCamera.SIZE;
+		var w = panel ? Fixed2dCamera.SIZE : Screen.width - Fixed2dCamera.SIZE;
 		var h = Screen.height;
 		guiTextureObject.pixelInset = new Rect(w / 2 - border, h / 2 - r.height - border, -w + r.width + border * 2, -h + r.height + border * 2);
 		
-		if (_panel) {
+		if (panel) {
 			DeltaTime.update.add(moveTextPanel);
 			moveTextPanel();
 		} else {

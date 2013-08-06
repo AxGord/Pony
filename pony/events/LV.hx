@@ -41,9 +41,10 @@ class LV<T> extends Signal {
 	}
 	
 	public inline function set_value(v:T):T {
-		if (v == value) return v;
-		value = v;
-		dispatchArgs([v]);
+		if (v != value) {
+			value = v;
+			dispatchArgs([v]);
+		}
 		return v;
 	}
 	

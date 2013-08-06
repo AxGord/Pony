@@ -1,5 +1,6 @@
 package ;
 
+import haxe.xml.Fast;
 import massive.munit.util.Timer;
 import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
@@ -20,4 +21,15 @@ class ToolsTest
 		Assert.areEqual(number.toFixed('   ,00'), ' 54,70');
 	}
 	
+	@Test
+	public function includeFile():Void {
+		Assert.areEqual('test.txt'.includeFile(), 'Hello world!');
+	}
+	/*
+	@Test
+	public function includeFast():Void {
+		trace(new Fast(Xml.parse('<data>123</data>').firstElement()));
+		//Assert.areEqual(cast('test.xml'.includeFast(), Fast).node.data.node.text, 'Hello world!');
+	}
+	*/
 }
