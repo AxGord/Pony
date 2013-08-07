@@ -30,7 +30,6 @@ package pony;
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import haxe.xml.Fast;
-import sys.io.File;
 
 using Reflect;
 using Lambda;
@@ -55,10 +54,14 @@ class Tools {
 			else
 				return false;
 		}
-		for (f in a.fields())
-			if (!b.hasField(f) || a.field(f) != b.field(f))
-				return false;
-		return true;
+		var fields:Array<String> = a.fields();
+		if (fields.length > 0) {
+			for (f in fields)
+				if (!b.hasField(f) || a.field(f) != b.field(f))
+					return false;
+			return true;
+		}
+		return false;
 	}
 	
 	public static function superIndexOf<T>(it:Iterable<T>, v:T):Int {
@@ -152,7 +155,7 @@ class StringTls {
 	
 	
 	macro public static function includeFile(file:String):Expr {
-		var s:String = File.getContent(file);
+		var s:String = sys.io.File.getContent(file);
 		return macro $v{s};
 	}
 	

@@ -3,7 +3,7 @@ import massive.munit.TestSuite;
 import events.ListenerTest;
 import events.SignalTest;
 import FunctionTest;
-import physics.TermoTest;
+import physics.ThermoTest;
 import PriorityTest;
 import TextCoderTest;
 import ToolsTest;
@@ -23,7 +23,7 @@ class TestSuite extends massive.munit.TestSuite
 		add(events.ListenerTest);
 		add(events.SignalTest);
 		add(FunctionTest);
-		add(physics.TermoTest);
+		add(physics.ThermoTest);
 		add(PriorityTest);
 		add(TextCoderTest);
 		add(ToolsTest);

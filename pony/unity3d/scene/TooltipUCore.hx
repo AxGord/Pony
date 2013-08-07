@@ -10,6 +10,7 @@ import unityengine.Texture;
 import unityengine.Transform;
 
 using hugs.HUGSWrapper;
+using pony.unity3d.UnityHelper;
 
 /**
  * TooltipUCore
@@ -39,7 +40,7 @@ class TooltipUCore extends MonoBehaviour {
 		if (Tooltip.texture == null) Tooltip.texture = texture;
 		
 		var it:NativeArrayIterator<Transform> = cast gameObject.getComponentsInChildrenOfType(Transform);
-		subObjects = [for (e in it) if (e != transform) e];
+		subObjects = [for (e in it) if (e != transform && e.renderer != null) e];
 		subs = subObjects.length > 0;
 		
 		if (!subs) {
@@ -48,13 +49,13 @@ class TooltipUCore extends MonoBehaviour {
 		
 		savedColors = [];
 		
-		for (e in subObjects) {
+		var ovr:MouseHelper = getOrAddTypedComponent(MouseHelper);
+		ovr.over.add(overDelay);
+		ovr.out.add(out);
+		ovr.down.add(function()trace('click'));
+		
+		for (e in subObjects)
 			savedColors.push(e.renderer.material.color);
-			e.gameObject.addTypedComponent(BoxCollider);
-			var ovr:MouseHelper = e.gameObject.addTypedComponent(MouseHelper);
-			ovr.over.add(overDelay);
-			ovr.out.add(out);
-		}
 	}
 	
 	private function onDCL(cl:Color):Void {

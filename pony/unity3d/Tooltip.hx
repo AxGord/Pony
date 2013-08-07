@@ -51,42 +51,45 @@ class Tooltip {
 	
 	public static var border:Single = 5;
 	public static var textObject:GameObject;
-	public static var guiTextObject:GUIText;
-	public static var guiTextureObject:GUITexture;
+	private static var textureObject:GameObject;
+	private static var guiTextObject:GUIText;
+	private static var guiTextureObject:GUITexture;
 	public static var r:Rect;
 	
 	public static var texture:Texture;
 	public static var defaultColorMod:LV<Color> = new LV(null);
 	public static var panel:Bool = false;
 	
+	private static function init():Void {
+		
+		textureObject = new GameObject("GUIText Tooltip Texture");
+		guiTextureObject = cast textureObject.AddComponent('GUITexture');
+		guiTextureObject.texture = texture;
+		
+		textObject = new GameObject("GUIText Tooltip");
+		textObject.transform.position = new Vector3(0.5, 0.5);
+		guiTextObject = cast textObject.AddComponent('GUIText');
+		guiTextObject.material.color = new Color(0, 0, 0);
+		//guiTextObject.font = cast Resources.Load('ARIAL');
+		guiTextObject.fontSize = 14;
+			
+			
+	}
 	
 	public static function showText(text:String, layer:Null<Int>, ?panel:Bool=false):Void {
 		if (textObject == null) {
-			textObject = new GameObject("GUIText Tooltip");
-			textObject.transform.position = new Vector3(0.5, 0.5);
-			
-			
-			
-			guiTextureObject = cast textObject.AddComponent('GUITexture');
-			guiTextureObject.texture = texture;
-			//guiTextureObject.color = new Color(0, 0, 0, 0.2);
-			
-			guiTextObject = cast textObject.AddComponent('GUIText');
-			guiTextObject.material.color = new Color(0, 0, 0);
-			//guiTextObject.font = cast Resources.Load('ARIAL');
-			guiTextObject.fontSize = 14;
-			//guiTextObject.fontStyle = FontStyle.Bold;
-			
-			
+			init();
 		}
 		Tooltip.panel = panel;
-		if (layer != null)
+		if (layer != null) {
 			textObject.layer = layer;
+			textureObject.layer = layer;
+		}
 				
 		guiTextObject.enabled = true;
 		guiTextureObject.enabled = true;
 		//guiTextObject.text = text;
-		guiTextObject.text = WordWrap.wordWrap(text, 10);
+		guiTextObject.text = WordWrap.wordWrap(text, 100);
 		//formatGuiTextArea(guiTextObject, 100);
 		
 		r = guiTextObject.GetScreenRect();
@@ -104,11 +107,13 @@ class Tooltip {
 	}
 	
 	private static function moveTextPanel():Void {
-		textObject.transform.position = new Vector3(1 - (Screen.width - Input.mousePosition.x + (r.width + border * 2)/2) / Fixed2dCamera.SIZE, (Input.mousePosition.y+r.height + border*2)/Screen.height, 500);
+		textObject.transform.position = new Vector3(1 - (Screen.width - Input.mousePosition.x + r.width/2) / Fixed2dCamera.SIZE, (Input.mousePosition.y+r.height + border*2)/Screen.height, 500);
+		textureObject.transform.position = new Vector3(1 - (Screen.width - Input.mousePosition.x + r.width/2) / Fixed2dCamera.SIZE, (Input.mousePosition.y+r.height + border*2)/Screen.height, 499);
 	}
 	
 	private static function moveText():Void {
-		textObject.transform.position = new Vector3(Input.mousePosition.x / (Screen.width - Fixed2dCamera.SIZE), Input.mousePosition.y/Screen.height, 500);
+		textObject.transform.position = new Vector3((Input.mousePosition.x - r.width/2)/ (Screen.width - Fixed2dCamera.SIZE), (Input.mousePosition.y+r.height + border*2) / Screen.height, 500);
+		textureObject.transform.position = new Vector3((Input.mousePosition.x - r.width/2)/ (Screen.width - Fixed2dCamera.SIZE), (Input.mousePosition.y+r.height + border*2) / Screen.height, 499);
 	}
 	
 	public static function hideText():Void {

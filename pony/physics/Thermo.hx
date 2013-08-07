@@ -34,7 +34,7 @@ using pony.Tools;
  * Termo Box Logic
  * @author AxGord
  */
-class Termo {
+class Thermo {
 
 	static public var ROOM_TEMP:Float = 20;
 	static public var ROOM_WET:Float = 0.5;
@@ -51,6 +51,9 @@ class Termo {
 	public var tempTarget:Null<Float>;
 	public var air:Float;
 	public var wet(default, null):Float;
+	
+	@:isVar public var enabled(get, set):Bool = false;
+	
 	public var wetTarget:Null<Float>;
 	public var smoke:Float;
 	
@@ -79,26 +82,48 @@ class Termo {
 	
 	public function new(v:Float=9) {
 		this.v = v;
-		air = wet = smoke = 0;
+		air = smoke = 0;
 		kwTotal = kw = 0;
 		temp = ROOM_TEMP;
 		wet = ROOM_WET;
 		maxkw = v / 2;
 		evaporatorV = v / 10;
 		pumpPower = 0;
-		DeltaTime.update.add(termoUpdate);
-		DeltaTime.update.add(evaporatorUpdate);
-		DeltaTime.update.add(dehumidifierUpdate);
+		DeltaTime.update.add(roomUpdate);
 		DeltaTime.update.add(coolerUpdate);
 	}
 	
-	private function termoUpdate(dt:Float):Void {
-		var m = 50 / v;
-		if (m < 1) m = 1;
+	inline private function get_enabled():Bool return enabled;
+	
+	private function set_enabled(value:Bool):Bool {
+		if (enabled != value) value ? enable() : disable();
+		return enabled = value;
+	}
+	
+	private function enable():Void {
+		DeltaTime.update.add(termoUpdate);
+		DeltaTime.update.add(evaporatorUpdate);
+		DeltaTime.update.add(dehumidifierUpdate);
+		
+	}
+	
+	private function disable():Void {
+		DeltaTime.update.remove(termoUpdate);
+		DeltaTime.update.remove(evaporatorUpdate);
+		DeltaTime.update.remove(dehumidifierUpdate);
+	}
+	
+	private function roomUpdate(dt:Float):Void {
 		if (temp > ROOM_TEMP) {
 			temp -= (temp - ROOM_TEMP) * (getAirC() - 1) / 5 * dt;
 			if (temp < ROOM_TEMP) temp = ROOM_TEMP;
 		}
+	}
+	
+	
+	private function termoUpdate(dt:Float):Void {
+		var m = 50 / v;
+		if (m < 1) m = 1;
 		if (tempTarget != null) {
 			if (tempTarget > temp) {
 				kw = Math.floor(tempTarget / temp * 100) / 100 / m;

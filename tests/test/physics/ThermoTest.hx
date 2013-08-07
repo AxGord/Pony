@@ -4,17 +4,17 @@ import massive.munit.util.Timer;
 import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
 import pony.DeltaTime;
-import pony.physics.Termo;
+import pony.physics.Thermo;
 
 using pony.Tools;
 
-class TermoTest 
+class ThermoTest 
 {
 	
 	@Test
 	public function hour():Void
 	{
-		var t = new Termo();
+		var t = new Thermo();
 		t.tempTarget = 40;
 		DeltaTester.run(60 * 60);
 		//trace(t.temp);
@@ -26,7 +26,7 @@ class TermoTest
 	@Test
 	public function min():Void
 	{
-		var t = new Termo();
+		var t = new Thermo();
 		t.tempTarget = 40;
 		DeltaTester.run(60);
 		//trace(t.temp);
@@ -37,7 +37,7 @@ class TermoTest
 	
 	@Test
 	public function pump():Void {
-		var t = new Termo();
+		var t = new Thermo();
 		t.wetTarget = 0.8;
 		DeltaTester.run(60);
 		//trace(t.wet);
@@ -48,7 +48,7 @@ class TermoTest
 	
 	@Test
 	public function dehumidifier():Void {
-		var t = new Termo();
+		var t = new Thermo();
 		t.wetTarget = 0.3;
 		DeltaTester.run(60);
 		//trace(t.wet);
