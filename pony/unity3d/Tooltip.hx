@@ -1,5 +1,5 @@
-/**
-* Copyright (c) 2012 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+
+/* Copyright (c) 2012 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -29,6 +29,7 @@ package pony.unity3d;
 
 import pony.DeltaTime;
 import pony.events.LV.LV;
+import pony.Rect.Rect;
 import pony.WordWrap;
 import unityengine.Color;
 import unityengine.GameObject;
@@ -43,8 +44,9 @@ import unityengine.Vector3;
 using hugs.HUGSWrapper;
 
 /**
- * ...
+ * Tooltip
  * @author AxGord
+ * @author BoBaH6eToH
  */
 
 class Tooltip {
@@ -55,11 +57,15 @@ class Tooltip {
 	private static var guiTextObject:GUIText;
 	private static var guiTextureObject:GUITexture;
 	public static var r:Rect;
+	public static var lr:Rect;
+	
+	public static var longTextObject:GameObject;
+	public static var guiLongTextObject:GUIText;
 	
 	public static var texture:Texture;
 	public static var defaultColorMod:LV<Color> = new LV(null);
 	public static var panel:Bool = false;
-	
+		
 	private static function init():Void {
 		
 		textureObject = new GameObject("GUIText Tooltip Texture");
@@ -72,11 +78,17 @@ class Tooltip {
 		guiTextObject.material.color = new Color(0, 0, 0);
 		//guiTextObject.font = cast Resources.Load('ARIAL');
 		guiTextObject.fontSize = 14;
+		
+		longTextObject = new GameObject("GUIText Tooltip");
+		longTextObject.transform.position = new Vector3(0.5, 0.5);
+		guiLongTextObject = cast longTextObject.AddComponent('GUIText');
+		guiLongTextObject.material.color = new Color(0, 0, 0);
+		guiLongTextObject.fontSize = 10;
 			
 			
 	}
 	
-	public static function showText(text:String, layer:Null<Int>, ?panel:Bool=false):Void {
+	public static function showText(text:String, bigText:String = "", layer:Null<Int>, ?panel:Bool = false):Void {
 		if (textObject == null) {
 			init();
 		}
@@ -84,19 +96,33 @@ class Tooltip {
 		if (layer != null) {
 			textObject.layer = layer;
 			textureObject.layer = layer;
+			longTextObject.layer = layer;
 		}
 				
 		guiTextObject.enabled = true;
 		guiTextureObject.enabled = true;
-		//guiTextObject.text = text;
-		guiTextObject.text = WordWrap.wordWrap(text, 100);
+		
+		
+		guiTextObject.text = WordWrap.wordWrap(text, bigText == "" ? 30 : 50);
+		
 		//formatGuiTextArea(guiTextObject, 100);
 		
 		r = guiTextObject.GetScreenRect();
+		
 		var w = panel ? Fixed2dCamera.SIZE : Screen.width - Fixed2dCamera.SIZE;
 		var h = Screen.height;
-		guiTextureObject.pixelInset = new Rect(w / 2 - border, h / 2 - r.height - border, -w + r.width + border * 2, -h + r.height + border * 2);
 		
+		if ( bigText != "" )
+		{
+			guiLongTextObject.enabled = true;
+			guiLongTextObject.text = WordWrap.wordWrap(bigText, 75);	
+			lr = guiLongTextObject.GetScreenRect();
+			r.height += lr.height;
+			r.width = Math.max(r.width, lr.width);
+		} else
+			guiLongTextObject.enabled = false;
+		guiTextureObject.pixelInset = new Rect(w / 2 - border, h / 2 - r.height - border, -w + r.width + border * 2, -h + r.height + border * 2);
+			
 		if (panel) {
 			DeltaTime.update.add(moveTextPanel);
 			moveTextPanel();
@@ -108,18 +134,21 @@ class Tooltip {
 	
 	private static function moveTextPanel():Void {
 		textObject.transform.position = new Vector3(1 - (Screen.width - Input.mousePosition.x + r.width/2) / Fixed2dCamera.SIZE, (Input.mousePosition.y+r.height + border*2)/Screen.height, 500);
-		textureObject.transform.position = new Vector3(1 - (Screen.width - Input.mousePosition.x + r.width/2) / Fixed2dCamera.SIZE, (Input.mousePosition.y+r.height + border*2)/Screen.height, 499);
+		textureObject.transform.position = new Vector3(1 - (Screen.width - Input.mousePosition.x + r.width / 2) / Fixed2dCamera.SIZE, (Input.mousePosition.y + r.height + border * 2) / Screen.height, 499);
+		//longTextObject.transform.position = new Vector3(1 - (Screen.width - Input.mousePosition.x + lr.width / 2) / Fixed2dCamera.SIZE, (Input.mousePosition.y + lr.height + border * 2) / Screen.height, 499);
 	}
 	
 	private static function moveText():Void {
 		textObject.transform.position = new Vector3((Input.mousePosition.x - r.width/2)/ (Screen.width - Fixed2dCamera.SIZE), (Input.mousePosition.y+r.height + border*2) / Screen.height, 500);
-		textureObject.transform.position = new Vector3((Input.mousePosition.x - r.width/2)/ (Screen.width - Fixed2dCamera.SIZE), (Input.mousePosition.y+r.height + border*2) / Screen.height, 499);
+		textureObject.transform.position = new Vector3((Input.mousePosition.x - r.width / 2) / (Screen.width - Fixed2dCamera.SIZE), (Input.mousePosition.y + r.height + border * 2) / Screen.height, 499);
+		longTextObject.transform.position = new Vector3((Input.mousePosition.x - r.width/2)/ (Screen.width - Fixed2dCamera.SIZE), (Input.mousePosition.y+r.height + border*2 - 15) / Screen.height, 500);
 	}
 	
 	public static function hideText():Void {
 		if (textObject == null) return;
 		guiTextObject.enabled = false;
 		guiTextureObject.enabled = false;
+		guiLongTextObject.enabled = false;
 		DeltaTime.update.remove(moveText);
 		DeltaTime.update.remove(moveTextPanel);
 	}

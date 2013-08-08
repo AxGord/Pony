@@ -160,9 +160,9 @@ class StringTls {
 	}
 	
 	inline public static function parseProcent(s:String):Float {
-		if (s.indexOf('%') != -1)
-			return Std.parseInt(s) / 100;
-		else
+		if (s.indexOf('%') != -1) {
+			return Std.parseFloat(s.substr(0,s.length-1))/100;
+		} else
 			return Std.parseFloat(s);
 	}
 }

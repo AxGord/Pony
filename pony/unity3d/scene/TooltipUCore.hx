@@ -15,6 +15,7 @@ using pony.unity3d.UnityHelper;
 /**
  * TooltipUCore
  * @author AxGord <axgord@gmail.com>
+ * @author BoBaH6eToH
  */
 
 class TooltipUCore extends MonoBehaviour {
@@ -28,6 +29,7 @@ class TooltipUCore extends MonoBehaviour {
 	
 	private var subs:Bool;
 	private var subObjects:Array<Transform>;
+	private var ovr:MouseHelper;
 	
 	private function Start():Void {
 		if (colorMod == null || (colorMod.r == 0 && colorMod.g == 0 && colorMod.b == 0)) {
@@ -49,10 +51,11 @@ class TooltipUCore extends MonoBehaviour {
 		
 		savedColors = [];
 		
-		var ovr:MouseHelper = getOrAddTypedComponent(MouseHelper);
+		ovr = getOrAddTypedComponent(MouseHelper);
 		ovr.over.add(overDelay);
 		ovr.out.add(out);
-		ovr.down.add(function()trace('click'));
+		ovr.middleUp.add(pressOut);
+		ovr.middleDown.add(press);
 		
 		for (e in subObjects)
 			savedColors.push(e.renderer.material.color);
@@ -67,17 +70,31 @@ class TooltipUCore extends MonoBehaviour {
 	}
 	
 	private function overDelay2():Void {
-		DeltaTime.update.once(over);
+		if (ovr.overed) DeltaTime.update.once(over);
 	}
 	
 	private function over():Void {
-		Tooltip.showText(text, gameObject.layer);
+		if (!ovr.overed) return;
+		if (MouseHelper.middleMousePressed)
+			Tooltip.showText(text, bigText, gameObject.layer);
+		else
+			Tooltip.showText(text, gameObject.layer);
 		lightUp();
 	}
 	
 	private function out():Void {
 		Tooltip.hideText();
 		lightDown();
+	}
+	
+	private function pressOut():Void
+	{		
+		Tooltip.showText(text, gameObject.layer);
+	}
+	
+	private function press():Void
+	{
+		Tooltip.showText(text, bigText, gameObject.layer);
 	}
 	
 	public function lightUp():Void {

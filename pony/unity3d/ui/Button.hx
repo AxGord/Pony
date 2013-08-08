@@ -32,6 +32,7 @@ import pony.ui.ButtonCore;
 import pony.unity3d.Tooltip;
 import unityengine.Input;
 import unityengine.MonoBehaviour;
+import unityengine.Screen;
 import unityengine.Vector3;
 import pony.unity3d.Fixed2dCamera;
 
@@ -42,6 +43,7 @@ import pony.unity3d.Fixed2dCamera;
 
 class Button extends MonoBehaviour {
 	
+	public var panel:Bool = true;
 	public var tooltip:String = '';
 	private var autoSwith:Bool = false;
 	
@@ -79,7 +81,9 @@ class Button extends MonoBehaviour {
 	}
 	
 	function Update() {
-		var h = guiTexture.HitTest(new Vector3(Input.mousePosition.x - Fixed2dCamera.begin, Input.mousePosition.y));
+		var h = panel
+			? guiTexture.HitTest(new Vector3(Input.mousePosition.x - Fixed2dCamera.begin, Input.mousePosition.y))
+			: guiTexture.HitTest(new Vector3(Input.mousePosition.x +(Screen.width - Fixed2dCamera.begin)/2, Input.mousePosition.y));
 		var down = Input.GetMouseButton(0);
 		if (prevState != h) {
 			if (h) core.mouseOver(down);

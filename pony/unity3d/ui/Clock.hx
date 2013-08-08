@@ -45,6 +45,7 @@ class Clock extends MonoBehaviour {
 	
 	private function Start():Void {
 		timer = new DTimer(beginHour);
+		timer.start();
 		timer.updateVisual.add(showTimer);
 		showTimer(timer.toString());
 	}

@@ -40,28 +40,59 @@ class DTimer {
 	public var hour:Int;
 	public var min:Int;
 	public var sec:Int;
-	public var forward:Bool;
+	public var forward(default,null):Bool;
 	
 	public var update:Signal;
 	public var updateVisual:Signal;
+	public var updateVisual:Signal;
+	public var progress:Signal;
 	
 	private var sumdt:Float;
+	
+	public var startTime: { hour:Int, min:Int, sec:Int };
 
 	public function new(hour:Int = 0, min:Int = 0, sec:Int = 0, forward:Bool = true) {
 		update = new Signal();
 		updateVisual = new Signal();
-		var l:Listener = visual;
-		updateVisual.takeListeners.add(update.add.bind(l));
-		updateVisual.lostListeners.add(update.remove.bind(l));
+		progress = new Signal();
+		//var l:Listener = visual;
+		updateVisual.takeListeners.add(takeVisual);
+		updateVisual.lostListeners.add(lostVisual);
 		setTime(hour, min, sec);
 		this.forward = forward;
-		DeltaTime.update.add(_update);
 	}
-	public function setTime(hour:Int=0,min:Int=0,sec:Int=0) {
+	
+	private function takeVisual():Void {
+		update.add(visual);
+	}
+	
+	private function lostVisual():Void {
+		update.remove(visual);
+	}
+	
+	public function setTime(hour:Int = 0, min:Int = 0, sec:Int = 0):DTimer {
+		startTime = { hour:hour, min:min, sec:sec };
 		this.hour = hour;
 		this.min = min;
 		this.sec = sec;
 		update.dispatch(hour, min, sec);
+		return this;
+	}
+	
+	public function start():DTimer {
+		if (forward)
+			DeltaTime.update.add(_update);
+		else
+			DeltaTime.update.add(_updateBack);
+		return this;
+	}
+	
+	public function stop():DTimer {
+		if (forward)
+			DeltaTime.update.remove(_update);
+		else
+			DeltaTime.update.remove(_updateBack);
+		return this;
 	}
 	
 	private function _update(dt:Float):Void {
@@ -86,12 +117,40 @@ class DTimer {
 			update.dispatch(hour, min, sec);
 	}
 	
+	private function _updateBack(dt:Float):Void {
+		sumdt -= dt;
+		var updated:Bool = sumdt < 0;
+		while (sumdt < 0) {
+			sumdt++;
+			sec--;
+			if (sec < 0) {
+				min--;
+				sec = 59;
+				if (min < 0) {
+					hour--;
+					min = 59;
+					if (hour < 0)
+						hour = 23;
+				}
+			}
+		}
+		
+		if (updated)
+			update.dispatch(hour, min, sec);
+	}
+	
 	private function visual():Void {
 		updateVisual.dispatch(toString());
 	}
 	
 	public function toString():String {
-		return hour + ':' + min.toFixed('00') + ':' + sec.toFixed('00');
+		return hour.toFixed('00') + ':' + min.toFixed('00') + ':' + sec.toFixed('00');
+	}
+	
+	public function parse(s:String):DTimer {
+		var a = s.split(':');
+		setTime(Std.parseInt(a[0]), Std.parseInt(a[1]), Std.parseInt(a[2]));
+		return this;
 	}
 	
 }
