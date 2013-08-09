@@ -44,20 +44,26 @@ class DTimer {
 	
 	public var update:Signal;
 	public var updateVisual:Signal;
-	public var updateVisual:Signal;
 	public var progress:Signal;
+	public var complite:Signal;
+	
 	
 	private var sumdt:Float;
 	
 	public var startTime: { hour:Int, min:Int, sec:Int };
+	public var startTotal:Float;
+	public var total:Float;
 
 	public function new(hour:Int = 0, min:Int = 0, sec:Int = 0, forward:Bool = true) {
 		update = new Signal();
 		updateVisual = new Signal();
 		progress = new Signal();
+		complite = new Signal();
 		//var l:Listener = visual;
 		updateVisual.takeListeners.add(takeVisual);
 		updateVisual.lostListeners.add(lostVisual);
+		progress.takeListeners.add(takeProgress);
+		progress.lostListeners.add(lostProgress);
 		setTime(hour, min, sec);
 		this.forward = forward;
 	}
@@ -70,13 +76,27 @@ class DTimer {
 		update.remove(visual);
 	}
 	
+	private function takeProgress():Void {
+		update.add(_progress);
+	}
+	
+	private function lostProgress():Void {
+		update.remove(_progress);
+	}
+	
+	
 	public function setTime(hour:Int = 0, min:Int = 0, sec:Int = 0):DTimer {
 		startTime = { hour:hour, min:min, sec:sec };
 		this.hour = hour;
 		this.min = min;
 		this.sec = sec;
+		total = startTotal = hour * 60 * 60 + min * 60 + sec;
 		update.dispatch(hour, min, sec);
 		return this;
+	}
+	
+	public inline function reset():DTimer {
+		return setTime(startTime.hour, startTime.min, startTime.sec);
 	}
 	
 	public function start():DTimer {
@@ -97,6 +117,7 @@ class DTimer {
 	
 	private function _update(dt:Float):Void {
 		sumdt += dt;
+		total += dt;
 		var updated:Bool = sumdt > 1;
 		while (sumdt > 1) {
 			sumdt--;
@@ -119,6 +140,7 @@ class DTimer {
 	
 	private function _updateBack(dt:Float):Void {
 		sumdt -= dt;
+		total -= dt;
 		var updated:Bool = sumdt < 0;
 		while (sumdt < 0) {
 			sumdt++;
@@ -129,8 +151,12 @@ class DTimer {
 				if (min < 0) {
 					hour--;
 					min = 59;
-					if (hour < 0)
-						hour = 23;
+					if (hour < 0) {
+						//hour = 23;
+						stop();
+						hour = min = sec = 0;
+						complite.dispatch();
+					}
 				}
 			}
 		}
@@ -151,6 +177,13 @@ class DTimer {
 		var a = s.split(':');
 		setTime(Std.parseInt(a[0]), Std.parseInt(a[1]), Std.parseInt(a[2]));
 		return this;
+	}
+	
+	private function _progress():Void {
+		if (forward)
+			progress.dispatch(total / startTotal);
+		else
+			progress.dispatch(1 - total / startTotal);
 	}
 	
 }

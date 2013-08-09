@@ -82,7 +82,7 @@ class TooltipUCore extends MonoBehaviour {
 		lightUp();
 	}
 	
-	private function out():Void {
+	public function out():Void {
 		Tooltip.hideText();
 		lightDown();
 	}
