@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2013 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -88,6 +88,12 @@ class ArrayTools {
 	public static function thereIs<T>(a:Iterable<Array<T>>, b:Array<T>):Bool {
 		for (e in a) if (equal(e, b)) return true;
 		return false;
+	}
+	
+	public static function arithmeticMean(a:Array<Float>):Float {
+		var s:Float = 0;
+		for (e in a) s += e;
+		return s / a.length;
 	}
 	
 }

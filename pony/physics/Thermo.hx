@@ -100,7 +100,7 @@ class Thermo {
 		kwTotal = kw = 0;
 		temp = ROOM_TEMP;
 		wet = ROOM_WET;
-		maxkw = v / 2;
+		maxkw = v / 5;
 		evaporatorV = v / 10;
 		pumpPower = 0;
 		DeltaTime.update.add(roomUpdate);
