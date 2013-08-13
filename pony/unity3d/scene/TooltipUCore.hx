@@ -10,7 +10,6 @@ import unityengine.Texture;
 import unityengine.Transform;
 
 using hugs.HUGSWrapper;
-using pony.unity3d.UnityHelper;
 
 /**
  * TooltipUCore
