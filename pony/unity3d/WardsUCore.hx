@@ -10,6 +10,7 @@ import unityengine.Vector3;
 /**
  * Wards
  * @author AxGord <axgord@gmail.com>
+ * @author BoBaH6eToH <freezedunk@gmail.com>
  */
 
 class WardsUCore extends MonoBehaviour 
@@ -17,7 +18,7 @@ class WardsUCore extends MonoBehaviour
 	public var withRotation:Bool = true;
 	public var withTimeScale:Bool = true;
 	public var speed:Single = 200;
-	public var currentPos:Int = 0;
+	public var currentPos:Int = -1;
 	
 	public var target:GameObject;
 	private var wards:Array<Transform>;
@@ -33,6 +34,7 @@ class WardsUCore extends MonoBehaviour
 			if (t == null) break;
 			wards.push(t);
 		}
+		goto(0);
 	}
 	
 	public function goto(n:Int):Void {
@@ -56,6 +58,18 @@ class WardsUCore extends MonoBehaviour
 			toObj = null;
 			rn = 0;
 		}
+	}
+	
+	public function goNext():Void 
+	{
+		if (currentPos < wards.length-1) 
+			goto(currentPos + 1);
+	}
+	
+	public function goPrev():Void
+	{
+		if (currentPos > 0) 
+			goto(currentPos - 1);
 	}
 	
 }
