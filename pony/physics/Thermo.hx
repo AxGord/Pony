@@ -52,7 +52,7 @@ class Thermo {
 	//inline static public var WATER_C:Float = 4.183;
 
 
-	public var temp(default, null):Float;
+	public var temp:Float;
 	public var tempTarget:Null<Float>;
 	public var air:Float;
 	public var wet(default, null):Float;
@@ -72,6 +72,7 @@ class Thermo {
 	//Energy
 	public var kwTotal:Float;
 	public var kw:Float;
+	public var icekw:Float;
 	public var maxkw:Float;
 
 
@@ -119,6 +120,7 @@ class Thermo {
 
 	private function enable():Void {
 		DeltaTime.update.add(termoUpdate);
+		DeltaTime.update.add(freezeUpdate);
 		DeltaTime.update.add(evaporatorUpdate);
 		DeltaTime.update.add(dehumidifierUpdate);
 
@@ -128,6 +130,7 @@ class Thermo {
 
 	private function disable():Void {
 		DeltaTime.update.remove(termoUpdate);
+		DeltaTime.update.remove(freezeUpdate);
 		DeltaTime.update.remove(evaporatorUpdate);
 		DeltaTime.update.remove(dehumidifierUpdate);
 	}
@@ -135,7 +138,7 @@ class Thermo {
 
 	private function roomUpdate(dt:Float):Void {
 		if (temp > ROOM_TEMP) {
-			temp -= (temp - ROOM_TEMP) * (getAirC() - 1) / 5 * dt;
+			temp -= (temp - ROOM_TEMP) * (getAirC() - 1) / 10 * dt;
 			if (temp < ROOM_TEMP) temp = ROOM_TEMP;
 		}
 	}
@@ -158,6 +161,19 @@ class Thermo {
 
 	}
 
+	private function freezeUpdate(dt:Float):Void {
+		if (tempTarget != null) {
+			if (tempTarget < temp) {
+				icekw = (1-tempTarget/temp/2) * maxkw;
+				if (icekw > maxkw) icekw = maxkw;
+			} else
+				icekw = 0;
+		}
+		kwTotal += icekw * dt / HOUR;
+		var t = icekw / (KK * getAirC() * getAirM() * ece);
+		temp -= t * dt / HOUR;
+
+	}
 
 	private function evaporatorUpdate(dt:Float):Void {
 		if (wetTarget != null) {

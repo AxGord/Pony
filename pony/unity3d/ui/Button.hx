@@ -60,20 +60,20 @@ class Button extends MonoBehaviour {
 			core.click.add(sw);
 		}
 		if (tooltip != '') {
-			core.change.sub([ButtonStates.Focus]).add(overDelay);
-			core.change.sub([ButtonStates.Default]).add(Tooltip.hideText);
-			core.change.sub([ButtonStates.Press]).add(Tooltip.hideText);
-			core.change.sub([ButtonStates.Leave]).add(Tooltip.hideText);
+			core.change.sub([ButtonStates.Focus]).add(over);
+			core.change.sub([ButtonStates.Default]).add(out);
+			core.change.sub([ButtonStates.Press]).add(out);
+			core.change.sub([ButtonStates.Leave]).add(out);
 			
 		}
 	}
 	
-	private function overDelay():Void {
-		DeltaTime.update.once(over);
+	private function out():Void {
+		Tooltip.hideText(this);
 	}
 	
 	private function over():Void {
-		Tooltip.showText(tooltip, gameObject.layer, true);
+		Tooltip.showText(tooltip, "", this, gameObject.layer, true);
 	}
 	
 	private function sw(mode:Int):Void {

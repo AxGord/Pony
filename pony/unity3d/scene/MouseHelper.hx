@@ -22,7 +22,7 @@ class MouseHelper extends MonoBehaviour {
 	public static var middleMousePressed:Bool = false;
 	private static var inited:Bool = false;
 	
-	@:isVar public var overed(get,set):Bool;
+	@:isVar public var overed(get,never):Bool;
 	public var over:Signal;
 	public var out:Signal;
 	public var down:Signal;
@@ -30,6 +30,8 @@ class MouseHelper extends MonoBehaviour {
 	public var middleUp:Signal;
 	
 	private var _overed:Int = 0;
+	private var ovr:MouseHelper;
+	private var ovrs:Int = 0;
 
 	public static function updateStatic():Void
 	{
@@ -65,32 +67,34 @@ class MouseHelper extends MonoBehaviour {
 		lock.add(updateOverState);
 	}
 	
-	private function get_overed():Bool {
-		for (e in gameObject.getComponentsInChildrenOfType(MouseHelper)) {
-			if (e == this) continue;
-			if (e.overed) return true;
-		}
-		return overed;
-	}
-	
-	private function set_overed(v:Bool):Bool return overed = v;
-	
 	private function Start():Void {
 		if (renderer != null && collider == null)
 			gameObject.addTypedComponent(BoxCollider);
 		
 		for (e in gameObject.getComponentsInChildrenOfType(Transform)) {
 			if (e == transform) continue;
-			var ovr:MouseHelper = e.gameObject.getTypedComponent(MouseHelper);
+			ovr = e.gameObject.getTypedComponent(MouseHelper);
 			if (ovr == null)
 				ovr = e.gameObject.addTypedComponent(MouseHelper);
-			ovr.over.add(over.dispatchEvent);
-			ovr.out.add(out.dispatchEvent);
+			ovr.over.add(subOver);
+			ovr.out.add(subOut);
 			ovr.down.add(down.dispatchEvent);
 			ovr.middleDown.add(middleDown.dispatchEvent);
 			ovr.middleUp.add(middleUp.dispatchEvent);
 		}
 		init();
+	}
+	
+	private function subOver():Void {
+		if (!overed)
+			over.dispatch();
+		ovrs++;
+	}
+	
+	private function subOut():Void {
+		ovrs--;
+		if (!overed)
+			out.dispatch();
 	}
 	
 	private function Update():Void {
@@ -110,14 +114,14 @@ class MouseHelper extends MonoBehaviour {
 	private function updateOverState():Void {
 		if (_overed == 2 && lock.value == 0) {
 			if (!overed) {
-				overed = true;
+				ovrs++;
 				over.dispatch();
 				globalMiddleDown.add(middleDown.dispatchEvent);
 				globalMiddleUp.add(middleUp.dispatchEvent);
 			}
 		} else {
 			if (overed) {
-				overed = false;
+				ovrs--;
 				out.dispatch();
 				globalMiddleDown.remove(middleDown.dispatchEvent);
 				globalMiddleUp.remove(middleUp.dispatchEvent);
@@ -129,4 +133,6 @@ class MouseHelper extends MonoBehaviour {
 		if (overed)
 			down.dispatch();
 	}
+	
+	private function get_overed():Bool return ovrs > 0;
 }

@@ -65,4 +65,12 @@ class Smooth {
 		update.dispatch(value);
 	}
 	
+	public function reset():Void
+	{
+		vals = [];
+		value = 0;
+		update.dispatch(value);
+	}
+	
+	
 }

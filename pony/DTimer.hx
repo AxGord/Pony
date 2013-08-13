@@ -37,10 +37,11 @@ using pony.Tools;
  */
 class DTimer {
 	
-	public var hour:Int;
-	public var min:Int;
-	public var sec:Int;
-	public var forward(default,null):Bool;
+	public var hour(default, null):Int;
+	public var min(default, null):Int;
+	public var sec(default, null):Int;
+	public var forward(default, null):Bool;
+	public var started(default, null):Bool;
 	
 	public var update:Signal;
 	public var updateVisual:Signal;
@@ -100,6 +101,7 @@ class DTimer {
 	}
 	
 	public function start():DTimer {
+		started = true;
 		if (forward)
 			DeltaTime.update.add(_update);
 		else
@@ -108,6 +110,7 @@ class DTimer {
 	}
 	
 	public function stop():DTimer {
+		started = false;
 		if (forward)
 			DeltaTime.update.remove(_update);
 		else
@@ -184,6 +187,26 @@ class DTimer {
 			progress.dispatch(total / startTotal);
 		else
 			progress.dispatch(1 - total / startTotal);
+	}
+	
+	public function minus(h:Int, m:Int, s:Int):Void {
+		hour -= h;
+		min -= m;
+		sec -= s;
+		while (sec < 0) {
+			sec += 60;
+			min--;
+		}
+		while (min < 0) {
+			min += 60;
+			hour--;
+		}
+	}
+	
+	static public function delay(sec:Int, f:Void->Void):DTimer {
+		var t = new DTimer(0, 0, sec, false);
+		t.complite.once(f);
+		return t;
 	}
 	
 }

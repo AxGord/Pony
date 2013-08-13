@@ -49,65 +49,68 @@ class TooltipUCore extends MonoBehaviour {
 			subObjects = [transform];
 		}
 		
-		savedColors = [];
+		
 		
 		ovr = getOrAddTypedComponent(MouseHelper);
-		ovr.over.add(overDelay);
+		ovr.over.add(over);
 		ovr.out.add(out);
 		ovr.middleUp.add(pressOut);
 		ovr.middleDown.add(press);
 		
-		for (e in subObjects)
-			savedColors.push(e.renderer.material.color);
+		saveColors();
+	}
+	
+	public function saveColors():Void {
+		savedColors = [];
+		for (e in subObjects) savedColors.push(e.renderer.material.color);
 	}
 	
 	private function onDCL(cl:Color):Void {
 		colorMod = cl;
 	}
 	
-	private function overDelay():Void {
-		DeltaTime.update.once(overDelay2);
-	}
-	
-	private function overDelay2():Void {
-		if (ovr.overed) DeltaTime.update.once(over);
-	}
-	
 	private function over():Void {
-		if (!ovr.overed) return;
-		if (MouseHelper.middleMousePressed)
-			Tooltip.showText(text, bigText, gameObject.layer);
-		else
-			Tooltip.showText(text, gameObject.layer);
-		lightUp();
+		try {
+			if (MouseHelper.middleMousePressed)
+				Tooltip.showText(text, bigText, this, gameObject.layer);
+			else
+				Tooltip.showText(text, "", this, gameObject.layer);
+			lightUp();
+		} catch (_:Dynamic) {}
 	}
 	
 	public function out():Void {
-		Tooltip.hideText();
-		lightDown();
+		try {
+			Tooltip.hideText(this);
+			lightDown();
+		} catch (_:Dynamic) {}
 	}
 	
 	private function pressOut():Void
 	{		
-		Tooltip.showText(text, gameObject.layer);
+		Tooltip.showText(text, "", this, gameObject.layer);
 	}
 	
 	private function press():Void
 	{
-		Tooltip.showText(text, bigText, gameObject.layer);
+		Tooltip.showText(text, bigText, this, gameObject.layer);
 	}
 	
 	public function lightUp():Void {
 		for (e in subObjects) {
-			var sColor = e.renderer.material.color;
-			e.renderer.material.color = new Color(sColor.r + colorMod.r, sColor.g + colorMod.g, sColor.b + colorMod.b);
+			try {
+				var sColor = e.renderer.material.color;
+				e.renderer.material.color = new Color(sColor.r + colorMod.r, sColor.g + colorMod.g, sColor.b + colorMod.b);
+			} catch (_:Dynamic) {}
 		}
 	}
 	
 	public function lightDown():Void {
 		var i:Int = 0;
 		for (e in subObjects) {
-			e.renderer.material.color = savedColors[i++];
+			try {
+				e.renderer.material.color = savedColors[i++];
+			} catch (_:Dynamic) {}
 		}
 	}
 	

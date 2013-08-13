@@ -65,6 +65,8 @@ class Tooltip {
 	public static var texture:Texture;
 	public static var defaultColorMod:LV<Color> = new LV(null);
 	public static var panel:Bool = false;
+	
+	private static var target:Dynamic;
 		
 	private static function init():Void {
 		
@@ -88,7 +90,8 @@ class Tooltip {
 			
 	}
 	
-	public static function showText(text:String, bigText:String = "", layer:Null<Int>, ?panel:Bool = false):Void {
+	public static function showText(text:String, bigText:String, obj:Dynamic, layer:Null<Int>, ?panel:Bool = false):Void {
+		target = obj;
 		if (textObject == null) {
 			init();
 		}
@@ -144,7 +147,8 @@ class Tooltip {
 		longTextObject.transform.position = new Vector3((Input.mousePosition.x - r.width/2)/ (Screen.width - Fixed2dCamera.SIZE), (Input.mousePosition.y+r.height + border*2 - 15) / Screen.height, 500);
 	}
 	
-	public static function hideText():Void {
+	public static function hideText(obj:Dynamic):Void {
+		if (target != obj) return;
 		if (textObject == null) return;
 		guiTextObject.enabled = false;
 		guiTextureObject.enabled = false;
