@@ -45,24 +45,71 @@ class Tools {
         return Context.makeExpr(date, Context.currentPos());
     }
 	
-	
-	public static function equal(a:Dynamic, b:Dynamic):Bool {
-		if (a == b) return true;
-		if (Std.is(a, Array)) {
-			if (Std.is(b, Array))
-				return ArrayTools.equal(a, b);
-			else
-				return false;
-		}
-		var fields:Array<String> = a.fields();
-		if (fields.length > 0) {
-			for (f in fields)
-				if (!b.hasField(f) || a.field(f) != b.field(f))
-					return false;
-			return true;
-		}
-		return false;
-	}
+	/**
+	 * Compare two value
+	 * @author	deep <system.grand@gmail.com>
+	 * @param	a
+	 * @param	b
+	 * @param	maxDepth -1 - infinity depth
+	 * @return
+	 */
+	public static function equal(a:Dynamic, b:Dynamic, maxDepth:Int = 1):Bool {
+      if (a == b) return true;
+      if (maxDepth == 0) return false;
+      
+      var type = Type.typeof(a);
+      //trace(type);
+      switch (type) {
+          case TInt, TFloat, TBool: return false;
+          case TFunction: return Reflect.compareMethods(a, b);
+          case TEnum(t): 
+            if (t != Type.getEnum(b)) return false;
+          
+            var a = Type.enumParameters(a);
+            var b = Type.enumParameters(b);
+            
+            if (a.length != b.length) return false;
+            for (i in 0...a.length) 
+              if (!equal(a[i], b[i], maxDepth-1)) return false;
+            return true;
+          
+          case TNull: return false;
+          case TObject: if(Std.is(a, Class)) return false;
+          case TUnknown:
+          case TClass(t):
+          
+          if (t == Array) {
+            if (!Std.is(b, Array)) return false;
+          
+            if (a.length != b.length) return false;
+            for (i in 0...a.length) 
+              if (!equal(a[i], b[i], maxDepth-1)) return false;
+            return true;
+          }
+  
+      }
+      // a is Object on Unknown or Class instance
+      switch (Type.typeof(b)) {
+          case TInt, TFloat, TBool, TFunction, TEnum(_): return false;
+          case TNull: return false;
+          case TObject: if(Std.is(b, Class)) return false;
+          case TUnknown:
+          case TClass(t): if (t == Array) return false;
+      }
+      
+      var fields:Array<String> = a.fields();
+      var bfields:Array<String> = b.fields();
+      //trace(fields);
+      //trace(b.fields());
+      if (fields.length == bfields.length) {
+        if (fields.length == 0) return true;
+              for (f in fields)
+                  if (bfields.indexOf(f) == -1 || !equal(a.field(f), b.field(f), maxDepth-1))
+                      return false;
+              return true;
+           }
+          return false;
+    }
 	
 	public static function superIndexOf<T>(it:Iterable<T>, v:T):Int {
 		var i:Int = 0;
@@ -79,14 +126,8 @@ class Tools {
 
 class ArrayTools {
 	
-	public static function equal<T>(a:Array<T>, b:Array<T>):Bool {
-		if (a == b) return true;
-		for (i in 0...a.length) if (a[i] != b[i]) return false;
-		return true;
-	}
-	
 	public static function thereIs<T>(a:Iterable<Array<T>>, b:Array<T>):Bool {
-		for (e in a) if (equal(e, b)) return true;
+		for (e in a) if (Tools.equal(e, b)) return true;
 		return false;
 	}
 	
