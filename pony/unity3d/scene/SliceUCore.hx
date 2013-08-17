@@ -10,7 +10,7 @@ import unityengine.Transform;
 
 using hugs.HUGSWrapper;
 /**
- * ...
+ * Slice
  * @author BoBaH6eToH
  */
 class SliceUCore extends MonoBehaviour

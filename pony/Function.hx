@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2013 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -37,7 +37,6 @@ import dotnet.system.reflection.FieldInfo;
 import cs.system.Type;
 import cs.NativeArray;
 import cs.internal.Function;
-import hugs.HUGSWrapper;
 typedef CSHash = {
 	o:Dynamic,
 	n:String
@@ -113,8 +112,8 @@ abstract Function( { f:Dynamic, count:Int, args:Array<Dynamic>, id:Int, used:Int
 			var t:Type = untyped f.GetType();
 			var a:NativeArray<FieldInfo> = untyped __cs__('t.GetFields()');
 			var data:Array<Dynamic> = [];
-			for (e in new NativeArrayIterator<FieldInfo>(a)) {
-				data.push(Reflect.field(f, e.Name));
+			for (i in 0...a.Length) {
+				data.push(Reflect.field(f, a[i].Name));
 			}
 			return {o:data, n:key};
 		}

@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2013 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -41,12 +41,14 @@ class Signal {
 	public var lostListeners:Signal;
 	public var takeListeners:Signal;
 	public var data:Dynamic;
+	public var target:Dynamic;
 	
 	private var listeners:Priority<Listener>;
 	
 	public var haveListeners(get, null):Bool;
 	
-	public function new() {
+	public function new(?target:Dynamic) {
+		this.target = target;
 		silent = false;
 		_init();
 		lostListeners = Type.createEmptyInstance(Signal);
@@ -142,7 +144,12 @@ class Signal {
 	}
 	
 	public inline function dispatchArgs(?args:Array<Dynamic>):Signal {
-		dispatchEvent(new Event(args));
+		dispatchEvent(new Event(args, target));
+		return this;
+	}
+	
+	public function dispatchEmpty():Signal {
+		dispatchEvent(new Event(target));
 		return this;
 	}
 	
@@ -153,7 +160,7 @@ class Signal {
 		add(function(event:Event) {
 			var a:Array<Dynamic> = event.args.copy();
 			for (arg in args) if (a.shift() != arg) return;
-			s.dispatchEvent(new Event(a.concat(addon), event));
+			s.dispatchEvent(new Event(a.concat(addon), target, event));
 		});
 		return s;
 	}
@@ -174,7 +181,7 @@ class Signal {
 	}
 	
 	public inline function buildListenerArgs(args:Array<Dynamic>):Listener
-		return buildListenerEvent(new Event(args));
+		return buildListenerEvent(new Event(args, target));
 		
 	private inline function get_haveListeners():Bool return !listeners.empty;
 	
@@ -195,7 +202,7 @@ class Signal {
 		if (addon == null) addon = [];
 		var s:Signal = new Signal();
 		add(function(event:Event) {
-			s.dispatchEvent(new Event(addon, event));
+			s.dispatchEvent(new Event(addon, target, event));
 		});
 		return s;
 	}

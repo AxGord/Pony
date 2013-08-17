@@ -25,50 +25,43 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony;
-import pony.events.Signal;
+package pony.net.cs;
+
+import dotnet.system.IAsyncResult;
+import dotnet.system.net.sockets.AddressFamily;
+import dotnet.system.net.sockets.ProtocolType;
+import dotnet.system.net.sockets.SocketType;
+import dotnet.system.net.IPEndPoint;
+import dotnet.system.net.IPAddress;
+import dotnet.system.net.sockets.Socket;
+import pony.net.SocketServerBase;
 
 /**
- * ...
- * @author AxGord
+ * SocketServer
+ * @author AxGord <axgord@gmail.com>
  */
-class DeltaTime {
-	
-	public static var speed:Float = 1;
-	public static var update(default,null):Signal = new Signal();
-	//public static var value(default,null):Float = 0;
-	
-	private static var t:Float;
-	
-	#if !flash
-	public static inline function init(?signal:Signal):Void {
-		set();
-		if (signal != null) signal.add(tick);
-	}
-	#end
-	
-	private static function tick():Void {
-		var value:Float = get();
-		set();
-		update.dispatch(value);
-	}
-	
-	private inline static function set():Void t = Date.now().getTime();
-	private inline static function get():Float return (Date.now().getTime() - t) * speed / 1000;
+class SocketServer extends SocketServerBase {
 
+	private var listener:Socket;
 	
-	#if (flash && !munit)
-	private static function __init__():Void {
-		update.takeListeners.add(_takeListeners);
-		update.lostListeners.add(_lostListeners);
+	public function new(port:Int) {
+		super();
+		listener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+		listener.Bind(new IPEndPoint(IPAddress.Any, port));
+		listener.Listen(100);
+		trace('Port: '+port);
+		waitAccept();
 	}
-	public static function _tick(_):Void tick();
-	public static function _takeListeners():Void {
-		_set();
-		flash.Lib.current.addEventListener(flash.events.Event.ENTER_FRAME, _tick);
-	}
-	public static function _lostListeners():Void flash.Lib.current.removeEventListener(flash.events.Event.ENTER_FRAME, _tick);
-	public static inline function _set():Void set();
-	#end
 	
+	private function waitAccept():Void {
+		listener.BeginAccept(untyped __cs__('acceptCallback'), null);
+	}
+
+
+	private function acceptCallback(ar:IAsyncResult):Void {
+		trace('accept');
+		addClient().initCS(listener.EndAccept(ar));
+		waitAccept();
+	}
+
 }

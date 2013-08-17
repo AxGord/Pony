@@ -64,4 +64,19 @@ class SignalTest
 		Assert.areEqual(Listener.unusedCount(), 0);
 		Assert.areEqual(Function.unusedCount, 0);
 	}
+	
+	@Test
+	public function event():Void {
+		var e = new Event(this);
+		Assert.areEqual(e.target, this);
+	}
+	
+	@Test
+	public function target():Void {
+		var t:SignalTest = null;
+		var s = new Signal(this);
+		s.add(function(tar:SignalTest) t = tar);
+		s.dispatch();
+		Assert.areEqual(t, this);
+	}
 }

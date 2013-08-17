@@ -1,7 +1,8 @@
 package pony.unity3d.scene;
 
 /**
- * ...
- * @author ...
+ * Slice
+ * @see SliceUCore
+ * @author BoBaH6eToH
  */
 class Slice extends SliceUCore {}

@@ -25,50 +25,38 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony;
+package pony.net;
 import pony.events.Signal;
 
 /**
- * ...
- * @author AxGord
+ * SocketServerBase
+ * @author AxGord <axgord@gmail.com>
  */
-class DeltaTime {
-	
-	public static var speed:Float = 1;
-	public static var update(default,null):Signal = new Signal();
-	//public static var value(default,null):Float = 0;
-	
-	private static var t:Float;
-	
-	#if !flash
-	public static inline function init(?signal:Signal):Void {
-		set();
-		if (signal != null) signal.add(tick);
-	}
-	#end
-	
-	private static function tick():Void {
-		var value:Float = get();
-		set();
-		update.dispatch(value);
-	}
-	
-	private inline static function set():Void t = Date.now().getTime();
-	private inline static function get():Float return (Date.now().getTime() - t) * speed / 1000;
+class SocketServerBase {
 
+	public var data(default,null):Signal;
+	public var connect(default,null):Signal;
+	public var close(default,null):Signal;
+	public var disconnect(default,null):Signal;
+	public var clients(default,null):Array<SocketClient>;
 	
-	#if (flash && !munit)
-	private static function __init__():Void {
-		update.takeListeners.add(_takeListeners);
-		update.lostListeners.add(_lostListeners);
+	public function new() {
+		connect = new Signal(this);
+		disconnect = new Signal();
+		data = new Signal();
+		close = new Signal(this);
+		clients = [];
+		disconnect.add(removeClient);
 	}
-	public static function _tick(_):Void tick();
-	public static function _takeListeners():Void {
-		_set();
-		flash.Lib.current.addEventListener(flash.events.Event.ENTER_FRAME, _tick);
-	}
-	public static function _lostListeners():Void flash.Lib.current.removeEventListener(flash.events.Event.ENTER_FRAME, _tick);
-	public static inline function _set():Void set();
-	#end
 	
+	private function addClient():SocketClient {
+		var cl = Type.createEmptyInstance(SocketClient);
+		cl.init(cast this, clients.length);
+		clients.push(cl);
+		return cl;
+	}
+	
+	private function removeClient(cl:SocketClient):Void {
+		clients.remove(cl);
+	}
 }

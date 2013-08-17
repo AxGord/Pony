@@ -25,50 +25,18 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony;
-import pony.events.Signal;
+package pony.net;
 
 /**
- * ...
- * @author AxGord
+ * SocketClient
+ * @author AxGord <axgord@gmail.com>
  */
-class DeltaTime {
-	
-	public static var speed:Float = 1;
-	public static var update(default,null):Signal = new Signal();
-	//public static var value(default,null):Float = 0;
-	
-	private static var t:Float;
-	
-	#if !flash
-	public static inline function init(?signal:Signal):Void {
-		set();
-		if (signal != null) signal.add(tick);
-	}
-	#end
-	
-	private static function tick():Void {
-		var value:Float = get();
-		set();
-		update.dispatch(value);
-	}
-	
-	private inline static function set():Void t = Date.now().getTime();
-	private inline static function get():Float return (Date.now().getTime() - t) * speed / 1000;
-
-	
-	#if (flash && !munit)
-	private static function __init__():Void {
-		update.takeListeners.add(_takeListeners);
-		update.lostListeners.add(_lostListeners);
-	}
-	public static function _tick(_):Void tick();
-	public static function _takeListeners():Void {
-		_set();
-		flash.Lib.current.addEventListener(flash.events.Event.ENTER_FRAME, _tick);
-	}
-	public static function _lostListeners():Void flash.Lib.current.removeEventListener(flash.events.Event.ENTER_FRAME, _tick);
-	public static inline function _set():Void set();
-	#end
-	
-}
+class SocketClient
+#if nodejs
+extends pony.net.nodejs.SocketClient
+#elseif cs
+extends pony.net.cs.SocketClient
+#elseif flash
+extends pony.net.flash.SocketClient
+#end
+implements ISocketClient {}

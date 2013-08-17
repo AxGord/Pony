@@ -25,50 +25,68 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony;
-import pony.events.Signal;
+package pony.net.flash;
+
+import flash.events.Event;
+import flash.events.IOErrorEvent;
+import flash.events.ProgressEvent;
+import flash.events.SecurityErrorEvent;
+import flash.net.Socket;
+import haxe.io.Bytes;
+import haxe.io.BytesData;
+import haxe.io.BytesInput;
+import haxe.io.BytesOutput;
+import pony.net.SocketClientBase;
 
 /**
- * ...
- * @author AxGord
+ * SocketClient
+ * @author AxGord <axgord@gmail.com>
  */
-class DeltaTime {
-	
-	public static var speed:Float = 1;
-	public static var update(default,null):Signal = new Signal();
-	//public static var value(default,null):Float = 0;
-	
-	private static var t:Float;
-	
-	#if !flash
-	public static inline function init(?signal:Signal):Void {
-		set();
-		if (signal != null) signal.add(tick);
-	}
-	#end
-	
-	private static function tick():Void {
-		var value:Float = get();
-		set();
-		update.dispatch(value);
-	}
-	
-	private inline static function set():Void t = Date.now().getTime();
-	private inline static function get():Float return (Date.now().getTime() - t) * speed / 1000;
+class SocketClient extends SocketClientBase {
 
+	private var socket:Socket;
 	
-	#if (flash && !munit)
-	private static function __init__():Void {
-		update.takeListeners.add(_takeListeners);
-		update.lostListeners.add(_lostListeners);
+	override public function open():Void {
+		if (!closed) return;
+		socket = new Socket(host, port);
+		socket.addEventListener(Event.CONNECT, connectHandler);
+		socket.addEventListener(ProgressEvent.SOCKET_DATA, socketDataHandler);
+		socket.addEventListener(Event.CLOSE, closeHandler);
+		socket.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandler);
+		socket.addEventListener(SecurityErrorEvent.SECURITY_ERROR, securityErrorHandler);
+
 	}
-	public static function _tick(_):Void tick();
-	public static function _takeListeners():Void {
-		_set();
-		flash.Lib.current.addEventListener(flash.events.Event.ENTER_FRAME, _tick);
+	
+	private function securityErrorHandler(_):Void {}
+	
+	private function ioErrorHandler(_):Void {
+		trace('connect error');
+		reconnect();
 	}
-	public static function _lostListeners():Void flash.Lib.current.removeEventListener(flash.events.Event.ENTER_FRAME, _tick);
-	public static inline function _set():Void set();
-	#end
+	
+	private function closeHandler(_):Void {
+		disconnect.dispatch();
+	}
+	
+	private function connectHandler(_):Void {
+		closed = false;
+		connect.dispatch();
+	}
+	
+	inline public function send(data:BytesOutput):Void {
+		socket.writeBytes(data.getBytes().getData());
+		socket.flush();
+	}
+	
+	inline public function close():Void {
+		closed = true;
+		socket.close();
+	}
+	
+	private function socketDataHandler(_):Void {
+		var b:BytesData = new BytesData();
+		socket.readBytes(b);
+		data.dispatch(new BytesInput(Bytes.ofData(b)));
+	}
 	
 }

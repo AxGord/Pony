@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2013 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -40,10 +40,12 @@ class Event {
 	public var prev(get, null):Event;
 	public var _stopPropagation:Bool;
 	public var signal:Signal;
+	public var target:Dynamic;
 	
 	private var currentListener:Listener_;
 	
-	public function new(?args:Array<Dynamic>, ?parent:Event) {
+	public function new(?args:Array<Dynamic>, ?target:Dynamic, ?parent:Event) {
+		this.target = target;
 		this.args = args == null ? [] : args;
 		this.parent = parent;
 		_stopPropagation = false;

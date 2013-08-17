@@ -27,6 +27,8 @@
 **/
 package pony;
 
+import haxe.io.BytesInput;
+import haxe.io.BytesOutput;
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import haxe.xml.Fast;
@@ -60,7 +62,7 @@ class Tools {
       var type = Type.typeof(a);
       //trace(type);
       switch (type) {
-          case TInt, TFloat, TBool: return false;
+          case TInt, TFloat, TBool, TNull: return false;
           case TFunction: return Reflect.compareMethods(a, b);
           case TEnum(t): 
             if (t != Type.getEnum(b)) return false;
@@ -73,7 +75,6 @@ class Tools {
               if (!equal(a[i], b[i], maxDepth-1)) return false;
             return true;
           
-          case TNull: return false;
           case TObject: if(Std.is(a, Class)) return false;
           case TUnknown:
           case TClass(t):
@@ -90,21 +91,19 @@ class Tools {
       }
       // a is Object on Unknown or Class instance
       switch (Type.typeof(b)) {
-          case TInt, TFloat, TBool, TFunction, TEnum(_): return false;
-          case TNull: return false;
+          case TInt, TFloat, TBool, TFunction, TEnum(_), TNull: return false;
           case TObject: if(Std.is(b, Class)) return false;
-          case TUnknown:
           case TClass(t): if (t == Array) return false;
+          case TUnknown:
       }
       
       var fields:Array<String> = a.fields();
-      var bfields:Array<String> = b.fields();
       //trace(fields);
       //trace(b.fields());
-      if (fields.length == bfields.length) {
+      if (fields.length == b.fields().length) {
         if (fields.length == 0) return true;
               for (f in fields)
-                  if (bfields.indexOf(f) == -1 || !equal(a.field(f), b.field(f), maxDepth-1))
+                  if (!b.hasField(f) || !equal(a.field(f), b.field(f), maxDepth-1))
                       return false;
               return true;
            }
@@ -121,6 +120,22 @@ class Tools {
 	}
 	
 	inline public static function percentCalc(p:Float, min:Float, max:Float):Float return (max - min) * p + min;
+	
+	public static function cut(b:BytesInput):BytesInput {
+		var r:BytesOutput = new BytesOutput();
+		var prev:Int = -1;
+		var v:Int = 0;
+		while (true) {
+			v = b.readByte();
+			if (prev == 0 && v == 0) break;
+			else {
+				if (prev != -1) r.writeByte(prev);
+				prev = v;
+			}
+		}
+		r.close();
+		return new BytesInput(r.getBytes());
+	}
 	
 }
 
@@ -216,12 +231,5 @@ class StringTls {
 
 class XmlTools {
 	inline public static function isTrue(x:haxe.xml.Fast, name:String):Bool return x.has.resolve(name) && StringTls.isTrue(x.att.resolve(name));
-	//inline public static function includeFast(f:String):haxe.xml.Fast return new haxe.xml.Fast(Xml.parse(StringTls.includeFile(f)));
-	/*
-	macro public static function includeFast(file:String):Expr {
-		var s:String = File.getContent(file);
-		//var f:haxe.xml.Fast = new haxe.xml.Fast(Xml.parse(s));
-		return macro new haxe.xml.Fast(Xml.parse($v{s}));
-	}*/
 	inline public static function fast(text:String):Fast return new haxe.xml.Fast(Xml.parse(text));
 }

@@ -25,50 +25,69 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony;
+package pony.net;
+import haxe.Timer;
 import pony.events.Signal;
 
 /**
- * ...
- * @author AxGord
+ * SocketClientBase
+ * @author AxGord <axgord@gmail.com>
  */
-class DeltaTime {
-	
-	public static var speed:Float = 1;
-	public static var update(default,null):Signal = new Signal();
-	//public static var value(default,null):Float = 0;
-	
-	private static var t:Float;
-	
-	#if !flash
-	public static inline function init(?signal:Signal):Void {
-		set();
-		if (signal != null) signal.add(tick);
-	}
-	#end
-	
-	private static function tick():Void {
-		var value:Float = get();
-		set();
-		update.dispatch(value);
-	}
-	
-	private inline static function set():Void t = Date.now().getTime();
-	private inline static function get():Float return (Date.now().getTime() - t) * speed / 1000;
+class SocketClientBase {
 
+	public var server(default,null):SocketServer;
+	public var connect(default,null):Signal;
+	public var data(default,null):Signal;
+	public var disconnect(default,null):Signal;
+	public var id(default,null):Int;
+	public var host(default,null):String;
+	public var port(default, null):Int;
+	public var closed(default, null):Bool;
 	
-	#if (flash && !munit)
-	private static function __init__():Void {
-		update.takeListeners.add(_takeListeners);
-		update.lostListeners.add(_lostListeners);
+	private var reconnectDelay:Int = -1;
+	
+	public function new(?host:String, port:Int, reconnect:Int=-1) {
+		trace('Create socket client');
+		if (host == null) host = '127.0.0.1';
+		this.host = host;
+		this.port = port;
+		this.reconnectDelay = reconnect;
+		_init();
+		open();
 	}
-	public static function _tick(_):Void tick();
-	public static function _takeListeners():Void {
-		_set();
-		flash.Lib.current.addEventListener(flash.events.Event.ENTER_FRAME, _tick);
+	
+	inline private function _init():Void {
+		closed = true;
+		id = -1;
+		connect = new Signal(this);
+		data = new Signal(this);
+		disconnect = new Signal(this);
 	}
-	public static function _lostListeners():Void flash.Lib.current.removeEventListener(flash.events.Event.ENTER_FRAME, _tick);
-	public static inline function _set():Void set();
-	#end
+	
+	public function reconnect():Void {
+		if (reconnectDelay == 0) {
+			trace('Reconnect');
+			open();
+		} else if (reconnectDelay > 0) {
+			trace('Reconnect after '+reconnectDelay+' ms');
+			Timer.delay(open, reconnectDelay);
+		}
+	}
+	
+	public function open():Void {}
+	
+	inline private function endInit():Void {
+		closed = false;
+		if (server != null)
+			server.connect.dispatch(this);
+	}
+	
+	public function init(server:SocketServer, id:Int):Void {
+		_init();
+		this.server = server;
+		this.id = id;
+		data.add(server.data.dispatchEvent);
+		disconnect.add(server.disconnect.dispatchEvent);
+	}
 	
 }
