@@ -16,7 +16,8 @@ class Main{
 		s.add(function() trace(123));
 		s.dispatch();
 		
-		Test.createByName
+		var t = Test.O;
+		t.getParameters();
 	}
 	
 }

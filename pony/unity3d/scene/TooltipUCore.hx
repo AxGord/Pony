@@ -56,6 +56,7 @@ class TooltipUCore extends MonoBehaviour {
 	private var subs:Bool;
 	private var subObjects:Array<Transform>;
 	private var ovr:MouseHelper;
+	private var lighted:Bool = false;
 	
 	private function Start():Void {
 		if (colorMod == null || (colorMod.r == 0 && colorMod.g == 0 && colorMod.b == 0)) {
@@ -123,6 +124,8 @@ class TooltipUCore extends MonoBehaviour {
 	}
 	
 	public function lightUp():Void {
+		if (lighted) return;
+		lighted = true;
 		for (e in subObjects) {
 			try {
 				var sColor = e.renderer.material.color;
@@ -132,6 +135,8 @@ class TooltipUCore extends MonoBehaviour {
 	}
 	
 	public function lightDown():Void {
+		if (!lighted) return;
+		lighted = false;
 		var i:Int = 0;
 		for (e in subObjects) {
 			try {

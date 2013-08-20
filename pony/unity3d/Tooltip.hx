@@ -42,6 +42,7 @@ import unityengine.Texture;
 import unityengine.Vector3;
 
 using hugs.HUGSWrapper;
+using pony.Tools;
 
 /**
  * Tooltip
@@ -51,6 +52,7 @@ using hugs.HUGSWrapper;
 
 class Tooltip {
 	
+	public static var limitBorder:Float = 50;
 	public static var border:Single = 5;
 	public static var textObject:GameObject;
 	private static var textureObject:GameObject;
@@ -81,7 +83,7 @@ class Tooltip {
 		//guiTextObject.font = cast Resources.Load('ARIAL');
 		guiTextObject.fontSize = 14;
 		
-		longTextObject = new GameObject("GUIText Tooltip");
+		longTextObject = new GameObject("GUIText Tooltip Long");
 		longTextObject.transform.position = new Vector3(0.5, 0.5);
 		guiLongTextObject = cast longTextObject.AddComponent('GUIText');
 		guiLongTextObject.material.color = new Color(0, 0, 0);
@@ -112,7 +114,7 @@ class Tooltip {
 		
 		r = guiTextObject.GetScreenRect();
 		
-		var w = panel ? Fixed2dCamera.SIZE : Screen.width - Fixed2dCamera.SIZE;
+		var w = panel && Fixed2dCamera.exists ? Fixed2dCamera.SIZE : Screen.width - Fixed2dCamera.SIZE;
 		var h = Screen.height;
 		
 		if ( bigText != "" )
@@ -126,7 +128,7 @@ class Tooltip {
 			guiLongTextObject.enabled = false;
 		guiTextureObject.pixelInset = new Rect(w / 2 - border, h / 2 - r.height - border, -w + r.width + border * 2, -h + r.height + border * 2);
 			
-		if (panel) {
+		if (panel && Fixed2dCamera.exists) {
 			DeltaTime.update.add(moveTextPanel);
 			moveTextPanel();
 		} else {
@@ -142,9 +144,19 @@ class Tooltip {
 	}
 	
 	private static function moveText():Void {
-		textObject.transform.position = new Vector3((Input.mousePosition.x - r.width/2)/ (Screen.width - Fixed2dCamera.SIZE), (Input.mousePosition.y+r.height + border*2) / Screen.height, 500);
-		textureObject.transform.position = new Vector3((Input.mousePosition.x - r.width / 2) / (Screen.width - Fixed2dCamera.SIZE), (Input.mousePosition.y + r.height + border * 2) / Screen.height, 499);
-		longTextObject.transform.position = new Vector3((Input.mousePosition.x - r.width/2)/ (Screen.width - Fixed2dCamera.SIZE), (Input.mousePosition.y+r.height + border*2 - 15) / Screen.height, 500);
+		var limx:Float = limitBorder / (Screen.width - Fixed2dCamera.SIZE);
+		var limy:Float = limitBorder / Screen.height;
+		var x:Float = (Input.mousePosition.x - r.width / 2) / (Screen.width - Fixed2dCamera.SIZE);
+		var y:Float = (Input.mousePosition.y + r.height + border * 2) / Screen.height;
+		var dw:Float = 1 - r.width / (Screen.width - Fixed2dCamera.SIZE);
+		var dh:Float = r.height / Screen.height;
+		x = x.limit(limx, dw-limx);
+		y = y.limit(dh+limy, 1-limy);
+		textObject.transform.position = new Vector3(x, y, 500);
+		textureObject.transform.position = new Vector3(x, y, 499);
+		y = (Input.mousePosition.y + r.height + border * 2 - 15) / Screen.height;
+		y = y.limit(dh+limy, 1-limy);
+		longTextObject.transform.position = new Vector3(x, y, 500);
 	}
 	
 	public static function hideText(obj:Dynamic):Void {

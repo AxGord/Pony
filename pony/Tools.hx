@@ -29,10 +29,11 @@ package pony;
 
 import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
+import haxe.xml.Fast;
+#if macro
 import haxe.macro.Context;
 import haxe.macro.Expr;
-import haxe.xml.Fast;
-
+#end
 using Reflect;
 using Lambda;
 /**
@@ -137,6 +138,20 @@ class Tools {
 		return new BytesInput(r.getBytes());
 	}
 	
+	macro public static function currentFile():Expr
+	{
+		var f:String = Context.getPosInfos(Context.currentPos()).file;
+		f = sys.FileSystem.fullPath(f);
+		return macro $v{f};
+	}
+	
+	macro public static function currentDir():Expr
+	{
+		var f:String = Context.getPosInfos(Context.currentPos()).file;
+		f = sys.FileSystem.fullPath(f).split('\\').slice(0,-1).join('/');
+		return macro $v{f};
+	}
+	
 }
 
 class ArrayTools {
@@ -193,6 +208,11 @@ class FloatTools {
 	
 	inline public static function approximately(a:Float, b:Float, range:Float = 1):Bool return inRange(a, b - range, b + range);
 	
+	inline public static function limit(v:Float, min:Float, max:Float):Float {
+		return if (v < min) min;
+		else if (v > max) max;
+		else v;
+	}
 }
 
 class StringTls {

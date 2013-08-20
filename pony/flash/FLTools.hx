@@ -26,6 +26,8 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.flash;
+
+#if !macro
 import flash.display.MovieClip;
 import flash.display.Shape;
 import flash.display.Sprite;
@@ -39,6 +41,11 @@ import flash.display.StageAlign;
 import flash.display.DisplayObjectContainer;
 import pony.events.Signal;
 
+#else
+import haxe.macro.Expr;
+import sys.FileSystem;
+import sys.io.File;
+#end
 /**
  * Flash tools
  * @author AxGord
@@ -46,6 +53,7 @@ import pony.events.Signal;
 
 class FLTools 
 {
+	#if !macro
 	static public var os(get, null):String;
 	static public var version(get, null):Array<Int>;
 	
@@ -187,15 +195,20 @@ class FLTools
 		
 		Lib.current.addChild(sprite);
 	}
-	/*
-	public static function nextTick(o:DisplayObject):Signal {
-		var s:Signal = new Signal();
-		var f:Event->Void = null;
-		f = function(_):Void {
-			o.removeEventListener(Event.ENTER_FRAME, f);
-			s.dispatch();
-		}
-		o.addEventListener(Event.ENTER_FRAME, 
+	#end
+	
+	macro public static function includeAS(dir:String):Expr {
+		var from = Tools.currentDir();
+		asCopy('HaxeInit', from, dir);
+		asCopy('ExtendedMovieClip', from, dir);
+		return macro null;
 	}
-	*/
+	
+	#if macro
+	private static function asCopy(file:String, from:String, to:String):Void {
+		file = '/' + file + '.as';
+		if (!FileSystem.exists(to + file))
+			File.copy(from+file, to+file);
+	}
+	#end
 }

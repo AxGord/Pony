@@ -39,13 +39,15 @@ import unityengine.Screen;
 class Fixed2dCamera extends MonoBehaviour {
 	
 	public static var begin:Single = 0;
+	public static var exists:Bool = false;
 	
-	public static var SIZE:Int;
+	public static var SIZE:Int = 0;
 	public var size:Int = 100;
 	public var mainCamera:Camera;
 	
 	public function Start() {
 		SIZE = size;
+		exists = true;
 	}
 	
 	private function Update():Void {

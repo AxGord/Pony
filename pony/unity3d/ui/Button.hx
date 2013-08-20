@@ -43,6 +43,7 @@ import pony.unity3d.Fixed2dCamera;
 
 class Button extends MonoBehaviour {
 	
+	public var defaultMode:Int = 0;
 	public var panel:Bool = true;
 	public var tooltip:String = '';
 	private var autoSwith:Bool = false;
@@ -56,6 +57,7 @@ class Button extends MonoBehaviour {
 	}
 	
 	function Start() {
+		core.mode = defaultMode;
 		if (autoSwith) {
 			core.click.add(sw);
 		}
@@ -81,7 +83,7 @@ class Button extends MonoBehaviour {
 	}
 	
 	function Update() {
-		var h = panel
+		var h = panel || !Fixed2dCamera.exists
 			? guiTexture.HitTest(new Vector3(Input.mousePosition.x - Fixed2dCamera.begin, Input.mousePosition.y))
 			: guiTexture.HitTest(new Vector3(Input.mousePosition.x +(Screen.width - Fixed2dCamera.begin)/2, Input.mousePosition.y));
 		var down = Input.GetMouseButton(0);

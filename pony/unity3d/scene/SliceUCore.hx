@@ -13,10 +13,8 @@ using hugs.HUGSWrapper;
  * Slice
  * @author BoBaH6eToH
  */
-class SliceUCore extends MonoBehaviour
+class SliceUCore extends TooltipSaver
 {
-
-	//public var transparentTexture:Material;
 	public var untransparentTexture:Material;
 	public var buttonForSlice:GameObject;
 	
@@ -24,22 +22,25 @@ class SliceUCore extends MonoBehaviour
 	
 	private var childrenMaterials:Array<Material>;
 	
-	public function Start() 
+	override private function Start() 
 	{
+		super.Start();
 		childrenMaterials = [for (e in getComponentsInChildrenOfType(Renderer)) e.material];
 		buttonSlice = buttonForSlice.getTypedComponent(TintButton).core;
 		buttonSlice.click.add(click);
-		buttonSlice.mode = 2;
 	}
 	
 	inline private function click(mode:Int):Void 
 	{
-		if ( buttonSlice.mode == 2)
+		if (mode == 2)
 			for (e in getComponentsInChildrenOfType(Renderer)) e.material = untransparentTexture;
 		else {
 			var i:Int = 0;
 			for (e in getComponentsInChildrenOfType(Renderer)) e.material = childrenMaterials[i++];
 		}
+		saveColors();
 	}
+	
+	
 	
 }

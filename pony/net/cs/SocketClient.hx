@@ -76,9 +76,9 @@ class SocketClient extends SocketClientBase {
 		closeAfterSend = false;
 		buffer = new NativeArray<Byte>(1024);
 		socket = s;
-		connect.dispatch();
-		waitData();
 		endInit();
+		waitData();
+		connect.dispatch();
 	}
 	
 	private function waitData():Void {
@@ -137,6 +137,7 @@ class SocketClient extends SocketClientBase {
 	}
 	
 	private function _close():Void {
+		closeAfterSend = false;
 		if (closed) return;
 		closed = true;
 		socket.Shutdown(SocketShutdown.Both);

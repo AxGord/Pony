@@ -91,6 +91,7 @@ class MouseHelper extends MonoBehaviour {
 		down = new Signal();
 		middleDown = new Signal();
 		middleUp = new Signal();
+		lock.add(resetOvrs);
 		lock.add(updateOverState);
 	}
 	
@@ -110,6 +111,12 @@ class MouseHelper extends MonoBehaviour {
 			ovr.middleUp.add(middleUp.dispatchEvent);
 		}
 		init();
+	}
+	
+	private function resetOvrs():Void {
+		if (overed) out.dispatch();
+		ovrs = 0;
+		_overed = 0;
 	}
 	
 	private function subOver():Void {
