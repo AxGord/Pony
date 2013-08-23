@@ -92,6 +92,7 @@ class DTimer {
 		this.min = min;
 		this.sec = sec;
 		total = startTotal = hour * 60 * 60 + min * 60 + sec;
+		sumdt = 0;
 		update.dispatch(hour, min, sec);
 		return this;
 	}

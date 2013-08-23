@@ -64,18 +64,24 @@ class Button extends ExtendedMovieClip {
 		visual = Type.createEmptyInstance(cl);
 		visual.gotoAndStop(config.def);
 		visual.mouseEnabled = false;
+		visual.scaleX = scaleX;
+		visual.scaleY = scaleY;
 		addChild(visual);
 		
 		zone = Type.createEmptyInstance(cl);
 		zone.gotoAndStop(config.zone);
 		zone.buttonMode = true;
 		zone.alpha = 0;
+		zone.scaleX = scaleX;
+		zone.scaleY = scaleY;
 		addChild(zone);
 		
 		core = new ButtonCore();
 		core.changeVisual.add(change);
 		
 		mouseEnabled = false;
+		scaleX = 1;
+		scaleY = 1;
 		
 		addEventListener(ExtendedMovieClip.INIT, init);
 	}

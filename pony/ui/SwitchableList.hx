@@ -42,7 +42,7 @@ class SwitchableList {
 	public function new(a:Array<ButtonCore>, def:Int = 0, swto:Int = 2) {
 		this.swto = swto;
 		state = def;
-		select = new Signal();
+		select = new Signal(this);
 		list = a;
 		for (i in 0...a.length) {
 			if (i == def) a[i].mode = swto;
@@ -51,10 +51,18 @@ class SwitchableList {
 		select.add(setState, -1);
 	}
 	
-	public function setState(n:Int):Void {
+	private function setState(n:Int):Void {
 		list[state].mode = 0;
 		list[n].mode = swto;
 		state = n;
+	}
+	
+	public function next():Void {
+		if (state + 1 < list.length) select.dispatch(state+1);
+	}
+	
+	public function prev():Void {
+		if (state - 1 >= 0) select.dispatch(state-1);
 	}
 	
 }

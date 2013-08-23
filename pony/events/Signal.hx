@@ -80,7 +80,7 @@ class Signal {
 		listener._use();
 		var f:Bool = listeners.empty;
 		listeners.addElement(listener, priority);
-		if (f && takeListeners != null) takeListeners.dispatchArgs([]);
+		if (f && takeListeners != null) takeListeners.dispatchEmpty();
 		return this;
 	}
 	
@@ -91,7 +91,7 @@ class Signal {
 		if (listeners.empty) return this;
 		listeners.removeElement(listener);
 		listener.unuse();
-		if (listeners.empty && lostListeners != null) lostListeners.dispatchArgs([]);
+		if (listeners.empty && lostListeners != null) lostListeners.dispatchEmpty();
 		return this;
 	}
 	
@@ -132,8 +132,9 @@ class Signal {
 			var r:Bool;
 			try {
 				r = l.call(event);
-			} catch (e:Dynamic) {
+			} catch (e:Error) {
 				remove(l);
+				trace(e.pos);
 				throw e;
 			}
 			var br:Bool = r == false || event._stopPropagation;
