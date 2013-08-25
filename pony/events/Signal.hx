@@ -26,8 +26,9 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.events;
-
+#if macro
 import haxe.macro.Expr;
+#end
 import pony.Priority;
 
 /**
@@ -132,9 +133,10 @@ class Signal {
 			var r:Bool;
 			try {
 				r = l.call(event);
-			} catch (e:Error) {
+			} catch (e:Dynamic) {
 				remove(l);
-				trace(e.pos);
+				if (e.pos != null)
+					trace(e.pos);
 				throw e;
 			}
 			var br:Bool = r == false || event._stopPropagation;
@@ -149,7 +151,7 @@ class Signal {
 		return this;
 	}
 	
-	public function dispatchEmpty():Signal {
+	public function dispatchEmpty(?_):Signal {
 		dispatchEvent(new Event(target));
 		return this;
 	}

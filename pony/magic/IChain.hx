@@ -4,8 +4,8 @@ package pony.magic;
  * IChain
  * @author AxGord <axgord@gmail.com>
  */
-interface IChain {
+interface IChain<T> {
 
-	public function chain(id:Int, prev:Unit, next:Unit):Void;
+	public function chain(id:Int, prev:T, next:T):Void;
 	
 }

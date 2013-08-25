@@ -1,6 +1,6 @@
 package pony.flash.ui;
 import flash.events.Event;
-import pony.flash.ExtendedMovieClip;
+import pony.events.Signal;
 
 /**
  * IntInput
@@ -13,18 +13,16 @@ class IntInput extends Input {
 	
 	public function new() {
 		super();
-		addEventListener(ExtendedMovieClip.INIT, init);
-	}
-	
-	private function init(_):Void {
+		inp.removeEventListener(Event.CHANGE, chHandler);
+		inp.addEventListener(Event.CHANGE, changeHandler);
 		inp.restrict = '0-9';
-		inp.addEventListener(Event.CHANGE, change);
 	}
 	
-	private function change(_):Void {
-		var v:Int = Std.parseInt(inp.text);
-		if (v < min) inp.text = Std.string(min);
-		else if (v > max) inp.text = Std.string(max);
+	private function changeHandler(_):Void {
+		var v:Int = Std.parseInt(value);
+		if (v < min) value = Std.string(min);
+		else if (v > max) value = Std.string(max);
+		change.dispatch(v);
 	}
 	
 }

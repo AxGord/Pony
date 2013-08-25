@@ -35,7 +35,7 @@ import pony.events.Signal;
 class DeltaTime {
 	
 	public static var speed:Float = 1;
-	public static var update(default,null):Signal = new Signal();
+	public static var update(default,null):Signal;
 	//public static var value(default,null):Float = 0;
 	
 	private static var t:Float;
@@ -58,7 +58,8 @@ class DeltaTime {
 
 	
 	#if (flash && !munit)
-	private static function __init__():Void {
+	public static function __init__():Void {
+		update = new Signal();
 		update.takeListeners.add(_takeListeners);
 		update.lostListeners.add(_lostListeners);
 	}
@@ -69,6 +70,12 @@ class DeltaTime {
 	}
 	public static function _lostListeners():Void flash.Lib.current.removeEventListener(flash.events.Event.ENTER_FRAME, _tick);
 	public static inline function _set():Void set();
+	#end
+	
+	#if (!flash || munit)
+	public static function __init__():Void {
+		update = new Signal();
+	}
 	#end
 	
 }

@@ -1,14 +1,17 @@
 package pony.flash.ui;
+import flash.display.MovieClip;
 import flash.text.TextField;
 import flash.text.TextFieldType;
-import pony.flash.ExtendedMovieClip;
+import flash.events.Event;
+import pony.events.Signal;
 
 /**
  * Input
  * @author AxGord <axgord@gmail.com>
  */
-class Input extends ExtendedMovieClip {
+class Input extends MovieClip {
 
+	public var change:Signal;
 	public var inp(get,never):TextField;
 	public var edit(get, set):Bool;
 	public var value(get, set):String;
@@ -16,6 +19,12 @@ class Input extends ExtendedMovieClip {
 	public function new() {
 		super();
 		stop();
+		change = new Signal();
+		inp.addEventListener(Event.CHANGE, chHandler);
+	}
+	
+	private function chHandler(_):Void {
+		change.dispatch(value);
 	}
 	
 	inline private function get_inp():TextField return Reflect.field(this,'input');

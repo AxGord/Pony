@@ -29,13 +29,13 @@ package pony.flash.ui;
 
 import flash.display.InteractiveObject;
 import flash.display.MovieClip;
+import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.ui.Multitouch;
 import flash.events.TouchEvent;
 
 
 import pony.events.Signal;
-import pony.flash.ExtendedMovieClip;
 import pony.ui.ButtonCore;
 
 using pony.flash.FLExtends;
@@ -45,7 +45,7 @@ using pony.flash.CPP_FL_TouchFix;
  * ...
  * @author AxGord
  */
-class Button extends ExtendedMovieClip {
+class Button extends MovieClip {
 
 	public static var config = {def: 1, focus: 2, press: 3, zone: 4, disabled: 5};
 	
@@ -83,10 +83,11 @@ class Button extends ExtendedMovieClip {
 		scaleX = 1;
 		scaleY = 1;
 		
-		addEventListener(ExtendedMovieClip.INIT, init);
+		addEventListener(Event.ENTER_FRAME, init);
 	}
 	
-	private function init(Void):Void {
+	private function init(_):Void {
+		removeEventListener(Event.ENTER_FRAME, init);
 		if (CPP_FL_TouchFix.useFix) {
 			zone.downSignal().sub([], [false]).add(core.mouseOver);
 			CPP_FL_TouchFix.move.add(touchMove);

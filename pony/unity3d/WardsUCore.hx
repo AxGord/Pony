@@ -27,6 +27,7 @@
 **/
 package pony.unity3d;
 
+import pony.events.Signal;
 import unityengine.GameObject;
 import unityengine.MonoBehaviour;
 import unityengine.Quaternion;
@@ -46,12 +47,19 @@ class WardsUCore extends MonoBehaviour
 	public var withTimeScale:Bool = true;
 	public var speed:Single = 200;
 	public var currentPos:Int = -1;
+	public var change:Signal;
 	
 	public var target:GameObject;
 	private var wards:Array<Transform>;
 	private var toN:Null<Int>;
 	private var toObj:Transform;
 	private var rn:Single = 0;
+	
+	public function new():Void {
+		super();
+		change = new Signal();
+		change.add(changeHandler);
+	}
 	
 	public function Start():Void 
 	{
@@ -64,11 +72,14 @@ class WardsUCore extends MonoBehaviour
 		goto(0);
 	}
 	
-	public function goto(n:Int):Void {
+	public function changeHandler(n:Int):Void {
 		if (n == currentPos) return;
+		currentPos = n;
 		toN = n;
 		toObj = wards[n];
 	}
+	
+	inline public function goto(n:Int):Void change.dispatch(n);
 	
 	public function Update():Void 
 	{
@@ -80,7 +91,7 @@ class WardsUCore extends MonoBehaviour
 		if (withRotation)
 			target.transform.rotation = Quaternion_Static.Slerp(target.transform.rotation, r, speed*(rn+=speed*2)*dt);
 		if (target.transform.position == p) {
-			currentPos = toN;
+			//currentPos = toN;
 			toN = null;
 			toObj = null;
 			rn = 0;

@@ -187,7 +187,7 @@ class FloatTools {
 	
 	public static function _toFixed(v:Float, n:Int, begin:Int = 0, d:String='.', beginS:String='0', endS:String='0'):String {
 		if (begin != 0) {
-			var s:String = _toFixed(v, n, d, beginS, endS);
+			var s:String = _toFixed(v, n, 0, d, beginS, endS);
 			var a = s.split(d);
 			var d = begin - a[0].length;
 			return StringTls.repeat(beginS, d) + s;
@@ -212,6 +212,27 @@ class FloatTools {
 		return if (v < min) min;
 		else if (v > max) max;
 		else v;
+	}
+	
+	//Занимательная математика в рамках дозволенного
+	inline public static function cultureAdd(a:Float, b:Float, max:Float):Float {
+		if (a + b > max)
+			return max;
+		else
+			return a + b;
+	}
+	
+	inline public static function cultureSub(a:Float, b:Float, min:Float):Float {
+		if (a - b < min) return min;
+		else return a - b;
+	}
+	
+	inline public static function cultureTarget(a:Float, b:Float, step:Float):Float {
+		return a > b ? cultureSub(a, step, b) : cultureAdd(a, step, b);
+	}
+	
+	inline public static function midValue(a:Float, b:Float, aCount:Float, bCount:Float):Float {
+		return (aCount * a + bCount * b) / (aCount + bCount);
 	}
 }
 
