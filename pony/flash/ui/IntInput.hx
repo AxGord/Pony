@@ -6,7 +6,7 @@ import pony.events.Signal;
  * IntInput
  * @author AxGord <axgord@gmail.com>
  */
-class IntInput extends Input {
+class IntInput extends InputBase<Int> {
 
 	public var min:Int = 0;
 	public var max:Int = 100;
@@ -19,10 +19,19 @@ class IntInput extends Input {
 	}
 	
 	private function changeHandler(_):Void {
-		var v:Int = Std.parseInt(value);
-		if (v < min) value = Std.string(min);
-		else if (v > max) value = Std.string(max);
+		var v:Int = value;
+		if (v < min) value = min;
+		else if (v > max) value = max;
 		change.dispatch(v);
+	}
+	
+	override private function get_value():Int {
+		return Std.parseInt(inp.text);
+	}
+	
+	override private function set_value(v:Int):Int {
+		inp.text = Std.string(v);
+		return v;
 	}
 	
 }

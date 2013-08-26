@@ -42,6 +42,7 @@ class Smooth {
 	
 	public function new(time:Float = 0.5) {
 		this.time = time;
+		dtsum = 0;
 		vals = [];
 		update = new Signal();
 		DeltaTime.update.add(tick);

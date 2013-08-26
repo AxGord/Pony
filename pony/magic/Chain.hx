@@ -11,21 +11,46 @@ import haxe.macro.Expr.Field;
 #if !macro
 @:autoBuild(pony.magic.ChainBuilder.build())
 #end
-interface Chain { }
+interface Chain<T> {
+	var list:Array<T>;
+}
 
 
 class ChainBuilder {
 	
 	macro public static function build():Array<Field> {
+		
 		var fields:Array<Field> = Context.getBuildFields();
-		var exprs:Array<Expr> = [];
+		var ch = (Type.getClassName(Chain));
+		var cl:String = null;
+		for (i in Context.getLocalClass().get().interfaces) {
+			if (i.t.toString() == ch) {
+				cl = i.params[0].getParameters()[0].toString();
+				break;
+			}
+		}
+		if (cl == null) throw "Can't find type T (Chain<T>)";
+		
+		var a = cl.split('.');
+		var name = a.pop();
+		
+		fields.push( {
+			pos: Context.currentPos(),
+			name: 'list',
+			meta: [],
+			doc: null,
+			access: [APublic],
+			kind: FVar(TPath({name: 'Array', pack:[], params:[TPType(TPath({name: name, pack:a, params:[]}))]}))
+		});
+		
+		var exprs:Array<Expr> = [Context.parse('list = new Array<$cl>()', Context.currentPos())];
 		var list:Array<String> = [];
 		for (f in fields) {
-			if (f.kind.getParameters()[1] != null) {
+			if (f.meta.length > 0 && f.meta[0].name == 'chain') {
 				//trace(f.name);
 				//trace(f.kind.getParameters()[1].expr);
 				var ex = { expr: f.kind.getParameters()[1].expr, pos:Context.currentPos() };
-				exprs.push(macro $i { f.name } = $e { ex } );
+				exprs.push(macro list.push($i { f.name } = $e { ex }) );
 				list.push(f.name);
 			}
 			f.kind.getParameters()[1] = null;
@@ -39,6 +64,8 @@ class ChainBuilder {
 			i++;
 		}
 		//trace(exprs);
+		
+		
 		fields.push( {
 			pos: Context.currentPos(),
 			name: 'new',
