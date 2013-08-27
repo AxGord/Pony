@@ -13,6 +13,7 @@ import haxe.macro.Expr.Field;
 #end
 interface Chain<T> {
 	var list:Array<T>;
+	function createChain():Void;
 }
 
 
@@ -30,7 +31,9 @@ class ChainBuilder {
 			}
 		}
 		if (cl == null) throw "Can't find type T (Chain<T>)";
-		
+		#if display
+		try {
+		#end
 		var a = cl.split('.');
 		var name = a.pop();
 		
@@ -60,7 +63,7 @@ class ChainBuilder {
 		for (e in list) {
 			var next:Expr = list[i+1] == null ? macro null : macro $i{list[i+1]};
 			var prev:Expr = list[i-1] == null ? macro null : macro $i{list[i-1]};
-			exprs.push(macro $i { e } .chain($v { i }, $e{prev}, $e{next}));
+			exprs.push(macro $i { e } .chain($v { i }, $e{prev}, $e{next}, this));
 			i++;
 		}
 		//trace(exprs);
@@ -68,13 +71,16 @@ class ChainBuilder {
 		
 		fields.push( {
 			pos: Context.currentPos(),
-			name: 'new',
+			name: 'createChain',
 			meta: [],
 			doc: null,
 			access: [APublic],
 			kind: FFun({ret: null, params: [], args: [], expr: {expr:EBlock(exprs), pos: Context.currentPos()}})
 		});
-		
+		#if display
+		} catch (_:Dynamic) {
+		}
+		#end
 		return fields;
 	}
 	

@@ -14,6 +14,8 @@ class ProgressBar extends MovieClip implements Dynamic<MovieClip> {
 	private var total:Float;
 	private var autof:Void->Float;
 	
+	@:isVar public var progress(default, set):Float;
+	
 	public function new() {
 		super();
 		addEventListener(Event.ENTER_FRAME, init);
@@ -27,8 +29,9 @@ class ProgressBar extends MovieClip implements Dynamic<MovieClip> {
 	
 	inline public function resolve(name:String):MovieClip return untyped this[name];
 	
-	inline public function progress(v:Float):Void {
+	inline public function set_progress(v:Float):Float {
 		this.bar.width = total * v;
+		return progress = v;
 	}
 	
 	inline public function enableAuto(f:Void->Float):Void {
@@ -42,7 +45,7 @@ class ProgressBar extends MovieClip implements Dynamic<MovieClip> {
 	}
 	
 	private function autoUpdate():Void {
-		progress(autof());
+		progress = autof();
 	}
 	
 }
