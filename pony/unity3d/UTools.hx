@@ -39,7 +39,7 @@ import unityengine.Screen;
 class UTools {
 
 
-	public static function init(key:String='', camera:String='/Camera', defWidth:Int=800, defHeight:Int=600):Bool {
+	public static function init(key:String='', camera:String='/Camera', defWidth:Int=800, defHeight:Int=600, fs:Bool=true):Bool {
 		var args: { reg:Bool, quality:String, width:String, height:String } = getArgs(['quality', 'width', 'height'], key==''?{}:{ reg:key } );
 		if (!args.reg) {
 			//Application.Quit();
@@ -49,7 +49,7 @@ class UTools {
 		QualitySettings.SetQualityLevel(cfg.quality);
 		
 		if (cfg.width > 0 && cfg.height > 0)
-			Screen.SetResolution(cfg.width, cfg.height, true);
+			Screen.SetResolution(cfg.width, cfg.height, fs);
 		else
 			Screen.SetResolution(defWidth, defHeight, false);
 			

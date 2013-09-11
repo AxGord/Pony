@@ -20,7 +20,7 @@ class InputBase<T> extends MovieClip {
 	public function new() {
 		super();
 		stop();
-		change = new Signal();
+		change = new Signal(this);
 		inp.addEventListener(Event.CHANGE, chHandler);
 	}
 	

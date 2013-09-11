@@ -60,7 +60,8 @@ class SwitcherUCore extends MonoBehaviour {
 	private function sw(n:Int):Void select.dispatch(names[n]);
 	
 	public function set(name:String):Void {
-		core.setState(Lambda.indexOf(names, name));
+		sw(Lambda.indexOf(names, name));
+		//core.setState();
 	}
 	
 }

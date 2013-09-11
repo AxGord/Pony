@@ -75,4 +75,18 @@ class ToolsTest
 		Assert.isFalse(Tools.equal(IA, IB));
 		Assert.isFalse(Tools.equal(A, B));
 	}
+	
+	@Test
+	public function culture():Void {
+		var v = 5.;
+		var target = 20.;
+		v = v.cultureTarget(target, 4.3);
+		v = v.cultureTarget(target, 4.3);
+		v = v.cultureTarget(target, 4.3);
+		v = v.cultureTarget(target, 4.3);
+		v = v.cultureTarget(target, 4.3);
+		v = v.cultureTarget(target, 4.3);
+		Assert.areEqual(v, target);
+	}
+	
 }

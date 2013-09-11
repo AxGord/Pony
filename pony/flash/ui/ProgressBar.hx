@@ -10,9 +10,10 @@ import pony.DeltaTime;
  */
 class ProgressBar extends MovieClip implements Dynamic<MovieClip> {
 
+	@:isVar public var auto(default, set):Void->Float;
+	
 	//@:extern private var bar:MovieClip;
 	private var total:Float;
-	private var autof:Void->Float;
 	
 	@:isVar public var progress(default, set):Float;
 	
@@ -29,23 +30,22 @@ class ProgressBar extends MovieClip implements Dynamic<MovieClip> {
 	
 	inline public function resolve(name:String):MovieClip return untyped this[name];
 	
-	inline public function set_progress(v:Float):Float {
+	public function set_progress(v:Float):Float {
 		this.bar.width = total * v;
 		return progress = v;
 	}
 	
-	inline public function enableAuto(f:Void->Float):Void {
-		autof = f;
-		DeltaTime.update.add(autoUpdate);
-		autoUpdate();
-	}
-	
-	inline public function diableAuto():Void {
-		DeltaTime.update.remove(autoUpdate);
+	private function set_auto(f:Void->Float):Void->Float {
+		if (auto == f) return f;
+		if (f == null) {
+			DeltaTime.fixedUpdate.remove(autoUpdate);
+		} else
+			DeltaTime.fixedUpdate.add(autoUpdate);
+		return auto = f;
 	}
 	
 	private function autoUpdate():Void {
-		progress = autof();
+		progress = auto();
 	}
 	
 }

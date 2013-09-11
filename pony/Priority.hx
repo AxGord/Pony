@@ -31,6 +31,7 @@ using Lambda;
 
 /**
  * todo: get element priority
+ * todo: есть подозрение что ломается при большом кол-ве элементов (>21) нужны тесты
  * @author AxGord
  */
 class Priority<T> {

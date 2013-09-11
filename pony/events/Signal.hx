@@ -90,9 +90,10 @@ class Signal {
 	 */
 	public function remove(listener:Listener):Signal {
 		if (listeners.empty) return this;
-		listeners.removeElement(listener);
-		listener.unuse();
-		if (listeners.empty && lostListeners != null) lostListeners.dispatchEmpty();
+		if (listeners.removeElement(listener)) {
+			listener.unuse();
+			if (listeners.empty && lostListeners != null) lostListeners.dispatchEmpty();
+		}
 		return this;
 	}
 	

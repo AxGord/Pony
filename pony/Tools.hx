@@ -122,20 +122,40 @@ class Tools {
 	
 	inline public static function percentCalc(p:Float, min:Float, max:Float):Float return (max - min) * p + min;
 	
-	public static function cut(b:BytesInput):BytesInput {
-		var r:BytesOutput = new BytesOutput();
-		var prev:Int = -1;
-		var v:Int = 0;
-		while (true) {
-			v = b.readByte();
-			if (prev == 0 && v == 0) break;
-			else {
-				if (prev != -1) r.writeByte(prev);
-				prev = v;
+	/**
+	 * @author BoBaH6eToH
+	 * @param	b
+	 * @return
+	 */
+	public static function cut(inp:BytesInput):BytesInput {
+		var out:BytesOutput = new BytesOutput();
+		var cntNull:Int = 0;
+		var flagNull:Bool = true;
+		var cur:Int = -99;
+		while (true)
+		{
+			try {
+				cur = inp.readByte();
+			} catch (_:Dynamic) {
+				break;
+			}
+			if ( cur == 0 )
+			{
+				if ( !flagNull )
+					flagNull = true;
+				cntNull++;
+			}
+			else
+			{
+				if ( flagNull )
+					while ( cntNull-- > 0 )
+						out.writeByte( 0 );
+				flagNull = false;
+				out.writeByte ( cur );
 			}
 		}
-		r.close();
-		return new BytesInput(r.getBytes());
+		out.close();
+		return new BytesInput(out.getBytes());
 	}
 	
 	macro public static function currentFile():Expr
@@ -195,7 +215,7 @@ class FloatTools {
 		
 		if (n == 0) return Std.string(Std.int(v));
 		var p:Float = Math.pow(10, n);
-		v = Std.int(v * p) / p;
+		v = Math.floor(v * p) / p;
 		var s:String = Std.string(v);
 		var a:Array<String> = s.split('.');
 		if (a.length <= 1)
@@ -216,14 +236,14 @@ class FloatTools {
 	
 	//Занимательная математика в рамках дозволенного
 	inline public static function cultureAdd(a:Float, b:Float, max:Float):Float {
-		if (a + b > max)
+		if (a + b >= max)
 			return max;
 		else
 			return a + b;
 	}
 	
 	inline public static function cultureSub(a:Float, b:Float, min:Float):Float {
-		if (a - b < min) return min;
+		if (a - b <= min) return min;
 		else return a - b;
 	}
 	

@@ -36,6 +36,7 @@ class DeltaTime {
 	
 	public static var speed:Float = 1;
 	public static var update(default,null):Signal;
+	public static var fixedUpdate(default,null):Signal;
 	//public static var value(default,null):Float = 0;
 	
 	private static var t:Float;
@@ -50,32 +51,37 @@ class DeltaTime {
 	private static function tick():Void {
 		var value:Float = get();
 		set();
-		update.dispatch(value);
+		update.dispatch(value * speed);
+		fixedUpdate.dispatch(value);
 	}
 	
 	private inline static function set():Void t = Date.now().getTime();
-	private inline static function get():Float return (Date.now().getTime() - t) * speed / 1000;
+	private inline static function get():Float return (Date.now().getTime() - t) / 1000;
 
 	
 	#if (flash && !munit)
-	public static function __init__():Void {
-		update = new Signal();
+	private static function __init__():Void {
+		createSignals();
 		update.takeListeners.add(_takeListeners);
 		update.lostListeners.add(_lostListeners);
 	}
-	public static function _tick(_):Void tick();
-	public static function _takeListeners():Void {
+	private static function _tick(_):Void tick();
+	private static function _takeListeners():Void {
 		_set();
 		flash.Lib.current.addEventListener(flash.events.Event.ENTER_FRAME, _tick);
 	}
-	public static function _lostListeners():Void flash.Lib.current.removeEventListener(flash.events.Event.ENTER_FRAME, _tick);
-	public static inline function _set():Void set();
+	private static function _lostListeners():Void flash.Lib.current.removeEventListener(flash.events.Event.ENTER_FRAME, _tick);
+	private static inline function _set():Void set();
 	#end
 	
 	#if (!flash || munit)
-	public static function __init__():Void {
-		update = new Signal();
+	private static function __init__():Void {
+		createSignals();
 	}
 	#end
 	
+	inline private static function createSignals():Void {
+		update = new Signal();
+		fixedUpdate = new Signal();
+	}
 }

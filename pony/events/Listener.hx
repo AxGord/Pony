@@ -37,7 +37,7 @@ using Lambda;
  * @author AxGord
  */
 
-typedef Listener_ = { f:Function, count:Int, event:Bool, prev:Event, used:Int }
+typedef Listener_ = { f:Function, count:Int, event:Bool, prev:Event, used:Int, active:Bool }
  
 abstract Listener( Listener_ ) {
 	
@@ -46,7 +46,7 @@ abstract Listener( Listener_ ) {
 	
 	inline public function new(f:Function, event:Bool = false, count:Int = -1) {
 		f._use();
-		this = {f:f, count:count, event:event, prev: null, used: 0}
+		this = {f:f, count:count, event:event, prev: null, used: 0, active: true}
 	}
 	
 	@:from static public function fromEFunction(f:Event->Void):Listener
@@ -69,6 +69,7 @@ abstract Listener( Listener_ ) {
 	inline public function count():Int return this.count;
 	
 	public function call(event:Event):Bool {
+		if (!this.active) return true;
 		this.count--;
 		event._setListener(this);
 		var r:Bool = true;
@@ -94,14 +95,15 @@ abstract Listener( Listener_ ) {
 	
 	inline public function unuse():Void {
 		this.used--;
-		if (this.used <= 0) {
+		if (this.used == 0) {
 			//if (this.event) {
 			//	eflist.remove(this.f.get());
 			//} else {
 				flist.remove(this.f.id());
 			//}
 			this.f.unuse();
-			this = null;
+			//this.f = null;
+			//this.prev = null;
 		}
 	}
 	
@@ -113,5 +115,9 @@ abstract Listener( Listener_ ) {
 		//for (l in eflist) if (l.used() <= 0) c++;
 		return c;
 	}
+	
+	inline public function getActive():Bool return this.active;
+	
+	inline public function setActive(b:Bool):Bool return this.active = b;
 	
 }

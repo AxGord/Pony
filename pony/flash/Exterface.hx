@@ -50,7 +50,7 @@ class Exterface extends Signal implements Dynamic<Exterface> {
 			super();
 			this.name = name;
 			#if debug
-			trace('Add callback: $name');
+			//trace('Add callback: $name');
 			#else
 			ExternalInterface.addCallback(name, cb);
 			#end

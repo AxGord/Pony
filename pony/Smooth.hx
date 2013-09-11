@@ -39,6 +39,7 @@ class Smooth {
 	public var update(default, null):Signal;
 	private var vals:Array<Float>;
 	private var dtsum:Float;
+	private var last:Null<Float>;
 	
 	public function new(time:Float = 0.5) {
 		this.time = time;
@@ -54,13 +55,21 @@ class Smooth {
 			update.dispatch(value);
 		}
 		vals.push(v);
+		last = v;
 	}
 	
 	private function tick(dt:Float):Void {
 		dtsum += dt;
 		if (dtsum < time) return;
 		dtsum %= time;
-		if (vals.length == 0) return;
+		if (vals.length == 0) {
+			if (last != null) {
+				value = last;
+				update.dispatch(value);
+				last = null;
+			}
+			return;
+		}
 		value = vals.arithmeticMean();
 		vals = [];
 		update.dispatch(value);
