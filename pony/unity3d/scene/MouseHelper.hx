@@ -30,6 +30,7 @@ package pony.unity3d.scene;
 import pony.DeltaTime;
 import pony.events.LV;
 import pony.events.Signal;
+import pony.unity3d.ui.LoadScreen;
 import unityengine.BoxCollider;
 import unityengine.Input;
 import unityengine.MonoBehaviour;
@@ -59,7 +60,9 @@ class MouseHelper extends MonoBehaviour {
 	private var _overed:Int = 0;
 	private var ovr:MouseHelper;
 	private var ovrs:Int = 0;
-
+	
+	public var sub:Bool = false;
+	
 	public static function updateStatic():Void
 	{
 		if (Input.GetMouseButton(2))
@@ -95,22 +98,32 @@ class MouseHelper extends MonoBehaviour {
 		lock.add(updateOverState);
 	}
 	
-	private function Start():Void {
+	public function Start():Void {
+		init();
+		if (LoadScreen.lastLoader != null && !sub)
+			LoadScreen.lastLoader.addAction(ft);
+		else
+			ft();
+	}
+	
+	public function ft():Void {
 		if (renderer != null && collider == null)
 			gameObject.addTypedComponent(BoxCollider);
 		
 		for (e in gameObject.getComponentsInChildrenOfType(Transform)) {
 			if (e == transform) continue;
 			ovr = e.gameObject.getTypedComponent(MouseHelper);
-			if (ovr == null)
+			if (ovr == null) {
 				ovr = e.gameObject.addTypedComponent(MouseHelper);
+				ovr.sub = true;
+			}
 			ovr.over.add(subOver);
 			ovr.out.add(subOut);
 			ovr.down.add(down.dispatchEvent);
 			ovr.middleDown.add(middleDown.dispatchEvent);
 			ovr.middleUp.add(middleUp.dispatchEvent);
 		}
-		init();
+		
 	}
 	
 	private function resetOvrs():Void {

@@ -46,6 +46,7 @@ using pony.Tools;
 
 /**
  * Tooltip
+ * Static class, helper for scene and ui tooltips
  * @author AxGord
  * @author BoBaH6eToH
  */
@@ -168,15 +169,4 @@ class Tooltip {
 		DeltaTime.update.remove(moveText);
 		DeltaTime.update.remove(moveTextPanel);
 	}
-	/*
-	private function OnGUI() {
-		if (overed > 0) {
-			GUILayout.BeginArea(new Rect(Input.mousePosition.x, Screen.height - Input.mousePosition.y, Screen.width, Screen.height));
-			GUILayout.FlexibleSpace();
-			GUILayout.Box(text);
-			//GUILayout.FlexibleSpace();
-			GUILayout.EndArea();
-		}
-	}
-	*/
 }

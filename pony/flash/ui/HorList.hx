@@ -25,66 +25,62 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.net;
-import com.dongxiguo.protobuf.binaryFormat.LimitableBytesInput;
-import haxe.io.BytesInput;
-import haxe.io.BytesOutput;
-import pony.DeltaTime;
-import pony.events.Signal;
+package pony.flash.ui;
+
+import flash.display.MovieClip;
+import flash.text.TextField;
+import pony.ui.ButtonCore;
 
 /**
- * Protobuf+SocketClient
+ * HorList
+ * Horizontal list switchable elements
  * @author AxGord <axgord@gmail.com>
  */
-class Protobuf<A, B> {
+class HorList extends MovieClip {
 
-	public var socket(default, set):SocketClient;
-	public var data(default, null):Signal;
-	public var onSend(default, null):Signal;
-	private var fs:List < A->Void > ;
+	private var bPrev(get,never):ButtonCore;
+	private var bNext(get,never):ButtonCore;
+	private var text(get,never):TextField;
 	
-	private var a:Class<A>;
-	private var b:Class<B>;
-	private var awrite:A->BytesOutput->Void;
-	private var bmerge:B->LimitableBytesInput->Void;
+	public var elemets(default, set):Array<String>;
+	public var current(default, set):Int = 0;
 	
-	public function new(a:Class<A>, b:Class<B>, awrite:A->BytesOutput->Void, bmerge:B->LimitableBytesInput->Void) {
-		data = new Signal(this);
-		onSend = new Signal(this);
-		this.a = a;
-		this.b = b;
-		this.awrite = awrite;
-		this.bmerge = bmerge;
-		DeltaTime.update.add(trySend);
+	public function new() {
+		super();
+		elemets = [];
+		bPrev.mode = 1;
+		bNext.mode = 1;
+		text.text = '';
+		bPrev.click.sub([0]).add(prev);
+		bNext.click.sub([0]).add(next);
 	}
 	
-	private function set_socket(s:SocketClient):SocketClient {
-		if (socket != null) socket.data.remove(socketData);
-		if (s != null) s.data.add(socketData);
-		return socket = s;
+	inline private function get_bPrev():ButtonCore return untyped this['bPrev'].core;
+	inline private function get_bNext():ButtonCore return untyped this['bNext'].core;
+	inline private function get_text():TextField return untyped this['text'];
+	
+	public function set_current(n:Int):Int {
+		if (current == n) return n;
+		bPrev.mode = n > 0 ? 0 : 1;
+		bNext.mode = n < elemets.length-1 ? 0 : 1;
+		text.text = elemets[n];
+		return current = n;
 	}
 	
-	public function send(f:A->Void):Void {
-		if (fs == null) fs = new List < A->Void > ();
-		fs.push(f);
+	public function set_elemets(a:Array<String>):Array<String> {
+		if (a.length == 0) {
+			current = 0;
+			bPrev.mode = 1;
+			bNext.mode = 1;
+			text.text = '';
+		} else {
+			bNext.mode = current < a.length - 1 ? 0 : 1;
+			text.text = a[current];
+		}
+		return elemets = a;
 	}
 	
-	private function trySend():Void {
-		if (fs == null) return;
-		if (socket == null || socket.closed) return;
-		var builder:A = Type.createInstance(a, []);
-		onSend.dispatch(builder);
-		for (f in fs) f(builder);
-		var output = new BytesOutput();
-		awrite(builder, output);
-		socket.send(output);
-		fs = null;
-	}
-	
-	private function socketData(input:BytesInput):Void {
-		var builder:B = Type.createInstance(b, []);
-		bmerge(builder, new LimitableBytesInput(input.readAll()));
-		data.dispatch(builder);
-	}
+	inline public function next():Void if (current < elemets.length-1) current++;
+	inline public function prev():Void if (current > 0) current--;
 	
 }

@@ -74,13 +74,22 @@ class SocketClient extends SocketClientBase {
 	}
 	
 	inline public function send(data:BytesOutput):Void {
-		socket.writeBytes(data.getBytes().getData());
-		socket.flush();
+		try {
+			socket.writeBytes(data.getBytes().getData());
+			socket.flush();
+		} catch (_:Dynamic) {
+			trace('socket error, reconnect');
+			close();
+			open();
+			connect.once(function()send(data));
+		}
 	}
 	
 	inline public function close():Void {
 		closed = true;
-		socket.close();
+		try {
+			socket.close();
+		} catch (_:Dynamic) {}
 	}
 	
 	private function socketDataHandler(_):Void {

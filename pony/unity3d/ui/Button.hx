@@ -37,7 +37,8 @@ import unityengine.Vector3;
 import pony.unity3d.Fixed2dCamera;
 
 /**
- * ...
+ * Simple Button
+ * @see pony.ui.ButtonCore
  * @author AxGord
  */
 

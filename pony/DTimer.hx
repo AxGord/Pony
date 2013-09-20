@@ -31,8 +31,8 @@ import pony.events.Signal;
 
 using pony.Tools;
 /**
- * DeltaTime Timer, can work as Clock
- * todo: timer events
+ * DeltaTime Timer
+ * Can work as Clock
  * @author AxGord
  */
 class DTimer {
@@ -41,6 +41,7 @@ class DTimer {
 	public var min(default, null):Int;
 	public var sec(default, null):Int;
 	public var forward(default, null):Bool;
+	public var repeat:Bool;
 	public var started(default, null):Bool;
 	
 	public var update:Signal;
@@ -55,7 +56,7 @@ class DTimer {
 	public var startTotal:Float;
 	public var total:Float;
 
-	public function new(hour:Int = 0, min:Int = 0, sec:Int = 0, forward:Bool = true) {
+	public function new(hour:Int = 0, min:Int = 0, sec:Int = 0, forward:Bool = true, repeat:Bool = false) {
 		update = new Signal();
 		updateVisual = new Signal();
 		progress = new Signal();
@@ -67,6 +68,7 @@ class DTimer {
 		progress.lostListeners.add(lostProgress);
 		setTime(hour, min, sec);
 		this.forward = forward;
+		this.repeat = repeat;
 	}
 	
 	private function takeVisual():Void {
@@ -160,6 +162,10 @@ class DTimer {
 						stop();
 						hour = min = sec = 0;
 						complite.dispatch();
+						if (repeat) {
+							reset();
+							start();
+						}
 					}
 				}
 			}

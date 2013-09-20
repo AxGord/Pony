@@ -33,7 +33,7 @@ import unityengine.MonoBehaviour;
 import unityengine.Time;
 
 /**
- * ...
+ * Clock
  * @author AxGord
  */
 

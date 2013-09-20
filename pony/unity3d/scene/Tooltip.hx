@@ -29,8 +29,8 @@ package pony.unity3d.scene;
 
 /**
  * Tooltip
- * @see TooltipUCore
+ * @see pony.unity3d.scene.ucore.TooltipUCore
  * @author AxGord <axgord@gmail.com>
  */
 
-class Tooltip extends TooltipUCore {}
+class Tooltip extends pony.unity3d.scene.ucore.TooltipUCore {}

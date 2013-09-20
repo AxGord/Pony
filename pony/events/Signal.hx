@@ -32,7 +32,7 @@ import haxe.macro.Expr;
 import pony.Priority;
 
 /**
- * ...
+ * Dynamic Signal
  * @author AxGord
  */
 
@@ -176,10 +176,7 @@ class Signal {
 		if (!f) lostListeners.dispatchArgs([]);
 		return this;
 	}
-	/*
-	public inline function buildListener():Listener
-		return dispatchEvent;
-	*/
+	
 	public inline function buildListenerEvent(event:Event):Listener {
 		return function() dispatchEvent(event);
 	}

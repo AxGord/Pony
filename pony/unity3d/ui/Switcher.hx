@@ -29,8 +29,8 @@ package pony.unity3d.ui;
 
 /**
  * Switcher
- * @see SwitcherUCore
+ * @see pony.unity3d.ui.ucore.SwitcherUCore
  * @author AxGord <axgord@gmail.com>
  */
 
-class Switcher extends SwitcherUCore {}
+class Switcher extends pony.unity3d.ui.ucore.SwitcherUCore {}

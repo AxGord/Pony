@@ -33,7 +33,10 @@ import unityengine.Color;
 import unityengine.Texture;
 
 /**
- * ...
+ * Tint Button
+ * This button use tint effect or textures for over, out and click.
+ * @see Button
+ * @see pony.ui.ButtonCore
  * @author AxGord
  */
 class TintButton extends Button {

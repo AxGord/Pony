@@ -25,66 +25,42 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.net;
-import com.dongxiguo.protobuf.binaryFormat.LimitableBytesInput;
-import haxe.io.BytesInput;
-import haxe.io.BytesOutput;
-import pony.DeltaTime;
+package pony.unity3d.ui.ucore;
+
 import pony.events.Signal;
+import pony.ui.SwitchableList;
+import pony.ui.ButtonCore;
+import unityengine.MonoBehaviour;
+using hugs.HUGSWrapper;
 
 /**
- * Protobuf+SocketClient
- * @author AxGord <axgord@gmail.com>
+ * Switcher
+ * @author AxGord
  */
-class Protobuf<A, B> {
 
-	public var socket(default, set):SocketClient;
-	public var data(default, null):Signal;
-	public var onSend(default, null):Signal;
-	private var fs:List < A->Void > ;
+class SwitcherUCore extends MonoBehaviour {
 	
-	private var a:Class<A>;
-	private var b:Class<B>;
-	private var awrite:A->BytesOutput->Void;
-	private var bmerge:B->LimitableBytesInput->Void;
+	public var select:Signal;
+	public var core:SwitchableList;
+	public var names:Array<String>;
 	
-	public function new(a:Class<A>, b:Class<B>, awrite:A->BytesOutput->Void, bmerge:B->LimitableBytesInput->Void) {
-		data = new Signal(this);
-		onSend = new Signal(this);
-		this.a = a;
-		this.b = b;
-		this.awrite = awrite;
-		this.bmerge = bmerge;
-		DeltaTime.update.add(trySend);
+	public function new() {
+		super();
+		select = new Signal();
 	}
 	
-	private function set_socket(s:SocketClient):SocketClient {
-		if (socket != null) socket.data.remove(socketData);
-		if (s != null) s.data.add(socketData);
-		return socket = s;
+	private function Start():Void {
+		var a:NativeArrayIterator<TintButton> = getComponentsInChildrenOfType(TintButton);
+		names = [for (e in a) e.name];
+		a.i = 0;
+		core = new SwitchableList([for (e in a) e.core], 0, 1);
+		core.select.add(sw);
 	}
 	
-	public function send(f:A->Void):Void {
-		if (fs == null) fs = new List < A->Void > ();
-		fs.push(f);
-	}
+	private function sw(n:Int):Void select.dispatch(names[n]);
 	
-	private function trySend():Void {
-		if (fs == null) return;
-		if (socket == null || socket.closed) return;
-		var builder:A = Type.createInstance(a, []);
-		onSend.dispatch(builder);
-		for (f in fs) f(builder);
-		var output = new BytesOutput();
-		awrite(builder, output);
-		socket.send(output);
-		fs = null;
-	}
-	
-	private function socketData(input:BytesInput):Void {
-		var builder:B = Type.createInstance(b, []);
-		bmerge(builder, new LimitableBytesInput(input.readAll()));
-		data.dispatch(builder);
+	public function set(name:String):Void {
+		sw(Lambda.indexOf(names, name));
 	}
 	
 }

@@ -25,7 +25,7 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.unity3d.scene;
+package pony.unity3d.scene.ucore;
 
 import pony.DeltaTime;
 import pony.unity3d.scene.MouseHelper;
@@ -89,7 +89,8 @@ class TooltipUCore extends MonoBehaviour {
 	
 	public function saveColors():Void {
 		savedColors = [];
-		for (e in subObjects) savedColors.push(e.renderer.material.color);
+		for (e in subObjects) if (e.renderer.material.HasProperty('_Color'))
+			savedColors.push(e.renderer.material.color);
 	}
 	
 	private function onDCL(cl:Color):Void {
@@ -127,10 +128,10 @@ class TooltipUCore extends MonoBehaviour {
 		if (lighted) return;
 		lighted = true;
 		for (e in subObjects) {
-			try {
+			if (e.renderer.material.HasProperty('_Color')) {
 				var sColor = e.renderer.material.color;
 				e.renderer.material.color = new Color(sColor.r + colorMod.r, sColor.g + colorMod.g, sColor.b + colorMod.b);
-			} catch (_:Dynamic) {}
+			}
 		}
 	}
 	

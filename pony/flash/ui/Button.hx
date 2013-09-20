@@ -42,7 +42,8 @@ using pony.flash.FLExtends;
 using pony.flash.CPP_FL_TouchFix;
 
 /**
- * ...
+ * Button
+ * @see pony.ui.ButtonCore
  * @author AxGord
  */
 class Button extends MovieClip {

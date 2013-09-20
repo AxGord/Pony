@@ -10,6 +10,14 @@ import pony.Function;
 
 class SignalTest 
 {
+	private var beginListenerUnused:Int;
+	private var beginFunctionUnused:Int;
+	
+	@Before
+	public function setup():Void {
+		beginListenerUnused = Listener.unusedCount();
+		beginFunctionUnused = Function.unusedCount;
+	}
 	
 	@Test
 	public function shortCuts():Void
@@ -37,6 +45,7 @@ class SignalTest
 	
 	@Test
 	public function remove():Void {
+		
 		var c:Int = 0;
 		var f:Void->Void = function() c++;
 		var s:Signal = new Signal();
@@ -46,8 +55,9 @@ class SignalTest
 		s.remove(f);
 		s.dispatch();
 		Assert.areEqual(c, 2);
-		Assert.areEqual(Listener.unusedCount(), 0);
-		Assert.areEqual(Function.unusedCount, 0);
+		
+		Assert.areEqual(Listener.unusedCount(), beginListenerUnused);
+		Assert.areEqual(Function.unusedCount, beginFunctionUnused);
 	}
 	
 	@Test
@@ -61,8 +71,9 @@ class SignalTest
 		s.removeAllListeners();
 		s.dispatch();
 		Assert.areEqual(c, 2);
-		Assert.areEqual(Listener.unusedCount(), 0);
-		Assert.areEqual(Function.unusedCount, 0);
+		
+		Assert.areEqual(Listener.unusedCount(), beginListenerUnused);
+		Assert.areEqual(Function.unusedCount, beginFunctionUnused);
 	}
 	
 	@Test

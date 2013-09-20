@@ -28,7 +28,7 @@
 package pony.events;
 
 /**
- * ...
+ * Signal with value
  * @author AxGord
  */
 class LV<T> extends Signal {

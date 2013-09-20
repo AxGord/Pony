@@ -30,7 +30,7 @@ class ThermoTest
 		var t = new Thermo();
 		t.enabled = true;
 		t.tempTarget = 40;
-		DeltaTester.run(60);
+		DeltaTime.testRun(60);
 		//trace(t.temp);
 		//trace(t.kwTotal);
 		Assert.isTrue(t.temp.approximately(39));
@@ -41,7 +41,7 @@ class ThermoTest
 	public function pump():Void {
 		var t = new Thermo();
 		t.wetTarget = 0.8;
-		DeltaTester.run(60);
+		DeltaTime.testRun(60);
 		//trace(t.wet);
 		//trace(t.kwTotal);
 		Assert.isTrue(t.wet.approximately(0.8));
@@ -52,7 +52,7 @@ class ThermoTest
 	public function dehumidifier():Void {
 		var t = new Thermo();
 		t.wetTarget = 0.3;
-		DeltaTester.run(60);
+		DeltaTime.testRun(60);
 		//trace(t.wet);
 		//trace(t.kwTotal);
 		Assert.isTrue(t.wet.approximately(0.4));

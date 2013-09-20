@@ -25,18 +25,12 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.unity3d;
-
-import unityengine.GameObject;
-import unityengine.MonoBehaviour;
-import unityengine.Quaternion;
-import unityengine.Transform;
-import unityengine.Vector3;
+package pony.unity3d.scene;
 
 /**
- * Wards
- * @see WardsUCore
+ * Door
+ * @see pony.unity3d.scene.ucore.DoorUCore
  * @author AxGord <axgord@gmail.com>
  */
 
-class Wards extends WardsUCore {}
+class Door extends pony.unity3d.scene.ucore.DoorUCore {}

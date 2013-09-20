@@ -25,43 +25,23 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.unity3d.ui;
-
-import pony.events.Signal;
-import pony.ui.SwitchableList;
-import pony.ui.ButtonCore;
+package pony.unity3d.scene;
 import unityengine.MonoBehaviour;
-using hugs.HUGSWrapper;
+import unityengine.Quaternion;
+import unityengine.Vector3;
 
 /**
- * Switcher
- * @author AxGord
+ * ShowTransformInfo
+ * @author AxGord <axgord@gmail.com>
  */
-
-class SwitcherUCore extends MonoBehaviour {
+class ShowTransformInfo extends MonoBehaviour {
+	#if debug
+	public var infoRotation:Quaternion;
+	public var infoPosition:Vector3;
 	
-	public var select:Signal;
-	public var core:SwitchableList;
-	public var names:Array<String>;
-	
-	public function new() {
-		super();
-		select = new Signal();
+	public function Update():Void {
+		infoRotation = transform.rotation;
+		infoPosition = transform.position;
 	}
-	
-	private function Start():Void {
-		var a:NativeArrayIterator<TintButton> = getComponentsInChildrenOfType(TintButton);
-		names = [for (e in a) e.name];
-		a.i = 0;
-		core = new SwitchableList([for (e in a) e.core], 0, 1);
-		core.select.add(sw);
-	}
-	
-	private function sw(n:Int):Void select.dispatch(names[n]);
-	
-	public function set(name:String):Void {
-		sw(Lambda.indexOf(names, name));
-		//core.setState();
-	}
-	
+	#end
 }

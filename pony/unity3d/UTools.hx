@@ -34,6 +34,7 @@ import unityengine.Screen;
 
 /**
  * UTools
+ * Tools for unity3d
  * @author AxGord <axgord@gmail.com>
  */
 class UTools {
@@ -57,7 +58,7 @@ class UTools {
 		var cam:GameObject = GameObject.Find(camera);
 		if (cam == null) return true;
 		compEnabled(cam, 'AntialiasingAsPostEffect', cfg.quality >= 1);
-		compEnabled(cam, 'NoiseAndGrain', compEnabled(cam, 'DepthOfFieldScatter', compEnabled(cam, 'BloomAndLensFlares', cfg.quality == 2)));
+		compEnabled(cam, 'NoiseAndGrain', compEnabled(cam, 'DepthOfFieldScatter', compEnabled(cam, 'BloomAndLensFlares', compEnabled(cam, 'NoiseAndGrain', compEnabled(cam, 'DepthOfFieldScatter', compEnabled(cam, 'SSAOEffect', cfg.quality == 2))))));
 		return true;
 	}
 	
