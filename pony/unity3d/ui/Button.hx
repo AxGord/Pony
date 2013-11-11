@@ -57,7 +57,7 @@ class Button extends MonoBehaviour {
 		core = new ButtonCore();
 	}
 	
-	function Start() {
+	private function Start():Void {
 		core.mode = defaultMode;
 		if (autoSwith) {
 			core.click.add(sw);
@@ -83,7 +83,7 @@ class Button extends MonoBehaviour {
 		core.mode = mode == 0 ? 2 : (mode == 2 ? 0 : mode);
 	}
 	
-	function Update() {
+	private function Update():Void {
 		var h = panel || !Fixed2dCamera.exists
 			? guiTexture.HitTest(new Vector3(Input.mousePosition.x - Fixed2dCamera.begin, Input.mousePosition.y))
 			: guiTexture.HitTest(new Vector3(Input.mousePosition.x +(Screen.width - Fixed2dCamera.begin)/2, Input.mousePosition.y));

@@ -2,3 +2,4 @@
 /tests/dump/
 /tests/build/
 /tests/report/
+*.dump

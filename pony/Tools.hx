@@ -282,7 +282,7 @@ class StringTls {
 		return macro $v{s};
 	}
 	
-	inline public static function parseProcent(s:String):Float {
+	inline public static function parsePercent(s:String):Float {
 		if (s.indexOf('%') != -1) {
 			return Std.parseFloat(s.substr(0,s.length-1))/100;
 		} else

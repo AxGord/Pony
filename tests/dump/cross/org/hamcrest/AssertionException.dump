@@ -1,8 +1,0 @@
-class org.hamcrest.AssertionException extends org.hamcrest.Exception{
-	public new(method) : ?message : String -> ?cause : Dynamic -> ?info : haxe.PosInfos -> Void
-
-	 = function(message:String = "",cause:Dynamic = null,info:haxe.PosInfos = null) = {
-		super(message,cause,info);
-	};
-
-}

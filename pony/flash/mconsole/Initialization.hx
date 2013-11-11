@@ -1,7 +1,9 @@
 package pony.flash.mconsole;
 
+import flash.events.KeyboardEvent;
 import flash.Lib;
 import flash.events.MouseEvent;
+import flash.system.Capabilities;
 
 using pony.flash.FLExtends;
 /**
@@ -22,7 +24,14 @@ class Initialization {
 	}
 	
 	public static inline function rightClick():Void {
-		Lib.current.stage.buildSignal(MouseEvent.RIGHT_MOUSE_DOWN).sw(Initialization.mprnt.show, Initialization.mprnt.hide);
+		if (MouseEvent.RIGHT_MOUSE_DOWN != null)
+			Lib.current.stage.buildSignal(MouseEvent.RIGHT_MOUSE_DOWN).sw(Initialization.mprnt.show, Initialization.mprnt.hide);
+		else
+			Console.warn('Rigth click not support in '+Capabilities.version);
+	}
+	
+	public static inline function anyKey():Void {
+		Lib.current.stage.buildSignal(KeyboardEvent.KEY_DOWN).sw(Initialization.mprnt.show, Initialization.mprnt.hide);
 	}
 	
 }

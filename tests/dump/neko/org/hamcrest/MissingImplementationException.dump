@@ -1,8 +1,0 @@
-class org.hamcrest.MissingImplementationException extends org.hamcrest.Exception{
-	public new(method) : ?message : String -> ?cause : Dynamic -> ?info : haxe.PosInfos -> Void
-
-	 = function(message:String = "Abstract method not overridden.",cause:Dynamic = null,info:haxe.PosInfos = null) = {
-		super(message,cause,info);
-	};
-
-}

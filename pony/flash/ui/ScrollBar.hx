@@ -40,10 +40,10 @@ using pony.flash.FLExtends;
  * ...
  * @author AxGord
  */
-class ScrollBar extends Sprite {
+class ScrollBar extends Sprite implements pony.flash.FLSt {
 
-	public var scroller:Button;
-	public var bg:DisplayObject;
+	@st public var scroller:Button;
+	@st public var bg:DisplayObject;
 	public var size(get, set):Float;
 	public var total(default, set):Float;
 	public var position(get,set):Float;

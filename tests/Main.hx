@@ -18,6 +18,7 @@ class Main{
 		
 		var t = Test.O;
 		t.getParameters();
+		Test.createByIndex
 	}
 	
 }

@@ -1,1 +1,0 @@
-type haxe.macro.FunctionArg = { ?value : Null<haxe.macro.Expr>, type : Null<haxe.macro.ComplexType>, opt : Bool, name : String }

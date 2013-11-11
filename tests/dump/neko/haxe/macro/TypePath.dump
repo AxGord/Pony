@@ -1,1 +1,0 @@
-type haxe.macro.TypePath = { ?sub : Null<String>, params : Array<haxe.macro.TypeParam>, pack : Array<String>, name : String }

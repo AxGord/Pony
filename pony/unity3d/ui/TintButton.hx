@@ -47,7 +47,7 @@ class TintButton extends Button {
 	private var defaultTexture:Texture;
 	private var sclr:Color;
 	
-	override function Start() {
+	override function Start():Void {
 		super.Start();
 		defaultTexture = guiTexture.texture;
 		sclr = guiTexture.color;
@@ -55,7 +55,7 @@ class TintButton extends Button {
 		core.sendVisual();
 	}
 	
-	function change(event:Event) {
+	private function change(event:Event):Void {
 		if (event.args[1] == 1) {
 			if (pressedTexture != null) {
 				guiTexture.texture = pressedTexture;

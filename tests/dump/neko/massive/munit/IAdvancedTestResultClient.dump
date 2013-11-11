@@ -1,4 +1,0 @@
-interface massive.munit.IAdvancedTestResultClient implements massive.munit.ITestResultClient{
-	public setCurrentTestClass(method) : className : String -> Void;
-
-}

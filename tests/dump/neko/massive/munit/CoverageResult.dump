@@ -1,1 +1,0 @@
-type massive.munit.CoverageResult = { percent : Float, className : String, blocks : Array<String> }

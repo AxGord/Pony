@@ -248,13 +248,13 @@ class Priority<T> {
 	private inline function get_empty():Bool return data.length == 0;
 	
 	/**
-	 * Make infinity loop. This good metod for devolopment UI.
-	 * @return Next element in loop
+	 * Make infinity loop. This good method for devolopment UI.
+	 * @return Next element in loop.
 	 */
 	public function loop():T {
-		if (data[counters[0]] == null) {
+		if (counters[0] >= length) {
+			counters[0] = 0;
 			if (empty) return null;
-			else counters[0] = 0;
 		}
 		return data[counters[0]++];
 	}
@@ -266,8 +266,31 @@ class Priority<T> {
 		counters[0] = 0;
 		return this;
 	}
+
+	/**
+	 * Start loop from custom element.
+	 * Use exists() before call this function for safely run.
+	 * @param	e first element for loop.
+	 */
+	public inline function reloop(e:T):Void while (loop() != e) null;
 	
+	/**
+	 * Make infinity loop. This good method for devolopment UI.
+	 * @return Previos element in loop.
+	 */
+	public function backLoop():T {
+		if (empty) {
+			counters[0] = 0;
+			return null;
+		}
+		counters[0]--;
+		if (counters[0] < 1) counters[0] = length;
+		return data[counters[0]-1];
+	}
 	
+	/**
+	 * Get minimal index.
+	 */
 	private function get_min():Int {
 		var n:Null<Int> = null;
 		for (k in hash.keys())
@@ -276,6 +299,9 @@ class Priority<T> {
 		return n;
 	}
 	
+	/**
+	 * Get maximal index.
+	 */
 	private function get_max():Int {
 		var n:Null<Int> = null;
 		for (k in hash.keys())
@@ -295,5 +321,6 @@ class Priority<T> {
 	 * @param	o T or Array&lt;T&gt;.
 	 */
 	public function addElementToEnd(e:T):Void addElement(e, max + 1);
+	
 	
 }

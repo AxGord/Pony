@@ -1,1 +1,0 @@
-type haxe.macro.AnonType = { fields : Array<haxe.macro.ClassField> }

@@ -29,6 +29,7 @@ package pony.flash.ui;
 
 import flash.display.MovieClip;
 import flash.text.TextField;
+import pony.events.Signal;
 import pony.ui.ButtonCore;
 
 /**
@@ -44,6 +45,7 @@ class HorList extends MovieClip {
 	
 	public var elemets(default, set):Array<String>;
 	public var current(default, set):Int = 0;
+	public var select(default, null):Signal;
 	
 	public function new() {
 		super();
@@ -53,6 +55,7 @@ class HorList extends MovieClip {
 		text.text = '';
 		bPrev.click.sub([0]).add(prev);
 		bNext.click.sub([0]).add(next);
+		select = new Signal(this);
 	}
 	
 	inline private function get_bPrev():ButtonCore return untyped this['bPrev'].core;
@@ -64,6 +67,7 @@ class HorList extends MovieClip {
 		bPrev.mode = n > 0 ? 0 : 1;
 		bNext.mode = n < elemets.length-1 ? 0 : 1;
 		text.text = elemets[n];
+		select.dispatch(n, elemets[n]);
 		return current = n;
 	}
 	

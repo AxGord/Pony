@@ -1,1 +1,0 @@
-type haxe.macro.MetadataEntry = { pos : haxe.macro.Position, params : Array<haxe.macro.Expr>, name : String }

@@ -1,7 +1,0 @@
-enum haxe.StackItem {
-	CFunction : haxe.StackItem;
-	Module : m : String -> haxe.StackItem;
-	FilePos : s : Null<haxe.StackItem> -> file : String -> line : Int -> haxe.StackItem;
-	Method : classname : String -> method : String -> haxe.StackItem;
-	Lambda : v : Int -> haxe.StackItem;
-}

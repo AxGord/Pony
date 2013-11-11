@@ -1,8 +1,0 @@
-class haxe.io.Eof{
-	toString(method) : Void -> String
-
-	 = function() = {
-		return "Eof";
-	};
-
-}

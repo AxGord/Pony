@@ -10,6 +10,7 @@ import physics.ThermoTest;
 import PriorityTest;
 import TextCoderTest;
 import ToolsTest;
+import ui.FocusManagerTest;
 
 /**
  * Auto generated Test Suite for MassiveUnit.
@@ -33,5 +34,6 @@ class TestSuite extends massive.munit.TestSuite
 		add(PriorityTest);
 		add(TextCoderTest);
 		add(ToolsTest);
+		add(ui.FocusManagerTest);
 	}
 }

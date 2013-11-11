@@ -43,5 +43,11 @@ class Tools {
 		return macro $e{macro $ { obj } .$name} ($a{[[$a{args}]]});
 	}
 	
+	public static function getMeta(a:Metadata, n:String):MetadataEntry {
+		if (a == null) return null;
+		for (e in a) if (e.name == n) return e;
+		return null;
+	}
+	
 }
 #end

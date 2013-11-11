@@ -1,1 +1,0 @@
-type haxe.PosInfos = { methodName : String, lineNumber : Int, fileName : String, ?customParams : Array<Dynamic>, className : String }

@@ -1,1 +1,0 @@
-type haxe.macro.TypeDefinition = { pos : haxe.macro.Position, params : Array<haxe.macro.TypeParamDecl>, pack : Array<String>, name : String, meta : haxe.macro.Metadata, kind : haxe.macro.TypeDefKind, isExtern : Bool, fields : Array<haxe.macro.Field> }

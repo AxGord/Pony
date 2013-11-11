@@ -1,1 +1,0 @@
-private type _Map.IMap<K : _Map.IMap.K,V : _Map.IMap.V> = { set : k : _Map.IMap.K -> v : _Map.IMap.V -> Void, remove : k : _Map.IMap.K -> Bool, keys : Void -> Iterator<_Map.IMap.K>, iterator : Void -> Iterator<_Map.IMap.V>, get : k : _Map.IMap.K -> Null<_Map.IMap.V>, exists : k : _Map.IMap.K -> Bool }

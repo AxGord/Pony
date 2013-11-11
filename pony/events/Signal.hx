@@ -39,14 +39,17 @@ import pony.Priority;
 class Signal {
 	
 	public var silent:Bool;
-	public var lostListeners:Signal;
-	public var takeListeners:Signal;
+	public var lostListeners(default, null):Signal;
+	public var takeListeners(default, null):Signal;
 	public var data:Dynamic;
 	public var target:Dynamic;
 	
 	private var listeners:Priority<Listener>;
+	private var lRunCopy:List<Priority<Listener>>;
 	
 	public var haveListeners(get, null):Bool;
+	
+	public var listenersCount(get, never):Int;
 	
 	public function new(?target:Dynamic) {
 		this.target = target;
@@ -60,6 +63,7 @@ class Signal {
 	
 	public inline function _init():Void {
 		listeners = new Priority<Listener>();
+		lRunCopy = new List<Priority<Listener>>();
 	}
 	
 	/**
@@ -91,6 +95,7 @@ class Signal {
 	public function remove(listener:Listener):Signal {
 		if (listeners.empty) return this;
 		if (listeners.removeElement(listener)) {
+			for (c in lRunCopy) c.removeElement(listener);
 			listener.unuse();
 			if (listeners.empty && lostListeners != null) lostListeners.dispatchEmpty();
 		}
@@ -130,20 +135,25 @@ class Signal {
 	public function dispatchEvent(event:Event):Signal {
 		event.signal = this;
 		if (silent) return this;
-		for (l in listeners.data.copy()) {
-			var r:Bool;
+		var c:Priority<Listener> = new Priority<Listener>(listeners.data.copy());
+		lRunCopy.add(c);
+		for (l in c) {
+			var r:Bool = false;
 			try {
 				r = l.call(event);
 			} catch (e:Dynamic) {
 				remove(l);
-				if (e.pos != null)
+				lRunCopy.remove(c);
+				try {
 					trace(e.pos);
+				} catch (e:Dynamic) {}
 				throw e;
 			}
 			var br:Bool = r == false || event._stopPropagation;
 			if (l.count() == 0) remove(l);
 			if (br) break;
 		}
+		lRunCopy.remove(c);
 		return this;
 	}
 	
@@ -170,6 +180,8 @@ class Signal {
 	}
 	
 	public inline function removeAllListeners():Signal {
+		for (c in lRunCopy) c.clear();
+		lRunCopy.clear();
 		var f:Bool = listeners.empty;
 		for (l in listeners) l.unuse();
 		listeners.clear();
@@ -207,5 +219,7 @@ class Signal {
 		});
 		return s;
 	}
+	
+	public inline function get_listenersCount():Int return listeners.length;
 	
 }

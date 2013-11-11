@@ -1,1 +1,0 @@
-type pony.events.Listener_ = { used : Int, prev : pony.events.Event, f : pony.Function, event : Bool, count : Int }

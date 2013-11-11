@@ -1,9 +1,0 @@
-class massive.munit.AssertionException extends massive.munit.MUnitException{
-	public new(method) : msg : String -> ?info : haxe.PosInfos -> Void
-
-	 = function(msg:String,info:haxe.PosInfos = null) = {
-		super(msg,info);
-		this.type = massive.haxe.util.ReflectUtil.here({fileName : "AssertionException.hx",lineNumber : 49,className : "massive.munit.AssertionException",methodName : "new"}).className;
-	};
-
-}

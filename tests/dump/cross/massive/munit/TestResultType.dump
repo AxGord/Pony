@@ -1,7 +1,0 @@
-enum massive.munit.TestResultType {
-	UNKNOWN : massive.munit.TestResultType;
-	PASS : massive.munit.TestResultType;
-	FAIL : massive.munit.TestResultType;
-	ERROR : massive.munit.TestResultType;
-	IGNORE : massive.munit.TestResultType;
-}

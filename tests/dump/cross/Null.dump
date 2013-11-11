@@ -1,1 +1,0 @@
-type Null<T : Null.T> = Null.T

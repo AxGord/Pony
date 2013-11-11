@@ -1,13 +1,18 @@
 package events;
 
+import events.ListenerTest.L;
 import massive.munit.util.Timer;
 import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
 import pony.events.Event;
 import pony.events.Listener;
 
+enum L { A; B; C; }
+
 class ListenerTest 
 {
+	
+	private var tl:L = null;
 	
 	@Test
 	public function withEvent():Void
@@ -55,5 +60,15 @@ class ListenerTest
 		l.unuse();
 	}
 	
+	@Test
+	public function enumTest():Void {
+		var l:Listener = enumHandler;
+		l.call(new Event([L.B]));
+		Assert.areEqual(tl, L.B);
+	}
+	
+	private function enumHandler(l:L):Void {
+		tl = l;
+	}
 	
 }

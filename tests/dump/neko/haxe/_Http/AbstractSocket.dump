@@ -1,1 +1,0 @@
-private type haxe._Http.AbstractSocket = { write : str : String -> Void, shutdown : read : Bool -> write : Bool -> Void, setTimeout : t : Float -> Void, output : haxe.io.Output, input : haxe.io.Input, connect : host : sys.net.Host -> port : Int -> Void, close : Void -> Void }

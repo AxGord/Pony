@@ -27,6 +27,8 @@
 **/
 package pony.unity3d;
 
+import pony.ui.ButtonCore;
+import pony.unity3d.ui.TintButton;
 import unityengine.GameObject;
 
 using hugs.HUGSWrapper;
@@ -40,5 +42,7 @@ class StaticAccess {
 	inline static public function component<T>(gameObject:String, cl:Class<T>):T {
 		return GameObject.Find(gameObject).getTypedComponent(cl);
 	}
+	
+	inline static public function tintButton(gameObject:String):ButtonCore return component(gameObject, TintButton).core;
 	
 }
