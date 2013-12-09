@@ -38,7 +38,7 @@ class ToolsTest
 	
 	@Test
 	public function includeFile():Void {
-		Assert.areEqual('test.txt'.includeFile(), 'Hello world!');
+		Assert.areEqual(StringTls.includeFile('test.txt'), 'Hello world!');
 	}
 	
 	@Test

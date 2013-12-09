@@ -26,9 +26,10 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.flash.ui;
-import com.eclecticdesignstudio.control.KeyBinding;
 import pony.events.Signal;
 import flash.events.MouseEvent;
+import pony.ui.Key;
+import pony.ui.Keyboard;
 
 /**
  * AnyButton
@@ -67,7 +68,9 @@ class AnyButton {
 		}
 	}
 	
-	private function onClick(?_):Void if (enabled) click.dispatch();
+	private function onClick(?_):Void _onClick();
+	
+	private function _onClick():Void if (enabled) click.dispatch();
 	
 	private function get_enabled():Bool {
 		return switch (type) {
@@ -84,15 +87,8 @@ class AnyButton {
 		return b;
 	}
 	
-	public function bind(k:Dynamic):Void {
-		
-		if (type == ButtonType.qlex) button.bind(k);
-		switch (type) {
-			case qlex: button.bind(k);
-			default: 
-				button.tabEnabled = false;
-				KeyBinding.addOnPress(k, onClick);
-		}
+	public function bind(k:Key):Void {
+		Keyboard.click.sub([k]).add(_onClick);
 	}
 	
 	private function get_shift():Bool return untyped button.shift;

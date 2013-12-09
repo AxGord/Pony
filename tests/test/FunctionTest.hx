@@ -5,17 +5,24 @@ import pony.macro.Tools;
 import massive.munit.util.Timer;
 import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
-using pony.Function;
+import pony.Function;
 
 class FunctionTest 
 {
+	
+	@Test
+	public function id():Void {
+		var f:Function = function() return 'qwe';
+		Assert.isNotNull(f.id);
+		Assert.isType(f.id, Int);
+	}
 	
 	@Test
 	public function arg0():Void
 	{
 		var f:Function = function() return 'qwe';
 		Assert.areEqual(f.call(), 'qwe');
-		Assert.areEqual(f.count(), 0);
+		Assert.areEqual(f.count, 0);
 		f.unuse();
 	}
 	
@@ -23,8 +30,8 @@ class FunctionTest
 	public function arg1():Void
 	{
 		var f:Function = function(s:String) return s;
-		Assert.areEqual(f.call('asd'), 'asd');
-		Assert.areEqual(f.count(), 1);
+		Assert.areEqual(f.call(['asd']), 'asd');
+		Assert.areEqual(f.count, 1);
 		f.unuse();
 	}
 	
@@ -32,8 +39,8 @@ class FunctionTest
 	public function arg3():Void
 	{
 		var f:Function = function(a:String, b:String, c:String) return a + b + c;
-		Assert.areEqual(f.count(), 3);
-		Assert.areEqual(f.call('a','w','d'), 'awd');
+		Assert.areEqual(f.count, 3);
+		Assert.areEqual(f.call(['a','w','d']), 'awd');
 		f.unuse();
 	}
 	
@@ -43,11 +50,11 @@ class FunctionTest
 		var b:Bool = false;
 		var f:Function = function(f:Bool) b = f;
 		Assert.isFalse(b);
-		f.call(true);
+		f.call([true]);
 		Assert.isTrue(b);
-		f.call(false);
+		f.call([false]);
 		Assert.isFalse(b);
-		Assert.areEqual(f.count(), 1);
+		Assert.areEqual(f.count, 1);
 		f.unuse();
 	}
 	

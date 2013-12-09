@@ -61,19 +61,25 @@ abstract Function( { f:Dynamic, count:Int, args:Array<Dynamic>, id:Int, used:Int
 	
 	private static var searchFree:Bool = false;
 	
+	#if !cs
+	public var id(get, never):Int;
+	public var count(get, never):Int;
+	public var used(get, never):Int;
+	#end
+	
 	function new(f:Dynamic, count:Int, ?args:Array<Dynamic>) {
 		counter++;
 		if (searchFree) {//if counter make loop, then need search free id
 			while (true) {
 				for (e in list) {
-					if (e.id() != counter)
+					if (e.get_id() != counter)
 						break;
 				}
 				counter++;
 			}
 		} else if (counter == -1)
 			searchFree = true;
-        this = { f:f, count:count, args:args == null?[]:args, id: counter, used: 0 };    
+        this = { f:f, count:count, args:args == null?[]:args, id: counter, used: 0 };
 	}
 	
 	static public function from(f:Dynamic, argc:Int):Function {
@@ -144,11 +150,13 @@ abstract Function( { f:Dynamic, count:Int, args:Array<Dynamic>, id:Int, used:Int
     @:from static public inline function from7<R>(f:Dynamic->Dynamic->Dynamic->Dynamic->Dynamic->Dynamic->Dynamic->R)
         return from(f, 7);
 		
-	public inline function _call(args:Array<Dynamic>):Dynamic {
+	public inline function call(?args:Array<Dynamic>):Dynamic {
+		if (args == null) args = [];
 		return Reflect.callMethod(null, this.f, this.args.concat(args));
 	}
 	
-	public inline function count():Int return this.count;
+	public inline function get_id():Int return this.id;
+	public inline function get_count():Int return this.count;
 	
 	//public inline function _bind(args:Array<Dynamic>):Function
 	//	return new Function(this.f, this.count - args.length, this.args.concat(args));
@@ -158,15 +166,9 @@ abstract Function( { f:Dynamic, count:Int, args:Array<Dynamic>, id:Int, used:Int
 		this.args = this.args.concat(args);
 	}
 	
-	public inline function id():Int {
-		return this.id;
-	}
-	
 	//public inline function get():Dynamic return this.f;
 		
-	public inline function _use():Void {
-		this.used++;
-	}
+	public inline function _use():Void this.used++;
 	
 	inline public function unuse():Void {
 		this.used--;
@@ -179,15 +181,16 @@ abstract Function( { f:Dynamic, count:Int, args:Array<Dynamic>, id:Int, used:Int
 			#else
 			list.remove(this.f);
 			#end
+			//trace('remove this');
 			this = null;
 			unusedCount--;
 		}
 	}
 	
-	inline public function used():Int return this.used;
+	public inline function get_used():Int return this.used;
 }
 
-
+/* Not supported on haxe later 3.01
 class FunctionExtends {
 	macro public static function call(f:ExprOf<Function>, a:Array < Expr > ):Expr
 		return Tools.argsArrayAbstr(f, '_call', a);
@@ -195,4 +198,4 @@ class FunctionExtends {
 		return Tools.argsArrayAbstr(f, '_bind', a);
 	macro public static function setArgs(f:ExprOf<Function>, a:Array < Expr > ):Expr
 		return Tools.argsArrayAbstr(f,'_setArgs',a);
-}
+}*/

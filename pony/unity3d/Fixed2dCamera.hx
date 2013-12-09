@@ -27,33 +27,33 @@
 **/
 package pony.unity3d;
 
-import unityengine.Camera;
-import unityengine.MonoBehaviour;
-import unityengine.Rect;
-import unityengine.Screen;
+import pony.DeltaTime;
 /**
  * ...
  * @author AxGord
  */
 
-class Fixed2dCamera extends MonoBehaviour {
+class Fixed2dCamera {
 	
 	public static var begin:Single = 0;
 	public static var exists:Bool = false;
 	
+	/**
+	 * Warning! [visible = false; => true;]
+	 */
+	public static var visible(default, set):Bool = true;
+	
 	public static var SIZE:Int = 0;
-	public var size:Int = 100;
-	public var mainCamera:Camera;
 	
-	public function Start() {
-		SIZE = size;
-		exists = true;
+	public static var obj:Fixed2dCameraU;
+	
+	private static function set_visible(v:Bool):Bool {
+		if (obj == null)
+			DeltaTime.update.once(set_visible.bind(v));
+		else if (v != visible) {
+			obj.size = v ? SIZE : 0;
+			visible = v;
+		}
+		return true;
 	}
-	
-	private function Update():Void {
-		begin = Screen.width - size;
-		mainCamera.pixelRect = new Rect(0, 0, begin, mainCamera.pixelRect.height);
-		camera.pixelRect = new Rect(begin, 0, size ,mainCamera.pixelRect.height);
-	}
-	
 }

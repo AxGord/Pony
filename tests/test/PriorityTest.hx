@@ -210,5 +210,14 @@ class PriorityTest
 		Assert.isTrue(p2.existsArray([10, 6]));
 		Assert.isFalse(p2.existsArray([10, 11]));
 	}
+	
+	@Test
+	public function loopTest():Void {
+		var p:Priority<Int> = new Priority<Int>([3]);
+		Assert.areEqual(p.loop(),3);
+		Assert.areEqual(p.loop(),3);
+		Assert.areEqual(p.loop(),3);
+		Assert.areEqual(p.loop(),3);
+	}
 
 }

@@ -27,22 +27,26 @@
 **/
 package pony.ui;
 import pony.events.Signal;
+import pony.IWards;
 
 /**
  * ...
  * @author AxGord
  */
-class SwitchableList {
+class SwitchableList implements IWards {
+	
+	public var change(default,null):Signal;
+	public var currentPos(default,null):Int;
 
 	private var list:Array<ButtonCore>;
-	public var state:Int;
+	public var state(get,set):Int;
 	public var select:Signal;
 	private var swto:Int;
 	
 	public function new(a:Array<ButtonCore>, def:Int = 0, swto:Int = 2) {
 		this.swto = swto;
 		state = def;
-		select = new Signal(this);
+		change = select = new Signal(this);
 		list = a;
 		for (i in 0...a.length) {
 			if (i == def) a[i].mode = swto;
@@ -64,5 +68,8 @@ class SwitchableList {
 	public function prev():Void {
 		if (state - 1 >= 0) select.dispatch(state-1);
 	}
+	
+	inline private function get_state():Int return currentPos;
+	inline private function set_state(v:Int):Int return currentPos = v;
 	
 }

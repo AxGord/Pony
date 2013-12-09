@@ -40,7 +40,21 @@ using hugs.HUGSWrapper;
 class StaticAccess {
 
 	inline static public function component<T>(gameObject:String, cl:Class<T>):T {
+		#if debug
+		var g:GameObject = GameObject.Find(gameObject);
+		if (g == null) {
+			trace('Can\'t find $gameObject game object');
+			throw null;
+		}
+		var c = g.getTypedComponent(cl);
+		if (c == null) {
+			trace('Can\'t find component ' + Type.getClassName(cl) + ' in $gameObject game object');
+			throw null;
+		}
+		return c;
+		#else
 		return GameObject.Find(gameObject).getTypedComponent(cl);
+		#end
 	}
 	
 	inline static public function tintButton(gameObject:String):ButtonCore return component(gameObject, TintButton).core;

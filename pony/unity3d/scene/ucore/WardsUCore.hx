@@ -28,6 +28,7 @@
 package pony.unity3d.scene.ucore;
 
 import pony.events.Signal;
+import pony.IWards;
 import unityengine.GameObject;
 import unityengine.MonoBehaviour;
 import unityengine.Quaternion;
@@ -35,19 +36,22 @@ import unityengine.Time;
 import unityengine.Transform;
 import unityengine.Vector3;
 
+using hugs.HUGSWrapper;
+
 /**
  * Wards
  * @author AxGord <axgord@gmail.com>
  * @author BoBaH6eToH <freezedunk@gmail.com>
  */
 
-class WardsUCore extends MonoBehaviour 
+class WardsUCore extends MonoBehaviour implements IWards
 {
 	public var withRotation:Bool = true;
 	public var withTimeScale:Bool = true;
 	public var speed:Single = 200;
 	public var currentPos:Int = -1;
-	public var change:Signal;
+	public var change(default, null):Signal;
+	public var changed(default, null):Signal;
 	
 	public var target:GameObject;
 	private var wards:Array<Transform>;
@@ -57,12 +61,15 @@ class WardsUCore extends MonoBehaviour
 	
 	public function new():Void {
 		super();
-		change = new Signal();
+		change = new Signal(this);
 		change.add(changeHandler);
+		changed = new Signal(this);
 	}
 	
 	public function Start():Void 
 	{
+		if (target == null) target = gameObject.getChildGameObject('obj');
+		
 		wards = [];
 		for (i in 1...10000) {
 			var t:Transform = transform.Find(Std.string(i));
@@ -95,6 +102,7 @@ class WardsUCore extends MonoBehaviour
 			toN = null;
 			toObj = null;
 			rn = 0;
+			changed.dispatch(currentPos);
 		}
 	}
 	

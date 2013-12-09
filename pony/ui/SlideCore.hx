@@ -30,7 +30,7 @@ import pony.DeltaTime;
 import pony.events.Signal;
 
 /**
- * ...
+ * Slide core
  * @author AxGord
  */
 class SlideCore {

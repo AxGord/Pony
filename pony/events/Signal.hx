@@ -90,6 +90,16 @@ class Signal {
 	}
 	
 	/**
+	 * Add for short lambda, ignore return and use args
+	 * @param	func
+	 * @param	priority
+	 * @return
+	 */
+	public function addl(func:pony.Function, priority:Int = 0):Signal {
+		return add(new Listener(func, false, true), priority);
+	}
+	
+	/**
 	 * Send only one argument: Listener or Event->Void or Function
 	 */
 	public function remove(listener:Listener):Signal {
@@ -141,6 +151,14 @@ class Signal {
 			var r:Bool = false;
 			try {
 				r = l.call(event);
+			} catch (msg:String) {
+				remove(l);
+				lRunCopy.remove(c);
+				#if (debug && cs)
+				trace(msg);
+				l.call(event);
+				#end
+				throw msg;
 			} catch (e:Dynamic) {
 				remove(l);
 				lRunCopy.remove(c);
@@ -150,7 +168,7 @@ class Signal {
 				throw e;
 			}
 			var br:Bool = r == false || event._stopPropagation;
-			if (l.count() == 0) remove(l);
+			if (l.get_count() == 0) remove(l);
 			if (br) break;
 		}
 		lRunCopy.remove(c);

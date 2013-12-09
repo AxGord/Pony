@@ -31,7 +31,7 @@ package pony.events;
  * Signal with value
  * @author AxGord
  */
-class LV<T> extends Signal {
+class LV<T:Dynamic> extends Signal {
 
 	public var value(default, set):T;
 	

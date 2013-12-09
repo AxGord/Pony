@@ -34,7 +34,7 @@ using Lambda;
  * todo: есть подозрение что ломается при большом кол-ве элементов (>21) нужны тесты
  * @author AxGord
  */
-class Priority<T> {
+class Priority<T:Dynamic> {
 	
 	/**
 	 * Total elements count.

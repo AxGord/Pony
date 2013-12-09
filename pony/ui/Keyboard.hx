@@ -6,6 +6,7 @@ import pony.events.Signal;
 
 /**
  * Keyboard
+ * @see pony.ui.Key
  * @author AxGord <axgord@gmail.com>
  */
 class Keyboard {
@@ -31,6 +32,8 @@ class Keyboard {
 	static private function __init__():Void {
 		#if HUGS
 		km = new pony.unity3d.Keyboard();
+		#elseif flash
+		km = new pony.flash.Keyboard();
 		#end
 		down = new Signal();
 		up = new Signal();

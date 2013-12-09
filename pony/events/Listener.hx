@@ -37,36 +37,39 @@ using Lambda;
  * @author AxGord
  */
 
-typedef Listener_ = { f:Function, count:Int, event:Bool, prev:Event, used:Int, active:Bool }
+typedef Listener_ = { f:Function, count:Int, event:Bool, prev:Event, used:Int, active:Bool, ignoreReturn:Bool }
  
 abstract Listener( Listener_ ) {
-	
 	public static var flist:Map<Int, Listener> = new Map<Int, Listener>();
 	//public static var eflist:Dictionary<Event->Void, Listener> = new Dictionary<Event->Void, Listener>();
 	
-	inline public function new(f:Function, event:Bool = false, count:Int = -1) {
+	public var active(get, set):Bool;
+	public var count(get, never):Int;
+	public var used(get, never):Int;
+	
+	inline public function new(f:Function, event:Bool = false, ignoreReturn:Bool = false, count:Int = -1) {
 		f._use();
-		this = {f:f, count:count, event:event, prev: null, used: 0, active: true}
+		this = {f:f, count:count, event:event, prev: null, used: 0, active: true, ignoreReturn: ignoreReturn}
 	}
 	
-	@:from static public function fromEFunction(f:Event->Void):Listener
+	@:from static inline public function fromEFunction(f:Event->Void):Listener
 		return _fromFunction(Function.from1(f), true);
 	
-	@:from static public function fromFunction(f:Function):Listener
+	@:from static inline public function fromFunction(f:Function):Listener
 		return _fromFunction(f, false);
 	
 	static public function _fromFunction(f:Function, ev:Bool):Listener {
-		if (flist.exists(f.id())) {
-			return flist.get(f.id());
+		if (flist.exists(f.get_id())) {
+			return flist.get(f.get_id());
 		} else {
 			//trace(ev);
 			var o:Listener = new Listener(f, ev);
-			flist.set(f.id(), o);
+			flist.set(f.get_id(), o);
 			return o;
 		}
     }
 	
-	inline public function count():Int return this.count;
+	inline public function get_count():Int return this.count;
 	
 	public function call(event:Event):Bool {
 		if (!this.active) return true;
@@ -74,24 +77,22 @@ abstract Listener( Listener_ ) {
 		event._setListener(this);
 		var r:Bool = true;
 		if (this.event) {
-			if (this.f._call([event]) == false) r = false;
+			if (this.f.call([event]) == false) r = false;
 		} else {
 			var args = event.args.copy();
 			args.push(event.target);
 			args.push(event);
-			if (this.f._call(args.slice(0, this.f.count())) == false) r = false;
+			if (this.f.call(args.slice(0, this.f.get_count())) == false) r = false;
 		}
 		this.prev = event;
-		return r;
+		return this.ignoreReturn ? true : r;
 	}
 	
 	inline public function setCount(count:Int):Listener {
-		return new Listener(this.f, this.event,  count);
+		return new Listener(this.f, this.event, this.ignoreReturn, count);
 	}
 	
-	inline public function _use():Void {
-		this.used++;
-	}
+	inline public function _use():Void this.used++;
 	
 	inline public function unuse():Void {
 		this.used--;
@@ -99,7 +100,7 @@ abstract Listener( Listener_ ) {
 			//if (this.event) {
 			//	eflist.remove(this.f.get());
 			//} else {
-				flist.remove(this.f.id());
+				flist.remove(this.f.get_id());
 			//}
 			this.f.unuse();
 			//this.f = null;
@@ -107,17 +108,17 @@ abstract Listener( Listener_ ) {
 		}
 	}
 	
-	inline public function used():Int return this.used;
+	inline public function get_used():Int return this.used;
 	
 	static public function unusedCount():Int {
 		var c:Int = 0;
-		for (l in flist) if (l.used() <= 0) c++;
+		for (l in flist) if (l.get_used() <= 0) c++;
 		//for (l in eflist) if (l.used() <= 0) c++;
 		return c;
 	}
 	
-	inline public function getActive():Bool return this.active;
+	inline public function get_active():Bool return this.active;
 	
-	inline public function setActive(b:Bool):Bool return this.active = b;
+	inline public function set_active(b:Bool):Bool return this.active = b;
 	
 }

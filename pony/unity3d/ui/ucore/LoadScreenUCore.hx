@@ -28,6 +28,7 @@
 package pony.unity3d.ui.ucore;
 
 import pony.Loader;
+import pony.unity3d.Fixed2dCamera;
 import unityengine.GameObject;
 import unityengine.GUITexture;
 import unityengine.MonoBehaviour;
@@ -67,6 +68,8 @@ class LoadScreenUCore extends MonoBehaviour {
 			fastLoad = false;
 		#end
 		
+		Fixed2dCamera.visible = false;
+		
 		if (background != null) {
 			bgTextureObject = new GameObject("GUITexture LoadScreen Background");
 			var guiTextureObject:GUITexture = cast bgTextureObject.AddComponent('GUITexture');
@@ -91,6 +94,7 @@ class LoadScreenUCore extends MonoBehaviour {
 	}
 	
 	public function end():Void {
+		Fixed2dCamera.visible = true;
 		if (bgTextureObject != null) Object.Destroy(bgTextureObject);
 		if (mainTextureObject != null) Object.Destroy(mainTextureObject);
 		if (progress != null) {
