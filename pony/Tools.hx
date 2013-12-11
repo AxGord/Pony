@@ -111,10 +111,10 @@ class Tools {
           return false;
     }
 	
-	public static function superIndexOf<T>(it:Iterable<T>, v:T):Int {
+	public static function superIndexOf<T>(it:Iterable<T>, v:T, maxDepth:Int = 1):Int {
 		var i:Int = 0;
 		for (e in it) {
-			if (equal(e, v)) return i;
+			if (equal(e, v, maxDepth)) return i;
 			i++;
 		}
 		return -1;

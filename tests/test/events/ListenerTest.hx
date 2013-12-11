@@ -30,7 +30,7 @@ class ListenerTest
 	public function withEventBool():Void
 	{
 		var b:Bool = false;
-		var l:Listener = function(event:Event):Bool return !(b = event.args[0]);
+		var l:Listener = new Listener(function(event:Event):Bool return !(b = event.args[0]), true, false);
 		Assert.isFalse(l.call(new Event([true])));
 		Assert.isTrue(b);
 		Assert.isTrue(l.call(new Event([false])));
@@ -52,7 +52,7 @@ class ListenerTest
 	public function arg():Void
 	{
 		var b:Bool = false;
-		var l:Listener = function(f:Bool) return !( b = f );
+		var l:Listener = new Listener(function(f:Bool) return !( b = f ), false, false);
 		Assert.isFalse(l.call(new Event([true])));
 		Assert.isTrue(b);
 		Assert.isTrue(l.call(new Event([false])));

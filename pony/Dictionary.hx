@@ -41,15 +41,14 @@ class Dictionary<K, V>
 	
 	public var count(get, null):Int;
 	
-	public function new() {
-		ks = [];
-		vs = [];
+	public var maxDepth:Int;
+	
+	inline public function new(maxDepth:Int = 1) {
+		this.maxDepth = maxDepth;
+		clear();
 	}
 
-	private function getIndex(k:K):Int {
-		//return ks.indexOf(k);
-		return ks.superIndexOf(k);
-	}
+	inline private function getIndex(k:K):Int return ks.superIndexOf(k, maxDepth);
 	
 	public function set(k:K, v:V):Void {
 		var i:Int = getIndex(k);
@@ -69,9 +68,7 @@ class Dictionary<K, V>
 			return vs[i];
 	}
 	
-	public function exists(k:K):Bool {
-		return getIndex(k) != -1;
-	}
+	inline public function exists(k:K):Bool return getIndex(k) != -1;
 	
 	public function remove(k:K):Bool {
 		var i:Int = getIndex(k);
@@ -83,18 +80,14 @@ class Dictionary<K, V>
 			return false;
 	}
 	
-	public function clear():Void {
+	inline public function clear():Void {
 		ks = [];
 		vs = [];
 	}
 	
-	public function iterator():Iterator<V> {
-		return vs.iterator();
-	}
+	inline public function iterator():Iterator<V> return vs.iterator();
 	
-	public function keys():Iterator<K> {
-		return ks.iterator();
-	}
+	inline public function keys():Iterator<K> return ks.iterator();
 	
 	public function toString():String {
 		var a:Array<String> = [];
@@ -112,6 +105,6 @@ class Dictionary<K, V>
 		}
 	}
 	
-	private inline function get_count():Int return ks.length;
+	inline private function get_count():Int return ks.length;
 	
 }

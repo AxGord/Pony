@@ -29,6 +29,7 @@ package pony.events;
 #if macro
 import haxe.macro.Expr;
 #end
+import pony.Dictionary;
 import pony.Priority;
 
 /**
@@ -39,31 +40,34 @@ import pony.Priority;
 class Signal {
 	
 	public var silent:Bool;
-	public var lostListeners(default, null):Signal;
-	public var takeListeners(default, null):Signal;
+	public var lostListeners(default, null):Signal0<Signal>;
+	public var takeListeners(default, null):Signal0<Signal>;
 	public var data:Dynamic;
-	public var target:Dynamic;
+	
+	public var target(default, null):Dynamic;
 	
 	private var listeners:Priority<Listener>;
 	private var lRunCopy:List<Priority<Listener>>;
+	
+	private var subMap:Dictionary < Array<Dynamic>, Signal > ;
 	
 	public var haveListeners(get, null):Bool;
 	
 	public var listenersCount(get, never):Int;
 	
 	public function new(?target:Dynamic) {
-		this.target = target;
 		silent = false;
-		_init();
-		lostListeners = Type.createEmptyInstance(Signal);
-		lostListeners._init();
-		takeListeners = Type.createEmptyInstance(Signal);
-		takeListeners._init();
+		subMap = new Dictionary < Array<Dynamic>, Signal > (5);
+		_init(target);
+		lostListeners = Type.createEmptyInstance(Signal)._init(this);
+		takeListeners = Type.createEmptyInstance(Signal)._init(this);
 	}
 	
-	public inline function _init():Void {
+	public inline function _init(target:Dynamic):Signal {
+		this.target = target;
 		listeners = new Priority<Listener>();
 		lRunCopy = new List<Priority<Listener>>();
+		return this;
 	}
 	
 	/**
@@ -87,16 +91,6 @@ class Signal {
 		listeners.addElement(listener, priority);
 		if (f && takeListeners != null) takeListeners.dispatchEmpty();
 		return this;
-	}
-	
-	/**
-	 * Add for short lambda, ignore return and use args
-	 * @param	func
-	 * @param	priority
-	 * @return
-	 */
-	public function addl(func:pony.Function, priority:Int = 0):Signal {
-		return add(new Listener(func, false, true), priority);
 	}
 	
 	/**
@@ -154,7 +148,7 @@ class Signal {
 			} catch (msg:String) {
 				remove(l);
 				lRunCopy.remove(c);
-				#if (debug && cs)
+				#if (debug && cs || munit)
 				trace(msg);
 				l.call(event);
 				#end
@@ -181,20 +175,45 @@ class Signal {
 	}
 	
 	public function dispatchEmpty(?_):Signal {
-		dispatchEvent(new Event(target));
+		dispatchEvent(new Event(null, target));
 		return this;
 	}
 	
+	macro public function sub(args:Array<Expr>):Expr {
+		var th:Expr = args.shift();
+		return if (args.length == 0)
+				throw 'Arguments not set';
+			else
+				macro $th.subArgs([$a{args}]);
+	}
+	
 	//todo: save sub signals
-	public function sub(args:Array<Dynamic>, ?addon:Array<Dynamic>):Signal {
-		if (addon == null) addon = [];
-		var s:Signal = new Signal();
-		add(function(event:Event) {
-			var a:Array<Dynamic> = event.args.copy();
-			for (arg in args) if (a.shift() != arg) return;
-			s.dispatchEvent(new Event(a.concat(addon), target, event));
-		});
+	public function subArgs(args:Array<Dynamic>):Signal {
+		var s:Signal = subMap.get(args);
+		if (s == null) {
+			s = new Signal(this);
+			s.data = args;
+			add(subHandler);
+		}
 		return s;
+	}
+	
+	private static function subHandler(event:Event):Void {
+		var a:Array<Dynamic> = event.args.copy();
+		for (arg in cast(event.target.data.args, Array<Dynamic>)) if (a.shift() != arg) return;
+		event.target.dispatchEvent(new Event(a, event.target, event));
+	}
+	
+	inline public function removeSubArgs(args:Array<Dynamic>):Void {
+		var s:Signal = subMap.get(args);
+		if (s == null) return;
+		s.removeAllListeners();
+		subMap.remove(args);
+	}
+	
+	inline public function removeAllSubArgs(args:Array<Dynamic>):Void {
+		for (e in subMap) e.removeAllListeners();
+		subMap.clear();
 	}
 	
 	public inline function removeAllListeners():Signal {
@@ -203,7 +222,7 @@ class Signal {
 		var f:Bool = listeners.empty;
 		for (l in listeners) l.unuse();
 		listeners.clear();
-		if (!f) lostListeners.dispatchArgs([]);
+		if (!f) lostListeners.dispatch();
 		return this;
 	}
 	
@@ -226,8 +245,8 @@ class Signal {
 		once(sw.bind(l2,l1));
 	}
 	
-	public function enableSilent():Void silent = true;
-	public function disableSilent():Void silent = false;
+	inline public function enableSilent():Void silent = true;
+	inline public function disableSilent():Void silent = false;
 	
 	public function clean(?addon:Array<Dynamic>):Signal {
 		if (addon == null) addon = [];
@@ -238,6 +257,15 @@ class Signal {
 		return s;
 	}
 	
-	public inline function get_listenersCount():Int return listeners.length;
+	private inline function get_listenersCount():Int return listeners.length;
 	
+	/**
+	 * Strict construct
+	 */
+	public static function create<A>(t:A):SignalTar<A> return new SignalTar(new Signal(t));
+	
+	/**
+	 * Empty strict construct
+	 */
+	public static function createEmpty():SignalTar<Void> return new SignalTar(new Signal());
 }

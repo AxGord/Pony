@@ -6,6 +6,8 @@ import massive.munit.async.AsyncFactory;
 import pony.events.Event;
 import pony.events.Signal;
 import pony.events.Listener;
+import pony.events.Signal0;
+import pony.events.Signal1.Signal1;
 import pony.Function;
 
 class SignalTest 
@@ -90,4 +92,41 @@ class SignalTest
 		s.dispatch();
 		Assert.areEqual(t, this);
 	}
+	
+	@Test
+	public function returns():Void {
+		var a = true, b=true;
+		var s = new Signal(this);
+		s.add(function(v:Bool):Bool return v );
+		s.add(function():Bool return a = false);
+		s.add(function() b = false);
+		s.dispatch(true);
+		Assert.isFalse(a);
+		Assert.isFalse(b);
+		s.dispatch(false);
+		Assert.isFalse(a);
+		Assert.isFalse(b);
+	}
+	
+	@Test
+	public function s1():Void {
+		var f:Bool = false;
+		var f2:Bool = false;
+		var s:Signal1<SignalTest, Int> = Signal.create(this);
+		s.add(function(i:Int) if (i == 3) f = true);
+		s.add(function() f2 = true);
+		s.dispatch(3);
+		Assert.isTrue(f);
+		Assert.isTrue(f2);
+	}
+	
+	@Test
+	public function s0():Void {
+		var f:Bool = false;
+		var s:Signal0<SignalTest> = Signal.create(this);
+		s.add(function() f = true);
+		s.dispatch();
+		Assert.isTrue(f);
+	}
+	
 }

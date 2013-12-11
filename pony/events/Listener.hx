@@ -47,7 +47,7 @@ abstract Listener( Listener_ ) {
 	public var count(get, never):Int;
 	public var used(get, never):Int;
 	
-	inline public function new(f:Function, event:Bool = false, ignoreReturn:Bool = false, count:Int = -1) {
+	inline public function new(f:Function, event:Bool = false, ignoreReturn:Bool = true, count:Int = -1) {
 		f._use();
 		this = {f:f, count:count, event:event, prev: null, used: 0, active: true, ignoreReturn: ignoreReturn}
 	}
