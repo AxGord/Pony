@@ -32,14 +32,14 @@ import haxe.macro.Expr;
 #end
 
 /**
- * Signal1
+ * Signal2
  * @author AxGord <axgord@gmail.com>
  */
-abstract Signal1<Target, T1>(Signal) {
+abstract Signal2<Target, T1, T2>(Signal) {
 
 	public var silent(get,set):Bool;
-	public var lostListeners(get, never):Signal0<Signal1<Target, T1>>;
-	public var takeListeners(get, never):Signal0<Signal1<Target, T1>>;
+	public var lostListeners(get, never):Signal0<Signal2<Target, T1, T2>>;
+	public var takeListeners(get, never):Signal0<Signal2<Target, T1, T2>>;
 	public var haveListeners(get, never):Bool;
 	public var data(get, set):Dynamic;
 	public var target(get, never):Target;
@@ -50,8 +50,8 @@ abstract Signal1<Target, T1>(Signal) {
 	inline private function get_silent():Bool return this.silent;
 	inline private function set_silent(b:Bool):Bool return this.silent = b;
 	
-	inline private function get_lostListeners():Signal0<Signal1<Target, T1>> return cast this.lostListeners;
-	inline private function get_takeListeners():Signal0<Signal1<Target, T1>> return cast this.takeListeners;
+	inline private function get_lostListeners():Signal0<Signal2<Target, T1, T2>> return cast this.lostListeners;
+	inline private function get_takeListeners():Signal0<Signal2<Target, T1, T2>> return cast this.takeListeners;
 	inline private function get_haveListeners():Bool return cast this.haveListeners;
 	
 	inline private function get_data():Dynamic return this.data;
@@ -59,34 +59,34 @@ abstract Signal1<Target, T1>(Signal) {
 	inline private function get_target():Target return this.target;
 	inline private function get_listenersCount():Int return this.listenersCount;
 	
-	inline public function add(listener:Listener1<Target, T1>, priority:Int = 0):Target {
+	inline public function add(listener:Listener2<Target, T1, T2>, priority:Int = 0):Target {
 		this.add(listener, priority);
 		return target;
 	}
 	
-	inline public function once(listener:Listener1<Target, T1>):Target {
+	inline public function once(listener:Listener2<Target, T1, T2>):Target {
 		this.once(listener);
 		return target;
 	}
 	
-	inline public function remove(listener:Listener1<Target, T1>):Target {
+	inline public function remove(listener:Listener2<Target, T1, T2>):Target {
 		this.remove(listener);
 		return target;
 	}
 	
-	inline public function changePriority(listener:Listener1<Target, T1>, priority:Int = 0):Target {
+	inline public function changePriority(listener:Listener2<Target, T1, T2>, priority:Int = 0):Target {
 		this.changePriority(listener, priority);
 		return target;
 	}
 	
-	inline public function dispatch(a:T1):Target return dispatchArgs([a]);
+	inline public function dispatch(a:T1, b:T2):Target return dispatchArgs([a, b]);
 	
 	inline public function dispatchEvent(event:Event):Target {
 		this.dispatchEvent(event);
 		return target;
 	}
 	
-	inline public function dispatchArgs(?args:Array<T1>):Target {
+	inline public function dispatchArgs(?args:Array<Dynamic>):Target {
 		this.dispatchArgs(args);
 		return target;
 	}
@@ -98,11 +98,11 @@ abstract Signal1<Target, T1>(Signal) {
 	
 	inline public function sub(a:T1):Signal0<Target> return subArgs([a]);
 	
-	inline public function subArgs(args:Array<T1>):Signal0<Target> return this.subArgs(args);
+	inline public function subArgs(args:Array<Dynamic>):Signal0<Target> return this.subArgs(args);
 	
-	inline public function removeSub(a:T1):Target return removeSubArgs([a]);
+	inline public function removeSub(a:T1, ?b:T2):Target return removeSubArgs(b == null ? [a] : [a,b]);
 	
-	inline public function removeSubArgs(args:Array<T1>):Target {
+	inline public function removeSubArgs(args:Array<Dynamic>):Target {
 		this.removeSubArgs(args);
 		return target;
 	}
@@ -117,12 +117,12 @@ abstract Signal1<Target, T1>(Signal) {
 		return target;
 	}
 	
-	inline public function listen<T>(s:Signal1<T, T1>):Target {
+	inline public function listen<T>(s:Signal2<T, T1, T2>):Target {
 		s.add(this.dispatchEvent);
 		return target;
 	}
 	
-	public function sw(l1:Listener1<Target,T1>, l2:Listener1<Target,T1>):Target {
+	public function sw(l1:Listener2<Target,T1, T2>, l2:Listener2<Target,T1, T2>):Target {
 		this.once(l1);
 		this.once(this.sw.bind(l2, l1));
 		return target;
@@ -136,6 +136,6 @@ abstract Signal1<Target, T1>(Signal) {
 	public function enableSilent():Void silent = true;
 	public function disableSilent():Void silent = false;
 	
-	@:from static private inline function from<A,B>(s:Signal):Signal1<A,B> return new Signal1<A,B>(s);
+	@:from static private inline function from<A,B,C>(s:Signal):Signal2<A,B,C> return new Signal2<A,B,C>(s);
 	
 }

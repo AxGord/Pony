@@ -50,22 +50,34 @@ typedef CSHash = {
 
 abstract Function( { f:Dynamic, count:Int, args:Array<Dynamic>, id:Int, used:Int } ) {
 	
-	public static var unusedCount:Int = 0;
+	public static var unusedCount:Int;
 	#if cs
-	public static var cslist:Dictionary<CSHash, Function> = new Dictionary<CSHash, Function>();
-	public static var list:Dictionary<CSHash, Function> = new Dictionary<CSHash, Function>();
+	public static var cslist:Dictionary<CSHash, Function>;
+	public static var list:Dictionary<CSHash, Function>;
 	#else
-	public static var list:Dictionary<Dynamic, Function> = new Dictionary<Dynamic, Function>();
+	public static var list:Dictionary<Dynamic, Function>;
 	#end
-	private static var counter:Int = -1;
+	private static var counter:Int;
 	
-	private static var searchFree:Bool = false;
+	private static var searchFree:Bool;
 	
 	#if !cs
 	public var id(get, never):Int;
 	public var count(get, never):Int;
 	public var used(get, never):Int;
 	#end
+	
+	private static function __init__():Void {
+		unusedCount = 0;
+		#if cs
+		cslist = new Dictionary<CSHash, Function>(1);
+		list = new Dictionary<CSHash, Function>(1);
+		#else
+		list = new Dictionary<Dynamic, Function>(1);
+		#end
+		counter = -1;
+		searchFree = false;
+	}
 	
 	function new(f:Dynamic, count:Int, ?args:Array<Dynamic>) {
 		counter++;
@@ -83,11 +95,8 @@ abstract Function( { f:Dynamic, count:Int, args:Array<Dynamic>, id:Int, used:Int
 	}
 	
 	static public function from(f:Dynamic, argc:Int):Function {
-		//var i:Int = list.indexOf(f);
 		#if cs
 		var h:CSHash = buildCSHash(f);
-		//trace(h);
-		//trace(cslist.exists(h));
 		if (cslist.exists(h))
 			return cslist.get(h);
 		else {
@@ -114,7 +123,6 @@ abstract Function( { f:Dynamic, count:Int, args:Array<Dynamic>, id:Int, used:Int
 			return {o:untyped f.obj, n:untyped f.field};
 		} else {
 			var key:String = Std.string(f);
-			//trace(f);
 			var t:Type = untyped f.GetType();
 			var a:NativeArray<FieldInfo> = untyped __cs__('t.GetFields()');
 			var data:Array<Dynamic> = [];
@@ -158,16 +166,11 @@ abstract Function( { f:Dynamic, count:Int, args:Array<Dynamic>, id:Int, used:Int
 	public inline function get_id():Int return this.id;
 	public inline function get_count():Int return this.count;
 	
-	//public inline function _bind(args:Array<Dynamic>):Function
-	//	return new Function(this.f, this.count - args.length, this.args.concat(args));
-		
 	public inline function _setArgs(args:Array<Dynamic>):Void {
 		this.count -= args.length;
 		this.args = this.args.concat(args);
 	}
 	
-	//public inline function get():Dynamic return this.f;
-		
 	public inline function _use():Void this.used++;
 	
 	inline public function unuse():Void {
@@ -181,7 +184,6 @@ abstract Function( { f:Dynamic, count:Int, args:Array<Dynamic>, id:Int, used:Int
 			#else
 			list.remove(this.f);
 			#end
-			//trace('remove this');
 			this = null;
 			unusedCount--;
 		}

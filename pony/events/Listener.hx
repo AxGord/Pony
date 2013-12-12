@@ -40,12 +40,15 @@ using Lambda;
 typedef Listener_ = { f:Function, count:Int, event:Bool, prev:Event, used:Int, active:Bool, ignoreReturn:Bool }
  
 abstract Listener( Listener_ ) {
-	public static var flist:Map<Int, Listener> = new Map<Int, Listener>();
-	//public static var eflist:Dictionary<Event->Void, Listener> = new Dictionary<Event->Void, Listener>();
+	public static var flist:Map<Int, Listener>;
 	
 	public var active(get, set):Bool;
 	public var count(get, never):Int;
 	public var used(get, never):Int;
+	
+	private function __init__():Void {
+		flist = new Map<Int, Listener>();
+	}
 	
 	inline public function new(f:Function, event:Bool = false, ignoreReturn:Bool = true, count:Int = -1) {
 		f._use();
@@ -57,12 +60,14 @@ abstract Listener( Listener_ ) {
 	
 	@:from static inline public function fromFunction(f:Function):Listener
 		return _fromFunction(f, false);
+		
+	@:from static inline public function fromSignal(s:Signal):Listener
+		return s.buildListenerEmpty();
 	
 	static public function _fromFunction(f:Function, ev:Bool):Listener {
 		if (flist.exists(f.get_id())) {
 			return flist.get(f.get_id());
 		} else {
-			//trace(ev);
 			var o:Listener = new Listener(f, ev);
 			flist.set(f.get_id(), o);
 			return o;
@@ -97,14 +102,8 @@ abstract Listener( Listener_ ) {
 	inline public function unuse():Void {
 		this.used--;
 		if (this.used == 0) {
-			//if (this.event) {
-			//	eflist.remove(this.f.get());
-			//} else {
-				flist.remove(this.f.get_id());
-			//}
+			flist.remove(this.f.get_id());
 			this.f.unuse();
-			//this.f = null;
-			//this.prev = null;
 		}
 	}
 	
@@ -113,7 +112,6 @@ abstract Listener( Listener_ ) {
 	static public function unusedCount():Int {
 		var c:Int = 0;
 		for (l in flist) if (l.get_used() <= 0) c++;
-		//for (l in eflist) if (l.used() <= 0) c++;
 		return c;
 	}
 	

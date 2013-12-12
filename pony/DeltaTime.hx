@@ -27,6 +27,8 @@
 **/
 package pony;
 import pony.events.Signal;
+import pony.events.Signal0;
+import pony.events.Signal1;
 
 /**
  * ...
@@ -35,14 +37,14 @@ import pony.events.Signal;
 class DeltaTime {
 	
 	public static var speed:Float = 1;
-	public static var update(default,null):Signal;
-	public static var fixedUpdate(default,null):Signal;
+	public static var update(default,null):Signal1<Void, Float>;
+	public static var fixedUpdate(default,null):Signal1<Void, Float>;
 	//public static var value(default,null):Float = 0;
 	
 	private static var t:Float;
 	
 	#if !flash
-	public static inline function init(?signal:Signal):Void {
+	public static inline function init(?signal:Signal0<Dynamic>):Void {
 		set();
 		if (signal != null) signal.add(tick);
 	}
@@ -81,8 +83,8 @@ class DeltaTime {
 	#end
 	
 	inline private static function createSignals():Void {
-		update = new Signal();
-		fixedUpdate = new Signal();
+		update = Signal.createEmpty();
+		fixedUpdate = Signal.createEmpty();
 	}
 	
 	/**

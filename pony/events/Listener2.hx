@@ -25,21 +25,19 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.ui;
+package pony.events;
 
-import pony.events.Signal;
-import pony.events.Signal1;
 /**
- * IKeyboard
- * @see pony.ui.Keyboard
+ * Listener2
  * @author AxGord <axgord@gmail.com>
  */
-interface IKeyboard<T> {
-
-	var down(default, null):Signal1<T, Key>;
-	var up(default, null):Signal1<T, Key>;
-
-	function enable():Void;
-	function disable():Void;
-	
+abstract Listener2<Target, T1, T2>(Listener) {
+	inline private function new(l:Listener) this = l;
+	@:from inline private static function from0<T,A,B>(f:Void->Void):Listener2<T,A,B> return new Listener2(f);
+	@:from inline private static function fromEvent<T,A,B>(f:Event->Void):Listener2<T,A,B> return new Listener2(f);
+	@:from inline private static function from1<T,A,B>(f:A->Void):Listener2<T,A,B> return new Listener2(f);
+	@:from inline private static function from1Tar<T,A,B>(f:A->T->Void):Listener2<T,A,B> return new Listener2(f);
+	@:from inline private static function from2<T,A,B>(f:A->B->Void):Listener2<T,A,B> return new Listener2(f);
+	@:from inline private static function from2Tar<T,A,B>(f:A->B->T->Void):Listener2<T,A,B> return new Listener2(f);
+	@:to inline private function to():Listener return this;
 }

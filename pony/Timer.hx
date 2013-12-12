@@ -47,8 +47,10 @@ class Timer extends Signal {
 	
 	public function start():Timer {
 		stop();
+		#if !neko
 		t = new haxe.Timer(delay);
 		t.run = run;
+		#end
 		return this;
 	}
 	
@@ -56,7 +58,9 @@ class Timer extends Signal {
 	
 	public function stop():Timer {
 		if (t != null) {
+			#if !neko
 			t.stop();
+			#end
 			t = null;
 		}
 		return this;

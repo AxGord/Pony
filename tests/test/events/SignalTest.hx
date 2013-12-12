@@ -8,6 +8,7 @@ import pony.events.Signal;
 import pony.events.Listener;
 import pony.events.Signal0;
 import pony.events.Signal1.Signal1;
+import pony.events.Signal2.Signal2;
 import pony.Function;
 
 class SignalTest 
@@ -127,6 +128,88 @@ class SignalTest
 		s.add(function() f = true);
 		s.dispatch();
 		Assert.isTrue(f);
+	}
+	
+	@Test
+	public function sub():Void {
+		var f:Bool = false;
+		var s:Signal = new Signal();
+		s.sub(3).add(function()f = true);
+		s.dispatch(5);
+		Assert.isFalse(f);
+		s.dispatch(3);
+		Assert.isTrue(f);
+	}
+	
+	@Test
+	public function sub1():Void {
+		var f:Bool = false;
+		var s:Signal1<Void, Int> = Signal.createEmpty();
+		s.sub(3).add(function() f = true);
+		s.dispatch(5);
+		Assert.isFalse(f);
+		s.dispatch(3);
+		Assert.isTrue(f);
+	}
+	
+	@Test
+	public function buildListener():Void {
+		var c:Int = 0;
+		var s1:Signal = new Signal();
+		var s2:Signal = new Signal();
+		s1.add(function(a:Int, b:Int, d:Int) c = a+b+d);
+		s2.add(s1.buildListener(1, 2, 3));
+		s2.dispatch();
+		Assert.areEqual(c, 6);
+	}
+	
+	@Test
+	public function subSilent():Void {
+		var f:Bool = true;
+		var s:Signal = new Signal();
+		s.sub(1).add(function() f = false);
+		s.dispatch(3);
+		Assert.isTrue(f);
+		s.sub(1).silent = true;
+		s.dispatch(1);
+		Assert.isTrue(f);
+		s.sub(1).silent = false;
+		s.dispatch(1);
+		Assert.isFalse(f);
+	}
+	
+	@Test
+	public function listen():Void {
+		var f:Bool = false;
+		var s1:Signal1<Void, Int> = Signal.createEmpty();
+		var s2:Signal1<Void, Int> = Signal.createEmpty();
+		s1.listen(s2);
+		s1.sub(2).add(function() f = true);
+		s2.dispatch(2);
+		Assert.isTrue(f);
+	}
+	
+	@Test
+	public function sw1():Void {
+		var t:String = '';
+		var s:Signal1<Void, Int> = Signal.createEmpty();
+		s.sw(function() t += 'a', function() t += 'b');
+		s.dispatch(1);
+		s.dispatch(2);
+		s.dispatch(3);
+		s.dispatch(4);
+		s.dispatch(5);
+		Assert.areEqual(t, 'ababa');
+	}
+	
+	@Test
+	public function signal2():Void {
+		var t:String = '';
+		var s:Signal2<SignalTest, String, Int> = Signal.create(this);
+		s.add(function(s:String) t+=s);
+		s.add(function(s:String, n:Int) t += s + n);
+		s.dispatch('v', 8);
+		Assert.areEqual(t, 'vv8');
 	}
 	
 }

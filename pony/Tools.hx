@@ -64,10 +64,17 @@ class Tools {
       //trace(type);
       switch (type) {
           case TInt, TFloat, TBool, TNull: return false;
-          case TFunction: return Reflect.compareMethods(a, b);
+		  case TFunction: 
+			  try {
+				return Reflect.compareMethods(a, b);
+			  } catch (_:Dynamic) {
+				  return false;
+			  }
           case TEnum(t): 
             if (t != Type.getEnum(b)) return false;
           
+			if (Type.enumIndex(a) != Type.enumIndex(b)) return false;
+			
             var a = Type.enumParameters(a);
             var b = Type.enumParameters(b);
             
