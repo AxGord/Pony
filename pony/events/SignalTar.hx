@@ -36,4 +36,8 @@ abstract SignalTar<T>(Signal) {
 	@:to inline private function to0():Signal0<T> return this;
 	@:to inline private function to1<A>():Signal1<T,A> return this;
 	@:to inline private function to2<A,B>():Signal2<T,A,B> return this;
+	
+	@:to inline private function tod0():Signal0<Dynamic> return this;
+	@:to inline private function tod1<A>():Signal1<Dynamic,A> return this;
+	@:to inline private function tod2<A,B>():Signal2<Dynamic,A,B> return this;
 }

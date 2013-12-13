@@ -4,6 +4,8 @@ import massive.munit.util.Timer;
 import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
 import pony.events.Signal;
+import pony.events.Signal0;
+import pony.events.Signal1;
 import pony.ui.FocusManager;
 import pony.ui.IFocus;
 import ui.FocusManagerTest.Element;
@@ -22,12 +24,12 @@ class FocusManagerTest
 }
 
 class Element implements IFocus {
-	public var focus(default,null):Signal;
+	public var focus(default,null):Signal1<Dynamic,Bool>;
 	public var focusPriority(default, null):Int = 0;
 	public var focusGroup(default, null):String = 'default';
 	
 	public function new() {
-		focus = new Signal(this);
+		focus = Signal.create(this);
 		FocusManager.reg(this);
 	}
 }

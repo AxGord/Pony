@@ -26,7 +26,7 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.ui;
-import pony.events.Signal;
+import pony.events.Signal1;
 
 /**
  * IFocus
@@ -35,7 +35,7 @@ import pony.events.Signal;
  */
 interface IFocus {
 
-	public var focus(default, null):Signal;
+	public var focus(default, null):Signal1<Dynamic, Bool>;
 	public var focusPriority(default, null):Int;
 	public var focusGroup(default, null):String;
 	

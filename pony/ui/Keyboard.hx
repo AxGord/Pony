@@ -42,10 +42,10 @@ class Keyboard {
 	static public var pressFirstDelay:Float = 0.5;
 	static public var pressDelay:Float = 0.2;
 	
-	static public var down:Signal1<Keyboard, Key>;
-	static public var up:Signal;
-	static public var press:Signal;
-	static public var click:Signal;
+	static public var down:Signal1<Void, Key>;
+	static public var up:Signal1<Void, Key>;
+	static public var press:Signal1<Void, Key>;
+	static public var click:Signal1<Void, Key>;
 	
 	static public var pressedKeys:List<Key> = new List<Key>();
 	
@@ -63,10 +63,10 @@ class Keyboard {
 		#elseif flash
 		km = new pony.flash.Keyboard();
 		#end
-		down = new Signal();
-		up = new Signal();
-		press = new Signal();
-		click = new Signal();
+		down = Signal.createEmpty();
+		up = Signal.createEmpty();
+		press = Signal.createEmpty();
+		click = Signal.createEmpty();
 		
 		autoEnableMode();
 	}

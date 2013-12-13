@@ -19,6 +19,7 @@ class KeyboardTest
 	
 	@After
 	public function end():Void {
+		Keyboard.click.removeAllListeners();
 		Keyboard.down.removeAllListeners();
 		Keyboard.up.removeAllListeners();
 	}
@@ -37,6 +38,40 @@ class KeyboardTest
 		Assert.isTrue(kb);
 		Assert.isTrue(kc);
 	}
+	
+	@Test
+	public function up():Void
+	{
+		var kb = false;
+		var kc = false;
+		Keyboard.up.sub(Key.B).add(function() kb = true);
+		Keyboard.up.sub(Key.C).add(function() kc = true);
+		helper.up.dispatch(Key.B);
+		Assert.isTrue(kb);
+		Assert.isFalse(kc);
+		helper.up.dispatch(Key.C);
+		Assert.isTrue(kb);
+		Assert.isTrue(kc);
+	}
+	
+	@Test
+	public function click():Void
+	{
+		var kb = false;
+		var kc = false;
+		Keyboard.click.sub(Key.B).add(function() kb = true);
+		Keyboard.click.sub(Key.C).add(function() kc = true);
+		helper.down.dispatch(Key.B);
+		Assert.isFalse(kb);
+		Assert.isFalse(kc);
+		helper.up.dispatch(Key.B);
+		helper.down.dispatch(Key.C);
+		Assert.isTrue(kb);
+		Assert.isFalse(kc);
+		helper.up.dispatch(Key.C);
+		Assert.isTrue(kb);
+		Assert.isTrue(kc);
+	}
 }
 
 class KeyboardTestHelper implements IKeyboard<KeyboardTestHelper> {
@@ -47,13 +82,14 @@ class KeyboardTestHelper implements IKeyboard<KeyboardTestHelper> {
 	public function new() {
 		down = Signal.create(this);
 		up = Signal.create(this);
+		disable();
 	}
 	
 	public function enable():Void {
-		//trace('enable');
+		down.silent = false;
 	}
 	public function disable():Void {
-		//trace('disable');
+		down.silent = true;
 	}
 	
 }
