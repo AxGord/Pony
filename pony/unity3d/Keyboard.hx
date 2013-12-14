@@ -28,6 +28,7 @@
 package pony.unity3d;
 import pony.DeltaTime;
 import pony.events.Signal;
+import pony.events.Signal1;
 import pony.ui.IKeyboard;
 import pony.ui.Key;
 import unityengine.Input;
@@ -38,16 +39,16 @@ import unityengine.KeyCode;
  * @see pony.ui.Keyboard
  * @author AxGord <axgord@gmail.com>
  */
-class Keyboard implements IKeyboard {
+class Keyboard implements IKeyboard<Keyboard> {
 	
-	public var down:Signal;
-	public var up:Signal;
+	public var down:Signal1<Keyboard, Key>;
+	public var up:Signal1<Keyboard, Key>;
 	
 	private var keys:Array<KeyCode>;
 	
 	public function new():Void {
-		down = new Signal(this);
-		up = new Signal(this);
+		down = Signal.create(this);
+		up = Signal.create(this);
 		
 		keys = KeyCode.createAll();
 	}
@@ -67,7 +68,7 @@ class Keyboard implements IKeyboard {
 				if (Input.GetKeyUp(k)) dispatchKey(up, k);
 	}
 	
-	private function dispatchKey(s:Signal, k:KeyCode):Void {
+	private function dispatchKey(s:Signal1<Keyboard, Key>, k:KeyCode):Void {
 		var k:Key = switch (k) {
 			case KeyCode.A: Key.A;
 			case KeyCode.B: Key.B;

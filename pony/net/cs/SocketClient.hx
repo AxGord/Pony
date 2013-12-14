@@ -26,7 +26,7 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.net.cs;
-
+#if cs
 import cs.NativeArray;
 import dotnet.system.Byte;
 import dotnet.system.IAsyncResult;
@@ -145,3 +145,4 @@ class SocketClient extends SocketClientBase {
 	}
 	
 }
+#end

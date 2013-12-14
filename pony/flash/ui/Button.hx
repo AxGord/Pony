@@ -90,7 +90,7 @@ class Button extends MovieClip {
 	private function init(_):Void {
 		removeEventListener(Event.ENTER_FRAME, init);
 		if (CPP_FL_TouchFix.useFix) {
-			zone.downSignal().sub([], [false]).add(core.mouseOver);
+			zone.downSignal().add(core.mouseOver.bind(false));
 			CPP_FL_TouchFix.move.add(touchMove);
 			CPP_FL_TouchFix.down.add(touchMove);
 			zone.upSignal().add(touchUp);

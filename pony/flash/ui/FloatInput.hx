@@ -60,7 +60,7 @@ class FloatInput extends InputBase<Null<Float>> {
 	}
 	
 	override private function set_value(v:Null<Float>):Null<Float> {
-		inp.text = v == null ? '' : v._toFixed(cafterdot, d);
+		inp.text = v == null ? '' : v._toFixed(cafterdot, 0, d);
 		return v;
 	}
 	

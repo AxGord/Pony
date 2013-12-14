@@ -27,27 +27,30 @@
 **/
 package pony.unity3d.scene.ucore;
 
-import bindx.IBindable;
+import pony.events.Signal;
+import pony.events.Signal0;
 import unityengine.MonoBehaviour;
 import unityengine.Quaternion;
 import unityengine.Vector3;
 using hugs.HUGSWrapper;
-using bindx.Bind;
 /**
  * OpenCloseUCore
  * @author AxGord <axgord@gmail.com>
  */
-class OpenCloseUCore extends MonoBehaviour implements IBindable {
+class OpenCloseUCore extends MonoBehaviour {
 	
 	public var openPos:Vector3;
 	public var openRotation:Quaternion;
-	@bindable public var open:Bool = false;
+	public var open(default, set):Bool = false;
+	public var onOpen(default, null):Signal0<OpenCloseUCore>;
+	public var onClose(default, null):Signal0<OpenCloseUCore>;
 	private var startPos:Vector3;
 	private var startRotation:Quaternion;
 	
 	public function new() {
 		super();
-		open.bindx(openHandler);
+		onOpen = Signal.create(this);
+		onClose = Signal.create(this);
 	}
 	
 	private function Start():Void {
@@ -57,10 +60,13 @@ class OpenCloseUCore extends MonoBehaviour implements IBindable {
 		if (openRotation.x == 0 && openRotation.y == 0 && openRotation.z == 0) openRotation = startRotation;
 	}
 	
-	private function openHandler(from:Bool, to:Bool):Void {
-		if (from == to) return;
+	private function set_open(to:Bool):Bool {
+		if (open == to) return to;
 		transform.position = to ? openPos : startPos;
 		transform.rotation = to ? openRotation : startRotation;
+		if (to) onOpen.dispatch();
+		else onClose.dispatch();
+		return open = to;
 	}
 	
 	public function change():Void open = !open;

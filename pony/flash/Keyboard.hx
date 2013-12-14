@@ -3,20 +3,22 @@ package pony.flash;
 import flash.events.KeyboardEvent;
 import flash.Lib;
 import pony.events.Signal;
+import pony.events.Signal1;
 import pony.ui.IKeyboard;
+import pony.ui.Key;
 
 /**
  * Keyboard
  * @author AxGord <axgord@gmail.com>
  */
-class Keyboard implements IKeyboard {
+class Keyboard implements IKeyboard<Keyboard> {
 
-	public var down(default, null):Signal;
-	public var up(default, null):Signal;
+	public var down(default, null):Signal1<Keyboard, Key>;
+	public var up(default, null):Signal1<Keyboard, Key>;
 	
 	public function new() {
-		down = new Signal(this);
-		up = new Signal(this);	
+		down = Signal.create(this);
+		up = Signal.create(this);	
 	}
 	
 	public function enable():Void {

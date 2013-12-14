@@ -37,3 +37,13 @@
 
 -cp test
 -neko build/neko_test.n
+
+--next
+
+# C++
+-main TestMain
+-lib munit
+-lib hamcrest
+-cp ..
+-cp test
+-cpp build/cpp

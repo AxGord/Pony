@@ -26,12 +26,12 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.macro;
+#if (macro || dox)
 import haxe.macro.Expr;
 /**
  * ...
  * @author AxGord
  */
-#if macro
 class Tools {
 
 	public inline static function argsArray(func:Expr, args:Array<Expr>):Expr {

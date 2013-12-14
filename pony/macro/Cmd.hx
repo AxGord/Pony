@@ -26,7 +26,7 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.macro;
-
+#if (macro || dox)
 import haxe.macro.Context;
 import haxe.xml.Fast;
 import sys.FileSystem;
@@ -53,3 +53,4 @@ class Cmd {
 	}
 	
 }
+#end

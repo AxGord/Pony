@@ -53,8 +53,8 @@ class HorList extends MovieClip {
 		bPrev.mode = 1;
 		bNext.mode = 1;
 		text.text = '';
-		bPrev.click.sub([0]).add(prev);
-		bNext.click.sub([0]).add(next);
+		//bPrev.click.sub(0).add(prev);
+		//bNext.click.sub(0).add(next);
 		select = new Signal(this);
 	}
 	

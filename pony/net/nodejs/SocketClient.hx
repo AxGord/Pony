@@ -26,7 +26,7 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.net.nodejs;
-
+#if nodejs
 import haxe.io.Bytes;
 import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
@@ -78,3 +78,4 @@ class SocketClient extends SocketClientBase {
 	}
 	
 }
+#end

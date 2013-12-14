@@ -26,7 +26,7 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.net.cs;
-
+#if cs
 import dotnet.system.IAsyncResult;
 import dotnet.system.net.sockets.AddressFamily;
 import dotnet.system.net.sockets.ProtocolType;
@@ -65,3 +65,4 @@ class SocketServer extends SocketServerBase {
 	}
 
 }
+#end

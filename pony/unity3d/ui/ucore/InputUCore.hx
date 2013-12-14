@@ -28,6 +28,7 @@
 package pony.unity3d.ui.ucore;
 
 import pony.events.Signal;
+import pony.events.Signal1;
 import pony.ui.FocusManager;
 import pony.ui.IFocus;
 import pony.unity3d.ui.TintButton;
@@ -50,7 +51,7 @@ class InputUCore extends TintButton implements IFocus {
 	public var max:Int = 0;
 	public var focusPriority(default,null):Int = 0;
 	public var focusGroup(default,null):String = '';
-	public var focus(default,null):Signal;
+	public var focus(default,null):Signal1<Dynamic,Bool>;
 	public var changed(default,null):Signal;
 	
 	public var selected(default, null):Bool;
@@ -63,9 +64,9 @@ class InputUCore extends TintButton implements IFocus {
 	public function new() {
 		super();
 		changed = new Signal(this);
-		focus = new Signal(this);
+		focus = Signal.create(this);
 		focus.add(onFocus);
-		core.click.sub([0]).add(focus.dispatchArgs.bind([true]));
+		core.click.sub(0).add(focus.dispatch.bind(true));
 	}
 	
 	private function onFocus(b:Bool):Void {

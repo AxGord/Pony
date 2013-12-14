@@ -76,7 +76,7 @@ class ScrollBar extends Sprite implements pony.flash.FLSt {
 		mouseMove.add(scrollerMove);
 		rect = isVert ? new Rectangle(0, 0, bg.height-scroller.height, 0) : new Rectangle(0, 0, bg.width-scroller.width, 0);
 		scroller.core.down.add(scroller.startDrag.bind(false, rect)).add(mouseMove.disableSilent);
-		scroller.core.change.sub([ButtonStates.Default]).add(scroller.stopDrag).add(mouseMove.enableSilent);
+		//scroller.core.change.sub(ButtonStates.Default).add(scroller.stopDrag).add(mouseMove.enableSilent);
 	}
 	
 	private function get_size():Float {

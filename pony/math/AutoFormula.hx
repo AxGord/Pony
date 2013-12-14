@@ -25,7 +25,7 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony;
+package pony.math;
 
 /**
  * AutoFormula
@@ -39,7 +39,7 @@ class AutoFormula {
 	public function new(values:Map<Float,Float>) {
 		this.values = values;
 	}
-	
+	/*
 	public function get(v:Float):Float {
 		var cur:Float;
 		var prev:Null<Float> = null;
@@ -65,5 +65,5 @@ class AutoFormula {
 			}
 		}
 	}
-	
+	*/
 }

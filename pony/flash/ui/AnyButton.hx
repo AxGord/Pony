@@ -88,7 +88,7 @@ class AnyButton {
 	}
 	
 	public function bind(k:Key):Void {
-		Keyboard.click.sub([k]).add(_onClick);
+		Keyboard.click.sub(k).add(_onClick);
 	}
 	
 	private function get_shift():Bool return untyped button.shift;

@@ -36,8 +36,9 @@ import pony.events.Signal;
 class Timer extends Signal {
 	
 	public var delay(default, null):Int;
-
+	#if (!neko && !dox && !cpp)
 	private var t:haxe.Timer;
+	#end
 	
 	public function new(delay:Int, autoStart:Bool = true) {
 		super();
@@ -47,7 +48,7 @@ class Timer extends Signal {
 	
 	public function start():Timer {
 		stop();
-		#if !neko
+		#if (!neko && !dox && !cpp)
 		t = new haxe.Timer(delay);
 		t.run = run;
 		#end
@@ -57,12 +58,12 @@ class Timer extends Signal {
 	private function run():Void dispatch();
 	
 	public function stop():Timer {
+		#if (!neko && !dox && !cpp)
 		if (t != null) {
-			#if !neko
 			t.stop();
-			#end
 			t = null;
 		}
+		#end
 		return this;
 	}
 	

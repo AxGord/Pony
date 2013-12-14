@@ -79,7 +79,6 @@ class Signal {
 	 * ]
 	 * Call with l or he or hd
 	 * @param priority Default 0.
-	 * @param delay Delay for call in ms. Default -1. -1 - run without wait.
 	 * @see pony.Priority for param priority.
 	 * @see pony.events.Listener
 	 * @see pony.events.Event
@@ -151,7 +150,7 @@ class Signal {
 				trace(msg);
 				l.call(event);
 				throw 'Listener error';
-				#elseif (debug || munit)
+				#elseif ((debug || munit) && (php || neko || cpp))
 				Sys.println('');
 				Sys.print(msg);
 				Sys.println(CallStack.toString(CallStack.exceptionStack()));

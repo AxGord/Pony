@@ -26,6 +26,7 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.net.nodejs;
+#if nodejs
 import js.Node;
 import pony.net.SocketServerBase;
 
@@ -53,3 +54,4 @@ class SocketServer extends SocketServerBase {
 	}
 	
 }
+#end

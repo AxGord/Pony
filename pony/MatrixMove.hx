@@ -27,10 +27,10 @@ class MatrixMove {
 	}
 	
 	public function arrowBinding():Void {
-		Keyboard.press.sub([Key.Up]).add(up);
-		Keyboard.press.sub([Key.Down]).add(down);
-		Keyboard.press.sub([Key.Right]).add(right);
-		Keyboard.press.sub([Key.Left]).add(left);
+		Keyboard.press.sub(Key.Up).add(up);
+		Keyboard.press.sub(Key.Down).add(down);
+		Keyboard.press.sub(Key.Right).add(right);
+		Keyboard.press.sub(Key.Left).add(left);
 	}
 	
 	public function up():Void {

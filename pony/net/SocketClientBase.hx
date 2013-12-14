@@ -26,7 +26,9 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.net;
+#if !dox
 import haxe.Timer;
+#end
 import pony.events.Signal;
 
 /**
@@ -70,7 +72,9 @@ class SocketClientBase {
 			open();
 		} else if (reconnectDelay > 0) {
 			trace('Reconnect after '+reconnectDelay+' ms');
+			#if !dox
 			Timer.delay(open, reconnectDelay);
+			#end
 		}
 	}
 	
