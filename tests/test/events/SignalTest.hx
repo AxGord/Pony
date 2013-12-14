@@ -212,4 +212,17 @@ class SignalTest
 		Assert.areEqual(t, 'vv8');
 	}
 	
+	@Test
+	public function signal2subs():Void {
+		var r = '';
+		var s:Signal2<Void, Int, String> = Signal.createEmpty();
+		s.sub1(1).add(function(c:String) r += c);
+		s.sub2(1, 'd').add(function() r += '-');
+		s.sub(2, 'e').add(function() r += '-');
+		s.sub(2).add(function(c:String) r += c);
+		s.dispatch(1, 'd');
+		s.dispatch(2, 'e');
+		Assert.areEqual(r, 'd--e');
+	}
+	
 }

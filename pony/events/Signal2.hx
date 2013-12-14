@@ -96,9 +96,12 @@ abstract Signal2<Target, T1, T2>(Signal) {
 		return target;
 	}
 	
-	inline public function sub(a:T1):Signal0<Target> return subArgs([a]);
+	inline public function sub(a:T1, ?b:T2):Signal return subArgs(b == null ? [a] : [a,b]);
 	
-	inline public function subArgs(args:Array<Dynamic>):Signal0<Target> return this.subArgs(args);
+	inline public function sub1(a:T1):Signal1<Target, T2> return subArgs([a]);
+	inline public function sub2(a:T1, b:T2):Signal0<Target> return subArgs([a, b]);
+	
+	inline public function subArgs(args:Array<Dynamic>):Signal return this.subArgs(args);
 	
 	inline public function removeSub(a:T1, ?b:T2):Target return removeSubArgs(b == null ? [a] : [a,b]);
 	
