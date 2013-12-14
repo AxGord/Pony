@@ -16,33 +16,134 @@
     <div class="wrapper">
       <header>
         <h1>Pony</h1>
-        <p>HaXe open-cross-library</p>
-		<p class="view"><a href="docs">Reference book</a></p>
+        <p class="view"><a href="http://haxe.org/">Haxe</a> open-cross-library<br/><small>for all occasions</small></p>
+		
+		
+		
+		<h2>Manual</h2>
+		<p><a href="#install">Installation</a></p>
+		<p><a href="#signals">Signals</a></p>
+		<p><a href="#deltatime">DeltaTime</a></p>
+		<p><a href="#priority">Priority</a></p>
+		
+		<h2>Reference book</h2>
+		<p><a href="docs">Explore more feature</a></p>
+		
+		<h2>GitHub</h2>
         <p class="view"><a href="https://github.com/AxGord/Pony">View the Project on GitHub <small>AxGord/Pony</small></a></p>
-        <ul>
+        
+		<ul>
           <li><a href="https://github.com/AxGord/Pony/zipball/master">Download <strong>ZIP File</strong></a></li>
           <li><a href="https://github.com/AxGord/Pony/tarball/master">Download <strong>TAR Ball</strong></a></li>
           <li><a href="https://github.com/AxGord/Pony">View On <strong>GitHub</strong></a></li>
         </ul>
+		
+		<h2>Tests</h2>
+		<pre>Tests: 53  Passed: 53  Failed: 0 Errors: 0 Ignored: 0 Time: 0.593</pre>
+		
       </header>
       <section>
-        <h1>Pony</h1>
+        <h1>Manual</h1>
 
-<p>HaXe open-cross-library</p>
+		<h2 id="install">Installation</h2>
 
-<h2>Sync → Async</h2>
+		<h3>Stable version</h3>
+		<pre>haxelib install pony</pre>
 
+		<h3>Unstable version</h3>
+		<pre>haxelib git pony https://github.com/AxGord/Pony</pre>
+		
+		<h2 id="signals">Signals</h2>
+		<p>For develop perfect event-driven-system</p>
+		
+<h3>Simple usage</h3>
 <pre>
-class Test implements pony.magic.async.AsyncAutoAll {
-    //methods...
+var signal = new Signal();
+signal.add(function() trace('tada'));
+signal.dispatch();//=> tada
+</pre>
+	
+<h3>Send arguments</h3>
+<pre>
+var signal = new Signal();
+signal.add(function(n:Int, t:String) trace(n+t));
+signal.dispatch(5, 'a');//=> 5a
+signal.dispatch(7, 'b');//=> 7b
+</pre>
+	
+<h3>Send target</h3>
+<pre>
+this.v = 1;
+var signal = new Signal(this);
+signal.add(function(n:Int, target) trace(n+target.v));
+signal.dispatch(5);//=> 6
+this.v = 2;
+signal.dispatch(7);//=> 9
+</pre>
+
+<h3>Build sub signals</h3>
+<pre>
+var signal = new Signal();
+signal.sub(5).add(function(t:String) trace('First sub: '+t));
+signal.sub(7).add(function(t:String) trace('Second sub: '+t));
+signal.dispatch(5, 'a');//=> First sub: a
+signal.dispatch(7, 'b');//=> Second sub: b
+</pre>
+
+<h3>Strict typed signals</h3>
+<p>Stop testing code on run time - start testing on compile time!</p>
+<pre>
+var signal:Signal2&lt;Void, Int, String&gt; = Signal.createEmpty();
+signal.add(function(n:Int, t:String) trace(n+t));
+signal.dispatch(5, 'a');//=> 5a
+signal.dispatch(7, 'b');//=> 7b
+</pre>
+<p>And with target</p>
+<pre>
+var signal:Signal2&lt;TargetClass, Int, String&gt; = Signal.create(this);
+signal.add(function(n:Int, target:TargetClass) trace(n+target.v));
+signal.dispatch(5);//=> 6
+this.v = 2;
+signal.dispatch(7);//=> 9
+</pre>
+		
+
+	<h2 id="deltatime">DeltaTime</h2>
+	<p>For develop interactive or realtime systems</p>
+
+<p>Detect FPS example</p>
+<pre>
+var dts:Float = 0;
+var frames:Int = 0;
+DeltaTime.update.add(function(dt:Float) {
+	frames++;
+	dts += dt;
+	if (dts >= 1) {
+		dts--;
+		show(clips);
+		clips = 0;
+	}
+});
+</pre>
+
+<p>Activate for Unity3d</p>
+<pre>
+class Main extends MonoBehavarior {
+function update() DeltaTime.update.dispatch(Time.deltaTime);
 }
 </pre>
 
-<h2>Tests</h2>
-
+<p id="priority">Priority</p>
+<p>Class for create priority lists</p>
 <pre>
-Tests: 53  Passed: 53  Failed: 0 Errors: 0 Ignored: 0 Time: 0.593
+var priority = new Priority&lt;String&gt;();
+priority.add('Keyword', 0);
+priority.add('Multyset', 8);
+priority.add('Music Box', 3);
+priority.add('Double inside', 8);
+trace(priority);//=>['Keyword', 'Multyset', 'Double inside', 'Music Box']
 </pre>
+
       </section>
       <footer>
         <p>This project is maintained by <a href="https://github.com/AxGord">AxGord</a></p>
