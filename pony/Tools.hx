@@ -127,6 +127,24 @@ class Tools {
 		return -1;
 	}
 	
+	public static function superMultyIndexOf<T>(it:Iterable<T>, av:Array<T>, maxDepth:Int = 1):Int {
+		var i:Int = 0;
+		for (e in it) {
+			for (v in av) if (equal(e, v, maxDepth)) return i;
+			i++;
+		}
+		return -1;
+	}
+	
+	public static function multyIndexOf<T>(it:Iterable<T>, av:Array<T>):Int {
+		var i:Int = 0;
+		for (e in it) {
+			for (v in av) if (e == v) return i;
+			i++;
+		}
+		return -1;
+	}
+	
 	inline public static function percentCalc(p:Float, min:Float, max:Float):Float return (max - min) * p + min;
 	
 	/**

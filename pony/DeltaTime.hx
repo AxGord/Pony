@@ -39,7 +39,8 @@ class DeltaTime {
 	public static var speed:Float = 1;
 	public static var update(default,null):Signal1<Void, Float>;
 	public static var fixedUpdate(default,null):Signal1<Void, Float>;
-	//public static var value(default,null):Float = 0;
+	public static var value:Float = 0;
+	public static var fixedValue:Float = 0;
 	
 	private static var t:Float;
 	
@@ -50,11 +51,12 @@ class DeltaTime {
 	}
 	#end
 	
-	private static function tick():Void {
-		var value:Float = get();
+	public static function tick():Void {
+		fixedValue = get();
 		set();
-		update.dispatch(value * speed);
-		fixedUpdate.dispatch(value);
+		value = fixedValue * speed;
+		update.dispatch(value);
+		fixedUpdate.dispatch(fixedValue);
 	}
 	
 	private inline static function set():Void t = Date.now().getTime();

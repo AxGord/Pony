@@ -4,6 +4,7 @@ import events.ListenerTest;
 import events.SignalTest;
 import FunctionTest;
 import LoaderTest;
+import magic.DeclaratorTest;
 import magic.StaticInitTest;
 import math.BalanceTest;
 import physics.ThermoTest;
@@ -30,6 +31,7 @@ class TestSuite extends massive.munit.TestSuite
 		add(events.SignalTest);
 		add(FunctionTest);
 		add(LoaderTest);
+		add(magic.DeclaratorTest);
 		add(magic.StaticInitTest);
 		add(math.BalanceTest);
 		add(physics.ThermoTest);
