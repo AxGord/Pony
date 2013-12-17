@@ -25,6 +25,7 @@
 		<p><a href="#signals">Signals</a></p>
 		<p><a href="#deltatime">DeltaTime</a></p>
 		<p><a href="#priority">Priority</a></p>
+        <p><a href="#declarator">Declarator</a></p>
 		
 		<h2>Reference book</h2>
 		<p><a href="docs">Explore more feature</a></p>
@@ -124,11 +125,7 @@ DeltaTime.update.add(function(dt:Float) {
 </pre>
 
 <p>Activate for Unity3d</p>
-<pre>
-class Main extends MonoBehavarior {
-function update() DeltaTime.update.dispatch(Time.deltaTime);
-}
-</pre>
+<p>Just connect pony.unity3d.DeltaTimeHelper to any GameObject</p>
 
 <h2 id="priority">Priority</h2>
 <p>Class for create priority lists</p>
@@ -139,6 +136,29 @@ priority.add('Multyset', 8);
 priority.add('Music Box', 3);
 priority.add('Double inside', 8);
 trace(priority);//=>['Keyword', 'Multyset', 'Double inside', 'Music Box']
+</pre>
+
+<h2 id="Declarator">Declarator</h2>
+<p>Use this for set args without constructor and replays set class var to new or __init__ functions.</p>
+<p>Static example</p>
+<pre>
+class DeclaratorStaticExample implements Declarator {
+static public var a:String = 'hello';
+static public var b:String;
+static public function __init__():Void b = a;//b = 'hello'
+}
+</pre>
+<p>Constructor example</p>
+<pre>
+class DeclaratorExample implements Declarator {
+@:arg private var i:Int;
+@:arg private var j:Int = 3;
+public function sum():Int return i + j;
+}
+</pre>
+<pre>
+new DeclaratorExample(2).sum();//=> 5
+new DeclaratorExample(2,7).sum();//=> 9
 </pre>
 
       </section>
