@@ -14,6 +14,7 @@ Ready for Haxe3 and HUGS
 <p><a href="http://axgord.github.io/Pony/#signals">Signals</a></p>
 <p><a href="http://axgord.github.io/Pony/#deltatime">DeltaTime</a></p>
 <p><a href="http://axgord.github.io/Pony/#priority">Priority</a></p>
+<p><a href="http://axgord.github.io/Pony/#declarator">Declarator</a></p>
 
 <h2>Reference book</h2>
 <p><a href="docs">Explore more feature</a></p>
