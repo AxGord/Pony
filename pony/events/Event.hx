@@ -53,7 +53,10 @@ class Event {
 	
 	public inline function _setListener(l:Listener_):Void currentListener = l;
 	
-	public inline function stopPropagation():Void _stopPropagation = true;
+	public inline function stopPropagation():Void {
+		if (parent != null) parent.stopPropagation();
+		_stopPropagation = true;
+	}
 	
 	private inline function get_count():Int return currentListener.count;
 	

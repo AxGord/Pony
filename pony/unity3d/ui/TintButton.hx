@@ -35,7 +35,7 @@ import unityengine.GameObject;
 
 /**
  * Tint Button
- * This button use tint effect or textures for over and press.
+ * This button use tint effect for over and press.
  * @see Button
  * @see pony.ui.ButtonCore
  * @author AxGord
@@ -43,86 +43,33 @@ import unityengine.GameObject;
 class TintButton extends Button {
 
 	private var tint:Single = 0.2;
-	private var pressedTexture:Texture;
-	private var disabledTexture:Texture;
-	private var secondPressedTexture:Texture;
-	private var secondState:Texture;
-	private var defaultTexture:Texture;
-	private var overTexture:Texture;
-	private var secondOverTexture:Texture;
 	private var sclr:Color;
-	
-	private var overObj:GameObject;
-	private var secondOverObj:GameObject;
-	
-	private var pressObj:GameObject;
-	private var secondPressObj:GameObject;
 	
 	override function Start():Void {
 		super.Start();
-		defaultTexture = guiTexture.texture;
 		sclr = guiTexture.color;
-		core.changeVisual.add(change);
+		
+		core.changeVisual.sub(Focus, 1).add(cancle);
+		core.changeVisual.sub(Leave, 1).add(cancle);
+		core.changeVisual.sub(Press, 1).add(cancle);
+		core.changeVisual.sub(Default, 1).add(cancle);
+		
+		core.changeVisual.sub(Focus).add(tfocus);
+		core.changeVisual.sub(Leave).add(tleave);
+		core.changeVisual.sub(Press).add(tpress);
+		core.changeVisual.sub(Default).add(restoreColor);
+		
 		core.sendVisual();
 	}
 	
-	private function change(event:Event):Void {
-		if (overObj != null) overObj.active = false;
-		if (secondOverObj != null) secondOverObj.active = false;
-		if (pressObj != null) pressObj.active = false;
-		if (secondPressObj != null) secondPressObj.active = false;
-		
-		if (event.args[1] == 1) {
-			if (pressedTexture != null) {
-				guiTexture.texture = disabledTexture != null ? disabledTexture : pressedTexture;
-				guiTexture.color = sclr;
-			} else restoreColor();
-			return;
-		}
-		
-		if (event.args[1] == 2 && secondState != null) 
-			guiTexture.texture = secondState;
-		else if (pressedTexture != null || secondState != null) {
-			guiTexture.texture = defaultTexture;
-		}
-		switch (cast(event.args[0], ButtonStates)) {
-			case ButtonStates.Focus | ButtonStates.Leave:
-				if (event.args[1] == 2 && secondOverObj != null) {
-					secondOverObj.active = true;
-					guiTexture.texture = null;
-				} else if (event.args[1] == 2 && secondOverTexture != null) {
-					guiTexture.texture = secondOverTexture;
-					restoreColor();
-				} else if (overObj != null) {
-					overObj.active = true;
-					guiTexture.texture = null;
-				} else if (overTexture != null) {
-					guiTexture.texture = overTexture;
-					restoreColor();
-				} else
-					guiTexture.color = new Color(sclr.r + tint, sclr.g + tint, sclr.b + tint);
-			case ButtonStates.Default:
-				guiTexture.color = sclr;
-			case ButtonStates.Press:
-				if (event.args[1] == 2 && secondPressObj != null) {
-					secondPressObj.active = true;
-					guiTexture.texture = null;
-				} else if (event.args[1] == 2 && secondPressedTexture != null) {
-					guiTexture.texture = secondPressedTexture;
-					restoreColor();
-				} else if (pressObj != null) {
-					pressObj.active = true;
-					guiTexture.texture = null;
-				} else if (pressedTexture != null) {
-					guiTexture.texture = pressedTexture;
-					restoreColor();	
-				} else
-					guiTexture.color = new Color(sclr.r - tint, sclr.g - tint, sclr.b - tint);
-		}
-	}
+	private function tfocus():Void guiTexture.color = new Color(sclr.r + tint, sclr.g + tint, sclr.b + tint);
+	private function tpress():Void guiTexture.color = new Color(sclr.r - tint, sclr.g - tint, sclr.b - tint);
+	private function tleave():Void guiTexture.color = new Color(sclr.r - tint / 2, sclr.g - tint / 2, sclr.b - tint / 2);
+	private function restoreColor():Void guiTexture.color = new Color(sclr.r, sclr.g, sclr.b);
 	
-	inline private function restoreColor():Void {
-		guiTexture.color = new Color(sclr.r - tint / 2, sclr.g - tint / 2, sclr.b - tint / 2);
+	private function cancle(e:Event):Void {
+		restoreColor();
+		e.stopPropagation();
 	}
 	
 }

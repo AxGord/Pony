@@ -38,4 +38,6 @@ abstract Listener1<Target, T1>(Listener) {
 	@:from inline private static function from1<T,A>(f:A->Void):Listener1<T,A> return new Listener1(f);
 	@:from inline private static function from1Tar<T,A>(f:A->T->Void):Listener1<T,A> return new Listener1(f);
 	@:to inline private function to():Listener return this;
+	
+	@:from inline private static function fromListener(f:Listener):Listener1<Target,T1> return new Listener1(f);
 }

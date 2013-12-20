@@ -10,7 +10,7 @@ import unityengine.Time;
  */
 class DeltaTimeHelper extends MonoBehaviour {
 
-	public function update():Void {
+	public function Update():Void {
 		DeltaTime.fixedValue = Time.fixedDeltaTime;
 		DeltaTime.value = DeltaTime.fixedValue * DeltaTime.speed;
 		DeltaTime.update.dispatch(DeltaTime.value);

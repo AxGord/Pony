@@ -82,15 +82,18 @@ abstract Listener( Listener_ ) {
 		event._setListener(this);
 		var r:Bool = true;
 		if (this.event) {
-			if (this.f.call([event]) == false) r = false;
+			if (this.ignoreReturn) this.f.call([event]);
+			else if (this.f.call([event]) == false) r = false;
 		} else {
-			var args = event.args.copy();
+			var args:Array<Dynamic> = [];
+			for (e in event.args) args.push(e);//copy for c#
 			args.push(event.target);
 			args.push(event);
-			if (this.f.call(args.slice(0, this.f.get_count())) == false) r = false;
+			if (this.ignoreReturn) this.f.call(args.slice(0, this.f.get_count()));
+			else if (this.f.call(args.slice(0, this.f.get_count())) == false) r = false;
 		}
 		this.prev = event;
-		return this.ignoreReturn ? true : r;
+		return event._stopPropagation ? false : r;
 	}
 	
 	inline public function setCount(count:Int):Listener {

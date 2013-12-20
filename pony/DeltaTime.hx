@@ -44,7 +44,7 @@ class DeltaTime {
 	
 	private static var t:Float;
 	
-	#if !flash
+	#if !(flash || HUGS)
 	public static inline function init(?signal:Signal0<Dynamic>):Void {
 		set();
 		if (signal != null) signal.add(tick);

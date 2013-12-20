@@ -266,7 +266,7 @@ class ButtonCore {
 	private function set_sw(a:Array<Int>):Array<Int> {
 		if (sw != null) throw 'sw setted';
 		for (i in 0...a.length)
-			click.sub([i], [a[i]]).add(set_mode);
+			click.sub(i).add(set_mode.bind(a[i]));
 		return sw = a;
 	}
 	

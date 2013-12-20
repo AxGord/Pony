@@ -27,6 +27,7 @@
 **/
 package pony.unity3d.ui;
 
+import cs.NativeArray.NativeArray;
 import pony.DeltaTime;
 import pony.ui.ButtonCore;
 import pony.unity3d.Tooltip;
@@ -36,6 +37,7 @@ import unityengine.Screen;
 import unityengine.Vector3;
 import pony.unity3d.Fixed2dCamera;
 
+using hugs.HUGSWrapper;
 /**
  * Simple Button
  * @see pony.ui.ButtonCore
@@ -47,7 +49,7 @@ class Button extends MonoBehaviour {
 	public var defaultMode:Int = 0;
 	public var panel:Bool = true;
 	public var tooltip:String = '';
-	private var autoSwith:Bool = false;
+	private var autoSwith:NativeArray<Int>;
 	
 	public var core:ButtonCore;
 	private var prevState:Bool = false;
@@ -58,17 +60,14 @@ class Button extends MonoBehaviour {
 	}
 	
 	private function Start():Void {
-		core.mode = defaultMode;
-		if (autoSwith) {
-			core.click.add(sw);
-		}
+		core.sw = [for (v in new NativeArrayIterator(autoSwith)) v];
 		if (tooltip != '') {
-			core.change.sub([ButtonStates.Focus]).add(over);
-			core.change.sub([ButtonStates.Default]).add(out);
-			core.change.sub([ButtonStates.Press]).add(out);
-			core.change.sub([ButtonStates.Leave]).add(out);
-			
+			core.change.sub(ButtonStates.Focus).add(over);
+			core.change.sub(ButtonStates.Default).add(out);
+			core.change.sub(ButtonStates.Press).add(out);
+			core.change.sub(ButtonStates.Leave).add(out);
 		}
+		DeltaTime.fixedUpdate.once(function() core.mode = defaultMode);
 	}
 	
 	private function out():Void {
@@ -77,10 +76,6 @@ class Button extends MonoBehaviour {
 	
 	private function over():Void {
 		Tooltip.showText(tooltip, "", this, gameObject.layer, true);
-	}
-	
-	private function sw(mode:Int):Void {
-		core.mode = mode == 0 ? 2 : (mode == 2 ? 0 : mode);
 	}
 	
 	private function Update():Void {

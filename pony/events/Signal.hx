@@ -166,9 +166,8 @@ class Signal {
 				} catch (e:Dynamic) {}
 				throw e;
 			}
-			var br:Bool = r == false || event._stopPropagation;
 			if (l.get_count() == 0) remove(l);
-			if (br) break;
+			if (!r) break;
 		}
 		lRunCopy.remove(c);
 		return this;
