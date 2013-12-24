@@ -26,6 +26,7 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.events;
+
 import pony.Dictionary;
 import pony.Priority;
 import haxe.CallStack;
@@ -50,13 +51,21 @@ class Signal {
 	private var lRunCopy:List<Priority<Listener>>;
 	
 	private var subMap:Dictionary < Array<Dynamic>, Signal > ;
+	private var subHandlers:Map < Int, Listener > ;
+	private var bindMap:Dictionary < Array<Dynamic>, Signal > ;
+	private var bindHandlers:Map < Int, Listener > ;
 	
 	public var haveListeners(get, null):Bool;
 	
 	public var listenersCount(get, never):Int;
 	
+	public var parent:Signal;
+	
 	public function new(?target:Dynamic) {
 		subMap = new Dictionary < Array<Dynamic>, Signal > (5);
+		subHandlers = new Map < Int, Listener >();
+		bindMap = new Dictionary < Array<Dynamic>, Signal > (5);
+		bindHandlers = new Map < Int, Listener >();
 		init(target);
 		lostListeners = Type.createEmptyInstance(Signal).init(this);
 		takeListeners = Type.createEmptyInstance(Signal).init(this);
@@ -191,14 +200,15 @@ class Signal {
 				macro $th.subArgs([$a{args}]);
 	}
 	
-	//todo: save sub signals
-	public function subArgs(args:Array<Dynamic>):Signal {
+	
+	public function subArgs(args:Array<Dynamic>, priority:Int=0):Signal {
 		var s:Signal = subMap.get(args);
 		if (s == null) {
 			s = new Signal(target);
-			s.data = args;
-			add(subHandler.bind(args));
-			subMap.set(args, s);
+			s.parent = this;
+			var l:Listener = subHandler.bind(args);
+			subHandlers[subMap.set(args, s)] = l;
+			add(l, priority);
 		}
 		return s;
 	}
@@ -207,6 +217,11 @@ class Signal {
 		var a:Array<Dynamic> = event.args.copy();
 		for (arg in args) if (a.shift() != arg) return;
 		subMap.get(args).dispatchEvent(new Event(a, event.target, event));
+	}
+	
+	inline public function changeSubArgs(args:Array<Dynamic>, priority:Int=0):Signal {
+		removeSubArgs(args);
+		return subArgs(args, priority);
 	}
 	
 	macro public function removeSub(args:Array<Expr>):Expr {
@@ -220,15 +235,54 @@ class Signal {
 	public function removeSubArgs(args:Array<Dynamic>):Signal {
 		var s:Signal = subMap.get(args);
 		if (s == null) return this;
-		s.removeAllListeners();
-		subMap.remove(args);
+		s.destroy();
+		//subMap.remove(args);
 		return this;
 	}
 	
 	inline public function removeAllSub():Signal {
-		for (e in subMap) e.removeAllListeners();
-		subMap.clear();
+		for (e in subMap) e.destroy();
+		//subMap.clear();
 		return this;
+	}
+	
+	inline private function removeSubSignal(s:Signal):Void {
+		var i:Int = subMap.getValueIndex(s);
+		if (i != -1) {
+			s.remove(subHandlers[i]);
+			subHandlers.remove(i);
+			subMap.removeIndex(i);
+		}
+		var i:Int = bindMap.getValueIndex(s);
+		if (i != -1) {
+			s.remove(bindHandlers[i]);
+			bindHandlers.remove(i);
+			bindMap.removeIndex(i);
+		}
+	}
+	
+	macro public function bind(args:Array<Expr>):Expr {
+		var th:Expr = args.shift();
+		return if (args.length == 0)
+				throw 'Arguments not set';
+			else
+				macro $th.bindArgs([$a{args}]);
+	}
+	
+	public function bindArgs(args:Array<Dynamic>, priority:Int=0):Signal {
+		var s:Signal = bindMap.get(args);
+		if (s == null) {
+			s = new Signal(target);
+			s.parent = this;
+			var l:Listener = bindHandler.bind(args);
+			bindHandlers[bindMap.set(args, s)] = l;
+			add(l, priority);
+		}
+		return s;
+	}
+	
+	private function bindHandler(args:Array<Dynamic>, event:Event):Void {
+		bindMap.get(args).dispatchEvent(new Event(args.concat(event.args), event.target, event));
 	}
 	
 	public function removeAllListeners():Signal {
@@ -255,14 +309,9 @@ class Signal {
 		
 	inline private function get_haveListeners():Bool return !listeners.empty;
 	
-	inline public function listen(s:Signal):Signal {
-		s.add(dispatchEvent);
-		return this;
-	}
-	
-	public function sw(l1:Listener, l2:Listener):Signal {
-		once(l1);
-		once(sw.bind(l2, l1));
+	public function sw(l1:Listener, l2:Listener, priority:Int=0):Signal {
+		once(l1, priority);
+		once(sw.bind(l2, l1, priority), priority);
 		return this;
 	}
 	
@@ -272,6 +321,7 @@ class Signal {
 	inline private function get_listenersCount():Int return listeners.length;
 	
 	inline public function destroy():Void {
+		if (parent != null) parent.removeSubSignal(this);
 		removeAllSub();
 		removeAllListeners();
 		takeListeners.destroy();
@@ -281,10 +331,10 @@ class Signal {
 	/**
 	 * Strict construct
 	 */
-	public static function create<A>(t:A):SignalTar<A> return new SignalTar(new Signal(t));
+	inline public static function create<A>(t:A):SignalTar<A> return new SignalTar(new Signal(t));
 	
 	/**
 	 * Empty strict construct
 	 */
-	public static function createEmpty():SignalTar<Void> return new SignalTar(new Signal());
+	inline public static function createEmpty():SignalTar<Void> return new SignalTar(new Signal());
 }

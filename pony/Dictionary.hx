@@ -48,15 +48,16 @@ class Dictionary<K, V>
 		clear();
 	}
 
-	inline private function getIndex(k:K):Int return ks.superIndexOf(k, maxDepth);
+	inline public function getIndex(k:K):Int return ks.superIndexOf(k, maxDepth);
 	
-	public function set(k:K, v:V):Void {
+	public function set(k:K, v:V):Int {
 		var i:Int = getIndex(k);
-		if (i != -1)
+		if (i != -1) {
 			vs[i] = v;
-		else {
+			return i;
+		} else {
 			ks.push(k);
-			vs.push(v);
+			return vs.push(v);
 		}
 	}
 	
@@ -73,11 +74,15 @@ class Dictionary<K, V>
 	public function remove(k:K):Bool {
 		var i:Int = getIndex(k);
 		if (i != -1) {
-			ks.splice(i, 1);
-			vs.splice(i, 1);
+			removeIndex(i);
 			return true;
 		} else
 			return false;
+	}
+	
+	inline public function removeIndex(i:Int):Void {
+		ks.splice(i, 1);
+		vs.splice(i, 1);
 	}
 	
 	inline public function clear():Void {
@@ -98,12 +103,20 @@ class Dictionary<K, V>
 	}
 	
 	public function removeValue(v:V):Void {
-		var i:Int = vs.indexOf(v);
+		var i:Int = getValueIndex(v);
 		if (i != -1) {
 			ks.splice(i, 1);
 			vs.splice(i, 1);
 		}
 	}
+	
+	public function getKey(v:V):K {
+		var i:Int = getValueIndex(v);
+		if (i == -1) return null;
+		return ks[i];
+	}
+	
+	inline public function getValueIndex(v:V):Int return vs.indexOf(v);
 	
 	inline private function get_count():Int return ks.length;
 	

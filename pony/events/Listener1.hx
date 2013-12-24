@@ -40,4 +40,7 @@ abstract Listener1<Target, T1>(Listener) {
 	@:to inline private function to():Listener return this;
 	
 	@:from inline private static function fromListener(f:Listener):Listener1<Target,T1> return new Listener1(f);
+	
+	@:from static inline public function fromSignal0<A>(s:Signal0<A>):Listener1<A, Void> return s.dispatchEvent;
+	@:from static inline public function fromSignal1<A, B>(s:Signal1<A, B>):Listener1<A, B> return s.dispatchEvent;
 }

@@ -4,8 +4,8 @@
   "license": "BSD",
   "tags": ["cross", "unity3d", "flash", "nodejs", "cs"],
   "description": "HaXe cross-library",
-  "version": "0.1.8",
-  "releasenote": "Review",
+  "version": "0.1.9",
+  "releasenote": "Strict typed signals",
   "contributors": ["AxGord"],
   "dependencies": {
   }

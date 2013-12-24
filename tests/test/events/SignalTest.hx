@@ -183,7 +183,7 @@ class SignalTest
 		var f:Bool = false;
 		var s1:Signal1<Void, Int> = Signal.createEmpty();
 		var s2:Signal1<Void, Int> = Signal.createEmpty();
-		s1.listen(s2);
+		s2.add(s1);
 		s1.sub(2).add(function() f = true);
 		s2.dispatch(2);
 		Assert.isTrue(f);

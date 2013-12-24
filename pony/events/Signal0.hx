@@ -59,8 +59,8 @@ abstract Signal0<Target>(Signal) {
 		return target;
 	}
 	
-	inline public function once(listener:Listener0<Target>):Target {
-		this.once(listener);
+	inline public function once(listener:Listener0<Target>, priority:Int = 0):Target {
+		this.once(listener, priority);
 		return target;
 	}
 	
@@ -99,11 +99,6 @@ abstract Signal0<Target>(Signal) {
 		return target;
 	}
 	
-	inline public function listen<T>(s:Signal0<T>):Target {
-		s.add(this.dispatchEvent);
-		return target;
-	}
-	
 	public function sw(l1:Listener0<Target>, l2:Listener0<Target>):Target {
 		this.once(l1);
 		this.once(this.sw.bind(l2, l1));
@@ -119,5 +114,6 @@ abstract Signal0<Target>(Signal) {
 	}
 	
 	@:from static private inline function from<A>(s:Signal):Signal0<A> return new Signal0<A>(s);
+	@:to private inline function to():Signal return this;
 	
 }

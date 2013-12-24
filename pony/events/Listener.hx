@@ -62,8 +62,8 @@ abstract Listener( Listener_ ) {
 		return _fromFunction(f, false);
 		
 	@:from static inline public function fromSignal(s:Signal):Listener
-		return s.buildListenerEmpty();
-	
+		return s.dispatchEvent;
+		
 	static public function _fromFunction(f:Function, ev:Bool):Listener {
 		if (flist.exists(f.get_id())) {
 			return flist.get(f.get_id());

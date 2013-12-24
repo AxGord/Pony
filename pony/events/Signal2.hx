@@ -64,8 +64,8 @@ abstract Signal2<Target, T1, T2>(Signal) {
 		return target;
 	}
 	
-	inline public function once(listener:Listener2<Target, T1, T2>):Target {
-		this.once(listener);
+	inline public function once(listener:Listener2<Target, T1, T2>, priority:Int = 0):Target {
+		this.once(listener, priority);
 		return target;
 	}
 	
@@ -96,12 +96,12 @@ abstract Signal2<Target, T1, T2>(Signal) {
 		return target;
 	}
 	
-	inline public function sub(a:T1, ?b:T2):Signal return subArgs(b == null ? [a] : [a,b]);
+	inline public function sub(a:T1, ?b:T2, priority:Int=0):Signal return subArgs(b == null ? [a] : [a,b], priority);
 	
-	inline public function sub1(a:T1):Signal1<Target, T2> return subArgs([a]);
-	inline public function sub2(a:T1, b:T2):Signal0<Target> return subArgs([a, b]);
+	inline public function sub1(a:T1, priority:Int=0):Signal1<Target, T2> return subArgs([a], priority);
+	inline public function sub2(a:T1, b:T2, priority:Int=0):Signal0<Target> return subArgs([a, b], priority);
 	
-	inline public function subArgs(args:Array<Dynamic>):Signal return this.subArgs(args);
+	inline public function subArgs(args:Array<Dynamic>, priority:Int=0):Signal return this.subArgs(args, priority);
 	
 	inline public function removeSub(a:T1, ?b:T2):Target return removeSubArgs(b == null ? [a] : [a,b]);
 	
@@ -120,11 +120,6 @@ abstract Signal2<Target, T1, T2>(Signal) {
 		return target;
 	}
 	
-	inline public function listen<T>(s:Signal2<T, T1, T2>):Target {
-		s.add(this.dispatchEvent);
-		return target;
-	}
-	
 	public function sw(l1:Listener2<Target,T1, T2>, l2:Listener2<Target,T1, T2>):Target {
 		this.once(l1);
 		this.once(this.sw.bind(l2, l1));
@@ -140,5 +135,6 @@ abstract Signal2<Target, T1, T2>(Signal) {
 	public function disableSilent():Void silent = false;
 	
 	@:from static private inline function from<A,B,C>(s:Signal):Signal2<A,B,C> return new Signal2<A,B,C>(s);
+	@:to private inline function to():Signal return this;
 	
 }
