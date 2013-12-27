@@ -94,14 +94,39 @@ abstract Signal0<Target>(Signal) {
 		return target;
 	}
 	
+	public function bind(a:Dynamic, ?b:Dynamic, ?c:Dynamic, ?d:Dynamic, ?e:Dynamic, ?f:Dynamic, ?g:Dynamic):Signal {
+		return if (g != null)
+			bindArgs([a, b, c, d, e, f, g]);
+		else if (f != null)
+			bindArgs([a, b, c, d, e, f]);
+		else if (e != null)
+			bindArgs([a, b, c, d, e]);
+		else if (d != null)
+			bindArgs([a, b, c, d]);
+		else if (c != null)
+			bindArgs([a, b, c]);
+		else if (b != null)
+			bindArgs([a, b]);
+		else
+			bindArgs([a]);
+	}
+	
+	inline public function bindArgs(args:Array<Dynamic>, priority:Int = 0):Signal return this.bindArgs(args, priority);
+	inline public function bind1<A>(a:A, priority:Int = 0):Signal1<Target, A> return bindArgs([a], priority);
+	inline public function bind2<A,B>(a:A, b:B, priority:Int = 0):Signal2<Target, A, B> return bindArgs([a,b], priority);
+	
+	inline public function removeBindArgs(args:Array<Dynamic>):Target {
+		this.removeBindArgs(args);
+		return target;
+	}
+	
 	inline public function removeAllListeners():Target {
 		this.removeAllListeners();
 		return target;
 	}
 	
-	public function sw(l1:Listener0<Target>, l2:Listener0<Target>):Target {
-		this.once(l1);
-		this.once(this.sw.bind(l2, l1));
+	inline public function sw(l1:Listener0<Target>, l2:Listener0<Target>):Target {
+		this.sw(l1, l2);
 		return target;
 	}
 	

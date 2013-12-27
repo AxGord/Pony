@@ -54,6 +54,8 @@ class Signal {
 	private var subHandlers:Map < Int, Listener > ;
 	private var bindMap:Dictionary < Array<Dynamic>, Signal > ;
 	private var bindHandlers:Map < Int, Listener > ;
+	private var notMap:Dictionary < Array<Dynamic>, Signal > ;
+	private var notHandlers:Map < Int, Listener > ;
 	
 	public var haveListeners(get, null):Bool;
 	
@@ -66,6 +68,8 @@ class Signal {
 		subHandlers = new Map < Int, Listener >();
 		bindMap = new Dictionary < Array<Dynamic>, Signal > (5);
 		bindHandlers = new Map < Int, Listener >();
+		notMap = new Dictionary < Array<Dynamic>, Signal > (5);
+		notHandlers = new Map < Int, Listener >();
 		init(target);
 		lostListeners = Type.createEmptyInstance(Signal).init(this);
 		takeListeners = Type.createEmptyInstance(Signal).init(this);
@@ -200,7 +204,6 @@ class Signal {
 				macro $th.subArgs([$a{args}]);
 	}
 	
-	
 	public function subArgs(args:Array<Dynamic>, priority:Int=0):Signal {
 		var s:Signal = subMap.get(args);
 		if (s == null) {
@@ -236,17 +239,15 @@ class Signal {
 		var s:Signal = subMap.get(args);
 		if (s == null) return this;
 		s.destroy();
-		//subMap.remove(args);
 		return this;
 	}
 	
 	inline public function removeAllSub():Signal {
 		for (e in subMap) e.destroy();
-		//subMap.clear();
 		return this;
 	}
 	
-	inline private function removeSubSignal(s:Signal):Void {
+	private function removeSubSignal(s:Signal):Void {
 		var i:Int = subMap.getValueIndex(s);
 		if (i != -1) {
 			s.remove(subHandlers[i]);
@@ -258,6 +259,12 @@ class Signal {
 			s.remove(bindHandlers[i]);
 			bindHandlers.remove(i);
 			bindMap.removeIndex(i);
+		}
+		var i:Int = notMap.getValueIndex(s);
+		if (i != -1) {
+			s.remove(notHandlers[i]);
+			notHandlers.remove(i);
+			notMap.removeIndex(i);
 		}
 	}
 	
@@ -283,6 +290,72 @@ class Signal {
 	
 	private function bindHandler(args:Array<Dynamic>, event:Event):Void {
 		bindMap.get(args).dispatchEvent(new Event(args.concat(event.args), event.target, event));
+	}
+	
+	macro public function removeBind(args:Array<Expr>):Expr {
+		var th:Expr = args.shift();
+		return if (args.length == 0)
+				throw 'Arguments not set';
+			else
+				macro $th.removeBindArgs([$a{args}]);
+	}
+	
+	public function removeBindArgs(args:Array<Dynamic>):Signal {
+		var s:Signal = bindMap.get(args);
+		if (s == null) return this;
+		s.destroy();
+		return this;
+	}
+	
+	inline public function removeAllBind():Signal {
+		for (e in bindMap) e.destroy();
+		return this;
+	}
+	
+	macro public function not(args:Array<Expr>):Expr {
+		var th:Expr = args.shift();
+		return if (args.length == 0)
+				throw 'Arguments not set';
+			else
+				macro $th.bindArgs([$a{args}]);
+	}
+	
+	public function notArgs(args:Array<Dynamic>, priority:Int=0):Signal {
+		var s:Signal = bindMap.get(args);
+		if (s == null) {
+			s = new Signal(target);
+			s.parent = this;
+			var l:Listener = notHandler.bind(args);
+			notHandlers[bindMap.set(args, s)] = l;
+			add(l, priority);
+		}
+		return s;
+	}
+	
+	private function notHandler(args:Array<Dynamic>, event:Event):Void {
+		var a:Array<Dynamic> = event.args.copy();
+		for (arg in args) if (a.shift() == arg) return;
+		subMap.get(args).dispatchEvent(new Event(a, event.target, event));
+	}
+	
+	macro public function removeNot(args:Array<Expr>):Expr {
+		var th:Expr = args.shift();
+		return if (args.length == 0)
+				throw 'Arguments not set';
+			else
+				macro $th.removeNotArgs([$a{args}]);
+	}
+	
+	public function removeNotArgs(args:Array<Dynamic>):Signal {
+		var s:Signal = bindMap.get(args);
+		if (s == null) return this;
+		s.destroy();
+		return this;
+	}
+	
+	inline public function removeAllNot():Signal {
+		for (e in notMap) e.destroy();
+		return this;
 	}
 	
 	public function removeAllListeners():Signal {

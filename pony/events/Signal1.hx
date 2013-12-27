@@ -112,6 +112,8 @@ abstract Signal1<Target, T1>(Signal) {
 		return target;
 	}
 	
+	
+	
 	inline public function removeAllListeners():Target {
 		this.removeAllListeners();
 		return target;
