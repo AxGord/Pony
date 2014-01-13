@@ -10,6 +10,7 @@ import math.BalanceTest;
 import physics.ThermoTest;
 import PriorityTest;
 import TextCoderTest;
+import TimeTest;
 import ToolsTest;
 import TumblerTest;
 import ui.FocusManagerTest;
@@ -37,6 +38,7 @@ class TestSuite extends massive.munit.TestSuite
 		add(physics.ThermoTest);
 		add(PriorityTest);
 		add(TextCoderTest);
+		add(TimeTest);
 		add(ToolsTest);
 		add(TumblerTest);
 		add(ui.FocusManagerTest);

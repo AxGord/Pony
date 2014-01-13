@@ -35,7 +35,7 @@ import haxe.macro.Expr;
  * Signal2
  * @author AxGord <axgord@gmail.com>
  */
-abstract Signal2<Target, T1, T2>(Signal) {
+abstract Signal2<Target, T1:Dynamic, T2:Dynamic>(Signal) {
 
 	public var silent(get,set):Bool;
 	public var lostListeners(get, never):Signal0<Signal2<Target, T1, T2>>;

@@ -50,7 +50,8 @@ class SwitchableList implements IWards {
 		list = a;
 		for (i in 0...a.length) {
 			if (i == def) a[i].mode = swto;
-			select.listen(a[i].click.sub([0], [i]));
+			//select.listen(a[i].click.sub([0], [i]));
+			a[i].click.sub(0).bind(i).add(select);
 		}
 		select.add(setState, -1);
 	}

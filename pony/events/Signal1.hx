@@ -35,7 +35,7 @@ import haxe.macro.Expr;
  * Signal1
  * @author AxGord <axgord@gmail.com>
  */
-abstract Signal1<Target, T1>(Signal) {
+abstract Signal1<Target, T1:Dynamic>(Signal) {
 
 	public var silent(get,set):Bool;
 	public var lostListeners(get, never):Signal0<Signal1<Target, T1>>;
@@ -78,9 +78,11 @@ abstract Signal1<Target, T1>(Signal) {
 		this.changePriority(listener, priority);
 		return target;
 	}
-	
+	#if cs //CS fix
+	inline public function dispatch(a:Dynamic):Target return dispatchArgs([a]);
+	#else
 	inline public function dispatch(a:T1):Target return dispatchArgs([a]);
-	
+	#end
 	inline public function dispatchEvent(event:Event):Target {
 		this.dispatchEvent(event);
 		return target;

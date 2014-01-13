@@ -201,6 +201,8 @@ class Tools {
 
 class ArrayTools {
 	
+	public static inline function exists<T>(a:Array<T>, e:T):Bool return a.indexOf(e) != -1;
+	
 	public static function thereIs<T>(a:Iterable<Array<T>>, b:Array<T>):Bool {
 		for (e in a) if (Tools.equal(e, b)) return true;
 		return false;
@@ -215,7 +217,12 @@ class ArrayTools {
 }
 
 class FloatTools {
-	
+	/**
+	 * todo: negative numbers
+	 * @param	ex
+	 * @param	mask
+	 * @return
+	 */
 	macro public static function toFixed(ex:Expr, mask:String):Expr {
 		var s:String;
 		if (mask.indexOf('.') != -1) {
@@ -248,6 +255,8 @@ class FloatTools {
 		else
 			return a[0] + d + a[1] + StringTls.repeat(endS, n - a[1].length);
 	}
+	
+	inline public static function sfloor(v:Float):Int return v > 0 ? Math.floor(v) : Math.ceil(v);
 	
 	inline public static function inRange(v:Float, min:Float, max:Float):Bool return min <= v && v <= max;
 	
@@ -282,6 +291,8 @@ class FloatTools {
 }
 
 class StringTls {
+	
+	public inline static function exists(s:String, ch:String):Bool return s.indexOf(ch) != -1;
 	
 	public static function repeat(s:String, count:Int):String {
 		var r:String = '';

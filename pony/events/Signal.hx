@@ -201,7 +201,7 @@ class Signal {
 		return if (args.length == 0)
 				throw 'Arguments not set';
 			else
-				macro $th.subArgs([$a{args}]);
+				macro $th.subArgs([$a{args}], 0);
 	}
 	
 	public function subArgs(args:Array<Dynamic>, priority:Int=0):Signal {
