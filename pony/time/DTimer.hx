@@ -28,6 +28,7 @@
 package pony.time;
 
 import pony.events.*;
+import pony.magic.Declarator;
 import pony.math.MathTools;
 
 /**
@@ -36,22 +37,16 @@ import pony.math.MathTools;
  * todo: use macro for parsing Time String in compile time
  * @author AxGord
  */
-class DTimer implements ITimer<DTimer> {
+class DTimer implements ITimer<DTimer> implements Declarator {
 	
-	public var beginTime:Time;
-	public var endTime:Time;
 	public var currentTime:Time;
 	
-	public var repeatCount:Int = -1;
-	
-	public var update:Signal1<DTimer, Time>;
-	public var progress:Signal1<DTimer, Float>;
-	public var complite:Signal0<DTimer>;
+	public var update:Signal1<DTimer, Time> = Signal.create(this);
+	public var progress:Signal1<DTimer, Float> = Signal.create(this);
+	public var complite:Signal0<DTimer> = Signal.create(this);
 	
 	private var sumdt:DT = 0;
 	private var back:Bool = false;
-	
-	private var updateSignal:Signal1<Void, Float>;
 	
 	public inline static function createTimer(?endTime:Time, ?beginTime:Time, repeat:Int = 0):DTimer
 		return new DTimer(DeltaTime.update, endTime, beginTime, repeat);
@@ -59,16 +54,14 @@ class DTimer implements ITimer<DTimer> {
 	public inline static function createFixedTimer(?endTime:Time, ?beginTime:Time, repeat:Int = 0):DTimer
 		return new DTimer(DeltaTime.fixedUpdate, endTime, beginTime, repeat);
 
-	public function new(updateSignal:Signal1 < Void, Float > , ?endTime:Time, ?beginTime:Time, repeat:Int = 0) {
-		this.updateSignal = updateSignal;
-		update = Signal.create(this);
-		progress = Signal.create(this);
-		complite = Signal.create(this);
+	@:arg private var updateSignal:Signal1<Void, Float>;
+	@:arg public var endTime:Time = null;
+	@:arg public var beginTime:Time = 0;
+	@:arg public var repeatCount:Int = 0;
+	
+	public function new() {
 		progress.takeListeners.add(takeProgress);
 		progress.lostListeners.add(lostProgress);
-		this.beginTime = beginTime == null ? 0 : beginTime;
-		this.endTime = endTime;
-		this.repeatCount = repeat;
 		reset();
 	}
 	
@@ -112,23 +105,20 @@ class DTimer implements ITimer<DTimer> {
 	}
 	
 	private function loop():Bool {
+		var result:Bool = false;
 		if (repeatCount > 0) {
 			currentTime -= endTime - beginTime;
 			repeatCount--;
-			dispatchUpdate();
-			complite.dispatch();
 		} else if (repeatCount == -1) {
 			currentTime -= endTime - beginTime;
-			dispatchUpdate();
-			complite.dispatch();
 		} else {
 			currentTime = endTime;
 			stop();
-			dispatchUpdate();
-			complite.dispatch();
-			return true;
+			result = true;
 		}
-		return false;
+		dispatchUpdate();
+		complite.dispatch();
+		return result;
 	}
 	
 	public inline function dispatchUpdate():DTimer return update.dispatch(currentTime);

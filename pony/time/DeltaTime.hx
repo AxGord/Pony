@@ -58,14 +58,14 @@ class DeltaTime {
 	public static function tick():Void {
 		fixedValue = get();
 		set();
-		fixedDispath();
+		fixedDispatch();
 	}
 	
 	private inline static function set():Void t = Date.now().getTime();
 	private inline static function get():Float return (Date.now().getTime() - t) / 1000;
 	#end
 	
-	public static inline function fixedDispath():Void fixedUpdate.dispatch(fixedValue);
+	public static inline function fixedDispatch():Void fixedUpdate.dispatch(fixedValue);
 	
 	#if (flash && !munit)
 	private static function __init__():Void {
@@ -113,7 +113,7 @@ class DeltaTime {
 				sec = 0;
 			}
 			fixedValue = r;
-			fixedDispath();
+			fixedDispatch();
 		}
 	}
 	#end

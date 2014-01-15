@@ -35,5 +35,5 @@ import unityengine.MonoBehaviour;
  * @author AxGord <axgord@gmail.com>
  */
 class DeltaTimeHelper extends MonoBehaviour {
-	public function Update():Void DeltaTime.fixedDispath();
+	public function Update():Void DeltaTime.fixedDispatch();
 }
