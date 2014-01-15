@@ -5,6 +5,7 @@ import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
 import pony.math.Balance;
 import pony.Tools;
+import pony.math.MathTools;
 
 class BalanceTest 
 {	
@@ -33,8 +34,8 @@ class BalanceTest
 	{
 		b[3] -= 0.1;
 		checkPositive();
-		Assert.isTrue(FloatTools.inRange(b[0]+b[1], 0.16, 0.18));
-		Assert.isTrue(FloatTools.inRange(b[2], 0.16, 0.18));
+		Assert.isTrue(MathTools.inRange(b[0]+b[1], 0.16, 0.18));
+		Assert.isTrue(MathTools.inRange(b[2], 0.16, 0.18));
 	}
 	
 	private function checkPositive():Void {

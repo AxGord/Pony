@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2013 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -191,9 +191,12 @@ class Signal {
 		return this;
 	}
 	
-	public function dispatchEmpty(?_):Signal {
+	public function dispatchEmpty():Void {
 		dispatchEvent(new Event(null, target));
-		return this;
+	}
+	
+	public function dispatchEmpty1(?_):Void {
+		dispatchEvent(new Event(null, target));
 	}
 	
 	macro public function sub(args:Array<Expr>):Expr {

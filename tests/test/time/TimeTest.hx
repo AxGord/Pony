@@ -1,7 +1,7 @@
-package ;
+package time ;
 
 import massive.munit.Assert.*;
-import pony.Time;
+import pony.time.Time;
 
 class TimeTest 
 {
@@ -29,5 +29,11 @@ class TimeTest
 	public function named():Void {
 		var t:Time = '2m 30s';
 		areEqual(t, ('2:30':Time));
+	}
+	
+	@Test
+	public function neg():Void {
+		var n:Time = -1000;
+		areEqual((n:String), '-1');
 	}
 }

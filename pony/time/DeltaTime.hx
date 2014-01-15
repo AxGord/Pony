@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2013 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -25,13 +25,12 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony;
-import pony.events.Signal;
-import pony.events.Signal0;
-import pony.events.Signal1;
+package pony.time;
+
+import pony.events.*;
 
 /**
- * ...
+ * Delta Time
  * @author AxGord
  */
 class DeltaTime {
@@ -40,7 +39,12 @@ class DeltaTime {
 	public static var update(default,null):Signal1<Void, Float>;
 	public static var fixedUpdate(default,null):Signal1<Void, Float>;
 	public static var value:Float = 0;
+	#if HUGS
+	public static var fixedValue(get, never):Float;
+	private inline function get_fixedValue():Float return unityengine.Time.fixedDeltaTime;
+	#else
 	public static var fixedValue:Float = 0;
+	#end
 	
 	private static var t:Float;
 	
@@ -50,18 +54,18 @@ class DeltaTime {
 		if (signal != null) signal.add(tick);
 	}
 	#end
-	
+	#if !HUGS
 	public static function tick():Void {
 		fixedValue = get();
 		set();
-		value = fixedValue * speed;
-		update.dispatch(value);
-		fixedUpdate.dispatch(fixedValue);
+		fixedDispath();
 	}
 	
 	private inline static function set():Void t = Date.now().getTime();
 	private inline static function get():Float return (Date.now().getTime() - t) / 1000;
-
+	#end
+	
+	public static inline function fixedDispath():Void fixedUpdate.dispatch(fixedValue);
 	
 	#if (flash && !munit)
 	private static function __init__():Void {
@@ -87,13 +91,18 @@ class DeltaTime {
 	inline private static function createSignals():Void {
 		update = Signal.createEmpty();
 		fixedUpdate = Signal.createEmpty();
+		
+		fixedUpdate.add(function(dt:Float) if (dt > 0) update.dispatch(value = dt * speed));
 	}
 	
+	#if (munit || dox)
 	/**
 	 * For unit tests
-	 * @param	sec
+	 * @param	time
+	 * @see pony.time.Time
 	 */
-	public static function testRun(sec:Float = 60):Void {
+	public static function testRun(time:Time = 60000):Void {
+		var sec:Float = time / 1000;
 		var d = if (sec < 100) 10 else if (sec < 1000) 50 else 100;//d > 100 sec - not normal lag
 		while (sec > 0) {
 			var r = Math.random() * d;
@@ -103,7 +112,9 @@ class DeltaTime {
 				r = sec;
 				sec = 0;
 			}
-			update.dispatch(r);
+			fixedValue = r;
+			fixedDispath();
 		}
 	}
+	#end
 }

@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -30,13 +30,13 @@ import flash.display.MovieClip;
 import flash.display.Sprite;
 import flash.geom.Rectangle;
 import flash.events.Event;
-import pony.Rect;
+import pony.geom.Rect;
 import pony.ui.GridCore;
 
 using pony.flash.FLExtends;
 
 /**
- * ...
+ * Grid
  * @author AxGord
  */
 class Grid extends Sprite {

@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2013 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -34,6 +34,8 @@ import haxe.xml.Fast;
 import haxe.macro.Context;
 import haxe.macro.Expr;
 #end
+import pony.text.TextTools;
+
 using Reflect;
 using Lambda;
 /**
@@ -145,8 +147,6 @@ class Tools {
 		return -1;
 	}
 	
-	inline public static function percentCalc(p:Float, min:Float, max:Float):Float return (max - min) * p + min;
-	
 	/**
 	 * @author BoBaH6eToH
 	 * @param	b
@@ -197,6 +197,8 @@ class Tools {
 		return macro $v{f};
 	}
 	
+	public static inline function exists<T>(a:Iterable<T>, e:T):Bool return a.indexOf(e) != -1;
+	
 }
 
 class ArrayTools {
@@ -208,11 +210,6 @@ class ArrayTools {
 		return false;
 	}
 	
-	public static function arithmeticMean(a:Array<Float>):Float {
-		var s:Float = 0;
-		for (e in a) s += e;
-		return s / a.length;
-	}
 	
 }
 
@@ -242,7 +239,7 @@ class FloatTools {
 			var s:String = _toFixed(v, n, 0, d, beginS, endS);
 			var a = s.split(d);
 			var d = begin - a[0].length;
-			return StringTls.repeat(beginS, d) + s;
+			return TextTools.repeat(beginS, d) + s;
 		}
 		
 		if (n == 0) return Std.string(Std.int(v));
@@ -251,82 +248,13 @@ class FloatTools {
 		var s:String = Std.string(v);
 		var a:Array<String> = s.split('.');
 		if (a.length <= 1)
-			return s + d + StringTls.repeat(endS, n);
+			return s + d + TextTools.repeat(endS, n);
 		else
-			return a[0] + d + a[1] + StringTls.repeat(endS, n - a[1].length);
-	}
-	
-	inline public static function sfloor(v:Float):Int return v > 0 ? Math.floor(v) : Math.ceil(v);
-	
-	inline public static function inRange(v:Float, min:Float, max:Float):Bool return min <= v && v <= max;
-	
-	inline public static function approximately(a:Float, b:Float, range:Float = 1):Bool return inRange(a, b - range, b + range);
-	
-	inline public static function limit(v:Float, min:Float, max:Float):Float {
-		return if (v < min) min;
-		else if (v > max) max;
-		else v;
-	}
-	
-	//Занимательная математика в рамках дозволенного
-	inline public static function cultureAdd(a:Float, b:Float, max:Float):Float {
-		if (a + b >= max)
-			return max;
-		else
-			return a + b;
-	}
-	
-	inline public static function cultureSub(a:Float, b:Float, min:Float):Float {
-		if (a - b <= min) return min;
-		else return a - b;
-	}
-	
-	inline public static function cultureTarget(a:Float, b:Float, step:Float):Float {
-		return a > b ? cultureSub(a, step, b) : cultureAdd(a, step, b);
-	}
-	
-	inline public static function midValue(a:Float, b:Float, aCount:Float, bCount:Float):Float {
-		return (aCount * a + bCount * b) / (aCount + bCount);
+			return a[0] + d + a[1] + TextTools.repeat(endS, n - a[1].length);
 	}
 }
 
-class StringTls {
-	
-	public inline static function exists(s:String, ch:String):Bool return s.indexOf(ch) != -1;
-	
-	public static function repeat(s:String, count:Int):String {
-		var r:String = '';
-		while (count-->0) r += s;
-		return r;
-	}
-	
-	inline public static function isTrue(s:String):Bool return StringTools.trim(s.toLowerCase()) == 'true';
-	
-	public static function explode(s:String, delimiters:Array<String>):Array<String> {
-		var r:Array<String> = [s];
-		for (d in delimiters) {
-			var sr:Array<String> = [];
-			for ( e in r ) for ( se in e.split(d) ) if (se != '') sr.push(se);
-			r = sr;
-		}
-		return r;
-	}
-	
-	
-	macro public static function includeFile(file:String):Expr {
-		var s:String = sys.io.File.getContent(file);
-		return macro $v{s};
-	}
-	
-	inline public static function parsePercent(s:String):Float {
-		if (s.indexOf('%') != -1) {
-			return Std.parseFloat(s.substr(0,s.length-1))/100;
-		} else
-			return Std.parseFloat(s);
-	}
-}
-
-class XmlTools {
-	inline public static function isTrue(x:haxe.xml.Fast, name:String):Bool return x.has.resolve(name) && StringTls.isTrue(x.att.resolve(name));
+class XMLTools {
+	inline public static function isTrue(x:haxe.xml.Fast, name:String):Bool return x.has.resolve(name) && TextTools.isTrue(x.att.resolve(name));
 	inline public static function fast(text:String):Fast return new haxe.xml.Fast(Xml.parse(text));
 }

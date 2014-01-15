@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2013 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -25,30 +25,48 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony;
+package pony.text;
+
+#if macro
+import haxe.macro.Context;
+import haxe.macro.Expr;
+#end
 
 /**
- * ...
- * @author AxGord
+ * TextTools
+ * @author AxGord <axgord@gmail.com>
  */
-typedef Point<T> = { x:T, y:T }
-
-abstract IntPoint(Point<Int>) to Point<Int> from Point<Int> {
+class TextTools {
+	public inline static function exists(s:String, ch:String):Bool return s.indexOf(ch) != -1;
 	
-	@:op(A + B) inline static public function add1(lhs:IntPoint, rhs:Point<Int>):IntPoint
-		return { x:lhs.getX() + rhs.x, y:lhs.getY() + rhs.y };
-		
-	@:op(A + B) inline static public function add2(lhs:IntPoint, rhs:IntPoint):IntPoint
-		return { x:lhs.getX() + rhs.getX(), y:lhs.getY() + rhs.getY() };
-		
-	@:op(A - B) inline static public function m1(lhs:IntPoint, rhs:Point<Int>):IntPoint
-		return { x:lhs.getX() - rhs.x, y:lhs.getY() - rhs.y };
-		
-	@:op(A - B) inline static public function m2(lhs:IntPoint, rhs:IntPoint):IntPoint
-		return { x:lhs.getX() - rhs.getX(), y:lhs.getY() - rhs.getY() };
-		
-	public inline function getX():Int return this.x;
-	public inline function getY():Int return this.y;
+	public static function repeat(s:String, count:Int):String {
+		var r:String = '';
+		while (count-->0) r += s;
+		return r;
+	}
 	
-	@:from static public inline function fromRect(r:Rect<Int>):IntPoint return { x: r.x, y: r.y };
+	inline public static function isTrue(s:String):Bool return StringTools.trim(s.toLowerCase()) == 'true';
+	
+	public static function explode(s:String, delimiters:Array<String>):Array<String> {
+		var r:Array<String> = [s];
+		for (d in delimiters) {
+			var sr:Array<String> = [];
+			for ( e in r ) for ( se in e.split(d) ) if (se != '') sr.push(se);
+			r = sr;
+		}
+		return r;
+	}
+	
+	
+	macro public static function includeFile(file:String):Expr {
+		var s:String = sys.io.File.getContent(file);
+		return macro $v{s};
+	}
+	
+	inline public static function parsePercent(s:String):Float {
+		if (s.indexOf('%') != -1) {
+			return Std.parseFloat(s.substr(0,s.length-1))/100;
+		} else
+			return Std.parseFloat(s);
+	}
 }

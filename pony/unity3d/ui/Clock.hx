@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2013 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -27,8 +27,8 @@
 **/
 package pony.unity3d.ui;
 
-import pony.DTimer;
-import unityengine.GUIText;
+import pony.time.DTimer;
+pony.time.DTimeryengine.GUIText;
 import unityengine.MonoBehaviour;
 import unityengine.Time;
 

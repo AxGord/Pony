@@ -25,7 +25,7 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony;
+package pony.time;
 
 import Math.*;
 
@@ -37,7 +37,7 @@ using pony.Tools;
  * Time
  * @author AxGord <axgord@gmail.com>
  */
-abstract Time(Int) {
+abstract Time(Null<Int>) {
 	public var ms(get, never):Int;
 	public var seconds(get, never):Int;
 	public var minutes(get, never):Int;
@@ -48,8 +48,11 @@ abstract Time(Int) {
 	public var totalMinutes(get, never):Int;
 	public var totalHours(get, never):Int;
 	
-	inline private function new(ms:Int) this = ms;
-	@:from inline private static function fromInt(ms:Int):Time return new Time(ms);
+	public var neg(get, never):Bool;
+	
+	inline public function new(?ms:Null<Int>) this = ms;
+	@:from inline private static function fromInt(ms:Null<Int>):Time return new Time(ms);
+	@:from inline private static function fromFloat(ms:Null<Float>):Time return new Time(ms.int());
 	@:from private static function fromString(time:String):Time {
 		var ms:Int = 0;
 		time = time.trim();
@@ -121,15 +124,17 @@ abstract Time(Int) {
 		}
 	}
 	
-	public inline function get_ms():Int return this % 1000;
-	public inline function get_seconds():Int return totalSeconds % 60;
-	public inline function get_minutes():Int return totalMinutes % 60;
-	public inline function get_hours():Int return totalHours % 24;
-	public inline function get_days():Int return FloatTools.sfloor(totalHours / 24);
+	private inline function get_ms():Int return this % 1000;
+	private inline function get_seconds():Int return totalSeconds % 60;
+	private inline function get_minutes():Int return totalMinutes % 60;
+	private inline function get_hours():Int return totalHours % 24;
+	private inline function get_days():Int return (totalHours / 24).int();
 	
-	public inline function get_totalSeconds():Int return FloatTools.sfloor(this / 1000);
-	public inline function get_totalMinutes():Int return FloatTools.sfloor(totalSeconds / 60);
-	public inline function get_totalHours():Int return FloatTools.sfloor(totalMinutes / 60);
+	private inline function get_totalSeconds():Int return (this / 1000).int();
+	private inline function get_totalMinutes():Int return (totalSeconds / 60).int();
+	private inline function get_totalHours():Int return (totalMinutes / 60).int();
+	
+	private inline function get_neg():Bool return this < 0;
 	
 	static public inline function fromDays(day:Int):Time return fromHours(day * 24);
 	static public inline function fromHours(hours:Int):Time return fromMinutes(hours * 60);
@@ -154,18 +159,40 @@ abstract Time(Int) {
 		return s == '' ? '0' : s;
 	}
 	
-	@:op(A + B) inline static public function add(a:Time, b:Time):Time return (a:Int) + (b:Int);
-	@:op(A + B) inline static public function addInt(a:Time, b:Int):Time return (a:Int) + b;
-	@:op(A + B) inline static public function addToInt(a:Int, b:Time):Time return a + (b:Int);
+	@:op(A + B) inline static private function add(a:Time, b:Time):Time return (a:Int) + (b:Int);
+	@:op(A + B) inline static private function addInt(a:Time, b:Int):Time return (a:Int) + b;
+	@:op(A + B) inline static private function addToInt(a:Int, b:Time):Time return a + (b:Int);
 	
-	@:op(A - B) inline static public function sub(a:Time, b:Time):Time return (a:Int) - (b:Int);
-	@:op(A - B) inline static public function subInt(a:Time, b:Int):Time return (a:Int) - b;
-	@:op(A - B) inline static public function subToInt(a:Int, b:Time):Time return a - (b:Int);
+	@:op(A - B) inline static private function sub(a:Time, b:Time):Time return (a:Int) - (b:Int);
+	@:op(A - B) inline static private function subInt(a:Time, b:Int):Time return (a:Int) - b;
+	@:op(A - B) inline static private function subToInt(a:Int, b:Time):Time return a - (b:Int);
 	
-	@:op(A * B) inline static public function multiply1(a:Time, b:Int):Time return (a:Int) * b;
-	@:op(A * B) inline static public function multiply2(a:Int, b:Time):Time return a * (b:Int);
+	@:op(A * B) inline static private function multiply1(a:Time, b:Int):Time return (a:Int) * b;
+	@:op(A * B) inline static private function multiply2(a:Int, b:Time):Time return a * (b:Int);
 	
-	@:op(A * B) inline static public function divide(a:Time, b:Int):Time return FloatTools.sfloor((a:Int) / b);
-
- 
+	@:op(A * B) inline static private function divide(a:Time, b:Int):Time return ((a:Int) / b).int();
+	
+	@:op(A > B) inline static private function sb(a:Time, b:Time):Bool return (a:Int) > (b:Int);
+	@:op(A > B) inline static private function sbInt(a:Time, b:Int):Bool return (a:Int) > b;
+	@:op(A > B) inline static private function sbToInt(a:Int, b:Time):Bool return a > (b:Int);
+	
+	@:op(A < B) inline static private function sm(a:Time, b:Time):Bool return (a:Int) < (b:Int);
+	@:op(A < B) inline static private function smInt(a:Time, b:Int):Bool return (a:Int) < b;
+	@:op(A < B) inline static private function smToInt(a:Int, b:Time):Bool return a < (b:Int);
+	
+	@:op(A >= B) inline static private function sbr(a:Time, b:Time):Bool return (a:Int) >= (b:Int);
+	@:op(A >= B) inline static private function sbrInt(a:Time, b:Int):Bool return (a:Int) >= b;
+	@:op(A >= B) inline static private function sbrToInt(a:Int, b:Time):Bool return a >= (b:Int);
+	
+	@:op(A <= B) inline static private function smr(a:Time, b:Time):Bool return (a:Int) <= (b:Int);
+	@:op(A <= B) inline static private function smrInt(a:Time, b:Int):Bool return (a:Int) <= b;
+	@:op(A <= B) inline static private function smrToInt(a:Int, b:Time):Bool return a <= (b:Int);
+	
+	@:op(A == B) inline static private function sr(a:Time, b:Time):Bool return (a:Int) == (b:Int);
+	@:op(A == B) inline static private function srInt(a:Time, b:Int):Bool return (a:Int) == b;
+	@:op(A == B) inline static private function srToInt(a:Int, b:Time):Bool return a == (b:Int);
+	
+	@:op(A != B) inline static private function snr(a:Time, b:Time):Bool return (a:Int) != (b:Int);
+	@:op(A != B) inline static private function snrInt(a:Time, b:Int):Bool return (a:Int) != b;
+	@:op(A != B) inline static private function snrToInt(a:Int, b:Time):Bool return a != (b:Int);
 }

@@ -25,15 +25,76 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.unity3d;
+package pony.time;
 
-import pony.time.DeltaTime;
-import unityengine.MonoBehaviour;
+import pony.events.Listener;
+import pony.events.Signal;
 
 /**
- * DeltaTimeHelper
- * @author AxGord <axgord@gmail.com>
+ * Timer as Signal
+ * todo: rewrite like DTime
+ * @author AxGord
  */
-class DeltaTimeHelper extends MonoBehaviour {
-	public function Update():Void DeltaTime.fixedDispath();
+class Timer extends Signal {
+	
+	public var delay(default, null):Time;
+	#if (!neko && !dox && !cpp)
+	private var t:haxe.Timer;
+	#elseif munit
+	private var t:massive.munit.util.Timer;
+	#end
+	
+	public inline function new(delay:Time) {
+		super();
+		if (delay <= 0) throw 'Delay can be only > 0';
+		this.delay = delay;
+	}
+	
+	public function start():Timer {
+		stop();
+		#if (!neko && !dox && !cpp)
+		t = new haxe.Timer(delay);
+		t.run = dispatchEmpty;
+		#elseif munit
+		t = new massive.munit.util.Timer(delay);
+		t.run = dispatchEmpty;
+		#end
+		return this;
+	}
+	
+	public function stop():Timer {
+		#if ((!neko && !dox && !cpp) || munit)
+		if (t != null) {
+			t.stop();
+			t = null;
+		}
+		#end
+		return this;
+	}
+	
+	public inline function clear():Void {
+		stop();
+		removeAllListeners();
+	}
+	
+	public function setTickCount(count:Int):Timer {
+		add(function() if (--count == 0) stop(), 100500);
+		return this;
+	}
+	
+	public inline static function tick(delay:Time):Timer {
+		var t = new Timer(delay);
+		return t.add(t.stop, 100500).start();
+	}
+	
+	public inline static function tickAndClear(delay:Time):Timer {
+		var t = new Timer(delay);
+		return t.add(t.clear, 100500).start();
+	}
+	
+	override public function add(listener:Listener, priority:Int = 0):Timer {
+		super.add(listener, priority);
+		return this;
+	}
+	
 }

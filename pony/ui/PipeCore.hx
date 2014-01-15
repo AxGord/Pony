@@ -26,10 +26,10 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.ui;
-import pony.Direction;
+import pony.geom.Direction;
 import pony.events.Event;
 import pony.events.Signal;
-import pony.Point;
+import pony.geom.Point;
 using pony.Tools;
 /**
  * ...

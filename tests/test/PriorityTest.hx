@@ -219,5 +219,14 @@ class PriorityTest
 		Assert.areEqual(p.loop(),3);
 		Assert.areEqual(p.loop(),3);
 	}
+	
+	@Test
+	public function addBigp():Void {
+		var p:Priority<Int> = new Priority<Int>();
+		p.addElement(4, 100500);
+		p.addElement(6);
+		Assert.areEqual(p.first, 6);
+		Assert.areEqual(p.last, 4);
+	}
 
 }

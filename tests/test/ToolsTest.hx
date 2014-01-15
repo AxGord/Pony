@@ -5,6 +5,8 @@ import massive.munit.util.Timer;
 import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
 using pony.Tools;
+using pony.text.TextTools;
+using pony.math.MathTools;
 
 enum A {
  E2(t:Int);
@@ -38,7 +40,7 @@ class ToolsTest
 	
 	@Test
 	public function includeFile():Void {
-		Assert.areEqual(StringTls.includeFile('test.txt'), 'Hello world!');
+		Assert.areEqual(TextTools.includeFile('test.txt'), 'Hello world!');
 	}
 	
 	@Test
