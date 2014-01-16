@@ -32,6 +32,7 @@ import pony.events.Listener;
 import pony.events.Listener1;
 import pony.events.Signal;
 import pony.events.Signal0;
+import pony.time.DT;
 import pony.ui.ButtonCore;
 
 /**
@@ -57,7 +58,7 @@ class Tumbler {
 		return v;
 	}
 	
-	public function regDT(l:Listener1<Void,Float>, priority:Int = 0):Void {
+	public function regDT(l:Listener1<Void,DT>, priority:Int = 0):Void {
 		onEnable.add(DeltaTime.update.add.bind(l, priority));
 		onDisable.add(DeltaTime.update.remove.bind(l));
 	}

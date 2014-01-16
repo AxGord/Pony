@@ -48,4 +48,8 @@ class MathTools {
 	inline public static function cultureSub(a:Float, b:Float, min:Float):Float return a - b <= min ? min : a - b;
 	inline public static function cultureTarget(a:Float, b:Float, step:Float):Float return a > b ? cultureSub(a, step, b) : cultureAdd(a, step, b);
 	inline public static function midValue(a:Float, b:Float, aCount:Float, bCount:Float):Float return (aCount * a + bCount * b) / (aCount + bCount);
+	inline public static function cabs(v:Int):Int return v < 0 ? -v : v; 
+	inline public static function cmin(a:Int, b:Int):Int return a < b ? a : b; 
+	inline public static function cmax(a:Int, b:Int):Int return a > b ? a : b; 
+	
 }

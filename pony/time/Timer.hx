@@ -27,39 +27,96 @@
 **/
 package pony.time;
 
-import pony.events.Listener;
-import pony.events.Signal;
+import pony.events.*;
+import pony.magic.Declarator;
+import pony.math.MathTools;
 
 /**
- * Timer as Signal
- * todo: rewrite like DTime
+ * Timer with signals
  * @author AxGord
  */
-class Timer extends Signal {
+class Timer implements ITimer<Timer> implements Declarator {
 	
-	public var delay(default, null):Time;
 	#if (!neko && !dox && !cpp)
 	private var t:haxe.Timer;
 	#elseif munit
 	private var t:massive.munit.util.Timer;
 	#end
 	
-	public inline function new(delay:Time) {
-		super();
-		if (delay <= 0) throw 'Delay can be only > 0';
-		this.delay = delay;
+	public var currentTime:Time;
+	
+	public var started(get, never):Bool;
+	
+	public var update:Signal1<Timer, Time> = Signal.create(this);
+	public var progress:Signal1<Timer, Float> = Signal.create(this);
+	public var complite:Signal0<Timer> = Signal.create(this);
+	
+	public var frequency:Time = 1000;
+	private var _frequency:Time;
+	
+	@:arg public var time:TimeInterval = null;
+	@:arg public var repeatCount:Int = 0;
+	
+	public function new() {
+		progress.takeListeners.add(takeProgress).lostListeners.add(lostProgress);
+		update.takeListeners.add(lUpdate).lostListeners.add(lUpdate);
+		reset();
+	}
+	
+	inline private function get_started():Bool return t != null;
+	
+	private function takeProgress():Void update.add(_progress);
+	private function lostProgress():Void update.remove(_progress);
+	
+	private function lUpdate():Void if (time != null) start();
+	
+	public function reset():Timer {
+		if (time != null) {
+			currentTime = time.back ? time.max : time.min;
+			_frequency = frequency;
+		} else {
+			currentTime = 0;
+			_frequency = MathTools.cmin(frequency, time.minimalPoint);
+		}
+		if (started) start();
+		return this;
 	}
 	
 	public function start():Timer {
 		stop();
+		var delay:Int = update.haveListeners || time == null ? _frequency : MathTools.cabs(time.max - currentTime);
 		#if (!neko && !dox && !cpp)
 		t = new haxe.Timer(delay);
-		t.run = dispatchEmpty;
+		t.run = update.haveListeners ? _update : _complite;
 		#elseif munit
 		t = new massive.munit.util.Timer(delay);
-		t.run = dispatchEmpty;
+		t.run = update.haveListeners ? _update : _complite;
 		#end
 		return this;
+	}
+	
+	private function _complite():Void {
+		complite.dispatch();
+		if (repeatCount == 0) stop();
+		else if (repeatCount > 0) repeatCount--;
+	}
+	
+	private function _update():Void {
+		if (time.back) {
+			currentTime -= _frequency;
+		} else {
+			currentTime += _frequency;
+			if (currentTime >= time.max) while (currentTime >= time.max) {
+				currentTime -= time.length;
+				dispatchUpdate();
+				complite.dispatch();
+				if (repeatCount == 0) {
+					stop();
+					break;
+				}
+				else if (repeatCount > 0) repeatCount--;
+			} else dispatchUpdate();
+		}
 	}
 	
 	public function stop():Timer {
@@ -72,29 +129,22 @@ class Timer extends Signal {
 		return this;
 	}
 	
-	public inline function clear():Void {
+	public inline function dispatchUpdate():Timer return update.dispatch(currentTime);
+	
+	public function destroy():Void {
 		stop();
-		removeAllListeners();
+		progress.destroy();
+		update.destroy();
+		complite.destroy();
+		progress = null;
+		update = null;
+		complite = null;
+		time = null;
 	}
 	
-	public function setTickCount(count:Int):Timer {
-		add(function() if (--count == 0) stop(), 100500);
-		return this;
-	}
+	private function _progress():Void progress.dispatch(time.percent(currentTime));
 	
-	public inline static function tick(delay:Time):Timer {
-		var t = new Timer(delay);
-		return t.add(t.stop, 100500).start();
-	}
-	
-	public inline static function tickAndClear(delay:Time):Timer {
-		var t = new Timer(delay);
-		return t.add(t.clear, 100500).start();
-	}
-	
-	override public function add(listener:Listener, priority:Int = 0):Timer {
-		super.add(listener, priority);
-		return this;
-	}
+	static public inline function delay (time:Time, f:Void->Void):Timer return new Timer(time).complite.once(f).start();
+	static public inline function repeat(time:Time, f:Void->Void):Timer return new Timer(time, -1).complite.add(f).start();
 	
 }

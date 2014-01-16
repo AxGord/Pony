@@ -25,23 +25,51 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.events;
+package pony.time;
+import pony.math.MathTools;
+
+using Reflect;
+
+typedef TimeInterval_ = { min:Time, max:Time };
 
 /**
- * Listener2
+ * TimeInterval
  * @author AxGord <axgord@gmail.com>
  */
-abstract Listener2<Target, T1, T2>(Listener) {
-	inline public function new(l:Listener) this = l;
-	@:from inline private static function from0<T,A,B>(f:Void->Void):Listener2<T,A,B> return new Listener2(f);
-	@:from inline private static function fromE<T,A,B>(f:Event->Void):Listener2<T,A,B> return new Listener2(f);
-	@:from inline private static function from1<T,A,B>(f:A->Void):Listener2<T,A,B> return new Listener2(f);
-	@:from inline private static function from2<T,A,B>(f:A->B->Void):Listener2<T,A,B> return new Listener2(f);
-	@:from inline private static function from2T<T,A,B>(f:A->B->T->Void):Listener2<T,A,B> return new Listener2(f);
-	@:from inline private static function from2TE<T,A,B>(f:A->B->T->Event->Void):Listener2<T,A,B> return new Listener2(f);
-	@:to inline private function to():Listener return this;
+abstract TimeInterval(TimeInterval_) {
 	
-	@:from static inline public function fromSignal0<A>(s:Signal0<A>):Listener2<A, Void, Void> return new Listener2(s.dispatchEvent);
-	@:from static inline public function fromSignal1<A, B>(s:Signal1<A, B>):Listener2<A, B, Void> return new Listener2(s.dispatchEvent);
-	@:from static inline public function fromSignal2<A, B, C>(s:Signal2<A, B, C>):Listener2<A, B, C> return new Listener2(s.dispatchEvent);
+	public var min(get, never):Time;
+	public var max(get, never):Time;
+	public var back(get, never):Bool;
+	public var length(get, never):Time;
+	public var minimalPoint(get, never):Time;
+
+	inline public function new(o:TimeInterval_) this = o;
+	
+	inline private function get_min():Time return this.min;
+	inline private function get_max():Time return this.max;
+	
+	@:from inline private static function fromInterator(it:IntIterator):TimeInterval
+		return new TimeInterval({min:it.field('min'), max:it.field('max')});
+	
+	@:to inline public function toString():String return (min:String) + ' ... ' + (max:String);
+	
+	@:from private static function fromString(time:String):TimeInterval {
+		var a = time.split('...');
+		if (a.length > 1)
+			return new TimeInterval( { min: a[0], max: a[1] } );
+		else
+			return fromTime(a[0]);
+	}
+	
+	@:from inline private static function fromTime(time:Time):TimeInterval return new TimeInterval( { min: 0, max: time } );
+	
+	inline public function check(t:Time):Bool return t >= min && t <= max;
+		
+	inline private function get_back():Bool return min > max;
+	inline private function get_length():Time return max - min;
+	
+	inline public function percent(time:Time):Float return MathTools.percentCalcd(time, min, max);
+	
+	inline private function get_minimalPoint():Int return MathTools.cmin(min.minimalPoint, max.minimalPoint);
 }

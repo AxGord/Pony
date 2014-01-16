@@ -35,8 +35,8 @@ class LV<T:Dynamic> extends Signal {
 
 	public var value(default, set):T;
 	
-	public inline function new(value:T) {
-		super();
+	public inline function new(value:T, ?target:Dynamic) {
+		super(target);
 		this.value = value;
 	}
 	

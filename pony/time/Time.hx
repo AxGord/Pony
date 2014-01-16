@@ -28,6 +28,7 @@
 package pony.time;
 
 import Math.*;
+import pony.math.MathTools;
 
 using Std;
 using StringTools;
@@ -49,6 +50,7 @@ abstract Time(Null<Int>) {
 	public var totalHours(get, never):Int;
 	
 	public var neg(get, never):Bool;
+	public var minimalPoint(get, never):Int;
 	
 	inline public function new(?ms:Null<Int>) this = ms;
 	@:from inline private static function fromInt(ms:Null<Int>):Time return new Time(ms);
@@ -195,4 +197,18 @@ abstract Time(Null<Int>) {
 	@:op(A != B) inline static private function snr(a:Time, b:Time):Bool return (a:Int) != (b:Int);
 	@:op(A != B) inline static private function snrInt(a:Time, b:Int):Bool return (a:Int) != b;
 	@:op(A != B) inline static private function snrToInt(a:Int, b:Time):Bool return a != (b:Int);
+	
+	private function get_minimalPoint():Int {
+		return MathTools.cabs(
+			if (ms != 0) {
+				if (ms % 10 != 0) 1;
+				else if (ms % 100 != 0) 10;
+				else 100;
+			}
+			else if (seconds != 0) fromSeconds(1);
+			else if (minutes != 0) fromMinutes(1);
+			else if (hours != 0) fromHours(1);
+			else fromDays(1)
+			);
+	}
 }

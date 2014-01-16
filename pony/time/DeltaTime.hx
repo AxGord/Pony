@@ -36,8 +36,8 @@ import pony.events.*;
 class DeltaTime {
 	
 	public static var speed:Float = 1;
-	public static var update(default,null):Signal1<Void, Float>;
-	public static var fixedUpdate(default,null):Signal1<Void, Float>;
+	public static var update(default,null):Signal1<Void, DT>;
+	public static var fixedUpdate(default,null):Signal1<Void, DT>;
 	public static var value:Float = 0;
 	#if HUGS
 	public static var fixedValue(get, never):Float;
@@ -92,7 +92,7 @@ class DeltaTime {
 		update = Signal.createEmpty();
 		fixedUpdate = Signal.createEmpty();
 		
-		fixedUpdate.add(function(dt:Float) if (dt > 0) update.dispatch(value = dt * speed));
+		fixedUpdate.add(function(dt:DT) if (dt > 0) update.dispatch(value = dt * speed));
 	}
 	
 	#if (munit || dox)

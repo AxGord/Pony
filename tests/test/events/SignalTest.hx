@@ -225,4 +225,13 @@ class SignalTest
 		Assert.areEqual(r, 'd--e');
 	}
 	
+	@Test
+	public function typedTarget():Void {
+		var t:SignalTest = null;
+		var s:Signal0<SignalTest> = Signal.create(this);
+		s.add(function(tar:SignalTest, e:Event) t = tar);
+		s.dispatch();
+		Assert.areEqual(t, this);
+	}
+	
 }

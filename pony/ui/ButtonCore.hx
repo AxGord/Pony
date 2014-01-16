@@ -28,10 +28,13 @@
 package pony.ui;
 import pony.events.Event;
 import pony.events.Signal;
+import pony.time.DTimer;
+import pony.time.ITimer;
+import pony.time.Time;
 import pony.time.Timer;
 
 /**
- * ...
+ * Button Core
  * @author AxGord
  */
 
@@ -40,6 +43,8 @@ enum ButtonStates {
 }
  
 class ButtonCore {
+	
+	public static var useDeltaTimer:Bool = false;
 
 	public static var MOUSE_FOCUS:Bool = true;
 	public static var tickDelay:Int = 200;
@@ -56,7 +61,7 @@ class ButtonCore {
 	private var prevSummary:ButtonStates;
 	private var prevVisual:ButtonStates;
 	private var prevTab:Bool;
-	private var timer:Timer;
+	private var timer:ITimer<Dynamic>;
 	private var prevMode:Int;
 	private var waitUp:Bool;
 	
@@ -243,9 +248,7 @@ class ButtonCore {
 				down.dispatch(mode);
 				if (tick.haveListeners) {
 					tick.dispatch(mode);
-					timer = Timer.tick(tickFirstDelay);
-					timer.once(tickListener);
-					timer.once(beginTicks);
+					createTimer(tickFirstDelay).complite.once(tickListener).complite.once(beginTicks);
 				}
 			default:
 		}
@@ -254,13 +257,14 @@ class ButtonCore {
 	private function tickListener():Void tick.dispatch(mode);
 	
 	private function beginTicks():Void {
-		timer = new Timer(tickDelay);
-		timer.add(tickListener);
+		createTimer(tickDelay, -1).complite.add(tickListener);
 	}
 	
 	private inline function killTimer():Void {
-		if (timer != null)
-			timer.clear();
+		if (timer != null) {
+			timer.destroy();
+			timer = null;
+		}
 	}
 	
 	private function set_sw(a:Array<Int>):Array<Int> {
@@ -269,5 +273,7 @@ class ButtonCore {
 			click.sub(i).add(set_mode.bind(a[i]));
 		return sw = a;
 	}
+	
+	inline private function createTimer(time:Time, repeat:Int = 0):ITimer<Dynamic> return timer = cast useDeltaTimer ? DTimer.createFixedTimer(time, repeat) : new Timer(time, repeat);
 	
 }

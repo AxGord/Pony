@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2013 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -32,15 +32,14 @@ package pony.events;
  * @author AxGord <axgord@gmail.com>
  */
 abstract Listener1<Target, T1>(Listener) {
-	inline private function new(l:Listener) this = l;
+	inline public function new(l:Listener) this = l;
 	@:from inline private static function from0<T,A>(f:Void->Void):Listener1<T, A> return new Listener1(f);
-	@:from inline private static function fromEvent<T,A>(f:Event->Void):Listener1<T, A> return new Listener1(f);
+	@:from inline private static function fromE<T,A>(f:Event->Void):Listener1<T, A> return new Listener1(f);
 	@:from inline private static function from1<T,A>(f:A->Void):Listener1<T,A> return new Listener1(f);
-	@:from inline private static function from1Tar<T,A>(f:A->T->Void):Listener1<T,A> return new Listener1(f);
+	@:from inline private static function from1T<T,A>(f:A->T->Void):Listener1<T,A> return new Listener1(f);
+	@:from inline private static function from1TE<T,A>(f:A->T->Event->Void):Listener1<T,A> return new Listener1(f);
 	@:to inline private function to():Listener return this;
 	
-	@:from inline private static function fromListener(f:Listener):Listener1<Target,T1> return new Listener1(f);
-	
-	@:from static inline public function fromSignal0<A>(s:Signal0<A>):Listener1<A, Void> return s.dispatchEvent;
-	@:from static inline public function fromSignal1<A, B>(s:Signal1<A, B>):Listener1<A, B> return s.dispatchEvent;
+	@:from static inline public function fromSignal0<A>(s:Signal0<A>):Listener1<A, Void> return new Listener1(s.dispatchEvent);
+	@:from static inline public function fromSignal1<A, B>(s:Signal1<A, B>):Listener1<A, B> return new Listener1(s.dispatchEvent);
 }

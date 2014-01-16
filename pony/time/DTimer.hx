@@ -29,12 +29,10 @@ package pony.time;
 
 import pony.events.*;
 import pony.magic.Declarator;
-import pony.math.MathTools;
 
 /**
  * DeltaTime Timer
  * Can work as Clock
- * todo: use macro for parsing Time String in compile time
  * @author AxGord
  */
 class DTimer implements ITimer<DTimer> implements Declarator {
@@ -46,22 +44,13 @@ class DTimer implements ITimer<DTimer> implements Declarator {
 	public var complite:Signal0<DTimer> = Signal.create(this);
 	
 	private var sumdt:DT = 0;
-	private var back:Bool = false;
-	
-	public inline static function createTimer(?endTime:Time, ?beginTime:Time, repeat:Int = 0):DTimer
-		return new DTimer(DeltaTime.update, endTime, beginTime, repeat);
-		
-	public inline static function createFixedTimer(?endTime:Time, ?beginTime:Time, repeat:Int = 0):DTimer
-		return new DTimer(DeltaTime.fixedUpdate, endTime, beginTime, repeat);
 
-	@:arg private var updateSignal:Signal1<Void, Float>;
-	@:arg public var endTime:Time = null;
-	@:arg public var beginTime:Time = 0;
+	@:arg private var updateSignal:Signal1<Void, DT>;
+	@:arg public var time:TimeInterval = null;
 	@:arg public var repeatCount:Int = 0;
 	
 	public function new() {
-		progress.takeListeners.add(takeProgress);
-		progress.lostListeners.add(lostProgress);
+		progress.takeListeners.add(takeProgress).lostListeners.add(lostProgress);
 		reset();
 	}
 	
@@ -69,8 +58,10 @@ class DTimer implements ITimer<DTimer> implements Declarator {
 	private function lostProgress():Void update.remove(_progress);
 	
 	public function reset():DTimer {
-		back = endTime != null && beginTime > endTime;
-		currentTime = back ? endTime : beginTime;
+		if (time != null)
+			currentTime = time.back ? time.max : time.min;
+		else
+			currentTime = 0;
 		return this;
 	}
 	
@@ -89,13 +80,15 @@ class DTimer implements ITimer<DTimer> implements Declarator {
 		if (dt >= 0.001) {
 			var t:Time = sumdt;
 			sumdt -= t;
-			if (endTime != null) {
-				if (back) {
+			if (time != null) {
+				if (time.back) {
 					currentTime -= t;
-					while (currentTime <= endTime) if (loop()) break;
+					while (currentTime <= time.max) if (loop()) break;
+					else dispatchUpdate();
 				} else {
 					currentTime += t;
-					while (currentTime >= endTime) if (loop()) break;
+					while (currentTime >= time.max) if (loop()) break;
+					else dispatchUpdate();
 				}
 			} else {
 				currentTime += t;
@@ -107,12 +100,12 @@ class DTimer implements ITimer<DTimer> implements Declarator {
 	private function loop():Bool {
 		var result:Bool = false;
 		if (repeatCount > 0) {
-			currentTime -= endTime - beginTime;
+			currentTime -= time.length;
 			repeatCount--;
 		} else if (repeatCount == -1) {
-			currentTime -= endTime - beginTime;
+			currentTime -= time.length;
 		} else {
-			currentTime = endTime;
+			currentTime = time.max;
 			stop();
 			result = true;
 		}
@@ -128,13 +121,19 @@ class DTimer implements ITimer<DTimer> implements Declarator {
 		progress.destroy();
 		update.destroy();
 		complite.destroy();
+		progress = null;
+		update = null;
+		complite = null;
+		time = null;
 	}
 	
-	private function _progress():Void progress.dispatch(MathTools.percentCalcd(currentTime, beginTime, endTime));
+	private function _progress():Void progress.dispatch(time.percent(currentTime));
 	
-	static public inline function delay      (time:Time, f:Void->Void):DTimer return DTimer.createTimer(time).complite.once(f).start();
-	static public inline function fixedDelay (time:Time, f:Void->Void):DTimer return DTimer.createFixedTimer(time).complite.once(f).start();
-	static public inline function repeat     (time:Time, f:Void->Void):DTimer return DTimer.createTimer(time, null, -1).complite.add(f).start();
-	static public inline function fixedRepeat(time:Time, f:Void->Void):DTimer return DTimer.createFixedTimer(time, null, -1).complite.add(f).start();
+	static public inline function createTimer     (time:TimeInterval, repeat:Int = 0):DTimer return new DTimer(DeltaTime.update, time, repeat);
+	static public inline function createFixedTimer(time:TimeInterval, repeat:Int = 0):DTimer return new DTimer(DeltaTime.fixedUpdate, time, repeat);
+	static public inline function delay           (time:Time, f:Void->Void):DTimer return DTimer.createTimer(time).complite.once(f).start();
+	static public inline function fixedDelay      (time:Time, f:Void->Void):DTimer return DTimer.createFixedTimer(time).complite.once(f).start();
+	static public inline function repeat          (time:Time, f:Void->Void):DTimer return DTimer.createTimer(time, -1).complite.add(f).start();
+	static public inline function fixedRepeat     (time:Time, f:Void->Void):DTimer return DTimer.createFixedTimer(time, -1).complite.add(f).start();
 	
 }

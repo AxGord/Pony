@@ -27,6 +27,7 @@
 **/
 package pony.ui;
 import pony.time.DeltaTime;
+import pony.time.DT;
 import pony.time.DTimer;
 import pony.events.Event;
 import pony.events.Signal;
@@ -93,7 +94,7 @@ class Keyboard {
 		press.dispatch(k);
 	}
 	
-	static private function update(dt:Float):Void {
+	static private function update(dt:DT):Void {
 		time += dt;
 		if (time >= delay) {
 			time -= delay;

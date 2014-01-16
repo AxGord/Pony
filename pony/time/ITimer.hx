@@ -12,10 +12,9 @@ interface ITimer < T:ITimer<T> > {
 	var progress:Signal1<T, Float>;
 	var complite:Signal0<T>;
 	
-	var beginTime:Time;
-	var endTime:Time;
+	var time:TimeInterval;
 	var currentTime:Time;
-	var repeatCount:Int = -1;
+	var repeatCount:Int;
 	
 	function start():T;
 	function stop():T;
