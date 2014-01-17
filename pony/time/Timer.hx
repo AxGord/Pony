@@ -144,7 +144,10 @@ class Timer implements ITimer<Timer> implements Declarator {
 	
 	private function _progress():Void progress.dispatch(time.percent(currentTime));
 	
-	static public inline function delay (time:Time, f:Void->Void):Timer return new Timer(time).complite.once(f).start();
+	static public inline function delay (time:Time, f:Void->Void):Timer {
+		var t = new Timer(time).complite.once(f);
+		return t.complite.once(t.destroy).start();
+	}
 	static public inline function repeat(time:Time, f:Void->Void):Timer return new Timer(time, -1).complite.add(f).start();
 	
 }

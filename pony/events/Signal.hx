@@ -40,6 +40,11 @@ import haxe.macro.Expr;
  */
 
 class Signal {
+	#if debug
+	public static var signalsCount:Int;
+	public var id:Int;
+	private static function __init__():Void signalsCount = 0;
+	#end
 	
 	public var silent:Bool = false;
 	public var lostListeners(default, null):Signal0<Signal>;
@@ -76,6 +81,9 @@ class Signal {
 	}
 	
 	inline private function init(target:Dynamic):Signal {
+		#if debug
+		id = signalsCount++;
+		#end
 		this.target = target;
 		listeners = new Priority<Listener>();
 		lRunCopy = new List<Priority<Listener>>();
@@ -160,14 +168,26 @@ class Signal {
 				remove(l);
 				lRunCopy.remove(c);
 				#if (debug && cs)
+				
 				trace(msg);
 				l.call(event);
+				#if debug
+				throw 'Listener error (signal: $id)';
+				#else
 				throw 'Listener error';
+				#end
+				
 				#elseif ((debug || munit) && (php || neko || cpp))
+				
 				Sys.println('');
 				Sys.print(msg);
 				Sys.println(CallStack.toString(CallStack.exceptionStack()));
+				#if debug
+				throw 'Listener error (signal: $id)';
+				#else
 				throw 'Listener error';
+				#end
+				
 				#else
 				throw msg;
 				#end
@@ -246,7 +266,10 @@ class Signal {
 	}
 	
 	inline public function removeAllSub():Signal {
-		for (e in subMap) e.destroy();
+		if (subMap != null) {
+			for (e in subMap) e.destroy();
+			subMap.clear();
+		}
 		return this;
 	}
 	
@@ -311,7 +334,10 @@ class Signal {
 	}
 	
 	inline public function removeAllBind():Signal {
-		for (e in bindMap) e.destroy();
+		if (bindMap != null) {
+			for (e in bindMap) e.destroy();
+			bindMap.clear();
+		}
 		return this;
 	}
 	
@@ -357,17 +383,21 @@ class Signal {
 	}
 	
 	inline public function removeAllNot():Signal {
-		for (e in notMap) e.destroy();
+		if (notMap != null) {
+			for (e in notMap) e.destroy();
+			notMap.clear();
+		}
 		return this;
 	}
 	
 	public function removeAllListeners():Signal {
-		for (c in lRunCopy) c.clear();
-		lRunCopy.clear();
+		//for (c in lRunCopy) c.clear();
+		//lRunCopy.clear();
+		//Not need coz auto clear all in dispatch
 		var f:Bool = listeners.empty;
 		for (l in listeners) l.unuse();
 		listeners.clear();
-		if (!f) lostListeners.dispatch();
+		if (!f && lostListeners != null) lostListeners.dispatch();
 		return this;
 	}
 	
@@ -397,11 +427,14 @@ class Signal {
 	inline private function get_listenersCount():Int return listeners.length;
 	
 	inline public function destroy():Void {
+		//trace('destroy '+id);
 		if (parent != null) parent.removeSubSignal(this);
 		removeAllSub();
+		removeAllBind();
+		removeAllNot();
 		removeAllListeners();
-		takeListeners.destroy();
-		lostListeners.destroy();
+		if (takeListeners != null) takeListeners.destroy();
+		if (lostListeners != null) lostListeners.destroy();
 	}
 	
 	/**

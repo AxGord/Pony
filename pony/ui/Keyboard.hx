@@ -39,10 +39,6 @@ import pony.events.Signal1;
  * @author AxGord <axgord@gmail.com>
  */
 class Keyboard {
-	
-	static public var pressFirstDelay:Float = 0.5;
-	static public var pressDelay:Float = 0.2;
-	
 	static public var down:Signal1<Void, Key>;
 	static public var up:Signal1<Void, Key>;
 	static public var press:Signal1<Void, Key>;
@@ -51,12 +47,12 @@ class Keyboard {
 	static public var pressedKeys:List<Key> = new List<Key>();
 	
 	static private var km:IKeyboard<Dynamic>;
-	static private var time:Float = 0;
-	static private var delay:Float;
 	static private var _enabled:Bool = false;
 	
 	static public var enabled(default, set):Bool = false;
 	static public var disabled(default, set):Bool = false;
+	
+	static private var presser:Presser;
 	
 	static private function __init__():Void {
 		#if HUGS
@@ -72,43 +68,26 @@ class Keyboard {
 		autoEnableMode();
 	}
 	
-	static private function takeListeners():Void {
-		if (haveListeners()) enable();
-	}
-	
-	static private function lostListeners():Void {
-		if (!haveListeners()) disable();
-	}
-	
+	static private function takeListeners():Void if (haveListeners()) enable();
+	static private function lostListeners():Void if (!haveListeners()) disable();
 	static private inline function haveListeners():Bool
 		return down.haveListeners || up.haveListeners  || press.haveListeners || click.haveListeners;
 	
 	static private function downPress(e:Event):Void {
 		var k:Key = e.args[0];
-		if (pressedKeys.length == 0)
-			DeltaTime.update.add(update, -100);
-		delay = pressFirstDelay;
-		time = 0;
+		if (pressedKeys.length == 0) presser = new Presser(_press);
 		pressedKeys.push(k);
 		km.up.sub(k).once(upPress);
 		press.dispatch(k);
 	}
 	
-	static private function update(dt:DT):Void {
-		time += dt;
-		if (time >= delay) {
-			time -= delay;
-			delay = pressDelay;
-			for (k in pressedKeys) press.dispatch(k);
-		}
-	}
+	static private function _press():Void for (k in pressedKeys) press.dispatch(k);
 	
 	static inline private function upPress(e:Event):Void {
 		var k:Key = e.parent.args[0];
 		click.dispatch(k);
 		pressedKeys.remove(k);
-		if (pressedKeys.length == 0)
-			DeltaTime.update.remove(update);
+		if (pressedKeys.length == 0) presser.destroy();
 	}
 	
 	static private function enable():Void {
@@ -123,7 +102,7 @@ class Keyboard {
 	static private function disable():Void {
 		if (_enabled == false) return;
 		_enabled = false;
-		DeltaTime.update.remove(update);
+		if (presser != null) presser.destroy();
 		pressedKeys.clear();
 		km.up.removeAllListeners();
 		km.down.removeAllListeners();

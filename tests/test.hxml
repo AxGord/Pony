@@ -37,6 +37,7 @@
 
 -cp test
 -neko build/neko_test.n
+-debug
 
 --next
 

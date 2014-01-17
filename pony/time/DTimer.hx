@@ -131,8 +131,14 @@ class DTimer implements ITimer<DTimer> implements Declarator {
 	
 	static public inline function createTimer     (time:TimeInterval, repeat:Int = 0):DTimer return new DTimer(DeltaTime.update, time, repeat);
 	static public inline function createFixedTimer(time:TimeInterval, repeat:Int = 0):DTimer return new DTimer(DeltaTime.fixedUpdate, time, repeat);
-	static public inline function delay           (time:Time, f:Void->Void):DTimer return DTimer.createTimer(time).complite.once(f).start();
-	static public inline function fixedDelay      (time:Time, f:Void->Void):DTimer return DTimer.createFixedTimer(time).complite.once(f).start();
+	static public inline function delay           (time:Time, f:Void->Void):DTimer {
+		var t = DTimer.createTimer(time).complite.once(f);
+		return t.complite.once(t.destroy).start();
+	}
+	static public inline function fixedDelay      (time:Time, f:Void->Void):DTimer {
+		var t = DTimer.createFixedTimer(time).complite.once(f);
+		return t.complite.once(t.destroy).start();
+	}
 	static public inline function repeat          (time:Time, f:Void->Void):DTimer return DTimer.createTimer(time, -1).complite.add(f).start();
 	static public inline function fixedRepeat     (time:Time, f:Void->Void):DTimer return DTimer.createFixedTimer(time, -1).complite.add(f).start();
 	

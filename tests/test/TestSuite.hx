@@ -16,6 +16,7 @@ import ToolsTest;
 import TumblerTest;
 import ui.FocusManagerTest;
 import ui.KeyboardTest;
+import ui.PresserTest;
 
 /**
  * Auto generated Test Suite for MassiveUnit.
@@ -45,5 +46,6 @@ class TestSuite extends massive.munit.TestSuite
 		add(TumblerTest);
 		add(ui.FocusManagerTest);
 		add(ui.KeyboardTest);
+		add(ui.PresserTest);
 	}
 }
