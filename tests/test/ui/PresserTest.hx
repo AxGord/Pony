@@ -14,9 +14,9 @@ class PresserTest
 		var c = 0;
 		var p = new Presser(function() c++);
 		Assert.areEqual(c, 0);
-		DeltaTime.testRun(600);
+		DeltaTime.testRun(550);
 		Assert.areEqual(c, 1);
-		DeltaTime.testRun(600);
+		DeltaTime.testRun(650);
 		Assert.areEqual(c, 4);
 		p.destroy();
 		DeltaTime.testRun(600);

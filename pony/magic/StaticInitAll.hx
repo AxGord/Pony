@@ -26,56 +26,20 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.magic;
-#if macro
-import haxe.macro.Context;
-import haxe.macro.Expr;
-import haxe.macro.Expr.Field;
-#end
+
 /**
- * StaticInit
+ * StaticInitAll
  * @author AxGord <axgord@gmail.com>
  */
-#if !macro
-@:autoBuild(pony.magic.StaticInitBuilder.build())
-#end
-interface StaticInit {}
-
-class StaticInitBuilder {
+class StaticInitAll {
 	
-	macro public static function build():Array<Field> {
-		var fields:Array<Field> = Context.getBuildFields();
-		var notAll:Bool = false;
-		for (m in ['StaticInitNotAll', ':StaticInitNotAll', 'NotAll', ':NotAll']) if (Context.getLocalClass().get().meta.has(m)) {
-			notAll = true;
-			break;
-		}
-		var exprs:Array<Expr> = [];
-		for (f in fields) {
-			if (f.kind.getParameters()[1] != null) {
-				var ex = { expr: f.kind.getParameters()[1].expr, pos:Context.currentPos() };
-				exprs.push(macro $i{f.name} = $e{ex});
-			}
-			f.kind.getParameters()[1] = null;
-		}
-		fields.push( {
-			pos: Context.currentPos(),
-			name: 'initStatic',
-			meta: [],
-			doc: null,
-			access: notAll ? [APublic, AStatic, AInline] : [APrivate, AStatic],
-			kind: FFun({ret: null, params: [], args: [], expr: {expr:EBlock(exprs), pos: Context.currentPos()}})
-		});
-		if (!notAll) fields.push( {
-			pos: Context.currentPos(),
-			name: '__init__',
-			meta: [],
-			doc: null,
-			access: [APrivate, AStatic],
-			kind: FFun( { ret: null, params: [], args: [], expr: { expr:EBlock([
-				macro pony.magic.StaticInitAll.functions.push(initStatic)
-			]), pos: Context.currentPos()}})
-		});
-		return fields;
+	public static var functions:List < Void->Void > ;
+
+	private static function __init__():Void functions = new List();
+	
+	public static function init() {
+		for (f in functions) f();
+		functions = null;
 	}
 	
 }

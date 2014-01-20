@@ -14,6 +14,7 @@ import time.TimerTest;
 import time.TimeTest;
 import ToolsTest;
 import TumblerTest;
+import ui.ButtonCoreTest;
 import ui.FocusManagerTest;
 import ui.KeyboardTest;
 import ui.PresserTest;
@@ -44,6 +45,7 @@ class TestSuite extends massive.munit.TestSuite
 		add(time.TimeTest);
 		add(ToolsTest);
 		add(TumblerTest);
+		add(ui.ButtonCoreTest);
 		add(ui.FocusManagerTest);
 		add(ui.KeyboardTest);
 		add(ui.PresserTest);
