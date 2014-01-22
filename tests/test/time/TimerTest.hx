@@ -28,9 +28,9 @@ class TimerTest
 	@AsyncTest
 	public function repeat(asyncFactory:AsyncFactory):Void {
 		var c = 0;
-		var handler:Void->Void = asyncFactory.createHandler(this, function() Assert.areEqual(c, 6), 300);
+		var handler:Void->Void = asyncFactory.createHandler(this, function() Assert.areEqual(c, 6), 500);
 		new Timer('3ms', 5).complite.add(function() c++).start();
-		new massive.munit.util.Timer(200).run = handler;
+		new massive.munit.util.Timer(400).run = handler;
 	}
 	
 }

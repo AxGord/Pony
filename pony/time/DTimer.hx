@@ -28,6 +28,7 @@
 package pony.time;
 
 import pony.events.*;
+import pony.events.Listener1.Listener1;
 import pony.magic.Declarator;
 
 /**
@@ -41,7 +42,7 @@ class DTimer implements ITimer<DTimer> implements Declarator {
 	
 	public var update:Signal1<DTimer, Time> = Signal.create(this);
 	public var progress:Signal1<DTimer, Float> = Signal.create(this);
-	public var complite:Signal0<DTimer> = Signal.create(this);
+	public var complite:Signal1<DTimer, DT> = Signal.create(this);
 	
 	private var sumdt:DT = 0;
 
@@ -65,8 +66,9 @@ class DTimer implements ITimer<DTimer> implements Declarator {
 		return this;
 	}
 	
-	public inline function start():DTimer {
+	public inline function start(?dt:DT):DTimer {
 		updateSignal.add(_update);
+		if (dt != null) _update(dt);
 		return this;
 	}
 	
@@ -99,6 +101,7 @@ class DTimer implements ITimer<DTimer> implements Declarator {
 	
 	private function loop():Bool {
 		var result:Bool = false;
+		var d:DT = Math.abs((currentTime:DT) - (time.max:DT)) + sumdt;
 		if (repeatCount > 0) {
 			currentTime -= time.length;
 			repeatCount--;
@@ -110,7 +113,7 @@ class DTimer implements ITimer<DTimer> implements Declarator {
 			result = true;
 		}
 		dispatchUpdate();
-		complite.dispatch();
+		complite.dispatch(d);
 		return result;
 	}
 	
@@ -131,15 +134,16 @@ class DTimer implements ITimer<DTimer> implements Declarator {
 	
 	static public inline function createTimer     (time:TimeInterval, repeat:Int = 0):DTimer return new DTimer(DeltaTime.update, time, repeat);
 	static public inline function createFixedTimer(time:TimeInterval, repeat:Int = 0):DTimer return new DTimer(DeltaTime.fixedUpdate, time, repeat);
-	static public inline function delay           (time:Time, f:Void->Void):DTimer {
+	
+	static public inline function delay           (time:Time, f:Listener1<DTimer, DT>, ?dt:DT):DTimer {
 		var t = DTimer.createTimer(time).complite.once(f);
-		return t.complite.once(t.destroy).start();
+		return t.complite.once(t.destroy).start(dt);
 	}
-	static public inline function fixedDelay      (time:Time, f:Void->Void):DTimer {
+	static public inline function fixedDelay      (time:Time, f:Listener1<DTimer, DT>, ?dt:DT):DTimer {
 		var t = DTimer.createFixedTimer(time).complite.once(f);
-		return t.complite.once(t.destroy).start();
+		return t.complite.once(t.destroy).start(dt);
 	}
-	static public inline function repeat          (time:Time, f:Void->Void):DTimer return DTimer.createTimer(time, -1).complite.add(f).start();
-	static public inline function fixedRepeat     (time:Time, f:Void->Void):DTimer return DTimer.createFixedTimer(time, -1).complite.add(f).start();
+	static public inline function repeat          (time:Time, f:Listener1<DTimer, DT>, ?dt:DT):DTimer return DTimer.createTimer(time, -1).complite.add(f).start(dt);
+	static public inline function fixedRepeat     (time:Time, f:Listener1<DTimer, DT>, ?dt:DT):DTimer return DTimer.createFixedTimer(time, -1).complite.add(f).start(dt);
 	
 }

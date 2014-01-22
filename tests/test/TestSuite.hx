@@ -7,6 +7,7 @@ import LoaderTest;
 import magic.DeclaratorTest;
 import magic.StaticInitTest;
 import math.BalanceTest;
+import math.LikerTest;
 import PriorityTest;
 import TextCoderTest;
 import time.DTimerTest;
@@ -38,6 +39,7 @@ class TestSuite extends massive.munit.TestSuite
 		add(magic.DeclaratorTest);
 		add(magic.StaticInitTest);
 		add(math.BalanceTest);
+		add(math.LikerTest);
 		add(PriorityTest);
 		add(TextCoderTest);
 		add(time.DTimerTest);

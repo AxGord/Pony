@@ -389,6 +389,11 @@ class Signal {
 		}
 		return this;
 	}
+	/*
+	public function and(signal:Signal):Signal {
+		var ns = new Signal(target);
+		
+	}*/
 	
 	public function removeAllListeners():Signal {
 		//for (c in lRunCopy) c.clear();

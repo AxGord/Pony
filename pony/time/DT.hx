@@ -35,7 +35,7 @@ using Std;
  * DT
  * @author AxGord <axgord@gmail.com>
  */
-abstract DT(Float) {
+abstract DT(Null<Float>) {
 	
 	public var ms(get, never):Float;
 	public var sec(get, never):Float;

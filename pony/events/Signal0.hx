@@ -123,6 +123,8 @@ abstract Signal0<Target>(Signal) {
 		return target;
 	}
 	
+	//inline public function and0(s:Signal0<Dynamic>):Signal0<Target> return this.and(s);
+	
 	inline public function removeAllListeners():Target {
 		this.removeAllListeners();
 		return target;

@@ -49,7 +49,7 @@ class Timer implements ITimer<Timer> implements Declarator {
 	
 	public var update:Signal1<Timer, Time> = Signal.create(this);
 	public var progress:Signal1<Timer, Float> = Signal.create(this);
-	public var complite:Signal0<Timer> = Signal.create(this);
+	public var complite:Signal1<Timer, DT> = Signal.create(this);
 	
 	public var frequency:Time = 1000;
 	private var _frequency:Time;
@@ -82,7 +82,7 @@ class Timer implements ITimer<Timer> implements Declarator {
 		return this;
 	}
 	
-	public function start():Timer {
+	public function start(?dt:DT):Timer {
 		stop();
 		var delay:Int = update.haveListeners || time == null ? _frequency : MathTools.cabs(time.max - currentTime);
 		#if (!neko && !dox && !cpp)
@@ -96,7 +96,7 @@ class Timer implements ITimer<Timer> implements Declarator {
 	}
 	
 	private function _complite():Void {
-		complite.dispatch();
+		complite.dispatch(0);
 		if (repeatCount == 0) stop();
 		else if (repeatCount > 0) repeatCount--;
 	}
@@ -109,7 +109,7 @@ class Timer implements ITimer<Timer> implements Declarator {
 			if (currentTime >= time.max) while (currentTime >= time.max) {
 				currentTime -= time.length;
 				dispatchUpdate();
-				complite.dispatch();
+				complite.dispatch(0);
 				if (repeatCount == 0) {
 					stop();
 					break;

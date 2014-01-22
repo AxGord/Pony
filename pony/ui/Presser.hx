@@ -26,9 +26,9 @@ class Presser {
 		}
 	}
 	
-	private function firstTickDelta():Void {
+	private function firstTickDelta(dt:DT):Void {
 		firstTimer = null;
-		secondTimer = DTimer.repeat(pressDelay, callBack);
+		secondTimer = DTimer.repeat(pressDelay, callBack, dt);
 		callBack();
 	}
 	

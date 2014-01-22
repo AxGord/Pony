@@ -6,6 +6,7 @@ import pony.magic.StaticInitAll;
 
 class StaticInitTest 
 {
+	#if !flash //problem with __init__ in flash/munit 
 	@Test
 	public function test():Void
 	{
@@ -24,6 +25,7 @@ class StaticInitTest
 		SimpleStaticClass3.initStatic();
 		Assert.areEqual(SimpleStaticClass3.someField, 'wee');
 	}
+	#end
 }
 
 class SimpleStaticClass implements StaticInit {
