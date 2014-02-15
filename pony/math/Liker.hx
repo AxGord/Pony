@@ -37,8 +37,8 @@ import pony.time.DeltaTime;
 class Liker implements Declarator {
 
 	@:arg private var base:Array<Array<Float>>;
-	@:arg private var min:Float = 1;
-	@:arg private var max:Float = 1;
+	@:arg public var min:Float = 1;
+	@:arg public var max:Float = 1;
 	
 	public function like(data:Array<Float>):Int {
 		var id:Int = -1;
@@ -79,6 +79,7 @@ class Liker implements Declarator {
 	}
 	
 	public function likek(base:Array<Float>, data:Array<Float>):Float {
+		if (base.length != data.length) throw 'data != base data';
 		var k:Float = 0;
 		for (i in 0...data.length) {
 			var a = data[i];

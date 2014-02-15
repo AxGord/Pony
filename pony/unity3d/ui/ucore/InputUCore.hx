@@ -31,6 +31,7 @@ import pony.events.Signal;
 import pony.events.Signal1;
 import pony.ui.FocusManager;
 import pony.ui.IFocus;
+import pony.unity3d.ui.TextureButton;
 import pony.unity3d.ui.TintButton;
 import unityengine.GUIText;
 import unityengine.Time;
@@ -41,13 +42,14 @@ using hugs.HUGSWrapper;
  * Input
  * @author AxGord <axgord@gmail.com>
  */
-class InputUCore extends TintButton implements IFocus {
+class InputUCore extends TextureButton implements IFocus {
 
 	public static var caretTime:Float = 0.5;
 	private static var ct:Float = 0;
 	private static var cb:Bool = false;
 	
 	public var text:String;
+	public var vtext:String;
 	public var max:Int = 0;
 	public var focusPriority(default,null):Int = 0;
 	public var focusGroup(default,null):String = '';
@@ -72,12 +74,15 @@ class InputUCore extends TintButton implements IFocus {
 	private function onFocus(b:Bool):Void {
 		selected = b;
 		core.mode = b ? 2 : 0;
-		if (!b) gt.text = text;
+		if (!b) gt.text = vtext = text;
 	}
 	
 	override private function Start():Void {
 		super.Start();
-		text = gt.text;
+		if (text == null || text == '')
+			vtext = text = gt.text;
+		else
+			gt.text = vtext = text;
 		FocusManager.reg(this);
 	}
 	
@@ -90,13 +95,13 @@ class InputUCore extends TintButton implements IFocus {
 				core.mode = 2;
 				if (ch == 13) {
 					core.mode = 0;
-					changed.dispatch(text);
+					changed.dispatch(gt.text = text = vtext);
 					continue;
 				}
 				if (ch == 8)
-					text = text.substr(0, -1);
-				else if (max == 0 || text.length < max)
-					text += ch;
+					vtext = vtext.substr(0, -1);
+				else if (max == 0 || vtext.length < max)
+					vtext += ch;
 			}
 			//draw
 			ct += Time.deltaTime;
@@ -104,8 +109,8 @@ class InputUCore extends TintButton implements IFocus {
 				ct -= caretTime;
 				cb = !cb;
 			}
-			gt.text = cb ? text + '|' : text;
-		} else gt.text = text;
+			gt.text = cb ? vtext + '|' : vtext;
+		}// else gt.text = text;
 	}
 	
 	inline private function get_y():Int return Math.ceil(guiTexture.pixelInset.y);

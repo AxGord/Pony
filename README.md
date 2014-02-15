@@ -16,4 +16,4 @@ Ready for Haxe3 and HUGS
 <p><a href="http://axgord.github.io/Pony/#declarator">Declarator</a></p>
 
 <h2>Reference book</h2>
-<p><a href="docs">Explore more feature</a></p>
+<p><a href="http://axgord.github.io/Pony/docs">Explore more feature</a></p>

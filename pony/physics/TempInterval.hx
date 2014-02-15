@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2013 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -25,45 +25,35 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.macro;
-#if (macro || dox)
-import haxe.macro.Context;
-import haxe.macro.Expr;
-/**
- * ...
- * @author AxGord
- */
-class Tools {
-	
-	public static var staticPlatform:Bool = Context.defined('cs') || Context.defined('flash') || Context.defined('java');
+package pony.physics;
 
-	public inline static function argsArray(func:Expr, args:Array<Expr>):Expr {
-		args.shift();
-		return macro $e{func} ($a{[[$a{args}]]});
-	}
+import pony.Interval;
+import pony.Pair;
+import pony.physics.Temp;
+
+/**
+ * TempInterval
+ * @author AxGord <axgord@gmail.com>
+ */
+abstract TempInterval(Interval<Temp>) {
+
+	public var min(get, never):Temp;
+	public var max(get, never):Temp;
+	public var mid(get, never):Temp;
 	
-	public static function argsArrayAbstr(obj:ExprOf<Function>, name:String, args:Array < Expr > ):Expr {
-		return macro $e{macro $ { obj } .$name} ($a{[[$a{args}]]});
-	}
+	inline private function get_min():Temp return this.min;
+	inline private function get_max():Temp return this.max;
+	inline private function get_mid():Temp return this.mid;
 	
-	public static function getMeta(a:Metadata, n:String):MetadataEntry {
-		if (a == null) return null;
-		for (e in a) if (e.name == n) return e;
-		return null;
+	inline public function new(v:Interval<Temp>) this = v;
+	@:from inline private static function fromInterval(it:Interval<Temp>):TempInterval return new TempInterval(it);
+	@:from inline private static function fromStringInterval(it:Interval<String>):TempInterval {
+		return new Interval<Temp>(new Pair<Temp, Temp>(it.min == null ? Math.NEGATIVE_INFINITY : it.min, it.max));
 	}
+	@:to inline private function toInterval():Interval<Temp> return this;
 	
-	public static function checkMeta(a:Metadata, an:Array<String>):Bool {
-		for (n in an) if (getMeta(a, n) != null) return true;
-		return false;
-	}
-	
-	public static function createInit():Field {
-		return {name: '__init__', access: [AStatic, APrivate], kind: FFun({args:[], ret: ComplexType.TPath({pack:[],name:'Void'}), expr: null}), pos: Context.currentPos()};
-	}
-	
-	public static function createNew():Field {
-		return {name: 'new', access: [APublic], kind: FFun({args:[], ret: ComplexType.TPath({pack:[],name:'Void'}), expr: null}), pos: Context.currentPos()};
-	}
+	@:to inline private function toStringInterval():Interval<String> return new Interval<String>(new Pair<String,String>(min, max));
+
+	@:to inline private function toString():String return toStringInterval();
 	
 }
-#end

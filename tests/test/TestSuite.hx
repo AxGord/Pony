@@ -1,5 +1,6 @@
 import massive.munit.TestSuite;
 
+import ColorTest;
 import events.ListenerTest;
 import events.SignalTest;
 import FunctionTest;
@@ -8,6 +9,7 @@ import magic.DeclaratorTest;
 import magic.StaticInitTest;
 import math.BalanceTest;
 import math.LikerTest;
+import physics.TempTest;
 import PriorityTest;
 import TextCoderTest;
 import time.DTimerTest;
@@ -32,6 +34,7 @@ class TestSuite extends massive.munit.TestSuite
 	{
 		super();
 
+		add(ColorTest);
 		add(events.ListenerTest);
 		add(events.SignalTest);
 		add(FunctionTest);
@@ -40,6 +43,7 @@ class TestSuite extends massive.munit.TestSuite
 		add(magic.StaticInitTest);
 		add(math.BalanceTest);
 		add(math.LikerTest);
+		add(physics.TempTest);
 		add(PriorityTest);
 		add(TextCoderTest);
 		add(time.DTimerTest);

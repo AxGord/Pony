@@ -129,7 +129,10 @@ class Timer implements ITimer<Timer> implements Declarator {
 		return this;
 	}
 	
-	public inline function dispatchUpdate():Timer return update.dispatch(currentTime);
+	public inline function dispatchUpdate():Timer {
+		update.dispatch(currentTime);
+		return this;
+	}
 	
 	public function destroy():Void {
 		stop();
@@ -145,9 +148,15 @@ class Timer implements ITimer<Timer> implements Declarator {
 	private function _progress():Void progress.dispatch(time.percent(currentTime));
 	
 	static public inline function delay (time:Time, f:Void->Void):Timer {
-		var t = new Timer(time).complite.once(f);
-		return t.complite.once(t.destroy).start();
+		var t = new Timer(time);
+		t.complite.once(f);
+		t.complite.once(t.destroy);
+		return t.start();
 	}
-	static public inline function repeat(time:Time, f:Void->Void):Timer return new Timer(time, -1).complite.add(f).start();
+	static public inline function repeat(time:Time, f:Void->Void):Timer {
+		var t = new Timer(time, -1);
+		t.complite.add(f);
+		return t.start();
+	}
 	
 }

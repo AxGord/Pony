@@ -30,6 +30,7 @@ package pony.text;
 #if macro
 import haxe.macro.Context;
 import haxe.macro.Expr;
+import haxe.Serializer;
 #end
 
 /**
@@ -61,6 +62,13 @@ class TextTools {
 	macro public static function includeFile(file:String):Expr {
 		var s:String = sys.io.File.getContent(file);
 		return macro $v{s};
+	}
+	
+	macro public static function includeJson(file:String):Expr {
+		var s:String = sys.io.File.getContent(file);
+		var d:Dynamic = haxe.Json.parse(s);
+		var z:String = Serializer.run(d);
+		return macro $v{z};
 	}
 	
 	inline public static function parsePercent(s:String):Float {

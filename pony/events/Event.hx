@@ -29,7 +29,7 @@ package pony.events;
 
 import pony.events.Listener;
 /**
- * ...
+ * Event
  * @author AxGord
  */
 class Event {
@@ -53,8 +53,8 @@ class Event {
 	
 	public inline function _setListener(l:Listener_):Void currentListener = l;
 	
-	public inline function stopPropagation():Void {
-		if (parent != null) parent.stopPropagation();
+	public inline function stopPropagation(lvl:Int = -1):Void {
+		if (parent != null && (lvl == -1 || lvl > 0 )) parent.stopPropagation(lvl-1);
 		_stopPropagation = true;
 	}
 	

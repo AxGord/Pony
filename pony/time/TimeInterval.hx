@@ -40,6 +40,7 @@ abstract TimeInterval(TimeInterval_) {
 	
 	public var min(get, never):Time;
 	public var max(get, never):Time;
+	public var mid(get, never):Time;
 	public var back(get, never):Bool;
 	public var length(get, never):Time;
 	public var minimalPoint(get, never):Time;
@@ -50,7 +51,7 @@ abstract TimeInterval(TimeInterval_) {
 	inline private function get_max():Time return this.max;
 	
 	@:from inline private static function fromInterator(it:IntIterator):TimeInterval
-		return new TimeInterval({min:it.field('min'), max:it.field('max')});
+		return create(it.field('min'), it.field('max'));
 	
 	@:to inline public function toString():String return (min:String) + ' ... ' + (max:String);
 	
@@ -72,4 +73,8 @@ abstract TimeInterval(TimeInterval_) {
 	inline public function percent(time:Time):Float return MathTools.percentCalcd(time, min, max);
 	
 	inline private function get_minimalPoint():Int return MathTools.cmin(min.minimalPoint, max.minimalPoint);
+	
+	inline private function get_mid():Time return Math.abs(max - min) / 2;
+	
+	inline public static function create(min:Time, max:Time):TimeInterval return new TimeInterval( { min:min, max:max });
 }

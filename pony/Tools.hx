@@ -43,7 +43,6 @@ using Lambda;
  * @author AxGord
  */
 class Tools {
-
 	
 	macro public static function getBuildDate() {
         var date = Date.now().toString();
@@ -210,6 +209,18 @@ class ArrayTools {
 		return false;
 	}
 	
+	public static function kv<T>(a:Array<T>):Iterator < KeyValue < Int, T >> {
+		var i:Int = 0;
+		var c:Int = a.length;
+		return {
+			hasNext: function() return i < c,
+			next: function() {
+				var p = new Pair(i, a[i]);
+				i++;
+				return p;
+			}
+		};
+	}
 	
 }
 

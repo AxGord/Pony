@@ -44,11 +44,6 @@ class StaticInitBuilder {
 	
 	macro public static function build():Array<Field> {
 		var fields:Array<Field> = Context.getBuildFields();
-		var notAll:Bool = false;
-		for (m in ['StaticInitNotAll', ':StaticInitNotAll', 'NotAll', ':NotAll']) if (Context.getLocalClass().get().meta.has(m)) {
-			notAll = true;
-			break;
-		}
 		var exprs:Array<Expr> = [];
 		for (f in fields) {
 			if (f.kind.getParameters()[1] != null) {
@@ -59,21 +54,11 @@ class StaticInitBuilder {
 		}
 		fields.push( {
 			pos: Context.currentPos(),
-			name: 'initStatic',
-			meta: [],
-			doc: null,
-			access: notAll ? [APublic, AStatic, AInline] : [APrivate, AStatic],
-			kind: FFun({ret: null, params: [], args: [], expr: {expr:EBlock(exprs), pos: Context.currentPos()}})
-		});
-		if (!notAll) fields.push( {
-			pos: Context.currentPos(),
 			name: '__init__',
 			meta: [],
 			doc: null,
-			access: [APrivate, AStatic],
-			kind: FFun( { ret: null, params: [], args: [], expr: { expr:EBlock([
-				macro pony.magic.StaticInitAll.functions.push(initStatic)
-			]), pos: Context.currentPos()}})
+			access: [APrivate, AStatic, AInline],
+			kind: FFun({ret: null, params: [], args: [], expr: {expr:EBlock(exprs), pos: Context.currentPos()}})
 		});
 		return fields;
 	}

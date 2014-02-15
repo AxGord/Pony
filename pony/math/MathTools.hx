@@ -39,6 +39,12 @@ class MathTools {
 		return s / a.length;
 	}
 	
+	public static function arraySum(a:Array<Float>):Float {
+		var s:Float = 0;
+		for (e in a) s += e;
+		return s;
+	}
+	
 	inline public static function percentCalc(p:Float, min:Float, max:Float):Float return (max - min) * p + min;
 	inline public static function percentCalcd(p:Float, a:Float, b:Float):Float return a > b ? percentCalc(p, b, a) : percentCalc(p, a, b);
 	inline public static function inRange(v:Float, min:Float, max:Float):Bool return min <= v && v <= max;

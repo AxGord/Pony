@@ -40,7 +40,7 @@ abstract Signal0<Target>(Signal) {
 	public var target(get, never):Target;
 	public var listenersCount(get, never):Int;
 	
-	inline private function new(s:Signal) this = s;
+	inline public function new(s:Signal) this = s;
 	
 	inline private function get_silent():Bool return this.silent;
 	inline private function set_silent(b:Bool):Bool return this.silent = b;
@@ -89,13 +89,9 @@ abstract Signal0<Target>(Signal) {
 		return target;
 	}
 	
-	inline public function dispatchEmpty():Void {
-		this.dispatchEmpty();
-	}
+	inline public function dispatchEmpty():Void this.dispatchEmpty();
 	
-	inline public function dispatchEmpty1(?_):Void {
-		this.dispatchEmpty();
-	}
+	inline public function dispatchEmpty1(?_):Void this.dispatchEmpty();
 	
 	public function bind(a:Dynamic, ?b:Dynamic, ?c:Dynamic, ?d:Dynamic, ?e:Dynamic, ?f:Dynamic, ?g:Dynamic):Signal {
 		return if (g != null)
@@ -123,7 +119,13 @@ abstract Signal0<Target>(Signal) {
 		return target;
 	}
 	
-	//inline public function and0(s:Signal0<Dynamic>):Signal0<Target> return this.and(s);
+	inline public function and(s:Signal):SignalTar<Target> return cast this.and(s);
+	inline public function and0(s:Signal0<Dynamic>):Signal0<Target> return and(s);
+	inline public function and1<A>(s:Signal1<Dynamic, A>):Signal1<Target, A> return and(s);
+	inline public function and2<A,B>(s:Signal2<Dynamic, A, B>):Signal2<Target, A, B> return and(s);
+	
+	inline public function or(s:Signal):Signal return this.or(s);
+	inline public function or0(s:Signal0<Dynamic>):Signal0<Dynamic> return this.or(s);
 	
 	inline public function removeAllListeners():Target {
 		this.removeAllListeners();
@@ -144,6 +146,7 @@ abstract Signal0<Target>(Signal) {
 	}
 	
 	@:from static private inline function from<A>(s:Signal):Signal0<A> return new Signal0<A>(s);
-	@:to private inline function to():Signal return this;
+	@:to public inline function toDynamic():Signal return this;
+	public inline function toTar():SignalTar<Target> return cast this;
 	
 }

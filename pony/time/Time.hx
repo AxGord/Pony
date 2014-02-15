@@ -126,6 +126,14 @@ abstract Time(Null<Int>) {
 		}
 	}
 	
+	public inline static function create(days:Int, hours:Int, minutes:Int, seconds:Int):Time {
+		return fromDays(days) + fromHours(hours) + fromMinutes(minutes) + fromSeconds(seconds);
+	}
+	
+	public inline static function createft(days:String, hours:String, minutes:String, seconds:String):Time {
+		return create(days.parseInt(), hours.parseInt(), hours.parseInt(), seconds.parseInt());
+	}
+	
 	private inline function get_ms():Int return this % 1000;
 	private inline function get_seconds():Int return totalSeconds % 60;
 	private inline function get_minutes():Int return totalMinutes % 60;
@@ -150,6 +158,13 @@ abstract Time(Null<Int>) {
 		var s = '';
 		if (this < 0) s += '-';
 		if (days != 0) s += abs(days) + ' ';
+		s += clock();
+		if (ms != 0) s += '.' + abs(ms).toFixed('000');
+		return s == '' ? '0' : s;
+	}
+	
+	public function clock():String {
+		var s = '';
 		if (hours != 0) {
 			s += abs(hours).toFixed('00') + ':' + abs(minutes).toFixed('00') + ':' + abs(seconds).toFixed('00');
 		} else {
@@ -157,8 +172,7 @@ abstract Time(Null<Int>) {
 				s += abs(minutes).toFixed('00') + ':' + abs(seconds).toFixed('00');
 			} else if (seconds != 0) s += abs(seconds);
 		}
-		if (ms != 0) s += '.' + abs(ms).toFixed('000');
-		return s == '' ? '0' : s;
+		return s;
 	}
 	
 	@:op(A + B) inline static private function add(a:Time, b:Time):Time return (a:Int) + (b:Int);

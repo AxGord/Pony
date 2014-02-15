@@ -35,6 +35,11 @@ typedef Rect<T> = { x:T, y:T, width:T, height:T }
 
 abstract IntRect(Rect<Int>) to Rect<Int> from Rect<Int> {
 	
+	public var x(get, never):Int;
+	public var y(get, never):Int;
+	public var width(get, never):Int;
+	public var height(get, never):Int;
+	
 	@:op(A + B) inline static public function add1(lhs:IntRect, rhs:Point<Int>):IntRect
 		return { x:lhs.getX() + rhs.x, y:lhs.getY() + rhs.y, width: lhs.getWidth(), height: lhs.getHeight() };
 	
@@ -52,4 +57,9 @@ abstract IntRect(Rect<Int>) to Rect<Int> from Rect<Int> {
 	
 	public inline function getWidth():Int return this.width;
 	public inline function getHeight():Int return this.height;
+	
+	private inline function get_x():Int return this.x;
+	private inline function get_y():Int return this.y;
+	private inline function get_width():Int return this.width;
+	private inline function get_height():Int return this.height;
 }

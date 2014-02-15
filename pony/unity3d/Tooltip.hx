@@ -43,6 +43,7 @@ import unityengine.Vector3;
 
 using hugs.HUGSWrapper;
 using pony.Tools;
+using pony.math.MathTools;
 
 /**
  * Tooltip

@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2013 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -28,6 +28,7 @@
 package pony.magic;
 
 #if macro
+import haxe.macro.ComplexTypeTools;
 import haxe.macro.Expr;
 import haxe.macro.Context;
 import haxe.macro.Type;
@@ -59,9 +60,34 @@ class DeclaratorBuilder
 				case [FVar(t, e), _]:
 					f.kind = FVar(t, null);
 					if (Tools.checkMeta(f.meta, [':arg', 'arg'])) {
-						args.push( { name: f.name, opt: e != null, type: t, value: e } );
 						var n = f.name;
-						toNew.push(macro this.$n = $i{f.name});
+						switch ComplexTypeTools.toString(t) {
+							case 'Int' | 'Float' if (Tools.staticPlatform):
+								args.push( { name: n, opt: false, type: t, value: macro $e } );
+								toNew.push(macro this.$n = $i{n});
+							case _:
+								args.push( { name: n, opt: e != null, type: t } );
+								if (e == null) toNew.push(macro this.$n = $i {n} );
+								else toNew.push(macro this.$n = if ($i{n} != null) $i{n} else $i{n} = $e);
+						}
+						
+					} else if (e != null) {
+						var t = Lambda.indexOf(f.access, AStatic) == -1 ? toNew : toInit;
+						t.push(macro $i { f.name } = $e);
+					}
+				case [FProp(g, s, t, e), _] if (s != 'set'):
+					f.kind = FProp(g,s, t, null);
+					if (Tools.checkMeta(f.meta, [':arg', 'arg'])) {
+						var n = f.name;
+						switch ComplexTypeTools.toString(t) {
+							case 'Int' | 'Float' if (Tools.staticPlatform):
+								args.push( { name: n, opt: false, type: t, value: macro $e } );
+								toNew.push(macro this.$n = $i{n});
+							case _:
+								args.push( { name: n, opt: e != null, type: t } );
+								if (e == null) toNew.push(macro this.$n = $i {n} );
+								else toNew.push(macro this.$n = if ($i{n} != null) $i{n} else $i{n} = $e);
+						}
 					} else if (e != null) {
 						var t = Lambda.indexOf(f.access, AStatic) == -1 ? toNew : toInit;
 						t.push(macro $i { f.name } = $e);
@@ -89,6 +115,13 @@ class DeclaratorBuilder
 		}
 		
 		if (fNew == null) {
+			var s = (Context.getLocalClass().get().superClass);
+			if (s != null) {
+				if (haveArgs(s.t.get().constructor.get().type)) {
+					toNew.push(macro super());
+				}
+			}
+			
 			fNew = Tools.createNew();
 			fields.push(fNew);
 		}
@@ -100,9 +133,19 @@ class DeclaratorBuilder
 					case EBlock(a): toNew = toNew.concat(a);
 					case _: toNew.push(k.expr);
 				}
+				
+				
+				
 				k.expr = macro $b{toNew};
 			case _: throw 'Error';
 		}
 		return fields;
 	}
+	#if macro
+	private static function haveArgs(t:Type):Bool return switch t {
+		case Type.TFun(args, _): args.length == 0;
+		case Type.TLazy(f): haveArgs(f());
+		case _: false;
+	}
+	#end
 }

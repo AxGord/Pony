@@ -389,11 +389,36 @@ class Signal {
 		}
 		return this;
 	}
-	/*
+	
 	public function and(signal:Signal):Signal {
-		var ns = new Signal(target);
-		
-	}*/
+		var ns = new Signal();
+		var lock1 = false;
+		var lock2 = false;
+		add(function(e1:Event) {
+			if (lock1) return;
+			lock2 = true;
+			signal.once(function(e2:Event) {
+				lock2 = false;
+				ns.dispatchEvent(new Event(e1.args.concat(e2.args), target, e1));
+			});
+		});
+		signal.add(function(e2:Event) {
+			if (lock2) return;
+			lock1 = true;
+			once(function(e1:Event) {
+				lock1 = false;
+				ns.dispatchEvent(new Event(e1.args.concat(e2.args), target, e1));
+			});
+		});
+		return ns;
+	}
+	
+	public function or(signal:Signal):Signal {
+		var ns = new Signal();
+		add(ns);
+		signal.add(ns);
+		return ns;
+	}
 	
 	public function removeAllListeners():Signal {
 		//for (c in lRunCopy) c.clear();

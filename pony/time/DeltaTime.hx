@@ -41,7 +41,7 @@ class DeltaTime {
 	public static var value:Float = 0;
 	#if HUGS
 	public static var fixedValue(get, never):Float;
-	private inline function get_fixedValue():Float return unityengine.Time.fixedDeltaTime;
+	private static inline function get_fixedValue():Float return unityengine.Time.fixedDeltaTime;
 	#else
 	public static var fixedValue:Float = 0;
 	#end
@@ -70,15 +70,15 @@ class DeltaTime {
 	#if (flash && !munit)
 	private static function __init__():Void {
 		createSignals();
-		update.takeListeners.add(_takeListeners);
-		update.lostListeners.add(_lostListeners);
+		fixedUpdate.takeListeners.add(_ftakeListeners);
+		fixedUpdate.lostListeners.add(_flostListeners);
 	}
-	private static function _tick(_):Void tick();
-	private static function _takeListeners():Void {
+	private static function _ftakeListeners():Void {
 		_set();
 		flash.Lib.current.addEventListener(flash.events.Event.ENTER_FRAME, _tick);
 	}
-	private static function _lostListeners():Void flash.Lib.current.removeEventListener(flash.events.Event.ENTER_FRAME, _tick);
+	private static function _flostListeners():Void flash.Lib.current.removeEventListener(flash.events.Event.ENTER_FRAME, _tick);
+	private static function _tick(_):Void tick();
 	private static inline function _set():Void set();
 	#end
 	
@@ -91,9 +91,14 @@ class DeltaTime {
 	inline private static function createSignals():Void {
 		update = Signal.createEmpty();
 		fixedUpdate = Signal.createEmpty();
-		
-		fixedUpdate.add(function(dt:DT) if (dt > 0) update.dispatch(value = dt * speed));
+		update.takeListeners.add(_takeListeners);
+		update.lostListeners.add(_lostListeners);
 	}
+	
+	private static function updateHandler(dt:DT):Void if (dt > 0) update.dispatch(value = dt * speed);
+	
+	private static function _takeListeners():Void fixedUpdate.add(updateHandler);
+	private static function _lostListeners():Void fixedUpdate.remove(updateHandler);
 	
 	#if (munit || dox)
 	/**

@@ -50,7 +50,7 @@ class DeclaratorTestHelper implements Declarator {
 
 
 class DeclaratorTestHelperSub extends DeclaratorTestHelper {
-	@arg private var v:Int;
+	@:arg private var v:Int;
 	
 	public function new(i:Int, j:Int=2) {
 		super(i, j);

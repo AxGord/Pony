@@ -26,8 +26,11 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony;
+import pony.Priority.PriorityIds;
 
 using Lambda;
+
+typedef PriorityIds = Priority<{id:Int,name:String}>;
 
 /**
  * todo: get element priority
@@ -70,6 +73,11 @@ class Priority<T:Dynamic> {
 	 * if true: [[1, 1, 3]] - normal. Default false.
 	 */
 	public var double:Bool;
+	
+	/**
+	 * Current element in loop.
+	 */
+	public var current(get, never):T;
 	
 	public var data(default,null):Array<T>;
 	
@@ -275,6 +283,13 @@ class Priority<T:Dynamic> {
 	public inline function reloop(e:T):Void while (loop() != e) null;
 	
 	/**
+	 * @return Current element in loop.
+	 */
+	private inline function get_current():T {
+		return if (counters[0] > length) data[0] else if (counters[0] < 1) data[length-1] else data[counters[0]-1];
+	}
+	
+	/**
 	 * Make infinity loop. This good method for devolopment UI.
 	 * @return Previos element in loop.
 	 */
@@ -322,5 +337,9 @@ class Priority<T:Dynamic> {
 	 */
 	public function addElementToEnd(e:T):Void addElement(e, max + 1);
 	
+	public static function createIds(a:Array<String>):PriorityIds {
+		var i:Int = 0;
+		return new Priority([for (e in a) { id:i++, name:e } ]);
+	}
 	
 }

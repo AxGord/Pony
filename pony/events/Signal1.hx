@@ -27,10 +27,6 @@
 **/
 package pony.events;
 
-#if macro
-import haxe.macro.Expr;
-#end
-
 /**
  * Signal1
  * @author AxGord <axgord@gmail.com>
@@ -92,9 +88,11 @@ abstract Signal1<Target, T1:Dynamic>(Signal) {
 		this.dispatchArgs(args);
 		return target;
 	}
-	
+	#if cs //CS fix
+	inline public function sub(a:Dynamic, priority:Int=0):Signal0<Target> return subArgs([a], priority);
+	#else
 	inline public function sub(a:T1, priority:Int=0):Signal0<Target> return subArgs([a], priority);
-	
+	#end
 	inline public function subArgs(args:Array<T1>, priority:Int=0):Signal0<Target> return this.subArgs(args, priority);
 	
 	inline public function removeSub(a:T1):Target return removeSubArgs([a]);

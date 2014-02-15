@@ -35,6 +35,9 @@ typedef Point<T> = { x:T, y:T }
 
 abstract IntPoint(Point<Int>) to Point<Int> from Point<Int> {
 	
+	public var x(get, never):Int;
+	public var y(get, never):Int;
+	
 	@:op(A + B) inline static public function add1(lhs:IntPoint, rhs:Point<Int>):IntPoint
 		return { x:lhs.getX() + rhs.x, y:lhs.getY() + rhs.y };
 		
@@ -47,6 +50,8 @@ abstract IntPoint(Point<Int>) to Point<Int> from Point<Int> {
 	@:op(A - B) inline static public function m2(lhs:IntPoint, rhs:IntPoint):IntPoint
 		return { x:lhs.getX() - rhs.getX(), y:lhs.getY() - rhs.getY() };
 		
+	private inline function get_x():Int return this.x;
+	private inline function get_y():Int return this.y;
 	public inline function getX():Int return this.x;
 	public inline function getY():Int return this.y;
 	

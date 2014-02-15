@@ -10,6 +10,7 @@ import pony.events.Signal0;
 import pony.events.Signal1.Signal1;
 import pony.events.Signal2.Signal2;
 import pony.Function;
+import pony.Tools;
 
 class SignalTest 
 {
@@ -232,6 +233,24 @@ class SignalTest
 		s.add(function(tar:SignalTest, e:Event) t = tar);
 		s.dispatch();
 		Assert.areEqual(t, this);
+	}
+	
+	@Test
+	public function and():Void {
+		var flags = [for(_ in 0...3) false];
+		var f2 = false;
+		var f3 = false;
+		var s1 = new Signal();
+		var s2 = new Signal();
+		var s3 = s1.and(s2);
+		s1.add(function() flags[0] = true);
+		s2.add(function() flags[1] = true);
+		s3.add(function() flags[2] = true);
+		Assert.isTrue(Tools.equal(flags, [false, false, false]));
+		s2.dispatch();
+		Assert.isTrue(Tools.equal(flags, [false, true, false]));
+		s1.dispatch();
+		Assert.isTrue(Tools.equal(flags, [true, true, true]));
 	}
 	
 }

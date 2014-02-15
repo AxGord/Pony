@@ -86,20 +86,19 @@ class DTimer implements ITimer<DTimer> implements Declarator {
 				if (time.back) {
 					currentTime -= t;
 					while (currentTime <= time.max) if (loop()) break;
-					else dispatchUpdate();
 				} else {
 					currentTime += t;
 					while (currentTime >= time.max) if (loop()) break;
-					else dispatchUpdate();
 				}
 			} else {
 				currentTime += t;
-				dispatchUpdate();
 			}
+			dispatchUpdate();
 		}
 	}
 	
 	private function loop():Bool {
+		if (complite == null) return true;
 		var result:Bool = false;
 		var d:DT = Math.abs((currentTime:DT) - (time.max:DT)) + sumdt;
 		if (repeatCount > 0) {
@@ -112,14 +111,17 @@ class DTimer implements ITimer<DTimer> implements Declarator {
 			stop();
 			result = true;
 		}
-		dispatchUpdate();
 		complite.dispatch(d);
 		return result;
 	}
 	
-	public inline function dispatchUpdate():DTimer return update.dispatch(currentTime);
+	public inline function dispatchUpdate():DTimer {
+		if (update != null) update.dispatch(currentTime);
+		return this;
+	}
 	
 	public function destroy():Void {
+		if (update == null) return;
 		stop();
 		progress.destroy();
 		update.destroy();
@@ -132,18 +134,49 @@ class DTimer implements ITimer<DTimer> implements Declarator {
 	
 	private function _progress():Void progress.dispatch(time.percent(currentTime));
 	
+	public inline function toString():String return currentTime;
+	
 	static public inline function createTimer     (time:TimeInterval, repeat:Int = 0):DTimer return new DTimer(DeltaTime.update, time, repeat);
 	static public inline function createFixedTimer(time:TimeInterval, repeat:Int = 0):DTimer return new DTimer(DeltaTime.fixedUpdate, time, repeat);
 	
 	static public inline function delay           (time:Time, f:Listener1<DTimer, DT>, ?dt:DT):DTimer {
-		var t = DTimer.createTimer(time).complite.once(f);
-		return t.complite.once(t.destroy).start(dt);
+		var t = DTimer.createTimer(time);
+		t.complite.once(f);
+		t.complite.once(t.destroy);
+		t.start(dt);
+		return t;
 	}
 	static public inline function fixedDelay      (time:Time, f:Listener1<DTimer, DT>, ?dt:DT):DTimer {
-		var t = DTimer.createFixedTimer(time).complite.once(f);
-		return t.complite.once(t.destroy).start(dt);
+		var t = DTimer.createFixedTimer(time);
+		t.complite.once(f);
+		t.complite.once(t.destroy);
+		t.start(dt);
+		return t;
 	}
-	static public inline function repeat          (time:Time, f:Listener1<DTimer, DT>, ?dt:DT):DTimer return DTimer.createTimer(time, -1).complite.add(f).start(dt);
-	static public inline function fixedRepeat     (time:Time, f:Listener1<DTimer, DT>, ?dt:DT):DTimer return DTimer.createFixedTimer(time, -1).complite.add(f).start(dt);
+	static public inline function repeat          (time:Time, f:Listener1 < DTimer, DT > , ?dt:DT):DTimer {
+		var t = DTimer.createTimer(time, -1);
+		t.complite.add(f);
+		t.start(dt);
+		return t;
+	}
+	static public inline function fixedRepeat     (time:Time, f:Listener1 < DTimer, DT > , ?dt:DT):DTimer {
+		var t = DTimer.createFixedTimer(time, -1);
+		t.complite.add(f);
+		t.start(dt);
+		return t;
+	}
 	
+	static public inline function clock(time:Time):DTimer {
+		var t = createTimer(null);
+		t.currentTime = time;
+		t.start();
+		return t;
+	}
+	
+	static public inline function fixedClock(time:Time):DTimer {
+		var t = createFixedTimer(null);
+		t.currentTime = time;
+		t.start();
+		return t;
+	}
 }

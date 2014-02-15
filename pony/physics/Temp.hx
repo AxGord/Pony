@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2013 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -25,45 +25,38 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.macro;
-#if (macro || dox)
-import haxe.macro.Context;
-import haxe.macro.Expr;
-/**
- * ...
- * @author AxGord
- */
-class Tools {
-	
-	public static var staticPlatform:Bool = Context.defined('cs') || Context.defined('flash') || Context.defined('java');
+package pony.physics;
 
-	public inline static function argsArray(func:Expr, args:Array<Expr>):Expr {
-		args.shift();
-		return macro $e{func} ($a{[[$a{args}]]});
+/**
+ * Temp
+ * @author AxGord <axgord@gmail.com>
+ */
+abstract Temp(Float) {
+
+	public var k(get,never):Float;
+	public var c(get,never):Float;
+	
+	inline public function new(k:Float) this = k;
+	
+	@:to inline private function get_k():Float return this;
+	inline private function get_c():Float return this - 273.15;
+	
+	@:from inline static public function fromK(k:Float):Temp return new Temp(k);
+	
+	inline static public function fromC(c:Float):Temp return new Temp(c+273.15);
+	
+	@:from static public function fromString(s:String):Temp {
+		s = StringTools.trim(s);
+		var ch = s.substr(s.length - 1).toLowerCase();
+		var v:Float = Std.parseFloat(s.substr(0, s.length - 1));
+		return switch ch {
+			case 'c': fromC(v);
+			case 'k': fromK(v);
+			case _: throw 'Unknown temp measure';
+		}
 	}
 	
-	public static function argsArrayAbstr(obj:ExprOf<Function>, name:String, args:Array < Expr > ):Expr {
-		return macro $e{macro $ { obj } .$name} ($a{[[$a{args}]]});
-	}
+	@:to inline private function toString():String return c + 'C';
 	
-	public static function getMeta(a:Metadata, n:String):MetadataEntry {
-		if (a == null) return null;
-		for (e in a) if (e.name == n) return e;
-		return null;
-	}
-	
-	public static function checkMeta(a:Metadata, an:Array<String>):Bool {
-		for (n in an) if (getMeta(a, n) != null) return true;
-		return false;
-	}
-	
-	public static function createInit():Field {
-		return {name: '__init__', access: [AStatic, APrivate], kind: FFun({args:[], ret: ComplexType.TPath({pack:[],name:'Void'}), expr: null}), pos: Context.currentPos()};
-	}
-	
-	public static function createNew():Field {
-		return {name: 'new', access: [APublic], kind: FFun({args:[], ret: ComplexType.TPath({pack:[],name:'Void'}), expr: null}), pos: Context.currentPos()};
-	}
 	
 }
-#end

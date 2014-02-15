@@ -252,9 +252,10 @@ class ButtonCore {
 	private function tickListener():Void tick.dispatch(mode);
 	
 	private function set_sw(a:Array<Int>):Array<Int> {
-		if (sw != null) throw 'sw setted';
+		if (sw != null) return sw;// throw 'sw setted';
 		for (i in 0...a.length)
 			click.sub(i).add(set_mode.bind(a[i]));
 		return sw = a;
 	}
+	
 }

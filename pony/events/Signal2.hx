@@ -27,9 +27,6 @@
 **/
 package pony.events;
 
-#if macro
-import haxe.macro.Expr;
-#end
 
 /**
  * Signal2
@@ -78,8 +75,11 @@ abstract Signal2<Target, T1:Dynamic, T2:Dynamic>(Signal) {
 		this.changePriority(listener, priority);
 		return target;
 	}
-	
+	#if cs
+	inline public function dispatch(a:Dynamic, b:Dynamic):Target return dispatchArgs([a, b]);
+	#else
 	inline public function dispatch(a:T1, b:T2):Target return dispatchArgs([a, b]);
+	#end
 	
 	inline public function dispatchEvent(event:Event):Target {
 		this.dispatchEvent(event);

@@ -27,11 +27,12 @@
 **/
 package pony.unity3d.ui;
 
+import pony.time.DeltaTime;
 import pony.time.DTimer;
-pony.time.DTimeryengine.GUIText;
+import pony.time.TimeInterval;
+import pony.time.Time;
+import unityengine.GUIText;
 import unityengine.MonoBehaviour;
-import unityengine.Time;
-
 /**
  * Clock
  * @author AxGord
@@ -39,19 +40,15 @@ import unityengine.Time;
 
 class Clock extends MonoBehaviour {
 	
-	public static var timer:DTimer;
-
-	private var beginHour:Int = 8;
+	public var timer:DTimer;
+	private var beginTime:String = '08:00:00';
 	
 	private function Start():Void {
-		timer = new DTimer(beginHour);
-		timer.start();
-		timer.updateVisual.add(showTimer);
-		showTimer(timer.toString());
+		timer = DTimer.clock(beginTime);
+		timer.update.add(showTimer);
+		timer.dispatchUpdate();
 	}
 	
-	private function showTimer(t:String):Void {
-		guiText.text = t;
-	}
+	private function showTimer(t:Time):Void guiText.text = t.clock();
 	
 }
