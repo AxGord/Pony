@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2013 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -26,7 +26,6 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony;
-import pony.Priority.PriorityIds;
 
 using Lambda;
 
@@ -34,7 +33,6 @@ typedef PriorityIds = Priority<{id:Int,name:String}>;
 
 /**
  * todo: get element priority
- * todo: есть подозрение что ломается при большом кол-ве элементов (>21) нужны тесты
  * @author AxGord
  */
 class Priority<T:Dynamic> {
@@ -42,37 +40,37 @@ class Priority<T:Dynamic> {
 	/**
 	 * Total elements count.
 	 */
-	public var length(get, null):Int;
+	public var length(get, never):Int;
 	
 	/**
 	 * Lowest priority number.
 	 */
-	public var min(get, null):Int;
+	public var min(get, never):Int;
 	
 	/**
 	 * Hightest priority number.
 	 */
-	public var max(get, null):Int;
+	public var max(get, never):Int;
 	
 	/**
 	 * First element.
 	 */
-	public var first(get, null):T;
+	public var first(get, never):T;
 	
 	/**
 	 * Last element.
 	 */
-	public var last(get, null):T;
+	public var last(get, never):T;
 	
 	/**
 	 * is empty
 	 */
-	public var empty(get, null):Bool;
+	public var empty(get, never):Bool;
 	
 	/**
 	 * if true: [[1, 1, 3]] - normal. Default false.
 	 */
-	public var double:Bool;
+	public var double:Bool = false;
 	
 	/**
 	 * Current element in loop.
@@ -84,8 +82,7 @@ class Priority<T:Dynamic> {
 	private var hash:Map<Int, Int>;
 	private var counters:Array<Int>;
 
-	public function new(?data:Array<T>) {
-		double = false;
+	inline public function new(?data:Array<T>) {
 		clear();
 		if (data != null) this.data = data;
 	}
@@ -114,7 +111,7 @@ class Priority<T:Dynamic> {
 	 * @param	a elements array for adding.
 	 * @param	priority priority, smalest first, bigest last, default 0 (0 - normal priority).
 	 */
-	public function addArray(a:Array<T>, priority:Int = 0):Priority<T> {
+	inline public function addArray(a:Array<T>, priority:Int = 0):Priority<T> {
 		for (e in a)
 			addElement(e, priority);
 		return this;
@@ -153,6 +150,12 @@ class Priority<T:Dynamic> {
 		data = new Array<T>();
 		counters = [0];
 		return this;
+	}
+	
+	public function destroy():Void {
+		hash = null;
+		data = null;
+		counters = null;
 	}
 	
 	public inline function existsElement(element:T):Bool
@@ -244,6 +247,8 @@ class Priority<T:Dynamic> {
 	
 	public inline function toString():String return data.toString();
 	
+	public inline function join(sep:String):String return data.join(sep);
+	
 	private inline function get_first():T return data[0];
 	
 	private inline function get_last():T return data[data.length - 1];
@@ -329,13 +334,13 @@ class Priority<T:Dynamic> {
 	 * Add element with lowest priority.
 	 * @param	o T or Array&lt;T&gt;.
 	 */
-	public function addElementToBegin(e:T):Void addElement(e, min - 1);
+	inline public function addElementToBegin(e:T):Void addElement(e, min - 1);
 	
 	/**
 	 * Add element with hightest priority.
 	 * @param	o T or Array&lt;T&gt;.
 	 */
-	public function addElementToEnd(e:T):Void addElement(e, max + 1);
+	inline public function addElementToEnd(e:T):Void addElement(e, max + 1);
 	
 	public static function createIds(a:Array<String>):PriorityIds {
 		var i:Int = 0;

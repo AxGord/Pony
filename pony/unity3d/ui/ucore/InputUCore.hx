@@ -132,4 +132,6 @@ class InputUCore extends TextureButton implements IFocus {
 		}
 		return v;
 	}
+	
+	public function setText(t:String):Void gt.text = text = vtext = t;
 }

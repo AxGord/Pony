@@ -25,42 +25,57 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.unity3d.ui;
-
-import pony.Color;
-import unityengine.Object;
-import unityengine.Vector3;
-import unityengine.GameObject;
-
-import pony.geom.Point;
-import pony.geom.Point.IntPoint;
-import pony.geom.Rect.IntRect;
-import pony.magic.Declarator;
-import pony.ui.FontStyle;
+package pony.fs;
+import pony.Priority;
+import sys.FileSystem;
 
 /**
- * Table
+ * File system Unit
  * @author AxGord <axgord@gmail.com>
  */
-class Table extends pony.ui.TableCore implements Declarator {
-	
-	private var gos:List<GameObject> = new List();
-	
-	@:arg private var startpos:IntPoint;
-	@:arg private var fp:Point<Float>;
-	@:arg private var z:Float;
-	@:arg private var textMargin:IntPoint;
+abstract Unit(Priority<String>) {
 
-	override private function drawBG(r:IntRect, color:Color):Void {
-		gos.push(GUI.rect(new Vector3(fp.x , fp.y, z), r+startpos, color));
+	public var isDir(get, never):Bool;
+	public var isFile(get, never):Bool;
+	public var exists(get, never):Bool;
+	public var fullPath(get, never):Unit;
+	public var dir(get, never):Dir;
+	
+	inline public function new(v:Priority<String>) {
+		for (e in v) if (e.length == 0) throw 'Wrong way detected';
+		this = v;
 	}
 	
-	override private function drawText(point:IntPoint, text:String, style:FontStyle):Void {
-		gos.push(GUI.text(new Vector3(fp.x , fp.y, z+1), point+startpos+textMargin, text, style));
+	private function get_exists():Bool {
+		for (e in this) if (FileSystem.exists(e)) return true;
+		return false;
 	}
 	
-	override private function clear():Void {
-		for (o in gos) Object.Destroy(o);
+	private function get_isDir():Bool {
+		for (e in this) if (FileSystem.exists(e) && FileSystem.isDirectory(e)) return true;
+		return false;
 	}
+	
+	private function get_isFile():Bool {
+		for (e in this) if (FileSystem.exists(e) && !FileSystem.isDirectory(e)) return true;
+		return false;
+	}
+	
+	inline private function get_fullPath():Unit return [for (e in this) FileSystem.fullPath(e)];
+	
+	inline private function get_dir():Dir return this;
+	
+	@:from inline static private function fromString(s:String):Unit return s.split(';').map(StringTools.trim);
+	@:to inline public function toString():String return this.join('; ');
+	
+	@:to inline public function split():Array<Unit> return cast this.data;
+	@:from inline static public function join(a:Array<Unit>):Unit return new Priority <String> (cast a);
+	
+	@:from inline static private function fromPriority(p:Priority<String>):Unit return new Unit(p);
+	@:to inline public function toPriority():Priority<String> return this;
+	
+	@:from inline static private function fromArray(a:Array<String>):Unit return new Priority(a);
+	@:to inline public function toArray():Array<String> return this.data;
+	
 	
 }

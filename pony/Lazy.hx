@@ -25,42 +25,25 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.unity3d.ui;
-
-import pony.Color;
-import unityengine.Object;
-import unityengine.Vector3;
-import unityengine.GameObject;
-
-import pony.geom.Point;
-import pony.geom.Point.IntPoint;
-import pony.geom.Rect.IntRect;
-import pony.magic.Declarator;
-import pony.ui.FontStyle;
+package pony;
 
 /**
- * Table
+ * Lazy
  * @author AxGord <axgord@gmail.com>
  */
-class Table extends pony.ui.TableCore implements Declarator {
+abstract Lazy<T>(Void->T) {
 	
-	private var gos:List<GameObject> = new List();
+	inline public function new(f:Void->T) this = f;
 	
-	@:arg private var startpos:IntPoint;
-	@:arg private var fp:Point<Float>;
-	@:arg private var z:Float;
-	@:arg private var textMargin:IntPoint;
-
-	override private function drawBG(r:IntRect, color:Color):Void {
-		gos.push(GUI.rect(new Vector3(fp.x , fp.y, z), r+startpos, color));
+	@:from inline static public function fromT<V>(v:V):Lazy<V> return new Lazy<V>(function():V return v);
+	
+	@:from inline static public function fromF<V>(f:Void->V):Lazy<V> return new Lazy<V>(f);
+	
+	@:to inline public function toT():T {
+		var v:T = this();
+		this = fromT(v);
+		return v;
 	}
 	
-	override private function drawText(point:IntPoint, text:String, style:FontStyle):Void {
-		gos.push(GUI.text(new Vector3(fp.x , fp.y, z+1), point+startpos+textMargin, text, style));
-	}
-	
-	override private function clear():Void {
-		for (o in gos) Object.Destroy(o);
-	}
-	
+	@:to inline public function toF():Void->T return this;
 }

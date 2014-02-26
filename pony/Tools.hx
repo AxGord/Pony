@@ -50,6 +50,15 @@ class Tools {
     }
 	
 	/**
+	 * Null Or Empty
+	 * @author Dan Korostelev <nadako@gmail.com>
+	 */
+	inline static public function nore<T:{var length(default,null):Int;}>(v:T):Bool
+		return v == null || v.length == 0;
+	
+	inline public static function or<T>(v1:T, v2:T):T return v1 == null ? v2 : v1;
+	
+	/**
 	 * Compare two value
 	 * @author	deep <system.grand@gmail.com>
 	 * @param	a

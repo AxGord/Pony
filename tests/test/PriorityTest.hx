@@ -223,10 +223,19 @@ class PriorityTest
 	@Test
 	public function addBigp():Void {
 		var p:Priority<Int> = new Priority<Int>();
-		p.addElement(4, 100500);
+		p.addElement(4, 1005001005);
 		p.addElement(6);
 		Assert.areEqual(p.first, 6);
 		Assert.areEqual(p.last, 4);
 	}
-
+	
+	
+	@Test
+	public function many():Void {
+		var p:Priority<Int> = new Priority<Int>();
+		for (i in 0...500) p.addElement(i,10000+i);
+		var i = 0;
+		for (e in p) Assert.areEqual(e, i++);
+	}
+	
 }

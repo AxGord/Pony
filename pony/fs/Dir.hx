@@ -25,42 +25,22 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.unity3d.ui;
-
-import pony.Color;
-import unityengine.Object;
-import unityengine.Vector3;
-import unityengine.GameObject;
-
-import pony.geom.Point;
-import pony.geom.Point.IntPoint;
-import pony.geom.Rect.IntRect;
-import pony.magic.Declarator;
-import pony.ui.FontStyle;
+package pony.fs;
 
 /**
- * Table
+ * Directory
  * @author AxGord <axgord@gmail.com>
  */
-class Table extends pony.ui.TableCore implements Declarator {
-	
-	private var gos:List<GameObject> = new List();
-	
-	@:arg private var startpos:IntPoint;
-	@:arg private var fp:Point<Float>;
-	@:arg private var z:Float;
-	@:arg private var textMargin:IntPoint;
+abstract Dir(Unit) {
 
-	override private function drawBG(r:IntRect, color:Color):Void {
-		gos.push(GUI.rect(new Vector3(fp.x , fp.y, z), r+startpos, color));
+	inline public function new(v:Unit) {
+		if (v.isFile) throw 'This is not directory';
+		this = v;
 	}
 	
-	override private function drawText(point:IntPoint, text:String, style:FontStyle):Void {
-		gos.push(GUI.text(new Vector3(fp.x , fp.y, z+1), point+startpos+textMargin, text, style));
-	}
+	@:from inline public static function fromUnit(u:Unit):Dir return new Dir(u);
+	@:to inline private function toUnit():Unit return this;
 	
-	override private function clear():Void {
-		for (o in gos) Object.Destroy(o);
-	}
+	@:to inline public function toString():String return this.toString();
 	
 }

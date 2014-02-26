@@ -1,6 +1,6 @@
 <h1>Pony</h1>
 HaXe open-cross-library
-Ready for Haxe3 and HUGS
+<p><small>Ready for Haxe3 and HUGS</small></p>
 <p><small>v0.1.9</small></p>
 
 <h2>Installation</h2>

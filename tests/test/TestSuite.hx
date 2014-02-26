@@ -3,6 +3,7 @@ import massive.munit.TestSuite;
 import ColorTest;
 import events.ListenerTest;
 import events.SignalTest;
+import fs.UnitTest;
 import FunctionTest;
 import LoaderTest;
 import magic.DeclaratorTest;
@@ -37,6 +38,7 @@ class TestSuite extends massive.munit.TestSuite
 		add(ColorTest);
 		add(events.ListenerTest);
 		add(events.SignalTest);
+		add(fs.UnitTest);
 		add(FunctionTest);
 		add(LoaderTest);
 		add(magic.DeclaratorTest);

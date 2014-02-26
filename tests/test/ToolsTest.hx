@@ -91,4 +91,20 @@ class ToolsTest
 		Assert.areEqual(v, target);
 	}
 	
+	@Test
+	public function nore():Void {
+		Assert.isTrue([].nore());
+		Assert.isTrue(''.nore());
+		Assert.isFalse([1].nore());
+		Assert.isFalse('1'.nore());
+	}
+	
+	@Test
+	public function or():Void {
+		var v:String = null;
+		Assert.areEqual(v.or('q'), 'q');
+		v = 'w';
+		Assert.areEqual(v.or('q'), 'w');
+	}
+	
 }
