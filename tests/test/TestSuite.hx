@@ -7,6 +7,8 @@ import fs.UnitTest;
 import FunctionTest;
 import LoaderTest;
 import magic.DeclaratorTest;
+import magic.ExtendedPropertiesTest;
+import magic.InTest;
 import magic.StaticInitTest;
 import math.BalanceTest;
 import math.LikerTest;
@@ -42,6 +44,8 @@ class TestSuite extends massive.munit.TestSuite
 		add(FunctionTest);
 		add(LoaderTest);
 		add(magic.DeclaratorTest);
+		add(magic.ExtendedPropertiesTest);
+		add(magic.InTest);
 		add(magic.StaticInitTest);
 		add(math.BalanceTest);
 		add(math.LikerTest);
