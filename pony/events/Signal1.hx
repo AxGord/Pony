@@ -107,7 +107,32 @@ abstract Signal1<Target, T1:Dynamic>(Signal) {
 		return target;
 	}
 	
+	public function bind(a:Dynamic, ?b:Dynamic, ?c:Dynamic, ?d:Dynamic, ?e:Dynamic, ?f:Dynamic, ?g:Dynamic):Signal {
+		return if (g != null)
+			bindArgs([a, b, c, d, e, f, g]);
+		else if (f != null)
+			bindArgs([a, b, c, d, e, f]);
+		else if (e != null)
+			bindArgs([a, b, c, d, e]);
+		else if (d != null)
+			bindArgs([a, b, c, d]);
+		else if (c != null)
+			bindArgs([a, b, c]);
+		else if (b != null)
+			bindArgs([a, b]);
+		else
+			bindArgs([a]);
+	}
 	
+	inline public function bindArgs(args:Array<Dynamic>, priority:Int = 0):Signal return this.bindArgs(args, priority);
+	inline public function bind1<A>(a:A, priority:Int = 0):Signal2<Target, T1, A> return bindArgs([a], priority);
+	
+	
+	inline public function and(s:Signal):SignalTar<Target> return cast this.and(s);
+	inline public function and0(s:Signal0<Dynamic>):Signal1<Target, T1> return and(s);
+	inline public function and1<A>(s:Signal1<Dynamic, A>):Signal2<Target, T1, A> return and(s);
+	
+	inline public function or(s:Signal1<Dynamic, T1>):Signal1<Dynamic, T1> return this.or(s);
 	
 	inline public function removeAllListeners():Target {
 		this.removeAllListeners();
@@ -131,4 +156,27 @@ abstract Signal1<Target, T1:Dynamic>(Signal) {
 	@:from static private inline function from<A,B>(s:Signal):Signal1<A,B> return new Signal1<A,B>(s);
 	@:to private inline function to():Signal return this;
 	
+	//Operators
+	
+	@:op(A << B) inline private function op_add(listener:Listener1<Target,T1>):Signal1<Target,T1> {
+		add(listener);
+		return this;
+	}
+	
+	@:op(A < B) inline private function op_once(listener:Listener1<Target,T1>):Signal1<Target,T1> {
+		once(listener);
+		return this;
+	}
+	
+	@:op(A >> B) inline private function op_remove(listener:Listener1<Target,T1>):Signal1<Target,T1> {
+		remove(listener);
+		return this;
+	}
+	
+	@:op(A & B) inline private function op_and0(s:Signal0<Dynamic>):Signal1<Target, T1> return and0(s);
+	@:op(A & B) inline private function op_and1<A>(s:Signal1<Dynamic, A>):Signal2<Target, T1, A> return and1(s);
+	
+	@:op(A | B) inline private function op_or(s:Signal1<Dynamic, T1>):Signal1<Dynamic, T1> return or(s);
+	
+	@:op(A + B) inline private function op_bind<A>(a:A):Signal2<Target,T1,A> return bind1(a);
 }

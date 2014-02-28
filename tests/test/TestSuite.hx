@@ -6,6 +6,7 @@ import events.SignalTest;
 import fs.UnitTest;
 import FunctionTest;
 import LoaderTest;
+import magic.BindableTest;
 import magic.DeclaratorTest;
 import magic.ExtendedPropertiesTest;
 import magic.InTest;
@@ -43,6 +44,7 @@ class TestSuite extends massive.munit.TestSuite
 		add(fs.UnitTest);
 		add(FunctionTest);
 		add(LoaderTest);
+		add(magic.BindableTest);
 		add(magic.DeclaratorTest);
 		add(magic.ExtendedPropertiesTest);
 		add(magic.InTest);

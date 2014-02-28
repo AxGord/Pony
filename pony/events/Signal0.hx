@@ -69,6 +69,7 @@ abstract Signal0<Target>(Signal) {
 		return target;
 	}
 	
+	
 	inline public function changePriority(listener:Listener0<Target>, priority:Int = 0):Target {
 		this.changePriority(listener, priority);
 		return target;
@@ -124,8 +125,7 @@ abstract Signal0<Target>(Signal) {
 	inline public function and1<A>(s:Signal1<Dynamic, A>):Signal1<Target, A> return and(s);
 	inline public function and2<A,B>(s:Signal2<Dynamic, A, B>):Signal2<Target, A, B> return and(s);
 	
-	inline public function or(s:Signal):Signal return this.or(s);
-	inline public function or0(s:Signal0<Dynamic>):Signal0<Dynamic> return this.or(s);
+	inline public function or(s:Signal0<Dynamic>):Signal0<Dynamic> return this.or(s);
 	
 	inline public function removeAllListeners():Target {
 		this.removeAllListeners();
@@ -149,4 +149,29 @@ abstract Signal0<Target>(Signal) {
 	@:to public inline function toDynamic():Signal return this;
 	public inline function toTar():SignalTar<Target> return cast this;
 	
+	//Operators
+	
+	@:op(A << B) inline private function op_add(listener:Listener0<Target>):Signal0<Target> {
+		add(listener);
+		return this;
+	}
+	
+	@:op(A < B) inline private function op_once(listener:Listener0<Target>):Signal0<Target> {
+		once(listener);
+		return this;
+	}
+	
+	@:op(A >> B) inline private function op_remove(listener:Listener0<Target>):Signal0<Target> {
+		remove(listener);
+		return this;
+	}
+	
+	@:op(A & B) inline private function op_and0(s:Signal0<Dynamic>):Signal0<Target> return and0(s);
+	@:op(A & B) inline private function op_and1<A>(s:Signal1<Dynamic, A>):Signal1<Target, A> return and1(s);
+	@:op(A & B) inline private function op_and2<A, B>(s:Signal2<Dynamic, A, B>):Signal2<Target, A, B> return and2(s);
+	
+	@:op(A | B) inline private function op_or(s:Signal0<Dynamic>):Signal0<Target> return or(s);
+	
+	@:op(A + B) inline private function op_bind1<A>(a:A):Signal1<Target,A> return bind1(a);
+
 }

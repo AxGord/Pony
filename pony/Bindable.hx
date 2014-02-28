@@ -27,23 +27,48 @@
 **/
 package pony;
 
+import pony.events.Listener1;
+import pony.events.Signal;
+import pony.Pair;
+import pony.events.Signal1;
+
 /**
- * Pair
+ * Bindable
  * @author AxGord <axgord@gmail.com>
  */
-abstract Pair<A,B>({a:A,b:B}) {
-
-	public var a(get, set):A;
-	public var b(get, set):B;
+abstract Bindable < T > (Pair < T, Signal1 < Void, T > >) {
 	
-	inline public function new(a:A, b:B) this = { a:a, b:b };
+	public var signal(get, never):Signal1 < Void, T >;
+	public var value(get, never):T;
 	
-	inline private function get_a():A return this.a;
-	inline private function get_b():B return this.b;
+	inline public function new(v:T) {
+		this = new Pair < T, Signal1 < Void, T >> (v, Signal.createEmpty());
+		this.b.add(silentSet);
+	}
 	
-	inline private function set_a(v:A):A return this.a = v;
-	inline private function set_b(v:B):B return this.b = v;
+	public function silentSet(v:T):Void this.a = v;
 	
-	@:from inline private static function fromObj<A,B>(o: { a:A, b:B } ):Pair<A,B> return cast o;
-	@:to inline public function toObj():{ a:A, b:B } return this;
+	@:op(A << B) inline private static function _set<A>(a:Bindable<A>, b:A):Bindable<A> {
+		if (a.value != b) a.signal.dispatch(b);
+		return a;
+	}
+	
+	inline public function dispatch():Void signal.dispatch(value);
+	
+	@:op(A << B) inline private static function _add<A>(a:Bindable<A>, b:Listener1<Void, A>):Bindable<A> {
+		a.signal.add(b);
+		return a;
+	}
+	
+	@:op(A << B) inline private static function _remove<A>(a:Bindable<A>, b:Listener1<Void, A>):Bindable<A> {
+		a.signal.remove(b);
+		return a;
+	}
+	
+	inline private function get_signal():Signal1 < Void, T > return this.b;
+	
+	@:to inline private function get_value():T return this.a;
+	@:to inline public function toString():String return Std.string(this.a);
+	@:to inline public function toDynamic():Dynamic return this.a;
+	
 }

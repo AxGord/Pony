@@ -253,4 +253,32 @@ class SignalTest
 		Assert.isTrue(Tools.equal(flags, [true, true, true]));
 	}
 	
+	@Test
+	public function shortSyntax():Void {
+		var s:Signal0<Void> = Signal.createEmpty();
+		var a = false;
+		var f = function() a = true;
+		s << f;
+		Assert.isFalse(a);
+		s.dispatch();
+		Assert.isTrue(a);
+		a = false;
+		s >> f;
+		s.dispatch();
+		Assert.isFalse(a);
+	}
+	
+	@Test
+	public function shortSyntaxAnd():Void {
+		var s1:Signal0<Void> = Signal.createEmpty();
+		var s2:Signal0<Void> = Signal.createEmpty();
+		var v = false;
+		(s2 & s1) << function() v = true;
+		s1.dispatch();
+		Assert.isFalse(v);
+		s2.dispatch();
+		Assert.isTrue(v);
+	}
+	
+	
 }
