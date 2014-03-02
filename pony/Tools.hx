@@ -33,13 +33,14 @@ import haxe.xml.Fast;
 #if macro
 import haxe.macro.Context;
 import haxe.macro.Expr;
+using haxe.macro.Tools;
 #end
 import pony.text.TextTools;
 
 using Reflect;
 using Lambda;
 /**
- * ...
+ * Tools
  * @author AxGord
  */
 class Tools {
@@ -51,12 +52,35 @@ class Tools {
 	
 	/**
 	 * Null Or Empty
-	 * @author Dan Korostelev <nadako@gmail.com>
+	 * @author nadako <nadako@gmail.com>
 	 */
 	inline static public function nore<T:{var length(default,null):Int;}>(v:T):Bool
 		return v == null || v.length == 0;
 	
 	inline public static function or<T>(v1:T, v2:T):T return v1 == null ? v2 : v1;
+	
+	/**
+	 * with
+	 * @author Simn <simon@haxe.org>
+	 * @link https://gist.github.com/Simn/87948652a840ff544a22
+	 */
+	macro static public function with(e1:Expr, el:Array<Expr>) {
+		var tempName = "tmp";
+		var acc = [macro var $tempName = $e1];
+		var eThis = macro $i{tempName};
+		for (e in el) {
+			var e = switch (e) {
+				case macro $i{s}($a{args}):
+					macro $eThis.$s($a{args});
+				case macro $i{s} = $e:
+					macro $eThis.$s = $e;
+				case _:
+					Context.error("Don't know what to do with " + e.toString(), e.pos);
+			}
+			acc.push(e);
+		}
+		return macro $b{acc};
+	}
 	
 	/**
 	 * Compare two value

@@ -107,4 +107,12 @@ class ToolsTest
 		Assert.areEqual(v.or('q'), 'w');
 	}
 	
+	@Test
+	public function with ():Void {
+		var o = { x:4, y: 7 };
+		o.with(x = 6, y = 8);
+		Assert.areEqual(o.x, 6);
+		Assert.areEqual(o.y, 8);
+	}
+	
 }
