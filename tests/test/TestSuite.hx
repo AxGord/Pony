@@ -9,6 +9,7 @@ import LoaderTest;
 import magic.BindableTest;
 import magic.DeclaratorTest;
 import magic.ExtendedPropertiesTest;
+import magic.HasAbstractTest;
 import magic.InTest;
 import magic.StaticInitTest;
 import math.BalanceTest;
@@ -47,6 +48,7 @@ class TestSuite extends massive.munit.TestSuite
 		add(magic.BindableTest);
 		add(magic.DeclaratorTest);
 		add(magic.ExtendedPropertiesTest);
+		add(magic.HasAbstractTest);
 		add(magic.InTest);
 		add(magic.StaticInitTest);
 		add(math.BalanceTest);

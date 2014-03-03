@@ -33,6 +33,7 @@ import pony.geom.Point.IntPoint;
 import pony.geom.Point.Point;
 import pony.geom.Rect.IntRect;
 import pony.geom.Rect.Rect;
+import pony.magic.HasAbstract;
 import pony.math.MathTools;
 import pony.Pair.Pair;
 
@@ -40,16 +41,15 @@ using pony.Tools;
 
 typedef TableContent = Array < Array<String> > ;
 
-
 /**
  * TableCore
  * @author AxGord <axgord@gmail.com>
  */
-class TableCore {
+class TableCore implements HasAbstract {
 	
 	public var data(default, set):TableContent;
 	
-	public function new() {}
+	private function new() {}
 	
 	public function set_data(d:TableContent):TableContent {
 		if (data != null) clear();
@@ -62,9 +62,9 @@ class TableCore {
 		if (a.x == b.x) drawBG({x:a.x, y:a.y, width: size, height: MathTools.cabs(b.y-a.y)}, color);
 		else drawBG({x:a.x, y:a.y, width: MathTools.cabs(b.x-a.x), height: size}, color);
 	}
-	private function drawBG(r:IntRect, color:Color):Void { }
-	private function drawText(point:IntPoint, text:String, style:FontStyle):Void { }
-	private function clear():Void { }
+	@:abstract private function drawBG(r:IntRect, color:Color):Void;
+	@:abstract private function drawText(point:IntPoint, text:String, style:FontStyle):Void;
+	@:abstract private function clear():Void;
 	
 	public dynamic function borderStyle(point:IntPoint, direct:Direction):Pair<Int,Color> return new Pair(1,new Color(0));
 	public dynamic function bgStyle(point:IntPoint):Pair<IntPoint, Color> return new Pair({x:100,y:20}, new Color(0xFFFFFF));
