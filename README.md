@@ -10,10 +10,10 @@ Haxe open-cross-library
 <pre>haxelib git pony https://github.com/AxGord/Pony</pre>
 
 <h2>Manual</h2>
-<li><a href="http://axgord.github.io/Pony/#signals">Signals</a></li>
-<li><a href="http://axgord.github.io/Pony/#deltatime">DeltaTime</a></li>
-<li><a href="http://axgord.github.io/Pony/#priority">Priority</a></li>
-<li><a href="http://axgord.github.io/Pony/#declarator">Declarator</a></li>
+- <a href="http://axgord.github.io/Pony/#signals">Signals</a>
+- <a href="http://axgord.github.io/Pony/#deltatime">DeltaTime</a>
+- <a href="http://axgord.github.io/Pony/#priority">Priority</a>
+- <a href="http://axgord.github.io/Pony/#declarator">Declarator</a>
 
 <h2>Reference book</h2>
 <p><a href="http://axgord.github.io/Pony/docs">Explore more feature</a></p>
