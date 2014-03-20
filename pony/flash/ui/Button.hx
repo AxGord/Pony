@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -33,6 +33,7 @@ import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.ui.Multitouch;
 import flash.events.TouchEvent;
+import pony.time.DeltaTime;
 
 
 import pony.events.Signal;
@@ -83,12 +84,10 @@ class Button extends MovieClip {
 		mouseEnabled = false;
 		scaleX = 1;
 		scaleY = 1;
-		
-		addEventListener(Event.ENTER_FRAME, init);
+		DeltaTime.fixedUpdate < init;
 	}
 	
-	private function init(_):Void {
-		removeEventListener(Event.ENTER_FRAME, init);
+	private function init():Void {
 		if (CPP_FL_TouchFix.useFix) {
 			zone.downSignal().add(core.mouseOver.bind(false));
 			CPP_FL_TouchFix.move.add(touchMove);

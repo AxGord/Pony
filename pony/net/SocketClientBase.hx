@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2013 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -27,9 +27,11 @@
 **/
 package pony.net;
 #if !dox
+import haxe.io.BytesInput;
+import haxe.io.BytesOutput;
 import haxe.Timer;
 #end
-import pony.events.Signal;
+import pony.events.*;
 
 /**
  * SocketClientBase
@@ -38,8 +40,8 @@ import pony.events.Signal;
 class SocketClientBase {
 
 	public var server(default,null):SocketServer;
-	public var connect(default,null):Signal;
-	public var data(default,null):Signal;
+	public var connect(default,null):Signal0<SocketClient>;
+	public var data(default,null):Signal1<SocketClient, BytesInput>;
 	public var disconnect(default,null):Signal;
 	public var id(default,null):Int;
 	public var host(default,null):String;
@@ -61,8 +63,8 @@ class SocketClientBase {
 	inline private function _init():Void {
 		closed = true;
 		id = -1;
-		connect = new Signal(this);
-		data = new Signal(this);
+		connect = Signal.create(cast this);
+		data = Signal.create(cast this);
 		disconnect = new Signal(this);
 	}
 	
@@ -83,7 +85,7 @@ class SocketClientBase {
 	inline private function endInit():Void {
 		closed = false;
 		if (server != null)
-			server.connect.dispatch(this);
+			server.connect.dispatch(cast this);
 	}
 	
 	public function init(server:SocketServer, id:Int):Void {
@@ -92,6 +94,10 @@ class SocketClientBase {
 		this.id = id;
 		data.add(server.data.dispatchEvent);
 		disconnect.add(server.disconnect.dispatchEvent);
+	}
+	
+	public function send2other(data:BytesOutput):Void {
+		server.send2other(data, cast this);
 	}
 	
 }

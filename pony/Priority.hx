@@ -84,7 +84,11 @@ class Priority<T:Dynamic> {
 
 	inline public function new(?data:Array<T>) {
 		clear();
-		if (data != null) this.data = data;
+		if (data != null) {
+			for (e in data) addElement(e);
+			//Not work?
+			//this.data = data;
+		}
 	}
 	
 	/**

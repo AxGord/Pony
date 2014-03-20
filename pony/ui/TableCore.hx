@@ -58,7 +58,7 @@ class TableCore implements HasAbstract {
 		return d;
 	}
 	
-	private function drawLine(a:IntPoint, b:IntPoint, color:Int, size:Int):Void {
+	private function drawLine(a:IntPoint, b:IntPoint, color:Color, size:Int):Void {
 		if (a.x == b.x) drawBG({x:a.x, y:a.y, width: size, height: MathTools.cabs(b.y-a.y)}, color);
 		else drawBG({x:a.x, y:a.y, width: MathTools.cabs(b.x-a.x), height: size}, color);
 	}

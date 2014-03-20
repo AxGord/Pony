@@ -27,6 +27,8 @@
 **/
 package pony.unity3d;
 
+import haxe.Log;
+import haxe.PosInfos;
 import pony.time.DeltaTime;
 import unityengine.MonoBehaviour;
 
@@ -35,5 +37,18 @@ import unityengine.MonoBehaviour;
  * @author AxGord <axgord@gmail.com>
  */
 class Helper extends MonoBehaviour {
+	/*
+	public function new() {
+		super();
+		Log.trace = log;
+	}
+	
+	private function log(v:Dynamic, ?pos:PosInfos):Void {
+		
+		var s = '<color=#FFF>$v</color> <color=#999>(at ' + pos.fileName + ':' + pos.lineNumber + ')</color>';
+		untyped __cs__("UnityEngine.Debug.Log(s)");
+	}
+	*/
 	private function Update():Void DeltaTime.fixedDispatch();
+	
 }

@@ -132,4 +132,20 @@ abstract Signal2<Target, T1:Dynamic, T2:Dynamic>(Signal) {
 	@:from static private inline function from<A,B,C>(s:Signal):Signal2<A,B,C> return new Signal2<A,B,C>(s);
 	@:to private inline function to():Signal return this;
 	
+	//Operators
+	
+	@:op(A << B) inline private function op_add(listener:Listener2<Target,T1,T2>):Signal2<Target,T1,T2> {
+		add(listener);
+		return this;
+	}
+	
+	@:op(A < B) inline private function op_once(listener:Listener2<Target,T1,T2>):Signal2<Target,T1,T2> {
+		once(listener);
+		return this;
+	}
+	
+	@:op(A >> B) inline private function op_remove(listener:Listener2<Target,T1,T2>):Signal2<Target,T1,T2> {
+		remove(listener);
+		return this;
+	}
 }

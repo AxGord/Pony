@@ -28,10 +28,7 @@
 package pony;
 
 import pony.time.DeltaTime;
-import pony.events.Listener;
-import pony.events.Listener1;
-import pony.events.Signal;
-import pony.events.Signal0;
+import pony.events.*;
 import pony.time.DT;
 import pony.ui.ButtonCore;
 
@@ -75,5 +72,7 @@ class Tumbler {
 			onDisable.add(function() b.mode = 0);
 		}
 	}
+	
+	inline public function silentSetEnabled(v:Bool):Void Reflect.setField(this, 'enabled', v);
 	
 }

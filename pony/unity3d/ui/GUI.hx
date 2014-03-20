@@ -24,7 +24,7 @@ using hugs.HUGSWrapper;
  */
 class GUI {
 	
-	static private var textures:Map<Int, Texture2D> = new Map<Int, Texture2D>();
+	static private var textures:Map<Color, Texture2D> = new Map<Color, Texture2D>();
 
 	public static function text(f:Vector3, point:IntPoint, text:String, style:FontStyle):GameObject {
 		var b = new GameObject();

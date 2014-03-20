@@ -94,9 +94,9 @@ class WardsUCore extends MonoBehaviour implements IWards
 		var dt:Single = withTimeScale ? Time.deltaTime : Time.fixedDeltaTime;
 		var p:Vector3 = toObj.position;
 		var r:Quaternion = toObj.rotation;
-		target.transform.position = Vector3_Static.MoveTowards(target.transform.position, p, speed*dt);
+		target.transform.position = Vector3.MoveTowards(target.transform.position, p, speed*dt);
 		if (withRotation)
-			target.transform.rotation = Quaternion_Static.Slerp(target.transform.rotation, r, speed*(rn+=speed*2)*dt);
+			target.transform.rotation = Quaternion.Slerp(target.transform.rotation, r, speed*(rn+=speed*2)*dt);
 		if (target.transform.position == p) {
 			//currentPos = toN;
 			toN = null;

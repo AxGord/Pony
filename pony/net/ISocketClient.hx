@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2013 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -27,7 +27,8 @@
 **/
 package pony.net;
 import haxe.io.BytesOutput;
-import pony.events.Signal;
+import haxe.io.BytesInput;
+import pony.events.*;
 
 /**
  * ISocketClient
@@ -36,8 +37,8 @@ import pony.events.Signal;
 interface ISocketClient {
 
 	var server(default,null):SocketServer;
-	var connect(default,null):Signal;
-	var data(default,null):Signal;
+	var connect(default,null):Signal0<SocketClient>;
+	var data(default,null):Signal1<SocketClient, BytesInput>;
 	var disconnect(default,null):Signal;
 	var id(default,null):Int;
 	var host(default,null):String;
@@ -48,5 +49,6 @@ interface ISocketClient {
 	function close():Void;
 	function open():Void;
 	function reconnect():Void;
+	function send2other(data:BytesOutput):Void;
 	
 }

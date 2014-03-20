@@ -27,8 +27,10 @@
 **/
 package pony;
 
+import haxe.io.Bytes;
 import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
+import haxe.io.Eof;
 import haxe.xml.Fast;
 #if macro
 import haxe.macro.Context;
@@ -231,6 +233,21 @@ class Tools {
 	
 	public static inline function exists<T>(a:Iterable<T>, e:T):Bool return a.indexOf(e) != -1;
 	
+	public static inline function bytesIterator(b:Bytes):Iterator<Byte> {
+		var i:Int = 0;
+		return {
+			hasNext: function():Bool return i < b.length,
+			next: function():Byte return b.get(i)
+		};
+	}
+	
+	public static inline function bytesInputIterator(b:BytesInput):Iterator<Byte> {
+		var i:Null<Int> = 0;
+		return {
+			hasNext: function():Bool return b.position < b.length,
+			next: function():Byte return b.readByte()
+		};
+	}
 }
 
 class ArrayTools {
@@ -255,6 +272,11 @@ class ArrayTools {
 		};
 	}
 	
+	public static inline function toBytes(a:Array<Int>):BytesOutput {
+		var b = new BytesOutput();
+		for (e in a) b.writeByte(e);
+		return b;
+	}
 }
 
 class FloatTools {

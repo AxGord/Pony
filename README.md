@@ -1,7 +1,7 @@
 <h1>Pony</h1>
-HaXe open-cross-library
-<p><small>Ready for Haxe3 and HUGS</small></p>
-<p><small>v0.1.9</small></p>
+Haxe open-cross-library
+<p><small>Ready for Haxe 3.1 and HUGS</small></p>
+<p><small>v0.2.0</small></p>
 
 <h2>Installation</h2>
 <p>Stable version</p>
@@ -10,10 +10,10 @@ HaXe open-cross-library
 <pre>haxelib git pony https://github.com/AxGord/Pony</pre>
 
 <h2>Manual</h2>
-<p><a href="http://axgord.github.io/Pony/#signals">Signals</a></p>
-<p><a href="http://axgord.github.io/Pony/#deltatime">DeltaTime</a></p>
-<p><a href="http://axgord.github.io/Pony/#priority">Priority</a></p>
-<p><a href="http://axgord.github.io/Pony/#declarator">Declarator</a></p>
+<li><a href="http://axgord.github.io/Pony/#signals">Signals</a></li>
+<li><a href="http://axgord.github.io/Pony/#deltatime">DeltaTime</a></li>
+<li><a href="http://axgord.github.io/Pony/#priority">Priority</a></li>
+<li><a href="http://axgord.github.io/Pony/#declarator">Declarator</a></li>
 
 <h2>Reference book</h2>
 <p><a href="http://axgord.github.io/Pony/docs">Explore more feature</a></p>

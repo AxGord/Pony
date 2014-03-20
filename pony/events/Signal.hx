@@ -467,6 +467,12 @@ class Signal {
 		if (lostListeners != null) lostListeners.destroy();
 	}
 	
+	inline public function debug():Void {
+		#if debug
+		add(function() trace('dispatch($id)'));
+		#end
+	}
+	
 	/**
 	 * Strict construct
 	 */

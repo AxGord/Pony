@@ -45,5 +45,7 @@ abstract Pair<A,B>({a:A,b:B}) {
 	inline private function set_b(v:B):B return this.b = v;
 	
 	@:from inline private static function fromObj<A,B>(o: { a:A, b:B } ):Pair<A,B> return cast o;
-	@:to inline public function toObj():{ a:A, b:B } return this;
+	@:to inline public function toObj(): { a:A, b:B } return this;
+	
+	@:from inline private static function array<T>(a:Array<T>):Pair<T,T> return new Pair(a[0],a[1]);
 }

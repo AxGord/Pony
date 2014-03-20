@@ -55,14 +55,25 @@ class ExtendedPropertiesBuilder {
 	#end
 	
 	macro public static function hidden():Array<Field> {
+		var fields:Array<Field> = Context.getBuildFields();
 		var fs:Array<Field> = [];
-		for (f in Context.getBuildFields()) {
+		var funs:Array<String> = [];
+		for (f in fields) if (f.kind.match(FFun(_))) funs.push(f.name);
+		for (f in fields) {
 			switch f.kind {
 				case FProp('_', s, t, e):
 					f.kind = FProp('get', s, t);
 					fs.push(f);
 					fs.push( { kind: FVar(t, e), name: hprefix + f.name, pos: f.pos, access: f.access.indexOf(AStatic) != -1 ? [AStatic] : [] } );
 					repList.push(f.name);
+					var fn = 'get_' + f.name;
+					if (funs.indexOf(fn) == -1) {
+						fs.push( { kind: FFun({
+							args: [],
+							ret: t,
+							expr: macro return $i{ hprefix + f.name }
+						}), name: fn, pos: f.pos, access: f.access.indexOf(AStatic) != -1 ? [AStatic, APrivate, AInline] : [APrivate, AInline]});
+					}
 				case _: fs.push(f);
 			}
 		}

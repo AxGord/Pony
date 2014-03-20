@@ -28,6 +28,7 @@
 package pony.ui;
 import pony.time.DeltaTime;
 import pony.events.Signal;
+import pony.time.DT;
 
 /**
  * Slide core
@@ -61,36 +62,36 @@ class SlideCore {
 	public function open(?to:Float):Void {
 		if (to != null) total = to;
 		if (opened) return;
-		if (!closed) DeltaTime.update.remove(closing);
+		if (!closed) DeltaTime.fixedUpdate.remove(closing);
 		closed = false;
-		DeltaTime.update.add(opening);
+		DeltaTime.fixedUpdate.add(opening);
 	}
 	
 	public function close():Void {
 		if (closed) return;
-		if (!opened) DeltaTime.update.remove(opening);
+		if (!opened) DeltaTime.fixedUpdate.remove(opening);
 		opened = false;
-		DeltaTime.update.add(closing);
+		DeltaTime.fixedUpdate.add(closing);
 	}
 	
-	private function opening(dt:Float):Void {
+	private function opening(dt:DT):Void {
 		current += (total * minimalMove + current) * dt * speed;
 		if (current >= total) {
 			current = total;
 			opened = true;
-			DeltaTime.update.remove(opening);
+			DeltaTime.fixedUpdate.remove(opening);
 			onOpen.dispatch();
 		}
 		update.dispatch(current, opened, closed);
 	}
 	
 	
-	private function closing(dt:Float):Void {
+	private function closing(dt:DT):Void {
 		current -= (total * minimalMove + (total - current)) * dt * speed;
 		if (current <= 0) {
 			current = 0;
 			closed = true;
-			DeltaTime.update.remove(closing);
+			DeltaTime.fixedUpdate.remove(closing);
 			onClose.dispatch();
 		}
 		update.dispatch(current, opened, closed);

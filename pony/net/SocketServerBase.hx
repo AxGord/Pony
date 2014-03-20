@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2013 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -26,7 +26,9 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.net;
-import pony.events.Signal;
+import haxe.io.BytesInput;
+import haxe.io.BytesOutput;
+import pony.events.*;
 
 /**
  * SocketServerBase
@@ -34,16 +36,16 @@ import pony.events.Signal;
  */
 class SocketServerBase {
 
-	public var data(default,null):Signal;
-	public var connect(default,null):Signal;
+	public var data(default,null):Signal1<SocketClient, BytesInput>;
+	public var connect(default,null):Signal1<SocketServer, SocketClient>;
 	public var close(default,null):Signal;
 	public var disconnect(default,null):Signal;
 	public var clients(default,null):Array<SocketClient>;
 	
 	public function new() {
-		connect = new Signal(this);
+		connect = Signal.create(cast this);
 		disconnect = new Signal();
-		data = new Signal();
+		data = Signal.create(null);
 		close = new Signal(this);
 		clients = [];
 		disconnect.add(removeClient);
@@ -56,7 +58,24 @@ class SocketServerBase {
 		return cl;
 	}
 	
-	private function removeClient(cl:SocketClient):Void {
-		clients.remove(cl);
+	inline private function removeClient(cl:SocketClient):Void clients.remove(cl);
+	
+	public function send(data:BytesOutput):Void {
+		var bs = data.getBytes();
+		for (c in clients) {
+			var b = new BytesOutput();
+			b.write(bs);
+			c.send(b);
+		}
+	}
+	
+	public function send2other(data:BytesOutput, exception:SocketClient):Void {
+		var bs = data.getBytes();
+		for (c in clients) {
+			if (c == exception) continue;
+			var b = new BytesOutput();
+			b.write(bs);
+			c.send(b);
+		}
 	}
 }

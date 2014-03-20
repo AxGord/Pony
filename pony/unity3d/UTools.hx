@@ -77,7 +77,7 @@ class UTools {
 				pvs.push('-' + v);
 			}
 		}
-		var a:NativeArray<String> = dotnet.system.Environment.GetCommandLineArgs();
+		var a:NativeArray<String> = cs.system.Environment.GetCommandLineArgs();
 		var skip:Bool = true;
 		for (i in 0...a.Length) if (skip) skip = false; else {
 			if (Lambda.indexOf(pvs, a[i]) != -1) {

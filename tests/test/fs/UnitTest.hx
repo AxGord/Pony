@@ -9,10 +9,9 @@ import pony.fs.Unit;
 class UnitTest 
 {
 	@Test
-	public function testExample():Void
+	public function test():Void
 	{
 		var v:Dir = '.';
-		trace(v.toString());
-		Assert.isTrue(false);
+		Assert.areEqual(v.toString(), '.');
 	}
 }

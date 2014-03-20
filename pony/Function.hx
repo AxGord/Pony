@@ -33,7 +33,7 @@ import pony.macro.Tools;
 using Lambda;
 
 #if cs
-import dotnet.system.reflection.FieldInfo;
+import cs.system.reflection.FieldInfo;
 import cs.system.Type;
 import cs.NativeArray;
 import cs.internal.Function;

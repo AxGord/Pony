@@ -26,57 +26,81 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.fs;
-import pony.Priority.Priority;
 import sys.FileSystem;
-using Lambda;
+
 /**
- * Directory
+ * File
  * @author AxGord <axgord@gmail.com>
  */
-abstract Dir(Unit) {
+abstract File(Unit) {
 
+	public var name(get, never):String;
+	public var exists(get, never):Bool;
 	public var first(get, never):String;
+	public var content(get, never):String;
+	public var ext(get, never):String;
+	public var fullPath(get, never):Unit;
+	public var fullDir(get, never):Unit;
 	
 	inline public function new(v:Unit) {
-		if (v.isFile) throw 'This is not directory';
+		if (v.isDir) throw 'This is not file';
 		this = v;
 	}
-		
-	public function content():Array<Unit> {
-		var result:Map<String, Unit> = new Map<String, Unit>();
-		for (d in this) {
-			if (d.exists) for (e in FileSystem.readDirectory(d.first)) {
-				if (!result.exists(e))
-					result[e] = [for (d in this.wayStringIterator()) d + '/' + e];
-			}
-		}
-		return result.array();
+	
+	public function get_content():String {
+		for (f in this) if (f.exists) return sys.io.File.getContent(f.first);
+		return null;
 	}
 	
-	inline public function delete():Void FileSystem.deleteDirectory(first);
+	inline private function get_name():String return this.name;
+	
+	inline private function get_exists():Bool return this.exists;
 	
 	inline private function get_first():String return this.first;
 	
-	public function contentRecursiveFiles():Array<File> {
-		var result:Array<File> = [];
-		for (u in content()) {
-			if (u.isDir) {
-				result = result.concat(u.dir.contentRecursiveFiles());
-			} else {
-				result.push(u.file);
-			}
-		}
-		
-		return result;
+	inline private function get_ext():String return first.split('.').pop();
+	
+	inline public function copyTo(to:File):Void {
+		to.createWays();
+		sys.io.File.copy(first, to.first);
 	}
 	
-	@:from inline public static function fromUnit(u:Unit):Dir return new Dir(u);
+	inline public function copyFrom(from:File):Void {
+		createWays();
+		sys.io.File.copy(from.first, first);
+	}
+	
+	public function createWays():Void {
+		for (e in fullDir) {
+			var a = e.first.split('/');
+			var d = a.shift();
+			for (e in a) {
+				d += '/' + e;
+				if (!FileSystem.exists(d)) FileSystem.createDirectory(d);
+			}
+		}
+	}
+	
+	inline private function get_fullPath():Unit return this.fullPath;
+	inline private function get_fullDir():Unit return [for (e in this.fullPath.wayStringIterator()) e.substr(0, e.lastIndexOf('/'))];
+	
+	public function delete():Void {
+		try {
+			for (e in this) if (e.exists) FileSystem.deleteFile(e.first);
+		} catch (_:Dynamic) {
+			throw "Can't delete file: "+name;
+		}
+	}
+	
+	@:from inline public static function fromUnit(u:Unit):File return new File(u);
 	@:to inline private function toUnit():Unit return this;
 	
 	@:to inline public function toString():String return this.toString();
 	
-	@:arrayAccess public inline function arrayAccess(key:Int):Dir return this[key];
+	@:to inline public function toArray():Array<String> return this.toArray();
 	
-	public inline function iterator():Iterator<Dir> return this.iterator();
+	@:arrayAccess public inline function arrayAccess(key:Int):File return this[key];
+	
+	public inline function iterator():Iterator<File> return this.iterator();
 	
 }

@@ -7,6 +7,7 @@ import flash.display.CapsStyle;
 import flash.display.JointStyle;
 import flash.text.TextField;
 import flash.text.TextFormat;
+import pony.Color;
 import pony.geom.Point.IntPoint;
 import pony.geom.Rect.IntRect;
 import pony.ui.FontStyle;
@@ -25,13 +26,17 @@ class Table extends TableCore {
 	public function new(area:DisplayObjectContainer) {
 		super();
 		this.area = area;
+		createShape();
+	}
+	
+	inline private function createShape():Void {
 		shape = new Shape();
 		area.addChild(shape);
 	}
 	
 	private inline function get_g():Graphics return shape.graphics;
 
-	override private function drawBG(r:IntRect, color:Int):Void {
+	override private function drawBG(r:IntRect, color:Color):Void {
 		g.lineStyle();
 		g.beginFill(color);
 		g.drawRect(r.getX(), r.getY(), r.getWidth(), r.getHeight());
@@ -47,6 +52,11 @@ class Table extends TableCore {
 		tf.x = point.x;
 		tf.y = point.y;
 		area.addChild(tf);
+	}
+	
+	override private function clear():Void {
+		area.removeChild(shape);
+		createShape();
 	}
 	
 }

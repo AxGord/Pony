@@ -40,11 +40,16 @@ abstract Unit(Priority<String>) {
 	public var exists(get, never):Bool;
 	public var fullPath(get, never):Unit;
 	public var dir(get, never):Dir;
+	public var file(get, never):File;
+	public var name(get,never):String;
+	public var first(get, never):String;
 	
 	inline public function new(v:Priority<String>) {
 		for (e in v) if (e.length == 0) throw 'Wrong way detected';
 		this = v;
 	}
+	
+	inline private function get_name():String return this.first.split('/').pop();
 	
 	private function get_exists():Bool {
 		for (e in this) if (FileSystem.exists(e)) return true;
@@ -61,9 +66,12 @@ abstract Unit(Priority<String>) {
 		return false;
 	}
 	
-	inline private function get_fullPath():Unit return [for (e in this) FileSystem.fullPath(e)];
+	inline private function get_fullPath():Unit return [for (e in this) StringTools.replace(FileSystem.fullPath(e), '\\', '/')];
 	
 	inline private function get_dir():Dir return this;
+	inline private function get_file():File return this;
+	
+	inline private function get_first():String return this.first;
 	
 	@:from inline static private function fromString(s:String):Unit return s.split(';').map(StringTools.trim);
 	@:to inline public function toString():String return this.join('; ');
@@ -77,5 +85,17 @@ abstract Unit(Priority<String>) {
 	@:from inline static private function fromArray(a:Array<String>):Unit return new Priority(a);
 	@:to inline public function toArray():Array<String> return this.data;
 	
+	inline public function wayStringIterator():Iterator<String> return this.iterator();
 	
+	inline public function addWay(way:String, priority:Int = 0):Void this.addElement(way, priority);
+	
+	public function iterator():Iterator<Unit> {
+		var it = this.iterator();
+		return {
+			hasNext: it.hasNext,
+			next: function():Unit return it.next()
+		};
+	}
+	
+	@:arrayAccess public inline function arrayAccess(key:Int):Unit return this.data[key];
 }

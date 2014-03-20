@@ -27,7 +27,7 @@
 **/
 package pony.ui;
 
-import pony.Rect;
+import pony.geom.Rect;
 import pony.geom.Point;
 
 /**

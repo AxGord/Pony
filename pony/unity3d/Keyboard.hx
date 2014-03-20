@@ -69,7 +69,7 @@ class Keyboard implements IKeyboard<Keyboard> {
 	}
 	
 	private function dispatchKey(s:Signal1<Keyboard, Key>, k:KeyCode):Void {
-		var k:Key = switch (k) {
+		var k:Key = switch k {
 			case KeyCode.A: Key.A;
 			case KeyCode.B: Key.B;
 			case KeyCode.C: Key.C;
@@ -153,7 +153,7 @@ class Keyboard implements IKeyboard<Keyboard> {
 			case KeyCode.Pause: Key.Pause;
 			case KeyCode.ScrollLock: Key.ScrollLock;
 			case KeyCode.Numlock: Key.NumLock;
-			case KeyCode.KeypadEquals: Key.Equals;
+			//case KeyCode.KeypadEquals: Key.Equals;
 			case KeyCode.Minus: Key.Minus;
 			case KeyCode.BackQuote: Key.Tilde;
 			case KeyCode.Period: Key.Dot;
@@ -168,6 +168,8 @@ class Keyboard implements IKeyboard<Keyboard> {
 			case KeyCode.RightWindows: Key.RightWin;
 			case KeyCode.Plus: Key.Plus;
 			case KeyCode.Return: Key.Enter;
+			//
+			case _: null;
 		};
 		if (k != null) s.dispatch(k);
 	}
