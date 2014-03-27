@@ -237,7 +237,7 @@ class Tools {
 		var i:Int = 0;
 		return {
 			hasNext: function():Bool return i < b.length,
-			next: function():Byte return b.get(i)
+			next: function():Byte return b.get(i++)
 		};
 	}
 	

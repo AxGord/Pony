@@ -41,6 +41,8 @@ abstract Byte(Int) from Int to Int {
 	
 	inline static public function create(a:Int, b:Int):Int return (a << 4) + b;
 	
+	inline public function chechSumWith(b:Byte):Byte return (this + (b:Int)) & 0xFF; 
+	
 	@:to inline public function toString():String return '0x' + StringTools.hex(this);
 	
 }

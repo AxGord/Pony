@@ -48,11 +48,14 @@ class DeltaTime {
 	
 	private static var t:Float;
 	
+	public static var nowDate(get,never):Date;
+	
 	#if !(flash || HUGS)
 	public static inline function init(?signal:Signal0<Dynamic>):Void {
 		set();
 		if (signal != null) signal.add(tick);
 	}
+	
 	#end
 	#if !HUGS
 	public static function tick():Void {
@@ -61,8 +64,17 @@ class DeltaTime {
 		fixedDispatch();
 	}
 	
-	private inline static function set():Void t = Date.now().getTime();
+	private static var lastNow:Date;
+	
+	inline private static function get_nowDate():Date return lastNow;
+	
+	private inline static function set():Void {
+		lastNow = Date.now();
+		t = lastNow.getTime();
+	}
 	private inline static function get():Float return (Date.now().getTime() - t) / 1000;
+	#else
+	inline private static function get_nowDate():Date return Date.now();
 	#end
 	
 	public static inline function fixedDispatch():Void fixedUpdate.dispatch(fixedValue);

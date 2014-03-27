@@ -28,11 +28,12 @@
 package pony.flash.ui;
 import flash.display.MovieClip;
 import flash.display.Sprite;
+import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.text.TextField;
 import pony.events.*;
-import pony.events.Event;
 import pony.flash.FLSt;
+import pony.flash.FLTools;
 import pony.IPercent;
 import pony.magic.ExtendedProperties;
 import pony.math.MathTools;
@@ -61,6 +62,8 @@ class Fader extends Sprite implements FLSt implements ExtendedProperties {
 	
 	public var animationSpeed:Float = 5;
 	
+	public var enabled(get, set):Bool;
+	
 	private var barSize:Float;
 	private var vald:Float;
 	private var startPos:Float;
@@ -74,7 +77,7 @@ class Fader extends Sprite implements FLSt implements ExtendedProperties {
 		change = Signal.create(this);
 		changeRT = Signal.create(this);
 		alph = new SlideCore(1,5);
-		DeltaTime.fixedUpdate < init;
+		FLTools.init < init;
 	}
 	
 	private function init():Void {
@@ -83,7 +86,9 @@ class Fader extends Sprite implements FLSt implements ExtendedProperties {
 		vald = value.y - button.y;
 		startPos = y;
 		value.mouseEnabled = false;
-		button.core.change.add(changeButton);
+		button.core.change.sub(ButtonStates.Press).add(mOn);
+		stage.addEventListener(MouseEvent.MOUSE_UP, mOff);
+		stage.addEventListener(Event.MOUSE_LEAVE, mOff);
 		change << startAnimation;
 		if (percent == null) set_percent(0);
 		alph.update.add(function(v:Float) bar.alpha = 1 - v);
@@ -91,6 +96,13 @@ class Fader extends Sprite implements FLSt implements ExtendedProperties {
 		alph.open();
 		button.addEventListener(MouseEvent.MOUSE_WHEEL, wheel);
 	}
+	
+	private function get_enabled():Bool return visible;
+	private function set_enabled(v:Bool):Bool {
+		visible = v;
+		return v;
+	}
+	
 	
 	private function wheel(event:MouseEvent):Void {
 		if (event.delta > 0) {
@@ -100,23 +112,29 @@ class Fader extends Sprite implements FLSt implements ExtendedProperties {
 		}
 	}
 	
-	private function changeButton(state:ButtonStates, _, _, event:Event):Void {
-		if (event.prev != null && state == event.prev.args[0]) return;
-		switch state {
-			case ButtonStates.Press | ButtonStates.Leave:
-				destroyTimer();
-				parent.setChildIndex(this, parent.numChildren-1);
-				button.removeEventListener(MouseEvent.MOUSE_WHEEL, wheel);
-				DeltaTime.fixedUpdate << update;
-				alph.close();
-				yBeforePress = button.y;
-			case _:
-				button.addEventListener(MouseEvent.MOUSE_WHEEL, wheel);
-				DeltaTime.fixedUpdate >> update;
-				if (percent != percentRT) change.dispatch(percent = percentRT);
-				if (yBeforePress == button.y) {
-					startHideBar();
-				}
+	private var mActive:Bool = false;
+	
+	private function mOn():Void {
+		if (mActive) return;
+		mActive = true;
+		if (!enabled) return;
+		destroyTimer();
+		parent.setChildIndex(this, parent.numChildren-1);
+		button.removeEventListener(MouseEvent.MOUSE_WHEEL, wheel);
+		DeltaTime.fixedUpdate << update;
+		alph.close();
+		yBeforePress = button.y;
+	}
+	
+	private function mOff(_):Void {
+		if (!mActive) return;
+		mActive = false;
+		if (!enabled) return;
+		button.addEventListener(MouseEvent.MOUSE_WHEEL, wheel);
+		DeltaTime.fixedUpdate >> update;
+		if (percent != percentRT) change.dispatch(percent = percentRT);
+		if (yBeforePress == button.y) {
+			startHideBar();
 		}
 	}
 	
@@ -152,6 +170,7 @@ class Fader extends Sprite implements FLSt implements ExtendedProperties {
 		button.y = pos - button.height / 2;
 		value.y = button.y + vald;
 		changeRT.dispatch(percentRT);
+		trace(v);
 		change.dispatch(percent = v);
 		return v;
 	}
@@ -161,6 +180,7 @@ class Fader extends Sprite implements FLSt implements ExtendedProperties {
 	}
 	
 	private function startAnimation():Void {
+		trace('startAnimation');
 		asy = y;
 		DeltaTime.fixedUpdate.add(y < startPos - button.y ? animationDown : animationUp);
 		startHideBar();

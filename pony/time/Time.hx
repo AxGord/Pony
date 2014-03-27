@@ -225,4 +225,6 @@ abstract Time(Null<Int>) {
 			else fromDays(1)
 			);
 	}
+	
+	@:from inline static public function fromDate(d:Date):Time return create(0, d.getHours(), d.getMinutes(), d.getSeconds());
 }

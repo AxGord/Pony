@@ -107,6 +107,11 @@ abstract Signal1<Target, T1:Dynamic>(Signal) {
 		return target;
 	}
 	
+	inline public function removeAllBind():Target {
+		this.removeAllSub();
+		return target;
+	}
+	
 	public function bind(a:Dynamic, ?b:Dynamic, ?c:Dynamic, ?d:Dynamic, ?e:Dynamic, ?f:Dynamic, ?g:Dynamic):Signal {
 		return if (g != null)
 			bindArgs([a, b, c, d, e, f, g]);
@@ -125,7 +130,7 @@ abstract Signal1<Target, T1:Dynamic>(Signal) {
 	}
 	
 	inline public function bindArgs(args:Array<Dynamic>, priority:Int = 0):Signal return this.bindArgs(args, priority);
-	inline public function bind1<A>(a:A, priority:Int = 0):Signal2<Target, T1, A> return bindArgs([a], priority);
+	inline public function bind1<A>(a:A, priority:Int = 0):Signal2<Target, A, T1> return bindArgs([a], priority);
 	
 	
 	inline public function and(s:Signal):SignalTar<Target> return cast this.and(s);
@@ -178,5 +183,5 @@ abstract Signal1<Target, T1:Dynamic>(Signal) {
 	
 	@:op(A | B) inline private function op_or(s:Signal1<Dynamic, T1>):Signal1<Dynamic, T1> return or(s);
 	
-	@:op(A + B) inline private function op_bind<A>(a:A):Signal2<Target,T1,A> return bind1(a);
+	@:op(A + B) inline private function op_bind<A>(a:A):Signal2<Target,A,T1> return bind1(a);
 }

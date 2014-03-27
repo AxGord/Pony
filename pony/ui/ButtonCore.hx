@@ -92,7 +92,7 @@ class ButtonCore {
 		waitUp = false;
 	}
 	
-	private function set_mode(v:Int):Int {
+	public function set_mode(v:Int):Int {
 		mode = v;
 		update();
 		return mode;

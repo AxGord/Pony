@@ -29,6 +29,7 @@ package pony.flash.ui;
 
 import flash.display.MovieClip;
 import flash.events.Event;
+import pony.flash.FLTools;
 import pony.time.DeltaTime;
 
 /**
@@ -46,11 +47,10 @@ class ProgressBar extends MovieClip implements Dynamic<MovieClip> {
 	
 	public function new() {
 		super();
-		addEventListener(Event.ENTER_FRAME, init);
+		FLTools.init < init;
 	}
 	
-	private function init(_):Void {
-		removeEventListener(Event.ENTER_FRAME, init);
+	private function init():Void {
 		total = this.bar.width;
 		this.bar.width = 0;
 	}

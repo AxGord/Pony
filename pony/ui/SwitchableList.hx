@@ -57,8 +57,8 @@ class SwitchableList implements IWards {
 	}
 	
 	private function setState(n:Int):Void {
-		list[state].mode = 0;
-		list[n].mode = swto;
+		if (list[state] != null) list[state].mode = 0;
+		if (list[n] != null) list[n].mode = swto;
 		state = n;
 	}
 	

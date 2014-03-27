@@ -27,11 +27,13 @@
 **/
 package pony;
 
+import pony.magic.Declarator;
 import pony.time.DeltaTime;
 import pony.events.*;
 import pony.time.DT;
+#if (!neko && !nodejs)
 import pony.ui.ButtonCore;
-
+#end
 /**
  * Tumbler
  * @author AxGord <axgord@gmail.com>
@@ -45,6 +47,10 @@ class Tumbler {
 	public function new() {
 		onEnable = Signal.create(this);
 		onDisable = Signal.create(this);
+		#if (!neko && !nodejs)
+		buttons = new Map();
+		buttonsPress = new Map();
+		#end
 	}
 	
 	public function set_enabled(v:Bool):Bool {
@@ -59,20 +65,101 @@ class Tumbler {
 		onEnable.add(DeltaTime.update.add.bind(l, priority));
 		onDisable.add(DeltaTime.update.remove.bind(l));
 	}
-	
-	public function regButton(b:ButtonCore):Void {
+	#if (!neko && !nodejs)
+	private var buttons:Map<pony.ui.ButtonCore, TumblerButtonGlue>;
+	private var buttonsPress:Map<pony.ui.ButtonCore, TumblerButtonPressGlue>;
+	public function regButton(b:pony.ui.ButtonCore):Void {
 		b.sw = [2, 1, 0];
-		if ((enabled && b.mode == 0) || (!enabled && b.mode == 2)) {
-			b.onMode.add(function(mode:Int) enabled = mode == 0);
-			onEnable.add(function() b.mode = 0);
-			onDisable.add(function() b.mode = 2);
-		} else {
-			b.onMode.add(function(mode:Int) enabled = mode == 2);
-			onEnable.add(function() b.mode = 2);
-			onDisable.add(function() b.mode = 0);
-		}
+		buttons[b] = new TumblerButtonGlue(b, this);
+	}
+	public function unregButton(b:pony.ui.ButtonCore):Bool {
+		if (buttons.exists(b)) {
+			buttons[b].destroy();
+			buttons.remove(b);
+			return true;
+		} else return false;
+	}
+	inline public function syncButton(b:pony.ui.ButtonCore):Void b.mode = enabled ? 2 : 0;
+	inline public function syncButtonInvert(b:pony.ui.ButtonCore):Void b.mode = enabled ? 0 : 2;
+	
+	public function regButtonPress(b:pony.ui.ButtonCore):Void {
+		buttonsPress[b] = new TumblerButtonPressGlue(b, this);
 	}
 	
+	public function unregButtonPress(b:pony.ui.ButtonCore):Bool {
+		if (buttonsPress.exists(b)) {
+			buttonsPress[b].destroy();
+			buttonsPress.remove(b);
+			return true;
+		} else return false;
+	}
+	
+	#end
 	inline public function silentSetEnabled(v:Bool):Void Reflect.setField(this, 'enabled', v);
 	
 }
+#if (!neko && !nodejs)
+class TumblerButtonGlue implements Declarator {
+	
+	@:arg private var b:ButtonCore;
+	@:arg private var t:Tumbler;
+	
+	public function new() {
+		if ((t.enabled && b.mode == 0) || (!t.enabled && b.mode == 2)) {
+			b.onMode.add(onMode);
+			t.onEnable.add(but0);
+			t.onDisable.add(but2);
+		} else {
+			b.onMode.add(onModeInvert);
+			t.onEnable.add(but2);
+			t.onDisable.add(but0);
+		}
+	}
+	
+	public function destroy():Void {
+		b.onMode.remove(onMode);
+		b.onMode.remove(onModeInvert);
+		t.onEnable.remove(but0);
+		t.onDisable.remove(but2);
+		t.onEnable.remove(but2);
+		t.onDisable.remove(but0);
+		b = null;
+		t = null;
+	}
+	
+	private function onMode(mode:Int):Void t.enabled = b.mode == 0;
+	private function onModeInvert(mode:Int):Void t.enabled = b.mode == 2;
+	private function but0():Void b.mode = 0;
+	private function but2():Void b.mode = 2;
+	
+	
+	
+}
+
+class TumblerButtonPressGlue implements Declarator {
+	
+	@:arg private var b:ButtonCore;
+	@:arg private var t:Tumbler;
+	
+	public function new() {
+		b.change.add(change);
+	}
+	
+	private function change(m:ButtonStates):Void {
+		switch m {
+			case ButtonStates.Press: t.enabled = true;
+			case _: t.enabled = false;
+		}
+	}
+	
+	inline public function destroy():Void {
+		trace('destroy');
+		b.change.remove(change);
+		b = null;
+		t = null;
+	}
+	
+	
+}
+
+#end

@@ -39,6 +39,7 @@ import pony.macro.Tools;
 /**
  * Use this for set args without constructor and replays set var to new or __init__ functions.
  * "@arg" or "@:arg" - for make field as argument in consructor.
+ * todo: inlines
  * @author AxGord <axgord@gmail.com>
  */
 #if !macro

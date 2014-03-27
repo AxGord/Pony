@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -40,6 +40,7 @@ import flash.display.StageScaleMode;
 import flash.display.StageAlign;
 import flash.display.DisplayObjectContainer;
 import pony.events.Signal;
+import pony.events.Signal0;
 
 #else
 import haxe.macro.Expr;
@@ -54,6 +55,13 @@ import sys.io.File;
 class FLTools 
 {
 	#if !macro
+	static public var init:Signal0<Void>;
+	
+	private static function __init__():Void {
+		init = Signal.createEmpty();
+		Lib.current.stage.addEventListener(Event.FRAME_CONSTRUCTED, function(_) init.dispatch());
+	}
+	
 	static public var os(get, null):String;
 	static public var version(get, null):Array<Int>;
 	

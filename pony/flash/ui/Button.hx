@@ -33,6 +33,7 @@ import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.ui.Multitouch;
 import flash.events.TouchEvent;
+import pony.flash.FLTools;
 import pony.time.DeltaTime;
 
 
@@ -55,6 +56,8 @@ class Button extends MovieClip {
 	
 	private var zone:Button;
 	private var visual:Button;
+	
+	private var leftOver:Bool = false;
 	
 	public function new() {
 		super();
@@ -84,23 +87,45 @@ class Button extends MovieClip {
 		mouseEnabled = false;
 		scaleX = 1;
 		scaleY = 1;
-		DeltaTime.fixedUpdate < init;
+		FLTools.init < init;
 	}
 	
 	private function init():Void {
-		if (CPP_FL_TouchFix.useFix) {
+		/*if (CPP_FL_TouchFix.useFix) {
 			zone.downSignal().add(core.mouseOver.bind(false));
 			CPP_FL_TouchFix.move.add(touchMove);
 			CPP_FL_TouchFix.down.add(touchMove);
 			zone.upSignal().add(touchUp);
 			
 		} else {
-		
+		*/
+		if (Multitouch.supportsTouchEvents) {
+			zone.addEventListener(TouchEvent.TOUCH_OVER, touchOver);
+			zone.addEventListener(TouchEvent.TOUCH_OUT, touchOut);
+			zone.addEventListener(TouchEvent.TOUCH_TAP, touchPress);
+		} else {
 			zone.addEventListener(MouseEvent.MOUSE_OVER, over);
 			zone.addEventListener(MouseEvent.MOUSE_OUT, core.mouseOut.v());
 			zone.addEventListener(MouseEvent.MOUSE_DOWN, core.mouseDown.v());
 			stage.addEventListener(MouseEvent.MOUSE_UP, core.mouseUp.v());
 		}
+	}
+	
+	private function touchOver(_):Void {
+		core.mouseOver(false);
+		core.mouseDown();
+	}
+	
+	private function touchOut(_):Void {
+		core.mouseOut();
+		core.mouseUp();
+		leftOver = false;
+	}
+	
+	private function touchPress(_):Void {
+		core.mouseUp();
+		core.mouseOut();
+		leftOver = false;
 	}
 	
 	private function over(event:MouseEvent):Void core.mouseOver(event.buttonDown);

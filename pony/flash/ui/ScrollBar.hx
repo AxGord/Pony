@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -32,6 +32,7 @@ import flash.events.Event;
 import flash.geom.Rectangle;
 import flash.events.MouseEvent;
 import pony.events.Signal;
+import pony.flash.FLTools;
 import pony.ui.ButtonCore;
 import pony.ui.SlideCore;
 
@@ -66,11 +67,10 @@ class ScrollBar extends Sprite implements pony.flash.FLSt {
 		_position = 0;
 		isVert = width < height;
 		super();
-		addEventListener(Event.ENTER_FRAME, init);
+		FLTools.init < init;
 	}
 	
-	private function init(Void):Void {
-		removeEventListener(Event.ENTER_FRAME, init);
+	private function init():Void {
 		mouseMove = stage.buildSignal(MouseEvent.MOUSE_MOVE);
 		mouseMove.silent = true;
 		mouseMove.add(scrollerMove);

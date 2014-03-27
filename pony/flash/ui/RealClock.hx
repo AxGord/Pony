@@ -25,40 +25,34 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.flash;
+package pony.flash.ui;
 
-import flash.events.KeyboardEvent;
-import flash.Lib;
-import pony.events.Signal;
-import pony.events.Signal1;
-import pony.ui.IKeyboard;
-import pony.ui.Key;
+import flash.display.Sprite;
+import flash.text.TextField;
+import pony.flash.FLSt;
+import pony.flash.FLTools;
+import pony.time.RealClock in RC;
+
 
 /**
- * Keyboard
+ * Clock
  * @author AxGord <axgord@gmail.com>
  */
-class Keyboard implements IKeyboard<Keyboard> {
+class RealClock extends Sprite implements FLSt {
 
-	public var down(default, null):Signal1<Keyboard, Key>;
-	public var up(default, null):Signal1<Keyboard, Key>;
+	@st private var time:TextField;
+	@st private var date:TextField;
 	
 	public function new() {
-		down = Signal.create(this);
-		up = Signal.create(this);	
+		super();
+		FLTools.init < init;
 	}
 	
-	public function enable():Void {
-		Lib.current.stage.addEventListener(KeyboardEvent.KEY_DOWN, kd);
-		Lib.current.stage.addEventListener(KeyboardEvent.KEY_UP, ku);
+	private function init():Void {
+		if (time != null)
+			RC.updateTime << function(s:String) time.text = s;
+		if (date != null)
+			RC.updateDate << function(s:String) date.text = s;
 	}
-	
-	public function disable():Void {
-		Lib.current.stage.removeEventListener(KeyboardEvent.KEY_DOWN, kd);
-		Lib.current.stage.removeEventListener(KeyboardEvent.KEY_UP, ku);
-	}
-	
-	private function kd(event:KeyboardEvent):Void down.dispatch(pony.ui.Keyboard.map.get(event.keyCode));
-	private function ku(event:KeyboardEvent):Void up.dispatch(pony.ui.Keyboard.map.get(event.keyCode));
 	
 }
