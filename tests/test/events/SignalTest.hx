@@ -280,5 +280,29 @@ class SignalTest
 		Assert.isTrue(v);
 	}
 	
+	@Test
+	public function arrows():Void {
+		var s1:Signal1<Void, Int> = Signal.createEmpty();
+		var s2:Signal1<Void, Int> = Signal.createEmpty();
+		var fsum = 0;
+		function f(v:Int) {
+			s2.dispatch(v * 2);
+			fsum += v * 2;
+		}
+		s2.takeListeners << function() s1 << f;
+		s2.lostListeners << function() s1 >> f;
+		var sum = 0;
+		s1.dispatch(3);
+		function l(v:Int) sum += v;
+		s2 << l;
+		s1.dispatch(1);
+		s2 >> l;
+		s1.dispatch(4);
+		s2 < l;
+		s1.dispatch(7);
+		s1.dispatch(9);
+		Assert.areEqual(fsum, sum);
+		Assert.areEqual(sum, 16);
+	}
 	
 }

@@ -41,6 +41,7 @@ import flash.display.StageAlign;
 import flash.display.DisplayObjectContainer;
 import pony.events.Signal;
 import pony.events.Signal0;
+import pony.time.DeltaTime;
 
 #else
 import haxe.macro.Expr;
@@ -59,7 +60,7 @@ class FLTools
 	
 	private static function __init__():Void {
 		init = Signal.createEmpty();
-		Lib.current.stage.addEventListener(Event.FRAME_CONSTRUCTED, function(_) init.dispatch());
+		Lib.current.stage.addEventListener(Event.ENTER_FRAME, init.dispatchEmpty1, false, -1001);
 	}
 	
 	static public var os(get, null):String;

@@ -56,17 +56,17 @@ abstract Signal2<Target, T1:Dynamic, T2:Dynamic>(Signal) {
 	inline private function get_target():Target return this.target;
 	inline private function get_listenersCount():Int return this.listenersCount;
 	
-	inline public function add(listener:Listener2<Target, T1, T2>, priority:Int = 0):Target {
+	public function add(listener:Listener2<Target, T1, T2>, priority:Int = 0):Target {
 		this.add(listener, priority);
 		return target;
 	}
 	
-	inline public function once(listener:Listener2<Target, T1, T2>, priority:Int = 0):Target {
+	public function once(listener:Listener2<Target, T1, T2>, priority:Int = 0):Target {
 		this.once(listener, priority);
 		return target;
 	}
 	
-	inline public function remove(listener:Listener2<Target, T1, T2>):Target {
+	public function remove(listener:Listener2<Target, T1, T2>):Target {
 		this.remove(listener);
 		return target;
 	}
@@ -76,12 +76,12 @@ abstract Signal2<Target, T1:Dynamic, T2:Dynamic>(Signal) {
 		return target;
 	}
 	#if cs
-	inline public function dispatch(a:Dynamic, b:Dynamic):Target return dispatchArgs([a, b]);
+	public function dispatch(a:Dynamic, b:Dynamic):Target return dispatchArgs([a, b]);
 	#else
-	inline public function dispatch(a:T1, b:T2):Target return dispatchArgs([a, b]);
+	public function dispatch(a:T1, b:T2):Target return dispatchArgs([a, b]);
 	#end
 	
-	inline public function dispatchEvent(event:Event):Target {
+	public function dispatchEvent(event:Event):Target {
 		this.dispatchEvent(event);
 		return target;
 	}

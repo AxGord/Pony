@@ -55,17 +55,17 @@ abstract Signal1<Target, T1:Dynamic>(Signal) {
 	inline private function get_target():Target return this.target;
 	inline private function get_listenersCount():Int return this.listenersCount;
 	
-	inline public function add(listener:Listener1<Target, T1>, priority:Int = 0):Target {
+	public function add(listener:Listener1<Target, T1>, priority:Int = 0):Target {
 		this.add(listener, priority);
 		return target;
 	}
 	
-	inline public function once(listener:Listener1<Target, T1>, priority:Int = 0):Target {
+	public function once(listener:Listener1<Target, T1>, priority:Int = 0):Target {
 		this.once(listener, priority);
 		return target;
 	}
 	
-	inline public function remove(listener:Listener1<Target, T1>):Target {
+	public function remove(listener:Listener1<Target, T1>):Target {
 		this.remove(listener);
 		return target;
 	}
@@ -75,11 +75,11 @@ abstract Signal1<Target, T1:Dynamic>(Signal) {
 		return target;
 	}
 	#if cs //CS fix
-	inline public function dispatch(a:Dynamic):Target return dispatchArgs([a]);
+	public function dispatch(a:Dynamic):Target return dispatchArgs([a]);
 	#else
-	inline public function dispatch(a:T1):Target return dispatchArgs([a]);
+	public function dispatch(a:T1):Target return dispatchArgs([a]);
 	#end
-	inline public function dispatchEvent(event:Event):Target {
+	public function dispatchEvent(event:Event):Target {
 		this.dispatchEvent(event);
 		return target;
 	}

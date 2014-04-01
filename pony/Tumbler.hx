@@ -61,7 +61,8 @@ class Tumbler {
 		return v;
 	}
 	
-	public function regDT(l:Listener1<Void,DT>, priority:Int = 0):Void {
+	
+	public function regDT(l:Listener1 < Void, DT > , priority:Int = 0):Void {
 		onEnable.add(DeltaTime.update.add.bind(l, priority));
 		onDisable.add(DeltaTime.update.remove.bind(l));
 	}

@@ -259,13 +259,14 @@ class ArrayTools {
 		return false;
 	}
 	
-	public static function kv<T>(a:Array<T>):Iterator < KeyValue < Int, T >> {
+	public static function kv<T>(a:Iterable<T>):Iterator < KeyValue < Int, T >> {
 		var i:Int = 0;
-		var c:Int = a.length;
+		//var c:Int = a.length;
+		var it = a.iterator();
 		return {
-			hasNext: function() return i < c,
+			hasNext: it.hasNext,
 			next: function() {
-				var p = new Pair(i, a[i]);
+				var p = new Pair(i, it.next());
 				i++;
 				return p;
 			}

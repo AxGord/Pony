@@ -41,7 +41,7 @@ class DeltaTime {
 	public static var value:Float = 0;
 	#if HUGS
 	public static var fixedValue(get, never):Float;
-	private static inline function get_fixedValue():Float return unityengine.Time.fixedDeltaTime;
+	private static inline function get_fixedValue():Float return unityengine.Time.deltaTime;
 	#else
 	public static var fixedValue:Float = 0;
 	#end
@@ -87,7 +87,7 @@ class DeltaTime {
 	}
 	private static function _ftakeListeners():Void {
 		_set();
-		flash.Lib.current.addEventListener(flash.events.Event.ENTER_FRAME, _tick);
+		flash.Lib.current.addEventListener(flash.events.Event.ENTER_FRAME, _tick, false, -1000);
 	}
 	private static function _flostListeners():Void flash.Lib.current.removeEventListener(flash.events.Event.ENTER_FRAME, _tick);
 	private static function _tick(_):Void tick();
