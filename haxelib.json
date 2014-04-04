@@ -4,8 +4,8 @@
   "license": "BSD",
   "tags": ["cross", "unity3d", "unity", "flash", "nodejs", "cs"],
   "description": "Haxe open-cross-library",
-  "version": "0.2.0",
-  "releasenote": "Haxe 3.1 ready",
+  "version": "0.2.1",
+  "releasenote": "Haxe 3.1.2 ready",
   "contributors": ["AxGord"],
   "dependencies": {
   }

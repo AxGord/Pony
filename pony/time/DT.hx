@@ -160,8 +160,8 @@ abstract DT(Null<Float>) {
 	@:op(A * B) inline static private function multiplyInt1(a:DT, b:Int):DT return (a:Float) * b;
 	@:op(A * B) inline static private function multiplyInt2(a:Int, b:DT):DT return a * (b:Float);
 	
-	@:op(A * B) inline static private function divide(a:DT, b:Float):DT return ((a:Float) / b).int();
-	@:op(A * B) inline static private function divideInt(a:DT, b:Int):DT return ((a:Float) / b).int();
+	@:op(A / B) inline static private function divide(a:DT, b:Float):DT return ((a:Float) / b).int();
+	@:op(A / B) inline static private function divideInt(a:DT, b:Int):DT return ((a:Float) / b).int();
 	
 	@:op(A > B) inline static private function sb(a:DT, b:DT):Bool return (a:Float) > (b:Float);
 	@:op(A > B) inline static private function sbInt(a:DT, b:Int):Bool return (a:Float) > b;
