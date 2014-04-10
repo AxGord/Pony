@@ -25,13 +25,13 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony;
-
+package pony.color;
 /**
- * Color
+ * UColor
+ * Can be only positive
  * @author AxGord <axgord@gmail.com>
  */
-abstract Color(UInt) {
+abstract UColor(UInt) {
 
 	public var argb(get,never):UInt;
 	public var rgb(get,never):UInt;
@@ -39,44 +39,97 @@ abstract Color(UInt) {
 	public var a(get,never):UInt;
 	public var r(get,never):UInt;
 	public var g(get,never):UInt;
-	public var b(get,never):UInt;
+	public var b(get, never):UInt;
+	
+	public var power(get, never):UInt;
 	
 	public var af(get,never):Float;
 	public var rf(get,never):Float;
 	public var gf(get,never):Float;
 	public var bf(get,never):Float;
 	
+	public var invertAlpha(get, never):UColor;
+	public var invert(get, never):UColor;
+	
 	inline public function new(v:UInt) this = v;
 	
-	inline public static function fromRGB(r:Int, g:Int, b:Int):Color return (r << 16) + (g << 8) + b;
-	inline public static function fromARGB(a:Int, r:Int, g:Int, b:Int):Color return (a << 24) + (r << 16) + (g << 8) + b;
+	inline public static function fromRGB(r:UInt, g:UInt, b:UInt):UColor return (r << 16) + (g << 8) + b;
+	inline public static function fromARGB(a:UInt, r:UInt, g:UInt, b:UInt):UColor return (a << 24) + (r << 16) + (g << 8) + b;
 	
-	@:from inline static private function fromUInt(v:UInt):Color return new Color(v);
+	public static function fromRGBSave(r:Int, g:Int, b:Int):UColor {
+		r = lim(r);
+		g = lim(g);
+		b = lim(b);
+		return fromRGB(r, g, b);
+	}
+	
+	public static function fromARGBSave(a:Int, r:Int, g:Int, b:Int):UColor {
+		a = lim(a);
+		r = lim(r);
+		g = lim(g);
+		b = lim(b);
+		return fromARGB(a, r, g, b);
+	}
+	
+	inline static private function lim(v:Int):UInt {
+		if (v > 0xFF) v = 0xFF;
+		if (v < 0x00) v = 0x00;
+		return v;
+	}
+	
+	inline private function _invert(v:UInt):UInt return 0xFF - v;
+	
+	inline private function get_invertAlpha():UColor return fromARGB(_invert(a), r, g, b);
+	inline private function get_invert():UColor return fromARGB(a, _invert(r), _invert(g), _invert(b));
+	
+	@:from inline static private function fromUInt(v:UInt):UColor return new UColor(v);
 	
 	@:to inline private function get_argb():UInt return this;
 	inline private function get_rgb():UInt return this & 0xFFFFFF;
+	
+	inline private function get_power():UInt return r + g + b;
 	
 	inline private function get_a():UInt return (this >> 24) & 255;
 	inline private function get_r():UInt return (this >> 16) & 255;
 	inline private function get_g():UInt return (this >> 8) & 255;
 	inline private function get_b():UInt return this & 255;
-	#if cs
+	/*#if cs
 	private function get_af():Float return a / 255;
 	private function get_rf():Float return r / 255;
 	private function get_gf():Float return g / 255;
 	private function get_bf():Float return b / 255;
-	#else
+	#else*/
 	inline private function get_af():Float return a / 255;
 	inline private function get_rf():Float return r / 255;
 	inline private function get_gf():Float return g / 255;
 	inline private function get_bf():Float return b / 255;
+	//#end
+	
+	//Haxe fail!
+	/*
+	@:op(A + B) inline static private function addToString(a:String, b:UColor):UColor return a+b.toString();
+	@:op(A + B) inline static private function addToString2(a:UColor, b:String):UColor return a.toString()+b;
+	*/
+	@:op(A - B) inline static private function sub(a:UColor, b:UColor):Color return Color.sub(a, b);
+	@:op(A + B) inline static private function add(a:UColor, b:UColor):UColor return fromARGBSave(a.a + b.a, a.r + b.r, a.g + b.g, a.b + b.b);
+	
+	#if HUGS
+	@:to inline public function toUnity():unityengine.Color {
+		return new unityengine.Color(rf, gf, bf, 1-af);
+	}
 	#end
+	
+	@:op(A > B) private static inline function gt(a:UColor, b:UColor):Bool return a.power > b.power;
+	@:op(A >= B) private static inline function gte(a:UColor, b:UColor):Bool return a.power >= b.power;
+	@:op(A < B) private static inline function lt(a:UColor, b:UColor):Bool return a.power < b.power;
+	@:op(A <= B) private static inline function lte(a:UColor, b:UColor):Bool return a.power <= b.power;
+
 	
 	@:to inline public function toString():String return '#' + StringTools.hex(this);
 	
-	@:from public static function fromString(s:String):Color {
+	@:from public static function fromString(s:String):UColor {
 		s = StringTools.trim(s);
-		return new Color(
+		return new UColor(
 			if (s.substr(0, 1) == '#') Std.parseInt('0x' + s.substr(1))
 			else if (s.substr(0, 3) == 'rgb') {
 				s = StringTools.ltrim(s.substr(3));
@@ -102,11 +155,5 @@ abstract Color(UInt) {
 			}
 		);
 	}
-	
-	#if HUGS
-	@:to inline public function toUnity():unityengine.Color {
-		return new unityengine.Color(rf, gf, bf, 1-af);
-	}
-	#end
 	
 }

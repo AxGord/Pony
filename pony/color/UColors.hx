@@ -25,57 +25,38 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.flash;
-import flash.display.DisplayObject;
-import flash.display.DisplayObjectContainer;
-import flash.display.InteractiveObject;
-import flash.events.Event;
-import flash.events.EventDispatcher;
-import flash.geom.Rectangle;
-import pony.events.Signal;
-import pony.geom.Rect;
-
+package pony.color;
+import flash.Vector.Vector;
+using pony.math.MathTools;
+using Std;
 /**
- * Flash extends
- * @author AxGord
+ * Colors
+ * @author AxGord <axgord@gmail.com>
  */
+@:forward(push, pop, iterator)
+abstract UColors(Array<UColor>) from Array<UColor> to Array<UColor> {
 
-typedef Sigid = {d:EventDispatcher, n:String};
- 
-class FLExtends {
+	public var mid(get, never):UColor;
+	public var midInvertAlpha(get, never):UColor;
 	
-	private static var signals:Map<Sigid, Signal> = new Map<Sigid, Signal>();
+	inline private function get_mid():UColor return _mid(0);
+	inline private function get_midInvertAlpha():UColor return _mid(0xFF);
 	
-	public static function buildSignal(d:EventDispatcher, name:String):Signal {
-		var sid:Sigid = { d:d, n:name };
-		var s:Signal;
-		if (!signals.exists(sid)) signals.set(sid, s = new Signal());
-		else s = signals.get(sid);
-		d.addEventListener(name, function(event:Event) s.dispatchArgs([event]));
-		return s;
+	private function _mid(alp:UInt):UColor {
+		var r:Array<UInt> = [];
+		var g:Array<UInt> = [];
+		var b:Array<UInt> = [];
+		for (e in this) if (e.a == alp) {
+			r.push(e.r);
+			g.push(e.g);
+			b.push(e.b);
+		}
+		return Color.fromRGB(r.arithmeticMean().int(), g.arithmeticMean().int(), b.arithmeticMean().int());
 	}
 	
-	public inline static function v(f:Void->Void):Dynamic return function(Void) f();
-	
-	public static function childrens(d:DisplayObjectContainer):Iterator<DisplayObject> {
-		var it:IntIterator = 0...d.numChildren;
-		return {
-			hasNext: it.hasNext,
-			next: function():DisplayObject return d.getChildAt(it.next())
-		};
-	}
-	
-	public static function rect(r:Rectangle):Rect<Float> return { x: r.x, y: r.y, width: r.width, height: r.height };
-	
-	static public function border(rect:Rectangle, x:Float, ?y:Float):Rectangle {
-		var r = rect.clone();
-		if (y == null) y = x;
-		r.x += x;
-		r.y += y;
-		r.width -= x * 2;
-		r.height -= y * 2;
-		return r;
-	}
-	
-	
+	@:from inline public static function fromIterable(it:Iterable<UColor>):UColors return Lambda.array(it);
+	@:from inline public static function fromIterableUInt(it:Iterable<UInt>):UColors return Lambda.array(it);
+	#if flash
+	@:from inline public static function fromVector(a:flash.Vector<UInt>):UColors return [for(i in 0...a.length) a[i]];
+	#end
 }

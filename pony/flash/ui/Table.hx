@@ -7,7 +7,7 @@ import flash.display.CapsStyle;
 import flash.display.JointStyle;
 import flash.text.TextField;
 import flash.text.TextFormat;
-import pony.Color;
+import pony.color.Color;
 import pony.geom.Point.IntPoint;
 import pony.geom.Rect.IntRect;
 import pony.ui.FontStyle;

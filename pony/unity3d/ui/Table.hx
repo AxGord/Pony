@@ -27,7 +27,7 @@
 **/
 package pony.unity3d.ui;
 
-import pony.Color;
+import pony.color.Color;
 import unityengine.Object;
 import unityengine.Vector3;
 import unityengine.GameObject;

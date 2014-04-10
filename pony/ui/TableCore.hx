@@ -27,7 +27,7 @@
 **/
 package pony.ui;
 
-import pony.Color;
+import pony.color.Color;
 import pony.geom.Direction;
 import pony.geom.Point.IntPoint;
 import pony.geom.Point.Point;

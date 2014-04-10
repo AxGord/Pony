@@ -33,13 +33,17 @@ package pony.math;
  */
 class MathTools {
 
-	public static function arithmeticMean(a:Array<Float>):Float {
+	public static function arithmeticMean(a:Iterable<Float>):Float {
 		var s:Float = 0;
-		for (e in a) s += e;
-		return s / a.length;
+		var count = 0;
+		for (e in a) {
+			count++;
+			s += e;
+		}
+		return s / count;
 	}
 	
-	public static function arraySum(a:Array<Float>):Float {
+	public static function arraySum(a:Iterable<Float>):Float {
 		var s:Float = 0;
 		for (e in a) s += e;
 		return s;

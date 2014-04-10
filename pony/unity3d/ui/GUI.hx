@@ -1,6 +1,6 @@
 package pony.unity3d.ui;
 
-import pony.Color;
+import pony.color.Color;
 import pony.geom.Rect.IntRect;
 import unityengine.Vector3;
 import unityengine.Vector2;
