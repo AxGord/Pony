@@ -84,7 +84,7 @@ abstract Color({a:Int, r:Int, g:Int, b:Int}) {
 	
 	@:from inline static private function fromUInt(v:UInt):Color return fromUColor(new UColor(v));
 	
-	@:from inline static private function fromUColor(v:UColor):Color return new Color(v.a, v.r, v.g, v.b);
+	@:from inline static private function fromUColor(v:UColor):Color return new Color(Std.int(v.a), Std.int(v.r), Std.int(v.g), Std.int(v.b));
 	@:to inline public function toUColor():UColor return UColor.fromARGBSave(a, r, g, b);
 	
 	@:to inline private function get_argb():UInt return toUColor();

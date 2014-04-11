@@ -27,7 +27,7 @@
 **/
 package pony.ui;
 
-import pony.color.Color;
+import pony.color.UColor;
 import pony.geom.Direction;
 import pony.geom.Point.IntPoint;
 import pony.geom.Point.Point;
@@ -58,16 +58,16 @@ class TableCore implements HasAbstract {
 		return d;
 	}
 	
-	private function drawLine(a:IntPoint, b:IntPoint, color:Color, size:Int):Void {
+	private function drawLine(a:IntPoint, b:IntPoint, color:UColor, size:Int):Void {
 		if (a.x == b.x) drawBG({x:a.x, y:a.y, width: size, height: MathTools.cabs(b.y-a.y)}, color);
 		else drawBG({x:a.x, y:a.y, width: MathTools.cabs(b.x-a.x), height: size}, color);
 	}
-	@:abstract private function drawBG(r:IntRect, color:Color):Void;
+	@:abstract private function drawBG(r:IntRect, color:UColor):Void;
 	@:abstract private function drawText(point:IntPoint, text:String, style:FontStyle):Void;
 	@:abstract private function clear():Void;
 	
-	public dynamic function borderStyle(point:IntPoint, direct:Direction):Pair<Int,Color> return new Pair(1,new Color(0));
-	public dynamic function bgStyle(point:IntPoint):Pair<IntPoint, Color> return new Pair({x:100,y:20}, new Color(0xFFFFFF));
+	public dynamic function borderStyle(point:IntPoint, direct:Direction):Pair<Int,UColor> return new Pair(1,new UColor(0));
+	public dynamic function bgStyle(point:IntPoint):Pair<IntPoint, UColor> return new Pair({x:100,y:20}, new UColor(0xFFFFFF));
 	public dynamic function fontStyle(point:IntPoint):FontStyle
 		return {font:'Arial', size: 14, color: 0, bold: false, italic:false, underline: false};
 	

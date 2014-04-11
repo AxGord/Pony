@@ -111,7 +111,7 @@ abstract UColor(UInt) {
 	@:op(A + B) inline static private function addToString2(a:UColor, b:String):UColor return a.toString()+b;
 	*/
 	@:op(A - B) inline static private function sub(a:UColor, b:UColor):Color return Color.sub(a, b);
-	@:op(A + B) inline static private function add(a:UColor, b:UColor):UColor return fromARGBSave(a.a + b.a, a.r + b.r, a.g + b.g, a.b + b.b);
+	@:op(A + B) inline static private function add(a:UColor, b:UColor):UColor return fromARGB(a.a + b.a, a.r + b.r, a.g + b.g, a.b + b.b);
 	
 	#if HUGS
 	@:to inline public function toUnity():unityengine.Color {
