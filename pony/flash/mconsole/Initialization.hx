@@ -16,7 +16,9 @@ class Initialization {
 	
 	public static function init():Void {
 		Console.start();
+		try {
 		Console.defaultPrinter.remove();
+		} catch (_:Dynamic) { }
 		Console.addPrinter(new FL_IDE_View());
 		mprnt = new ConsoleView();
 		Console.addPrinter(mprnt);

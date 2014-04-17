@@ -169,27 +169,30 @@ class Signal {
 				lRunCopy.remove(c);
 				#if (debug && cs)
 				
-				trace(msg);
-				l.call(event);
-				#if debug
-				throw 'Listener error (signal: $id)';
-				#else
-				throw 'Listener error';
-				#end
-				
+					trace(msg);
+					l.call(event);
+					#if debug
+					throw 'Listener error (signal: $id)';
+					#else
+					throw 'Listener error';
+					#end
+					
 				#elseif ((debug || munit) && (php || neko || cpp))
 				
-				Sys.println('');
-				Sys.print(msg);
-				Sys.println(CallStack.toString(CallStack.exceptionStack()));
-				#if debug
-				throw 'Listener error (signal: $id)';
-				#else
-				throw 'Listener error';
-				#end
+					Sys.println('');
+					Sys.print(msg);
+					Sys.println(CallStack.toString(CallStack.exceptionStack()));
+					#if debug
+					throw 'Listener error (signal: $id)';
+					#else
+					throw 'Listener error';
+					#end
 				
+				#elseif (debug && flash)
+					flash.Lib.trace(msg);
+					flash.Lib.trace(CallStack.toString(CallStack.exceptionStack()));
 				#else
-				throw msg;
+					throw msg;
 				#end
 			} catch (e:Dynamic) {
 				remove(l);
