@@ -28,15 +28,16 @@
 package pony.net.cs;
 #if cs
 import cs.NativeArray;
-import dotnet.system.Byte;
-import dotnet.system.IAsyncResult;
-import dotnet.system.net.sockets.AddressFamily;
-import dotnet.system.net.sockets.ProtocolType;
-import dotnet.system.net.sockets.SelectMode;
-import dotnet.system.net.sockets.Socket;
-import dotnet.system.net.sockets.SocketFlags;
-import dotnet.system.net.sockets.SocketShutdown;
-import dotnet.system.net.sockets.SocketType;
+import cs.system.Byte;
+import cs.system.IAsyncResult;
+import cs.system.net.sockets.AddressFamily;
+import cs.system.net.sockets.ProtocolType;
+import cs.system.net.sockets.SelectMode;
+import cs.system.net.sockets.Socket;
+import cs.system.net.sockets.SocketFlags;
+import cs.system.net.sockets.SocketShutdown;
+import cs.system.net.sockets.SocketType;
+import cs.types.UInt8;
 import haxe.io.Bytes;
 import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
@@ -51,7 +52,7 @@ using pony.Tools;
 class SocketClient extends SocketClientBase {
 
 	private var socket:Socket;
-	private var buffer:NativeArray<Byte>;
+	private var buffer:NativeArray<UInt8>;
 	private var sendProccess:Bool;
 	private var closeAfterSend:Bool;
 	
@@ -74,7 +75,7 @@ class SocketClient extends SocketClientBase {
 	public function initCS(s:Socket):Void {
 		sendProccess = false;
 		closeAfterSend = false;
-		buffer = new NativeArray<Byte>(1024);
+		buffer = new NativeArray<UInt8>(1024);
 		socket = s;
 		endInit();
 		waitData();

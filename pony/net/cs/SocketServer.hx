@@ -27,13 +27,13 @@
 **/
 package pony.net.cs;
 #if cs
-import dotnet.system.IAsyncResult;
-import dotnet.system.net.sockets.AddressFamily;
-import dotnet.system.net.sockets.ProtocolType;
-import dotnet.system.net.sockets.SocketType;
-import dotnet.system.net.IPEndPoint;
-import dotnet.system.net.IPAddress;
-import dotnet.system.net.sockets.Socket;
+import cs.system.IAsyncResult;
+import cs.system.net.sockets.AddressFamily;
+import cs.system.net.sockets.ProtocolType;
+import cs.system.net.sockets.SocketType;
+import cs.system.net.IPEndPoint;
+import cs.system.net.IPAddress;
+import cs.system.net.sockets.Socket;
 import pony.net.SocketServerBase;
 
 /**
