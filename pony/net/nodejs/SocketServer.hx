@@ -53,5 +53,8 @@ class SocketServer extends SocketServerBase {
 		addClient().nodejsInit(c);
 	}
 	
+	public function close():Void
+	{
+	}
 }
 #end

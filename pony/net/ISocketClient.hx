@@ -34,7 +34,7 @@ import pony.events.*;
  * ISocketClient
  * @author AxGord <axgord@gmail.com>
  */
-interface ISocketClient {
+interface ISocketClient extends INet{
 
 	var server(default,null):SocketServer;
 	var connect(default,null):Signal0<SocketClient>;

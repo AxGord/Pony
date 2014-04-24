@@ -34,13 +34,14 @@ import pony.events.*;
  * ISocketServer
  * @author AxGord <axgord@gmail.com>
  */
-interface ISocketServer {
+interface ISocketServer extends INet{
 	
 	var data(default,null):Signal1<SocketClient, BytesInput>;
 	var connect(default,null):Signal1<SocketServer, SocketClient>;
-	var close(default,null):Signal;
+	var closed(default,null):Signal;
 	var disconnect(default,null):Signal;
 	var clients(default,null):Array<SocketClient>;
 	
 	function send(data:BytesOutput):Void;
+	function close():Void;
 }

@@ -64,5 +64,11 @@ class SocketServer extends SocketServerBase {
 		waitAccept();
 	}
 
+	override public function close():Void 
+	{
+		listener.Close();
+		listener = null;
+		super.close();
+	}
 }
 #end

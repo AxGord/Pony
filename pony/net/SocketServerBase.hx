@@ -38,7 +38,7 @@ class SocketServerBase {
 
 	public var data(default,null):Signal1<SocketClient, BytesInput>;
 	public var connect(default,null):Signal1<SocketServer, SocketClient>;
-	public var close(default,null):Signal;
+	public var closed(default,null):Signal;
 	public var disconnect(default,null):Signal;
 	public var clients(default,null):Array<SocketClient>;
 	
@@ -46,7 +46,7 @@ class SocketServerBase {
 		connect = Signal.create(cast this);
 		disconnect = new Signal();
 		data = Signal.create(null);
-		close = new Signal(this);
+		closed = new Signal(this);
 		clients = [];
 		disconnect.add(removeClient);
 	}
@@ -77,5 +77,18 @@ class SocketServerBase {
 			b.write(bs);
 			c.send(b);
 		}
+	}
+	
+	public function close():Void 
+	{
+		closed.dispatch();
+		data.destroy();
+		data = null;
+		connect.destroy();
+		connect = null;
+		closed.destroy();
+		closed = null;
+		disconnect.destroy();
+		disconnect = null;
 	}
 }

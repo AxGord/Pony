@@ -26,6 +26,8 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.net;
+import pony.events.Signal;
+
 
 /**
  * SocketServer
@@ -42,4 +44,5 @@ extends pony.net.SocketServerBase
 #if !flash
 implements ISocketServer
 #end
-{}
+{
+}
