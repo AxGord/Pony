@@ -27,6 +27,7 @@
 **/
 package pony.time;
 
+import js.Node;
 import pony.events.*;
 
 /**
@@ -97,6 +98,24 @@ class DeltaTime {
 	#if (!flash || munit)
 	private static function __init__():Void {
 		createSignals();
+	}
+	#end
+	
+	#if nodejs
+	private static function __init__():Void {
+		createSignals();
+		fixedUpdate.takeListeners.add(_ftakeListeners);
+		fixedUpdate.lostListeners.add(_flostListeners);
+	}
+	private static function _ftakeListeners():Void {
+		set();
+		imm = js.Node.setImmediate(_tick);
+	}
+	private static function _flostListeners():Void js.Node.clearImmediate(imm);
+	private static var imm:Dynamic;
+	private static function _tick():Void {
+		imm = js.Node.setImmediate(_tick);
+		tick();
 	}
 	#end
 	

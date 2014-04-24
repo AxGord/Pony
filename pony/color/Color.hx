@@ -107,9 +107,9 @@ abstract Color({a:Int, r:Int, g:Int, b:Int}) {
 	@:from inline public static function fromString(s:String):Color return UColor.fromString(s);
 	
 	@:op(A - B) inline static public function sub(a:Color, b:Color):Color return fromARGBSave(a.a - b.a, a.r - b.r, a.g - b.g, a.b - b.b);
-	@:op(A + B) inline static public function add3(a:Color, b:Color):Color return fromARGBSave(a.a + b.a, a.r + b.r, a.g + b.g, a.b + b.b);
+	@:op(A + B) inline static public function add(a:Color, b:Color):Color return fromARGBSave(a.a + b.a, a.r + b.r, a.g + b.g, a.b + b.b);
 	//@:op(A + B) inline static public function add1(a:UColor, b:Color):Color return UColor.fromARGBSave(a.a + b.a, a.r + b.r, a.g + b.g, a.b + b.b);
 	//@:op(A + B) inline static public function add2(a:Color, b:UColor):Color return UColor.fromARGBSave(a.a + b.a, a.r + b.r, a.g + b.g, a.b + b.b);
-
 	
+	inline public function bright(v:Int):Color return fromARGBSave(a, r + v, g + v, b + v);
 }

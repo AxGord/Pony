@@ -53,8 +53,9 @@ class SocketServer extends SocketServerBase {
 		addClient().nodejsInit(c);
 	}
 	
-	public function close():Void
+	override public function close():Void
 	{
+		throw 'todo';
 	}
 }
 #end
