@@ -248,6 +248,20 @@ class Tools {
 			next: function():Byte return b.readByte()
 		};
 	}
+	
+	macro public static function ifsw(e:Expr):Expr {
+		var d:Array<Expr> = [];
+		switch e.expr {
+			case ESwitch(ex, cases, edef):
+				for (c in cases) {
+					var cond:Expr = { expr: EBinop(OpEq, ex, c.values[0]), pos: Context.currentPos() };
+					d.push(macro if ($cond) ${c.expr});
+				}
+			default: throw 'This is not switch';
+		}
+		//return macro $b{d};
+		return {expr: EBlock(d), pos: Context.currentPos()};// Context.makeExpr(d, Context.currentPos());
+	}
 }
 
 class ArrayTools {

@@ -88,11 +88,11 @@ abstract Signal1<Target, T1:Dynamic>(Signal) {
 		this.dispatchArgs(args);
 		return target;
 	}
-	#if cs //CS fix
-	inline public function sub(a:Dynamic, priority:Int=0):Signal0<Target> return subArgs([a], priority);
-	#else
+	//#if cs //CS fix
+	//inline public function sub(a:Dynamic, priority:Int=0):Signal0<Target> return subArgs([a], priority);
+	//#else
 	inline public function sub(a:T1, priority:Int=0):Signal0<Target> return subArgs([a], priority);
-	#end
+	//#end
 	inline public function subArgs(args:Array<T1>, priority:Int=0):Signal0<Target> return this.subArgs(args, priority);
 	
 	inline public function removeSub(a:T1):Target return removeSubArgs([a]);
@@ -161,7 +161,7 @@ abstract Signal1<Target, T1:Dynamic>(Signal) {
 	@:from static private inline function from<A,B>(s:Signal):Signal1<A,B> return new Signal1<A,B>(s);
 	@:to private inline function to():Signal return this;
 	
-	//Operators
+	//Operators (experimental)
 	
 	@:op(A << B) inline private function op_add(listener:Listener1<Target,T1>):Signal1<Target,T1> {
 		add(listener);
@@ -184,4 +184,5 @@ abstract Signal1<Target, T1:Dynamic>(Signal) {
 	@:op(A | B) inline private function op_or(s:Signal1<Dynamic, T1>):Signal1<Dynamic, T1> return or(s);
 	
 	@:op(A + B) inline private function op_bind<A>(a:A):Signal2<Target,A,T1> return bind1(a);
+	@:op(A - B) inline private function op_sub<T1>(a:T1):Signal0<Target> return sub(a);
 }

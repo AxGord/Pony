@@ -26,8 +26,9 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.time;
-
+#if nodejs
 import js.Node;
+#end
 import pony.events.*;
 
 /**
