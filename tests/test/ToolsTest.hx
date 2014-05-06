@@ -1,5 +1,7 @@
 package ;
 
+import haxe.io.BytesInput;
+import haxe.io.BytesOutput;
 import haxe.xml.Fast;
 import massive.munit.util.Timer;
 import massive.munit.Assert;
@@ -115,4 +117,21 @@ class ToolsTest
 		Assert.areEqual(o.y, 8);
 	}
 	
+	@Test
+	public function cut():Void 
+	{
+		var b1:BytesOutput = new BytesOutput();	
+		b1.writeByte(1);
+		b1.writeByte(0);
+		b1.writeByte(1);
+		//b1.writeByte(34);
+		//b1.writeByte(12);
+		
+		var b2:BytesInput = new BytesInput(b1.getBytes());
+		
+		var b3 = Tools.cut(b2);
+		var bi = b3.bytesInputIterator();
+		for (b in b2.bytesInputIterator()) Assert.areEqual(b, bi.next());
+		
+	}
 }

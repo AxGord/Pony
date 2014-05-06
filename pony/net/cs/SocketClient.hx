@@ -41,6 +41,7 @@ import cs.types.UInt8;
 import haxe.io.Bytes;
 import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
+import haxe.Timer;
 import pony.net.SocketClientBase;
 
 using pony.Tools;
@@ -79,7 +80,7 @@ class SocketClient extends SocketClientBase {
 		socket = s;
 		endInit();
 		waitData();
-		connect.dispatch();
+		Timer.delay(connect.dispatch.bind(), 20);//We are very sorry, but we acted to do it. 
 	}
 	
 	private function waitData():Void {
@@ -123,7 +124,7 @@ class SocketClient extends SocketClientBase {
 	public function send(data:BytesOutput):Void {
 		sendProccess = true;
 		var b = data.getBytes();
-		socket.BeginSend(cast b.getData(), 0, b.length, SocketFlags.None, untyped __cs__('sendCallback'), null);
+		socket.BeginSend(b.getData(), 0, b.length, SocketFlags.OutOfBand, untyped __cs__('sendCallback'), null);
 	}
 	
 	private function sendCallback(ar:IAsyncResult):Void {
