@@ -80,7 +80,7 @@ class SocketClient extends SocketClientBase {
 		socket = s;
 		endInit();
 		waitData();
-		Timer.delay(connect.dispatch.bind(), 20);//We are very sorry, but we acted to do it. 
+		Timer.delay(connect.dispatch.bind(), 20);//We are sorry, but we're forced to do it. 
 	}
 	
 	private function waitData():Void {
