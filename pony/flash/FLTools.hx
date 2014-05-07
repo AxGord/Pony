@@ -42,6 +42,11 @@ import flash.display.DisplayObjectContainer;
 import pony.events.Signal;
 import pony.events.Signal0;
 import pony.time.DeltaTime;
+import flash.display.BitmapData;
+import flash.events.IOErrorEvent;
+import haxe.crypto.Base64;
+import flash.display.Loader;
+import haxe.io.Bytes;
 
 #else
 import haxe.macro.Expr;
@@ -219,5 +224,42 @@ class FLTools
 		if (!FileSystem.exists(to + file))
 			File.copy(from+file, to+file);
 	}
+	#else
+	
+	
+	public static function base64ToBitmapDataAsync(base64:String, ok:BitmapData->Void, ?error:Dynamic->Void):Void {
+		if (error == null) error = Tools.errorFunction;
+		base64 = {
+			var s = base64.split(',');
+			s.length == 1 ? s[0] : s[1];
+		};//Remove header
+		try {
+			var loader = new Loader();
+			var removeEvents:Void->Void = null;
+			function errorHandler(e:IOErrorEvent):Void {
+				removeEvents();
+				error(e.text);
+			}
+			loader.addEventListener(IOErrorEvent.IO_ERROR, errorHandler);
+			function handler(e:Event):Void {
+				try {
+					removeEvents();
+					var src:BitmapData = new BitmapData(e.target.content.width, e.target.content.height);
+					src.draw(e.target.content);
+					ok(src);
+				} catch (e:Dynamic) error(e);
+			}
+			removeEvents = function() {
+				loader.removeEventListener(IOErrorEvent.IO_ERROR, errorHandler);
+				loader.contentLoaderInfo.removeEventListener(Event.COMPLETE, handler);
+			};
+			
+			loader.contentLoaderInfo.addEventListener(Event.COMPLETE, handler);
+			loader.loadBytes(Base64.decode(base64).getData());
+		} catch (e:Dynamic) error(e);	
+	}
+	
+	public static function bitmapDataToBase64(data:BitmapData):String return Base64.encode(Bytes.ofData(data.getPixels(data.rect)));
+	
 	#end
 }

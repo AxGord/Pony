@@ -76,6 +76,14 @@ class Tools {
 					macro $eThis.$s($a{args});
 				case macro $i{s} = $e:
 					macro $eThis.$s = $e;
+				case macro $i{s} += $e:
+					macro $eThis.$s += $e;
+				case macro $i{s} -= $e:
+					macro $eThis.$s -= $e;
+				case macro $i{s} *= $e:
+					macro $eThis.$s *= $e;
+				case macro $i{s} /= $e:
+					macro $eThis.$s /= $e;
 				case _:
 					Context.error("Don't know what to do with " + e.toString(), e.pos);
 			}
@@ -262,6 +270,16 @@ class Tools {
 		//return macro $b{d};
 		return {expr: EBlock(d), pos: Context.currentPos()};// Context.makeExpr(d, Context.currentPos());
 	}
+	
+	
+	public static function nullFunction0():Void return;
+	public static function nullFunction1(_:Dynamic):Void return;
+	public static function nullFunction2(_:Dynamic, _:Dynamic):Void return;
+	public static function nullFunction3(_:Dynamic, _:Dynamic, _:Dynamic):Void return;
+	public static function nullFunction4(_:Dynamic, _:Dynamic, _:Dynamic, _:Dynamic):Void return;
+	public static function nullFunction5(_:Dynamic, _:Dynamic, _:Dynamic, _:Dynamic, _:Dynamic):Void return;
+	public static function errorFunction(e:Dynamic):Void throw e;
+	
 }
 
 class ArrayTools {

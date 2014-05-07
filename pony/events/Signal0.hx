@@ -90,7 +90,7 @@ abstract Signal0<Target>(Signal) {
 		return target;
 	}
 	
-	inline public function dispatchEmpty():Void this.dispatchEmpty();
+	public function dispatchEmpty():Void this.dispatchEmpty();
 	
 	public function dispatchEmpty1(?_):Void this.dispatchEmpty();
 	

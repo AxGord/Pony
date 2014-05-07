@@ -184,5 +184,6 @@ abstract Signal1<Target, T1:Dynamic>(Signal) {
 	@:op(A | B) inline private function op_or(s:Signal1<Dynamic, T1>):Signal1<Dynamic, T1> return or(s);
 	
 	@:op(A + B) inline private function op_bind<A>(a:A):Signal2<Target,A,T1> return bind1(a);
-	@:op(A - B) inline private function op_sub<T1>(a:T1):Signal0<Target> return sub(a);
+	@:op(A - B) inline private function op_sub(a:T1):Signal0<Target> return sub(a);
+	
 }
