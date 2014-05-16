@@ -179,4 +179,17 @@ class ToolsTest
 		}, 3));
 	}
 	
+	@Test
+	public function convertObject():Void {
+		var a = {
+			a: '1',
+			b: {c:'3'}
+		};
+		var b = a.convertObject(function(a:String) return Std.parseInt(a) );
+		Assert.isTrue(b.equal({
+			a: 1,
+			b: {c:3}
+		}, 2));
+	}
+	
 }

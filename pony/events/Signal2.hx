@@ -149,5 +149,5 @@ abstract Signal2<Target, T1:Dynamic, T2:Dynamic>(Signal) {
 		return this;
 	}
 	
-	@:op(A - B) inline private function op_sub(a:T2):Signal1<Target, T1> return sub1(a);
+	@:op(A - B) inline private function op_sub(a:T1):Signal1<Target, T2> return sub1(a);
 }

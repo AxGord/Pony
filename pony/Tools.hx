@@ -276,7 +276,7 @@ class Tools {
 	public static function setFields(a:{}, b:{}):Void {
 		for (p in b.fields()) {
 			var d:Dynamic = b.field(p);
-			if (d.isObject())
+			if (d.isObject() && !Std.is(d, String))
 				setFields(a.field(p), d);
 			else
 				a.setField(p, d);
@@ -302,7 +302,17 @@ class Tools {
 		return result;
 	}
 	
-	public static function convertObject(...
+	public static function convertObject(a:{}, fun:Dynamic->Dynamic):Dynamic<Dynamic> {
+		var result:Dynamic<Dynamic> = { };
+		for (p in a.fields()) {
+			var d:Dynamic = a.field(p);
+			if (d.isObject() && !Std.is(d, String))
+				result.setField(p, convertObject(d, fun));
+			else
+				result.setField(p, fun(d));
+		}
+		return result;
+	}
 	
 	public static function nullFunction0():Void return;
 	public static function nullFunction1(_:Dynamic):Void return;
