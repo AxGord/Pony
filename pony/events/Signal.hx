@@ -198,7 +198,7 @@ class Signal {
 				remove(l);
 				lRunCopy.remove(c);
 				try {
-					trace(e.pos);
+					trace(CallStack.toString(CallStack.exceptionStack()));
 				} catch (e:Dynamic) {}
 				throw e;
 			}

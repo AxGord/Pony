@@ -47,6 +47,7 @@ import flash.events.IOErrorEvent;
 import haxe.crypto.Base64;
 import flash.display.Loader;
 import haxe.io.Bytes;
+import haxe.io.BytesData;
 
 #else
 import haxe.macro.Expr;
@@ -256,10 +257,11 @@ class FLTools
 			
 			loader.contentLoaderInfo.addEventListener(Event.COMPLETE, handler);
 			loader.loadBytes(Base64.decode(base64).getData());
-		} catch (e:Dynamic) error(e);	
+		} catch (e:Dynamic) error(e);
 	}
 	
-	public static function bitmapDataToBase64(data:BitmapData):String return Base64.encode(Bytes.ofData(data.getPixels(data.rect)));
+	inline public static function bytesDataToBase64(data:BytesData):String return Base64.encode(Bytes.ofData(data));
+	inline public static function bitmapDataToBase64(data:BitmapData):String return bytesDataToBase64(data.getPixels(data.rect));
 	
 	#end
 }

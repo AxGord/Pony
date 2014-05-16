@@ -41,6 +41,8 @@ import pony.text.TextTools;
 
 using Reflect;
 using Lambda;
+
+
 /**
  * Tools
  * @author AxGord
@@ -271,6 +273,36 @@ class Tools {
 		return {expr: EBlock(d), pos: Context.currentPos()};// Context.makeExpr(d, Context.currentPos());
 	}
 	
+	public static function setFields(a:{}, b:{}):Void {
+		for (p in b.fields()) {
+			var d:Dynamic = b.field(p);
+			if (d.isObject())
+				setFields(a.field(p), d);
+			else
+				a.setField(p, d);
+		}
+	}
+	
+	public static function parsePrefixObjects(a:Dynamic<String>, delimiter:String = '_'):Dynamic<Dynamic> {
+		var result:Dynamic<Dynamic> = { };
+		for (f in a.fields()) {
+			var d = f.split(delimiter);
+			var obj = result;
+			for (i in 0...d.length-1) {
+				if (obj.hasField(d[i])) {
+					obj = obj.field(d[i]);
+				} else {
+					var newObj = { };
+					obj.setField(d[i], newObj);
+					obj = newObj;
+				}
+			}
+			obj.setField(d.pop(), a.field(f));
+		}
+		return result;
+	}
+	
+	public static function convertObject(...
 	
 	public static function nullFunction0():Void return;
 	public static function nullFunction1(_:Dynamic):Void return;

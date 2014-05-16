@@ -134,4 +134,49 @@ class ToolsTest
 		for (b in b2.bytesInputIterator()) Assert.areEqual(b, bi.next());
 		
 	}
+	
+	@Test
+	public function setFields():Void {
+		var a = {
+			a: 5,
+			b: {
+				c: 7,
+				d: 8
+			}
+		};
+		
+		var b:Dynamic = {
+			b: {
+				c: 3
+			}
+		};
+		
+		var c:Dynamic = {
+			a: 5,
+			b: {
+				c: 3,
+				d: 8
+			}
+		};
+		
+		a.setFields(b);
+		Assert.isTrue(a.equal(c, 2));
+	}
+	
+	@Test
+	public function parsePrefixObjects():Void {
+		var obj = {
+			'a_b_c': '1',
+			'a_f_c': '2',
+			'f': '3'
+		};
+		Assert.isTrue(obj.parsePrefixObjects().equal({
+			a: { 
+				b: { c: '1' },
+				f: { c: '2' }
+			},
+			f: '3'
+		}, 3));
+	}
+	
 }
