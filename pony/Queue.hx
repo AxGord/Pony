@@ -25,38 +25,35 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.midi.nodejs;
-import js.Node;
-import pony.midi.IMidiDevice;
-import pony.events.*;
+package pony;
 
 /**
- * Midi
+ * Queue
  * @author AxGord <axgord@gmail.com>
  */
-class Midi implements IMidiDevice {
-	
-	private static var midiClass:Class<Dynamic> = Node.require('midi').input;
-	
-	private var core:Dynamic;
-	
-	public var on:Signal2<IMidiDevice, MidiCode, MidiCode>;
+class Queue<T> {
 
-	public function new(id:Int) {
-		on = Signal.create(cast this);
-		core = Type.createInstance(midiClass, []);
-		trace('Open midi: '+core.getPortName(id)+'($id)');
-		core.openPort(id);
-		core.on('message', function(deltaTime, message) {
-			on.dispatch(message[1], message[2]);
-		});
+	private var list:List<Array<Dynamic>>;
+	private var busy:Bool = false;
+	public var call:T;
+	private var method:T;
+	
+	public function new(method:T) {
+		this.method = method;
+		list = new List();
+		call = Reflect.makeVarArgs(_call);
 	}
 	
-	public function destroy():Void {
-		core.closePort();
-		on.destroy();
-		on = null;
-		core = null;
+	private function _call(a:Array<Dynamic>):Void {
+		trace(busy);
+		if (!busy) {
+			Reflect.callMethod(null, method, a);
+			busy = true;
+		} else {
+			list.add(a);
+		}
 	}
+	
+	inline public function next():Void list.length > 0 ? Reflect.callMethod(null, method, list.pop()) : busy = false;
 	
 }

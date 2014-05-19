@@ -25,10 +25,38 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.midi;
+package pony.midi.nodejs;
+import js.Node;
+import pony.midi.IMidiDevice;
+import pony.events.*;
 
 /**
- * ...
+ * Midi
  * @author AxGord <axgord@gmail.com>
  */
-typedef MidiDevice = pony.midi.nodejs.MidiDevice;
+class MidiDevice implements IMidiDevice {
+	
+	private static var midiClass:Class<Dynamic> = Node.require('midi').input;
+	
+	private var core:Dynamic;
+	
+	public var on:Signal2<IMidiDevice, MidiCode, MidiCode>;
+
+	public function new(id:Int) {
+		on = Signal.create(cast this);
+		core = Type.createInstance(midiClass, []);
+		trace('Open midi: '+core.getPortName(id)+'($id)');
+		core.openPort(id);
+		core.on('message', function(deltaTime, message) {
+			on.dispatch(message[1], message[2]);
+		});
+	}
+	
+	public function destroy():Void {
+		core.closePort();
+		on.destroy();
+		on = null;
+		core = null;
+	}
+	
+}
