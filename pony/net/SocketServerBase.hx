@@ -40,10 +40,14 @@ class SocketServerBase {
 	public var connect(default,null):Signal1<SocketServer, SocketClient>;
 	public var closed(default,null):Signal;
 	public var disconnect(default,null):Signal;
-	public var clients(default,null):Array<SocketClient>;
+	public var clients(default, null):Array<SocketClient>;
+	public var message(default, null):Signal1<SocketServer, String>;
+	public var error(default, null):Signal1<SocketServer, String>;
 	
 	public function new() {
 		connect = Signal.create(cast this);
+		message = Signal.create(cast this);
+		error = Signal.create(cast this);
 		disconnect = new Signal();
 		data = Signal.create(null);
 		closed = new Signal(this);

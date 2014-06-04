@@ -41,7 +41,7 @@ import cs.types.UInt8;
 import haxe.io.Bytes;
 import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
-import haxe.Timer;
+//import haxe.Timer;
 import pony.net.SocketClientBase;
 
 using pony.Tools;
@@ -57,10 +57,12 @@ class SocketClient extends SocketClientBase {
 	private var sendProccess:Bool;
 	private var closeAfterSend:Bool;
 	
+	private var packSize:Int;
+	
 	override public function open():Void {
 		if (!closed) return;
 		socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-		socket.BeginConnect(host, port, untyped __cs__('connectCallback'), null);
+		socket.BeginConnect(host, port, connectCallback, null);
 	}
 	
 	private function connectCallback(ar:IAsyncResult):Void {
@@ -76,45 +78,53 @@ class SocketClient extends SocketClientBase {
 	public function initCS(s:Socket):Void {
 		sendProccess = false;
 		closeAfterSend = false;
-		buffer = new NativeArray<UInt8>(1024);
 		socket = s;
 		endInit();
-		waitData();
-		Timer.delay(connect.dispatch.bind(), 20);//We are sorry, but we're forced to do it. 
+		waitFirstPack();
+		connect.dispatch();
+		//Timer.delay(connect.dispatch.bind(), 20);//We are sorry, but we're forced to do it. 
 	}
 	
-	private function waitData():Void {
-		socket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, untyped __cs__('readCallback'), null);
+	
+	private function waitFirstPack():Void {
+		buffer = new NativeArray<UInt8>(4);
+		socket.BeginReceive(buffer, 0, 4, SocketFlags.None, readFirstPack, null);
 	}
 	
-	private function readCallback(ar:IAsyncResult):Void {
+	private function readFirstPack(ar:IAsyncResult):Void {
 		if (closed) return;
 		try {
 			var bytesRead:Int = socket.EndReceive(ar);
 			if (bytesRead > 0) {
-				data.dispatch(new BytesInput(Bytes.ofData(cast buffer)).cut());
-				waitData();
+				if (bytesRead != 4) throw 'Wrong bytes count';
+				var bi = new BytesInput(Bytes.ofData(cast buffer));
+				packSize = bi.readInt32();
+				waitSecondPack();
 			} else _close();
-			
-			/*
-			if (socketConnected(socket)) {
-				waitData();
-				
-			} else {
-				_close();
-			}
-			*/
 		} catch (_:Dynamic) {
 			_close();
 		}
 	}
-	/*
-	inline private static function socketConnected(s:dotnet.system.net.sockets.Socket):Bool {
-		var part1:Bool = s.Poll(1000, SelectMode.SelectRead);
-		var part2:Bool = s.Available == 0;
-		return !(part1 && part2);
+	
+	private function waitSecondPack():Void {
+		buffer = new NativeArray<UInt8>(packSize);
+		socket.BeginReceive(buffer, 0, packSize, SocketFlags.None, readSecondPack, null);
 	}
-	*/
+	
+	private function readSecondPack(ar:IAsyncResult):Void {
+		if (closed) return;
+		try {
+			var bytesRead:Int = socket.EndReceive(ar);
+			if (bytesRead > 0) {
+				if (bytesRead != packSize) throw 'Wrong bytes count';
+				data.dispatch(new BytesInput(Bytes.ofData(cast buffer)));
+				waitFirstPack();
+			} else _close();
+		} catch (_:Dynamic) {
+			_close();
+		}
+	}
+	
 	private function disconnectCallback(ar:IAsyncResult):Void {
 		socket.EndDisconnect(ar);
 		socket.Close();
@@ -123,8 +133,9 @@ class SocketClient extends SocketClientBase {
 	
 	public function send(data:BytesOutput):Void {
 		sendProccess = true;
+		data.flush();
 		var b = data.getBytes();
-		socket.BeginSend(b.getData(), 0, b.length, SocketFlags.OutOfBand, untyped __cs__('sendCallback'), null);
+		socket.BeginSend(b.getData(), 0, b.length+1, SocketFlags.OutOfBand, sendCallback, null);
 	}
 	
 	private function sendCallback(ar:IAsyncResult):Void {
@@ -143,7 +154,7 @@ class SocketClient extends SocketClientBase {
 		if (closed) return;
 		closed = true;
 		socket.Shutdown(SocketShutdown.Both);
-		socket.BeginDisconnect(true, untyped __cs__('disconnectCallback'), socket);
+		socket.BeginDisconnect(true, disconnectCallback, socket);
 	}
 	
 }

@@ -44,12 +44,12 @@ class SocketServer extends SocketServerBase {
 
 	private var listener:Socket;
 	
-	public function new(port:Int) {
+	public function new(port:Int, maxListeners:Int=-1) {
 		super();
 		listener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 		listener.Bind(new IPEndPoint(IPAddress.Any, port));
-		listener.Listen(100);
-		trace('Port: '+port);
+		listener.Listen(-1);
+		//trace('Port: '+port);
 		waitAccept();
 	}
 	
@@ -59,9 +59,10 @@ class SocketServer extends SocketServerBase {
 
 
 	private function acceptCallback(ar:IAsyncResult):Void {
-		trace('accept');
-		addClient().initCS(listener.EndAccept(ar));
-		waitAccept();
+		try {
+			addClient().initCS(listener.EndAccept(ar));
+			waitAccept();
+		} catch (_:Dynamic) {}
 	}
 
 	override public function close():Void 

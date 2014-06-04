@@ -26,6 +26,7 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.net;
+import haxe.io.BytesOutput;
 
 /**
  * SocketClient
@@ -39,4 +40,13 @@ extends pony.net.cs.SocketClient
 #elseif flash
 extends pony.net.flash.SocketClient
 #end
-implements ISocketClient {}
+implements ISocketClient {
+	
+	override public function send(data:BytesOutput):Void {
+		var bo = new BytesOutput();
+		bo.writeInt32(data.length);
+		bo.write(data.getBytes());
+		super.send(bo);
+	}
+	
+}

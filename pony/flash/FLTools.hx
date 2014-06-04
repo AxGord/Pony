@@ -227,7 +227,6 @@ class FLTools
 	}
 	#else
 	
-	
 	public static function base64ToBitmapDataAsync(base64:String, ok:BitmapData->Void, ?error:Dynamic->Void):Void {
 		if (error == null) error = Tools.errorFunction;
 		base64 = {

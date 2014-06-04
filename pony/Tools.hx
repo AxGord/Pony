@@ -27,10 +27,12 @@
 **/
 package pony;
 
+import haxe.CallStack;
 import haxe.io.Bytes;
 import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
 import haxe.io.Eof;
+import haxe.Log;
 import haxe.xml.Fast;
 #if macro
 import haxe.macro.Context;
@@ -313,6 +315,30 @@ class Tools {
 		}
 		return result;
 	}
+	
+	inline public static function traceThrow(e:String):Void {
+		Log.trace(e, null);
+		Log.trace(CallStack.toString(CallStack.exceptionStack()), null);
+	}
+	
+	inline public static function writeStr(b:BytesOutput, s:String):Void {
+		b.writeInt32(s.length);
+		b.writeString(s);
+	}
+	
+	static public function readStr(b:BytesInput):String {
+		try {
+			return b.readString(b.readInt32());
+		} catch (_:Dynamic) return null;
+	}
+	
+	@:generic inline static public function sget<A,B:{function new():Void;}>(m:Map<A,B>, key:A):B {
+		return m.exists(key) ? m[key] : m[key] = new B();
+	}
+	
+	inline static public function min(it:IntIterator):Int return it.field('min');
+	inline static public function max(it:IntIterator):Int return it.field('max');
+	inline static public function copy(it:IntIterator):IntIterator return it.field('min')...it.field('max');
 	
 	public static function nullFunction0():Void return;
 	public static function nullFunction1(_:Dynamic):Void return;

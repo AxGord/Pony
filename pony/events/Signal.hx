@@ -156,6 +156,7 @@ class Signal {
 	}
 	
 	public function dispatchEvent(event:Event):Signal {
+		if (listeners.length == 0 ) return this;
 		event.signal = this;
 		if (silent) return this;
 		var c:Priority<Listener> = new Priority<Listener>(listeners.data.copy());
@@ -466,8 +467,14 @@ class Signal {
 		removeAllBind();
 		removeAllNot();
 		removeAllListeners();
-		if (takeListeners != null) takeListeners.destroy();
-		if (lostListeners != null) lostListeners.destroy();
+		if (takeListeners != null) {
+			takeListeners.destroy();
+			takeListeners =  null;
+		}
+		if (lostListeners != null) {
+			lostListeners.destroy();
+			lostListeners = null;
+		}
 	}
 	
 	inline public function debug():Void {

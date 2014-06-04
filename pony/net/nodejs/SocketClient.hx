@@ -64,16 +64,17 @@ class SocketClient extends SocketClientBase {
 		connect.dispatch();
 	}
 	
-	inline public function send(data:BytesOutput):Void {
+	public function send(data:BytesOutput):Void {
 		socket.write(data.getBytes().getData());
 	}
 	
 	private function dataHandler(d:NodeBuffer):Void {
-		data.dispatch(new BytesInput(Bytes.ofData(d)));
+		joinData(new BytesInput(Bytes.ofData(d)));
 	}
 	
 	inline public function close():Void {
 		socket.end();
+		socket = null;
 		closed = true;
 	}
 	

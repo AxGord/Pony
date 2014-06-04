@@ -27,6 +27,7 @@
 **/
 package pony.flash.ui;
 
+import flash.display.DisplayObject;
 import flash.display.InteractiveObject;
 import flash.display.MovieClip;
 import flash.events.Event;
@@ -69,6 +70,7 @@ class Button extends MovieClip {
 		visual = Type.createEmptyInstance(cl);
 		visual.gotoAndStop(config.def);
 		visual.mouseEnabled = false;
+		visual.mouseChildren = false;
 		visual.scaleX = scaleX;
 		visual.scaleY = scaleY;
 		addChild(visual);
@@ -85,12 +87,14 @@ class Button extends MovieClip {
 		core.changeVisual.add(change);
 		
 		mouseEnabled = false;
+		
 		scaleX = 1;
 		scaleY = 1;
 		FLTools.init < init;
 	}
 	
 	private function init():Void {
+		
 		/*if (CPP_FL_TouchFix.useFix) {
 			zone.downSignal().add(core.mouseOver.bind(false));
 			CPP_FL_TouchFix.move.add(touchMove);
@@ -137,12 +141,12 @@ class Button extends MovieClip {
 			return;
 		}
 		zone.buttonMode = true;
-		
+	
 		visual.gotoAndStop((switch [state, focus] {
 			case [Default, false]: config.def;
 			case [Focus|Leave, _] | [_, true]: config.focus;
 			case [Press, _]: config.press;
-		}) + mode * 3 - (mode>1?1:0));
+		}) + mode * 3 - (mode > 1?1:0));
 	}
 	
 	
@@ -159,4 +163,7 @@ class Button extends MovieClip {
 		core.mouseUp();
 		core.mouseOut();
 	}
+	
+	public function sw(v:Array<Int>):Void if (core != null) core.sw = v;
+	
 }

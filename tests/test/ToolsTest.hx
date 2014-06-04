@@ -192,4 +192,12 @@ class ToolsTest
 		}, 2));
 	}
 	
+	@Test
+	public function writeReadStr():Void {
+		var bo = new BytesOutput();
+		bo.writeStr('hello world');
+		var bi = new BytesInput(bo.getBytes());
+		Assert.areEqual(bi.readStr(), 'hello world');
+	}
+	
 }

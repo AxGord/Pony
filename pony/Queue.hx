@@ -45,7 +45,6 @@ class Queue<T> {
 	}
 	
 	private function _call(a:Array<Dynamic>):Void {
-		trace(busy);
 		if (!busy) {
 			Reflect.callMethod(null, method, a);
 			busy = true;

@@ -31,6 +31,7 @@ import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
 import haxe.Timer;
 #end
+import haxe.io.Bytes;
 import pony.events.*;
 
 /**
@@ -51,7 +52,7 @@ class SocketClientBase {
 	private var reconnectDelay:Int = -1;
 	
 	public function new(?host:String, port:Int, reconnect:Int=-1) {
-		trace('Create socket client');
+		//trace('Create socket client');
 		if (host == null) host = '127.0.0.1';
 		this.host = host;
 		this.port = port;
@@ -72,12 +73,13 @@ class SocketClientBase {
 		if (reconnectDelay == 0) {
 			trace('Reconnect');
 			open();
-		} else if (reconnectDelay > 0) {
-			trace('Reconnect after '+reconnectDelay+' ms');
-			#if !dox
-			Timer.delay(open, reconnectDelay);
-			#end
 		}
+		#if (!dox && HUGS)
+		else if (reconnectDelay > 0) {
+			trace('Reconnect after '+reconnectDelay+' ms');
+			Timer.delay(open, reconnectDelay);
+		}
+		#end
 	}
 	
 	public function open():Void {}
@@ -96,8 +98,10 @@ class SocketClientBase {
 		disconnect.add(server.disconnect.dispatchEvent);
 	}
 	
-	public function send2other(data:BytesOutput):Void {
-		server.send2other(data, cast this);
+	inline public function send2other(data:BytesOutput):Void server.send2other(data, cast this);
+	
+	private function joinData(bi:BytesInput):Void {
+		data.dispatch(new BytesInput(bi.read(bi.readInt32())));
 	}
 	
 }
