@@ -71,12 +71,25 @@ class ScrollBar extends Sprite implements pony.flash.FLSt {
 	}
 	
 	private function init():Void {
+		size = isVert ? bg.height : bg.width;
 		mouseMove = stage.buildSignal(MouseEvent.MOUSE_MOVE);
 		mouseMove.silent = true;
 		mouseMove.add(scrollerMove);
-		rect = isVert ? new Rectangle(0, 0, bg.height-scroller.height, 0) : new Rectangle(0, 0, bg.width-scroller.width, 0);
-		scroller.core.down.add(scroller.startDrag.bind(false, rect)).add(mouseMove.disableSilent);
-		//scroller.core.change.sub(ButtonStates.Default).add(scroller.stopDrag).add(mouseMove.enableSilent);
+		scroller.core.down.add(startDraaag);
+		scroller.core.change.sub(ButtonStates.Default).add(stopDraaag);
+		stage.addEventListener(MouseEvent.MOUSE_UP, stopDraaag.v());
+	}
+	
+	private function startDraaag():Void {
+		var ss:Float = size - scrollerSize;
+		rect = isVert ? new Rectangle(0, 0, 0, ss) : new Rectangle(0, 0, ss, 0);
+		scroller.startDrag(false, rect);
+		mouseMove.disableSilent();
+	}
+	
+	private function stopDraaag():Void {
+		scroller.stopDrag();
+		mouseMove.enableSilent();
 	}
 	
 	private function get_size():Float {
@@ -127,8 +140,10 @@ class ScrollBar extends Sprite implements pony.flash.FLSt {
 	
 	private function scrollerMove():Void {
 		_position = scrollerPos;
-		update.dispatch(position);
+		dispatchUpdate();
 	}
+	
+	inline private function dispatchUpdate():Void update.dispatch(position/size * total);
 	
 	private inline function get_scrollerSize():Float return isVert ? scroller.height : scroller.width;
 	private inline function get_scrollerPos():Float return isVert ? scroller.y : scroller.x;
@@ -136,11 +151,11 @@ class ScrollBar extends Sprite implements pony.flash.FLSt {
 	private inline function get_position():Float return _position;
 
 	public function set_position(p:Float):Float {
-		if (p < 0) p = 0;
+		if (p < 0 || scrollerSize >= size - 10) p = 0;
 		else if (p > size - scrollerSize) p = size - scrollerSize;
 		_position = p;
 		updateScroller();
-		update.dispatch(position);
+		dispatchUpdate();
 		return position;
 	}
 	

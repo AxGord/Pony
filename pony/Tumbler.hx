@@ -38,15 +38,15 @@ import pony.ui.ButtonCore;
  * Tumbler
  * @author AxGord <axgord@gmail.com>
  */
-class Tumbler {
+class Tumbler<T> {
 
-	public var onEnable:Signal0<Tumbler>;
-	public var onDisable:Signal0<Tumbler>;
+	public var onEnable:Signal0<T>;
+	public var onDisable:Signal0<T>;
 	public var enabled(default, set):Bool = false;
 	
 	public function new() {
-		onEnable = Signal.create(this);
-		onDisable = Signal.create(this);
+		onEnable = Signal.create(cast this);
+		onDisable = Signal.create(cast this);
 		#if (!neko && !nodejs)
 		buttons = new Map();
 		buttonsPress = new Map();
@@ -69,9 +69,10 @@ class Tumbler {
 	#if (!neko && !nodejs)
 	private var buttons:Map<pony.ui.ButtonCore, TumblerButtonGlue>;
 	private var buttonsPress:Map<pony.ui.ButtonCore, TumblerButtonPressGlue>;
-	public function regButton(b:pony.ui.ButtonCore):Void {
+	public function regButton(b:pony.ui.ButtonCore):T {
 		b.sw = [2, 1, 0];
-		buttons[b] = new TumblerButtonGlue(b, this);
+		buttons[b] = new TumblerButtonGlue(b, cast this);
+		return cast this;
 	}
 	public function unregButton(b:pony.ui.ButtonCore):Bool {
 		if (buttons.exists(b)) {
@@ -83,8 +84,9 @@ class Tumbler {
 	inline public function syncButton(b:pony.ui.ButtonCore):Void b.mode = enabled ? 2 : 0;
 	inline public function syncButtonInvert(b:pony.ui.ButtonCore):Void b.mode = enabled ? 0 : 2;
 	
-	public function regButtonPress(b:pony.ui.ButtonCore):Void {
-		buttonsPress[b] = new TumblerButtonPressGlue(b, this);
+	public function regButtonPress(b:pony.ui.ButtonCore):T {
+		buttonsPress[b] = new TumblerButtonPressGlue(b, cast this);
+		return cast this;
 	}
 	
 	public function unregButtonPress(b:pony.ui.ButtonCore):Bool {
@@ -103,7 +105,7 @@ class Tumbler {
 class TumblerButtonGlue implements Declarator {
 	
 	@:arg private var b:ButtonCore;
-	@:arg private var t:Tumbler;
+	@:arg private var t:Tumbler<Tumbler<Dynamic>>;
 	
 	public function new() {
 		if ((t.enabled && b.mode == 0) || (!t.enabled && b.mode == 2)) {
@@ -140,7 +142,7 @@ class TumblerButtonGlue implements Declarator {
 class TumblerButtonPressGlue implements Declarator {
 	
 	@:arg private var b:ButtonCore;
-	@:arg private var t:Tumbler;
+	@:arg private var t:Tumbler<Tumbler<Dynamic>>;
 	
 	public function new() {
 		b.change.add(change);

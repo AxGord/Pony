@@ -70,6 +70,8 @@ abstract Dir(Unit) {
 		return result;
 	}
 	
+	public function file(name:String):File return addString(name);
+	
 	@:from inline public static function fromUnit(u:Unit):Dir return new Dir(u);
 	@:to inline private function toUnit():Unit return this;
 	
@@ -79,4 +81,5 @@ abstract Dir(Unit) {
 	
 	public inline function iterator():Iterator<Dir> return this.iterator();
 	
+	@:op(A + B) inline public function addString(a:String):Unit return this.addString(a);
 }

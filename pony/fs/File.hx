@@ -26,6 +26,7 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.fs;
+import haxe.io.Bytes;
 import sys.FileSystem;
 
 /**
@@ -37,7 +38,8 @@ abstract File(Unit) {
 	public var name(get, never):String;
 	public var exists(get, never):Bool;
 	public var first(get, never):String;
-	public var content(get, never):String;
+	public var content(get, set):String;
+	public var bytes(get, set):Bytes;
 	public var ext(get, never):String;
 	public var fullPath(get, never):Unit;
 	public var fullDir(get, never):Unit;
@@ -52,6 +54,21 @@ abstract File(Unit) {
 		return null;
 	}
 	
+	public function set_content(c:String):String {
+		sys.io.File.saveContent(first, c);
+		return c;
+	}
+	
+	public function get_bytes():Bytes {
+		for (f in this) if (f.exists) return sys.io.File.getBytes(f.first);
+			return null;
+	}
+	
+	public function set_bytes(b:Bytes):Bytes {
+		sys.io.File.saveBytes(first, b);
+		return b;
+	}
+	
 	inline private function get_name():String return this.name;
 	
 	inline private function get_exists():Bool return this.exists;
@@ -60,7 +77,8 @@ abstract File(Unit) {
 	
 	inline private function get_ext():String return first.split('.').pop();
 	
-	inline public function copyTo(to:File):Void {
+	inline public function copyTo(to:Unit):Void {
+		var to:File = to.isDir ? to + name : to;
 		to.createWays();
 		sys.io.File.copy(first, to.first);
 	}

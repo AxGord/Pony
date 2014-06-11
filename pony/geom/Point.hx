@@ -38,6 +38,8 @@ abstract IntPoint(Point<Int>) to Point<Int> from Point<Int> {
 	public var x(get, never):Int;
 	public var y(get, never):Int;
 	
+	public function new(x:Int, y:Int) this = {x:x, y:y};
+	
 	@:op(A + B) inline static public function add1(lhs:IntPoint, rhs:Point<Int>):IntPoint
 		return { x:lhs.getX() + rhs.x, y:lhs.getY() + rhs.y };
 		

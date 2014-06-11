@@ -32,6 +32,7 @@ import flash.display.InteractiveObject;
 import flash.events.Event;
 import flash.events.EventDispatcher;
 import flash.geom.Rectangle;
+import flash.Lib;
 import pony.events.Signal;
 import pony.geom.Rect;
 
@@ -77,5 +78,14 @@ class FLExtends {
 		return r;
 	}
 	
+	inline public static function removeAllChild(d:DisplayObjectContainer):Void while (d.numChildren > 0) d.removeChildAt(0);
+	
+	public static function toCenter(o:DisplayObject, width:Float, height:Float):Void {
+		var b = o.getBounds(Lib.current.stage);
+		o.x = width/2 - (o.width/2 - (o.x - b.x));
+		o.y = height/2 - (o.height/2 - (o.y - b.y));
+	}
+	
+	public static function toScreenCenter(o:DisplayObject):Void toCenter(o, FLTools.width, FLTools.height);
 	
 }

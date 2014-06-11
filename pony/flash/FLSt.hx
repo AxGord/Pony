@@ -20,10 +20,9 @@ class FLStBuilder {
 	macro public static function build():Array<Field> {
 		var fields:Array<Field> = Context.getBuildFields();
 		for (f in fields) {
-			var m = f.meta.getMeta('st');
-			switch (f.kind) {
-				case FVar(t, _):
-					if (m != null) {
+			if (f.meta.getMeta('st') != null || f.meta.getMeta(':st') != null) {
+				switch (f.kind) {
+					case FVar(t, _):
 						f.kind = FProp('get', 'never', t);
 						fields.push( {
 							name: 'get_'+f.name,
@@ -36,8 +35,8 @@ class FLStBuilder {
 							pos: f.pos,
 							access: [AInline, APrivate]
 						});
-					}
-				case _:
+					case _:
+				}
 			}
 		}
 		return fields;

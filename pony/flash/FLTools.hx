@@ -26,6 +26,10 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.flash;
+import flash.display.LoaderInfo;
+import flash.net.URLLoader;
+import flash.net.URLLoaderDataFormat;
+import flash.net.URLRequest;
 
 #if !macro
 import flash.display.MovieClip;
@@ -63,11 +67,16 @@ class FLTools
 {
 	#if !macro
 	static public var init:Signal0<Void>;
+	static public var longInit:Signal0<Void>;
 	
 	private static function __init__():Void {
 		init = Signal.createEmpty();
+		longInit = Signal.createEmpty();
 		Lib.current.stage.addEventListener(Event.ENTER_FRAME, init.dispatchEmpty1, false, -1001);
+		init << linit;
 	}
+	
+	private static function linit():Void DeltaTime.fixedUpdate < function() longInit.dispatch();
 	
 	static public var os(get, null):String;
 	static public var version(get, null):Array<Int>;
@@ -75,9 +84,7 @@ class FLTools
 	static private function get_os():String return Capabilities.version.split(' ')[0];
 	static private function get_version():Array<Int> return Capabilities.version.split(' ')[1].split(',').map(Std.parseInt);
 	
-	public static function getRect(o:DisplayObject):Rectangle {
-		return new Rectangle(o.x, o.y, o.width, o.height);
-	}
+	public static function getRect(o:DisplayObject):Rectangle return new Rectangle(o.x, o.y, o.width, o.height);
 	
 	public static function setRectP(o:DisplayObject, r:Rectangle):Void {
 		o.x = r.x;
@@ -111,6 +118,7 @@ class FLTools
 		o.width = rect.width;
 		o.height = rect.height;
 	}
+	
 	
 	//SmartFit
 	//private static var _rect:Rectangle;
@@ -234,6 +242,13 @@ class FLTools
 			s.length == 1 ? s[0] : s[1];
 		};//Remove header
 		try {
+			bytesToBitmapData(Base64.decode(base64), ok, error);
+		} catch (e:Dynamic) error(e);
+	}
+	
+	public static function bytesToBitmapData(bytes:Bytes, ok:BitmapData->Void, ?error:Dynamic->Void):Void {
+		if (error == null) error = Tools.errorFunction;
+		try {
 			var loader = new Loader();
 			var removeEvents:Void->Void = null;
 			function errorHandler(e:IOErrorEvent):Void {
@@ -255,12 +270,66 @@ class FLTools
 			};
 			
 			loader.contentLoaderInfo.addEventListener(Event.COMPLETE, handler);
-			loader.loadBytes(Base64.decode(base64).getData());
+			loader.loadBytes(bytes.getData());
 		} catch (e:Dynamic) error(e);
 	}
 	
 	inline public static function bytesDataToBase64(data:BytesData):String return Base64.encode(Bytes.ofData(data));
 	inline public static function bitmapDataToBase64(data:BitmapData):String return bytesDataToBase64(data.getPixels(data.rect));
+	
+	public static function loadText(url:String, ok:String->Void, ?error:Dynamic->Void):Void {
+		if (error == null) error = Tools.errorFunction;
+		try {
+			var loader = new URLLoader(new URLRequest(url));
+			loader.dataFormat = URLLoaderDataFormat.TEXT;
+			var removeEvents:Void->Void = null;
+			function errorHandler(e:IOErrorEvent):Void {
+				removeEvents();
+				error(e.text);
+			}
+			loader.addEventListener(IOErrorEvent.IO_ERROR, errorHandler);
+			function handler(e:Event):Void {
+				try {
+					removeEvents();
+					ok(loader.data);
+				} catch (e:Dynamic) error(e);
+			}
+			removeEvents = function() {
+				loader.removeEventListener(IOErrorEvent.IO_ERROR, errorHandler);
+				loader.removeEventListener(Event.COMPLETE, handler);
+			};
+			
+			loader.addEventListener(Event.COMPLETE, handler);
+		} catch (e:Dynamic) error(e);
+	}
+	
+	
+	public static function loadBytes(url:String, ok:Bytes->Void, ?error:Dynamic->Void):Void {
+		if (error == null) error = Tools.errorFunction;
+		try {
+			var loader = new URLLoader(new URLRequest(url));
+			loader.dataFormat = URLLoaderDataFormat.BINARY;
+			var removeEvents:Void->Void = null;
+			function errorHandler(e:IOErrorEvent):Void {
+				removeEvents();
+				error(e.text);
+			}
+			loader.addEventListener(IOErrorEvent.IO_ERROR, errorHandler);
+			function handler(e:Event):Void {
+				try {
+					removeEvents();
+					ok(Bytes.ofData(loader.data));
+				} catch (e:Dynamic) error(e);
+			}
+			removeEvents = function() {
+				loader.removeEventListener(IOErrorEvent.IO_ERROR, errorHandler);
+				loader.removeEventListener(Event.COMPLETE, handler);
+			};
+			
+			loader.addEventListener(Event.COMPLETE, handler);
+		} catch (e:Dynamic) error(e);
+	}
+	
 	
 	#end
 }
