@@ -27,11 +27,13 @@
 **/
 package pony.flash.ui;
 
+import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.text.TextField;
 import pony.flash.FLSt;
 import pony.geom.Point.IntPoint;
 import pony.Pair;
+import pony.Pool;
 import pony.ui.ButtonCore;
 import pony.ui.TreeCore;
 
@@ -50,10 +52,10 @@ class Tree extends Sprite implements FLSt {
 	
 	public var core:TreeCore;
 	
-	private var groupClass:Class<Button>;
-	private var unitClass:Class<Button>;
-	private var groupTextClass:Class<Sprite>;
-	private var unitTextClass:Class<Sprite>;
+	private var groupPool:Pool<Button>;
+	private var unitPool:Pool<Button>;
+	private var groupTextPool:Pool<Sprite>;
+	private var unitTextPool:Pool<Sprite>;
 	
 	public var defaultMode:Int = 0;
 	
@@ -64,46 +66,49 @@ class Tree extends Sprite implements FLSt {
 	
 	private function init():Void {
 		core = new TreeCore(Std.int(group.height), drawUnit, drawGroup);
-		groupTextClass = Type.getClass(groupText);
-		unitTextClass = Type.getClass(unitText);
-		unitClass = Type.getClass(unit);
-		groupClass = Type.getClass(group);
+		groupTextPool = new Pool(Type.getClass(groupText));
+		unitTextPool = new Pool(Type.getClass(unitText));
+		unitPool = new Pool(Type.getClass(unit));
+		groupPool = new Pool(Type.getClass(group));
 		removeAllChild();
 	}
 	
 	private function drawUnit(p:IntPoint, text:String):Pair<ButtonCore, Void->Void> {
-		var o:Button = Type.createInstance(unitClass, []);
-		addChild(o);
-		o.x = p.x;
-		o.y = p.y;
-		var t = drawText(p, text, unitTextClass);
+		var o:Button = unitPool.get();
+		addToPoint(p, o);
+		var t = drawText(p, text, unitTextPool.get());
 		return new Pair(o.core, function() {
 			removeChild(o);
+			unitPool.ret(o);
 			removeChild(t);
+			unitTextPool.ret(t);
 		} );
 	}
 	
 	private function drawGroup(p:IntPoint, text:String):Pair<ButtonCore, Void->Void> {
-		var o:Button = Type.createInstance(groupClass, []);
-		addChild(o);
-		o.x = p.x;
-		o.y = p.y;
-		var t = drawText(p, text, groupTextClass);
+		var o:Button = groupPool.get();
+		addToPoint(p, o);
+		var t = drawText(p, text, groupTextPool.get());
 		return new Pair(o.core, function() {
 			removeChild(o);
+			groupPool.ret(o);
 			removeChild(t);
+			groupTextPool.ret(t);
 		} );
 	}
 	
-	private function drawText(p:IntPoint, text:String, cl:Class<Sprite>):Sprite {
-		var o:Sprite = Type.createInstance(cl, []);
-		addChild(o);
-		o.x = p.x;
-		o.y = p.y;
+	private function drawText(p:IntPoint, text:String, o:Sprite):Sprite {
+		addToPoint(p, o);
 		o.mouseChildren = false;
 		o.mouseEnabled = false;
 		untyped o.text.text = text;
 		return o;
+	}
+	
+	private function addToPoint(p:IntPoint, o:DisplayObject):Void {
+		o.x = p.x;
+		o.y = p.y;
+		addChild(o);
 	}
 	
 }

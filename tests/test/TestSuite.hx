@@ -15,6 +15,7 @@ import magic.StaticInitTest;
 import math.BalanceTest;
 import math.LikerTest;
 import physics.TempTest;
+import PoolTest;
 import PriorityTest;
 import TextCoderTest;
 import time.DTimerTest;
@@ -54,6 +55,7 @@ class TestSuite extends massive.munit.TestSuite
 		add(math.BalanceTest);
 		add(math.LikerTest);
 		add(physics.TempTest);
+		add(PoolTest);
 		add(PriorityTest);
 		add(TextCoderTest);
 		add(time.DTimerTest);
