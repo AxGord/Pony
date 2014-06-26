@@ -9,9 +9,9 @@ public class EntryPoint__Main{
 public  class Main : global::haxe.lang.HxObject {
 	static Main() {
 		#line 21 "C:\\data\\GitHub\\Pony\\socketTests\\src\\Main.hx"
-		global::Main.testCount = 1000;
+		global::Main.testCount = 100;
 		#line 23 "C:\\data\\GitHub\\Pony\\socketTests\\src\\Main.hx"
-		global::Main.delay = 30;
+		global::Main.delay = 300;
 		#line 27 "C:\\data\\GitHub\\Pony\\socketTests\\src\\Main.hx"
 		global::Main.port = 16001;
 		#line 29 "C:\\data\\GitHub\\Pony\\socketTests\\src\\Main.hx"
@@ -245,7 +245,7 @@ public  class Main : global::haxe.lang.HxObject {
 					#line 85 "C:\\data\\GitHub\\Pony\\socketTests\\src\\Main.hx"
 					{
 						#line 85 "C:\\data\\GitHub\\Pony\\socketTests\\src\\Main.hx"
-						object f = global::pony._Function.Function_Impl_.@from(new global::Main_createClient_85__Fun(((global::Array<int>) (i1) ), ((global::Array<object>) (client) )), 1);
+						object f = global::pony._Function.Function_Impl_.@from(new global::Main_createClient_85__Fun(((global::Array<object>) (client) ), ((global::Array<int>) (i1) )), 1);
 						#line 85 "C:\\data\\GitHub\\Pony\\socketTests\\src\\Main.hx"
 						l = global::pony.events._Listener.Listener_Impl_._fromFunction(f, false);
 					}
@@ -472,12 +472,12 @@ public  class Main_createServer_73__Fun : global::haxe.lang.Function {
 
 #pragma warning disable 109, 114, 219, 429, 168, 162
 public  class Main_createClient_85__Fun : global::haxe.lang.Function {
-	public    Main_createClient_85__Fun(global::Array<int> i1, global::Array<object> client) : base(1, 0){
+	public    Main_createClient_85__Fun(global::Array<object> client, global::Array<int> i1) : base(1, 0){
 		unchecked {
 			#line 85 "C:\\data\\GitHub\\Pony\\socketTests\\src\\Main.hx"
-			this.i1 = i1;
-			#line 85 "C:\\data\\GitHub\\Pony\\socketTests\\src\\Main.hx"
 			this.client = client;
+			#line 85 "C:\\data\\GitHub\\Pony\\socketTests\\src\\Main.hx"
+			this.i1 = i1;
 		}
 		#line default
 	}
@@ -517,9 +517,9 @@ public  class Main_createClient_85__Fun : global::haxe.lang.Function {
 	}
 	
 	
-	public  global::Array<int> i1;
-	
 	public  global::Array<object> client;
+	
+	public  global::Array<int> i1;
 	
 }
 

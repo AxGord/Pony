@@ -2553,6 +2553,13 @@ pony.ArrayTools.toBytes = function(a) {
 	}
 	return b;
 };
+pony.ArrayTools.randomize = function(a) {
+	a.sort(pony.ArrayTools.randomizeSort);
+	return a;
+};
+pony.ArrayTools.randomizeSort = function(_,_1) {
+	if(Math.random() > 0.5) return 1; else return -1;
+};
 pony.FloatTools = function() { };
 pony.FloatTools.__name__ = ["pony","FloatTools"];
 pony.FloatTools._toFixed = function(v,n,begin,d,beginS,endS) {

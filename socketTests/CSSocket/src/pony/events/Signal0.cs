@@ -125,7 +125,7 @@ namespace pony.events._Signal0{
 					#line 63 "C:\\data\\GitHub\\Pony\\pony\\events\\Signal0.hx"
 					object listener1 = ((object) (listener) );
 					#line 63 "C:\\data\\GitHub\\Pony\\pony\\events\\Signal0.hx"
-					object __temp_stmt425 = default(object);
+					object __temp_stmt426 = default(object);
 					#line 63 "C:\\data\\GitHub\\Pony\\pony\\events\\Signal0.hx"
 					{
 						#line 63 "C:\\data\\GitHub\\Pony\\pony\\events\\Signal0.hx"
@@ -139,27 +139,27 @@ namespace pony.events._Signal0{
 							#line 63 "C:\\data\\GitHub\\Pony\\pony\\events\\Signal0.hx"
 							double __temp_ret201 = ((double) (global::haxe.lang.Runtime.getField_f(__temp_getvar200, "used", 1303220797, true)) );
 							#line 63 "C:\\data\\GitHub\\Pony\\pony\\events\\Signal0.hx"
-							object __temp_expr426 = ((object) (global::haxe.lang.Runtime.setField(__temp_getvar200, "used", 1303220797, ( __temp_ret201 + 1.0 ))) );
+							object __temp_expr427 = ((object) (global::haxe.lang.Runtime.setField(__temp_getvar200, "used", 1303220797, ( __temp_ret201 + 1.0 ))) );
 							#line 63 "C:\\data\\GitHub\\Pony\\pony\\events\\Signal0.hx"
-							double __temp_expr427 = __temp_ret201;
+							double __temp_expr428 = __temp_ret201;
 						}
 						
 						#line 63 "C:\\data\\GitHub\\Pony\\pony\\events\\Signal0.hx"
 						{
 							#line 63 "C:\\data\\GitHub\\Pony\\pony\\events\\Signal0.hx"
-							bool __temp_odecl423 = global::haxe.lang.Runtime.toBool(global::haxe.lang.Runtime.getField(listener1, "event", 1975830554, true));
+							bool __temp_odecl424 = global::haxe.lang.Runtime.toBool(global::haxe.lang.Runtime.getField(listener1, "event", 1975830554, true));
 							#line 63 "C:\\data\\GitHub\\Pony\\pony\\events\\Signal0.hx"
-							bool __temp_odecl424 = global::haxe.lang.Runtime.toBool(global::haxe.lang.Runtime.getField(listener1, "ignoreReturn", 98429794, true));
+							bool __temp_odecl425 = global::haxe.lang.Runtime.toBool(global::haxe.lang.Runtime.getField(listener1, "ignoreReturn", 98429794, true));
 							#line 63 "C:\\data\\GitHub\\Pony\\pony\\events\\Signal0.hx"
-							this2 = new global::haxe.lang.DynamicObject(new global::Array<int>(new int[]{102, 98429794, 373703110, 1247723251, 1975830554}), new global::Array<object>(new object[]{f, __temp_odecl424, true, default(global::pony.events.Event), __temp_odecl423}), new global::Array<int>(new int[]{1248019663, 1303220797}), new global::Array<double>(new double[]{((double) (1) ), ((double) (0) )}));
+							this2 = new global::haxe.lang.DynamicObject(new global::Array<int>(new int[]{102, 98429794, 373703110, 1247723251, 1975830554}), new global::Array<object>(new object[]{f, __temp_odecl425, true, default(global::pony.events.Event), __temp_odecl424}), new global::Array<int>(new int[]{1248019663, 1303220797}), new global::Array<double>(new double[]{((double) (1) ), ((double) (0) )}));
 						}
 						
 						#line 63 "C:\\data\\GitHub\\Pony\\pony\\events\\Signal0.hx"
-						__temp_stmt425 = this2;
+						__temp_stmt426 = this2;
 					}
 					
 					#line 63 "C:\\data\\GitHub\\Pony\\pony\\events\\Signal0.hx"
-					this1.@add(((object) (__temp_stmt425) ), new global::haxe.lang.Null<int>(__temp_priority87, true));
+					this1.@add(((object) (__temp_stmt426) ), new global::haxe.lang.Null<int>(__temp_priority87, true));
 				}
 				
 				#line 64 "C:\\data\\GitHub\\Pony\\pony\\events\\Signal0.hx"
@@ -187,7 +187,7 @@ namespace pony.events._Signal0{
 					#line 74 "C:\\data\\GitHub\\Pony\\pony\\events\\Signal0.hx"
 					this1.listeners.changeElement(((object) (listener) ), new global::haxe.lang.Null<int>(__temp_priority88, true));
 					#line 74 "C:\\data\\GitHub\\Pony\\pony\\events\\Signal0.hx"
-					global::pony.events.Signal __temp_expr428 = this1;
+					global::pony.events.Signal __temp_expr429 = this1;
 				}
 				
 				#line 75 "C:\\data\\GitHub\\Pony\\pony\\events\\Signal0.hx"

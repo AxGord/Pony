@@ -48,17 +48,17 @@ namespace pony.net{
 						#line 60 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClientBase.hx"
 						global::pony.events.Signal this1 = default(global::pony.events.Signal);
 						#line 60 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClientBase.hx"
-						global::pony.events.Signal __temp_stmt487 = default(global::pony.events.Signal);
+						global::pony.events.Signal __temp_stmt488 = default(global::pony.events.Signal);
 						#line 60 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClientBase.hx"
 						{
 							#line 60 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClientBase.hx"
 							global::pony.events.Signal s = new global::pony.events.Signal(((global::pony.net.SocketClient) (__temp_me107) ));
 							#line 60 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClientBase.hx"
-							__temp_stmt487 = s;
+							__temp_stmt488 = s;
 						}
 						
 						#line 60 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClientBase.hx"
-						this1 = ((global::pony.events.Signal) (__temp_stmt487) );
+						this1 = ((global::pony.events.Signal) (__temp_stmt488) );
 						#line 60 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClientBase.hx"
 						__temp_me107.connect = ((global::pony.events.Signal) (this1) );
 					}
@@ -68,17 +68,17 @@ namespace pony.net{
 						#line 60 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClientBase.hx"
 						global::pony.events.Signal this2 = default(global::pony.events.Signal);
 						#line 60 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClientBase.hx"
-						global::pony.events.Signal __temp_stmt488 = default(global::pony.events.Signal);
+						global::pony.events.Signal __temp_stmt489 = default(global::pony.events.Signal);
 						#line 60 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClientBase.hx"
 						{
 							#line 60 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClientBase.hx"
 							global::pony.events.Signal s1 = new global::pony.events.Signal(((global::pony.net.SocketClient) (__temp_me107) ));
 							#line 60 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClientBase.hx"
-							__temp_stmt488 = s1;
+							__temp_stmt489 = s1;
 						}
 						
 						#line 60 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClientBase.hx"
-						this2 = ((global::pony.events.Signal) (__temp_stmt488) );
+						this2 = ((global::pony.events.Signal) (__temp_stmt489) );
 						#line 60 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClientBase.hx"
 						__temp_me107.data = ((global::pony.events.Signal) (this2) );
 					}
@@ -139,17 +139,17 @@ namespace pony.net{
 					#line 67 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClientBase.hx"
 					global::pony.events.Signal this1 = default(global::pony.events.Signal);
 					#line 67 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClientBase.hx"
-					global::pony.events.Signal __temp_stmt480 = default(global::pony.events.Signal);
+					global::pony.events.Signal __temp_stmt481 = default(global::pony.events.Signal);
 					#line 67 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClientBase.hx"
 					{
 						#line 67 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClientBase.hx"
 						global::pony.events.Signal s = new global::pony.events.Signal(((global::pony.net.SocketClient) (this) ));
 						#line 67 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClientBase.hx"
-						__temp_stmt480 = s;
+						__temp_stmt481 = s;
 					}
 					
 					#line 67 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClientBase.hx"
-					this1 = ((global::pony.events.Signal) (__temp_stmt480) );
+					this1 = ((global::pony.events.Signal) (__temp_stmt481) );
 					#line 67 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClientBase.hx"
 					this.connect = ((global::pony.events.Signal) (this1) );
 				}
@@ -159,17 +159,17 @@ namespace pony.net{
 					#line 68 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClientBase.hx"
 					global::pony.events.Signal this2 = default(global::pony.events.Signal);
 					#line 68 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClientBase.hx"
-					global::pony.events.Signal __temp_stmt481 = default(global::pony.events.Signal);
+					global::pony.events.Signal __temp_stmt482 = default(global::pony.events.Signal);
 					#line 68 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClientBase.hx"
 					{
 						#line 68 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClientBase.hx"
 						global::pony.events.Signal s1 = new global::pony.events.Signal(((global::pony.net.SocketClient) (this) ));
 						#line 68 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClientBase.hx"
-						__temp_stmt481 = s1;
+						__temp_stmt482 = s1;
 					}
 					
 					#line 68 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClientBase.hx"
-					this2 = ((global::pony.events.Signal) (__temp_stmt481) );
+					this2 = ((global::pony.events.Signal) (__temp_stmt482) );
 					#line 68 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClientBase.hx"
 					this.data = ((global::pony.events.Signal) (this2) );
 				}
@@ -242,17 +242,17 @@ namespace pony.net{
 						#line 94 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClientBase.hx"
 						global::pony.events.Signal this1 = default(global::pony.events.Signal);
 						#line 94 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClientBase.hx"
-						global::pony.events.Signal __temp_stmt482 = default(global::pony.events.Signal);
+						global::pony.events.Signal __temp_stmt483 = default(global::pony.events.Signal);
 						#line 94 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClientBase.hx"
 						{
 							#line 94 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClientBase.hx"
 							global::pony.events.Signal s = new global::pony.events.Signal(((global::pony.net.SocketClient) (this) ));
 							#line 94 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClientBase.hx"
-							__temp_stmt482 = s;
+							__temp_stmt483 = s;
 						}
 						
 						#line 94 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClientBase.hx"
-						this1 = ((global::pony.events.Signal) (__temp_stmt482) );
+						this1 = ((global::pony.events.Signal) (__temp_stmt483) );
 						#line 94 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClientBase.hx"
 						this.connect = ((global::pony.events.Signal) (this1) );
 					}
@@ -262,17 +262,17 @@ namespace pony.net{
 						#line 94 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClientBase.hx"
 						global::pony.events.Signal this2 = default(global::pony.events.Signal);
 						#line 94 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClientBase.hx"
-						global::pony.events.Signal __temp_stmt483 = default(global::pony.events.Signal);
+						global::pony.events.Signal __temp_stmt484 = default(global::pony.events.Signal);
 						#line 94 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClientBase.hx"
 						{
 							#line 94 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClientBase.hx"
 							global::pony.events.Signal s1 = new global::pony.events.Signal(((global::pony.net.SocketClient) (this) ));
 							#line 94 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClientBase.hx"
-							__temp_stmt483 = s1;
+							__temp_stmt484 = s1;
 						}
 						
 						#line 94 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClientBase.hx"
-						this2 = ((global::pony.events.Signal) (__temp_stmt483) );
+						this2 = ((global::pony.events.Signal) (__temp_stmt484) );
 						#line 94 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClientBase.hx"
 						this.data = ((global::pony.events.Signal) (this2) );
 					}
@@ -284,29 +284,29 @@ namespace pony.net{
 				#line 95 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClientBase.hx"
 				this.server = server;
 				this.id = id;
-				object __temp_stmt484 = default(object);
+				object __temp_stmt485 = default(object);
 				#line 97 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClientBase.hx"
 				{
 					#line 97 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClientBase.hx"
-					global::haxe.lang.Function __temp_stmt486 = default(global::haxe.lang.Function);
+					global::haxe.lang.Function __temp_stmt487 = default(global::haxe.lang.Function);
 					#line 97 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClientBase.hx"
 					{
 						#line 97 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClientBase.hx"
 						global::Array<object> _e = new global::Array<object>(new object[]{server.data});
 						#line 97 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClientBase.hx"
-						__temp_stmt486 = new global::pony.net.SocketClientBase_init_97__Fun(((global::Array<object>) (_e) ));
+						__temp_stmt487 = new global::pony.net.SocketClientBase_init_97__Fun(((global::Array<object>) (_e) ));
 					}
 					
 					#line 97 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClientBase.hx"
-					object __temp_stmt485 = global::pony._Function.Function_Impl_.@from(__temp_stmt486, 1);
+					object __temp_stmt486 = global::pony._Function.Function_Impl_.@from(__temp_stmt487, 1);
 					#line 97 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClientBase.hx"
-					object l = global::pony.events._Listener.Listener_Impl_._fromFunction(__temp_stmt485, true);
+					object l = global::pony.events._Listener.Listener_Impl_._fromFunction(__temp_stmt486, true);
 					#line 97 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClientBase.hx"
-					__temp_stmt484 = l;
+					__temp_stmt485 = l;
 				}
 				
 				#line 97 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClientBase.hx"
-				global::pony.events._Signal1.Signal1_Impl_.@add<object, object>(this.data, ((object) (__temp_stmt484) ), default(global::haxe.lang.Null<int>));
+				global::pony.events._Signal1.Signal1_Impl_.@add<object, object>(this.data, ((object) (__temp_stmt485) ), default(global::haxe.lang.Null<int>));
 				this.disconnect.@add(global::pony.events._Listener.Listener_Impl_._fromFunction(global::pony._Function.Function_Impl_.@from(((global::haxe.lang.Function) (new global::haxe.lang.Closure(((object) (server.disconnect) ), ((string) ("dispatchEvent") ), ((int) (1181009664) ))) ), 1), true), default(global::haxe.lang.Null<int>));
 			}
 			#line default

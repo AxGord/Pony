@@ -112,6 +112,8 @@ abstract Signal1<Target, T1:Dynamic>(Signal) {
 		return target;
 	}
 	
+	inline public function not(v:T1, priority:Int=0):Signal0<Target> return this.notArgs([v], priority);
+	
 	public function bind(a:Dynamic, ?b:Dynamic, ?c:Dynamic, ?d:Dynamic, ?e:Dynamic, ?f:Dynamic, ?g:Dynamic):Signal {
 		return if (g != null)
 			bindArgs([a, b, c, d, e, f, g]);
@@ -161,6 +163,8 @@ abstract Signal1<Target, T1:Dynamic>(Signal) {
 	@:from static private inline function from<A,B>(s:Signal):Signal1<A,B> return new Signal1<A,B>(s);
 	@:to private inline function to():Signal return this;
 	
+	@:to private inline function toListener():Listener return return this.dispatchEvent;
+	
 	//Operators (experimental)
 	
 	@:op(A << B) inline private function op_add(listener:Listener1<Target,T1>):Signal1<Target,T1> {
@@ -185,5 +189,6 @@ abstract Signal1<Target, T1:Dynamic>(Signal) {
 	
 	@:op(A + B) inline private function op_bind<A>(a:A):Signal2<Target,A,T1> return bind1(a);
 	@:op(A - B) inline private function op_sub(a:T1):Signal0<Target> return sub(a);
+	@:op(A / B) inline private function op_not(a:T1):Signal0<Target> return not(a);
 	
 }

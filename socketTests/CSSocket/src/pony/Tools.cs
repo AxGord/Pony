@@ -1104,6 +1104,33 @@ namespace pony{
 		}
 		
 		
+		public static   global::Array<T> randomize<T>(global::Array<T> a){
+			unchecked {
+				#line 387 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
+				a.sort(((global::haxe.lang.Function) (new global::haxe.lang.Closure(((object) (typeof(global::pony.ArrayTools)) ), ((string) ("randomizeSort") ), ((int) (2073172271) ))) ));
+				return a;
+			}
+			#line default
+		}
+		
+		
+		public static   int randomizeSort(T _, T _1){
+			unchecked {
+				#line 390 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
+				if (( global::Math.rand.NextDouble() > 0.5 )) {
+					#line 390 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
+					return 1;
+				}
+				 else {
+					#line 390 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
+					return -1;
+				}
+				
+			}
+			#line default
+		}
+		
+		
 		public static  new object __hx_createEmpty(){
 			unchecked {
 				#line 353 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
@@ -1175,7 +1202,7 @@ namespace pony{
 	public  class FloatTools : global::haxe.lang.HxObject {
 		public    FloatTools(global::haxe.lang.EmptyObject empty){
 			unchecked {
-				#line 383 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
+				#line 393 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
 				{
 				}
 				
@@ -1186,7 +1213,7 @@ namespace pony{
 		
 		public    FloatTools(){
 			unchecked {
-				#line 383 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
+				#line 393 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
 				global::pony.FloatTools.__hx_ctor_pony_FloatTools(this);
 			}
 			#line default
@@ -1195,7 +1222,7 @@ namespace pony{
 		
 		public static   void __hx_ctor_pony_FloatTools(global::pony.FloatTools __temp_me70){
 			unchecked {
-				#line 383 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
+				#line 393 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
 				{
 				}
 				
@@ -1206,61 +1233,61 @@ namespace pony{
 		
 		public static   string _toFixed(double v, int n, global::haxe.lang.Null<int> begin, string d, string beginS, string endS){
 			unchecked {
-				#line 404 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
+				#line 414 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
 				if (string.Equals(endS, default(string))) {
-					#line 404 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
+					#line 414 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
 					endS = "0";
 				}
 				
-				#line 404 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
+				#line 414 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
 				if (string.Equals(beginS, default(string))) {
-					#line 404 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
+					#line 414 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
 					beginS = "0";
 				}
 				
-				#line 404 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
+				#line 414 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
 				if (string.Equals(d, default(string))) {
-					#line 404 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
+					#line 414 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
 					d = ".";
 				}
 				
-				#line 404 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
+				#line 414 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
 				int __temp_begin69 = ( ( ! (begin.hasValue) ) ? (((int) (0) )) : (begin.@value) );
 				if (( __temp_begin69 != 0 )) {
-					#line 406 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
+					#line 416 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
 					string s = global::pony.FloatTools._toFixed(v, n, new global::haxe.lang.Null<int>(0, true), d, beginS, endS);
 					global::Array<object> a = global::haxe.lang.StringExt.split(s, d);
 					int d1 = ( __temp_begin69 - global::haxe.lang.Runtime.toString(a[0]).Length );
 					return global::haxe.lang.Runtime.concat(global::pony.text.TextTools.repeat(beginS, d1), s);
 				}
 				
-				#line 412 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
+				#line 422 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
 				if (( n == 0 )) {
-					#line 412 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
+					#line 422 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
 					return global::Std.@string(((int) (v) ));
 				}
 				
-				#line 413 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
+				#line 423 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
 				double p = global::System.Math.Pow(((double) (10) ), ((double) (n) ));
 				int __temp_stmt327 = default(int);
-				#line 414 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
+				#line 424 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
 				{
-					#line 414 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
+					#line 424 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
 					double x = global::System.Math.Floor(((double) (( v * p )) ));
-					#line 414 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
+					#line 424 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
 					__temp_stmt327 = ((int) (x) );
 				}
 				
-				#line 414 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
+				#line 424 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
 				v = ( __temp_stmt327 / p );
 				string s1 = global::Std.@string(v);
 				global::Array<object> a1 = global::haxe.lang.StringExt.split(s1, ".");
 				if (( a1.length <= 1 )) {
-					#line 418 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
+					#line 428 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
 					return global::haxe.lang.Runtime.concat(global::haxe.lang.Runtime.concat(s1, d), global::pony.text.TextTools.repeat(endS, n));
 				}
 				 else {
-					#line 420 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
+					#line 430 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
 					return global::haxe.lang.Runtime.concat(global::haxe.lang.Runtime.concat(global::haxe.lang.Runtime.concat(global::haxe.lang.Runtime.toString(a1[0]), d), global::haxe.lang.Runtime.toString(a1[1])), global::pony.text.TextTools.repeat(endS, ( n - global::haxe.lang.Runtime.toString(a1[1]).Length )));
 				}
 				
@@ -1271,7 +1298,7 @@ namespace pony{
 		
 		public static  new object __hx_createEmpty(){
 			unchecked {
-				#line 383 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
+				#line 393 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
 				return new global::pony.FloatTools(((global::haxe.lang.EmptyObject) (global::haxe.lang.EmptyObject.EMPTY) ));
 			}
 			#line default
@@ -1280,7 +1307,7 @@ namespace pony{
 		
 		public static  new object __hx_create(global::Array arr){
 			unchecked {
-				#line 383 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
+				#line 393 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
 				return new global::pony.FloatTools();
 			}
 			#line default
@@ -1297,7 +1324,7 @@ namespace pony{
 	public  class XMLTools : global::haxe.lang.HxObject {
 		public    XMLTools(global::haxe.lang.EmptyObject empty){
 			unchecked {
-				#line 424 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
+				#line 434 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
 				{
 				}
 				
@@ -1308,7 +1335,7 @@ namespace pony{
 		
 		public    XMLTools(){
 			unchecked {
-				#line 424 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
+				#line 434 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
 				global::pony.XMLTools.__hx_ctor_pony_XMLTools(this);
 			}
 			#line default
@@ -1317,7 +1344,7 @@ namespace pony{
 		
 		public static   void __hx_ctor_pony_XMLTools(global::pony.XMLTools __temp_me71){
 			unchecked {
-				#line 424 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
+				#line 434 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
 				{
 				}
 				
@@ -1328,35 +1355,35 @@ namespace pony{
 		
 		public static   bool isTrue(global::haxe.xml.Fast x, string name){
 			unchecked {
-				#line 425 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
+				#line 435 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
 				bool __temp_boolv330 = x.has.resolve(name);
-				#line 425 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
+				#line 435 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
 				bool __temp_boolv329 = false;
-				#line 425 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
+				#line 435 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
 				if (__temp_boolv330) {
-					#line 425 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
+					#line 435 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
 					{
-						#line 425 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
+						#line 435 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
 						string s = x.att.resolve(name);
-						#line 425 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
+						#line 435 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
 						string __temp_stmt331 = default(string);
-						#line 425 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
+						#line 435 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
 						{
-							#line 425 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
+							#line 435 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
 							string s1 = s.ToLower();
-							#line 425 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
+							#line 435 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
 							__temp_stmt331 = s1.Trim();
 						}
 						
-						#line 425 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
+						#line 435 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
 						__temp_boolv329 = string.Equals(__temp_stmt331, "true");
 					}
 					
 				}
 				
-				#line 425 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
+				#line 435 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
 				bool __temp_stmt328 = ( __temp_boolv330 && __temp_boolv329 );
-				#line 425 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
+				#line 435 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
 				return __temp_stmt328;
 			}
 			#line default
@@ -1365,7 +1392,7 @@ namespace pony{
 		
 		public static   global::haxe.xml.Fast fast(string text){
 			unchecked {
-				#line 426 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
+				#line 436 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
 				return new global::haxe.xml.Fast(((global::Xml) (global::Xml.parse(text)) ));
 			}
 			#line default
@@ -1374,7 +1401,7 @@ namespace pony{
 		
 		public static  new object __hx_createEmpty(){
 			unchecked {
-				#line 424 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
+				#line 434 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
 				return new global::pony.XMLTools(((global::haxe.lang.EmptyObject) (global::haxe.lang.EmptyObject.EMPTY) ));
 			}
 			#line default
@@ -1383,7 +1410,7 @@ namespace pony{
 		
 		public static  new object __hx_create(global::Array arr){
 			unchecked {
-				#line 424 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
+				#line 434 "C:\\data\\GitHub\\Pony\\pony\\Tools.hx"
 				return new global::pony.XMLTools();
 			}
 			#line default

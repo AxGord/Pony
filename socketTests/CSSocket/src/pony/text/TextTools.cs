@@ -61,17 +61,17 @@ namespace pony.text{
 		public static   bool isTrue(string s){
 			unchecked {
 				#line 49 "C:\\data\\GitHub\\Pony\\pony\\text\\TextTools.hx"
-				string __temp_stmt527 = default(string);
+				string __temp_stmt528 = default(string);
 				#line 49 "C:\\data\\GitHub\\Pony\\pony\\text\\TextTools.hx"
 				{
 					#line 49 "C:\\data\\GitHub\\Pony\\pony\\text\\TextTools.hx"
 					string s1 = s.ToLower();
 					#line 49 "C:\\data\\GitHub\\Pony\\pony\\text\\TextTools.hx"
-					__temp_stmt527 = s1.Trim();
+					__temp_stmt528 = s1.Trim();
 				}
 				
 				#line 49 "C:\\data\\GitHub\\Pony\\pony\\text\\TextTools.hx"
-				return string.Equals(__temp_stmt527, "true");
+				return string.Equals(__temp_stmt528, "true");
 			}
 			#line default
 		}

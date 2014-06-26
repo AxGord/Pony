@@ -5,6 +5,7 @@ NET_20
 WITHOUTUNITY
 cs
 dce
+debug
 haxe3
 haxe_ver
 hxcpp_api_level
@@ -21,6 +22,7 @@ NET_20=1
 WITHOUTUNITY=1
 cs=1
 dce=std
+debug=1
 haxe3=1
 haxe_ver=3.2
 hxcpp_api_level=312
@@ -453,6 +455,7 @@ C pony.events.Signal_buildListenerEvent_446__Fun
 C pony.events.Signal_buildListenerArgs_447__Fun
 C pony.events.Signal_buildListenerEmpty_448__Fun
 C pony.events.Signal_sw_454__Fun
+C pony.events.Signal_debug_482__Fun
 M cs.system.reflection.MethodInfo
 M haxe.EnumTools
 M haxe.io.BytesOutput

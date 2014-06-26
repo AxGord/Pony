@@ -78,6 +78,8 @@ class FLTools
 	
 	private static function linit():Void DeltaTime.fixedUpdate < function() longInit.dispatch();
 	
+	inline static public function registerClassAlias<T>(cl:Class<T>):Void untyped __global__["flash.net.registerClassAlias"](Type.getClassName(cl), cl);
+	
 	static public var os(get, null):String;
 	static public var version(get, null):Array<Int>;
 	
@@ -216,7 +218,7 @@ class FLTools
 		sprite.graphics.drawRect(width, 0, size, width+size);
 		sprite.graphics.drawRect(0, height, width, height + size);
 		
-		Lib.current.addChild(sprite);
+		Lib.current.stage.addChild(sprite);
 	}
 	#end
 	
@@ -316,10 +318,10 @@ class FLTools
 			}
 			loader.addEventListener(IOErrorEvent.IO_ERROR, errorHandler);
 			function handler(e:Event):Void {
-				try {
+				//try {
 					removeEvents();
 					ok(Bytes.ofData(loader.data));
-				} catch (e:Dynamic) error(e);
+				//} catch (e:Dynamic) error(e);
 			}
 			removeEvents = function() {
 				loader.removeEventListener(IOErrorEvent.IO_ERROR, errorHandler);

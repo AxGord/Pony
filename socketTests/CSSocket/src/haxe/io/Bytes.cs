@@ -34,7 +34,7 @@ namespace haxe.io{
 		
 		public static   global::haxe.io.Bytes alloc(int length){
 			unchecked {
-				#line 379 "C:\\HaxeToolkit\\haxe\\std\\haxe\\io\\Bytes.hx"
+				#line 381 "C:\\HaxeToolkit\\haxe\\std\\haxe\\io\\Bytes.hx"
 				return new global::haxe.io.Bytes(((int) (length) ), ((byte[]) (new byte[((int) (length) )]) ));
 			}
 			#line default
@@ -43,7 +43,7 @@ namespace haxe.io{
 		
 		public static   global::haxe.io.Bytes ofString(string s){
 			unchecked {
-				#line 407 "C:\\HaxeToolkit\\haxe\\std\\haxe\\io\\Bytes.hx"
+				#line 409 "C:\\HaxeToolkit\\haxe\\std\\haxe\\io\\Bytes.hx"
 				byte[] b = global::System.Text.Encoding.UTF8.GetBytes(((string) (s) ));
 				return new global::haxe.io.Bytes(((int) (( b as global::System.Array ).Length) ), ((byte[]) (b) ));
 			}
@@ -53,7 +53,7 @@ namespace haxe.io{
 		
 		public static   global::haxe.io.Bytes ofData(byte[] b){
 			unchecked {
-				#line 458 "C:\\HaxeToolkit\\haxe\\std\\haxe\\io\\Bytes.hx"
+				#line 460 "C:\\HaxeToolkit\\haxe\\std\\haxe\\io\\Bytes.hx"
 				return new global::haxe.io.Bytes(((int) (( b as global::System.Array ).Length) ), ((byte[]) (b) ));
 			}
 			#line default
@@ -84,7 +84,7 @@ namespace haxe.io{
 		
 		public virtual   string toString(){
 			unchecked {
-				#line 335 "C:\\HaxeToolkit\\haxe\\std\\haxe\\io\\Bytes.hx"
+				#line 337 "C:\\HaxeToolkit\\haxe\\std\\haxe\\io\\Bytes.hx"
 				return global::System.Text.Encoding.UTF8.GetString(((byte[]) (this.b) ), ((int) (0) ), ((int) (this.length) ));
 			}
 			#line default

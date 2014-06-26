@@ -359,7 +359,7 @@ class Signal {
 			s = new Signal(target);
 			s.parent = this;
 			var l:Listener = notHandler.bind(args);
-			notHandlers[bindMap.set(args, s)] = l;
+			notHandlers[notMap.set(args, s)] = l;
 			add(l, priority);
 		}
 		return s;
@@ -368,7 +368,7 @@ class Signal {
 	private function notHandler(args:Array<Dynamic>, event:Event):Void {
 		var a:Array<Dynamic> = event.args.copy();
 		for (arg in args) if (a.shift() == arg) return;
-		subMap.get(args).dispatchEvent(new Event(a, event.target, event));
+		notMap.get(args).dispatchEvent(new Event(a, event.target, event));
 	}
 	
 	macro public function removeNot(args:Array<Expr>):Expr {

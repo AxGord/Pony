@@ -25,52 +25,13 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.ui;
-import pony.events.Signal;
-import pony.events.Signal1;
-import pony.geom.IWards;
+package pony.flash.workers;
 
 /**
- * ...
- * @author AxGord
+ * @author AxGord <axgord@gmail.com>
  */
-class SwitchableList implements IWards<SwitchableList> {
-	
-	public var change(default,null):Signal1<SwitchableList, Int>;
-	public var currentPos(default,null):Int;
 
-	private var list:Array<ButtonCore>;
-	public var state(get,set):Int;
-	private var swto:Int;
-	
-	public function new(a:Array<ButtonCore>, def:Int = 0, swto:Int = 2) {
-		this.swto = swto;
-		state = def;
-		change = Signal.create(this);
-		list = a;
-		for (i in 0...a.length) {
-			if (i == def) a[i].mode = swto;
-			//select.listen(a[i].click.sub([0], [i]));
-			a[i].click.sub(0).bind(i).add(change);
-		}
-		change.add(setState, -1);
-	}
-	
-	private function setState(n:Int):Void {
-		if (list[state] != null) list[state].mode = 0;
-		if (list[n] != null) list[n].mode = swto;
-		state = n;
-	}
-	
-	public function next():Void {
-		if (state + 1 < list.length) change.dispatch(state+1);
-	}
-	
-	public function prev():Void {
-		if (state - 1 >= 0) change.dispatch(state-1);
-	}
-	
-	inline private function get_state():Int return currentPos;
-	inline private function set_state(v:Int):Int return currentPos = v;
-	
+interface IWorkerGatePool {
+	function _registerOutput<T1, T2>(name:String, response:T2->Void, unlock:Void->Void):T1->Void;
+	function _registerInput<T1, T2>(name:String, request:T1->Void):T2->Void;
 }

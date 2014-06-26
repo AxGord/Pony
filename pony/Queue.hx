@@ -34,7 +34,7 @@ package pony;
 class Queue<T> {
 
 	private var list:List<Array<Dynamic>>;
-	private var busy:Bool = false;
+	public var busy:Bool = false;
 	public var call:T;
 	private var method:T;
 	

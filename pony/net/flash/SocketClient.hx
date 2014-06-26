@@ -73,7 +73,7 @@ class SocketClient extends SocketClientBase {
 		connect.dispatch();
 	}
 	
-	inline public function send(data:BytesOutput):Void {
+	public function send(data:BytesOutput):Void {
 		try {
 			socket.writeBytes(data.getBytes().getData());
 			socket.flush();

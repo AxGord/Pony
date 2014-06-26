@@ -54,7 +54,7 @@ class SwitcherUCore extends MonoBehaviour {
 		names = [for (e in a) e.name];
 		a.i = 0;
 		core = new SwitchableList([for (e in a) e.core], 0, 1);
-		core.select.add(sw);
+		core.change.add(sw);
 	}
 	
 	private function sw(n:Int):Void select.dispatch(names[n]);

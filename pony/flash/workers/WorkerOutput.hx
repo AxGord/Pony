@@ -25,52 +25,49 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.ui;
-import pony.events.Signal;
-import pony.events.Signal1;
-import pony.geom.IWards;
+package pony.flash.workers;
+
+import flash.events.Event;
+import pony.magic.Declarator;
+import pony.Tools;
 
 /**
- * ...
- * @author AxGord
+ * WorkerOutput
+ * @author AxGord <axgord@gmail.com>
  */
-class SwitchableList implements IWards<SwitchableList> {
+class WorkerOutput<T1, T2> implements Declarator {
 	
-	public var change(default,null):Signal1<SwitchableList, Int>;
-	public var currentPos(default,null):Int;
+	@:arg public var name(default,null):String;
+	@:arg private var gate:IWorkerGatePool;
+	
+	private var q:Queue < T1->(T2->Void)->Void > = new Queue < T1->(T2->Void)->Void > (_request);
 
-	private var list:Array<ButtonCore>;
-	public var state(get,set):Int;
-	private var swto:Int;
-	
-	public function new(a:Array<ButtonCore>, def:Int = 0, swto:Int = 2) {
-		this.swto = swto;
-		state = def;
-		change = Signal.create(this);
-		list = a;
-		for (i in 0...a.length) {
-			if (i == def) a[i].mode = swto;
-			//select.listen(a[i].click.sub([0], [i]));
-			a[i].click.sub(0).bind(i).add(change);
-		}
-		change.add(setState, -1);
+	public function new() {
+		q.busy = true;
+		req = gate._registerOutput(name, response, q.next);
 	}
 	
-	private function setState(n:Int):Void {
-		if (list[state] != null) list[state].mode = 0;
-		if (list[n] != null) list[n].mode = swto;
-		state = n;
+	inline public function request(r:T1, ?cb:T2->Void):Void q.call(r, cb);
+	
+	private function _request(r:T1, cb:T2->Void):Void {
+		_response = cb != null ? cb: Tools.nullFunction1;
+		req(r);
 	}
 	
-	public function next():Void {
-		if (state + 1 < list.length) change.dispatch(state+1);
+	dynamic private function req(r:T1):Void {}
+	
+	private function response(r:T2):Void {
+		_response(r);
+		q.next();
 	}
 	
-	public function prev():Void {
-		if (state - 1 >= 0) change.dispatch(state-1);
-	}
+	dynamic private function _response(r:T2):Void { }
 	
-	inline private function get_state():Int return currentPos;
-	inline private function set_state(v:Int):Int return currentPos = v;
+	public function destroy():Void {
+		gate = null;
+		q = null;
+		req = null;
+		_response = null;
+	}
 	
 }

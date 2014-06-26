@@ -79,21 +79,21 @@ namespace pony.net.cs{
 					this.socket.EndConnect(((global::System.IAsyncResult) (ar) ));
 					this.initCS(this.socket);
 				}
-				catch (global::System.Exception __temp_catchallException489){
+				catch (global::System.Exception __temp_catchallException490){
 					#line 69 "C:\\data\\GitHub\\Pony\\pony\\net\\cs\\SocketClient.hx"
-					global::haxe.lang.Exceptions.exception = __temp_catchallException489;
+					global::haxe.lang.Exceptions.exception = __temp_catchallException490;
 					#line 72 "C:\\data\\GitHub\\Pony\\pony\\net\\cs\\SocketClient.hx"
-					object __temp_catchall490 = __temp_catchallException489;
+					object __temp_catchall491 = __temp_catchallException490;
 					#line 72 "C:\\data\\GitHub\\Pony\\pony\\net\\cs\\SocketClient.hx"
-					if (( __temp_catchall490 is global::haxe.lang.HaxeException )) {
+					if (( __temp_catchall491 is global::haxe.lang.HaxeException )) {
 						#line 72 "C:\\data\\GitHub\\Pony\\pony\\net\\cs\\SocketClient.hx"
-						__temp_catchall490 = ((global::haxe.lang.HaxeException) (__temp_catchallException489) ).obj;
+						__temp_catchall491 = ((global::haxe.lang.HaxeException) (__temp_catchallException490) ).obj;
 					}
 					
 					#line 72 "C:\\data\\GitHub\\Pony\\pony\\net\\cs\\SocketClient.hx"
 					{
 						#line 72 "C:\\data\\GitHub\\Pony\\pony\\net\\cs\\SocketClient.hx"
-						object _ = __temp_catchall490;
+						object _ = __temp_catchall491;
 						global::haxe.Log.trace.__hx_invoke2_o(default(double), "connect error", default(double), new global::haxe.lang.DynamicObject(new global::Array<int>(new int[]{302979532, 1547539107, 1648581351}), new global::Array<object>(new object[]{"connectCallback", "pony.net.cs.SocketClient", "SocketClient.hx"}), new global::Array<int>(new int[]{1981972957}), new global::Array<double>(new double[]{((double) (73) )})));
 						this.reconnect();
 					}
@@ -171,21 +171,21 @@ namespace pony.net.cs{
 					}
 					
 				}
-				catch (global::System.Exception __temp_catchallException491){
+				catch (global::System.Exception __temp_catchallException492){
 					#line 96 "C:\\data\\GitHub\\Pony\\pony\\net\\cs\\SocketClient.hx"
-					global::haxe.lang.Exceptions.exception = __temp_catchallException491;
+					global::haxe.lang.Exceptions.exception = __temp_catchallException492;
 					#line 105 "C:\\data\\GitHub\\Pony\\pony\\net\\cs\\SocketClient.hx"
-					object __temp_catchall492 = __temp_catchallException491;
+					object __temp_catchall493 = __temp_catchallException492;
 					#line 105 "C:\\data\\GitHub\\Pony\\pony\\net\\cs\\SocketClient.hx"
-					if (( __temp_catchall492 is global::haxe.lang.HaxeException )) {
+					if (( __temp_catchall493 is global::haxe.lang.HaxeException )) {
 						#line 105 "C:\\data\\GitHub\\Pony\\pony\\net\\cs\\SocketClient.hx"
-						__temp_catchall492 = ((global::haxe.lang.HaxeException) (__temp_catchallException491) ).obj;
+						__temp_catchall493 = ((global::haxe.lang.HaxeException) (__temp_catchallException492) ).obj;
 					}
 					
 					#line 105 "C:\\data\\GitHub\\Pony\\pony\\net\\cs\\SocketClient.hx"
 					{
 						#line 105 "C:\\data\\GitHub\\Pony\\pony\\net\\cs\\SocketClient.hx"
-						object _ = __temp_catchall492;
+						object _ = __temp_catchall493;
 						#line 105 "C:\\data\\GitHub\\Pony\\pony\\net\\cs\\SocketClient.hx"
 						this._close();
 					}
@@ -237,21 +237,21 @@ namespace pony.net.cs{
 					}
 					
 				}
-				catch (global::System.Exception __temp_catchallException493){
+				catch (global::System.Exception __temp_catchallException494){
 					#line 116 "C:\\data\\GitHub\\Pony\\pony\\net\\cs\\SocketClient.hx"
-					global::haxe.lang.Exceptions.exception = __temp_catchallException493;
+					global::haxe.lang.Exceptions.exception = __temp_catchallException494;
 					#line 124 "C:\\data\\GitHub\\Pony\\pony\\net\\cs\\SocketClient.hx"
-					object __temp_catchall494 = __temp_catchallException493;
+					object __temp_catchall495 = __temp_catchallException494;
 					#line 124 "C:\\data\\GitHub\\Pony\\pony\\net\\cs\\SocketClient.hx"
-					if (( __temp_catchall494 is global::haxe.lang.HaxeException )) {
+					if (( __temp_catchall495 is global::haxe.lang.HaxeException )) {
 						#line 124 "C:\\data\\GitHub\\Pony\\pony\\net\\cs\\SocketClient.hx"
-						__temp_catchall494 = ((global::haxe.lang.HaxeException) (__temp_catchallException493) ).obj;
+						__temp_catchall495 = ((global::haxe.lang.HaxeException) (__temp_catchallException494) ).obj;
 					}
 					
 					#line 124 "C:\\data\\GitHub\\Pony\\pony\\net\\cs\\SocketClient.hx"
 					{
 						#line 124 "C:\\data\\GitHub\\Pony\\pony\\net\\cs\\SocketClient.hx"
-						object _ = __temp_catchall494;
+						object _ = __temp_catchall495;
 						#line 124 "C:\\data\\GitHub\\Pony\\pony\\net\\cs\\SocketClient.hx"
 						this._close();
 					}
@@ -276,7 +276,7 @@ namespace pony.net.cs{
 					#line 151 "C:\\data\\GitHub\\Pony\\pony\\events\\Signal.hx"
 					_this.dispatchEvent(new global::pony.events.Event(((global::Array) (new global::Array<object>(new object[]{})) ), ((object) (_this.target) ), ((global::pony.events.Event) (default(global::pony.events.Event)) )));
 					#line 151 "C:\\data\\GitHub\\Pony\\pony\\events\\Signal.hx"
-					global::pony.events.Signal __temp_expr495 = _this;
+					global::pony.events.Signal __temp_expr496 = _this;
 				}
 				
 			}

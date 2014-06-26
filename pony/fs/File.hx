@@ -65,7 +65,9 @@ abstract File(Unit) {
 	}
 	
 	public function set_bytes(b:Bytes):Bytes {
+		#if !nodejs
 		sys.io.File.saveBytes(first, b);
+		#end
 		return b;
 	}
 	

@@ -28,6 +28,7 @@
 package pony.unity3d.scene.ucore;
 
 import pony.events.Signal;
+import pony.events.Signal1;
 import pony.geom.IWards;
 import unityengine.GameObject;
 import unityengine.MonoBehaviour;
@@ -44,13 +45,13 @@ using hugs.HUGSWrapper;
  * @author BoBaH6eToH <freezedunk@gmail.com>
  */
 
-class WardsUCore extends MonoBehaviour implements IWards
+class WardsUCore extends MonoBehaviour implements IWards<WardsUCore>
 {
 	public var withRotation:Bool = true;
 	public var withTimeScale:Bool = true;
 	public var speed:Single = 200;
 	public var currentPos:Int = -1;
-	public var change(default, null):Signal;
+	public var change(default, null):Signal1<WardsUCore, Int>;
 	public var changed(default, null):Signal;
 	
 	public var target:GameObject;
@@ -61,7 +62,7 @@ class WardsUCore extends MonoBehaviour implements IWards
 	
 	public function new():Void {
 		super();
-		change = new Signal(this);
+		change = Signal.create(this);
 		change.add(changeHandler);
 		changed = new Signal(this);
 	}

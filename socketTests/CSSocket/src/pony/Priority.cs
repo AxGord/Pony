@@ -400,7 +400,7 @@ namespace pony{
 				#line 178 "C:\\data\\GitHub\\Pony\\pony\\Priority.hx"
 				global::Array<object> f1 = new global::Array<object>(new object[]{f});
 				global::Array<T> s = new global::Array<T>(new T[]{default(T)});
-				global::Lambda.exists<T>(this.data, new global::pony.Priority_search_180__Fun<T>(((global::Array<T>) (s) ), ((global::Array<object>) (f1) )));
+				global::Lambda.exists<T>(this.data, new global::pony.Priority_search_180__Fun<T>(((global::Array<object>) (f1) ), ((global::Array<T>) (s) )));
 				#line 187 "C:\\data\\GitHub\\Pony\\pony\\Priority.hx"
 				return s[0];
 			}
@@ -1721,12 +1721,12 @@ namespace pony{
 #pragma warning disable 109, 114, 219, 429, 168, 162
 namespace pony{
 	public  class Priority_search_180__Fun<T> : global::haxe.lang.Function {
-		public    Priority_search_180__Fun(global::Array<T> s, global::Array<object> f1) : base(1, 0){
+		public    Priority_search_180__Fun(global::Array<object> f1, global::Array<T> s) : base(1, 0){
 			unchecked {
 				#line 181 "C:\\data\\GitHub\\Pony\\pony\\Priority.hx"
-				this.s = s;
-				#line 181 "C:\\data\\GitHub\\Pony\\pony\\Priority.hx"
 				this.f1 = f1;
+				#line 181 "C:\\data\\GitHub\\Pony\\pony\\Priority.hx"
+				this.s = s;
 			}
 			#line default
 		}
@@ -1751,9 +1751,9 @@ namespace pony{
 		}
 		
 		
-		public  global::Array<T> s;
-		
 		public  global::Array<object> f1;
+		
+		public  global::Array<T> s;
 		
 	}
 }

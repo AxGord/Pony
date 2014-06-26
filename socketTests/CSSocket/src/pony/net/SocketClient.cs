@@ -49,17 +49,17 @@ namespace pony.net{
 			unchecked {
 				#line 46 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClient.hx"
 				global::haxe.io.BytesOutput bo = new global::haxe.io.BytesOutput();
-				int __temp_stmt496 = default(int);
+				int __temp_stmt497 = default(int);
 				#line 47 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClient.hx"
 				{
 					#line 47 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClient.hx"
 					long x = ( data.b.b as global::System.IO.Stream ).Length;
 					#line 47 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClient.hx"
-					__temp_stmt496 = ((int) (x) );
+					__temp_stmt497 = ((int) (x) );
 				}
 				
 				#line 47 "C:\\data\\GitHub\\Pony\\pony\\net\\SocketClient.hx"
-				bo.writeInt32(__temp_stmt496);
+				bo.writeInt32(__temp_stmt497);
 				bo.write(data.getBytes());
 				base.send(bo);
 			}

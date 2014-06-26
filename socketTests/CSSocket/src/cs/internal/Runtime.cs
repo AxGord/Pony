@@ -320,7 +320,7 @@ namespace haxe.lang{
 			t = obj.GetType();
 			bf = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.FlattenHierarchy;
 		} else {
-			if (obj == typeof(string) && field.Equals("fromCharCode"))
+			if (t == typeof(string) && field.Equals("fromCharCode"))
 				return new haxe.lang.Closure(typeof(haxe.lang.StringExt), field, 0);
 
 			obj = null;

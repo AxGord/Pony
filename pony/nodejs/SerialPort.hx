@@ -36,6 +36,7 @@ import js.Node.NodeBuffer;
 import pony.events.*;
 import pony.magic.Declarator;
 import pony.nodejs.SerialPort.SerialPortConfig;
+import pony.Queue;
 import pony.time.Timer;
 
 using Lambda;
@@ -80,12 +81,14 @@ class SerialPort implements Declarator {
 	public var error(default, null):Signal1<SerialPort, String> = Signal.create(this);
 	
 	private var sp:Dynamic;
-	private var queue:List<BytesOutput> = new List();
+	
+	private var q:Queue<BytesOutput->Void>;
 	
 	@:arg public var id:String;
 	@:arg private var cfg:SerialPortConfig;
 	
 	public function new() {
+		q = new Queue < BytesOutput->Void > (_write);
 		error << reconnect;
 		open << function() connected = true;
 		connect();
@@ -150,7 +153,7 @@ class SerialPort implements Declarator {
 		sp.write(b.getBytes().getData(), function(err:Dynamic, result:Int) {
 			if (err == null && result > 0)
 				sp.drain(function(err:Dynamic) {
-					if (err == null) ok();
+					if (err == null) haxe.Timer.delay(ok, 12);//More delays! >:)
 					else if (error != null) error(err);
 				});
 			else if (error != null) error(err);
@@ -159,13 +162,13 @@ class SerialPort implements Declarator {
 	
 	public function write(b:BytesOutput):Void {
 		if (check()) return;
-		queue.add(b);
-		sendNext();
+		q.call(b);
 	}
 	
-	private function sendNext():Void {
-		if (queue.length > 0) writeAsync(queue.pop(), sendNext, error.dispatch);
+	private function _write(b:BytesOutput):Void {
+		writeAsync(b, q.next, error.dispatch);
 	}
+	
 	
 	
 }

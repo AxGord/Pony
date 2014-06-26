@@ -67,17 +67,16 @@ class Button extends MonoBehaviour {
 			core.change.sub(ButtonStates.Press).add(out);
 			core.change.sub(ButtonStates.Leave).add(out);
 		}
-		DeltaTime.fixedUpdate.once(function() core.mode = defaultMode);
+		DeltaTime.fixedUpdate < function() core.mode = defaultMode;
+		
+		
 	}
 	
-	private function out():Void {
-		Tooltip.hideText(this);
-	}
+	private function out():Void Tooltip.hideText(this);
 	
-	private function over():Void {
-		Tooltip.showText(tooltip, "", this, gameObject.layer, true);
-	}
+	private function over():Void Tooltip.showText(tooltip, "", this, gameObject.layer, true);
 	
+	#if !touchscript
 	private function Update():Void {
 		var h = panel || !Fixed2dCamera.exists
 			? guiTexture.HitTest(new Vector3(Input.mousePosition.x - Fixed2dCamera.begin, Input.mousePosition.y))
@@ -91,5 +90,22 @@ class Button extends MonoBehaviour {
 		if (down) core.mouseDown();
 		else core.mouseUp();
 	}
-	
+	#else
+	private function Update():Void {
+		var h = panel || !Fixed2dCamera.exists
+			? guiTexture.HitTest(new Vector3(Input.mousePosition.x - Fixed2dCamera.begin, Input.mousePosition.y))
+			: guiTexture.HitTest(new Vector3(Input.mousePosition.x +(Screen.width - Fixed2dCamera.begin)/2, Input.mousePosition.y));
+		if (Helper.touchDown && h) {
+			core.mouseOver(prevState);
+			core.mouseDown();
+		} else if (Helper.touchDown) {
+			core.mouseOut();
+			prevState = true;
+		} else {
+			prevState = false;
+			core.mouseUp();
+			core.mouseOut();
+		}
+	}
+	#end
 }

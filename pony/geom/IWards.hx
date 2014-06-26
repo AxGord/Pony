@@ -28,14 +28,15 @@
 package pony.geom;
 
 import pony.events.Signal;
+import pony.events.Signal1;
 
 /**
  * IWards
  * @author AxGord <axgord@gmail.com>
  */
-interface IWards {
+interface IWards<T:IWards<T>> {
 
 	public var currentPos(default,null):Int;
-	public var change(default,null):Signal;
+	public var change(default,null):Signal1<T, Int>;
 	
 }

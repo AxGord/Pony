@@ -25,52 +25,30 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.ui;
-import pony.events.Signal;
-import pony.events.Signal1;
-import pony.geom.IWards;
+package pony.flash.workers;
+import pony.magic.Declarator;
 
 /**
- * ...
- * @author AxGord
+ * WorkerInput
+ * @author AxGord <axgord@gmail.com>
  */
-class SwitchableList implements IWards<SwitchableList> {
+class WorkerInput<T1, T2> implements Declarator {
+	@:arg public var name(default,null):String;
+	@:arg private var gate:IWorkerGatePool;
 	
-	public var change(default,null):Signal1<SwitchableList, Int>;
-	public var currentPos(default,null):Int;
-
-	private var list:Array<ButtonCore>;
-	public var state(get,set):Int;
-	private var swto:Int;
-	
-	public function new(a:Array<ButtonCore>, def:Int = 0, swto:Int = 2) {
-		this.swto = swto;
-		state = def;
-		change = Signal.create(this);
-		list = a;
-		for (i in 0...a.length) {
-			if (i == def) a[i].mode = swto;
-			//select.listen(a[i].click.sub([0], [i]));
-			a[i].click.sub(0).bind(i).add(change);
-		}
-		change.add(setState, -1);
+	public function new() {
+		result = gate._registerInput(name, _request);
 	}
 	
-	private function setState(n:Int):Void {
-		if (list[state] != null) list[state].mode = 0;
-		if (list[n] != null) list[n].mode = swto;
-		state = n;
-	}
+	private function _request(r:T1):Void request(r);
 	
-	public function next():Void {
-		if (state + 1 < list.length) change.dispatch(state+1);
-	}
+	dynamic public function request(r:T1):Void { }
+	dynamic public function result(r:T2):Void { }
 	
-	public function prev():Void {
-		if (state - 1 >= 0) change.dispatch(state-1);
+	public function destroy():Void {
+		gate = null;
+		request = Tools.nullFunction1;
+		result = null;
 	}
-	
-	inline private function get_state():Int return currentPos;
-	inline private function set_state(v:Int):Int return currentPos = v;
 	
 }

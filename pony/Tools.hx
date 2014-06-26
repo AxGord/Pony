@@ -378,6 +378,18 @@ class ArrayTools {
 		for (e in a) b.writeByte(e);
 		return b;
 	}
+	
+	/**
+	 * Randomize
+	 * Warning: This function modifies original array
+	 */
+	public inline static function randomize<T>(a:Array<T>):Array<T> {
+		a.sort(randomizeSort);
+		return a;
+	}
+	private static function randomizeSort(_:Dynamic, _:Dynamic):Int return Math.random() > 0.5 ? 1 : -1;
+	
+	inline public static function last<T:Dynamic>(a:Array<T>):T return a[a.length - 1];
 }
 
 class FloatTools {
