@@ -26,6 +26,7 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.net.cs;
+import haxe.Timer;
 #if cs
 import cs.NativeArray;
 import cs.system.Byte;
@@ -61,6 +62,7 @@ class SocketClient extends SocketClientBase {
 	
 	override public function open():Void {
 		if (!closed) return;
+		trace('open');
 		socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 		socket.BeginConnect(host, port, connectCallback, null);
 	}
@@ -81,7 +83,7 @@ class SocketClient extends SocketClientBase {
 		socket = s;
 		endInit();
 		waitFirstPack();
-		connect.dispatch();
+		connect.dispatch(cast this);
 		//Timer.delay(connect.dispatch.bind(), 20);//We are sorry, but we're forced to do it. 
 	}
 	
@@ -132,10 +134,19 @@ class SocketClient extends SocketClientBase {
 	}
 	
 	public function send(data:BytesOutput):Void {
+		if (closed) return;
+		if (sendProccess) return;
 		sendProccess = true;
 		data.flush();
 		var b = data.getBytes();
-		socket.BeginSend(b.getData(), 0, b.length+1, SocketFlags.OutOfBand, sendCallback, null);
+		try {
+		socket.BeginSend(b.getData(), 0, b.length + 1, SocketFlags.OutOfBand, sendCallback, null);
+		} catch (_:Dynamic) {
+			trace('error');
+			sendProccess = false;
+			close();
+			Timer.delay(open, 100);
+		}
 	}
 	
 	private function sendCallback(ar:IAsyncResult):Void {

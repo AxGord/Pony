@@ -41,7 +41,7 @@ import pony.events.*;
 class SocketClientBase {
 
 	public var server(default,null):SocketServer;
-	public var connect(default,null):Signal0<SocketClient>;
+	public var connect(default,null):Signal1<SocketServer, SocketClient>;
 	public var data(default,null):Signal1<SocketClient, BytesInput>;
 	public var disconnect(default,null):Signal;
 	public var id(default,null):Int;
@@ -57,6 +57,7 @@ class SocketClientBase {
 		this.host = host;
 		this.port = port;
 		this.reconnectDelay = reconnect;
+		connect = Signal.create(null);
 		_init();
 		open();
 	}
@@ -64,7 +65,6 @@ class SocketClientBase {
 	inline private function _init():Void {
 		closed = true;
 		id = -1;
-		connect = Signal.create(cast this);
 		data = Signal.create(cast this);
 		disconnect = new Signal(this);
 	}

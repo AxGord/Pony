@@ -29,6 +29,8 @@ package pony.net;
 import com.dongxiguo.protobuf.binaryFormat.LimitableBytesInput;
 import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
+import haxe.Timer;
+import pony.events.Signal0;
 import pony.magic.Declarator;
 import pony.time.DeltaTime;
 import pony.events.*;
@@ -47,19 +49,25 @@ class Protobuf < A:ProtobufBuilder, B:ProtobufBuilder > implements Declarator {
 	@:arg public var socket(default, null):INet;
 	@:arg private var awrite:A->BytesOutput->Void;
 	@:arg private var bmerge:B->LimitableBytesInput->Void;
-	public var onData(default, null):Signal1<Protobuf< A, B >, B> = Signal.create(this);
+	public var onData(default, null):Signal2<Protobuf< A, B >, B, INet> = Signal.create(this);
 	public var onSend(default, null):Signal1<Protobuf< A, B >, A> = Signal.create(this);
 	private var fs:List < A->Void > = new List();
+	private var socketReady:Bool = false;
+	
+	private var gonext:Int = 0;
+	
+	public var sendComplite:Signal0<Protobuf<A,B>> = Signal.create(this);
 	
 	public function new() {
+		socket.connect < function() socketReady = true;
 		socket.data.add(dataHandler);
 		DeltaTime.fixedUpdate.add(trySend);
 	}
 	
-	private function dataHandler(d:BytesInput):Void {
+	private function dataHandler(d:BytesInput, s:SocketClient):Void {
 		var b:B = new B();
 		bmerge(b, new LimitableBytesInput(d.readAll()));
-		onData.dispatch(b);
+		onData.dispatch(b, s);
 	}
 
 	public function send(f:A->Void):Void {
@@ -68,15 +76,40 @@ class Protobuf < A:ProtobufBuilder, B:ProtobufBuilder > implements Declarator {
 	}
 	
 	private function trySend():Void {
+		if (gonext > 0) {
+			if (--gonext == 1) sendComplite.dispatch();
+			return;
+		}
+		if (!socketReady) return;
 		if (fs == null) return;
+		if (fs.length == 0) return;
 		if (socket == null) return;
 		var builder:A = new A();
 		onSend.dispatch(builder);
 		for (f in fs) f(builder);
+		fs = null;
+		if (untyped builder.midi != null) {
+			trace(untyped builder.midi.addr);
+			trace(untyped builder.midi.state);
+		}
+		sendTo(builder, socket);
+		#if nodejs
+		gonext = 2;
+		#else
+		gonext = 1;
+		#end
+	}
+	
+	public function sendTo(builder:A, socket:INet):Void {
 		var output = new BytesOutput();
 		awrite(builder, output);
 		socket.send(output);
-		fs = null;
+	}
+	
+	public function send2Other(builder:A, socket:SocketClient):Void {
+		var output = new BytesOutput();
+		awrite(builder, output);
+		socket.send2other(output);
 	}
 	
 }

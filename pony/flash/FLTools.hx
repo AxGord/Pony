@@ -27,6 +27,7 @@
 **/
 package pony.flash;
 import flash.display.LoaderInfo;
+import flash.geom.ColorTransform;
 import flash.net.URLLoader;
 import flash.net.URLLoaderDataFormat;
 import flash.net.URLRequest;
@@ -53,11 +54,15 @@ import flash.display.Loader;
 import haxe.io.Bytes;
 import haxe.io.BytesData;
 
+using pony.Tools;
+
 #else
 import haxe.macro.Expr;
 import sys.FileSystem;
 import sys.io.File;
 #end
+
+
 /**
  * Flash tools
  * @author AxGord
@@ -202,6 +207,11 @@ class FLTools
 		};
 	}
 	
+	public static function brightness(v:Int):ColorTransform {
+		var t = new ColorTransform();
+		t.with (greenOffset = v, redOffset = v, blueOffset = v);
+		return t;
+	}
 	
 	public inline static function setTrace():Void haxe.Log.trace = myTrace;
 	

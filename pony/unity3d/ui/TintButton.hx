@@ -43,6 +43,8 @@ import unityengine.GameObject;
 class TintButton extends Button {
 
 	private var tint:Single = 0.2;
+	
+	@:meta(UnityEngine.HideInInspector)
 	private var sclr:Color;
 	
 	override function Start():Void {

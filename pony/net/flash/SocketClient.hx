@@ -70,7 +70,7 @@ class SocketClient extends SocketClientBase {
 	
 	private function connectHandler(_):Void {
 		closed = false;
-		connect.dispatch();
+		connect.dispatch(cast this);
 	}
 	
 	public function send(data:BytesOutput):Void {
@@ -95,7 +95,7 @@ class SocketClient extends SocketClientBase {
 	private function socketDataHandler(_):Void {
 		var b:BytesData = new BytesData();
 		socket.readBytes(b);
-		data.dispatch(new BytesInput(Bytes.ofData(b)));
+		joinData(new BytesInput(Bytes.ofData(b)));
 	}
 	
 }

@@ -52,6 +52,8 @@ class Button extends MonoBehaviour {
 	private var autoSwith:NativeArray<Int>;
 	
 	public var core:ButtonCore;
+	
+	@:meta(UnityEngine.HideInInspector)
 	private var prevState:Bool = false;
 	
 	public function new() {

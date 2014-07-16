@@ -50,6 +50,7 @@ class MathTools {
 	}
 	
 	inline public static function percentCalc(p:Float, min:Float, max:Float):Float return (max - min) * p + min;
+	inline public static function percentBackCalc(p:Float, min:Float, max:Float):Float return  (p - min) / (max - min);
 	inline public static function percentCalcd(p:Float, a:Float, b:Float):Float return a > b ? percentCalc(p, b, a) : percentCalc(p, a, b);
 	inline public static function inRange(v:Float, min:Float, max:Float):Bool return min <= v && v <= max;
 	inline public static function approximately(a:Float, b:Float, range:Float = 1):Bool return inRange(a, b - range, b + range);

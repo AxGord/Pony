@@ -36,7 +36,8 @@ import pony.geom.IWards;
  */
 class SwitchableList implements IWards<SwitchableList> {
 	
-	public var change(default,null):Signal1<SwitchableList, Int>;
+	public var change(default, null):Signal1<SwitchableList, Int>;
+	public var lostState(default, null):Signal1<SwitchableList, Int>;
 	public var currentPos(default,null):Int;
 
 	private var list:Array<ButtonCore>;
@@ -47,6 +48,7 @@ class SwitchableList implements IWards<SwitchableList> {
 		this.swto = swto;
 		state = def;
 		change = Signal.create(this);
+		lostState = Signal.create(this);
 		list = a;
 		for (i in 0...a.length) {
 			if (i == def) a[i].mode = swto;
@@ -57,8 +59,10 @@ class SwitchableList implements IWards<SwitchableList> {
 	}
 	
 	private function setState(n:Int):Void {
+		if (state == n) return;
 		if (list[state] != null) list[state].mode = 0;
 		if (list[n] != null) list[n].mode = swto;
+		lostState.dispatch(state);
 		state = n;
 	}
 	

@@ -305,4 +305,14 @@ class SignalTest
 		Assert.areEqual(sum, 16);
 	}
 	
+	@Test
+	public function toFunction():Void {
+		var s:Signal1<Void, Int> = Signal.createEmpty();
+		var f = false;
+		s < function(v:Int) if (v == 3) f = true;
+		var fun:Int->Void = s;
+		fun(3);
+		Assert.isTrue(f);
+	}
+	
 }

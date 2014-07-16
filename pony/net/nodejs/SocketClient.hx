@@ -26,6 +26,7 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.net.nodejs;
+import pony.Queue;
 #if nodejs
 import haxe.io.Bytes;
 import haxe.io.BytesInput;
@@ -40,6 +41,7 @@ import pony.net.SocketClientBase;
 class SocketClient extends SocketClientBase {
 	
 	private var socket:NodeNetSocket;
+	private var q:Queue<BytesOutput->Void>;
 	
 	override public function open():Void {
 		socket = Node.net.connect(port, host);
@@ -48,6 +50,7 @@ class SocketClient extends SocketClientBase {
 	}
 	
 	public function nodejsInit(s:NodeNetSocket):Void {
+		q = new Queue(_send);
 		socket = s;
 		s.on('data', dataHandler);
 		s.on('end', closeHandler);
@@ -55,22 +58,18 @@ class SocketClient extends SocketClientBase {
 		endInit();
 	}
 	
-	private function closeHandler():Void {
-		disconnect.dispatch();
-	}
+	private function closeHandler():Void disconnect.dispatch();
 	
 	private function connected():Void {
 		closed = false;
-		connect.dispatch();
+		connect.dispatch(cast this);
 	}
 	
-	public function send(data:BytesOutput):Void {
-		socket.write(data.getBytes().getData());
-	}
+	public function send(data:BytesOutput):Void q.call(data);
 	
-	private function dataHandler(d:NodeBuffer):Void {
-		joinData(new BytesInput(Bytes.ofData(d)));
-	}
+	public function _send(data:BytesOutput):Void socket.write(data.getBytes().getData(), null, q.next);
+	
+	private function dataHandler(d:NodeBuffer):Void joinData(new BytesInput(Bytes.ofData(d)));
 	
 	inline public function close():Void {
 		socket.end();

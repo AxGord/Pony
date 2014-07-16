@@ -165,6 +165,11 @@ abstract Signal1<Target, T1:Dynamic>(Signal) {
 	
 	@:to private inline function toListener():Listener return return this.dispatchEvent;
 	
+	@:to private inline function toFunction():T1->Void return dispatch;
+	@:to private inline function toFunction2():Event->Void return dispatchEvent;
+	
+	public inline function debug():Void this.debug();
+	
 	//Operators (experimental)
 	
 	@:op(A << B) inline private function op_add(listener:Listener1<Target,T1>):Signal1<Target,T1> {
@@ -190,5 +195,6 @@ abstract Signal1<Target, T1:Dynamic>(Signal) {
 	@:op(A + B) inline private function op_bind<A>(a:A):Signal2<Target,A,T1> return bind1(a);
 	@:op(A - B) inline private function op_sub(a:T1):Signal0<Target> return sub(a);
 	@:op(A / B) inline private function op_not(a:T1):Signal0<Target> return not(a);
+	
 	
 }

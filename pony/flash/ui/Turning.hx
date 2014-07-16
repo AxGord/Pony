@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2013-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -25,30 +25,28 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.net;
-import haxe.io.BytesOutput;
-import haxe.io.BytesInput;
-import pony.events.*;
+package pony.flash.ui;
+
+import flash.display.MovieClip;
+import flash.display.Sprite;
+import pony.flash.FLSt;
+import pony.geom.Angle;
+import pony.ui.TurningCore;
 
 /**
- * ISocketClient
+ * ...
  * @author AxGord <axgord@gmail.com>
  */
-interface ISocketClient extends INet {
-
-	var server(default,null):SocketServer;
-	var connect(default,null):Signal1<SocketServer, SocketClient>;
-	var data(default,null):Signal1<SocketClient, BytesInput>;
-	var disconnect(default,null):Signal;
-	var id(default,null):Int;
-	var host(default,null):String;
-	var port(default, null):Int;
-	var closed(default, null):Bool;
+class Turning extends Sprite implements FLSt {
 	
-	function send(data:BytesOutput):Void;
-	function close():Void;
-	function open():Void;
-	function reconnect():Void;
-	function send2other(data:BytesOutput):Void;
+	@:st private var handle:MovieClip;
+	
+	public var core:TurningCore;
+	
+	public function new() {
+		super();
+		core = new TurningCore();
+		core.changeAngle << function(r:Angle) handle.rotation = r;
+	}
 	
 }

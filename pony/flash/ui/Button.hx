@@ -27,19 +27,15 @@
 **/
 package pony.flash.ui;
 
-import flash.display.DisplayObject;
-import flash.display.InteractiveObject;
 import flash.display.MovieClip;
-import flash.events.Event;
 import flash.events.MouseEvent;
-import flash.ui.Multitouch;
 import flash.events.TouchEvent;
+import flash.ui.Multitouch;
 import pony.flash.FLTools;
 import pony.time.DeltaTime;
-
-
-import pony.events.Signal;
 import pony.ui.ButtonCore;
+
+
 
 using pony.flash.FLExtends;
 using pony.flash.CPP_FL_TouchFix;
@@ -107,6 +103,7 @@ class Button extends MovieClip {
 			zone.addEventListener(TouchEvent.TOUCH_OVER, touchOver);
 			zone.addEventListener(TouchEvent.TOUCH_OUT, touchOut);
 			zone.addEventListener(TouchEvent.TOUCH_TAP, touchPress);
+			stage.addEventListener(TouchEvent.TOUCH_END, touchEnd);
 		} else {
 			zone.addEventListener(MouseEvent.MOUSE_OVER, over);
 			zone.addEventListener(MouseEvent.MOUSE_OUT, core.mouseOut.v());
@@ -116,17 +113,33 @@ class Button extends MovieClip {
 	}
 	
 	private function touchOver(_):Void {
+		//trace('over');
 		core.mouseOver(false);
 		core.mouseDown();
 	}
 	
-	private function touchOut(_):Void {
+	private function touchEnd(_):Void {
+		DeltaTime.fixedUpdate < _touchEnd;
+	}
+	
+	private function _touchEnd():Void {
+		//trace('end');
 		core.mouseOut();
 		core.mouseUp();
+	}
+	
+	private function touchMove(e:TouchEvent):Void {
+		if (hitTestPoint(e.stageX, e.stageY)) core.mouseOver(true);
+		else core.mouseOut();
+	}
+	
+	private function touchOut(_):Void {
+		core.mouseOut();
 		leftOver = false;
 	}
 	
 	private function touchPress(_):Void {
+		//trace('tPress');
 		core.mouseUp();
 		core.mouseOut();
 		leftOver = false;
@@ -151,7 +164,7 @@ class Button extends MovieClip {
 	
 	
 	//Touch screen in cpp
-	
+	/*
 	private function touchMove(obj:InteractiveObject) {
 		if (zone == obj) return;
 		core.mouseOut();
@@ -163,7 +176,7 @@ class Button extends MovieClip {
 		core.mouseUp();
 		core.mouseOut();
 	}
-	
+	*/
 	public function sw(v:Array<Int>):Void if (core != null) core.sw = v;
 	
 }

@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2013-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -25,30 +25,55 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.net;
-import haxe.io.BytesOutput;
-import haxe.io.BytesInput;
-import pony.events.*;
+package pony.flash.ui;
+import flash.events.MouseEvent;
+import flash.events.TouchEvent;
+import flash.display.MovieClip;
+import flash.ui.Multitouch;
+import pony.geom.Point;
+import pony.ui.ButtonCore;
 
 /**
- * ISocketClient
+ * TurningFree
  * @author AxGord <axgord@gmail.com>
  */
-interface ISocketClient extends INet {
-
-	var server(default,null):SocketServer;
-	var connect(default,null):Signal1<SocketServer, SocketClient>;
-	var data(default,null):Signal1<SocketClient, BytesInput>;
-	var disconnect(default,null):Signal;
-	var id(default,null):Int;
-	var host(default,null):String;
-	var port(default, null):Int;
-	var closed(default, null):Bool;
+class TurningFree extends Turning {
 	
-	function send(data:BytesOutput):Void;
-	function close():Void;
-	function open():Void;
-	function reconnect():Void;
-	function send2other(data:BytesOutput):Void;
+	@:st public var button:Button;
+	@:st public var lmin:MovieClip;
+	@:st public var lmax:MovieClip;
+	
+	public function new() {
+		super();
+		FLTools.init < init;
+	}
+	
+	private function init():Void {
+		if (lmin != null) core.minAngle = lmin.rotation;
+		if (lmax != null) core.maxAngle = lmax.rotation;
+		core.currentAngle = handle.rotation;
+		handle.mouseEnabled = false;
+		button.core.down.add(beginMove);
+		button.core.change.sub(ButtonStates.Default).add(endMove);
+		button.core.change.sub(ButtonStates.Focus).add(endMove);
+	}
+	
+	inline private function toMouse():Void core.toPoint({x:mouseX, y:mouseY});
+	
+	private function beginMove():Void {
+		toMouse();
+		if (Multitouch.supportsTouchEvents)
+			stage.addEventListener(TouchEvent.TOUCH_MOVE, touchMove);
+		else
+			stage.addEventListener(MouseEvent.MOUSE_MOVE, mouseMove);
+	}
+	
+	private function endMove():Void {
+		stage.removeEventListener(TouchEvent.TOUCH_MOVE, touchMove);
+		stage.removeEventListener(MouseEvent.MOUSE_MOVE, mouseMove);
+	}
+	
+	private function touchMove(e:TouchEvent):Void core.toPoint({x: e.stageX-x, y: e.stageY-y});
+	private function mouseMove(_:MouseEvent):Void toMouse();
 	
 }

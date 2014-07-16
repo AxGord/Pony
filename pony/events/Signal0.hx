@@ -149,6 +149,11 @@ abstract Signal0<Target>(Signal) {
 	@:to public inline function toDynamic():Signal return this;
 	public inline function toTar():SignalTar<Target> return cast this;
 	
+	@:to private inline function toFunction():Void->Void return dispatch;
+	@:to private inline function toFunction2():Event->Void return dispatchEvent;
+	
+	public inline function debug():Void this.debug();
+	
 	//Operators
 	
 	@:op(A << B) inline private function op_add(listener:Listener0<Target>):Signal0<Target> {

@@ -110,6 +110,9 @@ abstract Signal2<Target, T1:Dynamic, T2:Dynamic>(Signal) {
 		return target;
 	}
 	
+	inline public function not1(v:T1, priority:Int=0):Signal1<Target,T2> return this.notArgs([v], priority);
+	inline public function not2(v1:T1, v2:T2, priority:Int=0):Signal0<Target> return this.notArgs([v1, v2], priority);
+	
 	inline public function removeAllListeners():Target {
 		this.removeAllListeners();
 		return target;
@@ -132,6 +135,11 @@ abstract Signal2<Target, T1:Dynamic, T2:Dynamic>(Signal) {
 	@:from static private inline function from<A,B,C>(s:Signal):Signal2<A,B,C> return new Signal2<A,B,C>(s);
 	@:to private inline function to():Signal return this;
 	
+	@:to private inline function toFunction():T1->T2->Void return dispatch;
+	@:to private inline function toFunction2():Event->Void return dispatchEvent;
+	
+	public inline function debug():Void this.debug();
+	
 	//Operators (experimental)
 	
 	@:op(A << B) inline private function op_add(listener:Listener2<Target,T1,T2>):Signal2<Target,T1,T2> {
@@ -150,4 +158,5 @@ abstract Signal2<Target, T1:Dynamic, T2:Dynamic>(Signal) {
 	}
 	
 	@:op(A - B) inline private function op_sub(a:T1):Signal1<Target, T2> return sub1(a);
+	@:op(A / B) inline private function op_not(a:T1):Signal1<Target, T2> return not1(a);
 }

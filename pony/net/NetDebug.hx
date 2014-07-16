@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2013-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -26,29 +26,38 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.net;
-import haxe.io.BytesOutput;
 import haxe.io.BytesInput;
-import pony.events.*;
-
+import haxe.io.BytesOutput;
+import haxe.Log;
+import haxe.PosInfos;
+import pony.time.DeltaTime;
+using pony.Tools;
 /**
- * ISocketClient
+ * Net Debug
+ * Use TCP-IP for debug applications
  * @author AxGord <axgord@gmail.com>
  */
-interface ISocketClient extends INet {
-
-	var server(default,null):SocketServer;
-	var connect(default,null):Signal1<SocketServer, SocketClient>;
-	var data(default,null):Signal1<SocketClient, BytesInput>;
-	var disconnect(default,null):Signal;
-	var id(default,null):Int;
-	var host(default,null):String;
-	var port(default, null):Int;
-	var closed(default, null):Bool;
+class NetDebug {
+	#if !flash
+	inline public static function server(port:Int=60666) new SocketServer(port).data << function(d:BytesInput) Log.trace(d.readStr(), null);
+	#end
 	
-	function send(data:BytesOutput):Void;
-	function close():Void;
-	function open():Void;
-	function reconnect():Void;
-	function send2other(data:BytesOutput):Void;
+	private static var trstr:String = '';
+	
+	public static function client(name:String, ?host:String, port:Int=60666) {
+		var c = new SocketClient(host, port);
+		var old = Log.trace;
+		Log.trace = function(d:Dynamic, ?p:PosInfos):Void {
+			old(d, p);
+			if (trstr != '') trstr += '\n';
+			trstr += name + ' => ' + (p == null ? '' : p.fileName+':' + p.lineNumber + ': ') + Std.string(d);
+		}
+		DeltaTime.fixedUpdate << function():Void if (trstr != '') {
+			var b = new BytesOutput();
+			b.writeStr(trstr);
+			trstr = '';
+			c.send(b);
+		}
+	}
 	
 }
