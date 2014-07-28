@@ -26,10 +26,11 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony;
-
+#if macro
 import haxe.macro.Expr;
 import haxe.macro.Context;
 import pony.macro.Tools;
+#end
 using Lambda;
 
 #if cs
@@ -48,7 +49,7 @@ typedef CSHash = {
  * @author AxGord
  */
 
-abstract Function( { f:Dynamic, count:Int, args:Array<Dynamic>, id:Int, used:Int } ) {
+abstract Function( { f:Dynamic, count:Int, args:Array<Dynamic>, id:Int, used:Int, ret:Bool, event:Bool } ) {
 	
 	public static var unusedCount:Int;
 	#if cs
@@ -65,6 +66,8 @@ abstract Function( { f:Dynamic, count:Int, args:Array<Dynamic>, id:Int, used:Int
 	public var id(get, never):Int;
 	public var count(get, never):Int;
 	public var used(get, never):Int;
+	public var event(get, never):Bool;
+	public var ret(get, never):Bool;
 	#end
 	
 	private static function __init__():Void {
@@ -79,7 +82,7 @@ abstract Function( { f:Dynamic, count:Int, args:Array<Dynamic>, id:Int, used:Int
 		searchFree = false;
 	}
 	
-	function new(f:Dynamic, count:Int, ?args:Array<Dynamic>) {
+	function new(f:Dynamic, count:Int, ?args:Array<Dynamic>, ?ret:Bool = true, ?event:Bool = false) {
 		counter++;
 		if (searchFree) {//if counter make loop, then need search free id
 			while (true) {
@@ -91,17 +94,17 @@ abstract Function( { f:Dynamic, count:Int, args:Array<Dynamic>, id:Int, used:Int
 			}
 		} else if (counter == -1)
 			searchFree = true;
-        this = { f:f, count:count, args:args == null?[]:args, id: counter, used: 0 };
+        this = { f:f, count:count, args:args == null?[]:args, id: counter, used: 0, event: event, ret:ret };
 	}
 	
-	static public function from(f:Dynamic, argc:Int):Function {
+	static public function from(f:Dynamic, argc:Int, ret:Bool = true, event:Bool = false):Function {
 		#if cs
 		var h:CSHash = buildCSHash(f);
 		if (cslist.exists(h))
 			return cslist.get(h);
 		else {
 			unusedCount++;
-			var o:Function = new Function(f, argc);
+			var o:Function = new Function(f, argc, ret, event);
 			cslist.set(h, o);
 			return o;
 		}
@@ -110,7 +113,7 @@ abstract Function( { f:Dynamic, count:Int, args:Array<Dynamic>, id:Int, used:Int
 			return list.get(f);
 		else {
 			unusedCount++;
-			var o:Function = new Function(f, argc);
+			var o:Function = new Function(f, argc, ret, event);
 			list.set(f, o);
 			return o;
 		}
@@ -134,29 +137,57 @@ abstract Function( { f:Dynamic, count:Int, args:Array<Dynamic>, id:Int, used:Int
 	}
 	#end
 	
-    @:from static public inline function from0<R>(f:Void->R)
-        return from(f,0);
-	
-    @:from static public inline function from1<R>(f:Dynamic->R)
+    @:from static public inline function fromEventR<E:IEvent, R:Dynamic>(f:E->R) return from(f, 1, true, true);
+    @:from static public inline function fromEvent<E:IEvent>(f:E->Void) return from(f, 1, false, true);
+		
+    @:from static public inline function from0r<R:Dynamic>(f:Void->R)
+        return from(f, 0);
+		
+    @:from static public inline function from1r<R:Dynamic>(f:Dynamic->R)
         return from(f, 1);
 	
-    @:from static public inline function from2<R>(f:Dynamic->Dynamic->R)
+    @:from static public inline function from2r<R:Dynamic>(f:Dynamic->Dynamic->R)
         return from(f,2);
 	
-    @:from static public inline function from3<R>(f:Dynamic->Dynamic->Dynamic->R)
+    @:from static public inline function from3r<R:Dynamic>(f:Dynamic->Dynamic->Dynamic->R)
         return from(f,3);
 	
-    @:from static public inline function from4<R>(f:Dynamic->Dynamic->Dynamic->Dynamic->R)
+    @:from static public inline function from4r<R:Dynamic>(f:Dynamic->Dynamic->Dynamic->Dynamic->R)
         return from(f,4);
 	
-    @:from static public inline function from5<R>(f:Dynamic->Dynamic->Dynamic->Dynamic->Dynamic->R)
+    @:from static public inline function from5r<R:Dynamic>(f:Dynamic->Dynamic->Dynamic->Dynamic->Dynamic->R)
         return from(f,5);
 	
-    @:from static public inline function from6<R>(f:Dynamic->Dynamic->Dynamic->Dynamic->Dynamic->Dynamic->R)
+    @:from static public inline function from6r<R:Dynamic>(f:Dynamic->Dynamic->Dynamic->Dynamic->Dynamic->Dynamic->R)
         return from(f, 6);
 		
-    @:from static public inline function from7<R>(f:Dynamic->Dynamic->Dynamic->Dynamic->Dynamic->Dynamic->Dynamic->R)
+    @:from static public inline function from7r<R:Dynamic>(f:Dynamic->Dynamic->Dynamic->Dynamic->Dynamic->Dynamic->Dynamic->R)
         return from(f, 7);
+		
+    @:from static public inline function from0(f:Void->Void) {
+        return from(f, 0, false);
+	}
+    @:from static public inline function from1(f:Dynamic->Void)
+        return from(f, 1, false);
+	
+    @:from static public inline function from2(f:Dynamic->Dynamic->Void)
+        return from(f,2, false);
+	
+    @:from static public inline function from3(f:Dynamic->Dynamic->Dynamic->Void)
+        return from(f,3, false);
+	
+    @:from static public inline function from4(f:Dynamic->Dynamic->Dynamic->Dynamic->Void)
+        return from(f,4, false);
+	
+    @:from static public inline function from5(f:Dynamic->Dynamic->Dynamic->Dynamic->Dynamic->Void)
+        return from(f,5, false);
+	
+    @:from static public inline function from6(f:Dynamic->Dynamic->Dynamic->Dynamic->Dynamic->Dynamic->Void)
+        return from(f, 6, false);
+		
+    @:from static public inline function from7(f:Dynamic->Dynamic->Dynamic->Dynamic->Dynamic->Dynamic->Dynamic->Void)
+        return from(f, 7, false);
+	
 		
 	public inline function call(?args:Array<Dynamic>):Dynamic {
 		if (args == null) args = [];
@@ -190,6 +221,9 @@ abstract Function( { f:Dynamic, count:Int, args:Array<Dynamic>, id:Int, used:Int
 	}
 	
 	public inline function get_used():Int return this.used;
+	public inline function get_event():Bool return this.event;
+	public inline function get_ret():Bool return this.ret;
+	
 }
 
 /* Not supported on haxe later 3.01

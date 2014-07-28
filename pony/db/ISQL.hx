@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2013 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -25,44 +25,14 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.events;
+package pony.db;
+import pony.ILogable;
 
-import pony.events.Listener;
-import pony.IEvent;
 /**
- * Event
- * @author AxGord
+ * @author AxGord <axgord@gmail.com>
  */
-class Event implements IEvent {
-	
-	public var parent(default,null):Event;
-	public var args(default, null):Array<Dynamic>;
-	public var count(get, set):Int;
-	public var prev(get, null):Event;
-	public var _stopPropagation:Bool;
-	public var signal:Signal;
-	public var target:Dynamic;
-	
-	private var currentListener:Listener_;
-	
-	public function new(?args:Array<Dynamic>, ?target:Dynamic, ?parent:Event) {
-		this.target = target;
-		this.args = args == null ? [] : args;
-		this.parent = parent;
-		_stopPropagation = false;
-	}
-	
-	public inline function _setListener(l:Listener_):Void currentListener = l;
-	
-	public inline function stopPropagation(lvl:Int = -1):Void {
-		if (parent != null && (lvl == -1 || lvl > 0 )) parent.stopPropagation(lvl-1);
-		_stopPropagation = true;
-	}
-	
-	private inline function get_count():Int return currentListener.count;
-	
-	private inline function set_count(v:Int):Int return currentListener.count = v;
-	
-	private inline function get_prev():Event return currentListener.prev;
-	
+
+interface ISQL extends ILogable<ISQL>
+{
+  
 }

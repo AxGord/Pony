@@ -104,10 +104,10 @@ class SignalTest
 		s.add(function() b = false);
 		s.dispatch(true);
 		Assert.isFalse(a);
-		Assert.isFalse(b);
+		Assert.isTrue(b);
 		s.dispatch(false);
 		Assert.isFalse(a);
-		Assert.isFalse(b);
+		Assert.isTrue(b);
 	}
 	
 	@Test

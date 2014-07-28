@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2013 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -25,44 +25,46 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.events;
+package pony.db.mysql;
+import haxe.PosInfos;
+import pony.events.Signal;
+import pony.events.Signal0;
 
-import pony.events.Listener;
-import pony.IEvent;
 /**
- * Event
- * @author AxGord
+ * MySQL
+ * @author AxGord <axgord@gmail.com>
  */
-class Event implements IEvent {
+@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':cps'))
+class MySQL extends pony.db.mysql.nodejs.MySQL implements IMySQL implements Dynamic<Table> {
 	
-	public var parent(default,null):Event;
-	public var args(default, null):Array<Dynamic>;
-	public var count(get, set):Int;
-	public var prev(get, null):Event;
-	public var _stopPropagation:Bool;
-	public var signal:Signal;
-	public var target:Dynamic;
+	private var tables:Map<String, Table> = new Map();
 	
-	private var currentListener:Listener_;
-	
-	public function new(?args:Array<Dynamic>, ?target:Dynamic, ?parent:Event) {
-		this.target = target;
-		this.args = args == null ? [] : args;
-		this.parent = parent;
-		_stopPropagation = false;
+	@:cps
+	override public function action(q:String, ?actName:String, ?p:PosInfos):Bool {
+		var err, _, _ = query(q, p).async();
+		if (err != null) {
+			_error(actName == null ? Std.string(err) : "Can't "+actName+': ' + err.stack, p);
+			return false;
+		} else
+			return true;
 	}
 	
-	public inline function _setListener(l:Listener_):Void currentListener = l;
-	
-	public inline function stopPropagation(lvl:Int = -1):Void {
-		if (parent != null && (lvl == -1 || lvl > 0 )) parent.stopPropagation(lvl-1);
-		_stopPropagation = true;
+	public function resolve(table:String):Table {
+		var t:Table = tables[table];
+		if (t == null) {
+			t = new Table(this, escapeId(table));
+			tables[table] = t;
+		}
+		return t;
 	}
 	
-	private inline function get_count():Int return currentListener.count;
-	
-	private inline function set_count(v:Int):Int return currentListener.count = v;
-	
-	private inline function get_prev():Event return currentListener.prev;
-	
+	/**
+	 * Close connection and destroy object
+	 */
+	override public function destroy():Void {
+		tables = null;
+		onConnect.destroy();
+		onConnect = null;
+		super.destroy();
+	}
 }

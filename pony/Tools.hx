@@ -285,6 +285,8 @@ class Tools {
 		}
 	}
 	
+	inline public static function copyFields(a:{}, b:{}):Void for (p in b.fields()) a.setField(p, b.field(p));
+	
 	public static function parsePrefixObjects(a:Dynamic<String>, delimiter:String = '_'):Dynamic<Dynamic> {
 		var result:Dynamic<Dynamic> = { };
 		for (f in a.fields()) {
@@ -332,10 +334,13 @@ class Tools {
 		} catch (_:Dynamic) return null;
 	}
 	
-	@:generic inline static public function sget<A,B:{function new():Void;}>(m:Map<A,B>, key:A):B {
+	@:generic inline static public function sget<A,B:{function new():Void;}>(m:Map<A,B>, key:A):B
 		return m.exists(key) ? m[key] : m[key] = new B();
-	}
 	
+	inline static public function reverse<K:Dynamic,V:Dynamic>(map:Map<K, V>):Map<V, K>
+		return [for (k in map.keys()) map[k] => k];
+	
+		
 	inline static public function min(it:IntIterator):Int return it.field('min');
 	inline static public function max(it:IntIterator):Int return it.field('max');
 	inline static public function copy(it:IntIterator):IntIterator return it.field('min')...it.field('max');
@@ -390,6 +395,26 @@ class ArrayTools {
 	private static function randomizeSort(_:Dynamic, _:Dynamic):Int return Math.random() > 0.5 ? 1 : -1;
 	
 	inline public static function last<T:Dynamic>(a:Array<T>):T return a[a.length - 1];
+	
+	
+	static public function swap<T>(array:Array<T>, a:Int, b:Int):Array<T> {
+		if (a > b) return swap(array, b, a);
+		else if (a == b) return array;
+		var v1 = array[a];
+		var v2 = array[b];
+		var p1 = a == 0 ? [] : array.slice(0, a);
+		var p2 = array.slice(a+1, b);
+		var p3 = array.slice(b+1);
+		p1.push(v2);
+		p2.push(v1);
+		return p1.concat(p2).concat(p3);
+	}
+	
+	static public function delete<T>(array:Array<T>, index:Int):Array<T> {
+		var na:Array<T> = [];
+		for (i in 0...array.length) if (i != index) na.push(array[i]);
+		return na;
+	}
 }
 
 class FloatTools {

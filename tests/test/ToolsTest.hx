@@ -200,4 +200,11 @@ class ToolsTest
 		Assert.areEqual(bi.readStr(), 'hello world');
 	}
 	
+	@Test
+	public function swap():Void {
+		Assert.isTrue([1, 2, 3, 4].swap(0, 3).equal([4, 2, 3, 1]));
+		Assert.isTrue([1, 2, 3, 4].swap(0, 1).equal([2, 1, 3, 4]));
+		Assert.isTrue([3, 4].swap(1, 0).equal([4,3]));
+	}
+	
 }

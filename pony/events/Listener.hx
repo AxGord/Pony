@@ -50,25 +50,23 @@ abstract Listener( Listener_ ) {
 		flist = new Map<Int, Listener>();
 	}
 	
-	inline public function new(f:Function, event:Bool = false, ignoreReturn:Bool = true, count:Int = -1) {
+	inline public function new(f:Function, count:Int = -1) {
 		f._use();
-		this = {f:f, count:count, event:event, prev: null, used: 0, active: true, ignoreReturn: ignoreReturn}
+		this = {f:f, count:count, event:f.event, prev: null, used: 0, active: true, ignoreReturn: !f.ret}
 	}
 	
-	@:from static inline public function fromEFunction(f:Event->Void):Listener
-		return _fromFunction(Function.from1(f), true);
-	
 	@:from static inline public function fromFunction(f:Function):Listener
-		return _fromFunction(f, false);
+		return _fromFunction(f);
+		
 		
 	@:from static inline public function fromSignal(s:Signal):Listener
 		return s.dispatchEvent;
 		
-	static public function _fromFunction(f:Function, ev:Bool):Listener {
+	static public function _fromFunction(f:Function):Listener {
 		if (flist.exists(f.get_id())) {
 			return flist.get(f.get_id());
 		} else {
-			var o:Listener = new Listener(f, ev);
+			var o:Listener = new Listener(f);
 			flist.set(f.get_id(), o);
 			return o;
 		}
@@ -97,7 +95,7 @@ abstract Listener( Listener_ ) {
 	}
 	
 	inline public function setCount(count:Int):Listener {
-		return new Listener(this.f, this.event, this.ignoreReturn, count);
+		return new Listener(this.f, count);
 	}
 	
 	inline public function _use():Void this.used++;
