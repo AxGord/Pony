@@ -29,30 +29,31 @@ package pony.net;
 import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
 import pony.events.*;
+import pony.Logable.Logable;
 
 /**
  * SocketServerBase
  * @author AxGord <axgord@gmail.com>
  */
-class SocketServerBase {
-
-	public var data(default,null):Signal1<SocketClient, BytesInput>;
-	public var connect(default,null):Signal1<SocketServer, SocketClient>;
-	public var closed(default,null):Signal;
-	public var disconnect(default,null):Signal;
+class SocketServerBase extends Logable<ISocketServer>{
+	public var onData(default, null):Signal1<SocketClient, BytesInput>;
+	public var onConnect(default, null):Signal1<SocketServer, SocketClient>;
+	public var onClose(default, null):Signal;
+	public var onDisconnect(default, null):Signal;
 	public var clients(default, null):Array<SocketClient>;
-	public var message(default, null):Signal1<SocketServer, String>;
-	public var error(default, null):Signal1<SocketServer, String>;
+	public var onMessage(default, null):Signal1<SocketServer, String>;
+	public var onError(default, null):Signal1<SocketServer, String>;
 	
-	public function new() {
-		connect = Signal.create(cast this);
-		message = Signal.create(cast this);
-		error = Signal.create(cast this);
-		disconnect = new Signal();
-		data = Signal.create(null);
-		closed = new Signal(this);
+	private function new() {
+		super();
+		onConnect = Signal.create(cast this);
+		onMessage = Signal.create(cast this);
+		onError = Signal.create(cast this);
+		onDisconnect = new Signal();
+		onData = Signal.create(null);
+		onClose = new Signal(this);
 		clients = [];
-		disconnect.add(removeClient);
+		onDisconnect.add(removeClient);
 	}
 	
 	private function addClient():SocketClient {
@@ -64,6 +65,9 @@ class SocketServerBase {
 	
 	inline private function removeClient(cl:SocketClient):Void clients.remove(cl);
 	
+	/**
+	 * Sends a data to all the clients. 
+	 **/
 	public function send(data:BytesOutput):Void {
 		var bs = data.getBytes();
 		for (c in clients) {
@@ -73,6 +77,9 @@ class SocketServerBase {
 		}
 	}
 	
+	/**
+	 * Sends a data to all the clients except chosen one. 
+	 **/
 	public function send2other(data:BytesOutput, exception:SocketClient):Void {
 		var bs = data.getBytes();
 		for (c in clients) {
@@ -83,16 +90,16 @@ class SocketServerBase {
 		}
 	}
 	
-	public function close():Void 
+	public function destroy():Void 
 	{
-		closed.dispatch();
-		data.destroy();
-		data = null;
-		connect.destroy();
-		connect = null;
-		closed.destroy();
-		closed = null;
-		disconnect.destroy();
-		disconnect = null;
+		onClose.dispatch();
+		onData.destroy();
+		onData = null;
+		onConnect.destroy();
+		onConnect = null;
+		onClose.destroy();
+		onClose = null;
+		onDisconnect.destroy();
+		onDisconnect = null;
 	}
 }

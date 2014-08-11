@@ -1,75 +1,59 @@
-/**
-* Copyright (c) 2012-2013 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
-*
-* Redistribution and use in source and binary forms, with or without modification, are
-* permitted provided that the following conditions are met:
-*
-*   1. Redistributions of source code must retain the above copyright notice, this list of
-*      conditions and the following disclaimer.
-*
-*   2. Redistributions in binary form must reproduce the above copyright notice, this list
-*      of conditions and the following disclaimer in the documentation and/or other materials
-*      provided with the distribution.
-*
-* THIS SOFTWARE IS PROVIDED BY ALEXANDER GORDEYKO ``AS IS'' AND ANY EXPRESS OR IMPLIED
-* WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
-* FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL ALEXANDER GORDEYKO OR
-* CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
-* ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-* NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-* ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*
-* The views and conclusions contained in the software and documentation are those of the
-* authors and should not be interpreted as representing official policies, either expressed
-* or implied, of Alexander Gordeyko <axgord@gmail.com>.
-**/
 package pony.net.cs;
 #if cs
-import cs.system.IAsyncResult;
-import cs.system.net.sockets.AddressFamily;
-import cs.system.net.sockets.ProtocolType;
-import cs.system.net.sockets.SocketType;
-import cs.system.net.IPEndPoint;
-import cs.system.net.IPAddress;
-import cs.system.net.sockets.Socket;
+import haxe.io.Bytes;
+import haxe.io.BytesInput;
+import haxe.io.BytesOutput;
+import pony.events.Signal;
+import pony.events.Signal1.Signal1;
 import pony.net.SocketServerBase;
+import cs.system.net.sockets.Socket;
 
 /**
  * SocketServer
- * @author AxGord <axgord@gmail.com>
- */
-class SocketServer extends SocketServerBase {
-
-	private var listener:Socket;
+ * A class wrapping an async-based C# server.
+ * @author DIS
+ **/
+class SocketServer extends SocketServerBase
+{
+	private var server:CSServer;
 	
-	public function new(port:Int, maxListeners:Int=-1) {
-		super();
-		listener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-		listener.Bind(new IPEndPoint(IPAddress.Any, port));
-		listener.Listen(-1);
-		//trace('Port: '+port);
-		waitAccept();
-	}
-	
-	private function waitAccept():Void {
-		listener.BeginAccept(untyped __cs__('acceptCallback'), null);
-	}
-
-
-	private function acceptCallback(ar:IAsyncResult):Void {
-		try {
-			addClient().initCS(listener.EndAccept(ar));
-			waitAccept();
-		} catch (_:Dynamic) {}
-	}
-
-	override public function close():Void 
+	/**
+	 * Creats a new server.
+	 **/
+	public function new(port:Int):Void 
 	{
-		listener.Close();
-		listener = null;
-		super.close();
+		super();
+		server = new CSServer(port);
+		server.onData << function(b_in:BytesInput)
+		{
+			onData.dispatch(b_in);
+		}
+		
+		server.onAccept << function(socket:Socket)
+		{
+			var cl:SocketClient = addClient();
+			cl.socket = socket;
+			cl.isFromServer = true;
+			onConnect.dispatch(cl);
+		};
 	}
+	
+	/**
+	 * Closes a server and destroys signals.
+	 **/
+	public override function destroy():Void
+	{
+		server.stop();
+		super.destroy();
+		server = null;
+	}
+	/*
+	 * Здесь принято следующее именование:
+		 * названия сигналов в формате onVerb, где Verb - глагол настоящего простого времени в первом лице; исключение - сигнал на получение данных (onData);
+		 * названия переменных и функций записаны в стиле lowerCamelCase; нижнее подчёркивание - только в переменных b_in(BytesInput) и b_out(BytesOutput);
+		 * названия классов записаны в стиле UpperCamelCase;
+		 * названия интерфейсов записаны с использованием венгерской нотации, префикс "I" (interface);
+		 * названия аргументов функций, если они совпадают с полями класса или предка, записаны в венгерской нотации, префикс "a" (argument);
+		 */
 }
 #end
