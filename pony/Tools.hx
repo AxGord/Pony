@@ -378,6 +378,18 @@ class ArrayTools {
 		};
 	}
 	
+	public static function mkv<K, V>(map:Map < K, V>):Iterator < KeyValue < K, V >> {
+		var it = map.keys();
+		return {
+			hasNext: it.hasNext,
+			next: function() {
+				var k = it.next();
+				var p = new Pair(k, map[k]);
+				return p;
+			}
+		};
+	}
+	
 	public static inline function toBytes(a:Array<Int>):BytesOutput {
 		var b = new BytesOutput();
 		for (e in a) b.writeByte(e);

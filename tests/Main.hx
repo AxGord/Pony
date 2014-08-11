@@ -9,7 +9,7 @@ enum Test {
  * ...
  * @author AxGord
  */
-class Main{
+class Main {
 
 	public static function main() {
 		var s = new Signal();
