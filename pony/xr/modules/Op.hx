@@ -25,58 +25,55 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.text;
-
-#if macro
-import haxe.macro.Context;
-import haxe.macro.Expr;
-import haxe.Serializer;
-#end
+package pony.xr.modules ;
+import haxe.xml.Fast;
 
 /**
- * TextTools
+ * ...
  * @author AxGord <axgord@gmail.com>
  */
-class TextTools {
-	public inline static function exists(s:String, ch:String):Bool return s.indexOf(ch) != -1;
-	
-	public static function repeat(s:String, count:Int):String {
-		var r:String = '';
-		while (count-->0) r += s;
-		return r;
+class Op implements IXRModule {
+
+	public function new() {
+		
 	}
 	
-	inline public static function isTrue(s:String):Bool return StringTools.trim(s.toLowerCase()) == 'true';
-	
-	public static function explode(s:String, delimiters:Array<String>):Array<String> {
-		var r:Array<String> = [s];
-		for (d in delimiters) {
-			var sr:Array<String> = [];
-			for ( e in r ) for ( se in e.split(d) ) if (se != '') sr.push(se);
-			r = sr;
+	public function run(xr:XmlRequest, x:Fast, result:Dynamic->Void):Void {
+		switch x.att.n {
+			case 'sqrt': xr.rf(x, function(v:Dynamic) result(Math.sqrt(number(v))) );
+			case 'sum', '+':
+				var a = [for (e in x.elements) e];
+				var counter = 0;
+				var sum:Float = 0;
+				for (i in 0...a.length) {
+					xr._run(a[i], function(v:Dynamic) {
+						sum += number(v);
+						if (++counter == a.length) {
+							result(sum);
+						}
+					});
+				}
+			case 'neg', '-': xr.rf(x, function(v:Dynamic) result( -number(v)) );
+			case '/': xr.ab(x, function(a:Dynamic, b:Dynamic) result(a / b));
+			case '*':
+				var a = [for (e in x.elements) e];
+				var counter = 0;
+				var sum:Float = 0;
+				for (i in 0...a.length) {
+					xr._run(a[i], function(v:Dynamic) {
+						if (counter == 0)
+							sum = number(v);
+						else
+							sum *= number(v);
+						if (++counter == a.length) {
+							result(sum);
+						}
+					});
+				}
+			case _: xr._error('Unknown operation '+x.att.n);
 		}
-		return r;
 	}
 	
+	inline public static function number(v:Dynamic):Float return Std.is(v, String) ? Std.parseFloat(v): v;
 	
-	macro public static function includeFile(file:String):Expr {
-		var s:String = sys.io.File.getContent(file);
-		return macro $v{s};
-	}
-	
-	macro public static function includeJson(file:String):Expr {
-		var s:String = sys.io.File.getContent(file);
-		var d:Dynamic = haxe.Json.parse(s);
-		var z:String = Serializer.run(d);
-		return macro $v{z};
-	}
-	
-	inline public static function parsePercent(s:String):Float {
-		if (s.indexOf('%') != -1) {
-			return Std.parseFloat(s.substr(0,s.length-1))/100;
-		} else
-			return Std.parseFloat(s);
-	}
-	
-	inline public static function last(s:String):String return s.charAt(s.length-1);
 }
