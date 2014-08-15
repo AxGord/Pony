@@ -25,30 +25,32 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.net;
-import haxe.io.BytesOutput;
-import haxe.io.BytesInput;
-import pony.events.*;
+package pony.xr.modules;
+import haxe.xml.Fast;
+import pony.db.mysql.MySQL;
+import pony.db.mysql.Table;
 
 /**
- * ISocketClient
  * @author AxGord <axgord@gmail.com>
  */
-interface ISocketClient extends INet {
+class DB implements IXRModule implements ICanBeCopied<DB> {
 
-	var server(default,null):SocketServer;
-	var onConnect(default,null):Signal1<SocketServer, SocketClient>;
-	var onData(default,null):Signal1<SocketClient, BytesInput>;
-	var onDisconnect(default,null):Signal;
-	var id(default,null):Int;
-	var host(default,null):String;
-	var port(default, null):Int;
-	var closed(default, null):Bool;
+	public var source:Dynamic<MySQL>;
+	public var table:Table;
 	
-	function send(data:BytesOutput):Void;
-	function destroy():Void;
-	function open():Void;
-	function reconnect():Void;
-	function send2other(data:BytesOutput):Void;
+	public function new(source:Dynamic<MySQL>) {
+		this.source = source;
+	}
+	
+	inline public function setTable(name:String):Void table = source.resolve(name);
+	
+	inline public function copy():DB return new DB(source);
+	
+	public function run(xr:XmlRequest, x:Fast, result:Dynamic->Void):Void {
+		var n = x.has.n ? x.att.n : 'default';
+		var table = x.has.table ? x.att.table : table;
+		var mode = x.has.mode ? x.att.mode : 'stream';
+		//todo
+	}
 	
 }

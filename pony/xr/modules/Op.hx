@@ -25,30 +25,55 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.net;
-import haxe.io.BytesOutput;
-import haxe.io.BytesInput;
-import pony.events.*;
+package pony.xr.modules ;
+import haxe.xml.Fast;
 
 /**
- * ISocketClient
+ * ...
  * @author AxGord <axgord@gmail.com>
  */
-interface ISocketClient extends INet {
+class Op implements IXRModule {
 
-	var server(default,null):SocketServer;
-	var onConnect(default,null):Signal1<SocketServer, SocketClient>;
-	var onData(default,null):Signal1<SocketClient, BytesInput>;
-	var onDisconnect(default,null):Signal;
-	var id(default,null):Int;
-	var host(default,null):String;
-	var port(default, null):Int;
-	var closed(default, null):Bool;
+	public function new() {
+		
+	}
 	
-	function send(data:BytesOutput):Void;
-	function destroy():Void;
-	function open():Void;
-	function reconnect():Void;
-	function send2other(data:BytesOutput):Void;
+	public function run(xr:XmlRequest, x:Fast, result:Dynamic->Void):Void {
+		switch x.att.n {
+			case 'sqrt': xr.rf(x, function(v:Dynamic) result(Math.sqrt(number(v))) );
+			case 'sum', '+':
+				var a = [for (e in x.elements) e];
+				var counter = 0;
+				var sum:Float = 0;
+				for (i in 0...a.length) {
+					xr._run(a[i], function(v:Dynamic) {
+						sum += number(v);
+						if (++counter == a.length) {
+							result(sum);
+						}
+					});
+				}
+			case 'neg', '-': xr.rf(x, function(v:Dynamic) result( -number(v)) );
+			case '/': xr.ab(x, function(a:Dynamic, b:Dynamic) result(a / b));
+			case '*':
+				var a = [for (e in x.elements) e];
+				var counter = 0;
+				var sum:Float = 0;
+				for (i in 0...a.length) {
+					xr._run(a[i], function(v:Dynamic) {
+						if (counter == 0)
+							sum = number(v);
+						else
+							sum *= number(v);
+						if (++counter == a.length) {
+							result(sum);
+						}
+					});
+				}
+			case _: xr._error('Unknown operation '+x.att.n);
+		}
+	}
+	
+	inline public static function number(v:Dynamic):Float return Std.is(v, String) ? Std.parseFloat(v): v;
 	
 }

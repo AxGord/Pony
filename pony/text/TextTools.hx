@@ -77,4 +77,6 @@ class TextTools {
 		} else
 			return Std.parseFloat(s);
 	}
+	
+	inline public static function last(s:String):String return s.charAt(s.length-1);
 }

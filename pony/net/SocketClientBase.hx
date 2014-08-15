@@ -26,9 +26,12 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.net;
+#if !dox
 import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
 import haxe.Timer;
+import pony.Logable.Logable;
+#end
 import haxe.io.Bytes;
 import pony.events.*;
 
@@ -36,12 +39,12 @@ import pony.events.*;
  * SocketClientBase
  * @author AxGord <axgord@gmail.com>
  */
-class SocketClientBase {
+class SocketClientBase extends Logable<ISocketClient>{
 
 	public var server(default,null):SocketServer;
-	public var connect(default,null):Signal1<SocketServer, SocketClient>;
-	public var data(default,null):Signal1<SocketClient, BytesInput>;
-	public var disconnect(default,null):Signal;
+	public var onConnect(default,null):Signal1<SocketServer, SocketClient>;
+	public var onData(default,null):Signal1<SocketClient, BytesInput>;
+	public var onDisconnect(default,null):Signal;
 	public var id(default,null):Int;
 	public var host(default,null):String;
 	public var port(default, null):Int;
@@ -49,13 +52,13 @@ class SocketClientBase {
 	
 	private var reconnectDelay:Int = -1;
 	
-	public function new(?host:String, port:Int, reconnect:Int=-1) {
-		//trace('Create socket client');
+	public function new(?host:String, port:Int, reconnect:Int = -1) {
+		super();
 		if (host == null) host = '127.0.0.1';
 		this.host = host;
 		this.port = port;
 		this.reconnectDelay = reconnect;
-		connect = Signal.create(null);
+		onConnect = Signal.create(null);
 		_init();
 		open();
 	}
@@ -63,8 +66,8 @@ class SocketClientBase {
 	inline private function _init():Void {
 		closed = true;
 		id = -1;
-		data = Signal.create(cast this);
-		disconnect = new Signal(this);
+		onData = Signal.create(cast this);
+		onDisconnect = new Signal(this);
 	}
 	
 	public function reconnect():Void {
@@ -85,21 +88,38 @@ class SocketClientBase {
 	inline private function endInit():Void {
 		closed = false;
 		if (server != null)
-			server.connect.dispatch(cast this);
+			server.onConnect.dispatch(cast this);
 	}
 	
 	public function init(server:SocketServer, id:Int):Void {
 		_init();
 		this.server = server;
 		this.id = id;
-		data.add(server.data.dispatchEvent);
-		disconnect.add(server.disconnect.dispatchEvent);
+		onData.add(server.onData.dispatchEvent);
+		onDisconnect.add(server.onDisconnect.dispatchEvent);
 	}
 	
 	inline public function send2other(data:BytesOutput):Void server.send2other(data, cast this);
 	
 	private function joinData(bi:BytesInput):Void {
-		data.dispatch(new BytesInput(bi.read(bi.readInt32())));
+		onData.dispatch(new BytesInput(bi.read(bi.readInt32())));
+	}
+	/*
+	 * The code written above is just equivalent of next one:
+		 * var i = bi.readInt32();
+		 * onData.dispatch(bi.read(i));
+	 * */
+	
+	private function destroy():Void
+	{
+		closed = true;
+		onDisconnect.dispatch();
+		onConnect.destroy();
+		onConnect = null;
+		onData.destroy();
+		onData = null;
+		onDisconnect.destroy();
+		onDisconnect = null;
 	}
 	
 }

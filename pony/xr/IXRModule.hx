@@ -25,30 +25,13 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.net;
-import haxe.io.BytesOutput;
-import haxe.io.BytesInput;
-import pony.events.*;
+package pony.xr;
+import haxe.xml.Fast;
 
 /**
- * ISocketClient
  * @author AxGord <axgord@gmail.com>
  */
-interface ISocketClient extends INet {
 
-	var server(default,null):SocketServer;
-	var onConnect(default,null):Signal1<SocketServer, SocketClient>;
-	var onData(default,null):Signal1<SocketClient, BytesInput>;
-	var onDisconnect(default,null):Signal;
-	var id(default,null):Int;
-	var host(default,null):String;
-	var port(default, null):Int;
-	var closed(default, null):Bool;
-	
-	function send(data:BytesOutput):Void;
-	function destroy():Void;
-	function open():Void;
-	function reconnect():Void;
-	function send2other(data:BytesOutput):Void;
-	
+interface IXRModule {
+	function run(xr:XmlRequest, x:Fast, result:Dynamic->Void):Void;
 }

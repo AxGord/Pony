@@ -25,30 +25,37 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.net;
-import haxe.io.BytesOutput;
-import haxe.io.BytesInput;
-import pony.events.*;
+package pony.xr.modules ;
+import haxe.xml.Fast;
+import pony.ICanBeCopied;
 
 /**
- * ISocketClient
+ * ...
  * @author AxGord <axgord@gmail.com>
  */
-interface ISocketClient extends INet {
+class V implements IXRModule implements ICanBeCopied<V> {
 
-	var server(default,null):SocketServer;
-	var onConnect(default,null):Signal1<SocketServer, SocketClient>;
-	var onData(default,null):Signal1<SocketClient, BytesInput>;
-	var onDisconnect(default,null):Signal;
-	var id(default,null):Int;
-	var host(default,null):String;
-	var port(default, null):Int;
-	var closed(default, null):Bool;
+	public var values:Map<String, Dynamic> = new Map();
 	
-	function send(data:BytesOutput):Void;
-	function destroy():Void;
-	function open():Void;
-	function reconnect():Void;
-	function send2other(data:BytesOutput):Void;
+	public function new() {
+		
+	}
+	
+	public function run(xr:XmlRequest, x:Fast, result:Dynamic->Void):Void {
+		if (x.has.set) {
+			xr.rf(x, function(v:Dynamic) result(values[x.att.set] = v));
+		} else if (x.has.get) {
+			xr.rf(x, function(_) result(values[x.att.get]) );
+			
+		} else {
+			xr.rf(x, result);
+		}
+	}
+	
+	public function copy():V {
+		var o = new V();
+		o.values = values;
+		return o;
+	}
 	
 }
