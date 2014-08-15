@@ -32,11 +32,11 @@ import pony.events.Signal;
  * MultyTumbler
  * @author AxGord <axgord@gmail.com>
  */
-class MultyTumbler extends Tumbler {
+class MultyTumbler extends Tumbler<MultyTumbler> {
 
 	private var states:Array<Bool>;
 	
-	public function new(tumblers:Array<Tumbler>, ?on:Array<Signal>, ?off:Array<Signal>, ?defStates:Array<Bool>) {
+	public function new(tumblers:Array<Tumbler<MultyTumbler>>, ?on:Array<Signal>, ?off:Array<Signal>, ?defStates:Array<Bool>) {
 		super();
 		states = [];
 		var n:Int = 0;

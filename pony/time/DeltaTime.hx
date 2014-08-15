@@ -41,7 +41,7 @@ class DeltaTime {
 	public static var update(default,null):Signal1<Void, DT>;
 	public static var fixedUpdate(default,null):Signal1<Void, DT>;
 	public static var value:Float = 0;
-	#if HUGS
+	#if (HUGS && !WITHOUTUNITY)
 	public static var fixedValue(get, never):Float;
 	private static inline function get_fixedValue():Float return unityengine.Time.deltaTime;
 	#else

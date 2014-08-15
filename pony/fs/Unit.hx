@@ -26,6 +26,7 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.fs;
+#if (neko || cpp || nodejs)
 import pony.Priority;
 import sys.FileSystem;
 
@@ -101,3 +102,4 @@ abstract Unit(Priority<String>) {
 	
 	@:op(A + B) inline public function addString(a:String):Unit return [for (e in this) e+'/'+a];
 }
+#end

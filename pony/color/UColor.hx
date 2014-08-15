@@ -33,36 +33,88 @@ package pony.color;
  */
 abstract UColor(UInt) {
 
+	/**
+	 * ARGB
+	 */
 	public var argb(get,never):UInt;
+	/**
+	 * RGB
+	 */
 	public var rgb(get,never):UInt;
 	
+	/**
+	 * Alpha 0...255
+	 */
 	public var a(get,never):UInt;
+	/**
+	 * Red 0...255
+	 */
 	public var r(get,never):UInt;
+	/**
+	 * Green 0...255
+	 */
 	public var g(get,never):UInt;
+	/**
+	 * Blue 0...255
+	 */
 	public var b(get, never):UInt;
 	
+	/**
+	 * Power
+	 */
 	public var power(get, never):UInt;
 	
+	/**
+	 * Alpha 0...1
+	 */
 	public var af(get,never):Float;
+	/**
+	 * Red 0...1
+	 */
 	public var rf(get,never):Float;
+	/**
+	 * Green 0...1
+	 */
 	public var gf(get,never):Float;
+	/**
+	 * Blue 0...1
+	 */
 	public var bf(get,never):Float;
 	
+	/**
+	 * This color with inverted alpha
+	 */
 	public var invertAlpha(get, never):UColor;
+	/**
+	 * Inverted color
+	 */
 	public var invert(get, never):UColor;
 	
+	/**
+	 * Construct from ARGB values
+	 */
 	inline public function new(v:UInt) this = v;
-	
+	/**
+	 * Build from RGB values
+	 */
 	inline public static function fromRGB(r:UInt, g:UInt, b:UInt):UColor return (r << 16) + (g << 8) + b;
+	/**
+	 * Build from ARGB values
+	 */
 	inline public static function fromARGB(a:UInt, r:UInt, g:UInt, b:UInt):UColor return (a << 24) + (r << 16) + (g << 8) + b;
-	
+	/**
+	 * Safely building from RGB values
+	 * Values limited 0...255
+	 */
 	public static function fromRGBSave(r:Int, g:Int, b:Int):UColor {
 		r = lim(r);
 		g = lim(g);
 		b = lim(b);
 		return fromRGB(r, g, b);
 	}
-	
+	/**
+	 * Safely building from ARGB values
+	 */
 	public static function fromARGBSave(a:Int, r:Int, g:Int, b:Int):UColor {
 		a = lim(a);
 		r = lim(r);
@@ -110,10 +162,16 @@ abstract UColor(UInt) {
 	@:op(A + B) inline static private function addToString(a:String, b:UColor):UColor return a+b.toString();
 	@:op(A + B) inline static private function addToString2(a:UColor, b:String):UColor return a.toString()+b;
 	*/
+	/**
+	 * First color subtract second color
+	 */
 	@:op(A - B) inline static private function sub(a:UColor, b:UColor):Color return Color.sub(a, b);
+	/**
+	 * Colors sum
+	 */
 	@:op(A + B) inline static private function add(a:UColor, b:UColor):UColor return fromARGB(a.a + b.a, a.r + b.r, a.g + b.g, a.b + b.b);
 	
-	#if HUGS
+	#if (HUGS && !WITHOUTUNITY)
 	@:to inline public function toUnity():unityengine.Color {
 		return new unityengine.Color(rf, gf, bf, 1-af);
 	}
@@ -124,9 +182,13 @@ abstract UColor(UInt) {
 	@:op(A < B) private static inline function lt(a:UColor, b:UColor):Bool return a.power < b.power;
 	@:op(A <= B) private static inline function lte(a:UColor, b:UColor):Bool return a.power <= b.power;
 
-	
+	/**
+	 * Convert color to string
+	 */
 	@:to inline public function toString():String return '#' + StringTools.hex(this);
-	
+	/**
+	 * Build color from string
+	 */
 	@:from public static function fromString(s:String):UColor {
 		s = StringTools.trim(s);
 		return new UColor(

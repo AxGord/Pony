@@ -336,11 +336,9 @@ class Tools {
 	
 	@:generic inline static public function sget<A,B:{function new():Void;}>(m:Map<A,B>, key:A):B
 		return m.exists(key) ? m[key] : m[key] = new B();
-	
-	inline static public function reverse<K:Dynamic,V:Dynamic>(map:Map<K, V>):Map<V, K>
-		return [for (k in map.keys()) map[k] => k];
-	
-		
+	#if !cs
+	inline static public function reverse<K:Dynamic,V:Dynamic>(map:Map<K, V>):Map<V, K> return [for (k in map.keys()) map[k] => k];
+	#end
 	inline static public function min(it:IntIterator):Int return it.field('min');
 	inline static public function max(it:IntIterator):Int return it.field('max');
 	inline static public function copy(it:IntIterator):IntIterator return it.field('min')...it.field('max');

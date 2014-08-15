@@ -26,6 +26,7 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.fs;
+#if (neko || cpp || nodejs)
 import haxe.io.Bytes;
 import sys.FileSystem;
 
@@ -124,3 +125,4 @@ abstract File(Unit) {
 	public inline function iterator():Iterator<File> return this.iterator();
 	
 }
+#end

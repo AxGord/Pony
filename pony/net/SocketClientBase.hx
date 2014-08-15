@@ -26,11 +26,9 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.net;
-#if !dox
 import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
 import haxe.Timer;
-#end
 import haxe.io.Bytes;
 import pony.events.*;
 

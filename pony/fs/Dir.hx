@@ -26,6 +26,7 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.fs;
+#if (neko || cpp || nodejs)
 import pony.Priority.Priority;
 import sys.FileSystem;
 using Lambda;
@@ -83,3 +84,4 @@ abstract Dir(Unit) {
 	
 	@:op(A + B) inline public function addString(a:String):Unit return this.addString(a);
 }
+#end

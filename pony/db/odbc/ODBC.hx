@@ -25,24 +25,44 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.db.mysql.nodejs;
+package pony.db.odbc;
 #if nodejs
-import js.Node;
+import pony.db.ISQL;
+import pony.db.Table;
+
 /**
- * NodeMySQL api
+ * ODBC
  * @author AxGord <axgord@gmail.com>
  */
-typedef NodeMySQL = {
-	createConnection:Dynamic->NodeMySQL_Connection
-}
+class ODBC extends
+#if nodejs
+pony.db.odbc.nodejs.ODBC
+#end
+implements ISQL implements Dynamic<Table> {
+	
+	private var tables:Map<String, Table> = new Map();
+	
+	/**
+	 * Select table
+	 */
+	public function resolve(table:String):Table {
+		var t:Table = tables[table];
+		if (t == null) {
+			t = new Table(this, escapeId(table));
+			tables[table] = t;
+		}
+		return t;
+	}
+	
+	/**
+	 * Close connection and destroy object
+	 */
+	override public function destroy():Void {
+		tables = null;
+		connected = null;
+		super.destroy();
+	}
 
-typedef NodeMySQL_Connection = {
-	connect:(Dynamic->Void)->Void,
-	changeUser:Dynamic->(Dynamic->Void)->Void,
-	escape:String->String,
-	escapeId:String->String,
-	pause:(Dynamic->Void)->Void,
-	end:Void->Void,
-	query:String->?(Dynamic->Dynamic->Array<Dynamic>->Void)->NodeEventEmitter
+	
 }
 #end

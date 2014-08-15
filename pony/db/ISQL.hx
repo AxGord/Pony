@@ -26,6 +26,9 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.db;
+import haxe.PosInfos;
+import pony.db.mysql.Field;
+import pony.events.Waiter;
 import pony.ILogable;
 
 /**
@@ -34,5 +37,12 @@ import pony.ILogable;
 
 interface ISQL extends ILogable<ISQL>
 {
-  
+	var connected:Waiter;
+	var hack:String;
+	function escapeId(s:String):String;
+	function escape(s:String):String;
+	function destroy():Void;
+	function stream(q:String, ?p:PosInfos):Stream<Dynamic>;
+	function query(q:String, ?p:PosInfos, cb:Dynamic->Dynamic->Array<Field>->Void):Void;
+	function action(q:String, ?actName:String, ?p:PosInfos, result:Bool->Void):Void;
 }

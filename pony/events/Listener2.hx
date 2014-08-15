@@ -34,11 +34,12 @@ package pony.events;
 abstract Listener2<Target, T1, T2>(Listener) {
 	inline public function new(l:Listener) this = l;
 	@:from inline private static function from0<T,A,B>(f:Void->Void):Listener2<T,A,B> return new Listener2(f);
-	@:from inline private static function fromE<T,A,B>(f:Event->Void):Listener2<T,A,B> return new Listener2(f);
+	@:from inline private static function fromE<E:Event,T,A,B>(f:E->Void):Listener2<T,A,B> return new Listener2(f);
 	@:from inline private static function from1<T,A,B>(f:A->Void):Listener2<T,A,B> return new Listener2(f);
+	@:from inline private static function from1E<E:Event,T,A,B>(f:A->E->Void):Listener2<T,A,B> return new Listener2(f);
 	@:from inline private static function from2<T,A,B>(f:A->B->Void):Listener2<T,A,B> return new Listener2(f);
 	@:from inline private static function from2T<T,A,B>(f:A->B->T->Void):Listener2<T,A,B> return new Listener2(f);
-	@:from inline private static function from2TE<T,A,B>(f:A->B->T->Event->Void):Listener2<T,A,B> return new Listener2(f);
+	@:from inline private static function from2TE<E:Event,T,A,B>(f:A->B->T->E->Void):Listener2<T,A,B> return new Listener2(f);
 	@:to inline private function to():Listener return this;
 	
 	@:from static inline public function fromSignal0<A>(s:Signal0<A>):Listener2<A, Void, Void> return new Listener2(s.dispatchEvent);

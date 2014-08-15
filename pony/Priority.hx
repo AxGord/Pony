@@ -82,7 +82,7 @@ class Priority<T:Dynamic> {
 	private var hash:Map<Int, Int>;
 	private var counters:Array<Int>;
 
-	inline public function new(?data:Array<T>) {
+	public function new(?data:Array<T>) {
 		clear();
 		if (data != null) {
 			for (e in data) addElement(e);

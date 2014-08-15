@@ -26,6 +26,7 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.db.mysql;
+import pony.db.ISQL;
 
 using pony.Tools;
 
@@ -33,62 +34,75 @@ using pony.Tools;
  * TablePrepare
  * @author AxGord <axgord@gmail.com>
  */
-@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':cps'))
+@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
 class TablePrepare {
 	
-	private var mysql:MySQL;
+	private var mysql:ISQL;
 	private var table:String;
 	
-	public function new(mysql:MySQL, table:String) 
+	inline public function new(mysql:ISQL, table:String) 
 	{
 		this.mysql = mysql;
 		this.table = table;
 	}
 	
-	@:cps
-	public function prepare(fields:Array<Field>):Bool {
-		mysql._log('prepare table '+table);
-		var err, _, rem = mysql.query('SELECT * FROM $table LIMIT 0').async();
+	@:async public function prepare(fields:Array<Field>):Bool {
+		mysql._log('prepare table ' + table);
+		mysql.hack = table;
+		var err, _, remote = @await mysql.query('SELECT * FROM $table LIMIT 0');
 		if (err != null) {//Create table
 			var cr:Array<String> = [];
 			for (f in fields) {
 				var name = mysql.escapeId(f.name);
 				cr.push(name+' '+f.type.toString()+decorateLength(f.length)+' '+Flags.array2string(f.flags));
 			}
-			if (!mysql.action('CREATE TABLE $table ('+ cr.join(', ') +')', 'create table').async()) return false;
+			if (!@await mysql.action('CREATE TABLE $table ('+ cr.join(', ') +')', 'create table')) return false;
 		} else {//Update table
-			var remote:Array<Field> = parseFields(rem);
 			var map:Map<String,Int> = makeFieldsMap(fields);
-			
 			{//Rename
+				mysql._log('Search fields for rename');
 				var remMap:Map<String,Int> = makeFieldsMap(remote);
 				var free:Array<Field> = remote.copy();
 				for (f in fields) if (remMap.exists(f.name)) free = free.delete(remMap[f.name]);
-				free = renameTableFields(fields, remote, remMap, free, chk1).async();
+				free = @await renameTableFields(fields, remote, remMap, free, chk1);
 				if (free == null) return false;
-				free = renameTableFields(fields, remote, remMap, free, chk2).async();
+				free = @await renameTableFields(fields, remote, remMap, free, chk2);
 				if (free == null) return false;
-				free = renameTableFields(fields, remote, remMap, free, chk3).async();
+				free = @await renameTableFields(fields, remote, remMap, free, chk3);
 				if (free == null) return false;
-				free = renameTableFields(fields, remote, remMap, free, chk4).async();
+				free = @await renameTableFields(fields, remote, remMap, free, chk4);
 				if (free == null) return false;
-				free = renameTableFields(fields, remote, remMap, free, chk5).async();
+				free = @await renameTableFields(fields, remote, remMap, free, chk5);
 				if (free == null) return false;
 			}
 			
+			
 			var again:Bool = true;
 			//Drop
+			mysql._log('Search fields for drop');
 			while (again) {
 				again = false;
 				for (f in remote.kv()) if (!map.exists(f.value.name)) {
 					var name = mysql.escapeId(f.value.name);
-					if (!mysql.action('ALTER TABLE $table DROP $name', 'drop table field').async()) return false;
+					if (!@await mysql.action('ALTER TABLE $table DROP $name', 'drop table field')) return false;
 					remote = remote.delete(f.key);
 					again = true;
 					break;
 				}
 			}
 			again = true;
+			
+			
+			//Add
+			if (fields.length > remote.length) {
+				mysql._log('Search fields for add');
+				for (f in fields) if (!remMap.exists(f.name)) {
+					if (!@await mysql.action(alterAdd(f), 'add table field')) return false;
+					remote.push(f);
+				}
+			}
+			
+			mysql._log('Search fields for move');
 			//Move
 			while (again) {
 				again = false;
@@ -96,7 +110,7 @@ class TablePrepare {
 					if (map[f.value.name] != f.key) {
 						var i = map[f.value.name];
 						var postfix = i == 0 ? ' FIRST' : ' AFTER ' + mysql.escapeId(fields[i - 1].name);
-						if (!mysql.action(alter(fields[i], f.value)+postfix, 'move table field').async()) return false;
+						if (!@await mysql.action(alter(fields[i], f.value)+postfix, 'move table field')) return false;
 						remote = remote.swap(i, f.key);
 						remote[i] = fields[i];
 						again = true;
@@ -105,13 +119,15 @@ class TablePrepare {
 				}
 			}
 			//Update
+			mysql._log('Search fields for update');
 			for (_ in 0...fields.length) {
 				var f = fields.shift();
 				var r = remote.shift();
+				if (r == null) return false;
 				var ef:Bool = false;
 				for (fl in f.flags) if (!r.flags.exists(fl)) ef = true;
 				if (ef || f.type != r.type || (f.length != null && f.length != r.length)) {
-					if (!mysql.action(alter(f, r), 'update table field').async()) return false;
+					if (!@await mysql.action(alter(f, r), 'update table field')) return false;
 				}
 			}
 		}
@@ -125,11 +141,10 @@ class TablePrepare {
 	static private function chk4(f:Field, r:Field):Bool return f.type == r.type || f.flags.equal(r.flags);
 	static private function chk5(f:Field, r:Field):Bool return f.length == r.length;
 	
-	@:cps
-	private function renameTableFields(fields:Array<Field>, remote:Array<Field>, remMap:Map<String,Int>, free:Array<Field>, chk:Field->Field->Bool):Array<Field> {
+	@:async private function renameTableFields(fields:Array<Field>, remote:Array<Field>, remMap:Map<String,Int>, free:Array<Field>, chk:Field->Field->Bool):Array<Field> {
 		for (f in fields) if (!remMap.exists(f.name)) for (r in free)
 			if (chk(f, r)) {
-				if (!mysql.action(alter(f, r), 'rename table field').async()) return null;
+				if (!@await mysql.action(alter(f, r), 'rename table field')) return null;
 				free.remove(r);
 				var i = remote.indexOf(r);
 				remMap.remove(r.name);
@@ -148,25 +163,15 @@ class TablePrepare {
 		return 'ALTER TABLE $table CHANGE $name2 $name ' + f.type.toString() + decorateLength(f.length) + ' ' + Flags.array2string(flags);
 	}
 	
-	inline static function decorateLength(len:Null<Int>):String return len != null ? '($len)' : '';
+	public function alterAdd(f:Field):String {
+		var name = mysql.escapeId(f.name);
+		var flags = f.flags.copy();
+		return 'ALTER TABLE $table ADD $name ' + f.type.toString() + decorateLength(f.length) + ' ' + Flags.array2string(flags);
+	}
 	
-	static function makeFieldsMap(fields:Array<Field>):Map<String,Int>
+	inline private static function decorateLength(len:Null<Int>):String return len != null ? '($len)' : '';
+	
+	private static function makeFieldsMap(fields:Array<Field>):Map<String,Int>
 		return [for (f in fields.kv()) f.value.name => f.key];
 	
-	static function parseFields(a:Array<Dynamic>):Array<Field> {
-		return [for (e in a) {name: e.orgName, type: e.type, length: calcLen(e.type, e.length), flags: parseFlags(e.flags)}];
-	}
-	
-	static function calcLen(type:Types, length:Int):Int {
-		return switch type {
-			case Types.CHAR: Std.int(length / 3);
-			case _: length;
-		}
-	}
-	
-	static function parseFlags(f:Int):Array<Flags> {
-		var r = [];
-		for (k in Flags.toStr.keys()) if (f & k != 0) r.push(k);
-		return r;
-	}
 }

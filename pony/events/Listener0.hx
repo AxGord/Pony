@@ -33,11 +33,11 @@ package pony.events;
  */
 abstract Listener0<Target>(Listener) {
 	inline public function new(l:Listener) this = l;
-	@:from inline private static function from0(f:Void->Void):Listener0<Target> return new Listener0(f);
-	@:from inline private static function fromE(f:Event->Void):Listener0<Target> return new Listener0(f);
+	@:from inline private static function from0<Target>(f:Void->Void):Listener0<Target> return new Listener0(f);
+	@:from inline private static function fromE<E:Event,Target>(f:E->Void):Listener0<Target> return new Listener0(f);
 	@:from inline private static function from0T<T>(f:T->Void):Listener0<T> return new Listener0(f);
-	@:from inline private static function fromTE<T>(f:T->Event->Void):Listener0<T> return new Listener0(f);
+	@:from inline private static function fromTE<E:Event,T>(f:T->E->Void):Listener0<T> return new Listener0(f);
 	@:to inline private function to():Listener return this;
 	
-	@:from static inline public function fromSignal0<A>(s:Signal0<A>):Listener0<A> return s.dispatchEvent;
+	@:from static inline public function fromSignal0<Target>(s:Signal0<Target>):Listener0<Target> return fromE(s.dispatchEvent);
 }

@@ -95,4 +95,13 @@ class Stream<T> {
 		data = Tools.nullFunction1;
 		error = Tools.errorFunction;
 	}
+	
+	public function putIterable(a:Iterable<T>):Stream<T> {
+		for (e in a) dataListener(e);
+		endListener();
+		return this;
+	}
+	
+	inline static public function fromArray<T>(a:Array<T>):Stream<T> return new Stream().putIterable(a);
+	
 }

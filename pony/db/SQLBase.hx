@@ -25,24 +25,29 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.db.mysql.nodejs;
-#if nodejs
-import js.Node;
+package pony.db;
+import pony.events.Waiter;
+import pony.Logable;
+
 /**
- * NodeMySQL api
+ * SQLBase
  * @author AxGord <axgord@gmail.com>
  */
-typedef NodeMySQL = {
-	createConnection:Dynamic->NodeMySQL_Connection
+class SQLBase extends Logable<ISQL> {
+	
+	/**
+	 * Connected
+	 */
+	public var connected:Waiter;
+	
+	/**
+	 * Forced get fields info after query
+	 */
+	public var hack:String;
+	
+	private function new() {
+		super();
+		connected = new Waiter();
+	}
+	
 }
-
-typedef NodeMySQL_Connection = {
-	connect:(Dynamic->Void)->Void,
-	changeUser:Dynamic->(Dynamic->Void)->Void,
-	escape:String->String,
-	escapeId:String->String,
-	pause:(Dynamic->Void)->Void,
-	end:Void->Void,
-	query:String->?(Dynamic->Dynamic->Array<Dynamic>->Void)->NodeEventEmitter
-}
-#end

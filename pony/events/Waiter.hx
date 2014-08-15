@@ -25,24 +25,31 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.db.mysql.nodejs;
-#if nodejs
-import js.Node;
+package pony.events;
+
 /**
- * NodeMySQL api
+ * Waiter
  * @author AxGord <axgord@gmail.com>
  */
-typedef NodeMySQL = {
-	createConnection:Dynamic->NodeMySQL_Connection
+class Waiter {
+	
+	public var ready:Bool = false;
+	private var f:List<Void->Void>;
+	
+	public function new() {
+		f = new List < Void->Void > ();
+	}
+	
+	public function wait(cb:Void->Void) {
+		if (ready) cb();
+		else f.push(cb);
+	}
+	
+	public function end():Void {
+		if (ready) throw 'Double ready';
+		ready = true;
+		for (e in f) e();
+		f = null;
+	}
+	
 }
-
-typedef NodeMySQL_Connection = {
-	connect:(Dynamic->Void)->Void,
-	changeUser:Dynamic->(Dynamic->Void)->Void,
-	escape:String->String,
-	escapeId:String->String,
-	pause:(Dynamic->Void)->Void,
-	end:Void->Void,
-	query:String->?(Dynamic->Dynamic->Array<Dynamic>->Void)->NodeEventEmitter
-}
-#end

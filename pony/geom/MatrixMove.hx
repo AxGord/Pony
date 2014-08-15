@@ -43,11 +43,11 @@ typedef MatrixIndex = { r:Int, c:Int };
 class MatrixMove {
 	
 	private var moveMatrix:Matrix;
-	private var wards:IWards;
+	private var wards:IWards<Dynamic>;
 	
 	public var change:Signal;
 	
-	public function new(moveMatrix:Matrix, wards:IWards) {
+	public function new(moveMatrix:Matrix, wards:IWards<Dynamic>) {
 		this.moveMatrix = moveMatrix;
 		this.wards = wards;
 		change = Reflect.field(wards, 'change');

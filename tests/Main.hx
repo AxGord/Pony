@@ -1,23 +1,11 @@
 package;
 
-import pony.events.Signal;
-
-enum Test {
-	O; D;
-}
 /**
  * ...
  * @author AxGord
  */
-class Main{
+class Main {
 
-	public static function main() {
-		var s = new Signal();
-		s.add(function() trace(123));
-		s.dispatch();
-		
-		var t = Test.O;
-		t.getParameters();
-	}
+	public static function main() {}
 	
 }

@@ -37,4 +37,7 @@ interface ILogable<T:Dynamic>
 {
 	var log:Signal2<T, String, PosInfos>;
 	var error:Signal2<T, String, PosInfos>;
+	
+	function _log(s:String, ?p:PosInfos):Void;
+	function _error(s:String, ?p:PosInfos):Void;
 }

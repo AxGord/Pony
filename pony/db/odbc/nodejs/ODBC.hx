@@ -25,64 +25,41 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.db.mysql.nodejs;
+package pony.db.odbc.nodejs;
 
 #if nodejs
 
 import pony.db.SQLBase;
 import haxe.PosInfos;
 import js.Node;
-import pony.db.ISQL;
-import pony.db.mysql.Config;
-import pony.db.mysql.nodejs.NodeMySQL;
+import pony.db.mysql.Field;
 import pony.events.Waiter;
 import pony.Logable;
-import pony.Stream;
-using pony.Tools;
-
+using StringTools;
 /**
- * Node.JS MySQL Client
+ * Node.JS ODBC
  * haxelib: nodejs
- * npm: mysql
+ * npm: odbc
  * @author AxGord <axgord@gmail.com>
  */
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
-class MySQL extends SQLBase
-{
+class ODBC extends SQLBase {
 	
-	private static var mysqlClass:NodeMySQL = Node.require('mysql');
+	static private var constructor:Void->Dynamic = Node.require('odbc');
 	
-	private var connection:NodeMySQL_Connection;
-	/**
-	 * Create MySQL object and connect
-	 */
-	public function new(config:Config) 
-	{
+	private var db:Dynamic;
+	
+	public function new(connectionString:String) {
 		super();
-		connected = new Waiter();
-		init(config, Tools.nullFunction0);
+		db = constructor();
+		db.open(connectionString, open);
 	}
 	
-	@:async private function init(config:Config):Void {
-		var db = config.database;
-		var c = Reflect.copy(config);
-		Reflect.deleteField(c, 'database');
-		connection = mysqlClass.createConnection(c);
-		var err = @await connection.connect();
-		if (err != null) {
-			_error('Error connecting: ' + err.stack);
-			return;
-		}
-		var h = config.host == null ? 'localhost' : config.host;
-		var p = config.port == null ? '' : ':'+config.port;
-		_log('Connected to $h$p');
-		
-		if (@await prepareDatabase(db)) {
-			_log('Database $db ready');
-			connected.end();
-		}
-		
+	private function open(err:Dynamic) {
+		if (err != null) _error(err);
+		else connected.end();
 	}
+	
 	
 	/**
 	 * Make action, query with boolean result
@@ -100,29 +77,11 @@ class MySQL extends SQLBase
 	 * MySQL query
 	 */
 	inline public function query(q:String, ?p:PosInfos, cb:Dynamic->Dynamic->Array<Field>->Void):Void {
-		connection.query(q, function(err:Dynamic, res:Dynamic, f:Array<Dynamic>) {
+		db.query(q, function(err:Dynamic, res:Dynamic, f:Array<Dynamic>) {
 			if (err) _error(err);
-			var fields:Array<Field> = f == null ? null : parseFields(f);
-			cb(err, res, fields);
+			else cb(err, res, null);
 		});
 		_log(q, p);
-	}
-	
-	private static function parseFields(a:Array<Dynamic>):Array<Field> {
-		return [for (e in a) {name: e.orgName, type: e.type, length: calcLen(e.type, e.length), flags: parseFlags(e.flags)}];
-	}
-	
-	private static function calcLen(type:Types, length:Int):Int {
-		return switch type {
-			case Types.CHAR: Std.int(length / 3);
-			case _: length;
-		}
-	}
-	
-	private static function parseFlags(f:Int):Array<Flags> {
-		var r = [];
-		for (k in Flags.toStr.keys()) if (f & k != 0) r.push(k);
-		return r;
 	}
 	
 	/**
@@ -130,47 +89,26 @@ class MySQL extends SQLBase
 	 */
 	public function stream(q:String, ?p:PosInfos):Stream<Dynamic> {
 		var s = new Stream();
-		connection.query(q)
-			.on('error', errorHandler)
-			.on('error', s.errorListener)
-			.on('result', s.dataListener)
-			.on('end', s.endListener);
-		_log(q, p);
+		query(q, p, function(_, res:Array<Dynamic>, _):Void s.putIterable(res));
 		return s;
 	}
-	
-	private function errorHandler(e:Dynamic):Void _error(e);
 	
 	/**
 	 * Escape id (for fields, tables, databases)
 	 */
-	inline public function escapeId(s:String):String return connection.escapeId(s);
+	inline public function escapeId(s:String):String return s.replace('`', '');
 	/**
 	 * Escape (for values)
 	 */
-	inline public function escape(s:String):String return connection.escape(s);
-	
+	inline public function escape(s:String):String return "'"+s.replace("'", '')+"'";
 	
 	/**
 	 * Close connection and destroy object
 	 */
 	public function destroy():Void {
-		connection.end();
-		connection = null;
+		db.close();
+		db = null;
 	}
-	
-	@:async private function prepareDatabase(database:String):Bool {
-		if (!@await action(Const.createDB + database, "create database")) return false;
-		
-		var err = @await connection.changeUser({database: database});
-		if (err != null) {
-			_error("Can't open database: " + err.stack);
-			return false;
-		}
-		
-		return true;
-	}
-	
 	
 }
 #end

@@ -25,7 +25,7 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.db.mysql;
+package pony.db ;
 
 #if macro
 import haxe.macro.Expr;
@@ -97,7 +97,7 @@ class TableMacro {
 						switch p[0].expr {
 							case EConst(CIdent(s)):
 								a.push(genText('$field LIKE ', expr.pos));
-								a.push(macro pony.db.mysql.Table.WhereElement.Value(p[0]));
+								a.push(macro pony.db.Table.WhereElement.Value(p[0]));
 							case EConst(CInt(s)):
 								a.push(genText('$field LIKE $s', expr.pos));
 							case EConst(CString(s)):
@@ -115,7 +115,7 @@ class TableMacro {
 	
 	static private function genText(s:String, p:Position):Expr {
 		var e:Expr = {expr: EConst(CString(s)), pos: p};
-		return macro pony.db.mysql.Table.WhereElement.Text($e);
+		return macro pony.db.Table.WhereElement.Text($e);
 	}
 	
 	static private function takeFieldName(e:Expr):String {
@@ -133,7 +133,7 @@ class TableMacro {
 			case EConst(CIdent(s)):
 				if (s.charAt(0) == '$') {
 					var v:Expr = {expr: EConst(CIdent(s.substr(1))), pos: e.pos};
-					a.push(macro pony.db.mysql.Table.WhereElement.Value($v));
+					a.push(macro pony.db.Table.WhereElement.Value($v));
 				} else {
 					a.push(genText('`$s`', e.pos));
 				}
@@ -153,7 +153,7 @@ class TableMacro {
 				}
 				
 			case EUnop(OpNegBits, false, e):
-				a.push(macro pony.db.mysql.Table.WhereElement.Id($e));
+				a.push(macro pony.db.Table.WhereElement.Id($e));
 				
 			case _: throw 'Can\'t parse $e';
 		}

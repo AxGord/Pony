@@ -62,13 +62,11 @@ abstract Function( { f:Dynamic, count:Int, args:Array<Dynamic>, id:Int, used:Int
 	
 	private static var searchFree:Bool;
 	
-	#if !cs
 	public var id(get, never):Int;
 	public var count(get, never):Int;
 	public var used(get, never):Int;
 	public var event(get, never):Bool;
 	public var ret(get, never):Bool;
-	#end
 	
 	private static function __init__():Void {
 		unusedCount = 0;

@@ -26,7 +26,7 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.net.flash;
-
+#if flash
 import flash.events.Event;
 import flash.events.IOErrorEvent;
 import flash.events.ProgressEvent;
@@ -99,3 +99,4 @@ class SocketClient extends SocketClientBase {
 	}
 	
 }
+#end

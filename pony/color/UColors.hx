@@ -26,7 +26,9 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.color;
+#if flash
 import flash.Vector.Vector;
+#end
 using pony.math.MathTools;
 using Std;
 /**
@@ -35,8 +37,13 @@ using Std;
  */
 @:forward(push, pop, iterator)
 abstract UColors(Array<UColor>) from Array<UColor> to Array<UColor> {
-
+	/**
+	 * Middle color
+	 */
 	public var mid(get, never):UColor;
+	/**
+	 * Middle color with inverted alpha
+	 */
 	public var midInvertAlpha(get, never):UColor;
 	
 	inline private function get_mid():UColor return _mid(0);
@@ -53,10 +60,15 @@ abstract UColors(Array<UColor>) from Array<UColor> to Array<UColor> {
 		}
 		return Color.fromRGB(r.arithmeticMean().int(), g.arithmeticMean().int(), b.arithmeticMean().int());
 	}
-	
+	/**
+	 * Build from iterable colors
+	 */
 	@:from inline public static function fromIterable(it:Iterable<UColor>):UColors return Lambda.array(it);
+	/**
+	 * Build from iterable UInt
+	 */
 	@:from inline public static function fromIterableUInt(it:Iterable<UInt>):UColors return Lambda.array(it);
-	#if flash
+	#if (flash && !doc_gen)
 	@:from inline public static function fromVector(a:flash.Vector<UInt>):UColors return [for(i in 0...a.length) a[i]];
 	#end
 }

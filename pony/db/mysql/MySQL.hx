@@ -34,21 +34,19 @@ import pony.events.Signal0;
  * MySQL
  * @author AxGord <axgord@gmail.com>
  */
-@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':cps'))
-class MySQL extends pony.db.mysql.nodejs.MySQL implements IMySQL implements Dynamic<Table> {
+class MySQL extends
+#if nodejs
+pony.db.mysql.nodejs.MySQL
+#else
+pony.db.mysql.haxe.MySQL
+#end
+implements IMySQL implements Dynamic<Table> {
 	
 	private var tables:Map<String, Table> = new Map();
 	
-	@:cps
-	override public function action(q:String, ?actName:String, ?p:PosInfos):Bool {
-		var err, _, _ = query(q, p).async();
-		if (err != null) {
-			_error(actName == null ? Std.string(err) : "Can't "+actName+': ' + err.stack, p);
-			return false;
-		} else
-			return true;
-	}
-	
+	/**
+	 * Select table
+	 */
 	public function resolve(table:String):Table {
 		var t:Table = tables[table];
 		if (t == null) {
@@ -63,8 +61,7 @@ class MySQL extends pony.db.mysql.nodejs.MySQL implements IMySQL implements Dyna
 	 */
 	override public function destroy():Void {
 		tables = null;
-		onConnect.destroy();
-		onConnect = null;
+		connected = null;
 		super.destroy();
 	}
 }

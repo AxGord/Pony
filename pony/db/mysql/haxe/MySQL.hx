@@ -25,150 +25,134 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.db.mysql.nodejs;
+package pony.db.mysql.haxe;
 
-#if nodejs
+#if (cpp || neko || php)
 
 import pony.db.SQLBase;
 import haxe.PosInfos;
-import js.Node;
 import pony.db.ISQL;
 import pony.db.mysql.Config;
-import pony.db.mysql.nodejs.NodeMySQL;
+import pony.events.Signal;
+import pony.events.Signal0;
 import pony.events.Waiter;
 import pony.Logable;
 import pony.Stream;
+import sys.db.Connection;
+import sys.db.Mysql;
 using pony.Tools;
+using Lambda;
+using StringTools;
 
 /**
- * Node.JS MySQL Client
- * haxelib: nodejs
- * npm: mysql
+ * Haxe MySQL Client
  * @author AxGord <axgord@gmail.com>
  */
-@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
 class MySQL extends SQLBase
-{
+{	
 	
-	private static var mysqlClass:NodeMySQL = Node.require('mysql');
-	
-	private var connection:NodeMySQL_Connection;
+	private var connection:Connection;
 	/**
 	 * Create MySQL object and connect
 	 */
 	public function new(config:Config) 
 	{
 		super();
-		connected = new Waiter();
-		init(config, Tools.nullFunction0);
+		if (config.host == null) config.host = 'localhost';
+		if (config.user == null) config.user = 'root';
+		if (config.password == null) config.password = '';
+		connection = Mysql.connect( { host:config.host, port:config.port, user:config.user, pass:config.password, database:config.database } );
+	 	action(Const.createDB + config.database, "create database", init);
 	}
 	
-	@:async private function init(config:Config):Void {
-		var db = config.database;
-		var c = Reflect.copy(config);
-		Reflect.deleteField(c, 'database');
-		connection = mysqlClass.createConnection(c);
-		var err = @await connection.connect();
-		if (err != null) {
-			_error('Error connecting: ' + err.stack);
-			return;
-		}
-		var h = config.host == null ? 'localhost' : config.host;
-		var p = config.port == null ? '' : ':'+config.port;
-		_log('Connected to $h$p');
-		
-		if (@await prepareDatabase(db)) {
-			_log('Database $db ready');
-			connected.end();
-		}
-		
-	}
+	private function init(r:Bool):Void if (r) connected.end();
 	
 	/**
 	 * Make action, query with boolean result
 	 */
-	@:async public function action(q:String, ?actName:String, ?p:PosInfos):Bool {
-		var err, _, _ = @await query(q, p);
-		if (err != null) {
+	public function action(q:String, ?actName:String, ?p:PosInfos, _result:Bool->Void):Void {
+		_log(q);
+		try {
+			connection.request(q);
+			_result(true);
+		} catch (err:Dynamic) {
 			_error(actName == null ? Std.string(err) : "Can't "+actName+': ' + err.stack, p);
-			return false;
-		} else
-			return true;
+			_result(false);
+		}
+		
 	}
 	
 	/**
 	 * MySQL query
 	 */
 	inline public function query(q:String, ?p:PosInfos, cb:Dynamic->Dynamic->Array<Field>->Void):Void {
-		connection.query(q, function(err:Dynamic, res:Dynamic, f:Array<Dynamic>) {
-			if (err) _error(err);
-			var fields:Array<Field> = f == null ? null : parseFields(f);
-			cb(err, res, fields);
-		});
 		_log(q, p);
+		var f = null;
+		var r = null;
+		var e = null;
+		try {
+			if (hack != null) {
+				var d = connection.request('SHOW COLUMNS FROM $hack').results().array();
+				f = parseFields(d);
+				hack = null;
+			}
+			r = connection.request(q).results().array();
+		} catch (err:Dynamic) {
+			_error(e = err, p);
+		}
+		cb(e, r, f);
 	}
 	
 	private static function parseFields(a:Array<Dynamic>):Array<Field> {
-		return [for (e in a) {name: e.orgName, type: e.type, length: calcLen(e.type, e.length), flags: parseFlags(e.flags)}];
+		return [for (e in a) {name: e.Field, type: parseType(e.Type), length: parseLen(e.Type), flags: parseFlags(e)}];
 	}
 	
-	private static function calcLen(type:Types, length:Int):Int {
-		return switch type {
-			case Types.CHAR: Std.int(length / 3);
-			case _: length;
+	inline private static function parseLen(s:String):Int return Std.parseInt(s.split('(')[1].substr(0,-1));
+	inline private static function parseType(s:String):String return Types.fromString(s.split('(')[0]);
+	inline private static function parseFlags(o:Dynamic<String>):Array<Flags> {
+		var flags:Array<Flags> = [];
+		for (f in Reflect.fields(o)) {
+			switch [f, Reflect.field(o, f)] {
+				case ['Key', 'PRI']: flags.push(Flags.PRI_KEY);
+				case ['Extra', 'auto_increment']: flags.push(Flags.AUTO_INCREMENT);
+				case ['Null', 'NO']: flags.push(Flags.NOT_NULL);
+				case ['Type', v]: if (v.split(' ')[1] == 'unsigned') flags.push(Flags.UNSIGNED);
+				case [_,_]:
+			}
 		}
+		return flags;
 	}
 	
-	private static function parseFlags(f:Int):Array<Flags> {
-		var r = [];
-		for (k in Flags.toStr.keys()) if (f & k != 0) r.push(k);
-		return r;
-	}
 	
 	/**
 	 * Query with stream
 	 */
 	public function stream(q:String, ?p:PosInfos):Stream<Dynamic> {
-		var s = new Stream();
-		connection.query(q)
-			.on('error', errorHandler)
-			.on('error', s.errorListener)
-			.on('result', s.dataListener)
-			.on('end', s.endListener);
 		_log(q, p);
+		var s = new Stream();
+		try {
+			s.putIterable(connection.request(q).results());
+		} catch (err:Dynamic) {
+			s.errorListener(err);
+		}
 		return s;
 	}
-	
-	private function errorHandler(e:Dynamic):Void _error(e);
 	
 	/**
 	 * Escape id (for fields, tables, databases)
 	 */
-	inline public function escapeId(s:String):String return connection.escapeId(s);
+	inline public function escapeId(s:String):String return /*'`'+*/connection.escape(s)/*+'`'*/;
 	/**
 	 * Escape (for values)
 	 */
-	inline public function escape(s:String):String return connection.escape(s);
+	inline public function escape(s:String):String return connection.quote(s);
 	
 	
 	/**
 	 * Close connection and destroy object
 	 */
 	public function destroy():Void {
-		connection.end();
-		connection = null;
-	}
-	
-	@:async private function prepareDatabase(database:String):Bool {
-		if (!@await action(Const.createDB + database, "create database")) return false;
-		
-		var err = @await connection.changeUser({database: database});
-		if (err != null) {
-			_error("Can't open database: " + err.stack);
-			return false;
-		}
-		
-		return true;
+		connection.close();
 	}
 	
 	

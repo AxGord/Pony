@@ -62,9 +62,11 @@ class Timer implements ITimer<Timer> implements Declarator {
 		update.takeListeners.add(lUpdate).lostListeners.add(lUpdate);
 		reset();
 	}
-	
+	#if !dox
 	inline private function get_started():Bool return t != null;
-	
+	#else
+	inline private function get_started():Bool return false;
+	#end
 	private function takeProgress():Void update.add(_progress);
 	private function lostProgress():Void update.remove(_progress);
 	

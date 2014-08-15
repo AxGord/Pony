@@ -55,7 +55,7 @@ class Keyboard {
 	static private var presser:Presser;
 	
 	static private function __init__():Void {
-		#if HUGS
+		#if (HUGS && !WITHOUTUNITY)
 		km = new pony.unity3d.Keyboard();
 		#elseif flash
 		km = new pony.flash.Keyboard();

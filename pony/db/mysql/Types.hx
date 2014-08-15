@@ -64,7 +64,7 @@ package pony.db.mysql;
 	var GEOMETRY    = 0xff;
 	
 	@:to public function toString():String return toStr[this];
-	@:from public static function fromString(s:String):Types return fromStr[s];
+	@:from public static function fromString(s:String):Types return fromStr[s.toUpperCase()];
 	
 	public static var toStr:Map<Int, String>;
 	
