@@ -1,4 +1,5 @@
 package pony.net.cs;
+import pony.events.Waiter;
 #if cs
 import haxe.io.Bytes;
 import cs.system.net.sockets.Socket;
@@ -33,28 +34,32 @@ class SocketClient extends SocketClientBase
 	private var isFromServer:Bool = false;
 	private var client:CSClient;
 	
+	public var connected:Waiter = new Waiter();
+	
 	/**
 	 * Creates a new client. Type "127.0.0.1" if you want to use localhost as host. 
 	 **/
-	public override function new(aHost:String, aPort:Int):Void
+	public override function new(aHost:String='127.0.0.1', aPort:Int):Void
 	{
 		super(aHost, aPort);
 		client = new CSClient(host, port);
 		client.onConnect < function()
 		{
 			this.onConnect.dispatch(cast this);
+			connected.end();
 		}
 		client.onData << function(b_in:BytesInput)
 		{
 			//joinData(b_in);
 			onData.dispatch(b_in);
 		}
+		connect();
 	}
 	
 	/**
 	 * Connects client.
 	 **/
-	public function connect():Void
+	private function connect():Void
 	{
 		client.connect();
 	}

@@ -2,5 +2,6 @@
 /tests/dump/
 /tests/build/
 /tests/report/
+/socketTests/CSSocket/
 /api/
 *.dump

@@ -18,6 +18,7 @@ using pony.Tools;
  
 class Main {
 	
+	
 	static var testCount:Int = 100;
 	#if cs
 	static var delay:Int = 300;
@@ -36,12 +37,17 @@ class Main {
 		#if cs
 		try {
 		#end
-			if (testCount % 4 != 0) throw 'Wrong test count';
-			AsyncTests.init(testCount);
-			firstTest();
+			//if (testCount % 4 != 0) throw 'Wrong test count';
+			//AsyncTests.init(testCount);
+			//firstTest();
+			
+			var s = new SocketServer(port);
+			s.onConnect < function() trace('new client');
+			var c = new SocketClient(port);
+			c.connected.wait(function() trace('connected'));
 		#if cs
 			Sys.getChar(false);
-			AsyncTests.finish();
+			//AsyncTests.finish();
 		} catch (e:String) Tools.traceThrow(e);
 		#end
 	}
@@ -53,7 +59,7 @@ class Main {
 		
 		AsyncTests.wait(0...blockCount, function() {
 			trace('Second part');
-			server.close();
+			server.destroy();
 			var server = createServer();
 			for (i in blockCount...blockCount+partCount) Timer.delay(createClient.bind(i), delay+delay*(i-blockCount));
 		});
@@ -63,14 +69,14 @@ class Main {
 	static function createServer():SocketServer {
 		var server = new SocketServer(port);
 		
-		server.connect << function(cl:SocketClient):Void {
+		server.onConnect << function(cl:SocketClient):Void {
 			var bo = new BytesOutput();
 			bo.writeStr('hi world');
 			//trace(bo.length);
 			cl.send(bo);
 		};
 		
-		server.data << function(bi:BytesInput):Void {
+		server.onData << function(bi:BytesInput):Void {
 			var i = bi.readInt32();
 			AsyncTests.equals('hello user', bi.readStr());
 			AsyncTests.setFlag(partCount + i);
@@ -82,7 +88,7 @@ class Main {
 	static function createClient(i:Int):SocketClient {
 		var client = new SocketClient(port);
 			
-		client.data < function(data:BytesInput):Void {
+		client.onData < function(data:BytesInput):Void {
 			var s = data.readStr();
 			AsyncTests.equals(s, 'hi world');
 			var bo = new BytesOutput();
@@ -90,7 +96,7 @@ class Main {
 			bo.writeStr('hello user');
 			client.send(bo);
 			AsyncTests.setFlag(i);
-			client.close();
+			client.destroy();
 		};
 		
 		return client;

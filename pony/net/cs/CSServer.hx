@@ -45,7 +45,7 @@ class CSServer extends BaseSocket
 	private var numConnectedSockets:Int;
 	private var numConnections:Int;
 	private var bufferSize:Int;
-	private var readWritePool:SocketAsyncEventArgsPool;
+	//private var readWritePool:SocketAsyncEventArgsPool;
 	private var semaphoreAcceptedClients:Semaphore;
 	private var data:Bytes;
 	private var bytesToSend:Bytes;
