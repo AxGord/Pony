@@ -41,7 +41,7 @@ import pony.events.Signal1;
 class CSServer extends BaseSocket
 {
 	private var server:Socket;
-	private static var mutex:Mutex;
+	private var mutex:Mutex;
 	private var numConnectedSockets:Int;
 	private var numConnections:Int;
 	private var bufferSize:Int;

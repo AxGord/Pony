@@ -19,7 +19,7 @@ using pony.Tools;
 class Main {
 	
 	
-	static var testCount:Int = 100;
+	static var testCount:Int = 20;
 	#if cs
 	static var delay:Int = 300;
 	#elseif nodejs
@@ -37,17 +37,20 @@ class Main {
 		#if cs
 		try {
 		#end
-			//if (testCount % 4 != 0) throw 'Wrong test count';
-			//AsyncTests.init(testCount);
-			//firstTest();
+		
+			if (testCount % 4 != 0) throw 'Wrong test count';
+			AsyncTests.init(testCount);
+			firstTest();
 			
+			/*
 			var s = new SocketServer(port);
 			s.onConnect < function() trace('new client');
 			var c = new SocketClient(port);
-			c.connected.wait(function() trace('connected'));
+			c.connected.wait(function() trace('connected'));*/
+			
 		#if cs
 			Sys.getChar(false);
-			//AsyncTests.finish();
+			AsyncTests.finish();
 		} catch (e:String) Tools.traceThrow(e);
 		#end
 	}
@@ -96,6 +99,7 @@ class Main {
 			bo.writeStr('hello user');
 			client.send(bo);
 			AsyncTests.setFlag(i);
+			Sys.sleep(500);
 			client.destroy();
 		};
 		

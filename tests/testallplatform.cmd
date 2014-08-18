@@ -1,5 +1,5 @@
 @echo off
-haxelib run munit test -neko -as3 -js
+haxelib run munit test
 rd build /S /Q
 rd report /S /Q
 pause

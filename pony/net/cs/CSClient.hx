@@ -101,7 +101,7 @@ class CSClient implements IDisposable extends BaseSocket
 		client.ConnectAsync(connectArgs);
 		autoConnectEvent.WaitOne();
 		var errorCode:SocketError = connectArgs.SocketError;
-		if (errorCode != cs.system.net.sockets.SocketError.Success)
+		if (errorCode != cs.system.net.sockets.SocketError.Success && errorCode != cs.system.net.sockets.SocketError.IsConnected)
 		{
 			trace(errorCode);
 			throw new SocketException();
