@@ -30,6 +30,7 @@ package pony.net;
 import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
 import haxe.Timer;
+import pony.events.Waiter;
 import pony.Logable.Logable;
 #end
 import haxe.io.Bytes;
@@ -49,21 +50,28 @@ class SocketClientBase extends Logable<ISocketClient>{
 	public var host(default,null):String;
 	public var port(default, null):Int;
 	public var closed(default, null):Bool;
+	public var isAbleToSend:Bool;
+	public var connected:Waiter;
+	public var isWithLength:Bool;
 	
 	private var reconnectDelay:Int = -1;
 	
-	public function new(?host:String, port:Int, reconnect:Int = -1) {
+
+	public function new(?host:String, port:Int, reconnect:Int = -1, aIsWithLength:Bool = true) 
+	{
 		super();
+		connected = new Waiter();
 		if (host == null) host = '127.0.0.1';
 		this.host = host;
 		this.port = port;
 		this.reconnectDelay = reconnect;
 		onConnect = Signal.create(null);
+		isWithLength = aIsWithLength;
 		_init();
 		open();
 	}
 	
-	inline private function _init():Void {
+	private function _init():Void {
 		closed = true;
 		id = -1;
 		onData = Signal.create(cast this);
@@ -83,7 +91,7 @@ class SocketClientBase extends Logable<ISocketClient>{
 		#end
 	}
 	
-	public function open():Void {}
+	public function open():Void {} //Server's init.
 	
 	inline private function endInit():Void {
 		closed = false;
@@ -102,7 +110,18 @@ class SocketClientBase extends Logable<ISocketClient>{
 	inline public function send2other(data:BytesOutput):Void server.send2other(data, cast this);
 	
 	private function joinData(bi:BytesInput):Void {
-		onData.dispatch(new BytesInput(bi.read(bi.readInt32())));
+		if (server != null) isWithLength = server.isWithLength;
+		if (isWithLength)
+		{
+			var size:Int = bi.readInt32();
+			trace(size);
+			onData.dispatch(new BytesInput(bi.read(size)));
+		}
+		else
+		{
+			trace(isWithLength);
+			onData.dispatch(bi);
+		}
 	}
 	/*
 	 * The code written above is just equivalent of next one:
@@ -110,16 +129,13 @@ class SocketClientBase extends Logable<ISocketClient>{
 		 * onData.dispatch(bi.read(i));
 	 * */
 	
-	private function destroy():Void
+	public function destroy():Void
 	{
 		closed = true;
-		onDisconnect.dispatch();
 		onConnect.destroy();
 		onConnect = null;
 		onData.destroy();
 		onData = null;
-		onDisconnect.destroy();
-		onDisconnect = null;
 	}
 	
 }

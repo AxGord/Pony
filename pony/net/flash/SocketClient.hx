@@ -59,18 +59,20 @@ class SocketClient extends SocketClientBase {
 	
 	private function securityErrorHandler(_):Void {}
 	
-	private function ioErrorHandler(_):Void {
+	private function ioErrorHandler(event:IOErrorEvent):Void {
+		trace(event.text);
 		trace('connect error');
 		reconnect();
 	}
 	
 	private function closeHandler(_):Void {
-		disconnect.dispatch();
+		onDisconnect.dispatch();
 	}
 	
 	private function connectHandler(_):Void {
 		closed = false;
-		connect.dispatch(cast this);
+		//onConnect.dispatch(cast this);
+		connected.end();
 	}
 	
 	public function send(data:BytesOutput):Void {
@@ -81,7 +83,8 @@ class SocketClient extends SocketClientBase {
 			trace('socket error, reconnect');
 			close();
 			open();
-			connect.once(function()send(data));
+			//onConnect.once(function()send(data));
+			connected.wait(function() send(data));
 		}
 	}
 	

@@ -8,6 +8,7 @@ import pony.AsyncTests;
 import pony.net.SocketClient;
 import pony.net.SocketServer;
 import pony.Tools;
+import cs.system.GC;
 
 using pony.Tools;
 
@@ -19,11 +20,11 @@ using pony.Tools;
 class Main {
 	
 	
-	static var testCount:Int = 20;
+	static var testCount:Int = 500;
 	#if cs
-	static var delay:Int = 300;
+	static var delay:Int = 30;
 	#elseif nodejs
-	static var delay:Int = 5;
+	static var delay:Int = 1;
 	#end
 	static var port:Int = 16001;
 	
@@ -37,45 +38,57 @@ class Main {
 		#if cs
 		try {
 		#end
-		
+			/*var s = new SocketServer(port);
+			s.onConnect < function() trace('new client');
+			var c = new SocketClient("127.0.0.1", port, 1);
+			s.onData << function(b_in:BytesInput)
+			{
+				trace(b_in.readDouble());
+			}
+			c.connected.wait(function() 
+			{
+				trace('connected');
+				var b_out:BytesOutput = new BytesOutput();
+				b_out.writeDouble(34.34);
+				c.send(b_out);
+			});*/
+
 			if (testCount % 4 != 0) throw 'Wrong test count';
 			AsyncTests.init(testCount);
 			firstTest();
 			
-			/*
-			var s = new SocketServer(port);
-			s.onConnect < function() trace('new client');
-			var c = new SocketClient(port);
-			c.connected.wait(function() trace('connected'));*/
-			
 		#if cs
-			Sys.getChar(false);
+			Sys.getChar(false); 
 			AsyncTests.finish();
+			//Sys.exit(0);
 		} catch (e:String) Tools.traceThrow(e);
 		#end
 	}
 	
 	static function firstTest():Void {
-		var server = createServer();
+		var server = createServer(6001);
 		
 		for (i in 0...partCount) Timer.delay(createClient.bind(i), delay+delay*i);
 		
 		AsyncTests.wait(0...blockCount, function() {
 			trace('Second part');
 			server.destroy();
-			var server = createServer();
+			var server = createServer(6002);
 			for (i in blockCount...blockCount+partCount) Timer.delay(createClient.bind(i), delay+delay*(i-blockCount));
 		});
 		
 	}
 	
-	static function createServer():SocketServer {
-		var server = new SocketServer(port);
+	static function createServer(aPort:Int):SocketServer {
+		port = aPort;
+		var server = new SocketServer(aPort);
 		
 		server.onConnect << function(cl:SocketClient):Void {
 			var bo = new BytesOutput();
-			bo.writeStr('hi world');
-			//trace(bo.length);
+			//bo.writeDouble(23.23);
+			var s:String = "hi world";
+			bo.writeStr(s);
+			trace(bo.length);
 			cl.send(bo);
 		};
 		
@@ -91,15 +104,16 @@ class Main {
 	static function createClient(i:Int):SocketClient {
 		var client = new SocketClient(port);
 			
-		client.onData < function(data:BytesInput):Void {
+		client.onData < function(data:BytesInput):Void { 
 			var s = data.readStr();
+			if (s == null) throw 'wrong data';
 			AsyncTests.equals(s, 'hi world');
 			var bo = new BytesOutput();
 			bo.writeInt32(i);
 			bo.writeStr('hello user');
 			client.send(bo);
 			AsyncTests.setFlag(i);
-			Sys.sleep(500);
+			//Sys.sleep(1000);
 			client.destroy();
 		};
 		

@@ -45,13 +45,13 @@ class SocketServer extends SocketServerBase {
 		server.on('connection', connectionHandler);
 	}
 	
-	private function bound():Void message.dispatch('bound '+server.address());
+	private function bound():Void onMessage.dispatch('bound '+server.address());
 	
 	private function connectionHandler(c:NodeNetSocket):Void addClient().nodejsInit(c);
 	
-	override public function close():Void
+	override public function destroy():Void
 	{
-		super.close();
+		super.destroy();
 		server.close(null);
 		server = null;
 	}

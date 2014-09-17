@@ -32,4 +32,5 @@ package pony.unity3d.scene;
  * @see pony.unity3d.scene.ucore.SliceUCore
  * @author BoBaH6eToH
  */
-class Slice extends pony.unity3d.scene.ucore.SliceUCore {}
+class Slice extends pony.unity3d.scene.ucore.SliceUCore {
+	Slice.}

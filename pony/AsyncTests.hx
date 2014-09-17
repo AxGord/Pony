@@ -98,8 +98,14 @@ class AsyncTests extends TestCase
 	}
 	
 	static public function wait(it:IntIterator, cb:Void->Void):Void {
-		if (checkWait(it)) cb();
-		else waitList.push({it:it,cb:cb});
+		if (checkWait(it))
+		{
+			cb();
+		}
+		else 
+		{
+			waitList.push({it:it,cb:cb});
+		}
 	}
 	
 	static private function checkWait(it:IntIterator):Bool {

@@ -1,89 +1,158 @@
 package pony.net.cs;
-import pony.events.Waiter;
-#if cs
-import haxe.io.Bytes;
-import cs.system.net.sockets.Socket;
-import cs.system.net.sockets.SocketAsyncEventArgs;
-import haxe.io.BytesInput;
-import haxe.io.BytesOutput;
-import pony.events.Signal;
-import pony.events.Signal0.Signal0;
-import pony.events.Signal1.Signal1;
-import cs.NativeArray.NativeArray;
-import cs.system.net.sockets.Socket;
-import cs.system.net.sockets.SocketAsyncEventArgs;
-import cs.system.net.sockets.SocketShutdown;
-import cs.system.net.sockets.SocketException;
-import cs.system.Object;
-import cs.system.EventHandler_1;
-import cs.types.UInt8;
-import pony.net.SocketClientBase;
 
 /**
  * SocketClient
- * A class wrapping an async-based C# client.
  * @author DIS
- **/
+ */
 
+ import cs.NativeArray.NativeArray;
+ import cs.StdTypes.UInt8;
+ import cs.system.net.sockets.SocketInformation;
+  import cs.system.net.IPAddress;
+ import cs.system.IAsyncResult;
+ import cs.system.net.sockets.Socket;
+ import cs.system.net.sockets.AddressFamily;
+ import cs.system.net.sockets.SocketType;
+ import cs.system.net.sockets.ProtocolType;
+ import cs.system.net.sockets.SocketFlags;
+ import cs.system.threading.ManualResetEvent;
+ import cs.system.threading.Monitor;
+ import cs.system.AsyncCallback;
+ import haxe.io.BytesInput;
+ import haxe.io.BytesOutput;
+ import pony.net.SocketClientBase;
+ import pony.Queue.Queue;
+ 
 class SocketClient extends SocketClientBase
 {
 
 	@:allow(pony.net.cs.SocketServer)
-	private var socket:Socket;
+	private var client:Socket;
+	/**
+	 * Indicates if a client sended first or second datagramm; the first one is being sended if isSet is false, true instead.
+	 **/
 	@:allow(pony.net.cs.SocketServer)
-	private var isFromServer:Bool = false;
-	private var client:CSClient;
+	private var isSet:Bool;
+	//private var host:String;
+	//private var port:Int;
+	@:allow(pony.net.cs.SocketServer)
+	private var receiveBuffer:NativeArray<UInt8> = new NativeArray(4);
+	@:allow(pony.net.cs.SocketServer)
+	private var sendQueue:Queue < BytesOutput -> Void > ;
+	@:allow(pony.net.cs.SocketServer)
+	private var eventSend:ManualResetEvent = new ManualResetEvent(false);
+	@:allow(pony.net.cs.SocketServer)
+	private var eventReceive:ManualResetEvent = new ManualResetEvent(false);
+	@:allow(pony.net.cs.SocketServer)
+	private var isRunning:Bool;
 	
-	public var connected:Waiter = new Waiter();
-	
-	/**
-	 * Creates a new client. Type "127.0.0.1" if you want to use localhost as host. 
-	 **/
-	public override function new(aHost:String='127.0.0.1', aPort:Int):Void
+	public override function new(aHost:String = "127.0.0.1", aPort:Int, aReconnect:Int = -1, aIsWithLength:Bool = true) 
 	{
-		super(aHost, aPort);
-		client = new CSClient(host, port);
-		client.onConnect < function()
-		{
-			this.onConnect.dispatch(cast this);
-			connected.end();
-		}
-		client.onData << function(b_in:BytesInput)
-		{
-			//joinData(b_in);
-			onData.dispatch(b_in);
-		}
-		connect();
+		isRunning = true;
+		host = aHost;
+		port = aPort;
+		this.reconnectDelay = aReconnect;
+		this.isWithLength = aIsWithLength;
+		client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+		client.Connect(host, port);
+		super(host, port, reconnectDelay, aIsWithLength);
+		connected.end();
+		sendQueue = new Queue(_send);
+		client.BeginReceive(receiveBuffer, 0, receiveBuffer.Length, SocketFlags.None, new AsyncCallback(receiveCallback), this);
 	}
 	
-	/**
-	 * Connects client.
-	 **/
-	private function connect():Void
+	public function send(data:BytesOutput):Void
 	{
-		client.connect();
+		sendQueue.call(data);
 	}
 	
-	/**
-	 * Sends a data to a server.
-	 **/
-	public function send(b_out:BytesOutput):Void
+	@:allow(pony.net.cs.SocketServer)
+	private function _send(data:BytesOutput):Void
 	{
-		if (isFromServer)
+		var buffer:NativeArray<UInt8> = new NativeArray(data.length);
+		var b_out:BytesOutput = new BytesOutput();
+		var size:Int = buffer.Length;
+		b_out.writeBytes(data.getBytes(), 0, size);
+		var b_in:BytesInput = new BytesInput(b_out.getBytes());
+		for (i in 0...b_in.length) buffer[i] = b_in.readByte();
+		client.BeginSend(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(sendCallback), client);
+	}
+	
+	private function sendCallback(ar:IAsyncResult):Void
+	{
+		if (isRunning)
 		{
-			BaseSocket.baseSend(socket, b_out);
+			eventSend.Reset();
+			var s:Socket = cast(ar.AsyncState, Socket);
+			s.EndSend(ar);
+			sendQueue.next();
 		}
-		else
+		eventSend.Set();
+	}
+	
+	private function receiveCallback(ar:IAsyncResult):Void
+	{
+		if (isRunning)
 		{
-			client.send(b_out);
+			eventReceive.Reset();
+			var cl:SocketClient = cast(ar.AsyncState, SocketClient);
+			try
+			{
+				var bytesRead:Int = cl.client.EndReceive(ar);
+				if (0 != bytesRead)
+				{
+					var receiveBuffer:NativeArray<UInt8> = cl.receiveBuffer;
+					var b_out:BytesOutput = new BytesOutput();
+					for (i in 0...bytesRead)
+					{
+						b_out.writeByte(receiveBuffer[i]);
+					}
+					var b_in:BytesInput = new BytesInput(b_out.getBytes());
+					if (cl.isSet) 
+					{
+						onData.dispatch(b_in);
+						var buffer:NativeArray<UInt8> = new NativeArray(4);
+						cl.receiveBuffer = buffer;
+						cl.isSet = false;
+						cl.client.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(receiveCallback), cl);
+					}
+					else
+					{
+						var buffer:NativeArray<UInt8>;
+						if (isWithLength)
+						{
+							var size:Int = b_in.readInt32();
+							buffer = new NativeArray(size);
+						}
+						else
+						{
+							buffer = new NativeArray(255);
+						}
+						cl.receiveBuffer = buffer;
+						cl.isSet = true;
+						cl.client.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(receiveCallback), cl);
+					}
+				}
+				else
+				{
+					
+				}
+			}
+			catch (ex:Dynamic)
+			{
+				trace(ex);
+			}
 		}
+		eventReceive.Set();
 	}
 	
 	public override function destroy():Void
 	{
-		client.Dispose();
+		//Sys.sleep(1);
+		isRunning = false;
+		eventReceive.WaitOne();
+		eventSend.WaitOne();
+		client.Close();
 		super.destroy();
-		client = null;
 	}
 }
-#end

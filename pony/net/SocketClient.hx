@@ -42,14 +42,15 @@ extends pony.net.flash.SocketClient
 #end
 implements ISocketClient {
 	
-	/*public function close():Void 
-	{
-		
-	}*/
 	
 	override public function send(data:BytesOutput):Void {
-		var bo = new BytesOutput();
-		bo.writeInt32(data.length);
+		var bo = new BytesOutput(); 
+		//isWithLength = true;
+		//trace(isWithLength);
+		if (isWithLength)
+		{
+			bo.writeInt32(data.length);
+		}
 		bo.write(data.getBytes());
 		super.send(bo);
 	}

@@ -10,8 +10,10 @@ import pony.events.*;
 interface INet 
 {
 	var onData(default, null):Signal1<SocketClient, BytesInput>;
-	var onConnect(default, null):Signal1<SocketServer, SocketClient>; //onAccept in a server.
+	var isAbleToSend:Bool;
+	var isWithLength:Bool;
+	//var onConnect(default, null):Signal1<SocketServer, SocketClient>; //onAccept in a server.
 	var onDisconnect(default,null):Signal;
 	function send(b:BytesOutput):Void;
-	function destroy():Void;
+	private function destroy():Void;
 }

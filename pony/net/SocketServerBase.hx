@@ -29,6 +29,7 @@ package pony.net;
 import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
 import pony.events.*;
+import pony.events.Signal1;
 import pony.Logable.Logable;
 
 /**
@@ -43,6 +44,8 @@ class SocketServerBase extends Logable<ISocketServer>{
 	public var clients(default, null):Array<SocketClient>;
 	public var onMessage(default, null):Signal1<SocketServer, String>;
 	public var onError(default, null):Signal1<SocketServer, String>;
+	public var isAbleToSend:Bool = false;
+	public var isWithLength:Bool = true;
 	
 	private function new() {
 		super();
@@ -58,6 +61,7 @@ class SocketServerBase extends Logable<ISocketServer>{
 	
 	private function addClient():SocketClient {
 		var cl = Type.createEmptyInstance(SocketClient);
+		cl.isWithLength = isWithLength;
 		cl.init(cast this, clients.length);
 		clients.push(cl);
 		return cl;
@@ -90,6 +94,9 @@ class SocketServerBase extends Logable<ISocketServer>{
 		}
 	}
 	
+	/**
+	 * One should remember that a destroy function _must_ be called from a thread in which the server was created. 
+	 **/
 	public function destroy():Void 
 	{
 		onClose.dispatch();

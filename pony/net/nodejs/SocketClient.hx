@@ -26,6 +26,7 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.net.nodejs;
+import pony.events.Waiter;
 import pony.Queue;
 #if nodejs
 import haxe.io.Bytes;
@@ -41,11 +42,12 @@ import pony.net.SocketClientBase;
 class SocketClient extends SocketClientBase {
 	
 	private var socket:NodeNetSocket;
-	private var q:Queue<BytesOutput->Void>;
+	private var q:Queue < BytesOutput->Void > ;
 	
 	override public function open():Void {
 		socket = Node.net.connect(port, host);
-		socket.on('connect', connected);
+		//connected = new Waiter();
+		socket.on('connect', connectHandler);
 		nodejsInit(socket);
 	}
 	
@@ -58,20 +60,26 @@ class SocketClient extends SocketClientBase {
 		endInit();
 	}
 	
-	private function closeHandler():Void disconnect.dispatch();
-	
-	private function connected():Void {
-		closed = false;
-		connect.dispatch(cast this);
+	private function closeHandler():Void
+	{
+		onDisconnect.dispatch();
+		onDisconnect.destroy();
+		onDisconnect = null;
 	}
 	
-	public function send(data:BytesOutput):Void q.call(data);
+	private function connectHandler():Void {
+		closed = false;
+		connected.end();
+	}
+	
+	public function send(data:BytesOutput):Void	q.call(data);
 	
 	public function _send(data:BytesOutput):Void socket.write(data.getBytes().getData(), null, q.next);
 	
 	private function dataHandler(d:NodeBuffer):Void joinData(new BytesInput(Bytes.ofData(d)));
 	
-	inline public function close():Void {
+	override public function destroy():Void {
+		super.destroy();
 		socket.end();
 		socket = null;
 		closed = true;
