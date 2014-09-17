@@ -15,6 +15,7 @@ package pony.net.cs;
  import cs.system.net.sockets.SocketType;
  import cs.system.net.sockets.ProtocolType;
  import cs.system.net.sockets.SocketFlags;
+ import cs.system.net.sockets.SocketException;
  import cs.system.threading.ManualResetEvent;
  import cs.system.threading.Monitor;
  import cs.system.AsyncCallback;
@@ -45,6 +46,7 @@ class SocketClient extends SocketClientBase
 	private var eventReceive:ManualResetEvent = new ManualResetEvent(false);
 	@:allow(pony.net.cs.SocketServer)
 	private var isRunning:Bool;
+	private var isConnected:Bool = false;
 	
 	public override function new(aHost:String = "127.0.0.1", aPort:Int, aReconnect:Int = -1, aIsWithLength:Bool = true) 
 	{
@@ -54,11 +56,27 @@ class SocketClient extends SocketClientBase
 		this.reconnectDelay = aReconnect;
 		this.isWithLength = aIsWithLength;
 		client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-		client.Connect(host, port);
 		super(host, port, reconnectDelay, aIsWithLength);
-		connected.end();
-		sendQueue = new Queue(_send);
-		client.BeginReceive(receiveBuffer, 0, receiveBuffer.Length, SocketFlags.None, new AsyncCallback(receiveCallback), this);
+	}
+	
+	public override function open():Void
+	{
+		try
+		{
+			client.Connect(host, port);
+			isConnected = true;
+		}
+		catch (ex:SocketException)
+		{
+			isConnected = false;
+			reconnect();
+		}
+		if (isConnected)
+		{
+			connected.end();
+			sendQueue = new Queue(_send);
+			client.BeginReceive(receiveBuffer, 0, receiveBuffer.Length, SocketFlags.None, new AsyncCallback(receiveCallback), this);
+		}
 	}
 	
 	public function send(data:BytesOutput):Void
