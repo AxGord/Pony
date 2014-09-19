@@ -76,9 +76,12 @@ class FLTools
 	
 	private static function __init__():Void {
 		init = Signal.createEmpty();
+		DeltaTime.fixedUpdate << init.dispatchEmpty;
+		/*
 		longInit = Signal.createEmpty();
 		Lib.current.stage.addEventListener(Event.ENTER_FRAME, init.dispatchEmpty1, false, -1001);
 		init << linit;
+		*/
 	}
 	
 	private static function linit():Void DeltaTime.fixedUpdate < function() longInit.dispatch();
@@ -104,19 +107,17 @@ class FLTools
 		var d1:Float = w/h;
 		var d2:Float = o.width/o.height;
 		if (d1 < d2) {
-			//height *= w/width;
 			o.width = w;
 			o.scaleY = o.scaleX;
-			o.y += (h - o.height) / 2;
 		} else if (d1 > d2) {
-			//width *= h/height;
 			o.height = h;
 			o.scaleX = o.scaleY;
-			o.x += (w - o.width) / 2; 
 		} else {
 			o.width = w;
 			o.height = h;
 		}
+		o.x = (w - o.width) / 2;
+		o.y = (h - o.height) / 2;
 	}
 	
 	public static function setRect(o:DisplayObject, rect:Rectangle):Void {

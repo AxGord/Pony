@@ -57,7 +57,7 @@ class SocketServer extends SocketServerBase
 		if (isRunning)
 		{
 			eventAccept.Reset();
-			trace("Client accepted.");
+			//trace("Client accepted.");
 			var s:Socket = cast(ar.AsyncState, Socket);
 			var cl:SocketClient = clInit();
 			cl.client = s.EndAccept(ar);

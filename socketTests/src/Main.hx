@@ -8,7 +8,6 @@ import pony.AsyncTests;
 import pony.net.SocketClient;
 import pony.net.SocketServer;
 import pony.Tools;
-import cs.system.GC;
 
 using pony.Tools;
 
@@ -36,6 +35,7 @@ class Main {
 		js.Node.require('source-map-support').install();
 		#end
 		#if cs
+		trace('Please, not touch keyboard :)');
 		try {
 		#end
 			/*var s = new SocketServer(port);
@@ -52,10 +52,25 @@ class Main {
 				b_out.writeDouble(34.34);
 				c.send(b_out);
 			});*/
-
-			if (testCount % 4 != 0) throw 'Wrong test count';
-			AsyncTests.init(testCount);
-			firstTest();
+			trace('try connect');
+			var serv:SocketServer = null;
+			var cl = new SocketClient(13579, 100);
+			cl.connected.wait(function() {
+				
+				
+				//todo: Not work!
+				//serv.destroy();
+				//cl.destroy();
+				
+				trace('ok');
+				
+				if (testCount % 4 != 0) throw 'Wrong test count';
+				AsyncTests.init(testCount);
+				firstTest();
+				
+			});
+			
+			Timer.delay(function() serv = new SocketServer(13579), 3000);
 			
 		#if cs
 			Sys.getChar(false); 
@@ -63,6 +78,7 @@ class Main {
 			//Sys.exit(0);
 		} catch (e:String) Tools.traceThrow(e);
 		#end
+		//todo: NodeJS not exit!
 	}
 	
 	static function firstTest():Void {
@@ -88,7 +104,7 @@ class Main {
 			//bo.writeDouble(23.23);
 			var s:String = "hi world";
 			bo.writeStr(s);
-			trace(bo.length);
+			//trace(bo.length);
 			cl.send(bo);
 		};
 		

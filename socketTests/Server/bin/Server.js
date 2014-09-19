@@ -7,7 +7,7 @@ function $extend(from, fields) {
 	return proto;
 }
 var HxOverrides = function() { };
-HxOverrides.__name__ = ["HxOverrides"];
+HxOverrides.__name__ = true;
 HxOverrides.cca = function(s,index) {
 	var x = s.charCodeAt(index);
 	if(x != x) return undefined;
@@ -51,14 +51,12 @@ var IntIterator = function(min,max) {
 	this.min = min;
 	this.max = max;
 };
-IntIterator.__name__ = ["IntIterator"];
+IntIterator.__name__ = true;
 IntIterator.prototype = {
-	min: null
-	,max: null
-	,__class__: IntIterator
+	__class__: IntIterator
 };
 var Lambda = function() { };
-Lambda.__name__ = ["Lambda"];
+Lambda.__name__ = true;
 Lambda.exists = function(it,f) {
 	var $it0 = $iterator(it)();
 	while( $it0.hasNext() ) {
@@ -80,12 +78,9 @@ Lambda.indexOf = function(it,v) {
 var List = function() {
 	this.length = 0;
 };
-List.__name__ = ["List"];
+List.__name__ = true;
 List.prototype = {
-	h: null
-	,q: null
-	,length: null
-	,add: function(item) {
+	add: function(item) {
 		var x = [item];
 		if(this.h == null) this.h = x; else this.q[1] = x;
 		this.q = x;
@@ -123,107 +118,26 @@ List.prototype = {
 	,__class__: List
 };
 var Main = function() { };
-Main.__name__ = ["Main"];
+Main.__name__ = true;
 Main.main = function() {
-	js.Node.require("source-map-support").install();
-	haxe.Log.trace("try connect",{ fileName : "Main.hx", lineNumber : 55, className : "Main", methodName : "main"});
-	var serv = null;
-	var cl = new pony.net.SocketClient(null,13579,100);
-	cl.connected.wait(function() {
-		haxe.Log.trace("ok",{ fileName : "Main.hx", lineNumber : 65, className : "Main", methodName : "main"});
-		if(Main.testCount % 4 != 0) throw "Wrong test count";
-		pony.AsyncTests.init(Main.testCount);
-		Main.firstTest();
-	});
-	haxe.Timer.delay(function() {
-		serv = new pony.net.SocketServer(13579);
-	},3000);
-};
-Main.firstTest = function() {
-	var server = Main.createServer(6001);
-	var _g1 = 0;
-	var _g = Main.partCount;
-	while(_g1 < _g) {
-		var i = _g1++;
-		haxe.Timer.delay((function(f,i1) {
-			return function() {
-				return f(i1);
-			};
-		})(Main.createClient,i),Main.delay + Main.delay * i);
-	}
-	pony.AsyncTests.wait(new IntIterator(0,Main.blockCount),function() {
-		haxe.Log.trace("Second part",{ fileName : "Main.hx", lineNumber : 90, className : "Main", methodName : "firstTest"});
-		server.destroy();
-		var server1 = Main.createServer(6002);
-		var _g11 = Main.blockCount;
-		var _g2 = Main.blockCount + Main.partCount;
-		while(_g11 < _g2) {
-			var i2 = _g11++;
-			haxe.Timer.delay((function(f1,i3) {
-				return function() {
-					return f1(i3);
-				};
-			})(Main.createClient,i2),Main.delay + Main.delay * (i2 - Main.blockCount));
-		}
-	});
-};
-Main.createServer = function(aPort) {
-	Main.port = aPort;
-	var server = new pony.net.SocketServer(aPort);
-	var this1 = server.onConnect;
+	var s = new pony.net.SocketServer(13579);
+	var this1 = s.onConnect;
 	var listener;
 	var l;
 	var f = pony._Function.Function_Impl_.from(function(cl) {
 		var bo = new haxe.io.BytesOutput();
-		var s = "hi world";
-		bo.writeInt32(s.length);
-		bo.writeString(s);
+		bo.writeInt32("Hello man!".length);
+		bo.writeString("Hello man!");
 		cl.send(bo);
 	},1,false);
 	l = pony.events._Listener.Listener_Impl_._fromFunction(f);
 	listener = l;
 	pony.events._Signal1.Signal1_Impl_.add(this1,listener);
 	this1;
-	var this2 = server.onData;
-	var listener1;
-	var l1;
-	var f1 = pony._Function.Function_Impl_.from(function(bi) {
-		var i = bi.readInt32();
-		pony.AsyncTests.equals("hello user",pony.Tools.readStr(bi),{ fileName : "Main.hx", lineNumber : 113, className : "Main", methodName : "createServer"});
-		pony.AsyncTests.setFlag(Main.partCount + i);
-	},1,false);
-	l1 = pony.events._Listener.Listener_Impl_._fromFunction(f1);
-	listener1 = l1;
-	pony.events._Signal1.Signal1_Impl_.add(this2,listener1);
-	this2;
-	return server;
 };
-Main.createClient = function(i) {
-	var client = new pony.net.SocketClient(null,Main.port);
-	var this1 = client.onData;
-	var listener;
-	var l;
-	var f = pony._Function.Function_Impl_.from(function(data) {
-		var s = pony.Tools.readStr(data);
-		if(s == null) throw "wrong data";
-		pony.AsyncTests.assertList.push({ a : s, b : "hi world", pos : { fileName : "Main.hx", lineNumber : 126, className : "Main", methodName : "createClient"}});
-		var bo = new haxe.io.BytesOutput();
-		bo.writeInt32(i);
-		bo.writeInt32("hello user".length);
-		bo.writeString("hello user");
-		client.send(bo);
-		pony.AsyncTests.setFlag(i);
-		client.destroy();
-	},1,false);
-	l = pony.events._Listener.Listener_Impl_._fromFunction(f);
-	listener = l;
-	pony.events._Signal1.Signal1_Impl_.once(this1,listener);
-	this1;
-	return client;
-};
-Math.__name__ = ["Math"];
+Math.__name__ = true;
 var Reflect = function() { };
-Reflect.__name__ = ["Reflect"];
+Reflect.__name__ = true;
 Reflect.field = function(o,field) {
 	try {
 		return o[field];
@@ -273,7 +187,7 @@ Reflect.makeVarArgs = function(f) {
 	};
 };
 var Std = function() { };
-Std.__name__ = ["Std"];
+Std.__name__ = true;
 Std.string = function(s) {
 	return js.Boot.__string_rec(s,"");
 };
@@ -289,10 +203,9 @@ Std.parseFloat = function(x) {
 var StringBuf = function() {
 	this.b = "";
 };
-StringBuf.__name__ = ["StringBuf"];
+StringBuf.__name__ = true;
 StringBuf.prototype = {
-	b: null
-	,add: function(x) {
+	add: function(x) {
 		this.b += Std.string(x);
 	}
 	,addSub: function(s,pos,len) {
@@ -301,14 +214,7 @@ StringBuf.prototype = {
 	,__class__: StringBuf
 };
 var StringTools = function() { };
-StringTools.__name__ = ["StringTools"];
-StringTools.htmlEscape = function(s,quotes) {
-	s = s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
-	if(quotes) return s.split("\"").join("&quot;").split("'").join("&#039;"); else return s;
-};
-StringTools.startsWith = function(s,start) {
-	return s.length >= start.length && HxOverrides.substr(s,0,start.length) == start;
-};
+StringTools.__name__ = true;
 StringTools.isSpace = function(s,pos) {
 	var c = HxOverrides.cca(s,pos);
 	return c > 8 && c < 14 || c == 32;
@@ -366,30 +272,14 @@ ValueType.TUnknown = ["TUnknown",8];
 ValueType.TUnknown.toString = $estr;
 ValueType.TUnknown.__enum__ = ValueType;
 var Type = function() { };
-Type.__name__ = ["Type"];
-Type.getClass = function(o) {
-	if(o == null) return null;
-	return js.Boot.getClass(o);
-};
+Type.__name__ = true;
 Type.getEnum = function(o) {
 	if(o == null) return null;
 	return o.__enum__;
 };
-Type.getClassName = function(c) {
-	var a = c.__name__;
-	if(a == null) return null;
-	return a.join(".");
-};
 Type.createEmptyInstance = function(cl) {
 	function empty() {}; empty.prototype = cl.prototype;
 	return new empty();
-};
-Type.getInstanceFields = function(c) {
-	var a = [];
-	for(var i in c.prototype) a.push(i);
-	HxOverrides.remove(a,"__class__");
-	HxOverrides.remove(a,"__properties__");
-	return a;
 };
 Type["typeof"] = function(v) {
 	var _g = typeof(v);
@@ -426,7 +316,7 @@ Type.enumIndex = function(e) {
 var XmlType = { __ename__ : true, __constructs__ : [] };
 var Xml = function() {
 };
-Xml.__name__ = ["Xml"];
+Xml.__name__ = true;
 Xml.parse = function(str) {
 	return haxe.xml.Parser.parse(str);
 };
@@ -475,13 +365,7 @@ Xml.createDocument = function() {
 	return r;
 };
 Xml.prototype = {
-	nodeType: null
-	,_nodeName: null
-	,_nodeValue: null
-	,_attributes: null
-	,_children: null
-	,_parent: null
-	,get_nodeName: function() {
+	get_nodeName: function() {
 		if(this.nodeType != Xml.Element) throw "bad nodeType";
 		return this._nodeName;
 	}
@@ -523,7 +407,7 @@ haxe.StackItem.FilePos = function(s,file,line) { var $x = ["FilePos",2,s,file,li
 haxe.StackItem.Method = function(classname,method) { var $x = ["Method",3,classname,method]; $x.__enum__ = haxe.StackItem; $x.toString = $estr; return $x; };
 haxe.StackItem.LocalFunction = function(v) { var $x = ["LocalFunction",4,v]; $x.__enum__ = haxe.StackItem; $x.toString = $estr; return $x; };
 haxe.CallStack = function() { };
-haxe.CallStack.__name__ = ["haxe","CallStack"];
+haxe.CallStack.__name__ = true;
 haxe.CallStack.exceptionStack = function() {
 	return [];
 };
@@ -576,9 +460,9 @@ haxe.CallStack.itemToString = function(b,s) {
 	}
 };
 haxe.IMap = function() { };
-haxe.IMap.__name__ = ["haxe","IMap"];
+haxe.IMap.__name__ = true;
 haxe.Log = function() { };
-haxe.Log.__name__ = ["haxe","Log"];
+haxe.Log.__name__ = true;
 haxe.Log.trace = function(v,infos) {
 	js.Boot.__trace(v,infos);
 };
@@ -588,7 +472,7 @@ haxe.Timer = function(time_ms) {
 		me.run();
 	},time_ms);
 };
-haxe.Timer.__name__ = ["haxe","Timer"];
+haxe.Timer.__name__ = true;
 haxe.Timer.delay = function(f,time_ms) {
 	var t = new haxe.Timer(time_ms);
 	t.run = function() {
@@ -598,8 +482,7 @@ haxe.Timer.delay = function(f,time_ms) {
 	return t;
 };
 haxe.Timer.prototype = {
-	id: null
-	,stop: function() {
+	stop: function() {
 		if(this.id == null) return;
 		clearInterval(this.id);
 		this.id = null;
@@ -611,10 +494,9 @@ haxe.Timer.prototype = {
 haxe.ds = {};
 haxe.ds.BalancedTree = function() {
 };
-haxe.ds.BalancedTree.__name__ = ["haxe","ds","BalancedTree"];
+haxe.ds.BalancedTree.__name__ = true;
 haxe.ds.BalancedTree.prototype = {
-	root: null
-	,set: function(key,value) {
+	set: function(key,value) {
 		this.root = this.setLoop(key,value,this.root);
 	}
 	,get: function(key) {
@@ -713,19 +595,14 @@ haxe.ds.TreeNode = function(l,k,v,r,h) {
 		return $r;
 	}(this))) + 1; else this._height = h;
 };
-haxe.ds.TreeNode.__name__ = ["haxe","ds","TreeNode"];
+haxe.ds.TreeNode.__name__ = true;
 haxe.ds.TreeNode.prototype = {
-	left: null
-	,right: null
-	,key: null
-	,value: null
-	,_height: null
-	,__class__: haxe.ds.TreeNode
+	__class__: haxe.ds.TreeNode
 };
 haxe.ds.EnumValueMap = function() {
 	haxe.ds.BalancedTree.call(this);
 };
-haxe.ds.EnumValueMap.__name__ = ["haxe","ds","EnumValueMap"];
+haxe.ds.EnumValueMap.__name__ = true;
 haxe.ds.EnumValueMap.__interfaces__ = [haxe.IMap];
 haxe.ds.EnumValueMap.__super__ = haxe.ds.BalancedTree;
 haxe.ds.EnumValueMap.prototype = $extend(haxe.ds.BalancedTree.prototype,{
@@ -757,11 +634,10 @@ haxe.ds.EnumValueMap.prototype = $extend(haxe.ds.BalancedTree.prototype,{
 haxe.ds.IntMap = function() {
 	this.h = { };
 };
-haxe.ds.IntMap.__name__ = ["haxe","ds","IntMap"];
+haxe.ds.IntMap.__name__ = true;
 haxe.ds.IntMap.__interfaces__ = [haxe.IMap];
 haxe.ds.IntMap.prototype = {
-	h: null
-	,set: function(key,value) {
+	set: function(key,value) {
 		this.h[key] = value;
 	}
 	,get: function(key) {
@@ -795,11 +671,10 @@ haxe.ds.IntMap.prototype = {
 haxe.ds.StringMap = function() {
 	this.h = { };
 };
-haxe.ds.StringMap.__name__ = ["haxe","ds","StringMap"];
+haxe.ds.StringMap.__name__ = true;
 haxe.ds.StringMap.__interfaces__ = [haxe.IMap];
 haxe.ds.StringMap.prototype = {
-	h: null
-	,set: function(key,value) {
+	set: function(key,value) {
 		this.h["$" + key] = value;
 	}
 	,get: function(key) {
@@ -815,7 +690,7 @@ haxe.io.Bytes = function(length,b) {
 	this.length = length;
 	this.b = b;
 };
-haxe.io.Bytes.__name__ = ["haxe","io","Bytes"];
+haxe.io.Bytes.__name__ = true;
 haxe.io.Bytes.alloc = function(length) {
 	return new haxe.io.Bytes(length,new Buffer(length));
 };
@@ -827,9 +702,7 @@ haxe.io.Bytes.ofData = function(b) {
 	return new haxe.io.Bytes(b.length,b);
 };
 haxe.io.Bytes.prototype = {
-	length: null
-	,b: null
-	,get: function(pos) {
+	get: function(pos) {
 		return this.b[pos];
 	}
 	,set: function(pos,v) {
@@ -858,7 +731,7 @@ haxe.io.Bytes.prototype = {
 		}
 		return this.length - other.length;
 	}
-	,getString: function(pos,len) {
+	,readString: function(pos,len) {
 		if(pos < 0 || len < 0 || pos + len > this.length) throw haxe.io.Error.OutsideBounds;
 		var s = "";
 		var b = this.b;
@@ -881,11 +754,8 @@ haxe.io.Bytes.prototype = {
 		}
 		return s;
 	}
-	,readString: function(pos,len) {
-		return this.getString(pos,len);
-	}
 	,toString: function() {
-		return this.getString(0,this.length);
+		return this.readString(0,this.length);
 	}
 	,toHex: function() {
 		var s_b = "";
@@ -915,10 +785,9 @@ haxe.io.Bytes.prototype = {
 haxe.io.BytesBuffer = function() {
 	this.b = new Array();
 };
-haxe.io.BytesBuffer.__name__ = ["haxe","io","BytesBuffer"];
+haxe.io.BytesBuffer.__name__ = true;
 haxe.io.BytesBuffer.prototype = {
-	b: null
-	,get_length: function() {
+	get_length: function() {
 		return this.b.length;
 	}
 	,addByte: function($byte) {
@@ -954,10 +823,9 @@ haxe.io.BytesBuffer.prototype = {
 	,__class__: haxe.io.BytesBuffer
 };
 haxe.io.Input = function() { };
-haxe.io.Input.__name__ = ["haxe","io","Input"];
+haxe.io.Input.__name__ = true;
 haxe.io.Input.prototype = {
-	bigEndian: null
-	,readByte: function() {
+	readByte: function() {
 		throw "Not implemented";
 	}
 	,readBytes: function(s,pos,len) {
@@ -1012,14 +880,10 @@ haxe.io.BytesInput = function(b,pos,len) {
 	this.len = len;
 	this.totlen = len;
 };
-haxe.io.BytesInput.__name__ = ["haxe","io","BytesInput"];
+haxe.io.BytesInput.__name__ = true;
 haxe.io.BytesInput.__super__ = haxe.io.Input;
 haxe.io.BytesInput.prototype = $extend(haxe.io.Input.prototype,{
-	b: null
-	,pos: null
-	,len: null
-	,totlen: null
-	,readByte: function() {
+	readByte: function() {
 		if(this.len == 0) throw new haxe.io.Eof();
 		this.len--;
 		return this.b[this.pos++];
@@ -1042,10 +906,9 @@ haxe.io.BytesInput.prototype = $extend(haxe.io.Input.prototype,{
 	,__class__: haxe.io.BytesInput
 });
 haxe.io.Output = function() { };
-haxe.io.Output.__name__ = ["haxe","io","Output"];
+haxe.io.Output.__name__ = true;
 haxe.io.Output.prototype = {
-	bigEndian: null
-	,writeByte: function(c) {
+	writeByte: function(c) {
 		throw "Not implemented";
 	}
 	,writeBytes: function(s,pos,len) {
@@ -1100,11 +963,10 @@ haxe.io.Output.prototype = {
 haxe.io.BytesOutput = function() {
 	this.b = new haxe.io.BytesBuffer();
 };
-haxe.io.BytesOutput.__name__ = ["haxe","io","BytesOutput"];
+haxe.io.BytesOutput.__name__ = true;
 haxe.io.BytesOutput.__super__ = haxe.io.Output;
 haxe.io.BytesOutput.prototype = $extend(haxe.io.Output.prototype,{
-	b: null
-	,writeByte: function(c) {
+	writeByte: function(c) {
 		this.b.b.push(c);
 	}
 	,writeBytes: function(buf,pos,len) {
@@ -1118,7 +980,7 @@ haxe.io.BytesOutput.prototype = $extend(haxe.io.Output.prototype,{
 });
 haxe.io.Eof = function() {
 };
-haxe.io.Eof.__name__ = ["haxe","io","Eof"];
+haxe.io.Eof.__name__ = true;
 haxe.io.Eof.prototype = {
 	toString: function() {
 		return "Eof";
@@ -1136,227 +998,21 @@ haxe.io.Error.OutsideBounds = ["OutsideBounds",2];
 haxe.io.Error.OutsideBounds.toString = $estr;
 haxe.io.Error.OutsideBounds.__enum__ = haxe.io.Error;
 haxe.io.Error.Custom = function(e) { var $x = ["Custom",3,e]; $x.__enum__ = haxe.io.Error; $x.toString = $estr; return $x; };
-haxe.unit = {};
-haxe.unit.TestCase = function() {
-};
-haxe.unit.TestCase.__name__ = ["haxe","unit","TestCase"];
-haxe.unit.TestCase.prototype = {
-	currentTest: null
-	,setup: function() {
-	}
-	,tearDown: function() {
-	}
-	,print: function(v) {
-		haxe.unit.TestRunner.print(v);
-	}
-	,assertTrue: function(b,c) {
-		this.currentTest.done = true;
-		if(b == false) {
-			this.currentTest.success = false;
-			this.currentTest.error = "expected true but was false";
-			this.currentTest.posInfos = c;
-			throw this.currentTest;
-		}
-	}
-	,assertFalse: function(b,c) {
-		this.currentTest.done = true;
-		if(b == true) {
-			this.currentTest.success = false;
-			this.currentTest.error = "expected false but was true";
-			this.currentTest.posInfos = c;
-			throw this.currentTest;
-		}
-	}
-	,assertEquals: function(expected,actual,c) {
-		this.currentTest.done = true;
-		if(actual != expected) {
-			this.currentTest.success = false;
-			this.currentTest.error = "expected '" + Std.string(expected) + "' but was '" + Std.string(actual) + "'";
-			this.currentTest.posInfos = c;
-			throw this.currentTest;
-		}
-	}
-	,__class__: haxe.unit.TestCase
-};
-haxe.unit.TestResult = function() {
-	this.m_tests = new List();
-	this.success = true;
-};
-haxe.unit.TestResult.__name__ = ["haxe","unit","TestResult"];
-haxe.unit.TestResult.prototype = {
-	m_tests: null
-	,success: null
-	,add: function(t) {
-		this.m_tests.add(t);
-		if(!t.success) this.success = false;
-	}
-	,toString: function() {
-		var buf_b = "";
-		var failures = 0;
-		var _g_head = this.m_tests.h;
-		var _g_val = null;
-		while(_g_head != null) {
-			var test;
-			_g_val = _g_head[0];
-			_g_head = _g_head[1];
-			test = _g_val;
-			if(test.success == false) {
-				buf_b += "* ";
-				if(test.classname == null) buf_b += "null"; else buf_b += "" + test.classname;
-				buf_b += "::";
-				if(test.method == null) buf_b += "null"; else buf_b += "" + test.method;
-				buf_b += "()";
-				buf_b += "\n";
-				buf_b += "ERR: ";
-				if(test.posInfos != null) {
-					buf_b += Std.string(test.posInfos.fileName);
-					buf_b += ":";
-					buf_b += Std.string(test.posInfos.lineNumber);
-					buf_b += "(";
-					buf_b += Std.string(test.posInfos.className);
-					buf_b += ".";
-					buf_b += Std.string(test.posInfos.methodName);
-					buf_b += ") - ";
-				}
-				if(test.error == null) buf_b += "null"; else buf_b += "" + test.error;
-				buf_b += "\n";
-				if(test.backtrace != null) {
-					if(test.backtrace == null) buf_b += "null"; else buf_b += "" + test.backtrace;
-					buf_b += "\n";
-				}
-				buf_b += "\n";
-				failures++;
-			}
-		}
-		buf_b += "\n";
-		if(failures == 0) buf_b += "OK "; else buf_b += "FAILED ";
-		buf_b += Std.string(this.m_tests.length);
-		buf_b += " tests, ";
-		if(failures == null) buf_b += "null"; else buf_b += "" + failures;
-		buf_b += " failed, ";
-		buf_b += Std.string(this.m_tests.length - failures);
-		buf_b += " success";
-		buf_b += "\n";
-		return buf_b;
-	}
-	,__class__: haxe.unit.TestResult
-};
-haxe.unit.TestRunner = function() {
-	this.result = new haxe.unit.TestResult();
-	this.cases = new List();
-};
-haxe.unit.TestRunner.__name__ = ["haxe","unit","TestRunner"];
-haxe.unit.TestRunner.print = function(v) {
-	var msg = js.Boot.__string_rec(v,"");
-	var d;
-	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) {
-		msg = StringTools.htmlEscape(msg).split("\n").join("<br/>");
-		d.innerHTML += msg + "<br/>";
-	} else if(typeof process != "undefined" && process.stdout != null && process.stdout.write != null) process.stdout.write(msg); else if(typeof console != "undefined" && console.log != null) console.log(msg);
-};
-haxe.unit.TestRunner.customTrace = function(v,p) {
-	haxe.unit.TestRunner.print(p.fileName + ":" + p.lineNumber + ": " + Std.string(v) + "\n");
-};
-haxe.unit.TestRunner.prototype = {
-	result: null
-	,cases: null
-	,add: function(c) {
-		this.cases.add(c);
-	}
-	,run: function() {
-		this.result = new haxe.unit.TestResult();
-		var _g_head = this.cases.h;
-		var _g_val = null;
-		while(_g_head != null) {
-			var c;
-			_g_val = _g_head[0];
-			_g_head = _g_head[1];
-			c = _g_val;
-			this.runCase(c);
-		}
-		haxe.unit.TestRunner.print(this.result.toString());
-		return this.result.success;
-	}
-	,runCase: function(t) {
-		var old = haxe.Log.trace;
-		haxe.Log.trace = haxe.unit.TestRunner.customTrace;
-		var cl = Type.getClass(t);
-		var fields = Type.getInstanceFields(cl);
-		haxe.unit.TestRunner.print("Class: " + Type.getClassName(cl) + " ");
-		var _g = 0;
-		while(_g < fields.length) {
-			var f = fields[_g];
-			++_g;
-			var fname = f;
-			var field = Reflect.field(t,f);
-			if(StringTools.startsWith(fname,"test") && Reflect.isFunction(field)) {
-				t.currentTest = new haxe.unit.TestStatus();
-				t.currentTest.classname = Type.getClassName(cl);
-				t.currentTest.method = fname;
-				t.setup();
-				try {
-					Reflect.callMethod(t,field,new Array());
-					if(t.currentTest.done) {
-						t.currentTest.success = true;
-						haxe.unit.TestRunner.print(".");
-					} else {
-						t.currentTest.success = false;
-						t.currentTest.error = "(warning) no assert";
-						haxe.unit.TestRunner.print("W");
-					}
-				} catch( $e0 ) {
-					if( js.Boot.__instanceof($e0,haxe.unit.TestStatus) ) {
-						var e = $e0;
-						haxe.unit.TestRunner.print("F");
-						t.currentTest.backtrace = haxe.CallStack.toString(haxe.CallStack.exceptionStack());
-					} else {
-					var e1 = $e0;
-					haxe.unit.TestRunner.print("E");
-					if(e1.message != null) t.currentTest.error = "exception thrown : " + Std.string(e1) + " [" + Std.string(e1.message) + "]"; else t.currentTest.error = "exception thrown : " + Std.string(e1);
-					t.currentTest.backtrace = haxe.CallStack.toString(haxe.CallStack.exceptionStack());
-					}
-				}
-				this.result.add(t.currentTest);
-				t.tearDown();
-			}
-		}
-		haxe.unit.TestRunner.print("\n");
-		haxe.Log.trace = old;
-	}
-	,__class__: haxe.unit.TestRunner
-};
-haxe.unit.TestStatus = function() {
-	this.done = false;
-	this.success = false;
-};
-haxe.unit.TestStatus.__name__ = ["haxe","unit","TestStatus"];
-haxe.unit.TestStatus.prototype = {
-	done: null
-	,success: null
-	,error: null
-	,method: null
-	,classname: null
-	,posInfos: null
-	,backtrace: null
-	,__class__: haxe.unit.TestStatus
-};
 haxe.xml = {};
 haxe.xml._Fast = {};
 haxe.xml._Fast.NodeAccess = function(x) {
 	this.__x = x;
 };
-haxe.xml._Fast.NodeAccess.__name__ = ["haxe","xml","_Fast","NodeAccess"];
+haxe.xml._Fast.NodeAccess.__name__ = true;
 haxe.xml._Fast.NodeAccess.prototype = {
-	__x: null
-	,__class__: haxe.xml._Fast.NodeAccess
+	__class__: haxe.xml._Fast.NodeAccess
 };
 haxe.xml._Fast.AttribAccess = function(x) {
 	this.__x = x;
 };
-haxe.xml._Fast.AttribAccess.__name__ = ["haxe","xml","_Fast","AttribAccess"];
+haxe.xml._Fast.AttribAccess.__name__ = true;
 haxe.xml._Fast.AttribAccess.prototype = {
-	__x: null
-	,resolve: function(name) {
+	resolve: function(name) {
 		if(this.__x.nodeType == Xml.Document) throw "Cannot access document attribute " + name;
 		var v = this.__x.get(name);
 		if(v == null) throw this.__x.get_nodeName() + " is missing attribute " + name;
@@ -1367,10 +1023,9 @@ haxe.xml._Fast.AttribAccess.prototype = {
 haxe.xml._Fast.HasAttribAccess = function(x) {
 	this.__x = x;
 };
-haxe.xml._Fast.HasAttribAccess.__name__ = ["haxe","xml","_Fast","HasAttribAccess"];
+haxe.xml._Fast.HasAttribAccess.__name__ = true;
 haxe.xml._Fast.HasAttribAccess.prototype = {
-	__x: null
-	,resolve: function(name) {
+	resolve: function(name) {
 		if(this.__x.nodeType == Xml.Document) throw "Cannot access document attribute " + name;
 		return this.__x.exists(name);
 	}
@@ -1379,18 +1034,16 @@ haxe.xml._Fast.HasAttribAccess.prototype = {
 haxe.xml._Fast.HasNodeAccess = function(x) {
 	this.__x = x;
 };
-haxe.xml._Fast.HasNodeAccess.__name__ = ["haxe","xml","_Fast","HasNodeAccess"];
+haxe.xml._Fast.HasNodeAccess.__name__ = true;
 haxe.xml._Fast.HasNodeAccess.prototype = {
-	__x: null
-	,__class__: haxe.xml._Fast.HasNodeAccess
+	__class__: haxe.xml._Fast.HasNodeAccess
 };
 haxe.xml._Fast.NodeListAccess = function(x) {
 	this.__x = x;
 };
-haxe.xml._Fast.NodeListAccess.__name__ = ["haxe","xml","_Fast","NodeListAccess"];
+haxe.xml._Fast.NodeListAccess.__name__ = true;
 haxe.xml._Fast.NodeListAccess.prototype = {
-	__x: null
-	,__class__: haxe.xml._Fast.NodeListAccess
+	__class__: haxe.xml._Fast.NodeListAccess
 };
 haxe.xml.Fast = function(x) {
 	if(x.nodeType != Xml.Document && x.nodeType != Xml.Element) throw "Invalid nodeType " + Std.string(x.nodeType);
@@ -1401,18 +1054,12 @@ haxe.xml.Fast = function(x) {
 	this.has = new haxe.xml._Fast.HasAttribAccess(x);
 	this.hasNode = new haxe.xml._Fast.HasNodeAccess(x);
 };
-haxe.xml.Fast.__name__ = ["haxe","xml","Fast"];
+haxe.xml.Fast.__name__ = true;
 haxe.xml.Fast.prototype = {
-	x: null
-	,node: null
-	,nodes: null
-	,att: null
-	,has: null
-	,hasNode: null
-	,__class__: haxe.xml.Fast
+	__class__: haxe.xml.Fast
 };
 haxe.xml.Parser = function() { };
-haxe.xml.Parser.__name__ = ["haxe","xml","Parser"];
+haxe.xml.Parser.__name__ = true;
 haxe.xml.Parser.parse = function(str) {
 	var doc = Xml.createDocument();
 	haxe.xml.Parser.doParse(str,0,doc);
@@ -1659,7 +1306,7 @@ haxe.xml.Parser.doParse = function(str,p,parent) {
 };
 var js = {};
 js.Boot = function() { };
-js.Boot.__name__ = ["js","Boot"];
+js.Boot.__name__ = true;
 js.Boot.__unhtml = function(s) {
 	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
 };
@@ -1811,9 +1458,9 @@ js.Boot.__resolveNativeClass = function(name) {
 	if(typeof window != "undefined") return window[name]; else return global[name];
 };
 js.NodeC = function() { };
-js.NodeC.__name__ = ["js","NodeC"];
+js.NodeC.__name__ = true;
 js.Node = function() { };
-js.Node.__name__ = ["js","Node"];
+js.Node.__name__ = true;
 js.Node.get_assert = function() {
 	return js.Node.require("assert");
 };
@@ -1884,104 +1531,9 @@ js.Node.newSocket = function(options) {
 	return new js.Node.net.Socket(options);
 };
 var pony = {};
-pony.AsyncTests = function() {
-	haxe.unit.TestCase.call(this);
-};
-pony.AsyncTests.__name__ = ["pony","AsyncTests"];
-pony.AsyncTests.init = function(count) {
-	if(pony.AsyncTests.testCount != 0) throw "Second init";
-	haxe.Log.trace("" + pony.AsyncTests.dec + " Begin tests (" + count + ") " + pony.AsyncTests.dec);
-	pony.AsyncTests.testCount = count;
-	var _g = new haxe.ds.IntMap();
-	var _g1 = 0;
-	while(_g1 < count) {
-		var i = _g1++;
-		_g.set(i,false);
-	}
-	pony.AsyncTests.isRead = _g;
-};
-pony.AsyncTests.equals = function(a,b,infos) {
-	pony.AsyncTests.assertList.push({ a : a, b : b, pos : infos});
-};
-pony.AsyncTests.setFlag = function(n,infos) {
-	if(n >= pony.AsyncTests.testCount || n < 0) throw "Wrong test number";
-	if(pony.AsyncTests.isRead.get(n)) throw "Double complite";
-	haxe.Log.trace("" + pony.AsyncTests.dec + " Test #" + n + " finished " + pony.AsyncTests.dec,infos);
-	pony.AsyncTests.isRead.set(n,true);
-	true;
-	if(pony.AsyncTests.lock) return;
-	pony.AsyncTests.lock = true;
-	pony.AsyncTests.checkWaitList();
-	var $it0 = pony.AsyncTests.isRead.iterator();
-	while( $it0.hasNext() ) {
-		var e = $it0.next();
-		if(!e) {
-			pony.AsyncTests.lock = false;
-			return;
-		}
-	}
-	var test = new haxe.unit.TestRunner();
-	test.add(new pony.AsyncTests());
-	test.run();
-};
-pony.AsyncTests.finish = function(infos) {
-	if(!pony.AsyncTests.complite) throw "Tests not complited: " + Std.string((function($this) {
-		var $r;
-		var a = [];
-		var $it0 = pony.AsyncTests.isRead.keys();
-		while( $it0.hasNext() ) {
-			var k = $it0.next();
-			if(!pony.AsyncTests.isRead.get(k)) a.push(k);
-		}
-		$r = a;
-		return $r;
-	}(this)));
-	haxe.Log.trace("" + pony.AsyncTests.dec + " All tests finished " + pony.AsyncTests.dec,infos);
-};
-pony.AsyncTests.wait = function(it,cb) {
-	if(pony.AsyncTests.checkWait(it)) cb(); else pony.AsyncTests.waitList.push({ it : it, cb : cb});
-};
-pony.AsyncTests.checkWait = function(it) {
-	var _g1 = Reflect.field(it,"min");
-	var _g = Reflect.field(it,"max");
-	while(_g1 < _g) {
-		var i = _g1++;
-		if(!pony.AsyncTests.isRead.get(i)) return false;
-	}
-	return true;
-};
-pony.AsyncTests.checkWaitList = function() {
-	var nl = new List();
-	var _g_head = pony.AsyncTests.waitList.h;
-	var _g_val = null;
-	while(_g_head != null) {
-		var e;
-		_g_val = _g_head[0];
-		_g_head = _g_head[1];
-		e = _g_val;
-		if(pony.AsyncTests.checkWait(e.it)) e.cb(); else nl.push(e);
-	}
-	pony.AsyncTests.waitList = nl;
-};
-pony.AsyncTests.__super__ = haxe.unit.TestCase;
-pony.AsyncTests.prototype = $extend(haxe.unit.TestCase.prototype,{
-	testRun: function() {
-		var _g_head = pony.AsyncTests.assertList.h;
-		var _g_val = null;
-		while(_g_head != null) {
-			var e;
-			_g_val = _g_head[0];
-			_g_head = _g_head[1];
-			e = _g_val;
-			this.assertEquals(e.a,e.b,e.pos);
-		}
-		pony.AsyncTests.complite = true;
-	}
-	,__class__: pony.AsyncTests
-});
 pony._Byte = {};
 pony._Byte.Byte_Impl_ = function() { };
-pony._Byte.Byte_Impl_.__name__ = ["pony","_Byte","Byte_Impl_"];
+pony._Byte.Byte_Impl_.__name__ = true;
 pony._Byte.Byte_Impl_.get_a = function(this1) {
 	return this1 >> 4;
 };
@@ -2003,13 +1555,9 @@ pony.Dictionary = function(maxDepth) {
 	this.ks = [];
 	this.vs = [];
 };
-pony.Dictionary.__name__ = ["pony","Dictionary"];
+pony.Dictionary.__name__ = true;
 pony.Dictionary.prototype = {
-	ks: null
-	,vs: null
-	,count: null
-	,maxDepth: null
-	,getIndex: function(k) {
+	getIndex: function(k) {
 		return pony.Tools.superIndexOf(this.ks,k,this.maxDepth);
 	}
 	,set: function(k,v) {
@@ -2082,7 +1630,7 @@ pony.Dictionary.prototype = {
 };
 pony._Function = {};
 pony._Function.Function_Impl_ = function() { };
-pony._Function.Function_Impl_.__name__ = ["pony","_Function","Function_Impl_"];
+pony._Function.Function_Impl_.__name__ = true;
 pony._Function.Function_Impl_._new = function(f,count,args,ret,event) {
 	if(event == null) event = false;
 	if(ret == null) ret = true;
@@ -2198,19 +1746,15 @@ pony._Function.Function_Impl_.get_ret = function(this1) {
 	return this1.ret;
 };
 pony.IEvent = function() { };
-pony.IEvent.__name__ = ["pony","IEvent"];
+pony.IEvent.__name__ = true;
 pony.ILogable = function() { };
-pony.ILogable.__name__ = ["pony","ILogable"];
+pony.ILogable.__name__ = true;
 pony.ILogable.prototype = {
-	log: null
-	,error: null
-	,_log: null
-	,_error: null
-	,__class__: pony.ILogable
+	__class__: pony.ILogable
 };
 pony._KeyValue = {};
 pony._KeyValue.KeyValue_Impl_ = function() { };
-pony._KeyValue.KeyValue_Impl_.__name__ = ["pony","_KeyValue","KeyValue_Impl_"];
+pony._KeyValue.KeyValue_Impl_.__name__ = true;
 pony._KeyValue.KeyValue_Impl_._new = function(p) {
 	return p;
 };
@@ -2232,12 +1776,10 @@ pony.Logable = function() {
 	var this2 = pony.events.Signal.create(this);
 	this.error = this2;
 };
-pony.Logable.__name__ = ["pony","Logable"];
+pony.Logable.__name__ = true;
 pony.Logable.__interfaces__ = [pony.ILogable];
 pony.Logable.prototype = {
-	log: null
-	,error: null
-	,_error: function(s,p) {
+	_error: function(s,p) {
 		pony.events._Signal2.Signal2_Impl_.dispatch(this.error,s,p);
 	}
 	,_log: function(s,p) {
@@ -2247,7 +1789,7 @@ pony.Logable.prototype = {
 };
 pony._Pair = {};
 pony._Pair.Pair_Impl_ = function() { };
-pony._Pair.Pair_Impl_.__name__ = ["pony","_Pair","Pair_Impl_"];
+pony._Pair.Pair_Impl_.__name__ = true;
 pony._Pair.Pair_Impl_._new = function(a,b) {
 	return { a : a, b : b};
 };
@@ -2284,7 +1826,7 @@ pony.Priority = function(data) {
 		}
 	}
 };
-pony.Priority.__name__ = ["pony","Priority"];
+pony.Priority.__name__ = true;
 pony.Priority.createIds = function(a) {
 	var i = 0;
 	return new pony.Priority((function($this) {
@@ -2303,11 +1845,7 @@ pony.Priority.createIds = function(a) {
 	}(this)));
 };
 pony.Priority.prototype = {
-	'double': null
-	,data: null
-	,hash: null
-	,counters: null
-	,addElement: function(e,priority) {
+	addElement: function(e,priority) {
 		if(priority == null) priority = 0;
 		if(!this["double"] && this.existsElement(e)) return this;
 		var s;
@@ -2537,13 +2075,9 @@ pony.Queue = function(method) {
 	this.list = new List();
 	this.call = Reflect.makeVarArgs($bind(this,this._call));
 };
-pony.Queue.__name__ = ["pony","Queue"];
+pony.Queue.__name__ = true;
 pony.Queue.prototype = {
-	list: null
-	,busy: null
-	,call: null
-	,method: null
-	,_call: function(a) {
+	_call: function(a) {
 		if(!this.busy) {
 			this.method.apply(null,a);
 			this.busy = true;
@@ -2555,7 +2089,7 @@ pony.Queue.prototype = {
 	,__class__: pony.Queue
 };
 pony.Tools = function() { };
-pony.Tools.__name__ = ["pony","Tools"];
+pony.Tools.__name__ = true;
 pony.Tools.nore = function(v) {
 	return v == null || v.length == 0;
 };
@@ -2835,7 +2369,7 @@ pony.Tools.errorFunction = function(e) {
 	throw e;
 };
 pony.ArrayTools = function() { };
-pony.ArrayTools.__name__ = ["pony","ArrayTools"];
+pony.ArrayTools.__name__ = true;
 pony.ArrayTools.exists = function(a,e) {
 	return HxOverrides.indexOf(a,e,0) != -1;
 };
@@ -2901,7 +2435,7 @@ pony.ArrayTools["delete"] = function(array,index) {
 	return na;
 };
 pony.FloatTools = function() { };
-pony.FloatTools.__name__ = ["pony","FloatTools"];
+pony.FloatTools.__name__ = true;
 pony.FloatTools._toFixed = function(v,n,begin,d,beginS,endS) {
 	if(endS == null) endS = "0";
 	if(beginS == null) beginS = "0";
@@ -2922,7 +2456,7 @@ pony.FloatTools._toFixed = function(v,n,begin,d,beginS,endS) {
 	if(a1.length <= 1) return s1 + d + pony.text.TextTools.repeat(endS,n); else return a1[0] + d + a1[1] + pony.text.TextTools.repeat(endS,n - a1[1].length);
 };
 pony.XMLTools = function() { };
-pony.XMLTools.__name__ = ["pony","XMLTools"];
+pony.XMLTools.__name__ = true;
 pony.XMLTools.isTrue = function(x,name) {
 	return x.has.resolve(name) && pony.text.TextTools.isTrue(x.att.resolve(name));
 };
@@ -2936,17 +2470,10 @@ pony.events.Event = function(args,target,parent) {
 	this.parent = parent;
 	this._stopPropagation = false;
 };
-pony.events.Event.__name__ = ["pony","events","Event"];
+pony.events.Event.__name__ = true;
 pony.events.Event.__interfaces__ = [pony.IEvent];
 pony.events.Event.prototype = {
-	parent: null
-	,args: null
-	,prev: null
-	,_stopPropagation: null
-	,signal: null
-	,target: null
-	,currentListener: null
-	,_setListener: function(l) {
+	_setListener: function(l) {
 		this.currentListener = l;
 	}
 	,stopPropagation: function(lvl) {
@@ -2967,7 +2494,7 @@ pony.events.Event.prototype = {
 };
 pony.events._Listener = {};
 pony.events._Listener.Listener_Impl_ = function() { };
-pony.events._Listener.Listener_Impl_.__name__ = ["pony","events","_Listener","Listener_Impl_"];
+pony.events._Listener.Listener_Impl_.__name__ = true;
 pony.events._Listener.Listener_Impl_._new = function(f,count) {
 	if(count == null) count = -1;
 	var this1;
@@ -3085,7 +2612,7 @@ pony.events._Listener.Listener_Impl_.set_active = function(this1,b) {
 };
 pony.events._Listener0 = {};
 pony.events._Listener0.Listener0_Impl_ = function() { };
-pony.events._Listener0.Listener0_Impl_.__name__ = ["pony","events","_Listener0","Listener0_Impl_"];
+pony.events._Listener0.Listener0_Impl_.__name__ = true;
 pony.events._Listener0.Listener0_Impl_._new = function(l) {
 	return l;
 };
@@ -3129,7 +2656,7 @@ pony.events._Listener0.Listener0_Impl_.fromSignal0 = function(s) {
 };
 pony.events._Listener1 = {};
 pony.events._Listener1.Listener1_Impl_ = function() { };
-pony.events._Listener1.Listener1_Impl_.__name__ = ["pony","events","_Listener1","Listener1_Impl_"];
+pony.events._Listener1.Listener1_Impl_.__name__ = true;
 pony.events._Listener1.Listener1_Impl_._new = function(l) {
 	return l;
 };
@@ -3192,7 +2719,7 @@ pony.events._Listener1.Listener1_Impl_.fromSignal1 = function(s) {
 };
 pony.events._Listener2 = {};
 pony.events._Listener2.Listener2_Impl_ = function() { };
-pony.events._Listener2.Listener2_Impl_.__name__ = ["pony","events","_Listener2","Listener2_Impl_"];
+pony.events._Listener2.Listener2_Impl_.__name__ = true;
 pony.events._Listener2.Listener2_Impl_._new = function(l) {
 	return l;
 };
@@ -3285,7 +2812,6 @@ pony.events.Signal = function(target) {
 	this.bindHandlers = new haxe.ds.IntMap();
 	this.notMap = new pony.Dictionary(5);
 	this.notHandlers = new haxe.ds.IntMap();
-	this.id = pony.events.Signal.signalsCount++;
 	this.target = target;
 	this.listeners = new pony.Priority();
 	this.lRunCopy = new List();
@@ -3295,7 +2821,7 @@ pony.events.Signal = function(target) {
 	var s1 = Type.createEmptyInstance(pony.events.Signal).init(this);
 	this.takeListeners = s1;
 };
-pony.events.Signal.__name__ = ["pony","events","Signal"];
+pony.events.Signal.__name__ = true;
 pony.events.Signal.create = function(t) {
 	var s = new pony.events.Signal(t);
 	return s;
@@ -3305,24 +2831,7 @@ pony.events.Signal.createEmpty = function() {
 	return s;
 };
 pony.events.Signal.prototype = {
-	id: null
-	,silent: null
-	,lostListeners: null
-	,takeListeners: null
-	,data: null
-	,target: null
-	,listeners: null
-	,lRunCopy: null
-	,subMap: null
-	,subHandlers: null
-	,bindMap: null
-	,bindHandlers: null
-	,notMap: null
-	,notHandlers: null
-	,haveListeners: null
-	,parent: null
-	,init: function(target) {
-		this.id = pony.events.Signal.signalsCount++;
+	init: function(target) {
 		this.target = target;
 		this.listeners = new pony.Priority();
 		this.lRunCopy = new List();
@@ -3756,21 +3265,12 @@ pony.events.Signal.prototype = {
 		}
 	}
 	,debug: function() {
-		var _g = this;
-		this.add((function($this) {
-			var $r;
-			var f = pony._Function.Function_Impl_.from(function() {
-				haxe.Log.trace("dispatch(" + _g.id + ")",{ fileName : "Signal.hx", lineNumber : 482, className : "pony.events.Signal", methodName : "debug"});
-			},0,false);
-			$r = pony.events._Listener.Listener_Impl_._fromFunction(f);
-			return $r;
-		}(this)));
 	}
 	,__class__: pony.events.Signal
 };
 pony.events._Signal0 = {};
 pony.events._Signal0.Signal0_Impl_ = function() { };
-pony.events._Signal0.Signal0_Impl_.__name__ = ["pony","events","_Signal0","Signal0_Impl_"];
+pony.events._Signal0.Signal0_Impl_.__name__ = true;
 pony.events._Signal0.Signal0_Impl_._new = function(s) {
 	return s;
 };
@@ -3921,7 +3421,7 @@ pony.events._Signal0.Signal0_Impl_.toFunction2 = function(this1) {
 	})(this1);
 };
 pony.events._Signal0.Signal0_Impl_.debug = function(this1) {
-	this1.debug();
+	null;
 };
 pony.events._Signal0.Signal0_Impl_.op_add = function(this1,listener) {
 	pony.events._Signal0.Signal0_Impl_.add(this1,listener);
@@ -3957,7 +3457,7 @@ pony.events._Signal0.Signal0_Impl_.op_bind1 = function(this1,a) {
 };
 pony.events._Signal1 = {};
 pony.events._Signal1.Signal1_Impl_ = function() { };
-pony.events._Signal1.Signal1_Impl_.__name__ = ["pony","events","_Signal1","Signal1_Impl_"];
+pony.events._Signal1.Signal1_Impl_.__name__ = true;
 pony.events._Signal1.Signal1_Impl_._new = function(s) {
 	return s;
 };
@@ -4153,7 +3653,7 @@ pony.events._Signal1.Signal1_Impl_.toFunction2 = function(this1) {
 	})(this1);
 };
 pony.events._Signal1.Signal1_Impl_.debug = function(this1) {
-	this1.debug();
+	null;
 };
 pony.events._Signal1.Signal1_Impl_.op_add = function(this1,listener) {
 	pony.events._Signal1.Signal1_Impl_.add(this1,listener);
@@ -4193,7 +3693,7 @@ pony.events._Signal1.Signal1_Impl_.op_not = function(this1,a) {
 };
 pony.events._Signal2 = {};
 pony.events._Signal2.Signal2_Impl_ = function() { };
-pony.events._Signal2.Signal2_Impl_.__name__ = ["pony","events","_Signal2","Signal2_Impl_"];
+pony.events._Signal2.Signal2_Impl_.__name__ = true;
 pony.events._Signal2.Signal2_Impl_._new = function(s) {
 	return s;
 };
@@ -4359,7 +3859,7 @@ pony.events._Signal2.Signal2_Impl_.toFunction2 = function(this1) {
 	})(this1);
 };
 pony.events._Signal2.Signal2_Impl_.debug = function(this1) {
-	this1.debug();
+	null;
 };
 pony.events._Signal2.Signal2_Impl_.op_add = function(this1,listener) {
 	pony.events._Signal2.Signal2_Impl_.add(this1,listener);
@@ -4383,7 +3883,7 @@ pony.events._Signal2.Signal2_Impl_.op_not = function(this1,a) {
 };
 pony.events._SignalTar = {};
 pony.events._SignalTar.SignalTar_Impl_ = function() { };
-pony.events._SignalTar.SignalTar_Impl_.__name__ = ["pony","events","_SignalTar","SignalTar_Impl_"];
+pony.events._SignalTar.SignalTar_Impl_.__name__ = true;
 pony.events._SignalTar.SignalTar_Impl_._new = function(s) {
 	return s;
 };
@@ -4409,11 +3909,9 @@ pony.events.Waiter = function() {
 	this.ready = false;
 	this.f = new List();
 };
-pony.events.Waiter.__name__ = ["pony","events","Waiter"];
+pony.events.Waiter.__name__ = true;
 pony.events.Waiter.prototype = {
-	ready: null
-	,f: null
-	,wait: function(cb) {
+	wait: function(cb) {
 		if(this.ready) cb(); else this.f.push(cb);
 	}
 	,end: function() {
@@ -4434,57 +3932,26 @@ pony.events.Waiter.prototype = {
 };
 pony.net = {};
 pony.net.INet = function() { };
-pony.net.INet.__name__ = ["pony","net","INet"];
+pony.net.INet.__name__ = true;
 pony.net.INet.prototype = {
-	onData: null
-	,isAbleToSend: null
-	,isWithLength: null
-	,onConnect: null
-	,onDisconnect: null
-	,send: null
-	,destroy: null
-	,__class__: pony.net.INet
+	__class__: pony.net.INet
 };
 pony.net.ISocketClient = function() { };
-pony.net.ISocketClient.__name__ = ["pony","net","ISocketClient"];
+pony.net.ISocketClient.__name__ = true;
 pony.net.ISocketClient.__interfaces__ = [pony.net.INet];
 pony.net.ISocketClient.prototype = {
-	server: null
-	,onData: null
-	,onDisconnect: null
-	,id: null
-	,host: null
-	,port: null
-	,closed: null
-	,connected: null
-	,isAbleToSend: null
-	,isWithLength: null
-	,send: null
-	,destroy: null
-	,open: null
-	,reconnect: null
-	,send2other: null
-	,__class__: pony.net.ISocketClient
+	__class__: pony.net.ISocketClient
 };
 pony.net.ISocketServer = function() { };
-pony.net.ISocketServer.__name__ = ["pony","net","ISocketServer"];
+pony.net.ISocketServer.__name__ = true;
 pony.net.ISocketServer.__interfaces__ = [pony.net.INet];
 pony.net.ISocketServer.prototype = {
-	onData: null
-	,onClose: null
-	,onDisconnect: null
-	,clients: null
-	,isAbleToSend: null
-	,isWithLength: null
-	,send: null
-	,destroy: null
-	,__class__: pony.net.ISocketServer
+	__class__: pony.net.ISocketServer
 };
 pony.net.SocketClientBase = function(host,port,reconnect,aIsWithLength) {
 	if(aIsWithLength == null) aIsWithLength = true;
 	if(reconnect == null) reconnect = -1;
 	this.reconnectDelay = -1;
-	var _g = this;
 	pony.Logable.call(this);
 	this.connected = new pony.events.Waiter();
 	if(host == null) host = "127.0.0.1";
@@ -4493,29 +3960,14 @@ pony.net.SocketClientBase = function(host,port,reconnect,aIsWithLength) {
 	this.reconnectDelay = reconnect;
 	var this1 = pony.events.Signal.create(null);
 	this.onConnect = this1;
-	this.connected.wait(function() {
-		pony.events._Signal1.Signal1_Impl_.dispatch(_g.onConnect,_g);
-	});
 	this.isWithLength = aIsWithLength;
 	this._init();
 	this.open();
 };
-pony.net.SocketClientBase.__name__ = ["pony","net","SocketClientBase"];
+pony.net.SocketClientBase.__name__ = true;
 pony.net.SocketClientBase.__super__ = pony.Logable;
 pony.net.SocketClientBase.prototype = $extend(pony.Logable.prototype,{
-	server: null
-	,onConnect: null
-	,onData: null
-	,onDisconnect: null
-	,id: null
-	,host: null
-	,port: null
-	,closed: null
-	,isAbleToSend: null
-	,connected: null
-	,isWithLength: null
-	,reconnectDelay: null
-	,_init: function() {
+	_init: function() {
 		this.closed = true;
 		this.id = -1;
 		var this1 = pony.events.Signal.create(this);
@@ -4524,10 +3976,10 @@ pony.net.SocketClientBase.prototype = $extend(pony.Logable.prototype,{
 	}
 	,reconnect: function() {
 		if(this.reconnectDelay == 0) {
-			haxe.Log.trace("Reconnect",{ fileName : "SocketClientBase.hx", lineNumber : 84, className : "pony.net.SocketClientBase", methodName : "reconnect"});
+			haxe.Log.trace("Reconnect",{ fileName : "SocketClientBase.hx", lineNumber : 83, className : "pony.net.SocketClientBase", methodName : "reconnect"});
 			this.open();
 		} else if(this.reconnectDelay > 0) {
-			haxe.Log.trace("Reconnect after " + this.reconnectDelay + " ms",{ fileName : "SocketClientBase.hx", lineNumber : 89, className : "pony.net.SocketClientBase", methodName : "reconnect"});
+			haxe.Log.trace("Reconnect after " + this.reconnectDelay + " ms",{ fileName : "SocketClientBase.hx", lineNumber : 88, className : "pony.net.SocketClientBase", methodName : "reconnect"});
 			haxe.Timer.delay($bind(this,this.open),this.reconnectDelay);
 		}
 	}
@@ -4572,7 +4024,7 @@ pony.net.SocketClientBase.prototype = $extend(pony.Logable.prototype,{
 			var size = bi.readInt32();
 			pony.events._Signal1.Signal1_Impl_.dispatch(this.onData,new haxe.io.BytesInput(bi.read(size)));
 		} else {
-			haxe.Log.trace(this.isWithLength,{ fileName : "SocketClientBase.hx", lineNumber : 122, className : "pony.net.SocketClientBase", methodName : "joinData"});
+			haxe.Log.trace(this.isWithLength,{ fileName : "SocketClientBase.hx", lineNumber : 121, className : "pony.net.SocketClientBase", methodName : "joinData"});
 			pony.events._Signal1.Signal1_Impl_.dispatch(this.onData,bi);
 		}
 	}
@@ -4593,12 +4045,10 @@ pony.net.nodejs = {};
 pony.net.nodejs.SocketClient = function(host,port,reconnect,aIsWithLength) {
 	pony.net.SocketClientBase.call(this,host,port,reconnect,aIsWithLength);
 };
-pony.net.nodejs.SocketClient.__name__ = ["pony","net","nodejs","SocketClient"];
+pony.net.nodejs.SocketClient.__name__ = true;
 pony.net.nodejs.SocketClient.__super__ = pony.net.SocketClientBase;
 pony.net.nodejs.SocketClient.prototype = $extend(pony.net.SocketClientBase.prototype,{
-	socket: null
-	,q: null
-	,open: function() {
+	open: function() {
 		this.socket = js.Node.require("net").connect(this.port,this.host);
 		this.socket.on("connect",$bind(this,this.connectHandler));
 		this.nodejsInit(this.socket);
@@ -4641,7 +4091,7 @@ pony.net.nodejs.SocketClient.prototype = $extend(pony.net.SocketClientBase.proto
 pony.net.SocketClient = function(host,port,reconnect,aIsWithLength) {
 	pony.net.nodejs.SocketClient.call(this,host,port,reconnect,aIsWithLength);
 };
-pony.net.SocketClient.__name__ = ["pony","net","SocketClient"];
+pony.net.SocketClient.__name__ = true;
 pony.net.SocketClient.__interfaces__ = [pony.net.ISocketClient];
 pony.net.SocketClient.__super__ = pony.net.nodejs.SocketClient;
 pony.net.SocketClient.prototype = $extend(pony.net.nodejs.SocketClient.prototype,{
@@ -4675,19 +4125,10 @@ pony.net.SocketServerBase = function() {
 		return $r;
 	}(this)));
 };
-pony.net.SocketServerBase.__name__ = ["pony","net","SocketServerBase"];
+pony.net.SocketServerBase.__name__ = true;
 pony.net.SocketServerBase.__super__ = pony.Logable;
 pony.net.SocketServerBase.prototype = $extend(pony.Logable.prototype,{
-	onData: null
-	,onConnect: null
-	,onClose: null
-	,onDisconnect: null
-	,clients: null
-	,onMessage: null
-	,onError: null
-	,isAbleToSend: null
-	,isWithLength: null
-	,addClient: function() {
+	addClient: function() {
 		var cl = Type.createEmptyInstance(pony.net.SocketClient);
 		cl.isWithLength = this.isWithLength;
 		cl.init(this,this.clients.length);
@@ -4745,11 +4186,10 @@ pony.net.nodejs.SocketServer = function(port) {
 	this.server.listen(port,null,$bind(this,this.bound));
 	this.server.on("connection",$bind(this,this.connectionHandler));
 };
-pony.net.nodejs.SocketServer.__name__ = ["pony","net","nodejs","SocketServer"];
+pony.net.nodejs.SocketServer.__name__ = true;
 pony.net.nodejs.SocketServer.__super__ = pony.net.SocketServerBase;
 pony.net.nodejs.SocketServer.prototype = $extend(pony.net.SocketServerBase.prototype,{
-	server: null
-	,bound: function() {
+	bound: function() {
 		pony.events._Signal1.Signal1_Impl_.dispatch(this.onMessage,"bound " + Std.string(this.server.address()));
 	}
 	,connectionHandler: function(c) {
@@ -4765,7 +4205,7 @@ pony.net.nodejs.SocketServer.prototype = $extend(pony.net.SocketServerBase.proto
 pony.net.SocketServer = function(port) {
 	pony.net.nodejs.SocketServer.call(this,port);
 };
-pony.net.SocketServer.__name__ = ["pony","net","SocketServer"];
+pony.net.SocketServer.__name__ = true;
 pony.net.SocketServer.__interfaces__ = [pony.net.ISocketServer];
 pony.net.SocketServer.__super__ = pony.net.nodejs.SocketServer;
 pony.net.SocketServer.prototype = $extend(pony.net.nodejs.SocketServer.prototype,{
@@ -4773,7 +4213,7 @@ pony.net.SocketServer.prototype = $extend(pony.net.nodejs.SocketServer.prototype
 });
 pony.text = {};
 pony.text.TextTools = function() { };
-pony.text.TextTools.__name__ = ["pony","text","TextTools"];
+pony.text.TextTools.__name__ = true;
 pony.text.TextTools.exists = function(s,ch) {
 	return s.indexOf(ch) != -1;
 };
@@ -4821,8 +4261,8 @@ if(Array.prototype.indexOf) HxOverrides.indexOf = function(a,o,i) {
 	return Array.prototype.indexOf.call(a,o,i);
 };
 String.prototype.__class__ = String;
-String.__name__ = ["String"];
-Array.__name__ = ["Array"];
+String.__name__ = true;
+Array.__name__ = true;
 var Int = { __name__ : ["Int"]};
 var Dynamic = { __name__ : ["Dynamic"]};
 var Float = Number;
@@ -4848,17 +4288,27 @@ Xml.Comment = "comment";
 Xml.DocType = "doctype";
 Xml.ProcessingInstruction = "processingInstruction";
 Xml.Document = "document";
+js.Node.setTimeout = setTimeout;
+js.Node.clearTimeout = clearTimeout;
+js.Node.setInterval = setInterval;
+js.Node.clearInterval = clearInterval;
+js.Node.global = global;
+js.Node.process = process;
+js.Node.require = require;
+js.Node.console = console;
+js.Node.module = module;
+js.Node.stringify = JSON.stringify;
+js.Node.parse = JSON.parse;
+var version = HxOverrides.substr(js.Node.process.version,1,null).split(".").map(Std.parseInt);
+if(version[0] > 0 || version[1] >= 9) {
+	js.Node.setImmediate = setImmediate;
+	js.Node.clearImmediate = clearImmediate;
+}
 pony._Function.Function_Impl_.unusedCount = 0;
 pony._Function.Function_Impl_.list = new pony.Dictionary(1);
 pony._Function.Function_Impl_.counter = -1;
 pony._Function.Function_Impl_.searchFree = false;
 pony.events._Listener.Listener_Impl_.flist = new haxe.ds.IntMap();
-pony.events.Signal.signalsCount = 0;
-Main.testCount = 500;
-Main.delay = 1;
-Main.port = 16001;
-Main.partCount = Main.testCount / 4 | 0;
-Main.blockCount = Main.testCount / 2 | 0;
 haxe.xml.Parser.escapes = (function($this) {
 	var $r;
 	var h = new haxe.ds.StringMap();
@@ -4911,35 +4361,5 @@ js.NodeC.FILE_WRITE = "w";
 js.NodeC.FILE_WRITE_APPEND = "a+";
 js.NodeC.FILE_READWRITE = "a";
 js.NodeC.FILE_READWRITE_APPEND = "a+";
-js.Node.console = console;
-js.Node.process = process;
-js.Node.require = require;
-js.Node.setTimeout = setTimeout;
-js.Node.clearTimeout = clearTimeout;
-js.Node.setInterval = setInterval;
-js.Node.clearInterval = clearInterval;
-js.Node.setImmediate = (function($this) {
-	var $r;
-	var version = HxOverrides.substr(js.Node.process.version,1,null).split(".").map(Std.parseInt);
-	$r = version[0] > 0 || version[1] >= 9?setImmediate:null;
-	return $r;
-}(this));
-js.Node.clearImmediate = (function($this) {
-	var $r;
-	var version = HxOverrides.substr(js.Node.process.version,1,null).split(".").map(Std.parseInt);
-	$r = version[0] > 0 || version[1] >= 9?clearImmediate:null;
-	return $r;
-}(this));
-js.Node.global = global;
-js.Node.module = module;
-js.Node.stringify = JSON.stringify;
-js.Node.parse = JSON.parse;
-pony.AsyncTests.assertList = new List();
-pony.AsyncTests.testCount = 0;
-pony.AsyncTests.complite = false;
-pony.AsyncTests.dec = "----------";
-pony.AsyncTests.waitList = new List();
 Main.main();
 })();
-
-//# sourceMappingURL=main.js.map

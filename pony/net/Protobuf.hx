@@ -52,15 +52,13 @@ class Protobuf < A:ProtobufBuilder, B:ProtobufBuilder > implements Declarator {
 	public var onData(default, null):Signal2<Protobuf< A, B >, B, INet> = Signal.create(this);
 	public var onSend(default, null):Signal1<Protobuf< A, B >, A> = Signal.create(this);
 	private var fs:List < A->Void > = new List();
-	private var socketReady:Bool = false;
 	
 	private var gonext:Int = 0;
 	
 	public var sendComplite:Signal0<Protobuf<A,B>> = Signal.create(this);
 	
 	public function new() {
-		socket.connect < function() socketReady = true;
-		socket.data.add(dataHandler);
+		socket.onData.add(dataHandler);
 		DeltaTime.fixedUpdate.add(trySend);
 	}
 	
@@ -80,7 +78,7 @@ class Protobuf < A:ProtobufBuilder, B:ProtobufBuilder > implements Declarator {
 			if (--gonext == 1) sendComplite.dispatch();
 			return;
 		}
-		if (!socketReady) return;
+		if (!socket.isAbleToSend) return;
 		if (fs == null) return;
 		if (fs.length == 0) return;
 		if (socket == null) return;

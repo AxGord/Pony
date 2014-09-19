@@ -39,7 +39,7 @@ using pony.Tools;
  */
 class NetDebug {
 	#if !flash
-	inline public static function server(port:Int=60666) new SocketServer(port).data << function(d:BytesInput) Log.trace(d.readStr(), null);
+	inline public static function server(port:Int=60666) new SocketServer(port).onData << function(d:BytesInput) Log.trace(d.readStr(), null);
 	#end
 	
 	private static var trstr:String = '';

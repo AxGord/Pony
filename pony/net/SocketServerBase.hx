@@ -57,6 +57,7 @@ class SocketServerBase extends Logable<ISocketServer>{
 		onClose = new Signal(this);
 		clients = [];
 		onDisconnect.add(removeClient);
+		onConnect < function() isAbleToSend = true;
 	}
 	
 	private function addClient():SocketClient {

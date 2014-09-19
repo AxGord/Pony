@@ -29,6 +29,7 @@ package pony.flash;
 import haxe.Log;
 import haxe.macro.Context;
 import haxe.macro.Expr;
+import haxe.PosInfos;
 import pony.events.Signal;
 #if !macro
 import flash.external.ExternalInterface;
@@ -50,14 +51,19 @@ class Exterface extends Signal implements Dynamic<Exterface> {
 			super();
 			this.name = name;
 			#if debug
-			//trace('Add callback: $name');
+			trace('Add callback: $name');
 			#else
-			ExternalInterface.addCallback(name, cb);
+			ExternalInterface.addCallback(name, Reflect.makeVarArgs(dispatchArgs));
 			#end
 			map.set(name, this);
 		}
 	}
-	private function cb(v:Array<Dynamic>):Void dispatchArgs(v);
+	
+	public static function regLog():Void {
+		#if !debug
+		Log.trace = function(m:Dynamic, ?p:PosInfos):Void get.log.call(p.fileName+':' + p.lineNumber + ': ' + m);
+		#end
+	}
 	
 	public function resolve(field:String):Exterface {
 		var s:String = (name != null ? name + '.' : '') + field;

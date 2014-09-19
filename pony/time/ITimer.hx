@@ -16,7 +16,8 @@ interface ITimer < T:ITimer<T> > {
 	var currentTime:Time;
 	var repeatCount:Int;
 	
-	function start(?dt:DT):T;
+	//Have cs problem now:
+	//function start(?dt:DT):T;
 	function stop():T;
 	function reset():T;
 	function dispatchUpdate():T;

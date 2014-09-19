@@ -72,7 +72,7 @@ abstract TimeInterval(TimeInterval_) {
 	
 	inline public function percent(time:Time):Float return MathTools.percentCalcd(time, min, max);
 	
-	inline private function get_minimalPoint():Int return MathTools.cmin(min.minimalPoint, max.minimalPoint);
+	inline private function get_minimalPoint():Time return MathTools.cmin(min.minimalPoint, max.minimalPoint);
 	
 	inline private function get_mid():Time return Math.abs(max - min) / 2;
 	

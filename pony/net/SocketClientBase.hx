@@ -66,6 +66,7 @@ class SocketClientBase extends Logable<ISocketClient>{
 		this.port = port;
 		this.reconnectDelay = reconnect;
 		onConnect = Signal.create(null);
+		connected.wait(function() isAbleToSend = true);
 		isWithLength = aIsWithLength;
 		_init();
 		open();
@@ -83,7 +84,7 @@ class SocketClientBase extends Logable<ISocketClient>{
 			trace('Reconnect');
 			open();
 		}
-		#if (!dox && HUGS)
+		#if ((!dox && HUGS) || nodejs || flash)
 		else if (reconnectDelay > 0) {
 			trace('Reconnect after '+reconnectDelay+' ms');
 			Timer.delay(open, reconnectDelay);
@@ -114,7 +115,6 @@ class SocketClientBase extends Logable<ISocketClient>{
 		if (isWithLength)
 		{
 			var size:Int = bi.readInt32();
-			trace(size);
 			onData.dispatch(new BytesInput(bi.read(size)));
 		}
 		else
