@@ -1,4 +1,33 @@
-package pony.unity3d.scene ;
+/**
+* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+*
+* Redistribution and use in source and binary forms, with or without modification, are
+* permitted provided that the following conditions are met:
+*
+*   1. Redistributions of source code must retain the above copyright notice, this list of
+*      conditions and the following disclaimer.
+*
+*   2. Redistributions in binary form must reproduce the above copyright notice, this list
+*      of conditions and the following disclaimer in the documentation and/or other materials
+*      provided with the distribution.
+*
+* THIS SOFTWARE IS PROVIDED BY ALEXANDER GORDEYKO ``AS IS'' AND ANY EXPRESS OR IMPLIED
+* WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+* FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL ALEXANDER GORDEYKO OR
+* CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+* ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+* NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+* ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*
+* The views and conclusions contained in the software and documentation are those of the
+* authors and should not be interpreted as representing official policies, either expressed
+* or implied, of Alexander Gordeyko <axgord@gmail.com>.
+**/
+package pony.unity3d.scene;
+
+import unityengine.Time;
 
 using hugs.HUGSWrapper;
 
@@ -6,9 +35,7 @@ using hugs.HUGSWrapper;
  * Camera
  * @author DIS
  */
-
-
-class CameraManaging extends unityengine.MonoBehaviour
+@:nativeGen class CameraManaging extends unityengine.MonoBehaviour
 {
 	private var target:unityengine.Transform;
 	
@@ -21,9 +48,9 @@ class CameraManaging extends unityengine.MonoBehaviour
 	private var yMinLimit:Int = -20;
 	private var yMaxLimit:Int = 80;
 
-	private var maxDist : Float = 200;
-	private var minDist : Float = 30;
-	private var zoomSpeed : Float = 5;
+	private var maxDist:Float = 200;
+	private var minDist:Float = 30;
+	private var zoomSpeed:Float = 5;
 	
 	private var keyZoomUp:unityengine.KeyCode = unityengine.KeyCode.KeypadPlus;
 	private var keyZoomOut:unityengine.KeyCode = unityengine.KeyCode.KeypadMinus;
@@ -35,10 +62,12 @@ class CameraManaging extends unityengine.MonoBehaviour
 	
 	private var isInverted:Bool;
 
+	@:meta(UnityEngine.HideInInspector)
 	private var x:Float = 0.0;
-	private var y:Float = 0.0; 
-	
-	var vector:unityengine.Vector3;
+	@:meta(UnityEngine.HideInInspector)
+	private var y:Float = 0.0;
+	@:meta(UnityEngine.HideInInspector)
+	private var vector:unityengine.Vector3;
 	
 	private function clampAngle(angle:Float, min:Float, max:Float )
 	{
@@ -51,9 +80,8 @@ class CameraManaging extends unityengine.MonoBehaviour
 	private function Start():Void 
 	{
 		var angles:unityengine.Vector3 = this.transform.eulerAngles;
-		x = angles.x;
-		y = angles.y;
-		
+		x = angles.y;
+		y = angles.x;
 		
 		if (target.rigidbody != null && target.rigidbody.active) 
 		{
@@ -64,14 +92,14 @@ class CameraManaging extends unityengine.MonoBehaviour
 	private function LateUpdate():Void 
 	{
 		
+		var changed:Bool = false;
 		#if touchscript
 		
 		if (target.active && Helper.touchDown && !Helper.doubleDown)
 		{
 			x += Helper.touchDX * xSpeed * 0.001;
 			y -= Helper.touchDY * ySpeed * 0.001;
-	
-			y = clampAngle(y, yMinLimit, yMaxLimit);
+			changed = true;
 		}
 		#else
 		
@@ -79,13 +107,42 @@ class CameraManaging extends unityengine.MonoBehaviour
 		{
 			x += unityengine.Input.GetAxis("Mouse X") * xSpeed * 0.02;
 			y -= unityengine.Input.GetAxis("Mouse Y") * ySpeed * 0.02;
-	
-			y = clampAngle(y, yMinLimit, yMaxLimit);
+			changed = true;
 		}
 		#end
-		vector.Set(0.0, 0.0, -distance);
-		transform.rotation = unityengine.Quaternion.Euler(y, x, 0);
-		transform.position = transform.rotation.mulVector3(vector).add(target.position);
+		
+		var dt = Time.deltaTime / Time.timeScale;
+		
+		if (unityengine.Input.GetKey(keyTurnUp)) 
+		{
+			y += ySpeed * dt / 2;
+			changed = true;
+		}
+		
+		if (unityengine.Input.GetKey(keyTurnDown)) 
+		{
+			y -= ySpeed * dt / 2;
+			changed = true;
+		}
+		
+		if (unityengine.Input.GetKey(keyTurnLeft)) 
+		{
+			x += xSpeed * dt / 2;
+			changed = true;
+		}
+		
+		if (unityengine.Input.GetKey(keyTurnRight)) 
+		{
+			x -= xSpeed * dt / 2;
+			changed = true;
+		}
+		
+		if (changed) {
+			y = clampAngle(y, yMinLimit, yMaxLimit);
+			vector.Set(0.0, 0.0, -distance);
+			transform.rotation = unityengine.Quaternion.Euler(y, x, 0);
+			transform.position = transform.rotation.mulVector3(vector).add(target.position);
+		}
 		#if touchscript
 
 			if (Helper.doubleDown)
@@ -132,40 +189,21 @@ class CameraManaging extends unityengine.MonoBehaviour
 			}
 		}
 		
-		
-		
 		#end
 		if (unityengine.Input.GetKey(keyZoomOut) && distance < maxDist) 
 		{
-			distance += zoomSpeed / 10;
-			transform.Translate(unityengine.Vector3.forward.mul(-zoomSpeed / 10));
+			var zs = zoomSpeed * dt * 10;
+			distance += zs;
+			transform.Translate(unityengine.Vector3.forward.mul(-zs));
 		}
 		
 		if (unityengine.Input.GetKey(keyZoomUp) && distance > minDist) 
 		{
-			distance -= zoomSpeed / 10;
-			transform.Translate(unityengine.Vector3.forward.mul(zoomSpeed / 10));
+			var zs = zoomSpeed * dt * 10;
+			distance -= zs;
+			transform.Translate(unityengine.Vector3.forward.mul(zs));
 		}
 		
-		if (unityengine.Input.GetKey(keyTurnUp)) 
-		{
-			y += ySpeed * 0.004;
-		}
-		
-		if (unityengine.Input.GetKey(keyTurnDown)) 
-		{
-			y -= ySpeed * 0.004;
-		}
-		
-		if (unityengine.Input.GetKey(keyTurnLeft)) 
-		{
-			x += xSpeed * 0.004;
-		}
-		
-		if (unityengine.Input.GetKey(keyTurnRight)) 
-		{
-			x -= xSpeed * 0.004;
-		}
 	}
 
 	

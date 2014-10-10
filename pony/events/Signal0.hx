@@ -64,8 +64,8 @@ abstract Signal0<Target>(Signal) {
 		return target;
 	}
 	
-	public function remove(listener:Listener0<Target>):Target {
-		this.remove(listener);
+	public function remove(listener:Listener0<Target>, unuse:Bool = true):Target {
+		this.remove(listener, unuse);
 		return target;
 	}
 	

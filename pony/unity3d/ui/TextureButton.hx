@@ -39,7 +39,7 @@ using hugs.HUGSWrapper;
  * TextureButton
  * @author AxGord <axgord@gmail.com>
  */
-class TextureButton extends TintButton {
+@:nativeGen class TextureButton extends TintButton {
 
 	private var defs:NativeArray<Texture>;
 	private var overs:NativeArray<Texture>;

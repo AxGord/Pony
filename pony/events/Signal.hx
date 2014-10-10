@@ -115,11 +115,11 @@ class Signal {
 	/**
 	 * Send only one argument: Listener or Event->Void or Function
 	 */
-	public function remove(listener:Listener):Signal {
+	public function remove(listener:Listener, unuse:Bool = true):Signal {
 		if (listeners.empty) return this;
 		if (listeners.removeElement(listener)) {
 			for (c in lRunCopy) c.removeElement(listener);
-			listener.unuse();
+			if (unuse) listener.unuse();
 			if (listeners.empty && lostListeners != null) lostListeners.dispatchEmpty();
 		}
 		return this;

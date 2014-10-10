@@ -80,7 +80,7 @@ abstract Function( { f:Dynamic, count:Int, args:Array<Dynamic>, id:Int, used:Int
 		searchFree = false;
 	}
 	
-	function new(f:Dynamic, count:Int, ?args:Array<Dynamic>, ?ret:Bool = true, ?event:Bool = false) {
+	private function new(f:Dynamic, count:Int, ?args:Array<Dynamic>, ?ret:Bool = true, ?event:Bool = false) {
 		counter++;
 		if (searchFree) {//if counter make loop, then need search free id
 			while (true) {

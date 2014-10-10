@@ -42,7 +42,7 @@ import pony.ui.FontStyle;
  * Table
  * @author AxGord <axgord@gmail.com>
  */
-class Table extends pony.ui.TableCore implements Declarator {
+@:nativeGen class Table extends pony.ui.TableCore implements Declarator {
 	
 	private var gos:List<GameObject> = new List();
 	

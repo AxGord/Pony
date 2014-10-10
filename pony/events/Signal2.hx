@@ -66,8 +66,8 @@ abstract Signal2<Target, T1:Dynamic, T2:Dynamic>(Signal) {
 		return target;
 	}
 	
-	public function remove(listener:Listener2<Target, T1, T2>):Target {
-		this.remove(listener);
+	public function remove(listener:Listener2<Target, T1, T2>, unuse:Bool = true):Target {
+		this.remove(listener, unuse);
 		return target;
 	}
 	

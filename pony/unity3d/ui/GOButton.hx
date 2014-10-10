@@ -37,7 +37,7 @@ import unityengine.GameObject;
  * GOButton
  * @author AxGord <axgord@gmail.com>
  */
-class GOButton extends TextureButton {
+@:nativeGen class GOButton extends TextureButton {
 
 	private var goDefs:NativeArray<GameObject>;
 	private var goOvers:NativeArray<GameObject>;

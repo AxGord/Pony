@@ -52,7 +52,7 @@ using pony.math.MathTools;
  * @author BoBaH6eToH
  */
 
-class Tooltip {
+@:nativeGen class Tooltip {
 	
 	public static var limitBorder:Float = 50;
 	public static var border:Single = 5;

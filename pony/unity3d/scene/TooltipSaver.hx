@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2013 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -35,7 +35,7 @@ using hugs.HUGSWrapper;
  * @author AxGord <axgord@gmail.com>
  */
 
-class TooltipSaver extends MonoBehaviour {
+@:nativeGen class TooltipSaver extends MonoBehaviour {
 
 	private var tooltips:Array<Tooltip>;
 	

@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2013 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -27,9 +27,51 @@
 **/
 package pony.unity3d.scene;
 
+import pony.events.Signal;
+import pony.events.Signal0;
+import unityengine.MonoBehaviour;
+import unityengine.Quaternion;
+import unityengine.Vector3;
+using hugs.HUGSWrapper;
 /**
- * OpenClose
- * @see pony.unity3d.scene.ucore.OpenCloseUCore
+ * OpenCloseUCore
  * @author AxGord <axgord@gmail.com>
  */
-class OpenClose extends pony.unity3d.scene.ucore.OpenCloseUCore {}
+@:nativeGen class OpenClose extends MonoBehaviour {
+	
+	public var openPos:Vector3;
+	public var openRotation:Quaternion;
+	@:meta(UnityEngine.HideInInspector)
+	public var open(default, set):Bool = false;
+	public var onOpen(default, null):Signal0<OpenClose>;
+	public var onClose(default, null):Signal0<OpenClose>;
+	@:meta(UnityEngine.HideInInspector)
+	private var startPos:Vector3;
+	@:meta(UnityEngine.HideInInspector)
+	private var startRotation:Quaternion;
+	
+	public function new() {
+		super();
+		onOpen = Signal.create(this);
+		onClose = Signal.create(this);
+	}
+	
+	private function Start():Void {
+		startPos = transform.position;
+		startRotation = transform.rotation;
+		if (openPos.x == 0 && openPos.y == 0 && openPos.z == 0) openPos = startPos;
+		if (openRotation.x == 0 && openRotation.y == 0 && openRotation.z == 0) openRotation = startRotation;
+	}
+	
+	private function set_open(to:Bool):Bool {
+		if (open == to) return to;
+		transform.position = to ? openPos : startPos;
+		transform.rotation = to ? openRotation : startRotation;
+		if (to) onOpen.dispatch();
+		else onClose.dispatch();
+		return open = to;
+	}
+	
+	public function change():Void open = !open;
+	
+}

@@ -37,8 +37,7 @@ import unityengine.MonoBehaviour;
  * Clock
  * @author AxGord
  */
-
-class Clock extends MonoBehaviour {
+@:nativeGen class Clock extends MonoBehaviour {
 	
 	public var timer:DTimer;
 	private var beginTime:String = '08:00:00';

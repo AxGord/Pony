@@ -44,7 +44,7 @@ using hugs.HUGSWrapper;
  * DeltaTimeHelper
  * @author AxGord <axgord@gmail.com>
  */
-class Helper extends MonoBehaviour {
+@:nativeGen class Helper extends MonoBehaviour {
 	
 	static public var main:MonoBehaviour;
 	#if touchscript

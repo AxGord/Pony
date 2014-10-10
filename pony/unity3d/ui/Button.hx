@@ -43,8 +43,7 @@ using hugs.HUGSWrapper;
  * @see pony.ui.ButtonCore
  * @author AxGord
  */
-
-class Button extends MonoBehaviour {
+@:nativeGen class Button extends MonoBehaviour {
 	
 	public var defaultMode:Int = 0;
 	public var panel:Bool = true;

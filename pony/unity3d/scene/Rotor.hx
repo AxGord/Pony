@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2013 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -27,10 +27,31 @@
 **/
 package pony.unity3d.scene;
 
+import unityengine.MonoBehaviour;
+import unityengine.Time;
+import unityengine.Vector3;
+using hugs.HUGSWrapper;
+
 /**
- * Rotor
- * @see pony.unity3d.scene.ucore.RotorUCore
+ * RotorUCore
  * @author AxGord <axgord@gmail.com>
  */
 
-class Rotor extends pony.unity3d.scene.ucore.RotorUCore {}
+@:nativeGen class Rotor extends MonoBehaviour {
+
+	public var withTimeScale:Bool = true;
+	public var speed:Single = 200;
+	public var direct:Vector3;
+	
+	public function new():Void {
+		super();
+		direct = new Vector3(1, 0, 0);
+	}
+	
+	private function Update():Void {
+		var sp:Single = withTimeScale ? Time.deltaTime : Time.fixedDeltaTime;
+		sp *= speed;
+		transform.Rotate(direct, sp);
+	}
+	
+}

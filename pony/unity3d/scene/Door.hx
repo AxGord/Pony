@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2013 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -27,10 +27,21 @@
 **/
 package pony.unity3d.scene;
 
+using hugs.HUGSWrapper;
+
 /**
- * Door
- * @see pony.unity3d.scene.ucore.DoorUCore
+ * DoorUCore
  * @author AxGord <axgord@gmail.com>
  */
-
-class Door extends pony.unity3d.scene.ucore.DoorUCore {}
+@:nativeGen class Door extends OpenClose {
+	
+	@:meta(UnityEngine.HideInInspector)
+	private var mh:MouseHelper;
+	
+	override private function Start():Void {
+		super.Start();
+		mh = getOrAddTypedComponent(MouseHelper);
+		mh.down.add(change);
+	}
+	
+}

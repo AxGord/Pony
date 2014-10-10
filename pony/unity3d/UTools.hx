@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2013 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -37,7 +37,7 @@ import unityengine.Screen;
  * Tools for unity3d
  * @author AxGord <axgord@gmail.com>
  */
-class UTools {
+@:nativeGen class UTools {
 
 
 	public static function init(key:String='', camera:String='/Camera', defWidth:Int=800, defHeight:Int=600, fs:Bool=true):Bool {

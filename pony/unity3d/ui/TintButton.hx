@@ -40,7 +40,7 @@ import unityengine.GameObject;
  * @see pony.ui.ButtonCore
  * @author AxGord
  */
-class TintButton extends Button {
+@:nativeGen class TintButton extends Button {
 
 	private var tint:Single = 0.2;
 	

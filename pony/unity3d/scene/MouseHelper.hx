@@ -27,11 +27,13 @@
 **/
 package pony.unity3d.scene;
 
+import pony.events.Signal0;
 import pony.time.DeltaTime;
 import pony.events.LV;
 import pony.events.Signal;
 import pony.unity3d.ui.LoadScreen;
 import unityengine.BoxCollider;
+import unityengine.MeshCollider;
 import unityengine.Input;
 import unityengine.MonoBehaviour;
 import unityengine.Transform;
@@ -42,7 +44,7 @@ using hugs.HUGSWrapper;
  * @author AxGord <axgord@gmail.com>
  * @author BoBaH6eToH
  */
-class MouseHelper extends MonoBehaviour {
+@:nativeGen class MouseHelper extends MonoBehaviour {
 
 	public static var globalMiddleDown:Signal = new Signal();
 	public static var globalMiddleUp:Signal = new Signal();
@@ -50,17 +52,23 @@ class MouseHelper extends MonoBehaviour {
 	public static var middleMousePressed:Bool = false;
 	private static var inited:Bool = false;
 	
+	@:meta(UnityEngine.HideInInspector)
 	@:isVar public var overed(get,never):Bool;
-	public var over:Signal;
-	public var out:Signal;
-	public var down:Signal;
-	public var middleDown:Signal;
-	public var middleUp:Signal;
+	@:meta(UnityEngine.HideInInspector)
+	public var over:Signal0<MouseHelper>;
+	public var out:Signal0<MouseHelper>;
+	public var down:Signal0<MouseHelper>;
+	public var middleDown:Signal0<MouseHelper>;
+	public var middleUp:Signal0<MouseHelper>;
 	
+	@:meta(UnityEngine.HideInInspector)
 	private var _overed:Int = 0;
+	@:meta(UnityEngine.HideInInspector)
 	private var ovr:MouseHelper;
+	@:meta(UnityEngine.HideInInspector)
 	private var ovrs:Int = 0;
 	
+	@:meta(UnityEngine.HideInInspector)
 	public var sub:Bool = false;
 	
 	public static function updateStatic():Void
@@ -89,11 +97,11 @@ class MouseHelper extends MonoBehaviour {
 	
 	private function new() {
 		super();
-		over = new Signal();
-		out = new Signal();
-		down = new Signal();
-		middleDown = new Signal();
-		middleUp = new Signal();
+		over = Signal.create(this);
+		out = Signal.create(this);
+		down = Signal.create(this);
+		middleDown = Signal.create(this);
+		middleUp = Signal.create(this);
 		lock.add(resetOvrs);
 		lock.add(updateOverState);
 	}
@@ -108,7 +116,7 @@ class MouseHelper extends MonoBehaviour {
 	
 	public function ft():Void {
 		if (renderer != null && collider == null)
-			gameObject.addTypedComponent(BoxCollider);
+			gameObject.addTypedComponent(MeshCollider);
 		
 		for (e in gameObject.getComponentsInChildrenOfType(Transform)) {
 			if (e == transform) continue;
@@ -181,5 +189,5 @@ class MouseHelper extends MonoBehaviour {
 			down.dispatch();
 	}
 	
-	private function get_overed():Bool return ovrs > 0;
+	inline private function get_overed():Bool return ovrs > 0;
 }

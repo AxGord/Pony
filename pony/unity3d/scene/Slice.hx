@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2013 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -26,10 +26,46 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.unity3d.scene;
+import pony.ui.ButtonCore;
+import pony.unity3d.ui.TintButton;
+import unityengine.Color;
+import unityengine.GameObject;
+import unityengine.Material;
+import unityengine.MonoBehaviour;
+import unityengine.Renderer;
+import unityengine.Transform;
 
+using hugs.HUGSWrapper;
 /**
  * Slice
- * @see pony.unity3d.scene.ucore.SliceUCore
  * @author BoBaH6eToH
  */
-class Slice extends pony.unity3d.scene.ucore.SliceUCore {}
+@:nativeGen class Slice extends TooltipSaver
+{
+	public var untransparentTexture:Material;
+	public var buttonForSlice:GameObject;
+	
+	private var buttonSlice:ButtonCore;
+	
+	private var childrenMaterials:Array<Material>;
+	
+	override private function Start() 
+	{
+		super.Start();
+		childrenMaterials = [for (e in getComponentsInChildrenOfType(Renderer)) e.material];
+		buttonSlice = buttonForSlice.getTypedComponent(TintButton).core;
+		buttonSlice.click.add(click);
+	}
+	
+	inline private function click(mode:Int):Void 
+	{
+		if (mode == 2)
+			for (e in getComponentsInChildrenOfType(Renderer)) e.material = untransparentTexture;
+		else {
+			var i:Int = 0;
+			for (e in getComponentsInChildrenOfType(Renderer)) e.material = childrenMaterials[i++];
+		}
+		saveColors();
+	}
+	
+}

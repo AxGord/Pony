@@ -33,7 +33,7 @@ import pony.time.DeltaTime;
  * @author AxGord
  */
 
-class Fixed2dCamera {
+@:nativeGen class Fixed2dCamera {
 	
 	public static var begin:Single = 0;
 	public static var exists:Bool = false;
