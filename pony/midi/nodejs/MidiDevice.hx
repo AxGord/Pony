@@ -29,6 +29,9 @@ package pony.midi.nodejs;
 import js.Node;
 import pony.midi.IMidiDevice;
 import pony.events.*;
+import pony.midi.MidiCode;
+import pony.midi.MidiMessage;
+import pony.time.DT;
 
 /**
  * Midi
@@ -36,27 +39,54 @@ import pony.events.*;
  */
 class MidiDevice implements IMidiDevice {
 	
-	private static var midiClass:Class<Dynamic> = Node.require('midi').input;
+	private static var midiInputClass:Class<Dynamic> = Node.require('midi').input;
+	private static var midiOutputClass:Class<Dynamic> = Node.require('midi').output;
 	
-	private var core:Dynamic;
+	private static var preCore:Dynamic = Type.createInstance(midiInputClass, []);
 	
-	public var on:Signal2<IMidiDevice, MidiCode, MidiCode>;
+	private static var firstCreated:Bool = false;
+	
+	public static function list():Array<String> return [for (i in 0...preCore.getPortCount()) preCore.getPortName(i)];
+	
+	public static function listWithName(name:String):Map<Int,String> {
+		var m = new Map<Int, String>();
+		for (i in 0...preCore.getPortCount()) {
+			var n:String = preCore.getPortName(i);
+			if (n.indexOf(name) != -1) m[i] = n;
+		}
+		return m;
+	}
+	
+	private var input:Dynamic;
+	private var output:Dynamic;
+	
+	public var on:Signal2<IMidiDevice, MidiMessage, DT>;
 
 	public function new(id:Int) {
 		on = Signal.create(cast this);
-		core = Type.createInstance(midiClass, []);
-		trace('Open midi: '+core.getPortName(id)+'($id)');
-		core.openPort(id);
-		core.on('message', function(deltaTime, message) {
-			on.dispatch(message[1], message[2]);
+		input = firstCreated ? Type.createInstance(midiInputClass, []) : preCore;
+		output = Type.createInstance(midiOutputClass, []);
+		var name = input.getPortName(id);
+		trace('Open midi: '+name+'($id)');
+		input.openPort(id);
+		for (i in 0...output.getPortCount()) {
+			if (name.indexOf(output.getPortName(i)) == 0) {
+			output.openPort(i);
+			break;
+		}
+		}
+		input.on('message', function(deltaTime, message) {
+			on.dispatch({chanel:message[0], key:message[1], value: message[2]}, deltaTime);
 		});
 	}
 	
+	inline public function send(m:MidiMessage):Void output.sendMessage([m.chanel,m.key,m.value]);
+	
 	public function destroy():Void {
-		core.closePort();
+		input.closePort();
 		on.destroy();
 		on = null;
-		core = null;
+		input = null;
 	}
 	
 }
