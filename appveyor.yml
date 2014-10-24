@@ -10,7 +10,7 @@ build_script:
   - set HAXEPATH=%cd%
   - haxelib install munit
   - set path=%path%;%cd%
-tests:
+test:
   - cd tests
   - test.cmd >> result.txt
   - neko Appveyor.n
