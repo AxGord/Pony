@@ -7,9 +7,11 @@ before_build:
   - move haxe-3.1.3\haxelib.exe .
   - ps: Start-FileDownload 'http://nekovm.org/_media/neko-2.0.0-win.zip'
   - 7z e neko-2.0.0-win.zip -y
-  - set HAXEPATH=.
+  - set HAXEPATH=%cd%
   - haxelib install munit
-  
+  - set path=%path%;%cd%
+  - cd tests
+  - test.cmd
 build_script:
    - tests\test.cmd
    
