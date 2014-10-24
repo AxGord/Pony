@@ -46,6 +46,8 @@ class MidiDevice implements IMidiDevice {
 	
 	private static var firstCreated:Bool = false;
 	
+	inline public static function count():Int return preCore.getPortCount();
+	
 	public static function list():Array<String> return [for (i in 0...preCore.getPortCount()) preCore.getPortName(i)];
 	
 	public static function listWithName(name:String):Map<Int,String> {
@@ -57,6 +59,15 @@ class MidiDevice implements IMidiDevice {
 		return m;
 	}
 	
+	public static function countWithName(name:String):Int {
+		var c:Int = 0;
+		for (i in 0...preCore.getPortCount()) {
+			var n:String = preCore.getPortName(i);
+			if (n.indexOf(name) != -1) c++;
+		}
+		return c;
+	}
+	
 	private var input:Dynamic;
 	private var output:Dynamic;
 	
@@ -65,15 +76,18 @@ class MidiDevice implements IMidiDevice {
 	public function new(id:Int) {
 		on = Signal.create(cast this);
 		input = firstCreated ? Type.createInstance(midiInputClass, []) : preCore;
+		firstCreated = true;
 		output = Type.createInstance(midiOutputClass, []);
 		var name = input.getPortName(id);
 		trace('Open midi: '+name+'($id)');
 		input.openPort(id);
 		for (i in 0...output.getPortCount()) {
 			if (name.indexOf(output.getPortName(i)) == 0) {
-			output.openPort(i);
-			break;
-		}
+				trace(output.getPortName(i));
+				trace(name);
+				output.openPort(i);
+				break;
+			}
 		}
 		input.on('message', function(deltaTime, message) {
 			on.dispatch({chanel:message[0], key:message[1], value: message[2]}, deltaTime);

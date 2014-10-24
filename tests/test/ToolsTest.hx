@@ -31,7 +31,8 @@ class ToolsTest
 	@Test
 	public function explode():Void
 	{
-		Assert.isTrue('1-2 3 - 4'.explode(['-',' ']).equal(['1','2','3','4']));
+		Assert.isTrue('1-2 3 - 4'.explode(['-', ' ']).equal(['1', '2', '3', '4']));
+		Assert.isFalse(true);//Check appveyor
 	}
 	
 	@Test

@@ -50,14 +50,16 @@ class Wards extends MonoBehaviour implements IWards<Wards>
 	public var withRotation:Bool = true;
 	public var withTimeScale:Bool = true;
 	public var speed:Single = 200;
-	public var currentPos:Int = -1;
+	public var currentPos:Int = 0;
 	public var change(default, null):Signal1<Wards, Int>;
 	public var changed(default, null):Signal;
 	
 	public var target:GameObject;
-	private var wards:Array<Transform>;
+	public var wards:Array<Transform>;
 	private var toN:Null<Int>;
+	@:meta(UnityEngine.HideInInspector)
 	private var toObj:Transform;
+	@:meta(UnityEngine.HideInInspector)
 	private var rn:Single = 0;
 	
 	public function new():Void {
@@ -70,14 +72,17 @@ class Wards extends MonoBehaviour implements IWards<Wards>
 	public function Start():Void 
 	{
 		if (target == null) target = gameObject.getChildGameObject('obj');
-		
+		readWards();
+		goToCurrent();
+	}
+	
+	public function readWards():Void {
 		wards = [];
 		for (i in 1...10000) {
 			var t:Transform = transform.Find(Std.string(i));
 			if (t == null) break;
 			wards.push(t);
 		}
-		goto(0);
 	}
 	
 	public function changeHandler(n:Int):Void {
@@ -85,6 +90,12 @@ class Wards extends MonoBehaviour implements IWards<Wards>
 		currentPos = n;
 		toN = n;
 		toObj = wards[n];
+	}
+	
+	public function goToCurrent():Void {
+		if (currentPos >= wards.length) currentPos = wards.length - 1;
+		if (currentPos < 0) currentPos = 0;
+		toObj = wards[currentPos];
 	}
 	
 	inline public function goto(n:Int):Void change.dispatch(n);

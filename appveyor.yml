@@ -12,5 +12,6 @@ before_build:
   - set path=%path%;%cd%
 build_script:
   - cd tests
-  - test.cmd
+  - test.cmd >> result.txt
+  - neko Appveyor.n
    

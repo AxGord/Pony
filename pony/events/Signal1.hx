@@ -74,11 +74,11 @@ abstract Signal1<Target, T1:Dynamic>(Signal) {
 		this.changePriority(listener, priority);
 		return target;
 	}
-	#if cs //CS fix
+	/*#if cs //CS fix
 	public function dispatch(a:Dynamic):Target return dispatchArgs([a]);
-	#else
+	#else*/
 	public function dispatch(a:T1):Target return dispatchArgs([a]);
-	#end
+	//#end
 	public function dispatchEvent(event:Event):Target {
 		this.dispatchEvent(event);
 		return target;

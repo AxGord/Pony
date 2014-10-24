@@ -50,6 +50,11 @@ using hugs.HUGSWrapper;
 	@:meta(UnityEngine.HideInInspector)
 	private var startRotation:Quaternion;
 	
+	@:meta(UnityEngine.HideInInspector)
+	private var needChangePos:Bool;
+	@:meta(UnityEngine.HideInInspector)
+	private var needChangeRot:Bool;
+	
 	public function new() {
 		super();
 		onOpen = Signal.create(this);
@@ -59,14 +64,16 @@ using hugs.HUGSWrapper;
 	private function Start():Void {
 		startPos = transform.position;
 		startRotation = transform.rotation;
-		if (openPos.x == 0 && openPos.y == 0 && openPos.z == 0) openPos = startPos;
-		if (openRotation.x == 0 && openRotation.y == 0 && openRotation.z == 0) openRotation = startRotation;
+		//if (openPos.x == 0 && openPos.y == 0 && openPos.z == 0) openPos = startPos;
+		needChangePos = !(openPos.x == 0 && openPos.y == 0 && openPos.z == 0);
+		//if (openRotation.x == 0 && openRotation.y == 0 && openRotation.z == 0) openRotation = startRotation;
+		needChangeRot = !(openRotation.x == 0 && openRotation.y == 0 && openRotation.z == 0);
 	}
 	
 	private function set_open(to:Bool):Bool {
 		if (open == to) return to;
-		transform.position = to ? openPos : startPos;
-		transform.rotation = to ? openRotation : startRotation;
+		if (needChangePos) transform.position = to ? openPos : startPos;
+		if (needChangeRot) transform.rotation = to ? openRotation : startRotation;
 		if (to) onOpen.dispatch();
 		else onClose.dispatch();
 		return open = to;

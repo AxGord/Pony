@@ -10,7 +10,7 @@ class TimerTest
 	@AsyncTest
 	public function simple(asyncFactory:AsyncFactory):Void
 	{
-		var handler:Void->Void = asyncFactory.createHandler(this, empty, 30);
+		var handler:Void->Void = asyncFactory.createHandler(this, empty, 300);
 		new Timer(20).start().complite.add(handler);
 	}
 	
@@ -18,7 +18,7 @@ class TimerTest
 	public function tick(asyncFactory:AsyncFactory):Void
 	{
 		var count = 0;
-		var handler:Void->Void = asyncFactory.createHandler(this, function() Assert.areEqual(count, 1), 50);
+		var handler:Void->Void = asyncFactory.createHandler(this, function() Assert.areEqual(count, 1), 500);
 		new massive.munit.util.Timer(30).run = handler;
 		Timer.delay(10, function() count++ );
 	}
@@ -28,7 +28,7 @@ class TimerTest
 	@AsyncTest
 	public function repeat(asyncFactory:AsyncFactory):Void {
 		var c = 0;
-		var handler:Void->Void = asyncFactory.createHandler(this, function() Assert.areEqual(c, 6), 1500);
+		var handler:Void->Void = asyncFactory.createHandler(this, function() Assert.areEqual(c, 6), 5500);
 		new Timer('3ms', 5).complite.add(function() c++).start();
 		new massive.munit.util.Timer(400).run = handler;
 	}

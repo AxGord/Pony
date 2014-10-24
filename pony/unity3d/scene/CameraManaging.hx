@@ -61,6 +61,8 @@ using hugs.HUGSWrapper;
 	private var keyTurnRight:unityengine.KeyCode = unityengine.KeyCode.RightArrow;
 	
 	private var isInverted:Bool;
+	
+	private var liveUpdate:Bool = false;
 
 	@:meta(UnityEngine.HideInInspector)
 	private var x:Float = 0.0;
@@ -92,7 +94,7 @@ using hugs.HUGSWrapper;
 	private function LateUpdate():Void 
 	{
 		
-		var changed:Bool = false;
+		var changed:Bool = liveUpdate;
 		#if touchscript
 		
 		if (target.active && Helper.touchDown && !Helper.doubleDown)

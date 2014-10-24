@@ -72,7 +72,7 @@ class FLTools
 {
 	#if !macro
 	static public var init:Signal0<Void>;
-	static public var longInit:Signal0<Void>;
+	//static public var longInit:Signal0<Void>;
 	
 	private static function __init__():Void {
 		init = Signal.createEmpty();
@@ -84,7 +84,7 @@ class FLTools
 		*/
 	}
 	
-	private static function linit():Void DeltaTime.fixedUpdate < function() longInit.dispatch();
+	//private static function linit():Void DeltaTime.fixedUpdate < function() longInit.dispatch();
 	
 	inline static public function registerClassAlias<T>(cl:Class<T>):Void untyped __global__["flash.net.registerClassAlias"](Type.getClassName(cl), cl);
 	

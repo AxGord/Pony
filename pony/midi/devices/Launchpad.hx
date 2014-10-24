@@ -60,6 +60,8 @@ class Launchpad {
 	
 	inline public static function list():Map<Int, String> return MidiDevice.listWithName('Launchpad');
 	
+	inline public static function count():Int return MidiDevice.countWithName('Launchpad');
+	
 	private var midi:MidiDevice;
 	public var areaState(default, null):Matrix<LaunchpadColor>;
 	public var topState(default, null):Array<LaunchpadColor>;
