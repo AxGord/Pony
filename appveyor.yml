@@ -7,5 +7,6 @@ before_build:
   - move haxe-3.1.3\haxelib.exe .
   - haxelib install munit
   
-build:
+build_script:
    - tests\test.cmd
+   
