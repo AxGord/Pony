@@ -10,8 +10,7 @@ before_build:
   - set HAXEPATH=%cd%
   - haxelib install munit
   - set path=%path%;%cd%
+build_script:
   - cd tests
   - test.cmd
-build_script:
-   - tests\test.cmd
    
