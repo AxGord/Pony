@@ -1,4 +1,4 @@
-build_script:
+before_build:
   - ps: Start-FileDownload 'http://hxbuilds.s3-website-us-east-1.amazonaws.com/builds/haxe/windows/haxe_2014-09-14_development_2fcd2ca.tar.gz'
   - 7z e haxe_2014-09-14_development_2fcd2ca.tar.gz -y
   - 7z x haxe_2014-09-14_development_2fcd2ca.tar -y
@@ -10,7 +10,7 @@ build_script:
   - set HAXEPATH=%cd%
   - haxelib install munit
   - set path=%path%;%cd%
-tests:
+build_script:
   - cd tests
   - test.cmd >> result.txt
   - neko Appveyor.n
