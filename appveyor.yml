@@ -12,5 +12,5 @@ before_build:
   - set path=%path%;%cd%
 build_script:
   - cd tests
-  - haxelib run munit test | neko Appveyor.n
+  - test.cmd | neko Appveyor.n
    
