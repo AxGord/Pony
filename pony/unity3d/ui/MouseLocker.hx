@@ -40,10 +40,11 @@ import unityengine.Vector3;
 @:nativeGen class MouseLocker extends MonoBehaviour {
 
 	public var panel:Bool = false;
+	@:meta(UnityEngine.HideInInspector)
 	private var prevState:Bool = false;
 	
 	private function Update() {
-		var h = panel
+		var h = !panel
 			? guiTexture.HitTest(new Vector3(Input.mousePosition.x - Fixed2dCamera.begin, Input.mousePosition.y))
 			: guiTexture.HitTest(new Vector3(Input.mousePosition.x +(Screen.width - Fixed2dCamera.begin)/2, Input.mousePosition.y));
 		if (prevState != h) {

@@ -42,7 +42,8 @@ using hugs.HUGSWrapper;
 	public var openPos:Vector3;
 	public var openRotation:Quaternion;
 	@:meta(UnityEngine.HideInInspector)
-	public var open(default, set):Bool = false;
+	public var open(get, set):Bool;
+	private var _open:Bool = false;
 	public var onOpen(default, null):Signal0<OpenClose>;
 	public var onClose(default, null):Signal0<OpenClose>;
 	@:meta(UnityEngine.HideInInspector)
@@ -70,15 +71,46 @@ using hugs.HUGSWrapper;
 		needChangeRot = !(openRotation.x == 0 && openRotation.y == 0 && openRotation.z == 0);
 	}
 	
-	private function set_open(to:Bool):Bool {
-		if (open == to) return to;
-		if (needChangePos) transform.position = to ? openPos : startPos;
-		if (needChangeRot) transform.rotation = to ? openRotation : startRotation;
-		if (to) onOpen.dispatch();
-		else onClose.dispatch();
-		return open = to;
+	inline private function get_open():Bool return _open;
+	
+	public function set_open(to:Bool):Bool {
+		if (_open == to) return to;
+		if (to) {
+			silentOpen();
+			onOpen.dispatch();
+		} else {
+			silentClose();
+			onClose.dispatch();
+		}
+		return to;
 	}
 	
-	public function change():Void open = !open;
+	public function silentOpen():Void {
+		_open = true;
+		if (needChangePos) transform.position = openPos;
+		if (needChangeRot) transform.rotation = openRotation;
+	}
+	
+	public function silentClose():Void {
+		_open = false;
+		if (needChangePos) transform.position = startPos;
+		if (needChangeRot) transform.rotation = startRotation;
+	}
+	
+	inline public function change():Void open = !open;
+	
+	public function syncWith(d:Door):Void {
+		onOpen << d.silentOpen;
+		onClose << d.silentClose;
+		d.onOpen << silentOpen;
+		d.onClose << silentClose;
+	}
+	
+	public function unsyncWith(d:Door):Void {
+		onOpen >> d.silentOpen;
+		onClose >> d.silentClose;
+		d.onOpen >> silentOpen;
+		d.onClose >> silentClose;
+	}
 	
 }
