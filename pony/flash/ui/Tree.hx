@@ -65,7 +65,8 @@ class Tree extends Sprite implements FLSt {
 	}
 	
 	private function init():Void {
-		core = new TreeCore(Std.int(group.height), drawUnit, drawGroup);
+		//core = new TreeCore(Std.int(group.height), drawUnit, drawGroup);
+		core = new TreeCore();
 		groupTextPool = new Pool(Type.getClass(groupText));
 		unitTextPool = new Pool(Type.getClass(unitText));
 		unitPool = new Pool(Type.getClass(unit));

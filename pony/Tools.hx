@@ -168,9 +168,19 @@ class Tools {
 	
 	public static function superIndexOf<T>(it:Iterable<T>, v:T, maxDepth:Int = 1):Int {
 		var i:Int = 0;
-		for (e in it) {
-			if (equal(e, v, maxDepth)) return i;
-			i++;
+		if (maxDepth == 0) //Avoiding extra function calls on maxDepth == 0
+		{
+			for (e in it) {
+				if (e == v) return i;
+				i++;
+			}
+		}
+		else
+		{
+			for (e in it) {
+				if (equal(e, v, maxDepth)) return i;
+				i++;
+			}
 		}
 		return -1;
 	}

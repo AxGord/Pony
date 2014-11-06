@@ -33,6 +33,9 @@ import flash.events.TouchEvent;
 import flash.ui.Multitouch;
 import pony.flash.FLTools;
 import pony.time.DeltaTime;
+import pony.touchManager.ButtonCoreTM;
+import pony.touchManager.TouchManager;
+import pony.touchManager.TouchManagerEvent;
 import pony.ui.ButtonCore;
 
 
@@ -46,7 +49,7 @@ using pony.flash.CPP_FL_TouchFix;
  * @author AxGord
  */
 class Button extends MovieClip {
-
+#if !starling
 	public static var config = {def: 1, focus: 2, press: 3, zone: 4, disabled: 5};
 	
 	public var core:ButtonCore;
@@ -90,26 +93,13 @@ class Button extends MovieClip {
 	}
 	
 	private function init():Void {
-		
-		/*if (CPP_FL_TouchFix.useFix) {
-			zone.downSignal().add(core.mouseOver.bind(false));
-			CPP_FL_TouchFix.move.add(touchMove);
-			CPP_FL_TouchFix.down.add(touchMove);
-			zone.upSignal().add(touchUp);
-			
-		} else {
-		*/
-		if (Multitouch.supportsTouchEvents) {
-			zone.addEventListener(TouchEvent.TOUCH_OVER, touchOver);
-			zone.addEventListener(TouchEvent.TOUCH_OUT, touchOut);
-			zone.addEventListener(TouchEvent.TOUCH_TAP, touchPress);
-			stage.addEventListener(TouchEvent.TOUCH_END, touchEnd);
-		} else {
-			zone.addEventListener(MouseEvent.MOUSE_OVER, over);
-			zone.addEventListener(MouseEvent.MOUSE_OUT, core.mouseOut.v());
-			zone.addEventListener(MouseEvent.MOUSE_DOWN, core.mouseDown.v());
-			stage.addEventListener(MouseEvent.MOUSE_UP, core.mouseUp.v());
-		}
+
+		TouchManager.addListener(zone, touchManagerListener);
+	}
+	
+	public function touchManagerListener(e:TouchManagerEvent):Void
+	{
+		ButtonCoreTM.eventsTransition(e, core);
 	}
 	
 	private function touchOver(_):Void {
@@ -178,5 +168,21 @@ class Button extends MovieClip {
 	}
 	*/
 	public function sw(v:Array<Int>):Void if (core != null) core.sw = v;
+	public function getSW():Array<Int> return core.sw;
+	#else
+	private var _sw:Array<Int>;
 	
+	public var core:ButtonCore;
+	
+	public function new() {
+		super();
+		
+		core = new ButtonCore();
+	}
+	
+	public function sw(v:Array<Int>):Void _sw = v;
+	
+	public function getSW():Array<Int> return _sw;
+	
+#end
 }

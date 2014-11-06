@@ -73,8 +73,10 @@ abstract Function( { f:Dynamic, count:Int, args:Array<Dynamic>, id:Int, used:Int
 		#if cs
 		cslist = new Dictionary<CSHash, Function>(1);
 		list = new Dictionary<CSHash, Function>(1);
-		#else
+		#elseif neko
 		list = new Dictionary<Dynamic, Function>(1);
+		#else
+		list = new Dictionary<Dynamic, Function>(0);
 		#end
 		counter = -1;
 		searchFree = false;

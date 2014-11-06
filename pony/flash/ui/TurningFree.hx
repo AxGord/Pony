@@ -29,8 +29,11 @@ package pony.flash.ui;
 import flash.events.MouseEvent;
 import flash.events.TouchEvent;
 import flash.display.MovieClip;
+import flash.geom.Point;
 import flash.ui.Multitouch;
-import pony.geom.Point;
+import pony.touchManager.TouchEventType;
+import pony.touchManager.TouchManager;
+import pony.touchManager.TouchManagerEvent;
 import pony.ui.ButtonCore;
 
 /**
@@ -38,10 +41,11 @@ import pony.ui.ButtonCore;
  * @author AxGord <axgord@gmail.com>
  */
 class TurningFree extends Turning {
-	
+#if !starling
 	@:st public var button:Button;
 	@:st public var lmin:MovieClip;
 	@:st public var lmax:MovieClip;
+	private var _zero:Point = new Point(0, 0);
 	
 	public function new() {
 		super();
@@ -53,27 +57,13 @@ class TurningFree extends Turning {
 		if (lmax != null) core.maxAngle = lmax.rotation;
 		core.currentAngle = handle.rotation;
 		handle.mouseEnabled = false;
-		button.core.down.add(beginMove);
-		button.core.change.sub(ButtonStates.Default).add(endMove);
-		button.core.change.sub(ButtonStates.Focus).add(endMove);
+		TouchManager.addListener(this, onMove, [TouchEventType.Down, TouchEventType.Move]);
 	}
 	
-	inline private function toMouse():Void core.toPoint({x:mouseX, y:mouseY});
-	
-	private function beginMove():Void {
-		toMouse();
-		if (Multitouch.supportsTouchEvents)
-			stage.addEventListener(TouchEvent.TOUCH_MOVE, touchMove);
-		else
-			stage.addEventListener(MouseEvent.MOUSE_MOVE, mouseMove);
+	private function onMove(e:TouchManagerEvent):Void
+	{
+		var point = localToGlobal(_zero);
+		core.toPoint( { x:e.globalX - point.x, y:e.globalY - point.y } );
 	}
-	
-	private function endMove():Void {
-		stage.removeEventListener(TouchEvent.TOUCH_MOVE, touchMove);
-		stage.removeEventListener(MouseEvent.MOUSE_MOVE, mouseMove);
-	}
-	
-	private function touchMove(e:TouchEvent):Void core.toPoint({x: e.stageX-x, y: e.stageY-y});
-	private function mouseMove(_:MouseEvent):Void toMouse();
-	
+#end
 }

@@ -35,6 +35,8 @@ import pony.events.Signal;
 import pony.flash.FLTools;
 import pony.ui.ButtonCore;
 import pony.ui.SlideCore;
+import pony.starling.ui.StarlingScrollBar;
+
 
 using pony.flash.FLExtends;
 /**
@@ -42,7 +44,7 @@ using pony.flash.FLExtends;
  * @author AxGord
  */
 class ScrollBar extends Sprite implements pony.flash.FLSt {
-
+#if !starling
 	@st public var scroller:Button;
 	@st public var bg:DisplayObject;
 	public var size(get, set):Float;
@@ -160,4 +162,29 @@ class ScrollBar extends Sprite implements pony.flash.FLSt {
 	}
 	
 	private function slUpdate(v:Float):Void alpha = v;
+#else
+	public var size(get, set):Float;
+	public var total(get, set):Float;
+	public var position(get,set):Float;
+	public var isVert(get, set):Bool;
+	public var update(get, set):Signal;
+	
+	public var starlingScrollBar:StarlingScrollBar;
+	
+	private function get_size():Float return starlingScrollBar.size;
+	private function set_size(v:Float):Float return starlingScrollBar.size = v;
+	
+	private function get_total():Float return starlingScrollBar.total;
+	private function set_total(v:Float):Float return starlingScrollBar.total = v;
+	
+	private function get_position():Float return starlingScrollBar.position;
+	private function set_position(v:Float):Float return starlingScrollBar.position = v;
+	
+	private function get_isVert():Bool return starlingScrollBar.isVert;
+	private function set_isVert(v:Bool):Bool return starlingScrollBar.isVert = v;
+	
+	private function get_update():Signal return starlingScrollBar.update;
+	private function set_update(v:Signal):Signal return starlingScrollBar.update = v;
+	
+#end
 }
