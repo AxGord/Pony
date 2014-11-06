@@ -22,7 +22,10 @@ class NativeHitTestSource implements IHitTestSource
 	
 	public function hitTest(x:Float, y:Float):Dynamic 
 	{
-		return childUnderPoint(x, y, _container);
+		_point.x = x;
+		_point.y = y;
+		_point = _container.globalToLocal(_point);
+		return childUnderPoint(_point.x, _point.y, _container);
 	}
 	
 	private function childUnderPoint(x:Float, y:Float, container:DisplayObjectContainer, testShape:Bool = true):Dynamic

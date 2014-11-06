@@ -1,6 +1,7 @@
 package pony.touchManager.hitTestSources;
 import flash.geom.Point;
 import starling.display.DisplayObjectContainer;
+import starling.core.Starling;
 
 /**
  * ...
@@ -20,8 +21,8 @@ class StarlingHitTestSource implements IHitTestSource
 	
 	public function hitTest(x:Float, y:Float):Dynamic 
 	{
-		_point.x = x;
-		_point.y = y;
+		_point.x = x - Starling.current.viewPort.x;
+		_point.y = y - Starling.current.viewPort.y;
 		return _container.hitTest(_container.globalToLocal(_point), true);
 	}
 	

@@ -16,34 +16,26 @@ class StarlingCreator
 {
 	public var starling:Starling;
 	private var _stage:Stage;
+	private var _initialWidth:Int;
+	private var _initialHeight:Int;
 
-	public function new() 
+	public function new(showStats:Bool) 
 	{
 		_stage = Lib.current.stage;
 		
 		Starling.handleLostContext = true;
 		Starling.multitouchEnabled = true;
 		
-		starling = new Starling(StarlingStarter, Lib.current.stage, null, null, "auto", "auto");
+		//starling = new Starling(StarlingStarter, Lib.current.stage, null, null, "auto", "auto");
+		starling = new Starling(StarlingStarter, Lib.current.stage, new Rectangle(0, 0, _stage.stageWidth, _stage.stageHeight), null, "auto", "auto");
+		
+		_initialWidth = _stage.stageWidth;
+		_initialHeight = _stage.stageHeight;
 		
 		starling.antiAliasing = 0;
 		starling.enableErrorChecking = false;
-		starling.showStats = true;
+		starling.showStats = showStats;
 		
 		starling.start();
-		
-		Lib.current.stage.addEventListener(Event.RESIZE, resizeStage);
 	}
-	
-	private function resizeStage(e:Event)
-	{
-		var viewPortRectangle:Rectangle = new Rectangle();
-		viewPortRectangle.width = _stage.stageWidth;
-		viewPortRectangle.height = _stage.stageHeight;
-		Starling.current.viewPort = viewPortRectangle;
-		
- 		starling.stage.stageWidth = _stage.stageWidth;
-		starling.stage.stageHeight = _stage.stageHeight;
-	}
-	
 }
