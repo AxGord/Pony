@@ -36,7 +36,6 @@ class Initializer
 	private var _initialWidth:Int;
 	private var _initialHeight:Int;
 	private var _aspectRatio:Float;
-	private var _needResize:Bool = false;
 	
 	#if starling
 	private var _starlingCreator:StarlingCreator;
@@ -99,22 +98,12 @@ class Initializer
 		touchManagerInit();
 		
 		Lib.current.stage.addEventListener(Event.RESIZE, resizeStage);
-		//Lib.current.stage.addEventListener(Event.RESIZE, needResize);
-		//Lib.current.stage.addEventListener(Event.ENTER_FRAME, resizeStage);
 		
 		_initCallback(_sprite, _contentSprite);
 	}
 	
-	private function needResize(e:Event):Void
-	{
-		_needResize = true;
-	}
-	
 	private function resizeStage(e:Event):Void
 	{
-		//if (!_needResize) return;
-		//_needResize = false;
-		trace("resize");
 		var stage = Lib.current.stage;
 		var smallerWidth:Bool = stage.stageWidth / stage.stageHeight < _aspectRatio;
 		
