@@ -9,6 +9,7 @@ import flash.geom.Rectangle;
 import flash.Lib;
 import flash.ui.Multitouch;
 import flash.ui.MultitouchInputMode;
+import pony.flash.FLTools;
 import pony.starling.converter.StarlingConverter;
 import pony.starling.displayFactory.DisplayFactory.IDisplayObject;
 import pony.starling.displayFactory.DisplayFactory.IDisplayObjectContainer;
@@ -44,6 +45,18 @@ class Initializer
 	private var _viewLimiterA:Bitmap = new Bitmap(new BitmapData(1, 1, false, Lib.current.stage.color));
 	private var _viewLimiterB:Bitmap = new Bitmap(new BitmapData(1, 1, false, Lib.current.stage.color));
 	#end
+	
+	public static function init(initCallback:IDisplayObjectContainer->IDisplayObject->Void):Void {
+		FLTools.init < function() {
+			new Initializer(initCallback, 
+				#if debug
+				true
+				#else
+				false
+				#end
+			);
+		}
+	}
 	
 	public function new(initCallback:IDisplayObjectContainer->IDisplayObject->Void, showStats:Bool = false, content:flash.display.DisplayObject = null) 
 	{
