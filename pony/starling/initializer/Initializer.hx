@@ -157,7 +157,7 @@ class Initializer
 		//#end
 		//
 		//new NativeFlashTouchInput(Lib.current.stage);
-		//new StarlingTouchInputVisualized(cast _sprite);
+		////new StarlingTouchInputVisualized(cast _sprite);
 		#if starling
 			TouchManager.init();
 			TouchManager.removeScreenByID(0);

@@ -33,7 +33,7 @@ class TouchManager
 	{
 		if (_initialized) return;
 		_initialized = true;
-		trace("Touch Manager init");
+		
 		#if flash
 		InputMode.init();
 		

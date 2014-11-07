@@ -107,4 +107,13 @@ class StarlingUtils
 		}
 	}
 	
+	public static function playChildren(container:DisplayObjectContainer):Void
+	{
+		for (i in 0...container.numChildren)
+		{
+			var child:DisplayObject = container.getChildAt(i);
+			if (Std.is(child, MovieClip)) untyped child.play();
+			if (Std.is(child, DisplayObjectContainer)) playChildren(cast child);
+		}
+	}
 }

@@ -12,7 +12,7 @@ class NativeFlashTouchInput
 {
 	private var _displayObject:DisplayObject;
 
-	public function new( displayObject:DisplayObject) 
+	public function new(displayObject:DisplayObject) 
 	{
 		_displayObject = displayObject;
 		
