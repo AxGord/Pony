@@ -32,13 +32,12 @@ import pony.Function;
 
 using Lambda;
 
+typedef Listener_ = { f:Function, count:Int, event:Bool, prev:Event, used:Int, active:Bool, ignoreReturn:Bool }
+ 
 /**
  * Listener
  * @author AxGord
  */
-
-typedef Listener_ = { f:Function, count:Int, event:Bool, prev:Event, used:Int, active:Bool, ignoreReturn:Bool }
- 
 abstract Listener( Listener_ ) {
 	public static var flist:Map<Int, Listener>;
 	

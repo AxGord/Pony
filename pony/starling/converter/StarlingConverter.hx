@@ -157,8 +157,6 @@ class StarlingConverter
 	
 	public static function showAtlases():Void { _atlasCreator.showAtlases(); }
 	
-	
-	
 	private static function getStarlingTextField(source:flash.text.TextField, coordinateSpace:flash.display.DisplayObject):starling.text.TextField
 	{
 		var format:TextFormat = source.getTextFormat();
@@ -192,9 +190,6 @@ class StarlingConverter
 		
 		return result;
 	}
-	
-	
-	
 	
 	public static function childrenWithNames(clip:flash.display.Sprite):Bool
 	{

@@ -35,9 +35,19 @@ import pony.IEvent;
  */
 class Event implements IEvent {
 	
-	public var parent(default,null):Event;
+	/**
+	 * Parent event for this event
+	 */
+	public var parent(default, null):Event;
+	/**
+	 * Event arguments
+	 */
 	public var args(default, null):Array<Dynamic>;
+	/**
+	 * Call limit for current listener
+	 */
 	public var count(get, set):Int;
+	
 	public var prev(get, null):Event;
 	public var _stopPropagation:Bool;
 	public var signal:Signal;
