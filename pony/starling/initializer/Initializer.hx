@@ -10,6 +10,7 @@ import flash.Lib;
 import flash.ui.Multitouch;
 import flash.ui.MultitouchInputMode;
 import pony.starling.converter.StarlingConverter;
+import pony.starling.displayFactory.DisplayFactory.IDisplayObject;
 import pony.starling.displayFactory.DisplayFactory.IDisplayObjectContainer;
 import pony.starling.displayFactory.NativeFlashDisplayFactory;
 import pony.touchManager.hitTestSources.NativeHitTestSource;
@@ -29,9 +30,9 @@ import starling.core.Starling;
 class Initializer 
 {
 	private var _sprite:IDisplayObjectContainer;
-	private var _contentSprite:IDisplayObjectContainer;
+	private var _content:IDisplayObject;
 	
-	private var _initCallback:IDisplayObjectContainer->IDisplayObjectContainer->Void;
+	private var _initCallback:IDisplayObjectContainer->IDisplayObject->Void;
 	
 	private var _initialWidth:Int;
 	private var _initialHeight:Int;
@@ -44,14 +45,14 @@ class Initializer
 	private var _viewLimiterB:Bitmap = new Bitmap(new BitmapData(1, 1, false, Lib.current.stage.color));
 	#end
 	
-	public function new(initCallback:IDisplayObjectContainer->IDisplayObjectContainer->Void, showStats:Bool = false, contentSprite:flash.display.DisplayObject = null) 
+	public function new(initCallback:IDisplayObjectContainer->IDisplayObject->Void, showStats:Bool = false, content:flash.display.DisplayObject = null) 
 	{
 		_initCallback = initCallback;
 				
 		Lib.current.stage.align = StageAlign.TOP_LEFT;
 		Lib.current.stage.scaleMode = StageScaleMode.NO_SCALE;
 		
-		_contentSprite = (contentSprite != null) ? untyped contentSprite : untyped Lib.current;
+		_content = (content != null) ? untyped content : untyped Lib.current;
 		
 		_initialWidth = Lib.current.stage.stageWidth;
 		_initialHeight = Lib.current.stage.stageHeight;
@@ -63,9 +64,9 @@ class Initializer
 		_starlingCreator.starling.addEventListener(starling.events.Event.ROOT_CREATED, onRootCreated);
 	}
 	
-	private function convert(source:flash.display.Sprite):starling.display.Sprite
+	private function convert(source:flash.display.Sprite):starling.display.DisplayObject
 	{
-		var result:Sprite = cast StarlingConverter.getObject(source, Lib.current.stage);
+		var result:starling.display.DisplayObject = cast StarlingConverter.getObject(source, Lib.current.stage);
 		source.visible = false;
 		//source.alpha = 0.3;
 		return result;
@@ -77,15 +78,15 @@ class Initializer
 		
 		_sprite = untyped _starlingCreator.starling.root;
 		
-		_contentSprite = cast convert(untyped _contentSprite);
-		_sprite.addChild(_contentSprite);
+		_content = cast convert(untyped _content);
+		_sprite.addChild(_content);
 		#else
 		
 		_sprite = NativeFlashDisplayFactory.getInstance().createSprite();
 		Lib.current.stage.addChild(cast _sprite);
 		
-		_contentSprite.parent.removeChild(_contentSprite);
-		_sprite.addChild(_contentSprite);
+		_contentSprite.parent.removeChild(_content);
+		_sprite.addChild(_content);
 		
 		Lib.current.stage.addChild(_viewLimiterA);
 		Lib.current.stage.addChild(_viewLimiterB);
@@ -99,7 +100,7 @@ class Initializer
 		
 		Lib.current.stage.addEventListener(Event.RESIZE, resizeStage);
 		
-		_initCallback(_sprite, _contentSprite);
+		_initCallback(_sprite, _content);
 	}
 	
 	private function resizeStage(e:Event):Void
