@@ -85,7 +85,7 @@ class Initializer
 		_sprite = NativeFlashDisplayFactory.getInstance().createSprite();
 		Lib.current.stage.addChild(cast _sprite);
 		
-		_contentSprite.parent.removeChild(_content);
+		_content.parent.removeChild(_content);
 		_sprite.addChild(_content);
 		
 		Lib.current.stage.addChild(_viewLimiterA);
@@ -135,16 +135,21 @@ class Initializer
 	
 	private function touchManagerInit():Void
 	{
-		InputMode.init();
-		
-		#if starling
-			TouchManager.addScreen(new StarlingHitTestSource(cast _sprite));
-		#else
-			TouchManager.addScreen(new NativeHitTestSource(cast _sprite));
-		#end
-		
-		new NativeFlashTouchInput(Lib.current.stage);
+		//InputMode.init();
+		//
+		//#if starling
+			//TouchManager.addScreen(new StarlingHitTestSource(cast _sprite));
+		//#else
+			//TouchManager.addScreen(new NativeHitTestSource(cast _sprite));
+		//#end
+		//
+		//new NativeFlashTouchInput(Lib.current.stage);
 		//new StarlingTouchInputVisualized(cast _sprite);
+		#if starling
+			TouchManager.init();
+			TouchManager.removeScreenByID(0);
+			TouchManager.addScreen(new StarlingHitTestSource(cast _sprite));
+		#end
 	}
 	
 	#if !starling

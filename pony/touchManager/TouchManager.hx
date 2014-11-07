@@ -1,7 +1,10 @@
 package pony.touchManager;
+import flash.Lib;
 import haxe.ds.ObjectMap;
 import pony.touchManager.hitTestSources.IHitTestSource;
+import pony.touchManager.hitTestSources.NativeHitTestSource;
 import pony.touchManager.TouchEventType;
+import pony.touchManager.touchInputs.NativeFlashTouchInput;
 
 /**
  * ...
@@ -23,7 +26,22 @@ class TouchManager
 	private static var _gestureTouches:Map<Int, Touch> = new Map<Int, Touch>();
 	
 	private static var _screens:Array<IHitTestSource> = new Array<IHitTestSource>();
+	private static var _initialized:Bool = false;
 	
+	
+	public static function init():Void
+	{
+		if (_initialized) return;
+		_initialized = true;
+		trace("Touch Manager init");
+		#if flash
+		InputMode.init();
+		
+		TouchManager.addScreen(new NativeHitTestSource(Lib.current.stage));
+		
+		new NativeFlashTouchInput(Lib.current.stage);
+		#end
+	}
 	
 	//Screens:
 	
@@ -44,10 +62,17 @@ class TouchManager
 		_screens.remove(hitTest);
 	}
 	
+	public static function removeScreenByID(screenId:Int):Void
+	{
+		if (_screens.length < screenId && screenId >= 0) _screens.splice(screenId, 1);
+	}
+	
 	// Listeners:
 	
 	public static function addListener(displayObject:Dynamic, listener:TouchManagerEvent->Void, types:Array<TouchEventType> = null):Void
 	{
+		if (!_initialized) init();
+		
 		var exists = _objects.exists(displayObject);
 		
 		if (exists)

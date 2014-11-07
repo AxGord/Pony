@@ -35,7 +35,6 @@ import pony.events.Signal;
 import pony.flash.FLTools;
 import pony.ui.ButtonCore;
 import pony.ui.SlideCore;
-import pony.starling.ui.StarlingScrollBar;
 
 
 using pony.flash.FLExtends;
@@ -169,7 +168,7 @@ class ScrollBar extends Sprite implements pony.flash.FLSt {
 	public var isVert(get, set):Bool;
 	public var update(get, set):Signal;
 	
-	public var starlingScrollBar:StarlingScrollBar;
+	public var starlingScrollBar:pony.starling.ui.StarlingScrollBar;
 	
 	private function get_size():Float return starlingScrollBar.size;
 	private function set_size(v:Float):Float return starlingScrollBar.size = v;
