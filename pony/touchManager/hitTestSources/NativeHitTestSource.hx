@@ -24,7 +24,10 @@ class NativeHitTestSource implements IHitTestSource
 	{
 		_point.x = x;
 		_point.y = y;
-		_point = _container.globalToLocal(_point);
+		
+		//getChildAt(0).globalToLocal is needed because otherwise it won't work with scaled sprites for some reason.
+		//Should work with all the projects initialized with Initializer class, but not tested in other situations.
+		_point = _container.getChildAt(0).globalToLocal(_point);
 		return childUnderPoint(_point.x, _point.y, _container);
 	}
 	

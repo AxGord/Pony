@@ -71,6 +71,8 @@ class Initializer
 		_initialHeight = Lib.current.stage.stageHeight;
 		_aspectRatio = Lib.current.stage.stageWidth / Lib.current.stage.stageHeight;
 		
+		if (Multitouch.supportsTouchEvents) Multitouch.inputMode = MultitouchInputMode.TOUCH_POINT;
+		
 		#if starling
 		_starlingCreator = new StarlingCreator(showStats);
 		
@@ -93,6 +95,10 @@ class Initializer
 		
 		_content = cast convert(untyped _content);
 		_sprite.addChild(_content);
+		
+		TouchManager.init();
+		TouchManager.removeScreenByID(0);
+		TouchManager.addScreen(new StarlingHitTestSource(cast _sprite));
 		#else
 		
 		_sprite = NativeFlashDisplayFactory.getInstance().createSprite();
@@ -107,9 +113,6 @@ class Initializer
 		updateLimiters();
 		
 		#end
-		if (Multitouch.supportsTouchEvents) Multitouch.inputMode = MultitouchInputMode.TOUCH_POINT;
-	
-		touchManagerInit();
 		
 		Lib.current.stage.addEventListener(Event.RESIZE, resizeStage);
 		
@@ -145,26 +148,7 @@ class Initializer
 			updateLimiters();
 		#end
 	}
-	
-	private function touchManagerInit():Void
-	{
-		//InputMode.init();
-		//
-		//#if starling
-			//TouchManager.addScreen(new StarlingHitTestSource(cast _sprite));
-		//#else
-			//TouchManager.addScreen(new NativeHitTestSource(cast _sprite));
-		//#end
-		//
-		//new NativeFlashTouchInput(Lib.current.stage);
-		////new StarlingTouchInputVisualized(cast _sprite);
-		#if starling
-			TouchManager.init();
-			TouchManager.removeScreenByID(0);
-			TouchManager.addScreen(new StarlingHitTestSource(cast _sprite));
-		#end
-	}
-	
+		
 	#if !starling
 	private function updateLimiters():Void
 	{

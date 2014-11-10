@@ -64,7 +64,7 @@ class TouchManager
 	
 	public static function removeScreenByID(screenId:Int):Void
 	{
-		if (_screens.length < screenId && screenId >= 0) _screens.splice(screenId, 1);
+		if (_screens.length > screenId && screenId >= 0) _screens.splice(screenId, 1);
 	}
 	
 	// Listeners:
