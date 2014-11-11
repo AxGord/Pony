@@ -111,8 +111,6 @@ class StarlingTree extends Sprite
 	
 	private function set_minimized(value:Bool):Bool
 	{
-		if (minimized == value) return minimized;
-		
 		minimized = value;
 		
 		if (_headerButton != null) _headerButton.core.mode = minimized ? 2 : 0;
@@ -126,6 +124,7 @@ class StarlingTree extends Sprite
 		else
 		{
 			_nodesSprite.y = toY;
+			updateNodesPosition();
 		}
 		
 		return minimized;
