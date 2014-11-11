@@ -38,7 +38,6 @@ import pony.flash.FLSt;
 import pony.geom.Point.IntPoint;
 import pony.Pair;
 import pony.Pool;
-import pony.starling.ui.StarlingButton;
 import pony.ui.ButtonCore;
 import pony.ui.TreeCore;
 
