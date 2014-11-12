@@ -13,13 +13,17 @@ class DisplayListStaticExtentions
 {
 	public static function setTouchable(object:IDisplayObject, value:Bool):Void
 	{
+		#if starling
 		if (Std.is(object, starling.display.DisplayObject)) StarlingStaticExtentions.setTouchable(cast object, value);
+		#end
 		if (Std.is(object, flash.display.DisplayObject)) FlashStaticExtentions.setTouchable(cast object, value);
 	}
 	
 	public static function getTouchable(object:IDisplayObject):Bool
 	{
+		#if starling
 		if (Std.is(object, starling.display.DisplayObject)) return StarlingStaticExtentions.getTouchable(cast object);
+		#end
 		if (Std.is(object, flash.display.DisplayObject)) return FlashStaticExtentions.getTouchable(cast object);
 		
 		return false;
@@ -29,7 +33,7 @@ class DisplayListStaticExtentions
 	public static function stopUniversalDrag(dragged:IDisplayObject):Void { UniversalDrag.stopUniversalDrag(dragged); }
 	public static function stopUniversalDragKinetic(dragged:IDisplayObject):Void { UniversalDrag.stopUniversalDragKinetic(dragged); }
 }
-
+#if starling
 class StarlingStaticExtentions
 {
 	public static function setTouchable(object:starling.display.DisplayObject, value:Bool):Void { object.touchable = value; }
@@ -39,7 +43,7 @@ class StarlingStaticExtentions
 	public static function stopUniversalDrag(dragged:starling.display.DisplayObject):Void { UniversalDrag.stopUniversalDrag(cast dragged); }
 	public static function stopUniversalDragKinetic(dragged:starling.display.DisplayObject):Void { UniversalDrag.stopUniversalDragKinetic(cast dragged); }
 }
-
+#end
 class FlashStaticExtentions
 {
 	public static function setTouchable(object:flash.display.DisplayObject, value:Bool):Void

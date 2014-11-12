@@ -7,7 +7,9 @@ import pony.starling.displayFactory.DisplayFactory.IDisplayObject;
 import pony.touchManager.TouchEventType;
 import pony.touchManager.TouchManager;
 import pony.touchManager.TouchManagerEvent;
+#if starling
 import starling.display.DisplayObject;
+#end
 
 /**
  * UniversalDrag
@@ -137,12 +139,14 @@ class UniversalDrag
 	}
 }
 
+#if starling
 class UniversalDragStarling
 {
 	public static function startUniversalDrag(dragged:starling.display.DisplayObject, lockCenter:Bool = false, bounds:Rectangle = null):Void { UniversalDrag.startUniversalDrag(cast dragged, lockCenter, bounds); }
 	public static function stopUniversalDrag(dragged:starling.display.DisplayObject):Void { UniversalDrag.stopUniversalDrag(cast dragged); }
 	public static function stopUniversalDragKinetic(dragged:starling.display.DisplayObject):Void { UniversalDrag.stopUniversalDragKinetic(cast dragged); }
 }
+#end
 
 class UniversalDragFlash
 {
