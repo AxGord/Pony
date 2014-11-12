@@ -17,7 +17,6 @@ import starling.textures.SubTexture;
 import starling.textures.Texture;
 import pony.starling.converter.MaxRectsBinPack.FreeRectangleChoiceHeuristic;
 import pony.starling.utils.ReusableBitmapData;
-import pony.starling.utils.StarlingDrag;
 import pony.touchManager.TouchEventType;
 import pony.touchManager.TouchManager;
 
@@ -25,6 +24,8 @@ import pony.touchManager.TouchManager;
  * AtlasCreator
  * @author Maletin
  */
+using pony.starling.displayFactory.DisplayListStaticExtentions;
+ 
 class AtlasCreator 
 {
 	private var _atlases:Array<Atlas> = new Array<Atlas>();
@@ -401,8 +402,8 @@ private class Atlas
 		var debugImage:Image = new Image(texture);
 		debugImage.touchable = true;
 		untyped Starling.current.root.addChild(debugImage);
-		TouchManager.addListener(debugImage, function(_):Void { StarlingDrag.startDrag(debugImage); }, [TouchEventType.Down]);
-		TouchManager.addListener(debugImage, function(_):Void { StarlingDrag.stopDrag(debugImage); }, [TouchEventType.Up]);
+		TouchManager.addListener(debugImage, function(_):Void { debugImage.startUniversalDrag(); }, [TouchEventType.Down]);
+		TouchManager.addListener(debugImage, function(_):Void { debugImage.stopUniversalDrag(); }, [TouchEventType.Up]);
 	}
 }
 

@@ -9,6 +9,7 @@ import starling.display.Image;
 import starling.display.MovieClip;
 import starling.display.Sprite;
 import starling.textures.Texture;
+import starling.textures.SubTexture;
 /**
  * StarlingUtils
  * @author Maletin
@@ -17,7 +18,6 @@ class StarlingUtils
 {
 	public static function largeImage(data:BitmapData, mipMaps:Bool = false):Sprite
 	{
-		//trace("Large image:");
 		var result:Sprite = new Sprite();
 		
 		if ( (data.width <= 2048) && (data.height <= 2048) )
@@ -40,7 +40,6 @@ class StarlingUtils
 					{
 						var textureWidth :Int = (i == xTextures - 1) ? data.width  - i * 2048 : 2048;
 						var textureHeight:Int = (j == yTextures - 1) ? data.height - j * 2048 : 2048;
-						//trace("Large image " + (textureWidth * textureHeight * 4) + " bytes");
 						
 						var bmpd:BitmapData = ReusableBitmapData.getPowTwo(textureWidth, textureHeight);
 						
@@ -58,6 +57,11 @@ class StarlingUtils
 					texture.root.onRestore = function():Void
 					{
 						texture.root.uploadBitmapData(textureSourceInit());
+					}
+					
+					if ((i == xTextures - 1) || (j == yTextures - 1))
+					{
+						texture = new SubTexture(texture, new Rectangle(0, 0, data.width  - i * 2048, data.height - j * 2048), true);
 					}
 					
 					var image:Image = new Image(texture);

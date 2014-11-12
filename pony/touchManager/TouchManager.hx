@@ -28,6 +28,8 @@ class TouchManager
 	private static var _screens:Array<IHitTestSource> = new Array<IHitTestSource>();
 	private static var _initialized:Bool = false;
 	
+	private static var _lastDownEvent:TouchManagerEvent = null;
+	
 	
 	public static function init():Void
 	{
@@ -155,6 +157,8 @@ class TouchManager
 		if (currentObjectChain.length > maxLength) maxLength = currentObjectChain.length;
 		if (activeObjectChain.length > maxLength) maxLength = activeObjectChain.length;
 		
+		dispatch(GLOBAL, Move, true, touch);
+		
 		for (i in 0...maxLength)
 		{
 			if (!touchInputMode && touch.active == null)
@@ -170,8 +174,6 @@ class TouchManager
 				if (activeObjectChain.length > i) dispatch(activeObjectChain[i], Move, commonParent(newCurrentObjectChain, activeObjectChain, i), touch);
 			}
 		}
-			
-		dispatch(GLOBAL, Move, true, touch);
 			
 		touch.current = newCurrentObject;
 	}
@@ -215,12 +217,12 @@ class TouchManager
 			
 			_touches.set(id, touch);
 			
+			dispatch(GLOBAL, Down, true, touch);
 			var touchObjectChain:Array<Dynamic> = getObjectChain(touchObject);
 			for (i in 0...touchObjectChain.length)
 			{
 				dispatch(touchObjectChain[i], Down, true, touch);
 			}
-			dispatch(GLOBAL, Down, true, touch);
 		}
 		else
 		{
@@ -237,11 +239,11 @@ class TouchManager
 			}
 			_mouse.current = _mouse.active;
 			
+			dispatch(GLOBAL, Down, true, _mouse);
 			for (i in 0...mouseActiveObjectChain.length)
 			{
 				dispatch(mouseActiveObjectChain[i], Down, true, _mouse);
 			}
-			dispatch(GLOBAL, Down, true, _mouse);
 		}
 	}
 	
@@ -276,12 +278,12 @@ class TouchManager
 		var activeChain:Array<Dynamic> = getObjectChain(touch.active);
 		var currentChain:Array<Dynamic> = getObjectChain(touch.current);
 		
+		dispatch(GLOBAL, Up, true, touch);
+		
 		for (i in 0...activeChain.length)
 		{
 			dispatch(activeChain[i], Up, commonParent(activeChain, currentChain, i), touch);
 		}
-		
-		dispatch(GLOBAL, Up, true, touch);
 		
 		if (touchInputMode)
 		{
@@ -317,7 +319,12 @@ class TouchManager
 			event.gesture = gesture;
 			event.speedX = touch.speedX;
 			event.speedY = touch.speedY;
+			event.touchID = touch.id;
 			
+			if (event.type == Down)
+			{
+				_lastDownEvent = event;
+			}
 			
 			var listeners = _objects.get(object);
 			
@@ -330,6 +337,8 @@ class TouchManager
 			}
 		}
 	}
+	
+	public static function getLastDownEvent():TouchManagerEvent { return _lastDownEvent; }
 
 	
 	

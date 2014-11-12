@@ -67,9 +67,9 @@ class Initializer
 		
 		_content = (content != null) ? untyped content : untyped Lib.current;
 		
-		_initialWidth = Lib.current.stage.stageWidth;
-		_initialHeight = Lib.current.stage.stageHeight;
-		_aspectRatio = Lib.current.stage.stageWidth / Lib.current.stage.stageHeight;
+		_initialWidth = FLTools.width != -1 ? Std.int(FLTools.width) : Lib.current.stage.stageWidth;
+		_initialHeight = FLTools.height != -1 ? Std.int(FLTools.height) : Lib.current.stage.stageHeight;
+		_aspectRatio = _initialWidth / _initialHeight;
 		
 		if (Multitouch.supportsTouchEvents) Multitouch.inputMode = MultitouchInputMode.TOUCH_POINT;
 		

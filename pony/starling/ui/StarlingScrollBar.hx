@@ -15,7 +15,7 @@ import pony.touchManager.TouchManagerEvent;
 
 
 using pony.flash.FLExtends;
-using pony.starling.utils.StarlingDrag;
+using pony.starling.displayFactory.DisplayListStaticExtentions;
 /**
  * StarlingScrollBar
  * @author Maletin
@@ -41,6 +41,7 @@ class StarlingScrollBar extends Sprite implements pony.flash.FLSt
 	private var slideCore:SlideCore;
 	
 	private var _position:Float;
+	private var _scrollRect:Rectangle;
 
 	public function new(source:Sprite) 
 	{
@@ -56,6 +57,7 @@ class StarlingScrollBar extends Sprite implements pony.flash.FLSt
 		
 		addChild(bg);
 		addChild(scroller);
+		_scrollRect = scroller.getBounds(this);
 		
 		this.transformationMatrix = source.transformationMatrix;
 		
@@ -71,14 +73,10 @@ class StarlingScrollBar extends Sprite implements pony.flash.FLSt
 	
 	private function init():Void {
 		size = isVert ? bg.height : bg.width;
-		//mouseMove = stage.buildSignal(MouseEvent.MOUSE_MOVE);
 		mouseMove = buildTMSignal(TouchManager.GLOBAL, [TouchEventType.Move]);
 		mouseMove.silent = true;
 		mouseMove.add(scrollerMove);
-		scroller.core.down.add(startDraaag);
-		//scroller.core.change.sub(ButtonStates.Default).add(stopDraaag); //???
-		//stage.addEventListener(MouseEvent.MOUSE_UP, stopDraaag.v());
-		TouchManager.addListener(TouchManager.GLOBAL, stopDraaag.v(), [TouchEventType.Up]);
+		TouchManager.addListener(scroller, function(e:TouchManagerEvent):Void { startDraaag(); }, [TouchEventType.Down] );
 		
 	}
 	
@@ -86,20 +84,23 @@ class StarlingScrollBar extends Sprite implements pony.flash.FLSt
 	{
 		var s:Signal;
 		s = new Signal();
-		//d.addEventListener(name, function(event:Event) s.dispatchArgs([event]));
 		TouchManager.addListener(displayObject, function(event:TouchManagerEvent) s.dispatchArgs([event]), types);
 		return s;
 	}
 	
 	private function startDraaag():Void {
 		var ss:Float = size - scrollerSize;
-		rect = isVert ? new Rectangle(0, 0, 0, ss) : new Rectangle(0, 0, ss, 0);
-		scroller.startDrag(false, rect);
+		rect = isVert ? new Rectangle(_scrollRect.x, _scrollRect.y, 0, ss) : new Rectangle(_scrollRect.x, _scrollRect.y, ss, 0);
+		scroller.startUniversalDrag(false, rect);
 		mouseMove.disableSilent();
+		
+		TouchManager.addListener(TouchManager.GLOBAL, stopDraaag, [TouchEventType.Up]);
 	}
 	
-	private function stopDraaag():Void {
-		scroller.stopDrag();
+	private function stopDraaag(e:Dynamic = null):Void {
+		TouchManager.removeListener(TouchManager.GLOBAL, stopDraaag);
+		
+		scroller.stopUniversalDrag();
 		mouseMove.enableSilent();
 	}
 	

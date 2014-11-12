@@ -33,11 +33,16 @@ import flash.geom.Rectangle;
 import flash.events.MouseEvent;
 import pony.events.Signal;
 import pony.flash.FLTools;
+import pony.touchManager.TouchEventType;
+import pony.touchManager.TouchEventType;
+import pony.touchManager.TouchManager;
+import pony.touchManager.TouchManagerEvent;
 import pony.ui.ButtonCore;
 import pony.ui.SlideCore;
 
 
 using pony.flash.FLExtends;
+using pony.starling.displayFactory.DisplayListStaticExtentions;
 /**
  * ...
  * @author AxGord
@@ -73,23 +78,33 @@ class ScrollBar extends Sprite implements pony.flash.FLSt {
 	
 	private function init():Void {
 		size = isVert ? bg.height : bg.width;
-		mouseMove = stage.buildSignal(MouseEvent.MOUSE_MOVE);
+		mouseMove = buildTMSignal(TouchManager.GLOBAL, [TouchEventType.Move]);
 		mouseMove.silent = true;
 		mouseMove.add(scrollerMove);
-		scroller.core.down.add(startDraaag);
-		scroller.core.change.sub(ButtonStates.Default).add(stopDraaag);
-		stage.addEventListener(MouseEvent.MOUSE_UP, stopDraaag.v());
+		TouchManager.addListener(scroller, function(e:TouchManagerEvent):Void { startDraaag(); }, [TouchEventType.Down] );
+	}
+	
+	private function buildTMSignal(displayObject:Dynamic, types:Array<TouchEventType> = null):Signal
+	{
+		var s:Signal;
+		s = new Signal();
+		TouchManager.addListener(displayObject, function(event:TouchManagerEvent) s.dispatchArgs([event]), types);
+		return s;
 	}
 	
 	private function startDraaag():Void {
 		var ss:Float = size - scrollerSize;
 		rect = isVert ? new Rectangle(0, 0, 0, ss) : new Rectangle(0, 0, ss, 0);
-		scroller.startDrag(false, rect);
+		scroller.startUniversalDrag(false, rect);
 		mouseMove.disableSilent();
+		
+		TouchManager.addListener(TouchManager.GLOBAL, stopDraaag, [TouchEventType.Up]);
 	}
 	
-	private function stopDraaag():Void {
-		scroller.stopDrag();
+	private function stopDraaag(e:Dynamic = null):Void {
+		TouchManager.removeListener(TouchManager.GLOBAL, stopDraaag);
+		
+		scroller.stopUniversalDrag();
 		mouseMove.enableSilent();
 	}
 	
