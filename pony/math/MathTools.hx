@@ -62,5 +62,6 @@ class MathTools {
 	inline public static function cabs(v:Int):Int return v < 0 ? -v : v; 
 	inline public static function cmin(a:Int, b:Int):Int return a < b ? a : b; 
 	inline public static function cmax(a:Int, b:Int):Int return a > b ? a : b; 
+	inline public static function roundTo(v:Float, count:Int):Float return Math.round(v * Math.pow(10, count)) / Math.pow(10, count);
 	
 }
