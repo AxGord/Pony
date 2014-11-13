@@ -4,14 +4,14 @@ import flash.geom.Rectangle;
 import pony.events.Signal;
 import pony.flash.FLTools;
 import pony.flash.ui.IScrollBar;
+import pony.touchManager.TouchEventType;
+import pony.touchManager.TouchManager;
+import pony.touchManager.TouchManagerEvent;
 import pony.ui.SlideCore;
 import starling.display.DisplayObject;
 import starling.display.Image;
 import starling.display.Sprite;
 import starling.textures.TextureSmoothing;
-import pony.touchManager.TouchEventType;
-import pony.touchManager.TouchManager;
-import pony.touchManager.TouchManagerEvent;
 
 
 

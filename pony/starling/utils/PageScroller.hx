@@ -1,14 +1,11 @@
 package pony.starling.utils;
+import com.greensock.TweenMax;
 import flash.geom.Rectangle;
-import pony.events.Listener;
 import pony.flash.ui.IScrollBar;
-import pony.flash.ui.ScrollBar;
 import pony.starling.displayFactory.DisplayFactory.IDisplayObject;
-import pony.starling.ui.StarlingScrollBar;
 import pony.touchManager.TouchEventType;
 import pony.touchManager.TouchManager;
 import pony.touchManager.TouchManagerEvent;
-import com.greensock.TweenMax;
 
 /**
  * PageScroller

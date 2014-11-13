@@ -10,7 +10,6 @@ import flash.Lib;
 import flash.ui.Multitouch;
 import flash.ui.MultitouchInputMode;
 import pony.flash.FLTools;
-import pony.starling.converter.StarlingConverter;
 import pony.starling.displayFactory.DisplayFactory.IDisplayObject;
 import pony.starling.displayFactory.DisplayFactory.IDisplayObjectContainer;
 import pony.starling.displayFactory.NativeFlashDisplayFactory;
@@ -22,6 +21,7 @@ import pony.touchManager.TouchManager;
 #if starling
 import starling.display.Sprite;
 import starling.core.Starling;
+import pony.starling.converter.StarlingConverter;
 #end
 
 /**
