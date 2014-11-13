@@ -3,6 +3,7 @@ package pony.starling.ui;
 import flash.geom.Rectangle;
 import pony.events.Signal;
 import pony.flash.FLTools;
+import pony.flash.ui.IScrollBar;
 import pony.ui.SlideCore;
 import starling.display.DisplayObject;
 import starling.display.Image;
@@ -20,7 +21,7 @@ using pony.starling.displayFactory.DisplayListStaticExtentions;
  * StarlingScrollBar
  * @author Maletin
  */
-class StarlingScrollBar extends Sprite implements pony.flash.FLSt
+class StarlingScrollBar extends Sprite implements pony.flash.FLSt implements IScrollBar
 {
 	public var scroller:StarlingButton;
 	public var bg:DisplayObject;
@@ -169,6 +170,15 @@ class StarlingScrollBar extends Sprite implements pony.flash.FLSt
 		updateScroller();
 		dispatchUpdate();
 		return position;
+	}
+	
+	public function setPositionPercent(p:Float):Void
+	{
+		if (p < 0 || scrollerSize >= size - 10) p = 0;
+		else if (p > 1) p = 1;
+		_position = p * (size - scrollerSize);
+		updateScroller();
+		dispatchUpdate();
 	}
 	
 	private function slUpdate(v:Float):Void alpha = v;

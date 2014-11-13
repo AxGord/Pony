@@ -47,8 +47,9 @@ using pony.starling.displayFactory.DisplayListStaticExtentions;
  * ...
  * @author AxGord
  */
-class ScrollBar extends Sprite implements pony.flash.FLSt {
+
 #if !starling
+class ScrollBar extends Sprite implements pony.flash.FLSt implements IScrollBar {
 	@st public var scroller:Button;
 	@st public var bg:DisplayObject;
 	public var size(get, set):Float;
@@ -175,8 +176,19 @@ class ScrollBar extends Sprite implements pony.flash.FLSt {
 		return position;
 	}
 	
+	public function setPositionPercent(p:Float):Void
+	{
+		if (p < 0 || scrollerSize >= size - 10) p = 0;
+		else if (p > 1) p = 1;
+		_position = p * (size - scrollerSize);
+		updateScroller();
+		dispatchUpdate();
+	}
+	
 	private function slUpdate(v:Float):Void alpha = v;
 #else
+class ScrollBar extends Sprite implements pony.flash.FLSt {
+	
 	public var size(get, set):Float;
 	public var total(get, set):Float;
 	public var position(get,set):Float;

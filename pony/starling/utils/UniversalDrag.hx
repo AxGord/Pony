@@ -17,6 +17,8 @@ import starling.display.DisplayObject;
  */
 class UniversalDrag 
 {
+	public static inline var KINETIC_DRAG_DURATION:Float = 0.7;
+	
 	private static var _dragged:IDisplayObject;
 	private static var _dragBounds:Rectangle;
 	
@@ -128,7 +130,7 @@ class UniversalDrag
 		_dragged.x = prevX;
 		_dragged.y = prevY;
 		
-		_activeTween = TweenMax.to(_dragged, 0.7, { x:toX, y:toY } );
+		_activeTween = TweenMax.to(_dragged, KINETIC_DRAG_DURATION, { x:toX, y:toY } );
 		
 		_dragged = null;
 	}

@@ -61,7 +61,7 @@ class StarlingTree extends Sprite
 			}
 		}
 		
-		_nodesSprite.clipRect = new Rectangle(0, (_header != null ? _headerButton.height : 0), 10000, 10000);
+		_nodesSprite.clipRect = new Rectangle(0, (_header != null ? _headerButton.height : 1), 10000, 10000);
 	}
 	
 	public function draw():Void
