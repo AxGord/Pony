@@ -115,11 +115,12 @@ class Initializer
 		#end
 		
 		Lib.current.stage.addEventListener(Event.RESIZE, resizeStage);
+		resizeStage();
 		
 		_initCallback(_sprite, _content);
 	}
 	
-	private function resizeStage(e:Event):Void
+	private function resizeStage(e:Event = null):Void
 	{
 		var stage = Lib.current.stage;
 		var smallerWidth:Bool = stage.stageWidth / stage.stageHeight < _aspectRatio;

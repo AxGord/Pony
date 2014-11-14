@@ -166,10 +166,10 @@ class Tree extends Sprite implements FLSt {
 		
 		if (_headerButton != null) _headerButton.core.mode = minimized ? 2 : 0;
 		
-		
-		var toY:Float = minimized ? -(treeHeight() - headerHeight()) : 0;
+		var toY:Float = minimized ? - _nodesSprite.height : 0;
 		if (animated)
 		{
+			TweenMax.killTweensOf(_nodesSprite);
 			TweenMax.to(_nodesSprite, 0.2 + 0.0003 * _nodesSprite.height, { y:toY, onUpdate:updateNodesPosition } );
 		}
 		else
