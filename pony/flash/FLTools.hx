@@ -228,6 +228,7 @@ class FLTools
 		sprite.graphics.drawRect(-size, 0, size, width+size);
 		sprite.graphics.drawRect(width, 0, size, width+size);
 		sprite.graphics.drawRect(0, height, width, height + size);
+		sprite.graphics.endFill();
 		
 		Lib.current.stage.addChild(sprite);
 	}

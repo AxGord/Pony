@@ -94,13 +94,12 @@ class Tree extends Sprite implements FLSt {
 			}
 		}
 		
-		//TODO mask
-		//_nodesSprite.clipRect = new Rectangle(0, (_header != null ? _headerButton.height : 0), 10000, 10000);
-		var mask:Sprite = new Sprite();
-		mask.graphics.beginFill(0x0, 1);
-		mask.graphics.drawRect(0, headerHeight(), 1000, 10000);
-		mask.graphics.endFill();
-		this.mask = mask;
+		//var mask:Sprite = new Sprite();
+		//mask.graphics.beginFill(0x0, 1);
+		//mask.graphics.drawRect(0, headerHeight(), 1000, 10000);
+		//mask.graphics.endFill();
+		//this.mask = mask;
+		//addChild(mask);
 	}
 	
 	public function setHeaderAndCore(header:TreeElement, core:TreeCore):Void
