@@ -232,6 +232,20 @@ class FLTools
 		
 		Lib.current.stage.addChild(sprite);
 	}
+	
+	public static function reverseChildren(container:DisplayObjectContainer):Void
+	{
+		var children:Array<DisplayObject> = new Array<DisplayObject>();
+		for (i in 0...container.numChildren)
+		{
+			children.push(container.getChildAt(i));
+		}
+		container.removeChildren();
+		for (i in 0...children.length)
+		{
+			container.addChild(children[children.length - i - 1]);
+		}
+	}
 	#end
 	
 	macro public static function includeAS(dir:String):Expr {

@@ -74,8 +74,6 @@ class Tree extends Sprite implements FLSt {
 	public var animated(default, set):Bool = false;
 	
 	public function new(header:TreeElement = null, core:TreeCore = null) {
-		//super();
-		//FLTools.init < init;
 		super();
 		
 		removeChildren();
@@ -95,13 +93,6 @@ class Tree extends Sprite implements FLSt {
 				default:
 			}
 		}
-		
-		//var mask:Sprite = new Sprite();
-		//mask.graphics.beginFill(0x0, 1);
-		//mask.graphics.drawRect(0, headerHeight(), 1000, 10000);
-		//mask.graphics.endFill();
-		//this.mask = mask;
-		//addChild(mask);
 	}
 	
 	public function setHeaderAndCore(header:TreeElement, core:TreeCore):Void
@@ -138,6 +129,8 @@ class Tree extends Sprite implements FLSt {
 		minimized = !core.opened;
 		
 		animated = true;
+		
+		FLTools.reverseChildren(_nodesSprite);
 	}
 	
 	public function treeHeight():Float
@@ -150,8 +143,9 @@ class Tree extends Sprite implements FLSt {
 		var previous:Float = _headerButton != null ? _headerButton.height : 0;
 		for (node in _nodes)
 		{
-			node.y = node.visible ? previous : 0;
-			if (node.visible) previous = node.y + (Std.is(node, Tree) ? untyped node.treeHeight() : node.height);
+			node.visible = node.y + _nodesSprite.y >= 0;
+			node.y = previous;
+			previous = node.y + (Std.is(node, Tree) ? untyped node.treeHeight() : node.height);
 		}
 		
 		if (_heightChangeCallback != null) _heightChangeCallback();

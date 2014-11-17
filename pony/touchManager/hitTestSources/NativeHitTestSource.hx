@@ -34,6 +34,7 @@ class NativeHitTestSource implements IHitTestSource
 	private function childUnderPoint(x:Float, y:Float, container:DisplayObjectContainer, testShape:Bool = true):Dynamic
 	{
 		if (!container.mouseChildren && container.mouseEnabled && container.visible) return container;
+		if ((!container.mouseChildren && !container.mouseEnabled) || !container.visible) return null;
 		var i:Int = container.numChildren - 1;
 		while (i >= 0)
 		{
