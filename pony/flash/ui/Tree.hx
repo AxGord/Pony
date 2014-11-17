@@ -27,7 +27,6 @@
 **/
 package pony.flash.ui;
 
-import com.greensock.TweenMax;
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.Sprite;
@@ -40,6 +39,9 @@ import pony.Pair;
 import pony.Pool;
 import pony.ui.ButtonCore;
 import pony.ui.TreeCore;
+#if tweenmax
+import com.greensock.TweenMax;
+#end
 
 using pony.flash.FLExtends;
 
@@ -69,7 +71,7 @@ class Tree extends Sprite implements FLSt {
 	public var core:TreeCore;
 	
 	public var minimized(default, set):Bool;
-	public var animated:Bool = false;
+	public var animated(default, set):Bool = false;
 	
 	public function new(header:TreeElement = null, core:TreeCore = null) {
 		//super();
@@ -169,8 +171,10 @@ class Tree extends Sprite implements FLSt {
 		var toY:Float = minimized ? - _nodesSprite.height : 0;
 		if (animated)
 		{
+			#if tweenmax
 			TweenMax.killTweensOf(_nodesSprite);
 			TweenMax.to(_nodesSprite, 0.2 + 0.0003 * _nodesSprite.height, { y:toY, onUpdate:updateNodesPosition } );
+			#end
 		}
 		else
 		{
@@ -179,6 +183,17 @@ class Tree extends Sprite implements FLSt {
 		}
 		
 		return minimized;
+	}
+	
+	private function set_animated(value:Bool):Bool
+	{
+		#if tweenmax
+		animated = value;
+		#else
+		animated = false;
+		#end
+		
+		return animated;
 	}
 	
 	private function drawUnit(p:IntPoint, text:String, func:Void->Void):Void

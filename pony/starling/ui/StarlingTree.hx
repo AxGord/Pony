@@ -1,6 +1,6 @@
 package pony.starling.ui;
 
-import com.greensock.TweenMax;
+
 import flash.geom.Rectangle;
 import pony.flash.ui.Button;
 import pony.geom.Point.IntPoint;
@@ -8,6 +8,10 @@ import pony.ui.TreeCore;
 import starling.display.DisplayObject;
 import starling.display.Sprite;
 import pony.starling.converter.StarlingConverter;
+#if tweenmax
+import com.greensock.TweenMax;
+#end
+
 /**
  * StarlingTree
  * @author Maletin
@@ -33,7 +37,7 @@ class StarlingTree extends Sprite
 	public var core:TreeCore;
 	
 	public var minimized(default, set):Bool;
-	public var animated:Bool = false;
+	public var animated(default, set):Bool = false;
 
 	public function new(flashSource:flash.display.Sprite, header:TreeElement = null, core:TreeCore = null) 
 	{
@@ -119,7 +123,9 @@ class StarlingTree extends Sprite
 		var toY:Float = minimized ? -_nodesSprite.height : 0;
 		if (animated)
 		{
+			#if tweenmax
 			TweenMax.to(_nodesSprite, 0.2 + 0.0003 * _nodesSprite.height, { y:toY, onUpdate:updateNodesPosition } );
+			#end
 		}
 		else
 		{
@@ -128,6 +134,17 @@ class StarlingTree extends Sprite
 		}
 		
 		return minimized;
+	}
+	
+	private function set_animated(value:Bool):Bool
+	{
+		#if tweenmax
+		animated = value;
+		#else
+		animated = false;
+		#end
+		
+		return animated;
 	}
 	
 	private function drawUnit(p:IntPoint, text:String, func:Void->Void):Void

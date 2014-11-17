@@ -1,11 +1,13 @@
 package pony.starling.utils;
-import com.greensock.TweenMax;
 import flash.geom.Rectangle;
 import pony.flash.ui.IScrollBar;
 import pony.starling.displayFactory.DisplayFactory.IDisplayObject;
 import pony.touchManager.TouchEventType;
 import pony.touchManager.TouchManager;
 import pony.touchManager.TouchManagerEvent;
+#if tweenmax
+import com.greensock.TweenMax;
+#end
 
 /**
  * PageScroller
@@ -30,6 +32,8 @@ class PageScroller
 		_pageAreaHeight = pageAreaHeight;
 		_scrollBar.update.add(function(p:Float):Void { if (!dragged) page.y = -p; });
 		TouchManager.addListener(page, scrollListener, [TouchEventType.MouseWheel]);
+		//TouchManager.addListener(_scrollBar, scrollListener, [TouchEventType.MouseWheel]);
+		//TouchManager.addListener(_scrollBar, function(e:TouchManagerEvent):Void { trace("ScrollBar mousewheel"); } , [TouchEventType.MouseWheel]);
 		
 		TouchManager.addListener(page, onAreaDrag, [TouchEventType.Down]);
 		TouchManager.addListener(page, dragScrollUpdate, [TouchEventType.Move]);
@@ -46,9 +50,11 @@ class PageScroller
 	private function onAreaStopDrag(e:TouchManagerEvent):Void
 	{
 		_page.stopUniversalDragKinetic();
+		#if tweenmax
 		TweenMax.killTweensOf(this);
 		kineticDragged = true;
 		TweenMax.to(this, UniversalDrag.KINETIC_DRAG_DURATION, { onUpdate:function():Void { kineticDragged = true; dragScrollUpdate(null); }, onComplete:function ():Void { kineticDragged = false; } } );
+		#end
 		activelyDragged = false;
 	}
 	

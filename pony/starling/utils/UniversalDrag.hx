@@ -1,12 +1,14 @@
 package pony.starling.utils;
 
-import com.greensock.TweenMax;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 import pony.starling.displayFactory.DisplayFactory.IDisplayObject;
 import pony.touchManager.TouchEventType;
 import pony.touchManager.TouchManager;
 import pony.touchManager.TouchManagerEvent;
+#if tweenmax
+import com.greensock.TweenMax;
+#end
 #if starling
 import starling.display.DisplayObject;
 #end
@@ -25,8 +27,6 @@ class UniversalDrag
 	private static var _xSpeed:Float;
 	private static var _ySpeed:Float;
 	
-	private static var _activeTween:TweenMax;
-	
 	private static var SPEED_MP:Float = 350;
 	private static var SPEED_POW:Float = 1.4;
 	
@@ -35,6 +35,10 @@ class UniversalDrag
 	
 	private static var _dragTouchId:Int = -1;
 	private static var bufferPoint:Point = new Point(0, 0);
+	
+	#if tweenmax
+	private static var _activeTween:TweenMax;
+	#end
 	
 	
 	public static function startUniversalDrag(dragged:IDisplayObject, lockCenter:Bool = false, bounds:Rectangle = null):Void
@@ -66,7 +70,9 @@ class UniversalDrag
 		
 		TouchManager.addListener(TouchManager.GLOBAL, onDrag, [TouchEventType.Move]);
 		
+		#if tweenmax
 		if (_activeTween != null) _activeTween.kill();
+		#end
 	}
 	
 	private static function onDrag(e:TouchManagerEvent):Void
@@ -113,11 +119,10 @@ class UniversalDrag
 		
 		if (_dragged == null) return;
 		
+		#if tweenmax
+		
 		var prevX:Float = _dragged.x;
 		var prevY:Float = _dragged.y;
-		
-		//trace("_xSpeed = " + _xSpeed + ", (" + SPEED_MP + " * Math.pow(Math.abs(_xSpeed), " + SPEED_POW + ") * sign(_xSpeed) ) = " + (SPEED_MP * Math.pow(Math.abs(_xSpeed), SPEED_POW) * sign(_xSpeed)) + "\n" + 
-			  //"_ySpeed = " + _ySpeed + ", (" + SPEED_MP + " * Math.pow(Math.abs(_ySpeed), " + SPEED_POW + ") * sign(_ySpeed) ) = " + (SPEED_MP * Math.pow(Math.abs(_ySpeed), SPEED_POW) * sign(_ySpeed)));
 		
 		_dragged.x += SPEED_MP * Math.pow(Math.abs(_xSpeed), SPEED_POW) * sign(_xSpeed);
 		_dragged.y += SPEED_MP * Math.pow(Math.abs(_ySpeed), SPEED_POW) * sign(_ySpeed);
@@ -131,6 +136,8 @@ class UniversalDrag
 		_dragged.y = prevY;
 		
 		_activeTween = TweenMax.to(_dragged, KINETIC_DRAG_DURATION, { x:toX, y:toY } );
+		
+		#end
 		
 		_dragged = null;
 	}
