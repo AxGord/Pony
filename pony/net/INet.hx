@@ -15,5 +15,5 @@ interface INet
 	var onConnect(default, null):Signal1<SocketServer, SocketClient>; //onAccept in a server.
 	var onDisconnect(default,null):Signal;
 	function send(b:BytesOutput):Void;
-	private function destroy():Void;
+	function destroy():Void;
 }

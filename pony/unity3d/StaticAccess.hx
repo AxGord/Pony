@@ -31,6 +31,7 @@ import pony.ui.ButtonCore;
 import pony.unity3d.ui.TintButton;
 import pony.unity3d.ui.Button;
 import unityengine.GameObject;
+import unityengine.Behaviour;
 
 using hugs.HUGSWrapper;
 /**
@@ -40,7 +41,7 @@ using hugs.HUGSWrapper;
  */
 @:nativeGen class StaticAccess {
 
-	inline static public function component<T>(gameObject:String, cl:Class<T>):T {
+	inline static public function component<T:Behaviour>(gameObject:String, cl:Class<T>):T {
 		#if debug
 		var g:GameObject = GameObject.Find(gameObject);
 		if (g == null) {

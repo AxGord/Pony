@@ -75,7 +75,7 @@ class Protobuf < A:ProtobufBuilder, B:ProtobufBuilder > implements Declarator {
 	
 	private function trySend():Void {
 		if (gonext > 0) {
-			if (--gonext == 1) sendComplite.dispatch();
+			if (--gonext == 0) sendComplite.dispatch();
 			return;
 		}
 		if (!socket.isAbleToSend) return;
@@ -86,16 +86,12 @@ class Protobuf < A:ProtobufBuilder, B:ProtobufBuilder > implements Declarator {
 		onSend.dispatch(builder);
 		for (f in fs) f(builder);
 		fs = null;
-		if (untyped builder.midi != null) {
-			trace(untyped builder.midi.addr);
-			trace(untyped builder.midi.state);
-		}
 		sendTo(builder, socket);
-		#if nodejs
-		gonext = 2;
-		#else
+		//#if nodejs
+		//gonext = 2;
+		//#else
 		gonext = 1;
-		#end
+		//#end
 	}
 	
 	public function sendTo(builder:A, socket:INet):Void {
@@ -108,6 +104,14 @@ class Protobuf < A:ProtobufBuilder, B:ProtobufBuilder > implements Declarator {
 		var output = new BytesOutput();
 		awrite(builder, output);
 		socket.send2other(output);
+	}
+	
+	public function destroy():Void {
+		DeltaTime.fixedUpdate.remove(trySend);
+		socket.destroy();
+		sendComplite.destroy();
+		onData.destroy();
+		onSend.destroy();
 	}
 	
 }

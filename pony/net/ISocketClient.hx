@@ -48,7 +48,7 @@ interface ISocketClient extends INet {
 	var isWithLength:Bool;
 	
 	function send(data:BytesOutput):Void;
-	private function destroy():Void;
+	function destroy():Void;
 	function open():Void;
 	function reconnect():Void;
 	function send2other(data:BytesOutput):Void;
