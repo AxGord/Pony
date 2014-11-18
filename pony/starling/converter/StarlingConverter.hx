@@ -188,6 +188,12 @@ class StarlingConverter
 		
 		result.transformationMatrix = matrix;
 		
+		var rect:Rectangle = source.getBounds(coordinateSpace);
+		var matrixPoint:Point = matrix.transformPoint(new Point(selfRect.x, selfRect.y));
+		
+		result.x = matrixPoint.x;
+		result.y = matrixPoint.y;
+		
 		return result;
 	}
 	
