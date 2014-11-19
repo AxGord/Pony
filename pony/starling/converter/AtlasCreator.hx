@@ -1,5 +1,6 @@
 package pony.starling.converter;
 import flash.display.BitmapData;
+import flash.display.DisplayObject;
 import flash.filters.BevelFilter;
 import flash.filters.BlurFilter;
 import flash.filters.ColorMatrixFilter;
@@ -74,7 +75,7 @@ class AtlasCreator
 			
 			var nonAlphaRect:Rectangle = drawResult.nonAlphaRect;
 			
-			var textureBase:Dynamic = createTexture(drawResult.bitmapData, drawResult.bitmapDataRect, !disposeable);
+			var textureBase:Dynamic = createTexture(drawResult.bitmapData, drawResult.bitmapDataRect, !disposeable, drawResult.restorationCallback);
 			
 			texture = new SubTexture(textureBase.texture, textureBase.addedTo, disposeable);
 			
@@ -150,7 +151,7 @@ class AtlasCreator
 				
 				var nonAlphaRect:Rectangle = drawResult.nonAlphaRect;
 				
-				var textureBase:Dynamic = createTexture(drawResult.bitmapData, drawResult.bitmapDataRect, !disposeable);
+				var textureBase:Dynamic = createTexture(drawResult.bitmapData, drawResult.bitmapDataRect, !disposeable, frameRestorationCallback.bind(source, i, drawResult.restorationCallback));
 				
 				nonAlphaRect.x -= matrixPoint.x - rect.x;
 				nonAlphaRect.y -= matrixPoint.y - rect.y;
@@ -201,7 +202,6 @@ class AtlasCreator
 			}
 		}
 		
-		//TODO set frame to 1-st !null ?
 		source.gotoAndStop(1);
 		matrix = StarlingConverter.matrixCalculation(source, coordinateSpace);
 		var matrixPoint:Point = matrix.transformPoint(new Point(0, 0));
@@ -265,7 +265,8 @@ class AtlasCreator
 				//TODO support for larger textures?
 				if (bufferRect.width  > Atlas.size - 2 * _border) bufferRect.width  = nonAlphaRect.width  = Atlas.size - 2 * _border;
 				if (bufferRect.height > Atlas.size - 2 * _border) bufferRect.height = nonAlphaRect.height = Atlas.size - 2 * _border;
-				return { nonAlphaRect:nonAlphaRect, bitmapData:buffer, bitmapDataRect:bufferRect};
+				return { nonAlphaRect:nonAlphaRect, bitmapData:buffer, bitmapDataRect:bufferRect, 
+						 restorationCallback:bitmapDataRestorationCallback.bind(Std.int(rect.width + additionalSize * 2), Std.int(rect.height + additionalSize * 2), source, matrix)};
 			}
 		}
 		
@@ -274,15 +275,28 @@ class AtlasCreator
 		return null;
 	}
 	
-	private function createTexture(bitmapData:BitmapData, area:Rectangle, toAtlas:Bool):Dynamic
+	private function bitmapDataRestorationCallback(sizeX:Int, sizeY:Int, source:DisplayObject, matrix:Matrix):BitmapData
+	{
+		var result:BitmapData = ReusableBitmapData.getPowTwo(sizeX, sizeY);
+		result.draw(source, matrix, null, null, null, true);
+		return result;
+	}
+	
+	private function frameRestorationCallback(source:flash.display.MovieClip, frame:Int, callback:Void->BitmapData):BitmapData
+	{
+		source.gotoAndStop(frame + 1);
+		return callback();
+	}
+	
+	private function createTexture(bitmapData:BitmapData, area:Rectangle, toAtlas:Bool, restorationCallback:Void->BitmapData = null):Dynamic
 	{
 		if (toAtlas)
 		{
-			var addedTo:Rectangle = _atlases[_atlases.length - 1].add(bitmapData, area);
+			var addedTo:Rectangle = _atlases[_atlases.length - 1].add(bitmapData, area, restorationCallback);
 			if (addedTo == null)
 			{
 				_atlases.push(new Atlas());
-				addedTo = _atlases[_atlases.length - 1].add(bitmapData, area);
+				addedTo = _atlases[_atlases.length - 1].add(bitmapData, area, restorationCallback);
 			}
 			
 			return { texture:_atlases[_atlases.length - 1].texture, addedTo:addedTo };
@@ -302,6 +316,10 @@ class AtlasCreator
 			{
 				//Can't place it in a smaller bitmapData
 				texture = Texture.fromBitmapData(bitmapData, false);
+				texture.root.onRestore = function():Void {
+					var bmpd = restorationCallback();
+					texture.root.uploadBitmapData(bmpd);
+				}
 				return { texture:texture, addedTo:area };
 			}
 			else
@@ -311,6 +329,13 @@ class AtlasCreator
 				
 				texture = Texture.fromBitmapData(smallerBitmapData, false);
 				area.x = area.y = 0;
+				
+				texture.root.onRestore = function():Void {
+					var bmpd = restorationCallback();
+					var smallerBmpd:BitmapData = ReusableBitmapData.getPowTwo(cast area.width, cast area.height);
+					smallerBmpd.copyPixels(bmpd, area, new Point(0, 0));
+					texture.root.uploadBitmapData(smallerBmpd);
+				}
 				return { texture:texture, addedTo:area };
 			}
 		}
@@ -319,7 +344,7 @@ class AtlasCreator
 	
 	public function generate():Void
 	{
-		_atlases[_atlases.length - 1].generate();
+		_atlases[_atlases.length - 1].generate(false);
 	}
 	
 	private static function initStorageMap():Map<String, TextureStorage>
@@ -347,18 +372,22 @@ class AtlasCreator
 private class Atlas
 {
 	public static var size:Int = 2048;
-	public var bitmapData:BitmapData = new BitmapData(size, size, true, 0x0);
+	private static var lastActiveAtlasBmpd:BitmapData;
 	public var pack:MaxRectsBinPack = new MaxRectsBinPack(size, size, false);
 	public var texture:Texture = Texture.empty(size, size, true, false, false, 1);
 	public var upToDate:Bool = false;
 	public var full:Bool = false;
 	
+	private var _bitmapDataRestoration:Array<BitmapData->Void> = new Array<BitmapData->Void>();
+	
 	public function new()
 	{
 		//trace("NEW ATLAS CREATED");
+		lastActiveAtlasBmpd = new BitmapData(size, size, true, 0x0);
+		texture.root.onRestore = textureRestore;
 	}
 	
-	public function add(data:BitmapData, rect:Rectangle):Rectangle
+	public function add(data:BitmapData, rect:Rectangle, restorationCallback:Void->BitmapData = null):Rectangle
 	{
 		if (full) return null;
 		
@@ -373,28 +402,42 @@ private class Atlas
 		
 		if (placedRect.width == 0 || placedRect.height == 0)
 		{
-			generate();
+			generate(true);
 			return null;
 		}
 		
-		bitmapData.copyPixels(data, rect, placedRect.topLeft);
+		_bitmapDataRestoration.push(function(bmpd:BitmapData):Void
+		{
+			if (restorationCallback != null) bmpd.copyPixels(restorationCallback(), rect, placedRect.topLeft);
+		});
+		
+		lastActiveAtlasBmpd.copyPixels(data, rect, placedRect.topLeft);
 		
 		upToDate = false;
 		
 		return placedRect;
 	}
 	
-	public function generate():Void
+	public function generate(finalize:Bool):Void
 	{
 		if (upToDate) return;
 		
-		texture.root.uploadBitmapData(bitmapData);
-		texture.root.onRestore = function():Void
-        {
-            texture.root.uploadBitmapData(bitmapData);
-        };
+		texture.root.uploadBitmapData(lastActiveAtlasBmpd);
 		
 		upToDate = true;
+		
+		if (finalize) full = true;
+	}
+	
+	private function textureRestore():Void
+	{
+		var bitmapData = ReusableBitmapData.getPowTwo(size, size);
+		for (i in 0..._bitmapDataRestoration.length)
+		{
+			_bitmapDataRestoration[i](bitmapData);
+		}
+		texture.root.uploadBitmapData(bitmapData);
+		bitmapData = null;
 	}
 	
 	public function drawOnScreen():Void
