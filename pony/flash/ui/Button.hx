@@ -28,17 +28,11 @@
 package pony.flash.ui;
 
 import flash.display.MovieClip;
-import flash.events.MouseEvent;
-import flash.events.TouchEvent;
-import flash.ui.Multitouch;
 import pony.flash.FLTools;
-import pony.time.DeltaTime;
 import pony.touchManager.ButtonCoreTM;
 import pony.touchManager.TouchManager;
 import pony.touchManager.TouchManagerEvent;
 import pony.ui.ButtonCore;
-
-
 
 using pony.flash.FLExtends;
 using pony.flash.CPP_FL_TouchFix;
@@ -102,41 +96,6 @@ class Button extends MovieClip {
 		ButtonCoreTM.eventsTransition(e, core);
 	}
 	
-	private function touchOver(_):Void {
-		//trace('over');
-		core.mouseOver(false);
-		core.mouseDown();
-	}
-	
-	private function touchEnd(_):Void {
-		DeltaTime.fixedUpdate < _touchEnd;
-	}
-	
-	private function _touchEnd():Void {
-		//trace('end');
-		core.mouseOut();
-		core.mouseUp();
-	}
-	
-	private function touchMove(e:TouchEvent):Void {
-		if (hitTestPoint(e.stageX, e.stageY)) core.mouseOver(true);
-		else core.mouseOut();
-	}
-	
-	private function touchOut(_):Void {
-		core.mouseOut();
-		leftOver = false;
-	}
-	
-	private function touchPress(_):Void {
-		//trace('tPress');
-		core.mouseUp();
-		core.mouseOut();
-		leftOver = false;
-	}
-	
-	private function over(event:MouseEvent):Void core.mouseOver(event.buttonDown);
-	
 	private function change(state:ButtonStates, mode:Int, focus:Bool):Void {
 		if (mode == 1) {
 			zone.buttonMode = false;
@@ -152,21 +111,6 @@ class Button extends MovieClip {
 		}) + mode * 3 - (mode > 1?1:0));
 	}
 	
-	
-	//Touch screen in cpp
-	/*
-	private function touchMove(obj:InteractiveObject) {
-		if (zone == obj) return;
-		core.mouseOut();
-		core.mouseUp();
-	}
-	
-	private function touchUp() {
-		core.mouseDown();
-		core.mouseUp();
-		core.mouseOut();
-	}
-	*/
 	public function sw(v:Array<Int>):Void if (core != null) core.sw = v;
 	public function getSW():Array<Int> return core.sw;
 	#else
