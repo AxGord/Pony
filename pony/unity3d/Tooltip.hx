@@ -63,14 +63,16 @@ using pony.math.MathTools;
 	public static var r:Rect;
 	public static var lr:Rect;
 	
-	public static var longTextObject:GameObject;
-	public static var guiLongTextObject:GUIText;
+	private static var longTextObject:GameObject;
+	private static var guiLongTextObject:GUIText;
 	
 	public static var texture:Texture;
 	public static var defaultColorMod:LV<Color> = new LV(null);
 	public static var panel:Bool = false;
 	
 	private static var target:Dynamic;
+	private static var longTextDY:Float = 0;
+	private static var distanceToLong:Float = 5;
 		
 	private static function init():Void {
 		
@@ -119,13 +121,19 @@ using pony.math.MathTools;
 		var w = panel && Fixed2dCamera.exists ? Fixed2dCamera.SIZE : Screen.width - Fixed2dCamera.SIZE;
 		var h = Screen.height;
 		
+		var rectWidth:Float = r.width;
+		var rectHeight:Float = r.height;
+		
 		if ( bigText != "" )
 		{
 			guiLongTextObject.enabled = true;
 			guiLongTextObject.text = WordWrap.wordWrap(bigText, 75);	
 			lr = guiLongTextObject.GetScreenRect();
-			r.height += lr.height;
-			r.width = Math.max(r.width, lr.width);
+			longTextDY = r.height + distanceToLong;
+			rectHeight = r.height + lr.height + distanceToLong;
+			rectWidth = Math.max(r.width, lr.width);
+			r = new Rect(r.x, r.y, rectWidth, rectHeight);
+			
 		} else
 			guiLongTextObject.enabled = false;
 		guiTextureObject.pixelInset = new Rect(w / 2 - border, h / 2 - r.height - border, -w + r.width + border * 2, -h + r.height + border * 2);
@@ -156,8 +164,7 @@ using pony.math.MathTools;
 		y = y.limit(dh+limy, 1-limy);
 		textObject.transform.position = new Vector3(x, y, 500);
 		textureObject.transform.position = new Vector3(x, y, 499);
-		y = (Input.mousePosition.y + r.height + border * 2 - 15) / Screen.height;
-		y = y.limit(dh+limy, 1-limy);
+		y -= longTextDY / Screen.height;
 		longTextObject.transform.position = new Vector3(x, y, 500);
 	}
 	
