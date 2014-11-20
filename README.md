@@ -9,7 +9,7 @@ Haxe open-cross-library
 <pre>haxelib install Pony</pre>
 <p>Unstable version</p>
 <pre>haxelib git pony https://github.com/AxGord/Pony</pre>
-<p>Recommended Haxe build: <a href="http://hxbuilds.s3-website-us-east-1.amazonaws.com/builds/haxe/windows/haxe_2014-09-14_development_2fcd2ca.tar.gz">haxe_2014-09-14_development_2fcd2ca.tar.gz</a></p>
+<p>Last Haxe build: <a href="http://hxbuilds.s3-website-us-east-1.amazonaws.com/builds/haxe/windows/haxe_latest.tar.gz">haxe_latest.tar.gz</a></p>
 
 <h2>Manual</h2>
 - <a href="http://axgord.github.io/Pony/#signals">Signals</a>

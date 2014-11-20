@@ -35,7 +35,7 @@ using Std;
  * DT
  * @author AxGord <axgord@gmail.com>
  */
-abstract DT(Null<Float>) {
+abstract DT(Null<Float>) from Float to Float {
 	
 	public var ms(get, never):Float;
 	public var sec(get, never):Float;
@@ -81,20 +81,18 @@ abstract DT(Null<Float>) {
 	
 	inline public function new(v:Float) this = v;
 	
-	@:from inline private static function fromFloat(v:Float):DT return new DT(v);
-	@:from inline private static function fromTime(v:Time):DT return new DT(v/1000);
-	@:to inline public function toFloat():Float return this;
+	@:from inline public static function fromTime(v:Time):DT return new DT(v/1000);
 	@:to inline public function toTime():Time return this * 1000;
 	
 	@:to public function toString():String {
 		var d:Float = this % 1;
-		var t:Time = this * 1000;
+		var t:Time = toTime();
 		if (d == 0)
 			return t;
 		else if (t.ms > 0)
-			return t + '.' + Std.string(d).substr(1);
+			return t.toString() + '.' + Std.string(d).substr(1);
 		else
-			return t + '..' + Std.string(d).substr(1);
+			return t.toString() + '..' + Std.string(d).substr(1);
 	}
 	
 	inline private function get_ms   ():Float return this / 1000;

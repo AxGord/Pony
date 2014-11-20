@@ -31,7 +31,7 @@ package pony.color;
  * Can be only positive
  * @author AxGord <axgord@gmail.com>
  */
-abstract UColor(UInt) {
+abstract UColor(UInt) from UInt to UInt {
 
 	/**
 	 * ARGB
@@ -134,9 +134,7 @@ abstract UColor(UInt) {
 	inline private function get_invertAlpha():UColor return fromARGB(_invert(a), r, g, b);
 	inline private function get_invert():UColor return fromARGB(a, _invert(r), _invert(g), _invert(b));
 	
-	@:from inline static private function fromUInt(v:UInt):UColor return new UColor(v);
-	
-	@:to inline private function get_argb():UInt return this;
+	inline private function get_argb():UInt return this;
 	inline private function get_rgb():UInt return this & 0xFFFFFF;
 	
 	inline private function get_power():UInt return r + g + b;

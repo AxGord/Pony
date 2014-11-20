@@ -34,7 +34,7 @@ using Lambda;
  * Directory
  * @author AxGord <axgord@gmail.com>
  */
-abstract Dir(Unit) {
+abstract Dir(Unit) from Unit {
 
 	public var first(get, never):String;
 	
@@ -73,7 +73,6 @@ abstract Dir(Unit) {
 	
 	public function file(name:String):File return addString(name);
 	
-	@:from inline public static function fromUnit(u:Unit):Dir return new Dir(u);
 	@:to inline private function toUnit():Unit return this;
 	
 	@:to inline public function toString():String return this.toString();

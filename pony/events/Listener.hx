@@ -32,91 +32,97 @@ import pony.Function;
 
 using Lambda;
 
-typedef Listener_ = { f:Function, count:Int, event:Bool, prev:Event, used:Int, active:Bool, ignoreReturn:Bool }
- 
+typedef Listener_ = { count:Int, prev:Event, used:Int, active:Bool }
+
 /**
  * Listener
  * @author AxGord
  */
-abstract Listener( Listener_ ) {
-	public static var flist:Map<Int, Listener>;
+@:forward(id, event)
+abstract Listener(Function) from Function {
+	public static var listeners:Map<Int, Listener_>;// = new Map<Int, Listener_>();
+
+	inline private static function __init__():Void {
+		listeners = new Map<Int, Listener_>();
+	}
 	
 	public var active(get, set):Bool;
 	public var count(get, never):Int;
 	public var used(get, never):Int;
-	
-	private function __init__():Void {
-		flist = new Map<Int, Listener>();
-	}
-	
+	public var ignoreReturn(get, never):Bool;
+	public var listener(get, never):Listener_;
+	private var exists(get,never):Bool;
+
 	inline public function new(f:Function, count:Int = -1) {
-		f._use();
-		this = {f:f, count:count, event:f.event, prev: null, used: 0, active: true, ignoreReturn: !f.ret}
-	}
-	
-	@:from static inline public function fromFunction(f:Function):Listener
-		return _fromFunction(f);
-		
-		
-	@:from static inline public function fromSignal(s:Signal):Listener
-		return s.dispatchEvent;
-		
-	static public function _fromFunction(f:Function):Listener {
-		if (flist.exists(f.get_id())) {
-			return flist.get(f.get_id());
+		if (count == -1) {
+			this = f;
+			this._use();
 		} else {
-			var o:Listener = new Listener(f);
-			flist.set(f.get_id(), o);
-			return o;
+			this = f.copy();
+			this._use();
+			initListener(count);
 		}
-    }
-	
-	inline public function get_count():Int return this.count;
-	
-	public function call(event:Event):Bool {
-		if (!this.active) return true;
-		this.count--;
-		event._setListener(this);
-		var r:Bool = true;
-		if (this.event) {
-			if (this.ignoreReturn) this.f.call([event]);
-			else if (this.f.call([event]) == false) r = false;
-		} else {
-			var args:Array<Dynamic> = [];
-			for (e in event.args) args.push(e);//copy for c#
-			args.push(event.target);
-			args.push(event);
-			if (this.ignoreReturn) this.f.call(args.slice(0, this.f.get_count()));
-			else if (this.f.call(args.slice(0, this.f.get_count())) == false) r = false;
-		}
-		this.prev = event;
-		return event._stopPropagation ? false : r;
 	}
-	
-	inline public function setCount(count:Int):Listener {
-		return new Listener(this.f, count);
+
+	inline private function initListener(count:Int = -1):Void {
+		if (!exists) listeners[this.id] = {count:count, prev: null, used:0, active:true};
 	}
+
+	inline public function get_exists():Bool return listeners.exists(this.id);
+	inline public function get_listener():Listener_ return listeners[this.id];
+	inline public function get_ignoreReturn():Bool return !this.ret;
+	inline public function get_count():Int return exists ? listener.count : -1;
+	inline public function get_active():Bool return exists ? listener.active : true;
+	inline public function set_active(b:Bool):Bool {
+		initListener();
+		return listener.active = b;
+	}
+	inline public function get_used():Int return this.used;
+   
+	inline public function setCount(count:Int):Listener return new Listener(this, count);
 	
-	inline public function _use():Void this.used++;
+	inline public function use():Void {
+		initListener();
+		listener.used++;
+	}
 	
 	inline public function unuse():Void {
-		this.used--;
+		initListener();
+		listener.used--;
 		if (this.used == 0) {
-			flist.remove(this.f.get_id());
-			this.f.unuse();
+			listeners.remove(this.id);
+			//flist.remove(this.f.get_id());
+			this.unuse();
 		}
 	}
-	
-	inline public function get_used():Int return this.used;
 	
 	static public function unusedCount():Int {
 		var c:Int = 0;
-		for (l in flist) if (l.get_used() <= 0) c++;
+		for (l in listeners) if (l.used <= 0) c++;
 		return c;
 	}
 	
-	inline public function get_active():Bool return this.active;
+	public function call(_event:Event):Bool {
+		initListener();
+		if (!active) return true;
+		listener.count--;
+		_event._setListener(listener);
+		var r:Bool = true;
+		if (this.event) {
+			if (ignoreReturn) this.call([_event]);
+			else if (this.call([_event]) == false) r = false;
+		} else {
+			var args:Array<Dynamic> = [];
+			for (e in _event.args) args.push(e);//copy for c#
+			args.push(_event.target);
+			args.push(_event);
+			if (ignoreReturn) this.call(args.slice(0, this.get_count()));
+			else if (this.call(args.slice(0, this.get_count())) == false) r = false;
+		}
+		if (listener != null) listener.prev = _event;
+		return _event._stopPropagation ? false : r;
+	}
 	
-	inline public function set_active(b:Bool):Bool return this.active = b;
+	@:from inline static public function fromSignal(s:Signal):Listener return s.dispatchEvent;
 	
 }

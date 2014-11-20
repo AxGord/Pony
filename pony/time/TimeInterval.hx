@@ -30,7 +30,7 @@ import pony.math.MathTools;
 
 using Reflect;
 
-typedef TimeInterval_ = { min:Time, max:Time };
+private typedef TimeInterval_ = { min:Time, max:Time };
 
 /**
  * TimeInterval

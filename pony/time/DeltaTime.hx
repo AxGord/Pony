@@ -111,15 +111,10 @@ class DeltaTime {
 	}
 	private static function _ftakeListeners():Void {
 		set();
-		imm = js.Node.setInterval(tick, Std.int(1000/60));
-		//imm = js.Node.setImmediate(_tick);
+		imm = js.Node.setInterval(tick, Std.int(1000/60));//60 FPS
 	}
-	//private static function _flostListeners():Void js.Node.clearImmediate(imm);
+	
 	private static function _flostListeners():Void js.Node.clearInterval(imm);
-	/*private static function _tick():Void {
-		imm = js.Node.setImmediate(_tick);
-		tick();
-	}*/
 	#end
 	
 	inline private static function createSignals():Void {

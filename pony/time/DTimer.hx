@@ -80,8 +80,8 @@ class DTimer implements ITimer<DTimer> implements Declarator {
 	private function _update(dt:DT):Void {
 		sumdt += dt;
 		if (dt >= 0.001) {
-			var t:Time = sumdt;
-			sumdt -= t;
+			var t:Time = sumdt.toTime();
+			sumdt -= DT.fromTime(t);
 			if (time != null) {
 				if (time.back) {
 					currentTime -= t;
@@ -100,7 +100,7 @@ class DTimer implements ITimer<DTimer> implements Declarator {
 	private function loop():Bool {
 		if (complite == null) return true;
 		var result:Bool = false;
-		var d:DT = Math.abs((currentTime:DT) - (time.max:DT)) + sumdt;
+		var d:DT = Math.abs(currentTime - time.max)/1000 + sumdt;
 		if (repeatCount > 0) {
 			currentTime -= time.length;
 			repeatCount--;
@@ -139,27 +139,27 @@ class DTimer implements ITimer<DTimer> implements Declarator {
 	static public inline function createTimer     (time:TimeInterval, repeat:Int = 0):DTimer return new DTimer(DeltaTime.update, time, repeat);
 	static public inline function createFixedTimer(time:TimeInterval, repeat:Int = 0):DTimer return new DTimer(DeltaTime.fixedUpdate, time, repeat);
 	
-	static public inline function delay           (time:Time, f:Listener1<DTimer, DT>, ?dt:DT):DTimer {
+	static public inline function delay(time:Time, f:Listener1<DTimer, DT>, ?dt:DT):DTimer {
 		var t = DTimer.createTimer(time);
 		t.complite.once(f);
 		t.complite.once(t.destroy);
 		t.start(dt);
 		return t;
 	}
-	static public inline function fixedDelay      (time:Time, f:Listener1<DTimer, DT>, ?dt:DT):DTimer {
+	static public inline function fixedDelay(time:Time, f:Listener1<DTimer, DT>, ?dt:DT):DTimer {
 		var t = DTimer.createFixedTimer(time);
 		t.complite.once(f);
 		t.complite.once(t.destroy);
 		t.start(dt);
 		return t;
 	}
-	static public inline function repeat          (time:Time, f:Listener1 < DTimer, DT > , ?dt:DT):DTimer {
+	static public inline function repeat(time:Time, f:Listener1 < DTimer, DT >, ?dt:DT):DTimer {
 		var t = DTimer.createTimer(time, -1);
 		t.complite.add(f);
 		t.start(dt);
 		return t;
 	}
-	static public inline function fixedRepeat     (time:Time, f:Listener1 < DTimer, DT > , ?dt:DT):DTimer {
+	static public inline function fixedRepeat(time:Time, f:Listener1 < DTimer, DT > , ?dt:DT):DTimer {
 		var t = DTimer.createFixedTimer(time, -1);
 		t.complite.add(f);
 		t.start(dt);

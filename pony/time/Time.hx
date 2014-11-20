@@ -38,7 +38,7 @@ using pony.Tools;
  * Time
  * @author AxGord <axgord@gmail.com>
  */
-abstract Time(Null<Int>) {
+abstract Time(Null<Int>) from Int to Int {
 	public var ms(get, never):Int;
 	public var seconds(get, never):Int;
 	public var minutes(get, never):Int;
@@ -53,9 +53,8 @@ abstract Time(Null<Int>) {
 	public var minimalPoint(get, never):Int;
 	
 	inline public function new(?ms:Null<Int>) this = ms;
-	@:from inline private static function fromInt(ms:Null<Int>):Time return new Time(ms);
 	@:from inline private static function fromFloat(ms:Null<Float>):Time return new Time(ms.int());
-	@:from private static function fromString(time:String):Time {
+	@:from public static function fromString(time:String):Time {
 		var ms:Int = 0;
 		time = time.trim();
 		var neg:Bool = time.charAt(0) == '-'; 
@@ -151,7 +150,6 @@ abstract Time(Null<Int>) {
 	static public inline function fromMinutes(minutes:Int):Time return fromSeconds(minutes * 60);
 	static public inline function fromSeconds(seconds:Int):Time return seconds * 1000;
 	
-	@:to inline public function toInt():Int return this;
 	@:to inline public function toFloat():Float return this;
 	@:to inline public function toArray():Array<Int> return [days, hours, minutes, seconds, ms];
 	@:to public function toString():String {

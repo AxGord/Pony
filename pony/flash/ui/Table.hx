@@ -8,6 +8,7 @@ import flash.display.JointStyle;
 import flash.text.TextField;
 import flash.text.TextFormat;
 import pony.color.Color;
+import pony.color.UColor;
 import pony.geom.Point.IntPoint;
 import pony.geom.Rect.IntRect;
 import pony.ui.FontStyle;
@@ -36,7 +37,7 @@ class Table extends TableCore {
 	
 	private inline function get_g():Graphics return shape.graphics;
 
-	override private function drawBG(r:IntRect, color:Color):Void {
+	override private function drawBG(r:IntRect, color:UColor):Void {
 		g.lineStyle();
 		g.beginFill(color);
 		g.drawRect(r.getX(), r.getY(), r.getWidth(), r.getHeight());

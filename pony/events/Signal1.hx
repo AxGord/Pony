@@ -148,7 +148,7 @@ abstract Signal1<Target, T1:Dynamic>(Signal) {
 	
 	public function sw(l1:Listener1<Target,T1>, l2:Listener1<Target,T1>):Target {
 		this.once(l1);
-		this.once(this.sw.bind(l2, l1));
+		this.once(sw.bind(l2, l1));
 		return target;
 	}
 	

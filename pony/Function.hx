@@ -97,6 +97,8 @@ abstract Function( { f:Dynamic, count:Int, args:Array<Dynamic>, id:Int, used:Int
         this = { f:f, count:count, args:args == null?[]:args, id: counter, used: 0, event: event, ret:ret };
 	}
 	
+	inline public function copy():Function return new Function(this.f, this.count, this.args, this.ret, this.event);
+	
 	static public function from(f:Dynamic, argc:Int, ret:Bool = true, event:Bool = false):Function {
 		#if cs
 		var h:CSHash = buildCSHash(f);

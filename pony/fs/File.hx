@@ -34,7 +34,7 @@ import sys.FileSystem;
  * File
  * @author AxGord <axgord@gmail.com>
  */
-abstract File(Unit) {
+abstract File(Unit) from Unit {
 
 	public var name(get, never):String;
 	public var exists(get, never):Bool;
@@ -113,7 +113,6 @@ abstract File(Unit) {
 		}
 	}
 	
-	@:from inline public static function fromUnit(u:Unit):File return new File(u);
 	@:to inline private function toUnit():Unit return this;
 	
 	@:to inline public function toString():String return this.toString();

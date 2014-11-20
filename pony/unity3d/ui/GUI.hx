@@ -28,6 +28,7 @@
 package pony.unity3d.ui;
 
 import pony.color.Color;
+import pony.color.UColor;
 import pony.geom.Rect.IntRect;
 import unityengine.Vector3;
 import unityengine.Vector2;
@@ -51,7 +52,7 @@ using hugs.HUGSWrapper;
  */
 @:nativeGen class GUI {
 	
-	static private var textures:Map<Color, Texture2D> = new Map<Color, Texture2D>();
+	static private var textures:Map<Int, Dynamic> = new Map<Int, Texture2D>();
 
 	public static function text(f:Vector3, point:IntPoint, text:String, style:FontStyle):GameObject {
 		var b = new GameObject();
@@ -73,7 +74,7 @@ using hugs.HUGSWrapper;
 		return b;
 	}
 	
-	public static function rect(f:Vector3, r:IntRect, color:Color):GameObject {
+	public static function rect(f:Vector3, r:IntRect, color:UColor):GameObject {
 		if (!textures.exists(color)) {
 			var t:Texture2D = new Texture2D(1, 1);
 			t.SetPixel(0,0,color);

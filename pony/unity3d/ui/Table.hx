@@ -28,6 +28,7 @@
 package pony.unity3d.ui;
 
 import pony.color.Color;
+import pony.color.UColor;
 import unityengine.Object;
 import unityengine.Vector3;
 import unityengine.GameObject;
@@ -51,7 +52,7 @@ import pony.ui.FontStyle;
 	@:arg private var z:Float;
 	@:arg private var textMargin:IntPoint;
 
-	override private function drawBG(r:IntRect, color:Color):Void {
+	override private function drawBG(r:IntRect, color:UColor):Void {
 		gos.push(GUI.rect(new Vector3(fp.x , fp.y, z), r+startpos, color));
 	}
 	

@@ -105,7 +105,7 @@ class Signal {
 	 * @see pony.events.Event
 	 */
 	public function add(listener:Listener, priority:Int = 0):Signal {
-		listener._use();
+		listener.use();
 		var f:Bool = listeners.empty;
 		listeners.addElement(listener, priority);
 		if (f && takeListeners != null) takeListeners.dispatchEmpty();

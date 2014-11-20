@@ -46,13 +46,13 @@ class Queue<T> {
 	
 	private function _call(a:Array<Dynamic>):Void {
 		if (!busy) {
-			Reflect.callMethod(null, method, a);
+			Reflect.callMethod(null, cast method, a);
 			busy = true;
 		} else {
 			list.add(a);
 		}
 	}
 	
-	inline public function next():Void list.length > 0 ? Reflect.callMethod(null, method, list.pop()) : busy = false;
+	inline public function next():Void list.length > 0 ? Reflect.callMethod(null, cast method, list.pop()) : busy = false;
 	
 }
