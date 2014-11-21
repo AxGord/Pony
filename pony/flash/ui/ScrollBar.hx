@@ -44,7 +44,7 @@ import pony.ui.SlideCore;
 using pony.flash.FLExtends;
 using pony.starling.displayFactory.DisplayListStaticExtentions;
 /**
- * ...
+ * ScrollBar
  * @author AxGord
  */
 
@@ -68,12 +68,13 @@ class ScrollBar extends Sprite implements pony.flash.FLSt implements IScrollBar 
 	private var _position:Float;
 	
 	public function new() {
+		super();
+		alpha = 0;
 		slideCore = new SlideCore(1, 20);
 		slideCore.update.add(slUpdate);
 		update = new Signal();
 		_position = 0;
 		isVert = width < height;
-		super();
 		FLTools.init < init;
 	}
 	
@@ -83,6 +84,7 @@ class ScrollBar extends Sprite implements pony.flash.FLSt implements IScrollBar 
 		mouseMove.silent = true;
 		mouseMove.add(scrollerMove);
 		TouchManager.addListener(scroller, function(e:TouchManagerEvent):Void { startDraaag(); }, [TouchEventType.Down] );
+		slideCore.close();
 	}
 	
 	private function buildTMSignal(displayObject:Dynamic, types:Array<TouchEventType> = null):Signal
