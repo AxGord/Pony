@@ -3,6 +3,7 @@ package pony.starling.ui;
 
 import flash.geom.Rectangle;
 import pony.flash.ui.Button;
+import pony.flash.ui.Tree;
 import pony.geom.Point.IntPoint;
 import pony.ui.TreeCore;
 import starling.display.DisplayObject;
@@ -124,7 +125,7 @@ class StarlingTree extends Sprite
 		if (animated)
 		{
 			#if tweenmax
-			TweenMax.to(_nodesSprite, 0.2 + 0.0003 * _nodesSprite.height, { y:toY, onUpdate:updateNodesPosition } );
+			TweenMax.to(_nodesSprite, Tree.basicAnimationTime + Tree.additionalAnimationTimePerPixel * _nodesSprite.height, { y:toY, onUpdate:updateNodesPosition } );
 			#end
 		}
 		else

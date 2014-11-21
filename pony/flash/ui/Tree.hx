@@ -56,6 +56,10 @@ class Tree extends Sprite implements FLSt {
 	@:st private var groupText:Sprite;
 	@:st private var unitText:Sprite;
 	
+	public static var basicAnimationTime:Float = 0.1;
+	public static var additionalAnimationTimePerPixel:Float = 0.00015;
+	
+	
 	#if !starling
 	
 	private var _header:TreeElement;
@@ -143,7 +147,7 @@ class Tree extends Sprite implements FLSt {
 		var previous:Float = _headerButton != null ? _headerButton.height : 0;
 		for (node in _nodes)
 		{
-			node.visible = node.y + _nodesSprite.y >= 0;
+			if (!Std.is(node, Tree)) node.visible = node.y + _nodesSprite.y >= -y;
 			node.y = previous;
 			previous = node.y + (Std.is(node, Tree) ? untyped node.treeHeight() : node.height);
 		}
@@ -162,12 +166,12 @@ class Tree extends Sprite implements FLSt {
 		
 		if (_headerButton != null) _headerButton.core.mode = minimized ? 2 : 0;
 		
-		var toY:Float = minimized ? - _nodesSprite.height : 0;
+		var toY:Float = minimized ? -nodesSpriteBottom() : 0;
 		if (animated)
 		{
 			#if tweenmax
 			TweenMax.killTweensOf(_nodesSprite);
-			TweenMax.to(_nodesSprite, 0.2 + 0.0003 * _nodesSprite.height, { y:toY, onUpdate:updateNodesPosition } );
+			TweenMax.to(_nodesSprite, basicAnimationTime + additionalAnimationTimePerPixel * nodesSpriteBottom(), { y:toY, onUpdate:updateNodesPosition } );
 			#end
 		}
 		else
@@ -177,6 +181,11 @@ class Tree extends Sprite implements FLSt {
 		}
 		
 		return minimized;
+	}
+	
+	private function nodesSpriteBottom():Float
+	{
+		return _nodesSprite.getRect(_nodesSprite).bottom - (_headerButton != null ? _headerButton.height : 0);
 	}
 	
 	private function set_animated(value:Bool):Bool
