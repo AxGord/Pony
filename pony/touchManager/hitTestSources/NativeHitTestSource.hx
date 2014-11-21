@@ -3,6 +3,7 @@ import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.InteractiveObject;
 import flash.geom.Point;
+import flash.text.TextField;
 
 /**
  * ...
@@ -53,7 +54,7 @@ class NativeHitTestSource implements IHitTestSource
 				}
 				else if (Std.is(child, InteractiveObject))
 				{
-					if (untyped child.mouseEnabled) return child;
+					if (untyped child.mouseEnabled && !isStaticTextField(child)) return child;
 				}
 			}
 			
@@ -62,6 +63,12 @@ class NativeHitTestSource implements IHitTestSource
 		
 		if (container.mouseEnabled) return container;
 		return null;
+	}
+	
+	private inline function isStaticTextField(child:DisplayObject):Bool
+	{
+		//If it's a textfield with no name, then it's static textfield
+		return ( child.name.indexOf("instance") != -1 && Std.is(child, TextField) );
 	}
 	
 	public function parent(object:Dynamic):Dynamic
