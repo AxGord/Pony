@@ -154,8 +154,6 @@ abstract Signal0<Target>(Signal) {
 	
 	public inline function debug():Void this.debug();
 	
-	//Operators
-	
 	@:op(A << B) inline private function op_add(listener:Listener0<Target>):Signal0<Target> {
 		add(listener);
 		return this;
@@ -168,6 +166,21 @@ abstract Signal0<Target>(Signal) {
 	
 	@:op(A >> B) inline private function op_remove(listener:Listener0<Target>):Signal0<Target> {
 		remove(listener);
+		return this;
+	}
+	
+	@:op(A << B) inline private function op_addSignal<A>(signal:Signal0<A>):Signal0<Target> {
+		add(signal.dispatchEvent);
+		return this;
+	}
+	
+	@:op(A < B) inline private function op_onceSignal<A>(signal:Signal0<A>):Signal0<Target> {
+		once(signal.dispatchEvent);
+		return this;
+	}
+	
+	@:op(A >> B) inline private function op_removeSignal<A>(signal:Signal0<A>):Signal0<Target> {
+		remove(signal.dispatchEvent);
 		return this;
 	}
 	

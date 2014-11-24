@@ -170,8 +170,6 @@ abstract Signal1<Target, T1:Dynamic>(Signal) {
 	
 	public inline function debug():Void this.debug();
 	
-	//Operators (experimental)
-	
 	@:op(A << B) inline private function op_add(listener:Listener1<Target,T1>):Signal1<Target,T1> {
 		add(listener);
 		return this;
@@ -184,6 +182,21 @@ abstract Signal1<Target, T1:Dynamic>(Signal) {
 	
 	@:op(A >> B) inline private function op_remove(listener:Listener1<Target,T1>):Signal1<Target,T1> {
 		remove(listener);
+		return this;
+	}
+	
+	@:op(A << B) inline private function op_addSignal<A>(signal:Signal1<A,T1>):Signal1<Target,T1> {
+		add(signal.dispatchEvent);
+		return this;
+	}
+	
+	@:op(A < B) inline private function op_onceSignal<A>(signal:Signal1<A,T1>):Signal1<Target,T1> {
+		once(signal.dispatchEvent);
+		return this;
+	}
+	
+	@:op(A >> B) inline private function op_removeSignal<A>(signal:Signal1<A,T1>):Signal1<Target,T1> {
+		remove(signal.dispatchEvent);
 		return this;
 	}
 	
