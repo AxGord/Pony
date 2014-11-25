@@ -120,4 +120,14 @@ class StarlingUtils
 			if (Std.is(child, DisplayObjectContainer)) playChildren(cast child);
 		}
 	}
+	
+	public static function setChildrenTextureSmoothing(container:DisplayObjectContainer, smoothing:String = "none"):Void
+	{
+		for (i in 0...container.numChildren)
+		{
+			var child:DisplayObject = container.getChildAt(i);
+			if (Std.is(child, Image)) cast(child, Image).smoothing = smoothing;
+			if (Std.is(child, DisplayObjectContainer)) setChildrenTextureSmoothing(cast child, smoothing);
+		}
+	}
 }

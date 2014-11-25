@@ -352,6 +352,7 @@ class AtlasCreator
 		var result:Map<String, TextureStorage> = new Map<String, TextureStorage>();
 		result.set("flash.display.MovieClip", new TextureStorage(false));
 		result.set("flash.text.StaticText", new TextureStorage(false));
+		result.set("flash.text.TextField", new TextureStorage(false));
 		result.set("flash.display.Shape", new TextureStorage(false));
 		
 		return result;

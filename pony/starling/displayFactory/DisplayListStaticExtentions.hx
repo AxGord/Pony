@@ -3,6 +3,7 @@ import flash.display.DisplayObjectContainer;
 import flash.display.InteractiveObject;
 import flash.geom.Rectangle;
 import pony.starling.displayFactory.DisplayFactory.IDisplayObject;
+import pony.starling.displayFactory.DisplayFactory.ITextField;
 import pony.starling.utils.UniversalDrag;
 
 /**
@@ -32,6 +33,26 @@ class DisplayListStaticExtentions
 	public static function startUniversalDrag(dragged:IDisplayObject, lockCenter:Bool = false, bounds:Rectangle = null):Void { UniversalDrag.startUniversalDrag(dragged, lockCenter, bounds); }
 	public static function stopUniversalDrag(dragged:IDisplayObject):Void { UniversalDrag.stopUniversalDrag(dragged); }
 	public static function stopUniversalDragKinetic(dragged:IDisplayObject):Void { UniversalDrag.stopUniversalDragKinetic(dragged); }
+	
+	public static function getTextWidth(textField:ITextField):Float
+	{
+		#if starling
+		if (Std.is(textField, starling.text.TextField)) return StarlingStaticExtentions.getTextWidth(cast textField);
+		#end
+		if (Std.is(textField, flash.text.TextField)) return FlashStaticExtentions.getTextWidth(cast textField);
+		
+		return 0;
+	}
+	
+	public static function getTextHeight(textField:ITextField):Float
+	{
+		#if starling
+		if (Std.is(textField, starling.text.TextField)) return StarlingStaticExtentions.getTextHeight(cast textField);
+		#end
+		if (Std.is(textField, flash.text.TextField)) return FlashStaticExtentions.getTextHeight(cast textField);
+		
+		return 0;
+	}
 }
 #if starling
 class StarlingStaticExtentions
@@ -42,6 +63,9 @@ class StarlingStaticExtentions
 	public static function startUniversalDrag(dragged:starling.display.DisplayObject, lockCenter:Bool = false, bounds:Rectangle = null):Void { UniversalDrag.startUniversalDrag(cast dragged, lockCenter, bounds); }
 	public static function stopUniversalDrag(dragged:starling.display.DisplayObject):Void { UniversalDrag.stopUniversalDrag(cast dragged); }
 	public static function stopUniversalDragKinetic(dragged:starling.display.DisplayObject):Void { UniversalDrag.stopUniversalDragKinetic(cast dragged); }
+	
+	public static function getTextWidth(textField:starling.text.TextField):Float { return textField.textBounds.width; }
+	public static function getTextHeight(textField:starling.text.TextField):Float { return textField.textBounds.height; }
 }
 #end
 class FlashStaticExtentions
@@ -62,4 +86,7 @@ class FlashStaticExtentions
 	public static function startUniversalDrag(dragged:flash.display.DisplayObject, lockCenter:Bool = false, bounds:Rectangle = null):Void { UniversalDrag.startUniversalDrag(cast dragged, lockCenter, bounds); }
 	public static function stopUniversalDrag(dragged:flash.display.DisplayObject):Void { UniversalDrag.stopUniversalDrag(cast dragged); }
 	public static function stopUniversalDragKinetic(dragged:flash.display.DisplayObject):Void { UniversalDrag.stopUniversalDragKinetic(cast dragged); }
+	
+	public static function getTextWidth(textField:flash.text.TextField):Float { return textField.textWidth; }
+	public static function getTextHeight(textField:flash.text.TextField):Float { return textField.textHeight; }
 }

@@ -14,14 +14,15 @@ import pony.starling.displayFactory.DisplayFactory.IDisplayObject;
 import pony.starling.displayFactory.DisplayFactory.IDisplayObjectContainer;
 import pony.starling.displayFactory.NativeFlashDisplayFactory;
 import pony.touchManager.hitTestSources.NativeHitTestSource;
-import pony.touchManager.hitTestSources.StarlingHitTestSource;
 import pony.touchManager.InputMode;
 import pony.touchManager.touchInputs.NativeFlashTouchInput;
 import pony.touchManager.TouchManager;
 #if starling
 import starling.display.Sprite;
+import starling.display.Quad;
 import starling.core.Starling;
 import pony.starling.converter.StarlingConverter;
+import pony.touchManager.hitTestSources.StarlingHitTestSource;
 #end
 
 /**
@@ -41,6 +42,8 @@ class Initializer
 	
 	#if starling
 	private var _starlingCreator:StarlingCreator;
+	private var _viewLimiterA:Quad = new Quad(1, 1, Lib.current.stage.color);
+	private var _viewLimiterB:Quad = new Quad(1, 1, Lib.current.stage.color);
 	#else
 	private var _viewLimiterA:Bitmap = new Bitmap(new BitmapData(1, 1, false, Lib.current.stage.color));
 	private var _viewLimiterB:Bitmap = new Bitmap(new BitmapData(1, 1, false, Lib.current.stage.color));
@@ -69,6 +72,8 @@ class Initializer
 		
 		_initialWidth = FLTools.width != -1 ? Std.int(FLTools.width) : Lib.current.stage.stageWidth;
 		_initialHeight = FLTools.height != -1 ? Std.int(FLTools.height) : Lib.current.stage.stageHeight;
+		FLTools.width = _initialWidth;
+		FLTools.height = _initialHeight;
 		_aspectRatio = _initialWidth / _initialHeight;
 		
 		if (Multitouch.supportsTouchEvents) Multitouch.inputMode = MultitouchInputMode.TOUCH_POINT;
@@ -99,6 +104,10 @@ class Initializer
 		TouchManager.init();
 		TouchManager.removeScreenByID(0);
 		TouchManager.addScreen(new StarlingHitTestSource(cast _sprite));
+		
+		Starling.current.stage.addChild(_viewLimiterA);
+		Starling.current.stage.addChild(_viewLimiterB);
+		
 		#else
 		
 		_sprite = NativeFlashDisplayFactory.getInstance().createSprite();
@@ -133,24 +142,19 @@ class Initializer
 		
 		#if starling
 			var viewPortRectangle:Rectangle = new Rectangle();
-			viewPortRectangle.x = (stage.stageWidth - newWidth) / 2;
-			viewPortRectangle.y = (stage.stageHeight - newHeight) / 2;
-			viewPortRectangle.width = newWidth;
-			viewPortRectangle.height = newHeight;
-			
+			viewPortRectangle.width = stage.stageWidth;
+			viewPortRectangle.height = stage.stageHeight;
 			Starling.current.viewPort = viewPortRectangle;
-			
-			Starling.current.stage.stageWidth = newWidth;
-			Starling.current.stage.stageHeight = newHeight;
-		#else
-			_sprite.x = (stage.stageWidth - newWidth) / 2;
-			_sprite.y = (stage.stageHeight - newHeight) / 2;
-		
-			updateLimiters();
+			Starling.current.stage.stageWidth = stage.stageWidth;
+			Starling.current.stage.stageHeight = stage.stageHeight;
 		#end
-	}
 		
-	#if !starling
+		_sprite.x = Std.int((stage.stageWidth - newWidth) / 2);
+		_sprite.y = Std.int((stage.stageHeight - newHeight) / 2);
+		
+		updateLimiters();
+	}
+	
 	private function updateLimiters():Void
 	{
 		var stage = Lib.current.stage;
@@ -165,6 +169,5 @@ class Initializer
 		_viewLimiterB.width = smallerWidth ? stage.stageWidth : (stage.stageWidth - stage.stageHeight * _aspectRatio) / 2;
 		_viewLimiterB.height = smallerWidth ? (stage.stageHeight - stage.stageWidth / _aspectRatio) / 2 : stage.height;
 	}
-	#end
 	
 }

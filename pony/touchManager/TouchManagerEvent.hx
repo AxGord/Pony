@@ -25,6 +25,8 @@ class TouchManagerEvent
 	public var speedY:Float;
 	
 	public var touchID:Int;
+	
+	public var target:Dynamic;
 
 	public function new()
 	{

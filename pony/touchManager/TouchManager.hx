@@ -320,6 +320,7 @@ class TouchManager
 			event.speedX = touch.speedX;
 			event.speedY = touch.speedY;
 			event.touchID = touch.id;
+			event.target = object;
 			
 			if (event.type == Down)
 			{
