@@ -30,6 +30,7 @@ package pony.net;
 import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
 import haxe.Timer;
+import pony.events.Signal1;
 import pony.events.Waiter;
 import pony.Logable.Logable;
 #end

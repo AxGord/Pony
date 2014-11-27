@@ -18,6 +18,7 @@ package pony.net.cs;
  import cs.system.net.sockets.SocketException;
  import cs.system.threading.ManualResetEvent;
  import cs.system.threading.Monitor;
+ import cs.system.threading.Interlocked;
  import cs.system.AsyncCallback;
  import haxe.io.BytesInput;
  import haxe.io.BytesOutput;
@@ -26,24 +27,21 @@ package pony.net.cs;
  
 class SocketClient extends SocketClientBase
 {
-
 	@:allow(pony.net.cs.SocketServer)
 	private var client:Socket;
 	/**
 	 * Indicates if a client sended first or second datagramm; the first one is being sended if isSet is false, true instead.
 	 **/
 	@:allow(pony.net.cs.SocketServer)
-	private var isSet:Bool;
-	//private var host:String;
-	//private var port:Int;
+	private var isSet:Bool = false;
 	@:allow(pony.net.cs.SocketServer)
-	private var receiveBuffer:NativeArray<UInt8> = new NativeArray(4);
+	private var receiveBuffer:NativeArray<UInt8> = new NativeArray(255);
 	@:allow(pony.net.cs.SocketServer)
 	private var sendQueue:Queue < BytesOutput -> Void > ;
 	@:allow(pony.net.cs.SocketServer)
-	private var eventSend:ManualResetEvent = new ManualResetEvent(false);
+	private var eventSend:ManualResetEvent = new ManualResetEvent(true);
 	@:allow(pony.net.cs.SocketServer)
-	private var eventReceive:ManualResetEvent = new ManualResetEvent(false);
+	private var eventReceive:ManualResetEvent = new ManualResetEvent(true);
 	@:allow(pony.net.cs.SocketServer)
 	private var isRunning:Bool;
 	private var isConnected:Bool = false;
@@ -56,6 +54,7 @@ class SocketClient extends SocketClientBase
 		this.reconnectDelay = aReconnect;
 		this.isWithLength = aIsWithLength;
 		client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+		client.NoDelay = true; //One should never forget that this may cause troubles in future.
 		super(host, port, reconnectDelay, aIsWithLength);
 	}
 	
@@ -75,13 +74,23 @@ class SocketClient extends SocketClientBase
 		{
 			connected.end();
 			sendQueue = new Queue(_send);
+			isSet = false;
 			client.BeginReceive(receiveBuffer, 0, receiveBuffer.Length, SocketFlags.None, new AsyncCallback(receiveCallback), this);
 		}
 	}
 	
 	public function send(data:BytesOutput):Void
 	{
-		sendQueue.call(data);
+		Monitor.Enter(sendQueue);
+		try
+		{
+			sendQueue.call(data);
+		}
+		catch (ex:Dynamic)
+		{
+			Monitor.Exit(sendQueue);
+		}
+		Monitor.Exit(sendQueue);
 	}
 	
 	@:allow(pony.net.cs.SocketServer)
@@ -103,36 +112,46 @@ class SocketClient extends SocketClientBase
 			eventSend.Reset();
 			var s:Socket = cast(ar.AsyncState, Socket);
 			s.EndSend(ar);
-			sendQueue.next();
+			Monitor.Enter(sendQueue);
+			try
+			{
+				sendQueue.next();
+			}
+			catch (ex:Dynamic)
+			{
+				Monitor.Exit(sendQueue);
+			}
+			Monitor.Exit(sendQueue);
 		}
 		eventSend.Set();
 	}
 	
+	@:allow(pony.net.cs.SocketServer)
 	private function receiveCallback(ar:IAsyncResult):Void
 	{
 		if (isRunning)
 		{
 			eventReceive.Reset();
-			var cl:SocketClient = cast(ar.AsyncState, SocketClient);
 			try
 			{
-				var bytesRead:Int = cl.client.EndReceive(ar);
+				var bytesRead:Int = client.EndReceive(ar);
 				if (0 != bytesRead)
 				{
-					var receiveBuffer:NativeArray<UInt8> = cl.receiveBuffer;
+					var receiveBuffer:NativeArray<UInt8> = receiveBuffer;
 					var b_out:BytesOutput = new BytesOutput();
 					for (i in 0...bytesRead)
 					{
 						b_out.writeByte(receiveBuffer[i]);
 					}
 					var b_in:BytesInput = new BytesInput(b_out.getBytes());
-					if (cl.isSet) 
+					if (isSet) 
 					{
+						eventReceive.Set();
 						onData.dispatch(b_in);
-						var buffer:NativeArray<UInt8> = new NativeArray(4);
-						cl.receiveBuffer = buffer;
-						cl.isSet = false;
-						cl.client.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(receiveCallback), cl);
+						var buffer:NativeArray<UInt8> = new NativeArray(255);
+						receiveBuffer = buffer;
+						isSet = false;
+						client.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(receiveCallback), this);
 					}
 					else
 					{
@@ -146,14 +165,15 @@ class SocketClient extends SocketClientBase
 						{
 							buffer = new NativeArray(255);
 						}
-						cl.receiveBuffer = buffer;
-						cl.isSet = true;
-						cl.client.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(receiveCallback), cl);
+						onData.dispatch(b_in);
+						receiveBuffer = buffer;
+						isSet = true;
+						client.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(receiveCallback), this);
 					}
 				}
 				else
 				{
-					
+
 				}
 			}
 			catch (ex:Dynamic)
@@ -166,10 +186,10 @@ class SocketClient extends SocketClientBase
 	
 	public override function destroy():Void
 	{
-		//Sys.sleep(1);
 		isRunning = false;
 		eventReceive.WaitOne();
 		eventSend.WaitOne();
+		//trace("Client's close traced."); This one isn't traced. Need to fix. 
 		client.Close();
 		super.destroy();
 	}

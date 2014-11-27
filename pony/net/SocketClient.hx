@@ -45,8 +45,6 @@ implements ISocketClient {
 	
 	override public function send(data:BytesOutput):Void {
 		var bo = new BytesOutput(); 
-		//isWithLength = true;
-		//trace(isWithLength);
 		if (isWithLength)
 		{
 			bo.writeInt32(data.length);

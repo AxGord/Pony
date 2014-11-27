@@ -27,14 +27,15 @@ package pony.net.cs;
  import pony.net.SocketServerBase;
  import pony.net.SocketClient;
  import pony.Queue.Queue;
+ import cs.system.threading.Interlocked;
 
 class SocketServer extends SocketServerBase
 {
 
 	private var server:Socket;
 	private var port:Int;
-	private var eventAccept:ManualResetEvent = new ManualResetEvent(false);
-	private var eventReceive:ManualResetEvent = new ManualResetEvent(false);
+	private var eventAccept:ManualResetEvent = new ManualResetEvent(true);
+	private var eventReceive:ManualResetEvent = new ManualResetEvent(true);
 	private var isRunning:Bool;
 	
 	public override function new(aPort:Int) 
@@ -43,10 +44,11 @@ class SocketServer extends SocketServerBase
 		port = aPort;
 		var ep:IPEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), port);
 		server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+		server.NoDelay = true;
 		server.Bind(ep);
-		server.Listen(100);
+		server.Listen(1000);
 		isRunning = true;
-		for (i in 0...10) 
+		for (i in 0...1) 
 		{
 			server.BeginAccept(new AsyncCallback(acceptCallback), server);
 		}
@@ -57,10 +59,10 @@ class SocketServer extends SocketServerBase
 		if (isRunning)
 		{
 			eventAccept.Reset();
-			//trace("Client accepted.");
 			var s:Socket = cast(ar.AsyncState, Socket);
 			var cl:SocketClient = clInit();
 			cl.client = s.EndAccept(ar);
+			cl.client.NoDelay = true; //One should never forget that this may cause troubles in future.
 			Monitor.Enter(clients);
 			try 
 			{
@@ -68,14 +70,16 @@ class SocketServer extends SocketServerBase
 			}
 			catch (ex:Dynamic)
 			{
+				Monitor.PulseAll(clients);
 				Monitor.Exit(clients);
 			}
+			Monitor.PulseAll(clients);
 			Monitor.Exit(clients);
 			try
 			{
-				cl.receiveBuffer = new NativeArray(4);
+				cl.receiveBuffer = new NativeArray(255);
 				cl.isSet = false;
-				cl.client.BeginReceive(cl.receiveBuffer, 0, cl.receiveBuffer.Length, SocketFlags.None, new AsyncCallback(receiveCallback), cl);
+				cl.client.BeginReceive(cl.receiveBuffer, 0, cl.receiveBuffer.Length, SocketFlags.None, new AsyncCallback(cl.receiveCallback), cl);
 				onConnect.dispatch(cl);
 				s.BeginAccept(new AsyncCallback(acceptCallback), ar.AsyncState);	
 			}
@@ -88,63 +92,6 @@ class SocketServer extends SocketServerBase
 		eventAccept.Set();
 	}
 	
-	private function receiveCallback(ar:IAsyncResult):Void
-	{
-		if (isRunning)
-		{
-			eventReceive.Reset();
-			var cl:SocketClient = cast(ar.AsyncState, SocketClient);
-			try
-			{
-				var bytesRead:Int = cl.client.EndReceive(ar);
-				if (0 != bytesRead)
-				{
-					var receiveBuffer:NativeArray<UInt8> = cl.receiveBuffer;
-					var b_out:BytesOutput = new BytesOutput();
-					for (i in 0...bytesRead)
-					{
-						b_out.writeByte(receiveBuffer[i]);
-					}
-					var b_in:BytesInput = new BytesInput(b_out.getBytes());
-					if (cl.isSet) 
-					{					
-						onData.dispatch(b_in);
-						var buffer:NativeArray<UInt8> = new NativeArray(4);
-						cl.receiveBuffer = buffer;
-						cl.isSet = false;
-						cl.client.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(receiveCallback), cl);
-					}
-					else
-					{
-						var buffer:NativeArray<UInt8>;
-						if (isWithLength)
-						{
-							var size:Int = b_in.readInt32();
-							buffer = new NativeArray(size);
-						}
-						else
-						{
-							buffer = new NativeArray(255);
-						}
-						cl.receiveBuffer = buffer;
-						cl.isSet = true;
-						cl.client.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(receiveCallback), cl); //BeginReceive has to be called every time callback is, not when isSet is false only. Fixed.
-					}
-				}
-				else
-				{
-					closeConnection(cl);
-				}
-			}
-			catch (ex:Dynamic)
-			{
-				closeConnection(cl);
-				trace(ex);
-			}
-		}
-		eventReceive.Set();
-	}
-	
 	private function closeConnection(cl:SocketClient):Void
 	{
 		cl.client.Close();
@@ -155,30 +102,43 @@ class SocketServer extends SocketServerBase
 		}
 		catch (ex:Dynamic)
 		{
+			Monitor.PulseAll(clients);
 			Monitor.Exit(clients);
 		}
+		Monitor.PulseAll(clients);
 		Monitor.Exit(clients);
 	}
 	
 	private function clInit():SocketClient
 	{
 		var cl:SocketClient = Type.createEmptyInstance(SocketClient);
-		cl.init(cast this, clients.length);
+		Monitor.Enter(clients);
+		try 
+		{
+			cl.init(cast this, clients.length);
+		}
+		catch (_:Dynamic)
+		{
+			Monitor.PulseAll(clients);
+			Monitor.Exit(clients);
+		}
+		Monitor.PulseAll(clients);
+		Monitor.Exit(clients);
 		cl.isWithLength = this.isWithLength;
 		cl.sendQueue = new Queue(cl._send);
 		cl.isRunning = true;
-		cl.eventReceive = new ManualResetEvent(false);
-		cl.eventSend = new ManualResetEvent(false);
+		cl.eventReceive = new ManualResetEvent(true);
+		cl.eventSend = new ManualResetEvent(true);
 		return cl;
 	}
 	
 	public override function destroy():Void
 	{
-		//Sys.sleep(1);
 		isRunning = false;
-		eventReceive.WaitOne(500);
-		eventAccept.WaitOne(500);	//The events DO guarantee that executing callbacks finish correct and DO NOT guarantee that next callbacks will execute so it may cause a loss of data;
-		server.Close();			//to prevent this situation there is a Sys.sleep(1) that makes main thread to wait for other threads to finish its executing. 
+		eventReceive.WaitOne();
+		trace("Server's close traced.");
+		eventAccept.WaitOne();//The events DO guarantee that executing callbacks finish correct and DO NOT guarantee that next callbacks will execute so it may cause a loss of data;
+		server.Close();		  //to prevent this situation there is a Sys.sleep(1) that makes main thread to wait for other threads to finish its executing. There's no more need in the Sys.sleep(1).
 		super.destroy();
 	}
 }
