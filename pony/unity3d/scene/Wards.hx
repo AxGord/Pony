@@ -44,8 +44,7 @@ using hugs.HUGSWrapper;
  * @author AxGord <axgord@gmail.com>
  * @author BoBaH6eToH <freezedunk@gmail.com>
  */
-
-class Wards extends MonoBehaviour implements IWards<Wards>
+@:nativeGen class Wards extends MonoBehaviour implements IWards<Wards>
 {
 	public var withRotation:Bool = true;
 	public var withTimeScale:Bool = true;

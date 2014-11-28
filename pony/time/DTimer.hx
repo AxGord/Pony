@@ -79,7 +79,7 @@ class DTimer implements ITimer<DTimer> implements Declarator {
 	
 	private function _update(dt:DT):Void {
 		sumdt += dt;
-		if (dt >= 0.001) {
+		if (sumdt >= 0.001) {
 			var t:Time = sumdt.toTime();
 			sumdt -= DT.fromTime(t);
 			if (time != null) {

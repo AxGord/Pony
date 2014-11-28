@@ -129,6 +129,8 @@ class DeltaTime {
 	private static function _takeListeners():Void fixedUpdate.add(updateHandler);
 	private static function _lostListeners():Void fixedUpdate.remove(updateHandler);
 	
+	public static function skipUpdate(f:Void->Void):Void DeltaTime.fixedUpdate < function() DeltaTime.fixedUpdate < f;
+	
 	#if (munit || dox)
 	/**
 	 * For unit tests

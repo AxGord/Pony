@@ -37,7 +37,7 @@ using hugs.HUGSWrapper;
  */
 @:nativeGen class CameraManaging extends unityengine.MonoBehaviour
 {
-	private var target:unityengine.Transform;
+	public var target:unityengine.Transform;
 	
 	private var distance:Float = 10.0;
 	private var distanceX:Float = 0;
