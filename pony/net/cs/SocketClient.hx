@@ -7,19 +7,19 @@ package pony.net.cs;
 
  import cs.NativeArray.NativeArray;
  import cs.StdTypes.UInt8;
- import cs.system.net.sockets.SocketInformation;
-  import cs.system.net.IPAddress;
  import cs.system.IAsyncResult;
+ import cs.system.AsyncCallback;
+ import cs.system.net.IPAddress;
+ import cs.system.net.sockets.SocketInformation;
  import cs.system.net.sockets.Socket;
  import cs.system.net.sockets.AddressFamily;
  import cs.system.net.sockets.SocketType;
  import cs.system.net.sockets.ProtocolType;
  import cs.system.net.sockets.SocketFlags;
  import cs.system.net.sockets.SocketException;
+ import cs.system.threading.Thread;
  import cs.system.threading.ManualResetEvent;
  import cs.system.threading.Monitor;
- import cs.system.threading.Interlocked;
- import cs.system.AsyncCallback;
  import haxe.io.BytesInput;
  import haxe.io.BytesOutput;
  import pony.net.SocketClientBase;
@@ -27,6 +27,9 @@ package pony.net.cs;
  
 class SocketClient extends SocketClientBase
 {
+	/**
+	 * A client socket used to begin and end asynchronous operations.
+	 **/
 	@:allow(pony.net.cs.SocketServer)
 	private var client:Socket;
 	/**
@@ -34,16 +37,34 @@ class SocketClient extends SocketClientBase
 	 **/
 	@:allow(pony.net.cs.SocketServer)
 	private var isSet:Bool = false;
+	/**
+	 * A receive buffer; by default, connection is considered to be with length so default size is 4.
+	 **/
 	@:allow(pony.net.cs.SocketServer)
-	private var receiveBuffer:NativeArray<UInt8> = new NativeArray(255);
+	private var receiveBuffer:NativeArray<UInt8> = new NativeArray(4);
+	/**
+	 * A queue using to synchronize sending.
+	 **/
 	@:allow(pony.net.cs.SocketServer)
 	private var sendQueue:Queue < BytesOutput -> Void > ;
+	/**
+	 * An event that signals if send callback ends. Using in destroy function.
+	 **/
 	@:allow(pony.net.cs.SocketServer)
 	private var eventSend:ManualResetEvent = new ManualResetEvent(true);
+	/**
+	 * An event that signals if receive callback ends. Using in destroy function.
+	 **/
 	@:allow(pony.net.cs.SocketServer)
 	private var eventReceive:ManualResetEvent = new ManualResetEvent(true);
+	/**
+	 * A flag that indicates if send-receive process is running.
+	 **/
 	@:allow(pony.net.cs.SocketServer)
 	private var isRunning:Bool;
+	/**
+	 * A flag that indicates if client is connected.
+	 **/
 	private var isConnected:Bool = false;
 	
 	public override function new(aHost:String = "127.0.0.1", aPort:Int, aReconnect:Int = -1, aIsWithLength:Bool = true) 
@@ -146,10 +167,12 @@ class SocketClient extends SocketClientBase
 					var b_in:BytesInput = new BytesInput(b_out.getBytes());
 					if (isSet) 
 					{
-						eventReceive.Set();
+						//eventReceive.Set(); //Threre is a trouble like this: if eventReceive is set, then destroy inserted in onData handler executes every time the callback does,
+											  //so an exception is raised because of the client being equal to null and the callback crashes. But if one doesn't set the event, the destroy
+											  //stops waiting for event to set, so the callback stops too. Need to fix somehow. Fixed by adding a thread into destroy. 
 						onData.dispatch(b_in);
-						var buffer:NativeArray<UInt8> = new NativeArray(255);
-						receiveBuffer = buffer;
+						var buffer:NativeArray<UInt8> = new NativeArray(4);
+						this.receiveBuffer = buffer;
 						isSet = false;
 						client.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(receiveCallback), this);
 					}
@@ -164,9 +187,9 @@ class SocketClient extends SocketClientBase
 						else
 						{
 							buffer = new NativeArray(255);
-						}
-						onData.dispatch(b_in);
-						receiveBuffer = buffer;
+							onData.dispatch(b_in);//This will work uncorrect if length of datagramm is greater than 255. 
+						} 
+						this.receiveBuffer = buffer;
 						isSet = true;
 						client.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(receiveCallback), this);
 					}
@@ -178,19 +201,47 @@ class SocketClient extends SocketClientBase
 			}
 			catch (ex:Dynamic)
 			{
+				trace(id);
 				trace(ex);
 			}
 		}
+		//trace(isRunning); //This trace, being uncommented, comletely burns program to the ground.  
 		eventReceive.Set();
 	}
 	
 	public override function destroy():Void
 	{
 		isRunning = false;
-		eventReceive.WaitOne();
-		eventSend.WaitOne();
-		//trace("Client's close traced."); This one isn't traced. Need to fix. 
-		client.Close();
-		super.destroy();
+		var destrThread:Thread = new Thread(new cs.system.threading.ThreadStart(function()
+		{
+			eventReceive.WaitOne();
+			eventSend.WaitOne();
+			//trace("Client's close traced."); This one isn't traced. Need to fix. "three-fourth-fixed", see commetary below. 
+			try
+			{
+				client.Shutdown(cs.system.net.sockets.SocketShutdown.Both);
+				client.Disconnect(false);//These two strings may cause a crash. Use them at your own risk - or just comment so as "trace(ex);" above too. The problem is: when Close
+										 //having been executed, receive callback tries to execute one more time (although it hasn't to) and crashes the program because client becomes
+										 //null. To prevent this trying to receive I added the Shutdown and Disconnect but they don't work the way it should - or I misunderstood their 
+										 //working.
+										 //There were a few time when Disconnect raised an exception as if it waits for client to be alive but one is not. It's really strange behaviour
+										 //because client must be alive - Close isn't called at the time Disconnect is. It looks like Disconnect is called twice for one client. The temporary 
+										 //solve of this problem is just not to use Disconnect and swallow the exception raising because of it. 
+										 //By now there's no need in commenting something because execption raised by Disconnect is caught by using try-catch block and Close executes anyhow.
+										 //But it isn't the best way to solve the problem, though. 
+			}
+			catch(ex:Dynamic)
+			{
+				client.Close();
+			}
+			client.Close();
+			
+			closed = true;
+			onConnect.destroy();
+			onConnect = null;
+			onData.destroy();
+			onData = null;
+		}));
+		destrThread.Start();
 	}
 }

@@ -21,7 +21,7 @@ class Main {
 	
 	static var testCount:Int = 500;
 	#if cs
-	static var delay:Int = 5;
+	static var delay:Int = 30;
 	#elseif nodejs
 	static var delay:Int = 1;
 	#end
