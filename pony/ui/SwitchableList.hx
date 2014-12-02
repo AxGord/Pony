@@ -43,9 +43,13 @@ class SwitchableList implements IWards<SwitchableList> {
 	private var list:Array<ButtonCore>;
 	public var state(get,set):Int;
 	private var swto:Int;
+	private var ret:Bool;
+	private var def:Int;
 	
-	public function new(a:Array<ButtonCore>, def:Int = 0, swto:Int = 2) {
+	public function new(a:Array<ButtonCore>, def:Int = 0, swto:Int = 2, ret:Bool = false) {
 		this.swto = swto;
+		this.ret = ret;
+		this.def = def;
 		state = def;
 		change = Signal.create(this);
 		lostState = Signal.create(this);
@@ -54,9 +58,12 @@ class SwitchableList implements IWards<SwitchableList> {
 			if (i == def) a[i].mode = swto;
 			//select.listen(a[i].click.sub([0], [i]));
 			a[i].click.sub(0).bind(i).add(change);
+			if (ret) a[i].click.sub(swto).bind(i).add(changeRet);
 		}
 		change.add(setState, -1);
 	}
+	
+	private function changeRet():Void change.dispatch( -1 );
 	
 	private function setState(n:Int):Void {
 		if (state == n) return;

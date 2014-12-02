@@ -21,6 +21,7 @@ import PriorityTest;
 import StreamTest;
 import TextCoderTest;
 import time.DTimerTest;
+import time.TimelineTest;
 import time.TimerTest;
 import time.TimeTest;
 import ToolsTest;
@@ -63,6 +64,7 @@ class TestSuite extends massive.munit.TestSuite
 		add(StreamTest);
 		add(TextCoderTest);
 		add(time.DTimerTest);
+		add(time.TimelineTest);
 		add(time.TimerTest);
 		add(time.TimeTest);
 		add(ToolsTest);
