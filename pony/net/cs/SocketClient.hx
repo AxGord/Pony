@@ -19,14 +19,15 @@ package pony.net.cs;
  import cs.system.net.sockets.SocketException;
  import cs.system.threading.Thread;
  import cs.system.threading.ManualResetEvent;
- import cs.system.threading.Monitor;
  import haxe.io.BytesInput;
  import haxe.io.BytesOutput;
+ import pony.cs.Synchro;
  import pony.net.SocketClientBase;
  import pony.Queue.Queue;
  
 class SocketClient extends SocketClientBase
 {
+	
 	/**
 	 * A client socket used to begin and end asynchronous operations.
 	 **/
@@ -102,16 +103,7 @@ class SocketClient extends SocketClientBase
 	
 	public function send(data:BytesOutput):Void
 	{
-		Monitor.Enter(sendQueue);
-		try
-		{
-			sendQueue.call(data);
-		}
-		catch (ex:Dynamic)
-		{
-			Monitor.Exit(sendQueue);
-		}
-		Monitor.Exit(sendQueue);
+		Synchro.lock(sendQueue, function() sendQueue.call(data));
 	}
 	
 	@:allow(pony.net.cs.SocketServer)
@@ -133,16 +125,7 @@ class SocketClient extends SocketClientBase
 			eventSend.Reset();
 			var s:Socket = cast(ar.AsyncState, Socket);
 			s.EndSend(ar);
-			Monitor.Enter(sendQueue);
-			try
-			{
-				sendQueue.next();
-			}
-			catch (ex:Dynamic)
-			{
-				Monitor.Exit(sendQueue);
-			}
-			Monitor.Exit(sendQueue);
+			Synchro.lock(sendQueue, function() sendQueue.next());
 		}
 		eventSend.Set();
 	}
@@ -174,7 +157,11 @@ class SocketClient extends SocketClientBase
 						var buffer:NativeArray<UInt8> = new NativeArray(4);
 						this.receiveBuffer = buffer;
 						isSet = false;
-						client.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(receiveCallback), this);
+						Synchro.lock(client, function() 
+						{
+							if (client != null && client.Connected) client.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(receiveCallback), this); //Костыль для убиения бага. 
+						} );
+						
 					}
 					else
 					{
@@ -188,10 +175,14 @@ class SocketClient extends SocketClientBase
 						{
 							buffer = new NativeArray(255);
 							onData.dispatch(b_in);//This will work uncorrect if length of datagramm is greater than 255. 
-						} 
+						}
 						this.receiveBuffer = buffer;
 						isSet = true;
-						client.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(receiveCallback), this);
+						Synchro.lock(client, function() 
+						{
+							if (client != null && client.Connected) client.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(receiveCallback), this);
+						});
+						
 					}
 				}
 				else
@@ -205,7 +196,7 @@ class SocketClient extends SocketClientBase
 				trace(ex);
 			}
 		}
-		//trace(isRunning); //This trace, being uncommented, comletely burns program to the ground.  
+		//trace(isRunning); //This trace, being uncommented, comletely burns program to the ground. Although it doesn't do, fixed somehow. 
 		eventReceive.Set();
 	}
 	
@@ -216,25 +207,31 @@ class SocketClient extends SocketClientBase
 		{
 			eventReceive.WaitOne();
 			eventSend.WaitOne();
-			//trace("Client's close traced."); This one isn't traced. Need to fix. "three-fourth-fixed", see commetary below. 
-			try
+			//trace("Client's close traced."); This one isn't traced. Need to fix. "three-fourth-fixed", see commetary below. Seems to be completely fixed, but there's one more bug. 
+			Synchro.lock(client, function() 
 			{
-				client.Shutdown(cs.system.net.sockets.SocketShutdown.Both);
-				client.Disconnect(false);//These two strings may cause a crash. Use them at your own risk - or just comment so as "trace(ex);" above too. The problem is: when Close
-										 //having been executed, receive callback tries to execute one more time (although it hasn't to) and crashes the program because client becomes
-										 //null. To prevent this trying to receive I added the Shutdown and Disconnect but they don't work the way it should - or I misunderstood their 
-										 //working.
-										 //There were a few time when Disconnect raised an exception as if it waits for client to be alive but one is not. It's really strange behaviour
-										 //because client must be alive - Close isn't called at the time Disconnect is. It looks like Disconnect is called twice for one client. The temporary 
-										 //solve of this problem is just not to use Disconnect and swallow the exception raising because of it. 
-										 //By now there's no need in commenting something because execption raised by Disconnect is caught by using try-catch block and Close executes anyhow.
-										 //But it isn't the best way to solve the problem, though. 
-			}
-			catch(ex:Dynamic)
-			{
-				client.Close();
-			}
-			client.Close();
+				var flag:Bool = true;
+				try
+				{
+					client.Shutdown(cs.system.net.sockets.SocketShutdown.Both);
+					client.Disconnect(false);//These two strings may cause a crash. Use them at your own risk - or just comment so as "trace(ex);" above too. The problem is: when Close
+											 //having been executed, receive callback tries to execute one more time (although it hasn't to) and crashes the program because client becomes
+											 //null. To prevent this trying to receive I added the Shutdown and Disconnect but they don't work the way it should - or I misunderstood their 
+											 //working.
+											 //There were a few time when Disconnect raised an exception as if it waits for client to be alive but one is not. It's really strange behaviour
+											 //because client must be alive - Close isn't called at the time Disconnect is. It looks like Disconnect is called twice for one client. The temporary 
+											 //solve of this problem is just not to use Disconnect and swallow the exception raising because of it. 
+											 //By now there's no need in commenting something because execption raised by Disconnect is caught by using try-catch block and Close executes anyhow.
+											 //But it isn't the best way to solve the problem, though.
+											 //By now client is locked so there is no race condition anymore, fixed. 
+				}
+				catch(ex:Dynamic)
+				{
+					flag = false;
+					client.Close();
+				}
+				if (flag) client.Close(); 
+			} );
 			
 			closed = true;
 			onConnect.destroy();
@@ -242,6 +239,7 @@ class SocketClient extends SocketClientBase
 			onData.destroy();
 			onData = null;
 		}));
+		destrThread.IsBackground = true;
 		destrThread.Start();
 	}
 }

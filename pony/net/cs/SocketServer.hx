@@ -17,13 +17,13 @@ package pony.net.cs;
  import cs.system.net.sockets.SocketType;
  import cs.system.net.sockets.ProtocolType;
  import cs.system.threading.ManualResetEvent;
- import cs.system.threading.Monitor;
  import cs.system.threading.Thread;
  import cs.types.UInt8;
  import haxe.io.Bytes;
  import haxe.io.BytesInput;
  import haxe.io.BytesOutput;
  import pony.net.SocketClient;
+ import pony.cs.Synchro;
  import pony.Queue.Queue;
 
 class SocketServer extends SocketServerBase
@@ -75,18 +75,7 @@ class SocketServer extends SocketServerBase
 			var cl:SocketClient = clInit();
 			cl.client = s.EndAccept(ar);
 			cl.client.NoDelay = true; //One should never forget that this may cause troubles in future.
-			Monitor.Enter(clients);
-			try 
-			{
-				clients.push(cl);
-			}
-			catch (ex:Dynamic)
-			{
-				Monitor.PulseAll(clients);
-				Monitor.Exit(clients);
-			}
-			Monitor.PulseAll(clients);
-			Monitor.Exit(clients);
+			Synchro.lock(clients, function() clients.push(cl));
 			try
 			{
 				cl.receiveBuffer = new NativeArray(4);
@@ -107,35 +96,13 @@ class SocketServer extends SocketServerBase
 	private function closeConnection(cl:SocketClient):Void
 	{
 		cl.client.Close();
-		Monitor.Enter(clients);
-		try
-		{
-			clients.remove(cl);
-		}
-		catch (ex:Dynamic)
-		{
-			Monitor.PulseAll(clients);
-			Monitor.Exit(clients);
-		}
-		Monitor.PulseAll(clients);
-		Monitor.Exit(clients);
+		Synchro.lock(clients, function() clients.remove(cl));
 	}
 	
 	private function clInit():SocketClient
 	{
 		var cl:SocketClient = Type.createEmptyInstance(SocketClient);
-		Monitor.Enter(clients);
-		try 
-		{
-			cl.init(cast this, clients.length);
-		}
-		catch (_:Dynamic)
-		{
-			Monitor.PulseAll(clients);
-			Monitor.Exit(clients);
-		}
-		Monitor.PulseAll(clients);
-		Monitor.Exit(clients);
+		Synchro.lock(clients, function() cl.init(cast this, clients.length));
 		cl.isWithLength = this.isWithLength;
 		cl.sendQueue = new Queue(cl._send);
 		cl.isRunning = true;
@@ -164,6 +131,7 @@ class SocketServer extends SocketServerBase
 			onDisconnect.destroy();
 			onDisconnect = null;
 		}));
+		destrThread.IsBackground = true;
 		destrThread.Start();
 	}
 }

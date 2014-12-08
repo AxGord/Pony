@@ -21,7 +21,7 @@ class Main {
 	
 	static var testCount:Int = 500;
 	#if cs
-	static var delay:Int = 30;
+	static var delay:Int = 1;
 	#elseif nodejs
 	static var delay:Int = 1;
 	#end
@@ -75,9 +75,12 @@ class Main {
 		#if cs
 			Sys.getChar(false); 
 			AsyncTests.finish();
+			//trace(pony.net.cs.SocketClient.num);
+			//Sys.getChar(false);
 			//Sys.exit(0);
 		} catch (e:String) Tools.traceThrow(e);
 		#end
+		Application.
 		//todo: NodeJS not exit!
 	}
 	
@@ -131,6 +134,7 @@ class Main {
 			AsyncTests.setFlag(i);
 			//Sys.sleep(1000);
 			client.destroy();
+			client = null;
 		};
 		
 		return client;

@@ -1,4 +1,5 @@
 (function () { "use strict";
+var console = (1,eval)('this').console || {log:function(){}};
 var $estr = function() { return js.Boot.__string_rec(this,''); };
 function $extend(from, fields) {
 	function Inherit() {} Inherit.prototype = from; var proto = new Inherit();
@@ -152,7 +153,7 @@ Main.firstTest = function() {
 		})(Main.createClient,i),Main.delay + Main.delay * i);
 	}
 	pony.AsyncTests.wait(new IntIterator(0,Main.blockCount),function() {
-		haxe.Log.trace("Second part",{ fileName : "Main.hx", lineNumber : 90, className : "Main", methodName : "firstTest"});
+		haxe.Log.trace("Second part",{ fileName : "Main.hx", lineNumber : 92, className : "Main", methodName : "firstTest"});
 		server.destroy();
 		var server1 = Main.createServer(6002);
 		var _g11 = Main.blockCount;
@@ -172,27 +173,23 @@ Main.createServer = function(aPort) {
 	var server = new pony.net.SocketServer(aPort);
 	var this1 = server.onConnect;
 	var listener;
-	var l;
-	var f = pony._Function.Function_Impl_.from(function(cl) {
+	var l = pony._Function.Function_Impl_.from(function(cl) {
 		var bo = new haxe.io.BytesOutput();
 		var s = "hi world";
 		bo.writeInt32(s.length);
 		bo.writeString(s);
 		cl.send(bo);
 	},1,false);
-	l = pony.events._Listener.Listener_Impl_._fromFunction(f);
 	listener = l;
 	pony.events._Signal1.Signal1_Impl_.add(this1,listener);
 	this1;
 	var this2 = server.onData;
 	var listener1;
-	var l1;
-	var f1 = pony._Function.Function_Impl_.from(function(bi) {
+	var l1 = pony._Function.Function_Impl_.from(function(bi) {
 		var i = bi.readInt32();
-		pony.AsyncTests.equals("hello user",pony.Tools.readStr(bi),{ fileName : "Main.hx", lineNumber : 113, className : "Main", methodName : "createServer"});
-		pony.AsyncTests.setFlag(Main.partCount + i);
+		pony.AsyncTests.equals("hello user",pony.Tools.readStr(bi),{ fileName : "Main.hx", lineNumber : 115, className : "Main", methodName : "createServer"});
+		pony.AsyncTests.setFlag(Main.partCount + i,{ fileName : "Main.hx", lineNumber : 116, className : "Main", methodName : "createServer"});
 	},1,false);
-	l1 = pony.events._Listener.Listener_Impl_._fromFunction(f1);
 	listener1 = l1;
 	pony.events._Signal1.Signal1_Impl_.add(this2,listener1);
 	this2;
@@ -202,20 +199,19 @@ Main.createClient = function(i) {
 	var client = new pony.net.SocketClient(null,Main.port);
 	var this1 = client.onData;
 	var listener;
-	var l;
-	var f = pony._Function.Function_Impl_.from(function(data) {
+	var l = pony._Function.Function_Impl_.from(function(data) {
 		var s = pony.Tools.readStr(data);
 		if(s == null) throw "wrong data";
-		pony.AsyncTests.assertList.push({ a : s, b : "hi world", pos : { fileName : "Main.hx", lineNumber : 126, className : "Main", methodName : "createClient"}});
+		pony.AsyncTests.assertList.push({ a : s, b : "hi world", pos : { fileName : "Main.hx", lineNumber : 128, className : "Main", methodName : "createClient"}});
 		var bo = new haxe.io.BytesOutput();
 		bo.writeInt32(i);
 		bo.writeInt32("hello user".length);
 		bo.writeString("hello user");
 		client.send(bo);
-		pony.AsyncTests.setFlag(i);
+		pony.AsyncTests.setFlag(i,{ fileName : "Main.hx", lineNumber : 133, className : "Main", methodName : "createClient"});
 		client.destroy();
+		client = null;
 	},1,false);
-	l = pony.events._Listener.Listener_Impl_._fromFunction(f);
 	listener = l;
 	pony.events._Signal1.Signal1_Impl_.once(this1,listener);
 	this1;
@@ -433,7 +429,7 @@ Xml.parse = function(str) {
 Xml.createElement = function(name) {
 	var r = new Xml();
 	r.nodeType = Xml.Element;
-	r._children = new Array();
+	r._children = [];
 	r._attributes = new haxe.ds.StringMap();
 	r.set_nodeName(name);
 	return r;
@@ -471,7 +467,7 @@ Xml.createProcessingInstruction = function(data) {
 Xml.createDocument = function() {
 	var r = new Xml();
 	r.nodeType = Xml.Document;
-	r._children = new Array();
+	r._children = [];
 	return r;
 };
 Xml.prototype = {
@@ -858,7 +854,7 @@ haxe.io.Bytes.prototype = {
 		}
 		return this.length - other.length;
 	}
-	,getString: function(pos,len) {
+	,readString: function(pos,len) {
 		if(pos < 0 || len < 0 || pos + len > this.length) throw haxe.io.Error.OutsideBounds;
 		var s = "";
 		var b = this.b;
@@ -881,11 +877,8 @@ haxe.io.Bytes.prototype = {
 		}
 		return s;
 	}
-	,readString: function(pos,len) {
-		return this.getString(pos,len);
-	}
 	,toString: function() {
-		return this.getString(0,this.length);
+		return this.readString(0,this.length);
 	}
 	,toHex: function() {
 		var s_b = "";
@@ -913,7 +906,7 @@ haxe.io.Bytes.prototype = {
 	,__class__: haxe.io.Bytes
 };
 haxe.io.BytesBuffer = function() {
-	this.b = new Array();
+	this.b = [];
 };
 haxe.io.BytesBuffer.__name__ = ["haxe","io","BytesBuffer"];
 haxe.io.BytesBuffer.prototype = {
@@ -1295,7 +1288,7 @@ haxe.unit.TestRunner.prototype = {
 				t.currentTest.method = fname;
 				t.setup();
 				try {
-					Reflect.callMethod(t,field,new Array());
+					Reflect.callMethod(t,field,[]);
 					if(t.currentTest.done) {
 						t.currentTest.success = true;
 						haxe.unit.TestRunner.print(".");
@@ -1698,18 +1691,18 @@ js.Boot.__string_rec = function(o,s) {
 		if(o instanceof Array) {
 			if(o.__enum__) {
 				if(o.length == 2) return o[0];
-				var str = o[0] + "(";
+				var str2 = o[0] + "(";
 				s += "\t";
 				var _g1 = 2;
 				var _g = o.length;
 				while(_g1 < _g) {
-					var i = _g1++;
-					if(i != 2) str += "," + js.Boot.__string_rec(o[i],s); else str += js.Boot.__string_rec(o[i],s);
+					var i1 = _g1++;
+					if(i1 != 2) str2 += "," + js.Boot.__string_rec(o[i1],s); else str2 += js.Boot.__string_rec(o[i1],s);
 				}
-				return str + ")";
+				return str2 + ")";
 			}
 			var l = o.length;
-			var i1;
+			var i;
 			var str1 = "[";
 			s += "\t";
 			var _g2 = 0;
@@ -1726,12 +1719,12 @@ js.Boot.__string_rec = function(o,s) {
 		} catch( e ) {
 			return "???";
 		}
-		if(tostr != null && tostr != Object.toString) {
+		if(tostr != null && tostr != Object.toString && typeof(tostr) == "function") {
 			var s2 = o.toString();
 			if(s2 != "[object Object]") return s2;
 		}
 		var k = null;
-		var str2 = "{\n";
+		var str = "{\n";
 		s += "\t";
 		var hasp = o.hasOwnProperty != null;
 		for( var k in o ) {
@@ -1741,12 +1734,12 @@ js.Boot.__string_rec = function(o,s) {
 		if(k == "prototype" || k == "__class__" || k == "__super__" || k == "__interfaces__" || k == "__properties__") {
 			continue;
 		}
-		if(str2.length != 2) str2 += ", \n";
-		str2 += s + k + " : " + js.Boot.__string_rec(o[k],s);
+		if(str.length != 2) str += ", \n";
+		str += s + k + " : " + js.Boot.__string_rec(o[k],s);
 		}
 		s = s.substring(1);
-		str2 += "\n" + s + "}";
-		return str2;
+		str += "\n" + s + "}";
+		return str;
 	case "function":
 		return "<function>";
 	case "string":
@@ -1890,7 +1883,7 @@ pony.AsyncTests = function() {
 pony.AsyncTests.__name__ = ["pony","AsyncTests"];
 pony.AsyncTests.init = function(count) {
 	if(pony.AsyncTests.testCount != 0) throw "Second init";
-	haxe.Log.trace("" + pony.AsyncTests.dec + " Begin tests (" + count + ") " + pony.AsyncTests.dec);
+	haxe.Log.trace("" + pony.AsyncTests.dec + " Begin tests (" + count + ") " + pony.AsyncTests.dec,{ fileName : "AsyncTests.hx", lineNumber : 57, className : "pony.AsyncTests", methodName : "init"});
 	pony.AsyncTests.testCount = count;
 	var _g = new haxe.ds.IntMap();
 	var _g1 = 0;
@@ -1980,7 +1973,7 @@ pony.AsyncTests.prototype = $extend(haxe.unit.TestCase.prototype,{
 	,__class__: pony.AsyncTests
 });
 pony._Byte = {};
-pony._Byte.Byte_Impl_ = function() { };
+pony._Byte.Byte_Impl_ = {};
 pony._Byte.Byte_Impl_.__name__ = ["pony","_Byte","Byte_Impl_"];
 pony._Byte.Byte_Impl_.get_a = function(this1) {
 	return this1 >> 4;
@@ -2081,7 +2074,7 @@ pony.Dictionary.prototype = {
 	,__class__: pony.Dictionary
 };
 pony._Function = {};
-pony._Function.Function_Impl_ = function() { };
+pony._Function.Function_Impl_ = {};
 pony._Function.Function_Impl_.__name__ = ["pony","_Function","Function_Impl_"];
 pony._Function.Function_Impl_._new = function(f,count,args,ret,event) {
 	if(event == null) event = false;
@@ -2098,6 +2091,9 @@ pony._Function.Function_Impl_._new = function(f,count,args,ret,event) {
 	} else if(pony._Function.Function_Impl_.counter == -1) pony._Function.Function_Impl_.searchFree = true;
 	this1 = { f : f, count : count, args : args == null?[]:args, id : pony._Function.Function_Impl_.counter, used : 0, event : event, ret : ret};
 	return this1;
+};
+pony._Function.Function_Impl_.copy = function(this1) {
+	return pony._Function.Function_Impl_._new(this1.f,this1.count,this1.args,this1.ret,this1.event);
 };
 pony._Function.Function_Impl_.from = function(f,argc,ret,event) {
 	if(event == null) event = false;
@@ -2209,7 +2205,7 @@ pony.ILogable.prototype = {
 	,__class__: pony.ILogable
 };
 pony._KeyValue = {};
-pony._KeyValue.KeyValue_Impl_ = function() { };
+pony._KeyValue.KeyValue_Impl_ = {};
 pony._KeyValue.KeyValue_Impl_.__name__ = ["pony","_KeyValue","KeyValue_Impl_"];
 pony._KeyValue.KeyValue_Impl_._new = function(p) {
 	return p;
@@ -2246,7 +2242,7 @@ pony.Logable.prototype = {
 	,__class__: pony.Logable
 };
 pony._Pair = {};
-pony._Pair.Pair_Impl_ = function() { };
+pony._Pair.Pair_Impl_ = {};
 pony._Pair.Pair_Impl_.__name__ = ["pony","_Pair","Pair_Impl_"];
 pony._Pair.Pair_Impl_._new = function(a,b) {
 	return { a : a, b : b};
@@ -2354,7 +2350,7 @@ pony.Priority.prototype = {
 	}
 	,clear: function() {
 		this.hash = new haxe.ds.IntMap();
-		this.data = new Array();
+		this.data = [];
 		this.counters = [0];
 		return this;
 	}
@@ -2643,11 +2639,20 @@ pony.Tools.equal = function(a,b,maxDepth) {
 pony.Tools.superIndexOf = function(it,v,maxDepth) {
 	if(maxDepth == null) maxDepth = 1;
 	var i = 0;
-	var $it0 = $iterator(it)();
-	while( $it0.hasNext() ) {
-		var e = $it0.next();
-		if(pony.Tools.equal(e,v,maxDepth)) return i;
-		i++;
+	if(maxDepth == 0) {
+		var $it0 = $iterator(it)();
+		while( $it0.hasNext() ) {
+			var e = $it0.next();
+			if(e == v) return i;
+			i++;
+		}
+	} else {
+		var $it1 = $iterator(it)();
+		while( $it1.hasNext() ) {
+			var e1 = $it1.next();
+			if(pony.Tools.equal(e1,v,maxDepth)) return i;
+			i++;
+		}
 	}
 	return -1;
 };
@@ -2908,18 +2913,18 @@ pony.FloatTools._toFixed = function(v,n,begin,d,beginS,endS) {
 	if(d == null) d = ".";
 	if(begin == null) begin = 0;
 	if(begin != 0) {
-		var s = pony.FloatTools._toFixed(v,n,0,d,beginS,endS);
-		var a = s.split(d);
-		var d1 = begin - a[0].length;
-		return pony.text.TextTools.repeat(beginS,d1) + s;
+		var s1 = pony.FloatTools._toFixed(v,n,0,d,beginS,endS);
+		var a1 = s1.split(d);
+		var d1 = begin - a1[0].length;
+		return pony.text.TextTools.repeat(beginS,d1) + s1;
 	}
 	if(n == 0) return Std.string(v | 0);
 	var p = Math.pow(10,n);
 	v = Math.floor(v * p) / p;
-	var s1;
-	if(v == null) s1 = "null"; else s1 = "" + v;
-	var a1 = s1.split(".");
-	if(a1.length <= 1) return s1 + d + pony.text.TextTools.repeat(endS,n); else return a1[0] + d + a1[1] + pony.text.TextTools.repeat(endS,n - a1[1].length);
+	var s;
+	if(v == null) s = "null"; else s = "" + v;
+	var a = s.split(".");
+	if(a.length <= 1) return s + d + pony.text.TextTools.repeat(endS,n); else return a[0] + d + a[1] + pony.text.TextTools.repeat(endS,n - a[1].length);
 };
 pony.XMLTools = function() { };
 pony.XMLTools.__name__ = ["pony","XMLTools"];
@@ -2966,151 +2971,180 @@ pony.events.Event.prototype = {
 	,__class__: pony.events.Event
 };
 pony.events._Listener = {};
-pony.events._Listener.Listener_Impl_ = function() { };
+pony.events._Listener.Listener_Impl_ = {};
 pony.events._Listener.Listener_Impl_.__name__ = ["pony","events","_Listener","Listener_Impl_"];
 pony.events._Listener.Listener_Impl_._new = function(f,count) {
 	if(count == null) count = -1;
 	var this1;
-	f.used++;
-	this1 = { f : f, count : count, event : f.event, prev : null, used : 0, active : true, ignoreReturn : !f.ret};
+	if(count == -1) {
+		this1 = f;
+		this1.used++;
+	} else {
+		this1 = pony._Function.Function_Impl_._new(f.f,f.count,f.args,f.ret,f.event);
+		this1.used++;
+		if(!pony.events._Listener.Listener_Impl_.listeners.exists(this1.id)) {
+			var v = { count : count, prev : null, used : 0, active : true};
+			pony.events._Listener.Listener_Impl_.listeners.set(this1.id,v);
+			v;
+		}
+	}
 	return this1;
 };
-pony.events._Listener.Listener_Impl_.fromFunction = function(f) {
-	return pony.events._Listener.Listener_Impl_._fromFunction(f);
-};
-pony.events._Listener.Listener_Impl_.fromSignal = function(s) {
-	var f = pony._Function.Function_Impl_.from($bind(s,s.dispatchEvent),1,true,true);
-	return pony.events._Listener.Listener_Impl_._fromFunction(f);
-};
-pony.events._Listener.Listener_Impl_._fromFunction = function(f) {
-	if(pony.events._Listener.Listener_Impl_.flist.exists(f.id)) return pony.events._Listener.Listener_Impl_.flist.get(f.id); else {
-		var o;
-		var this1;
-		f.used++;
-		this1 = { f : f, count : -1, event : f.event, prev : null, used : 0, active : true, ignoreReturn : !f.ret};
-		o = this1;
-		pony.events._Listener.Listener_Impl_.flist.set(f.id,o);
-		return o;
+pony.events._Listener.Listener_Impl_.initListener = function(this1,count) {
+	if(count == null) count = -1;
+	if(!pony.events._Listener.Listener_Impl_.listeners.exists(this1.id)) {
+		var v = { count : count, prev : null, used : 0, active : true};
+		pony.events._Listener.Listener_Impl_.listeners.set(this1.id,v);
+		v;
 	}
+};
+pony.events._Listener.Listener_Impl_.get_exists = function(this1) {
+	return pony.events._Listener.Listener_Impl_.listeners.exists(this1.id);
+};
+pony.events._Listener.Listener_Impl_.get_listener = function(this1) {
+	return pony.events._Listener.Listener_Impl_.listeners.get(this1.id);
+};
+pony.events._Listener.Listener_Impl_.get_ignoreReturn = function(this1) {
+	return !this1.ret;
 };
 pony.events._Listener.Listener_Impl_.get_count = function(this1) {
-	return this1.count;
+	if(pony.events._Listener.Listener_Impl_.listeners.exists(this1.id)) return pony.events._Listener.Listener_Impl_.listeners.get(this1.id).count; else return -1;
 };
-pony.events._Listener.Listener_Impl_.call = function(this1,event) {
-	if(!this1.active) return true;
-	this1.count--;
-	event.currentListener = this1;
-	var r = true;
-	if(this1.event) {
-		if(this1.ignoreReturn) {
-			var this2 = this1.f;
-			var args = [event];
-			if(args == null) args = [];
-			Reflect.callMethod(null,this2.f,this2.args.concat(args));
-		} else if((function($this) {
-			var $r;
-			var this3 = this1.f;
-			var args1 = [event];
-			if(args1 == null) args1 = [];
-			$r = Reflect.callMethod(null,this3.f,this3.args.concat(args1));
-			return $r;
-		}(this)) == false) r = false;
-	} else {
-		var args2 = [];
-		var _g = 0;
-		var _g1 = event.args;
-		while(_g < _g1.length) {
-			var e = _g1[_g];
-			++_g;
-			args2.push(e);
-		}
-		args2.push(event.target);
-		args2.push(event);
-		if(this1.ignoreReturn) {
-			var this4 = this1.f;
-			var args3 = args2.slice(0,this1.f.count);
-			if(args3 == null) args3 = [];
-			Reflect.callMethod(null,this4.f,this4.args.concat(args3));
-		} else if((function($this) {
-			var $r;
-			var this5 = this1.f;
-			var args4 = args2.slice(0,this1.f.count);
-			if(args4 == null) args4 = [];
-			$r = Reflect.callMethod(null,this5.f,this5.args.concat(args4));
-			return $r;
-		}(this)) == false) r = false;
+pony.events._Listener.Listener_Impl_.get_active = function(this1) {
+	if(pony.events._Listener.Listener_Impl_.listeners.exists(this1.id)) return pony.events._Listener.Listener_Impl_.listeners.get(this1.id).active; else return true;
+};
+pony.events._Listener.Listener_Impl_.set_active = function(this1,b) {
+	if(!pony.events._Listener.Listener_Impl_.listeners.exists(this1.id)) {
+		var v = { count : -1, prev : null, used : 0, active : true};
+		pony.events._Listener.Listener_Impl_.listeners.set(this1.id,v);
+		v;
 	}
-	this1.prev = event;
-	if(event._stopPropagation) return false; else return r;
-};
-pony.events._Listener.Listener_Impl_.setCount = function(this1,count) {
-	var f = this1.f;
-	var this2;
-	f.used++;
-	this2 = { f : f, count : count, event : f.event, prev : null, used : 0, active : true, ignoreReturn : !f.ret};
-	return this2;
-};
-pony.events._Listener.Listener_Impl_._use = function(this1) {
-	this1.used++;
-};
-pony.events._Listener.Listener_Impl_.unuse = function(this1) {
-	this1.used--;
-	if(this1.used == 0) {
-		pony.events._Listener.Listener_Impl_.flist.remove(this1.f.id);
-		this1.f.used--;
-		if(this1.f.used <= 0) {
-			pony._Function.Function_Impl_.list.remove(this1.f.f);
-			this1.f = null;
-			pony._Function.Function_Impl_.unusedCount--;
-		}
-	}
+	return pony.events._Listener.Listener_Impl_.listeners.get(this1.id).active = b;
 };
 pony.events._Listener.Listener_Impl_.get_used = function(this1) {
 	return this1.used;
 };
+pony.events._Listener.Listener_Impl_.setCount = function(this1,count) {
+	var this2;
+	if(count == -1) {
+		this2 = this1;
+		this2.used++;
+	} else {
+		this2 = pony._Function.Function_Impl_._new(this1.f,this1.count,this1.args,this1.ret,this1.event);
+		this2.used++;
+		if(!pony.events._Listener.Listener_Impl_.listeners.exists(this2.id)) {
+			var v = { count : count, prev : null, used : 0, active : true};
+			pony.events._Listener.Listener_Impl_.listeners.set(this2.id,v);
+			v;
+		}
+	}
+	return this2;
+};
+pony.events._Listener.Listener_Impl_["use"] = function(this1) {
+	if(!pony.events._Listener.Listener_Impl_.listeners.exists(this1.id)) {
+		var v = { count : -1, prev : null, used : 0, active : true};
+		pony.events._Listener.Listener_Impl_.listeners.set(this1.id,v);
+		v;
+	}
+	pony.events._Listener.Listener_Impl_.listeners.get(this1.id).used++;
+};
+pony.events._Listener.Listener_Impl_.unuse = function(this1) {
+	if(!pony.events._Listener.Listener_Impl_.listeners.exists(this1.id)) {
+		var v = { count : -1, prev : null, used : 0, active : true};
+		pony.events._Listener.Listener_Impl_.listeners.set(this1.id,v);
+		v;
+	}
+	pony.events._Listener.Listener_Impl_.listeners.get(this1.id).used--;
+	if(this1.used == 0) {
+		pony.events._Listener.Listener_Impl_.listeners.remove(this1.id);
+		this1.used--;
+		if(this1.used <= 0) {
+			pony._Function.Function_Impl_.list.remove(this1.f);
+			this1 = null;
+			pony._Function.Function_Impl_.unusedCount--;
+		}
+	}
+};
 pony.events._Listener.Listener_Impl_.unusedCount = function() {
 	var c = 0;
-	var $it0 = pony.events._Listener.Listener_Impl_.flist.iterator();
+	var $it0 = pony.events._Listener.Listener_Impl_.listeners.iterator();
 	while( $it0.hasNext() ) {
 		var l = $it0.next();
 		if(l.used <= 0) c++;
 	}
 	return c;
 };
-pony.events._Listener.Listener_Impl_.get_active = function(this1) {
-	return this1.active;
+pony.events._Listener.Listener_Impl_.call = function(this1,_event) {
+	if(!pony.events._Listener.Listener_Impl_.listeners.exists(this1.id)) {
+		var v = { count : -1, prev : null, used : 0, active : true};
+		pony.events._Listener.Listener_Impl_.listeners.set(this1.id,v);
+		v;
+	}
+	if(!(pony.events._Listener.Listener_Impl_.listeners.exists(this1.id)?pony.events._Listener.Listener_Impl_.listeners.get(this1.id).active:true)) return true;
+	pony.events._Listener.Listener_Impl_.listeners.get(this1.id).count--;
+	_event._setListener(pony.events._Listener.Listener_Impl_.listeners.get(this1.id));
+	var r = true;
+	if(this1.event) {
+		if(!this1.ret) {
+			var args = [_event];
+			if(args == null) args = [];
+			Reflect.callMethod(null,this1.f,this1.args.concat(args));
+		} else if((function($this) {
+			var $r;
+			var args1 = [_event];
+			if(args1 == null) args1 = [];
+			$r = Reflect.callMethod(null,this1.f,this1.args.concat(args1));
+			return $r;
+		}(this)) == false) r = false;
+	} else {
+		var args2 = [];
+		var _g = 0;
+		var _g1 = _event.args;
+		while(_g < _g1.length) {
+			var e = _g1[_g];
+			++_g;
+			args2.push(e);
+		}
+		args2.push(_event.target);
+		args2.push(_event);
+		if(!this1.ret) {
+			var args3 = args2.slice(0,this1.count);
+			if(args3 == null) args3 = [];
+			Reflect.callMethod(null,this1.f,this1.args.concat(args3));
+		} else if((function($this) {
+			var $r;
+			var args4 = args2.slice(0,this1.count);
+			if(args4 == null) args4 = [];
+			$r = Reflect.callMethod(null,this1.f,this1.args.concat(args4));
+			return $r;
+		}(this)) == false) r = false;
+	}
+	if(pony.events._Listener.Listener_Impl_.listeners.get(this1.id) != null) pony.events._Listener.Listener_Impl_.listeners.get(this1.id).prev = _event;
+	if(_event._stopPropagation) return false; else return r;
 };
-pony.events._Listener.Listener_Impl_.set_active = function(this1,b) {
-	return this1.active = b;
+pony.events._Listener.Listener_Impl_.fromSignal = function(s) {
+	return pony._Function.Function_Impl_.from($bind(s,s.dispatchEvent),1,true,true);
 };
 pony.events._Listener0 = {};
-pony.events._Listener0.Listener0_Impl_ = function() { };
+pony.events._Listener0.Listener0_Impl_ = {};
 pony.events._Listener0.Listener0_Impl_.__name__ = ["pony","events","_Listener0","Listener0_Impl_"];
 pony.events._Listener0.Listener0_Impl_._new = function(l) {
 	return l;
 };
 pony.events._Listener0.Listener0_Impl_.from0 = function(f) {
-	var l;
-	var f1 = pony._Function.Function_Impl_.from(f,0,false);
-	l = pony.events._Listener.Listener_Impl_._fromFunction(f1);
+	var l = pony._Function.Function_Impl_.from(f,0,false);
 	return l;
 };
 pony.events._Listener0.Listener0_Impl_.fromE = function(f) {
-	var l;
-	var f1 = pony._Function.Function_Impl_.from(f,1,false,true);
-	l = pony.events._Listener.Listener_Impl_._fromFunction(f1);
+	var l = pony._Function.Function_Impl_.from(f,1,false,true);
 	return l;
 };
 pony.events._Listener0.Listener0_Impl_.from0T = function(f) {
-	var l;
-	var f1 = pony._Function.Function_Impl_.from(f,1,false);
-	l = pony.events._Listener.Listener_Impl_._fromFunction(f1);
+	var l = pony._Function.Function_Impl_.from(f,1,false);
 	return l;
 };
 pony.events._Listener0.Listener0_Impl_.fromTE = function(f) {
-	var l;
-	var f1 = pony._Function.Function_Impl_.from(f,2,false);
-	l = pony.events._Listener.Listener_Impl_._fromFunction(f1);
+	var l = pony._Function.Function_Impl_.from(f,2,false);
 	return l;
 };
 pony.events._Listener0.Listener0_Impl_.to = function(this1) {
@@ -3122,45 +3156,33 @@ pony.events._Listener0.Listener0_Impl_.fromSignal0 = function(s) {
 			return pony.events._Signal0.Signal0_Impl_.dispatchEvent(_e,event);
 		};
 	})(s);
-	var l;
-	var f1 = pony._Function.Function_Impl_.from(f,1,false,true);
-	l = pony.events._Listener.Listener_Impl_._fromFunction(f1);
+	var l = pony._Function.Function_Impl_.from(f,1,false,true);
 	return l;
 };
 pony.events._Listener1 = {};
-pony.events._Listener1.Listener1_Impl_ = function() { };
+pony.events._Listener1.Listener1_Impl_ = {};
 pony.events._Listener1.Listener1_Impl_.__name__ = ["pony","events","_Listener1","Listener1_Impl_"];
 pony.events._Listener1.Listener1_Impl_._new = function(l) {
 	return l;
 };
 pony.events._Listener1.Listener1_Impl_.from0 = function(f) {
-	var l;
-	var f1 = pony._Function.Function_Impl_.from(f,0,false);
-	l = pony.events._Listener.Listener_Impl_._fromFunction(f1);
+	var l = pony._Function.Function_Impl_.from(f,0,false);
 	return l;
 };
 pony.events._Listener1.Listener1_Impl_.fromE = function(f) {
-	var l;
-	var f1 = pony._Function.Function_Impl_.from(f,1,false,true);
-	l = pony.events._Listener.Listener_Impl_._fromFunction(f1);
+	var l = pony._Function.Function_Impl_.from(f,1,false,true);
 	return l;
 };
 pony.events._Listener1.Listener1_Impl_.from1 = function(f) {
-	var l;
-	var f1 = pony._Function.Function_Impl_.from(f,1,false);
-	l = pony.events._Listener.Listener_Impl_._fromFunction(f1);
+	var l = pony._Function.Function_Impl_.from(f,1,false);
 	return l;
 };
 pony.events._Listener1.Listener1_Impl_.from1T = function(f) {
-	var l;
-	var f1 = pony._Function.Function_Impl_.from(f,2,false);
-	l = pony.events._Listener.Listener_Impl_._fromFunction(f1);
+	var l = pony._Function.Function_Impl_.from(f,2,false);
 	return l;
 };
 pony.events._Listener1.Listener1_Impl_.from1TE = function(f) {
-	var l;
-	var f1 = pony._Function.Function_Impl_.from(f,3,false);
-	l = pony.events._Listener.Listener_Impl_._fromFunction(f1);
+	var l = pony._Function.Function_Impl_.from(f,3,false);
 	return l;
 };
 pony.events._Listener1.Listener1_Impl_.to = function(this1) {
@@ -3168,74 +3190,56 @@ pony.events._Listener1.Listener1_Impl_.to = function(this1) {
 };
 pony.events._Listener1.Listener1_Impl_.fromSignal0 = function(s) {
 	var l;
-	var f;
-	var f1 = (function(_e) {
+	var f = (function(_e) {
 		return function(event) {
 			return pony.events._Signal0.Signal0_Impl_.dispatchEvent(_e,event);
 		};
 	})(s);
-	f = pony._Function.Function_Impl_.from(f1,1,true,true);
-	l = pony.events._Listener.Listener_Impl_._fromFunction(f);
+	l = pony._Function.Function_Impl_.from(f,1,true,true);
 	return l;
 };
 pony.events._Listener1.Listener1_Impl_.fromSignal1 = function(s) {
 	var l;
-	var f;
-	var f1 = (function(_e) {
+	var f = (function(_e) {
 		return function(event) {
 			return pony.events._Signal1.Signal1_Impl_.dispatchEvent(_e,event);
 		};
 	})(s);
-	f = pony._Function.Function_Impl_.from(f1,1,true,true);
-	l = pony.events._Listener.Listener_Impl_._fromFunction(f);
+	l = pony._Function.Function_Impl_.from(f,1,true,true);
 	return l;
 };
 pony.events._Listener2 = {};
-pony.events._Listener2.Listener2_Impl_ = function() { };
+pony.events._Listener2.Listener2_Impl_ = {};
 pony.events._Listener2.Listener2_Impl_.__name__ = ["pony","events","_Listener2","Listener2_Impl_"];
 pony.events._Listener2.Listener2_Impl_._new = function(l) {
 	return l;
 };
 pony.events._Listener2.Listener2_Impl_.from0 = function(f) {
-	var l;
-	var f1 = pony._Function.Function_Impl_.from(f,0,false);
-	l = pony.events._Listener.Listener_Impl_._fromFunction(f1);
+	var l = pony._Function.Function_Impl_.from(f,0,false);
 	return l;
 };
 pony.events._Listener2.Listener2_Impl_.fromE = function(f) {
-	var l;
-	var f1 = pony._Function.Function_Impl_.from(f,1,false,true);
-	l = pony.events._Listener.Listener_Impl_._fromFunction(f1);
+	var l = pony._Function.Function_Impl_.from(f,1,false,true);
 	return l;
 };
 pony.events._Listener2.Listener2_Impl_.from1 = function(f) {
-	var l;
-	var f1 = pony._Function.Function_Impl_.from(f,1,false);
-	l = pony.events._Listener.Listener_Impl_._fromFunction(f1);
+	var l = pony._Function.Function_Impl_.from(f,1,false);
 	return l;
 };
 pony.events._Listener2.Listener2_Impl_.from1E = function(f) {
-	var l;
-	var f1 = pony._Function.Function_Impl_.from(f,2,false);
-	l = pony.events._Listener.Listener_Impl_._fromFunction(f1);
+	var l = pony._Function.Function_Impl_.from(f,2,false);
 	return l;
 };
 pony.events._Listener2.Listener2_Impl_.from2 = function(f) {
-	var l;
-	var f1 = pony._Function.Function_Impl_.from(f,2,false);
-	l = pony.events._Listener.Listener_Impl_._fromFunction(f1);
+	var l = pony._Function.Function_Impl_.from(f,2,false);
 	return l;
 };
 pony.events._Listener2.Listener2_Impl_.from2T = function(f) {
-	var l;
-	var f1 = pony._Function.Function_Impl_.from(f,3,false);
-	l = pony.events._Listener.Listener_Impl_._fromFunction(f1);
+	var l = pony._Function.Function_Impl_.from(f,3,false);
 	return l;
 };
 pony.events._Listener2.Listener2_Impl_.from2TE = function(f) {
-	var l;
-	var f1 = pony._Function.Function_Impl_.from(f,4,false);
-	l = pony.events._Listener.Listener_Impl_._fromFunction(f1);
+	var l = pony._Function.Function_Impl_.from(f,4,false);
 	return l;
 };
 pony.events._Listener2.Listener2_Impl_.to = function(this1) {
@@ -3243,38 +3247,32 @@ pony.events._Listener2.Listener2_Impl_.to = function(this1) {
 };
 pony.events._Listener2.Listener2_Impl_.fromSignal0 = function(s) {
 	var l;
-	var f;
-	var f1 = (function(_e) {
+	var f = (function(_e) {
 		return function(event) {
 			return pony.events._Signal0.Signal0_Impl_.dispatchEvent(_e,event);
 		};
 	})(s);
-	f = pony._Function.Function_Impl_.from(f1,1,true,true);
-	l = pony.events._Listener.Listener_Impl_._fromFunction(f);
+	l = pony._Function.Function_Impl_.from(f,1,true,true);
 	return l;
 };
 pony.events._Listener2.Listener2_Impl_.fromSignal1 = function(s) {
 	var l;
-	var f;
-	var f1 = (function(_e) {
+	var f = (function(_e) {
 		return function(event) {
 			return pony.events._Signal1.Signal1_Impl_.dispatchEvent(_e,event);
 		};
 	})(s);
-	f = pony._Function.Function_Impl_.from(f1,1,true,true);
-	l = pony.events._Listener.Listener_Impl_._fromFunction(f);
+	l = pony._Function.Function_Impl_.from(f,1,true,true);
 	return l;
 };
 pony.events._Listener2.Listener2_Impl_.fromSignal2 = function(s) {
 	var l;
-	var f;
-	var f1 = (function(_e) {
+	var f = (function(_e) {
 		return function(event) {
 			return pony.events._Signal2.Signal2_Impl_.dispatchEvent(_e,event);
 		};
 	})(s);
-	f = pony._Function.Function_Impl_.from(f1,1,true,true);
-	l = pony.events._Listener.Listener_Impl_._fromFunction(f);
+	l = pony._Function.Function_Impl_.from(f,1,true,true);
 	return l;
 };
 pony.events.Signal = function(target) {
@@ -3330,13 +3328,19 @@ pony.events.Signal.prototype = {
 	}
 	,add: function(listener,priority) {
 		if(priority == null) priority = 0;
-		listener.used++;
+		if(!pony.events._Listener.Listener_Impl_.listeners.exists(listener.id)) {
+			var v = { count : -1, prev : null, used : 0, active : true};
+			pony.events._Listener.Listener_Impl_.listeners.set(listener.id,v);
+			v;
+		}
+		pony.events._Listener.Listener_Impl_.listeners.get(listener.id).used++;
 		var f = this.listeners.data.length == 0;
 		this.listeners.addElement(listener,priority);
 		if(f && this.takeListeners != null) pony.events._Signal0.Signal0_Impl_.dispatchEmpty(this.takeListeners);
 		return this;
 	}
-	,remove: function(listener) {
+	,remove: function(listener,unuse) {
+		if(unuse == null) unuse = true;
 		if(this.listeners.data.length == 0) return this;
 		if(this.listeners.removeElement(listener)) {
 			var _g_head = this.lRunCopy.h;
@@ -3348,14 +3352,21 @@ pony.events.Signal.prototype = {
 				c = _g_val;
 				c.removeElement(listener);
 			}
-			listener.used--;
-			if(listener.used == 0) {
-				pony.events._Listener.Listener_Impl_.flist.remove(listener.f.id);
-				listener.f.used--;
-				if(listener.f.used <= 0) {
-					pony._Function.Function_Impl_.list.remove(listener.f.f);
-					listener.f = null;
-					pony._Function.Function_Impl_.unusedCount--;
+			if(unuse) {
+				if(!pony.events._Listener.Listener_Impl_.listeners.exists(listener.id)) {
+					var v = { count : -1, prev : null, used : 0, active : true};
+					pony.events._Listener.Listener_Impl_.listeners.set(listener.id,v);
+					v;
+				}
+				pony.events._Listener.Listener_Impl_.listeners.get(listener.id).used--;
+				if(listener.used == 0) {
+					pony.events._Listener.Listener_Impl_.listeners.remove(listener.id);
+					listener.used--;
+					if(listener.used <= 0) {
+						pony._Function.Function_Impl_.list.remove(listener.f);
+						listener = null;
+						pony._Function.Function_Impl_.unusedCount--;
+					}
 				}
 			}
 			if(this.listeners.data.length == 0 && this.lostListeners != null) pony.events._Signal0.Signal0_Impl_.dispatchEmpty(this.lostListeners);
@@ -3371,10 +3382,16 @@ pony.events.Signal.prototype = {
 		if(priority == null) priority = 0;
 		return this.add((function($this) {
 			var $r;
-			var f = listener.f;
 			var this1;
-			f.used++;
-			this1 = { f : f, count : 1, event : f.event, prev : null, used : 0, active : true, ignoreReturn : !f.ret};
+			{
+				this1 = pony._Function.Function_Impl_._new(listener.f,listener.count,listener.args,listener.ret,listener.event);
+				this1.used++;
+				if(!pony.events._Listener.Listener_Impl_.listeners.exists(this1.id)) {
+					var v = { count : 1, prev : null, used : 0, active : true};
+					pony.events._Listener.Listener_Impl_.listeners.set(this1.id,v);
+					v;
+				}
+			}
 			$r = this1;
 			return $r;
 		}(this)),priority);
@@ -3408,7 +3425,7 @@ pony.events.Signal.prototype = {
 				throw e;
 				}
 			}
-			if(l.count == 0) this.remove(l);
+			if((pony.events._Listener.Listener_Impl_.listeners.exists(l.id)?pony.events._Listener.Listener_Impl_.listeners.get(l.id).count:-1) == 0) this.remove(l);
 			if(!r) break;
 		}
 		this.lRunCopy.remove(c);
@@ -3431,14 +3448,12 @@ pony.events.Signal.prototype = {
 			s = new pony.events.Signal(this.target);
 			s.parent = this;
 			var l;
-			var f;
-			var f1 = (function(f2,a1) {
+			var f1 = (function(f,a1) {
 				return function(a2) {
-					f2(a1,a2);
+					f(a1,a2);
 				};
 			})($bind(this,this.subHandler),args);
-			f = pony._Function.Function_Impl_.from(f1,1,false,true);
-			l = pony.events._Listener.Listener_Impl_._fromFunction(f);
+			l = pony._Function.Function_Impl_.from(f1,1,false,true);
 			var k = this.subMap.set(args,s);
 			this.subHandlers.set(k,l);
 			l;
@@ -3505,14 +3520,12 @@ pony.events.Signal.prototype = {
 			s = new pony.events.Signal(this.target);
 			s.parent = this;
 			var l;
-			var f;
-			var f1 = (function(f2,a1) {
+			var f1 = (function(f,a1) {
 				return function(a2) {
-					f2(a1,a2);
+					f(a1,a2);
 				};
 			})($bind(this,this.bindHandler),args);
-			f = pony._Function.Function_Impl_.from(f1,1,false,true);
-			l = pony.events._Listener.Listener_Impl_._fromFunction(f);
+			l = pony._Function.Function_Impl_.from(f1,1,false,true);
 			var k = this.bindMap.set(args,s);
 			this.bindHandlers.set(k,l);
 			l;
@@ -3547,14 +3560,12 @@ pony.events.Signal.prototype = {
 			s = new pony.events.Signal(this.target);
 			s.parent = this;
 			var l;
-			var f;
-			var f1 = (function(f2,a1) {
+			var f1 = (function(f,a1) {
 				return function(a2) {
-					f2(a1,a2);
+					f(a1,a2);
 				};
 			})($bind(this,this.notHandler),args);
-			f = pony._Function.Function_Impl_.from(f1,1,false,true);
-			l = pony.events._Listener.Listener_Impl_._fromFunction(f);
+			l = pony._Function.Function_Impl_.from(f1,1,false,true);
 			var k = this.notMap.set(args,s);
 			this.notHandlers.set(k,l);
 			l;
@@ -3594,58 +3605,28 @@ pony.events.Signal.prototype = {
 		var ns = new pony.events.Signal();
 		var lock1 = false;
 		var lock2 = false;
-		this.add((function($this) {
-			var $r;
-			var f = pony._Function.Function_Impl_.from(function(e1) {
-				if(lock1) return;
-				lock2 = true;
-				signal.once((function($this) {
-					var $r;
-					var f1 = pony._Function.Function_Impl_.from(function(e2) {
-						lock2 = false;
-						ns.dispatchEvent(new pony.events.Event(e1.args.concat(e2.args),_g.target,e1));
-					},1,false,true);
-					$r = pony.events._Listener.Listener_Impl_._fromFunction(f1);
-					return $r;
-				}(this)),null);
-			},1,false,true);
-			$r = pony.events._Listener.Listener_Impl_._fromFunction(f);
-			return $r;
-		}(this)));
-		signal.add((function($this) {
-			var $r;
-			var f2 = pony._Function.Function_Impl_.from(function(e21) {
-				if(lock2) return;
-				lock1 = true;
-				_g.once((function($this) {
-					var $r;
-					var f3 = pony._Function.Function_Impl_.from(function(e11) {
-						lock1 = false;
-						ns.dispatchEvent(new pony.events.Event(e11.args.concat(e21.args),_g.target,e11));
-					},1,false,true);
-					$r = pony.events._Listener.Listener_Impl_._fromFunction(f3);
-					return $r;
-				}(this)),null);
-			},1,false,true);
-			$r = pony.events._Listener.Listener_Impl_._fromFunction(f2);
-			return $r;
-		}(this)));
+		this.add(pony._Function.Function_Impl_.from(function(e1) {
+			if(lock1) return;
+			lock2 = true;
+			signal.once(pony._Function.Function_Impl_.from(function(e2) {
+				lock2 = false;
+				ns.dispatchEvent(new pony.events.Event(e1.args.concat(e2.args),_g.target,e1));
+			},1,false,true),null);
+		},1,false,true));
+		signal.add(pony._Function.Function_Impl_.from(function(e21) {
+			if(lock2) return;
+			lock1 = true;
+			_g.once(pony._Function.Function_Impl_.from(function(e11) {
+				lock1 = false;
+				ns.dispatchEvent(new pony.events.Event(e11.args.concat(e21.args),_g.target,e11));
+			},1,false,true),null);
+		},1,false,true));
 		return ns;
 	}
 	,or: function(signal) {
 		var ns = new pony.events.Signal();
-		this.add((function($this) {
-			var $r;
-			var f = pony._Function.Function_Impl_.from($bind(ns,ns.dispatchEvent),1,true,true);
-			$r = pony.events._Listener.Listener_Impl_._fromFunction(f);
-			return $r;
-		}(this)));
-		signal.add((function($this) {
-			var $r;
-			var f1 = pony._Function.Function_Impl_.from($bind(ns,ns.dispatchEvent),1,true,true);
-			$r = pony.events._Listener.Listener_Impl_._fromFunction(f1);
-			return $r;
-		}(this)));
+		this.add(pony._Function.Function_Impl_.from($bind(ns,ns.dispatchEvent),1,true,true));
+		signal.add(pony._Function.Function_Impl_.from($bind(ns,ns.dispatchEvent),1,true,true));
 		return ns;
 	}
 	,removeAllListeners: function() {
@@ -3653,13 +3634,18 @@ pony.events.Signal.prototype = {
 		var $it0 = this.listeners.iterator();
 		while( $it0.hasNext() ) {
 			var l = $it0.next();
-			l.used--;
+			if(!pony.events._Listener.Listener_Impl_.listeners.exists(l.id)) {
+				var v = { count : -1, prev : null, used : 0, active : true};
+				pony.events._Listener.Listener_Impl_.listeners.set(l.id,v);
+				v;
+			}
+			pony.events._Listener.Listener_Impl_.listeners.get(l.id).used--;
 			if(l.used == 0) {
-				pony.events._Listener.Listener_Impl_.flist.remove(l.f.id);
-				l.f.used--;
-				if(l.f.used <= 0) {
-					pony._Function.Function_Impl_.list.remove(l.f.f);
-					l.f = null;
+				pony.events._Listener.Listener_Impl_.listeners.remove(l.id);
+				l.used--;
+				if(l.used <= 0) {
+					pony._Function.Function_Impl_.list.remove(l.f);
+					l = null;
 					pony._Function.Function_Impl_.unusedCount--;
 				}
 			}
@@ -3670,10 +3656,9 @@ pony.events.Signal.prototype = {
 	}
 	,buildListenerEvent: function(event) {
 		var _g = this;
-		var f = pony._Function.Function_Impl_.from(function() {
+		return pony._Function.Function_Impl_.from(function() {
 			_g.dispatchEvent(event);
 		},0,false);
-		return pony.events._Listener.Listener_Impl_._fromFunction(f);
 	}
 	,buildListenerArgs: function(args) {
 		return this.buildListenerEvent(new pony.events.Event(args,this.target));
@@ -3689,16 +3674,12 @@ pony.events.Signal.prototype = {
 		this.once(l1,priority);
 		this.once((function($this) {
 			var $r;
-			var f;
-			{
-				var f1 = (function(f2,l11,l21,a1) {
-					return function() {
-						return f2(l11,l21,a1);
-					};
-				})($bind($this,$this.sw),l2,l1,priority);
-				f = pony._Function.Function_Impl_.from(f1,0);
-			}
-			$r = pony.events._Listener.Listener_Impl_._fromFunction(f);
+			var f1 = (function(f,l11,l21,a1) {
+				return function() {
+					return f(l11,l21,a1);
+				};
+			})($bind($this,$this.sw),l2,l1,priority);
+			$r = pony._Function.Function_Impl_.from(f1,0);
 			return $r;
 		}(this)),priority);
 		return this;
@@ -3757,19 +3738,14 @@ pony.events.Signal.prototype = {
 	}
 	,debug: function() {
 		var _g = this;
-		this.add((function($this) {
-			var $r;
-			var f = pony._Function.Function_Impl_.from(function() {
-				haxe.Log.trace("dispatch(" + _g.id + ")",{ fileName : "Signal.hx", lineNumber : 482, className : "pony.events.Signal", methodName : "debug"});
-			},0,false);
-			$r = pony.events._Listener.Listener_Impl_._fromFunction(f);
-			return $r;
-		}(this)));
+		this.add(pony._Function.Function_Impl_.from(function() {
+			haxe.Log.trace("dispatch(" + _g.id + ")",{ fileName : "Signal.hx", lineNumber : 482, className : "pony.events.Signal", methodName : "debug"});
+		},0,false));
 	}
 	,__class__: pony.events.Signal
 };
 pony.events._Signal0 = {};
-pony.events._Signal0.Signal0_Impl_ = function() { };
+pony.events._Signal0.Signal0_Impl_ = {};
 pony.events._Signal0.Signal0_Impl_.__name__ = ["pony","events","_Signal0","Signal0_Impl_"];
 pony.events._Signal0.Signal0_Impl_._new = function(s) {
 	return s;
@@ -3811,8 +3787,9 @@ pony.events._Signal0.Signal0_Impl_.once = function(this1,listener,priority) {
 	this1.once(listener,priority);
 	return this1.target;
 };
-pony.events._Signal0.Signal0_Impl_.remove = function(this1,listener) {
-	this1.remove(listener);
+pony.events._Signal0.Signal0_Impl_.remove = function(this1,listener,unuse) {
+	if(unuse == null) unuse = true;
+	this1.remove(listener,unuse);
 	return this1.target;
 };
 pony.events._Signal0.Signal0_Impl_.changePriority = function(this1,listener,priority) {
@@ -3935,6 +3912,48 @@ pony.events._Signal0.Signal0_Impl_.op_remove = function(this1,listener) {
 	pony.events._Signal0.Signal0_Impl_.remove(this1,listener);
 	return this1;
 };
+pony.events._Signal0.Signal0_Impl_.op_addSignal = function(this1,signal) {
+	pony.events._Signal0.Signal0_Impl_.add(this1,(function($this) {
+		var $r;
+		var f = (function(_e) {
+			return function(event) {
+				return pony.events._Signal0.Signal0_Impl_.dispatchEvent(_e,event);
+			};
+		})(signal);
+		var l = pony._Function.Function_Impl_.from(f,1,false,true);
+		$r = l;
+		return $r;
+	}(this)));
+	return this1;
+};
+pony.events._Signal0.Signal0_Impl_.op_onceSignal = function(this1,signal) {
+	pony.events._Signal0.Signal0_Impl_.once(this1,(function($this) {
+		var $r;
+		var f = (function(_e) {
+			return function(event) {
+				return pony.events._Signal0.Signal0_Impl_.dispatchEvent(_e,event);
+			};
+		})(signal);
+		var l = pony._Function.Function_Impl_.from(f,1,false,true);
+		$r = l;
+		return $r;
+	}(this)));
+	return this1;
+};
+pony.events._Signal0.Signal0_Impl_.op_removeSignal = function(this1,signal) {
+	pony.events._Signal0.Signal0_Impl_.remove(this1,(function($this) {
+		var $r;
+		var f = (function(_e) {
+			return function(event) {
+				return pony.events._Signal0.Signal0_Impl_.dispatchEvent(_e,event);
+			};
+		})(signal);
+		var l = pony._Function.Function_Impl_.from(f,1,false,true);
+		$r = l;
+		return $r;
+	}(this)));
+	return this1;
+};
 pony.events._Signal0.Signal0_Impl_.op_and0 = function(this1,s) {
 	var this2 = this1.and(s);
 	return this2;
@@ -3956,7 +3975,7 @@ pony.events._Signal0.Signal0_Impl_.op_bind1 = function(this1,a) {
 	return s;
 };
 pony.events._Signal1 = {};
-pony.events._Signal1.Signal1_Impl_ = function() { };
+pony.events._Signal1.Signal1_Impl_ = {};
 pony.events._Signal1.Signal1_Impl_.__name__ = ["pony","events","_Signal1","Signal1_Impl_"];
 pony.events._Signal1.Signal1_Impl_._new = function(s) {
 	return s;
@@ -3998,8 +4017,9 @@ pony.events._Signal1.Signal1_Impl_.once = function(this1,listener,priority) {
 	this1.once(listener,priority);
 	return this1.target;
 };
-pony.events._Signal1.Signal1_Impl_.remove = function(this1,listener) {
-	this1.remove(listener);
+pony.events._Signal1.Signal1_Impl_.remove = function(this1,listener,unuse) {
+	if(unuse == null) unuse = true;
+	this1.remove(listener,unuse);
 	return this1.target;
 };
 pony.events._Signal1.Signal1_Impl_.changePriority = function(this1,listener,priority) {
@@ -4104,16 +4124,16 @@ pony.events._Signal1.Signal1_Impl_.sw = function(this1,l1,l2) {
 	this1.once(l1,null);
 	this1.once((function($this) {
 		var $r;
-		var f;
-		{
-			var f1 = (function(f2,l11,l21) {
-				return function() {
-					return f2(l11,l21);
-				};
-			})($bind(this1,this1.sw),l2,l1);
-			f = pony._Function.Function_Impl_.from(f1,0);
-		}
-		$r = pony.events._Listener.Listener_Impl_._fromFunction(f);
+		var f1 = (function(f,l11,l21) {
+			return function() {
+				return f(l11,l21);
+			};
+		})((function(_e) {
+			return function(l12,l22) {
+				return pony.events._Signal1.Signal1_Impl_.sw(_e,l12,l22);
+			};
+		})(this1),l2,l1);
+		$r = pony._Function.Function_Impl_.from(f1,0);
 		return $r;
 	}(this)),null);
 	return this1.target;
@@ -4135,8 +4155,7 @@ pony.events._Signal1.Signal1_Impl_.to = function(this1) {
 	return this1;
 };
 pony.events._Signal1.Signal1_Impl_.toListener = function(this1) {
-	var f = pony._Function.Function_Impl_.from($bind(this1,this1.dispatchEvent),1,true,true);
-	return pony.events._Listener.Listener_Impl_._fromFunction(f);
+	return pony._Function.Function_Impl_.from($bind(this1,this1.dispatchEvent),1,true,true);
 };
 pony.events._Signal1.Signal1_Impl_.toFunction = function(this1) {
 	return (function(_e) {
@@ -4167,6 +4186,48 @@ pony.events._Signal1.Signal1_Impl_.op_remove = function(this1,listener) {
 	pony.events._Signal1.Signal1_Impl_.remove(this1,listener);
 	return this1;
 };
+pony.events._Signal1.Signal1_Impl_.op_addSignal = function(this1,signal) {
+	pony.events._Signal1.Signal1_Impl_.add(this1,(function($this) {
+		var $r;
+		var f = (function(_e) {
+			return function(event) {
+				return pony.events._Signal1.Signal1_Impl_.dispatchEvent(_e,event);
+			};
+		})(signal);
+		var l = pony._Function.Function_Impl_.from(f,1,false,true);
+		$r = l;
+		return $r;
+	}(this)));
+	return this1;
+};
+pony.events._Signal1.Signal1_Impl_.op_onceSignal = function(this1,signal) {
+	pony.events._Signal1.Signal1_Impl_.once(this1,(function($this) {
+		var $r;
+		var f = (function(_e) {
+			return function(event) {
+				return pony.events._Signal1.Signal1_Impl_.dispatchEvent(_e,event);
+			};
+		})(signal);
+		var l = pony._Function.Function_Impl_.from(f,1,false,true);
+		$r = l;
+		return $r;
+	}(this)));
+	return this1;
+};
+pony.events._Signal1.Signal1_Impl_.op_removeSignal = function(this1,signal) {
+	pony.events._Signal1.Signal1_Impl_.remove(this1,(function($this) {
+		var $r;
+		var f = (function(_e) {
+			return function(event) {
+				return pony.events._Signal1.Signal1_Impl_.dispatchEvent(_e,event);
+			};
+		})(signal);
+		var l = pony._Function.Function_Impl_.from(f,1,false,true);
+		$r = l;
+		return $r;
+	}(this)));
+	return this1;
+};
 pony.events._Signal1.Signal1_Impl_.op_and0 = function(this1,s) {
 	var this2 = this1.and(s);
 	return this2;
@@ -4192,7 +4253,7 @@ pony.events._Signal1.Signal1_Impl_.op_not = function(this1,a) {
 	return s;
 };
 pony.events._Signal2 = {};
-pony.events._Signal2.Signal2_Impl_ = function() { };
+pony.events._Signal2.Signal2_Impl_ = {};
 pony.events._Signal2.Signal2_Impl_.__name__ = ["pony","events","_Signal2","Signal2_Impl_"];
 pony.events._Signal2.Signal2_Impl_._new = function(s) {
 	return s;
@@ -4234,8 +4295,9 @@ pony.events._Signal2.Signal2_Impl_.once = function(this1,listener,priority) {
 	this1.once(listener,priority);
 	return this1.target;
 };
-pony.events._Signal2.Signal2_Impl_.remove = function(this1,listener) {
-	this1.remove(listener);
+pony.events._Signal2.Signal2_Impl_.remove = function(this1,listener,unuse) {
+	if(unuse == null) unuse = true;
+	this1.remove(listener,unuse);
 	return this1.target;
 };
 pony.events._Signal2.Signal2_Impl_.changePriority = function(this1,listener,priority) {
@@ -4314,16 +4376,16 @@ pony.events._Signal2.Signal2_Impl_.sw = function(this1,l1,l2) {
 	this1.once(l1,null);
 	this1.once((function($this) {
 		var $r;
-		var f;
-		{
-			var f1 = (function(f2,l11,l21) {
-				return function() {
-					return f2(l11,l21);
-				};
-			})($bind(this1,this1.sw),l2,l1);
-			f = pony._Function.Function_Impl_.from(f1,0);
-		}
-		$r = pony.events._Listener.Listener_Impl_._fromFunction(f);
+		var f1 = (function(f,l11,l21) {
+			return function() {
+				return f(l11,l21);
+			};
+		})((function(_e) {
+			return function(l12,l22) {
+				return pony.events._Signal2.Signal2_Impl_.sw(_e,l12,l22);
+			};
+		})(this1),l2,l1);
+		$r = pony._Function.Function_Impl_.from(f1,0);
 		return $r;
 	}(this)),null);
 	return this1.target;
@@ -4373,6 +4435,48 @@ pony.events._Signal2.Signal2_Impl_.op_remove = function(this1,listener) {
 	pony.events._Signal2.Signal2_Impl_.remove(this1,listener);
 	return this1;
 };
+pony.events._Signal2.Signal2_Impl_.op_addSignal = function(this1,signal) {
+	pony.events._Signal2.Signal2_Impl_.add(this1,(function($this) {
+		var $r;
+		var f = (function(_e) {
+			return function(event) {
+				return pony.events._Signal2.Signal2_Impl_.dispatchEvent(_e,event);
+			};
+		})(signal);
+		var l = pony._Function.Function_Impl_.from(f,1,false,true);
+		$r = l;
+		return $r;
+	}(this)));
+	return this1;
+};
+pony.events._Signal2.Signal2_Impl_.op_onceSignal = function(this1,signal) {
+	pony.events._Signal2.Signal2_Impl_.once(this1,(function($this) {
+		var $r;
+		var f = (function(_e) {
+			return function(event) {
+				return pony.events._Signal2.Signal2_Impl_.dispatchEvent(_e,event);
+			};
+		})(signal);
+		var l = pony._Function.Function_Impl_.from(f,1,false,true);
+		$r = l;
+		return $r;
+	}(this)));
+	return this1;
+};
+pony.events._Signal2.Signal2_Impl_.op_removeSignal = function(this1,signal) {
+	pony.events._Signal2.Signal2_Impl_.remove(this1,(function($this) {
+		var $r;
+		var f = (function(_e) {
+			return function(event) {
+				return pony.events._Signal2.Signal2_Impl_.dispatchEvent(_e,event);
+			};
+		})(signal);
+		var l = pony._Function.Function_Impl_.from(f,1,false,true);
+		$r = l;
+		return $r;
+	}(this)));
+	return this1;
+};
 pony.events._Signal2.Signal2_Impl_.op_sub = function(this1,a) {
 	var s = this1.subArgs([a],0);
 	return s;
@@ -4382,7 +4486,7 @@ pony.events._Signal2.Signal2_Impl_.op_not = function(this1,a) {
 	return s;
 };
 pony.events._SignalTar = {};
-pony.events._SignalTar.SignalTar_Impl_ = function() { };
+pony.events._SignalTar.SignalTar_Impl_ = {};
 pony.events._SignalTar.SignalTar_Impl_.__name__ = ["pony","events","_SignalTar","SignalTar_Impl_"];
 pony.events._SignalTar.SignalTar_Impl_._new = function(s) {
 	return s;
@@ -4494,7 +4598,7 @@ pony.net.SocketClientBase = function(host,port,reconnect,aIsWithLength) {
 	var this1 = pony.events.Signal.create(null);
 	this.onConnect = this1;
 	this.connected.wait(function() {
-		pony.events._Signal1.Signal1_Impl_.dispatch(_g.onConnect,_g);
+		_g.isAbleToSend = true;
 	});
 	this.isWithLength = aIsWithLength;
 	this._init();
@@ -4548,20 +4652,11 @@ pony.net.SocketClientBase.prototype = $extend(pony.Logable.prototype,{
 					return pony.events._Signal1.Signal1_Impl_.dispatchEvent(_e,event);
 				};
 			})(server.onData);
-			var l;
-			{
-				var f1 = pony._Function.Function_Impl_.from(f,1,false,true);
-				l = pony.events._Listener.Listener_Impl_._fromFunction(f1);
-			}
+			var l = pony._Function.Function_Impl_.from(f,1,false,true);
 			$r = l;
 			return $r;
 		}(this)));
-		this.onDisconnect.add((function($this) {
-			var $r;
-			var f2 = pony._Function.Function_Impl_.from(($_=server.onDisconnect,$bind($_,$_.dispatchEvent)),1,true,true);
-			$r = pony.events._Listener.Listener_Impl_._fromFunction(f2);
-			return $r;
-		}(this)));
+		this.onDisconnect.add(pony._Function.Function_Impl_.from(($_=server.onDisconnect,$bind($_,$_.dispatchEvent)),1,true,true));
 	}
 	,send2other: function(data) {
 		this.server.send2other(data,this);
@@ -4656,6 +4751,7 @@ pony.net.SocketClient.prototype = $extend(pony.net.nodejs.SocketClient.prototype
 pony.net.SocketServerBase = function() {
 	this.isWithLength = true;
 	this.isAbleToSend = false;
+	var _g = this;
 	pony.Logable.call(this);
 	var this1 = pony.events.Signal.create(this);
 	this.onConnect = this1;
@@ -4668,12 +4764,15 @@ pony.net.SocketServerBase = function() {
 	this.onData = this4;
 	this.onClose = new pony.events.Signal(this);
 	this.clients = [];
-	this.onDisconnect.add((function($this) {
-		var $r;
-		var f = pony._Function.Function_Impl_.from($bind($this,$this.removeClient),1,false);
-		$r = pony.events._Listener.Listener_Impl_._fromFunction(f);
-		return $r;
-	}(this)));
+	this.onDisconnect.add(pony._Function.Function_Impl_.from($bind(this,this.removeClient),1,false));
+	var this5 = this.onConnect;
+	var listener;
+	var l = pony._Function.Function_Impl_.from(function() {
+		_g.isAbleToSend = true;
+	},0,false);
+	listener = l;
+	pony.events._Signal1.Signal1_Impl_.once(this5,listener);
+	this5;
 };
 pony.net.SocketServerBase.__name__ = ["pony","net","SocketServerBase"];
 pony.net.SocketServerBase.__super__ = pony.Logable;
@@ -4848,11 +4947,27 @@ Xml.Comment = "comment";
 Xml.DocType = "doctype";
 Xml.ProcessingInstruction = "processingInstruction";
 Xml.Document = "document";
+js.Node.setTimeout = setTimeout;
+js.Node.clearTimeout = clearTimeout;
+js.Node.setInterval = setInterval;
+js.Node.clearInterval = clearInterval;
+js.Node.global = global;
+js.Node.process = process;
+js.Node.require = require;
+js.Node.console = console;
+js.Node.module = module;
+js.Node.stringify = JSON.stringify;
+js.Node.parse = JSON.parse;
+var version = HxOverrides.substr(js.Node.process.version,1,null).split(".").map(Std.parseInt);
+if(version[0] > 0 || version[1] >= 9) {
+	js.Node.setImmediate = setImmediate;
+	js.Node.clearImmediate = clearImmediate;
+}
 pony._Function.Function_Impl_.unusedCount = 0;
-pony._Function.Function_Impl_.list = new pony.Dictionary(1);
+pony._Function.Function_Impl_.list = new pony.Dictionary(0);
 pony._Function.Function_Impl_.counter = -1;
 pony._Function.Function_Impl_.searchFree = false;
-pony.events._Listener.Listener_Impl_.flist = new haxe.ds.IntMap();
+pony.events._Listener.Listener_Impl_.listeners = new haxe.ds.IntMap();
 pony.events.Signal.signalsCount = 0;
 Main.testCount = 500;
 Main.delay = 1;
@@ -4911,29 +5026,6 @@ js.NodeC.FILE_WRITE = "w";
 js.NodeC.FILE_WRITE_APPEND = "a+";
 js.NodeC.FILE_READWRITE = "a";
 js.NodeC.FILE_READWRITE_APPEND = "a+";
-js.Node.console = console;
-js.Node.process = process;
-js.Node.require = require;
-js.Node.setTimeout = setTimeout;
-js.Node.clearTimeout = clearTimeout;
-js.Node.setInterval = setInterval;
-js.Node.clearInterval = clearInterval;
-js.Node.setImmediate = (function($this) {
-	var $r;
-	var version = HxOverrides.substr(js.Node.process.version,1,null).split(".").map(Std.parseInt);
-	$r = version[0] > 0 || version[1] >= 9?setImmediate:null;
-	return $r;
-}(this));
-js.Node.clearImmediate = (function($this) {
-	var $r;
-	var version = HxOverrides.substr(js.Node.process.version,1,null).split(".").map(Std.parseInt);
-	$r = version[0] > 0 || version[1] >= 9?clearImmediate:null;
-	return $r;
-}(this));
-js.Node.global = global;
-js.Node.module = module;
-js.Node.stringify = JSON.stringify;
-js.Node.parse = JSON.parse;
 pony.AsyncTests.assertList = new List();
 pony.AsyncTests.testCount = 0;
 pony.AsyncTests.complite = false;
