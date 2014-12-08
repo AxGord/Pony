@@ -54,6 +54,8 @@ using pony.math.MathTools;
 
 @:nativeGen class Tooltip {
 	
+	public static var panelMode:Bool = false;
+	
 	public static var limitBorder:Float = 50;
 	public static var border:Single = 5;
 	public static var textObject:GameObject;
@@ -97,6 +99,7 @@ using pony.math.MathTools;
 	}
 	
 	public static function showText(text:String, bigText:String, obj:Dynamic, layer:Null<Int>, ?panel:Bool = false):Void {
+		if (panelMode) panel = true;
 		target = obj;
 		if (textObject == null) {
 			init();
@@ -150,6 +153,7 @@ using pony.math.MathTools;
 	private static function moveTextPanel():Void {
 		textObject.transform.position = new Vector3(1 - (Screen.width - Input.mousePosition.x + r.width/2) / Fixed2dCamera.SIZE, (Input.mousePosition.y+r.height + border*2)/Screen.height, 500);
 		textureObject.transform.position = new Vector3(1 - (Screen.width - Input.mousePosition.x + r.width / 2) / Fixed2dCamera.SIZE, (Input.mousePosition.y + r.height + border * 2) / Screen.height, 499);
+	
 		//longTextObject.transform.position = new Vector3(1 - (Screen.width - Input.mousePosition.x + lr.width / 2) / Fixed2dCamera.SIZE, (Input.mousePosition.y + lr.height + border * 2) / Screen.height, 499);
 	}
 	

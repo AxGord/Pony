@@ -44,10 +44,10 @@ class TimelineTest
 		DeltaTime.testRun('4s');
 		Assert.areEqual(lastStep, 2);
 		
-		DeltaTime.testRun('5s');
+		DeltaTime.testRun('8s');
 		Assert.areEqual(lastStep, 2);
 		t.play();
-		DeltaTime.testRun('5s');
+		DeltaTime.testRun('8s');
 		Assert.areEqual(lastStep, 3);
 		
 		DeltaTime.testRun('25s');

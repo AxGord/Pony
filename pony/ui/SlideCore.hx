@@ -51,12 +51,22 @@ class SlideCore {
 	public function new(total:Float=1, speed:Float=30) {
 		this.total = total;
 		this.speed = speed;
-		current = 0;
-		opened = false;
-		closed = true;
+		hardClose();
 		update = new Signal();
 		onOpen = new Signal();
 		onClose = new Signal();
+	}
+	
+	inline public function hardClose():Void {
+		current = 0;
+		opened = false;
+		closed = true;
+	}
+	
+	inline public function hardOpen():Void {
+		current = total;
+		opened = true;
+		closed = false;
 	}
 	
 	public function open(?to:Float):Void {
