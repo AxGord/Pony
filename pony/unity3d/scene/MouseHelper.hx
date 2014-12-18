@@ -160,6 +160,7 @@ using hugs.HUGSWrapper;
 	}
 	
 	private function OnMouseOver():Void {
+		if (!enabled) return;
 		if (lock.value > 0) return;
 		if (_overed == 2) return;
 		_overed = 2;
