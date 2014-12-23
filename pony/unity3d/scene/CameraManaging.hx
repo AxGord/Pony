@@ -44,6 +44,9 @@ using hugs.HUGSWrapper;
 
 	private var xSpeed:Float = 250.0;
 	private var ySpeed:Float = 120.0;
+	
+	private var xDempfCoef:Float = 1;
+	private var yDempfCoef:Float = 1;
 
 	private var yMinLimit:Int = -20;
 	private var yMaxLimit:Int = 80;
@@ -61,6 +64,8 @@ using hugs.HUGSWrapper;
 	private var keyTurnRight:unityengine.KeyCode = unityengine.KeyCode.RightArrow;
 	
 	private var isInverted:Bool;
+	
+	private var isInerted:Bool = false;
 	
 	private var liveUpdate:Bool = false;
 
@@ -121,10 +126,20 @@ using hugs.HUGSWrapper;
 			changed = true;
 		}
 		
+		if (unityengine.Input.GetKeyUp(keyTurnUp))
+		{
+			y += Math.exp(yDempfCoef * dt);
+		}
+		
 		if (unityengine.Input.GetKey(keyTurnDown)) 
 		{
 			y -= ySpeed * dt / 2;
 			changed = true;
+		}
+		
+		if (unityengine.Input.GetKeyUp(keyTurnDown))
+		{
+			y -= Math.exp(yDempfCoef * dt);
 		}
 		
 		if (unityengine.Input.GetKey(keyTurnLeft)) 
@@ -133,10 +148,20 @@ using hugs.HUGSWrapper;
 			changed = true;
 		}
 		
+		if (unityengine.Input.GetKeyUp(keyTurnLeft))
+		{
+			x += Math.exp(xDempfCoef * dt);
+		}
+		
 		if (unityengine.Input.GetKey(keyTurnRight)) 
 		{
 			x -= xSpeed * dt / 2;
 			changed = true;
+		}
+		
+		if (unityengine.Input.GetKeyUp(keyTurnRight))
+		{
+			x -= Math.exp(xDempfCoef * dt);
 		}
 		
 		if (changed) {
