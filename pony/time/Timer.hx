@@ -84,6 +84,12 @@ class Timer implements ITimer<Timer> implements Declarator {
 		return this;
 	}
 	
+	inline public function restart(?dt:DT):Void {
+		stop();
+		reset();
+		start(dt);
+	}
+	
 	public function start(?dt:DT):Timer {
 		stop();
 		var delay:Int = update.haveListeners || time == null ? _frequency : MathTools.cabs(time.max - currentTime);

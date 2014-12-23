@@ -33,4 +33,23 @@ class TimerTest
 		new massive.munit.util.Timer(400).run = handler;
 	}
 	
+	/* Munit problem?
+	@AsyncTest
+	public function reset(asyncFactory:AsyncFactory):Void {
+		var c = 0;
+		var handler:Void->Void = asyncFactory.createHandler(this, function() Assert.areEqual(c, 2), 5500);
+		var t = null;
+		t = new Timer(15);
+		trace('start');
+		t.complite.add(function() {
+			c++;
+			if (c == 1) {
+				trace('restart');
+				t.restart();
+			}
+		} ).start();
+		
+		new massive.munit.util.Timer(400).run = handler;
+	}
+	*/
 }

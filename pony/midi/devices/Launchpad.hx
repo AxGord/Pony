@@ -41,7 +41,7 @@ import pony.midi.MidiMessage;
  * Launchpad
  * @author AxGord
  */
-class Launchpad {
+class Launchpad implements ILaunchpad {
 	
 	private static var area(default, never):Matrix<MidiCode> = [
 		[for (i in 0...8) i],
@@ -67,13 +67,13 @@ class Launchpad {
 	public var topState(default, null):Array<LaunchpadColor>;
 	public var rightState(default, null):Array<LaunchpadColor>;
 	
-	public var onArea(default, null):Signal2<Launchpad, IntPoint, Bool>;
-	public var onTop(default, null):Signal2<Launchpad, Int, Bool>;
-	public var onRight(default, null):Signal2<Launchpad, Int, Bool>;
+	public var onArea(default, null):Signal2<ILaunchpad, IntPoint, Bool>;
+	public var onTop(default, null):Signal2<ILaunchpad, Int, Bool>;
+	public var onRight(default, null):Signal2<ILaunchpad, Int, Bool>;
 	
 	public function new(id:Int = 0) {
 		var i:Int = 0;
-		for (k in list().keys()) {
+		for (k in 0...count()) {
 			if (id == i) {
 				midi = new MidiDevice(k);
 				break;
@@ -81,10 +81,11 @@ class Launchpad {
 			i++;
 		}
 		if (id != i) throw 'Wrong id';
+		if (midi == null) throw 'Launchpad not found';
 		reset();
-		onArea = Signal.create(this);
-		onTop = Signal.create(this);
-		onRight = Signal.create(this);
+		onArea = Signal.create(cast this);
+		onTop = Signal.create(cast this);
+		onRight = Signal.create(cast this);
 		midi.on << midiHandler;
 	}
 	
@@ -141,5 +142,7 @@ class Launchpad {
 		topState = [for (_ in 0...8) Off];
 		rightState = [for (_ in 0...8) Off];
 	}
+	
+	public static function createAll():Array<Launchpad> return [for (i in 0...count()) new Launchpad(i)];
 	
 }

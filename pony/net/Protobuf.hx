@@ -73,6 +73,8 @@ class Protobuf < A:ProtobufBuilder, B:ProtobufBuilder > implements Declarator {
 		fs.push(f);
 	}
 	
+	public function sendBuilder(b:A):Void send(function(nb:A) for (f in Reflect.fields(b)) Reflect.setField(nb, f, Reflect.field(b, f)));
+	
 	private function trySend():Void {
 		if (gonext > 0) {
 			if (--gonext == 0) sendComplite.dispatch();

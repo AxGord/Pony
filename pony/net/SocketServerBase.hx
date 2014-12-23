@@ -36,7 +36,9 @@ import pony.Logable.Logable;
  * SocketServerBase
  * @author AxGord <axgord@gmail.com>
  */
-class SocketServerBase extends Logable<ISocketServer>{
+class SocketServerBase extends Logable<ISocketServer> {
+	
+	public var id(default,null):Int = -1;
 	public var onData(default, null):Signal1<SocketClient, BytesInput>;
 	public var onConnect(default, null):Signal1<SocketServer, SocketClient>;
 	public var onClose(default, null):Signal;

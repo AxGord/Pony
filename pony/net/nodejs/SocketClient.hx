@@ -57,6 +57,7 @@ class SocketClient extends SocketClientBase {
 		s.on('data', dataHandler);
 		s.on('end', closeHandler);
 		s.on('error', reconnect);
+		isAbleToSend = true;
 		endInit();
 	}
 	

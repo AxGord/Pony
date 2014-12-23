@@ -71,6 +71,7 @@ class SocketClient extends SocketClientBase {
 	
 	private function connectHandler(_):Void {
 		closed = false;
+		isAbleToSend = true;
 		//onConnect.dispatch(cast this);
 		connected.end();
 	}
