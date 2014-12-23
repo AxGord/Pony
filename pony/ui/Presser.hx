@@ -50,7 +50,7 @@ class Presser {
 	public function new(callBack:Void->Void) {
 		this.callBack = callBack;
 		if (useDeltaTime) {
-			firstTimer = DTimer.delay(pressFirstDelay, firstTickDelta);
+			firstTimer = DTimer.fixedDelay(pressFirstDelay, firstTickDelta);
 		} else {
 			#if (!neko || munit)
 			firstTimer = pony.time.Timer.delay(pressFirstDelay, firstTickClassic);
@@ -60,7 +60,7 @@ class Presser {
 	
 	private function firstTickDelta(dt:DT):Void {
 		firstTimer = null;
-		secondTimer = DTimer.repeat(pressDelay, callBack, dt);
+		secondTimer = DTimer.fixedRepeat(pressDelay, callBack, dt);
 		callBack();
 	}
 	#if (!neko || munit)

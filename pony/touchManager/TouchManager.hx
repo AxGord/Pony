@@ -1,10 +1,17 @@
 package pony.touchManager;
-import flash.Lib;
+
+
 import haxe.ds.ObjectMap;
 import pony.touchManager.hitTestSources.IHitTestSource;
 import pony.touchManager.hitTestSources.NativeHitTestSource;
 import pony.touchManager.TouchEventType;
 import pony.touchManager.touchInputs.NativeFlashTouchInput;
+
+#if flash
+import flash.Lib;
+import flash.ui.Multitouch;
+import flash.ui.MultitouchInputMode;
+#end
 
 /**
  * ...
@@ -37,6 +44,8 @@ class TouchManager
 		_initialized = true;
 		
 		#if flash
+		if (Multitouch.supportsTouchEvents) Multitouch.inputMode = MultitouchInputMode.TOUCH_POINT;
+		
 		InputMode.init();
 		
 		TouchManager.addScreen(new NativeHitTestSource(Lib.current.stage));

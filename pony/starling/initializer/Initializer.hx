@@ -76,8 +76,6 @@ class Initializer
 		FLTools.height = _initialHeight;
 		_aspectRatio = _initialWidth / _initialHeight;
 		
-		if (Multitouch.supportsTouchEvents) Multitouch.inputMode = MultitouchInputMode.TOUCH_POINT;
-		
 		#if starling
 		_starlingCreator = new StarlingCreator(showStats);
 		

@@ -45,7 +45,6 @@ typedef IMovieClip = {
 	//numframes/totalframes
 	function play():Void;
 	function stop():Void;//Different behavior?
-	//function gotoAndStop(frame:Int):Void;
 	//function addChild(child:IDisplayObject):Void;
 }
 

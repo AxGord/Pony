@@ -53,7 +53,7 @@ abstract Time(Null<Int>) from Int to Int {
 	public var minimalPoint(get, never):Int;
 	
 	inline public function new(?ms:Null<Int>) this = ms;
-	@:from inline private static function fromFloat(ms:Null<Float>):Time return new Time(ms.int());
+	@:from inline public static function fromFloat(ms:Null<Float>):Time return new Time(ms.int());
 	@:from public static function fromString(time:String):Time {
 		var ms:Int = 0;
 		time = time.trim();

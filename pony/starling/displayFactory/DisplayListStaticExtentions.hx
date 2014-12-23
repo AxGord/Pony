@@ -3,6 +3,7 @@ import flash.display.DisplayObjectContainer;
 import flash.display.InteractiveObject;
 import flash.geom.Rectangle;
 import pony.starling.displayFactory.DisplayFactory.IDisplayObject;
+import pony.starling.displayFactory.DisplayFactory.IMovieClip;
 import pony.starling.displayFactory.DisplayFactory.ITextField;
 import pony.starling.utils.UniversalDrag;
 
@@ -53,6 +54,22 @@ class DisplayListStaticExtentions
 		
 		return 0;
 	}
+	
+	public static function gotoAndPlay(clip:IMovieClip, frame:Int):Void
+	{
+		#if starling
+		if (Std.is(clip, starling.display.MovieClip)) StarlingStaticExtentions.gotoAndPlay(cast clip, frame);
+		#end
+		if (Std.is(clip, flash.display.MovieClip)) cast(clip, flash.display.MovieClip).gotoAndPlay(frame);
+	}
+	
+	public static function gotoAndStop(clip:IMovieClip, frame:Int):Void
+	{
+		#if starling
+		if (Std.is(clip, starling.display.MovieClip)) StarlingStaticExtentions.gotoAndStop(cast clip, frame);
+		#end
+		if (Std.is(clip, flash.display.MovieClip)) cast(clip, flash.display.MovieClip).gotoAndStop(frame);
+	}
 }
 #if starling
 class StarlingStaticExtentions
@@ -66,6 +83,15 @@ class StarlingStaticExtentions
 	
 	public static function getTextWidth(textField:starling.text.TextField):Float { return textField.textBounds.width; }
 	public static function getTextHeight(textField:starling.text.TextField):Float { return textField.textBounds.height; }
+	
+	public static function gotoAndPlay(clip:starling.display.MovieClip, frame:Int):Void {
+		clip.currentFrame = frame - 1;
+		clip.play();
+	}
+	public static function gotoAndStop(clip:starling.display.MovieClip, frame:Int):Void {
+		clip.currentFrame = frame - 1;
+		clip.pause();
+	}
 }
 #end
 class FlashStaticExtentions

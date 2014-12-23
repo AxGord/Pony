@@ -11,7 +11,7 @@ class TimerTest
 	public function simple(asyncFactory:AsyncFactory):Void
 	{
 		var handler:Void->Void = asyncFactory.createHandler(this, empty, 1000);
-		new Timer(20).start().complite.add(handler);
+		new Timer(20).complite.add(handler).start();
 	}
 	
 	@AsyncTest

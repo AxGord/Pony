@@ -27,8 +27,10 @@ class InputMode
 			Lib.current.stage.addEventListener(flash.events.TouchEvent.TOUCH_BEGIN, touchBegins);
 			Lib.current.stage.addEventListener(flash.events.TouchEvent.TOUCH_END, touchEnds);
 			
+			#if !disableMouseInput
 			Lib.current.stage.addEventListener(MouseEvent.MOUSE_MOVE, mouseInput);
 			Lib.current.stage.addEventListener(MouseEvent.MOUSE_DOWN, mouseInput);
+			#end
 		}
 		
 		_initialized = true;
@@ -58,6 +60,7 @@ class InputMode
 		}
 	}
 	
+	#if !disableMouseInput
 	private static function mouseInput(_):Void
 	{
 		if ( (_activeTouchesCounter == 0) && (_touchMode) && (Timer.stamp() * 1000 >= _ignoreMouseMoveUntil))
@@ -67,6 +70,7 @@ class InputMode
 			_touchMode = false;
 		}
 	}
+	#end
 	
 	private static function checkInitialized():Void
 	{
