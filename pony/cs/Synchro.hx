@@ -1,3 +1,4 @@
+#if cs
 package pony.cs;
 import cs.system.threading.Monitor;
 import cs.system.threading.Mutex;
@@ -14,6 +15,10 @@ class Synchro
 	 **/
 	public static function lock(obj:Dynamic, func:Void -> Void):Bool
 	{
+		if ((Type.typeof(obj) == TInt) || 
+		(Type.typeof(obj) == TBool) ||
+		(Type.typeof(obj) == TFloat)) throw new cs.system.threading.SynchronizationLockException(); //Небольшой костыль для более-менее корректного поведения. 
+		
 		var isSynchred:Bool = true;
 		Monitor.Enter(obj);
 		try
@@ -61,3 +66,4 @@ class Synchro
 		else return false;
 	}
 }
+#end

@@ -26,7 +26,7 @@ package pony.net.cs;
  import pony.cs.Synchro;
  import pony.Queue.Queue;
 
-class SocketServer extends SocketServerBase
+class SocketServer extends SocketServerBase 
 {
 
 	/**
@@ -87,7 +87,7 @@ class SocketServer extends SocketServerBase
 			catch (ex:SocketException)
 			{
 				closeConnection(cl);
-				trace(ex);
+				_error(ex.get_Message());
 			}
 		}
 		eventAccept.Set();

@@ -192,8 +192,7 @@ class SocketClient extends SocketClientBase
 			}
 			catch (ex:Dynamic)
 			{
-				trace(id);
-				trace(ex);
+				_error(ex);
 			}
 		}
 		//trace(isRunning); //This trace, being uncommented, comletely burns program to the ground. Although it doesn't do, fixed somehow. 

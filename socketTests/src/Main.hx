@@ -21,7 +21,7 @@ class Main {
 	
 	static var testCount:Int = 500;
 	#if cs
-	static var delay:Int = 1;
+	static var delay:Int = 3;
 	#elseif nodejs
 	static var delay:Int = 1;
 	#end
@@ -55,6 +55,7 @@ class Main {
 			trace('try connect');
 			var serv:SocketServer = null;
 			var cl = new SocketClient(13579, 100);
+			cl.log << Log.trace;
 			cl.connected.wait(function() {
 				
 				
@@ -70,7 +71,7 @@ class Main {
 				
 			});
 			
-			Timer.delay(function() serv = new SocketServer(13579), 3000);
+			Timer.delay(function() serv = new SocketServer(13579), 100);
 			
 		#if cs
 			Sys.getChar(false); 
@@ -80,7 +81,6 @@ class Main {
 			//Sys.exit(0);
 		} catch (e:String) Tools.traceThrow(e);
 		#end
-		Application.
 		//todo: NodeJS not exit!
 	}
 	
