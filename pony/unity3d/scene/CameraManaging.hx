@@ -42,11 +42,14 @@ using hugs.HUGSWrapper;
 	private var distance:Float = 10.0;
 	private var distanceX:Float = 0;
 
-	private var xSpeed:Float = 250.0;
-	private var ySpeed:Float = 120.0;
+	private var xActualSpeed:Float = 0.0;
+	private var yActualSpeed:Float = 0.0;
 	
-	private var xDempfCoef:Float = 1;
-	private var yDempfCoef:Float = 1;
+	private var xConstSpeed:Float = 250.0;
+	private var yConstSpeed:Float = 125.0;
+	
+	private var xDempf:Float = 0.95;
+	private var yDempf:Float = 0.95;
 
 	private var yMinLimit:Int = -20;
 	private var yMaxLimit:Int = 80;
@@ -76,7 +79,7 @@ using hugs.HUGSWrapper;
 	@:meta(UnityEngine.HideInInspector)
 	private var vector:unityengine.Vector3;
 	
-	private function clampAngle(angle:Float, min:Float, max:Float )
+	private function clampAngle(angle:Float, min:Float, max:Float)
 	{
 		if (angle < -360) angle -= 360;
 		if (angle > 360) angle += 360;
@@ -112,56 +115,72 @@ using hugs.HUGSWrapper;
 		
 		if (target.active && unityengine.Input.GetMouseButton(1))
 		{
-			x += unityengine.Input.GetAxis("Mouse X") * xSpeed * 0.02;
-			y -= unityengine.Input.GetAxis("Mouse Y") * ySpeed * 0.02;
+			xActualSpeed = unityengine.Input.GetAxis("Mouse X") * xConstSpeed;
+			yActualSpeed = -unityengine.Input.GetAxis("Mouse Y") * yConstSpeed;
+			x += xActualSpeed * 0.02;
+			y += yActualSpeed * 0.02;
 			changed = true;
 		}
+		
 		#end
 		
 		var dt = Time.deltaTime / Time.timeScale;
 		
 		if (unityengine.Input.GetKey(keyTurnUp)) 
 		{
-			y += ySpeed * dt / 2;
+			yActualSpeed = yConstSpeed;
+			y += yActualSpeed * dt / 2;
 			changed = true;
 		}
-		
-		if (unityengine.Input.GetKeyUp(keyTurnUp))
+		else if ((yActualSpeed > 0) && (!unityengine.Input.GetMouseButton(1)))
 		{
-			y += Math.exp(yDempfCoef * dt);
+			yActualSpeed *= yDempf;
+			if (Math.abs(yActualSpeed) < 0.001) yActualSpeed = 0;
+			y += yActualSpeed * dt / 2;
+			changed = true;
 		}
 		
 		if (unityengine.Input.GetKey(keyTurnDown)) 
 		{
-			y -= ySpeed * dt / 2;
+			yActualSpeed = -yConstSpeed;
+			y += yActualSpeed * dt / 2;
 			changed = true;
 		}
-		
-		if (unityengine.Input.GetKeyUp(keyTurnDown))
+		else if ((yActualSpeed < 0) && (!unityengine.Input.GetMouseButton(1)))
 		{
-			y -= Math.exp(yDempfCoef * dt);
+			yActualSpeed *= yDempf;
+			if (Math.abs(yActualSpeed) < 0.001) yActualSpeed = 0;
+			y += yActualSpeed * dt / 2;
+			changed = true;
 		}
 		
 		if (unityengine.Input.GetKey(keyTurnLeft)) 
 		{
-			x += xSpeed * dt / 2;
+			trace(1);
+			xActualSpeed = xConstSpeed;
+			x += xActualSpeed * dt / 2;
 			changed = true;
 		}
-		
-		if (unityengine.Input.GetKeyUp(keyTurnLeft))
+		else if ((xActualSpeed > 0) && (!unityengine.Input.GetMouseButton(1)))
 		{
-			x += Math.exp(xDempfCoef * dt);
+			xActualSpeed *= xDempf;
+			if (Math.abs(xActualSpeed) < 0.001) xActualSpeed = 0;
+			x += xActualSpeed * dt / 2;
+			changed = true;
 		}
 		
 		if (unityengine.Input.GetKey(keyTurnRight)) 
 		{
-			x -= xSpeed * dt / 2;
+			xActualSpeed = -xConstSpeed;
+			x += xActualSpeed * dt / 2;
 			changed = true;
 		}
-		
-		if (unityengine.Input.GetKeyUp(keyTurnRight))
+		else if ((xActualSpeed < 0) && (!unityengine.Input.GetMouseButton(1)))
 		{
-			x -= Math.exp(xDempfCoef * dt);
+			xActualSpeed *= xDempf;
+			if (Math.abs(xActualSpeed) < 0.001) xActualSpeed = 0;
+			x += xActualSpeed * dt / 2;
+			changed = true;
 		}
 		
 		if (changed) {
