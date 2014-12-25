@@ -128,7 +128,7 @@ using hugs.HUGSWrapper;
 		
 		if (unityengine.Input.GetKey(keyTurnUp)) 
 		{
-			yActualSpeed = yConstSpeed;
+			yActualSpeed = (1 - yDempf) * yConstSpeed + yDempf * yActualSpeed;
 			y += yActualSpeed * dt / 2;
 			changed = true;
 		}
@@ -142,7 +142,7 @@ using hugs.HUGSWrapper;
 		
 		if (unityengine.Input.GetKey(keyTurnDown)) 
 		{
-			yActualSpeed = -yConstSpeed;
+			yActualSpeed = (yDempf - 1) * yConstSpeed + yDempf * yActualSpeed;
 			y += yActualSpeed * dt / 2;
 			changed = true;
 		}
@@ -156,8 +156,7 @@ using hugs.HUGSWrapper;
 		
 		if (unityengine.Input.GetKey(keyTurnLeft)) 
 		{
-			trace(1);
-			xActualSpeed = xConstSpeed;
+			xActualSpeed = (1 - xDempf) * xConstSpeed + xDempf * xActualSpeed;
 			x += xActualSpeed * dt / 2;
 			changed = true;
 		}
@@ -171,7 +170,7 @@ using hugs.HUGSWrapper;
 		
 		if (unityengine.Input.GetKey(keyTurnRight)) 
 		{
-			xActualSpeed = -xConstSpeed;
+			xActualSpeed = (xDempf - 1) * xConstSpeed + xDempf * xActualSpeed;
 			x += xActualSpeed * dt / 2;
 			changed = true;
 		}
