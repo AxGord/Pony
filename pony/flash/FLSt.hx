@@ -21,6 +21,7 @@ class FLStBuilder {
 		var fields:Array<Field> = Context.getBuildFields();
 		for (f in fields) {
 			if (f.meta.getMeta('st') != null || f.meta.getMeta(':st') != null) {
+				//trace(f.meta.getMeta(':st').params);
 				switch (f.kind) {
 					case FVar(t, _):
 						f.kind = FProp('get', 'never', t);

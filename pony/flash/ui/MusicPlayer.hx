@@ -1,4 +1,4 @@
-package pony.flash;
+package pony.flash.ui;
 
 import flash.display.MovieClip;
 import flash.display.Sprite;
@@ -24,7 +24,7 @@ typedef SongInfo = {
  * MusicPlayer
  * @author AxGord
  */
-class MusicPlayer extends Sprite implements FLSt {
+class MusicPlayer extends MovieClip implements FLSt {
 
 	@:st private var progress:ProgressBar;
 	@:st private var bPlay:Button;
@@ -49,16 +49,16 @@ class MusicPlayer extends Sprite implements FLSt {
 	
 	private function init() {
 		volume.total = 100;
-		volume.update < volumeHandler;
+		volume.update.add(volumeHandler);
 		if (bMute != null) bMute.core.click.add(volume.set_position);
 		songClass = Type.getClass(song);
-		beginPoint = new Point(song.x, song.y);
+		beginPoint = {x: song.x, y: song.y};
 		songHeight = song.height;
 		removeChild(song);
-		song = null;
-		bPlay.sw = [2, 1, 0];
-		bPlay.core.onMode.sub(2).add(play);
-		bPlay.core.onMode.sub(0).add(pause);
+		//song = null;
+		//bPlay.sw = [2, 1, 0];
+		//bPlay.core.onMode.sub(2).add(play);
+		//bPlay.core.onMode.sub(0).add(pause);
 	}
 	
 	public function mute():Void {
@@ -101,7 +101,7 @@ class MusicPlayer extends Sprite implements FLSt {
 	public function unloadPlaylist():Void {
 		visible = false;
 	}
-	
+	/*
 	public function play():Void {
 		
 	}
@@ -109,5 +109,5 @@ class MusicPlayer extends Sprite implements FLSt {
 	public function pause():Void {
 		
 	}
-	
+	*/
 }
