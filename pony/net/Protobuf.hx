@@ -32,6 +32,7 @@ import haxe.io.BytesOutput;
 import haxe.Timer;
 import pony.events.Signal0;
 import pony.magic.Declarator;
+import pony.Queue;
 import pony.time.DeltaTime;
 import pony.events.*;
 
@@ -57,9 +58,23 @@ class Protobuf < A:ProtobufBuilder, B:ProtobufBuilder > implements Declarator {
 	
 	public var sendComplite:Signal0<Protobuf<A,B>> = Signal.create(this);
 	
+	private var _queue:Queue<(A->Void)->Void>;
+	
 	public function new() {
+		_queue = new Queue<(A->Void)->Void>(__queue);
 		socket.onData.add(dataHandler);
 		DeltaTime.fixedUpdate.add(trySend);
+	}
+	
+	inline public function queue(f:A->Void):Void _queue.call(f);
+	
+	private function __queue(f:A->Void):Void {
+		send(f);
+		onSend < queueNext;//todo: fix problem
+	}
+	
+	private function queueNext():Void {
+		DeltaTime.skipUpdate(_queue.next);
 	}
 	
 	private function dataHandler(d:BytesInput, s:SocketClient):Void {

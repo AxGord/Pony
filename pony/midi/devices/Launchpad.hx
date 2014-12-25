@@ -73,7 +73,7 @@ class Launchpad implements ILaunchpad {
 	
 	public function new(id:Int = 0) {
 		var i:Int = 0;
-		for (k in 0...count()) {
+		for (k in list().keys()) {
 			if (id == i) {
 				midi = new MidiDevice(k);
 				break;
