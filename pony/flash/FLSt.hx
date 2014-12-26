@@ -20,11 +20,18 @@ class FLStBuilder {
 	macro public static function build():Array<Field> {
 		var fields:Array<Field> = Context.getBuildFields();
 		for (f in fields) {
-			if (f.meta.getMeta('st') != null || f.meta.getMeta(':st') != null) {
-				//trace(f.meta.getMeta(':st').params);
+			var m = f.meta.getMeta('st', true);
+			
+			if (m != null) {
+				var allowSet = false;
+				for (p in m.params) switch p.expr {
+					case EConst(CIdent('set')): allowSet = true;
+					case _:
+				}
+				
 				switch (f.kind) {
 					case FVar(t, _):
-						f.kind = FProp('get', 'never', t);
+						f.kind = FProp('get', allowSet ? 'set' : 'never', t);
 						fields.push( {
 							name: 'get_'+f.name,
 							kind: FFun( {
@@ -36,6 +43,18 @@ class FLStBuilder {
 							pos: f.pos,
 							access: [AInline, APrivate]
 						});
+						if (allowSet)
+							fields.push( {
+								name: 'set_'+f.name,
+								kind: FFun( {
+									args: [{name:'v',type:t}],
+									ret: t,
+									expr: macro return untyped this[$v{f.name}] = v,
+									params: []
+								}),
+								pos: f.pos,
+								access: [AInline, APrivate]
+							});
 					case _:
 				}
 			}
