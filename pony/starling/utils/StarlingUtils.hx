@@ -111,6 +111,16 @@ class StarlingUtils
 		}
 	}
 	
+	public static function alphaToUntouchable(container:starling.display.DisplayObjectContainer):Void
+	{
+		for (i in 0...container.numChildren)
+		{
+			var child:starling.display.DisplayObject = container.getChildAt(i);
+			if (!child.touchable) child.alpha = 0.2;
+			if (Std.is(child, starling.display.DisplayObjectContainer)) alphaToUntouchable(cast child);
+		}
+	}
+	
 	public static function playChildren(container:DisplayObjectContainer):Void
 	{
 		for (i in 0...container.numChildren)

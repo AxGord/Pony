@@ -28,12 +28,17 @@
 package pony.flash.ui;
 import flash.display.MovieClip;
 import flash.Lib;
+import pony.starling.converter.IStarlingConvertible;
 
 /**
  * Window
  * @author AxGord <axgord@gmail.com>
  */
-class Window extends MovieClip {
+#if !starling
+class Window extends MovieClip implements IWindow {
+#else
+class Window extends MovieClip implements IWindow implements IStarlingConvertible {
+#end
 
 	private var st:Windows;
 	
@@ -58,6 +63,12 @@ class Window extends MovieClip {
 		st.blurOff();
 		visible = false;
 	}
-	
-	
+
+#if starling	
+	public function convert(coordinateSpace:flash.display.DisplayObject):starling.display.DisplayObject
+	{
+		return new pony.starling.ui.StarlingWindow(untyped pony.starling.converter.StarlingConverter.getSprite(cast(this, flash.display.Sprite), coordinateSpace, false));
+	}
+#end
+
 }

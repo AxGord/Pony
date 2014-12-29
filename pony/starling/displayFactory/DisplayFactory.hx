@@ -14,6 +14,7 @@ typedef IDisplayObject = {
 	var rotation:Float;//Degrees / Rads!!!
 	var scaleX:Float;
 	var scaleY:Float;
+	var stage:IDisplayObjectContainer;
 	var visible:Bool;
 	var width:Float;
 	var x:Float;
