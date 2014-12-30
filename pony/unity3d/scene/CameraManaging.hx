@@ -123,8 +123,16 @@ using hugs.HUGSWrapper;
 		}
 		
 		#end
-		
-		var dt = Time.deltaTime / Time.timeScale;
+
+		var dt:Float = 0;
+		if (Time.timeScale == 0)
+		{
+			dt = 0;
+		}
+		else
+		{
+			dt = Time.deltaTime / Time.timeScale;
+		}
 		
 		if (unityengine.Input.GetKey(keyTurnUp)) 
 		{
