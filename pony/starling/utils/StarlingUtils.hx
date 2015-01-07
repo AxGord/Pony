@@ -3,6 +3,9 @@ package pony.starling.utils;
 import flash.display.BitmapData;
 import flash.geom.Point;
 import flash.geom.Rectangle;
+import flash.Lib;
+import pony.starling.displayFactory.DisplayFactory.IDisplayObject;
+import pony.time.DeltaTime;
 import starling.display.DisplayObject;
 import starling.display.DisplayObjectContainer;
 import starling.display.Image;
@@ -10,6 +13,7 @@ import starling.display.MovieClip;
 import starling.display.Sprite;
 import starling.textures.Texture;
 import starling.textures.SubTexture;
+using pony.flash.FLExtends;
 /**
  * StarlingUtils
  * @author Maletin
@@ -138,6 +142,20 @@ class StarlingUtils
 			var child:DisplayObject = container.getChildAt(i);
 			if (Std.is(child, Image)) cast(child, Image).smoothing = smoothing;
 			if (Std.is(child, DisplayObjectContainer)) setChildrenTextureSmoothing(cast child, smoothing);
+		}
+	}
+	
+	public static function syncAll(root:IDisplayObject):Void {
+		DeltaTime.fixedUpdate << function() {
+			for (e in Lib.current.childrens()) {
+				var o:IDisplayObject = untyped root.getChildByName(e.name);
+				if (o == null) continue;
+				o.x = e.x;
+				o.y = e.y;
+				o.width = e.width;
+				o.height = e.height;
+				o.alpha = e.alpha;
+			}
 		}
 	}
 }

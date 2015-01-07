@@ -50,14 +50,18 @@ class MusicPlayer extends SongPlayer {
 			songList.push(o);
 			var b:Button = untyped o.b;
 			bcs.push(b.core);
-			var t:TextField = untyped o.t;
+			var t:TextField = untyped o.tTitle;
 			t.text = SongPlayer.formatSong(e);
+			t.mouseEnabled = false;
+			var t:TextField = untyped o.tTime;
+			t.text = e.length;
 			t.mouseEnabled = false;
 			i++;
 		}
 		sw = new SwitchableList(bcs);
 		sw.change << select;
-		
+		loadSong(pl[0]);
+		onComplite << sw.next;
 	}
 	
 	public function select(n:Int):Void {
