@@ -20,7 +20,7 @@ import pony.starling.converter.MaxRectsBinPack.FreeRectangleChoiceHeuristic;
 import pony.starling.utils.ReusableBitmapData;
 import pony.touchManager.TouchEventType;
 import pony.touchManager.TouchManager;
-
+using pony.flash.FLTools;
 /**
  * AtlasCreator
  * @author Maletin
@@ -129,6 +129,10 @@ class AtlasCreator
 			for (i in 0...source.totalFrames)
 			{				
 				source.gotoAndStop(i + 1); //Because first frame on a flash timeline is 1, not 0
+				
+				//Sync childrens
+				for (ch in source.childrens()) if (Std.is(ch, flash.display.MovieClip)) cast(ch, flash.display.MovieClip).gotoAndStop(i + 1);
+				
 				rect = source.getBounds(coordinateSpace);
 				rectToInt(rect);
 				

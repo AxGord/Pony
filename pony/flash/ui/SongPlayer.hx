@@ -105,6 +105,12 @@ class SongPlayer extends MovieClip implements FLSt {
 			channel.stop();
 			channel.removeEventListener(Event.SOUND_COMPLETE, soundComplete);
 		}
+		if (sound != null) {
+			sound.removeEventListener(ProgressEvent.PROGRESS, progressHandler);
+			try {
+				sound.close();
+			} catch(_:Dynamic) {}
+		}
 		pTime = 0;
 		visible = true;
 		songTotal = song.length;
