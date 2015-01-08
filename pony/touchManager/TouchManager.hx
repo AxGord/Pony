@@ -3,14 +3,15 @@ package pony.touchManager;
 
 import haxe.ds.ObjectMap;
 import pony.touchManager.hitTestSources.IHitTestSource;
-import pony.touchManager.hitTestSources.NativeHitTestSource;
 import pony.touchManager.TouchEventType;
-import pony.touchManager.touchInputs.NativeFlashTouchInput;
+
 
 #if flash
 import flash.Lib;
 import flash.ui.Multitouch;
 import flash.ui.MultitouchInputMode;
+import pony.touchManager.hitTestSources.NativeHitTestSource;
+import pony.touchManager.touchInputs.NativeFlashTouchInput;
 #end
 
 /**
@@ -440,7 +441,7 @@ class TouchManager
 		while (object != null)
 		{
 			object = screen.parent(object);
-			if (_objects.exists(object)) return object;
+			if (object != null && _objects.exists(object)) return object;
 		}
 		
 		return null;

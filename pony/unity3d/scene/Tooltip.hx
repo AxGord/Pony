@@ -28,6 +28,8 @@
 package pony.unity3d.scene;
 
 import pony.time.DeltaTime;
+import pony.touchManager.TouchEventType;
+import pony.touchManager.TouchManager;
 import pony.unity3d.scene.MouseHelper;
 import unityengine.BoxCollider;
 import unityengine.Color;
@@ -80,11 +82,14 @@ using hugs.HUGSWrapper;
 		if (!subs) {
 			subObjects = [transform];
 		}
-		ovr = getOrAddTypedComponent(MouseHelper);
-		ovr.over.add(over);
-		ovr.out.add(out);
-		ovr.middleUp.add(pressOut);
-		ovr.middleDown.add(press);
+		//ovr = getOrAddTypedComponent(MouseHelper);
+		//ovr.over.add(over);
+		//ovr.out.add(out);
+		//ovr.middleUp.add(pressOut);
+		//ovr.middleDown.add(press);
+		
+		TouchManager.addListener(this.transform, over, [TouchEventType.Hover]);
+		TouchManager.addListener(this.transform, out, [TouchEventType.HoverOut]);
 		
 		saveColors();
 	}
@@ -105,9 +110,10 @@ using hugs.HUGSWrapper;
 		colorMod = cl;
 	}
 	
-	private function over():Void {
+	private function over(_):Void {
 		try {
-			if (MouseHelper.middleMousePressed)
+			//if (MouseHelper.middleMousePressed)
+			if (unityengine.Input.GetMouseButton(2))
 				pony.unity3d.Tooltip.showText(text, bigText, this, gameObject.layer);
 			else
 				pony.unity3d.Tooltip.showText(text, "", this, gameObject.layer);
@@ -115,7 +121,7 @@ using hugs.HUGSWrapper;
 		} catch (_:Dynamic) {}
 	}
 	
-	public function out():Void {
+	public function out(_):Void {
 		try {
 			pony.unity3d.Tooltip.hideText(this);
 			lightDown();
