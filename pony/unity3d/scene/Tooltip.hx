@@ -88,8 +88,8 @@ using hugs.HUGSWrapper;
 		//ovr.middleUp.add(pressOut);
 		//ovr.middleDown.add(press);
 		
-		TouchManager.addListener(this.transform, over, [TouchEventType.Hover]);
-		TouchManager.addListener(this.transform, out, [TouchEventType.HoverOut]);
+		TouchManager.addListener(this.transform, over, [TouchEventType.Hover, TouchEventType.Over, TouchEventType.Down]);
+		TouchManager.addListener(this.transform, out, [TouchEventType.HoverOut, TouchEventType.Out]);
 		
 		saveColors();
 	}
