@@ -25,7 +25,7 @@ typedef SongInfo = {
  * @author AxGord
  */
 class SongPlayer extends MovieClip implements FLSt {
-
+#if !starling
 	//@:st private var progress:ProgressBar;
 	@:st private var playBar:Bar;
 	@:st private var loadProgress:ProgressBar;
@@ -181,5 +181,5 @@ class SongPlayer extends MovieClip implements FLSt {
 		playBar.on << setPosition;
 	}
 	
-	
+#end
 }

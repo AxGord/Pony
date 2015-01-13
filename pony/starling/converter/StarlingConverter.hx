@@ -12,6 +12,7 @@ import flash.Vector;
 import pony.flash.ui.Button;
 import pony.flash.ui.Tree;
 import pony.flash.ui.TurningFree;
+import pony.starling.ui.StarlingBar;
 import starling.core.Starling;
 import starling.display.DisplayObject;
 import starling.textures.Texture;
@@ -49,6 +50,12 @@ class StarlingConverter
 			starlingChild = getSpriteInternal(untyped source, coordinateSpace, disposeable);
 			starlingChild = new StarlingScrollBar(untyped starlingChild);
 			untyped source.starlingScrollBar = starlingChild;
+		}
+		else if (Std.is(source, pony.flash.ui.Bar)) // ScrollBar
+		{
+			starlingChild = getSpriteInternal(untyped source, coordinateSpace, disposeable);
+			starlingChild = new StarlingBar(untyped starlingChild);
+			untyped source.starlingBar = starlingChild;
 		}
 		else if (Std.is(source, TurningFree)) // TurningFree
 		{

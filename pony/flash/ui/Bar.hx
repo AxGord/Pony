@@ -10,7 +10,7 @@ import pony.events.Signal1;
  * @author AxGord
  */
 class Bar extends MovieClip implements FLSt {
-
+#if !starling
 	@:st private var bar:MovieClip;
 	
 	private var total:Float;
@@ -40,5 +40,5 @@ class Bar extends MovieClip implements FLSt {
 		bar.width = v * total;
 		return value = v;
 	}
-	
+#end
 }

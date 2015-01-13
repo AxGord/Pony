@@ -15,7 +15,7 @@ import pony.ui.SwitchableList;
  * @author AxGord
  */
 class MusicPlayer extends SongPlayer {
-
+#if !starling
 	@:st(set) private var song:MovieClip;
 	
 	private var songClass:Class<MovieClip>;
@@ -72,4 +72,5 @@ class MusicPlayer extends SongPlayer {
 	public function unloadPlaylist():Void {
 		visible = false;
 	}
+#end
 }
