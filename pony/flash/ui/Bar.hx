@@ -34,7 +34,7 @@ class Bar extends MovieClip implements FLSt {
 		bar.width = 0;
 	}
 	
-	private function set_value(v:Float):Float {
+	public function set_value(v:Float):Float {
 		if (value == v) return v;
 		on.dispatch(v);
 		bar.width = v * total;

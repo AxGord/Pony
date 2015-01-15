@@ -1,0 +1,57 @@
+package pony.starling.ui;
+
+import pony.events.Signal;
+import pony.events.Signal1;
+import pony.flash.FLTools;
+import pony.time.DeltaTime;
+import pony.touchManager.TouchEventType;
+import pony.touchManager.TouchManager;
+import pony.touchManager.TouchManagerEvent;
+import starling.display.DisplayObject;
+import starling.display.Image;
+import starling.display.Sprite;
+import starling.textures.TextureSmoothing;
+
+/**
+ * StarlingProgressBar
+ * @author AxGord
+ */
+class StarlingProgressBar extends Sprite {
+
+	@:isVar public var auto(default, set):Void->Float;
+	
+	private var bar:DisplayObject;
+	private var total:Float;
+	
+	@:isVar public var progress(default, set):Float;
+	
+	public function new(source:Sprite) {
+		super();
+		addChild(source);
+		bar = untyped source.getChildByName("bar");
+		FLTools.init < init;
+	}
+	
+	private function init():Void {
+		total = bar.width;
+		bar.width = 0;
+	}
+	
+	public function set_progress(v:Float):Float {
+		bar.width = total * v;
+		return progress = v;
+	}
+	
+	private function set_auto(f:Void->Float):Void->Float {
+		if (auto == f) return f;
+		if (f == null) {
+			DeltaTime.fixedUpdate.remove(autoUpdate);
+		} else
+			DeltaTime.fixedUpdate.add(autoUpdate);
+		return auto = f;
+	}
+	
+	private function autoUpdate():Void {
+		progress = auto();
+	}
+}

@@ -10,9 +10,15 @@ import flash.text.TextFormat;
 import flash.text.TextFormatAlign;
 import flash.Vector;
 import pony.flash.ui.Button;
+import pony.flash.ui.MusicPlayer;
+import pony.flash.ui.ProgressBar;
+import pony.flash.ui.SongPlayer;
 import pony.flash.ui.Tree;
 import pony.flash.ui.TurningFree;
 import pony.starling.ui.StarlingBar;
+import pony.starling.ui.StarlingMusicPlayer;
+import pony.starling.ui.StarlingProgressBar;
+import pony.starling.ui.StarlingSongPlayer;
 import starling.core.Starling;
 import starling.display.DisplayObject;
 import starling.textures.Texture;
@@ -57,6 +63,26 @@ class StarlingConverter
 			starlingChild = new StarlingBar(untyped starlingChild);
 			untyped source.starlingBar = starlingChild;
 		}
+		
+		else if (Std.is(source, pony.flash.ui.ProgressBar)) // ScrollBar
+		{
+			starlingChild = getSpriteInternal(untyped source, coordinateSpace, disposeable);
+			starlingChild = new StarlingProgressBar(untyped starlingChild);
+			untyped source.starlingBar = starlingChild;
+		}
+		else if (Std.is(source, pony.flash.ui.SongPlayer)) // ScrollBar
+		{
+			starlingChild = getSpriteInternal(untyped source, coordinateSpace, disposeable);
+			starlingChild = new StarlingSongPlayer(untyped starlingChild);
+			untyped source.starlingBar = starlingChild;
+		}
+		else if (Std.is(source, pony.flash.ui.MusicPlayer)) // ScrollBar
+		{
+			starlingChild = getSpriteInternal(untyped source, coordinateSpace, disposeable);
+			starlingChild = new StarlingMusicPlayer(untyped starlingChild);
+			untyped source.starlingBar = starlingChild;
+		}
+		
 		else if (Std.is(source, TurningFree)) // TurningFree
 		{
 			starlingChild = getSpriteInternal(untyped source, coordinateSpace, disposeable);
