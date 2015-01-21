@@ -67,7 +67,9 @@ class ButtonCore {
 	public var up(default, null):Signal;
 	public var select(default, null):Signal;
 	public var unselect(default, null):Signal;
-	public var onMode(default, null):Signal;	
+	public var onMode(default, null):Signal;
+	
+	public var locked:Bool = false;
 	
 	public var sw(default, set):Array<Int>;
 	
@@ -99,6 +101,7 @@ class ButtonCore {
 	}
 	
 	public function mouseOver(btnDown:Bool):Void {
+		//if (locked) return;
 		switch (mouseState) {
 			case Default:
 				if (!btnDown) {
@@ -115,6 +118,7 @@ class ButtonCore {
 	}
 	
 	public function mouseOut():Void {
+		//if (locked) return;
 		waitUp = false;
 		switch (mouseState) {
 			case Focus:
@@ -128,6 +132,7 @@ class ButtonCore {
 	}
 	
 	public function mouseUp():Void {
+		if (locked) return;
 		switch (mouseState) {
 			case Default if (waitUp):
 				mouseState = Focus;
@@ -144,41 +149,48 @@ class ButtonCore {
 	}
 	
 	public function mouseDown():Void {
+		if (locked) return;
 		if (mouseState != Focus) return;
 		mouseState = Press;
 		update();
 	}
 	
 	public function setFocus():Void {
+		if (locked) return;
 		if (tabState != Default) return;
 		tabState = Focus;
 		update();
 	}
 	
 	public function leaveFocus():Void {
+		if (locked) return;
 		if (tabState != Default) return;
 		tabState = Default;
 		update();
 	}
 	
 	public function enterDown():Void {
+		if (locked) return;
 		if (tabState != Focus) return;
 		tabState = Press;
 		update();
 	}
 	
 	public function enterUp():Void {
+		if (locked) return;
 		if (tabState != Press) return;
 		tabState = Press;
 		update();
 	}
 	
 	public function keyDown():Void {
+		if (locked) return;
 		if (keyboardState != Default) return;
 		keyboardState = Press;
 	}
 	
 	public function keyUp():Void {
+		if (locked) return;
 		if (keyboardState != Press) return;
 		keyboardState = Default;
 	}

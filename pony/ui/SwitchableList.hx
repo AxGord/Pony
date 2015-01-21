@@ -55,7 +55,11 @@ class SwitchableList implements IWards<SwitchableList> {
 		lostState = Signal.create(this);
 		list = a;
 		for (i in 0...a.length) {
-			if (i == def) a[i].mode = swto;
+			if (i == def)
+			{
+				a[i].locked = true;
+				a[i].mode = swto;
+			}
 			//select.listen(a[i].click.sub([0], [i]));
 			a[i].click.sub(0).bind(i).add(change);
 			if (ret) a[i].click.sub(swto).bind(i).add(changeRet);
@@ -67,8 +71,16 @@ class SwitchableList implements IWards<SwitchableList> {
 	
 	private function setState(n:Int):Void {
 		if (state == n) return;
-		if (list[state] != null) list[state].mode = 0;
-		if (list[n] != null) list[n].mode = swto;
+		//if (list[state] != null) list[state].mode = 0;
+		if (list[state] != null) {
+			list[state].locked = false;
+			list[state].mode = 0;
+		}
+		//if (list[n] != null) list[n].mode = swto;
+		if (list[n] != null) {
+			list[n].locked = true;
+			list[n].mode = swto;
+		}
 		lostState.dispatch(state);
 		state = n;
 	}
