@@ -174,12 +174,16 @@ class Signal {
 			try {
 				r = l.call(event);
 			} catch (msg:String) {
+				//TODO Better error messages
+				
 				trace("Listener error (str)");
 				trace(msg);
 				trace(CallStack.toString(CallStack.exceptionStack()));
+				throw msg;
 			} catch (e:Dynamic) {
 				trace("Listener error");
 				trace(CallStack.toString(CallStack.exceptionStack()));
+				throw e;
 			}
 			
 			if (l.get_count() == 0)
