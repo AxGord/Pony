@@ -62,6 +62,8 @@ class Signal {
 	private var notMap:Dictionary < Array<Dynamic>, Signal > ;
 	private var notHandlers:Map < Int, Listener > ;
 	
+	private var listenersBuffer:Array<Listener>;
+	
 	public var haveListeners(get, null):Bool;
 	
 	public var listenersCount(get, never):Int;
@@ -159,55 +161,91 @@ class Signal {
 		if (listeners.length == 0 ) return this;
 		event.signal = this;
 		if (silent) return this;
-		var c:Priority<Listener> = new Priority<Listener>(listeners.data.copy());
-		lRunCopy.add(c);
-		for (l in c) {
+		
+		if (listenersBuffer == null) listenersBuffer = new Array<Listener>();
+		while (listenersBuffer.length > 0) listenersBuffer.pop();
+		for (k in 0...listeners.length) listenersBuffer.push(listeners.data[k]);
+		
+		var i:Int = 0;
+		while (i < listenersBuffer.length)
+		{
+			var l = listenersBuffer[i];
 			var r:Bool = false;
 			try {
 				r = l.call(event);
 			} catch (msg:String) {
-				remove(l);
-				lRunCopy.remove(c);
-				#if (debug && cs)
-				
-					trace(msg);
-					l.call(event);
-					#if debug
-					throw 'Listener error (signal: $id)';
-					#else
-					throw 'Listener error';
-					#end
-					
-				#elseif ((debug || munit) && (php || neko || cpp))
-				
-					Sys.println('');
-					Sys.print(msg);
-					Sys.println(CallStack.toString(CallStack.exceptionStack()));
-					#if debug
-					throw 'Listener error (signal: $id)';
-					#else
-					throw 'Listener error';
-					#end
-				
-				#elseif (debug && flash)
-					flash.Lib.trace(msg);
-					flash.Lib.trace(CallStack.toString(CallStack.exceptionStack()));
-				#else
-					throw msg;
-				#end
+				trace("Listener error (str)");
+				trace(msg);
+				trace(CallStack.toString(CallStack.exceptionStack()));
 			} catch (e:Dynamic) {
-				remove(l);
-				lRunCopy.remove(c);
-				try {
-					trace(CallStack.toString(CallStack.exceptionStack()));
-				} catch (e:Dynamic) {}
-				throw e;
+				trace("Listener error");
+				trace(CallStack.toString(CallStack.exceptionStack()));
 			}
-			if (l.get_count() == 0) remove(l);
+			
+			if (l.get_count() == 0)
+			{
+				if (!listeners.empty && listeners.removeElement(l)) {
+					listenersBuffer.remove(l);
+					l.unuse();
+					if (listeners.empty && lostListeners != null) lostListeners.dispatchEmpty();
+					i--;
+				}
+			}
 			if (!r) break;
+			i++;
 		}
-		lRunCopy.remove(c);
 		return this;
+		
+		
+		//var c:Priority<Listener> = new Priority<Listener>(listeners.data.copy());
+		//lRunCopy.add(c);
+		//for (l in c) {
+			//var r:Bool = false;
+			//try {
+				//r = l.call(event);
+			//} catch (msg:String) {
+				//remove(l);
+				//lRunCopy.remove(c);
+				//#if (debug && cs)
+				//
+					//trace(msg);
+					//l.call(event);
+					//#if debug
+					//throw 'Listener error (signal: $id)';
+					//#else
+					//throw 'Listener error';
+					//#end
+					//
+				//#elseif ((debug || munit) && (php || neko || cpp))
+				//
+					//Sys.println('');
+					//Sys.print(msg);
+					//Sys.println(CallStack.toString(CallStack.exceptionStack()));
+					//#if debug
+					//throw 'Listener error (signal: $id)';
+					//#else
+					//throw 'Listener error';
+					//#end
+				//
+				//#elseif (debug && flash)
+					//flash.Lib.trace(msg);
+					//flash.Lib.trace(CallStack.toString(CallStack.exceptionStack()));
+				//#else
+					//throw msg;
+				//#end
+			//} catch (e:Dynamic) {
+				//remove(l);
+				//lRunCopy.remove(c);
+				//try {
+					//trace(CallStack.toString(CallStack.exceptionStack()));
+				//} catch (e:Dynamic) {}
+				//throw e;
+			//}
+			//if (l.get_count() == 0) remove(l);
+			//if (!r) break;
+		//}
+		//lRunCopy.remove(c);
+		//return this;
 	}
 	
 	public inline function dispatchArgs(?args:Array<Dynamic>):Signal {
