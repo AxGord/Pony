@@ -1,6 +1,7 @@
 package pony.midi.devices;
 import pony.events.Signal2;
 import pony.geom.Point.IntPoint;
+import pony.ILogable;
 import pony.math.Matrix;
 import pony.midi.devices.LaunchpadColor;
 
@@ -8,7 +9,7 @@ import pony.midi.devices.LaunchpadColor;
  * @author AxGord
  */
 
-interface ILaunchpad {
+interface ILaunchpad extends ILogable<ILaunchpad> {
   
 	var areaState(default, null):Matrix<LaunchpadColor>;
 	var topState(default, null):Array<LaunchpadColor>;

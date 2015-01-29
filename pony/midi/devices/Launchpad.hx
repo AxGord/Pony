@@ -31,6 +31,7 @@ import pony.events.Signal;
 import pony.events.Signal1;
 import pony.events.Signal2;
 import pony.geom.Point.IntPoint;
+import pony.Logable;
 import pony.math.Matrix;
 import pony.midi.MidiCode;
 import pony.midi.MidiDevice;
@@ -41,7 +42,7 @@ import pony.midi.MidiMessage;
  * Launchpad
  * @author AxGord
  */
-class Launchpad implements ILaunchpad {
+class Launchpad extends Logable<ILaunchpad> implements ILaunchpad {
 	
 	private static var area(default, never):Matrix<MidiCode> = [
 		[for (i in 0...8) i],
@@ -72,6 +73,7 @@ class Launchpad implements ILaunchpad {
 	public var onRight(default, null):Signal2<ILaunchpad, Int, Bool>;
 	
 	public function new(id:Int = 0) {
+		super();
 		var i:Int = 0;
 		for (k in list().keys()) {
 			if (id == i) {
@@ -97,14 +99,14 @@ class Launchpad implements ILaunchpad {
 					onRight.dispatch(i, m.value == 127);
 				else {
 					var p = area.indexOf(m.key);
-					if (p == null) throw 'Unknown button';
+					if (p == null) return _error('Unknown button');
 					onArea.dispatch(p, m.value == 127);
 				}
 			case 176:
 				var i = topBlock.indexOf(m.key);
-				if (i == -1) throw 'Unknown button';
+				if (i == -1) return _error('Unknown button');
 				onTop.dispatch(i, m.value == 127);
-			case _: throw 'Unknown button';
+			case _: return _error('Unknown button');
 		}
 	}
 	

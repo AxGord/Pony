@@ -9,7 +9,7 @@ import pony.midi.devices.LaunchpadColor;
  * VirtualLaunchpad
  * @author AxGord
  */
-class VirtualLaunchpad implements ILaunchpad {
+class VirtualLaunchpad extends Logable<ILaunchpad> implements ILaunchpad {
 
 	public var areaState(default, null):Matrix<LaunchpadColor>;
 	public var topState(default, null):Array<LaunchpadColor>;
@@ -20,6 +20,7 @@ class VirtualLaunchpad implements ILaunchpad {
 	public var onRight(default, null):Signal2<ILaunchpad, Int, Bool>;
 	
 	public function new() {
+		super();
 		reset();
 		onArea = Signal.create(cast this);
 		onTop = Signal.create(cast this);
