@@ -71,7 +71,9 @@ class ScrollBar extends Sprite implements pony.flash.FLSt implements IScrollBar 
 		super();
 		alpha = 0;
 		slideCore = new SlideCore(1, 20);
+		slideCore.hardClose();
 		slideCore.update.add(slUpdate);
+		alpha = 0;
 		update = new Signal();
 		_position = 0;
 		isVert = width < height;
@@ -84,7 +86,6 @@ class ScrollBar extends Sprite implements pony.flash.FLSt implements IScrollBar 
 		mouseMove.silent = true;
 		mouseMove.add(scrollerMove);
 		TouchManager.addListener(scroller, function(e:TouchManagerEvent):Void { startDraaag(); }, [TouchEventType.Down] );
-		slideCore.close();
 	}
 	
 	private function buildTMSignal(displayObject:Dynamic, types:Array<TouchEventType> = null):Signal

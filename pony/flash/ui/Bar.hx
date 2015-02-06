@@ -16,11 +16,13 @@ class Bar extends MovieClip implements FLSt {
 	private var total:Float;
 	
 	public var value(default, set):Float = 0;
-	public var on:Signal1<Bar, Float>;
+	public var onComplete:Signal1<Bar, Float>;
+	public var onDynamic:Signal1<Bar, Float>;
 	
 	public function new() {
 		super();
-		on = Signal.create(this);
+		onComplete = Signal.create(this);
+		onDynamic = Signal.create(this);
 		FLTools.init < init;
 		addEventListener(MouseEvent.CLICK, clickHandler);
 	}
@@ -36,7 +38,8 @@ class Bar extends MovieClip implements FLSt {
 	
 	public function set_value(v:Float):Float {
 		if (value == v) return v;
-		on.dispatch(v);
+		onDynamic.dispatch(v);
+		onComplete.dispatch(v);
 		bar.width = v * total;
 		return value = v;
 	}

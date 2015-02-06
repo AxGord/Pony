@@ -28,9 +28,15 @@ class StarlingButton extends MovieClip
 	private var _handCursor:TouchManagerHandCursor;
 	private var _hitArea:Rectangle;
 
+	private var _textures:Vector<Texture>;
+	private var _framerate:Int;
+	
 	public function new(textures:Vector<Texture>, framerate:Int, core:ButtonCore) 
 	{
 		super(textures, framerate);
+		_textures = textures;
+		_framerate = framerate;
+		
 		
 		var hitAreaFrame:Int = numFrames > config.zone - 1 ? config.zone : config.def;
 		gotoAndStop(hitAreaFrame);
@@ -46,6 +52,13 @@ class StarlingButton extends MovieClip
 		core.changeVisual.add(change);
 		
 		_handCursor = new TouchManagerHandCursor(this);
+	}
+	
+	inline public function clone():StarlingButton {
+		var b = new StarlingButton(_textures, _framerate, new ButtonCore());
+		b.x = x;
+		b.y = y;
+		return b;
 	}
 	
 	public function touchManagerListener(e:TouchManagerEvent):Void

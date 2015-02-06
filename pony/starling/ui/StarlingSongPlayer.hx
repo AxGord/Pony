@@ -34,8 +34,9 @@ class StarlingSongPlayer extends Sprite {
 		
 		addChild(source);
 		
-		playBar = untyped source.getChildByName("bar");
+		playBar = untyped source.getChildByName("playBar");
 		loadProgress = untyped source.getChildByName("loadProgress");
+		
 		bPlay = untyped source.getChildByName("bPlay");
 		tTitle = untyped source.getChildByName("tTitle");
 		bMute = untyped source.getChildByName("bMute");
@@ -49,7 +50,7 @@ class StarlingSongPlayer extends Sprite {
 		core.onVolume << function(v:Float) volume.value = v;
 		core.onMute << function() bMute.core.mode = 2;
 		core.onUnmute << function() bMute.core.mode = 0;
-		core.onLoadprogress << function(v:Float) loadProgress.progress = v;
+		core.onLoadprogress << function(v:Float) loadProgress.value = v;
 		core.onPosition << function(v:Float) playBar.value = v;
 		core.onTextUpdate << function(t:String) tTitle.text = t;
 		core.onTimeTextUpdate << function(t:String) tTime.text = t;
@@ -59,8 +60,8 @@ class StarlingSongPlayer extends Sprite {
 		//tTime.mouseEnabled = false;
 		tTime.text = '';
 		volume.value = 0.8;
-		volume.on << core.set_volume;
-		playBar.on << core.set_position;
+		volume.onDynamic << core.set_volume;
+		playBar.onDynamic << core.set_position;
 		bMute.core.click.add(core.switchMute);
 		bPlay.core.click.add(core.switchPlay);
 	}

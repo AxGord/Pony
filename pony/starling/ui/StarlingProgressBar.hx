@@ -1,5 +1,6 @@
 package pony.starling.ui;
 
+import flash.events.Event;
 import pony.events.Signal;
 import pony.events.Signal1;
 import pony.flash.FLTools;
@@ -23,23 +24,19 @@ class StarlingProgressBar extends Sprite {
 	private var bar:DisplayObject;
 	private var total:Float;
 	
-	@:isVar public var progress(default, set):Float;
+	@:isVar public var value(default, set):Float;
 	
 	public function new(source:Sprite) {
 		super();
-		addChild(source);
 		bar = untyped source.getChildByName("bar");
-		FLTools.init < init;
-	}
-	
-	private function init():Void {
 		total = bar.width;
 		bar.width = 0;
+		addChild(source);
 	}
 	
-	public function set_progress(v:Float):Float {
+	public function set_value(v:Float):Float {
 		bar.width = total * v;
-		return progress = v;
+		return value = v;
 	}
 	
 	private function set_auto(f:Void->Float):Void->Float {
@@ -52,6 +49,6 @@ class StarlingProgressBar extends Sprite {
 	}
 	
 	private function autoUpdate():Void {
-		progress = auto();
+		value = auto();
 	}
 }

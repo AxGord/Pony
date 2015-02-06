@@ -1,4 +1,5 @@
 package pony.starling.converter ;
+import flash.display.BitmapData;
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
 import flash.display.Sprite;
@@ -9,18 +10,21 @@ import flash.text.TextField;
 import flash.text.TextFormat;
 import flash.text.TextFormatAlign;
 import flash.Vector;
+import pony.flash.FLTools;
 import pony.flash.ui.Button;
 import pony.flash.ui.MusicPlayer;
 import pony.flash.ui.ProgressBar;
 import pony.flash.ui.SongPlayer;
 import pony.flash.ui.Tree;
 import pony.flash.ui.TurningFree;
+import pony.starling.SpritePack;
 import pony.starling.ui.StarlingBar;
 import pony.starling.ui.StarlingMusicPlayer;
 import pony.starling.ui.StarlingProgressBar;
 import pony.starling.ui.StarlingSongPlayer;
 import starling.core.Starling;
 import starling.display.DisplayObject;
+import starling.display.Image;
 import starling.textures.Texture;
 import starling.utils.HAlign;
 import starling.utils.VAlign;
@@ -70,16 +74,16 @@ class StarlingConverter
 			starlingChild = new StarlingProgressBar(untyped starlingChild);
 			untyped source.starlingBar = starlingChild;
 		}
-		else if (Std.is(source, pony.flash.ui.SongPlayer)) // ScrollBar
-		{
-			starlingChild = getSpriteInternal(untyped source, coordinateSpace, disposeable);
-			starlingChild = new StarlingSongPlayer(untyped starlingChild);
-			untyped source.starlingBar = starlingChild;
-		}
 		else if (Std.is(source, pony.flash.ui.MusicPlayer)) // ScrollBar
 		{
 			starlingChild = getSpriteInternal(untyped source, coordinateSpace, disposeable);
 			starlingChild = new StarlingMusicPlayer(untyped starlingChild);
+			untyped source.starlingBar = starlingChild;
+		}
+		else if (Std.is(source, pony.flash.ui.SongPlayer)) // ScrollBar
+		{
+			starlingChild = getSpriteInternal(untyped source, coordinateSpace, disposeable);
+			starlingChild = new StarlingSongPlayer(untyped starlingChild);
 			untyped source.starlingBar = starlingChild;
 		}
 		
@@ -116,6 +120,22 @@ class StarlingConverter
 			if (untyped source.getSW() != null) untyped starlingChild.sw(untyped source.getSW());
 			
 			Starling.juggler.add(untyped starlingChild);
+		}
+		else if (Std.is(source, SpritePack))
+		{
+			var m:SpritePack = cast source;
+			var a:Array<Image> = [];
+			
+			for (f in 1...(m.totalFrames+1)) {
+				m.gotoAndStop(f);
+				var bitmap:BitmapData = new BitmapData(Std.int(FLTools.width), Std.int(FLTools.height));
+				bitmap.draw(m);
+				
+				a.push(new Image(Texture.fromBitmapData(bitmap)));
+				bitmap.dispose();
+				//a.push(_atlasCreator.addImage(m, coordinateSpace, disposeable, true));
+			}
+			starlingChild = new StarlingSpritePack(a);
 		}
 		else if (Std.is(source, flash.display.MovieClip) && cast(source, flash.display.MovieClip).totalFrames > 1) // MovieClip
 		{

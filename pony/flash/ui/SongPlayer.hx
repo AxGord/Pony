@@ -30,7 +30,7 @@ class SongPlayer extends MovieClip implements FLSt {
 		core.onVolume << function(v:Float) volume.value = v;
 		core.onMute << function() bMute.core.mode = 2;
 		core.onUnmute << function() bMute.core.mode = 0;
-		core.onLoadprogress << function(v:Float) loadProgress.progress = v;
+		core.onLoadprogress << function(v:Float) loadProgress.value = v;
 		core.onPosition << function(v:Float) playBar.value = v;
 		core.onTextUpdate << function(t:String) tTitle.text = t;
 		core.onTimeTextUpdate << function(t:String) tTime.text = t;

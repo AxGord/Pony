@@ -37,13 +37,13 @@ import pony.time.DeltaTime;
  * @author AxGord <axgord@gmail.com>
  */
 class ProgressBar extends MovieClip implements Dynamic<MovieClip> {
-
+#if !starling
 	@:isVar public var auto(default, set):Void->Float;
 	
 	//@:extern private var bar:MovieClip;
 	private var total:Float;
 	
-	@:isVar public var progress(default, set):Float;
+	@:isVar public var value(default, set):Float;
 	
 	public function new() {
 		super();
@@ -59,7 +59,7 @@ class ProgressBar extends MovieClip implements Dynamic<MovieClip> {
 	
 	public function set_progress(v:Float):Float {
 		this.bar.width = total * v;
-		return progress = v;
+		return value = v;
 	}
 	
 	private function set_auto(f:Void->Float):Void->Float {
@@ -72,7 +72,7 @@ class ProgressBar extends MovieClip implements Dynamic<MovieClip> {
 	}
 	
 	private function autoUpdate():Void {
-		progress = auto();
+		value = auto();
 	}
-	
+#end
 }
