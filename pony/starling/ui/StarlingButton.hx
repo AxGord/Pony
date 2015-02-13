@@ -6,6 +6,7 @@ import flash.Vector;
 import haxe.CallStack;
 import pony.ui.ButtonCore;
 import starling.display.MovieClip;
+import starling.display.Sprite;
 import starling.display.Image;
 import starling.display.DisplayObject;
 import starling.textures.Texture;
@@ -17,31 +18,40 @@ import pony.touchManager.TouchManagerHandCursor;
 import starling.core.Starling;
 
 /**
- * ...
+ * StarlingButton
  * @author Maletin
  */
-class StarlingButton extends MovieClip
+class StarlingButton extends Sprite
 {
 	public static var config = {def: 1, focus: 2, press: 3, zone: 4, disabled: 5};
+	
+	private var mc:Array<MovieClip>;
 	
 	public var core:ButtonCore;
 	private var _handCursor:TouchManagerHandCursor;
 	private var _hitArea:Rectangle;
 
-	private var _textures:Vector<Texture>;
+	private var _textures:Vector<Vector<Texture>>;
 	private var _framerate:Int;
+	private var prev:Int = -1;
 	
-	public function new(textures:Vector<Texture>, framerate:Int, core:ButtonCore) 
+	public function new(textures:Vector<Vector<Texture>>, framerate:Int, core:ButtonCore) 
 	{
-		super(textures, framerate);
+		super();
+		mc = [for (v in textures) {
+			var m = new MovieClip(v, framerate);
+			Starling.juggler.add(m);
+			m.play();
+			m;
+			}];
+		//addChild(mc);
+		//super(textures, framerate);
 		_textures = textures;
 		_framerate = framerate;
 		
+		var hitAreaFrame:Int = mc.length > config.zone - 1 ? config.zone : config.def;
 		
-		var hitAreaFrame:Int = numFrames > config.zone - 1 ? config.zone : config.def;
-		gotoAndStop(hitAreaFrame);
-		
-		var texture = getFrameTexture(hitAreaFrame - 1);//Zero-based frame id here
+		var texture = mc[hitAreaFrame-1].getFrameTexture(0);//Zero-based frame id here
 		_hitArea = new Rectangle(-texture.frame.x, -texture.frame.y, texture.width, texture.height);
 		
 		gotoAndStop(config.def);
@@ -93,8 +103,13 @@ class StarlingButton extends MovieClip
 	
 	private function gotoAndStop(frame:Int):Void
 	{
-		currentFrame = frame - 1;
-		pause();
+		frame--;
+		if (prev != -1) removeChild(mc[prev]);
+		addChild(mc[frame]);
+		mc[frame].currentFrame = 0;
+		prev = frame;
+		//mc.currentFrame = frame - 1;
+		//mc.pause();
 	}
 	
 	public function sw(v:Array<Int>):Void if (core != null) core.sw = v;

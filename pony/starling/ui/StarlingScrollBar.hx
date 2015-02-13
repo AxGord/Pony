@@ -53,7 +53,7 @@ class StarlingScrollBar extends Sprite implements pony.flash.FLSt implements ISc
 		scroller = untyped source.getChildByName("scroller");
 		bg = untyped source.getChildByName("bg");
 		
-		scroller.smoothing = TextureSmoothing.NONE;
+		//scroller.smoothing = TextureSmoothing.NONE;
 		if (Std.is(bg, Image)) untyped bg.smoothing = TextureSmoothing.NONE;
 		
 		addChild(bg);

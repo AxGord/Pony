@@ -33,6 +33,7 @@ import pony.starling.ui.StarlingScrollBar;
 import pony.starling.ui.StarlingTree;
 import pony.starling.ui.StarlingTurningFree;
 
+using pony.flash.FLExtends;
 /**
  * StarlingConverter
  * @author Maletin
@@ -101,17 +102,32 @@ class StarlingConverter
 		{
 			starlingChild = cast(source, IStarlingConvertible).convert(coordinateSpace);
 		}
-		else if (Std.is(source, flash.display.Sprite) && childrenWithNames(cast(source, flash.display.Sprite))) // Container
-		{
-			starlingChild = getSpriteInternal(cast(source, flash.display.Sprite), coordinateSpace, disposeable);
-		}
 		else if (Std.is(source, pony.flash.ui.Button)) // Button
 		{
-			var textures:Vector<Texture> = new Vector<Texture>();
+			var mc:flash.display.MovieClip = cast source;
+			var movies:Array<Vector<Texture>> = [];
+			for (i in 1...mc.totalFrames+1)
+			{
+				mc.gotoAndStop(i);
+				var v:Vector<Texture> = null;
+				for (o in mc.childrens()) if (Std.is(o, flash.display.MovieClip)) {
+					var clip:starling.display.MovieClip = _atlasCreator.addClip(cast o, coordinateSpace, disposeable);
+					v = new Vector<Texture>();
+					for (i in 0...(untyped clip.numFrames)) v.push(clip.getFrameTexture(i));
+					break;
+				}
+				movies.push(v);
+			}
+			var textures:Vector<Vector<Texture>> = new Vector<Vector<Texture>>();
 			var clip:starling.display.MovieClip = _atlasCreator.addClip(cast(source, flash.display.MovieClip), coordinateSpace, disposeable);
 			for (i in 0...(untyped clip.numFrames))
 			{
-				textures.push(clip.getFrameTexture(i));
+				var v = new Vector<Texture>();
+				if (movies[i] == null)
+					v.push(clip.getFrameTexture(i));
+				else
+					v = movies[i];
+				textures.push(v);
 			}
 			
 			starlingChild = new StarlingButton(textures, 60, untyped source.core);
@@ -119,7 +135,11 @@ class StarlingConverter
 			
 			if (untyped source.getSW() != null) untyped starlingChild.sw(untyped source.getSW());
 			
-			Starling.juggler.add(untyped starlingChild);
+			//Starling.juggler.add(untyped starlingChild);
+		}
+		else if (Std.is(source, flash.display.Sprite) && childrenWithNames(cast(source, flash.display.Sprite))) // Container
+		{
+			starlingChild = getSpriteInternal(cast(source, flash.display.Sprite), coordinateSpace, disposeable);
 		}
 		else if (Std.is(source, SpritePack))
 		{
@@ -128,7 +148,8 @@ class StarlingConverter
 			
 			for (f in 1...(m.totalFrames+1)) {
 				m.gotoAndStop(f);
-				var bitmap:BitmapData = new BitmapData(Std.int(FLTools.width), Std.int(FLTools.height));
+				
+				var bitmap:BitmapData = new BitmapData(Std.int(Math.min(FLTools.width, m.width)), Std.int(Math.min(FLTools.height, m.height)));
 				bitmap.draw(m);
 				
 				a.push(new Image(Texture.fromBitmapData(bitmap)));
