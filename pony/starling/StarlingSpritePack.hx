@@ -1,7 +1,11 @@
 package pony.starling;
 
+import flash.display.BitmapData;
+import pony.flash.FLTools;
+import pony.starling.converter.AtlasCreator;
 import starling.display.Image;
 import starling.display.Sprite;
+import starling.textures.Texture;
 
 /**
  * StarlingSpritePack
@@ -26,6 +30,20 @@ class StarlingSpritePack extends Sprite {
 		addChild(data[frame]);
 		currentFrame = frame;
 		return frame;
+	}
+	
+	public static function builder(_atlasCreator:AtlasCreator, source:flash.display.DisplayObject, coordinateSpace:flash.display.DisplayObject, disposeable:Bool = false):starling.display.DisplayObject {
+		var m:SpritePack = cast source;
+		var a:Array<Image> = [];
+		
+		for (f in 1...(m.totalFrames + 1)) {
+			m.gotoAndStop(f);
+			var bitmap:BitmapData = new BitmapData(Std.int(Math.min(FLTools.width, m.width)), Std.int(Math.min(FLTools.height, m.height)));
+			bitmap.draw(m);
+			a.push(new Image(Texture.fromBitmapData(bitmap)));
+			bitmap.dispose();
+		}
+		return new StarlingSpritePack(a);
 	}
 	
 }

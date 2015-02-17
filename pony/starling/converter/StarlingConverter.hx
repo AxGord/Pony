@@ -1,5 +1,4 @@
 package pony.starling.converter ;
-import flash.display.BitmapData;
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
 import flash.display.Sprite;
@@ -9,8 +8,6 @@ import flash.geom.Rectangle;
 import flash.text.TextField;
 import flash.text.TextFormat;
 import flash.text.TextFormatAlign;
-import flash.Vector;
-import pony.flash.FLTools;
 import pony.flash.ui.Button;
 import pony.flash.ui.MusicPlayer;
 import pony.flash.ui.ProgressBar;
@@ -19,19 +16,17 @@ import pony.flash.ui.Tree;
 import pony.flash.ui.TurningFree;
 import pony.starling.SpritePack;
 import pony.starling.ui.StarlingBar;
+import pony.starling.ui.StarlingButton;
 import pony.starling.ui.StarlingMusicPlayer;
 import pony.starling.ui.StarlingProgressBar;
-import pony.starling.ui.StarlingSongPlayer;
-import starling.core.Starling;
-import starling.display.DisplayObject;
-import starling.display.Image;
-import starling.textures.Texture;
-import starling.utils.HAlign;
-import starling.utils.VAlign;
-import pony.starling.ui.StarlingButton;
 import pony.starling.ui.StarlingScrollBar;
+import pony.starling.ui.StarlingSongPlayer;
 import pony.starling.ui.StarlingTree;
 import pony.starling.ui.StarlingTurningFree;
+import starling.core.Starling;
+import starling.display.DisplayObject;
+import starling.utils.HAlign;
+import starling.utils.VAlign;
 
 using pony.flash.FLExtends;
 /**
@@ -49,7 +44,7 @@ class StarlingConverter
 	
 	private static function getObjectInternal(source:flash.display.DisplayObject, coordinateSpace:flash.display.DisplayObject, disposeable:Bool = false, atlasGeneration:Bool):starling.display.DisplayObject
 	{
-		trace("Converting " + source + " with a name " + source.name);
+		//trace("Converting " + source + " with a name " + source.name);
 		
 		var starlingChild:starling.display.DisplayObject;
 		if (Std.is(source, flash.text.TextField) && hasName(source)) // Dynamic TextField
@@ -104,57 +99,7 @@ class StarlingConverter
 		}
 		else if (Std.is(source, pony.flash.ui.Button)) // Button
 		{
-			var mc:flash.display.MovieClip = cast source;
-			var movies:Array<starling.display.MovieClip> = [];
-			for (i in 1...mc.totalFrames+1)
-			{
-				mc.gotoAndStop(i);
-				//var v:Vector<MovieClip> = null;
-				var c:starling.display.MovieClip = null;
-				for (o in mc.childrens()) if (Std.is(o, flash.display.MovieClip)) {
-					
-					var clip:starling.display.MovieClip = _atlasCreator.addClip(cast o, source, disposeable);
-					clip.x = 12;
-					clip.y = 12;
-					Starling.juggler.add(clip);
-					clip.play();
-					//clip.transformationMatrix = untyped o.transformationMatrix;
-					//v = new Vector<Texture>();
-					//for (i in 0...(untyped clip.numFrames)) v.push(clip.getFrameTexture(i));
-					//v.push(clip);
-
-					//movies.push(clip);
-					
-					c = clip;
-					
-					break;
-				}
-				movies.push(c);
-			}
-			var textures:Array<starling.display.MovieClip> = [];
-			var clip:starling.display.MovieClip = _atlasCreator.addClip(cast(source, flash.display.MovieClip), coordinateSpace, disposeable);
-			
-			for (i in 0...(untyped clip.numFrames))
-			{
-				if (movies[i] == null) {
-					var sv = new Vector<Texture>();
-					sv.push(clip.getFrameTexture(i));
-					var m = new starling.display.MovieClip(sv, 60);
-					textures.push(m);
-				}
-				else {
-					//movies[i].x = clip.x;
-					//movies[i].y = clip.y;
-					textures.push(movies[i]);
-				}
-			}
-			
-			starlingChild = new StarlingButton(textures, 60, untyped source.core);
-			starlingChild.transformationMatrix = clip.transformationMatrix;
-			
-			if (untyped source.getSW() != null) untyped starlingChild.sw(untyped source.getSW());
-			
-			//Starling.juggler.add(untyped starlingChild);
+			starlingChild = StarlingButton.builder(_atlasCreator, source, coordinateSpace, disposeable);
 		}
 		else if (Std.is(source, flash.display.Sprite) && childrenWithNames(cast(source, flash.display.Sprite))) // Container
 		{
@@ -162,20 +107,7 @@ class StarlingConverter
 		}
 		else if (Std.is(source, SpritePack))
 		{
-			var m:SpritePack = cast source;
-			var a:Array<Image> = [];
-			
-			for (f in 1...(m.totalFrames+1)) {
-				m.gotoAndStop(f);
-				
-				var bitmap:BitmapData = new BitmapData(Std.int(Math.min(FLTools.width, m.width)), Std.int(Math.min(FLTools.height, m.height)));
-				bitmap.draw(m);
-				
-				a.push(new Image(Texture.fromBitmapData(bitmap)));
-				bitmap.dispose();
-				//a.push(_atlasCreator.addImage(m, coordinateSpace, disposeable, true));
-			}
-			starlingChild = new StarlingSpritePack(a);
+			starlingChild = StarlingSpritePack.builder(_atlasCreator, source, coordinateSpace, disposeable);
 		}
 		else if (Std.is(source, flash.display.MovieClip) && cast(source, flash.display.MovieClip).totalFrames > 1) // MovieClip
 		{

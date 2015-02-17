@@ -43,7 +43,7 @@ class AtlasCreator
 		_atlases.push(new Atlas());
 	}
 	
-	public function addImage(source:flash.display.DisplayObject, coordinateSpace:flash.display.DisplayObject, disposeable:Bool):Image
+	public function addImage(source:flash.display.DisplayObject, coordinateSpace:flash.display.DisplayObject, disposeable:Bool, ignoreCache:Bool=false):Image
 	{
 		var className:String = Type.getClassName(Type.getClass(source));
 		
@@ -59,7 +59,7 @@ class AtlasCreator
 		var preloadedTextures:Dynamic = null;
 		var dPivot:Point = null;
 		
-		if (_loadedTextures.exists(className))
+		if (!ignoreCache && _loadedTextures.exists(className))
 		{
 			preloadedTextures = _loadedTextures.get(className).get(matrix.a, matrix.b, matrix.c, matrix.d, source.filters);
 		}
