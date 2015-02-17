@@ -49,7 +49,7 @@ class StarlingConverter
 	
 	private static function getObjectInternal(source:flash.display.DisplayObject, coordinateSpace:flash.display.DisplayObject, disposeable:Bool = false, atlasGeneration:Bool):starling.display.DisplayObject
 	{
-		//trace("Converting " + source + " with a name " + source.name);
+		trace("Converting " + source + " with a name " + source.name);
 		
 		var starlingChild:starling.display.DisplayObject;
 		if (Std.is(source, flash.text.TextField) && hasName(source)) // Dynamic TextField
@@ -105,29 +105,48 @@ class StarlingConverter
 		else if (Std.is(source, pony.flash.ui.Button)) // Button
 		{
 			var mc:flash.display.MovieClip = cast source;
-			var movies:Array<Vector<Texture>> = [];
+			var movies:Array<starling.display.MovieClip> = [];
 			for (i in 1...mc.totalFrames+1)
 			{
 				mc.gotoAndStop(i);
-				var v:Vector<Texture> = null;
+				//var v:Vector<MovieClip> = null;
+				var c:starling.display.MovieClip = null;
 				for (o in mc.childrens()) if (Std.is(o, flash.display.MovieClip)) {
-					var clip:starling.display.MovieClip = _atlasCreator.addClip(cast o, coordinateSpace, disposeable);
-					v = new Vector<Texture>();
-					for (i in 0...(untyped clip.numFrames)) v.push(clip.getFrameTexture(i));
+					
+					var clip:starling.display.MovieClip = _atlasCreator.addClip(cast o, source, disposeable);
+					clip.x = 12;
+					clip.y = 12;
+					Starling.juggler.add(clip);
+					clip.play();
+					//clip.transformationMatrix = untyped o.transformationMatrix;
+					//v = new Vector<Texture>();
+					//for (i in 0...(untyped clip.numFrames)) v.push(clip.getFrameTexture(i));
+					//v.push(clip);
+
+					//movies.push(clip);
+					
+					c = clip;
+					
 					break;
 				}
-				movies.push(v);
+				movies.push(c);
 			}
-			var textures:Vector<Vector<Texture>> = new Vector<Vector<Texture>>();
+			var textures:Array<starling.display.MovieClip> = [];
 			var clip:starling.display.MovieClip = _atlasCreator.addClip(cast(source, flash.display.MovieClip), coordinateSpace, disposeable);
+			
 			for (i in 0...(untyped clip.numFrames))
 			{
-				var v = new Vector<Texture>();
-				if (movies[i] == null)
-					v.push(clip.getFrameTexture(i));
-				else
-					v = movies[i];
-				textures.push(v);
+				if (movies[i] == null) {
+					var sv = new Vector<Texture>();
+					sv.push(clip.getFrameTexture(i));
+					var m = new starling.display.MovieClip(sv, 60);
+					textures.push(m);
+				}
+				else {
+					//movies[i].x = clip.x;
+					//movies[i].y = clip.y;
+					textures.push(movies[i]);
+				}
 			}
 			
 			starlingChild = new StarlingButton(textures, 60, untyped source.core);

@@ -31,22 +31,25 @@ class StarlingButton extends Sprite
 	private var _handCursor:TouchManagerHandCursor;
 	private var _hitArea:Rectangle;
 
-	private var _textures:Vector<Vector<Texture>>;
+	//private var _textures:Vector<Vector<Texture>>;
 	private var _framerate:Int;
 	private var prev:Int = -1;
 	
-	public function new(textures:Vector<Vector<Texture>>, framerate:Int, core:ButtonCore) 
+	public function new(textures:Array<MovieClip>, framerate:Int, core:ButtonCore) 
 	{
 		super();
+		mc = textures;
+		/*
 		mc = [for (v in textures) {
 			var m = new MovieClip(v, framerate);
 			Starling.juggler.add(m);
 			m.play();
 			m;
 			}];
+			*/
 		//addChild(mc);
 		//super(textures, framerate);
-		_textures = textures;
+		//_textures = textures;
 		_framerate = framerate;
 		
 		var hitAreaFrame:Int = mc.length > config.zone - 1 ? config.zone : config.def;
@@ -65,7 +68,7 @@ class StarlingButton extends Sprite
 	}
 	
 	inline public function clone():StarlingButton {
-		var b = new StarlingButton(_textures, _framerate, new ButtonCore());
+		var b = new StarlingButton(mc, _framerate, new ButtonCore());
 		b.x = x;
 		b.y = y;
 		return b;
