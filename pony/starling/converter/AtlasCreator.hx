@@ -32,6 +32,7 @@ class AtlasCreator
 	private var _atlases:Array<Atlas> = new Array<Atlas>();
 	
 	private static var _loadedTextures:Map<String, TextureStorage> = initStorageMap();
+	private static var _framesLoadedTextures:Map<String, Map<Int, TextureStorage>> = new Map<String, Map<Int, TextureStorage>>();
 	
 	private static var _border:Int = 1;
 	
@@ -43,7 +44,7 @@ class AtlasCreator
 		_atlases.push(new Atlas());
 	}
 	
-	public function addImage(source:flash.display.DisplayObject, coordinateSpace:flash.display.DisplayObject, disposeable:Bool, ignoreCache:Bool=false):Image
+	public function addImage(source:flash.display.DisplayObject, coordinateSpace:flash.display.DisplayObject, disposeable:Bool, frame:Null<Int>=-1, ignoreCache:Bool=false):Image
 	{
 		var className:String = Type.getClassName(Type.getClass(source));
 		
@@ -58,8 +59,12 @@ class AtlasCreator
 		var texture:Texture = null;
 		var preloadedTextures:Dynamic = null;
 		var dPivot:Point = null;
-		
-		if (!ignoreCache && _loadedTextures.exists(className))
+		if (frame != -1) {
+			if (!ignoreCache && _framesLoadedTextures.exists(className) && _framesLoadedTextures[className].exists(frame)) {
+				preloadedTextures = _framesLoadedTextures[className][frame].get(matrix.a, matrix.b, matrix.c, matrix.d, source.filters);
+			}
+		}
+		else if (!ignoreCache && _loadedTextures.exists(className))
 		{
 			preloadedTextures = _loadedTextures.get(className).get(matrix.a, matrix.b, matrix.c, matrix.d, source.filters);
 		}
@@ -89,10 +94,16 @@ class AtlasCreator
 		
 		result.x = matrixPoint.x;
 		result.y = matrixPoint.y;
-		
-		if (!_loadedTextures.exists(className)) _loadedTextures.set(className, new TextureStorage());
-		_loadedTextures.get(className).add(matrix.a, matrix.b, matrix.c, matrix.d, source.filters, texture, dPivot);
-		
+		if (frame != -1) {
+			if (!_framesLoadedTextures.exists(className) || !_framesLoadedTextures[className].exists(frame)) {
+				if (!_framesLoadedTextures.exists(className)) _framesLoadedTextures[className] = new Map<Int, TextureStorage>(); 
+				_framesLoadedTextures[className][frame] = new TextureStorage();
+			}
+			_framesLoadedTextures[className][frame].add(matrix.a, matrix.b, matrix.c, matrix.d, source.filters, texture, dPivot);
+		} else {
+			if (!_loadedTextures.exists(className)) _loadedTextures.set(className, new TextureStorage());
+			_loadedTextures.get(className).add(matrix.a, matrix.b, matrix.c, matrix.d, source.filters, texture, dPivot);
+		}
 		return result;
 	}
 	

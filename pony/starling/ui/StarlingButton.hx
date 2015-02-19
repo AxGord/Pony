@@ -107,6 +107,7 @@ class StarlingButton extends Sprite
 		
 		var mc:flash.display.MovieClip = cast source;
 		var movies:Array<starling.display.MovieClip> = [];
+		var j = 0;
 		for (i in 1...mc.totalFrames+1)
 		{
 			mc.gotoAndStop(i);
@@ -119,7 +120,7 @@ class StarlingButton extends Sprite
 				var str = null;
 				for (i in 1...m.totalFrames+1) {
 					m.gotoAndStop(i);
-					var im = _atlasCreator.addImage(source, coordinateSpace, disposeable, true);
+					var im = _atlasCreator.addImage(source, coordinateSpace, disposeable, -1, true);//todo: cache more frames
 					v.push(im.texture);
 					if (str == null) str = im.transformationMatrix;
 				}
@@ -131,12 +132,12 @@ class StarlingButton extends Sprite
 				break;
 			}
 			if (clip == null) {
-				var im = _atlasCreator.addImage(source, coordinateSpace, disposeable, true);
+				var im = _atlasCreator.addImage(source, coordinateSpace, disposeable, j);
 				v.push(im.texture);
 				clip = new starling.display.MovieClip(v, 60);
 				clip.transformationMatrix = im.transformationMatrix;
 			}
-			
+			j++;
 			movies.push(clip);
 		}
 		var starlingChild = new StarlingButton(movies, 60, untyped source.core);
