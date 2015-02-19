@@ -57,7 +57,7 @@ class ProgressBar extends MovieClip implements Dynamic<MovieClip> {
 	
 	inline public function resolve(name:String):MovieClip return untyped this[name];
 	
-	public function set_progress(v:Float):Float {
+	public function set_value(v:Float):Float {
 		this.bar.width = total * v;
 		return value = v;
 	}

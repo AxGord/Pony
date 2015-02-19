@@ -40,8 +40,8 @@ class SongPlayer extends MovieClip implements FLSt {
 		tTime.mouseEnabled = false;
 		tTime.text = '';
 		volume.value = 0.8;
-		volume.on << core.set_volume;
-		playBar.on << core.set_position;
+		volume.onDynamic << core.set_volume;
+		playBar.onDynamic << core.set_position;
 		bMute.core.click.add(core.switchMute);
 		bPlay.core.click.add(core.switchPlay);
 	}
