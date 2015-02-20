@@ -120,7 +120,7 @@ class StarlingButton extends Sprite
 				var str = null;
 				for (i in 1...m.totalFrames+1) {
 					m.gotoAndStop(i);
-					var im = _atlasCreator.addImage(source, coordinateSpace, disposeable, -1, true);//todo: cache more frames
+					var im = _atlasCreator.addImage(source, coordinateSpace, disposeable, j++);
 					v.push(im.texture);
 					if (str == null) str = im.transformationMatrix;
 				}
@@ -132,12 +132,11 @@ class StarlingButton extends Sprite
 				break;
 			}
 			if (clip == null) {
-				var im = _atlasCreator.addImage(source, coordinateSpace, disposeable, j);
+				var im = _atlasCreator.addImage(source, coordinateSpace, disposeable, j++);
 				v.push(im.texture);
 				clip = new starling.display.MovieClip(v, 60);
 				clip.transformationMatrix = im.transformationMatrix;
 			}
-			j++;
 			movies.push(clip);
 		}
 		var starlingChild = new StarlingButton(movies, 60, untyped source.core);
