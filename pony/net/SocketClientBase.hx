@@ -42,8 +42,8 @@ import pony.events.*;
  */
 class SocketClientBase extends Logable<ISocketClient>{
 
-	public var server(default,null):SocketServer;
-	public var onConnect(default,null):Signal1<SocketServer, SocketClient>;
+	public var server(default,null):ISocketServer;
+	public var onConnect(default,null):Signal1<ISocketServer, SocketClient>;
 	public var onData(default,null):Signal1<SocketClient, BytesInput>;
 	public var onDisconnect(default,null):Signal;
 	public var id(default,null):Int;
@@ -100,7 +100,7 @@ class SocketClientBase extends Logable<ISocketClient>{
 			server.onConnect.dispatch(cast this);
 	}
 	
-	public function init(server:SocketServer, id:Int):Void {
+	public function init(server:ISocketServer, id:Int):Void {
 		_init();
 		this.server = server;
 		this.id = id;

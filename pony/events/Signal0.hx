@@ -54,40 +54,40 @@ abstract Signal0<Target>(Signal) {
 	inline private function get_target():Target return this.target;
 	inline private function get_listenersCount():Int return this.listenersCount;
 	
-	public function add(listener:Listener0<Target>, priority:Int = 0):Target {
+	public function add(listener:Listener0<Target>, priority:Int = 0):Void {
 		this.add(listener, priority);
-		return target;
+		//return target;
 	}
 	
-	public function once(listener:Listener0<Target>, priority:Int = 0):Target {
+	public function once(listener:Listener0<Target>, priority:Int = 0):Void {
 		this.once(listener, priority);
-		return target;
+		//return target;
 	}
 	
-	public function remove(listener:Listener0<Target>, unuse:Bool = true):Target {
+	public function remove(listener:Listener0<Target>, unuse:Bool = true):Void {
 		this.remove(listener, unuse);
-		return target;
+		//return target;
 	}
 	
 	
-	inline public function changePriority(listener:Listener0<Target>, priority:Int = 0):Target {
+	inline public function changePriority(listener:Listener0<Target>, priority:Int = 0):Void {
 		this.changePriority(listener, priority);
-		return target;
+		//return target;
 	}
 	
-	public function dispatch():Target {
+	public function dispatch():Void {
 		this.dispatchEmpty();
-		return target;
+		//return target;
 	}
 	
-	public function dispatchEvent(event:Event):Target {
+	public function dispatchEvent(event:Event):Void {
 		this.dispatchEvent(event);
-		return target;
+		//return target;
 	}
 	
-	inline public function dispatchArgs():Target {
+	inline public function dispatchArgs():Void {
 		this.dispatchEmpty();
-		return target;
+		//return target;
 	}
 	
 	public function dispatchEmpty():Void this.dispatchEmpty();
@@ -115,9 +115,9 @@ abstract Signal0<Target>(Signal) {
 	inline public function bind1<A>(a:A, priority:Int = 0):Signal1<Target, A> return bindArgs([a], priority);
 	inline public function bind2<A,B>(a:A, b:B, priority:Int = 0):Signal2<Target, A, B> return bindArgs([a,b], priority);
 	
-	inline public function removeBindArgs(args:Array<Dynamic>):Target {
+	inline public function removeBindArgs(args:Array<Dynamic>):Void {
 		this.removeBindArgs(args);
-		return target;
+		//return target;
 	}
 	
 	inline public function and(s:Signal):SignalTar<Target> return cast this.and(s);
@@ -127,22 +127,22 @@ abstract Signal0<Target>(Signal) {
 	
 	inline public function or(s:Signal0<Dynamic>):Signal0<Dynamic> return this.or(s);
 	
-	inline public function removeAllListeners():Target {
+	inline public function removeAllListeners():Void {
 		this.removeAllListeners();
-		return target;
+		//return target;
 	}
 	
-	inline public function sw(l1:Listener0<Target>, l2:Listener0<Target>):Target {
+	inline public function sw(l1:Listener0<Target>, l2:Listener0<Target>):Void {
 		this.sw(l1, l2);
-		return target;
+		//return target;
 	}
 	
 	public function enableSilent():Void silent = true;
 	public function disableSilent():Void silent = false;
 	
-	inline public function destroy():Target {
+	inline public function destroy():Void {
 		this.destroy();
-		return target;
+		//return target;
 	}
 	
 	@:from static private inline function from<A>(s:Signal):Signal0<A> return new Signal0<A>(s);
@@ -188,7 +188,7 @@ abstract Signal0<Target>(Signal) {
 	@:op(A & B) inline private function op_and1<A>(s:Signal1<Dynamic, A>):Signal1<Target, A> return and1(s);
 	@:op(A & B) inline private function op_and2<A, B>(s:Signal2<Dynamic, A, B>):Signal2<Target, A, B> return and2(s);
 	
-	@:op(A | B) inline private function op_or(s:Signal0<Dynamic>):Signal0<Target> return or(s);
+	//@:op(A | B) inline private function op_or(s:Signal0<Dynamic>):Signal0<Target> return or(s);
 	
 	@:op(A + B) inline private function op_bind1<A>(a:A):Signal1<Target,A> return bind1(a);
 

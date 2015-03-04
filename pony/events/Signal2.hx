@@ -56,39 +56,39 @@ abstract Signal2<Target, T1:Dynamic, T2:Dynamic>(Signal) {
 	inline private function get_target():Target return this.target;
 	inline private function get_listenersCount():Int return this.listenersCount;
 	
-	public function add(listener:Listener2<Target, T1, T2>, priority:Int = 0):Target {
+	public function add(listener:Listener2<Target, T1, T2>, priority:Int = 0):Void {
 		this.add(listener, priority);
-		return target;
+		//return target;
 	}
 	
-	public function once(listener:Listener2<Target, T1, T2>, priority:Int = 0):Target {
+	public function once(listener:Listener2<Target, T1, T2>, priority:Int = 0):Void {
 		this.once(listener, priority);
-		return target;
+		//return target;
 	}
 	
-	public function remove(listener:Listener2<Target, T1, T2>, unuse:Bool = true):Target {
+	public function remove(listener:Listener2<Target, T1, T2>, unuse:Bool = true):Void {
 		this.remove(listener, unuse);
-		return target;
+		//return target;
 	}
 	
-	inline public function changePriority(listener:Listener2<Target, T1, T2>, priority:Int = 0):Target {
+	inline public function changePriority(listener:Listener2<Target, T1, T2>, priority:Int = 0):Void {
 		this.changePriority(listener, priority);
-		return target;
+		//return target;
 	}
 	/*#if cs
 	public function dispatch(a:Dynamic, b:Dynamic):Target return dispatchArgs([a, b]);
 	#else*/
-	public function dispatch(a:T1, b:T2):Target return dispatchArgs([a, b]);
+	public function dispatch(a:T1, b:T2):Void dispatchArgs([a, b]);
 	//#end
 	
-	public function dispatchEvent(event:Event):Target {
+	public function dispatchEvent(event:Event):Void {
 		this.dispatchEvent(event);
-		return target;
+		//return target;
 	}
 	
-	inline public function dispatchArgs(?args:Array<Dynamic>):Target {
+	inline public function dispatchArgs(?args:Array<Dynamic>):Void {
 		this.dispatchArgs(args);
-		return target;
+		//return target;
 	}
 	
 	inline public function sub(a:T1, ?b:T2, priority:Int=0):Signal return subArgs(b == null ? [a] : [a,b], priority);
@@ -98,35 +98,35 @@ abstract Signal2<Target, T1:Dynamic, T2:Dynamic>(Signal) {
 	
 	inline public function subArgs(args:Array<Dynamic>, priority:Int=0):Signal return this.subArgs(args, priority);
 	
-	inline public function removeSub(a:T1, ?b:T2):Target return removeSubArgs(b == null ? [a] : [a,b]);
+	inline public function removeSub(a:T1, ?b:T2):Void removeSubArgs(b == null ? [a] : [a,b]);
 	
-	inline public function removeSubArgs(args:Array<Dynamic>):Target {
+	inline public function removeSubArgs(args:Array<Dynamic>):Void {
 		this.removeSubArgs(args);
-		return target;
+		//return target;
 	}
 	
-	inline public function removeAllSub():Target {
+	inline public function removeAllSub():Void {
 		this.removeAllSub();
-		return target;
+		//return target;
 	}
 	
 	inline public function not1(v:T1, priority:Int=0):Signal1<Target,T2> return this.notArgs([v], priority);
 	inline public function not2(v1:T1, v2:T2, priority:Int=0):Signal0<Target> return this.notArgs([v1, v2], priority);
 	
-	inline public function removeAllListeners():Target {
+	inline public function removeAllListeners():Void {
 		this.removeAllListeners();
-		return target;
+		//return target;
 	}
 	
-	public function sw(l1:Listener2<Target,T1, T2>, l2:Listener2<Target,T1, T2>):Target {
+	public function sw(l1:Listener2<Target,T1, T2>, l2:Listener2<Target,T1, T2>):Void {
 		this.once(l1);
 		this.once(sw.bind(l2, l1));
-		return target;
+		//return target;
 	}
 	
-	inline public function destroy():Target {
+	inline public function destroy():Void {
 		this.destroy();
-		return target;
+		//return target;
 	}
 	
 	public function enableSilent():Void silent = true;

@@ -45,4 +45,5 @@ interface ISocketServer extends INet {
 	
 	function send(data:BytesOutput):Void;
 	function destroy():Void;
+	function send2other(data:BytesOutput, exception:SocketClient):Void;
 }

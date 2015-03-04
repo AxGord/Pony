@@ -39,6 +39,8 @@ extends pony.net.nodejs.SocketClient
 extends pony.net.cs.SocketClient
 #elseif flash
 extends pony.net.flash.SocketClient
+#elseif openfl
+extends pony.net.openfl.SocketClient
 #end
 implements ISocketClient {
 	

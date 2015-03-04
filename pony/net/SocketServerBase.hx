@@ -36,11 +36,12 @@ import pony.Logable.Logable;
  * SocketServerBase
  * @author AxGord <axgord@gmail.com>
  */
+#if !openfl
 class SocketServerBase extends Logable<ISocketServer> {
 	
 	public var id(default,null):Int = -1;
 	public var onData(default, null):Signal1<SocketClient, BytesInput>;
-	public var onConnect(default, null):Signal1<SocketServer, SocketClient>;
+	public var onConnect(default, null):Signal1<ISocketServer, SocketClient>;
 	public var onClose(default, null):Signal;
 	public var onDisconnect(default, null):Signal;
 	public var clients(default, null):Array<SocketClient>;
@@ -113,3 +114,4 @@ class SocketServerBase extends Logable<ISocketServer> {
 		onDisconnect = null;
 	}
 }
+#end

@@ -29,6 +29,7 @@ package pony.net;
 import pony.events.Signal;
 
 
+#if !openfl
 /**
  * SocketServer
  * @author AxGord <axgord@gmail.com>
@@ -46,3 +47,4 @@ implements ISocketServer
 #end
 {
 }
+#end

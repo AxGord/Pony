@@ -50,10 +50,12 @@ using Lambda;
  * @author AxGord
  */
 class Tools {
-	
+	#if macro
+	private static var _getBuildDate:String;
+	#end
 	macro public static function getBuildDate() {
-        var date = Date.now().toString();
-        return Context.makeExpr(date, Context.currentPos());
+        if (_getBuildDate == null) _getBuildDate = Date.now().toString();
+        return Context.makeExpr(_getBuildDate, Context.currentPos());
     }
 	
 	/**
