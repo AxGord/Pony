@@ -58,8 +58,10 @@ class Timer implements ITimer<Timer> implements Declarator {
 	@:arg public var repeatCount:Int = 0;
 	
 	public function new() {
-		progress.takeListeners.add(takeProgress).lostListeners.add(lostProgress);
-		update.takeListeners.add(lUpdate).lostListeners.add(lUpdate);
+		progress.takeListeners.add(takeProgress);
+		progress.lostListeners.add(lostProgress);
+		update.takeListeners.add(lUpdate);
+		progress.lostListeners.add(lUpdate);
 		reset();
 	}
 	#if !dox
