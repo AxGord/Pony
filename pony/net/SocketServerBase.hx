@@ -29,8 +29,7 @@ package pony.net;
 import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
 import pony.events.*;
-import pony.events.Signal1;
-import pony.Logable.Logable;
+import pony.Logable;
 
 /**
  * SocketServerBase
@@ -41,27 +40,30 @@ class SocketServerBase extends Logable<ISocketServer> {
 	
 	public var id(default,null):Int = -1;
 	public var onData(default, null):Signal1<SocketClient, BytesInput>;
+	public var onString(default, null):Signal1<SocketClient, String>;
 	public var onConnect(default, null):Signal1<ISocketServer, SocketClient>;
 	public var onClose(default, null):Signal;
 	public var onDisconnect(default, null):Signal;
 	public var clients(default, null):Array<SocketClient>;
-	public var onMessage(default, null):Signal1<SocketServer, String>;
-	public var onError(default, null):Signal1<SocketServer, String>;
 	public var isAbleToSend:Bool = false;
 	public var isWithLength:Bool = true;
 	
 	private function new() {
 		super();
 		onConnect = Signal.create(cast this);
-		onMessage = Signal.create(cast this);
-		onError = Signal.create(cast this);
 		onDisconnect = new Signal();
 		onData = Signal.create(null);
+		onString = Signal.create(null);
+		onString.takeListeners << beginString;
+		onString.lostListeners << endString;
 		onClose = new Signal(this);
 		clients = [];
 		onDisconnect.add(removeClient);
 		onConnect < function() isAbleToSend = true;
 	}
+	
+	private function beginString():Void for (c in clients) c.onString << onString.dispatchEvent;
+	private function endString():Void for (c in clients) c.onString >> onString.dispatchEvent;
 	
 	private function addClient():SocketClient {
 		var cl = Type.createEmptyInstance(SocketClient);
@@ -106,6 +108,8 @@ class SocketServerBase extends Logable<ISocketServer> {
 		onClose.dispatch();
 		onData.destroy();
 		onData = null;
+		onString.destroy();
+		onString = null;
 		onConnect.destroy();
 		onConnect = null;
 		onClose.destroy();

@@ -31,7 +31,7 @@ import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
 import haxe.Timer;
 import pony.events.Waiter;
-import pony.Logable.Logable;
+import pony.Logable;
 #end
 import haxe.io.Bytes;
 import pony.events.*;
@@ -45,6 +45,7 @@ class SocketClientBase extends Logable<ISocketClient>{
 	public var server(default,null):ISocketServer;
 	public var onConnect(default,null):Signal1<ISocketServer, SocketClient>;
 	public var onData(default,null):Signal1<SocketClient, BytesInput>;
+	public var onString(default, null):Signal1<SocketClient, String>;
 	public var onDisconnect(default,null):Signal;
 	public var id(default,null):Int;
 	public var host(default,null):String;
@@ -75,11 +76,21 @@ class SocketClientBase extends Logable<ISocketClient>{
 		open();
 	}
 	
+	private function readString(event:Event):Void {
+		var b:BytesInput = event.args[0];
+		onString.dispatch(b.readString(b.length));
+		event.stopPropagation();
+	}
+	
 	private function _init():Void {
 		closed = true;
 		id = -1;
 		onData = Signal.create(cast this);
 		onDisconnect = new Signal(this);
+		
+		onString = Signal.create(null);
+		onString.takeListeners << function() onData.add(readString, -1000);
+		onString.lostListeners << function() onData.remove(readString);
 	}
 	
 	public function reconnect():Void {
@@ -113,6 +124,9 @@ class SocketClientBase extends Logable<ISocketClient>{
 		
 		onData.add(server.onData.dispatchEvent);
 		onDisconnect.add(server.onDisconnect.dispatchEvent);
+		
+		if (server.onString.haveListeners) onString << server.onString.dispatchEvent;
+		
 	}
 	
 	inline public function send2other(data:BytesOutput):Void server.send2other(data, cast this);
@@ -166,6 +180,8 @@ class SocketClientBase extends Logable<ISocketClient>{
 		onConnect = null;
 		onData.destroy();
 		onData = null;
+		onString.destroy();
+		onString = null;
 	}
 	
 }

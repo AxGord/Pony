@@ -55,4 +55,10 @@ implements ISocketClient {
 		super.send(bo);
 	}
 	
+	inline public function sendString(data:String):Void {
+		var bo = new BytesOutput();
+		bo.writeString(data);
+		send(bo);
+	}
+	
 }

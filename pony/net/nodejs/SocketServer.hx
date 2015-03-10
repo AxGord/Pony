@@ -45,7 +45,7 @@ class SocketServer extends SocketServerBase {
 		server.on('connection', connectionHandler);
 	}
 	
-	private function bound():Void onMessage.dispatch('bound '+server.address());
+	private function bound():Void _log('bound '+server.address());
 	
 	private function connectionHandler(c:NodeNetSocket):Void addClient().nodejsInit(c);
 	
