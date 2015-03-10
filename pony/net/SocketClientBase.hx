@@ -56,6 +56,9 @@ class SocketClientBase extends Logable<ISocketClient>{
 	
 	private var reconnectDelay:Int = -1;
 	
+	//For big data
+	private var waitNext:Int;
+	private var waitBuf:BytesOutput;
 
 	public function new(?host:String, port:Int, reconnect:Int = -1, aIsWithLength:Bool = true) 
 	{
@@ -104,6 +107,10 @@ class SocketClientBase extends Logable<ISocketClient>{
 		_init();
 		this.server = server;
 		this.id = id;
+		
+		waitNext = 0;
+		waitBuf = new BytesOutput();
+		
 		onData.add(server.onData.dispatchEvent);
 		onDisconnect.add(server.onDisconnect.dispatchEvent);
 	}
@@ -114,12 +121,35 @@ class SocketClientBase extends Logable<ISocketClient>{
 		if (server != null) isWithLength = server.isWithLength;
 		if (isWithLength)
 		{
-			var size:Int = bi.readInt32();
-			onData.dispatch(new BytesInput(bi.read(size)));
+			var size:Int = 0;
+			var len:Int = 0;
+			
+			if (waitNext > 0) {
+				size = waitNext;
+				len = bi.length;
+			} else {			
+				size = bi.readInt32();
+				len = bi.length - 4;//4 - int32
+			}
+			
+			if (size > len) {
+				waitNext = size - len;
+				size = len;
+				waitBuf.write(bi.read(size));
+			} else {
+				if (waitNext > 0) {
+					waitNext = 0;
+					waitBuf.write(bi.read(size));
+					onData.dispatch(new BytesInput(waitBuf.getBytes()));
+					waitBuf = new BytesOutput();
+				} else {
+					onData.dispatch(new BytesInput(bi.read(size)));
+				}
+			}
+			
 		}
 		else
 		{
-			trace(isWithLength);
 			onData.dispatch(bi);
 		}
 	}
