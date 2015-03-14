@@ -47,19 +47,73 @@ class Signal {
 	#end
 	
 	public var silent:Bool = false;
-	public var lostListeners(default, null):Signal0<Signal>;
-	public var takeListeners(default, null):Signal0<Signal>;
+	public var lostListeners(get, null):Signal0<Signal>;
+	private var readyLostListeners:Bool = false;
+	private function get_lostListeners():Signal0<Signal> {
+		if (!readyLostListeners) {
+			lostListeners = Signal.create(this);
+			readyLostListeners = true;
+		}
+		return lostListeners;
+	}
+	
+	public var takeListeners(get, null):Signal0<Signal>;
+	private var readyTakeListeners:Bool = false;
+	
+	private function get_takeListeners():Signal0<Signal> {
+		if (!readyTakeListeners) {
+			takeListeners = Signal.create(this);
+			readyTakeListeners = true;
+		}
+		return takeListeners; 
+	}
+	
 	public var data:Dynamic;
 	public var target(default, null):Dynamic;
 	
 	private var listeners:Priority<Listener>;
 	private var lRunCopy:List<Priority<Listener>>;
 	
-	private var subMap:Dictionary < Array<Dynamic>, Signal > ;
+	private var subMap(get, null):Dictionary < Array<Dynamic>, Signal > ;
+	private var subMapReady:Bool = false;
+	
+	private function get_subMap():Dictionary < Array<Dynamic>, Signal > {
+		if (!subMapReady) {
+			subMap = new Dictionary < Array<Dynamic>, Signal > (5);
+			subHandlers = new Map < Int, Listener >();
+			subMapReady = true;
+		}
+		return subMap;
+	}
+	
 	private var subHandlers:Map < Int, Listener > ;
-	private var bindMap:Dictionary < Array<Dynamic>, Signal > ;
+	
+	private var bindMap(get, null):Dictionary < Array<Dynamic>, Signal > ;
+	private var bindMapReady:Bool = false;
+	
+	private function get_bindMap():Dictionary < Array<Dynamic>, Signal > {
+		if (!bindMapReady) {
+			bindMap = new Dictionary < Array<Dynamic>, Signal > (5);
+			bindHandlers = new Map < Int, Listener >();
+			bindMapReady = true;
+		}
+		return bindMap;
+	}
+	
 	private var bindHandlers:Map < Int, Listener > ;
+	
 	private var notMap:Dictionary < Array<Dynamic>, Signal > ;
+	private var notMapReady:Bool = false;
+	
+	private function get_notMap():Dictionary < Array<Dynamic>, Signal > {
+		if (!notMapReady) {
+			notMap = new Dictionary < Array<Dynamic>, Signal > (5);
+			notHandlers = new Map < Int, Listener >();
+			notMapReady = true;
+		}
+		return notMap;
+	}
+	
 	private var notHandlers:Map < Int, Listener > ;
 	
 	private var listenersBuffer:Array<Listener>;
@@ -71,25 +125,12 @@ class Signal {
 	public var parent:Signal;
 	
 	public function new(?target:Dynamic) {
-		subMap = new Dictionary < Array<Dynamic>, Signal > (5);
-		subHandlers = new Map < Int, Listener >();
-		bindMap = new Dictionary < Array<Dynamic>, Signal > (5);
-		bindHandlers = new Map < Int, Listener >();
-		notMap = new Dictionary < Array<Dynamic>, Signal > (5);
-		notHandlers = new Map < Int, Listener >();
-		init(target);
-		lostListeners = Type.createEmptyInstance(Signal).init(this);
-		takeListeners = Type.createEmptyInstance(Signal).init(this);
-	}
-	
-	inline private function init(target:Dynamic):Signal {
 		#if debug
 		id = signalsCount++;
 		#end
 		this.target = target;
 		listeners = new Priority<Listener>();
 		lRunCopy = new List<Priority<Listener>>();
-		return this;
 	}
 	
 	/**
@@ -110,7 +151,7 @@ class Signal {
 		listener.use();
 		var f:Bool = listeners.empty;
 		listeners.addElement(listener, priority);
-		if (f && takeListeners != null) takeListeners.dispatchEmpty();
+		if (f && readyTakeListeners) takeListeners.dispatchEmpty();
 		return this;
 	}
 	
@@ -122,7 +163,7 @@ class Signal {
 		if (listeners.removeElement(listener)) {
 			for (c in lRunCopy) c.removeElement(listener);
 			if (unuse) listener.unuse();
-			if (listeners.empty && lostListeners != null) lostListeners.dispatchEmpty();
+			if (listeners.empty && readyLostListeners) lostListeners.dispatchEmpty();
 		}
 		return this;
 	}
@@ -157,13 +198,20 @@ class Signal {
 				macro $th.dispatchArgs([$a{args}]);
 	}
 	
+	#if debug
 	#if cs
-	private static function stackFilter(s:String):Bool {
-		return s.indexOf('Called from pony.events') == -1
+	private static function csStackFilter(s:String):Bool {
+		return stackFilter(s)
 			&& s.indexOf('Called from EntryPoint__') == -1
-			&& s.indexOf('Called from Reflect') == -1
 			&& s.indexOf('Called from haxe') == -1
 			&& s.indexOf('Called from System') == -1;
+	}
+	#end
+	
+	private static function stackFilter(s:String):Bool {
+		return s.indexOf('pony.events.') == -1
+			&& s.indexOf('Reflect.') == -1
+			&& s.indexOf('Reflect::') == -1;
 	}
 	#end
 	
@@ -202,7 +250,7 @@ class Signal {
 							cs.shift();
 							var s = CallStack.toString(cs);
 							var rs:String = '';
-							for (l in s.split(')\n')) if (l != '' && stackFilter(l)) {
+							for (l in s.split(')\n')) if (l != '' && csStackFilter(l)) {
 								var a = l.split('.hx line ');
 								var n:Int = Std.parseInt(a[1]) - 1;
 								rs += a[0] + '.hx:$n)\n';
@@ -221,7 +269,7 @@ class Signal {
 							cs = a.concat(cs);
 							var r:String = e.Message+'\n';
 							for (s in CallStack.toString(cs).split('\n'))
-								if (s != '' && stackFilter(s)) {
+								if (s != '' && csStackFilter(s)) {
 									var a = s.split('.hx line ');
 									var n:Int = Std.parseInt(a[1]) - 1;
 									r += a[0] + ':$n)\n';
@@ -244,16 +292,43 @@ class Signal {
 						}
 						var r:String = '';
 						for (s in CallStack.toString(cs).split('\n'))
-							if (s != '' && stackFilter(s))
+							if (s != '' && csStackFilter(s))
 								r += s + '\n';
 						Sys.println(r + '\n\n\n\n');
 					#end
 					throw e;
 				}
-				#else
+				#elseif js
+				catch (e:js.Error) {
+					var r = '';
+					for (s in e.stack.split('\n')) {
+						#if nodejs
+						s = StringTools.replace(s, js.Node.__dirname+'\\file:\\', '');
+						#end
+						if (stackFilter(s)) r += '$s\n';
+					}
+					Sys.println(r + '\n\n\n\n');
+					throw e;
+				}
 				catch (e:Dynamic) {
-					trace("Listener error");
-					trace(CallStack.toString(CallStack.exceptionStack()));
+					Sys.println('Listener error: $e');
+					var r = '';
+					var cs = CallStack.callStack();
+					cs.pop();
+					for (s in CallStack.toString(CallStack.exceptionStack().concat(cs)).split('\n'))
+						if (stackFilter(s)) r += '$s\n';
+					Sys.println(r + '\n\n\n\n');
+					throw e;
+				}
+				#elseif neko
+				catch (e:String) {
+					Sys.println('Listener error: $e');
+					var r = '';
+					var cs = CallStack.callStack();
+					cs.pop();
+					for (s in CallStack.toString(CallStack.exceptionStack().concat(cs)).split('\n'))
+						if (stackFilter(s)) r += '$s\n';
+					Sys.println(r + '\n\n\n\n');
 					throw e;
 				}
 				#end
@@ -265,7 +340,7 @@ class Signal {
 				if (!listeners.empty && listeners.removeElement(l)) {
 					listenersBuffer.remove(l);
 					l.unuse();
-					if (listeners.empty && lostListeners != null) lostListeners.dispatchEmpty();
+					if (listeners.empty && readyLostListeners) lostListeners.dispatchEmpty();
 					i--;
 				}
 			}
@@ -273,57 +348,6 @@ class Signal {
 			i++;
 		}
 		return this;
-		
-		
-		//var c:Priority<Listener> = new Priority<Listener>(listeners.data.copy());
-		//lRunCopy.add(c);
-		//for (l in c) {
-			//var r:Bool = false;
-			//try {
-				//r = l.call(event);
-			//} catch (msg:String) {
-				//remove(l);
-				//lRunCopy.remove(c);
-				//#if (debug && cs)
-				//
-					//trace(msg);
-					//l.call(event);
-					//#if debug
-					//throw 'Listener error (signal: $id)';
-					//#else
-					//throw 'Listener error';
-					//#end
-					//
-				//#elseif ((debug || munit) && (php || neko || cpp))
-				//
-					//Sys.println('');
-					//Sys.print(msg);
-					//Sys.println(CallStack.toString(CallStack.exceptionStack()));
-					//#if debug
-					//throw 'Listener error (signal: $id)';
-					//#else
-					//throw 'Listener error';
-					//#end
-				//
-				//#elseif (debug && flash)
-					//flash.Lib.trace(msg);
-					//flash.Lib.trace(CallStack.toString(CallStack.exceptionStack()));
-				//#else
-					//throw msg;
-				//#end
-			//} catch (e:Dynamic) {
-				//remove(l);
-				//lRunCopy.remove(c);
-				//try {
-					//trace(CallStack.toString(CallStack.exceptionStack()));
-				//} catch (e:Dynamic) {}
-				//throw e;
-			//}
-			//if (l.get_count() == 0) remove(l);
-			//if (!r) break;
-		//}
-		//lRunCopy.remove(c);
-		//return this;
 	}
 	
 	public inline function dispatchArgs(?args:Array<Dynamic>):Signal {
@@ -379,6 +403,7 @@ class Signal {
 	}
 	
 	public function removeSubArgs(args:Array<Dynamic>):Signal {
+		if (!subMapReady) return this;
 		var s:Signal = subMap.get(args);
 		if (s == null) return this;
 		s.destroy();
@@ -386,9 +411,12 @@ class Signal {
 	}
 	
 	inline public function removeAllSub():Signal {
-		if (subMap != null) {
+		if (subMapReady) {
 			for (e in subMap) e.destroy();
 			subMap.clear();
+			subMapReady = false;
+			subMap = null;
+			subHandlers = null;
 		}
 		return this;
 	}
@@ -447,6 +475,7 @@ class Signal {
 	}
 	
 	public function removeBindArgs(args:Array<Dynamic>):Signal {
+		if (!bindMapReady) return this;
 		var s:Signal = bindMap.get(args);
 		if (s == null) return this;
 		s.destroy();
@@ -454,7 +483,7 @@ class Signal {
 	}
 	
 	inline public function removeAllBind():Signal {
-		if (bindMap != null) {
+		if (bindMapReady) {
 			for (e in bindMap) e.destroy();
 			bindMap.clear();
 		}
@@ -470,7 +499,7 @@ class Signal {
 	}
 	
 	public function notArgs(args:Array<Dynamic>, priority:Int=0):Signal {
-		var s:Signal = bindMap.get(args);
+		var s:Signal = notMap.get(args);
 		if (s == null) {
 			s = new Signal(target);
 			s.parent = this;
@@ -496,6 +525,7 @@ class Signal {
 	}
 	
 	public function removeNotArgs(args:Array<Dynamic>):Signal {
+		if (!notMapReady) return this;
 		var s:Signal = bindMap.get(args);
 		if (s == null) return this;
 		s.destroy();
@@ -503,7 +533,7 @@ class Signal {
 	}
 	
 	inline public function removeAllNot():Signal {
-		if (notMap != null) {
+		if (notMapReady) {
 			for (e in notMap) e.destroy();
 			notMap.clear();
 		}
@@ -547,7 +577,7 @@ class Signal {
 		var f:Bool = listeners.empty;
 		for (l in listeners) l.unuse();
 		listeners.clear();
-		if (!f && lostListeners != null) lostListeners.dispatch();
+		if (!f && readyLostListeners) lostListeners.dispatch();
 		return this;
 	}
 	
@@ -583,11 +613,11 @@ class Signal {
 		removeAllBind();
 		removeAllNot();
 		removeAllListeners();
-		if (takeListeners != null) {
+		if (readyTakeListeners) {
 			takeListeners.destroy();
 			takeListeners =  null;
 		}
-		if (lostListeners != null) {
+		if (readyLostListeners) {
 			lostListeners.destroy();
 			lostListeners = null;
 		}
