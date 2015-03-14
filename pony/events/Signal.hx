@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -157,6 +157,16 @@ class Signal {
 				macro $th.dispatchArgs([$a{args}]);
 	}
 	
+	#if cs
+	private static function stackFilter(s:String):Bool {
+		return s.indexOf('Called from pony.events') == -1
+			&& s.indexOf('Called from EntryPoint__') == -1
+			&& s.indexOf('Called from Reflect') == -1
+			&& s.indexOf('Called from haxe') == -1
+			&& s.indexOf('Called from System') == -1;
+	}
+	#end
+	
 	public function dispatchEvent(event:Event):Signal {
 		if (listeners.length == 0 ) return this;
 		event.signal = this;
@@ -171,21 +181,85 @@ class Signal {
 		{
 			var l = listenersBuffer[i];
 			var r:Bool = false;
-			try {
+			#if debug
+				try {
+					r = l.call(event);
+				}
+				#if cs
+				catch (e:cs.system.Exception) {
+					#if (HUGS && !WITHOUTUNITY)
+					
+						if (e.InnerException != null) {
+							var r:String = e.InnerException.StackTrace.split('\n')[0];
+							if (r.indexOf('.hx') != -1) {
+								var a = r.split('.hx:');
+								var n:Int = Std.parseInt(a[1]) - 1;
+								r = a[0] + '.hx:' + n;
+							}
+							var cs = CallStack.callStack();
+							cs.shift();
+							cs.shift();
+							cs.shift();
+							var s = CallStack.toString(cs);
+							var rs:String = '';
+							for (l in s.split(')\n')) if (l != '' && stackFilter(l)) {
+								var a = l.split('.hx line ');
+								var n:Int = Std.parseInt(a[1]) - 1;
+								rs += a[0] + '.hx:$n)\n';
+							}
+							unityengine.Debug.LogError(
+								'Listener error: ' + e.InnerException.Message+'\n' +
+								r + '\n' + rs + '\n\n\n\n\n');
+						} else {
+							var cs = CallStack.callStack();
+							Sys.println(e.Message);
+							var a = CallStack.exceptionStack();
+							a.pop();
+							a.pop();
+							a.pop();
+							a.pop();
+							cs = a.concat(cs);
+							var r:String = e.Message+'\n';
+							for (s in CallStack.toString(cs).split('\n'))
+								if (s != '' && stackFilter(s)) {
+									var a = s.split('.hx line ');
+									var n:Int = Std.parseInt(a[1]) - 1;
+									r += a[0] + ':$n)\n';
+								}
+							unityengine.Debug.LogError(r + '\n\n\n\n');
+						}
+					#else
+						var cs = CallStack.callStack();
+						if (e.InnerException != null) {
+							Sys.println('Listener error: '+e.InnerException.Message);
+							Sys.println(e.InnerException.StackTrace);
+						} else {
+							Sys.println(e.Message);
+							var a = CallStack.exceptionStack();
+							a.pop();
+							a.pop();
+							a.pop();
+							a.pop();
+							cs = a.concat(cs);
+						}
+						var r:String = '';
+						for (s in CallStack.toString(cs).split('\n'))
+							if (s != '' && stackFilter(s))
+								r += s + '\n';
+						Sys.println(r + '\n\n\n\n');
+					#end
+					throw e;
+				}
+				#else
+				catch (e:Dynamic) {
+					trace("Listener error");
+					trace(CallStack.toString(CallStack.exceptionStack()));
+					throw e;
+				}
+				#end
+			#else
 				r = l.call(event);
-			} catch (msg:String) {
-				//TODO Better error messages
-				
-				trace("Listener error (str)");
-				trace(msg);
-				trace(CallStack.toString(CallStack.exceptionStack()));
-				throw msg;
-			} catch (e:Dynamic) {
-				trace("Listener error");
-				trace(CallStack.toString(CallStack.exceptionStack()));
-				throw e;
-			}
-			
+			#end
 			if (l.get_count() == 0)
 			{
 				if (!listeners.empty && listeners.removeElement(l)) {
