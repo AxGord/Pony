@@ -38,7 +38,7 @@ import pony.Logable;
 #if !openfl
 class SocketServerBase extends Logable<ISocketServer> {
 	
-	public var id(default,null):Int = -1;
+	//public var id(default,null):Int = -1;
 	public var onData(default, null):Signal1<SocketClient, BytesInput>;
 	public var onString(default, null):Signal1<SocketClient, String>;
 	public var onConnect(default, null):Signal1<ISocketServer, SocketClient>;

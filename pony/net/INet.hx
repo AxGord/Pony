@@ -9,7 +9,7 @@ import pony.events.*;
  */
 interface INet 
 {
-	var id(default,null):Int;
+	//var id(default,null):Int;
 	var onData(default, null):Signal1<SocketClient, BytesInput>;
 	var isAbleToSend:Bool;
 	var isWithLength:Bool;
