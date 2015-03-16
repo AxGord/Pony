@@ -314,5 +314,77 @@ class SignalTest
 		fun(3);
 		Assert.isTrue(f);
 	}
+
+	@Test
+	public function join():Void {
+		var s1:Signal = new Signal();
+		var s2:Signal = new Signal();
+		s1.join(s2);
+		var a = false;
+		var b = false;
+		s1.add(function() a = true);
+		s2.add(function() b = true);
+		s1.dispatch();
+		Assert.isTrue(a);
+		Assert.isTrue(b);
+		a = b = false;
+		s2.dispatch();
+		Assert.isTrue(a);
+		Assert.isTrue(b);
+	}
+	
+	@Test
+	public function typed0Join():Void {
+		var s1:Signal0<Void> = Signal.createEmpty();
+		var s2:Signal0<Void> = Signal.createEmpty();
+		s1.join(s2);
+		var a = false;
+		var b = false;
+		s1.add(function() a = true);
+		s2.add(function() b = true);
+		s1.dispatch();
+		Assert.isTrue(a);
+		Assert.isTrue(b);
+		a = b = false;
+		s2.dispatch();
+		Assert.isTrue(a);
+		Assert.isTrue(b);
+	}
+	
+	@Test
+	public function typed0bJoin():Void {
+		var s1:Signal0<Void> = Signal.createEmpty();
+		var s2:Signal0<Void> = Signal.createEmpty();
+		var a = false;
+		var b = false;
+		s2.add(function() b = true);
+		s1.join(s2);
+		s1.add(function() a = true);
+		s1.dispatch();
+		Assert.isTrue(a);
+		Assert.isTrue(b);
+		a = b = false;
+		s2.dispatch();
+		Assert.isTrue(a);
+		Assert.isTrue(b);
+	}
+	
+	@Test
+	public function typed0brJoin():Void {
+		var s1:Signal0<Void> = Signal.createEmpty();
+		var s2:Signal0<Void> = Signal.createEmpty();
+		var a = false;
+		var b = false;
+		s1.add(function() a = true);
+		s1.join(s2);
+		s2.add(function() b = true);
+		s1.dispatch();
+		Assert.isTrue(a);
+		Assert.isTrue(b);
+		a = b = false;
+		s2.dispatch();
+		Assert.isTrue(a);
+		Assert.isTrue(b);
+	}
 	
 }

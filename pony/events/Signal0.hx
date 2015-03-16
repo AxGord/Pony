@@ -145,6 +145,12 @@ abstract Signal0<Target>(Signal) {
 		//return target;
 	}
 	
+	@:access(pony.events.Signal)
+	inline public function join(s:Signal0<Target>):Signal0<Target> {
+		for (l in this.listeners) s.add(cast l, -10);
+		return this = s;
+	}
+	
 	@:from static private inline function from<A>(s:Signal):Signal0<A> return new Signal0<A>(s);
 	@:to public inline function toDynamic():Signal return this;
 	public inline function toTar():SignalTar<Target> return cast this;

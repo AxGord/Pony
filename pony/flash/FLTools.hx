@@ -71,20 +71,19 @@ import sys.io.File;
 class FLTools 
 {
 	#if !macro
-	static public var init:Signal0<Void>;
-	//static public var longInit:Signal0<Void>;
+	static public var init:Signal0<MovieClip>;
 	
 	private static function __init__():Void {
-		init = Signal.createEmpty();
-		DeltaTime.fixedUpdate << init.dispatchEmpty;
-		/*
-		longInit = Signal.createEmpty();
-		Lib.current.stage.addEventListener(Event.ENTER_FRAME, init.dispatchEmpty1, false, -1001);
-		init << linit;
-		*/
+		init = Signal.create(Lib.current);
+		Lib.current.addEventListener(Event.ADDED_TO_STAGE, _init);
 	}
 	
-	//private static function linit():Void DeltaTime.fixedUpdate < function() longInit.dispatch();
+	private static function _init(_):Void {
+		Lib.current.removeEventListener(Event.ADDED_TO_STAGE, _init);
+		init.dispatch();
+		init.destroy();
+		init = null;
+	}
 	
 	inline static public function registerClassAlias<T>(cl:Class<T>):Void untyped __global__["flash.net.registerClassAlias"](Type.getClassName(cl), cl);
 	

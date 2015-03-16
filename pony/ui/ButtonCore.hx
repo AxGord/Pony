@@ -82,6 +82,9 @@ class ButtonCore {
 		up = new Signal();
 		onMode = new Signal();
 		
+		select = new Signal();
+		unselect = new Signal();
+		
 		mouseState = Default;
 		keyboardState = Default;
 		tabState = Default;
@@ -268,6 +271,16 @@ class ButtonCore {
 		for (i in 0...a.length)
 			click.sub(i).add(set_mode.bind(a[i]));
 		return sw = a;
+	}
+	
+	inline public function joinVisual(bc:ButtonCore):ButtonCore {
+		changeVisual.join(bc.changeVisual);
+		return this;
+	}
+	
+	inline public function join(bc:ButtonCore):ButtonCore {
+		change.join(bc.change);
+		return joinVisual(bc);
 	}
 	
 }

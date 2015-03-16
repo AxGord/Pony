@@ -629,6 +629,27 @@ class Signal {
 		#end
 	}
 	
+	public function join(s:Signal):Signal {
+		var la:Listener = null;
+		var lb:Listener = null;
+		
+		la = function(event:Event):Void {
+			lb.active = false;
+			dispatchEvent(event);
+			lb.active = true;
+		}
+		
+		lb = function(event:Event):Void {
+			la.active = false;
+			s.dispatchEvent(event);
+			la.active = true;
+		}
+		
+		s.add(la);
+		add(lb);
+		return this;
+	}
+	
 	/**
 	 * Strict construct
 	 */

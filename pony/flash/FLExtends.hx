@@ -34,7 +34,9 @@ import flash.events.EventDispatcher;
 import flash.geom.Rectangle;
 import flash.Lib;
 import pony.events.Signal;
+import pony.flash.ui.Button;
 import pony.geom.Rect;
+import pony.ui.ButtonCore;
 
 /**
  * Flash extends
@@ -87,5 +89,11 @@ class FLExtends {
 	}
 	
 	public static function toScreenCenter(o:DisplayObject):Void toCenter(o, FLTools.width, FLTools.height);
+	
+	inline public static function getTyped<T:DisplayObject>(o:DisplayObjectContainer, name:String, cl:Class < T >):T return cast get(o, name);
+	
+	inline public static function get(o:DisplayObjectContainer, name:String):DisplayObject return untyped o[name];
+	
+	inline public static function button(o:DisplayObjectContainer, name:String):ButtonCore return getTyped(o, name, Button).core;
 	
 }

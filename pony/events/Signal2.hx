@@ -124,6 +124,12 @@ abstract Signal2<Target, T1:Dynamic, T2:Dynamic>(Signal) {
 		//return target;
 	}
 	
+	@:access(pony.events.Signal)
+	inline public function join(s:Signal2<Target, T1, T2>):Signal2<Target, T1, T2> {
+		for (l in this.listeners) s.add(cast l, -10);
+		return this = s;
+	}
+	
 	inline public function destroy():Void {
 		this.destroy();
 		//return target;

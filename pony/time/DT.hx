@@ -193,6 +193,8 @@ abstract DT(Null<Float>) from Float to Float {
 	@:op(A <= B) inline static private function smrTime(a:DT, b:Time):Bool return a <= (b:DT);
 	@:op(A <= B) inline static private function smrToTime(a:Time, b:DT):Bool return (a:DT) <= b;
 	
+	@:op(A == B) inline static private function srNull(a:DT, b:Null<Float>):Bool return a.sec == null;
+	
 	@:op(A == B) inline static private function sr(a:DT, b:DT):Bool return (a:Float) == (b:Float);
 	@:op(A == B) inline static private function srInt(a:DT, b:Int):Bool return (a:Float) == b;
 	@:op(A == B) inline static private function srToInt(a:Int, b:DT):Bool return a == (b:Float);
@@ -200,6 +202,8 @@ abstract DT(Null<Float>) from Float to Float {
 	@:op(A == B) inline static private function srToFloat(a:Float, b:DT):Bool return a == (b:Float);
 	@:op(A == B) inline static private function srTime(a:DT, b:Time):Bool return a == (b:DT);
 	@:op(A == B) inline static private function srToTime(a:Time, b:DT):Bool return (a:DT) == b;
+	
+	@:op(A != B) inline static private function srnNull(a:DT, b:Null<Float>):Bool return a.sec != null;
 	
 	@:op(A != B) inline static private function snr(a:DT, b:DT):Bool return (a:Float) != (b:Float);
 	@:op(A != B) inline static private function snrInt(a:DT, b:Int):Bool return (a:Float) != b;
