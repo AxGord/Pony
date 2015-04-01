@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -38,7 +38,7 @@ using Std;
 abstract DT(Null<Float>) from Float to Float {
 	
 	public var ms(get, never):Float;
-	public var sec(get, never):Float;
+	public var sec(get, never):Null<Float>;
 	public var min(get, never):Float;
 	public var hour(get, never):Float;
 	public var day(get, never):Float;
@@ -96,7 +96,7 @@ abstract DT(Null<Float>) from Float to Float {
 	}
 	
 	inline private function get_ms   ():Float return this / 1000;
-	inline private function get_sec  ():Float return this;
+	inline private function get_sec  ():Null<Float> return this;
 	inline private function get_min  ():Float return sec * 60;
 	inline private function get_hour ():Float return min * 60;
 	inline private function get_day  ():Float return hour * 24;

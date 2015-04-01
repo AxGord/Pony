@@ -32,6 +32,22 @@ package pony.math;
  * @author AxGord <axgord@gmail.com>
  */
 class MathTools {
+	
+	#if neko
+	//todo: google it
+	public static inline var maxInt:Int = 536870911;
+	public static inline var minInt:Int = -536870911;
+	#else
+	/**
+	 * The largest representable 32-bit signed integer, which is 2,147,483,647.
+	 */
+	public static inline var maxInt:Int = 2147483647;
+
+	/**
+	 * The smallest representable 32-bit signed integer, which is -2,147,483,648.
+	 */
+	public static inline var minInt:Int = -2147483648;
+	#end
 
 	public static function arithmeticMean(a:Iterable<Float>):Float {
 		var s:Float = 0;

@@ -25,76 +25,20 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.time;
-import pony.events.Listener1;
-import pony.events.Signal;
-import pony.events.Signal0;
-import pony.events.Signal1;
-import pony.magic.Declarator;
+package pony.text.tpl;
+
+import pony.text.tpl.Tpl;
 
 /**
- * TimeLine
+ * ITplPut
  * @author AxGord
  */
-class Timeline implements Declarator {
 
-	@:arg private var data:Array<Time>;
-	@:arg public var pauseOnStep:Bool = false;
-	
-	public var onStep:Signal1<Timeline, Int> = Signal.create(this);
-	
-	public var isPlay(default, null):Bool = false;
-	
-	public var currentStep(default,null):Int = 0;
-	public var currentTime(default,null):Time = 0;
-	
-	private var lastdt:DT = 0;
-	private var timer:DTimer;
-	
-	public function play(dt:DT = 0):Void {
-		if (isPlay) return;
-		if (currentStep >= data.length) return;
-		isPlay = true;
-		if (timer == null) timer = DTimer.fixedDelay(data[currentStep] - currentTime, endStep, dt + lastdt);
-		else timer.start(dt + lastdt);
-		lastdt = 0;
-	}
-	
-	public function pause():Void {
-		if (!isPlay) return;
-		timer.stop();
-		isPlay = false;
-	}
-	
-	private function endStep(dt:DT):Void {
-		timer = null;
-		currentTime = data[currentStep];
-		currentStep++;
-		lastdt = dt;
-		isPlay = false;
-		if (!pauseOnStep) play();
-		onStep.dispatch(currentStep);
-	}
-	
-	public function reset():Void {
-		if (timer != null) {
-			timer.destroy();
-			timer = null;
-		}
-		isPlay = false;
-		currentTime = 0;
-		currentStep = 0;
-	}
-	
-	public function playTo(step:Int, dt:DT = 0):Void {
-		pauseOnStep = true;
-		var l:Listener1<Timeline, Int> = null;
-		l = function(n:Int):Void {
-			if (n < step) play();
-			else onStep >> l;
-		}
-		onStep << l;
-		play(dt);
-	}
-	
+interface ITplPut
+{
+	var parent:ITplPut;
+	function tplData(d:TplData, cb:String->Void):Void;
+	function tag(name:String, content:TplData, arg:String, args:Map<String,String>, ?kid:ITplPut, cb:String->Void):Void;
+	function shortTag(name:String, arg:String, ?kid:ITplPut, cb:String->Void):Void;
+	function sub(o:Dynamic, d:Dynamic, ?cl:Class<ITplPut>, ?content:TplData, cb:String->Void):Void;
 }

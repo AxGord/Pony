@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -43,26 +43,28 @@ abstract Dir(Unit) from Unit {
 		this = v;
 	}
 		
-	public function content():Array<Unit> {
+	public function content(?filter:String, noSkipDir:Bool=false):Array<Unit> {
 		var result:Map<String, Unit> = new Map<String, Unit>();
 		for (d in this) {
 			if (d.exists) for (e in FileSystem.readDirectory(d.first)) {
-				if (!result.exists(e))
+				if (!result.exists(e) && ((noSkipDir && FileSystem.isDirectory(d.fullPath+e)) || filter == null || e.substr(-filter.length) == filter))
 					result[e] = [for (d in this.wayStringIterator()) d + '/' + e];
 			}
 		}
 		return result.array();
 	}
 	
+	public function files(?filter:String):Array<File> return [for (u in content(filter)) if (u.isFile) u];
+	
 	inline public function delete():Void FileSystem.deleteDirectory(first);
 	
 	inline private function get_first():String return this.first;
 	
-	public function contentRecursiveFiles():Array<File> {
+	public function contentRecursiveFiles(?filter:String):Array<File> {
 		var result:Array<File> = [];
-		for (u in content()) {
+		for (u in content(filter, true)) {
 			if (u.isDir) {
-				result = result.concat(u.dir.contentRecursiveFiles());
+				result = result.concat(u.dir.contentRecursiveFiles(filter));
 			} else {
 				result.push(u.file);
 			}

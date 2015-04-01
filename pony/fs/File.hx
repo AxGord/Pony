@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -37,6 +37,7 @@ import sys.FileSystem;
 abstract File(Unit) from Unit {
 
 	public var name(get, never):String;
+	public var shortName(get, never):String;
 	public var exists(get, never):Bool;
 	public var first(get, never):String;
 	public var content(get, set):String;
@@ -73,6 +74,8 @@ abstract File(Unit) from Unit {
 	}
 	
 	inline private function get_name():String return this.name;
+	
+	inline private function get_shortName():String return name.split('.')[0];
 	
 	inline private function get_exists():Bool return this.exists;
 	

@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -251,7 +251,7 @@ class Tools {
 	macro public static function currentDir():Expr
 	{
 		var f:String = Context.getPosInfos(Context.currentPos()).file;
-		f = sys.FileSystem.fullPath(f).split('\\').slice(0,-1).join('/');
+		f = sys.FileSystem.fullPath(f).split('\\').slice(0,-1).join('/')+'/';
 		return macro $v{f};
 	}
 	

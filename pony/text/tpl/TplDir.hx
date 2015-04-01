@@ -25,76 +25,32 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.time;
-import pony.events.Listener1;
-import pony.events.Signal;
-import pony.events.Signal0;
-import pony.events.Signal1;
-import pony.magic.Declarator;
+package pony.text.tpl;
+import pony.fs.Dir;
+import pony.fs.File;
+import pony.text.tpl.Tpl;
+import pony.text.tpl.TplData.TplStyle;
 
 /**
- * TimeLine
+ * TplDir
  * @author AxGord
  */
-class Timeline implements Declarator {
-
-	@:arg private var data:Array<Time>;
-	@:arg public var pauseOnStep:Bool = false;
+@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
+class TplDir
+{
+	private var h:Map<String,Tpl>;
 	
-	public var onStep:Signal1<Timeline, Int> = Signal.create(this);
-	
-	public var isPlay(default, null):Bool = false;
-	
-	public var currentStep(default,null):Int = 0;
-	public var currentTime(default,null):Time = 0;
-	
-	private var lastdt:DT = 0;
-	private var timer:DTimer;
-	
-	public function play(dt:DT = 0):Void {
-		if (isPlay) return;
-		if (currentStep >= data.length) return;
-		isPlay = true;
-		if (timer == null) timer = DTimer.fixedDelay(data[currentStep] - currentTime, endStep, dt + lastdt);
-		else timer.start(dt + lastdt);
-		lastdt = 0;
+	public function new(dir:Dir, ?c:Class<ITplPut>, o:Dynamic, ?s:TplStyle)
+	{
+		h = [for (f in dir.contentRecursiveFiles('.tpl'))
+			(f.fullDir.toString().length > dir.toString().length ?
+			f.fullDir.toString().substr(dir.toString().length+1) + '/' : '') + f.shortName => new Tpl(c, o, f.content)];
 	}
 	
-	public function pause():Void {
-		if (!isPlay) return;
-		timer.stop();
-		isPlay = false;
+	inline public function gen(n:String, ?d:Dynamic, ?p:Dynamic, cb:String->Void):Void {
+		return h[n].gen(d, p, cb);
 	}
 	
-	private function endStep(dt:DT):Void {
-		timer = null;
-		currentTime = data[currentStep];
-		currentStep++;
-		lastdt = dt;
-		isPlay = false;
-		if (!pauseOnStep) play();
-		onStep.dispatch(currentStep);
-	}
-	
-	public function reset():Void {
-		if (timer != null) {
-			timer.destroy();
-			timer = null;
-		}
-		isPlay = false;
-		currentTime = 0;
-		currentStep = 0;
-	}
-	
-	public function playTo(step:Int, dt:DT = 0):Void {
-		pauseOnStep = true;
-		var l:Listener1<Timeline, Int> = null;
-		l = function(n:Int):Void {
-			if (n < step) play();
-			else onStep >> l;
-		}
-		onStep << l;
-		play(dt);
-	}
+	public inline function exists(n:String):Bool return h.exists(n);
 	
 }

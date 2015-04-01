@@ -2,6 +2,7 @@
 -main TestMain
 -lib munit
 -lib hamcrest
+-lib continuation
 -cp ..
 
 -cp test
@@ -13,6 +14,7 @@
 -main TestMain
 -lib munit
 -lib hamcrest
+-lib continuation
 -cp ..
 
 -cp test
@@ -24,6 +26,7 @@
 -main TestMain
 -lib munit
 -lib hamcrest
+-lib continuation
 -cp ..
 
 -cp test
