@@ -25,34 +25,90 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.text.tpl;
-import pony.fs.Dir;
+package pony.net.http;
+
 import pony.fs.File;
-import pony.text.tpl.Tpl;
-import pony.text.tpl.TplData.TplStyle;
+import pony.text.ParseBoy;
 
 /**
- * TplDir
+ * HttpConnection
  * @author AxGord
  */
-@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
-class TplDir
+
+class HttpConnection
 {
-	private var h:Map<String,Tpl>;
-	
-	public function new(dir:Dir, ?c:Class<ITplPut>, o:Dynamic, ?s:TplStyle)
+	public var method:String;
+	public var post:Map<String, String>;
+	public var fullUrl:String;
+	public var url:String;
+	public var params:Map<String, String>;
+	public var sessionStorage:Map<String, Dynamic>;
+	public var host:String;
+	public var protocol:String;
+	public var languages:Array<String>;
+	public var cookie:Cookie;
+	public var end:Bool;
+
+	public function new(fullUrl:String)
 	{
+		end = false;
+		languages = [];
+		sessionStorage = new Map<String, Dynamic>();
+		this.fullUrl = fullUrl;
+		var pb:ParseBoy<Void> = new ParseBoy<Void>(fullUrl);
+		pb.gt(['://']);
+		protocol = pb.str();
+		pb.gt(['/']);
+		host = pb.str();
+		params = new Map<String, String>();
+		if (pb.gt(['?']) == 0) {
+			url = pb.str();
+			var loop:Bool = true;
+			while (loop) {
+				switch (pb.gt(['=', '&'])) {
+					case 0:
+						var v:String = pb.str();
+						if (pb.gt(['&']) == -1) loop = false;
+						params.set(v, pb.str());
+					case 1:
+						var p:String = pb.str();
+						if (p != '')
+							params.set(p, null);
+					default:
+						var p:String = pb.str();
+						if (p != '')
+							params.set(p, null);
+						loop = false;
+				}
+			}
+		} else
+			url = pb.str();
+	}
+	/*
+	public function sendFile(file:File):Void {
 		
-		h = [for (f in dir.contentRecursiveFiles('.tpl'))
-			(f.fullDir.toString().length > dir.toString().length ?
-			f.fullDir.toString().substr(dir.toString().length+1) + '/' : '') + f.shortName => new Tpl(c, o, f.content)];
-			
 	}
 	
-	inline public function gen(n:String, ?d:Dynamic, ?p:Dynamic, cb:String->Void):Void {
-		return h[n].gen(d, p, cb);
+	public function endAction():Void {
+		
 	}
 	
-	public inline function exists(n:String):Bool return h.exists(n);
+	public function error(?message:String):Void {
+		
+	}
+	
+	public function sendHtml(text:String):Void {
+		
+	}
+	*/
+	
+	public function mix():Map<String, String> {
+		var h = new Map<String, String>();
+		for (k in params.keys())
+			h.set(k, params.get(k));
+		for (k in post.keys())
+			h.set(k, post.get(k));
+		return h;
+	}
 	
 }

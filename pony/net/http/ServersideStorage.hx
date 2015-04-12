@@ -25,34 +25,33 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.text.tpl;
-import pony.fs.Dir;
-import pony.fs.File;
-import pony.text.tpl.Tpl;
-import pony.text.tpl.TplData.TplStyle;
+package pony.net.http;
 
-/**
- * TplDir
- * @author AxGord
- */
-@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
-class TplDir
+import pony.Dictionary;
+import pony.magic.Declarator;
+import pony.Tools;
+
+class ServersideStorage implements Declarator
 {
-	private var h:Map<String,Tpl>;
+	private var clients:Map<String, Map<String, Dynamic>> = new Map<String, Map<String, Dynamic>>();
+	@:arg private var keyName:String = 'PonyKey';
 	
-	public function new(dir:Dir, ?c:Class<ITplPut>, o:Dynamic, ?s:TplStyle)
-	{
-		
-		h = [for (f in dir.contentRecursiveFiles('.tpl'))
-			(f.fullDir.toString().length > dir.toString().length ?
-			f.fullDir.toString().substr(dir.toString().length+1) + '/' : '') + f.shortName => new Tpl(c, o, f.content)];
-			
+	public function getClient(cookie:Cookie):Map<String, Dynamic> {
+		var key:String = cookie.get(keyName);
+		if (key == null) {
+			var k:String = Tools.randomString();
+			cookie.set(keyName, k);
+			return getClientByKey(k);
+		} else {
+			return getClientByKey(key);
+		}
+		return null;
 	}
 	
-	inline public function gen(n:String, ?d:Dynamic, ?p:Dynamic, cb:String->Void):Void {
-		return h[n].gen(d, p, cb);
+	public function getClientByKey(key:String):Map<String, Dynamic> {
+		if (!clients.exists(key))
+			clients.set(key, new Map<String, Dynamic>());
+		return clients.get(key);
 	}
-	
-	public inline function exists(n:String):Bool return h.exists(n);
 	
 }

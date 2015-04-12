@@ -99,7 +99,7 @@ class ParseBoy<T> implements Declarator
 	 * @param nospace if true return -2 if no space.
 	 * @return string number, -1 if not.
 	 */
-	public function goto(a:Array<String>, nospace:Bool=false):Int {
+	public function gt(a:Array<String>, nospace:Bool=false):Int {
 		beforeGoto = pos;
 		var r:Int = -1;
 		var ipos:Int = MathTools.maxInt;
@@ -167,7 +167,7 @@ class ParseBoy<T> implements Declarator
 	}
 	
 	public function gotoPushStr(search:String):Int {
-		return if (goto([search]) != -1)
+		return if (gt([search]) != -1)
 			pushStr();
 		else {
 			pos = beforeGoto;

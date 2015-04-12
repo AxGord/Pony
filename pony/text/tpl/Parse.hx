@@ -88,33 +88,33 @@ class Parse extends ParseBoy<TplContent>
 				if (closed) return;
 				//push(Text(t.substr(pos, (t.length - pos) - (t.length - o))));
 				//pos = o;
-				goto([s.closeEnd]);
+				gt([s.closeEnd]);
 				throw 'Closed not opened tag ['+t.substr(c, pos-c)+']';
 			}
 		}
-		switch (goto([s.begin, s.shortBegin])) {
+		switch (gt([s.begin, s.shortBegin])) {
 			case 0:
 				pushText();
 				tag();
 				searchOpen(closed);
 			case 1:
 				pushText();
-				switch (goto([s.shortEnd, s.args.set])) {
+				switch (gt([s.shortEnd, s.args.set])) {
 					case 0:
 						data.push(ShortTag( { name: parseName(str()), arg: null } ));
 					case 1:
 						var name:String = str();
 						
-						switch (goto([s.shortEnd, s.args.valueq])) {
+						switch (gt([s.shortEnd, s.args.valueq])) {
 							case 0:
 								if (s.args.qalltime)
 									throw '["] - not found';
 								data.push(ShortTag( { name: parseName(name), arg: parse(str(), s) } ));
 							case 1:
-								if (goto([s.args.valueq]) == -1)
+								if (gt([s.args.valueq]) == -1)
 									throw '["] - not closed';
 								data.push(ShortTag( { name: parseName(name), arg: parse(str(), s) } ));
-								if (goto([s.shortEnd]) == -1)
+								if (gt([s.shortEnd]) == -1)
 									throw 'Oops';
 							default: throw 'Oops';
 						}
@@ -160,7 +160,7 @@ class Parse extends ParseBoy<TplContent>
 	private inline function tag():Bool {
 		var result:Bool = false;
 		skipSpace();
-		switch (goto([s.end, s.endClose, s.args.begin, s.args.set])) {
+		switch (gt([s.end, s.endClose, s.args.begin, s.args.set])) {
 			case 0:
 				var name:String = str();
 				var d:TplData = tagContent(name);
@@ -176,9 +176,9 @@ class Parse extends ParseBoy<TplContent>
 				data.push(Tag( { name: parseName(name), arg: null, args: a.args, content: d } ));
 			case 3:
 				var name:String = str();
-				switch (goto([s.end, s.endClose, s.args.valueq], true)) {
+				switch (gt([s.end, s.endClose, s.args.valueq], true)) {
 					case -2:
-						switch (goto([s.end, s.endClose, s.args.begin])) {
+						switch (gt([s.end, s.endClose, s.args.begin])) {
 							case 0:
 								var arg:TplData = parse(str(), s);
 								var d:TplData = tagContent(name);
@@ -206,10 +206,10 @@ class Parse extends ParseBoy<TplContent>
 						throw 'todo';
 						*/
 					case 2:
-						if (goto([s.args.valueq]) == -1)
+						if (gt([s.args.valueq]) == -1)
 							throw '["] - not closed';
 						var arg:TplData = parse(str(), s);
-						switch (goto([s.end, s.endClose, s.args.begin])) {
+						switch (gt([s.end, s.endClose, s.args.begin])) {
 							case 0:
 								var d:TplData = tagContent(name);
 								data.push(Tag( { name: parseName(name), arg: arg, args: new Map<String, TplData>(), content: d } ));
@@ -233,14 +233,14 @@ class Parse extends ParseBoy<TplContent>
 	private function args():{args: Map<String, TplData>, closedTag: Bool} {
 		var args:Map<String, TplData> = new Map<String, TplData>();
 		while (true) {
-			switch (goto([s.args.end, s.end, s.endClose], true)) {
+			switch (gt([s.args.end, s.end, s.endClose], true)) {
 				case -2:
-					switch (goto([s.args.set, s.args.delemiter, s.args.end, s.end, s.endClose])) {
+					switch (gt([s.args.set, s.args.delemiter, s.args.end, s.end, s.endClose])) {
 						case 0:
 							var n:String = str();
-							switch (goto([s.args.valueq], true)) {
+							switch (gt([s.args.valueq], true)) {
 								case -2:
-									switch (goto([s.args.delemiter, s.end, s.args.end, s.endClose])) {
+									switch (gt([s.args.delemiter, s.end, s.args.end, s.endClose])) {
 										case 0:
 											args.set(n, parse(str(), s));
 										case 1:
@@ -249,14 +249,14 @@ class Parse extends ParseBoy<TplContent>
 											break;
 										case 2:
 											args.set(n, parse(str(), s));
-											if (goto([s.args.valueq]) == -1) throw 'Oops';
+											if (gt([s.args.valueq]) == -1) throw 'Oops';
 										case 3:
 											args.set(n, parse(str(), s));
 											return { args: args, closedTag: true };
 										default: throw 'Oops';
 									}
 								case 0:
-									if (goto([s.args.valueq]) == -1) throw 'Oops';
+									if (gt([s.args.valueq]) == -1) throw 'Oops';
 									args.set(n, parse(str(), s));
 									
 								default: throw 'Oops';
@@ -265,7 +265,7 @@ class Parse extends ParseBoy<TplContent>
 							args.set(str(), null);
 						case 2:
 							args.set(str(), null);
-							if (goto([s.end]) == -1) throw 'Oops';
+							if (gt([s.end]) == -1) throw 'Oops';
 						case 3:
 							args.set(str(), null);
 							if (s.args.end != '') throw 'Oops';
@@ -277,7 +277,7 @@ class Parse extends ParseBoy<TplContent>
 						default: throw 'Oops';
 					}
 				case 0:
-					if (goto([s.end]) == -1) throw 'Oops';
+					if (gt([s.end]) == -1) throw 'Oops';
 					break;
 				case 1:
 					if (s.args.end != '') throw 'Oops';
@@ -299,11 +299,11 @@ class Parse extends ParseBoy<TplContent>
 	}
 	
 	private function closeTag(name:String):Void {
-		if (goto([s.closeBegin]) == -1)
+		if (gt([s.closeBegin]) == -1)
 			throw 'Tag ' + name + ' is not closed';
 		data.push(Text(str()));
 		skipSpace();
-		if (goto([s.closeEnd]) == -1)
+		if (gt([s.closeEnd]) == -1)
 			throw 'Tag ' + name + ' is not closed';
 		if (s.space) {
 			if (str().trim() != name)
@@ -315,14 +315,14 @@ class Parse extends ParseBoy<TplContent>
 	}
 	
 	private function openPos():Int {
-		goto([s.begin, s.shortBegin]);
+		gt([s.begin, s.shortBegin]);
 		var p:Int = pos-lengthGoto;
 		pos = beforeGoto;
 		return p;
 	}
 	
 	private function closePos():Int {
-		goto([s.closeBegin]);
+		gt([s.closeBegin]);
 		var p:Int = pos-lengthGoto;
 		pos = beforeGoto;
 		return p;

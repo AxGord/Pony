@@ -54,7 +54,7 @@ class TplPut<T1, T2> implements ITplPut
 	public function tplData(d:TplData):String {
 		if (d == null) return null;
 		var r:String = '', nt:String = null;
-		if (d.length > 0) @fork(e in d)
+		if (d.length > 0) for(e in d)
 			switch (e) {
 				case Text(t1):
 					if (nt!=null) {
@@ -194,7 +194,7 @@ class TplPut<T1, T2> implements ITplPut
 	@:async
 	public function tplTag(d:TplTag):String {
 		var na:Map<String,String> = new Map<String,String>();
-		if (d.args.iterator().hasNext()) @fork(k in d.args.keys())
+		if (d.args.iterator().hasNext()) for(k in d.args.keys())
 			na.set(k, @await tplData(d.args.get(k)));
 			
 		var arg:String = @await tplData(d.arg);
@@ -231,6 +231,11 @@ class TplPut<T1, T2> implements ITplPut
 	}
 	
 	@:async
+	public function tagHelper(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String {
+		return @await tag(name, content, arg, args, kid);
+	}
+	
+	@:async
 	private inline function parentTag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String {
 		return @await parent.tag(name, content, arg, args, kid == null ? this : kid);
 	}
@@ -262,6 +267,11 @@ class TplPut<T1, T2> implements ITplPut
 	
 	@:async
 	public function shortTag(name:String, arg:String, ?kid:ITplPut):String {
+		return @await super_shortTag(name, arg, kid);
+	}
+	
+	@:async
+	public function super_shortTag(name:String, arg:String, ?kid:ITplPut):String {
 		if (parent == null)
 			return '%' + name + '%';
 		else
@@ -285,16 +295,12 @@ class TplPut<T1, T2> implements ITplPut
 			delemiter);
 	}
 	
-	public function manyAsync(?d:Iterable<Dynamic>, ?i:Iterator<Dynamic>, cl:Dynamic, content:TplData, ?delemiter:String, ok:String->Void):Void {
-		manyEasy(d, i,
-			function(e:Dynamic, cb:String->Void) sub(this, e, cl, content, cb),
-			delemiter, ok);
-	}
+	private static function getString(v:Dynamic, cb:String->Void):Void cb(Std.string(v));
 	
 	@:async
 	public static function manyEasy(?o:Iterable<Dynamic>, ?i:Iterator<Dynamic>, ?func:Dynamic->(String->Void)->Void, ?delemiter:String):String {
 		if (func == null) {
-			func = function(v:Dynamic, cb:String->Void):Void cb(Std.string(v));
+			func = getString;
 		}
 		if (o != null)
 			i = o.iterator();

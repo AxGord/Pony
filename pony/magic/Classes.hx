@@ -25,34 +25,37 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.text.tpl;
-import pony.fs.Dir;
-import pony.fs.File;
-import pony.text.tpl.Tpl;
-import pony.text.tpl.TplData.TplStyle;
-
-/**
- * TplDir
- * @author AxGord
- */
-@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
-class TplDir
+package pony.magic;
+#if macro
+import haxe.macro.Expr;
+import haxe.macro.Context;
+import sys.FileSystem;
+using pony.macro.Tools;
+#end
+class Classes
 {
-	private var h:Map<String,Tpl>;
-	
-	public function new(dir:Dir, ?c:Class<ITplPut>, o:Dynamic, ?s:TplStyle)
-	{
+
+	macro public static function dir(pack:String, dir:String):Expr {
+		var f:String = Context.getPosInfos(Context.currentPos()).file;
+		f = sys.FileSystem.fullPath(f).split('\\').slice(0, -1).join('/') + '/';
 		
-		h = [for (f in dir.contentRecursiveFiles('.tpl'))
-			(f.fullDir.toString().length > dir.toString().length ?
-			f.fullDir.toString().substr(dir.toString().length+1) + '/' : '') + f.shortName => new Tpl(c, o, f.content)];
-			
+		var d:String = f + dir + '/';
+		trace(d);
+		var list:Array<Expr> = [];
+		var p:Array<String> = (pack != '' ? pack.split('.') : []).concat(dir.split('/'));
+		for (e in FileSystem.readDirectory(d))
+			if (e.substr(-3) == '.hx') {
+				var ex:Expr = null;
+				for (s in p)
+					if (ex == null)
+						ex = {expr: EConst(CIdent(s)), pos: Context.currentPos()};
+					else
+						ex = {expr: EField(ex, s), pos: Context.currentPos()};
+				trace(e.substr(0, e.length-3));
+				ex = {expr: EField(ex, e.substr(0, e.length-3)), pos: Context.currentPos()};
+				list.push(ex);
+			}
+		return {expr: EArrayDecl(list), pos: Context.currentPos()};
 	}
-	
-	inline public function gen(n:String, ?d:Dynamic, ?p:Dynamic, cb:String->Void):Void {
-		return h[n].gen(d, p, cb);
-	}
-	
-	public inline function exists(n:String):Bool return h.exists(n);
 	
 }

@@ -25,34 +25,49 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.text.tpl;
-import pony.fs.Dir;
-import pony.fs.File;
-import pony.text.tpl.Tpl;
-import pony.text.tpl.TplData.TplStyle;
+package pony.net.http.modules.mmodels.fields;
 
-/**
- * TplDir
- * @author AxGord
- */
-@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
-class TplDir
+import pony.net.http.modules.mmodels.Field;
+import pony.text.tpl.ITplPut;
+import pony.text.tpl.TplData;
+
+class FText extends Field
 {
-	private var h:Map<String,Tpl>;
-	
-	public function new(dir:Dir, ?c:Class<ITplPut>, o:Dynamic, ?s:TplStyle)
+
+	public function new(?len:Int)
 	{
-		
-		h = [for (f in dir.contentRecursiveFiles('.tpl'))
-			(f.fullDir.toString().length > dir.toString().length ?
-			f.fullDir.toString().substr(dir.toString().length+1) + '/' : '') + f.shortName => new Tpl(c, o, f.content)];
-			
+		super(len);
+		type = 'Text';
+		tplPut = CTextPut;
 	}
 	
-	inline public function gen(n:String, ?d:Dynamic, ?p:Dynamic, cb:String->Void):Void {
-		return h[n].gen(d, p, cb);
+	override public function htmlInput(cl:String, act:String, value:String):String {
+		return
+			'<textarea ' + (cl != null?'class="' + cl + '" ':'') +
+			'name="' + model.name + '.' + act + '.' +
+			name + '">'+value+'</textarea>';
 	}
 	
-	public inline function exists(n:String):Bool return h.exists(n);
+}
+
+@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
+class CTextPut extends pony.text.tpl.TplPut<FText, Dynamic> {
+	
+	@:async
+	override public function tag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String 
+	{
+		return @await html(name);
+	}
+	
+	@:async
+	override public function shortTag(name:String, arg:String, ?kid:ITplPut):String 
+	{
+		return @await tag(name, [], arg, new Map(), kid);
+	}
+	
+	@:async
+	public function html(f:String):String {
+		return StringTools.replace(StringTools.htmlEscape(Std.string(Reflect.field(datad, f))), '\r\n', '<br/>');
+	}
 	
 }

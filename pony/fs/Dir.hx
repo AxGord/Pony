@@ -26,7 +26,7 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.fs;
-#if (neko || cpp || nodejs)
+#if (neko || cpp || nodejs || php)
 import pony.Priority.Priority;
 import sys.FileSystem;
 using Lambda;
@@ -34,6 +34,7 @@ using Lambda;
  * Directory
  * @author AxGord <axgord@gmail.com>
  */
+@:forward(addWay, addWayArray, name)
 abstract Dir(Unit) from Unit {
 
 	public var first(get, never):String;
@@ -43,11 +44,11 @@ abstract Dir(Unit) from Unit {
 		this = v;
 	}
 		
-	public function content(?filter:String, noSkipDir:Bool=false):Array<Unit> {
+	public function content(?filter:String):Array<Unit> {
 		var result:Map<String, Unit> = new Map<String, Unit>();
 		for (d in this) {
 			if (d.exists) for (e in FileSystem.readDirectory(d.first)) {
-				if (!result.exists(e) && ((noSkipDir && FileSystem.isDirectory(d.fullPath+e)) || filter == null || e.substr(-filter.length) == filter))
+				if (!result.exists(e) && (filter == null || e.substr(-filter.length) == filter))
 					result[e] = [for (d in this.wayStringIterator()) d + '/' + e];
 			}
 		}
@@ -55,6 +56,7 @@ abstract Dir(Unit) from Unit {
 	}
 	
 	public function files(?filter:String):Array<File> return [for (u in content(filter)) if (u.isFile) u];
+	public function dirs(?filter:String):Array<Dir> return [for (u in content(filter)) if (u.isDir) u];
 	
 	inline public function delete():Void FileSystem.deleteDirectory(first);
 	
@@ -62,7 +64,7 @@ abstract Dir(Unit) from Unit {
 	
 	public function contentRecursiveFiles(?filter:String):Array<File> {
 		var result:Array<File> = [];
-		for (u in content(filter, true)) {
+		for (u in content(filter)) {
 			if (u.isDir) {
 				result = result.concat(u.dir.contentRecursiveFiles(filter));
 			} else {

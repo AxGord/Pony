@@ -26,33 +26,77 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.text.tpl;
-import pony.fs.Dir;
-import pony.fs.File;
-import pony.text.tpl.Tpl;
-import pony.text.tpl.TplData.TplStyle;
 
-/**
- * TplDir
- * @author AxGord
- */
+import pony.text.tpl.Tpl;
+import pony.text.tpl.TplPut;
+import pony.text.tpl.ValuePut;
+
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
-class TplDir
-{
-	private var h:Map<String,Tpl>;
+class Valuator<C1, C2> extends TplPut<C1, C2> {
+
+	public function new(data:C1, datad:C2, parent:ITplPut = null) {
+		super(data, datad, parent);
+	}
 	
-	public function new(dir:Dir, ?c:Class<ITplPut>, o:Dynamic, ?s:TplStyle)
+	@:async
+	override public function tag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String
 	{
-		
-		h = [for (f in dir.contentRecursiveFiles('.tpl'))
-			(f.fullDir.toString().length > dir.toString().length ?
-			f.fullDir.toString().substr(dir.toString().length+1) + '/' : '') + f.shortName => new Tpl(c, o, f.content)];
-			
+		return @await super1_tag(name, content, arg, args, kid);
 	}
 	
-	inline public function gen(n:String, ?d:Dynamic, ?p:Dynamic, cb:String->Void):Void {
-		return h[n].gen(d, p, cb);
+	@:async
+	public function super1_tag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String
+	{
+		var b:Bool = @await valuBool(name);
+		if (b != null) {
+			if (args.exists('!'))
+				return b ? '' : @await tplData(content);
+			else
+				return b ? @await tplData(content) : '';
+		} else {
+			var v:String = @await valu(name, arg);
+			if (args.exists('htmlEscape'))
+				v = StringTools.htmlEscape(v);
+			if (v != null) {
+				
+				if (v == '') {
+					if (args.exists('!'))
+						return @await tplData(content);
+					else
+						return '';
+				} else if (!args.exists('!'))
+					return @await sub(v, null, ValuePut, content);
+				else
+					return '';
+			} else
+				return @await tagHelper(name, content, arg, args, kid);
+		}
 	}
 	
-	public inline function exists(n:String):Bool return h.exists(n);
+	
+	@:async
+	override public function shortTag(name:String, arg:String, ?kid:ITplPut):String {
+		return @await super1_shortTag(name, arg, kid);
+	}
+	
+	@:async
+	public function super1_shortTag(name:String, arg:String, ?kid:ITplPut):String
+	{
+		var v:String = @await valu(name, arg);
+		if (v != null)
+			return v;
+		else
+			return @await super_shortTag(name, arg, kid);
+	}
+	
+	@:async
+	public function valu(name:String, arg:String):String {
+		return null;
+	}
+	
+	@:async
+	public function valuBool(name:String):Bool {
+		return null;
+	}
 	
 }

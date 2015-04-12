@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -128,7 +128,7 @@ class Table implements Dynamic < Table > implements Declarator implements Ninja
 	/**
 	 * Get result for current query
 	 */
-	public function get(?p:PosInfos, cb:Array<Dynamic>->Void):Void {
+	public function get(cb:Array<Dynamic>->Void, ?p:PosInfos):Void {
 		mysql.query(genGetQuery(), p, function(err:Dynamic, fields:Dynamic, _):Void {
 			if (err != null) {
 				mysql._error(err);
@@ -136,6 +136,12 @@ class Table implements Dynamic < Table > implements Declarator implements Ninja
 				cb(solo ? fields.map(soloMap): fields);
 			}
 		});
+	}
+	/**
+	 * Get first for current query
+	 */
+	public function first(cb:Dynamic->Void, ?p:PosInfos):Void {
+		limit(1).get(function(r:Array<Dynamic>) cb(r[0]));
 	}
 	
 	inline private function genGetQuery():String
@@ -152,6 +158,15 @@ class Table implements Dynamic < Table > implements Declarator implements Ninja
 	 * Clear this table
 	 */
 	inline public function clear(cb:Bool->Void, ?p:PosInfos):Void mysql.action('TRUNCATE TABLE $table', 'clear table', p, cb);
+	
+	/**
+	 * Insert data to table
+	 */
+	public function insert(data:Map<String, DBV>, cb:Bool->Void, ?p:PosInfos):Void {
+		var keys = [for (f in data.keys()) mysql.escapeId(f)];
+		var values = [for (d in data) d.get(mysql.escape)];
+		mysql.action('INSERT INTO $table (' + keys.join(', ') + ') VALUES (' + values.join(', ') + ')', 'insert', p, cb);
+	}
 	
 	#end
 	

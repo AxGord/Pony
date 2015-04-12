@@ -26,33 +26,26 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.text.tpl;
-import pony.fs.Dir;
-import pony.fs.File;
-import pony.text.tpl.Tpl;
-import pony.text.tpl.TplData.TplStyle;
 
-/**
- * TplDir
- * @author AxGord
- */
+import pony.text.tpl.Tpl;
+import pony.text.tpl.TplPut;
+
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
-class TplDir
-{
-	private var h:Map<String,Tpl>;
+class ValuePut extends TplPut < String, {} > {
 	
-	public function new(dir:Dir, ?c:Class<ITplPut>, o:Dynamic, ?s:TplStyle)
+	@:async
+	override public function tag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String
 	{
-		
-		h = [for (f in dir.contentRecursiveFiles('.tpl'))
-			(f.fullDir.toString().length > dir.toString().length ?
-			f.fullDir.toString().substr(dir.toString().length+1) + '/' : '') + f.shortName => new Tpl(c, o, f.content)];
-			
+		return @await parent.tag(name, content, arg, args, null);
 	}
 	
-	inline public function gen(n:String, ?d:Dynamic, ?p:Dynamic, cb:String->Void):Void {
-		return h[n].gen(d, p, cb);
+	@:async
+	override public function shortTag(name:String, arg:String, ?kid:ITplPut):String
+	{
+		if (name == 'value')
+			return data;
+		else
+			return @await parent.shortTag(name, arg, null);
 	}
-	
-	public inline function exists(n:String):Bool return h.exists(n);
 	
 }

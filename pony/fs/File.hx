@@ -26,7 +26,7 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.fs;
-#if (neko || cpp || nodejs)
+#if (neko || cpp || nodejs || php)
 import haxe.io.Bytes;
 import sys.FileSystem;
 
@@ -34,22 +34,25 @@ import sys.FileSystem;
  * File
  * @author AxGord <axgord@gmail.com>
  */
+@:forward(exists, firstExists, takeExists)
 abstract File(Unit) from Unit {
 
 	public var name(get, never):String;
 	public var shortName(get, never):String;
-	public var exists(get, never):Bool;
 	public var first(get, never):String;
 	public var content(get, set):String;
 	public var bytes(get, set):Bytes;
 	public var ext(get, never):String;
 	public var fullPath(get, never):Unit;
 	public var fullDir(get, never):Unit;
+	public var size(get, never):Int;
 	
 	inline public function new(v:Unit) {
 		if (v.isDir) throw 'This is not file';
 		this = v;
 	}
+	
+	private function get_size():Int return FileSystem.stat(this.firstExists).size;
 	
 	public function get_content():String {
 		for (f in this) if (f.exists) return sys.io.File.getContent(f.first);
@@ -76,8 +79,6 @@ abstract File(Unit) from Unit {
 	inline private function get_name():String return this.name;
 	
 	inline private function get_shortName():String return name.split('.')[0];
-	
-	inline private function get_exists():Bool return this.exists;
 	
 	inline private function get_first():String return this.first;
 	
@@ -106,7 +107,7 @@ abstract File(Unit) from Unit {
 	}
 	
 	inline private function get_fullPath():Unit return this.fullPath;
-	inline private function get_fullDir():Unit return [for (e in this.fullPath.wayStringIterator()) e.substr(0, e.lastIndexOf('/'))];
+	inline private function get_fullDir():Unit return [for (e in this.wayStringIterator()) e.substr(0, e.lastIndexOf('/'))];
 	
 	public function delete():Void {
 		try {

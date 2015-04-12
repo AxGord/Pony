@@ -34,6 +34,7 @@ using pony.Tools;
  * TablePrepare
  * @author AxGord <axgord@gmail.com>
  */
+#if !macro
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
 class TablePrepare {
 	
@@ -175,3 +176,4 @@ class TablePrepare {
 		return [for (f in fields.kv()) f.value.name => f.key];
 	
 }
+#end

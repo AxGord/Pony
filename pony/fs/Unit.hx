@@ -26,7 +26,7 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.fs;
-#if (neko || cpp || nodejs)
+#if (neko || cpp || nodejs || php)
 import pony.Priority;
 import sys.FileSystem;
 
@@ -44,10 +44,18 @@ abstract Unit(Priority<String>) {
 	public var file(get, never):File;
 	public var name(get,never):String;
 	public var first(get, never):String;
+	public var firstExists(get, never):String;
+	public var takeExists(get, never):Array<String>;
 	
 	inline public function new(v:Priority<String>) {
 		for (e in v) if (e.length == 0) throw 'Wrong way detected';
 		this = v;
+	}
+	
+	private function get_takeExists():Array<String> {
+		var a = [];
+		for (e in this) if (FileSystem.exists(e)) a.push(e);
+		return a;
 	}
 	
 	inline private function get_name():String return this.first.split('/').pop();
@@ -73,6 +81,10 @@ abstract Unit(Priority<String>) {
 	inline private function get_file():File return this;
 	
 	inline private function get_first():String return this.first;
+	private function get_firstExists():String {
+		for (e in iterator()) if (e.exists) return e;
+		return null;
+	}
 	
 	@:from inline static private function fromString(s:String):Unit return s.split(';').map(StringTools.trim);
 	@:to inline public function toString():String return this.join('; ');
@@ -89,6 +101,7 @@ abstract Unit(Priority<String>) {
 	inline public function wayStringIterator():Iterator<String> return this.iterator();
 	
 	inline public function addWay(way:String, priority:Int = 0):Void this.addElement(way, priority);
+	inline public function addWayArray(way:Array<String>, priority:Int = 0):Void this.addArray(way, priority);
 	
 	public function iterator():Iterator<Unit> {
 		var it = this.iterator();

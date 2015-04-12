@@ -25,34 +25,14 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.text.tpl;
-import pony.fs.Dir;
-import pony.fs.File;
-import pony.text.tpl.Tpl;
-import pony.text.tpl.TplData.TplStyle;
+package pony.net.http.modules.mmodels;
+import pony.magic.Classes;
 
-/**
- * TplDir
- * @author AxGord
- */
-@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
-class TplDir
-{
-	private var h:Map<String,Tpl>;
-	
-	public function new(dir:Dir, ?c:Class<ITplPut>, o:Dynamic, ?s:TplStyle)
-	{
-		
-		h = [for (f in dir.contentRecursiveFiles('.tpl'))
-			(f.fullDir.toString().length > dir.toString().length ?
-			f.fullDir.toString().substr(dir.toString().length+1) + '/' : '') + f.shortName => new Tpl(c, o, f.content)];
-			
+class DefaultActionsPack {
+	public static var list:Array<Dynamic>;
+	public static function __init__() {
+		//list = new Hash<Dynamic>();
+		//list.set('Many', pony.net.http.modules.mmodels.actions.Many);
+		list = (Classes.dir('pony.net.http.modules.mmodels', 'actions'));
 	}
-	
-	inline public function gen(n:String, ?d:Dynamic, ?p:Dynamic, cb:String->Void):Void {
-		return h[n].gen(d, p, cb);
-	}
-	
-	public inline function exists(n:String):Bool return h.exists(n);
-	
 }

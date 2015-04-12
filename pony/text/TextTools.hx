@@ -78,5 +78,20 @@ class TextTools {
 			return Std.parseFloat(s);
 	}
 	
-	inline public static function last(s:String):String return s.charAt(s.length-1);
+	inline public static function last(s:String):String return s.charAt(s.length - 1);
+	
+	public static function bigFirst(s:String):String return s.charAt(0).toUpperCase() + s.substr(1);
+	
+	public static function smallFirst(s:String):String return s.charAt(0).toLowerCase() + s.substr(1);
+	
+	public static function lines(s:String):Array<String> { 
+ 		var a:Array<String> = s.split('\r\n'); 
+ 		if (a.length == 1) { 
+ 			a = s.split('\r'); 
+ 			if (a.length == 1) 
+ 				a = s.split('\n'); 
+ 		} 
+ 		return a; 
+ 	} 
+
 }

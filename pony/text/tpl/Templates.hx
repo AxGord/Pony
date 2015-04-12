@@ -26,33 +26,51 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.text.tpl;
+
+import haxe.xml.Fast;
 import pony.fs.Dir;
 import pony.fs.File;
-import pony.text.tpl.Tpl;
-import pony.text.tpl.TplData.TplStyle;
+import pony.text.tpl.TplSystem;
 
 /**
- * TplDir
+ * Templates
  * @author AxGord
  */
-@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
-class TplDir
+
+class Templates
 {
-	private var h:Map<String,Tpl>;
 	
-	public function new(dir:Dir, ?c:Class<ITplPut>, o:Dynamic, ?s:TplStyle)
+	private var list:Map<String, TplSystem>;
+
+	public function new(dir:Dir, ?c:Class<ITplPut>, o:Dynamic)
 	{
-		
-		h = [for (f in dir.contentRecursiveFiles('.tpl'))
-			(f.fullDir.toString().length > dir.toString().length ?
-			f.fullDir.toString().substr(dir.toString().length+1) + '/' : '') + f.shortName => new Tpl(c, o, f.content)];
-			
+		list = new Map<String, TplSystem>();
+		var td:Dir = dir + 'templates';
+		for (d in td.dirs()) {
+			var mf:File = d + 'manifest.xml';
+			if (mf.exists) {
+				var manifest:Manifest = TplSystem.parseManifest(mf);
+				if (manifest.title == null) manifest.title = d.name;
+				for (e in manifest._extends) {
+					//d.list.repriority(1);
+					//d.list.change(d.list.first, -1);
+					d.addWayArray(td + e);
+				}
+				//trace(d);
+				var ts:TplSystem = new TplSystem(d, c, o);
+				ts.manifest = manifest;
+				list.set(d.name, ts);
+			} else
+				list.set(d.name, new TplSystem(d, c, o));
+		}
 	}
 	
-	inline public function gen(n:String, ?d:Dynamic, ?p:Dynamic, cb:String->Void):Void {
-		return h[n].gen(d, p, cb);
-	}
+	public inline function exists(key:String):Bool return list.exists(key);
 	
-	public inline function exists(n:String):Bool return h.exists(n);
+	public inline function get(key:String):TplSystem return list.get(key);
+	
+	public inline function iterator():Iterator<TplSystem> {
+		return list.iterator();
+	}
 	
 }

@@ -25,34 +25,41 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.text.tpl;
-import pony.fs.Dir;
-import pony.fs.File;
-import pony.text.tpl.Tpl;
-import pony.text.tpl.TplData.TplStyle;
+package pony.net.http.modules.mmodels;
 
-/**
- * TplDir
- * @author AxGord
- */
-@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
-class TplDir
+import pony.db.mysql.Field;
+import pony.db.mysql.Flags;
+import pony.db.mysql.Types;
+import pony.text.tpl.ITplPut;
+
+class Field
 {
-	private var h:Map<String,Tpl>;
+	public var name:String;
+	public var model:Model;
+	public var type:Types;
+	public var notnull:Bool;
+	public var len:Int;
 	
-	public function new(dir:Dir, ?c:Class<ITplPut>, o:Dynamic, ?s:TplStyle)
-	{
-		
-		h = [for (f in dir.contentRecursiveFiles('.tpl'))
-			(f.fullDir.toString().length > dir.toString().length ?
-			f.fullDir.toString().substr(dir.toString().length+1) + '/' : '') + f.shortName => new Tpl(c, o, f.content)];
-			
+	public var tplPut:Class<ITplPut> = null;
+	
+	public function new(?len:Int) {
+		type = Types.TEXT;
+		notnull = false;
+		this.len = len;
 	}
 	
-	inline public function gen(n:String, ?d:Dynamic, ?p:Dynamic, cb:String->Void):Void {
-		return h[n].gen(d, p, cb);
+	public function init(name:String, model:Model):Void {
+		this.name = name;
+		this.model = model;
+		//trace(name);
 	}
 	
-	public inline function exists(n:String):Bool return h.exists(n);
+	public function htmlInput(cl:String, act:String, value:String):String {
+		return '';
+	}
+	
+	public function create():pony.db.mysql.Field {
+		return {name: name, type: type, flags: notnull ? [Flags.NOT_NULL] : [], length: len};
+	}
 	
 }

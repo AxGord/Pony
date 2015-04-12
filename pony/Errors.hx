@@ -25,34 +25,26 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.text.tpl;
-import pony.fs.Dir;
-import pony.fs.File;
-import pony.text.tpl.Tpl;
-import pony.text.tpl.TplData.TplStyle;
+package pony;
 
-/**
- * TplDir
- * @author AxGord
- */
-@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
-class TplDir
+class Errors
 {
-	private var h:Map<String,Tpl>;
+
+	public var arg:String;
+	public var result:Map<String, String>;
 	
-	public function new(dir:Dir, ?c:Class<ITplPut>, o:Dynamic, ?s:TplStyle)
-	{
-		
-		h = [for (f in dir.contentRecursiveFiles('.tpl'))
-			(f.fullDir.toString().length > dir.toString().length ?
-			f.fullDir.toString().substr(dir.toString().length+1) + '/' : '') + f.shortName => new Tpl(c, o, f.content)];
-			
+	public function new() {
+		result = new Map<String, String>();
 	}
 	
-	inline public function gen(n:String, ?d:Dynamic, ?p:Dynamic, cb:String->Void):Void {
-		return h[n].gen(d, p, cb);
+	public inline function test(cond:Bool, message:String) {
+		if (cond && !result.exists(arg)) set(message);
 	}
 	
-	public inline function exists(n:String):Bool return h.exists(n);
+	public inline function set(message:String):Void {
+		result.set(arg, message);
+	}
+	
+	public inline function empty():Bool return !result.iterator().hasNext();
 	
 }

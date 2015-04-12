@@ -25,34 +25,36 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.text.tpl;
-import pony.fs.Dir;
-import pony.fs.File;
-import pony.text.tpl.Tpl;
-import pony.text.tpl.TplData.TplStyle;
+package pony.db;
+
+private enum DBVT {
+	TInt; TString; TFun(fun:DBVF);
+}
+
+private enum DBVF {
+	FNow;
+}
 
 /**
- * TplDir
+ * DBV
  * @author AxGord
  */
-@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
-class TplDir
+abstract DBV({type:DBVT, ?val:Dynamic})
 {
-	private var h:Map<String,Tpl>;
+
+	inline private function new(v) this = v;
 	
-	public function new(dir:Dir, ?c:Class<ITplPut>, o:Dynamic, ?s:TplStyle)
-	{
-		
-		h = [for (f in dir.contentRecursiveFiles('.tpl'))
-			(f.fullDir.toString().length > dir.toString().length ?
-			f.fullDir.toString().substr(dir.toString().length+1) + '/' : '') + f.shortName => new Tpl(c, o, f.content)];
-			
+	public function get(f:String->String):String {
+		return switch this.type {
+			case TString: f(this.val);
+			case TInt: Std.string(this.val);
+			case TFun(FNow): 'Now()';
+		}
 	}
 	
-	inline public function gen(n:String, ?d:Dynamic, ?p:Dynamic, cb:String->Void):Void {
-		return h[n].gen(d, p, cb);
-	}
+	@:from inline public static function fromInt(v:Int):DBV return new DBV({type:TInt, val: v});
+	@:from inline public static function fromString(v:String):DBV return new DBV({type:TString, val: v});
 	
-	public inline function exists(n:String):Bool return h.exists(n);
+	inline public static function now():DBV return new DBV({type:TFun(FNow)});
 	
 }

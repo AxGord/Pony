@@ -59,7 +59,7 @@ class TplSystem
 	public var includes:TplDir;
 	public var manifest:Manifest;
 	public var name:String;
-	public var _static:Map<String, String>;
+	public var _static:Map<String, File>;
 
 	public function new(dir:Dir, ?c:Class<ITplPut>, o:Dynamic, ?s:TplStyle)
 	{
@@ -67,7 +67,7 @@ class TplSystem
 		name = (dir:Unit).name;
 		pages = new TplDir(dir + 'pages', c, o, s);
 		includes = new TplDir(dir + 'includes', TplPut, null, s);
-		_static = [for (e in ((dir + 'static'):Dir).contentRecursiveFiles()) e.name => e.content];
+		_static = [for (e in ((dir + 'static'):Dir).contentRecursiveFiles()) e.name => e];
 	}
 	
 	@:async
@@ -78,7 +78,7 @@ class TplSystem
 	public inline function exists(n:String):Bool return pages.exists(n);
 	
 	public static function parseManifest(f:File):Manifest {
-		var x:Fast = XMLTools.fast(f);
+		var x:Fast = XMLTools.fast(f.content).node.manifest;
 		var g = function(n:String) return x.hasNode.resolve(n) ? StringTools.trim(x.node.resolve(n).innerData) : null;
 		return {
 			title: g('title'),
@@ -122,7 +122,9 @@ class PagesPut extends TplPut<TplSystem, {}> {
 			}
 			var d:TplDir = data.includes;
 			if (d.exists(arg)) {
-				var c:String = @await kid.tplData(content);
+				var c:String = null;
+				if (kid != null) c = @await kid.tplData(content);
+				else c = @await tplData(content);
 				return @await d.gen(arg, null, new IncludePut({content: c, args: args}, null, kid));
 			}
 			else

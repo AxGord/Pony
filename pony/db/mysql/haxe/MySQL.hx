@@ -62,7 +62,10 @@ class MySQL extends SQLBase
 		if (config.user == null) config.user = 'root';
 		if (config.password == null) config.password = '';
 		connection = Mysql.connect( { host:config.host, port:config.port, user:config.user, pass:config.password, database:config.database } );
-	 	action(Const.createDB + config.database, "create database", init);
+		action('SET NAMES utf8', function(b:Bool) {
+			if (b) action(Const.createDB + config.database, "create database", init);
+		} );
+		
 	}
 	
 	private function init(r:Bool):Void if (r) connected.end();

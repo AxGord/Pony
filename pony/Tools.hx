@@ -98,6 +98,16 @@ class Tools {
 		return macro $b{acc};
 	}
 	
+	static public function randomString(string_length:Int = 36):String {
+		var chars:String = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz";
+		var randomstring:String = '';
+		for (i in 0...string_length) {
+			var rnum:Int = Math.floor(Math.random() * chars.length);
+			randomstring += chars.charAt(rnum);
+		}
+		return randomstring;
+	}
+	
 	/**
 	 * Compare two value
 	 * @author	deep <system.grand@gmail.com>

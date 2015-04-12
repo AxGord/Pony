@@ -25,34 +25,46 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.text.tpl;
-import pony.fs.Dir;
-import pony.fs.File;
-import pony.text.tpl.Tpl;
-import pony.text.tpl.TplData.TplStyle;
+package pony.net.http;
 
 /**
- * TplDir
+ * Cookie
  * @author AxGord
  */
-@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
-class TplDir
+
+class Cookie
 {
-	private var h:Map<String,Tpl>;
+	private var oldCookie:Map<String, String>;
+	private var newCookie:Map<String, String>;
 	
-	public function new(dir:Dir, ?c:Class<ITplPut>, o:Dynamic, ?s:TplStyle)
+	public function new(cookie:String)
 	{
-		
-		h = [for (f in dir.contentRecursiveFiles('.tpl'))
-			(f.fullDir.toString().length > dir.toString().length ?
-			f.fullDir.toString().substr(dir.toString().length+1) + '/' : '') + f.shortName => new Tpl(c, o, f.content)];
-			
+		newCookie = new Map<String, String>();
+		oldCookie = new Map<String, String>();
+		if (cookie != null) {
+			var a:Array<String> = cookie.split(';');
+			for (e in a) {
+				var kv:Array<String> = e.split('=');
+				oldCookie.set(kv[0], kv[1]);
+			}
+		}
 	}
 	
-	inline public function gen(n:String, ?d:Dynamic, ?p:Dynamic, cb:String->Void):Void {
-		return h[n].gen(d, p, cb);
+	public function toString():String {
+		var s:String = '';
+		for (k in newCookie.keys()) {
+			s += k + '=' + newCookie.get(k) + ';HttpOnly;';
+		}
+		return s;
 	}
 	
-	public inline function exists(n:String):Bool return h.exists(n);
+	public function get(name:String):String {
+		if (newCookie.exists(name))
+			return newCookie.get(name);
+		else
+			return oldCookie.get(name);
+	}
+	
+	inline public function set(name:String, value:String):Void newCookie.set(name, value);
 	
 }
