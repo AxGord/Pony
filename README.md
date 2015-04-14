@@ -1,8 +1,8 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/83l5njueb4k0ns60?svg=true)](https://ci.appveyor.com/project/AxGord/pony)
 <h1>Pony</h1>
 Haxe open-cross-library
-<p><small>Ready for <a href="http://haxe.org/">Haxe 3.1</a> and <a href="https://github.com/proletariatgames/HUGS">HUGS</a></small></p>
-<p><small>v0.2.1</small></p>
+<p><small>Ready for <a href="http://haxe.org/">Haxe 3.1.3</a> and <a href="https://github.com/proletariatgames/HUGS">HUGS</a></small></p>
+<p><small>v0.3.0</small></p>
 
 <h2>Installation</h2>
 <p>Stable version</p>
@@ -10,7 +10,6 @@ Haxe open-cross-library
 <p>Unstable version</p>
 <pre>haxelib git pony https://github.com/AxGord/Pony</pre>
 <p>Last Haxe build: <a href="http://hxbuilds.s3-website-us-east-1.amazonaws.com/builds/haxe/windows/haxe_latest.tar.gz">haxe_latest.tar.gz</a></p>
-<p>Recommended Haxe build: <a href="http://hxbuilds.s3-website-us-east-1.amazonaws.com/builds/haxe/windows/haxe_2014-12-08_development_7a39b8f.tar.gz">haxe_2014-12-08_development_7a39b8f.tar.gz</a></p>
 
 <h2>Manual</h2>
 - <a href="http://axgord.github.io/Pony/#signals">Signals</a>
