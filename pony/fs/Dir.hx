@@ -44,11 +44,13 @@ abstract Dir(Unit) from Unit {
 		this = v;
 	}
 		
-	public function content(?filter:String):Array<Unit> {
+	public function content(?filter:String, allowDir:Bool = false):Array<Unit> {
 		var result:Map<String, Unit> = new Map<String, Unit>();
 		for (d in this) {
 			if (d.exists) for (e in FileSystem.readDirectory(d.first)) {
-				if (!result.exists(e) && (filter == null || e.substr(-filter.length) == filter))
+				if (!result.exists(e) &&
+						(filter == null || e.substr( -filter.length) == filter ||
+						(allowDir && FileSystem.isDirectory(d + '/' + e))))
 					result[e] = [for (d in this.wayStringIterator()) d + '/' + e];
 			}
 		}
@@ -64,7 +66,7 @@ abstract Dir(Unit) from Unit {
 	
 	public function contentRecursiveFiles(?filter:String):Array<File> {
 		var result:Array<File> = [];
-		for (u in content(filter)) {
+		for (u in content(filter, true)) {
 			if (u.isDir) {
 				result = result.concat(u.dir.contentRecursiveFiles(filter));
 			} else {

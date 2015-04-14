@@ -123,7 +123,8 @@ class LangTable
 		if (i == -1) return text;
 		if (!h.exists(to))
 			to = defaultLang;
-		var r:String = h.get(to)[i];
+		var a = h.get(to);
+		var r:String = a[i];
 		return s == text ? r : r.smallFirst();
 	}
 	

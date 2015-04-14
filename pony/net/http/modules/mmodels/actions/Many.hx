@@ -52,7 +52,6 @@ class ManyPut extends pony.text.tpl.TplPut<Many, CPQ> {
 	@:async
 	override public function tag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String
 	{
-		datad.
 		var a:Array<Dynamic> = @await data.call([]);
 		if (args.exists('!'))
 			return a.length == 0 ? @await parent.tplData(content) : '';
