@@ -27,45 +27,35 @@
 **/
 package pony.geom;
 
-typedef Point_<T> = { x:T, y:T }
-
 /**
- * Point / IntPoint
+ * GeomTools
  * @author AxGord
  */
-abstract Point<T>(Point_<T>) from Point_<T> to Point_<T> {
-	public var x(get, set):T;
-	public var y(get, set):T;
-	inline public function new(x:T, y:T) this = { x:x, y:y };
-	inline private function get_x():T return this.x;
-	inline private function get_y():T return this.y;
-	inline private function set_x(v:T):T return this.x = v;
-	inline private function set_y(v:T):T return this.y = v;
+class GeomTools 
+{
+	
+	public static function inPoly<T:Float>(point:Point<T>, poly:Polygon<T>):Bool {		
+		var xp = [];
+		var yp = [];
+		//Maybe use poly direct?
+		for (p in poly) {
+			xp.push(p.x);
+			yp.push(p.y);
+		}
+		var x = point.x;
+		var y = point.y;
+		var npol = xp.length;
+		var j = npol - 1;
+		var c = false;
+		for (i in 0...npol){
+			if ((((yp[i]<=y) && (y<yp[j])) || ((yp[j]<=y) && (y<yp[i]))) &&
+				(x > (xp[j] - xp[i]) * (y - yp[i]) / (yp[j] - yp[i]) + xp[i])) {
+				c = !c;
+			}
+			j = i;
+		}
+		return c;
+	}
 }
-
-abstract IntPoint(Point_<Int>) to Point_<Int> from Point_<Int> {
-	
-	public var x(get, never):Int;
-	public var y(get, never):Int;
-	
-	public function new(x:Int, y:Int) this = {x:x, y:y};
-	
-	@:op(A + B) inline static public function add1(lhs:IntPoint, rhs:Point<Int>):IntPoint
-		return { x:lhs.getX() + rhs.x, y:lhs.getY() + rhs.y };
-		
-	@:op(A + B) inline static public function add2(lhs:IntPoint, rhs:IntPoint):IntPoint
-		return { x:lhs.getX() + rhs.getX(), y:lhs.getY() + rhs.getY() };
-		
-	@:op(A - B) inline static public function m1(lhs:IntPoint, rhs:Point<Int>):IntPoint
-		return { x:lhs.getX() - rhs.x, y:lhs.getY() - rhs.y };
-		
-	@:op(A - B) inline static public function m2(lhs:IntPoint, rhs:IntPoint):IntPoint
-		return { x:lhs.getX() - rhs.getX(), y:lhs.getY() - rhs.getY() };
-		
-	private inline function get_x():Int return this.x;
-	private inline function get_y():Int return this.y;
-	public inline function getX():Int return this.x;
-	public inline function getY():Int return this.y;
-	
-	@:from static public inline function fromRect(r:Rect<Int>):IntPoint return { x: r.x, y: r.y };
-}
+//todo:
+//abstract _Poly<T>(Pair<Array<T>>, Point<Array<T>>>)

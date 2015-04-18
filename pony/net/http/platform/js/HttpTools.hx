@@ -25,47 +25,37 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.geom;
-
-typedef Point_<T> = { x:T, y:T }
+package pony.net.http.platform.js;
+import js.Browser;
+import js.html.Node;
+import pony.Queue;
 
 /**
- * Point / IntPoint
+ * HttpTools
  * @author AxGord
  */
-abstract Point<T>(Point_<T>) from Point_<T> to Point_<T> {
-	public var x(get, set):T;
-	public var y(get, set):T;
-	inline public function new(x:T, y:T) this = { x:x, y:y };
-	inline private function get_x():T return this.x;
-	inline private function get_y():T return this.y;
-	inline private function set_x(v:T):T return this.x = v;
-	inline private function set_y(v:T):T return this.y = v;
-}
-
-abstract IntPoint(Point_<Int>) to Point_<Int> from Point_<Int> {
+class HttpTools 
+{
 	
-	public var x(get, never):Int;
-	public var y(get, never):Int;
+	private static var snode:Node;
+	private static var getJsonQueue:Queue < String->(Dynamic->Void)->Void > = new Queue(_getJson);
 	
-	public function new(x:Int, y:Int) this = {x:x, y:y};
+	inline private static function regcb(cb:Dynamic->Void) untyped Browser.window.ponyCallbackFunc = cb;
 	
-	@:op(A + B) inline static public function add1(lhs:IntPoint, rhs:Point<Int>):IntPoint
-		return { x:lhs.getX() + rhs.x, y:lhs.getY() + rhs.y };
-		
-	@:op(A + B) inline static public function add2(lhs:IntPoint, rhs:IntPoint):IntPoint
-		return { x:lhs.getX() + rhs.getX(), y:lhs.getY() + rhs.getY() };
-		
-	@:op(A - B) inline static public function m1(lhs:IntPoint, rhs:Point<Int>):IntPoint
-		return { x:lhs.getX() - rhs.x, y:lhs.getY() - rhs.y };
-		
-	@:op(A - B) inline static public function m2(lhs:IntPoint, rhs:IntPoint):IntPoint
-		return { x:lhs.getX() - rhs.getX(), y:lhs.getY() - rhs.getY() };
-		
-	private inline function get_x():Int return this.x;
-	private inline function get_y():Int return this.y;
-	public inline function getX():Int return this.x;
-	public inline function getY():Int return this.y;
+	public static function getJson(url:String, cb:Dynamic->Void):Void getJsonQueue.call(url, cb);
 	
-	@:from static public inline function fromRect(r:Rect<Int>):IntPoint return { x: r.x, y: r.y };
+	private static function _getJson(url:String, cb:Dynamic->Void):Void {
+		regcb(function(r:Dynamic) {
+			Browser.document.getElementsByTagName("head")[0].removeChild(snode);
+			snode = null;
+			regcb(null);
+			cb(r);
+			getJsonQueue.next();
+		});
+		var script = Browser.document.createElement('SCRIPT');
+		url += '&callback=ponyCallbackFunc';
+		untyped script.src = url;
+		snode = Browser.document.getElementsByTagName("head")[0].appendChild(script);
+	}
+	
 }

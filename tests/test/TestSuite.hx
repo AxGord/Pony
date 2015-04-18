@@ -5,6 +5,7 @@ import events.ListenerTest;
 import events.SignalTest;
 import fs.UnitTest;
 import FunctionTest;
+import geom.GeomToolsTest;
 import LoaderTest;
 import magic.BindableTest;
 import magic.DeclaratorTest;
@@ -49,6 +50,7 @@ class TestSuite extends massive.munit.TestSuite
 		add(events.SignalTest);
 		add(fs.UnitTest);
 		add(FunctionTest);
+		add(geom.GeomToolsTest);
 		add(LoaderTest);
 		add(magic.BindableTest);
 		add(magic.DeclaratorTest);
