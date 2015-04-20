@@ -56,6 +56,26 @@ class GeomTools
 		}
 		return c;
 	}
+	
+	public static function countInPoly<T:Float>(points:Array<Point<T>>, poly:Polygon<T>):Int {
+		var i:Int = 0;
+		for (p in points) if (inPoly(p, poly)) i++;
+		return i;
+	}
+	
+	inline public static function rectInPoly<T:Float>(rect:Rect<T>, poly:Polygon<T>):Int {
+		return countInPoly(rectToPoints(rect), poly);
+	}
+	
+	inline public static function rectToPoints<T:Float>(rect:Rect<T>):Array<Point<T>> {
+		return [
+			new Point<T>(rect.x, rect.y),
+			new Point<T>(rect.x+rect.width, rect.y),
+			new Point<T>(rect.x+rect.width, rect.y+rect.height),
+			new Point<T>(rect.x, rect.y+rect.height)
+		];
+	}
+	
 }
 //todo:
 //abstract _Poly<T>(Pair<Array<T>>, Point<Array<T>>>)
