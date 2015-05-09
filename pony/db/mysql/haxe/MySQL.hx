@@ -74,12 +74,12 @@ class MySQL extends SQLBase
 	 * Make action, query with boolean result
 	 */
 	public function action(q:String, ?actName:String, ?p:PosInfos, _result:Bool->Void):Void {
-		_log(q);
+		_log(q, p);
 		try {
 			connection.request(q);
 			_result(true);
 		} catch (err:Dynamic) {
-			_error(actName == null ? Std.string(err) : "Can't "+actName+': ' + err.stack, p);
+			_error(actName == null ? Std.string(err) : "Can't " + actName+': ' + Std.string(err), p);
 			_result(false);
 		}
 		
@@ -144,7 +144,7 @@ class MySQL extends SQLBase
 	/**
 	 * Escape id (for fields, tables, databases)
 	 */
-	inline public function escapeId(s:String):String return /*'`'+*/connection.escape(s)/*+'`'*/;
+	inline public function escapeId(s:String):String return '`'+connection.escape(s)+'`';
 	/**
 	 * Escape (for values)
 	 */

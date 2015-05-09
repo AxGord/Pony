@@ -4,6 +4,7 @@ import pony.events.Signal;
 import pony.events.Signal1;
 import pony.flash.FLTools;
 import pony.flash.SongPlayerCore;
+import pony.time.DeltaTime;
 import pony.touchManager.TouchEventType;
 import pony.touchManager.TouchManager;
 import pony.touchManager.TouchManagerEvent;
@@ -43,7 +44,7 @@ class StarlingSongPlayer extends Sprite {
 		volume = untyped source.getChildByName("volume");
 		tTime = untyped source.getChildByName("tTime");
 		
-		FLTools.init < init;
+		DeltaTime.fixedUpdate < init;
 		core = new SongPlayerCore();
 		core.onPlay << function() bPlay.core.mode = 2;
 		core.onPause << function() bPlay.core.mode = 0;

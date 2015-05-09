@@ -4,6 +4,7 @@ import flash.geom.Rectangle;
 import pony.events.Signal;
 import pony.flash.FLTools;
 import pony.flash.ui.IScrollBar;
+import pony.time.DeltaTime;
 import pony.touchManager.TouchEventType;
 import pony.touchManager.TouchManager;
 import pony.touchManager.TouchManagerEvent;
@@ -69,7 +70,7 @@ class StarlingScrollBar extends Sprite implements pony.flash.FLSt implements ISc
 		_position = 0;
 		isVert = width < height;
 		
-		FLTools.init < init;
+		DeltaTime.fixedUpdate < init;
 	}
 	
 	private function init():Void {

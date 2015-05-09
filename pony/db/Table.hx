@@ -168,6 +168,15 @@ class Table implements Dynamic < Table > implements Declarator implements Ninja
 		mysql.action('INSERT INTO $table (' + keys.join(', ') + ') VALUES (' + values.join(', ') + ')', 'insert', p, cb);
 	}
 	
+	/**
+	 * Update data it table
+	 */
+	public function update(data:Map<String, DBV>, cb:Bool->Void, ?p:PosInfos):Void {
+		var set = [for (f in data.keys()) mysql.escapeId(f) + '=' + data[f].get(mysql.escape)];
+		mysql.action('UPDATE $table SET ' + set.join(', ') + _where, cb);
+	}
+	 
+	 
 	#end
 	
 	/**

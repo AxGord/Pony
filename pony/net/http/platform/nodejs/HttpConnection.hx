@@ -145,8 +145,10 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 	
 	private function writeCookie():Void {
 		var s:String = cookie.toString();
-		if (s != '')
+		if (s != '') {
 			res.setHeader('Set-Cookie', s);
+			res.setHeader('Cookie Domain', host);
+		}
 		end = true;
 	}
 	

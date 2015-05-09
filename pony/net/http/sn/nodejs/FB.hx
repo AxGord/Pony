@@ -25,46 +25,52 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.net.http;
+package pony.net.http.sn.nodejs;
+import js.Node;
+import pony.net.http.sn.FBData;
+import pony.net.http.sn.IFB;
 
 /**
- * Cookie
+ * FB
  * @author AxGord
  */
-
-class Cookie
+class FB implements IFB
 {
-	private var oldCookie:Map<String, String>;
-	private var newCookie:Map<String, String>;
+	public var fb:Dynamic;
 	
-	public function new(?cookie:String, ?mapCookie:Map<String,String>)
+	public function new(appid:String, secret:String = '') 
 	{
-		newCookie = new Map<String, String>();
-		oldCookie = new Map<String, String>();
-		if (cookie != null) {
-			var a:Array<String> = cookie.split(';');
-			for (e in a) {
-				var kv:Array<String> = e.split('=');
-				oldCookie.set(kv[0], kv[1]);
-			}
-		} else if (mapCookie != null) oldCookie = mapCookie;
+		fb = Node.require('fb');
 	}
 	
-	public function toString():String {
-		var s:String = '';
-		for (k in newCookie.keys()) {
-			s += k + '=' + newCookie.get(k) + ';HttpOnly;';
+	inline public function api(token:String, r:String, cb:Dynamic->Void):Void {
+		if (token == null) cb(null);
+		else {
+			fb.setAccessToken(token);
+			fb.api(r, cb);
 		}
-		return s;
 	}
 	
-	public function get(name:String):String {
-		if (newCookie.exists(name))
-			return newCookie.get(name);
-		else
-			return oldCookie.get(name);
+	public function me(token:String, cb:FBData->Void):Void {
+		api(token, '/me', function(res) {
+			if(res == null || res.error != null) {
+				cb(null);
+			} else {
+				cb({
+					id: res.id,
+					email: res.email,
+					first_name: res.first_name,
+					isMale: res.gender == 'male',
+					last_name: res.last_name,
+					name: res.name,
+					link: res.link,
+					locale: res.locale,
+					timezone: Std.parseInt(res.timezone),
+					updated_time: res.updated_time,
+					verified: res.verified == 'true'
+				});
+			}
+		});
 	}
-	
-	inline public function set(name:String, value:String):Void newCookie.set(name, value);
 	
 }

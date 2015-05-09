@@ -38,7 +38,7 @@ import pony.text.tpl.TplPut;
 import pony.text.tpl.ITplPut;
 
 typedef Defaults = { template: String, lang: String }
-typedef CPQ = {connection: IHttpConnection, page: String, query: Array<String>, template: TplSystem, lang: String}
+typedef CPQ = {connection: IHttpConnection, page: String, query: Array<String>, template: TplSystem, lang: String, data:Map<String, Dynamic>}
 
 /**
  * WebServer
@@ -66,7 +66,7 @@ class WebServer
 		if (connection.end) return;
 		if (connection.url != '' && sendStatic(connection)) return;
 		
-		var cpq:CPQ = {connection: connection, page: '', query: [], template: tpl.get(defaults.template), lang: defaults.lang};
+		var cpq:CPQ = {connection: connection, page: '', query: [], template: tpl.get(defaults.template), lang: defaults.lang, data: new Map<String,Dynamic>()};
 		
 		for (m in modules)
 			if (m.connect(cpq)) return;

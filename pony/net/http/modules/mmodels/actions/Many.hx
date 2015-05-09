@@ -106,6 +106,7 @@ class ManyPutSub extends Valuator<ManyPut, Dynamic> {
 	@:async
 	override public function tag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String
 	{
+		if (data.data.model.columns.exists(name)) return '%$name%';
 		var c = data.data.model.columns[name];
 		if (c.tplPut != null) {
 			var o = Type.createInstance(c.tplPut, [c, datad, this]);
@@ -117,6 +118,7 @@ class ManyPutSub extends Valuator<ManyPut, Dynamic> {
 	@:async
 	override public function shortTag(name:String, arg:String, ?kid:ITplPut):String 
 	{
+		if (!data.data.model.columns.exists(name)) return '%$name%';
 		var c = data.data.model.columns[name];
 		if (c.tplPut != null) {
 			var o = Type.createInstance(c.tplPut, [c, datad, this]);

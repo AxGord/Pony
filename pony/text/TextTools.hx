@@ -64,8 +64,24 @@ class TextTools {
 		return macro $v{s};
 	}
 	
+	macro public static function includeFileFromCurrentDir(file:String):Expr {
+		var f:String = Context.getPosInfos(Context.currentPos()).file;
+		f = sys.FileSystem.fullPath(f).split('\\').slice(0, -1).join('/') + '/';
+		var s:String = sys.io.File.getContent(f+file);
+		return macro $v{s};
+	}
+	
 	macro public static function includeJson(file:String):Expr {
 		var s:String = sys.io.File.getContent(file);
+		var d:Dynamic = haxe.Json.parse(s);
+		var z:String = Serializer.run(d);
+		return macro $v{z};
+	}
+	
+	macro public static function includeJsonFromCurrentDir(file:String):Expr {
+		var f:String = Context.getPosInfos(Context.currentPos()).file;
+		f = sys.FileSystem.fullPath(f).split('\\').slice(0, -1).join('/') + '/';
+		var s:String = sys.io.File.getContent(f+file);
 		var d:Dynamic = haxe.Json.parse(s);
 		var z:String = Serializer.run(d);
 		return macro $v{z};

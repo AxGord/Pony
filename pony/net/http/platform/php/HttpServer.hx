@@ -16,8 +16,9 @@ class HttpServer
 		connection.sendText('Hell world');
 	}
 	
-	public function run():Void {
-		request(new HttpConnection());
+	public function run(storage:ServersideStorageDB):Void {
+		request(new HttpConnection(storage));
+		storage.save();
 	}
 	
 }

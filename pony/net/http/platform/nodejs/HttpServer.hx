@@ -75,13 +75,23 @@ class HttpServer
 					var o:Dynamic = Node.require('querystring').parse(s);
 					for (f in o.fields())
 						h.set(f, o.field(f));
-						
-					var a:Dynamic = untyped me.server.address();
-					me.request(new HttpConnection('http://' + a.address + ':' + a.port + req.url, me.storage, req, res, h));
+					
+					var host = if (req.headers.host != null) {
+						req.headers.host;
+					} else {
+						var a:Dynamic = untyped me.server.address();
+						a.address + ':' + a.port;
+					}
+					me.request(new HttpConnection('http://' + host + req.url, me.storage, req, res, h));
 				});
 			case 'GET':
-				var a:Dynamic = untyped server.address();
-				request(new HttpConnection('http://' + a.address + ':' + a.port + req.url, storage, req, res, new Map<String, String>()));
+				var host = if (req.headers.host != null) {
+					req.headers.host;
+				} else {
+					var a:Dynamic = untyped me.server.address();
+					a.address + ':' + a.port;
+				}
+				request(new HttpConnection('http://' + host + req.url, storage, req, res, new Map<String, String>()));
 			case 'OPTIONS':
 				res.setHeader('Allow', 'POST, GET');
 				res.end();

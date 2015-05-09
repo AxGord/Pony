@@ -25,46 +25,59 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.net.http;
+package pony.net.http.sn.php;
+import pony.net.http.sn.FBData;
 
 /**
- * Cookie
+ * FB
  * @author AxGord
  */
-
-class Cookie
+class FB implements IFB
 {
-	private var oldCookie:Map<String, String>;
-	private var newCookie:Map<String, String>;
-	
-	public function new(?cookie:String, ?mapCookie:Map<String,String>)
+
+	public function new(appid:String, secret:String = '', sdk:String = "facebook-php-sdk-v4/autoload.php") 
 	{
-		newCookie = new Map<String, String>();
-		oldCookie = new Map<String, String>();
-		if (cookie != null) {
-			var a:Array<String> = cookie.split(';');
-			for (e in a) {
-				var kv:Array<String> = e.split('=');
-				oldCookie.set(kv[0], kv[1]);
-			}
-		} else if (mapCookie != null) oldCookie = mapCookie;
+		var f = Sys.executablePath();
+		f = sys.FileSystem.fullPath(f).split('\\').slice(0, -1).join('/') + '/';
+		untyped __call__("require_once", f + sdk);
+		untyped __call__("\\Facebook\\FacebookSession::setDefaultApplication", appid, secret);
 	}
 	
-	public function toString():String {
-		var s:String = '';
-		for (k in newCookie.keys()) {
-			s += k + '=' + newCookie.get(k) + ';HttpOnly;';
+	inline public function api(token:String, r:String, cb:Dynamic->Void):Void {
+		if (token == null) {
+			cb(null);
+			return;
 		}
-		return s;
+		var graphObject = null;
+		try {
+			var session = untyped __call__("new \\Facebook\\FacebookSession", token);
+			var request = untyped __call__("new \\Facebook\\FacebookRequest", session, 'GET', r);
+			var response = request.execute();
+			graphObject = response.getGraphObject();
+		} catch (_:Dynamic) {}
+		cb(graphObject);
 	}
 	
-	public function get(name:String):String {
-		if (newCookie.exists(name))
-			return newCookie.get(name);
-		else
-			return oldCookie.get(name);
+	public function me(token:String, cb:FBData->Void):Void {
+		api(token, '/me', function(res) {
+			if(res == null || res.error != null) {
+				cb(null);
+			} else {
+				cb({
+					id: res.getProperty('id'),
+					email: res.getProperty('email'),
+					first_name: res.getProperty('first_name'),
+					isMale: res.getProperty('gender') == 'male',
+					last_name: res.getProperty('last_name'),
+					name: res.getProperty('name'),
+					link: res.getProperty('link'),
+					locale: res.getProperty('locale'),
+					timezone: Std.parseInt(res.getProperty('timezone')),
+					updated_time: res.getProperty('updated_time'),
+					verified: res.getProperty('verified') == 'true'
+				});
+			}
+		});
 	}
-	
-	inline public function set(name:String, value:String):Void newCookie.set(name, value);
 	
 }

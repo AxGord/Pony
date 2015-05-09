@@ -7,10 +7,12 @@ import pony.fs.File;
  */
 class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnection {
 
-	public function new() 
+	public function new(storage:ServersideStorageDB) 
 	{
 		post = new Map();
-		super('http://server'+php.Web.getURI());
+		super('http://' + php.Web.getHostName() + php.Web.getURI()+'?'+php.Web.getParamsString());
+		cookie = new Cookie(php.Web.getCookies());
+		sessionStorage = storage.getClient(cookie);
 	}
 	
 	public function sendFile(file:File):Void {
@@ -26,11 +28,37 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 		untyped __call__('exit');
 		
 	}
-	public function endAction():Void {}
-	public function error(?message:String):Void php.Lib.print('Error '+(message!=null?message:''));
+	public function endAction():Void {
+		writeCookie();
+		php.Web.setHeader('Location', '/'+url);
+		php.Web.setHeader('Cache-Control', 'private');
+		php.Web.setReturnCode(302);
+		php.Lib.print('<html><body><a href=".">Click here</a></body></html>');
+		end = true;
+		
+	}
+	public function error(?message:String):Void {
+		php.Lib.print('Error '+(message!=null?message:''));
+		end = true;
+	}
 	public function sendHtml(text:String):Void {
+		writeCookie();
 		php.Web.setHeader('Content-Type', 'text/html; charset=utf-8');
 		php.Lib.print(text);
+		end = true;
 	}
-	public function sendText(text:String):Void php.Lib.print(text);
+	public function sendText(text:String):Void {
+		writeCookie();
+		php.Lib.print(text);
+		end = true;
+	}
+	
+	private function writeCookie():Void {
+		var s:String = cookie.toString();
+		if (s != '') {
+			php.Web.setHeader('Set-Cookie', s);
+			php.Web.setHeader('Cookie Domain', host);
+		}
+		end = true;
+	}
 }
