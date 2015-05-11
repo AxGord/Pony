@@ -28,6 +28,7 @@
 package pony.net.http.modules.mfb;
 import pony.fs.Dir;
 import pony.net.http.IModule;
+import pony.net.http.ModuleConnect;
 import pony.net.http.sn.FB;
 import pony.net.http.sn.FBData;
 import pony.net.http.WebServer.CPQ;
@@ -44,7 +45,7 @@ import pony.text.tpl.TplPut;
  */
 class MFB implements IModule
 {
-	static public var fb:FB;
+	public var fb:FB;
 	
 	public var appid:String;
 	public var server:WebServer;
@@ -72,39 +73,54 @@ class MFB implements IModule
 			cpq.connection.endAction();
 			return true;
 		} else {
+			cpq.data['MFB'] = new MFBConnect(this, cpq);
 			return false;
 		}
 	}
 	
-	public function tpl(d:CPQ, parent:ITplPut):ITplPut {
-		return new MFBPut(this, d, parent);
+	inline public function tpl(cpq:CPQ, parent:ITplPut):ITplPut {
+		return cpq.data['MFB'].tpl(parent);
 	}
 	
-	inline public function getToken(cpq:CPQ):String {
+	
+}
+
+class MFBConnect extends ModuleConnect<MFB>
+{
+
+	public var token(get, set):String;
+	
+	private var data:FBData;
+	
+	inline public function tpl(parent:ITplPut):ITplPut
+		return new MFBPut(this, null, parent);
+	
+	inline private function get_token():String
 		return cpq.connection.sessionStorage['fb_token'];
-	}
 	
-	public function getBaseData(cpq:CPQ, cb:FBData->Void):Void {
-		if (cpq.data.exists('MFB')) {
-			cb(cpq.data['MFB']);
+	inline private function set_token(t:String):String
+		return cpq.connection.sessionStorage['fb_token'] = t;
+	
+	public function getBaseData(cb:FBData->Void):Void {
+		if (data != null) {
+			cb(data);
 		} else {
-			var token = getToken(cpq);
 			if (token == null) {
 				cb(null);
 			} else
-				fb.me(token, function(d:FBData) {
+				base.fb.me(token, function(d:FBData) {
 					if (d == null) {
-						cpq.connection.sessionStorage.set('fb_token', null);
+						token = null;
 						cpq.connection.endAction();
 						return;
 					} else
-						cb(cpq.data['MFB'] = d);
+						cb(data = d);
 				});
 		}
 	}
 	
-	public function getId(cpq:CPQ, cb:String->Void):Void
-		getBaseData(cpq, function(d) cb(d == null?'0':d.id));
+	public function getId(cb:String->Void):Void
+		getBaseData(function(d) cb(d == null?'0':d.id));
 	
 }
 
@@ -123,16 +139,16 @@ class MFBPrePut extends TplPut<MFB, String> {
 }
 
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
-class MFBPut extends TplPut<MFB, CPQ> {
+class MFBPut extends TplPut<MFBConnect, {}> {
 	
 	@:async
 	override public function tag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String
 	{
 		if (name == 'facebook') {
 			if (content == null) {
-				return Std.string(data.getToken(datad));
+				return Std.string(data.token);
 			} else {
-				return @await sub(data, datad, MFBPutSub, content);
+				return @await sub(data, null, MFBPutSub, content);
 			}
 		} else {
 			return @await super.tag(name, content, arg, args, kid);
@@ -142,16 +158,16 @@ class MFBPut extends TplPut<MFB, CPQ> {
 }
 
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
-class MFBPutSub extends TplPut<MFB, CPQ> {
+class MFBPutSub extends TplPut<MFBConnect, {}> {
 	
 	@:async
 	override public function tag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String
 	{
 		if (name == 'ready') {
-			var token = data.getToken(datad);
+			var token = data.token;
 			if (args.exists('!')) {
 				if (token == null) {
-					return @await sub(data, datad, MFBPutSub, content);
+					return @await sub(data, null, MFBPutSub, content);
 				} else {
 					return '';
 				}
@@ -159,7 +175,7 @@ class MFBPutSub extends TplPut<MFB, CPQ> {
 				if (token == null) {
 					return '';
 				} else {
-					return @await sub(data, datad, MFBPutSub, content);	
+					return @await sub(data, null, MFBPutSub, content);	
 				}
 			}
 			
@@ -172,10 +188,10 @@ class MFBPutSub extends TplPut<MFB, CPQ> {
 	override public function shortTag(name:String, arg:String, ?kid:ITplPut):String
 	{
 		return switch (name) {
-			case 'token': Std.string(data.getToken(datad));
-			case 'button': data.getToken(datad) != null ? '' : data.buttonData;
-			case 'appid': data.appid;
-			case 'id': @await data.getId(datad);
+			case 'token': Std.string(data.token);
+			case 'button': data.token != null ? '' : data.base.buttonData;
+			case 'appid': data.base.appid;
+			case 'id': @await data.getId();
 			default: @await super.shortTag(name, arg, kid);
 		}
 	}
