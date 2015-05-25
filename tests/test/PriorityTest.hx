@@ -229,13 +229,37 @@ class PriorityTest
 		Assert.areEqual(p.last, 4);
 	}
 	
-	
 	@Test
 	public function many():Void {
 		var p:Priority<Int> = new Priority<Int>();
 		for (i in 0...500) p.addElement(i,10000+i);
 		var i = 0;
 		for (e in p) Assert.areEqual(e, i++);
+	}
+	
+	@Test
+	public function getPriority():Void {
+		Assert.areEqual(p2.getElementPriority(3), 0);
+		Assert.areEqual(p2.getElementPriority(4), 0);
+		Assert.areEqual(p2.getElementPriority(5), 1);
+		Assert.areEqual(p2.getElementPriority(6), 1);
+		Assert.areEqual(p2.getElementPriority(1), -1);
+		Assert.areEqual(p2.getElementPriority(2), -1);
+	}
+	
+	@Test
+	public function someProblemWithRemoveElementFromHash():Void {
+		var p:Priority<String> = new Priority<String>();
+		p.addElement('E', 50);
+		p.addElement('P', 29);
+		
+		p.removeElement('P');
+		p.removeElement('E');
+		
+		p.addElement('Ch', 1);
+		p.addElement('P', 29);
+		p.addElement('E', 50);
+		Assert.areEqual(p.first, 'Ch');
 	}
 	
 }

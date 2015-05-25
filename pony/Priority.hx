@@ -186,6 +186,23 @@ class Priority<T:Dynamic> {
 		});
 		return s;
 	}
+
+	/**
+	 * @param	e Element
+	 */
+	public function getElementPriority(e:T):Null<Int> {
+		var a = [for (k in hash.keys()) k];
+		a.sort(asort);
+		var i:Int = 0;
+		for (k in a) {
+			var j:Int = hash[k];
+			for (n in i...(i+j)) if (data[n] == e) return k;
+			i += j;
+		}
+		return null;
+	}
+	
+	private function asort(x:Int, y:Int):Int return x - y;
 	
 	/**
 	 * @param	e Element for removing
@@ -193,21 +210,26 @@ class Priority<T:Dynamic> {
 	public function removeElement(e:T):Bool {
 		var i:Int = data.indexOf(e);
 		if (i == -1) return false;
+		
 		for (k in 0...counters.length)
 			if (i < counters[k]) counters[k]--;
 		data.remove(e);
-		var a:Array<Int> = [];
-		for (k in hash.keys())
-			a.push(k);
-		a.sort(function(x:Int, y:Int):Int return x - y);
+		
+		var a:Array<Int> = [for (k in hash.keys()) k];
+		a.sort(asort);
 		for (k in a) {
+			var n = hash.get(k);
 			if (i > 0) {
-				i -= hash.get(k);
+				i -= n;
 			} else {
-				hash.set(k, hash.get(k) - 1);
+				if (n > 1)
+					hash.set(k, n - 1);
+				else
+					hash.remove(k);
 				break;
 			}
 		}
+		
 		if (double) removeElement(e);
 		return true;
 	}
