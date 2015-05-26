@@ -162,8 +162,14 @@ class Priority<T:Dynamic> {
 		counters = null;
 	}
 	
-	public inline function existsElement(element:T):Bool
-		return existsFunction(function(e:T):Bool return e == element);
+	/**
+	 * Set this function for custom compare priority elements
+	 * @param	a
+	 * @param	b
+	 */
+	dynamic public function compare(a:T, b:T):Bool return a == b;
+	
+	public inline function existsElement(element:T):Bool return existsFunction(compare.bind(element));
 	
 	public inline function existsFunction(f:T->Bool):Bool return data.exists(f);
 	
@@ -196,7 +202,7 @@ class Priority<T:Dynamic> {
 		var i:Int = 0;
 		for (k in a) {
 			var j:Int = hash[k];
-			for (n in i...(i+j)) if (data[n] == e) return k;
+			for (n in i...(i+j)) if (compare(data[n], e)) return k;
 			i += j;
 		}
 		return null;
