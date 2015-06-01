@@ -106,7 +106,7 @@ class Priority<T:Dynamic> {
 		data.insert(c, e);
 		for (k in 0...counters.length)
 			if (c < counters[k]) counters[k]++;
-		hash.set(priority, s+1);
+		hash.set(priority, s + 1);
 		return this;
 	}
 	
@@ -131,7 +131,7 @@ class Priority<T:Dynamic> {
 	 * This funcion not crashed if you make operations with Priority object. You can remove and add elements in "for" body.
 	 */
 	public function iterator():Iterator<T> {
-		var n:Int = counters.push(0)-1;
+		var n:Int = counters.push(0) - 1;
 		return {
 			hasNext: function():Bool {
 				if (counters.length < n) counters.push(n);
@@ -151,7 +151,7 @@ class Priority<T:Dynamic> {
 	 */
 	public function clear():Priority<T> {
 		hash = new Map<Int,Int>();
-		data = new Array<T>();
+		data = [];
 		counters = [0];
 		return this;
 	}
@@ -202,7 +202,7 @@ class Priority<T:Dynamic> {
 		var i:Int = 0;
 		for (k in a) {
 			var j:Int = hash[k];
-			for (n in i...(i+j)) if (compare(data[n], e)) return k;
+			for (n in i...(i + j)) if (compare(data[n], e)) return k;
 			i += j;
 		}
 		return null;
@@ -323,7 +323,7 @@ class Priority<T:Dynamic> {
 	 * @return Current element in loop.
 	 */
 	private inline function get_current():T {
-		return if (counters[0] > length) data[0] else if (counters[0] < 1) data[length-1] else data[counters[0]-1];
+		return if (counters[0] > length) data[0] else if (counters[0] < 1) data[length - 1] else data[counters[0] - 1];
 	}
 	
 	/**
@@ -337,7 +337,7 @@ class Priority<T:Dynamic> {
 		}
 		counters[0]--;
 		if (counters[0] < 1) counters[0] = length;
-		return data[counters[0]-1];
+		return data[counters[0] - 1];
 	}
 	
 	/**

@@ -44,7 +44,6 @@ import pony.text.TextTools;
 using Reflect;
 using Lambda;
 
-
 /**
  * Tools
  * @author AxGord
@@ -117,65 +116,54 @@ class Tools {
 	 * @return
 	 */
 	public static function equal(a:Dynamic, b:Dynamic, maxDepth:Int = 1):Bool {
-      if (a == b) return true;
-      if (maxDepth == 0) return false;
-      
-      var type = Type.typeof(a);
-      //trace(type);
-      switch (type) {
-          case TInt, TFloat, TBool, TNull: return false;
-		  case TFunction: 
-			  try {
-				return Reflect.compareMethods(a, b);
-			  } catch (_:Dynamic) {
-				  return false;
-			  }
-          case TEnum(t): 
-            if (t != Type.getEnum(b)) return false;
-          
-			if (Type.enumIndex(a) != Type.enumIndex(b)) return false;
-			
-            var a = Type.enumParameters(a);
-            var b = Type.enumParameters(b);
-            
-            if (a.length != b.length) return false;
-            for (i in 0...a.length) 
-              if (!equal(a[i], b[i], maxDepth-1)) return false;
-            return true;
-          
-          case TObject: if(Std.is(a, Class)) return false;
-          case TUnknown:
-          case TClass(t):
-          
-          if (t == Array) {
-            if (!Std.is(b, Array)) return false;
-          
-            if (a.length != b.length) return false;
-            for (i in 0...a.length) 
-              if (!equal(a[i], b[i], maxDepth-1)) return false;
-            return true;
-          }
-  
-      }
-      // a is Object on Unknown or Class instance
-      switch (Type.typeof(b)) {
-          case TInt, TFloat, TBool, TFunction, TEnum(_), TNull: return false;
-          case TObject: if(Std.is(b, Class)) return false;
-          case TClass(t): if (t == Array) return false;
-          case TUnknown:
-      }
-      
-      var fields:Array<String> = a.fields();
-      //trace(fields);
-      //trace(b.fields());
-      if (fields.length == b.fields().length) {
-        if (fields.length == 0) return true;
-              for (f in fields)
-                  if (!b.hasField(f) || !equal(a.field(f), b.field(f), maxDepth-1))
-                      return false;
-              return true;
-           }
-          return false;
+		if (a == b) return true;
+		if (maxDepth == 0) return false;
+		var type = Type.typeof(a);
+		switch (type) {
+			case TInt, TFloat, TBool, TNull: return false;
+			case TFunction: 
+				try {
+					return Reflect.compareMethods(a, b);
+				} catch (_:Dynamic) {
+					return false;
+				}
+			case TEnum(t): 
+				if (t != Type.getEnum(b)) return false;
+				if (Type.enumIndex(a) != Type.enumIndex(b)) return false;
+				var a = Type.enumParameters(a);
+				var b = Type.enumParameters(b);
+				if (a.length != b.length) return false;
+				for (i in 0...a.length) 
+					if (!equal(a[i], b[i], maxDepth - 1)) return false;
+				return true;
+			case TObject: if (Std.is(a, Class)) return false;
+			case TUnknown:
+			case TClass(t):
+				if (t == Array) {
+					if (!Std.is(b, Array)) return false;
+					if (a.length != b.length) return false;
+					for (i in 0...a.length) 
+						if (!equal(a[i], b[i], maxDepth - 1)) return false;
+					return true;
+				}
+		}
+		// a is Object on Unknown or Class instance
+		switch (Type.typeof(b)) {
+			case TInt, TFloat, TBool, TFunction, TEnum(_), TNull: return false;
+			case TObject: if (Std.is(b, Class)) return false;
+			case TClass(t): if (t == Array) return false;
+			case TUnknown:
+		}
+
+		var fields:Array<String> = a.fields();
+		if (fields.length == b.fields().length) {
+			if (fields.length == 0) return true;
+			for (f in fields)
+				if (!b.hasField(f) || !equal(a.field(f), b.field(f), maxDepth - 1))
+					return false;
+				return true;
+			}
+		return false;
     }
 	
 	public static function superIndexOf<T>(it:Iterable<T>, v:T, maxDepth:Int = 1):Int {
@@ -261,7 +249,7 @@ class Tools {
 	macro public static function currentDir():Expr
 	{
 		var f:String = Context.getPosInfos(Context.currentPos()).file;
-		f = sys.FileSystem.fullPath(f).split('\\').slice(0,-1).join('/')+'/';
+		f = sys.FileSystem.fullPath(f).split('\\').slice(0, -1).join('/') + '/';
 		return macro $v{f};
 	}
 	
@@ -314,7 +302,7 @@ class Tools {
 		for (f in a.fields()) {
 			var d = f.split(delimiter);
 			var obj = result;
-			for (i in 0...d.length-1) {
+			for (i in 0...d.length - 1) {
 				if (obj.hasField(d[i])) {
 					obj = obj.field(d[i]);
 				} else {
@@ -416,15 +404,14 @@ class ArrayTools {
 	
 	inline public static function last<T:Dynamic>(a:Array<T>):T return a[a.length - 1];
 	
-	
 	static public function swap<T>(array:Array<T>, a:Int, b:Int):Array<T> {
 		if (a > b) return swap(array, b, a);
 		else if (a == b) return array;
 		var v1 = array[a];
 		var v2 = array[b];
 		var p1 = a == 0 ? [] : array.slice(0, a);
-		var p2 = array.slice(a+1, b);
-		var p3 = array.slice(b+1);
+		var p2 = array.slice(a + 1, b);
+		var p3 = array.slice(b + 1);
 		p1.push(v2);
 		p2.push(v1);
 		return p1.concat(p2).concat(p3);
