@@ -26,7 +26,7 @@ class MyAbstractBaseClass implements HasAbstract {
 	}
 }
 
-class ChildClass extends MyAbstractBaseClass {
+private class ChildClass extends MyAbstractBaseClass {
 	
 	public function new() {
 		super();
