@@ -37,13 +37,13 @@ class FLStBuilder {
 							kind: FFun( {
 								args: [],
 								ret: t,
-								expr: macro return untyped this[$v{f.name}],
+								expr: macro return untyped getChild($v{f.name}),
 								params: []
 							}),
 							pos: f.pos,
 							access: [AInline, APrivate]
 						});
-						if (allowSet)
+						if (allowSet)//Only flash!
 							fields.push( {
 								name: 'set_'+f.name,
 								kind: FFun( {
