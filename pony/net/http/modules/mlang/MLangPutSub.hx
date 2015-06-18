@@ -25,60 +25,50 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.net.http.modules.mmodels.fields;
+package pony.net.http.modules.mlang;
 
-import pony.db.mysql.Field;
-import pony.db.mysql.Flags;
-import pony.db.mysql.Types;
-import pony.net.http.modules.mmodels.Field;
 import pony.text.tpl.ITplPut;
 import pony.text.tpl.TplData;
+import pony.text.tpl.Valuator;
 
-class FDate extends Field
-{
-
-	public function new(nn:Bool = true)
-	{
-		super();
-		type = Types.INT;
-		len = 10;
-		notnull = nn;
-		tplPut = CDatePut;
-	}
-	
-	override public function create():pony.db.mysql.Field
-	{
-		return {name: name, length: len, type: type, flags: notnull ? [Flags.UNSIGNED, Flags.NOT_NULL] : [Flags.UNSIGNED]};
-	}
-	
-}
-
+/**
+ * MLangPutSub
+ * @author AxGord <axgord@gmail.com>
+ */
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
-class CDatePut extends pony.text.tpl.TplPut<FDate, Dynamic> {
+@:final class MLangPutSub extends Valuator<MLangPut, String> {
 	
 	@:async
-	override public function tag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String 
+	override public function tag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String
 	{
-		var v = Date.fromTime(Std.int(Reflect.field(b, name))*1000);
-		if (content.length == 1) switch content[0] {
-			case TplContent.Text(t) if (t != ''):
-				return DateTools.format(v, StringTools.replace(t,'$','%'));
-			case _:
-				return v.toString();
+		if (name == 'selected') return @await super.tag(name, content, arg, args, kid);
+		else {
+			var r = @await valu(name, arg);
+			if (r != null)
+				return @await super.tag(name, content, arg, args, kid);
+			else
+				return @await parentTag(name, content, arg, args, kid);
+		}
+	}
+	
+	@:async
+	override public function valuBool(name:String):Bool {
+		if (name == 'selected') {
+			return a.a.cpq.lang == b;
 		} else
-			return v.toString();
+			return null;
 	}
 	
 	@:async
-	override public function shortTag(name:String, arg:String, ?kid:ITplPut):String 
-	{
-		return @await tag(name, [], arg, new Map(), kid);
-	}
-	
-	@:async
-	public function html(f:String):String {
-		var v = Date.fromTime(Std.int(Reflect.field(b, f))*1000);
-		return v.toString();
+	override public function valu(name:String, arg:String):String {
+		return switch (name) {
+			case 'name': b;
+			case 'title': a.a.base.langTable.langs.get(b).title;
+			case 'author':
+				var a:String = a.a.base.langTable.langs.get(b).author;
+				a != null ? a : '';
+			default: null;
+		}
 	}
 	
 }

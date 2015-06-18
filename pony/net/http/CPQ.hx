@@ -25,60 +25,54 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.net.http.modules.mmodels.fields;
+package pony.net.http;
+import pony.magic.Declarator;
+import pony.text.tpl.TplSystem;
 
-import pony.db.mysql.Field;
-import pony.db.mysql.Flags;
-import pony.db.mysql.Types;
-import pony.net.http.modules.mmodels.Field;
-import pony.text.tpl.ITplPut;
-import pony.text.tpl.TplData;
+/**
+ * CPQ
+ * @author AxGord <axgord@gmail.com>
+ */
+class CPQ implements Declarator {
 
-class FDate extends Field
-{
-
-	public function new(nn:Bool = true)
-	{
-		super();
-		type = Types.INT;
-		len = 10;
-		notnull = nn;
-		tplPut = CDatePut;
-	}
+	@:arg public var connection: IHttpConnection;
+	public var page: String = '';
+	public var query: Array<String> = [];
+	@:arg public var template: TplSystem;
+	@:arg public var lang: String;
+	public var modules:Map<String, ModuleConnect<IModule>> = new Map<String,ModuleConnect<IModule>>();
 	
-	override public function create():pony.db.mysql.Field
-	{
-		return {name: name, length: len, type: type, flags: notnull ? [Flags.UNSIGNED, Flags.NOT_NULL] : [Flags.UNSIGNED]};
-	}
-	
-}
-
-@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
-class CDatePut extends pony.text.tpl.TplPut<FDate, Dynamic> {
-	
-	@:async
-	override public function tag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String 
-	{
-		var v = Date.fromTime(Std.int(Reflect.field(b, name))*1000);
-		if (content.length == 1) switch content[0] {
-			case TplContent.Text(t) if (t != ''):
-				return DateTools.format(v, StringTools.replace(t,'$','%'));
-			case _:
-				return v.toString();
+	public function run() {
+		var a:Array<String> = connection.url.split('/');
+		var u:Array<String> = [];
+		while (a.length != 0) {
+			var n:String = a.join('/');
+			if (template.exists(n + '/index')) {
+				page = n;
+				query = u;
+				tpl(n+'/index');
+				return;
+			} else if (template.exists(n)) {
+				page = n;
+				query = u;
+				tpl(n);
+				return;
+			} else
+				u.push(a.pop());
+		}
+		if (template.exists('index')) {
+			query = u;
+			tpl('index');
 		} else
-			return v.toString();
+			error('Not exists index.tpl');
 	}
 	
-	@:async
-	override public function shortTag(name:String, arg:String, ?kid:ITplPut):String 
-	{
-		return @await tag(name, [], arg, new Map(), kid);
+	@:extern inline public function tpl(name:String):Void {
+		template.gen(name, this, connection.sendHtml);
 	}
 	
-	@:async
-	public function html(f:String):String {
-		var v = Date.fromTime(Std.int(Reflect.field(b, f))*1000);
-		return v.toString();
+	public function error(message:String):Void {
+		connection.error(message);
 	}
 	
 }

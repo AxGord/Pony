@@ -41,12 +41,6 @@ class Valuator<C1, C2> extends TplPut<C1, C2> {
 	@:async
 	override public function tag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String
 	{
-		return @await super1_tag(name, content, arg, args, kid);
-	}
-	
-	@:async
-	public function super1_tag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String
-	{
 		var b:Bool = @await valuBool(name);
 		if (b != null) {
 			if (args.exists('!'))
@@ -73,20 +67,14 @@ class Valuator<C1, C2> extends TplPut<C1, C2> {
 		}
 	}
 	
-	
 	@:async
-	override public function shortTag(name:String, arg:String, ?kid:ITplPut):String {
-		return @await super1_shortTag(name, arg, kid);
-	}
-	
-	@:async
-	public function super1_shortTag(name:String, arg:String, ?kid:ITplPut):String
+	override public function shortTag(name:String, arg:String, ?kid:ITplPut):String
 	{
 		var v:String = @await valu(name, arg);
 		if (v != null)
 			return v;
 		else
-			return @await super_shortTag(name, arg, kid);
+			return @await super.shortTag(name, arg, kid);
 	}
 	
 	@:async

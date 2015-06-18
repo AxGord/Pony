@@ -25,60 +25,56 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.net.http.modules.mmodels.fields;
+package pony.net.http.modules.mlang;
 
-import pony.db.mysql.Field;
-import pony.db.mysql.Flags;
-import pony.db.mysql.Types;
-import pony.net.http.modules.mmodels.Field;
 import pony.text.tpl.ITplPut;
 import pony.text.tpl.TplData;
+import pony.text.tpl.TplPut;
+import pony.text.tpl.TplSystem.Manifest;
 
-class FDate extends Field
-{
-
-	public function new(nn:Bool = true)
-	{
-		super();
-		type = Types.INT;
-		len = 10;
-		notnull = nn;
-		tplPut = CDatePut;
-	}
-	
-	override public function create():pony.db.mysql.Field
-	{
-		return {name: name, length: len, type: type, flags: notnull ? [Flags.UNSIGNED, Flags.NOT_NULL] : [Flags.UNSIGNED]};
-	}
-	
-}
-
+/**
+ * MLangPut
+ * @author AxGord <axgord@gmail.com>
+ */
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
-class CDatePut extends pony.text.tpl.TplPut<FDate, Dynamic> {
+@:final class MLangPut extends TplPut<MLangConnect, {}> {
 	
 	@:async
-	override public function tag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String 
+	override public function tag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String
 	{
-		var v = Date.fromTime(Std.int(Reflect.field(b, name))*1000);
-		if (content.length == 1) switch content[0] {
-			case TplContent.Text(t) if (t != ''):
-				return DateTools.format(v, StringTools.replace(t,'$','%'));
-			case _:
-				return v.toString();
-		} else
-			return v.toString();
+		if (name == 'l') {
+			if (args.exists('not'))
+				return a.cpq.lang == args.get('not') ? '' : @await tplData(content);
+			else {
+				var d:String = kid != null ? @await kid.tplData(content) : @await tplData(content);
+				return l(d, args);
+			}
+		} else if (name == 'languages') {
+			return @await many(null, a.base.langTable.langs.keys(), MLangPutSub, content, arg);
+		} else if (name == 'language')
+			return @await sub(this, a.cpq.lang, MLangPutSub, content);
+		else
+			return @await super.tag(name, content, arg, args, kid);
 	}
 	
 	@:async
-	override public function shortTag(name:String, arg:String, ?kid:ITplPut):String 
+	override public function shortTag(name:String, arg:String, ?kid:ITplPut):String
 	{
-		return @await tag(name, [], arg, new Map(), kid);
+		switch (name) {
+			case 'language':
+				return a.cpq.lang;
+			case 'languages':
+				return @await TplPut.manyEasy(null, a.base.langTable.langs.keys(), null, arg == null ? ', ' : arg);
+			default:
+				return @await super.shortTag(name, arg, kid);
+		}
 	}
 	
-	@:async
-	public function html(f:String):String {
-		var v = Date.fromTime(Std.int(Reflect.field(b, f))*1000);
-		return v.toString();
+	private function l(d:String, args:Map<String, String>):String {
+		var m:Manifest = a.cpq.template.manifest;
+		var from:String = args.exists('from') ? args.get('from') : (m != null && m.language != null ? m.language : a.base.server.defaults.lang);
+		var to:String = args.exists('to') ? args.get('to') : a.cpq.lang;
+		return a.base.langTable.translate(from, to, d);
 	}
 	
 }

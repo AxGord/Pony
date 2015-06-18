@@ -28,17 +28,15 @@
 package pony.net.http;
 
 import pony.fs.Dir;
-import pony.fs.File;
 import pony.fs.Unit;
 import pony.text.tpl.Templates;
-import pony.text.tpl.TplData;
-import pony.text.tpl.TplSystem;
-import pony.text.tpl.Tpl;
-import pony.text.tpl.TplPut;
-import pony.text.tpl.ITplPut;
 
 typedef Defaults = { template: String, lang: String }
-typedef CPQ = {connection: IHttpConnection, page: String, query: Array<String>, template: TplSystem, lang: String, data:Map<String, Dynamic>}
+enum EConnect {
+	BREAK;
+	NOTREG;
+	REG(m:ModuleConnect<IModule>);
+}
 
 /**
  * WebServer
@@ -66,39 +64,15 @@ class WebServer
 		if (connection.end) return;
 		if (connection.url != '' && sendStatic(connection)) return;
 		
-		var cpq:CPQ = {connection: connection, page: '', query: [], template: tpl.get(defaults.template), lang: defaults.lang, data: new Map<String,Dynamic>()};
-		
-		for (m in modules)
-			if (m.connect(cpq)) return;
-
-		try {
-			var a:Array<String> = connection.url.split('/');
-			var u:Array<String> = [];
-			while (a.length != 0) {
-				var n:String = a.join('/');
-				if (cpq.template.exists(n + '/index')) {
-					cpq.page = n;
-					cpq.query = u;
-					gen(n+'/index', cpq);
-					return;
-				} else if (cpq.template.exists(n)) {
-					cpq.page = n;
-					cpq.query = u;
-					gen(n, cpq);
-					return;
-				} else
-					u.push(a.pop());
+		var cpq = new CPQ(connection, tpl.get(defaults.template), defaults.lang);
+		for (m in modules) {
+			switch m.connect(cpq) {
+				case BREAK: return;
+				case REG(obj): cpq.modules[Type.getClassName(Type.getClass(m))] = obj;
+				case NOTREG:
 			}
-			if (cpq.template.exists('index')) {
-				cpq.query = u;
-				gen('index', cpq);
-			} else
-				throw 'Not exists index.tpl';
-		} /*catch (e:String) {
-			connection.error(e);
-		} catch (e:Dynamic) {
-			connection.error(e);
-		}*/
+		}
+		cpq.run();
 	}
 	
 	private function sendStatic(connection:IHttpConnection):Bool {
@@ -120,37 +94,6 @@ class WebServer
 			}
 		}
 		return false;
-	}
-	
-	private inline function gen(name:String, cpq:CPQ):Void {
-		cpq.template.gen(name, cpq, cpq.connection.sendHtml/*, cpq.connection.error*/);
-	}
-	
-}
-
-@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
-class WebServerPut extends TplPut<WebServer, CPQ> {
-	
-	private var t:ITplPut;
-	
-	public function new(o:WebServer, d:CPQ, parent:ITplPut) {
-		super(o, d, parent);
-		t = parent;
-		for (m in data.modules) {
-			t = m.tpl(datad, t);
-		}
-	}
-	
-	@:async
-	override public function tag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String
-	{
-		return @await t.tag(name, content, arg, args, kid);
-	}
-	
-	@:async
-	override public function shortTag(name:String, arg:String, ?kid:ITplPut):String
-	{
-		return @await t.shortTag(name, arg, kid);
 	}
 	
 }

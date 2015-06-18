@@ -28,6 +28,7 @@
 package pony.net.http;
 
 import pony.fs.File;
+import pony.magic.HasAbstract;
 import pony.text.ParseBoy;
 
 /**
@@ -35,7 +36,7 @@ import pony.text.ParseBoy;
  * @author AxGord
  */
 
-class HttpConnection
+class HttpConnection implements HasAbstract
 {
 	public var method:String;
 	public var post:Map<String, String>;
@@ -51,6 +52,7 @@ class HttpConnection
 
 	public function new(fullUrl:String)
 	{
+		trace(fullUrl);
 		end = false;
 		languages = [];
 		sessionStorage = new Map<String, Dynamic>();
@@ -60,30 +62,51 @@ class HttpConnection
 		protocol = pb.str();
 		pb.gt(['/']);
 		host = pb.str();
-		params = new Map<String, String>();
+		params = null;
 		if (pb.gt(['?']) == 0) {
 			url = pb.str();
-			var loop:Bool = true;
-			while (loop) {
-				switch (pb.gt(['=', '&'])) {
-					case 0:
-						var v:String = pb.str();
-						if (pb.gt(['&']) == -1) loop = false;
-						params.set(v, pb.str());
-					case 1:
-						var p:String = pb.str();
-						if (p != '')
-							params.set(p, null);
-					default:
-						var p:String = pb.str();
-						if (p != '')
-							params.set(p, null);
-						loop = false;
-				}
-			}
-		} else
+			params = parseData(pb);
+		} else {
 			url = pb.str();
+			params = new Map<String, String>();
+		}
 	}
+	
+	private function rePost():Void {
+		if (method == 'POST' && params.exists('re')) {
+			sessionStorage.set('post', post);
+			endAction();
+		} else if (sessionStorage.exists('post')) {
+			post = sessionStorage.get('post');
+			sessionStorage.remove('post');
+		}
+	}
+	
+	@:abstract public function endAction():Void; 
+	
+	private function parseData(pb:ParseBoy<Void>):Map<String, String> {
+		var params = new Map<String, String>();
+		var loop:Bool = true;
+		while (loop) {
+			switch (pb.gt(['=', '&'])) {
+				case 0:
+					var v:String = pb.str();
+					if (pb.gt(['&']) == -1) loop = false;
+					params.set(v, pb.str());
+				case 1:
+					var p:String = pb.str();
+					if (p != '')
+						params.set(p, null);
+				default:
+					var p:String = pb.str();
+					if (p != '')
+						params.set(p, null);
+					loop = false;
+			}
+		}
+		return params;
+	}
+	
 	/*
 	public function sendFile(file:File):Void {
 		

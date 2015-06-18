@@ -73,14 +73,7 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 		}
 		cookie = new Cookie(req.headers.cookie);
 		sessionStorage = storage.getClient(cookie);
-		//re
-		if (method == 'POST' && params.exists('re')) {
-			sessionStorage.set('post', post);
-			endAction();
-		} else if (sessionStorage.exists('post')) {
-			this.post = sessionStorage.get('post');
-			sessionStorage.remove('post');
-		}
+		rePost();
 	}
 	
 	private function langPush(s:String):Void {
@@ -109,7 +102,7 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 		
 	}
 	
-	public function endAction():Void {
+	override public function endAction():Void {
 		writeCookie();
 		res.setHeader('Location', '/'+url);
 		res.setHeader('Cache-Control', 'private');

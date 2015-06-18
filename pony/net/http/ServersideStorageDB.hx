@@ -27,6 +27,7 @@
 **/
 package pony.net.http;
 
+import haxe.ds.IntMap;
 import haxe.Serializer;
 import haxe.Unserializer;
 import pony.db.DBV;
@@ -71,7 +72,7 @@ class ServersideStorageDB implements Declarator
 		orig = new Map<String, Dynamic>();
 		table.select('key','value').where(client == $key).get(function(d) {
 			client = [for (e in d) e.key => Unserializer.run(e.value)];
-			orig = [for (e in d) e.key => Unserializer.run(e.value)];
+			orig = [for (e in d) e.key => e.value];
 		} );//Works only for sync
 		return client;
 	}
@@ -84,9 +85,11 @@ class ServersideStorageDB implements Declarator
 				'value' => (Serializer.run(client[k]):DBV)
 			], function(r) if (!r) throw 'Can\'t save storage');
 		} else {
-			table.where(client == $key && key == $k).update([
-				'value' => (Serializer.run(client[k]):DBV)
-			], function(r) if (!r) throw 'Can\'t save storage');
+			var s = Serializer.run(client[k]);
+			if (s != orig[k])
+				table.where(client == $key && key == $k).update([
+					'value' => (s:DBV)
+				], function(r) if (!r) throw 'Can\'t save storage');
 		}
 	}
 	

@@ -27,6 +27,7 @@
 **/
 package pony.text.tpl;
 
+import pony.magic.SuperPuper;
 import pony.text.tpl.ITplPut;
 import pony.text.tpl.Tpl;
 import pony.text.tpl.TplData.TplShortTag;
@@ -36,17 +37,16 @@ import pony.text.tpl.TplData.TplTag;
  * TplPut
  * @author AxGord
  */
-
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
-class TplPut<T1, T2> implements ITplPut
+class TplPut<T1, T2> implements ITplPut implements SuperPuper
 {
-	public var data:T1;
-	public var datad:T2;
+	public var a:T1;
+	public var b:T2;
 	public var parent:ITplPut = null;
 	
-	public function new(data:T1, datad:T2, parent:ITplPut) {
-		this.data = data;
-		this.datad = datad;
+	public function new(a:T1, b:T2, parent:ITplPut) {
+		this.a = a;
+		this.b = b;
 		this.parent = parent;
 	}
 	
@@ -217,7 +217,7 @@ class TplPut<T1, T2> implements ITplPut
 		return @await o.tag(name, content, arg, na, null);
 	}
 	
-	@:async
+	@:async @:puper
 	public function tag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String {
 		return if (parent == null)
 			@await shortTag(name, arg);
@@ -265,13 +265,8 @@ class TplPut<T1, T2> implements ITplPut
 			return @await tag(name, content, arg, new Map<String, String>());
 	}
 	
-	@:async
+	@:async @:puper
 	public function shortTag(name:String, arg:String, ?kid:ITplPut):String {
-		return @await super_shortTag(name, arg, kid);
-	}
-	
-	@:async
-	public function super_shortTag(name:String, arg:String, ?kid:ITplPut):String {
 		if (parent == null)
 			return '%' + name + '%';
 		else

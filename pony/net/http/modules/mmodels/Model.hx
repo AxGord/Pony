@@ -27,29 +27,23 @@
 **/
 package pony.net.http.modules.mmodels;
 
-
 import haxe.rtti.Meta;
 import pony.db.mysql.Field;
 import pony.db.mysql.Flags;
-import pony.db.mysql.MySQL;
 import pony.db.mysql.Types;
 import pony.db.Table;
-import pony.text.tpl.TplData;
+import pony.net.http.CPQ;
+import pony.net.http.WebServer.EConnect;
+import pony.Pair;
 import pony.text.tpl.ITplPut;
-import pony.net.http.WebServer;
-import pony.Stream;
 
 using pony.Tools;
 using Lambda;
-
 
 enum ActResult {
 	OK; ERROR(e:Map<String, String>); DBERROR;
 }
 
-#if !macro
-@:autoBuild(pony.net.http.modules.mmodels.Builder.build())
-#end
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
 class Model
 {
@@ -59,15 +53,18 @@ class Model
 	public var columns:Map<String, pony.net.http.modules.mmodels.Field>;
 	public var actions:Map<String, Action>;
 	public var db:Table;
+	public var cl:Class<ModelConnect>;
 	
 	public function new(mm:MModels, actionsClasses:Map<String, Dynamic>) {
 		lang = 'en';
 		name = Type.getClassName(Type.getClass(this));
 		name = name.substr(name.lastIndexOf('.')+1);
 		this.mm = mm;
-		var ma:Dynamic<Array<{name: String, type: String}>> = untyped Type.getClass(this).__methoArgs__;
+		var n = Type.getClassName(Type.getClass(this)) + 'Connect';
+		cl = cast Type.resolveClass(n);
+		var ma:Dynamic<Array<{name: String, type: String}>> = untyped cl.__methoArgs__;
 		actions = new Map<String, Action>();
-		var fields:Dynamic = Meta.getFields(Type.getClass(this));
+		var fields:Dynamic = Meta.getFields(cl);
 		for (f in Reflect.fields(fields)) {
 			var ff:Dynamic = Reflect.field(fields, f);
 			for (sf in Reflect.fields(ff))
@@ -140,43 +137,19 @@ class Model
 		throw e;
 	}
 	
-	public function tpl(d:CPQ, parent:ITplPut):ITplPut {
-		return new ModelPut(this, d, parent);
-	}
-	
-	public function connect(cpq:CPQ):Bool {
-		for (a in actions)
-			if (a.connect(cpq)) return true;
-		return false;
-	}
-	
-	public function action(cpq:CPQ, h:Map<String, Map<String, String>>):Bool {
-		for (k in h.keys())
-			if (actions.get(k).action(cpq, h.get(k))) return true;
-		return false;
+	public function connect(cpq:CPQ):EConnect {
+		var mc:ModelConnect = Type.createInstance(cl, [this, cpq]);
+		var a = new Map<String, ActionConnect>();
+		for (k in actions.keys())
+			switch actions[k].connect(cpq, mc) {
+				case BREAK: return BREAK;
+				case REG(obj): a[k] = cast obj;
+				case NOTREG:
+			}
+		mc.actions = a;
+		return REG(cast mc);
 	}
 	
 	inline public static function dbr(r:Bool):ActResult return r ? OK : DBERROR;
-	
-}
-
-@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
-class ModelPut extends pony.text.tpl.TplPut<Model, CPQ> {
-	
-	private var list:Map<String, ITplPut>;
-	
-	public function new(o:Model, d:CPQ, parent:ITplPut) {
-		super(o, d, parent);
-		list = [for (k in data.actions.keys()) k => data.actions[k].tpl(d, parent)];
-	}
-	
-	@:async
-	override public function tag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String
-	{
-		if (list.exists(name))
-			return @await list.get(name).tag(name, content, arg, args, kid);
-		else
-			return @await super.tag(name, content, arg, args, kid);
-	}
 	
 }

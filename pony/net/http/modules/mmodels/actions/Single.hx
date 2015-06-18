@@ -39,22 +39,27 @@ using pony.Tools;
 
 class Single extends Action
 {
+	override public function connect(cpq:CPQ, modelConnect:ModelConnect):EConnect {
+		return REG(cast new SingleConnect(this, cpq, modelConnect));
+	}
+}
 
-	override public function tpl(d:CPQ, parent:ITplPut):ITplPut {
-		return new SinglePut(this, d, parent);
+class SingleConnect extends ActionConnect {
+	
+	override public function tpl(parent:ITplPut):ITplPut {
+		return new SinglePut(this, cpq, parent);
 	}
 	
 }
 
-
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
-class SinglePut extends pony.text.tpl.TplPut<Single, CPQ> {
+@:final class SinglePut extends pony.text.tpl.TplPut<SingleConnect, CPQ> {
 	
 	@:async
 	override public function tag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String
 	{
 		trace(name);
-		var a:Dynamic = @await data.call([]);
+		var a:Dynamic = @await a.call([]);
 		if (args.exists('!'))
 			return a == null ? @await parent.tplData(content) : '';
 		else {
@@ -91,7 +96,7 @@ class SinglePut extends pony.text.tpl.TplPut<Single, CPQ> {
 	
 	@:async
 	private function html(e:Dynamic, f:String):String {
-		var c = data.model.columns[f];
+		var c = a.base.model.columns[f];
 		if (c.tplPut != null) {
 			var o:Dynamic = Type.createInstance(c.tplPut, [c, e, this]);
 			return @await o.html(f);
@@ -109,9 +114,9 @@ class SinglePutSub extends Valuator<SinglePut, Dynamic> {
 	override public function tag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String
 	{
 		trace(name);
-		var c = data.data.model.columns[name];
+		var c = a.a.base.model.columns[name];
 		if (c.tplPut != null) {
-			var o = Type.createInstance(c.tplPut, [c, datad, this]);
+			var o = Type.createInstance(c.tplPut, [c, b, this]);
 			return @await o.tag(name, content, arg, args, kid);
 		} else
 			return @await super1_tag(name, content, arg, args, kid);
@@ -120,9 +125,9 @@ class SinglePutSub extends Valuator<SinglePut, Dynamic> {
 	@:async
 	override public function shortTag(name:String, arg:String, ?kid:ITplPut):String 
 	{
-		var c = data.data.model.columns[name];
+		var c = a.a.base.model.columns[name];
 		if (c.tplPut != null) {
-			var o = Type.createInstance(c.tplPut, [c, datad, this]);
+			var o = Type.createInstance(c.tplPut, [c, b, this]);
 			return @await o.shortTag(name, arg, kid);
 		} else
 			return @await super1_shortTag(name, arg, kid);
@@ -130,8 +135,8 @@ class SinglePutSub extends Valuator<SinglePut, Dynamic> {
 	
 	@:async
 	override public function valu(name:String, arg:String):String {
-		if (Reflect.hasField(datad, name))
-			return Std.string(Reflect.field(datad, name));
+		if (Reflect.hasField(b, name))
+			return Std.string(Reflect.field(b, name));
 		else
 			return null;
 	}

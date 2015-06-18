@@ -43,7 +43,7 @@ class ValuePut extends TplPut < String, {} > {
 	override public function shortTag(name:String, arg:String, ?kid:ITplPut):String
 	{
 		if (name == 'value')
-			return data;
+			return a;
 		else
 			return @await parent.shortTag(name, arg, null);
 	}

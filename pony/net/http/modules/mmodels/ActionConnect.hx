@@ -25,60 +25,58 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.net.http.modules.mmodels.fields;
+package pony.net.http.modules.mmodels;
 
-import pony.db.mysql.Field;
-import pony.db.mysql.Flags;
-import pony.db.mysql.Types;
-import pony.net.http.modules.mmodels.Field;
+import pony.Errors;
+import pony.net.http.CPQ;
+import pony.net.http.ModuleConnect;
+import pony.net.http.modules.mmodels.Model.ActResult;
 import pony.text.tpl.ITplPut;
-import pony.text.tpl.TplData;
 
-class FDate extends Field
-{
-
-	public function new(nn:Bool = true)
-	{
-		super();
-		type = Types.INT;
-		len = 10;
-		notnull = nn;
-		tplPut = CDatePut;
+/**
+ * ActionConnect
+ * @author AxGord <axgord@gmail.com>
+ */
+class ActionConnect extends ModuleConnect<Action> {
+	
+	private var method:Dynamic;
+	private var methodCheck:Dynamic;
+	public var model:ModelConnect;
+	
+	public function new(base:Action, cpq:CPQ, model:ModelConnect) {
+		super(base, cpq);
+		this.model = model;
+		method = Reflect.field(model, base.name);
+		methodCheck = Reflect.field(model, base.name+'Validate');
 	}
 	
-	override public function create():pony.db.mysql.Field
-	{
-		return {name: name, length: len, type: type, flags: notnull ? [Flags.UNSIGNED, Flags.NOT_NULL] : [Flags.UNSIGNED]};
+	override public function tpl(parent:ITplPut):ITplPut {
+		return new ActionPut(base, cpq, parent);
 	}
 	
-}
-
-@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
-class CDatePut extends pony.text.tpl.TplPut<FDate, Dynamic> {
+	public function action(h:Map<String, String>):Bool {
+		return false;
+	}
 	
-	@:async
-	override public function tag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String 
-	{
-		var v = Date.fromTime(Std.int(Reflect.field(b, name))*1000);
-		if (content.length == 1) switch content[0] {
-			case TplContent.Text(t) if (t != ''):
-				return DateTools.format(v, StringTools.replace(t,'$','%'));
-			case _:
-				return v.toString();
+	public function call(args:Array<Dynamic>, cb:Dynamic->Void):Void {
+		Reflect.callMethod(model, method, args.concat([cb]));
+	}
+	
+	public function _callCheck(args:Array<Dynamic>):Errors {	
+		return Reflect.callMethod(model, methodCheck, args);
+	}
+		
+	public function callCheck(args:Array<Dynamic>, cb:ActResult->Void):Void {
+		if (methodCheck != null) {
+			var r = _callCheck(args);
+			if (r.empty()) {
+				call(args, function(b:Bool) cb(b ? OK : DBERROR));
+			} else {
+				cb(ERROR(r.result));
+			}
 		} else
-			return v.toString();
+			call(args, function(b:Bool) cb(b ? OK : DBERROR));
 	}
-	
-	@:async
-	override public function shortTag(name:String, arg:String, ?kid:ITplPut):String 
-	{
-		return @await tag(name, [], arg, new Map(), kid);
-	}
-	
-	@:async
-	public function html(f:String):String {
-		var v = Date.fromTime(Std.int(Reflect.field(b, f))*1000);
-		return v.toString();
-	}
+
 	
 }

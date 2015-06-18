@@ -28,22 +28,19 @@
 package pony.net.http.modules.mfb;
 import pony.fs.Dir;
 import pony.net.http.IModule;
-import pony.net.http.ModuleConnect;
 import pony.net.http.sn.FB;
-import pony.net.http.sn.FBData;
 import pony.net.http.WebServer.CPQ;
+import pony.net.http.WebServer.EConnect;
 import pony.text.TextTools;
 import pony.text.tpl.ITplPut;
 import pony.text.tpl.Tpl;
-import pony.text.tpl.TplData;
 import pony.text.tpl.TplPut;
-
 
 /**
  * MFB
  * @author AxGord
  */
-class MFB implements IModule
+@:final class MFB implements IModule
 {
 	public var fb:FB;
 	
@@ -59,140 +56,36 @@ class MFB implements IModule
 		#end
 		this.appid = appid;
 		var s = TextTools.includeFileFromCurrentDir('mfb.tpl');
-		new Tpl(MFBPrePut, this, s).gen(appid, null, function(r) buttonData = r);
+		new Tpl(MFBPrePut, appid, s).gen(null, null, function(r) buttonData = r);
 	}
 	
 	public function init(dir:Dir, server:WebServer):Void {
 		this.server = server;
 	}
 	
-	public function connect(cpq:CPQ):Bool {
+	public function connect(cpq:CPQ):EConnect {
 		if (cpq.connection.params.exists('fbauth')) {
 			cpq.connection.sessionStorage.set('fb_token', cpq.connection.params['fbauth']);
 			cpq.connection.params.remove('fbauth');
 			cpq.connection.endAction();
-			return true;
+			return BREAK;
 		} else {
-			cpq.data['MFB'] = new MFBConnect(this, cpq);
-			return false;
+			return REG(new MFBConnect(this, cpq));
 		}
 	}
-	
-	inline public function tpl(cpq:CPQ, parent:ITplPut):ITplPut {
-		return cpq.data['MFB'].tpl(parent);
-	}
-	
-	
-}
-
-class MFBConnect extends ModuleConnect<MFB>
-{
-
-	public var token(get, set):String;
-	
-	private var data:FBData;
-	
-	inline public function tpl(parent:ITplPut):ITplPut
-		return new MFBPut(this, null, parent);
-	
-	inline private function get_token():String
-		return cpq.connection.sessionStorage['fb_token'];
-	
-	inline private function set_token(t:String):String
-		return cpq.connection.sessionStorage['fb_token'] = t;
-	
-	public function getBaseData(cb:FBData->Void):Void {
-		if (data != null) {
-			cb(data);
-		} else {
-			if (token == null) {
-				cb(null);
-			} else
-				base.fb.me(token, function(d:FBData) {
-					if (d == null) {
-						token = null;
-						cpq.connection.endAction();
-						return;
-					} else
-						cb(data = d);
-				});
-		}
-	}
-	
-	public function getId(cb:String->Void):Void
-		getBaseData(function(d) cb(d == null?'0':d.id));
 	
 }
 
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
-class MFBPrePut extends TplPut<MFB, String> {
+@:final class MFBPrePut extends TplPut<String,{}> {
 	@:async
 	override public function shortTag(name:String, arg:String, ?kid:ITplPut):String
 	{
 		switch (name) {
 			case 'appid':
-				return datad;
+				return a;
 			case _:
 				return @await super.shortTag(name, arg, kid);
-		}
-	}
-}
-
-@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
-class MFBPut extends TplPut<MFBConnect, {}> {
-	
-	@:async
-	override public function tag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String
-	{
-		if (name == 'facebook') {
-			if (content == null) {
-				return Std.string(data.token);
-			} else {
-				return @await sub(data, null, MFBPutSub, content);
-			}
-		} else {
-			return @await super.tag(name, content, arg, args, kid);
-		}
-	}
-	
-}
-
-@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
-class MFBPutSub extends TplPut<MFBConnect, {}> {
-	
-	@:async
-	override public function tag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String
-	{
-		if (name == 'ready') {
-			var token = data.token;
-			if (args.exists('!')) {
-				if (token == null) {
-					return @await sub(data, null, MFBPutSub, content);
-				} else {
-					return '';
-				}
-			} else {
-				if (token == null) {
-					return '';
-				} else {
-					return @await sub(data, null, MFBPutSub, content);	
-				}
-			}
-			
-		} else {
-			return @await super.tag(name, content, arg, args, kid);
-		}
-	}
-	
-	@:async
-	override public function shortTag(name:String, arg:String, ?kid:ITplPut):String
-	{
-		return switch (name) {
-			case 'token': Std.string(data.token);
-			case 'button': data.token != null ? '' : data.base.buttonData;
-			case 'appid': data.base.appid;
-			case 'id': @await data.getId();
-			default: @await super.shortTag(name, arg, kid);
 		}
 	}
 }

@@ -30,6 +30,7 @@ package pony.net.http.modules.mmodels;
 #if macro
 import haxe.macro.Expr;
 import haxe.macro.Context;
+import haxe.macro.Type;
 
 using pony.text.TextTools;
 using Lambda;
@@ -39,6 +40,8 @@ class Builder {
 	
 	macro public static function build():Array<Field> {
 		var fields:Array<Field> = Context.getBuildFields();
+		var cur = Context.getLocalClass().get();
+		if (cur.name == 'Model') return fields;
 		for (f in fields) switch (f.name) {
 			case 'many', 'insert', 'single':
 				if (!f.meta.exists(function(m) return m.name == 'action'))
@@ -66,6 +69,7 @@ class Builder {
 			}
 			data.push({field: f.name, expr: {expr: EArrayDecl(d), pos: Context.currentPos()}});
 		}
+		
 		fields.push( {
 			pos: Context.currentPos(),
 			name: '__methoArgs__',
@@ -74,6 +78,7 @@ class Builder {
 			access: [AStatic, APrivate],
 			kind: FVar(null, {expr: EObjectDecl(data), pos: Context.currentPos()})
 		});
+		
 		return fields;
 	}
 	

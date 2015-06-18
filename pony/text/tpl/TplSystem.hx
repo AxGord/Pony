@@ -120,7 +120,7 @@ class PagesPut extends TplPut<TplSystem, {}> {
 					return '';
 				}
 			}
-			var d:TplDir = data.includes;
+			var d:TplDir = a.includes;
 			if (d.exists(arg)) {
 				var c:String = null;
 				if (kid != null) c = @await kid.tplData(content);
@@ -150,9 +150,9 @@ class IncludePut extends TplPut<{content:String, args: Map<String, String>}, {}>
 	override public function shortTag(name:String, arg:String, ?kid:ITplPut):String
 	{
 		if (name == 'content') {
-			return data.content;
-		} else if (data.args.exists(name)) {
-			var r:String = data.args.get(name);
+			return a.content;
+		} else if (a.args.exists(name)) {
+			var r:String = a.args.get(name);
 			return r;
 		} else
 			return @await super.shortTag(name, arg, kid);

@@ -67,7 +67,7 @@ class CTextPut extends pony.text.tpl.TplPut<FText, Dynamic> {
 	
 	@:async
 	public function html(f:String):String {
-		return StringTools.replace(StringTools.htmlEscape(Std.string(Reflect.field(datad, f))), '\r\n', '<br/>');
+		return StringTools.replace(StringTools.htmlEscape(Std.string(Reflect.field(b, f))), '\r\n', '<br/>');
 	}
 	
 }

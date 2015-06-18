@@ -1,5 +1,6 @@
 package pony.net.http.platform.php;
 import pony.fs.File;
+import pony.text.ParseBoy;
 
 /**
  * HttpConnection
@@ -10,9 +11,14 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 	public function new(storage:ServersideStorageDB) 
 	{
 		post = new Map();
-		super('http://' + php.Web.getHostName() + php.Web.getURI()+'?'+php.Web.getParamsString());
+		super('http://' + php.Web.getHostName() + php.Web.getURI() + '?' + php.Web.getParamsString());
+		
+		method = php.Web.getMethod();
+		post = parseData(new ParseBoy<Void>(php.Web.getPostData()));
+		
 		cookie = new Cookie(php.Web.getCookies());
 		sessionStorage = storage.getClient(cookie);
+		rePost();
 	}
 	
 	public function sendFile(file:File):Void {
@@ -28,7 +34,8 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 		untyped __call__('exit');
 		
 	}
-	public function endAction():Void {
+	
+	override public function endAction():Void {
 		writeCookie();
 		php.Web.setHeader('Location', '/'+url);
 		php.Web.setHeader('Cache-Control', 'private');

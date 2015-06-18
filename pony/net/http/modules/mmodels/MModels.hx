@@ -40,7 +40,7 @@ using pony.Tools;
 using Lambda;
 
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
-class MModels implements IModule
+@:final class MModels implements IModule
 {
 	public var lastActionId:Int;
 	public var list:Map<String, Model>;
@@ -81,12 +81,18 @@ class MModels implements IModule
 	public function init(dir:Dir, server:WebServer):Void {
 	}
 	
-	public function connect(cpq:CPQ):Bool {
+	public function connect(cpq:CPQ):EConnect {
 		if (!cpq.connection.sessionStorage.exists('modelsActions'))
 			cpq.connection.sessionStorage.set('modelsActions', new Map<Int, Dynamic>());
 			
-		for (m in list)
-			if (m.connect(cpq)) return true;
+		var connectList:Map<String, ModelConnect> = new Map();
+			
+		for (k in list.keys())
+			switch (list[k].connect(cpq)) {
+				case BREAK: return BREAK;
+				case REG(obj): connectList[k] = cast obj;
+				case NOTREG:
+			}
 			
 		var post:Map<String, String> = cpq.connection.mix();
 		var h = new Map<String, Map<String, Map<String, String>>>();
@@ -102,33 +108,8 @@ class MModels implements IModule
 		}
 		for (k in h.keys())
 			if (list.exists(k))
-				if (list.get(k).action(cpq, h.get(k))) return true;
-		return false;
-	}
-	
-	public function tpl(d:CPQ, parent:ITplPut):ITplPut {
-		return new MModelsPut(this, d, parent);
-	}
-	
-}
-
-@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
-class MModelsPut extends pony.text.tpl.TplPut<MModels, CPQ> {
-	
-	private var list:Map<String, ITplPut>;
-	
-	public function new(o:MModels, d:CPQ, parent:ITplPut) {
-		super(o, d, parent);
-		list = [for (k in data.list.keys()) k => data.list[k].tpl(d, parent)];
-	}
-	
-	@:async
-	override public function tag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String
-	{
-		if (list.exists(name))
-			return @await list.get(name).tplData(content);
-		else
-			return @await super.tag(name, content, arg, args, kid);
+				if (connectList[k].action(h.get(k))) return BREAK;
+		return REG(cast new MModelsConnect(this, cpq, connectList));
 	}
 	
 }

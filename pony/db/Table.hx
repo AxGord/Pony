@@ -71,8 +71,13 @@ class Table implements Dynamic < Table > implements Declarator implements Ninja
 	private var _limit:Null<Int>;
 	private var _begin:Int = 0;
 	private var _where:String = '';
+	private var _error:String->Void = Tools.nullFunction1;
 	
 	inline private function ninjaCreate():Table return new Table(mysql, table);
+	/**
+	 * Error hander
+	 */
+	@:n inline public function error(f:String->Void):Table _error = f;
 	/**
 	 * Select fields for query
 	 */
@@ -131,6 +136,7 @@ class Table implements Dynamic < Table > implements Declarator implements Ninja
 	public function get(cb:Array<Dynamic>->Void, ?p:PosInfos):Void {
 		mysql.query(genGetQuery(), p, function(err:Dynamic, fields:Dynamic, _):Void {
 			if (err != null) {
+				_error(err);
 				mysql._error(err);
 			} else {
 				cb(solo ? fields.map(soloMap): fields);
