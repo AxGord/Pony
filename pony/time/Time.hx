@@ -45,6 +45,7 @@ abstract Time(Null<Int>) from Int to Int {
 	public var hours(get, never):Int;
 	public var days(get, never):Int;
 	
+	public var totalMs(get, never):Int;
 	public var totalSeconds(get, never):Int;
 	public var totalMinutes(get, never):Int;
 	public var totalHours(get, never):Int;
@@ -139,6 +140,7 @@ abstract Time(Null<Int>) from Int to Int {
 	private inline function get_hours():Int return totalHours % 24;
 	private inline function get_days():Int return (totalHours / 24).int();
 	
+	private inline function get_totalMs():Int return this;
 	private inline function get_totalSeconds():Int return (this / 1000).int();
 	private inline function get_totalMinutes():Int return (totalSeconds / 60).int();
 	private inline function get_totalHours():Int return (totalMinutes / 60).int();
