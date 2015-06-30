@@ -37,7 +37,11 @@ class FLStBuilder {
 							kind: FFun( {
 								args: [],
 								ret: t,
-								expr: macro return untyped getChild($v{f.name}),
+								#if openfl
+								expr: macro return untyped getChild($v { f.name } ),
+								#else
+								expr: macro return untyped getChildByName($v { f.name } ),
+								#end
 								params: []
 							}),
 							pos: f.pos,
