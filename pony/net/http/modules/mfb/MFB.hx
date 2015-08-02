@@ -29,7 +29,7 @@ package pony.net.http.modules.mfb;
 import pony.fs.Dir;
 import pony.net.http.IModule;
 import pony.net.http.sn.FB;
-import pony.net.http.WebServer.CPQ;
+import pony.net.http.CPQ;
 import pony.net.http.WebServer.EConnect;
 import pony.text.TextTools;
 import pony.text.tpl.ITplPut;
@@ -70,7 +70,7 @@ import pony.text.tpl.TplPut;
 			cpq.connection.endAction();
 			return BREAK;
 		} else {
-			return REG(new MFBConnect(this, cpq));
+			return REG(cast new MFBConnect(this, cpq));
 		}
 	}
 	

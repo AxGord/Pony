@@ -42,9 +42,9 @@ import pony.text.tpl.TplPut;
 	{
 		if (name == 'facebook') {
 			if (content == null) {
-				return Std.string(data.token);
+				return Std.string(a.token);
 			} else {
-				return @await sub(data, null, MFBPutSub, content);
+				return @await sub(a, null, MFBPutSub, content);
 			}
 		} else {
 			return @await super.tag(name, content, arg, args, kid);
