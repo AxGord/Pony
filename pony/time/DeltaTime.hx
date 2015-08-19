@@ -52,14 +52,33 @@ class DeltaTime {
 	
 	public static var nowDate(get,never):Date;
 	
-	#if !(flash || HUGS)
+	#if !((flash||openfl) || HUGS)
 	public static inline function init(?signal:Signal0<Dynamic>):Void {
 		set();
 		if (signal != null) signal.add(tick);
 	}
 	
 	#end
-	#if !HUGS
+	
+	#if openfl
+	public static function tick():Void {
+		fixedValue = get();
+		set();
+		fixedDispatch();
+	}
+	
+	private static var lastNow:Date;
+	
+	inline private static function get_nowDate():Date return lastNow;
+	
+	private inline static function set():Void {
+		t = openfl.Lib.getTimer();
+		lastNow = Date.fromTime(t);
+	}
+	
+	private inline static function get():Float return (openfl.Lib.getTimer() - t) / 1000;
+	
+	#elseif !HUGS
 	public static function tick():Void {
 		fixedValue = get();
 		set();
@@ -75,13 +94,14 @@ class DeltaTime {
 		t = lastNow.getTime();
 	}
 	private inline static function get():Float return (Date.now().getTime() - t) / 1000;
+	
 	#else
 	inline private static function get_nowDate():Date return Date.now();
 	#end
 	
 	public static inline function fixedDispatch():Void fixedUpdate.dispatch(fixedValue);
 	
-	#if (flash && !munit)
+	#if ((flash||openfl) && !munit)
 	private static function __init__():Void {
 		createSignals();
 		fixedUpdate.takeListeners.add(_ftakeListeners);
@@ -96,7 +116,7 @@ class DeltaTime {
 	private static inline function _set():Void set();
 	#end
 	
-	#if (!flash || munit)
+	#if (!(flash||openfl) || munit)
 	private static function __init__():Void {
 		createSignals();
 	}

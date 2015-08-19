@@ -34,7 +34,7 @@ package pony;
 class Queue<T> {
 
 	private var list:List<Array<Dynamic>>;
-	public var busy:Bool = false;
+	public var busy(default, null):Bool = false;
 	public var call:T;
 	private var method:T;
 	
@@ -46,8 +46,8 @@ class Queue<T> {
 	
 	private function _call(a:Array<Dynamic>):Void {
 		if (!busy) {
-			Reflect.callMethod(null, cast method, a);
 			busy = true;
+			Reflect.callMethod(null, cast method, a);
 		} else {
 			list.add(a);
 		}

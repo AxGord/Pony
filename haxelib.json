@@ -4,7 +4,7 @@
   "license": "BSD",
   "tags": ["cross", "unity3d", "unity", "flash", "nodejs", "cs", "php"],
   "description": "Haxe open-cross-library",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "releasenote": "Upgrade web server",
   "contributors": ["AxGord"],
   "dependencies": {
