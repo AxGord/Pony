@@ -36,10 +36,11 @@ import pony.events.*;
  */
 interface ISocketServer extends INet {
 	
+	var onConnect(default, null):Signal1<ISocketServer, SocketClient>; //onAccept in a server.
 	var onData(default,null):Signal1<SocketClient, BytesInput>;
 	var onString(default, null):Signal1<SocketClient, String>;
 	var onClose(default,null):Signal;
-	var onDisconnect(default,null):Signal;
+	var onDisconnect(default,null):Signal0<SocketClient>;
 	var clients(default, null):Array<SocketClient>;
 	var isAbleToSend:Bool;
 	var isWithLength:Bool;

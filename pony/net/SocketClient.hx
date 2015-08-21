@@ -26,6 +26,7 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.net;
+import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
 
 /**
@@ -44,21 +45,54 @@ extends pony.net.openfl.SocketClient
 #end
 implements ISocketClient {
 	
+	public var writeLengthSize:UInt = 4;
 	
+	private var stack:Array<BytesOutput> = [];
+	
+	#if !cs//Not working for CS
+	dynamic public function writeLength(bo:BytesOutput, length:UInt):Void bo.writeInt32(length);
+	#end
 	override public function send(data:BytesOutput):Void {
-		var bo = new BytesOutput(); 
-		if (isWithLength)
-		{
-			bo.writeInt32(data.length);
+		trace(closed);
+		if (closed) {
+			stack.push(data);
+			return;
 		}
-		bo.write(data.getBytes());
-		super.send(bo);
+		var len:UInt = data.length;
+		var needSplit = maxSize != 0 && len > maxSize;
+		if (isWithLength || needSplit) {
+			var bo = new BytesOutput();
+			#if cs
+			if (isWithLength) bo.writeInt32(len);
+			#else
+			if (isWithLength) writeLength(bo, len);
+			#end
+			if (needSplit) {
+				if (isWithLength && maxSize > 4 + writeLengthSize) maxSize -= writeLengthSize;
+				var b = new BytesInput(data.getBytes());
+				while (len >= maxSize) {
+					bo.write(b.read(maxSize));
+					len -= maxSize;
+				}
+				if (len > 0) bo.write(b.read(len));
+			} else {
+				bo.write(data.getBytes());
+			}
+			super.send(bo);
+		} else {
+			super.send(data);
+		}
 	}
 	
 	inline public function sendString(data:String):Void {
 		var bo = new BytesOutput();
 		bo.writeString(data);
 		send(bo);
+	}
+	
+	public function sendStack():Void {
+		trace('sendStack '+stack.length);
+		if (stack.length > 0) send(stack.shift());
 	}
 	
 }

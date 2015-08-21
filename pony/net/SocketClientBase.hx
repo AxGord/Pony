@@ -40,13 +40,16 @@ import pony.events.*;
  * SocketClientBase
  * @author AxGord <axgord@gmail.com>
  */
-class SocketClientBase extends Logable<ISocketClient>{
+class SocketClientBase extends Logable<ISocketClient> {
 
+	public var readLengthSize:UInt = 4;
+	
 	public var server(default,null):ISocketServer;
-	public var onConnect(default,null):Signal1<ISocketServer, SocketClient>;
 	public var onData(default,null):Signal1<SocketClient, BytesInput>;
 	public var onString(default, null):Signal1<SocketClient, String>;
-	public var onDisconnect(default,null):Signal;
+	public var onDisconnect(default, null):Signal0<SocketClient>;
+	public var onLostConnection(default, null):Signal0<SocketClient>;
+	public var onReconnect(default, null):Signal0<SocketClient>;
 	public var id(default,null):Int;
 	public var host(default,null):String;
 	public var port(default, null):Int;
@@ -54,14 +57,18 @@ class SocketClientBase extends Logable<ISocketClient>{
 	public var isAbleToSend:Bool;
 	public var connected:Waiter;
 	public var isWithLength:Bool;
+	public var tryCount:Int;
 	
 	private var reconnectDelay:Int = -1;
+	private var maxSize:UInt;
 	
 	//For big data
-	private var waitNext:Int;
-	private var waitBuf:BytesOutput;
+	private var waitNext:UInt;
+	private var waitBuf:BytesOutput = new BytesOutput();
 
-	public function new(?host:String, port:Int, reconnect:Int = -1, aIsWithLength:Bool = true) 
+	private var tryCounter:Int = 0;
+	
+	public function new(?host:String, port:Int, reconnect:Int = -1, tryCount:Int = 0, aIsWithLength:Bool = true, maxSize:Int = 1024) 
 	{
 		super();
 		connected = new Waiter();
@@ -69,11 +76,12 @@ class SocketClientBase extends Logable<ISocketClient>{
 		this.host = host;
 		this.port = port;
 		this.reconnectDelay = reconnect;
-		onConnect = Signal.create(null);
+		this.tryCount = tryCount;
+		this.maxSize = maxSize;
 		connected.wait(function() isAbleToSend = true);
 		isWithLength = aIsWithLength;
 		_init();
-		open();
+		_open();
 	}
 	
 	private function readString(event:Event):Void {
@@ -86,24 +94,59 @@ class SocketClientBase extends Logable<ISocketClient>{
 		closed = true;
 		id = -1;
 		onData = Signal.create(cast this);
-		onDisconnect = new Signal(this);
-		
+		onDisconnect = Signal.create(cast this);
+		onDisconnect.add(_closeHandler, -10);
+		onLostConnection = Signal.create(cast this);
+		onReconnect = Signal.create(cast this);
 		onString = Signal.create(null);
 		onString.takeListeners << function() onData.add(readString, -1000);
 		onString.lostListeners << function() onData.remove(readString);
 	}
 	
+	private function _closeHandler():Void connected = new Waiter();
+	
 	public function reconnect():Void {
+		close();
 		if (reconnectDelay == 0) {
 			trace('Reconnect');
-			open();
+			_open();
 		}
 		#if ((!dox && HUGS) || nodejs || flash)
 		else if (reconnectDelay > 0) {
-			trace('Reconnect after '+reconnectDelay+' ms');
-			Timer.delay(open, reconnectDelay);
+			trace('Reconnect after ' + reconnectDelay + ' ms');
+			Timer.delay(_open, reconnectDelay);
 		}
 		#end
+	}
+	
+	private function badConnection(e:Event):Void {
+		
+		e.stopPropagation();
+		error >> badConnection;
+		onDisconnect >> badConnection;
+		if (connected.ready) {
+			connected = new Waiter();
+			connected.wait(reconnectHandler);
+		}
+		trace('Bad connection');
+		if (!closed) onLostConnection.dispatch();
+		reconnect();
+	}
+	
+	private function reconnectHandler():Void {
+		tryCounter = 0;
+		onReconnect.dispatch();
+	}
+	
+	public function close():Void closed = true;
+	
+	private function _open():Void {
+		if (tryCounter < tryCount) {
+			tryCounter++;
+			error.once(badConnection, -100);
+			onDisconnect.once(badConnection, -100);
+		}
+		open();
 	}
 	
 	public function open():Void {} //Server's init.
@@ -131,34 +174,35 @@ class SocketClientBase extends Logable<ISocketClient>{
 	
 	inline public function send2other(data:BytesOutput):Void server.send2other(data, cast this);
 	
+	dynamic public function readLength(bi:BytesInput):UInt return bi.readInt32();
+	
 	private function joinData(bi:BytesInput):Void {
 		if (server != null) isWithLength = server.isWithLength;
 		if (isWithLength)
 		{
-			var size:Int = 0;
-			var len:Int = 0;
+			var size:UInt = 0;
+			var len:UInt = 0;
 			
 			if (waitNext > 0) {
 				size = waitNext;
 				len = bi.length;
-			} else {			
-				size = bi.readInt32();
-				len = bi.length - 4;//4 - int32
+			} else {
+				size = readLength(bi);
+				len = bi.length - readLengthSize;
 			}
 			
 			if (size > len) {
 				waitNext = size - len;
-				size = len;
-				waitBuf.write(bi.read(size));
+				waitBuf.write(bi.read(len));
 			} else {
 				if (waitNext > 0) {
 					waitNext = 0;
 					waitBuf.write(bi.read(size));
 					onData.dispatch(new BytesInput(waitBuf.getBytes()));
-					waitBuf = new BytesOutput();
 				} else {
 					onData.dispatch(new BytesInput(bi.read(size)));
 				}
+				waitBuf = new BytesOutput();
 			}
 			
 		}
@@ -167,17 +211,17 @@ class SocketClientBase extends Logable<ISocketClient>{
 			onData.dispatch(bi);
 		}
 	}
+	
 	/*
 	 * The code written above is just equivalent of next one:
 		 * var i = bi.readInt32();
 		 * onData.dispatch(bi.read(i));
 	 * */
-	
 	public function destroy():Void
 	{
 		closed = true;
-		onConnect.destroy();
-		onConnect = null;
+		onLostConnection.destroy();
+		onLostConnection = null;
 		onData.destroy();
 		onData = null;
 		onString.destroy();

@@ -233,8 +233,6 @@ class SocketClient extends SocketClientBase
 			} );
 			
 			closed = true;
-			onConnect.destroy();
-			onConnect = null;
 			onData.destroy();
 			onData = null;
 		}));

@@ -207,4 +207,26 @@ class ToolsTest
 		Assert.isTrue([3, 4].swap(1, 0).equal([4,3]));
 	}
 	
+	@Test
+	public function own():Void {
+		Assert.isTrue(OwnTest1.own(OwnTest1));
+		Assert.isFalse(OwnTest1.own(OwnTest2));
+		Assert.isTrue(OwnTest1.own(OwnTest3));
+		Assert.isFalse(OwnTest3.own(OwnTest1));
+	}
+	
+}
+
+
+private class OwnTest1 {
+	
+	
+}
+
+private class OwnTest2 {
+	
+}
+
+private class OwnTest3 extends OwnTest1 {
+	
 }

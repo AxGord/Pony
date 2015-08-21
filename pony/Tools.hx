@@ -39,6 +39,7 @@ import haxe.macro.Context;
 import haxe.macro.Expr;
 using haxe.macro.Tools;
 #end
+import mcover.macro.ClassParser;
 import pony.text.TextTools;
 
 using Reflect;
@@ -361,6 +362,14 @@ class Tools {
 	public static function nullFunction5(_:Dynamic, _:Dynamic, _:Dynamic, _:Dynamic, _:Dynamic):Void return;
 	public static function errorFunction(e:Dynamic):Void throw e;
 	
+	public static function own(c1:Class<Dynamic>, c2:Class<Dynamic>):Bool {
+		var p = c2;
+		while (p != null) {
+			if (c1 == p) return true;
+			p = Type.getSuperClass(c2);
+		}
+		return false;
+	}
 }
 
 class ArrayTools {

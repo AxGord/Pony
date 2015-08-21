@@ -56,25 +56,17 @@ class SocketClient extends SocketClientBase {
 		socket.addEventListener(Event.CLOSE, closeHandler);
 		socket.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandler);
 		socket.addEventListener(SecurityErrorEvent.SECURITY_ERROR, securityErrorHandler);
-
 	}
 	
 	private function securityErrorHandler(_):Void {}
 	
-	private function ioErrorHandler(event:IOErrorEvent):Void {
-		trace(event.text);
-		trace('connect error');
-		reconnect();
-	}
+	private function ioErrorHandler(event:IOErrorEvent):Void _error(event.text);
 	
-	private function closeHandler(_):Void {
-		onDisconnect.dispatch();
-	}
+	private function closeHandler(_):Void onDisconnect.dispatch();
 	
 	private function connectHandler(_):Void {
 		closed = false;
 		isAbleToSend = true;
-		//onConnect.dispatch(cast this);
 		connected.end();
 	}
 	
@@ -82,16 +74,12 @@ class SocketClient extends SocketClientBase {
 		try {
 			socket.writeBytes(ByteArray.fromBytes(data.getBytes()));
 			socket.flush();
-		} catch (_:Dynamic) {
-			trace('socket error, reconnect');
-			close();
-			open();
-			//onConnect.once(function()send(data));
-			connected.wait(function() send(data));
+		} catch (e:Dynamic) {
+			_error(e);
 		}
 	}
 	
-	inline public function close():Void {
+	override public function close():Void {
 		closed = true;
 		try {
 			socket.close();

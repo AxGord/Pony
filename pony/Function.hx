@@ -139,58 +139,57 @@ abstract Function( { f:Dynamic, count:Int, args:Array<Dynamic>, id:Int, used:Int
 	}
 	#end
 	
-    @:from static public inline function fromEventR<E:IEvent, R:Dynamic>(f:E->R) return from(f, 1, true, true);
-    @:from static public inline function fromEvent<E:IEvent>(f:E->Void) return from(f, 1, false, true);
+    @:from @:extern static public inline function fromEventR<E:IEvent, R:Dynamic>(f:E->R) return from(f, 1, true, true);
+    @:from @:extern static public inline function fromEvent<E:IEvent>(f:E->Void) return from(f, 1, false, true);
 		
-    @:from static public inline function from0r<R:Dynamic>(f:Void->R)
+    @:from @:extern static public inline function from0r<R:Dynamic>(f:Void->R)
         return from(f, 0);
 		
-    @:from static public inline function from1r<R:Dynamic>(f:Dynamic->R)
+    @:from @:extern static public inline function from1r<R:Dynamic>(f:Dynamic->R)
         return from(f, 1);
 	
-    @:from static public inline function from2r<R:Dynamic>(f:Dynamic->Dynamic->R)
+    @:from @:extern static public inline function from2r<R:Dynamic>(f:Dynamic->Dynamic->R)
         return from(f,2);
 	
-    @:from static public inline function from3r<R:Dynamic>(f:Dynamic->Dynamic->Dynamic->R)
+    @:from @:extern static public inline function from3r<R:Dynamic>(f:Dynamic->Dynamic->Dynamic->R)
         return from(f,3);
 	
-    @:from static public inline function from4r<R:Dynamic>(f:Dynamic->Dynamic->Dynamic->Dynamic->R)
+    @:from @:extern static public inline function from4r<R:Dynamic>(f:Dynamic->Dynamic->Dynamic->Dynamic->R)
         return from(f,4);
 	
-    @:from static public inline function from5r<R:Dynamic>(f:Dynamic->Dynamic->Dynamic->Dynamic->Dynamic->R)
+    @:from @:extern static public inline function from5r<R:Dynamic>(f:Dynamic->Dynamic->Dynamic->Dynamic->Dynamic->R)
         return from(f,5);
 	
-    @:from static public inline function from6r<R:Dynamic>(f:Dynamic->Dynamic->Dynamic->Dynamic->Dynamic->Dynamic->R)
+    @:from @:extern static public inline function from6r<R:Dynamic>(f:Dynamic->Dynamic->Dynamic->Dynamic->Dynamic->Dynamic->R)
         return from(f, 6);
 		
-    @:from static public inline function from7r<R:Dynamic>(f:Dynamic->Dynamic->Dynamic->Dynamic->Dynamic->Dynamic->Dynamic->R)
+    @:from @:extern static public inline function from7r<R:Dynamic>(f:Dynamic->Dynamic->Dynamic->Dynamic->Dynamic->Dynamic->Dynamic->R)
         return from(f, 7);
 		
-    @:from static public inline function from0(f:Void->Void) {
+    @:from @:extern static public inline function from0(f:Void->Void) {
         return from(f, 0, false);
 	}
-    @:from static public inline function from1(f:Dynamic->Void)
+    @:from @:extern static public inline function from1(f:Dynamic->Void)
         return from(f, 1, false);
 	
-    @:from static public inline function from2(f:Dynamic->Dynamic->Void)
+    @:from @:extern static public inline function from2(f:Dynamic->Dynamic->Void)
         return from(f,2, false);
 	
-    @:from static public inline function from3(f:Dynamic->Dynamic->Dynamic->Void)
+    @:from @:extern static public inline function from3(f:Dynamic->Dynamic->Dynamic->Void)
         return from(f,3, false);
 	
-    @:from static public inline function from4(f:Dynamic->Dynamic->Dynamic->Dynamic->Void)
+    @:from @:extern static public inline function from4(f:Dynamic->Dynamic->Dynamic->Dynamic->Void)
         return from(f,4, false);
 	
-    @:from static public inline function from5(f:Dynamic->Dynamic->Dynamic->Dynamic->Dynamic->Void)
+    @:from @:extern static public inline function from5(f:Dynamic->Dynamic->Dynamic->Dynamic->Dynamic->Void)
         return from(f,5, false);
 	
-    @:from static public inline function from6(f:Dynamic->Dynamic->Dynamic->Dynamic->Dynamic->Dynamic->Void)
+    @:from @:extern static public inline function from6(f:Dynamic->Dynamic->Dynamic->Dynamic->Dynamic->Dynamic->Void)
         return from(f, 6, false);
 		
-    @:from static public inline function from7(f:Dynamic->Dynamic->Dynamic->Dynamic->Dynamic->Dynamic->Dynamic->Void)
+    @:from @:extern static public inline function from7(f:Dynamic->Dynamic->Dynamic->Dynamic->Dynamic->Dynamic->Dynamic->Void)
         return from(f, 7, false);
 	
-		
 	public inline function call(?args:Array<Dynamic>):Dynamic {
 		if (args == null) args = [];
 		return Reflect.callMethod(null, this.f, this.args.concat(args));

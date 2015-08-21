@@ -43,7 +43,7 @@ class SocketServerBase extends Logable<ISocketServer> {
 	public var onString(default, null):Signal1<SocketClient, String>;
 	public var onConnect(default, null):Signal1<ISocketServer, SocketClient>;
 	public var onClose(default, null):Signal;
-	public var onDisconnect(default, null):Signal;
+	public var onDisconnect(default, null):Signal0<SocketClient>;
 	public var clients(default, null):Array<SocketClient>;
 	public var isAbleToSend:Bool = false;
 	public var isWithLength:Bool = true;

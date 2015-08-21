@@ -38,7 +38,7 @@ interface ISocketClient extends INet {
 
 	var server(default,null):ISocketServer;
 	var onData(default,null):Signal1<SocketClient, BytesInput>;
-	var onDisconnect(default,null):Signal;
+	var onDisconnect(default,null):Signal0<SocketClient>;
 	var id(default,null):Int;
 	var host(default,null):String;
 	var port(default, null):Int;
