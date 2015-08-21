@@ -2,10 +2,10 @@
   "name": "pony",
   "url": "https://github.com/AxGord/Pony",
   "license": "BSD",
-  "tags": ["cross", "unity3d", "unity", "flash", "nodejs", "cs", "php"],
+  "tags": ["cross", "utils", "unity3d", "unity", "flash", "nodejs", "cs", "php", "openfl"],
   "description": "Haxe open-cross-library",
-  "version": "0.3.2",
-  "releasenote": "Upgrade web server",
+  "version": "0.3.3",
+  "releasenote": "Upgrade sockets",
   "contributors": ["AxGord"],
   "dependencies": {
   }
