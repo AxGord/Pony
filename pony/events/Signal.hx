@@ -307,17 +307,29 @@ class Signal {
 						#end
 						if (stackFilter(s)) r += '$s\n';
 					}
+					#if nodejs
+					js.Node.console.log(r + '\n\n\n\n');
+					#else
 					Sys.println(r + '\n\n\n\n');
+					#end
 					throw e;
 				}
 				catch (e:Dynamic) {
+					#if nodejs
+					js.Node.console.log('Listener error: $e');
+					#else
 					Sys.println('Listener error: $e');
+					#end
 					var r = '';
 					var cs = CallStack.callStack();
 					cs.pop();
 					for (s in CallStack.toString(CallStack.exceptionStack().concat(cs)).split('\n'))
 						if (stackFilter(s)) r += '$s\n';
+					#if nodejs
+					js.Node.console.log(r + '\n\n\n\n');
+					#else
 					Sys.println(r + '\n\n\n\n');
+					#end
 					throw e;
 				}
 				#elseif neko

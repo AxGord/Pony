@@ -92,11 +92,11 @@ using hugs.HUGSWrapper;
 		var angles:unityengine.Vector3 = this.transform.eulerAngles;
 		x = angles.y;
 		y = angles.x;
-		
+		/*
 		if (target.rigidbody != null && target.rigidbody.active) 
 		{
 			target.rigidbody.freezeRotation = true;
-		}
+		}*/
 	}
 	
 	private function LateUpdate():Void 
@@ -113,7 +113,7 @@ using hugs.HUGSWrapper;
 		}
 		#else
 		
-		if (target.active && unityengine.Input.GetMouseButton(1))
+		if (target.gameObject.active && unityengine.Input.GetMouseButton(1))
 		{
 			xActualSpeed = unityengine.Input.GetAxis("Mouse X") * xConstSpeed;
 			yActualSpeed = -unityengine.Input.GetAxis("Mouse Y") * yConstSpeed;
@@ -124,15 +124,7 @@ using hugs.HUGSWrapper;
 		
 		#end
 
-		var dt:Float = 0;
-		if (Time.timeScale == 0)
-		{
-			dt = 0;
-		}
-		else
-		{
-			dt = Time.deltaTime / Time.timeScale;
-		}
+		var dt:Float = Time.timeScale == 0 ? 0 : Time.deltaTime / Time.timeScale;
 		
 		if (unityengine.Input.GetKey(keyTurnUp)) 
 		{

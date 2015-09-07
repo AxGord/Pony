@@ -28,8 +28,8 @@
 package pony.unity3d;
 
 import pony.ui.ButtonCore;
-import pony.unity3d.ui.TintButton;
-import pony.unity3d.ui.Button;
+//import pony.unity3d.ui.TintButton;
+//import pony.unity3d.ui.Button;
 import unityengine.GameObject;
 import unityengine.Component;
 
@@ -59,7 +59,7 @@ using hugs.HUGSWrapper;
 		#end
 	}
 	
-	inline static public function tintButton(gameObject:String):ButtonCore return component(gameObject, TintButton).core;
-	inline static public function button(gameObject:String):ButtonCore return component(gameObject, Button).core;
+	//inline static public function tintButton(gameObject:String):ButtonCore return component(gameObject, TintButton).core;
+	//inline static public function button(gameObject:String):ButtonCore return component(gameObject, Button).core;
 	
 }
