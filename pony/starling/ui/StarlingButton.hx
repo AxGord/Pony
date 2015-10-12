@@ -3,21 +3,19 @@ package pony.starling.ui;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.Vector;
-import haxe.CallStack;
+import pony.flash.ui.Button;
 import pony.starling.converter.AtlasCreator;
-import pony.ui.ButtonCore;
+import pony.touchManager.Toucheble;
+import pony.touchManager.TouchManagerHandCursor;
+import pony.ui.ButtonImgN;
+import starling.core.Starling;
+import starling.display.DisplayObject;
 import starling.display.MovieClip;
 import starling.display.Sprite;
-import starling.display.Image;
-import starling.display.DisplayObject;
 import starling.textures.Texture;
-import pony.touchManager.ButtonCoreTM;
-import pony.touchManager.TouchEventType;
-import pony.touchManager.TouchManager;
-import pony.touchManager.TouchManagerEvent;
-import pony.touchManager.TouchManagerHandCursor;
-import starling.core.Starling;
+
 using pony.flash.FLExtends;
+
 /**
  * StarlingButton
  * @author Maletin
@@ -28,43 +26,42 @@ class StarlingButton extends Sprite
 	
 	private var mc:Array<MovieClip>;
 	
-	public var core:ButtonCore;
+	public var core:ButtonImgN;
 	private var _handCursor:TouchManagerHandCursor;
 	private var _hitArea:Rectangle;
 
 	private var _framerate:Int;
 	private var prev:Int = -1;
 	
-	public function new(textures:Array<MovieClip>, framerate:Int, core:ButtonCore) 
+	public function new(textures:Array<MovieClip>, framerate:Int) 
 	{
 		super();
 		mc = textures;
 		_framerate = framerate;
-		
 		var hitAreaFrame:Int = mc.length > config.zone - 1 ? config.zone : config.def;
-		
 		_hitArea = new Rectangle(mc[hitAreaFrame-1].x, mc[hitAreaFrame-1].y, mc[hitAreaFrame-1].width, mc[hitAreaFrame-1].height);
-		
 		gotoAndStop(config.def);
-
-		this.core = core;
-		TouchManager.addListener(this, touchManagerListener);
-		
-		core.changeVisual.add(change);
-		
-		_handCursor = new TouchManagerHandCursor(this);
+		core = new ButtonImgN(new Toucheble(this));
+		core.onImg << imgHandler;
+		useHandCursor = true;
+	}
+	
+	private function imgHandler(img:Int):Void {
+		if (img == 4) {
+			useHandCursor = false;
+			gotoAndStop(5);
+			return;
+		}
+		useHandCursor = true;
+	
+		gotoAndStop(img > 4 ? img + 1 : img);
 	}
 	
 	inline public function clone():StarlingButton {
-		var b = new StarlingButton(mc, _framerate, new ButtonCore());
+		var b = new StarlingButton(mc, _framerate);
 		b.x = x;
 		b.y = y;
 		return b;
-	}
-	
-	public function touchManagerListener(e:TouchManagerEvent):Void
-	{
-		ButtonCoreTM.eventsTransition(e, core);
 	}
 		
 	override public function hitTest(localPoint:Point, forTouch:Bool=false):DisplayObject
@@ -77,21 +74,6 @@ class StarlingButton extends Sprite
 		return null;
     }
 	
-	private function change(state:ButtonStates, mode:Int, focus:Bool):Void {
-		if (mode == 1) {
-			_handCursor.enabled = false;
-			gotoAndStop(config.disabled);
-			return;
-		}
-		_handCursor.enabled = true;
-	
-		gotoAndStop((switch [state, focus] {
-			case [Default, false]: config.def;
-			case [Focus|Leave, _] | [_, true]: config.focus;
-			case [Press, _]: config.press;
-		}) + mode * 3 - (mode > 1?1:0));
-	}
-	
 	private function gotoAndStop(frame:Int):Void
 	{
 		frame--;
@@ -101,9 +83,7 @@ class StarlingButton extends Sprite
 		prev = frame;
 	}
 	
-	public function sw(v:Array<Int>):Void if (core != null) core.sw = v;
-	
-	public static function builder(_atlasCreator:AtlasCreator, source:flash.display.DisplayObject, coordinateSpace:flash.display.DisplayObject, disposeable:Bool = false):starling.display.DisplayObject {
+	public static function builder(_atlasCreator:AtlasCreator, source:Button, coordinateSpace:flash.display.DisplayObject, disposeable:Bool = false):starling.display.DisplayObject {
 		
 		var mc:flash.display.MovieClip = cast source;
 		var movies:Array<starling.display.MovieClip> = [];
@@ -139,9 +119,10 @@ class StarlingButton extends Sprite
 			}
 			movies.push(clip);
 		}
-		var starlingChild = new StarlingButton(movies, 60, untyped source.core);
+		var starlingChild = new StarlingButton(movies, 60);
 		
-		if (untyped source.getSW() != null) untyped starlingChild.sw(untyped source.getSW());
+		starlingChild.core.switchMap(@:privateAccess source._sw);
+		if (@:privateAccess source._bsw) starlingChild.core.bswitch();
 		
 		return starlingChild;
 		

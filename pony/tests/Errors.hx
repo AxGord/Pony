@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -25,50 +25,26 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony;
+package pony.tests;
 
-import pony.events.Listener1;
-import pony.events.Signal;
-import pony.Pair;
-import pony.events.Signal1;
+class Errors
+{
 
-/**
- * Bindable
- * @author AxGord <axgord@gmail.com>
- */
-abstract Bindable < T > (Pair < T, Signal1 < Void, T > >) {
+	public var arg:String;
+	public var result:Map<String, String>;
 	
-	public var signal(get, never):Signal1 < Void, T >;
-	public var value(get, never):T;
-	
-	inline public function new(v:T) {
-		this = new Pair < T, Signal1 < Void, T >> (v, Signal.createEmpty());
-		this.b.add(silentSet);
+	public function new() {
+		result = new Map<String, String>();
 	}
 	
-	public function silentSet(v:T):Void this.a = v;
-	
-	@:op(A << B) inline private static function _set<A>(a:Bindable<A>, b:A):Bindable<A> {
-		if (a.value != b) a.signal.dispatch(b);
-		return a;
+	public inline function test(cond:Bool, message:String) {
+		if (cond && !result.exists(arg)) set(message);
 	}
 	
-	inline public function dispatch():Void signal.dispatch(value);
-	
-	@:op(A << B) inline private static function _add<A>(a:Bindable<A>, b:Listener1<Void, A>):Bindable<A> {
-		a.signal.add(b);
-		return a;
+	public inline function set(message:String):Void {
+		result.set(arg, message);
 	}
 	
-	@:op(A << B) inline private static function _remove<A>(a:Bindable<A>, b:Listener1<Void, A>):Bindable<A> {
-		a.signal.remove(b);
-		return a;
-	}
-	
-	inline private function get_signal():Signal1 < Void, T > return this.b;
-	
-	@:to inline private function get_value():T return this.a;
-	@:to inline public function toString():String return Std.string(this.a);
-	@:to inline public function toDynamic():Dynamic return this.a;
+	public inline function empty():Bool return !result.iterator().hasNext();
 	
 }

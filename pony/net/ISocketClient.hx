@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -26,31 +26,22 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.net;
+
 import haxe.io.BytesOutput;
-import haxe.io.BytesInput;
-import pony.events.*;
+import pony.events.Waiter;
 
 /**
  * ISocketClient
  * @author AxGord <axgord@gmail.com>
  */
 interface ISocketClient extends INet {
-
-	var server(default,null):ISocketServer;
-	var onData(default,null):Signal1<SocketClient, BytesInput>;
-	var onDisconnect(default,null):Signal0<SocketClient>;
+	#if !flash
+	var server(default,null):SocketServer;
 	var id(default,null):Int;
 	var host(default,null):String;
 	var port(default, null):Int;
-	var closed(default, null):Bool;
-	var connected:Waiter;
-	var isAbleToSend:Bool;
-	var isWithLength:Bool;
-	
-	function send(data:BytesOutput):Void;
-	function destroy():Void;
-	function open():Void;
 	function reconnect():Void;
 	function send2other(data:BytesOutput):Void;
 	
+	#end
 }

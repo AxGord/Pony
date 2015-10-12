@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -26,10 +26,9 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.net;
-import pony.events.Signal;
 
+import haxe.io.BytesOutput;
 
-#if !openfl
 /**
  * SocketServer
  * @author AxGord <axgord@gmail.com>
@@ -46,5 +45,22 @@ extends pony.net.SocketServerBase
 implements ISocketServer
 #end
 {
+	#if !flash
+	public function new(port:Int, isWithLength:Bool = true, maxSize:Int = 1024) {
+		this.isWithLength = isWithLength;
+		this.maxSize = maxSize;
+		super(port);
+	}
+	#end
+	@:extern inline public function sendString(data:String):Void {
+		var bo = new BytesOutput();
+		bo.writeString(data);
+		send(bo);
+	}
+	
+	override public function destroy():Void {
+		if (opened) super.destroy();
+		else if (onOpen != null) onOpen << destroy;
+	}
+	
 }
-#end

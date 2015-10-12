@@ -30,29 +30,30 @@ package pony.time;
 import pony.events.*;
 import pony.events.Listener1.Listener1;
 import pony.magic.Declarator;
+import pony.magic.HasSignal;
 
 /**
  * DeltaTime Timer
  * Can work as Clock
  * @author AxGord
  */
-class DTimer implements ITimer<DTimer> implements Declarator {
+class DTimer implements HasSignal implements ITimer<DTimer> implements Declarator {
 	
 	public var currentTime:Time;
 	
-	public var update:Signal1<DTimer, Time> = Signal.create(this);
-	public var progress:Signal1<DTimer, Float> = Signal.create(this);
-	public var complite:Signal1<DTimer, DT> = Signal.create(this);
+	@:auto public var update:Signal1<Time>;
+	@:auto public var progress:Signal1<Float>;
+	@:auto public var complete:Signal1<DT>;
 	
 	private var sumdt:DT = 0;
 
-	@:arg private var updateSignal:Signal1<Void, DT>;
+	@:arg private var updateSignal:Signal1<DT>;
 	@:arg public var time:TimeInterval = null;
 	@:arg public var repeatCount:Int = 0;
 	
 	public function new() {
-		progress.takeListeners.add(takeProgress);
-		progress.lostListeners.add(lostProgress);
+		eProgress.onTake.add(takeProgress);
+		eProgress.onLost.add(lostProgress);
 		reset();
 	}
 	
@@ -99,7 +100,7 @@ class DTimer implements ITimer<DTimer> implements Declarator {
 	}
 	
 	private function loop():Bool {
-		if (complite == null) return true;
+		if (eComplete == null) return true;
 		var result:Bool = false;
 		var d:DT = Math.abs(currentTime - time.max)/1000 + sumdt;
 		if (repeatCount > 0) {
@@ -112,57 +113,57 @@ class DTimer implements ITimer<DTimer> implements Declarator {
 			stop();
 			result = true;
 		}
-		complite.dispatch(d);
+		eComplete.dispatch(d);
 		return result;
 	}
 	
 	public inline function dispatchUpdate():DTimer {
-		if (update != null) update.dispatch(currentTime);
+		if (update != null) eUpdate.dispatch(currentTime);
 		return this;
 	}
 	
 	public function destroy():Void {
 		if (update == null) return;
 		stop();
-		progress.destroy();
-		update.destroy();
-		complite.destroy();
-		progress = null;
-		update = null;
-		complite = null;
+		eProgress.destroy();
+		eUpdate.destroy();
+		eComplete.destroy();
+		eProgress = null;
+		eUpdate = null;
+		eComplete = null;
 		time = null;
 	}
 	
-	private function _progress():Void progress.dispatch(time.percent(currentTime));
+	private function _progress():Void eProgress.dispatch(time.percent(currentTime));
 	
 	public inline function toString():String return currentTime;
 	
 	static public inline function createTimer     (time:TimeInterval, repeat:Int = 0):DTimer return new DTimer(DeltaTime.update, time, repeat);
 	static public inline function createFixedTimer(time:TimeInterval, repeat:Int = 0):DTimer return new DTimer(DeltaTime.fixedUpdate, time, repeat);
 	
-	static public inline function delay(time:Time, f:Listener1<DTimer, DT>, ?dt:DT):DTimer {
+	static public inline function delay(time:Time, f:Listener1<DT>, ?dt:DT):DTimer {
 		var t = DTimer.createTimer(time);
-		t.complite.once(f);
-		t.complite.once(t.destroy);
+		t.complete.once(f);
+		t.complete.once(t.destroy);
 		t.start(dt);
 		return t;
 	}
-	static public inline function fixedDelay(time:Time, f:Listener1<DTimer, DT>, ?dt:DT):DTimer {
+	static public inline function fixedDelay(time:Time, f:Listener1<DT>, ?dt:DT):DTimer {
 		var t = DTimer.createFixedTimer(time);
-		t.complite.once(f);
-		t.complite.once(t.destroy);
+		t.complete.once(f);
+		t.complete.once(t.destroy);
 		t.start(dt);
 		return t;
 	}
-	static public inline function repeat(time:Time, f:Listener1 < DTimer, DT >, ?dt:DT):DTimer {
+	static public inline function repeat(time:Time, f:Listener1 < DT >, ?dt:DT):DTimer {
 		var t = DTimer.createTimer(time, -1);
-		t.complite.add(f);
+		t.complete.add(f);
 		t.start(dt);
 		return t;
 	}
-	static public inline function fixedRepeat(time:Time, f:Listener1 < DTimer, DT > , ?dt:DT):DTimer {
+	static public inline function fixedRepeat(time:Time, f:Listener1 < DT > , ?dt:DT):DTimer {
 		var t = DTimer.createFixedTimer(time, -1);
-		t.complite.add(f);
+		t.complete.add(f);
 		t.start(dt);
 		return t;
 	}

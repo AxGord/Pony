@@ -3,48 +3,36 @@ package events;
 import massive.munit.util.Timer;
 import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
-import pony.events.Event;
-import pony.events.Signal;
-import pony.events.Listener;
-import pony.events.Signal0;
-import pony.events.Signal1.Signal1;
-import pony.events.Signal2.Signal2;
-import pony.Function;
+import pony.events.*;
 import pony.Tools;
 
 class SignalTest 
 {
-	private var beginListenerUnused:Int;
-	private var beginFunctionUnused:Int;
-	
-	@Before
-	public function setup():Void {
-		beginListenerUnused = Listener.unusedCount();
-		beginFunctionUnused = Function.unusedCount;
-	}
 	
 	@Test
 	public function shortCuts():Void
 	{
 		var r:String;
-		var s:Signal = new Signal();
+		var e = new Event2();
+		var s:Signal2<String, String> = e;
 		s.add(function(name:String, end:String) r = 'ok, '+name+end);
-		s.dispatch(new Event(['men', '?']));
+		e.dispatch('men', '?');
 		Assert.areEqual(r, 'ok, men?');
-		s.dispatch('glass', '!');
+		e.dispatch('glass', '!');
 		Assert.areEqual(r, 'ok, glass!');
-		s.removeAllListeners();
+		s.clear();
 	}
 	
 	@Test
 	public function clearDispath():Void
 	{
 		var r:String;
-		var s:Signal = new Signal();
+		var e = new Event0();
+		var s:Signal0 = e;
 		s.add(function() r = 'ok');
-		s.dispatch();
+		e.dispatch();
 		Assert.areEqual(r, 'ok');
-		s.removeAllListeners();
+		s.clear();
 	}
 	
 	@Test
@@ -52,60 +40,42 @@ class SignalTest
 		
 		var c:Int = 0;
 		var f:Void->Void = function() c++;
-		var s:Signal = new Signal();
+		var e = new Event0();
+		var s:Signal0 = e;
 		s.add(f);
-		s.dispatch();
-		s.dispatch();
+		e.dispatch();
+		e.dispatch();
 		s.remove(f);
-		s.dispatch();
+		e.dispatch();
 		Assert.areEqual(c, 2);
-		
-		Assert.areEqual(Listener.unusedCount(), beginListenerUnused);
-		Assert.areEqual(Function.unusedCount, beginFunctionUnused);
 	}
 	
 	@Test
 	public function removeAll():Void {
 		var c:Int = 0;
 		var f = function() c++;
-		var s:Signal = new Signal();
+		var e = new Event0();
+		var s:Signal0 = e;
 		s.add(f);
-		s.dispatch();
-		s.dispatch();
-		s.removeAllListeners();
-		s.dispatch();
+		e.dispatch();
+		e.dispatch();
+		s.clear();
+		e.dispatch();
 		Assert.areEqual(c, 2);
-		
-		Assert.areEqual(Listener.unusedCount(), beginListenerUnused);
-		Assert.areEqual(Function.unusedCount, beginFunctionUnused);
-	}
-	
-	@Test
-	public function event():Void {
-		var e = new Event(this);
-		Assert.areEqual(e.target, this);
-	}
-	
-	@Test
-	public function target():Void {
-		var t:SignalTest = null;
-		var s = new Signal(this);
-		s.add(function(tar:SignalTest) t = tar);
-		s.dispatch();
-		Assert.areEqual(t, this);
 	}
 	
 	@Test
 	public function returns():Void {
-		var a = true, b=true;
-		var s = new Signal(this);
+		var a = true, b = true;
+		var e = new Event1();
+		var s:Signal1<Bool> = e;
 		s.add(function(v:Bool):Bool return v );
 		s.add(function():Bool return a = false);
 		s.add(function() b = false);
-		s.dispatch(true);
+		e.dispatch(true);
 		Assert.isFalse(a);
 		Assert.isTrue(b);
-		s.dispatch(false);
+		e.dispatch(false);
 		Assert.isFalse(a);
 		Assert.isTrue(b);
 	}
@@ -114,10 +84,11 @@ class SignalTest
 	public function s1():Void {
 		var f:Bool = false;
 		var f2:Bool = false;
-		var s:Signal1<SignalTest, Int> = Signal.create(this);
+		var e = new Event1();
+		var s:Signal1<Int> = e;
 		s.add(function(i:Int) if (i == 3) f = true);
 		s.add(function() f2 = true);
-		s.dispatch(3);
+		e.dispatch(3);
 		Assert.isTrue(f);
 		Assert.isTrue(f2);
 	}
@@ -125,31 +96,34 @@ class SignalTest
 	@Test
 	public function s0():Void {
 		var f:Bool = false;
-		var s:Signal0<SignalTest> = Signal.create(this);
+		var e = new Event0();
+		var s:Signal0 = e;
 		s.add(function() f = true);
-		s.dispatch();
+		e.dispatch();
 		Assert.isTrue(f);
 	}
 	
 	@Test
 	public function sub():Void {
 		var f:Bool = false;
-		var s:Signal = new Signal();
+		var e = new Event1();
+		var s:Signal1<Int> = e;
 		s.sub(3).add(function()f = true);
-		s.dispatch(5);
+		e.dispatch(5);
 		Assert.isFalse(f);
-		s.dispatch(3);
+		e.dispatch(3);
 		Assert.isTrue(f);
 	}
 	
 	@Test
 	public function sub1():Void {
 		var f:Bool = false;
-		var s:Signal1<Void, Int> = Signal.createEmpty();
+		var e = new Event2();
+		var s:Signal2<Int,Int> = e;
 		s.sub(3).add(function() f = true);
-		s.dispatch(5);
+		s.dispatch(5,4);
 		Assert.isFalse(f);
-		s.dispatch(3);
+		s.dispatch(3,4);
 		Assert.isTrue(f);
 	}
 	

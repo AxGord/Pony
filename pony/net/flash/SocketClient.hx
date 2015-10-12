@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -26,6 +26,7 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.net.flash;
+
 #if flash
 import flash.events.Event;
 import flash.events.IOErrorEvent;
@@ -47,7 +48,7 @@ class SocketClient extends SocketClientBase {
 	private var socket:Socket;
 	
 	override public function open():Void {
-		if (!closed) return;
+		super.open();
 		socket = new Socket(host, port);
 		socket.addEventListener(Event.CONNECT, connectHandler);
 		socket.addEventListener(ProgressEvent.SOCKET_DATA, socketDataHandler);
@@ -58,22 +59,18 @@ class SocketClient extends SocketClientBase {
 	
 	private function securityErrorHandler(_):Void {}
 	
-	private function ioErrorHandler(event:IOErrorEvent):Void _error(event.text);
+	private function ioErrorHandler(event:IOErrorEvent):Void error(event.text);
 	
-	private function closeHandler(_):Void onDisconnect.dispatch();
+	private function closeHandler(_):Void close();
 	
-	private function connectHandler(_):Void {
-		closed = false;
-		isAbleToSend = true;
-		connected.end();
-	}
+	private function connectHandler(_):Void connect();
 	
 	public function send(data:BytesOutput):Void {
 		try {
 			socket.writeBytes(data.getBytes().getData());
 			socket.flush();
 		} catch (e:Dynamic) {
-			_error(e);
+			error(e);
 		}
 	}
 	

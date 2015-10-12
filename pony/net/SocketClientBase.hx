@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -26,6 +26,7 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.net;
+
 #if !dox
 import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
@@ -35,27 +36,32 @@ import pony.Logable;
 #end
 import haxe.io.Bytes;
 import pony.events.*;
+import pony.magic.HasSignal;
 
 /**
  * SocketClientBase
  * @author AxGord <axgord@gmail.com>
  */
-class SocketClientBase extends Logable<ISocketClient> {
+class SocketClientBase extends Logable implements HasSignal {
 
-	public var readLengthSize:UInt = 4;
+	public var readLengthSize:UInt;
 	
-	public var server(default,null):ISocketServer;
-	public var onData(default,null):Signal1<SocketClient, BytesInput>;
-	public var onString(default, null):Signal1<SocketClient, String>;
-	public var onDisconnect(default, null):Signal0<SocketClient>;
-	public var onLostConnection(default, null):Signal0<SocketClient>;
-	public var onReconnect(default, null):Signal0<SocketClient>;
+	public var server(default, null):SocketServer;
+	
+	@:auto public var onData:Signal2<BytesInput, SocketClient>;
+	@:auto public var onString:Signal2<String, SocketClient>;
+	@:auto public var onClose:Signal0;
+	@:auto public var onDisconnect:Signal1<SocketClient>;
+	@:lazy public var onLostConnection:Signal0;
+	@:lazy public var onReconnect:Signal0;
+	@:lazy public var onOpen:Signal0;
+	@:lazy public var onConnect:Signal1<SocketClient>;
+	
+	public var opened(default,null):Bool;
+	
 	public var id(default,null):Int;
 	public var host(default,null):String;
 	public var port(default, null):Int;
-	public var closed(default, null):Bool;
-	public var isAbleToSend:Bool;
-	public var connected:Waiter;
 	public var isWithLength:Bool;
 	public var tryCount:Int;
 	
@@ -71,104 +77,116 @@ class SocketClientBase extends Logable<ISocketClient> {
 	public function new(?host:String, port:Int, reconnect:Int = -1, tryCount:Int = 0, aIsWithLength:Bool = true, maxSize:Int = 1024) 
 	{
 		super();
-		connected = new Waiter();
 		if (host == null) host = '127.0.0.1';
 		this.host = host;
 		this.port = port;
 		this.reconnectDelay = reconnect;
 		this.tryCount = tryCount;
 		this.maxSize = maxSize;
-		connected.wait(function() isAbleToSend = true);
 		isWithLength = aIsWithLength;
-		_init();
+		sharedInit();
 		_open();
 	}
 	
-	private function readString(event:Event):Void {
-		var b:BytesInput = event.args[0];
-		onString.dispatch(b.readString(b.length));
-		event.stopPropagation();
+	private function readString(b:BytesInput):Bool {
+		eString.dispatch(b.readString(b.length), cast this);
+		return true;
 	}
 	
-	private function _init():Void {
-		closed = true;
+	private function sharedInit():Void {
+		readLengthSize = 4;
+		opened = false;
 		id = -1;
-		onData = Signal.create(cast this);
-		onDisconnect = Signal.create(cast this);
-		onDisconnect.add(_closeHandler, -10);
-		onLostConnection = Signal.create(cast this);
-		onReconnect = Signal.create(cast this);
-		onString = Signal.create(null);
-		onString.takeListeners << function() onData.add(readString, -1000);
-		onString.lostListeners << function() onData.remove(readString);
+		eString.onTake << function() onData.add(readString, -1);
+		eString.onLost << function() onData.remove(readString);
 	}
 	
-	private function _closeHandler():Void connected = new Waiter();
-	
-	public function reconnect():Void {
+	private function tryAgain():Void {
 		close();
 		if (reconnectDelay == 0) {
-			trace('Reconnect');
+			log('Reconnect');
 			_open();
 		}
 		#if ((!dox && HUGS) || nodejs || flash)
 		else if (reconnectDelay > 0) {
-			trace('Reconnect after ' + reconnectDelay + ' ms');
+			log('Reconnect after ' + reconnectDelay + ' ms');
 			Timer.delay(_open, reconnectDelay);
 		}
 		#end
 	}
 	
-	private function badConnection(e:Event):Void {
-		
-		e.stopPropagation();
-		error >> badConnection;
+	public function reconnect():Void {
+		close();
+		open();
+	}
+	
+	private function badConnection():Bool {
+		onError >> badConnection;
 		onDisconnect >> badConnection;
-		if (connected.ready) {
-			connected = new Waiter();
-			connected.wait(reconnectHandler);
-		}
-		trace('Bad connection');
-		if (!closed) onLostConnection.dispatch();
-		reconnect();
+		log('Bad connection');
+		if (opened) eLostConnection.dispatch();
+		tryAgain();
+		return true;
 	}
 	
 	private function reconnectHandler():Void {
 		tryCounter = 0;
-		onReconnect.dispatch();
+		eReconnect.dispatch();
 	}
 	
-	public function close():Void closed = true;
+	private function close():Void {
+		if (!opened) return;
+		opened = false;
+		eDisconnect.dispatch(cast this);
+		eClose.dispatch();
+	}
+	
+	private function connect():Void {
+		opened = true;
+		eConnect.dispatch(cast this);
+		eOpen.dispatch();
+	}
 	
 	private function _open():Void {
 		if (tryCounter < tryCount) {
 			tryCounter++;
-			error.once(badConnection, -100);
+			onError.once(badConnection, -100);
 			onDisconnect.once(badConnection, -100);
 		}
 		open();
 	}
 	
-	public function open():Void {} //Server's init.
-	
-	inline private function endInit():Void {
-		closed = false;
-		if (server != null)
-			server.onConnect.dispatch(cast this);
+	private function open():Void {
+		onError < tryAgain;
 	}
 	
-	public function init(server:ISocketServer, id:Int):Void {
-		_init();
+	@:access(pony.net.SocketServer)
+	public function init(server:SocketServer, id:Int):Void {
+		
+		eData = new Event2<BytesInput, SocketClient>();
+		eString = new Event2<String, SocketClient>();
+		eClose = new Event0();
+		eDisconnect = new Event1<SocketClient>();
+		eLostConnection = new Event0();
+		eReconnect = new Event0();
+		eOpen = new Event0();
+		eConnect = new Event1<SocketClient>();
+		
+		onData << server.eData;
+		onDisconnect << server.eDisconnect;
+		onConnect << server.eConnect;
+		
+		sharedInit();
 		this.server = server;
+		this.maxSize = server.maxSize;
+		this.isWithLength = server.isWithLength;
 		this.id = id;
 		
 		waitNext = 0;
 		waitBuf = new BytesOutput();
 		
-		onData.add(server.onData.dispatchEvent);
-		onDisconnect.add(server.onDisconnect.dispatchEvent);
 		
-		if (server.onString.haveListeners) onString << server.onString.dispatchEvent;
+		if (!server.eString.empty) onString << server.eString;
 		
 	}
 	
@@ -198,9 +216,9 @@ class SocketClientBase extends Logable<ISocketClient> {
 				if (waitNext > 0) {
 					waitNext = 0;
 					waitBuf.write(bi.read(size));
-					onData.dispatch(new BytesInput(waitBuf.getBytes()));
+					eData.dispatch(new BytesInput(waitBuf.getBytes()), cast this);
 				} else {
-					onData.dispatch(new BytesInput(bi.read(size)));
+					eData.dispatch(new BytesInput(bi.read(size)), cast this);
 				}
 				waitBuf = new BytesOutput();
 			}
@@ -208,24 +226,29 @@ class SocketClientBase extends Logable<ISocketClient> {
 		}
 		else
 		{
-			onData.dispatch(bi);
+			eData.dispatch(bi, cast this);
 		}
 	}
 	
-	/*
-	 * The code written above is just equivalent of next one:
-		 * var i = bi.readInt32();
-		 * onData.dispatch(bi.read(i));
-	 * */
 	public function destroy():Void
 	{
-		closed = true;
-		onLostConnection.destroy();
-		onLostConnection = null;
-		onData.destroy();
-		onData = null;
-		onString.destroy();
-		onString = null;
+		close();
+		eLostConnection.destroy();
+		eLostConnection = null;
+		eReconnect.destroy();
+		eReconnect = null;
+		eString.destroy();
+		eString = null;
+		eData.destroy();
+		eData = null;
+		eConnect.destroy();
+		eConnect = null;
+		eOpen.destroy();
+		eOpen = null;
+		eClose.destroy();
+		eClose = null;
+		eDisconnect.destroy();
+		eDisconnect = null;
 	}
 	
 }

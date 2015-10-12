@@ -26,35 +26,35 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.time;
-import pony.events.Signal;
-import pony.events.Signal1.Signal1;
+import pony.events.Signal1;
 import pony.magic.Declarator;
+import pony.magic.HasSignal;
 import pony.time.DTimer;
 using pony.Tools;
 /**
  * Clock
  * @author AxGord <axgord@gmail.com>
  */
-class RealClock implements Declarator {
+class RealClock implements Declarator implements HasSignal {
 
 	public static var dateSep:String = '-';
 	public static var months:Array<String> = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
 	public static var invertDate:Bool = false;
 	
-	public static var updateTime:Signal1<Void,String> = Signal.createEmpty();
-	public static var updateDate:Signal1<Void,String> = Signal.createEmpty();
+	@:auto public static var updateTime:Signal1<String>;
+	@:auto public static var updateDate:Signal1<String>;
 	
 	private static function __init__():Void {
-		updateTime.takeListeners << enableTime;
-		updateDate.takeListeners << enableDate;
-		updateTime.lostListeners << disableTime;
-		updateDate.lostListeners << disableDate;
+		eUpdateTime.onTake << enableTime;
+		eUpdateDate.onTake << enableDate;
+		eUpdateTime.onLost << disableTime;
+		eUpdateDate.onLost << disableDate;
 	}
 	
 	private static function enableTime():Void DeltaTime.fixedUpdate << updaterTime;
 	private static function disableTime():Void DeltaTime.fixedUpdate >> updaterTime;
 	
-	private static function updaterTime():Void updateTime.dispatch((DeltaTime.nowDate:Time).clock());
+	private static function updaterTime():Void eUpdateTime.dispatch((DeltaTime.nowDate:Time).clock());
 	
 	private static function enableDate():Void DeltaTime.fixedUpdate << updaterDate;
 	private static function disableDate():Void DeltaTime.fixedUpdate >> updaterDate;
@@ -63,7 +63,7 @@ class RealClock implements Declarator {
 		var d = DeltaTime.nowDate;
 		var a:Array<String> = [Std.string(d.getFullYear()), months[d.getMonth()], d.getDate().toFixed('00')];
 		if (invertDate) a.reverse();
-		updateDate.dispatch(a.join(dateSep));
+		eUpdateDate.dispatch(a.join(dateSep));
 	}
 	
 	inline public static function localeRus():Void {

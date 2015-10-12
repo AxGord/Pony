@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -27,6 +27,9 @@
 **/
 package pony;
 
+import pony.events.Signal0;
+import pony.magic.HasSignal;
+
 using Lambda;
 
 typedef PriorityIds = Priority<{id:Int,name:String}>;
@@ -35,7 +38,10 @@ typedef PriorityIds = Priority<{id:Int,name:String}>;
  * todo: get element priority
  * @author AxGord
  */
-class Priority<T:Dynamic> {
+class Priority<T:Dynamic> implements HasSignal {
+	
+	@:lazy public var onTake:Signal0;
+	@:lazy public var onLost:Signal0;
 	
 	/**
 	 * Total elements count.
@@ -70,7 +76,7 @@ class Priority<T:Dynamic> {
 	/**
 	 * if true: [[1, 1, 3]] - normal. Default false.
 	 */
-	public var double:Bool = false;
+	public var double:Bool;
 	
 	/**
 	 * Current element in loop.
@@ -80,24 +86,37 @@ class Priority<T:Dynamic> {
 	public var data(default,null):Array<T>;
 	
 	private var hash:Map<Int, Int>;
-	private var counters:Array<Int>;
+	
+	private var addStack:List<Pair<T, Int>>;
+	public var lock(default, set):Bool = false;
+	
+	/**
+	 * Counters for loops
+	 */
+	public var counters(default,null):Array<Int>;
 
-	public function new(?data:Array<T>) {
-		clear();
+	
+	public function new(?data:Array<T>, double:Bool = false) {
+		_clear();
+		this.double = double;
 		if (data != null) {
-			for (e in data) addElement(e);
-			//Not work?
-			//this.data = data;
+			this.data = data;
+			repriority();
 		}
 	}
-	
+
 	/**
 	 * Add element in priority list with custom priority.
 	 * @param	element elements for adding.
 	 * @param	priority priority, smalest first, bigest last, default 0 (0 - normal priority).
 	 */
-	public function addElement(e:T, priority:Int = 0):Priority<T> {
-		if (!double && existsElement(e)) return this;
+	public function add(e:T, priority:Int = 0):Priority<T> {
+		if (!double && exists(e)) return this;
+		if (lock) {
+			addStack.push(new Pair(e, priority));
+			return this;
+		}
+		var needOnTake = empty;
 		var s:Int = hash.exists(priority) ? hash.get(priority) : 0;
 		var c:Int = 0;
 		for (k in hash.keys())
@@ -107,7 +126,16 @@ class Priority<T:Dynamic> {
 		for (k in 0...counters.length)
 			if (c < counters[k]) counters[k]++;
 		hash.set(priority, s + 1);
+		if (needOnTake) eTake.dispatch();
 		return this;
+	}
+	
+	@:extern inline private function set_lock(v:Bool):Bool {
+		if (lock != v) {
+			lock = v;
+			if (!v) for (e in addStack) add(e.a, e.b);
+		}
+		return v;
 	}
 	
 	/**
@@ -115,9 +143,8 @@ class Priority<T:Dynamic> {
 	 * @param	a elements array for adding.
 	 * @param	priority priority, smalest first, bigest last, default 0 (0 - normal priority).
 	 */
-	inline public function addArray(a:Array<T>, priority:Int = 0):Priority<T> {
-		for (e in a)
-			addElement(e, priority);
+	@:extern inline public function addArray(a:Array<T>, priority:Int = 0):Priority<T> {
+		for (e in a) add(e, priority);
 		return this;
 	}
 	
@@ -132,10 +159,12 @@ class Priority<T:Dynamic> {
 	 */
 	public function iterator():Iterator<T> {
 		var n:Int = counters.push(0) - 1;
+		var i:Int = 0;
 		return {
 			hasNext: function():Bool {
-				if (counters.length < n) counters.push(n);
-				if (data[counters[n]] != null)
+				if (counters == null) return false;//if destroy in iteration
+				if (counters.length < n) counters.push(i);
+				if (data.length > counters[n])
 					return true;
 				else {
 					counters.splice(n, 1);
@@ -147,19 +176,44 @@ class Priority<T:Dynamic> {
 	}
 	
 	/**
+	 * Call this method if you use break
+	 */
+	@:extern inline public function brk():Void {
+		if (counters != null) counters.splice(1, counters.length);
+	}
+	
+	/**
 	 * Remove all elements
 	 */
-	public function clear():Priority<T> {
-		hash = new Map<Int,Int>();
-		data = [];
-		counters = [0];
+	@:extern inline public function clear():Priority<T> {
+		var needOnLost = !empty;
+		_clear();
+		if (needOnLost) eLost.dispatch();
 		return this;
 	}
 	
-	public function destroy():Void {
+	/**
+	 * Remove all elements
+	 */
+	@:extern inline private function _clear():Priority<T> {
+		hash = new Map<Int,Int>();
+		data = [];
+		counters = [0];
+		addStack = new List();
+		return this;
+	}
+	
+	/**
+	 * Destroy this object
+	 */
+	@:extern inline public function destroy():Void {
+		clear();
 		hash = null;
 		data = null;
 		counters = null;
+		eLost = null;
+		eTake = null;
+		addStack = null;
 	}
 	
 	/**
@@ -169,14 +223,21 @@ class Priority<T:Dynamic> {
 	 */
 	dynamic public function compare(a:T, b:T):Bool return a == b;
 	
-	public inline function existsElement(element:T):Bool return existsFunction(compare.bind(element));
+	@:extern inline public function exists(element:T):Bool return existsFunction(compare.bind(element));
 	
-	public inline function existsFunction(f:T->Bool):Bool return data.exists(f);
+	@:extern inline public function existsFunction(f:T->Bool):Bool return data.exists(f);
 	
-	public function existsArray(a:Array<T>):Bool {
-		for (e in a) if (existsElement(e)) return true;
+	@:extern inline public function existsArray(a:Array<T>):Bool {
+		for (e in a) if (exists(e)) return true;
 		return false;
 	}
+
+	@:extern inline public function indexOfFunction(f:T->Bool):Int {
+		return pony.Tools.ArrayTools.fIndexOf(data, f);
+	}
+	
+	@:extern inline public function indexOfElement(element:T):Int return indexOfFunction(compare.bind(element));
+	
 	
 	/**
 	 * Some time need take object with custom value.
@@ -196,7 +257,7 @@ class Priority<T:Dynamic> {
 	/**
 	 * @param	e Element
 	 */
-	public function getElementPriority(e:T):Null<Int> {
+	public function getPriority(e:T):Null<Int> {
 		var a = [for (k in hash.keys()) k];
 		a.sort(asort);
 		var i:Int = 0;
@@ -213,13 +274,14 @@ class Priority<T:Dynamic> {
 	/**
 	 * @param	e Element for removing
 	 */
-	public function removeElement(e:T):Bool {
-		var i:Int = data.indexOf(e);
+	public function remove(e:T):Bool {
+		var i:Int = indexOfElement(e);
 		if (i == -1) return false;
-		
+		var needOnLost = !empty;
 		for (k in 0...counters.length)
 			if (i < counters[k]) counters[k]--;
-		data.remove(e);
+		
+		data.splice(i, 1);
 		
 		var a:Array<Int> = [for (k in hash.keys()) k];
 		a.sort(asort);
@@ -235,20 +297,20 @@ class Priority<T:Dynamic> {
 				break;
 			}
 		}
-		
-		if (double) removeElement(e);
+		if (needOnLost && empty) eLost.dispatch();
+		if (double) remove(e);
 		return true;
 	}
 	
-	public function removeFunction(f:T->Bool):Bool {
+	@:extern inline public function removeFunction(f:T->Bool):Bool {
 		var e:T = search(f);
-		return if (e != null) removeElement(e);
+		return if (e != null) remove(e);
 		else false;
 	}
 	
-	public function removeArray(a:Array<T>):Bool {
+	@:extern inline public function removeArray(a:Array<T>):Bool {
 		var f:Bool = true;
-		for (e in a) if (!removeElement(e)) f = false;
+		for (e in a) if (!remove(e)) f = false;
 		return f;
 	}
 	
@@ -256,41 +318,44 @@ class Priority<T:Dynamic> {
 	 * All elements taking new priority, but save order.
 	 * @param	priority New priority, default 0
 	 */
-	public function repriority(priority:Int = 0):Void {
+	@:extern inline public function repriority(priority:Int = 0):Void {
 		hash = new Map<Int,Int>();
 		hash.set(priority, data.length);
 	}
 	
-	public function changeElement(e:T, priority:Int = 0):Priority<T> {
-		if (removeElement(e)) addElement(e, priority);
+	/**
+	 * todo: optimize
+	 */
+	public function change(e:T, priority:Int = 0):Priority<T> {
+		if (remove(e)) add(e, priority);
 		else throw 'Element not exists';
 		return this;
 	}
 	
 	public function changeFunction(f:T->Bool, priority:Int = 0):Priority<T> {
 		var e:T = search(f);
-		return changeElement(e, priority);
+		return change(e, priority);
 	}
 	
 	public function changeArray(a:Array<T>, priority:Int = 0):Priority<T> {
-		for (e in a) changeElement(e, priority);
+		for (e in a) change(e, priority);
 		return this;
 	}
 	
-	public inline function toString():String return data.toString();
+	@:extern inline public function toString():String return data.toString();
 	
-	public inline function join(sep:String):String return data.join(sep);
+	@:extern inline public function join(sep:String):String return data.join(sep);
 	
-	private inline function get_first():T return data[0];
+	@:extern inline private function get_first():T return data[0];
 	
-	private inline function get_last():T return data[data.length - 1];
+	@:extern inline private function get_last():T return data[data.length - 1];
 	
-	private inline function get_length():Int return data.length;
+	@:extern inline private function get_length():Int return data.length;
 	
 	/**
 	 * @return True if priority list not have element and false if have.
 	 */
-	private inline function get_empty():Bool return data.length == 0;
+	@:extern inline private function get_empty():Bool return data.length == 0;
 	
 	/**
 	 * Make infinity loop. This good method for devolopment UI.
@@ -307,7 +372,7 @@ class Priority<T:Dynamic> {
 	/**
 	 * Next time loop return first element.
 	 */
-	public inline function resetLoop():Priority<T> {
+	@:extern inline public function resetLoop():Priority<T> {
 		counters[0] = 0;
 		return this;
 	}
@@ -317,12 +382,12 @@ class Priority<T:Dynamic> {
 	 * Use exists() before call this function for safely run.
 	 * @param	e first element for loop.
 	 */
-	public inline function reloop(e:T):Void while (loop() != e) null;
+	@:extern inline public function reloop(e:T):Void while (loop() != e) null;
 	
 	/**
 	 * @return Current element in loop.
 	 */
-	private inline function get_current():T {
+	@:extern inline private function get_current():T {
 		return if (counters[0] > length) data[0] else if (counters[0] < 1) data[length - 1] else data[counters[0] - 1];
 	}
 	
@@ -366,15 +431,17 @@ class Priority<T:Dynamic> {
 	 * Add element with lowest priority.
 	 * @param	o T or Array&lt;T&gt;.
 	 */
-	inline public function addElementToBegin(e:T):Void addElement(e, min - 1);
+	@:extern inline public function addToBegin(e:T):Void add(e, min - 1);
 	
 	/**
 	 * Add element with hightest priority.
 	 * @param	o T or Array&lt;T&gt;.
 	 */
-	inline public function addElementToEnd(e:T):Void addElement(e, max + 1);
+	@:extern inline public function addToEnd(e:T):Void add(e, max + 1);
 	
-	public static function createIds(a:Array<String>):PriorityIds {
+	@:extern inline public function isDestroy():Bool return data == null;
+	
+	@:extern inline public static function createIds(a:Array<String>):PriorityIds {
 		var i:Int = 0;
 		return new Priority([for (e in a) { id:i++, name:e } ]);
 	}

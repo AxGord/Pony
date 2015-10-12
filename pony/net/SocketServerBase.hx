@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -35,35 +35,36 @@ import pony.Logable;
  * SocketServerBase
  * @author AxGord <axgord@gmail.com>
  */
-#if !openfl
-class SocketServerBase extends Logable<ISocketServer> {
+class SocketServerBase extends Logable {
 	
-	//public var id(default,null):Int = -1;
-	public var onData(default, null):Signal1<SocketClient, BytesInput>;
-	public var onString(default, null):Signal1<SocketClient, String>;
-	public var onConnect(default, null):Signal1<ISocketServer, SocketClient>;
-	public var onClose(default, null):Signal;
-	public var onDisconnect(default, null):Signal0<SocketClient>;
-	public var clients(default, null):Array<SocketClient>;
+	@:auto public var onData:Signal2<BytesInput, SocketClient>;
+	@:auto public var onString:Signal2<String, SocketClient>;
+	
+	@:auto public var onConnect:Signal1<SocketClient>;
+	@:auto public var onOpen:Signal0;
+	
+	@:auto public var onClose:Signal0;
+	@:auto public var onDisconnect:Signal1<SocketClient>;
+	
+	public var opened(default,null):Bool;
+	
+	public var clients(default, null):Array<SocketClient> = [];
+	@:allow(pony.net.SocketClientBase) public var isWithLength:Bool = true;
 	public var isAbleToSend:Bool = false;
-	public var isWithLength:Bool = true;
+	@:allow(pony.net.SocketClientBase) private var maxSize:Int;
 	
 	private function new() {
 		super();
-		onConnect = Signal.create(cast this);
-		onDisconnect = new Signal();
-		onData = Signal.create(null);
-		onString = Signal.create(null);
-		onString.takeListeners << beginString;
-		onString.lostListeners << endString;
-		onClose = new Signal(this);
+		eString.onTake << beginString;
+		eString.onLost << endString;
 		clients = [];
-		onDisconnect.add(removeClient);
+		onDisconnect << removeClient;
+		onOpen < function() opened = true;
 		onConnect < function() isAbleToSend = true;
 	}
 	
-	private function beginString():Void for (c in clients) c.onString << onString.dispatchEvent;
-	private function endString():Void for (c in clients) c.onString >> onString.dispatchEvent;
+	private function beginString():Void for (c in clients) c.onString << eString;
+	private function endString():Void for (c in clients) c.onString >> eString;
 	
 	private function addClient():SocketClient {
 		var cl = Type.createEmptyInstance(SocketClient);
@@ -73,7 +74,7 @@ class SocketServerBase extends Logable<ISocketServer> {
 		return cl;
 	}
 	
-	inline private function removeClient(cl:SocketClient):Void clients.remove(cl);
+	private function removeClient(cl:SocketClient):Void clients.remove(cl);
 	
 	/**
 	 * Sends a data to all the clients. 
@@ -105,17 +106,19 @@ class SocketServerBase extends Logable<ISocketServer> {
 	 **/
 	public function destroy():Void 
 	{
-		onClose.dispatch();
-		onData.destroy();
-		onData = null;
-		onString.destroy();
-		onString = null;
-		onConnect.destroy();
-		onConnect = null;
-		onClose.destroy();
-		onClose = null;
-		onDisconnect.destroy();
-		onDisconnect = null;
+		opened = false;
+		eClose.dispatch();
+		eString.destroy();
+		eString = null;
+		eData.destroy();
+		eData = null;
+		eConnect.destroy();
+		eConnect = null;
+		eOpen.destroy();
+		eOpen = null;
+		eClose.destroy();
+		eClose = null;
+		eDisconnect.destroy();
+		eDisconnect = null;
 	}
 }
-#end

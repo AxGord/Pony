@@ -1,31 +1,58 @@
+/**
+* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+*
+* Redistribution and use in source and binary forms, with or without modification, are
+* permitted provided that the following conditions are met:
+*
+*   1. Redistributions of source code must retain the above copyright notice, this list of
+*      conditions and the following disclaimer.
+*
+*   2. Redistributions in binary form must reproduce the above copyright notice, this list
+*      of conditions and the following disclaimer in the documentation and/or other materials
+*      provided with the distribution.
+*
+* THIS SOFTWARE IS PROVIDED BY ALEXANDER GORDEYKO ``AS IS'' AND ANY EXPRESS OR IMPLIED
+* WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+* FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL ALEXANDER GORDEYKO OR
+* CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+* ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+* NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+* ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*
+* The views and conclusions contained in the software and documentation are those of the
+* authors and should not be interpreted as representing official policies, either expressed
+* or implied, of Alexander Gordeyko <axgord@gmail.com>.
+**/
 package pony.net.cs;
+#if cs
+
+import cs.NativeArray.NativeArray;
+import cs.system.IAsyncResult;
+import cs.system.AsyncCallback;
+import cs.system.net.IPEndPoint;
+import cs.system.net.IPAddress;
+import cs.system.net.sockets.Socket;
+import cs.system.net.sockets.SocketFlags;
+import cs.system.net.sockets.SocketException;
+import cs.system.net.sockets.AddressFamily;
+import cs.system.net.sockets.SocketType;
+import cs.system.net.sockets.ProtocolType;
+import cs.system.threading.ManualResetEvent;
+import cs.system.threading.Thread;
+import cs.types.UInt8;
+import haxe.io.Bytes;
+import haxe.io.BytesInput;
+import haxe.io.BytesOutput;
+import pony.net.SocketClient;
+import pony.cs.Synchro;
+import pony.Queue.Queue;
 
 /**
  * SocketServer
  * @author DIS
  */
-
- import cs.NativeArray.NativeArray;
- import cs.system.IAsyncResult;
- import cs.system.AsyncCallback;
- import cs.system.net.IPEndPoint;
- import cs.system.net.IPAddress;
- import cs.system.net.sockets.Socket;
- import cs.system.net.sockets.SocketFlags;
- import cs.system.net.sockets.SocketException;
- import cs.system.net.sockets.AddressFamily;
- import cs.system.net.sockets.SocketType;
- import cs.system.net.sockets.ProtocolType;
- import cs.system.threading.ManualResetEvent;
- import cs.system.threading.Thread;
- import cs.types.UInt8;
- import haxe.io.Bytes;
- import haxe.io.BytesInput;
- import haxe.io.BytesOutput;
- import pony.net.SocketClient;
- import pony.cs.Synchro;
- import pony.Queue.Queue;
-
 class SocketServer extends SocketServerBase 
 {
 
@@ -81,13 +108,13 @@ class SocketServer extends SocketServerBase
 				cl.receiveBuffer = new NativeArray(4);
 				cl.isSet = false;
 				cl.client.BeginReceive(cl.receiveBuffer, 0, cl.receiveBuffer.Length, SocketFlags.None, new AsyncCallback(cl.receiveCallback), cl);
-				onConnect.dispatch(cl);
+				@:privateAccess cl.connect();
 				s.BeginAccept(new AsyncCallback(acceptCallback), ar.AsyncState);	
 			}
 			catch (ex:SocketException)
 			{
 				closeConnection(cl);
-				_error(ex.get_Message());
+				error(ex.get_Message());
 			}
 		}
 		eventAccept.Set();
@@ -111,8 +138,9 @@ class SocketServer extends SocketServerBase
 		return cl;
 	}
 	
-	public override function destroy():Void
+	override public function destroy():Void
 	{
+		super.destroy();
 		isRunning = false;
 		var destrThread:Thread = new Thread(new cs.system.threading.ThreadStart(function()
 		{
@@ -121,17 +149,9 @@ class SocketServer extends SocketServerBase
 			eventAccept.WaitOne();//The events DO guarantee that executing callbacks finish correct and DO NOT guarantee that next callbacks will execute so it may cause a loss of data;
 			server.Close();		  //to prevent this situation there is a Sys.sleep(1) that makes main thread to wait for other threads to finish its executing. There's no more need in the Sys.sleep(1).
 			
-			onClose.dispatch();
-			onData.destroy();
-			onData = null;
-			onConnect.destroy();
-			onConnect = null;
-			onClose.destroy();
-			onClose = null;
-			onDisconnect.destroy();
-			onDisconnect = null;
 		}));
 		destrThread.IsBackground = true;
 		destrThread.Start();
 	}
 }
+#end

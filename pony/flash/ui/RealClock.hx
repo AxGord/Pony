@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -31,6 +31,7 @@ import flash.display.Sprite;
 import flash.text.TextField;
 import pony.flash.FLSt;
 import pony.flash.FLTools;
+import pony.time.DeltaTime;
 import pony.time.RealClock in RC;
 
 
@@ -40,12 +41,12 @@ import pony.time.RealClock in RC;
  */
 class RealClock extends Sprite implements FLSt {
 
-	@st private var time:TextField;
-	@st private var date:TextField;
+	@:st private var time:TextField;
+	@:st private var date:TextField;
 	
 	public function new() {
 		super();
-		FLTools.init < init;
+		DeltaTime.fixedUpdate < init;
 	}
 	
 	private function init():Void {

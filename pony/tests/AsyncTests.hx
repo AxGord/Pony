@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -25,7 +25,8 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony;
+package pony.tests;
+
 import haxe.CallStack;
 import haxe.Log;
 import haxe.PosInfos;
@@ -48,7 +49,7 @@ class AsyncTests extends TestCase
 	private static var complite:Bool = false;
 	private static var dec:String = '----------';
 	private static var waitList:List<{it:IntIterator, cb:Void->Void}> = new List<{it:IntIterator, cb:Void->Void}>();
-	
+	private static var counter:Int = 0;
 	private static var lock:Bool;
 	
 	static public function init(count:Int):Void 
@@ -66,20 +67,30 @@ class AsyncTests extends TestCase
 	
 	static public function setFlag(n:Int, ?infos:PosInfos) 
 	{
-		if (n >= testCount || n < 0) throw 'Wrong test number';
-		if (isRead[n]) throw 'Double complite';
-		Log.trace('$dec Test #$n finished $dec', infos);
-		isRead[n] = true;
-		if (lock) return;
-		lock = true;
-		checkWaitList();
-		for (e in isRead) if (!e) {
-			lock = false;
-			return;
-		}
-		var test:TestRunner = new TestRunner();
-		test.add(new AsyncTests());
-		test.run();
+		#if cs
+		pony.cs.Synchro.lock(isRead, function() {
+		#end
+			//trace(counter++);
+			if (n >= testCount || n < 0) throw 'Wrong test number';
+			if (isRead[n]) throw 'Double complite';
+			Log.trace('$dec Test #$n finished $dec', infos);
+			isRead[n] = true;
+			if (lock) {
+				trace('Locked call');
+				return;
+			}
+			lock = true;
+			checkWaitList();
+			for (e in isRead) if (!e) {
+				lock = false;
+				return;
+			}
+			var test:TestRunner = new TestRunner();
+			test.add(new AsyncTests());
+			test.run();
+		#if cs
+		});
+		#end
 	}
 	
 	public function testRun()
@@ -114,10 +125,10 @@ class AsyncTests extends TestCase
 	}
 	
 	static private function checkWaitList():Void {
-		var nl = new List<{it:IntIterator, cb:Void->Void}>();
-		for (e in waitList) if (checkWait(e.it)) e.cb();
-		else nl.push(e);
-		waitList = nl;
+		for (e in waitList) if (checkWait(e.it)) {
+			e.cb();
+			waitList.remove(e);
+		}
 	}
 	
 }

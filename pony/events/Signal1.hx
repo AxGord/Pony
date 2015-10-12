@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -27,193 +27,178 @@
 **/
 package pony.events;
 
+import pony.Priority;
+import pony.events.Listener1;
+
 /**
  * Signal1
  * @author AxGord <axgord@gmail.com>
  */
-abstract Signal1<Target, T1:Dynamic>(Signal) {
+@:forward(
+	empty,
+	clear,
+	min,
+	max,
+	add,
+	remove,
+	change,
+	addToBegin,
+	addToEnd,
+	getPriority,
+	exists,
+	existsArray,
+	addArray,
+	removeArray
+)
+abstract Signal1<T1>(Priority<Listener1<T1>>) from Event1<T1> {
 
-	public var silent(get,set):Bool;
-	public var lostListeners(get, never):Signal0<Signal1<Target, T1>>;
-	public var takeListeners(get, never):Signal0<Signal1<Target, T1>>;
-	public var haveListeners(get, never):Bool;
-	public var data(get, set):Dynamic;
-	public var target(get, never):Target;
-	public var listenersCount(get, never):Int;
 	
-	inline private function new(s:Signal) this = s;
-	
-	inline private function get_silent():Bool return this.silent;
-	inline private function set_silent(b:Bool):Bool return this.silent = b;
-	
-	inline private function get_lostListeners():Signal0<Signal1<Target, T1>> return cast this.lostListeners;
-	inline private function get_takeListeners():Signal0<Signal1<Target, T1>> return cast this.takeListeners;
-	inline private function get_haveListeners():Bool return cast this.haveListeners;
-	
-	inline private function get_data():Dynamic return this.data;
-	inline private function set_data(d:Dynamic):Dynamic return this.data = d;
-	inline private function get_target():Target return this.target;
-	inline private function get_listenersCount():Int return this.listenersCount;
-	
-	public function add(listener:Listener1<Target, T1>, priority:Int = 0):Void {
-		this.add(listener, priority);
-		//return target;
+	@:extern inline public function once(e:Listener1<T1>, priority:Int = 0):Signal1<T1> {
+		e.once = true;
+		return this.add(e, priority);
 	}
 	
-	public function once(listener:Listener1<Target, T1>, priority:Int = 0):Void {
-		this.once(listener, priority);
-		//return target;
+	@:op(A << B) @:extern inline private function op_add(listener:Listener1<T1>):Signal1<T1> {
+		return this.add(listener);
 	}
 	
-	public function remove(listener:Listener1<Target, T1>, unuse:Bool = true):Void {
-		this.remove(listener, unuse);
-		//return target;
+	@:op(A < B) @:extern inline private function once_op(listener:Listener1<T1>):Signal1<T1> {
+		return once(listener);
 	}
 	
-	inline public function changePriority(listener:Listener1<Target, T1>, priority:Int = 0):Void {
-		this.changePriority(listener, priority);
-		//return target;
-	}
-	/*#if cs //CS fix
-	public function dispatch(a:Dynamic):Target return dispatchArgs([a]);
-	#else*/
-	public function dispatch(a:T1):Void dispatchArgs([a]);
-	//#end
-	public function dispatchEvent(event:Event):Void {
-		this.dispatchEvent(event);
-		//return target;
+	@:op(A >> B) @:extern inline private function remove_op(listener:Listener1<T1>):Bool {
+		return this.remove( listener );
 	}
 	
-	inline public function dispatchArgs(?args:Array<T1>):Void {
-		this.dispatchArgs(args);
-		//return target;
-	}
-	//#if cs //CS fix
-	//inline public function sub(a:Dynamic, priority:Int=0):Signal0<Target> return subArgs([a], priority);
-	//#else
-	inline public function sub(a:T1, priority:Int=0):Signal0<Target> return subArgs([a], priority);
-	//#end
-	inline public function subArgs(args:Array<T1>, priority:Int=0):Signal0<Target> return this.subArgs(args, priority);
-	
-	inline public function removeSub(a:T1):Void removeSubArgs([a]);
-	
-	inline public function removeSubArgs(args:Array<T1>):Void {
-		this.removeSubArgs(args);
-		//return target;
+	public function sub(a1:T1, priority:Int = 0, once:Bool=false):Signal0 {
+		for (e in this) switch e.listener {
+			case LSub(sig, val) if (val == a1):
+				this.brk();
+				return sig;
+			case _:
+		}
+		var s = new Event0();
+		this.add({ once:once, listener:LSub(s, a1) }, priority);
+		return s;
 	}
 	
-	inline public function removeAllSub():Void {
-		this.removeAllSub();
-		//return target;
+	@:op(A - B) @:extern inline private function sub_op(a1:T1):Signal0 {
+		return sub(a1);
 	}
 	
-	inline public function removeAllBind():Void {
-		this.removeAllSub();
-		//return target;
+	@:op(A -= B) @:extern inline public function removeSub(a1:T1):Bool {
+		return this.remove({ once:false, listener:LSub(null, a1) });
 	}
 	
-	inline public function not(v:T1, priority:Int=0):Signal0<Target> return this.notArgs([v], priority);
-	
-	public function bind(a:Dynamic, ?b:Dynamic, ?c:Dynamic, ?d:Dynamic, ?e:Dynamic, ?f:Dynamic, ?g:Dynamic):Signal {
-		return if (g != null)
-			bindArgs([a, b, c, d, e, f, g]);
-		else if (f != null)
-			bindArgs([a, b, c, d, e, f]);
-		else if (e != null)
-			bindArgs([a, b, c, d, e]);
-		else if (d != null)
-			bindArgs([a, b, c, d]);
-		else if (c != null)
-			bindArgs([a, b, c]);
-		else if (b != null)
-			bindArgs([a, b]);
-		else
-			bindArgs([a]);
+	public function not(a1:T1, priority:Int = 0, once:Bool = false):Signal1<T1> {
+		for (e in this) switch e.listener {
+			case LNot(sig, val) if (val == a1):
+				this.brk();
+				return sig;
+			case _:
+		}
+		var s = new Event1();
+		this.add({ once:once, listener:LNot(s, a1) }, priority);
+		return s;
+	}
+
+	@:op(A / B) @:extern inline private function not_op(a1:T1):Signal1<T1> {
+		return not(a1);
 	}
 	
-	inline public function bindArgs(args:Array<Dynamic>, priority:Int = 0):Signal return this.bindArgs(args, priority);
-	inline public function bind1<A>(a:A, priority:Int = 0):Signal2<Target, A, T1> return bindArgs([a], priority);
-	
-	
-	inline public function and(s:Signal):SignalTar<Target> return cast this.and(s);
-	inline public function and0(s:Signal0<Dynamic>):Signal1<Target, T1> return and(s);
-	inline public function and1<A>(s:Signal1<Dynamic, A>):Signal2<Target, T1, A> return and(s);
-	
-	inline public function or(s:Signal1<Dynamic, T1>):Signal1<Dynamic, T1> return this.or(s);
-	
-	inline public function removeAllListeners():Void {
-		this.removeAllListeners();
-		//return target;
+	@:op(A % B) @:extern inline private function not_op0(a1:T1):Signal0 {
+		return not(a1);
 	}
 	
-	public function sw(l1:Listener1<Target,T1>, l2:Listener1<Target,T1>):Void {
-		this.once(l1);
-		this.once(sw.bind(l2, l1));
-		//return target;
+	@:op(A /= B) @:extern inline public function removeNot(a1:T1):Bool {
+		return this.remove({ once:false, listener:LNot(null, a1) });
 	}
 	
-	@:access(pony.events.Signal)
-	inline public function join(s:Signal1<Target, T1>):Signal1<Target, T1> {
-		for (l in this.listeners) s.add(cast l, -10);
-		return this = s;
+	@:from @:extern inline private static function signal2<T1,T2>(s:Signal2<T1,T2>):Signal1<T1> {
+		return cast s;
 	}
 	
-	inline public function destroy():Void {
-		this.destroy();
-		//return target;
+	@:op(A || B) @:extern inline public function or(s:Signal1<T1>):Signal1<T1> {
+		var ns = new Event1();
+		this.add(ns);
+		s.add(ns);
+		return ns;
 	}
 	
-	public function enableSilent():Void silent = true;
-	public function disableSilent():Void silent = false;
+	@:op(A | B) @:extern inline public function orOnce(s:Signal1<T1>):Signal1<T1> {
+		var ns = new Event1();
+		once(ns);
+		s.once(ns);
+		return ns;
+	}
 	
-	@:from static private inline function from<A,B>(s:Signal):Signal1<A,B> return new Signal1<A,B>(s);
-	@:to private inline function to():Signal return this;
+	@:op(A & B) public function andOnce<T2>(s:Signal1<T2>):Signal2<T1,T2> {
+		var ns = new Event2();
+		var listener1 = null;
+		var listener2 = null;
+		listener1 = function (a) {
+			s.remove(listener2);
+			s.once(ns.dispatch.bind(a));
+		}
+		listener2 = function (b) {
+			this.remove(listener1);
+			once(ns.dispatch.bind(_, b));
+		}
+		once(listener1);
+		s.once(listener2);
+		return ns;
+	}
 	
-	@:to private inline function toListener():Listener return return this.dispatchEvent;
+	@:op(A && B) public function and<T2>(s:Signal1<T2>):Signal2<T1, T2> {
+		var ns = new Event2();
+		var start:Void->Void = null;
+		var listener1 = null;
+		var listener2 = null;
+		listener1 = function (a) {
+			s.remove(listener2);
+			s.once(ns.dispatch.bind(a));
+			s.once(start);
+		}
+		listener2 = function (b) {
+			this.remove(listener1);
+			once(ns.dispatch.bind(_, b));
+			once(start);
+		}
+		start = function () {
+			once(listener1);
+			s.once(listener2);
+		}
+		start();
+		return ns;
+	}
 	
-	@:to private inline function toFunction():T1->Void return dispatch;
-	@:to private inline function toFunction2():Event->Void return dispatchEvent;
+	@:extern inline public function convert0(f:Event0->T1->Void):Signal0 {
+		var ns = new Event0();
+		this.add(f.bind(ns));
+		return ns;
+	}
 	
-	public inline function debug():Void this.debug();
+	@:extern inline public function convert1<ST1>(f:Event1<ST1>->T1->Void):Signal1<ST1> {
+		var ns = new Event1();
+		this.add(f.bind(ns));
+		return ns;
+	}
 	
-	@:op(A << B) inline private function op_add(listener:Listener1<Target,T1>):Signal1<Target,T1> {
-		add(listener);
+	@:extern inline public function convert2<ST1, ST2>(f:Event2<ST1, ST2>->T1->Void):Signal2<ST1, ST2> {
+		var ns = new Event2();
+		this.add(f.bind(ns));
+		return ns;
+	}
+	
+	@:extern inline public function join(s:Signal1<T1>):Signal1<T1> {
+		this.add({once:false, listener:LEvent1((untyped s:Event1<T1>), true)});
+		s.add({once:false, listener:LEvent1((this:Event1<T1>), true)});
 		return this;
 	}
 	
-	@:op(A < B) inline private function op_once(listener:Listener1<Target,T1>):Signal1<Target,T1> {
-		once(listener);
+	@:extern inline public function unjoin(s:Signal1<T1>):Signal1<T1> {
+		this.remove((untyped s:Event1<T1>));
+		s.remove((this:Event1<T1>));
 		return this;
 	}
-	
-	@:op(A >> B) inline private function op_remove(listener:Listener1<Target,T1>):Signal1<Target,T1> {
-		remove(listener);
-		return this;
-	}
-	
-	@:op(A << B) inline private function op_addSignal<A>(signal:Signal1<A,T1>):Signal1<Target,T1> {
-		add(signal.dispatchEvent);
-		return this;
-	}
-	
-	@:op(A < B) inline private function op_onceSignal<A>(signal:Signal1<A,T1>):Signal1<Target,T1> {
-		once(signal.dispatchEvent);
-		return this;
-	}
-	
-	@:op(A >> B) inline private function op_removeSignal<A>(signal:Signal1<A,T1>):Signal1<Target,T1> {
-		remove(signal.dispatchEvent);
-		return this;
-	}
-	
-	@:op(A & B) inline private function op_and0(s:Signal0<Dynamic>):Signal1<Target, T1> return and0(s);
-	@:op(A & B) inline private function op_and1<A>(s:Signal1<Dynamic, A>):Signal2<Target, T1, A> return and1(s);
-	
-	@:op(A | B) inline private function op_or(s:Signal1<Dynamic, T1>):Signal1<Dynamic, T1> return or(s);
-	
-	@:op(A + B) inline private function op_bind<A>(a:A):Signal2<Target,A,T1> return bind1(a);
-	@:op(A - B) inline private function op_sub(a:T1):Signal0<Target> return sub(a);
-	@:op(A / B) inline private function op_not(a:T1):Signal0<Target> return not(a);
-	
-	
 }

@@ -1,30 +1,59 @@
+/**
+* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+*
+* Redistribution and use in source and binary forms, with or without modification, are
+* permitted provided that the following conditions are met:
+*
+*   1. Redistributions of source code must retain the above copyright notice, this list of
+*      conditions and the following disclaimer.
+*
+*   2. Redistributions in binary form must reproduce the above copyright notice, this list
+*      of conditions and the following disclaimer in the documentation and/or other materials
+*      provided with the distribution.
+*
+* THIS SOFTWARE IS PROVIDED BY ALEXANDER GORDEYKO ``AS IS'' AND ANY EXPRESS OR IMPLIED
+* WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+* FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL ALEXANDER GORDEYKO OR
+* CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+* ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+* NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+* ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*
+* The views and conclusions contained in the software and documentation are those of the
+* authors and should not be interpreted as representing official policies, either expressed
+* or implied, of Alexander Gordeyko <axgord@gmail.com>.
+**/
 package pony.net.cs;
 
+#if cs
+import cs.NativeArray.NativeArray;
+import cs.StdTypes.UInt8;
+import cs.system.IAsyncResult;
+import cs.system.AsyncCallback;
+import cs.system.net.IPAddress;
+import cs.system.net.sockets.SocketInformation;
+import cs.system.net.sockets.Socket;
+import cs.system.net.sockets.AddressFamily;
+import cs.system.net.sockets.SocketType;
+import cs.system.net.sockets.ProtocolType;
+import cs.system.net.sockets.SocketFlags;
+import cs.system.net.sockets.SocketException;
+import cs.system.threading.Thread;
+import cs.system.threading.ManualResetEvent;
+import haxe.io.BytesInput;
+import haxe.io.BytesOutput;
+import pony.cs.Synchro;
+import pony.net.SocketClientBase;
+import pony.Queue.Queue;
+import haxe.Timer;//Use HUGS for this
+ 
 /**
  * SocketClient
  * @author DIS
+ * @author AxGord <axgord@gmail.com>
  */
-
- import cs.NativeArray.NativeArray;
- import cs.StdTypes.UInt8;
- import cs.system.IAsyncResult;
- import cs.system.AsyncCallback;
- import cs.system.net.IPAddress;
- import cs.system.net.sockets.SocketInformation;
- import cs.system.net.sockets.Socket;
- import cs.system.net.sockets.AddressFamily;
- import cs.system.net.sockets.SocketType;
- import cs.system.net.sockets.ProtocolType;
- import cs.system.net.sockets.SocketFlags;
- import cs.system.net.sockets.SocketException;
- import cs.system.threading.Thread;
- import cs.system.threading.ManualResetEvent;
- import haxe.io.BytesInput;
- import haxe.io.BytesOutput;
- import pony.cs.Synchro;
- import pony.net.SocketClientBase;
- import pony.Queue.Queue;
- 
 class SocketClient extends SocketClientBase
 {
 	
@@ -90,15 +119,19 @@ class SocketClient extends SocketClientBase
 		catch (ex:SocketException)
 		{
 			isConnected = false;
-			reconnect();
+			tryAgain();
 		}
 		if (isConnected)
 		{
-			connected.end();
 			sendQueue = new Queue(_send);
 			isSet = false;
-			client.BeginReceive(receiveBuffer, 0, receiveBuffer.Length, SocketFlags.None, new AsyncCallback(receiveCallback), this);
+			Timer.delay(connect, 10);//allow add listener first
+			Timer.delay(begin, 20);//and begin take data after some delay
 		}
+	}
+	
+	private function begin():Void {
+		client.BeginReceive(receiveBuffer, 0, receiveBuffer.Length, SocketFlags.None, new AsyncCallback(receiveCallback), this);
 	}
 	
 	public function send(data:BytesOutput):Void
@@ -153,7 +186,7 @@ class SocketClient extends SocketClientBase
 						//eventReceive.Set(); //Threre is a trouble like this: if eventReceive is set, then destroy inserted in onData handler executes every time the callback does,
 											  //so an exception is raised because of the client being equal to null and the callback crashes. But if one doesn't set the event, the destroy
 											  //stops waiting for event to set, so the callback stops too. Need to fix somehow. Fixed by adding a thread into destroy. 
-						onData.dispatch(b_in);
+						eData.dispatch(b_in, cast this);
 						var buffer:NativeArray<UInt8> = new NativeArray(4);
 						this.receiveBuffer = buffer;
 						isSet = false;
@@ -174,7 +207,7 @@ class SocketClient extends SocketClientBase
 						else
 						{
 							buffer = new NativeArray(255);
-							onData.dispatch(b_in);//This will work uncorrect if length of datagramm is greater than 255. 
+							eData.dispatch(b_in, cast this);//This will work uncorrect if length of datagramm is greater than 255. 
 						}
 						this.receiveBuffer = buffer;
 						isSet = true;
@@ -192,13 +225,13 @@ class SocketClient extends SocketClientBase
 			}
 			catch (ex:Dynamic)
 			{
-				_error(ex);
+				error(ex);
 			}
 		}
 		//trace(isRunning); //This trace, being uncommented, comletely burns program to the ground. Although it doesn't do, fixed somehow. 
 		eventReceive.Set();
 	}
-	
+	/*
 	public override function destroy():Void
 	{
 		isRunning = false;
@@ -232,11 +265,22 @@ class SocketClient extends SocketClientBase
 				if (flag) client.Close(); 
 			} );
 			
-			closed = true;
-			onData.destroy();
-			onData = null;
+			destroy();
 		}));
 		destrThread.IsBackground = true;
 		destrThread.Start();
 	}
+	*/
+	
+	override public function destroy():Void {
+		isRunning = false;
+		super.destroy();
+	}
+	
+	override function close():Void {
+		if (opened) client.Close();
+		super.close();
+	}
+	
 }
+#end

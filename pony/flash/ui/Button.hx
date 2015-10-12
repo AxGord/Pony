@@ -29,13 +29,13 @@ package pony.flash.ui;
 
 import flash.display.MovieClip;
 import pony.flash.FLTools;
-import pony.touchManager.ButtonCoreTM;
-import pony.touchManager.TouchManager;
+import pony.time.DeltaTime;
+import pony.touchManager.Toucheble;
 import pony.touchManager.TouchManagerEvent;
 import pony.ui.ButtonCore;
+import pony.ui.ButtonImgN;
 
 using pony.flash.FLExtends;
-using pony.flash.CPP_FL_TouchFix;
 
 /**
  * Button
@@ -43,15 +43,13 @@ using pony.flash.CPP_FL_TouchFix;
  * @author AxGord
  */
 class Button extends MovieClip {
-#if !starling
-	public static var config = {def: 1, focus: 2, press: 3, zone: 4, disabled: 5};
+	#if !starling
+	//public static var config = {def: 1, focus: 2, press: 3, zone: 4, disabled: 5};
 	
-	public var core:ButtonCore;
+	public var core:ButtonImgN;
 	
 	private var zone:Button;
 	private var visual:Button;
-	
-	private var leftOver:Bool = false;
 	
 	public function new() {
 		super();
@@ -61,7 +59,7 @@ class Button extends MovieClip {
 		var cl:Class<Button> = Type.getClass(this);
 		
 		visual = Type.createEmptyInstance(cl);
-		visual.gotoAndStop(config.def);
+		visual.gotoAndStop(1);
 		visual.mouseEnabled = false;
 		visual.mouseChildren = false;
 		visual.scaleX = scaleX;
@@ -69,64 +67,43 @@ class Button extends MovieClip {
 		addChild(visual);
 		
 		zone = Type.createEmptyInstance(cl);
-		zone.gotoAndStop(config.zone);
+		zone.gotoAndStop(4);
 		zone.buttonMode = true;
 		zone.alpha = 0;
 		zone.scaleX = scaleX;
 		zone.scaleY = scaleY;
 		addChild(zone);
 		
-		core = new ButtonCore();
-		core.changeVisual.add(change);
 		
 		mouseEnabled = false;
 		
 		scaleX = 1;
 		scaleY = 1;
-		FLTools.init < init;
+		
+		core = new ButtonImgN(new FlashToucheble(zone));
+		core.onImg << change;
 	}
 	
-	private function init():Void {
-
-		TouchManager.addListener(zone, touchManagerListener);
-	}
-	
-	public function touchManagerListener(e:TouchManagerEvent):Void
-	{
-		ButtonCoreTM.eventsTransition(e, core);
-	}
-	
-	private function change(state:ButtonStates, mode:Int, focus:Bool):Void {
-		if (mode == 1) {
+	private function change(img:Int):Void {
+		if (img == 4) {
 			zone.buttonMode = false;
-			visual.gotoAndStop(config.disabled);
+			visual.gotoAndStop(5);
 			return;
 		}
 		zone.buttonMode = true;
 	
-		visual.gotoAndStop((switch [state, focus] {
-			case [Default, false]: config.def;
-			case [Focus|Leave, _] | [_, true]: config.focus;
-			case [Press, _]: config.press;
-		}) + mode * 3 - (mode > 1?1:0));
+		visual.gotoAndStop(img > 4 ? img + 1 : img);
 	}
 	
-	public function sw(v:Array<Int>):Void if (core != null) core.sw = v;
-	public function getSW():Array<Int> return core.sw;
+	public function switchMap(a:Array<Int>):Void core.switchMap(a);
+	public function bswitch():Void core.bswitch();
+	
 	#else
 	private var _sw:Array<Int>;
+	private var _bsw:Bool = false;
 	
-	public var core:ButtonCore;
+	public function switchMap(v:Array<Int>):Void _sw = v;
+	public function bswitch():Void _bsw = true;
 	
-	public function new() {
-		super();
-		
-		core = new ButtonCore();
-	}
-	
-	public function sw(v:Array<Int>):Void _sw = v;
-	
-	public function getSW():Array<Int> return _sw;
-	
-#end
+	#end
 }

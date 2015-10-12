@@ -30,16 +30,17 @@ package pony.time;
 import js.Node;
 #end
 import pony.events.*;
+import pony.magic.HasSignal;
 
 /**
  * Delta Time
  * @author AxGord
  */
-class DeltaTime {
+class DeltaTime implements HasSignal {
 	
 	public static var speed:Float = 1;
-	public static var update(default,null):Signal1<Void, DT>;
-	public static var fixedUpdate(default,null):Signal1<Void, DT>;
+	@:lazy public static var update:Signal1<DT>;
+	@:lazy public static var fixedUpdate:Signal1<DT>;
 	public static var value:Float = 0;
 	#if (HUGS && !WITHOUTUNITY)
 	public static var fixedValue(get, never):Float;
@@ -99,13 +100,13 @@ class DeltaTime {
 	inline private static function get_nowDate():Date return Date.now();
 	#end
 	
-	public static inline function fixedDispatch():Void fixedUpdate.dispatch(fixedValue);
+	public static inline function fixedDispatch():Void eFixedUpdate.dispatch(fixedValue);
 	
 	#if ((flash||openfl) && !munit)
 	private static function __init__():Void {
 		createSignals();
-		fixedUpdate.takeListeners.add(_ftakeListeners);
-		fixedUpdate.lostListeners.add(_flostListeners);
+		eFixedUpdate.onTake.add(_ftakeListeners);
+		eFixedUpdate.onLost.add(_flostListeners);
 	}
 	private static function _ftakeListeners():Void {
 		_set();
@@ -138,13 +139,15 @@ class DeltaTime {
 	#end
 	
 	inline private static function createSignals():Void {
-		update = Signal.createEmpty();
-		fixedUpdate = Signal.createEmpty();
-		update.takeListeners.add(_takeListeners);
-		update.lostListeners.add(_lostListeners);
+		update;
+		fixedUpdate;
+		//update = Signal.createEmpty();
+		//fixedUpdate = Signal.createEmpty();
+		eUpdate.onTake.add(_takeListeners);
+		eUpdate.onLost.add(_lostListeners);
 	}
 	
-	private static function updateHandler(dt:DT):Void if (dt > 0) update.dispatch(value = dt * speed);
+	private static function updateHandler(dt:DT):Void if (dt > 0) eUpdate.dispatch(value = dt * speed);
 	
 	private static function _takeListeners():Void fixedUpdate.add(updateHandler);
 	private static function _lostListeners():Void fixedUpdate.remove(updateHandler);

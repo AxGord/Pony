@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -44,7 +44,6 @@ import flash.display.DisplayObject;
 import flash.display.StageScaleMode;
 import flash.display.StageAlign;
 import flash.display.DisplayObjectContainer;
-import pony.events.Signal;
 import pony.events.Signal0;
 import pony.time.DeltaTime;
 import flash.display.BitmapData;
@@ -71,6 +70,7 @@ import sys.io.File;
 class FLTools 
 {
 	#if !macro
+	/*
 	static public var init:Signal0<MovieClip>;
 	
 	private static function __init__():Void {
@@ -84,7 +84,7 @@ class FLTools
 		init.destroy();
 		init = null;
 	}
-	
+	*/
 	inline static public function registerClassAlias<T>(cl:Class<T>):Void untyped __global__["flash.net.registerClassAlias"](Type.getClassName(cl), cl);
 	
 	static public var os(get, null):String;

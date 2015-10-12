@@ -27,6 +27,7 @@
 **/
 package pony;
 
+import haxe.Constraints.Function;
 import haxe.CallStack;
 import haxe.io.Bytes;
 import haxe.io.BytesInput;
@@ -39,7 +40,6 @@ import haxe.macro.Context;
 import haxe.macro.Expr;
 using haxe.macro.Tools;
 #end
-import mcover.macro.ClassParser;
 import pony.text.TextTools;
 
 using Reflect;
@@ -370,6 +370,24 @@ class Tools {
 		}
 		return false;
 	}
+	
+	#if (js||flash)
+	@:extern inline
+	#end
+	public static function functionLength(f:Function):Int {
+		#if php
+		var rf = untyped __php__("new ReflectionMethod($f[0], $f[1])");
+		return rf.getNumberOfParameters();
+		#elseif (js||flash)
+		return untyped f.length;
+		#elseif cpp
+		return Std.parseInt(Std.string(f).substr(10));
+		#elseif neko
+		return Std.parseInt(Std.string(f).split(':')[1]);
+		#else
+		return throw 'Function not work for current platform';
+		#end
+	}
 }
 
 class ArrayTools {
@@ -431,6 +449,16 @@ class ArrayTools {
 		for (i in 0...array.length) if (i != index) na.push(array[i]);
 		return na;
 	}
+	
+	static public function fIndexOf<T>(a:Array<T>, f:T->Bool):Int {
+		var i = 0;
+		for (e in a) {
+			if (f(e)) return i;
+			i++;
+		}
+		return -1;
+	}
+	
 }
 
 class FloatTools {

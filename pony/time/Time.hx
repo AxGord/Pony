@@ -163,17 +163,19 @@ abstract Time(Null<Int>) from Int to Int {
 		return s == '' ? '0' : s;
 	}
 	
-	public function clock():String {
+	public function clock(?autoHide:Bool):String {
 		var s = '';
-		if (hours != 0) {
-			s += abs(hours).toFixed('00') + ':' + abs(minutes).toFixed('00') + ':' + abs(seconds).toFixed('00');
+		if (hours != 0 || !autoHide) {
+			s += print(hours) + ':' + print(minutes) + ':' + print(seconds);
 		} else {
 			if (minutes != 0) {
-				s += abs(minutes).toFixed('00') + ':' + abs(seconds).toFixed('00');
+				s += print(minutes) + ':' + print(seconds);
 			} else if (seconds != 0) s += abs(seconds);
 		}
 		return s;
 	}
+	
+	@:extern inline function print(v:Float):String return abs(v).toFixed('00');
 	
 	@:op(A + B) inline static private function add(a:Time, b:Time):Time return (a:Int) + (b:Int);
 	@:op(A + B) inline static private function addInt(a:Time, b:Int):Time return (a:Int) + b;

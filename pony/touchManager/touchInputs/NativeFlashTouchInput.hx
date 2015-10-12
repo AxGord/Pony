@@ -49,7 +49,7 @@ class NativeFlashTouchInput
 	{
 		if (!InputMode.touchMode())
 		{
-			TouchManager.move(e.stageX, e.stageY, false);
+			TouchManager.move(e.stageX, e.stageY, false, 0, e.buttonDown);
 		}
 	}
 	

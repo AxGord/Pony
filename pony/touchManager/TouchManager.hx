@@ -121,8 +121,9 @@ class TouchManager
 	
 	// Events:
 	
-	public static function move(x:Float, y:Float, touchInputMode:Bool, id:Int = MOUSE_ID):Void
+	public static function move(x:Float, y:Float, touchInputMode:Bool, id:Int = MOUSE_ID, mouseDown:Bool=false):Void
 	{
+		
 		if (_gestureTouches.exists(id))
 		{
 			//Gesture
@@ -171,10 +172,13 @@ class TouchManager
 		
 		for (i in 0...maxLength)
 		{
+			
 			if (!touchInputMode && touch.active == null)
 			{
-				if (!commonParent(newCurrentObjectChain, currentObjectChain, i) && currentObjectChain.length > i) dispatch(currentObjectChain[i], HoverOut, false, touch);
-				if (newCurrentObjectChain.length > i) dispatch(newCurrentObjectChain[i], Hover, true, touch);
+				if (!commonParent(newCurrentObjectChain, currentObjectChain, i) ) {
+					if (currentObjectChain.length > i) dispatch(currentObjectChain[i], mouseDown ? Out : HoverOut, false, touch);
+					if (newCurrentObjectChain.length > i) dispatch(newCurrentObjectChain[i], mouseDown ? Over : Hover, true, touch);
+				}
 			}
 			else
 			{
@@ -242,11 +246,12 @@ class TouchManager
 			
 			var mouseActiveObjectChain:Array<Dynamic> = getObjectChain(_mouse.active);
 			var mouseCurrentObjectChain:Array<Dynamic> = getObjectChain(_mouse.current);
-			
+			/*
 			for (i in 0...mouseCurrentObjectChain.length)
 			{
 				if (commonParent(mouseActiveObjectChain, mouseCurrentObjectChain, i)) dispatch(mouseCurrentObjectChain[i], HoverOut, false, _mouse);
 			}
+			*/
 			_mouse.current = _mouse.active;
 			
 			dispatch(GLOBAL, Down, true, _mouse);

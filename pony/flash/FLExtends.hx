@@ -33,7 +33,6 @@ import flash.events.Event;
 import flash.events.EventDispatcher;
 import flash.geom.Rectangle;
 import flash.Lib;
-import pony.events.Signal;
 import pony.flash.ui.Button;
 import pony.geom.Rect;
 import pony.ui.ButtonCore;
@@ -46,7 +45,7 @@ import pony.ui.ButtonCore;
 typedef Sigid = {d:EventDispatcher, n:String};
  
 class FLExtends {
-	
+	/*
 	private static var signals:Map<Sigid, Signal> = new Map<Sigid, Signal>();
 	
 	public static function buildSignal(d:EventDispatcher, name:String):Signal {
@@ -57,7 +56,7 @@ class FLExtends {
 		d.addEventListener(name, function(event:Event) s.dispatchArgs([event]));
 		return s;
 	}
-	
+	*/
 	public inline static function v(f:Void->Void):Dynamic return function(Void) f();
 	
 	public static function childrens(d:DisplayObjectContainer):Iterator<DisplayObject> {
@@ -94,6 +93,6 @@ class FLExtends {
 	
 	inline public static function get(o:DisplayObjectContainer, name:String):DisplayObject return untyped o[name];
 	
-	inline public static function button(o:DisplayObjectContainer, name:String):ButtonCore return getTyped(o, name, Button).core;
+	//inline public static function button(o:DisplayObjectContainer, name:String):ButtonCore return getTyped(o, name, Button).core;
 	
 }

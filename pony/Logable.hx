@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -25,29 +25,24 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony ;
+package pony;
+
 import haxe.PosInfos;
-import pony.events.Signal;
-import pony.events.Signal1;
 import pony.events.Signal2;
 import pony.ILogable;
+import pony.magic.HasSignal;
 
 /**
  * Logable
  * @author AxGord <axgord@gmail.com>
  */
-class Logable<T:Dynamic> implements ILogable<T>
+class Logable implements ILogable implements HasSignal
 {
-	public var log:Signal2<T, String, PosInfos>;
-	public var error:Signal2<T, String, PosInfos>;
+	public function new() { }
 	
-	public function new() 
-	{
-		log = Signal.create(cast this);
-		error = Signal.create(cast this);
-	}
+	@:lazy public var onLog:Signal2<String, PosInfos>;
+	@:lazy public var onError:Signal2<String, PosInfos>;
 	
-	inline public function _error(s:String, ?p:PosInfos):Void error.dispatch(s,p);
-	inline public function _log(s:String, ?p:PosInfos):Void log.dispatch(s,p);
-	
+	inline public function error(s:String, ?p:PosInfos):Void eError.dispatch(s,p);
+	inline public function log(s:String, ?p:PosInfos):Void eLog.dispatch(s,p);
 }

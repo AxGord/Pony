@@ -25,26 +25,22 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony;
+package pony.events;
 
-class Errors
-{
+import haxe.Constraints.Function;
 
-	public var arg:String;
-	public var result:Map<String, String>;
-	
-	public function new() {
-		result = new Map<String, String>();
-	}
-	
-	public inline function test(cond:Bool, message:String) {
-		if (cond && !result.exists(arg)) set(message);
-	}
-	
-	public inline function set(message:String):Void {
-		result.set(arg, message);
-	}
-	
-	public inline function empty():Bool return !result.iterator().hasNext();
+/**
+ * SignalTools
+ * @author AxGord <axgord@gmail.com>
+ */
+class SignalTools {
+
+	#if cs
+	@:extern inline public static function functionHashCompare(a:Function, b:Function):Bool return untyped a.GetHashCode() == untyped b.GetHashCode();
+	#elseif java
+	@:extern inline public static function functionHashCompare(a:Function, b:Function):Bool return untyped a.hashCode() == untyped b.hashCode();
+	#else
+	@:extern inline public static function functionHashCompare(a:Function, b:Function):Bool return a == b;
+	#end
 	
 }

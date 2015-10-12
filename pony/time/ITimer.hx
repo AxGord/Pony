@@ -34,11 +34,11 @@ import pony.events.*;
  * @author AxGord <axgord@gmail.com>
  */
 interface ITimer < T:ITimer<T> > {
-	
-	var update:Signal1<T, Time>;
-	var progress:Signal1<T, Float>;
-	var complite:Signal1<T, DT>;
-	
+	#if !flash
+	var update(get,never):Signal1<Time>;
+	var progress(get,never):Signal1<Float>;
+	var complete(get,never):Signal1<DT>;
+	#end
 	var time:TimeInterval;
 	var currentTime:Time;
 	var repeatCount:Int;

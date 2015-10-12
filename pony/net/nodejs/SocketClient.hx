@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -26,9 +26,10 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.net.nodejs;
+#if nodejs
+
 import pony.events.Waiter;
 import pony.Queue;
-#if nodejs
 import haxe.io.Bytes;
 import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
@@ -44,47 +45,36 @@ class SocketClient extends SocketClientBase {
 	private var socket:NodeNetSocket;
 	private var q:Queue < BytesOutput->Void > ;
 	
-	override public function open():Void {
+	override private function open():Void {
+		super.open();
 		socket = Node.net.connect(port, host);
-		//connected = new Waiter();
-		socket.on('connect', connectHandler);
+		socket.on('connect', connect);
 		nodejsInit(socket);
 	}
 	
-	public function nodejsInit(s:NodeNetSocket):Void {
+	@:allow(pony.net.nodejs.SocketServer)
+	private function nodejsInit(s:NodeNetSocket):Void {
 		q = new Queue(_send);
 		socket = s;
 		s.on('data', dataHandler);
-		s.on('end', closeHandler);
-		s.on('error', reconnect);
-		isAbleToSend = true;
-		endInit();
+		s.on('end', close);
+		s.on('error', error.bind('socket error'));
 	}
 	
-	private function closeHandler():Void
-	{
-		onDisconnect.dispatch();
-		onDisconnect.destroy();
-		onDisconnect = null;
-	}
-	
-	private function connectHandler():Void {
-		closed = false;
-		connected.end();
+	override private function close():Void {
+		super.close();
+		if (socket != null) {
+			socket.end();
+			socket.destroy();
+			socket = null;
+		}
 	}
 	
 	public function send(data:BytesOutput):Void	q.call(data);
 	
-	public function _send(data:BytesOutput):Void socket.write(data.getBytes().getData(), null, q.next);
+	private function _send(data:BytesOutput):Void socket.write(data.getBytes().getData(), null, q.next);
 	
 	private function dataHandler(d:NodeBuffer):Void joinData(new BytesInput(Bytes.ofData(d)));
-	
-	override public function destroy():Void {
-		super.destroy();
-		socket.end();
-		socket = null;
-		closed = true;
-	}
 	
 }
 #end

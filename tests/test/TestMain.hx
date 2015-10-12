@@ -5,8 +5,6 @@ import massive.munit.client.JUnitReportClient;
 import massive.munit.client.SummaryReportClient;
 import massive.munit.TestRunner;
 
-using pony.Function;
-
 #if js
 import js.Lib;
 #end

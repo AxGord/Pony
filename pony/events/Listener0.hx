@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2013 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -27,17 +27,23 @@
 **/
 package pony.events;
 
+enum Listener0Type {
+	LFunction0( f:Void->Bool );
+	LEvent0( s:Event0, ?safe:Bool );
+}
+
+typedef Listener0_ = { once:Bool, listener:Listener0Type }
+
 /**
- * Listener0
  * @author AxGord <axgord@gmail.com>
  */
-abstract Listener0<Target>(Listener) {
-	inline public function new(l:Listener) this = l;
-	@:from inline private static function from0<Target>(f:Void->Void):Listener0<Target> return new Listener0(f);
-	@:from inline private static function fromE<E:Event,Target>(f:E->Void):Listener0<Target> return new Listener0(f);
-	@:from inline private static function from0T<T>(f:T->Void):Listener0<T> return new Listener0(f);
-	@:from inline private static function fromTE<E:Event,T>(f:T->E->Void):Listener0<T> return new Listener0(f);
-	@:to inline private function to():Listener return this;
+@:forward(once, listener)
+abstract Listener0(Listener0_) to Listener0_ from Listener0_ {
 	
-	@:from static inline public function fromSignal0<Target>(s:Signal0<Target>):Listener0<Target> return fromE(s.dispatchEvent);
+	@:from @:extern inline private static function f0<T1>(f:Void->Void):Listener0 return { once:false, listener:LFunction0(cast f) };
+	@:from @:extern inline private static function s0<T1>(f:Event0):Listener0 return { once:false,  listener:LEvent0(f) };
+	inline public function call(?safe:Bool):Bool return switch this.listener {
+		case LFunction0(f): f();
+		case LEvent0(s, sv): s.dispatch(sv||safe);
+	}
 }

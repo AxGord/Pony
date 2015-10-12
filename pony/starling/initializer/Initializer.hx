@@ -13,6 +13,7 @@ import pony.flash.FLTools;
 import pony.starling.displayFactory.DisplayFactory.IDisplayObject;
 import pony.starling.displayFactory.DisplayFactory.IDisplayObjectContainer;
 import pony.starling.displayFactory.NativeFlashDisplayFactory;
+import pony.time.DeltaTime;
 import pony.touchManager.hitTestSources.NativeHitTestSource;
 import pony.touchManager.InputMode;
 import pony.touchManager.touchInputs.NativeFlashTouchInput;
@@ -50,7 +51,7 @@ class Initializer
 	#end
 	
 	public static function init(initCallback:IDisplayObjectContainer->IDisplayObject->Void):Void {
-		FLTools.init < function() {
+		DeltaTime.fixedUpdate < function() {
 			new Initializer(initCallback, 
 				#if debug
 				true

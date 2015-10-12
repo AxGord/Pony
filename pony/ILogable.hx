@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -26,18 +26,18 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony;
+
 import haxe.PosInfos;
 import pony.events.Signal2;
 
 /**
- * Logable
+ * Logable interface
  * @author AxGord <axgord@gmail.com>
  */
-interface ILogable<T:Dynamic>
+interface ILogable
 {
-	var log:Signal2<T, String, PosInfos>;
-	var error:Signal2<T, String, PosInfos>;
-	
-	function _log(s:String, ?p:PosInfos):Void;
-	function _error(s:String, ?p:PosInfos):Void;
+	#if !flash
+	var onLog(get,never):Signal2<String, PosInfos>;
+	var onError(get, never):Signal2<String, PosInfos>;
+	#end
 }

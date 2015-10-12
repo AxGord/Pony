@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -45,16 +45,21 @@ extends pony.net.openfl.SocketClient
 #end
 implements ISocketClient {
 	
-	public var writeLengthSize:UInt = 4;
+	public var writeLengthSize:UInt;
 	
-	private var stack:Array<BytesOutput> = [];
+	private var stack:Array<BytesOutput>;
+	
+	override function sharedInit():Void {
+		writeLengthSize = 4;
+		stack = [];
+		super.sharedInit();
+	}
 	
 	#if !cs//Not working for CS
 	dynamic public function writeLength(bo:BytesOutput, length:UInt):Void bo.writeInt32(length);
 	#end
 	override public function send(data:BytesOutput):Void {
-		trace(closed);
-		if (closed) {
+		if (!opened) {
 			stack.push(data);
 			return;
 		}
@@ -90,8 +95,7 @@ implements ISocketClient {
 		send(bo);
 	}
 	
-	public function sendStack():Void {
-		trace('sendStack '+stack.length);
+	@:extern inline public function sendStack():Void {
 		if (stack.length > 0) send(stack.shift());
 	}
 	

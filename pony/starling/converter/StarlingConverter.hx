@@ -8,6 +8,8 @@ import flash.geom.Rectangle;
 import flash.text.TextField;
 import flash.text.TextFormat;
 import flash.text.TextFormatAlign;
+
+/*
 import pony.flash.ui.Button;
 import pony.flash.ui.MusicPlayer;
 import pony.flash.ui.ProgressBar;
@@ -23,6 +25,11 @@ import pony.starling.ui.StarlingScrollBar;
 import pony.starling.ui.StarlingSongPlayer;
 import pony.starling.ui.StarlingTree;
 import pony.starling.ui.StarlingTurningFree;
+*/
+import pony.flash.ui.Button;
+import pony.starling.ui.StarlingButton;
+
+
 import starling.core.Starling;
 import starling.display.DisplayObject;
 import starling.utils.HAlign;
@@ -50,7 +57,7 @@ class StarlingConverter
 		if (Std.is(source, flash.text.TextField) && hasName(source)) // Dynamic TextField
 		{
 			starlingChild = getStarlingTextField(cast(source, TextField), coordinateSpace);
-		}
+		}/*
 		else if (Std.is(source, pony.flash.ui.ScrollBar)) // ScrollBar
 		{
 			starlingChild = getSpriteInternal(untyped source, coordinateSpace, disposeable);
@@ -96,10 +103,10 @@ class StarlingConverter
 		else if (Std.is(source, IStarlingConvertible))
 		{
 			starlingChild = cast(source, IStarlingConvertible).convert(coordinateSpace);
-		}
+		}*/
 		else if (Std.is(source, pony.flash.ui.Button)) // Button
 		{
-			starlingChild = StarlingButton.builder(_atlasCreator, source, coordinateSpace, disposeable);
+			starlingChild = StarlingButton.builder(_atlasCreator, cast source, coordinateSpace, disposeable);
 		}
 		else if (Std.is(source, flash.display.Sprite) && childrenWithNames(cast(source, flash.display.Sprite))) // Container
 		{

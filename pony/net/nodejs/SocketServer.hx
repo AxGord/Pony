@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -41,13 +41,15 @@ class SocketServer extends SocketServerBase {
 	public function new(port:Int) {
 		super();
 		server = Node.net.createServer(null,null);
-		server.listen(port, bound);
 		server.on('connection', connectionHandler);
+		server.listen(port, eOpen.dispatch.bind(false));
 	}
 	
-	private function bound():Void _log('bound '+server.address());
-	
-	private function connectionHandler(c:NodeNetSocket):Void addClient().nodejsInit(c);
+	private function connectionHandler(c:NodeNetSocket):Void {
+		var cl = addClient();
+		cl.nodejsInit(c);
+		@:privateAccess cl.connect();
+	}
 	
 	override public function destroy():Void
 	{

@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2013 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -26,38 +26,59 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.events;
-import pony.Priority.Priority;
+
+import pony.Priority;
 
 /**
- * EventDispatcher
+ * Event0
  * @author AxGord <axgord@gmail.com>
  */
-class EventDispatcher {
+@:forward(
+	empty,
+	onTake,
+	onLost
+)
+abstract Event0(Priority<Listener0>) from Priority<Listener0> to Priority<Listener0> {
 
-	private var signals:Map<String, Signal>;
-	
-	public function new() {
-		signals = new Map<String, Signal>();
+	@:extern inline public function new(double:Bool = false) {
+		this = new Priority(double);
+		this.compare = compare;
 	}
 	
-	public function dispatch(name:String, event:Event):Event {
-		if (signals.exists(name))
-			signals.get(name).dispatchEvent(event);
-		return event;
-	}
-	
-	public function addListener(name:String, l:Listener, p:Int=0):Void {
-		if (!signals.exists(name))
-			signals.set(name, new Signal(this));
-		signals.get(name).add(l, p);
-	}
-	
-	public function removeListener(name:String, l:Listener, p:Int=0):Void {
-		if (signals.exists(name)) {
-			var s:Signal = signals.get(name);
-			s.remove(l);
-			if (s.listenersCount == 0) signals.remove(name);
+	private static function compare<T1>(a:Listener0, b:Listener0):Bool {
+		return switch [a.listener, b.listener] {
+			case [LFunction0(a), LFunction0(b)]:
+				SignalTools.functionHashCompare(a, b);
+			case [LEvent0(a,_), LEvent0(b,_)]:
+				a == b;
+			case _: false;
 		}
+	}
+	
+	public function dispatch(safe:Bool=false):Bool {
+		if (this == null || this.isDestroy() || (safe && this.counters.length > 1)) return false;
+		this.lock = true;
+		for (e in this) {
+			if (e.call(safe)) {
+				this.brk();
+				return true;
+			}
+			if (!this.isDestroy() && e.once) this.remove(e);
+		}
+		this.lock = false;
+		return false;
+	}
+	
+	@:op(A && B) @:extern inline public function and(s:Event0):Event0 {
+		return (new Event0():Signal0).add(this).add(s);
+	}
+	
+	@:op(A & B) @:extern inline public function andOnce(s:Event0):Event0 {
+		return (new Event0():Signal0).add(this).add(s);
+	}
+	
+	@:extern inline public function destroy():Void {
+		if (this != null) this.destroy();
 	}
 	
 }
