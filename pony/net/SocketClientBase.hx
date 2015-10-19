@@ -195,7 +195,6 @@ class SocketClientBase extends Logable implements HasSignal {
 	dynamic public function readLength(bi:BytesInput):UInt return bi.readInt32();
 	
 	private function joinData(bi:BytesInput):Void {
-		if (server != null) isWithLength = server.isWithLength;
 		if (isWithLength)
 		{
 			var size:UInt = 0;

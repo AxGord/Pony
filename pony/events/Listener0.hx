@@ -41,7 +41,7 @@ typedef Listener0_ = { once:Bool, listener:Listener0Type }
 abstract Listener0(Listener0_) to Listener0_ from Listener0_ {
 	
 	@:from @:extern inline private static function f0<T1>(f:Void->Void):Listener0 return { once:false, listener:LFunction0(cast f) };
-	@:from @:extern inline private static function s0<T1>(f:Event0):Listener0 return { once:false,  listener:LEvent0(f) };
+	@:from @:extern inline private static function s0<T1>(f:Event0):Listener0 return { once:false, listener:LEvent0(f) };
 	inline public function call(?safe:Bool):Bool return switch this.listener {
 		case LFunction0(f): f();
 		case LEvent0(s, sv): s.dispatch(sv||safe);

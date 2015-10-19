@@ -47,12 +47,12 @@ implements ISocketServer
 {
 	#if !flash
 	public function new(port:Int, isWithLength:Bool = true, maxSize:Int = 1024) {
+		super(port);
 		this.isWithLength = isWithLength;
 		this.maxSize = maxSize;
-		super(port);
 	}
 	#end
-	@:extern inline public function sendString(data:String):Void {
+	inline public function sendString(data:String):Void {
 		var bo = new BytesOutput();
 		bo.writeString(data);
 		send(bo);

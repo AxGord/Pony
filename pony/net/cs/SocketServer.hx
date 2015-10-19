@@ -130,7 +130,6 @@ class SocketServer extends SocketServerBase
 	{
 		var cl:SocketClient = Type.createEmptyInstance(SocketClient);
 		Synchro.lock(clients, function() cl.init(cast this, clients.length));
-		cl.isWithLength = this.isWithLength;
 		cl.sendQueue = new Queue(cl._send);
 		cl.isRunning = true;
 		cl.eventReceive = new ManualResetEvent(true);
