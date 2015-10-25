@@ -75,7 +75,7 @@ class SliderCore implements Declarator implements HasSignal {
 			changePos << function(v) changeX(v);//Coz changeX dynamic function
 		}
 		onStartDrag << startDragHandler;
-		changePos << b.touch.check;
+		if (b != null) changePos << b.touch.check;
 	}
 	
 	@:extern inline
@@ -92,7 +92,7 @@ class SliderCore implements Declarator implements HasSignal {
 		finalPos = pos;
 		finalPercent = percent;
 		finalValue = value;
-		changePos << b.touch.check;
+		if (b != null) changePos << b.touch.check;
 	}
 	
 	inline public function startDrag():Void untyped (onStartDrag:Event0).dispatch();
@@ -114,7 +114,7 @@ class SliderCore implements Declarator implements HasSignal {
 	
 	private function startDragHandler(t:Touch):Void {
 		t.onMove << moveHandler;
-		changePos >> b.touch.check;
+		if (b != null) changePos >> b.touch.check;
 	}
 	
 	private function moveHandler(t:Touch):Void {
