@@ -3,7 +3,7 @@ import pony.events.Signal0;
 import pony.events.Signal1;
 import pony.events.Signal2;
 import pony.magic.HasSignal;
-import pony.touchManager.TouchebleBase;
+import pony.touch.TouchebleBase;
 
 enum ButtonState {
 	Default; Focus; Leave; Press;

@@ -25,84 +25,39 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.flash.ui;
+package pony.touch;
 
-import flash.display.MovieClip;
-import pony.flash.FLTools;
-import pony.time.DeltaTime;
-import pony.touch.Toucheble;
-import pony.ui.ButtonCore;
-import pony.ui.ButtonImgN;
-
-using pony.flash.FLExtends;
+import pony.touchManager.TouchEventType;
+import pony.touchManager.TouchManager;
+import pony.touchManager.TouchManagerEvent;
+import pony.touch.TouchebleBase;
 
 /**
- * Button
- * @see pony.ui.ButtonCore
- * @author AxGord
+ * Toucheble
+ * todo: over after mouse down
+ * @author AxGord <axgord@gmail.com>
  */
-class Button extends MovieClip {
-	#if !starling
-	//public static var config = {def: 1, focus: 2, press: 3, zone: 4, disabled: 5};
+class Toucheble extends TouchebleBase {
+
+	public var leave:Bool = false;
+	private var prev:TouchEventType;
 	
-	public var core:ButtonImgN;
-	
-	private var zone:Button;
-	private var visual:Button;
-	
-	public function new() {
+	public function new(object:Dynamic) {
 		super();
-		FLTools.setTrace();
-		stop();
-		removeChildren();
-		var cl:Class<Button> = Type.getClass(this);
-		
-		visual = Type.createEmptyInstance(cl);
-		visual.gotoAndStop(1);
-		visual.mouseEnabled = false;
-		visual.mouseChildren = false;
-		visual.scaleX = scaleX;
-		visual.scaleY = scaleY;
-		addChild(visual);
-		
-		zone = Type.createEmptyInstance(cl);
-		zone.gotoAndStop(4);
-		zone.buttonMode = true;
-		zone.alpha = 0;
-		zone.scaleX = scaleX;
-		zone.scaleY = scaleY;
-		addChild(zone);
-		
-		
-		mouseEnabled = false;
-		
-		scaleX = 1;
-		scaleY = 1;
-		
-		core = new ButtonImgN(new FlashToucheble(zone));
-		core.onImg << change;
+		TouchManager.addListener(object, eventHandler);
 	}
 	
-	private function change(img:Int):Void {
-		if (img == 4) {
-			zone.buttonMode = false;
-			visual.gotoAndStop(5);
-			return;
+	private function eventHandler(event:TouchManagerEvent):Void {
+		switch event.type {
+			case TouchEventType.Hover: dispatchOver(event.touchID); leave = false; //trace('Hover');
+			case TouchEventType.HoverOut: dispatchOut(event.touchID); leave = true; //trace('HoverOut');
+			case TouchEventType.Over: dispatchOverDown(event.touchID); leave = false; //trace('Over');
+			case TouchEventType.Out: dispatchOutDown(event.touchID); leave = true; //trace('Out');
+			case TouchEventType.Down: dispatchDown(event.touchID, event.globalX, event.globalY); //trace('Down');
+			case TouchEventType.Up: leave ? dispatchOutUp(event.touchID) : dispatchUp(); //trace('Up');
+			case _:
 		}
-		zone.buttonMode = true;
-	
-		visual.gotoAndStop(img > 4 ? img + 1 : img);
+		prev = event.type;
 	}
 	
-	public function switchMap(a:Array<Int>):Void core.switchMap(a);
-	public function bswitch():Void core.bswitch();
-	
-	#else
-	private var _sw:Array<Int>;
-	private var _bsw:Bool = false;
-	
-	public function switchMap(v:Array<Int>):Void _sw = v;
-	public function bswitch():Void _bsw = true;
-	
-	#end
 }

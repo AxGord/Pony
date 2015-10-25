@@ -1,7 +1,7 @@
 package pony.ui;
 
 import pony.events.Signal1;
-import pony.touchManager.TouchebleBase;
+import pony.touch.TouchebleBase;
 import pony.ui.ButtonCore;
 
 /**

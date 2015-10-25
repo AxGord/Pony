@@ -130,7 +130,7 @@ class Priority<T:Dynamic> implements HasSignal {
 		return this;
 	}
 	
-	@:extern inline private function set_lock(v:Bool):Bool {
+	private function set_lock(v:Bool):Bool {
 		if (lock != v) {
 			lock = v;
 			if (!v) for (e in addStack) add(e.a, e.b);

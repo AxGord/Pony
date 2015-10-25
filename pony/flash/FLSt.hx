@@ -40,7 +40,7 @@ class FLStBuilder {
 								#if openfl
 								expr: macro return untyped getChild($v { f.name } ),
 								#else
-								expr: macro return untyped getChildByName($v { f.name } ),
+								expr: macro return untyped this.getChildByName($v { f.name } ),
 								#end
 								params: []
 							}),

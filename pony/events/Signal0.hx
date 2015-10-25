@@ -27,6 +27,8 @@
 **/
 package pony.events;
 
+import haxe.Log;
+import haxe.PosInfos;
 import pony.Priority;
 import pony.events.Listener0;
 
@@ -178,6 +180,10 @@ abstract Signal0(Priority<Listener0>) from Event0 {
 		this.remove((untyped s:Event0));
 		s.remove((this:Event0));
 		return this;
+	}
+	
+	@:extern inline public function trace(?message:String, priority:Int=0, ?pos:PosInfos):Void {
+		this.add(function() Log.trace(message, pos), priority);
 	}
 	
 }

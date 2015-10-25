@@ -27,82 +27,35 @@
 **/
 package pony.flash.ui;
 
-import flash.display.MovieClip;
-import pony.flash.FLTools;
+import flash.display.DisplayObject;
+import flash.display.Sprite;
+import pony.flash.FLSt;
 import pony.time.DeltaTime;
-import pony.touch.Toucheble;
-import pony.ui.ButtonCore;
-import pony.ui.ButtonImgN;
-
-using pony.flash.FLExtends;
+import pony.ui.SliderCore;
 
 /**
- * Button
- * @see pony.ui.ButtonCore
- * @author AxGord
+ * Slider
+ * @author AxGord <axgord@gmail.com>
  */
-class Button extends MovieClip {
-	#if !starling
-	//public static var config = {def: 1, focus: 2, press: 3, zone: 4, disabled: 5};
+class Slider extends Sprite implements FLSt {
+
+	public var core:SliderCore;
 	
-	public var core:ButtonImgN;
+	@:st private var b:Button;
+	@:st private var bg:DisplayObject;
 	
-	private var zone:Button;
-	private var visual:Button;
+	private var touchId:Int;
 	
 	public function new() {
 		super();
-		FLTools.setTrace();
-		stop();
-		removeChildren();
-		var cl:Class<Button> = Type.getClass(this);
-		
-		visual = Type.createEmptyInstance(cl);
-		visual.gotoAndStop(1);
-		visual.mouseEnabled = false;
-		visual.mouseChildren = false;
-		visual.scaleX = scaleX;
-		visual.scaleY = scaleY;
-		addChild(visual);
-		
-		zone = Type.createEmptyInstance(cl);
-		zone.gotoAndStop(4);
-		zone.buttonMode = true;
-		zone.alpha = 0;
-		zone.scaleX = scaleX;
-		zone.scaleY = scaleY;
-		addChild(zone);
-		
-		
-		mouseEnabled = false;
-		
-		scaleX = 1;
-		scaleY = 1;
-		
-		core = new ButtonImgN(new FlashToucheble(zone));
-		core.onImg << change;
+		DeltaTime.fixedUpdate < init;
 	}
 	
-	private function change(img:Int):Void {
-		if (img == 4) {
-			zone.buttonMode = false;
-			visual.gotoAndStop(5);
-			return;
-		}
-		zone.buttonMode = true;
-	
-		visual.gotoAndStop(img > 4 ? img + 1 : img);
+	private function init():Void {
+		core = SliderCore.create(b.core, bg.width-b.width, bg.height-b.height);
+		core.changeX = function(v) b.x = v; 
+		core.changeY = function(v) b.y = v; 
+		core.endInit();
 	}
 	
-	public function switchMap(a:Array<Int>):Void core.switchMap(a);
-	public function bswitch():Void core.bswitch();
-	
-	#else
-	private var _sw:Array<Int>;
-	private var _bsw:Bool = false;
-	
-	public function switchMap(v:Array<Int>):Void _sw = v;
-	public function bswitch():Void _bsw = true;
-	
-	#end
 }
