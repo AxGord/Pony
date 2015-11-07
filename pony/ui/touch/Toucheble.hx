@@ -32,7 +32,7 @@ package pony.ui.touch;
  */
 typedef Toucheble =
 #if flash
-pony.ui.touch.flash.Toucheble//need openfl_flash class
+pony.ui.touch.flash.Toucheble
 #elseif openfl
 pony.ui.touch.openfl.Toucheble
 #else

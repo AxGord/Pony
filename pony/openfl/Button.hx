@@ -28,7 +28,7 @@
 package pony.openfl;
 
 import openfl.display.Sprite;
-import pony.ui.touch.openfl.Toucheble;
+import pony.ui.touch.Toucheble;
 import pony.ui.gui.ButtonImgN;
 
 /**

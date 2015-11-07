@@ -91,8 +91,6 @@ class Mouse implements Declarator implements HasSignal {
 				case MouseButton.MIDDLE: eMiddleDown.dispatch(e.x, e.y);
 				case MouseButton.RIGHT: eRightDown.dispatch(e.x, e.y);
 			}
-			Mouse.x = e.x;
-			Mouse.y = e.y;
 		}
 		downStack = [];
 	}
