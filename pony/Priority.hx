@@ -87,7 +87,7 @@ class Priority<T:Dynamic> implements HasSignal {
 	
 	private var hash:Map<Int, Int>;
 	
-	private var addStack:List<Pair<T, Int>>;
+	private var addStack:Array<Pair<T, Int>>;
 	public var lock(default, set):Bool = false;
 	
 	/**
@@ -131,9 +131,13 @@ class Priority<T:Dynamic> implements HasSignal {
 	}
 	
 	private function set_lock(v:Bool):Bool {
+		if (data == null) return v;
 		if (lock != v) {
 			lock = v;
-			if (!v) for (e in addStack) add(e.a, e.b);
+			if (!v) {
+				for (e in addStack) add(e.a, e.b);
+				addStack = [];
+			}
 		}
 		return v;
 	}
@@ -199,7 +203,7 @@ class Priority<T:Dynamic> implements HasSignal {
 		hash = new Map<Int,Int>();
 		data = [];
 		counters = [0];
-		addStack = new List();
+		addStack = [];
 		return this;
 	}
 	

@@ -51,7 +51,12 @@ interface HasSignal { }
 class HasSignalBuilder {
 	macro static public function build():Array<Field> {
 		var fields:Array<Field> = Context.getBuildFields();
-		var pack = ['pony','events'];
+		var pack = ['pony', 'events'];
+		#if !(cpp||windows||android||ios)
+		var ext = [ { name:':extern', pos: Context.currentPos() } ];
+		#else
+		var ext = [];
+		#end
 		for (f in fields) switch f.kind {
 			case FVar(TPath(p),_) if (p.name.substr(0,6) == 'Signal'):
 				var on = !(f.name.substr(0, 2) != 'on' && f.name.charAt(3).toLowerCase() == f.name.charAt(3));
@@ -65,7 +70,7 @@ class HasSignalBuilder {
 						TPath( tp ),
 						{pos:f.pos, expr: ENew(tp, [])}//fail if use EReturn
 					)});
-					fields.push( { name:'get_' + f.name, access: ast.concat([AInline, APrivate]), meta: [{name:':extern', pos: f.pos}], pos:f.pos, kind:FFun(
+					fields.push( { name:'get_' + f.name, access: ast.concat([AInline, APrivate]), meta: ext, pos:f.pos, kind:FFun(
 						{args: [], ret: null, expr: macro return $i { eName }}
 					) } );
 				} else if (f.meta.checkMeta([":lazy", "lazy"])) {
@@ -74,7 +79,7 @@ class HasSignalBuilder {
 						TPath( tp )
 					) } );
 					var ex:Expr = { pos:f.pos, expr: ENew(tp, []) };
-					fields.push( { name:'get_' + f.name, access: ast.concat([AInline, APrivate]), meta: [{name:':extern', pos: f.pos}], pos:f.pos, kind:FFun(
+					fields.push( { name:'get_' + f.name, access: ast.concat([AInline, APrivate]), meta: ext, pos:f.pos, kind:FFun(
 						{args: [], ret: null, expr: macro return $i { eName } == null ? $i { eName } = ${ex} : $i { eName }}
 					) } );
 				}
@@ -100,18 +105,18 @@ class HasSignalBuilder {
 				
 				if (lazy) {
 					var eventName = 'e'+TextTools.bigFirst(changeName);
-					fields.push({ name:'set_' + f.name, access: ast.concat([AInline, APrivate]), meta: [{name:':extern', pos: f.pos}], pos:f.pos, kind:FFun(
+					fields.push({ name:'set_' + f.name, access: ast.concat([AInline, APrivate]), meta: ext, pos:f.pos, kind:FFun(
 						{args: [ { name:'v', type:null } ], ret: null, expr: macro return $i { eventName } == null || v != $i { f.name } && !$i { eventName }.dispatch(v, $i { f.name }, true ) ?  $i { f.name } = v : $i { f.name } }
 					) } );
 					fields.push( { name: eventName, access:ast.concat([APrivate]), pos:f.pos, kind:FVar(TPath(tp)) } );
 					fields.push( { name: changeName, access:ast.concat([priv?APrivate:APublic]), pos:f.pos, kind:FProp(
 						'get', 'never', TPath( { pack:pack, name:'Signal2', params:[ TPType(ttp), TPType(ttp) ] } )
 					) } );
-					fields.push( { name:'get_' + changeName, access: ast.concat([AInline, APrivate]), meta: [{name:':extern', pos: f.pos}], pos:f.pos, kind:FFun(
+					fields.push( { name:'get_' + changeName, access: ast.concat([AInline, APrivate]), meta: ext, pos:f.pos, kind:FFun(
 						{args: [], ret: tps, expr: macro return $i { eventName } == null ? $i { eventName } = ${ex} : $i { eventName }}
 					) } );
 				} else {				
-					fields.push( { name:'set_' + f.name, access: ast.concat([AInline, APrivate]), meta: [{name:':extern', pos: f.pos}], pos:f.pos, kind:FFun(
+					fields.push( { name:'set_' + f.name, access: ast.concat([AInline, APrivate]), meta: ext, pos:f.pos, kind:FFun(
 						{args: [ { name:'v', type:null } ], ret: null, expr: macro return v != $i { f.name } && !( untyped $i { changeName } :Event2 < $ttp, $ttp > ).dispatch(v, $i { f.name }, true ) ?  $i { f.name } = v : $i { f.name } }
 					) } );
 					fields.push( { name: changeName, access:ast.concat([priv?APrivate:APublic]), pos:f.pos, kind:FProp(

@@ -31,7 +31,7 @@ import cs.NativeArray.NativeArray;
 import pony.events.Event;
 import pony.unity3d.ui.TintButton;
 import unityengine.Texture;
-import pony.ui.ButtonCore;
+import pony.ui.gui.ButtonCore;
 
 using hugs.HUGSWrapper;
 

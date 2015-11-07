@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -65,20 +65,50 @@ class MathTools {
 		return s;
 	}
 	
-	inline public static function percentCalc(p:Float, min:Float, max:Float):Float return (max - min) * p + min;
-	inline public static function percentBackCalc(p:Float, min:Float, max:Float):Float return  (p - min) / (max - min);
-	inline public static function percentCalcd(p:Float, a:Float, b:Float):Float return a > b ? percentCalc(p, b, a) : percentCalc(p, a, b);
-	inline public static function inRange(v:Float, min:Float, max:Float):Bool return min <= v && v <= max;
-	inline public static function approximately(a:Float, b:Float, range:Float = 1):Bool return inRange(a, b - range, b + range);
-	inline public static function limit(v:Float, min:Float, max:Float):Float return if (v < min) min; else if (v > max) max; else v;
-	inline public static function cultureAdd(a:Float, b:Float, max:Float):Float return a + b >= max ? max : a + b;
-	inline public static function cultureSub(a:Float, b:Float, min:Float):Float return a - b <= min ? min : a - b;
-	inline public static function cultureTarget(a:Float, b:Float, step:Float):Float return a > b ? cultureSub(a, step, b) : cultureAdd(a, step, b);
-	inline public static function midValue(a:Float, b:Float, aCount:Float, bCount:Float):Float return (aCount * a + bCount * b) / (aCount + bCount);
-	inline public static function cabs(v:Int):Int return v < 0 ? -v : v; 
-	inline public static function cmin(a:Int, b:Int):Int return a < b ? a : b; 
-	inline public static function cmax(a:Int, b:Int):Int return a > b ? a : b; 
-	inline public static function roundTo(v:Float, count:Int):Float return Math.round(v * Math.pow(10, count)) / Math.pow(10, count);
-	inline public static function intNot(v:Int):Int return v == 0 ? 1 : 0;
+	@:extern inline public static function percentCalc(p:Float, min:Float, max:Float):Float return (max - min) * p + min;
+	@:extern inline public static function percentBackCalc(p:Float, min:Float, max:Float):Float return  (p - min) / (max - min);
+	@:extern inline public static function percentCalcd(p:Float, a:Float, b:Float):Float return a > b ? percentCalc(p, b, a) : percentCalc(p, a, b);
+	@:extern inline public static function inRange(v:Float, min:Float, max:Float):Bool return min <= v && v <= max;
+	@:extern inline public static function approximately(a:Float, b:Float, range:Float = 1):Bool return inRange(a, b - range, b + range);
+	@:extern inline public static function limit(v:Float, min:Float, max:Float):Float return if (v < min) min; else if (v > max) max; else v;
+	@:extern inline public static function cultureAdd(a:Float, b:Float, max:Float):Float return a + b >= max ? max : a + b;
+	@:extern inline public static function cultureSub(a:Float, b:Float, min:Float):Float return a - b <= min ? min : a - b;
+	@:extern inline public static function cultureTarget(a:Float, b:Float, step:Float):Float return a > b ? cultureSub(a, step, b) : cultureAdd(a, step, b);
+	@:extern inline public static function midValue(a:Float, b:Float, aCount:Float, bCount:Float):Float return (aCount * a + bCount * b) / (aCount + bCount);
+	@:extern inline public static function cabs(v:Int):Int return v < 0 ? -v : v; 
+	@:extern inline public static function cmin(a:Int, b:Int):Int return a < b ? a : b; 
+	@:extern inline public static function cmax(a:Int, b:Int):Int return a > b ? a : b; 
+	@:extern inline public static function roundTo(v:Float, count:Int):Float return Math.round(v * Math.pow(10, count)) / Math.pow(10, count);
+	@:extern inline public static function intNot(v:Int):Int return v == 0 ? 1 : 0;
+	
+	public static function lengthAfterComma(v:Float):Int {
+		var a = Std.string(v).split('.');
+		return a.length < 2 ? 0 : a[1].length;
+	}
+	
+	public static function lengthBeforeComma(v:Float):Int {
+		return Std.string(v).split('.')[0].length;
+	}
+	
+	public static function searchOptimal(a:Map<Int,Float>, p:Array<Float>):Array<Int> {
+		var result = [];
+		for (p in p) {
+			var best:Float = MathTools.maxInt;
+			var ind:Int = -1;
+			
+			for (e in a.keys()) {
+				if (result.indexOf(e) != -1) continue;
+				var v = Math.abs(a[e] - p);
+				if (v < best) {
+					ind = e;
+					best = v;
+				}
+			}
+			
+			result.push(ind);
+			
+		}
+		return result;
+	}
 	
 }

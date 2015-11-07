@@ -28,9 +28,9 @@
 package pony.unity3d.scene;
 
 import pony.time.DeltaTime;
-import pony.touchManager.TouchEventType;
-import pony.touchManager.TouchManager;
-import pony.touchManager.TouchManagerEvent;
+import pony.ui.touch.starling.touchManager.TouchEventType;
+import pony.ui.touch.starling.touchManager.TouchManager;
+import pony.ui.touch.starling.touchManager.TouchManagerEvent;
 import pony.unity3d.scene.MouseHelper;
 import unityengine.BoxCollider;
 import unityengine.Color;

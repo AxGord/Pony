@@ -30,7 +30,7 @@ import pony.events.Signal;
 import pony.events.Signal0;
 import pony.events.Listener;
 import pony.events.Listener1;
-import pony.ui.ButtonCore;
+import pony.ui.gui.ButtonCore;
 /**
  * TTumbler
  * @author AxGord <axgord@gmail.com>

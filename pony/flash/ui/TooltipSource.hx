@@ -2,9 +2,9 @@ package pony.flash.ui;
 
 import flash.display.MovieClip;
 #if starling
-import pony.starling.converter.IStarlingConvertible;
-import pony.starling.converter.StarlingConverter;
-import pony.starling.utils.StarlingUtils;
+import pony.flash.starling.converter.IStarlingConvertible;
+import pony.flash.starling.converter.StarlingConverter;
+import pony.flash.starling.utils.StarlingUtils;
 #end
 
 

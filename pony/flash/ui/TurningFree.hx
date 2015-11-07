@@ -31,10 +31,10 @@ import flash.events.TouchEvent;
 import flash.display.MovieClip;
 import flash.geom.Point;
 import flash.ui.Multitouch;
-import pony.touchManager.TouchEventType;
-import pony.touchManager.TouchManager;
-import pony.touchManager.TouchManagerEvent;
-import pony.ui.ButtonCore;
+import pony.ui.touch.starling.touchManager.TouchEventType;
+import pony.ui.touch.starling.touchManager.TouchManager;
+import pony.ui.touch.starling.touchManager.TouchManagerEvent;
+import pony.ui.gui.ButtonCore;
 
 /**
  * TurningFree

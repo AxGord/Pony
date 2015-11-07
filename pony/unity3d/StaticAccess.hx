@@ -27,7 +27,7 @@
 **/
 package pony.unity3d;
 
-import pony.ui.ButtonCore;
+import pony.ui.gui.ButtonCore;
 //import pony.unity3d.ui.TintButton;
 //import pony.unity3d.ui.Button;
 import unityengine.GameObject;

@@ -3,9 +3,9 @@ package ui;
 import massive.munit.Assert;
 import pony.events.Signal;
 import pony.events.Signal1;
-import pony.ui.Key;
-import pony.ui.Keyboard;
-import pony.ui.IKeyboard;
+import pony.ui.keyboard.Key;
+import pony.ui.keyboard.Keyboard;
+import pony.ui.keyboard.IKeyboard;
 class KeyboardTest 
 {
 	var helper:KeyboardTestHelper;

@@ -29,7 +29,7 @@ package pony.unity3d.ui;
 
 import cs.NativeArray.NativeArray;
 import pony.time.DeltaTime;
-import pony.ui.ButtonCore;
+import pony.ui.gui.ButtonCore;
 import pony.unity3d.Tooltip;
 import unityengine.Input;
 import unityengine.MonoBehaviour;

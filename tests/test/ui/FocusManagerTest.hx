@@ -6,8 +6,8 @@ import massive.munit.async.AsyncFactory;
 import pony.events.Signal;
 import pony.events.Signal0;
 import pony.events.Signal1;
-import pony.ui.FocusManager;
-import pony.ui.IFocus;
+import pony.ui.gui.FocusManager;
+import pony.ui.gui.IFocus;
 import ui.FocusManagerTest.Element;
 
 class FocusManagerTest 

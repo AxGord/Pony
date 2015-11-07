@@ -42,7 +42,7 @@ import unityengine.Resources;
 import unityengine.Font;
 
 import pony.geom.Point.IntPoint;
-import pony.ui.FontStyle;
+import pony.ui.gui.FontStyle;
 import hugs.HUGS;
 using hugs.HUGSWrapper;
 

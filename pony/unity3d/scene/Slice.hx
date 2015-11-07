@@ -26,7 +26,7 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.unity3d.scene;
-import pony.ui.ButtonCore;
+import pony.ui.gui.ButtonCore;
 import pony.unity3d.ui.TintButton;
 import unityengine.Color;
 import unityengine.GameObject;

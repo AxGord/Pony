@@ -33,16 +33,16 @@ import flash.geom.Rectangle;
 import flash.events.MouseEvent;
 import pony.events.Signal;
 import pony.flash.FLTools;
-import pony.touchManager.TouchEventType;
-import pony.touchManager.TouchEventType;
-import pony.touchManager.TouchManager;
-import pony.touchManager.TouchManagerEvent;
-import pony.ui.ButtonCore;
-import pony.ui.SlideCore;
+import pony.ui.touch.starling.touchManager.TouchEventType;
+import pony.ui.touch.starling.touchManager.TouchEventType;
+import pony.ui.touch.starling.touchManager.TouchManager;
+import pony.ui.touch.starling.touchManager.TouchManagerEvent;
+import pony.ui.gui.ButtonCore;
+import pony.ui.gui.SlideCore;
 
 
 using pony.flash.FLExtends;
-using pony.starling.displayFactory.DisplayListStaticExtentions;
+using pony.flash.starling.displayFactory.DisplayListStaticExtentions;
 /**
  * ScrollBar
  * @author AxGord

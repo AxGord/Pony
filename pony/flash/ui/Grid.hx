@@ -31,7 +31,7 @@ import flash.display.Sprite;
 import flash.geom.Rectangle;
 import flash.events.Event;
 import pony.geom.Rect;
-import pony.ui.GridCore;
+import pony.ui.gui.GridCore;
 
 using pony.flash.FLExtends;
 

@@ -40,9 +40,9 @@ import pony.math.MathTools;
 import pony.time.DeltaTime;
 import pony.time.DT;
 import pony.time.DTimer;
-import pony.ui.ButtonCore;
-import pony.ui.ButtonCore.ButtonStates;
-import pony.ui.SlideCore;
+import pony.ui.gui.ButtonCore;
+import pony.ui.gui.ButtonCore.ButtonStates;
+import pony.ui.gui.SlideCore;
 
 /**
  * Fader

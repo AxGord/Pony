@@ -28,8 +28,8 @@
 package pony.unity3d.ui;
 
 import pony.events.Signal;
-import pony.ui.SwitchableList;
-import pony.ui.ButtonCore;
+import pony.ui.gui.SwitchableList;
+import pony.ui.gui.ButtonCore;
 import unityengine.MonoBehaviour;
 using hugs.HUGSWrapper;
 

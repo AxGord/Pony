@@ -28,7 +28,9 @@
 package pony.flash.ui;
 import flash.display.MovieClip;
 import flash.Lib;
-import pony.starling.converter.IStarlingConvertible;
+import pony.flash.starling.converter.StarlingConverter;
+import pony.flash.starling.ui.StarlingWindow;
+import pony.flash.starling.converter.IStarlingConvertible;
 
 /**
  * Window
@@ -67,7 +69,7 @@ class Window extends MovieClip implements IWindow implements IStarlingConvertibl
 #if starling	
 	public function convert(coordinateSpace:flash.display.DisplayObject):starling.display.DisplayObject
 	{
-		return new pony.starling.ui.StarlingWindow(untyped pony.starling.converter.StarlingConverter.getSprite(cast(this, flash.display.Sprite), coordinateSpace, false));
+		return new pony.flash.starling.ui.StarlingWindow(untyped pony.flash.starling.converter.StarlingConverter.getSprite(cast(this, flash.display.Sprite), coordinateSpace, false));
 	}
 #end
 

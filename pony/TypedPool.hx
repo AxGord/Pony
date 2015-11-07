@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2013-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -33,15 +33,21 @@ package pony;
  */
 @:generic class TypedPool<T:{function new():Void;}> implements IPool<T> {
 	
-	private var list:List<T> = new List<T>();
+	private var list:Array<T> = [];
 	
-	public function new() {}
+	@:extern inline public function new() {}
 	
+	#if !flash
+	@:extern inline
+	#end
 	public function get():T {
 		var v = list.pop();
 		return v == null ? new T() : v;
 	}
 	
+	#if !flash
+	@:extern inline
+	#end
 	public function ret(obj:T):Void list.push(obj);
 	
 }

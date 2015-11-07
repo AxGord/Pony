@@ -28,8 +28,8 @@
 package pony.flash.ui;
 import pony.events.Signal;
 import flash.events.MouseEvent;
-import pony.ui.Key;
-import pony.ui.Keyboard;
+import pony.ui.keyboard.Key;
+import pony.ui.keyboard.Keyboard;
 
 /**
  * AnyButton

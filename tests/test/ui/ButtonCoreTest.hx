@@ -1,7 +1,7 @@
 package ui;
 
 import massive.munit.Assert.*;
-import pony.ui.ButtonCore;
+import pony.ui.gui.ButtonCore;
 
 class ButtonCoreTest 
 {

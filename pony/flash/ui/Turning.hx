@@ -31,7 +31,7 @@ import flash.display.MovieClip;
 import flash.display.Sprite;
 import pony.flash.FLSt;
 import pony.geom.Angle;
-import pony.ui.TurningCore;
+import pony.ui.gui.TurningCore;
 
 /**
  * ...

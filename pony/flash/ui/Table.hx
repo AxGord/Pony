@@ -11,8 +11,8 @@ import pony.color.Color;
 import pony.color.UColor;
 import pony.geom.Point.IntPoint;
 import pony.geom.Rect.IntRect;
-import pony.ui.FontStyle;
-import pony.ui.TableCore;
+import pony.ui.gui.FontStyle;
+import pony.ui.gui.TableCore;
 
 /**
  * Table

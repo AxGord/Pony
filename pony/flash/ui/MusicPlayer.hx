@@ -5,8 +5,8 @@ import flash.text.TextField;
 import pony.flash.ui.Button;
 import pony.flash.ui.SongPlayer;
 import pony.geom.Point;
-import pony.ui.ButtonCore;
-import pony.ui.SwitchableList;
+import pony.ui.gui.ButtonCore;
+import pony.ui.gui.SwitchableList;
 
 import pony.flash.SongPlayerCore;
 

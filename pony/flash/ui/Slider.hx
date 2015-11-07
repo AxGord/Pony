@@ -28,27 +28,25 @@
 package pony.flash.ui;
 
 import flash.display.DisplayObject;
-import flash.display.Sprite;
-import pony.flash.FLSt;
+import flash.display.MovieClip;
+import pony.flash.FLStage;
 import pony.time.DeltaTime;
-import pony.ui.SliderCore;
+import pony.ui.gui.SliderCore;
 
 /**
  * Slider
  * @author AxGord <axgord@gmail.com>
  */
-class Slider extends Sprite implements FLSt {
+class Slider extends MovieClip implements FLStage {
 
 	public var core:SliderCore;
-	
-	@:st private var b:Button;
-	@:st private var bg:DisplayObject;
-	
-	private var touchId:Int;
+	private var _invert:Bool = false;
+	@:stage private var b:Button;
+	@:stage private var bg:DisplayObject;
 	
 	public function new() {
 		super();
-		DeltaTime.fixedUpdate < init;
+		DeltaTime.fixedUpdate.once(init, -1);
 	}
 	
 	private function init():Void {
@@ -57,5 +55,7 @@ class Slider extends Sprite implements FLSt {
 		core.changeY = function(v) b.y = v; 
 		core.endInit();
 	}
+	
+	private function invert():Void _invert = true;
 	
 }

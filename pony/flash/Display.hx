@@ -1,5 +1,6 @@
 package pony.flash;
-import pony.starling.displayFactory.DisplayFactory.IDisplayObject;
+import pony.flash.starling.displayFactory.DisplayFactory;
+import pony.flash.starling.displayFactory.DisplayFactory.IDisplayObject;
 #if starling
 typedef DisplayObject_ = starling.display.DisplayObject;
 #else

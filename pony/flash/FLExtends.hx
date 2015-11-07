@@ -26,6 +26,7 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.flash;
+
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.InteractiveObject;
@@ -35,7 +36,7 @@ import flash.geom.Rectangle;
 import flash.Lib;
 import pony.flash.ui.Button;
 import pony.geom.Rect;
-import pony.ui.ButtonCore;
+import pony.ui.gui.ButtonCore;
 
 /**
  * Flash extends

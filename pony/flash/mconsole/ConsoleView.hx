@@ -5,7 +5,7 @@ import flash.display.Sprite;
 import flash.text.TextField;
 import flash.text.TextFormat;
 import mconsole.Printer;
-import pony.ui.SlideCore;
+import pony.ui.gui.SlideCore;
 /**
  * ...
  * @author AxGord

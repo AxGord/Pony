@@ -29,8 +29,8 @@ package pony.geom;
 
 import pony.events.Signal;
 import pony.geom.IWards;
-import pony.ui.Keyboard;
-import pony.ui.Key;
+import pony.ui.keyboard.Keyboard;
+import pony.ui.keyboard.Key;
 
 typedef Matrix = Array < Array<Null<Int>> > ;
 

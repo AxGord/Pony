@@ -37,8 +37,8 @@ import pony.flash.FLSt;
 import pony.geom.Point.IntPoint;
 import pony.Pair;
 import pony.Pool;
-import pony.ui.ButtonCore;
-import pony.ui.TreeCore;
+import pony.ui.gui.ButtonCore;
+import pony.ui.gui.TreeCore;
 #if tweenmax
 import com.greensock.TweenMax;
 #end

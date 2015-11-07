@@ -28,7 +28,7 @@
 package pony.unity3d.ui;
 
 import pony.events.Event;
-import pony.ui.ButtonCore;
+import pony.ui.gui.ButtonCore;
 import unityengine.Color;
 import unityengine.Texture;
 import unityengine.GameObject;

@@ -1,17 +1,18 @@
 package pony.flash.ui;
+import pony.flash.starling.displayFactory.DisplayFactory;
 import flash.geom.Point;
 import flash.Lib;
-import pony.starling.displayFactory.DisplayFactory.IDisplayObject;
-import pony.starling.displayFactory.DisplayFactory.IDisplayObjectContainer;
-import pony.starling.displayFactory.DisplayFactory.ITextField;
-import pony.touchManager.TouchEventType;
-import pony.touchManager.TouchManager;
-import pony.touchManager.TouchManagerEvent;
+import pony.flash.starling.displayFactory.DisplayFactory.IDisplayObject;
+import pony.flash.starling.displayFactory.DisplayFactory.IDisplayObjectContainer;
+import pony.flash.starling.displayFactory.DisplayFactory.ITextField;
+import pony.ui.touch.starling.touchManager.TouchEventType;
+import pony.ui.touch.starling.touchManager.TouchManager;
+import pony.ui.touch.starling.touchManager.TouchManagerEvent;
 #if starling
 import starling.core.Starling;
 #end
 
-using pony.starling.displayFactory.DisplayListStaticExtentions;
+using pony.flash.starling.displayFactory.DisplayListStaticExtentions;
 
 /**
  * Tooltip

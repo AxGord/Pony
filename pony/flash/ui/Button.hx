@@ -29,10 +29,8 @@ package pony.flash.ui;
 
 import flash.display.MovieClip;
 import pony.flash.FLTools;
-import pony.time.DeltaTime;
-import pony.touch.Toucheble;
-import pony.ui.ButtonCore;
-import pony.ui.ButtonImgN;
+import pony.ui.gui.ButtonImgN;
+import pony.ui.touch.Toucheble;
 
 using pony.flash.FLExtends;
 
@@ -79,7 +77,7 @@ class Button extends MovieClip {
 		scaleX = 1;
 		scaleY = 1;
 		
-		core = new ButtonImgN(new FlashToucheble(zone));
+		core = new ButtonImgN(new Toucheble(zone));
 		core.onImg << change;
 	}
 	

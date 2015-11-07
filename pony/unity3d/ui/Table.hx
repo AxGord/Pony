@@ -29,6 +29,7 @@ package pony.unity3d.ui;
 
 import pony.color.Color;
 import pony.color.UColor;
+import pony.ui.gui.TableCore;
 import unityengine.Object;
 import unityengine.Vector3;
 import unityengine.GameObject;
@@ -37,13 +38,13 @@ import pony.geom.Point;
 import pony.geom.Point.IntPoint;
 import pony.geom.Rect.IntRect;
 import pony.magic.Declarator;
-import pony.ui.FontStyle;
+import pony.ui.gui.FontStyle;
 
 /**
  * Table
  * @author AxGord <axgord@gmail.com>
  */
-@:nativeGen class Table extends pony.ui.TableCore implements Declarator {
+@:nativeGen class Table extends pony.ui.gui.TableCore implements Declarator {
 	
 	private var gos:List<GameObject> = new List();
 	

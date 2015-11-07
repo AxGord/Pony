@@ -53,8 +53,8 @@ abstract Time(Null<Int>) from Int to Int {
 	public var neg(get, never):Bool;
 	public var minimalPoint(get, never):Int;
 	
-	inline public function new(?ms:Null<Int>) this = ms;
-	@:from inline public static function fromFloat(ms:Null<Float>):Time return new Time(ms.int());
+	@:extern inline public function new(?ms:Null<Int>) this = ms;
+	@:from @:extern inline public static function fromFloat(ms:Null<Float>):Time return new Time(ms.int());
 	@:from public static function fromString(time:String):Time {
 		var ms:Int = 0;
 		time = time.trim();
@@ -117,7 +117,7 @@ abstract Time(Null<Int>) from Int to Int {
 		}
 	}
 	
-	private inline static function parseTime(d:Array<String>):Int {
+	@:extern inline private static function parseTime(d:Array<String>):Int {
 		return switch d.length {
 			case 1: fromSeconds(d[0] == '' ? 0 : d[0].parseInt());
 			case 2: fromSeconds(d[1] == '' ? 0 : d[1].parseInt()) + fromMinutes(d[0] == '' ? 0 : d[0].parseInt());
@@ -126,34 +126,34 @@ abstract Time(Null<Int>) from Int to Int {
 		}
 	}
 	
-	public inline static function create(days:Int, hours:Int, minutes:Int, seconds:Int):Time {
+	@:extern inline public static function create(days:Int, hours:Int, minutes:Int, seconds:Int):Time {
 		return fromDays(days) + fromHours(hours) + fromMinutes(minutes) + fromSeconds(seconds);
 	}
 	
-	public inline static function createft(days:String, hours:String, minutes:String, seconds:String):Time {
+	@:extern inline public static function createft(days:String, hours:String, minutes:String, seconds:String):Time {
 		return create(days.parseInt(), hours.parseInt(), hours.parseInt(), seconds.parseInt());
 	}
 	
-	private inline function get_ms():Int return this % 1000;
-	private inline function get_seconds():Int return totalSeconds % 60;
-	private inline function get_minutes():Int return totalMinutes % 60;
-	private inline function get_hours():Int return totalHours % 24;
-	private inline function get_days():Int return (totalHours / 24).int();
+	@:extern inline private function get_ms():Int return this % 1000;
+	@:extern inline private function get_seconds():Int return totalSeconds % 60;
+	@:extern inline private function get_minutes():Int return totalMinutes % 60;
+	@:extern inline private function get_hours():Int return totalHours % 24;
+	@:extern inline private function get_days():Int return (totalHours / 24).int();
 	
-	private inline function get_totalMs():Int return this;
-	private inline function get_totalSeconds():Int return (this / 1000).int();
-	private inline function get_totalMinutes():Int return (totalSeconds / 60).int();
-	private inline function get_totalHours():Int return (totalMinutes / 60).int();
+	@:extern inline private function get_totalMs():Int return this;
+	@:extern inline private function get_totalSeconds():Int return (this / 1000).int();
+	@:extern inline private function get_totalMinutes():Int return (totalSeconds / 60).int();
+	@:extern inline private function get_totalHours():Int return (totalMinutes / 60).int();
 	
-	private inline function get_neg():Bool return this < 0;
+	@:extern inline private function get_neg():Bool return this < 0;
 	
-	static public inline function fromDays(day:Int):Time return fromHours(day * 24);
-	static public inline function fromHours(hours:Int):Time return fromMinutes(hours * 60);
-	static public inline function fromMinutes(minutes:Int):Time return fromSeconds(minutes * 60);
-	static public inline function fromSeconds(seconds:Int):Time return seconds * 1000;
+	@:extern inline static public function fromDays(day:Int):Time return fromHours(day * 24);
+	@:extern inline static public function fromHours(hours:Int):Time return fromMinutes(hours * 60);
+	@:extern inline static public function fromMinutes(minutes:Int):Time return fromSeconds(minutes * 60);
+	@:extern inline static public function fromSeconds(seconds:Int):Time return seconds * 1000;
 	
-	@:to inline public function toFloat():Float return this;
-	@:to inline public function toArray():Array<Int> return [days, hours, minutes, seconds, ms];
+	@:to @:extern inline public function toFloat():Float return this;
+	@:to @:extern inline public function toArray():Array<Int> return [days, hours, minutes, seconds, ms];
 	@:to public function toString():String {
 		var s = '';
 		if (this < 0) s += '-';
@@ -175,44 +175,44 @@ abstract Time(Null<Int>) from Int to Int {
 		return s;
 	}
 	
-	@:extern inline function print(v:Float):String return abs(v).toFixed('00');
+	@:extern inline static function print(v:Float):String return abs(v).toFixed('00');
 	
-	@:op(A + B) inline static private function add(a:Time, b:Time):Time return (a:Int) + (b:Int);
-	@:op(A + B) inline static private function addInt(a:Time, b:Int):Time return (a:Int) + b;
-	@:op(A + B) inline static private function addToInt(a:Int, b:Time):Time return a + (b:Int);
+	@:op(A + B) @:extern inline static private function add(a:Time, b:Time):Time return (a:Int) + (b:Int);
+	@:op(A + B) @:extern inline static private function addInt(a:Time, b:Int):Time return (a:Int) + b;
+	@:op(A + B) @:extern inline static private function addToInt(a:Int, b:Time):Time return a + (b:Int);
 	
-	@:op(A - B) inline static private function sub(a:Time, b:Time):Time return (a:Int) - (b:Int);
-	@:op(A - B) inline static private function subInt(a:Time, b:Int):Time return (a:Int) - b;
-	@:op(A - B) inline static private function subToInt(a:Int, b:Time):Time return a - (b:Int);
+	@:op(A - B) @:extern inline static private function sub(a:Time, b:Time):Time return (a:Int) - (b:Int);
+	@:op(A - B) @:extern inline static private function subInt(a:Time, b:Int):Time return (a:Int) - b;
+	@:op(A - B) @:extern inline static private function subToInt(a:Int, b:Time):Time return a - (b:Int);
 	
-	@:op(A * B) inline static private function multiply1(a:Time, b:Int):Time return (a:Int) * b;
-	@:op(A * B) inline static private function multiply2(a:Int, b:Time):Time return a * (b:Int);
+	@:op(A * B) @:extern inline static private function multiply1(a:Time, b:Int):Time return (a:Int) * b;
+	@:op(A * B) @:extern inline static private function multiply2(a:Int, b:Time):Time return a * (b:Int);
 	
-	@:op(A * B) inline static private function divide(a:Time, b:Int):Time return ((a:Int) / b).int();
+	@:op(A * B) @:extern inline static private function divide(a:Time, b:Int):Time return ((a:Int) / b).int();
 	
-	@:op(A > B) inline static private function sb(a:Time, b:Time):Bool return (a:Int) > (b:Int);
-	@:op(A > B) inline static private function sbInt(a:Time, b:Int):Bool return (a:Int) > b;
-	@:op(A > B) inline static private function sbToInt(a:Int, b:Time):Bool return a > (b:Int);
+	@:op(A > B) @:extern inline static private function sb(a:Time, b:Time):Bool return (a:Int) > (b:Int);
+	@:op(A > B) @:extern inline static private function sbInt(a:Time, b:Int):Bool return (a:Int) > b;
+	@:op(A > B) @:extern inline static private function sbToInt(a:Int, b:Time):Bool return a > (b:Int);
 	
-	@:op(A < B) inline static private function sm(a:Time, b:Time):Bool return (a:Int) < (b:Int);
-	@:op(A < B) inline static private function smInt(a:Time, b:Int):Bool return (a:Int) < b;
-	@:op(A < B) inline static private function smToInt(a:Int, b:Time):Bool return a < (b:Int);
+	@:op(A < B) @:extern inline static private function sm(a:Time, b:Time):Bool return (a:Int) < (b:Int);
+	@:op(A < B) @:extern inline static private function smInt(a:Time, b:Int):Bool return (a:Int) < b;
+	@:op(A < B) @:extern inline static private function smToInt(a:Int, b:Time):Bool return a < (b:Int);
 	
-	@:op(A >= B) inline static private function sbr(a:Time, b:Time):Bool return (a:Int) >= (b:Int);
-	@:op(A >= B) inline static private function sbrInt(a:Time, b:Int):Bool return (a:Int) >= b;
-	@:op(A >= B) inline static private function sbrToInt(a:Int, b:Time):Bool return a >= (b:Int);
+	@:op(A >= B) @:extern inline static private function sbr(a:Time, b:Time):Bool return (a:Int) >= (b:Int);
+	@:op(A >= B) @:extern inline static private function sbrInt(a:Time, b:Int):Bool return (a:Int) >= b;
+	@:op(A >= B) @:extern inline static private function sbrToInt(a:Int, b:Time):Bool return a >= (b:Int);
 	
-	@:op(A <= B) inline static private function smr(a:Time, b:Time):Bool return (a:Int) <= (b:Int);
-	@:op(A <= B) inline static private function smrInt(a:Time, b:Int):Bool return (a:Int) <= b;
-	@:op(A <= B) inline static private function smrToInt(a:Int, b:Time):Bool return a <= (b:Int);
+	@:op(A <= B) @:extern inline static private function smr(a:Time, b:Time):Bool return (a:Int) <= (b:Int);
+	@:op(A <= B) @:extern inline static private function smrInt(a:Time, b:Int):Bool return (a:Int) <= b;
+	@:op(A <= B) @:extern inline static private function smrToInt(a:Int, b:Time):Bool return a <= (b:Int);
 	
-	@:op(A == B) inline static private function sr(a:Time, b:Time):Bool return (a:Int) == (b:Int);
-	@:op(A == B) inline static private function srInt(a:Time, b:Int):Bool return (a:Int) == b;
-	@:op(A == B) inline static private function srToInt(a:Int, b:Time):Bool return a == (b:Int);
+	@:op(A == B) @:extern inline static private function sr(a:Time, b:Time):Bool return (a:Int) == (b:Int);
+	@:op(A == B) @:extern inline static private function srInt(a:Time, b:Int):Bool return (a:Int) == b;
+	@:op(A == B) @:extern inline static private function srToInt(a:Int, b:Time):Bool return a == (b:Int);
 	
-	@:op(A != B) inline static private function snr(a:Time, b:Time):Bool return (a:Int) != (b:Int);
-	@:op(A != B) inline static private function snrInt(a:Time, b:Int):Bool return (a:Int) != b;
-	@:op(A != B) inline static private function snrToInt(a:Int, b:Time):Bool return a != (b:Int);
+	@:op(A != B) @:extern inline static private function snr(a:Time, b:Time):Bool return (a:Int) != (b:Int);
+	@:op(A != B) @:extern inline static private function snrInt(a:Time, b:Int):Bool return (a:Int) != b;
+	@:op(A != B) @:extern inline static private function snrToInt(a:Int, b:Time):Bool return a != (b:Int);
 	
 	private function get_minimalPoint():Int {
 		return MathTools.cabs(
@@ -228,5 +228,5 @@ abstract Time(Null<Int>) from Int to Int {
 			);
 	}
 	
-	@:from inline static public function fromDate(d:Date):Time return create(0, d.getHours(), d.getMinutes(), d.getSeconds());
+	@:from @:extern inline static public function fromDate(d:Date):Time return create(0, d.getHours(), d.getMinutes(), d.getSeconds());
 }

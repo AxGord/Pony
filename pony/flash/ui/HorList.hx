@@ -30,7 +30,7 @@ package pony.flash.ui;
 import flash.display.MovieClip;
 import flash.text.TextField;
 import pony.events.Signal;
-import pony.ui.ButtonCore;
+import pony.ui.gui.ButtonCore;
 
 /**
  * HorList
