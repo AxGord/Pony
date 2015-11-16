@@ -40,7 +40,7 @@ import pony.flash.FLStage;
  */
 class StepSlider extends MovieClip implements FLStage {
 
-	public var core:StepSliderCore;
+	public var core(default, null):StepSliderCore;
 	private var _invert:Bool = false;
 	@:stage private var b:Button;
 	@:stage private var bg:DisplayObject;

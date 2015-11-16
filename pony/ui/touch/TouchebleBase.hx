@@ -55,6 +55,17 @@ class TouchebleBase implements HasSignal {
 		onOutUp << function() onUp >> eClick;
 	}
 	
+	public function destroy():Void {
+		eOver.destroy();
+		eOut.destroy();
+		eOutUp.destroy();
+		eOverDown.destroy();
+		eOutDown.destroy();
+		eDown.destroy();
+		eUp.destroy();
+		eClick.destroy();
+	}
+	
 	/**
 	 * Use this method if object has moved
 	 */

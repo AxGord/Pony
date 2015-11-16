@@ -37,9 +37,10 @@ import pony.ui.gui.ButtonImgN;
  */
 class Button extends Sprite {
 
-	public var core:ButtonImgN;
+	public var core(default, null):ButtonImgN;
 	
 	private var states:Array<SBitmap>;
+	private var zone:SBitmap;
 	
 	public function new(states:Array<String>) {
 		super();
@@ -55,7 +56,6 @@ class Button extends Sprite {
 			}
 		}];
 		this.states[0].visible = true;
-		var zone:SBitmap;
 		if (this.states.length > 3) {
 			zone = this.states[3] == null ? new SBitmap(states[0]) : this.states[3];
 			this.states.splice(3, 1);
@@ -69,11 +69,18 @@ class Button extends Sprite {
 		addChild(z);
 		core = new ButtonImgN(new Toucheble(z));
 		core.onImg << change;
+		
 	}
 	
 	private function change(img:Int):Void {
 		img--;
 		for (b in states) if (b != null) b.visible = false;
+		if (img == 3 && states[img] == null) {
+			zone.visible = false;
+			return;
+		} else {
+			zone.visible = true;
+		}
 		if (img >= states.length) img = states.length - 1;
 		while (states[img] == null) img--;
 		states[img].visible = true;

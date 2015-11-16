@@ -26,6 +26,7 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.ui.gui;
+import pony.events.Event2;
 import pony.events.Signal0;
 import pony.events.Signal1;
 import pony.events.Signal2;
@@ -86,10 +87,29 @@ class ButtonCore extends Tumbler implements HasSignal {
 			lowMode = 1;
 		}
 		changeLowMode / 1 << function(v) mode = v > 1 ? v - 1 : v;
-		changeMode << function(v) lowMode = v != 0 ? v + 1 : v;
-		changeMode << function(v) bMode = v == 1;
 		changeBMode << function(v) mode = v ? 1 : 0;
-		
+		allowChangeMode();
+		onEnable << allowChangeMode;
+		onDisable << disallowChangeMode;
+	}
+	
+	public function destroy():Void {
+		touch.destroy();
+		eVisual.destroy();
+		eClick.destroy();
+		untyped (changeLowMode:Event2<Int,Int>).destroy();
+		untyped (changeMode:Event2<Int,Int>).destroy();
+		untyped (changeBMode:Event2<Int,Int>).destroy();
+		untyped (changeState:Event2<Int,Int>).destroy();
+	}
+	
+	private function allowChangeMode():Void changeMode << changeModeHandler;
+	
+	private function disallowChangeMode():Void changeMode >> changeModeHandler;
+	
+	private function changeModeHandler(v:Int):Void {
+		lowMode = v != 0 ? v + 1 : v;
+		bMode = v == 1;
 	}
 	
 	@:extern inline private function enableOverDown():Void {
@@ -117,5 +137,6 @@ class ButtonCore extends Tumbler implements HasSignal {
 	@:extern inline public function bswitch():Void {
 		onClick << function() bMode = !bMode;
 	}
+	
 	
 }

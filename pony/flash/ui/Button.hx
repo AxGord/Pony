@@ -43,7 +43,7 @@ class Button extends MovieClip {
 	#if !starling
 	//public static var config = {def: 1, focus: 2, press: 3, zone: 4, disabled: 5};
 	
-	public var core:ButtonImgN;
+	public var core(default, null):ButtonImgN;
 	
 	private var zone:Button;
 	private var visual:Button;

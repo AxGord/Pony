@@ -39,7 +39,7 @@ import pony.ui.gui.SliderCore;
  */
 class Slider extends MovieClip implements FLStage {
 
-	public var core:SliderCore;
+	public var core(default, null):SliderCore;
 	private var _invert:Bool = false;
 	@:stage private var b:Button;
 	@:stage private var bg:DisplayObject;

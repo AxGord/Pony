@@ -132,6 +132,20 @@ class Toucheble extends TouchebleBase {
 		changeTouchMode - false << toMouse;
 	}
 	
+	override public function destroy():Void {
+		changeTouchMode - true >> toTouch;
+		changeTouchMode - false >> toMouse;
+		obj = null;
+		if (touchMode) {
+			touch.destroy();
+			touch = null;
+		} else {
+			mouse.destroy();
+			mouse = null;
+		}
+		super.destroy();
+	}
+	
 	private function toTouch():Void {
 		mouse.destroy();
 		mouse = null;
