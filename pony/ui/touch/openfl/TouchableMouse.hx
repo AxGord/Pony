@@ -30,14 +30,14 @@ package pony.ui.touch.openfl;
 import openfl.display.DisplayObject;
 import openfl.events.MouseEvent;
 import openfl.Lib;
-import pony.ui.touch.TouchebleBase;
+import pony.ui.touch.TouchableBase;
 
 /**
  * TouchebleMouse
  * @author AxGord <axgord@gmail.com>
  */
-@:access(pony.ui.touch.TouchebleBase)
-class TouchebleMouse {
+@:access(pony.ui.touch.TouchableBase)
+class TouchableMouse {
 
 	private static var inited:Bool = false;
 	static public var down(default, null):Bool = false;
@@ -45,7 +45,7 @@ class TouchebleMouse {
 	public static function init():Void {
 		if (inited) return;
 		inited = true;
-		Mouse.onMove << TouchebleBase.dispatchMove.bind(0);
+		Mouse.onMove << TouchableBase.dispatchMove.bind(0);
 		
 		Mouse.onLeftDown << function() down = true;
 		Mouse.onLeftUp << function() down = false;
@@ -53,11 +53,11 @@ class TouchebleMouse {
 	}
 	
 	private var obj:DisplayObject;
-	private var base:TouchebleBase;
+	private var base:TouchableBase;
 	private var over:Bool = false;
 	private var _down:Bool = false;
 	
-	public function new(obj:DisplayObject, base:TouchebleBase) {
+	public function new(obj:DisplayObject, base:TouchableBase) {
 		init();
 		this.obj = obj;
 		this.base = base;
@@ -95,6 +95,10 @@ class TouchebleMouse {
 	}
 	
 	private function downHandler(e:MouseEvent):Void {
+		if (!over) {
+			over = true;
+			base.dispatchOver();
+		}
 		_down = true;
 		base.dispatchDown(0, e.stageX, e.stageY);
 	}

@@ -30,11 +30,11 @@ package pony.ui.touch;
 /**
  * @author AxGord <axgord@gmail.com>
  */
-typedef Toucheble =
+typedef Touchable =
 #if flash
-pony.ui.touch.flash.Toucheble
+pony.ui.touch.flash.Touchable
 #elseif openfl
-pony.ui.touch.openfl.Toucheble
+pony.ui.touch.openfl.Touchable
 #else
-pony.ui.touch.starling.Toucheble
+pony.ui.touch.starling.Touchable
 #end

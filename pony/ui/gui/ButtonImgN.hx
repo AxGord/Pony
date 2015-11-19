@@ -28,7 +28,7 @@
 package pony.ui.gui;
 
 import pony.events.Signal1;
-import pony.ui.touch.TouchebleBase;
+import pony.ui.touch.TouchableBase;
 import pony.ui.gui.ButtonCore;
 
 /**
@@ -39,7 +39,7 @@ class ButtonImgN extends ButtonCore {
 
 	@:auto public var onImg:Signal1<Int>;
 	
-	public function new(t:TouchebleBase) {
+	public function new(t:TouchableBase) {
 		super(t);
 		onVisual << visualHandler;
 	}

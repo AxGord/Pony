@@ -25,39 +25,22 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.ui.touch.starling;
+package pony.ui.touch;
 
-import pony.ui.touch.starling.touchManager.TouchEventType;
-import pony.ui.touch.starling.touchManager.TouchManager;
-import pony.ui.touch.starling.touchManager.TouchManagerEvent;
-import pony.ui.touch.TouchebleBase;
+import pony.events.Event0;
+import pony.events.Event1;
 
 /**
- * Toucheble
- * todo: over after mouse down
  * @author AxGord <axgord@gmail.com>
  */
-class Toucheble extends TouchebleBase {
-
-	public var leave:Bool = false;
-	private var prev:TouchEventType;
-	
-	public function new(object:Dynamic) {
-		super();
-		TouchManager.addListener(object, eventHandler);
-	}
-	
-	private function eventHandler(event:TouchManagerEvent):Void {
-		switch event.type {
-			case TouchEventType.Hover: dispatchOver(event.touchID); leave = false; //trace('Hover');
-			case TouchEventType.HoverOut: dispatchOut(event.touchID); leave = true; //trace('HoverOut');
-			case TouchEventType.Over: dispatchOverDown(event.touchID); leave = false; //trace('Over');
-			case TouchEventType.Out: dispatchOutDown(event.touchID); leave = true; //trace('Out');
-			case TouchEventType.Down: dispatchDown(event.touchID, event.globalX, event.globalY); //trace('Down');
-			case TouchEventType.Up: leave ? dispatchOutUp(event.touchID) : dispatchUp(); //trace('Up');
-			case _:
-		}
-		prev = event.type;
-	}
-	
+interface TouchableBaseEvents {
+  
+	var eOver:Event1<Touch>;
+	var eOut:Event1<Touch>;
+	var eOutUp:Event1<Touch>;
+	var eOverDown:Event1<Touch>;
+	var eOutDown:Event1<Touch>;
+	var eDown:Event1<Touch>;
+	var eUp:Event1<Touch>;
+	var eClick:Event0;
 }

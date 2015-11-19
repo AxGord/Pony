@@ -31,7 +31,7 @@ import pony.events.Signal0;
 import pony.events.Signal1;
 import pony.events.Signal2;
 import pony.magic.HasSignal;
-import pony.ui.touch.TouchebleBase;
+import pony.ui.touch.TouchableBase;
 
 enum ButtonState {
 	Default; Focus; Leave; Press;
@@ -47,14 +47,14 @@ class ButtonCore extends Tumbler implements HasSignal {
 	@:bindable public var lowMode:Int = 0;
 	@:bindable public var mode:Int = 0;
 	@:bindable public var bMode:Bool = false;
-	public var touch:TouchebleBase;
+	public var touch:TouchableBase;
 	@:auto public var onClick:Signal1<Int>;
 	@:bindable public var state:ButtonState = Default;
 	
 	
 	private var modeBeforeDisable:Int = 1;
 	
-	public function new(t:TouchebleBase) {
+	public function new(t:TouchableBase) {
 		super();
 		
 		touch = t;

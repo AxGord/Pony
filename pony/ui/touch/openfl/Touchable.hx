@@ -35,13 +35,13 @@ import pony.time.DeltaTime;
 import pony.time.DTimer;
 import pony.ui.touch.lime.Touch;
 import pony.ui.touch.Mouse;
-import pony.ui.touch.TouchebleBase;
+import pony.ui.touch.TouchableBase;
 
 /**
  * Toucheble
  * @author AxGord <axgord@gmail.com>
  */
-class Toucheble extends TouchebleBase {
+class Touchable extends TouchableBase {
 	
 	@:bindable static public var touchMode:Bool = false;
 	public static var onAnyTouch(default, null):Signal1<lime.ui.Touch>;
@@ -118,17 +118,17 @@ class Toucheble extends TouchebleBase {
 	}
 	
 	private var obj:DisplayObject;
-	private var touch:TouchebleTouch;
-	private var mouse:TouchebleMouse;
+	private var touch:TouchableTouch;
+	private var mouse:TouchableMouse;
 	
 	public function new(obj:DisplayObject) {
 		super();
 		this.obj = obj;
 		init();
 		if (touchMode)
-			touch = new TouchebleTouch(obj, this);
+			touch = new TouchableTouch(obj, this);
 		else
-			mouse = new TouchebleMouse(obj, this);
+			mouse = new TouchableMouse(obj, this);
 		changeTouchMode - true << toTouch;
 		changeTouchMode - false << toMouse;
 	}
@@ -150,13 +150,13 @@ class Toucheble extends TouchebleBase {
 	private function toTouch():Void {
 		mouse.destroy();
 		mouse = null;
-		touch = new TouchebleTouch(obj, this);
+		touch = new TouchableTouch(obj, this);
 	}
 	
 	private function toMouse():Void {
 		touch.destroy();
 		touch = null;
-		mouse = new TouchebleMouse(obj, this);
+		mouse = new TouchableMouse(obj, this);
 	}
 	
 }

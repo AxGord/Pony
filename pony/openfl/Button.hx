@@ -28,7 +28,7 @@
 package pony.openfl;
 
 import openfl.display.Sprite;
-import pony.ui.touch.Toucheble;
+import pony.ui.touch.Touchable;
 import pony.ui.gui.ButtonImgN;
 
 /**
@@ -67,7 +67,7 @@ class Button extends Sprite {
 		z.alpha = 0;
 		z.buttonMode = true;
 		addChild(z);
-		core = new ButtonImgN(new Toucheble(z));
+		core = new ButtonImgN(new Touchable(z));
 		core.onImg << change;
 		
 	}

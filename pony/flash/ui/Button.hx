@@ -30,7 +30,7 @@ package pony.flash.ui;
 import flash.display.MovieClip;
 import pony.flash.FLTools;
 import pony.ui.gui.ButtonImgN;
-import pony.ui.touch.Toucheble;
+import pony.ui.touch.Touchable;
 
 using pony.flash.FLExtends;
 
@@ -77,7 +77,7 @@ class Button extends MovieClip {
 		scaleX = 1;
 		scaleY = 1;
 		
-		core = new ButtonImgN(new Toucheble(zone));
+		core = new ButtonImgN(new Touchable(zone));
 		core.onImg << change;
 	}
 	

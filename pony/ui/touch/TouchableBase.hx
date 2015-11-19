@@ -36,7 +36,7 @@ import pony.TypedPool;
  * Toucheble
  * @author AxGord <axgord@gmail.com>
  */
-class TouchebleBase implements HasSignal {
+class TouchableBase implements HasSignal {
 
 	static private var touches:Map<Int, Touch> = new Map<Int, Touch>();
 	static private var touchPool:TypedPool<Touch> = new TypedPool<Touch>();

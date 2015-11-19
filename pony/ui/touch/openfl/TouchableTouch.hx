@@ -25,19 +25,20 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.ui.touch.flash;
+package pony.ui.touch.openfl;
 
-import flash.display.DisplayObject;
-import flash.events.TouchEvent;
-import flash.Lib;
-import pony.ui.touch.flash.Touch;
+import lime.ui.Touch as T;
+import openfl.display.DisplayObject;
+import openfl.events.TouchEvent;
+import openfl.Lib;
+import pony.ui.touch.lime.Touch;
 
 /**
  * TouchebleTouch
  * @author AxGord <axgord@gmail.com>
  */
-@:access(pony.ui.touch.TouchebleBase)
-class TouchebleTouch {
+@:access(pony.ui.touch.TouchableBase)
+class TouchableTouch {
 
 	private static var inited:Bool = false;
 	
@@ -48,16 +49,16 @@ class TouchebleTouch {
 	}
 	
 	static private function globalTouchMoveHandler(e:TouchEvent):Void {
-		TouchebleBase.dispatchMove(e.touchPointID, e.stageX, e.stageY);
+		TouchableBase.dispatchMove(e.touchPointID, e.stageX, e.stageY);
 	}
 	
 	private var obj:DisplayObject;
-	private var base:TouchebleBase;
+	private var base:TouchableBase;
 	private var touchId:Int = -1;
 	private var over:Bool = false;
 	private var down:Bool = false;
 	
-	public function new(obj:DisplayObject, base:TouchebleBase) {
+	public function new(obj:DisplayObject, base:TouchableBase) {
 		init();
 		this.obj = obj;
 		this.base = base;
@@ -65,6 +66,7 @@ class TouchebleTouch {
 		obj.addEventListener(TouchEvent.TOUCH_MOVE, touchMoveHandler);
 		Lib.current.stage.addEventListener(TouchEvent.TOUCH_MOVE, touchGlobalMoveHandler);
 		Touch.onEnd << touchEndHandler;
+		Touch.onCancle << cancleTouchHandler;
 	}
 	
 	public function destroy():Void {
@@ -73,6 +75,7 @@ class TouchebleTouch {
 		obj.removeEventListener(TouchEvent.TOUCH_MOVE, touchMoveHandler);
 		Lib.current.stage.removeEventListener(TouchEvent.TOUCH_MOVE, touchGlobalMoveHandler);
 		Touch.onEnd >> touchEndHandler;
+		Touch.onCancle >> cancleTouchHandler;
 		obj = null;
 		base = null;
 	}
@@ -96,7 +99,7 @@ class TouchebleTouch {
 		base.dispatchDown(e.touchPointID, e.stageX, e.stageY);
 	}
 	
-	private function touchEndHandler(t:TO):Void {
+	private function touchEndHandler(t:T):Void {
 		if (!down) return;
 		if (!isNotLock(t.id)) return;
 		if (over) {
