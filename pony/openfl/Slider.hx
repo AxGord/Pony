@@ -50,6 +50,8 @@ class Slider<T:SliderType> extends Sprite {
 	
 	public function new(b:Button, bg:Bitmap, invert:Bool=false, sizeFix:Float=0, bFix:Float=0) {
 		super();
+		addChild(bg);
+		addChild(b);
 		var isVert = bg.height > bg.width;
 		core = new T(b.core, (isVert ? bg.height : bg.width) + sizeFix, isVert, invert);
 		core.changeX = function(v:Float) b.x = Std.int(v + bFix); 

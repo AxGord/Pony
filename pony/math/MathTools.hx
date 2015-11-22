@@ -90,25 +90,4 @@ class MathTools {
 		return Std.string(v).split('.')[0].length;
 	}
 	
-	public static function searchOptimal(a:Map<Int,Float>, p:Array<Float>):Array<Int> {
-		var result = [];
-		for (p in p) {
-			var best:Float = MathTools.maxInt;
-			var ind:Int = -1;
-			
-			for (e in a.keys()) {
-				if (result.indexOf(e) != -1) continue;
-				var v = Math.abs(a[e] - p);
-				if (v < best) {
-					ind = e;
-					best = v;
-				}
-			}
-			
-			result.push(ind);
-			
-		}
-		return result;
-	}
-	
 }

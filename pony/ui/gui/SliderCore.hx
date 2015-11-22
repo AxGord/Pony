@@ -88,6 +88,10 @@ class SliderCore implements Declarator implements HasSignal {
 		return new SliderCore(b, isVert ? height : width, isVert, invert);
 	}
 	
+	public function destroy():Void {
+		if (button != null) button.destroy();
+	}
+	
 	private function changePercentHandler(v:Float):Void pos = v * size;
 	private function changePosHandler(v:Float):Void percent = v / size;
 	private function changeValueHandler(v:Float):Void percent = (max-min) / (v-min);
