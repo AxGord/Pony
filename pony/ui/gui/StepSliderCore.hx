@@ -42,14 +42,14 @@ class StepSliderCore extends SliderCore {
 	private var percentRound:Int = -1;
 	private var valueRound:Int = -1;
 	
-	public function new(button:ButtonCore = null, size:Float, isVertical:Bool = false, invert:Bool = false) {
-		super(button, size, isVertical, invert);
+	public function new(button:ButtonCore = null, size:Float, isVertical:Bool = false, invert:Bool = false, draggable:Bool = true) {
+		super(button, size, isVertical, invert, draggable);
 	}
 	
 	@:extern inline
-	public static function create(?button:ButtonCore, width:Float, height:Float, invert:Bool=false):StepSliderCore {
+	public static function create(?button:ButtonCore, width:Float, height:Float, invert:Bool=false, draggable:Bool=true):StepSliderCore {
 		var isVert = height > width;
-		return new StepSliderCore(button, isVert ? height : width, isVert, invert);
+		return new StepSliderCore(button, isVert ? height : width, isVert, invert, draggable);
 	}
 	
 	@:extern inline private function set_percentStep(v:Float):Float {

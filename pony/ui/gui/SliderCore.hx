@@ -44,6 +44,7 @@ class SliderCore implements Declarator implements HasSignal {
 	@:arg public var size(default,null):Float;
 	@:arg public var isVertical(default,null):Bool = false;
 	@:arg public var invert:Bool = false;
+	@:arg public var draggable:Bool = true;
 	
 	public var min(default, null):Float;
 	public var max(default, null):Float;
@@ -63,29 +64,31 @@ class SliderCore implements Declarator implements HasSignal {
 	public function new() {
 		changePercent << changePercentHandler;
 		changePos << changePosHandler;
-		if (button != null) {
-			onStartDrag = button.touch.onDown;
-			onStopDrag = button.touch.onUp || button.touch.onOutUp;
-		} else {
-			onStartDrag = new Event1();
-			onStopDrag = new Event1();
+		if (draggable) {
+			if (button != null) {
+				onStartDrag = button.touch.onDown;
+				onStopDrag = button.touch.onUp || button.touch.onOutUp;
+			} else {
+				onStartDrag = new Event1();
+				onStopDrag = new Event1();
+			}
+			onStopDrag << stopDragHandler;
 		}
-		onStopDrag << stopDragHandler;
 		if (isVertical) {
-			onStartDrag << startYDragHandler;
+			if (draggable) onStartDrag << startYDragHandler;
 			changePos << function(v) changeY(inv(v));
 		} else {
-			onStartDrag << startXDragHandler;
+			if (draggable) onStartDrag << startXDragHandler;
 			changePos << function(v) changeX(inv(v));
 		}
-		onStartDrag << startDragHandler;
+		if (draggable) onStartDrag << startDragHandler;
 		if (button != null) changePos << button.touch.check;
 	}
 	
 	@:extern inline
-	public static function create(?b:ButtonCore, width:Float, height:Float, invert:Bool=false):SliderCore {
+	public static function create(?b:ButtonCore, width:Float, height:Float, invert:Bool=false, draggable:Bool=true):SliderCore {
 		var isVert = height > width;
-		return new SliderCore(b, isVert ? height : width, isVert, invert);
+		return new SliderCore(b, isVert ? height : width, isVert, invert, draggable);
 	}
 	
 	public function destroy():Void {

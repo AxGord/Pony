@@ -122,9 +122,9 @@ class Touchable extends TouchableBase {
 	private var mouse:TouchableMouse;
 	
 	public function new(obj:DisplayObject) {
+		init();
 		super();
 		this.obj = obj;
-		init();
 		if (touchMode)
 			touch = new TouchableTouch(obj, this);
 		else
