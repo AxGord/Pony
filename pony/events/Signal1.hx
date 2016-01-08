@@ -92,7 +92,7 @@ abstract Signal1<T1>(Priority<Listener1<T1>>) from Event1<T1> {
 		return this.remove({ once:false, listener:LSub(null, a1) });
 	}
 	
-	public function bind1<T2>(a1:T2, priority:Int = 0, _once:Bool = false):Signal2<T1,T2> {
+	public function bind1<T2>(a1:T2, priority:Null<Int> = 0, _once:Bool = false):Signal2<T1,T2> {
 		for (e in this) switch e.listener {
 			case LBind1(sig, val) if (val == a1):
 				this.brk();

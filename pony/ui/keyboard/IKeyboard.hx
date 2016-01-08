@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2013 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -27,19 +27,15 @@
 **/
 package pony.ui.keyboard;
 
-import pony.events.Signal;
 import pony.events.Signal1;
 /**
  * IKeyboard
  * @see pony.ui.Keyboard
  * @author AxGord <axgord@gmail.com>
  */
-interface IKeyboard<T> {
-
-	var down(default, null):Signal1<T, Key>;
-	var up(default, null):Signal1<T, Key>;
-
+interface IKeyboard {
+	var down(get, never):Signal1<Key>;
+	var up(get, never):Signal1<Key>;
 	function enable():Void;
 	function disable():Void;
-	
 }

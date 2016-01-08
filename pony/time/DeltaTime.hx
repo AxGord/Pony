@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -54,7 +54,7 @@ class DeltaTime implements HasSignal {
 	public static var nowDate(get,never):Date;
 	
 	#if !((flash||openfl) || HUGS)
-	public static inline function init(?signal:Signal0<Dynamic>):Void {
+	public static inline function init(?signal:Signal0):Void {
 		set();
 		if (signal != null) signal.add(tick);
 	}

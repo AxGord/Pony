@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2013 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -34,9 +34,9 @@ import pony.events.Signal1;
  * @author AxGord <axgord@gmail.com>
  */
 interface IFocus {
-
-	public var focus(default, null):Signal1<Dynamic, Bool>;
+	public var onFocus(get, never):Signal1<Bool>;
 	public var focusPriority(default, null):Int;
 	public var focusGroup(default, null):String;
-	
+	public function focus():Void;
+	public function unfocus():Void;
 }

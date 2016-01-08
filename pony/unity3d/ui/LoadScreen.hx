@@ -89,9 +89,9 @@ using hugs.HUGSWrapper;
 		}
 		
 		if (progress != null) {
-			loader.progress.add(progress.set);
+			loader.onProgress.add(progress.set);
 		}
-		loader.complite.once(end);
+		loader.onComplete.once(end);
 		loader.init(fastLoad);
 	}
 	
@@ -100,7 +100,7 @@ using hugs.HUGSWrapper;
 		if (bgTextureObject != null) Object.Destroy(bgTextureObject);
 		if (mainTextureObject != null) Object.Destroy(mainTextureObject);
 		if (progress != null) {
-			loader.progress.remove(progress.set);
+			loader.onProgress.remove(progress.set);
 			Object.Destroy(progress.gameObject);
 		}
 		if (up != null) Object.Destroy(up);

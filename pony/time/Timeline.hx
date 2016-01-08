@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -27,21 +27,21 @@
 **/
 package pony.time;
 import pony.events.Listener1;
-import pony.events.Signal;
 import pony.events.Signal0;
 import pony.events.Signal1;
 import pony.magic.Declarator;
+import pony.magic.HasSignal;
 
 /**
  * TimeLine
  * @author AxGord
  */
-class Timeline implements Declarator {
+class Timeline implements Declarator implements HasSignal {
 
 	@:arg private var data:Array<Time>;
 	@:arg public var pauseOnStep:Bool = false;
 	
-	public var onStep:Signal1<Timeline, Int> = Signal.create(this);
+	@:auto public var onStep:Signal1<Int>;
 	
 	public var isPlay(default, null):Bool = false;
 	
@@ -73,7 +73,7 @@ class Timeline implements Declarator {
 		lastdt = dt;
 		isPlay = false;
 		if (!pauseOnStep) play();
-		onStep.dispatch(currentStep);
+		eStep.dispatch(currentStep);
 	}
 	
 	public function reset():Void {
@@ -88,7 +88,7 @@ class Timeline implements Declarator {
 	
 	public function playTo(step:Int, dt:DT = 0):Void {
 		pauseOnStep = true;
-		var l:Listener1<Timeline, Int> = null;
+		var l:Listener1<Int> = null;
 		l = function(n:Int):Void {
 			if (n < step) play();
 			else onStep >> l;

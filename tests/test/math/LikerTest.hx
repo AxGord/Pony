@@ -36,7 +36,10 @@ class LikerTest
 		var r:Int = -2;
 		instance.likeAsync([0.2, 0.42, 0.1], function(id:Int) r = id);
 		Assert.areEqual(r, -2);
-		for (_ in 0...5) DeltaTime.fixedUpdate.dispatch(1);
+		DeltaTime.fixedValue = 1;
+		for (_ in 0...5) {
+			DeltaTime.fixedDispatch();
+		}
 		Assert.areEqual(r, 1);
 		
 	}

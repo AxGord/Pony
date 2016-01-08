@@ -12,7 +12,7 @@ class TimerTest
 	{
 		var handler:Void->Void = asyncFactory.createHandler(this, empty, 1000);
 		var t = new Timer(20);
-		t.complite << handler;
+		t.complete << handler;
 		t.start();
 	}
 	
@@ -32,7 +32,7 @@ class TimerTest
 		var c = 0;
 		var handler:Void->Void = asyncFactory.createHandler(this, function() Assert.areEqual(c, 6), 5500);
 		var t = new Timer('3ms', 5);
-		t.complite << function() c++;
+		t.complete << function() c++;
 		t.start();
 		new massive.munit.util.Timer(400).run = handler;
 	}

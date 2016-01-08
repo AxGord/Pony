@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -29,13 +29,14 @@ package pony.time;
 
 import pony.events.*;
 import pony.magic.Declarator;
+import pony.magic.HasSignal;
 import pony.math.MathTools;
 
 /**
  * Timer with signals
  * @author AxGord
  */
-class Timer implements ITimer<Timer> implements Declarator {
+class Timer implements ITimer<Timer> implements Declarator implements HasSignal {
 	
 	#if (!neko && !dox && !cpp)
 	private var t:haxe.Timer;
@@ -47,9 +48,9 @@ class Timer implements ITimer<Timer> implements Declarator {
 	
 	public var started(get, never):Bool;
 	
-	public var update:Signal1<Timer, Time> = Signal.create(this);
-	public var progress:Signal1<Timer, Float> = Signal.create(this);
-	public var complite:Signal1<Timer, DT> = Signal.create(this);
+	@:auto public var update:Signal1<Time>;
+	@:auto public var progress:Signal1<Float>;
+	@:auto public var complete:Signal1<DT>;
 	
 	public var frequency:Time = 1000;
 	private var _frequency:Time;
@@ -58,10 +59,10 @@ class Timer implements ITimer<Timer> implements Declarator {
 	@:arg public var repeatCount:Int = 0;
 	
 	public function new() {
-		progress.takeListeners.add(takeProgress);
-		progress.lostListeners.add(lostProgress);
-		update.takeListeners.add(lUpdate);
-		progress.lostListeners.add(lUpdate);
+		eProgress.onTake.add(takeProgress);
+		eProgress.onLost.add(lostProgress);
+		eUpdate.onTake.add(lUpdate);
+		eProgress.onLost.add(lUpdate);
 		reset();
 	}
 	#if !dox
@@ -94,19 +95,19 @@ class Timer implements ITimer<Timer> implements Declarator {
 	
 	public function start(?dt:DT):Timer {
 		stop();
-		var delay:Int = update.haveListeners || time == null ? _frequency : MathTools.cabs(time.max - currentTime);
+		var delay:Int = !eUpdate.empty || time == null ? _frequency : MathTools.cabs(time.max - currentTime);
 		#if (!neko && !dox && !cpp)
 		t = new haxe.Timer(delay);
-		t.run = update.haveListeners ? _update : _complite;
+		t.run = !update.empty ? _update : _complite;
 		#elseif munit
 		t = new massive.munit.util.Timer(delay);
-		t.run = update.haveListeners ? _update : _complite;
+		t.run = !eUpdate.empty ? _update : _complite;
 		#end
 		return this;
 	}
 	
 	private function _complite():Void {
-		complite.dispatch(0);
+		eComplete.dispatch(0);
 		if (repeatCount == 0) stop();
 		else if (repeatCount > 0) repeatCount--;
 	}
@@ -119,7 +120,7 @@ class Timer implements ITimer<Timer> implements Declarator {
 			if (currentTime >= time.max) while (currentTime >= time.max) {
 				currentTime -= time.length;
 				dispatchUpdate();
-				complite.dispatch(0);
+				eComplete.dispatch(0);
 				if (repeatCount == 0) {
 					stop();
 					break;
@@ -140,32 +141,32 @@ class Timer implements ITimer<Timer> implements Declarator {
 	}
 	
 	public inline function dispatchUpdate():Timer {
-		update.dispatch(currentTime);
+		eUpdate.dispatch(currentTime);
 		return this;
 	}
 	
 	public function destroy():Void {
 		stop();
-		progress.destroy();
-		update.destroy();
-		complite.destroy();
-		progress = null;
-		update = null;
-		complite = null;
+		eProgress.destroy();
+		eUpdate.destroy();
+		eComplete.destroy();
+		eProgress = null;
+		eUpdate = null;
+		eComplete = null;
 		time = null;
 	}
 	
-	private function _progress():Void progress.dispatch(time.percent(currentTime));
+	private function _progress():Void eProgress.dispatch(time.percent(currentTime));
 	
 	static public inline function delay (time:Time, f:Void->Void):Timer {
 		var t = new Timer(time);
-		t.complite.once(f);
-		t.complite.once(t.destroy);
+		t.complete.once(f);
+		t.complete.once(t.destroy);
 		return t.start();
 	}
 	static public inline function repeat(time:Time, f:Void->Void):Timer {
 		var t = new Timer(time, -1);
-		t.complite.add(f);
+		t.complete.add(f);
 		return t.start();
 	}
 	

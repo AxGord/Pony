@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -29,8 +29,8 @@ package pony.ui.keyboard.flash;
 
 import flash.events.KeyboardEvent;
 import flash.Lib;
-import pony.events.Signal;
 import pony.events.Signal1;
+import pony.magic.HasSignal;
 import pony.ui.keyboard.IKeyboard;
 import pony.ui.keyboard.Key;
 import pony.ui.keyboard.Keyboard;
@@ -39,15 +39,12 @@ import pony.ui.keyboard.Keyboard;
  * Keyboard
  * @author AxGord <axgord@gmail.com>
  */
-class Keyboard implements IKeyboard<Keyboard> {
+class Keyboard implements IKeyboard implements HasSignal {
 
-	public var down(default, null):Signal1<Keyboard, Key>;
-	public var up(default, null):Signal1<Keyboard, Key>;
+	@:auto public var down:Signal1<Key>;
+	@:auto public var up:Signal1<Key>;
 	
-	public function new() {
-		down = Signal.create(this);
-		up = Signal.create(this);	
-	}
+	public function new() {}
 	
 	public function enable():Void {
 		Lib.current.stage.addEventListener(KeyboardEvent.KEY_DOWN, kd);
@@ -59,7 +56,7 @@ class Keyboard implements IKeyboard<Keyboard> {
 		Lib.current.stage.removeEventListener(KeyboardEvent.KEY_UP, ku);
 	}
 	
-	private function kd(event:KeyboardEvent):Void down.dispatch(pony.ui.keyboard.Keyboard.map.get(event.keyCode));
-	private function ku(event:KeyboardEvent):Void up.dispatch(pony.ui.keyboard.Keyboard.map.get(event.keyCode));
+	private function kd(event:KeyboardEvent):Void eDown.dispatch(pony.ui.keyboard.Keyboard.map.get(event.keyCode));
+	private function ku(event:KeyboardEvent):Void eUp.dispatch(pony.ui.keyboard.Keyboard.map.get(event.keyCode));
 	
 }

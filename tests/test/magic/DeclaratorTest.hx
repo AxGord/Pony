@@ -4,7 +4,6 @@ import magic.DeclaratorTest.DeclaratorTestHelper;
 import massive.munit.util.Timer;
 import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
-import pony.events.Signal;
 import pony.magic.Declarator;
 
 class DeclaratorTest 

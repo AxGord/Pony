@@ -35,15 +35,15 @@ class TimeTest
 	@Test
 	public function neg():Void {
 		var n:Time = -1000;
-		areEqual((n:String), '-1');
+		areEqual((n:String), '-00:00:01');
 	}
 	
 	@Test
 	public function timeInterval():Void {
 		var t:TimeInterval = 500...3000;
-		areEqual(t.toString(), '.500 ... 3');
+		areEqual(t.toString(), '00:00:00.500 ... 00:00:03');
 		var t:TimeInterval = '27min ... 30min';
-		areEqual(t.toString(), '27:00 ... 30:00');
+		areEqual(t.toString(), '00:27:00 ... 00:30:00');
 	}
 	
 	@Test

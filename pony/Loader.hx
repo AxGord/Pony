@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -27,15 +27,20 @@
 **/
 package pony;
 
+import pony.magic.HasSignal;
 import pony.time.DeltaTime;
-import pony.events.Signal;
+import pony.events.Signal0;
+import pony.events.Signal1;
 
 /**
  * Loader
- * Organize loading for your application
+ * Organize loading for application
  * @author AxGord <axgord@gmail.com>
  */
-class Loader {
+class Loader implements HasSignal {
+	
+	@:auto public var onProgress:Signal1<Float>;
+	@:auto public var onComplete:Signal0;
 	
 	public var intensivity:Int;
 	public var beginWait:Int;
@@ -44,8 +49,6 @@ class Loader {
 	private var totalActions(default, null):Int = 0;
 	public var total:Int = 0;
 	public var complites:Int = 0;
-	public var progress(default, null):Signal;
-	public var complite(default, null):Signal;
 	
 	public var loaded:Bool = false;
 	
@@ -53,10 +56,7 @@ class Loader {
 		this.intensivity = intensivity;
 		this.beginWait = beginWait;
 		actions = new List < Void->Void >();
-		progress = new Signal(this);
-		complite = new Signal(this);
-		complite.once(end);
-		
+		onComplete.once(end);
 	}
 	
 	public function init(fastLoad:Bool = false):Void {
@@ -64,24 +64,24 @@ class Loader {
 			if (beginWait == 0)
 				begin();
 			else
-				DeltaTime.update.add(wait);
+				DeltaTime.fixedUpdate.add(wait);
 		} else
 			fastEnd();
 	}
 	
 	private function fast():Void {
-		complite.dispatch();
+		eComplete.dispatch();
 	}
 	
 	private function wait():Void {
 		if (beginWait-- <= 0) {
-			DeltaTime.update.remove(wait);
+			DeltaTime.fixedUpdate.remove(wait);
 			begin();
 		}
 	}
 	
 	inline private function begin():Void {
-		DeltaTime.update.add(update);
+		DeltaTime.fixedUpdate.add(update);
 	}
 	
 	private function update():Void {
@@ -95,20 +95,20 @@ class Loader {
 			#end
 		}
 		if (totalActions == 0)
-			progress.dispatch(counterPercent());
+			eProgress.dispatch(counterPercent());
 		else if (total == 0)
-			progress.dispatch(listPercent());
+			eProgress.dispatch(listPercent());
 		else
-			progress.dispatch((listPercent() + counterPercent())/2);
+			eProgress.dispatch((listPercent() + counterPercent())/2);
 		if (actions.length == 0 && complites == total)
-			complite.dispatch();
+			eComplete.dispatch();
 	}
 	
 	inline private function listPercent():Float return 1 - actions.length / totalActions;
 	inline private function counterPercent():Float return complites / total;
 	
 	public function end():Void {
-		DeltaTime.update.remove(update);
+		DeltaTime.fixedUpdate.remove(update);
 		loaded = true;
 	}
 	
@@ -118,7 +118,7 @@ class Loader {
 	}
 	
 	inline private function fastEnd():Void {
-		complite.dispatch();
+		eComplete.dispatch();
 	}
 	
 }

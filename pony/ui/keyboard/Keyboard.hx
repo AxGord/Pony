@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -26,30 +26,28 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.ui.keyboard;
-import pony.time.DeltaTime;
-import pony.time.DT;
-import pony.time.DTimer;
-import pony.events.Event;
-import pony.events.Signal;
 import pony.events.Signal1;
+import pony.magic.Declarator;
+import pony.magic.HasSignal;
 import pony.ui.keyboard.IKeyboard;
 import pony.ui.keyboard.Key;
-import pony.ui.keyboard.unity.Keyboard;
 
 /**
  * Keyboard
+ * Need declarator for __init__
  * @see pony.ui.Key
  * @author AxGord <axgord@gmail.com>
  */
-class Keyboard {
-	static public var down:Signal1<Void, Key>;
-	static public var up:Signal1<Void, Key>;
-	static public var press:Signal1<Void, Key>;
-	static public var click:Signal1<Void, Key>;
+class Keyboard implements Declarator implements HasSignal {
+	
+	@:auto static public var down:Signal1<Key>;
+	@:auto static public var up:Signal1<Key>;
+	@:auto static public var press:Signal1<Key>;
+	@:auto static public var click:Signal1<Key>;
 	
 	static public var pressedKeys:List<Key> = new List<Key>();
 	
-	static private var km:IKeyboard<Dynamic>;
+	static private var km:IKeyboard;
 	static private var _enabled:Bool = false;
 	
 	static public var enabled(default, set):Bool = false;
@@ -63,10 +61,6 @@ class Keyboard {
 		#elseif flash
 		km = new pony.ui.keyboard.flash.Keyboard();
 		#end
-		down = Signal.createEmpty();
-		up = Signal.createEmpty();
-		press = Signal.createEmpty();
-		click = Signal.createEmpty();
 		
 		autoEnableMode();
 	}
@@ -74,21 +68,19 @@ class Keyboard {
 	static private function takeListeners():Void if (haveListeners()) enable();
 	static private function lostListeners():Void if (!haveListeners()) disable();
 	static private inline function haveListeners():Bool
-		return down.haveListeners || up.haveListeners  || press.haveListeners || click.haveListeners;
+		return !down.empty || !up.empty  || !press.empty || !click.empty;
 	
-	static private function downPress(e:Event):Void {
-		var k:Key = e.args[0];
+	static private function downPress(k:Key):Void {
 		if (pressedKeys.length == 0) presser = new Presser(_press);
 		pressedKeys.push(k);
-		km.up.sub(k).once(upPress);
-		press.dispatch(k);
+		km.up - k + k < upPress;
+		ePress.dispatch(k);
 	}
 	
-	static private function _press():Void for (k in pressedKeys) press.dispatch(k);
+	static private function _press():Void for (k in pressedKeys) ePress.dispatch(k);
 	
-	static inline private function upPress(e:Event):Void {
-		var k:Key = e.parent.args[0];
-		click.dispatch(k);
+	static inline private function upPress(k:Key):Void {
+		eClick.dispatch(k);
 		pressedKeys.remove(k);
 		if (pressedKeys.length == 0) presser.destroy();
 	}
@@ -97,9 +89,9 @@ class Keyboard {
 		if (_enabled == true) return;
 		_enabled = true;
 		km.enable();
-		km.down.add(downPress);
-		km.down.add(down.dispatchEvent);
-		km.up.add(up.dispatchEvent);
+		km.down << downPress;
+		km.down << eDown;
+		km.up << eUp;
 	}
 	
 	static private function disable():Void {
@@ -107,8 +99,8 @@ class Keyboard {
 		_enabled = false;
 		if (presser != null) presser.destroy();
 		pressedKeys.clear();
-		km.up.removeAllListeners();
-		km.down.removeAllListeners();
+		km.up.clear();
+		km.down.clear();
 		km.disable();
 	}
 	
@@ -139,27 +131,27 @@ class Keyboard {
 	}
 	
 	static private function manualEnableMode():Void {
-		down.takeListeners.remove(takeListeners);
-		up.takeListeners.remove(takeListeners);
-		press.takeListeners.remove(takeListeners);
-		click.takeListeners.remove(takeListeners);
+		eDown.onTake.remove(takeListeners);
+		eUp.onTake.remove(takeListeners);
+		ePress.onTake.remove(takeListeners);
+		eClick.onTake.remove(takeListeners);
 		
-		down.lostListeners.remove(lostListeners);
-		up.lostListeners.remove(lostListeners);
-		press.lostListeners.remove(lostListeners);
-		click.lostListeners.remove(lostListeners);
+		eDown.onLost.remove(lostListeners);
+		eUp.onLost.remove(lostListeners);
+		ePress.onLost.remove(lostListeners);
+		eClick.onLost.remove(lostListeners);
 	}
 	
 	static private function autoEnableMode():Void {
-		down.takeListeners.add(takeListeners);
-		up.takeListeners.add(takeListeners);
-		press.takeListeners.add(takeListeners);
-		click.takeListeners.add(takeListeners);
+		eDown.onTake.add(takeListeners);
+		eUp.onTake.add(takeListeners);
+		ePress.onTake.add(takeListeners);
+		eClick.onTake.add(takeListeners);
 		
-		down.lostListeners.add(lostListeners);
-		up.lostListeners.add(lostListeners);
-		press.lostListeners.add(lostListeners);
-		click.lostListeners.add(lostListeners);
+		eDown.onLost.add(lostListeners);
+		eUp.onLost.add(lostListeners);
+		ePress.onLost.add(lostListeners);
+		eClick.onLost.add(lostListeners);
 	}
 	
 	static public var map:Map<Int, Key> = [

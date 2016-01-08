@@ -18,14 +18,14 @@ class PriorityTest
 	{
 		p1 = new Priority<Int>();
 		p2 = new Priority<Int>();
-		p2.addElement(3, 0);
-		p2.addElement(4, 0);
-		p2.addElement(5, 1);
-		p2.addElement(6, 1);
-		p2.addElement(1, -1);
-		p2.addElement(2, -1);
+		p2.add(3, 0);
+		p2.add(4, 0);
+		p2.add(5, 1);
+		p2.add(6, 1);
+		p2.add(1, -1);
+		p2.add(2, -1);
 		p3 = new Priority<Int>();
-		p3.addElement(99, 0);
+		p3.add(99, 0);
 	}
 	
 	
@@ -57,7 +57,7 @@ class PriorityTest
 	public function linean():Void {
 		var p:Priority<Int> = new Priority<Int>();
 		for (i in -50...50) {
-			p.addElement(i, i);
+			p.add(i, i);
 		}
 		var prev:Null<Int> = null;
 		for (e in p) {
@@ -73,7 +73,7 @@ class PriorityTest
 		var p:Priority<Int> = new Priority<Int>();
 		for (i in 0...100) {
 			var r:Int = Math.round(Math.random()*10)-5;
-			p.addElement(r, r);
+			p.add(r, r);
 		}
 		var prev:Null<Int> = null;
 		for (e in p) {
@@ -86,7 +86,7 @@ class PriorityTest
 	
 	@Test
 	public function remove():Void {
-		p2.removeElement(5);
+		p2.remove(5);
 		Assert.areEqual(5, p2.length);
 		var i:Int = 1;
 		for (e in p2) {
@@ -97,8 +97,8 @@ class PriorityTest
 	
 	@Test
 	public function exists():Void {
-		Assert.isTrue(p2.existsElement(5));
-		Assert.isFalse(p2.existsElement(9));
+		Assert.isTrue(p2.exists(5));
+		Assert.isFalse(p2.exists(9));
 	}
 	
 	@Test
@@ -138,10 +138,10 @@ class PriorityTest
 	public function loop_add():Void {
 		Assert.areEqual(1, p2.loop());
 		Assert.areEqual(2, p2.loop());
-		p2.addElement(9, -1);
+		p2.add(9, -1);
 		Assert.areEqual(9, p2.loop());
 		Assert.areEqual(3, p2.loop());
-		p2.addElement(8, -2);
+		p2.add(8, -2);
 		Assert.areEqual(4, p2.loop());
 		Assert.areEqual(5, p2.loop());
 		Assert.areEqual(6, p2.loop());
@@ -155,10 +155,10 @@ class PriorityTest
 	public function loop_remove():Void {
 		Assert.areEqual(1, p2.loop());
 		Assert.areEqual(2, p2.loop());
-		p2.removeElement(3);
+		p2.remove(3);
 		Assert.areEqual(4, p2.loop());
 		Assert.areEqual(5, p2.loop());
-		p2.removeElement(1);
+		p2.remove(1);
 		Assert.areEqual(6, p2.loop());
 		Assert.areEqual(2, p2.loop());
 		Assert.areEqual(4, p2.loop());
@@ -171,11 +171,11 @@ class PriorityTest
 		for (e in p2) {
 			//trace(i + ' ' + e);
 			switch (i++) {
-				case 1: p2.removeElement(1);
+				case 1: p2.remove(1);
 				case 2: Assert.areEqual(2, e);
 				case 3:
 					Assert.areEqual(3, e);
-					p2.addElement(11, -2);
+					p2.add(11, -2);
 				case 4: Assert.areEqual(4, e);
 			}
 		}
@@ -184,13 +184,13 @@ class PriorityTest
 	
 	@Test
 	public function addToBegin():Void {
-		p2.addElementToBegin(78);
+		p2.addToBegin(78);
 		Assert.areEqual(78, p2.first);
 	}
 	
 	@Test
 	public function addToEnd():Void {
-		p2.addElementToEnd(45);
+		p2.addToEnd(45);
 		Assert.areEqual(45, p2.last);
 	}
 	
@@ -223,8 +223,8 @@ class PriorityTest
 	@Test
 	public function addBigp():Void {
 		var p:Priority<Int> = new Priority<Int>();
-		p.addElement(4, 1005001005);
-		p.addElement(6);
+		p.add(4, 1005001005);
+		p.add(6);
 		Assert.areEqual(p.first, 6);
 		Assert.areEqual(p.last, 4);
 	}
@@ -232,33 +232,33 @@ class PriorityTest
 	@Test
 	public function many():Void {
 		var p:Priority<Int> = new Priority<Int>();
-		for (i in 0...500) p.addElement(i,10000+i);
+		for (i in 0...500) p.add(i,10000+i);
 		var i = 0;
 		for (e in p) Assert.areEqual(e, i++);
 	}
 	
 	@Test
 	public function getPriority():Void {
-		Assert.areEqual(p2.getElementPriority(3), 0);
-		Assert.areEqual(p2.getElementPriority(4), 0);
-		Assert.areEqual(p2.getElementPriority(5), 1);
-		Assert.areEqual(p2.getElementPriority(6), 1);
-		Assert.areEqual(p2.getElementPriority(1), -1);
-		Assert.areEqual(p2.getElementPriority(2), -1);
+		Assert.areEqual(p2.getPriority(3), 0);
+		Assert.areEqual(p2.getPriority(4), 0);
+		Assert.areEqual(p2.getPriority(5), 1);
+		Assert.areEqual(p2.getPriority(6), 1);
+		Assert.areEqual(p2.getPriority(1), -1);
+		Assert.areEqual(p2.getPriority(2), -1);
 	}
 	
 	@Test
 	public function someProblemWithRemoveElementFromHash():Void {
 		var p:Priority<String> = new Priority<String>();
-		p.addElement('E', 50);
-		p.addElement('P', 29);
+		p.add('E', 50);
+		p.add('P', 29);
 		
-		p.removeElement('P');
-		p.removeElement('E');
+		p.remove('P');
+		p.remove('E');
 		
-		p.addElement('Ch', 1);
-		p.addElement('P', 29);
-		p.addElement('E', 50);
+		p.add('Ch', 1);
+		p.add('P', 29);
+		p.add('E', 50);
 		Assert.areEqual(p.first, 'Ch');
 	}
 	

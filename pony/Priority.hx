@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -231,7 +231,7 @@ class Priority<T:Dynamic> implements HasSignal {
 	
 	@:extern inline public function existsFunction(f:T->Bool):Bool return data.exists(f);
 	
-	@:extern inline public function existsArray(a:Array<T>):Bool {
+	public function existsArray(a:Array<T>):Bool {
 		for (e in a) if (exists(e)) return true;
 		return false;
 	}

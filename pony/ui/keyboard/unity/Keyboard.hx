@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -26,8 +26,8 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.ui.keyboard.unity;
+import pony.magic.HasSignal;
 import pony.time.DeltaTime;
-import pony.events.Signal;
 import pony.events.Signal1;
 import pony.ui.keyboard.IKeyboard;
 import pony.ui.keyboard.Key;
@@ -39,16 +39,14 @@ import unityengine.KeyCode;
  * @see pony.ui.Keyboard
  * @author AxGord <axgord@gmail.com>
  */
-class Keyboard implements IKeyboard<Keyboard> {
+class Keyboard implements IKeyboard implements HasSignal {
 	
-	public var down:Signal1<Keyboard, Key>;
-	public var up:Signal1<Keyboard, Key>;
+	@:auto public var down:Signal1<Key>;
+	@:auto public var up:Signal1<Key>;
 	
 	private var keys:Array<KeyCode>;
 	
 	public function new():Void {
-		down = Signal.create(this);
-		up = Signal.create(this);
 		keys = [KeyCode.A,KeyCode.B,KeyCode.C,KeyCode.D,KeyCode.E,KeyCode.F,KeyCode.G,KeyCode.H,KeyCode.I,KeyCode.J,KeyCode.K,KeyCode.L,KeyCode.M,KeyCode.N,KeyCode.O,KeyCode.P,KeyCode.Q,KeyCode.R,KeyCode.S,KeyCode.T,KeyCode.U,KeyCode.V,KeyCode.W,KeyCode.X,KeyCode.Y,KeyCode.Z,KeyCode.Backspace,KeyCode.Tab,KeyCode.Escape,KeyCode.Space,KeyCode.Keypad0,KeyCode.Keypad1,KeyCode.Keypad2,KeyCode.Keypad3,KeyCode.Keypad4,KeyCode.Keypad5,KeyCode.Keypad6,KeyCode.Keypad7,KeyCode.Keypad8,KeyCode.Keypad9,KeyCode.KeypadDivide,KeyCode.KeypadEquals,KeyCode.KeypadMultiply,KeyCode.KeypadMinus,KeyCode.KeypadPlus,KeyCode.KeypadEnter,KeyCode.KeypadPeriod,KeyCode.UpArrow,KeyCode.DownArrow,KeyCode.RightArrow,KeyCode.LeftArrow,KeyCode.Insert,KeyCode.Delete,KeyCode.Home,KeyCode.End,KeyCode.PageUp,KeyCode.PageDown,KeyCode.F1,KeyCode.F2,KeyCode.F3,KeyCode.F4,KeyCode.F5,KeyCode.F6,KeyCode.F7,KeyCode.F8,KeyCode.F9,KeyCode.F10,KeyCode.F11,KeyCode.F12,KeyCode.Alpha1,KeyCode.Alpha2,KeyCode.Alpha3,KeyCode.Alpha4,KeyCode.Alpha5,KeyCode.Alpha6,KeyCode.Alpha7,KeyCode.Alpha8,KeyCode.Alpha9,KeyCode.Alpha0,KeyCode.Print,KeyCode.Pause,KeyCode.ScrollLock,KeyCode.Numlock, KeyCode.Minus,KeyCode.BackQuote,KeyCode.Period,KeyCode.Slash,KeyCode.Backslash,KeyCode.Quote,KeyCode.LeftShift,KeyCode.LeftControl,KeyCode.LeftAlt,KeyCode.CapsLock,KeyCode.LeftWindows,KeyCode.RightWindows,KeyCode.Plus,KeyCode.Return];
 		//keys = KeyCode.createAll();
 	}

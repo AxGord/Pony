@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -52,20 +52,23 @@ class HasSignalBuilder {
 	macro static public function build():Array<Field> {
 		var fields:Array<Field> = Context.getBuildFields();
 		var pack = ['pony', 'events'];
-		#if !(cpp||windows||android||ios)
+		#if !(cpp||windows||android||ios||neko)
 		var ext = [ { name:':extern', pos: Context.currentPos() } ];
 		#else
 		var ext = [];
 		#end
 		for (f in fields) switch f.kind {
-			case FVar(TPath(p),_) if (p.name.substr(0,6) == 'Signal'):
+			case FProp(g, s, TPath(p), _) if (p.name.substr(0, 6) == 'Signal' && f.meta.checkMeta([":auto", ":lazy"])):
+				Context.error(f.name + " - can't be property", f.pos);
+			case FVar(TPath(p), _) if (p.name.substr(0, 6) == 'Signal'):
 				var on = !(f.name.substr(0, 2) != 'on' && f.name.charAt(3).toLowerCase() == f.name.charAt(3));
-					//Context.error('Incorrect signal name: ${f.name}', f.pos);
+				//Context.error('Incorrect signal name: ${f.name}', f.pos);
 				var ast = f.access.indexOf(AStatic) == -1 ? [] : [AStatic];
 				var eName = 'e' + TextTools.bigFirst(f.name.substr(on ? 2 : 0));
 				var tp = { name: 'Event' + p.name.substr(6), pack: pack, params: p.params };
-				if (f.meta.checkMeta([":auto", "auto"])) {
+				if (f.meta.checkMeta([":auto"])) {
 					f.kind = FProp('get', 'never', TPath(p));
+					f.meta = [];
 					fields.push( { name: eName, access:ast.concat([APrivate]), pos:f.pos, kind:FVar(
 						TPath( tp ),
 						{pos:f.pos, expr: ENew(tp, [])}//fail if use EReturn
@@ -73,8 +76,9 @@ class HasSignalBuilder {
 					fields.push( { name:'get_' + f.name, access: ast.concat([AInline, APrivate]), meta: ext, pos:f.pos, kind:FFun(
 						{args: [], ret: null, expr: macro return $i { eName }}
 					) } );
-				} else if (f.meta.checkMeta([":lazy", "lazy"])) {
+				} else if (f.meta.checkMeta([":lazy"])) {
 					f.kind = FProp('get', 'never', TPath(p));
+					f.meta = [];
 					fields.push( { name: eName, access:ast.concat([APrivate]), pos:f.pos, kind:FVar(
 						TPath( tp )
 					) } );

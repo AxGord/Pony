@@ -20,8 +20,8 @@ class LoaderTest
 		flag = false;
 		loader = new Loader();
 		loader.total++;
-		loader.complite.add(function() flag = true);
-		loader.progress.add(function(v:Float) progress = Math.floor(v * 100));
+		loader.onComplete.add(function() flag = true);
+		loader.onProgress.add(function(v:Float) progress = Math.floor(v * 100));
 		loader.init();
 	}
 	

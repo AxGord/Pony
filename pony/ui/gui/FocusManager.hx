@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2013 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -54,11 +54,11 @@ class FocusManager {
 		if (!list.exists(o.focusGroup)) list.set(o.focusGroup, new Priority<IFocus>());
 		var g:Priority<IFocus> = list.get(o.focusGroup);
 		#if cs
-		g.addElement(o, Reflect.field(o, 'focusPriority'));
+		g.add(o, Reflect.field(o, 'focusPriority'));
 		#else
-		g.addElement(o, o.focusPriority);
+		g.add(o, o.focusPriority);
 		#end
-		o.focus.add(newFocus, -5);
+		(o.onFocus + o).add(newFocus, -5);
 	}
 	
 	/**
@@ -66,13 +66,13 @@ class FocusManager {
 	 * @param	o element.
 	 */
 	public static function unreg(o:IFocus):Void {
-		list.get(o.focusGroup).removeElement(o);
-		o.focus.remove(newFocus);
+		list.get(o.focusGroup).remove(o);
+		o.onFocus + o >> newFocus;
 	}
 	
 	private static function newFocus(b:Bool, o:IFocus):Void {
 		if (b) {
-			if (current != null) current.focus.dispatch(false);
+			if (current != null) current.unfocus();
 			current = o;
 			p.reloop(o);
 		} else {
@@ -85,7 +85,7 @@ class FocusManager {
 	 * @param	name group name.
 	 */
 	inline public static function selectGroup(name:String=''):Void {
-		list.get(name).first.focus.dispatch(true);
+		list.get(name).first.focus();
 	}
 	
 	/**
@@ -95,7 +95,7 @@ class FocusManager {
 	public static function next():IFocus {
 		if (current == null) return null;
 		var e:IFocus = p.loop();
-		e.focus.dispatch(true);
+		e.focus();
 		return e;
 	}
 	
@@ -106,7 +106,7 @@ class FocusManager {
 	public static function prev():IFocus {
 		if (current == null) return null;
 		var e:IFocus = p.backLoop();
-		e.focus.dispatch(true);
+		e.focus();
 		return e;
 	}
 	

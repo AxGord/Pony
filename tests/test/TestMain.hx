@@ -18,7 +18,7 @@ class TestMain
 	static function main(){	new TestMain(); }
 
 	public function new()
-	{	
+	{
 		var suites = new Array<Class<massive.munit.TestSuite>>();
 		suites.push(TestSuite);
 

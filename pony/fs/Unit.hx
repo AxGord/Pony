@@ -100,7 +100,7 @@ abstract Unit(Priority<String>) {
 	
 	inline public function wayStringIterator():Iterator<String> return this.iterator();
 	
-	inline public function addWay(way:String, priority:Int = 0):Void this.addElement(way, priority);
+	inline public function addWay(way:String, priority:Int = 0):Void this.add(way, priority);
 	inline public function addWayArray(way:Array<String>, priority:Int = 0):Void this.addArray(way, priority);
 	
 	public function iterator():Iterator<Unit> {
