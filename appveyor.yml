@@ -9,6 +9,7 @@ before_build:
   - 7z e neko-2.0.0-win.zip -y
   - set HAXEPATH=%cd%
   - haxelib install munit
+  -	haxelib install hamcrest
   - haxelib install continuation
   - set path=%path%;%cd%
 build_script:
