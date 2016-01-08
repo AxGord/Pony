@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -51,6 +51,10 @@ abstract Event0(Priority<Listener0>) from Priority<Listener0> to Priority<Listen
 				SignalTools.functionHashCompare(a, b);
 			case [LEvent0(a,_), LEvent0(b,_)]:
 				a == b;
+			case [LBind1(_,a), LBind1(_,b)]:
+				a == b;
+			case [LBind2(_,a1,a2), LBind2(_,b1,b2)]:
+				a1 == b1 && a2 == b2;
 			case _: false;
 		}
 	}

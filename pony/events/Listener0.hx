@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -30,6 +30,8 @@ package pony.events;
 enum Listener0Type {
 	LFunction0( f:Void->Bool );
 	LEvent0( s:Event0, ?safe:Bool );
+	LBind1( s:Event1<Dynamic>, v:Dynamic );
+	LBind2( s:Event2<Dynamic, Dynamic>, v1:Dynamic, v2:Dynamic );
 }
 
 typedef Listener0_ = { once:Bool, listener:Listener0Type }
@@ -45,5 +47,8 @@ abstract Listener0(Listener0_) to Listener0_ from Listener0_ {
 	inline public function call(?safe:Bool):Bool return switch this.listener {
 		case LFunction0(f): f();
 		case LEvent0(s, sv): s.dispatch(sv||safe);
+		case LBind1(s, v): s.dispatch(v, safe);
+		case LBind2(s, v1, v2): s.dispatch(v1, v2, safe);
 	}
+	
 }

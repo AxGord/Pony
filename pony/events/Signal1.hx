@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -90,6 +90,26 @@ abstract Signal1<T1>(Priority<Listener1<T1>>) from Event1<T1> {
 	
 	@:op(A -= B) @:extern inline public function removeSub(a1:T1):Bool {
 		return this.remove({ once:false, listener:LSub(null, a1) });
+	}
+	
+	public function bind1<T2>(a1:T2, priority:Int = 0, _once:Bool = false):Signal2<T1,T2> {
+		for (e in this) switch e.listener {
+			case LBind1(sig, val) if (val == a1):
+				this.brk();
+				return cast sig;
+			case _:
+		}
+		var s = new Event2();
+		this.add({ once:_once, listener:LBind1(s, a1) }, priority);
+		return s;
+	}
+	
+	@:op(A + B) @:extern inline private function bind1_op<T2>(a1:T2):Signal2<T1,T2> {
+		return bind1(a1);
+	}
+	
+	@:op(A * B) @:extern inline private function bind1Once_op<T2>(a1:T2):Signal2<T1,T2> {
+		return bind1(a1, true);
 	}
 	
 	public function not(a1:T1, priority:Int = 0, once:Bool = false):Signal1<T1> {

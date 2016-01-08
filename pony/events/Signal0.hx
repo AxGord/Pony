@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -126,15 +126,15 @@ abstract Signal0(Priority<Listener0>) from Event0 {
 		return ns;
 	}
 
-	@:extern inline public function bind1<T1>(a1:T1, priority:Int = 0, _once:Bool=false):Signal1<T1> {
+	public function bind1<T1>(a1:T1, priority:Int = 0, _once:Bool = false):Signal1<T1> {
+		for (e in this) switch e.listener {
+			case LBind1(sig, val) if (val == a1):
+				this.brk();
+				return cast sig;
+			case _:
+		}
 		var s = new Event1();
-		this.add(s.dispatch.bind(a1), priority);
-		return s;
-	}
-	
-	@:extern inline public function bind1Once<T1>(a1:T1, priority:Int = 0, _once:Bool=false):Signal1<T1> {
-		var s = new Event1();
-		once(s.dispatch.bind(a1), priority);
+		this.add({ once:_once, listener:LBind1(s, a1) }, priority);
 		return s;
 	}
 	
@@ -143,7 +143,27 @@ abstract Signal0(Priority<Listener0>) from Event0 {
 	}
 	
 	@:op(A * B) @:extern inline private function bind1Once_op<T1>(a1:T1):Signal1<T1> {
-		return bind1Once(a1);
+		return bind1(a1, true);
+	}
+	
+	@:extern inline public function removeBind1<T1>(a1:T1):Bool {
+		return this.remove({ once:false, listener:LBind1(null, a1) });
+	}
+	
+	public function bind2<T1,T2>(a1:T1, a2:T2, priority:Int = 0, _once:Bool = false):Signal2<T1,T2> {
+		for (e in this) switch e.listener {
+			case LBind2(sig, v1, v2) if (v1 == a1 && v2 == a2):
+				this.brk();
+				return cast sig;
+			case _:
+		}
+		var s = new Event2();
+		this.add({ once:_once, listener:LBind2(s, a1, a2) }, priority);
+		return s;
+	}
+	
+	@:extern inline public function removeBind2<T1,T2>(a1:T1,a2:T2):Bool {
+		return this.remove({ once:false, listener:LBind2(null, a1, a2) });
 	}
 	
 	@:from @:extern inline private static function fromSignal1<T1>(s:Signal1<T1>):Signal0 {

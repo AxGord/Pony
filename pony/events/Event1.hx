@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -60,6 +60,8 @@ abstract Event1<T1>(Priority<Listener1<T1>>) from Priority<Listener1<T1>> to Pri
 				a == b;
 			case [LNot(_, a), LNot(_, b)]:
 				a == b;
+			case [LBind1(_,a1), LBind1(_,b1)]:
+				a1 == b1;
 			case _: false;
 		}
 	}
