@@ -57,18 +57,23 @@ class HasSignalBuilder {
 		#else
 		var ext = [];
 		#end
+		var destrStatic:Array<Expr> = [];
+		var destr:Array<Expr> = [];
+		
 		for (f in fields) switch f.kind {
 			case FProp(g, s, TPath(p), _) if (p.name.substr(0, 6) == 'Signal' && f.meta.checkMeta([":auto", ":lazy"])):
 				Context.error(f.name + " - can't be property", f.pos);
 			case FVar(TPath(p), _) if (p.name.substr(0, 6) == 'Signal'):
 				var on = !(f.name.substr(0, 2) != 'on' && f.name.charAt(3).toLowerCase() == f.name.charAt(3));
 				//Context.error('Incorrect signal name: ${f.name}', f.pos);
-				var ast = f.access.indexOf(AStatic) == -1 ? [] : [AStatic];
+				var isStatic = f.access.indexOf(AStatic) != -1;
+				var ast = !isStatic ? [] : [AStatic];
 				var eName = 'e' + TextTools.bigFirst(f.name.substr(on ? 2 : 0));
 				var tp = { name: 'Event' + p.name.substr(6), pack: pack, params: p.params };
+				var flag = false;
+				var a = (isStatic ? destrStatic : destr);
 				if (f.meta.checkMeta([":auto"])) {
-					f.kind = FProp('get', 'never', TPath(p));
-					f.meta = [];
+					flag = true;
 					fields.push( { name: eName, access:ast.concat([APrivate]), pos:f.pos, kind:FVar(
 						TPath( tp ),
 						{pos:f.pos, expr: ENew(tp, [])}//fail if use EReturn
@@ -76,9 +81,9 @@ class HasSignalBuilder {
 					fields.push( { name:'get_' + f.name, access: ast.concat([AInline, APrivate]), meta: ext, pos:f.pos, kind:FFun(
 						{args: [], ret: null, expr: macro return $i { eName }}
 					) } );
+					a.push(macro $i { eName }.destroy());
 				} else if (f.meta.checkMeta([":lazy"])) {
-					f.kind = FProp('get', 'never', TPath(p));
-					f.meta = [];
+					flag = true;
 					fields.push( { name: eName, access:ast.concat([APrivate]), pos:f.pos, kind:FVar(
 						TPath( tp )
 					) } );
@@ -86,9 +91,17 @@ class HasSignalBuilder {
 					fields.push( { name:'get_' + f.name, access: ast.concat([AInline, APrivate]), meta: ext, pos:f.pos, kind:FFun(
 						{args: [], ret: null, expr: macro return $i { eName } == null ? $i { eName } = ${ex} : $i { eName }}
 					) } );
+					a.push(macro if ($i { eName } != null) $i { eName }.destroy());
 				}
+				if (flag) {
+					f.kind = FProp('get', 'never', TPath(p));
+					f.meta = [];
+					a.push(macro $i { eName } = null);
+				}
+				
 			case FVar(TPath(p), val) if (f.meta.checkMeta([":bindable", "bindable"])):
-				var ast = f.access.indexOf(AStatic) == -1 ? [] : [AStatic];
+				var isStatic = f.access.indexOf(AStatic) != -1;
+				var ast = !isStatic ? [] : [AStatic];
 				var changeName = 'change' + TextTools.bigFirst(f.name);
 				f.kind = FProp('default', 'set', TPath(p), val);
 				var ttp = TPath(p);
@@ -107,27 +120,43 @@ class HasSignalBuilder {
 					case _: Context.error('Incorrect bindable parameter', f.pos);
 				}
 				
+				var a = (isStatic ? destrStatic : destr);
+				var eventName = 'e'+TextTools.bigFirst(changeName);
+				fields.push( { name: changeName, access:ast.concat([priv?APrivate:APublic]), pos:f.pos, kind:FProp(
+					'get', 'never', TPath( { pack:pack, name:'Signal2', params:[ TPType(ttp), TPType(ttp) ] } )
+				) } );
 				if (lazy) {
-					var eventName = 'e'+TextTools.bigFirst(changeName);
 					fields.push({ name:'set_' + f.name, access: ast.concat([AInline, APrivate]), meta: ext, pos:f.pos, kind:FFun(
 						{args: [ { name:'v', type:null } ], ret: null, expr: macro return $i { eventName } == null || v != $i { f.name } && !$i { eventName }.dispatch(v, $i { f.name }, true ) ?  $i { f.name } = v : $i { f.name } }
 					) } );
 					fields.push( { name: eventName, access:ast.concat([APrivate]), pos:f.pos, kind:FVar(TPath(tp)) } );
-					fields.push( { name: changeName, access:ast.concat([priv?APrivate:APublic]), pos:f.pos, kind:FProp(
-						'get', 'never', TPath( { pack:pack, name:'Signal2', params:[ TPType(ttp), TPType(ttp) ] } )
-					) } );
 					fields.push( { name:'get_' + changeName, access: ast.concat([AInline, APrivate]), meta: ext, pos:f.pos, kind:FFun(
 						{args: [], ret: tps, expr: macro return $i { eventName } == null ? $i { eventName } = ${ex} : $i { eventName }}
 					) } );
-				} else {				
+					a.push(macro if ($i { eventName } != null) $i { eventName }.destroy());
+					a.push(macro $i { eventName } = null);
+				} else {			
 					fields.push( { name:'set_' + f.name, access: ast.concat([AInline, APrivate]), meta: ext, pos:f.pos, kind:FFun(
 						{args: [ { name:'v', type:null } ], ret: null, expr: macro return v != $i { f.name } && !( untyped $i { changeName } :Event2 < $ttp, $ttp > ).dispatch(v, $i { f.name }, true ) ?  $i { f.name } = v : $i { f.name } }
 					) } );
-					fields.push( { name: changeName, access:ast.concat([priv?APrivate:APublic]), pos:f.pos, kind:FProp(
-						'default', 'never',  tps, ex
+					fields.push( { name: eventName, access:ast.concat([APrivate]), pos:f.pos, kind:FVar(TPath(tp), ex) } );
+					fields.push( { name:'get_' + changeName, access: ast.concat([AInline, APrivate]), meta: ext, pos:f.pos, kind:FFun(
+						{args: [], ret: tps, expr: macro return $i { eventName }}
 					) } );
+					a.push(macro $i { eventName }.destroy());
+					a.push(macro $i { eventName } = null);
 				}
 			case _:
+		}
+		if (destrStatic.length > 0) {
+			fields.push({name:'destroyStaticSignals', access: [APrivate, AStatic], pos:Context.currentPos(),meta:[],kind:FFun(
+				{args: [], ret: null, expr: macro $b{destrStatic}}
+			)});
+		}
+		if (destr.length > 0) {
+			fields.push({name:'destroySignals', access: [APrivate], pos:Context.currentPos(),meta:[],kind:FFun(
+				{args: [], ret: null, expr: macro $b{destr}}
+			)});
 		}
 		return fields;
 	}
