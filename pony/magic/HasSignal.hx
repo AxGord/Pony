@@ -154,7 +154,20 @@ class HasSignalBuilder {
 			)});
 		}
 		if (destr.length > 0) {
-			fields.push({name:'destroySignals', access: [APrivate], pos:Context.currentPos(),meta:[],kind:FFun(
+			var acc = [APrivate];
+			var b = false;
+			var cl = Context.getLocalClass().get();
+			while (cl.superClass != null) {
+				cl = cl.superClass.t.get();
+				for (f in cl.fields.get()) if (f.name == 'destroySignals') {
+					b = true;
+					acc.push(AOverride);
+					destr.unshift(macro super.destroySignals());
+					break;
+				}
+				if (b) break;
+			}
+			fields.push({name:'destroySignals', access: acc, pos:Context.currentPos(),meta:[],kind:FFun(
 				{args: [], ret: null, expr: macro $b{destr}}
 			)});
 		}
