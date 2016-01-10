@@ -38,7 +38,7 @@ typedef PriorityIds = Priority<{id:Int,name:String}>;
  * todo: get element priority
  * @author AxGord
  */
-class Priority<T:Dynamic> implements HasSignal {
+@:final class Priority<T:Dynamic> implements HasSignal {
 	
 	@:lazy public var onTake:Signal0;
 	@:lazy public var onLost:Signal0;
@@ -215,9 +215,8 @@ class Priority<T:Dynamic> implements HasSignal {
 		hash = null;
 		data = null;
 		counters = null;
-		eLost = null;
-		eTake = null;
 		addStack = null;
+		destroySignals();
 	}
 	
 	/**

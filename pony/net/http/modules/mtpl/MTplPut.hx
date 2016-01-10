@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -54,6 +54,12 @@ import pony.text.tpl.TplSystem;
 	override public function shortTag(name:String, arg:String, ?kid:ITplPut):String
 	{
 		switch (name) {
+			case 'static' if (arg != null):
+				#if php
+				return '/'+b.template._static[arg].firstExists;//todo: site directory
+				#else
+				return '/tpl/${b.template.name}/$arg';
+				#end
 			case 'template':
 				return b.template.name;
 			case 'templates':

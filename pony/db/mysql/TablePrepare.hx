@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -48,7 +48,7 @@ class TablePrepare {
 	}
 	
 	@:async public function prepare(fields:Array<Field>):Bool {
-		mysql._log('prepare table ' + table);
+		mysql.log('prepare table ' + table);
 		mysql.hack = table;
 		var err, _, remote = @await mysql.query('SELECT * FROM $table LIMIT 0');
 		if (err != null) {//Create table
@@ -61,7 +61,7 @@ class TablePrepare {
 		} else {//Update table
 			var map:Map<String,Int> = makeFieldsMap(fields);
 			{//Rename
-				mysql._log('Search fields for rename');
+				mysql.log('Search fields for rename');
 				var remMap:Map<String,Int> = makeFieldsMap(remote);
 				var free:Array<Field> = remote.copy();
 				for (f in fields) if (remMap.exists(f.name)) free = free.delete(remMap[f.name]);
@@ -80,7 +80,7 @@ class TablePrepare {
 			
 			var again:Bool = true;
 			//Drop
-			mysql._log('Search fields for drop');
+			mysql.log('Search fields for drop');
 			while (again) {
 				again = false;
 				for (f in remote.kv()) if (!map.exists(f.value.name)) {
@@ -96,14 +96,14 @@ class TablePrepare {
 			
 			//Add
 			if (fields.length > remote.length) {
-				mysql._log('Search fields for add');
+				mysql.log('Search fields for add');
 				for (f in fields) if (!remMap.exists(f.name)) {
 					if (!@await mysql.action(alterAdd(f), 'add table field')) return false;
 					remote.push(f);
 				}
 			}
 			
-			mysql._log('Search fields for move');
+			mysql.log('Search fields for move');
 			//Move
 			while (again) {
 				again = false;
@@ -120,7 +120,7 @@ class TablePrepare {
 				}
 			}
 			//Update
-			mysql._log('Search fields for update');
+			mysql.log('Search fields for update');
 			for (_ in 0...fields.length) {
 				var f = fields.shift();
 				var r = remote.shift();

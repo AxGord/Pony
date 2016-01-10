@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -40,4 +40,6 @@ interface ILogable
 	var onLog(get,never):Signal2<String, PosInfos>;
 	var onError(get, never):Signal2<String, PosInfos>;
 	#end
+	function error(s:String, ?p:PosInfos):Void;
+	function log(s:String, ?p:PosInfos):Void;
 }

@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -33,8 +33,6 @@ import pony.db.SQLBase;
 import haxe.PosInfos;
 import pony.db.ISQL;
 import pony.db.mysql.Config;
-import pony.events.Signal;
-import pony.events.Signal0;
 import pony.events.Waiter;
 import pony.Logable;
 import pony.Stream;
@@ -74,12 +72,12 @@ class MySQL extends SQLBase
 	 * Make action, query with boolean result
 	 */
 	public function action(q:String, ?actName:String, ?p:PosInfos, _result:Bool->Void):Void {
-		_log(q, p);
+		log(q, p);
 		try {
 			connection.request(q);
 			_result(true);
 		} catch (err:Dynamic) {
-			_error(actName == null ? Std.string(err) : "Can't " + actName+': ' + Std.string(err), p);
+			error(actName == null ? Std.string(err) : "Can't " + actName+': ' + Std.string(err), p);
 			_result(false);
 		}
 		
@@ -89,7 +87,7 @@ class MySQL extends SQLBase
 	 * MySQL query
 	 */
 	inline public function query(q:String, ?p:PosInfos, cb:Dynamic->Dynamic->Array<Field>->Void):Void {
-		_log(q, p);
+		log(q, p);
 		var f = null;
 		var r = null;
 		var e = null;
@@ -101,7 +99,7 @@ class MySQL extends SQLBase
 			}
 			r = connection.request(q).results().array();
 		} catch (err:Dynamic) {
-			_error(e = err, p);
+			error(e = err, p);
 		}
 		cb(e, r, f);
 	}
@@ -131,7 +129,7 @@ class MySQL extends SQLBase
 	 * Query with stream
 	 */
 	public function stream(q:String, ?p:PosInfos):Stream<Dynamic> {
-		_log(q, p);
+		log(q, p);
 		var s = new Stream();
 		try {
 			s.putIterable(connection.request(q).results());

@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -27,18 +27,20 @@
 **/
 package pony.db ;
 
+import pony.magic.Declarator;
+import pony.magic.Ninja;
+
 #if macro
 import haxe.macro.Expr;
-#end
+#else
 import haxe.PosInfos;
 import pony.db.ISQL;
 import pony.db.mysql.Field;
 import pony.db.mysql.TablePrepare;
-import pony.magic.Declarator;
-import pony.magic.Ninja;
 import pony.Stream;
 
 using pony.Tools;
+#end
 
 /**
  * WhereElement
@@ -137,7 +139,7 @@ class Table implements Dynamic < Table > implements Declarator implements Ninja
 		mysql.query(genGetQuery(), p, function(err:Dynamic, fields:Dynamic, _):Void {
 			if (err != null) {
 				_error(err);
-				mysql._error(err);
+				mysql.error(err);
 			} else {
 				cb(solo ? fields.map(soloMap): fields);
 			}

@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -70,7 +70,7 @@ class ServersideStorageDB implements Declarator
 		this.key = key;
 		client = new Map<String, Dynamic>();
 		orig = new Map<String, Dynamic>();
-		table.select('key','value').where(client == $key).get(function(d) {
+		table.select('key', 'value').where(client == $key).get(function(d) {
 			client = [for (e in d) e.key => Unserializer.run(e.value)];
 			orig = [for (e in d) e.key => e.value];
 		} );//Works only for sync

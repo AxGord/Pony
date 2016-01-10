@@ -52,7 +52,7 @@ class HasSignalBuilder {
 	macro static public function build():Array<Field> {
 		var fields:Array<Field> = Context.getBuildFields();
 		var pack = ['pony', 'events'];
-		#if !(cpp||windows||android||ios||neko)
+		#if (js||flash)
 		var ext = [ { name:':extern', pos: Context.currentPos() } ];
 		#else
 		var ext = [];

@@ -28,6 +28,7 @@ class HasAbstractBuilder {
 		var cCur = Context.getLocalClass().get();
 		
 		for (f in Context.getBuildFields()) if (f.meta.checkMeta([":abstract", "abstract"])) {
+			if (f.access.indexOf(AOverride) != -1) Context.error("You can't use abstract for override field " + f.name, cCur.pos);
 			switch f.kind {
 				case FFun(fun):
 					fields.push( {

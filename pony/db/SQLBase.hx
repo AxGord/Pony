@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -33,7 +33,7 @@ import pony.Logable;
  * SQLBase
  * @author AxGord <axgord@gmail.com>
  */
-class SQLBase extends Logable<ISQL> {
+class SQLBase extends Logable {
 	
 	/**
 	 * Connected

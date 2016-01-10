@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -70,15 +70,15 @@ class MySQL extends SQLBase
 		connection = mysqlClass.createConnection(c);
 		var err = @await connection.connect();
 		if (err != null) {
-			_error('Error connecting: ' + err.stack);
+			error('Error connecting: ' + err.stack);
 			return;
 		}
 		var h = config.host == null ? 'localhost' : config.host;
 		var p = config.port == null ? '' : ':'+config.port;
-		_log('Connected to $h$p');
+		log('Connected to $h$p');
 		
 		if (@await prepareDatabase(db)) {
-			_log('Database $db ready');
+			log('Database $db ready');
 			connected.end();
 		}
 		
@@ -90,7 +90,7 @@ class MySQL extends SQLBase
 	@:async public function action(q:String, ?actName:String, ?p:PosInfos):Bool {
 		var err, _, _ = @await query(q, p);
 		if (err != null) {
-			_error(actName == null ? Std.string(err) : "Can't "+actName+': ' + err.stack, p);
+			error(actName == null ? Std.string(err) : "Can't "+actName+': ' + err.stack, p);
 			return false;
 		} else
 			return true;
@@ -101,11 +101,11 @@ class MySQL extends SQLBase
 	 */
 	inline public function query(q:String, ?p:PosInfos, cb:Dynamic->Dynamic->Array<Field>->Void):Void {
 		connection.query(q, function(err:Dynamic, res:Dynamic, f:Array<Dynamic>) {
-			if (err) _error(err);
+			if (err) error(err);
 			var fields:Array<Field> = f == null ? null : parseFields(f);
 			cb(err, res, fields);
 		});
-		_log(q, p);
+		log(q, p);
 	}
 	
 	private static function parseFields(a:Array<Dynamic>):Array<Field> {
@@ -135,11 +135,11 @@ class MySQL extends SQLBase
 			.on('error', s.errorListener)
 			.on('result', s.dataListener)
 			.on('end', s.endListener);
-		_log(q, p);
+		log(q, p);
 		return s;
 	}
 	
-	private function errorHandler(e:Dynamic):Void _error(e);
+	private function errorHandler(e:Dynamic):Void error(e);
 	
 	/**
 	 * Escape id (for fields, tables, databases)
@@ -164,7 +164,7 @@ class MySQL extends SQLBase
 		
 		var err = @await connection.changeUser({database: database});
 		if (err != null) {
-			_error("Can't open database: " + err.stack);
+			error("Can't open database: " + err.stack);
 			return false;
 		}
 		
