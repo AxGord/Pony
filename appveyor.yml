@@ -30,5 +30,6 @@ install:
 build: off
 
 test_script:
+  - set path=%path%;%cd%
   - cd tests
   - test.cmd | neko Appveyor.n
