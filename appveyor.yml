@@ -22,6 +22,7 @@ install:
   - haxelib install hamcrest || type log.txt && cmd /C exit 1
   - haxelib install continuation || type log.txt && cmd /C exit 1
   - haxelib list
+  - set path=%path%;%cd%
 
 # We don't use the build section, but do both build and 
 # test in `test_script:`.
@@ -30,6 +31,5 @@ install:
 build: off
 
 test_script:
-  - set path=%path%;%cd%
   - cd tests
   - test.cmd | neko Appveyor.n
