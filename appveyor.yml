@@ -15,7 +15,7 @@ install:
   #- cinst phantomjs -y
   #- cinst php -y
   # Download and setup a standalone flash player debugger
-  - haxe flash/install.hxml
+  #- haxe flash/install.hxml
   # Install project dependencies
   # `> log.txt || type log.txt` is for muting the output unless there is an error
   - haxelib install munit || type log.txt && cmd /C exit 1
