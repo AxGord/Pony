@@ -3,7 +3,6 @@ import massive.munit.TestSuite;
 import ColorTest;
 import events.ListenerTest;
 import events.SignalTest;
-import ExampleTest;
 import fs.UnitTest;
 import geom.GeomToolsTest;
 import LoaderTest;
@@ -48,7 +47,6 @@ class TestSuite extends massive.munit.TestSuite
 		add(ColorTest);
 		add(events.ListenerTest);
 		add(events.SignalTest);
-		add(ExampleTest);
 		add(fs.UnitTest);
 		add(geom.GeomToolsTest);
 		add(LoaderTest);

@@ -210,7 +210,7 @@ typedef PriorityIds = Priority<{id:Int,name:String}>;
 	/**
 	 * Destroy this object
 	 */
-	@:extern inline public function destroy():Void {
+	public function destroy():Void {
 		clear();
 		hash = null;
 		data = null;
