@@ -26,6 +26,7 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.ui.gui;
+
 import pony.events.Signal1;
 
 /**

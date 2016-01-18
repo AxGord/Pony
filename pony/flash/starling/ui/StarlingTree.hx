@@ -1,6 +1,5 @@
 package pony.flash.starling.ui;
 
-
 import flash.geom.Rectangle;
 import pony.flash.ui.Button;
 import pony.flash.ui.Tree;
@@ -152,7 +151,7 @@ class StarlingTree extends Sprite
 	{
 		var button:StarlingButton = cast getNewObject(unit);
 		
-		button.core.click.add(func);
+		button.core.onClick.add(func);
 		
 		var node = new Sprite();
 		node.addChild(button);
@@ -167,7 +166,7 @@ class StarlingTree extends Sprite
 	{
 		var button:StarlingButton = cast getNewObject(group);
 		_headerButton = button;
-		button.core.click.add(toggleMinimize);
+		button.core.onClick.add(toggleMinimize);
 		
 		var node = new Sprite();
 		node.addChild(button);

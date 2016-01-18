@@ -31,7 +31,7 @@ package pony.ui.touch;
  * @author AxGord <axgord@gmail.com>
  */
 typedef Touchable =
-#if flash
+#if (flash&&!starling)
 pony.ui.touch.flash.Touchable
 #elseif openfl
 pony.ui.touch.openfl.Touchable

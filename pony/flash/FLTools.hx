@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -26,6 +26,7 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.flash;
+
 import flash.display.LoaderInfo;
 import flash.geom.ColorTransform;
 import flash.net.URLLoader;
@@ -66,25 +67,9 @@ import sys.io.File;
  * Flash tools
  * @author AxGord
  */
-
 class FLTools 
 {
 	#if !macro
-	/*
-	static public var init:Signal0<MovieClip>;
-	
-	private static function __init__():Void {
-		init = Signal.create(Lib.current);
-		Lib.current.addEventListener(Event.ADDED_TO_STAGE, _init);
-	}
-	
-	private static function _init(_):Void {
-		Lib.current.removeEventListener(Event.ADDED_TO_STAGE, _init);
-		init.dispatch();
-		init.destroy();
-		init = null;
-	}
-	*/
 	inline static public function registerClassAlias<T>(cl:Class<T>):Void untyped __global__["flash.net.registerClassAlias"](Type.getClassName(cl), cl);
 	
 	static public var os(get, null):String;

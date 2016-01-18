@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2013-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2013-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -27,24 +27,24 @@
 **/
 package pony.ui.gui;
 
-import pony.events.Signal;
 import pony.events.Signal1;
 import pony.geom.Angle;
 import pony.geom.Point;
 import pony.magic.Declarator;
 import pony.magic.ExtendedProperties;
+import pony.magic.HasSignal;
 import pony.math.MathTools;
 
 /**
  * Turning
  * @author AxGord <axgord@gmail.com>
  */
-class TurningCore implements Declarator implements ExtendedProperties {
+class TurningCore implements Declarator implements ExtendedProperties implements HasSignal {
 	
 	public var currentAngle(_, set):Angle;
-	public var changeAngle(default,null):Signal1<TurningCore, Angle> = Signal.create(this);
+	@:auto public var changeAngle:Signal1<Angle>;
 	public var current(_, set):Float;
-	public var change(default,null):Signal1<TurningCore, Float> = Signal.create(this);
+	@:auto public var change:Signal1<Float>;
 	public var minAngle:Null<Angle>;
 	public var maxAngle:Null<Angle>;
 	
@@ -66,8 +66,8 @@ class TurningCore implements Declarator implements ExtendedProperties {
 			v += maxAngle;
 		}
 		if (v == currentAngle) return v;
-		changeAngle.dispatch(currentAngle = v);
-		change.dispatch(current = angleToValue(v));
+		eChangeAngle.dispatch(currentAngle = v);
+		eChange.dispatch(current = angleToValue(v));
 		return v;
 	}
 	
@@ -92,7 +92,7 @@ class TurningCore implements Declarator implements ExtendedProperties {
 	private function set_current(v:Float):Float {
 		if (v == current) return v;
 		current = v;
-		changeAngle.dispatch(currentAngle = valueToAngle(v));
+		eChangeAngle.dispatch(currentAngle = valueToAngle(v));
 		return v;
 	}
 	

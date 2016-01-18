@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -29,7 +29,6 @@ package pony.flash.ui;
 
 import flash.display.MovieClip;
 import flash.events.Event;
-import pony.flash.FLTools;
 import pony.time.DeltaTime;
 
 /**
@@ -47,7 +46,7 @@ class ProgressBar extends MovieClip implements Dynamic<MovieClip> {
 	
 	public function new() {
 		super();
-		FLTools.init < init;
+		DeltaTime.fixedUpdate.once(init, -1);
 	}
 	
 	private function init():Void {

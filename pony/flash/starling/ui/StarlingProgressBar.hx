@@ -1,7 +1,6 @@
 package pony.flash.starling.ui;
 
 import flash.events.Event;
-import pony.events.Signal;
 import pony.events.Signal1;
 import pony.flash.FLTools;
 import pony.time.DeltaTime;

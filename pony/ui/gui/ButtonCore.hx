@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -26,7 +26,7 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.ui.gui;
-import pony.events.Event2;
+
 import pony.events.Signal0;
 import pony.events.Signal1;
 import pony.events.Signal2;
@@ -43,14 +43,13 @@ enum ButtonState {
  */
 class ButtonCore extends Tumbler implements HasSignal {
 
+	public var touch:TouchableBase;
+	@:auto public var onClick:Signal1<Int>;
 	@:auto public var onVisual:Signal2<Int, ButtonState>;
 	@:bindable public var lowMode:Int = 0;
 	@:bindable public var mode:Int = 0;
 	@:bindable public var bMode:Bool = false;
-	public var touch:TouchableBase;
-	@:auto public var onClick:Signal1<Int>;
 	@:bindable public var state:ButtonState = Default;
-	
 	
 	private var modeBeforeDisable:Int = 1;
 	
@@ -95,12 +94,7 @@ class ButtonCore extends Tumbler implements HasSignal {
 	
 	public function destroy():Void {
 		touch.destroy();
-		eVisual.destroy();
-		eClick.destroy();
-		untyped (changeLowMode:Event2<Int,Int>).destroy();
-		untyped (changeMode:Event2<Int,Int>).destroy();
-		untyped (changeBMode:Event2<Int,Int>).destroy();
-		untyped (changeState:Event2<Int,Int>).destroy();
+		destroySignals();
 	}
 	
 	private function allowChangeMode():Void changeMode << changeModeHandler;
@@ -138,5 +132,26 @@ class ButtonCore extends Tumbler implements HasSignal {
 		onClick << function() bMode = !bMode;
 	}
 	
+	public function join(b:ButtonCore):Void {
+		b.changeLowMode << setLowMode;
+		b.changeState << setState;
+		b.onClick << click;
+		changeMode << b.setLowMode;
+		changeState << b.setState;
+		onClick << b.click;
+	}
+	
+	public function unjoin(b:ButtonCore):Void {
+		b.changeLowMode >> setLowMode;
+		b.changeState >> setState;
+		b.onClick >> click;
+		changeMode >> b.setLowMode;
+		changeState >> b.setState;
+		onClick >> b.click;
+	}
+	
+	private function setLowMode(m:Int):Void lowMode = m;
+	private function setState(s:ButtonState):Void state = s;
+	private function click(mode:Int):Void eClick.dispatch(mode, true);
 	
 }

@@ -2,9 +2,9 @@ package pony.flash.starling.ui;
 
 import flash.geom.Point;
 import flash.Lib;
-import pony.events.Signal;
 import pony.events.Signal1;
 import pony.flash.FLTools;
+import pony.magic.HasSignal;
 import pony.ui.touch.starling.touchManager.TouchEventType;
 import pony.ui.touch.starling.touchManager.TouchManager;
 import pony.ui.touch.starling.touchManager.TouchManagerEvent;
@@ -17,20 +17,18 @@ import starling.textures.TextureSmoothing;
  * StarlingBar
  * @author AxGord
  */
-class StarlingBar extends StarlingProgressBar {
+class StarlingBar extends StarlingProgressBar implements HasSignal {
 	
 	private var zone:DisplayObject;
 	private var b:DisplayObject;
-	public var onDynamic:Signal1<StarlingBar, Float>;
-	public var onComplete:Signal1<StarlingBar, Float>;
+	@:auto public var onDynamic:Signal1<Float>;
+	@:auto public var onComplete:Signal1<Float>;
 	
 	private var source:Sprite;
 	
 	public function new(source:Sprite) {
 		super(source);
 		this.source = source;
-		onComplete = Signal.create(this);
-		onDynamic = Signal.create(this);
 		bar.touchable = false;
 		zone = untyped source.getChildByName("zone");
 		zone.alpha = 0;
@@ -47,7 +45,7 @@ class StarlingBar extends StarlingProgressBar {
 	
 	private function endMove(e:TouchManagerEvent):Void {
 		TouchManager.removeListener(zone, touchHandler);
-		onComplete.dispatch(value);
+		eComplete.dispatch(value);
 	}
 	
 	private function touchHandler(e:TouchManagerEvent):Void {
@@ -62,7 +60,7 @@ class StarlingBar extends StarlingProgressBar {
 	override public function set_value(v:Float):Float {
 		if (value == v) return v;
 		super.set_value(v);
-		onDynamic.dispatch(v);
+		eDynamic.dispatch(v);
 		if (b != null) {
 			b.x = bar.width - b.width / 2;
 			if (b.x < 0) b.x = 0;

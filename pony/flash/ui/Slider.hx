@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -38,7 +38,7 @@ import pony.ui.gui.SliderCore;
  * @author AxGord <axgord@gmail.com>
  */
 class Slider extends MovieClip implements FLStage {
-
+#if !starling
 	public var core(default, null):SliderCore;
 	private var _invert:Bool = false;
 	@:stage private var b:Button;
@@ -57,5 +57,5 @@ class Slider extends MovieClip implements FLStage {
 	}
 	
 	private function invert():Void _invert = true;
-	
+#end
 }

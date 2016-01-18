@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -26,18 +26,19 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.ui.gui;
-import pony.events.Signal;
+
 import pony.events.Signal1;
 import pony.geom.IWards;
+import pony.magic.HasSignal;
 
 /**
- * ...
+ * SwitchableList
  * @author AxGord
  */
-class SwitchableList implements IWards<SwitchableList> {
+class SwitchableList implements IWards implements HasSignal {
 	
-	public var change(default, null):Signal1<SwitchableList, Int>;
-	public var lostState(default, null):Signal1<SwitchableList, Int>;
+	@:auto public var change:Signal1<Int>;
+	@:auto public var lostState:Signal1<Int>;
 	public var currentPos(default,null):Int;
 
 	private var list:Array<ButtonCore>;
@@ -51,46 +52,44 @@ class SwitchableList implements IWards<SwitchableList> {
 		this.ret = ret;
 		this.def = def;
 		state = def;
-		change = Signal.create(this);
-		lostState = Signal.create(this);
 		list = a;
 		for (i in 0...a.length) {
 			if (i == def)
 			{
-				a[i].locked = true;
+				a[i].disable();
 				a[i].mode = swto;
 			}
 			//select.listen(a[i].click.sub([0], [i]));
-			a[i].click.sub(0).bind(i).add(change);
-			if (ret) a[i].click.sub(swto).bind(i).add(changeRet);
+			a[i].onClick.sub(0).bind1(i).add(eChange);
+			if (ret) a[i].onClick.sub(swto).bind1(i).add(changeRet);
 		}
 		change.add(setState, -1);
 	}
 	
-	private function changeRet():Void change.dispatch( -1 );
+	private function changeRet():Void eChange.dispatch( -1 );
 	
 	private function setState(n:Int):Void {
 		if (state == n) return;
 		//if (list[state] != null) list[state].mode = 0;
 		if (list[state] != null) {
-			list[state].locked = false;
+			list[state].enable();
 			list[state].mode = 0;
 		}
 		//if (list[n] != null) list[n].mode = swto;
 		if (list[n] != null) {
-			list[n].locked = true;
+			list[n].disable();
 			list[n].mode = swto;
 		}
-		lostState.dispatch(state);
+		eLostState.dispatch(state);
 		state = n;
 	}
 	
 	public function next():Void {
-		if (state + 1 < list.length) change.dispatch(state+1);
+		if (state + 1 < list.length) eChange.dispatch(state+1);
 	}
 	
 	public function prev():Void {
-		if (state - 1 >= 0) change.dispatch(state-1);
+		if (state - 1 >= 0) eChange.dispatch(state-1);
 	}
 	
 	inline private function get_state():Int return currentPos;

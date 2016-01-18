@@ -10,6 +10,14 @@ import flash.text.TextFormat;
 import flash.text.TextFormatAlign;
 import pony.flash.starling.SpritePack;
 import pony.flash.starling.StarlingSpritePack;
+import pony.flash.starling.ui.StarlingBar;
+import pony.flash.starling.ui.StarlingMusicPlayer;
+import pony.flash.starling.ui.StarlingProgressBar;
+import pony.flash.starling.ui.StarlingSongPlayer;
+import pony.flash.starling.ui.StarlingTree;
+import pony.flash.starling.ui.StarlingTurningFree;
+import pony.flash.ui.Tree;
+import pony.flash.ui.TurningFree;
 
 /*
 import pony.flash.ui.Button;
@@ -65,7 +73,7 @@ class StarlingConverter
 			starlingChild = getSpriteInternal(untyped source, coordinateSpace, disposeable);
 			starlingChild = new StarlingScrollBar(untyped starlingChild);
 			untyped source.starlingScrollBar = starlingChild;
-		}
+		}*/
 		else if (Std.is(source, pony.flash.ui.Bar)) // ScrollBar
 		{
 			starlingChild = getSpriteInternal(untyped source, coordinateSpace, disposeable);
@@ -79,6 +87,22 @@ class StarlingConverter
 			starlingChild = new StarlingProgressBar(untyped starlingChild);
 			untyped source.starlingBar = starlingChild;
 		}
+		
+		else if (Std.is(source, TurningFree)) // TurningFree
+		{
+			starlingChild = getSpriteInternal(untyped source, coordinateSpace, disposeable);
+			starlingChild = new StarlingTurningFree(cast starlingChild, cast (source, TurningFree).core, cast (source, TurningFree));
+		}
+		else if (Std.is(source, Tree)) // Tree
+		{
+			starlingChild = new StarlingTree(untyped source);
+			setPivotPointAndPosition(starlingChild, source, coordinateSpace);
+		}
+		/*
+		else if (Std.is(source, IStarlingConvertible))
+		{
+			starlingChild = cast(source, IStarlingConvertible).convert(coordinateSpace);
+		}*/
 		else if (Std.is(source, pony.flash.ui.MusicPlayer)) // ScrollBar
 		{
 			starlingChild = getSpriteInternal(untyped source, coordinateSpace, disposeable);
@@ -91,21 +115,6 @@ class StarlingConverter
 			starlingChild = new StarlingSongPlayer(untyped starlingChild);
 			untyped source.starlingBar = starlingChild;
 		}
-		
-		else if (Std.is(source, TurningFree)) // TurningFree
-		{
-			starlingChild = getSpriteInternal(untyped source, coordinateSpace, disposeable);
-			starlingChild = new StarlingTurningFree(cast starlingChild, cast (source, TurningFree).core, cast (source, TurningFree));
-		}
-		else if (Std.is(source, Tree)) // Tree
-		{
-			starlingChild = new StarlingTree(untyped source);
-			setPivotPointAndPosition(starlingChild, source, coordinateSpace);
-		}
-		else if (Std.is(source, IStarlingConvertible))
-		{
-			starlingChild = cast(source, IStarlingConvertible).convert(coordinateSpace);
-		}*/
 		else if (Std.is(source, pony.flash.ui.Button)) // Button
 		{
 			starlingChild = StarlingButton.builder(_atlasCreator, cast source, coordinateSpace, disposeable);

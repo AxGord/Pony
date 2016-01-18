@@ -23,6 +23,12 @@ install:
   - haxelib install continuation || type log.txt && cmd /C exit 1
   - haxelib list
 
-build_script:
+# We don't use the build section, but do both build and 
+# test in `test_script:`.
+# It is just because it is more similar to the TravisCI config,
+# thus it would be easier to update both of them.
+build: off
+
+test_script:
   - cd tests
   - test.cmd | neko Appveyor.n

@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2013-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2013-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -26,15 +26,11 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.flash.ui;
-import flash.events.MouseEvent;
-import flash.events.TouchEvent;
 import flash.display.MovieClip;
 import flash.geom.Point;
-import flash.ui.Multitouch;
-import pony.ui.touch.starling.touchManager.TouchEventType;
-import pony.ui.touch.starling.touchManager.TouchManager;
-import pony.ui.touch.starling.touchManager.TouchManagerEvent;
-import pony.ui.gui.ButtonCore;
+import pony.time.DeltaTime;
+import pony.ui.touch.Touch;
+import pony.ui.touch.Touchable;
 
 /**
  * TurningFree
@@ -42,14 +38,14 @@ import pony.ui.gui.ButtonCore;
  */
 class TurningFree extends Turning {
 #if !starling
-	@:st public var button:Button;
-	@:st public var lmin:MovieClip;
-	@:st public var lmax:MovieClip;
+	@:stage public var button:Button;
+	@:stage public var lmin:MovieClip;
+	@:stage public var lmax:MovieClip;
 	private var _zero:Point = new Point(0, 0);
 	
 	public function new() {
 		super();
-		FLTools.init < init;
+		DeltaTime.fixedUpdate.once(init, -1);
 	}
 	
 	private function init():Void {
@@ -57,13 +53,16 @@ class TurningFree extends Turning {
 		if (lmax != null) core.maxAngle = lmax.rotation;
 		core.currentAngle = handle.rotation;
 		handle.mouseEnabled = false;
-		TouchManager.addListener(this, onMove, [TouchEventType.Down, TouchEventType.Move]);
+		var t = new Touchable(this);
+		t.onDown << downHandler;
 	}
 	
-	private function onMove(e:TouchManagerEvent):Void
-	{
-		var point = localToGlobal(_zero);
-		core.toPoint( { x:e.globalX - point.x, y:e.globalY - point.y } );
+	private function downHandler(t:Touch):Void {
+		t.onMove << moveHandler;
+	}
+	
+	private function moveHandler(t:Touch):Void {
+		core.toPoint(new Point(t.x, t.y));
 	}
 #end
 }

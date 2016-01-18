@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2013-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -29,17 +29,17 @@ package pony.flash.ui;
 
 import flash.display.MovieClip;
 import flash.display.Sprite;
-import pony.flash.FLSt;
+import pony.flash.FLStage;
 import pony.geom.Angle;
 import pony.ui.gui.TurningCore;
 
 /**
- * ...
+ * Turning
  * @author AxGord <axgord@gmail.com>
  */
-class Turning extends Sprite implements FLSt {
+class Turning extends Sprite implements FLStage {
 	
-	@:st private var handle:MovieClip;
+	@:stage private var handle:MovieClip;
 	
 	public var core:TurningCore;
 	

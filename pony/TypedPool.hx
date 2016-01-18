@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -48,6 +48,6 @@ package pony;
 	#if !flash
 	@:extern inline
 	#end
-	public function ret(obj:T):Void list.push(obj);
+	public function ret(obj:T):Void list.push(untyped obj);
 	
 }

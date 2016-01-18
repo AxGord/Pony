@@ -1,3 +1,30 @@
+/**
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+*
+* Redistribution and use in source and binary forms, with or without modification, are
+* permitted provided that the following conditions are met:
+*
+*   1. Redistributions of source code must retain the above copyright notice, this list of
+*      conditions and the following disclaimer.
+*
+*   2. Redistributions in binary form must reproduce the above copyright notice, this list
+*      of conditions and the following disclaimer in the documentation and/or other materials
+*      provided with the distribution.
+*
+* THIS SOFTWARE IS PROVIDED BY ALEXANDER GORDEYKO ``AS IS'' AND ANY EXPRESS OR IMPLIED
+* WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+* FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL ALEXANDER GORDEYKO OR
+* CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+* ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+* NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+* ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*
+* The views and conclusions contained in the software and documentation are those of the
+* authors and should not be interpreted as representing official policies, either expressed
+* or implied, of Alexander Gordeyko <axgord@gmail.com>.
+**/
 package pony.flash.starling.ui;
 
 import flash.geom.Point;
@@ -5,9 +32,9 @@ import flash.geom.Rectangle;
 import flash.Vector;
 import pony.flash.ui.Button;
 import pony.flash.starling.converter.AtlasCreator;
-import pony.touchManager.Toucheble;
 import pony.ui.touch.starling.touchManager.TouchManagerHandCursor;
 import pony.ui.gui.ButtonImgN;
+import pony.ui.touch.Touchable;
 import starling.core.Starling;
 import starling.display.DisplayObject;
 import starling.display.MovieClip;
@@ -19,6 +46,7 @@ using pony.flash.FLExtends;
 /**
  * StarlingButton
  * @author Maletin
+ * @author AxGord <axgord@gmail.com>
  */
 class StarlingButton extends Sprite
 {
@@ -41,7 +69,7 @@ class StarlingButton extends Sprite
 		var hitAreaFrame:Int = mc.length > config.zone - 1 ? config.zone : config.def;
 		_hitArea = new Rectangle(mc[hitAreaFrame-1].x, mc[hitAreaFrame-1].y, mc[hitAreaFrame-1].width, mc[hitAreaFrame-1].height);
 		gotoAndStop(config.def);
-		core = new ButtonImgN(new Toucheble(this));
+		core = new ButtonImgN(new Touchable(this));
 		core.onImg << imgHandler;
 		useHandCursor = true;
 	}
@@ -121,10 +149,11 @@ class StarlingButton extends Sprite
 		}
 		var starlingChild = new StarlingButton(movies, 60);
 		
-		starlingChild.core.switchMap(@:privateAccess source._sw);
+		var a = @:privateAccess source._sw;
+		if (a != null) starlingChild.core.switchMap(a);
 		if (@:privateAccess source._bsw) starlingChild.core.bswitch();
 		
 		return starlingChild;
-		
 	}
+	
 }

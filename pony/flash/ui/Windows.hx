@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2013 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -26,12 +26,15 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.flash.ui;
+
 import flash.display.BlendMode;
 import flash.display.MovieClip;
 import flash.filters.BlurFilter;
 import flash.Lib;
 import flash.display.StageQuality;
+
 using pony.flash.FLTools;
+
 /**
  * Windows
  * @author AxGord <axgord@gmail.com>

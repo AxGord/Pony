@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2013-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -33,7 +33,7 @@ import flash.display.Sprite;
 import flash.geom.Rectangle;
 import flash.text.TextField;
 import haxe.CallStack;
-import pony.flash.FLSt;
+import pony.flash.FLStage;
 import pony.geom.Point.IntPoint;
 import pony.Pair;
 import pony.Pool;
@@ -49,12 +49,12 @@ using pony.flash.FLExtends;
  * Tree
  * @author AxGord <axgord@gmail.com>
  */
-class Tree extends Sprite implements FLSt {
+class Tree extends Sprite implements FLStage {
 	
-	@:st private var group:Button;
-	@:st private var unit:Button;
-	@:st private var groupText:Sprite;
-	@:st private var unitText:Sprite;
+	@:stage private var group:Button;
+	@:stage private var unit:Button;
+	@:stage private var groupText:Sprite;
+	@:stage private var unitText:Sprite;
 	
 	public static var basicAnimationTime:Float = 0.1;
 	public static var additionalAnimationTimePerPixel:Float = 0.00015;
@@ -203,7 +203,7 @@ class Tree extends Sprite implements FLSt {
 	{
 		var button:Button = cast getNewObject(unit);
 		
-		button.core.click.add(func);
+		button.core.onClick.add(func);
 		
 		var node = new Sprite();
 		node.addChild(button);
@@ -218,7 +218,7 @@ class Tree extends Sprite implements FLSt {
 	{
 		var button:Button = cast getNewObject(group);
 		_headerButton = button;
-		button.core.click.add(toggleMinimize);
+		button.core.onClick.add(toggleMinimize);
 		
 		var node = new Sprite();
 		node.addChild(button);

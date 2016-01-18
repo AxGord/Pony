@@ -7,7 +7,6 @@ import pony.flash.starling.converter.StarlingConverter;
 import pony.flash.starling.utils.StarlingUtils;
 #end
 
-
 /**
  * TooltipSource
  * @author Maletin
