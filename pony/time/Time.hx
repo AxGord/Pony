@@ -163,13 +163,17 @@ abstract Time(Null<Int>) from Int to Int {
 		return s == '' ? '0' : s;
 	}
 	
+	@:extern inline public function showMinSec():String {
+		return print(minutes) + ':' + print(seconds);
+	}
+	
 	public function clock(?autoHide:Bool):String {
 		var s = '';
 		if (hours != 0 || !autoHide) {
-			s += print(hours) + ':' + print(minutes) + ':' + print(seconds);
+			s += print(hours) + ':' + showMinSec();
 		} else {
 			if (minutes != 0) {
-				s += print(minutes) + ':' + print(seconds);
+				s += showMinSec();
 			} else if (seconds != 0) s += abs(seconds);
 		}
 		return s;

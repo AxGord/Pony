@@ -53,7 +53,6 @@ import pony.events.Listener1;
 	removeArray
 )
 abstract Signal1<T1>(Priority<Listener1<T1>>) from Event1<T1> {
-
 	
 	@:extern inline public function once(e:Listener1<T1>, priority:Int = 0):Signal1<T1> {
 		e.once = true;

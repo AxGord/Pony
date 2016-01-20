@@ -77,7 +77,7 @@ class Timer implements ITimer<Timer> implements Declarator implements HasSignal 
 	
 	public function reset():Timer {
 		if (time != null) {
-			currentTime = time.back ? time.max : time.min;
+			currentTime = time.min;
 			_frequency = frequency;
 		} else {
 			currentTime = 0;

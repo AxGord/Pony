@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2013-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -25,15 +25,51 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony;
+package pony.pixijs.ui;
+
+import pixi.core.text.Text;
+import pixi.core.text.Text.TextStyle;
+import pony.geom.Point;
+import pony.time.DTimer;
+import pony.time.Time;
+import pony.time.TimeInterval;
 
 /**
- * Object pool interface
+ * TimeBar
  * @author AxGord <axgord@gmail.com>
  */
-interface IPool<T> {
-	#if !cs
-	function get():T;
-	function ret(obj:T):Void;
-	#end
+class TimeBar extends Bar {
+
+	private var timeLabel:Text;
+	private var style:TextStyle;
+	private var timer:DTimer;
+	
+	public function new(bg:String, fillBegin:String, fill:String, ?offset:Point<Int>, style:TextStyle) {
+		this.style = style;
+		super(bg, fillBegin, fill, offset);
+		onReady < readyHandler;
+	}
+	
+	private function readyHandler(p:Point<Int>):Void {
+		timeLabel = new Text('00:00', style);
+		timeLabel.x = (p.x - timeLabel.width) / 2;
+		timeLabel.y = (p.y - timeLabel.height) / 2 - 2;
+		addChild(timeLabel);
+		timer = DTimer.createFixedTimer(null);
+		timer.progress << progressHandler;
+		timer.update << updateHandler;
+	}
+	
+	private function progressHandler(p:Float):Void core.percent = p;
+	private function updateHandler(t:Time):Void timeLabel.text = t.showMinSec();
+	
+	public function start(t:TimeInterval):Void {
+		timer.time = t;
+		timer.reset();
+		timer.start();
+	}
+	
+	@:extern inline public function pause():Void timer.stop();
+	@:extern inline public function play():Void timer.start();
+	
 }

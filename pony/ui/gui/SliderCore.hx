@@ -27,31 +27,19 @@
 **/
 package pony.ui.gui;
 
-import pony.events.Event0;
 import pony.events.Event1;
 import pony.events.Signal1;
-import pony.magic.Declarator;
-import pony.magic.HasSignal;
 import pony.ui.touch.Touch;
 
 /**
  * SliderCore
  * @author AxGord <axgord@gmail.com>
  */
-class SliderCore implements Declarator implements HasSignal {
+class SliderCore extends BarCore {
 	
 	@:arg private var button:ButtonCore = null;
-	@:arg public var size(default,null):Float;
-	@:arg public var isVertical(default,null):Bool = false;
-	@:arg public var invert:Bool = false;
-	@:arg public var draggable:Bool = true;
+	private var draggable:Bool;
 	
-	public var min(default, null):Float;
-	public var max(default, null):Float;
-	
-	@:bindable public var percent:Float = 0;
-	@:bindable public var pos:Float = 0;
-	@:bindable public var value:Float = 0;
 	@:bindable public var finalPercent:Float = 0;
 	@:bindable public var finalPos:Float = 0;
 	@:bindable public var finalValue:Float = 0;
@@ -61,27 +49,21 @@ class SliderCore implements Declarator implements HasSignal {
 	
 	private var startPoint:Float = 0;
 	
-	public function new() {
-		changePercent << changePercentHandler;
-		changePos << changePosHandler;
-		if (draggable) {
-			if (button != null) {
-				onStartDrag = button.touch.onDown;
-				onStopDrag = button.touch.onUp || button.touch.onOutUp;
-			} else {
-				onStartDrag = new Event1();
-				onStopDrag = new Event1();
-			}
-			onStopDrag << stopDragHandler;
-		}
-		if (isVertical) {
-			if (draggable) onStartDrag << startYDragHandler;
-			changePos << function(v) changeY(inv(v));
+	public function new(size:Float, isVertical:Bool = false, invert:Bool = false, draggable:Bool=true) {
+		super(size, isVertical, invert);
+		this.draggable = draggable;
+		if (button != null) {
+			onStartDrag = button.touch.onDown;
+			onStopDrag = button.touch.onUp || button.touch.onOutUp;
 		} else {
-			if (draggable) onStartDrag << startXDragHandler;
-			changePos << function(v) changeX(inv(v));
+			onStartDrag = new Event1();
+			onStopDrag = new Event1();
 		}
-		if (draggable) onStartDrag << startDragHandler;
+		onStopDrag << stopDragHandler;
+		if (draggable) {
+			onStartDrag << (isVertical ? startYDragHandler : startXDragHandler);
+			onStartDrag << startDragHandler;
+		}
 		if (button != null) changePos << button.touch.check;
 	}
 	
@@ -91,13 +73,10 @@ class SliderCore implements Declarator implements HasSignal {
 		return new SliderCore(b, isVert ? height : width, isVert, invert, draggable);
 	}
 	
-	public function destroy():Void {
+	override public function destroy():Void {
+		destroySignals();
 		if (button != null) button.destroy();
 	}
-	
-	private function changePercentHandler(v:Float):Void pos = v * size;
-	private function changePosHandler(v:Float):Void percent = v / size;
-	private function changeValueHandler(v:Float):Void percent = (max-min) / (v-min);
 	
 	private function stopDragHandler(t:Touch):Void {
 		if (t != null) t.onMove >> moveHandler;
@@ -110,30 +89,15 @@ class SliderCore implements Declarator implements HasSignal {
 	inline public function startDrag(t:Touch):Void untyped (onStartDrag:Event1<Touch>).dispatch(t);
 	inline public function stopDrag(t:Touch):Void untyped (onStopDrag:Event1<Touch>).dispatch(t);
 	
-	/**
-	 * Set view to default position
-	 */
-	inline public function endInit():Void {
-		if (isVertical) {
-			changeY(inv(0));
-		} else {
-			changeX(inv(0));
-		}
-	}
-	
 	private function startXDragHandler(t:Touch):Void startPoint = inv(pos) - t.x;
 	private function startYDragHandler(t:Touch):Void startPoint = inv(pos) - t.y;
-	
-	@:extern inline function inv(p:Float):Float return invert ? size - p : p;
 	
 	private function startDragHandler(t:Touch):Void {
 		if (t != null) t.onMove << moveHandler;
 		if (button != null) changePos >> button.touch.check;
 	}
 	
-	private function moveHandler(t:Touch):Void {
-		pos = limit(detectPos(t.x, t.y));
-	}
+	private function moveHandler(t:Touch):Void pos = limit(detectPos(t.x, t.y));
 	
 	@:extern inline private function detectPos(x:Float, y:Float):Float {
 		return inv((isVertical ? y : x) + startPoint);
@@ -143,27 +107,6 @@ class SliderCore implements Declarator implements HasSignal {
 		return if (p < 0) 0;
 		else if (p > size) size;
 		else p;
-	}
-	
-	/**
-	 * Use this method for connect view
-	 */
-	dynamic public function changeX(v:Float):Void { }
-	
-	/**
-	 * Use this method for connect view
-	 */
-	dynamic public function changeY(v:Float):Void {}
-
-	inline public function initValue(min:Float, max:Float):Void {
-		this.min = min;
-		this.max = max;
-		changePercent << updateValue;
-		changeValue << changeValueHandler;
-	}
-	
-	private function updateValue(v:Float):Void {
-		value = min + v * (max - min);
 	}
 	
 }

@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -106,7 +106,7 @@ class Mouse implements Declarator implements HasSignal {
 	public static function checkDown(b:Int):Bool {
 		if (upStack.length > 0) {
 			var l = ArrayTools.last(downStack);
-			if (l.b == b) return false;
+			if (l == null || l.b == b) return false;
 		}
 		return true;
 	}

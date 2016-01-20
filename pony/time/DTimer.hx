@@ -62,7 +62,7 @@ class DTimer implements HasSignal implements ITimer<DTimer> implements Declarato
 	
 	public function reset():DTimer {
 		if (time != null)
-			currentTime = time.back ? time.max : time.min;
+			currentTime = time.min;
 		else
 			currentTime = 0;
 		return this;

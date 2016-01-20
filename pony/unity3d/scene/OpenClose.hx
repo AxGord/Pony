@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -27,25 +27,27 @@
 **/
 package pony.unity3d.scene;
 
-import pony.events.Signal;
 import pony.events.Signal0;
+import pony.magic.HasSignal;
 import unityengine.MonoBehaviour;
 import unityengine.Quaternion;
 import unityengine.Vector3;
+
 using hugs.HUGSWrapper;
+
 /**
  * OpenCloseUCore
  * @author AxGord <axgord@gmail.com>
  */
-@:nativeGen class OpenClose extends MonoBehaviour {
+@:nativeGen class OpenClose extends MonoBehaviour implements HasSignal {
 	
 	public var openPos:Vector3;
 	public var openRotation:Quaternion;
 	@:meta(UnityEngine.HideInInspector)
 	public var open(get, set):Bool;
 	private var _open:Bool = false;
-	public var onOpen(default, null):Signal0<OpenClose>;
-	public var onClose(default, null):Signal0<OpenClose>;
+	@:auto public var onOpen:Signal0;
+	@:auto public var onClose:Signal0;
 	@:meta(UnityEngine.HideInInspector)
 	private var startPos:Vector3;
 	@:meta(UnityEngine.HideInInspector)
@@ -58,8 +60,6 @@ using hugs.HUGSWrapper;
 	
 	public function new() {
 		super();
-		onOpen = Signal.create(this);
-		onClose = Signal.create(this);
 	}
 	
 	private function Start():Void {
@@ -77,10 +77,10 @@ using hugs.HUGSWrapper;
 		if (_open == to) return to;
 		if (to) {
 			silentOpen();
-			onOpen.dispatch();
+			eOpen.dispatch();
 		} else {
 			silentClose();
-			onClose.dispatch();
+			eClose.dispatch();
 		}
 		return to;
 	}
@@ -100,17 +100,17 @@ using hugs.HUGSWrapper;
 	inline public function change():Void open = !open;
 	
 	public function syncWith(d:Door):Void {
-		onOpen << d.silentOpen;
-		onClose << d.silentClose;
-		d.onOpen << silentOpen;
-		d.onClose << silentClose;
+		eOpen << d.silentOpen;
+		eClose << d.silentClose;
+		d.eOpen << silentOpen;
+		d.eClose << silentClose;
 	}
 	
 	public function unsyncWith(d:Door):Void {
-		onOpen >> d.silentOpen;
-		onClose >> d.silentClose;
-		d.onOpen >> silentOpen;
-		d.onClose >> silentClose;
+		eOpen >> d.silentOpen;
+		eClose >> d.silentClose;
+		d.eOpen >> silentOpen;
+		d.eClose >> silentClose;
 	}
 	
 }

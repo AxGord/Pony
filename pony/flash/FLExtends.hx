@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -34,6 +34,10 @@ import flash.events.Event;
 import flash.events.EventDispatcher;
 import flash.geom.Rectangle;
 import flash.Lib;
+import flash.display.GradientType;
+import flash.display.Graphics;
+import flash.display.SpreadMethod;
+import flash.geom.Matrix;
 import pony.flash.ui.Button;
 import pony.geom.Rect;
 import pony.ui.gui.ButtonCore;
@@ -96,4 +100,23 @@ class FLExtends {
 	
 	//inline public static function button(o:DisplayObjectContainer, name:String):ButtonCore return getTyped(o, name, Button).core;
 	
+	public static function vlinGrad(graphics:Graphics, c1:UInt, c2:UInt, width:Float, height:Float):Void {
+		var colors:Array<UInt> = [c1, c2];
+		var alphas:Array<Float> = [1, 1];
+		var ratios:Array<Int> = [0x00, 0xFF];
+		var matr:Matrix = new Matrix();
+		matr.createGradientBox(height, height, Math.PI / 2, 0, 0);
+		graphics.beginGradientFill(GradientType.LINEAR, colors, alphas, ratios, matr, SpreadMethod.PAD);       
+		graphics.drawRect(0,0,width,height);
+	}
+	
+	public static function hlinGrad(graphics:Graphics, c1:UInt, c2:UInt, width:Float, height:Float):Void {
+		var colors:Array<UInt> = [c1, c2];
+		var alphas:Array<Float> = [1, 1];
+		var ratios:Array<Int> = [0x00, 0xFF];
+		var matr:Matrix = new Matrix();
+		matr.createGradientBox(width, width, 0, 0, 0);
+		graphics.beginGradientFill(GradientType.LINEAR, colors, alphas, ratios, matr, SpreadMethod.PAD);       
+		graphics.drawRect(0,0,width,height);
+	}
 }

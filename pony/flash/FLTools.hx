@@ -111,14 +111,14 @@ class FLTools
 		o.height = rect.height;
 	}
 	
-	
+	public static var width:Float = -1;
+	public static var height:Float = -1;
+	#if !openfl
 	//SmartFit
 	//private static var _rect:Rectangle;
 	private static var _target:MovieClip;
 	private static var _shape:Shape;
 	private static var _inited:Void->Void;
-	public static var width:Float = -1;
-	public static var height:Float = -1;
 	
 	public static function smartFit(m:MovieClip, ?inited:Void->Void):Void {
 		_target = m;
@@ -175,7 +175,7 @@ class FLTools
 		
 		//for (o in objs) _target.addChild(o);
 	}
-	
+	#end
 	public static function recursiveCompare(o:DisplayObjectContainer, t:Dynamic):Bool {
 		if (o == t) return true;
 		for (i in 0...o.numChildren)
@@ -341,7 +341,6 @@ class FLTools
 			loader.addEventListener(Event.COMPLETE, handler);
 		} catch (e:Dynamic) error(e);
 	}
-	
 	
 	#end
 }

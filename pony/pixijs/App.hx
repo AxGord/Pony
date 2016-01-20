@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2013-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -25,15 +25,59 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony;
+package pony.pixijs;
+
+import pixi.core.sprites.Sprite;
+import pixi.plugins.app.Application;
+import pony.time.DeltaTime;
 
 /**
- * Object pool interface
+ * App
  * @author AxGord <axgord@gmail.com>
  */
-interface IPool<T> {
-	#if !cs
-	function get():T;
-	function ret(obj:T):Void;
-	#end
+class App extends Application {
+
+	private var _width:Float;
+	private var _height:Float;
+	private var container:Sprite;
+	private var prevTime:Float = 0;
+	
+	public function new(container:Sprite, width:Float, height:Float, ?bg:UInt) {
+		super();
+		backgroundColor = bg;
+		_width = width;
+		_height = height;
+		this.container = container;
+		onResize = resizeHandler;
+		onUpdate = updateHandler;
+		start();
+		stage.addChild(container);
+		resizeHandler();
+	}
+	
+	private function resizeHandler():Void {
+		var w = width / _width;
+		var h = height / _height;
+		var d:Float;
+		if (w > h) {
+			d = h;
+			var nw = _width * d;
+			container.x = (width - nw) / 2;
+			container.y = 0;
+		} else {
+			d = w;
+			var nh = _height * d;
+			container.x = 0;
+			container.y = (height - nh) / 2;
+		}
+		container.width = d;
+		container.height = d;
+	}
+	
+	private function updateHandler(time:Float):Void {
+		DeltaTime.fixedValue = (time - prevTime) / 1000;
+		prevTime = time;
+		DeltaTime.fixedDispatch();
+	}
+	
 }
