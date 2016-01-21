@@ -27,9 +27,8 @@
 **/
 package pony.pixijs.ui;
 
-import pixi.core.text.Text;
-import pixi.core.text.Text.TextStyle;
 import pony.geom.Point;
+import pony.pixijs.UniversalText;
 import pony.time.DTimer;
 import pony.time.Time;
 import pony.time.TimeInterval;
@@ -40,18 +39,18 @@ import pony.time.TimeInterval;
  */
 class TimeBar extends Bar {
 
-	private var timeLabel:Text;
-	private var style:TextStyle;
+	public var timeLabel:UniversalText;
+	private var style:ETextStyle;
 	private var timer:DTimer;
 	
-	public function new(bg:String, fillBegin:String, fill:String, ?offset:Point<Int>, style:TextStyle) {
+	public function new(bg:String, fillBegin:String, fill:String, ?offset:Point<Int>, ?style:ETextStyle) {
 		this.style = style;
 		super(bg, fillBegin, fill, offset);
 		onReady < readyHandler;
 	}
 	
 	private function readyHandler(p:Point<Int>):Void {
-		timeLabel = new Text('00:00', style);
+		timeLabel = new UniversalText('00:00', style);
 		timeLabel.x = (p.x - timeLabel.width) / 2;
 		timeLabel.y = (p.y - timeLabel.height) / 2 - 2;
 		addChild(timeLabel);

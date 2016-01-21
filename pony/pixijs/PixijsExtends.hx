@@ -30,6 +30,7 @@ package pony.pixijs;
 import pixi.core.sprites.Sprite;
 import pixi.core.text.Text;
 import pixi.core.textures.Texture;
+import pixi.extras.BitmapText;
 import pixi.filters.blur.BlurFilter;
 
 /**
@@ -74,6 +75,24 @@ class PixijsExtendsText {
 		var s:TextStyle = Reflect.copy(t.style);
 		if (color != null) s.fill = color;
 		var ct = new Text(t.text, s);
+		ct.x = t.x;
+		ct.y = t.y;
+		ct.filters = [f];
+		return ct;
+	}
+	
+}/**
+ * PixijsExtendsBitmapText
+ * @author AxGord <axgord@gmail.com>
+ */
+class PixijsExtendsBitmapText {
+	
+	public static function glow(t:BitmapText, style:BitmapTextStyle, blur:Int=10, ?color:Null<UInt>):BitmapText {
+		var f = new BlurFilter();
+		f.blur = blur;
+		var s:BitmapTextStyle = Reflect.copy(style);
+		if (color != null) s.tint = color;
+		var ct = new BitmapText(t.text, s);
 		ct.x = t.x;
 		ct.y = t.y;
 		ct.filters = [f];
