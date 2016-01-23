@@ -25,18 +25,56 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.ui.touch;
+package pony.ui.touch.pixijs;
+
+import pixi.core.display.Container;
+import pixi.interaction.EventTarget;
+import pony.ui.touch.Mouse as M;
 
 /**
+ * Mouse
  * @author AxGord <axgord@gmail.com>
  */
-typedef Touchable =
-#if pixijs
-pony.ui.touch.pixijs.Touchable
-#elseif (flash&&!starling)
-pony.ui.touch.flash.Touchable
-#elseif openfl
-pony.ui.touch.openfl.Touchable
-#else
-pony.ui.touch.starling.Touchable
-#end
+@:access(pony.ui.touch.Mouse)
+class Mouse {
+
+	private static var obj:Container;
+	private static var inited:Bool = false;
+	
+	public static function reg(obj:Container):Void {
+		if (Mouse.obj != null) throw 'ready';
+		Mouse.obj = obj;
+		if (inited) _init();
+	}
+	
+	public static function init() {
+		if (inited) return;
+		inited = true;
+		if (obj != null) _init();
+	}
+	
+	public static function _init() {
+		obj.interactive = true;
+		obj.on('mousedown', downHandler);
+		obj.on('mouseup', upHandler);
+		M.eMove.onTake << function() obj.on('mousemove', moveHandler);
+		M.eMove.onLost << function() obj.removeListener('mousemove', moveHandler);
+		M.eLeave.onTake << function() obj.on('mouseupoutside', upoutsideHandler);
+		M.eLeave.onLost << function() obj.removeListener('mouseupoutside', upoutsideHandler);
+	}
+	
+	private static function downHandler(e:EventTarget):Void {
+		M.downHandler(e.data.global.x, e.data.global.y, untyped e.data.originalEvent.button);
+	}
+	
+	private static function upHandler(e:EventTarget):Void {
+		M.upHandler(e.data.global.x, e.data.global.y, untyped e.data.originalEvent.button);
+	}
+	
+	private static function moveHandler(e:EventTarget):Void {
+		M.moveHandler(e.data.global.x, e.data.global.y);
+	}
+	
+	private static function upoutsideHandler(_):Void M.eLeave.dispatch();
+	
+}

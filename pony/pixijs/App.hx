@@ -30,6 +30,8 @@ package pony.pixijs;
 import pixi.core.sprites.Sprite;
 import pixi.plugins.app.Application;
 import pony.time.DeltaTime;
+import pony.ui.touch.pixijs.Mouse;
+import pony.ui.touch.pixijs.Touch;
 
 /**
  * App
@@ -53,6 +55,8 @@ class App extends Application {
 		start();
 		stage.addChild(container);
 		resizeHandler();
+		Mouse.reg(container);
+		Touch.reg(container);
 	}
 	
 	private function resizeHandler():Void {

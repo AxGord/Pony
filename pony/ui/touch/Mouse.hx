@@ -59,7 +59,9 @@ class Mouse implements Declarator implements HasSignal {
 	private static var downStack:Array<MouseEvent> = [];
 	private static var upStack:Array<Int> = [];
 	
-	#if flash
+	#if pixijs
+	inline public static function init():Void pony.ui.touch.pixijs.Mouse.init();
+	#elseif flash
 	inline public static function init():Void pony.ui.touch.flash.Mouse.init();
 	inline public static function enableStd():Void pony.ui.touch.flash.Mouse.enableStd();
 	inline public static function disableStd():Void pony.ui.touch.flash.Mouse.disableStd();

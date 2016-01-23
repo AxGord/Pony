@@ -25,18 +25,49 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.ui.touch;
+package pony.pixijs.ui;
+
+import pixi.core.textures.Texture;
+import pixi.extras.MovieClip;
+import pony.ui.gui.ButtonImgN;
+import pony.ui.touch.Touchable;
 
 /**
+ * Button
  * @author AxGord <axgord@gmail.com>
  */
-typedef Touchable =
-#if pixijs
-pony.ui.touch.pixijs.Touchable
-#elseif (flash&&!starling)
-pony.ui.touch.flash.Touchable
-#elseif openfl
-pony.ui.touch.openfl.Touchable
-#else
-pony.ui.touch.starling.Touchable
-#end
+class Button extends MovieClip {
+
+	public var core:ButtonImgN;
+	private var hideDisabled:Bool;
+	
+	public function new(imgs:Array<String>) {
+		if (imgs[0] == null) throw 'Need first img';
+		if (imgs[1] == null)
+			imgs[1] = imgs[2] != null ? imgs[2] : imgs[0];
+		if (imgs[2] == null) imgs[2] = imgs[1];
+		hideDisabled = imgs[3] == null;
+		var i = 4;
+		while (i < imgs.length) {
+			if (imgs[i+1] == null)
+				imgs[i+1] = imgs[i+2] != null ? imgs[i+2] : imgs[i];
+			if (imgs[i+2] == null) imgs[i+2] = imgs[i+1];
+			i += 3;
+		}
+		super([for (img in imgs) Texture.fromImage(img)]);
+		buttonMode = true;
+		core = new ButtonImgN(new Touchable(this));
+		core.onImg << imgHandler;
+	}
+	
+	private function imgHandler(n:Int):Void {
+		if (n == 4 && hideDisabled) {
+			visible = false;
+			return;
+		} else {
+			visible = true;
+		}
+		gotoAndStop(n - 1);
+	}
+	
+}
