@@ -413,6 +413,15 @@ class ArrayTools {
 		};
 	}
 	
+	public static function pair<A,B>(a:Iterable<A>, b:Iterable<B>):Iterator < Pair < A, B >> {
+		var itA = a.iterator();
+		var itB = b.iterator();
+		return {
+			hasNext: function() return itA.hasNext() && itB.hasNext(),
+			next: function() return new Pair(itA.next(), itB.next())
+		};
+	}
+	
 	public static inline function toBytes(a:Array<Int>):BytesOutput {
 		var b = new BytesOutput();
 		for (e in a) b.writeByte(e);

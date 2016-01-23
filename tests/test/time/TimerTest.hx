@@ -34,7 +34,7 @@ class TimerTest
 		var t = new Timer('3ms', 5);
 		t.complete << function() c++;
 		t.start();
-		new massive.munit.util.Timer(700).run = handler;
+		new massive.munit.util.Timer(1500).run = handler;
 	}
 	
 	/* Munit problem?

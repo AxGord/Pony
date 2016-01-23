@@ -27,90 +27,75 @@
 **/
 package pony.pixijs.ui;
 
+import pixi.core.display.Container;
 import pixi.core.sprites.Sprite;
-import pixi.core.textures.Texture;
-import pony.events.Signal1;
+import pixi.core.text.Text;
+import pixi.extras.BitmapText;
+import pony.events.Signal0;
+import pony.geom.Border;
+import pony.geom.GeomTools;
 import pony.geom.Point;
+import pony.magic.Declarator;
 import pony.magic.HasSignal;
-import pony.ui.gui.BarCore;
+import pony.time.DeltaTime;
 
+using pony.Tools;
 using pony.pixijs.PixijsExtends;
 
 /**
- * Bar
+ * Layout
  * @author AxGord <axgord@gmail.com>
  */
-class Bar extends Sprite implements HasSignal {
-	
-	public var core:BarCore;
-	@:auto public var onReady:Signal1<Point<Int>>;
-	
-	private var bg:Sprite;
-	private var begin:Sprite;
-	private var end:Sprite;
-	private var fill:Sprite;
+class Layout extends Sprite implements Declarator implements HasSignal {
 
-	public function new(bg:String, fillBegin:String, fill:String, ?offset:Point<Int>) {
+	@:arg public var layoutWidth:Float;
+	@:arg public var layoutHeight:Float;
+	@:arg public var objects:Array<Container>;
+	@:arg public var vert:Bool = false;
+	@:arg public var border:Border<Int> = 0;
+	
+	@:auto public var onUpdate:Signal0;
+	
+	private var momentalLoad:Bool = true;
+	
+	public function new() {
 		super();
-		this.bg = new Sprite(Texture.fromImage(bg));
-		addChild(this.bg);
-		begin = new Sprite(Texture.fromImage(fillBegin));
-		addChild(begin);
-		this.fill = new Sprite(Texture.fromImage(fill));
-		addChild(this.fill);
-		[this.bg, begin, this.fill].loadedList(init);
-		if (offset != null) {
-			this.fill.x = begin.x = offset.x;
-			this.fill.y = begin.y = offset.y;
-		}
+		var loadlist:Array<Sprite> = [];
+		for (obj in objects) if (Std.is(obj, Sprite)) loadlist.push(cast obj);
+		loadlist.loadedList(update);
+		momentalLoad = false;
 	}
 	
-	public function init():Void {
-		end = new Sprite(begin.texture);
-		end.x = begin.x;
-		end.y = begin.y;
-
-		addChild(end);
-		core = BarCore.create(bg.width - (begin.x + begin.width) * 2, bg.height - (begin.y + begin.height) * 2);
-		if (core.isVertical) {
-			end.height = -end.height;
-			fill.y = begin.y + begin.height;
-		} else {
-			end.width = -end.width;
-			fill.x = begin.x + begin.width;
+	private function update():Void {
+		var positions = GeomTools.pointsCeil(GeomTools.center(
+				new Point(layoutWidth, layoutHeight),
+				[for (obj in objects)
+					Std.is(obj, BitmapText) || Std.is(obj, Text)
+					? new Point(untyped obj.textWidth, untyped obj.textHeight)
+					: new Point(obj.width, obj.height)],
+				vert, border
+			));
+		for (p in objects.pair(positions)) {
+			p.a.x = p.b.x;
+			p.a.y = p.b.y;
+			addChild(p.a);
 		}
-		core.changeX = function(p:Float) {
-			fill.width = p;
-			end.x = fill.x + fill.width + begin.width;
-		}
-		core.changeY = function(p:Float) {
-			fill.height = p;
-			end.y = fill.y + fill.height + begin.height;
-		}
-		
-		core.endInit();
-		eReady.dispatch(new Point(Std.int(bg.width), Std.int(bg.height)));
+		objects = null;
+		if (momentalLoad)
+			DeltaTime.fixedUpdate < eUpdate.dispatch.bind(false);
+		else
+			eUpdate.dispatch();
 	}
-
+	
 	override public function destroy():Void {
-		core.destroy();
-		core = null;
 		destroySignals();
-		super.destroy();
-		removeChild(bg);
-		bg.destroy();
-		bg = null;
-		removeChild(begin);
-		begin.destroy();
-		begin = null;
-		removeChild(fill);
-		fill.destroy();
-		fill = null;
-		if (end != null) {
-			removeChild(end);
-			end.destroy();
-			end = null;
+		for (obj in objects) {
+			removeChild(obj);
+			obj.destroy();
 		}
+		objects = null;
+		border = null;
+		super.destroy();
 	}
 	
 }

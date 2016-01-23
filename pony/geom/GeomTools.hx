@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -26,6 +26,7 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.geom;
+import pony.geom.Point.IntPoint;
 
 /**
  * GeomTools
@@ -74,6 +75,38 @@ class GeomTools
 			new Point<T>(rect.x+rect.width, rect.y+rect.height),
 			new Point<T>(rect.x, rect.y+rect.height)
 		];
+	}
+	
+	public static function center(container:Point<Float>, objects:Array<Point<Float>>, vert:Bool = false, ?border:Border<Int>):Array<Point<Float>> {
+		var fa = vert ? centerA : centerB;
+		var fb = vert ? centerB : centerA;
+		if (border == null) border = 0;
+		var w = container.x - (border.left + border.right);
+		var h = container.y - (border.top + border.bottom);
+		var a = fa(w, [for (obj in objects) obj.x]);
+		var b = fb(h, [for (obj in objects) obj.y]);
+		return [for (i in 0...a.length) new Point(a[i]+border.left, b[i]+border.top)];
+	}
+	
+	public static function centerA(size:Float, objects:Array<Float>):Array<Float> {
+		return [for (obj in objects) (size - obj) / 2];
+	}
+	
+	public static function centerB(size:Float, objects:Array<Float>):Array<Float> {
+		var sum:Float = 0;
+		for (obj in objects) sum += obj;
+		var d:Float = (size - sum) / (objects.length + 1);
+		var pos:Float = d;
+		var r = [];
+		for (obj in objects) {
+			r.push(pos);
+			pos += obj + d;
+		}
+		return r;
+	}
+	
+	public static function pointsCeil(a:Array<Point<Float>>):Array<IntPoint> {
+		return [for (p in a) new IntPoint(Std.int(p.x), Std.int(p.y))];
 	}
 	
 }

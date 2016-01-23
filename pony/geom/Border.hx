@@ -25,56 +25,31 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.pixijs.ui;
-
-import pixi.core.textures.Texture;
-import pixi.extras.MovieClip;
-import pony.ui.gui.ButtonImgN;
-import pony.ui.touch.Touchable;
+package pony.geom;
 
 /**
- * Button
+ * Borders
  * @author AxGord <axgord@gmail.com>
  */
-class Button extends MovieClip {
+abstract Border<T:Float>({top:T, left:T, right:T, bottom:T}) {
+	
+	public var top(get, never):T;
+	public var left(get, never):T;
+	public var right(get, never):T;
+	public var bottom(get, never):T;
 
-	public var core(default,null):ButtonImgN;
-	private var hideDisabled:Bool;
-	
-	public function new(imgs:Array<String>) {
-		if (imgs[0] == null) throw 'Need first img';
-		if (imgs[1] == null)
-			imgs[1] = imgs[2] != null ? imgs[2] : imgs[0];
-		if (imgs[2] == null) imgs[2] = imgs[1];
-		hideDisabled = imgs[3] == null;
-		var i = 4;
-		while (i < imgs.length) {
-			if (imgs[i+1] == null)
-				imgs[i+1] = imgs[i+2] != null ? imgs[i+2] : imgs[i];
-			if (imgs[i+2] == null) imgs[i+2] = imgs[i+1];
-			i += 3;
-		}
-		super([for (img in imgs) Texture.fromImage(img)]);
-		buttonMode = true;
-		core = new ButtonImgN(new Touchable(this));
-		core.onImg << imgHandler;
+	@:extern inline public function new(top:T, ?left:Null<T>, ?right:Null<T>, ?bottom:Null<T>) {
+		if (left == null) left = top;
+		if (right == null) right = left;
+		if (bottom == null) bottom = top;
+		this = {top:top, left:left, right:right, bottom:bottom};
 	}
 	
-	private function imgHandler(n:Int):Void {
-		if (n == 4 && hideDisabled) {
-			visible = false;
-			return;
-		} else {
-			visible = true;
-		}
-		gotoAndStop(n - 1);
-	}
+	@:from @:extern inline private static function fromNumber<T:Float>(v:T):Border<T> return new Border(v);
 	
-	override public function destroy():Void {
-		core.destroy();
-		core = null;
-		super.destroy();
-		//todo: pixi clear texture cache?
-	}
+	@:extern inline private function get_top():T return this.top;
+	@:extern inline private function get_left():T return this.left;
+	@:extern inline private function get_right():T return this.right;
+	@:extern inline private function get_bottom():T return this.bottom;
 	
 }

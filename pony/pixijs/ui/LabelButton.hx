@@ -27,90 +27,62 @@
 **/
 package pony.pixijs.ui;
 
+import pixi.core.display.Container;
 import pixi.core.sprites.Sprite;
-import pixi.core.textures.Texture;
-import pony.events.Signal1;
-import pony.geom.Point;
+import pony.events.Signal0;
+import pony.geom.Border;
 import pony.magic.HasSignal;
-import pony.ui.gui.BarCore;
+import pony.ui.gui.ButtonCore;
 
 using pony.pixijs.PixijsExtends;
 
 /**
- * Bar
+ * LabelButton
  * @author AxGord <axgord@gmail.com>
  */
-class Bar extends Sprite implements HasSignal {
-	
-	public var core:BarCore;
-	@:auto public var onReady:Signal1<Point<Int>>;
-	
-	private var bg:Sprite;
-	private var begin:Sprite;
-	private var end:Sprite;
-	private var fill:Sprite;
+class LabelButton extends Sprite implements HasSignal {
 
-	public function new(bg:String, fillBegin:String, fill:String, ?offset:Point<Int>) {
+	public var core(get, never):ButtonCore;
+	public var layout:Layout;
+	@:auto public var onReady:Signal0;
+	public var w(get, never):Float;
+	public var h(get, never):Float;
+	
+	private var button:Button;
+	private var objects:Array<Container>;
+	private var vert:Bool;
+	private var border:Border<Int>;
+	
+	public function new(imgs:Array<String>, objects:Array<Container>, vert:Bool = false, ?border:Border<Int>) {
 		super();
-		this.bg = new Sprite(Texture.fromImage(bg));
-		addChild(this.bg);
-		begin = new Sprite(Texture.fromImage(fillBegin));
-		addChild(begin);
-		this.fill = new Sprite(Texture.fromImage(fill));
-		addChild(this.fill);
-		[this.bg, begin, this.fill].loadedList(init);
-		if (offset != null) {
-			this.fill.x = begin.x = offset.x;
-			this.fill.y = begin.y = offset.y;
-		}
+		visible = false;
+		this.objects = objects;
+		this.vert = vert;
+		this.border = border;
+		button = new Button(imgs);
+		addChild(button);
+		button.textures[0].loaded(init);
 	}
 	
-	public function init():Void {
-		end = new Sprite(begin.texture);
-		end.x = begin.x;
-		end.y = begin.y;
-
-		addChild(end);
-		core = BarCore.create(bg.width - (begin.x + begin.width) * 2, bg.height - (begin.y + begin.height) * 2);
-		if (core.isVertical) {
-			end.height = -end.height;
-			fill.y = begin.y + begin.height;
-		} else {
-			end.width = -end.width;
-			fill.x = begin.x + begin.width;
-		}
-		core.changeX = function(p:Float) {
-			fill.width = p;
-			end.x = fill.x + fill.width + begin.width;
-		}
-		core.changeY = function(p:Float) {
-			fill.height = p;
-			end.y = fill.y + fill.height + begin.height;
-		}
-		
-		core.endInit();
-		eReady.dispatch(new Point(Std.int(bg.width), Std.int(bg.height)));
+	private function init():Void {
+		visible = true;
+		layout = new Layout(w, h, objects, vert, border);
+		addChild(layout);
+		objects = null;
+		layout.onUpdate < eReady;
 	}
-
+	
+	@:extern inline private function get_core():ButtonCore return button.core;
+	
 	override public function destroy():Void {
-		core.destroy();
-		core = null;
+		button.destroy();
+		button = null;
 		destroySignals();
+		layout.destroy();
 		super.destroy();
-		removeChild(bg);
-		bg.destroy();
-		bg = null;
-		removeChild(begin);
-		begin.destroy();
-		begin = null;
-		removeChild(fill);
-		fill.destroy();
-		fill = null;
-		if (end != null) {
-			removeChild(end);
-			end.destroy();
-			end = null;
-		}
 	}
+	
+	@:extern inline private function get_w():Float return button.width;
+	@:extern inline private function get_h():Float return button.height;
 	
 }
