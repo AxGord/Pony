@@ -27,48 +27,21 @@
 **/
 package pony.pixijs.ui;
 
-import pony.geom.Point;
-import pony.pixijs.UniversalText;
-import pony.time.DTimer;
-import pony.time.Time;
-import pony.time.TimeInterval;
+import pixi.core.display.Container;
+import pony.geom.Border;
+import pony.ui.gui.RubberLayoutCore;
 
 /**
- * TimeBar
+ * RubberLayout
  * @author AxGord <axgord@gmail.com>
  */
-class TimeBar extends Bar {
-
-	public var timeLabel:UniversalText;
-	private var style:ETextStyle;
-	private var timer:DTimer;
+class RubberLayout extends BaseLayout<RubberLayoutCore<Container>> {
 	
-	public function new(bg:String, fillBegin:String, fill:String, ?offset:Point<Int>, ?style:ETextStyle) {
-		this.style = style;
-		super(bg, fillBegin, fill, offset);
-		timer = DTimer.createFixedTimer(null);
-		onReady < readyHandler;
+	public function new(layoutWidth:Float, layoutHeight:Float, vert:Bool = false, ?border:Border<Int>, padding:Bool = false) {
+		layout = new RubberLayoutCore<Container>(vert, border, padding);
+		layout.width = layoutWidth;
+		layout.height = layoutHeight;
+		super();
 	}
-	
-	private function readyHandler(p:Point<Int>):Void {
-		timeLabel = new UniversalText('00:00', style);
-		timeLabel.x = (p.x - timeLabel.width) / 2;
-		timeLabel.y = (p.y - timeLabel.height) / 2 - 2;
-		addChild(timeLabel);
-		timer.progress << progressHandler;
-		timer.update << updateHandler;
-	}
-	
-	private function progressHandler(p:Float):Void core.percent = p;
-	private function updateHandler(t:Time):Void timeLabel.text = t.showMinSec();
-	
-	public function start(t:TimeInterval):Void {
-		timer.time = t;
-		timer.reset();
-		timer.start();
-	}
-	
-	@:extern inline public function pause():Void timer.stop();
-	@:extern inline public function play():Void timer.start();
 	
 }

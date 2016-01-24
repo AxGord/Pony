@@ -45,7 +45,8 @@ class PixijsExtends {
 	
 	public static function loadedList(a:Array<Sprite>, f:Void->Void):Void {
 		var i = a.length;
-		for (s in a) loaded(s, function() if (--i == 0) f());
+		if (i == 0) f();
+		else for (s in a) loaded(s, function() if (--i == 0) f());
 	}
 	
 }

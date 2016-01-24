@@ -25,50 +25,69 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.pixijs.ui;
+package pony.ui.gui;
 
+import pony.events.Signal0;
+import pony.geom.IWH;
 import pony.geom.Point;
-import pony.pixijs.UniversalText;
-import pony.time.DTimer;
-import pony.time.Time;
-import pony.time.TimeInterval;
+import pony.magic.Declarator;
+import pony.magic.HasSignal;
+import pony.Tasks;
+
+using pony.Tools;
 
 /**
- * TimeBar
+ * BaseLayoutCore
  * @author AxGord <axgord@gmail.com>
  */
-class TimeBar extends Bar {
+class BaseLayoutCore<T> implements Declarator implements HasSignal implements IWH {
 
-	public var timeLabel:UniversalText;
-	private var style:ETextStyle;
-	private var timer:DTimer;
+	private var objects:Array<T> = [];
+	public var size(get, never):Point<Float>;
+	@:auto private var onReady:Signal0;
+	private var ready:Bool = false;
+	public var tasks:Tasks;
 	
-	public function new(bg:String, fillBegin:String, fill:String, ?offset:Point<Int>, ?style:ETextStyle) {
-		this.style = style;
-		super(bg, fillBegin, fill, offset);
-		timer = DTimer.createFixedTimer(null);
-		onReady < readyHandler;
+	private var _w:Float;
+	private var _h:Float;
+	
+	public function new() {
+		tasks = new Tasks(init);
 	}
 	
-	private function readyHandler(p:Point<Int>):Void {
-		timeLabel = new UniversalText('00:00', style);
-		timeLabel.x = (p.x - timeLabel.width) / 2;
-		timeLabel.y = (p.y - timeLabel.height) / 2 - 2;
-		addChild(timeLabel);
-		timer.progress << progressHandler;
-		timer.update << updateHandler;
+	public function add(o:T):Void {
+		objects.push(o);
+		if (Std.is(o, IWH)) {
+			tasks.add();
+			cast(o, IWH).waitReady(tasks.end);
+		} else load(o);
 	}
 	
-	private function progressHandler(p:Float):Void core.percent = p;
-	private function updateHandler(t:Time):Void timeLabel.text = t.showMinSec();
+	public dynamic function load(o:T):Void {}
+	public dynamic function getSize(o:T):Point<Float> return throw 'Unknown type';
+	public dynamic function setXpos(o:T, v:Float):Void {}
+	public dynamic function setYpos(o:T, v:Float):Void {}
+	private function get_size():Point<Float> return new Point(_w, _h);
 	
-	public function start(t:TimeInterval):Void {
-		timer.time = t;
-		timer.reset();
-		timer.start();
+	private function init():Void {
+		if (ready) {
+			update();
+		} else {
+			ready = true;
+			update();
+			eReady.dispatch();
+		}
 	}
 	
-	@:extern inline public function pause():Void timer.stop();
-	@:extern inline public function play():Void timer.start();
+	public function waitReady(cb:Void->Void):Void {
+		if (ready) cb();
+		else onReady < cb;
+	}
+	
+	public function update():Void {}
+	
+	@:extern inline private function getObjSize(o:T):Point<Float> {
+		return Std.is(o, IWH) ? cast(o, IWH).size : getSize(o);
+	}
 	
 }

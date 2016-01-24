@@ -27,6 +27,7 @@
 **/
 package pony.pixijs;
 
+import js.Browser;
 import pixi.core.sprites.Sprite;
 import pixi.plugins.app.Application;
 import pony.time.DeltaTime;
@@ -47,6 +48,8 @@ class App extends Application {
 	public function new(container:Sprite, width:Float, height:Float, ?bg:UInt) {
 		super();
 		backgroundColor = bg;
+		antialias = false;
+		pixelRatio = Browser.window.devicePixelRatio;
 		_width = width;
 		_height = height;
 		this.container = container;

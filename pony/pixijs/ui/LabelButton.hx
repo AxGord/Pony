@@ -28,11 +28,9 @@
 package pony.pixijs.ui;
 
 import pixi.core.display.Container;
-import pixi.core.sprites.Sprite;
-import pony.events.Signal0;
 import pony.geom.Border;
-import pony.magic.HasSignal;
 import pony.ui.gui.ButtonCore;
+import pony.ui.gui.RubberLayoutCore;
 
 using pony.pixijs.PixijsExtends;
 
@@ -40,49 +38,25 @@ using pony.pixijs.PixijsExtends;
  * LabelButton
  * @author AxGord <axgord@gmail.com>
  */
-class LabelButton extends Sprite implements HasSignal {
+class LabelButton extends BaseLayout<RubberLayoutCore<Container>> {
 
 	public var core(get, never):ButtonCore;
-	public var layout:Layout;
-	@:auto public var onReady:Signal0;
-	public var w(get, never):Float;
-	public var h(get, never):Float;
 	
 	private var button:Button;
-	private var objects:Array<Container>;
-	private var vert:Bool;
-	private var border:Border<Int>;
 	
-	public function new(imgs:Array<String>, objects:Array<Container>, vert:Bool = false, ?border:Border<Int>) {
+	public function new(imgs:Array<String>, vert:Bool = false, ?border:Border<Int>) {
+		layout = new RubberLayoutCore<Container>(vert, border);
+		layout.tasks.add();
 		super();
-		visible = false;
-		this.objects = objects;
-		this.vert = vert;
-		this.border = border;
 		button = new Button(imgs);
 		addChild(button);
-		button.textures[0].loaded(init);
-	}
-	
-	private function init():Void {
-		visible = true;
-		layout = new Layout(w, h, objects, vert, border);
-		addChild(layout);
-		objects = null;
-		layout.onUpdate < eReady;
+		button.textures[0].loaded(function(){
+			layout.width = button.width;
+			layout.height = button.height;
+			layout.tasks.end();
+		});
 	}
 	
 	@:extern inline private function get_core():ButtonCore return button.core;
-	
-	override public function destroy():Void {
-		button.destroy();
-		button = null;
-		destroySignals();
-		layout.destroy();
-		super.destroy();
-	}
-	
-	@:extern inline private function get_w():Float return button.width;
-	@:extern inline private function get_h():Float return button.height;
 	
 }

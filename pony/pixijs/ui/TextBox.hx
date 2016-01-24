@@ -27,48 +27,57 @@
 **/
 package pony.pixijs.ui;
 
-import pony.geom.Point;
+import pixi.core.display.Container;
+import pixi.core.sprites.Sprite;
+import pony.geom.Border;
+import pony.pixijs.ETextStyle;
 import pony.pixijs.UniversalText;
-import pony.time.DTimer;
-import pony.time.Time;
-import pony.time.TimeInterval;
+import pony.time.DeltaTime;
+import pony.ui.gui.RubberLayoutCore;
+
+using pony.pixijs.PixijsExtends;
 
 /**
- * TimeBar
+ * TextBox
  * @author AxGord <axgord@gmail.com>
  */
-class TimeBar extends Bar {
+class TextBox extends BaseLayout<RubberLayoutCore<Container>> {
 
-	public var timeLabel:UniversalText;
-	private var style:ETextStyle;
-	private var timer:DTimer;
+	public var text(get, set):String;
 	
-	public function new(bg:String, fillBegin:String, fill:String, ?offset:Point<Int>, ?style:ETextStyle) {
-		this.style = style;
-		super(bg, fillBegin, fill, offset);
-		timer = DTimer.createFixedTimer(null);
-		onReady < readyHandler;
+	public var obj(default, null):UniversalText;
+	
+	public function new(image:Sprite, text:String, style:ETextStyle, ?border:Border<Int>) {
+		layout = new RubberLayoutCore(border);
+		layout.tasks.add();
+		super();
+		addChild(image);
+		image.loaded(function(){
+			layout.width = image.width;
+			layout.height = image.height;
+			layout.tasks.end();
+		});
+		add(obj = new UniversalText(text, style));
 	}
 	
-	private function readyHandler(p:Point<Int>):Void {
-		timeLabel = new UniversalText('00:00', style);
-		timeLabel.x = (p.x - timeLabel.width) / 2;
-		timeLabel.y = (p.y - timeLabel.height) / 2 - 2;
-		addChild(timeLabel);
-		timer.progress << progressHandler;
-		timer.update << updateHandler;
+	inline private function get_text():String return obj.text;
+	
+	private function set_text(v:String):String {
+		if (obj.text != v) {
+			obj.text = v;
+			update();
+		}
+		return v;
 	}
 	
-	private function progressHandler(p:Float):Void core.percent = p;
-	private function updateHandler(t:Time):Void timeLabel.text = t.showMinSec();
-	
-	public function start(t:TimeInterval):Void {
-		timer.time = t;
-		timer.reset();
-		timer.start();
+	@:extern inline private function update():Void {
+		layout.update();
+		_update();
+		DeltaTime.fixedUpdate < _update;
 	}
 	
-	@:extern inline public function pause():Void timer.stop();
-	@:extern inline public function play():Void timer.start();
+	inline private function _update():Void {
+		DeltaTime.fixedUpdate < layout.update;
+	}
 	
 }

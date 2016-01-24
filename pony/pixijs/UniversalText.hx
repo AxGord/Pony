@@ -41,13 +41,15 @@ enum EUniversalText {
  * UniversalText
  * @author AxGord <axgord@gmail.com>
  */
-abstract UniversalText(EUniversalText) {
+abstract UniversalText(EUniversalText) from EUniversalText to EUniversalText {
 
 	public var text(get, set):String;
 	public var x(get, set):Float;
 	public var y(get, set):Float;
 	public var width(get, set):Float;
 	public var height(get, set):Float;
+	public var textWidth(get, set):Float;
+	public var textHeight(get, set):Float;
 	
 	@:extern inline public function new(t:String, s:ETextStyle) {
 		this = switch s {
@@ -130,6 +132,34 @@ abstract UniversalText(EUniversalText) {
 		return switch this {
 			case TEXT(t): t.height = v;
 			case BITMAP_TEXT(t): t.height = v;
+		}
+	}
+	
+	@:extern inline private function get_textWidth():Float {
+		return switch this {
+			case TEXT(t): t.width;
+			case BITMAP_TEXT(t): t.textWidth;
+		}
+	}
+	
+	@:extern inline private function set_textWidth(v:Float):Float {
+		return switch this {
+			case TEXT(t): t.width = v;
+			case BITMAP_TEXT(t): t.textWidth = v;
+		}
+	}
+	
+	@:extern inline private function get_textHeight():Float {
+		return switch this {
+			case TEXT(t): t.height;
+			case BITMAP_TEXT(t): t.textHeight;
+		}
+	}
+	
+	@:extern inline private function set_textHeight(v:Float):Float {
+		return switch this {
+			case TEXT(t): t.height = v;
+			case BITMAP_TEXT(t): t.textHeight = v;
 		}
 	}
 	

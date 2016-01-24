@@ -27,48 +27,57 @@
 **/
 package pony.pixijs.ui;
 
+import pixi.core.display.Container;
+import pixi.core.sprites.Sprite;
+import pixi.core.text.Text;
+import pixi.extras.BitmapText;
+import pony.geom.IWH;
 import pony.geom.Point;
-import pony.pixijs.UniversalText;
-import pony.time.DTimer;
-import pony.time.Time;
-import pony.time.TimeInterval;
+import pony.ui.gui.BaseLayoutCore;
+
+using pony.pixijs.PixijsExtends;
 
 /**
- * TimeBar
+ * BaseLayout
  * @author AxGord <axgord@gmail.com>
  */
-class TimeBar extends Bar {
+class BaseLayout<T:BaseLayoutCore<Container>> extends Sprite implements IWH {
 
-	public var timeLabel:UniversalText;
-	private var style:ETextStyle;
-	private var timer:DTimer;
+	public var layout(default, null):T;
+	public var size(get, never):Point<Float>;
 	
-	public function new(bg:String, fillBegin:String, fill:String, ?offset:Point<Int>, ?style:ETextStyle) {
-		this.style = style;
-		super(bg, fillBegin, fill, offset);
-		timer = DTimer.createFixedTimer(null);
-		onReady < readyHandler;
+	public function new() {
+		super();
+		layout.load = load;
+		layout.getSize = getSize;
+		layout.setXpos = setXpos;
+		layout.setYpos = setYpos;
 	}
 	
-	private function readyHandler(p:Point<Int>):Void {
-		timeLabel = new UniversalText('00:00', style);
-		timeLabel.x = (p.x - timeLabel.width) / 2;
-		timeLabel.y = (p.y - timeLabel.height) / 2 - 2;
-		addChild(timeLabel);
-		timer.progress << progressHandler;
-		timer.update << updateHandler;
+	public function add(obj:Container):Void {
+		addChild(obj);
+		layout.add(obj);
 	}
 	
-	private function progressHandler(p:Float):Void core.percent = p;
-	private function updateHandler(t:Time):Void timeLabel.text = t.showMinSec();
-	
-	public function start(t:TimeInterval):Void {
-		timer.time = t;
-		timer.reset();
-		timer.start();
+	private function load(obj:Container):Void {
+		if (Std.is(obj, Sprite)) {
+			layout.tasks.add();
+			cast(obj, Sprite).loaded(layout.tasks.end);
+		}
 	}
 	
-	@:extern inline public function pause():Void timer.stop();
-	@:extern inline public function play():Void timer.start();
+	private function setXpos(obj:Container, v:Float):Void obj.x = v;
+	private function setYpos(obj:Container, v:Float):Void obj.y = v;
+	
+	public function waitReady(cb:Void->Void):Void layout.waitReady(cb);
+	
+	private function getSize(o:Container):Point<Float> {
+		return if (Std.is(o, BitmapText))
+			new Point(untyped o.textWidth, untyped o.textHeight);
+		else
+			new Point(o.width, o.height);
+	}
+	
+	inline private function get_size():Point<Float> return layout.size;
 	
 }

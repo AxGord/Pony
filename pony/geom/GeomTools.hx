@@ -77,9 +77,10 @@ class GeomTools
 		];
 	}
 	
-	public static function center(container:Point<Float>, objects:Array<Point<Float>>, vert:Bool = false, ?border:Border<Int>):Array<Point<Float>> {
-		var fa = vert ? centerA : centerB;
-		var fb = vert ? centerB : centerA;
+	public static function center(container:Point<Float>, objects:Array<Point<Float>>, vert:Bool = false, ?border:Border<Int>, padding:Bool = false):Array<Point<Float>> {
+		var fc = padding && objects.length > 1 ? centerC : centerB;
+		var fa = vert ? centerA : fc;
+		var fb = vert ? fc : centerA;
 		if (border == null) border = 0;
 		var w = container.x - (border.left + border.right);
 		var h = container.y - (border.top + border.bottom);
@@ -89,6 +90,7 @@ class GeomTools
 	}
 	
 	public static function centerA(size:Float, objects:Array<Float>):Array<Float> {
+		if (size == -1) for (obj in objects) if (obj > size) size = obj;
 		return [for (obj in objects) (size - obj) / 2];
 	}
 	
@@ -97,6 +99,19 @@ class GeomTools
 		for (obj in objects) sum += obj;
 		var d:Float = (size - sum) / (objects.length + 1);
 		var pos:Float = d;
+		var r = [];
+		for (obj in objects) {
+			r.push(pos);
+			pos += obj + d;
+		}
+		return r;
+	}
+	
+	public static function centerC(size:Float, objects:Array<Float>):Array<Float> {
+		var sum:Float = 0;
+		for (obj in objects) sum += obj;
+		var d:Float = (size - sum) / (objects.length - 1);
+		var pos:Float = 0;
 		var r = [];
 		for (obj in objects) {
 			r.push(pos);

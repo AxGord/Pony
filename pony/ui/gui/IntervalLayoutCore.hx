@@ -25,50 +25,72 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.pixijs.ui;
+package pony.ui.gui;
 
-import pony.geom.Point;
-import pony.pixijs.UniversalText;
-import pony.time.DTimer;
-import pony.time.Time;
-import pony.time.TimeInterval;
+import pony.geom.GeomTools;
+
+using pony.Tools;
 
 /**
- * TimeBar
+ * IntervalLayoutCore
  * @author AxGord <axgord@gmail.com>
  */
-class TimeBar extends Bar {
-
-	public var timeLabel:UniversalText;
-	private var style:ETextStyle;
-	private var timer:DTimer;
+class IntervalLayoutCore<T> extends BaseLayoutCore<T> {
 	
-	public function new(bg:String, fillBegin:String, fill:String, ?offset:Point<Int>, ?style:ETextStyle) {
-		this.style = style;
-		super(bg, fillBegin, fill, offset);
-		timer = DTimer.createFixedTimer(null);
-		onReady < readyHandler;
+	@:arg private var _interval:Int;
+	@:arg private var _vert:Bool = false;
+	
+	public var interval(get, set):Int;
+	public var vert(get, set):Bool;
+	
+	override public function update():Void {
+		if (!ready) return;
+		var pos:Float = 0;
+		if (vert) {
+			var sizes = [];
+			_w = 0;
+			for (obj in objects) {
+				var objSize = getObjSize(obj);
+				setYpos(obj, Std.int(pos));
+				pos += objSize.y + interval;
+				if (objSize.x > _w) _w = objSize.x;
+				sizes.push(objSize.x);
+			}
+			if (objects.length > 0) pos -= interval;
+			_h = pos;
+			for (p in GeomTools.centerA(_w, sizes).pair(objects)) setXpos(p.b, p.a);
+		} else {
+			var sizes = [];
+			_h = 0;
+			for (obj in objects) {
+				var objSize = getObjSize(obj);
+				setXpos(obj, Std.int(pos));
+				pos += objSize.x + interval;
+				if (objSize.y > _h) _h = objSize.y;
+				sizes.push(objSize.y);
+			}
+			if (objects.length > 0) pos -= interval;
+			_w = pos;
+			for (p in GeomTools.centerA(_h, sizes).pair(objects)) setYpos(p.b, p.a);
+		}
+		super.update();
 	}
 	
-	private function readyHandler(p:Point<Int>):Void {
-		timeLabel = new UniversalText('00:00', style);
-		timeLabel.x = (p.x - timeLabel.width) / 2;
-		timeLabel.y = (p.y - timeLabel.height) / 2 - 2;
-		addChild(timeLabel);
-		timer.progress << progressHandler;
-		timer.update << updateHandler;
+	@:extern inline private function get_interval():Int return _interval;
+	@:extern inline private function get_vert():Bool return _vert;
+	
+	@:extern inline private function set_interval(v:Int):Int {
+		if (interval == v) return v;
+		_interval = v;
+		update();
+		return v;
 	}
 	
-	private function progressHandler(p:Float):Void core.percent = p;
-	private function updateHandler(t:Time):Void timeLabel.text = t.showMinSec();
-	
-	public function start(t:TimeInterval):Void {
-		timer.time = t;
-		timer.reset();
-		timer.start();
+	@:extern inline private function set_vert(v:Bool):Bool {
+		if (vert == v) return v;
+		_vert = v;
+		update();
+		return v;
 	}
-	
-	@:extern inline public function pause():Void timer.stop();
-	@:extern inline public function play():Void timer.start();
 	
 }
