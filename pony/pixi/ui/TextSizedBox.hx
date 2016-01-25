@@ -25,23 +25,54 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.pixijs.ui;
+package pony.pixi.ui;
 
 import pixi.core.display.Container;
 import pony.geom.Border;
+import pony.pixi.ETextStyle;
+import pony.pixi.ui.BaseLayout;
+import pony.pixi.UniversalText;
+import pony.time.DeltaTime;
 import pony.ui.gui.RubberLayoutCore;
 
 /**
- * RubberLayout
+ * TextSizedBox
  * @author AxGord <axgord@gmail.com>
  */
-class RubberLayout extends BaseLayout<RubberLayoutCore<Container>> {
+class TextSizedBox extends BaseLayout<RubberLayoutCore<Container>> {
+
+	public var text(get, set):String;
 	
-	public function new(layoutWidth:Float, layoutHeight:Float, vert:Bool = false, ?border:Border<Int>, padding:Bool = false) {
-		layout = new RubberLayoutCore<Container>(vert, border, padding);
-		layout.width = layoutWidth;
-		layout.height = layoutHeight;
+	public var obj(default, null):UniversalText;
+	
+	public function new(w:Float, h:Float, text:String, style:ETextStyle, ?border:Border<Int>) {
+		layout = new RubberLayoutCore(border);
+		layout.tasks.add();
+		layout.width = w;
+		layout.height = h;
 		super();
+		add(obj = new UniversalText(text, style));
+		layout.tasks.end();
+	}
+	
+	inline private function get_text():String return obj.text;
+	
+	private function set_text(v:String):String {
+		if (obj.text != v) {
+			obj.text = v;
+			update();
+		}
+		return v;
+	}
+	
+	@:extern inline private function update():Void {
+		layout.update();
+		_update();
+		DeltaTime.fixedUpdate < _update;
+	}
+	
+	inline private function _update():Void {
+		DeltaTime.fixedUpdate < layout.update;
 	}
 	
 }

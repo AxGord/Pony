@@ -77,8 +77,8 @@ class GeomTools
 		];
 	}
 	
-	public static function center(container:Point<Float>, objects:Array<Point<Float>>, vert:Bool = false, ?border:Border<Int>, padding:Bool = false):Array<Point<Float>> {
-		var fc = padding && objects.length > 1 ? centerC : centerB;
+	public static function center(container:Point<Float>, objects:Array<Point<Float>>, vert:Bool = false, ?border:Border<Int>, padding:Bool = true):Array<Point<Float>> {
+		var fc = !padding && objects.length > 1 ? centerC : centerB;
 		var fa = vert ? centerA : fc;
 		var fb = vert ? fc : centerA;
 		if (border == null) border = 0;

@@ -60,7 +60,7 @@ class Mouse implements Declarator implements HasSignal {
 	private static var upStack:Array<Int> = [];
 	
 	#if pixijs
-	inline public static function init():Void pony.ui.touch.pixijs.Mouse.init();
+	inline public static function init():Void pony.ui.touch.pixi.Mouse.init();
 	#elseif flash
 	inline public static function init():Void pony.ui.touch.flash.Mouse.init();
 	inline public static function enableStd():Void pony.ui.touch.flash.Mouse.enableStd();

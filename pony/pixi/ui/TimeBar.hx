@@ -25,66 +25,51 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.pixijs;
+package pony.pixi.ui;
 
-import js.Browser;
-import pixi.core.sprites.Sprite;
-import pixi.plugins.app.Application;
-import pony.time.DeltaTime;
-import pony.ui.touch.pixijs.Mouse;
-import pony.ui.touch.pixijs.Touch;
+import pony.geom.Point;
+import pony.pixi.ETextStyle;
+import pony.pixi.UniversalText;
+import pony.time.DTimer;
+import pony.time.Time;
+import pony.time.TimeInterval;
 
 /**
- * App
+ * TimeBar
  * @author AxGord <axgord@gmail.com>
  */
-class App extends Application {
+class TimeBar extends Bar {
 
-	private var _width:Float;
-	private var _height:Float;
-	private var container:Sprite;
-	private var prevTime:Float = 0;
+	public var timeLabel:UniversalText;
+	private var style:ETextStyle;
+	private var timer:DTimer;
 	
-	public function new(container:Sprite, width:Float, height:Float, ?bg:UInt) {
-		super();
-		backgroundColor = bg;
-		antialias = false;
-		pixelRatio = Browser.window.devicePixelRatio;
-		_width = width;
-		_height = height;
-		this.container = container;
-		onResize = resizeHandler;
-		onUpdate = updateHandler;
-		start();
-		stage.addChild(container);
-		resizeHandler();
-		Mouse.reg(container);
-		Touch.reg(container);
+	public function new(bg:String, fillBegin:String, fill:String, ?offset:Point<Int>, ?style:ETextStyle) {
+		this.style = style;
+		super(bg, fillBegin, fill, offset);
+		timer = DTimer.createFixedTimer(null);
+		onReady < readyHandler;
 	}
 	
-	private function resizeHandler():Void {
-		var w = width / _width;
-		var h = height / _height;
-		var d:Float;
-		if (w > h) {
-			d = h;
-			var nw = _width * d;
-			container.x = (width - nw) / 2;
-			container.y = 0;
-		} else {
-			d = w;
-			var nh = _height * d;
-			container.x = 0;
-			container.y = (height - nh) / 2;
-		}
-		container.width = d;
-		container.height = d;
+	private function readyHandler(p:Point<Int>):Void {
+		timeLabel = new UniversalText('00:00', style);
+		timeLabel.x = (p.x - timeLabel.width) / 2;
+		timeLabel.y = (p.y - timeLabel.height) / 2 - 2;
+		addChild(timeLabel);
+		timer.progress << progressHandler;
+		timer.update << updateHandler;
 	}
 	
-	private function updateHandler(time:Float):Void {
-		DeltaTime.fixedValue = (time - prevTime) / 1000;
-		prevTime = time;
-		DeltaTime.fixedDispatch();
+	private function progressHandler(p:Float):Void core.percent = p;
+	private function updateHandler(t:Time):Void timeLabel.text = t.showMinSec();
+	
+	public function start(t:TimeInterval):Void {
+		timer.time = t;
+		timer.reset();
+		timer.start();
 	}
+	
+	@:extern inline public function pause():Void timer.stop();
+	@:extern inline public function play():Void timer.start();
 	
 }

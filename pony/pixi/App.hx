@@ -25,20 +25,66 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.pixijs.ui;
+package pony.pixi;
 
-import pixi.core.display.Container;
-import pony.ui.gui.IntervalLayoutCore;
+import js.Browser;
+import pixi.core.sprites.Sprite;
+import pixi.plugins.app.Application;
+import pony.time.DeltaTime;
+import pony.ui.touch.pixi.Mouse;
+import pony.ui.touch.pixi.Touch;
 
 /**
- * IntervalLayout
+ * App
  * @author AxGord <axgord@gmail.com>
  */
-class IntervalLayout extends BaseLayout<IntervalLayoutCore<Container>> {
+class App extends Application {
 
-	public function new(interval:Int, vert:Bool = false) {
-		layout = new IntervalLayoutCore<Container>(interval, vert);
+	private var _width:Float;
+	private var _height:Float;
+	private var container:Sprite;
+	private var prevTime:Float = 0;
+	
+	public function new(container:Sprite, width:Float, height:Float, ?bg:UInt) {
 		super();
+		backgroundColor = bg;
+		antialias = false;
+		pixelRatio = Browser.window.devicePixelRatio;
+		_width = width;
+		_height = height;
+		this.container = container;
+		onResize = resizeHandler;
+		onUpdate = updateHandler;
+		start();
+		stage.addChild(container);
+		resizeHandler();
+		Mouse.reg(container);
+		Touch.reg(container);
+	}
+	
+	private function resizeHandler():Void {
+		var w = width / _width;
+		var h = height / _height;
+		var d:Float;
+		if (w > h) {
+			d = h;
+			var nw = _width * d;
+			container.x = (width - nw) / 2;
+			container.y = 0;
+		} else {
+			d = w;
+			var nh = _height * d;
+			container.x = 0;
+			container.y = (height - nh) / 2;
+		}
+		container.width = d;
+		container.height = d;
+	}
+	
+	private function updateHandler(time:Float):Void {
+		DeltaTime.fixedValue = (time - prevTime) / 1000;
+		prevTime = time;
+		DeltaTime.fixedDispatch();
 	}
 	
 }

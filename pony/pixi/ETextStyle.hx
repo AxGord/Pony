@@ -25,31 +25,16 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.pixijs.ui;
+package pony.pixi;
 
-import pixi.core.display.Container;
-import pixi.core.sprites.Sprite;
-import pony.geom.Border;
-import pony.ui.gui.RubberLayoutCore;
-
-using pony.pixijs.PixijsExtends;
+import pixi.core.text.Text.TextStyle;
+import pixi.extras.BitmapText.BitmapTextStyle;
 
 /**
- * BGLayout
+ * UniversalTextStyle
  * @author AxGord <axgord@gmail.com>
  */
-class BGLayout extends BaseLayout<RubberLayoutCore<Container>> {
-	
-	public function new(img:Sprite, vert:Bool = false, ?border:Border<Int>) {
-		layout = new RubberLayoutCore<Container>(vert, border);
-		layout.tasks.add();
-		super();
-		addChild(img);
-		img.loaded(function(){
-			layout.width = img.width;
-			layout.height = img.height;
-			layout.tasks.end();
-		});
-	}
-	
+enum ETextStyle {
+	TEXT_STYLE(style:TextStyle);
+	BITMAP_TEXT_STYLE(style:BitmapTextStyle);
 }

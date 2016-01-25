@@ -25,12 +25,12 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.pixijs;
+package pony.pixi;
 
 import pixi.core.display.Container;
 import pixi.core.text.Text;
 import pixi.extras.BitmapText;
-import pony.pixijs.ETextStyle;
+import pony.pixi.ETextStyle;
 
 enum EUniversalText {
 	TEXT(t:Text);

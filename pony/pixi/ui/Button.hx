@@ -25,59 +25,56 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.pixijs.ui;
+package pony.pixi.ui;
 
-import pixi.core.display.Container;
-import pixi.core.sprites.Sprite;
-import pony.geom.Border;
-import pony.pixijs.ETextStyle;
-import pony.pixijs.UniversalText;
-import pony.time.DeltaTime;
-import pony.ui.gui.RubberLayoutCore;
-
-using pony.pixijs.PixijsExtends;
+import pixi.core.textures.Texture;
+import pixi.extras.MovieClip;
+import pony.ui.gui.ButtonImgN;
+import pony.ui.touch.Touchable;
 
 /**
- * TextBox
+ * Button
  * @author AxGord <axgord@gmail.com>
  */
-class TextBox extends BaseLayout<RubberLayoutCore<Container>> {
+class Button extends MovieClip {
 
-	public var text(get, set):String;
+	public var core(default,null):ButtonImgN;
+	private var hideDisabled:Bool;
 	
-	public var obj(default, null):UniversalText;
-	
-	public function new(image:Sprite, text:String, style:ETextStyle, ?border:Border<Int>) {
-		layout = new RubberLayoutCore(border);
-		layout.tasks.add();
-		super();
-		addChild(image);
-		image.loaded(function(){
-			layout.width = image.width;
-			layout.height = image.height;
-			layout.tasks.end();
-		});
-		add(obj = new UniversalText(text, style));
-	}
-	
-	inline private function get_text():String return obj.text;
-	
-	private function set_text(v:String):String {
-		if (obj.text != v) {
-			obj.text = v;
-			update();
+	public function new(imgs:Array<String>) {
+		if (imgs[0] == null) throw 'Need first img';
+		if (imgs[1] == null)
+			imgs[1] = imgs[2] != null ? imgs[2] : imgs[0];
+		if (imgs[2] == null) imgs[2] = imgs[1];
+		hideDisabled = imgs[3] == null;
+		var i = 4;
+		while (i < imgs.length) {
+			if (imgs[i+1] == null)
+				imgs[i+1] = imgs[i+2] != null ? imgs[i+2] : imgs[i];
+			if (imgs[i+2] == null) imgs[i+2] = imgs[i+1];
+			i += 3;
 		}
-		return v;
+		super([for (img in imgs) Texture.fromImage(img)]);
+		buttonMode = true;
+		core = new ButtonImgN(new Touchable(this));
+		core.onImg << imgHandler;
 	}
 	
-	@:extern inline private function update():Void {
-		layout.update();
-		_update();
-		DeltaTime.fixedUpdate < _update;
+	private function imgHandler(n:Int):Void {
+		if (n == 4 && hideDisabled) {
+			visible = false;
+			return;
+		} else {
+			visible = true;
+		}
+		gotoAndStop(n - 1);
 	}
 	
-	inline private function _update():Void {
-		DeltaTime.fixedUpdate < layout.update;
+	override public function destroy():Void {
+		core.destroy();
+		core = null;
+		super.destroy();
+		//todo: pixi clear texture cache?
 	}
 	
 }

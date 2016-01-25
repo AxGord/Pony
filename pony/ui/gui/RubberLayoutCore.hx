@@ -44,7 +44,7 @@ class RubberLayoutCore<T> extends BaseLayoutCore<T> {
 
 	@:arg private var _vert:Bool = false;
 	@:arg private var _border:Border<Int> = 0;
-	@:arg private var _padding:Bool = false;
+	@:arg private var _padding:Bool = true;
 	
 	public var vert(get, set):Bool;
 	public var border(get, set):Border<Int>;

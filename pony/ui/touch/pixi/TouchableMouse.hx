@@ -25,7 +25,7 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.ui.touch.pixijs;
+package pony.ui.touch.pixi;
 
 import pixi.core.display.Container;
 import pixi.interaction.EventTarget;
@@ -44,7 +44,7 @@ class TouchableMouse {
 	public static function init():Void {
 		if (inited) return;
 		inited = true;
-		pony.ui.touch.pixijs.Mouse.init();
+		pony.ui.touch.pixi.Mouse.init();
 		Mouse.onMove << TouchableBase.dispatchMove.bind(0);
 		Mouse.onLeftDown << function() down = true;
 		Mouse.onLeftUp << function() down = false;

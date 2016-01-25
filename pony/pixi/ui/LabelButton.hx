@@ -25,50 +25,38 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.pixijs.ui;
+package pony.pixi.ui;
 
-import pony.geom.Point;
-import pony.pixijs.UniversalText;
-import pony.time.DTimer;
-import pony.time.Time;
-import pony.time.TimeInterval;
+import pixi.core.display.Container;
+import pony.geom.Border;
+import pony.ui.gui.ButtonCore;
+import pony.ui.gui.RubberLayoutCore;
+
+using pony.pixi.PixijsExtends;
 
 /**
- * TimeBar
+ * LabelButton
  * @author AxGord <axgord@gmail.com>
  */
-class TimeBar extends Bar {
+class LabelButton extends BaseLayout<RubberLayoutCore<Container>> {
 
-	public var timeLabel:UniversalText;
-	private var style:ETextStyle;
-	private var timer:DTimer;
+	public var core(get, never):ButtonCore;
 	
-	public function new(bg:String, fillBegin:String, fill:String, ?offset:Point<Int>, ?style:ETextStyle) {
-		this.style = style;
-		super(bg, fillBegin, fill, offset);
-		timer = DTimer.createFixedTimer(null);
-		onReady < readyHandler;
+	private var button:Button;
+	
+	public function new(imgs:Array<String>, vert:Bool = false, ?border:Border<Int>) {
+		layout = new RubberLayoutCore<Container>(vert, border);
+		layout.tasks.add();
+		super();
+		button = new Button(imgs);
+		addChild(button);
+		button.textures[0].loaded(function(){
+			layout.width = button.width;
+			layout.height = button.height;
+			layout.tasks.end();
+		});
 	}
 	
-	private function readyHandler(p:Point<Int>):Void {
-		timeLabel = new UniversalText('00:00', style);
-		timeLabel.x = (p.x - timeLabel.width) / 2;
-		timeLabel.y = (p.y - timeLabel.height) / 2 - 2;
-		addChild(timeLabel);
-		timer.progress << progressHandler;
-		timer.update << updateHandler;
-	}
-	
-	private function progressHandler(p:Float):Void core.percent = p;
-	private function updateHandler(t:Time):Void timeLabel.text = t.showMinSec();
-	
-	public function start(t:TimeInterval):Void {
-		timer.time = t;
-		timer.reset();
-		timer.start();
-	}
-	
-	@:extern inline public function pause():Void timer.stop();
-	@:extern inline public function play():Void timer.start();
+	@:extern inline private function get_core():ButtonCore return button.core;
 	
 }

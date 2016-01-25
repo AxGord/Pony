@@ -25,13 +25,13 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.ui.touch.pixijs;
+package pony.ui.touch.pixi;
 
 import pixi.core.display.Container;
 import pony.events.Signal1;
 import pony.time.DeltaTime;
 import pony.time.DTimer;
-import pony.ui.touch.pixijs.Touch;
+import pony.ui.touch.pixi.Touch;
 import pony.ui.touch.TouchableBase;
 
 /**

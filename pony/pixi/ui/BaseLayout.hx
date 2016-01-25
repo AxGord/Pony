@@ -25,7 +25,7 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.pixijs.ui;
+package pony.pixi.ui;
 
 import pixi.core.display.Container;
 import pixi.core.sprites.Sprite;
@@ -35,7 +35,7 @@ import pony.geom.IWH;
 import pony.geom.Point;
 import pony.ui.gui.BaseLayoutCore;
 
-using pony.pixijs.PixijsExtends;
+using pony.pixi.PixijsExtends;
 
 /**
  * BaseLayout

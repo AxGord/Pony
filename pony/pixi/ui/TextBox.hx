@@ -25,38 +25,59 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.pixijs.ui;
+package pony.pixi.ui;
 
 import pixi.core.display.Container;
+import pixi.core.sprites.Sprite;
 import pony.geom.Border;
-import pony.ui.gui.ButtonCore;
+import pony.pixi.ETextStyle;
+import pony.pixi.UniversalText;
+import pony.time.DeltaTime;
 import pony.ui.gui.RubberLayoutCore;
 
-using pony.pixijs.PixijsExtends;
+using pony.pixi.PixijsExtends;
 
 /**
- * LabelButton
+ * TextBox
  * @author AxGord <axgord@gmail.com>
  */
-class LabelButton extends BaseLayout<RubberLayoutCore<Container>> {
+class TextBox extends BaseLayout<RubberLayoutCore<Container>> {
 
-	public var core(get, never):ButtonCore;
+	public var text(get, set):String;
 	
-	private var button:Button;
+	public var obj(default, null):UniversalText;
 	
-	public function new(imgs:Array<String>, vert:Bool = false, ?border:Border<Int>) {
-		layout = new RubberLayoutCore<Container>(vert, border);
+	public function new(image:Sprite, text:String, style:ETextStyle, ?border:Border<Int>) {
+		layout = new RubberLayoutCore(border);
 		layout.tasks.add();
 		super();
-		button = new Button(imgs);
-		addChild(button);
-		button.textures[0].loaded(function(){
-			layout.width = button.width;
-			layout.height = button.height;
+		addChild(image);
+		image.loaded(function(){
+			layout.width = image.width;
+			layout.height = image.height;
 			layout.tasks.end();
 		});
+		add(obj = new UniversalText(text, style));
 	}
 	
-	@:extern inline private function get_core():ButtonCore return button.core;
+	inline private function get_text():String return obj.text;
+	
+	private function set_text(v:String):String {
+		if (obj.text != v) {
+			obj.text = v;
+			update();
+		}
+		return v;
+	}
+	
+	@:extern inline private function update():Void {
+		layout.update();
+		_update();
+		DeltaTime.fixedUpdate < _update;
+	}
+	
+	inline private function _update():Void {
+		DeltaTime.fixedUpdate < layout.update;
+	}
 	
 }
