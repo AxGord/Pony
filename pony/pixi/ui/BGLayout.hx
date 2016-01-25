@@ -32,7 +32,7 @@ import pixi.core.sprites.Sprite;
 import pony.geom.Border;
 import pony.ui.gui.RubberLayoutCore;
 
-using pony.pixi.PixijsExtends;
+using pony.pixi.PixiExtends;
 
 /**
  * BGLayout

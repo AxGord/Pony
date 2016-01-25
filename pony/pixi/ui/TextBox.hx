@@ -35,7 +35,7 @@ import pony.pixi.UniversalText;
 import pony.time.DeltaTime;
 import pony.ui.gui.RubberLayoutCore;
 
-using pony.pixi.PixijsExtends;
+using pony.pixi.PixiExtends;
 
 /**
  * TextBox

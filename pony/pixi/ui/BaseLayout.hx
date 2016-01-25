@@ -35,7 +35,7 @@ import pony.geom.IWH;
 import pony.geom.Point;
 import pony.ui.gui.BaseLayoutCore;
 
-using pony.pixi.PixijsExtends;
+using pony.pixi.PixiExtends;
 
 /**
  * BaseLayout

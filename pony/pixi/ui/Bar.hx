@@ -34,7 +34,7 @@ import pony.geom.Point;
 import pony.magic.HasSignal;
 import pony.ui.gui.BarCore;
 
-using pony.pixi.PixijsExtends;
+using pony.pixi.PixiExtends;
 
 /**
  * Bar

@@ -37,10 +37,10 @@ import pixi.filters.blur.BlurFilter;
  * PixijsExtends
  * @author AxGord <axgord@gmail.com>
  */
-class PixijsExtends {
+class PixiExtends {
 
 	@:extern inline public static function loaded(s:Sprite, f:Void->Void):Void {
-		PixijsExtendsTexture.loaded(s.texture, f);
+		PixiExtendsTexture.loaded(s.texture, f);
 	}
 	
 	public static function loadedList(a:Array<Sprite>, f:Void->Void):Void {
@@ -55,7 +55,7 @@ class PixijsExtends {
  * PixijsExtendsTexture
  * @author AxGord <axgord@gmail.com>
  */
-class PixijsExtendsTexture {
+class PixiExtendsTexture {
 	
 	public static function loaded(t:Texture, f:Void->Void):Void {
 		if (t.baseTexture.hasLoaded) f();
@@ -68,7 +68,7 @@ class PixijsExtendsTexture {
  * PixijsExtendsText
  * @author AxGord <axgord@gmail.com>
  */
-class PixijsExtendsText {
+class PixiExtendsText {
 	
 	public static function glow(t:Text, blur:Int=10, ?color:Null<UInt>):Text {
 		var f = new BlurFilter();
@@ -86,7 +86,7 @@ class PixijsExtendsText {
  * PixijsExtendsBitmapText
  * @author AxGord <axgord@gmail.com>
  */
-class PixijsExtendsBitmapText {
+class PixiExtendsBitmapText {
 	
 	public static function glow(t:BitmapText, style:BitmapTextStyle, blur:Int=10, ?color:Null<UInt>):BitmapText {
 		var f = new BlurFilter();
