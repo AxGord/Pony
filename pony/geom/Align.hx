@@ -25,21 +25,43 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.pixi.ui;
-
-import pixi.core.display.Container;
-import pony.geom.Align;
-import pony.ui.gui.IntervalLayoutCore;
+package pony.geom;
 
 /**
- * IntervalLayout
+ * Align
  * @author AxGord <axgord@gmail.com>
  */
-class IntervalLayout extends BaseLayout<IntervalLayoutCore<Container>> {
+abstract Align(AlignType) from AlignType to AlignType {
+	
+	public var vertical(get, never):VAlign;
+	public var horizontal(get, never):HAlign;
 
-	public function new(interval:Int, vert:Bool = false, ?align:Align) {
-		layout = new IntervalLayoutCore<Container>(interval, vert, align);
-		super();
+	
+	@:extern inline public function new(v:AlignType) this = v;
+	
+	@:from @:extern inline public static function fromV(v:VAlign):Align {
+		return new Pair(v, HAlign.Center);
 	}
 	
+	@:from @:extern inline public static function fromH(v:HAlign):Align {
+		return new Pair(VAlign.Middle, v);
+	}
+	
+	@:to @:extern inline public function toV():VAlign return this.a;
+	@:to @:extern inline public function toH():HAlign return this.b;
+	
+	@:extern inline private function get_vertical():VAlign return this.a;
+	@:extern inline private function get_horizontal():HAlign return this.b;
+
+	
+}
+ 
+typedef AlignType = Pair<VAlign, HAlign>;
+
+enum VAlign {
+	Top; Middle; Bottom;
+}
+
+enum HAlign {
+	Left; Center; Right;
 }

@@ -26,7 +26,9 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.geom;
-import pony.geom.Point.IntPoint;
+
+import pony.geom.Align;
+import pony.geom.Point;
 
 /**
  * GeomTools
@@ -118,6 +120,27 @@ class GeomTools
 			pos += obj + d;
 		}
 		return r;
+	}
+	
+	public static function end(size:Float, objects:Array<Float>):Array<Float> {
+		if (size == -1) for (obj in objects) if (obj > size) size = obj;
+		return [for (obj in objects) size - obj];
+	}
+	
+	public static function valign(a:VAlign, size:Float, objects:Array<Float>):Array<Float> {
+		return switch a {
+			case VAlign.Top: [for (_ in objects) 0];
+			case VAlign.Middle: centerA(size, objects);
+			case VAlign.Bottom: end(size, objects);
+		}
+	}
+	
+	public static function halign(a:HAlign, size:Float, objects:Array<Float>):Array<Float> {
+		return switch a {
+			case HAlign.Left: [for (_ in objects) 0];
+			case HAlign.Center: centerA(size, objects);
+			case HAlign.Right: end(size, objects);
+		}
 	}
 	
 	public static function pointsCeil(a:Array<Point<Float>>):Array<IntPoint> {

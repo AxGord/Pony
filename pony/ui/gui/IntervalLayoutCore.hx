@@ -27,6 +27,7 @@
 **/
 package pony.ui.gui;
 
+import pony.geom.Align;
 import pony.geom.GeomTools;
 
 using pony.Tools;
@@ -39,9 +40,11 @@ class IntervalLayoutCore<T> extends BaseLayoutCore<T> {
 	
 	@:arg private var _interval:Int;
 	@:arg private var _vert:Bool = false;
+	@:arg private var _align:Align = new Pair(VAlign.Middle, HAlign.Center);
 	
 	public var interval(get, set):Int;
 	public var vert(get, set):Bool;
+	public var align(get, set):Align;
 	
 	override public function update():Void {
 		if (!ready) return;
@@ -58,7 +61,7 @@ class IntervalLayoutCore<T> extends BaseLayoutCore<T> {
 			}
 			if (objects.length > 0) pos -= interval;
 			_h = pos;
-			for (p in GeomTools.centerA(_w, sizes).pair(objects)) setXpos(p.b, p.a);
+			for (p in GeomTools.halign(_align, _w, sizes).pair(objects)) setXpos(p.b, p.a);
 		} else {
 			var sizes = [];
 			_h = 0;
@@ -71,13 +74,14 @@ class IntervalLayoutCore<T> extends BaseLayoutCore<T> {
 			}
 			if (objects.length > 0) pos -= interval;
 			_w = pos;
-			for (p in GeomTools.centerA(_h, sizes).pair(objects)) setYpos(p.b, p.a);
+			for (p in GeomTools.valign(_align, _h, sizes).pair(objects)) setYpos(p.b, p.a);
 		}
 		super.update();
 	}
 	
 	@:extern inline private function get_interval():Int return _interval;
 	@:extern inline private function get_vert():Bool return _vert;
+	@:extern inline private function get_align():Align return _align;
 	
 	@:extern inline private function set_interval(v:Int):Int {
 		if (interval == v) return v;
@@ -93,4 +97,10 @@ class IntervalLayoutCore<T> extends BaseLayoutCore<T> {
 		return v;
 	}
 	
+	@:extern inline private function set_align(v:Align):Align {
+		if (align == v) return v;
+		_align = v;
+		update();
+		return v;
+	}
 }
