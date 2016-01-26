@@ -49,9 +49,11 @@ class Bar extends Sprite implements HasSignal {
 	private var begin:Sprite;
 	private var end:Sprite;
 	private var fill:Sprite;
+	private var invert:Bool = false;
 
-	public function new(bg:String, fillBegin:String, fill:String, ?offset:Point<Int>) {
+	public function new(bg:String, fillBegin:String, fill:String, ?offset:Point<Int>, invert:Bool=false) {
 		super();
+		this.invert = invert;
 		this.bg = new Sprite(Texture.fromImage(bg));
 		addChild(this.bg);
 		begin = new Sprite(Texture.fromImage(fillBegin));
@@ -71,7 +73,7 @@ class Bar extends Sprite implements HasSignal {
 		end.y = begin.y;
 
 		addChild(end);
-		core = BarCore.create(bg.width - (begin.x + begin.width) * 2, bg.height - (begin.y + begin.height) * 2);
+		core = BarCore.create(bg.width - (begin.x + begin.width) * 2, bg.height - (begin.y + begin.height) * 2, invert);
 		if (core.isVertical) {
 			end.height = -end.height;
 			fill.y = begin.y + begin.height;

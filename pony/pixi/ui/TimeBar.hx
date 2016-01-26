@@ -44,9 +44,9 @@ class TimeBar extends Bar {
 	private var style:ETextStyle;
 	private var timer:DTimer;
 	
-	public function new(bg:String, fillBegin:String, fill:String, ?offset:Point<Int>, ?style:ETextStyle) {
+	public function new(bg:String, fillBegin:String, fill:String, ?offset:Point<Int>, ?style:ETextStyle, invert:Bool=false) {
 		this.style = style;
-		super(bg, fillBegin, fill, offset);
+		super(bg, fillBegin, fill, offset, invert);
 		timer = DTimer.createFixedTimer(null);
 		onReady < readyHandler;
 	}
