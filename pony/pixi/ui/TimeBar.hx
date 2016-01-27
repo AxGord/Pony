@@ -63,9 +63,10 @@ class TimeBar extends Bar {
 	private function progressHandler(p:Float):Void core.percent = p;
 	private function updateHandler(t:Time):Void timeLabel.text = t.showMinSec();
 	
-	public function start(t:TimeInterval):Void {
+	public function start(t:TimeInterval, ?cur:Time):Void {
 		timer.time = t;
 		timer.reset();
+		if (cur != null) timer.currentTime = cur;
 		timer.start();
 	}
 	

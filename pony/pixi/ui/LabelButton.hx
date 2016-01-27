@@ -42,7 +42,7 @@ class LabelButton extends BaseLayout<RubberLayoutCore<Container>> {
 
 	public var core(get, never):ButtonCore;
 	
-	private var button:Button;
+	public var button(default, null):Button;
 	
 	public function new(imgs:Array<String>, vert:Bool = false, ?border:Border<Int>) {
 		layout = new RubberLayoutCore<Container>(vert, border);
@@ -50,9 +50,9 @@ class LabelButton extends BaseLayout<RubberLayoutCore<Container>> {
 		super();
 		button = new Button(imgs);
 		addChild(button);
-		button.textures[0].loaded(function(){
-			layout.width = button.width;
-			layout.height = button.height;
+		button.textures[0].loaded(function() {
+			layout.width = button.textures[0].width;
+			layout.height = button.textures[0].height;
 			layout.tasks.end();
 		});
 	}

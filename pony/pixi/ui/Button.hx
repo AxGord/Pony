@@ -54,7 +54,7 @@ class Button extends MovieClip {
 			if (imgs[i+2] == null) imgs[i+2] = imgs[i+1];
 			i += 3;
 		}
-		super([for (img in imgs) Texture.fromImage(img)]);
+		super([for (img in imgs) img == null ? null : Texture.fromImage(img)]);
 		buttonMode = true;
 		core = new ButtonImgN(new Touchable(this));
 		core.onImg << imgHandler;
