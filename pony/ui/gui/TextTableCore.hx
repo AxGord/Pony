@@ -45,7 +45,7 @@ typedef TableContent = Array < Array<String> > ;
  * TableCore
  * @author AxGord <axgord@gmail.com>
  */
-class TableCore implements HasAbstract {
+class TextTableCore implements HasAbstract {
 	
 	public var data(default, set):TableContent;
 	

@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -25,44 +25,67 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.unity3d.ui;
+package pony.flash.ui;
 
+import flash.display.DisplayObjectContainer;
+import flash.display.Graphics;
+import flash.display.Shape;
+import flash.display.LineScaleMode;
+import flash.display.CapsStyle;
+import flash.display.JointStyle;
+import flash.text.TextField;
+import flash.text.TextFormat;
 import pony.color.Color;
 import pony.color.UColor;
-import pony.ui.gui.TableCore;
-import unityengine.Object;
-import unityengine.Vector3;
-import unityengine.GameObject;
-
-import pony.geom.Point;
 import pony.geom.Point.IntPoint;
 import pony.geom.Rect.IntRect;
-import pony.magic.Declarator;
 import pony.ui.gui.FontStyle;
+import pony.ui.gui.TextTableCore;
 
 /**
  * Table
  * @author AxGord <axgord@gmail.com>
  */
-@:nativeGen class Table extends pony.ui.gui.TableCore implements Declarator {
+class TextTable extends TextTableCore {
+
+	private var area:DisplayObjectContainer;
+	private var shape:Shape;
+	private var g(get,never):Graphics;
 	
-	private var gos:List<GameObject> = new List();
+	public function new(area:DisplayObjectContainer) {
+		super();
+		this.area = area;
+		createShape();
+	}
 	
-	@:arg private var startpos:IntPoint;
-	@:arg private var fp:Point<Float>;
-	@:arg private var z:Float;
-	@:arg private var textMargin:IntPoint;
+	inline private function createShape():Void {
+		shape = new Shape();
+		area.addChild(shape);
+	}
+	
+	private inline function get_g():Graphics return shape.graphics;
 
 	override private function drawBG(r:IntRect, color:UColor):Void {
-		gos.push(GUI.rect(new Vector3(fp.x , fp.y, z), r+startpos, color));
+		g.lineStyle();
+		g.beginFill(color);
+		g.drawRect(r.getX(), r.getY(), r.getWidth(), r.getHeight());
+		g.endFill();
 	}
 	
 	override private function drawText(point:IntPoint, text:String, style:FontStyle):Void {
-		gos.push(GUI.text(new Vector3(fp.x , fp.y, z+1), point+startpos+textMargin, text, style));
+		var tf = new TextField();
+		tf.text = text;
+		trace(style);
+		tf.selectable = false;
+		tf.setTextFormat(new TextFormat(style.font, style.size, style.color, style.bold, style.italic, style.underline));
+		tf.x = point.x;
+		tf.y = point.y;
+		area.addChild(tf);
 	}
 	
 	override private function clear():Void {
-		for (o in gos) Object.Destroy(o);
+		area.removeChild(shape);
+		createShape();
 	}
 	
 }
