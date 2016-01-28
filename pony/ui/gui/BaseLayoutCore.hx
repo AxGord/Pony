@@ -33,6 +33,7 @@ import pony.geom.Point;
 import pony.magic.Declarator;
 import pony.magic.HasSignal;
 import pony.Tasks;
+import pony.time.DeltaTime;
 
 using pony.Tools;
 
@@ -52,14 +53,14 @@ class BaseLayoutCore<T> implements Declarator implements HasSignal implements IW
 	private var _h:Float;
 	
 	public function new() {
-		tasks = new Tasks(init);
+		tasks = new Tasks(tasksReady);
 	}
 	
 	public function add(o:T):Void {
 		objects.push(o);
 		if (Std.is(o, IWH)) {
 			tasks.add();
-			cast(o, IWH).waitReady(tasks.end);
+			cast(o, IWH).waitReady(DeltaTime.notInstant(tasks.end));
 		} else load(o);
 	}
 	
@@ -69,7 +70,7 @@ class BaseLayoutCore<T> implements Declarator implements HasSignal implements IW
 	public dynamic function setYpos(o:T, v:Float):Void {}
 	private function get_size():Point<Float> return new Point(_w, _h);
 	
-	private function init():Void {
+	private function tasksReady():Void {
 		if (ready) {
 			update();
 		} else {
@@ -81,7 +82,10 @@ class BaseLayoutCore<T> implements Declarator implements HasSignal implements IW
 	
 	public function waitReady(cb:Void->Void):Void {
 		if (ready) cb();
-		else onReady < cb;
+		else if (tasks.ready) {
+			tasksReady();
+			cb();
+		} else onReady < cb;
 	}
 	
 	public function update():Void {}

@@ -79,16 +79,27 @@ class GeomTools
 		];
 	}
 	
-	public static function center(container:Point<Float>, objects:Array<Point<Float>>, vert:Bool = false, ?border:Border<Int>, padding:Bool = true):Array<Point<Float>> {
+	public static function center(container:Point<Float>, objects:Array<Point<Float>>, vert:Bool = false, ?border:Border<Int>, padding:Bool = true, ?align:Align):Array<Point<Float>> {
+		var cfun =  if (align != null)  {
+			if (vert) switch align.horizontal {
+				case HAlign.Left: begin;
+				case HAlign.Center: centerA;
+				case HAlign.Right: end;
+			} else switch align.vertical {
+				case VAlign.Top: begin;
+				case VAlign.Middle: centerA;
+				case VAlign.Bottom: end;
+			}
+		} else centerA;
 		var fc = !padding && objects.length > 1 ? centerC : centerB;
-		var fa = vert ? centerA : fc;
-		var fb = vert ? fc : centerA;
+		var fa = vert ? cfun : fc;
+		var fb = vert ? fc : cfun;
 		if (border == null) border = 0;
 		var w = container.x - (border.left + border.right);
 		var h = container.y - (border.top + border.bottom);
 		var a = fa(w, [for (obj in objects) obj.x]);
 		var b = fb(h, [for (obj in objects) obj.y]);
-		return [for (i in 0...a.length) new Point(a[i]+border.left, b[i]+border.top)];
+		return [for (i in 0...a.length) new Point(a[i] + border.left, b[i] + border.top)];
 	}
 	
 	public static function centerA(size:Float, objects:Array<Float>):Array<Float> {
@@ -121,6 +132,8 @@ class GeomTools
 		}
 		return r;
 	}
+	
+	public static function begin(size:Float, objects:Array<Float>):Array<Float> return [for (_ in objects) 0];
 	
 	public static function end(size:Float, objects:Array<Float>):Array<Float> {
 		if (size == -1) for (obj in objects) if (obj > size) size = obj;

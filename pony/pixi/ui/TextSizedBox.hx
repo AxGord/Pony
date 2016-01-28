@@ -28,6 +28,7 @@
 package pony.pixi.ui;
 
 import pixi.core.display.Container;
+import pony.geom.Align;
 import pony.geom.Border;
 import pony.pixi.ETextStyle;
 import pony.pixi.ui.BaseLayout;
@@ -45,8 +46,9 @@ class TextSizedBox extends BaseLayout<RubberLayoutCore<Container>> {
 	
 	public var obj(default, null):UniversalText;
 	
-	public function new(w:Float, h:Float, text:String, style:ETextStyle, ?border:Border<Int>) {
-		layout = new RubberLayoutCore(border);
+	public function new(w:Float, h:Float, text:String, style:ETextStyle, ?border:Border<Int>, ?align:Align) {
+		var f = align != null && align.horizontal != HAlign.Center;
+		layout = new RubberLayoutCore(f, border, align);
 		layout.tasks.add();
 		layout.width = w;
 		layout.height = h;

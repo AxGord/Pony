@@ -154,6 +154,12 @@ class DeltaTime implements HasSignal {
 	
 	public static function skipUpdate(f:Void->Void):Void DeltaTime.fixedUpdate < function() DeltaTime.fixedUpdate < f;
 	
+	public static function notInstant(cb:Void->Void):Void->Void {
+		var instant = true;
+		DeltaTime.fixedUpdate < function() instant = false;
+		return function() instant ? DeltaTime.fixedUpdate < cb : cb();
+	}
+	
 	#if (munit || dox)
 	/**
 	 * For unit tests

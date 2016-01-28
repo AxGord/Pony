@@ -25,39 +25,28 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.pixi.ui;
+package pony.events;
 
-import pixi.core.display.Container;
-import pony.geom.Border;
-import pony.geom.Point;
-import pony.ui.gui.ButtonCore;
-import pony.ui.gui.RubberLayoutCore;
-
-using pony.pixi.PixiExtends;
+import pony.events.Signal0;
+import pony.magic.HasSignal;
 
 /**
- * LabelButton
+ * WaitReady Helper
  * @author AxGord <axgord@gmail.com>
  */
-class LabelButton extends BaseLayout<RubberLayoutCore<Container>> {
+class WaitReady implements HasSignal {
 
-	public var core(get, never):ButtonCore;
+	@:auto private var onReady:Signal0;
+	private var isReady:Bool = false;
 	
-	public var button(default, null):Button;
+	public function new() {}
 	
-	public function new(imgs:Array<String>, vert:Bool = false, ?border:Border<Int>, ?offset:Point<Float>) {
-		layout = new RubberLayoutCore<Container>(vert, border);
-		layout.tasks.add();
-		super();
-		button = new Button(imgs, offset);
-		addChild(button);
-		button.waitReady(function() {
-			layout.width = button.size.x;
-			layout.height = button.size.y;
-			layout.tasks.end();
-		});
+	public function ready():Void {
+		isReady = true;
+		eReady.dispatch();
+		eReady.destroy();
 	}
 	
-	@:extern inline private function get_core():ButtonCore return button.core;
+	public function waitReady(cb:Void->Void):Void isReady ? cb() : onReady < cb;
 	
 }

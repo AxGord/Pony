@@ -50,31 +50,30 @@ class IntervalLayoutCore<T> extends BaseLayoutCore<T> {
 		if (!ready) return;
 		var pos:Float = 0;
 		if (vert) {
-			var sizes = [];
 			_w = 0;
-			for (obj in objects) {
+			var sizes = [for (obj in objects) {
 				var objSize = getObjSize(obj);
 				setYpos(obj, Std.int(pos));
 				pos += objSize.y + interval;
 				if (objSize.x > _w) _w = objSize.x;
-				sizes.push(objSize.x);
-			}
+				objSize.x;
+			}];
 			if (objects.length > 0) pos -= interval;
 			_h = pos;
-			for (p in GeomTools.halign(_align, _w, sizes).pair(objects)) setXpos(p.b, p.a);
+			for (p in GeomTools.halign(_align, _w, sizes).pair(objects)) setXpos(p.b, Std.int(p.a));
 		} else {
-			var sizes = [];
+			[];
 			_h = 0;
-			for (obj in objects) {
+			var sizes = [for (obj in objects) {
 				var objSize = getObjSize(obj);
 				setXpos(obj, Std.int(pos));
 				pos += objSize.x + interval;
 				if (objSize.y > _h) _h = objSize.y;
-				sizes.push(objSize.y);
-			}
+				objSize.y;
+			}];
 			if (objects.length > 0) pos -= interval;
 			_w = pos;
-			for (p in GeomTools.valign(_align, _h, sizes).pair(objects)) setYpos(p.b, p.a);
+			for (p in GeomTools.valign(_align, _h, sizes).pair(objects)) setYpos(p.b, Std.int(p.a));
 		}
 		super.update();
 	}
@@ -103,4 +102,5 @@ class IntervalLayoutCore<T> extends BaseLayoutCore<T> {
 		update();
 		return v;
 	}
+	
 }

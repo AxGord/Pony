@@ -27,25 +27,42 @@
 **/
 package pony.pixi.ui;
 
+import pixi.core.sprites.Sprite;
 import pixi.core.textures.Texture;
-import pixi.extras.MovieClip;
+import pony.geom.IWH;
+import pony.geom.Point;
 import pony.ui.gui.ButtonImgN;
 import pony.ui.touch.Touchable;
+import pony.events.WaitReady;
+
+using pony.pixi.PixiExtends;
 
 /**
  * Button
  * @author AxGord <axgord@gmail.com>
  */
-class Button extends MovieClip {
+class Button extends Sprite implements IWH {
 
-	public var core(default,null):ButtonImgN;
+	public var core(default, null):ButtonImgN;
+	public var size(get, never):Point<Float>;
 	private var hideDisabled:Bool;
+	public var touchActive(get, set):Bool;
 	
-	public function new(imgs:Array<String>) {
+	private var list:Array<Sprite>;
+	private var zone:Sprite;
+	private var prev:Int = 0;
+	private var wr:WaitReady;
+	
+	public function new(imgs:Array<String>, ?offset:Point<Float>) {
+		wr = new WaitReady();
 		if (imgs[0] == null) throw 'Need first img';
 		if (imgs[1] == null)
 			imgs[1] = imgs[2] != null ? imgs[2] : imgs[0];
 		if (imgs[2] == null) imgs[2] = imgs[1];
+		
+		var z = imgs.length > 3 ? imgs.splice(3, 1)[0] : null;
+		if (z == null) z = imgs[0];
+		
 		hideDisabled = imgs[3] == null;
 		var i = 4;
 		while (i < imgs.length) {
@@ -54,11 +71,26 @@ class Button extends MovieClip {
 			if (imgs[i+2] == null) imgs[i+2] = imgs[i+1];
 			i += 3;
 		}
-		super([for (img in imgs) img == null ? null : Texture.fromImage(img)]);
-		buttonMode = true;
-		core = new ButtonImgN(new Touchable(this));
+		list = [for (img in imgs) img == null ? null : new Sprite(Texture.fromImage(img))];
+		if (offset != null) {
+			for (e in list) if (e != null) {
+				e.x = -offset.x;
+				e.y = -offset.y;
+			}
+		}
+		super();
+		zone = new Sprite(Texture.fromImage(z));
+		zone.texture.loaded(wr.ready);
+		addChild(zone);
+		zone.buttonMode = true;
+		zone.alpha = 0;
+		core = new ButtonImgN(new Touchable(zone));
 		core.onImg << imgHandler;
+		addChild(list[0]);
 	}
+	
+	inline public function waitReady(cb:Void->Void):Void wr.waitReady(cb);
+	inline private function get_size():Point<Float> return new Point(zone.width, zone.height);
 	
 	private function imgHandler(n:Int):Void {
 		if (n == 4 && hideDisabled) {
@@ -67,14 +99,17 @@ class Button extends MovieClip {
 		} else {
 			visible = true;
 		}
-		gotoAndStop(n - 1);
+		if (prev != -1) removeChild(list[prev]);
+		addChild(list[prev = n - 1]);
 	}
 	
 	override public function destroy():Void {
 		core.destroy();
 		core = null;
 		super.destroy();
-		//todo: pixi clear texture cache?
 	}
+	
+	inline private function get_touchActive():Bool return zone.interactive;
+	inline private function set_touchActive(v:Bool):Bool return zone.interactive = v;
 	
 }

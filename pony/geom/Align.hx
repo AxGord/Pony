@@ -47,8 +47,8 @@ abstract Align(AlignType) from AlignType to AlignType {
 		return new Pair(VAlign.Middle, v);
 	}
 	
-	@:to @:extern inline public function toV():VAlign return this.a;
-	@:to @:extern inline public function toH():HAlign return this.b;
+	@:to @:extern inline private function toV():VAlign return this.a;
+	@:to @:extern inline private function toH():HAlign return this.b;
 	
 	@:extern inline private function get_vertical():VAlign return this.a;
 	@:extern inline private function get_horizontal():HAlign return this.b;
