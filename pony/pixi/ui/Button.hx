@@ -86,8 +86,13 @@ class Button extends Sprite implements IWH {
 		zone.alpha = 0;
 		core = new ButtonImgN(new Touchable(zone));
 		core.onImg << imgHandler;
+		core.onDisable << disableHandler;
+		core.onEnable << enableHandler;
 		addChild(list[0]);
 	}
+	
+	private function disableHandler():Void touchActive = false;
+	private function enableHandler():Void touchActive = true;
 	
 	inline public function waitReady(cb:Void->Void):Void wr.waitReady(cb);
 	inline private function get_size():Point<Float> return new Point(zone.width, zone.height);

@@ -472,6 +472,12 @@ class ArrayTools {
 		return -1;
 	}
 	
+	static public function sum<T:Float>(a:Array<T>):T {
+		var sum:T = cast 0;
+		for (v in a) sum += v;
+		return sum;
+	}
+	
 }
 
 class FloatTools {
