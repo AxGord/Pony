@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -63,11 +63,11 @@ class TextTableCore implements HasAbstract {
 		else drawBG({x:a.x, y:a.y, width: MathTools.cabs(b.x-a.x), height: size}, color);
 	}
 	@:abstract private function drawBG(r:IntRect, color:UColor):Void;
-	@:abstract private function drawText(point:IntPoint, text:String, style:FontStyle):Void;
+	@:abstract private function drawText(point:IntRect, text:String, style:FontStyle):Void;
 	@:abstract private function clear():Void;
 	
 	public dynamic function borderStyle(point:IntPoint, direct:Direction):Pair<Int,UColor> return new Pair(1,new UColor(0));
-	public dynamic function bgStyle(point:IntPoint):Pair<IntPoint, UColor> return new Pair({x:100,y:20}, new UColor(0xFFFFFF));
+	public dynamic function bgStyle(point:IntPoint):Pair<IntPoint, UColor> return new Pair({x:100,y:20}, new UColor(0xFFFFFFFF));
 	public dynamic function fontStyle(point:IntPoint):FontStyle
 		return {font:'Arial', size: 14, color: 0, bold: false, italic:false, underline: false};
 	
@@ -92,7 +92,7 @@ class TextTableCore implements HasAbstract {
 				dx += left.a;
 				drawBG( { x:dx, y:dy, width:bg.a.x, height:bg.a.y }, bg.b);
 				var tf = fontStyle(point);
-				drawText({x: dx, y: dy},c.value, tf);
+				drawText({x: dx, y: dy, width:bg.a.x, height:bg.a.y }, c.value, tf);
 				if (cl == c.key)
 				drawLine( { x: dx + bg.a.x, y: dy-top.a }, { x: dx + bg.a.x, y: dy + bg.a.y }, right.b, right.a);
 				dy += bg.a.y;

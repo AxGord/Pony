@@ -91,7 +91,19 @@ class GeomTools
 				case VAlign.Bottom: end;
 			}
 		} else centerA;
-		var fc = !padding && objects.length > 1 ? centerC : centerB;
+		var _fc = !padding && objects.length > 1 ? centerC : centerB;
+		var fc =  if (align != null)  {
+			if (!vert) switch align.horizontal {
+				case HAlign.Left: begin;
+				case HAlign.Center: _fc;
+				case HAlign.Right: end;
+			} else switch align.vertical {
+				case VAlign.Top: begin;
+				case VAlign.Middle: _fc;
+				case VAlign.Bottom: end;
+			}
+		} else _fc;
+		
 		var fa = vert ? cfun : fc;
 		var fb = vert ? fc : cfun;
 		if (border == null) border = 0;

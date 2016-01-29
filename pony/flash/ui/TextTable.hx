@@ -72,7 +72,7 @@ class TextTable extends TextTableCore {
 		g.endFill();
 	}
 	
-	override private function drawText(point:IntPoint, text:String, style:FontStyle):Void {
+	override private function drawText(point:IntRect, text:String, style:FontStyle):Void {
 		var tf = new TextField();
 		tf.text = text;
 		trace(style);

@@ -390,6 +390,10 @@ class Tools {
 	}
 }
 
+class ImmutableArrayTools {
+	@:extern inline public static function kv<T>(a:ImmutableArray<T>):Iterator < KeyValue < Int, T >> return ArrayTools.kv(cast a);
+}
+
 class ArrayTools {
 	
 	public static inline function exists<T>(a:Array<T>, e:T):Bool return a.indexOf(e) != -1;

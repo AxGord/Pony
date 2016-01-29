@@ -57,7 +57,7 @@ import pony.ui.gui.FontStyle;
 		gos.push(GUI.rect(new Vector3(fp.x , fp.y, z), r+startpos, color));
 	}
 	
-	override private function drawText(point:IntPoint, text:String, style:FontStyle):Void {
+	override private function drawText(point:IntRect, text:String, style:FontStyle):Void {
 		gos.push(GUI.text(new Vector3(fp.x , fp.y, z+1), point+startpos+textMargin, text, style));
 	}
 	
