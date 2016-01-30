@@ -45,7 +45,7 @@ class LabelButton extends BaseLayout<RubberLayoutCore<Container>> {
 	
 	public var button(default, null):Button;
 	
-	public function new(imgs:Array<String>, vert:Bool = false, ?border:Border<Int>, ?offset:Point<Float>) {
+	public function new(imgs:ImmutableArray<String>, vert:Bool = false, ?border:Border<Int>, ?offset:Point<Float>) {
 		layout = new RubberLayoutCore<Container>(vert, border);
 		layout.tasks.add();
 		super();

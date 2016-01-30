@@ -31,6 +31,7 @@ import pixi.core.sprites.Sprite;
 import pixi.core.textures.Texture;
 import pony.geom.IWH;
 import pony.geom.Point;
+import pony.ImmutableArray;
 import pony.ui.gui.ButtonImgN;
 import pony.ui.touch.Touchable;
 import pony.events.WaitReady;
@@ -53,7 +54,8 @@ class Button extends Sprite implements IWH {
 	private var prev:Int = 0;
 	private var wr:WaitReady;
 	
-	public function new(imgs:Array<String>, ?offset:Point<Float>) {
+	public function new(imgs:ImmutableArray<String>, ?offset:Point<Float>) {
+		var imgs = imgs.copy();
 		wr = new WaitReady();
 		if (imgs[0] == null) throw 'Need first img';
 		if (imgs[1] == null)
@@ -62,7 +64,6 @@ class Button extends Sprite implements IWH {
 		
 		var z = imgs.length > 3 ? imgs.splice(3, 1)[0] : null;
 		if (z == null) z = imgs[0];
-		
 		hideDisabled = imgs[3] == null;
 		var i = 4;
 		while (i < imgs.length) {
