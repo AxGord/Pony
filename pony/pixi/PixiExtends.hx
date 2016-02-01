@@ -32,6 +32,7 @@ import pixi.core.text.Text;
 import pixi.core.textures.Texture;
 import pixi.extras.BitmapText;
 import pixi.filters.blur.BlurFilter;
+import pixi.filters.color.ColorMatrixFilter;
 
 /**
  * PixijsExtends
@@ -47,6 +48,22 @@ class PixiExtends {
 		var i = a.length;
 		if (i == 0) f();
 		else for (s in a) loaded(s, function() if (--i == 0) f());
+	}
+	
+	@:extern inline public static function darkness(c:ColorMatrixFilter, v:Float):Void {
+		c.matrix = [v, 0, 0, 0, 0, 0, v, 0, 0, 0, 0, 0, v, 0, 0, 1];
+	}
+	
+	@:extern inline public static function darknessFilter(v:Float):ColorMatrixFilter {
+		var c = new ColorMatrixFilter();
+		darkness(c, v);
+		return c;
+	}
+	
+	@:extern inline public static function blurFilter():BlurFilter {
+		var b = new BlurFilter();
+		b.passes = 3;
+		return b;
 	}
 	
 }
