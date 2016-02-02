@@ -1,8 +1,8 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/83l5njueb4k0ns60?svg=true)](https://ci.appveyor.com/project/AxGord/pony)
 <h1>Pony</h1>
 Haxe open-cross-library
-<p><small>Ready for <a href="http://haxe.org/">Haxe 3.2</a> and <a href="https://github.com/proletariatgames/HUGS">HUGS</a></small></p>
-<p><small>v0.3.3</small></p>
+<p><small>Ready for <a href="http://haxe.org/">Haxe 3.2.1</a> and <a href="https://github.com/proletariatgames/HUGS">HUGS</a></small></p>
+<p><small>v0.4.0</small></p>
 
 <h2>Installation</h2>
 <p>Stable version</p>
