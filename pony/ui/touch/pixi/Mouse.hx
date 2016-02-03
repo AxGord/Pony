@@ -29,6 +29,7 @@ package pony.ui.touch.pixi;
 
 import pixi.core.display.Container;
 import pixi.interaction.EventTarget;
+import pony.geom.Point;
 import pony.ui.touch.Mouse as M;
 
 /**
@@ -64,17 +65,22 @@ class Mouse {
 	}
 	
 	private static function downHandler(e:EventTarget):Void {
-		M.downHandler(e.data.global.x, e.data.global.y, untyped e.data.originalEvent.button);
+		var p = correction(e.data.global.x, e.data.global.y);
+		M.downHandler(p.x, p.y, untyped e.data.originalEvent.button);
 	}
 	
 	private static function upHandler(e:EventTarget):Void {
-		M.upHandler(e.data.global.x, e.data.global.y, untyped e.data.originalEvent.button);
+		var p = correction(e.data.global.x, e.data.global.y);
+		M.upHandler(p.x, p.y, untyped e.data.originalEvent.button);
 	}
 	
 	private static function moveHandler(e:EventTarget):Void {
-		M.moveHandler(e.data.global.x, e.data.global.y);
+		var p = correction(e.data.global.x, e.data.global.y);
+		M.moveHandler(p.x, p.y);
 	}
 	
 	private static function upoutsideHandler(_):Void M.eLeave.dispatch();
+	
+	public static dynamic function correction(x:Float, y:Float):Point<Float> return new Point(x, y);
 	
 }

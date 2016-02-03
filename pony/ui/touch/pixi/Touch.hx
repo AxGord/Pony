@@ -30,6 +30,7 @@ package pony.ui.touch.pixi;
 import pixi.core.display.Container;
 import pixi.interaction.EventTarget;
 import pony.events.Signal1;
+import pony.geom.Point;
 import pony.magic.Declarator;
 import pony.magic.HasSignal;
 import pony.time.DeltaTime;
@@ -84,7 +85,8 @@ class Touch implements Declarator implements HasSignal {
 	}
 	
 	@:extern inline private static function pack(e:EventTarget):TouchObj {
-		return { id:e.data.identifier, x:e.data.global.x, y:e.data.global.y };
+		var p = correction(e.data.global.x, e.data.global.y);
+		return { id:e.data.identifier, x:p.x, y:p.y };
 	}
 	
 	private static function moveHandler(e:EventTarget):Void {
@@ -116,5 +118,7 @@ class Touch implements Declarator implements HasSignal {
 		for (t in endStack) eEnd.dispatch(t);
 		endStack = [];
 	}
+	
+	public static dynamic function correction(x:Float, y:Float):Point<Float> return new Point(x, y);
 	
 }

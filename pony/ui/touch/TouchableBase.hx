@@ -30,6 +30,7 @@ package pony.ui.touch;
 import pony.events.Signal0;
 import pony.events.Signal1;
 import pony.magic.HasSignal;
+import pony.time.DTimer;
 import pony.TypedPool;
 
 /**
@@ -49,21 +50,28 @@ class TouchableBase implements HasSignal {
 	@:auto public var onDown:Signal1<Touch>;
 	@:auto public var onUp:Signal1<Touch>;
 	@:auto public var onClick:Signal0;
+	@:auto public var onTap:Signal0;
 	
 	public function new() {
 		onDown << function() onUp < eClick;
 		onOutUp << function() onUp >> eClick;
+		
+		eTap.onTake << function() onDown << beginTap;
+		eTap.onLost << function() onDown >> beginTap;
+	}
+	
+	private function beginTap(t:Touch) {
+		onUp < eTap;
+		DTimer.fixedDelay(300, cancleTap);
+		t.onMove < cancleTap;
+	}
+	
+	private function cancleTap() {
+		onUp >> eTap;
 	}
 	
 	public function destroy():Void {
-		eOver.destroy();
-		eOut.destroy();
-		eOutUp.destroy();
-		eOverDown.destroy();
-		eOutDown.destroy();
-		eDown.destroy();
-		eUp.destroy();
-		eClick.destroy();
+		destroySignals();
 	}
 	
 	/**

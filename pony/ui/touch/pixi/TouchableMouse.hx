@@ -97,7 +97,8 @@ class TouchableMouse {
 			base.dispatchOver();
 		}
 		_down = true;
-		base.dispatchDown(0, e.data.global.x, e.data.global.y);
+		var p = pony.ui.touch.pixi.Mouse.correction(e.data.global.x, e.data.global.y);
+		base.dispatchDown(0, p.x, p.y);
 	}
 	
 	private function upHandler(e:EventTarget):Void {

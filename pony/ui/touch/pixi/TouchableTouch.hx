@@ -101,7 +101,8 @@ class TouchableTouch {
 		over = true;
 		down = true;
 		base.dispatchOver(e.data.identifier);
-		base.dispatchDown(e.data.identifier, e.data.global.x, e.data.global.y);
+		var p = Touch.correction(e.data.global.x, e.data.global.y);
+		base.dispatchDown(e.data.identifier, p.x, p.y);
 	}
 	
 	private function touchEndHandler(t:TouchObj):Void {

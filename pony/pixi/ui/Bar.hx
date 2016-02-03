@@ -32,6 +32,8 @@ import pixi.core.textures.Texture;
 import pony.events.Signal1;
 import pony.geom.Point;
 import pony.magic.HasSignal;
+import pony.Or;
+import pony.time.DeltaTime;
 import pony.ui.gui.BarCore;
 
 using pony.pixi.PixiExtends;
@@ -45,22 +47,30 @@ class Bar extends Sprite implements HasSignal {
 	public var core:BarCore;
 	@:auto public var onReady:Signal1<Point<Int>>;
 	
-	private var bg:Sprite;
+	private var bg:Or<Sprite, Point<Int>>;
 	private var begin:Sprite;
 	private var end:Sprite;
 	private var fill:Sprite;
 	private var invert:Bool = false;
 
-	public function new(bg:String, fillBegin:String, fill:String, ?offset:Point<Int>, invert:Bool=false) {
+	public function new(bg:Or<String, Point<Int>>, fillBegin:String, fill:String, ?offset:Point<Int>, invert:Bool=false) {
 		super();
 		this.invert = invert;
-		this.bg = new Sprite(Texture.fromImage(bg));
-		addChild(this.bg);
+		var loadList = switch bg {
+			case OrState.A(v):
+				var s = new Sprite(Texture.fromImage(v));
+				addChild(s);
+				this.bg = s;
+				[s];
+			case OrState.B(v):
+				this.bg = v;
+				[];
+		}
 		begin = new Sprite(Texture.fromImage(fillBegin));
 		addChild(begin);
 		this.fill = new Sprite(Texture.fromImage(fill));
 		addChild(this.fill);
-		[this.bg, begin, this.fill].loadedList(init);
+		loadList.concat([begin, this.fill]).loadedList(DeltaTime.notInstant(init));
 		if (offset != null) {
 			this.fill.x = begin.x = offset.x;
 			this.fill.y = begin.y = offset.y;
@@ -73,7 +83,11 @@ class Bar extends Sprite implements HasSignal {
 		end.y = begin.y;
 
 		addChild(end);
-		core = BarCore.create(bg.width - (begin.x + begin.width) * 2, bg.height - (begin.y + begin.height) * 2, invert);
+		var size = switch bg {
+			case OrState.A(v): new Point<Int>(Std.int(v.width), Std.int(v.height));
+			case OrState.B(v): v;
+		}
+		core = BarCore.create(size.x - (begin.x + begin.width) * 2, size.y - (begin.y + begin.height) * 2, invert);
 		if (core.isVertical) {
 			end.height = -end.height;
 			fill.y = begin.y + begin.height;
@@ -91,7 +105,7 @@ class Bar extends Sprite implements HasSignal {
 		}
 		
 		core.endInit();
-		eReady.dispatch(new Point(Std.int(bg.width), Std.int(bg.height)));
+		eReady.dispatch(size);
 	}
 
 	override public function destroy():Void {
@@ -99,8 +113,12 @@ class Bar extends Sprite implements HasSignal {
 		core = null;
 		destroySignals();
 		super.destroy();
-		removeChild(bg);
-		bg.destroy();
+		switch bg {
+			case OrState.A(v):
+				removeChild(v);
+				v.destroy();
+			case _:
+		}
 		bg = null;
 		removeChild(begin);
 		begin.destroy();

@@ -27,9 +27,11 @@
 **/
 package pony.pixi;
 
+import haxe.Constraints.FlatEnum;
 import js.Browser;
 import pixi.core.sprites.Sprite;
 import pixi.plugins.app.Application;
+import pony.geom.Point;
 import pony.time.DeltaTime;
 import pony.ui.touch.pixi.Mouse;
 import pony.ui.touch.pixi.Touch;
@@ -59,7 +61,9 @@ class App extends Application {
 		stage.addChild(container);
 		resizeHandler();
 		Mouse.reg(container);
+		Mouse.correction = correction;
 		Touch.reg(container);
+		Touch.correction = correction;
 	}
 	
 	private function resizeHandler():Void {
@@ -85,6 +89,10 @@ class App extends Application {
 		DeltaTime.fixedValue = (time - prevTime) / 1000;
 		prevTime = time;
 		DeltaTime.fixedDispatch();
+	}
+	
+	private function correction(x:Float, y:Float):Point<Float> {
+		return new Point((x - container.x) / container.width, (y - container.y) / container.height);
 	}
 	
 }
