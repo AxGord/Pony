@@ -51,6 +51,7 @@ class BaseLayoutCore<T> implements Declarator implements HasSignal implements IW
 	
 	private var _w:Float;
 	private var _h:Float;
+	private var _needUpdate:Bool = false;
 	
 	public function new() {
 		tasks = new Tasks(tasksReady);
@@ -60,8 +61,22 @@ class BaseLayoutCore<T> implements Declarator implements HasSignal implements IW
 		objects.push(o);
 		if (Std.is(o, IWH)) {
 			tasks.add();
-			cast(o, IWH).waitReady(DeltaTime.notInstant(tasks.end));
+			cast(o, IWH).waitReady(tasks.end);
 		} else load(o);
+		needUpdate();
+	}
+	
+	private function endUpdate():Void {
+		tasks.end();
+		_needUpdate = false;
+	}
+	
+	public function needUpdate():Void {
+		if (!_needUpdate) {
+			_needUpdate = true;
+			tasks.add();
+			DeltaTime.fixedUpdate < endUpdate;	
+		}
 	}
 	
 	public dynamic function load(o:T):Void {}
