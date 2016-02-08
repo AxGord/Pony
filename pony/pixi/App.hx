@@ -41,7 +41,7 @@ import pony.ui.touch.pixi.Touch;
  * @author AxGord <axgord@gmail.com>
  */
 class App extends Application {
-
+	
 	private var _width:Float;
 	private var _height:Float;
 	private var container:Sprite;
@@ -49,6 +49,7 @@ class App extends Application {
 	
 	public function new(container:Sprite, width:Float, height:Float, ?bg:UInt) {
 		super();
+		roundPixels = true;
 		backgroundColor = bg;
 		antialias = false;
 		pixelRatio = Browser.window.devicePixelRatio;
