@@ -73,18 +73,16 @@ class TextTools {
 	
 	macro public static function includeJson(file:String):Expr {
 		var s:String = sys.io.File.getContent(file);
-		var d:Dynamic = haxe.Json.parse(s);
-		var z:String = Serializer.run(d);
-		return macro $v{z};
+		haxe.Json.parse(s);//check
+		return macro haxe.Json.parse($v{s});//todo: not parse on runtime
 	}
 	
 	macro public static function includeJsonFromCurrentDir(file:String):Expr {
 		var f:String = Context.getPosInfos(Context.currentPos()).file;
 		f = sys.FileSystem.fullPath(f).split('\\').slice(0, -1).join('/') + '/';
 		var s:String = sys.io.File.getContent(f+file);
-		var d:Dynamic = haxe.Json.parse(s);
-		var z:String = Serializer.run(d);
-		return macro $v{z};
+		haxe.Json.parse(s);//check
+		return macro haxe.Json.parse($v{s});//todo: not parse on runtime
 	}
 	
 	inline public static function parsePercent(s:String):Float {
