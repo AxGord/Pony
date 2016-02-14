@@ -90,4 +90,13 @@ class MathTools {
 		return Std.string(v).split('.')[0].length;
 	}
 	
+	public static function range(a:Float, b:Float):Float {
+		var max = Math.max(a, b);
+		var min = Math.min(a, b);
+		var up = min < 0 ? -min : 0;
+		max += up;
+		min += up;
+		return max - min;
+	}
+	
 }

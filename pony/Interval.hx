@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2014 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -39,11 +39,13 @@ abstract Interval<T:Dynamic>(Pair<T,T>) {
 	public var min(get, never):T;
 	public var max(get, never):T;
 	public var mid(get, never):Float;
+	public var range(get, never):Float;
 	
 	inline public function new(p:Pair<T, T>) this = p;
 	inline private function get_min():T return this.a;
 	inline private function get_max():T return this.b;
 	inline private function get_mid():Float return (min:Float) == Math.NEGATIVE_INFINITY ? max : (min:Float) + Math.abs(max - min) / 2;
+	inline private function get_range():Float return MathTools.range(min, max);
 	
 	@:from inline static private function fromPair<V>(p:Pair<V,V>):Interval<V> return new Interval<V>(p);
 	@:to inline private function toPair():Pair<T,T> return this;
@@ -61,6 +63,8 @@ abstract Interval<T:Dynamic>(Pair<T,T>) {
 	@:to inline public function toString():String return min + ' ... ' + max;
 	
 	@:from inline private static function fromInterator(it:IntIterator):Interval<Int> return create(it.field('min'), it.field('max'));
+	@:from inline private static function fromInteratorF(it:IntIterator):Interval<Float> return create(it.field('min'), it.field('max'));
 	
 	inline public function includes(v:T):Bool return (v:Float) >= (min:Float) && (v:Float) <= (max:Float);
+	
 }
