@@ -60,8 +60,8 @@ class Tween implements HasSignal implements Declarator {
 		updateSignal = fixedTime ? DeltaTime.fixedUpdate : DeltaTime.update;
 		value = invert ? range.max : range.min;
 		if (pingpong) onComplete << invertInvert;
+		onComplete << endPlay;
 		if (loop) onComplete << play;
-		else onComplete << endPlay;
 	}
 	
 	private function invertInvert():Void invert = !invert;
