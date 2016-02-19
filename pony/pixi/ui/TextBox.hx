@@ -44,10 +44,12 @@ using pony.pixi.PixiExtends;
 class TextBox extends BaseLayout<RubberLayoutCore<Container>> {
 
 	public var text(get, set):String;
-	
 	public var obj(default, null):UniversalText;
 	
-	public function new(image:Sprite, text:String, style:ETextStyle, ?border:Border<Int>) {
+	private var nocache:Bool;
+	
+	public function new(image:Sprite, text:String, style:ETextStyle, ?border:Border<Int>, nocache:Bool=false) {
+		this.nocache = nocache;
 		layout = new RubberLayoutCore(border);
 		layout.tasks.add();
 		super();
@@ -58,13 +60,16 @@ class TextBox extends BaseLayout<RubberLayoutCore<Container>> {
 			layout.tasks.end();
 		});
 		add(obj = new UniversalText(text, style));
+		if (!nocache) obj.toContainer().cacheAsBitmap = true;
 	}
 	
 	inline private function get_text():String return obj.text;
 	
 	private function set_text(v:String):String {
 		if (obj.text != v) {
+			obj.toContainer().cacheAsBitmap = false;
 			obj.text = v;
+			if (!nocache) obj.toContainer().cacheAsBitmap = true;
 			update();
 		}
 		return v;

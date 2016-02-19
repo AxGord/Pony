@@ -54,7 +54,7 @@ class Button extends Sprite implements IWH {
 	private var prev:Int = 0;
 	private var wr:WaitReady;
 	
-	public function new(imgs:ImmutableArray<String>, ?offset:Point<Float>) {
+	public function new(imgs:ImmutableArray<String>, ?offset:Point<Float>, useSpriteSheet:Bool=false) {
 		var imgs = imgs.copy();
 		wr = new WaitReady();
 		if (imgs[0] == null) throw 'Need first img';
@@ -72,7 +72,7 @@ class Button extends Sprite implements IWH {
 			if (imgs[i+2] == null) imgs[i+2] = imgs[i+1];
 			i += 3;
 		}
-		list = [for (img in imgs) img == null ? null : new Sprite(Texture.fromImage(img))];
+		list = [for (img in imgs) img == null ? null : (useSpriteSheet ? Sprite.fromFrame(StringTools.replace(img,'/','_')) : Sprite.fromImage(img))];
 		if (offset != null) {
 			for (e in list) if (e != null) {
 				e.x = -offset.x;
@@ -80,8 +80,11 @@ class Button extends Sprite implements IWH {
 			}
 		}
 		super();
-		zone = new Sprite(Texture.fromImage(z));
-		zone.texture.loaded(wr.ready);
+		zone = useSpriteSheet ? Sprite.fromFrame(StringTools.replace(z, '/', '_')) : Sprite.fromImage(z);
+		if (useSpriteSheet)
+			wr.ready();
+		else
+			zone.texture.loaded(wr.ready);
 		addChild(zone);
 		zone.buttonMode = true;
 		zone.alpha = 0;

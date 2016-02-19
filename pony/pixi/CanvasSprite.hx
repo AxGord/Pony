@@ -61,9 +61,11 @@ class CanvasSprite extends Sprite {
 	
 	public function needRenderer():Void DeltaTime.fixedUpdate < render;
 	
-	public function render():Void {
+	private function render():Void {
+		visible = true;
 		txtr.render(this, null, true, true);
 		txtr.update();
+		visible = false;
 	}
 	
 }

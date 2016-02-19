@@ -43,17 +43,20 @@ import pony.ui.gui.RubberLayoutCore;
 class TextSizedBox extends BaseLayout<RubberLayoutCore<Container>> {
 
 	public var text(get, set):String;
-	
 	public var obj(default, null):UniversalText;
 	
-	public function new(w:Float, h:Float, text:String, style:ETextStyle, ?border:Border<Int>, ?align:Align) {
+	private var nocache:Bool;
+	
+	public function new(w:Float, h:Float, text:String, style:ETextStyle, ?border:Border<Int>, ?align:Align, nocache:Bool=false) {
 		var f = align != null && align.horizontal != HAlign.Center;
+		this.nocache = nocache;
 		layout = new RubberLayoutCore(f, border, align);
 		layout.tasks.add();
 		layout.width = w;
 		layout.height = h;
 		super();
 		add(obj = new UniversalText(text, style));
+		if (!nocache) obj.toContainer().cacheAsBitmap = true;
 		layout.tasks.end();
 	}
 	
@@ -61,7 +64,9 @@ class TextSizedBox extends BaseLayout<RubberLayoutCore<Container>> {
 	
 	private function set_text(v:String):String {
 		if (obj.text != v) {
+			obj.toContainer().cacheAsBitmap = false;
 			obj.text = v;
+			if (!nocache) obj.toContainer().cacheAsBitmap = true;
 			update();
 		}
 		return v;
