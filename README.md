@@ -2,7 +2,7 @@
 [![Build status](https://img.shields.io/badge/haxelib-0.4.0-blue.svg)](http://lib.haxe.org/p/pony)
 [![Build status](https://ci.appveyor.com/api/projects/status/83l5njueb4k0ns60?svg=true)](https://ci.appveyor.com/project/AxGord/pony)
 
-<p align="center"><img src="http://qlex.ru/pony_logo_hor.svg"/></p>
+<p align="center"><img width="422" height="158" src="http://qlex.ru/pony_logo_hor.svg"/></p>
 
 <h2>Installation</h2>
 <p>Stable version</p>
