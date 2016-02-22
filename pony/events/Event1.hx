@@ -100,7 +100,7 @@ abstract Event1<T1>(Priority<Listener1<T1>>) from Priority<Listener1<T1>> to Pri
 		return (new Event1():Signal1<T1>).add(this).add(s);
 	}
 	
-	@:extern inline public function destroy():Void {
+	inline public function destroy():Void {
 		if (this != null) this.destroy();
 	}
 }

@@ -126,7 +126,7 @@ abstract Event2<T1,T2>(Priority<Listener2<T1,T2>>) from Priority<Listener2<T1,T2
 		return (new Event2():Signal2<T1,T2>).add(this).add(s);
 	}
 	
-	@:extern inline public function destroy():Void {
+	inline public function destroy():Void {
 		if (this != null) this.destroy();
 	}
 }
