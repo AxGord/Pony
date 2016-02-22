@@ -1,6 +1,6 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/83l5njueb4k0ns60?svg=true)](https://ci.appveyor.com/project/AxGord/pony)
 
-<p align="center"><img src="https://raw.githubusercontent.com/AxGord/Pony/haxe3/logo/pony_logo_hor.svg"/></p>
+<p align="center"><img src="logo/pony_logo_hor.svg"/></p>
 <p><small>Ready for <a href="http://haxe.org/">Haxe 3.2.1</a> and <a href="https://github.com/proletariatgames/HUGS">HUGS</a></small></p>
 <p><small>v0.4.0</small></p>
 
