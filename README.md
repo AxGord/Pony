@@ -2,13 +2,7 @@
 [![Build status](https://img.shields.io/badge/haxelib-0.4.0-blue.svg)](http://lib.haxe.org/p/pony)
 [![Build status](https://ci.appveyor.com/api/projects/status/83l5njueb4k0ns60?svg=true)](https://ci.appveyor.com/project/AxGord/pony)
 
-<<<<<<< HEAD
-<p align="center"><img src="logo/pony_logo_hor.svg"/></p>
-<p><small>Ready for <a href="http://haxe.org/">Haxe 3.2.1</a> and <a href="https://github.com/proletariatgames/HUGS">HUGS</a></small></p>
-<p><small>v0.4.0</small></p>
-=======
 <p align="center"><img height="200" src="http://qlex.ru/pony_logo_hor.svg?v=1"/></p>
->>>>>>> 67bbb4658919fdf5e8a57043f194c4731960c197
 
 Installation
 ============
