@@ -25,12 +25,14 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony;
+package pony.ui;
 
 import haxe.rtti.Meta;
 #if pixijs
 import pony.pixi.PixiAssets;
 #end
+import pony.Or;
+import pony.Tasks;
 import pony.time.DeltaTime;
 using Lambda;
 
@@ -69,7 +71,7 @@ class AssetManager {
 		for (path in pathes) {
 			loaded.push(0);
 			var n = i++;
-			loadPath(path + '/', assets, function(a:Int, _) {
+			loadPath(path, assets, function(a:Int, _) {
 				if (a == 0) return;
 				loaded[n] = a;
 				update();
@@ -83,24 +85,34 @@ class AssetManager {
 		var i = 0;
 		var l = assets.length;
 		for (asset in assets) {
-			load(path+asset, function() cb(++i, l));
+			load(path, asset, function() cb(++i, l));
 		}
 		if (i == 0) cb(0, l);
 	}
 	
-	public static function load(asset:String, cb:Void->Void):Void {
-		if (loadedAssets.indexOf(asset) != -1) {
-			cb();
-			return;
-		}
-		if (globalLoad.exists(asset)) {
-			globalLoad[asset].push(cb);
-		} else {
-			globalLoad[asset] = [];
-			_load(asset, function() {
-				cb();
-				globalLoaded(asset);
-			});
+	public static function load(patch:String, asset:Or<String,Array<String>>, cb:Void->Void):Void {
+		switch asset {
+			case OrState.A(asset):
+				asset = patch + '/' + asset;
+				if (loadedAssets.indexOf(asset) != -1) {
+					cb();
+					return;
+				}
+				if (globalLoad.exists(asset)) {
+					globalLoad[asset].push(cb);
+				} else {
+					globalLoad[asset] = [];
+					_load(asset, function() {
+						cb();
+						globalLoaded(asset);
+					});
+				}
+			case OrState.B(assets):
+				var tasks:Tasks = new Tasks(cb);
+				for (asset in assets) {
+					tasks.add();
+					load(patch, asset, tasks.end);
+				}
 		}
 	}
 	
@@ -142,7 +154,7 @@ class AssetManager {
 		Reflect.getProperty(s, 'loadAllAssets')(true, f);
 	}
 
-	private static function cbjoin(cb:Int->Int->Void):Pair<Int->Int->Void, Int->Int->Void> {
+	public static function cbjoin(cb:Int->Int->Void):Pair<Int->Int->Void, Int->Int->Void> {
 		var aCurrent:Int = 0;
 		var aTotal:Int = 0;
 		var bCurrent:Int = 0;
@@ -158,6 +170,27 @@ class AssetManager {
 			cb(aCurrent+c, aTotal+t);
 		}
 		return new Pair(a, b);
+	}
+	
+	public static function allCountWithChilds(cl:String, pathes:Array<String>, assets:Array<String>):Int {
+		var chs = Meta.getType(Type.resolveClass(cl)).assets_childs;
+		if (chs == null) {
+			return allCount(pathes, assets);
+		}
+		return allCount(pathes, assets) + allCountChilds(chs);
+	}
+	
+	inline private static function allCountChilds(chs:Array<Dynamic>):Int {
+		var sum = 0;
+		for (ch in chs) {
+			var s = Type.resolveClass(ch);
+			sum += Reflect.getProperty(s, 'countAllAssets')(true);
+		}
+		return sum;
+	}
+	
+	inline public static function allCount(pathes:Array<String>, assets:Array<String>):Int {
+		return pathes.length * assets.length;
 	}
 	
 	public static function loadComplete(source:(Int->Int->Void)->Void, cb:Void->Void):Void {

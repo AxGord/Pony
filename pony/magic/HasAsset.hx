@@ -119,8 +119,23 @@ class HasAssetBuilder {
 						ret: macro:Void,
 						expr:
 							macro childs
-							? pony.AssetManager.loadPackWithChilds($v { cl.toString() }, ASSETS_PATHES, ASSETS_LIST, cb)
-							: pony.AssetManager.loadPack(ASSETS_PATHES, ASSETS_LIST, cb)
+							? pony.ui.AssetManager.loadPackWithChilds($v { cl.toString() }, ASSETS_PATHES, ASSETS_LIST, cb)
+							: pony.ui.AssetManager.loadPack(ASSETS_PATHES, ASSETS_LIST, cb)
+					}),
+				pos: Context.currentPos(),
+				meta: [keepMeta]
+			});
+			
+		fields.push({
+				name: 'countAllAssets',
+				access: [APublic, AStatic],
+				kind: FieldType.FFun( {
+						args: [{name: 'childs', type:macro:Bool, value:macro true}],
+						ret: macro:Int,
+						expr:
+							macro return childs
+							? pony.ui.AssetManager.allCountWithChilds($v { cl.toString() }, ASSETS_PATHES, ASSETS_LIST)
+							: pony.ui.AssetManager.allCount(ASSETS_PATHES, ASSETS_LIST)
 					}),
 				pos: Context.currentPos(),
 				meta: [keepMeta]
@@ -132,9 +147,15 @@ class HasAssetBuilder {
 					name: f == 'def' ? 'loadAsset' : 'loadAsset_' + f,
 					access: [APublic, AStatic],
 					kind: FieldType.FFun( {
-					args: [{name: 'asset', type:macro:Int, opt: true}, {name: 'cb', type:macro:Void->Void}],
+					args: [{name: 'asset', type:macro:pony.Or<Int,Array<Int>>, opt: true}, {name: 'cb', type:macro:Void->Void}],
 							ret: macro:Void,
-							expr: macro pony.AssetManager.load($v+'/'+ASSETS_LIST[asset], cb)
+							expr: macro pony.ui.AssetManager.load(
+								$v,
+								switch asset {
+									case pony.Or.OrState.A(asset): ASSETS_LIST[asset];
+									case pony.Or.OrState.B(assets): [for (asset in assets) ASSETS_LIST[asset]];
+								},
+								cb)
 						}),
 					pos: Context.currentPos()
 				});
@@ -144,7 +165,7 @@ class HasAssetBuilder {
 				kind: FieldType.FFun( {
 				args: [{name: 'cb', type:macro:Int->Int->Void}],
 						ret: macro:Void,
-						expr: macro pony.AssetManager.loadPath($v, ASSETS_LIST, cb)
+						expr: macro pony.ui.AssetManager.loadPath($v, ASSETS_LIST, cb)
 					}),
 				pos: Context.currentPos()
 			});
@@ -154,10 +175,7 @@ class HasAssetBuilder {
 				kind: FieldType.FFun( {
 				args: [{name: 'asset', type:macro:Int}],
 						ret: macro:String,
-						expr: macro $b { [
-							/*macro pony.AssetManager.backLoad($v + '/' + ASSETS_LIST[asset]),*/
-							macro return ASSETS_NAMES[asset] == null ? $v + '/' + ASSETS_LIST[asset] : ASSETS_NAMES[asset]
-							]}
+						expr: macro return ASSETS_NAMES[asset] == null ? $v + '/' + ASSETS_LIST[asset] : ASSETS_NAMES[asset]
 					}),
 				pos: Context.currentPos()
 			});
@@ -168,7 +186,7 @@ class HasAssetBuilder {
 				kind: FieldType.FFun( {
 				args: [{name: 'asset', type:macro:Int}],
 						ret: macro:String,
-						expr: macro $b{[/*macro pony.AssetManager.backLoad($v+'/'+ASSETS_LIST[asset]), */macro return ASSETS_NAMES[asset]]}
+						expr: macro return ASSETS_NAMES[asset]
 					}),
 				pos: Context.currentPos()
 			});
@@ -179,7 +197,7 @@ class HasAssetBuilder {
 				kind: FieldType.FFun( {
 				args: [{name: 'asset', type:macro:Int}],
 						ret: macro:String,
-						expr: macro $b{[/*macro pony.AssetManager.backLoad($v+'/'+ASSETS_LIST[asset]),*/ macro return $v + '/' + ASSETS_LIST[asset]]}
+						expr: macro return $v + '/' + ASSETS_LIST[asset]
 					}),
 				pos: Context.currentPos()
 			});
@@ -190,7 +208,7 @@ class HasAssetBuilder {
 				kind: FieldType.FFun( {
 				args: [{name: 'asset', type:macro:Int}],
 						ret: null,
-						expr: macro $b{[/*macro pony.AssetManager.backLoad($v+'/'+ASSETS_LIST[asset]), */macro return pony.AssetManager.image($v+'/'+ASSETS_LIST[asset], ASSETS_NAMES[asset])]}
+						expr: macro return pony.ui.AssetManager.image($v+'/'+ASSETS_LIST[asset], ASSETS_NAMES[asset])
 					}),
 				pos: Context.currentPos()
 			});

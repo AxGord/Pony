@@ -69,7 +69,7 @@ class BarCore implements Declarator implements HasSignal {
 	
 	private function changePercentHandler(v:Float):Void pos = v * size;
 	private function changePosHandler(v:Float):Void percent = v / size;
-	private function changeValueHandler(v:Float):Void percent = (max-min) / (v-min);
+	private function changeValueHandler(v:Float):Void percent =  (v-min) / (max-min);
 	private function updateValue(v:Float):Void value = min + v * (max - min);
 	@:extern inline private function inv(p:Float):Float return invert ? size - p : p;
 	
