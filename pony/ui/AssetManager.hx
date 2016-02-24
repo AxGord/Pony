@@ -90,10 +90,10 @@ class AssetManager {
 		if (i == 0) cb(0, l);
 	}
 	
-	public static function load(patch:String, asset:Or<String,Array<String>>, cb:Void->Void):Void {
+	public static function load(path:String, asset:Or<String,Array<String>>, cb:Void->Void):Void {
 		switch asset {
 			case OrState.A(asset):
-				asset = patch + '/' + asset;
+				asset = (path == '' ? '' : path + '/') + asset;
 				if (loadedAssets.indexOf(asset) != -1) {
 					cb();
 					return;
@@ -111,7 +111,7 @@ class AssetManager {
 				var tasks:Tasks = new Tasks(cb);
 				for (asset in assets) {
 					tasks.add();
-					load(patch, asset, tasks.end);
+					load(path, asset, tasks.end);
 				}
 		}
 	}
