@@ -33,11 +33,11 @@ import pony.db.SQLBase;
 import haxe.PosInfos;
 import pony.db.ISQL;
 import pony.db.mysql.Config;
-import pony.events.Waiter;
 import pony.Logable;
 import pony.Stream;
 import sys.db.Connection;
 import sys.db.Mysql;
+
 using pony.Tools;
 using Lambda;
 using StringTools;
@@ -66,7 +66,7 @@ class MySQL extends SQLBase
 		
 	}
 	
-	private function init(r:Bool):Void if (r) connected.end();
+	private function init(r:Bool):Void if (r) connected.ready();
 	
 	/**
 	 * Make action, query with boolean result
@@ -158,4 +158,5 @@ class MySQL extends SQLBase
 	
 	
 }
+
 #end

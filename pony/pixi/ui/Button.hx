@@ -98,7 +98,7 @@ class Button extends Sprite implements IWH {
 	private function disableHandler():Void touchActive = false;
 	private function enableHandler():Void touchActive = true;
 	
-	inline public function waitReady(cb:Void->Void):Void wr.waitReady(cb);
+	inline public function wait(cb:Void->Void):Void wr.wait(cb);
 	inline private function get_size():Point<Float> return new Point(zone.width, zone.height);
 	
 	private function imgHandler(n:Int):Void {
@@ -115,6 +115,18 @@ class Button extends Sprite implements IWH {
 	override public function destroy():Void {
 		core.destroy();
 		core = null;
+		
+		for (e in list) {
+			removeChild(e);
+			e.destroy();
+		}
+		list = null;
+		removeChild(zone);
+		zone.destroy();
+		zone = null;
+		
+		wr = null;
+		
 		super.destroy();
 	}
 	

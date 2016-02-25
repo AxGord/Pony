@@ -27,7 +27,7 @@
 **/
 package pony.pixi.ui;
 
-import pony.geom.Point;
+import pony.geom.Border;
 
 /**
  * ProgressBar
@@ -35,8 +35,17 @@ import pony.geom.Point;
  */
 class ProgressBar extends LabelBar {
 
-	public function new(bg:String, fillBegin:String, fill:String, ?offset:Point<Int>, ?style:ETextStyle, invert:Bool=false) {
-		super(bg, fillBegin, fill, offset, style, invert);
+	public function new(
+		bg:String,
+		fillBegin:String,
+		fill:String,
+		?animation:String,
+		animationSpeed:Int = 2000,
+		?border:Border<Int>,
+		?style:ETextStyle,
+		invert:Bool = false
+	) {
+		super(bg, fillBegin, fill, animation, animationSpeed, border, style, invert);
 		onReady < initProgressBar; 
 	}
 	

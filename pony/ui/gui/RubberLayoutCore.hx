@@ -54,6 +54,7 @@ class RubberLayoutCore<T> extends BaseLayoutCore<T> {
 	public var align(get, set):Align;
 	
 	override public function update():Void {
+		if (objects == null) return;
 		if (!ready) return;
 		var positions = GeomTools.pointsCeil(GeomTools.center(
 				new Point(width, height),

@@ -58,7 +58,7 @@ class Bar extends Sprite implements HasSignal {
 		this.invert = invert;
 		var loadList = switch bg {
 			case OrState.A(v):
-				var s = new Sprite(Texture.fromImage(v));
+				var s = Sprite.fromImage(v);
 				addChild(s);
 				this.bg = s;
 				[s];
@@ -66,9 +66,9 @@ class Bar extends Sprite implements HasSignal {
 				this.bg = v;
 				[];
 		}
-		begin = new Sprite(Texture.fromImage(fillBegin));
+		begin = Sprite.fromImage(fillBegin);
 		addChild(begin);
-		this.fill = new Sprite(Texture.fromImage(fill));
+		this.fill = Sprite.fromImage(fill);
 		addChild(this.fill);
 		loadList.concat([begin, this.fill]).loadedList(DeltaTime.notInstant(init));
 		if (offset != null) {
@@ -106,13 +106,13 @@ class Bar extends Sprite implements HasSignal {
 		
 		core.endInit();
 		eReady.dispatch(size);
+		eReady.destroy();
 	}
 
 	override public function destroy():Void {
 		core.destroy();
 		core = null;
 		destroySignals();
-		super.destroy();
 		switch bg {
 			case OrState.A(v):
 				removeChild(v);
@@ -131,6 +131,7 @@ class Bar extends Sprite implements HasSignal {
 			end.destroy();
 			end = null;
 		}
+		super.destroy();
 	}
 	
 }

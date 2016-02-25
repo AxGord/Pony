@@ -25,13 +25,68 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.geom;
+package pony.pixi.ui;
+
+import pixi.core.sprites.Sprite;
+import pony.geom.Point;
+import pony.time.Tween;
 
 /**
+ * AnimBar
  * @author AxGord <axgord@gmail.com>
  */
-interface IWH {
-	var size(get, never):Point<Float>;
-	function wait(cb:Void->Void):Void;
-	function destroy():Void;
+class AnimBar extends Bar {
+
+	private var animation:Sprite;
+	private var tween:Tween;
+	
+	public function new(
+		bg:String,
+		fillBegin:String,
+		fill:String,
+		?animation:String,
+		animationSpeed:Int = 2000,
+		?offset:Point<Int>,
+		invert:Bool = false
+	) {
+		super(bg, fillBegin, fill, offset, invert);
+		if (animation == null) return;
+		this.animation = Sprite.fromImage(animation);
+		this.animation.visible = false;
+		addChildAt(this.animation, 1);
+		if (offset != null) {
+			this.animation.x = offset.x;
+			this.animation.y = offset.y;
+		}
+		tween = new Tween(animationSpeed, true, true, true, true);
+		tween.onUpdate << animUpdate;
+	}
+	
+	private function animUpdate(alp:Float):Void {
+		begin.alpha = alp;
+		fill.alpha = alp;
+		if (end != null) end.alpha = alp;
+	}
+	
+	public function startAnimation():Void {
+		animation.visible = true;
+		tween.play();
+	}
+	
+	public function stopAnimation():Void {
+		animation.visible = false;
+		tween.stopOnEnd();
+	}
+	
+	override public function destroy():Void {
+		if (animation != null) {
+			tween.destroy();
+			tween = null;
+			removeChild(animation);
+			animation.destroy();
+			animation = null;
+		}
+		super.destroy();
+	}
+	
 }

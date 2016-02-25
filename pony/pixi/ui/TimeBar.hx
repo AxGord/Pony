@@ -27,9 +27,9 @@
 **/
 package pony.pixi.ui;
 
+import pony.geom.Border;
 import pony.geom.Point;
 import pony.pixi.ETextStyle;
-import pony.pixi.UniversalText;
 import pony.time.DTimer;
 import pony.time.Time;
 import pony.time.TimeInterval;
@@ -38,39 +38,57 @@ import pony.time.TimeInterval;
  * TimeBar
  * @author AxGord <axgord@gmail.com>
  */
-class TimeBar extends Bar {
-
-	public var timeLabel:UniversalText;
-	private var style:ETextStyle;
-	private var timer:DTimer;
+class TimeBar extends LabelBar {
 	
-	public function new(bg:String, fillBegin:String, fill:String, ?offset:Point<Int>, ?style:ETextStyle, invert:Bool=false) {
-		this.style = style;
-		super(bg, fillBegin, fill, offset, invert);
+	private var timer:DTimer;
+	private var ignoreBeginAnimation:Bool = false;
+	
+	public function new(
+		bg:String,
+		fillBegin:String,
+		fill:String,
+		?animation:String,
+		animationSpeed:Int = 2000,
+		?border:Border<Int>,
+		?style:ETextStyle,
+		invert:Bool = false
+	) {
+		labelInitVisible = false;
+		super(bg, fillBegin, fill, animation, animationSpeed, border, style, invert);
 		timer = DTimer.createFixedTimer(null);
-		onReady < readyHandler;
+		onReady < timerInit;
 	}
 	
-	private function readyHandler(p:Point<Int>):Void {
-		timeLabel = new UniversalText('00:00', style);
-		timeLabel.x = (p.x - timeLabel.width) / 2;
-		timeLabel.y = (p.y - timeLabel.height) / 2 - 2;
-		addChild(timeLabel);
+	private function timerInit(p:Point<Int>):Void {
 		timer.progress << progressHandler;
 		timer.update << updateHandler;
+		timer.complete << startAnimation;
+		text = '00:00';
+		if (animation != null && !ignoreBeginAnimation) {
+			core.percent = 0;
+			startAnimation();
+		}
 	}
 	
 	private function progressHandler(p:Float):Void core.percent = p;
-	private function updateHandler(t:Time):Void timeLabel.text = t.showMinSec();
+	private function updateHandler(t:Time):Void text = t.showMinSec();
 	
 	public function start(t:TimeInterval, ?cur:Time):Void {
+		ignoreBeginAnimation = true;
 		timer.time = t;
 		timer.reset();
 		if (cur != null) timer.currentTime = cur;
 		timer.start();
+		if (animation != null) stopAnimation();
 	}
 	
 	@:extern inline public function pause():Void timer.stop();
 	@:extern inline public function play():Void timer.start();
+	
+	override public function destroy():Void {
+		timer.destroy();
+		timer = null;
+		super.destroy();
+	}
 	
 }

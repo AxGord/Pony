@@ -211,6 +211,7 @@ typedef PriorityIds = Priority<{id:Int,name:String}>;
 	 * Destroy this object
 	 */
 	public function destroy():Void {
+		if (hash == null) return;
 		clear();
 		hash = null;
 		data = null;

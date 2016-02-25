@@ -25,13 +25,15 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.geom;
+package pony.ui.gui;
 
 /**
+ * IPopup
  * @author AxGord <axgord@gmail.com>
  */
-interface IWH {
-	var size(get, never):Point<Float>;
-	function wait(cb:Void->Void):Void;
+interface IPopup {
+
+	dynamic function onClose():Void;
 	function destroy():Void;
+	
 }

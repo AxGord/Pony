@@ -28,7 +28,6 @@
 package pony.time;
 
 import pony.events.*;
-import pony.events.Listener1.Listener1;
 import pony.magic.Declarator;
 import pony.magic.HasSignal;
 
@@ -124,13 +123,9 @@ class DTimer implements HasSignal implements ITimer<DTimer> implements Declarato
 	
 	public function destroy():Void {
 		if (update == null) return;
-		stop();
-		eProgress.destroy();
-		eUpdate.destroy();
-		eComplete.destroy();
-		eProgress = null;
-		eUpdate = null;
-		eComplete = null;
+		eProgress.onTake.remove(takeProgress);
+		eProgress.onLost.remove(lostProgress);
+		destroySignals();
 		time = null;
 	}
 	

@@ -28,25 +28,27 @@
 package pony.events;
 
 import pony.events.Signal0;
-import pony.magic.HasSignal;
 
 /**
  * WaitReady Helper
  * @author AxGord <axgord@gmail.com>
  */
-class WaitReady implements HasSignal {
+class WaitReady {
 
 	@:auto private var onReady:Signal0;
 	private var isReady:Bool = false;
+	private var list:Array<Void->Void> = [];
 	
 	public function new() {}
 	
 	public function ready():Void {
 		isReady = true;
-		eReady.dispatch();
-		eReady.destroy();
+		for (f in list) f();
+		list = null;
 	}
 	
-	public function waitReady(cb:Void->Void):Void isReady ? cb() : onReady < cb;
+	public function wait(cb:Void->Void):Void isReady ? cb() : list.push(cb);
+	
+	@:extern inline public function destroy():Void list = null;
 	
 }

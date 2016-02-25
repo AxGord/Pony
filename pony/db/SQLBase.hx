@@ -26,7 +26,8 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.db;
-import pony.events.Waiter;
+
+import pony.events.WaitReady;
 import pony.Logable;
 
 /**
@@ -38,7 +39,7 @@ class SQLBase extends Logable {
 	/**
 	 * Connected
 	 */
-	public var connected:Waiter;
+	public var connected:WaitReady;
 	
 	/**
 	 * Forced get fields info after query
@@ -47,7 +48,7 @@ class SQLBase extends Logable {
 	
 	private function new() {
 		super();
-		connected = new Waiter();
+		connected = new WaitReady();
 	}
 	
 }

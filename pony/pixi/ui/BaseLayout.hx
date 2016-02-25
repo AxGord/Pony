@@ -28,6 +28,7 @@
 package pony.pixi.ui;
 
 import pixi.core.display.Container;
+import pixi.core.display.DisplayObject;
 import pixi.core.sprites.Sprite;
 import pixi.core.text.Text;
 import pixi.extras.BitmapText;
@@ -66,10 +67,18 @@ class BaseLayout<T:BaseLayoutCore<Container>> extends Sprite implements IWH {
 		}
 	}
 	
+	private function destroyChild(obj:Container):Void {
+		if (Std.is(obj, DisplayObject)) {
+			var s:DisplayObject = cast obj;
+			removeChild(s);
+			s.destroy();
+		}
+	}
+	
 	private function setXpos(obj:Container, v:Float):Void obj.x = v;
 	private function setYpos(obj:Container, v:Float):Void obj.y = v;
 	
-	public function waitReady(cb:Void->Void):Void layout.waitReady(cb);
+	public function wait(cb:Void->Void):Void layout.wait(cb);
 	
 	private function getSize(o:Container):Point<Float> {
 		return if (Std.is(o, BitmapText))
@@ -79,5 +88,10 @@ class BaseLayout<T:BaseLayoutCore<Container>> extends Sprite implements IWH {
 	}
 	
 	inline private function get_size():Point<Float> return layout.size;
+	
+	override function destroy():Void {
+		layout.destroy();
+		super.destroy();
+	}
 	
 }

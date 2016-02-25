@@ -61,41 +61,47 @@ class BaseLayoutCore<T> implements Declarator implements HasSignal implements IW
 		objects.push(o);
 		if (Std.is(o, IWH)) {
 			tasks.add();
-			cast(o, IWH).waitReady(tasks.end);
+			cast(o, IWH).wait(tasks.end);
 		} else load(o);
 		needUpdate();
 	}
 	
 	private function endUpdate():Void {
+		if (objects == null) return;
 		tasks.end();
 		_needUpdate = false;
 	}
 	
 	public function needUpdate():Void {
+		if (objects == null) return;
 		if (!_needUpdate) {
 			_needUpdate = true;
 			tasks.add();
-			DeltaTime.fixedUpdate < endUpdate;	
+			DeltaTime.fixedUpdate < endUpdate;
 		}
 	}
 	
 	public dynamic function load(o:T):Void {}
+	public dynamic function destroyChild(o:T):Void {}
 	public dynamic function getSize(o:T):Point<Float> return throw 'Unknown type';
 	public dynamic function setXpos(o:T, v:Float):Void {}
 	public dynamic function setYpos(o:T, v:Float):Void {}
 	private function get_size():Point<Float> return new Point(_w, _h);
 	
 	private function tasksReady():Void {
+		if (objects == null) return;
 		if (ready) {
 			update();
 		} else {
 			ready = true;
 			update();
 			eReady.dispatch();
+			eReady.destroy();
 		}
 	}
 	
-	public function waitReady(cb:Void->Void):Void {
+	public function wait(cb:Void->Void):Void {
+		if (objects == null) return;
 		if (ready) cb();
 		else if (tasks.ready) {
 			tasksReady();
@@ -107,6 +113,20 @@ class BaseLayoutCore<T> implements Declarator implements HasSignal implements IW
 	
 	@:extern inline private function getObjSize(o:T):Point<Float> {
 		return Std.is(o, IWH) ? cast(o, IWH).size : getSize(o);
+	}
+	
+	public function destroy():Void {
+		for (o in objects) {
+			if (Std.is(o, IWH))
+				cast(o, IWH).destroy();
+			else
+				destroyChild(o);
+		}
+		objects = null;
+		
+		DeltaTime.fixedUpdate >> endUpdate;
+		destroySignals();
+		tasks = null;
 	}
 	
 }

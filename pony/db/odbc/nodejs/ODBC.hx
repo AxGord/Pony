@@ -33,9 +33,10 @@ import pony.db.SQLBase;
 import haxe.PosInfos;
 import js.Node;
 import pony.db.mysql.Field;
-import pony.events.Waiter;
 import pony.Logable;
+
 using StringTools;
+
 /**
  * Node.JS ODBC
  * haxelib: nodejs
@@ -57,7 +58,7 @@ class ODBC extends SQLBase {
 	
 	private function open(err:Dynamic) {
 		if (err != null) _error(err);
-		else connected.end();
+		else connected.ready();
 	}
 	
 	
@@ -111,4 +112,5 @@ class ODBC extends SQLBase {
 	}
 	
 }
+
 #end

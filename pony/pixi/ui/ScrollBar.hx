@@ -109,4 +109,14 @@ class ScrollBar extends Sprite {
 		updatePos();
 	}
 	
+	override public function destroy():Void {
+		onChangePosition = null;
+		removeChild(bar);
+		bar.destroy();
+		bar = null;
+		onReady = null;
+		touchable = null;
+		super.destroy();
+	}
+	
 }

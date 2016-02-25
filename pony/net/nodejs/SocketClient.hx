@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -26,9 +26,9 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.net.nodejs;
+
 #if nodejs
 
-import pony.events.Waiter;
 import pony.Queue;
 import haxe.io.Bytes;
 import haxe.io.BytesInput;
@@ -77,4 +77,5 @@ class SocketClient extends SocketClientBase {
 	private function dataHandler(d:NodeBuffer):Void joinData(new BytesInput(Bytes.ofData(d)));
 	
 }
+
 #end

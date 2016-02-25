@@ -104,9 +104,24 @@ class TextTable extends TextTableCore {
 	}
 	
 	override private function clear():Void {
-		for (t in texts) target.removeChild(t);
+		for (t in texts) {
+			target.removeChild(t);
+			t.destroy();
+		}
 		graphics.clear();
 		create();
+	}
+	
+	public function destroy():Void {
+		for (t in texts) {
+			target.removeChild(t);
+			t.destroy();
+		}
+		texts = null;
+		target.removeChild(graphics);
+		graphics.destroy();
+		graphics = null;
+		target = null;
 	}
 	
 }

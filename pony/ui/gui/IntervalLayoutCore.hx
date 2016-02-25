@@ -47,6 +47,7 @@ class IntervalLayoutCore<T> extends BaseLayoutCore<T> {
 	public var align(get, set):Align;
 	
 	override public function update():Void {
+		if (objects == null) return;
 		if (!ready) return;
 		var pos:Float = 0;
 		if (vert) {

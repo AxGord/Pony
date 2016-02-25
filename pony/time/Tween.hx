@@ -68,6 +68,7 @@ class Tween implements HasSignal implements Declarator {
 	private function endPlay():Void playing = false;
 	
 	public function play(?dt:DT):Void {
+		if (updateSignal == null) return;
 		if (playing) return;
 		playing = true;
 		if (!invert) {
@@ -107,20 +108,30 @@ class Tween implements HasSignal implements Declarator {
 	
 	@:extern inline private function update():Void eUpdate.dispatch(value);
 	
-	public function stopOnBegin():Void {
+	public function pause():Void {
 		updateSignal.remove(invert ? backward : forward);
-		invert = false;
-		value = range.min;
-		update();
 		playing = false;
 	}
 	
+	public function stopOnBegin():Void {
+		pause();
+		invert = false;
+		value = range.min;
+		update();
+	}
+	
 	public function stopOnEnd():Void {
-		updateSignal.remove(invert ? backward : forward);
+		pause();
 		invert = true;
 		value = range.max;
 		update();
-		playing = false;
+	}
+	
+	public function destroy():Void {
+		pause();
+		this.destroySignals();
+		updateSignal = null;
+		range = null;
 	}
 	
 }

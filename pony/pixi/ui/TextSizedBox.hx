@@ -82,4 +82,10 @@ class TextSizedBox extends BaseLayout<RubberLayoutCore<Container>> {
 		DeltaTime.fixedUpdate < layout.update;
 	}
 	
+	override function destroy():Void {
+		DeltaTime.fixedUpdate >> _update;
+		DeltaTime.fixedUpdate >> layout.update;
+		super.destroy();
+	}
+	
 }

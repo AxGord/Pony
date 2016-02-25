@@ -31,10 +31,8 @@ package pony.net;
 import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
 import haxe.Timer;
-import pony.events.Waiter;
 import pony.Logable;
 #end
-import haxe.io.Bytes;
 import pony.events.*;
 import pony.magic.HasSignal;
 

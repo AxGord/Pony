@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -52,25 +52,65 @@ class TouchableBase implements HasSignal {
 	@:auto public var onClick:Signal0;
 	@:auto public var onTap:Signal0;
 	
+	private var tapTimer:DTimer;
+	private var tapTouch:Touch;
+	
 	public function new() {
 		onDown << function() onUp < eClick;
 		onOutUp << function() onUp >> eClick;
 		
-		eTap.onTake << function() onDown << beginTap;
-		eTap.onLost << function() onDown >> beginTap;
+		eTap.onTake << eTapTake;
+		eTap.onLost << eTapLost;
 	}
 	
-	private function beginTap(t:Touch) {
-		onUp < eTap;
-		DTimer.fixedDelay(300, cancleTap);
-		t.onMove < cancleTap;
+	private function eTapTake():Void {
+		tapTimer = DTimer.createFixedTimer(300);
+		tapTimer.complete << cancleTap;
+		onDown < beginTap;
+	}
+	
+	private function eTapLost():Void {
+		if (tapTouch != null) removeTapCancle();
+		tapTimer.destroy();
+		tapTimer = null;
+		onDown >> beginTap;
+	}
+	
+	private function beginTap(t:Touch):Void {
+		tapTouch = t;
+		tapTimer.start();
+		onUp < tapHandler;
+		t.onMove < tapFirstMove;
+	}
+	
+	private function tapFirstMove():Void {
+		tapTouch.onMove < cancleTap;
+	}
+	
+	private function tapHandler():Void {
+		removeTapCancle();
+		eTap.dispatch();
+		onDown < beginTap;
 	}
 	
 	private function cancleTap() {
-		onUp >> eTap;
+		removeTapCancle();
+		onDown < beginTap;
+	}
+	
+	private function removeTapCancle():Void {
+		onUp >> tapHandler;
+		tapTimer.stop();
+		tapTimer.reset();
+		tapTouch.onMove >> tapFirstMove;
+		tapTouch.onMove >> cancleTap;
+		tapTouch = null;
 	}
 	
 	public function destroy():Void {
+		if (tapTimer != null) eTapLost();
+		eTap.onTake >> eTapTake;
+		eTap.onLost >> eTapLost;
 		destroySignals();
 	}
 	

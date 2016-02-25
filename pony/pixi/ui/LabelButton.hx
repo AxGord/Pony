@@ -42,7 +42,6 @@ using pony.pixi.PixiExtends;
 class LabelButton extends BaseLayout<RubberLayoutCore<Container>> {
 
 	public var core(get, never):ButtonCore;
-	
 	public var button(default, null):Button;
 	
 	public function new(imgs:ImmutableArray<String>, vert:Bool = false, ?border:Border<Int>, ?offset:Point<Float>, useSpriteSheet:Bool=false) {
@@ -51,7 +50,7 @@ class LabelButton extends BaseLayout<RubberLayoutCore<Container>> {
 		super();
 		button = new Button(imgs, offset, useSpriteSheet);
 		addChild(button);
-		button.waitReady(function() {
+		button.wait(function() {
 			layout.width = button.size.x;
 			layout.height = button.size.y;
 			layout.tasks.end();
@@ -59,5 +58,12 @@ class LabelButton extends BaseLayout<RubberLayoutCore<Container>> {
 	}
 	
 	@:extern inline private function get_core():ButtonCore return button.core;
+	
+	override function destroy():Void {
+		removeChild(button);
+		button.destroy();
+		button = null;
+		super.destroy();
+	}
 	
 }

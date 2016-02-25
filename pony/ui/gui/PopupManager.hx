@@ -25,13 +25,50 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.geom;
+package pony.ui.gui;
+
+import types.Popup;
 
 /**
+ * PopupManager
  * @author AxGord <axgord@gmail.com>
  */
-interface IWH {
-	var size(get, never):Point<Float>;
-	function wait(cb:Void->Void):Void;
-	function destroy():Void;
+class PopupManager<Popup> {
+	
+	private var list:Array<Popup> = [];
+	private var current:IPopup;
+	
+	public function new() {}
+	
+	public function showPopup(type:Popup):Void {
+		if (current == null) {
+			_showPopup(type);
+		} else {
+			list.push(type);
+		}
+	}
+	
+	public function hardPopup(type:Popup):Void {
+		list = [];
+		close();
+		_showPopup(type);
+	}
+	
+	private function _showPopup(type:Popup):Void {
+		current = getPopup(type);
+		current.onClose = close;
+	}
+	
+	dynamic public function getPopup(type:Popup):IPopup return throw 'Method not set';
+	dynamic public function onClose():Void {}
+	
+	public function close():Void {
+		if (current == null) return;
+		current.destroy();
+		current = null;
+		onClose();
+		if (list.length > 0)
+			_showPopup(list.shift());
+	}
+	
 }

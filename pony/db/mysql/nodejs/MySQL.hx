@@ -35,7 +35,7 @@ import js.Node;
 import pony.db.ISQL;
 import pony.db.mysql.Config;
 import pony.db.mysql.nodejs.NodeMySQL;
-import pony.events.Waiter;
+import pony.events.WaitReady;
 import pony.Logable;
 import pony.Stream;
 using pony.Tools;
@@ -59,7 +59,7 @@ class MySQL extends SQLBase
 	public function new(config:Config) 
 	{
 		super();
-		connected = new Waiter();
+		connected = new WaitReady();
 		init(config, Tools.nullFunction0);
 	}
 	
@@ -79,7 +79,7 @@ class MySQL extends SQLBase
 		
 		if (@await prepareDatabase(db)) {
 			log('Database $db ready');
-			connected.end();
+			connected.ready();
 		}
 		
 	}

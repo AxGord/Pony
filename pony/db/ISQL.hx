@@ -26,9 +26,10 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.db;
+
 import haxe.PosInfos;
 import pony.db.mysql.Field;
-import pony.events.Waiter;
+import pony.events.WaitReady;
 import pony.ILogable;
 
 /**
@@ -37,7 +38,7 @@ import pony.ILogable;
 
 interface ISQL extends ILogable
 {
-	var connected:Waiter;
+	var connected:WaitReady;
 	var hack:String;
 	function escapeId(s:String):String;
 	function escape(s:String):String;
