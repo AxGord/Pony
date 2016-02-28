@@ -48,6 +48,7 @@ class Button extends Sprite implements IWH {
 	public var size(get, never):Point<Float>;
 	private var hideDisabled:Bool;
 	public var touchActive(get, set):Bool;
+	public var cursor(get, set):Bool;
 	
 	private var list:Array<Sprite>;
 	private var zone:Sprite;
@@ -130,6 +131,8 @@ class Button extends Sprite implements IWH {
 		super.destroy();
 	}
 	
+	inline private function get_cursor():Bool return zone.buttonMode;
+	inline private function set_cursor(v:Bool):Bool return zone.buttonMode = v;
 	inline private function get_touchActive():Bool return zone.interactive;
 	inline private function set_touchActive(v:Bool):Bool return zone.interactive = v;
 	

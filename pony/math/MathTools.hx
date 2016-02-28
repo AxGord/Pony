@@ -99,4 +99,18 @@ class MathTools {
 		return max - min;
 	}
 	
+	public static function shortValue(value:Int):String {
+		var s = Std.string(value);
+		var count = Std.int((s.length-1) / 3);
+		var sub = s.substr(0, s.length - 3 * count);
+		return sub + switch count {
+			case 0: '';
+			case 1: 'k';
+			case 2: 'm';
+			case 3: 'b';
+			case 4: 't';
+			case _: throw 'long';
+		}
+	}
+	
 }
