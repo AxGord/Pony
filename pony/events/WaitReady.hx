@@ -27,21 +27,19 @@
 **/
 package pony.events;
 
-import pony.events.Signal0;
-
 /**
  * WaitReady Helper
  * @author AxGord <axgord@gmail.com>
  */
 class WaitReady {
 
-	@:auto private var onReady:Signal0;
 	private var isReady:Bool = false;
 	private var list:Array<Void->Void> = [];
 	
 	public function new() {}
 	
 	public function ready():Void {
+		if (list == null) return;
 		isReady = true;
 		for (f in list) f();
 		list = null;
@@ -49,6 +47,9 @@ class WaitReady {
 	
 	public function wait(cb:Void->Void):Void isReady ? cb() : list.push(cb);
 	
-	@:extern inline public function destroy():Void list = null;
+	@:extern inline public function destroy():Void {
+		isReady = false;
+		list = null;
+	}
 	
 }

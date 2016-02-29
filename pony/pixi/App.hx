@@ -29,6 +29,7 @@ package pony.pixi;
 
 import haxe.Constraints.FlatEnum;
 import js.Browser;
+import js.html.Element;
 import pixi.core.sprites.Sprite;
 import pixi.plugins.app.Application;
 import pony.geom.Point;
@@ -47,7 +48,7 @@ class App extends Application {
 	private var container:Sprite;
 	private var prevTime:Float = 0;
 	
-	public function new(container:Sprite, width:Float, height:Float, ?bg:UInt) {
+	public function new(container:Sprite, width:Float, height:Float, ?bg:UInt, ?parentDom:Element) {
 		super();
 		roundPixels = true;
 		backgroundColor = bg;
@@ -58,7 +59,7 @@ class App extends Application {
 		this.container = container;
 		onResize = resizeHandler;
 		onUpdate = updateHandler;
-		start();
+		start(parentDom);
 		stage.addChild(container);
 		resizeHandler();
 		Mouse.reg(container);
