@@ -42,6 +42,7 @@ using Lambda;
  */
 class AssetManager {
 
+	public static var baseUrl:String = '';
 	private static var loadedAssets:Array<String> = [];
 	private static var globalLoad:Map<String, Array<Void->Void>> = new Map();
 	
@@ -102,7 +103,7 @@ class AssetManager {
 					globalLoad[asset].push(cb);
 				} else {
 					globalLoad[asset] = [];
-					_load(asset, function() {
+					_load(baseUrl + asset, function() {
 						cb();
 						globalLoaded(asset);
 					});
@@ -127,7 +128,7 @@ class AssetManager {
 		if (loadedAssets.indexOf(asset) != -1) return;
 		if (!globalLoad.exists(asset)) {
 			globalLoad[asset] = [];
-			_load(asset, globalLoaded.bind(asset));
+			_load(baseUrl + asset, globalLoaded.bind(asset));
 		}
 	}
 	

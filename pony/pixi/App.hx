@@ -30,6 +30,7 @@ package pony.pixi;
 import haxe.Constraints.FlatEnum;
 import js.Browser;
 import js.html.Element;
+import js.html.Event;
 import pixi.core.sprites.Sprite;
 import pixi.plugins.app.Application;
 import pony.geom.Point;
@@ -47,9 +48,11 @@ class App extends Application {
 	private var _height:Float;
 	private var container:Sprite;
 	private var prevTime:Float = 0;
+	private var parentDom:Element;
 	
 	public function new(container:Sprite, width:Float, height:Float, ?bg:UInt, ?parentDom:Element) {
 		super();
+		this.parentDom = parentDom;
 		roundPixels = true;
 		backgroundColor = bg;
 		antialias = false;
@@ -61,7 +64,7 @@ class App extends Application {
 		onUpdate = updateHandler;
 		start(parentDom);
 		stage.addChild(container);
-		resizeHandler();
+		__onWindowResize();
 		Mouse.reg(container);
 		Mouse.correction = correction;
 		Touch.reg(container);
@@ -95,6 +98,25 @@ class App extends Application {
 	
 	private function correction(x:Float, y:Float):Point<Float> {
 		return new Point((x - container.x) / container.width, (y - container.y) / container.height);
+	}
+	
+	override function _onWindowResize(event:Event) {
+		DeltaTime.fixedUpdate < __onWindowResize;
+	}
+	
+	private function __onWindowResize():Void {
+		if (parentDom == null) {
+			width = Browser.window.innerWidth;
+			height = Browser.window.innerHeight;
+		} else {
+			width = parentDom.clientWidth;
+			height = parentDom.clientHeight;
+		}
+		renderer.resize(width, height);
+		canvas.style.width = width + "px";
+		canvas.style.height = height + "px";
+
+		if (onResize != null) onResize();
 	}
 	
 }
