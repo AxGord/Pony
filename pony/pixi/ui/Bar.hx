@@ -58,7 +58,7 @@ class Bar extends Sprite implements HasSignal {
 		this.invert = invert;
 		var loadList = switch bg {
 			case OrState.A(v):
-				var s = Sprite.fromImage(v);
+				var s = PixiAssets.image(v);
 				addChild(s);
 				this.bg = s;
 				[s];
@@ -66,9 +66,9 @@ class Bar extends Sprite implements HasSignal {
 				this.bg = v;
 				[];
 		}
-		begin = Sprite.fromImage(fillBegin);
+		begin = PixiAssets.image(fillBegin);
 		addChild(begin);
-		this.fill = Sprite.fromImage(fill);
+		this.fill = PixiAssets.image(fill);
 		addChild(this.fill);
 		loadList.concat([begin, this.fill]).loadedList(DeltaTime.notInstant(init));
 		if (offset != null) {

@@ -51,7 +51,7 @@ class AnimBar extends Bar {
 	) {
 		super(bg, fillBegin, fill, offset, invert);
 		if (animation == null) return;
-		this.animation = Sprite.fromImage(animation);
+		this.animation = PixiAssets.image(animation);
 		this.animation.visible = false;
 		addChildAt(this.animation, 1);
 		if (offset != null) {

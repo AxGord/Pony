@@ -28,7 +28,9 @@
 package pony.pixi;
 
 import pixi.core.sprites.Sprite;
+import pixi.core.textures.Texture;
 import pixi.loaders.Loader;
+import pony.ui.AssetManager;
 
 /**
  * PixiAssets
@@ -42,8 +44,12 @@ class PixiAssets {
 		loader.load(cb);
 	}
 	
-	public static function image(asset:String, name:String):Sprite {
-		return name == null ? Sprite.fromImage(asset) : Sprite.fromFrame(name);
+	public static function image(asset:String, ?name:String):Sprite {
+		return name == null ? Sprite.fromImage(AssetManager.baseUrl+asset) : Sprite.fromFrame(name);
+	}
+	
+	public static function texture(asset:String, ?name:String):Texture {
+		return name == null ? Texture.fromImage(AssetManager.baseUrl+asset) : Texture.fromFrame(name);
 	}
 	
 }

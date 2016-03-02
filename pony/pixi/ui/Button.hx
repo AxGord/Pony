@@ -73,7 +73,7 @@ class Button extends Sprite implements IWH {
 			if (imgs[i+2] == null) imgs[i+2] = imgs[i+1];
 			i += 3;
 		}
-		list = [for (img in imgs) img == null ? null : (useSpriteSheet ? Sprite.fromFrame(StringTools.replace(img,'/','_')) : Sprite.fromImage(img))];
+		list = [for (img in imgs) img == null ? null : (useSpriteSheet ? Sprite.fromFrame(StringTools.replace(img,'/','_')) : PixiAssets.image(img))];
 		if (offset != null) {
 			for (e in list) if (e != null) {
 				e.x = -offset.x;
@@ -81,7 +81,7 @@ class Button extends Sprite implements IWH {
 			}
 		}
 		super();
-		zone = useSpriteSheet ? Sprite.fromFrame(StringTools.replace(z, '/', '_')) : Sprite.fromImage(z);
+		zone = useSpriteSheet ? Sprite.fromFrame(StringTools.replace(z, '/', '_')) : PixiAssets.image(z);
 		if (useSpriteSheet)
 			wr.ready();
 		else

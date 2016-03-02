@@ -207,8 +207,10 @@ class AssetManager {
 	#if pixijs
 	@:extern inline public static function _load(asset:String, cb:Void->Void):Void PixiAssets.load(asset, cb);
 	@:extern inline public static function image(asset:String, name:String) return PixiAssets.image(asset, name);
+	@:extern inline public static function texture(asset:String, name:String) return PixiAssets.texture(asset, name);
 	#else
 	@:extern inline public static function _load(asset:String, cb:Void->Void):Void cb();
 	@:extern inline public static function image(asset:String, name:String) return asset;
+	@:extern inline public static function texture(asset:String, name:String) return asset;
 	#end
 }
