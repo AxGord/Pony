@@ -53,13 +53,17 @@ class AnimBar extends Bar {
 		if (animation == null) return;
 		this.animation = PixiAssets.image(animation);
 		this.animation.visible = false;
-		addChildAt(this.animation, 1);
 		if (offset != null) {
 			this.animation.x = offset.x;
 			this.animation.y = offset.y;
 		}
 		tween = new Tween(animationSpeed, true, true, true, true);
 		tween.onUpdate << animUpdate;
+		onReady < animInit;
+	}
+
+	private function animInit():Void {
+		addChildAt(animation, 1);
 	}
 	
 	private function animUpdate(alp:Float):Void {

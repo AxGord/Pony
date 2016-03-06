@@ -31,6 +31,7 @@ import haxe.Constraints.FlatEnum;
 import js.Browser;
 import js.html.Element;
 import js.html.Event;
+import pixi.core.Pixi;
 import pixi.core.sprites.Sprite;
 import pixi.plugins.app.Application;
 import pony.geom.Point;
@@ -43,6 +44,8 @@ import pony.ui.touch.pixi.Touch;
  * @author AxGord <axgord@gmail.com>
  */
 class App extends Application {
+	
+	public var isWebGL:Bool;
 	
 	private var _width:Float;
 	private var _height:Float;
@@ -63,6 +66,7 @@ class App extends Application {
 		onResize = resizeHandler;
 		onUpdate = updateHandler;
 		start(parentDom);
+		isWebGL = renderer.type == Pixi.RENDERER_TYPE.WEBGL;
 		stage.addChild(container);
 		__onWindowResize();
 		Mouse.reg(container);

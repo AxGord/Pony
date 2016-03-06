@@ -32,6 +32,13 @@ import pony.magic.Declarator;
 import pony.magic.HasSignal;
 import pony.math.MathTools;
 
+@:enum abstract TweenType(Int) {
+	var Linear = 0;
+	var Square = 1;
+	var BackSquare = 2;
+	var Bezier = 3;
+}
+
 /**
  * Tween
  * @author AxGord <axgord@gmail.com>
@@ -39,6 +46,7 @@ import pony.math.MathTools;
 class Tween implements HasSignal implements Declarator {
 	
 	@:auto public var onUpdate:Signal1<Float>;
+	@:auto public var onProgress:Signal1<Float>;
 	@:auto public var onComplete:Signal1<Float>;
 	
 	@:arg private var range:Interval<Float> = 0...1;
@@ -49,28 +57,59 @@ class Tween implements HasSignal implements Declarator {
 	private var invert:Bool;
 	
 	private var updateSignal:Signal1<DT>;
-	private var value:Float;
+	private var progress:Float = 0;
 	private var sr:Float;
 	private var playing:Bool = false;
+	private var type:TweenType;
 	
-	public function new(time:Time = 1000, invert:Bool = false, loop:Bool = false, pingpong:Bool = false, fixedTime:Bool = false) {
-		var speed = 1000 / time;
-		sr = speed * range.range;
+	public function new(type:TweenType=TweenType.Linear, time:Time = 1000, invert:Bool = false, loop:Bool = false, pingpong:Bool = false, fixedTime:Bool = false) {
+		this.type = type;
+		sr = 1000 / time;
 		this.invert = invert;
 		updateSignal = fixedTime ? DeltaTime.fixedUpdate : DeltaTime.update;
-		value = invert ? range.max : range.min;
 		if (pingpong) onComplete << invertInvert;
 		onComplete << endPlay;
 		if (loop) onComplete << play;
+		onProgress << progressHandler;
+	}
+	
+	private function progressHandler(v:Float):Void {
+		v = switch type {
+			case Linear: v;
+			case Square: v * v;
+			case BackSquare: 1 - Math.pow(1 - v, 2);
+			case Bezier: v * v * (3 - 2 * v);
+		};
+		eUpdate.dispatch(MathTools.percentCalc(v, range.min, range.max));
 	}
 	
 	private function invertInvert():Void invert = !invert;
 	private function endPlay():Void playing = false;
 	
+	public function playForward(?dt:DT):Void {
+		if (playing) pause();
+		invert = false;
+		playing = true;
+		updateSignal << forward;
+		if (dt != null) forward(dt);
+	}
+	
+	public function playBack(?dt:DT):Void {
+		if (playing) pause();
+		invert = true;
+		updateSignal << backward;
+		if (dt != null) backward(dt);
+	}
+	
 	public function play(?dt:DT):Void {
 		if (updateSignal == null) return;
 		if (playing) return;
 		playing = true;
+		if (invert) {
+			if (progress == 0) progress = 1;
+		} else {
+			if (progress == 1) progress = 0;
+		}
 		if (!invert) {
 			updateSignal << forward;
 			if (dt != null) forward(dt);
@@ -81,11 +120,12 @@ class Tween implements HasSignal implements Declarator {
 	}
 	
 	private function forward(dt:Float):Void {
-		value += dt * sr;
-		if (value >= range.max) {
+		if (updateSignal == null) return;//todo
+		progress += dt * sr;
+		if (progress >= 1) {
 			updateSignal >> forward;
-			var d = MathTools.range(value, range.max) / sr;
-			value = range.max;
+			var d = MathTools.range(progress, 1) / sr;
+			progress = 1;
 			update();
 			eComplete.dispatch(d);
 		} else {
@@ -94,11 +134,12 @@ class Tween implements HasSignal implements Declarator {
 	}
 	
 	private function backward(dt:Float):Void {
-		value -= dt * sr;
-		if (value <= range.min) {
+		if (updateSignal == null) return;//todo
+		progress -= dt * sr;
+		if (progress <= 0) {
 			updateSignal >> backward;
-			var d = MathTools.range(value, range.min) / sr;
-			value = range.min;
+			var d = MathTools.range(progress, 0) / sr;
+			progress = 0;
 			update();
 			eComplete.dispatch(d);
 		} else {
@@ -106,24 +147,27 @@ class Tween implements HasSignal implements Declarator {
 		}
 	}
 	
-	@:extern inline private function update():Void eUpdate.dispatch(value);
+	@:extern inline private function update():Void eProgress.dispatch(progress);
 	
 	public function pause():Void {
+		if (updateSignal == null) return;
 		updateSignal.remove(invert ? backward : forward);
 		playing = false;
 	}
 	
 	public function stopOnBegin():Void {
+		if (updateSignal == null) return;
 		pause();
 		invert = false;
-		value = range.min;
+		progress = 0;
 		update();
 	}
 	
 	public function stopOnEnd():Void {
+		if (updateSignal == null) return;
 		pause();
 		invert = true;
-		value = range.max;
+		progress = 1;
 		update();
 	}
 	

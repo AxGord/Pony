@@ -52,6 +52,7 @@ class Bar extends Sprite implements HasSignal {
 	private var end:Sprite;
 	private var fill:Sprite;
 	private var invert:Bool = false;
+	private var creep:Float = 1;
 
 	public function new(bg:Or<String, Point<Int>>, fillBegin:String, fill:String, ?offset:Point<Int>, invert:Bool=false) {
 		super();
@@ -77,7 +78,7 @@ class Bar extends Sprite implements HasSignal {
 		}
 	}
 	
-	public function init():Void {
+	private function init():Void {
 		end = new Sprite(begin.texture);
 		end.x = begin.x;
 		end.y = begin.y;
@@ -90,18 +91,18 @@ class Bar extends Sprite implements HasSignal {
 		core = BarCore.create(size.x - (begin.x + begin.width) * 2, size.y - (begin.y + begin.height) * 2, invert);
 		if (core.isVertical) {
 			end.height = -end.height;
-			fill.y = begin.y + begin.height;
+			fill.y = begin.y + begin.height - creep;
 		} else {
 			end.width = -end.width;
-			fill.x = begin.x + begin.width;
+			fill.x = begin.x + begin.width - creep;
 		}
 		core.changeX = function(p:Float) {
-			fill.width = p;
-			end.x = fill.x + fill.width + begin.width;
+			fill.width = p + creep * 2;
+			end.x = fill.x + fill.width + begin.width - creep;
 		}
 		core.changeY = function(p:Float) {
-			fill.height = p;
-			end.y = fill.y + fill.height + begin.height;
+			fill.height = p + creep * 2;
+			end.y = fill.y + fill.height + begin.height - creep;
 		}
 		
 		core.endInit();

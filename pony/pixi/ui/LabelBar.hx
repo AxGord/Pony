@@ -57,10 +57,10 @@ class LabelBar extends AnimBar {
 		this.style = style;
 		this.border = border;
 		super(bg, fillBegin, fill, animation, animationSpeed, border == null ? null : new Point(border.left, border.top), invert);
-		onReady < readyHandler;
+		onReady < labelInit;
 	}
 	
-	private function readyHandler(p:Point<Int>):Void {
+	private function labelInit(p:Point<Int>):Void {
 		label = new TextSizedBox(p.x, p.y, '', style, border, true);
 		label.visible = labelInitVisible;
 		addChild(label);
