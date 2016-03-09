@@ -129,6 +129,7 @@ class TouchableBase implements HasSignal {
 	}
 	
 	public function destroy():Void {
+		unlistenWheel();
 		if (tapTimer != null) eTapLost();
 		eTap.onTake >> eTapTake;
 		eTap.onLost >> eTapLost;
