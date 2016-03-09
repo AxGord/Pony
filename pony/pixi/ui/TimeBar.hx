@@ -51,10 +51,12 @@ class TimeBar extends LabelBar {
 		animationSpeed:Int = 2000,
 		?border:Border<Int>,
 		?style:ETextStyle,
-		invert:Bool = false
+		invert:Bool = false,
+		useSpriteSheet:Bool = false,
+		creep:Float = 0
 	) {
 		labelInitVisible = false;
-		super(bg, fillBegin, fill, animation, animationSpeed, border, style, invert);
+		super(bg, fillBegin, fill, animation, animationSpeed, border, style, invert, useSpriteSheet, creep);
 		timer = DTimer.createFixedTimer(null);
 		onReady < timerInit;
 	}
@@ -64,10 +66,7 @@ class TimeBar extends LabelBar {
 		timer.update << updateHandler;
 		timer.complete << startAnimation;
 		text = '00:00';
-		if (animation != null && !ignoreBeginAnimation) {
-			core.percent = 0;
-			startAnimation();
-		}
+		if (!ignoreBeginAnimation) startAnimation();
 	}
 	
 	private function progressHandler(p:Float):Void core.percent = p;
@@ -75,11 +74,11 @@ class TimeBar extends LabelBar {
 	
 	public function start(t:TimeInterval, ?cur:Time):Void {
 		ignoreBeginAnimation = true;
+		stopAnimation();
 		timer.time = t;
 		timer.reset();
 		if (cur != null) timer.currentTime = cur;
 		timer.start();
-		if (animation != null) stopAnimation();
 	}
 	
 	@:extern inline public function pause():Void timer.stop();

@@ -51,6 +51,7 @@ class TouchableBase implements HasSignal {
 	@:auto public var onUp:Signal1<Touch>;
 	@:auto public var onClick:Signal0;
 	@:auto public var onTap:Signal0;
+	@:auto public var onWheel:Signal1<Int>;
 	
 	private var tapTimer:DTimer;
 	private var tapTouch:Touch;
@@ -61,7 +62,27 @@ class TouchableBase implements HasSignal {
 		
 		eTap.onTake << eTapTake;
 		eTap.onLost << eTapLost;
+		
+		eWheel.onTake << addWheel;
+		eWheel.onLost << removeWheel;
 	}
+	
+	private function addWheel():Void {
+		onOver << listenWheel;
+		onUp << listenWheel;
+		onOut << unlistenWheel;
+		onOutUp << unlistenWheel;
+	}
+	
+	private function removeWheel():Void {
+		if (onOver != null) onOver >> listenWheel;
+		if (onUp != null) onUp >> listenWheel;
+		if (onOut != null) onOut >> unlistenWheel;
+		if (onOutUp != null) onOutUp >> unlistenWheel;
+	}
+	
+	private function listenWheel():Void Mouse.onWheel << eWheel;
+	private function unlistenWheel():Void Mouse.onWheel >> eWheel;
 	
 	private function eTapTake():Void {
 		tapTimer = DTimer.createFixedTimer(300);

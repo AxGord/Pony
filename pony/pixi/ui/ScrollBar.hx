@@ -50,12 +50,19 @@ class ScrollBar extends Sprite {
 	private var startTPosBefore:Int;
 	private var vert:Bool;
 	
-	public function new(size:Int, begin:String, body:String, vert:Bool = true, ?offset:Point<Int>) {
+	public function new(
+		size:Int,
+		begin:String,
+		body:String,
+		vert:Bool = true,
+		?offset:Point<Int>,
+		useSpriteSheet:Bool = false
+	) {
 		super();
 		this.vert = vert;
 		totalSize = size;
 		var point = vert ? new Point(0, size) : new Point(size, 0);
-		bar = new Bar(point, begin, body, offset);
+		bar = new Bar(point, begin, body, offset, false, useSpriteSheet);
 		addChild(bar);
 		onReady = bar.onReady;
 	}

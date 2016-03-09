@@ -47,11 +47,13 @@ class AnimBar extends Bar {
 		?animation:String,
 		animationSpeed:Int = 2000,
 		?offset:Point<Int>,
-		invert:Bool = false
+		invert:Bool = false,
+		useSpriteSheet:Bool=false,
+		creep:Float = 0
 	) {
-		super(bg, fillBegin, fill, offset, invert);
+		super(bg, fillBegin, fill, offset, invert, useSpriteSheet, creep);
 		if (animation == null) return;
-		this.animation = PixiAssets.image(animation);
+		this.animation = PixiAssets.cImage(animation, useSpriteSheet);
 		this.animation.visible = false;
 		if (offset != null) {
 			this.animation.x = offset.x;

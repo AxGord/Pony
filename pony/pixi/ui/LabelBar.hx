@@ -52,11 +52,13 @@ class LabelBar extends AnimBar {
 		animationSpeed:Int = 2000,
 		?border:Border<Int>,
 		?style:ETextStyle,
-		invert:Bool = false
+		invert:Bool = false,
+		useSpriteSheet:Bool = false,
+		creep:Float = 0
 	) {
 		this.style = style;
 		this.border = border;
-		super(bg, fillBegin, fill, animation, animationSpeed, border == null ? null : new Point(border.left, border.top), invert);
+		super(bg, fillBegin, fill, animation, animationSpeed, border == null ? null : new Point(border.left, border.top), invert, useSpriteSheet, creep);
 		onReady < labelInit;
 	}
 	

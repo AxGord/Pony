@@ -52,4 +52,12 @@ class PixiAssets {
 		return name == null ? Texture.fromImage(AssetManager.baseUrl+asset) : Texture.fromFrame(name);
 	}
 	
+	public static function cImage(asset:String, useSpriteSheet:Bool):Sprite {
+		return useSpriteSheet ? Sprite.fromFrame(asset) : Sprite.fromImage(AssetManager.baseUrl + asset);
+	}
+	
+	public static function cTexture(asset:String, useSpriteSheet:Bool):Texture {
+		return useSpriteSheet ? Texture.fromFrame(asset) : Texture.fromImage(AssetManager.baseUrl + asset);
+	}
+	
 }

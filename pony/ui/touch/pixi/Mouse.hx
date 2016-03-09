@@ -27,6 +27,7 @@
 **/
 package pony.ui.touch.pixi;
 
+import js.Browser;
 import pixi.core.display.Container;
 import pixi.interaction.EventTarget;
 import pony.geom.Point;
@@ -62,6 +63,17 @@ class Mouse {
 		M.eMove.onLost << function() obj.removeListener('mousemove', moveHandler);
 		M.eLeave.onTake << function() obj.on('mouseupoutside', upoutsideHandler);
 		M.eLeave.onLost << function() obj.removeListener('mouseupoutside', upoutsideHandler);
+		M.eWheel.onTake << Browser.document.addEventListener.bind("wheel", wheelHandler, false);
+		M.eWheel.onLost << Browser.document.removeEventListener.bind("wheel", wheelHandler, false);
+	}
+	
+	private static function wheelHandler(e:Dynamic):Void {
+		if (e.wheelDelta == null)
+			M.eWheel.dispatch(e.deltaY > 0 ? -120 : 120);
+		else
+			M.eWheel.dispatch(e.wheelDelta);
+		e.returnValue = false;
+		e.preventDefault();
 	}
 	
 	private static function downHandler(e:EventTarget):Void {

@@ -97,6 +97,7 @@ class Tween implements HasSignal implements Declarator {
 	public function playBack(?dt:DT):Void {
 		if (playing) pause();
 		invert = true;
+		playing = true;
 		updateSignal << backward;
 		if (dt != null) backward(dt);
 	}
@@ -120,7 +121,16 @@ class Tween implements HasSignal implements Declarator {
 	}
 	
 	private function forward(dt:Float):Void {
-		if (updateSignal == null) return;//todo
+		if (updateSignal == null) {
+			DeltaTime.fixedUpdate >> forward;
+			DeltaTime.update >> forward;
+			return;//todo: fix bug
+		}
+		if (!playing) {
+			//trace('forward');
+			updateSignal >> forward;
+			return;//todo: fix bug
+		}
 		progress += dt * sr;
 		if (progress >= 1) {
 			updateSignal >> forward;
@@ -134,7 +144,16 @@ class Tween implements HasSignal implements Declarator {
 	}
 	
 	private function backward(dt:Float):Void {
-		if (updateSignal == null) return;//todo
+		if (updateSignal == null) {
+			DeltaTime.fixedUpdate >> backward;
+			DeltaTime.update >> backward;
+			return;//todo: fix bug
+		}
+		if (!playing) {
+			//trace('backward');
+			updateSignal >> backward;
+			return;//todo: fix bug
+		}
 		progress -= dt * sr;
 		if (progress <= 0) {
 			updateSignal >> backward;
@@ -147,7 +166,7 @@ class Tween implements HasSignal implements Declarator {
 		}
 	}
 	
-	@:extern inline private function update():Void eProgress.dispatch(progress);
+	inline public function update():Void eProgress.dispatch(progress);
 	
 	public function pause():Void {
 		if (updateSignal == null) return;

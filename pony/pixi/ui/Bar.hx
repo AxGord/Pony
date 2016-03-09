@@ -27,6 +27,7 @@
 **/
 package pony.pixi.ui;
 
+import pixi.core.Pixi;
 import pixi.core.sprites.Sprite;
 import pixi.core.textures.Texture;
 import pony.events.Signal1;
@@ -52,14 +53,23 @@ class Bar extends Sprite implements HasSignal {
 	private var end:Sprite;
 	private var fill:Sprite;
 	private var invert:Bool = false;
-	private var creep:Float = 1;
+	private var creep:Float;
 
-	public function new(bg:Or<String, Point<Int>>, fillBegin:String, fill:String, ?offset:Point<Int>, invert:Bool=false) {
+	public function new(
+		bg:Or<String, Point<Int>>,
+		fillBegin:String,
+		fill:String,
+		?offset:Point<Int>,
+		invert:Bool = false,
+		useSpriteSheet:Bool = false,
+		creep:Float = 0
+	) {
 		super();
 		this.invert = invert;
+		this.creep = creep;
 		var loadList = switch bg {
 			case OrState.A(v):
-				var s = PixiAssets.image(v);
+				var s = PixiAssets.cImage(v, useSpriteSheet);
 				addChild(s);
 				this.bg = s;
 				[s];
@@ -67,11 +77,15 @@ class Bar extends Sprite implements HasSignal {
 				this.bg = v;
 				[];
 		}
-		begin = PixiAssets.image(fillBegin);
+		begin = PixiAssets.cImage(fillBegin, useSpriteSheet);
 		addChild(begin);
-		this.fill = PixiAssets.image(fill);
+		this.fill = PixiAssets.cImage(fill, useSpriteSheet);
+		this.fill.texture.baseTexture.scaleMode = Pixi.SCALE_MODES.NEAREST;
 		addChild(this.fill);
-		loadList.concat([begin, this.fill]).loadedList(DeltaTime.notInstant(init));
+		if (useSpriteSheet)
+			DeltaTime.fixedUpdate < init;
+		else
+			loadList.concat([begin, this.fill]).loadedList(DeltaTime.notInstant(init));
 		if (offset != null) {
 			this.fill.x = begin.x = offset.x;
 			this.fill.y = begin.y = offset.y;

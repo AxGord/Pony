@@ -28,6 +28,7 @@
 package pony.ui.touch;
 
 import pony.events.Signal0;
+import pony.events.Signal1;
 import pony.events.Signal2;
 import pony.magic.Declarator;
 import pony.magic.HasSignal;
@@ -50,6 +51,7 @@ class Mouse implements Declarator implements HasSignal {
 	@:auto public static var onMiddleDown:Signal2<Float, Float>;
 	@:auto public static var onMiddleUp:Signal2<Float, Float>;
 	@:auto public static var onLeave:Signal0;
+	@:auto public static var onWheel:Signal1<Int>;
 	
 	public static var x(default, null):Float;
 	public static var y(default, null):Float;
