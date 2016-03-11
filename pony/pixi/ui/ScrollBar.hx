@@ -106,6 +106,8 @@ class ScrollBar extends Sprite {
 	}
 	
 	private function endMove(t:Touch):Void {
+		t.onUp >> endMove;
+		t.onOutUp >> endMove;
 		t.onMove >> move;
 		move(t);
 		touchable.onDown < beginMove;

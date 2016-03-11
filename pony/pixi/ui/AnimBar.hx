@@ -63,16 +63,10 @@ class AnimBar extends Bar {
 		tween.onUpdate << animUpdate;
 		onReady < animInit;
 	}
-
-	private function animInit():Void {
-		addChildAt(animation, 1);
-	}
 	
-	private function animUpdate(alp:Float):Void {
-		begin.alpha = alp;
-		fill.alpha = alp;
-		if (end != null) end.alpha = alp;
-	}
+	private function animInit():Void addChildAt(animation, children.length);
+	
+	private function animUpdate(alp:Float):Void animation.alpha = alp;
 	
 	public function startAnimation():Void {
 		animation.visible = true;
