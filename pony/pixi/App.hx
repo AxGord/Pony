@@ -27,7 +27,6 @@
 **/
 package pony.pixi;
 
-import haxe.Constraints.FlatEnum;
 import js.Browser;
 import js.html.Element;
 import js.html.Event;
@@ -35,7 +34,9 @@ import pixi.core.Pixi;
 import pixi.core.sprites.Sprite;
 import pixi.plugins.app.Application;
 import pony.geom.Point;
+import pony.time.DTimer;
 import pony.time.DeltaTime;
+import pony.time.Time;
 import pony.ui.touch.pixi.Mouse;
 import pony.ui.touch.pixi.Touch;
 
@@ -52,46 +53,68 @@ class App extends Application {
 	private var container:Sprite;
 	private var prevTime:Float = 0;
 	private var parentDom:Element;
+	private var smallDeviceQuality:Float;
+	private var smallDeviceQualityOffset:Float;
+	private var resizeTimer:DTimer;
 	
-	public function new(container:Sprite, width:Float, height:Float, ?bg:UInt, ?parentDom:Element) {
+	/**
+	 * @param	smallDeviceQuality - 1 ideal, 2 - low, 3 - normal, 4 - good
+	 */
+	public function new(container:Sprite, width:Float, height:Float, ?bg:UInt, ?parentDom:Element, smallDeviceQuality:Float = 3, resizeInterval:Time=200) {
 		super();
 		this.parentDom = parentDom;
-		roundPixels = true;
+		this.smallDeviceQuality = smallDeviceQuality;
+		smallDeviceQualityOffset = 1 - 1 / smallDeviceQuality;
+		resizeTimer = DTimer.createFixedTimer(resizeInterval);
+		resizeTimer.complete << resizeHandler;
 		backgroundColor = bg;
 		antialias = false;
-		pixelRatio = Browser.window.devicePixelRatio;
+		Browser.window.onresize = _onWindowResize;
+		autoResize = false;
 		_width = width;
 		_height = height;
 		this.container = container;
-		onResize = resizeHandler;
 		onUpdate = updateHandler;
 		start(parentDom);
 		isWebGL = renderer.type == Pixi.RENDERER_TYPE.WEBGL;
 		stage.addChild(container);
-		__onWindowResize();
 		Mouse.reg(container);
 		Mouse.correction = correction;
 		Touch.reg(container);
 		Touch.correction = correction;
+		resizeHandler();
 	}
 	
 	private function resizeHandler():Void {
+		if (parentDom == null) {
+			width = Browser.window.innerWidth;
+			height = Browser.window.innerHeight;
+		} else {
+			width = parentDom.clientWidth;
+			height = parentDom.clientHeight;
+		}
+		
 		var w = width / _width;
 		var h = height / _height;
-		var d:Float;
+		var d:Float = w > h ? h : w;
+		
+		var ratio = smallDeviceQuality <= 1 ? 1 : smallDeviceQualityOffset + d / smallDeviceQuality;
+		ratio *= Browser.window.devicePixelRatio;
+		if (ratio > 1) ratio = 1;
+		
+		renderer.resize(width/d * ratio, height/d * ratio);
+		canvas.style.width = width + "px";
+		canvas.style.height = height + "px";
+		
 		if (w > h) {
-			d = h;
-			var nw = _width * d;
-			container.x = (width - nw) / 2;
+			container.x = (width/d - _width) / 2 * ratio;
 			container.y = 0;
 		} else {
-			d = w;
-			var nh = _height * d;
 			container.x = 0;
-			container.y = (height - nh) / 2;
+			container.y = (height/d - _height) / 2 * ratio;
 		}
-		container.width = d;
-		container.height = d;
+		container.width = ratio;
+		container.height = ratio;
 	}
 	
 	private function updateHandler(time:Float):Void {
@@ -104,23 +127,9 @@ class App extends Application {
 		return new Point((x - container.x) / container.width, (y - container.y) / container.height);
 	}
 	
-	override function _onWindowResize(event:Event) {
-		DeltaTime.fixedUpdate < __onWindowResize;
-	}
-	
-	private function __onWindowResize():Void {
-		if (parentDom == null) {
-			width = Browser.window.innerWidth;
-			height = Browser.window.innerHeight;
-		} else {
-			width = parentDom.clientWidth;
-			height = parentDom.clientHeight;
-		}
-		renderer.resize(width, height);
-		canvas.style.width = width + "px";
-		canvas.style.height = height + "px";
-
-		if (onResize != null) onResize();
+	override function _onWindowResize(event:Event):Void {
+		resizeTimer.reset();
+		resizeTimer.start();
 	}
 	
 }
