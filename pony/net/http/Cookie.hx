@@ -50,10 +50,11 @@ class Cookie
 		} else if (mapCookie != null) oldCookie = mapCookie;
 	}
 	
-	public function toString():String {
+	public function toString(?domain:String):String {
+		domain = domain != null ? 'domain=$domain;' : '';
 		var s:String = '';
 		for (k in newCookie.keys()) {
-			s += k + '=' + newCookie.get(k) + ';HttpOnly;';
+			s += k + '=' + newCookie.get(k) + ';HttpOnly;$domain';
 		}
 		return s;
 	}

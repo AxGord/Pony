@@ -137,10 +137,10 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 	}
 	
 	private function writeCookie():Void {
-		var s:String = cookie.toString();
+		var s:String = cookie.toString(host);
 		if (s != '') {
 			res.setHeader('Set-Cookie', s);
-			res.setHeader('Cookie Domain', host);
+			//res.setHeader('Cookie Domain', host);
 		}
 		end = true;
 	}
