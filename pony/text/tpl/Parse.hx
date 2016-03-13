@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -41,6 +41,8 @@ using pony.Tools;
 class Parse extends ParseBoy<TplContent>
 {
 	
+	private static var VAR_SYMBOLS:String = 'qwertyuiopasdfghjklzxcvbnm1234567890-';
+	
 	public static function parse(t:String, s:TplStyle):TplData {
 		var o:Parse = new Parse(t, s);
 		return o.data;
@@ -75,8 +77,56 @@ class Parse extends ParseBoy<TplContent>
 		searchOpen();
 	}
 	
-	private function searchOpen(closed:Bool=false):Void {
+	private function searchOpen(closed:Bool = false):Void {
+		
+		//BEGIN CHECK VARS
+		gt([s.shortBegin]);
+		var p_sh = pos;
+		pos = beforeGoto;
+		gt([s.begin]);
+		var p_nrml = pos;
+		pos = beforeGoto;
+		
+		if (p_sh < p_nrml) {
+			var bef = pos;
+			pos = p_sh;
+			switch gt([s.args.set, s.shortEnd]) {
+				case 0:
+					var r:Bool = false;
+					var name = str();
+					for (i in 0...name.length) {
+						if (VAR_SYMBOLS.indexOf(name.charAt(i)) == -1) {
+							beforeGoto = bef;
+							pos = p_sh + s.args.set.length;
+							pushText();
+							r = true;
+							break;
+						}
+					}
+					pos = !r ? bef : p_sh;
+				case 1:
+					var r:Bool = false;
+					var name = str();
+					for (i in 0...name.length) {
+						if (VAR_SYMBOLS.indexOf(name.charAt(i)) == -1) {
+							beforeGoto = bef;
+							pos = p_sh + s.shortEnd.length;
+							pushText();
+							r = true;
+							break;
+						}
+					}
+					pos = !r ? bef : p_sh;
+				case _:
+					beforeGoto = bef;
+					pos = p_sh;
+					pushText();
+			}
+		}
+		//END CHECK VARS
+		
 		var o:Int = openPos(), c:Int = closePos();
+				
 		if (o >= c) {
 			if (o == c) {
 				if (closed)
@@ -104,7 +154,6 @@ class Parse extends ParseBoy<TplContent>
 						data.push(ShortTag( { name: parseName(str()), arg: null } ));
 					case 1:
 						var name:String = str();
-						
 						switch (gt([s.shortEnd, s.args.valueq])) {
 							case 0:
 								if (s.args.qalltime)
@@ -116,10 +165,11 @@ class Parse extends ParseBoy<TplContent>
 								data.push(ShortTag( { name: parseName(name), arg: parse(str(), s) } ));
 								if (gt([s.shortEnd]) == -1)
 									throw 'Oops';
-							default: throw 'Oops';
+							default: 
+								throw 'Oops';
 						}
-						
-					default: throw 'Oops';
+					default:
+						throw 'Oops';
 				}
 				searchOpen(closed);
 			default:
@@ -316,7 +366,7 @@ class Parse extends ParseBoy<TplContent>
 	
 	private function openPos():Int {
 		gt([s.begin, s.shortBegin]);
-		var p:Int = pos-lengthGoto;
+		var p:Int = pos - lengthGoto;
 		pos = beforeGoto;
 		return p;
 	}
