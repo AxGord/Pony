@@ -279,6 +279,12 @@ typedef PriorityIds = Priority<{id:Int,name:String}>;
 	 * @param	e Element for removing
 	 */
 	public function remove(e:T):Bool {
+		if (lock) {
+			var ns = [];
+			for (st in addStack) if (!compare(st.a, e)) ns.push(st);
+			addStack = ns;
+		}
+		
 		var i:Int = indexOfElement(e);
 		if (i == -1) return false;
 		var needOnLost = !empty;

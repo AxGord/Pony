@@ -55,7 +55,7 @@ class Button extends Sprite implements IWH {
 	private var prev:Int = 0;
 	private var wr:WaitReady;
 	
-	public function new(imgs:ImmutableArray<String>, ?offset:Point<Float>, useSpriteSheet:Bool=false) {
+	public function new(imgs:ImmutableArray<String>, ?offset:Point<Float>, useSpriteSheet:Bool = false) {
 		var imgs = imgs.copy();
 		wr = new WaitReady();
 		if (imgs[0] == null) throw 'Need first img';
