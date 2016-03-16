@@ -93,7 +93,7 @@ class Parse extends ParseBoy<TplContent>
 			switch gt([s.args.set, s.shortEnd]) {
 				case 0:
 					var r:Bool = false;
-					var name = str();
+					var name = StringTools.trim(str());
 					for (i in 0...name.length) {
 						if (VAR_SYMBOLS.indexOf(name.charAt(i)) == -1) {
 							beforeGoto = bef;
@@ -106,7 +106,7 @@ class Parse extends ParseBoy<TplContent>
 					pos = !r ? bef : p_sh;
 				case 1:
 					var r:Bool = false;
-					var name = str();
+					var name = StringTools.trim(str());
 					for (i in 0...name.length) {
 						if (VAR_SYMBOLS.indexOf(name.charAt(i)) == -1) {
 							beforeGoto = bef;
