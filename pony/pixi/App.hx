@@ -27,7 +27,9 @@
 **/
 package pony.pixi;
 
+import haxe.CallStack;
 import js.Browser;
+import js.Error;
 import js.html.Element;
 import js.html.Event;
 import pixi.core.Pixi;
@@ -120,7 +122,43 @@ class App extends Application {
 	private function updateHandler(time:Float):Void {
 		DeltaTime.fixedValue = (time - prevTime) / 1000;
 		prevTime = time;
+		#if (debug && callstack)
+		try {
+			DeltaTime.fixedDispatch();
+		} catch (e:Error) {
+			pauseRendering();
+			canvas.remove();
+			renderer.view.remove();
+			DeltaTime.fixedUpdate.clear();
+			var pre = Browser.document.createPreElement();
+			if (parentDom != null)
+				parentDom.appendChild(pre);
+			else
+				Browser.document.body.appendChild(pre);
+			pre.appendChild(Browser.document.createTextNode(Std.string(e)+'\n\n'));
+			untyped StackTrace.fromError(e).then(function(stackframes:Array<Dynamic>){
+				for (s in stackframes) pre.appendChild(Browser.document.createTextNode(s.toString()+'\n'));
+			});
+			throw e;
+		} catch (e:Dynamic) {
+			pauseRendering();
+			canvas.remove();
+			renderer.view.remove();
+			DeltaTime.fixedUpdate.clear();
+			var pre = Browser.document.createPreElement();
+			if (parentDom != null)
+				parentDom.appendChild(pre);
+			else
+				Browser.document.body.appendChild(pre);
+			pre.appendChild(Browser.document.createTextNode(Std.string(e)+'\n\n'));
+			untyped StackTrace.get().then(function(stackframes:Array<Dynamic>){
+				for (s in stackframes) pre.appendChild(Browser.document.createTextNode(s.toString()+'\n'));
+			});
+			throw e;
+		} 
+		#else
 		DeltaTime.fixedDispatch();
+		#end
 	}
 	
 	private function correction(x:Float, y:Float):Point<Float> {

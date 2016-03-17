@@ -109,6 +109,7 @@ class ScrollBar extends Sprite {
 		t.onUp >> endMove;
 		t.onOutUp >> endMove;
 		t.onMove >> move;
+		if (onReady == null) return;
 		move(t);
 		touchable.onDown < beginMove;
 	}
