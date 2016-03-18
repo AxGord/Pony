@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -25,17 +25,18 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.net.http;
+package pony.net.http.modules.mlink;
 
-import pony.fs.Dir;
 import pony.text.tpl.ITplPut;
-import pony.net.http.WebServer;
 
 /**
- * IModule
- * @author AxGord
+ * MLinkConnect
+ * @author AxGord <axgord@gmail.com>
  */
-interface IModule {
-	function connect(cpq:CPQ):EConnect;
-	function init(dir:Dir, server:WebServer):Void;
+@:final class MLinkConnect extends ModuleConnect<{}> {
+	
+	override public function tpl(parent:ITplPut):ITplPut {
+		return new MLinkPut(this, null, parent);
+	}
+	
 }

@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -26,21 +26,23 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.net.http;
+
+import pony.net.http.modules.mlink.MLink;
 import pony.net.http.modules.mtpl.MTpl;
 import pony.net.http.modules.mlang.MLang;
 
 /**
- * ...
+ * DefaultModulePack
  * @author AxGord
  */
-
 class DefaultModulePack
 {
 
-	public static function create():Array<IModule> {
+	@:extern inline public static function create():Array<IModule> {
 		return [
 			cast new MLang(),
-			cast new MTpl()
+			cast new MTpl(),
+			cast new MLink()
 		];
 	}
 	
