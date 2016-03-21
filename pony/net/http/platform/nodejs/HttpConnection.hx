@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -41,18 +41,20 @@ using Reflect;
  */
 class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnection {
 	
+	private static var _send(get, never):Dynamic;
+	private static var __send:Dynamic;
 	
-	private static var mime(get, never):Dynamic;
-	
-	inline private static function get_mime():Dynamic return Node.require('mime');
+	inline private static function get__send():Dynamic return __send != null ? __send : __send = Node.require('send');
 	
 	private var res:NodeHttpServerResp;
+	private var req:NodeHttpServerReq;
 	
 	public function new(url:String, storage:ServersideStorage, req:NodeHttpServerReq, res:NodeHttpServerResp, post:Map<String, String>) {
 		super(url);
 		method = req.method;
 		this.post = post;
 		this.res = res;
+		this.req = req;
 		if (req.headers.hasField('accept-language')) {
 			var pb:ParseBoy<Void> = new ParseBoy<Void>(req.headers.field('accept-language'));
 			var n:Int;
@@ -88,18 +90,9 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 			if (err != null) {
 				error(err.toString());
 			} else {
-				var type = mime.lookup(f);
-				res.writeHead(200, {
-					'Content-Length': stat.size,
-					'Content-Type': type
-				});
-				var readStream = Node.fs.createReadStream(f);
-				// We replaced all the event handlers with a simple call to readStream.pipe()
-				readStream.pipe(res);
+				_send(req, f).pipe(res);
 			}
 		});
-		
-		
 	}
 	
 	override public function endAction():Void {
@@ -137,7 +130,7 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 	}
 	
 	private function writeCookie():Void {
-		var s:String = cookie.toString(host);
+		var s:String = cookie.toString(host.split(':')[0]);
 		if (s != '') {
 			res.setHeader('Set-Cookie', s);
 			//res.setHeader('Cookie Domain', host);

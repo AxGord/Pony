@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -52,7 +52,7 @@ class HttpConnection implements HasAbstract
 
 	public function new(fullUrl:String)
 	{
-		trace(fullUrl);
+		//trace(fullUrl);
 		end = false;
 		languages = [];
 		sessionStorage = new Map<String, Dynamic>();

@@ -26,6 +26,7 @@ Sometimes need npm
 ------------------
 * [node-midi](https://github.com/justinlatimer/node-midi)
 * [node-mysql](https://github.com/felixge/node-mysql)
+* [send](https://github.com/pillarjs/send)
 * [NodeJS Library for Facebook](https://github.com/node-facebook/facebook-node-sdk)
 * [SPDY Server for node.js](https://github.com/indutny/node-spdy)
 
