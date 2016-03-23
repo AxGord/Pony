@@ -82,7 +82,7 @@ class AssetManager {
 		if (!called) cb(0, total);
 	}
 	
-	public static function loadPath(path:String='', assets:Array<String>, cb:Int->Int->Void):Void {
+	public static function loadPath(path:String = '', assets:Array<String>, cb:Int->Int->Void):Void {
 		var i = 0;
 		var l = assets.length;
 		for (asset in assets) {
