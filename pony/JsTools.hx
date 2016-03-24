@@ -25,61 +25,26 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.pixi;
+package pony;
 
-import pixi.core.renderers.canvas.CanvasRenderer;
-import pixi.core.sprites.Sprite;
-import pixi.core.textures.RenderTexture;
-import pony.geom.Point;
-import pony.time.DeltaTime;
+import js.Browser;
 
 /**
- * CanvasSprite
+ * JsTools
  * @author AxGord <axgord@gmail.com>
  */
-class CanvasSprite extends Sprite {
+class JsTools {
+
+	public static var isIE(get, never):Bool;
 	
-	private static var _renderer:CanvasRenderer;
+	private static var _isIE:Null<Bool>;
 	
-	private static var inited:Bool = false;
-	
-	private static function init():Void {
-		if (inited) return;
-		inited == true;
-		if (JsTools.isIE) return;
-		_renderer = new CanvasRenderer(0, 0);
-	}
-	
-	public var result:Sprite;
-	private var txtr:RenderTexture;
-	
-	public function new(sourse:Sprite, size:Point<Int>, ?offset:Point<Int>) {
-		super();
-		init();
-		if (_renderer == null) {
-			result = sourse;
-			return;
+	private static function get_isIE():Bool {
+		if (_isIE == null) {
+			_isIE = Browser.navigator.userAgent.indexOf('MSIE') != -1
+				|| Browser.navigator.appVersion.indexOf('Trident/') > 0;
 		}
-		if (offset != null) {
-			sourse.x = offset.x;
-			sourse.y = offset.y;
-		}
-		addChild(sourse);
-		txtr = new RenderTexture(_renderer, size.x, size.y);
-		result = new Sprite(txtr);
-		if (offset != null) {
-			result.x = -offset.x;
-			result.y = -offset.y;
-		}
-	}
-	
-	public function needRenderer():Void if (_renderer != null) DeltaTime.fixedUpdate < render;
-	
-	private function render():Void {
-		visible = true;
-		txtr.render(this, null, true, true);
-		txtr.update();
-		visible = false;
+		return _isIE;
 	}
 	
 }
