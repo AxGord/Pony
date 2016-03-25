@@ -48,6 +48,7 @@ class Tween implements HasSignal implements Declarator {
 	@:auto public var onUpdate:Signal1<Float>;
 	@:auto public var onProgress:Signal1<Float>;
 	@:auto public var onComplete:Signal1<Float>;
+	@:auto public var onSkip:Signal1<Int>;
 	
 	@:arg private var range:Interval<Float> = 0...1;
 	
@@ -61,15 +62,28 @@ class Tween implements HasSignal implements Declarator {
 	private var sr:Float;
 	private var playing:Bool = false;
 	private var type:TweenType;
-	private var time:Float;
+	private var skipTime:Float;
 	
-	public function new(type:TweenType=TweenType.Linear, time:Time = 1000, invert:Bool = false, loop:Bool = false, pingpong:Bool = false, fixedTime:Bool = false) {
+	public function new(
+		type:TweenType = TweenType.Linear,
+		time:Time = 1000,
+		invert:Bool = false,
+		loop:Bool = false,
+		pingpong:Bool = false,
+		fixedTime:Bool = false,
+		?skipTime:Time
+	) {
 		this.type = type;
-		this.time = time / 1000;
 		sr = 1000 / time;
 		this.invert = invert;
 		updateSignal = fixedTime ? DeltaTime.fixedUpdate : DeltaTime.update;
-		if (pingpong) onComplete << invertInvert;
+		if (pingpong) {
+			if (skipTime == null) skipTime = time / 500;
+			onComplete << invertInvert;
+		} else {
+			if (skipTime == null) skipTime = time / 1000;
+		}
+		this.skipTime = skipTime;
 		onComplete << endPlay;
 		if (loop) onComplete << play;
 		onProgress << progressHandler;
@@ -108,16 +122,10 @@ class Tween implements HasSignal implements Declarator {
 		if (updateSignal == null) return;
 		if (playing) return;
 		playing = true;
-		if (dt > time) {
-			var c = Std.int(dt.sec / time);
-			dt -= time * c;
-			//todo: skip event
-			if (c % 2 == 1) {
-				progress = 1;
-				update();
-				eComplete.dispatch(dt);
-				return;
-			}
+		if (dt > skipTime) {
+			var c = Std.int(dt.sec / skipTime);
+			dt -= skipTime * c;
+			eSkip.dispatch(c);
 		}
 		if (invert) {
 			if (progress == 0) progress = 1;
