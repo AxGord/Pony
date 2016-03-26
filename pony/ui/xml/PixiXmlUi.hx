@@ -31,8 +31,12 @@ import pixi.core.display.DisplayObject;
 import pixi.core.sprites.Sprite;
 import pixi.extras.BitmapText;
 import pony.color.UColor;
+import pony.geom.Border;
 import pony.magic.HasAbstract;
+import pony.pixi.ETextStyle;
 import pony.pixi.ui.IntervalLayout;
+import pony.pixi.ui.TimeBar;
+import pony.time.Time;
 
 /**
  * PixiXmlUi
@@ -44,7 +48,8 @@ import pony.pixi.ui.IntervalLayout;
 	image: pixi.core.sprites.Sprite,
 	text: pixi.extras.BitmapText,
 	ivlayout: pony.pixi.ui.IntervalLayout,
-	ihlayout: pony.pixi.ui.IntervalLayout
+	ihlayout: pony.pixi.ui.IntervalLayout,
+	timebar: pony.pixi.ui.TimeBar
 }))
 #end
 class PixiXmlUi extends Sprite implements HasAbstract {
@@ -69,6 +74,20 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 				var l = new IntervalLayout(Std.parseInt(attrs.i), false);
 				for (e in content) l.add(e);
 				l;
+			case 'timebar':
+				var font = attrs.size + 'px ' + attrs.font;
+				new TimeBar(
+					attrs.bg,
+					attrs.begin,
+					attrs.fill,
+					attrs.anim,
+					attrs.animspeed == null ? null : (attrs.animspeed:Time),
+					cast Border.fromString(attrs.border),
+					ETextStyle.BITMAP_TEXT_STYLE({font: font, tint: UColor.fromString(attrs.color).rgb}),
+					attrs.invert != null && attrs.invert.toLowerCase() == 'true',
+					attrs.src.indexOf(',') != -1,
+					attrs.creep == null ? 0 : Std.parseInt(attrs.creep)
+				);
 			case _:
 				throw 'Unknown component $name';
 		}

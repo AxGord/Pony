@@ -76,11 +76,11 @@ class XmlUiBuilder {
 			case EConst(CString(uiFile)):
 				var ps = uiFile.split('/');
 				ps.pop();
-				var p = ps.join('/');
-				var xml = new Fast(Xml.parse(File.getContent(uiFile))).elements.next();
+				gpath = ps.join('/');
+				var xml = getXml(uiFile);
 				if (xml.has.style) {
 					for (f in parseAttr(xml.att.style)) {
-						var s = getStyle(joinPath(p, f));
+						var s = getStyle(joinPath(gpath, f));
 						for (k in s.keys()) style[k] = s[k];
 					}
 				}
@@ -101,6 +101,12 @@ class XmlUiBuilder {
 	}
 	
 	#if macro
+	private static var gpath:String;
+	
+	private static function getXml(file:String):Fast {
+		return new Fast(Xml.parse(File.getContent(StringTools.trim(file)))).elements.next();
+	}
+	
 	private static function getStyle(file:String):Style {
 		var xml = new Fast(Xml.parse(File.getContent(file))).node.style;
 		var path = xml.has.path ? xml.att.path : '';
@@ -122,6 +128,12 @@ class XmlUiBuilder {
 	}
 	
 	private static function getPathes(pathes:Array<String>, xml:Fast, style:Style, path:String = ''):Void {
+		if (xml.name == 'include') {
+			if (xml.has.path) path = joinPath(path, xml.att.path);
+			var xml = getXml(joinPath(gpath, xml.innerData));
+			getPathes(pathes, xml, style, path);
+			return;
+		}
 		if (xml.has.path) {
 			path = joinPath(path, xml.att.path);
 		} else {
@@ -134,19 +146,28 @@ class XmlUiBuilder {
 		} else {
 			var attrs:Map<String, String> = new Map();
 			addStyle(xml.name, attrs, style);
-			if (attrs.exists('src')) pathes.push(joinPath(path, attrs['src']));
+			if (attrs.exists('src'))
+				for (e in joinPathA(path, attrs['src']).split(','))
+					pathes.push(StringTools.ltrim(e));
 		}
 		for (x in xml.elements) getPathes(pathes, x, style, path);
 	}
 	
 	private static function genExpr(xml:Fast, style:Style, prefix:String = '', path:String = ''):Expr {
+		
+		if (xml.name == 'include') {
+			if (xml.has.path) path = joinPath(path, xml.att.path);
+			var xml = getXml(joinPath(gpath, xml.innerData));
+			return genExpr(xml, style, prefix, path);
+		}
+		
 		var attrs:Map<String, String> = new Map();
 		var name = addStyle(xml.name, attrs, style);
 		for (k in xml.x.attributes()) if (k != 'id')
 			attrs[k] = xml.att.resolve(k);
 			
 		if (attrs.exists('path')) path = joinPath(path, attrs['path']);
-		if (attrs.exists('src')) attrs['src'] = joinPath(path, attrs['src']);
+		if (attrs.exists('src')) attrs['src'] = joinPathA(path, attrs['src']);
 			
 		var content:Array<Expr> = [for (x in xml.elements) genExpr(x, style, prefix + (xml.has.id ? xml.att.id+'_' : ''), path)];
 		if (content.length == 0 && xml.x.firstChild() != null) content.push(macro $v{xml.innerData});
@@ -164,12 +185,31 @@ class XmlUiBuilder {
 		var n = name;
 		if (style[name].exists('extends'))
 			n = addStyle(style[name]['extends'], attrs, style);
-		for (k in style[name].keys()) if (k != 'extends')
-			attrs[k] = style[name][k];
+		for (k in style[name].keys()) if (k != 'extends') {
+			var s:String = style[name][k];
+			var att1 = attrs[k] != null && attrs[k].charAt(0) == ',';
+			var att2 = s.charAt(0) == ',';
+			attrs[k] = switch [att1, att2] {
+				case [false, false]:
+					s;
+				case [false, true]:
+					attrs[k] != null ? attrs[k] + s : StringTools.ltrim(s.substr(1));
+				case [true, false]:
+					s + attrs[k];
+				case [true, true]:
+					StringTools.ltrim(attrs[k]) + s;
+			}
+		}
 		return n;
 	}
 	
 	private static function addId(fields:Array<Field>, xml:Fast, style:Style, types:Map<String, ComplexType>, prefix:String = ''):Void {
+		
+		if (xml.name == 'include') {
+			var xml = getXml(joinPath(gpath, xml.innerData));
+			addId(fields, xml, style, types, prefix);
+		}
+		
 		var id = prefix;
 		if (xml.has.id) {
 			id = prefix + xml.att.id;
@@ -185,6 +225,10 @@ class XmlUiBuilder {
 			getType(style[name]['extends'], style, types);
 		else
 			Context.error('Unknown type '+name, Context.currentPos());
+	}
+	
+	private static function joinPathA(a:String, b:String):String {
+		return [for (b in b.split(',')) joinPath(a, StringTools.ltrim(b))].join(', ');
 	}
 	
 	private static function joinPath(a:String, b:String):String {

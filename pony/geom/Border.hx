@@ -52,4 +52,21 @@ abstract Border<T:Float>({top:T, left:T, right:T, bottom:T}) {
 	@:extern inline private function get_right():T return this.right;
 	@:extern inline private function get_bottom():T return this.bottom;
 	
+	@:from public static function fromString(v:String):Border<Float> {
+		if (v == null || v == '') return new Border<Float>(0);
+		var v = v.split(' ');
+		return fromArray([Std.parseFloat(v[0]), Std.parseFloat(v[1]), Std.parseFloat(v[2]), Std.parseFloat(v[3])]);
+	}
+	
+	@:from public static function fromArray<T:Float>(v:Array<T>):Border<T> {
+		return switch v.length {
+			case 0: cast new Border(0);
+			case 1: new Border(v[0]);
+			case 2: new Border(v[0], v[1]);
+			case 3: new Border(v[0], v[1], v[2]);
+			case 4: new Border(v[0], v[1], v[2], v[3]);
+			case _: throw 'Uncorrect array length';
+		}
+	}
+	
 }
