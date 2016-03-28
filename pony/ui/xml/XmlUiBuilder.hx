@@ -78,6 +78,15 @@ class XmlUiBuilder {
 				ps.pop();
 				gpath = ps.join('/');
 				var xml = getXml(uiFile);
+				
+				var filters:Style = new Map();
+				if (xml.has.filters) {
+					for (f in parseAttr(xml.att.filters)) {
+						var s = getFilters(joinPath(gpath, f));
+						for (k in s.keys()) filters[k] = s[k];
+					}
+				}
+				
 				if (xml.has.style) {
 					for (f in parseAttr(xml.att.style)) {
 						var s = getStyle(joinPath(gpath, f));
@@ -86,7 +95,15 @@ class XmlUiBuilder {
 				}
 				
 				addId(fields, xml, style, types);
-				fields.push({name: '_createUI', kind:FFun({args:[], ret:null, expr:macro return ${genExpr(xml, style)}}), pos: Context.currentPos(), access:[AOverride, APrivate]});
+				
+				var obj = {expr: EObjectDecl([for (k in filters.keys()) {field: k, expr: mapToOExprObject(filters[k])}]), pos: Context.currentPos()};
+				
+				var exprs:Array<Expr> = [
+					macro createFilters($obj),
+					macro return ${genExpr(xml, style)}
+				];
+				
+				fields.push({name: '_createUI', kind:FFun({args:[], ret:null, expr:macro $b{exprs}}), pos: Context.currentPos(), access:[AOverride, APrivate]});
 				var pathes:Array<String> = [];
 				getPathes(pathes, xml, style);
 				var pts = [];
@@ -103,12 +120,24 @@ class XmlUiBuilder {
 	#if macro
 	private static var gpath:String;
 	
+	private static function mapToOExprObject(map:Map<String, String>):Dynamic {
+		return {expr: EObjectDecl([for (k in map.keys()) {field: k, expr: macro $v{map[k]}}]), pos: Context.currentPos()};
+	}
+	
 	private static function getXml(file:String):Fast {
 		return new Fast(Xml.parse(File.getContent(StringTools.trim(file)))).elements.next();
 	}
 	
+	private static function getFilters(file:String):Style {
+		var xml = getXml(file);
+		var path = xml.has.path ? xml.att.path : '';
+		return [for (x in xml.elements) x.name => 
+			[for (a in x.x.attributes()) a => x.att.resolve(a)]
+		];
+	}
+	
 	private static function getStyle(file:String):Style {
-		var xml = new Fast(Xml.parse(File.getContent(file))).node.style;
+		var xml = getXml(file);
 		var path = xml.has.path ? xml.att.path : '';
 		return [for (x in xml.elements) x.name => 
 			[for (a in x.x.attributes()) a => (a == 'src' ? joinPath(path, x.att.resolve(a)) : x.att.resolve(a))]
@@ -154,7 +183,6 @@ class XmlUiBuilder {
 	}
 	
 	private static function genExpr(xml:Fast, style:Style, prefix:String = '', path:String = ''):Expr {
-		
 		if (xml.name == 'include') {
 			if (xml.has.path) path = joinPath(path, xml.att.path);
 			var xml = getXml(joinPath(gpath, xml.innerData));

@@ -28,15 +28,22 @@
 package pony.ui.xml;
 
 import pixi.core.display.DisplayObject;
+import pixi.core.renderers.webgl.filters.AbstractFilter;
 import pixi.core.sprites.Sprite;
 import pixi.extras.BitmapText;
+import pixi.filters.dropshadow.DropShadowFilter;
 import pony.color.UColor;
 import pony.geom.Align;
 import pony.geom.Border;
+import pony.geom.Point;
 import pony.magic.HasAbstract;
 import pony.pixi.ETextStyle;
 import pony.pixi.ui.AlignLayout;
+import pony.pixi.ui.Button;
 import pony.pixi.ui.IntervalLayout;
+import pony.pixi.ui.LabelButton;
+import pony.pixi.ui.RubberLayout;
+import pony.pixi.ui.SizedSprite;
 import pony.pixi.ui.TextBox;
 import pony.pixi.ui.TimeBar;
 import pony.time.Time;
@@ -52,15 +59,19 @@ import pony.time.Time;
 	image: pixi.core.sprites.Sprite,
 	text: pixi.extras.BitmapText,
 	timebar: pony.pixi.ui.TimeBar,
+	button: pony.pixi.ui.Button,
+	lbutton: pony.pixi.ui.LabelButton,
 	textbox: pony.pixi.ui.TextBox
 }))
 #end
 class PixiXmlUi extends Sprite implements HasAbstract {
 
+	private var FILTERS:Map<String, AbstractFilter> = new Map();
+	
 	private function createUIElement(name:String, attrs:Dynamic<String>, content:Array<Dynamic>):Dynamic {
 		var obj:DisplayObject = switch name {
 			case 'free':
-				var s = new Sprite();
+				var s = new SizedSprite(new Point(attrs.w != null ? Std.parseFloat(attrs.w) : 0, attrs.h != null ? Std.parseFloat(attrs.h) : 0));
 				for (e in content) s.addChild(e);
 				s;
 			case 'layout':
@@ -73,13 +84,20 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 					var l = new IntervalLayout(Std.parseInt(attrs.ih), false);
 					for (e in content) l.add(e);
 					l;
+				} else if (attrs.w != null || attrs.h != null) {
+					var r = new RubberLayout(Std.parseFloat(attrs.w), Std.parseFloat(attrs.h));
+					for (e in content) r.add(e);
+					r;
 				} else {
 					var s = new AlignLayout(Align.fromString(attrs.align));
 					for (e in content) s.add(e);
 					s;
 				}
 			case 'image':
-				Sprite.fromImage(attrs.src);
+				if (attrs.name != null)
+					Sprite.fromFrame(attrs.name);
+				else
+					Sprite.fromImage(attrs.src);
 			case 'textbox':
 				var font = attrs.size + 'px ' + attrs.font;
 				var text = content.length > 0 ? content[0] : '';
@@ -92,6 +110,12 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 				var text = content.length > 0 ? content[0] : '';
 				var style = {font: font, tint: UColor.fromString(attrs.color).rgb};
 				new BitmapText(text, style);
+			case 'lbutton':
+				var b = new LabelButton(splitAttr(attrs.skin), isTrue(attrs.vert), cast Border.fromString(attrs.border), true);
+				for (c in content) b.add(c);
+				b;
+			case 'button':
+				new Button(splitAttr(attrs.skin), true);
 			case 'timebar':
 				var font = attrs.size + 'px ' + attrs.font;
 				new TimeBar(
@@ -109,9 +133,16 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 			case _:
 				throw 'Unknown component $name';
 		}
+		if (attrs.filters != null) {
+			obj.filters = [for (f in splitAttr(attrs.filters)) FILTERS[f]];
+		}
 		if (attrs.x != null) obj.x = Std.parseInt(attrs.x);
 		if (attrs.y != null) obj.y = Std.parseInt(attrs.y);
 		return obj;
+	}
+	
+	static private function splitAttr(s:String):Array<String> {
+		return s.split(',').map(StringTools.trim).map(function(v) return v == '' ? null : v);
 	}
 	
 	inline static private function isTrue(s:String):Bool return s != null && s.toLowerCase() == 'true';
@@ -119,5 +150,20 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 	@:abstract private function _createUI():DisplayObject;
 	
 	private function createUI():Void addChild(_createUI());
+	
+	private function createFilters(data:Dynamic<Dynamic<String>>):Void {
+		for (name in Reflect.fields(data)) {
+			var d:AbstractFilter = Reflect.field(data, name);
+			var f = switch Reflect.field(d, 'extends') {
+				case 'shadow':
+					new DropShadowFilter();
+				case _:
+					throw 'Unknown filter';
+			}
+			for (n in Reflect.fields(d)) if (n != 'extends')
+				Reflect.setProperty(f, n, Std.parseFloat(Reflect.field(d, n)));
+			FILTERS[name] = f;
+		}
+	}
 	
 }
