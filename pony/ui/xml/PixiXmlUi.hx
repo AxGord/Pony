@@ -155,7 +155,7 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 					attrs.creep == null ? 0 : Std.parseInt(attrs.creep)
 				);
 			case _:
-				throw 'Unknown component $name';
+				customUIElement(name, attrs, content);
 		}
 		if (attrs.r != null) {
 			obj.rotation = Std.parseFloat(attrs.r) * Math.PI / 180;
@@ -174,6 +174,8 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 		if (attrs.y != null) obj.y = Std.parseInt(attrs.y);
 		return obj;
 	}
+	
+	private function customUIElement(name:String, attrs:Dynamic<String>, content:Array<Dynamic>):Dynamic throw 'Unknown component $name';
 	
 	static private function splitAttr(s:String):Array<String> {
 		return s.split(',').map(StringTools.trim).map(function(v) return v == '' ? null : v);
