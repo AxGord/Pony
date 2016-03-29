@@ -27,71 +27,36 @@
 **/
 package pony.pixi.ui;
 
-import pixi.core.display.Container;
-import pixi.core.display.DisplayObject;
-import pixi.core.sprites.Sprite;
-import pixi.core.text.Text;
 import pixi.extras.BitmapText;
 import pony.geom.IWH;
 import pony.geom.Point;
-import pony.ui.gui.BaseLayoutCore;
-
-using pony.pixi.PixiExtends;
+import pony.text.TextTools;
 
 /**
- * BaseLayout
+ * Text
  * @author AxGord <axgord@gmail.com>
  */
-class BaseLayout<T:BaseLayoutCore<Container>> extends Sprite implements IWH {
+class BText extends BitmapText implements IWH {
 
-	public var layout(default, null):T;
 	public var size(get, never):Point<Float>;
+	private var ansi:String;
 	
-	public function new() {
-		super();
-		layout.load = load;
-		layout.getSize = getSize;
-		layout.setXpos = setXpos;
-		layout.setYpos = setYpos;
+	public function new(text:String, ?style:BitmapTextStyle, ?ansi:String) {
+		this.ansi = ansi;
+		if (ansi != null)
+			text = TextTools.convertToANSI(text, ansi);
+		super(text, style);
 	}
 	
-	public function add(obj:Container):Void {
-		addChild(obj);
-		layout.add(obj);
-	}
+	private function get_size():Point<Float> return new Point(textWidth, textHeight);
 	
-	private function load(obj:Container):Void {
-		if (Std.is(obj, Sprite)) {
-			layout.tasks.add();
-			cast(obj, Sprite).loaded(layout.tasks.end);
-		}
-	}
+	public function wait(cb:Void->Void):Void cb();
 	
-	private function destroyChild(obj:Container):Void {
-		if (Std.is(obj, DisplayObject)) {
-			var s:DisplayObject = cast obj;
-			removeChild(s);
-			s.destroy();
-		}
-	}
-	
-	private function setXpos(obj:Container, v:Float):Void obj.x = v;
-	private function setYpos(obj:Container, v:Float):Void obj.y = v;
-	
-	public function wait(cb:Void->Void):Void layout.wait(cb);
-	
-	private function getSize(o:Container):Point<Float> {
-		return if (Std.is(o, BitmapText))
-			new Point(untyped o.textWidth, untyped o.textHeight);
+	public function setText(s:String):Void {
+		if (ansi != null)
+			text = TextTools.convertToANSI(s, ansi);
 		else
-			new Point(o.width, o.height);
-	}
-	
-	inline private function get_size():Point<Float> return layout.size;
-	
-	override function destroy():Void {
-		layout.destroy();
-		super.destroy();
+			text = s;
 	}
 	
 }

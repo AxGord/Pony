@@ -79,7 +79,14 @@ class GeomTools
 		];
 	}
 	
-	public static function center(container:Point<Float>, objects:Array<Point<Float>>, vert:Bool = false, ?border:Border<Int>, padding:Bool = true, ?align:Align):Array<Point<Float>> {
+	public static function center(
+		container:Point<Float>,
+		objects:Array<Point<Float>>,
+		vert:Bool = false,
+		?border:Border<Int>,
+		padding:Bool = true,
+		?align:Align
+	):Array<Point<Float>> {
 		var cfun =  if (align != null)  {
 			if (vert) switch align.horizontal {
 				case HAlign.Left: begin;

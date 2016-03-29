@@ -28,6 +28,7 @@
 package pony.ui.gui;
 
 import pony.geom.Align;
+import pony.geom.Border;
 import pony.geom.GeomTools;
 
 using pony.Tools;
@@ -39,8 +40,10 @@ using pony.Tools;
 class AlignLayoutCore<T> extends BaseLayoutCore<T> {
 	
 	@:arg private var _align:Align = new Pair(VAlign.Middle, HAlign.Center);
+	@:arg private var _border:Border<Int> = 0;
 	
 	public var align(get, set):Align;
+	public var border(get, set):Border<Int>;
 	
 	override public function update():Void {
 		if (objects == null) return;
@@ -52,15 +55,16 @@ class AlignLayoutCore<T> extends BaseLayoutCore<T> {
 				if (s > _w) _w = s;
 				s;
 			}];
-			for (p in GeomTools.halign(align, _w, sizesX).pair(objects)) setXpos(p.b, Std.int(p.a));
-		} else {
+			for (p in GeomTools.halign(align, _w, sizesX).pair(objects)) setXpos(p.b, Std.int(p.a) + _border.left);
+		}
+		if (align.vertical != null) {
 			_h = 0;
 			var sizesY = [for (obj in objects) {
 				var s = getObjSize(obj).y;
 				if (s > _h) _h = s;
 				s;
 			}];
-			for (p in GeomTools.valign(align, _h, sizesY).pair(objects)) setYpos(p.b, Std.int(p.a));
+			for (p in GeomTools.valign(align, _h, sizesY).pair(objects)) setYpos(p.b, Std.int(p.a) + _border.top);
 		}
 		super.update();
 	}
@@ -70,6 +74,15 @@ class AlignLayoutCore<T> extends BaseLayoutCore<T> {
 	@:extern inline private function set_align(v:Align):Align {
 		if (align == v) return v;
 		_align = v;
+		update();
+		return v;
+	}
+	
+	@:extern inline private function get_border():Border<Int> return _border;
+	
+	@:extern inline private function set_border(v:Border<Int>):Border<Int> {
+		if (border == v) return v;
+		_border = v;
 		update();
 		return v;
 	}
