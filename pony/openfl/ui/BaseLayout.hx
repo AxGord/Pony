@@ -1,13 +1,19 @@
 package pony.openfl.ui;
 
 import openfl.display.DisplayObject;
+import openfl.display.DisplayObjectContainer;
 import openfl.display.Sprite;
 import openfl.text.TextField;
 import pony.ui.gui.BaseLayoutCore;
 import pony.geom.IWH;
 import pony.geom.Point;
 
-class BaseLayout<T:BaseLayoutCore<DisplayObject>> extends DisplayObject implements IWH {
+/**
+ * ...
+ * @author meerfolk<meerfolk@gmail.com>
+ */
+
+class BaseLayout<T:BaseLayoutCore<DisplayObject>> extends Sprite implements IWH {
 	
 	public var layout(default, null):T;
 	public var size(get, never):Point<Float>;
@@ -21,8 +27,6 @@ class BaseLayout<T:BaseLayoutCore<DisplayObject>> extends DisplayObject implemen
 	}
 	
 	public function add(obj:DisplayObject):Void {
-		var o : DisplayObject = new DisplayObject();
-		o.
 		addChild(obj);
 		layout.add(obj);
 	}
@@ -34,7 +38,7 @@ class BaseLayout<T:BaseLayoutCore<DisplayObject>> extends DisplayObject implemen
 		}
 	}
 	
-	private function destroyChild(obj:DisplayObject):Void {
+	private function destroyChild(obj:DisplayObjectContainer):Void {
 		if (Std.is(obj, DisplayObject)) {
 			var s:DisplayObject = cast obj;
 			removeChild(s);
@@ -58,6 +62,7 @@ class BaseLayout<T:BaseLayoutCore<DisplayObject>> extends DisplayObject implemen
 	
 	public function destroy():Void {
 		layout.destroy();
+		//super.destroy();
 	}
 	
 	
