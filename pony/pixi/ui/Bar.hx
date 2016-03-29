@@ -31,6 +31,8 @@ import pixi.core.Pixi;
 import pixi.core.sprites.Sprite;
 import pixi.core.textures.Texture;
 import pony.events.Signal1;
+import pony.events.WaitReady;
+import pony.geom.IWH;
 import pony.geom.Point;
 import pony.magic.HasSignal;
 import pony.Or;
@@ -43,10 +45,13 @@ using pony.pixi.PixiExtends;
  * Bar
  * @author AxGord <axgord@gmail.com>
  */
-class Bar extends Sprite implements HasSignal {
+class Bar extends Sprite implements HasSignal implements IWH {
 	
 	public var core:BarCore;
 	@:auto public var onReady:Signal1<Point<Int>>;
+	
+	private var _wait:WaitReady = new WaitReady();
+	public var size(get, never):Point<Float>;
 	
 	private var bg:Or<Sprite, Point<Int>>;
 	private var begin:Sprite;
@@ -89,6 +94,17 @@ class Bar extends Sprite implements HasSignal {
 		if (offset != null) {
 			this.fill.x = begin.x = offset.x;
 			this.fill.y = begin.y = offset.y;
+		}
+		
+		onReady.add(_wait.ready, 10);
+	}
+	
+	inline public function wait(cb:Void->Void):Void _wait.wait(cb);
+	
+	private function get_size():Point<Float> {
+		return switch bg {
+			case OrState.A(v): new Point(v.width, v.height);
+			case OrState.B(v): cast v;
 		}
 	}
 	

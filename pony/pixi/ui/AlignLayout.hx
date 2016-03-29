@@ -28,70 +28,18 @@
 package pony.pixi.ui;
 
 import pixi.core.display.Container;
-import pixi.core.display.DisplayObject;
-import pixi.core.sprites.Sprite;
-import pixi.core.text.Text;
-import pixi.extras.BitmapText;
-import pony.geom.IWH;
-import pony.geom.Point;
-import pony.ui.gui.BaseLayoutCore;
-
-using pony.pixi.PixiExtends;
+import pony.geom.Align;
+import pony.ui.gui.AlignLayoutCore;
 
 /**
- * BaseLayout
+ * IntervalLayout
  * @author AxGord <axgord@gmail.com>
  */
-class BaseLayout<T:BaseLayoutCore<Container>> extends Sprite implements IWH implements ILayout {
+class AlignLayout extends BaseLayout<AlignLayoutCore<Container>> {
 
-	public var layout(default, null):T;
-	public var size(get, never):Point<Float>;
-	
-	public function new() {
+	public function new(?align:Align) {
+		layout = new AlignLayoutCore<Container>(align);
 		super();
-		layout.load = load;
-		layout.getSize = getSize;
-		layout.setXpos = setXpos;
-		layout.setYpos = setYpos;
-	}
-	
-	public function add(obj:Container):Void {
-		addChild(obj);
-		layout.add(obj);
-	}
-	
-	private function load(obj:Container):Void {
-		if (Std.is(obj, Sprite)) {
-			layout.tasks.add();
-			cast(obj, Sprite).loaded(layout.tasks.end);
-		}
-	}
-	
-	private function destroyChild(obj:Container):Void {
-		if (Std.is(obj, DisplayObject)) {
-			var s:DisplayObject = cast obj;
-			removeChild(s);
-			s.destroy();
-		}
-	}
-	
-	private function setXpos(obj:Container, v:Float):Void obj.x = v;
-	private function setYpos(obj:Container, v:Float):Void obj.y = v;
-	
-	public function wait(cb:Void->Void):Void layout.wait(cb);
-	
-	private function getSize(o:Container):Point<Float> {
-		return if (Std.is(o, BitmapText))
-			new Point(untyped o.textWidth, untyped o.textHeight);
-		else
-			new Point(o.width, o.height);
-	}
-	
-	inline private function get_size():Point<Float> return layout.size;
-	
-	override function destroy():Void {
-		layout.destroy();
-		super.destroy();
 	}
 	
 }

@@ -39,13 +39,27 @@ import pony.time.DeltaTime;
  */
 class CanvasSprite extends Sprite {
 	
-	private static var _renderer:CanvasRenderer = new CanvasRenderer(0, 0);
+	private static var _renderer:CanvasRenderer;
+	
+	private static var inited:Bool = false;
+	
+	private static function init():Void {
+		if (inited) return;
+		inited == true;
+		if (JsTools.isIE) return;
+		_renderer = new CanvasRenderer(0, 0);
+	}
 	
 	public var result:Sprite;
 	private var txtr:RenderTexture;
 	
 	public function new(sourse:Sprite, size:Point<Int>, ?offset:Point<Int>) {
 		super();
+		init();
+		if (_renderer == null) {
+			result = sourse;
+			return;
+		}
 		if (offset != null) {
 			sourse.x = offset.x;
 			sourse.y = offset.y;
@@ -59,7 +73,7 @@ class CanvasSprite extends Sprite {
 		}
 	}
 	
-	public function needRenderer():Void DeltaTime.fixedUpdate < render;
+	public function needRenderer():Void if (_renderer != null) DeltaTime.fixedUpdate < render;
 	
 	private function render():Void {
 		visible = true;

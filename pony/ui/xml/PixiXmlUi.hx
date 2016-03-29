@@ -28,11 +28,25 @@
 package pony.ui.xml;
 
 import pixi.core.display.DisplayObject;
+import pixi.core.renderers.webgl.filters.AbstractFilter;
 import pixi.core.sprites.Sprite;
 import pixi.extras.BitmapText;
+import pixi.filters.dropshadow.DropShadowFilter;
 import pony.color.UColor;
+import pony.geom.Align;
+import pony.geom.Border;
+import pony.geom.Point;
 import pony.magic.HasAbstract;
+import pony.pixi.ETextStyle;
+import pony.pixi.ui.AlignLayout;
+import pony.pixi.ui.Button;
 import pony.pixi.ui.IntervalLayout;
+import pony.pixi.ui.LabelButton;
+import pony.pixi.ui.RubberLayout;
+import pony.pixi.ui.SizedSprite;
+import pony.pixi.ui.TextBox;
+import pony.pixi.ui.TimeBar;
+import pony.time.Time;
 
 /**
  * PixiXmlUi
@@ -41,44 +55,115 @@ import pony.pixi.ui.IntervalLayout;
 #if !macro
 @:autoBuild(pony.ui.xml.XmlUiBuilder.build({
 	free: pixi.core.sprites.Sprite,
+	layout: pony.pixi.ui.ILayout,
 	image: pixi.core.sprites.Sprite,
 	text: pixi.extras.BitmapText,
-	ivlayout: pony.pixi.ui.IntervalLayout,
-	ihlayout: pony.pixi.ui.IntervalLayout
+	timebar: pony.pixi.ui.TimeBar,
+	button: pony.pixi.ui.Button,
+	lbutton: pony.pixi.ui.LabelButton,
+	textbox: pony.pixi.ui.TextBox
 }))
 #end
 class PixiXmlUi extends Sprite implements HasAbstract {
 
+	private var FILTERS:Map<String, AbstractFilter> = new Map();
+	
 	private function createUIElement(name:String, attrs:Dynamic<String>, content:Array<Dynamic>):Dynamic {
 		var obj:DisplayObject = switch name {
 			case 'free':
-				var s = new Sprite();
+				var s = new SizedSprite(new Point(attrs.w != null ? Std.parseFloat(attrs.w) : 0, attrs.h != null ? Std.parseFloat(attrs.h) : 0));
 				for (e in content) s.addChild(e);
 				s;
+			case 'layout':
+				var align = attrs.align != null ? new AlignLayout(Align.fromString(attrs.align)) : null;
+				if (attrs.iv != null) {
+					var l = new IntervalLayout(Std.parseInt(attrs.iv), true);
+					for (e in content) l.add(e);
+					l;
+				} else if (attrs.ih != null) {
+					var l = new IntervalLayout(Std.parseInt(attrs.ih), false);
+					for (e in content) l.add(e);
+					l;
+				} else if (attrs.w != null || attrs.h != null) {
+					var r = new RubberLayout(Std.parseFloat(attrs.w), Std.parseFloat(attrs.h));
+					for (e in content) r.add(e);
+					r;
+				} else {
+					var s = new AlignLayout(Align.fromString(attrs.align));
+					for (e in content) s.add(e);
+					s;
+				}
 			case 'image':
-				Sprite.fromImage(attrs.src);
+				if (attrs.name != null)
+					Sprite.fromFrame(attrs.name);
+				else
+					Sprite.fromImage(attrs.src);
+			case 'textbox':
+				var font = attrs.size + 'px ' + attrs.font;
+				var text = content.length > 0 ? content[0] : '';
+				var style = ETextStyle.BITMAP_TEXT_STYLE({font: font, tint: UColor.fromString(attrs.color).rgb});
+				var s = Sprite.fromImage(attrs.src);
+				s.visible = !isTrue(attrs.hidebg);
+				new TextBox(s, text, style, cast Border.fromString(attrs.border), isTrue(attrs.nocache));
 			case 'text':
 				var font = attrs.size + 'px ' + attrs.font;
 				var text = content.length > 0 ? content[0] : '';
-				new BitmapText(text, {font: font, tint: UColor.fromString(attrs.color).rgb});
-			case 'ivlayout':
-				var l = new IntervalLayout(Std.parseInt(attrs.i), true);
-				for (e in content) l.add(e);
-				l;
-			case 'ihlayout':
-				var l = new IntervalLayout(Std.parseInt(attrs.i), false);
-				for (e in content) l.add(e);
-				l;
+				var style = {font: font, tint: UColor.fromString(attrs.color).rgb};
+				new BitmapText(text, style);
+			case 'lbutton':
+				var b = new LabelButton(splitAttr(attrs.skin), isTrue(attrs.vert), cast Border.fromString(attrs.border), true);
+				for (c in content) b.add(c);
+				b;
+			case 'button':
+				new Button(splitAttr(attrs.skin), true);
+			case 'timebar':
+				var font = attrs.size + 'px ' + attrs.font;
+				new TimeBar(
+					attrs.bg,
+					attrs.begin,
+					attrs.fill,
+					attrs.anim,
+					attrs.animspeed == null ? null : (attrs.animspeed:Time),
+					cast Border.fromString(attrs.border),
+					ETextStyle.BITMAP_TEXT_STYLE({font: font, tint: UColor.fromString(attrs.color).rgb}),
+					isTrue(attrs.invert),
+					attrs.src.indexOf(',') != -1,
+					attrs.creep == null ? 0 : Std.parseInt(attrs.creep)
+				);
 			case _:
 				throw 'Unknown component $name';
+		}
+		if (attrs.filters != null) {
+			obj.filters = [for (f in splitAttr(attrs.filters)) FILTERS[f]];
 		}
 		if (attrs.x != null) obj.x = Std.parseInt(attrs.x);
 		if (attrs.y != null) obj.y = Std.parseInt(attrs.y);
 		return obj;
 	}
 	
+	static private function splitAttr(s:String):Array<String> {
+		return s.split(',').map(StringTools.trim).map(function(v) return v == '' ? null : v);
+	}
+	
+	inline static private function isTrue(s:String):Bool return s != null && s.toLowerCase() == 'true';
+	
 	@:abstract private function _createUI():DisplayObject;
 	
 	private function createUI():Void addChild(_createUI());
+	
+	private function createFilters(data:Dynamic<Dynamic<String>>):Void {
+		for (name in Reflect.fields(data)) {
+			var d:AbstractFilter = Reflect.field(data, name);
+			var f = switch Reflect.field(d, 'extends') {
+				case 'shadow':
+					new DropShadowFilter();
+				case _:
+					throw 'Unknown filter';
+			}
+			for (n in Reflect.fields(d)) if (n != 'extends')
+				Reflect.setProperty(f, n, Std.parseFloat(Reflect.field(d, n)));
+			FILTERS[name] = f;
+		}
+	}
 	
 }
