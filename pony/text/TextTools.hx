@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -38,6 +38,32 @@ import haxe.Serializer;
  * @author AxGord <axgord@gmail.com>
  */
 class TextTools {
+	
+	public static var letters:Map<String, String> = ['ru' => 'АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ'];
+	inline private static var firstANSIId:Int = 192;
+	
+	public static function convertToANSI(s:String, lang:String):String {
+		var r = '';
+		for (i in 0...s.length) r += getANSILetter(s.charAt(i), lang);
+		return r;
+	}
+	
+	private static function getANSILetter(s:String, lang:String):String {
+		var l = letters[lang];
+		for (i in 0...l.length) if (l.charAt(i) == s)
+			return String.fromCharCode(i + firstANSIId);
+		l = l.toLowerCase();
+		for (i in 0...l.length) if (l.charAt(l.length+i) == s)
+			return String.fromCharCode(l.length + i + firstANSIId);
+		return s;
+	}
+	
+	public static function checkLang(s:String, lang:String):Bool {
+		var l = letters[lang];
+		for (i in 0...s.length) if (l.indexOf(s.charAt(i).toUpperCase()) != -1) return true;
+		return false;
+	}
+	
 	public inline static function exists(s:String, ch:String):Bool return s.indexOf(ch) != -1;
 	
 	public static function repeat(s:String, count:Int):String {

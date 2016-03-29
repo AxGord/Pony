@@ -27,71 +27,60 @@
 **/
 package pony.pixi.ui;
 
-import pixi.core.display.Container;
-import pixi.core.display.DisplayObject;
+import pixi.core.graphics.Graphics;
 import pixi.core.sprites.Sprite;
-import pixi.core.text.Text;
-import pixi.extras.BitmapText;
+import pixi.extras.BitmapText.BitmapTextStyle;
+import pony.color.UColor;
 import pony.geom.IWH;
 import pony.geom.Point;
-import pony.ui.gui.BaseLayoutCore;
-
-using pony.pixi.PixiExtends;
+import pony.ui.gui.ButtonImgN;
+import pony.ui.touch.pixi.Touchable;
 
 /**
- * BaseLayout
+ * TextButton
  * @author AxGord <axgord@gmail.com>
  */
-class BaseLayout<T:BaseLayoutCore<Container>> extends Sprite implements IWH {
+class TextButton extends Sprite implements IWH {
 
-	public var layout(default, null):T;
+	public var core:ButtonImgN;
+	public var text(get, set):String;
+	public var btext(default, null):BText;
 	public var size(get, never):Point<Float>;
+	private var color:Array<UColor>;
 	
-	public function new() {
+	public function new(color:Array<UColor>, text:String, font:String, ?ansi:String) {
 		super();
-		layout.load = load;
-		layout.getSize = getSize;
-		layout.setXpos = setXpos;
-		layout.setYpos = setYpos;
+		this.color = color;
+		btext = new BText(text, {font: font, tint: color[0]}, ansi);
+		addChild(btext);
+		var g = new Graphics();
+		g.lineStyle();
+		g.beginFill(0, 0);
+		g.drawRect(0, 0, size.x, size.y);
+		g.endFill();
+		addChildAt(g, 0);
+		g.buttonMode = true;
+		core = new ButtonImgN(new Touchable(g));
+		core.onImg << imgHandler;
 	}
 	
-	public function add(obj:Container):Void {
-		addChild(obj);
-		layout.add(obj);
+	private function imgHandler(n:Int):Void {
+		n--;
+		if (n > color.length) n = color.length - 1;
+		btext.tint = color[n];
 	}
 	
-	private function load(obj:Container):Void {
-		if (Std.is(obj, Sprite)) {
-			layout.tasks.add();
-			cast(obj, Sprite).loaded(layout.tasks.end);
-		}
+	@:extern inline private function get_text():String return btext.text;
+	
+	@:extern inline private function set_text(t:String):String {
+		btext.setText(t);
+		return t;
 	}
 	
-	private function destroyChild(obj:Container):Void {
-		if (Std.is(obj, DisplayObject)) {
-			var s:DisplayObject = cast obj;
-			removeChild(s);
-			s.destroy();
-		}
+	inline private function get_size():Point<Float> {
+		return btext.size;
 	}
 	
-	private function setXpos(obj:Container, v:Float):Void obj.x = v;
-	private function setYpos(obj:Container, v:Float):Void obj.y = v;
-	
-	public function wait(cb:Void->Void):Void layout.wait(cb);
-	
-	private function getSize(o:Container):Point<Float> {
-		return if (Std.is(o, BitmapText))
-			new Point(untyped o.textWidth, untyped o.textHeight);
-		else
-			new Point(o.width, o.height);
-	}
-	
-	inline private function get_size():Point<Float> return layout.size;
-	
-	override function destroy():Void {
-		layout.destroy();
-		super.destroy();
-	}
+	inline public function wait(cb:Void->Void):Void btext.wait(cb);
 	
 }

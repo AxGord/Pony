@@ -28,6 +28,7 @@
 package pony.ui.xml;
 
 import pixi.core.display.DisplayObject;
+import pixi.core.graphics.Graphics;
 import pixi.core.renderers.webgl.filters.AbstractFilter;
 import pixi.core.sprites.Sprite;
 import pixi.extras.BitmapText;
@@ -39,12 +40,14 @@ import pony.geom.Point;
 import pony.magic.HasAbstract;
 import pony.pixi.ETextStyle;
 import pony.pixi.ui.AlignLayout;
+import pony.pixi.ui.BText;
 import pony.pixi.ui.Button;
 import pony.pixi.ui.IntervalLayout;
 import pony.pixi.ui.LabelButton;
 import pony.pixi.ui.RubberLayout;
 import pony.pixi.ui.SizedSprite;
 import pony.pixi.ui.TextBox;
+import pony.pixi.ui.TextButton;
 import pony.pixi.ui.TimeBar;
 import pony.time.Time;
 
@@ -55,13 +58,15 @@ import pony.time.Time;
 #if !macro
 @:autoBuild(pony.ui.xml.XmlUiBuilder.build({
 	free: pixi.core.sprites.Sprite,
-	layout: pony.pixi.ui.ILayout,
+	layout: pony.pixi.ui.TLayout,
 	image: pixi.core.sprites.Sprite,
-	text: pixi.extras.BitmapText,
+	text: pony.pixi.ui.BText,
 	timebar: pony.pixi.ui.TimeBar,
 	button: pony.pixi.ui.Button,
 	lbutton: pony.pixi.ui.LabelButton,
-	textbox: pony.pixi.ui.TextBox
+	textbox: pony.pixi.ui.TextBox,
+	rect: pixi.core.graphics.Graphics,
+	textbutton: pony.pixi.ui.TextButton
 }))
 #end
 class PixiXmlUi extends Sprite implements HasAbstract {
@@ -74,22 +79,37 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 				var s = new SizedSprite(new Point(attrs.w != null ? Std.parseFloat(attrs.w) : 0, attrs.h != null ? Std.parseFloat(attrs.h) : 0));
 				for (e in content) s.addChild(e);
 				s;
+			case 'rect':
+				var color = UColor.fromString(attrs.color);
+				var g = new Graphics();
+				g.lineStyle();
+				g.beginFill(color.rgb, color.invertAlpha.af);
+				g.drawRect(0, 0, Std.parseFloat(attrs.w), Std.parseFloat(attrs.h));
+				g.endFill();
+				return g;
 			case 'layout':
-				var align = attrs.align != null ? new AlignLayout(Align.fromString(attrs.align)) : null;
+				var align = Align.fromString(attrs.align);
 				if (attrs.iv != null) {
-					var l = new IntervalLayout(Std.parseInt(attrs.iv), true);
+					var l = new IntervalLayout(Std.parseInt(attrs.iv), true, align);
 					for (e in content) l.add(e);
 					l;
 				} else if (attrs.ih != null) {
-					var l = new IntervalLayout(Std.parseInt(attrs.ih), false);
+					var l = new IntervalLayout(Std.parseInt(attrs.ih), false, align);
 					for (e in content) l.add(e);
 					l;
 				} else if (attrs.w != null || attrs.h != null) {
-					var r = new RubberLayout(Std.parseFloat(attrs.w), Std.parseFloat(attrs.h));
+					var r = new RubberLayout(
+						Std.parseFloat(attrs.w),
+						Std.parseFloat(attrs.h),
+						isTrue(attrs.vert),
+						cast Border.fromString(attrs.border),
+						attrs.padding == null ? true : isTrue(attrs.padding),
+						align
+					);
 					for (e in content) r.add(e);
 					r;
 				} else {
-					var s = new AlignLayout(Align.fromString(attrs.align));
+					var s = new AlignLayout(align);
 					for (e in content) s.add(e);
 					s;
 				}
@@ -109,13 +129,17 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 				var font = attrs.size + 'px ' + attrs.font;
 				var text = content.length > 0 ? content[0] : '';
 				var style = {font: font, tint: UColor.fromString(attrs.color).rgb};
-				new BitmapText(text, style);
+				new BText(text, style, attrs.ansi);
 			case 'lbutton':
 				var b = new LabelButton(splitAttr(attrs.skin), isTrue(attrs.vert), cast Border.fromString(attrs.border), true);
 				for (c in content) b.add(c);
 				b;
 			case 'button':
 				new Button(splitAttr(attrs.skin), true);
+			case 'textbutton':
+				var font = attrs.size + 'px ' + attrs.font;
+				var text = content.length > 0 ? content[0] : '';
+				new TextButton(attrs.color.split(' ').map(function(v) return UColor.fromString(v)), text, font, attrs.ansi);
 			case 'timebar':
 				var font = attrs.size + 'px ' + attrs.font;
 				new TimeBar(
@@ -132,6 +156,16 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 				);
 			case _:
 				throw 'Unknown component $name';
+		}
+		if (attrs.r != null) {
+			obj.rotation = Std.parseFloat(attrs.r) * Math.PI / 180;
+		}
+		if (attrs.alpha != null) {
+			obj.alpha = Std.parseFloat(attrs.alpha);
+		}
+		if (attrs.scale != null) {
+			var s = Std.parseFloat(attrs.scale);
+			obj.scale = new pixi.core.math.Point(s, s);
 		}
 		if (attrs.filters != null) {
 			obj.filters = [for (f in splitAttr(attrs.filters)) FILTERS[f]];

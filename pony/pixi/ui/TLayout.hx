@@ -27,16 +27,11 @@
 **/
 package pony.pixi.ui;
 
-import pixi.core.display.Container;
-import pony.geom.IWH;
 import pony.ui.gui.BaseLayoutCore;
+import pixi.core.display.Container;
 
 /**
+ * TLayout
  * @author AxGord <axgord@gmail.com>
  */
-interface ILayout extends IWH {
-	var x:Float;
-	var y:Float;
-	var layout(default, null):Dynamic;
-	function add(obj:Container):Void;
-}
+typedef TLayout = BaseLayout<BaseLayoutCore<Container>>;
