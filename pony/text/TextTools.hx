@@ -53,7 +53,7 @@ class TextTools {
 		for (i in 0...l.length) if (l.charAt(i) == s)
 			return String.fromCharCode(i + firstANSIId);
 		l = l.toLowerCase();
-		for (i in 0...l.length) if (l.charAt(l.length+i) == s)
+		for (i in 0...l.length) if (l.charAt(i) == s)
 			return String.fromCharCode(l.length + i + firstANSIId);
 		return s;
 	}

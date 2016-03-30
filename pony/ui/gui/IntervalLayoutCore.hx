@@ -28,6 +28,7 @@
 package pony.ui.gui;
 
 import pony.geom.Align;
+import pony.geom.Border;
 import pony.geom.GeomTools;
 
 using pony.Tools;
@@ -40,10 +41,12 @@ class IntervalLayoutCore<T> extends BaseLayoutCore<T> {
 	
 	@:arg private var _interval:Int;
 	@:arg private var _vert:Bool = false;
+	@:arg private var _border:Border<Int> = 0;
 	@:arg private var _align:Align = new Pair(VAlign.Middle, HAlign.Center);
 	
 	public var interval(get, set):Int;
 	public var vert(get, set):Bool;
+	public var border(get, set):Border<Int>;
 	public var align(get, set):Align;
 	
 	override public function update():Void {
@@ -52,6 +55,7 @@ class IntervalLayoutCore<T> extends BaseLayoutCore<T> {
 		var pos:Float = 0;
 		if (vert) {
 			_w = 0;
+			pos = border.top;
 			var sizes = [for (obj in objects) {
 				var objSize = getObjSize(obj);
 				setYpos(obj, Std.int(pos));
@@ -61,10 +65,11 @@ class IntervalLayoutCore<T> extends BaseLayoutCore<T> {
 			}];
 			if (objects.length > 0) pos -= interval;
 			_h = pos;
-			for (p in GeomTools.halign(_align, _w, sizes).pair(objects)) setXpos(p.b, Std.int(p.a));
+			for (p in GeomTools.halign(_align, _w, sizes).pair(objects)) setXpos(p.b, Std.int(p.a) + border.left);
 		} else {
 			[];
 			_h = 0;
+			pos = border.left;
 			var sizes = [for (obj in objects) {
 				var objSize = getObjSize(obj);
 				setXpos(obj, Std.int(pos));
@@ -74,13 +79,14 @@ class IntervalLayoutCore<T> extends BaseLayoutCore<T> {
 			}];
 			if (objects.length > 0) pos -= interval;
 			_w = pos;
-			for (p in GeomTools.valign(_align, _h, sizes).pair(objects)) setYpos(p.b, Std.int(p.a));
+			for (p in GeomTools.valign(_align, _h, sizes).pair(objects)) setYpos(p.b, Std.int(p.a) + border.top);
 		}
 		super.update();
 	}
 	
 	@:extern inline private function get_interval():Int return _interval;
 	@:extern inline private function get_vert():Bool return _vert;
+	@:extern inline private function get_border():Border<Int> return _border;
 	@:extern inline private function get_align():Align return _align;
 	
 	@:extern inline private function set_interval(v:Int):Int {
@@ -93,6 +99,13 @@ class IntervalLayoutCore<T> extends BaseLayoutCore<T> {
 	@:extern inline private function set_vert(v:Bool):Bool {
 		if (vert == v) return v;
 		_vert = v;
+		update();
+		return v;
+	}
+	
+	@:extern inline private function set_border(v:Border<Int>):Border<Int> {
+		if (border == v) return v;
+		_border = v;
 		update();
 		return v;
 	}

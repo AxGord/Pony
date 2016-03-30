@@ -30,10 +30,11 @@ package pony.ui;
 import haxe.rtti.Meta;
 #if pixijs
 import pony.pixi.PixiAssets;
+#elseif openfl
+import pony.openfl.OpenflAssets;
 #end
 import pony.Or;
 import pony.Tasks;
-import pony.openfl.OpenflAssets;
 import pony.time.DeltaTime;
 using Lambda;
 
@@ -209,9 +210,13 @@ class AssetManager {
 	@:extern inline public static function _load(asset:String, cb:Void->Void):Void PixiAssets.load(asset, cb);
 	@:extern inline public static function image(asset:String, name:String) return PixiAssets.image(asset, name);
 	@:extern inline public static function texture(asset:String, name:String) return PixiAssets.texture(asset, name);
-	#else
+	#elseif openfl
 	@:extern inline public static function _load(asset:String, cb:Void->Void):Void OpenflAssets.load(asset, cb);
 	@:extern inline public static function image(asset:String, name:String) return OpenflAssets.image(asset);
+	@:extern inline public static function texture(asset:String, name:String) return asset;;
+	#else
+	@:extern inline public static function _load(asset:String, cb:Void->Void):Void trace('Load: $asset');
+	@:extern inline public static function image(asset:String, name:String) return asset;
 	@:extern inline public static function texture(asset:String, name:String) return asset;
 	#end
 }

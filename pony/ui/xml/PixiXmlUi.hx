@@ -90,11 +90,11 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 			case 'layout':
 				var align = Align.fromString(attrs.align);
 				if (attrs.iv != null) {
-					var l = new IntervalLayout(Std.parseInt(attrs.iv), true, align);
+					var l = new IntervalLayout(Std.parseInt(attrs.iv), true, cast Border.fromString(attrs.border), align);
 					for (e in content) l.add(e);
 					l;
 				} else if (attrs.ih != null) {
-					var l = new IntervalLayout(Std.parseInt(attrs.ih), false, align);
+					var l = new IntervalLayout(Std.parseInt(attrs.ih), false, cast Border.fromString(attrs.border), align);
 					for (e in content) l.add(e);
 					l;
 				} else if (attrs.w != null || attrs.h != null) {
