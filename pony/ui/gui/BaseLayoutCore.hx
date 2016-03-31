@@ -84,6 +84,7 @@ class BaseLayoutCore<T> implements Declarator implements HasSignal implements IW
 	public dynamic function load(o:T):Void {}
 	public dynamic function destroyChild(o:T):Void {}
 	public dynamic function getSize(o:T):Point<Float> return throw 'Unknown type';
+	public dynamic function getSizeMod(o:T, p:Point<Float>):Point<Float> return p;
 	public dynamic function setXpos(o:T, v:Float):Void {}
 	public dynamic function setYpos(o:T, v:Float):Void {}
 	private function get_size():Point<Float> return new Point(_w, _h);
@@ -112,7 +113,7 @@ class BaseLayoutCore<T> implements Declarator implements HasSignal implements IW
 	public function update():Void {}
 	
 	@:extern inline private function getObjSize(o:T):Point<Float> {
-		return Std.is(o, IWH) ? cast(o, IWH).size : getSize(o);
+		return getSizeMod(o, Std.is(o, IWH) ? cast(o, IWH).size : getSize(o));
 	}
 	
 	public function destroy():Void {

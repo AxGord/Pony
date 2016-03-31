@@ -36,6 +36,7 @@ import js.Browser;
 class JsTools {
 
 	public static var isIE(get, never):Bool;
+	public static var isMobile(get, never):Bool
 	
 	private static var _isIE:Null<Bool>;
 	
@@ -46,5 +47,7 @@ class JsTools {
 		}
 		return _isIE;
 	}
+	
+	@:extern inline private function get_isMobile():Bool return untyped Browser.window.orientation != null;
 	
 }

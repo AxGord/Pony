@@ -31,7 +31,6 @@ import pixi.core.display.DisplayObject;
 import pixi.core.graphics.Graphics;
 import pixi.core.renderers.webgl.filters.AbstractFilter;
 import pixi.core.sprites.Sprite;
-import pixi.extras.BitmapText;
 import pixi.filters.dropshadow.DropShadowFilter;
 import pony.color.UColor;
 import pony.geom.Align;
@@ -44,6 +43,7 @@ import pony.pixi.ui.BText;
 import pony.pixi.ui.Button;
 import pony.pixi.ui.IntervalLayout;
 import pony.pixi.ui.LabelButton;
+import pony.pixi.ui.ProgressBar;
 import pony.pixi.ui.RubberLayout;
 import pony.pixi.ui.SizedSprite;
 import pony.pixi.ui.TextBox;
@@ -61,6 +61,7 @@ import pony.time.Time;
 	layout: pony.pixi.ui.TLayout,
 	image: pixi.core.sprites.Sprite,
 	text: pony.pixi.ui.BText,
+	progressbar: pony.pixi.ui.ProgressBar,
 	timebar: pony.pixi.ui.TimeBar,
 	button: pony.pixi.ui.Button,
 	lbutton: pony.pixi.ui.LabelButton,
@@ -120,14 +121,14 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 					Sprite.fromImage(attrs.src);
 			case 'textbox':
 				var font = attrs.size + 'px ' + attrs.font;
-				var text = content.length > 0 ? content[0] : '';
+				var text = _putData(content);
 				var style = ETextStyle.BITMAP_TEXT_STYLE({font: font, tint: UColor.fromString(attrs.color).rgb});
 				var s = Sprite.fromImage(attrs.src);
 				s.visible = !isTrue(attrs.hidebg);
 				new TextBox(s, text, style, cast Border.fromString(attrs.border), isTrue(attrs.nocache));
 			case 'text':
 				var font = attrs.size + 'px ' + attrs.font;
-				var text = content.length > 0 ? content[0] : '';
+				var text = _putData(content);
 				var style = {font: font, tint: UColor.fromString(attrs.color).rgb};
 				new BText(text, style, attrs.ansi);
 			case 'lbutton':
@@ -138,8 +139,22 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 				new Button(splitAttr(attrs.skin), true);
 			case 'textbutton':
 				var font = attrs.size + 'px ' + attrs.font;
-				var text = content.length > 0 ? content[0] : '';
+				var text = _putData(content);
 				new TextButton(attrs.color.split(' ').map(function(v) return UColor.fromString(v)), text, font, attrs.ansi);
+			case 'progressbar':
+				var font = attrs.size + 'px ' + attrs.font;
+				new ProgressBar(
+					attrs.bg,
+					attrs.begin,
+					attrs.fill,
+					attrs.anim,
+					attrs.animspeed == null ? null : (attrs.animspeed:Time),
+					cast Border.fromString(attrs.border),
+					ETextStyle.BITMAP_TEXT_STYLE({font: font, tint: UColor.fromString(attrs.color).rgb}),
+					isTrue(attrs.invert),
+					attrs.src.indexOf(',') != -1,
+					attrs.creep == null ? 0 : Std.parseInt(attrs.creep)
+				);
 			case 'timebar':
 				var font = attrs.size + 'px ' + attrs.font;
 				new TimeBar(
@@ -156,6 +171,10 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 				);
 			case _:
 				customUIElement(name, attrs, content);
+		}
+		if (isTrue(attrs.notouch)) {
+			obj.interactive = false;
+			obj.interactiveChildren = false;
 		}
 		if (attrs.r != null) {
 			obj.rotation = Std.parseFloat(attrs.r) * Math.PI / 180;
@@ -175,6 +194,8 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 		return obj;
 	}
 	
+	private function _putData(content:Array<Dynamic>):String return putData(content.length > 0 ? content[0] : '');
+	private function putData(c:String):String return c;
 	private function customUIElement(name:String, attrs:Dynamic<String>, content:Array<Dynamic>):Dynamic throw 'Unknown component $name';
 	
 	static private function splitAttr(s:String):Array<String> {
