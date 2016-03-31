@@ -63,11 +63,12 @@ abstract Event0(Priority<Listener0>) from Priority<Listener0> to Priority<Listen
 		if (this == null || this.isDestroy() || (safe && this.counters.length > 1)) return false;
 		this.lock = true;
 		for (e in this) {
+			if (this.isDestroy()) return false;
+			if (e.once) this.remove(e);
 			if (e.call(safe)) {
 				this.brk();
 				return true;
 			}
-			if (!this.isDestroy() && e.once) this.remove(e);
 		}
 		this.lock = false;
 		return false;

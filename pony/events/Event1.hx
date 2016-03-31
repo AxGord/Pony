@@ -70,11 +70,12 @@ abstract Event1<T1>(Priority<Listener1<T1>>) from Priority<Listener1<T1>> to Pri
 		if (this == null || this.isDestroy() || (safe && this.counters.length > 1)) return false;
 		this.lock = true;
 		for (e in this) {
+			if (this.isDestroy()) return false;
+			if (e.once) this.remove(e);
 			if (e.call(a1, safe)) {
 				this.brk();
 				return true;
 			}
-			if (!this.isDestroy() && e.once) this.remove(e);
 		}
 		this.lock = false;
 		return false;

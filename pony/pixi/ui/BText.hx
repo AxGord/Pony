@@ -41,11 +41,12 @@ class BText extends BitmapText implements IWH {
 	public var size(get, never):Point<Float>;
 	private var ansi:String;
 	
-	public function new(text:String, ?style:BitmapTextStyle, ?ansi:String) {
+	public function new(text:String, ?style:BitmapTextStyle, ?ansi:String, nocache:Bool=false) {
 		this.ansi = ansi;
 		if (ansi != null)
 			text = TextTools.convertToANSI(text, ansi);
 		super(text, style);
+		if (!nocache) this.cacheAsBitmap = true;
 	}
 	
 	private function get_size():Point<Float> return new Point(textWidth, textHeight);

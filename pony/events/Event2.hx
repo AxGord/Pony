@@ -80,11 +80,12 @@ abstract Event2<T1,T2>(Priority<Listener2<T1,T2>>) from Priority<Listener2<T1,T2
 		if (this == null || this.isDestroy() || (safe && this.counters.length > 1)) return false;
 		this.lock = true;
 		for (e in this) {
+			if (this.isDestroy()) return false;
+			if (e.once) this.remove(e);
 			if (e.call(a1, a2, safe)) {
 				this.brk();
 				return true;
 			}
-			if (!this.isDestroy() && e.once) this.remove(e);
 		}
 		this.lock = false;
 		return false;

@@ -110,8 +110,8 @@ class TouchableBase implements HasSignal {
 	
 	private function tapHandler():Void {
 		removeTapCancle();
-		eTap.dispatch();
 		onDown < beginTap;
+		eTap.dispatch();
 	}
 	
 	private function cancleTap() {

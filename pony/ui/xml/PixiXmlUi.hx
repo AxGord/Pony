@@ -130,7 +130,7 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 				var font = attrs.size + 'px ' + attrs.font;
 				var text = _putData(content);
 				var style = {font: font, tint: UColor.fromString(attrs.color).rgb};
-				new BText(text, style, attrs.ansi);
+				new BText(text, style, attrs.ansi, isTrue(attrs.nocache));
 			case 'lbutton':
 				var b = new LabelButton(splitAttr(attrs.skin), isTrue(attrs.vert), cast Border.fromString(attrs.border), true);
 				for (c in content) b.add(c);
@@ -210,8 +210,8 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 	
 	private function createFilters(data:Dynamic<Dynamic<String>>):Void {
 		for (name in Reflect.fields(data)) {
-			var d:AbstractFilter = Reflect.field(data, name);
-			var f = switch Reflect.field(d, 'extends') {
+			var d = Reflect.field(data, name);
+			var f:AbstractFilter = switch Reflect.field(d, 'extends') {
 				case 'shadow':
 					new DropShadowFilter();
 				case _:
