@@ -59,6 +59,15 @@ class XmlUiBuilder {
 		var meta = cl.get().meta.get();
 		if (!meta.checkMeta([':ui'])) Context.error('Not have :ui', Context.currentPos());
 		
+		if (meta.checkMeta([':ui_types'])) {
+			var m = meta.getMeta(':ui_types').params[0];
+			switch m.expr {
+				case EObjectDecl(ts):
+					for (t in ts) types[t.field] = TypeTools.toComplexType(Context.getType(exprToTypeString(t.expr)));
+				case _: Context.error('Types list wrong type', m.pos);
+			}
+		}
+		
 		var fields:Array<Field> = Context.getBuildFields();
 		
 		var style:Style = new Map();
@@ -140,7 +149,7 @@ class XmlUiBuilder {
 		var xml = getXml(file);
 		var path = xml.has.path ? xml.att.path : '';
 		return [for (x in xml.elements) x.name => 
-			[for (a in x.x.attributes()) a => (a == 'src' ? joinPath(path, x.att.resolve(a)) : x.att.resolve(a))]
+			[for (a in x.x.attributes()) a => (a == 'src' ? joinPathA(path, x.att.resolve(a)) : x.att.resolve(a))]
 		];
 	}
 	

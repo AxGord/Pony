@@ -51,7 +51,7 @@ class TextButton extends Sprite implements IWH {
 	public function new(color:Array<UColor>, text:String, font:String, ?ansi:String) {
 		super();
 		this.color = color;
-		btext = new BText(text, {font: font, tint: color[0]}, ansi);
+		btext = new BText(text, {font: font, tint: color[0]}, ansi, true);
 		addChild(btext);
 		var g = new Graphics();
 		g.lineStyle();
@@ -71,15 +71,9 @@ class TextButton extends Sprite implements IWH {
 	}
 	
 	@:extern inline private function get_text():String return btext.text;
+	@:extern inline private function set_text(t:String):String return btext.t = t;
 	
-	@:extern inline private function set_text(t:String):String {
-		btext.setText(t);
-		return t;
-	}
-	
-	inline private function get_size():Point<Float> {
-		return btext.size;
-	}
+	inline private function get_size():Point<Float> return btext.size;
 	
 	inline public function wait(cb:Void->Void):Void btext.wait(cb);
 	

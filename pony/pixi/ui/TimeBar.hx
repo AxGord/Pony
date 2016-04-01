@@ -40,7 +40,7 @@ import pony.time.TimeInterval;
  */
 class TimeBar extends LabelBar {
 	
-	private var timer:DTimer;
+	public var timer:DTimer;
 	private var ignoreBeginAnimation:Bool = false;
 	
 	public function new(
@@ -64,7 +64,7 @@ class TimeBar extends LabelBar {
 	private function timerInit(p:Point<Int>):Void {
 		timer.progress << progressHandler;
 		timer.update << updateHandler;
-		timer.complete << startAnimation;
+		timer.complete.add(startAnimation, -10);
 		text = '00:00';
 		if (!ignoreBeginAnimation) startAnimation();
 	}

@@ -38,26 +38,34 @@ import pony.text.TextTools;
  */
 class BText extends BitmapText implements IWH {
 
+	public var t(get, set):String;
 	public var size(get, never):Point<Float>;
 	private var ansi:String;
+	private var nocache:Bool;
 	
 	public function new(text:String, ?style:BitmapTextStyle, ?ansi:String, nocache:Bool=false) {
 		this.ansi = ansi;
+		this.nocache = nocache;
 		if (ansi != null)
 			text = TextTools.convertToANSI(text, ansi);
 		super(text, style);
-		if (!nocache) this.cacheAsBitmap = true;
+		if (!nocache) cacheAsBitmap = true;
 	}
 	
 	private function get_size():Point<Float> return new Point(textWidth, textHeight);
 	
 	public function wait(cb:Void->Void):Void cb();
 	
-	public function setText(s:String):Void {
+	@:extern inline public function get_t():String return text;
+	
+	public function set_t(s:String):String {
+		if (!nocache) cacheAsBitmap = false;
 		if (ansi != null)
 			text = TextTools.convertToANSI(s, ansi);
 		else
 			text = s;
+		if (!nocache) cacheAsBitmap = true;
+		return s;
 	}
 	
 }
