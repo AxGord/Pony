@@ -43,7 +43,7 @@ using pony.Tools;
  */
 class BaseLayoutCore<T> implements Declarator implements HasSignal implements IWH {
 
-	private var objects:Array<T> = [];
+	public var objects(default, null):Array<T> = [];
 	public var size(get, never):Point<Float>;
 	@:auto private var onReady:Signal0;
 	private var ready:Bool = false;

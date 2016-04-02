@@ -215,6 +215,17 @@ class ToolsTest
 		Assert.isFalse(OwnTest3.own(OwnTest1));
 	}
 	
+	@Test
+	public function clone():Void {
+		var a:Array<Dynamic> = ['sdas', {c:333}];
+		var o = {a:123, b:a};
+		var n = o.clone();
+		Assert.areEqual(o.a, n.a);
+		Assert.areEqual(o.b[0], n.b[0]);
+		Assert.areEqual(o.b[1].c, n.b[1].c);
+		//todo: Test enum
+	}
+	
 }
 
 

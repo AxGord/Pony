@@ -167,6 +167,31 @@ class Tools {
 		return false;
     }
 	
+	public static function clone<T:Dynamic>(obj:T):T {
+		return switch Type.typeof(obj) {
+			case TEnum(t):
+				Type.createEnumIndex(t, Type.enumIndex(obj), [for (e in Type.enumParameters(obj)) clone(e)]);
+			case TObject if (!Std.is(obj, Class)):
+				_clone(obj);
+			case TClass(t):
+				if (t == Array) {
+					var obj:Array<Dynamic> = cast obj;
+					cast [for (i in 0...obj.length) clone(obj[i])];
+				} else {
+					cast _clone(obj);
+				}
+			case _:
+				obj;
+		}
+	}
+	
+	private static function _clone<T:Dynamic>(obj:T):T {
+		var n = {};
+		for (p in obj.fields())
+			n.setField(p, clone(obj.field(p)));
+		return cast n;
+	}
+	
 	public static function superIndexOf<T>(it:Iterable<T>, v:T, maxDepth:Int = 1):Int {
 		var i:Int = 0;
 		if (maxDepth == 0) //Avoiding extra function calls on maxDepth == 0

@@ -91,6 +91,10 @@ abstract Matrix<T>(Array<Array<T>>) from Array<Array<T>> to Array<Array<T>> {
 		return null;
 	}
 	
+	public static function create<T>(x:Int, y:Int, v:T):Matrix<T> {
+		return [for (_ in 0...y) [for (_ in 0...x) v]];
+	}
+	
 	//todo: ver, rotate, math op
 	
 }
