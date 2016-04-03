@@ -94,6 +94,7 @@ class XmlUiBuilder {
 						var s = getFilters(joinPath(gpath, f));
 						for (k in s.keys()) filters[k] = s[k];
 					}
+					xml.x.remove('filters');
 				}
 				
 				if (xml.has.style) {
