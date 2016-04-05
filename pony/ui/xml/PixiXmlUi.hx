@@ -31,6 +31,7 @@ import pixi.core.display.DisplayObject;
 import pixi.core.graphics.Graphics;
 import pixi.core.renderers.webgl.filters.AbstractFilter;
 import pixi.core.sprites.Sprite;
+import pixi.extras.MovieClip;
 import pixi.filters.dropshadow.DropShadowFilter;
 import pony.color.UColor;
 import pony.geom.Align;
@@ -67,7 +68,8 @@ import pony.time.Time;
 	lbutton: pony.pixi.ui.LabelButton,
 	textbox: pony.pixi.ui.TextBox,
 	rect: pixi.core.graphics.Graphics,
-	textbutton: pony.pixi.ui.TextButton
+	textbutton: pony.pixi.ui.TextButton,
+	clip: pixi.extras.MovieClip
 }))
 #end
 class PixiXmlUi extends Sprite implements HasAbstract {
@@ -119,6 +121,18 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 					Sprite.fromFrame(attrs.name);
 				else
 					Sprite.fromImage(attrs.src);
+			case 'clip':
+				var data = if (attrs.name != null) {
+					var a = attrs.name.split('|');
+					var p = a[1].split('...');
+					[for (n in new IntIterator(Std.parseInt(p[0]), Std.parseInt(p[1]))) a[0] + n + a[2]];
+				} else {
+					attrs.frames.split(',').map(StringTools.trim);
+				}
+				var m = MovieClip.fromFrames(data);
+				if (attrs.speed != null) m.animationSpeed = Std.parseFloat(attrs.speed);
+				m.play();
+				m;
 			case 'textbox':
 				var font = attrs.size + 'px ' + attrs.font;
 				var text = _putData(content);
@@ -140,7 +154,12 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 			case 'textbutton':
 				var font = attrs.size + 'px ' + attrs.font;
 				var text = _putData(content);
-				new TextButton(attrs.color.split(' ').map(function(v) return UColor.fromString(v)), text, font, attrs.ansi);
+				new TextButton(
+					attrs.color.split(' ').map(function(v) return UColor.fromString(v)),
+					text, font, attrs.ansi,
+					attrs.line != null ? Std.parseFloat(attrs.line) : 0,
+					attrs.linepos != null ? Std.parseFloat(attrs.linepos) : 0
+				);
 			case 'progressbar':
 				var font = attrs.size + 'px ' + attrs.font;
 				new ProgressBar(

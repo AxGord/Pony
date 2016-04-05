@@ -47,11 +47,13 @@ class TextButton extends Sprite implements IWH {
 	public var btext(default, null):BText;
 	public var size(get, never):Point<Float>;
 	private var color:Array<UColor>;
+	private var lines:Array<Graphics>;
+	private var prevline:Graphics;
 	
-	public function new(color:Array<UColor>, text:String, font:String, ?ansi:String) {
+	public function new(color:Array<UColor>, text:String, font:String, ?ansi:String, line:Float=0, linepos:Float=0) {
 		super();
 		this.color = color;
-		btext = new BText(text, {font: font, tint: color[0]}, ansi, true);
+		btext = new BText(text, {font: font, tint: color[0].rgb}, ansi, true);
 		addChild(btext);
 		var g = new Graphics();
 		g.lineStyle();
@@ -60,6 +62,40 @@ class TextButton extends Sprite implements IWH {
 		g.endFill();
 		addChildAt(g, 0);
 		g.buttonMode = true;
+		if (line > 0) {
+			lines = [];
+			for (c in color) {
+				var g = new Graphics();
+				g.lineStyle(line, c.rgb, 1-c.af);
+				
+				var pos:Float = 0;
+				var step:Bool = false;
+				while (pos <= size.x) {
+					var end = false;
+					if (pos == size.x) {
+						end = true;
+					}
+					if (step) {
+						g.lineTo(pos, size.y);
+						pos += 5;
+					} else {
+						g.moveTo(pos, size.y);
+						pos += 10;
+					}
+					if (end) break;
+					else if (pos > size.x) pos = size.x;
+					step = !step;
+				}
+				g.y = linepos;
+				g.visible = false;
+				addChild(g);
+				lines.push(g);
+				if (lines.length > 2) break;
+			}
+			prevline = lines[0];
+			prevline.visible = true;
+		}
+		
 		core = new ButtonImgN(new Touchable(g));
 		core.onImg << imgHandler;
 	}
@@ -68,6 +104,15 @@ class TextButton extends Sprite implements IWH {
 		n--;
 		if (n > color.length) n = color.length - 1;
 		btext.tint = color[n];
+		
+		if (prevline != null) {
+			prevline.visible = false;
+			prevline = null;
+		}
+		if (lines[n] != null) {
+			lines[n].visible = true;
+			prevline = lines[n];
+		}
 	}
 	
 	@:extern inline private function get_text():String return btext.text;

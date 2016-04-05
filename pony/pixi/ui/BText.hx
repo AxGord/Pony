@@ -48,7 +48,11 @@ class BText extends BitmapText implements IWH {
 		this.nocache = nocache;
 		if (ansi != null)
 			text = TextTools.convertToANSI(text, ansi);
-		super(text, style);
+			try {
+				super(text, style);
+			} catch (_:Dynamic) {
+				throw 'Font error: '+style.font;
+			}
 		if (!nocache) cacheAsBitmap = true;
 	}
 	
