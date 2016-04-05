@@ -370,7 +370,11 @@ class Tools {
 		} catch (_:Dynamic) return null;
 	}
 	
+	#if (haxe_ver >= 3.30)
+	@:generic inline static public function sget<A,B:haxe.Constraints.Constructible<Dynamic>>(m:Map<A,B>, key:A):B
+	#else
 	@:generic inline static public function sget<A,B:{function new():Void;}>(m:Map<A,B>, key:A):B
+	#end
 		return m.exists(key) ? m[key] : m[key] = new B();
 	#if !cs
 	inline static public function reverse<K:Dynamic,V:Dynamic>(map:Map<K, V>):Map<V, K> return [for (k in map.keys()) map[k] => k];

@@ -31,8 +31,11 @@ package pony;
  * Typed object pool
  * @author AxGord <axgord@gmail.com>
  */
+#if (haxe_ver >= 3.30)
+@:generic class TypedPool<T:haxe.Constraints.Constructible<Dynamic>> implements IPool<T> {
+#else
 @:generic class TypedPool<T:{function new():Void;}> implements IPool<T> {
-	
+#end
 	private var list:Array<T> = [];
 	
 	@:extern inline public function new() {}
