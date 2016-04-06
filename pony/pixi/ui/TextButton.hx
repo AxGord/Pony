@@ -44,7 +44,7 @@ class TextButton extends Sprite implements IWH {
 
 	public var core:ButtonImgN;
 	public var text(get, set):String;
-	public var btext(default, null):BText;
+	public var btext(default, null):BTextLow;
 	public var size(get, never):Point<Float>;
 	private var color:Array<UColor>;
 	private var lines:Array<Graphics>;
@@ -53,7 +53,7 @@ class TextButton extends Sprite implements IWH {
 	public function new(color:Array<UColor>, text:String, font:String, ?ansi:String, line:Float=0, linepos:Float=0) {
 		super();
 		this.color = color;
-		btext = new BText(text, {font: font, tint: color[0].rgb}, ansi, true);
+		btext = new BTextLow(text, {font: font, tint: color[0].rgb}, ansi, true);
 		addChild(btext);
 		var g = new Graphics();
 		g.lineStyle();

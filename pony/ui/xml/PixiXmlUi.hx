@@ -144,7 +144,7 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 				var font = attrs.size + 'px ' + attrs.font;
 				var text = _putData(content);
 				var style = {font: font, tint: UColor.fromString(attrs.color).rgb};
-				new BText(text, style, attrs.ansi, isTrue(attrs.nocache));
+				new BText(text, style, attrs.ansi);
 			case 'lbutton':
 				var b = new LabelButton(splitAttr(attrs.skin), isTrue(attrs.vert), cast Border.fromString(attrs.border), true);
 				for (c in content) b.add(c);

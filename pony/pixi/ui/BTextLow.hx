@@ -27,57 +27,49 @@
 **/
 package pony.pixi.ui;
 
-import pixi.core.sprites.Sprite;
 import pixi.extras.BitmapText;
 import pony.geom.IWH;
 import pony.geom.Point;
 import pony.text.TextTools;
-import pony.time.DeltaTime;
 
 /**
  * Text
  * @author AxGord <axgord@gmail.com>
  */
-class BText extends Sprite implements IWH {
+class BTextLow extends BitmapText implements IWH {
 
 	public var t(get, set):String;
 	public var size(get, never):Point<Float>;
 	private var ansi:String;
-	private var current:BTextLow;
-	private var style:BitmapTextStyle;
+	private var nocache:Bool;
 	
-	public function new(text:String, ?style:BitmapTextStyle, ?ansi:String) {
-		super();
-		this.style = style;
+	public function new(text:String, ?style:BitmapTextStyle, ?ansi:String, nocache:Bool=false) {
 		this.ansi = ansi;
-		firstset(text);
+		this.nocache = nocache;
+		if (ansi != null)
+			text = TextTools.convertToANSI(text, ansi);
+			try {
+				super(text, style);
+			} catch (_:Dynamic) {
+				throw 'Font error: '+style.font;
+			}
+		if (!nocache) cacheAsBitmap = true;
 	}
 	
-	private function get_size():Point<Float> return current.size;
+	private function get_size():Point<Float> return new Point(textWidth, textHeight);
 	
 	public function wait(cb:Void->Void):Void cb();
 	
-	@:extern inline public function get_t():String return current.text;
+	@:extern inline public function get_t():String return text;
 	
 	public function set_t(s:String):String {
-		removeChild(current);
-		current.destroy();
-		current = new BTextLow(s, style, ansi);
-		addChild(current);
+		if (!nocache) cacheAsBitmap = false;
+		if (ansi != null)
+			text = TextTools.convertToANSI(s, ansi);
+		else
+			text = s;
+		if (!nocache) cacheAsBitmap = true;
 		return s;
-	}
-	
-	private function firstset(s:String):Void {
-		current = new BTextLow(s, style, ansi);
-		addChild(current);
-	}
-	
-	override public function destroy():Void {
-		removeChild(current);
-		current.destroy();
-		ansi = null;
-		style = null;
-		super.destroy();
 	}
 	
 }
