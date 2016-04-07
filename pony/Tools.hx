@@ -432,7 +432,7 @@ class ArrayTools {
 		return false;
 	}
 	
-	public static function kv<T>(a:Iterable<T>):Iterator < KeyValue < Int, T >> {
+	public static function kv<T>(a:Array<T>):Iterator < KeyValue < Int, T >> {
 		var i:Int = 0;
 		//var c:Int = a.length;
 		var it = a.iterator();
@@ -505,6 +505,21 @@ class ArrayTools {
 		var sum:T = cast 0;
 		for (v in a) sum += v;
 		return sum;
+	}
+	
+}
+
+class MapTools {
+	
+	public static function kv<K, T>(a:Map<K, T>):Iterator < KeyValue < K, T >> {
+		var it = a.keys();
+		return {
+			hasNext: it.hasNext,
+			next: function() {
+				var k:K = it.next();
+				return new Pair(k, a[k]);
+			}
+		};
 	}
 	
 }
