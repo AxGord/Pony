@@ -45,6 +45,7 @@ class BText extends Sprite implements IWH {
 	private var ansi:String;
 	private var current:BTextLow;
 	private var style:BitmapTextStyle;
+	public var color(get, set):UInt;
 	
 	public function new(text:String, ?style:BitmapTextStyle, ?ansi:String) {
 		super();
@@ -78,6 +79,12 @@ class BText extends Sprite implements IWH {
 		ansi = null;
 		style = null;
 		super.destroy();
+	}
+	
+	private function get_color():UInt return style.tint;
+	
+	private function set_color(v:UInt):UInt {
+		return style.tint = v;
 	}
 	
 }
