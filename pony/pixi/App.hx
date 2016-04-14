@@ -101,7 +101,6 @@ class App extends Application {
 		var d:Float = w > h ? h : w;
 		
 		var ratio = smallDeviceQuality <= 1 ? 1 : smallDeviceQualityOffset + d / smallDeviceQuality;
-		ratio *= Browser.window.devicePixelRatio;
 		if (ratio > 1) ratio = 1;
 		
 		renderer.resize(width/d * ratio, height/d * ratio);

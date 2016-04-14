@@ -87,7 +87,7 @@ class GeomTools
 		padding:Bool = true,
 		?align:Align
 	):Array<Point<Float>> {
-		var cfun =  if (align != null)  {
+		var cfun = if (align != null)  {
 			if (vert) switch align.horizontal {
 				case HAlign.Left: begin;
 				case HAlign.Center: centerA;
