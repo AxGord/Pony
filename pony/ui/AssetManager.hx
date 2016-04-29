@@ -105,7 +105,7 @@ class AssetManager {
 					globalLoad[asset].push(cb);
 				} else {
 					globalLoad[asset] = [];
-					_load(baseUrl + asset, function() {
+					_load(asset, function() {
 						cb();
 						globalLoaded(asset);
 					});
@@ -130,7 +130,7 @@ class AssetManager {
 		if (loadedAssets.indexOf(asset) != -1) return;
 		if (!globalLoad.exists(asset)) {
 			globalLoad[asset] = [];
-			_load(baseUrl + asset, globalLoaded.bind(asset));
+			_load(asset, globalLoaded.bind(asset));
 		}
 	}
 	
@@ -208,15 +208,15 @@ class AssetManager {
 	
 	#if pixijs
 	@:extern inline public static function _load(asset:String, cb:Void->Void):Void PixiAssets.load(asset, cb);
-	@:extern inline public static function image(asset:String, name:String) return PixiAssets.image(asset, name);
-	@:extern inline public static function texture(asset:String, name:String) return PixiAssets.texture(asset, name);
+	@:extern inline public static function image(asset:String, ?name:String) return PixiAssets.image(asset, name);
+	@:extern inline public static function texture(asset:String, ?name:String) return PixiAssets.texture(asset, name);
 	#elseif openfl
 	@:extern inline public static function _load(asset:String, cb:Void->Void):Void OpenflAssets.load(asset, cb);
-	@:extern inline public static function image(asset:String, name:String) return OpenflAssets.image(asset);
-	@:extern inline public static function texture(asset:String, name:String) return asset;;
+	@:extern inline public static function image(asset:String, ?name:String) return OpenflAssets.image(asset);
+	@:extern inline public static function texture(asset:String, ?name:String) return asset;;
 	#else
 	@:extern inline public static function _load(asset:String, cb:Void->Void):Void trace('Load: $asset');
-	@:extern inline public static function image(asset:String, name:String) return asset;
-	@:extern inline public static function texture(asset:String, name:String) return asset;
+	@:extern inline public static function image(asset:String, ?name:String) return asset;
+	@:extern inline public static function texture(asset:String, ?name:String) return asset;
 	#end
 }

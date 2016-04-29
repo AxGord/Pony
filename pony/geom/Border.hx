@@ -69,4 +69,7 @@ abstract Border<T:Float>({top:T, left:T, right:T, bottom:T}) {
 		}
 	}
 	
+	@:op(A * B) @:extern inline public function mul(rhs:Float):Border<Float>
+		return new Border(top * rhs, left * rhs, right * rhs, bottom * rhs);
+	
 }

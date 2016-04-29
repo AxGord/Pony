@@ -40,7 +40,7 @@ class PixiAssets {
 
 	public static function load(asset:String, cb:Void->Void):Void {
 		var loader = new Loader();
-		loader.add(asset, asset);
+		loader.add(asset, AssetManager.baseUrl + asset);
 		loader.load(cb);
 	}
 	

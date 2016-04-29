@@ -26,7 +26,7 @@ class OpenflAssets {
 	static var assetName : String;
 	
 	public static function load(asset:String, cb:Void->Void):Void {
-		pony.flash.FLTools.loadBytes(asset,function (b : Bytes) {
+		pony.flash.FLTools.loadBytes(AssetManager.baseUrl + asset, function (b : Bytes) {
 			pony.flash.FLTools.bytesToBitmapData(b, function(bd : BitmapData){
 				assets.set(asset, new Bitmap(bd));
 				cb();

@@ -41,7 +41,7 @@ using pony.Tools;
 class Parse extends ParseBoy<TplContent>
 {
 	
-	private static var VAR_SYMBOLS:String = 'qwertyuiopasdfghjklzxcvbnm1234567890-';
+	public static var VAR_SYMBOLS:String = 'qwertyuiopasdfghjklzxcvbnm1234567890-';
 	
 	public static function parse(t:String, s:TplStyle):TplData {
 		var o:Parse = new Parse(t, s);

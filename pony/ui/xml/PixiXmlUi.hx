@@ -39,6 +39,7 @@ import pony.geom.Border;
 import pony.geom.Point;
 import pony.magic.HasAbstract;
 import pony.pixi.ETextStyle;
+import pony.pixi.PixiAssets;
 import pony.pixi.ui.AlignLayout;
 import pony.pixi.ui.BText;
 import pony.pixi.ui.Button;
@@ -75,11 +76,12 @@ import pony.time.Time;
 class PixiXmlUi extends Sprite implements HasAbstract {
 
 	private var FILTERS:Map<String, AbstractFilter> = new Map();
+	private var SCALE:Float = 1;
 	
 	private function createUIElement(name:String, attrs:Dynamic<String>, content:Array<Dynamic>):Dynamic {
 		var obj:DisplayObject = switch name {
 			case 'free':
-				var s = new SizedSprite(new Point(attrs.w != null ? Std.parseFloat(attrs.w) : 0, attrs.h != null ? Std.parseFloat(attrs.h) : 0));
+				var s = new SizedSprite(new Point(parseAndScale(attrs.w), parseAndScale(attrs.h)));
 				for (e in content) s.addChild(e);
 				s;
 			case 'rect':
@@ -87,25 +89,25 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 				var g = new Graphics();
 				g.lineStyle();
 				g.beginFill(color.rgb, color.invertAlpha.af);
-				g.drawRect(0, 0, Std.parseFloat(attrs.w), Std.parseFloat(attrs.h));
+				g.drawRect(0, 0, parseAndScale(attrs.w), parseAndScale(attrs.h));
 				g.endFill();
 				return g;
 			case 'layout':
 				var align = Align.fromString(attrs.align);
 				if (attrs.iv != null) {
-					var l = new IntervalLayout(Std.parseInt(attrs.iv), true, cast Border.fromString(attrs.border), align);
+					var l = new IntervalLayout(parseAndScaleInt(attrs.iv), true, scaleBorderInt(attrs.border), align);
 					for (e in content) l.add(e);
 					l;
 				} else if (attrs.ih != null) {
-					var l = new IntervalLayout(Std.parseInt(attrs.ih), false, cast Border.fromString(attrs.border), align);
+					var l = new IntervalLayout(parseAndScaleInt(attrs.ih), false, scaleBorderInt(attrs.border), align);
 					for (e in content) l.add(e);
 					l;
 				} else if (attrs.w != null || attrs.h != null) {
 					var r = new RubberLayout(
-						Std.parseFloat(attrs.w),
-						Std.parseFloat(attrs.h),
+						parseAndScaleWithNull(attrs.w),
+						parseAndScaleWithNull(attrs.h),
 						isTrue(attrs.vert),
-						cast Border.fromString(attrs.border),
+						scaleBorderInt(attrs.border),
 						attrs.padding == null ? true : isTrue(attrs.padding),
 						align
 					);
@@ -117,10 +119,7 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 					s;
 				}
 			case 'image':
-				if (attrs.name != null)
-					Sprite.fromFrame(attrs.name);
-				else
-					Sprite.fromImage(attrs.src);
+				PixiAssets.image(attrs.src, attrs.name);
 			case 'clip':
 				var data = if (attrs.name != null) {
 					var a = attrs.name.split('|');
@@ -134,59 +133,59 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 				m.play();
 				m;
 			case 'textbox':
-				var font = attrs.size + 'px ' + attrs.font;
+				var font = parseAndScaleInt(attrs.size) + 'px ' + attrs.font;
 				var text = _putData(content);
 				var style = ETextStyle.BITMAP_TEXT_STYLE({font: font, tint: UColor.fromString(attrs.color).rgb});
-				var s = Sprite.fromImage(attrs.src);
+				var s = PixiAssets.image(attrs.src, attrs.name);
 				s.visible = !isTrue(attrs.hidebg);
-				new TextBox(s, text, style, cast Border.fromString(attrs.border), isTrue(attrs.nocache));
+				new TextBox(s, text, style, scaleBorderInt(attrs.border), isTrue(attrs.nocache));
 			case 'text':
-				var font = attrs.size + 'px ' + attrs.font;
+				var font = parseAndScaleInt(attrs.size) + 'px ' + attrs.font;
 				var text = _putData(content);
 				var style = {font: font, tint: UColor.fromString(attrs.color).rgb};
 				new BText(text, style, attrs.ansi);
 			case 'lbutton':
-				var b = new LabelButton(splitAttr(attrs.skin), isTrue(attrs.vert), cast Border.fromString(attrs.border), true);
+				var b = new LabelButton(splitAttr(attrs.skin), isTrue(attrs.vert), scaleBorderInt(attrs.border), true);
 				for (c in content) b.add(c);
 				b;
 			case 'button':
 				new Button(splitAttr(attrs.skin), true);
 			case 'textbutton':
-				var font = attrs.size + 'px ' + attrs.font;
+				var font = parseAndScaleInt(attrs.size) + 'px ' + attrs.font;
 				var text = _putData(content);
 				new TextButton(
 					attrs.color.split(' ').map(function(v) return UColor.fromString(v)),
 					text, font, attrs.ansi,
-					attrs.line != null ? Std.parseFloat(attrs.line) : 0,
-					attrs.linepos != null ? Std.parseFloat(attrs.linepos) : 0
+					parseAndScale(attrs.line),
+					parseAndScale(attrs.linepos)
 				);
 			case 'progressbar':
-				var font = attrs.size + 'px ' + attrs.font;
+				var font = parseAndScaleInt(attrs.size) + 'px ' + attrs.font;
 				new ProgressBar(
 					attrs.bg,
 					attrs.begin,
 					attrs.fill,
 					attrs.anim,
 					attrs.animspeed == null ? null : (attrs.animspeed:Time),
-					cast Border.fromString(attrs.border),
+					scaleBorderInt(attrs.border),
 					ETextStyle.BITMAP_TEXT_STYLE({font: font, tint: UColor.fromString(attrs.color).rgb}),
 					isTrue(attrs.invert),
 					attrs.src.indexOf(',') != -1,
-					attrs.creep == null ? 0 : Std.parseInt(attrs.creep)
+					parseAndScaleInt(attrs.creep)
 				);
 			case 'timebar':
-				var font = attrs.size + 'px ' + attrs.font;
+				var font = parseAndScaleInt(attrs.size) + 'px ' + attrs.font;
 				new TimeBar(
 					attrs.bg,
 					attrs.begin,
 					attrs.fill,
 					attrs.anim,
 					attrs.animspeed == null ? null : (attrs.animspeed:Time),
-					cast Border.fromString(attrs.border),
+					scaleBorderInt(attrs.border),
 					ETextStyle.BITMAP_TEXT_STYLE({font: font, tint: UColor.fromString(attrs.color).rgb}),
 					isTrue(attrs.invert),
 					attrs.src.indexOf(',') != -1,
-					attrs.creep == null ? 0 : Std.parseInt(attrs.creep)
+					parseAndScaleInt(attrs.creep)
 				);
 			case _:
 				customUIElement(name, attrs, content);
@@ -208,10 +207,24 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 		if (attrs.filters != null) {
 			obj.filters = [for (f in splitAttr(attrs.filters)) FILTERS[f]];
 		}
-		if (attrs.x != null) obj.x = Std.parseInt(attrs.x);
-		if (attrs.y != null) obj.y = Std.parseInt(attrs.y);
+		if (attrs.x != null) obj.x = parseAndScale(attrs.x);
+		if (attrs.y != null) obj.y = parseAndScale(attrs.y);
 		return obj;
 	}
+	
+	@:extern inline private function parseAndScaleWithNull(s:String):Float {
+		return Std.parseFloat(s) * SCALE;
+	}
+	
+	@:extern inline private function parseAndScale(s:String):Float {
+		return s == null ? 0 : parseAndScaleWithNull(s);
+	}
+	
+	@:extern inline private function parseAndScaleInt(s:String):Int {
+		return s == null ? 0 : Std.int(Std.parseInt(s) * SCALE);
+	}
+	
+	@:extern inline private function scaleBorderInt(s:String):Border<Int> return cast (Border.fromString(s) * SCALE);
 	
 	private function _putData(content:Array<Dynamic>):String return putData(content.length > 0 ? content[0] : '');
 	private function putData(c:String):String return c;
@@ -225,7 +238,10 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 	
 	@:abstract private function _createUI():DisplayObject;
 	
-	private function createUI():Void addChild(_createUI());
+	private function createUI(scale:Float = 1):Void {
+		SCALE = scale;
+		addChild(_createUI());
+	}
 	
 	private function createFilters(data:Dynamic<Dynamic<String>>):Void {
 		for (name in Reflect.fields(data)) {
