@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -25,37 +25,47 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.net.http.modules.mmodels;
+package pony.net.http.modules.mkeyauth;
 
-import pony.db.Table;
-import pony.net.http.CPQ;
-import pony.text.tpl.ITplPut;
+import pony.fs.Dir;
+import pony.net.http.WebServer.EConnect;
 
 /**
- * ModelConnect
+ * MKeyAuth
  * @author AxGord <axgord@gmail.com>
  */
-#if !macro
-@:autoBuild(pony.net.http.modules.mmodels.Builder.build())
-#end
-class ModelConnect extends ModuleConnect<Model> {
+@:final class MKeyAuth implements IModule {
 
-	private var db:Table;
-	public var actions:Map<String, ActionConnect>;
+	inline public static var PARAM:String = 'authkey';
+	inline public static var SESSION:String = 'keyAuthed';
 	
-	private function new(base:Model, cpq:CPQ) {
-		super(base, cpq);
-		db = base.db.error(cpq.error);
+	private var keys:Array<String>;
+	public var server:WebServer;
+	
+	public function new(keys:Array<String>) this.keys = keys;
+	
+	public function init(dir:Dir, server:WebServer):Void {
+		this.server = server;
 	}
 	
-	public function action(h:Map<String, Map<String, String>>):Bool {
-		for (k in h.keys())
-			if (actions[k].action(h.get(k))) return true;
-		return false;
-	}
-	
-	override public function tpl(parent:ITplPut):ITplPut {
-		return new ModelPut(this, null, parent);
+	public function connect(cpq:CPQ):EConnect {
+		if (cpq.connection.params.exists(PARAM)) {
+			var key:String = cpq.connection.params.get(PARAM);
+			if (key == null) {
+				cpq.connection.sessionStorage[SESSION] = false;
+				cpq.connection.params.remove(PARAM);
+				cpq.connection.endAction();
+			} else if (keys.indexOf(key) != -1) {
+				cpq.connection.sessionStorage[SESSION] = true;
+				cpq.connection.params.remove(PARAM);
+				cpq.connection.endAction();
+			} else {
+				cpq.connection.error('Access error');
+			}
+			return BREAK;
+		} else {
+			return REG(cast new MKeyAuthConnect(this, cpq));
+		}
 	}
 	
 }

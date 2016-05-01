@@ -83,6 +83,7 @@ class HttpConnection implements HasAbstract
 	}
 	
 	@:abstract public function endAction():Void; 
+	@:abstract public function endActionPrevPage():Void; 
 	
 	private function parseData(pb:ParseBoy<Void>):Map<String, String> {
 		var params = new Map<String, String>();

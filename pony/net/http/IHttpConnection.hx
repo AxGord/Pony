@@ -49,6 +49,7 @@ interface IHttpConnection
 	
 	function sendFile(file:File):Void;
 	function endAction():Void;
+	function endActionPrevPage():Void;
 	function error(?message:String):Void;
 	function sendHtml(text:String):Void;
 	function sendText(text:String):Void;

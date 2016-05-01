@@ -106,6 +106,17 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 		end = true;
 	}
 	
+	override public function endActionPrevPage():Void {
+		writeCookie();
+		res.setHeader('Location', req.headers.field('referer'));
+		res.setHeader('Cache-Control', 'private');
+		res.statusCode = 302;
+		var t:String = '<html><body><a href=".">Click here</a></body></html>';
+		res.setHeader('Content-Length', NodeBuffer.byteLength(t, 'utf8'));
+		res.end(t);
+		end = true;
+	}
+	
 	public function error(?message:String):Void {
 		writeCookie();
 		res.setHeader('Content-Type', 'text/html; charset=UTF-8');

@@ -40,4 +40,8 @@ import pony.text.tpl.ITplPut;
 		return new MLangPut(this, null, parent);
 	}
 	
+	public function translate(from:String, text:String):String {
+		return base.langTable.translate(from, cpq.lang, text);
+	}
+	
 }
