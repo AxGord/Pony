@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -35,6 +35,7 @@ import pony.db.Table;
 import pony.net.http.CPQ;
 import pony.net.http.WebServer.EConnect;
 import pony.Pair;
+import pony.net.http.modules.mmodels.fields.FInt;
 import pony.text.tpl.ITplPut;
 
 using pony.Tools;
@@ -54,6 +55,8 @@ class Model
 	public var actions:Map<String, Action>;
 	public var db:Table;
 	public var cl:Class<ModelConnect>;
+	public var pathes:Map<String, Array<String>>;
+	public var activePathes:Map<String, {path:String, field:String}>;
 	
 	public function new(mm:MModels, actionsClasses:Map<String, Dynamic>) {
 		lang = 'en';
@@ -63,6 +66,12 @@ class Model
 		var n = Type.getClassName(Type.getClass(this)) + 'Connect';
 		cl = cast Type.resolveClass(n);
 		var ma:Dynamic<Array<{name: String, type: String}>> = untyped cl.__methoArgs__;
+		
+		var o = untyped cl.__methoPathes__;
+		var o2 = untyped cl.__methoActivePathes__;
+		pathes = [for (f in Reflect.fields(o)) f => Reflect.field(o, f)];
+		activePathes = [for (f in Reflect.fields(o2)) f => Reflect.field(o2, f)];
+		
 		actions = new Map<String, Action>();
 		var fields:Dynamic = Meta.getFields(cl);
 		for (f in Reflect.fields(fields)) {
@@ -73,6 +82,7 @@ class Model
 				}
 		}
 		columns = new Map < String, pony.net.http.modules.mmodels.Field > ();
+		columns['id'] = new FInt();
 		var cs = untyped Type.getClass(this).fields;
 		for (f in Reflect.fields(cs)) {
 			var c:pony.net.http.modules.mmodels.Field = Reflect.field(cs, f);
@@ -94,7 +104,7 @@ class Model
 		var a:Array<Field> = [
 			{name: 'id', type: Types.INT, flags: [Flags.UNSIGNED, Flags.NOT_NULL, Flags.PRI_KEY, Flags.AUTO_INCREMENT]}
 		];
-		for (c in columns) a.push(c.create());
+		for (c in columns.kv()) if (c.key != 'id') a.push(c.value.create());
 		return @await db.prepare(a);
 	}
 	
@@ -140,13 +150,18 @@ class Model
 	public function connect(cpq:CPQ):EConnect {
 		var mc:ModelConnect = Type.createInstance(cl, [this, cpq]);
 		var a = new Map<String, ActionConnect>();
-		for (k in actions.keys())
-			switch actions[k].connect(cpq, mc) {
+		var sub = new Map<String, ISubActionConnect>();
+		for (k in actions.keys()) {
+			var r = actions[k].connect(cpq, mc);
+			if (r.b != null) sub[k] = r.b;
+			switch r.a {
 				case BREAK: return BREAK;
 				case REG(obj): a[k] = cast obj;
 				case NOTREG:
 			}
+		}
 		mc.actions = a;
+		mc.subactions = sub;
 		return REG(cast mc);
 	}
 	

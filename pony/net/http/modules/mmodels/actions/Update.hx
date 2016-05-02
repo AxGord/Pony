@@ -28,40 +28,38 @@
 package pony.net.http.modules.mmodels.actions;
 
 import pony.Pair;
-import pony.net.http.modules.mmodels.ModelConnect;
-import pony.net.http.CPQ;
-import pony.net.http.modules.mmodels.Action;
-import pony.net.http.WebServer;
-import pony.net.http.modules.mmodels.Model;
+import pony.net.http.WebServer.EConnect;
+import pony.net.http.modules.mmodels.Model.ActResult;
 import pony.text.tpl.ITplPut;
-import pony.text.tpl.Tpl;
 import pony.text.tpl.TplData;
 
 using pony.text.TextTools;
-using Lambda;
 
-class Insert extends Action
-{
+/**
+ * Update
+ * @author AxGord <axgord@gmail.com>
+ */
+class Update extends Action {
 	override public function connect(cpq:CPQ, modelConnect:ModelConnect):Pair<EConnect, ISubActionConnect> {
-		return new Pair(REG(cast new InsertConnect(this, cpq, modelConnect)), null);
+		var obj = new UpdateConnect(this, cpq, modelConnect);
+		return new Pair(REG(cast obj), cast obj);
 	}
 }
 
-class InsertConnect extends ActionConnect {
+class UpdateConnect extends ActionConnect implements ISubActionConnect {
 	
 	public var storage(get,never):Map<Int,Dynamic>;
 	
-	@:extern inline private function get_storage():Map<Int,Dynamic> {
+	private function get_storage():Map<Int,Dynamic> {
 		return cpq.connection.sessionStorage.get('modelsActions');
 	}
 	
-	override public function tpl(parent:ITplPut):ITplPut {
-		return new InsertPut(this, cpq, parent);
+	public function subtpl(parent:ITplPut, data:Dynamic):ITplPut {
+		return new UpdatePut(this, data, parent);
 	}
 	
 	override public function action(h:Map<String, String>):Bool {
-		var ma:Map<Int,Dynamic> = storage;
-		if (ma.exists(base.id)) {
+		if (storage.exists(base.id)) {
 			cpq.connection.error('Double send');
 			return true;
 		}
@@ -85,7 +83,7 @@ class InsertConnect extends ActionConnect {
 				}
 		}
 		callCheck(ca, function(r:ActResult) {
-			ma.set(base.id, {values: h, result: r});
+			storage.set(base.id, {values: h, result: r});
 			switch r {
 				case ActResult.OK: cpq.connection.endAction();
 				case _: cpq.connection.endActionPrevPage();
@@ -94,61 +92,8 @@ class InsertConnect extends ActionConnect {
 		return true;
 	}
 	
-	@:extern inline public function clr():Void {
-		storage.remove(base.id);
-	}
-	
-}
-
-@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
-class InsertPut extends pony.text.tpl.TplPut < InsertConnect, CPQ > {
-	
-	@:async
-	override public function tag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String
-	{
-		if (content == null || args.exists('auto')) {
-			var fixList = [];
-			if (args.exists('fix'))
-				fixList = args.get('fix').split(',');
-			var r:String = '';
-			var ma:Map<Int, Dynamic> = a.storage;
-			var m = ma.get(a.base.id);
-			if (m == null)
-				for (k in a.base.args.keys()) {
-					r += inputE(k, '', fixList.indexOf(k) != -1);
-				}
-			else
-				for (k in a.base.args.keys()) {
-					r += inputE(k, m.values.exists(k) ? m.values.get(k) : '', fixList.indexOf(k) != -1);
-				}
-			a.clr();
-			return '<form action="" method="POST">' +
-				(content != null ? '<div class="capition">' + @await tplData(content) + '</div>' : '') +
-				r + '<button>Send</button> <a href="" class="action">Clear</a></form>';
-		} else {
-			var r:String = @await sub(a, b, InsertPutSub, content);
-			a.clr();
-			return r;
-		}
-	}
-	
-	
-	private function inputE(name:String, value:String, fix:Bool):String {
-		var s:String = st(name);
-		if (s == null)
-			return '<label>' + name.bigFirst() + input(name, null, value)+'</label>';
-		if (s == '')
-			return '<label>' + name.bigFirst() + input(name, 'ok', fix ? value : '')+'</label>';
-		return '<label>' + name.bigFirst() + input(name, 'error', value)+'<div>'+s+'</div>'+'</label>';
-	}
-	
-	private function input(name:String, cl:String, value:String):String {
-		return a.base.model.columns.get(name).htmlInput(cl, a.base.name, value);
-	}
-	
-	private function st(arg:String):String {
-		var ma:Map<Int, Dynamic> = b.connection.sessionStorage.get('modelsActions');
-		var m = ma.get(a.base.id);
+	public function st(arg:String):String {
+		var m = storage.get(base.id);
 		var r:ActResult = m == null ? null : m.result;
 		var st:String = null;
 		if (r != null) switch (r) {
@@ -163,16 +108,66 @@ class InsertPut extends pony.text.tpl.TplPut < InsertConnect, CPQ > {
 		return st;
 	}
 	
+	@:extern inline public function clr():Void storage.remove(base.id);
+	
 }
 
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
-class InsertPutSub extends pony.text.tpl.TplPut < InsertConnect, CPQ > {
+class UpdatePut extends pony.text.tpl.TplPut < UpdateConnect, Dynamic > {
+	
+	@:async
+	override public function tag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String
+	{
+		if (content == null || args.exists('auto')) {
+			var fixList = [];
+			if (args.exists('fix'))
+				fixList = args.get('fix').split(',');
+			var r:String = '';
+			var ma:Map<Int, Dynamic> = a.storage;
+			var m = ma.get(a.base.id);
+			if (m == null)
+				for (k in a.base.args.keys()) {
+					r += inputE(k, Reflect.field(b, k), fixList.indexOf(k) != -1);
+				}
+			else
+				for (k in a.base.args.keys()) {
+					r += inputE(k, m.values.exists(k) ? m.values.get(k) : '', fixList.indexOf(k) != -1);
+				}
+			a.clr();
+			return '<form action="" method="POST">' +
+				(content != null ? '<div class="capition">' + @await tplData(content) + '</div>' : '') +
+				r + '<button>Send</button> <a href="" class="action">Clear</a></form>';
+		} else {
+			var r:String = @await sub(a, b, UpdatePutSub, content);
+			a.clr();
+			return r;
+		}
+	}
+	
+	
+	private function inputE(name:String, value:String, fix:Bool):String {
+		var s:String = a.st(name);
+		if (s == null)
+			return '<label>' + name.bigFirst() + input(name, null, value)+'</label>';
+		if (s == '')
+			return '<label>' + name.bigFirst() + input(name, 'ok', fix ? value : '')+'</label>';
+		return '<label>' + name.bigFirst() + input(name, 'error', value)+'<div>'+s+'</div>'+'</label>';
+	}
+	
+	private function input(name:String, cl:String, value:String):String {
+		return a.base.model.columns.get(name).htmlInput(cl, a.base.name, value);
+	}
+	
+}
+
+@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
+class UpdatePutSub extends pony.text.tpl.TplPut < UpdateConnect, Dynamic > {
 	
 	@:async
 	override public function tag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String
 	{
 		if (a.base.args.exists(name)) {
-			return @await sub({o: a, arg: name}, b, InsertPutArg, content);
+			return @await sub({o: a, arg: name}, Reflect.field(b, name), UpdatePutArg, content);
 		} else
 			return @await super.tag(name, content, arg, args, kid);
 	}
@@ -181,35 +176,18 @@ class InsertPutSub extends pony.text.tpl.TplPut < InsertConnect, CPQ > {
 }
 
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
-class InsertPutArg extends pony.text.tpl.TplPut < {o: InsertConnect, arg: String}, CPQ > {
-	
-	private function st():String {
-		var ma:Map<Int, Dynamic> = b.connection.sessionStorage.get('modelsActions');
-		var m = ma.get(a.o.base.id);
-		var r:ActResult = m == null ? null : m.result;
-		var st:String = null;
-		if (r != null) switch (r) {
-			case OK: st = '';
-			case ERROR(e):
-				if (e.exists(a.arg))
-					st = e.get(a.arg);
-				else
-					st = '';
-			case DBERROR: st = 'DataBase error';
-		}
-		return st;
-	}
+class UpdatePutArg extends pony.text.tpl.TplPut < {o: UpdateConnect, arg: String}, String > {
 	
 	@:async
 	override public function tag(name:String, content:TplData, arg:String, args:Map<String,String>, ?kid:ITplPut):String
 	{
 		switch (name) {
 			case 'default':
-				return st() == null ? @await tplData(content) : '';
+				return a.o.st(a.arg) == null ? @await tplData(content) : '';
 			case 'ok':
-				return st() == '' ? @await tplData(content) : '';
+				return a.o.st(a.arg) == '' ? @await tplData(content) : '';
 			case 'error':
-				var s = st();
+				var s = a.o.st(a.arg);
 				return s != null && s != '' ? @await tplData(content) : '';
 			default:
 				return @await super.tag(name, content, arg, args, kid);
@@ -220,19 +198,18 @@ class InsertPutArg extends pony.text.tpl.TplPut < {o: InsertConnect, arg: String
 	override public function shortTag(name:String, arg:String, ?kid:ITplPut):String
 	{
 		if (name == 'error') {
-			var s = st();
+			var s = a.o.st(a.arg);
 			if (s != null)
 				return s;
 			else
 				return '';
 		} else if (name == 'value') {
-			var ma:Map<Int, Dynamic> = b.connection.sessionStorage.get('modelsActions');
+			var ma:Map<Int, Dynamic> = a.o.cpq.connection.sessionStorage.get('modelsActions');
 			var m = ma.get(a.o.base.id);
-			if (m == null)
-				return '';
-			else {
-				//trace(m.values);
-				return m.values.exists(a.arg) ? m.values.get(a.arg) : '';
+			if (m == null) {
+				return b;
+			} else {
+				return m.values.exists(a.arg) ? m.values.get(a.arg) : b;
 			}
 		} else {
 			return @await super.shortTag(name, arg, kid);

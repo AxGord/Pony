@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -43,7 +43,7 @@ class Builder {
 		var cur = Context.getLocalClass().get();
 		if (cur.name == 'Model') return fields;
 		for (f in fields) switch (f.name) {
-			case 'many', 'insert', 'single':
+			case 'many', 'insert', 'single', 'update':
 				if (!f.meta.exists(function(m) return m.name == 'action'))
 					f.meta.push( { pos: Context.currentPos(), name: 'action', params: [{expr: EConst(CString(f.name.bigFirst())), pos: Context.currentPos()}] } );
 			/*case 'manyAsync', 'insertAsync':
@@ -51,23 +51,39 @@ class Builder {
 				if (!f.meta.exists(function(m) return m.name == 'action'))
 					f.meta.push( { pos: Context.currentPos(), name: 'action', params: [EConst(CString(n)).expr()] } );*/
 		}
-		
+		var pathes:Array<{ field : String, expr : Expr}> = [];
+		var activePathes:Array<{ field : String, expr : Expr}> = [];
 		var data:Array<{ field : String, expr : Expr}> = [];
-		for (f in fields) if (f.meta.exists(function(m) return m.name == 'action')) {
-			var d:Array<Expr> = [];
-			 switch f.kind {
-				case FFun(fun): for (a in fun.args)
-					switch a.type {
-						case TPath(p):
-							d.push({expr: EObjectDecl([
-									{field: 'name', expr: {expr: EConst(CString(a.name)), pos: Context.currentPos()}},
-									{field: 'type', expr: {expr: EConst(CString(p.name)), pos: Context.currentPos()}}
-							]), pos: Context.currentPos()});
-						case _: throw 'Error';
-					}
-				case _: throw 'Error';
+		for (f in fields) {
+			for (m in f.meta) {
+				switch m.name {
+					case ':path':
+						pathes.push({field:f.name, expr: m.params[0]});
+					case ':activePath':
+						activePathes.push(
+							{field:f.name, expr: {expr: EObjectDecl([
+									{field: 'path', expr: m.params[0]},
+									{field: 'field', expr: m.params[1]}
+							]), pos: Context.currentPos()}}
+						);
+					case 'action':
+						var d:Array<Expr> = [];
+						switch f.kind {
+							case FFun(fun): for (a in fun.args)
+								switch a.type {
+									case TPath(p):
+										d.push({expr: EObjectDecl([
+												{field: 'name', expr: {expr: EConst(CString(a.name)), pos: Context.currentPos()}},
+												{field: 'type', expr: {expr: EConst(CString(p.name)), pos: Context.currentPos()}}
+										]), pos: Context.currentPos()});
+									case _: throw 'Error';
+								}
+							case _: throw 'Error';
+						}
+						data.push({field: f.name, expr: {expr: EArrayDecl(d), pos: Context.currentPos()}});
+				}
+				
 			}
-			data.push({field: f.name, expr: {expr: EArrayDecl(d), pos: Context.currentPos()}});
 		}
 		
 		fields.push( {
@@ -77,6 +93,24 @@ class Builder {
 			doc: null,
 			access: [AStatic, APrivate],
 			kind: FVar(null, {expr: EObjectDecl(data), pos: Context.currentPos()})
+		});
+		
+		fields.push( {
+			pos: Context.currentPos(),
+			name: '__methoPathes__',
+			meta: [],
+			doc: null,
+			access: [AStatic, APublic],
+			kind: FVar(null, {expr: EObjectDecl(pathes), pos: Context.currentPos()})
+		});
+		
+		fields.push( {
+			pos: Context.currentPos(),
+			name: '__methoActivePathes__',
+			meta: [],
+			doc: null,
+			access: [AStatic, APublic],
+			kind: FVar(null, {expr: EObjectDecl(activePathes), pos: Context.currentPos()})
 		});
 		
 		return fields;

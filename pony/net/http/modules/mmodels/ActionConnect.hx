@@ -42,12 +42,61 @@ class ActionConnect extends ModuleConnect<Action> {
 	private var method:Dynamic;
 	private var methodCheck:Dynamic;
 	public var model:ModelConnect;
+	public var pathQuery:String;
+	public var actionPathQuery:String;
+	public var hasPathArg:Bool = false;
+	public var activePathTarget:String;
+	private var tplInited:Bool = false;
 	
 	public function new(base:Action, cpq:CPQ, model:ModelConnect) {
 		super(base, cpq);
 		this.model = model;
 		method = Reflect.field(model, base.name);
-		methodCheck = Reflect.field(model, base.name+'Validate');
+		methodCheck = Reflect.hasField(model, base.name+'Validate') ?
+			Reflect.field(model, base.name+'Validate') :
+			Reflect.field(model, 'validate');
+	}
+	
+	private function initTpl():Void {
+		if (tplInited) return;
+		tplInited = true;
+		var p = model.base.activePathes[base.name];
+		if (p != null) {
+			activePathTarget = p.field == null ? 'id' : p.field;
+			var apath:String = p.path;
+			if (apath != null) {
+				var q = [cpq.page].concat(cpq.query);
+				var takeNext = false;
+				var i = 0;
+				for (e in q) {
+					i++;
+					if (e == apath) takeNext = true;
+					else if (takeNext) {
+						actionPathQuery = e;
+						break;
+					}
+				}
+			}
+		}
+		
+		if (model.base.pathes[base.name] != null) for (path in model.base.pathes[base.name]) {
+			hasPathArg = true;
+			var q = [cpq.page].concat(cpq.query);
+			var takeNext = false;
+			var i = 0;
+			for (e in q) {
+				i++;
+				if (e == path) takeNext = true;
+				else if (takeNext) {
+					pathQuery = e;
+					return;
+				}
+			}
+		}
+	}
+	
+	public function checkActivePath(data:Dynamic):Bool {
+		return Reflect.field(data, activePathTarget) == actionPathQuery;
 	}
 	
 	override public function tpl(parent:ITplPut):ITplPut {

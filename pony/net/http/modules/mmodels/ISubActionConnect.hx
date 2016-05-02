@@ -25,14 +25,13 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.net.http.sn;
+package pony.net.http.modules.mmodels;
+
+import pony.text.tpl.ITplPut;
 
 /**
- * @author AxGord
+ * @author AxGord <axgord@gmail.com>
  */
-
-interface IFB 
-{
-	function api(token:String, r:String, cb:Dynamic->Void):Void;
-	function me(token:String, cb:FBData->Void):Void;
+interface ISubActionConnect {
+  function subtpl(parent:ITplPut, data:Dynamic):ITplPut;
 }

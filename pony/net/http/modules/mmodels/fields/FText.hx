@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -56,7 +56,10 @@ class CTextPut extends pony.text.tpl.TplPut<FText, Dynamic> {
 	@:async
 	override public function tag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String 
 	{
-		return @await html(name);
+		if (args.exists('noesc'))
+			return Reflect.field(b, name);
+		else
+			return @await html(Reflect.field(b, name));
 	}
 	
 	@:async

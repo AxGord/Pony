@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -27,6 +27,7 @@
 **/
 package pony.net.http.modules.mmodels.actions;
 
+import pony.Pair;
 import pony.net.http.modules.mmodels.Action;
 import pony.net.http.WebServer;
 import pony.Stream;
@@ -39,14 +40,15 @@ using pony.Tools;
 
 class Single extends Action
 {
-	override public function connect(cpq:CPQ, modelConnect:ModelConnect):EConnect {
-		return REG(cast new SingleConnect(this, cpq, modelConnect));
+	override public function connect(cpq:CPQ, modelConnect:ModelConnect):Pair<EConnect, ISubActionConnect> {
+		return new Pair(REG(cast new SingleConnect(this, cpq, modelConnect)), null);
 	}
 }
 
 class SingleConnect extends ActionConnect {
 	
 	override public function tpl(parent:ITplPut):ITplPut {
+		initTpl();
 		return new SinglePut(this, cpq, parent);
 	}
 	
@@ -58,12 +60,14 @@ class SingleConnect extends ActionConnect {
 	@:async
 	override public function tag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String
 	{
-		trace(name);
-		var a:Dynamic = @await a.call([]);
+		var cargs = a.hasPathArg ? [a.pathQuery] : [];
+		var a:Dynamic = @await a.call(cargs);
 		if (args.exists('!'))
 			return a == null ? @await parent.tplData(content) : '';
 		else {
-			if (args.exists('div')) {
+			if (a == null)
+				return '';
+			else if (args.exists('div')) {
 				return @await div(arg, args, a);
 			} else
 				return @await sub(this, a, SinglePutSub, content);
@@ -113,13 +117,16 @@ class SinglePutSub extends Valuator<SinglePut, Dynamic> {
 	@:async
 	override public function tag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String
 	{
-		trace(name);
-		var c = a.a.base.model.columns[name];
-		if (c.tplPut != null) {
-			var o = Type.createInstance(c.tplPut, [c, b, this]);
-			return @await o.tag(name, content, arg, args, kid);
-		} else
-			return @await super1_tag(name, content, arg, args, kid);
+		if (a.a.model.subactions.exists(name)) {
+			return @await a.a.model.subactions[name].subtpl(parent, b).tag(name, content, arg, args, kid);
+		} else {
+			var c = a.a.base.model.columns[name];
+			if (c.tplPut != null) {
+				var o = Type.createInstance(c.tplPut, [c, b, this]);
+				return @await o.tag(name, content, arg, args, kid);
+			} else
+				return @await super1_tag(name, content, arg, args, kid);
+		}
 	}
 	
 	@:async

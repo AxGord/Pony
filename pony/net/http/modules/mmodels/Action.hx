@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -46,8 +46,8 @@ class Action
 		id = model.mm.lastActionId++;	
 	}
 		
-	public function connect(cpq:CPQ, modelConnect:ModelConnect):EConnect {
-		return REG(cast new ActionConnect(this, cpq, modelConnect));
+	public function connect(cpq:CPQ, modelConnect:ModelConnect):Pair<EConnect, ISubActionConnect> {
+		return new Pair(REG(cast new ActionConnect(this, cpq, modelConnect)), null);
 	}
 	
 }

@@ -44,7 +44,8 @@ class Cookie
 		if (cookie != null) {
 			var a:Array<String> = cookie.split(';');
 			for (e in a) {
-				var kv:Array<String> = e.split('=');
+				var kv:Array<String> = e.split('=').map(StringTools.trim);
+				//todo: fix double cookie problem
 				oldCookie.set(kv[0], kv[1]);
 			}
 		} else if (mapCookie != null) oldCookie = mapCookie;

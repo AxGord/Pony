@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -42,6 +42,7 @@ class ModelConnect extends ModuleConnect<Model> {
 
 	private var db:Table;
 	public var actions:Map<String, ActionConnect>;
+	public var subactions:Map<String, ISubActionConnect>;
 	
 	private function new(base:Model, cpq:CPQ) {
 		super(base, cpq);
@@ -49,8 +50,9 @@ class ModelConnect extends ModuleConnect<Model> {
 	}
 	
 	public function action(h:Map<String, Map<String, String>>):Bool {
-		for (k in h.keys())
+		for (k in h.keys()) {
 			if (actions[k].action(h.get(k))) return true;
+		}
 		return false;
 	}
 	

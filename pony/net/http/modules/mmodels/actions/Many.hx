@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -27,6 +27,7 @@
 **/
 package pony.net.http.modules.mmodels.actions;
 
+import pony.Pair;
 import pony.net.http.modules.mmodels.Action;
 import pony.net.http.WebServer;
 import pony.Stream;
@@ -39,14 +40,15 @@ using pony.Tools;
 
 class Many extends Action
 {
-	override public function connect(cpq:CPQ, modelConnect:ModelConnect):EConnect {
-		return REG(cast new ManyConnect(this, cpq, modelConnect));
+	override public function connect(cpq:CPQ, modelConnect:ModelConnect):Pair<EConnect, ISubActionConnect> {
+		return new Pair(REG(cast new ManyConnect(this, cpq, modelConnect)), null);
 	}
 }
 
 class ManyConnect extends ActionConnect {
 	
 	override public function tpl(parent:ITplPut):ITplPut {
+		initTpl();
 		return new ManyPut(this, cpq, parent);
 	}
 	
@@ -112,13 +114,22 @@ class ManyPut extends pony.text.tpl.TplPut<ManyConnect, CPQ> {
 	@:async
 	override public function tag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String
 	{
-		if (a.a.base.model.columns.exists(name)) return '%$name%';
-		var c = a.a.base.model.columns[name];
-		if (c.tplPut != null) {
-			var o = Type.createInstance(c.tplPut, [c, b, this]);
-			return @await o.tag(name, content, arg, args, kid);
-		} else
-			return @await super.tag(name, content, arg, args, kid);
+		if (name == 'selected') {
+			var f1 = a.a.checkActivePath(b);
+			var f2 = !args.exists('!');
+			if ((f1 && f2) || (!f1 && !f2))
+				return @await tplData(content);
+			else
+				return '';
+		} else {
+			if (a.a.base.model.columns.exists(name)) return '%$name%';
+			var c = a.a.base.model.columns[name];
+			if (c.tplPut != null) {
+				var o = Type.createInstance(c.tplPut, [c, b, this]);
+				return @await o.tag(name, content, arg, args, kid);
+			} else
+				return @await super.tag(name, content, arg, args, kid);
+		}
 	}
 	
 	@:async
