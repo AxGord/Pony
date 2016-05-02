@@ -41,7 +41,7 @@ class FText extends Field
 		tplPut = CTextPut;
 	}
 	
-	override public function htmlInput(cl:String, act:String, value:String):String {
+	override public function htmlInput(cl:String, act:String, value:String, hidden:Bool=false):String {
 		return
 			'<textarea ' + (cl != null?'class="' + cl + '" ':'') +
 			'name="' + model.name + '.' + act + '.' +

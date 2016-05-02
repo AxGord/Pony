@@ -121,7 +121,7 @@ class SinglePutSub extends Valuator<SinglePut, Dynamic> {
 			return @await a.a.model.subactions[name].subtpl(parent, b).tag(name, content, arg, args, kid);
 		} else {
 			var c = a.a.base.model.columns[name];
-			if (c.tplPut != null) {
+			if (c != null && c.tplPut != null) {
 				var o = Type.createInstance(c.tplPut, [c, b, this]);
 				return @await o.tag(name, content, arg, args, kid);
 			} else
@@ -132,12 +132,16 @@ class SinglePutSub extends Valuator<SinglePut, Dynamic> {
 	@:async
 	override public function shortTag(name:String, arg:String, ?kid:ITplPut):String 
 	{
-		var c = a.a.base.model.columns[name];
-		if (c.tplPut != null) {
-			var o = Type.createInstance(c.tplPut, [c, b, this]);
-			return @await o.shortTag(name, arg, kid);
-		} else
-			return @await super1_shortTag(name, arg, kid);
+		if (a.a.model.subactions.exists(name)) {
+			return @await a.a.model.subactions[name].subtpl(parent, b).shortTag(name, arg, kid);
+		} else {
+			var c = a.a.base.model.columns[name];
+			if (c != null && c.tplPut != null) {
+				var o = Type.createInstance(c.tplPut, [c, b, this]);
+				return @await o.shortTag(name, arg, kid);
+			} else
+				return @await super1_shortTag(name, arg, kid);
+		}
 	}
 	
 	@:async

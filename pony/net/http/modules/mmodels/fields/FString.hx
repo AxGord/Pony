@@ -41,9 +41,10 @@ class FString extends Field
 		type = Types.CHAR;
 	}
 	
-	override public function htmlInput(cl:String, act:String, value:String):String {
+	override public function htmlInput(cl:String, act:String, value:String, hidded:Bool=false):String {
+		var h = hidded ? 'type="hidden" ' : '';
 		return
-			'<input ' + (cl != null?'class="' + cl + '" ':'') +
+			'<input ' + h + (cl != null?'class="' + cl + '" ':'') +
 			'name="' + model.name + '.' + act + '.' +
 			name + '" type="text" value="'+value+'"/>';
 	}

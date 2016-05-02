@@ -69,6 +69,7 @@ class ActionConnect extends ModuleConnect<Action> {
 				var takeNext = false;
 				var i = 0;
 				for (e in q) {
+					if (apath == '' && i > 1) break;
 					i++;
 					if (e == apath) takeNext = true;
 					else if (takeNext) {
@@ -85,6 +86,7 @@ class ActionConnect extends ModuleConnect<Action> {
 			var takeNext = false;
 			var i = 0;
 			for (e in q) {
+				if (path == '' && i > 1) break;
 				i++;
 				if (e == path) takeNext = true;
 				else if (takeNext) {

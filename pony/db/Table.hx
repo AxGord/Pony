@@ -184,6 +184,20 @@ class Table implements Dynamic < Table > implements Declarator implements Ninja
 		mysql.action('UPDATE $table SET ' + set.join(', ') + _where, cb);
 	}
 	 
+	/**
+	 * Delete selected rows from table
+	 */
+	public function delete(cb:Bool->Void, ?p:PosInfos):Void {
+		var q = 'DELETE FROM $table' + _where + order + (_limit == null ? '' : ' LIMIT $_begin, $_limit');
+		mysql.query(q, p, function(err:Dynamic, fields:Dynamic, _):Void {
+			if (err != null) {
+				_error(err);
+				mysql.error(err);
+			} else {
+				cb(solo ? fields.map(soloMap): fields);
+			}
+		});
+	}
 	 
 	#end
 	
