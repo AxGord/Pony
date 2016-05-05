@@ -42,8 +42,8 @@ class ActionConnect extends ModuleConnect<Action> {
 	private var method:Dynamic;
 	private var methodCheck:Dynamic;
 	public var model:ModelConnect;
-	public var pathQuery:String;
-	public var actionPathQuery:String;
+	public var pathQuery:String = '';
+	public var actionPathQuery:String = '';
 	public var hasPathArg:Bool = false;
 	public var activePathTarget:String;
 	private var tplInited:Bool = false;
@@ -105,6 +105,14 @@ class ActionConnect extends ModuleConnect<Action> {
 		return new ActionPut(base, cpq, parent);
 	}
 	
+	public function runAction(h:Map<String, String>):Bool {
+		if (checkAccess()) {
+			return action(h);
+		} else {
+			return false;
+		}
+	}
+	
 	public function action(h:Map<String, String>):Bool {
 		return false;
 	}
@@ -115,6 +123,14 @@ class ActionConnect extends ModuleConnect<Action> {
 	
 	public function _callCheck(args:Array<Dynamic>):Errors {	
 		return Reflect.callMethod(model, methodCheck, args);
+	}
+	
+	public function checkAccess():Bool {
+		if (model.base.access.exists(base.name)) {
+			return Reflect.callMethod(model, Reflect.field(model, model.base.access[base.name]), []);
+		} else {
+			return true;
+		}
 	}
 		
 	public function callCheck(args:Array<Dynamic>, cb:ActResult->Void):Void {

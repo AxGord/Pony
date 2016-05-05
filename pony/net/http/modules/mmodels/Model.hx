@@ -57,6 +57,7 @@ class Model
 	public var cl:Class<ModelConnect>;
 	public var pathes:Map<String, Array<String>>;
 	public var activePathes:Map<String, {path:String, field:String}>;
+	public var access:Map<String, String>;
 	
 	public function new(mm:MModels, actionsClasses:Map<String, Dynamic>) {
 		lang = 'en';
@@ -71,6 +72,9 @@ class Model
 		var o2 = untyped cl.__methoActivePathes__;
 		pathes = [for (f in Reflect.fields(o)) f => Reflect.field(o, f)];
 		activePathes = [for (f in Reflect.fields(o2)) f => Reflect.field(o2, f)];
+		
+		var o = untyped cl.__methoAccess__;
+		access = [for (f in Reflect.fields(o)) f => Reflect.field(o, f)];
 		
 		actions = new Map<String, Action>();
 		var fields:Dynamic = Meta.getFields(cl);

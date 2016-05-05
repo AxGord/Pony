@@ -60,6 +60,7 @@ class ManyPut extends pony.text.tpl.TplPut<ManyConnect, CPQ> {
 	@:async
 	override public function tag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String
 	{
+		if (!a.checkAccess()) return '';
 		var a:Array<Dynamic> = @await a.call([]);
 		if (args.exists('!'))
 			return a.length == 0 ? @await parent.tplData(content) : '';
@@ -124,7 +125,7 @@ class ManyPut extends pony.text.tpl.TplPut<ManyConnect, CPQ> {
 		} else {
 			if (a.a.base.model.columns.exists(name)) return '%$name%';
 			var c = a.a.base.model.columns[name];
-			if (c.tplPut != null) {
+			if (c != null && c.tplPut != null) {
 				var o = Type.createInstance(c.tplPut, [c, b, this]);
 				return @await o.tag(name, content, arg, args, kid);
 			} else
@@ -137,7 +138,7 @@ class ManyPut extends pony.text.tpl.TplPut<ManyConnect, CPQ> {
 	{
 		if (!a.a.base.model.columns.exists(name)) return '%$name%';
 		var c = a.a.base.model.columns[name];
-		if (c.tplPut != null) {
+		if (c != null && c.tplPut != null) {
 			var o = Type.createInstance(c.tplPut, [c, b, this]);
 			return @await o.shortTag(name, arg, kid);
 		} else

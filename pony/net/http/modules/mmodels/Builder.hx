@@ -53,6 +53,7 @@ class Builder {
 		}
 		var pathes:Array<{ field : String, expr : Expr}> = [];
 		var activePathes:Array<{ field : String, expr : Expr}> = [];
+		var acc:Array<{ field : String, expr : Expr}> = [];
 		var data:Array<{ field : String, expr : Expr}> = [];
 		for (f in fields) {
 			for (m in f.meta) {
@@ -81,6 +82,13 @@ class Builder {
 							case _: throw 'Error';
 						}
 						data.push({field: f.name, expr: {expr: EArrayDecl(d), pos: Context.currentPos()}});
+					case ':check':
+						acc.push(
+							{field:f.name, expr: macro $v{switch m.params[0].expr {
+								case EConst(CIdent(s)): s;
+								case _: throw 'error';
+							}}}
+						);
 				}
 				
 			}
@@ -111,6 +119,15 @@ class Builder {
 			doc: null,
 			access: [AStatic, APublic],
 			kind: FVar(null, {expr: EObjectDecl(activePathes), pos: Context.currentPos()})
+		});
+		
+		fields.push( {
+			pos: Context.currentPos(),
+			name: '__methoAccess__',
+			meta: [],
+			doc: null,
+			access: [AStatic, APublic],
+			kind: FVar(null, {expr: EObjectDecl(acc), pos: Context.currentPos()})
 		});
 		
 		return fields;

@@ -49,10 +49,9 @@ class Valuator<C1, C2> extends TplPut<C1, C2> {
 				return b ? @await tplData(content) : '';
 		} else {
 			var v:String = @await valu(name, arg);
-			if (args.exists('htmlEscape'))
-				v = StringTools.htmlEscape(v);
 			if (v != null) {
-				
+				if (args.exists('htmlEscape'))
+					v = StringTools.htmlEscape(v);
 				if (v == '') {
 					if (args.exists('!'))
 						return @await tplData(content);
@@ -63,7 +62,7 @@ class Valuator<C1, C2> extends TplPut<C1, C2> {
 				else
 					return '';
 			} else
-				return @await tagHelper(name, content, arg, args, kid);
+				return @await super.tag(name, content, arg, args, kid);
 		}
 	}
 	

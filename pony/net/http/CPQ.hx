@@ -75,4 +75,6 @@ class CPQ implements Declarator {
 		connection.error(message);
 	}
 	
+	@:extern inline public function getModule<T>(cl:Class<T>):T return cast modules[Type.getClassName(cl)];
+	
 }

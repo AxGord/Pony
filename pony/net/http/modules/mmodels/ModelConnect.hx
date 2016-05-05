@@ -51,7 +51,7 @@ class ModelConnect extends ModuleConnect<Model> {
 	
 	public function action(h:Map<String, Map<String, String>>):Bool {
 		for (k in h.keys()) {
-			if (actions[k].action(h.get(k))) return true;
+			if (actions[k].runAction(h.get(k))) return true;
 		}
 		return false;
 	}

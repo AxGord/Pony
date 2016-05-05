@@ -39,6 +39,6 @@ import pony.text.tpl.ITplPut;
 		return new MKeyAuthPut(this, null, parent);
 	}
 	
-	public function authed():Bool return cpq.connection.sessionStorage[MKeyAuth.SESSION];
+	public function authed():Bool return cpq.connection.sessionStorage[MKeyAuth.SESSION] == true;
 	
 }

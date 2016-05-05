@@ -106,6 +106,7 @@ class InsertPut extends pony.text.tpl.TplPut < InsertConnect, CPQ > {
 	@:async
 	override public function tag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String
 	{
+		if (!a.checkAccess()) return '';
 		if (content == null || args.exists('auto')) {
 			var fixList = [];
 			if (args.exists('fix'))

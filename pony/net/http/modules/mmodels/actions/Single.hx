@@ -60,6 +60,10 @@ class SingleConnect extends ActionConnect {
 	@:async
 	override public function tag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String
 	{
+		if (Std.is(kid, SinglePutSub)) {
+			return @await parent.tag(name, content, arg, args, kid);
+		}
+		if (!a.checkAccess()) return '';
 		var cargs = a.hasPathArg ? [a.pathQuery] : [];
 		var a:Dynamic = @await a.call(cargs);
 		if (args.exists('!'))

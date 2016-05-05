@@ -229,12 +229,12 @@ class TplPut<T1, T2> implements ITplPut implements SuperPuper
 				r;
 		}
 	}
-	
+	/*
 	@:async
 	public function tagHelper(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String {
 		return @await tag(name, content, arg, args, kid);
 	}
-	
+	*/
 	@:async
 	private inline function parentTag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String {
 		return @await parent.tag(name, content, arg, args, kid == null ? this : kid);

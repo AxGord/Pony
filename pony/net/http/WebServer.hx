@@ -68,7 +68,7 @@ class WebServer
 		for (m in modules) {
 			switch m.connect(cpq) {
 				case BREAK: return;
-				case REG(obj): cpq.modules[Type.getClassName(Type.getClass(m))] = obj;
+				case REG(obj): cpq.modules[Type.getClassName(Type.getClass(obj))] = obj;
 				case NOTREG:
 			}
 		}
