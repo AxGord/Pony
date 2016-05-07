@@ -87,6 +87,8 @@ class Model
 		}
 		columns = new Map < String, pony.net.http.modules.mmodels.Field > ();
 		columns['id'] = new FInt();
+		columns['id'].model = this;
+		columns['id'].name = 'id';
 		var cs = untyped Type.getClass(this).fields;
 		for (f in Reflect.fields(cs)) {
 			var c:pony.net.http.modules.mmodels.Field = Reflect.field(cs, f);

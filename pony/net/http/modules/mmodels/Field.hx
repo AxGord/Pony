@@ -39,6 +39,7 @@ class Field
 	public var type:Types;
 	public var notnull:Bool;
 	public var len:Int;
+	public var isFile:Bool = false;
 	
 	public var tplPut:Class<ITplPut> = null;
 	

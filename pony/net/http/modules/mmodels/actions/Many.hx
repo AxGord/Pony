@@ -115,34 +115,42 @@ class ManyPut extends pony.text.tpl.TplPut<ManyConnect, CPQ> {
 	@:async
 	override public function tag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String
 	{
-		if (name == 'selected') {
-			var f1 = a.a.checkActivePath(b);
-			var f2 = !args.exists('!');
-			if ((f1 && f2) || (!f1 && !f2))
-				return @await tplData(content);
-			else
-				return '';
+		if (a.a.model.subactions.exists(name)) {
+			return @await a.a.model.subactions[name].subtpl(parent, b).tag(name, content, arg, args, kid);
 		} else {
-			if (a.a.base.model.columns.exists(name)) return '%$name%';
-			var c = a.a.base.model.columns[name];
-			if (c != null && c.tplPut != null) {
-				var o = Type.createInstance(c.tplPut, [c, b, this]);
-				return @await o.tag(name, content, arg, args, kid);
-			} else
-				return @await super.tag(name, content, arg, args, kid);
+			if (name == 'selected') {
+				var f1 = a.a.checkActivePath(b);
+				var f2 = !args.exists('!');
+				if ((f1 && f2) || (!f1 && !f2))
+					return @await tplData(content);
+				else
+					return '';
+			} else {
+				if (a.a.base.model.columns.exists(name)) return '%$name%';
+				var c = a.a.base.model.columns[name];
+				if (c != null && c.tplPut != null) {
+					var o = Type.createInstance(c.tplPut, [c, b, this]);
+					return @await o.tag(name, content, arg, args, kid);
+				} else
+					return @await super.tag(name, content, arg, args, kid);
+			}
 		}
 	}
 	
 	@:async
 	override public function shortTag(name:String, arg:String, ?kid:ITplPut):String 
 	{
-		if (!a.a.base.model.columns.exists(name)) return '%$name%';
-		var c = a.a.base.model.columns[name];
-		if (c != null && c.tplPut != null) {
-			var o = Type.createInstance(c.tplPut, [c, b, this]);
-			return @await o.shortTag(name, arg, kid);
-		} else
-			return @await super.shortTag(name, arg, kid);
+		if (a.a.model.subactions.exists(name)) {
+			return @await a.a.model.subactions[name].subtpl(parent, b).shortTag(name, arg, kid);
+		} else {
+			if (!a.a.base.model.columns.exists(name)) return '%$name%';
+			var c = a.a.base.model.columns[name];
+			if (c != null && c.tplPut != null) {
+				var o = Type.createInstance(c.tplPut, [c, b, this]);
+				return @await o.shortTag(name, arg, kid);
+			} else
+				return @await super.shortTag(name, arg, kid);
+		}
 	}
 	
 	@:async

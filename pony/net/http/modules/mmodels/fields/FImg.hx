@@ -31,27 +31,74 @@ import pony.db.mysql.Field;
 import pony.db.mysql.Flags;
 import pony.db.mysql.Types;
 import pony.net.http.modules.mmodels.Field;
+import pony.text.tpl.ITplPut;
+import pony.text.tpl.TplData;
 
-class FString extends Field
+/**
+ * FImg
+ * @author AxGord <axgord@gmail.com>
+ */
+class FImg extends Field
 {
 
-	public function new(?len:Int=32)
+	public function new(nn:Bool = true)
 	{
-		super(len);
+		super(32);
+		isFile = true;
 		type = Types.CHAR;
-	}
-	
-	override public function htmlInput(cl:String, act:String, value:String, hidded:Bool=false):String {
-		var h = hidded ? 'type="hidden" ' : 'type="text" ';
-		return
-			'<input ' + h + (cl != null?'class="' + cl + '" ':'') +
-			'name="' + model.name + '.' + act + '.' +
-			name + '" value="'+value+'"/>';
+		notnull = nn;
+		tplPut = FImgPut;
 	}
 	
 	override public function create():pony.db.mysql.Field
 	{
-		return {name: name, type: type, length: len, flags: notnull ? [Flags.NOT_NULL] : []};
+		return {name: name, length: len, type: type, flags: notnull ? [Flags.NOT_NULL] : []};
+	}
+	
+	override public function htmlInput(cl:String, act:String, value:String, hidded:Bool=false):String {
+		return
+			'<input ' + (cl != null?'class="' + cl + '" ':'') +
+			'name="' + model.name + '.' + act + '.' +
+			name + '" type="file" value="'+value+'"/>';
+	}
+	
+}
+
+@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
+class FImgPut extends pony.text.tpl.TplPut<FImg, Dynamic> {
+	
+	@:async
+	override public function tag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String 
+	{
+		return @await sub(this, get(name), FImgPutSub, content);
+	}
+	
+	@:async
+	override public function shortTag(name:String, arg:String, ?kid:ITplPut):String 
+	{
+		return get(name);
+	}
+	
+	@:async
+	public function html(f:String):String {
+		return '<img src="'+get(f)+'" width="200px"/>';
+	}
+	
+	private function get(f:String):String return '/usercontent/' + Reflect.field(b, f);
+	
+}
+
+@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
+class FImgPutSub extends pony.text.tpl.Valuator<FImgPut, String> {
+	
+	@:async
+	override public function valu(name:String, arg:String):String {
+		return switch name {
+			case 'orig': b;
+			case 'small': 'small_' + b;
+			case 'html': '<img src="$b"/>';
+			case _: null;
+		}
 	}
 	
 }

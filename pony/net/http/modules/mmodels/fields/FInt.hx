@@ -43,10 +43,11 @@ class FInt extends Field
 	}
 	
 	override public function htmlInput(cl:String, act:String, value:String, hidden:Bool=false):String {
+		var t = hidden ? 'type="hidden"' : 'type="text"';
 		return
-			'<input ' + (cl != null?'class="' + cl + '" ':'') +
-			'name="' + model.name + '.' + act + '.' +
-			name + '" type="text" value="'+value+'"/>';
+			'<input ' + t + (cl != null?' class="' + cl + '"':'') +
+			' name="' + model.name + '.' + act + '.' +
+			name + '" value="'+value+'"/>';
 	}
 	
 	override public function create():pony.db.mysql.Field

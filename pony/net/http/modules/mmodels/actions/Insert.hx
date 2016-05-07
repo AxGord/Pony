@@ -112,18 +112,22 @@ class InsertPut extends pony.text.tpl.TplPut < InsertConnect, CPQ > {
 			if (args.exists('fix'))
 				fixList = args.get('fix').split(',');
 			var r:String = '';
+			var hasFile:Bool = false;
 			var ma:Map<Int, Dynamic> = a.storage;
 			var m = ma.get(a.base.id);
 			if (m == null)
 				for (k in a.base.args.keys()) {
 					r += inputE(k, '', fixList.indexOf(k) != -1);
+					if (isFile(k)) hasFile = true;
 				}
 			else
 				for (k in a.base.args.keys()) {
 					r += inputE(k, m.values.exists(k) ? m.values.get(k) : '', fixList.indexOf(k) != -1);
+					if (isFile(k)) hasFile = true;
 				}
 			a.clr();
-			return '<form action="" method="POST">' +
+			var f = hasFile ? ' enctype="multipart/form-data"' : '';
+			return '<form action="" method="POST"$f>' +
 				(content != null ? '<div class="capition">' + @await tplData(content) + '</div>' : '') +
 				r + '<button>Send</button> <a href="" class="action">Clear</a></form>';
 		} else {
@@ -144,8 +148,10 @@ class InsertPut extends pony.text.tpl.TplPut < InsertConnect, CPQ > {
 	}
 	
 	private function input(name:String, cl:String, value:String):String {
-		return a.base.model.columns.get(name).htmlInput(cl, a.base.name, value);
+		return a.base.model.columns[name].htmlInput(cl, a.base.name, value);
 	}
+	
+	private function isFile(name:String):Bool return a.base.model.columns[name].isFile;
 	
 	private function st(arg:String):String {
 		var ma:Map<Int, Dynamic> = b.connection.sessionStorage.get('modelsActions');

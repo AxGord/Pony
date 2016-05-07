@@ -49,9 +49,11 @@ class WebServer
 	public var tpl:Templates;
 	public var _static:Dir;
 	public var defaults:Defaults;
+	public var usercontent:String;
 	
-	public function new(dir:Dir, modules:Array<IModule>, ?defaults:Defaults)
+	public function new(dir:Dir, usercontent:String, modules:Array<IModule>, ?defaults:Defaults)
 	{
+		this.usercontent = usercontent;
 		this.defaults = defaults != null ? defaults : {template: 'Default', lang: 'en'};
 		this.modules = modules;
 		tpl = new Templates(dir, WebServerPut, this);
@@ -90,6 +92,15 @@ class WebServer
 				else if (!tpl.get(t)._static.exists(p)) connection.error('Not found');
 				else
 					connection.sendFile(tpl.get(t)._static.get(p));
+				return true;
+			} else if (a[0] == 'usercontent') {
+				a.shift();
+				var p:String = a.join('/');
+				var u:Unit = usercontent + p;
+				if (u.exists)
+					connection.sendFile(u);
+				else
+					connection.error('Not found');
 				return true;
 			}
 		}

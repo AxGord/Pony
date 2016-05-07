@@ -28,6 +28,7 @@
 package pony.net.http.platform.nodejs;
 
 import js.Node;
+import pony.Pair;
 import pony.net.http.IHttpConnection;
 import pony.net.http.ServersideStorage;
 
@@ -35,6 +36,10 @@ using Reflect;
 
 class HttpServer
 {
+	
+	public static var multipartyClass:Class<Dynamic> = Node.require('multiparty').Form;
+	public static var querystring:Dynamic = Node.require('querystring');
+	
 	private static var spdy(get, never):Dynamic;
 	private var server:NodeHttpServer;
 	private var spdyServer:Dynamic;
@@ -63,16 +68,41 @@ class HttpServer
 		//trace(req.method+': ' + req.url);
 		//trace(req.headers);
 		res.setHeader('Server', 'PonyHttpServer');
+		var multi = 'multipart/form-data';
 		switch (req.method/*.toUpperCase()*/) {
+			case 'POST' if ((req.headers.field('content-type'):String).substr(0, multi.length) == multi):
+				var me = this;
+				var multiparty = Type.createInstance(multipartyClass, []);
+				multiparty.parse(req, function(err, fields, files:Dynamic<Array<Dynamic>>) {
+					if (fields == null || files == null) {
+						res.end('error');
+					} else {
+						var host = if (req.headers.host != null) {
+							req.headers.host;
+						} else {
+							var a:Dynamic = untyped me.server.address();
+							a.address + ':' + a.port;
+						}
+						var map:Map<String, String> = new Map();
+						for (k in files.fields()) {
+							var f:Dynamic = files.field(k)[0];
+							if (f.size > 0) map[k] = f.headers.field('content-type')+':'+f.path;
+						}
+						me.request(new HttpConnection('http://' + host + req.url, me.storage, req, res, map));
+					}
+				});
+				
+				return;
+			
 			case 'POST':
+				var me = this;
 				var s:String = '';
 				untyped req.addListener('data', function(d:String):Void {
 					s += d;
 				});
-				var me = this;
 				untyped req.addListener('end', function(Void):Void {
 					var h = new Map<String, String>();
-					var o:Dynamic = Node.require('querystring').parse(s);
+					var o:Dynamic = querystring.parse(s);
 					for (f in o.fields())
 						h.set(f, o.field(f));
 					
@@ -84,6 +114,8 @@ class HttpServer
 					}
 					me.request(new HttpConnection('http://' + host + req.url, me.storage, req, res, h));
 				});
+				return;
+				
 			case 'GET':
 				var host = if (req.headers.host != null) {
 					req.headers.host;
