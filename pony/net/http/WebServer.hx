@@ -66,7 +66,7 @@ class WebServer
 		if (connection.end) return;
 		if (connection.url != '' && sendStatic(connection)) return;
 		
-		var cpq = new CPQ(connection, tpl.get(defaults.template), defaults.lang);
+		var cpq = new CPQ(connection, usercontent, tpl.get(defaults.template), defaults.lang);
 		for (m in modules) {
 			switch m.connect(cpq) {
 				case BREAK: return;

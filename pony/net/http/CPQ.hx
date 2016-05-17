@@ -36,6 +36,7 @@ import pony.text.tpl.TplSystem;
 class CPQ implements Declarator {
 
 	@:arg public var connection: IHttpConnection;
+	@:arg public var usercontent:String;
 	public var page: String = '';
 	public var query: Array<String> = [];
 	@:arg public var template: TplSystem;

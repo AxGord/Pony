@@ -26,6 +26,7 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.net.http.modules.mfb;
+
 import pony.net.http.sn.FBData;
 import pony.text.tpl.ITplPut;
 

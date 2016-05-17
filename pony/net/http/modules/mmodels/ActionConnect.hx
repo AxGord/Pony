@@ -52,9 +52,9 @@ class ActionConnect extends ModuleConnect<Action> {
 		super(base, cpq);
 		this.model = model;
 		method = Reflect.field(model, base.name);
-		methodCheck = Reflect.hasField(model, base.name+'Validate') ?
-			Reflect.field(model, base.name+'Validate') :
-			Reflect.field(model, 'validate');
+		methodCheck = Reflect.field(model, base.name+'Validate');
+		if (methodCheck == null)
+			methodCheck = Reflect.field(model, 'validate');
 	}
 	
 	private function initTpl():Void {

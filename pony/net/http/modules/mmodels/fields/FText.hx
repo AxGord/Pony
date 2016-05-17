@@ -59,7 +59,7 @@ class CTextPut extends pony.text.tpl.TplPut<FText, Dynamic> {
 		if (args.exists('noesc'))
 			return Reflect.field(b, name);
 		else
-			return @await html(Reflect.field(b, name));
+			return @await html(name);
 	}
 	
 	@:async

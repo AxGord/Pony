@@ -126,7 +126,7 @@ class ManyPut extends pony.text.tpl.TplPut<ManyConnect, CPQ> {
 				else
 					return '';
 			} else {
-				if (a.a.base.model.columns.exists(name)) return '%$name%';
+				if (!a.a.base.model.columns.exists(name)) return '%$name%';
 				var c = a.a.base.model.columns[name];
 				if (c != null && c.tplPut != null) {
 					var o = Type.createInstance(c.tplPut, [c, b, this]);

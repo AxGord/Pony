@@ -52,10 +52,10 @@ class Cookie
 	}
 	
 	public function toString(?domain:String):String {
-		domain = domain != null ? 'domain=$domain;' : '';
+		//domain = domain != null ? 'domain=$domain' : '';
 		var s:String = '';
 		for (k in newCookie.keys()) {
-			s += k + '=' + newCookie.get(k) + ';HttpOnly;$domain';
+			s += k + '=' + newCookie.get(k) + ';';// + ';HttpOnly;$domain';
 		}
 		return s;
 	}

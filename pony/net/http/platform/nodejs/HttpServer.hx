@@ -73,7 +73,7 @@ class HttpServer
 			case 'POST' if ((req.headers.field('content-type'):String).substr(0, multi.length) == multi):
 				var me = this;
 				var multiparty = Type.createInstance(multipartyClass, []);
-				multiparty.parse(req, function(err, fields, files:Dynamic<Array<Dynamic>>) {
+				multiparty.parse(req, function(err, fields:Dynamic<Array<Dynamic>>, files:Dynamic<Array<Dynamic>>) {
 					if (fields == null || files == null) {
 						res.end('error');
 					} else {
@@ -84,6 +84,9 @@ class HttpServer
 							a.address + ':' + a.port;
 						}
 						var map:Map<String, String> = new Map();
+						for (k in fields.fields()) {
+							map[k] = fields.field(k)[0];
+						}
 						for (k in files.fields()) {
 							var f:Dynamic = files.field(k)[0];
 							if (f.size > 0) map[k] = f.headers.field('content-type')+':'+f.path;
