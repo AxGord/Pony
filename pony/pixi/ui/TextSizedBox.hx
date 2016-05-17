@@ -44,6 +44,7 @@ class TextSizedBox extends BaseLayout<RubberLayoutCore<Container>> {
 
 	public var text(get, set):String;
 	public var obj(default, null):UniversalText;
+	public var noupdate:Bool = false;
 	
 	private var nocache:Bool;
 	
@@ -67,7 +68,7 @@ class TextSizedBox extends BaseLayout<RubberLayoutCore<Container>> {
 			obj.toContainer().cacheAsBitmap = false;
 			obj.text = v;
 			if (!nocache) obj.toContainer().cacheAsBitmap = true;
-			update();
+			if (!noupdate) update();
 		}
 		return v;
 	}
