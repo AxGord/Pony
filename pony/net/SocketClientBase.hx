@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -44,7 +44,9 @@ class SocketClientBase extends Logable implements HasSignal {
 
 	public var readLengthSize:UInt;
 	
+	#if (!js||nodejs)
 	public var server(default, null):SocketServer;
+	#end
 	
 	@:auto public var onData:Signal2<BytesInput, SocketClient>;
 	@:auto public var onString:Signal2<String, SocketClient>;
@@ -158,6 +160,7 @@ class SocketClientBase extends Logable implements HasSignal {
 		onError < tryAgain;
 	}
 	
+	#if (!js||nodejs)
 	@:access(pony.net.SocketServer)
 	public function init(server:SocketServer, id:Int):Void {
 		
@@ -189,12 +192,15 @@ class SocketClientBase extends Logable implements HasSignal {
 	}
 	
 	inline public function send2other(data:BytesOutput):Void server.send2other(data, cast this);
+	#end
 	
 	dynamic public function readLength(bi:BytesInput):UInt return bi.readInt32();
 	
 	private function joinData(bi:BytesInput):Void {
 		if (isWithLength)
 		{
+			if (bi.length < 4) return;//ignore small data
+			
 			var size:UInt = 0;
 			var len:UInt = 0;
 			

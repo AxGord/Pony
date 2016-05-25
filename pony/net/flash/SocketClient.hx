@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -38,6 +38,7 @@ import haxe.io.BytesData;
 import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
 import pony.net.SocketClientBase;
+import pony.time.DeltaTime;
 
 /**
  * SocketClient
@@ -46,15 +47,29 @@ import pony.net.SocketClientBase;
 class SocketClient extends SocketClientBase {
 
 	private var socket:Socket;
+	private var q:Queue < BytesOutput->Void > ;
+	
+	/**
+	 * Need for remove double dispath outputProgress
+	 */
+	private var waitOutput:Bool = false;
 	
 	override public function open():Void {
 		super.open();
+		q = new Queue(_send);
 		socket = new Socket(host, port);
 		socket.addEventListener(Event.CONNECT, connectHandler);
 		socket.addEventListener(ProgressEvent.SOCKET_DATA, socketDataHandler);
 		socket.addEventListener(Event.CLOSE, closeHandler);
 		socket.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandler);
 		socket.addEventListener(SecurityErrorEvent.SECURITY_ERROR, securityErrorHandler);
+		socket.addEventListener('outputProgress', outputProgressHandler);
+	}
+	
+	private function outputProgressHandler(_):Void {
+		if (!waitOutput) return;
+		waitOutput = false;
+		DeltaTime.fixedUpdate < q.next;
 	}
 	
 	private function securityErrorHandler(_):Void {}
@@ -65,7 +80,10 @@ class SocketClient extends SocketClientBase {
 	
 	private function connectHandler(_):Void connect();
 	
-	public function send(data:BytesOutput):Void {
+	public function send(data:BytesOutput):Void	q.call(data);
+	
+	private function _send(data:BytesOutput):Void {
+		waitOutput = true;
 		try {
 			socket.writeBytes(data.getBytes().getData());
 			socket.flush();

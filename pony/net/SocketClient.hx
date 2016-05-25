@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -33,6 +33,7 @@ import haxe.io.BytesOutput;
  * SocketClient
  * @author AxGord <axgord@gmail.com>
  */
+#if (!js || nodejs)
 class SocketClient
 #if nodejs
 extends pony.net.nodejs.SocketClient
@@ -89,14 +90,21 @@ implements ISocketClient {
 		}
 	}
 	
-	inline public function sendString(data:String):Void {
+	public function sendString(data:String):Void {
 		var bo = new BytesOutput();
 		bo.writeString(data);
 		send(bo);
 	}
 	
-	@:extern inline public function sendStack():Void {
+	public function sendStack():Void {
 		if (stack.length > 0) send(stack.shift());
 	}
 	
+	public function sendAllStack():Void {
+		while (stack.length > 0) send(stack.shift());
+	}
+	
 }
+#else
+typedef SocketClient = SocketClientBase;
+#end

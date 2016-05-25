@@ -72,6 +72,8 @@ class App extends Application {
 		backgroundColor = bg;
 		antialias = false;
 		Browser.window.onresize = _onWindowResize;
+		Browser.window.onorientationchange = _onWindowResize;
+		Browser.window.onfocus = _onWindowResize;
 		autoResize = false;
 		_width = width;
 		_height = height;

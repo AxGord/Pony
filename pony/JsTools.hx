@@ -36,9 +36,11 @@ import js.Browser;
 class JsTools {
 
 	public static var isIE(get, never):Bool;
+	public static var isEdge(get, never):Bool;
 	public static var isMobile(get, never):Bool;
 	
 	private static var _isIE:Null<Bool>;
+	private static var _isEdge:Null<Bool>;
 	
 	private static function get_isIE():Bool {
 		if (_isIE == null) {
@@ -47,6 +49,14 @@ class JsTools {
 		}
 		return _isIE;
 	}
+	
+	private static function get_isEdge():Bool {
+		if (_isEdge == null) {
+			_isEdge = Browser.navigator.userAgent.indexOf('Edge') != -1;
+		}
+		return _isEdge;
+	}
+	
 	
 	@:extern inline private static function get_isMobile():Bool return untyped Browser.window.orientation != null;
 	
