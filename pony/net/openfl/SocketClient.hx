@@ -65,8 +65,10 @@ class SocketClient extends SocketClientBase {
 		socket.addEventListener(Event.CLOSE, closeHandler);
 		socket.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandler);
 		socket.addEventListener(SecurityErrorEvent.SECURITY_ERROR, securityErrorHandler);
-		socket.addEventListener('outputProgress', outputProgressHandler);//todo: test it for all targets
+		socket.addEventListener('outputProgress', outputProgressHandler);
 	}
+	
+	private function skipOutputProgressHandler():Void outputProgressHandler(null);
 	
 	private function outputProgressHandler(_):Void {
 		if (!waitOutput) return;
@@ -84,11 +86,12 @@ class SocketClient extends SocketClientBase {
 	
 	public function send(data:BytesOutput):Void	q.call(data);
 	
-	public function _send(data:BytesOutput):Void {
+	private function _send(data:BytesOutput):Void {
 		waitOutput = true;
 		try {
 			socket.writeBytes(ByteArray.fromBytes(data.getBytes()));
 			socket.flush();
+			DeltaTime.skipUpdate(skipOutputProgressHandler);
 		} catch (e:Dynamic) {
 			error(e);
 		}
