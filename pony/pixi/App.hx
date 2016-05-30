@@ -166,6 +166,11 @@ class App extends Application {
 		return new Point((x - container.x) / container.width, (y - container.y) / container.height);
 	}
 	
+	override public function resumeRendering() {
+		super.resumeRendering();
+		Browser.window.onresize = _onWindowResize;
+	}
+	
 	override function _onWindowResize(event:Event):Void {
 		resizeTimer.reset();
 		resizeTimer.start();
