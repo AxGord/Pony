@@ -57,6 +57,12 @@ class LabelButton extends BaseLayout<RubberLayoutCore<Container>> {
 		});
 	}
 	
+	override public function add(obj:Container):Void {
+		obj.interactive = false;
+		obj.interactiveChildren = false;
+		super.add(obj);
+	}
+	
 	@:extern inline private function get_core():ButtonCore return button.core;
 	
 	override function destroy():Void {

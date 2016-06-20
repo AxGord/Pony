@@ -25,51 +25,58 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.pixi.ui;
-
-import pixi.extras.BitmapText;
-import pony.geom.IWH;
-import pony.geom.Point;
-import pony.text.TextTools;
+package pony.pixi.ui.slices;
 
 /**
- * Text
+ * Slice9
  * @author AxGord <axgord@gmail.com>
  */
-class BTextLow extends BitmapText implements IWH {
-
-	public var t(get, set):String;
-	public var size(get, never):Point<Float>;
-	private var ansi:String;
-	public var nocache(default, null):Bool;
+class Slice9 extends SliceSprite {
 	
-	public function new(text:String, ?style:BitmapTextStyle, ?ansi:String, nocache:Bool=false) {
-		this.ansi = ansi;
-		this.nocache = nocache;
-		if (ansi != null)
-			text = TextTools.convertToANSI(text, ansi);
-		try {
-			super(text, style);
-		} catch (_:Dynamic) {
-			throw 'Font error: '+style.font;
-		}
-		if (!this.nocache) cacheAsBitmap = true;
+	override private function init():Void {
+		images[1].x = images[0].width;
+		images[3].y = images[0].height;
+		images[4].x = images[1].x;
+		images[4].y = images[3].y;
+		if (sliceWidth == null)
+			sliceWidth = images[0].width + images[1].width + images[2].width;
+		if (sliceHeight == null)
+			sliceHeight = images[0].height + images[3].height + images[6].height;
+		super.init();
 	}
 	
-	private function get_size():Point<Float> return new Point(textWidth, textHeight);
+	override private function set_sliceWidth(v:Float):Float {
+		sliceWidth = v;
+		updateWidth();
+		return v;
+	}
 	
-	public function wait(cb:Void->Void):Void cb();
+	private function updateWidth():Void {
+		if (!inited) return;
+		images[1].width = sliceWidth - images[0].width - images[2].width;
+		images[2].x = images[0].width + images[1].width;
+		images[4].width = images[1].width;
+		images[5].x = images[2].x;
+		images[7].width = images[1].width;
+		images[7].x = images[1].x;
+		images[8].x = images[2].x;
+	}
 	
-	@:extern inline public function get_t():String return text;
+	override private function set_sliceHeight(v:Float):Float {
+		sliceHeight = v;
+		updateHeight();
+		return v;
+	}
 	
-	public function set_t(s:String):String {
-		if (!nocache) cacheAsBitmap = false;
-		if (ansi != null)
-			text = TextTools.convertToANSI(s, ansi);
-		else
-			text = s;
-		if (!nocache) cacheAsBitmap = true;
-		return s;
+	private function updateHeight():Void {
+		if (!inited) return;
+		images[3].height = sliceHeight - images[0].height - images[6].height;
+		images[6].y = images[0].height + images[3].height;
+		images[4].height = images[3].height;
+		images[5].y = images[3].y;
+		images[5].height = images[3].height;
+		images[7].y = images[6].y;
+		images[8].y = images[6].y;
 	}
 	
 }

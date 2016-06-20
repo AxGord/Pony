@@ -25,51 +25,41 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.pixi.ui;
-
-import pixi.extras.BitmapText;
-import pony.geom.IWH;
-import pony.geom.Point;
-import pony.text.TextTools;
+package pony.pixi.ui.slices;
 
 /**
- * Text
+ * Slice4
  * @author AxGord <axgord@gmail.com>
  */
-class BTextLow extends BitmapText implements IWH {
-
-	public var t(get, set):String;
-	public var size(get, never):Point<Float>;
-	private var ansi:String;
-	public var nocache(default, null):Bool;
+class Slice4 extends Slice9 {
 	
-	public function new(text:String, ?style:BitmapTextStyle, ?ansi:String, nocache:Bool=false) {
-		this.ansi = ansi;
-		this.nocache = nocache;
-		if (ansi != null)
-			text = TextTools.convertToANSI(text, ansi);
-		try {
-			super(text, style);
-		} catch (_:Dynamic) {
-			throw 'Font error: '+style.font;
-		}
-		if (!this.nocache) cacheAsBitmap = true;
+	public function new(data:Array<String>, useSpriteSheet:Bool = false) {
+		data = [
+			data[0], data[1], data[0],
+			data[2], data[3], data[2],
+			data[0], data[1], data[0]
+		];
+		super(data, useSpriteSheet);
 	}
 	
-	private function get_size():Point<Float> return new Point(textWidth, textHeight);
+	override function updateWidth():Void {
+		if (!inited) return;
+		super.updateWidth();
+		images[2].x += images[2].width;
+		images[2].width = -images[2].width;
+		images[5].x += images[5].width;
+		images[5].width = -images[5].width;
+		images[8].x += images[8].width;
+		images[8].width = -images[8].width;
+	}
 	
-	public function wait(cb:Void->Void):Void cb();
-	
-	@:extern inline public function get_t():String return text;
-	
-	public function set_t(s:String):String {
-		if (!nocache) cacheAsBitmap = false;
-		if (ansi != null)
-			text = TextTools.convertToANSI(s, ansi);
-		else
-			text = s;
-		if (!nocache) cacheAsBitmap = true;
-		return s;
+	override function updateHeight():Void {
+		if (!inited) return;
+		super.updateHeight();
+		for (i in 6...9) {
+			images[i].y += images[i].height;
+			images[i].height = -images[i].height;
+		}
 	}
 	
 }

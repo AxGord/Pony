@@ -25,51 +25,58 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.pixi.ui;
+package pony.pixi.ui.slices;
 
-import pixi.extras.BitmapText;
-import pony.geom.IWH;
-import pony.geom.Point;
-import pony.text.TextTools;
+import pixi.core.sprites.Sprite;
+
+using pony.pixi.PixiExtends;
 
 /**
- * Text
+ * SliceSprite
  * @author AxGord <axgord@gmail.com>
  */
-class BTextLow extends BitmapText implements IWH {
-
-	public var t(get, set):String;
-	public var size(get, never):Point<Float>;
-	private var ansi:String;
-	public var nocache(default, null):Bool;
+class SliceSprite extends Sprite {
 	
-	public function new(text:String, ?style:BitmapTextStyle, ?ansi:String, nocache:Bool=false) {
-		this.ansi = ansi;
-		this.nocache = nocache;
-		if (ansi != null)
-			text = TextTools.convertToANSI(text, ansi);
-		try {
-			super(text, style);
-		} catch (_:Dynamic) {
-			throw 'Font error: '+style.font;
+	public var sliceWidth(default, set):Float;
+	public var sliceHeight(default, set):Float;
+	
+	private var inited:Bool = false;
+	private var images:Array<Sprite>;
+	
+	public function new(data:Array<String>, useSpriteSheet:Bool = false) {
+		super();
+		images = [for (e in data) PixiAssets.cImage(e, useSpriteSheet)];
+		images.loadedList(init);
+	}
+	
+	private function init():Void {
+		inited = true;
+		if (sliceWidth != null) {
+			sliceWidth = sliceWidth;
+		} else {
+			sliceWidth = images[0].width;
 		}
-		if (!this.nocache) cacheAsBitmap = true;
+		if (sliceHeight != null) {
+			sliceHeight = sliceHeight;
+		} else {
+			sliceHeight = images[0].height;
+		}
+		for (img in images) addChild(img);
 	}
 	
-	private function get_size():Point<Float> return new Point(textWidth, textHeight);
-	
-	public function wait(cb:Void->Void):Void cb();
-	
-	@:extern inline public function get_t():String return text;
-	
-	public function set_t(s:String):String {
-		if (!nocache) cacheAsBitmap = false;
-		if (ansi != null)
-			text = TextTools.convertToANSI(s, ansi);
-		else
-			text = s;
-		if (!nocache) cacheAsBitmap = true;
-		return s;
+	private function set_sliceWidth(v:Float):Float {
+		sliceWidth = v;
+		if (!inited) return v;
+		for (img in images) img.width = v;
+		return v;
 	}
+	
+	private function set_sliceHeight(v:Float):Float {
+		sliceHeight = v;
+		if (!inited) return v;
+		for (img in images) img.height = v;
+		return v;
+	}
+	
 	
 }

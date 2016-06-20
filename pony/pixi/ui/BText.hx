@@ -88,9 +88,9 @@ class BText extends Sprite implements IWH {
 	private function set_color(v:Null<UInt>):Null<UInt> {
 		if (v == null) v = defColor;
 		style.tint = v;
-		current.cacheAsBitmap = false;
+		if (!current.nocache) current.cacheAsBitmap = false;
 		current.tint = v;
-		current.cacheAsBitmap = true;
+		if (!current.nocache) current.cacheAsBitmap = true;
 		return v;
 	}
 	

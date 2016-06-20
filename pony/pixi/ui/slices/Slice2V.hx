@@ -25,51 +25,24 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.pixi.ui;
-
-import pixi.extras.BitmapText;
-import pony.geom.IWH;
-import pony.geom.Point;
-import pony.text.TextTools;
+package pony.pixi.ui.slices;
 
 /**
- * Text
+ * Slice2V
  * @author AxGord <axgord@gmail.com>
  */
-class BTextLow extends BitmapText implements IWH {
-
-	public var t(get, set):String;
-	public var size(get, never):Point<Float>;
-	private var ansi:String;
-	public var nocache(default, null):Bool;
+class Slice2V extends Slice3V {
 	
-	public function new(text:String, ?style:BitmapTextStyle, ?ansi:String, nocache:Bool=false) {
-		this.ansi = ansi;
-		this.nocache = nocache;
-		if (ansi != null)
-			text = TextTools.convertToANSI(text, ansi);
-		try {
-			super(text, style);
-		} catch (_:Dynamic) {
-			throw 'Font error: '+style.font;
-		}
-		if (!this.nocache) cacheAsBitmap = true;
+	public function new(data:Array<String>, useSpriteSheet:Bool = false) {
+		data.push(data[0]);
+		super(data, useSpriteSheet);
 	}
 	
-	private function get_size():Point<Float> return new Point(textWidth, textHeight);
-	
-	public function wait(cb:Void->Void):Void cb();
-	
-	@:extern inline public function get_t():String return text;
-	
-	public function set_t(s:String):String {
-		if (!nocache) cacheAsBitmap = false;
-		if (ansi != null)
-			text = TextTools.convertToANSI(s, ansi);
-		else
-			text = s;
-		if (!nocache) cacheAsBitmap = true;
-		return s;
+	override function update():Void {
+		if (!inited) return;
+		super.update();
+		images[2].y += images[2].height;
+		images[2].height = -images[2].height;
 	}
 	
 }

@@ -25,51 +25,31 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.pixi.ui;
-
-import pixi.extras.BitmapText;
-import pony.geom.IWH;
-import pony.geom.Point;
-import pony.text.TextTools;
+package pony.pixi.ui.slices;
 
 /**
- * Text
+ * Slice3H
  * @author AxGord <axgord@gmail.com>
  */
-class BTextLow extends BitmapText implements IWH {
-
-	public var t(get, set):String;
-	public var size(get, never):Point<Float>;
-	private var ansi:String;
-	public var nocache(default, null):Bool;
+class Slice3H extends SliceSprite {
 	
-	public function new(text:String, ?style:BitmapTextStyle, ?ansi:String, nocache:Bool=false) {
-		this.ansi = ansi;
-		this.nocache = nocache;
-		if (ansi != null)
-			text = TextTools.convertToANSI(text, ansi);
-		try {
-			super(text, style);
-		} catch (_:Dynamic) {
-			throw 'Font error: '+style.font;
-		}
-		if (!this.nocache) cacheAsBitmap = true;
+	override private function init():Void {
+		images[1].x = images[0].width;
+		if (sliceWidth == null)
+			sliceWidth = images[0].width + images[1].width + images[2].width;
+		super.init();
 	}
 	
-	private function get_size():Point<Float> return new Point(textWidth, textHeight);
+	override private function set_sliceWidth(v:Float):Float {
+		sliceWidth = v;
+		update();
+		return v;
+	}
 	
-	public function wait(cb:Void->Void):Void cb();
-	
-	@:extern inline public function get_t():String return text;
-	
-	public function set_t(s:String):String {
-		if (!nocache) cacheAsBitmap = false;
-		if (ansi != null)
-			text = TextTools.convertToANSI(s, ansi);
-		else
-			text = s;
-		if (!nocache) cacheAsBitmap = true;
-		return s;
+	private function update():Void {
+		if (!inited) return;
+		images[1].width = sliceWidth - images[0].width - images[2].width;
+		images[2].x = images[0].width + images[1].width;
 	}
 	
 }
