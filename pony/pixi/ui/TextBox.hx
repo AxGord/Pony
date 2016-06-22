@@ -29,6 +29,7 @@ package pony.pixi.ui;
 
 import pixi.core.display.Container;
 import pixi.core.sprites.Sprite;
+import pixi.extras.BitmapText.BitmapTextStyle;
 import pony.geom.Border;
 import pony.pixi.ETextStyle;
 import pony.pixi.UniversalText;
@@ -44,11 +45,11 @@ using pony.pixi.PixiExtends;
 class TextBox extends BaseLayout<RubberLayoutCore<Container>> {
 
 	public var text(get, set):String;
-	public var obj(default, null):UniversalText;
+	public var obj(default, null):BText;
 	
 	private var nocache:Bool;
 	
-	public function new(image:Sprite, text:String, style:ETextStyle, ?border:Border<Int>, nocache:Bool=false) {
+	public function new(image:Sprite, text:String, style:ETextStyle, ?ansi:String, ?border:Border<Int>, nocache:Bool=false) {
 		this.nocache = nocache;
 		layout = new RubberLayoutCore(border);
 		layout.tasks.add();
@@ -59,36 +60,20 @@ class TextBox extends BaseLayout<RubberLayoutCore<Container>> {
 			layout.height = image.height;
 			layout.tasks.end();
 		});
-		add(obj = new UniversalText(text, style));
-		if (!nocache) obj.toContainer().cacheAsBitmap = true;
+		switch style {
+			case ETextStyle.BITMAP_TEXT_STYLE(s):
+				add(obj = new BText(text, s, ansi));
+			case _:
+				throw 'Not supported';
+		}
 	}
 	
-	inline private function get_text():String return obj.text;
+	inline private function get_text():String return obj.t;
 	
 	private function set_text(v:String):String {
-		if (obj.text != v) {
-			obj.toContainer().cacheAsBitmap = false;
-			obj.text = v;
-			if (!nocache) obj.toContainer().cacheAsBitmap = true;
-			update();
-		}
-		return v;
-	}
-	
-	@:extern inline private function update():Void {
+		obj.t = v;
 		layout.update();
-		_update();
-		DeltaTime.fixedUpdate < _update;
-	}
-	
-	inline private function _update():Void {
-		DeltaTime.fixedUpdate < layout.update;
-	}
-	
-	override function destroy():Void {
-		DeltaTime.fixedUpdate >> _update;
-		DeltaTime.fixedUpdate >> layout.update;
-		super.destroy();
+		return v;
 	}
 	
 }
