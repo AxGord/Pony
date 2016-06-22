@@ -56,6 +56,7 @@ class TouchableTouch {
 	private var touchId:Int = -1;
 	private var over:Bool = false;
 	private var down:Bool = false;
+	private var needCancle:Bool = false;
 	
 	public function new(obj:Container, base:TouchableBase) {
 		init();
@@ -81,8 +82,7 @@ class TouchableTouch {
 	
 	private function outsideHandler(e:EventTarget):Void {
 		if (isLock(e.data.identifier)) return;
-		over = false;
-		base.dispatchOutDown(e.data.identifier);
+		lost(untyped e.data.identifier);
 	}
 	
 	private function isLock(t:Int):Bool {
@@ -107,7 +107,10 @@ class TouchableTouch {
 	
 	private function touchEndHandler(t:TouchObj):Void {
 		if (!down) return;
-		if (!isNotLock(t.id)) return;
+		if (!isNotLock(t.id)) {
+			if (down && !over) lost(t.id);
+			return;
+		}
 		if (over) {
 			base.dispatchUp(t.id);
 			base.dispatchOut(t.id);
@@ -121,18 +124,37 @@ class TouchableTouch {
 	
 	private function touchMoveHandler(e:EventTarget):Void {
 		if (!down) return;
-		if (isLock(e.data.identifier)) return;
-		if (over) return;
-		over = true;
-		base.dispatchOverDown(e.data.identifier);
+		var id = e.data.identifier;
+		if (isLock(id)) return;
+		var p = e.data.global;
+		var c = obj.getBounds().contains(p.x, p.y);
+		if (over) {
+			if (!c) {
+				over = false;
+				base.dispatchOutDown(id);
+				if (needCancle) lost(id);
+			}
+		} else {
+			if (c) {
+				over = true;
+				base.dispatchOverDown(id);
+			}
+		}
 	}
 	
 	private function cancleTouchHandler(id:Int):Void {
-		if (!isNotLock(id)) return;
-		lost(id);
+		if (touchId == id) {
+			lost(id);
+		} else if (!isNotLock(id) && down) {
+			if (!over)
+				lost(id);
+			else
+				needCancle = true;
+		}
 	}
 	
 	private function lost(id:Int):Void {
+		needCancle = false;
 		down = false;
 		over = false;
 		base.dispatchOutDown(id);
