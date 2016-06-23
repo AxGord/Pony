@@ -41,19 +41,19 @@ class BTextLow extends BitmapText implements IWH {
 	public var t(get, set):String;
 	public var size(get, never):Point<Float>;
 	private var ansi:String;
-	private var nocache:Bool;
+	public var nocache(default, null):Bool;
 	
 	public function new(text:String, ?style:BitmapTextStyle, ?ansi:String, nocache:Bool=false) {
 		this.ansi = ansi;
 		this.nocache = nocache;
 		if (ansi != null)
 			text = TextTools.convertToANSI(text, ansi);
-			try {
-				super(text, style);
-			} catch (_:Dynamic) {
-				throw 'Font error: '+style.font;
-			}
-		if (!nocache) cacheAsBitmap = true;
+		try {
+			super(text, style);
+		} catch (_:Dynamic) {
+			throw 'Font error: '+style.font;
+		}
+		if (!this.nocache) cacheAsBitmap = true;
 	}
 	
 	private function get_size():Point<Float> return new Point(textWidth, textHeight);

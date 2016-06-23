@@ -32,6 +32,8 @@ import pixi.core.textures.Texture;
 import pony.geom.IWH;
 import pony.geom.Point;
 import pony.ImmutableArray;
+import pony.pixi.ui.slices.SliceSprite;
+import pony.pixi.ui.slices.SliceTools;
 import pony.ui.gui.ButtonImgN;
 import pony.ui.touch.Touchable;
 import pony.events.WaitReady;
@@ -50,8 +52,8 @@ class Button extends Sprite implements IWH {
 	public var touchActive(get, set):Bool;
 	public var cursor(get, set):Bool;
 	
-	private var list:Array<Sprite>;
-	private var zone:Sprite;
+	private var list:Array<SliceSprite>;
+	private var zone:SliceSprite;
 	private var prev:Int = 0;
 	private var wr:WaitReady;
 	
@@ -73,7 +75,7 @@ class Button extends Sprite implements IWH {
 			if (imgs[i+2] == null) imgs[i+2] = imgs[i+1];
 			i += 3;
 		}
-		list = [for (img in imgs) img == null ? null : (useSpriteSheet ? Sprite.fromFrame(StringTools.replace(img,'/','_')) : PixiAssets.image(img))];
+		list = [for (img in imgs) img == null ? null : getImg(img, useSpriteSheet)];
 		if (offset != null) {
 			for (e in list) if (e != null) {
 				e.x = -offset.x;
@@ -81,7 +83,7 @@ class Button extends Sprite implements IWH {
 			}
 		}
 		super();
-		zone = useSpriteSheet ? Sprite.fromFrame(StringTools.replace(z, '/', '_')) : PixiAssets.image(z);
+		zone = getInteractiveImg(z, useSpriteSheet);
 		if (useSpriteSheet)
 			wr.ready();
 		else
@@ -96,11 +98,33 @@ class Button extends Sprite implements IWH {
 		addChild(list[0]);
 	}
 	
+	public function setWidth(v:Float):Void {
+		zone.sliceWidth = v;
+		for (img in list) img.sliceWidth = v;
+	}
+	
+	public function setHeight(v:Float):Void {
+		zone.sliceHeight = v;
+		for (img in list) img.sliceHeight = v;
+	}
+	
+	
+	@:extern inline private static function getInteractiveImg(img:String, useSpriteSheet:Bool):SliceSprite {
+		return SliceTools.getSliceSprite(useSpriteSheet ? StringTools.replace(img, '/', '_') : img, useSpriteSheet);
+	}
+	
+	private static function getImg(img:String, useSpriteSheet:Bool):SliceSprite {
+		var s = getInteractiveImg(img, useSpriteSheet);
+		s.interactive = false;
+		s.interactiveChildren = false;
+		return s;
+	}
+	
 	private function disableHandler():Void touchActive = false;
 	private function enableHandler():Void touchActive = true;
 	
 	inline public function wait(cb:Void->Void):Void wr.wait(cb);
-	inline private function get_size():Point<Float> return new Point(zone.width, zone.height);
+	inline private function get_size():Point<Float> return new Point(zone.sliceWidth, zone.sliceHeight);
 	
 	private function imgHandler(n:Int):Void {
 		if (n == 4 && hideDisabled) {

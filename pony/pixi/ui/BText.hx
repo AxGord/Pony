@@ -46,11 +46,13 @@ class BText extends Sprite implements IWH {
 	private var current:BTextLow;
 	private var style:BitmapTextStyle;
 	public var color(get, set):UInt;
+	private var defColor:UInt;
 	
 	public function new(text:String, ?style:BitmapTextStyle, ?ansi:String) {
 		super();
 		this.style = style;
 		this.ansi = ansi;
+		defColor = style.tint;
 		firstset(text);
 	}
 	
@@ -83,8 +85,13 @@ class BText extends Sprite implements IWH {
 	
 	private function get_color():UInt return style.tint;
 	
-	private function set_color(v:UInt):UInt {
-		return style.tint = v;
+	private function set_color(v:Null<UInt>):Null<UInt> {
+		if (v == null) v = defColor;
+		style.tint = v;
+		if (!current.nocache) current.cacheAsBitmap = false;
+		current.tint = v;
+		if (!current.nocache) current.cacheAsBitmap = true;
+		return v;
 	}
 	
 }

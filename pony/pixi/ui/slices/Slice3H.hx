@@ -25,55 +25,31 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.pixi.ui;
-
-import pixi.core.display.Container;
-import pixi.core.sprites.Sprite;
-import pixi.extras.BitmapText.BitmapTextStyle;
-import pony.geom.Border;
-import pony.pixi.ETextStyle;
-import pony.pixi.UniversalText;
-import pony.time.DeltaTime;
-import pony.ui.gui.RubberLayoutCore;
-
-using pony.pixi.PixiExtends;
+package pony.pixi.ui.slices;
 
 /**
- * TextBox
+ * Slice3H
  * @author AxGord <axgord@gmail.com>
  */
-class TextBox extends BaseLayout<RubberLayoutCore<Container>> {
-
-	public var text(get, set):String;
-	public var obj(default, null):BText;
+class Slice3H extends SliceSprite {
 	
-	private var nocache:Bool;
-	
-	public function new(image:Sprite, text:String, style:ETextStyle, ?ansi:String, ?border:Border<Int>, nocache:Bool=false) {
-		this.nocache = nocache;
-		layout = new RubberLayoutCore(border);
-		layout.tasks.add();
-		super();
-		addChild(image);
-		image.loaded(function(){
-			layout.width = image.width;
-			layout.height = image.height;
-			layout.tasks.end();
-		});
-		switch style {
-			case ETextStyle.BITMAP_TEXT_STYLE(s):
-				add(obj = new BText(text, s, ansi));
-			case _:
-				throw 'Not supported';
-		}
+	override private function init():Void {
+		images[1].x = images[0].width;
+		if (sliceWidth == null)
+			sliceWidth = images[0].width + images[1].width + images[2].width;
+		super.init();
 	}
 	
-	inline private function get_text():String return obj.t;
-	
-	private function set_text(v:String):String {
-		obj.t = v;
-		layout.update();
+	override private function set_sliceWidth(v:Float):Float {
+		sliceWidth = v;
+		update();
 		return v;
+	}
+	
+	private function update():Void {
+		if (!inited) return;
+		images[1].width = sliceWidth - images[0].width - images[2].width;
+		images[2].x = images[0].width + images[1].width;
 	}
 	
 }

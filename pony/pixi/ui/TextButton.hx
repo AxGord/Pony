@@ -54,6 +54,8 @@ class TextButton extends Sprite implements IWH {
 		super();
 		this.color = color;
 		btext = new BTextLow(text, {font: font, tint: color[0].rgb}, ansi, true);
+		btext.interactive = false;
+		btext.interactiveChildren = false;
 		addChild(btext);
 		var g = new Graphics();
 		g.lineStyle();

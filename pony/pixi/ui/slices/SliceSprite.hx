@@ -25,55 +25,58 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.pixi.ui;
+package pony.pixi.ui.slices;
 
-import pixi.core.display.Container;
 import pixi.core.sprites.Sprite;
-import pixi.extras.BitmapText.BitmapTextStyle;
-import pony.geom.Border;
-import pony.pixi.ETextStyle;
-import pony.pixi.UniversalText;
-import pony.time.DeltaTime;
-import pony.ui.gui.RubberLayoutCore;
 
 using pony.pixi.PixiExtends;
 
 /**
- * TextBox
+ * SliceSprite
  * @author AxGord <axgord@gmail.com>
  */
-class TextBox extends BaseLayout<RubberLayoutCore<Container>> {
-
-	public var text(get, set):String;
-	public var obj(default, null):BText;
+class SliceSprite extends Sprite {
 	
-	private var nocache:Bool;
+	public var sliceWidth(default, set):Float;
+	public var sliceHeight(default, set):Float;
 	
-	public function new(image:Sprite, text:String, style:ETextStyle, ?ansi:String, ?border:Border<Int>, nocache:Bool=false) {
-		this.nocache = nocache;
-		layout = new RubberLayoutCore(border);
-		layout.tasks.add();
+	private var inited:Bool = false;
+	private var images:Array<Sprite>;
+	
+	public function new(data:Array<String>, useSpriteSheet:Bool = false) {
 		super();
-		addChild(image);
-		image.loaded(function(){
-			layout.width = image.width;
-			layout.height = image.height;
-			layout.tasks.end();
-		});
-		switch style {
-			case ETextStyle.BITMAP_TEXT_STYLE(s):
-				add(obj = new BText(text, s, ansi));
-			case _:
-				throw 'Not supported';
-		}
+		images = [for (e in data) PixiAssets.cImage(e, useSpriteSheet)];
+		images.loadedList(init);
 	}
 	
-	inline private function get_text():String return obj.t;
+	private function init():Void {
+		inited = true;
+		if (sliceWidth != null) {
+			sliceWidth = sliceWidth;
+		} else {
+			sliceWidth = images[0].width;
+		}
+		if (sliceHeight != null) {
+			sliceHeight = sliceHeight;
+		} else {
+			sliceHeight = images[0].height;
+		}
+		for (img in images) addChild(img);
+	}
 	
-	private function set_text(v:String):String {
-		obj.t = v;
-		layout.update();
+	private function set_sliceWidth(v:Float):Float {
+		sliceWidth = v;
+		if (!inited) return v;
+		for (img in images) img.width = v;
 		return v;
 	}
+	
+	private function set_sliceHeight(v:Float):Float {
+		sliceHeight = v;
+		if (!inited) return v;
+		for (img in images) img.height = v;
+		return v;
+	}
+	
 	
 }

@@ -25,55 +25,32 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.pixi.ui;
-
-import pixi.core.display.Container;
-import pixi.core.sprites.Sprite;
-import pixi.extras.BitmapText.BitmapTextStyle;
-import pony.geom.Border;
-import pony.pixi.ETextStyle;
-import pony.pixi.UniversalText;
-import pony.time.DeltaTime;
-import pony.ui.gui.RubberLayoutCore;
-
-using pony.pixi.PixiExtends;
+package pony.pixi.ui.slices;
 
 /**
- * TextBox
+ * Slice6H
  * @author AxGord <axgord@gmail.com>
  */
-class TextBox extends BaseLayout<RubberLayoutCore<Container>> {
-
-	public var text(get, set):String;
-	public var obj(default, null):BText;
+class Slice6H extends Slice9 {
 	
-	private var nocache:Bool;
-	
-	public function new(image:Sprite, text:String, style:ETextStyle, ?ansi:String, ?border:Border<Int>, nocache:Bool=false) {
-		this.nocache = nocache;
-		layout = new RubberLayoutCore(border);
-		layout.tasks.add();
-		super();
-		addChild(image);
-		image.loaded(function(){
-			layout.width = image.width;
-			layout.height = image.height;
-			layout.tasks.end();
-		});
-		switch style {
-			case ETextStyle.BITMAP_TEXT_STYLE(s):
-				add(obj = new BText(text, s, ansi));
-			case _:
-				throw 'Not supported';
-		}
+	public function new(data:Array<String>, useSpriteSheet:Bool = false) {
+		data = [
+			data[0], data[1], data[0],
+			data[2], data[3], data[2],
+			data[4], data[5], data[4]
+		];
+		super(data, useSpriteSheet);
 	}
 	
-	inline private function get_text():String return obj.t;
-	
-	private function set_text(v:String):String {
-		obj.t = v;
-		layout.update();
-		return v;
+	override function updateWidth():Void {
+		if (!inited) return;
+		super.updateWidth();
+		images[2].x += images[2].width;
+		images[2].width = -images[2].width;
+		images[5].x += images[5].width;
+		images[5].width = -images[5].width;
+		images[8].x += images[8].width;
+		images[8].width = -images[8].width;
 	}
 	
 }
