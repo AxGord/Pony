@@ -27,6 +27,7 @@
 **/
 package pony.ui.touch.pixi;
 
+import haxe.Int64;
 import pixi.core.display.Container;
 import pixi.interaction.EventTarget;
 import pony.events.Signal1;
@@ -35,7 +36,7 @@ import pony.magic.Declarator;
 import pony.magic.HasSignal;
 import pony.time.DeltaTime;
 
-typedef TouchObj = {x:Float, y:Float, id:Int};
+typedef TouchObj = {x:Float, y:Float, id:UInt};
 
 /**
  * Touch
@@ -46,9 +47,9 @@ class Touch implements Declarator implements HasSignal {
 	@:auto public static var onMove:Signal1<TouchObj>;
 	@:auto public static var onStart:Signal1<TouchObj>;
 	@:auto public static var onEnd:Signal1<TouchObj>;
-	@:auto public static var onCancle:Signal1<Int>;
+	@:auto public static var onCancle:Signal1<UInt>;
 	
-	private static var tMove:Map<Int, TouchObj> = new Map<Int, TouchObj>();
+	private static var tMove:Map<String, TouchObj> = new Map<String, TouchObj>();
 	private static var startStack:Array<TouchObj> = [];
 	private static var endStack:Array<TouchObj> = [];
 	
@@ -90,13 +91,13 @@ class Touch implements Declarator implements HasSignal {
 	}
 	
 	private static function moveHandler(e:EventTarget):Void {
-		tMove[e.data.identifier] = pack(e);
+		tMove[Std.string(e.data.identifier)] = pack(e);
 		DeltaTime.fixedUpdate.once(moveDispatch, -8);
 	}
 	
 	private static function moveDispatch():Void {
 		for (t in tMove) eMove.dispatch(t);
-		tMove = new Map();
+		tMove = new Map<String, TouchObj>();
 	}
 	
 	private static function startHandler(e:EventTarget):Void {

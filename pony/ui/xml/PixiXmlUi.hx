@@ -205,7 +205,9 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 			obj.scale = new pixi.core.math.Point(s, s);
 		}
 		if (attrs.filters != null) {
-			obj.filters = [for (f in splitAttr(attrs.filters)) FILTERS[f]];
+			var a = [];
+			for (f in splitAttr(attrs.filters)) if (FILTERS.exists(f)) a.push(FILTERS[f]);
+			if (a.length > 0) obj.filters = a;
 		}
 		if (attrs.x != null) obj.x = parseAndScale(attrs.x);
 		if (attrs.y != null) obj.y = parseAndScale(attrs.y);
@@ -246,6 +248,7 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 	private function createFilters(data:Dynamic<Dynamic<String>>):Void {
 		for (name in Reflect.fields(data)) {
 			var d = Reflect.field(data, name);
+			if (d.nomobile == 'true' && JsTools.isMobile) continue;
 			var f:AbstractFilter = switch Reflect.field(d, 'extends') {
 				case 'shadow':
 					new DropShadowFilter();

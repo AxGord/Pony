@@ -28,6 +28,7 @@
 package pony.pixi.ui;
 
 import pixi.core.display.Container;
+import pixi.core.math.shapes.Rectangle;
 import pony.geom.Border;
 import pony.geom.Point;
 import pony.ui.gui.ButtonCore;
@@ -60,6 +61,7 @@ class LabelButton extends BaseLayout<RubberLayoutCore<Container>> {
 	override public function add(obj:Container):Void {
 		obj.interactive = false;
 		obj.interactiveChildren = false;
+		obj.hitArea = new Rectangle(0, 0, 0, 0);
 		super.add(obj);
 	}
 	

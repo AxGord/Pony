@@ -39,7 +39,7 @@ import pony.TypedPool;
  */
 class TouchableBase implements HasSignal {
 
-	static private var touches:Map<Int, Touch> = new Map<Int, Touch>();
+	static private var touches:Map<UInt, Touch> = new Map<UInt, Touch>();
 	static private var touchPool:TypedPool<Touch> = new TypedPool<Touch>();
 	
 	@:auto public var onOver:Signal1<Touch>;
@@ -141,7 +141,7 @@ class TouchableBase implements HasSignal {
 	 */
 	public function check():Void {}
 	
-	private function dispatchDown(id:Int = 0, x:Float, y:Float, safe:Bool = false):Void {
+	private function dispatchDown(id:UInt = 0, x:Float, y:Float, safe:Bool = false):Void {
 		if (touches.exists(id)) 
 			@:privateAccess touches[id].eDown.dispatch(touches[id].set(x, y));
 		else
@@ -149,13 +149,13 @@ class TouchableBase implements HasSignal {
 		eDown.dispatch(touches[id], safe);
 	}
 	
-	private function dispatchUp(id:Int = 0, safe:Bool = false):Void {
+	private function dispatchUp(id:UInt = 0, safe:Bool = false):Void {
 		if (!touches.exists(id)) return;
 		@:privateAccess touches[id].eUp.dispatch(touches[id]);
 		eUp.dispatch(touches[id], safe);
 	}
 	
-	private function dispatchOver(id:Int = 0, safe:Bool = false):Void {
+	private function dispatchOver(id:UInt = 0, safe:Bool = false):Void {
 		if (touches.exists(id)) 
 			@:privateAccess touches[id].eOver.dispatch(touches[id]);
 		else
@@ -163,13 +163,13 @@ class TouchableBase implements HasSignal {
 		eOver.dispatch(touches[id], safe);
 	}
 	
-	private function dispatchOutDown(id:Int = 0, safe:Bool = false):Void {
+	private function dispatchOutDown(id:UInt = 0, safe:Bool = false):Void {
 		if (!touches.exists(id)) return;
 		@:privateAccess touches[id].eOutDown.dispatch(touches[id]);
 		eOutDown.dispatch(touches[id], safe);
 	}
 	
-	private function dispatchOverDown(id:Int = 0, safe:Bool = false):Void {
+	private function dispatchOverDown(id:UInt = 0, safe:Bool = false):Void {
 		if (touches.exists(id)) 
 			@:privateAccess touches[id].eOverDown.dispatch(touches[id]);
 		else
@@ -177,28 +177,28 @@ class TouchableBase implements HasSignal {
 		eOverDown.dispatch(touches[id], safe);
 	}
 	
-	private function dispatchOut(id:Int = 0, safe:Bool = false):Void {
+	private function dispatchOut(id:UInt = 0, safe:Bool = false):Void {
 		if (!touches.exists(id)) return;
 		@:privateAccess touches[id].eOut.dispatch(touches[id]);
 		eOut.dispatch(touches[id], safe);
 		removeTouch(id);
 	}
 	
-	private function dispatchOutUpListener(id:Int):Void dispatchOutUp(id);
+	private function dispatchOutUpListener(id:UInt):Void dispatchOutUp(id);
 	
-	private function dispatchOutUp(id:Int = 0, safe:Bool = false):Void {
+	private function dispatchOutUp(id:UInt = 0, safe:Bool = false):Void {
 		if (touches.exists(id))
 			@:privateAccess touches[id].eOutUp.dispatch(touches[id]);
 		eOutUp.dispatch(touches[id], safe);
 		removeTouch(id);
 	}
 	
-	static private function dispatchMove(id:Int = 0, x:Float, y:Float):Void {
+	static private function dispatchMove(id:UInt = 0, x:Float, y:Float):Void {
 		if (touches.exists(id))
 			@:privateAccess touches[id].eMove.dispatch(touches[id].set(x,y));
 	}
 	
-	static private function removeTouch(id:Int):Void {
+	static private function removeTouch(id:UInt):Void {
 		if (id == 0 || !touches.exists(id)) return;
 		touches[id].clear();
 		touchPool.ret(touches[id]);

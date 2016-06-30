@@ -38,9 +38,11 @@ class JsTools {
 	public static var isIE(get, never):Bool;
 	public static var isEdge(get, never):Bool;
 	public static var isMobile(get, never):Bool;
+	public static var isAndroid(get, never):Bool;
 	
 	private static var _isIE:Null<Bool>;
 	private static var _isEdge:Null<Bool>;
+	private static var _isAndroid:Null<Bool>;
 	
 	private static function get_isIE():Bool {
 		if (_isIE == null) {
@@ -57,6 +59,12 @@ class JsTools {
 		return _isEdge;
 	}
 	
+	private static function get_isAndroid():Bool {
+		if (_isAndroid == null) {
+			_isAndroid = Browser.navigator.userAgent.toLowerCase().indexOf('android') != -1;
+		}
+		return _isAndroid;
+	}
 	
 	@:extern inline private static function get_isMobile():Bool return untyped Browser.window.orientation != null;
 	

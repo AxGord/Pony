@@ -66,12 +66,12 @@ class SocketClient extends SocketClientBase {
 		socket.addEventListener('outputProgress', outputProgressHandler);
 	}
 	
-	private function skipOutputProgressHandler():Void outputProgressHandler(null);
+	//private function skipOutputProgressHandler():Void outputProgressHandler(null);
 	
 	private function outputProgressHandler(_):Void {
 		if (!waitOutput) return;
 		waitOutput = false;
-		DeltaTime.fixedUpdate < q.next;
+		DeltaTime.skipUpdate(q.next);
 	}
 	
 	private function securityErrorHandler(_):Void {}
@@ -89,7 +89,7 @@ class SocketClient extends SocketClientBase {
 		try {
 			socket.writeBytes(data.getBytes().getData());
 			socket.flush();
-			DeltaTime.skipUpdate(skipOutputProgressHandler);
+			//DeltaTime.skipUpdate(skipOutputProgressHandler);
 		} catch (e:Dynamic) {
 			error(e);
 		}

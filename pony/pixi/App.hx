@@ -62,7 +62,7 @@ class App extends Application {
 	/**
 	 * @param	smallDeviceQuality - 1 ideal, 2 - low, 3 - normal, 4 - good
 	 */
-	public function new(container:Sprite, width:Float, height:Float, ?bg:UInt, ?parentDom:Element, smallDeviceQuality:Float = 3, resizeInterval:Time=200) {
+	public function new(container:Sprite, width:Float, height:Float, ?bg:UInt, ?parentDom:Element, smallDeviceQuality:Float = 3, fps:Int=60, resizeInterval:Time=200) {
 		super();
 		this.parentDom = parentDom;
 		this.smallDeviceQuality = smallDeviceQuality;
@@ -75,6 +75,7 @@ class App extends Application {
 		Browser.window.onorientationchange = _onWindowResize;
 		Browser.window.onfocus = _onWindowResize;
 		autoResize = false;
+		this.fps = fps;
 		_width = width;
 		_height = height;
 		this.container = container;
