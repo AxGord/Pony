@@ -49,11 +49,6 @@ class SocketClient extends SocketClientBase {
 	private var socket:Socket;
 	private var q:Queue < BytesOutput->Void > ;
 	
-	/**
-	 * Need for remove double dispath outputProgress
-	 */
-	private var waitOutput:Bool = false;
-	
 	override public function open():Void {
 		super.open();
 		q = new Queue(_send);
@@ -63,14 +58,12 @@ class SocketClient extends SocketClientBase {
 		socket.addEventListener(Event.CLOSE, closeHandler);
 		socket.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandler);
 		socket.addEventListener(SecurityErrorEvent.SECURITY_ERROR, securityErrorHandler);
-		socket.addEventListener('outputProgress', outputProgressHandler);
 	}
 	
 	//private function skipOutputProgressHandler():Void outputProgressHandler(null);
 	
 	private function outputProgressHandler(_):Void {
-		if (!waitOutput) return;
-		waitOutput = false;
+		socket.removeEventListener('outputProgress', outputProgressHandler);
 		DeltaTime.skipUpdate(q.next);
 	}
 	
@@ -85,7 +78,7 @@ class SocketClient extends SocketClientBase {
 	public function send(data:BytesOutput):Void	q.call(data);
 	
 	private function _send(data:BytesOutput):Void {
-		waitOutput = true;
+		socket.addEventListener('outputProgress', outputProgressHandler);
 		try {
 			socket.writeBytes(data.getBytes().getData());
 			socket.flush();

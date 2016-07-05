@@ -129,8 +129,8 @@ class App extends Application {
 			DeltaTime.fixedDispatch();
 		} catch (e:Error) {
 			pauseRendering();
-			canvas.remove();
-			renderer.view.remove();
+			JsTools.remove(canvas);
+			JsTools.remove(renderer.view);
 			DeltaTime.fixedUpdate.clear();
 			var pre = Browser.document.createPreElement();
 			if (parentDom != null)

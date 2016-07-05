@@ -28,6 +28,7 @@
 package pony;
 
 import js.Browser;
+import js.html.DOMElement;
 
 /**
  * JsTools
@@ -67,5 +68,9 @@ class JsTools {
 	}
 	
 	@:extern inline private static function get_isMobile():Bool return untyped Browser.window.orientation != null;
+	
+	@:extern inline public static function remove(el:DOMElement):Void {
+		isIE ? el.parentNode.removeChild(el) : el.remove();
+	}
 	
 }
