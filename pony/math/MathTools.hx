@@ -59,8 +59,8 @@ class MathTools {
 		return s / count;
 	}
 	
-	public static function arraySum(a:Iterable<Float>):Float {
-		var s:Float = 0;
+	public static function arraySum<T:Float>(a:Iterable<T>):T {
+		var s:T = cast 0;
 		for (e in a) s += e;
 		return s;
 	}

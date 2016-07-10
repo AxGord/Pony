@@ -37,27 +37,28 @@ import pony.ui.AssetManager;
  * @author AxGord <axgord@gmail.com>
  */
 class PixiAssets {
-
+	
+	
 	public static function load(asset:String, cb:Void->Void):Void {
 		var loader = new Loader();
-		loader.add(asset, AssetManager.baseUrl + asset);
+		loader.add(asset, AssetManager.getPath(asset));
 		loader.load(cb);
 	}
 	
 	public static function image(asset:String, ?name:String):Sprite {
-		return name == null ? Sprite.fromImage(AssetManager.baseUrl+asset) : Sprite.fromFrame(name);
+		return name == null ? Sprite.fromImage(AssetManager.getPath(asset)) : Sprite.fromFrame(name);
 	}
 	
 	public static function texture(asset:String, ?name:String):Texture {
-		return name == null ? Texture.fromImage(AssetManager.baseUrl+asset) : Texture.fromFrame(name);
+		return name == null ? Texture.fromImage(AssetManager.getPath(asset)) : Texture.fromFrame(name);
 	}
 	
 	public static function cImage(asset:String, useSpriteSheet:Bool):Sprite {
-		return useSpriteSheet ? Sprite.fromFrame(asset) : Sprite.fromImage(AssetManager.baseUrl + asset);
+		return useSpriteSheet ? Sprite.fromFrame(asset) : Sprite.fromImage(AssetManager.getPath(asset));
 	}
 	
 	public static function cTexture(asset:String, useSpriteSheet:Bool):Texture {
-		return useSpriteSheet ? Texture.fromFrame(asset) : Texture.fromImage(AssetManager.baseUrl + asset);
+		return useSpriteSheet ? Texture.fromFrame(asset) : Texture.fromImage(AssetManager.getPath(asset));
 	}
 	
 }

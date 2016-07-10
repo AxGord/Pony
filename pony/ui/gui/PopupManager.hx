@@ -27,8 +27,6 @@
 **/
 package pony.ui.gui;
 
-import types.Popup;
-
 /**
  * PopupManager
  * @author AxGord <axgord@gmail.com>

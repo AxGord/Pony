@@ -154,6 +154,13 @@ class DeltaTime implements HasSignal {
 	
 	public static function skipUpdate(f:Void->Void):Void DeltaTime.fixedUpdate < function() DeltaTime.fixedUpdate < f;
 	
+	public static function skipFrames(n:Int, f:Void->Void):Void {
+		if (n == 0)
+			f();
+		else
+			DeltaTime.fixedUpdate < skipFrames.bind(n-1, f);
+	}
+	
 	public static function notInstant(cb:Void->Void):Void->Void {
 		var instant = true;
 		DeltaTime.fixedUpdate < function() instant = false;

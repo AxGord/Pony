@@ -27,6 +27,7 @@
 **/
 package pony.ui.touch.pixi;
 
+import js.Browser;
 import pixi.core.display.Container;
 import pixi.interaction.EventTarget;
 import pony.ui.touch.pixi.Touch;
@@ -67,13 +68,17 @@ class TouchableTouch {
 		obj.on('touchendoutside', outsideHandler);
 		Touch.onEnd << touchEndHandler;
 		Touch.onCancle << cancleTouchHandler;
+		Browser.window.addEventListener('orientationchange', orientationchangeHandler, true);
 	}
+	
+	private function orientationchangeHandler():Void lost(touchId);
 	
 	public function destroy():Void {
 		if (touchId != null) lost(touchId);
 		obj.removeListener('touchstart', touchBeginHandler);
 		obj.removeListener('touchmove', touchMoveHandler);
 		obj.removeListener('touchendoutside', outsideHandler);
+		Browser.window.removeEventListener('orientationchange', orientationchangeHandler, true);
 		Touch.onEnd >> touchEndHandler;
 		Touch.onCancle >> cancleTouchHandler;
 		obj = null;

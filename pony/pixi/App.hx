@@ -71,9 +71,9 @@ class App extends Application {
 		resizeTimer.complete << resizeHandler;
 		backgroundColor = bg;
 		antialias = false;
+		Browser.window.addEventListener('orientationchange', _onWindowResize, true);
+		Browser.window.addEventListener('focus', _onWindowResize, true);
 		Browser.window.onresize = _onWindowResize;
-		Browser.window.onorientationchange = _onWindowResize;
-		Browser.window.onfocus = _onWindowResize;
 		autoResize = false;
 		this.fps = fps;
 		_width = width;

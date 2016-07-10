@@ -35,6 +35,7 @@ import pony.openfl.OpenflAssets;
 #end
 import pony.Or;
 import pony.Tasks;
+import pony.math.MathTools;
 import pony.time.DeltaTime;
 using Lambda;
 
@@ -47,6 +48,12 @@ class AssetManager {
 	public static var baseUrl:String = '';
 	private static var loadedAssets:Array<String> = [];
 	private static var globalLoad:Map<String, Array<Void->Void>> = new Map();
+	
+	public static var local:String = '';
+	
+	@:extern inline public static function getPath(asset:String):String {
+		return baseUrl + StringTools.replace(asset, '{local}', local);
+	}
 	
 	public static dynamic function monitor(current:Int, total:Int):Void {}
 	
@@ -204,6 +211,16 @@ class AssetManager {
 			if (last) cb();
 			else check = function(c:Int, t:Int) if (c == t) cb();
 		}
+	}
+	
+	public static function loadList(count:Int, cb:Int->Int->Void):Array<Int->Int->Void> {
+		var totals:Array<Int> = [for (_ in 0...count) 0];
+		var currents:Array<Int> = [for (_ in 0...count) 0];
+		return [for (i in 0...count) function(c:Int, t:Int) {
+			currents[i] = c;
+			totals[i] = t;
+			cb(MathTools.arraySum(currents), MathTools.arraySum(totals));
+		}];
 	}
 	
 	#if pixijs
