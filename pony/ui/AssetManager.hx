@@ -230,7 +230,7 @@ class AssetManager {
 	#elseif openfl
 	@:extern inline public static function _load(asset:String, cb:Void->Void):Void OpenflAssets.load(asset, cb);
 	@:extern inline public static function image(asset:String, ?name:String) return OpenflAssets.image(asset);
-	@:extern inline public static function texture(asset:String, ?name:String) return asset;;
+	@:extern inline public static function texture(asset:String, ?name:String) return asset;
 	#else
 	@:extern inline public static function _load(asset:String, cb:Void->Void):Void trace('Load: $asset');
 	@:extern inline public static function image(asset:String, ?name:String) return asset;

@@ -34,11 +34,11 @@ class BaseLayout<T:BaseLayoutCore<DisplayObject>> extends Sprite implements IWH 
 	private function load(obj : DisplayObject) : Void {
 		if (Std.is(obj, Sprite)) {
 			layout.tasks.add();
-			//cast(obj, Sprite).loaded(layout.tasks.end);
+			layout.tasks.end();
 		}
 	}
 	
-	private function destroyChild(obj:DisplayObjectContainer):Void {
+	private function destroyChild(obj:DisplayObject):Void {
 		if (Std.is(obj, DisplayObject)) {
 			var s:DisplayObject = cast obj;
 			removeChild(s);
@@ -57,6 +57,8 @@ class BaseLayout<T:BaseLayoutCore<DisplayObject>> extends Sprite implements IWH 
 		else
 			new Point(o.width, o.height);
 	}
+	
+	private static function getSizeMod(o:DisplayObject, p:Point<Float>):Point<Float> return new Point(p.x * o.scaleX, p.y * o.scaleY);
 	
 	inline private function get_size():Point<Float> return layout.size;
 	
