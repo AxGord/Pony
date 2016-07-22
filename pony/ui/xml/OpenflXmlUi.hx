@@ -100,7 +100,7 @@ class OpenflXmlUi extends Sprite implements HasAbstract {
 					attrs.color = attrs.color.replace('#', '0x');
 				}
 				var format : TextFormat = new TextFormat(attrs.font, Std.parseInt(attrs.size),Std.parseInt(attrs.color));
-				var text = content.length > 0 ? content[0] : '';
+				var text = _putData(content);
 				var t : TextField = new TextField();
 				t.autoSize = TextFieldAutoSize.LEFT;
 				t.selectable = false;
