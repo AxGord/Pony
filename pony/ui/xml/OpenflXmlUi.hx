@@ -1,5 +1,6 @@
 package pony.ui.xml;
 
+import flash.text.TextFieldAutoSize;
 import openfl.display.DisplayObject;
 import openfl.display.Sprite;
 import openfl.filters.BitmapFilter;
@@ -101,6 +102,8 @@ class OpenflXmlUi extends Sprite implements HasAbstract {
 				var format : TextFormat = new TextFormat(attrs.font, Std.parseInt(attrs.size),Std.parseInt(attrs.color));
 				var text = content.length > 0 ? content[0] : '';
 				var t : TextField = new TextField();
+				t.autoSize = TextFieldAutoSize.LEFT;
+				t.selectable = false;
 				t.defaultTextFormat = format;
 				t.text = text;
 				t;

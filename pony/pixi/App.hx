@@ -106,6 +106,9 @@ class App extends Application {
 		var ratio = smallDeviceQuality <= 1 ? 1 : smallDeviceQualityOffset + d / smallDeviceQuality;
 		if (ratio > 1) ratio = 1;
 		
+		//Stealing all mobile device resources
+		if (!JsTools.isMobile) ratio *= Browser.window.devicePixelRatio;
+		
 		renderer.resize(width/d * ratio, height/d * ratio);
 		canvas.style.width = width + "px";
 		canvas.style.height = height + "px";
