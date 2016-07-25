@@ -108,7 +108,7 @@ class OpenflXmlUi extends Sprite implements HasAbstract {
 				t.text = text;
 				t;
 			case _:
-				throw 'Unknown component $name';
+				customUIElement(name, attrs, content);
 		}
 		if (attrs.r != null) {
 			obj.rotation = Std.parseFloat(attrs.r) * Math.PI / 180;
