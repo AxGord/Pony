@@ -82,8 +82,9 @@ class HttpConnection implements HasAbstract
 		}
 	}
 	
-	@:abstract public function endAction():Void; 
+	public function endAction():Void goto('/$url');
 	@:abstract public function endActionPrevPage():Void; 
+	@:abstract public function goto(url:String):Void; 
 	
 	private function parseData(pb:ParseBoy<Void>):Map<String, String> {
 		var params = new Map<String, String>();

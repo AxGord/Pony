@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -28,7 +28,7 @@
 package pony.db;
 
 private enum DBVT {
-	TInt; TString; TFun(fun:DBVF);
+	TInt; TString; TFun(fun:DBVF); TNull;
 }
 
 private enum DBVF {
@@ -42,19 +42,23 @@ private enum DBVF {
 abstract DBV({type:DBVT, ?val:Dynamic})
 {
 
-	inline private function new(v) this = v;
+	public static var NULL(get, never):DBV;
+	public static var NOW(get, never):DBV;
+	
+	@:extern inline private function new(v) this = v;
 	
 	public function get(f:String->String):String {
 		return switch this.type {
 			case TString: f(this.val);
 			case TInt: Std.string(this.val);
-			case TFun(FNow): 'Now()';
+			case TFun(FNow): 'NOW()';
+			case TNull: 'NULL';
 		}
 	}
 	
-	@:from inline public static function fromInt(v:Int):DBV return new DBV({type:TInt, val: v});
-	@:from inline public static function fromString(v:String):DBV return new DBV({type:TString, val: v});
-	
-	inline public static function now():DBV return new DBV({type:TFun(FNow)});
+	@:from @:extern inline public static function fromInt(v:Int):DBV return new DBV({type:TInt, val: v});
+	@:from @:extern inline public static function fromString(v:String):DBV return new DBV({type:TString, val: v});
+	@:extern inline private static function get_NOW():DBV return new DBV({type:TFun(FNow)});
+	@:extern inline private static function get_NULL():DBV return new DBV({type:TNull});
 	
 }

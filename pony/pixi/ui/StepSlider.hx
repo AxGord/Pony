@@ -25,34 +25,35 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.net.http;
+package pony.pixi.ui;
 
-import pony.fs.File;
+import pixi.core.Pixi;
+import pony.geom.Border;
+import pony.geom.Point;
+import pony.ui.gui.StepSliderCore;
+
 /**
- * IHttpConnection
- * @author AxGord
+ * StepSlider
+ * @author AxGord <axgord@gmail.com>
  */
+class StepSlider extends LabelButton {
 
-interface IHttpConnection
-{
-	var method:String;
-	var post:Map<String, String>;
-	var fullUrl:String;
-	var url:String;
-	var params:Map<String, String>;
-	var sessionStorage:Map<String, Dynamic>;
-	var host:String;
-	var protocol:String;
-	var languages:Array<String>;
-	var cookie:Cookie;
-	var end:Bool;
+	public var sliderCore:StepSliderCore;
 	
-	function sendFile(file:File):Void;
-	function endAction():Void;
-	function goto(url:String):Void;
-	function endActionPrevPage():Void;
-	function error(?message:String):Void;
-	function sendHtml(text:String):Void;
-	function sendText(text:String):Void;
-	function mix():Map<String, String>;
+	public function new(
+		w:Float,
+		h:Float,
+		invert:Bool = false,
+		draggable:Bool = true,
+		imgs:ImmutableArray<String>,
+		vert:Bool = false,
+		?border:Border<Int>,
+		?offset:Point<Float>,
+		useSpriteSheet:Bool = false
+	) {
+		super(imgs, vert, border, offset, useSpriteSheet);
+		sliderCore = StepSliderCore.create(button.core, w, h, invert, draggable);
+		sliderCore.percentStep = 0.1;
+	}
+	
 }

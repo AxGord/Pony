@@ -48,9 +48,11 @@ import pony.pixi.ui.LabelButton;
 import pony.pixi.ui.ProgressBar;
 import pony.pixi.ui.RubberLayout;
 import pony.pixi.ui.SizedSprite;
+import pony.pixi.ui.StepSlider;
 import pony.pixi.ui.TextBox;
 import pony.pixi.ui.TextButton;
 import pony.pixi.ui.TimeBar;
+import pony.pixi.ui.slices.SliceTools;
 import pony.time.Time;
 
 /**
@@ -70,7 +72,8 @@ import pony.time.Time;
 	textbox: pony.pixi.ui.TextBox,
 	rect: pixi.core.graphics.Graphics,
 	textbutton: pony.pixi.ui.TextButton,
-	clip: pixi.extras.MovieClip
+	clip: pixi.extras.MovieClip,
+	slide: pony.pixi.ui.StepSlider,
 }))
 #end
 class PixiXmlUi extends Sprite implements HasAbstract {
@@ -120,6 +123,11 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 				}
 			case 'image':
 				PixiAssets.image(attrs.src, attrs.name);
+			case 'slice':
+				var s = SliceTools.getSliceSprite(attrs.src);
+				if (attrs.w != null) s.sliceWidth = Std.parseInt(attrs.w);
+				if (attrs.h != null) s.sliceHeight = Std.parseInt(attrs.h);
+				return s;
 			case 'clip':
 				var data = if (attrs.name != null) {
 					var a = attrs.name.split('|');
@@ -150,6 +158,19 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 				b;
 			case 'button':
 				new Button(splitAttr(attrs.skin), true);
+			case 'slider':
+				var b = new StepSlider(
+					parseAndScale(attrs.w),
+					parseAndScale(attrs.h),
+					isTrue(attrs.invert),
+					!isFalse(attrs.draggable),
+					splitAttr(attrs.skin),
+					isTrue(attrs.vert),
+					scaleBorderInt(attrs.border),
+					true
+				);
+				for (c in content) b.add(c);
+				b;
 			case 'textbutton':
 				var font = parseAndScaleInt(attrs.size) + 'px ' + attrs.font;
 				var text = _putData(content);
@@ -237,6 +258,7 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 	}
 	
 	inline static private function isTrue(s:String):Bool return s != null && s.toLowerCase() == 'true';
+	inline static private function isFalse(s:String):Bool return s != null && s.toLowerCase() != 'true';
 	
 	@:abstract private function _createUI():DisplayObject;
 	

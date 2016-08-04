@@ -95,27 +95,18 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 		});
 	}
 	
-	override public function endAction():Void {
+	override public function goto(url:String):Void {
 		writeCookie();
-		res.setHeader('Location', '/'+url);
+		res.setHeader('Location', url);
 		res.setHeader('Cache-Control', 'private');
 		res.statusCode = 302;
-		var t:String = '<html><body><a href=".">Click here</a></body></html>';
+		var t:String = '<html><body><a href="$url">Click here</a></body></html>';
 		res.setHeader('Content-Length', NodeBuffer.byteLength(t, 'utf8'));
 		res.end(t);
 		end = true;
 	}
 	
-	override public function endActionPrevPage():Void {
-		writeCookie();
-		res.setHeader('Location', req.headers.field('referer'));
-		res.setHeader('Cache-Control', 'private');
-		res.statusCode = 302;
-		var t:String = '<html><body><a href=".">Click here</a></body></html>';
-		res.setHeader('Content-Length', NodeBuffer.byteLength(t, 'utf8'));
-		res.end(t);
-		end = true;
-	}
+	override public function endActionPrevPage():Void goto(req.headers.field('referer'));
 	
 	public function error(?message:String):Void {
 		writeCookie();

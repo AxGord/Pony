@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2013 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -26,29 +26,32 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.flash;
+
 import haxe.Log;
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import haxe.PosInfos;
-import pony.events.Signal;
+
 #if !macro
 import flash.external.ExternalInterface;
+import pony.events.Signal2;
 #end
 
 /**
  * Interface for ExternalInterface
  * @author AxGord
  */
-class Exterface extends Signal implements Dynamic<Exterface> {
+class Exterface implements Dynamic<Exterface> implements pony.magic.HasSignal {
+	
 	public var name(default, null):String;
 	
 	#if !macro
+	@:auto public var signal:Signal2<Dynamic, Dynamic>;
 	public static var get:Exterface = new Exterface();
 	private static var map:Map<String, Exterface> = new Map<String, Exterface>();
 	
 	private function new(?name:String) {
 		if (name != null) {
-			super();
 			this.name = name;
 			#if debug
 			trace('Add callback: $name');
@@ -58,6 +61,8 @@ class Exterface extends Signal implements Dynamic<Exterface> {
 			map.set(name, this);
 		}
 	}
+	
+	private function dispatchArgs(a:Array<Dynamic>):Void eSignal.dispatch(a[0], a[1]);
 	
 	public static function regLog():Void {
 		#if !debug
