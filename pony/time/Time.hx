@@ -167,6 +167,10 @@ abstract Time(Null<Int>) from Int to Int {
 		return print(minutes) + ':' + print(seconds);
 	}
 	
+	@:extern inline public function showSec():String {
+		return print(totalSeconds);
+	}
+	
 	public function clock(?autoHide:Bool):String {
 		var s = '';
 		if (hours != 0 || !autoHide) {

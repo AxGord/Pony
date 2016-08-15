@@ -41,6 +41,8 @@ import pony.magic.HasAbstract;
 import pony.pixi.ETextStyle;
 import pony.pixi.PixiAssets;
 import pony.pixi.ui.AlignLayout;
+import pony.pixi.ui.BGLayout;
+import pony.pixi.ui.BGLayout;
 import pony.pixi.ui.BText;
 import pony.pixi.ui.Button;
 import pony.pixi.ui.IntervalLayout;
@@ -73,7 +75,7 @@ import pony.time.Time;
 	rect: pixi.core.graphics.Graphics,
 	textbutton: pony.pixi.ui.TextButton,
 	clip: pixi.extras.MovieClip,
-	slide: pony.pixi.ui.StepSlider,
+	slider: pony.pixi.ui.StepSlider,
 }))
 #end
 class PixiXmlUi extends Sprite implements HasAbstract {
@@ -97,7 +99,11 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 				return g;
 			case 'layout':
 				var align = Align.fromString(attrs.align);
-				if (attrs.iv != null) {
+				if (attrs.src != null) {
+					var l = new BGLayout(PixiAssets.image(attrs.src, attrs.name), isTrue(attrs.vert), scaleBorderInt(attrs.border));
+					for (e in content) l.add(e);
+					l;
+				} else if (attrs.iv != null) {
 					var l = new IntervalLayout(parseAndScaleInt(attrs.iv), true, scaleBorderInt(attrs.border), align);
 					for (e in content) l.add(e);
 					l;
@@ -124,7 +130,7 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 			case 'image':
 				PixiAssets.image(attrs.src, attrs.name);
 			case 'slice':
-				var s = SliceTools.getSliceSprite(attrs.src);
+				var s = SliceTools.getSliceSprite(attrs.name, attrs.src);
 				if (attrs.w != null) s.sliceWidth = Std.parseInt(attrs.w);
 				if (attrs.h != null) s.sliceHeight = Std.parseInt(attrs.h);
 				return s;
@@ -153,22 +159,20 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 				var style = {font: font, tint: UColor.fromString(attrs.color).rgb};
 				new BText(text, style, attrs.ansi);
 			case 'lbutton':
-				var b = new LabelButton(splitAttr(attrs.skin), isTrue(attrs.vert), scaleBorderInt(attrs.border), true);
+				var b = new LabelButton(splitAttr(attrs.skin), isTrue(attrs.vert), scaleBorderInt(attrs.border), attrs.src);
 				for (c in content) b.add(c);
 				b;
 			case 'button':
-				new Button(splitAttr(attrs.skin), true);
+				new Button(splitAttr(attrs.skin), attrs.src);
 			case 'slider':
 				var b = new StepSlider(
+					new LabelButton(splitAttr(attrs.skin), isTrue(attrs.vert), scaleBorderInt(attrs.border), attrs.src),
 					parseAndScale(attrs.w),
 					parseAndScale(attrs.h),
 					isTrue(attrs.invert),
-					!isFalse(attrs.draggable),
-					splitAttr(attrs.skin),
-					isTrue(attrs.vert),
-					scaleBorderInt(attrs.border),
-					true
+					!isFalse(attrs.draggable)
 				);
+				if (attrs.step != null) b.sliderCore.percentStep = Std.parseFloat(attrs.step);
 				for (c in content) b.add(c);
 				b;
 			case 'textbutton':

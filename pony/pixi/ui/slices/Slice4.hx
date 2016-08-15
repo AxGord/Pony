@@ -33,7 +33,7 @@ package pony.pixi.ui.slices;
  */
 class Slice4 extends Slice9 {
 	
-	public function new(data:Array<String>, useSpriteSheet:Bool = false) {
+	public function new(data:Array<String>, ?useSpriteSheet:String) {
 		data = [
 			data[0], data[1], data[0],
 			data[2], data[3], data[2],

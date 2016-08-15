@@ -35,7 +35,7 @@ using StringTools;
  */
 class SliceTools {
 
-	static public function getSliceSprite(name:String, useSpriteSheet:Bool = false):SliceSprite {
+	static public function getSliceSprite(name:String, ?useSpriteSheet:String):SliceSprite {
 		return getSliceSpriteFromData(parseSliceName(name), useSpriteSheet);
 	}
 	
@@ -63,7 +63,7 @@ class SliceTools {
 		}
 	}
 	
-	static public function getSliceSpriteFromData(data:SliceData, useSpriteSheet:Bool = false):SliceSprite {
+	static public function getSliceSpriteFromData(data:SliceData, ?useSpriteSheet:String):SliceSprite {
 		return switch data {
 			case SliceData.Hor2(a, b):
 				new Slice2H([a, b], useSpriteSheet);
