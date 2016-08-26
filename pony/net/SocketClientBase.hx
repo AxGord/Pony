@@ -199,8 +199,6 @@ class SocketClientBase extends Logable implements HasSignal {
 	private function joinData(bi:BytesInput):Void {
 		if (isWithLength)
 		{
-			if (bi.length < 4) return;//ignore small data
-			
 			var size:UInt = 0;
 			var len:UInt = 0;
 			
@@ -208,6 +206,7 @@ class SocketClientBase extends Logable implements HasSignal {
 				size = waitNext;
 				len = bi.length;
 			} else {
+				if (bi.length < 4) return;//ignore small data
 				size = readLength(bi);
 				len = bi.length - readLengthSize;
 			}
