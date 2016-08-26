@@ -101,4 +101,6 @@ class BarCore implements Declarator implements HasSignal {
 		changeValue << changeValueHandler;
 	}
 	
+	public function setPercent(v:Float):Void percent = v;
+	
 }

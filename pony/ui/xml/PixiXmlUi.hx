@@ -44,6 +44,7 @@ import pony.pixi.ui.AlignLayout;
 import pony.pixi.ui.BGLayout;
 import pony.pixi.ui.BGLayout;
 import pony.pixi.ui.BText;
+import pony.pixi.ui.Bar;
 import pony.pixi.ui.Button;
 import pony.pixi.ui.IntervalLayout;
 import pony.pixi.ui.LabelButton;
@@ -67,6 +68,7 @@ import pony.time.Time;
 	layout: pony.pixi.ui.TLayout,
 	image: pixi.core.sprites.Sprite,
 	text: pony.pixi.ui.BText,
+	bar: pony.pixi.ui.Bar,
 	progressbar: pony.pixi.ui.ProgressBar,
 	timebar: pony.pixi.ui.TimeBar,
 	button: pony.pixi.ui.Button,
@@ -183,6 +185,17 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 					text, font, attrs.ansi,
 					parseAndScale(attrs.line),
 					parseAndScale(attrs.linepos)
+				);
+			case 'bar':
+				var b = scaleBorderInt(attrs.border);
+				new Bar(
+					new Point(parseAndScaleInt(attrs.w), parseAndScaleInt(attrs.h)),
+					attrs.begin,
+					attrs.fill,
+					new Point(b.left, b.top),
+					isTrue(attrs.invert),
+					attrs.src != null,
+					parseAndScaleInt(attrs.creep)
 				);
 			case 'progressbar':
 				var font = parseAndScaleInt(attrs.size) + 'px ' + attrs.font;
