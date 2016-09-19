@@ -22,6 +22,7 @@ import physics.TempTest;
 import PoolTest;
 import PriorityTest;
 import StreamTest;
+import text.TextToolsTest;
 import text.tpl.TplTest;
 import TextCoderTest;
 import time.DTimerTest;
@@ -69,6 +70,7 @@ class TestSuite extends massive.munit.TestSuite
 		add(PoolTest);
 		add(PriorityTest);
 		add(StreamTest);
+		add(text.TextToolsTest);
 		add(text.tpl.TplTest);
 		add(TextCoderTest);
 		add(time.DTimerTest);
