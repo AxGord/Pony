@@ -120,8 +120,8 @@ class Button extends Sprite implements IWH {
 		return s;
 	}
 	
-	private function disableHandler():Void touchActive = false;
-	private function enableHandler():Void touchActive = true;
+	private function disableHandler():Void cursor = false;
+	private function enableHandler():Void cursor = true;
 	
 	inline public function wait(cb:Void->Void):Void wr.wait(cb);
 	inline private function get_size():Point<Float> return new Point(zone.sliceWidth, zone.sliceHeight);
