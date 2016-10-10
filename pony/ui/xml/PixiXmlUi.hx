@@ -46,6 +46,7 @@ import pony.pixi.ui.BGLayout;
 import pony.pixi.ui.BText;
 import pony.pixi.ui.Bar;
 import pony.pixi.ui.Button;
+import pony.pixi.ui.FSButton;
 import pony.pixi.ui.IntervalLayout;
 import pony.pixi.ui.LabelButton;
 import pony.pixi.ui.ProgressBar;
@@ -72,6 +73,7 @@ import pony.time.Time;
 	progressbar: pony.pixi.ui.ProgressBar,
 	timebar: pony.pixi.ui.TimeBar,
 	button: pony.pixi.ui.Button,
+	fsbutton: pony.pixi.ui.FSButton,
 	lbutton: pony.pixi.ui.LabelButton,
 	textbox: pony.pixi.ui.TextBox,
 	rect: pixi.core.graphics.Graphics,
@@ -166,6 +168,8 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 				b;
 			case 'button':
 				new Button(splitAttr(attrs.skin), attrs.src);
+			case 'fsbutton':
+				new FSButton(splitAttr(attrs.skin), attrs.src);
 			case 'slider':
 				var b = new StepSlider(
 					new LabelButton(splitAttr(attrs.skin), isTrue(attrs.vert), scaleBorderInt(attrs.border), attrs.src),
