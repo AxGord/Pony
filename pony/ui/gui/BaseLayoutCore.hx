@@ -59,6 +59,15 @@ class BaseLayoutCore<T> implements Declarator implements HasSignal implements IW
 	
 	public function add(o:T):Void {
 		objects.push(o);
+		addWait(o);
+	}
+	
+	public function addToBegin(o:T):Void {
+		objects.unshift(o);
+		addWait(o);
+	}
+	
+	private function addWait(o:T) {
 		if (Std.is(o, IWH)) {
 			tasks.add();
 			cast(o, IWH).wait(tasks.end);

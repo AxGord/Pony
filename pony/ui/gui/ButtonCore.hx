@@ -86,7 +86,10 @@ class ButtonCore extends Tumbler implements HasSignal {
 			lowMode = 1;
 		}
 		changeLowMode / 1 << function(v) mode = v > 1 ? v - 1 : v;
-		changeBMode << function(v) mode = v ? 1 : 0;
+		changeBMode << function(v:Bool) {
+			mode = v ? 1 : 0;
+			if (!enabled) modeBeforeDisable = mode != 0 ? mode + 1 : mode;
+		}
 		allowChangeMode();
 		onEnable << allowChangeMode;
 		onDisable << disallowChangeMode;
@@ -153,5 +156,10 @@ class ButtonCore extends Tumbler implements HasSignal {
 	private function setLowMode(m:Int):Void lowMode = m;
 	private function setState(s:ButtonState):Void state = s;
 	private function click(mode:Int):Void eClick.dispatch(mode, true);
+
+	@:extern inline public function reset():Void {
+		lowMode = 0;
+		state = Default;
+	}
 	
 }

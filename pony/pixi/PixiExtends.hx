@@ -66,6 +66,11 @@ class PixiExtends {
 		return b;
 	}
 	
+	public static function childLevel(s:Sprite, lvl:Int):Sprite {
+		for (_ in 0...lvl) s = cast s.getChildAt(0);
+		return s;
+	}
+	
 }
 
 /**

@@ -227,6 +227,7 @@ class AssetManager {
 	@:extern inline public static function _load(asset:String, cb:Void->Void):Void PixiAssets.load(asset, cb);
 	@:extern inline public static function image(asset:String, ?name:String) return PixiAssets.image(asset, name);
 	@:extern inline public static function texture(asset:String, ?name:String) return PixiAssets.texture(asset, name);
+	@:extern inline public static function sound(asset:String) return PixiAssets.sound(asset);
 	#elseif openfl
 	@:extern inline public static function _load(asset:String, cb:Void->Void):Void OpenflAssets.load(asset, cb);
 	@:extern inline public static function image(asset:String, ?name:String) return OpenflAssets.image(asset);

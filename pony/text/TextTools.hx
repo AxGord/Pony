@@ -132,6 +132,61 @@ class TextTools {
  				a = s.split('\n'); 
  		} 
  		return a; 
- 	} 
+ 	}
+	
+	public static function tabParser(s:String, ?tab:String):Dynamic {
+		var a = s.split('\n');
+		//trace('Lines '+a.length);
+		var name = StringTools.trim(a.shift());
+		if (a.length == 0) return StringTools.trim(name);
+		var section:Map<String, Dynamic> = new Map<String, Dynamic>();
+		var entry = [];
+		var arr = [];
+		for (e in a) {
+			if (tab == null) tab = detectTab(e);
+			if (e.substr(0, tab.length) == tab) {
+				entry.push(removeTab(e, tab));
+			} else {
+				var data:Dynamic = null;
+				if (entry.length == 0) {
+					data = StringTools.trim(e);
+					arr.push(name);
+				} else {
+					data = tabParser(entry.join('\n'), tab);
+					section[name] = data;
+					entry = [];
+				}
+				name = StringTools.trim(e);
+			}
+		}
+		
+		if (arr.length > 0) {
+			arr.push(name);
+			return arr;
+		}
+		
+		if (entry.length > 0) {
+			var data = tabParser(entry.join('\n'), tab);
+			section[name] = data;
+		}
+		return section;
+	}
 
+	public static function removeTab(s:String, ?tab:String):String {
+		if (tab == null) tab = detectTab(s);
+		return s.substr(tab.length);
+	}
+	
+	private static function detectTab(s:String):String {
+		for (t in ['    ', '		', '	', '  ', ' '])
+			if (s.substr(0, t.length) == t)
+				return t;
+		return null;
+	}
+	
+	public static function removeQuotes(s:String):String {
+		var f = s.charAt(0);
+		return (f == '"' || f == "'") ? s.substring(1, s.length - 1) : s;
+	}
+	
 }

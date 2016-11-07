@@ -48,6 +48,8 @@ import pony.ui.touch.pixi.Touch;
  */
 class App extends Application {
 	
+	public static var main:App;
+	
 	public var isWebGL:Bool;
 	
 	private var _width:Float;
@@ -88,10 +90,13 @@ class App extends Application {
 		Touch.reg(container);
 		Touch.correction = correction;
 		resizeHandler();
+		if (main == null) main = this;
 	}
 	
+	public function fullscreen():Void JsTools.fse(canvas);
+	
 	private function resizeHandler():Void {
-		if (parentDom == null) {
+		if (parentDom == null || JsTools.isFSE) {
 			width = Browser.window.innerWidth;
 			height = Browser.window.innerHeight;
 		} else {
@@ -108,7 +113,7 @@ class App extends Application {
 		
 		//Stealing all mobile device resources
 		//if (!JsTools.isMobile)
-		ratio *= Browser.window.devicePixelRatio;
+		//ratio *= Browser.window.devicePixelRatio;
 		
 		renderer.resize(width/d * ratio, height/d * ratio);
 		canvas.style.width = width + "px";

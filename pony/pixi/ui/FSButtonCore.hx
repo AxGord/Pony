@@ -25,52 +25,35 @@
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
-package pony.pixi;
+package pony.pixi.ui;
 
-import pixi.core.sprites.Sprite;
-import pixi.core.textures.Texture;
-import pixi.loaders.Loader;
-import pixi.loaders.Resource;
-import pony.ui.AssetManager;
+import js.Browser;
 
 /**
- * PixiAssets
+ * FSButtonCore
  * @author AxGord <axgord@gmail.com>
  */
-class PixiAssets {
-	
-	private static var sounds:Map<String, PixiSound> = new Map();
-	
-	public static function load(asset:String, cb:Void->Void):Void {
-		var loader = new Loader();
-		if (['.mp3', '.wav', '.ogg'].indexOf(asset.substr( -4)) != -1) {
-			if (!sounds.exists(asset)) {
-				var s = new PixiSound();
-				sounds[asset] = s;
-				loader.add(asset, AssetManager.getPath(asset), { loadType: 3 }, s.loadHandler);
-			}
-		} else {
-			loader.add(asset, AssetManager.getPath(asset));
-		}
-		loader.load(cb);
+class FSButtonCore {
+
+	public function new() {
+		App.main.canvas.addEventListener("fullscreenchange", setFullScreenImage);
+		App.main.canvas.addEventListener("mozfullscreenchange", setFullScreenImage);
+		App.main.canvas.addEventListener("webkitfullscreenchange", setFullScreenImage);
+		App.main.canvas.addEventListener("msfullscreenchange", setFullScreenImage);
 	}
 	
-	public static function image(asset:String, ?name:String):Sprite {
-		return name == null ? Sprite.fromImage(AssetManager.getPath(asset)) : Sprite.fromFrame(name);
+	dynamic public function onEnable():Void {}
+	dynamic public function onDisable():Void {}
+	
+	private function setFullScreenImage():Void {
+		if (JsTools.isFSE)
+			onEnable();
+		else
+			onDisable();
 	}
 	
-	public static function texture(asset:String, ?name:String):Texture {
-		return name == null ? Texture.fromImage(AssetManager.getPath(asset)) : Texture.fromFrame(name);
-	}
+	public function fsOn():Void App.main.fullscreen();
 	
-	public static function cImage(asset:String, useSpriteSheet:Bool):Sprite {
-		return useSpriteSheet ? Sprite.fromFrame(asset) : Sprite.fromImage(AssetManager.getPath(asset));
-	}
-	
-	public static function cTexture(asset:String, useSpriteSheet:Bool):Texture {
-		return useSpriteSheet ? Texture.fromFrame(asset) : Texture.fromImage(AssetManager.getPath(asset));
-	}
-	
-	public static function sound(asset:String):PixiSound return sounds[asset]; 
+	public function fsOff():Void JsTools.closeFS();
 	
 }

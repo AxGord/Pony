@@ -40,10 +40,13 @@ class JsTools {
 	public static var isEdge(get, never):Bool;
 	public static var isMobile(get, never):Bool;
 	public static var isAndroid(get, never):Bool;
+	public static var isSafari(get, never):Bool;
+	public static var isFSE(get, never):Bool;
 	
 	private static var _isIE:Null<Bool>;
 	private static var _isEdge:Null<Bool>;
 	private static var _isAndroid:Null<Bool>;
+	private static var _isSafari:Null<Bool>;
 	
 	private static function get_isIE():Bool {
 		if (_isIE == null) {
@@ -67,10 +70,53 @@ class JsTools {
 		return _isAndroid;
 	}
 	
+	private static function get_isSafari():Bool {
+		if (_isSafari == null) {
+			_isSafari = Browser.navigator.userAgent.toLowerCase().indexOf('safari') != -1;
+		}
+		return _isSafari;
+	}
+	
 	@:extern inline private static function get_isMobile():Bool return untyped Browser.window.orientation != null;
 	
 	@:extern inline public static function remove(el:DOMElement):Void {
 		isIE ? el.parentNode.removeChild(el) : el.remove();
+	}
+	
+	@:extern inline public static function get_isFSE():Bool {
+		return untyped 
+        {
+            Browser.document.fullscreenElement ||
+            Browser.document.mozFullscreenElement ||
+            Browser.document.webkitFullscreenElement ||
+            Browser.document.msFullscreenElement; 
+        };
+	}
+	
+	public static function closeFS():Void {
+		untyped {
+			if (document.cancelFullScreen)
+				document.cancelFullScreen();
+			else if (document.mozCancelFullScreen)
+				document.mozCancelFullScreen();
+			else if (document.webkitCancelFullScreen)
+				document.webkitCancelFullScreen();
+			else if (document.msCancelFullScreen)
+				document.msCancelFullScreen();
+		}
+	}
+	
+	public static function fse(e:DOMElement):Void {
+		untyped {
+			if (e.requestFullscreen)
+				e.requestFullscreen();
+			else if (e.mozRequestFullScreen)
+				e.mozRequestFullScreen();
+			else if (e.webkitRequestFullscreen)
+				e.webkitRequestFullscreen();
+			else if (e.msRequestFullscreen)
+				e.msRequestFullscreen();
+		}
 	}
 	
 }

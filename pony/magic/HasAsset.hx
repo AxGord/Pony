@@ -214,6 +214,17 @@ class HasAssetBuilder {
 			});
 			
 			fields.push({
+				name: f == 'def' ? 'sound' : 'sound_' + f,
+				access: [APublic, AStatic],
+				kind: FieldType.FFun( {
+				args: [{name: 'asset', type:macro:Int}],
+						ret: null,
+						expr: macro return pony.ui.AssetManager.sound($v+'/'+ASSETS_LIST[asset])
+					}),
+				pos: Context.currentPos()
+			});
+			
+			fields.push({
 				name: f == 'def' ? 'getTexture' : 'getTexture_' + f,
 				access: [APublic, AStatic],
 				kind: FieldType.FFun( {

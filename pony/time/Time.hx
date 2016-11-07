@@ -27,7 +27,6 @@
 **/
 package pony.time;
 
-import Math.*;
 import pony.math.MathTools;
 
 using Std;
@@ -131,7 +130,7 @@ abstract Time(Null<Int>) from Int to Int {
 	}
 	
 	@:extern inline public static function createft(days:String, hours:String, minutes:String, seconds:String):Time {
-		return create(days.parseInt(), hours.parseInt(), hours.parseInt(), seconds.parseInt());
+		return create(days.parseInt(), hours.parseInt(), minutes.parseInt(), seconds.parseInt());
 	}
 	
 	@:extern inline private function get_ms():Int return this % 1000;
@@ -154,17 +153,23 @@ abstract Time(Null<Int>) from Int to Int {
 	
 	@:to @:extern inline public function toFloat():Float return this;
 	@:to @:extern inline public function toArray():Array<Int> return [days, hours, minutes, seconds, ms];
+	
+	#if !macro
 	@:to public function toString():String {
 		var s = '';
 		if (this < 0) s += '-';
-		if (days != 0) s += abs(days) + ' ';
+		if (days != 0) s += Math.abs(days) + ' ';
 		s += clock();
-		if (ms != 0) s += '.' + abs(ms).toFixed('000');
+		if (ms != 0) s += '.' + Math.abs(ms).toFixed('000');
 		return s == '' ? '0' : s;
 	}
 	
 	@:extern inline public function showMinSec():String {
 		return print(minutes) + ':' + print(seconds);
+	}
+	
+	@:extern inline public function showSec():String {
+		return print(totalSeconds);
 	}
 	
 	public function clock(?autoHide:Bool):String {
@@ -174,12 +179,13 @@ abstract Time(Null<Int>) from Int to Int {
 		} else {
 			if (minutes != 0) {
 				s += showMinSec();
-			} else if (seconds != 0) s += abs(seconds);
+			} else if (seconds != 0) s += Math.abs(seconds);
 		}
 		return s;
 	}
 	
-	@:extern inline static function print(v:Float):String return abs(v).toFixed('00');
+	@:extern inline static function print(v:Float):String return Math.abs(v).toFixed('00');
+	#end
 	
 	@:op(A + B) @:extern inline static private function add(a:Time, b:Time):Time return (a:Int) + (b:Int);
 	@:op(A + B) @:extern inline static private function addInt(a:Time, b:Int):Time return (a:Int) + b;

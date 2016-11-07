@@ -43,9 +43,9 @@ class SliceSprite extends Sprite {
 	private var inited:Bool = false;
 	private var images:Array<Sprite>;
 	
-	public function new(data:Array<String>, useSpriteSheet:Bool = false) {
+	public function new(data:Array<String>, ?useSpriteSheet:String) {
 		super();
-		images = [for (e in data) PixiAssets.cImage(e, useSpriteSheet)];
+		images = [for (e in data) PixiAssets.image(useSpriteSheet, e)];
 		images.loadedList(init);
 	}
 	

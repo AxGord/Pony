@@ -57,7 +57,7 @@ class Button extends Sprite implements IWH {
 	private var prev:Int = 0;
 	private var wr:WaitReady;
 	
-	public function new(imgs:ImmutableArray<String>, ?offset:Point<Float>, useSpriteSheet:Bool = false) {
+	public function new(imgs:ImmutableArray<String>, ?offset:Point<Float>, ?useSpriteSheet:String) {
 		var imgs = imgs.copy();
 		wr = new WaitReady();
 		if (imgs[0] == null) throw 'Need first img';
@@ -84,7 +84,7 @@ class Button extends Sprite implements IWH {
 		}
 		super();
 		zone = getInteractiveImg(z, useSpriteSheet);
-		if (useSpriteSheet)
+		if (useSpriteSheet!=null)
 			wr.ready();
 		else
 			zone.texture.loaded(wr.ready);
@@ -109,19 +109,19 @@ class Button extends Sprite implements IWH {
 	}
 	
 	
-	@:extern inline private static function getInteractiveImg(img:String, useSpriteSheet:Bool):SliceSprite {
-		return SliceTools.getSliceSprite(useSpriteSheet ? StringTools.replace(img, '/', '_') : img, useSpriteSheet);
+	@:extern inline private static function getInteractiveImg(img:String, useSpriteSheet:String):SliceSprite {
+		return SliceTools.getSliceSprite(useSpriteSheet!=null ? StringTools.replace(img, '/', '_') : img, useSpriteSheet);
 	}
 	
-	private static function getImg(img:String, useSpriteSheet:Bool):SliceSprite {
+	private static function getImg(img:String, useSpriteSheet:String):SliceSprite {
 		var s = getInteractiveImg(img, useSpriteSheet);
 		s.interactive = false;
 		s.interactiveChildren = false;
 		return s;
 	}
 	
-	private function disableHandler():Void touchActive = false;
-	private function enableHandler():Void touchActive = true;
+	private function disableHandler():Void cursor = false;
+	private function enableHandler():Void cursor = true;
 	
 	inline public function wait(cb:Void->Void):Void wr.wait(cb);
 	inline private function get_size():Point<Float> return new Point(zone.sliceWidth, zone.sliceHeight);

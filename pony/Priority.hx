@@ -39,10 +39,10 @@ typedef PriorityIds = Priority<{id:Int,name:String}>;
  * @author AxGord
  */
 @:final class Priority<T:Dynamic> implements HasSignal {
-	
+	#if !macro
 	@:lazy public var onTake:Signal0;
 	@:lazy public var onLost:Signal0;
-	
+	#end
 	/**
 	 * Total elements count.
 	 */
@@ -126,7 +126,9 @@ typedef PriorityIds = Priority<{id:Int,name:String}>;
 		for (k in 0...counters.length)
 			if (c < counters[k]) counters[k]++;
 		hash.set(priority, s + 1);
+		#if !macro
 		if (needOnTake) eTake.dispatch();
+		#end
 		return this;
 	}
 	
@@ -192,7 +194,9 @@ typedef PriorityIds = Priority<{id:Int,name:String}>;
 	@:extern inline public function clear():Priority<T> {
 		var needOnLost = !empty;
 		_clear();
+		#if !macro
 		if (needOnLost) eLost.dispatch();
+		#end
 		return this;
 	}
 	
@@ -217,7 +221,9 @@ typedef PriorityIds = Priority<{id:Int,name:String}>;
 		data = null;
 		counters = null;
 		addStack = null;
+		#if !macro
 		destroySignals();
+		#end
 	}
 	
 	/**
@@ -307,7 +313,9 @@ typedef PriorityIds = Priority<{id:Int,name:String}>;
 				break;
 			}
 		}
+		#if !macro
 		if (needOnLost && empty) eLost.dispatch();
+		#end
 		if (double) remove(e);
 		return true;
 	}
