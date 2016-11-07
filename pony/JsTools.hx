@@ -40,11 +40,13 @@ class JsTools {
 	public static var isEdge(get, never):Bool;
 	public static var isMobile(get, never):Bool;
 	public static var isAndroid(get, never):Bool;
+	public static var isSafari(get, never):Bool;
 	public static var isFSE(get, never):Bool;
 	
 	private static var _isIE:Null<Bool>;
 	private static var _isEdge:Null<Bool>;
 	private static var _isAndroid:Null<Bool>;
+	private static var _isSafari:Null<Bool>;
 	
 	private static function get_isIE():Bool {
 		if (_isIE == null) {
@@ -66,6 +68,13 @@ class JsTools {
 			_isAndroid = Browser.navigator.userAgent.toLowerCase().indexOf('android') != -1;
 		}
 		return _isAndroid;
+	}
+	
+	private static function get_isSafari():Bool {
+		if (_isSafari == null) {
+			_isSafari = Browser.navigator.userAgent.toLowerCase().indexOf('safari') != -1;
+		}
+		return _isSafari;
 	}
 	
 	@:extern inline private static function get_isMobile():Bool return untyped Browser.window.orientation != null;
