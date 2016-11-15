@@ -29,15 +29,14 @@ package pony.pixi.ui;
 
 import pixi.core.Pixi;
 import pixi.core.sprites.Sprite;
-import pixi.core.textures.Texture;
+import pony.Or;
 import pony.events.Signal1;
 import pony.events.WaitReady;
 import pony.geom.IWH;
 import pony.geom.Point;
 import pony.magic.HasSignal;
-import pony.Or;
 import pony.time.DeltaTime;
-import pony.ui.gui.BarCore;
+import pony.ui.gui.SmoothBarCore;
 
 using pony.pixi.PixiExtends;
 
@@ -47,7 +46,7 @@ using pony.pixi.PixiExtends;
  */
 class Bar extends Sprite implements HasSignal implements IWH {
 	
-	public var core:BarCore;
+	public var core:SmoothBarCore;
 	@:auto public var onReady:Signal1<Point<Int>>;
 	
 	private var _wait:WaitReady = new WaitReady();
@@ -59,6 +58,7 @@ class Bar extends Sprite implements HasSignal implements IWH {
 	private var fill:Sprite;
 	private var invert:Bool = false;
 	private var creep:Float;
+	private var smooth:Bool;
 
 	public function new(
 		bg:Or<String, Point<Int>>,
@@ -67,11 +67,13 @@ class Bar extends Sprite implements HasSignal implements IWH {
 		?offset:Point<Int>,
 		invert:Bool = false,
 		useSpriteSheet:Bool = false,
-		creep:Float = 0
+		creep:Float = 0,
+		smooth:Bool = false
 	) {
 		super();
 		this.invert = invert;
 		this.creep = creep;
+		this.smooth = smooth;
 		var loadList = switch bg {
 			case OrState.A(v):
 				var s = PixiAssets.cImage(v, useSpriteSheet);
@@ -118,7 +120,8 @@ class Bar extends Sprite implements HasSignal implements IWH {
 			case OrState.A(v): new Point<Int>(Std.int(v.width), Std.int(v.height));
 			case OrState.B(v): v;
 		}
-		core = BarCore.create(size.x - (begin.x + begin.width) * 2, size.y - (begin.y + begin.height) * 2, invert);
+		core = SmoothBarCore.create(size.x - (begin.x + begin.width) * 2, size.y - (begin.y + begin.height) * 2, invert);
+		core.smooth = smooth;
 		if (core.isVertical) {
 			end.height = -end.height;
 			fill.y = begin.y + begin.height - creep;
@@ -126,18 +129,27 @@ class Bar extends Sprite implements HasSignal implements IWH {
 			end.width = -end.width;
 			fill.x = begin.x + begin.width - creep;
 		}
-		core.changeX = function(p:Float) {
-			fill.width = p + creep * 2;
-			end.x = fill.x + fill.width + begin.width - creep;
-		}
-		core.changeY = function(p:Float) {
-			fill.height = p + creep * 2;
-			end.y = fill.y + fill.height + begin.height - creep;
+		if (smooth) {
+			core.smoothChangeX= changeXHandler;
+			core.smoothChangeY = changeYHandler;
+		} else {
+			core.changeX = changeXHandler;
+			core.changeY = changeYHandler;
 		}
 		
 		core.endInit();
 		eReady.dispatch(size);
 		eReady.destroy();
+	}
+	
+	private function changeXHandler(p:Float) {
+		fill.width = p + creep * 2;
+		end.x = fill.x + fill.width + begin.width - creep;
+	}
+	
+	private function changeYHandler(p:Float) {
+		fill.height = p + creep * 2;
+		end.y = fill.y + fill.height + begin.height - creep;
 	}
 
 	override public function destroy():Void {

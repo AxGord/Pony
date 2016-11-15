@@ -199,7 +199,8 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 					new Point(b.left, b.top),
 					isTrue(attrs.invert),
 					attrs.src != null,
-					parseAndScaleInt(attrs.creep)
+					parseAndScaleInt(attrs.creep),
+					PixiXmlUi.isTrue(attrs.smooth)
 				);
 			case 'progressbar':
 				var font = attrs.font == null ? null : parseAndScaleInt(attrs.size) + 'px ' + attrs.font;
@@ -213,7 +214,8 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 					font == null ? null : ETextStyle.BITMAP_TEXT_STYLE({font: font, tint: UColor.fromString(attrs.color).rgb}),
 					isTrue(attrs.invert),
 					font == null || attrs.src.indexOf(',') != -1,
-					parseAndScaleInt(attrs.creep)
+					parseAndScaleInt(attrs.creep),
+					PixiXmlUi.isTrue(attrs.smooth)
 				);
 			case 'timebar':
 				var font = parseAndScaleInt(attrs.size) + 'px ' + attrs.font;

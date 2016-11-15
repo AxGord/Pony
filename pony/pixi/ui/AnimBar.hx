@@ -49,9 +49,10 @@ class AnimBar extends Bar {
 		?offset:Point<Int>,
 		invert:Bool = false,
 		useSpriteSheet:Bool=false,
-		creep:Float = 0
+		creep:Float = 0,
+		smooth:Bool = false
 	) {
-		super(bg, fillBegin, fill, offset, invert, useSpriteSheet, creep);
+		super(bg, fillBegin, fill, offset, invert, useSpriteSheet, creep, smooth);
 		tween = new Tween(animationSpeed, true, true, true, true);
 		if (animation != null) {
 			this.animation = PixiAssets.cImage(animation, useSpriteSheet);
