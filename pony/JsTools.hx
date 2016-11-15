@@ -30,37 +30,40 @@ package pony;
 import js.Browser;
 import js.html.DOMElement;
 
+enum UserAgent {
+	IE; Edge; Chrome; Safari;
+}
+
 /**
  * JsTools
  * @author AxGord <axgord@gmail.com>
  */
 class JsTools {
 
-	public static var isIE(get, never):Bool;
-	public static var isEdge(get, never):Bool;
+	public static var agent(get, never):UserAgent;
+	
 	public static var isMobile(get, never):Bool;
 	public static var isAndroid(get, never):Bool;
-	public static var isSafari(get, never):Bool;
 	public static var isFSE(get, never):Bool;
 	
-	private static var _isIE:Null<Bool>;
-	private static var _isEdge:Null<Bool>;
 	private static var _isAndroid:Null<Bool>;
-	private static var _isSafari:Null<Bool>;
 	
-	private static function get_isIE():Bool {
-		if (_isIE == null) {
-			_isIE = Browser.navigator.userAgent.indexOf('MSIE') != -1
-				|| Browser.navigator.appVersion.indexOf('Trident/') > 0;
-		}
-		return _isIE;
-	}
+	private static var _agent:UserAgent;
 	
-	private static function get_isEdge():Bool {
-		if (_isEdge == null) {
-			_isEdge = Browser.navigator.userAgent.indexOf('Edge') != -1;
+	private static function get_agent():UserAgent {
+		if (_agent != null) return _agent;
+		var ua = Browser.navigator.userAgent.toLowerCase();
+		if (ua.indexOf('msie') != -1
+		|| ua.indexOf('trident/') > 0) {
+			_agent = IE;
+		} else if (ua.indexOf('edge') != -1) {
+			_agent = Edge;
+		} else if (ua.indexOf('chrome') != -1) {
+			_agent = Chrome;
+		} else if (ua.indexOf('safari') != -1 && ua.indexOf('android') == -1) {
+			_agent = Safari;
 		}
-		return _isEdge;
+		return _agent;
 	}
 	
 	private static function get_isAndroid():Bool {
@@ -70,17 +73,10 @@ class JsTools {
 		return _isAndroid;
 	}
 	
-	private static function get_isSafari():Bool {
-		if (_isSafari == null) {
-			_isSafari = Browser.navigator.userAgent.toLowerCase().indexOf('safari') != -1;
-		}
-		return _isSafari;
-	}
-	
 	@:extern inline private static function get_isMobile():Bool return untyped Browser.window.orientation != null;
 	
 	@:extern inline public static function remove(el:DOMElement):Void {
-		isIE ? el.parentNode.removeChild(el) : el.remove();
+		agent == IE ? el.parentNode.removeChild(el) : el.remove();
 	}
 	
 	@:extern inline public static function get_isFSE():Bool {

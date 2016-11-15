@@ -202,7 +202,7 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 					parseAndScaleInt(attrs.creep)
 				);
 			case 'progressbar':
-				var font = parseAndScaleInt(attrs.size) + 'px ' + attrs.font;
+				var font = attrs.font == null ? null : parseAndScaleInt(attrs.size) + 'px ' + attrs.font;
 				new ProgressBar(
 					attrs.bg,
 					attrs.begin,
@@ -210,9 +210,9 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 					attrs.anim,
 					attrs.animspeed == null ? null : (attrs.animspeed:Time),
 					scaleBorderInt(attrs.border),
-					ETextStyle.BITMAP_TEXT_STYLE({font: font, tint: UColor.fromString(attrs.color).rgb}),
+					font == null ? null : ETextStyle.BITMAP_TEXT_STYLE({font: font, tint: UColor.fromString(attrs.color).rgb}),
 					isTrue(attrs.invert),
-					attrs.src.indexOf(',') != -1,
+					font == null || attrs.src.indexOf(',') != -1,
 					parseAndScaleInt(attrs.creep)
 				);
 			case 'timebar':

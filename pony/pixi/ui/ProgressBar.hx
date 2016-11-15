@@ -52,6 +52,7 @@ class ProgressBar extends LabelBar {
 	}
 	
 	private function initProgressBar():Void {
+		if (label == null) return;
 		setLabel(0);
 		core.changePercent << setLabel;
 	}

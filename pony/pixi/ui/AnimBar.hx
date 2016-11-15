@@ -52,36 +52,41 @@ class AnimBar extends Bar {
 		creep:Float = 0
 	) {
 		super(bg, fillBegin, fill, offset, invert, useSpriteSheet, creep);
-		if (animation == null) return;
-		this.animation = PixiAssets.cImage(animation, useSpriteSheet);
-		this.animation.visible = false;
-		if (offset != null) {
-			this.animation.x = offset.x;
-			this.animation.y = offset.y;
-		}
 		tween = new Tween(animationSpeed, true, true, true, true);
-		tween.onUpdate << animUpdate;
-		onReady < animInit;
+		if (animation != null) {
+			this.animation = PixiAssets.cImage(animation, useSpriteSheet);
+			this.animation.visible = false;
+			if (offset != null) {
+				this.animation.x = offset.x;
+				this.animation.y = offset.y;
+			}
+			tween.onUpdate << animUpdate;
+			onReady < animInit;
+		} else {
+			tween.onUpdate << animUpdate2;
+		}
 	}
 	
 	private function animInit():Void addChildAt(animation, children.length);
 	
 	private function animUpdate(alp:Float):Void animation.alpha = alp;
+	private function animUpdate2(alp:Float):Void begin.alpha = fill.alpha = end.alpha = alp;
 	
 	public function startAnimation():Void {
-		animation.visible = true;
+		if (animation != null) animation.visible = true;
 		tween.play();
 	}
 	
 	public function stopAnimation():Void {
-		animation.visible = false;
+		if (animation != null) animation.visible = false;
+		else begin.alpha = fill.alpha = end.alpha = 1;
 		tween.stopOnEnd();
 	}
 	
 	override public function destroy():Void {
+		tween.destroy();
+		tween = null;
 		if (animation != null) {
-			tween.destroy();
-			tween = null;
 			removeChild(animation);
 			animation.destroy();
 			animation = null;

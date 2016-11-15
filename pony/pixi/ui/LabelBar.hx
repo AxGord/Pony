@@ -59,7 +59,7 @@ class LabelBar extends AnimBar {
 		this.style = style;
 		this.border = border;
 		super(bg, fillBegin, fill, animation, animationSpeed, border == null ? null : new Point(border.left, border.top), invert, useSpriteSheet, creep);
-		onReady < labelInit;
+		if (style != null) onReady < labelInit;
 	}
 	
 	private function labelInit(p:Point<Int>):Void {
@@ -69,8 +69,8 @@ class LabelBar extends AnimBar {
 		style = null;
 	}
 	
-	@:extern inline function get_text():String return label.text;
-	@:extern inline function set_text(s:String):String return label.text = s;
+	@:extern inline function get_text():String return label == null ? null : label.text;
+	@:extern inline function set_text(s:String):String return label == null ? null : label.text = s;
 
 	override public function startAnimation():Void {
 		if (label == null)
