@@ -55,9 +55,24 @@ class XmlUiBuilder {
 			case _: Context.error('Types list wrong type', typesExpr.pos);
 		}
 		
-		var cl = Context.getLocalClass();
-		var meta = cl.get().meta.get();
-		if (!meta.checkMeta([':ui'])) Context.error('Not have :ui', Context.currentPos());
+		var cl = Context.getLocalClass().get();
+		var meta = cl.meta.get();
+		if (!meta.checkMeta([':ui'])) {
+			//Context.error('Not have :ui', Context.currentPos());
+			return Context.getBuildFields();
+		}
+		
+		if (cl.superClass != null) {
+			var submeta = cl.superClass.t.get().meta.get();
+			if (submeta.checkMeta([':ui_types'])) {
+				var m = submeta.getMeta(':ui_types').params[0];
+				switch m.expr {
+					case EObjectDecl(ts):
+						for (t in ts) types[t.field] = TypeTools.toComplexType(Context.getType(exprToTypeString(t.expr)));
+					case _: Context.error('Types list wrong type', m.pos);
+				}
+			}
+		}
 		
 		if (meta.checkMeta([':ui_types'])) {
 			var m = meta.getMeta(':ui_types').params[0];

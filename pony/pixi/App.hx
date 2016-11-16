@@ -51,6 +51,7 @@ class App extends Application {
 	public static var main:App;
 	
 	public var isWebGL:Bool;
+	public var pauseDraw:Bool = false;
 	
 	private var _width:Float;
 	private var _height:Float;
@@ -184,6 +185,16 @@ class App extends Application {
 	override function _onWindowResize(event:Event):Void {
 		resizeTimer.reset();
 		resizeTimer.start();
+	}
+	
+	override function _onRequestAnimationFrame(elapsedTime:Float) {
+		_frameCount++;
+		if (_frameCount == Std.int(60 / fps)) {
+			_frameCount = 0;
+			if (onUpdate != null) onUpdate(elapsedTime);
+			if (!pauseDraw) renderer.render(stage);
+		}
+		_animationFrameId = Browser.window.requestAnimationFrame(_onRequestAnimationFrame);
 	}
 	
 }
