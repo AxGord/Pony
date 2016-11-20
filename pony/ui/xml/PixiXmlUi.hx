@@ -29,6 +29,7 @@ package pony.ui.xml;
 
 import pixi.core.display.DisplayObject;
 import pixi.core.graphics.Graphics;
+import pixi.core.math.shapes.Rectangle;
 import pixi.core.renderers.webgl.filters.AbstractFilter;
 import pixi.core.sprites.Sprite;
 import pixi.extras.MovieClip;
@@ -234,9 +235,11 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 			case _:
 				customUIElement(name, attrs, content);
 		}
+		
 		if (isTrue(attrs.notouch)) {
 			obj.interactive = false;
 			obj.interactiveChildren = false;
+			obj.hitArea = new Rectangle(0, 0, 0, 0);
 		}
 		if (attrs.r != null) {
 			obj.rotation = Std.parseFloat(attrs.r) * Math.PI / 180;

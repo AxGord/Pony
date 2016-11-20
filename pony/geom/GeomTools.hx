@@ -27,17 +27,13 @@
 **/
 package pony.geom;
 
-import pony.geom.Align;
-import pony.geom.Point;
-
 /**
  * GeomTools
  * @author AxGord
  */
-class GeomTools 
-{
+class GeomTools {
 	
-	public static function inPoly<T:Float>(point:Point<T>, poly:Polygon<T>):Bool {		
+	public static function inPoly<T:Float>(point:Point<T>, poly:Polygon<T>):Bool {
 		var xp = [];
 		var yp = [];
 		//Maybe use poly direct?
@@ -51,7 +47,7 @@ class GeomTools
 		var j = npol - 1;
 		var c = false;
 		for (i in 0...npol){
-			if ((((yp[i]<=y) && (y<yp[j])) || ((yp[j]<=y) && (y<yp[i]))) &&
+			if ((((yp[i] <= y) && (y < yp[j])) || ((yp[j] <= y) && (y < yp[i]))) &&
 				(x > (xp[j] - xp[i]) * (y - yp[i]) / (yp[j] - yp[i]) + xp[i])) {
 				c = !c;
 			}
@@ -66,16 +62,16 @@ class GeomTools
 		return i;
 	}
 	
-	inline public static function rectInPoly<T:Float>(rect:Rect<T>, poly:Polygon<T>):Int {
+	public static inline function rectInPoly<T:Float>(rect:Rect<T>, poly:Polygon<T>):Int {
 		return countInPoly(rectToPoints(rect), poly);
 	}
 	
-	inline public static function rectToPoints<T:Float>(rect:Rect<T>):Array<Point<T>> {
+	public static inline function rectToPoints<T:Float>(rect:Rect<T>):Array<Point<T>> {
 		return [
 			new Point<T>(rect.x, rect.y),
-			new Point<T>(rect.x+rect.width, rect.y),
-			new Point<T>(rect.x+rect.width, rect.y+rect.height),
-			new Point<T>(rect.x, rect.y+rect.height)
+			new Point<T>(rect.x + rect.width, rect.y),
+			new Point<T>(rect.x + rect.width, rect.y + rect.height),
+			new Point<T>(rect.x, rect.y + rect.height)
 		];
 	}
 	
