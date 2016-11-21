@@ -27,6 +27,10 @@
 **/
 package pony.geom;
 
+import pony.geom.Align.HAlign;
+import pony.geom.Align.VAlign;
+import pony.geom.Point.IntPoint;
+
 /**
  * GeomTools
  * @author AxGord

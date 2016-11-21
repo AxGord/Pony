@@ -1,9 +1,13 @@
 engines:
   haxe-checkstyle:
     enabled: true
+  markdownlint:
+    enabled: true
 
 exclude_paths:
   - socketTests/**/*
+  - tests/**/*
+  - logo/**/*
 
 ratings:
   paths:
