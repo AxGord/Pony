@@ -30,6 +30,7 @@ package pony.pixi;
 import pixi.core.renderers.canvas.CanvasRenderer;
 import pixi.core.sprites.Sprite;
 import pixi.core.textures.RenderTexture;
+import pony.JsTools;
 import pony.geom.Point;
 import pony.time.DeltaTime;
 
@@ -46,7 +47,7 @@ class CanvasSprite extends Sprite {
 	private static function init():Void {
 		if (inited) return;
 		inited == true;
-		if (JsTools.isIE) return;
+		if (JsTools.agent == IE) return;
 		_renderer = new CanvasRenderer(0, 0);
 	}
 	

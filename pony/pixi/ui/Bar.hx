@@ -130,7 +130,7 @@ class Bar extends Sprite implements HasSignal implements IWH {
 			fill.x = begin.x + begin.width - creep;
 		}
 		if (smooth) {
-			core.smoothChangeX= changeXHandler;
+			core.smoothChangeX = changeXHandler;
 			core.smoothChangeY = changeYHandler;
 		} else {
 			core.changeX = changeXHandler;

@@ -100,4 +100,14 @@ class SmoothBarCore extends BarCore {
 	 * Use this method for connect view
 	 */
 	dynamic public function smoothChangeY(v:Float):Void {}
+	
+	override public function endInit():Void {
+		super.endInit();
+		if (isVertical) {
+			smoothChangeY(inv(0));
+		} else {
+			smoothChangeX(inv(0));
+		}
+	}
+	
 }

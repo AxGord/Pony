@@ -27,6 +27,7 @@
 **/
 package pony;
 
+import haxe.Constraints.Function;
 import js.Browser;
 import js.html.DOMElement;
 
@@ -49,6 +50,8 @@ class JsTools {
 	private static var _isAndroid:Null<Bool>;
 	
 	private static var _agent:UserAgent;
+	
+	private static var logFunction:Function;
 	
 	private static function get_agent():UserAgent {
 		if (_agent != null) return _agent;
@@ -113,6 +116,15 @@ class JsTools {
 			else if (e.msRequestFullscreen)
 				e.msRequestFullscreen();
 		}
+	}
+	
+	public static function disableLog():Void {
+		logFunction = Browser.console.log;
+		untyped Browser.console.log = Tools.nullFunction0;
+	}
+	
+	public static function enableLog():Void {
+		untyped Browser.console.log = logFunction;
 	}
 	
 }
