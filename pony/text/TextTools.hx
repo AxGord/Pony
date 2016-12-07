@@ -26,6 +26,7 @@
 * or implied, of Alexander Gordeyko <axgord@gmail.com>.
 **/
 package pony.text;
+import pony.math.MathTools;
 
 #if macro
 import haxe.macro.Context;
@@ -92,7 +93,8 @@ class TextTools {
 	
 	macro public static function includeFileFromCurrentDir(file:String):Expr {
 		var f:String = Context.getPosInfos(Context.currentPos()).file;
-		f = sys.FileSystem.fullPath(f).split('\\').slice(0, -1).join('/') + '/';
+		var i = MathTools.cmax(f.lastIndexOf('\\'), f.lastIndexOf('/'));
+		f = i != -1 ? f.substr(0, i) + '/' : '';
 		var s:String = sys.io.File.getContent(f+file);
 		return macro $v{s};
 	}
@@ -105,7 +107,8 @@ class TextTools {
 	
 	macro public static function includeJsonFromCurrentDir(file:String):Expr {
 		var f:String = Context.getPosInfos(Context.currentPos()).file;
-		f = sys.FileSystem.fullPath(f).split('\\').slice(0, -1).join('/') + '/';
+		var i = MathTools.cmax(f.lastIndexOf('\\'), f.lastIndexOf('/'));
+		f = i != -1 ? f.substr(0, i) + '/' : '';
 		var s:String = sys.io.File.getContent(f+file);
 		haxe.Json.parse(s);//check
 		return macro haxe.Json.parse($v{s});//todo: not parse on runtime
