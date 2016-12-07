@@ -81,6 +81,7 @@ import pony.time.Time;
 	textbutton: pony.pixi.ui.TextButton,
 	clip: pixi.extras.MovieClip,
 	slider: pony.pixi.ui.StepSlider,
+	slice: pony.pixi.ui.slices.SliceSprite,
 }))
 #end
 class PixiXmlUi extends Sprite implements HasAbstract {

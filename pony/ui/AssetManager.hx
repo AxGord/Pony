@@ -166,9 +166,9 @@ class AssetManager {
 
 	public static function cbjoin(cb:Int->Int->Void):Pair<Int->Int->Void, Int->Int->Void> {
 		var aCurrent:Int = 0;
-		var aTotal:Int = 0;
+		var aTotal:Int = 1;
 		var bCurrent:Int = 0;
-		var bTotal:Int = 0;
+		var bTotal:Int = 1;
 		function a(c:Int, t:Int) {
 			aCurrent = c;
 			aTotal = t;
@@ -214,7 +214,7 @@ class AssetManager {
 	}
 	
 	public static function loadList(count:Int, cb:Int->Int->Void):Array<Int->Int->Void> {
-		var totals:Array<Int> = [for (_ in 0...count) 0];
+		var totals:Array<Int> = [for (_ in 0...count) 1];
 		var currents:Array<Int> = [for (_ in 0...count) 0];
 		return [for (i in 0...count) function(c:Int, t:Int) {
 			currents[i] = c;

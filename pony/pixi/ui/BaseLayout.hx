@@ -99,6 +99,7 @@ class BaseLayout<T:BaseLayoutCore<Container>> extends Sprite implements IWH {
 	
 	override function destroy():Void {
 		layout.destroy();
+		layout = null;
 		super.destroy();
 	}
 	

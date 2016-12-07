@@ -182,7 +182,9 @@ class App extends Application {
 		Browser.window.onresize = _onWindowResize;
 	}
 	
-	override function _onWindowResize(event:Event):Void {
+	override function _onWindowResize(event:Event):Void refreshSize();
+	
+	@:extern inline public function refreshSize():Void {
 		resizeTimer.reset();
 		resizeTimer.start();
 	}
