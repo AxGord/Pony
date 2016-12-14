@@ -32,7 +32,19 @@ import js.Browser;
 import js.html.DOMElement;
 
 enum UserAgent {
-	IE; Edge; Chrome; Safari;
+	IE; Edge; Chrome; Safari; Firefox; Unknown;
+}
+
+enum OS {
+	Windows; Linux(type:Linux); Android; Unknown;
+}
+
+enum Linux {
+	Ubuntu; Other;
+}
+
+enum ISA {
+	X32; X64; Unknown;
 }
 
 /**
@@ -42,14 +54,15 @@ enum UserAgent {
 class JsTools {
 
 	public static var agent(get, never):UserAgent;
+	public static var os(get, never):OS;
+	public static var isa(get, never):ISA;
 	
 	public static var isMobile(get, never):Bool;
-	public static var isAndroid(get, never):Bool;
 	public static var isFSE(get, never):Bool;
 	
-	private static var _isAndroid:Null<Bool>;
-	
 	private static var _agent:UserAgent;
+	private static var _os:OS;
+	private static var _isa:ISA;
 	
 	private static var logFunction:Function;
 	
@@ -65,15 +78,43 @@ class JsTools {
 			_agent = Chrome;
 		} else if (ua.indexOf('safari') != -1 && ua.indexOf('android') == -1) {
 			_agent = Safari;
+		} else if (ua.indexOf('firefox') != -1) {
+			_agent = Firefox;
+		} else {
+			_agent = UserAgent.Unknown;
 		}
 		return _agent;
 	}
 	
-	private static function get_isAndroid():Bool {
-		if (_isAndroid == null) {
-			_isAndroid = Browser.navigator.userAgent.toLowerCase().indexOf('android') != -1;
+	private static function get_os():OS {
+		if (_os != null) return _os;
+		var ua = Browser.navigator.userAgent.toLowerCase();
+		if (ua.indexOf('android') != -1) {
+			_os = Android;
+		} else if (ua.indexOf('windows') != -1) {
+			_os = Windows;
+		} else if (ua.indexOf('linux') != -1) {
+			if (ua.indexOf('ubuntu') != -1)
+				_os = Linux(Ubuntu);
+			else
+				_os = Linux(Other);
+		} else {
+			_os = OS.Unknown;
 		}
-		return _isAndroid;
+		return _os;
+	}
+	
+	private static function get_isa():ISA {
+		if (_isa != null) return _isa;
+		var ua = Browser.navigator.userAgent.toLowerCase();
+		if (ua.indexOf('x86_32') != -1 || ua.indexOf('x32') != -1) {
+			_isa = X32;
+		} else if (ua.indexOf('x86_64') != -1 || ua.indexOf('x64') != -1) {
+			_isa = X64;
+		} else {
+			_isa = ISA.Unknown;
+		}
+		return _isa;
 	}
 	
 	@:extern inline private static function get_isMobile():Bool return untyped Browser.window.orientation != null;
