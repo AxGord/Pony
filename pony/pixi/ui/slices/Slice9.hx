@@ -34,8 +34,8 @@ package pony.pixi.ui.slices;
 class Slice9 extends SliceSprite {
 	
 	override private function init():Void {
-		images[1].x = images[0].width;
-		images[3].y = images[0].height;
+		images[1].x = images[0].width - creep;
+		images[3].y = images[0].height - creep;
 		images[4].x = images[1].x;
 		images[4].y = images[3].y;
 		if (sliceWidth == null)
@@ -53,8 +53,8 @@ class Slice9 extends SliceSprite {
 	
 	private function updateWidth():Void {
 		if (!inited) return;
-		images[1].width = sliceWidth - images[0].width - images[2].width;
-		images[2].x = images[0].width + images[1].width;
+		images[1].width = sliceWidth - images[0].width - images[2].width + creep*2;
+		images[2].x = images[0].width + images[1].width - creep*2;
 		images[4].width = images[1].width;
 		images[5].x = images[2].x;
 		images[7].width = images[1].width;
@@ -70,8 +70,8 @@ class Slice9 extends SliceSprite {
 	
 	private function updateHeight():Void {
 		if (!inited) return;
-		images[3].height = sliceHeight - images[0].height - images[6].height;
-		images[6].y = images[0].height + images[3].height;
+		images[3].height = sliceHeight - images[0].height - images[6].height + creep*2;
+		images[6].y = images[0].height + images[3].height - creep*2;
 		images[4].height = images[3].height;
 		images[5].y = images[3].y;
 		images[5].height = images[3].height;

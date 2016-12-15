@@ -42,10 +42,15 @@ class SliceSprite extends Sprite {
 	
 	private var inited:Bool = false;
 	private var images:Array<Sprite>;
+	private var creep:Float;
 	
-	public function new(data:Array<String>, ?useSpriteSheet:String) {
+	public function new(data:Array<String>, ?useSpriteSheet:String, creep:Float = 0) {
 		super();
-		images = [for (e in data) PixiAssets.image(useSpriteSheet, e)];
+		this.creep = creep;
+		if (useSpriteSheet != null)
+			images = [for (e in data) PixiAssets.image(useSpriteSheet, e)];
+		else
+			images = [for (e in data) PixiAssets.image(e)];
 		images.loadedList(init);
 	}
 	

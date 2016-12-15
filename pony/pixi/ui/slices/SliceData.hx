@@ -32,10 +32,12 @@ package pony.pixi.ui.slices;
  */
 enum SliceData {
 	Not(s:String);
-	Vert2(a:String, b:String);
-	Hor2(a:String, b:String);
-	Vert3(a:String, b:String, c:String);
-	Hor3(a:String, b:String, c:String);
+	Vert2(a:Array<String>);
+	Hor2(a:Array<String>);
+	Vert3(a:Array<String>);
+	Hor3(a:Array<String>);
 	Four(a:Array<String>);
+	Vert6(a:Array<String>);
+	Hor6(a:Array<String>);
 	Nine(a:Array<String>);
 }

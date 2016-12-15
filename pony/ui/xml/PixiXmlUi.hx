@@ -136,10 +136,10 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 			case 'image':
 				PixiAssets.image(attrs.src, attrs.name);
 			case 'slice':
-				var s = SliceTools.getSliceSprite(attrs.name, attrs.src);
+				var s = SliceTools.getSliceSprite(attrs.name, attrs.src, parseAndScale(attrs.creep));
 				if (attrs.w != null) s.sliceWidth = Std.parseInt(attrs.w);
 				if (attrs.h != null) s.sliceHeight = Std.parseInt(attrs.h);
-				return s;
+				s;
 			case 'clip':
 				var data = if (attrs.name != null) {
 					var a = attrs.name.split('|');
@@ -154,14 +154,14 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 				m;
 			case 'textbox':
 				var font = parseAndScaleInt(attrs.size) + 'px ' + attrs.font;
-				var text = _putData(content);
+				var text = textTransform(_putData(content), attrs.transform);
 				var style = ETextStyle.BITMAP_TEXT_STYLE({font: font, tint: UColor.fromString(attrs.color).rgb});
 				var s = PixiAssets.image(attrs.src, attrs.name);
 				s.visible = !isTrue(attrs.hidebg);
 				new TextBox(s, text, style, scaleBorderInt(attrs.border), isTrue(attrs.nocache));
 			case 'text':
 				var font = parseAndScaleInt(attrs.size) + 'px ' + attrs.font;
-				var text = _putData(content);
+				var text = textTransform(_putData(content), attrs.transform);
 				var style = {font: font, tint: UColor.fromString(attrs.color).rgb};
 				new BText(text, style, attrs.ansi);
 			case 'lbutton':
@@ -185,7 +185,7 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 				b;
 			case 'textbutton':
 				var font = parseAndScaleInt(attrs.size) + 'px ' + attrs.font;
-				var text = _putData(content);
+				var text = textTransform(_putData(content), attrs.transform);
 				new TextButton(
 					attrs.color.split(' ').map(function(v) return UColor.fromString(v)),
 					text, font, attrs.ansi,
@@ -260,6 +260,14 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 		if (attrs.x != null) obj.x = parseAndScale(attrs.x);
 		if (attrs.y != null) obj.y = parseAndScale(attrs.y);
 		return obj;
+	}
+	
+	private static function textTransform(text:String, transform:String):String {
+		return switch transform {
+			case 'uppercase': text.toUpperCase();
+			case 'lowercase': text.toLowerCase();
+			case _: text;
+		}
 	}
 	
 	@:extern inline private function parseAndScaleWithNull(s:String):Float {

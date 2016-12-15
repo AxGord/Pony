@@ -71,6 +71,12 @@ class PixiExtends {
 		return s;
 	}
 	
+	@:extern inline public static function flipX(o:Sprite):Void o.scale.x = -o.scale.x;
+	@:extern inline public static function flipY(o:Sprite):Void o.scale.y = -o.scale.y;
+	@:extern inline public static function flipXpos(o:Sprite):Void o.x += o.width;
+	@:extern inline public static function flipYpos(o:Sprite):Void o.y += o.height;
+
+	
 }
 
 /**
