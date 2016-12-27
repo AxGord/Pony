@@ -32,7 +32,7 @@ import js.Browser;
 import js.html.DOMElement;
 
 enum UserAgent {
-	IE; Edge; Chrome; Safari; Firefox; Unknown;
+	IE; Edge; Chrome; Safari; Firefox; Samsung; Unknown;
 }
 
 enum OS {
@@ -74,6 +74,8 @@ class JsTools {
 			_agent = IE;
 		} else if (ua.indexOf('edge') != -1) {
 			_agent = Edge;
+		} else if (ua.indexOf('samsung') != -1) {
+			_agent = Samsung;
 		} else if (ua.indexOf('chrome') != -1) {
 			_agent = Chrome;
 		} else if (ua.indexOf('safari') != -1 && ua.indexOf('android') == -1) {

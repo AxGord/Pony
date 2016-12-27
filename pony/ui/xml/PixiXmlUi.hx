@@ -50,6 +50,7 @@ import pony.pixi.ui.Button;
 import pony.pixi.ui.FSButton;
 import pony.pixi.ui.IntervalLayout;
 import pony.pixi.ui.LabelButton;
+import pony.pixi.ui.Mask;
 import pony.pixi.ui.ProgressBar;
 import pony.pixi.ui.RubberLayout;
 import pony.pixi.ui.SizedSprite;
@@ -135,6 +136,10 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 				}
 			case 'image':
 				PixiAssets.image(attrs.src, attrs.name);
+			case 'mask':
+				var o = new Mask(parseAndScaleWithNull(attrs.w), parseAndScaleWithNull(attrs.h), parseAndScaleInt(attrs.radius), content.shift());
+				for (e in content) o.addChild(e);
+				o;
 			case 'slice':
 				var s = SliceTools.getSliceSprite(attrs.name, attrs.src, parseAndScale(attrs.creep));
 				if (attrs.w != null) s.sliceWidth = Std.parseInt(attrs.w);
@@ -150,6 +155,7 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 				}
 				var m = MovieClip.fromFrames(data);
 				if (attrs.speed != null) m.animationSpeed = Std.parseFloat(attrs.speed);
+				m.loop = !isFalse(attrs.loop);
 				m.play();
 				m;
 			case 'textbox':
