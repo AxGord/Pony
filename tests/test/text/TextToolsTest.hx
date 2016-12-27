@@ -13,8 +13,8 @@ class TextToolsTest
 		var data = 'lvl1
 		lvl2
 		lvl2b';
-		var r = TextTools.tabParser(data);
-		Assert.areEqual(r.lvl1[0], 'lvl2');
-		Assert.areEqual(r.lvl1[1], 'lvl2b');
+		var r:Map<String, Dynamic> = TextTools.tabParser(data);
+		Assert.areEqual(r['lvl1'][0], 'lvl2');
+		Assert.areEqual(r['lvl1'][1], 'lvl2b');
 	}
 }
