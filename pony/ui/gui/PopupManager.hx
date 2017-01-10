@@ -69,4 +69,8 @@ class PopupManager<Popup> {
 			_showPopup(list.shift());
 	}
 	
+	@:extern inline public function clearList():Void {
+		list = [];
+	}
+	
 }

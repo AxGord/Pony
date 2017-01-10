@@ -119,7 +119,13 @@ class JsTools {
 		return _isa;
 	}
 	
-	@:extern inline private static function get_isMobile():Bool return untyped Browser.window.orientation != null;
+	@:extern inline private static function get_isMobile():Bool {
+		#if simmobile
+		return true;
+		#else
+		return untyped Browser.window.orientation != null;
+		#end
+	}
 	
 	@:extern inline public static function remove(el:DOMElement):Void {
 		agent == IE ? el.parentNode.removeChild(el) : el.remove();
