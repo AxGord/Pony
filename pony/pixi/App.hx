@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2017 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -27,7 +27,6 @@
 **/
 package pony.pixi;
 
-import haxe.CallStack;
 import js.Browser;
 import js.Error;
 import js.html.Element;
@@ -35,7 +34,9 @@ import js.html.Event;
 import pixi.core.Pixi;
 import pixi.core.sprites.Sprite;
 import pixi.plugins.app.Application;
+import pony.events.Signal0;
 import pony.geom.Point;
+import pony.magic.HasSignal;
 import pony.time.DTimer;
 import pony.time.DeltaTime;
 import pony.time.Time;
@@ -46,17 +47,21 @@ import pony.ui.touch.pixi.Touch;
  * App
  * @author AxGord <axgord@gmail.com>
  */
-class App extends Application {
+class App extends Application implements HasSignal {
+	
+	public static inline var DEFAULT_FPS:Int = 60;
+	public static inline var DEFAULT_RESIZE_INTERVAL:Int = 200;
 	
 	public static var main:App;
 	
 	public var isWebGL:Bool;
 	public var pauseDraw:Bool = false;
 	
+	@:auto public var onResizeSignal:Signal0;
+	
 	private var _width:Float;
 	private var _height:Float;
 	private var container:Sprite;
-	private var prevTime:Float = 0;
 	private var parentDom:Element;
 	private var smallDeviceQuality:Float;
 	private var smallDeviceQualityOffset:Float;
@@ -65,7 +70,17 @@ class App extends Application {
 	/**
 	 * @param	smallDeviceQuality - 1 ideal, 2 - low, 3 - normal, 4 - good
 	 */
-	public function new(container:Sprite, width:Float, height:Float, ?bg:UInt, ?parentDom:Element, smallDeviceQuality:Float = 3, fps:Int=60, resizeInterval:Time=200) {
+	public function new(
+		renderType:String = 'auto',
+		container:Sprite,
+		width:Float,
+		height:Float,
+		?bg:UInt,
+		?parentDom:Element,
+		smallDeviceQuality:Float = 3,
+		fps:Int = DEFAULT_FPS,
+		resizeInterval:Time = DEFAULT_RESIZE_INTERVAL
+	) {
 		super();
 		this.parentDom = parentDom;
 		this.smallDeviceQuality = smallDeviceQuality;
@@ -78,12 +93,12 @@ class App extends Application {
 		Browser.window.addEventListener('focus', _onWindowResize, true);
 		Browser.window.onresize = _onWindowResize;
 		autoResize = false;
-		this.fps = fps;
 		_width = width;
 		_height = height;
 		this.container = container;
 		onUpdate = updateHandler;
-		start(parentDom);
+		start(renderType, parentDom);
+		app.ticker.speed = fps / DEFAULT_FPS;
 		isWebGL = renderer.type == Pixi.RENDERER_TYPE.WEBGL;
 		stage.addChild(container);
 		Mouse.reg(container);
@@ -116,24 +131,25 @@ class App extends Application {
 		//if (!JsTools.isMobile)
 		//ratio *= Browser.window.devicePixelRatio;
 		
-		renderer.resize(width/d * ratio, height/d * ratio);
+		renderer.resize(width / d * ratio, height / d * ratio);
 		canvas.style.width = width + "px";
 		canvas.style.height = height + "px";
 		
 		if (w > h) {
-			container.x = (width/d - _width) / 2 * ratio;
+			container.x = (width / d - _width) / 2 * ratio;
 			container.y = 0;
 		} else {
 			container.x = 0;
-			container.y = (height/d - _height) / 2 * ratio;
+			container.y = (height / d - _height) / 2 * ratio;
 		}
 		container.width = ratio;
 		container.height = ratio;
+		
+		eResizeSignal.dispatch();
 	}
 	
-	private function updateHandler(time:Float):Void {
-		DeltaTime.fixedValue = (time - prevTime) / 1000;
-		prevTime = time;
+	private function updateHandler(_):Void {
+		DeltaTime.fixedValue = app.ticker.elapsedMS / 1000;
 		#if (debug && callstack)
 		try {
 			DeltaTime.fixedDispatch();
@@ -147,9 +163,9 @@ class App extends Application {
 				parentDom.appendChild(pre);
 			else
 				Browser.document.body.appendChild(pre);
-			pre.appendChild(Browser.document.createTextNode(Std.string(e)+'\n\n'));
+			pre.appendChild(Browser.document.createTextNode(Std.string(e) + '\n\n'));
 			untyped StackTrace.fromError(e).then(function(stackframes:Array<Dynamic>){
-				for (s in stackframes) pre.appendChild(Browser.document.createTextNode(s.toString()+'\n'));
+				for (s in stackframes) pre.appendChild(Browser.document.createTextNode(s.toString() + '\n'));
 			});
 			throw e;
 		} catch (e:Dynamic) {
@@ -162,9 +178,9 @@ class App extends Application {
 				parentDom.appendChild(pre);
 			else
 				Browser.document.body.appendChild(pre);
-			pre.appendChild(Browser.document.createTextNode(Std.string(e)+'\n\n'));
+			pre.appendChild(Browser.document.createTextNode(Std.string(e) + '\n\n'));
 			untyped StackTrace.get().then(function(stackframes:Array<Dynamic>){
-				for (s in stackframes) pre.appendChild(Browser.document.createTextNode(s.toString()+'\n'));
+				for (s in stackframes) pre.appendChild(Browser.document.createTextNode(s.toString() + '\n'));
 			});
 			throw e;
 		} 
@@ -177,26 +193,16 @@ class App extends Application {
 		return new Point((x - container.x) / container.width, (y - container.y) / container.height);
 	}
 	
-	override public function resumeRendering() {
+	override public function resumeRendering():Void {
 		super.resumeRendering();
 		Browser.window.onresize = _onWindowResize;
 	}
 	
 	override function _onWindowResize(event:Event):Void refreshSize();
 	
-	@:extern inline public function refreshSize():Void {
+	@:extern public inline function refreshSize():Void {
 		resizeTimer.reset();
 		resizeTimer.start();
-	}
-	
-	override function _onRequestAnimationFrame(elapsedTime:Float) {
-		_frameCount++;
-		if (_frameCount == Std.int(60 / fps)) {
-			_frameCount = 0;
-			if (onUpdate != null) onUpdate(elapsedTime);
-			if (!pauseDraw) renderer.render(stage);
-		}
-		_animationFrameId = Browser.window.requestAnimationFrame(_onRequestAnimationFrame);
 	}
 	
 }

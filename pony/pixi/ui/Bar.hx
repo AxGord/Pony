@@ -52,6 +52,7 @@ class Bar extends Sprite implements HasSignal implements IWH {
 	private var _wait:WaitReady = new WaitReady();
 	public var size(get, never):Point<Float>;
 	
+	private var barContainter:Sprite;
 	private var bg:Or<Sprite, Point<Int>>;
 	private var begin:Sprite;
 	private var end:Sprite;
@@ -84,11 +85,13 @@ class Bar extends Sprite implements HasSignal implements IWH {
 				this.bg = v;
 				[];
 		}
+		barContainter = new Sprite();
+		addChild(barContainter);
 		begin = PixiAssets.cImage(fillBegin, useSpriteSheet);
-		addChild(begin);
+		barContainter.addChild(begin);
 		this.fill = PixiAssets.cImage(fill, useSpriteSheet);
 		this.fill.texture.baseTexture.scaleMode = Pixi.SCALE_MODES.NEAREST;
-		addChild(this.fill);
+		barContainter.addChild(this.fill);
 		if (useSpriteSheet)
 			DeltaTime.fixedUpdate < init;
 		else
@@ -115,7 +118,7 @@ class Bar extends Sprite implements HasSignal implements IWH {
 		end.x = begin.x;
 		end.y = begin.y;
 
-		addChild(end);
+		barContainter.addChild(end);
 		var size = switch bg {
 			case OrState.A(v): new Point<Int>(Std.int(v.width), Std.int(v.height));
 			case OrState.B(v): v;

@@ -27,12 +27,15 @@
 **/
 package pony.pixi;
 
+import pixi.core.math.Point;
+import pixi.core.math.shapes.Rectangle;
 import pixi.core.sprites.Sprite;
 import pixi.core.text.Text;
+import pixi.core.text.TextStyle;
 import pixi.core.textures.Texture;
 import pixi.extras.BitmapText;
 import pixi.filters.blur.BlurFilter;
-import pixi.filters.color.ColorMatrixFilter;
+import pixi.filters.colormatrix.ColorMatrixFilter;
 
 /**
  * PixijsExtends
@@ -76,6 +79,14 @@ class PixiExtends {
 	@:extern inline public static function flipXpos(o:Sprite):Void o.x += o.width;
 	@:extern inline public static function flipYpos(o:Sprite):Void o.y += o.height;
 
+	@:extern inline public static function setFilterArea(o:Sprite, size:Float):Void {
+		setFilterAreaXY(o, size, size);
+	}
+	
+	@:extern inline public static function setFilterAreaXY(o:Sprite, sx:Float, sy:Float):Void {
+		var p = o.toGlobal(new Point());
+		o.filterArea = new Rectangle(p.x - sx, p.y - sy, o.width + sx * 2, o.height + sy * 2);
+	}
 	
 }
 

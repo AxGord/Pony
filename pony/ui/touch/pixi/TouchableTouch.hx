@@ -86,7 +86,7 @@ class TouchableTouch {
 	}
 	
 	private function outsideHandler(e:EventTarget):Void {
-		if (isLock(e.data.identifier)) return;
+		if (isLock(untyped e.data.identifier)) return;
 		lost(untyped e.data.identifier);
 	}
 	
@@ -102,12 +102,12 @@ class TouchableTouch {
 	@:extern inline private function isNotLock(t:UInt):Bool return touchId == null || touchId == t;
 	
 	private function touchBeginHandler(e:EventTarget):Void {
-		if (isLock(e.data.identifier)) return;
+		if (isLock(untyped e.data.identifier)) return;
 		over = true;
 		down = true;
-		base.dispatchOver(e.data.identifier);
-		var p = Touch.correction(e.data.global.x, e.data.global.y);
-		base.dispatchDown(e.data.identifier, p.x, p.y);
+		base.dispatchOver(untyped e.data.identifier);
+		var p = Touch.correction(untyped e.data.global.x, e.data.global.y);
+		base.dispatchDown(untyped e.data.identifier, p.x, p.y);
 	}
 	
 	private function touchEndHandler(t:TouchObj):Void {
@@ -129,7 +129,7 @@ class TouchableTouch {
 	
 	private function touchMoveHandler(e:EventTarget):Void {
 		if (!down) return;
-		var id = e.data.identifier;
+		var id = untyped e.data.identifier;
 		if (isLock(id)) return;
 		var p = e.data.global;
 		var c = obj.getBounds().contains(p.x, p.y);

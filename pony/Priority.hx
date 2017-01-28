@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2017 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -32,14 +32,16 @@ import pony.magic.HasSignal;
 
 using Lambda;
 
-typedef PriorityIds = Priority<{id:Int,name:String}>;
+typedef PriorityIds = Priority < {
+	id:Int, name:String
+} >;
 
 /**
  * todo: get element priority
  * @author AxGord
  */
 @:final class Priority<T:Dynamic> implements HasSignal {
-	#if !macro
+	#if (!macro)
 	@:lazy public var onTake:Signal0;
 	@:lazy public var onLost:Signal0;
 	#end
@@ -83,7 +85,7 @@ typedef PriorityIds = Priority<{id:Int,name:String}>;
 	 */
 	public var current(get, never):T;
 	
-	public var data(default,null):Array<T>;
+	public var data(default, null):Array<T>;
 	
 	private var hash:Map<Int, Int>;
 	
@@ -93,8 +95,7 @@ typedef PriorityIds = Priority<{id:Int,name:String}>;
 	/**
 	 * Counters for loops
 	 */
-	public var counters(default,null):Array<Int>;
-
+	public var counters(default, null):Array<Int>;
 	
 	public function new(?data:Array<T>, double:Bool = false) {
 		_clear();
@@ -126,7 +127,7 @@ typedef PriorityIds = Priority<{id:Int,name:String}>;
 		for (k in 0...counters.length)
 			if (c < counters[k]) counters[k]++;
 		hash.set(priority, s + 1);
-		#if !macro
+		#if (!macro)
 		if (needOnTake) eTake.dispatch();
 		#end
 		return this;
@@ -149,7 +150,7 @@ typedef PriorityIds = Priority<{id:Int,name:String}>;
 	 * @param	a elements array for adding.
 	 * @param	priority priority, smalest first, bigest last, default 0 (0 - normal priority).
 	 */
-	@:extern inline public function addArray(a:Array<T>, priority:Int = 0):Priority<T> {
+	@:extern public inline function addArray(a:Array<T>, priority:Int = 0):Priority<T> {
 		for (e in a) add(e, priority);
 		return this;
 	}
@@ -168,7 +169,7 @@ typedef PriorityIds = Priority<{id:Int,name:String}>;
 		var i:Int = 0;
 		return {
 			hasNext: function():Bool {
-				if (counters == null) return false;//if destroy in iteration
+				if (counters == null) return false; //if destroy in iteration
 				if (counters.length < n) counters.push(i);
 				if (data.length > counters[n])
 					return true;
@@ -184,17 +185,17 @@ typedef PriorityIds = Priority<{id:Int,name:String}>;
 	/**
 	 * Call this method if you use break
 	 */
-	@:extern inline public function brk():Void {
+	@:extern public inline function brk():Void {
 		if (counters != null) counters.splice(1, counters.length);
 	}
 	
 	/**
 	 * Remove all elements
 	 */
-	@:extern inline public function clear():Priority<T> {
+	@:extern public inline function clear():Priority<T> {
 		var needOnLost = !empty;
 		_clear();
-		#if !macro
+		#if (!macro)
 		if (needOnLost) eLost.dispatch();
 		#end
 		return this;
@@ -203,8 +204,8 @@ typedef PriorityIds = Priority<{id:Int,name:String}>;
 	/**
 	 * Remove all elements
 	 */
-	@:extern inline private function _clear():Priority<T> {
-		hash = new Map<Int,Int>();
+	@:extern private inline function _clear():Priority<T> {
+		hash = new Map<Int, Int>();
 		data = [];
 		counters = [0];
 		addStack = [];
@@ -221,7 +222,7 @@ typedef PriorityIds = Priority<{id:Int,name:String}>;
 		data = null;
 		counters = null;
 		addStack = null;
-		#if !macro
+		#if (!macro)
 		destroySignals();
 		#end
 	}
@@ -231,28 +232,27 @@ typedef PriorityIds = Priority<{id:Int,name:String}>;
 	 * @param	a
 	 * @param	b
 	 */
-	dynamic public function compare(a:T, b:T):Bool return a == b;
+	public dynamic function compare(a:T, b:T):Bool return a == b;
 	
-	@:extern inline public function exists(element:T):Bool return existsFunction(compare.bind(element));
+	@:extern public inline function exists(element:T):Bool return existsFunction(compare.bind(element));
 	
-	@:extern inline public function existsFunction(f:T->Bool):Bool return data.exists(f);
+	@:extern public inline function existsFunction(f:T -> Bool):Bool return data.exists(f);
 	
 	public function existsArray(a:Array<T>):Bool {
 		for (e in a) if (exists(e)) return true;
 		return false;
 	}
 
-	@:extern inline public function indexOfFunction(f:T->Bool):Int {
+	@:extern public inline function indexOfFunction(f:T -> Bool):Int {
 		return pony.Tools.ArrayTools.fIndexOf(data, f);
 	}
 	
-	@:extern inline public function indexOfElement(element:T):Int return indexOfFunction(compare.bind(element));
-	
+	@:extern public inline function indexOfElement(element:T):Int return indexOfFunction(compare.bind(element));
 	
 	/**
 	 * Some time need take object with custom value.
 	 */
-	public function search(f:T->Bool):T {
+	public function search(f:T -> Bool):T {
 		var s:T = null;
 		existsFunction(function(e:T):Bool {
 			if (f(e)) {
@@ -313,20 +313,20 @@ typedef PriorityIds = Priority<{id:Int,name:String}>;
 				break;
 			}
 		}
-		#if !macro
+		#if (!macro)
 		if (needOnLost && empty) eLost.dispatch();
 		#end
 		if (double) remove(e);
 		return true;
 	}
 	
-	@:extern inline public function removeFunction(f:T->Bool):Bool {
+	@:extern public inline function removeFunction(f:T -> Bool):Bool {
 		var e:T = search(f);
 		return if (e != null) remove(e);
 		else false;
 	}
 	
-	@:extern inline public function removeArray(a:Array<T>):Bool {
+	@:extern public inline function removeArray(a:Array<T>):Bool {
 		var f:Bool = true;
 		for (e in a) if (!remove(e)) f = false;
 		return f;
@@ -336,8 +336,8 @@ typedef PriorityIds = Priority<{id:Int,name:String}>;
 	 * All elements taking new priority, but save order.
 	 * @param	priority New priority, default 0
 	 */
-	@:extern inline public function repriority(priority:Int = 0):Void {
-		hash = new Map<Int,Int>();
+	@:extern public inline function repriority(priority:Int = 0):Void {
+		hash = new Map<Int, Int>();
 		hash.set(priority, data.length);
 	}
 	
@@ -350,7 +350,7 @@ typedef PriorityIds = Priority<{id:Int,name:String}>;
 		return this;
 	}
 	
-	public function changeFunction(f:T->Bool, priority:Int = 0):Priority<T> {
+	public function changeFunction(f:T -> Bool, priority:Int = 0):Priority<T> {
 		var e:T = search(f);
 		return change(e, priority);
 	}
@@ -360,20 +360,20 @@ typedef PriorityIds = Priority<{id:Int,name:String}>;
 		return this;
 	}
 	
-	@:extern inline public function toString():String return data.toString();
+	@:extern public inline function toString():String return data.toString();
 	
-	@:extern inline public function join(sep:String):String return data.join(sep);
+	@:extern public inline function join(sep:String):String return data.join(sep);
 	
-	@:extern inline private function get_first():T return data[0];
+	@:extern private inline function get_first():T return data[0];
 	
-	@:extern inline private function get_last():T return data[data.length - 1];
+	@:extern private inline function get_last():T return data[data.length - 1];
 	
-	@:extern inline private function get_length():Int return data.length;
+	@:extern private inline function get_length():Int return data.length;
 	
 	/**
 	 * @return True if priority list not have element and false if have.
 	 */
-	@:extern inline private function get_empty():Bool return data.length == 0;
+	@:extern private inline function get_empty():Bool return data.length == 0;
 	
 	/**
 	 * Make infinity loop. This good method for devolopment UI.
@@ -390,7 +390,7 @@ typedef PriorityIds = Priority<{id:Int,name:String}>;
 	/**
 	 * Next time loop return first element.
 	 */
-	@:extern inline public function resetLoop():Priority<T> {
+	@:extern public inline function resetLoop():Priority<T> {
 		counters[0] = 0;
 		return this;
 	}
@@ -400,12 +400,12 @@ typedef PriorityIds = Priority<{id:Int,name:String}>;
 	 * Use exists() before call this function for safely run.
 	 * @param	e first element for loop.
 	 */
-	@:extern inline public function reloop(e:T):Void while (loop() != e) null;
+	@:extern public inline function reloop(e:T):Void while (loop() != e) null;
 	
 	/**
 	 * @return Current element in loop.
 	 */
-	@:extern inline private function get_current():T {
+	@:extern private inline function get_current():T {
 		return if (counters[0] > length) data[0] else if (counters[0] < 1) data[length - 1] else data[counters[0] - 1];
 	}
 	
@@ -449,17 +449,17 @@ typedef PriorityIds = Priority<{id:Int,name:String}>;
 	 * Add element with lowest priority.
 	 * @param	o T or Array&lt;T&gt;.
 	 */
-	@:extern inline public function addToBegin(e:T):Void add(e, min - 1);
+	@:extern public inline function addToBegin(e:T):Void add(e, min - 1);
 	
 	/**
 	 * Add element with hightest priority.
 	 * @param	o T or Array&lt;T&gt;.
 	 */
-	@:extern inline public function addToEnd(e:T):Void add(e, max + 1);
+	@:extern public inline function addToEnd(e:T):Void add(e, max + 1);
 	
-	@:extern inline public function isDestroy():Bool return data == null;
+	@:extern public inline function isDestroy():Bool return data == null;
 	
-	@:extern inline public static function createIds(a:Array<String>):PriorityIds {
+	@:extern public static inline function createIds(a:Array<String>):PriorityIds {
 		var i:Int = 0;
 		return new Priority([for (e in a) { id:i++, name:e } ]);
 	}

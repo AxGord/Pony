@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2017 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -73,7 +73,8 @@ class TextTools {
 		return r;
 	}
 	
-	inline public static function isTrue(s:String):Bool return StringTools.trim(s.toLowerCase()) == 'true';
+	inline public static function isTrue(s:String):Bool return return s != null && StringTools.trim(s.toLowerCase()) == 'true';
+	inline public static function isFalse(s:String):Bool return return s != null && StringTools.trim(s.toLowerCase()) != 'true';
 	
 	public static function explode(s:String, delimiters:Array<String>):Array<String> {
 		var r:Array<String> = [s];

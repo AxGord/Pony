@@ -27,7 +27,7 @@
 **/
 package pony.pixi;
 
-import pixi.core.text.Text.TextStyle;
+import pixi.core.text.TextStyle;
 import pixi.extras.BitmapText.BitmapTextStyle;
 
 /**

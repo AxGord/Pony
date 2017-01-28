@@ -82,16 +82,16 @@ class Touch implements Declarator implements HasSignal {
 	}
 	
 	private static function handleTouchEvent(e:EventTarget):Void {
-		eCancle.dispatch(e.data.identifier);
+		eCancle.dispatch(untyped e.data.identifier);
 	}
 	
 	@:extern inline private static function pack(e:EventTarget):TouchObj {
 		var p = correction(e.data.global.x, e.data.global.y);
-		return { id:e.data.identifier, x:p.x, y:p.y };
+		return { id: untyped e.data.identifier, x:p.x, y:p.y };
 	}
 	
 	private static function moveHandler(e:EventTarget):Void {
-		tMove[Std.string(e.data.identifier)] = pack(e);
+		tMove[Std.string(untyped e.data.identifier)] = pack(e);
 		DeltaTime.fixedUpdate.once(moveDispatch, -8);
 	}
 	
