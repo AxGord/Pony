@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2017 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -53,41 +53,46 @@ class BText extends Sprite implements IWH {
 		this.style = style;
 		this.ansi = ansi;
 		defColor = style.tint;
-		firstset(text);
+		t = text;
 	}
 	
-	private function get_size():Point<Float> return current.size;
+	private function get_size():Point<Float> return current == null ? null : current.size;
 	
 	public function wait(cb:Void->Void):Void cb();
 	
-	@:extern inline public function get_t():String return current.text;
+	@:extern inline public function get_t():String return current == null ? null : current.text;
+	
+	@:extern inline public function safeSet(s:String):Void {
+		t = StringTools.replace(s, ' ', '').length == 0 ? null : s;
+	}
 	
 	public function set_t(s:String):String {
-		removeChild(current);
-		current.destroy();
+		if (current != null) {
+			removeChild(current);
+			current.destroy();
+		}
+		if (s == null) return s;
 		current = new BTextLow(s, style, ansi);
 		addChild(current);
 		return s;
 	}
 	
-	private function firstset(s:String):Void {
-		current = new BTextLow(s, style, ansi);
-		addChild(current);
-	}
-	
 	override public function destroy():Void {
-		removeChild(current);
-		current.destroy();
+		if (current != null) {
+			removeChild(current);
+			current.destroy();
+		}
 		ansi = null;
 		style = null;
 		super.destroy();
 	}
 	
-	private function get_color():UInt return style.tint;
+	@:extern inline private function get_color():UInt return style.tint;
 	
 	private function set_color(v:Null<UInt>):Null<UInt> {
 		if (v == null) v = defColor;
 		style.tint = v;
+		if (current == null) return v;
 		if (!current.nocache) current.cacheAsBitmap = false;
 		current.tint = v;
 		if (!current.nocache) current.cacheAsBitmap = true;

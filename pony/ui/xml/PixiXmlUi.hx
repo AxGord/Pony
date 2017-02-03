@@ -59,6 +59,7 @@ import pony.pixi.ui.StepSlider;
 import pony.pixi.ui.TextBox;
 import pony.pixi.ui.TextButton;
 import pony.pixi.ui.TimeBar;
+import pony.pixi.ui.ZeroPlace;
 import pony.pixi.ui.slices.SliceTools;
 import pony.time.DeltaTime;
 import pony.time.Time;
@@ -74,6 +75,7 @@ using pony.pixi.PixiExtends;
 @:autoBuild(pony.ui.xml.XmlUiBuilder.build({
 	free: pixi.core.sprites.Sprite,
 	layout: pony.pixi.ui.TLayout,
+	zeroplace: pony.pixi.ui.ZeroPlace,
 	image: pixi.core.sprites.Sprite,
 	text: pony.pixi.ui.BText,
 	bar: pony.pixi.ui.Bar,
@@ -128,8 +130,8 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 					l;
 				} else if (attrs.w != null || attrs.h != null) {
 					var r = new RubberLayout(
-						parseAndScaleWithNull(attrs.w),
-						parseAndScaleWithNull(attrs.h),
+						parseAndScale(attrs.w),
+						parseAndScale(attrs.h),
 						attrs.vert.isTrue(),
 						scaleBorderInt(attrs.border),
 						attrs.padding == null ? true : attrs.padding.isTrue(),
@@ -142,10 +144,14 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 					for (e in content) s.add(e);
 					s;
 				}
+			case 'zeroplace':
+				var s = new ZeroPlace();
+				for (e in content) s.add(e);
+				s;
 			case 'image':
 				PixiAssets.image(attrs.src, attrs.name);
 			case 'mask':
-				var o = new Mask(parseAndScaleWithNull(attrs.w), parseAndScaleWithNull(attrs.h), parseAndScaleInt(attrs.radius), content.shift());
+				var o = new Mask(parseAndScaleWithoutNull(attrs.w), parseAndScaleWithoutNull(attrs.h), parseAndScaleInt(attrs.radius), content.shift());
 				for (e in content) o.addChild(e);
 				o;
 			case 'slice':
@@ -314,12 +320,12 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 		}
 	}
 	
-	@:extern private inline function parseAndScaleWithNull(s:String):Float {
+	@:extern private inline function parseAndScaleWithoutNull(s:String):Float {
 		return Std.parseFloat(s) * SCALE;
 	}
 	
 	@:extern private inline function parseAndScale(s:String):Float {
-		return s == null ? 0 : parseAndScaleWithNull(s);
+		return s == null ? 0 : parseAndScaleWithoutNull(s);
 	}
 	
 	@:extern inline function parseAndScaleInt(s:String):Int {
