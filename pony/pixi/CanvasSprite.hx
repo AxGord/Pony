@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2017 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -27,9 +27,12 @@
 **/
 package pony.pixi;
 
+import js.Browser;
+import pixi.core.Pixi;
 import pixi.core.renderers.canvas.CanvasRenderer;
 import pixi.core.sprites.Sprite;
 import pixi.core.textures.RenderTexture;
+import pixi.core.textures.Texture;
 import pony.JsTools;
 import pony.geom.Point;
 import pony.time.DeltaTime;
@@ -40,47 +43,47 @@ import pony.time.DeltaTime;
  */
 class CanvasSprite extends Sprite {
 	
-	private static var _renderer:CanvasRenderer;
-	
-	private static var inited:Bool = false;
-	
-	private static function init():Void {
-		if (inited) return;
-		inited == true;
-		if (JsTools.agent == IE) return;
-		_renderer = new CanvasRenderer(0, 0);
-	}
-	
-	public var result:Sprite;
-	private var txtr:RenderTexture;
+	private var sourse:Sprite;
+	private var size:Point<Int>;
+	private var offset:Point<Int>;
 	
 	public function new(sourse:Sprite, size:Point<Int>, ?offset:Point<Int>) {
 		super();
-		init();
-		if (_renderer == null) {
-			result = sourse;
+		this.size = size;
+		this.sourse = sourse;
+		this.offset = offset;
+		if (JsTools.agent == IE) {
+			addChild(sourse);
 			return;
 		}
 		if (offset != null) {
 			sourse.x = offset.x;
 			sourse.y = offset.y;
 		}
+	}
+	
+	public function needRenderer():Void if (JsTools.agent != IE) DeltaTime.fixedUpdate < render;
+	
+	private function render():Void {
+		if (children.length > 0) {
+			var sp = children[0];
+			removeChildAt(0);
+			sp.destroy(true);
+		}
 		addChild(sourse);
-		txtr = new RenderTexture(_renderer, size.x, size.y);
-		result = new Sprite(txtr);
+		
+		var _renderer = new CanvasRenderer(size.x, size.y);
+		_renderer.transparent = true;
+		_renderer.render(this);
+		
+		removeChildAt(0);
+		var result = new Sprite(Texture.fromCanvas(_renderer.view));
 		if (offset != null) {
 			result.x = -offset.x;
 			result.y = -offset.y;
 		}
-	}
-	
-	public function needRenderer():Void if (_renderer != null) DeltaTime.fixedUpdate < render;
-	
-	private function render():Void {
-		visible = true;
-		txtr.render(this, null, true, true);
-		txtr.update();
-		visible = false;
+		addChild(result);
+		_renderer.destroy();
 	}
 	
 }
