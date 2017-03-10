@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2017 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -28,6 +28,7 @@
 package pony.pixi.ui;
 
 import pixi.core.Pixi;
+import pixi.core.display.DisplayObject.DestroyOptions;
 import pixi.core.sprites.Sprite;
 import pony.Or;
 import pony.events.Signal1;
@@ -155,7 +156,7 @@ class Bar extends Sprite implements HasSignal implements IWH {
 		end.y = fill.y + fill.height + begin.height - creep;
 	}
 
-	override public function destroy():Void {
+	override public function destroy(?options:haxe.extern.EitherType<Bool, DestroyOptions>):Void {
 		core.destroy();
 		core = null;
 		destroySignals();
@@ -177,7 +178,9 @@ class Bar extends Sprite implements HasSignal implements IWH {
 			end.destroy();
 			end = null;
 		}
-		super.destroy();
+		super.destroy(options);
 	}
+	
+	public function destroyIWH():Void destroy();
 	
 }

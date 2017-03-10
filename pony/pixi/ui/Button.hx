@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2017 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -27,6 +27,7 @@
 **/
 package pony.pixi.ui;
 
+import pixi.core.display.DisplayObject.DestroyOptions;
 import pixi.core.sprites.Sprite;
 import pixi.core.textures.Texture;
 import pony.geom.IWH;
@@ -137,7 +138,7 @@ class Button extends Sprite implements IWH {
 		addChild(list[prev = n - 1]);
 	}
 	
-	override public function destroy():Void {
+	override public function destroy(?options:haxe.extern.EitherType<Bool, DestroyOptions>):Void {
 		core.destroy();
 		core = null;
 		
@@ -152,12 +153,14 @@ class Button extends Sprite implements IWH {
 		
 		wr = null;
 		
-		super.destroy();
+		super.destroy(options);
 	}
 	
 	inline private function get_cursor():Bool return zone.buttonMode;
 	inline private function set_cursor(v:Bool):Bool return zone.buttonMode = v;
 	inline private function get_touchActive():Bool return zone.interactive;
 	inline private function set_touchActive(v:Bool):Bool return zone.interactive = v;
+	
+	public function destroyIWH():Void destroy();
 	
 }

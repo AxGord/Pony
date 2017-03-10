@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2017 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -112,7 +112,7 @@ class PixiExtendsText {
 	public static function glow(t:Text, blur:Int=10, ?color:Null<UInt>):Text {
 		var f = new BlurFilter();
 		f.blur = blur;
-		var s:TextStyle = Reflect.copy(t.style);
+		var s = Reflect.copy(t.style);
 		if (color != null) s.fill = color;
 		var ct = new Text(t.text, s);
 		ct.x = t.x;

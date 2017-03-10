@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2017 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -128,7 +128,7 @@ class BaseLayoutCore<T> implements Declarator implements HasSignal implements IW
 	public function destroy():Void {
 		for (o in objects) {
 			if (Std.is(o, IWH))
-				cast(o, IWH).destroy();
+				cast(o, IWH).destroyIWH();
 			else
 				destroyChild(o);
 		}
@@ -138,5 +138,7 @@ class BaseLayoutCore<T> implements Declarator implements HasSignal implements IW
 		destroySignals();
 		tasks = null;
 	}
+	
+	public function destroyIWH():Void destroy();
 	
 }

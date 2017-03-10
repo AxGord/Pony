@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2017 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -33,5 +33,5 @@ package pony.geom;
 interface IWH {
 	var size(get, never):Point<Float>;
 	function wait(cb:Void->Void):Void;
-	function destroy():Void;
+	function destroyIWH():Void;
 }

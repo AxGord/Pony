@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2017 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -28,6 +28,7 @@
 package pony.pixi.ui;
 
 import pixi.core.display.Container;
+import pixi.core.display.DisplayObject.DestroyOptions;
 import pixi.core.math.shapes.Rectangle;
 import pony.geom.Border;
 import pony.geom.Point;
@@ -67,11 +68,11 @@ class LabelButton extends BaseLayout<RubberLayoutCore<Container>> {
 	
 	@:extern inline private function get_core():ButtonCore return button.core;
 	
-	override function destroy():Void {
+	override function destroy(?options:haxe.extern.EitherType<Bool, DestroyOptions>):Void {
 		removeChild(button);
 		button.destroy();
 		button = null;
-		super.destroy();
+		super.destroy(options);
 	}
 	
 }

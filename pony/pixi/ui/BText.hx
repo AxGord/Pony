@@ -27,6 +27,7 @@
 **/
 package pony.pixi.ui;
 
+import pixi.core.display.DisplayObject.DestroyOptions;
 import pixi.core.sprites.Sprite;
 import pixi.extras.BitmapText;
 import pony.geom.IWH;
@@ -77,14 +78,14 @@ class BText extends Sprite implements IWH {
 		return s;
 	}
 	
-	override public function destroy():Void {
+	override public function destroy(?options:haxe.extern.EitherType<Bool, DestroyOptions>):Void {
 		if (current != null) {
 			removeChild(current);
 			current.destroy();
 		}
 		ansi = null;
 		style = null;
-		super.destroy();
+		super.destroy(options);
 	}
 	
 	@:extern inline private function get_color():UInt return style.tint;
@@ -98,5 +99,7 @@ class BText extends Sprite implements IWH {
 		if (!current.nocache) current.cacheAsBitmap = true;
 		return v;
 	}
+	
+	public function destroyIWH():Void destroy();
 	
 }

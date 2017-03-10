@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2017 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -62,7 +62,7 @@ class PopupManager<Popup> {
 	
 	public function close():Void {
 		if (current == null) return;
-		current.destroy();
+		current.destroyPopup();
 		current = null;
 		onClose();
 		if (list.length > 0)

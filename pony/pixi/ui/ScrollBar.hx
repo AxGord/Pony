@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2017 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -27,6 +27,7 @@
 **/
 package pony.pixi.ui;
 
+import pixi.core.display.DisplayObject.DestroyOptions;
 import pixi.core.sprites.Sprite;
 import pony.events.Signal0;
 import pony.geom.Point;
@@ -119,14 +120,14 @@ class ScrollBar extends Sprite {
 		updatePos();
 	}
 	
-	override public function destroy():Void {
+	override public function destroy(?options:haxe.extern.EitherType<Bool, DestroyOptions>):Void {
 		onChangePosition = null;
 		removeChild(bar);
 		bar.destroy();
 		bar = null;
 		onReady = null;
 		touchable = null;
-		super.destroy();
+		super.destroy(options);
 	}
 	
 }
