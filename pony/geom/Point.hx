@@ -43,7 +43,12 @@ abstract Point<T>(Point_<T>) from Point_<T> to Point_<T> {
 	inline private function set_y(v:T):T return this.y = v;
 }
 
-abstract IntPoint(Point_<Int>) to Point_<Int> from Point_<Int> {
+abstract IntPoint(Point_ < Int > ) to Point_ < Int > from Point_ < Int > {
+	
+	public static var OneUp:IntPoint = new IntPoint(0, -1);
+	public static var OneDown:IntPoint = new IntPoint(0, 1);
+	public static var OneLeft:IntPoint = new IntPoint(-1, 0);
+	public static var OneRight:IntPoint = new IntPoint(1, 0);
 	
 	public var x(get, never):Int;
 	public var y(get, never):Int;
@@ -68,4 +73,16 @@ abstract IntPoint(Point_<Int>) to Point_<Int> from Point_<Int> {
 	public inline function getY():Int return this.y;
 	
 	@:from static public inline function fromRect(r:Rect<Int>):IntPoint return { x: r.x, y: r.y };
+	
+	@:op(A == B) inline private function equal(b:IntPoint):Bool return x == b.x && y == b.y;
+	
+	@:from public static function fromDirection(d:Direction):IntPoint {
+		return switch d {
+			case Direction.up: OneUp;
+			case Direction.down: OneDown;
+			case Direction.left: OneLeft;
+			case Direction.right: OneRight;
+		}
+	}
+	
 }

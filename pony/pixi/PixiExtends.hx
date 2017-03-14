@@ -63,6 +63,12 @@ class PixiExtends {
 		return c;
 	}
 	
+	@:extern inline public static function brightnessFilter(v:Float):ColorMatrixFilter {
+		var c = new ColorMatrixFilter();
+		c.brightness(v, true);
+		return c;
+	}
+	
 	@:extern inline public static function blurFilter():BlurFilter {
 		var b = new BlurFilter();
 		b.passes = 3;

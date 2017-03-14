@@ -300,7 +300,7 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 						DeltaTime.fixedUpdate << f;
 					} else {
 						DeltaTime.skipUpdate(f);
-						App.main.onResizeSignal << f;
+						App.main.onResize << f;
 					}
 				}
 			}

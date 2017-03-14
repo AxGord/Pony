@@ -28,36 +28,49 @@
 package pony.pixi;
 
 import js.Browser;
-import js.Error;
+import js.html.CanvasElement;
 import js.html.Element;
-import js.html.Event;
 import pixi.core.Pixi;
+import pixi.core.RenderOptions;
 import pixi.core.sprites.Sprite;
-import pixi.plugins.app.Application;
+import pixi.core.ticker.Ticker;
 import pony.events.Signal0;
 import pony.geom.Point;
 import pony.magic.HasSignal;
 import pony.time.DTimer;
-import pony.time.DeltaTime;
+import pony.time.JsDT;
 import pony.time.Time;
 import pony.ui.touch.pixi.Mouse;
 import pony.ui.touch.pixi.Touch;
+
+@:enum abstract SmallDeviceQuality(Int) to Int {
+	var ideal = 1;
+	var low = 2;
+	var normal = 3;
+	var good = 4;
+}
 
 /**
  * App
  * @author AxGord <axgord@gmail.com>
  */
-class App extends Application implements HasSignal {
+class App implements HasSignal {
 	
-	public static inline var DEFAULT_FPS:Int = 60;
 	public static inline var DEFAULT_RESIZE_INTERVAL:Int = 200;
 	
 	public static var main:App;
 	
+	/**
+	 * Pixi Application
+	 * Read-only
+	 */
+	public var app(default, null):pixi.core.Application;
+	
 	public var isWebGL:Bool;
 	public var pauseDraw:Bool = false;
 	
-	@:auto public var onResizeSignal:Signal0;
+	@:auto public var onResize:Signal0;
+	public var canvas:CanvasElement;
 	
 	private var _width:Float;
 	private var _height:Float;
@@ -67,46 +80,88 @@ class App extends Application implements HasSignal {
 	private var smallDeviceQualityOffset:Float;
 	private var resizeTimer:DTimer;
 	
+	private var ticker:Ticker;
+	
+	private var width:Float;
+	private var height:Float;
+	private var background:Int;
+	private var renderPause:Bool = false;
+	
 	/**
 	 * @param	smallDeviceQuality - 1 ideal, 2 - low, 3 - normal, 4 - good
 	 */
 	public function new(
-		renderType:String = 'auto',
 		container:Sprite,
 		width:Float,
 		height:Float,
 		?bg:UInt,
 		?parentDom:Element,
-		smallDeviceQuality:Float = 3,
-		fps:Int = DEFAULT_FPS,
+		smallDeviceQuality:SmallDeviceQuality = SmallDeviceQuality.normal,
 		resizeInterval:Time = DEFAULT_RESIZE_INTERVAL
 	) {
-		super();
+		this.width = width;
+		this.height = height;
+		background = bg;
+		
 		this.parentDom = parentDom;
 		this.smallDeviceQuality = smallDeviceQuality;
 		smallDeviceQualityOffset = 1 - 1 / smallDeviceQuality;
 		resizeTimer = DTimer.createFixedTimer(resizeInterval);
 		resizeTimer.complete << resizeHandler;
-		backgroundColor = bg;
-		antialias = false;
-		Browser.window.addEventListener('orientationchange', _onWindowResize, true);
-		Browser.window.addEventListener('focus', _onWindowResize, true);
-		Browser.window.onresize = _onWindowResize;
-		autoResize = false;
+		
+		Browser.window.addEventListener('orientationchange', refreshSize, true);
+		Browser.window.addEventListener('focus', refreshSize, true);
+		Browser.window.onresize = refreshSize;
 		_width = width;
 		_height = height;
 		this.container = container;
-		onUpdate = updateHandler;
-		start(renderType, parentDom);
-		app.ticker.speed = fps / DEFAULT_FPS;
-		isWebGL = renderer.type == Pixi.RENDERER_TYPE.WEBGL;
-		stage.addChild(container);
+		
+		pixiInit();
+		
+		isWebGL = app.renderer.type == Pixi.RENDERER_TYPE.WEBGL;
+		app.stage.addChild(container);
 		Mouse.reg(container);
 		Mouse.correction = correction;
 		Touch.reg(container);
 		Touch.correction = correction;
 		resizeHandler();
 		if (main == null) main = this;
+		
+		app.stop();
+		
+		JsDT.start();
+		JsDT.render = render;
+		
+		#if stats addStats(); #end
+	}
+	
+	private function render():Void if (!renderPause) app.render();
+	
+	@:extern private inline function pixiInit():Void {
+		canvas = Browser.document.createCanvasElement();
+		canvas.style.width = width + "px";
+		canvas.style.height = height + "px";
+		canvas.style.position = "static";
+
+		var renderingOptions:RenderOptions = {
+			view: canvas,
+			backgroundColor: background,
+			resolution: 1,
+			antialias: false,
+			forceFXAA: false,
+			autoResize: false,
+			transparent: false,
+			clearBeforeRender: true,
+			preserveDrawingBuffer: false,
+			roundPixels: false
+		};
+
+		app = new pixi.core.Application(width, height, renderingOptions);
+
+		if (parentDom == null)
+			Browser.document.body.appendChild(app.view);
+		else
+			parentDom.appendChild(app.view);
 	}
 	
 	public function fullscreen():Void JsTools.fse(canvas);
@@ -131,7 +186,7 @@ class App extends Application implements HasSignal {
 		//if (!JsTools.isMobile)
 		//ratio *= Browser.window.devicePixelRatio;
 		
-		renderer.resize(width / d * ratio, height / d * ratio);
+		app.renderer.resize(width / d * ratio, height / d * ratio);
 		canvas.style.width = width + "px";
 		canvas.style.height = height + "px";
 		
@@ -145,64 +200,31 @@ class App extends Application implements HasSignal {
 		container.width = ratio;
 		container.height = ratio;
 		
-		eResizeSignal.dispatch();
-	}
-	
-	private function updateHandler(_):Void {
-		DeltaTime.fixedValue = app.ticker.elapsedMS / 1000;
-		#if (debug && callstack)
-		try {
-			DeltaTime.fixedDispatch();
-		} catch (e:Error) {
-			pauseRendering();
-			JsTools.remove(canvas);
-			JsTools.remove(renderer.view);
-			DeltaTime.fixedUpdate.clear();
-			var pre = Browser.document.createPreElement();
-			if (parentDom != null)
-				parentDom.appendChild(pre);
-			else
-				Browser.document.body.appendChild(pre);
-			pre.appendChild(Browser.document.createTextNode(Std.string(e) + '\n\n'));
-			untyped StackTrace.fromError(e).then(function(stackframes:Array<Dynamic>){
-				for (s in stackframes) pre.appendChild(Browser.document.createTextNode(s.toString() + '\n'));
-			});
-			throw e;
-		} catch (e:Dynamic) {
-			pauseRendering();
-			canvas.remove();
-			renderer.view.remove();
-			DeltaTime.fixedUpdate.clear();
-			var pre = Browser.document.createPreElement();
-			if (parentDom != null)
-				parentDom.appendChild(pre);
-			else
-				Browser.document.body.appendChild(pre);
-			pre.appendChild(Browser.document.createTextNode(Std.string(e) + '\n\n'));
-			untyped StackTrace.get().then(function(stackframes:Array<Dynamic>){
-				for (s in stackframes) pre.appendChild(Browser.document.createTextNode(s.toString() + '\n'));
-			});
-			throw e;
-		} 
-		#else
-		DeltaTime.fixedDispatch();
-		#end
+		eResize.dispatch();
 	}
 	
 	private function correction(x:Float, y:Float):Point<Float> {
 		return new Point((x - container.x) / container.width, (y - container.y) / container.height);
 	}
 	
-	override public function resumeRendering():Void {
-		super.resumeRendering();
-		Browser.window.onresize = _onWindowResize;
+	public function pauseRendering():Void {
+		renderPause = true;
+		Browser.window.onresize = null;
 	}
 	
-	override function _onWindowResize(event:Event):Void refreshSize();
+	public function resumeRendering():Void {
+		renderPause = false;
+		Browser.window.onresize = refreshSize;
+		refreshSize();
+	}
 	
-	@:extern public inline function refreshSize():Void {
+	public function refreshSize(?_):Void {
 		resizeTimer.reset();
 		resizeTimer.start();
 	}
+	
+	#if stats
+	@:extern public inline function addStats():Void new Perf().addInfo(["UNKNOWN", "WEBGL", "CANVAS"][app.renderer.type]);
+	#end
 	
 }

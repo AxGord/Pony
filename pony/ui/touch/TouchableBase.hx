@@ -29,6 +29,8 @@ package pony.ui.touch;
 
 import pony.events.Signal0;
 import pony.events.Signal1;
+import pony.geom.Direction;
+import pony.geom.Point;
 import pony.magic.HasSignal;
 import pony.time.DTimer;
 import pony.TypedPool;
@@ -52,9 +54,13 @@ class TouchableBase implements HasSignal {
 	@:auto public var onClick:Signal0;
 	@:auto public var onTap:Signal0;
 	@:auto public var onWheel:Signal1<Int>;
+	@:auto public var onSwipe:Signal1<Direction>;
 	
 	private var tapTimer:DTimer;
 	private var tapTouch:Touch;
+	private var swipeTimer:DTimer;
+	private var swipeTouch:Touch;
+	private var swipePoint:Point<Float>;
 	
 	public function new() {
 		onDown << function() onUp < eClick;
@@ -65,6 +71,74 @@ class TouchableBase implements HasSignal {
 		
 		eWheel.onTake << addWheel;
 		eWheel.onLost << removeWheel;
+		
+		eSwipe.onTake << addSwipe;
+		eSwipe.onLost << removeSwipe;
+	}
+	
+	private function addSwipe():Void {
+		swipeTimer = DTimer.createFixedTimer(50);
+		swipeTimer.complete << checkSwipe;
+		onDown < listenSwipe;
+	}
+	
+	private function removeSwipe():Void {
+		onDown >> listenSwipe;
+		cancleSwipe();
+		swipeTimer.destroy();
+		swipeTimer = null;
+	}
+	
+	private function listenSwipe(t:Touch):Void {
+		swipePoint = new Point(t.x, t.y);
+		onDown >> listenSwipe;
+		swipeTouch = t;
+		swipeTimer.repeatCount = 8;
+		swipeTimer.start();
+		t.onUp < cancleSwipeAndListenDown;
+		t.onOutUp < cancleSwipeAndListenDown;
+	}
+	
+	private function checkSwipe():Void {
+		var x = swipePoint.x - swipeTouch.x;
+		var y = swipePoint.y - swipeTouch.y;
+		var ax = Math.abs(x);
+		var ay = Math.abs(y);
+		if (ax > ay) {
+			if (ax >= 4) {
+				onUp >> eClick;
+				eSwipe.dispatch(x > 0 ? Direction.left : Direction.right);
+				cancleSwipeAndListenDown();
+				return;
+			}
+		} else if (ax < ay) {
+			if (ay >= 4) {
+				onUp >> eClick;
+				eSwipe.dispatch(y > 0 ? Direction.up : Direction.down);
+				cancleSwipeAndListenDown();
+				return;
+			}
+		}
+		if (swipeTimer.repeatCount == 0)
+			cancleSwipeAndListenDown();
+	}
+	
+	private function cancleSwipeAndListenDown():Void {
+		cancleSwipe();
+		if (swipeTimer != null) onDown < listenSwipe;
+	}
+	
+	private function cancleSwipe():Void {
+		if (swipeTimer != null) {
+			swipeTimer.stop();
+			swipeTimer.reset();
+		}
+		if (swipeTouch != null) {
+			swipeTouch.onUp >> cancleSwipeAndListenDown;
+			swipeTouch.onOutUp >> cancleSwipeAndListenDown;
+			swipeTouch = null;
+		}
+		swipePoint = null;
 	}
 	
 	private function addWheel():Void {
