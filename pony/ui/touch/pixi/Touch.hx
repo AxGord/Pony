@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2017 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -29,7 +29,7 @@ package pony.ui.touch.pixi;
 
 import haxe.Int64;
 import pixi.core.display.Container;
-import pixi.interaction.EventTarget;
+import pixi.interaction.InteractionEvent;
 import pony.events.Signal1;
 import pony.geom.Point;
 import pony.magic.Declarator;
@@ -81,16 +81,16 @@ class Touch implements Declarator implements HasSignal {
 		
 	}
 	
-	private static function handleTouchEvent(e:EventTarget):Void {
+	private static function handleTouchEvent(e:InteractionEvent):Void {
 		eCancle.dispatch(untyped e.data.identifier);
 	}
 	
-	@:extern inline private static function pack(e:EventTarget):TouchObj {
+	@:extern inline private static function pack(e:InteractionEvent):TouchObj {
 		var p = correction(e.data.global.x, e.data.global.y);
 		return { id: untyped e.data.identifier, x:p.x, y:p.y };
 	}
 	
-	private static function moveHandler(e:EventTarget):Void {
+	private static function moveHandler(e:InteractionEvent):Void {
 		tMove[Std.string(untyped e.data.identifier)] = pack(e);
 		DeltaTime.fixedUpdate.once(moveDispatch, -8);
 	}
@@ -100,7 +100,7 @@ class Touch implements Declarator implements HasSignal {
 		tMove = new Map<String, TouchObj>();
 	}
 	
-	private static function startHandler(e:EventTarget):Void {
+	private static function startHandler(e:InteractionEvent):Void {
 		startStack.push(pack(e));
 		DeltaTime.fixedUpdate.once(startDispatch, -9);
 	}
@@ -110,7 +110,7 @@ class Touch implements Declarator implements HasSignal {
 		startStack = [];
 	}
 	
-	private static function endHandler(e:EventTarget):Void {
+	private static function endHandler(e:InteractionEvent):Void {
 		endStack.push(pack(e));
 		DeltaTime.fixedUpdate.once(endDispatch, -7);
 	}

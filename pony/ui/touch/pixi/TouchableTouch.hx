@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2017 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -29,7 +29,7 @@ package pony.ui.touch.pixi;
 
 import js.Browser;
 import pixi.core.display.Container;
-import pixi.interaction.EventTarget;
+import pixi.interaction.InteractionEvent;
 import pony.ui.touch.pixi.Touch;
 
 /**
@@ -85,7 +85,7 @@ class TouchableTouch {
 		base = null;
 	}
 	
-	private function outsideHandler(e:EventTarget):Void {
+	private function outsideHandler(e:InteractionEvent):Void {
 		if (isLock(untyped e.data.identifier)) return;
 		lost(untyped e.data.identifier);
 	}
@@ -101,7 +101,7 @@ class TouchableTouch {
 	@:extern inline private function unlock(t:UInt):Void touchId = null;
 	@:extern inline private function isNotLock(t:UInt):Bool return touchId == null || touchId == t;
 	
-	private function touchBeginHandler(e:EventTarget):Void {
+	private function touchBeginHandler(e:InteractionEvent):Void {
 		if (isLock(untyped e.data.identifier)) return;
 		over = true;
 		down = true;
@@ -127,7 +127,7 @@ class TouchableTouch {
 		unlock(t.id);
 	}
 	
-	private function touchMoveHandler(e:EventTarget):Void {
+	private function touchMoveHandler(e:InteractionEvent):Void {
 		if (!down) return;
 		var id = untyped e.data.identifier;
 		if (isLock(id)) return;

@@ -128,6 +128,7 @@ class App implements HasSignal {
 		if (main == null) main = this;
 		
 		app.stop();
+		app.ticker.stop();
 		
 		JsDT.start();
 		JsDT.render = render;

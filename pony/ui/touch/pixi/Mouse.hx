@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2017 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -29,7 +29,7 @@ package pony.ui.touch.pixi;
 
 import js.Browser;
 import pixi.core.display.Container;
-import pixi.interaction.EventTarget;
+import pixi.interaction.InteractionEvent;
 import pony.geom.Point;
 import pony.ui.touch.Mouse as M;
 
@@ -76,17 +76,17 @@ class Mouse {
 		e.preventDefault();
 	}
 	
-	private static function downHandler(e:EventTarget):Void {
+	private static function downHandler(e:InteractionEvent):Void {
 		var p = correction(e.data.global.x, e.data.global.y);
 		M.downHandler(p.x, p.y, untyped e.data.originalEvent.button);
 	}
 	
-	private static function upHandler(e:EventTarget):Void {
+	private static function upHandler(e:InteractionEvent):Void {
 		var p = correction(e.data.global.x, e.data.global.y);
 		M.upHandler(p.x, p.y, untyped e.data.originalEvent.button);
 	}
 	
-	private static function moveHandler(e:EventTarget):Void {
+	private static function moveHandler(e:InteractionEvent):Void {
 		var p = correction(e.data.global.x, e.data.global.y);
 		M.moveHandler(p.x, p.y);
 	}

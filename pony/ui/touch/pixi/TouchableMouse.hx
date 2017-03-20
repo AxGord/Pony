@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2017 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -28,7 +28,7 @@
 package pony.ui.touch.pixi;
 
 import pixi.core.display.Container;
-import pixi.interaction.EventTarget;
+import pixi.interaction.InteractionEvent;
 import pony.ui.touch.Mouse;
 
 /**
@@ -90,7 +90,7 @@ class TouchableMouse {
 		down ? base.dispatchOutDown() : base.dispatchOut();
 	}
 	
-	private function downHandler(e:EventTarget):Void {
+	private function downHandler(e:InteractionEvent):Void {
 		if (untyped e.data.originalEvent.button != MouseButton.LEFT) return;
 		if (!over) {
 			over = true;
@@ -101,7 +101,7 @@ class TouchableMouse {
 		base.dispatchDown(0, p.x, p.y);
 	}
 	
-	private function upHandler(e:EventTarget):Void {
+	private function upHandler(e:InteractionEvent):Void {
 		if (untyped e.data.originalEvent.button != MouseButton.LEFT) return;
 		_down = false;
 		if (!over) return;
