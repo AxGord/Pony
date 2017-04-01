@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2017 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -67,6 +67,7 @@ class TablePrepare {
 				for (f in fields) if (remMap.exists(f.name)) free = free.delete(remMap[f.name]);
 				free = @await renameTableFields(fields, remote, remMap, free, chk1);
 				if (free == null) return false;
+				/*
 				free = @await renameTableFields(fields, remote, remMap, free, chk2);
 				if (free == null) return false;
 				free = @await renameTableFields(fields, remote, remMap, free, chk3);
@@ -75,6 +76,7 @@ class TablePrepare {
 				if (free == null) return false;
 				free = @await renameTableFields(fields, remote, remMap, free, chk5);
 				if (free == null) return false;
+				*/
 			}
 			
 			
@@ -127,7 +129,7 @@ class TablePrepare {
 				if (r == null) return false;
 				var ef:Bool = false;
 				for (fl in f.flags) if (!r.flags.exists(fl)) ef = true;
-				if (ef || f.type != r.type || (f.length != null && f.length != r.length)) {
+				if (ef || f.type != r.type || (f.length != null && f.type != Types.TEXT && f.length != r.length)) {
 					if (!@await mysql.action(alter(f, r), 'update table field')) return false;
 				}
 			}

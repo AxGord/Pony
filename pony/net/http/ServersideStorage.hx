@@ -33,7 +33,7 @@ import pony.Tools;
 
 class ServersideStorage implements Declarator
 {
-	private var clients:Map<String, Map<String, Dynamic>> = new Map<String, Map<String, Dynamic>>();
+	public var clients:Map<String, Map<String, Dynamic>> = new Map<String, Map<String, Dynamic>>();
 	@:arg private var keyName:String = 'PonyKey';
 	
 	public function getClient(cookie:Cookie):Map<String, Dynamic> {

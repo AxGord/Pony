@@ -41,7 +41,6 @@ class TableMacro {
 	static public function transExpr(expr:Expr, a:Array<Expr>):Array<Expr> {
 		switch expr.expr {
 			case EBinop(op, e1, e2):
-				
 				var o = switch op {
 					case OpGt: '>';
 					case OpGte: '>=';
@@ -61,6 +60,7 @@ class TableMacro {
 						return a;
 					case _: throw 'Unknown operation '+op;
 				}
+				
 				a = a.concat(parseExpr(e1));
 				//var field = takeFieldName(e1);
 				
@@ -77,7 +77,6 @@ class TableMacro {
 						a.push(genText(' $o ', expr.pos));
 						a = a.concat(parseExpr(e2));
 				}
-				
 			case EParenthesis(e):
 				a.push(genText('(', e.pos));
 				transExpr(e, a);
@@ -146,9 +145,20 @@ class TableMacro {
 				try {
 					var v = ExprTools.getValue(e);
 					a.push(genText(Std.string(v), e.pos));
-				} catch(_:Dynamic) {
+				} catch (_:Dynamic) {
+					var o = switch op {
+						case OpGt: '>';
+						case OpGte: '>=';
+						case OpLt: '<';
+						case OpLte: '<=';
+						case OpEq: '=';
+						case OpNotEq: '!=';
+						case OpBoolAnd, OpAnd: 'AND';
+						case OpBoolOr, OpOr: 'OR';
+						case _: throw 'Unknown operation '+op;
+					}
 					a = a.concat(parseExpr(e1));
-					a.push(genText(printer.printBinop(OpAdd), e.pos));
+					a.push(genText(' '+o+' ', e.pos));
 					a = a.concat(parseExpr(e2));
 				}
 				

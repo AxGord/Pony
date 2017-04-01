@@ -34,9 +34,10 @@ import pony.text.tpl.TplData;
 class FText extends Field
 {
 
-	public function new(?len:Int)
+	public function new(?len:Int, notnull:Bool=true)
 	{
 		super(len);
+		this.notnull = notnull;
 		type = 'Text';
 		tplPut = CTextPut;
 	}

@@ -139,6 +139,8 @@ class UpdatePut extends pony.text.tpl.TplPut < UpdateConnect, Dynamic > {
 				(content != null ? '<div class="capition">' + @await tplData(content) + '</div>' : '') +
 				r + '<button>Send</button> <a href="" class="action">Clear</a></form>';
 		} else {
+			trace(name);
+			trace('------------');
 			var r:String = @await sub(a, b, UpdatePutSub, content);
 			a.clr();
 			return r;
@@ -163,6 +165,14 @@ class UpdatePut extends pony.text.tpl.TplPut < UpdateConnect, Dynamic > {
 
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
 class UpdatePutSub extends pony.text.tpl.TplPut < UpdateConnect, Dynamic > {
+	
+	@:async
+	override public function shortTag(name:String, arg:String, ?kid:ITplPut):String {
+		if (a.base.args.exists(name))
+			return Std.string(Reflect.field(b, name));
+		else
+			return @await super.shortTag(name, arg, kid);
+	}
 	
 	@:async
 	override public function tag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String

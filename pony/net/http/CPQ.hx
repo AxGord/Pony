@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2017 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -35,7 +35,7 @@ import pony.text.tpl.TplSystem;
  */
 class CPQ implements Declarator {
 
-	@:arg public var connection: IHttpConnection;
+	@:arg public var connection:IHttpConnection;
 	@:arg public var usercontent:String;
 	public var page: String = '';
 	public var query: Array<String> = [];
