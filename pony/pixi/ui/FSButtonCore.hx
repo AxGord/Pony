@@ -38,8 +38,8 @@ class FSButtonCore {
 	public function new() {
 		App.main.canvas.addEventListener("fullscreenchange", setFullScreenImage);
 		App.main.canvas.addEventListener("mozfullscreenchange", setFullScreenImage);
-		App.main.canvas.addEventListener("webkitfullscreenchange", setFullScreenImage);
 		App.main.canvas.addEventListener("msfullscreenchange", setFullScreenImage);
+		Browser.document.addEventListener("mozfullscreenchange", setFullScreenImage);
 	}
 	
 	dynamic public function onEnable():Void {}

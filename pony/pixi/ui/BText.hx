@@ -30,6 +30,7 @@ package pony.pixi.ui;
 import pixi.core.display.DisplayObject.DestroyOptions;
 import pixi.core.sprites.Sprite;
 import pixi.extras.BitmapText;
+import pixi.filters.blur.BlurFilter;
 import pony.geom.IWH;
 import pony.geom.Point;
 import pony.text.TextTools;
@@ -41,18 +42,26 @@ import pony.time.DeltaTime;
  */
 class BText extends Sprite implements IWH {
 
+	private static var blurFilter:BlurFilter = new BlurFilter();
+	
 	public var t(get, set):String;
 	public var size(get, never):Point<Float>;
 	private var ansi:String;
 	private var current:BTextLow;
+	private var currentShadow:BTextLow;
 	private var style:BitmapTextStyle;
 	public var color(get, set):UInt;
 	private var defColor:UInt;
+	private var shadow:Bool = false;
+	private var shadowStyle:BitmapTextStyle;
 	
-	public function new(text:String, ?style:BitmapTextStyle, ?ansi:String) {
+	public function new(text:String, ?style:BitmapTextStyle, ?ansi:String, shadow:Bool = false) {
 		super();
 		this.style = style;
 		this.ansi = ansi;
+		this.shadow = shadow;
+		if (shadow)
+			shadowStyle = {font:style.font, tint:0x000000};
 		defColor = style.tint;
 		t = text;
 	}
@@ -68,24 +77,34 @@ class BText extends Sprite implements IWH {
 	}
 	
 	public function set_t(s:String):String {
-		if (current != null) {
-			removeChild(current);
-			current.destroy();
-		}
+		destroyIfExists();
 		if (s == null) return s;
 		current = new BTextLow(s, style, ansi);
+		if (shadow) {
+			currentShadow = new BTextLow(s, shadowStyle, ansi);
+			currentShadow.filters = [blurFilter];
+			addChild(currentShadow);
+		}
 		addChild(current);
 		return s;
 	}
 	
 	override public function destroy(?options:haxe.extern.EitherType<Bool, DestroyOptions>):Void {
+		destroyIfExists();
+		ansi = null;
+		style = null;
+		super.destroy(options);
+	}
+	
+	@:extern inline private function destroyIfExists():Void {
 		if (current != null) {
 			removeChild(current);
 			current.destroy();
 		}
-		ansi = null;
-		style = null;
-		super.destroy(options);
+		if (currentShadow != null) {
+			removeChild(currentShadow);
+			currentShadow.destroy();
+		}
 	}
 	
 	@:extern inline private function get_color():UInt return style.tint;

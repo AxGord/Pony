@@ -111,9 +111,12 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 				var g = new Graphics();
 				g.lineStyle();
 				g.beginFill(color.rgb, color.invertAlpha.af);
-				g.drawRect(0, 0, parseAndScale(attrs.w), parseAndScale(attrs.h));
+				if (attrs.round == null)
+					g.drawRect(0, 0, parseAndScale(attrs.w), parseAndScale(attrs.h));
+				else
+					g.drawRoundedRect(0, 0, parseAndScale(attrs.w), parseAndScale(attrs.h), Std.parseFloat(attrs.round));
 				g.endFill();
-				return g;
+				g;
 			case 'layout':
 				var align = Align.fromString(attrs.align);
 				if (attrs.src != null) {
@@ -183,7 +186,7 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 				var font = parseAndScaleInt(attrs.size) + 'px ' + attrs.font;
 				var text = textTransform(_putData(content), attrs.transform);
 				var style = {font: font, tint: UColor.fromString(attrs.color).rgb};
-				new BText(text, style, attrs.ansi);
+				new BText(text, style, attrs.ansi, attrs.shadow.isTrue());
 			case 'lbutton':
 				var b = new LabelButton(splitAttr(attrs.skin), attrs.vert.isTrue(), scaleBorderInt(attrs.border), attrs.src);
 				for (c in content) b.add(c);

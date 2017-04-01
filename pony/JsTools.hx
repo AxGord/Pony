@@ -135,9 +135,10 @@ class JsTools {
 		return untyped 
         {
             Browser.document.fullscreenElement ||
+            Browser.document.mozFullScreen ||
             Browser.document.mozFullscreenElement ||
             Browser.document.webkitFullscreenElement ||
-            Browser.document.msFullscreenElement; 
+            Browser.document.msFullscreenElement;
         };
 	}
 	
