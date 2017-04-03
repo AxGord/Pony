@@ -37,9 +37,16 @@ class JsDT {
 	
 	public static var half(default, set):Bool;
 	
+	/**
+	 * Switch half mode for mobile devices 
+	 */
+	public static var halfMobile(never, set):Bool;
+	
 	private static var inited:Bool = false;
 	private static var afid:Int = -1;
 	private static var ms:Float = 0;
+	private static var allowFastTickAbort:Bool = false;
+	private static var allowHalfTick:Bool = false;
 	
 	private static function init():Void {
 		inited = true;
@@ -74,11 +81,18 @@ class JsDT {
 		return b;
 	}
 	
+	@:extern private static inline function set_halfMobile(b:Bool):Bool {
+		if (JsTools.isMobile) half = b;
+		return half;
+	}
+	
 	public static function start():Void {
 		if (!inited) init();
 		if (half) {
+			allowHalfTick = true;
 			afid = raf(halfTick1);
 		} else {
+			allowFastTickAbort = true;
 			afid = raf(fastTick);
 		}
 	}
@@ -86,11 +100,16 @@ class JsDT {
 	@:extern public static inline function stop():Void {
 		caf(afid);
 		afid = -1;
+		if (half)
+			allowFastTickAbort = false;
+		else
+			allowHalfTick = false;
 	}
 	
 	private static function halfTick1(v:Float):Void {
 		tick(v);
-		afid = raf(halfTick2);
+		if (allowHalfTick)
+			afid = raf(halfTick2);
 	}
 	
 	private static function halfTick2(v:Float):Void {
@@ -101,7 +120,8 @@ class JsDT {
 	private static function fastTick(v:Float):Void {
 		tick(v);
 		render();
-		afid = raf(fastTick);
+		if (allowFastTickAbort)
+			afid = raf(fastTick);
 	}
 	
 	@:extern private static inline function tick(v:Float):Void {
