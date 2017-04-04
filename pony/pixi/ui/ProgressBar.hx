@@ -43,12 +43,13 @@ class ProgressBar extends LabelBar {
 		animationSpeed:Int = 2000,
 		?border:Border<Int>,
 		?style:ETextStyle,
+		shadow:Bool = false,
 		invert:Bool = false,
 		useSpriteSheet:Bool = false,
 		creep:Float = 0,
 		smooth:Bool = false
 	) {
-		super(bg, fillBegin, fill, animation, animationSpeed, border, style, invert, useSpriteSheet, creep, smooth);
+		super(bg, fillBegin, fill, animation, animationSpeed, border, style, shadow, invert, useSpriteSheet, creep, smooth);
 		onReady < initProgressBar; 
 	}
 	

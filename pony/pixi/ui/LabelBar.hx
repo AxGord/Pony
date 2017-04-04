@@ -42,6 +42,7 @@ class LabelBar extends AnimBar {
 	
 	private var label:TextSizedBox;
 	private var style:ETextStyle;
+	private var shadow:Bool;
 	private var labelInitVisible:Bool = true;
 	private var border:Border<Int>;
 	
@@ -53,19 +54,21 @@ class LabelBar extends AnimBar {
 		animationSpeed:Int = 2000,
 		?border:Border<Int>,
 		?style:ETextStyle,
+		shadow:Bool = false,
 		invert:Bool = false,
 		useSpriteSheet:Bool = false,
 		creep:Float = 0,
 		smooth:Bool = false
 	) {
 		this.style = style;
+		this.shadow = shadow;
 		this.border = border;
 		super(bg, fillBegin, fill, animation, animationSpeed, border == null ? null : new Point(border.left, border.top), invert, useSpriteSheet, creep, smooth);
 		if (style != null) onReady < labelInit;
 	}
 	
 	private function labelInit(p:Point<Int>):Void {
-		label = new TextSizedBox(p.x, p.y, '', style, border, true);
+		label = new TextSizedBox(p.x, p.y, '', style, border, true, shadow);
 		label.visible = labelInitVisible;
 		addChild(label);
 		style = null;

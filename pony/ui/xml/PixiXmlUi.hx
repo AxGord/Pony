@@ -237,6 +237,7 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 					attrs.animspeed == null ? null : (attrs.animspeed:Time),
 					scaleBorderInt(attrs.border),
 					font == null ? null : ETextStyle.BITMAP_TEXT_STYLE({font: font, tint: UColor.fromString(attrs.color).rgb}),
+					attrs.shadow.isTrue(),
 					attrs.invert.isTrue(),
 					font == null || attrs.src.indexOf(',') != -1,
 					parseAndScaleInt(attrs.creep),
@@ -252,6 +253,7 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 					attrs.animspeed == null ? null : (attrs.animspeed:Time),
 					scaleBorderInt(attrs.border),
 					ETextStyle.BITMAP_TEXT_STYLE({font: font, tint: UColor.fromString(attrs.color).rgb}),
+					attrs.shadow.isTrue(),
 					attrs.invert.isTrue(),
 					attrs.src.indexOf(',') != -1,
 					parseAndScaleInt(attrs.creep)

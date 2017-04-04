@@ -52,12 +52,13 @@ class TimeBar extends LabelBar {
 		animationSpeed:Int = 2000,
 		?border:Border<Int>,
 		?style:ETextStyle,
+		shadow:Bool = false,
 		invert:Bool = false,
 		useSpriteSheet:Bool = false,
 		creep:Float = 0
 	) {
 		labelInitVisible = false;
-		super(bg, fillBegin, fill, animation, animationSpeed, border, style, invert, useSpriteSheet, creep);
+		super(bg, fillBegin, fill, animation, animationSpeed, border, style, shadow, invert, useSpriteSheet, creep);
 		timer = DTimer.createFixedTimer(null);
 		onReady < timerInit;
 	}

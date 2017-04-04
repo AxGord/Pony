@@ -44,12 +44,12 @@ import pony.ui.gui.RubberLayoutCore;
 class TextSizedBox extends BaseLayout<RubberLayoutCore<Container>> {
 
 	public var text(get, set):String;
-	public var obj(default, null):UniversalText;
+	public var obj(default, null):BText;
 	public var noupdate:Bool = false;
 	
 	private var nocache:Bool;
 	
-	public function new(w:Float, h:Float, text:String, style:ETextStyle, ?border:Border<Int>, ?align:Align, nocache:Bool=false) {
+	public function new(w:Float, h:Float, text:String, style:ETextStyle, ?border:Border<Int>, ?align:Align, nocache:Bool=false, shadow:Bool = false) {
 		var f = align != null && align.horizontal != HAlign.Center;
 		this.nocache = nocache;
 		layout = new RubberLayoutCore(f, border, align);
@@ -57,18 +57,26 @@ class TextSizedBox extends BaseLayout<RubberLayoutCore<Container>> {
 		layout.width = w;
 		layout.height = h;
 		super();
-		add(obj = new UniversalText(text, style));
-		if (!nocache) obj.toContainer().cacheAsBitmap = true;
+		switch style {
+			case ETextStyle.BITMAP_TEXT_STYLE(t):
+				obj = new BText(text, t, null, shadow);
+				add(obj);
+			case ETextStyle.TEXT_STYLE(_):
+				throw 'Not supported';
+				//add(obj = new UniversalText(text, style));
+				//if (!nocache) obj.toContainer().cacheAsBitmap = true;
+		}
 		layout.tasks.end();
 	}
 	
-	inline private function get_text():String return obj.text;
+	inline private function get_text():String return obj.t;
 	
 	private function set_text(v:String):String {
-		if (obj.text != v) {
-			obj.toContainer().cacheAsBitmap = false;
-			obj.text = v;
-			if (!nocache) obj.toContainer().cacheAsBitmap = true;
+		if (obj.t != v) {
+//			obj.toContainer().cacheAsBitmap = false;
+//			obj.text = v;
+//			if (!nocache) obj.toContainer().cacheAsBitmap = true;
+			obj.t = v;
 			if (!noupdate) update();
 		}
 		return v;
