@@ -31,6 +31,8 @@ import pixi.core.sprites.Sprite;
 import pixi.core.textures.Texture;
 import pixi.loaders.Loader;
 import pixi.loaders.Resource;
+import pixi.plugins.spine.Spine;
+import pixi.plugins.spine.core.SkeletonData;
 import pony.ui.AssetManager;
 
 /**
@@ -40,9 +42,21 @@ import pony.ui.AssetManager;
 class PixiAssets {
 	
 	private static var sounds:Map<String, PixiSound> = new Map();
+	private static var spines:Map<String, SkeletonData> = new Map();
 	
 	public static function load(asset:String, cb:Void->Void):Void {
 		var loader = new Loader();
+		
+		var sp = '(spine)';
+		if (asset.substr(0, sp.length) == sp) {
+			loadSpine(asset.substr(sp.length), function(d:SkeletonData){
+				spines[asset] = d;
+				cb();
+			});
+			
+			return;
+		}
+		
 		if (['.mp3', '.wav', '.ogg'].indexOf(asset.substr( -4)) != -1) {
 			if (!sounds.exists(asset)) {
 				var s = new PixiSound();
@@ -53,6 +67,14 @@ class PixiAssets {
 			loader.add(asset, AssetManager.getPath(asset));
 		}
 		loader.load(cb);
+	}
+	
+	public static function loadSpine(asset:String, cb:SkeletonData->Void):Void {
+		var loader = new Loader();
+		loader.add(asset, AssetManager.getPath(asset));
+		loader.load(function(_, resources) {
+			cb(Reflect.field(resources, asset).spineData);
+		});
 	}
 	
 	public static function image(asset:String, ?name:String):Sprite {
@@ -71,6 +93,7 @@ class PixiAssets {
 		return useSpriteSheet ? Texture.fromFrame(asset) : Texture.fromImage(AssetManager.getPath(asset));
 	}
 	
-	public static function sound(asset:String):PixiSound return sounds[asset]; 
+	public static function sound(asset:String):PixiSound return sounds[asset];
+	public static function spine(asset:String):SkeletonData return spines[asset];
 	
 }
