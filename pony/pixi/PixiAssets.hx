@@ -47,9 +47,9 @@ class PixiAssets {
 	public static function load(asset:String, cb:Void->Void):Void {
 		var loader = new Loader();
 		
-		var sp = '(spine)';
-		if (asset.substr(0, sp.length) == sp) {
-			loadSpine(asset.substr(sp.length), function(d:SkeletonData){
+		var sp = asset.split('(spine)');
+		if (sp.length > 1) {
+			loadSpine(sp.join(''), function(d:SkeletonData) {
 				spines[asset] = d;
 				cb();
 			});

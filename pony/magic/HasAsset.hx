@@ -219,7 +219,7 @@ class HasAssetBuilder {
 				kind: FieldType.FFun( {
 				args: [{name: 'asset', type:macro:Int}],
 						ret: null,
-						expr: macro return pony.ui.AssetManager.spine(ASSETS_LIST[asset])
+						expr: macro return pony.ui.AssetManager.spine($v+'/'+ASSETS_LIST[asset])
 					}),
 				pos: Context.currentPos()
 			});
