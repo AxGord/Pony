@@ -49,7 +49,7 @@ class BText extends Sprite implements IWH {
 	private var ansi:String;
 	private var current:BTextLow;
 	private var currentShadow:BTextLow;
-	private var style:BitmapTextStyle;
+	public var style(default, null):BitmapTextStyle;
 	public var color(get, set):UInt;
 	private var defColor:UInt;
 	private var shadow:Bool = false;

@@ -61,6 +61,11 @@ class BaseLayout<T:BaseLayoutCore<Container>> extends Sprite implements IWH {
 		layout.add(obj);
 	}
 	
+	public function addAt(obj:Container, index:Int):Void {
+		addChildAt(obj, index);
+		layout.add(obj);
+	}
+	
 	public function addToBegin(obj:Container):Void {
 		addChildAt(obj, 0);
 		layout.addToBegin(obj);

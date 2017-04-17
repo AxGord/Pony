@@ -52,7 +52,7 @@ class TouchableBase implements HasSignal {
 	@:auto public var onDown:Signal1<Touch>;
 	@:auto public var onUp:Signal1<Touch>;
 	@:auto public var onClick:Signal0;
-	@:auto public var onTap:Signal0;
+	@:auto public var onTap:Signal1<Touch>;
 	@:auto public var onWheel:Signal1<Int>;
 	@:auto public var onSwipe:Signal1<Direction>;
 	
@@ -182,10 +182,10 @@ class TouchableBase implements HasSignal {
 		tapTouch.onMove < cancleTap;
 	}
 	
-	private function tapHandler():Void {
+	private function tapHandler(t:Touch):Void {
 		removeTapCancle();
 		onDown < beginTap;
-		eTap.dispatch();
+		eTap.dispatch(t);
 	}
 	
 	private function cancleTap() {

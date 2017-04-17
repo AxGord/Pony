@@ -44,7 +44,7 @@ class ScrollBar extends Sprite {
 	public var onReady:Signal0;
 	private var bar:Bar;
 	private var totalSize:Float;
-	private var pos:Int = 0;
+	public var pos(default, set):Int = 0;
 	private var contentSize:Float;
 	private var touchable:Touchable;
 	private var startTPos:Float;
@@ -71,19 +71,25 @@ class ScrollBar extends Sprite {
 	public function updateContent(size:Float):Void {
 		contentSize = size;
 		bar.core.percent = size > totalSize ? totalSize / size : 1;
+		if (pos < totalSize - contentSize) pos = Std.int(totalSize - contentSize);
 		updatePos();
 	}
 	
 	public dynamic function onChangePosition(v:Int):Void {}
 	
-	public function scroll(delta:Int):Void {
-		pos += delta;
-		updatePos();
+	public function scroll(delta:Int):Void pos += delta;
+	
+	@:extern inline private function set_pos(v:Int):Int {
+		if (v != pos) {
+			pos = v;
+			if (pos > 0) pos = 0;
+			if (pos < totalSize - contentSize) pos = Std.int(totalSize - contentSize);
+			updatePos();
+		}
+		return pos;
 	}
 	
-	private function updatePos():Void {
-		if (pos > 0) pos = 0;
-		if (pos < totalSize - contentSize) pos = Std.int(totalSize - contentSize);
+	@:extern inline private function updatePos():Void {
 		onChangePosition(pos);
 		var p = ( pos / (totalSize - contentSize));
 		var v = (totalSize - bar.core.pos) * p;
@@ -115,10 +121,7 @@ class ScrollBar extends Sprite {
 		touchable.onDown < beginMove;
 	}
 	
-	private function move(t:Touch):Void {
-		pos = startTPosBefore - Std.int(startTPos - (vert ? t.y : t.x));
-		updatePos();
-	}
+	private function move(t:Touch):Void pos = startTPosBefore - Std.int(startTPos - (vert ? t.y : t.x));
 	
 	override public function destroy(?options:haxe.extern.EitherType<Bool, DestroyOptions>):Void {
 		onChangePosition = null;
