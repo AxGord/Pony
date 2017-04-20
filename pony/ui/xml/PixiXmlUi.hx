@@ -42,6 +42,7 @@ import pony.geom.Point;
 import pony.magic.HasAbstract;
 import pony.pixi.App;
 import pony.pixi.ETextStyle;
+import pony.pixi.FastMovieClip;
 import pony.pixi.PixiAssets;
 import pony.pixi.ui.AlignLayout;
 import pony.pixi.ui.BGLayout;
@@ -88,6 +89,7 @@ using pony.pixi.PixiExtends;
 	rect: pixi.core.graphics.Graphics,
 	textbutton: pony.pixi.ui.TextButton,
 	clip: pixi.extras.MovieClip,
+	fastclip: pixi.core.sprites.Sprite,
 	slider: pony.pixi.ui.StepSlider,
 	slice: pony.pixi.ui.slices.SliceSprite,
 }))
@@ -173,8 +175,22 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 				var m = MovieClip.fromFrames(data);
 				if (attrs.speed != null) m.animationSpeed = Std.parseFloat(attrs.speed);
 				m.loop = !attrs.loop.isFalse();
-				m.play();
+				if (attrs.play.isTrue()) m.play();
 				m;
+			case 'fastclip':
+				var data = if (attrs.name != null) {
+					var a = attrs.name.split('|');
+					var p = a[1].split('...');
+					[for (n in new IntIterator(Std.parseInt(p[0]), Std.parseInt(p[1]))) a[0] + n + a[2]];
+				} else {
+					attrs.frames.split(',').map(StringTools.trim);
+				}
+				
+				var clip = FastMovieClip.fromStorage(data, Std.parseFloat(attrs.frameTime), attrs.fixedTime.isTrue());
+				clip.loop = !attrs.loop.isFalse();
+				if (attrs.play.isTrue()) clip.play();
+				
+				clip.get();
 			case 'textbox':
 				var font = parseAndScaleInt(attrs.size) + 'px ' + attrs.font;
 				var text = textTransform(_putData(content), attrs.transform);
