@@ -69,7 +69,7 @@ class FastMovieClip {
 	
 	public static function fromStorage(data:Or<Array<Texture>, Array<String>>, frameTime:Time, fixedTime:Bool = false):FastMovieClip {
 		var data = converOr(data);
-		var n = data[0].baseTexture.imageUrl;
+		var n = idFromTexture(data[0]);
 		if (!storage.exists(n)) {
 			return storage[n] = new FastMovieClip(data, frameTime, fixedTime);
 		} else {
@@ -77,9 +77,9 @@ class FastMovieClip {
 		}
 	}
 	
-	@:extern public static inline function fromUrl(n:String):FastMovieClip return storage[n];
-	
-	@:extern public static inline function fromSprite(s:Sprite):FastMovieClip return fromUrl(s.texture.baseTexture.imageUrl);
+	@:extern public static inline function fromSprite(s:Sprite):FastMovieClip return fromTexture(s.texture);
+	@:extern public static inline function fromTexture(t:Texture):FastMovieClip return storage[idFromTexture(t)];
+	@:extern private static inline function idFromTexture(t:Texture):String return t.baseTexture.imageUrl + '_' + t.frame.x + '_' + t.frame.y;
 	
 	@:extern private static inline function converOr(data:Or<Array<Texture>, Array<String>>):Array<Texture> {
 		return switch data {
