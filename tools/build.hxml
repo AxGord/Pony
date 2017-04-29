@@ -1,0 +1,38 @@
+-neko bin/pony.n
+-cp src
+-main Main
+-cmd nekotools boot bin/pony.n
+-dce full
+-D analyzer-optimize
+
+--next
+
+-js bin/ponyWatch.js
+-cp src
+-main WatchMain
+-lib hxnodejs
+-dce full
+-D analyzer-optimize
+-D js-es5
+-lib pony
+
+--next
+
+-js bin/ponyPrepare.js
+-cp src
+-main NodePrepareMain
+-lib hxnodejs
+-dce full
+-D analyzer-optimize
+-D js-es5
+-lib pony
+
+--next
+
+-js bin/ponyUglify.js
+-cp src
+-main UglifyMain
+-lib hxnodejs
+-dce full
+-D analyzer-optimize
+-D js-es5
