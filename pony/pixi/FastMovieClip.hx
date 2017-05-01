@@ -33,6 +33,7 @@ import pixi.core.textures.Texture;
 import pony.Or;
 import pony.time.DT;
 import pony.time.DTimer;
+import pony.time.DeltaTime;
 import pony.time.Time;
 
 /**
@@ -94,13 +95,16 @@ class FastMovieClip {
 		else
 			frame++;
 			
+		onFrameUpdate(frame, dt);
+			
 		if (!loop && frame >= data.length - 1) {
 			stop();
-			onComplete(dt);
+			DeltaTime.fixedUpdate < onComplete;
 		}
 	}
 	
 	dynamic public function onComplete(dt:DT):Void {}
+	dynamic public function onFrameUpdate(frame:Int, dt:DT):Void {}
 	
 	@:extern public inline function get():Sprite {
 		if (pool.length > 0) {
