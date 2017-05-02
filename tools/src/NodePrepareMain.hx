@@ -26,9 +26,9 @@ class NodePrepareMain {
 		switch e.name {
 			case 'poeditor':
 				
-				//var poe = new Poeditor(e);
-				//poe.updateFiles(runNext);
-				runNext();
+				var poe = new Poeditor(e);
+				poe.updateFiles(runNext);
+				
 			case 'download':
 				
 				var d = new Download(e);

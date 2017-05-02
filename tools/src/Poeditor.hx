@@ -38,7 +38,6 @@ class Poeditor {
 	public function updateFiles(cb:Void->Void):Void {
 		var tasks = new Tasks(cb);
 		client.projects.get(id).then(function(project){
-			Sys.println(project);
 			project.languages.list().then(function(languages:Array<Dynamic>){
 				for (language in languages) {
 					if (language.percentage != 100 || !files.exists(language.code)) continue;
@@ -48,7 +47,9 @@ class Poeditor {
 						var obj:Dynamic = {};
 						for (term in terms) Reflect.setField(obj, term.term, term.translation);
 						var r = Json.stringify(obj, null, '\t');
-						File.saveContent(path + files[lang.code] + '.json', r);
+						var file = path + files[lang.code] + '.json';
+						Sys.println('Update lang file: '+file);
+						File.saveContent(file, r);
 						tasks.end();
 					});
 				}

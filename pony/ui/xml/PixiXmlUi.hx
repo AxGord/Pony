@@ -32,7 +32,7 @@ import pixi.core.graphics.Graphics;
 import pixi.core.math.shapes.Rectangle;
 import pixi.core.renderers.webgl.filters.Filter;
 import pixi.core.sprites.Sprite;
-import pixi.extras.MovieClip;
+import pixi.extras.AnimatedSprite;
 import pixi.filters.extras.GlowFilter;
 import pony.color.UColor;
 import pony.geom.Align;
@@ -88,7 +88,7 @@ using pony.pixi.PixiExtends;
 	textbox: pony.pixi.ui.TextBox,
 	rect: pixi.core.graphics.Graphics,
 	textbutton: pony.pixi.ui.TextButton,
-	clip: pixi.extras.MovieClip,
+	clip: pixi.extras.AnimatedSprite,
 	fastclip: pixi.core.sprites.Sprite,
 	slider: pony.pixi.ui.StepSlider,
 	slice: pony.pixi.ui.slices.SliceSprite,
@@ -172,7 +172,7 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 				} else {
 					attrs.frames.split(',').map(StringTools.trim);
 				}
-				var m = MovieClip.fromFrames(data);
+				var m = AnimatedSprite.fromFrames(data);
 				if (attrs.speed != null) m.animationSpeed = Std.parseFloat(attrs.speed);
 				m.loop = !attrs.loop.isFalse();
 				if (attrs.play.isTrue()) m.play();

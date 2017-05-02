@@ -6,7 +6,7 @@ import sys.io.File;
  */
 class Build {
 
-	private var command:Array<String> = []; 
+	private var command:Array<String> = [];
 	private var debug:Bool;
 	private var app:String;
 	
@@ -21,7 +21,8 @@ class Build {
 		
 		Sys.println('haxe ' + command.join(' '));
 		
-		Sys.command('haxe', command);
+		var code = Sys.command('haxe', command);
+		if (code > 0) Sys.exit(code);
 	}
 	
 	private function pushCommands(xml:Fast):Void {

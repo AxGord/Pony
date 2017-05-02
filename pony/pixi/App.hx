@@ -145,6 +145,8 @@ class App implements HasSignal {
 		canvas.style.position = "static";
 
 		var renderingOptions:RenderOptions = {
+			width: width,
+			height: height,
 			view: canvas,
 			backgroundColor: background,
 			resolution: 1,
@@ -157,7 +159,7 @@ class App implements HasSignal {
 			roundPixels: false
 		};
 
-		app = new pixi.core.Application(width, height, renderingOptions);
+		app = new pixi.core.Application(renderingOptions);
 
 		if (parentDom == null)
 			Browser.document.body.appendChild(app.view);

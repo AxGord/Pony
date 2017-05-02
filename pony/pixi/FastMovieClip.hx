@@ -69,8 +69,7 @@ class FastMovieClip {
 	}
 	
 	public static function fromStorage(data:Or<Array<Texture>, Array<String>>, frameTime:Time, fixedTime:Bool = false):FastMovieClip {
-		var data = converOr(data);
-		var n = idFromTexture(data[0]);
+		var n = idFromTexture(converOrFirst(data));
 		if (!storage.exists(n)) {
 			return storage[n] = new FastMovieClip(data, frameTime, fixedTime);
 		} else {
@@ -86,6 +85,13 @@ class FastMovieClip {
 		return switch data {
 			case OrState.A(t): t;
 			case OrState.B(s): [for (e in s) Texture.fromFrame(e)];
+		};
+	}
+	
+	@:extern private static inline function converOrFirst(data:Or<Array<Texture>, Array<String>>):Texture {
+		return switch data {
+			case OrState.A(t): t[0];
+			case OrState.B(s): Texture.fromFrame(s[0]);
 		};
 	}
 	
