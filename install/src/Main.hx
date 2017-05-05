@@ -28,7 +28,7 @@ class Main {
 
 		//Sys.command('sudo', ['chmod', '/usr/local/lib/node_modules', '777']);
 
-		var npm:Array<String> = ['poeditor-client', 'uglify-js'];
+		var npm:Array<String> = ['https://github.com/janjakubnanista/poeditor-client.git', 'uglify-js'];
 
 		Sys.println('Install npm');
 
