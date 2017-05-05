@@ -11,6 +11,7 @@ import sys.io.File;
 class UglifyMain {
 
 	static var debug:Bool = false;
+	static var app:String;
 	static var input:Array<String> = [];
 	static var output:String = null;
 	static var mapInput:String = null;
@@ -22,9 +23,13 @@ class UglifyMain {
 	static function main() {
 		var UglifyJS = Node.require("uglify-js");
 		
-		var xml = new Fast(Xml.parse(File.getContent('pony.xml'))).node.project.node.uglify;
+		var xml = Utils.getXml().node.uglify;
 
-		debug = Sys.args()[0] == 'debug';
+		
+		var cfg = Utils.parseArgs(Sys.args());
+		
+		app = cfg.app;
+		debug = cfg.debug;
 		
 		run(xml);
 		
@@ -59,6 +64,10 @@ class UglifyMain {
 				
 				case 'm': mangle = true;
 				case 'c': compress = true;
+				
+				case 'apps': if (app != null && e.hasNode.resolve(app)) {
+					run(e.node.resolve(app));
+				}
 			}
 		}
 	}

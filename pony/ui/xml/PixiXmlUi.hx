@@ -328,8 +328,20 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 			if (a.length > 0) obj.filters = a;
 		}
 		
+		
 		if (attrs.x != null) obj.x = parseAndScale(attrs.x);
 		if (attrs.y != null) obj.y = parseAndScale(attrs.y);
+		
+		if (attrs.flipx.isTrue()) {
+			PixiExtends.flipX(cast obj);
+			PixiExtends.flipXpos(cast obj);
+		}
+		
+		if (attrs.flipy.isTrue()) {
+			PixiExtends.flipY(cast obj);
+			PixiExtends.flipYpos(cast obj);
+		}
+		
 		return obj;
 	}
 	

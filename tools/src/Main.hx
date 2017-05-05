@@ -1,4 +1,5 @@
 import haxe.xml.Fast;
+import sys.FileSystem;
 import sys.io.File;
 /**
  * Pony Command-Line Tools
@@ -21,48 +22,61 @@ class Main {
 				Sys.println('Pony Command-Line Tools (0.0.1)');
 			
 			case 'watch':
-				Sys.command('start', ['node', ponyPath + 'ponyWatch.js']);
+				runNode('ponyWatch');
 				
 			case 'prepare':
-				new Prepare(getXml());
-				Sys.command('node', [ponyPath + 'ponyPrepare.js']);
+				new Prepare(Utils.getXml());
+				runNode('ponyPrepare');
 				
 			case 'build':
-				build(parseArgs(args), getXml());
+				build(Utils.parseArgs(args), Utils.getXml());
 				
 			case 'zip':
-				var cfg = parseArgs(args);
-				var xml = getXml();
+				var cfg = Utils.parseArgs(args);
+				var xml = Utils.getXml();
 				build(cfg, xml);
 				new Zip(xml.node.zip, cfg.app, cfg.debug);
 				
+			case 'create':
+				if (FileSystem.exists(Utils.MAIN_FILE)) Utils.error(Utils.MAIN_FILE + ' exists');
+				
+				var content = Xml.createDocument();
+				var root = Xml.createElement('project');
+				var name = args[0];
+				if (name != null) root.set('name', name);
+				root.addChild(Xml.createComment('Put configuration here'));
+				content.addChild(root);
+				var r = '<?xml version="1.0" encoding="utf-8" ?>\n';
+				r += haxe.xml.Printer.print(content, true);
+				File.saveContent(Utils.MAIN_FILE, r);
+				
 			case _:
-				Sys.println('Unknown command');
-				return;
+				Utils.error('Unknown command');
 		}
 		
 		Sys.println('Complete');
 		
 	}
 	
-	static function getXml():Fast return new Fast(Xml.parse(File.getContent('pony.xml'))).node.project;
-	
-	static function parseArgs(args:Array<String>):AppCfg {
-		var debug = args.indexOf('debug') != -1;
-		var app:String = null;
-		for (a in args) if (a != 'debug' && a != 'release') {
-			app = a;
-			break;
-		}
-		return {app: app, debug:debug};
-	}
-	
 	static function build(args:AppCfg, xml:Fast):Void {
 		new Build(xml.node.build, args.app, args.debug);
-		if (xml.hasNode.uglify) {
-			Sys.println('Uglify');
-			Sys.command('node', args.debug ? [ponyPath + 'ponyUglify.js', 'debug'] : [ponyPath + 'ponyUglify.js']);
-		}
+		if (xml.hasNode.uglify)
+			runNode('ponyUglify', addCfg(args));
+	}
+	
+	static function addCfg(?a:Array<String>, args:AppCfg):Array<String> {
+		if (a == null) a = [];
+		if (args.app != null) a.push(args.app);
+		if (args.debug) a.push('debug');
+		return a;
+	}
+	
+	static function runNode(name:String, ?args:Array<String>):Int {
+		if (args == null) args = [];
+		Sys.println('Run: '+name);
+		var a = [ponyPath + name + '.js'];
+		for (e in args) a.push(e);
+		return Sys.command('node', a);
 	}
 	
 }

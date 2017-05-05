@@ -44,6 +44,7 @@ class FastMovieClip {
 	
 	private static var storage:Map<String, FastMovieClip> = new Map();
 	
+	public var totalFrames(get, never):Int;
 	private var pool:Array<Sprite> = [];
 	private var data:Array<Pair<Rectangle, Rectangle>>;
 	public var texture(default, null):Texture;
@@ -96,14 +97,14 @@ class FastMovieClip {
 	}
 	
 	private function tick(dt:DT):Void {
-		if (loop && frame >= data.length - 1)
+		if (loop && frame >= totalFrames - 1)
 			frame = 0;
 		else
 			frame++;
 			
 		onFrameUpdate(frame, dt);
 			
-		if (!loop && frame >= data.length - 1) {
+		if (!loop && frame >= totalFrames - 1) {
 			stop();
 			DeltaTime.fixedUpdate < onComplete;
 		}
@@ -141,7 +142,7 @@ class FastMovieClip {
 	
 	@:extern public inline function set_frame(n:Int):Int {
 		if (n < 0) n = 0;
-		else if (n >= data.length) n = data.length - 1;
+		else if (n >= totalFrames) n = data.length - 1;
 		texture.trim = data[n].a;
 		texture.frame = data[n].b;
 		return frame = n;
@@ -161,5 +162,7 @@ class FastMovieClip {
 		
 		onComplete = null;
 	}
+	
+	@:extern inline private function get_totalFrames():Int return data.length;
 	
 }

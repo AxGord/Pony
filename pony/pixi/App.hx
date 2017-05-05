@@ -156,7 +156,7 @@ class App implements HasSignal {
 			transparent: false,
 			clearBeforeRender: true,
 			preserveDrawingBuffer: false,
-			roundPixels: false
+			roundPixels: true
 		};
 
 		app = new pixi.core.Application(renderingOptions);
