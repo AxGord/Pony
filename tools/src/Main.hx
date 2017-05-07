@@ -37,6 +37,12 @@ class Main {
 				build(cfg, xml);
 				new Zip(xml.node.zip, cfg.app, cfg.debug);
 				
+			case 'ftp':
+				var cfg = Utils.parseArgs(args);
+				var xml = Utils.getXml();
+				build(cfg, xml);
+				runNode('ponyFtp', addCfg(cfg));
+				
 			case 'create':
 				if (FileSystem.exists(Utils.MAIN_FILE)) Utils.error(Utils.MAIN_FILE + ' exists');
 				
