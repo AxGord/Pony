@@ -75,6 +75,7 @@ using pony.pixi.PixiExtends;
 #if (!macro)
 @:autoBuild(pony.ui.xml.XmlUiBuilder.build({
 	free: pixi.core.sprites.Sprite,
+	mask: pony.pixi.ui.Mask,
 	layout: pony.pixi.ui.TLayout,
 	zeroplace: pony.pixi.ui.ZeroPlace,
 	image: pixi.core.sprites.Sprite,
@@ -278,6 +279,16 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 				customUIElement(name, attrs, content);
 		}
 		
+		if (attrs.pivot != null) {
+			var a = attrs.pivot.split(' ');
+			var w = cast(obj, Sprite).width;
+			var h = cast(obj, Sprite).height;
+			if (a.length == 1)
+				obj.pivot.set(Std.parseFloat(a[0]) * w, Std.parseFloat(a[0]) * h);
+			else
+				obj.pivot.set(Std.parseFloat(a[0]) * w, Std.parseFloat(a[1]) * h);
+		}
+		
 		if (attrs.notouch.isTrue()) {
 			obj.interactive = false;
 			obj.interactiveChildren = false;
@@ -290,8 +301,7 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 			obj.alpha = Std.parseFloat(attrs.alpha);
 		}
 		if (attrs.scale != null) {
-			var s = Std.parseFloat(attrs.scale);
-			obj.scale = new pixi.core.math.Point(s, s);
+			obj.scale.set(Std.parseFloat(attrs.scale));
 		}
 		
 		if (attrs.filters != null) {
