@@ -75,7 +75,7 @@ class App implements HasSignal {
 	private var _width:Float;
 	private var _height:Float;
 	private var container:Sprite;
-	private var parentDom:Element;
+	public var parentDom:Element;
 	private var smallDeviceQuality:Float;
 	private var smallDeviceQualityOffset:Float;
 	private var resizeTimer:DTimer;
@@ -162,21 +162,15 @@ class App implements HasSignal {
 		app = new pixi.core.Application(renderingOptions);
 
 		if (parentDom == null)
-			Browser.document.body.appendChild(app.view);
-		else
-			parentDom.appendChild(app.view);
+			parentDom = Browser.document.body;
+		parentDom.appendChild(app.view);
 	}
 	
-	public function fullscreen():Void JsTools.fse(canvas);
+	public function fullscreen():Void JsTools.fse(parentDom);
 	
 	private function resizeHandler():Void {
-		if (parentDom == null || JsTools.isFSE) {
-			width = Browser.window.innerWidth;
-			height = Browser.window.innerHeight;
-		} else {
-			width = parentDom.clientWidth;
-			height = parentDom.clientHeight;
-		}
+		width = parentDom.clientWidth;
+		height = parentDom.clientHeight;
 		
 		var w = width / _width;
 		var h = height / _height;
