@@ -51,10 +51,12 @@ class FastMovieClip {
 	private var timer:DTimer;
 	public var frame(default, set):Int = 0;
 	public var loop:Bool = true;
+	private var crop:Int;
 	
-	public function new(data:Or<Array<Texture>, Array<String>>, frameTime:Time, fixedTime:Bool = false) {
+	public function new(data:Or<Array<Texture>, Array<String>>, frameTime:Time, fixedTime:Bool = false, crop:Int=0) {
 		var data = converOr(data);
 		texture = data[0];
+		this.crop = crop;
 		var first:Bool = true;
 		this.data = [for (t in data) {
 			var p = new Pair(t.trim, t.frame);
@@ -69,10 +71,10 @@ class FastMovieClip {
 		timer.complete << tick;
 	}
 	
-	public static function fromStorage(data:Or<Array<Texture>, Array<String>>, frameTime:Time, fixedTime:Bool = false):FastMovieClip {
+	public static function fromStorage(data:Or<Array<Texture>, Array<String>>, frameTime:Time, fixedTime:Bool = false, crop:Int=0):FastMovieClip {
 		var n = idFromTexture(converOrFirst(data));
 		if (!storage.exists(n)) {
-			return storage[n] = new FastMovieClip(data, frameTime, fixedTime);
+			return storage[n] = new FastMovieClip(data, frameTime, fixedTime, crop);
 		} else {
 			return storage[n];
 		}
@@ -144,7 +146,14 @@ class FastMovieClip {
 		if (n < 0) n = 0;
 		else if (n >= totalFrames) n = data.length - 1;
 		texture.trim = data[n].a;
-		texture.frame = data[n].b;
+		var r = data[n].b;
+		texture.frame = r;
+		if (crop > 0) {
+			if (texture.trim == null)
+				texture.trim = new Rectangle(-crop, -crop, r.width + crop*2, r.height + crop*2);
+			else
+				texture.trim = new Rectangle(texture.trim.x-crop, texture.trim.y-crop, texture.trim.width + crop*2, texture.trim.height + crop*2);
+		}
 		return frame = n;
 	}
 	
