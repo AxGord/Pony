@@ -84,6 +84,7 @@ class BText extends Sprite implements IWH {
 	public function set_t(s:String):String {
 		destroyIfExists();
 		if (s == null) return s;
+		s = StringTools.replace(s, '\\n', '\n');
 		current = new BTextLow(s, style, ansi);
 		if (shadow) {
 			currentShadow = new BTextLow(s, shadowStyle, ansi);

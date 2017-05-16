@@ -45,6 +45,7 @@ import pony.pixi.ETextStyle;
 import pony.pixi.FastMovieClip;
 import pony.pixi.PixiAssets;
 import pony.pixi.ui.AlignLayout;
+import pony.pixi.ui.AutoButton;
 import pony.pixi.ui.BGLayout;
 import pony.pixi.ui.BText;
 import pony.pixi.ui.Bar;
@@ -84,10 +85,12 @@ using pony.pixi.PixiExtends;
 	progressbar: pony.pixi.ui.ProgressBar,
 	timebar: pony.pixi.ui.TimeBar,
 	button: pony.pixi.ui.Button,
+	autobutton: pony.pixi.ui.AutoButton,
 	fsbutton: pony.pixi.ui.FSButton,
 	lbutton: pony.pixi.ui.LabelButton,
 	textbox: pony.pixi.ui.TextBox,
 	rect: pixi.core.graphics.Graphics,
+	circle: pixi.core.graphics.Graphics,
 	textbutton: pony.pixi.ui.TextButton,
 	clip: pixi.extras.AnimatedSprite,
 	fastclip: pixi.core.sprites.Sprite,
@@ -118,6 +121,14 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 					g.drawRect(0, 0, parseAndScale(attrs.w), parseAndScale(attrs.h));
 				else
 					g.drawRoundedRect(0, 0, parseAndScale(attrs.w), parseAndScale(attrs.h), Std.parseFloat(attrs.round));
+				g.endFill();
+				g;
+			case 'circle':
+				var color = UColor.fromString(attrs.color);
+				var g = new Graphics();
+				g.lineStyle();
+				g.beginFill(color.rgb, color.invertAlpha.af);
+				g.drawCircle(0, 0, parseAndScale(attrs.r));
 				g.endFill();
 				g;
 			case 'layout':
@@ -198,7 +209,7 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 				var style = ETextStyle.BITMAP_TEXT_STYLE({font: font, tint: UColor.fromString(attrs.color).rgb});
 				var s = PixiAssets.image(attrs.src, attrs.name);
 				s.visible = !attrs.hidebg.isTrue();
-				new TextBox(s, text, style, scaleBorderInt(attrs.border), attrs.nocache.isTrue());
+				new TextBox(s, text, style, scaleBorderInt(attrs.border), attrs.nocache.isTrue(), attrs.shadow.isTrue());
 			case 'text':
 				var font = parseAndScaleInt(attrs.size) + 'px ' + attrs.font;
 				var text = textTransform(_putData(content), attrs.transform);
@@ -210,6 +221,8 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 				b;
 			case 'button':
 				new Button(splitAttr(attrs.skin), attrs.src);
+			case 'autobutton':
+				new AutoButton(PixiAssets.image(attrs.src, attrs.name));
 			case 'fsbutton':
 				new FSButton(splitAttr(attrs.skin), attrs.src);
 			case 'slider':
@@ -350,6 +363,10 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 		if (attrs.flipy.isTrue()) {
 			PixiExtends.flipY(cast obj);
 			PixiExtends.flipYpos(cast obj);
+		}
+		
+		if (attrs.visible.isFalse()) {
+			obj.visible = false;
 		}
 		
 		return obj;
