@@ -46,6 +46,7 @@ class BTextLow extends BitmapText implements IWH {
 	public function new(text:String, ?style:BitmapTextStyle, ?ansi:String, nocache:Bool=false) {
 		this.ansi = ansi;
 		this.nocache = nocache;
+		if (text == null) text = ' ';
 		if (ansi != null)
 			text = TextTools.convertToANSI(text, ansi);
 		try {
@@ -64,6 +65,7 @@ class BTextLow extends BitmapText implements IWH {
 	
 	public function set_t(s:String):String {
 		if (!nocache) cacheAsBitmap = false;
+		if (s == null) s = ' ';
 		if (ansi != null)
 			text = TextTools.convertToANSI(s, ansi);
 		else

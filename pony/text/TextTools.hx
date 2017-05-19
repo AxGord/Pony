@@ -44,6 +44,8 @@ class TextTools {
 	inline private static var firstANSIId:Int = 192;
 	
 	public static function convertToANSI(s:String, lang:String):String {
+		lang = lang.split('_')[0];
+		if (!letters.exists(lang)) return s;
 		var r = '';
 		for (i in 0...s.length) r += getANSILetter(s.charAt(i), lang);
 		return r;
