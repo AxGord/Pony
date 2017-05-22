@@ -221,7 +221,24 @@ class App implements HasSignal {
 	}
 	
 	#if stats
-	@:extern public inline function addStats():Void new Perf().addInfo(["UNKNOWN", "WEBGL", "CANVAS"][app.renderer.type]);
+	@:extern public inline function addStats():Void {
+		var perf = new Perf();
+		perf.addInfo(["UNKNOWN", "WEBGL", "CANVAS"][app.renderer.type]);
+		var elements = [perf.fps, perf.info, perf.ms];
+		if (perf.memory != null)
+			elements.push(perf.memory);
+			
+		function change() for (e in elements) e.style.opacity = e.style.opacity != "0.1" ? "0.1" : "0.8";
+			
+		for (e in elements) {
+			#if !debug
+			e.style.opacity = "0.1";
+			#else
+			e.style.opacity = "0.8";
+			#end
+			e.onclick = change;
+		}
+	}
 	#end
 	
 }
