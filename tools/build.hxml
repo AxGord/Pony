@@ -4,6 +4,7 @@
 -cmd nekotools boot bin/pony.n
 -dce full
 -D analyzer-optimize
+-resource logo.txt@logo
 
 --next
 

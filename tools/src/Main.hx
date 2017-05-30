@@ -19,8 +19,10 @@ class Main {
 		var args = Sys.args();
 		switch args.shift() {
 			case null:
-				Sys.println('Pony Command-Line Tools (0.0.1)');
-			
+				Sys.println(haxe.Resource.getString('logo'));
+				Sys.println('');
+				Sys.println('Command-Line Tools');
+				Sys.exit(0);
 			case 'watch':
 				runNode('ponyWatch');
 				
