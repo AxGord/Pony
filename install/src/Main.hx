@@ -63,7 +63,7 @@ class Main {
 
 				Sys.println('Add user path to ponytools');
 				var home = Sys.getEnv('HOME');
-				var pFile = home + '/.bash_profile';
+				var pFiles = [home + '/.bash_profile', home + '/.zshrc'];
 				var npmPath = '/usr/local/lib/node_modules';
 				
 				var data = [
@@ -72,6 +72,7 @@ class Main {
 					"export PATH=$PATH:$PONYTOOLS_PATH"
 				];
 
+				for (pFile in pFiles) {
 				if (FileSystem.exists(pFile)) {
 					var c = File.getContent(pFile);
 					if (c.indexOf('PONYTOOLS_PATH') == -1) {
@@ -79,6 +80,7 @@ class Main {
 					}
 				} else {
 					File.saveContent(pFile, data.join('\n'));
+					}
 				}
 
 				Sys.println('Installation complete, please reenter in command line and use pony');				
