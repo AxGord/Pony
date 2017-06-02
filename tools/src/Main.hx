@@ -70,6 +70,9 @@ class Main {
 		new Build(xml.node.build, args.app, args.debug);
 		if (xml.hasNode.uglify)
 			runNode('ponyUglify', addCfg(args));
+		if (xml.hasNode.wrapper) {
+			new Wrapper(xml.node.wrapper, args.app, args.debug);
+		}
 	}
 	
 	static function addCfg(?a:Array<String>, args:AppCfg):Array<String> {
