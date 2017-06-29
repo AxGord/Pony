@@ -25,7 +25,6 @@ class UglifyMain {
 		
 		var xml = Utils.getXml().node.uglify;
 
-		
 		var cfg = Utils.parseArgs(Sys.args());
 		
 		app = cfg.app;
@@ -33,11 +32,16 @@ class UglifyMain {
 		
 		run(xml);
 		
-		var r = UglifyJS.minify(input, {
+		var inputContent:Dynamic<String> = {};
+		for (f in input) Reflect.setField(inputContent, f.split('/').pop(), File.getContent(f));
+
+		var r = UglifyJS.minify(inputContent, {
+			toplevel: true,
 			warnings: true,
-			inSourceMap: mapInput,
-			outSourceMap: mapUrl,
-			sourceMapUrl: mapUrl,
+			sourceMap: {
+				filename: output.split('/').pop(),
+				url: mapInput
+			},
 			mangle: mangle,
 			compress: untyped compress ? {} : false
 		});
