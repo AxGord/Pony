@@ -24,7 +24,7 @@
     <option noInlineOnDebug="False" />
     <option mainClass="Main" />
     <option enabledebug="False" />
-    <option additional="-cmd nekotools boot bin/pony.n&#xA;-dce full" />
+    <option additional="-cmd nekotools boot bin/pony.n&#xA;-dce full&#xA;-resource logo.txt@logo" />
   </build>
   <!-- haxelib libraries -->
   <haxelib>

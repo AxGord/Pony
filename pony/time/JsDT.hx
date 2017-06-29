@@ -47,6 +47,8 @@ class JsDT {
 	private static var ms:Float = 0;
 	private static var allowFastTickAbort:Bool = false;
 	private static var allowHalfTick:Bool = false;
+	private static var blurId:Int;
+	public static var rareTime:Int = 10000;
 	
 	private static function init():Void {
 		inited = true;
@@ -127,6 +129,22 @@ class JsDT {
 	@:extern private static inline function tick(v:Float):Void {
 		DeltaTime.fixedValue = (v - ms) / 1000;
 		ms = v;
+		DeltaTime.fixedDispatch();
+	}
+	
+	public static function blur():Void {
+		stop();
+		blurId = Browser.window.setInterval(rareTick, rareTime);
+	}
+	
+	public static function focus():Void {
+		Browser.window.clearInterval(blurId);
+		start();
+	}
+	
+	private static function rareTick():Void {
+		DeltaTime.fixedValue = rareTime / 1000;
+		ms += rareTime;
 		DeltaTime.fixedDispatch();
 	}
 	

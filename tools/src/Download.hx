@@ -1,4 +1,5 @@
 #if nodejs
+import js.node.http.IncomingMessage;
 import pony.Tasks;
 import js.node.Http;
 import js.node.Https;
@@ -49,10 +50,12 @@ class Download {
 			var needDownload = false;
 			
 			if (FileSystem.exists(file)) {
-				if (unit.b != null)
+				if (unit.b != null) {
+					Sys.println('Check ' + file);
 					needDownload = sys.io.File.getContent(file).indexOf(unit.b) == -1;
-				else
+				} else {
 					needDownload = false;
+				}
 			} else {
 				needDownload = true;
 			}
@@ -62,16 +65,17 @@ class Download {
 			}
 			
 		}
-		
+		tasks.add();
 		for (file in downloadList) {
 			Sys.println('Download '+file.b);
 			tasks.add();
-			
 			var f = Fs.createWriteStream(file.a);
-			Https.get(file.b, function(response) response.pipe(f)).once('end', tasks.end);
+			Https.get(file.b, function(response:IncomingMessage) {
+				response.once('end', tasks.end);
+				response.pipe(f); 
+			});
 		}
-		
-		
+		tasks.end();
 		
 	}
 	

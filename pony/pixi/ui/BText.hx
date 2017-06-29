@@ -42,7 +42,12 @@ import pony.time.DeltaTime;
  */
 class BText extends Sprite implements IWH {
 
-	private static var blurFilter:BlurFilter = new BlurFilter();
+	private static var blurFilter:BlurFilter;
+	
+	private static function __init__():Void {
+		blurFilter = new BlurFilter();
+		blurFilter.blur = 2;
+	}
 	
 	public var t(get, set):String;
 	public var size(get, never):Point<Float>;
@@ -79,6 +84,7 @@ class BText extends Sprite implements IWH {
 	public function set_t(s:String):String {
 		destroyIfExists();
 		if (s == null) return s;
+		s = StringTools.replace(s, '\\n', '\n');
 		current = new BTextLow(s, style, ansi);
 		if (shadow) {
 			currentShadow = new BTextLow(s, shadowStyle, ansi);

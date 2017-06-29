@@ -4,6 +4,7 @@
 -cmd nekotools boot bin/pony.n
 -dce full
 -D analyzer-optimize
+-resource logo.txt@logo
 
 --next
 
@@ -33,6 +34,17 @@
 -cp src
 -main UglifyMain
 -lib hxnodejs
+-dce full
+-D analyzer-optimize
+-D js-es5
+
+--next
+
+-js bin/ponyFtp.js
+-cp src
+-main FtpMain
+-lib hxnodejs
+-lib pony
 -dce full
 -D analyzer-optimize
 -D js-es5

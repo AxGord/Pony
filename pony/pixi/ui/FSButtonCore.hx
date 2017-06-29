@@ -36,9 +36,9 @@ import js.Browser;
 class FSButtonCore {
 
 	public function new() {
-		App.main.canvas.addEventListener("fullscreenchange", setFullScreenImage);
-		App.main.canvas.addEventListener("webkitfullscreenchange", setFullScreenImage);
-		App.main.canvas.addEventListener("msfullscreenchange", setFullScreenImage);
+		App.main.parentDom.addEventListener("fullscreenchange", setFullScreenImage);
+		App.main.parentDom.addEventListener("webkitfullscreenchange", setFullScreenImage);
+		App.main.parentDom.addEventListener("msfullscreenchange", setFullScreenImage);
 		Browser.document.addEventListener("mozfullscreenchange", setFullScreenImage);
 	}
 	

@@ -147,7 +147,7 @@ class DeltaTime implements HasSignal {
 		eUpdate.onLost.add(_lostListeners);
 	}
 	
-	private static function updateHandler(dt:DT):Void if (dt > 0) eUpdate.dispatch(value = dt * speed);
+	private static function updateHandler(dt:DT):Void if (speed > 0 && dt > 0) eUpdate.dispatch(value = dt * speed);
 	
 	private static function _takeListeners():Void fixedUpdate.add(updateHandler);
 	private static function _lostListeners():Void fixedUpdate.remove(updateHandler);

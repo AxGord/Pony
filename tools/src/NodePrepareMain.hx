@@ -20,17 +20,21 @@ class NodePrepareMain {
 	}
 	
 	static function runNext():Void {
-		if (!itetator.hasNext()) return;
+		if (!itetator.hasNext()) {
+			Sys.println('Node prepare complete');
+			return;
+		}
 		var e = itetator.next();
-		Sys.println('Try run module ' + e.name);
 		switch e.name {
 			case 'poeditor':
 				
-				//var poe = new Poeditor(e);
-				//poe.updateFiles(runNext);
-				runNext();
+				Sys.println(e.name);
+				var poe = new Poeditor(e);
+				poe.updateFiles(runNext);
+				
 			case 'download':
 				
+				Sys.println(e.name);
 				var d = new Download(e);
 				d.run(runNext);
 				

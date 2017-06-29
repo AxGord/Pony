@@ -153,9 +153,9 @@ class ButtonCore extends Tumbler implements HasSignal {
 		onClick >> b.click;
 	}
 	
-	private function setLowMode(m:Int):Void lowMode = m;
-	private function setState(s:ButtonState):Void state = s;
-	private function click(mode:Int):Void eClick.dispatch(mode, true);
+	public function setLowMode(m:Int):Void lowMode = m;
+	public function setState(s:ButtonState):Void state = s;
+	public function click(mode:Int):Void eClick.dispatch(mode, true);
 
 	inline public function reset():Void {
 		lowMode = 0;

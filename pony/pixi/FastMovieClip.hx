@@ -33,6 +33,7 @@ import pixi.core.textures.Texture;
 import pony.Or;
 import pony.time.DT;
 import pony.time.DTimer;
+import pony.time.DeltaTime;
 import pony.time.Time;
 
 /**
@@ -43,16 +44,19 @@ class FastMovieClip {
 	
 	private static var storage:Map<String, FastMovieClip> = new Map();
 	
+	public var totalFrames(get, never):Int;
 	private var pool:Array<Sprite> = [];
 	private var data:Array<Pair<Rectangle, Rectangle>>;
 	public var texture(default, null):Texture;
 	private var timer:DTimer;
 	public var frame(default, set):Int = 0;
 	public var loop:Bool = true;
+	private var crop:Int;
 	
-	public function new(data:Or<Array<Texture>, Array<String>>, frameTime:Time, fixedTime:Bool = false) {
+	public function new(data:Or<Array<Texture>, Array<String>>, frameTime:Time, fixedTime:Bool = false, crop:Int=0) {
 		var data = converOr(data);
 		texture = data[0];
+		this.crop = crop;
 		var first:Bool = true;
 		this.data = [for (t in data) {
 			var p = new Pair(t.trim, t.frame);
@@ -67,11 +71,10 @@ class FastMovieClip {
 		timer.complete << tick;
 	}
 	
-	public static function fromStorage(data:Or<Array<Texture>, Array<String>>, frameTime:Time, fixedTime:Bool = false):FastMovieClip {
-		var data = converOr(data);
-		var n = idFromTexture(data[0]);
+	public static function fromStorage(data:Or<Array<Texture>, Array<String>>, frameTime:Time, fixedTime:Bool = false, crop:Int=0):FastMovieClip {
+		var n = idFromTexture(converOrFirst(data));
 		if (!storage.exists(n)) {
-			return storage[n] = new FastMovieClip(data, frameTime, fixedTime);
+			return storage[n] = new FastMovieClip(data, frameTime, fixedTime, crop);
 		} else {
 			return storage[n];
 		}
@@ -88,19 +91,29 @@ class FastMovieClip {
 		};
 	}
 	
+	@:extern private static inline function converOrFirst(data:Or<Array<Texture>, Array<String>>):Texture {
+		return switch data {
+			case OrState.A(t): t[0];
+			case OrState.B(s): Texture.fromFrame(s[0]);
+		};
+	}
+	
 	private function tick(dt:DT):Void {
-		if (loop && frame >= data.length - 1)
+		if (loop && frame >= totalFrames - 1)
 			frame = 0;
 		else
 			frame++;
 			
-		if (!loop && frame >= data.length - 1) {
+		onFrameUpdate(frame, dt);
+			
+		if (!loop && frame >= totalFrames - 1) {
 			stop();
-			onComplete(dt);
+			DeltaTime.fixedUpdate < onComplete;
 		}
 	}
 	
 	dynamic public function onComplete(dt:DT):Void {}
+	dynamic public function onFrameUpdate(frame:Int, dt:DT):Void {}
 	
 	@:extern public inline function get():Sprite {
 		if (pool.length > 0) {
@@ -131,9 +144,16 @@ class FastMovieClip {
 	
 	@:extern public inline function set_frame(n:Int):Int {
 		if (n < 0) n = 0;
-		else if (n >= data.length) n = data.length - 1;
+		else if (n >= totalFrames) n = data.length - 1;
 		texture.trim = data[n].a;
-		texture.frame = data[n].b;
+		var r = data[n].b;
+		texture.frame = r;
+		if (crop > 0) {
+			if (texture.trim == null)
+				texture.trim = new Rectangle(-crop, -crop, r.width + crop*2, r.height + crop*2);
+			else
+				texture.trim = new Rectangle(texture.trim.x-crop, texture.trim.y-crop, texture.trim.width + crop*2, texture.trim.height + crop*2);
+		}
 		return frame = n;
 	}
 	
@@ -151,5 +171,7 @@ class FastMovieClip {
 		
 		onComplete = null;
 	}
+	
+	@:extern inline private function get_totalFrames():Int return data.length;
 	
 }

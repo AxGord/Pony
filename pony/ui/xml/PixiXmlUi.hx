@@ -32,7 +32,7 @@ import pixi.core.graphics.Graphics;
 import pixi.core.math.shapes.Rectangle;
 import pixi.core.renderers.webgl.filters.Filter;
 import pixi.core.sprites.Sprite;
-import pixi.extras.MovieClip;
+import pixi.extras.AnimatedSprite;
 import pixi.filters.extras.GlowFilter;
 import pony.color.UColor;
 import pony.geom.Align;
@@ -45,6 +45,7 @@ import pony.pixi.ETextStyle;
 import pony.pixi.FastMovieClip;
 import pony.pixi.PixiAssets;
 import pony.pixi.ui.AlignLayout;
+import pony.pixi.ui.AutoButton;
 import pony.pixi.ui.BGLayout;
 import pony.pixi.ui.BText;
 import pony.pixi.ui.Bar;
@@ -75,6 +76,7 @@ using pony.pixi.PixiExtends;
 #if (!macro)
 @:autoBuild(pony.ui.xml.XmlUiBuilder.build({
 	free: pixi.core.sprites.Sprite,
+	mask: pony.pixi.ui.Mask,
 	layout: pony.pixi.ui.TLayout,
 	zeroplace: pony.pixi.ui.ZeroPlace,
 	image: pixi.core.sprites.Sprite,
@@ -83,12 +85,14 @@ using pony.pixi.PixiExtends;
 	progressbar: pony.pixi.ui.ProgressBar,
 	timebar: pony.pixi.ui.TimeBar,
 	button: pony.pixi.ui.Button,
+	autobutton: pony.pixi.ui.AutoButton,
 	fsbutton: pony.pixi.ui.FSButton,
 	lbutton: pony.pixi.ui.LabelButton,
 	textbox: pony.pixi.ui.TextBox,
 	rect: pixi.core.graphics.Graphics,
+	circle: pixi.core.graphics.Graphics,
 	textbutton: pony.pixi.ui.TextButton,
-	clip: pixi.extras.MovieClip,
+	clip: pixi.extras.AnimatedSprite,
 	fastclip: pixi.core.sprites.Sprite,
 	slider: pony.pixi.ui.StepSlider,
 	slice: pony.pixi.ui.slices.SliceSprite,
@@ -117,6 +121,14 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 					g.drawRect(0, 0, parseAndScale(attrs.w), parseAndScale(attrs.h));
 				else
 					g.drawRoundedRect(0, 0, parseAndScale(attrs.w), parseAndScale(attrs.h), Std.parseFloat(attrs.round));
+				g.endFill();
+				g;
+			case 'circle':
+				var color = UColor.fromString(attrs.color);
+				var g = new Graphics();
+				g.lineStyle();
+				g.beginFill(color.rgb, color.invertAlpha.af);
+				g.drawCircle(0, 0, parseAndScale(attrs.r));
 				g.endFill();
 				g;
 			case 'layout':
@@ -172,7 +184,7 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 				} else {
 					attrs.frames.split(',').map(StringTools.trim);
 				}
-				var m = MovieClip.fromFrames(data);
+				var m = AnimatedSprite.fromFrames(data);
 				if (attrs.speed != null) m.animationSpeed = Std.parseFloat(attrs.speed);
 				m.loop = !attrs.loop.isFalse();
 				if (attrs.play.isTrue()) m.play();
@@ -197,7 +209,7 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 				var style = ETextStyle.BITMAP_TEXT_STYLE({font: font, tint: UColor.fromString(attrs.color).rgb});
 				var s = PixiAssets.image(attrs.src, attrs.name);
 				s.visible = !attrs.hidebg.isTrue();
-				new TextBox(s, text, style, scaleBorderInt(attrs.border), attrs.nocache.isTrue());
+				new TextBox(s, text, style, scaleBorderInt(attrs.border), attrs.nocache.isTrue(), attrs.shadow.isTrue());
 			case 'text':
 				var font = parseAndScaleInt(attrs.size) + 'px ' + attrs.font;
 				var text = textTransform(_putData(content), attrs.transform);
@@ -209,6 +221,8 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 				b;
 			case 'button':
 				new Button(splitAttr(attrs.skin), attrs.src);
+			case 'autobutton':
+				new AutoButton(PixiAssets.image(attrs.src, attrs.name));
 			case 'fsbutton':
 				new FSButton(splitAttr(attrs.skin), attrs.src);
 			case 'slider':
@@ -278,6 +292,16 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 				customUIElement(name, attrs, content);
 		}
 		
+		if (attrs.pivot != null) {
+			var a = attrs.pivot.split(' ');
+			var w = cast(obj, Sprite).width;
+			var h = cast(obj, Sprite).height;
+			if (a.length == 1)
+				obj.pivot.set(Std.parseFloat(a[0]) * w, Std.parseFloat(a[0]) * h);
+			else
+				obj.pivot.set(Std.parseFloat(a[0]) * w, Std.parseFloat(a[1]) * h);
+		}
+		
 		if (attrs.notouch.isTrue()) {
 			obj.interactive = false;
 			obj.interactiveChildren = false;
@@ -290,8 +314,7 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 			obj.alpha = Std.parseFloat(attrs.alpha);
 		}
 		if (attrs.scale != null) {
-			var s = Std.parseFloat(attrs.scale);
-			obj.scale = new pixi.core.math.Point(s, s);
+			obj.scale.set(Std.parseFloat(attrs.scale));
 		}
 		
 		if (attrs.filters != null) {
@@ -328,8 +351,24 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 			if (a.length > 0) obj.filters = a;
 		}
 		
+		
 		if (attrs.x != null) obj.x = parseAndScale(attrs.x);
 		if (attrs.y != null) obj.y = parseAndScale(attrs.y);
+		
+		if (attrs.flipx.isTrue()) {
+			PixiExtends.flipX(cast obj);
+			PixiExtends.flipXpos(cast obj);
+		}
+		
+		if (attrs.flipy.isTrue()) {
+			PixiExtends.flipY(cast obj);
+			PixiExtends.flipYpos(cast obj);
+		}
+		
+		if (attrs.visible.isFalse()) {
+			obj.visible = false;
+		}
+		
 		return obj;
 	}
 	
