@@ -40,7 +40,9 @@ class Build {
 				case 'release': if (!debug) pushCommands(e);
 				case a:
 					command.push('-' + a);
-					command.push(e.innerData);
+					try {
+						command.push(e.innerData);
+					} catch (_:Dynamic) {}
 			}
 		}
 		
