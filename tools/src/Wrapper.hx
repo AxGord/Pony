@@ -15,7 +15,7 @@ class Wrapper {
 	private var file:String;
 
 	public function new(xml:Fast, app:String, debug:Bool) {
-		trace('Wrapper');
+		//Sys.println('Wrapper');
 		this.app = app;
 		this.debug = debug;
 		
@@ -25,7 +25,7 @@ class Wrapper {
 		
 		if (file == null) throw 'File not set';
 		if (pre == null && post == null) {
-			trace('Nothing');
+			//Sys.println('Nothing');
 			return;
 		}
 		
@@ -34,7 +34,7 @@ class Wrapper {
 		if (pre != null) data = pre + data;
 		if (post != null) data = data + post;
 		
-		trace('Apply wrapper to ' + file);
+		Sys.println('Apply wrapper to ' + file);
 		
 		File.saveContent(file, data);
 	}

@@ -17,6 +17,7 @@ class UglifyMain {
 	static var mapInput:String = null;
 	static var mapOutput:String = null;
 	static var mapUrl:String = null;
+	static var mapSource:String = null;
 	static var mangle:Bool = false;
 	static var compress:Bool = false;
 	
@@ -38,9 +39,10 @@ class UglifyMain {
 		var r = UglifyJS.minify(inputContent, {
 			toplevel: true,
 			warnings: true,
-			sourceMap: {
-				filename: output.split('/').pop(),
-				url: mapInput
+			sourceMap: mapInput == null ? null : {
+				content: File.getContent(mapInput),
+				filename: mapSource,
+				url: mapUrl
 			},
 			mangle: mangle,
 			compress: untyped compress ? {} : false
@@ -62,6 +64,7 @@ class UglifyMain {
 					mapInput = e.node.input.innerData;
 					mapOutput = e.node.output.innerData;
 					mapUrl = e.node.url.innerData;
+					mapSource = e.node.source.innerData;
 					
 				case 'debug': if (debug) run(e);
 				case 'release': if (!debug) run(e);

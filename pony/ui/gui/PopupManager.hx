@@ -36,6 +36,8 @@ class PopupManager<Popup> {
 	private var list:Array<Popup> = [];
 	private var current:IPopup;
 	
+	public var onStartClose:Void->Void;
+	
 	public function new() {}
 	
 	public function showPopup(type:Popup):Void {
@@ -48,7 +50,7 @@ class PopupManager<Popup> {
 	
 	public function hardPopup(type:Popup):Void {
 		list = [];
-		close();
+		endClose();
 		_showPopup(type);
 	}
 	
@@ -61,6 +63,14 @@ class PopupManager<Popup> {
 	dynamic public function onClose():Void {}
 	
 	public function close():Void {
+		if (current == null) return;
+		if (onStartClose != null)
+			onStartClose();
+		else
+			endClose();
+	}
+	
+	public function endClose():Void {
 		if (current == null) return;
 		current.destroyPopup();
 		current = null;
