@@ -34,6 +34,7 @@ import pixi.core.Pixi;
 import pixi.core.RenderOptions;
 import pixi.core.sprites.Sprite;
 import pixi.core.ticker.Ticker;
+import pony.JsTools.OS;
 import pony.events.Signal0;
 import pony.geom.Point;
 import pony.magic.HasSignal;
@@ -118,7 +119,7 @@ class App implements HasSignal {
 		
 		pixiInit();
 		
-		isWebGL = app.renderer.type == Pixi.RENDERER_TYPE.WEBGL;
+		isWebGL = app.renderer.type == RendererType.WEBGL;
 		app.stage.addChild(container);
 		Mouse.reg(container);
 		Mouse.correction = correction;
@@ -179,9 +180,8 @@ class App implements HasSignal {
 		var ratio = smallDeviceQuality <= 1 ? 1 : smallDeviceQualityOffset + d / smallDeviceQuality;
 		if (ratio > 1) ratio = 1;
 		
-		//Stealing all mobile device resources
-		//if (!JsTools.isMobile)
-		//ratio *= Browser.window.devicePixelRatio;
+		if (JsTools.os == OS.IOS)
+			ratio *= Browser.window.devicePixelRatio;
 		
 		app.renderer.resize(width / d * ratio, height / d * ratio);
 		canvas.style.width = width + "px";
@@ -223,7 +223,7 @@ class App implements HasSignal {
 	#if stats
 	@:extern public inline function addStats():Void {
 		var perf = new Perf();
-		perf.addInfo(["UNKNOWN", "WEBGL", "CANVAS"][app.renderer.type]);
+		perf.addInfo(["UNKNOWN", "WEBGL", "CANVAS"][app.renderer.type.getIndex()]);
 		var elements = [perf.fps, perf.info, perf.ms];
 		if (perf.memory != null)
 			elements.push(perf.memory);

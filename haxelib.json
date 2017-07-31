@@ -2,10 +2,10 @@
   "name": "pony",
   "url": "https://github.com/AxGord/Pony",
   "license": "BSD",
-  "tags": ["cross", "utils", "pixi", "pixijs", "unity3d", "unity", "flash", "nodejs", "cs", "php", "openfl"],
+  "tags": ["cross", "tools", "utils", "pixi", "pixijs", "unity3d", "unity", "flash", "nodejs", "cs", "php", "openfl"],
   "description": "Haxe open-cross-library",
-  "version": "0.4.0",
-  "releasenote": "New event system. Pixijs support.",
+  "version": "0.4.5",
+  "releasenote": "Pony Tools. Pixijs features.",
   "contributors": ["AxGord"],
   "dependencies": {
   }

@@ -91,7 +91,7 @@ class Bar extends Sprite implements HasSignal implements IWH {
 		begin = PixiAssets.cImage(fillBegin, useSpriteSheet);
 		barContainter.addChild(begin);
 		this.fill = PixiAssets.cImage(fill, useSpriteSheet);
-		this.fill.texture.baseTexture.scaleMode = Pixi.SCALE_MODES.NEAREST;
+		this.fill.texture.baseTexture.scaleMode = 1;
 		barContainter.addChild(this.fill);
 		if (useSpriteSheet)
 			DeltaTime.fixedUpdate < init;

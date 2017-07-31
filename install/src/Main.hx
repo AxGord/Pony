@@ -55,7 +55,7 @@ class Main {
 				}		
 				Sys.command('install'+PD+'append_user_path.cmd', [toolshome]);
 				
-				Sys.println('Installation complete, please reenter in command line and use pony');
+				Sys.println('Installation complete, please reboot system');
 
 			case 'Mac':
 
@@ -83,7 +83,7 @@ class Main {
 					}
 				}
 
-				Sys.println('Installation complete, please reenter in command line and use pony');				
+				Sys.println('Installation complete, please reenter in command line');				
 
 			case _:
 				Sys.println('Not supported OS');

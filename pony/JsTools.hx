@@ -36,7 +36,7 @@ enum UserAgent {
 }
 
 enum OS {
-	Windows; Linux(type:Linux); Android; Unknown;
+	Windows; Linux(type:Linux); Android; Unknown; IOS;
 }
 
 enum Linux {
@@ -91,16 +91,28 @@ class JsTools {
 	private static function get_os():OS {
 		if (_os != null) return _os;
 		var ua = Browser.navigator.userAgent.toLowerCase();
-		if (ua.indexOf('android') != -1) {
-			_os = Android;
-		} else if (ua.indexOf('windows') != -1) {
+		if (ua.indexOf('windows') != -1) {
 			_os = Windows;
+		} else if (ua.indexOf('android') != -1) {
+			_os = Android;
 		} else if (ua.indexOf('linux') != -1) {
 			if (ua.indexOf('ubuntu') != -1)
 				_os = Linux(Ubuntu);
 			else
 				_os = Linux(Other);
 		} else {
+			var iDevices = [
+				'iPad Simulator',
+				'iPhone Simulator',
+				'iPod Simulator',
+				'iPad',
+				'iPhone',
+				'iPod'
+			];
+			if (Browser.navigator.platform != null)
+				while (iDevices.length > 0)
+					if (Browser.navigator.platform == iDevices.pop())
+						return _os = OS.IOS;
 			_os = OS.Unknown;
 		}
 		return _os;
