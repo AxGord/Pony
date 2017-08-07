@@ -169,6 +169,8 @@ class App implements HasSignal {
 	
 	public function fullscreen():Void JsTools.fse(parentDom);
 	
+	dynamic public function ratioMod(ratio:Float):Float return ratio;
+	
 	private function resizeHandler():Void {
 		width = parentDom.clientWidth;
 		height = parentDom.clientHeight;
@@ -180,9 +182,8 @@ class App implements HasSignal {
 		var ratio = smallDeviceQuality <= 1 ? 1 : smallDeviceQualityOffset + d / smallDeviceQuality;
 		if (ratio > 1) ratio = 1;
 		
-		if (JsTools.os == OS.IOS)
-			ratio *= Browser.window.devicePixelRatio;
-		
+		ratio = ratioMod(ratio);
+			
 		app.renderer.resize(width / d * ratio, height / d * ratio);
 		canvas.style.width = width + "px";
 		canvas.style.height = height + "px";
