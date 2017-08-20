@@ -1,5 +1,6 @@
 import sys.FileSystem;
 import sys.io.File;
+import sys.io.Process;
 
 /**
  * Install Pony Command-Line Tools
@@ -10,7 +11,7 @@ class Main {
 	static function main() {
 		
 		var PD = Sys.systemName() == 'Windows' ? '\\' : '/';
-		
+
 		Sys.println('Install Pony Command-Line Tools...');
 		var toolsSrc = Sys.getCwd() + 'tools';
 		toolsSrc = StringTools.replace(toolsSrc, '/', PD);
@@ -64,7 +65,7 @@ class Main {
 				Sys.println('Add user path to ponytools');
 				var home = Sys.getEnv('HOME');
 				var pFiles = [home + '/.bash_profile', home + '/.zshrc'];
-				var npmPath = '/usr/local/lib/node_modules';
+				var npmPath = new Process('npm', ['prefix', '-g']).stdout.readLine()+'/lib/node_modules';
 				
 				var data = [
 					"export NODE_PATH="+npmPath,
@@ -73,13 +74,19 @@ class Main {
 				];
 
 				for (pFile in pFiles) {
-				if (FileSystem.exists(pFile)) {
-					var c = File.getContent(pFile);
-					if (c.indexOf('PONYTOOLS_PATH') == -1) {
-						File.saveContent(pFile, c + "\n" + data.join('\n'));
-					}
-				} else {
-					File.saveContent(pFile, data.join('\n'));
+					if (FileSystem.exists(pFile)) {
+						var c = File.getContent(pFile);
+						if (c.indexOf('PONYTOOLS_PATH') == -1) {
+							File.saveContent(pFile, c + "\n" + data.join('\n'));
+						} else {
+							var d1 = c.split('PONYTOOLS_PATH=');
+							var d2 = d1[1].split('\n');
+							d2.shift();
+							var s = d1[0] + 'PONYTOOLS_PATH=' + toolshome + '\n' + d2.join('\n');
+							File.saveContent(pFile, s);
+						}
+					} else {
+						File.saveContent(pFile, data.join('\n'));
 					}
 				}
 
