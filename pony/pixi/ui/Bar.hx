@@ -59,7 +59,6 @@ class Bar extends Sprite implements HasSignal implements IWH {
 	private var end:Sprite;
 	private var fill:Sprite;
 	private var invert:Bool = false;
-	private var creep:Float;
 	private var smooth:Bool;
 
 	public function new(
@@ -74,7 +73,6 @@ class Bar extends Sprite implements HasSignal implements IWH {
 	) {
 		super();
 		this.invert = invert;
-		this.creep = creep;
 		this.smooth = smooth;
 		var loadList = switch bg {
 			case OrState.A(v):
@@ -89,9 +87,11 @@ class Bar extends Sprite implements HasSignal implements IWH {
 		barContainter = new Sprite();
 		addChild(barContainter);
 		begin = PixiAssets.cImage(fillBegin, useSpriteSheet);
+		if (useSpriteSheet) TextureCut.apply(begin.texture, creep);
 		barContainter.addChild(begin);
 		this.fill = PixiAssets.cImage(fill, useSpriteSheet);
-		this.fill.texture.baseTexture.scaleMode = 1;
+		if (useSpriteSheet) TextureCut.apply(this.fill.texture, creep);
+		//this.fill.texture.baseTexture.scaleMode = 1;
 		barContainter.addChild(this.fill);
 		if (useSpriteSheet)
 			DeltaTime.fixedUpdate < init;
@@ -128,10 +128,10 @@ class Bar extends Sprite implements HasSignal implements IWH {
 		core.smooth = smooth;
 		if (core.isVertical) {
 			end.height = -end.height;
-			fill.y = begin.y + begin.height - creep;
+			fill.y = begin.y + begin.height;
 		} else {
 			end.width = -end.width;
-			fill.x = begin.x + begin.width - creep;
+			fill.x = begin.x + begin.width ;
 		}
 		if (smooth) {
 			core.smoothChangeX = changeXHandler;
@@ -147,13 +147,13 @@ class Bar extends Sprite implements HasSignal implements IWH {
 	}
 	
 	private function changeXHandler(p:Float) {
-		fill.width = p + creep * 2;
-		end.x = fill.x + fill.width + begin.width - creep;
+		fill.width = p ;
+		end.x = fill.x + fill.width + begin.width;
 	}
 	
 	private function changeYHandler(p:Float) {
-		fill.height = p + creep * 2;
-		end.y = fill.y + fill.height + begin.height - creep;
+		fill.height = p;
+		end.y = fill.y + fill.height + begin.height;
 	}
 
 	override public function destroy(?options:haxe.extern.EitherType<Bool, DestroyOptions>):Void {

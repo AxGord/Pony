@@ -33,6 +33,7 @@ import pixi.core.math.shapes.Rectangle;
 import pixi.core.renderers.webgl.filters.Filter;
 import pixi.core.sprites.Sprite;
 import pixi.extras.AnimatedSprite;
+import pixi.extras.TilingSprite;
 import pixi.filters.extras.GlowFilter;
 import pony.color.UColor;
 import pony.geom.Align;
@@ -120,7 +121,7 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 				if (attrs.round == null)
 					g.drawRect(0, 0, parseAndScale(attrs.w), parseAndScale(attrs.h));
 				else
-					g.drawRoundedRect(0, 0, parseAndScale(attrs.w), parseAndScale(attrs.h), Std.parseFloat(attrs.round));
+					g.drawRoundedRect(0, 0, parseAndScale(attrs.w), parseAndScale(attrs.h), parseAndScaleInt(attrs.round));
 				g.endFill();
 				g;
 			case 'circle':
@@ -167,14 +168,16 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 				s;
 			case 'image':
 				PixiAssets.image(attrs.src, attrs.name);
+			case 'tile':
+				new TilingSprite(PixiAssets.texture(attrs.src, attrs.name), parseAndScale(attrs.w), parseAndScale(attrs.h));
 			case 'mask':
 				var o = new Mask(parseAndScaleWithoutNull(attrs.w), parseAndScaleWithoutNull(attrs.h), parseAndScaleInt(attrs.radius), content.shift());
 				for (e in content) o.addChild(e);
 				o;
 			case 'slice':
 				var s = SliceTools.getSliceSprite(attrs.name, attrs.src, parseAndScale(attrs.creep));
-				if (attrs.w != null) s.sliceWidth = Std.parseInt(attrs.w);
-				if (attrs.h != null) s.sliceHeight = Std.parseInt(attrs.h);
+				if (attrs.w != null) s.sliceWidth = parseAndScale(attrs.w);
+				if (attrs.h != null) s.sliceHeight = parseAndScale(attrs.h);
 				s;
 			case 'clip':
 				var data = if (attrs.name != null) {
