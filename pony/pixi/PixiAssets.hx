@@ -43,6 +43,7 @@ class PixiAssets {
 	
 	private static var sounds:Map<String, PixiSound> = new Map();
 	private static var spines:Map<String, SkeletonData> = new Map();
+	private static var texts:Map<String, String> = new Map();
 	
 	public static function load(asset:String, cb:Void->Void):Void {
 		var loader = new Loader();
@@ -61,7 +62,13 @@ class PixiAssets {
 			if (!sounds.exists(asset)) {
 				var s = new PixiSound();
 				sounds[asset] = s;
-				loader.add(asset, AssetManager.getPath(asset), { loadType: 3 }, s.loadHandler);
+				loader.add(asset, AssetManager.getPath(asset), { loadType: LoadType.AUDIO.getIndex() }, s.loadHandler);
+			}
+		} else if (['frag', '.txt'].indexOf(asset.substr( -4)) != -1) {
+			if (!texts.exists(asset)) {
+				loader.add(asset, AssetManager.getPath(asset), { loadType: LoadType.XHR.getIndex() }, function(r:Resource):Void {
+					texts[asset] = r.data;
+				});
 			}
 		} else {
 			loader.add(asset, AssetManager.getPath(asset));
@@ -95,5 +102,6 @@ class PixiAssets {
 	
 	public static function sound(asset:String):PixiSound return sounds[asset];
 	public static function spine(asset:String):SkeletonData return spines[asset];
+	public static function text(asset:String):String return texts[asset];
 	
 }
