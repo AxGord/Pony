@@ -119,10 +119,12 @@ class AssetManager {
 				}
 			case OrState.B(assets):
 				var tasks:Tasks = new Tasks(cb);
+				tasks.add();
 				for (asset in assets) {
 					tasks.add();
 					load(path, asset, tasks.end);
 				}
+				tasks.end();
 		}
 	}
 	
@@ -229,6 +231,8 @@ class AssetManager {
 	@:extern inline public static function texture(asset:String, ?name:String) return PixiAssets.texture(asset, name);
 	@:extern inline public static function sound(asset:String) return PixiAssets.sound(asset);
 	@:extern inline public static function spine(asset:String) return PixiAssets.spine(asset);
+	@:extern inline public static function text(asset:String) return PixiAssets.text(asset);
+	@:extern inline public static function json(asset:String) return PixiAssets.json(asset);
 	#elseif openfl
 	@:extern inline public static function _load(asset:String, cb:Void->Void):Void OpenflAssets.load(asset, cb);
 	@:extern inline public static function image(asset:String, ?name:String) return OpenflAssets.image(asset);

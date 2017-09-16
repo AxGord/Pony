@@ -82,6 +82,7 @@ class BText extends Sprite implements IWH {
 	}
 	
 	public function set_t(s:String):String {
+		if (current != null && current.t == s) return s;
 		destroyIfExists();
 		if (s == null) return s;
 		s = StringTools.replace(s, '\\n', '\n');

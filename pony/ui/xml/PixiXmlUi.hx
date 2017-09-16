@@ -55,6 +55,7 @@ import pony.pixi.ui.FSButton;
 import pony.pixi.ui.IntervalLayout;
 import pony.pixi.ui.LabelButton;
 import pony.pixi.ui.Mask;
+import pony.pixi.ui.Particles;
 import pony.pixi.ui.ProgressBar;
 import pony.pixi.ui.RubberLayout;
 import pony.pixi.ui.SizedSprite;
@@ -97,6 +98,7 @@ using pony.pixi.PixiExtends;
 	fastclip: pixi.core.sprites.Sprite,
 	slider: pony.pixi.ui.StepSlider,
 	slice: pony.pixi.ui.slices.SliceSprite,
+	particles: pony.pixi.ui.Particles
 }))
 #end
 class PixiXmlUi extends Sprite implements HasAbstract {
@@ -291,6 +293,14 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 					attrs.src.indexOf(',') != -1,
 					parseAndScaleInt(attrs.creep)
 				);
+			case 'particles':
+				var src = attrs.src.split(',').map(StringTools.trim);
+				if (attrs.img != null) {
+					new Particles(src[0], attrs.img.split(',').map(StringTools.trim), src[1]);
+				} else {
+					var cfg = src.shift();
+					new Particles(cfg, src);
+				}
 			case _:
 				customUIElement(name, attrs, content);
 		}
