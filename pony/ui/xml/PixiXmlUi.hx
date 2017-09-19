@@ -82,6 +82,7 @@ using pony.pixi.PixiExtends;
 	layout: pony.pixi.ui.TLayout,
 	zeroplace: pony.pixi.ui.ZeroPlace,
 	image: pixi.core.sprites.Sprite,
+	tile: pixi.extras.TilingSprite,
 	text: pony.pixi.ui.BText,
 	bar: pony.pixi.ui.Bar,
 	progressbar: pony.pixi.ui.ProgressBar,

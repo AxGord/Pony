@@ -43,7 +43,7 @@ class Particles extends Sprite {
 	private var cfgurl:String;
 	private var imagesurl:Array<String>;
 	private var asset:String;
-	private var emitter:Emitter;
+	public var emitter:Emitter;
 	
 	public function new(cfgurl:String, imagesurl:Array<String>, ?asset:String) {
 		super();
