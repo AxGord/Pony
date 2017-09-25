@@ -113,7 +113,7 @@ class InsertPut extends pony.text.tpl.TplPut < InsertConnect, CPQ > {
 				fixList = args.get('fix').split(',');
 			var r:String = '';
 			var hasFile:Bool = false;
-			var ma:Map<Int, Dynamic> = a.storage;
+			var ma:Map<Int, {values:Map<String, String>, result: ActResult}> = cast a.storage;
 			var m = ma.get(a.base.id);
 			if (m == null)
 				for (k in a.base.args.keys()) {
@@ -191,7 +191,7 @@ class InsertPutSub extends pony.text.tpl.TplPut < InsertConnect, CPQ > {
 class InsertPutArg extends pony.text.tpl.TplPut < {o: InsertConnect, arg: String}, CPQ > {
 	
 	private function st():String {
-		var ma:Map<Int, Dynamic> = b.connection.sessionStorage.get('modelsActions');
+		var ma:Map<Int, {values:Map<String, String>, result: ActResult}> = b.connection.sessionStorage.get('modelsActions');
 		var m = ma.get(a.o.base.id);
 		var r:ActResult = m == null ? null : m.result;
 		var st:String = null;
@@ -233,7 +233,7 @@ class InsertPutArg extends pony.text.tpl.TplPut < {o: InsertConnect, arg: String
 			else
 				return '';
 		} else if (name == 'value') {
-			var ma:Map<Int, Dynamic> = b.connection.sessionStorage.get('modelsActions');
+			var ma:Map<Int, {values:Map<String, String>, result: ActResult}> = b.connection.sessionStorage.get('modelsActions');
 			var m = ma.get(a.o.base.id);
 			if (m == null)
 				return '';

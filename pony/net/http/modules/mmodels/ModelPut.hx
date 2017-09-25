@@ -36,11 +36,11 @@ import pony.text.tpl.TplPut;
  * @author AxGord <axgord@gmail.com>
  */
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
-@:final class ModelPut extends TplPut<ModelConnect, {}> {
+@:final class ModelPut extends TplPut<ModelConnect, Dynamic> {
 	
 	private var list:Map<String, ITplPut>;
 	
-	public function new(a:ModelConnect, b:{}, parent:ITplPut) {
+	public function new(a:ModelConnect, b:Dynamic, parent:ITplPut) {
 		super(a, b, parent);
 		list = [for (k in a.actions.keys()) k => a.actions[k].tpl(parent)];
 	}

@@ -31,6 +31,9 @@ import pony.Pair;
 import pony.net.http.modules.mmodels.Action;
 import pony.net.http.WebServer;
 import pony.Stream;
+import pony.net.http.modules.mmodels.MModelsPut;
+import pony.net.http.modules.mmodels.ModelConnect;
+import pony.net.http.modules.mmodels.ModelPut;
 import pony.text.tpl.ITplPut;
 import pony.text.tpl.Tpl;
 import pony.text.tpl.TplData;
@@ -61,7 +64,10 @@ class ManyPut extends pony.text.tpl.TplPut<ManyConnect, CPQ> {
 	override public function tag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String
 	{
 		if (!a.checkAccess()) return '';
-		var a:Array<Dynamic> = @await a.call([]);
+		
+		var mp:ModelPut = cast parent;
+		var f = arg == null ? 'id' : arg;
+		var a:Array<Dynamic> = @await a.call(mp.b == null ? [] : [Reflect.field(mp.b, f)]);
 		if (args.exists('!'))
 			return a.length == 0 ? @await parent.tplData(content) : '';
 		else {
@@ -109,6 +115,7 @@ class ManyPut extends pony.text.tpl.TplPut<ManyConnect, CPQ> {
 	
 }
 
+
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
 @:final class ManyPutSub extends Valuator<ManyPut, Dynamic> {
 	
@@ -126,7 +133,14 @@ class ManyPut extends pony.text.tpl.TplPut<ManyConnect, CPQ> {
 				else
 					return '';
 			} else {
-				if (!a.a.base.model.columns.exists(name)) return '%$name%';
+				if (!a.a.base.model.columns.exists(name)) {
+					var sm = a.b.getModule(MModelsConnect).list[name];
+					if (sm != null) {
+						return @await sm.tpl(this).tplData(content);
+					} else {
+						return '%$name%';
+					}
+				}
 				var c = a.a.base.model.columns[name];
 				if (c != null && c.tplPut != null) {
 					var o = Type.createInstance(c.tplPut, [c, b, this]);

@@ -64,7 +64,11 @@ class SingleConnect extends ActionConnect {
 			return @await parent.tag(name, content, arg, args, kid);
 		}
 		if (!a.checkAccess()) return '';
-		var cargs = a.hasPathArg ? [a.pathQuery] : [];
+		
+		var mp:ModelPut = cast parent;
+		var f = arg == null ? 'id' : arg;
+		var v:String = mp.b == null ? null : Reflect.field(mp.b, f);
+		var cargs:Array<String> = a.hasPathArg ? (v == null ? [a.pathQuery] : [v]) : (v == null ? [] : [v]);
 		var a:Dynamic = @await a.call(cargs);
 		if (args.exists('!'))
 			return a == null ? @await parent.tplData(content) : '';

@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2017 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -160,7 +160,7 @@ class MySQL extends SQLBase
 	}
 	
 	@:async private function prepareDatabase(database:String):Bool {
-		if (!@await action(Const.createDB + database, "create database")) return false;
+		if (!@await action(Const.createDB + database + Const.createDBPostfix, "create database")) return false;
 		
 		var err = @await connection.changeUser({database: database});
 		if (err != null) {
