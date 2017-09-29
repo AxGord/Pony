@@ -146,13 +146,9 @@ abstract Time(Null<Int>) from Int to Int {
 	
 	@:extern inline private function get_neg():Bool return this < 0;
 	
-	#if (haxe_ver > 3.30) @:extern #end
 	inline static public function fromDays(day:Int):Time return fromHours(day * 24);
-	#if (haxe_ver > 3.30) @:extern #end
 	inline static public function fromHours(hours:Int):Time return fromMinutes(hours * 60);
-	#if (haxe_ver > 3.30) @:extern #end
 	inline static public function fromMinutes(minutes:Int):Time return fromSeconds(minutes * 60);
-	#if (haxe_ver > 3.30) @:extern #end
 	inline static public function fromSeconds(seconds:Int):Time return seconds * 1000;
 	
 	@:to @:extern inline public function toFloat():Float return this;

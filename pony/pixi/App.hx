@@ -30,11 +30,10 @@ package pony.pixi;
 import js.Browser;
 import js.html.CanvasElement;
 import js.html.Element;
-import pixi.core.Pixi;
-import pixi.core.RenderOptions;
+import pixi.core.Application.ApplicationOptions;
+import pixi.core.Pixi.RendererType;
 import pixi.core.sprites.Sprite;
 import pixi.core.ticker.Ticker;
-import pony.JsTools.OS;
 import pony.events.Signal0;
 import pony.geom.Point;
 import pony.magic.HasSignal;
@@ -83,8 +82,8 @@ class App implements HasSignal {
 	
 	private var ticker:Ticker;
 	
-	private var width:Float;
-	private var height:Float;
+	private var width:Int;
+	private var height:Int;
 	private var background:Int;
 	private var renderPause:Bool = false;
 	
@@ -93,8 +92,8 @@ class App implements HasSignal {
 	 */
 	public function new(
 		container:Sprite,
-		width:Float,
-		height:Float,
+		width:Int,
+		height:Int,
 		?bg:UInt,
 		?parentDom:Element,
 		smallDeviceQuality:SmallDeviceQuality = SmallDeviceQuality.normal,
@@ -145,7 +144,7 @@ class App implements HasSignal {
 		canvas.style.height = height + "px";
 		canvas.style.position = "static";
 
-		var renderingOptions:RenderOptions = {
+		var renderingOptions:ApplicationOptions = {
 			width: width,
 			height: height,
 			view: canvas,
