@@ -28,6 +28,11 @@
 package pony.net.http.platform.nodejs;
 
 import js.Node;
+import js.node.Fs;
+import js.node.Http;
+import js.node.http.IncomingMessage;
+import js.node.http.Server;
+import js.node.http.ServerResponse;
 import pony.Pair;
 import pony.net.http.IHttpConnection;
 import pony.net.http.ServersideStorage;
@@ -41,7 +46,7 @@ class HttpServer
 	public static var querystring:Dynamic = Node.require('querystring');
 	
 	private static var spdy(get, never):Dynamic;
-	private var server:NodeHttpServer;
+	private var server:Server;
 	private var spdyServer:Dynamic;
 	public var storage:ServersideStorage;
 	
@@ -49,22 +54,23 @@ class HttpServer
 	
 	public function new(host:String=null, port:Int=80, ?spdyConf:Dynamic)
 	{
-		server = Node.http.createServer(listen);
+		server = Http.createServer(listen);
 		server.listen(port, host, createHandler);
 		storage = new ServersideStorage();
 		
 		if (spdyConf != null) {
+			trace(spdyConf);
 			var options = {
-			  key: Node.fs.readFileSync(Node.__dirname + '/keys/spdy-key.pem'),
-			  cert: Node.fs.readFileSync(Node.__dirname + '/keys/spdy-cert.pem'),
-			  ca: Node.fs.readFileSync(Node.__dirname + '/keys/spdy-csr.pem')
+			  key: Fs.readFileSync(Node.__dirname + '/keys/spdy-key.pem'),
+			  cert: Fs.readFileSync(Node.__dirname + '/keys/spdy-cert.pem'),
+			  ca: Fs.readFileSync(Node.__dirname + '/keys/spdy-csr.pem')
 			};
 			
 			spdyServer = spdy.createServer(options, listen).listen(spdyConf.hasField('port') ? spdyConf.port : 443, createSpdyHandler);
 		}
 	}
 	
-	private function listen(req:NodeHttpServerReq, res:NodeHttpServerResp):Void {
+	private function listen(req:IncomingMessage, res:ServerResponse):Void {
 		//trace(req.method+': ' + req.url);
 		//trace(req.headers);
 		res.setHeader('Server', 'PonyHttpServer');
@@ -77,8 +83,8 @@ class HttpServer
 					if (fields == null || files == null) {
 						res.end('error');
 					} else {
-						var host = if (req.headers.host != null) {
-							req.headers.host;
+						var host = if (req.headers.exists('host')) {
+							req.headers.get('host');
 						} else {
 							var a:Dynamic = untyped me.server.address();
 							a.address + ':' + a.port;
@@ -120,8 +126,8 @@ class HttpServer
 				return;
 				
 			case 'GET':
-				var host = if (req.headers.host != null) {
-					req.headers.host;
+				var host = if (req.headers.exists('host')) {
+					req.headers.get('host');
 				} else {
 					var a:Dynamic = untyped me.server.address();
 					a.address + ':' + a.port;

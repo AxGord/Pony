@@ -27,7 +27,13 @@
 **/
 package pony.net.http.platform.nodejs;
 
+import js.Error;
 import js.Node;
+import js.node.Buffer;
+import js.node.Fs;
+import js.node.fs.Stats;
+import js.node.http.IncomingMessage;
+import js.node.http.ServerResponse;
 import pony.fs.File;
 import pony.net.http.Cookie;
 import pony.net.http.IHttpConnection;
@@ -46,10 +52,10 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 	
 	inline private static function get__send():Dynamic return __send != null ? __send : __send = Node.require('send');
 	
-	private var res:NodeHttpServerResp;
-	private var req:NodeHttpServerReq;
+	private var res:ServerResponse;
+	private var req:IncomingMessage;
 	
-	public function new(url:String, storage:ServersideStorage, req:NodeHttpServerReq, res:NodeHttpServerResp, post:Map<String, String>) {
+	public function new(url:String, storage:ServersideStorage, req:IncomingMessage, res:ServerResponse, post:Map<String, String>) {
 		super(url);
 		method = req.method;
 		this.post = post;
@@ -73,7 +79,7 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 				}
 			} while (n != -1);
 		}
-		cookie = new Cookie(req.headers.cookie);
+		cookie = new Cookie(req.headers.get('cookie'));
 		sessionStorage = storage.getClient(cookie);
 		rePost();
 	}
@@ -86,9 +92,9 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 	public inline function sendFile(file:File):Void {
 		writeCookie();
 		var f = file.firstExists;
-		Node.fs.stat(f, function(err:NodeErr, stat:NodeStat):Void {
+		Fs.stat(f, function(err:Error, stat:Stats):Void {
 			if (err != null) {
-				error(err.toString());
+				error(err.name);
 			} else {
 				_send(req, f).pipe(res);
 			}
@@ -101,9 +107,13 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 		res.setHeader('Cache-Control', 'private');
 		res.statusCode = 302;
 		var t:String = '<html><body><a href="$url">Click here</a></body></html>';
-		res.setHeader('Content-Length', NodeBuffer.byteLength(t, 'utf8'));
+		setLength(t);
 		res.end(t);
 		end = true;
+	}
+	
+	@:extern private inline function setLength(t:String):Void {
+		return res.setHeader('Content-Length', Std.string(Buffer.byteLength(t, 'utf8')));
 	}
 	
 	override public function endActionPrevPage():Void goto(req.headers.field('referer'));
@@ -118,7 +128,7 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 	public function sendHtml(text:String):Void {
 		writeCookie();
 		res.setHeader('Content-Type', 'text/html; charset=UTF-8');
-		res.setHeader('Content-Length', NodeBuffer.byteLength(text, 'utf8'));
+		setLength(text);
 		res.end(text);
 		end = true;
 	}
@@ -126,7 +136,7 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 	public function sendText(text:String):Void {
 		writeCookie();
 		res.setHeader('Content-Type', 'text/plain; charset=UTF-8');
-		res.setHeader('Content-Length', NodeBuffer.byteLength(text, 'utf8'));
+		setLength(text);
 		res.end(text);
 		end = true;
 	}
