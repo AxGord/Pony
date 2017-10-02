@@ -64,6 +64,9 @@ class Main {
 				r += haxe.xml.Printer.print(content, true);
 				File.saveContent(Utils.MAIN_FILE, r);
 				
+			case 'server':
+				runNode('ponyServer');
+
 			case _:
 				Utils.error('Unknown command');
 		}

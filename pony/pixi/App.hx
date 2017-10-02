@@ -87,6 +87,8 @@ class App implements HasSignal {
 	private var background:Int;
 	private var renderPause:Bool = false;
 	
+	private var backImgcontainer:Sprite;
+	
 	/**
 	 * @param	smallDeviceQuality - 1 ideal, 2 - low, 3 - normal, 4 - good
 	 */
@@ -97,7 +99,8 @@ class App implements HasSignal {
 		?bg:UInt,
 		?parentDom:Element,
 		smallDeviceQuality:SmallDeviceQuality = SmallDeviceQuality.normal,
-		resizeInterval:Time = DEFAULT_RESIZE_INTERVAL
+		resizeInterval:Time = DEFAULT_RESIZE_INTERVAL,
+		?backImg:Sprite
 	) {
 		this.width = width;
 		this.height = height;
@@ -119,6 +122,12 @@ class App implements HasSignal {
 		pixiInit();
 		
 		isWebGL = app.renderer.type == RendererType.WEBGL;
+
+		if (backImg != null) {
+			backImgcontainer = backImg;
+			app.stage.addChild(backImgcontainer);
+		}
+
 		app.stage.addChild(container);
 		Mouse.reg(container);
 		Mouse.correction = correction;
@@ -197,6 +206,11 @@ class App implements HasSignal {
 		container.width = ratio;
 		container.height = ratio;
 		
+		if (backImgcontainer != null) {
+			backImgcontainer.width = (width / d * ratio) / _width;
+			backImgcontainer.height = (height / d * ratio) / _height;
+		}
+
 		eResize.dispatch();
 	}
 	

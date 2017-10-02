@@ -48,3 +48,14 @@
 -dce full
 -D analyzer-optimize
 -D js-es5
+
+--next
+
+-js bin/ponyServer.js
+-cp src
+-main ServerMain
+-lib hxnodejs
+-lib pony
+-dce full
+-D analyzer-optimize
+-D js-es5
