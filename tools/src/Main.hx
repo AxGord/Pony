@@ -1,6 +1,7 @@
 import haxe.xml.Fast;
 import sys.FileSystem;
 import sys.io.File;
+
 /**
  * Pony Command-Line Tools
  * @author AxGord <axgord@gmail.com>
@@ -29,7 +30,8 @@ class Main {
 				runNode('ponyWatch');
 				
 			case 'prepare':
-				new Prepare(Utils.getXml());
+				var cfg = Utils.parseArgs(args);
+				new Prepare(Utils.getXml(), cfg.app, cfg.debug);
 				runNode('ponyPrepare');
 				
 			case 'build':
@@ -77,7 +79,7 @@ class Main {
 	
 	static function build(args:AppCfg, xml:Fast):Void {
 		var startTime = Sys.time();
-		new Build(xml.node.build, args.app, args.debug);
+		new Build(xml, args.app, args.debug).run();
 		Sys.println('Compile time: ' + Std.int((Sys.time() - startTime) * 1000)/1000);
 		if (xml.hasNode.uglify) {
 			var startTime = Sys.time();

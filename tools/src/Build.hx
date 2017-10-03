@@ -1,28 +1,55 @@
 import haxe.xml.Fast;
-import sys.io.File;
+using pony.text.TextTools;
 /**
  * Build
  * @author AxGord <axgord@gmail.com>
  */
 class Build {
 
-	private var command:Array<String> = [];
+	public var command:Array<String> = [];
 	private var debug:Bool;
 	private var app:String;
-	
+	private var isHxml:Bool = false;
+	private var gxml:Fast;
+
 	public function new(xml:Fast, app:String, debug:Bool) {
 		this.app = app;
 		this.debug = debug;
+		gxml = xml;
 		
 		if (app == null && xml.hasNode.apps) throw 'Please type app name';
 		
-		pushCommands(xml);
+		isHxml = xml.node.build.att.hxml.isTrue();
+	}
+
+	private function genCommands():Void {
+		pushCommands(gxml.node.build);
+		for (e in gxml.node.haxelib.nodes.lib) {
+			var a = e.innerData.split(' ');
+			command.push('-lib');
+			command.push(a.join(':'));
+		}
 		if (debug) command.push('-debug');
-		
-		Sys.println('haxe ' + command.join(' '));
-		
-		var code = Sys.command('haxe', command);
-		if (code > 0) Sys.exit(code);
+	}
+
+	public function getCommands():Array<String> {
+		genCommands();
+		return command;
+	}
+
+	public function run():Void {
+		if (!isHxml) {
+			genCommands();
+			Sys.println('haxe ' + command.join(' '));
+			var code = Sys.command('haxe', command);
+			if (code > 0) Sys.exit(code);
+		} else {
+			var c = ['pony.hxml'];
+			if (debug) c.push('-debug');
+			Sys.println('haxe ' + c.join(' '));
+			var code = Sys.command('haxe', c);
+			if (code > 0) Sys.exit(code);
+		}
 	}
 	
 	private function pushCommands(xml:Fast):Void {

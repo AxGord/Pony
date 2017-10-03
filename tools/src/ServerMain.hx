@@ -18,11 +18,25 @@ class ServerMain {
 	static var path:String;
 
 	static function main() {
-		var xml = Utils.getXml().node.server;
-		path = xml.node.path.innerData;
-		var port:Int = Std.parseInt(xml.node.port.innerData);
-		var server:HttpServer = new HttpServer(port);
-		server.request = connectHandler;
+		var xml = Utils.getXml();
+		var sx = xml.node.server;
+		if (sx != null) {
+			path = sx.node.path.innerData;
+			var port:Int = Std.parseInt(sx.node.port.innerData);
+			var server:HttpServer = new HttpServer(port);
+			server.request = connectHandler;
+		}
+		var px = sx.node.proxy;
+		if (px != null) {
+			var target = px.node.target.innerData;
+			var port = px.node.port.innerData;
+			Node.require('http-proxy')
+			.createProxyServer({
+				target: target,
+				headers: {'Host': '127.0.0.1:$port'}
+			})
+			.listen(Std.parseInt(port));
+		}
 	}
 
 	static function connectHandler(connection:IHttpConnection):Void {
