@@ -19,7 +19,7 @@ class Build {
 		
 		if (app == null && xml.hasNode.apps) throw 'Please type app name';
 		
-		isHxml = xml.node.build.att.hxml.isTrue();
+		isHxml = xml.node.build.has.hxml && xml.node.build.att.hxml.isTrue();
 	}
 
 	private function genCommands():Void {

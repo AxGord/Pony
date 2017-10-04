@@ -66,16 +66,17 @@ class App implements HasSignal {
 	 */
 	public var app(default, null):pixi.core.Application;
 	
-	public var isWebGL:Bool;
+	public var isWebGL(default, null):Bool;
 	public var pauseDraw:Bool = false;
 	
 	@:auto public var onResize:Signal0;
-	public var canvas:CanvasElement;
+	public var canvas(default, null):CanvasElement;
+	
+	public var container(default, null):Sprite;
+	public var parentDom(default, null):Element;
 	
 	private var _width:Float;
 	private var _height:Float;
-	private var container:Sprite;
-	public var parentDom:Element;
 	private var smallDeviceQuality:Float;
 	private var smallDeviceQualityOffset:Float;
 	private var resizeTimer:DTimer;

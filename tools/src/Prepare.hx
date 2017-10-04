@@ -18,7 +18,7 @@ class Prepare {
 			Sys.command('haxelib', args);
 		}
 		var f = false;
-		if (xml.node.build.att.hxml.isTrue()) {
+		if (xml.node.build.has.hxml && xml.node.build.att.hxml.isTrue()) {
 			var s = '';
 			for (e in new Build(xml, app, debug).getCommands()) {
 				s += e;
