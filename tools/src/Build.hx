@@ -1,4 +1,5 @@
 import haxe.xml.Fast;
+import sys.io.File;
 using pony.text.TextTools;
 /**
  * Build
@@ -22,6 +23,23 @@ class Build {
 		isHxml = xml.node.build.has.hxml && xml.node.build.att.hxml.isTrue();
 	}
 
+	private function writeConfig():Void {
+		var f = false;
+		var s = '';
+		for (e in new Build(gxml, app, debug).getCommands()) {
+			s += e;
+			s += f ? '\n' : ' ';
+			f = !f;
+		}
+		File.saveContent('pony.hxml', s);
+	}
+
+	public function writeConfigIfNeed():Void {
+		if (gxml.node.build.has.hxml && gxml.node.build.att.hxml.isTrue()) {
+			writeConfig();
+		}
+	}
+
 	private function genCommands():Void {
 		pushCommands(gxml.node.build);
 		for (e in gxml.node.haxelib.nodes.lib) {
@@ -29,7 +47,13 @@ class Build {
 			command.push('-lib');
 			command.push(a.join(':'));
 		}
-		if (debug) command.push('-debug');
+		if (debug) {
+			command.push('-debug');
+			if (gxml.hasNode.server && gxml.node.server.hasNode.haxe) {
+				command.push('--connect');
+				command.push(gxml.node.server.node.haxe.innerData);
+			}
+		}
 	}
 
 	public function getCommands():Array<String> {
@@ -44,14 +68,14 @@ class Build {
 			var code = Sys.command('haxe', command);
 			if (code > 0) Sys.exit(code);
 		} else {
+			writeConfig();
 			var c = ['pony.hxml'];
-			if (debug) c.push('-debug');
 			Sys.println('haxe ' + c.join(' '));
 			var code = Sys.command('haxe', c);
 			if (code > 0) Sys.exit(code);
 		}
 	}
-	
+
 	private function pushCommands(xml:Fast):Void {
 		for (e in xml.elements) {
 			switch e.name {

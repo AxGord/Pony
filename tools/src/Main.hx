@@ -67,6 +67,11 @@ class Main {
 				File.saveContent(Utils.MAIN_FILE, r);
 				
 			case 'server':
+				var xml = Utils.getXml();
+				if (xml.hasNode.server && xml.node.server.hasNode.haxe) {
+					var cfg = Utils.parseArgs(args);
+					new Build(xml, cfg.app, cfg.debug).writeConfigIfNeed();
+				}
 				runNode('ponyServer');
 
 			case _:

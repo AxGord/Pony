@@ -1,7 +1,5 @@
 package;
-import sys.io.File;
 import haxe.xml.Fast;
-using pony.text.TextTools;
 
 /**
  * Prepare
@@ -17,16 +15,7 @@ class Prepare {
 			args.push('--always');
 			Sys.command('haxelib', args);
 		}
-		var f = false;
-		if (xml.node.build.has.hxml && xml.node.build.att.hxml.isTrue()) {
-			var s = '';
-			for (e in new Build(xml, app, debug).getCommands()) {
-				s += e;
-				s += f ? '\n' : ' ';
-				f = !f;
-			}
-			File.saveContent('pony.hxml', s);
-		}
+		new Build(xml, app, debug).writeConfigIfNeed();
 	}
 	
 }

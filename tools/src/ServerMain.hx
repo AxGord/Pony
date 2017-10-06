@@ -3,6 +3,7 @@ import sys.io.File;
 import haxe.xml.Fast;
 import haxe.Json;
 import js.Node;
+import js.node.ChildProcess;
 import js.node.http.IncomingMessage;
 import js.node.http.ServerResponse;
 import pony.net.http.HttpServer;
@@ -21,10 +22,13 @@ class ServerMain {
 		var xml = Utils.getXml();
 		if (xml.hasNode.server) {
 			var sx = xml.node.server;
-			path = sx.node.path.innerData;
-			var port:Int = Std.parseInt(sx.node.port.innerData);
-			var server:HttpServer = new HttpServer(port);
-			server.request = connectHandler;
+
+			if (sx.hasNode.port && sx.hasNode.path) {
+				path = sx.node.path.innerData;
+				var port:Int = Std.parseInt(sx.node.port.innerData);
+				var server:HttpServer = new HttpServer(port);
+				server.request = connectHandler;
+			}
 
 			if (sx.hasNode.proxy) {
 				var px = sx.node.proxy;
@@ -37,7 +41,30 @@ class ServerMain {
 				})
 				.listen(Std.parseInt(port));
 			}
+
+			if (sx.hasNode.haxe) {
+				var port:String = sx.node.haxe.innerData;
+				var r = 'haxe -v --wait $port pony.xml';
+				trace(r);
+				var p = ChildProcess.exec(r, execHandler);
+				p.stdout.on('data', traceData);
+				p.stderr.on('data', traceData);
+				p.on('exit', childExitHandler);
+			}
+
 		}
+	}
+
+	static function execHandler(err:Null<ChildProcessExecError>, a1:String, a2:String):Void {
+		trace('haxe server is exec');
+	}
+
+	static function childExitHandler(code:Int):Void {
+		trace('Child exited with code $code');
+	}
+
+	static function traceData(data):Void {
+		trace(data);
 	}
 
 	static function connectHandler(connection:IHttpConnection):Void {
