@@ -150,10 +150,12 @@ class XmlUiBuilder {
 	}
 	
 	private static function getXml(file:String):Fast {
+		Context.registerModuleDependency(Context.getLocalModule(), file);
 		return new Fast(Xml.parse(File.getContent(StringTools.trim(file)))).elements.next();
 	}
 	
 	private static function getFilters(file:String):Style {
+		Context.registerModuleDependency(Context.getLocalModule(), file);		
 		var xml = getXml(file);
 		var path = xml.has.path ? xml.att.path : '';
 		return [for (x in xml.elements) x.name => 
@@ -162,6 +164,7 @@ class XmlUiBuilder {
 	}
 	
 	private static function getStyle(file:String):Style {
+		Context.registerModuleDependency(Context.getLocalModule(), file);		
 		var xml = getXml(file);
 		var path = xml.has.path ? xml.att.path : '';
 		return [for (x in xml.elements) x.name => 
