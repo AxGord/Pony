@@ -49,7 +49,7 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 		rePost();
 	}
 	
-	public function sendFile(file:File):Void {
+	override public function sendFile(file:File):Void {
 		php.Web.setHeader('Content-Description', 'File Transfer');
 		php.Web.setHeader('Content-Type', Mime.get[file.ext]);
 		//php.Web.setHeader('Content-Disposition', 'attachment; filename=' + file.name);
@@ -72,8 +72,12 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 		end = true;
 		
 	}
-	public function error(?message:String):Void {
-		php.Lib.print('Error '+(message!=null?message:''));
+	override public function error(?message:String):Void {
+		php.Lib.print(message!=null?message:'Error');
+		end = true;
+	}
+	override public function notfound(?message:String):Void {
+		php.Lib.print(message!=null?message:'Not found');
 		end = true;
 	}
 	public function sendHtml(text:String):Void {

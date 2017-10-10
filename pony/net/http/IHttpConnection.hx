@@ -48,10 +48,12 @@ interface IHttpConnection
 	var end:Bool;
 	
 	function sendFile(file:File):Void;
+	function sendFileOrIndexHtml(path:String):Void;
 	function endAction():Void;
 	function goto(url:String):Void;
 	function endActionPrevPage():Void;
 	function error(?message:String):Void;
+	function notfound(?message:String):Void;
 	function sendHtml(text:String):Void;
 	function sendText(text:String):Void;
 	function mix():Map<String, String>;

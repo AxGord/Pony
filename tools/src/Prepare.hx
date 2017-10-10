@@ -8,6 +8,7 @@ import haxe.xml.Fast;
 class Prepare {
 
 	public function new(xml:Fast, app:String, debug:Bool) {
+		sys.FileSystem.deleteFile('libcache.js');
 		Sys.println('update haxelib');
 		for (node in xml.node.haxelib.nodes.lib) {
 			var args = ['install'];

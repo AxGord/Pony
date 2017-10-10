@@ -17,6 +17,7 @@ import sys.FileSystem;
 class ServerMain {
 
 	static var path:String;
+	static var haxePort:String;
 
 	static function main() {
 		var xml = Utils.getXml();
@@ -43,46 +44,37 @@ class ServerMain {
 			}
 
 			if (sx.hasNode.haxe) {
-				var port:String = sx.node.haxe.innerData;
-				var r = 'haxe -v --wait $port pony.xml';
-				trace(r);
-				var p = ChildProcess.exec(r, execHandler);
-				p.stdout.on('data', traceData);
-				p.stderr.on('data', traceData);
-				p.on('exit', childExitHandler);
+				haxePort = sx.node.haxe.innerData;
+				runHaxeServer();
 			}
 
 		}
+	}
+
+	static function runHaxeServer():Void {
+		var r = 'haxe -v --wait $haxePort';
+		Sys.println(r);
+		var p = ChildProcess.exec(r, execHandler);
+		p.stdout.on('data', traceData);
+		p.stderr.on('data', traceData);
+		p.on('exit', childExitHandler);
 	}
 
 	static function execHandler(err:Null<ChildProcessExecError>, a1:String, a2:String):Void {
-		trace('haxe server is exec');
+		Sys.println('haxe server is exec');
+		runHaxeServer();
 	}
 
 	static function childExitHandler(code:Int):Void {
-		trace('Child exited with code $code');
+		Sys.println('Child exited with code $code');
 	}
 
 	static function traceData(data):Void {
-		trace(data);
+		Sys.print(data);
 	}
 
 	static function connectHandler(connection:IHttpConnection):Void {
-		var f = path + connection.url;
-		if (FileSystem.exists(f)) {
-			if (FileSystem.isDirectory(f)) {
-				if (FileSystem.exists(f+'index.htm'))
-					connection.sendFile(f+'index.htm');
-				else if (FileSystem.exists(f+'index.html'))
-					connection.sendFile(f+'index.html');
-				else
-					connection.error('Not found');
-			} else {
-				connection.sendFile(f);
-			}
-		} else {
-			connection.error('Not found');
-		}
+		connection.sendFileOrIndexHtml(path + connection.url);
 	}
 
 }

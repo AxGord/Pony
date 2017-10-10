@@ -22,7 +22,7 @@ class UglifyMain {
 	static var compress:Bool = false;
 	
 	static function main() {
-		var UglifyJS = Node.require("uglify-js");
+		var UglifyJS:Dynamic = Node.require("uglify-js");
 		
 		var xml = Utils.getXml().node.uglify;
 
@@ -33,23 +33,56 @@ class UglifyMain {
 		
 		run(xml);
 		
-		var inputContent:Dynamic<String> = {};
-		for (f in input) Reflect.setField(inputContent, f.split('/').pop(), File.getContent(f));
+		if (debug && xml.has.libcache && pony.text.TextTools.isTrue(xml.att.libcache)) {
+			
+			var cachefile = 'libcache.js';
 
-		var r = UglifyJS.minify(inputContent, {
-			toplevel: true,
-			warnings: true,
-			sourceMap: mapInput == null ? null : {
-				content: File.getContent(mapInput),
-				filename: mapSource,
-				url: mapUrl
-			},
-			mangle: mangle,
-			compress: untyped compress ? {} : false
-		});
-		
-		File.saveContent(output, r.code);
-		if (mapOutput != null) File.saveContent(mapOutput, r.map);
+			var lastFile = input.pop();
+			var lastContent = File.getContent(lastFile);
+
+			var libdata = '';
+			if (sys.FileSystem.exists(cachefile)) {
+				libdata = File.getContent(cachefile);
+			} else {
+				var inputContent:Dynamic<String> = {};
+				for (f in input) Reflect.setField(inputContent, f.split('/').pop(), File.getContent(f));
+
+				var r = UglifyJS.minify(inputContent, {
+					toplevel: true,
+					warnings: true,
+					mangle: mangle,
+					compress: untyped compress ? {} : false
+				});
+				libdata = r.code;
+				File.saveContent(cachefile, libdata);
+			}
+			File.saveContent(lastFile, libdata + '\n' + lastContent);
+			var mapFile = lastFile + '.map';
+			var convert = Node.require('convert-source-map');
+			var offset = Node.require('offset-sourcemap-lines');
+			var originalMap = convert.fromJSON(File.getContent(mapFile)).toObject();
+			var offsettedMap = offset(originalMap, 1);
+			var newMapData = convert.fromObject(offsettedMap).toJSON();
+			File.saveContent(mapFile, newMapData);
+		} else {
+			var inputContent:Dynamic<String> = {};
+			for (f in input) Reflect.setField(inputContent, f.split('/').pop(), File.getContent(f));
+
+			var r = UglifyJS.minify(inputContent, {
+				toplevel: true,
+				warnings: true,
+				sourceMap: mapInput == null ? null : {
+					content: File.getContent(mapInput),
+					filename: mapSource,
+					url: mapUrl
+				},
+				mangle: mangle,
+				compress: untyped compress ? {} : false
+			});
+			
+			File.saveContent(output, r.code);
+			if (mapOutput != null) File.saveContent(mapOutput, r.map);
+		}
 	}
 	
 	static function run(xml:Fast) {

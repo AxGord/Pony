@@ -27,6 +27,7 @@
 **/
 package pony.net.http;
 
+import sys.FileSystem;
 import pony.fs.File;
 import pony.magic.HasAbstract;
 import pony.text.ParseBoy;
@@ -38,6 +39,10 @@ import pony.text.ParseBoy;
 
 class HttpConnection implements HasAbstract
 {
+
+	inline static var indexFileShort:String = 'index.htm';
+	inline static var indexFile:String = indexFileShort + 'l';
+
 	public var method:String;
 	public var post:Map<String, String>;
 	public var fullUrl:String;
@@ -83,8 +88,11 @@ class HttpConnection implements HasAbstract
 	}
 	
 	public function endAction():Void goto('/$url');
-	@:abstract public function endActionPrevPage():Void; 
-	@:abstract public function goto(url:String):Void; 
+	@:abstract public function endActionPrevPage():Void;
+	@:abstract public function goto(url:String):Void;
+	@:abstract public function error(?message:String):Void;
+	@:abstract public function notfound(?message:String):Void;
+	@:abstract public function sendFile(file:File):Void;
 	
 	private function parseData(pb:ParseBoy<Void>):Map<String, String> {
 		var params = new Map<String, String>();
@@ -134,6 +142,23 @@ class HttpConnection implements HasAbstract
 		for (k in post.keys())
 			h.set(k, post.get(k));
 		return h;
+	}
+
+	public function sendFileOrIndexHtml(f:String):Void {
+		if (FileSystem.exists(f)) {
+			if (FileSystem.isDirectory(f)) {
+				if (FileSystem.exists(f+indexFileShort))
+					sendFile(f+indexFileShort);
+				else if (FileSystem.exists(f+indexFile))
+					sendFile(f+indexFile);
+				else
+					notfound();
+			} else {
+				sendFile(f);
+			}
+		} else {
+			notfound();
+		}
 	}
 	
 }

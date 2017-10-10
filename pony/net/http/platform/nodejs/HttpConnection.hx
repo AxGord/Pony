@@ -89,7 +89,7 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 			languages.push(s);
 	}
 	
-	public inline function sendFile(file:File):Void {
+	override public function sendFile(file:File):Void {
 		writeCookie();
 		var f = file.firstExists;
 		Fs.stat(f, function(err:Error, stat:Stats):Void {
@@ -118,10 +118,19 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 	
 	override public function endActionPrevPage():Void goto(req.headers.field('referer'));
 	
-	public function error(?message:String):Void {
+	override public function error(?message:String):Void {
 		writeCookie();
 		res.setHeader('Content-Type', 'text/html; charset=UTF-8');
-		res.end(message == null ? 'Error' : 'Error: '+message);
+		res.writeHead(500);
+		res.end(message == null ? 'Error' : message);
+		end = true;
+	}
+
+	override public function notfound(?message:String):Void {
+		writeCookie();
+		res.setHeader('Content-Type', 'text/html; charset=UTF-8');
+		res.writeHead(404);
+		res.end(message == null ? 'Not found' : message);
 		end = true;
 	}
 	

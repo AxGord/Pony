@@ -15,7 +15,7 @@
 -lib hxnodejs
 -dce full
 -D analyzer-optimize
--D js-es5
+-D js-es6
 -lib pony
 
 --next
@@ -26,7 +26,7 @@
 -lib hxnodejs
 -dce full
 -D analyzer-optimize
--D js-es5
+-D js-es6
 -lib pony
 
 --next
@@ -37,7 +37,8 @@
 -lib hxnodejs
 -dce full
 -D analyzer-optimize
--D js-es5
+-D js-es6
+-lib pony
 
 --next
 
@@ -48,7 +49,7 @@
 -lib pony
 -dce full
 -D analyzer-optimize
--D js-es5
+-D js-es6
 
 --next
 
@@ -59,4 +60,4 @@
 -lib pony
 -dce full
 -D analyzer-optimize
--D js-es5
+-D js-es6

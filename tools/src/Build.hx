@@ -31,7 +31,11 @@ class Build {
 			s += f ? '\n' : ' ';
 			f = !f;
 		}
-		File.saveContent('pony.hxml', s);
+		var prev = File.getContent('pony.hxml');
+		if (prev != s) {
+			sys.FileSystem.deleteFile('libcache.js');
+			File.saveContent('pony.hxml', s);
+		}
 	}
 
 	public function writeConfigIfNeed():Void {
@@ -49,10 +53,10 @@ class Build {
 		}
 		if (debug) {
 			command.push('-debug');
-			if (gxml.hasNode.server && gxml.node.server.hasNode.haxe) {
-				command.push('--connect');
-				command.push(gxml.node.server.node.haxe.innerData);
-			}
+			// if (gxml.hasNode.server && gxml.node.server.hasNode.haxe) {
+			// 	command.push('--connect');
+			// 	command.push(gxml.node.server.node.haxe.innerData);
+			// }
 		}
 	}
 
@@ -64,14 +68,39 @@ class Build {
 	public function run():Void {
 		if (!isHxml) {
 			genCommands();
-			Sys.println('haxe ' + command.join(' '));
-			var code = Sys.command('haxe', command);
-			if (code > 0) Sys.exit(code);
+			runCompilation(command);
 		} else {
 			writeConfig();
-			var c = ['pony.hxml'];
-			Sys.println('haxe ' + c.join(' '));
-			var code = Sys.command('haxe', c);
+			runCompilation(['pony.hxml']);
+		}
+	}
+
+	private function runCompilation(command:Array<String>):Void {
+		if (gxml.hasNode.server && gxml.node.server.hasNode.haxe) {
+			var newline = "\n";
+			var s = new sys.net.Socket();
+			s.connect(new sys.net.Host('127.0.0.1'), Std.parseInt(gxml.node.server.node.haxe.innerData));
+			var d = Sys.getCwd();
+			s.write('--cwd ' + d + newline);
+			s.write(command.join(newline));
+			s.write("\000");
+
+			var hasError = false;
+			for (line in s.read().split(newline))
+			{
+				switch (line.charCodeAt(0)) {
+					case 0x01: 
+						neko.Lib.print(line.substr(1).split("\x01").join(newline));
+					case 0x02: 
+						hasError = true;
+					default: 
+						Sys.stderr().writeString(line + newline);
+				}
+			}
+			if (hasError) Sys.exit(1);	
+		} else {
+			Sys.println('haxe ' + command.join(' '));
+			var code = Sys.command('haxe', command);
 			if (code > 0) Sys.exit(code);
 		}
 	}
