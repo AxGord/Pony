@@ -33,7 +33,7 @@ class Build {
 		}
 		var prev = File.getContent('pony.hxml');
 		if (prev != s) {
-			sys.FileSystem.deleteFile('libcache.js');
+			if (sys.FileSystem.exists('libcache.js')) sys.FileSystem.deleteFile('libcache.js');
 			File.saveContent('pony.hxml', s);
 		}
 	}
@@ -76,7 +76,7 @@ class Build {
 	}
 
 	private function runCompilation(command:Array<String>):Void {
-		if (gxml.hasNode.server && gxml.node.server.hasNode.haxe) {
+		if (debug && gxml.hasNode.server && gxml.node.server.hasNode.haxe) {
 			var newline = "\n";
 			var s = new sys.net.Socket();
 			s.connect(new sys.net.Host('127.0.0.1'), Std.parseInt(gxml.node.server.node.haxe.innerData));
