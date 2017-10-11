@@ -25,7 +25,15 @@ class Main {
 				Sys.println(haxe.Resource.getString('logo'));
 				Sys.println('');
 				Sys.println('Command-Line Tools');
+				Sys.println('https://github.com/AxGord/Pony');
+				Sys.println('http://lib.haxe.org/p/pony');
+				Sys.println('pony help - for help');
 				Sys.exit(0);
+
+			case 'help':
+				Sys.println('Visit https://github.com/AxGord/Pony/wiki/Pony-Tools for more info');
+				Sys.exit(0);		
+
 			case 'watch':
 				runNode('ponyWatch');
 				
@@ -68,6 +76,9 @@ class Main {
 				
 			case 'server':
 				runNode('ponyServer');
+
+			case 'haxelib':
+				Haxelib.run(args);
 
 			case _:
 				Utils.error('Unknown command');

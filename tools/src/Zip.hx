@@ -1,12 +1,4 @@
-import haxe.crypto.Crc32;
-import haxe.io.Output;
 import haxe.xml.Fast;
-import haxe.zip.Compress;
-import haxe.zip.Entry;
-import haxe.zip.Tools;
-import haxe.zip.Writer;
-import sys.FileSystem;
-import sys.io.File;
 
 /**
  * ZipMain
@@ -20,7 +12,6 @@ class Zip {
 	private var debug:Bool;
 	private var app:String;
 	private var compressLvl:Int = 9;
-	private var list:List<Entry> = new List<Entry>();
 	
 	public function new(xml:Fast, app:String, debug:Bool) {
 		Sys.println('Zip files');
@@ -29,52 +20,12 @@ class Zip {
 		this.debug = debug;
 		getData(xml);
 		
-		var a = output.split('/');
-		a.pop();
-		FileSystem.createDirectory(a.join('/'));
-		if (FileSystem.exists(output))
-			FileSystem.deleteFile(output);
-		
-		for (e in input) {
-			writeEntry(e);
-		}
-		
-		var o:Output = File.write(output, true);
-		var writer:Writer = new Writer(o);
-		writer.write(list);
-		o.flush();
-		o.close();
+		var zip = new pony.ZipTool(output, prefix, compressLvl);
+		zip.onLog << Sys.println;
+		zip.onError << function(err:String) throw err;
+		zip.writeList(input).end();
 	}
 	
-	private function writeEntry(entry:String):Void {
-		if (!FileSystem.exists(prefix+entry)) throw 'File not exists: '+entry;
-		if (FileSystem.isDirectory(prefix+entry)) {
-			writeDir(entry);
-		} else {
-			writeFile(entry);
-		}
-	}
-	
-	private function writeDir(dir:String):Void {
-		for (e in FileSystem.readDirectory(prefix+dir)) {
-			writeEntry(dir + (dir.substr(-1) == '/' ? '' : '/') + e);
-		}
-	}
-	
-	private function writeFile(file:String):Void {
-		Sys.println(prefix+file);
-		var b = File.getBytes(prefix + file);
-		var entry = {
-			fileName: file,
-			fileSize: b.length,
-			fileTime: Date.now(),
-			compressed: false,
-			dataSize: b.length,
-			data: b,
-			crc32: Crc32.make(b)};
-		if (compressLvl > 0) Tools.compress(entry, compressLvl);
-		list.push(entry);
-	}
 	
 	private function getData(xml:Fast):Void {
 		for (node in xml.elements) {
