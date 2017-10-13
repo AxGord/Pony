@@ -114,21 +114,8 @@ class Haxelib {
 		Sys.println('Library $name created');
 	}
 
-	private static function libexists():Bool return sys.FileSystem.exists(haxelibFile);
+	private static inline function libexists():Bool return sys.FileSystem.exists(haxelibFile);
 
-	private static function saveJson(jdata:Dynamic):Void {
-		var tdata = haxe.Json.stringify(jdata, '\n');
-		while (true) {
-			var ndata = StringTools.replace(tdata, '\n\n', '\n');
-			if (ndata == tdata) {
-				tdata = ndata;
-				break;
-			} else {
-				tdata = ndata;
-			}
-		}
-		sys.io.File.saveContent(haxelibFile, tdata);
-		Sys.println('$haxelibFile saved');
-	}
+	private static inline function saveJson(jdata:Dynamic):Void Utils.saveJson(haxelibFile, jdata);
 
 }

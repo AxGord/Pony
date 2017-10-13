@@ -26,5 +26,20 @@ class Utils {
 		Sys.println(message);
 		Sys.exit(errCode);
 	}
+
+	public static function saveJson(file:String, jdata:Dynamic):Void {
+		var tdata = haxe.Json.stringify(jdata, '\n');
+		while (true) {
+			var ndata = StringTools.replace(tdata, '\n\n', '\n');
+			if (ndata == tdata) {
+				tdata = ndata;
+				break;
+			} else {
+				tdata = ndata;
+			}
+		}
+		sys.io.File.saveContent(file, tdata);
+		Sys.println('$file saved');
+	}
 	
 }

@@ -62,17 +62,7 @@ class Main {
 				Sys.println('Ftp time: ' + Std.int((Sys.time() - startTime) * 1000)/1000);
 				
 			case 'create':
-				if (FileSystem.exists(Utils.MAIN_FILE)) Utils.error(Utils.MAIN_FILE + ' exists');
-				
-				var content = Xml.createDocument();
-				var root = Xml.createElement('project');
-				var name = args[0];
-				if (name != null) root.set('name', name);
-				root.addChild(Xml.createComment('Put configuration here'));
-				content.addChild(root);
-				var r = '<?xml version="1.0" encoding="utf-8" ?>\n';
-				r += haxe.xml.Printer.print(content, true);
-				File.saveContent(Utils.MAIN_FILE, r);
+				Create.run(args);
 				
 			case 'server':
 				runNode('ponyServer');
