@@ -1,4 +1,3 @@
-
 #if nodejs
 import js.Node;
 import haxe.xml.Fast;

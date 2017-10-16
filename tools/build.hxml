@@ -1,5 +1,6 @@
 -neko bin/pony.n
 -cp src
+-cp sharedsrc
 -main Main
 -cmd nekotools boot bin/pony.n
 -dce full
@@ -10,7 +11,8 @@
 --next
 
 -js bin/ponyWatch.js
--cp src
+-cp nodesrc
+-cp sharedsrc
 -main WatchMain
 -lib hxnodejs
 -dce full
@@ -21,7 +23,8 @@
 --next
 
 -js bin/ponyPrepare.js
--cp src
+-cp nodesrc
+-cp sharedsrc
 -main NodePrepareMain
 -lib hxnodejs
 -dce full
@@ -32,7 +35,8 @@
 --next
 
 -js bin/ponyUglify.js
--cp src
+-cp nodesrc
+-cp sharedsrc
 -main UglifyMain
 -lib hxnodejs
 -dce full
@@ -43,7 +47,8 @@
 --next
 
 -js bin/ponyFtp.js
--cp src
+-cp nodesrc
+-cp sharedsrc
 -main FtpMain
 -lib hxnodejs
 -lib pony
@@ -54,7 +59,8 @@
 --next
 
 -js bin/ponyServer.js
--cp src
+-cp nodesrc
+-cp sharedsrc
 -main ServerMain
 -lib hxnodejs
 -lib pony

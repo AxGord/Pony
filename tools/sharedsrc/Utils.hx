@@ -13,6 +13,23 @@ class Utils {
 	public static inline var XML_REMSP_LEFT:String = '{REMSP_LEFT}';
 	public static inline var XML_REMSP_RIGHT:String = '{REMSP_RIGHT}';
 
+	public static var PD(default, null):String;
+	public static var toolsPath(default, null):String;
+	public static var libPath(default, null):String;
+
+	public static var ponyVersion(get, never):String;
+	private static var _ponyVersion:String;
+
+	private static function __init__():Void {
+		PD = Sys.systemName() == 'Windows' ? '\\' : '/';
+		var a = Sys.executablePath().split(PD);
+		a.pop();
+		toolsPath = a.join(PD) + PD;
+		a.pop();
+		a.pop();
+		libPath = a.join(PD) + PD;
+	}
+
 	public static function parseArgs(args:Array<String>):AppCfg {
 		var debug = args.indexOf('debug') != -1;
 		var app:String = null;
@@ -73,4 +90,14 @@ class Utils {
 		return e;
 	}
 	
+	public static function get_ponyVersion():String {
+		if (_ponyVersion != null) {
+			return _ponyVersion;
+		} else {
+			var file = libPath + 'haxelib.json';
+			var data = haxe.Json.parse(File.getContent(file));
+			return _ponyVersion = data.version;
+		}
+	}
+
 }

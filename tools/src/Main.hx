@@ -8,16 +8,9 @@ import sys.io.File;
  */
 class Main {
 	
-	static var ponyPath:String;
-	
 	static function main() {
 		
 		var startTime = Sys.time();
-		
-		var PD = Sys.systemName() == 'Windows' ? '\\' : '/';
-		var a = Sys.executablePath().split(PD);
-		a.pop();
-		ponyPath = a.join(PD) + PD;
 		
 		var args = Sys.args();
 		switch args.shift() {
@@ -62,7 +55,7 @@ class Main {
 				Sys.println('Ftp time: ' + Std.int((Sys.time() - startTime) * 1000)/1000);
 				
 			case 'create':
-				Create.run(args);
+				create.Create.run(args);
 				
 			case 'server':
 				runNode('ponyServer');
@@ -102,7 +95,7 @@ class Main {
 	static function runNode(name:String, ?args:Array<String>):Int {
 		if (args == null) args = [];
 		Sys.println('Run: $name.js');
-		var a = [ponyPath + name + '.js'];
+		var a = [Utils.toolsPath + name + '.js'];
 		for (e in args) a.push(e);
 		return Sys.command('node', a);
 	}
