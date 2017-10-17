@@ -14,7 +14,6 @@ class Project {
 	public function new(name:String) this.name = name;
 
 	public function result():Xml {
-		var content = Xml.createDocument();
 		var root = Xml.createElement('project');
 		if (name != null) root.set('name', name);
 		if (server.active) root.addChild(server.result());
@@ -24,8 +23,26 @@ class Project {
 		if (root.firstChild() == null) {
 			root.addChild(Xml.createComment('Put configuration here'));
 		}
-		content.addChild(root);
-		return content;
+		return root;
+	}
+
+	public function getMain():String {
+		return build.active ? build.getMainhx() : null; 
+	}
+
+	public function getCps():Array<String> {
+		return [];
+	}
+
+	public function getLibs():Map<String, String> {
+		var map = new Map<String, String>();
+		if (haxelib.active) {
+			for (lib in haxelib.libs.keys()) map[lib] = haxelib.libs[lib];
+		}
+		if (build.active) {
+			for (lib in build.libs.keys()) map[lib] = build.libs[lib];
+		}
+		return map;
 	}
 
 }

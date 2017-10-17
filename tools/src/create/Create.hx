@@ -1,6 +1,5 @@
 package create;
 
-import sys.FileSystem;
 import types.ProjectType;
 
 class Create {
@@ -20,7 +19,7 @@ class Create {
 
 		var name:String = type != null ? args[1] : args[0];
 
-		if (FileSystem.exists(Utils.MAIN_FILE)) Utils.error(Utils.MAIN_FILE + ' exists');
+		if (sys.FileSystem.exists(Utils.MAIN_FILE)) Utils.error(Utils.MAIN_FILE + ' exists');
 				
 		var project = new Project(name);
 
@@ -31,29 +30,19 @@ class Create {
 		}
 
 		Utils.savePonyProject(project.result());
-		//createVscode();
 
-	}
+		var main = project.getMain();
 
-	private static function createVscode():Void {
-		if (!FileSystem.exists('.vscode')) {
-			FileSystem.createDirectory('.vscode');
-			var data = {
-				version: '2.0.0',
-				tasks: {
-					taskName: 'pony build',
-					type: 'shell',
-					command: 'pony build',
-					problemMatcher: ["$haxe"],
-					group: {
-						kind: 'build',
-						isDefault: true
-					}
-				}
-			};
-			Utils.saveJson('.vscode/tasks.json', data);
+		if (type != null) switch type {
+			case ProjectType.JS, ProjectType.Pixi:
+				Utils.createEmptyMainFile(main);
+			case _:
 		}
+
+		create.ides.VSCode.create();
+		create.ides.HaxeDevelop.create(name, main, project.getLibs(), project.getCps());
 	}
+
 
 
 }

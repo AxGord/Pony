@@ -1,6 +1,7 @@
 package;
 import haxe.xml.Fast;
 import sys.io.File;
+import sys.FileSystem;
 
 /**
  * Share
@@ -89,6 +90,19 @@ class Utils {
 		e.addChild(Utils.xmlData(data));
 		return e;
 	}
+
+	public static function xmlSimpleAtt(v:String, att:String, data:String):Xml {
+		var e = Xml.createElement(v);
+		e.set(att, data);
+		return e;
+	}
+
+	public static function mapToNode(name:String, tag:String, map:Map<String, String>):Xml {
+		var r = Xml.createElement(name);
+		for (key in map.keys())
+			r.addChild(Utils.xmlSimpleAtt(tag, key, map[key]));
+		return r;
+	}
 	
 	public static function get_ponyVersion():String {
 		if (_ponyVersion != null) {
@@ -98,6 +112,40 @@ class Utils {
 			var data = haxe.Json.parse(File.getContent(file));
 			return _ponyVersion = data.version;
 		}
+	}
+
+	public static function getPath(file:String):String {
+		return file.substr(0, file.lastIndexOf('/')+1);
+	}
+
+	public static function createPath(file:String):Void {
+		var path = getPath(file);
+		if (!FileSystem.exists(path))
+			FileSystem.createDirectory(path);
+	}
+
+	public static function createHaxeFile(file:String, ?content:Array<String>):Void {
+		if (FileSystem.exists(file)) return;
+		createPath(file);
+		var f = file.substr(file.lastIndexOf('/') + 1);
+		var cl = f.substr(0, f.lastIndexOf('.'));
+		var c = 'class $cl {\n\n';
+		if (content != null) {
+			for (e in content) c += '\t$e\n';
+		}
+		c += '}';
+		File.saveContent(file, c);
+	}
+
+	public static function createEmptyMainFile(file:String, ?main:Array<String>):Void {
+		var content = ['static function main() {'];
+		if (main != null) {
+			for (e in main) content.push('\t$e');
+		} else {
+			content.push('\t');
+		}
+		content.push('}\n');
+		createHaxeFile(file, content);
 	}
 
 }

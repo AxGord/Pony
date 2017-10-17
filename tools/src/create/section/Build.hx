@@ -47,4 +47,6 @@ class Build extends Section {
 		}
 	}
 
+	public function getMainhx():String return cps[0] + '/' + main + '.hx';
+
 }
