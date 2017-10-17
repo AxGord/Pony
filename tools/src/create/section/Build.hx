@@ -38,7 +38,8 @@ class Build extends Section {
 		return xml;
 	}
 
-	public function output():String return outputPath + outputFile + outputExt();
+	public function output():String return outputPath + getOutputFile();
+	public function getOutputFile():String return outputFile + outputExt();
 
 	public function outputExt():String {
 		return switch target {

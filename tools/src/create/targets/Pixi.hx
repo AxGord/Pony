@@ -6,6 +6,7 @@ class Pixi {
 		JS.set(project);
 		project.download.addLib('pixijs');
 		project.haxelib.addLib('pixijs', '4.5.5');
+		project.uglify.libs.push(project.download.getLibFinal('pixijs'));
 	}
 
 }

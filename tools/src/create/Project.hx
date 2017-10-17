@@ -8,6 +8,7 @@ class Project {
 	public var download(default, null):Download = new Download();
 	public var haxelib(default, null):Haxelib = new Haxelib();
 	public var build(default, null):Build = new Build();
+	public var uglify(default, null):Uglify = new Uglify();
 
 	public var name:String;
 
@@ -19,7 +20,16 @@ class Project {
 		if (server.active) root.addChild(server.result());
 		if (download.active) root.addChild(download.result());
 		if (haxelib.active) root.addChild(haxelib.result());
-		if (build.active) root.addChild(build.result());
+		if (build.active) {
+			root.addChild(build.result());
+			if (uglify.active) {
+				uglify.outputPath = build.outputPath;
+				uglify.outputFile = build.getOutputFile();
+				root.addChild(uglify.result());
+			}
+		}
+		
+
 		if (root.firstChild() == null) {
 			root.addChild(Xml.createComment('Put configuration here'));
 		}

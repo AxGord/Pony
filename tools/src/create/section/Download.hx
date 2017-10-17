@@ -12,9 +12,7 @@ class Download extends Section {
 
 	public function new() super('download');
 
-	public function addLib(name:String):Void {
-		list.push(LIBS[name]);
-	}
+	public function addLib(name:String):Void list.push(LIBS[name]);
 
 	public function result():Xml {
 		init();
@@ -24,6 +22,8 @@ class Download extends Section {
 		}
 		return xml;
 	}
+
+	public function getLibFinal(name:String):String return path + LIBS[name].getFinal();
 
 }
 
@@ -48,5 +48,7 @@ private class Library {
 			unit.set('check', check);
 		return unit;
 	}
+
+	public function getFinal():String return url.substr(url.lastIndexOf('/') + 1);
 
 }

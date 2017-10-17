@@ -11,6 +11,8 @@ class JS {
 		project.haxelib.addLib('pony', Utils.ponyVersion);
 		project.build.active = true;
 		project.build.target = types.HaxeTargets.JS;
+		project.uglify.active = true;
+		project.uglify.debugLibs.push(project.download.getLibFinal('stacktrace'));
 	}
 
 }
