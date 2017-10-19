@@ -3,6 +3,9 @@ class Haxelib {
 	private static inline var listFile:String = 'haxelibfiles.txt';
 	private static inline var outputFile:String = 'haxelib.zip';
 	private static inline var haxelibFile:String = 'haxelib.json';
+	private static inline var readmeFile:String = 'README.md';
+	private static inline var badgeVersionBegin:String = '[![Haxelib](https://img.shields.io/badge/haxelib-';
+	private static inline var badgeVersionEnd:String = '-';
 
 	public static function run(args:Array<String>):Void {
 		switch args.shift() {
@@ -18,6 +21,8 @@ class Haxelib {
 				upver(1, args.join(' '));
 			case 'major':
 				upver(0, args.join(' '));
+			case 'updateReadme':
+				updateReadme(getVersion());
 			case _:
 				Utils.error('Unknown command');
 		}
@@ -27,6 +32,7 @@ class Haxelib {
 		var jdata = getData();
 		var ver = parseVersion(jdata.version);
 		ver[index]++;
+		for (i in index + 1...ver.length) ver[i] = 0;
 		_submit(jdata, ver.join('.'), desc);
 	}
 
@@ -64,7 +70,23 @@ class Haxelib {
 		_submit(jdata, version, desc);
 	}
 
+	private static function getVersion():String return getData().version;
+
+	private static function updateReadme(version:String):Void {
+		if (sys.FileSystem.exists(readmeFile)) {
+			var content = sys.io.File.getContent(readmeFile);
+			var begin = content.indexOf(badgeVersionBegin);
+			if (begin == -1) return;
+			begin += badgeVersionBegin.length;
+			var beginData = content.substr(0, begin);
+			var endData = content.substr(begin);
+			endData = endData.substr(endData.indexOf(badgeVersionEnd));
+			sys.io.File.saveContent(readmeFile, beginData + version + endData);
+		}
+	}
+
 	private static function _submit(jdata:Dynamic, version:String, desc:String):Void {
+		updateReadme(version);
 		if (desc == null) desc = '';
 		jdata.version = version;
 		jdata.releasenote = desc;
