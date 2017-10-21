@@ -73,16 +73,7 @@ class Haxelib {
 	private static function getVersion():String return getData().version;
 
 	private static function updateReadme(version:String):Void {
-		if (sys.FileSystem.exists(readmeFile)) {
-			var content = sys.io.File.getContent(readmeFile);
-			var begin = content.indexOf(badgeVersionBegin);
-			if (begin == -1) return;
-			begin += badgeVersionBegin.length;
-			var beginData = content.substr(0, begin);
-			var endData = content.substr(begin);
-			endData = endData.substr(endData.indexOf(badgeVersionEnd));
-			sys.io.File.saveContent(readmeFile, beginData + version + endData);
-		}
+		pony.text.TextTools.betweenReplaceFile(readmeFile, badgeVersionBegin, badgeVersionEnd, version);
 	}
 
 	private static function _submit(jdata:Dynamic, version:String, desc:String):Void {

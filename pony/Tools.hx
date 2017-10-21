@@ -173,13 +173,13 @@ class Tools {
 				Type.createEnumIndex(t, Type.enumIndex(obj), [for (e in Type.enumParameters(obj)) clone(e)]);
 			case TObject if (!Std.is(obj, Class)):
 				_clone(obj);
-			case TClass(t):
-				if (t == Array) {
-					var obj:Array<Dynamic> = cast obj;
-					cast [for (i in 0...obj.length) clone(obj[i])];
-				} else {
-					cast _clone(obj);
-				}
+			case TClass(Array):
+				var obj:Array<Dynamic> = cast obj;
+				cast [for (i in 0...obj.length) clone(obj[i])];	
+			case TClass(String):
+				obj;
+			case TClass(_):
+				cast _clone(obj);
 			case _:
 				obj;
 		}

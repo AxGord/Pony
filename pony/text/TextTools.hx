@@ -87,8 +87,7 @@ class TextTools {
 		}
 		return r;
 	}
-	
-	
+
 	macro public static function includeFile(file:String):Expr {
 		var s:String = sys.io.File.getContent(file);
 		return macro $v{s};
@@ -193,6 +192,23 @@ class TextTools {
 	public static function removeQuotes(s:String):String {
 		var f = s.charAt(0);
 		return (f == '"' || f == "'") ? s.substring(1, s.length - 1) : s;
+	}
+
+	public static function betweenReplace(text:String, begin:String, end:String, value:String):String {
+		var beginIndex = text.indexOf(begin);
+		if (beginIndex == -1) return null;
+		beginIndex += begin.length;
+		var beginData = text.substr(0, beginIndex);
+		var endData = text.substr(beginIndex);
+		endData = endData.substr(endData.indexOf(end));
+		return beginData + value + endData;
+	}
+
+	public static function betweenReplaceFile(file:String, begin:String, end:String, value:String):Void {
+		if (sys.FileSystem.exists(file)) {
+			var text = betweenReplace(sys.io.File.getContent(file), begin, end, value);
+			if (text != null) sys.io.File.saveContent(file, text);
+		}		
 	}
 	
 }

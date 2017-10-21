@@ -31,6 +31,12 @@ class Utils {
 		libPath = a.join(PD) + PD;
 	}
 
+	public static function command(name:String, args:Array<String>):Void {
+		Sys.println(name + ' ' + args.join(' '));
+		var r = Sys.command(name, args);
+		if (r > 0) error('$name error $r');
+	}
+
 	public static function parseArgs(args:Array<String>):AppCfg {
 		var debug = args.indexOf('debug') != -1;
 		var app:String = null;
