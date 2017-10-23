@@ -27,6 +27,7 @@ class Create {
 			case ProjectType.Server: create.targets.Server.set(project);
 			case ProjectType.JS: create.targets.JS.set(project);
 			case ProjectType.Pixi: create.targets.Pixi.set(project);
+			case ProjectType.Node: create.targets.Node.set(project);
 		}
 
 		Utils.savePonyProject(project.result());

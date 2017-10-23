@@ -7,10 +7,10 @@ typedef BaseConfig = {
 
 class XmlConfigReader<T:BaseConfig> {
 	
-	private var cfg:T;
+	public var cfg:T;
 	private var onConfig:T->Void;
 
-	public function new(xml:Fast, cfg:T, onConfig:T->Void) {
+	public function new(xml:Fast, cfg:T, ?onConfig:T->Void) {
 		this.cfg = cfg;
 		this.onConfig = onConfig;
 		for (a in xml.x.attributes()) readAttr(a, normalize(xml.x.get(a)));

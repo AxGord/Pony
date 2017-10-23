@@ -204,11 +204,13 @@ class TextTools {
 		return beginData + value + endData;
 	}
 
+	#if (neko || nodejs || php)
 	public static function betweenReplaceFile(file:String, begin:String, end:String, value:String):Void {
 		if (sys.FileSystem.exists(file)) {
 			var text = betweenReplace(sys.io.File.getContent(file), begin, end, value);
 			if (text != null) sys.io.File.saveContent(file, text);
 		}		
 	}
+	#end
 	
 }

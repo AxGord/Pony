@@ -20,7 +20,6 @@ class Texturepacker {
 	private var units:Array<TPUnit> = [];
 
 	public function new(xml:Fast, app:String, debug:Bool) {
-		if (app == null && xml.hasNode.apps) throw 'Please type app name';
 		new Path(xml, {
 			app: app,
 			debug: debug,
@@ -56,8 +55,8 @@ class Texturepacker {
 
 			switch format[1] {
 				case 'png':
-					//command.push('--png-opt-level');
-					//command.push('7');
+					command.push('--png-opt-level');
+					command.push('7');
 				case 'jpg':
 					command.push('--jpg-quality');
 					command.push(Std.string(Std.int(unit.quality * 100)));
@@ -99,6 +98,18 @@ class Texturepacker {
 
 private class Path extends XmlConfigReader<TPConfig> {
 
+	override private function readXml(xml:Fast):Void {
+		var variants:Array<TPConfig> = [for (node in xml.nodes.variant) cast (selfCreate(node), Path).cfg];
+		if (variants.length > 0) {
+			for (v in variants) {
+				cfg = v;
+				super.readXml(xml);
+			}
+		} else {
+			super.readXml(xml);
+		}
+	}
+
 	override private function readAttr(name:String, val:String):Void {
 		switch name {
 			case 'format': cfg.format = val;
@@ -115,6 +126,7 @@ private class Path extends XmlConfigReader<TPConfig> {
 		switch xml.name {
 			case 'path': selfCreate(xml);
 			case 'unit': new Unit(xml, copyCfg(), onConfig);
+			case 'variant':
 			case _: throw 'Unknown tag';
 		}
 	}
@@ -125,7 +137,11 @@ private class Unit extends Path {
 
 	override private function readNode(xml:Fast):Void {
 		switch xml.name {
-			case 'path': selfCreate(xml);
+			case 'path':
+				var from = normalize(xml.att.from);
+				for (node in xml.nodes.input) {
+					cfg.input.push(from + normalize(node.innerData));
+				}
 			case 'input': cfg.input.push(normalize(xml.innerData));
 			case 'output': cfg.output = normalize(xml.innerData);
 			case _: throw 'Unknown tag';

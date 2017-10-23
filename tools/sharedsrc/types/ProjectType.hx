@@ -4,4 +4,5 @@ enum ProjectType {
 	Pixi;
 	JS;
 	Server;
+	Node;
 }
