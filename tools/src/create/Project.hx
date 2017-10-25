@@ -4,6 +4,7 @@ import create.section.*;
 
 class Project {
 
+	public var run(default, null):Run = new Run();
 	public var server(default, null):Server = new Server();
 	public var download(default, null):Download = new Download();
 	public var haxelib(default, null):Haxelib = new Haxelib();
@@ -17,6 +18,7 @@ class Project {
 	public function result():Xml {
 		var root = Xml.createElement('project');
 		if (name != null) root.set('name', name);
+		if (run.active) root.addChild(run.result());
 		if (server.active) root.addChild(server.result());
 		if (download.active) root.addChild(download.result());
 		if (haxelib.active) root.addChild(haxelib.result());
@@ -53,6 +55,12 @@ class Project {
 			for (lib in build.libs.keys()) map[lib] = build.libs[lib];
 		}
 		return map;
+	}
+
+	public function setRun(cmd:String):Void {
+		run.active = true;
+		run.path = build.outputPath;
+		run.command = cmd + ' ' + build.outputFile;
 	}
 
 }

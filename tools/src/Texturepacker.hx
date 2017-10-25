@@ -1,5 +1,5 @@
 import haxe.xml.Fast;
-import XmlConfigReader;
+import pony.text.XmlConfigReader;
 
 private typedef TPConfig = { > BaseConfig, > TPUnit,
 	from:String,

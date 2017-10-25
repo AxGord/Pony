@@ -1,3 +1,5 @@
+package pony.text;
+
 import haxe.xml.Fast;
 
 typedef BaseConfig = {

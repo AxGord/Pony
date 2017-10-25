@@ -9,6 +9,8 @@ class Node {
 		project.haxelib.addLib('hxnodejs', '4.0.9');
 		project.build.active = true;
 		project.build.target = types.HaxeTargets.JS;
+		project.build.esVersion = 6;
+		project.setRun('node');
 		project.uglify.active = true;
 	}
 

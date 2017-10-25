@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2015 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2017 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -34,7 +34,6 @@ import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
 import haxe.io.Eof;
 import haxe.Log;
-import haxe.xml.Fast;
 #if macro
 import haxe.macro.Context;
 import haxe.macro.Expr;
@@ -290,7 +289,6 @@ class Tools {
 	}
 	
 	public static inline function bytesInputIterator(b:BytesInput):Iterator<Byte> {
-		var i:Null<Int> = 0;
 		return {
 			hasNext: function():Bool return b.position < b.length,
 			next: function():Byte return b.readByte()
@@ -563,9 +561,4 @@ class FloatTools {
 		else
 			return a[0] + d + a[1] + TextTools.repeat(endS, n - a[1].length);
 	}
-}
-
-class XMLTools {
-	inline public static function isTrue(x:haxe.xml.Fast, name:String):Bool return x.has.resolve(name) && TextTools.isTrue(x.att.resolve(name));
-	inline public static function fast(text:String):Fast return new haxe.xml.Fast(Xml.parse(text));
 }

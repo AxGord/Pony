@@ -4,7 +4,7 @@ class Server {
 
 	public static function set(project:Project):Void {
 		project.server.active = true;
-		project.server.http = true;
+		project.server.haxe = true;
 	}
 
 }

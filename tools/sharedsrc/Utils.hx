@@ -1,7 +1,7 @@
-package;
 import haxe.xml.Fast;
 import sys.io.File;
 import sys.FileSystem;
+import pony.text.XmlTools;
 
 /**
  * Share
@@ -10,9 +10,6 @@ import sys.FileSystem;
 class Utils {
 	
 	public static inline var MAIN_FILE:String = 'pony.xml';
-	
-	public static inline var XML_REMSP_LEFT:String = '{REMSP_LEFT}';
-	public static inline var XML_REMSP_RIGHT:String = '{REMSP_RIGHT}';
 
 	public static var PD(default, null):String;
 	public static var toolsPath(default, null):String;
@@ -47,7 +44,7 @@ class Utils {
 		return {app: app, debug:debug};
 	}
 	
-	public static function getXml():Fast return new Fast(Xml.parse(File.getContent(MAIN_FILE))).node.project;
+	public static function getXml():Fast return XmlTools.fast(File.getContent(MAIN_FILE)).node.project;
 	
 	public static function error(message:String, errCode:Int = 1):Void {
 		Sys.println(message);
@@ -70,45 +67,10 @@ class Utils {
 	}
 
 	public static function saveXML(file:String, xml:Xml):Void {
-		var doc = Xml.createDocument();
-		doc.addChild(Xml.createProcessingInstruction('xml version="1.0" encoding="utf-8"'));
-		doc.addChild(xml);
-		var r = haxe.xml.Printer.print(doc, true);
-		
-		var a = r.split(XML_REMSP_LEFT);
-		r = '';
-		for (e in a) r += e.substring(0, e.lastIndexOf('>') + 1);
-		a = r.split(XML_REMSP_RIGHT);
-		r = '';
-		for (e in a) r += e.substring(e.indexOf('<'));
-
-		File.saveContent(file, r);
+		File.saveContent(file, XmlTools.document(xml));
 	}
 
 	public static function savePonyProject(xml:Xml):Void saveXML(MAIN_FILE, xml);
-
-	public static function xmlData(data:String):Xml {
-		return Xml.createPCData(XML_REMSP_LEFT + data + XML_REMSP_RIGHT);
-	}
-
-	public static function xmlSimple(v:String, data:String):Xml {
-		var e = Xml.createElement(v);
-		e.addChild(Utils.xmlData(data));
-		return e;
-	}
-
-	public static function xmlSimpleAtt(v:String, att:String, data:String):Xml {
-		var e = Xml.createElement(v);
-		e.set(att, data);
-		return e;
-	}
-
-	public static function mapToNode(name:String, tag:String, map:Map<String, String>):Xml {
-		var r = Xml.createElement(name);
-		for (key in map.keys())
-			r.addChild(Utils.xmlSimpleAtt(tag, key, map[key]));
-		return r;
-	}
 	
 	public static function get_ponyVersion():String {
 		if (_ponyVersion != null) {

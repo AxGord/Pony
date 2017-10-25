@@ -31,7 +31,7 @@ class Build {
 			s += f ? '\n' : ' ';
 			f = !f;
 		}
-		var prev = File.getContent('pony.hxml');
+		var prev = sys.FileSystem.exists('pony.hxml') ? File.getContent('pony.hxml') : null;
 		if (prev != s) {
 			if (sys.FileSystem.exists('libcache.js')) sys.FileSystem.deleteFile('libcache.js');
 			File.saveContent('pony.hxml', s);

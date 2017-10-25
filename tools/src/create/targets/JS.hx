@@ -4,7 +4,7 @@ class JS {
 
 	public static function set(project:Project):Void {
 		Server.set(project);
-		project.server.haxe = true;
+		project.server.http = true;
 		project.download.active = true;
 		project.download.addLib('stacktrace');
 		project.haxelib.active = true;

@@ -34,14 +34,18 @@ class Create {
 
 		var main = project.getMain();
 
+		var ponycmd:String = 'build';
 		if (type != null) switch type {
 			case ProjectType.JS, ProjectType.Pixi:
+				Utils.createEmptyMainFile(main);
+			case ProjectType.Node:
+				ponycmd = 'run';
 				Utils.createEmptyMainFile(main);
 			case _:
 		}
 
-		create.ides.VSCode.create();
-		create.ides.HaxeDevelop.create(name, main, project.getLibs(), project.getCps());
+		create.ides.VSCode.create(ponycmd);
+		create.ides.HaxeDevelop.create(name, main, project.getLibs(), project.getCps(), ponycmd);
 	}
 
 

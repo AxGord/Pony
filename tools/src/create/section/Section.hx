@@ -1,4 +1,5 @@
 package create.section;
+import pony.text.XmlTools;
 
 class Section {
 
@@ -16,7 +17,7 @@ class Section {
 	}
 
 	private function add(name:String, value:String):Void {
-		xml.addChild(Utils.xmlSimple(name, value));
+		xml.addChild(XmlTools.node(name, value));
 	}
 
 	private function set(att:String, value:String):Void {

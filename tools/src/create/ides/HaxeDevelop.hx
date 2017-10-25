@@ -1,10 +1,11 @@
 package create.ides;
 
 import sys.FileSystem;
+import pony.text.XmlTools;
 
 class HaxeDevelop {
 
-	public static function create(name:String, main:String, libs:Map<String, String>, cps:Array<String>):Void {
+	public static function create(name:String, main:String, libs:Map<String, String>, cps:Array<String>, ponycmd:String = 'build'):Void {
 		if (name == null) return;
 		var fdname = name + '.hxproj';
 		if (!FileSystem.exists(fdname)) {
@@ -13,7 +14,7 @@ class HaxeDevelop {
 			var root = Xml.createElement('project');
 			root.set('version', '2');
 
-			root.addChild(Utils.mapToNode('output', 'movie', [
+			root.addChild(XmlTools.mapToNode('output', 'movie', [
 				'outputType' => 'CustomBuild',
 				'input' => '',
 				'path' => 'null',
@@ -26,11 +27,11 @@ class HaxeDevelop {
 				'background' => '#FFFFFF'
 			]));
 
-			var clp = Utils.mapToNode('classpaths', 'class', [for (cp in cps) 'path' => cp]);
+			var clp = XmlTools.mapToNode('classpaths', 'class', [for (cp in cps) 'path' => cp]);
 			clp.addChild(Xml.createComment('example: <class path="..." />'));
 			root.addChild(clp);
 
-			root.addChild(Utils.mapToNode('build', 'option', [
+			root.addChild(XmlTools.mapToNode('build', 'option', [
 				'directives' => '',
 				'flashStrict' => 'False',
 				'noInlineOnDebug' => 'False',
@@ -39,7 +40,7 @@ class HaxeDevelop {
 				'additional' => 'pony.hxml'
 			]));
 
-			var libs = Utils.mapToNode('haxelib', 'library', [
+			var libs = XmlTools.mapToNode('haxelib', 'library', [
 				for (lib in libs.keys()) 'name' => lib +
 					(
 					libs[lib] == null
@@ -50,19 +51,19 @@ class HaxeDevelop {
 			libs.addChild(Xml.createComment('example: <library name="..." />'));
 			root.addChild(libs);
 
-			root.addChild(Utils.mapToNode('compileTargets', 'compile', [
+			root.addChild(XmlTools.mapToNode('compileTargets', 'compile', [
 				'path' => main
 			]));
 
-			root.addChild(Utils.mapToNode('hiddenPaths', 'hidden', [
+			root.addChild(XmlTools.mapToNode('hiddenPaths', 'hidden', [
 				'path' => 'obj'
 			]));
 
-			root.addChild(Utils.xmlSimple('preBuildCommand', '$fcmd $(BuildConfig)'));
+			root.addChild(XmlTools.node('preBuildCommand', '$fcmd $(BuildConfig)'));
 
-			root.addChild(Utils.xmlSimpleAtt('postBuildCommand', 'alwaysRun', 'False'));
+			root.addChild(XmlTools.att('postBuildCommand', 'alwaysRun', 'False'));
 
-			root.addChild(Utils.mapToNode('options', 'option', [
+			root.addChild(XmlTools.mapToNode('options', 'option', [
 				'showHiddenPaths' => 'True',
 				'testMovie' => 'Webserver',
 				'testMovieCommand' => ''
@@ -72,7 +73,7 @@ class HaxeDevelop {
 
 			Utils.saveXML(fdname, root);
 
-			sys.io.File.saveContent(fcmd, 'pony build %1');
+			sys.io.File.saveContent(fcmd, 'pony $ponycmd %1');
 
 		}
 	}

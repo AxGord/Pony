@@ -13,6 +13,7 @@ class Build extends Section {
 	public var main:String = 'Main';
 	public var dce:String = 'full';
 	public var analyzerOptimize:Bool = true;
+	public var esVersion:Int = null;
 
 	public function new() super('build');
 
@@ -35,6 +36,7 @@ class Build extends Section {
 		}
 		if (dce != null) add('dce', dce);
 		if (analyzerOptimize) add('d', 'analyzer-optimize');
+		if (esVersion != null) add('d', 'js-es$esVersion');
 		return xml;
 	}
 

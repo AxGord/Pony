@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2017 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -30,76 +30,81 @@ package pony.magic;
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import haxe.macro.ExprTools;
+import haxe.xml.Fast;
 import sys.io.File;
 import pony.text.TextTools;
-import pony.time.Time;
-import pony.Pair;
+import pony.text.XmlTools;
+import pony.text.XmlConfigReader;
 using Lambda;
 using pony.macro.Tools;
 #end
 
 /**
- * Cue
+ * PonyConfig
  * @author AxGord <axgord@gmail.com>
  */
 #if !macro
-@:autoBuild(pony.magic.CueBuilder.build())
+@:autoBuild(pony.magic.PonyConfigBuilder.build())
 #end
-interface Cue {}
+interface PonyConfig {}
 
-class CueBuilder {
-	#if macro
-	inline private static var INDEX:String = 'INDEX';
-	inline private static var TITLE:String = 'TITLE ';
-	#end
+class PonyConfigBuilder {
+
+	private static var file:String = 'pony.xml';
+
 	macro static public function build():Array<Field> {
-		
-		var cl = Context.getLocalClass();
-		var meta = cl.get().meta.get();
-		var cueFile = null;
-		for (m in meta) switch m {
-			case {name:':cue', params: [{expr: EConst(CString(v))}]}:
-				cueFile = v;
-			case _:
-		}
-		if (cueFile == null) throw 'Error';
-		Context.registerModuleDependency(Context.getLocalModule(), cueFile);
-		var cue = File.getContent(cueFile);
-		var map:Map<String, Map<String, Array<String>>> = TextTools.tabParser(cue);
-		var data:Array<Pair<String, Int>> = [];
-		for (e in map.iterator().next()) {
-			var title:String = null;
-			var time:String = null;
-			for (v in e) {
-				if (v.substr(0, INDEX.length) == INDEX)
-					time = v.substr(INDEX.length + 4);
-				if (v.substr(0, TITLE.length) == TITLE)
-					title = TextTools.removeQuotes(v.substr(TITLE.length));
-			}
-			if (title == null || time == null) throw 'Error';
-			title = StringTools.replace(title, ' ', '_');
-			var a = time.split(':');
-			var t = Time.createft('0', '0', a[0], a[1]) + Std.parseInt(a[2]) * 10;
-			data.push(new Pair(title, t));
-		}
-		data.sort(function(a, b) return a.b - b.b);
-		
+		Context.registerModuleDependency(Context.getLocalModule(), file);
 		var fields:Array<Field> = Context.getBuildFields();
-		
-		for (i in 0...data.length) {
-			var title = data[i].a;
-			var t:Pair<Time, Time> = i != data.length -1 ? {a: data[i].b, b: data[i + 1].b} : {a: data[i].b, b: null};
-			
-			fields.push({
-				name: title,
-				access: [APublic, AStatic],
-				pos: Context.currentPos(),
-				kind: FVar(macro:pony.time.TimeInterval, {expr: EBinop(OpInterval, macro $v{t.a}, macro $v{t.b}), pos:Context.currentPos()})
+		var xml = XmlTools.fast(File.getContent(file)).node.project;
+		var cfg:PConfig = {app:null, debug:false, path:''};
+		if (xml.hasNode.config) {
+			new ReadXmlConfig(xml.node.config, cfg, function(cfg:PConfig):Void {
+				var isInt = Std.string(Std.parseInt(cfg.value)) == cfg.value;
+				var isFloat = !isInt && Std.string(Std.parseFloat(cfg.value)) == cfg.value;
+				fields.push({
+					name: cfg.path + cfg.key,
+					access: [APublic, AStatic, AInline],
+					pos: Context.currentPos(),
+					kind: FVar(
+						isFloat ? (macro:Float) : (isInt ? (macro:Int) : (macro:String)),
+						Context.makeExpr(isFloat ? Std.parseFloat(cfg.value) : (isInt ? Std.parseInt(cfg.value) : cfg.value), Context.currentPos())
+					)
+				});
 			});
-			
 		}
-		
 		return fields;
 	}
-	
+
 }
+#if macro
+private typedef PConfig = { > BaseConfig,
+	path: String,
+	?key: String,
+	?value: String
+};
+
+private class ReadXmlConfig extends XmlConfigReader<PConfig> {
+
+	override private function readNode(xml:Fast):Void {
+		var nt = xml.x.count();
+		if (nt > 1) {
+			new ReadXmlConfig(xml, {
+				app: cfg.app,
+				debug: cfg.debug,
+				path: cfg.path + xml.name + '_'
+			}, onConfig);
+		} else if (nt == 1) {
+			onConfig({
+				app: cfg.app,
+				debug: cfg.debug,
+				path: cfg.path,
+				key: xml.name,
+				value: xml.innerData
+			});
+		} else {
+			throw 'Xml error';
+		}
+	}
+
+}
+#end

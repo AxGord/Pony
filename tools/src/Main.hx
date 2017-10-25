@@ -37,6 +37,18 @@ class Main {
 				
 			case 'build':
 				build(Utils.parseArgs(args), Utils.getXml());
+
+			case 'run':
+				var xml = Utils.getXml();
+				build(Utils.parseArgs(args), xml);
+				if (!xml.hasNode.run)
+					Utils.error('Not exists run section');					
+				var r = xml.node.run;
+				if (r.has.path)
+					Sys.setCwd(r.att.path);
+				var args = r.innerData.split(' ');
+				var cmd = args.shift();
+				Utils.command(cmd, args);
 				
 			case 'zip':
 				var cfg = Utils.parseArgs(args);
