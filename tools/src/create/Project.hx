@@ -18,6 +18,13 @@ class Project {
 	public function result():Xml {
 		var root = Xml.createElement('project');
 		if (name != null) root.set('name', name);
+
+		if (build.active) {
+			var cfg = Xml.createElement('config');
+			cfg.addChild(Xml.createComment('Put configuration here'));
+			root.addChild(cfg);
+		}
+
 		if (run.active) root.addChild(run.result());
 		if (server.active) root.addChild(server.result());
 		if (download.active) root.addChild(download.result());

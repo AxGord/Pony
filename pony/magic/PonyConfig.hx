@@ -30,13 +30,12 @@ package pony.magic;
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import haxe.macro.ExprTools;
+import haxe.macro.Compiler;
 import haxe.xml.Fast;
 import sys.io.File;
-import pony.text.TextTools;
-import pony.text.XmlTools;
 import pony.text.XmlConfigReader;
+import pony.text.XmlTools;
 using Lambda;
-using pony.macro.Tools;
 #end
 
 /**
@@ -56,19 +55,52 @@ class PonyConfigBuilder {
 		Context.registerModuleDependency(Context.getLocalModule(), file);
 		var fields:Array<Field> = Context.getBuildFields();
 		var xml = XmlTools.fast(File.getContent(file)).node.project;
-		var cfg:PConfig = {app:null, debug:false, path:''};
+		#if debug
+		var debug = true;
+		#else
+		var debug = false;
+		#end
+		var cfg:PConfig = {app:Compiler.getDefine('app'), debug:debug, path:''};
 		if (xml.hasNode.config) {
 			new ReadXmlConfig(xml.node.config, cfg, function(cfg:PConfig):Void {
-				var isInt = Std.string(Std.parseInt(cfg.value)) == cfg.value;
-				var isFloat = !isInt && Std.string(Std.parseFloat(cfg.value)) == cfg.value;
+
+				var type:ComplexType = switch cfg.type {
+					case CString: macro:String;
+					case CInt: macro:Int;
+					case CFloat: macro:Float;
+					case CStringMap: macro:Map<String, String>;
+					case CIntMap: macro:Map<String, Int>;
+					case CFloatMap: macro:Map<String, Float>;
+					case _: throw 'Error';
+				}
+
+				var value:Expr = switch cfg.type {
+					case CString: Context.makeExpr(cfg.value, Context.currentPos());
+					case CInt: Context.makeExpr(Std.parseInt(cfg.value), Context.currentPos());
+					case CFloat: Context.makeExpr(Std.parseFloat(cfg.value), Context.currentPos());
+					case CStringMap, CIntMap, CFloatMap: null;
+					case _: throw 'Error';
+				}
+
+				var map:Array<Expr> = switch cfg.type {
+					case CString, CInt, CFloat: null;
+					case CStringMap: [for (k in cfg.map.keys()) macro $v{k} => $v{cfg.map[k]}];
+					case CIntMap: [for (k in cfg.map.keys()) macro $v{k} => $v{Std.parseInt(cfg.map[k])}];
+					case CFloatMap: [for (k in cfg.map.keys()) macro $v{k} => $v{Std.parseFloat(cfg.map[k])}];
+					case _: throw 'Error';
+				}
+
+				var access = [APublic, AStatic];
+				switch cfg.type {
+					case CString, CInt, CFloat: access.push(AInline);
+					case _:
+				}
+
 				fields.push({
 					name: cfg.path + cfg.key,
-					access: [APublic, AStatic, AInline],
+					access: access,
 					pos: Context.currentPos(),
-					kind: FVar(
-						isFloat ? (macro:Float) : (isInt ? (macro:Int) : (macro:String)),
-						Context.makeExpr(isFloat ? Std.parseFloat(cfg.value) : (isInt ? Std.parseInt(cfg.value) : cfg.value), Context.currentPos())
-					)
+					kind: FVar(type, value != null ? value : macro $a{map})
 				});
 			});
 		}
@@ -80,30 +112,112 @@ class PonyConfigBuilder {
 private typedef PConfig = { > BaseConfig,
 	path: String,
 	?key: String,
-	?value: String
+	?value: String,
+	?map: Map<String, String>,
+	?type: ConfigTypes
 };
+
+private enum ConfigTypes {
+	CString;
+	CInt;
+	CFloat;
+	CVars;
+	CStringMap;
+	CIntMap;
+	CFloatMap;
+}
 
 private class ReadXmlConfig extends XmlConfigReader<PConfig> {
 
 	override private function readNode(xml:Fast):Void {
-		var nt = xml.x.count();
-		if (nt > 1) {
-			new ReadXmlConfig(xml, {
-				app: cfg.app,
-				debug: cfg.debug,
-				path: cfg.path + xml.name + '_'
-			}, onConfig);
-		} else if (nt == 1) {
-			onConfig({
-				app: cfg.app,
-				debug: cfg.debug,
-				path: cfg.path,
-				key: xml.name,
-				value: xml.innerData
-			});
-		} else {
-			throw 'Xml error';
+		var stype:String = xml.has.type ? xml.att.type : null;
+
+		var map:Map<String, String> = null;
+
+		var type:ConfigTypes = switch stype {
+
+			case 'map', 'intmap', 'floatmap', 'stringmap':
+				var mapType:ConfigTypes = switch stype {
+					case 'map': null;
+					case 'intmap': CInt;
+					case 'floatmap': CFloat;
+					case 'stringmap': CString;
+					case _: throw 'Error';
+				};
+				map = new Map();
+				new ReadXmlConfig(xml, {
+					app: cfg.app,
+					debug: cfg.debug,
+					path: ''
+				}, function(conf:PConfig) {
+					if (mapType == null) mapType = conf.type;
+					if (mapType != conf.type) throw 'Type error';
+					map[conf.path + conf.key] = conf.value;
+				});
+
+				switch mapType {
+					case CInt: CIntMap;
+					case CFloat: CFloatMap;
+					case CString: CStringMap;
+					case _: throw 'Type error';
+				}
+
+			case 'vars': CVars;
+			case 'int': CInt;
+			case 'float': CFloat;
+			case 'string': CString;
+
+			case _:
+
+				var nt = xml.x.count();
+				if (nt > 1) {
+					CVars;
+				} else if (nt == 1) {
+					var v = xml.innerData;
+					if (Std.string(Std.parseInt(v)) == v)
+						CInt;
+					else if (Std.string(Std.parseFloat(v)) == v)
+						CFloat;
+					else
+						CString;
+				} else {
+					throw 'Xml error';
+				}
+
 		}
+
+		switch type {
+
+			case CIntMap, CFloatMap, CStringMap:
+				onConfig({
+					app: cfg.app,
+					debug: cfg.debug,
+					path: cfg.path,
+					key: xml.name,
+					map: map,
+					type: type
+				});
+
+			case CInt, CFloat, CString:
+				onConfig({
+					app: cfg.app,
+					debug: cfg.debug,
+					path: cfg.path,
+					key: xml.name,
+					value: xml.innerData,
+					type: type
+				});
+
+			case CVars:
+				new ReadXmlConfig(xml, {
+					app: cfg.app,
+					debug: cfg.debug,
+					path: cfg.path + xml.name + '_'
+				}, onConfig);
+
+		}
+
+		
 	}
 
 }

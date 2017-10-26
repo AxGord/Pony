@@ -43,6 +43,11 @@ class Create {
 				Utils.createEmptyMainFile(main);
 			case _:
 		}
+		if (project.build.active) {
+			var cfgfile = project.build.gethx('Config');
+			if (!sys.FileSystem.exists(cfgfile))
+				sys.io.File.saveContent(cfgfile, 'class Config implements pony.magic.PonyConfig {}');
+		}
 
 		create.ides.VSCode.create(ponycmd);
 		create.ides.HaxeDevelop.create(name, main, project.getLibs(), project.getCps(), ponycmd);

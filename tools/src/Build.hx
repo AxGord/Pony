@@ -58,6 +58,10 @@ class Build {
 			// 	command.push(gxml.node.server.node.haxe.innerData);
 			// }
 		}
+		if (app != null) {
+			command.push('-D');
+			command.push('app=$app');
+		}
 	}
 
 	public function getCommands():Array<String> {

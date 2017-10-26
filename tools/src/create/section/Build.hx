@@ -50,6 +50,7 @@ class Build extends Section {
 		}
 	}
 
-	public function getMainhx():String return cps[0] + '/' + main + '.hx';
+	public function getMainhx():String return gethx(main);
+	public function gethx(name:String):String return cps[0] + '/' + name + '.hx';
 
 }
