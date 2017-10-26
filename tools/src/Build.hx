@@ -51,16 +51,16 @@ class Build {
 			command.push('-lib');
 			command.push(a.join(':'));
 		}
+		if (app != null) {
+			command.push('-D');
+			command.push('app=$app');
+		}
 		if (debug) {
 			command.push('-debug');
 			// if (gxml.hasNode.server && gxml.node.server.hasNode.haxe) {
 			// 	command.push('--connect');
 			// 	command.push(gxml.node.server.node.haxe.innerData);
 			// }
-		}
-		if (app != null) {
-			command.push('-D');
-			command.push('app=$app');
 		}
 	}
 

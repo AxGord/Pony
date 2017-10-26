@@ -37,7 +37,8 @@ class Main {
 			'multiparty',
 			'http-proxy',
 			'convert-source-map',
-			'offset-sourcemap-lines'
+			'offset-sourcemap-lines',
+			'poeditor-client'
 		];
 
 		Sys.println('Install npm');

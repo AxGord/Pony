@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2017 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -27,25 +27,23 @@
 **/
 package pony.net.nodejs;
 #if nodejs
-import js.Node;
-import pony.net.SocketServerBase;
 
 /**
  * SocketServer
  * @author AxGord <axgord@gmail.com>
  */
-class SocketServer extends SocketServerBase {
+class SocketServer extends pony.net.SocketServerBase {
 
-	private var server:NodeNetServer;
+	private var server:js.node.net.Server;
 	
 	public function new(port:Int) {
 		super();
-		server = Node.net.createServer(null,null);
+		server = js.node.Net.createServer(null,null);
 		server.on('connection', connectionHandler);
 		server.listen(port, eOpen.dispatch.bind(false));
 	}
 	
-	private function connectionHandler(c:NodeNetSocket):Void {
+	private function connectionHandler(c:js.node.net.Socket):Void {
 		var cl = addClient();
 		cl.nodejsInit(c);
 		@:privateAccess cl.connect();

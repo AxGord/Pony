@@ -1,5 +1,5 @@
 /**
-* Copyright (c) 2012-2016 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* Copyright (c) 2012-2017 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -42,18 +42,18 @@ import pony.net.SocketClientBase;
  */
 class SocketClient extends SocketClientBase {
 	
-	private var socket:NodeNetSocket;
+	private var socket:js.node.net.Socket;
 	private var q:Queue < BytesOutput->Void > ;
 	
 	override private function open():Void {
 		super.open();
-		socket = Node.net.connect(port, host);
+		socket = js.node.Net.connect(port, host);
 		socket.on('connect', connect);
 		nodejsInit(socket);
 	}
 	
 	@:allow(pony.net.nodejs.SocketServer)
-	private function nodejsInit(s:NodeNetSocket):Void {
+	private function nodejsInit(s:js.node.net.Socket):Void {
 		q = new Queue(_send);
 		socket = s;
 		s.on('data', dataHandler);
@@ -72,9 +72,9 @@ class SocketClient extends SocketClientBase {
 	
 	public function send(data:BytesOutput):Void	q.call(data);
 	
-	private function _send(data:BytesOutput):Void socket.write(data.getBytes().getData(), null, q.next);
+	private function _send(data:BytesOutput):Void socket.write(js.node.Buffer.hxFromBytes(data.getBytes()), q.next);
 	
-	private function dataHandler(d:NodeBuffer):Void joinData(new BytesInput(Bytes.ofData(d)));
+	private function dataHandler(d:js.node.Buffer):Void joinData(new BytesInput(Bytes.ofData(d.buffer)));
 	
 }
 
