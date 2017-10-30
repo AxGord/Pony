@@ -127,8 +127,8 @@ class DeltaTime implements HasSignal {
 	private static var imm:Dynamic;
 	private static function __init__():Void {
 		createSignals();
-		fixedUpdate.takeListeners.add(_ftakeListeners);
-		fixedUpdate.lostListeners.add(_flostListeners);
+		eFixedUpdate.onTake << _ftakeListeners;
+		eFixedUpdate.onLost << _flostListeners;
 	}
 	private static function _ftakeListeners():Void {
 		set();
