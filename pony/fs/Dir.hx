@@ -54,7 +54,7 @@ abstract Dir(Unit) from Unit {
 					result[e] = [for (d in this.wayStringIterator()) d + '/' + e];
 			}
 		}
-		return result.array();
+		return [for (e in result) e];
 	}
 	
 	public function files(?filter:String):Array<File> return [for (u in content(filter)) if (u.isFile) u];

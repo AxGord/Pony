@@ -1,7 +1,7 @@
 pony/
+tools/resources/
 tools/src/
 tools/build.hxml
-tools/logo.txt
 LICENSE.txt
 README.md
 run.n

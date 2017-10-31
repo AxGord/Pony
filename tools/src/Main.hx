@@ -18,6 +18,7 @@ class Main {
 				Sys.println(haxe.Resource.getString('logo'));
 				Sys.println('');
 				Sys.println('Command-Line Tools');
+				Sys.println('Library version ' + Utils.ponyVersion);
 				Sys.println('https://github.com/AxGord/Pony');
 				Sys.println('http://lib.haxe.org/p/pony');
 				Sys.println('pony help - for help');
@@ -74,6 +75,12 @@ class Main {
 
 			case 'haxelib':
 				Haxelib.run(args);
+
+			case 'lines':
+				Lines.run(args);
+
+			case 'license':
+				License.run(args);
 
 			case _:
 				Utils.error('Unknown command');

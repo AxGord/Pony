@@ -6,7 +6,9 @@
 -dce full
 -D analyzer-optimize
 -lib pony
--resource logo.txt@logo
+-resource resources/logo.txt@logo
+-resource resources/bsd.txt@bsd
+-resource resources/closed.txt@closed
 
 --next
 

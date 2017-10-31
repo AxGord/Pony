@@ -38,7 +38,6 @@ class Project {
 			}
 		}
 		
-
 		if (root.firstChild() == null) {
 			root.addChild(Xml.createComment('Put configuration here'));
 		}
