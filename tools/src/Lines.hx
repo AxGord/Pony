@@ -33,16 +33,19 @@ class Lines {
     }
 
     private static function tryShow(lang:String, ext:String):Void {
-        var count = getCount(ext);
-        if (count > 0)
-            Sys.println('$lang files total lines count: $count');
+        var p = getCount(ext);
+        if (p.b > 0)
+            Sys.println('$lang files total lines count: ${p.a} in ${p.b} files');
     }
 
-    private static function getCount(ext:String):Int {
+    private static function getCount(ext:String):pony.Pair<Int, Int> {
         var count:Int = 0;
-        for (file in ('.':Dir).contentRecursiveFiles(ext))
+        var files:Int = 0;
+        for (file in ('.':Dir).contentRecursiveFiles(ext)) {
+            files++;
             count += file.content.split('\n').length;
-        return count;
+        }
+        return new pony.Pair(count, files);
     }
 
 }
