@@ -68,22 +68,25 @@ class Build {
 	}
 
 	private function genCommands():Void {
-		pushCommands(gxml.node.build);
-		for (e in gxml.node.haxelib.nodes.lib) {
-			var a = e.innerData.split(' ');
-			command.push('-lib');
-			command.push(a.join(':'));
-		}
-		if (app != null) {
-			command.push('-D');
-			command.push('app=$app');
-		}
-		if (debug) {
-			command.push('-debug');
-			// if (gxml.hasNode.server && gxml.node.server.hasNode.haxe) {
-			// 	command.push('--connect');
-			// 	command.push(gxml.node.server.node.haxe.innerData);
-			// }
+		for (xml in gxml.nodes.build) {
+			if (command.length > 0) {
+				command.push('--next');
+			}
+			pushCommands(xml);
+			for (e in gxml.node.haxelib.nodes.lib) {
+				var a = e.innerData.split(' ');
+				command.push('-lib');
+				command.push(a.join(':'));
+			}
+			if (app != null) {
+				command.push('-D');
+				command.push('app=$app');
+			}
+			if (debug) {
+				command.push('-debug');
+			} else {
+				command.push('-release');
+			}
 		}
 	}
 
