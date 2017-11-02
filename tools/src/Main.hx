@@ -56,7 +56,13 @@ class Main {
 				
 			case 'prepare':
 				var cfg = Utils.parseArgs(args);
-				new Prepare(Utils.getXml(), cfg.app, cfg.debug);
+
+				var xml = Utils.getXml();
+				new Prepare(xml, cfg.app, cfg.debug);
+
+				if (xml.hasNode.poeditor)
+					Utils.command('npm', ['install', 'git+https://github.com/janjakubnanista/poeditor-client.git']);
+
 				runNode('ponyPrepare');
 				
 			case 'build':

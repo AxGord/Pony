@@ -64,21 +64,25 @@ class Poeditor {
 	public function updateFiles(cb:Void->Void):Void {
 		var tasks = new Tasks(cb);
 		client.projects.get(id).then(function(project){
-			project.languages.list().then(function(languages:Array<Dynamic>){
+			project.languages.list().then(function(languages:Array<{name:String, code:String, percentage:Int, export:Dynamic}>){
 				tasks.add();
-				for (language in languages) {
-					if (language.percentage != 100 || !files.exists(language.code)) continue;
-					tasks.add();
-					var lang = language;
-					lang.export({type: 'key_value_json'}).then(function(v) {
-						var file = path + files[lang.code] + '.json';
-						Sys.println('Update lang file: '+file);
-						var f = Fs.createWriteStream(file);
-						Https.get(v, function(response:IncomingMessage) {
-							response.once('end', tasks.end);
-							response.pipe(f); 
-						});
-					});
+				for (i in 0...languages.length) {
+					var lang = languages[i];
+					Sys.println('Check lang: ' + lang.name);
+					if (lang.percentage == 100 && files.exists(lang.code)) {
+						tasks.add();
+						try {
+							lang.export({type: 'key_value_json'}).then(function(v) {
+								var file = path + files[lang.code] + '.json';
+								Sys.println('Update lang file: '+file);
+								var f = Fs.createWriteStream(file);
+								Https.get(v, function(response:IncomingMessage) {
+									response.once('end', tasks.end);
+									response.pipe(f); 
+								});
+							});
+						} catch (e:Dynamic) trace(e);
+					}
 				}
 				tasks.end();
 			});

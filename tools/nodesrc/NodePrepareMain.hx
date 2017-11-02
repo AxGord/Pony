@@ -36,6 +36,8 @@ class NodePrepareMain {
 	static var itetator:Iterator<Fast>;
 	
 	private static function main() {
+		js.Node.require('source-map-support').install();
+		haxe.Log.trace('pony node prepare');
 		var file = 'pony.xml';
 		var xml = new Fast(Xml.parse(File.getContent(file)));
 		itetator = xml.node.project.elements;

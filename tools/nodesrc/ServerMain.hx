@@ -43,6 +43,7 @@ class ServerMain {
 	static var haxePort:String;
 
 	static function main() {
+		js.Node.require('source-map-support').install();
 		var xml = Utils.getXml();
 		if (xml.hasNode.server) {
 			var sx = xml.node.server;

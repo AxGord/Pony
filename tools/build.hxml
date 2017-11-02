@@ -9,6 +9,7 @@
 -resource resources/logo.txt@logo
 -resource resources/bsd.txt@bsd
 -resource resources/closed.txt@closed
+-debug
 
 --next
 
@@ -21,6 +22,7 @@
 -D analyzer-optimize
 -D js-es6
 -lib pony
+-debug
 
 --next
 
@@ -33,6 +35,7 @@
 -D analyzer-optimize
 -D js-es6
 -lib pony
+-debug
 
 --next
 
@@ -45,6 +48,7 @@
 -D analyzer-optimize
 -D js-es6
 -lib pony
+-debug
 
 --next
 
@@ -57,6 +61,7 @@
 -dce full
 -D analyzer-optimize
 -D js-es6
+-debug
 
 --next
 
@@ -69,3 +74,4 @@
 -dce full
 -D analyzer-optimize
 -D js-es6
+-debug

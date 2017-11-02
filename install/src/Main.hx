@@ -53,15 +53,15 @@ class Main {
 		//Sys.command('sudo', ['chmod', '/usr/local/lib/node_modules', '777']);
 
 		var npm:Array<String> = [
-			'https://github.com/janjakubnanista/poeditor-client.git',
+			//'https://github.com/janjakubnanista/poeditor-client.git',
 			'uglify-js',
 			'ftp',
 			'send',
 			'multiparty',
 			'http-proxy',
+			'source-map-support',
 			'convert-source-map',
-			'offset-sourcemap-lines',
-			'poeditor-client'
+			'offset-sourcemap-lines'
 		];
 
 		Sys.println('Install npm');
