@@ -44,8 +44,7 @@ class Prepare {
 		if (xml.hasNode.texturepacker) {
 			new Texturepacker(xml.node.texturepacker, app, debug);
 		}
-		if (app != null)
-			new Build(xml, app, debug).writeConfigIfNeed();
+		new Build(xml, app, debug).writeConfigIfNeed();
 	}
 	
 }

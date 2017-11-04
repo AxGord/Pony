@@ -131,6 +131,14 @@ class Main {
 		if (xml.hasNode.wrapper) {
 			new Wrapper(xml.node.wrapper, args.app, args.debug);
 		}
+		for (test in xml.nodes.test) {
+			var cwd:Cwd = test.has.path ? test.att.path : null;
+			cwd.set();
+			var args = test.innerData.split(' ');
+			var cmd = args.shift();
+			Utils.command(cmd, args);
+			cwd.undo();
+		}
 	}
 	
 	static function addCfg(?a:Array<String>, args:AppCfg):Array<String> {
