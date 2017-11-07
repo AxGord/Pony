@@ -41,8 +41,6 @@ class Build {
 		this.debug = debug;
 		gxml = xml;
 		
-		if (app == null && xml.hasNode.apps) throw 'Please type app name';
-		
 		isHxml = xml.node.build.has.hxml && xml.node.build.att.hxml.isTrue();
 	}
 
