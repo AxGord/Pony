@@ -63,6 +63,11 @@ class ServerMain {
 				.createProxyServer({
 					target: target,
 					headers: {'Host': '127.0.0.1:$port'}
+				}).on('error', function (err, req, res) {
+					res.writeHead(500, {
+						'Content-Type': 'text/plain'
+					});
+					res.end('Something went wrong. And we are reporting a custom error message.');
 				})
 				.listen(Std.parseInt(port));
 			}

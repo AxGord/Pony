@@ -84,8 +84,6 @@ class Build {
 			}
 			if (debug) {
 				command.push('-debug');
-			} else {
-				command.push('-release');
 			}
 		}
 	}
