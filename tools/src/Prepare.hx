@@ -41,6 +41,17 @@ class Prepare {
 				Sys.command('haxelib', args);
 			}
 		}
+
+		if (xml.hasNode.npm) {
+			var cwd = new Cwd(xml.node.npm.att.path);
+			Sys.println('install npm');
+			cwd.sw();
+			for (module in xml.node.npm.nodes.module) {
+				Sys.command('npm', ['install', module.innerData, '--prefix', './']);
+			}
+			cwd.sw();
+		}
+
 		if (xml.hasNode.texturepacker) {
 			new Texturepacker(xml.node.texturepacker, app, debug);
 		}

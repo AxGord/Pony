@@ -133,11 +133,11 @@ class Main {
 		}
 		for (test in xml.nodes.test) {
 			var cwd:Cwd = test.has.path ? test.att.path : null;
-			cwd.set();
+			cwd.sw();
 			var args = test.innerData.split(' ');
 			var cmd = args.shift();
 			Utils.command(cmd, args);
-			cwd.undo();
+			cwd.sw();
 		}
 	}
 	
