@@ -19,8 +19,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Pony Config, fixes",
-"version": "0.5.7",
+"releasenote": "RPC and upgrade tools",
+"version": "0.5.8",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }

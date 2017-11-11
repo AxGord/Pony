@@ -6,3 +6,4 @@
 /socketTests/CSSocket/
 /api/
 *.dump
+.DS_Store
