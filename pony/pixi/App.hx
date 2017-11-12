@@ -30,7 +30,7 @@ import pixi.core.Application.ApplicationOptions;
 import pixi.core.Pixi.RendererType;
 import pixi.core.sprites.Sprite;
 import pixi.core.ticker.Ticker;
-import pony.events.Signal0;
+import pony.events.Signal1;
 import pony.geom.Point;
 import pony.magic.HasSignal;
 import pony.time.DTimer;
@@ -65,7 +65,7 @@ class App implements HasSignal {
 	public var isWebGL(default, null):Bool;
 	public var pauseDraw:Bool = false;
 	
-	@:auto public var onResize:Signal0;
+	@:auto public var onResize:Signal1<Float>;
 	public var canvas(default, null):CanvasElement;
 	
 	public var container(default, null):Sprite;
@@ -85,6 +85,8 @@ class App implements HasSignal {
 	private var renderPause:Bool = false;
 	
 	private var backImgcontainer:Sprite;
+
+	public var scale(default, null):Float;
 	
 	/**
 	 * @param	smallDeviceQuality - 1 ideal, 2 - low, 3 - normal, 4 - good
@@ -102,7 +104,7 @@ class App implements HasSignal {
 		this.width = width;
 		this.height = height;
 		background = bg;
-		
+
 		this.parentDom = parentDom;
 		this.smallDeviceQuality = smallDeviceQuality;
 		smallDeviceQualityOffset = 1 - 1 / smallDeviceQuality;
@@ -116,7 +118,33 @@ class App implements HasSignal {
 		_height = height;
 		this.container = container;
 		
-		pixiInit();
+		//beign pixi init
+		canvas = Browser.document.createCanvasElement();
+		canvas.style.width = width + "px";
+		canvas.style.height = height + "px";
+		canvas.style.position = "static";
+
+		var renderingOptions:ApplicationOptions = {
+			width: width,
+			height: height,
+			view: canvas,
+			backgroundColor: background,
+			resolution: 1,
+			antialias: false,
+			forceFXAA: false,
+			autoResize: false,
+			transparent: false,
+			clearBeforeRender: true,
+			preserveDrawingBuffer: false,
+			roundPixels: true
+		};
+		//end pixi init
+
+		app = new pixi.core.Application(renderingOptions);
+
+		if (parentDom == null)
+			parentDom = Browser.document.body;
+		parentDom.appendChild(app.view);
 		
 		isWebGL = app.renderer.type == RendererType.WEBGL;
 
@@ -144,34 +172,6 @@ class App implements HasSignal {
 	
 	private function render():Void if (!renderPause) app.render();
 	
-	@:extern private inline function pixiInit():Void {
-		canvas = Browser.document.createCanvasElement();
-		canvas.style.width = width + "px";
-		canvas.style.height = height + "px";
-		canvas.style.position = "static";
-
-		var renderingOptions:ApplicationOptions = {
-			width: width,
-			height: height,
-			view: canvas,
-			backgroundColor: background,
-			resolution: 1,
-			antialias: false,
-			forceFXAA: false,
-			autoResize: false,
-			transparent: false,
-			clearBeforeRender: true,
-			preserveDrawingBuffer: false,
-			roundPixels: true
-		};
-
-		app = new pixi.core.Application(renderingOptions);
-
-		if (parentDom == null)
-			parentDom = Browser.document.body;
-		parentDom.appendChild(app.view);
-	}
-	
 	public function fullscreen():Void JsTools.fse(parentDom);
 	
 	dynamic public function ratioMod(ratio:Float):Float return ratio;
@@ -188,7 +188,7 @@ class App implements HasSignal {
 		if (ratio > 1) ratio = 1;
 		
 		ratio = ratioMod(ratio);
-			
+
 		app.renderer.resize(width / d * ratio, height / d * ratio);
 		canvas.style.width = width + "px";
 		canvas.style.height = height + "px";
@@ -208,7 +208,8 @@ class App implements HasSignal {
 			backImgcontainer.height = (height / d * ratio) / _height;
 		}
 
-		eResize.dispatch();
+		this.scale = d;
+		eResize.dispatch(d);
 	}
 	
 	private function correction(x:Float, y:Float):Point<Float> {
