@@ -2,8 +2,9 @@ pony/
 tools/resources/
 tools/src/
 tools/sharedsrc/
-Tools/nodesrc/
+tools/nodesrc/
 tools/build.hxml
+install/append_user_path.cmd
 LICENSE.txt
 README.md
 run.n

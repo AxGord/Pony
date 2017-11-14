@@ -19,8 +19,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Fix install problem",
-"version": "0.5.9",
+"releasenote": "Windows install tools: append_user_path",
+"version": "0.6.0",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }
