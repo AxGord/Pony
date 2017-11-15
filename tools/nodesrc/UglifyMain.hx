@@ -57,6 +57,8 @@ class UglifyMain {
 		
 		if (debug && xml.has.libcache && pony.text.TextTools.isTrue(xml.att.libcache)) {
 			
+			if (input.length == 1) return;
+
 			var cachefile = 'libcache.js';
 
 			var lastFile = input.pop();
