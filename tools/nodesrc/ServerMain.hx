@@ -103,6 +103,7 @@ class ServerMain {
 	}
 
 	static function connectHandler(connection:IHttpConnection):Void {
+		Sys.println('Http get: ' + connection.url);
 		connection.sendFileOrIndexHtml(path + connection.url);
 	}
 

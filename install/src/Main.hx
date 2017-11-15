@@ -50,26 +50,9 @@ class Main {
 		
 		FileSystem.deleteFile(toolshome + 'pony.n');
 
-		//Sys.command('sudo', ['chmod', '/usr/local/lib/node_modules', '777']);
-
-		var npm:Array<String> = [
-			//'https://github.com/janjakubnanista/poeditor-client.git',
-			'uglify-js',
-			'ftp',
-			'send',
-			'multiparty',
-			'http-proxy',
-			'source-map-support',
-			'convert-source-map',
-			'offset-sourcemap-lines'
-		];
-
-		Sys.println('Install npm');
-
 		switch Sys.systemName() {
 			case 'Windows':
-
-				for (m in npm) Sys.command('npm', ['-g', 'install', m]);		
+				installNpms();
 
 				var path = Sys.getEnv('PATH');
 				
@@ -92,43 +75,81 @@ class Main {
 				Sys.println('Installation complete, please reboot system');
 
 			case 'Mac':
+				installNpms(true);
 
-				for (m in npm) Sys.command('sudo', ['npm', '-g', 'install', m]);
-
-				Sys.println('Add user path to ponytools');
 				var home = Sys.getEnv('HOME');
-				var pFiles = [home + '/.bash_profile', home + '/.zshrc'];
-				var npmPath = new Process('npm', ['prefix', '-g']).stdout.readLine()+'/lib/node_modules';
+				writeProfileFiles([home + '/.bash_profile', home + '/.zshrc'], toolshome);
 				
-				var data = [
-					"export NODE_PATH="+npmPath,
-					"export PONYTOOLS_PATH="+toolshome,
-					"export PATH=$PATH:$PONYTOOLS_PATH"
-				];
-
-				for (pFile in pFiles) {
-					if (FileSystem.exists(pFile)) {
-						var c = File.getContent(pFile);
-						if (c.indexOf('PONYTOOLS_PATH') == -1) {
-							File.saveContent(pFile, c + "\n" + data.join('\n'));
-						} else {
-							var d1 = c.split('PONYTOOLS_PATH=');
-							var d2 = d1[1].split('\n');
-							d2.shift();
-							var s = d1[0] + 'PONYTOOLS_PATH=' + toolshome + '\n' + d2.join('\n');
-							File.saveContent(pFile, s);
-						}
-					} else {
-						File.saveContent(pFile, data.join('\n'));
-					}
-				}
 
 				Sys.println('Installation complete, please reenter in command line');				
+
+			case 'Linux':
+				installNpms(true);
+				
+				var home = Sys.getEnv('HOME');
+				var pfile = home + '/.profile';
+				writeProfileFiles([pfile], toolshome);
+
+				Sys.command('source', [pfile]);
+				Sys.println('Installation complete, please type "source ~/.profile"');	
 
 			case _:
 				Sys.println('Not supported OS');
 				return;
 		}
+	}
+
+	private static function installNpms(?sudo:Bool):Void {
+		Sys.println('Install npm');
+
+		//Sys.command('sudo', ['chmod', '/usr/local/lib/node_modules', '777']);	
+
+		var npm:Array<String> = [
+			//'https://github.com/janjakubnanista/poeditor-client.git',
+			'uglify-js',
+			'ftp',
+			'send',
+			'multiparty',
+			'http-proxy',
+			'source-map-support',
+			'convert-source-map',
+			'offset-sourcemap-lines'
+		];
+		if (sudo)
+			for (m in npm) Sys.command('sudo', ['npm', '-g', 'install', m]);
+		else
+			for (m in npm) Sys.command('npm', ['-g', 'install', m]);
+	}
+
+	private static function writeProfileFiles(pFiles:Array<String>, toolshome:String):Void {
+
+		Sys.println('Add user path to ponytools');
+		var npmPath = new Process('npm', ['prefix', '-g']).stdout.readLine()+'/lib/node_modules';
+			
+		var data = [
+			"export NODE_PATH="+npmPath,
+			"export PONYTOOLS_PATH="+toolshome,
+			"export PATH=$PATH:$PONYTOOLS_PATH"
+		];
+
+		for (pFile in pFiles) {
+			if (FileSystem.exists(pFile)) {
+				var c = File.getContent(pFile);
+				if (c.indexOf('PONYTOOLS_PATH') == -1) {
+					File.saveContent(pFile, c + "\n" + data.join('\n'));
+				} else {
+					var d1 = c.split('PONYTOOLS_PATH=');
+					var d2 = d1[1].split('\n');
+					d2.shift();
+					var s = d1[0] + 'PONYTOOLS_PATH=' + toolshome + '\n' + d2.join('\n');
+					File.saveContent(pFile, s);
+				}
+			} else {
+				File.saveContent(pFile, data.join('\n'));
+			}
+		}
+
+
 	}
 	
 }
