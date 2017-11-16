@@ -32,6 +32,8 @@ import pony.geom.Rect;
  */
 class HtmlContainerBase {
 
+	public static inline var POSITION:String = 'absolute';
+
     private var app:App;
 
 	public var targetStyle(default, set):CSSStyleDeclaration;
@@ -72,7 +74,7 @@ class HtmlContainerBase {
 		if (s == null) {
 			app.onResize >> resizeHandler;
 		} else {
-			s.position = 'absolute';
+			s.position = POSITION;
 			app.onResize << resizeHandler;
 			resizeHandler(app.scale);
 		}
