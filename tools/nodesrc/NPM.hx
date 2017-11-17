@@ -1,0 +1,1 @@
+class NPM implements pony.magic.NPM {}

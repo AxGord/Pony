@@ -1,0 +1,11 @@
+<project name="PonyTools">
+
+    <npm>
+        <module>source-map-support</module>
+        <module>uglify-js</module>
+        <module>poeditor-client</module>
+        <module>ftp</module>
+        <module>http-proxy</module>
+    </npm>
+
+</project>

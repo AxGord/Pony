@@ -21,7 +21,6 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-#if nodejs
 import sys.io.File;
 import haxe.xml.Fast;
 import haxe.Json;
@@ -36,7 +35,7 @@ class NodePrepareMain {
 	static var itetator:Iterator<Fast>;
 	
 	private static function main() {
-		js.Node.require('source-map-support').install();
+		NPM.source_map_support.install();
 		haxe.Log.trace('pony node prepare');
 		var file = 'pony.xml';
 		var xml = new Fast(Xml.parse(File.getContent(file)));
@@ -69,4 +68,3 @@ class NodePrepareMain {
 	}
 	
 }
-#end

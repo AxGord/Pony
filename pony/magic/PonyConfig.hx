@@ -45,7 +45,7 @@ interface PonyConfig {}
 
 class PonyConfigBuilder {
 
-	private static var file:String = 'pony.xml';
+	private static inline var file:String = 'pony.xml';
 
 	macro static public function build():Array<Field> {
 		Context.registerModuleDependency(Context.getLocalModule(), file);

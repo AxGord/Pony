@@ -33,8 +33,6 @@ import js.Node;
  * @author AxGord <axgord@gmail.com>
  */
 class FtpMain {
-
-	static var FTP = Node.require("ftp");
 		
 	static var path:String = '';
 	static var debug:Bool = false;
@@ -63,7 +61,7 @@ class FtpMain {
 			path = xml.att.path;
 		run(xml);
 		
-		ftp = Type.createInstance(FTP, []);
+		ftp = Type.createInstance(NPM.ftp, []);
 		ftp.on('ready', readyHandler);
 		ftp.on('error', function(e) trace(e));
 		ftp.connect({

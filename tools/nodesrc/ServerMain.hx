@@ -43,7 +43,7 @@ class ServerMain {
 	static var haxePort:String;
 
 	static function main() {
-		js.Node.require('source-map-support').install();
+		NPM.source_map_support.install();
 		var xml = Utils.getXml();
 		if (xml.hasNode.server) {
 			var sx = xml.node.server;
@@ -59,7 +59,7 @@ class ServerMain {
 				var px = sx.node.proxy;
 				var target = px.node.target.innerData;
 				var port = px.node.port.innerData;
-				Node.require('http-proxy')
+				NPM.http_proxy
 				.createProxyServer({
 					target: target,
 					headers: {'Host': '127.0.0.1:$port'}

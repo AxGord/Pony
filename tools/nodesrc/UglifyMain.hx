@@ -44,7 +44,6 @@ class UglifyMain {
 	static var compress:Bool = false;
 	
 	static function main() {
-		var UglifyJS:Dynamic = Node.require("uglify-js");
 		
 		var xml = Utils.getXml().node.uglify;
 
@@ -71,7 +70,7 @@ class UglifyMain {
 				var inputContent:Dynamic<String> = {};
 				for (f in input) Reflect.setField(inputContent, f.split('/').pop(), File.getContent(f));
 
-				var r = UglifyJS.minify(inputContent, {
+				var r = NPM.uglify_js.minify(inputContent, {
 					toplevel: true,
 					warnings: true,
 					mangle: mangle,
@@ -92,7 +91,7 @@ class UglifyMain {
 			var inputContent:Dynamic<String> = {};
 			for (f in input) Reflect.setField(inputContent, f.split('/').pop(), File.getContent(f));
 
-			var r = UglifyJS.minify(inputContent, {
+			var r = NPM.uglify_js.minify(inputContent, {
 				toplevel: true,
 				warnings: true,
 				sourceMap: mapInput == null ? null : {

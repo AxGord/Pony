@@ -37,8 +37,6 @@ import js.Node;
  * @author AxGord <axgord@gmail.com>
  */
 class Poeditor {
-
-	private static var POEditorClient = Node.require('poeditor-client');
 	
 	private var id:Int;
 	private var path:String;
@@ -58,7 +56,7 @@ class Poeditor {
 			return;
 		}
 		
-		client = Type.createInstance(POEditorClient, [token]);
+		client = Type.createInstance(NPM.poeditor_client, [token]);
 	}
 	
 	public function updateFiles(cb:Void->Void):Void {
