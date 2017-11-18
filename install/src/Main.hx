@@ -44,7 +44,7 @@ class Main {
 		for (m in ['hxnodejs'])
 			Sys.command('haxelib', ['install', m]);
 
-		Sys.println('Compile pony.exe');
+		Sys.println('Compile pony');
 		
 		Sys.command('haxe', ['--cwd', toolsSrc, 'build.hxml']);
 		
@@ -69,19 +69,29 @@ class Main {
 				if (FileSystem.exists(user + 'pony_user_path_bak.txt')) {
 					Sys.println('path ready');
 					return;
-				}		
-				Sys.command('install'+PD+'append_user_path.cmd', [toolshome]);
+				}
 				
-				Sys.println('Installation complete, please reboot system');
+				var stdout = new Process('cmd.exe', ['/C', 'install\\append_user_path.cmd']).stdout;
+				var data = stdout.readAll();
+				var path = StringTools.trim(data.toString());
+				
+				if (path != '') {
+					var np = path + (path.substr(-1) == ';' ? '': ';') + toolshome;
+					Sys.println('Set new PATH: $np');
+					Sys.command('setx', ['PATH', np]);
+					Sys.putEnv('PATH', np);
+				} else {
+					Sys.println('ERROR');
+				}
+				
+				printSuccess();
 
 			case 'Mac':
 				installNpms(true);
 
 				var home = Sys.getEnv('HOME');
 				writeProfileFiles([home + '/.bash_profile', home + '/.zshrc'], toolshome);
-				
-
-				Sys.println('Installation complete, please reenter in command line');				
+				printSuccess();		
 
 			case 'Linux':
 				installNpms(true);
@@ -89,15 +99,15 @@ class Main {
 				var home = Sys.getEnv('HOME');
 				var pfile = home + '/.profile';
 				writeProfileFiles([pfile], toolshome);
-
-				Sys.command('source', [pfile]);
-				Sys.println('Installation complete, please type "source ~/.profile"');	
+				printSuccess();
 
 			case _:
 				Sys.println('Not supported OS');
 				return;
 		}
 	}
+	
+	private static function printSuccess():Void Sys.println('Installation complete, reenter');
 
 	private static function installNpms(?sudo:Bool):Void {
 		Sys.println('Install npm');
