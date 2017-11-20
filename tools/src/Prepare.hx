@@ -43,7 +43,7 @@ class Prepare {
 		}
 
 		if (xml.hasNode.npm) {
-			var cwd = new Cwd(xml.node.npm.att.path);
+			var cwd = new Cwd(xml.node.npm.has.path ? xml.node.npm.att.path : null);
 			Sys.println('install npm');
 			cwd.sw();
 			for (module in xml.node.npm.nodes.module) {
@@ -52,10 +52,11 @@ class Prepare {
 			cwd.sw();
 		}
 
-		if (xml.hasNode.texturepacker) {
+		if (xml.hasNode.texturepacker)
 			new Texturepacker(xml.node.texturepacker, app, debug);
-		}
-		new Build(xml, app, debug).writeConfigIfNeed();
+			
+		if (xml.hasNode.build)
+			new Build(xml, app, debug).writeConfigIfNeed();
 	}
 	
 }
