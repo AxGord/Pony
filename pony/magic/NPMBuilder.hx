@@ -26,7 +26,6 @@ package pony.magic;
 #if macro
 import haxe.macro.Context;
 import haxe.macro.Expr;
-import haxe.macro.ExprTools;
 import haxe.macro.Compiler;
 import haxe.xml.Fast;
 import sys.io.File;
@@ -36,14 +35,9 @@ using Lambda;
 #end
 
 /**
- * NPM
+ * NPMBuilder
  * @author AxGord <axgord@gmail.com>
  */
-#if !macro
-@:autoBuild(pony.magic.NPMBuilder.build())
-#end
-interface NPM {}
-
 class NPMBuilder {
 
     #if macro
@@ -56,6 +50,7 @@ class NPMBuilder {
 		var faccess = [APrivate, AStatic, AInline];
 		Context.registerModuleDependency(Context.getLocalModule(), file);
 		var fields:Array<Field> = Context.getBuildFields();
+        if (!sys.FileSystem.exists(file)) return fields;
         var xml = XmlTools.fast(File.getContent(file)).node.project;
         if (xml.hasNode.npm) {
             var npm = xml.node.npm;

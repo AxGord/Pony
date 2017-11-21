@@ -25,7 +25,6 @@ package pony.magic;
 #if macro
 import haxe.macro.Context;
 import haxe.macro.Expr;
-import haxe.macro.ExprTools;
 import haxe.macro.Compiler;
 import haxe.xml.Fast;
 import sys.io.File;
@@ -35,21 +34,17 @@ using Lambda;
 #end
 
 /**
- * PonyConfig
+ * ConfigBuilder
  * @author AxGord <axgord@gmail.com>
  */
-#if !macro
-@:autoBuild(pony.magic.PonyConfigBuilder.build())
-#end
-interface PonyConfig {}
-
-class PonyConfigBuilder {
+class ConfigBuilder {
 
 	private static inline var file:String = 'pony.xml';
 
 	macro static public function build():Array<Field> {
 		Context.registerModuleDependency(Context.getLocalModule(), file);
 		var fields:Array<Field> = Context.getBuildFields();
+        if (!sys.FileSystem.exists(file)) return fields;
 		var xml = XmlTools.fast(File.getContent(file)).node.project;
 		#if debug
 		var debug = true;
