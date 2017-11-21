@@ -28,6 +28,7 @@ import js.node.Https;
 import sys.FileSystem;
 import sys.io.File;
 import pony.Tasks;
+import pony.NPM;
 import haxe.xml.Fast;
 import haxe.Json;
 import js.Node;

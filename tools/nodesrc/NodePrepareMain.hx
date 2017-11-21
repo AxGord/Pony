@@ -25,6 +25,7 @@ import sys.io.File;
 import haxe.xml.Fast;
 import haxe.Json;
 import js.Node;
+import pony.NPM;
 
 /**
  * NodePrepare

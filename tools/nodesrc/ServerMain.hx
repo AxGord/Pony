@@ -31,6 +31,7 @@ import js.node.http.IncomingMessage;
 import js.node.http.ServerResponse;
 import pony.net.http.HttpServer;
 import pony.net.http.IHttpConnection;
+import pony.NPM;
 import sys.FileSystem;
 
 /**

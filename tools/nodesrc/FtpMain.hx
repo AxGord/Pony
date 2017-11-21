@@ -27,6 +27,7 @@ import pony.fs.File;
 import sys.FileSystem;
 import haxe.xml.Fast;
 import js.Node;
+import pony.NPM;
 
 /**
  * FtpMain
