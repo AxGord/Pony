@@ -31,13 +31,13 @@ import sys.io.File;
  */
 class Main {
 	
-	static function main() {
+	static function main():Void {
 		
 		var startTime = Sys.time();
 		
 		var args = Sys.args();
 		switch args.shift() {
-			case null:
+			case null, 'logo':
 				Sys.println(haxe.Resource.getString('logo'));
 				Sys.println('');
 				Sys.println('Command-Line Tools');

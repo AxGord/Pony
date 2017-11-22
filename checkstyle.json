@@ -190,7 +190,7 @@
 		{
 			"props": {
 				"ignoreExtern": true,
-				"format": "^[A-Z0-9_]*$",
+				"format": "^[A-Z][A-z0-9_]*$",
 				"tokens": [
 					"ENUM"
 				]
@@ -371,9 +371,6 @@
 			"type": "TabForAligning"
 		},
 		{
-			"type": "Trace"
-		},
-		{
 			"props": {
 				"ignoreEnumAbstractValues": true
 			},
@@ -388,32 +385,6 @@
 		},
 		{
 			"type": "UnnecessaryConstructor"
-		},
-		{
-			"props": {
-				"ignoreModules": [
-					"haxeparser.Data",
-					"haxeparser.Data.Token",
-					"haxeparser.Data.TokenDef",
-					"haxeparser.Data.TypeDecl",
-					"haxe.macro.Expr",
-					"haxe.macro.Expr.Access",
-					"haxe.macro.Expr.Field",
-					"haxe.macro.Expr.Function"
-				],
-				"moduleTypeMap": {
-					"checkstyle.Config": [
-						"CheckConfig"
-					],
-					"checkstyle.ChecksInfo": [
-						"CheckInfo"
-					]
-				}
-			},
-			"type": "UnusedImport"
-		},
-		{
-			"type": "UnusedLocalVar"
 		},
 		{
 			"props": {
@@ -462,10 +433,20 @@
 				]
 			},
 			"type": "WhitespaceAround"
+		},
+		{
+			"type": "StringLiteral",
+			"props": {
+				"policy": "onlySingle",
+				"allowException": true,
+				"severity": "WARNING"
+			}
 		}
 	],
 	"exclude": {
-		"all": [],
+		"all": [
+			"Sys"
+		],
 		"Dynamic": [
 			"checkstyle.Main",
 			"checkstyle.Checker",

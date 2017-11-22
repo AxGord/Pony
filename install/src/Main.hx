@@ -25,22 +25,40 @@ import sys.FileSystem;
 import sys.io.File;
 import sys.io.Process;
 
+enum OS {
+	Windows;
+	Mac;
+	Linux;
+}
+
 /**
  * Install Pony Command-Line Tools
  * @author AxGord <axgord@gmail.com>
  */
 class Main {
-	
-	static function main() {
-		
-		var PD = Sys.systemName() == 'Windows' ? '\\' : '/';
 
-		Sys.println('Install Pony Command-Line Tools...');
+	static function main():Void {
+
+		var system:OS = OS.createByName(Sys.systemName());
+		var pd = system == Windows ? '\\' : '/';
 		var toolsSrc = Sys.getCwd() + 'tools';
-		toolsSrc = StringTools.replace(toolsSrc, '/', PD);
-		var toolshome = toolsSrc + PD + 'bin' + PD;
+		toolsSrc = StringTools.replace(toolsSrc, '/', pd);
+		var toolshome = toolsSrc + pd + 'bin' + pd;
+
+		var args = Sys.args();
+		if (args.length > 1) {
+			Sys.setCwd(args.pop());
+			var runfile = toolshome + (system == Windows ? 'pony.exe' : 'pony');
+			if (sys.FileSystem.exists(runfile)) {
+				Sys.exit(Sys.command(runfile, args));
+			} else  {
+				Sys.println('Pony not compiled');
+				Sys.exit(1);
+			}
+		}
+		Sys.println('Install Pony Command-Line Tools...');
 		
-		Sys.println('Install haxelibs');		
+		Sys.println('Install haxelibs');
 		for (m in ['hxnodejs'])
 			Sys.command('haxelib', ['install', m]);
 
@@ -50,21 +68,19 @@ class Main {
 		
 		FileSystem.deleteFile(toolshome + 'pony.n');
 
-		switch Sys.systemName() {
-			case 'Windows':
+		switch system {
+			case Windows:
 				installNpms();
 
-				var path = Sys.getEnv('PATH');
-				
 				Sys.println('Add user path to pony.exe');
 				
 				if (Sys.getEnv('NODE_PATH') == null) {
 					Sys.println('Set NODE_PATH');
-					var modulespath = Sys.getEnv('appdata') + PD + 'npm' + PD + 'node_modules';
+					var modulespath = Sys.getEnv('appdata') + pd + 'npm' + pd + 'node_modules';
 					Sys.command('setx', ['NODE_PATH', modulespath]);
 				}
 				
-				var user = Sys.getEnv('USERPROFILE') + PD;
+				var user = Sys.getEnv('USERPROFILE') + pd;
 				
 				if (FileSystem.exists(user + 'pony_user_path_bak.txt')) {
 					Sys.println('path ready');
@@ -86,14 +102,14 @@ class Main {
 				
 				printSuccess();
 
-			case 'Mac':
+			case Mac:
 				installNpms(true);
 
 				var home = Sys.getEnv('HOME');
 				writeProfileFiles([home + '/.bash_profile', home + '/.zshrc'], toolshome);
 				printSuccess();		
 
-			case 'Linux':
+			case Linux:
 				installNpms(true);
 				
 				var home = Sys.getEnv('HOME');
@@ -101,9 +117,6 @@ class Main {
 				writeProfileFiles([pfile], toolshome);
 				printSuccess();
 
-			case _:
-				Sys.println('Not supported OS');
-				return;
 		}
 	}
 	

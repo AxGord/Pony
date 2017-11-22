@@ -43,12 +43,13 @@ class Utils {
 
 	private static function __init__():Void {
 		PD = Sys.systemName() == 'Windows' ? '\\' : '/';
-		var a = Sys.executablePath().split(PD);
-		a.pop();
-		toolsPath = a.join(PD) + PD;
-		a.pop();
-		a.pop();
-		libPath = a.join(PD) + PD;
+		#if nodejs
+		var o:String = Std.string(js.node.ChildProcess.execSync('haxelib path pony'));
+		libPath = o.split('\n')[0];
+		#else
+		libPath = new sys.io.Process('haxelib', ['path', 'pony']).stdout.readLine();
+		#end
+		toolsPath = libPath + PD + 'tools' + PD + 'bin' + PD;
 	}
 
 	public static function command(name:String, args:Array<String>):Void {
