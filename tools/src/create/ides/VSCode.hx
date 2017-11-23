@@ -27,24 +27,101 @@ import sys.FileSystem;
 
 class VSCode {
 
-	public static function create(ponycmd:String='build'):Void {
-		if (!FileSystem.exists('.vscode')) {
-			FileSystem.createDirectory('.vscode');
-			var data = {
-				version: '2.0.0',
-				tasks: [{
-					taskName: 'pony $ponycmd debug',
-					type: 'shell',
-					command: 'pony $ponycmd debug',
-					problemMatcher: ["$haxe"],
-					group: {
-						kind: 'build',
-						isDefault: true
-					}
-				}]
-			};
-			Utils.saveJson('.vscode/tasks.json', data);
-		}
+	private static inline var preLaunchTask:String = 'default';
+
+	public static var allowCreate(get, never):Bool;
+
+	private static function get_allowCreate():Bool return !FileSystem.exists('.vscode');
+
+	public static function createDir():Void FileSystem.createDirectory('.vscode');
+
+	public static function create(ponycmd:String):Void {
+		var tasks:Array<Any> = [];
+
+		if (ponycmd != null)
+			tasks.push({
+				identifier: preLaunchTask,
+				label: 'pony $ponycmd debug',
+				type: 'shell',
+				command: 'pony $ponycmd debug',
+				problemMatcher: ["$haxe"]
+			});
+		tasks.push({
+			label: 'pony server',
+			type: 'shell',
+			command: 'pony server',
+			problemMatcher: ["$haxe"],
+			group: {
+				kind: 'build',
+				isDefault: true
+			},
+			isBackground: true,
+			presentation: {
+				echo: false,
+				reveal: 'silent',
+				focus: false,
+				panel: 'dedicated'
+			}
+		});
+
+		var data = {
+			version: '2.0.0',
+			tasks: tasks
+		};
+		Utils.saveJson('.vscode/tasks.json', data);
+	}
+
+	public static function createNode(output:String, app:String):Void {
+		var data = {
+			version: '0.2.0',
+			configurations: [
+				{
+					type: 'node',
+					request: 'launch',
+					name: 'Launch Program',
+					program: "${workspaceFolder}/" + output + '/' + app,
+					cwd: "${workspaceFolder}/" + output,
+					preLaunchTask: preLaunchTask,
+					console: 'internalConsole',
+					internalConsoleOptions: 'openOnSessionStart'
+				}
+			]
+		};
+		Utils.saveJson('.vscode/launch.json', data);
+	}
+
+	public static function createChrome(httpPort:Int):Void {
+		var launch:String = 'Launch Chrome';
+		var attach:String = 'Attach to Chrome';
+		var compounds:Array<Any> = [{
+			name: "Start debug",
+			configurations: [launch, attach]
+		}];
+		var configurations:Array<Any> = [
+			{
+				type: 'chrome',
+				request: 'attach',
+				name: attach,
+				port: 9222,
+				webRoot: "${workspaceRoot}",
+				internalConsoleOptions: 'openOnSessionStart'
+			},
+			{
+				type: 'chrome',
+				request: 'launch',
+				name: launch,
+				url: 'http://localhost:$httpPort',
+				webRoot: "${workspaceRoot}",
+				preLaunchTask: preLaunchTask
+			}
+		];
+		
+		var data = {
+			version: '0.2.0',
+			compounds: compounds,
+			configurations: configurations
+		};
+		Utils.saveJson('.vscode/launch.json', data);
 	}
 
 }

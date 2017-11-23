@@ -40,6 +40,10 @@ class Create {
 			}
 		}
 
+		if (type == null) {
+			Utils.error('Wrong app type');
+		}
+
 		var name:String = type != null ? args[1] : args[0];
 
 		if (sys.FileSystem.exists(Utils.MAIN_FILE)) Utils.error(Utils.MAIN_FILE + ' exists');
@@ -57,20 +61,27 @@ class Create {
 
 		var main = project.getMain();
 
+		var vscAllow:Bool = create.ides.VSCode.allowCreate;
+
+		if (vscAllow) create.ides.VSCode.createDir();
+
 		var ponycmd:String = 'build';
 		if (type != null) switch type {
 			case ProjectType.JS, ProjectType.Pixi:
 				Utils.createEmptyMainFile(main);
+				if (vscAllow) create.ides.VSCode.createChrome(project.server.httpPort);
 			case ProjectType.Node:
 				ponycmd = 'run';
 				Utils.createEmptyMainFile(main);
+				if (vscAllow) create.ides.VSCode.createNode(project.build.outputPath, outputFile);
+			case ProjectType.Server:
+				if (vscAllow) create.ides.VSCode.create(null);
+				return;
 			case _:
 		}
 		
-		create.ides.VSCode.create(ponycmd);
+		if (vscAllow) create.ides.VSCode.create(ponycmd);
 		create.ides.HaxeDevelop.create(name, main, project.getLibs(), project.getCps(), ponycmd);
 	}
-
-
 
 }
