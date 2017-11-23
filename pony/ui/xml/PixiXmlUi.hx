@@ -96,7 +96,8 @@ using pony.pixi.PixiExtends;
 	clip: pixi.extras.AnimatedSprite,
 	fastclip: pixi.core.sprites.Sprite,
 	slider: pony.pixi.ui.StepSlider,
-	slice: pony.pixi.ui.slices.SliceSprite
+	slice: pony.pixi.ui.slices.SliceSprite,
+	video: pony.pixi.ui.HtmlVideoUI,
 	#if pixi_particles
 	, particles: pony.pixi.ui.Particles
 	#end
@@ -294,6 +295,17 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 					attrs.src.indexOf(',') != -1,
 					parseAndScaleInt(attrs.creep)
 				);
+			case 'video':
+				var video = new pony.pixi.ui.HtmlVideoUI({
+					x: parseAndScale(attrs.x),
+					y: parseAndScale(attrs.y),
+					width: parseAndScale(attrs.w),
+					height: parseAndScale(attrs.h)
+				}, pony.pixi.App.main);
+				var src = attrs.src;
+				if (src != null)
+					video.video.loadVideo(src);
+				video;
 			#if pixi_particles
 			case 'particles':
 				var src = attrs.src.split(',').map(StringTools.trim);

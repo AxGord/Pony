@@ -83,9 +83,16 @@ class HtmlContainerBase {
 	}
 
 	private function set_targetRect(v:Rect<Float>):Rect<Float> {
-		targetRect = v;
-		if (targetStyle != null)
-			resizeHandler(app.scale);
+		if (targetRect == null
+			|| v.x != targetRect.x
+            || v.y != targetRect.y
+            || v.width != targetRect.width
+            || v.height != targetRect.height
+        ) {
+			targetRect = v;
+			if (targetStyle != null)
+				resizeHandler(app.scale);
+		}
 		return v;
 	}
 
