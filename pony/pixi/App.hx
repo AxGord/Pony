@@ -143,8 +143,8 @@ class App implements HasSignal {
 		app = new pixi.core.Application(renderingOptions);
 
 		if (parentDom == null)
-			parentDom = Browser.document.body;
-		parentDom.appendChild(app.view);
+			this.parentDom = Browser.document.body;
+		this.parentDom.appendChild(app.view);
 		
 		isWebGL = app.renderer.type == RendererType.WEBGL;
 
@@ -177,6 +177,7 @@ class App implements HasSignal {
 	dynamic public function ratioMod(ratio:Float):Float return ratio;
 	
 	private function resizeHandler():Void {
+
 		width = parentDom.clientWidth;
 		height = parentDom.clientHeight;
 		

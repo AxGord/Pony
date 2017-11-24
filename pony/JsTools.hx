@@ -47,7 +47,7 @@ enum ISA {
  * JsTools
  * @author AxGord <axgord@gmail.com>
  */
-class JsTools {
+class JsTools implements pony.magic.HasSignal {
 
 	public static var agent(get, never):UserAgent;
 	public static var os(get, never):OS;
@@ -56,12 +56,26 @@ class JsTools {
 	public static var isMobile(get, never):Bool;
 	public static var isFSE(get, never):Bool;
 	
+	/**
+	 *  https://github.com/jfriend00/docReady
+	 */
+	@:lazy public static var onDocReady:pony.events.Signal0;
+
 	private static var _agent:UserAgent;
 	private static var _os:OS;
 	private static var _isa:ISA;
 	
 	private static var logFunction:Function;
 	
+	private static function __init__():Void {
+		onDocReady.clear();
+		eDocReady.onTake < regDocReady;
+	}
+
+	private static function regDocReady():Void {
+		js.Lib.global.docReady(eDocReady.dispatch);
+	}
+
 	private static function get_agent():UserAgent {
 		if (_agent != null) return _agent;
 		var ua = Browser.navigator.userAgent.toLowerCase();
