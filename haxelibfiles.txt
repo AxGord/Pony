@@ -4,7 +4,7 @@ tools/src/
 tools/sharedsrc/
 tools/nodesrc/
 tools/build.hxml
-install/append_user_path.cmd
+install/user_path.cmd
 LICENSE.txt
 README.md
 run.n

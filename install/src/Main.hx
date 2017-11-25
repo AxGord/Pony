@@ -37,6 +37,8 @@ enum OS {
  */
 class Main {
 
+	static inline var envkey:String = 'PONYTOOLS_PATH';
+	
 	static function main():Void {
 
 		var system:OS = OS.createByName(Sys.systemName());
@@ -80,26 +82,35 @@ class Main {
 					Sys.command('setx', ['NODE_PATH', modulespath]);
 				}
 				
-				var user = Sys.getEnv('USERPROFILE') + pd;
+				var envPath:String = Sys.getEnv(envkey);
 				
-				if (FileSystem.exists(user + 'pony_user_path_bak.txt')) {
-					Sys.println('path ready');
-					return;
+				if (envPath == null) {
+				
+					var user = Sys.getEnv('USERPROFILE') + pd;
+					
+					if (FileSystem.exists(user + 'pony_user_path_bak.txt')) {
+						Sys.println('Error: path ready');
+						return;
+					}
+					
+					var stdout = new Process('cmd.exe', ['/C', 'install\\user_path.cmd']).stdout;
+					var data = stdout.readAll();
+					var path = StringTools.trim(data.toString());
+					
+					if (path != '') {
+						var np = path + (path.substr(-1) == ';' ? '': ';') + '%$envkey%';
+						Sys.println('Set new PATH: $np');
+						Sys.command('setx', ['PATH', np]);
+						Sys.println('Set new $envkey: $toolshome');
+						Sys.command('setx', [envkey, toolshome]);
+					} else {
+						Sys.println('ERROR');
+					}
+
+				} else if (envPath != toolshome) {
+					Sys.println('Set new $envkey: $toolshome');
+					Sys.command('setx', [envkey, toolshome]);
 				}
-				
-				var stdout = new Process('cmd.exe', ['/C', 'install\\append_user_path.cmd']).stdout;
-				var data = stdout.readAll();
-				var path = StringTools.trim(data.toString());
-				
-				if (path != '') {
-					var np = path + (path.substr(-1) == ';' ? '': ';') + toolshome;
-					Sys.println('Set new PATH: $np');
-					Sys.command('setx', ['PATH', np]);
-					Sys.putEnv('PATH', np);
-				} else {
-					Sys.println('ERROR');
-				}
-				
 				printSuccess();
 
 			case Mac:
@@ -150,21 +161,21 @@ class Main {
 		var npmPath = new Process('npm', ['prefix', '-g']).stdout.readLine()+'/lib/node_modules';
 			
 		var data = [
-			"export NODE_PATH="+npmPath,
-			"export PONYTOOLS_PATH="+toolshome,
-			"export PATH=$PATH:$PONYTOOLS_PATH"
+			'export NODE_PATH=$npmPath',
+			'export $envkey=$toolshome',
+			"export PATH=$PATH:$" + envkey
 		];
 
 		for (pFile in pFiles) {
 			if (FileSystem.exists(pFile)) {
 				var c = File.getContent(pFile);
-				if (c.indexOf('PONYTOOLS_PATH') == -1) {
+				if (c.indexOf(envkey) == -1) {
 					File.saveContent(pFile, c + "\n" + data.join('\n'));
 				} else {
-					var d1 = c.split('PONYTOOLS_PATH=');
+					var d1 = c.split('$envkey=');
 					var d2 = d1[1].split('\n');
 					d2.shift();
-					var s = d1[0] + 'PONYTOOLS_PATH=' + toolshome + '\n' + d2.join('\n');
+					var s = d1[0] + envkey + '=' + toolshome + '\n' + d2.join('\n');
 					File.saveContent(pFile, s);
 				}
 			} else {

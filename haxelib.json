@@ -19,8 +19,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Repair Windows installation problems",
-"version": "0.6.1",
+"releasenote": "Tools: using env key for Windows",
+"version": "0.6.2",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }
