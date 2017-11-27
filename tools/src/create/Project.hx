@@ -29,6 +29,7 @@ class Project {
 
 	public var run(default, null):Run = new Run();
 	public var server(default, null):Server = new Server();
+	public var config(default, null):Config = new Config();
 	public var download(default, null):Download = new Download();
 	public var haxelib(default, null):Haxelib = new Haxelib();
 	public var build(default, null):Build = new Build();
@@ -42,7 +43,7 @@ class Project {
 		var root = Xml.createElement('project');
 		if (name != null) root.set('name', name);
 
-		if (build.active) {
+		if (!config.active && build.active) {
 			var cfg = Xml.createElement('config');
 			cfg.addChild(Xml.createComment('Put configuration here'));
 			root.addChild(cfg);
@@ -50,6 +51,7 @@ class Project {
 
 		if (run.active) root.addChild(run.result());
 		if (server.active) root.addChild(server.result());
+		if (config.active) root.addChild(config.result());
 		if (download.active) root.addChild(download.result());
 		if (haxelib.active) root.addChild(haxelib.result());
 		if (build.active) {

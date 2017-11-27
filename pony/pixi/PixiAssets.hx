@@ -59,17 +59,17 @@ class PixiAssets {
 			if (!sounds.exists(asset)) {
 				var s = new PixiSound();
 				sounds[asset] = s;
-				loader.add(asset, AssetManager.getPath(asset), { loadType: LoadType.AUDIO.getIndex() }, s.loadHandler);
+				loader.add(asset, AssetManager.getPath(asset), { loadType: 2 }, s.loadHandler);
 			}
 		} else if (['frag', '.txt'].indexOf(asset.substr( -4)) != -1) {
 			if (!texts.exists(asset)) {
-				loader.add(asset, AssetManager.getPath(asset), { loadType: LoadType.XHR.getIndex() }, function(r:Resource):Void {
+				loader.add(asset, AssetManager.getPath(asset), { loadType: 0 }, function(r:Resource):Void {
 					texts[asset] = r.data;
 				});
 			}
 		} else if (['json'].indexOf(asset.substr( -4)) != -1) {
 			if (!jsons.exists(asset)) {
-				loader.add(asset, AssetManager.getPath(asset), { loadType: LoadType.XHR.getIndex() }, function(r:Resource):Void {
+				loader.add(asset, AssetManager.getPath(asset), { loadType: 0 }, function(r:Resource):Void {
 					jsons[asset] = r.data;
 				});
 			}

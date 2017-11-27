@@ -44,7 +44,7 @@ class Create {
 			Utils.error('Wrong app type');
 		}
 
-		var name:String = type != null ? args[1] : args[0];
+		var name:String = args[1];
 
 		if (sys.FileSystem.exists(Utils.MAIN_FILE)) Utils.error(Utils.MAIN_FILE + ' exists');
 				
@@ -53,7 +53,7 @@ class Create {
 		if (type != null) switch type {
 			case ProjectType.Server: create.targets.Server.set(project);
 			case ProjectType.JS: create.targets.JS.set(project);
-			case ProjectType.Pixi: create.targets.Pixi.set(project);
+			case ProjectType.Pixi, ProjectType.Pixixml: create.targets.Pixi.set(project);
 			case ProjectType.Node: create.targets.Node.set(project);
 		}
 
@@ -65,19 +65,45 @@ class Create {
 
 		if (vscAllow) create.ides.VSCode.createDir();
 
+		var needHtml:Bool = false;
 		var ponycmd:String = 'build';
 		if (type != null) switch type {
-			case ProjectType.JS, ProjectType.Pixi:
-				Utils.createEmptyMainFile(main);
+			case ProjectType.JS:
+				Utils.createPath(main);
+				var data:String = haxe.Resource.getString('jstemplate.hx');
+				sys.io.File.saveContent(main, data);
 				if (vscAllow) create.ides.VSCode.createChrome(project.server.httpPort);
+				needHtml = true;
+			case ProjectType.Pixi:
+				Utils.createPath(main);
+				var data:String = haxe.Resource.getString('pixitemplate.hx');
+				sys.io.File.saveContent(main, data);
+				if (vscAllow) create.ides.VSCode.createChrome(project.server.httpPort);
+				needHtml = true;
+			case ProjectType.Pixixml:
+				Utils.createPath(main);
+				var data:String = haxe.Resource.getString('pixixmltemplate.hx');
+				sys.io.File.saveContent(main, data);
+				var xdata:String = haxe.Resource.getString('pixixmltemplate.xml');
+				sys.io.File.saveContent('app.xml', xdata);
+				if (vscAllow) create.ides.VSCode.createChrome(project.server.httpPort);
+				needHtml = true;
 			case ProjectType.Node:
-				ponycmd = 'run';
+				//ponycmd = 'run';
 				Utils.createEmptyMainFile(main);
 				if (vscAllow) create.ides.VSCode.createNode(project.build.outputPath, outputFile);
 			case ProjectType.Server:
 				if (vscAllow) create.ides.VSCode.create(null);
 				return;
 			case _:
+		}
+
+		if (needHtml) {
+			var html:String = haxe.Resource.getString('template.html');
+			html = StringTools.replace(html, '::TITLE::', name == null ? 'App' : name);
+			html = StringTools.replace(html, '::APP::', project.build.getOutputFile());
+			sys.FileSystem.createDirectory(project.build.outputPath);
+			sys.io.File.saveContent(project.build.outputPath + 'index.html', html);
 		}
 		
 		if (vscAllow) create.ides.VSCode.create(ponycmd);

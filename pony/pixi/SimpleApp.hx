@@ -21,19 +21,32 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-package create.targets;
+package pony.pixi;
 
-class Pixi {
+/**
+ * Simple Pixi.js Application
+ * @author AxGord <axgord@gmail.com>
+ */
+class SimpleApp extends pixi.core.sprites.Sprite {
 
-	public static function set(project:Project):Void {
-		JS.set(project);
-		project.config.active = true;
-		project.config.options['width'] = '1280';
-		project.config.options['height'] = '1024';
-		project.config.options['background'] = '#505050';
-		project.download.addLib('pixijs');
-		project.haxelib.addLib('pixijs', '4.5.5');
-		project.uglify.libs.push(project.download.getLibFinal('pixijs'));
+	public var app:App;
+	private var parentDomId:String;
+
+	public function new(?parentDomId:String) {
+		super();
+		this.parentDomId = parentDomId;
+		pony.JsTools.disableContextMenuGlobal();
+		pony.JsTools.onDocReady < init;
+	}
+
+	private function init():Void {
+		app = new App(
+			this,
+			pony.Config.width,
+			pony.Config.height,
+			pony.Config.background,
+			parentDomId == null ? null : js.Browser.document.getElementById(parentDomId)
+		);
 	}
 
 }

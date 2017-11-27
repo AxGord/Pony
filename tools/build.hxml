@@ -9,6 +9,11 @@
 -resource resources/logo.txt@logo
 -resource resources/bsd.txt@bsd
 -resource resources/closed.txt@closed
+-resource resources/template.html@template.html
+-resource resources/pixitemplate.hx@pixitemplate.hx
+-resource resources/pixixmltemplate.hx@pixixmltemplate.hx
+-resource resources/pixixmltemplate.xml@pixixmltemplate.xml
+-resource resources/jstemplate.hx@jstemplate.hx
 -debug
 
 --next

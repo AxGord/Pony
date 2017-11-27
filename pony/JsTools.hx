@@ -198,5 +198,15 @@ class JsTools implements pony.magic.HasSignal {
 	public static function enableLog():Void {
 		untyped Browser.console.log = logFunction;
 	}
+
+	public static function disableContextMenuGlobal():Void {
+		js.Browser.window.oncontextmenu = contextMenuHandler;
+	}
+
+	private static function contextMenuHandler(event:js.html.Event):Bool {
+		event.preventDefault();
+		event.stopPropagation();
+		return false;
+	}
 	
 }

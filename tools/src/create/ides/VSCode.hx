@@ -92,33 +92,20 @@ class VSCode {
 
 	public static function createChrome(httpPort:Int):Void {
 		var launch:String = 'Launch Chrome';
-		var attach:String = 'Attach to Chrome';
-		var compounds:Array<Any> = [{
-			name: "Start debug",
-			configurations: [launch, attach]
-		}];
 		var configurations:Array<Any> = [
-			{
-				type: 'chrome',
-				request: 'attach',
-				name: attach,
-				port: 9222,
-				webRoot: "${workspaceRoot}",
-				internalConsoleOptions: 'openOnSessionStart'
-			},
 			{
 				type: 'chrome',
 				request: 'launch',
 				name: launch,
 				url: 'http://localhost:$httpPort',
 				webRoot: "${workspaceRoot}",
-				preLaunchTask: preLaunchTask
+				preLaunchTask: preLaunchTask,
+				internalConsoleOptions: 'openOnSessionStart'
 			}
 		];
 		
 		var data = {
 			version: '0.2.0',
-			compounds: compounds,
 			configurations: configurations
 		};
 		Utils.saveJson('.vscode/launch.json', data);

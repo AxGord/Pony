@@ -25,6 +25,7 @@ package types;
 
 enum ProjectType {
 	Pixi;
+	Pixixml;
 	JS;
 	Server;
 	Node;
