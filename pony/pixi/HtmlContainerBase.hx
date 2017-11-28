@@ -25,6 +25,7 @@ package pony.pixi;
 
 import js.html.CSSStyleDeclaration;
 import pony.geom.Rect;
+import pony.geom.Point;
 
 /**
  * HtmlContainerBase
@@ -38,6 +39,7 @@ class HtmlContainerBase {
 
 	public var targetStyle(default, set):CSSStyleDeclaration;
 	public var targetRect(default, set):Rect<Float>;
+	public var targetPos(default, set):Point<Float> = new Point(.0, .0);
 
     public function new(targetRect:Rect<Float>, ?app:App, ?targetStyle:CSSStyleDeclaration) {
 		this.targetRect = targetRect;
@@ -45,13 +47,13 @@ class HtmlContainerBase {
             app = App.main;
         this.app = app;
 		this.targetStyle = targetStyle;
+		this.targetPos = targetPos;
     }
 
 	private function resizeHandler(scale:Float):Void {
 		var rect = app.parentDom.getBoundingClientRect();
-		var nx = rect.x + js.Browser.window.scrollX + scale * (targetRect.x + app.container.x / app.container.width);
-		var ny = rect.y + js.Browser.window.scrollY + scale * (targetRect.y + app.container.y / app.container.height);
-
+		var nx = rect.x + js.Browser.window.scrollX + scale * (targetRect.x + targetPos.x + app.container.x / app.container.width);
+		var ny = rect.y + js.Browser.window.scrollY + scale * (targetRect.y + targetPos.y + app.container.y / app.container.height);
 
 		var bw = scale * targetRect.width;
 		var bh = scale * targetRect.height;
@@ -92,6 +94,14 @@ class HtmlContainerBase {
 			targetRect = v;
 			if (targetStyle != null)
 				resizeHandler(app.scale);
+		}
+		return v;
+	}
+
+	private function set_targetPos(v:Point<Float>):Point<Float> {
+		if (v.x != targetPos.x || v.y != targetPos.y) {
+			targetPos = v;
+			resizeHandler(app.scale);
 		}
 		return v;
 	}

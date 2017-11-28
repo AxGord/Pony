@@ -30,7 +30,6 @@ package pony.pixi;
 @:ui('app.xml')
 class SimpleXmlApp extends pony.ui.xml.PixiXmlUi {
 
-	public var app:App;
 	private var parentDomId:String;
 
 	public function new(?parentDomId:String) {

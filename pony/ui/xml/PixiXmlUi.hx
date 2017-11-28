@@ -62,6 +62,9 @@ import pony.pixi.ui.TextBox;
 import pony.pixi.ui.TextButton;
 import pony.pixi.ui.TimeBar;
 import pony.pixi.ui.ZeroPlace;
+import pony.pixi.ui.HtmlVideoUI;
+import pony.pixi.ui.HtmlContainer;
+import pony.pixi.ui.RenderBox;
 import pony.pixi.ui.slices.SliceTools;
 import pony.time.DeltaTime;
 import pony.time.Time;
@@ -91,6 +94,7 @@ using pony.pixi.PixiExtends;
 	lbutton: pony.pixi.ui.LabelButton,
 	textbox: pony.pixi.ui.TextBox,
 	rect: pixi.core.graphics.Graphics,
+	line: pixi.core.graphics.Graphics,
 	circle: pixi.core.graphics.Graphics,
 	textbutton: pony.pixi.ui.TextButton,
 	clip: pixi.extras.AnimatedSprite,
@@ -98,8 +102,10 @@ using pony.pixi.PixiExtends;
 	slider: pony.pixi.ui.StepSlider,
 	slice: pony.pixi.ui.slices.SliceSprite,
 	video: pony.pixi.ui.HtmlVideoUI,
+	html: pony.pixi.ui.HtmlContainer,
+	render: pony.pixi.ui.RenderBox,
 	#if pixi_particles
-	, particles: pony.pixi.ui.Particles
+	particles: pony.pixi.ui.Particles
 	#end
 }))
 #end
@@ -110,6 +116,7 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 	
 	private var FILTERS:Map<String, Filter> = new Map();
 	private var SCALE:Float = 1;
+	public var app(default, null):App;
 	
 	private function createUIElement(name:String, attrs:Dynamic<String>, content:Array<Dynamic>):Dynamic {
 		var obj:DisplayObject = switch name {
@@ -127,6 +134,13 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 				else
 					g.drawRoundedRect(0, 0, parseAndScale(attrs.w), parseAndScale(attrs.h), parseAndScaleInt(attrs.round));
 				g.endFill();
+				g;
+			case 'line':
+				var color = UColor.fromString(attrs.color);
+				var g = new Graphics(true);
+				g.lineStyle(parseAndScale(attrs.size), color.rgb, color.invertAlpha.af);
+				g.moveTo(0, 0);
+				g.lineTo(parseAndScale(attrs.w), parseAndScale(attrs.h));
 				g;
 			case 'circle':
 				var color = UColor.fromString(attrs.color);
@@ -296,16 +310,43 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 					parseAndScaleInt(attrs.creep)
 				);
 			case 'video':
-				var video = new pony.pixi.ui.HtmlVideoUI({
+				var video = new HtmlVideoUI({
 					x: parseAndScale(attrs.x),
 					y: parseAndScale(attrs.y),
 					width: parseAndScale(attrs.w),
 					height: parseAndScale(attrs.h)
-				}, pony.pixi.App.main);
+				}, app);
 				var src = attrs.src;
 				if (src != null)
 					video.video.loadVideo(src);
 				video;
+
+			case 'html':
+				var c = new HtmlContainer({
+					x: parseAndScale(attrs.x),
+					y: parseAndScale(attrs.y),
+					width: parseAndScale(attrs.w),
+					height: parseAndScale(attrs.h)
+				}, app);
+				if (attrs.div.isTrue()) {
+					var div = js.Browser.document.createDivElement();
+					if (attrs.src != null) {
+						div.innerHTML = pony.pixi.PixiAssets.text(attrs.src);
+					}
+					if (attrs.color != null)
+						div.style.backgroundColor = attrs.color;
+					app.parentDom.appendChild(div);
+					c.targetStyle = div.style;
+					c.element = div;
+				}
+				c;
+
+			case 'render':
+				var r = new RenderBox(parseAndScale(attrs.w), parseAndScale(attrs.h), attrs.canvas.isTrue());
+				for (c in content) r.addElement(c);
+				r.update();
+				r;
+
 			#if pixi_particles
 			case 'particles':
 				var src = attrs.src.split(',').map(StringTools.trim);
@@ -316,6 +357,7 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 					new Particles(cfg, src);
 				}
 			#end
+			
 			case _:
 				customUIElement(name, attrs, content);
 		}
@@ -372,7 +414,7 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 						DeltaTime.fixedUpdate << f;
 					} else {
 						DeltaTime.skipUpdate(f);
-						App.main.onResize << f;
+						app.onResize << f;
 					}
 				}
 			}
@@ -432,7 +474,9 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 	
 	@:abstract private function _createUI():DisplayObject;
 	
-	private function createUI(scale:Float = 1):Void {
+	private function createUI(?app:App, scale:Float = 1):Void {
+		if (this.app == null)
+			this.app = app == null ? App.main : app;
 		SCALE = scale;
 		addChild(_createUI());
 	}
