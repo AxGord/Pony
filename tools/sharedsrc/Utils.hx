@@ -130,7 +130,7 @@ class Utils {
 	}
 
 	public static function createEmptyMainFile(file:String, ?main:Array<String>):Void {
-		var content = ['static function main() {'];
+		var content = ['private static function main():Void {'];
 		if (main != null) {
 			for (e in main) content.push('\t$e');
 		} else {

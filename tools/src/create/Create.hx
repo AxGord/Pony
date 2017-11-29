@@ -55,6 +55,7 @@ class Create {
 			case ProjectType.JS: create.targets.JS.set(project);
 			case ProjectType.Pixi, ProjectType.Pixixml: create.targets.Pixi.set(project);
 			case ProjectType.Node: create.targets.Node.set(project);
+			case ProjectType.Neko: create.targets.Neko.set(project);
 		}
 
 		Utils.savePonyProject(project.result());
@@ -68,6 +69,10 @@ class Create {
 		var needHtml:Bool = false;
 		var ponycmd:String = 'build';
 		if (type != null) switch type {
+			case ProjectType.Neko:
+				ponycmd = 'run';
+				Utils.createEmptyMainFile(main);
+
 			case ProjectType.JS:
 				Utils.createPath(main);
 				var data:String = haxe.Resource.getString('jstemplate.hx');

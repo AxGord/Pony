@@ -21,13 +21,18 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-package types;
+package create.targets;
 
-enum ProjectType {
-	Pixi;
-	Pixixml;
-	JS;
-	Server;
-	Node;
-	Neko;
+class Neko {
+
+	public static function set(project:Project):Void {
+		project.server.active = true;
+		project.server.haxe = true;
+		project.haxelib.active = true;
+		project.haxelib.addLib('pony', Utils.ponyVersion);
+		project.build.active = true;
+		project.build.target = types.HaxeTargets.Neko;
+		project.setRun('neko');
+	}
+
 }

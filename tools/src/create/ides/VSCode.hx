@@ -27,7 +27,7 @@ import sys.FileSystem;
 
 class VSCode {
 
-	private static inline var preLaunchTask:String = 'default';
+	private static inline var PRELAUNCH_TASK:String = 'default';
 
 	public static var allowCreate(get, never):Bool;
 
@@ -40,21 +40,20 @@ class VSCode {
 
 		if (ponycmd != null)
 			tasks.push({
-				identifier: preLaunchTask,
+				identifier: PRELAUNCH_TASK,
 				label: 'pony $ponycmd debug',
 				type: 'shell',
 				command: 'pony $ponycmd debug',
+				group: {
+					kind: 'build',
+					isDefault: true
+				},
 				problemMatcher: ["$haxe"]
 			});
 		tasks.push({
-			label: 'pony server',
+			label: 'server',
 			type: 'shell',
 			command: 'pony server',
-			problemMatcher: ["$haxe"],
-			group: {
-				kind: 'build',
-				isDefault: true
-			},
 			isBackground: true,
 			presentation: {
 				echo: false,
@@ -81,7 +80,7 @@ class VSCode {
 					name: 'Launch Program',
 					program: "${workspaceFolder}/" + output + '/' + app,
 					cwd: "${workspaceFolder}/" + output,
-					preLaunchTask: preLaunchTask,
+					preLaunchTask: PRELAUNCH_TASK,
 					console: 'internalConsole',
 					internalConsoleOptions: 'openOnSessionStart'
 				}
@@ -99,7 +98,7 @@ class VSCode {
 				name: launch,
 				url: 'http://localhost:$httpPort',
 				webRoot: "${workspaceRoot}",
-				preLaunchTask: preLaunchTask,
+				preLaunchTask: PRELAUNCH_TASK,
 				internalConsoleOptions: 'openOnSessionStart'
 			}
 		];
