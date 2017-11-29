@@ -19,8 +19,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Tools: using env key for Windows",
-"version": "0.6.2",
+"releasenote": "Fix haxelib tools compilation error",
+"version": "0.6.3",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }

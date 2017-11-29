@@ -35,7 +35,7 @@ class NodePrepareMain {
 
 	static var itetator:Iterator<Fast>;
 	
-	private static function main() {
+	private static function main():Void {
 		NPM.source_map_support.install();
 		haxe.Log.trace('pony node prepare');
 		var file = 'pony.xml';

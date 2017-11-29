@@ -22,6 +22,7 @@
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
 package create.section;
+
 import pony.text.XmlTools;
 
 class Run extends Section {
@@ -30,7 +31,6 @@ class Run extends Section {
 	public var command:String = '';
 
 	public function new() super('run');
-
 
 	public function result():Xml {
 		init();

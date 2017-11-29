@@ -34,6 +34,8 @@ import pony.NPM;
  * @author AxGord <axgord@gmail.com>
  */
 class FtpMain {
+
+	static inline var DELAY_TIMEOUT:Int = 2000;
 		
 	static var path:String = '';
 	static var debug:Bool = false;
@@ -52,7 +54,6 @@ class FtpMain {
 	
 	static function main() {
 		var xml = Utils.getXml().node.ftp;
-
 		
 		var cfg = Utils.parseArgs(Sys.args());
 		
@@ -83,7 +84,6 @@ class FtpMain {
 		Sys.println('Delete old files');
 		inputIterator = input.iterator();
 		deleteNext();
-		
 		/*
 		ftp.list(function(e:Dynamic, a:Array<Dynamic>) {
 			trace(a);
@@ -92,7 +92,7 @@ class FtpMain {
 	}
 	
 	static function deleteNext():Void {
-		if (inputIterator.hasNext()) {		
+		if (inputIterator.hasNext()) {
 			var unit = inputIterator.next();
 			if (FileSystem.isDirectory(path + unit)) {
 				ftp.rmdir(unit, true, pauseDeleteNext);
@@ -108,7 +108,7 @@ class FtpMain {
 	}
 	
 	static function pauseDeleteNext():Void {
-		Node.setTimeout(deleteNext, 2000);
+		Node.setTimeout(deleteNext, DELAY_TIMEOUT);
 	}
 	
 	static function uploadNext():Void {
@@ -118,7 +118,7 @@ class FtpMain {
 				fileIterator = new Dir(path + unit).contentRecursiveFiles().iterator();
 				uploadNextFile();
 			} else {
-				trace('Upload file: '+unit);
+				trace('Upload file: ' + unit);
 				ftp.put(path + unit, unit, false, uploadNext);
 			}
 		} else {

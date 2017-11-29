@@ -60,7 +60,7 @@ class Poeditor {
 		client = Type.createInstance(NPM.poeditor_client, [token]);
 	}
 	
-	public function updateFiles(cb:Void->Void):Void {
+	public function updateFiles(cb:Void -> Void):Void {
 		var tasks = new Tasks(cb);
 		client.projects.get(id).then(function(project){
 			project.languages.list().then(function(languages:Array<{name:String, code:String, percentage:Int, export:Dynamic}>){
@@ -73,7 +73,7 @@ class Poeditor {
 						try {
 							lang.export({type: 'key_value_json'}).then(function(v) {
 								var file = path + files[lang.code] + '.json';
-								Sys.println('Update lang file: '+file);
+								Sys.println('Update lang file: ' + file);
 								var f = Fs.createWriteStream(file);
 								Https.get(v, function(response:IncomingMessage) {
 									response.once('end', tasks.end);
@@ -87,7 +87,6 @@ class Poeditor {
 			});
 		});
 	}
-	
 	
 }
 #end

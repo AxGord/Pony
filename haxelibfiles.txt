@@ -4,6 +4,7 @@ tools/src/
 tools/sharedsrc/
 tools/nodesrc/
 tools/build.hxml
+tools/pony.xml
 install/user_path.cmd
 LICENSE.txt
 README.md

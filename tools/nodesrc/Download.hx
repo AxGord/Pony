@@ -60,16 +60,13 @@ class Download {
 		}
 	}
 	
-	public function run(cb:Void->Void):Void {
-		
+	public function run(cb:Void -> Void):Void {
 		var tasks = new Tasks(cb);
-		
 		var downloadList = [];
 		
 		for (unit in units) {
 			
 			var file = path + unit.a.split('/').pop();
-			
 			var needDownload = false;
 			
 			if (FileSystem.exists(file)) {
@@ -90,7 +87,7 @@ class Download {
 		}
 		tasks.add();
 		for (file in downloadList) {
-			Sys.println('Download '+file.b);
+			Sys.println('Download ' + file.b);
 			tasks.add();
 			var f = Fs.createWriteStream(file.a);
 			Https.get(file.b, function(response:IncomingMessage) {

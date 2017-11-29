@@ -60,8 +60,7 @@ class ServerMain {
 				var px = sx.node.proxy;
 				var target = px.node.target.innerData;
 				var port = px.node.port.innerData;
-				NPM.http_proxy
-				.createProxyServer({
+				NPM.http_proxy.createProxyServer({
 					target: target,
 					headers: {'Host': '127.0.0.1:$port'}
 				}).on('error', function (err, req, res) {
@@ -69,8 +68,7 @@ class ServerMain {
 						'Content-Type': 'text/plain'
 					});
 					res.end('Something went wrong. And we are reporting a custom error message.');
-				})
-				.listen(Std.parseInt(port));
+				}).listen(Std.parseInt(port));
 			}
 
 			if (sx.hasNode.haxe) {
