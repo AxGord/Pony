@@ -49,11 +49,12 @@ class HtmlContainer extends pixi.core.sprites.Sprite implements pony.geom.IWH {
 		_size = new Point(targetRect.width, targetRect.height);
 		htmlContainer = new HtmlContainerBase(targetRect, app);
 		pony.time.DeltaTime.fixedUpdate < posUpdate;
+		pony.time.DeltaTime.skipUpdate(posUpdate);
 	}
 
 	public function wait(f:Void -> Void):Void f();
 
-	private function posUpdate():Void {
+	public function posUpdate():Void {
 		var gx:Float = 0;
 		var gy:Float = 0;
 		var p:DisplayObject = parent;
