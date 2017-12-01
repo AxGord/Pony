@@ -37,7 +37,8 @@ import sys.io.File;
  */
 class ZipTool extends pony.Logable {
 
-	private var ignore:Array<String> = ['.DS_Store'];
+	public var ignore:Array<String> = ['.DS_Store'];
+	
 	private var output:String;
 	private var prefix:String;
 	private var compressLvl:Int;

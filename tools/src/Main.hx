@@ -36,7 +36,9 @@ class Main {
 		var startTime = Sys.time();
 		
 		var args = Sys.args();
-		switch args.shift() {
+		var cmd = args.shift();
+
+		switch cmd {
 			case null, 'logo':
 				Sys.println(haxe.Resource.getString('logo'));
 				Sys.println('');
@@ -64,6 +66,9 @@ class Main {
 					Utils.command('npm', ['install', 'git+https://github.com/janjakubnanista/poeditor-client.git']);
 
 				runNode('ponyPrepare');
+
+				if (xml.hasNode.unpack)
+					new Unpack(xml.node.unpack);
 				
 			case 'build':
 				build(Utils.parseArgs(args), Utils.getXml());

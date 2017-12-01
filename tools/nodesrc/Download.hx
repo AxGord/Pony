@@ -69,7 +69,7 @@ class Download {
 			var file = path + unit.a.split('/').pop();
 			var needDownload = false;
 			
-			if (FileSystem.exists(file)) {
+			if (unit.b != null && FileSystem.exists(file)) {
 				if (unit.b != null) {
 					Sys.println('Check ' + file);
 					needDownload = sys.io.File.getContent(file).indexOf(unit.b) == -1;
@@ -89,11 +89,23 @@ class Download {
 		for (file in downloadList) {
 			Sys.println('Download ' + file.b);
 			tasks.add();
-			var f = Fs.createWriteStream(file.a);
-			Https.get(file.b, function(response:IncomingMessage) {
-				response.once('end', tasks.end);
-				response.pipe(f); 
-			});
+			var protocol = file.b.substr(0, 7);
+			if (protocol == 'https:/') {
+				//Sys.println('https download');
+				Https.get(file.b, function(response:IncomingMessage) {
+					response.once('end', tasks.end);
+					response.pipe(Fs.createWriteStream(file.a)); 
+				});
+			} else if (protocol ==  'http://') {
+				//Sys.println('http download');
+				Http.get(file.b, function(response:IncomingMessage) {
+					response.once('end', tasks.end);
+					response.pipe(Fs.createWriteStream(file.a)); 
+				});
+			} else {
+				Sys.println('Unsupported protocol: $protocol');
+				tasks.end();
+			}
 		}
 		tasks.end();
 		
