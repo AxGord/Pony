@@ -44,7 +44,7 @@ class ZipTool extends pony.Logable {
 	private var compressLvl:Int;
 	private var list:List<Entry> = new List<Entry>();
 
-	public function new(output:String='', prefix:String='', compressLvl:Int = 9) {
+	public function new(output:String = '', prefix:String = '', compressLvl:Int = 9) {
 		super();
 		this.output = output;
 		this.prefix = prefix;

@@ -25,7 +25,7 @@ import pony.fs.Dir;
 
 class Lines {
 
-	public static function run(args:Array<String>):Void {
+	public static function run():Void {
         tryShow('Haxe', '.hx');
         tryShow('Xml', '.xml');
         tryShow('Json', '.json');

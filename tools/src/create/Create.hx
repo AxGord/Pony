@@ -30,11 +30,11 @@ class Create {
 	private static inline var outputDir:String = 'bin/';
 	private static inline var outputFile:String = 'app';
 
-	public static function run(args:Array<String>):Void {
+	public static function run(a:String, b:String):Void {
 
 		var type:ProjectType = null;
-		if (args.length > 0) for (t in ProjectType.createAll()) {
-			if (t.getName().toLowerCase() == args[0].toLowerCase()) {
+		if (a != null) for (t in ProjectType.createAll()) {
+			if (t.getName().toLowerCase() == a.toLowerCase()) {
 				type = t;
 				break;
 			}
@@ -44,7 +44,7 @@ class Create {
 			Utils.error('Wrong app type');
 		}
 
-		var name:String = args[1];
+		var name:String = b;
 
 		if (sys.FileSystem.exists(Utils.MAIN_FILE)) Utils.error(Utils.MAIN_FILE + ' exists');
 				

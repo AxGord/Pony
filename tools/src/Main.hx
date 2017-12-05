@@ -31,107 +31,110 @@ import sys.io.File;
  */
 class Main {
 	
+	static var commands:Commands = new Commands();
+
+	static function showLogo():Void {
+		Sys.println(haxe.Resource.getString('logo'));
+		Sys.println('');
+		Sys.println('Command-Line Tools');
+		Sys.println('Library version ' + Utils.ponyVersion);
+		Sys.println('https://github.com/AxGord/Pony');
+		Sys.println('http://lib.haxe.org/p/pony');
+		Sys.println('Type: "pony help" - for help');
+		Sys.exit(0);
+	}
+
+	static function showHelp():Void {
+
+		Sys.println(commands.helpData.join('\n'));
+		Sys.println('');
+		Sys.println('Visit https://github.com/AxGord/Pony/wiki/Pony-Tools for more info');
+		Sys.exit(0);
+
+	}
+
+	static function prepare(cfg:AppCfg):Void {
+
+		var xml = Utils.getXml();
+		new Prepare(xml, cfg.app, cfg.debug);
+
+		if (xml.hasNode.poeditor)
+			Utils.command('npm', ['install', 'git+https://github.com/janjakubnanista/poeditor-client.git']);
+
+		runNode('ponyPrepare');
+
+		if (xml.hasNode.unpack)
+			new Unpack(xml.node.unpack);
+
+	}
+
+	static function rbuild(cfg:AppCfg):Void {
+		build(cfg, Utils.getXml());
+	}
+
+	static function run(cfg:AppCfg):Void {
+		var xml = Utils.getXml();
+		build(cfg, xml);
+		if (!xml.hasNode.run)
+			Utils.error('Not exists run section');
+		var r = xml.node.run;
+		if (r.has.path)
+			Sys.setCwd(r.att.path);
+		var args = r.innerData.split(' ');
+		var cmd = args.shift();
+		Utils.command(cmd, args);
+	}
+
+	static function zip(cfg:AppCfg):Void {
+		var xml = Utils.getXml();
+		build(cfg, xml);
+		var startTime = Sys.time();
+		new Zip(xml.node.zip, cfg.app, cfg.debug);
+		Sys.println('Zip time: ' + Std.int((Sys.time() - startTime) * 1000) / 1000);
+	}
+
+	static function ftp(cfg:AppCfg):Void {
+		var xml = Utils.getXml();
+		build(cfg, xml);
+		var startTime = Sys.time();
+		runNode('ponyFtp', addCfg(cfg));
+		Sys.println('Ftp time: ' + Std.int((Sys.time() - startTime) * 1000) / 1000);
+	}
+
+	static function cfgAndCall(a:String, b:String, f:AppCfg -> Void):Void {
+		f(Utils.parseArgs([a, b]));
+	}
+
 	static function main():Void {
 		
 		var startTime = Sys.time();
-		
-		var args = Sys.args();
-		var cmd = args.shift();
 
-		switch cmd {
-			case null, 'logo':
-				Sys.println(haxe.Resource.getString('logo'));
-				Sys.println('');
-				Sys.println('Command-Line Tools');
-				Sys.println('Library version ' + Utils.ponyVersion);
-				Sys.println('https://github.com/AxGord/Pony');
-				Sys.println('http://lib.haxe.org/p/pony');
-				Sys.println('pony help - for help');
-				Sys.exit(0);
+		commands.onError < Utils.error.bind(_, 1);
+		commands.onLog < Sys.println;
+		commands.onNothing < showLogo;
+		commands.onHelp < showHelp;
+		commands.onServer < function() runNode('ponyServer');
+		commands.onPrepare < cfgAndCall.bind(_, _, prepare);
+		commands.onBuild < cfgAndCall.bind(_, _, rbuild);
+		commands.onRun < cfgAndCall.bind(_, _, run);
+		commands.onZip < cfgAndCall.bind(_, _, zip);
+		commands.onCreate < create.Create.run;
+		commands.onLines < Lines.run;
+		commands.onLicense < License.run;
 
-			case 'help':
-				Sys.println('Visit https://github.com/AxGord/Pony/wiki/Pony-Tools for more info');
-				Sys.exit(0);		
+		commands.runArgs(Sys.args());
 
-			case 'watch':
-				runNode('ponyWatch');
-				
-			case 'prepare':
-				var cfg = Utils.parseArgs(args);
-
-				var xml = Utils.getXml();
-				new Prepare(xml, cfg.app, cfg.debug);
-
-				if (xml.hasNode.poeditor)
-					Utils.command('npm', ['install', 'git+https://github.com/janjakubnanista/poeditor-client.git']);
-
-				runNode('ponyPrepare');
-
-				if (xml.hasNode.unpack)
-					new Unpack(xml.node.unpack);
-				
-			case 'build':
-				build(Utils.parseArgs(args), Utils.getXml());
-
-			case 'run':
-				var xml = Utils.getXml();
-				build(Utils.parseArgs(args), xml);
-				if (!xml.hasNode.run)
-					Utils.error('Not exists run section');					
-				var r = xml.node.run;
-				if (r.has.path)
-					Sys.setCwd(r.att.path);
-				var args = r.innerData.split(' ');
-				var cmd = args.shift();
-				Utils.command(cmd, args);
-				
-			case 'zip':
-				var cfg = Utils.parseArgs(args);
-				var xml = Utils.getXml();
-				build(cfg, xml);
-				var startTime = Sys.time();
-				new Zip(xml.node.zip, cfg.app, cfg.debug);
-				Sys.println('Zip time: ' + Std.int((Sys.time() - startTime) * 1000)/1000);
-				
-			case 'ftp':
-				var cfg = Utils.parseArgs(args);
-				var xml = Utils.getXml();
-				build(cfg, xml);
-				var startTime = Sys.time();
-				runNode('ponyFtp', addCfg(cfg));
-				Sys.println('Ftp time: ' + Std.int((Sys.time() - startTime) * 1000)/1000);
-				
-			case 'create':
-				create.Create.run(args);
-				
-			case 'server':
-				runNode('ponyServer');
-
-			case 'haxelib':
-				Haxelib.run(args);
-
-			case 'lines':
-				Lines.run(args);
-
-			case 'license':
-				License.run(args);
-
-			case _:
-				Utils.error('Unknown command');
-		}
-		
-		Sys.println('Total time: ' + Std.int((Sys.time() - startTime) * 1000)/1000);
-		
+		Sys.println('Total time: ' + Std.int((Sys.time() - startTime) * 1000) / 1000);
 	}
 	
 	static function build(args:AppCfg, xml:Fast):Void {
 		var startTime = Sys.time();
 		new Build(xml, args.app, args.debug).run();
-		Sys.println('Compile time: ' + Std.int((Sys.time() - startTime) * 1000)/1000);
+		Sys.println('Compile time: ' + Std.int((Sys.time() - startTime) * 1000) / 1000);
 		if (xml.hasNode.uglify) {
 			var startTime = Sys.time();
 			runNode('ponyUglify', addCfg(args));
-			Sys.println('Uglify time: ' + Std.int((Sys.time() - startTime) * 1000)/1000);
+			Sys.println('Uglify time: ' + Std.int((Sys.time() - startTime) * 1000) / 1000);
 		}
 		if (xml.hasNode.wrapper) {
 			new Wrapper(xml.node.wrapper, args.app, args.debug);

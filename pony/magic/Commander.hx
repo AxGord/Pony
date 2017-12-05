@@ -91,8 +91,8 @@ class CommanderBuilder {
 				expr: switch x.nodes.arg.length {
 					case 0: macro $i{ed}.dispatch();
 					case 1: macro $i{ed}.dispatch(args != null ? args[0] : null);
-					case 2: macro args != null ? $i{ed}.dispatch(args[0], args[1]) : $i{ed}.dispath(null, null);
-					case _: macro args != null ? $i{ed}.dispatch(args.shift(), args) : $i{ed}.dispath(null, null);
+					case 2: macro args != null ? $i{ed}.dispatch(args[0], args[1]) : $i{ed}.dispatch(null, null);
+					case _: macro args != null ? $i{ed}.dispatch(args.shift(), args) : $i{ed}.dispatch(null, null);
 				}
 			});
 

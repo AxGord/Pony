@@ -26,10 +26,10 @@ import pony.fs.File;
 
 class License {
 
-	public static function run(args:Array<String>):Void {
+	public static function run(a:String, args:Array<String>):Void {
         var file:File = 'LICENSE.txt';
 
-        switch args.shift() {
+        switch a {
             case 'create':
                 switch args.shift().toLowerCase() {
                     case 'bsd':

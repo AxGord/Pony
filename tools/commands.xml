@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<commands>
+	<nothing>
+		<help>Show logo and version</help>
+		<syn>logo</syn>
+		<syn>version</syn>
+		<syn>v</syn>
+	</nothing>
+	<help>
+		<help>Show tools help</help>
+		<syn>h</syn>
+	</help>
+	<create>
+		<help>Create new project in current directory</help>
+		<syn>c</syn>
+		<syn>new</syn>
+		<syn>n</syn>
+		<arg>Target (server, node, pixi, xmlpixi, js, neko)</arg>
+		<arg>Project name (create fdt too)</arg>
+	</create>
+	<server>
+		<help>Run pony server (build, tests, proxy, watch)</help>
+		<syn>s</syn>
+		<syn>watch</syn>
+	</server>
+	<prepare>
+		<help>Run prepare tools set</help>
+		<syn>p</syn>
+		<arg>Configure name</arg>
+		<arg>Debug or release</arg>
+	</prepare>
+	<build>
+		<help>Run build tools set</help>
+		<syn>b</syn>
+		<arg>Configure name</arg>
+		<arg>Debug or release</arg>
+	</build>
+	<run>
+		<help>Build project and run result after</help>
+		<syn>r</syn>
+		<arg>Configure name</arg>
+		<arg>Debug or release</arg>
+	</run>
+	<zip>
+		<help>Build project and pack result after</help>
+		<syn>z</syn>
+		<arg>Configure name</arg>
+		<arg>Debug or release</arg>
+	</zip>
+	<ftp>
+		<help>Build project and send result after on ftp server</help>
+		<syn>f</syn>
+		<arg>Configure name</arg>
+		<arg>Debug or release</arg>
+	</ftp>
+	<haxelib>
+		<help>Haxelib tools</help>
+		<arg>Operation</arg>
+		<arg>Arguments</arg>
+		<arg>...</arg>
+	</haxelib>
+	<lines>
+		<help>Print lines count</help>
+		<syn>l</syn>
+	</lines>
+	<license>
+		<help>Generate or put license</help>
+		<arg>Create or update</arg>
+		<arg>License type for create</arg>
+		<arg>...</arg>
+	</license>
+
+</commands>

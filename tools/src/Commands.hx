@@ -1,0 +1,1 @@
+class Commands extends pony.magic.Commander {}
