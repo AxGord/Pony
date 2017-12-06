@@ -111,6 +111,33 @@ class CommanderBuilder {
 				meta: [{name: ':auto', pos: Context.currentPos()}],
 				doc: h
 			});
+
+			var args:Array<FunctionArg> = switch x.nodes.arg.length {
+				case 0: [];
+				case 1: [{name: 'arg1', type: macro:String}];
+				case 2: [{name: 'arg1', type: macro:String}, {name: 'arg2', type: macro:String}];
+				case _: [{name: 'arg1', type: macro:String}, {name: 'argN', type: macro:Array<String>}];
+			}
+
+			var cbody:Expr = switch x.nodes.arg.length {
+				case 0: macro $i{ed}.dispatch();
+				case 1: macro $i{ed}.dispatch(arg1);
+				case 2: macro $i{ed}.dispatch(arg1, arg2);
+				case _: macro $i{ed}.dispatch(arg1, argN);
+			}
+
+			fields.push({
+				name: cmd,
+				access: [APublic, AInline],
+				pos: Context.currentPos(),
+				kind: FFun({
+					args: args,
+					ret: macro:Void,
+					expr: cbody
+				}),
+				meta: [{name: ':extern', pos: Context.currentPos()}],
+				doc: h
+			});
 		}
 
 		var body:ExprDef = ESwitch(macro cmd, cases, macro error('Unknown command: ' + cmd));

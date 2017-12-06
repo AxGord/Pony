@@ -21,13 +21,42 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-class Commands extends pony.magic.Commander {
+import haxe.xml.Fast;
+import pony.text.XmlConfigReader;
+import types.BAConfig;
+import types.BASection;
 
-	public function new() {
-		super();
-		onZip << eBuild;
-		onFtp << eBuild;
-		onRun << eBuild;
+class BAReader<T:BAConfig> extends XmlConfigReader<T> implements pony.magic.HasAbstract {
+
+	override private function readNode(xml:Fast):Void {
+		switch xml.name {
+			case 'before':
+				var cfg = copyCfg();
+				cfg.before = true;
+				_selfCreate(xml, cfg);
+			case 'after':
+				var cfg = copyCfg();
+				cfg.before = false;
+				_selfCreate(xml, cfg);
+			case 'server': createSection(xml, Server);
+			case 'prepare': createSection(xml, Prepare);
+			case 'build': createSection(xml, Build);
+			case 'run': createSection(xml, Run);
+			case 'zip': createSection(xml, Zip);
+
+			case _: throw 'Unknown tag';
+		}
 	}
+
+	private function createSection(xml:Fast, section:BASection):Void {
+		var cfg = copyCfg();
+		clean();
+		cfg.section = section;
+		_selfCreate(xml, cfg);
+	}
+
+	@:abstract private function clean():Void;
+
+	override private function end():Void onConfig(cfg);
 
 }

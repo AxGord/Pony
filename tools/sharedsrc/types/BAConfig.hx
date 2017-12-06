@@ -21,13 +21,11 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-class Commands extends pony.magic.Commander {
+package types;
 
-	public function new() {
-		super();
-		onZip << eBuild;
-		onFtp << eBuild;
-		onRun << eBuild;
-	}
+import pony.text.XmlConfigReader;
 
+typedef BAConfig = { > BaseConfig,
+	before: Bool,
+	section: BASection
 }

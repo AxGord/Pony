@@ -110,5 +110,12 @@ abstract Unit(Priority<String>) {
 	@:arrayAccess public inline function arrayAccess(key:Int):Unit return this.data[key];
 	
 	@:op(A + B) inline public function addString(a:String):Unit return [for (e in this) e+'/'+a];
+
+	@:extern public inline function delete():Void {
+		if (isDir)
+			dir.delete();
+		else
+			file.delete();
+	}
 }
 #end

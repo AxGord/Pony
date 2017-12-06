@@ -52,12 +52,17 @@ abstract Dir(Unit) from Unit {
 		}
 		return [for (e in result) e];
 	}
+
+	public function deleteContent():Void {
+		for (e in contentRecursiveFiles()) e.delete();
+		for (e in contentRecursiveDirs()) e.delete();
+	}
 	
 	public function files(?filter:String):Array<File> return [for (u in content(filter)) if (u.isFile) u];
 	public function dirs(?filter:String):Array<Dir> return [for (u in content(filter)) if (u.isDir) u];
 	
 	inline public function delete():Void FileSystem.deleteDirectory(first);
-	
+
 	inline private function get_first():String return this.first;
 	
 	public function contentRecursiveFiles(?filter:String):Array<File> {
@@ -67,6 +72,18 @@ abstract Dir(Unit) from Unit {
 				result = result.concat(u.dir.contentRecursiveFiles(filter));
 			} else {
 				result.push(u.file);
+			}
+		}
+		
+		return result;
+	}
+
+	public function contentRecursiveDirs(?filter:String):Array<Dir> {
+		var result:Array<Dir> = [];
+		for (u in content(filter, true)) {
+			if (u.isDir) {
+				result = result.concat(u.dir.contentRecursiveDirs(filter));
+				result.push(u.dir);
 			}
 		}
 		

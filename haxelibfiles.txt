@@ -6,6 +6,7 @@ tools/nodesrc/
 tools/build.hxml
 tools/pony.xml
 install/user_path.cmd
+checkstyle.json
 LICENSE.txt
 README.md
 run.n

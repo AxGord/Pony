@@ -123,7 +123,7 @@ class Build {
 						Sys.stderr().writeString(line + newline);
 				}
 			}
-			if (hasError) Sys.exit(1);	
+			if (hasError) Sys.exit(1);
 		} else {
 			Sys.println('haxe ' + command.join(' '));
 			var code = Sys.command('haxe', command);

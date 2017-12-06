@@ -63,9 +63,6 @@ class Main {
 
 		runNode('ponyPrepare');
 
-		if (xml.hasNode.unpack)
-			new Unpack(xml.node.unpack);
-
 	}
 
 	static function rbuild(cfg:AppCfg):Void {
@@ -74,7 +71,6 @@ class Main {
 
 	static function run(cfg:AppCfg):Void {
 		var xml = Utils.getXml();
-		build(cfg, xml);
 		if (!xml.hasNode.run)
 			Utils.error('Not exists run section');
 		var r = xml.node.run;
@@ -87,15 +83,12 @@ class Main {
 
 	static function zip(cfg:AppCfg):Void {
 		var xml = Utils.getXml();
-		build(cfg, xml);
 		var startTime = Sys.time();
 		new Zip(xml.node.zip, cfg.app, cfg.debug);
 		Sys.println('Zip time: ' + Std.int((Sys.time() - startTime) * 1000) / 1000);
 	}
 
 	static function ftp(cfg:AppCfg):Void {
-		var xml = Utils.getXml();
-		build(cfg, xml);
 		var startTime = Sys.time();
 		runNode('ponyFtp', addCfg(cfg));
 		Sys.println('Ftp time: ' + Std.int((Sys.time() - startTime) * 1000) / 1000);
@@ -109,15 +102,24 @@ class Main {
 		
 		var startTime = Sys.time();
 
-		commands.onError < Utils.error.bind(_, 1);
-		commands.onLog < Sys.println;
+		commands.onError << Utils.error.bind(_, 1);
+		commands.onLog << Sys.println;
+
+		var modules:Modules = new Modules(commands);
+		modules.register(new module.Clean());
+		modules.register(new module.Unpack());
+		modules.init();
+
 		commands.onNothing < showLogo;
 		commands.onHelp < showHelp;
 		commands.onServer < function() runNode('ponyServer');
 		commands.onPrepare < cfgAndCall.bind(_, _, prepare);
 		commands.onBuild < cfgAndCall.bind(_, _, rbuild);
+
 		commands.onRun < cfgAndCall.bind(_, _, run);
 		commands.onZip < cfgAndCall.bind(_, _, zip);
+		commands.onFtp < cfgAndCall.bind(_, _, ftp);
+
 		commands.onCreate < create.Create.run;
 		commands.onLines < Lines.run;
 		commands.onLicense < License.run;

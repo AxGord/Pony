@@ -21,30 +21,12 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-import haxe.xml.Fast;
+package types;
 
-/**
- * Unpack
- * @author AxGord <axgord@gmail.com>
- */
-class Unpack {
-
-	public function new(xml:Fast) {
-		for (z in xml.nodes.zip) {
-			var path = '';
-			try path = StringTools.trim(z.innerData) catch (_:Dynamic) {}
-			var file = z.att.file;
-			Sys.println('Unzip: ' + file);
-			for (e in haxe.zip.Reader.readZip(sys.io.File.read(file))) {
-				Sys.println(e.fileName);
-				Utils.createPath(path + e.fileName);
-				sys.io.File.saveBytes(path + e.fileName, haxe.zip.Reader.unzip(e));
-			}
-			if (z.has.rm && z.att.rm.toLowerCase() == 'true') {
-				Sys.println('Delete: ' + file);
-				sys.FileSystem.deleteFile(file);
-			}
-		}
-	}
-
+enum BASection {
+	Server;
+	Prepare;
+	Build;
+	Run;
+	Zip;
 }
