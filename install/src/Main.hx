@@ -61,7 +61,7 @@ class Main {
 		Sys.println('Install Pony Command-Line Tools...');
 		
 		Sys.println('Install haxelibs');
-		for (m in ['hxnodejs'])
+		for (m in ['hxnodejs', 'hxbit'])
 			Sys.command('haxelib', ['install', m]);
 
 		Sys.println('Compile pony');

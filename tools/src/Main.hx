@@ -61,7 +61,7 @@ class Main {
 		if (xml.hasNode.poeditor)
 			Utils.command('npm', ['install', 'git+https://github.com/janjakubnanista/poeditor-client.git']);
 
-		runNode('ponyPrepare');
+		Utils.runNode('ponyPrepare');
 
 	}
 
@@ -90,7 +90,7 @@ class Main {
 
 	static function ftp(cfg:AppCfg):Void {
 		var startTime = Sys.time();
-		runNode('ponyFtp', addCfg(cfg));
+		Utils.runNode('ponyFtp', addCfg(cfg));
 		Sys.println('Ftp time: ' + Std.int((Sys.time() - startTime) * 1000) / 1000);
 	}
 
@@ -108,11 +108,12 @@ class Main {
 		var modules:Modules = new Modules(commands);
 		modules.register(new module.Clean());
 		modules.register(new module.Unpack());
+		modules.register(new module.Remote());
 		modules.init();
 
 		commands.onNothing < showLogo;
 		commands.onHelp < showHelp;
-		commands.onServer < function() runNode('ponyServer');
+		commands.onServer < function() Utils.runNode('ponyServer');
 		commands.onPrepare < cfgAndCall.bind(_, _, prepare);
 		commands.onBuild < cfgAndCall.bind(_, _, rbuild);
 
@@ -135,7 +136,7 @@ class Main {
 		Sys.println('Compile time: ' + Std.int((Sys.time() - startTime) * 1000) / 1000);
 		if (xml.hasNode.uglify) {
 			var startTime = Sys.time();
-			runNode('ponyUglify', addCfg(args));
+			Utils.runNode('ponyUglify', addCfg(args));
 			Sys.println('Uglify time: ' + Std.int((Sys.time() - startTime) * 1000) / 1000);
 		}
 		if (xml.hasNode.wrapper) {
@@ -156,14 +157,6 @@ class Main {
 		if (args.app != null) a.push(args.app);
 		if (args.debug) a.push('debug');
 		return a;
-	}
-	
-	static function runNode(name:String, ?args:Array<String>):Int {
-		if (args == null) args = [];
-		Sys.println('Run: $name.js');
-		var a = [Utils.toolsPath + name + '.js'];
-		for (e in args) a.push(e);
-		return Sys.command('node', a);
 	}
 	
 }

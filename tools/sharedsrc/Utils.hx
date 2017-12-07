@@ -140,4 +140,16 @@ class Utils {
 		createHaxeFile(file, content);
 	}
 
+	#if neko
+
+	public static function runNode(name:String, ?args:Array<String>):Int {
+		if (args == null) args = [];
+		Sys.println('Run: $name.js');
+		var a = [toolsPath + name + '.js'];
+		for (e in args) a.push(e);
+		return Sys.command('node', a);
+	}
+
+	#end
+
 }

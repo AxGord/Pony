@@ -27,7 +27,7 @@ import haxe.xml.Fast;
 import types.BASection;
 
 /**
- * Unpack
+ * Unpack module
  * @author AxGord <axgord@gmail.com>
  */
 class Unpack extends Module {
@@ -46,17 +46,17 @@ class Unpack extends Module {
 		modules.commands.onRun.once(getConfig, -20);
 		modules.commands.onZip.once(getConfig, -20);
 
-		modules.commands.onServer.once(before.bind(Server), -9);
-		modules.commands.onPrepare.once(before.bind(Prepare), -9);
-		modules.commands.onBuild.once(before.bind(Build), -9);
-		modules.commands.onRun.once(before.bind(Run), -9);
-		modules.commands.onZip.once(before.bind(Zip), -9);
+		modules.commands.onServer.once(before.bind(Server), -5);
+		modules.commands.onPrepare.once(before.bind(Prepare), -5);
+		modules.commands.onBuild.once(before.bind(Build), -5);
+		modules.commands.onRun.once(before.bind(Run), -5);
+		modules.commands.onZip.once(before.bind(Zip), -5);
 
-		modules.commands.onServer.once(after.bind(Server), 9);
-		modules.commands.onPrepare.once(after.bind(Prepare), 9);
-		modules.commands.onBuild.once(after.bind(Build), 9);
-		modules.commands.onRun.once(after.bind(Run), 9);
-		modules.commands.onZip.once(after.bind(Zip), 9);
+		modules.commands.onServer.once(after.bind(Server), 5);
+		modules.commands.onPrepare.once(after.bind(Prepare), 5);
+		modules.commands.onBuild.once(after.bind(Build), 5);
+		modules.commands.onRun.once(after.bind(Run), 5);
+		modules.commands.onZip.once(after.bind(Zip), 5);
 	}
 
 	private function readConfig(ac:AppCfg):Void {

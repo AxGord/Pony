@@ -135,7 +135,6 @@ class CommanderBuilder {
 					ret: macro:Void,
 					expr: cbody
 				}),
-				meta: [{name: ':extern', pos: Context.currentPos()}],
 				doc: h
 			});
 		}

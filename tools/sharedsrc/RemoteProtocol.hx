@@ -21,32 +21,23 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-package module;
-
-import haxe.xml.Fast;
+import haxe.io.Bytes;
+import pony.events.Signal1;
+import pony.events.Signal2;
 
 /**
- * Module
+ * RemoteProtocol
  * @author AxGord <axgord@gmail.com>
  */
-class Module extends pony.Logable implements pony.magic.HasAbstract {
+class RemoteProtocol extends pony.net.RPC<RemoteProtocol> implements pony.magic.HasSignal implements pony.net.IRPC {
 
-	public var modules:Modules;
-	private var xml(get, never):Fast;
-	private var _xml:Fast;
-	private var xname:String;
+	@:rpc public var onLog:Signal1<String>;
 
-	public function new(?xname:String) {
-		super();
-		this.xname = xname;
-	}
+	@:rpc public var onFile:Signal2<String, Bytes>;
+	@:rpc public var onFileReceived:Signal1<String>;
 
-	private function get_xml():Fast {
-		if (_xml == null)
-			_xml = xname == null ? modules.xml : (modules.xml.hasNode.resolve(xname) ? modules.xml.node.resolve(xname) : null);
-		return _xml;
-	}
+	@:rpc public var onCommand:Signal1<String>;
+	@:rpc public var onCommandComplete:Signal1<String>;
 
-	@:abstract public function init():Void;
 
 }

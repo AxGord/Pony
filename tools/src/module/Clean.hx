@@ -28,6 +28,10 @@ import pony.fs.Unit;
 import pony.fs.Dir;
 import types.BASection;
 
+/**
+ * Clean module
+ * @author AxGord <axgord@gmail.com>
+ */
 class Clean extends Module {
 
 	private var beforeDirs:Map<BASection, Array<String>> = new Map();

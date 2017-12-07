@@ -22,6 +22,7 @@
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
 package pony.net;
+
 import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
 

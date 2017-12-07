@@ -23,30 +23,21 @@
 **/
 package module;
 
-import haxe.xml.Fast;
-
 /**
- * Module
+ * Remote module
  * @author AxGord <axgord@gmail.com>
  */
-class Module extends pony.Logable implements pony.magic.HasAbstract {
+class Remote extends Module {
 
-	public var modules:Modules;
-	private var xml(get, never):Fast;
-	private var _xml:Fast;
-	private var xname:String;
+	public function new() super('remote');
 
-	public function new(?xname:String) {
-		super();
-		this.xname = xname;
+	override public function init():Void {
+		if (xml == null) return;
+		modules.commands.onZip.add(run, 8);
 	}
 
-	private function get_xml():Fast {
-		if (_xml == null)
-			_xml = xname == null ? modules.xml : (modules.xml.hasNode.resolve(xname) ? modules.xml.node.resolve(xname) : null);
-		return _xml;
+	private function run():Void {
+		Utils.runNode('ponyRemote');
 	}
-
-	@:abstract public function init():Void;
 
 }

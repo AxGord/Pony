@@ -67,13 +67,17 @@ class ServerMain {
 					res.writeHead(500, {
 						'Content-Type': 'text/plain'
 					});
-					res.end('Something went wrong. And we are reporting a custom error message.');
+					res.end('Something went wrong.');
 				}).listen(Std.parseInt(port));
 			}
 
 			if (sx.hasNode.haxe) {
 				haxePort = sx.node.haxe.innerData;
 				runHaxeServer();
+			}
+
+			if (sx.hasNode.remote) {
+				new ServerRemote(sx.node.remote);
 			}
 
 		}
