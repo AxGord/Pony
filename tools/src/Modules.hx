@@ -22,6 +22,7 @@
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
 import haxe.xml.Fast;
+import pony.text.XmlTools;
 import module.Module;
 
 /**
@@ -57,6 +58,10 @@ class Modules extends pony.Logable {
 
 	public function init():Void {
 		for (m in list) m.init();
+	}
+
+	@:extern public inline function getNode(name:String):Fast {
+		return XmlTools.getNode(xml, name);
 	}
 
 }

@@ -72,4 +72,8 @@ class XmlTools {
 		return r;
 	}
 
+	public static function getNode(xml:Fast, name:String):Fast {
+		return xml != null && xml.hasNode.resolve(name) ? xml.node.resolve(name) : null;
+	}
+
 }

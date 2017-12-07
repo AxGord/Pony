@@ -68,8 +68,13 @@ class Utils {
 		return {app: app, debug:debug};
 	}
 	
-	public static function getXml():Fast return XmlTools.fast(File.getContent(MAIN_FILE)).node.project;
-	
+	public static function getXml():Fast {
+		if (FileSystem.exists(MAIN_FILE))
+			return XmlTools.fast(File.getContent(MAIN_FILE)).node.project;
+		else
+			return null;
+	}
+
 	public static function error(message:String, errCode:Int = 1):Void {
 		Sys.println(message);
 		Sys.exit(errCode);

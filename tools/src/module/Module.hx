@@ -43,7 +43,7 @@ class Module extends pony.Logable implements pony.magic.HasAbstract {
 
 	private function get_xml():Fast {
 		if (_xml == null)
-			_xml = xname == null ? modules.xml : (modules.xml.hasNode.resolve(xname) ? modules.xml.node.resolve(xname) : null);
+			_xml = xname == null ? modules.xml : modules.getNode(xname);
 		return _xml;
 	}
 
