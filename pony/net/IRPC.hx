@@ -110,7 +110,7 @@ class RPCBuilder {
 						var ae:Array<Expr> = [macro $i{flagName} = true];
 						for (arg in 0...args.length)
 							ae.push(macro $i{n + '_' + arg} = $i{'arg'+arg});
-						ae.push(macro needSend());
+						ae.push(macro send());
 						fields.push({
 							name: rn + 'Remote',
 							access: [APublic],
@@ -135,7 +135,6 @@ class RPCBuilder {
 							ca.push(macro $i{'arg$arg'});
 						}
 
-
 						rc.push({expr: ECall(macro $i{en}.dispatch, [for (arg in 0...args.length) macro $i{'arg$arg'}]), pos: Context.currentPos()});
 						var bl = {expr: EBlock(rc), pos: Context.currentPos()};
 						
@@ -154,7 +153,6 @@ class RPCBuilder {
 
 						checks.push(chname);
 					}
-
 
 				case FieldType.FFun(f) if (field.meta.checkMeta([':rpc'])):
 					var n = field.name;
@@ -181,7 +179,7 @@ class RPCBuilder {
 						var ae:Array<Expr> = [macro $i{flagName} = true];
 						for (arg in f.args)
 							ae.push(macro $i{n + '_' + arg.name} = $i{arg.name});
-						ae.push(macro needSend());
+						ae.push(macro send());
 						fields.push({
 							name: n + 'Remote',
 							access: [APublic],

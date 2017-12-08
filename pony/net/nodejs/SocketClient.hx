@@ -68,8 +68,14 @@ class SocketClient extends SocketClientBase {
 	
 	public function send(data:BytesOutput):Void	q.call(data);
 	
-	private function _send(data:BytesOutput):Void socket.write(js.node.Buffer.hxFromBytes(data.getBytes()), q.next);
-	
+	private function _send(data:BytesOutput):Void {
+		socket.write(js.node.Buffer.hxFromBytes(data.getBytes()), sendNextAfterTimeout);
+	}
+
+	private function sendNextAfterTimeout():Void {
+		pony.time.DeltaTime.skipUpdate(q.next);
+	}
+
 	private function dataHandler(d:js.node.Buffer):Void joinData(new BytesInput(Bytes.ofData(d.buffer)));
 	
 }

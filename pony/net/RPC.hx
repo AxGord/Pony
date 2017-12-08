@@ -41,6 +41,10 @@ class RPC<T:pony.net.IRPC> {
 		socket = s;
 		serializer = new hxbit.Serializer();
 		s.onData << dataHandler;
+		if (Std.is(s, pony.net.SocketClient)) {
+			var s:pony.net.SocketClient = cast s;
+			s.onConnect << s.sendAllStack;
+		}
 	}
 
 	private function dataHandler(b:haxe.io.BytesInput):Void {
@@ -53,9 +57,7 @@ class RPC<T:pony.net.IRPC> {
 		object.checkRemoteCalls();
 	}
 
-	@:extern inline private function get_object():T return cast this;
-
-	@:extern inline private function needSend():Void pony.time.DeltaTime.fixedUpdate < send;
+	@:extern private inline function get_object():T return cast this;
 
 	private function send():Void {
 		var bo = new haxe.io.BytesOutput();
