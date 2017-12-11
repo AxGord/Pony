@@ -58,9 +58,6 @@ class Main {
 		var xml = Utils.getXml();
 		new Prepare(xml, cfg.app, cfg.debug);
 
-		if (xml.hasNode.poeditor)
-			Utils.command('npm', ['install', 'git+https://github.com/janjakubnanista/poeditor-client.git']);
-
 		Utils.runNode('ponyPrepare');
 
 	}

@@ -53,7 +53,7 @@ class RemoteMain {
 
 		var cl = new pony.net.SocketClient(rx.node.host.innerData, Std.parseInt(rx.node.port.innerData));
 		protocol = new RemoteProtocol(cl);
-		protocol.onLog << Sys.println;
+		protocol.onLog << logHandler;
 		protocol.onFileReceived << fileReceivedHandler;
 		protocol.onCommandComplete << runCommands;
 
@@ -70,6 +70,10 @@ class RemoteMain {
 
 	}
 
+	function logHandler(s:String):Void {
+		for (e in s.split('\n')) if (e != null) Sys.println('| $e');
+	}
+
 	function fileReceivedHandler(file:String):Void {
 		trace('File received: $file');
 		fileq.remove(file);
@@ -78,10 +82,12 @@ class RemoteMain {
 	}
 
 	function runCommands():Void {
-		if (commands.length > 0) 
+		if (commands.length > 0) {
 			pony.time.DeltaTime.fixedUpdate < protocol.commandRemote.bind(commands.shift());
-		else
+		} else {
+			protocol.socket.destroy();
 			Sys.exit(0);
+		}
 	}
 
 	static function main():Void {

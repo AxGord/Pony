@@ -55,8 +55,11 @@ class Prepare {
 		if (xml.hasNode.texturepacker)
 			new Texturepacker(xml.node.texturepacker, app, debug);
 			
-		if (xml.hasNode.build)
+		if (xml.hasNode.build) try {
 			new Build(xml, app, debug).writeConfigIfNeed();
+		} catch (e:String) {
+			Sys.println(e);
+		}
 	}
 	
 }

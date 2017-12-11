@@ -70,6 +70,6 @@ class XmlConfigReader<T:BaseConfig> {
 	private function copyCfg():T return pony.Tools.clone(cfg);
 
 	private function _selfCreate<C:XmlConfigReader<T>>(xml:Fast, conf:T):C return cast Type.createInstance(Type.getClass(this), [xml, conf, onConfig]);
-	private function selfCreate<C:XmlConfigReader<T>>(xml:Fast):C return _selfCreate(xml, cfg);
+	private function selfCreate<C:XmlConfigReader<T>>(xml:Fast):C return _selfCreate(xml, copyCfg());
 
 }

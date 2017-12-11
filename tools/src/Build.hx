@@ -135,7 +135,7 @@ class Build {
 		for (e in xml.elements) {
 			switch e.name {
 				case 'apps':
-					if (app == null) Utils.error('App not selected');
+					if (app == null) throw 'App not selected';
 					pushCommands(e.node.resolve(app));
 				case 'd':
 					command.push('-D');
