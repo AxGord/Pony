@@ -121,6 +121,7 @@ class Main {
 		commands.onCreate < create.Create.run;
 		commands.onLines < Lines.run;
 		commands.onLicense < License.run;
+		commands.onHaxelib < Haxelib.run;
 
 		commands.runArgs(Sys.args());
 

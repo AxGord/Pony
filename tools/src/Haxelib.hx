@@ -30,8 +30,8 @@ class Haxelib {
 	private static inline var badgeVersionBegin:String = '[![Haxelib](https://img.shields.io/badge/haxelib-';
 	private static inline var badgeVersionEnd:String = '-';
 
-	public static function run(args:Array<String>):Void {
-		switch args.shift() {
+	public static function run(command:String, args:Array<String>):Void {
+		switch command {
 			case 'submit':
 				var a = args.shift();
 				submit(a, args.join(' '));

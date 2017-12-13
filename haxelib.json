@@ -19,8 +19,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Fix haxelib tools compilation error",
-"version": "0.6.3",
+"releasenote": "Upgrade pony tools, net fixes",
+"version": "0.6.4",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }
