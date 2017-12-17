@@ -24,6 +24,7 @@
 import haxe.xml.Fast;
 import sys.io.File;
 using pony.text.TextTools;
+
 /**
  * Build
  * @author AxGord <axgord@gmail.com>
@@ -35,12 +36,14 @@ class Build {
 	private var app:String;
 	private var isHxml:Bool = false;
 	private var gxml:Fast;
+	private var haxeCompiler:String = 'haxe';
 
 	public function new(xml:Fast, app:String, debug:Bool) {
 		this.app = app;
 		this.debug = debug;
 		gxml = xml;
-		
+		if (xml.node.build.has.haxe)
+			haxeCompiler = xml.node.build.att.haxe;
 		isHxml = xml.node.build.has.hxml && xml.node.build.att.hxml.isTrue();
 	}
 
@@ -125,8 +128,8 @@ class Build {
 			}
 			if (hasError) Sys.exit(1);
 		} else {
-			Sys.println('haxe ' + command.join(' '));
-			var code = Sys.command('haxe', command);
+			Sys.println(haxeCompiler + ' ' + command.join(' '));
+			var code = Sys.command(haxeCompiler, command);
 			if (code > 0) Sys.exit(code);
 		}
 	}

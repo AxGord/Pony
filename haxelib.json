@@ -19,8 +19,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Upgrade pony tools, net fixes",
-"version": "0.6.4",
+"releasenote": "Pony Tools: custom haxe compiler",
+"version": "0.6.5",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }
