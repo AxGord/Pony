@@ -30,6 +30,7 @@ import pixi.core.Application.ApplicationOptions;
 import pixi.core.Pixi.RendererType;
 import pixi.core.sprites.Sprite;
 import pixi.core.ticker.Ticker;
+import pony.events.Signal0;
 import pony.events.Signal1;
 import pony.geom.Point;
 import pony.magic.HasSignal;
@@ -66,6 +67,7 @@ class App implements HasSignal {
 	public var pauseDraw:Bool = false;
 	
 	@:auto public var onResize:Signal1<Float>;
+	@:auto public var onFrequentResize:Signal0;
 	public var canvas(default, null):CanvasElement;
 	
 	public var container(default, null):Sprite;
@@ -174,7 +176,7 @@ class App implements HasSignal {
 	
 	public function fullscreen():Void JsTools.fse(parentDom);
 	
-	dynamic public function ratioMod(ratio:Float):Float return ratio;
+	public dynamic function ratioMod(ratio:Float):Float return ratio;
 	
 	private function resizeHandler():Void {
 
@@ -229,6 +231,7 @@ class App implements HasSignal {
 	}
 	
 	public function refreshSize(?_):Void {
+		eFrequentResize.dispatch();
 		resizeTimer.reset();
 		resizeTimer.start();
 	}

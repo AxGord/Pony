@@ -41,6 +41,8 @@ class HtmlContainerBase {
 	public var targetRect(default, set):Rect<Float>;
 	public var targetPos(default, set):Point<Float> = new Point(.0, .0);
 
+	private var lastRect:Rect<Float> = null;
+
     public function new(targetRect:Rect<Float>, ?app:App, ?targetStyle:CSSStyleDeclaration) {
 		this.targetRect = targetRect;
         if (app == null)
@@ -51,33 +53,36 @@ class HtmlContainerBase {
     }
 
 	private function resizeHandler(scale:Float):Void {
-		var rect = app.parentDom.getBoundingClientRect();
-		var nx = rect.x + js.Browser.window.scrollX + scale * (targetRect.x + targetPos.x + app.container.x / app.container.width);
-		var ny = rect.y + js.Browser.window.scrollY + scale * (targetRect.y + targetPos.y + app.container.y / app.container.height);
-
-		var bw = scale * targetRect.width;
-		var bh = scale * targetRect.height;
-
-		resize(nx, ny, bw, bh);
+		lastRect = {
+			x: scale * (targetRect.x + targetPos.x + app.container.x / app.container.width),
+			y: scale * (targetRect.y + targetPos.y + app.container.y / app.container.height),
+			width: scale * targetRect.width,
+			height: scale * targetRect.height
+		};
+		lastRect.x += lastRect.width;
+		lastRect.y += lastRect.height;
+		resize();
 	}
 
-	private function resize(x:Float, y:Float, w:Float, h:Float):Void {
-		targetStyle.top = px(y);
-		targetStyle.left = px(x);
-		targetStyle.width = px(w);
-		targetStyle.height = px(h);
+	private function resize():Void {
+		targetStyle.bottom = px(app.parentDom.clientHeight - lastRect.y);
+		targetStyle.right = px(app.parentDom.clientWidth - lastRect.x);
+		targetStyle.width = px(lastRect.width);
+		targetStyle.height = px(lastRect.height);
 	}
 
-	@:extern inline static function px(v:Float):String return v + 'px';
+	@:extern private static inline function px(v:Float):String return v + 'px';
 
 	private function set_targetStyle(s:CSSStyleDeclaration):CSSStyleDeclaration {
 		targetStyle = s;
 
 		if (s == null) {
 			app.onResize >> resizeHandler;
+			app.onFrequentResize >> resize;
 		} else {
 			s.position = POSITION;
 			app.onResize << resizeHandler;
+			app.onFrequentResize << resize;
 			resizeHandler(app.scale);
 		}
 
@@ -87,10 +92,10 @@ class HtmlContainerBase {
 	private function set_targetRect(v:Rect<Float>):Rect<Float> {
 		if (targetRect == null
 			|| v.x != targetRect.x
-            || v.y != targetRect.y
-            || v.width != targetRect.width
-            || v.height != targetRect.height
-        ) {
+			|| v.y != targetRect.y
+			|| v.width != targetRect.width
+			|| v.height != targetRect.height
+		) {
 			targetRect = v;
 			if (targetStyle != null)
 				resizeHandler(app.scale);
