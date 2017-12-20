@@ -27,14 +27,20 @@ import pony.HtmlVideo;
 
 class HtmlVideoUI extends HtmlContainer {
 
-    public var video(default, null):HtmlVideo;
+	public var video(default, null):HtmlVideo;
+	public var muted(get, set):Bool;
 
-    public function new(targetRect:pony.geom.Rect<Float>, ?app:pony.pixi.App, ?options:HtmlVideoOptions) {
-        super(targetRect, app);
-        video = new HtmlVideo(options);
-        video.appendTo(app.parentDom);
-        htmlContainer.targetStyle = video.style;
-    }
-    
-    
+	public function new(targetRect:pony.geom.Rect<Float>, ?app:pony.pixi.App, ?options:HtmlVideoOptions) {
+		super(targetRect, app);
+		video = new HtmlVideo(options);
+		video.appendTo(app.parentDom);
+		htmlContainer.targetStyle = video.style;
+	}
+
+	public function hide():Void video.hide();
+	public function show():Void video.show();
+
+	@:extern private inline function get_muted():Bool return video.muted;
+	@:extern private inline function set_muted(v:Bool):Bool return video.muted = v;
+
 }

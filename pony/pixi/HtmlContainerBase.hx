@@ -35,7 +35,7 @@ class HtmlContainerBase {
 
 	public static inline var POSITION:String = 'absolute';
 
-    private var app:App;
+	private var app:App;
 
 	public var targetStyle(default, set):CSSStyleDeclaration;
 	public var targetRect(default, set):Rect<Float>;
@@ -43,14 +43,14 @@ class HtmlContainerBase {
 
 	private var lastRect:Rect<Float> = null;
 
-    public function new(targetRect:Rect<Float>, ?app:App, ?targetStyle:CSSStyleDeclaration) {
+	public function new(targetRect:Rect<Float>, ?app:App, ?targetStyle:CSSStyleDeclaration) {
 		this.targetRect = targetRect;
-        if (app == null)
-            app = App.main;
-        this.app = app;
+		if (app == null)
+			app = App.main;
+		this.app = app;
 		this.targetStyle = targetStyle;
 		this.targetPos = targetPos;
-    }
+	}
 
 	private function resizeHandler(scale:Float):Void {
 		lastRect = {
