@@ -32,7 +32,14 @@ import js.node.http.ServerResponse;
 import pony.net.http.HttpServer;
 import pony.net.http.IHttpConnection;
 import pony.NPM;
+import pony.text.XmlConfigReader;
 import sys.FileSystem;
+
+typedef RemoteConfig = { > BaseConfig,
+	key: String,
+	files: Array<String>,
+	commands: Array<String>
+}
 
 /**
  * RemoteMain
@@ -45,11 +52,22 @@ class RemoteMain {
 	var protocol:RemoteProtocol;
 
 	function new() {
+
+		var cfg = Utils.parseArgs(Sys.args());
 		var xml = Utils.getXml();
 		
 		var rx = xml.node.remote;
+
+		var reader = new RemoteConfigReader(rx, {
+			app: cfg.app,
+			debug: cfg.debug,
+			key: null,
+			files: [],
+			commands: []
+		});
 		
-		commands = [for (c in rx.nodes.command) c.innerData];
+		commands = reader.cfg.commands;
+		fileq = reader.cfg.files;
 
 		var cl = new pony.net.SocketClient(rx.node.host.innerData, Std.parseInt(rx.node.port.innerData));
 		protocol = new RemoteProtocol(cl);
@@ -57,15 +75,14 @@ class RemoteMain {
 		protocol.onFileReceived << fileReceivedHandler;
 		protocol.onCommandComplete << runCommands;
 
-		if (rx.nodes.send.length == 0) {
+		if (reader.cfg.key != null) {
+			protocol.authRemote(reader.cfg.key);
+		}
+
+		if (fileq.length == 0) {
 			runCommands();
 		} else {
-			for (send in rx.nodes.send) {
-				var file = send.innerData;
-				fileq.push(file);
-				protocol.fileRemote(file, File.getBytes(file));
-			}
-
+			for (f in fileq) protocol.fileRemote(f, File.getBytes(f));
 		}
 
 	}
@@ -83,7 +100,7 @@ class RemoteMain {
 
 	function runCommands():Void {
 		if (commands.length > 0) {
-			pony.time.DeltaTime.fixedUpdate < protocol.commandRemote.bind(commands.shift());
+			protocol.commandRemote(commands.shift());
 		} else {
 			protocol.socket.destroy();
 			Sys.exit(0);
@@ -93,6 +110,19 @@ class RemoteMain {
 	static function main():Void {
 		NPM.source_map_support.install();
 		new RemoteMain();
+	}
+
+}
+
+private class RemoteConfigReader extends XmlConfigReader<RemoteConfig> {
+
+	override private function readNode(xml:Fast):Void {
+		switch xml.name {
+			case 'key': cfg.key = StringTools.trim(xml.innerData);
+			case 'send': cfg.files.push(StringTools.trim(xml.innerData));
+			case 'command': cfg.commands.push(StringTools.trim(xml.innerData));
+			case _: super.readNode(xml);
+		}
 	}
 
 }

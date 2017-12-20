@@ -36,8 +36,8 @@ class Remote extends Module {
 		modules.commands.onZip.add(run, 8);
 	}
 
-	private function run():Void {
-		Utils.runNode('ponyRemote');
+	private function run(a:String, b:String):Void {
+		Utils.runNode('ponyRemote', b != null ? [a, b] : (a != null ? [a] : []));
 	}
 
 }

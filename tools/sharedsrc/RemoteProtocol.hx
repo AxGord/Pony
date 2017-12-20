@@ -32,12 +32,12 @@ import pony.events.Signal2;
 class RemoteProtocol extends pony.net.RPC<RemoteProtocol> implements pony.magic.HasSignal implements pony.net.IRPC {
 
 	@:rpc public var onLog:Signal1<String>;
+	@:rpc public var onAuth:Signal1<String>;
 
 	@:rpc public var onFile:Signal2<String, Bytes>;
 	@:rpc public var onFileReceived:Signal1<String>;
 
 	@:rpc public var onCommand:Signal1<String>;
 	@:rpc public var onCommandComplete:Signal1<String>;
-
 
 }
