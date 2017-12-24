@@ -19,8 +19,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Pony Tools: Upgrade remote",
-"version": "0.6.6",
+"releasenote": "Pony Tools: remote command list and fixes",
+"version": "0.6.7",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }
