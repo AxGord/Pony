@@ -109,8 +109,9 @@ class Unpack extends Module {
 		log('Unzip: ' + c.file);
 		for (e in haxe.zip.Reader.readZip(sys.io.File.read(c.file))) {
 			Sys.println(e.fileName);
-			Utils.createPath(c.path + e.fileName);
-			sys.io.File.saveBytes(c.path + e.fileName, haxe.zip.Reader.unzip(e));
+			var f:String = c.path + e.fileName;
+			Utils.createPath(f);
+			sys.io.File.saveBytes(f, haxe.zip.Reader.unzip(e));
 		}
 		if (c.rm) {
 			log('Delete: ' + c.file);

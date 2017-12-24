@@ -35,9 +35,11 @@ class ServerRemoteInstanse {
 	private var currentCommand:String;
 	private var key:String;
 	private var protocol:RemoteProtocol;
+	private var commands:Map<String, Array<String>> = new Map();
 
-	public function new(client:SocketClient, key:String) {
+	public function new(client:SocketClient, key:String, commands:Map<String, Array<String>>) {
 		this.key = key;
+		this.commands = commands;
 		protocol = new RemoteProtocol(client);
 		if (key == null)
 			start();
@@ -73,8 +75,13 @@ class ServerRemoteInstanse {
 
 	private function commandHandler(command:String):Void {
 		currentCommand = command;
-		log(command);
-		var p = ChildProcess.exec(command, execHandler);
+		var c:Array<String> = commands[command];
+		if (c == null) {
+			childExitHandler(404);
+			return;
+		}
+		log(c[0]);
+		var p = ChildProcess.exec(c[0], execHandler);
 		p.stdout.on('data', log);
 		p.stderr.on('data', log);
 		p.on('exit', childExitHandler);
@@ -85,8 +92,8 @@ class ServerRemoteInstanse {
 	}
 
 	private function childExitHandler(code:Int):Void {
-		log('Child exited with code $code');
-		protocol.commandCompleteRemote(currentCommand);
+		//log('Child exited with code $code');
+		protocol.commandCompleteRemote(currentCommand, code);
 	}
 
 }

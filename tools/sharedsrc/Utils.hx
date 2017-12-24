@@ -117,7 +117,7 @@ class Utils {
 
 	public static function createPath(file:String):Void {
 		var path = getPath(file);
-		if (!FileSystem.exists(path))
+		if (path != '' && !FileSystem.exists(path))
 			FileSystem.createDirectory(path);
 	}
 

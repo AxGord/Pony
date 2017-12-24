@@ -73,7 +73,7 @@ class RemoteMain {
 		protocol = new RemoteProtocol(cl);
 		protocol.onLog << logHandler;
 		protocol.onFileReceived << fileReceivedHandler;
-		protocol.onCommandComplete << runCommands;
+		protocol.onCommandComplete << commandCompleteHandler;
 
 		if (reader.cfg.key != null) {
 			protocol.authRemote(reader.cfg.key);
@@ -85,6 +85,15 @@ class RemoteMain {
 			for (f in fileq) protocol.fileRemote(f, File.getBytes(f));
 		}
 
+	}
+
+	function commandCompleteHandler(name:String, code:Int):Void {
+		if (code == 0) {
+			runCommands();
+		} else {
+			Sys.println('End with error $code');
+			end();
+		}
 	}
 
 	function logHandler(s:String):Void {
@@ -102,9 +111,13 @@ class RemoteMain {
 		if (commands.length > 0) {
 			protocol.commandRemote(commands.shift());
 		} else {
-			protocol.socket.destroy();
-			Sys.exit(0);
+			end();
 		}
+	}
+
+	function end():Void {
+		protocol.socket.destroy();
+		Sys.exit(0);
 	}
 
 	static function main():Void {

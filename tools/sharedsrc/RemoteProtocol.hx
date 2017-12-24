@@ -38,6 +38,6 @@ class RemoteProtocol extends pony.net.RPC<RemoteProtocol> implements pony.magic.
 	@:rpc public var onFileReceived:Signal1<String>;
 
 	@:rpc public var onCommand:Signal1<String>;
-	@:rpc public var onCommandComplete:Signal1<String>;
+	@:rpc public var onCommandComplete:Signal2<String, Int>;
 
 }

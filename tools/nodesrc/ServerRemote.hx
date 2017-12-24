@@ -34,19 +34,29 @@ class ServerRemote {
 
 	private var socket:SocketServer;
 	private var key:String = null;
+	private var commands:Map<String, Array<String>> = new Map();
 
 	public function new(xml:Fast) {
 		var port = Std.parseInt(xml.node.port.innerData);
 		try {
 			key = StringTools.trim(xml.node.key.innerData);
 		} catch (_:Any) {}
+
+		for (node in xml.node.commands.elements) {
+			var d:String = StringTools.trim(node.innerData);
+			if (!commands.exists(node.name))
+				commands[node.name] = [d];
+			else
+				commands[node.name].push(d);
+		}
+
 		Sys.println('Remote Server running at $port');
 		socket = new SocketServer(port);
 		socket.onConnect << connectHandler;
 	}
 
 	private function connectHandler(client:SocketClient):Void {
-		new ServerRemoteInstanse(client, key);
+		new ServerRemoteInstanse(client, key, commands);
 	}
 }
 #end
