@@ -21,7 +21,7 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-package pony.net;
+package pony.net.rpc;
 
 #if macro
 import haxe.macro.Context;
@@ -43,19 +43,20 @@ using Lambda;
  * @author AxGord <axgord@gmail.com>
  */
 #if !macro
-@:autoBuild(pony.net.IRPC.RPCBuilder.build())
+@:autoBuild(pony.net.rpc.IRPC.RPCBuilder.build())
 #end
 interface IRPC
 #if !macro
 extends hxbit.Serializable
 #end
 {
-	function checkRemoteCalls():Void;
+	private function send():Void;
+	public function checkRemoteCalls():Void;
 }
 
 class RPCBuilder {
 
-	macro static public function build():Array<Field> {
+	macro public static function build():Array<Field> {
 		var smeta = [{name: ':s', pos: Context.currentPos()}];
 		var fields:Array<Field> = Context.getBuildFields();
 		var checks:Array<String> = [];

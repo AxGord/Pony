@@ -21,7 +21,9 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-package pony.net;
+package pony.net.rpc;
+
+import haxe.io.BytesOutput;
 
 /**
  * IRPC - Remove Procedure Call Build System
@@ -29,17 +31,13 @@ package pony.net;
  * use with IRPC
  * @author AxGord <axgord@gmail.com>
  */
-class RPC<T:pony.net.IRPC> {
+class RPC<T:pony.net.rpc.IRPC> extends RPCBase<T> {
 
 	public var socket:pony.net.INet;
 
-	private var serializer:hxbit.Serializer;
-
-	private var object(get, never):T;
-
 	public function new(s:pony.net.INet) {
+		super();
 		socket = s;
-		serializer = new hxbit.Serializer();
 		s.onData << dataHandler;
 		if (Std.is(s, pony.net.SocketClient)) {
 			var s:pony.net.SocketClient = cast s;
@@ -47,21 +45,9 @@ class RPC<T:pony.net.IRPC> {
 		}
 	}
 
-	private function dataHandler(b:haxe.io.BytesInput):Void {
-		serializer.refs = new Map();
-		untyped serializer.knownStructs = [];
-		serializer.setInput(b.readAll(), 0);
-		object.__uid = untyped serializer.getObjRef();
-		object.unserializeInit();
-		object.unserialize(serializer);
-		object.checkRemoteCalls();
-	}
-
-	@:extern private inline function get_object():T return cast this;
-
 	private function send():Void {
-		var bo = new haxe.io.BytesOutput();
-		bo.write(serializer.serialize(object));
+		var bo:BytesOutput = new BytesOutput();
+		bo.write(pack());
 		socket.send(bo);
 	}
 

@@ -84,7 +84,10 @@ class RemoteMain {
 		} else {
 			for (f in fileq) protocol.fileRemote(f, File.getBytes(f));
 		}
+	}
 
+	function sendFile(name:String):Void {
+		
 	}
 
 	function commandCompleteHandler(name:String, code:Int):Void {
