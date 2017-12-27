@@ -23,34 +23,26 @@
 **/
 package pony.net.rpc;
 
-import haxe.io.Bytes;
+import haxe.PosInfos;
 import pony.events.Signal0;
 import pony.events.Signal1;
 import pony.events.Signal2;
 
 /**
- * FileTransport
+ * RPCLog
  * @author AxGord <axgord@gmail.com>
  */
-@:final class RPCFileTransport extends pony.net.rpc.RPCUnit<RPCFileTransport> implements pony.net.rpc.IRPC {
+@:final class RPCLog
+extends pony.net.rpc.RPCUnit<RPCLog>
+#if !macro implements pony.ILogable #end
+implements pony.net.rpc.IRPC {
 
-	@:rpc public var onFileBegin:Signal1<String>;
-	@:rpc public var onFileData:Signal1<Bytes>;
-	@:rpc public var onFileDataReceived:Signal0;
-	@:rpc public var onFileEnd:Signal0;
-	@:rpc public var onFileReceived:Signal0;
+	@:rpc public var onLog:Signal2<String, PosInfos>;
+	@:rpc public var onError:Signal2<String, PosInfos>;
 
-	private var input:sys.io.FileInput;
+	#if !macro
+	public inline function error(s:String, ?p:PosInfos):Void errorRemote(s, p);
+	public inline function log(s:String, ?p:PosInfos):Void logRemote(s, p);
+	#end
 
-	public function send(file:String):Void {
-		input = sys.io.File.read(file, true);
-		fileBeginRemote(file);
-		sendFilePart();
-	}
-
-	private function sendFilePart():Void {
-		var b = input.read(1024);
-		fileDataRemote(b);
-	}
-	
 }

@@ -63,7 +63,43 @@ class RPCBuilder {
 
 		//function reg(name:String)
 
+		var tonew:Array<Expr> = [];
+
 		for (field in fields) {
+			if (field.meta.checkMeta([':sub'])) switch field.kind {
+
+				case FieldType.FVar(TPath(t)):
+					
+					var n = field.name;
+					var sn = 'on' + pony.text.TextTools.bigFirst(n);
+
+					fields.push({
+						name: sn,
+						access: [APrivate],
+						pos: Context.currentPos(),
+						kind: FVar(macro:Signal1<Bytes>),
+						meta: [{name: ':rpc', pos: Context.currentPos()}]
+					});
+
+					var en:Expr = {expr: ENew(t, []), pos: Context.currentPos()};
+					tonew.push( macro $i{n} = ${en} );
+					tonew.push( macro $i{n}.onData << $i{n + 'Remote'});
+					tonew.push( macro $i{sn} << $i{n}.data);
+
+				case _:
+
+			}
+		}
+
+		var newf:Function = null;
+
+		for (field in fields) {
+			switch field.kind {
+				case FieldType.FFun(f) if (field.name == 'new'):
+					newf = f;
+				case _:
+			}
+
 			if (field.meta.checkMeta([':rpc'])) switch field.kind {
 
 				case FieldType.FVar(t):
@@ -112,6 +148,9 @@ class RPCBuilder {
 						for (arg in 0...args.length)
 							ae.push(macro $i{n + '_' + arg} = $i{'arg'+arg});
 						ae.push(macro send());
+						for (arg in 0...args.length)
+							ae.push(macro $i{n + '_' + arg} = null);
+						ae.push(macro $i{flagName} = false);
 						fields.push({
 							name: rn + 'Remote',
 							access: [APublic],
@@ -181,6 +220,9 @@ class RPCBuilder {
 						for (arg in f.args)
 							ae.push(macro $i{n + '_' + arg.name} = $i{arg.name});
 						ae.push(macro send());
+						for (arg in f.args)
+							ae.push(macro $i{n + '_' + arg.name} = null);
+						ae.push(macro $i{flagName} = false);
 						fields.push({
 							name: n + 'Remote',
 							access: [APublic],
@@ -236,6 +278,24 @@ class RPCBuilder {
 				expr: {expr: EBlock([for (ch in checks) macro $i{ch}()]), pos: Context.currentPos()}
 			})
 		});
+
+		if (tonew.length > 0) {
+			if (newf == null) {
+				newf = {
+					args: [{name: 'socket', type: macro:INet}],
+					expr: macro super(socket),
+					ret: null
+				};
+				fields.push({
+					name: 'new',
+					access: [APublic],
+					kind: FFun(newf),
+					pos: Context.currentPos()
+				});
+			}
+			tonew.unshift(newf.expr);
+			newf.expr = {expr: EBlock(tonew), pos: Context.currentPos()};
+		}
 
 		return fields;
 	}

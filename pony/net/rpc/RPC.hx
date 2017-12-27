@@ -24,6 +24,7 @@
 package pony.net.rpc;
 
 import haxe.io.BytesOutput;
+import pony.magic.HasSignal;
 
 /**
  * IRPC - Remove Procedure Call Build System
@@ -31,7 +32,7 @@ import haxe.io.BytesOutput;
  * use with IRPC
  * @author AxGord <axgord@gmail.com>
  */
-class RPC<T:pony.net.rpc.IRPC> extends RPCBase<T> {
+class RPC<T:pony.net.rpc.IRPC> extends RPCBase<T> implements HasSignal {
 
 	public var socket:pony.net.INet;
 
