@@ -30,29 +30,22 @@ import pony.events.Signal1;
 class BaseStream<T> implements HasSignal {
 
 	@:auto public var onData:Signal1<T>;
-	@:auto public var onEnd:Signal0;
+	@:auto public var onEnd:Signal1<T>;
 	@:auto public var onError:Signal0;
 
 	@:auto public var onGetData:Signal0;
-	@:auto public var onGetEnd:Signal0;
+	@:auto public var onCancel:Signal0;
+	@:auto public var onComplete:Signal0;
 
 	private var buffer:T;
 	private var sendNext:Bool = false;
 	private var dataRequested:Bool = false;
 	private var nextRequest:Bool = false;
 	private var ended:Bool = false;
-	private var getLast:Bool = false;
 
 	public function new() {}
 
 	public function next():Void {
-		if (getLast) {
-			getLast = false;
-			eData.dispatch(buffer);
-			buffer = null;
-			destroy();
-			return;
-		}
 		if (ended) return;
 		if (buffer != null) {
 			eData.dispatch(buffer);
@@ -66,17 +59,16 @@ class BaseStream<T> implements HasSignal {
 		}
 	}
 
-	public function cancle():Void {
+	public function cancel():Void {
 		ended = true;
 		buffer = null;
-		eGetEnd.dispatch();
+		eCancel.dispatch();
 		destroy();
 	}
 
 	public function data(d:T):Void {
 		if (ended) return;
 		dataRequested = false;
-
 		if (sendNext) {
 			sendNext = false;
 			eData.dispatch(d);
@@ -92,14 +84,9 @@ class BaseStream<T> implements HasSignal {
 		}
 	}
 
-	public function end():Void {
+	public function end(b:T):Void {
 		ended = true;
-		if (buffer != null) {
-			eEnd.dispatch();
-			destroy();
-		} else {
-			getLast = true;
-		}
+		eEnd.dispatch(b);
 	}
 
 	public function error():Void {
@@ -118,6 +105,11 @@ class BaseStream<T> implements HasSignal {
 		} else {
 			throw 'So fast';
 		}
+	}
+
+	public function complete():Void {
+		eComplete.dispatch();
+		destroy();
 	}
 
 	private function destroy():Void {

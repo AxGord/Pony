@@ -28,10 +28,11 @@ import pony.events.Signal0;
 class WriteStream<T> implements pony.magic.HasLink {
 
 	public var onGetData(link, never):Signal0 = base.onGetData;
-	public var onGetEnd(link, never):Signal0 = base.onGetEnd;
+	public var onCancel(link, never):Signal0 = base.onCancel;
+	public var onComplete(link, never):Signal0 = base.onComplete;
 
 	public var data(link, never):T -> Void = base.data;
-	public var end(link, never):Void -> Void = base.end;
+	public var end(link, never):T -> Void = base.end;
 	public var error(link, never):Void -> Void = base.error;
 
 	@:extern public inline function readStream():ReadStream<T> {
