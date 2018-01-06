@@ -33,7 +33,6 @@ import pony.ds.WriteStream;
 
 class FileWriteStream extends WriteStream<Bytes> {
 
-	private var stream:ReadStream<Bytes>;
 	private var size:Float;
 	private var fd:Int;
 	private var path:String;
@@ -42,11 +41,8 @@ class FileWriteStream extends WriteStream<Bytes> {
 	public function new(path:String) {
 		super();
 		this.path = path;
-		stream = readStream();
-		stream.onData < getSize;
+		readStream.onData < getSize;
 	}
-
-	public function start():Void stream.next();
 
 	private function getSize(b:Bytes):Void {
 		size = b.getFloat(0);
@@ -56,13 +52,14 @@ class FileWriteStream extends WriteStream<Bytes> {
 	private function openHandler(err:js.Error, fd:Int):Void {
 		if (err == null) {
 			this.fd = fd;
-			stream.onData << dataHandler;
-			stream.onEnd << endHandler;
-			stream.next();
+			readStream.onData << dataHandler;
+			readStream.onEnd << endHandler;
+			readStream.next();
 		} else {
-			stream.cancel();
+			readStream.cancel();
 		}
 	}
+	
 	private function dataHandler(b:Bytes):Void {
 		Fs.write(fd, Buffer.hxFromBytes(b), 0, b.length, position, writeHandler);
 	}
@@ -70,9 +67,9 @@ class FileWriteStream extends WriteStream<Bytes> {
 	private function writeHandler(err:js.Error, len:Int, buf:Buffer):Void {
 		position += len;
 		if (err == null) {
-			stream.next();
+			readStream.next();
 		} else {
-			stream.cancel();
+			readStream.cancel();
 		}
 	}
 
@@ -84,16 +81,16 @@ class FileWriteStream extends WriteStream<Bytes> {
 		if (err == null) {
 			Fs.close(fd, closeHandler);
 		} else {
-			stream.cancel();
+			readStream.cancel();
 		}
 	}
 
 	private function closeHandler(err:js.Error):Void {
 		if (err != null) {
 			trace(err);
-			stream.cancel();
+			readStream.cancel();
 		} else {
-			stream.complete();
+			readStream.complete();
 		}
 	}
 

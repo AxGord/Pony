@@ -31,6 +31,7 @@ import pony.text.tpl.WithTplPut;
 import pony.text.tpl.TplDir;
 import pony.fs.Dir;
 import pony.fs.File;
+import pony.text.XmlTools;
 using pony.Tools;
 
 typedef Manifest = {
@@ -74,7 +75,7 @@ class TplSystem
 	public inline function exists(n:String):Bool return pages.exists(n);
 	
 	public static function parseManifest(f:File):Manifest {
-		var x:Fast = XMLTools.fast(f.content).node.manifest;
+		var x:Fast = XmlTools.fast(f.content).node.manifest;
 		var g = function(n:String) return x.hasNode.resolve(n) ? StringTools.trim(x.node.resolve(n).innerData) : null;
 		return {
 			title: g('title'),

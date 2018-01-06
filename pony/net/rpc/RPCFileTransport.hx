@@ -27,6 +27,9 @@ import haxe.io.Bytes;
 import pony.events.Signal0;
 import pony.events.Signal1;
 import pony.events.Signal2;
+import pony.ds.ReadStream;
+import pony.fs.FileReadStream;
+import pony.fs.FileWriteStream;
 
 /**
  * FileTransport
@@ -34,23 +37,33 @@ import pony.events.Signal2;
  */
 @:final class RPCFileTransport extends pony.net.rpc.RPCUnit<RPCFileTransport> implements pony.net.rpc.IRPC {
 
-	@:rpc public var onFileBegin:Signal1<String>;
-	@:rpc public var onFileData:Signal1<Bytes>;
-	@:rpc public var onFileDataReceived:Signal0;
-	@:rpc public var onFileEnd:Signal0;
-	@:rpc public var onFileReceived:Signal0;
+	@:sub public var stream:RPCStream;
 
-	private var input:sys.io.FileInput;
+	@:rpc public var onFile:Signal1<String>;
 
-	public function send(file:String):Void {
-		input = sys.io.File.read(file, true);
-		fileBeginRemote(file);
-		sendFilePart();
+	private var fileWrite:FileWriteStream;
+
+	public function new() {
+		super();
+		onFile << fileHandler;
 	}
 
-	private function sendFilePart():Void {
-		var b = input.read(1024);
-		fileDataRemote(b);
+	public function sendFile(path:String, ?newPath:String):Void {
+		if (newPath == null) newPath = path;
+		fileRemote(newPath);
+		var fs:FileReadStream = new FileReadStream(path);
+		stream.write(fs);
 	}
+
+	private function fileHandler(path:String):Void {
+		fileWrite = new FileWriteStream(changePath(path));
+		stream.onRead < readHandler;
+	}
+
+	private function readHandler(rs:ReadStream<Bytes>):Void {
+		fileWrite.pipe(rs);
+	}
+
+	public dynamic function changePath(path:String):String return path;
 	
 }

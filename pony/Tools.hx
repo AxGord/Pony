@@ -270,7 +270,7 @@ class Tools {
 	macro public static function currentDir():Expr
 	{
 		var f:String = Context.getPosInfos(Context.currentPos()).file;
-		f = sys.FileSystem.fullPath(f).split('\\').slice(0, -1).join('/') + '/';
+		f = StringTools.replace(sys.FileSystem.fullPath(f), '\\', '/').split('/').slice(0, -1).join('/') + '/';
 		return macro $v{f};
 	}
 	
