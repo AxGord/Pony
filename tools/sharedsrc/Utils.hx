@@ -155,6 +155,10 @@ class Utils {
 		return Sys.command('node', a);
 	}
 
+	public static function runAndKeepNode(name:String, ?args:Array<String>):Void {
+		while (true) runNode(name, args);
+	}
+
 	#end
 
 }

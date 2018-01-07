@@ -41,10 +41,11 @@ class ServerRemoteInstanse {
 		this.key = key;
 		this.commands = commands;
 		protocol = new RemoteProtocol(client);
-		if (key == null)
+		if (key == null) {
 			start();
-		else
+		} else {
 			protocol.onAuth < authHandler;
+		}
 	}
 
 	private function authHandler(v:String):Void {
@@ -58,6 +59,7 @@ class ServerRemoteInstanse {
 	}
 
 	private function start():Void {
+		protocol.file.enabled = true;
 		protocol.onCommand << commandHandler;
 	}
 

@@ -21,62 +21,13 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-package pony.net.rpc;
+package pony.sys;
 
-import haxe.io.Bytes;
-import pony.events.Signal0;
-import pony.events.Signal1;
-import pony.events.Signal2;
-import pony.ds.ReadStream;
-import pony.fs.FileReadStream;
-import pony.fs.FileWriteStream;
+interface IProcess extends pony.ILogable  {
 
-/**
- * FileTransport
- * @author AxGord <axgord@gmail.com>
- */
-@:final class RPCFileTransport extends pony.net.rpc.RPCUnit<RPCFileTransport> implements pony.net.rpc.IRPC {
+	public var runned(default, null):Bool;
 
-	public var enabled(default, set):Bool = false;
+	public function run():Bool;
+	public function kill():Bool;
 
-	@:sub public var stream:RPCStream;
-
-	@:rpc public var onFile:Signal1<String>;
-
-	private var fileWrite:FileWriteStream;
-
-	public function new() {
-		super();
-	}
-
-	private function set_enabled(v:Bool):Bool {
-		if (v != enabled) {
-			enabled = v;
-			if (v) {
-				onFile << fileHandler;
-			} else {
-				onFile >> fileHandler;
-			}
-		}
-		return v;
-	}
-
-	public function sendFile(path:String, ?newPath:String):Void {
-		if (newPath == null) newPath = path;
-		fileRemote(newPath);
-		var fs:FileReadStream = new FileReadStream(path);
-		stream.write(fs);
-	}
-
-	private function fileHandler(path:String):Void {
-		fileWrite = new FileWriteStream(changePath(path));
-		stream.onRead < readHandler;
-	}
-
-	private function readHandler(rs:ReadStream<Bytes>):Void {
-		fileWrite.pipe(rs);
-	}
-
-	public dynamic function changePath(path:String):String return path;
-	
 }

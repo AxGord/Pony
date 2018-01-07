@@ -125,7 +125,7 @@ class HttpServer
 				var host = if (req.headers.exists('host')) {
 					req.headers.get('host');
 				} else {
-					var a:Dynamic = untyped me.server.address();
+					var a:Dynamic = untyped this.server.address();
 					a.address + ':' + a.port;
 				}
 				request(new HttpConnection('http://' + host + req.url, storage, req, res, new Map<String, String>()));

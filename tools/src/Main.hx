@@ -110,7 +110,7 @@ class Main {
 
 		commands.onNothing < showLogo;
 		commands.onHelp < showHelp;
-		commands.onServer < function() Utils.runNode('ponyServer');
+		commands.onServer < function() Utils.runAndKeepNode('ponyServer');
 		commands.onPrepare < cfgAndCall.bind(_, _, prepare);
 		commands.onBuild < cfgAndCall.bind(_, _, rbuild);
 
