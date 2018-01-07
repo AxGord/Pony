@@ -58,19 +58,12 @@ class ServerRemoteInstanse {
 	}
 
 	private function start():Void {
-		protocol.onFile << fileHandler;
 		protocol.onCommand << commandHandler;
-	}
-
-	private function fileHandler(name:String, data:haxe.io.Bytes):Void {
-		log('Get file: $name (' + data.length + ')');
-		File.saveBytes(name, data);
-		protocol.fileReceivedRemote(name);
 	}
 
 	private function log(s:String):Void {
 		Sys.println(s);
-		protocol.logRemote(s);
+		protocol.log.log(s);
 	}
 
 	private function commandHandler(command:String):Void {

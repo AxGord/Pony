@@ -282,7 +282,7 @@ class RPCBuilder {
 		if (tonew.length > 0) {
 			if (newf == null) {
 				newf = {
-					args: [{name: 'socket', type: macro:INet}],
+					args: [{name: 'socket', type: macro:pony.net.INet}],
 					expr: macro super(socket),
 					ret: null
 				};

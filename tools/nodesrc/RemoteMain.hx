@@ -71,8 +71,7 @@ class RemoteMain {
 
 		var cl = new pony.net.SocketClient(rx.node.host.innerData, Std.parseInt(rx.node.port.innerData));
 		protocol = new RemoteProtocol(cl);
-		protocol.onLog << logHandler;
-		protocol.onFileReceived << fileReceivedHandler;
+		protocol.log.onLog << logHandler;
 		protocol.onCommandComplete << commandCompleteHandler;
 
 		if (reader.cfg.key != null) {
@@ -82,12 +81,25 @@ class RemoteMain {
 		if (fileq.length == 0) {
 			runCommands();
 		} else {
-			for (f in fileq) protocol.fileRemote(f, File.getBytes(f));
+			protocol.file.stream.onStreamData << streamDataHandler;
+			protocol.file.stream.onStreamEnd << sendNextFile;
+			sendNextFile();
 		}
 	}
 
-	function sendFile(name:String):Void {
-		
+	private function streamDataHandler():Void {
+		Sys.print('.');
+	}
+
+	private function sendNextFile():Void {
+		if (fileq.length == 0) {
+			runCommands();
+		} else {
+			var file:String = fileq.shift();
+			Sys.println('');
+			Sys.println('Send file: $file');
+			protocol.file.sendFile(file);
+		}
 	}
 
 	function commandCompleteHandler(name:String, code:Int):Void {
@@ -101,13 +113,6 @@ class RemoteMain {
 
 	function logHandler(s:String):Void {
 		for (e in s.split('\n')) if (e != null) Sys.println('| $e');
-	}
-
-	function fileReceivedHandler(file:String):Void {
-		trace('File received: $file');
-		fileq.remove(file);
-		if (fileq.length == 0)
-			runCommands();
 	}
 
 	function runCommands():Void {

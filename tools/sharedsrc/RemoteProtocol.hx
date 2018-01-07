@@ -25,21 +25,21 @@ import haxe.io.Bytes;
 import pony.events.Signal0;
 import pony.events.Signal1;
 import pony.events.Signal2;
+import pony.net.rpc.RPC;
+import pony.net.rpc.IRPC;
+import pony.net.rpc.RPCLog;
+import pony.net.rpc.RPCFileTransport;
 
 /**
  * RemoteProtocol
  * @author AxGord <axgord@gmail.com>
  */
-class RemoteProtocol extends pony.net.RPC<RemoteProtocol> implements pony.magic.HasSignal implements pony.net.IRPC {
+class RemoteProtocol extends RPC<RemoteProtocol> implements IRPC {
 
-	@:rpc public var onLog:Signal1<String>;
+	@:sub public var log:RPCLog;
+	@:sub public var file:RPCFileTransport;
+
 	@:rpc public var onAuth:Signal1<String>;
-
-	@:rpc public var onFileBegin:Signal1<String>;
-	@:rpc public var onFileData:Signal1<Bytes>;
-	@:rpc public var onFileEnd:Signal0;
-	@:rpc public var onFileReceived:Signal1<String>;
-
 	@:rpc public var onCommand:Signal1<String>;
 	@:rpc public var onCommandComplete:Signal2<String, Int>;
 
