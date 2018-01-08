@@ -34,4 +34,4 @@ test_script:
   - haxelib dev pony .
   - haxelib run pony
   - cd tests
-  - test.cmd | neko Appveyor.n
+  - cmd: test.cmd | neko Appveyor.n
