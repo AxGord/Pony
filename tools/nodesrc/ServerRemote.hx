@@ -24,7 +24,10 @@
 #if nodejs
 import pony.net.SocketServer;
 import pony.net.SocketClient;
+import pony.Pair;
 import haxe.xml.Fast;
+
+using pony.text.XmlTools;
 
 /**
  * ServerRemote
@@ -34,7 +37,8 @@ class ServerRemote {
 
 	private var socket:SocketServer;
 	private var key:String = null;
-	private var commands:Map<String, Array<String>> = new Map();
+	private var commands:Map<String, Array<Pair<Bool, String>>> = new Map();
+	private var instanse:ServerRemoteInstanse;
 
 	public function new(xml:Fast) {
 		var port = Std.parseInt(xml.node.port.innerData);
@@ -43,7 +47,7 @@ class ServerRemote {
 		} catch (_:Any) {}
 
 		for (node in xml.node.commands.elements) {
-			var d:String = StringTools.trim(node.innerData);
+			var d:Pair<Bool, String> = new Pair(!node.isFalse('log'), StringTools.trim(node.innerData));
 			if (!commands.exists(node.name))
 				commands[node.name] = [d];
 			else
@@ -56,7 +60,18 @@ class ServerRemote {
 	}
 
 	private function connectHandler(client:SocketClient):Void {
-		new ServerRemoteInstanse(client, key, commands);
+		Sys.println('New connection');
+		if (instanse == null) {
+			Sys.println('Accept');
+			instanse = new ServerRemoteInstanse(client, key, commands);
+			client.onClose < closeHandler;
+		} else {
+			Sys.println('Deny');
+			client.destroy();
+		}
 	}
+
+	private function closeHandler():Void instanse = null;
+
 }
 #end

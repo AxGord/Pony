@@ -73,18 +73,28 @@ class RemoteMain {
 		protocol = new RemoteProtocol(cl);
 		protocol.log.onLog << logHandler;
 		protocol.onCommandComplete << commandCompleteHandler;
+		protocol.onReady << readyHandler;
 
 		if (reader.cfg.key != null) {
 			protocol.authRemote(reader.cfg.key);
 		}
 
+	}
+
+	private function readyHandler():Void {
 		if (fileq.length == 0) {
 			runCommands();
 		} else {
-			protocol.file.stream.onStreamData << streamDataHandler;
-			protocol.file.stream.onStreamEnd << sendNextFile;
+			protocol.file.stream.onGetData << streamDataHandler;
+			protocol.file.stream.onComplete << sendNextFile;
+			protocol.file.stream.onCancel << error;
 			sendNextFile();
 		}
+	}
+
+	private function error():Void {
+		Sys.println('Error');
+		end();
 	}
 
 	private function streamDataHandler():Void {
@@ -92,11 +102,11 @@ class RemoteMain {
 	}
 
 	private function sendNextFile():Void {
+		Sys.println('');
 		if (fileq.length == 0) {
 			runCommands();
 		} else {
 			var file:String = fileq.shift();
-			Sys.println('');
 			Sys.println('Send file: $file');
 			protocol.file.sendFile(file);
 		}

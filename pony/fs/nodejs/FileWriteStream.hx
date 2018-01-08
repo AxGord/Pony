@@ -54,9 +54,10 @@ class FileWriteStream extends WriteStream<Bytes> {
 			this.fd = fd;
 			readStream.onData << dataHandler;
 			readStream.onEnd << endHandler;
+			readStream.onError < cancel;
 			readStream.next();
 		} else {
-			readStream.cancel();
+			cancel();
 		}
 	}
 	
@@ -69,7 +70,7 @@ class FileWriteStream extends WriteStream<Bytes> {
 		if (err == null) {
 			readStream.next();
 		} else {
-			readStream.cancel();
+			cancel();
 		}
 	}
 
@@ -81,7 +82,7 @@ class FileWriteStream extends WriteStream<Bytes> {
 		if (err == null) {
 			Fs.close(fd, closeHandler);
 		} else {
-			readStream.cancel();
+			cancel();
 		}
 	}
 
@@ -92,6 +93,14 @@ class FileWriteStream extends WriteStream<Bytes> {
 		} else {
 			readStream.complete();
 		}
+	}
+
+	public function cancel():Void {
+		try {
+			Fs.closeSync(fd);
+			Fs.unlinkSync(path);
+		} catch (_:Any) {}
+		readStream.cancel();
 	}
 
 }

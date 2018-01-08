@@ -26,6 +26,8 @@ package module;
 import haxe.xml.Fast;
 import types.BASection;
 
+using pony.text.XmlTools;
+
 /**
  * Unpack module
  * @author AxGord <axgord@gmail.com>
@@ -108,7 +110,7 @@ class Unpack extends Module {
 	private function unzip(c:ZipConfig):Void {
 		log('Unzip: ' + c.file);
 		for (e in haxe.zip.Reader.readZip(sys.io.File.read(c.file))) {
-			Sys.println(e.fileName);
+			if (c.log) log(e.fileName);
 			var f:String = c.path + e.fileName;
 			Utils.createPath(f);
 			sys.io.File.saveBytes(f, haxe.zip.Reader.unzip(e));
@@ -125,7 +127,8 @@ class Unpack extends Module {
 private typedef ZipConfig = {
 	path: String,
 	file: String,
-	rm: Bool
+	rm: Bool,
+	log: Bool
 }
 
 private typedef UnpackConfig = { > types.BAConfig,
@@ -136,12 +139,13 @@ private class UnpackReader extends BAReader<UnpackConfig> {
 
 	override private function readNode(xml:Fast):Void {
 		switch xml.name {
-
-			case 'zip': cfg.zips.push({
-				path: try StringTools.trim(xml.innerData) catch (_:Any) '',
-				file: xml.att.file,
-				rm: xml.has.rm && xml.att.rm.toLowerCase() == 'true'
-			});
+			case 'zip': 
+				cfg.zips.push({
+					path: try StringTools.trim(xml.innerData) catch (_:Any) '',
+					file: xml.att.file,
+					rm: xml.isTrue('rm'),
+					log: !xml.isFalse('log')
+				});
 
 			case _: super.readNode(xml);
 		}

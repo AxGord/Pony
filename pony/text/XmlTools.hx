@@ -31,6 +31,7 @@ class XmlTools {
 	public static inline var XML_REMSP_RIGHT:String = '{REMSP_RIGHT}';
 
 	inline public static function isTrue(x:haxe.xml.Fast, name:String):Bool return x.has.resolve(name) && TextTools.isTrue(x.att.resolve(name));
+	inline public static function isFalse(x:haxe.xml.Fast, name:String):Bool return x.has.resolve(name) && TextTools.isFalse(x.att.resolve(name));
 	inline public static function fast(text:String):Fast return new haxe.xml.Fast(Xml.parse(text));
 
 	public static function document(xml:Xml):String {

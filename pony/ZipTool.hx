@@ -42,7 +42,8 @@ class ZipTool extends pony.Logable {
 	private var output:String;
 	private var prefix:String;
 	private var compressLvl:Int;
-	private var list:List<Entry> = new List<Entry>();
+	private var fileOutput:Output;
+	private var writer:Writer;
 
 	public function new(output:String = '', prefix:String = '', compressLvl:Int = 9) {
 		super();
@@ -53,6 +54,9 @@ class ZipTool extends pony.Logable {
 		a.pop();
 		if (a.length > 0) FileSystem.createDirectory(a.join('/'));
 		if (FileSystem.exists(output)) FileSystem.deleteFile(output);
+
+		fileOutput = File.write(output, true);
+		writer = new Writer(fileOutput);
 	}
 
 	public function writeList(input:Array<String>):ZipTool {
@@ -61,11 +65,9 @@ class ZipTool extends pony.Logable {
 	}
 
 	public function end():Void {
-		var o:Output = File.write(output, true);
-		var writer:Writer = new Writer(o);
-		writer.write(list);
-		o.flush();
-		o.close();
+		writer.writeCDR();
+		fileOutput.flush();
+		fileOutput.close();
 	}
 
 	public function writeEntry(entry:String):ZipTool {
@@ -101,7 +103,7 @@ class ZipTool extends pony.Logable {
 	public function writeFile(file:String):ZipTool {
 		log(prefix + file);
 		var b = File.getBytes(prefix + file);
-		var entry = {
+		var entry:Entry = {
 			fileName: file,
 			fileSize: b.length,
 			fileTime: Date.now(),
@@ -110,7 +112,10 @@ class ZipTool extends pony.Logable {
 			data: b,
 			crc32: Crc32.make(b)};
 		if (compressLvl > 0) Tools.compress(entry, compressLvl);
-		list.push(entry);
+
+		writer.writeEntryHeader(entry);
+		fileOutput.writeFullBytes(entry.data, 0, entry.data.length);
+		
 		return this;
 	}
 

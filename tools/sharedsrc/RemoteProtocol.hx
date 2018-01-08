@@ -40,6 +40,7 @@ class RemoteProtocol extends RPC<RemoteProtocol> implements IRPC {
 	@:sub public var file:RPCFileTransport;
 
 	@:rpc public var onAuth:Signal1<String>;
+	@:rpc public var onReady:Signal0;
 	@:rpc public var onCommand:Signal1<String>;
 	@:rpc public var onCommandComplete:Signal2<String, Int>;
 

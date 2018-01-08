@@ -25,6 +25,7 @@
 import js.node.ChildProcess;
 import sys.io.File;
 import pony.net.SocketClient;
+import pony.Pair;
 
 /**
  * ServerRemoteInstanse
@@ -32,20 +33,42 @@ import pony.net.SocketClient;
  */
 class ServerRemoteInstanse {
 
+	private var client:SocketClient;
 	private var currentCommand:String;
 	private var key:String;
 	private var protocol:RemoteProtocol;
-	private var commands:Map<String, Array<String>> = new Map();
+	private var commands:Map<String, Array<Pair<Bool, String>>> = new Map();
+	private var cmdRLog:Bool = true;
+	private var needKick:Bool = false;
 
-	public function new(client:SocketClient, key:String, commands:Map<String, Array<String>>) {
+	public function new(client:SocketClient, key:String, commands:Map<String, Array<Pair<Bool, String>>>) {
+		this.client = client;
 		this.key = key;
 		this.commands = commands;
+		client.onClose < closeHandler;
+		client.onData << dataHandler;
 		protocol = new RemoteProtocol(client);
+		pony.time.Timer.repeat(10000, repeatHandler);
 		if (key == null) {
 			start();
 		} else {
 			protocol.onAuth < authHandler;
 		}
+	}
+
+	private function dataHandler():Void needKick = false;
+
+	private function repeatHandler():Void {
+		if (needKick) {
+			client.destroy();
+		} else {
+			needKick = true;
+		}
+	}
+
+	private function closeHandler():Void {
+		Sys.println('Disconnect');
+		protocol.file.cancel();
 	}
 
 	private function authHandler(v:String):Void {
@@ -54,30 +77,41 @@ class ServerRemoteInstanse {
 			start();
 		} else {
 			log('Auth failed');
-			pony.time.DeltaTime.skipUpdate(protocol.socket.destroy);
+			pony.time.DeltaTime.skipUpdate(client.destroy);
 		}
 	}
 
 	private function start():Void {
-		protocol.file.enabled = true;
+		protocol.file.enable();
+		protocol.file.onData << function() Sys.print('.');
 		protocol.onCommand << commandHandler;
+		protocol.readyRemote();
 	}
 
 	private function log(s:String):Void {
+		needKick = false;
 		Sys.println(s);
 		protocol.log.log(s);
 	}
 
+	private function prlog(s:String):Void {
+		needKick = false;
+		Sys.println(s);
+		if (cmdRLog) protocol.log.log(s);
+	}
+
 	private function commandHandler(command:String):Void {
+		Sys.println('');
 		currentCommand = command;
-		var c:Array<String> = commands[command];
+		var c:Array<Pair<Bool, String>> = commands[command];
 		if (c == null) {
 			childExitHandler(404);
 			return;
 		}
-		log(c[0]);
-		var p = ChildProcess.exec(c[0], execHandler);
-		p.stdout.on('data', log);
+		log(c[0].b);
+		cmdRLog = c[0].a;
+		var p = ChildProcess.exec(c[0].b, execHandler);
+		p.stdout.on('data', prlog);
 		p.stderr.on('data', log);
 		p.on('exit', childExitHandler);
 	}
@@ -87,6 +121,7 @@ class ServerRemoteInstanse {
 	}
 
 	private function childExitHandler(code:Int):Void {
+		needKick = false;
 		//log('Child exited with code $code');
 		protocol.commandCompleteRemote(currentCommand, code);
 	}

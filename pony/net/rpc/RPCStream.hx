@@ -56,6 +56,7 @@ import pony.ds.WriteStream;
 
 	private function beginReadHandler(data:Bytes):Void {
 		writeSream = new WriteStream<Bytes>();
+		writeSream.data(data);
 
 		onStreamEnd < endRead;
 		onError < endRead;
@@ -67,7 +68,6 @@ import pony.ds.WriteStream;
 		writeSream.onCancel << cancelRemote;
 		writeSream.onComplete << completeRemote;
 		eRead.dispatch(writeSream.readStream);
-		writeSream.data(data);
 	}
 
 	public function write(rs:ReadStream<Bytes>):Void {
