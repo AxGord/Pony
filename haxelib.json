@@ -19,8 +19,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Streams and fixes",
-"version": "0.6.8",
+"releasenote": "Windows File read stream",
+"version": "0.6.9",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }

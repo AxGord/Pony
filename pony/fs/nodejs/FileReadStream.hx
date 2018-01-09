@@ -33,6 +33,7 @@ import pony.ds.WriteStream;
 
 class FileReadStream extends ReadStream<Bytes> {
 
+	private static inline var DEFAULT_BLOCK_SIZE:Int = 4096;
 	private var writeStream:WriteStream<Bytes>;
 	private var fd:Int;
 	private var buffer:Buffer;
@@ -72,7 +73,7 @@ class FileReadStream extends ReadStream<Bytes> {
 		if (stop) return;
 		if (err == null) {
 			size = cast stats.size;
-			buffer = new Buffer(stats.blksize);
+			buffer = new Buffer(stats.blksize == null ? DEFAULT_BLOCK_SIZE : stats.blksize);
 			var b:BytesOutput = new BytesOutput();
 			b.writeFloat(size);
 			writeStream.data(b.getBytes());

@@ -109,12 +109,14 @@ class Unpack extends Module {
 
 	private function unzip(c:ZipConfig):Void {
 		log('Unzip: ' + c.file);
-		for (e in haxe.zip.Reader.readZip(sys.io.File.read(c.file))) {
+		var input = sys.io.File.read(c.file);
+		for (e in haxe.zip.Reader.readZip(input)) {
 			if (c.log) log(e.fileName);
 			var f:String = c.path + e.fileName;
 			Utils.createPath(f);
 			sys.io.File.saveBytes(f, haxe.zip.Reader.unzip(e));
 		}
+		input.close();
 		if (c.rm) {
 			log('Delete: ' + c.file);
 			sys.FileSystem.deleteFile(c.file);

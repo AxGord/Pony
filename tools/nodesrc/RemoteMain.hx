@@ -117,7 +117,7 @@ class RemoteMain {
 			runCommands();
 		} else {
 			Sys.println('End with error $code');
-			end();
+			end(code);
 		}
 	}
 
@@ -133,9 +133,9 @@ class RemoteMain {
 		}
 	}
 
-	function end():Void {
+	function end(code:Int = 0):Void {
 		protocol.socket.destroy();
-		Sys.exit(0);
+		Sys.exit(code);
 	}
 
 	static function main():Void {
