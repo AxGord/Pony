@@ -4,6 +4,10 @@ environment:
   global:
     HAXELIB_ROOT: C:\projects\haxelib
 
+init:
+  - set PATH="%PATH%:C:\Program Files\AppVeyor\BuildAgent\"
+  - ps: $env:path
+
 install:
   # Install the haxe chocolatey package (https://chocolatey.org/packages/haxe)
   - cinst haxe -y
