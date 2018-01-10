@@ -7,7 +7,6 @@ environment:
 install:
   # Install the haxe chocolatey package (https://chocolatey.org/packages/haxe)
   - cinst haxe -y
-  - cinst nodejs -y
   - RefreshEnv
   # Setup haxelib
   - mkdir "%HAXELIB_ROOT%"
@@ -23,6 +22,7 @@ install:
   - haxelib install hamcrest || type log.txt && cmd /C exit 1
   - haxelib install continuation || type log.txt && cmd /C exit 1
   - haxelib list
+  - ps: $env:path
 
 # We don't use the build section, but do both build and 
 # test in `test_script:`.
