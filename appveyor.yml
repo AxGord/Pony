@@ -4,10 +4,6 @@ environment:
   global:
     HAXELIB_ROOT: C:\projects\haxelib
 
-init:
-  - set PATH=%PATH%;C:\Program Files\AppVeyor\BuildAgent\
-  - ps: $env:path
-
 install:
   # Install the haxe chocolatey package (https://chocolatey.org/packages/haxe)
   - cinst haxe -y
@@ -26,6 +22,7 @@ install:
   - haxelib install hamcrest || type log.txt && cmd /C exit 1
   - haxelib install continuation || type log.txt && cmd /C exit 1
   - haxelib list
+  - set PATH=%PATH%;C:\Program Files\AppVeyor\BuildAgent\
   - ps: $env:path
 
 # We don't use the build section, but do both build and 
