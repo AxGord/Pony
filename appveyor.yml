@@ -5,7 +5,7 @@ environment:
     HAXELIB_ROOT: C:\projects\haxelib
 
 init:
-  - set PATH="%PATH%:C:\Program Files\AppVeyor\BuildAgent\"
+  - set PATH="%PATH%;C:\Program Files\AppVeyor\BuildAgent\"
   - ps: $env:path
 
 install:
