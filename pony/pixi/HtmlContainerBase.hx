@@ -34,6 +34,7 @@ import pony.geom.Point;
 class HtmlContainerBase {
 
 	public static inline var POSITION:String = 'absolute';
+	public static inline var POSITION_FIXED:String = 'fixed';
 
 	private var app:App;
 
@@ -42,14 +43,23 @@ class HtmlContainerBase {
 	public var targetPos(default, set):Point<Float> = new Point(.0, .0);
 
 	private var lastRect:Rect<Float> = null;
+	private var fixed:Bool;
 
-	public function new(targetRect:Rect<Float>, ?app:App, ?targetStyle:CSSStyleDeclaration) {
+	public function new(targetRect:Rect<Float>, ?app:App, ?targetStyle:CSSStyleDeclaration, fixed:Bool = false) {
 		this.targetRect = targetRect;
+		this.fixed = fixed;
 		if (app == null)
 			app = App.main;
 		this.app = app;
 		this.targetStyle = targetStyle;
 		this.targetPos = targetPos;
+		if (fixed) {
+			js.Browser.window.addEventListener('scroll', resize);
+		}
+	}
+
+	private function scrollHandler():Void {
+		pony.time.DeltaTime.fixedUpdate < resize;
 	}
 
 	private function resizeHandler(scale:Float):Void {
@@ -59,14 +69,22 @@ class HtmlContainerBase {
 			width: scale * targetRect.width,
 			height: scale * targetRect.height
 		};
-		lastRect.x += lastRect.width;
-		lastRect.y += lastRect.height;
+		if (!fixed) {
+			lastRect.x += lastRect.width;
+			lastRect.y += lastRect.height;
+		}
 		resize();
 	}
 
 	private function resize():Void {
-		targetStyle.bottom = px(app.parentDom.clientHeight - lastRect.y);
-		targetStyle.right = px(app.parentDom.clientWidth - lastRect.x);
+		if (fixed) {
+			var b = app.parentDom.getBoundingClientRect();
+			targetStyle.top = px(b.top + lastRect.y);
+			targetStyle.left = px(b.left + lastRect.x);
+		} else {
+			targetStyle.bottom = px(app.parentDom.clientHeight - lastRect.y);
+			targetStyle.right = px(app.parentDom.clientWidth - lastRect.x);
+		}
 		targetStyle.width = px(lastRect.width);
 		targetStyle.height = px(lastRect.height);
 	}
@@ -80,7 +98,7 @@ class HtmlContainerBase {
 			app.onResize >> resizeHandler;
 			app.onFrequentResize >> resize;
 		} else {
-			s.position = POSITION;
+			s.position = fixed ? POSITION_FIXED : POSITION;
 			app.onResize << resizeHandler;
 			app.onFrequentResize << resize;
 			resizeHandler(app.scale);

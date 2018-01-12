@@ -19,8 +19,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Windows File read stream",
-"version": "0.6.9",
+"releasenote": "Read stream buffer size and fixed position for pixi html container",
+"version": "0.7.0",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }

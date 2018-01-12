@@ -33,7 +33,7 @@ import pony.ds.WriteStream;
 
 class FileReadStream extends ReadStream<Bytes> {
 
-	private static inline var DEFAULT_BLOCK_SIZE:Int = 4096;
+	private static inline var DEFAULT_BLOCK_SIZE:Int = 4 * 1024 * 1024;// 4 mb
 	private var writeStream:WriteStream<Bytes>;
 	private var fd:Int;
 	private var buffer:Buffer;

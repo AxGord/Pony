@@ -315,7 +315,7 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 					y: parseAndScale(attrs.y),
 					width: parseAndScale(attrs.w),
 					height: parseAndScale(attrs.h)
-				}, app);
+				}, app, attrs.fixed.isTrue());
 				var src = attrs.src;
 				if (src != null)
 					video.video.loadVideo(src);
