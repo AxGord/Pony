@@ -21,29 +21,15 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-import haxe.io.Bytes;
-import pony.events.Signal0;
-import pony.events.Signal1;
-import pony.events.Signal2;
-import pony.net.rpc.RPC;
-import pony.net.rpc.IRPC;
-import pony.net.rpc.RPCLog;
-import pony.net.rpc.RPCFileTransport;
+package pony;
 
 /**
- * RemoteProtocol
+ * SPair
  * @author AxGord <axgord@gmail.com>
  */
-class RemoteProtocol extends RPC<RemoteProtocol> implements IRPC {
+@:forward(a, b, array)
+abstract SPair<T>(Pair<T, T>) to Pair<T, T> from Pair<T, T> {
 
-	@:sub public var log:RPCLog;
-	@:sub public var file:RPCFileTransport;
-
-	@:rpc public var onAuth:Signal1<String>;
-	@:rpc public var onReady:Signal0;
-	@:rpc public var onCommand:Signal1<String>;
-	@:rpc public var onCommandComplete:Signal2<String, Int>;
-	@:rpc public var onZipLog:Signal1<Bytes>;
-	@:rpc public var onGetInitFile:Signal0;
-
+	public inline function new(a:T, b:T) this = new Pair(a, b);
+	
 }

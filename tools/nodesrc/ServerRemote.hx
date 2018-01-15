@@ -47,7 +47,7 @@ class ServerRemote {
 		} catch (_:Any) {}
 
 		for (node in xml.node.commands.elements) {
-			var d:Pair<Bool, String> = new Pair(!node.isFalse('log'), StringTools.trim(node.innerData));
+			var d:Pair<Bool, String> = new Pair(!node.isFalse('zipLog'), StringTools.trim(node.innerData));
 			if (!commands.exists(node.name))
 				commands[node.name] = [d];
 			else

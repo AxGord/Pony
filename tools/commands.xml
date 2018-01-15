@@ -53,6 +53,9 @@
 		<arg>Configure name</arg>
 		<arg>Debug or release</arg>
 	</ftp>
+	<hash>
+		<help>Create hashes list for files from config</help>
+	</hash>
 	<haxelib>
 		<help>Haxelib tools</help>
 		<arg>Operation</arg>

@@ -24,6 +24,7 @@
 #if nodejs
 import js.node.ChildProcess;
 import sys.io.File;
+import haxe.io.BytesOutput;
 import pony.net.SocketClient;
 import pony.Pair;
 
@@ -38,7 +39,8 @@ class ServerRemoteInstanse {
 	private var key:String;
 	private var protocol:RemoteProtocol;
 	private var commands:Map<String, Array<Pair<Bool, String>>> = new Map();
-	private var cmdRLog:Bool = true;
+	private var zipRLog:Bool = true;
+	private var packLog:BytesOutput;
 	private var needKick:Bool = false;
 
 	public function new(client:SocketClient, key:String, commands:Map<String, Array<Pair<Bool, String>>>) {
@@ -85,7 +87,14 @@ class ServerRemoteInstanse {
 		protocol.file.enable();
 		protocol.file.onData << function() Sys.print('.');
 		protocol.onCommand << commandHandler;
+		protocol.onGetInitFile << getInitFileHandler;
 		protocol.readyRemote();
+	}
+
+	private function getInitFileHandler():Void {
+		var file = 'init.zip';
+		Sys.println('Send file: $file');
+		protocol.file.sendFile(file);
 	}
 
 	private function log(s:String):Void {
@@ -97,11 +106,15 @@ class ServerRemoteInstanse {
 	private function prlog(s:String):Void {
 		needKick = false;
 		Sys.println(s);
-		if (cmdRLog) protocol.log.log(s);
+		if (zipRLog)
+			packLog.writeString(s + '\n');
+		else
+			protocol.log.log(s);
 	}
 
 	private function commandHandler(command:String):Void {
 		Sys.println('');
+		packLog = new BytesOutput();
 		currentCommand = command;
 		var c:Array<Pair<Bool, String>> = commands[command];
 		if (c == null) {
@@ -109,10 +122,10 @@ class ServerRemoteInstanse {
 			return;
 		}
 		log(c[0].b);
-		cmdRLog = c[0].a;
+		zipRLog = c[0].a;
 		var p = ChildProcess.exec(c[0].b, execHandler);
 		p.stdout.on('data', prlog);
-		p.stderr.on('data', log);
+		p.stderr.on('data', prlog);
 		p.on('exit', childExitHandler);
 	}
 
@@ -122,6 +135,11 @@ class ServerRemoteInstanse {
 
 	private function childExitHandler(code:Int):Void {
 		needKick = false;
+		if (zipRLog) {
+			packLog.flush();
+			//protocol.zipLogRemote(haxe.zip.Compress.run(packLog.getBytes(), 9));
+			protocol.zipLogRemote(packLog.getBytes());
+		}
 		//log('Child exited with code $code');
 		protocol.commandCompleteRemote(currentCommand, code);
 	}

@@ -22,10 +22,12 @@
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
 package pony.fs;
+
 #if (neko || cpp || nodejs || php)
-import pony.Priority.Priority;
+import pony.Priority;
 import sys.FileSystem;
 using Lambda;
+
 /**
  * Directory
  * @author AxGord <axgord@gmail.com>
@@ -74,7 +76,6 @@ abstract Dir(Unit) from Unit {
 				result.push(u.file);
 			}
 		}
-		
 		return result;
 	}
 
@@ -101,5 +102,6 @@ abstract Dir(Unit) from Unit {
 	public inline function iterator():Iterator<Dir> return this.iterator();
 	
 	@:op(A + B) inline public function addString(a:String):Unit return this.addString(a);
+
 }
 #end

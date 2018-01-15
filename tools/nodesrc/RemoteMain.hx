@@ -23,6 +23,7 @@
 **/
 #if nodejs
 import sys.io.File;
+import haxe.io.Bytes;
 import haxe.xml.Fast;
 import haxe.Json;
 import js.Node;
@@ -53,7 +54,36 @@ class RemoteMain {
 
 	function new() {
 
-		var cfg = Utils.parseArgs(Sys.args());
+		var args = Sys.args();
+		if (args[0] == 'create') {
+			var urla = args[1].split('@');
+			var key:String = null;
+			var url:Array<String> = null;
+			if (urla.length > 1) {
+				key = urla[0];
+				url = urla[1].split(':');
+			} else {
+				url = urla[0].split(':');
+			}
+			var host:String = url[0];
+			var port:Int = url.length > 1 ? Std.parseInt(url[1]) : null;
+			var cl = new pony.net.SocketClient(host, port);
+			protocol = new RemoteProtocol(cl);
+			protocol.log.onLog << logHandler;
+			protocol.onReady << function() {
+				protocol.file.enable();
+				protocol.file.stream.onStreamData << streamDataHandler;
+				protocol.file.stream.onStreamEnd << protocol.socket.destroy;
+				protocol.file.stream.onError << error;
+				protocol.getInitFileRemote();
+			}
+			if (key != null) {
+				protocol.authRemote(key);
+			}
+			return;
+		}
+
+		var cfg = Utils.parseArgs(args);
 		var xml = Utils.getXml();
 		
 		var rx = xml.node.remote;
@@ -74,6 +104,7 @@ class RemoteMain {
 		protocol.log.onLog << logHandler;
 		protocol.onCommandComplete << commandCompleteHandler;
 		protocol.onReady << readyHandler;
+		protocol.onZipLog << zipLogHandler;
 
 		if (reader.cfg.key != null) {
 			protocol.authRemote(reader.cfg.key);
@@ -94,7 +125,7 @@ class RemoteMain {
 
 	private function error():Void {
 		Sys.println('Error');
-		end();
+		end(1);
 	}
 
 	private function streamDataHandler():Void {
@@ -135,7 +166,12 @@ class RemoteMain {
 
 	function end(code:Int = 0):Void {
 		protocol.socket.destroy();
-		Sys.exit(code);
+		if (code > 0) Sys.exit(code);
+	}
+
+	function zipLogHandler(b:Bytes):Void {
+		//File.saveBytes('log.txt', haxe.zip.Uncompress.run(b));
+		File.saveBytes('log.txt', b);
 	}
 
 	static function main():Void {

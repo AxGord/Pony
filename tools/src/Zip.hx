@@ -21,7 +21,10 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
+
 import haxe.xml.Fast;
+import sys.FileSystem;
+import sys.io.File;
 
 /**
  * ZipMain
@@ -35,6 +38,7 @@ class Zip {
 	private var debug:Bool;
 	private var app:String;
 	private var compressLvl:Int = 9;
+	private var allowfilter:Array<String> = null;
 	
 	public function new(xml:Fast, app:String, debug:Bool) {
 		Sys.println('Zip files');
@@ -46,6 +50,7 @@ class Zip {
 		var zip = new pony.ZipTool(output, prefix, compressLvl);
 		zip.onLog << Sys.println;
 		zip.onError << function(err:String) throw err;
+		zip.allowList = allowfilter;
 		zip.writeList(input).end();
 	}
 	
@@ -60,9 +65,15 @@ class Zip {
 				case 'release': if (!debug) getData(node);
 				case 'prefix': prefix = node.innerData;
 				case 'compress': compressLvl = Std.parseInt(node.innerData);
+				case 'hashfilter': allowfilter = getMap(node.innerData);
 				case _: throw 'Wrong zip tag';
 			}
 		}
+	}
+
+	private function getMap(file:String):Array<String> {
+		var c = FileSystem.exists(file) ? File.getContent(file) : '';
+		return [for (e in c.split('\n')) e.split(':')[0]];
 	}
 	
 }

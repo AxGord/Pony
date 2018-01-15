@@ -43,6 +43,7 @@ class BAReader<T:BAConfig> extends XmlConfigReader<T> implements pony.magic.HasA
 			case 'build': createSection(xml, Build);
 			case 'run': createSection(xml, Run);
 			case 'zip': createSection(xml, Zip);
+			case 'hash': createSection(xml, Hash);
 
 			case _: throw 'Unknown tag';
 		}

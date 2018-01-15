@@ -21,29 +21,36 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-import haxe.io.Bytes;
-import pony.events.Signal0;
-import pony.events.Signal1;
-import pony.events.Signal2;
-import pony.net.rpc.RPC;
-import pony.net.rpc.IRPC;
-import pony.net.rpc.RPCLog;
-import pony.net.rpc.RPCFileTransport;
+package pony;
+
+import haxe.MainLoop;
 
 /**
- * RemoteProtocol
+ * Thread Tasks
  * @author AxGord <axgord@gmail.com>
  */
-class RemoteProtocol extends RPC<RemoteProtocol> implements IRPC {
+abstract ThreadTasks(UInt) {
 
-	@:sub public var log:RPCLog;
-	@:sub public var file:RPCFileTransport;
+	@:extern public inline function new() this = 0;
 
-	@:rpc public var onAuth:Signal1<String>;
-	@:rpc public var onReady:Signal0;
-	@:rpc public var onCommand:Signal1<String>;
-	@:rpc public var onCommandComplete:Signal2<String, Int>;
-	@:rpc public var onZipLog:Signal1<Bytes>;
-	@:rpc public var onGetInitFile:Signal0;
+	@:extern public inline function add(f:Void -> Void):Void {
+		this++;
+		MainLoop.addThread(function():Void {
+			f();
+			this--;
+		});
+	}
+
+	@:extern public inline function wait():Void while (this > 0) Sys.sleep(0.1);
+
+	@:extern public static inline function multyTask(count:Int, f:Void -> Void):Void {
+		if (count == 1) {
+			f();
+		} else if (count > 1) {
+			var t = new ThreadTasks();
+			while (count-- > 0) t.add(f);
+			t.wait();
+		}
+	}
 
 }

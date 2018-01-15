@@ -34,6 +34,8 @@ import types.BASection;
  */
 class Clean extends Module {
 
+	private static inline var PRIORITY:Int = 10;
+
 	private var beforeDirs:Map<BASection, Array<String>> = new Map();
 	private var beforeUnits:Map<BASection, Array<String>> = new Map();
 	private var afterDirs:Map<BASection, Array<String>> = new Map();
@@ -43,34 +45,11 @@ class Clean extends Module {
 
 	override public function init():Void {
 		if (xml == null) return;
-
-		modules.commands.onServer.once(emptyConfig, -20);
-		modules.commands.onPrepare.once(getConfig, -20);
-		modules.commands.onBuild.once(getConfig, -20);
-		modules.commands.onRun.once(getConfig, -20);
-		modules.commands.onZip.once(getConfig, -20);
-
-		modules.commands.onServer.once(before.bind(Server), -10);
-		modules.commands.onPrepare.once(before.bind(Prepare), -10);
-		modules.commands.onBuild.once(before.bind(Build), -10);
-		modules.commands.onRun.once(before.bind(Run), -10);
-		modules.commands.onZip.once(before.bind(Zip), -10);
-
-		modules.commands.onServer.once(after.bind(Server), 10);
-		modules.commands.onPrepare.once(after.bind(Prepare), 10);
-		modules.commands.onBuild.once(after.bind(Build), 10);
-		modules.commands.onRun.once(after.bind(Run), 10);
-		modules.commands.onZip.once(after.bind(Zip), 10);
+		addConfigListener();
+		addListeners(PRIORITY, before, after);
 	}
 
-	private function readConfig(ac:AppCfg):Void {
-
-		modules.commands.onServer >> emptyConfig;
-		modules.commands.onPrepare >> getConfig;
-		modules.commands.onBuild >> getConfig;
-		modules.commands.onRun >> getConfig;
-		modules.commands.onZip >> getConfig;
-
+	override private function readConfig(ac:AppCfg):Void {
 		new CleanReader(xml, {
 			debug: ac.debug,
 			app: ac.app,
@@ -81,37 +60,27 @@ class Clean extends Module {
 		}, configHandler);
 	}
 
-	private function getConfig(a:String, b:String):Void readConfig(Utils.parseArgs([a, b]));
-
-	private function emptyConfig():Void readConfig({debug:false, app:null}); 
-
 	private function before(section:BASection):Void {
-		if (beforeDirs.exists(section)) {
-			for (d in beforeDirs[section]) {
-				log('Clean directory: $d');
-				(d:Dir).deleteContent();
-			}
-		}
-		if (beforeUnits.exists(section)) {
-			for (u in beforeUnits[section]) {
-				log('Delete file: $u');
-				(u:Unit).delete();
-			}
-		}
+		if (beforeDirs.exists(section)) cleanDirs(beforeDirs[section]);
+		if (beforeUnits.exists(section)) deleteUnits(beforeUnits[section]);
 	}
 
 	private function after(section:BASection):Void {
-		if (afterDirs.exists(section)) {
-			for (d in afterDirs[section]) {
-				log('Clean directory: $d');
-				(d:Dir).deleteContent();
-			}
+		if (afterDirs.exists(section)) cleanDirs(afterDirs[section]);
+		if (afterUnits.exists(section)) deleteUnits(afterUnits[section]);
+	}
+
+	private function cleanDirs(data:Array<String>):Void {
+		for (d in data) {
+			log('Clean directory: $d');
+			(d:Dir).deleteContent();
 		}
-		if (afterUnits.exists(section)) {
-			for (u in afterUnits[section]) {
-				log('Delete file: $u');
-				(u:Unit).delete();
-			}
+	}
+
+	private function deleteUnits(data:Array<String>):Void {
+		for (u in data) {
+			log('Delete file: $u');
+			(u:Unit).delete();
 		}
 	}
 

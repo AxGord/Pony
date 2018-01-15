@@ -105,12 +105,13 @@ class Main {
 		var modules:Modules = new Modules(commands);
 		modules.register(new module.Clean());
 		modules.register(new module.Unpack());
+		modules.register(new module.Server());
 		modules.register(new module.Remote());
+		modules.register(new module.Hash());
 		modules.init();
 
 		commands.onNothing < showLogo;
 		commands.onHelp < showHelp;
-		commands.onServer < function() Utils.runAndKeepNode('ponyServer');
 		commands.onPrepare < cfgAndCall.bind(_, _, prepare);
 		commands.onBuild < cfgAndCall.bind(_, _, rbuild);
 

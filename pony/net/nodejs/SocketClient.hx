@@ -69,7 +69,7 @@ class SocketClient extends SocketClientBase {
 	public function send(data:BytesOutput):Void	q.call(data);
 	
 	private function _send(data:BytesOutput):Void {
-		socket.write(js.node.Buffer.hxFromBytes(data.getBytes()), sendNextAfterTimeout);
+		if (socket != null) socket.write(js.node.Buffer.hxFromBytes(data.getBytes()), sendNextAfterTimeout);
 	}
 
 	private function sendNextAfterTimeout():Void {

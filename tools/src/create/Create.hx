@@ -32,6 +32,14 @@ class Create {
 
 	public static function run(a:String, b:String):Void {
 
+		if (a == 'remote') {
+			if (Utils.runNode('ponyRemote', ['create', b]) > 0) return;
+			pony.ZipTool.unpackFile('init.zip');
+			sys.FileSystem.deleteFile('init.zip');
+			Utils.command('pony', ['prepare']);
+			return;
+		}
+
 		var type:ProjectType = null;
 		if (a != null) for (t in ProjectType.createAll()) {
 			if (t.getName().toLowerCase() == a.toLowerCase()) {

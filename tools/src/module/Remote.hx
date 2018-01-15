@@ -23,6 +23,9 @@
 **/
 package module;
 
+import sys.io.File;
+import sys.FileSystem;
+
 /**
  * Remote module
  * @author AxGord <axgord@gmail.com>
@@ -37,7 +40,14 @@ class Remote extends Module {
 	}
 
 	private function run(a:String, b:String):Void {
-		Utils.runNode('ponyRemote', b != null ? [a, b] : (a != null ? [a] : []));
+		var code = Utils.runNode('ponyRemote', b != null ? [a, b] : (a != null ? [a] : []));
+		if (code > 0) {
+			var log = 'log.txt';
+			if (FileSystem.exists(log)) {
+				Sys.println(File.getContent(log));
+			}
+			Utils.error('Server build error', code);
+		}
 	}
 
 }

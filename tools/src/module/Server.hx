@@ -21,29 +21,22 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-import haxe.io.Bytes;
-import pony.events.Signal0;
-import pony.events.Signal1;
-import pony.events.Signal2;
-import pony.net.rpc.RPC;
-import pony.net.rpc.IRPC;
-import pony.net.rpc.RPCLog;
-import pony.net.rpc.RPCFileTransport;
+package module;
 
 /**
- * RemoteProtocol
+ * Server module
  * @author AxGord <axgord@gmail.com>
  */
-class RemoteProtocol extends RPC<RemoteProtocol> implements IRPC {
+class Server extends Module {
 
-	@:sub public var log:RPCLog;
-	@:sub public var file:RPCFileTransport;
+	public function new() super('server');
 
-	@:rpc public var onAuth:Signal1<String>;
-	@:rpc public var onReady:Signal0;
-	@:rpc public var onCommand:Signal1<String>;
-	@:rpc public var onCommandComplete:Signal2<String, Int>;
-	@:rpc public var onZipLog:Signal1<Bytes>;
-	@:rpc public var onGetInitFile:Signal0;
+	override public function init():Void {
+		if (xml == null) return;
+		if (pony.text.XmlTools.isTrue(xml, 'keep'))
+			modules.commands.onServer < Utils.runAndKeepNode.bind('ponyServer');
+		else
+			modules.commands.onServer < Utils.runNode.bind('ponyServer');
+	}
 
 }

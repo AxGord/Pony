@@ -156,7 +156,7 @@ class Utils {
 	}
 
 	public static function runAndKeepNode(name:String, ?args:Array<String>):Void {
-		while (runNode(name, args) != 0) {}
+		while (true) runNode(name, args);
 	}
 
 	#end

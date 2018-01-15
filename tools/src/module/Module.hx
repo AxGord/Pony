@@ -24,12 +24,15 @@
 package module;
 
 import haxe.xml.Fast;
+import types.BASection;
 
 /**
  * Module
  * @author AxGord <axgord@gmail.com>
  */
 class Module extends pony.Logable implements pony.magic.HasAbstract {
+
+	private static inline var CONFIG_PRIORITY:Int = -20;
 
 	public var modules:Modules;
 	private var xml(get, never):Fast;
@@ -48,5 +51,50 @@ class Module extends pony.Logable implements pony.magic.HasAbstract {
 	}
 
 	@:abstract public function init():Void;
+	private function readConfig(ac:AppCfg):Void {}
+
+	private function addConfigListener():Void {
+		modules.commands.onServer.once(emptyConfig, CONFIG_PRIORITY);
+		modules.commands.onPrepare.once(getConfig, CONFIG_PRIORITY);
+		modules.commands.onBuild.once(getConfig, CONFIG_PRIORITY);
+		modules.commands.onRun.once(getConfig, CONFIG_PRIORITY);
+		modules.commands.onZip.once(getConfig, CONFIG_PRIORITY);
+		modules.commands.onHash.once(emptyConfig, CONFIG_PRIORITY);
+	}
+
+	private function removeConfigListener():Void {
+		modules.commands.onServer >> emptyConfig;
+		modules.commands.onPrepare >> getConfig;
+		modules.commands.onBuild >> getConfig;
+		modules.commands.onRun >> getConfig;
+		modules.commands.onZip >> getConfig;
+		modules.commands.onHash >> emptyConfig;
+	}
+
+	private function addListeners(priority:Int, before:BASection -> Void, after:BASection -> Void):Void {
+		modules.commands.onServer.once(before.bind(Server), -priority);
+		modules.commands.onPrepare.once(before.bind(Prepare), -priority);
+		modules.commands.onBuild.once(before.bind(Build), -priority);
+		modules.commands.onRun.once(before.bind(Run), -priority);
+		modules.commands.onZip.once(before.bind(Zip), -priority);
+		modules.commands.onHash.once(before.bind(Hash), -priority);
+
+		modules.commands.onServer.once(after.bind(Server), priority);
+		modules.commands.onPrepare.once(after.bind(Prepare), priority);
+		modules.commands.onBuild.once(after.bind(Build), priority);
+		modules.commands.onRun.once(after.bind(Run), priority);
+		modules.commands.onZip.once(after.bind(Zip), priority);
+		modules.commands.onHash.once(after.bind(Hash), priority);
+	}
+
+	private function getConfig(a:String, b:String):Void {
+		removeConfigListener();
+		readConfig(Utils.parseArgs([a, b]));
+	}
+
+	private function emptyConfig():Void {
+		removeConfigListener();
+		readConfig({debug:false, app:null});
+	}
 
 }

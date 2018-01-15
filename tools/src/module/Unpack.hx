@@ -34,6 +34,8 @@ using pony.text.XmlTools;
  */
 class Unpack extends Module {
 
+	private static inline var PRIORITY:Int = 5;
+
 	private var beforeZips:Map<BASection, Array<ZipConfig>> = new Map();
 	private var afterZips:Map<BASection, Array<ZipConfig>> = new Map();
 
@@ -41,34 +43,11 @@ class Unpack extends Module {
 
 	override public function init():Void {
 		if (xml == null) return;
-
-		modules.commands.onServer.once(emptyConfig, -20);
-		modules.commands.onPrepare.once(getConfig, -20);
-		modules.commands.onBuild.once(getConfig, -20);
-		modules.commands.onRun.once(getConfig, -20);
-		modules.commands.onZip.once(getConfig, -20);
-
-		modules.commands.onServer.once(before.bind(Server), -5);
-		modules.commands.onPrepare.once(before.bind(Prepare), -5);
-		modules.commands.onBuild.once(before.bind(Build), -5);
-		modules.commands.onRun.once(before.bind(Run), -5);
-		modules.commands.onZip.once(before.bind(Zip), -5);
-
-		modules.commands.onServer.once(after.bind(Server), 5);
-		modules.commands.onPrepare.once(after.bind(Prepare), 5);
-		modules.commands.onBuild.once(after.bind(Build), 5);
-		modules.commands.onRun.once(after.bind(Run), 5);
-		modules.commands.onZip.once(after.bind(Zip), 5);
+		addConfigListener();
+		addListeners(PRIORITY, before, after);
 	}
 
-	private function readConfig(ac:AppCfg):Void {
-
-		modules.commands.onServer >> emptyConfig;
-		modules.commands.onPrepare >> getConfig;
-		modules.commands.onBuild >> getConfig;
-		modules.commands.onRun >> getConfig;
-		modules.commands.onZip >> getConfig;
-		
+	override private function readConfig(ac:AppCfg):Void {
 		new UnpackReader(xml, {
 			debug: ac.debug,
 			app: ac.app,
@@ -77,10 +56,6 @@ class Unpack extends Module {
 			zips: []
 		}, configHandler);
 	}
-
-	private function getConfig(a:String, b:String):Void readConfig(Utils.parseArgs([a, b]));
-
-	private function emptyConfig():Void readConfig({debug:false, app:null}); 
 
 	private function configHandler(cfg:UnpackConfig):Void {
 		if (cfg.zips.length == 0) return;
@@ -109,14 +84,7 @@ class Unpack extends Module {
 
 	private function unzip(c:ZipConfig):Void {
 		log('Unzip: ' + c.file);
-		var input = sys.io.File.read(c.file);
-		for (e in haxe.zip.Reader.readZip(input)) {
-			if (c.log) log(e.fileName);
-			var f:String = c.path + e.fileName;
-			Utils.createPath(f);
-			sys.io.File.saveBytes(f, haxe.zip.Reader.unzip(e));
-		}
-		input.close();
+		pony.ZipTool.unpackFile(c.file, c.path, c.log ? function(s:String) log(s) : null);
 		if (c.rm) {
 			log('Delete: ' + c.file);
 			sys.FileSystem.deleteFile(c.file);

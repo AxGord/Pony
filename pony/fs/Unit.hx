@@ -22,6 +22,7 @@
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
 package pony.fs;
+
 #if (neko || cpp || nodejs || php)
 import pony.Priority;
 import sys.FileSystem;
@@ -30,6 +31,7 @@ import sys.FileSystem;
  * File system Unit
  * @author AxGord <axgord@gmail.com>
  */
+@:forward(map)
 abstract Unit(Priority<String>) {
 
 	public var isDir(get, never):Bool;
@@ -91,7 +93,7 @@ abstract Unit(Priority<String>) {
 	@:from inline static private function fromPriority(p:Priority<String>):Unit return new Unit(p);
 	@:to inline public function toPriority():Priority<String> return this;
 	
-	@:from inline static private function fromArray(a:Array<String>):Unit return new Priority(a);
+	@:from inline static private function fromArray(a:Array<String>):Unit return new Priority(a.map(removeLastSlash));
 	@:to inline public function toArray():Array<String> return this.data;
 	
 	inline public function wayStringIterator():Iterator<String> return this.iterator();
@@ -109,7 +111,7 @@ abstract Unit(Priority<String>) {
 	
 	@:arrayAccess public inline function arrayAccess(key:Int):Unit return this.data[key];
 	
-	@:op(A + B) inline public function addString(a:String):Unit return [for (e in this) e+'/'+a];
+	@:op(A + B) inline public function addString(a:String):Unit return [for (e in this) e + '/' + a];
 
 	@:extern public inline function delete():Void {
 		if (isDir)
@@ -117,5 +119,10 @@ abstract Unit(Priority<String>) {
 		else
 			file.delete();
 	}
+
+	private static function removeLastSlash(v:String):String {
+		return v.substr(-1) == '/' ?  v.substr(0, -1) : v;
+	}
+
 }
 #end
