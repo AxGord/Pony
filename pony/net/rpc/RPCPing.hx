@@ -21,31 +21,67 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-import haxe.io.Bytes;
+package pony.net.rpc;
+
 import pony.events.Signal0;
-import pony.events.Signal1;
-import pony.events.Signal2;
-import pony.net.rpc.RPC;
-import pony.net.rpc.IRPC;
-import pony.net.rpc.RPCLog;
-import pony.net.rpc.RPCFileTransport;
-import pony.net.rpc.RPCPing;
+import pony.time.Timer;
 
 /**
- * RemoteProtocol
+ * RPCLog
  * @author AxGord <axgord@gmail.com>
  */
-class RemoteProtocol extends RPC<RemoteProtocol> implements IRPC {
+@:final class RPCPing extends pony.net.rpc.RPCUnit<RPCPing> implements pony.net.rpc.IRPC {
 
-	@:sub public var log:RPCLog;
-	@:sub public var file:RPCFileTransport;
-	@:sub public var ping:RPCPing;
+	private static inline var REPEAR:Int = 10000;
 
-	@:rpc public var onAuth:Signal1<String>;
-	@:rpc public var onReady:Signal0;
-	@:rpc public var onCommand:Signal1<String>;
-	@:rpc public var onCommandComplete:Signal2<String, Int>;
-	@:rpc public var onZipLog:Signal1<Bytes>;
-	@:rpc public var onGetInitFile:Signal0;
+	@:auto public var onWarning:Signal0;
+	@:auto public var onRestore:Signal0;
+	@:auto public var onLostConnection:Signal0;
+
+	@:rpc public var onPing:Signal0;
+	@:rpc public var onPong:Signal0;
+
+	public function new() {
+		super();
+		onPing << pongRemote;
+	}
+
+	public function watch(repeatTime:Int = REPEAR):Void -> Void return new Watch(this, repeatTime).activity; 
+
+}
+
+private class Watch {
+
+	private var rpc:RPCPing;
+	private var silent:Bool = false;
+	private var ping:Bool = true;
+	private var timer:Timer;
+
+	public function new(rpc:RPCPing, repeatTime:Int) {
+		this.rpc = rpc;
+		rpc.onPing << activity;
+		rpc.onPong << activity;
+		timer = Timer.repeat(repeatTime, repeatHandler);
+	}
+
+	private function repeatHandler():Void {
+		if (silent) {
+			if (ping) {
+				ping = false;
+				@:privateAccess rpc.eWarning.dispatch();
+				rpc.pingRemote();
+			} else {
+				@:privateAccess rpc.eLostConnection.dispatch();
+			}
+		} else {
+			silent = true;
+		}
+	}
+
+	public function activity():Void {
+		timer.reset();
+		if (silent && !ping) @:privateAccess rpc.eRestore.dispatch();
+		silent = false;
+	}
 
 }

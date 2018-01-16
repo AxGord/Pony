@@ -41,30 +41,23 @@ class ServerRemoteInstanse {
 	private var commands:Map<String, Array<Pair<Bool, String>>> = new Map();
 	private var zipRLog:Bool = true;
 	private var packLog:BytesOutput;
-	private var needKick:Bool = false;
+
+	private var activity:Void -> Void;
 
 	public function new(client:SocketClient, key:String, commands:Map<String, Array<Pair<Bool, String>>>) {
 		this.client = client;
 		this.key = key;
 		this.commands = commands;
 		client.onClose < closeHandler;
-		client.onData << dataHandler;
 		protocol = new RemoteProtocol(client);
-		pony.time.Timer.repeat(10000, repeatHandler);
+		activity = protocol.ping.watch();
+		client.onData << activity;
+		protocol.ping.onLostConnection << client.destroy;
+
 		if (key == null) {
 			start();
 		} else {
 			protocol.onAuth < authHandler;
-		}
-	}
-
-	private function dataHandler():Void needKick = false;
-
-	private function repeatHandler():Void {
-		if (needKick) {
-			client.destroy();
-		} else {
-			needKick = true;
 		}
 	}
 
@@ -98,13 +91,16 @@ class ServerRemoteInstanse {
 	}
 
 	private function log(s:String):Void {
-		needKick = false;
+		activity();
 		Sys.println(s);
 		protocol.log.log(s);
 	}
 
 	private function prlog(s:String):Void {
-		needKick = false;
+		activity();
+		if (s.substr(-1) == '\n')
+			s = s.substr(0, -1);
+		if (s == '') return;
 		Sys.println(s);
 		if (zipRLog)
 			packLog.writeString(s + '\n');
@@ -134,7 +130,7 @@ class ServerRemoteInstanse {
 	}
 
 	private function childExitHandler(code:Int):Void {
-		needKick = false;
+		activity();
 		if (zipRLog) {
 			packLog.flush();
 			//protocol.zipLogRemote(haxe.zip.Compress.run(packLog.getBytes(), 9));
