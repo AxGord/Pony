@@ -127,11 +127,14 @@ class Hash extends Module {
 				unlock();
 				var nt = Std.string(stat.mtime.getTime());
 				var ns = Std.string(stat.size);
-				if (!map.exists(e) || nt != map[e][0] || ns != map[e][1]) {
-					if (hash) {
-						var nHash = Std.string(Crc32.make(File.getBytes(e)));
-						var nd = [nt, ns, nHash];
-						if (map.exists(e)) {
+				
+				if (map.exists(e)) {
+
+					if (nt != map[e][0] || ns != map[e][1]) {
+						var nd = [nt, ns];
+						if (hash) {
+							var nHash = Std.string(Crc32.make(File.getBytes(e)));
+							nd.push(nHash);
 							if (map[e][2] != nHash) {
 								changesMap[e] = nd;
 								Sys.print('!');
@@ -139,20 +142,24 @@ class Hash extends Module {
 								Sys.print('.');
 							}
 						} else {
-							Sys.print('+');
 							changesMap[e] = nd;
+							Sys.print('!');
 						}
 						nmap[e] = nd;
 					} else {
-						var nd = [nt, ns];
-						changesMap[e] = nd;
-						nmap[e] = nd;
-						Sys.print('!');
+						nmap[e] = map[e];
+						Sys.print('.');
 					}
+
 				} else {
-					nmap[e] = map[e];
-					Sys.print('.');
+					var nd = [nt, ns];
+					if (hash)
+						nd.push(Std.string(Crc32.make(File.getBytes(e))));
+					changesMap[e] = nd;
+					nmap[e] = nd;
+					Sys.print('+');
 				}
+
 				return true;
 			} else {
 				Sys.print('^');

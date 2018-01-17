@@ -100,9 +100,9 @@ class ThreadTasksWhile {
 
 	@:extern public inline function wait():Void while (!ended()) Sys.sleep(0.01);
 
-	public static function multyTask(count:Int, f:(Void->Void) -> (Void->Void) -> Bool):Void {
+	public static function multyTask(count:Int, f:(Void -> Void) -> (Void -> Void) -> Bool):Void {
 		if (count == 1) {
-			f(Tools.nullFunction0, Tools.nullFunction0);
+			while (f(Tools.nullFunction0, Tools.nullFunction0)) {}
 		} else if (count > 1) {
 			var t = new ThreadTasksWhile();
 			while (count-- > 0) t.add(f);

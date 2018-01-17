@@ -19,8 +19,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Pony Tools: unpack command, fixes and features",
-"version": "0.7.2",
+"releasenote": "Pony Tools: hash fixes",
+"version": "0.7.3",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }

@@ -1,6 +1,6 @@
 [![Lang](https://img.shields.io/badge/language-haxe-orange.svg)](http://haxe.org)
 [![License](https://img.shields.io/badge/license-BSD-blue.svg)](LICENSE.txt)
-[![Haxelib](https://img.shields.io/badge/haxelib-0.7.2-blue.svg)](http://lib.haxe.org/p/pony)
+[![Haxelib](https://img.shields.io/badge/haxelib-0.7.3-blue.svg)](http://lib.haxe.org/p/pony)
 [![Build status](https://ci.appveyor.com/api/projects/status/83l5njueb4k0ns60?svg=true)](https://ci.appveyor.com/project/AxGord/pony)
 
 <p align="center"><img width="65%" src="http://qlex.ru/pony_logo_hor.svg?v=1"/></p>
