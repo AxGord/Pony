@@ -30,4 +30,5 @@ enum BASection {
 	Run;
 	Zip;
 	Hash;
+	Unpack;
 }

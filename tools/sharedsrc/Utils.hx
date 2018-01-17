@@ -156,7 +156,23 @@ class Utils {
 	}
 
 	public static function runAndKeepNode(name:String, ?args:Array<String>):Void {
+		Sys.println('Keep run: $name.js');
 		while (true) runNode(name, args);
+	}
+
+	public static function getHashes(file:String):Map<String, Array<String>> {
+		var c = FileSystem.exists(file) ? File.getContent(file) : '';
+		var m = new Map<String, Array<String>>();
+		for (e in c.split('\n')) {
+			var a = e.split(':');
+			if (a.length > 1)
+				m[a[0]] = a[1].split(',');
+		}
+		return m;
+	}
+
+	public static function saveHashes(file:String, map:Map<String, Array<String>>):Void {
+		File.saveContent(file, [for (k in map.keys()) k + ':' + map[k].join(',')].join('\n'));
 	}
 
 	#end

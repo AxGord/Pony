@@ -60,6 +60,7 @@ class Module extends pony.Logable implements pony.magic.HasAbstract {
 		modules.commands.onRun.once(getConfig, CONFIG_PRIORITY);
 		modules.commands.onZip.once(getConfig, CONFIG_PRIORITY);
 		modules.commands.onHash.once(emptyConfig, CONFIG_PRIORITY);
+		modules.commands.onUnpack.once(emptyConfig, CONFIG_PRIORITY);
 	}
 
 	private function removeConfigListener():Void {
@@ -69,6 +70,7 @@ class Module extends pony.Logable implements pony.magic.HasAbstract {
 		modules.commands.onRun >> getConfig;
 		modules.commands.onZip >> getConfig;
 		modules.commands.onHash >> emptyConfig;
+		modules.commands.onUnpack >> emptyConfig;
 	}
 
 	private function addListeners(priority:Int, before:BASection -> Void, after:BASection -> Void):Void {
@@ -78,6 +80,7 @@ class Module extends pony.Logable implements pony.magic.HasAbstract {
 		modules.commands.onRun.once(before.bind(Run), -priority);
 		modules.commands.onZip.once(before.bind(Zip), -priority);
 		modules.commands.onHash.once(before.bind(Hash), -priority);
+		modules.commands.onUnpack.once(before.bind(Unpack), -priority);
 
 		modules.commands.onServer.once(after.bind(Server), priority);
 		modules.commands.onPrepare.once(after.bind(Prepare), priority);
@@ -85,6 +88,7 @@ class Module extends pony.Logable implements pony.magic.HasAbstract {
 		modules.commands.onRun.once(after.bind(Run), priority);
 		modules.commands.onZip.once(after.bind(Zip), priority);
 		modules.commands.onHash.once(after.bind(Hash), priority);
+		modules.commands.onUnpack.once(after.bind(Unpack), priority);
 	}
 
 	private function getConfig(a:String, b:String):Void {

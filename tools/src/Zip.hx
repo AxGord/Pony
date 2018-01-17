@@ -38,7 +38,8 @@ class Zip {
 	private var debug:Bool;
 	private var app:String;
 	private var compressLvl:Int = 9;
-	private var allowfilter:Array<String> = null;
+	private var hash:Map<String, Array<String>> = null;
+	private var log:Bool = true;
 	
 	public function new(xml:Fast, app:String, debug:Bool) {
 		Sys.println('Zip files');
@@ -46,12 +47,13 @@ class Zip {
 		this.app = app;
 		this.debug = debug;
 		getData(xml);
+
+		if (pony.text.XmlTools.isFalse(xml, 'log')) log = false; 
 		
 		var zip = new pony.ZipTool(output, prefix, compressLvl);
-		zip.onLog << Sys.println;
+		if (log) zip.onLog << Sys.println;
 		zip.onError << function(err:String) throw err;
-		zip.allowList = allowfilter;
-		zip.writeList(input).end();
+		zip.writeHash(hash).writeList(input).end();
 	}
 	
 	
@@ -65,15 +67,10 @@ class Zip {
 				case 'release': if (!debug) getData(node);
 				case 'prefix': prefix = node.innerData;
 				case 'compress': compressLvl = Std.parseInt(node.innerData);
-				case 'hashfilter': allowfilter = getMap(node.innerData);
+				case 'hash': hash = Utils.getHashes(node.innerData);
 				case _: throw 'Wrong zip tag';
 			}
 		}
-	}
-
-	private function getMap(file:String):Array<String> {
-		var c = FileSystem.exists(file) ? File.getContent(file) : '';
-		return [for (e in c.split('\n')) e.split(':')[0]];
 	}
 	
 }

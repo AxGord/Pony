@@ -114,7 +114,8 @@ class ZipTool extends pony.Logable {
 			compressed: false,
 			dataSize: b.length,
 			data: b,
-			crc32: Crc32.make(b)};
+			crc32: Crc32.make(b)
+		};
 		if (compressLvl > 0) Tools.compress(entry, compressLvl);
 
 		writer.writeEntryHeader(entry);
@@ -135,6 +136,31 @@ class ZipTool extends pony.Logable {
 			File.saveBytes(f, haxe.zip.Reader.unzip(e));
 		}
 		input.close();
+	}
+
+	public function writeHash(hash:Map<String, Array<String>>):ZipTool {
+		if (hash == null) return this;
+		for (file in hash.keys()) {
+			var f = prefix + file;
+			if (allowList != null && allowList.indexOf(f) == -1) continue;
+			log(f);
+			var h = hash[file];
+			var b = File.getBytes(f);
+			var entry:Entry = {
+				fileName: file,
+				fileSize: Std.parseInt(h[1]),
+				fileTime: Date.fromTime(Std.parseFloat(h[0])),
+				compressed: false,
+				dataSize: b.length,
+				data: b,
+				crc32: h.length > 2 ? Std.parseInt(h[2]) : Crc32.make(b)
+			};
+			if (compressLvl > 0) Tools.compress(entry, compressLvl);
+
+			writer.writeEntryHeader(entry);
+			fileOutput.writeFullBytes(entry.data, 0, entry.data.length);
+		}
+		return this;
 	}
 
 }

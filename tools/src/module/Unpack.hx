@@ -45,6 +45,11 @@ class Unpack extends Module {
 		if (xml == null) return;
 		addConfigListener();
 		addListeners(PRIORITY, before, after);
+		modules.commands.onUnpack < start;
+	}
+
+	private function start():Void {
+		for (c in afterZips[BASection.Unpack]) unzip(c);
 	}
 
 	override private function readConfig(ac:AppCfg):Void {
@@ -52,7 +57,7 @@ class Unpack extends Module {
 			debug: ac.debug,
 			app: ac.app,
 			before: false,
-			section: Prepare,
+			section: BASection.Unpack,
 			zips: []
 		}, configHandler);
 	}
@@ -73,11 +78,13 @@ class Unpack extends Module {
 	}
 
 	private function before(section:BASection):Void {
+		if (section == BASection.Unpack) return;
 		if (!beforeZips.exists(section)) return;
 		for (c in beforeZips[section]) unzip(c);
 	}
 
 	private function after(section:BASection):Void {
+		if (section == BASection.Unpack) return;
 		if (!afterZips.exists(section)) return;
 		for (c in afterZips[section]) unzip(c);
 	}

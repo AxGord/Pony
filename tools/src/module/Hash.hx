@@ -43,6 +43,8 @@ class Hash extends Module {
 	
 	private static inline var PRIORITY:Int = 8;
 
+	public var ignore:Array<String> = [];
+
 	private var map:Map<String, String>;
 
 	private var beforeDirs:Map<BASection, HashTargets> = new Map();
@@ -103,7 +105,7 @@ class Hash extends Module {
 		for (e in data.b) {
 			var d:Dir = e;
 			for (f in d.contentRecursiveFiles())
-				list.push(f);
+				if (f.name.charAt(0) != '.' && ignore.indexOf(f.name) == -1) list.push(f);
 		}
 		files(data.a, list);
 	}
@@ -113,25 +115,32 @@ class Hash extends Module {
 	}
 
 	private function files(file:SPair<String>, list:Array<String>):Void {
-		var map:Map<String, Array<String>> = getMap(file.a);
+		var map:Map<String, Array<String>> = Utils.getHashes(file.a);
 		var nmap:Map<String, Array<String>> = new Map();
 		var changesMap:Map<String, Array<String>> = new Map();
 		Sys.println('Hashing');
-		ThreadTasks.multyTask(threads, function(){
-			while (list.length > 0) {
+		var startTime = Sys.time();
+		ThreadTasksWhile.multyTask(threads, function(lock:Void->Void, unlock:Void->Void) {
+			if (list.length > 0) {
 				var e = list.pop();
 				var stat = FileSystem.stat(e);
+				unlock();
 				var nt = Std.string(stat.mtime.getTime());
 				var ns = Std.string(stat.size);
 				if (!map.exists(e) || nt != map[e][0] || ns != map[e][1]) {
 					if (hash) {
 						var nHash = Std.string(Crc32.make(File.getBytes(e)));
 						var nd = [nt, ns, nHash];
-						if (map[e][2] != nHash) {
-							changesMap[e] = nd;
-							Sys.print('!');
+						if (map.exists(e)) {
+							if (map[e][2] != nHash) {
+								changesMap[e] = nd;
+								Sys.print('!');
+							} else {
+								Sys.print('.');
+							}
 						} else {
-							Sys.print('.');
+							Sys.print('+');
+							changesMap[e] = nd;
 						}
 						nmap[e] = nd;
 					} else {
@@ -144,28 +153,16 @@ class Hash extends Module {
 					nmap[e] = map[e];
 					Sys.print('.');
 				}
+				return true;
+			} else {
+				Sys.print('^');
+				return false;
 			}
 		});
-		saveMap(file.a, nmap);
-		saveMap(file.b, changesMap);
+		Utils.saveHashes(file.a, nmap);
+		Utils.saveHashes(file.b, changesMap);
 		Sys.println('');
-		Sys.println('Hashing complete');
-	}
-
-	private function getMap(file:String):Map<String, Array<String>> {
-		var c = FileSystem.exists(file) ? File.getContent(file) : '';
-		var m = new Map<String, Array<String>>();
-		for (e in c.split('\n')) {
-			var a = e.split(':');
-			if (a.length > 1)
-				m[a[0]] = a[1].split(',');
-		}
-		return m;
-	}
-
-	private function saveMap(file:String, map:Map<String, Array<String>>):Void {
-		File.saveContent(file, [for (k in map.keys()) k + ':' + map[k].join(',')].join('\n'));
-
+		Sys.println('Hashing time: ' + Std.int((Sys.time() - startTime) * 1000) / 1000);
 	}
 
 	private function configHandler(cfg:HashConfig):Void {

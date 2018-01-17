@@ -56,6 +56,9 @@
 	<hash>
 		<help>Create hashes list for files from config</help>
 	</hash>
+	<unpack>
+		<help>Unpack files from config archives</help>
+	</unpack>
 	<haxelib>
 		<help>Haxelib tools</help>
 		<arg>Operation</arg>

@@ -40,9 +40,11 @@ class Remote extends Module {
 	}
 
 	private function run(a:String, b:String):Void {
+		var log = 'log.txt';
+		if (FileSystem.exists(log))
+			FileSystem.deleteFile(log);
 		var code = Utils.runNode('ponyRemote', b != null ? [a, b] : (a != null ? [a] : []));
 		if (code > 0) {
-			var log = 'log.txt';
 			if (FileSystem.exists(log)) {
 				Sys.println(File.getContent(log));
 			}

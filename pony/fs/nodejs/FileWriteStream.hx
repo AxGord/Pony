@@ -45,11 +45,13 @@ class FileWriteStream extends WriteStream<Bytes> {
 	}
 
 	private function getSize(b:Bytes):Void {
+		if (readStream.onData == null) return;
 		size = b.getFloat(0);
 		Fs.open(path, 'w', openHandler);
 	}
 
 	private function openHandler(err:js.Error, fd:Int):Void {
+		if (readStream.onData == null) return;
 		if (err == null) {
 			this.fd = fd;
 			readStream.onData << dataHandler;
@@ -62,10 +64,12 @@ class FileWriteStream extends WriteStream<Bytes> {
 	}
 	
 	private function dataHandler(b:Bytes):Void {
+		if (readStream.onData == null) return;
 		Fs.write(fd, Buffer.hxFromBytes(b), 0, b.length, position, writeHandler);
 	}
 
 	private function writeHandler(err:js.Error, len:Int, buf:Buffer):Void {
+		if (readStream.onData == null) return;
 		position += len;
 		if (err == null) {
 			readStream.next();
@@ -75,10 +79,12 @@ class FileWriteStream extends WriteStream<Bytes> {
 	}
 
 	private function endHandler(b:Bytes):Void {
+		if (readStream.onData == null) return;
 		Fs.write(fd, Buffer.hxFromBytes(b), 0, b.length, position, lastWriteHandler);
 	}
 
 	private function lastWriteHandler(err:js.Error, len:Int, buf:Buffer):Void {
+		if (readStream.onData == null) return;
 		if (err == null) {
 			Fs.close(fd, closeHandler);
 		} else {
@@ -87,6 +93,7 @@ class FileWriteStream extends WriteStream<Bytes> {
 	}
 
 	private function closeHandler(err:js.Error):Void {
+		if (readStream.onData == null) return;
 		if (err != null) {
 			trace(err);
 			readStream.cancel();

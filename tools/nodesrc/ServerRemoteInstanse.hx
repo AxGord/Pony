@@ -36,6 +36,7 @@ class ServerRemoteInstanse {
 
 	private var client:SocketClient;
 	private var currentCommand:String;
+	private var currentCommandN:Int;
 	private var key:String;
 	private var protocol:RemoteProtocol;
 	private var commands:Map<String, Array<Pair<Bool, String>>> = new Map();
@@ -52,7 +53,8 @@ class ServerRemoteInstanse {
 		protocol = new RemoteProtocol(client);
 		activity = protocol.ping.watch();
 		client.onData << activity;
-		protocol.ping.onLostConnection << client.destroy;
+		protocol.ping.onLostConnection < closeHandler;
+		protocol.ping.onLostConnection < client.destroy;
 
 		if (key == null) {
 			start();
@@ -110,16 +112,22 @@ class ServerRemoteInstanse {
 
 	private function commandHandler(command:String):Void {
 		Sys.println('');
+		currentCommandN = 0;
 		packLog = new BytesOutput();
 		currentCommand = command;
-		var c:Array<Pair<Bool, String>> = commands[command];
-		if (c == null) {
+		if (!commands.exists(command)) {
 			childExitHandler(404);
 			return;
 		}
-		log(c[0].b);
-		zipRLog = c[0].a;
-		var p = ChildProcess.exec(c[0].b, execHandler);
+		runNextCommand();
+	}
+
+	private function runNextCommand():Void {
+		var c:Pair<Bool, String> = commands[currentCommand][currentCommandN];
+		log('Command $currentCommand $currentCommandN');
+		log(c.b);
+		zipRLog = c.a;
+		var p = ChildProcess.exec(c.b, execHandler);
 		p.stdout.on('data', prlog);
 		p.stderr.on('data', prlog);
 		p.on('exit', childExitHandler);
@@ -131,7 +139,13 @@ class ServerRemoteInstanse {
 
 	private function childExitHandler(code:Int):Void {
 		activity();
-		if (zipRLog) {
+		currentCommandN++;
+		if (code == 0 && currentCommandN < commands[currentCommand].length) {
+			runNextCommand();
+			return;
+		}
+
+		if (packLog.length > 0) {
 			packLog.flush();
 			//protocol.zipLogRemote(haxe.zip.Compress.run(packLog.getBytes(), 9));
 			protocol.zipLogRemote(packLog.getBytes());
