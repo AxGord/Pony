@@ -52,7 +52,6 @@ class HtmlContainerBase {
 			app = App.main;
 		this.app = app;
 		this.targetStyle = targetStyle;
-		this.targetPos = targetPos;
 		if (fixed) {
 			js.Browser.window.addEventListener('scroll', resize);
 		}

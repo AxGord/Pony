@@ -29,7 +29,7 @@ typedef Point_<T> = { x:T, y:T }
  * Point / IntPoint
  * @author AxGord
  */
-abstract Point<T>(Point_<T>) from Point_<T> to Point_<T> {
+abstract Point<T:Float>(Point_<T>) from Point_<T> to Point_<T> to Point<Float> {
 	public var x(get, set):T;
 	public var y(get, set):T;
 	inline public function new(x:T, y:T) this = { x:x, y:y };

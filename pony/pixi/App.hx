@@ -73,22 +73,24 @@ class App implements HasSignal {
 	public var container(default, null):Sprite;
 	public var parentDom(default, null):Element;
 	
-	private var _width:Float;
-	private var _height:Float;
+	private var _width:Int;
+	private var _height:Int;
 	private var smallDeviceQuality:Float;
 	private var smallDeviceQualityOffset:Float;
 	private var resizeTimer:DTimer;
 	
 	private var ticker:Ticker;
 	
-	private var width:Int;
-	private var height:Int;
-	private var background:Int;
+	public var width(default, null):Int;
+	public var height(default, null):Int;
+	public var background(default, null):Int;
+
 	private var renderPause:Bool = false;
 	
 	private var backImgcontainer:Sprite;
 
 	public var scale(default, null):Float;
+	public var resolution(get, never):Point<Int>;
 	
 	/**
 	 * @param	smallDeviceQuality - 1 ideal, 2 - low, 3 - normal, 4 - good
@@ -172,6 +174,8 @@ class App implements HasSignal {
 		#if stats addStats(); #end
 	}
 	
+	@:extern private inline function get_resolution():Point<Int> return new Point(_width, _height);
+
 	private function render():Void if (!renderPause) app.render();
 	
 	public function fullscreen():Void JsTools.fse(parentDom);

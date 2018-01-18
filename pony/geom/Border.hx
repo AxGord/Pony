@@ -50,8 +50,7 @@ abstract Border<T:Float>({top:T, left:T, right:T, bottom:T}) {
 	
 	@:from public static function fromString(v:String):Border<Float> {
 		if (v == null || v == '') return new Border<Float>(0);
-		var v = v.split(' ');
-		return fromArray([Std.parseFloat(v[0]), Std.parseFloat(v[1]), Std.parseFloat(v[2]), Std.parseFloat(v[3])]);
+		return fromArray(v.split(' ').map(Std.parseFloat));
 	}
 	
 	@:from public static function fromArray<T:Float>(v:Array<T>):Border<T> {
@@ -67,5 +66,9 @@ abstract Border<T:Float>({top:T, left:T, right:T, bottom:T}) {
 	
 	@:op(A * B) @:extern inline public function mul(rhs:Float):Border<Float>
 		return new Border(top * rhs, left * rhs, right * rhs, bottom * rhs);
+
+	@:extern public inline function getRectFromSize(size:Point<T>):Rect<T> {
+		return {x: left, y: top, width: size.x - left - right, height: size.y - top - bottom};
+	}
 	
 }

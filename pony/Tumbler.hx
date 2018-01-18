@@ -44,5 +44,6 @@ class Tumbler implements HasSignal {
 	
 	public function enable():Void enabled = true;
 	public function disable():Void enabled = false;
+	public function sw():Void enabled = !enabled;
 	
 }

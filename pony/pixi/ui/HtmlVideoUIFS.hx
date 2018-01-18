@@ -21,9 +21,51 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-package pony.geom;
+package pony.pixi.ui;
 
-/**
- * @author AxGord
- */
-typedef Polygon<T:Float> = Array<Point<T>>;
+import pony.HtmlVideo;
+import pony.geom.Rect;
+import pony.geom.Border;
+import pony.geom.Point;
+import pony.Or;
+import pony.Tumbler;
+import pony.time.DeltaTime;
+
+class HtmlVideoUIFS extends HtmlVideoUI {
+
+	public var fullscreen(default, null) = new Tumbler(false);
+	private var normalRect:Rect<Float>;
+	private var fsRect:Rect<Float>;
+	private var normalPos:Point<Float>;
+
+	public function new(targetRect:Rect<Float>, fsRect:Or<Border<Float>, Rect<Float>>, ?app:pony.pixi.App, ?options:HtmlVideoOptions, fixed:Bool = false) {
+		super(targetRect, app, options, fixed);
+		if (fsRect != null) {
+			this.normalRect = targetRect;
+			switch fsRect {
+				case A(border):
+					this.fsRect = border.getRectFromSize(app.resolution);
+				case B(rect):
+					this.fsRect = rect;
+			}
+			video.onClick << fullscreen.sw;
+			video.onHide || video.onEnd << fullscreen.disable;
+			fullscreen.onEnable << openFullScreenHandler;
+			fullscreen.onDisable << closeFullScreenHandler;
+			video.style.cursor = 'pointer';
+		}
+	}
+
+	public function openFullScreenHandler():Void {
+		normalPos = htmlContainer.targetPos;
+		htmlContainer.targetPos = new Point<Float>(0, 0);
+		targetRect = fsRect;
+	}
+
+	public function closeFullScreenHandler():Void {
+		htmlContainer.targetPos = normalPos;
+		normalPos = null;
+		targetRect = normalRect;
+	}
+
+}

@@ -63,6 +63,7 @@ import pony.pixi.ui.TextButton;
 import pony.pixi.ui.TimeBar;
 import pony.pixi.ui.ZeroPlace;
 import pony.pixi.ui.HtmlVideoUI;
+import pony.pixi.ui.HtmlVideoUIFS;
 import pony.pixi.ui.HtmlContainer;
 import pony.pixi.ui.RenderBox;
 import pony.pixi.ui.slices.SliceTools;
@@ -102,6 +103,7 @@ using pony.pixi.PixiExtends;
 	slider: pony.pixi.ui.StepSlider,
 	slice: pony.pixi.ui.slices.SliceSprite,
 	video: pony.pixi.ui.HtmlVideoUI,
+	fsvideo: pony.pixi.ui.HtmlVideoUIFS,
 	html: pony.pixi.ui.HtmlContainer,
 	render: pony.pixi.ui.RenderBox,
 	#if pixi_particles
@@ -316,6 +318,18 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 					width: parseAndScale(attrs.w),
 					height: parseAndScale(attrs.h)
 				}, app, attrs.fixed.isTrue());
+				var src = attrs.src;
+				if (src != null)
+					video.video.loadVideo(src);
+				video;
+
+			case 'fsvideo':
+				var video = new HtmlVideoUIFS({
+					x: parseAndScale(attrs.x),
+					y: parseAndScale(attrs.y),
+					width: parseAndScale(attrs.w),
+					height: parseAndScale(attrs.h)
+				}, attrs.fsborder != null ? (attrs.fsborder:Border<Float>) : null, app, attrs.fixed.isTrue());
 				var src = attrs.src;
 				if (src != null)
 					video.video.loadVideo(src);
