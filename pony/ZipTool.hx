@@ -105,7 +105,7 @@ class ZipTool extends pony.Logable {
 		var f = prefix + file;
 		if (allowList != null && allowList.indexOf(f) == -1) return this;
 		log(f);
-		var stat = FileSystem.stat(file);
+		var stat = FileSystem.stat(f);
 		var b = File.getBytes(f);
 		var entry:Entry = {
 			fileName: file,

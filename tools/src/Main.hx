@@ -78,13 +78,6 @@ class Main {
 		Utils.command(cmd, args);
 	}
 
-	static function zip(cfg:AppCfg):Void {
-		var xml = Utils.getXml();
-		var startTime = Sys.time();
-		new Zip(xml.node.zip, cfg.app, cfg.debug);
-		Sys.println('Zip time: ' + Std.int((Sys.time() - startTime) * 1000) / 1000);
-	}
-
 	static function ftp(cfg:AppCfg):Void {
 		var startTime = Sys.time();
 		Utils.runNode('ponyFtp', addCfg(cfg));
@@ -108,6 +101,7 @@ class Main {
 		modules.register(new module.Server());
 		modules.register(new module.Remote());
 		modules.register(new module.Hash());
+		modules.register(new module.Zip());
 		modules.init();
 
 		commands.onNothing < showLogo;
@@ -116,7 +110,6 @@ class Main {
 		commands.onBuild < cfgAndCall.bind(_, _, rbuild);
 
 		commands.onRun < cfgAndCall.bind(_, _, run);
-		commands.onZip < cfgAndCall.bind(_, _, zip);
 		commands.onFtp < cfgAndCall.bind(_, _, ftp);
 
 		commands.onCreate < create.Create.run;

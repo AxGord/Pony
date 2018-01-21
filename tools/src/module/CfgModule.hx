@@ -20,57 +20,32 @@
 * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-**/
+**/package module;
 
-import haxe.xml.Fast;
-import sys.FileSystem;
-import sys.io.File;
+import types.BAConfig;
+import types.BASection;
 
 /**
- * ZipMain
+ * CfgModule
  * @author AxGord <axgord@gmail.com>
  */
-class Zip {
+class CfgModule<T:BAConfig> extends Module implements pony.magic.HasAbstract {
 
-	private var input:Array<String> = [];
-	private var output:String = 'app.zip';
-	private var prefix:String = 'bin/';
-	private var debug:Bool;
-	private var app:String;
-	private var compressLvl:Int = 9;
-	private var hash:Map<String, Array<String>> = null;
-	private var log:Bool = true;
-	
-	public function new(xml:Fast, app:String, debug:Bool) {
-		Sys.println('Zip files');
-		
-		this.app = app;
-		this.debug = debug;
-		getData(xml);
+	private var cfgs:Array<T> = [];
 
-		if (pony.text.XmlTools.isFalse(xml, 'log')) log = false; 
-		
-		var zip = new pony.ZipTool(output, prefix, compressLvl);
-		if (log) zip.onLog << Sys.println;
-		zip.onError << function(err:String) throw err;
-		zip.writeHash(hash).writeList(input).end();
-	}
-	
-	
-	private function getData(xml:Fast):Void {
-		for (node in xml.elements) {
-			switch node.name {
-				case 'input': input.push(node.innerData);
-				case 'output': output = node.innerData;
-				case 'apps': getData(node.node.resolve(app));
-				case 'debug': if (debug) getData(node);
-				case 'release': if (!debug) getData(node);
-				case 'prefix': prefix = node.innerData;
-				case 'compress': compressLvl = Std.parseInt(node.innerData);
-				case 'hash': hash = Utils.getHashes(node.innerData);
-				case _: throw 'Wrong zip tag';
-			}
+	override public function init():Void throw 'Abstract';
+
+	private function configHandler(cfg:T):Void cfgs.push(cfg);
+
+	override private function runModule(before:Bool, section:BASection):Void {
+		for (cfg in cfgs) if (cfg.before == before && cfg.section == section) {
+			begin();
+			run(cfg);
+			end();
+			break;
 		}
 	}
-	
+
+	@:abstract private function run(cfg:T):Void;
+
 }

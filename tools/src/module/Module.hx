@@ -38,6 +38,8 @@ class Module extends pony.Logable implements pony.magic.HasAbstract {
 	private var xml(get, never):Fast;
 	private var _xml:Fast;
 	private var xname:String;
+	private var currentSection:BASection;
+	private var startTime:Float;
 
 	public function new(?xname:String) {
 		super();
@@ -50,8 +52,39 @@ class Module extends pony.Logable implements pony.magic.HasAbstract {
 		return _xml;
 	}
 
+	private function begin():Void {
+		log('Start $xname');
+		startTime = Sys.time();
+	}
+
+	private function end():Void {
+		log('Complete $xname, time: ' + Std.int((Sys.time() - startTime) * 1000) / 1000);
+	}
+
 	@:abstract public function init():Void;
+	private function runModule(before:Bool, section:BASection):Void throw 'Abstract';
 	private function readConfig(ac:AppCfg):Void {}
+
+	private function initSections(priority:Int, current:BASection):Void {
+		if (xml == null) return;
+		currentSection = current;
+		addConfigListener();
+		addListeners(priority, moduleBefore, moduleAfter);
+		
+		switch current {
+			case Server: modules.commands.onServer < moduleStart;
+			case Prepare: modules.commands.onPrepare < moduleStart;
+			case Build: modules.commands.onBuild < moduleStart;
+			case Run: modules.commands.onRun < moduleStart;
+			case Zip: modules.commands.onZip < moduleStart;
+			case Hash: modules.commands.onHash < moduleStart;
+			case Unpack: modules.commands.onUnpack < moduleStart;
+		}
+	}
+
+	private function moduleStart():Void runModule(false, currentSection);
+	private function moduleBefore(section:BASection):Void if (section != currentSection) runModule(true, section);
+	private function moduleAfter(section:BASection):Void if (section != currentSection) runModule(false, section);
 
 	private function addConfigListener():Void {
 		modules.commands.onServer.once(emptyConfig, CONFIG_PRIORITY);
