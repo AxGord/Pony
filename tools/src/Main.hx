@@ -62,10 +62,6 @@ class Main {
 
 	}
 
-	static function rbuild(cfg:AppCfg):Void {
-		build(cfg, Utils.getXml());
-	}
-
 	static function run(cfg:AppCfg):Void {
 		var xml = Utils.getXml();
 		if (!xml.hasNode.run)
@@ -96,6 +92,10 @@ class Main {
 		commands.onLog << Sys.println;
 
 		var modules:Modules = new Modules(commands);
+		modules.register(new module.Build());
+		modules.register(new module.Uglify());
+		modules.register(new module.Wrapper());
+		modules.register(new module.Test());
 		modules.register(new module.Clean());
 		modules.register(new module.Unpack());
 		modules.register(new module.Server());
@@ -107,7 +107,6 @@ class Main {
 		commands.onNothing < showLogo;
 		commands.onHelp < showHelp;
 		commands.onPrepare < cfgAndCall.bind(_, _, prepare);
-		commands.onBuild < cfgAndCall.bind(_, _, rbuild);
 
 		commands.onRun < cfgAndCall.bind(_, _, run);
 		commands.onFtp < cfgAndCall.bind(_, _, ftp);
@@ -120,28 +119,6 @@ class Main {
 		commands.runArgs(Sys.args());
 
 		Sys.println('Total time: ' + Std.int((Sys.time() - startTime) * 1000) / 1000);
-	}
-	
-	static function build(args:AppCfg, xml:Fast):Void {
-		var startTime = Sys.time();
-		new Build(xml, args.app, args.debug).run();
-		Sys.println('Compile time: ' + Std.int((Sys.time() - startTime) * 1000) / 1000);
-		if (xml.hasNode.uglify) {
-			var startTime = Sys.time();
-			Utils.runNode('ponyUglify', addCfg(args));
-			Sys.println('Uglify time: ' + Std.int((Sys.time() - startTime) * 1000) / 1000);
-		}
-		if (xml.hasNode.wrapper) {
-			new Wrapper(xml.node.wrapper, args.app, args.debug);
-		}
-		for (test in xml.nodes.test) {
-			var cwd:Cwd = test.has.path ? test.att.path : null;
-			cwd.sw();
-			var args = test.innerData.split(' ');
-			var cmd = args.shift();
-			Utils.command(cmd, args);
-			cwd.sw();
-		}
 	}
 	
 	static function addCfg(?a:Array<String>, args:AppCfg):Array<String> {

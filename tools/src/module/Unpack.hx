@@ -34,7 +34,7 @@ using pony.text.XmlTools;
  */
 class Unpack extends Module {
 
-	private static inline var PRIORITY:Int = 5;
+	private static inline var PRIORITY:Int = 6;
 
 	private var beforeZips:Map<BASection, Array<ZipConfig>> = new Map();
 	private var afterZips:Map<BASection, Array<ZipConfig>> = new Map();

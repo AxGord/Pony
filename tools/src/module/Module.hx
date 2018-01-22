@@ -65,13 +65,13 @@ class Module extends pony.Logable implements pony.magic.HasAbstract {
 	private function runModule(before:Bool, section:BASection):Void throw 'Abstract';
 	private function readConfig(ac:AppCfg):Void {}
 
-	private function initSections(priority:Int, current:BASection):Void {
+	private function initSections(priority:Int, ?current:BASection):Void {
 		if (xml == null) return;
 		currentSection = current;
 		addConfigListener();
 		addListeners(priority, moduleBefore, moduleAfter);
 		
-		switch current {
+		if (current != null) switch current {
 			case Server: modules.commands.onServer < moduleStart;
 			case Prepare: modules.commands.onPrepare < moduleStart;
 			case Build: modules.commands.onBuild < moduleStart;

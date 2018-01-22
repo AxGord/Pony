@@ -21,45 +21,73 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-package;
+package module;
+
 import haxe.xml.Fast;
+import types.BASection;
 
 /**
- * Prepare
+ * Uglify module
  * @author AxGord <axgord@gmail.com>
  */
-class Prepare {
+class Test extends CfgModule<TestConfig> {
 
-	public function new(xml:Fast, app:String, debug:Bool) {
-		if (sys.FileSystem.exists('libcache.js')) sys.FileSystem.deleteFile('libcache.js');
-		if (xml.hasNode.haxelib) {
-			Sys.println('update haxelib');
-			for (node in xml.node.haxelib.nodes.lib) {
-				var args = ['install'];
-				args = args.concat(node.innerData.split(' '));
-				args.push('--always');
-				Sys.command('haxelib', args);
-			}
-		}
+	private static inline var PRIORITY:Int = 5;
 
-		if (xml.hasNode.npm) {
-			var cwd = new Cwd(xml.node.npm.has.path ? xml.node.npm.att.path : null);
-			Sys.println('install npm');
-			cwd.sw();
-			for (module in xml.node.npm.nodes.module) {
-				Sys.command('npm', ['install', module.innerData, '--prefix', './']);
-			}
-			cwd.sw();
-		}
+	public function new() super('test');
 
-		if (xml.hasNode.texturepacker)
-			new Texturepacker(xml.node.texturepacker, app, debug);
-			
-		//if (xml.hasNode.build) try {
-		//	new Build(xml, app, debug).writeConfigIfNeed();
-		//} catch (e:String) {
-		//	Sys.println(e);
-		//}
+	override public function init():Void initSections(PRIORITY);
+
+	override private function readConfig(ac:AppCfg):Void {
+		new TestReader(xml, {
+			debug: ac.debug,
+			app: ac.app,
+			before: false,
+			section: BASection.Build,
+			path: null,
+			test: []
+		}, configHandler);
 	}
-	
+
+	override private function run(cfg:TestConfig):Void {
+		var cwd:Cwd = cfg.path;
+		cwd.sw();
+		for (t in cfg.test) {
+			var args = t.split(' ');
+			var cmd = args.shift();
+			Utils.command(cmd, args);
+		}
+		cwd.sw();
+	}
+
+}
+
+private typedef TestConfig = { > types.BAConfig,
+	path: String,
+	test: Array<String>
+}
+
+private class TestReader extends BAReader<TestConfig> {
+
+	override private function readNode(xml:Fast):Void {
+		switch xml.name {
+			case 'test':
+				cfg.test.push(StringTools.trim(xml.innerData));
+			case _:
+				super.readNode(xml);
+		}
+	}
+
+	override private function clean():Void {
+		cfg.path = null;
+		cfg.test = [];
+	}
+
+	override private function readAttr(name:String, val:String):Void {
+		switch name {
+			case 'test': cfg.path = val;
+			case _:
+		}
+	}
+
 }
