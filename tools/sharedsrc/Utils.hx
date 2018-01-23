@@ -34,6 +34,7 @@ class Utils {
 	
 	public static inline var MAIN_FILE:String = 'pony.xml';
 
+	public static var isWindows(get, never):Bool;
 	public static var PD(default, null):String;
 	public static var toolsPath(default, null):String;
 	public static var libPath(default, null):String;
@@ -43,15 +44,17 @@ class Utils {
 	private static var hashesCache:Map<String, Map<String, Array<String>>> = new Map();
 
 	private static function __init__():Void {
-		PD = Sys.systemName() == 'Windows' ? '\\' : '/';
+		PD = isWindows ? '\\' : '/';
 		#if nodejs
 		var o:String = Std.string(js.node.ChildProcess.execSync('haxelib path pony'));
 		libPath = o.split('\n')[0];
 		#else
 		libPath = new sys.io.Process('haxelib', ['path', 'pony']).stdout.readLine();
 		#end
-		toolsPath = libPath + PD + 'tools' + PD + 'bin' + PD;
+		toolsPath = libPath + 'tools' + PD + 'bin' + PD;
 	}
+
+	private static inline function get_isWindows():Bool return Sys.systemName() == 'Windows';
 
 	public static function command(name:String, args:Array<String>):Void {
 		Sys.println(name + ' ' + args.join(' '));

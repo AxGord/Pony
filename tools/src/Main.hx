@@ -85,6 +85,14 @@ class Main {
 	}
 
 	static function main():Void {
+		var p = Sys.executablePath();
+		p = p.substr(0, p.lastIndexOf(Utils.PD) + 1);
+		if (p != Utils.toolsPath) {
+			var pony = Utils.toolsPath + 'pony';
+			if (Utils.isWindows) pony += '.exe';
+			Sys.exit(Sys.command(pony, Sys.args()));
+			return;
+		}
 		
 		var startTime = Sys.time();
 

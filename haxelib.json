@@ -19,8 +19,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Pony Tools: hash fixes",
-"version": "0.7.3",
+"releasenote": "Pony Tools: custom hxml, remote command, fixes",
+"version": "0.7.4",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }
