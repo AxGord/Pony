@@ -51,10 +51,13 @@ class Utils {
 		#else
 		libPath = new sys.io.Process('haxelib', ['path', 'pony']).stdout.readLine();
 		#end
+		libPath = path(libPath);
 		toolsPath = libPath + 'tools' + PD + 'bin' + PD;
 	}
 
 	private static inline function get_isWindows():Bool return Sys.systemName() == 'Windows';
+
+	public static function path(s:String):String return StringTools.replace(StringTools.replace(s, '/', PD), '\\', PD);
 
 	public static function command(name:String, args:Array<String>):Void {
 		Sys.println(name + ' ' + args.join(' '));

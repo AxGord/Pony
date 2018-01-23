@@ -85,7 +85,7 @@ class Main {
 	}
 
 	static function main():Void {
-		var p = Sys.executablePath();
+		var p = Utils.path(Sys.executablePath());
 		p = p.substr(0, p.lastIndexOf(Utils.PD) + 1);
 		if (p != Utils.toolsPath) {
 			var pony = Utils.toolsPath + 'pony';
