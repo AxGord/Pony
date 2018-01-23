@@ -53,8 +53,9 @@ class ServerRemoteInstanse {
 		protocol = new RemoteProtocol(client);
 		activity = protocol.ping.watch();
 		client.onData << activity;
-		protocol.ping.onLostConnection < closeHandler;
-		protocol.ping.onLostConnection < client.destroy;
+		protocol.ping.onLostConnection < lostHandler;
+		protocol.ping.onWarning << function() Sys.println('Problem with connection');
+		protocol.ping.onRestore << function() Sys.println('Connection restore');
 
 		if (key == null) {
 			start();
@@ -66,6 +67,12 @@ class ServerRemoteInstanse {
 	private function closeHandler():Void {
 		Sys.println('Disconnect');
 		protocol.file.cancel();
+	}
+
+	private function lostHandler():Void {
+		Sys.println('Lost connection');
+		protocol.file.cancel();
+		client.destroy();
 	}
 
 	private function authHandler(v:String):Void {
@@ -127,6 +134,7 @@ class ServerRemoteInstanse {
 		log('Command $currentCommand $currentCommandN');
 		log(c.b);
 		zipRLog = c.a;
+		onBeginCommand();
 		var p = ChildProcess.exec(c.b, execHandler);
 		p.stdout.on('data', prlog);
 		p.stderr.on('data', prlog);
@@ -138,6 +146,7 @@ class ServerRemoteInstanse {
 	}
 
 	private function childExitHandler(code:Int):Void {
+		onEndCommand();
 		activity();
 		currentCommandN++;
 		if (code == 0 && currentCommandN < commands[currentCommand].length) {
@@ -153,6 +162,9 @@ class ServerRemoteInstanse {
 		//log('Child exited with code $code');
 		protocol.commandCompleteRemote(currentCommand, code);
 	}
+
+	public dynamic function onBeginCommand():Void {}
+	public dynamic function onEndCommand():Void {}
 
 }
 #end

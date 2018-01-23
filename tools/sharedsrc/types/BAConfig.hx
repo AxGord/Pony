@@ -27,5 +27,7 @@ import pony.text.XmlConfigReader;
 
 typedef BAConfig = { > BaseConfig,
 	before: Bool,
-	section: BASection
+	section: BASection,
+	// runBefore: Array<String>,
+	// runAfter: Array<String>
 }

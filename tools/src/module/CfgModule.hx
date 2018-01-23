@@ -42,7 +42,6 @@ class CfgModule<T:BAConfig> extends Module implements pony.magic.HasAbstract {
 			begin();
 			run(cfg);
 			end();
-			break;
 		}
 	}
 

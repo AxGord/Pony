@@ -39,6 +39,7 @@ class ServerRemote {
 	private var key:String = null;
 	private var commands:Map<String, Array<Pair<Bool, String>>> = new Map();
 	private var instanse:ServerRemoteInstanse;
+	private var cmdLock:Bool = false;
 
 	public function new(xml:Fast) {
 		var port = Std.parseInt(xml.node.port.innerData);
@@ -61,9 +62,11 @@ class ServerRemote {
 
 	private function connectHandler(client:SocketClient):Void {
 		Sys.println('New connection');
-		if (instanse == null) {
+		if (instanse == null && !cmdLock) {
 			Sys.println('Accept');
 			instanse = new ServerRemoteInstanse(client, key, commands);
+			instanse.onBeginCommand = beginCommandHandler;
+			instanse.onEndCommand = endCommandHandler;
 			client.onClose < closeHandler;
 		} else {
 			Sys.println('Deny');
@@ -72,6 +75,9 @@ class ServerRemote {
 	}
 
 	private function closeHandler():Void instanse = null;
+
+	private function beginCommandHandler():Void cmdLock = true;
+	private function endCommandHandler():Void cmdLock = false;
 
 }
 #end

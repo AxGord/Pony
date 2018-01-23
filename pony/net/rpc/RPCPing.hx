@@ -82,6 +82,7 @@ private class Watch {
 		timer.reset();
 		if (silent && !ping) @:privateAccess rpc.eRestore.dispatch();
 		silent = false;
+		ping = true;
 	}
 
 }

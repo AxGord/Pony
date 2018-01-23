@@ -55,16 +55,17 @@ class Build extends CfgModule<BuildConfig> {
 	}
 
 	override private function readConfig(ac:AppCfg):Void {
-		new BuildConfigReader(xml, {
-			debug: ac.debug,
-			app: ac.app,
-			before: false,
-			section: BASection.Build,
-			command: [],
-			haxeCompiler: 'haxe',
-			hxml: null,
-			runHxml: []
-		}, configHandler);
+		for (xml in nodes)
+			new BuildConfigReader(xml, {
+				debug: ac.debug,
+				app: ac.app,
+				before: false,
+				section: BASection.Build,
+				command: [],
+				haxeCompiler: 'haxe',
+				hxml: null,
+				runHxml: []
+			}, configHandler);
 	}
 
 	override private function run(cfg:BuildConfig):Void {
@@ -143,11 +144,13 @@ private typedef BuildConfig = { > types.BAConfig,
 
 private class BuildConfigReader extends BAReader<BuildConfig> {
 
+	private static inline var UT:String = 'Unknown tag';
+
 	override private function readNode(xml:Fast):Void {
 		try {
 			super.readNode(xml);
 		} catch (s:String) {
-			if (s == 'Unknown tag') {
+			if (s.substr(0, UT.length) == UT) {
 				switch xml.name {
 					case 'hxml':
 						cfg.runHxml.push(StringTools.trim(xml.innerData));
@@ -171,7 +174,7 @@ private class BuildConfigReader extends BAReader<BuildConfig> {
 
 	override private function clean():Void {
 		cfg.command = [];
-		cfg.haxeCompiler = 'app';
+		cfg.haxeCompiler = 'haxe';
 		cfg.hxml = null;
 		cfg.runHxml = [];
 	}

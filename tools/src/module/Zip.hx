@@ -57,7 +57,7 @@ class Zip extends CfgModule<ZipConfig> {
 		var zip = new pony.ZipTool(cfg.output, cfg.prefix, cfg.compressLvl);
 		if (cfg.log) zip.onLog << Sys.println;
 		zip.onError << function(err:String) throw err;
-		zip.writeHash(cfg.hash).writeList(cfg.input).end();
+		zip.writeHash(Utils.getHashes(cfg.hash)).writeList(cfg.input).end();
 	}
 
 }
@@ -67,7 +67,7 @@ private typedef ZipConfig = { > types.BAConfig,
 	output: String,
 	prefix: String,
 	compressLvl: Int,
-	hash: Map<String, Array<String>>,
+	hash: String,
 	log: Bool
 }
 
@@ -80,7 +80,7 @@ private class ZipConfigReader extends BAReader<ZipConfig> {
 			case 'output': cfg.output = StringTools.trim(xml.innerData);
 			case 'prefix': cfg.prefix = StringTools.trim(xml.innerData);
 			case 'compress': cfg.compressLvl = Std.parseInt(xml.innerData);
-			case 'hash': cfg.hash = Utils.getHashes(StringTools.trim(xml.innerData));
+			case 'hash': cfg.hash = StringTools.trim(xml.innerData);
 
 			case _: super.readNode(xml);
 		}

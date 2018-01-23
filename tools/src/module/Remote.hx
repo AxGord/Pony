@@ -36,7 +36,7 @@ class Remote extends Module {
 
 	override public function init():Void {
 		if (xml == null) return;
-		modules.commands.onZip.add(run, 8);
+		modules.commands.onRemote << run;
 	}
 
 	private function run(a:String, b:String):Void {

@@ -40,6 +40,7 @@ class Utils {
 
 	public static var ponyVersion(get, never):String;
 	private static var _ponyVersion:String;
+	private static var hashesCache:Map<String, Map<String, Array<String>>> = new Map();
 
 	private static function __init__():Void {
 		PD = Sys.systemName() == 'Windows' ? '\\' : '/';
@@ -161,6 +162,7 @@ class Utils {
 	}
 
 	public static function getHashes(file:String):Map<String, Array<String>> {
+		if (hashesCache.exists(file)) return hashesCache[file];
 		var c = FileSystem.exists(file) ? File.getContent(file) : '';
 		var m = new Map<String, Array<String>>();
 		for (e in c.split('\n')) {
@@ -168,10 +170,11 @@ class Utils {
 			if (a.length > 1)
 				m[a[0]] = a[1].split(',');
 		}
-		return m;
+		return hashesCache[file] = m;
 	}
 
 	public static function saveHashes(file:String, map:Map<String, Array<String>>):Void {
+		hashesCache[file] = map;
 		File.saveContent(file, [for (k in map.keys()) k + ':' + map[k].join(',')].join('\n'));
 	}
 

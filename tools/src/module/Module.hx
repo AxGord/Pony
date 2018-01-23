@@ -36,6 +36,7 @@ class Module extends pony.Logable implements pony.magic.HasAbstract {
 
 	public var modules:Modules;
 	private var xml(get, never):Fast;
+	private var nodes(get, never):List<Fast>;
 	private var _xml:Fast;
 	private var xname:String;
 	private var currentSection:BASection;
@@ -50,6 +51,10 @@ class Module extends pony.Logable implements pony.magic.HasAbstract {
 		if (_xml == null)
 			_xml = xname == null ? modules.xml : modules.getNode(xname);
 		return _xml;
+	}
+
+	private function get_nodes():List<Fast> {
+		return xname == null ? new List<Fast>() : modules.xml.nodes.resolve(xname);
 	}
 
 	private function begin():Void {
@@ -77,6 +82,7 @@ class Module extends pony.Logable implements pony.magic.HasAbstract {
 			case Build: modules.commands.onBuild < moduleStart;
 			case Run: modules.commands.onRun < moduleStart;
 			case Zip: modules.commands.onZip < moduleStart;
+			case Remote: modules.commands.onRemote < moduleStart;
 			case Hash: modules.commands.onHash < moduleStart;
 			case Unpack: modules.commands.onUnpack < moduleStart;
 		}
@@ -92,6 +98,7 @@ class Module extends pony.Logable implements pony.magic.HasAbstract {
 		modules.commands.onBuild.once(getConfig, CONFIG_PRIORITY);
 		modules.commands.onRun.once(getConfig, CONFIG_PRIORITY);
 		modules.commands.onZip.once(getConfig, CONFIG_PRIORITY);
+		modules.commands.onRemote.once(getConfig, CONFIG_PRIORITY);
 		modules.commands.onHash.once(emptyConfig, CONFIG_PRIORITY);
 		modules.commands.onUnpack.once(emptyConfig, CONFIG_PRIORITY);
 	}
@@ -102,24 +109,27 @@ class Module extends pony.Logable implements pony.magic.HasAbstract {
 		modules.commands.onBuild >> getConfig;
 		modules.commands.onRun >> getConfig;
 		modules.commands.onZip >> getConfig;
+		modules.commands.onRemote >> getConfig;
 		modules.commands.onHash >> emptyConfig;
 		modules.commands.onUnpack >> emptyConfig;
 	}
 
 	private function addListeners(priority:Int, before:BASection -> Void, after:BASection -> Void):Void {
-		modules.commands.onServer.once(before.bind(Server), -priority);
-		modules.commands.onPrepare.once(before.bind(Prepare), -priority);
-		modules.commands.onBuild.once(before.bind(Build), -priority);
-		modules.commands.onRun.once(before.bind(Run), -priority);
-		modules.commands.onZip.once(before.bind(Zip), -priority);
-		modules.commands.onHash.once(before.bind(Hash), -priority);
-		modules.commands.onUnpack.once(before.bind(Unpack), -priority);
+		modules.commands.onServer.once(before.bind(Server), CONFIG_PRIORITY + priority);
+		modules.commands.onPrepare.once(before.bind(Prepare), CONFIG_PRIORITY + priority);
+		modules.commands.onBuild.once(before.bind(Build), CONFIG_PRIORITY + priority);
+		modules.commands.onRun.once(before.bind(Run), CONFIG_PRIORITY + priority);
+		modules.commands.onZip.once(before.bind(Zip), CONFIG_PRIORITY + priority);
+		modules.commands.onRemote.once(before.bind(Remote), CONFIG_PRIORITY + priority);
+		modules.commands.onHash.once(before.bind(Hash), CONFIG_PRIORITY + priority);
+		modules.commands.onUnpack.once(before.bind(Unpack), CONFIG_PRIORITY + priority);
 
 		modules.commands.onServer.once(after.bind(Server), priority);
 		modules.commands.onPrepare.once(after.bind(Prepare), priority);
 		modules.commands.onBuild.once(after.bind(Build), priority);
 		modules.commands.onRun.once(after.bind(Run), priority);
 		modules.commands.onZip.once(after.bind(Zip), priority);
+		modules.commands.onRemote.once(after.bind(Remote), priority);
 		modules.commands.onHash.once(after.bind(Hash), priority);
 		modules.commands.onUnpack.once(after.bind(Unpack), priority);
 	}

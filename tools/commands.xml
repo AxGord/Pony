@@ -53,6 +53,12 @@
 		<arg>Configure name</arg>
 		<arg>Debug or release</arg>
 	</ftp>
+	<remote>
+		<help>Run commands on remote pony build server</help>
+		<syn>x</syn>
+		<arg>Configure name</arg>
+		<arg>Debug or release</arg>
+	</remote>
 	<hash>
 		<help>Create hashes list for files from config</help>
 	</hash>

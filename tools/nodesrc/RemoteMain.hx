@@ -100,6 +100,7 @@ class RemoteMain {
 		fileq = reader.cfg.files;
 
 		var cl = new pony.net.SocketClient(rx.node.host.innerData, Std.parseInt(rx.node.port.innerData));
+		cl.onDisconnect < disconnectHandler;
 		protocol = new RemoteProtocol(cl);
 		protocol.log.onLog << logHandler;
 		protocol.onCommandComplete << commandCompleteHandler;
@@ -111,7 +112,12 @@ class RemoteMain {
 		}
 
 	}
-
+	
+	private function disconnectHandler():Void {
+		Sys.println('Disconnect');
+		end(2);
+	}
+	
 	private function readyHandler():Void {
 		if (fileq.length == 0) {
 			runCommands();
@@ -165,6 +171,7 @@ class RemoteMain {
 	}
 
 	function end(code:Int = 0):Void {
+		protocol.socket.onDisconnect >> disconnectHandler;
 		protocol.socket.destroy();
 		if (code > 0) Sys.exit(code);
 	}

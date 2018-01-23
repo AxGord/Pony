@@ -29,6 +29,7 @@ enum BASection {
 	Build;
 	Run;
 	Zip;
+	Remote;
 	Hash;
 	Unpack;
 }
