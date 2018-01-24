@@ -209,4 +209,16 @@ class JsTools implements pony.magic.HasSignal {
 		return false;
 	}
 	
+	public static function normalizeCss(s:String):String {
+		var n = Browser.document.createDivElement();
+		n.style.cssText = s;
+		return n.style.cssText;
+	}
+
+	public static function splitCss(s:String):Array<String> {
+		var a = s.split(';');
+		a.pop();
+		return a.map(function(s:String) return StringTools.ltrim(s) + ';');
+	}
+
 }

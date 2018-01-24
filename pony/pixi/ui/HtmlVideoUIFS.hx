@@ -23,6 +23,7 @@
 **/
 package pony.pixi.ui;
 
+import pony.JsTools;
 import pony.HtmlVideo;
 import pony.geom.Rect;
 import pony.geom.Border;
@@ -37,9 +38,23 @@ class HtmlVideoUIFS extends HtmlVideoUI {
 	private var normalRect:Rect<Float>;
 	private var fsRect:Rect<Float>;
 	private var normalPos:Point<Float>;
+	private var normalCss:String;
+	private var fsCss:String;
 
-	public function new(targetRect:Rect<Float>, fsRect:Or<Border<Float>, Rect<Float>>, ?app:pony.pixi.App, ?options:HtmlVideoOptions, fixed:Bool = false) {
-		super(targetRect, app, options, fixed);
+	public function new(
+		targetRect:Rect<Float>,
+		fsRect:Or<Border<Float>, Rect<Float>>,
+		?css:String,
+		?fscss:String,
+		?app:pony.pixi.App,
+		?options:HtmlVideoOptions,
+		fixed:Bool = false)
+	{
+		if (css != null) {
+			css = JsTools.normalizeCss(css);
+			normalCss = css;
+		}
+		super(targetRect, css, app, options, fixed);
 		if (fsRect != null) {
 			this.normalRect = targetRect;
 			switch fsRect {
@@ -53,6 +68,10 @@ class HtmlVideoUIFS extends HtmlVideoUI {
 			fullscreen.onEnable << openFullScreenHandler;
 			fullscreen.onDisable << closeFullScreenHandler;
 			video.style.cursor = 'pointer';
+
+			if (fscss != null) {
+				fsCss = JsTools.normalizeCss(fscss);
+			}
 		}
 	}
 
@@ -60,12 +79,34 @@ class HtmlVideoUIFS extends HtmlVideoUI {
 		normalPos = htmlContainer.targetPos;
 		htmlContainer.targetPos = new Point<Float>(0, 0);
 		targetRect = fsRect;
+		switchCss(normalCss, fsCss);
 	}
 
 	public function closeFullScreenHandler():Void {
 		htmlContainer.targetPos = normalPos;
 		normalPos = null;
 		targetRect = normalRect;
+		switchCss(fsCss, normalCss);
+	}
+
+	private function switchCss(a:String, b:String):Void {
+		var css = JsTools.splitCss(video.style.cssText);
+		var ncss:Array<String> = null;
+		if (a != null) {
+			ncss = [];
+			var r = JsTools.splitCss(a);
+			for (e in css) {
+				if (r.indexOf(e) == -1)
+					ncss.push(e);
+			}
+		} else {
+			ncss = css;
+		}
+		if (b != null) {
+			video.style.cssText = ncss.join('') + b;
+		} else {
+			video.style.cssText = ncss.join('');
+		}
 	}
 
 }
