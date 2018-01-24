@@ -57,7 +57,9 @@ class Zip extends CfgModule<ZipConfig> {
 		var zip = new pony.ZipTool(cfg.output, cfg.prefix, cfg.compressLvl);
 		if (cfg.log) zip.onLog << Sys.println;
 		zip.onError << function(err:String) throw err;
-		zip.writeHash(Utils.getHashes(cfg.hash)).writeList(cfg.input).end();
+		if (cfg.hash != null)
+			zip.writeHash(Utils.getHashes(cfg.hash));
+		zip.writeList(cfg.input).end();
 	}
 
 }
