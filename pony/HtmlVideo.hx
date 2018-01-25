@@ -140,10 +140,7 @@ class HtmlVideo implements pony.magic.HasSignal {
 		elvis = false;
 		this.startPercent = startPercent;
 
-		if (videoSource != null) {
-			videoSource.removeEventListener('error', videoSourceErrorHandler);
-			videoElement.removeChild(videoSource);
-		}
+		unloadVideo();
 
 		videoSource = cast js.Browser.document.createElement('source'); // must play from <source> not .src coz mobile browsers are retarded
 		videoSource.addEventListener('error', videoSourceErrorHandler);
@@ -152,6 +149,14 @@ class HtmlVideo implements pony.magic.HasSignal {
 
 		updateVideoLoadPercentage();
 		playstopDelay(playVideo);
+	}
+
+	public function unloadVideo():Void {
+		if (videoSource != null) {
+			videoSource.removeEventListener('error', videoSourceErrorHandler);
+			videoElement.removeChild(videoSource);
+			videoSource = null;
+		}
 	}
 
 	@:extern private inline function playstopDelay(cb:Void->Void):Void DTimer.fixedDelay(options.playDelay, cb);
