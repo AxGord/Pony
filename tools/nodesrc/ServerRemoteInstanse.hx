@@ -142,10 +142,11 @@ class ServerRemoteInstanse {
 	}
 
 	private function execHandler(err:Null<ChildProcessExecError>, a1:String, a2:String):Void {
-		//log('haxe server is exec');
+		log('procss is exec');
 	}
 
 	private function childExitHandler(code:Int):Void {
+		trace('childExitHandler: $code');
 		onEndCommand();
 		activity();
 		currentCommandN++;

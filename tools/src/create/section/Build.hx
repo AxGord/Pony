@@ -23,6 +23,7 @@
 **/
 package create.section;
 
+import pony.text.XmlTools;
 import types.*;
 
 class Build extends Section {
@@ -46,20 +47,45 @@ class Build extends Section {
 
 	public function result():Xml {
 		init();
-		if (hxml) set('hxml', 'true');
-		add('main', main);
-		add(target, output());
-		for (cp in cps) add('cp', cp);
-		for (name in libs.keys()) {
-			var v = libs[name];
-			if (v == null)
-				add('lib', name);
-			else
-				add('lib', '$name $v');
+
+		if (hxml) {
+			var prepare = Xml.createElement('prepare');
+			prepare.set('hxml', outputFile);
+			prepare.addChild(XmlTools.node('main', main));
+			prepare.addChild(XmlTools.node(target, output()));
+			for (cp in cps) prepare.addChild(XmlTools.node('cp', cp));
+			for (name in libs.keys()) {
+				var v = libs[name];
+				if (v == null)
+					prepare.addChild(XmlTools.node('lib', name));
+				else
+					prepare.addChild(XmlTools.node('lib', '$name $v'));
+			}
+			if (dce != null) prepare.addChild(XmlTools.node('dce', dce));
+			if (analyzerOptimize) prepare.addChild(XmlTools.node('d', 'analyzer-optimize'));
+			if (esVersion != null) prepare.addChild(XmlTools.node('d', 'js-es$esVersion'));
+
+			xml.addChild(prepare);
+
+			var build = Xml.createElement('build');
+			build.addChild(XmlTools.node('hxml', outputFile));
+			xml.addChild(build);
+		} else {
+			add('main', main);
+			add(target, output());
+			for (cp in cps) add('cp', cp);
+			for (name in libs.keys()) {
+				var v = libs[name];
+				if (v == null)
+					add('lib', name);
+				else
+					add('lib', '$name $v');
+			}
+			if (dce != null) add('dce', dce);
+			if (analyzerOptimize) add('d', 'analyzer-optimize');
+			if (esVersion != null) add('d', 'js-es$esVersion');
 		}
-		if (dce != null) add('dce', dce);
-		if (analyzerOptimize) add('d', 'analyzer-optimize');
-		if (esVersion != null) add('d', 'js-es$esVersion');
+
 		return xml;
 	}
 

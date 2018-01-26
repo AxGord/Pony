@@ -10,10 +10,10 @@
 -resource resources/bsd.txt@bsd
 -resource resources/closed.txt@closed
 -resource resources/template.html@template.html
--resource resources/pixitemplate.hx@pixitemplate.hx
--resource resources/pixixmltemplate.hx@pixixmltemplate.hx
+-resource resources/pixitemplate.hx.tpl@pixitemplate.hx.tpl
+-resource resources/pixixmltemplate.hx.tpl@pixixmltemplate.hx.tpl
 -resource resources/pixixmltemplate.xml@pixixmltemplate.xml
--resource resources/jstemplate.hx@jstemplate.hx
+-resource resources/jstemplate.hx.tpl@jstemplate.hx.tpl
 -debug
 
 --next

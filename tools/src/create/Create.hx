@@ -83,19 +83,19 @@ class Create {
 
 			case ProjectType.JS:
 				Utils.createPath(main);
-				var data:String = haxe.Resource.getString('jstemplate.hx');
+				var data:String = haxe.Resource.getString('jstemplate.hx.tpl');
 				sys.io.File.saveContent(main, data);
 				if (vscAllow) create.ides.VSCode.createChrome(project.server.httpPort);
 				needHtml = true;
 			case ProjectType.Pixi:
 				Utils.createPath(main);
-				var data:String = haxe.Resource.getString('pixitemplate.hx');
+				var data:String = haxe.Resource.getString('pixitemplate.hx.tpl');
 				sys.io.File.saveContent(main, data);
 				if (vscAllow) create.ides.VSCode.createChrome(project.server.httpPort);
 				needHtml = true;
 			case ProjectType.Pixixml:
 				Utils.createPath(main);
-				var data:String = haxe.Resource.getString('pixixmltemplate.hx');
+				var data:String = haxe.Resource.getString('pixixmltemplate.hx.tpl');
 				sys.io.File.saveContent(main, data);
 				var xdata:String = haxe.Resource.getString('pixixmltemplate.xml');
 				sys.io.File.saveContent('app.xml', xdata);
@@ -121,6 +121,8 @@ class Create {
 		
 		if (vscAllow) create.ides.VSCode.create(ponycmd);
 		create.ides.HaxeDevelop.create(name, main, project.getLibs(), project.getCps(), ponycmd);
+
+		Utils.command('pony', ['prepare']);
 	}
 
 }

@@ -69,7 +69,7 @@ class Build extends CfgModule<BuildConfig> {
 	}
 
 	override private function run(cfg:BuildConfig):Void {
-		if (cfg.command.length > 0) {
+		if (cfg.runHxml.length == 0) {
 			var cmd = cfg.command.concat(haxelib);
 			if (cfg.app != null) {
 				cmd.push('-D');
@@ -85,7 +85,16 @@ class Build extends CfgModule<BuildConfig> {
 			}
 		}
 		for (e in cfg.runHxml) {
-			runCompilation([e + '.hxml'], cfg.debug, cfg.haxeCompiler);
+			var cmd = cfg.command.copy();
+			cmd.push(e + '.hxml');
+			if (cfg.app != null) {
+				cmd.push('-D');
+				cmd.push('app=${cfg.app}');
+			}
+			if (cfg.debug) {
+				cmd.push('-debug');
+			}
+			runCompilation(cmd, cfg.debug, cfg.haxeCompiler);
 		}
 	}
 

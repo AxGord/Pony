@@ -19,8 +19,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Pony Tools: fix ftp error",
-"version": "0.7.6",
+"releasenote": "Pony Tools: update create",
+"version": "0.7.7",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }
