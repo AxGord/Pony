@@ -113,7 +113,6 @@ class HtmlVideo implements HasSignal implements HasLink {
 		videoElement.muted = true; // must be muted to play on mobiles
 		videoElement.autoplay = true; // for mobiles + desktop
 		videoElement.controls = false;
-		videoElement.preload = 'none';
 		videoElement.loop = false;
 		videoElement.addEventListener('canplay', playVideo);
 		videoElement.addEventListener('pause', playVideo);
@@ -286,7 +285,7 @@ class HtmlVideo implements HasSignal implements HasLink {
 	@:auto public var onReady:Signal0;
 	@:auto public var onLoad:Signal0;
 
-	public var progress(default, null):Percent = new Percent();
+	public var progress(default, null):Percent = new Percent(0);
 	public var targetTime(default, set):Time = 0;
 	private var element:VideoElement;
 	private var isReady(get, never):Bool;
@@ -313,7 +312,7 @@ class HtmlVideo implements HasSignal implements HasLink {
 	}
 
 	public function reset():Void {
-		progress.allow = 1;
+		progress.allow = 0;
 		progress.min = 0;
 		progress.max = -1;
 	}
