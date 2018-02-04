@@ -21,27 +21,56 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-package pony.pixi.ui;
+package pony;
 
-import pony.HtmlVideo;
+class Percent implements pony.magic.HasSignal {
 
-class HtmlVideoUI extends HtmlContainer {
+	@:bindable public var percent:Float;
+	@:bindable public var full:Bool;
+	@:bindable public var run:Bool;
+	public var min(default, set):Float = 0;
+	public var max(default, set):Float = -1;
+	public var allow(default, set):Float = 1;
 
-	public var video(default, null):HtmlVideo;
-	public var muted(get, set):Bool;
-
-	public function new(targetRect:pony.geom.Rect<Float>, ?css:String, ?app:pony.pixi.App, ?options:HtmlVideoOptions, fixed:Bool = false) {
-		super(targetRect, app, fixed);
-		video = new HtmlVideo(options);
-		video.appendTo(app.parentDom);
-		htmlContainer.targetStyle = video.style;
-		if (css != null) video.style.cssText += css;
+	public function new(allow:Float = 1, max:Float = -1) {
+		this.allow = allow;
+		this.max = max;
+	}
+	
+	@:extern private inline function set_min(v:Float):Float {
+		if (min != v) {
+			min = v;
+			updatePercent();
+		}
+		return v;
 	}
 
-	public inline function hide():Void video.visible.disable();
-	public inline function show():Void video.visible.enable();
+	@:extern private inline function set_max(v:Float):Float {
+		if (max != v) {
+			max = v;
+			updatePercent();
+		}
+		return v;
+	}
 
-	@:extern private inline function get_muted():Bool return video.muted.enabled;
-	@:extern private inline function set_muted(v:Bool):Bool return video.muted.enabled = v;
+	@:extern private inline function set_allow(v:Float):Float {
+		if (allow != v) {
+			allow = v;
+			updatePercent();
+		}
+		return v;
+	}
+
+	@:extern private inline function updatePercent():Void {
+		if (max == -1) {
+			percent = 0;
+			full = false;
+			run = false;
+		} else {
+			percent = min / max;
+			full = percent >= 1;
+			run = percent >= allow;
+		}
+	}
 
 }

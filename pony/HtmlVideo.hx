@@ -28,48 +28,51 @@ import js.html.VideoElement;
 import js.html.SourceElement;
 import pony.events.Signal0;
 import pony.time.DTimer;
+import pony.Tumbler;
+import pony.Percent;
+import pony.JsTools;
+import pony.time.Time;
+import pony.time.DeltaTime;
+import pony.magic.HasSignal;
+import pony.magic.HasLink;
 
 typedef HtmlVideoOptions = {
 	?bufferingTreshhold: Float,
 	?retryDelay: Int,
-	?maxRetries: Int,
-	?playDelay: Int
+	?maxRetries: Int
 }
 
 /**
  * HtmlVideo
  * @author AxGord <axgord@gmail.com>
  */
-class HtmlVideo implements pony.magic.HasSignal {
+class HtmlVideo implements HasSignal implements HasLink {
 
 	@:auto public var onClick:Signal0;
-	@:auto public var onShow:Signal0;
-	@:auto public var onHide:Signal0;
-	@:auto public var onEnd:Signal0;
+	public var onEnd(link, never):Signal0 = position.onEnd;
+
+	@:bindable public var resultVisible:Bool = true;
+	public var visible(default, null):Tumbler = new Tumbler(true);
+	public var loadProgress(link, null):Percent = loadState.progress;
+	public var playProgress(link, null):Percent = position.progress;
+	public var muted:Tumbler = new Tumbler(false);
+
+	private var loader:HtmlVideoLoader;
+	private var loadState:HtmlVideoLoadProgress;
+	private var position:HtmlVideoPlayProgress;
 
 	private var options:HtmlVideoOptions = {
-		bufferingTreshhold: 0.5,
+		bufferingTreshhold: 1,
 		retryDelay: 3000,
-		maxRetries: 4,
-		playDelay: 500
+		maxRetries: 4
 	};
-
-	public var visible(default, set):Bool;
 
 	public var videoElement(default, null):VideoElement;
 	public var style(get, never):CSSStyleDeclaration;
-
-	private var videoSource:SourceElement;
-	private var videoLoadPercentage:Float = 0;
-	private var retryCount:Int = 0;
-	private var startPercent:Float = 0;
-	private var elementVisible(get, set):Bool;
-
-	public var resultVisible(get, never):Bool;
-	public var elvis(default, set):Bool;
-	public var muted(get, set):Bool;
+	public var startTime(default, set):Time = 0;
 
 	public function new(?options:HtmlVideoOptions) {
+		
 		if (options != null) {
 			if (options.bufferingTreshhold != null)
 				this.options.bufferingTreshhold = options.bufferingTreshhold;
@@ -79,149 +82,256 @@ class HtmlVideo implements pony.magic.HasSignal {
 				this.options.maxRetries = options.maxRetries;
 		}
 
+		createVideoElement();
+
+		loader = new HtmlVideoLoader(videoElement, this.options.retryDelay, this.options.maxRetries);
+		loadState = new HtmlVideoLoadProgress(videoElement);
+		position = new HtmlVideoPlayProgress(videoElement);
+
+		loader.onUnload << loadState.reset;
+		loader.onUnload << position.reset;
+
+		loadState.onReady << setActualMuted;
+
+		visible.changeEnabled << updateResultVisible;
+		loadProgress.changeRun << updateResultVisible;
+
+		changeResultVisible - true << showHtmlElement;
+		changeResultVisible - false << hideHtmlElement;
+
+		resultVisible = false;
+
+		if (!JsTools.isMobile) {
+			muted.onEnable << muteHandler;
+			muted.onDisable << unmuteHandler;
+		}
+	}
+	
+	@:extern private inline function createVideoElement():Void {
 		videoElement = cast js.Browser.document.createElement('video');
-		videoElement.setAttribute("playsinline", "playsinline"); // for ios
-		if (pony.JsTools.isMobile)
-			videoElement.muted = true; // must be muted to play on mobiles
+		videoElement.setAttribute('playsinline', 'playsinline'); // for ios
+		videoElement.muted = true; // must be muted to play on mobiles
 		videoElement.autoplay = true; // for mobiles + desktop
 		videoElement.controls = false;
-
-		videoElement.addEventListener('loadeddata', videoLoaddataHandler);
-		videoElement.addEventListener('canplay', videoCanplayHandler);
+		videoElement.preload = 'none';
+		videoElement.loop = false;
+		videoElement.addEventListener('canplay', playVideo);
+		videoElement.addEventListener('pause', playVideo);
 		videoElement.addEventListener('click', videoClickHandler);
-		videoElement.addEventListener('ended', videoEndHandler);
-		videoElement.addEventListener('pause', videoPauseHandler);
-		videoElement.addEventListener('progress', videoProgessHandler);
-
-		elementVisible = false;
 	}
 
-	public inline function hide():Void visible = false;
-	public inline function show():Void visible = true;
+	public inline function loadVideo(url:String):Void loader.loadVideo(url);
+	public inline function unloadVideo():Void loader.unloadVideo();
+
+	@:extern private inline function set_startTime(v:Time):Time return position.start = v;
+
+	private function muteHandler():Void videoElement.muted = true;
+	private function unmuteHandler():Void if (loadProgress.run) videoElement.muted = false;
+	private function setActualMuted():Void videoElement.muted = muted.enabled;
+
+	private function updateResultVisible():Void {
+		resultVisible = visible.enabled && loadProgress.run;
+	}
 
 	@:extern private inline function get_muted():Bool return videoElement.muted;
 	@:extern private inline function set_muted(v:Bool):Bool return videoElement.muted = v;
 
-	@:extern private inline function set_visible(v:Bool):Bool {
-		visible = v;
-		updateVisible();
-		return v; 
-	}
-
 	@:extern public inline function appendTo(parent:js.html.DOMElement):Void parent.appendChild(videoElement);
 	@:extern private inline function get_style():CSSStyleDeclaration return videoElement.style;
 
-	@:extern private inline function get_elementVisible():Bool return videoElement.style.display == 'block';
-	
-	@:extern private inline function set_elvis(v:Bool):Bool {
-		elvis = v;
-		updateVisible();
-		return v;
-	}
+	private function showHtmlElement():Void videoElement.style.display = 'block';
+	private function hideHtmlElement():Void videoElement.style.display = 'none';
 
-	private function set_elementVisible(v:Bool):Bool {
-		if (v != elementVisible) {
-			if (v) {
-				videoElement.style.display = 'block';
-				eShow.dispatch();
-			} else {
-				videoElement.style.display = 'none';
-				eHide.dispatch();
+	private function videoClickHandler():Void eClick.dispatch();
+
+	private function playVideo():Void {
+		if (loadProgress.run) {
+			if (!loader.isPlaying) {
+				videoElement.play();
+				if (!pony.JsTools.isMobile)
+					videoElement.muted = muted.enabled;
 			}
 		}
-		return v;
 	}
 
-	@:extern private inline function updateVisible():Void elementVisible = resultVisible;
+}
 
-	@:extern private inline function get_resultVisible():Bool return elvis && visible;
+@:final private class HtmlVideoLoader implements HasSignal {
 
-	public function loadVideo(url:String, startPercent:Float = 0):Void {
-		elvis = false;
-		this.startPercent = startPercent;
+	@:auto public var onLoad:Signal0;
+	@:auto public var onUnload:Signal0;
 
-		unloadVideo();
+	public var isPlaying(get, never):Bool;
 
+	private var element:VideoElement;
+	private var videoSource:SourceElement;
+	private var retryCount:Int = 0;
+	private var unloaded:Bool = true;
+	private var retryDelay:Int;
+	private var maxRetries:Int;
+
+	public function new(videoElement:VideoElement, retryDelay:Int, maxRetries:Int) {
+		element = videoElement;
+		this.retryDelay = retryDelay;
+		this.maxRetries = maxRetries;
+	}
+
+	@:extern private inline function get_isPlaying():Bool {
+		return element.currentTime > 0 &&
+			!element.paused &&
+			!element.ended &&
+			element.readyState > 2;
+	}
+
+	public function loadVideo(url:String):Void {
+		var playingbefore = isPlaying;
+		_unloadVideo();
 		videoSource = cast js.Browser.document.createElement('source'); // must play from <source> not .src coz mobile browsers are retarded
 		videoSource.addEventListener('error', videoSourceErrorHandler);
 		videoSource.src = url;
-		videoElement.appendChild(videoSource);
-
-		updateVideoLoadPercentage();
-		playstopDelay(playVideo);
+		element.appendChild(videoSource);
+		if (!playingbefore)
+			element.load();
+		unloaded = false;
+		eLoad.dispatch();
 	}
 
-	public function unloadVideo():Void {
-		if (videoSource != null) {
-			videoSource.removeEventListener('error', videoSourceErrorHandler);
-			videoElement.removeChild(videoSource);
-			videoSource = null;
+	public inline function unloadVideo():Void {
+		if (unloaded) {
+			_unloadVideo();
+		} else {
+			var playingbefore = isPlaying;
+			_unloadVideo();
+			if (playingbefore)
+				element.load();
 		}
 	}
 
-	@:extern private inline function playstopDelay(cb:Void->Void):Void DTimer.fixedDelay(options.playDelay, cb);
+	private function _unloadVideo():Void {
+		eUnload.dispatch();
+		element.muted = true;
+		retryCount = 0;
+		if (unloaded) return;
+		if (videoSource != null) {
+			videoSource.src = '';
+			videoSource.removeEventListener('error', videoSourceErrorHandler);
+			element.removeChild(videoSource);
+			videoSource = null;
+		}
+		element.removeAttribute('src');
+		unloaded = true;
+	}
 
-	private function videoSourceErrorHandler(e:js.Error):Void DTimer.fixedDelay(options.retryDelay, retryConnect);
+	private function videoSourceErrorHandler(e:js.Error):Void DTimer.fixedDelay(retryDelay, retryConnect);
 
 	private function retryConnect():Void {
-		if (retryCount < options.maxRetries) {
-			loadVideo(videoSource.src, startPercent);
+		if (retryCount < maxRetries) {
+			loadVideo(videoSource.src);
 			retryCount++;
 		}
 	}
 
-	private function videoLoaddataHandler():Void {
-		updateVideoLoadPercentage();
-		if (isVideoLoadedThreshold()) videoLoaded();
+}
+
+@:final private class HtmlVideoPlayProgress implements HasSignal {
+
+	@:auto public var onEnd:Signal0;
+
+	public var progress(default, null):Percent = new Percent();
+	public var current(get, never):Time;
+	public var start(default, set):Time = 0;
+	public var total(default, null):Time;
+
+	private var element:VideoElement;
+
+	public function new(videoElement:VideoElement) {
+		element = videoElement;
+		element.addEventListener('timeupdate', timeupdateHandler);
+		element.addEventListener('progress', progressHandler);
+		element.addEventListener('ended', endedHandler);
 	}
 
-	private function videoCanplayHandler():Void {
-		updateVideoLoadPercentage();
-		if (isVideoLoadedThreshold() && elvis) playVideo();
+	@:extern private inline function get_current():Time return Time.fromSeconds(Std.int(element.currentTime));
+
+	private function set_start(v:Time):Time {
+		if (v != start) {
+			start = v;
+			progress.min = element.currentTime = v.totalSeconds;
+		}
+		return v;
 	}
 
-	private function videoClickHandler():Void eClick.dispatch();
+	private function timeupdateHandler():Void progress.min = element.currentTime;
 
-	private function videoEndHandler():Void {
-		hideVideo();
-		eEnd.dispatch();
-	}
-
-	private function videoPauseHandler():Void if (elvis) playVideo();
-
-	private function videoProgessHandler():Void {
-		updateVideoLoadPercentage();
-		if (isVideoLoadedThreshold()) {
-			showVideo();
-			videoCanplayHandler();
+	private function progressHandler():Void {
+		if (total == null && element.duration > 0) {
+			total = Time.fromSeconds(Std.int(element.duration));
+			progress.min = element.currentTime = start.totalSeconds;
+			progress.max = total;
 		}
 	}
 
+	private function endedHandler():Void eEnd.dispatch();
+
+	public function reset():Void {
+		total = null;
+		progress.min = 0;
+		progress.max = -1;
+	}
+
+}
+
+@:final private class HtmlVideoLoadProgress implements HasSignal {
+	
+	@:auto public var onReady:Signal0;
+	@:auto public var onLoad:Signal0;
+
+	public var progress(default, null):Percent = new Percent();
+	public var targetTime(default, set):Time = 0;
+	private var element:VideoElement;
+	private var isReady(get, never):Bool;
+
+	public function new(videoElement:VideoElement) {
+		element = videoElement;
+		element.addEventListener('progress', updateVideoLoadPercentage);
+		element.addEventListener('loadeddata', updateVideoLoadPercentage);
+		progress.changeRun << changeRunHandler;
+	}
+	
+	@:extern private inline function get_isReady():Bool {
+		return element.readyState > 2 &&
+			element.duration != 0 &&
+			element.buffered.length > 0;
+	}
+
+	private function set_targetTime(v:Time):Time {
+		if (v == targetTime) {
+			targetTime = v;
+			progress.allow = v.totalSeconds;
+		}
+		return v;
+	}
+
+	public function reset():Void {
+		progress.allow = 1;
+		progress.min = 0;
+		progress.max = -1;
+	}
+
+	private function changeRunHandler(v:Bool):Void {
+		if (v)
+			eReady.dispatch();
+		else
+			eLoad.dispatch();
+	}
+
 	private function updateVideoLoadPercentage():Void {
-		if (videoElement.buffered.length > 0)// if video has buffered yet
-			videoLoadPercentage = videoElement.buffered.end(0) / videoElement.duration;
+		if (element.duration == 0) {
+			progress.min = 0;
+		} else if (isReady) {
+			progress.max = Std.int(element.duration);
+			progress.min = Std.int(element.buffered.end(0));
+		}
 	}
-
-	@:extern private inline function isVideoLoadedThreshold():Bool return videoLoadPercentage >= options.bufferingTreshhold;
-
-	private function videoLoaded():Void {
-		retryCount = 0;
-		videoElement.currentTime = videoElement.duration * startPercent;
-		updateVideoLoadPercentage();
-		playVideo();
-		showVideo();
-	}
-
-	private function showVideo():Void {
-		updateVideoLoadPercentage();
-		if (isVideoLoadedThreshold()) elvis = true;
-	}
-
-	private function hideVideo():Void {
-		playstopDelay(videoElement.pause);
-		elvis = false;
-	}
-
-	private function playVideo():Void if (isVideoLoadedThreshold()) videoElement.play();
 
 }

@@ -178,7 +178,7 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 					for (e in content) r.add(e);
 					r;
 				} else {
-					var s = new AlignLayout(align);
+					var s = new AlignLayout(align, scaleBorderInt(attrs.border));
 					for (e in content) s.add(e);
 					s;
 				}

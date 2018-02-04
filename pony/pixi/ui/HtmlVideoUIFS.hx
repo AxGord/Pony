@@ -64,7 +64,7 @@ class HtmlVideoUIFS extends HtmlVideoUI {
 					this.fsRect = rect;
 			}
 			video.onClick << fullscreen.sw;
-			video.onHide || video.onEnd << fullscreen.disable;
+			(video.loadProgress.changeRun - false - true) || video.onEnd << fullscreen.disable;
 			fullscreen.onEnable << openFullScreenHandler;
 			fullscreen.onDisable << closeFullScreenHandler;
 			video.style.cursor = 'pointer';
