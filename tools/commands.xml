@@ -61,6 +61,8 @@
 	</remote>
 	<hash>
 		<help>Create hashes list for files from config</help>
+		<arg>Configure name</arg>
+		<arg>Debug or release</arg>
 	</hash>
 	<unpack>
 		<help>Unpack files from config archives</help>

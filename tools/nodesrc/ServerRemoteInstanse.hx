@@ -27,6 +27,7 @@ import sys.io.File;
 import haxe.io.BytesOutput;
 import pony.net.SocketClient;
 import pony.Pair;
+import pony.sys.Process;
 
 /**
  * ServerRemoteInstanse
@@ -42,6 +43,7 @@ class ServerRemoteInstanse {
 	private var commands:Map<String, Array<Pair<Bool, String>>> = new Map();
 	private var zipRLog:Bool = true;
 	private var packLog:BytesOutput;
+	private var activeProcess:Process;
 
 	private var activity:Void -> Void;
 
@@ -54,8 +56,8 @@ class ServerRemoteInstanse {
 		activity = protocol.ping.watch();
 		client.onData << activity;
 		protocol.ping.onLostConnection < lostHandler;
-		protocol.ping.onWarning << function() Sys.println('Problem with connection');
-		protocol.ping.onRestore << function() Sys.println('Connection restore');
+		protocol.ping.onWarning << warningHandler;
+		protocol.ping.onRestore << restoreHandler;
 
 		if (key == null) {
 			start();
@@ -64,13 +66,24 @@ class ServerRemoteInstanse {
 		}
 	}
 
+	private function warningHandler():Void Sys.println('Problem with connection');
+	private function restoreHandler():Void Sys.println('Connection restore');
+
 	private function closeHandler():Void {
 		Sys.println('Disconnect');
-		protocol.file.cancel();
+		closeConnection();
 	}
 
 	private function lostHandler():Void {
 		Sys.println('Lost connection');
+		closeConnection();
+	}
+
+	private function closeConnection():Void {
+		client.onClose >> closeHandler;
+		protocol.ping.onLostConnection >> lostHandler;
+		protocol.ping.onWarning >> warningHandler;
+		protocol.ping.onRestore >> restoreHandler;
 		protocol.file.cancel();
 		client.destroy();
 	}
@@ -135,17 +148,15 @@ class ServerRemoteInstanse {
 		log(c.b);
 		zipRLog = c.a;
 		onBeginCommand();
-		var p = ChildProcess.exec(c.b, execHandler);
-		p.stdout.on('data', prlog);
-		p.stderr.on('data', prlog);
-		p.on('exit', childExitHandler);
-	}
 
-	private function execHandler(err:Null<ChildProcessExecError>, a1:String, a2:String):Void {
-		log('procss is exec');
+		activeProcess = new Process(c.b);
+		activeProcess.onLog << prlog;
+		activeProcess.onError << prlog;
+		activeProcess.onComplete < childExitHandler;
 	}
 
 	private function childExitHandler(code:Int):Void {
+		activeProcess.destroy();
 		trace('childExitHandler: $code');
 		onEndCommand();
 		activity();

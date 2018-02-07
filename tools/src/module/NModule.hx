@@ -14,26 +14,32 @@
 * THIS SOFTWARE IS PROVIDED BY ALEXANDER GORDEYKO ``AS IS'' AND ANY EXPRESS OR IMPLIED
 * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
 * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL ALEXANDER GORDEYKO OR
-* CONTRIBUTORS BE`` LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+* CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
 * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
 * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-package pony.sys.haxe;
+package module;
 
-class Process extends pony.Logable implements pony.sys.IProcess {
-	
-	public var runned(default, null):Bool = false;
+import hxbit.Serializer;
+import types.BAConfig;
 
-	private var runCmd:String;
+class NModule<T:BAConfig> extends CfgModule<T> {
 
-	public function new(runCmd:String) {
-		super();
-		this.runCmd = runCmd;
+	private static var serializer:Serializer = new Serializer();
+
+	public var protocol:NProtocol;
+
+	override private function run(cfg:T):Void {
+		protocol = new NProtocol();
+		writeCfg(cfg);
+		var bytes = serializer.serialize(protocol);
+		Utils.runNode('pony', [bytes.toString()]);
+		protocol = null;
 	}
 
-	//todo
+	@:abstract private function writeCfg(cfg:T):Void;
 
 }

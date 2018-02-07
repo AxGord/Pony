@@ -6,6 +6,7 @@
 -dce full
 -D analyzer-optimize
 -lib pony
+-lib hxbit
 -resource resources/logo.txt@logo
 -resource resources/bsd.txt@bsd
 -resource resources/closed.txt@closed

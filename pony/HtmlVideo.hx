@@ -32,7 +32,6 @@ import pony.Tumbler;
 import pony.Percent;
 import pony.JsTools;
 import pony.time.Time;
-import pony.time.DeltaTime;
 import pony.magic.HasSignal;
 import pony.magic.HasLink;
 

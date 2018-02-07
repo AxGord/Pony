@@ -51,7 +51,7 @@ class XmlConfigReader<T:BaseConfig> {
 		for (a in xml.x.attributes()) readAttr(a, normalize(xml.x.get(a)));
 		for (e in xml.elements) {
 			switch e.name {
-				case 'apps': 
+				case 'apps':
 					if (cfg.app != null) {
 						if (e.hasNode.resolve(cfg.app))
 							readXml(e.node.resolve(cfg.app));

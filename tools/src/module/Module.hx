@@ -99,7 +99,7 @@ class Module extends pony.Logable implements pony.magic.HasAbstract {
 		modules.commands.onRun.once(getConfig, CONFIG_PRIORITY);
 		modules.commands.onZip.once(getConfig, CONFIG_PRIORITY);
 		modules.commands.onRemote.once(getConfig, CONFIG_PRIORITY);
-		modules.commands.onHash.once(emptyConfig, CONFIG_PRIORITY);
+		modules.commands.onHash.once(getConfig, CONFIG_PRIORITY);
 		modules.commands.onUnpack.once(emptyConfig, CONFIG_PRIORITY);
 	}
 

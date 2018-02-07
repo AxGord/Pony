@@ -35,6 +35,8 @@ import types.BASection;
 
 private typedef HashTargets = Pair<SPair<String>, Array<String>>;
 
+private typedef CalcConfig = {a: String, b: String, c: String, r:String};
+
 /**
  * Hash module
  * @author AxGord <axgord@gmail.com>
@@ -49,8 +51,10 @@ class Hash extends Module {
 
 	private var beforeDirs:Map<BASection, HashTargets> = new Map();
 	private var beforeUnits:Map<BASection, HashTargets> = new Map();
+	private var beforeCalc:Map<BASection, CalcConfig> = new Map();
 	private var afterDirs:Map<BASection, HashTargets> = new Map();
 	private var afterUnits:Map<BASection, HashTargets> = new Map();
+	private var afterCalc:Map<BASection, CalcConfig> = new Map();
 
 	private var threads:Int = 1;
 	private var hash:Bool = false;
@@ -74,12 +78,17 @@ class Hash extends Module {
 			section: Hash,
 			dirs: [],
 			units: [],
+			calc: createCalcConfig(),
 			stateFile: 'hashstate.txt',
-			changesFile: 'hashchanges.txt'
+			changesFile: null//'hashchanges.txt'
 		}, configHandler);
 	}
 
 	private function start():Void {
+		if (afterCalc.exists(BASection.Hash)) {
+			var ac = afterCalc[BASection.Hash];
+			calc(ac.a, ac.b, ac.c, ac.r);
+		}
 		if (!afterDirs.exists(BASection.Hash) && !afterUnits.exists(BASection.Hash)) return;
 		if (afterDirs.exists(BASection.Hash)) dirs(afterDirs[BASection.Hash]);
 		if (afterUnits.exists(BASection.Hash)) units(afterUnits[BASection.Hash]);
@@ -87,6 +96,7 @@ class Hash extends Module {
 
 	private function before(section:BASection):Void {
 		if (section == BASection.Hash) return;
+		if (beforeCalc.exists(section)) calc(beforeCalc[section].a, beforeCalc[section].b, beforeCalc[section].c, beforeCalc[section].r);
 		if (!beforeDirs.exists(section) && !beforeUnits.exists(section)) return;
 		//todo: look files
 		if (beforeDirs.exists(section)) dirs(beforeDirs[section]);
@@ -95,6 +105,7 @@ class Hash extends Module {
 
 	private function after(section:BASection):Void {
 		if (section == BASection.Hash) return;
+		if (afterCalc.exists(section)) calc(afterCalc[section].a, afterCalc[section].b, afterCalc[section].c, afterCalc[section].r);
 		if (!afterDirs.exists(section) && !afterUnits.exists(section)) return;
 		if (afterDirs.exists(section)) dirs(afterDirs[section]);
 		if (afterUnits.exists(section)) units(afterUnits[section]);
@@ -112,6 +123,32 @@ class Hash extends Module {
 
 	private function units(data:HashTargets):Void {
 		files(data.a, data.b);
+	}
+
+	private function calc(a:String, b:String, c:String, r:String):Void {
+		var ah = Utils.getHashes(a);
+		var bh = Utils.getHashes(b);
+		var ch:Map<String, Array<String>> = new Map();
+		var rm:Array<String> = [];
+		for (ak in ah.keys()) {
+			if (!(bh.exists(ak) && compareHash(ah[ak], bh[ak]))) {
+				ch[ak] = ah[ak];
+			}
+		}
+		if (r != null)
+			for (bk in bh.keys())
+				if (!ah.exists(bk)) rm.push(bk);
+		
+		Utils.saveHashes(c, ch);
+		if (r != null) File.saveContent(r, rm.join('\n'));
+	}
+
+	private static function compareHash(a:Array<String>, b:Array<String>):Bool {
+		if (a.length != b.length) return false;
+		for (i in 0...a.length) {
+			if (a[i] != b[i]) return false;
+		}
+		return true;
 	}
 
 	private function files(file:SPair<String>, list:Array<String>):Void {
@@ -167,14 +204,28 @@ class Hash extends Module {
 			}
 		});
 		Utils.saveHashes(file.a, nmap);
-		Utils.saveHashes(file.b, changesMap);
+		if (file.b != null) Utils.saveHashes(file.b, changesMap);
 		Sys.println('');
 		Sys.println('Hashing time: ' + Std.int((Sys.time() - startTime) * 1000) / 1000);
 	}
 
 	private function configHandler(cfg:HashConfig):Void {
 		var filesPair = new SPair(cfg.stateFile, cfg.changesFile);
+		var a = cfg.calc.a;
+		var b = cfg.calc.b;
+		var c = cfg.calc.c;
+		var r = cfg.calc.r;
 		if (cfg.before) {
+			if (a != null || b != null || c != null || r != null) {
+				if (!beforeCalc.exists(cfg.section))
+					beforeCalc[cfg.section] = createCalcConfig();
+
+				if (a != null) beforeCalc[cfg.section].a = a;
+				if (b != null) beforeCalc[cfg.section].b = b;
+				if (c != null) beforeCalc[cfg.section].c = c;
+				if (r != null) beforeCalc[cfg.section].r = r;
+			}
+
 			if (cfg.dirs.length > 0) {
 				if (beforeDirs.exists(cfg.section)) {
 					beforeDirs[cfg.section].b = beforeDirs[cfg.section].b.concat(cfg.dirs);
@@ -190,6 +241,16 @@ class Hash extends Module {
 				}
 			}
 		} else {
+			if (a != null || b != null || c != null || r != null) {
+				if (!afterCalc.exists(cfg.section))
+					afterCalc[cfg.section] = createCalcConfig();
+
+				if (a != null) afterCalc[cfg.section].a = a;
+				if (b != null) afterCalc[cfg.section].b = b;
+				if (c != null) afterCalc[cfg.section].c = c;
+				if (r != null) afterCalc[cfg.section].r = r;
+			}
+
 			if (cfg.dirs.length > 0) {
 				if (afterDirs.exists(cfg.section)) {
 					afterDirs[cfg.section].b = afterDirs[cfg.section].b.concat(cfg.dirs);
@@ -207,23 +268,27 @@ class Hash extends Module {
 		}
 	}
 
+	@:extern public static inline function createCalcConfig():CalcConfig return {a: null, b: null, c: null, r: null};
+
 }
 
 private typedef HashConfig = { > types.BAConfig,
 	dirs: Array<String>,
 	units: Array<String>,
 	stateFile: String,
-	changesFile: String
+	changesFile: String,
+	calc: CalcConfig
 }
 
 private class HashReader extends BAReader<HashConfig> {
 
 	override private function readNode(xml:Fast):Void {
 		switch xml.name {
-
 			case 'dir': cfg.dirs.push(StringTools.trim(xml.innerData));
 			case 'unit': cfg.units.push(StringTools.trim(xml.innerData));
-
+			case 'calc':
+				allowEnd = false;
+				new HashCalcReader(xml, copyCfg(), onConfig);
 			case _: super.readNode(xml);
 		}
 	}
@@ -231,6 +296,7 @@ private class HashReader extends BAReader<HashConfig> {
 	override private function clean():Void {
 		cfg.dirs = [];
 		cfg.units = [];
+		cfg.calc = module.Hash.createCalcConfig();
 	}
 
 	override private function readAttr(name:String, val:String):Void {
@@ -239,6 +305,26 @@ private class HashReader extends BAReader<HashConfig> {
 			case 'changes': cfg.changesFile = val;
 			case _:
 		}
+	}
+
+}
+
+private class HashCalcReader extends BAReader<HashConfig> {
+
+	override private function readNode(xml:Fast):Void {
+		switch xml.name {
+			case 'a': cfg.calc.a = StringTools.trim(xml.innerData);
+			case 'b': cfg.calc.b = StringTools.trim(xml.innerData);
+			case 'c': cfg.calc.c = StringTools.trim(xml.innerData);
+			case 'r': cfg.calc.r = StringTools.trim(xml.innerData);
+			case _: super.readNode(xml);
+		}
+	}
+
+	override private function clean():Void {
+		cfg.dirs = [];
+		cfg.units = [];
+		cfg.calc = {a: null, b: null, c: null, r: null};
 	}
 
 }

@@ -35,12 +35,7 @@ import pony.net.http.IHttpConnection;
 import pony.NPM;
 import pony.text.XmlConfigReader;
 import sys.FileSystem;
-
-typedef RemoteConfig = { > BaseConfig,
-	key: String,
-	files: Array<String>,
-	commands: Array<String>
-}
+import types.RemoteConfig;
 
 /**
  * RemoteMain
