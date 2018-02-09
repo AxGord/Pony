@@ -61,7 +61,7 @@ class HtmlVideo implements HasSignal implements HasLink {
 	private var position:HtmlVideoPlayProgress;
 
 	private var options:HtmlVideoOptions = {
-		bufferingTreshhold: 1,
+		bufferingTreshhold: 3,
 		retryDelay: 3000,
 		maxRetries: 4
 	};
@@ -84,7 +84,7 @@ class HtmlVideo implements HasSignal implements HasLink {
 		createVideoElement();
 
 		loader = new HtmlVideoLoader(videoElement, this.options.retryDelay, this.options.maxRetries);
-		loadState = new HtmlVideoLoadProgress(videoElement);
+		loadState = new HtmlVideoLoadProgress(videoElement, options.bufferingTreshhold);
 		position = new HtmlVideoPlayProgress(videoElement);
 
 		loader.onUnload << loadState.reset;
@@ -287,10 +287,12 @@ class HtmlVideo implements HasSignal implements HasLink {
 	public var progress(default, null):Percent = new Percent(0);
 	public var targetTime(default, set):Time = 0;
 	private var element:VideoElement;
+	private var bufferingTreshhold:Float;
 	private var isReady(get, never):Bool;
 
-	public function new(videoElement:VideoElement) {
+	public function new(videoElement:VideoElement, bufferingTreshhold:Float) {
 		element = videoElement;
+		this.bufferingTreshhold = bufferingTreshhold;
 		element.addEventListener('progress', updateVideoLoadPercentage);
 		element.addEventListener('loadeddata', updateVideoLoadPercentage);
 		progress.changeRun << changeRunHandler;
@@ -305,13 +307,13 @@ class HtmlVideo implements HasSignal implements HasLink {
 	private function set_targetTime(v:Time):Time {
 		if (v == targetTime) {
 			targetTime = v;
-			progress.allow = v.totalSeconds;
+			progress.allow = v.totalSeconds + bufferingTreshhold;
 		}
 		return v;
 	}
 
 	public function reset():Void {
-		progress.allow = 0;
+		progress.allow = bufferingTreshhold;
 		progress.min = 0;
 		progress.max = -1;
 	}

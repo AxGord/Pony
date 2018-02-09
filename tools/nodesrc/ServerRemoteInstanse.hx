@@ -41,16 +41,17 @@ class ServerRemoteInstanse {
 	private var key:String;
 	private var protocol:RemoteProtocol;
 	private var commands:Map<String, Array<Pair<Bool, String>>> = new Map();
+	private var allowForGet:Array<String>;
 	private var zipRLog:Bool = true;
 	private var packLog:BytesOutput;
 	private var activeProcess:Process;
-
 	private var activity:Void -> Void;
 
-	public function new(client:SocketClient, key:String, commands:Map<String, Array<Pair<Bool, String>>>) {
+	public function new(client:SocketClient, key:String, commands:Map<String, Array<Pair<Bool, String>>>, allowForGet:Array<String>) {
 		this.client = client;
 		this.key = key;
 		this.commands = commands;
+		this.allowForGet = allowForGet;
 		client.onClose < closeHandler;
 		protocol = new RemoteProtocol(client);
 		activity = protocol.ping.watch();
@@ -103,7 +104,17 @@ class ServerRemoteInstanse {
 		protocol.file.onData << function() Sys.print('.');
 		protocol.onCommand << commandHandler;
 		protocol.onGetInitFile << getInitFileHandler;
+		protocol.onGetFile << getFileHandler;
 		protocol.readyRemote();
+	}
+
+	private function getFileHandler(file:String):Void {
+		if (allowForGet.indexOf(file) != -1) {
+			Sys.println('Send file: $file');
+			protocol.file.sendFile(file);
+		} else {
+			Sys.println('Deny send file: $file');
+		}
 	}
 
 	private function getInitFileHandler():Void {

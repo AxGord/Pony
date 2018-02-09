@@ -48,4 +48,6 @@ class RemoteProtocol extends RPC<RemoteProtocol> implements IRPC {
 	@:rpc public var onZipLog:Signal1<Bytes>;
 	@:rpc public var onGetInitFile:Signal0;
 
+	@:rpc public var onGetFile:Signal1<String>;
+
 }

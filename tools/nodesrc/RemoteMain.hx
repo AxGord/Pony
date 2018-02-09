@@ -33,7 +33,9 @@ import js.node.http.ServerResponse;
 import pony.net.http.HttpServer;
 import pony.net.http.IHttpConnection;
 import pony.NPM;
+import pony.Logable;
 import pony.text.XmlConfigReader;
+import pony.sys.Process;
 import sys.FileSystem;
 import types.RemoteConfig;
 
@@ -43,8 +45,7 @@ import types.RemoteConfig;
  */
 class RemoteMain {
 
-	var fileq:Array<String> = [];
-	var commands:Array<String>;
+	var commands:Array<RemoteCommand>;
 	var protocol:RemoteProtocol;
 
 	function new() {
@@ -64,7 +65,7 @@ class RemoteMain {
 			var port:Int = url.length > 1 ? Std.parseInt(url[1]) : null;
 			var cl = new pony.net.SocketClient(host, port);
 			protocol = new RemoteProtocol(cl);
-			protocol.log.onLog << logHandler;
+			protocol.log.onLog << remoteLogHandler;
 			protocol.onReady << function() {
 				protocol.file.enable();
 				protocol.file.stream.onStreamData << streamDataHandler;
@@ -80,25 +81,27 @@ class RemoteMain {
 
 		var cfg = Utils.parseArgs(args);
 		var xml = Utils.getXml();
-		
-		var rx = xml.node.remote;
 
-		var reader = new RemoteConfigReader(rx, {
+		var reader = new RemoteConfigReader(xml.node.remote, {
 			app: cfg.app,
 			debug: cfg.debug,
+			host: null,
+			port: null,
 			key: null,
-			files: [],
 			commands: []
 		});
+
+		if (reader.cfg.host == null || reader.cfg.port == null) {
+			Sys.println('Not setted port or host');
+			return;
+		}
 		
 		commands = reader.cfg.commands;
-		fileq = reader.cfg.files;
 
-		var cl = new pony.net.SocketClient(rx.node.host.innerData, Std.parseInt(rx.node.port.innerData));
+		var cl = new pony.net.SocketClient(reader.cfg.host, reader.cfg.port);
 		cl.onDisconnect < disconnectHandler;
 		protocol = new RemoteProtocol(cl);
 		protocol.log.onLog << logHandler;
-		protocol.onCommandComplete << commandCompleteHandler;
 		protocol.onReady << readyHandler;
 		protocol.onZipLog << zipLogHandler;
 
@@ -114,14 +117,23 @@ class RemoteMain {
 	}
 	
 	private function readyHandler():Void {
-		if (fileq.length == 0) {
-			runCommands();
-		} else {
-			protocol.file.stream.onGetData << streamDataHandler;
-			protocol.file.stream.onComplete << sendNextFile;
-			protocol.file.stream.onCancel << error;
-			sendNextFile();
-		}
+		var runner = new RemoteActionRunner(protocol, commands);
+		runner.onLog << logHandler;
+		runner.onError << errorHandler;
+		runner.onEnd = actionsEndHandler;
+	}
+
+	private function actionsEndHandler():Void {
+		end(0);
+	}
+
+	private function logHandler(message:String, pos:haxe.PosInfos):Void {
+		haxe.Log.trace(message, pos);
+	}
+
+	private function errorHandler(message:String, pos:haxe.PosInfos):Void {
+		Sys.println(message);
+		end(1);
 	}
 
 	private function error():Void {
@@ -133,36 +145,8 @@ class RemoteMain {
 		Sys.print('.');
 	}
 
-	private function sendNextFile():Void {
-		Sys.println('');
-		if (fileq.length == 0) {
-			runCommands();
-		} else {
-			var file:String = fileq.shift();
-			Sys.println('Send file: $file');
-			protocol.file.sendFile(file);
-		}
-	}
-
-	function commandCompleteHandler(name:String, code:Int):Void {
-		if (code == 0) {
-			runCommands();
-		} else {
-			Sys.println('End with error $code');
-			end(code);
-		}
-	}
-
-	function logHandler(s:String):Void {
+	function remoteLogHandler(s:String):Void {
 		for (e in s.split('\n')) if (e != null) Sys.println('| $e');
-	}
-
-	function runCommands():Void {
-		if (commands.length > 0) {
-			protocol.commandRemote(commands.shift());
-		} else {
-			end();
-		}
 	}
 
 	function end(code:Int = 0):Void {
@@ -187,11 +171,162 @@ private class RemoteConfigReader extends XmlConfigReader<RemoteConfig> {
 
 	override private function readNode(xml:Fast):Void {
 		switch xml.name {
+			case 'host': cfg.host = StringTools.trim(xml.innerData);
+			case 'port': cfg.port = Std.parseInt(xml.innerData);
 			case 'key': cfg.key = StringTools.trim(xml.innerData);
-			case 'send': cfg.files.push(StringTools.trim(xml.innerData));
-			case 'command': cfg.commands.push(StringTools.trim(xml.innerData));
+
+			case 'get': cfg.commands.push(Get(StringTools.trim(xml.innerData)));
+			case 'send': cfg.commands.push(Send(StringTools.trim(xml.innerData)));
+			case 'exec': cfg.commands.push(Exec(StringTools.trim(xml.innerData)));
+			case 'command': cfg.commands.push(Command(StringTools.trim(xml.innerData)));
+
 			case _: super.readNode(xml);
 		}
+	}
+
+}
+
+private class RemoteActionRunner extends Logable {
+
+	public var onEnd:Void->Void;
+	private var protocol:RemoteProtocol;
+	private var commands:Array<RemoteCommand>;
+
+	public function new(protocol:RemoteProtocol, commands:Array<RemoteCommand>) {
+		super();
+		this.protocol = protocol;
+		this.commands = commands;
+	}
+
+	public function run():Void runNext();
+
+	private function runNext():Void {
+		if (commands.length > 0) {
+			switch commands.shift() {
+				case Get(file): listen(new RemoteActionGet(protocol, file));
+				case Send(file): listen(new RemoteActionSend(protocol, file));
+				case Exec(command): listen(new RemoteActionExec(protocol, command));
+				case Command(command): listen(new RemoteActionCommand(protocol, command));
+			}
+		} else {
+			onEnd();
+		}
+	}
+
+	private function listen(action:RemoteAction):Void {
+		action.onLog << log;
+		action.onError << error;
+		action.onEnd = runNext;
+	}
+
+}
+
+private class RemoteAction extends Logable implements pony.magic.HasAbstract {
+
+	private var protocol:RemoteProtocol;
+	public var onEnd:Void->Void;
+
+	public function new(protocol:RemoteProtocol, data:String) {
+		super();
+		this.protocol = protocol;
+		run(data);
+	}
+
+	@:abstract private function run(data:String):Void {
+		log(Type.getClassName(Type.getClass(this)) + ': ' + data);
+	}
+
+	public function end():Void {
+		onEnd();
+		destroy();
+	}
+
+	public function destroy():Void {
+		destroySignals();
+	}
+
+}
+
+private class RemoteActionGet extends RemoteAction {
+
+	override private function run(data:String):Void {
+		super.run(data);
+		protocol.file.enable();
+		protocol.file.stream.onStreamEnd < end;
+		protocol.file.stream.onStreamData << streamDataHandler;
+		protocol.file.stream.onError << streamErrorHandler;
+		protocol.getFileRemote(data);
+	}
+
+	private function streamErrorHandler():Void error('File stream error');
+
+	private function streamDataHandler():Void Sys.print('.');
+
+	override public function destroy():Void {
+		super.destroy();
+		protocol.file.disable();
+		protocol.file.stream.onStreamEnd >> end;
+		protocol.file.stream.onStreamData >> streamDataHandler;
+		protocol.file.stream.onError >> streamErrorHandler;
+	}
+
+}
+
+private class RemoteActionSend extends RemoteAction {
+
+	override private function run(data:String):Void {
+		super.run(data);
+		protocol.file.stream.onComplete < end;
+		protocol.file.stream.onGetData << streamDataHandler;
+		protocol.file.stream.onCancel << streamErrorHandler;
+		protocol.file.sendFile(data);
+	}
+
+	private function streamErrorHandler():Void error('File stream error');
+
+	private function streamDataHandler():Void Sys.print('.');
+
+	override public function destroy():Void {
+		super.destroy();
+		protocol.file.stream.onComplete >> end;
+		protocol.file.stream.onGetData >> streamDataHandler;
+		protocol.file.stream.onCancel >> streamErrorHandler;
+	}
+
+}
+
+private class RemoteActionExec extends RemoteAction {
+
+	private var process:Process;
+
+	override private function run(data:String):Void {
+		super.run(data);
+		process = new Process(data);
+		process.onComplete < end;
+		process.onError < error;
+		process.onLog << log;
+		process.run();
+	}
+
+	override public function destroy():Void {
+		super.destroy();
+		process.destroy();
+		process = null;
+	}
+
+}
+
+private class RemoteActionCommand extends RemoteAction {
+
+	override private function run(data:String):Void {
+		super.run(data);
+		protocol.onCommandComplete < end;
+		protocol.commandRemote(data);
+	}
+
+	override public function destroy():Void {
+		super.destroy();
+		protocol.onCommandComplete >> end;
 	}
 
 }

@@ -40,12 +40,15 @@ class ServerRemote {
 	private var commands:Map<String, Array<Pair<Bool, String>>> = new Map();
 	private var instanse:ServerRemoteInstanse;
 	private var cmdLock:Bool = false;
+	private var allowForGet:Array<String>;
 
 	public function new(xml:Fast) {
 		var port = Std.parseInt(xml.node.port.innerData);
 		try {
 			key = StringTools.trim(xml.node.key.innerData);
 		} catch (_:Any) {}
+
+		allowForGet = [for (node in xml.nodes.allow) StringTools.trim(node.innerData)];
 
 		for (node in xml.node.commands.elements) {
 			var d:Pair<Bool, String> = new Pair(!node.isFalse('zipLog'), StringTools.trim(node.innerData));
@@ -64,7 +67,7 @@ class ServerRemote {
 		Sys.println('New connection');
 		if (instanse == null && !cmdLock) {
 			Sys.println('Accept');
-			instanse = new ServerRemoteInstanse(client, key, commands);
+			instanse = new ServerRemoteInstanse(client, key, commands, allowForGet);
 			instanse.onBeginCommand = beginCommandHandler;
 			instanse.onEndCommand = endCommandHandler;
 			client.onClose < closeHandler;
