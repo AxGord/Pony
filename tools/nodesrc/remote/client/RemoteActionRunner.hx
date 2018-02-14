@@ -21,56 +21,47 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-package pony;
+package remote.client;
 
-class Percent implements pony.magic.HasSignal {
+import pony.Logable;
+import types.RemoteConfig;
+import remote.client.actions.RemoteAction;
+import remote.client.actions.RemoteActionGet;
+import remote.client.actions.RemoteActionSend;
+import remote.client.actions.RemoteActionExec;
+import remote.client.actions.RemoteActionCommand;
 
-	@:bindable public var percent:Float;
-	@:bindable public var full:Bool;
-	@:bindable public var run:Bool;
-	public var current(default, set):Float = 0;
-	public var total(default, set):Float = -1;
-	public var allow(default, set):Float = 1;
+class RemoteActionRunner extends Logable {
 
-	public function new(allow:Float = 1, total:Float = -1) {
-		this.allow = allow;
-		this.total = total;
-	}
-	
-	@:extern private inline function set_current(v:Float):Float {
-		if (current != v) {
-			current = v;
-			update();
-		}
-		return v;
+	public var onEnd:Void -> Void;
+	private var protocol:RemoteProtocol;
+	private var commands:Array<RemoteCommand>;
+
+	public function new(protocol:RemoteProtocol, commands:Array<RemoteCommand>) {
+		super();
+		this.protocol = protocol;
+		this.commands = commands;
 	}
 
-	@:extern private inline function set_total(v:Float):Float {
-		if (total != v) {
-			total = v;
-			update();
-		}
-		return v;
-	}
+	public function run():Void runNext();
 
-	@:extern private inline function set_allow(v:Float):Float {
-		if (allow != v) {
-			allow = v;
-			update();
-		}
-		return v;
-	}
-
-	@:extern private inline function update():Void {
-		if (total == -1) {
-			percent = 0;
-			full = false;
-			run = false;
+	private function runNext():Void {
+		if (commands.length > 0) {
+			switch commands.shift() {
+				case Get(file): listen(new RemoteActionGet(protocol, file));
+				case Send(file): listen(new RemoteActionSend(protocol, file));
+				case Exec(command): listen(new RemoteActionExec(protocol, command));
+				case Command(command): listen(new RemoteActionCommand(protocol, command));
+			}
 		} else {
-			percent = current / total;
-			full = percent >= 1;
-			run = current >= allow;
+			onEnd();
 		}
+	}
+
+	private function listen(action:RemoteAction):Void {
+		action.onLog << log;
+		action.onError << error;
+		action.onEnd = runNext;
 	}
 
 }

@@ -21,6 +21,7 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
+package remote.server;
 #if nodejs
 import pony.net.SocketServer;
 import pony.net.SocketClient;

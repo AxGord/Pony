@@ -36,7 +36,7 @@ import pony.magic.HasSignal;
 import pony.magic.HasLink;
 
 typedef HtmlVideoOptions = {
-	?bufferingTreshhold: Float,
+	?bufferingTreshhold: Int,
 	?retryDelay: Int,
 	?maxRetries: Int
 }
@@ -84,7 +84,7 @@ class HtmlVideo implements HasSignal implements HasLink {
 		createVideoElement();
 
 		loader = new HtmlVideoLoader(videoElement, this.options.retryDelay, this.options.maxRetries);
-		loadState = new HtmlVideoLoadProgress(videoElement, options.bufferingTreshhold);
+		loadState = new HtmlVideoLoadProgress(videoElement, this.options.bufferingTreshhold);
 		position = new HtmlVideoPlayProgress(videoElement);
 
 		loader.onUnload << loadState.reset;
@@ -254,18 +254,18 @@ class HtmlVideo implements HasSignal implements HasLink {
 	private function set_start(v:Time):Time {
 		if (v != start) {
 			start = v;
-			progress.min = element.currentTime = v.totalSeconds;
+			progress.current = element.currentTime = v.totalSeconds;
 		}
 		return v;
 	}
 
-	private function timeupdateHandler():Void progress.min = element.currentTime;
+	private function timeupdateHandler():Void progress.current = element.currentTime;
 
 	private function progressHandler():Void {
 		if (total == null && element.duration > 0) {
 			total = Time.fromSeconds(Std.int(element.duration));
-			progress.min = element.currentTime = start.totalSeconds;
-			progress.max = total;
+			progress.current = element.currentTime = start.totalSeconds;
+			progress.total = total;
 		}
 	}
 
@@ -273,8 +273,8 @@ class HtmlVideo implements HasSignal implements HasLink {
 
 	public function reset():Void {
 		total = null;
-		progress.min = 0;
-		progress.max = -1;
+		progress.current = 0;
+		progress.total = -1;
 	}
 
 }
@@ -314,8 +314,8 @@ class HtmlVideo implements HasSignal implements HasLink {
 
 	public function reset():Void {
 		progress.allow = bufferingTreshhold;
-		progress.min = 0;
-		progress.max = -1;
+		progress.current = 0;
+		progress.total = -1;
 	}
 
 	private function changeRunHandler(v:Bool):Void {
@@ -327,10 +327,10 @@ class HtmlVideo implements HasSignal implements HasLink {
 
 	private function updateVideoLoadPercentage():Void {
 		if (element.duration == 0) {
-			progress.min = 0;
+			progress.current = 0;
 		} else if (isReady) {
-			progress.max = Std.int(element.duration);
-			progress.min = Std.int(element.buffered.end(0));
+			progress.total = Std.int(element.duration);
+			progress.current = Std.int(element.buffered.end(0));
 		}
 	}
 

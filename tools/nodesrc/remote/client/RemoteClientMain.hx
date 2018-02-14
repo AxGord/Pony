@@ -21,56 +21,37 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-package pony;
+package remote.client;
 
-class Percent implements pony.magic.HasSignal {
+import pony.NPM;
 
-	@:bindable public var percent:Float;
-	@:bindable public var full:Bool;
-	@:bindable public var run:Bool;
-	public var current(default, set):Float = 0;
-	public var total(default, set):Float = -1;
-	public var allow(default, set):Float = 1;
+/**
+ * Remote Client Main
+ * @author AxGord <axgord@gmail.com>
+ */
+class RemoteClientMain {
 
-	public function new(allow:Float = 1, total:Float = -1) {
-		this.allow = allow;
-		this.total = total;
-	}
-	
-	@:extern private inline function set_current(v:Float):Float {
-		if (current != v) {
-			current = v;
-			update();
-		}
-		return v;
+	private static function main():Void {
+		NPM.source_map_support.install();
+		var args = Sys.args();
+		if (!new RemoteClientCreate(args).runned) new RemoteClient(args);
 	}
 
-	@:extern private inline function set_total(v:Float):Float {
-		if (total != v) {
-			total = v;
-			update();
+	public static function createProtocol(host:String, port:Int, key:String):RemoteProtocol {
+		if (host == null || port == null) {
+			Sys.println('Not setted port or host');
+			Sys.exit(1);
 		}
-		return v;
+		var client = new pony.net.SocketClient(host, port);
+		client.onDisconnect < disconnectHandler;		
+		var protocol = new RemoteProtocol(client);
+		if (key != null) protocol.authRemote(key);
+		return protocol;
 	}
 
-	@:extern private inline function set_allow(v:Float):Float {
-		if (allow != v) {
-			allow = v;
-			update();
-		}
-		return v;
-	}
-
-	@:extern private inline function update():Void {
-		if (total == -1) {
-			percent = 0;
-			full = false;
-			run = false;
-		} else {
-			percent = current / total;
-			full = percent >= 1;
-			run = current >= allow;
-		}
+	public static function disconnectHandler():Void {
+		Sys.println('Disconnect');
+		Sys.exit(2);
 	}
 
 }

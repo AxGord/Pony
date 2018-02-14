@@ -21,56 +21,51 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-package pony;
+package remote.client;
 
-class Percent implements pony.magic.HasSignal {
+class RemoteClientCreate {
 
-	@:bindable public var percent:Float;
-	@:bindable public var full:Bool;
-	@:bindable public var run:Bool;
-	public var current(default, set):Float = 0;
-	public var total(default, set):Float = -1;
-	public var allow(default, set):Float = 1;
+	public var runned(default, null):Bool = false;
 
-	public function new(allow:Float = 1, total:Float = -1) {
-		this.allow = allow;
-		this.total = total;
-	}
-	
-	@:extern private inline function set_current(v:Float):Float {
-		if (current != v) {
-			current = v;
-			update();
+	private var protocol:RemoteProtocol;
+
+	public function new(args:Array<String>) {
+		if (args[0] == 'create') {
+			var urla = args[1].split('@');
+			var key:String = null;
+			var url:Array<String> = null;
+			if (urla.length > 1) {
+				key = urla[0];
+				url = urla[1].split(':');
+			} else {
+				url = urla[0].split(':');
+			}
+			var host:String = url[0];
+			var port:Int = url.length > 1 ? Std.parseInt(url[1]) : null;
+			protocol = RemoteClientMain.createProtocol(host, port, key);
+			protocol.log.onLog << remoteLogHandler;
+			protocol.onReady < protocolReadyHandler;
+			runned = true;
 		}
-		return v;
-	}
-
-	@:extern private inline function set_total(v:Float):Float {
-		if (total != v) {
-			total = v;
-			update();
-		}
-		return v;
 	}
 
-	@:extern private inline function set_allow(v:Float):Float {
-		if (allow != v) {
-			allow = v;
-			update();
-		}
-		return v;
+	private function protocolReadyHandler():Void {
+		protocol.file.enable();
+		protocol.file.stream.onStreamData << streamDataHandler;
+		protocol.file.stream.onStreamEnd << protocol.socket.destroy;
+		protocol.file.stream.onError << error;
+		protocol.getInitFileRemote();
 	}
 
-	@:extern private inline function update():Void {
-		if (total == -1) {
-			percent = 0;
-			full = false;
-			run = false;
-		} else {
-			percent = current / total;
-			full = percent >= 1;
-			run = current >= allow;
-		}
+	private function error():Void {
+		Sys.println('Error');
+		Sys.exit(3);
+	}
+
+	private function streamDataHandler():Void Sys.print('.');
+
+	private function remoteLogHandler(s:String):Void {
+		for (e in s.split('\n')) if (e != null) Sys.println('| $e');
 	}
 
 }

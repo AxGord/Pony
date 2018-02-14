@@ -33,6 +33,7 @@ import pony.net.http.HttpServer;
 import pony.net.http.IHttpConnection;
 import pony.NPM;
 import sys.FileSystem;
+import remote.server.ServerRemote;
 
 /**
  * ServerMain

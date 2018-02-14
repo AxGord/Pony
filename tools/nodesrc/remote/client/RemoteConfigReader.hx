@@ -21,55 +21,26 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-package pony;
+package remote.client;
 
-class Percent implements pony.magic.HasSignal {
+import haxe.xml.Fast;
+import pony.text.XmlConfigReader;
+import types.RemoteConfig;
 
-	@:bindable public var percent:Float;
-	@:bindable public var full:Bool;
-	@:bindable public var run:Bool;
-	public var current(default, set):Float = 0;
-	public var total(default, set):Float = -1;
-	public var allow(default, set):Float = 1;
+class RemoteConfigReader extends XmlConfigReader<RemoteConfig> {
 
-	public function new(allow:Float = 1, total:Float = -1) {
-		this.allow = allow;
-		this.total = total;
-	}
-	
-	@:extern private inline function set_current(v:Float):Float {
-		if (current != v) {
-			current = v;
-			update();
-		}
-		return v;
-	}
+	override private function readNode(xml:Fast):Void {
+		switch xml.name {
+			case 'host': cfg.host = StringTools.trim(xml.innerData);
+			case 'port': cfg.port = Std.parseInt(xml.innerData);
+			case 'key': cfg.key = StringTools.trim(xml.innerData);
 
-	@:extern private inline function set_total(v:Float):Float {
-		if (total != v) {
-			total = v;
-			update();
-		}
-		return v;
-	}
+			case 'get': cfg.commands.push(Get(StringTools.trim(xml.innerData)));
+			case 'send': cfg.commands.push(Send(StringTools.trim(xml.innerData)));
+			case 'exec': cfg.commands.push(Exec(StringTools.trim(xml.innerData)));
+			case 'command': cfg.commands.push(Command(StringTools.trim(xml.innerData)));
 
-	@:extern private inline function set_allow(v:Float):Float {
-		if (allow != v) {
-			allow = v;
-			update();
-		}
-		return v;
-	}
-
-	@:extern private inline function update():Void {
-		if (total == -1) {
-			percent = 0;
-			full = false;
-			run = false;
-		} else {
-			percent = current / total;
-			full = percent >= 1;
-			run = current >= allow;
+			case _: super.readNode(xml);
 		}
 	}
 

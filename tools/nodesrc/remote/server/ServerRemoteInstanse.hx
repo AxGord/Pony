@@ -21,9 +21,8 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-#if nodejs
-import js.node.ChildProcess;
-import sys.io.File;
+package remote.server;
+
 import haxe.io.BytesOutput;
 import pony.net.SocketClient;
 import pony.Pair;
@@ -190,4 +189,3 @@ class ServerRemoteInstanse {
 	public dynamic function onEndCommand():Void {}
 
 }
-#end

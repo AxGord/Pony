@@ -21,56 +21,19 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-package pony;
+package remote.client.actions;
 
-class Percent implements pony.magic.HasSignal {
+class RemoteActionCommand extends RemoteAction {
 
-	@:bindable public var percent:Float;
-	@:bindable public var full:Bool;
-	@:bindable public var run:Bool;
-	public var current(default, set):Float = 0;
-	public var total(default, set):Float = -1;
-	public var allow(default, set):Float = 1;
-
-	public function new(allow:Float = 1, total:Float = -1) {
-		this.allow = allow;
-		this.total = total;
-	}
-	
-	@:extern private inline function set_current(v:Float):Float {
-		if (current != v) {
-			current = v;
-			update();
-		}
-		return v;
+	override private function run(data:String):Void {
+		super.run(data);
+		protocol.onCommandComplete < end;
+		protocol.commandRemote(data);
 	}
 
-	@:extern private inline function set_total(v:Float):Float {
-		if (total != v) {
-			total = v;
-			update();
-		}
-		return v;
-	}
-
-	@:extern private inline function set_allow(v:Float):Float {
-		if (allow != v) {
-			allow = v;
-			update();
-		}
-		return v;
-	}
-
-	@:extern private inline function update():Void {
-		if (total == -1) {
-			percent = 0;
-			full = false;
-			run = false;
-		} else {
-			percent = current / total;
-			full = percent >= 1;
-			run = current >= allow;
-		}
+	override public function destroy():Void {
+		super.destroy();
+		protocol.onCommandComplete >> end;
 	}
 
 }
