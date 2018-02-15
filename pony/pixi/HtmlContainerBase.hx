@@ -26,6 +26,7 @@ package pony.pixi;
 import js.html.CSSStyleDeclaration;
 import pony.geom.Rect;
 import pony.geom.Point;
+import pony.Tumbler;
 
 /**
  * HtmlContainerBase
@@ -41,6 +42,7 @@ class HtmlContainerBase {
 	public var targetStyle(default, set):CSSStyleDeclaration;
 	public var targetRect(default, set):Rect<Float>;
 	public var targetPos(default, set):Point<Float> = new Point(.0, .0);
+	public var posUpdater:Tumbler = new Tumbler(true);
 
 	private var lastRect:Rect<Float> = null;
 	private var fixed:Bool;
@@ -55,6 +57,7 @@ class HtmlContainerBase {
 		if (fixed) {
 			js.Browser.window.addEventListener('scroll', resize);
 		}
+		posUpdater.onEnable << resize;
 	}
 
 	private function scrollHandler():Void {
@@ -76,6 +79,7 @@ class HtmlContainerBase {
 	}
 
 	private function resize():Void {
+		if (!posUpdater.enabled) return;
 		if (fixed) {
 			var b = app.parentDom.getBoundingClientRect();
 			targetStyle.top = px(b.top + lastRect.y);

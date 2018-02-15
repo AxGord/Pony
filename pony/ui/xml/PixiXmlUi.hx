@@ -324,12 +324,20 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 				video;
 
 			case 'fsvideo':
-				var video = new HtmlVideoUIFS({
-					x: parseAndScale(attrs.x),
-					y: parseAndScale(attrs.y),
-					width: parseAndScale(attrs.w),
-					height: parseAndScale(attrs.h)
-				}, attrs.fsborder != null ? (attrs.fsborder:Border<Float>) : null, attrs.css, attrs.fscss, app, attrs.fixed.isTrue());
+				var video = new HtmlVideoUIFS(
+					{
+						x: parseAndScale(attrs.x),
+						y: parseAndScale(attrs.y),
+						width: parseAndScale(attrs.w),
+						height: parseAndScale(attrs.h)
+					},
+					attrs.fsborder != null ? (attrs.fsborder:Border<Float>) : null,
+					attrs.css,
+					attrs.fscss,
+					attrs.transition,
+					app,
+					attrs.fixed.isTrue()
+				);
 				var src = attrs.src;
 				if (src != null)
 					video.video.loadVideo(src);

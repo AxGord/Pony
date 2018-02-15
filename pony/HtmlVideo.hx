@@ -118,8 +118,15 @@ class HtmlVideo implements HasSignal implements HasLink {
 		videoElement.addEventListener('click', videoClickHandler);
 	}
 
-	public inline function loadVideo(url:String):Void loader.loadVideo(url);
-	public inline function unloadVideo():Void loader.unloadVideo();
+	public inline function loadVideo(url:String):Void {
+		loader.loadVideo(url);
+		loadState.enable();
+	}
+
+	public inline function unloadVideo():Void {
+		loadState.disable();
+		loader.unloadVideo();
+	}
 
 	@:extern private inline function set_startTime(v:Time):Time return position.start = v;
 
@@ -279,7 +286,7 @@ class HtmlVideo implements HasSignal implements HasLink {
 
 }
 
-@:final private class HtmlVideoLoadProgress implements HasSignal {
+@:final private class HtmlVideoLoadProgress extends Tumbler implements HasSignal {
 	
 	@:auto public var onReady:Signal0;
 	@:auto public var onLoad:Signal0;
@@ -291,6 +298,7 @@ class HtmlVideo implements HasSignal implements HasLink {
 	private var isReady(get, never):Bool;
 
 	public function new(videoElement:VideoElement, bufferingTreshhold:Float) {
+		super(false);
 		element = videoElement;
 		this.bufferingTreshhold = bufferingTreshhold;
 		element.addEventListener('progress', updateVideoLoadPercentage);
@@ -299,7 +307,8 @@ class HtmlVideo implements HasSignal implements HasLink {
 	}
 	
 	@:extern private inline function get_isReady():Bool {
-		return element.readyState > 2 &&
+		return enabled &&
+			element.readyState > 2 &&
 			element.duration != 0 &&
 			element.buffered.length > 0;
 	}
@@ -326,11 +335,11 @@ class HtmlVideo implements HasSignal implements HasLink {
 	}
 
 	private function updateVideoLoadPercentage():Void {
-		if (element.duration == 0) {
-			progress.current = 0;
-		} else if (isReady) {
+		if (isReady) {
 			progress.total = Std.int(element.duration);
-			progress.current = Std.int(element.buffered.end(0));
+			progress.current = Std.int(element.buffered.end(element.buffered.length - 1));
+		} else {
+			progress.current = 0;
 		}
 	}
 

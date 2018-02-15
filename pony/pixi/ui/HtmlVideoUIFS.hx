@@ -31,6 +31,8 @@ import pony.geom.Point;
 import pony.Or;
 import pony.Tumbler;
 import pony.time.DeltaTime;
+import pony.time.Time;
+import pony.time.DTimer;
 
 class HtmlVideoUIFS extends HtmlVideoUI {
 
@@ -40,12 +42,15 @@ class HtmlVideoUIFS extends HtmlVideoUI {
 	private var normalPos:Point<Float>;
 	private var normalCss:String;
 	private var fsCss:String;
+	private var transition:String;
+	private var transitionDelay:DTimer;
 
 	public function new(
 		targetRect:Rect<Float>,
 		fsRect:Or<Border<Float>, Rect<Float>>,
 		?css:String,
 		?fscss:String,
+		?transition:String,
 		?app:pony.pixi.App,
 		?options:HtmlVideoOptions,
 		fixed:Bool = false)
@@ -57,6 +62,7 @@ class HtmlVideoUIFS extends HtmlVideoUI {
 		super(targetRect, css, app, options, fixed);
 		if (fsRect != null) {
 			this.normalRect = targetRect;
+			generateTransition(transition);
 			switch fsRect {
 				case A(border):
 					this.fsRect = border.getRectFromSize(app.resolution);
@@ -75,14 +81,47 @@ class HtmlVideoUIFS extends HtmlVideoUI {
 		}
 	}
 
+	private function generateTransition(tr:String):Void {
+		if (tr == null) return;
+		var a = tr.split(' ');
+		var t = a.shift();
+		var r = [for (e in a) '$e $t'].join(', ');
+		transition = JsTools.normalizeCss('transition: ' + r + '; -webkit-transition: ' + r + ';');
+		transitionDelay = DTimer.createFixedTimer((t:Time) + 10);
+		transitionDelay.complete << removeTransition;
+	}
+
+	private function addTransition():Void {
+		if (transition != null) {
+			video.style.cssText += transition;
+			transitionDelay.reset();
+			transitionDelay.start();
+		}
+	}
+
+	private function removeTransition():Void {
+		var css = JsTools.splitCss(video.style.cssText);
+		var t = JsTools.splitCss(transition);
+		var ncss:Array<String> = [];
+		for (e in css) if (t.indexOf(e) == -1) ncss.push(e);
+		video.style.cssText = ncss.join('');
+	}
+
 	public function openFullScreenHandler():Void {
+		addTransition();
 		normalPos = htmlContainer.targetPos;
 		htmlContainer.targetPos = new Point<Float>(0, 0);
 		targetRect = fsRect;
-		switchCss(normalCss, fsCss);
+		if (transition == null)
+			_openFullScreenHandler();
+		else
+			transitionDelay.complete < _openFullScreenHandler;
 	}
 
+	private function _openFullScreenHandler():Void switchCss(normalCss, fsCss);
+
 	public function closeFullScreenHandler():Void {
+		addTransition();
 		htmlContainer.targetPos = normalPos;
 		normalPos = null;
 		targetRect = normalRect;

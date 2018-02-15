@@ -140,7 +140,10 @@ class App implements HasSignal {
 			transparent: false,
 			clearBeforeRender: true,
 			preserveDrawingBuffer: false,
-			roundPixels: true
+			roundPixels: true,
+			#if forcecanvas
+			forceCanvas: true
+			#end
 		};
 		//end pixi init
 
