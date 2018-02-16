@@ -28,13 +28,13 @@ Unstable version
 
 Manual
 ------
-* [Home](/AxGord/Pony/wiki)
+* [Home](https://github.com/AxGord/Pony/wiki)
 
-* [Pony Tools](/AxGord/Pony/wiki/Pony-Tools)
-    * [Server section](/AxGord/Pony/wiki/Server-section)
-    * [Prepare sections](/AxGord/Pony/wiki/Prepare-sections)
-    * [Build sections](/AxGord/Pony/wiki/Build-sections)
-    * [Post build sections](/AxGord/Pony/wiki/Post-build-sections)
+* [Pony Tools](https://github.com/AxGord/Pony/wiki/Pony-Tools)
+    * [Server section](https://github.com/AxGord/Pony/wiki/Server-section)
+    * [Prepare sections](https://github.com/AxGord/Pony/wiki/Prepare-sections)
+    * [Build sections](https://github.com/AxGord/Pony/wiki/Build-sections)
+    * [Post build sections](https://github.com/AxGord/Pony/wiki/Post-build-sections)
     
 
 Old Manual
