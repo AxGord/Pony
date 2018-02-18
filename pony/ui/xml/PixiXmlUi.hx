@@ -406,7 +406,11 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 			obj.alpha = Std.parseFloat(attrs.alpha);
 		}
 		if (attrs.scale != null) {
-			obj.scale.set(Std.parseFloat(attrs.scale));
+			var a = attrs.scale.split(' ');
+			if (a.length == 1)
+				obj.scale.set(Std.parseFloat(a[0]));
+			else
+				obj.scale.set(Std.parseFloat(a[0]), Std.parseFloat(a[1]));
 		}
 		
 		if (attrs.filters != null) {
