@@ -246,7 +246,7 @@ class App implements HasSignal {
 	#if stats
 	@:extern public inline function addStats():Void {
 		var perf = new Perf();
-		perf.addInfo(["UNKNOWN", "WEBGL", "CANVAS"][app.renderer.type.getIndex()]);
+		perf.addInfo(["UNKNOWN", "WEBGL", "CANVAS"][0]);
 		var elements = [perf.fps, perf.info, perf.ms];
 		if (perf.memory != null)
 			elements.push(perf.memory);

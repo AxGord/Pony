@@ -107,7 +107,7 @@ class Button extends Sprite implements IWH {
 	
 	
 	@:extern inline private static function getInteractiveImg(img:String, useSpriteSheet:String):SliceSprite {
-		return SliceTools.getSliceSprite(useSpriteSheet!=null ? StringTools.replace(img, '/', '_') : img, useSpriteSheet);
+		return SliceTools.getSliceSprite(img, useSpriteSheet);
 	}
 	
 	private static function getImg(img:String, useSpriteSheet:String):SliceSprite {
