@@ -54,7 +54,9 @@ class HtmlVideo implements HasSignal implements HasLink {
 	public var visible(default, null):Tumbler = new Tumbler(true);
 	public var loadProgress(link, null):Percent = loadState.progress;
 	public var playProgress(link, null):Percent = position.progress;
-	public var muted:Tumbler = new Tumbler(false);
+	public var muted:Tumbler = new Tumbler(true);
+	public var muted1:Tumbler = new Tumbler(true);
+	public var muted2:Tumbler = new Tumbler(true);
 
 	private var loader:HtmlVideoLoader;
 	private var loadState:HtmlVideoLoadProgress;
@@ -100,11 +102,13 @@ class HtmlVideo implements HasSignal implements HasLink {
 
 		resultVisible = false;
 
-		if (!JsTools.isMobile) {
-			muted.onEnable << muteHandler;
-			muted.onDisable << unmuteHandler;
-		}
+		muted.onEnable << muteHandler;
+		muted.onDisable << unmuteHandler;
+		muted1.changeEnabled << muteUpdate;
+		muted2.changeEnabled << muteUpdate;
 	}
+
+	private function muteUpdate():Void muted.enabled = muted1.enabled || muted2.enabled;
 	
 	@:extern private inline function createVideoElement():Void {
 		videoElement = cast js.Browser.document.createElement('video');
@@ -113,6 +117,7 @@ class HtmlVideo implements HasSignal implements HasLink {
 		videoElement.autoplay = true; // for mobiles + desktop
 		videoElement.controls = false;
 		videoElement.loop = false;
+		videoElement.preload = 'auto';
 		videoElement.addEventListener('canplay', playVideo);
 		videoElement.addEventListener('pause', playVideo);
 		videoElement.addEventListener('click', videoClickHandler);
