@@ -140,14 +140,14 @@ class Main {
 
 		var npm:Array<String> = [
 			'git+https://github.com/janjakubnanista/poeditor-client.git',
-			'uglify-js',
-			'ftp',
-			'send',
-			'multiparty',
-			'http-proxy',
-			'source-map-support',
-			'convert-source-map',
-			'offset-sourcemap-lines'
+			'uglify-js@3.3.11',
+			'ftp@0.3.10',
+			'send@0.16.2',
+			'multiparty@4.1.3',
+			'http-proxy@1.16.2',
+			'source-map-support@0.5.3',
+			'convert-source-map@1.5.1',
+			'offset-sourcemap-lines@1.0.0'
 		];
 		if (sudo)
 			for (m in npm) Sys.command('sudo', ['npm', '-g', 'install', m]);

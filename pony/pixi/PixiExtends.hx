@@ -95,6 +95,10 @@ class PixiExtends {
 	@:extern inline public static function getPonyRect(o:Container):Rect<Float> {
 		return {x: o.x, y: o.y, width: o.width, height: o.height};
 	}
+
+	@:extern public static inline function pivotCenter(s:Container):Void {
+		s.pivot.set(s.width / 2, s.height / 2);
+	}
 	
 }
 
