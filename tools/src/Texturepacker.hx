@@ -43,6 +43,7 @@ class Texturepacker {
 	private var units:Array<TPUnit> = [];
 
 	public function new(xml:Fast, app:String, debug:Bool) {
+		if (pony.text.XmlTools.isTrue(xml, 'disabled')) return;
 		new Path(xml, {
 			app: app,
 			debug: debug,
