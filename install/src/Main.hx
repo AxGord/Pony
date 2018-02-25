@@ -147,7 +147,8 @@ class Main {
 			'http-proxy@1.16.2',
 			'source-map-support@0.5.3',
 			'convert-source-map@1.5.1',
-			'offset-sourcemap-lines@1.0.0'
+			'offset-sourcemap-lines@1.0.0',
+			'msdf-bmfont-xml@2.3.4'
 		];
 		if (sudo)
 			for (m in npm) Sys.command('sudo', ['npm', '-g', 'install', m]);

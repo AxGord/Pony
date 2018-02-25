@@ -21,25 +21,13 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-package module;
+package types;
 
-import hxbit.Serializer;
-import types.BAConfig;
-
-class NModule<T:BAConfig> extends CfgModule<T> {
-
-	private static var serializer:Serializer = new Serializer();
-
-	public var protocol:NProtocol;
-
-	override private function run(cfg:T):Void {
-		protocol = new NProtocol();
-		writeCfg(cfg);
-		var bytes = serializer.serialize(protocol);
-		Utils.runNode('pony', [bytes.toHex()]);
-		protocol = null;
-	}
-
-	@:abstract private function writeCfg(cfg:T):Void;
-
+typedef BmfontConfig = { > BAConfig,
+	from: String,
+	to: String,
+	font: Array<{
+		file: String,
+		size: Int
+	}>
 }

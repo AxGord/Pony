@@ -110,6 +110,7 @@ class Main {
 		modules.register(new module.Remote());
 		modules.register(new module.Hash());
 		modules.register(new module.Zip());
+		modules.register(new module.Bmfont());
 		modules.init();
 
 		commands.onNothing < showLogo;

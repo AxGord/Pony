@@ -96,3 +96,17 @@
 -D analyzer-optimize
 -D js-es6
 -debug
+
+--next
+
+-js bin/pony.js
+-cp nodesrc
+-cp sharedsrc
+-main NMain
+-lib hxnodejs
+-lib pony
+-lib hxbit
+-dce full
+-D analyzer-optimize
+-D js-es6
+-debug

@@ -7,6 +7,7 @@
         <module>poeditor-client</module>
         <module>ftp</module>
         <module>http-proxy</module>
+        <module>msdf-bmfont-xml</module>
     </npm>
 
 </project>

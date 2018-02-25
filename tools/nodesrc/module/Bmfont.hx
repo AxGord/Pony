@@ -23,23 +23,40 @@
 **/
 package module;
 
-import hxbit.Serializer;
-import types.BAConfig;
+import pony.fs.File;
+import types.BmfontConfig;
 
-class NModule<T:BAConfig> extends CfgModule<T> {
+class Bmfont {
 
-	private static var serializer:Serializer = new Serializer();
+	private var to:String;
 
-	public var protocol:NProtocol;
-
-	override private function run(cfg:T):Void {
-		protocol = new NProtocol();
-		writeCfg(cfg);
-		var bytes = serializer.serialize(protocol);
-		Utils.runNode('pony', [bytes.toHex()]);
-		protocol = null;
+	public function new(cfg:BmfontConfig) {
+		to = cfg.to;
+		Utils.createPath(to);
+		for (font in cfg.font)
+			packFont(cfg.from + font.file, font.size);
 	}
 
-	@:abstract private function writeCfg(cfg:T):Void;
+	private function packFont(font:File, size:Int):Void {
+		var ofn = font.shortName + '_' + size;
+		pony.NPM.msdf_bmfont_xml(font.fullPath.first, {
+			filename: ofn,
+			smartSize: true,
+			pot: false,
+			square: true,
+			fontSize: size,
+			fieldType: 'sdf',
+			distanceRange: 2,
+			textureSize: [2048, 2048]
+		}, function(error:Any, textures:Array<{filename:String, texture:Dynamic}>, font:{filename:String, data:String, options:Dynamic}){
+			if (error != null) throw error;
+			for (t in textures) {
+				js.node.Fs.writeFileSync(to + ofn + '.png', t.texture);
+			}
+			sys.io.File.saveContent(to + ofn + '.fnt', font.data);
+			Sys.println('');
+			Sys.println(to + ofn + '.fnt');
+		});
+	}
 
 }

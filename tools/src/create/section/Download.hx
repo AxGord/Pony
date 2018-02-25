@@ -26,8 +26,8 @@ package create.section;
 class Download extends Section {
 
 	public static var LIBS:Map<String, Library> = [
-		'stacktrace' => new Library('https://raw.githubusercontent.com/stacktracejs/stacktrace.js/v{v}/dist/stacktrace.min.js', '1.3.0'),
-		'pixijs' => new Library('https://pixijs.download/v{v}/pixi.min.js', '4.5.3', 'pixi.js - v{v}'),
+		'stacktrace' => new Library('https://raw.githubusercontent.com/stacktracejs/stacktrace.js/v{v}/dist/stacktrace.min.js', '1.3.1'),
+		'pixijs' => new Library('https://pixijs.download/v{v}/pixi.min.js', '4.7.0', 'pixi.js - v{v}'),
 		'docready' => new Library('https://raw.githubusercontent.com/jfriend00/docReady/master/docready.js'),
 	];
 

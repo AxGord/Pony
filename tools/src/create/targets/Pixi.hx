@@ -32,7 +32,7 @@ class Pixi {
 		project.config.options['height'] = '1024';
 		project.config.options['background'] = '#505050';
 		project.download.addLib('pixijs');
-		project.haxelib.addLib('pixijs', '4.5.5');
+		project.haxelib.addLib('pixijs', '4.7.0');
 		project.uglify.libs.push(project.download.getLibFinal('pixijs'));
 	}
 

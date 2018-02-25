@@ -23,23 +23,61 @@
 **/
 package module;
 
-import hxbit.Serializer;
-import types.BAConfig;
+import haxe.xml.Fast;
+import types.BASection;
+import types.BmfontConfig;
 
-class NModule<T:BAConfig> extends CfgModule<T> {
+class Bmfont extends NModule<BmfontConfig> {
 
-	private static var serializer:Serializer = new Serializer();
+	private static inline var PRIORITY:Int = 20;
 
-	public var protocol:NProtocol;
+	public function new() super('bmfont');
 
-	override private function run(cfg:T):Void {
-		protocol = new NProtocol();
-		writeCfg(cfg);
-		var bytes = serializer.serialize(protocol);
-		Utils.runNode('pony', [bytes.toHex()]);
-		protocol = null;
+	override public function init():Void {
+		if (xml == null) return;
+		initSections(PRIORITY, BASection.Prepare);
 	}
 
-	@:abstract private function writeCfg(cfg:T):Void;
+	override private function readConfig(ac:AppCfg):Void {
+		for (xml in nodes)
+			new BmfontReader(xml, {
+				debug: ac.debug,
+				app: ac.app,
+				before: false,
+				section: BASection.Prepare,
+				from: '',
+				to: '',
+				font: []
+			}, configHandler);
+	}
+
+	override private function writeCfg(cfg:BmfontConfig):Void {
+		protocol.bmfont = cfg;
+	}
+
+}
+
+private class BmfontReader extends BAReader<BmfontConfig> {
+
+	override private function readNode(xml:Fast):Void {
+		switch xml.name {
+			case 'font': cfg.font.push({file: StringTools.trim(xml.innerData), size: Std.parseInt(xml.att.size)});
+			case _: super.readNode(xml);
+		}
+	}
+
+	override private function clean():Void {
+		cfg.from = '';
+		cfg.to = '';
+		cfg.font = [];
+	}
+
+	override private function readAttr(name:String, val:String):Void {
+		switch name {
+			case 'from': cfg.from = val;
+			case 'to': cfg.to = val;
+			case _:
+		}
+	}
 
 }

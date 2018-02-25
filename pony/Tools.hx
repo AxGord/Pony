@@ -363,6 +363,13 @@ class Tools {
 			return b.readString(b.readInt32());
 		} catch (_:Dynamic) return null;
 	}
+
+	public static function hexToBytes(hex:String):Bytes {
+		var output = new BytesOutput();
+		for (i in 0...Std.int(hex.length / 2))
+			output.writeByte(Std.parseInt(('0x' + hex.substr(i * 2, 2))));
+		return output.getBytes();
+	}
 	
 	#if (haxe_ver >= 3.30)
 	@:generic inline static public function sget<A,B:haxe.Constraints.Constructible<Dynamic>>(m:Map<A,B>, key:A):B

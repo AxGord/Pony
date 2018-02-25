@@ -21,25 +21,18 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-package module;
-
+import haxe.io.Bytes;
 import hxbit.Serializer;
-import types.BAConfig;
+import pony.Tools;
 
-class NModule<T:BAConfig> extends CfgModule<T> {
+class NMain {
 
-	private static var serializer:Serializer = new Serializer();
-
-	public var protocol:NProtocol;
-
-	override private function run(cfg:T):Void {
-		protocol = new NProtocol();
-		writeCfg(cfg);
-		var bytes = serializer.serialize(protocol);
-		Utils.runNode('pony', [bytes.toHex()]);
-		protocol = null;
+	private static function main():Void {
+		var args = Sys.args();
+		var b:Bytes = Tools.hexToBytes(args.pop());
+		var serializer:Serializer = new Serializer();
+		var np:NProtocol = serializer.unserialize(b, NProtocol);
+		new module.Bmfont(np.bmfont);
 	}
-
-	@:abstract private function writeCfg(cfg:T):Void;
 
 }
