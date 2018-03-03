@@ -84,7 +84,7 @@ class BText extends Sprite implements IWH {
 		s = StringTools.replace(s, '\\n', '\n');
 		current = new BTextLow(s, style, ansi);
 		if (shadow) {
-			currentShadow = new BTextLow(s, shadowStyle, ansi, true);
+			currentShadow = new BTextLow(s, shadowStyle, ansi, false);
 			currentShadow.filters = [blurFilter];
 			addChild(currentShadow);
 		}
