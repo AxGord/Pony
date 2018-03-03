@@ -59,7 +59,7 @@ class HtmlVideo implements HasSignal implements HasLink {
 	public var muted2:Tumbler = new Tumbler(true);
 
 	private var loader:HtmlVideoLoader;
-	private var loadState:HtmlVideoLoadProgress;
+	public var loadState:HtmlVideoLoadProgress;
 	private var position:HtmlVideoPlayProgress;
 
 	private var options:HtmlVideoOptions = {
