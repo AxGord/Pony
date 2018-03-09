@@ -324,6 +324,15 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 				video;
 
 			case 'fsvideo':
+				var fspos:Point<Float> = null;
+				if (attrs.fspos != null) {
+					var a = attrs.fspos.split(' ').map(Std.parseFloat);
+					if (a.length == 1) {
+						fspos = new Point<Float>(a[0], a[0]);
+					} else {
+						fspos = new Point<Float>(a[0], a[1]);
+					}
+				}
 				var video = new HtmlVideoUIFS(
 					{
 						x: parseAndScale(attrs.x),
@@ -332,6 +341,7 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 						height: parseAndScale(attrs.h)
 					},
 					attrs.fsborder != null ? (attrs.fsborder:Border<Float>) : null,
+					fspos,
 					attrs.css,
 					attrs.fscss,
 					attrs.transition,

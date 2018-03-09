@@ -89,6 +89,8 @@ class HtmlVideo implements HasSignal implements HasLink {
 		loadState = new HtmlVideoLoadProgress(videoElement, this.options.bufferingTreshhold);
 		position = new HtmlVideoPlayProgress(videoElement);
 
+		position.changePosition << function(v:Time) loadState.targetTime = v;
+
 		loader.onUnload << loadState.reset;
 		loader.onUnload << position.reset;
 
@@ -120,17 +122,27 @@ class HtmlVideo implements HasSignal implements HasLink {
 		videoElement.preload = 'auto';
 		videoElement.addEventListener('canplay', playVideo);
 		videoElement.addEventListener('pause', playVideo);
-		videoElement.addEventListener('click', videoClickHandler);
+		videoElement.addEventListener('mousedown', videoClickHandler);
 	}
 
 	public inline function loadVideo(url:String):Void {
 		loader.loadVideo(url);
 		loadState.enable();
+		play();
 	}
 
 	public inline function unloadVideo():Void {
+		stop();
 		loadState.disable();
 		loader.unloadVideo();
+	}
+	
+	public function play():Void {
+		position.enable();
+	}
+
+	public function stop():Void {
+		position.disable();
 	}
 
 	@:extern private inline function set_startTime(v:Time):Time return position.start = v;
@@ -243,8 +255,9 @@ class HtmlVideo implements HasSignal implements HasLink {
 
 }
 
-@:final private class HtmlVideoPlayProgress implements HasSignal {
+@:final private class HtmlVideoPlayProgress extends Tumbler {
 
+	@:bindable public var position:Time;
 	@:auto public var onEnd:Signal0;
 
 	public var progress(default, null):Percent = new Percent();
@@ -253,12 +266,28 @@ class HtmlVideo implements HasSignal implements HasLink {
 	public var total(default, null):Time;
 
 	private var element:VideoElement;
+	private var timer:DTimer;
+	private var ended:Bool = false;
 
 	public function new(videoElement:VideoElement) {
+		super(false);
 		element = videoElement;
 		element.addEventListener('timeupdate', timeupdateHandler);
 		element.addEventListener('progress', progressHandler);
 		element.addEventListener('ended', endedHandler);
+		progress.changeFull - true << endedHandler;
+		timer = DTimer.createFixedTimer(1000, -1);
+		timer.complete << tick;
+		onEnable << enableHandler;
+		onDisable << disableHandler;
+	}
+
+	private function enableHandler():Void {
+		timer.start();
+	}
+
+	private function disableHandler():Void {
+		timer.stop();
 	}
 
 	@:extern private inline function get_current():Time return Time.fromSeconds(Std.int(element.currentTime));
@@ -267,32 +296,61 @@ class HtmlVideo implements HasSignal implements HasLink {
 		if (v != start) {
 			start = v;
 			progress.current = element.currentTime = v.totalSeconds;
+			position = v;
 		}
 		return v;
 	}
 
-	private function timeupdateHandler():Void progress.current = element.currentTime;
-
-	private function progressHandler():Void {
-		if (total == null && element.duration > 0) {
-			total = Time.fromSeconds(Std.int(element.duration));
-			progress.current = element.currentTime = start.totalSeconds;
-			progress.total = total;
+	private function timeupdateHandler():Void {
+		if (ended) {
+			element.pause();
+			eEnd.dispatch();
+		} else {
+			progress.current = element.currentTime;
 		}
 	}
 
-	private function endedHandler():Void eEnd.dispatch();
+	private function progressHandler():Void {
+		if (total == null && element.duration > 0) {
+			var t = Time.fromSeconds(Std.int(element.duration));
+			if (start >= t) {
+				eEnd.dispatch();
+			} else {
+				total = t;
+				position = start;
+				progress.current = element.currentTime = start.totalSeconds;
+				progress.total = total;
+			}
+		}
+	}
+
+	private function endedHandler():Void {
+		if (!ended) {
+			ended = true;
+			eEnd.dispatch();
+		}
+	}
 
 	public function reset():Void {
+		timer.reset();
 		total = null;
-		progress.current = 0;
+		ended = false;
+		start = 0;
 		progress.total = -1;
+	}
+
+	private function tick():Void {
+		position += 1000;
+		if (!pony.math.MathTools.approximately(position.totalSeconds, progress.current, 3)) {
+			progress.current = element.currentTime = position.totalSeconds;
+		}
 	}
 
 }
 
 @:final private class HtmlVideoLoadProgress extends Tumbler implements HasSignal {
 	
+	@:bindable public var loading:Bool = false;
 	@:auto public var onReady:Signal0;
 	@:auto public var onLoad:Signal0;
 
@@ -309,6 +367,8 @@ class HtmlVideo implements HasSignal implements HasLink {
 		element.addEventListener('progress', updateVideoLoadPercentage);
 		element.addEventListener('loadeddata', updateVideoLoadPercentage);
 		progress.changeRun << changeRunHandler;
+		onDisable << reset;
+		changeEnabled << updateLoading;
 	}
 	
 	@:extern private inline function get_isReady():Bool {
@@ -337,6 +397,7 @@ class HtmlVideo implements HasSignal implements HasLink {
 			eReady.dispatch();
 		else
 			eLoad.dispatch();
+		updateLoading();
 	}
 
 	private function updateVideoLoadPercentage():Void {
@@ -347,5 +408,7 @@ class HtmlVideo implements HasSignal implements HasLink {
 			progress.current = 0;
 		}
 	}
+
+	private function updateLoading():Void loading = enabled && !progress.run;
 
 }

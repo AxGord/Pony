@@ -48,6 +48,7 @@ class HtmlVideoUIFS extends HtmlVideoUI {
 	public function new(
 		targetRect:Rect<Float>,
 		fsRect:Or<Border<Float>, Rect<Float>>,
+		?fsPos:Point<Float>,
 		?css:String,
 		?fscss:String,
 		?transition:String,
@@ -68,6 +69,10 @@ class HtmlVideoUIFS extends HtmlVideoUI {
 					this.fsRect = border.getRectFromSize(app.resolution);
 				case B(rect):
 					this.fsRect = rect;
+			}
+			if (fsPos != null) {
+				this.fsRect.x += fsPos.x;
+				this.fsRect.y += fsPos.y;
 			}
 			video.onClick << fullscreen.sw;
 			(video.loadProgress.changeRun - false - true) || video.onEnd << fullscreen.disable;
