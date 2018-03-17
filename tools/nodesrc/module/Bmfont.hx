@@ -40,6 +40,8 @@ class Bmfont {
 	private function packFont(font:File, size:Int):Void {
 		var short = font.shortName;
 		var ofn = short + '_' + size;
+		var fntFile:String = to + ofn + '.fnt';
+		if (sys.FileSystem.exists(fntFile)) return;
 		pony.NPM.msdf_bmfont_xml(font.fullPath.first, {
 			filename: ofn,
 			smartSize: true,
@@ -55,7 +57,7 @@ class Bmfont {
 				js.node.Fs.writeFileSync(to + ofn + '.png', t.texture);
 			}
 			var data = StringTools.replace(font.data, '<info face="$short"', '<info face="$ofn"');
-			sys.io.File.saveContent(to + ofn + '.fnt', data);
+			sys.io.File.saveContent(fntFile, data);
 			Sys.println('');
 			Sys.println(to + ofn + '.fnt');
 		});
