@@ -5,6 +5,7 @@ environment:
     HAXELIB_ROOT: C:\projects\haxelib
 
 install:
+  - ps: Set-Service wuauserv -StartupType Manual
   # Install the haxe chocolatey package (https://chocolatey.org/packages/haxe)
   - cinst haxe -y
   - RefreshEnv
