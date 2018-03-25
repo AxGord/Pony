@@ -48,6 +48,13 @@ class Utils {
 	}
 
 	public static inline function cmdExists(c:String):Bool return cmdExistsa(c, ['-v']);
-	public static inline function cmdExistsa(c:String, a:Array<String>):Bool return new Process(c, a).exitCode() == 0;
+
+	public static function cmdExistsa(c:String, a:Array<String>):Bool {
+		try {
+			return new Process(c, a).exitCode() == 0;
+		} catch (e:Any) {
+			return false;
+		}
+	}
 
 }
