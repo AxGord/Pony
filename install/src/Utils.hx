@@ -21,28 +21,33 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-package create.section;
+import sys.io.Process;
 
-class Server extends Section {
+/**
+ * Utils
+ * @author AxGord <axgord@gmail.com>
+ */
+class Utils {
 
-	public var httpPort:Int = 2000;
-	public var httpPath:String = 'bin/';
-	public var http:Bool = false;
-	public var haxePort:Int = 6010;
-	public var haxe:Bool = false;
+	public static var nodeExists(get, never):Bool;
+	public static var codeExists(get, never):Bool;
 
-	public function new() super('server');
+	private static var _nodeExists:Null<Bool>;
+	private static var _codeExists:Null<Bool>;
 
-	public function result():Xml {
-		init();
-		if (http) {
-			add('path', httpPath);
-			add('port', Std.string(httpPort));
-		}
-		if (haxe) {
-			add('haxe', Std.string(haxePort));
-		}
-		return xml;
+	private static function get_nodeExists():Bool {
+		if (_nodeExists == null)
+			_nodeExists = cmdExists('node') && cmdExists('npm');
+		return _nodeExists;
 	}
+
+	private static function get_codeExists():Bool {
+		if (_codeExists == null)
+			_codeExists = cmdExists('code');
+		return _codeExists;
+	}
+
+	public static inline function cmdExists(c:String):Bool return cmdExistsa(c, ['-v']);
+	public static inline function cmdExistsa(c:String, a:Array<String>):Bool return new Process(c, a).exitCode() == 0;
 
 }

@@ -21,28 +21,30 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-package create.section;
 
-class Server extends Section {
+/**
+ * Config
+ * @author AxGord <axgord@gmail.com>
+ */
+class Config {
+	
+	public static var settings(default, null):Settings;
 
-	public var httpPort:Int = 2000;
-	public var httpPath:String = 'bin/';
-	public var http:Bool = false;
-	public var haxePort:Int = 6010;
-	public var haxe:Bool = false;
+	public static var ENVKEY:String;
+	public static var OS:TargetOS;
+	public static var PD:String;
+	public static var SRC:String;
+	public static var BIN:String;
 
-	public function new() super('server');
+	public static function init():Void {
+		settings = haxe.Json.parse(haxe.Resource.getString('settings.json'));
+		ENVKEY = settings.envkey;
 
-	public function result():Xml {
-		init();
-		if (http) {
-			add('path', httpPath);
-			add('port', Std.string(httpPort));
-		}
-		if (haxe) {
-			add('haxe', Std.string(haxePort));
-		}
-		return xml;
+		OS = TargetOS.createByName(Sys.systemName());
+		PD = OS == Windows ? '\\' : '/';
+		SRC = Sys.getCwd() + 'tools';
+		SRC = StringTools.replace(SRC, '/', PD);
+		BIN = SRC + PD + 'bin' + PD;
 	}
 
 }

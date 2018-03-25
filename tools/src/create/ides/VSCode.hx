@@ -55,6 +55,7 @@ class VSCode {
 			type: 'shell',
 			command: 'pony server',
 			isBackground: true,
+			auto: true,
 			presentation: {
 				echo: false,
 				reveal: 'silent',

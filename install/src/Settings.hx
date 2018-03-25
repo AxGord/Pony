@@ -21,28 +21,14 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-package create.section;
 
-class Server extends Section {
-
-	public var httpPort:Int = 2000;
-	public var httpPath:String = 'bin/';
-	public var http:Bool = false;
-	public var haxePort:Int = 6010;
-	public var haxe:Bool = false;
-
-	public function new() super('server');
-
-	public function result():Xml {
-		init();
-		if (http) {
-			add('path', httpPath);
-			add('port', Std.string(httpPort));
-		}
-		if (haxe) {
-			add('haxe', Std.string(haxePort));
-		}
-		return xml;
-	}
-
+/**
+ * Settings
+ * @author AxGord <axgord@gmail.com>
+ */
+typedef Settings = {
+	envkey: String,
+	haxelib: Array<String>,
+	npm: Array<String>,
+	vscode: Array<String>
 }

@@ -3,3 +3,4 @@
 -main Main
 -dce full
 -D analyzer-optimize
+-resource settings.json

@@ -21,28 +21,27 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-package create.section;
 
-class Server extends Section {
+/**
+ * PonyInstall
+ * @author AxGord <axgord@gmail.com>
+ */
+class PonyInstall extends BaseInstall {
 
-	public var httpPort:Int = 2000;
-	public var httpPath:String = 'bin/';
-	public var http:Bool = false;
-	public var haxePort:Int = 6010;
-	public var haxe:Bool = false;
+	public function new() super('Pony Command-Line Tools', true, true);
 
-	public function new() super('server');
+	override private function run():Void {
+		VSCodePluginsInstall.install();
+		new HaxelibInstall();
+		compile();
+		NpmInstall.install();
+		new UserpathInstall();
+	}
 
-	public function result():Xml {
-		init();
-		if (http) {
-			add('path', httpPath);
-			add('port', Std.string(httpPort));
-		}
-		if (haxe) {
-			add('haxe', Std.string(haxePort));
-		}
-		return xml;
+	private inline function compile():Void {
+		log('Compile pony');
+		cmd('haxe', ['--cwd', Config.SRC, 'build.hxml']);
+		sys.FileSystem.deleteFile(Config.BIN + 'pony.n');
 	}
 
 }

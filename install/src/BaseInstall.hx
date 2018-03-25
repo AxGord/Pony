@@ -21,28 +21,58 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-package create.section;
 
-class Server extends Section {
+/**
+ * BaseInstall
+ * @author AxGord <axgord@gmail.com>
+ */
+class BaseInstall {
 
-	public var httpPort:Int = 2000;
-	public var httpPath:String = 'bin/';
-	public var http:Bool = false;
-	public var haxePort:Int = 6010;
-	public var haxe:Bool = false;
+	private static var YCODE:Int = 'y'.charCodeAt(0);
+	private static var NCODE:Int = 'n'.charCodeAt(0);
 
-	public function new() super('server');
+	private var n:String;
+	private var hard:Bool;
 
-	public function result():Xml {
-		init();
-		if (http) {
-			add('path', httpPath);
-			add('port', Std.string(httpPort));
+	public function new(n:String, q:Bool, hard:Bool) {
+		this.n = n;
+		this.hard = hard;
+		if (!q || question()) {
+			log('');
+			log('Install $n');
+			run();
+			log('Complete install $n');
 		}
-		if (haxe) {
-			add('haxe', Std.string(haxePort));
-		}
-		return xml;
+	}
+
+	private function run():Void {}
+
+	private inline function question():Bool {
+		var r:Int = null;
+		do {
+			log('');
+			log('Do you want install $n? (y/n)');
+			r = Sys.getChar(true);
+			log('');
+		} while (r != YCODE && r != NCODE);
+		return r == YCODE;
+	}
+
+	private function listInstall(c:String, a:Array<String>, l:Array<String>):Void for (e in l) cmd(c, a.concat(e.split(' ')));
+
+	private inline function log(s:String):Void Sys.println(s);
+
+	private inline function cmd(c:String, a:Array<String>):Void hard ? hardCmd(c, a) : softCmd(c, a);
+
+	private inline function softCmd(c:String, a:Array<String>):Void {
+		log([c].concat(a).join(' '));
+		Sys.command(c, a);
+	}
+
+	private inline function hardCmd(c:String, a:Array<String>):Void {
+		log([c].concat(a).join(' '));
+		var r = Sys.command(c, a);
+		if (r != 0) Sys.exit(r);
 	}
 
 }

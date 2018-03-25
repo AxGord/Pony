@@ -21,28 +21,28 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-package create.section;
 
-class Server extends Section {
+/**
+ * NpmInstall
+ * @author AxGord <axgord@gmail.com>
+ */
+class NpmInstall extends BaseInstall {
 
-	public var httpPort:Int = 2000;
-	public var httpPath:String = 'bin/';
-	public var http:Bool = false;
-	public var haxePort:Int = 6010;
-	public var haxe:Bool = false;
+	private var sudo:Bool;
 
-	public function new() super('server');
-
-	public function result():Xml {
-		init();
-		if (http) {
-			add('path', httpPath);
-			add('port', Std.string(httpPort));
-		}
-		if (haxe) {
-			add('haxe', Std.string(haxePort));
-		}
-		return xml;
+	public function new() {
+		this.sudo = Config.OS != TargetOS.Windows;
+		super('npm', true, false);
 	}
+
+	override private function run():Void {
+		//Sys.command('sudo', ['chmod', '/usr/local/lib/node_modules', '777']);	
+		var cmds = ['sudo', 'npm', '-g', 'install'];
+		if (!sudo) cmds.shift();
+		var c = cmds.shift();
+		listInstall(c, cmds, Config.settings.npm);
+	}
+
+	public static inline function install():Void if (Utils.nodeExists) new NpmInstall();
 
 }

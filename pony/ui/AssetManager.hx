@@ -156,10 +156,16 @@ class AssetManager {
 			var p = cbjoin(f);
 			f = p.a;
 			var s = Type.resolveClass(chs[i]);
-			Reflect.getProperty(s, 'loadAllAssets')(true, p.b);
+			if (s != null)
+				Reflect.getProperty(s, 'loadAllAssets')(true, p.b);
+			else
+				p.b(0, 0); //skip load
 		}
 		var s = Type.resolveClass(chs[chs.length - 1]);
-		Reflect.getProperty(s, 'loadAllAssets')(true, f);
+		if (s != null)
+			Reflect.getProperty(s, 'loadAllAssets')(true, f);
+		else
+			f(0, 0); //skip load
 	}
 
 	public static function cbjoin(cb:Int->Int->Void):Pair<Int->Int->Void, Int->Int->Void> {
