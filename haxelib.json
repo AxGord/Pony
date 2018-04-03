@@ -19,8 +19,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Upgrade tools, pixi, installer",
-"version": "0.7.8",
+"releasenote": "Update pony tools installer",
+"version": "0.7.9",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }
