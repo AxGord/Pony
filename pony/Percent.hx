@@ -69,7 +69,7 @@ class Percent implements pony.magic.HasSignal {
 		} else {
 			percent = current / total;
 			full = percent >= 1;
-			run = current >= allow;
+			run = full || current >= allow;
 		}
 	}
 

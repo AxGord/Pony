@@ -34,9 +34,17 @@ class BaseInstall {
 	private var n:String;
 	private var hard:Bool;
 
-	public function new(n:String, q:Bool, hard:Bool) {
+	public function new(n:String, ?qn:String, q:Bool, hard:Bool) {
 		this.n = n;
 		this.hard = hard;
+		if (qn == null) qn = n;
+		if (q) {
+			switch Config.questionState(qn) {
+				case InstallQuestion.No: return;
+				case InstallQuestion.Yes: q = false;
+				case InstallQuestion.Say: q = true;
+			}
+		}
 		if (!q || question()) {
 			log('');
 			log('Install $n');

@@ -23,26 +23,11 @@
 **/
 
 /**
- * NpmInstall
+ * InstallQuestion
  * @author AxGord <axgord@gmail.com>
  */
-class NpmInstall extends BaseInstall {
-
-	private var sudo:Bool;
-
-	public function new() {
-		if (Utils.nodeExists) {
-			this.sudo = Config.OS != TargetOS.Windows;
-			super('npm', true, false);
-		}
-	}
-
-	override private function run():Void {
-		//Sys.command('sudo', ['chmod', '/usr/local/lib/node_modules', '777']);	
-		var cmds = ['sudo', 'npm', '-g', 'install'];
-		if (!sudo) cmds.shift();
-		var c = cmds.shift();
-		listInstall(c, cmds, Config.settings.npm);
-	}
-
+enum InstallQuestion {
+	Say;
+	Yes;
+	No;
 }

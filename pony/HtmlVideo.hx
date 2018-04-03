@@ -38,7 +38,8 @@ import pony.magic.HasLink;
 typedef HtmlVideoOptions = {
 	?bufferingTreshhold: Int,
 	?retryDelay: Int,
-	?maxRetries: Int
+	?maxRetries: Int,
+	?virtualPlay: Bool
 }
 
 /**
@@ -64,7 +65,7 @@ class HtmlVideo implements HasSignal implements HasLink {
 
 	private var options:HtmlVideoOptions = {
 		bufferingTreshhold: 3,
-		retryDelay: 3000,
+		retryDelay: 10000,
 		maxRetries: 4
 	};
 
@@ -138,11 +139,11 @@ class HtmlVideo implements HasSignal implements HasLink {
 	}
 	
 	public function play():Void {
-		position.enable();
+		if (options.virtualPlay) position.enable();
 	}
 
 	public function stop():Void {
-		position.disable();
+		if (options.virtualPlay) position.disable();
 	}
 
 	@:extern private inline function set_startTime(v:Time):Time return position.start = v;

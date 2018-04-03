@@ -35,6 +35,8 @@ class Config {
 	public static var PD:String;
 	public static var SRC:String;
 	public static var BIN:String;
+	public static var ARGS:Array<String>;
+	public static var INSTALL:Bool;
 
 	public static function init():Void {
 		settings = haxe.Json.parse(haxe.Resource.getString('settings.json'));
@@ -45,6 +47,19 @@ class Config {
 		SRC = Sys.getCwd() + 'tools';
 		SRC = StringTools.replace(SRC, '/', PD);
 		BIN = SRC + PD + 'bin' + PD;
+		ARGS = Sys.args();
+		INSTALL = ARGS[0] == 'install';
+		if (INSTALL) ARGS.shift();
+	}
+
+	public static function questionState(name:String):InstallQuestion {
+		if (!INSTALL)
+			return InstallQuestion.Say;
+		if (ARGS.indexOf('-' + name) != -1)
+			return InstallQuestion.No;
+		if (ARGS.indexOf('+' + name) != -1)
+			return InstallQuestion.Yes;
+		return InstallQuestion.Say;
 	}
 
 }

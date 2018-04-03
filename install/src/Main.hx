@@ -31,13 +31,12 @@ class Main {
 	
 	static function main():Void {
 		Config.init();
-		tryRun();
+		if (!Config.INSTALL) tryRun(Config.ARGS);
 		if (!Utils.nodeExists) Sys.println('Warning: nodejs not installed!');
 		new PonyInstall();
 	}
 
-	static function tryRun():Void {
-		var args = Sys.args();
+	static function tryRun(args:Array<String>):Void {
 		if (args.length > 1) {
 			Sys.setCwd(args.pop());
 			var runfile = Config.BIN + (Config.OS == Windows ? 'pony.exe' : 'pony');

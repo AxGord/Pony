@@ -33,14 +33,22 @@ import Config.*;
  */
 class UserpathInstall extends BaseInstall {
 
-	public function new() super('user path', true, true);
+	private var installNodePath:Bool = true;
+	private var installPonyPath:Bool = true;
+
+	public function new() {
+		installNodePath = questionState('nodepath') != InstallQuestion.No;
+		installPonyPath = questionState('ponypath') != InstallQuestion.No;
+		super('userpath', true, true);
+	}
 
 	override public function run():Void {
-		switch Config.OS {
+		switch OS {
 			case Windows:
-				if (Utils.nodeExists)
+				if (installNodePath && Utils.nodeExists)
 					windowsNodeUserpath();
-				windowsPonyUserpath();
+				if (installPonyPath)
+					windowsPonyUserpath();
 				
 			case Mac:
 				var home = Sys.getEnv('HOME');
@@ -93,14 +101,23 @@ class UserpathInstall extends BaseInstall {
 
 	private inline function setx(v:String, p:String):Void cmd('setx', [v, p]);
 
-	private static function writeProfileFiles(pFiles:Array<String>):Void {
-		var npmPath = new Process('npm', ['prefix', '-g']).stdout.readLine() + '/lib/node_modules';
-			
+	private function writeProfileFiles(pFiles:Array<String>):Void {
 		var data = [
-			'export NODE_PATH=$npmPath',
 			'export $ENVKEY=$BIN',
 			"export PATH=$PATH:$" + ENVKEY
 		];
+
+		if (installNodePath && Utils.nodeExists) {
+			var npmPath = new Process('npm', ['prefix', '-g']).stdout.readLine() + '/lib/node_modules';
+			var line = 'export NODE_PATH=$npmPath';
+			if (installPonyPath) {
+				data.unshift(line);
+			} else {				
+				saveNpmLine(line, pFiles);
+			}
+		}
+
+		if (!installPonyPath) return;
 
 		for (pFile in pFiles) {
 			if (FileSystem.exists(pFile)) {
@@ -116,6 +133,19 @@ class UserpathInstall extends BaseInstall {
 				}
 			} else {
 				File.saveContent(pFile, data.join('\n'));
+			}
+		}
+	}
+
+	public static function saveNpmLine(line:String, pFiles:Array<String>):Void {
+		for (pFile in pFiles) {
+			if (FileSystem.exists(pFile)) {
+				var c = File.getContent(pFile);
+				if (c.indexOf(line) == -1) {
+					File.saveContent(pFile, c + '\n' + line + '\n');
+				}
+			} else {
+				File.saveContent(pFile, line + '\n');
 			}
 		}
 	}

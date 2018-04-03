@@ -28,13 +28,13 @@
  */
 class PonyInstall extends BaseInstall {
 
-	public function new() super('Pony Command-Line Tools', true, true);
+	public function new() super('Pony Command-Line Tools', !Config.INSTALL, true);
 
 	override private function run():Void {
-		VSCodePluginsInstall.install();
+		new VSCodePluginsInstall();
 		new HaxelibInstall();
 		compile();
-		NpmInstall.install();
+		new NpmInstall();
 		new UserpathInstall();
 	}
 

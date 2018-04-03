@@ -34,6 +34,6 @@ build: off
 
 test_script:
   - haxelib dev pony .
-  - haxelib run pony
+  - haxelib run pony install -code -npm -userpath
   - cd tests
   - cmd: test.cmd | neko Appveyor.n
