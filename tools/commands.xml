@@ -66,6 +66,8 @@
 	</hash>
 	<unpack>
 		<help>Unpack files from config archives</help>
+		<arg>Configure name</arg>
+		<arg>Debug or release</arg>
 	</unpack>
 	<haxelib>
 		<help>Haxelib tools</help>

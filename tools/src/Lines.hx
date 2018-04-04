@@ -30,6 +30,9 @@ class Lines {
         tryShow('Xml', '.xml');
         tryShow('Json', '.json');
         tryShow('JavaScript', '.js');
+        tryShow('TypeScript', '.ts');
+        tryShow('ActionScript3', '.as');
+        tryShow('MXML', '.mxml');
     }
 
     private static function tryShow(lang:String, ext:String):Void {

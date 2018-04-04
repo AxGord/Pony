@@ -19,8 +19,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Update pony tools installer",
-"version": "0.7.9",
+"releasenote": "Pony Tools: unpack conf, flag, lines for ts, as, mxml",
+"version": "0.8.0",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }

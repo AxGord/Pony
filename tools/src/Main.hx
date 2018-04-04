@@ -125,7 +125,7 @@ class Main {
 		commands.onLicense < License.run;
 		commands.onHaxelib < Haxelib.run;
 
-		commands.runArgs(Sys.args());
+		commands.runArgs(grabFlags(Sys.args()));
 
 		Sys.println('Total time: ' + Std.int((Sys.time() - startTime) * 1000) / 1000);
 	}
@@ -135,6 +135,17 @@ class Main {
 		if (args.app != null) a.push(args.app);
 		if (args.debug) a.push('debug');
 		return a;
+	}
+
+	static function grabFlags(args:Array<String>):Array<String> {
+		var na:Array<String> = [];
+		for (a in args) {
+			if (a.charAt(0) == '-')
+				Flags.set(a.substr(1));
+			else
+				na.push(a);
+		}
+		return na;
 	}
 	
 }
