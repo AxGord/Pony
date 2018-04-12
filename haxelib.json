@@ -19,8 +19,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Pony Tools: unpack conf, flag, lines for ts, as, mxml",
-"version": "0.8.0",
+"releasenote": "Html Video ie11 bugfix",
+"version": "0.8.1",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }

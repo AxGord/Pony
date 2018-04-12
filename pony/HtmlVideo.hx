@@ -265,6 +265,7 @@ class HtmlVideo implements HasSignal implements HasLink {
 	public var current(get, never):Time;
 	public var start(default, set):Time = 0;
 	public var total(default, null):Time;
+	public var elementCurrentTime(get, set):Float;
 
 	private var element:VideoElement;
 	private var timer:DTimer;
@@ -283,6 +284,17 @@ class HtmlVideo implements HasSignal implements HasLink {
 		onDisable << disableHandler;
 	}
 
+	@:abstract private inline function get_elementCurrentTime():Float {
+		return try element.currentTime catch (_:Any) 0;
+	}
+
+	@:abstract private inline function set_elementCurrentTime(v:Float):Float {
+		try {
+			element.currentTime = v;
+		} catch (_:Any) {}
+		return v;
+	}
+
 	private function enableHandler():Void {
 		timer.start();
 	}
@@ -296,7 +308,7 @@ class HtmlVideo implements HasSignal implements HasLink {
 	private function set_start(v:Time):Time {
 		if (v != start) {
 			start = v;
-			progress.current = element.currentTime = v.totalSeconds;
+			progress.current = elementCurrentTime = v.totalSeconds;
 			position = v;
 		}
 		return v;
@@ -307,7 +319,7 @@ class HtmlVideo implements HasSignal implements HasLink {
 			element.pause();
 			eEnd.dispatch();
 		} else {
-			progress.current = element.currentTime;
+			progress.current = elementCurrentTime;
 		}
 	}
 
@@ -319,7 +331,7 @@ class HtmlVideo implements HasSignal implements HasLink {
 			} else {
 				total = t;
 				position = start;
-				progress.current = element.currentTime = start.totalSeconds;
+				progress.current = elementCurrentTime = start.totalSeconds;
 				progress.total = total;
 			}
 		}
@@ -343,7 +355,7 @@ class HtmlVideo implements HasSignal implements HasLink {
 	private function tick():Void {
 		position += 1000;
 		if (!pony.math.MathTools.approximately(position.totalSeconds, progress.current, 3)) {
-			progress.current = element.currentTime = position.totalSeconds;
+			progress.current = elementCurrentTime = position.totalSeconds;
 		}
 	}
 
