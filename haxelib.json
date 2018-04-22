@@ -19,8 +19,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Html Video ie11 bugfix",
-"version": "0.8.1",
+"releasenote": "pony.xml: env vars for config",
+"version": "0.8.2",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }

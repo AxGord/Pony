@@ -127,6 +127,20 @@ private enum ConfigTypes {
 private class ReadXmlConfig extends XmlConfigReader<PConfig> {
 
 	override private function readNode(xml:Fast):Void {
+		var v:String = null;
+		try {
+			v = xml.innerData;
+			if (v.charAt(0) == '$') {
+				var nv = Sys.getEnv(v.substr(1));
+				if (nv == null) {
+					Sys.println('Warning: Not exists env: ' + v);
+					v = '';
+				} else {
+					v = nv;
+				}
+			}
+		} catch (_:Any) {}
+
 		var stype:String = xml.has.type ? xml.att.type : null;
 
 		var map:Map<String, String> = null;
@@ -173,8 +187,9 @@ private class ReadXmlConfig extends XmlConfigReader<PConfig> {
 				if (nt > 1) {
 					CVars;
 				} else if (nt == 1) {
-					var v = xml.innerData;
-					if (Std.string(Std.parseInt(v)) == v)
+					if (v == null)
+						CString;
+					else if (Std.string(Std.parseInt(v)) == v)
 						CInt;
 					else if (Std.string(Std.parseFloat(v)) == v)
 						CFloat;
@@ -206,7 +221,7 @@ private class ReadXmlConfig extends XmlConfigReader<PConfig> {
 					debug: cfg.debug,
 					path: cfg.path,
 					key: xml.name,
-					value: xml.innerData,
+					value: v,
 					type: type
 				});
 
