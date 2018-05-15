@@ -59,6 +59,12 @@ class HtmlVideo implements HasSignal implements HasLink {
 	public var muted1:Tumbler = new Tumbler(true);
 	public var muted2:Tumbler = new Tumbler(true);
 
+	public var qualities(link, set):Array<String> = loader.qualities;
+	public var qualityIndex(link, set):Int = loader.qualityIndex;
+
+	public var qualityUpSpeed(link, set):Float = loadState.qualityUpSpeed;
+	public var qualityDownSpeed(link, set):Float = loadState.qualityDownSpeed;
+
 	private var loader:HtmlVideoLoader;
 	public var loadState:HtmlVideoLoadProgress;
 	private var position:HtmlVideoPlayProgress;
@@ -109,7 +115,15 @@ class HtmlVideo implements HasSignal implements HasLink {
 		muted.onDisable << unmuteHandler;
 		muted1.changeEnabled << muteUpdate;
 		muted2.changeEnabled << muteUpdate;
+
+		loadState.onQualityUp << loader.qualityUp;
+		loadState.onQualityDown << loader.qualityDown;
 	}
+
+	@:extern private inline function set_qualities(q:Array<String>):Array<String> return loader.qualities = q; 
+	@:extern private inline function set_qualityIndex(q:Int):Int return loader.qualityIndex = q;
+	@:extern private inline function set_qualityUpSpeed(v:Float):Float return loadState.qualityUpSpeed = v;
+	@:extern private inline function set_qualityDownSpeed(v:Float):Float return loadState.qualityDownSpeed = v;
 
 	private function muteUpdate():Void muted.enabled = muted1.enabled || muted2.enabled;
 	
@@ -186,6 +200,9 @@ class HtmlVideo implements HasSignal implements HasLink {
 
 	public var isPlaying(get, never):Bool;
 
+	public var qualities(default, set):Array<String> = null;
+	public var qualityIndex:Int = 1;
+
 	private var element:VideoElement;
 	private var videoSource:SourceElement;
 	private var retryCount:Int = 0;
@@ -207,6 +224,8 @@ class HtmlVideo implements HasSignal implements HasLink {
 	}
 
 	public function loadVideo(url:String):Void {
+		if (qualities != null)
+			url = StringTools.replace(url, '{quality}', qualities[qualityIndex]);
 		var playingbefore = isPlaying;
 		_unloadVideo();
 		videoSource = cast js.Browser.document.createElement('source'); // must play from <source> not .src coz mobile browsers are retarded
@@ -252,6 +271,20 @@ class HtmlVideo implements HasSignal implements HasLink {
 			loadVideo(videoSource.src);
 			retryCount++;
 		}
+	}
+
+	@:extern private inline function set_qualities(q:Array<String>):Array<String> {
+		if (qualityIndex >= q.length)
+			qualityIndex = q.length - 1;
+		return qualities = q;
+	}
+
+	public function qualityUp():Void {
+		if (qualities != null && qualityIndex < qualities.length - 1) qualityIndex++;
+	}
+
+	public function qualityDown():Void {
+		if (qualities != null && qualityIndex > 0) qualityIndex--;
 	}
 
 }
@@ -367,11 +400,19 @@ class HtmlVideo implements HasSignal implements HasLink {
 	@:auto public var onReady:Signal0;
 	@:auto public var onLoad:Signal0;
 
+	@:auto public var onQualityUp:Signal0;
+	@:auto public var onQualityDown:Signal0;
+	public var onFullLoad(default, null):Signal0;
+
+	public var qualityUpSpeed:Float = 2;
+	public var qualityDownSpeed:Float = 1;
+
 	public var progress(default, null):Percent = new Percent(0);
 	public var targetTime(default, set):Time = 0;
 	private var element:VideoElement;
 	private var bufferingTreshhold:Float;
 	private var isReady(get, never):Bool;
+	private var beginLoadTime:Float;
 
 	public function new(videoElement:VideoElement, bufferingTreshhold:Float) {
 		super(false);
@@ -382,6 +423,25 @@ class HtmlVideo implements HasSignal implements HasLink {
 		progress.changeRun << changeRunHandler;
 		onDisable << reset;
 		changeEnabled << updateLoading;
+		//load speed calc
+		onEnable << startLoadHandler;
+		onFullLoad = progress.changeFull - true;
+	}
+
+	private function startLoadHandler():Void {
+		if (targetTime == 0) {
+			beginLoadTime = Date.now().getTime();
+			onFullLoad < endLoadHandler;
+		}
+	}
+
+	private function endLoadHandler():Void {
+		var time = (Date.now().getTime() - beginLoadTime) / 1000;
+		var p = element.duration / time;
+		if (p > qualityUpSpeed)
+			eQualityUp.dispatch();
+		else if (p < qualityDownSpeed)
+			eQualityDown.dispatch();
 	}
 	
 	@:extern private inline function get_isReady():Bool {
@@ -392,7 +452,8 @@ class HtmlVideo implements HasSignal implements HasLink {
 	}
 
 	private function set_targetTime(v:Time):Time {
-		if (v == targetTime) {
+		if (v != targetTime) {
+			onFullLoad >> endLoadHandler;
 			targetTime = v;
 			progress.allow = v.totalSeconds + bufferingTreshhold;
 		}

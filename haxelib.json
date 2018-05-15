@@ -19,8 +19,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "pony.xml: env vars for config",
-"version": "0.8.2",
+"releasenote": "Uglify several files support. Electron. Upgrades and fixes.",
+"version": "0.8.3",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }

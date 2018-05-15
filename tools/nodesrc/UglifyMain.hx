@@ -33,23 +33,24 @@ import pony.NPM;
  */
 class UglifyMain {
 
-	static var debug:Bool = false;
-	static var app:String;
-	static var input:Array<String> = [];
-	static var output:String = null;
-	static var mapInput:String = null;
-	static var mapOutput:String = null;
-	static var mapUrl:String = null;
-	static var mapSource:String = null;
-	static var mangle:Bool = false;
-	static var compress:Bool = false;
+	var debug:Bool = false;
+	var app:String;
+	var input:Array<String> = [];
+	var output:String = null;
+	var mapInput:String = null;
+	var mapOutput:String = null;
+	var mapUrl:String = null;
+	var mapSource:String = null;
+	var mangle:Bool = false;
+	var compress:Bool = false;
 	
 	static function main() {
-		
-		var xml = Utils.getXml().node.uglify;
-
 		var cfg = Utils.parseArgs(Sys.args());
-		
+		for (xml in Utils.getXml().nodes.uglify)
+			new UglifyMain(xml, cfg);
+	}
+
+	function new(xml:Fast, cfg:AppCfg) {
 		app = cfg.app;
 		debug = cfg.debug;
 		
@@ -109,7 +110,7 @@ class UglifyMain {
 		}
 	}
 	
-	static function run(xml:Fast) {
+	function run(xml:Fast) {
 		for (e in xml.elements) {
 			switch e.name {
 				case 'input':

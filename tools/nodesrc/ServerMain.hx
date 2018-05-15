@@ -58,18 +58,33 @@ class ServerMain {
 			}
 
 			if (sx.hasNode.proxy) {
-				var px = sx.node.proxy;
-				var target = px.node.target.innerData;
-				var port = px.node.port.innerData;
-				NPM.http_proxy.createProxyServer({
-					target: target,
-					headers: {'Host': '127.0.0.1:$port'}
-				}).on('error', function (err, req, res) {
-					res.writeHead(500, {
-						'Content-Type': 'text/plain'
-					});
-					res.end('Something went wrong.');
-				}).listen(Std.parseInt(port));
+				for (px in sx.nodes.proxy) {
+					var target = px.node.target.innerData;
+					var port = px.node.port.innerData;
+					trace('Start proxy server on $port to $target target');
+					if (!px.has.slow) {
+						NPM.http_proxy.createProxyServer({
+							target: target,
+							headers: {'Host': '127.0.0.1:$port'}
+						}).on('error', function (err, req, res) {
+							res.writeHead(500, {
+								'Content-Type': 'text/plain'
+							});
+							res.end('Something went wrong.');
+						}).listen(Std.parseInt(port));
+					} else {
+						var proxy = NPM.http_proxy.createProxyServer();
+						js.node.Http.createServer(function(req:IncomingMessage, res:ServerResponse) {
+							var url = target + req.url;
+							trace('Slow proxy request: ' + url);
+							Node.setTimeout(function () {
+								proxy.web(req, res, {
+									target: url
+								});
+							}, Std.parseInt(px.att.slow));
+						}).listen(port);
+					}
+				}
 			}
 
 			if (sx.hasNode.haxe) {

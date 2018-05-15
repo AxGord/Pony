@@ -76,6 +76,21 @@ class JsTools implements pony.magic.HasSignal {
 		js.Lib.global.docReady(eDocReady.dispatch);
 	}
 
+	@:extern public static inline function removeEval():Void {
+		untyped window.eval = evalHandler;
+	}
+
+	private static function evalHandler():Void {
+		throw new js.Error('Sorry, this app does not support window.eval().');
+	}
+
+	@:extern public static inline function disableDrop():Void {
+		js.Browser.document.ondragover = abortEvent;
+		js.Browser.document.ondrop = abortEvent;
+	}
+
+	public static function abortEvent(e:js.html.Event):Void e.preventDefault();
+
 	private static function get_agent():UserAgent {
 		if (_agent != null) return _agent;
 		var ua = Browser.navigator.userAgent.toLowerCase();
@@ -155,13 +170,13 @@ class JsTools implements pony.magic.HasSignal {
 	
 	@:extern inline public static function get_isFSE():Bool {
 		return untyped 
-        {
-            Browser.document.fullscreenElement ||
-            Browser.document.mozFullScreen ||
-            Browser.document.mozFullscreenElement ||
-            Browser.document.webkitFullscreenElement ||
-            Browser.document.msFullscreenElement;
-        };
+		{
+			Browser.document.fullscreenElement ||
+			Browser.document.mozFullScreen ||
+			Browser.document.mozFullscreenElement ||
+			Browser.document.webkitFullscreenElement ||
+			Browser.document.msFullscreenElement;
+		};
 	}
 	
 	public static function closeFS():Void {
