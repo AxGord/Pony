@@ -43,6 +43,12 @@ enum ISA {
 	X32; X64; Unknown;
 }
 
+typedef JsMap<K, V> = {
+	set: K -> V -> Void,
+	get: K -> V,
+	keys: Void -> Array<K>
+}
+
 /**
  * JsTools
  * @author AxGord <axgord@gmail.com>
@@ -234,6 +240,20 @@ class JsTools implements pony.magic.HasSignal {
 		var a = s.split(';');
 		a.pop();
 		return a.map(function(s:String) return StringTools.ltrim(s) + ';');
+	}
+
+	public static function mapToJSMap<K, V>(map:Map<K, V>):JsMap<K, V> {
+		var n:JsMap<K, V> = untyped __js__('new Map()');
+		for (k in map.keys()) n.set(k, map[k]);
+		return n;
+	}
+
+	public static function stringJSMapToMap<K:String, V:Any>(map:JsMap<K, V>):Map<K, V> {
+		return [for (k in map.keys()) k => map.get(k)];
+	}
+
+	public static function intJSMapToMap<K:Int, V:Any>(map:JsMap<K, V>):Map<K, V> {
+		return [for (k in map.keys()) k => map.get(k)];
 	}
 
 }

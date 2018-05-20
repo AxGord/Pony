@@ -45,21 +45,16 @@ class Main {
 	}
 
 	static function showHelp():Void {
-
-		Sys.println(commands.helpData.join('\n'));
+		Sys.println(commands.helpData.join('\n\n'));
 		Sys.println('');
 		Sys.println('Visit https://github.com/AxGord/Pony/wiki/Pony-Tools for more info');
 		Sys.exit(0);
-
 	}
 
 	static function prepare(cfg:AppCfg):Void {
-
 		var xml = Utils.getXml();
 		new Prepare(xml, cfg.app, cfg.debug);
-
 		Utils.runNode('ponyPrepare');
-
 	}
 
 	static function run(cfg:AppCfg):Void {

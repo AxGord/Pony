@@ -21,45 +21,34 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-package;
-import haxe.xml.Fast;
+package pony.html;
+
+import js.html.MouseEvent;
 
 /**
- * Prepare
+ * Frame horizontal resizer
  * @author AxGord <axgord@gmail.com>
  */
-class Prepare {
+class FrameHResizer extends FrameBaseResizer {
 
-	public function new(xml:Fast, app:String, debug:Bool) {
-		if (sys.FileSystem.exists('libcache.js')) sys.FileSystem.deleteFile('libcache.js');
-		if (xml.hasNode.haxelib) {
-			Sys.println('update haxelib');
-			for (node in xml.node.haxelib.nodes.lib) {
-				var args = ['install'];
-				args = args.concat(node.innerData.split(' '));
-				args.push('--always');
-				Sys.command('haxelib', args);
-			}
-		}
-
-		if (xml.hasNode.npm && pony.text.XmlTools.isTrue(xml.node.npm, 'autoinstall')) {
-			var cwd = new Cwd(xml.node.npm.has.path ? xml.node.npm.att.path : null);
-			Sys.println('install npm');
-			cwd.sw();
-			for (module in xml.node.npm.nodes.module) {
-				Sys.command('npm', ['install', module.innerData, '--prefix', './']);
-			}
-			cwd.sw();
-		}
-
-		if (!Flags.NOTP && xml.hasNode.texturepacker)
-			new Texturepacker(xml.node.texturepacker, app, debug);
-			
-		//if (xml.hasNode.build) try {
-		//	new Build(xml, app, debug).writeConfigIfNeed();
-		//} catch (e:String) {
-		//	Sys.println(e);
-		//}
+	public function new(frameA:String, resizer:String, frameB:String, frameAMin:Int, frameBMin:Int) {
+		super(frameA, resizer, frameB, frameAMin, frameBMin);
 	}
-	
+
+	override private function get_sizeA():Int return frameA.clientHeight;
+	override private function get_sizeB():Int return frameB.clientHeight;
+
+	override private function set_posA(v:Int):Int {
+		frameA.style.height = v + 'px';
+		return v;
+	}
+
+	override private function set_posB(v:Int):Int {
+		frameB.style.bottom = v + 'px';
+		resizer.style.bottom = (v - (resizer.clientHeight / 2)) + 'px';
+		return v;
+	}
+
+	override private function getMousePos(e:MouseEvent):Int return e.clientY;
+
 }

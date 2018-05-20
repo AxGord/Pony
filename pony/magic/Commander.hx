@@ -90,15 +90,15 @@ class CommanderBuilder {
 			var bcmd:String = pony.text.TextTools.bigFirst(cmd);
 
 			if (x.nodes.arg.length > 0) {
-				h = h == null ? '' : h + '. ';
-				h += 'Arguments: ' + [for (a in x.nodes.arg) getHelp(a)].join('; ');
+				h = h == null ? '' : h + '.\n\t';
+				h += 'Arguments:\n\t\t' + [for (a in x.nodes.arg) getHelp(a)].join('\n\t\t');
 			}
 
 			if (h != null) {
 				var shelp = '';
 				if (x.nodes.syn.length > 0)
 					shelp = '(' + [for (s in x.nodes.syn) StringTools.trim(s.innerData)].join(', ') + ') ';
-				help.push(cmd + ' ' + shelp + '- ' + h);
+				help.push(cmd + ' ' + shelp + '\n\t' + h);
 			}
 
 			var ed:String = 'e' + bcmd;

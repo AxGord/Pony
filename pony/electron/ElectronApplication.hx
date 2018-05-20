@@ -25,6 +25,7 @@ package pony.electron;
 
 import electron.main.App;
 import electron.main.BrowserWindow;
+import pony.text.TextTools;
 
 class ElectronApplication extends VSTraceHelper implements pony.magic.HasAbstract {
 	
@@ -91,5 +92,21 @@ class ElectronApplication extends VSTraceHelper implements pony.magic.HasAbstrac
 		log('Activate');
 		if (Lambda.count(windows) == 0) createMainWindow();
 	}
+
+	public function mapCreateWindow(map:Map<String, String>, ?id:String):BrowserWindow {
+		var frame = !TextTools.isFalse(map['frame']);
+		return createWindow(map['name'], id, {
+			width: Std.parseInt(map['width']),
+			height: Std.parseInt(map['height']),
+			frame: frame,
+			titleBarStyle: frame ? null : 'hiddenInset',
+			fullscreen: map.exists('fullscreen') ? TextTools.isTrue(map['fullscreen']) : null,
+			resizable: !TextTools.isFalse(map['resizable']),
+			minWidth: Std.parseInt(map['minWidth']),
+			minHeight: Std.parseInt(map['minHeight'])
+		});
+	}
+
+	public inline function mapCloseWindow(map:Map<String, String>):Void return closeWindow(map['name']);
 
 }

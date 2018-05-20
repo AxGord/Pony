@@ -46,6 +46,8 @@ class Haxelib {
 				upver(0, args.join(' '));
 			case 'updateReadme':
 				updateReadme(getVersion());
+			case 'upload':
+				upload();
 			case _:
 				Utils.error('Unknown command');
 		}
@@ -107,6 +109,10 @@ class Haxelib {
 
 		saveJson(jdata);
 
+		upload();
+	}
+
+	private static function upload():Void {
 		var data = sys.io.File.getContent(listFile).split('\n');
 		if (data.indexOf(haxelibFile) == -1) data.push(haxelibFile);
 		var zip = new pony.ZipTool(outputFile, 0);

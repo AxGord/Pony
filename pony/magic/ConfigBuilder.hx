@@ -163,7 +163,8 @@ private class ReadXmlConfig extends XmlConfigReader<PConfig> {
 					path: ''
 				}, function(conf:PConfig) {
 					if (mapType == null) mapType = conf.type;
-					if (mapType != conf.type) throw 'Type error';
+					if (stype == 'map' && mapType != conf.type)
+						throw 'Type error';
 					map[conf.path + conf.key] = conf.value;
 				});
 

@@ -121,8 +121,7 @@ class App implements HasSignal {
 		_width = width;
 		_height = height;
 		this.container = container;
-		
-		//beign pixi init
+
 		canvas = Browser.document.createCanvasElement();
 		canvas.style.width = width + "px";
 		canvas.style.height = height + "px";
@@ -145,7 +144,6 @@ class App implements HasSignal {
 			forceCanvas: true
 			#end
 		};
-		//end pixi init
 
 		app = new pixi.core.Application(renderingOptions);
 
