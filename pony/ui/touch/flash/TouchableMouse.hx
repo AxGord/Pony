@@ -67,6 +67,8 @@ class TouchableMouse {
 		obj.addEventListener(MouseEvent.MOUSE_UP, upHandler);
 		
 		Lib.current.stage.addEventListener(MouseEvent.MOUSE_UP, globUpHandler, false);
+
+		obj.addEventListener(MouseEvent.MOUSE_WHEEL, wheelHandler);
 		
 		Mouse.onLeave << leaveHandler;
 	}
@@ -78,6 +80,7 @@ class TouchableMouse {
 		obj.removeEventListener(MouseEvent.MOUSE_DOWN, downHandler);
 		obj.removeEventListener(MouseEvent.MOUSE_UP, upHandler);
 		Lib.current.stage.removeEventListener(MouseEvent.MOUSE_UP, globUpHandler, false);
+		obj.removeEventListener(MouseEvent.MOUSE_WHEEL, wheelHandler);
 		Mouse.onLeave >> leaveHandler;
 		obj = null;
 		base = null;
@@ -108,6 +111,10 @@ class TouchableMouse {
 		_down = false;
 		if (!over) base.dispatchOutUp();
 		else DeltaTime.fixedUpdate < up;
+	}
+
+	private function wheelHandler(e:MouseEvent):Void {
+		base.eWheel.dispatch(e.delta);
 	}
 	
 	private function up():Void {

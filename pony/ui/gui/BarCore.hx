@@ -32,7 +32,7 @@ import pony.magic.HasSignal;
  */
 class BarCore implements Declarator implements HasSignal {
 
-	@:arg public var size(default,null):Float;
+	@:arg public var size(default, null):Float;
 	@:arg public var isVertical(default,null):Bool = false;
 	@:arg public var invert:Bool = false;
 	
@@ -98,5 +98,11 @@ class BarCore implements Declarator implements HasSignal {
 	}
 	
 	public function setPercent(v:Float):Void percent = v;
+
+	public function setSize(v:Float):Float {
+		size = v;
+		percent = pos / size;
+		return v;
+	}
 	
 }

@@ -44,6 +44,7 @@ class SliderCore extends BarCore {
 	public var onStopDrag(default, null):Signal1<Touch>;
 	
 	private var startPoint:Float = 0;
+	public var wheelSpeed:Int = 2;
 	
 	public function new(size:Float, isVertical:Bool = false, invert:Bool = false, draggable:Bool=true) {
 		super(size, isVertical, invert);
@@ -103,6 +104,10 @@ class SliderCore extends BarCore {
 		return if (p < 0) 0;
 		else if (p > size) size;
 		else p;
+	}
+
+	public function wheel(v:Int):Void {
+		pos = limit(pos - wheelSpeed * v);
 	}
 	
 }
