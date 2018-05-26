@@ -42,20 +42,18 @@ typedef Style = Map<String, Map<String, String>>;
  * @author AxGord <axgord@gmail.com>
  */
 class XmlUiBuilder {
-	
+
 	macro static public function build(typesExpr:Expr):Array<Field> {
+
+		var cl = Context.getLocalClass().get();
+		var meta = cl.meta.get();
+		if (!meta.checkMeta([':ui']))
+			return Context.getBuildFields();
 		
 		var types = switch typesExpr.expr {
 			case EObjectDecl(ts):
-				[for (t in ts) t.field => TypeTools.toComplexType(Context.getType(exprToTypeString(t.expr)))];
+				[for (t in ts) t.field => exprToComplex(t.expr)];
 			case _: Context.error('Types list wrong type', typesExpr.pos);
-		}
-		
-		var cl = Context.getLocalClass().get();
-		var meta = cl.meta.get();
-		if (!meta.checkMeta([':ui'])) {
-			//Context.error('Not have :ui', Context.currentPos());
-			return Context.getBuildFields();
 		}
 		
 		if (cl.superClass != null) {
@@ -64,7 +62,7 @@ class XmlUiBuilder {
 				var m = submeta.getMeta(':ui_types').params[0];
 				switch m.expr {
 					case EObjectDecl(ts):
-						for (t in ts) types[t.field] = TypeTools.toComplexType(Context.getType(exprToTypeString(t.expr)));
+						for (t in ts) types[t.field] = exprToComplex(t.expr);
 					case _: Context.error('Types list wrong type', m.pos);
 				}
 			}
@@ -74,7 +72,7 @@ class XmlUiBuilder {
 			var m = meta.getMeta(':ui_types').params[0];
 			switch m.expr {
 				case EObjectDecl(ts):
-					for (t in ts) types[t.field] = TypeTools.toComplexType(Context.getType(exprToTypeString(t.expr)));
+					for (t in ts) types[t.field] = exprToComplex(t.expr);
 				case _: Context.error('Types list wrong type', m.pos);
 			}
 		}
@@ -141,6 +139,17 @@ class XmlUiBuilder {
 	#if macro
 	private static var gpath:String;
 	
+	private static function exprToComplex(expr:Expr):ComplexType {
+		return switch Context.typeof(expr) {
+			case TType(tt, _):
+				var st = (tt.get().type);
+				var c = TypeTools.toComplexType(st);
+				var tpt:Type = (c.getParameters()[0].params[0]);
+				tpt.getParameters()[0];
+			case _: throw 'err';
+		}
+	}
+
 	private static function mapToOExprObject(map:Map<String, String>):Dynamic {
 		return {expr: EObjectDecl([for (k in map.keys()) {field: k, expr: macro $v{map[k]}}]), pos: Context.currentPos()};
 	}

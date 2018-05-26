@@ -27,40 +27,7 @@ package pony.magic;
  * In
  * @author AxGord <axgord@gmail.com>
  */
-#if macro
-import haxe.macro.Context;
-import haxe.macro.Expr;
-import haxe.macro.ExprTools;
-import pony.macro.Tools;
-using Lambda;
-#end
-
 #if !macro
-@:autoBuild(pony.magic.InBuilder.build()) 
-interface In { }
+@:autoBuild(pony.magic.builder.InBuilder.build()) 
 #end
-
-class InBuilder {
-	
-	macro static public function build():Array<Field> {
-		var fs:Array<Field> = Context.getBuildFields();
-		for (f in fs) switch f.kind {
-			case FFun(f):
-				f.expr = ExprTools.map(f.expr, repl);
-			case _:
-		}
-		return fs;
-	}
-	#if macro
-	static public function repl(e:Expr):Expr {
-		return switch e.expr {
-			case EIn(e1, e2): macro $e2.indexOf($e1) != -1;
-			case EFor(_, _): e;
-			case _: ExprTools.map(e, repl);
-		};
-	}
-	
-	#end
-	
-}
-	
+interface In { }

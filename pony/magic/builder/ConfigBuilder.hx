@@ -21,7 +21,8 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-package pony.magic;
+package pony.magic.builder;
+
 #if macro
 import haxe.macro.Context;
 import haxe.macro.Expr;
@@ -30,6 +31,7 @@ import haxe.xml.Fast;
 import sys.io.File;
 import pony.text.XmlConfigReader;
 import pony.text.XmlTools;
+
 using Lambda;
 #end
 
@@ -41,10 +43,10 @@ class ConfigBuilder {
 
 	private static inline var file:String = 'pony.xml';
 
-	macro static public function build():Array<Field> {
+	macro public static function build():Array<Field> {
 		Context.registerModuleDependency(Context.getLocalModule(), file);
 		var fields:Array<Field> = Context.getBuildFields();
-        if (!sys.FileSystem.exists(file)) return fields;
+		if (!sys.FileSystem.exists(file)) return fields;
 		var xml = XmlTools.fast(File.getContent(file)).node.project;
 		#if debug
 		var debug = true;
@@ -234,7 +236,6 @@ private class ReadXmlConfig extends XmlConfigReader<PConfig> {
 				}, onConfig);
 
 		}
-
 		
 	}
 

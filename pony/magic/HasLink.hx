@@ -23,53 +23,11 @@
 **/
 package pony.magic;
 
-#if macro
-import haxe.macro.Context;
-import haxe.macro.Expr;
-import haxe.macro.Type;
-import pony.text.TextTools;
-using pony.macro.Tools;
-#end
-
 /**
  * HasLink
  * @author AxGord <axgord@gmail.com>
  */
 #if !macro
-@:autoBuild(pony.magic.HasLinkBuilder.build())
+@:autoBuild(pony.magic.builder.HasLinkBuilder.build())
 #end
-interface HasLink { }
-
-/**
- * HasLinkBuilder
- * @author AxGord <axgord@gmail.com>
- */
-class HasLinkBuilder {
-	macro static public function build():Array<Field> {
-		var fields:Array<Field> = Context.getBuildFields();
-		for (field in fields) {
-			switch field.kind {
-				case FProp(get, set, type, expr) if (get == 'link'):
-					field.kind = FProp('get', set, type);
-					var access = [AInline, APrivate];
-					if (field.access.indexOf(AStatic) != -1)
-						access.push(AStatic);
-					fields.push({
-						name: 'get_' + field.name,
-						access: access,
-						kind: FFun({
-							args: [],
-							ret: type,
-							expr: macro return ${ expr }
-						}),
-						pos: field.pos,
-						#if (js||flash) //for interfaces work only js or flash
-						meta: [ { name:':extern', pos: field.pos } ]
-						#end
-					});
-				case _:
-			}
-		}
-		return fields;
-	}
-}
+interface HasLink {}

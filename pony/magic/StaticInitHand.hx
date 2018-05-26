@@ -22,41 +22,12 @@
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
 package pony.magic;
-#if macro
-import haxe.macro.Context;
-import haxe.macro.Expr;
-import haxe.macro.Expr.Field;
-#end
+
 /**
  * StaticInit hand mode
  * @author AxGord <axgord@gmail.com>
  */
 #if !macro
-@:autoBuild(pony.magic.StaticInitHandBuilder.build())
+@:autoBuild(pony.magic.builder.StaticInitHandBuilder.build())
 #end
 interface StaticInitHand {}
-
-class StaticInitHandBuilder {
-	
-	macro public static function build():Array<Field> {
-		var fields:Array<Field> = Context.getBuildFields();
-		var exprs:Array<Expr> = [];
-		for (f in fields) if (f.access.indexOf(AInline) == -1) {
-			if (f.kind.getParameters()[1] != null) {
-				var ex = { expr: f.kind.getParameters()[1].expr, pos:Context.currentPos() };
-				exprs.push(macro $i{f.name} = $e{ex});
-			}
-			f.kind.getParameters()[1] = null;
-		}
-		fields.push( {
-			pos: Context.currentPos(),
-			name: 'init',
-			meta: [],
-			doc: null,
-			access: [APublic, AStatic],
-			kind: FFun({ret: null, params: [], args: [], expr: {expr:EBlock(exprs), pos: Context.currentPos()}})
-		});
-		return fields;
-	}
-	
-}

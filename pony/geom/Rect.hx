@@ -22,14 +22,38 @@
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
 package pony.geom;
+
 import pony.geom.Point;
+
 /**
  * Rect / IntRect
  * @author AxGord
  */
-typedef Rect<T> = { x:T, y:T, width:T, height:T }
+typedef SimpleRect<T> = { x:T, y:T, width:T, height:T }
 
-abstract IntRect(Rect<Int>) to Rect<Int> from Rect<Int> {
+abstract Rect<T>(SimpleRect<T>) to SimpleRect<T> from SimpleRect<T>  {
+	
+	public var x(get, set):T;
+	public var y(get, set):T;
+	public var width(get, set):T;
+	public var height(get, set):T;
+
+	public inline function new(x:T, y:T, width:T, height:T) {
+		this = {x: x, y: y, width: width, height: height};
+	}
+
+	private inline function get_x():T return this.x;
+	private inline function get_y():T return this.y;
+	private inline function get_width():T return this.width;
+	private inline function get_height():T return this.height;
+
+	private inline function set_x(v:T):T return this.x = v;
+	private inline function set_y(v:T):T return this.y = v;
+	private inline function set_width(v:T):T return this.width = v;
+	private inline function set_height(v:T):T return this.height = v;
+}
+
+abstract IntRect(SimpleRect<Int>) to SimpleRect<Int> from SimpleRect<Int> {
 	
 	public var x(get, never):Int;
 	public var y(get, never):Int;

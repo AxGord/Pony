@@ -22,21 +22,22 @@
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
 package pony.magic;
+
 #if macro
 import haxe.macro.Expr;
 import haxe.macro.Context;
 import sys.FileSystem;
+
 using pony.macro.Tools;
 #end
-class Classes
-{
+
+class Classes {
 
 	macro public static function dir(pack:String, dir:String):Expr {
 		var f:String = Context.getPosInfos(Context.currentPos()).file;
 		f = sys.FileSystem.fullPath(f).split('\\').slice(0, -1).join('/') + '/';
-		
 		var d:String = f + dir + '/';
-		trace(d);
+		// trace(d);
 		var list:Array<Expr> = [];
 		var p:Array<String> = (pack != '' ? pack.split('.') : []).concat(dir.split('/'));
 		for (e in FileSystem.readDirectory(d))
@@ -47,7 +48,7 @@ class Classes
 						ex = {expr: EConst(CIdent(s)), pos: Context.currentPos()};
 					else
 						ex = {expr: EField(ex, s), pos: Context.currentPos()};
-				trace(e.substr(0, e.length-3));
+				// trace(e.substr(0, e.length-3));
 				ex = {expr: EField(ex, e.substr(0, e.length-3)), pos: Context.currentPos()};
 				list.push(ex);
 			}

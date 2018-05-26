@@ -36,7 +36,11 @@ class Module extends pony.Logable implements pony.magic.HasAbstract {
 
 	public var modules:Modules;
 	private var xml(get, never):Fast;
+	#if (haxe_ver >= "4.0.0")
+	private var nodes(get, never):Array<Fast>;
+	#else
 	private var nodes(get, never):List<Fast>;
+	#end
 	private var _xml:Fast;
 	private var xname:String;
 	private var currentSection:BASection;
@@ -53,9 +57,15 @@ class Module extends pony.Logable implements pony.magic.HasAbstract {
 		return _xml;
 	}
 
+	#if (haxe_ver >= "4.0.0")
+	private function get_nodes():Array<Fast> {
+		return xname == null ? [] : modules.xml.nodes.resolve(xname);
+	}
+	#else
 	private function get_nodes():List<Fast> {
 		return xname == null ? new List<Fast>() : modules.xml.nodes.resolve(xname);
 	}
+	#end
 
 	private function begin():Void {
 		log('Start $xname');

@@ -28,6 +28,6 @@ package pony;
  * @author AxGord <axgord@gmail.com>
  */
 #if !macro
-@:build(pony.magic.ConfigBuilder.build())
+@:build(pony.magic.builder.ConfigBuilder.build())
 #end
 class Config {}
