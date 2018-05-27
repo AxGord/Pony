@@ -45,6 +45,9 @@ class MathTools {
 	public static inline var minInt:Int = -2147483648;
 	#end
 
+	public static var DEG2RAD:Float = Math.PI / 180;
+	public static var RAD2DEG:Float = 180 / Math.PI;
+
 	public static function arithmeticMean(a:Iterable<Float>):Float {
 		var s:Float = 0;
 		var count = 0;

@@ -117,8 +117,24 @@ class Build extends CfgModule<BuildConfig> {
 	private function runCompilation(command:Array<String>, debug:Bool, compiler:String):Void {
 		if (debug && server && compiler == 'haxe') {
 			var newline = "\n";
-			var s = new sys.net.Socket();
-			s.connect(new sys.net.Host('127.0.0.1'), Std.parseInt(modules.xml.node.server.node.haxe.innerData));
+			var port:Int = Std.parseInt(modules.xml.node.server.node.haxe.innerData);
+			var s:sys.net.Socket = null;
+			var tryCounter:Int = 3;
+			var timeout:Int = 10;
+			while (true) try {
+				s = new sys.net.Socket();
+				s.connect(new sys.net.Host('127.0.0.1'), port);
+				break;
+			} catch (e:Any) {
+				Sys.stderr().writeString(Std.string(e));
+				if (tryCounter-- <= 0) {
+					break;
+				} else {
+					Sys.println('');
+					Sys.println('Connect error, try again after $timeout sec...');
+					Sys.sleep(timeout);
+				}
+			}
 			var d = Sys.getCwd();
 			s.write('--cwd ' + d + newline);
 			s.write(command.join(newline));

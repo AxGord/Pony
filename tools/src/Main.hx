@@ -24,6 +24,7 @@
 import haxe.xml.Fast;
 import sys.FileSystem;
 import sys.io.File;
+import pony.Tools;
 
 /**
  * Pony Command-Line Tools
@@ -38,6 +39,7 @@ class Main {
 		Sys.println('');
 		Sys.println('Command-Line Tools');
 		Sys.println('Library version ' + Utils.ponyVersion);
+		Sys.println('Build date ' + Tools.getBuildDate());
 		Sys.println('https://github.com/AxGord/Pony');
 		Sys.println('http://lib.haxe.org/p/pony');
 		Sys.println('Type: "pony help" - for help');

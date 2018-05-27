@@ -94,7 +94,7 @@ class AutoButton extends Sprite implements IWH {
 	}
 	
 	private function get_size():Point<Float> return _size;
-	public function wait(cb:Void->Void):Void cb();
+	public function wait(cb:Void -> Void):Void cb();
 	public function destroyIWH():Void destroy();
 	
 }
