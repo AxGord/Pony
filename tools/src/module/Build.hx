@@ -28,6 +28,8 @@ import sys.FileSystem;
 import sys.io.File;
 import types.BASection;
 
+typedef LastCompilationOptions = {command:Array<String>, debug:Bool, compiler:String};
+
 /**
  * Build module
  * @author AxGord <axgord@gmail.com>
@@ -38,6 +40,7 @@ class Build extends CfgModule<BuildConfig> {
 
 	private var haxelib:Array<String> = [];
 	private var server:Bool = false;
+	private var lastCompilationOptions:LastCompilationOptions;
 
 	public function new() super('build');
 
@@ -133,11 +136,18 @@ class Build extends CfgModule<BuildConfig> {
 					Sys.println('');
 					Sys.println('Connect error, try again after $timeout sec...');
 					Sys.sleep(timeout);
+					if (lastCompilationOptions != null) {
+						var lco = lastCompilationOptions;
+						lastCompilationOptions = null;
+						runCompilation(lco.command, lco.debug, lco.compiler);
+					}
 				}
 			}
 			var d = Sys.getCwd();
 			s.write('--cwd ' + d + newline);
-			s.write(command.join(newline));
+			var cmd = command.join(newline);
+			Sys.println(cmd);
+			s.write(cmd);
 			s.write("\000");
 
 			var hasError = false;
@@ -145,7 +155,7 @@ class Build extends CfgModule<BuildConfig> {
 			{
 				switch (line.charCodeAt(0)) {
 					case 0x01:
-						neko.Lib.print(line.substr(1).split("\x01").join(newline));
+						Sys.println(line.substr(1).split("\x01").join(newline));
 					case 0x02:
 						hasError = true;
 					default: 
@@ -153,6 +163,7 @@ class Build extends CfgModule<BuildConfig> {
 				}
 			}
 			if (hasError) Sys.exit(1);
+			lastCompilationOptions = {command:command, debug:debug, compiler:compiler};
 		} else {
 			Utils.command(compiler, command);
 		}
