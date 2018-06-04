@@ -30,4 +30,4 @@ import pixi.core.display.Container;
  * TLayout
  * @author AxGord <axgord@gmail.com>
  */
-typedef TLayout = BaseLayout<BaseLayoutCore<Container>>;
+class TLayout extends BaseLayout<BaseLayoutCore<Container>> {}
