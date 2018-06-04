@@ -27,6 +27,7 @@ import haxe.xml.Fast;
 import sys.FileSystem;
 import sys.io.File;
 import types.BASection;
+import sys.net.Socket;
 
 typedef LastCompilationOptions = {command:Array<String>, debug:Bool, compiler:String};
 
@@ -99,6 +100,7 @@ class Build extends CfgModule<BuildConfig> {
 			}
 			runCompilation(cmd, cfg.debug, cfg.haxeCompiler);
 		}
+		checkCompilation();
 	}
 
 	private function saveHxml(name:String, commands:Array<String>):Void {
@@ -120,29 +122,7 @@ class Build extends CfgModule<BuildConfig> {
 	private function runCompilation(command:Array<String>, debug:Bool, compiler:String):Void {
 		if (debug && server && compiler == 'haxe') {
 			var newline = "\n";
-			var port:Int = Std.parseInt(modules.xml.node.server.node.haxe.innerData);
-			var s:sys.net.Socket = null;
-			var tryCounter:Int = 3;
-			var timeout:Int = 10;
-			while (true) try {
-				s = new sys.net.Socket();
-				s.connect(new sys.net.Host('127.0.0.1'), port);
-				break;
-			} catch (e:Any) {
-				Sys.stderr().writeString(Std.string(e));
-				if (tryCounter-- <= 0) {
-					break;
-				} else {
-					Sys.println('');
-					Sys.println('Connect error, try again after $timeout sec...');
-					Sys.sleep(timeout);
-					if (lastCompilationOptions != null) {
-						var lco = lastCompilationOptions;
-						lastCompilationOptions = null;
-						runCompilation(lco.command, lco.debug, lco.compiler);
-					}
-				}
-			}
+			var s:sys.net.Socket = connectToHaxeServer();
 			var d = Sys.getCwd();
 			s.write('--cwd ' + d + newline);
 			var cmd = command.join(newline);
@@ -162,11 +142,47 @@ class Build extends CfgModule<BuildConfig> {
 						Sys.stderr().writeString(line + newline);
 				}
 			}
+			s.close();
 			if (hasError) Sys.exit(1);
 			lastCompilationOptions = {command:command, debug:debug, compiler:compiler};
 		} else {
 			Utils.command(compiler, command);
 		}
+	}
+
+	private function connectToHaxeServer():Socket {
+		var port:Int = Std.parseInt(modules.xml.node.server.node.haxe.innerData);
+		var s:sys.net.Socket = null;
+		var tryCounter:Int = 3;
+		var timeout:Int = 7;
+		while (true) try {
+			s = new sys.net.Socket();
+			s.connect(new sys.net.Host('127.0.0.1'), port);
+			return s;
+		} catch (e:Any) {
+			Sys.stderr().writeString(Std.string(e));
+			if (tryCounter-- <= 0) {
+				Sys.exit(1);
+			} else {
+				Sys.println('');
+				Sys.println('Connect error, try again after $timeout sec...');
+				Sys.sleep(timeout);
+				if (lastCompilationOptions != null) {
+					var lco = lastCompilationOptions;
+					lastCompilationOptions = null;
+					runCompilation(lco.command, lco.debug, lco.compiler);
+				}
+			}
+		}
+		return null;
+	}
+
+	private function checkCompilation():Void {
+		if (lastCompilationOptions != null && lastCompilationOptions.debug && server && lastCompilationOptions.compiler == 'haxe') {
+			var s = connectToHaxeServer();
+			s.close();
+		}
+		
 	}
 
 }
