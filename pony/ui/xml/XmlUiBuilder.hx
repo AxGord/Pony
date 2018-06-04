@@ -44,11 +44,12 @@ typedef Style = Map<String, Map<String, String>>;
 class XmlUiBuilder {
 
 	macro static public function build(typesExpr:Expr):Array<Field> {
-
 		var cl = Context.getLocalClass().get();
 		var meta = cl.meta.get();
-		if (!meta.checkMeta([':ui']))
+		if (!meta.checkMeta([':ui'])) {
+			cl.superClass.t;//run build for super class
 			return Context.getBuildFields();
+		}
 		
 		var types = switch typesExpr.expr {
 			case EObjectDecl(ts):

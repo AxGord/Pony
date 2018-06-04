@@ -80,5 +80,7 @@ abstract IntPoint(Point_ < Int > ) to Point_ < Int > from Point_ < Int > {
 			case Direction.right: OneRight;
 		}
 	}
+
+	public function toString():String return '(${this.x}, ${this.y})';
 	
 }

@@ -51,6 +51,7 @@ import pony.pixi.ui.FSButton;
 import pony.pixi.ui.IntervalLayout;
 import pony.pixi.ui.LabelButton;
 import pony.pixi.ui.Mask;
+import pony.pixi.ui.DrawShapeView;
 #if pixi_particles
 import pony.pixi.ui.Particles;
 #end
@@ -66,6 +67,7 @@ import pony.pixi.ui.HtmlVideoUI;
 import pony.pixi.ui.HtmlVideoUIFS;
 import pony.pixi.ui.HtmlContainer;
 import pony.pixi.ui.RenderBox;
+import pony.pixi.ui.LogableSprite;
 import pony.pixi.ui.slices.SliceTools;
 import pony.time.DeltaTime;
 import pony.time.Time;
@@ -106,12 +108,13 @@ using pony.pixi.PixiExtends;
 	fsvideo: pony.pixi.ui.HtmlVideoUIFS,
 	html: pony.pixi.ui.HtmlContainer,
 	render: pony.pixi.ui.RenderBox,
+	drawshape: pony.pixi.ui.DrawShapeView,
 	#if pixi_particles
 	particles: pony.pixi.ui.Particles
 	#end
 }))
 #end
-class PixiXmlUi extends Sprite implements HasAbstract {
+class PixiXmlUi extends LogableSprite implements HasAbstract {
 
 	private static inline var PX:String = 'px ';
 	private static inline var GLOW_FILTER_OFFSET:Int = 2;
@@ -379,6 +382,12 @@ class PixiXmlUi extends Sprite implements HasAbstract {
 				r.update();
 				r;
 
+			case 'drawshape':
+				var ds = new DrawShapeView(new Point<Int>(parseAndScaleInt(attrs.w), parseAndScaleInt(attrs.h)));
+				if (attrs.enabled.isTrue()) ds.enable();
+				ds.onLog << log;
+				ds.onError << error;
+				ds;
 			#if pixi_particles
 			case 'particles':
 				var src = attrs.src.split(',').map(StringTools.trim);
