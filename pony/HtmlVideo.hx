@@ -65,7 +65,7 @@ class HtmlVideo implements HasSignal implements HasLink {
 	public var qualityUpSpeed(link, set):Float = loadState.qualityUpSpeed;
 	public var qualityDownSpeed(link, set):Float = loadState.qualityDownSpeed;
 
-	private var loader:HtmlVideoLoader;
+	public var loader:HtmlVideoLoader;
 	public var loadState:HtmlVideoLoadProgress;
 	private var position:HtmlVideoPlayProgress;
 
@@ -404,8 +404,8 @@ class HtmlVideo implements HasSignal implements HasLink {
 	@:auto public var onQualityDown:Signal0;
 	public var onFullLoad(default, null):Signal0;
 
-	public var qualityUpSpeed:Float = 2;
-	public var qualityDownSpeed:Float = 1;
+	public var qualityUpSpeed:Float = 1.8;
+	public var qualityDownSpeed:Float = 0.9;
 
 	public var progress(default, null):Percent = new Percent(0);
 	public var targetTime(default, set):Time = 0;
