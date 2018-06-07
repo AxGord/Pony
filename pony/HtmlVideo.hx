@@ -65,6 +65,8 @@ class HtmlVideo implements HasSignal implements HasLink {
 	public var qualityUpSpeed(link, set):Float = loadState.qualityUpSpeed;
 	public var qualityDownSpeed(link, set):Float = loadState.qualityDownSpeed;
 
+	public var url(default, null):String;
+
 	public var loader:HtmlVideoLoader;
 	public var loadState:HtmlVideoLoadProgress;
 	private var position:HtmlVideoPlayProgress;
@@ -141,12 +143,14 @@ class HtmlVideo implements HasSignal implements HasLink {
 	}
 
 	public inline function loadVideo(url:String):Void {
+		this.url = url;
 		loader.loadVideo(url);
 		loadState.enable();
 		play();
 	}
 
 	public inline function unloadVideo():Void {
+		url = null;
 		stop();
 		loadState.disable();
 		loader.unloadVideo();
@@ -267,7 +271,7 @@ class HtmlVideo implements HasSignal implements HasLink {
 	private function videoSourceErrorHandler(e:js.Error):Void DTimer.fixedDelay(retryDelay, retryConnect);
 
 	private function retryConnect():Void {
-		if (retryCount < maxRetries) {
+		if (videoSource != null && retryCount < maxRetries) {
 			loadVideo(videoSource.src);
 			retryCount++;
 		}

@@ -23,6 +23,9 @@
 **/
 package pony.pixi;
 
+import pony.events.Signal0;
+import pony.ui.AssetManager;
+
 /**
  * Simple Xml Pixi.js Application
  * @author AxGord <axgord@gmail.com>
@@ -31,6 +34,7 @@ package pony.pixi;
 class SimpleXmlApp extends pony.ui.xml.PixiXmlUi {
 
 	private var parentDomId:String;
+	@:auto private var onLoaded:Signal0;
 
 	public function new(?parentDomId:String) {
 		super();
@@ -39,7 +43,7 @@ class SimpleXmlApp extends pony.ui.xml.PixiXmlUi {
 		pony.JsTools.onDocReady < init;
 	}
 
-	private function init():Void {
+	private function createApp():Void {
 		app = new App(
 			this,
 			pony.Config.width,
@@ -47,6 +51,11 @@ class SimpleXmlApp extends pony.ui.xml.PixiXmlUi {
 			pony.Config.background,
 			parentDomId == null ? null : js.Browser.document.getElementById(parentDomId)
 		);
+	}
+
+	private function init():Void {
+		createApp();
+		AssetManager.loadComplete(SimpleXmlApp.loadUI, eLoaded.dispatch.bind(false));
 	}
 
 }

@@ -47,6 +47,7 @@ import pony.pixi.ui.BGLayout;
 import pony.pixi.ui.BText;
 import pony.pixi.ui.Bar;
 import pony.pixi.ui.Button;
+import pony.pixi.ui.RectButton;
 import pony.pixi.ui.FSButton;
 import pony.pixi.ui.IntervalLayout;
 import pony.pixi.ui.LabelButton;
@@ -92,6 +93,7 @@ using pony.pixi.PixiExtends;
 	progressbar: pony.pixi.ui.ProgressBar,
 	timebar: pony.pixi.ui.TimeBar,
 	button: pony.pixi.ui.Button,
+	rectbutton: pony.pixi.ui.RectButton,
 	autobutton: pony.pixi.ui.AutoButton,
 	fsbutton: pony.pixi.ui.FSButton,
 	lbutton: pony.pixi.ui.LabelButton,
@@ -247,6 +249,15 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 				b;
 			case 'button':
 				new Button(splitAttr(attrs.skin), attrs.src);
+			case 'rectbutton':
+				var b = new RectButton(
+					new Point(parseAndScaleInt(attrs.w), parseAndScaleInt(attrs.h)),
+					attrs.color.split(' ').map(UColor.fromString),
+					attrs.vert.isTrue(),
+					scaleBorderInt(attrs.border)
+				);
+				for (c in content) b.add(c);
+				b;
 			case 'autobutton':
 				new AutoButton(PixiAssets.image(attrs.src, attrs.name));
 			case 'fsbutton':
