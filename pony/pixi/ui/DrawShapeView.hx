@@ -28,6 +28,7 @@ import pony.geom.Point;
 import pony.geom.drawshape.DrawShape;
 import pony.geom.drawshape.DrawShapePointer;
 import pony.geom.drawshape.DrawShapePointerData;
+import pony.events.Signal1;
 import pony.events.Signal2;
 import pixi.core.graphics.Graphics;
 import pixi.core.sprites.Sprite;
@@ -59,8 +60,9 @@ class DrawShapeView extends LogableSprite implements pony.geom.IWH {
 	public var mainLayer(default, null):Sprite = new Sprite();
 
 	private var touchable:Touchable;
-	private var ds:DrawShape;
-	private var dsp:DrawShapePointer;
+	public var ds(default, null):DrawShape;
+	public var dsp(default, null):DrawShapePointer;
+	public var dpivot(default, null):DrawShapePivot;
 	private var snap:Graphics = new Graphics();
 	public var resultLines(default, null):Graphics = new Graphics();
 	public var polyLines(default, null):Graphics = new Graphics();
@@ -101,6 +103,8 @@ class DrawShapeView extends LogableSprite implements pony.geom.IWH {
 		ds.onDrawFinishPolygon << drawPolygon;
 		ds.onDrawFinishPolygon << drawPolygonLines;
 		ds.onDrawFinishPolygon << freeze;
+
+		dpivot = new DrawShapePivot(dsp);
 
 		resultLines.position.set(LINE_WIDTH / 2, LINE_WIDTH / 2);
 		drawLayer.addChild(shapes);
@@ -219,6 +223,21 @@ class DrawShapeView extends LogableSprite implements pony.geom.IWH {
 		polyLines.drawPolygon(polygon);
 	}
 
+	public function pivotMode():Void {
+		ds.disable();
+		dpivot.start();
+	}
+
+	public function reset():Void {
+		dpivot.reset();
+		unfreeze();
+		ds.reset();
+		resultLines.clear();
+		polyLines.clear();
+		shapes.clear();
+		freeze();
+	}
+
 	public function destroyIWH():Void {
 		destroy();
 	}
@@ -231,4 +250,29 @@ class DrawShapeView extends LogableSprite implements pony.geom.IWH {
 		fn();
 	}
 	
+}
+
+class DrawShapePivot implements pony.magic.HasSignal {
+
+	@:auto public var onPivot:Signal1<Point<Int>>;
+
+	private var pointer:DrawShapePointer;
+
+	public function new(pointer:DrawShapePointer) {
+		this.pointer = pointer;
+	}
+
+	public function start():Void {	
+		pointer.enable();
+		pointer.onDownPoint < downPointHandler;
+	}
+
+	public function reset():Void {
+		pointer.onDownPoint >> downPointHandler;
+	}
+
+	private function downPointHandler(p:DrawShapePointerData):Void {
+		ePivot.dispatch(new Point<Int>(p.col, p.row));
+	}
+
 }

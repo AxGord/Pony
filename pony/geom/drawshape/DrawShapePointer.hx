@@ -41,6 +41,7 @@ class DrawShapePointer extends pony.Tumbler {
 	
 	@:auto public var onDrawPoint:Signal2<DrawShapePointerData, Touch>;
 	@:auto public var onHidePoint:Signal1<Touch>;
+	@:auto public var onDownPoint:Signal2<DrawShapePointerData, Touch>;
 
 	private var touchable:Touchable;
 
@@ -50,6 +51,7 @@ class DrawShapePointer extends pony.Tumbler {
 	public var ybegin(default, null):Float = 0;
 	public var snapCellCounts(default, null):Point<Int> = new Point<Int>(16, 16);
 	public var snapCellSize(default, null):Point<Float>;
+	private var downPointData:DrawShapePointerData;
 
 	private var lastTouch:Touch;
 
@@ -69,6 +71,8 @@ class DrawShapePointer extends pony.Tumbler {
 			this.snapCellCounts = snapCellCounts;
 		snapCellSize = new Point(width / this.snapCellCounts.x, height / this.snapCellCounts.y);
 		onDrawPoint.add(magnet, PRIORITY);
+		onDrawPoint.add(drawPointHandler, PRIORITY);
+		onHidePoint.add(hidePointHandler, PRIORITY);
 		onEnable << enableHandler;
 		onDisable << disableHandler;
 	}
@@ -141,6 +145,20 @@ class DrawShapePointer extends pony.Tumbler {
 			col: p.x,
 			row: p.y
 		};
+	}
+	
+	private function drawPointHandler(p:DrawShapePointerData, t:Touch):Void {
+		downPointData = p;
+		t.onDown << downHandler;
+	}
+
+	private function hidePointHandler(t:Touch):Void {
+		downPointData = null;
+		t.onDown >> downHandler;
+	}
+
+	private function downHandler(t:Touch):Void {
+		eDownPoint.dispatch(downPointData, t);
 	}
 
 }

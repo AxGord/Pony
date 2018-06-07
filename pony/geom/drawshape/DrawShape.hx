@@ -55,7 +55,9 @@ class DrawShape extends pony.Logable {
 
 	private var pointer:DrawShapePointer;
 	private var downPointData:DrawShapePointerData;
+	private var downPointTouch:Touch;
 	private var targetPointData:DrawShapePointerData;
+	private var targetPointTouch:Touch;
 	private var shape:Array<IntPoint> = [];
 
 	public function new(pointer:DrawShapePointer) {
@@ -64,6 +66,10 @@ class DrawShape extends pony.Logable {
 		onDrawFinishShape = onFinishShape.convert1(convertPoints);
 		onDrawFinishPolygon = onDrawFinishShape.convert1(pointsToPolygon);
 		onFinishBinary = onFinishShape.convert1(shapeToBytes);
+	}
+
+	public function reset():Void {
+		shape = [];
 	}
 
 	public function enable():Void {
@@ -75,8 +81,8 @@ class DrawShape extends pony.Logable {
 	public function disable():Void {
 		log('disable drow shape');
 		pointer.disable();
-		removeStartListeners();
 		removeDrawListeners();
+		removeStartListeners();
 	}
 
 	private function convertPoints(e:Event1<Array<Point<Float>>>, p:Array<IntPoint>):Void {
@@ -102,27 +108,37 @@ class DrawShape extends pony.Logable {
 		e.dispatch(b.getBytes());
 	}
 
+	private function stopListenDownTouch():Void {
+		if (downPointTouch != null) {
+			stopListenDown(downPointTouch);
+		}
+	}
+
 	private function addStartListeners():Void {
 		pointer.onDrawPoint.add(startListenDown, PRIORITY);
 		pointer.onHidePoint.add(stopListenDown, PRIORITY);
 	}
 
 	private function removeStartListeners():Void {
+		stopListenDownTouch();
 		pointer.onDrawPoint >> startListenDown;
 		pointer.onHidePoint >> stopListenDown;
 	}
 
 	private function startListenDown(p:DrawShapePointerData, t:Touch):Void {
+		stopListenDownTouch();
 		downPointData = p;
+		downPointTouch = t;
 		t.onDown < downHandler;
 	}
 
 	private function stopListenDown(t:Touch):Void {
+		downPointTouch = null;
 		t.onDown >> downHandler;
 	}
 
 	private function downHandler(t:Touch):Void {
-		t.onUp < clickHandler;
+		clickHandler(t);
 	}
 
 	private function clickHandler(t:Touch):Void {
@@ -134,7 +150,6 @@ class DrawShape extends pony.Logable {
 
 	private function stopDrawHandler(t:Touch):Void {
 		removeDrawListeners();
-		pathDrawRemove(t);
 		ePathCancel.dispatch();
 		addStartListeners();
 		startListenDown(targetPointData, t);
@@ -146,6 +161,7 @@ class DrawShape extends pony.Logable {
 	}
 
 	private function removeDrawListeners():Void {
+		pathDrawRemoveTouch();
 		pointer.onDrawPoint >> drawPath;
 		pointer.onHidePoint >> pathDrawRemove;
 	}
@@ -153,15 +169,20 @@ class DrawShape extends pony.Logable {
 	private function drawPath(p:DrawShapePointerData, t:Touch):Void {
 		pathDrawRemove(t);
 		targetPointData = p;
+		targetPointTouch = t;
 		ePathDraw.dispatch(downPointData, p);
-		t.onUp < store;
-		t.onOutUp < store;
+		t.onDown < store;
 	}
 
 	private function pathDrawRemove(t:Touch):Void {
-		t.onUp >> store;
-		t.onOutUp >> store;
+		targetPointTouch = null;
+		t.onDown >> store;
 		ePathDrawRemove.dispatch();
+	}
+
+	private function pathDrawRemoveTouch():Void {
+		if (targetPointTouch != null)
+			pathDrawRemove(targetPointTouch);
 	}
 
 	private function checkDeny(p1:IntPoint, p2:IntPoint):Bool {
