@@ -90,15 +90,19 @@ class BodyBase implements pony.magic.HasSignal implements pony.magic.HasLink imp
 		}
 	}
 
-	public function scale(x:Float, y:Float):Void {
+	public inline function scale(x:Float, y:Float):Void {
 		body.scaleShapes(x, y);
 	}
 
-	public function lookAt(x:Float, y:Float):Void {
+	public inline function lookAt(x:Float, y:Float):Void {
 		rotation = Math.atan2(y - pos.y, x - pos.x);
 	}
 
-	public function setSpeed(v:Float):Void {
+	public inline function lookAtPoint(p:Point<Float>):Void {
+		lookAt(p.x, p.y);
+	}
+
+	public inline function setSpeed(v:Float):Void {
 		body.velocity = new Vec2(v * Math.cos(rotation), v * Math.sin(rotation));
 	}
 

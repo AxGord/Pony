@@ -72,6 +72,12 @@ abstract Align(AlignType) from AlignType to AlignType {
 		}
 		return new Pair(vert, hor);
 	}
+
+	@:to @:extern public inline function toInt():Int return vertical.getIndex() + (1 + horizontal.getIndex()) * 3;
+	
+	@:from @:extern public static inline function fromInt(v:Int):Align {
+		return new Pair(VAlign.createByIndex(v % 3), HAlign.createByIndex(Std.int(v / 3) - 1));
+	}
 	
 }
  
