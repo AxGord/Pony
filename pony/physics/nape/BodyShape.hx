@@ -31,6 +31,9 @@ import pony.geom.Rect;
 import nape.shape.Polygon;
 import nape.geom.Vec2;
 import nape.space.Space;
+import nape.shape.Shape;
+import nape.geom.GeomPoly;
+import nape.geom.GeomPolyList;
 
 /**
  * BodyShape
@@ -54,9 +57,11 @@ class BodyShape extends BodyBase {
 			var p:Byte = bi.readByte();
 			new Vec2((p.a - pb.a) * resolution, (p.b - pb.b) * resolution);
 		}];
-		var sh = new Polygon(a, material);
-		sh.sensorEnabled = body.isBullet;
-		body.shapes.add(sh);
+		for (g in new GeomPoly(a).convexDecomposition()) {
+			var p = new Polygon(g, material);
+			p.sensorEnabled = body.isBullet;
+			body.shapes.add(p);
+		}
 	}
 
 }
