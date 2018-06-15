@@ -154,6 +154,7 @@ class HtmlVideo implements HasSignal implements HasLink {
 		stop();
 		loadState.disable();
 		loader.unloadVideo();
+		position.dispathEnd();
 	}
 	
 	public function play():Void {
@@ -321,6 +322,10 @@ class HtmlVideo implements HasSignal implements HasLink {
 		onDisable << disableHandler;
 	}
 
+	public function dispathEnd():Void {
+		eEnd.dispatch(true);
+	}
+
 	@:abstract private inline function get_elementCurrentTime():Float {
 		return try element.currentTime catch (_:Any) 0;
 	}
@@ -354,7 +359,7 @@ class HtmlVideo implements HasSignal implements HasLink {
 	private function timeupdateHandler():Void {
 		if (ended) {
 			element.pause();
-			eEnd.dispatch();
+			dispathEnd();
 		} else {
 			progress.current = elementCurrentTime;
 		}

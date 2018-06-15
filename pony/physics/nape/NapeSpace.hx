@@ -23,6 +23,7 @@
 **/
 package pony.physics.nape;
 
+import haxe.io.Bytes;
 import pony.geom.Point;
 import pony.geom.Rect;
 import pony.time.DeltaTime;
@@ -98,6 +99,10 @@ class NapeSpace implements Dynamic<NapeGroup> {
 
 	public function createStaticCircle(r:Float, isBullet:Bool = false):BodyCircle {
 		return new BodyCircle(r, space, limits, true, isBullet);
+	}
+
+	public function createShape(data:Bytes, resolution:Float, isBullet:Bool = false):BodyShape {
+		return new BodyShape(data, resolution, space, limits, false, isBullet);
 	}
 
 }

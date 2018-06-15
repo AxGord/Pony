@@ -23,6 +23,7 @@
 **/
 package pony.pixi.nape;
 
+import haxe.io.Bytes;
 import pixi.core.sprites.Sprite;
 import pony.geom.Point;
 import pony.geom.Rect;
@@ -85,6 +86,10 @@ class NapeGroupView extends Sprite {
 
 	public function createStaticCircle(r:Float, isBullet:Bool = false):BodyCircleView {
 		return reg(new BodyCircleView(core.createStaticCircle(r, isBullet)));
+	}
+
+	public function createShape(data:Bytes, resolution:Float, isBullet:Bool = false):BodyShapeView {
+		return reg(new BodyShapeView(core.createShape(data, resolution, isBullet)));
 	}
 
 }

@@ -23,6 +23,7 @@
 **/
 package pony.pixi.nape;
 
+import haxe.io.Bytes;
 import pony.ui.touch.Touchable;
 import pony.geom.Point;
 import pony.geom.Rect;
@@ -30,7 +31,6 @@ import pony.physics.nape.BodyBase;
 import pony.physics.nape.DebugLineStyle;
 import pony.physics.nape.NapeSpace;
 import nape.space.Space;
-import nape.geom.Vec2;
 import pixi.core.sprites.Sprite;
 import pixi.core.graphics.Graphics;
 
@@ -130,6 +130,10 @@ class NapeSpaceView extends Sprite implements pony.magic.HasLink implements Dyna
 
 	public function createStaticCircle(r:Float, isBullet:Bool = false):BodyCircleView {
 		return reg(new BodyCircleView(core.createStaticCircle(r, isBullet)));
+	}
+
+	public function createShape(data:Bytes, resolution:Float, isBullet:Bool = false):BodyShapeView {
+		return reg(new BodyShapeView(core.createShape(data, resolution, isBullet)));
 	}
 
 }

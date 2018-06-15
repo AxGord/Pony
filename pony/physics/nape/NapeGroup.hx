@@ -23,6 +23,7 @@
 **/
 package pony.physics.nape;
 
+import haxe.io.Bytes;
 import nape.callbacks.InteractionCallback;
 import pony.geom.Point;
 import pony.geom.Rect;
@@ -87,6 +88,10 @@ class NapeGroup {
 
 	public function createStaticCircle(r:Float, isBullet:Bool = false):BodyCircle {
 		return new BodyCircle(r, space, ns.limits, true, isBullet, this);
+	}
+
+	public function createShape(data:Bytes, resolution:Float, isBullet:Bool = false):BodyShape {
+		return new BodyShape(data, resolution, space, ns.limits, false, isBullet, this);
 	}
 
 }

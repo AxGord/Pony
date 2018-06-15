@@ -66,6 +66,11 @@ class BaseLayout<T:BaseLayoutCore<Container>> extends Sprite implements IWH {
 		addChildAt(obj, 0);
 		layout.addToBegin(obj);
 	}
+
+	public function remove(obj:Container):Void {
+		removeChild(obj);
+		layout.remove(obj);
+	}
 	
 	private function load(obj:Container):Void {
 		if (Std.is(obj, Sprite)) {

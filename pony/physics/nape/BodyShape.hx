@@ -21,19 +21,42 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-package pony.pixi.nape;
+package pony.physics.nape;
 
-import pony.physics.nape.BodyBox;
+import haxe.io.BytesInput;
+import haxe.io.Bytes;
+import pony.Byte;
+import pony.geom.Point;
+import pony.geom.Rect;
+import nape.shape.Polygon;
+import nape.geom.Vec2;
+import nape.space.Space;
 
 /**
- * BodyBoxView
+ * BodyShape
  * @author AxGord <axgord@gmail.com>
  */
-class BodyBoxView extends BodyBaseView<BodyBox> {
-	
-	override function drawDebug():Void {
-		g.drawRect(0, 0, core.size.x, core.size.y);
-		g.position.set(-core.size.x / 2, -core.size.x / 2);
+class BodyShape extends BodyBase {
+
+	public var sbytes(default, null):Bytes;
+	public var resolution(default, null):Float;
+
+	public function new(sbytes:Bytes, resolution:Float, space:Space, ?limits:Rect<Float>, isStatic:Bool = false, isBullet:Bool = false, ?group:NapeGroup) {
+		this.sbytes = sbytes;
+		this.resolution = resolution;
+		super(space, limits, isStatic, isBullet, group);
+	}
+
+	override function init():Void {
+		var bi = new BytesInput(sbytes);
+		var pb:Byte = bi.readByte();
+		var a:Array<Vec2> = [while (bi.position < bi.length) {
+			var p:Byte = bi.readByte();
+			new Vec2((p.a - pb.a) * resolution, (p.b - pb.b) * resolution);
+		}];
+		var sh = new Polygon(a, material);
+		sh.sensorEnabled = body.isBullet;
+		body.shapes.add(sh);
 	}
 
 }

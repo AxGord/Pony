@@ -61,7 +61,7 @@ class BodyBase implements pony.magic.HasSignal implements pony.magic.HasLink imp
 	public var angularVel(link, link):Float = body.angularVel;
 	public var rotation(link, link):Float = body.rotation;
 
-	private var body:Body;
+	public var body(default, null):Body;
 	private var cbt:CbType;
 	private var addedListeners:Array<Listener> = [];
 	private var events0:Array<Event0> = [];
@@ -123,8 +123,8 @@ class BodyBase implements pony.magic.HasSignal implements pony.magic.HasLink imp
 		ePos.dispatch(body.position.x, body.position.y);
 		eRotation.dispatch(body.rotation);
 		if (limits != null) {
-			var mx = body.bounds.width;
-			var my = body.bounds.height;
+			var mx = body.bounds.width * 2;
+			var my = body.bounds.height * 2;
 			if (body.position.x < limits.x - mx
 			|| body.position.x > limits.width + mx
 			|| body.position.y < limits.y - my

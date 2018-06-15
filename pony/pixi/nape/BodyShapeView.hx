@@ -23,17 +23,30 @@
 **/
 package pony.pixi.nape;
 
-import pony.physics.nape.BodyBox;
+import haxe.io.BytesInput;
+import pony.Byte;
+import pony.physics.nape.BodyShape;
 
 /**
- * BodyBoxView
+ * BodyShapeView
  * @author AxGord <axgord@gmail.com>
  */
-class BodyBoxView extends BodyBaseView<BodyBox> {
+class BodyShapeView extends BodyBaseView<BodyShape> {
 	
 	override function drawDebug():Void {
-		g.drawRect(0, 0, core.size.x, core.size.y);
-		g.position.set(-core.size.x / 2, -core.size.x / 2);
+		var bi = new BytesInput(core.sbytes);
+		var pb:Byte = bi.readByte();
+		var fp:Byte = bi.readByte();
+		g.moveTo((fp.a - pb.a) * core.resolution, (fp.b - pb.b) * core.resolution);
+		while (bi.position < bi.length) {
+			var p:Byte = bi.readByte();
+			g.lineTo((p.a - pb.a) * core.resolution, (p.b - pb.b) * core.resolution);
+		}
+		g.lineTo((fp.a - pb.a) * core.resolution, (fp.b - pb.b) * core.resolution);
+
+		g.lineStyle(4, 0xF78C6C);
+		g.beginFill(0xF78C6C);
+		g.drawCircle(0, 0, 10);
 	}
 
 }
