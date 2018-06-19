@@ -46,6 +46,7 @@ import pony.pixi.ui.AutoButton;
 import pony.pixi.ui.BGLayout;
 import pony.pixi.ui.BText;
 import pony.pixi.ui.Bar;
+import pony.pixi.ui.ScrollBox;
 import pony.pixi.ui.Button;
 import pony.pixi.ui.RectButton;
 import pony.pixi.ui.FSButton;
@@ -90,6 +91,7 @@ using pony.pixi.PixiExtends;
 	tile: pixi.extras.TilingSprite,
 	text: pony.pixi.ui.BText,
 	bar: pony.pixi.ui.Bar,
+	vscroll: pony.pixi.ui.ScrollBox,
 	progressbar: pony.pixi.ui.ProgressBar,
 	timebar: pony.pixi.ui.TimeBar,
 	button: pony.pixi.ui.Button,
@@ -294,6 +296,10 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 					parseAndScaleInt(attrs.creep),
 					attrs.smooth.isTrue()
 				);
+			case 'vscroll':
+				var b = new ScrollBox(parseAndScale(attrs.w), parseAndScale(attrs.h));
+				for (c in content) b.add(c);
+				b;
 			case 'progressbar':
 				var font = attrs.font == null ? null : parseAndScaleInt(attrs.size) + PX + attrs.font;
 				new ProgressBar(
