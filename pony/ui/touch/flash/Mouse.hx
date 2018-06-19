@@ -85,14 +85,20 @@ class Mouse {
 		enabled = true;
 		Lib.current.stage.removeEventListener(MouseEvent.CLICK, lock, true);
 		Lib.current.stage.removeEventListener(MouseEvent.DOUBLE_CLICK, lock, true);
-		Lib.current.stage.removeEventListener(MouseEvent.MIDDLE_CLICK, lock, true);
-		Lib.current.stage.removeEventListener(MouseEvent.MIDDLE_MOUSE_DOWN, lock, true);
-		Lib.current.stage.removeEventListener(MouseEvent.MIDDLE_MOUSE_UP, lock, true);
+		try {
+			Lib.current.stage.removeEventListener(MouseEvent.MIDDLE_CLICK, lock, true);
+			Lib.current.stage.removeEventListener(MouseEvent.MIDDLE_MOUSE_DOWN, lock, true);
+			Lib.current.stage.removeEventListener(MouseEvent.MIDDLE_MOUSE_UP, lock, true);
+		} catch (_:Any) {}
 		Lib.current.stage.removeEventListener(MouseEvent.MOUSE_OUT, lock, true);
 		Lib.current.stage.removeEventListener(MouseEvent.MOUSE_OVER, lock, true);
-		Lib.current.stage.removeEventListener(MouseEvent.RIGHT_CLICK, lock, true);
-		Lib.current.stage.removeEventListener(MouseEvent.RIGHT_MOUSE_DOWN, lock, true);
-		Lib.current.stage.removeEventListener(MouseEvent.RIGHT_MOUSE_UP, lock, true);
+		try {
+			Lib.current.stage.removeEventListener(MouseEvent.RIGHT_CLICK, lock, true);
+		} catch (_:Any) {}
+		try {
+			Lib.current.stage.removeEventListener(MouseEvent.RIGHT_MOUSE_DOWN, lock, true);
+			Lib.current.stage.removeEventListener(MouseEvent.RIGHT_MOUSE_UP, lock, true);
+		} catch (_:Any) {}
 		Lib.current.stage.removeEventListener(MouseEvent.ROLL_OUT, lock, true);
 		Lib.current.stage.removeEventListener(MouseEvent.ROLL_OVER, lock, true);
 	}
@@ -100,14 +106,20 @@ class Mouse {
 		enabled = false;
 		Lib.current.stage.addEventListener(MouseEvent.CLICK, lock, true, -1000);
 		Lib.current.stage.addEventListener(MouseEvent.DOUBLE_CLICK, lock, true, -1000);
-		Lib.current.stage.addEventListener(MouseEvent.MIDDLE_CLICK, lock, true, -1000);
-		Lib.current.stage.addEventListener(MouseEvent.MIDDLE_MOUSE_DOWN, lock, true, -1000);
-		Lib.current.stage.addEventListener(MouseEvent.MIDDLE_MOUSE_UP, lock, true, -1000);
+		try {
+			Lib.current.stage.addEventListener(MouseEvent.MIDDLE_CLICK, lock, true, -1000);
+			Lib.current.stage.addEventListener(MouseEvent.MIDDLE_MOUSE_DOWN, lock, true, -1000);
+			Lib.current.stage.addEventListener(MouseEvent.MIDDLE_MOUSE_UP, lock, true, -1000);
+		} catch (_:Any) {}
 		Lib.current.stage.addEventListener(MouseEvent.MOUSE_OUT, lock, true, -1000);
 		Lib.current.stage.addEventListener(MouseEvent.MOUSE_OVER, lock, true, -1000);
-		Lib.current.stage.addEventListener(MouseEvent.RIGHT_CLICK, lock, true, -1000);
-		Lib.current.stage.addEventListener(MouseEvent.RIGHT_MOUSE_DOWN, lock, true, -1000);
-		Lib.current.stage.addEventListener(MouseEvent.RIGHT_MOUSE_UP, lock, true, -1000);
+		try {
+			Lib.current.stage.addEventListener(MouseEvent.RIGHT_CLICK, lock, true, -1000);
+		} catch (_:Any) {}
+		try {
+			Lib.current.stage.addEventListener(MouseEvent.RIGHT_MOUSE_DOWN, lock, true, -1000);
+			Lib.current.stage.addEventListener(MouseEvent.RIGHT_MOUSE_UP, lock, true, -1000);
+		} catch (_:Any) {}
 		Lib.current.stage.addEventListener(MouseEvent.ROLL_OUT, lock, true, -1000);
 		Lib.current.stage.addEventListener(MouseEvent.ROLL_OVER, lock, true, -1000);
 	}

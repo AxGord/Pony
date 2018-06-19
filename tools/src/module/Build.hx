@@ -212,6 +212,9 @@ private class BuildConfigReader extends BAReader<BuildConfig> {
 							cfg.command.push(xml.att.name + '=' + xml.innerData);
 						else
 							cfg.command.push(xml.innerData);
+					case 'i':
+							cfg.command.push('--macro');
+							cfg.command.push('"include(\'${xml.innerData}\')"');
 					case a:
 						cfg.command.push('-' + a);
 						try {
