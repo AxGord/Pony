@@ -36,6 +36,10 @@ import pony.magic.HasSignal;
 import pony.time.DeltaTime;
 import pony.ui.gui.SmoothBarCore;
 import pony.ui.touch.Touchable;
+import pony.ui.gui.ScrollBoxCore;
+import pony.ui.gui.ButtonCore;
+import pony.ui.touch.Touch;
+import pixi.core.math.shapes.Rectangle;
 
 using pony.pixi.PixiExtends;
 
@@ -47,70 +51,107 @@ class ScrollBox extends Sprite implements HasSignal implements IWH {
 	
 	public var size(get, never):Point<Float>;
 
-	private var _size:Point<Float>;
-	private var vert:Bool;
-	private var bar:Graphics;
+	private var vbar:Sprite;
+	private var hbar:Sprite;
 	private var content:Sprite = new Sprite();
-	private var touchable:Touchable;
+	private var core:ScrollBoxCore;
+	private var touchArea:Sprite = new Sprite();
 
-	public function new(w:Float, h:Float, vert:Bool = true, color:UInt = 0, barsize:Float = 8) {
-		if (!vert) throw 'Not supported!';
+	public function new(w:Float, h:Float, vert:Bool = true, hor:Bool = false, color:UInt = 0, barsize:Float = 8, wheelSpeed:Float = 1) {
 		super();
-		_size = new Point(w, h);
-		this.vert = vert;
+		var tag = new Graphics();
+		tag.beginFill(0, 0);
+		tag.drawRect(0, 0, 1, 1);
+		touchArea.addChild(tag);
+		content.addChild(touchArea);
+
 		var g = new Graphics();
 		g.beginFill(0x606060);
-		if (vert)
-			g.drawRect(0, 0, w - barsize, h);
-		else
-			g.drawRect(0, 0, w, h - barsize);
-		touchable = new Touchable(g);
-		touchable.onWheel << wheelHandler;
+		g.drawRect(0, 0, 1, 1);
 		addChild(g);
-		bar = new Graphics();
-		bar.beginFill(color);
-		if (vert) {
-			bar.drawRect(w - barsize, 0, barsize, 1);
-		} else {
-			bar.drawRect(0, h - barsize, 1, barsize);
-		}
-		addChild(bar);
+
 		addChild(content);
 		content.mask = g;
-	}
 
-	private function wheelHandler(delta:Int):Void {
-		var csize:Float = content.getBounds().height;
-		content.y += delta;
-		if (content.y < -csize + size.y) {
-			content.y = -csize + size.y;
-		} else if (content.y > 0) {
-			content.y = 0;
+		var vbutton:ButtonCore = null;
+		if (vert) {
+			var gvbar = new Graphics();
+			gvbar.beginFill(color);
+			gvbar.drawRect(0, 0, 1, 1);
+			vbar = new Sprite();
+			vbar.alpha = 0.7;
+			vbar.addChild(gvbar);
+			addChild(vbar);
+			vbutton = new ButtonCore(new Touchable(vbar));
+			vbutton.onVisual << vvisualHandler;
 		}
 
-		bar.y = -content.y;
+		var hbutton:ButtonCore = null;
+		if (hor) {
+			var ghbar = new Graphics();
+			ghbar.beginFill(color);
+			ghbar.drawRect(0, 0, 1, 1);
+			hbar = new Sprite();
+			hbar.alpha = 0.7;
+			hbar.addChild(ghbar);
+			addChild(hbar);
+			hbutton = new ButtonCore(new Touchable(hbar));
+			hbutton.onVisual << hvisualHandler;
+		}
+
+		core = new ScrollBoxCore(w, h, new Touchable(content), vbutton, hbutton, barsize, wheelSpeed);
+		if (vert) {
+			core.onHideScrollVert << hideVBar;
+			core.onScrollVertSize << showVBar;
+			core.onScrollVertSize << vbar.scale.set;
+			core.onScrollVertPos << vbar.position.set;
+		}
+		if (hor) {
+			core.onHideScrollVert << hideHBar;
+			core.onScrollVertSize << showHBar;
+			core.onScrollVertSize << hbar.scale.set;
+			core.onScrollVertPos << hbar.position.set;
+		}
+		core.onContentPos << content.position.set;
+		core.onMaskSize << g.scale.set;
+		core.onMaskSize << maximizeTouchArea;
 	}
+
+	private function maximizeTouchArea(mw:Float, mh:Float):Void {
+		var b = content.getLocalBounds();
+		touchArea.scale.set(b.width, b.height);
+		if (touchArea.scale.x < mw) touchArea.scale.x = mw;
+		if (touchArea.scale.y < mh) touchArea.scale.y = mh;
+	}
+
+	private function vvisualHandler(_, state:ButtonState):Void {
+		vbar.alpha = state == ButtonState.Default ? 0.7 : 1;
+	}
+
+	private function hvisualHandler(_, state:ButtonState):Void {
+		hbar.alpha = state == ButtonState.Default ? 0.7 : 1;
+	}
+
+	private function showVBar():Void vbar.visible = true;
+	private function hideVBar():Void vbar.visible = false;
+	private function showHBar():Void hbar.visible = true;
+	private function hideHBar():Void hbar.visible = false;
 
 	public function add(c:DisplayObject):Void {
 		content.addChild(c);
 		needUpdate();
 	}
 
-	public function needUpdate():Void {
+	public inline function needUpdate():Void {
 		DeltaTime.fixedUpdate < update;
 	}
 
 	public function update():Void {
 		var b = content.getLocalBounds();
-		if (b.height <= size.y) {
-			bar.visible = false;
-		} else {
-			bar.visible = true;
-			bar.height = size.y * 2 - b.height;
-		}
+		core.content(b.width, b.height);
 	}
 
-	private function get_size():Point<Float> return _size;
+	private function get_size():Point<Float> return new Point<Float>(core.w, core.h);
 
 	public function wait(fn:Void -> Void):Void fn();
 
