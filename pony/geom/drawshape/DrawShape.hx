@@ -73,13 +73,13 @@ class DrawShape extends pony.Logable {
 	}
 
 	public function enable():Void {
-		log('enable drow shape');
+		log('enable draw shape');
 		pointer.enable();
 		addStartListeners();
 	}
 
 	public function disable():Void {
-		log('disable drow shape');
+		log('disable draw shape');
 		pointer.disable();
 		removeDrawListeners();
 		removeStartListeners();
@@ -102,8 +102,7 @@ class DrawShape extends pony.Logable {
 
 	private function shapeToBytes(e:Event1<Bytes>, p:Array<IntPoint>):Void {
 		var b = new BytesOutput();
-		for (v in p)
-			b.writeByte(Byte.create(v.x, v.y));
+		for (v in p) b.writeByte(Byte.create(v.x, v.y));
 		log('Bytes size: ' + b.length);
 		e.dispatch(b.getBytes());
 	}

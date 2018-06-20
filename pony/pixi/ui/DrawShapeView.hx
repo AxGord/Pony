@@ -32,6 +32,7 @@ import pony.events.Signal1;
 import pony.events.Signal2;
 import pixi.core.graphics.Graphics;
 import pixi.core.sprites.Sprite;
+import pony.time.DeltaTime;
 
 // typedef DrawShapeStyle = {
 // 	snapWidth: Float
@@ -52,6 +53,7 @@ class DrawShapeView extends LogableSprite implements pony.geom.IWH {
 
 	public var size(get, never):Point<Int>;
 	private var _size:Point<Int>;
+	public var touchArea(default, null):Sprite = new Sprite();
 	public var bgLayer(default, null):Sprite = new Sprite();
 	public var snapLayer(default, null):Sprite = new Sprite();
 	public var drawLayer(default, null):Sprite = new Sprite();
@@ -77,8 +79,7 @@ class DrawShapeView extends LogableSprite implements pony.geom.IWH {
 		super();
 		_size = size;
 
-		this.touchable = new Touchable(bgLayer);
-
+		addChild(touchArea);
 		mainLayer.addChild(bgLayer);
 		mainLayer.addChild(snapLayer);
 		mainLayer.addChild(drawLayer);
@@ -86,8 +87,9 @@ class DrawShapeView extends LogableSprite implements pony.geom.IWH {
 		addChild(tmpDrawLayer);
 		addChild(pointerLayer);
 
-		snapLayer.interactive = false;
-		drawLayer.interactive = false;
+		this.touchable = new Touchable(touchArea);
+
+		mainLayer.interactive = false;
 		tmpDrawLayer.interactive = false;
 		pointerLayer.interactive = false;
 
@@ -118,6 +120,9 @@ class DrawShapeView extends LogableSprite implements pony.geom.IWH {
 		ds.onPathDrawRemove << clearPathLine;
 		ds.onStoreClear << clearStore;
 
+		polyLines.position.set(LINE_WIDTH / 2, LINE_WIDTH / 2);
+		shapes.position.set(LINE_WIDTH / 2, LINE_WIDTH / 2);
+
 		createBackground();
 		createPointers();
 		drawSnap();
@@ -134,6 +139,14 @@ class DrawShapeView extends LogableSprite implements pony.geom.IWH {
 		else
 			bg.drawRect(0, dsp.ybegin, size.x, size.x);
 		bgLayer.addChild(bg);
+
+		var tg = new Graphics();
+		tg.beginFill(0, 0);
+		if (size.x > size.y)
+			tg.drawRect(dsp.xbegin - dsp.snapCellSize.x, -dsp.snapCellSize.y, size.y + dsp.snapCellSize.x * 2, size.y + dsp.snapCellSize.y * 2);
+		else
+			tg.drawRect(-dsp.snapCellSize.x, dsp.ybegin - dsp.snapCellSize.y, size.x + dsp.snapCellSize.x * 2, size.x + dsp.snapCellSize.y * 2);
+		touchArea.addChild(tg);
 	}
 
 	private function createPointers():Void {
@@ -147,10 +160,10 @@ class DrawShapeView extends LogableSprite implements pony.geom.IWH {
 
 	private function drawSnap():Void {
 		snap.position.set(LINE_WIDTH / 2, LINE_WIDTH / 2);
-		snap.lineStyle(LINE_WIDTH, SNAP_LINE_COLOR);
-		for (r in dsp.drawSnap(LINE_WIDTH)) {
-			snap.moveTo(r.x, r.y);
-			snap.lineTo(r.width, r.height);
+		for (r in dsp.drawSnap()) {
+			snap.lineStyle(LINE_WIDTH * (r.a ? 2 : 1), SNAP_LINE_COLOR);
+			snap.moveTo(r.b.x, r.b.y);
+			snap.lineTo(r.b.width, r.b.height);
 		}
 		snapLayer.addChild(snap);
 	}
@@ -263,7 +276,7 @@ class DrawShapePivot implements pony.magic.HasSignal {
 	}
 
 	public function start():Void {	
-		pointer.enable();
+		DeltaTime.fixedUpdate < pointer.enable;
 		pointer.onDownPoint < downPointHandler;
 	}
 

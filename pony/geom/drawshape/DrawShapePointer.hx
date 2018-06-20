@@ -30,6 +30,7 @@ import pony.geom.Point;
 import pony.events.Signal0;
 import pony.events.Signal1;
 import pony.events.Signal2;
+import pony.time.DeltaTime;
 
 /**
  * DrawShapePointer
@@ -49,7 +50,7 @@ class DrawShapePointer extends pony.Tumbler {
 	private var height:Float;
 	public var xbegin(default, null):Float = 0;
 	public var ybegin(default, null):Float = 0;
-	public var snapCellCounts(default, null):Point<Int> = new Point<Int>(16, 16);
+	public var snapCellCounts(default, null):Point<Int> = new Point<Int>(12, 12);
 	public var snapCellSize(default, null):Point<Float>;
 	private var downPointData:DrawShapePointerData;
 
@@ -77,14 +78,13 @@ class DrawShapePointer extends pony.Tumbler {
 		onDisable << disableHandler;
 	}
 
-	public function drawSnap(w:Float = 0):Array<Rect<Float>> {
-		w /= 2;
-		var r:Array<Rect<Float>> = [];
+	public function drawSnap():Array<Pair<Bool, Rect<Float>>> {
+		var r:Array<Pair<Bool, Rect<Float>>> = [];
 		for (x in 0...snapCellCounts.x + 1) {
-			r.push(new Rect<Float>(xbegin + x * snapCellSize.x - w, ybegin - w, xbegin + x * snapCellSize.x - w, ybegin + height - w));
+			r.push(new Pair(x % 4 == 0, new Rect<Float>(xbegin + x * snapCellSize.x, ybegin, xbegin + x * snapCellSize.x, ybegin + height)));
 		}
 		for (y in 0...snapCellCounts.y + 1) {
-			r.push(new Rect<Float>(xbegin - w, ybegin + y * snapCellSize.y - w, xbegin + width - w, ybegin + y * snapCellSize.y - w));			
+			r.push(new Pair(y % 4 == 0, new Rect<Float>(xbegin, ybegin + y * snapCellSize.y, xbegin + width, ybegin + y * snapCellSize.y)));			
 		}
 		return r;
 	}
@@ -94,20 +94,24 @@ class DrawShapePointer extends pony.Tumbler {
 	}
 
 	private function enableHandler():Void {
-		touchable.onOver << overHandler;
+		if (lastTouch != null) {
+			overHandler(lastTouch);
+		} else {
+			touchable.onOver < overHandler;
+		}
 	}
 
 	private function disableHandler():Void {
-		touchable.onOver >> overHandler;
 		if (lastTouch != null)
 			outHandler(lastTouch);
+		touchable.onOver >> overHandler;
 	}
 
 	private function overHandler(t:Touch):Void {
 		lastTouch = t;
 		t.onMove << moveHandler;
 		moveHandler(t);
-		t.onOut << outHandler;
+		touchable.onOut < outHandler;
 	}
 
 	private function moveHandler(t:Touch):Void {
@@ -119,8 +123,9 @@ class DrawShapePointer extends pony.Tumbler {
 
 	private function outHandler(t:Touch):Void {
 		hidePoint(t);
+		touchable.onOut >> outHandler;
 		t.onMove >> moveHandler;
-		lastTouch = null;
+		touchable.onOver < overHandler;
 	}
 
 	public function hidePoint(t:Touch):Void eHidePoint.dispatch(t);

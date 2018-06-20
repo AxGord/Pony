@@ -1,3 +1,26 @@
+/**
+* Copyright (c) 2012-2018 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
+* 
+* Redistribution and use in source and binary forms, with or without modification, are
+* permitted provided that the following conditions are met:
+* 
+* 1. Redistributions of source code must retain the above copyright notice, this list of
+*   conditions and the following disclaimer.
+* 
+* 2. Redistributions in binary form must reproduce the above copyright notice, this list
+*   of conditions and the following disclaimer in the documentation and/or other materials
+*   provided with the distribution.
+* 
+* THIS SOFTWARE IS PROVIDED BY ALEXANDER GORDEYKO ``AS IS'' AND ANY EXPRESS OR IMPLIED
+* WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+* FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL ALEXANDER GORDEYKO OR
+* CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+* ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+* NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+* ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+**/
 package pony.ui.gui;
 
 import pony.events.Signal0;
@@ -14,60 +37,60 @@ import pony.ui.gui.SliderCore;
  */
 class ScrollBoxBarCore implements HasSignal {
 
-    @:auto public var onHide:Signal0;
-    @:auto public var onPos:Signal2<Float, Float>;
-    @:auto public var onSize:Signal2<Float, Float>;
-    @:auto public var onContentPos:Signal1<Float>;
-    @:auto public var onMaskSize:Signal1<Float>;
+	@:auto public var onHide:Signal0;
+	@:auto public var onPos:Signal2<Float, Float>;
+	@:auto public var onSize:Signal2<Float, Float>;
+	@:auto public var onContentPos:Signal1<Float>;
+	@:auto public var onMaskSize:Signal1<Float>;
 
-    public var c(default, null):Float;
-    private var slider:SliderCore;
-    private var scrollPanelSize:Float;
-    private var totalA:Float;
-    private var totalB:Float;
-    private var scrollerSize:Float;
+	public var c(default, null):Float;
+	private var slider:SliderCore;
+	private var scrollPanelSize:Float;
+	private var totalA:Float;
+	private var totalB:Float;
+	private var scrollerSize:Float;
 
-    public function new(t:ButtonCore, scrollPanelSize:Float, totalA:Float, totalB:Float, vert:Bool, wheelSpeed:Float) {
-        slider = new SliderCore(t, 0, vert);
-        slider.wheelSpeed = wheelSpeed;
-        this.scrollPanelSize = scrollPanelSize;
-        this.totalA = totalA;
-        this.totalB = totalB;
-        if (vert) {
-            slider.changeY = posHandler;
-        } else {
-            slider.changeX = posHandler;
-        }
-        slider.changePercent << percentHandler;
-    }
+	public function new(t:ButtonCore, scrollPanelSize:Float, totalA:Float, totalB:Float, vert:Bool, wheelSpeed:Float) {
+		slider = new SliderCore(t, 0, vert);
+		slider.wheelSpeed = wheelSpeed;
+		this.scrollPanelSize = scrollPanelSize;
+		this.totalA = totalA;
+		this.totalB = totalB;
+		if (vert) {
+			slider.changeY = posHandler;
+		} else {
+			slider.changeX = posHandler;
+		}
+		slider.changePercent << percentHandler;
+	}
 
-    public function content(c:Float):Void {
-        this.c = c;
-        if (c <= totalA) {
-            eHide.dispatch();
-            eContentPos.dispatch(0);
-            eMaskSize.dispatch(totalB);
-        } else {
-            scrollerSize = totalA * totalA / c;
-            slider.pos = 0;
-            slider.setSize(totalA - scrollerSize);
-            ePos.dispatch(0, totalB - scrollPanelSize);
-            eContentPos.dispatch(0);
-            eSize.dispatch(scrollerSize, scrollPanelSize);
-            eMaskSize.dispatch(totalB - scrollPanelSize);
-        }
-    }
+	public function content(c:Float):Void {
+		this.c = c;
+		if (c <= totalA) {
+			eHide.dispatch();
+			eContentPos.dispatch(0);
+			eMaskSize.dispatch(totalB);
+		} else {
+			scrollerSize = totalA * totalA / c;
+			slider.pos = 0;
+			slider.setSize(totalA - scrollerSize);
+			ePos.dispatch(0, totalB - scrollPanelSize);
+			eContentPos.dispatch(0);
+			eSize.dispatch(scrollerSize, scrollPanelSize);
+			eMaskSize.dispatch(totalB - scrollPanelSize);
+		}
+	}
 
-    private function posHandler(pos:Float):Void {
-        ePos.dispatch(pos, totalB - scrollPanelSize);
-    }
+	private function posHandler(pos:Float):Void {
+		ePos.dispatch(pos, totalB - scrollPanelSize);
+	}
 
-    private function percentHandler(p:Float):Void {
-        eContentPos.dispatch(-(c - totalA) * p);
-    }
+	private function percentHandler(p:Float):Void {
+		eContentPos.dispatch(-(c - totalA) * p);
+	}
 
-    public function wheelHandler(delta:Int):Void {
-        slider.wheel(delta);
-    }
+	public function wheelHandler(delta:Int):Void {
+		slider.wheel(delta);
+	}
 
 }

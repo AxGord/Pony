@@ -225,8 +225,7 @@ class App implements HasSignal {
 			container.x = 0;
 			container.y = (height / d - _height) / 2 * ratio;
 		}
-		container.width = ratio;
-		container.height = ratio;
+		container.scale.set(ratio);
 		
 		if (backImgcontainer != null) {
 			backImgcontainer.width = (width / d * ratio) / _width;
