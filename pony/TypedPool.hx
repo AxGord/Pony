@@ -50,3 +50,31 @@ package pony;
 	public function ret(obj:T):Void list.push(untyped obj);
 	
 }
+
+/**
+ * Typed object pool with arg
+ * @author AxGord <axgord@gmail.com>
+ */
+#if (haxe_ver >= 3.30)
+@:generic class TypedPool1<T:haxe.Constraints.Constructible<Dynamic>, A1> {
+#else
+@:generic class TypedPool1<T:{function new(a1:A1):Void;}, A1> {
+#end
+	private var list:Array<T> = [];
+	
+	inline public function new() {}
+	
+	#if !flash
+	@:extern inline
+	#end
+	public function get(a1:A1):T {
+		var v = list.pop();
+		return v == null ? new T(a1) : v;
+	}
+	
+	#if !flash
+	@:extern inline
+	#end
+	public function ret(obj:T):Void list.push(untyped obj);
+	
+}
