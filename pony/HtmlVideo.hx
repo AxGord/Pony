@@ -413,15 +413,16 @@ class HtmlVideo implements HasSignal implements HasLink {
 	@:auto public var onQualityDown:Signal0;
 	public var onFullLoad(default, null):Signal0;
 
-	public var qualityUpSpeed:Float = 1.8;
-	public var qualityDownSpeed:Float = 0.9;
+	public var qualityUpSpeed:Float = 1.5;
+	public var qualityDownSpeed:Float = 0.8;
 
 	public var progress(default, null):Percent = new Percent(0);
-	public var targetTime(default, set):Time = 0;
+	public var targetTime(default, set):Time = null;
 	private var element:VideoElement;
 	private var bufferingTreshhold:Float;
 	private var isReady(get, never):Bool;
 	private var beginLoadTime:Float;
+	private var posOnBegin:Bool = true;
 
 	public function new(videoElement:VideoElement, bufferingTreshhold:Float) {
 		super(false);
@@ -438,19 +439,32 @@ class HtmlVideo implements HasSignal implements HasLink {
 	}
 
 	private function startLoadHandler():Void {
-		if (targetTime == 0) {
+		if (targetTime.totalSeconds <= 3) {
 			beginLoadTime = Date.now().getTime();
 			onFullLoad < endLoadHandler;
+			onDisable < slowSpeedDetected;
+		} else {
+			beginLoadTime = null;
 		}
 	}
 
+	private function slowSpeedDetected():Void {
+		onFullLoad >> endLoadHandler;
+		var time = (Date.now().getTime() - beginLoadTime) / 1000;
+		if (time - beginLoadTime > 10)
+			eQualityDown.dispatch();
+	}
+
 	private function endLoadHandler():Void {
+		onDisable >> slowSpeedDetected;
 		var time = (Date.now().getTime() - beginLoadTime) / 1000;
 		var p = element.duration / time;
+		// trace('Test results: ', p, element.duration, time);
 		if (p > qualityUpSpeed)
 			eQualityUp.dispatch();
 		else if (p < qualityDownSpeed)
 			eQualityDown.dispatch();
+		beginLoadTime = null;
 	}
 	
 	@:extern private inline function get_isReady():Bool {
@@ -462,14 +476,26 @@ class HtmlVideo implements HasSignal implements HasLink {
 
 	private function set_targetTime(v:Time):Time {
 		if (v != targetTime) {
-			onFullLoad >> endLoadHandler;
+			if (progress.total != -1 && enabled && posOnBegin) {
+				onFullLoad >> endLoadHandler;
+				onDisable >> slowSpeedDetected;
+			}
 			targetTime = v;
 			progress.allow = v.totalSeconds + bufferingTreshhold;
+			if (progress.total != -1 && enabled) {
+				if (posOnBegin) {
+					startLoadHandler();
+				} else {
+					eQualityDown.dispatch();
+				}
+				posOnBegin = false;
+			}
 		}
 		return v;
 	}
 
 	public function reset():Void {
+		posOnBegin = true;
 		progress.allow = bufferingTreshhold;
 		progress.current = 0;
 		progress.total = -1;

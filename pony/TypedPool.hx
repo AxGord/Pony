@@ -28,7 +28,7 @@ package pony;
  * @author AxGord <axgord@gmail.com>
  */
 #if (haxe_ver >= 3.30)
-@:generic class TypedPool<T:haxe.Constraints.Constructible<Dynamic>> implements IPool<T> {
+@:generic class TypedPool<T:haxe.Constraints.Constructible<Void -> Void>> implements IPool<T> {
 #else
 @:generic class TypedPool<T:{function new():Void;}> implements IPool<T> {
 #end
@@ -56,20 +56,56 @@ package pony;
  * @author AxGord <axgord@gmail.com>
  */
 #if (haxe_ver >= 3.30)
-@:generic class TypedPool1<T:haxe.Constraints.Constructible<Dynamic>, A1> {
+@:generic class TypedPool1<T:haxe.Constraints.Constructible<A1 -> Void>, A1> {
 #else
 @:generic class TypedPool1<T:{function new(a1:A1):Void;}, A1> {
 #end
 	private var list:Array<T> = [];
+	private var a1:A1;
 	
-	inline public function new() {}
+	public inline function new(a1:A1) {
+		this.a1 = a1;
+	}
 	
 	#if !flash
 	@:extern inline
 	#end
-	public function get(a1:A1):T {
+	public function get():T {
 		var v = list.pop();
 		return v == null ? new T(a1) : v;
+	}
+	
+	#if !flash
+	@:extern inline
+	#end
+	public function ret(obj:T):Void list.push(untyped obj);
+	
+}
+
+/**
+ * Typed object pool with two args
+ * @author AxGord <axgord@gmail.com>
+ */
+#if (haxe_ver >= 3.30)
+@:generic class TypedPool2<T:haxe.Constraints.Constructible<A1 -> A2 -> Void>, A1, A2> {
+#else
+@:generic class TypedPool2<T:{function new(a1:A1, a:A2):Void;}, A1, A2> {
+#end
+	private var list:Array<T> = [];
+	private var a1:A1;
+	private var a2:A2;
+	
+	public inline function new(a1:A1, a2:A2) {
+		this.a1 = a1;
+		this.a2 = a2;
+	}
+	
+	#if !flash
+	@:extern inline
+	#end
+	public function get():T {
+		var v = list.pop();
+		return v == null ? new T(a1, a2) : v;
 	}
 	
 	#if !flash

@@ -25,9 +25,9 @@ package pony;
 
 class Percent implements pony.magic.HasSignal {
 
-	@:bindable public var percent:Float;
-	@:bindable public var full:Bool;
-	@:bindable public var run:Bool;
+	@:bindable public var percent:Float = 0;
+	@:bindable public var full:Bool = false;
+	@:bindable public var run:Bool = false;
 	public var current(default, set):Float = 0;
 	public var total(default, set):Float = -1;
 	public var allow(default, set):Float = 1;
