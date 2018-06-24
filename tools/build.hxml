@@ -16,6 +16,7 @@
 -resource resources/pixixmltemplate.xml@pixixmltemplate.xml
 -resource resources/jstemplate.hx.tpl@jstemplate.hx.tpl
 -resource resources/electrontemplate.hx.tpl@electrontemplate.hx.tpl
+-resource resources/monacotemplate.hx.tpl@monacotemplate.hx.tpl
 -debug
 
 --next

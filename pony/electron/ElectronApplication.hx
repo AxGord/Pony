@@ -103,7 +103,8 @@ class ElectronApplication extends VSTraceHelper implements pony.magic.HasAbstrac
 			fullscreen: map.exists('fullscreen') ? TextTools.isTrue(map['fullscreen']) : null,
 			resizable: !TextTools.isFalse(map['resizable']),
 			minWidth: Std.parseInt(map['minWidth']),
-			minHeight: Std.parseInt(map['minHeight'])
+			minHeight: Std.parseInt(map['minHeight']),
+			backgroundColor: map['background']
 		});
 	}
 

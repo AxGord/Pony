@@ -32,4 +32,5 @@ enum ProjectType {
 	Neko;
 	Pixielectron;
 	Electron;
+	Monacoelectron;
 }

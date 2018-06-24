@@ -36,7 +36,8 @@ class Electron {
 			'width' => '1280',
 			'height' => '1024',
 			'minWidth' => '640',
-			'minHeight' => '512'
+			'minHeight' => '512',
+			'background' => '#1A1A1A'
 		];
 		var windows:ConfigOptions = [
 			'default' => defWindow

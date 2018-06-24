@@ -30,7 +30,7 @@ class Pixi {
 		project.config.active = true;
 		project.config.options['width'] = '1280';
 		project.config.options['height'] = '1024';
-		project.config.options['background'] = '#505050';
+		project.config.options['background'] = '#1A1A1A';
 		project.download.addLib('pixijs');
 		project.haxelib.addLib('pixijs', '4.7.1');
 		var uglify = !second ? project.uglify : project.seconduglify;

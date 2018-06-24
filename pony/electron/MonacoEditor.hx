@@ -59,8 +59,8 @@ class MonacoEditor extends pony.Logable {
 
 	public static var instance(default, null):MonacoEditor;
 
-	public static function init(home:String = 'monaco/', ?themes:Array<String>, ?langs:Array<Lang>):Void {
-		instance = new MonacoEditor(home, themes, langs);
+	public static function init(home:String = 'monaco/', modulesPath:String = '', ?themes:Array<String>, ?langs:Array<Lang>):Void {
+		instance = new MonacoEditor(home, modulesPath, themes, langs);
 	}
 
 	@:auto public var onInit:Signal0;
@@ -73,10 +73,10 @@ class MonacoEditor extends pony.Logable {
 	private var themes:Map<String, IStandaloneThemeData> = new Map<String, IStandaloneThemeData>();
 	private var langs:Map<String, LangLoaded> = new Map<String, LangLoaded>();
 
-	private function new(home:String = 'monaco/', onigasm:String = 'node_modules/onigasm/lib/onigasm.wasm', ?themes:Array<String>, ?langs:Array<Lang>) {
+	private function new(home:String = 'monaco/', modulesPath:String = '', onigasm:String = 'node_modules/onigasm/lib/onigasm.wasm', ?themes:Array<String>, ?langs:Array<Lang>) {
 		super();
 
-		var dir:String = js.Node.__dirname + '/../';
+		var dir:String = js.Node.__dirname + '/' + modulesPath;
 		monacoDir = dir + home;
 		wmodule = dir + onigasm;
 

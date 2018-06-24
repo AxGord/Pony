@@ -73,6 +73,12 @@ class Create {
 				create.targets.JS.set(project, true);
 				project.secondbuild.outputFile = 'default';
 				project.secondbuild.esVersion = 6;
+			case ProjectType.Monacoelectron:
+				create.targets.Electron.set(project);
+				create.targets.JS.set(project, true);
+				project.secondbuild.outputFile = 'default';
+				project.secondbuild.esVersion = 6;
+				project.haxelib.addLib('monaco-editor', '0.13.0');
 			case ProjectType.Neko: create.targets.Neko.set(project);
 		}
 
@@ -144,6 +150,29 @@ class Create {
 				createHtml(project.build.outputPath + 'default.html', 'template.html', name == null ? 'App' : name, project.secondbuild.getOutputFile());
 				create.targets.Node.createAndSaveNpmPackageToOutputDir(
 					project, null,
+					[
+						'electron' => '^2.0.3'
+					]
+				);
+
+			case ProjectType.Monacoelectron:
+				Utils.createPath(main);
+				sys.FileSystem.createDirectory(project.build.outputPath);
+				var mdata:String = haxe.Resource.getString('electrontemplate.hx.tpl');
+				sys.io.File.saveContent(project.build.getMainhx(), mdata);
+				var data:String = haxe.Resource.getString('monacotemplate.hx.tpl');
+				sys.io.File.saveContent(project.secondbuild.getMainhx(), data);
+				if (vscAllow) create.ides.VSCode.createElectron(project.build.outputPath);
+				createHtml(project.build.outputPath + 'default.html', 'template.html', name == null ? 'App' : name, project.secondbuild.getOutputFile());
+				create.targets.Node.createAndSaveNpmPackageToOutputDir(
+					project,
+					[
+						'monaco-editor' => '^0.13.0',
+						'monaco-editor-textmate' => '^1.0.1',
+						'monaco-loader' => '^0.8.2',
+						'monaco-textmate' => '^1.0.1',
+						'onigasm' => '^1.3.1'
+					],
 					[
 						'electron' => '^2.0.3'
 					]
