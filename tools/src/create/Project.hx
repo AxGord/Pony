@@ -33,9 +33,13 @@ class Project {
 	public var download(default, null):Download = new Download();
 	public var haxelib(default, null):Haxelib = new Haxelib();
 	public var build(default, null):Build = new Build();
+	public var secondbuild(default, null):Build = new Build();
 	public var uglify(default, null):Uglify = new Uglify();
+	public var seconduglify(default, null):Uglify = new Uglify();
+	public var npm(default, null):Npm = new Npm();
 
 	public var name:String;
+	public var rname(get, never):String;
 
 	public function new(name:String) this.name = name;
 
@@ -54,12 +58,21 @@ class Project {
 		if (config.active) root.addChild(config.result());
 		if (download.active) root.addChild(download.result());
 		if (haxelib.active) root.addChild(haxelib.result());
+		if (npm.active) root.addChild(npm.result());
 		if (build.active) {
 			root.addChild(build.result());
 			if (uglify.active) {
 				uglify.outputPath = build.outputPath;
 				uglify.outputFile = build.getOutputFile();
 				root.addChild(uglify.result());
+			}
+		}
+		if (secondbuild.active) {
+			root.addChild(secondbuild.result());
+			if (seconduglify.active) {
+				seconduglify.outputPath = secondbuild.outputPath;
+				seconduglify.outputFile = secondbuild.getOutputFile();
+				root.addChild(seconduglify.result());
 			}
 		}
 		
@@ -93,5 +106,7 @@ class Project {
 		run.path = build.outputPath;
 		run.command = cmd + ' ' + build.outputFile;
 	}
+
+	private function get_rname():String return name == null ? 'App' : name;
 
 }

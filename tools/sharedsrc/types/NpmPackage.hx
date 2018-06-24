@@ -21,46 +21,15 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-package create.section;
+package types;
 
-import pony.Or;
-import pony.text.XmlTools;
-import pony.KeyValue;
-
-using pony.Tools;
-
-typedef ConfigOptions = Map<String, Or<String, ConfigOptions>>;
-
-class Config extends Section {
-
-	public var options(default, null):ConfigOptions = new Map();
-
-	public function new() super('config');
-
-	public function result():Xml {
-		init();
-		for (e in options.kv()) xml.addChild(make(e));
-		return xml;
-	}
-
-	private function make(e:KeyValue<String, Or<String, ConfigOptions>>):Xml {
-		var r = Xml.createElement(e.key);
-		switch e.value {
-			case OrState.A(v):
-				r.addChild(XmlTools.data(v));
-			case OrState.B(v):
-				var allString:Bool = true;
-				for (e in v.kv()) {
-					switch e.value {
-						case OrState.A(_):
-						case OrState.B(_):
-							allString = false;
-					}
-					r.addChild(make(e));
-				}
-				if (allString) r.set('type', 'stringmap');
-		}
-		return r;
-	}
-
+typedef NpmPackage = {
+	name: String,
+	version: String,
+	main: String,
+	build: {
+		productName: String
+	},
+	?dependencies: Dynamic<String>,
+	?devDependencies: Dynamic<String>
 }

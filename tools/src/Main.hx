@@ -38,8 +38,9 @@ class Main {
 		Sys.println(haxe.Resource.getString('logo'));
 		Sys.println('');
 		Sys.println('Command-Line Tools');
-		Sys.println('Library version ' + Utils.ponyVersion);
-		Sys.println('Build date ' + Tools.getBuildDate());
+		Sys.println('Library version: ' + Utils.ponyVersion + ' [' + Utils.getHaxelibVersion() + ']');
+		Sys.println('Library path: ' + Utils.libPath);
+		Sys.println('Build date: ' + Tools.getBuildDate());
 		Sys.println('https://github.com/AxGord/Pony');
 		Sys.println('http://lib.haxe.org/p/pony');
 		Sys.println('Type: "pony help" - for help');

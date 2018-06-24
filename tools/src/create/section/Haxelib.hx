@@ -25,7 +25,7 @@ package create.section;
 
 class Haxelib extends Section {
 
-	public var libs:Map<String, String> = new Map<String, String>();
+	public var libs(default, null):Map<String, String> = new Map<String, String>();
 
 	public function new() super('haxelib');
 

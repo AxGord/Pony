@@ -522,6 +522,12 @@ class MapTools {
 			}
 		};
 	}
+
+	public static function toDynamic<T>(map:Map<String, T>):Dynamic<T> {
+		var r:Dynamic<T> = {};
+		for (e in kv(map)) r.setField(e.key, e.value);
+		return r;
+	}
 	
 }
 

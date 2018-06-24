@@ -63,6 +63,16 @@ class Create {
 			case ProjectType.JS: create.targets.JS.set(project);
 			case ProjectType.Pixi, ProjectType.Pixixml: create.targets.Pixi.set(project);
 			case ProjectType.Node: create.targets.Node.set(project);
+			case ProjectType.Pixielectron:
+				create.targets.Electron.set(project);
+				create.targets.Pixi.set(project, true);
+				project.secondbuild.outputFile = 'default';
+				project.secondbuild.esVersion = 6;
+			case ProjectType.Electron:
+				create.targets.Electron.set(project);
+				create.targets.JS.set(project, true);
+				project.secondbuild.outputFile = 'default';
+				project.secondbuild.esVersion = 6;
 			case ProjectType.Neko: create.targets.Neko.set(project);
 		}
 
@@ -74,7 +84,7 @@ class Create {
 
 		if (vscAllow) create.ides.VSCode.createDir();
 
-		var needHtml:Bool = false;
+		var needHtml:String = null;
 		var ponycmd:String = 'build';
 		if (type != null) switch type {
 			case ProjectType.Neko:
@@ -86,13 +96,13 @@ class Create {
 				var data:String = haxe.Resource.getString('jstemplate.hx.tpl');
 				sys.io.File.saveContent(main, data);
 				if (vscAllow) create.ides.VSCode.createChrome(project.server.httpPort);
-				needHtml = true;
+				needHtml = 'index.html';
 			case ProjectType.Pixi:
 				Utils.createPath(main);
 				var data:String = haxe.Resource.getString('pixitemplate.hx.tpl');
 				sys.io.File.saveContent(main, data);
 				if (vscAllow) create.ides.VSCode.createChrome(project.server.httpPort);
-				needHtml = true;
+				needHtml = 'index.html';
 			case ProjectType.Pixixml:
 				Utils.createPath(main);
 				var data:String = haxe.Resource.getString('pixixmltemplate.hx.tpl');
@@ -100,29 +110,67 @@ class Create {
 				var xdata:String = haxe.Resource.getString('pixixmltemplate.xml');
 				sys.io.File.saveContent('app.xml', xdata);
 				if (vscAllow) create.ides.VSCode.createChrome(project.server.httpPort);
-				needHtml = true;
+				needHtml = 'index.html';
 			case ProjectType.Node:
 				//ponycmd = 'run';
 				Utils.createEmptyMainFile(main);
 				if (vscAllow) create.ides.VSCode.createNode(project.build.outputPath, outputFile);
+			case ProjectType.Pixielectron:
+				Utils.createPath(main);
+				sys.FileSystem.createDirectory(project.build.outputPath);
+				var mdata:String = haxe.Resource.getString('electrontemplate.hx.tpl');
+				sys.io.File.saveContent(project.build.getMainhx(), mdata);
+				var data:String = haxe.Resource.getString('pixixmltemplate.hx.tpl');
+				sys.io.File.saveContent(project.secondbuild.getMainhx(), data);
+				var xdata:String = haxe.Resource.getString('pixixmltemplate.xml');
+				sys.io.File.saveContent('app.xml', xdata);
+				if (vscAllow) create.ides.VSCode.createElectron(project.build.outputPath);
+				createHtml(project.build.outputPath + 'default.html', 'template.html', name == null ? 'App' : name, project.secondbuild.getOutputFile());
+				create.targets.Node.createAndSaveNpmPackageToOutputDir(
+					project, null,
+					[
+						'electron' => '^2.0.3'
+					]
+				);
+
+			case ProjectType.Electron:
+				Utils.createPath(main);
+				sys.FileSystem.createDirectory(project.build.outputPath);
+				var mdata:String = haxe.Resource.getString('electrontemplate.hx.tpl');
+				sys.io.File.saveContent(project.build.getMainhx(), mdata);
+				var data:String = haxe.Resource.getString('jstemplate.hx.tpl');
+				sys.io.File.saveContent(project.secondbuild.getMainhx(), data);
+				if (vscAllow) create.ides.VSCode.createElectron(project.build.outputPath);
+				createHtml(project.build.outputPath + 'default.html', 'template.html', name == null ? 'App' : name, project.secondbuild.getOutputFile());
+				create.targets.Node.createAndSaveNpmPackageToOutputDir(
+					project, null,
+					[
+						'electron' => '^2.0.3'
+					]
+				);
+				
 			case ProjectType.Server:
 				if (vscAllow) create.ides.VSCode.create(null);
 				return;
 			case _:
 		}
 
-		if (needHtml) {
-			var html:String = haxe.Resource.getString('template.html');
-			html = StringTools.replace(html, '::TITLE::', name == null ? 'App' : name);
-			html = StringTools.replace(html, '::APP::', project.build.getOutputFile());
+		if (needHtml != null) {
 			sys.FileSystem.createDirectory(project.build.outputPath);
-			sys.io.File.saveContent(project.build.outputPath + 'index.html', html);
+			createHtml(project.build.outputPath + needHtml, 'template.html', name == null ? 'App' : name, project.build.getOutputFile());
 		}
 		
 		if (vscAllow) create.ides.VSCode.create(ponycmd);
 		create.ides.HaxeDevelop.create(name, main, project.getLibs(), project.getCps(), ponycmd);
 
 		Utils.command('pony', ['prepare']);
+	}
+
+	private static function createHtml(file:String, template:String, title:String, app:String):Void {
+		var html:String = haxe.Resource.getString(template);
+		html = StringTools.replace(html, '::TITLE::', title);
+		html = StringTools.replace(html, '::APP::', app);
+		sys.io.File.saveContent(file, html);
 	}
 
 }

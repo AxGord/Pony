@@ -40,6 +40,7 @@ class Utils {
 	public static var libPath(default, null):String;
 
 	public static var ponyVersion(get, never):String;
+	public static var ponyHaxelibVersion(get, never):String;
 	private static var _ponyVersion:String;
 	private static var hashesCache:Map<String, Map<String, Array<String>>> = new Map();
 
@@ -53,6 +54,11 @@ class Utils {
 		#end
 		libPath = path(libPath);
 		toolsPath = libPath + 'tools' + PD + 'bin' + PD;
+	}
+
+	public static function getHaxelibVersion():String {
+		var s:String = new sys.io.Process('haxelib', ['list', 'pony']).stdout.readLine();
+		return s.substring(s.indexOf('[') + 1, s.length - 1);
 	}
 
 	private static inline function get_isWindows():Bool return Sys.systemName() == 'Windows';
@@ -116,6 +122,10 @@ class Utils {
 			var data = haxe.Json.parse(File.getContent(file));
 			return _ponyVersion = data.version;
 		}
+	}
+
+	public static function get_ponyHaxelibVersion():String {
+		return getHaxelibVersion().split(':')[0];
 	}
 
 	public static function getPath(file:String):String {

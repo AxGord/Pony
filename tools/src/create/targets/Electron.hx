@@ -21,46 +21,30 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-package create.section;
+package create.targets;
 
-import pony.Or;
-import pony.text.XmlTools;
-import pony.KeyValue;
+import create.section.Config;
 
-using pony.Tools;
+class Electron {
 
-typedef ConfigOptions = Map<String, Or<String, ConfigOptions>>;
-
-class Config extends Section {
-
-	public var options(default, null):ConfigOptions = new Map();
-
-	public function new() super('config');
-
-	public function result():Xml {
-		init();
-		for (e in options.kv()) xml.addChild(make(e));
-		return xml;
-	}
-
-	private function make(e:KeyValue<String, Or<String, ConfigOptions>>):Xml {
-		var r = Xml.createElement(e.key);
-		switch e.value {
-			case OrState.A(v):
-				r.addChild(XmlTools.data(v));
-			case OrState.B(v):
-				var allString:Bool = true;
-				for (e in v.kv()) {
-					switch e.value {
-						case OrState.A(_):
-						case OrState.B(_):
-							allString = false;
-					}
-					r.addChild(make(e));
-				}
-				if (allString) r.set('type', 'stringmap');
-		}
-		return r;
+	public static function set(project:Project):Void {
+		Node.set(project);
+		project.build.main = 'Application';
+		project.config.active = true;
+		var defWindow:ConfigOptions = [
+			'name' => 'default',
+			'width' => '1280',
+			'height' => '1024',
+			'minWidth' => '640',
+			'minHeight' => '512'
+		];
+		var windows:ConfigOptions = [
+			'default' => defWindow
+		];
+		project.config.options['window'] = windows;
+		project.haxelib.addLib('electron', '2.0.0');
+		project.npm.active = true;
+		project.npm.path = project.build.outputPath;
 	}
 
 }

@@ -111,4 +111,50 @@ class VSCode {
 		Utils.saveJson('.vscode/launch.json', data);
 	}
 
+	public static function createElectron(output:String):Void {
+		var confNamePrefix:String = 'Electron: ';
+		var mainConfName:String = confNamePrefix + 'Main';
+		var renderConfName:String = confNamePrefix + 'Renderer';
+		var resultDir:String = "${workspaceFolder}/" + output;
+		var electronExecutable:String = resultDir + 'node_modules/.bin/electron';
+		var port:Int = 9222;
+		var data = {
+			version: '0.2.0',
+			configurations: [
+				({
+					type: 'node',
+					request: 'launch',
+					name: mainConfName,
+					protocol: 'inspector',
+					runtimeExecutable: electronExecutable,
+					runtimeArgs: [
+						output,
+						'--remote-debugging-port=$port'
+					],
+					windows: {
+						runtimeExecutable: electronExecutable + '.cmd'
+					},
+					preLaunchTask: PRELAUNCH_TASK,
+					internalConsoleOptions: 'openOnSessionStart'
+				}:Dynamic),
+				({
+					name: renderConfName,
+					type: 'chrome',
+					request: 'attach',
+					port: port,
+					webRoot: resultDir,
+					timeout: 10000,
+					internalConsoleOptions: 'openOnSessionStart'
+				}:Dynamic)
+			],
+			compounds: [
+				{
+					name: confNamePrefix + 'All',
+					configurations: [mainConfName, renderConfName]
+				}
+			]
+		};
+		Utils.saveJson('.vscode/launch.json', data);
+	}
+
 }

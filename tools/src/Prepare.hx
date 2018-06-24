@@ -42,18 +42,24 @@ class Prepare {
 			}
 		}
 
-		if (xml.hasNode.npm && pony.text.XmlTools.isTrue(xml.node.npm, 'autoinstall')) {
-			var cwd = new Cwd(xml.node.npm.has.path ? xml.node.npm.att.path : null);
+		if (xml.hasNode.npm) {
 			Sys.println('install npm');
+			var cwd = new Cwd(xml.node.npm.has.path ? xml.node.npm.att.path : null);
 			cwd.sw();
-			for (module in xml.node.npm.nodes.module) {
-				Sys.command('npm', ['install', module.innerData, '--prefix', './']);
+			Sys.command('npm', ['install']);
+
+			if (pony.text.XmlTools.isTrue(xml.node.npm, 'autoinstall')) {
+				for (module in xml.node.npm.nodes.module) {
+					Sys.command('npm', ['install', module.innerData, '--prefix', './']);
+				}
 			}
+
 			cwd.sw();
 		}
 
 		if (!Flags.NOTP && xml.hasNode.texturepacker)
 			new Texturepacker(xml.node.texturepacker, app, debug);
+		
 			
 		//if (xml.hasNode.build) try {
 		//	new Build(xml, app, debug).writeConfigIfNeed();

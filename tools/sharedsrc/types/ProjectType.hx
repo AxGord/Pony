@@ -30,4 +30,6 @@ enum ProjectType {
 	Server;
 	Node;
 	Neko;
+	Pixielectron;
+	Electron;
 }
