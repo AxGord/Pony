@@ -41,6 +41,8 @@ import nape.geom.GeomPolyList;
  */
 class BodyShape extends BodyBase {
 
+	public static var CACHE:Map<Bytes, Map<Int, GeomPolyList>> = new Map<Bytes, Map<Int, GeomPolyList>>();
+
 	public var sbytes(default, null):Bytes;
 	public var resolution(default, null):Float;
 
@@ -51,13 +53,24 @@ class BodyShape extends BodyBase {
 	}
 
 	override function init():Void {
-		var bi = new BytesInput(sbytes);
-		var pb:Byte = bi.readByte();
-		var a:Array<Vec2> = [while (bi.position < bi.length) {
-			var p:Byte = bi.readByte();
-			new Vec2((p.a - pb.a) * resolution, (p.b - pb.b) * resolution);
-		}];
-		for (g in new GeomPoly(a).convexDecomposition()) {
+		var rint:Int = Std.int(resolution * 1000);
+		var cbcache = CACHE[sbytes];
+		if (cbcache == null) {
+			cbcache = new Map();
+			CACHE[sbytes] = cbcache;
+		}
+		var cpolygons:GeomPolyList = cbcache[rint];
+		if (cpolygons == null) {
+			var bi = new BytesInput(sbytes);
+			var pb:Byte = bi.readByte();
+			var a:Array<Vec2> = [while (bi.position < bi.length) {
+				var p:Byte = bi.readByte();
+				new Vec2((p.a - pb.a) * resolution, (p.b - pb.b) * resolution);
+			}];
+			cpolygons = new GeomPoly(a).convexDecomposition();
+			cbcache[rint] = cpolygons;
+		}
+		for (g in cpolygons) {
 			var p = new Polygon(g, material);
 			p.sensorEnabled = body.isBullet;
 			body.shapes.add(p);

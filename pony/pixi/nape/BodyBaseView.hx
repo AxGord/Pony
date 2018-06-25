@@ -28,6 +28,7 @@ import pixi.core.sprites.Sprite;
 import pixi.core.display.DisplayObject;
 import haxe.extern.EitherType;
 import pony.geom.Point;
+import pony.events.Signal1;
 import pony.physics.nape.BodyBase;
 import pony.physics.nape.DebugLineStyle;
 
@@ -35,8 +36,9 @@ import pony.physics.nape.DebugLineStyle;
  * BodyBaseView
  * @author AxGord <axgord@gmail.com>
  */
-@:abstract class BodyBaseView<T:BodyBase> extends Sprite implements pony.magic.HasAbstract {
+@:abstract class BodyBaseView<T:BodyBase> extends Sprite implements pony.magic.HasAbstract implements pony.magic.HasSignal {
 
+	@:auto public var onOut:Signal1<BodyBaseView<T>>;
 	public var core(default, null):T;
 	public var debugLines(default, set):DebugLineStyle;
 	private var g:Graphics;
@@ -46,8 +48,11 @@ import pony.physics.nape.DebugLineStyle;
 		this.core = core;
 		core.onPos << posHandler;
 		core.onRotation << rotationHandler;
+		core.onOut << out;
 		core.onDestroy < destroy.bind(null);
 	}
+
+	private function out():Void eOut.dispatch(this);
 
 	public function scl(x:Float, y:Float):Void {
 		scale.set(x, y);
@@ -65,6 +70,7 @@ import pony.physics.nape.DebugLineStyle;
 			addChild(g);
 			g.lineStyle(v.size, v.color);
 			drawDebug();
+			g.cacheAsBitmap = true;
 		}
 		return debugLines = v;
 	}

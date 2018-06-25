@@ -56,6 +56,7 @@ class BodyBase implements pony.magic.HasSignal implements pony.magic.HasLink imp
 	@:auto public var onDestroy:Signal0;
 	@:auto public var onPos:Signal2<Float, Float>;
 	@:auto public var onRotation:Signal1<Float>;
+	@:auto public var onOut:Signal0;
 
 	public var pos(get, set):Point<Float>;
 	public var angularVel(link, link):Float = body.angularVel;
@@ -129,7 +130,7 @@ class BodyBase implements pony.magic.HasSignal implements pony.magic.HasLink imp
 			|| body.position.x > limits.width + mx
 			|| body.position.y < limits.y - my
 			|| body.position.y > limits.height + my)
-				destroy();
+				eOut.dispatch();
 		}
 	}
 

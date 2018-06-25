@@ -143,7 +143,7 @@ class VSCode {
 					request: 'attach',
 					port: port,
 					webRoot: resultDir,
-					timeout: 10000,
+					timeout: 20000,
 					internalConsoleOptions: 'openOnSessionStart'
 				}:Dynamic)
 			],
