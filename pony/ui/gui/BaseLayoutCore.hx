@@ -58,8 +58,14 @@ class BaseLayoutCore<T> implements Declarator implements HasSignal implements IW
 		addWait(o);
 	}
 
+	public function addAt(o:T, index:Int):Void {
+		objects.insert(index, o);
+		addWait(o);
+	}
+
 	public function remove(o:T):Void {
 		objects.remove(o);
+		needUpdate();
 	}
 	
 	public function addToBegin(o:T):Void {
