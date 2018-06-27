@@ -49,6 +49,7 @@ class ScrollBoxBarCore implements HasSignal {
 	private var totalA:Float;
 	private var totalB:Float;
 	private var scrollerSize:Float;
+	private var startPoint:Float;
 
 	public function new(t:ButtonCore, scrollPanelSize:Float, totalA:Float, totalB:Float, vert:Bool, wheelSpeed:Float) {
 		slider = new SliderCore(t, 0, vert);
@@ -61,23 +62,23 @@ class ScrollBoxBarCore implements HasSignal {
 		} else {
 			slider.changeX = posHandler;
 		}
-		slider.changePercent << percentHandler;
+		slider.changeValue << valueHandler;
 	}
 
 	public function content(c:Float):Void {
 		this.c = c;
 		if (c <= totalA) {
+			slider.setSize(0.1);
 			eHide.dispatch();
 			eContentPos.dispatch(0);
 			eMaskSize.dispatch(totalB);
 		} else {
 			scrollerSize = totalA * totalA / c;
-			slider.pos = 0;
 			slider.setSize(totalA - scrollerSize);
-			ePos.dispatch(0, totalB - scrollPanelSize);
-			eContentPos.dispatch(0);
 			eSize.dispatch(scrollerSize, scrollPanelSize);
 			eMaskSize.dispatch(totalB - scrollPanelSize);
+			slider.initValue(0, c - totalA);
+			slider.update();
 		}
 	}
 
@@ -85,12 +86,21 @@ class ScrollBoxBarCore implements HasSignal {
 		ePos.dispatch(pos, totalB - scrollPanelSize);
 	}
 
-	private function percentHandler(p:Float):Void {
-		eContentPos.dispatch(-(c - totalA) * p);
+	private function valueHandler(v:Float):Void {
+		eContentPos.dispatch(-v);
+
 	}
 
 	public function wheelHandler(delta:Int):Void {
 		slider.wheel(delta);
+	}
+
+	public function start(p:Float):Void {
+		startPoint = slider.value + p;
+	}
+
+	public function move(p:Float):Void {
+		slider.setPosValue(startPoint - p);
 	}
 
 }

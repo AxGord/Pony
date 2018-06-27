@@ -28,6 +28,7 @@ import pony.events.Signal1;
 import pony.events.Signal2;
 import pony.magic.HasSignal;
 import pony.ui.touch.Touchable;
+import pony.ui.touch.Touch;
 import pony.ui.gui.ButtonCore;
 import pony.ui.gui.SliderCore;
 
@@ -73,9 +74,11 @@ class ScrollBoxCore implements HasSignal {
 			barVert.onSize << function(a:Float, b:Float):Void eScrollVertSize.dispatch(b, a);
 			barVert.onContentPos << vertContentHandler;
 			barVert.onMaskSize << vertMaskSizeHandler;
-			if (tArea != null) {
+			if (tArea != null)
 				tArea.onWheel << barVert.wheelHandler;
-			}
+			tScrollerVert.touch.onOver << disableContentDrag;
+			tScrollerVert.touch.onOut << enableContentDrag;
+			tScrollerVert.touch.onOutUp << enableContentDrag;
 		}
 		if (tScrollerHor != null) {
 			barHor = new ScrollBoxBarCore(tScrollerHor, scrollSize, w, h, false, wheelSpeed);
@@ -84,7 +87,47 @@ class ScrollBoxCore implements HasSignal {
 			barHor.onSize << eScrollHorSize;
 			barHor.onContentPos << horContentHandler;
 			barHor.onMaskSize << horMaskSizeHandler;
+
+			tScrollerHor.touch.onOver << disableContentDrag;
+			tScrollerHor.touch.onOut << enableContentDrag;
+			tScrollerHor.touch.onOutUp << enableContentDrag;
 		}
+
+		enableContentDrag();
+	}
+
+	public function disableContentDrag():Void {
+		if (tArea != null)
+			tArea.onDown >> areaDownHandler;
+	}
+
+	public function enableContentDrag():Void {
+		
+		if (tArea != null)
+			tArea.onDown << areaDownHandler;
+	}
+
+	private function areaDownHandler(t:Touch):Void {
+		t.onMove << areaMoveHandler;
+		t.onUp < areaUpHandler;
+		t.onOutUp < areaUpHandler;
+		if (barVert != null)
+			barVert.start(t.y);
+		if (barHor != null)
+			barHor.start(t.x);
+	}
+
+	private function areaMoveHandler(t:Touch):Void {
+		if (barVert != null)
+			barVert.move(t.y);
+		if (barHor != null)
+			barHor.move(t.x);
+	}
+
+	private function areaUpHandler(t:Touch):Void {
+		t.onMove >> areaMoveHandler;
+		t.onUp >> areaUpHandler;
+		t.onOutUp >> areaUpHandler;
 	}
 
 	private function vertMaskSizeHandler(v:Float):Void {

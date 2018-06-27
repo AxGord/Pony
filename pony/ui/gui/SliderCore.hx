@@ -106,8 +106,26 @@ class SliderCore extends BarCore {
 		else p;
 	}
 
-	public function wheel(v:Int):Void {
-		pos = limit(pos - wheelSpeed * v);
+	public inline function wheel(v:Int):Void {
+		scroll(wheelSpeed * v);
+	}
+
+	public inline function scroll(v:Float):Void {
+		if (size >= 1)
+			pos = limit(pos - wheelSpeed * v);
+	}
+
+	public inline function update():Void {
+		var p = pos;
+		pos = 0;
+		pos = limit(p);
+	}
+
+	public inline function setPosValue(v:Float):Void {
+		if (size >= 1) {
+			value = v;
+			update();
+		}
 	}
 	
 }
