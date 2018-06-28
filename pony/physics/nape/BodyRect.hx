@@ -23,6 +23,8 @@
 **/
 package pony.physics.nape;
 
+import haxe.io.BytesOutput;
+import haxe.io.Bytes;
 import pony.geom.Point;
 import pony.geom.Rect;
 import nape.phys.Body;
@@ -47,6 +49,16 @@ class BodyRect extends BodyBase {
 		var sh = new Polygon(Polygon.rect(size.x, size.y, size.width, size.height), material);
 		sh.sensorEnabled = body.isBullet;
 		body.shapes.add(sh);
+	}
+
+	override public function getCacheId():Bytes {
+		var b:BytesOutput = new BytesOutput();
+		b.writeByte(0x02); //shape code
+		b.writeInt32(Std.int(size.x * 1000));
+		b.writeInt32(Std.int(size.y * 1000));
+		b.writeInt32(Std.int(size.width * 1000));
+		b.writeInt32(Std.int(size.height * 1000));
+		return b.getBytes();
 	}
 
 }

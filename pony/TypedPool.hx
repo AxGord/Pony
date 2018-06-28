@@ -32,7 +32,7 @@ package pony;
 #else
 @:generic class TypedPool<T:{function new():Void;}> implements IPool<T> {
 #end
-	private var list:Array<T> = [];
+	public var list:Array<T> = [];
 	
 	inline public function new() {}
 	
@@ -48,6 +48,13 @@ package pony;
 	@:extern inline
 	#end
 	public function ret(obj:T):Void list.push(untyped obj);
+
+	#if !flash
+	@:extern inline
+	#end
+	public function destroy():Void {
+		list = null;
+	}
 	
 }
 
@@ -60,7 +67,7 @@ package pony;
 #else
 @:generic class TypedPool1<T:{function new(a1:A1):Void;}, A1> {
 #end
-	private var list:Array<T> = [];
+	public var list:Array<T> = [];
 	private var a1:A1;
 	
 	public inline function new(a1:A1) {
@@ -80,6 +87,14 @@ package pony;
 	#end
 	public function ret(obj:T):Void list.push(untyped obj);
 	
+	#if !flash
+	@:extern inline
+	#end
+	public function destroy():Void {
+		list = null;
+		a1 = null;
+	}
+
 }
 
 /**
@@ -91,7 +106,7 @@ package pony;
 #else
 @:generic class TypedPool2<T:{function new(a1:A1, a:A2):Void;}, A1, A2> {
 #end
-	private var list:Array<T> = [];
+	public var list:Array<T> = [];
 	private var a1:A1;
 	private var a2:A2;
 	
@@ -113,4 +128,13 @@ package pony;
 	#end
 	public function ret(obj:T):Void list.push(untyped obj);
 	
+	#if !flash
+	@:extern inline
+	#end
+	public function destroy():Void {
+		list = null;
+		a1 = null;
+		a2 = null;
+	}
+
 }

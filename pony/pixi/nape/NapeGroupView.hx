@@ -47,6 +47,10 @@ class NapeGroupView extends Sprite {
 		this.core = core;
 	}
 
+	public function clear():Void {
+		for (o in objects.copy()) o.destroy();
+	}
+
 	private function set_debugLines(v:DebugLineStyle):DebugLineStyle {
 		debugLines = v;
 		for (e in objects) e.debugLines = v;

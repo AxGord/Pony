@@ -97,7 +97,7 @@ class DTimer implements HasSignal implements ITimer<DTimer> implements Declarato
 	private function loop():Bool {
 		if (eComplete == null) return true;
 		var result:Bool = false;
-		var d:DT = Math.abs(currentTime - time.max)/1000 + sumdt;
+		var d:DT = Math.abs(currentTime - time.max) / 1000 + sumdt;
 		if (repeatCount > 0) {
 			currentTime -= time.length;
 			repeatCount--;

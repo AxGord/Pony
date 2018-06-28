@@ -23,6 +23,7 @@
 **/
 package pony.pixi.nape;
 
+import pixi.core.graphics.Graphics;
 import pony.physics.nape.BodyRect;
 
 /**
@@ -31,8 +32,10 @@ import pony.physics.nape.BodyRect;
  */
 class BodyRectView extends BodyBaseView<BodyRect> {
 
-	override private function drawDebug():Void {
-		g.drawRect(core.size.x, core.size.y, core.size.width, core.size.height);
+	override private function drawDebug(g:Graphics):Void {
+		g.drawRect(0, 0, core.size.width - core.size.x, core.size.height - core.size.y);
+		g.x = core.size.x;
+		g.y = core.size.y;
 	}
 
 }

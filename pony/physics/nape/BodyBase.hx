@@ -23,7 +23,7 @@
 **/
 package pony.physics.nape;
 
-import pony.math.MathTools;
+import haxe.io.Bytes;
 import nape.phys.Body;
 import nape.phys.BodyType;
 import nape.phys.Material;
@@ -44,6 +44,7 @@ import pony.events.Signal2;
 import pony.geom.Point;
 import pony.geom.Rect;
 import pony.time.DeltaTime;
+import pony.math.MathTools;
 
 /**
  * BodyBase
@@ -90,6 +91,8 @@ class BodyBase implements pony.magic.HasSignal implements pony.magic.HasLink imp
 			pony.time.DeltaTime.update << updateHandler;
 		}
 	}
+
+	public function getCacheId():Bytes return null;
 
 	public inline function scale(x:Float, y:Float):Void {
 		body.scaleShapes(x, y);
@@ -199,7 +202,9 @@ class BodyBase implements pony.magic.HasSignal implements pony.magic.HasLink imp
 	public function destroy():Void {
 		if (body == null) return;
 		DeltaTime.update >> updateHandler;
-		for (l in addedListeners) body.space.listeners.remove(l);
+		if (body.space != null)
+			for (l in addedListeners)
+				body.space.listeners.remove(l);
 		addedListeners = null;
 		for (e in events0) e.destroy();
 		events0 = null;

@@ -23,6 +23,7 @@
 **/
 package pony.pixi.nape;
 
+import pixi.core.graphics.Graphics;
 import haxe.io.BytesInput;
 import pony.Byte;
 import pony.physics.nape.BodyShape;
@@ -32,21 +33,23 @@ import pony.physics.nape.BodyShape;
  * @author AxGord <axgord@gmail.com>
  */
 class BodyShapeView extends BodyBaseView<BodyShape> {
-	
-	override function drawDebug():Void {
+
+	override private function drawDebug(g:Graphics):Void {
 		var bi = new BytesInput(core.sbytes);
 		var pb:Byte = bi.readByte();
 		var fp:Byte = bi.readByte();
-		g.moveTo((fp.a - pb.a) * core.resolution, (fp.b - pb.b) * core.resolution);
+		g.moveTo(fp.a * core.resolution, fp.b * core.resolution);
 		while (bi.position < bi.length) {
 			var p:Byte = bi.readByte();
-			g.lineTo((p.a - pb.a) * core.resolution, (p.b - pb.b) * core.resolution);
+			g.lineTo(p.a * core.resolution, p.b * core.resolution);
 		}
-		g.lineTo((fp.a - pb.a) * core.resolution, (fp.b - pb.b) * core.resolution);
+		g.lineTo(fp.a * core.resolution, fp.b * core.resolution);
 
 		g.lineStyle(4, 0xF78C6C);
 		g.beginFill(0xF78C6C);
-		g.drawCircle(0, 0, 10);
+		g.x = -pb.a * core.resolution;
+		g.y = -pb.b * core.resolution;
+		g.drawCircle(-g.x, -g.y, 10);
 	}
 
 }

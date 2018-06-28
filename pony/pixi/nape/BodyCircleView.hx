@@ -23,6 +23,7 @@
 **/
 package pony.pixi.nape;
 
+import pixi.core.graphics.Graphics;
 import pony.physics.nape.BodyCircle;
 
 /**
@@ -31,10 +32,12 @@ import pony.physics.nape.BodyCircle;
  */
 class BodyCircleView extends BodyBaseView<BodyCircle> {
 
-	override private function drawDebug():Void {
-		g.drawCircle(0, 0, core.radius);
-		g.moveTo(0, 0);
-		g.lineTo(core.radius, 0);
+	override private function drawDebug(g:Graphics):Void {
+		g.drawCircle(core.radius, core.radius, core.radius);
+		g.moveTo(core.radius, core.radius);
+		g.lineTo(core.radius * 2, core.radius);
+		g.x = -core.radius;
+		g.y = -core.radius;
 	}
 
 }

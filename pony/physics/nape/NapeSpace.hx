@@ -39,7 +39,7 @@ class NapeSpace implements Dynamic<NapeGroup> {
 
 	public var space:Space;
 	private var integrations:Int;
-	private var minimalStep:Float;
+	public var minimalStep(default, null):Float;
 	public var width:Float;
 	public var height:Float;
 	public var limits:Rect<Float>;

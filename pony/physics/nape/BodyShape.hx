@@ -24,6 +24,7 @@
 package pony.physics.nape;
 
 import haxe.io.BytesInput;
+import haxe.io.BytesOutput;
 import haxe.io.Bytes;
 import pony.Byte;
 import pony.geom.Point;
@@ -41,7 +42,7 @@ import nape.geom.GeomPolyList;
  */
 class BodyShape extends BodyBase {
 
-	public static var CACHE:Map<Bytes, Map<Int, GeomPolyList>> = new Map<Bytes, Map<Int, GeomPolyList>>();
+	public static var CACHE:Map<String, GeomPolyList> = new Map<String, GeomPolyList>();
 
 	public var sbytes(default, null):Bytes;
 	public var resolution(default, null):Float;
@@ -53,13 +54,8 @@ class BodyShape extends BodyBase {
 	}
 
 	override function init():Void {
-		var rint:Int = Std.int(resolution * 1000);
-		var cbcache = CACHE[sbytes];
-		if (cbcache == null) {
-			cbcache = new Map();
-			CACHE[sbytes] = cbcache;
-		}
-		var cpolygons:GeomPolyList = cbcache[rint];
+		var cid = getCacheId().toHex();
+		var cpolygons:GeomPolyList = CACHE[cid];
 		if (cpolygons == null) {
 			var bi = new BytesInput(sbytes);
 			var pb:Byte = bi.readByte();
@@ -68,13 +64,21 @@ class BodyShape extends BodyBase {
 				new Vec2((p.a - pb.a) * resolution, (p.b - pb.b) * resolution);
 			}];
 			cpolygons = new GeomPoly(a).convexDecomposition();
-			cbcache[rint] = cpolygons;
+			CACHE[cid] = cpolygons;
 		}
 		for (g in cpolygons) {
 			var p = new Polygon(g, material);
 			p.sensorEnabled = body.isBullet;
 			body.shapes.add(p);
 		}
+	}
+
+	override public function getCacheId():Bytes {
+		var b:BytesOutput = new BytesOutput();
+		b.writeByte(0x00); //shape code
+		b.writeInt32(Std.int(resolution * 1000));
+		b.write(sbytes);
+		return b.getBytes();
 	}
 
 }

@@ -28,6 +28,7 @@ import pony.ui.touch.Touchable;
 import pony.geom.Point;
 import pony.geom.Rect;
 import pony.physics.nape.BodyBase;
+import pony.physics.nape.BodyShape;
 import pony.physics.nape.DebugLineStyle;
 import pony.physics.nape.NapeSpace;
 import nape.space.Space;
@@ -46,7 +47,7 @@ class NapeSpaceView extends Sprite implements pony.magic.HasLink implements Dyna
 
 	public var core(default, null):NapeSpace;
 	private var objects:Array<BodyBaseView<BodyBase>> = [];
-	private var groups:Map<String, NapeGroupView> = new Map<String, NapeGroupView>();	
+	private var groups:Map<String, NapeGroupView> = new Map<String, NapeGroupView>();
 
 	public var touchable(default, null):Touchable;
 
@@ -60,6 +61,11 @@ class NapeSpaceView extends Sprite implements pony.magic.HasLink implements Dyna
 		mask = bgm;
 		interactive = false;
 		interactiveChildren = false;
+	}
+
+	public function clear():Void {
+		for (g in groups) g.clear();
+		for (o in objects.copy()) o.destroy();
 	}
 
 	public function resolve(name:String):NapeGroupView {
@@ -134,6 +140,11 @@ class NapeSpaceView extends Sprite implements pony.magic.HasLink implements Dyna
 
 	public function createShape(data:Bytes, resolution:Float, isBullet:Bool = false):BodyShapeView {
 		return reg(new BodyShapeView(core.createShape(data, resolution, isBullet)));
+	}
+
+	public static function clearCache():Void {
+		BodyShape.CACHE = new Map();
+		BodyBaseView.clearCache();
 	}
 
 }
