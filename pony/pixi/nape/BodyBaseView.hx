@@ -29,6 +29,7 @@ import pixi.core.sprites.Sprite;
 import pixi.core.display.DisplayObject;
 import haxe.extern.EitherType;
 import pony.geom.Point;
+import pony.geom.Rect;
 import pony.events.Signal1;
 import pony.physics.nape.BodyBase;
 import pony.physics.nape.DebugLineStyle;
@@ -71,6 +72,11 @@ import haxe.io.Bytes;
 			debugView.destroy();
 			debugView = null;
 		}
+		if (v.pivotColor == null)
+			v.pivotColor = v.color;
+		if (v.pivotSize == null)
+			v.pivotSize = v.size;
+		debugLines = v;
 		if (v != null) {
 			var cid:Bytes = core.getCacheId();
 			if (cid != null) {
@@ -104,7 +110,7 @@ import haxe.io.Bytes;
 				g.cacheAsBitmap = true;
 			}
 		}
-		return debugLines = v;
+		return v;
 	}
 
 	@:abstract private function drawDebug(g:Graphics):Void;

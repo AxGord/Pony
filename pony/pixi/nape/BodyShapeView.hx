@@ -44,12 +44,10 @@ class BodyShapeView extends BodyBaseView<BodyShape> {
 			g.lineTo(p.a * core.resolution, p.b * core.resolution);
 		}
 		g.lineTo(fp.a * core.resolution, fp.b * core.resolution);
-
-		g.lineStyle(4, 0xF78C6C);
-		g.beginFill(0xF78C6C);
+		g.beginFill(g.lineColor = debugLines.pivotColor);
 		g.x = -pb.a * core.resolution;
 		g.y = -pb.b * core.resolution;
-		g.drawCircle(-g.x, -g.y, 10);
+		g.drawCircle(-g.x, -g.y, debugLines.pivotSize);
 	}
 
 }

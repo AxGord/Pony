@@ -29,5 +29,7 @@ package pony.physics.nape;
  */
 typedef DebugLineStyle = {
 	size: Int,
-	color: Int
+	color: Int,
+	?pivotSize: Int,
+	?pivotColor: Int
 }

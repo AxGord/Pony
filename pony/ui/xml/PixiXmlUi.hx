@@ -297,7 +297,15 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 					attrs.smooth.isTrue()
 				);
 			case 'vscroll':
-				var b = new ScrollBox(parseAndScale(attrs.w), parseAndScale(attrs.h));
+				var b = new ScrollBox(
+					parseAndScale(attrs.w),
+					parseAndScale(attrs.h),
+					true,
+					false,
+					attrs.color != null ? UColor.fromString(attrs.color) : 0,
+					attrs.bar != null ? parseAndScale(attrs.bar) : 8,
+					attrs.wheel != null ? parseAndScale(attrs.wheel) : 1
+				);
 				for (c in content) b.add(c);
 				b;
 			case 'progressbar':
@@ -482,7 +490,6 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 			}
 			if (a.length > 0) obj.filters = a;
 		}
-		
 		
 		if (attrs.x != null) obj.x = parseAndScale(attrs.x);
 		if (attrs.y != null) obj.y = parseAndScale(attrs.y);

@@ -147,8 +147,10 @@ class ScrollBox extends Sprite implements HasSignal implements IWH {
 	}
 
 	public function update():Void {
-		var b = content.getLocalBounds();
+		touchArea.visible = false;
+		var b = content.getBounds();
 		core.content(b.width, b.height);
+		touchArea.visible = true;
 	}
 
 	private function get_size():Point<Float> return new Point<Float>(core.w, core.h);

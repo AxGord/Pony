@@ -42,6 +42,9 @@ class NapeSpace implements Dynamic<NapeGroup> {
 	public var minimalStep(default, null):Float;
 	public var width:Float;
 	public var height:Float;
+	public var minSide(get, never):Float;
+	public var maxSide(get, never):Float;
+	public var snap(get, never):Float;
 	public var limits:Rect<Float>;
 	private var groups:Map<String, NapeGroup> = new Map<String, NapeGroup>();
 
@@ -53,6 +56,10 @@ class NapeSpace implements Dynamic<NapeGroup> {
 		this.integrations = integrations;
 		this.minimalStep = minimalStep;
 	}
+
+	@:extern private inline function get_minSide():Float return Math.min(width, height);
+	@:extern private inline function get_maxSide():Float return Math.max(width, height);
+	@:extern private inline function get_snap():Float return minSide / 100;
 
 	public function resolve(name:String):NapeGroup {
 		if (!groups.exists(name))
