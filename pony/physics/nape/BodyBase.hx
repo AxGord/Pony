@@ -68,6 +68,9 @@ class BodyBase implements pony.magic.HasSignal implements pony.magic.HasLink imp
 	private var addedListeners:Array<Listener> = [];
 	private var events0:Array<Event0> = [];
 	private var material:Material;
+	private var lookAtTarget:Float;
+	private var lookAtVelocity:Float;
+	private var lookAtDirrect:Int;
 
 	public var limits:Rect<Float>;
 
@@ -100,6 +103,28 @@ class BodyBase implements pony.magic.HasSignal implements pony.magic.HasLink imp
 
 	public inline function lookAt(x:Float, y:Float):Void {
 		rotation = Math.atan2(y - pos.y, x - pos.x);
+	}
+
+	public function lookAtVelLin(x:Float, y:Float, vel:Float):Void {
+		lookAtVelocity = vel;
+		lookAtTarget = Math.atan2(y - pos.y, x - pos.x);
+		lookAtDirrect = lookAtTarget > rotation ? 1 : -1;
+		if (lookAtTarget == rotation) lookAtDirrect = 0;
+		angularVel = lookAtDirrect * vel;
+		if (lookAtDirrect != 0) {
+			pony.time.DeltaTime.update << checkLookAtHandler;
+			checkLookAtHandler();
+		}
+	}
+
+	private function checkLookAtHandler():Void {
+		if ( (lookAtDirrect == 1 && lookAtTarget <= rotation)
+			|| (lookAtDirrect == -1 && lookAtTarget >= rotation)			
+		) {
+			angularVel = 0;
+			rotation = lookAtTarget;
+			pony.time.DeltaTime.update >> checkLookAtHandler;
+		}
 	}
 
 	public inline function lookAtPoint(p:Point<Float>):Void {
