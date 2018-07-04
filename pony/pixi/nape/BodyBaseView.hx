@@ -43,7 +43,9 @@ import haxe.io.Bytes;
  */
 @:abstract class BodyBaseView<T:BodyBase> extends Sprite implements pony.magic.HasAbstract implements pony.magic.HasSignal {
 
-	public static var DEBUG_CACHE:Map<String, Pair<Point<Float>, RenderTexture>> = new Map<String, Pair<Point<Float>, RenderTexture>>();
+	public static var DEBUG_CACHE(default, null):Map<String, Pair<Point<Float>, RenderTexture>> = new Map<String, Pair<Point<Float>, RenderTexture>>();
+
+	public static var LIST(default, null):Map<Int, BodyBaseView<T>> = new Map<Int, BodyBaseView<T>>();
 
 	@:auto public var onOut:Signal1<BodyBaseView<T>>;
 	public var core(default, null):T;
@@ -53,6 +55,7 @@ import haxe.io.Bytes;
 	public function new(core:T) {
 		super();
 		this.core = core;
+		LIST[core.body.id] = this;
 		core.onPos << posHandler;
 		core.onRotation << rotationHandler;
 		core.onOut << out;
@@ -125,6 +128,7 @@ import haxe.io.Bytes;
 
 	override public function destroy(?options:EitherType<Bool, DestroyOptions>):Void {
 		if (core == null) return;
+		LIST.remove(core.body.id);
 		var c = core;
 		core = null;
 		c.destroy();

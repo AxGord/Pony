@@ -38,8 +38,8 @@ import nape.geom.Vec2;
 class NapeSpace implements Dynamic<NapeGroup> {
 
 	public var space:Space;
-	private var integrations:Int;
 	public var minimalStep(default, null):Float;
+	private var skipVelIntegrations:Int;
 	public var width:Float;
 	public var height:Float;
 	public var minSide(get, never):Float;
@@ -48,13 +48,13 @@ class NapeSpace implements Dynamic<NapeGroup> {
 	public var limits:Rect<Float>;
 	private var groups:Map<String, NapeGroup> = new Map<String, NapeGroup>();
 
-	public function new(w:Float, h:Float, ?gravity:Point<Float>, integrations:Int = 1, minimalStep:Float = 0.05) {
+	public function new(w:Float, h:Float, ?gravity:Point<Float>, minimalStep:Float = 1 / 60, skipVelIntegrations:Int = 10) {
 		this.width = w;
 		this.height = h;
 		limits = new Rect<Float>(0, 0, w, h);
 		space = new Space(gravity != null ? Vec2.weak(gravity.x, gravity.y) : null);
-		this.integrations = integrations;
 		this.minimalStep = minimalStep;
+		this.skipVelIntegrations = skipVelIntegrations;
 	}
 
 	@:extern private inline function get_minSide():Float return Math.min(width, height);
@@ -68,7 +68,7 @@ class NapeSpace implements Dynamic<NapeGroup> {
 	}
 
 	public function play():Void {
-		DeltaTime.update << update;
+		DeltaTime.update.add(update, 1);
 	}
 
 	public function pause():Void {
@@ -77,11 +77,16 @@ class NapeSpace implements Dynamic<NapeGroup> {
 
 	public function update(dt:DT):Void {
 		var f:Float = dt;
-		while (f > minimalStep) {
-			f -= minimalStep;
-			space.step(minimalStep, integrations, integrations);
+		var integrations:Int = Std.int(f / minimalStep);
+		var sumf:Float = minimalStep * integrations;
+		f -= sumf;
+		if (integrations > 0) {
+			var vi:Int = Std.int(integrations / skipVelIntegrations);
+			if (vi == 0) vi = 1;
+			space.step(sumf, vi, integrations);
 		}
-		space.step(f, integrations, integrations);
+		if (f > 0)
+			space.step(f, 1, 1);
 	}
 
 	public function createBox(size:Point<Float>, isBullet:Bool = false):BodyBox {

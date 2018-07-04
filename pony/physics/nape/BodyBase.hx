@@ -34,10 +34,12 @@ import nape.callbacks.BodyListener;
 import nape.callbacks.BodyCallback;
 import nape.callbacks.InteractionListener;
 import nape.callbacks.InteractionType;
+import nape.callbacks.InteractionCallback;
 import nape.callbacks.Listener;
 import nape.dynamics.InteractionFilter;
 import nape.geom.Vec2;
 import pony.events.Event0;
+import pony.events.Event1;
 import pony.events.Signal0;
 import pony.events.Signal1;
 import pony.events.Signal2;
@@ -67,6 +69,7 @@ class BodyBase implements pony.magic.HasSignal implements pony.magic.HasLink imp
 	private var cbt:CbType;
 	private var addedListeners:Array<Listener> = [];
 	private var events0:Array<Event0> = [];
+	private var events1:Array<Event1<Int>> = [];
 	private var material:Material;
 	private var lookAtTarget:Float;
 	private var lookAtVelocity:Float;
@@ -112,14 +115,14 @@ class BodyBase implements pony.magic.HasSignal implements pony.magic.HasLink imp
 		if (lookAtTarget == rotation) lookAtDirrect = 0;
 		angularVel = lookAtDirrect * vel;
 		if (lookAtDirrect != 0) {
-			pony.time.DeltaTime.update << checkLookAtHandler;
+			pony.time.DeltaTime.update.add(checkLookAtHandler, 2);
 			checkLookAtHandler();
 		}
 	}
 
 	private function checkLookAtHandler():Void {
-		if ( (lookAtDirrect == 1 && lookAtTarget <= rotation)
-			|| (lookAtDirrect == -1 && lookAtTarget >= rotation)			
+		if ( (lookAtDirrect == 1 && lookAtTarget <= rotation + MathTools.DEG2RAD * angularVel)
+			|| (lookAtDirrect == -1 && lookAtTarget >= rotation + MathTools.DEG2RAD * angularVel)
 		) {
 			angularVel = 0;
 			rotation = lookAtTarget;
@@ -143,6 +146,12 @@ class BodyBase implements pony.magic.HasSignal implements pony.magic.HasLink imp
 	private function createEvent0():Event0 {
 		var e = new Event0();
 		events0.push(e);
+		return e;
+	}
+
+	private function createEvent1():Event1<Int> {
+		var e = new Event1<Int>();
+		events1.push(e);
 		return e;
 	}
 
@@ -178,14 +187,14 @@ class BodyBase implements pony.magic.HasSignal implements pony.magic.HasLink imp
 		DeltaTime.update >> updateHandler;
 	}
 
-	public function groupCollision<T:NapeGroup>(with:T):Signal0 {
-		var e = createEvent0();
+	public function groupCollision<T:NapeGroup>(with:T):Signal1<Int> {
+		var e = createEvent1();
 		body.space.listeners.add(new InteractionListener(
 			CbEvent.BEGIN,
 			with.sensor ? InteractionType.SENSOR : InteractionType.COLLISION,
 			cbt,
 			with.cbt,
-			function(_) e.dispatch()
+			function(ic:InteractionCallback):Void e.dispatch(ic.int2.id)
 		));
 		return e;
 	}
@@ -233,6 +242,8 @@ class BodyBase implements pony.magic.HasSignal implements pony.magic.HasLink imp
 		addedListeners = null;
 		for (e in events0) e.destroy();
 		events0 = null;
+		for (e in events1) e.destroy();
+		events1 = null;
 		body.cbTypes.remove(cbt);
 		cbt = null;
 		body.space = null;
