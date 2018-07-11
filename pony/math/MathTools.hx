@@ -64,22 +64,27 @@ class MathTools {
 		return s;
 	}
 	
-	@:extern inline public static function percentCalc(p:Float, min:Float, max:Float):Float return (max - min) * p + min;
-	@:extern inline public static function percentBackCalc(p:Float, min:Float, max:Float):Float return  (p - min) / (max - min);
-	@:extern inline public static function percentCalcd(p:Float, a:Float, b:Float):Float return a > b ? percentCalc(p, b, a) : percentCalc(p, a, b);
-	@:extern inline public static function inRange(v:Float, min:Float, max:Float):Bool return min <= v && v <= max;
-	@:extern inline public static function approximately(a:Float, b:Float, range:Float = 1):Bool return inRange(a, b - range, b + range);
-	@:extern inline public static function limit(v:Float, min:Float, max:Float):Float return if (v < min) min; else if (v > max) max; else v;
-	@:extern inline public static function cultureAdd(a:Float, b:Float, max:Float):Float return a + b >= max ? max : a + b;
-	@:extern inline public static function cultureSub(a:Float, b:Float, min:Float):Float return a - b <= min ? min : a - b;
-	@:extern inline public static function cultureTarget(a:Float, b:Float, step:Float):Float return a > b ? cultureSub(a, step, b) : cultureAdd(a, step, b);
-	@:extern inline public static function midValue(a:Float, b:Float, aCount:Float, bCount:Float):Float return (aCount * a + bCount * b) / (aCount + bCount);
-	@:extern inline public static function cabs(v:Int):Int return v < 0 ? -v : v; 
-	@:extern inline public static function cmin(a:Int, b:Int):Int return a < b ? a : b; 
-	@:extern inline public static function cmax(a:Int, b:Int):Int return a > b ? a : b; 
-	@:extern inline public static function roundTo(v:Float, count:Int):Float return Math.round(v * Math.pow(10, count)) / Math.pow(10, count);
-	@:extern inline public static function intNot(v:Int):Int return v == 0 ? 1 : 0;
+	@:extern public static inline function percentCalc(p:Float, min:Float, max:Float):Float return (max - min) * p + min;
+	@:extern public static inline function percentBackCalc(p:Float, min:Float, max:Float):Float return  (p - min) / (max - min);
+	@:extern public static inline function percentCalcd(p:Float, a:Float, b:Float):Float return a > b ? percentCalc(p, b, a) : percentCalc(p, a, b);
+	@:extern public static inline function inRange(v:Float, min:Float, max:Float):Bool return min <= v && v <= max;
+	@:extern public static inline function approximately(a:Float, b:Float, range:Float = 1):Bool return inRange(a, b - range, b + range);
+	@:extern public static inline function limit(v:Float, min:Float, max:Float):Float return if (v < min) min; else if (v > max) max; else v;
+	@:extern public static inline function cultureAdd(a:Float, b:Float, max:Float):Float return a + b >= max ? max : a + b;
+	@:extern public static inline function cultureSub(a:Float, b:Float, min:Float):Float return a - b <= min ? min : a - b;
+	@:extern public static inline function cultureTarget(a:Float, b:Float, step:Float):Float return a > b ? cultureSub(a, step, b) : cultureAdd(a, step, b);
+	@:extern public static inline function midValue(a:Float, b:Float, aCount:Float, bCount:Float):Float return (aCount * a + bCount * b) / (aCount + bCount);
+	@:extern public static inline function cabs(v:Int):Int return v < 0 ? -v : v; 
+	@:extern public static inline function cmin(a:Int, b:Int):Int return a < b ? a : b; 
+	@:extern public static inline function cmax(a:Int, b:Int):Int return a > b ? a : b; 
+	@:extern public static inline function roundTo(v:Float, count:Int):Float return Math.round(v * Math.pow(10, count)) / Math.pow(10, count);
+	@:extern public static inline function intTo(v:Float, count:Int):Float return Std.int(v * Math.pow(10, count)) / Math.pow(10, count);
+	@:extern public static inline function intNot(v:Int):Int return v == 0 ? 1 : 0;
 	
+	public static inline function float10(v:Float):Float return intTo(v, 1);
+	public static inline function float100(v:Float):Float return intTo(v, 2);
+	public static inline function float1000(v:Float):Float return intTo(v, 3);
+
 	public static function lengthAfterComma(v:Float):Int {
 		var a = Std.string(v).split('.');
 		return a.length < 2 ? 0 : a[1].length;
