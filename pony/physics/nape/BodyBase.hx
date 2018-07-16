@@ -115,7 +115,7 @@ class BodyBase implements pony.magic.HasSignal implements pony.magic.HasLink imp
 		if (lookAtTarget == rotation) lookAtDirrect = 0;
 		angularVel = lookAtDirrect * vel;
 		if (lookAtDirrect != 0) {
-			pony.time.DeltaTime.update.add(checkLookAtHandler, 2);
+			DeltaTime.update.add(checkLookAtHandler, 2);
 			checkLookAtHandler();
 		}
 	}
@@ -236,6 +236,7 @@ class BodyBase implements pony.magic.HasSignal implements pony.magic.HasLink imp
 	public function destroy():Void {
 		if (body == null) return;
 		DeltaTime.update >> updateHandler;
+		DeltaTime.update >> checkLookAtHandler;
 		if (body.space != null)
 			for (l in addedListeners)
 				body.space.listeners.remove(l);

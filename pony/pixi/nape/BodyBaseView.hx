@@ -137,6 +137,7 @@ import haxe.io.Bytes;
 			debugView.destroy();
 			debugView = null;
 		}
+		destroySignals();
 		super.destroy(options);
 	}
 	
