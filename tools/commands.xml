@@ -79,6 +79,10 @@
 		<help>Print lines count</help>
 		<syn>l</syn>
 	</lines>
+	<chars>
+		<help>Show chars in .fnt file</help>
+		<arg>.fnt file</arg>
+	</chars>
 	<license>
 		<help>Generate or put license</help>
 		<arg>Create or update</arg>

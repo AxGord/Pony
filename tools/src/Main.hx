@@ -120,6 +120,7 @@ class Main {
 
 		commands.onCreate < create.Create.run;
 		commands.onLines < Lines.run;
+		commands.onChars < Chars.run;
 		commands.onLicense < License.run;
 		commands.onHaxelib < Haxelib.run;
 

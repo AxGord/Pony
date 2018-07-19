@@ -34,16 +34,17 @@ class Bmfont {
 		to = cfg.to;
 		Utils.createPath(to);
 		for (font in cfg.font)
-			packFont(cfg.from + font.file, font.size);
+			packFont(cfg.from + font.file, font.size, font.charset, font.output);
 	}
 
-	private function packFont(font:File, size:Int):Void {
+	private function packFont(font:File, size:Int, ?charset:String, ?output:String):Void {
 		var short = font.shortName;
-		var ofn = short + '_' + size;
+		var ofn = output != null ? output : short + '_' + size;
 		var fntFile:String = to + ofn + '.fnt';
 		if (sys.FileSystem.exists(fntFile)) return;
 		pony.NPM.msdf_bmfont_xml(font.fullPath.first, {
 			filename: ofn,
+			charset: charset,
 			smartSize: true,
 			pot: false,
 			square: true,

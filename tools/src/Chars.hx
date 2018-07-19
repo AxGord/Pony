@@ -21,34 +21,20 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-import pony.fs.Dir;
 
-class Lines {
+import haxe.xml.Fast;
+import haxe.Utf8;
 
-	public static function run():Void {
-		tryShow('Haxe', '.hx');
-		tryShow('Xml', '.xml');
-		tryShow('Json', '.json');
-		tryShow('JavaScript', '.js');
-		tryShow('TypeScript', '.ts');
-		tryShow('ActionScript3', '.as');
-		tryShow('MXML', '.mxml');
-	}
+class Chars {
 
-	private static function tryShow(lang:String, ext:String):Void {
-		var p = getCount(ext);
-		if (p.b > 0)
-			Sys.println('$lang files total lines count: ${p.a} in ${p.b} files');
-	}
-
-	private static function getCount(ext:String):pony.Pair<Int, Int> {
-		var count:Int = 0;
-		var files:Int = 0;
-		for (file in ('.':Dir).contentRecursiveFiles(ext)) {
-			files++;
-			count += file.content.split('\n').length;
-		}
-		return new pony.Pair(count, files);
+	public static function run(file:String):Void {
+		var c:String = sys.io.File.getContent(file);
+		var x:Fast = new Fast(Xml.parse(c));
+		var chars:Array<Fast> = x.node.font.node.chars.nodes.char;
+		var rs:Utf8 = new Utf8(chars.length);
+		for (char in chars)
+			rs.addChar(Std.parseInt(char.att.id));
+		Sys.println(rs.toString());
 	}
 
 }

@@ -61,7 +61,13 @@ private class BmfontReader extends BAReader<BmfontConfig> {
 
 	override private function readNode(xml:Fast):Void {
 		switch xml.name {
-			case 'font': cfg.font.push({file: StringTools.trim(xml.innerData), size: Std.parseInt(xml.att.size)});
+			case 'font':
+				cfg.font.push({
+					file: StringTools.trim(xml.innerData),
+					size: Std.parseInt(xml.att.size),
+					charset: xml.has.charset ? xml.att.charset : null,
+					output: xml.has.output ? xml.att.output : null,
+				});
 			case _: super.readNode(xml);
 		}
 	}
