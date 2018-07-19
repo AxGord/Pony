@@ -34,14 +34,14 @@ class Bmfont {
 		to = cfg.to;
 		Utils.createPath(to);
 		for (font in cfg.font)
-			packFont(cfg.from + font.file, font.size, font.charset, font.output);
+			packFont(cfg.from + font.file, font.size, font.face, font.charset, font.output);
 	}
 
-	private function packFont(font:File, size:Int, ?charset:String, ?output:String):Void {
+	private function packFont(font:File, size:Int, face:String, charset:String, output:String):Void {
 		var short = font.shortName;
 		var ofn = output != null ? output : short + '_' + size;
 		var fntFile:String = to + ofn + '.fnt';
-		if (sys.FileSystem.exists(fntFile)) return;
+		// if (sys.FileSystem.exists(fntFile)) return; //todo check xml
 		pony.NPM.msdf_bmfont_xml(font.fullPath.first, {
 			filename: ofn,
 			charset: charset,
@@ -57,7 +57,8 @@ class Bmfont {
 			for (t in textures) {
 				js.node.Fs.writeFileSync(to + ofn + '.png', t.texture);
 			}
-			var data = StringTools.replace(font.data, '<info face="$short"', '<info face="$ofn"');
+			var f:String = face == null ? ofn : face;
+			var data = StringTools.replace(font.data, '<info face="$short"', '<info face="$f"');
 			sys.io.File.saveContent(fntFile, data);
 			Sys.println('');
 			Sys.println(to + ofn + '.fnt');

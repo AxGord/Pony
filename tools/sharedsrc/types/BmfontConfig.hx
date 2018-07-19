@@ -28,6 +28,7 @@ typedef BmfontConfig = { > BAConfig,
 	to: String,
 	font: Array<{
 		file: String,
+		face: String,
 		size: Int,
 		charset: String,
 		output: String

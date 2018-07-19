@@ -64,6 +64,7 @@ private class BmfontReader extends BAReader<BmfontConfig> {
 			case 'font':
 				cfg.font.push({
 					file: StringTools.trim(xml.innerData),
+					face: xml.has.face ? xml.att.face : null,
 					size: Std.parseInt(xml.att.size),
 					charset: xml.has.charset ? xml.att.charset : null,
 					output: xml.has.output ? xml.att.output : null,
