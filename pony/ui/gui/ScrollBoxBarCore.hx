@@ -43,11 +43,11 @@ class ScrollBoxBarCore implements HasSignal {
 	@:auto public var onContentPos:Signal1<Float>;
 	@:auto public var onMaskSize:Signal1<Float>;
 
-	public var c(default, null):Float;
+	public var c(default, null):Null<Float>;
 	private var slider:SliderCore;
 	private var scrollPanelSize:Float;
-	private var totalA:Float;
-	private var totalB:Float;
+	public var totalA(default, set):Float;
+	public var totalB(default, set):Float;
 	private var scrollerSize:Float;
 	private var startPoint:Float;
 
@@ -63,6 +63,24 @@ class ScrollBoxBarCore implements HasSignal {
 			slider.changeX = posHandler;
 		}
 		slider.changeValue << valueHandler;
+	}
+
+	private function set_totalA(v:Float):Float {
+		if (v != totalA) {
+			totalA = v;
+			if (c != null)
+				content(c);
+		}
+		return v;
+	}
+
+	private function set_totalB(v:Float):Float {
+		if (v != totalB) {
+			totalB = v;
+			if (c != null)
+				content(c);
+		}
+		return v;
 	}
 
 	public function content(c:Float):Void {

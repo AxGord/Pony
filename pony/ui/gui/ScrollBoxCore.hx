@@ -47,8 +47,8 @@ class ScrollBoxCore implements HasSignal {
 	@:auto public var onContentPos:Signal2<Float, Float>;
 	@:auto public var onMaskSize:Signal2<Float, Float>;
 
-	public var w(default, null):Float;
-	public var h(default, null):Float;
+	public var w(default, set):Float;
+	public var h(default, set):Float;
 	public var vert(default, null):Bool;
 	public var hor(default, null):Bool;
 
@@ -94,6 +94,24 @@ class ScrollBoxCore implements HasSignal {
 		}
 
 		enableContentDrag();
+	}
+
+	public function set_w(v:Float):Float {
+		if (v != w) {
+			w = v;
+			if (barVert != null) barVert.totalB = v;
+			if (barHor != null) barHor.totalA = v;
+		}
+		return v;
+	}
+
+	public function set_h(v:Float):Float {
+		if (v != h) {
+			h = v;
+			if (barVert != null) barVert.totalA = v;
+			if (barHor != null) barHor.totalB = v;
+		}
+		return v;
 	}
 
 	public function disableContentDrag():Void {

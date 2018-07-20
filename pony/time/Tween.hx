@@ -54,7 +54,7 @@ class Tween implements HasSignal implements Declarator {
 	private var invert:Bool;
 	
 	private var updateSignal:Signal1<DT>;
-	private var progress:Float = 0;
+	public var progress(default, null):Float = 0;
 	private var sr:Float;
 	private var playing:Bool = false;
 	private var type:TweenType;
