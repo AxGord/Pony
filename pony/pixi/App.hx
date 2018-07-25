@@ -134,7 +134,6 @@ class App implements HasSignal {
 		canvas.style.height = height + "px";
 		canvas.style.position = "static";
 
-
 		var renderingOptions:ApplicationOptions = {
 			width: width,
 			height: height,

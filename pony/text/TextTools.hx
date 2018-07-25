@@ -209,4 +209,19 @@ class TextTools {
 	}
 	#end
 	
+	public static function textLineLimit(text:String, len:Int):String {
+		if (text.length <= len) {
+			return text;
+		} else {
+			var l:Int = len;
+			while (len > 0) {
+				if (text.charAt(l) == ' ') {
+					return text.substr(0, l) + '\n' + text.substr(l + 1);
+				}
+				l--;
+			}
+			return text.substr(0, len) + '\n' + text.substr(len);
+		}
+	}
+
 }

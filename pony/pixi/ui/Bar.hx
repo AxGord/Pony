@@ -127,7 +127,7 @@ class Bar extends Sprite implements HasSignal implements IWH {
 			fill.y = begin.y + begin.height;
 		} else {
 			end.width = -end.width;
-			fill.x = begin.x + begin.width ;
+			fill.x = begin.x + begin.width;
 		}
 		if (smooth) {
 			core.smoothChangeX = changeXHandler;
@@ -143,7 +143,7 @@ class Bar extends Sprite implements HasSignal implements IWH {
 	}
 	
 	private function changeXHandler(p:Float) {
-		fill.width = p ;
+		fill.width = p;
 		end.x = fill.x + fill.width + begin.width;
 	}
 	
