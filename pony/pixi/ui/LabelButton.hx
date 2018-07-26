@@ -41,8 +41,9 @@ class LabelButton extends BaseLayout<RubberLayoutCore<Container>> {
 
 	public var core(get, never):ButtonCore;
 	public var button(default, null):Button;
+	private var dac:Float;
 	
-	public function new(imgs:ImmutableArray<String>, vert:Bool = false, ?border:Border<Int>, padding:Bool = true, ?offset:Point<Float>, ?useSpriteSheet:String) {
+	public function new(imgs:ImmutableArray<String>, vert:Bool = false, ?border:Border<Int>, padding:Bool = true, ?offset:Point<Float>, ?useSpriteSheet:String, ?dac:Float) {
 		layout = new RubberLayoutCore<Container>(vert, border, padding);
 		layout.tasks.add();
 		super();
@@ -53,7 +54,15 @@ class LabelButton extends BaseLayout<RubberLayoutCore<Container>> {
 			layout.height = button.size.y;
 			layout.tasks.end();
 		});
+		if (dac != null) {
+			this.dac = dac;
+			core.onDisable << disableHandler;
+			core.onEnable << enableHandler;
+		}
 	}
+
+	private function disableHandler():Void for (o in layout.objects) o.alpha = dac;
+	private function enableHandler():Void for (o in layout.objects) o.alpha = 1;
 	
 	override public function add(obj:Container):Void {
 		obj.interactive = false;
