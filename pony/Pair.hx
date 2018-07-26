@@ -44,4 +44,7 @@ abstract Pair<A,B>({a:A,b:B}) {
 	@:to inline public function toObj(): { a:A, b:B } return this;
 	
 	@:from inline private static function array<T>(a:Array<T>):Pair<T,T> return new Pair(a[0],a[1]);
+
+	public inline function toString():String return 'a: $a; b: $b';
+
 }

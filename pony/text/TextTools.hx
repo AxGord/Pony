@@ -22,7 +22,9 @@
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
 package pony.text;
+
 import pony.math.MathTools;
+import pony.SPair;
 
 #if macro
 import haxe.macro.Context;
@@ -222,6 +224,11 @@ class TextTools {
 			}
 			return text.substr(0, len) + '\n' + text.substr(len);
 		}
+	}
+
+	public static function ext(s:String):SPair<String> {
+		var i:Int = s.lastIndexOf('.');
+		return i == -1 ? new SPair(s, null) : new SPair(s.substr(0, i), s.substr(i + 1));
 	}
 
 }
