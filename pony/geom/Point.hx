@@ -38,6 +38,24 @@ abstract Point<T:Float>(Point_<T>) from Point_<T> to Point_<T> to Point<Float> {
 	inline private function set_x(v:T):T return this.x = v;
 	inline private function set_y(v:T):T return this.y = v;
 	public function toString():String return '(${this.x}, ${this.y})';
+
+	@:op(A * B) inline static public function mul2<T:Float>(lhs:Point<T>, rhs:Point<T>):Point<T>
+		return { x:lhs.x * rhs.x, y:lhs.y * rhs.y };
+
+	@:op(A * B) inline static public function mul1<T:Float>(lhs:Point<T>, rhs:T):Point<T>
+		return { x:lhs.x * rhs, y:lhs.y * rhs };
+
+	@:op(A + B) inline static public function add2<T:Float>(lhs:Point<T>, rhs:Point<T>):Point<T>
+		return { x:lhs.x + rhs.x, y:lhs.y + rhs.y };
+
+	@:op(A + B) inline static public function add1<T:Float>(lhs:Point<T>, rhs:T):Point<T>
+		return { x:lhs.x + rhs, y:lhs.y + rhs };
+
+	@:op(A - B) inline static public function sub2<T:Float>(lhs:Point<T>, rhs:Point<T>):Point<T>
+		return { x:lhs.x - rhs.x, y:lhs.y - rhs.y };
+
+	@:op(A - B) inline static public function sub1<T:Float>(lhs:Point<T>, rhs:T):Point<T>
+		return { x:lhs.x - rhs, y:lhs.y - rhs };
 }
 
 abstract IntPoint(Point_ < Int > ) to Point_ < Int > from Point_ < Int > {
