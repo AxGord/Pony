@@ -38,10 +38,12 @@ typedef LastCompilationOptions = {command:Array<String>, debug:Bool, compiler:St
 class Build extends CfgModule<BuildConfig> {
 
 	private static inline var PRIORITY:Int = 1;
+	private static inline var TIMEOUT:Int = 5;
 
 	private var haxelib:Array<String> = [];
 	private var server:Bool = false;
 	private var lastCompilationOptions:LastCompilationOptions;
+	private var tryCounter:Int;
 
 	public function new() super('build');
 
@@ -122,6 +124,7 @@ class Build extends CfgModule<BuildConfig> {
 	private function runCompilation(command:Array<String>, debug:Bool, compiler:String):Void {
 		if (debug && server && compiler == 'haxe') {
 			var newline = "\n";
+			tryCounter = 3;
 			var s:sys.net.Socket = connectToHaxeServer();
 			var d = Sys.getCwd();
 			s.write('--cwd ' + d + newline);
@@ -131,7 +134,14 @@ class Build extends CfgModule<BuildConfig> {
 			s.write("\000");
 
 			var hasError = false;
-			for (line in s.read().split(newline))
+			var r:String = null;
+			try {
+				r = s.read();
+			} catch (e:Any) {
+				compilationServerError(Std.string(e));
+				return;
+			}
+			for (line in r.split(newline))
 			{
 				switch (line.charCodeAt(0)) {
 					case 0x01:
@@ -153,28 +163,30 @@ class Build extends CfgModule<BuildConfig> {
 	private function connectToHaxeServer():Socket {
 		var port:Int = Std.parseInt(modules.xml.node.server.node.haxe.innerData);
 		var s:sys.net.Socket = null;
-		var tryCounter:Int = 3;
-		var timeout:Int = 7;
 		while (true) try {
 			s = new sys.net.Socket();
 			s.connect(new sys.net.Host('127.0.0.1'), port);
 			return s;
 		} catch (e:Any) {
-			Sys.stderr().writeString(Std.string(e));
-			if (tryCounter-- <= 0) {
-				Sys.exit(1);
-			} else {
-				Sys.println('');
-				Sys.println('Connect error, try again after $timeout sec...');
-				Sys.sleep(timeout);
-				if (lastCompilationOptions != null) {
-					var lco = lastCompilationOptions;
-					lastCompilationOptions = null;
-					runCompilation(lco.command, lco.debug, lco.compiler);
-				}
-			}
+			compilationServerError(Std.string(e));
 		}
 		return null;
+	}
+
+	private function compilationServerError(s:String):Void {
+		Sys.stderr().writeString(s);
+		if (tryCounter-- <= 0) {
+			Sys.exit(1);
+		} else {
+			Sys.println('');
+			Sys.println('Connect error, try again after $TIMEOUT sec...');
+			Sys.sleep(TIMEOUT);
+			if (lastCompilationOptions != null) {
+				var lco = lastCompilationOptions;
+				lastCompilationOptions = null;
+				runCompilation(lco.command, lco.debug, lco.compiler);
+			}
+		}
 	}
 
 	private function checkCompilation():Void {

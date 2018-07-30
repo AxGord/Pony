@@ -56,7 +56,10 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 		php.Web.setHeader('Content-Length', Std.string(file.size));
 		untyped __call__('readfile', file.firstExists);
 		untyped __call__('exit');
-		
+	}
+
+	public function sendBytes(bytes:Bytes):Void {
+		throw 'Unsupported';
 	}
 	
 	override public function endAction():Void {

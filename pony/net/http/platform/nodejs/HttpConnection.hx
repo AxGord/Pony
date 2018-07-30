@@ -30,6 +30,7 @@ import js.node.Fs;
 import js.node.fs.Stats;
 import js.node.http.IncomingMessage;
 import js.node.http.ServerResponse;
+import haxe.io.Bytes;
 import pony.fs.File;
 import pony.net.http.Cookie;
 import pony.net.http.IHttpConnection;
@@ -95,6 +96,11 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 				_send(req, f).pipe(res);
 			}
 		});
+	}
+
+	public function sendBytes(bytes:Bytes):Void {
+		writeCookie();
+		res.end(new Buffer(bytes.getData()));
 	}
 	
 	override public function goto(url:String):Void {

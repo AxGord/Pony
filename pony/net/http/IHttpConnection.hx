@@ -23,12 +23,13 @@
 **/
 package pony.net.http;
 
+import haxe.io.Bytes;
 import pony.fs.File;
+
 /**
  * IHttpConnection
  * @author AxGord
  */
-
 interface IHttpConnection
 {
 	var method:String;
@@ -44,6 +45,7 @@ interface IHttpConnection
 	var end:Bool;
 	
 	function sendFile(file:File):Void;
+	function sendBytes(bytes:Bytes):Void;
 	function sendFileOrIndexHtml(path:String):Void;
 	function endAction():Void;
 	function goto(url:String):Void;
