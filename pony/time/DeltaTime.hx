@@ -22,9 +22,7 @@
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
 package pony.time;
-#if nodejs
-import js.Node;
-#end
+
 import pony.events.*;
 import pony.magic.HasSignal;
 
@@ -119,7 +117,7 @@ class DeltaTime implements HasSignal {
 	}
 	#end
 	
-	#if nodejs
+	#if (nodejs && nodedt)
 	private static var imm:Dynamic;
 	private static function __init__():Void {
 		createSignals();

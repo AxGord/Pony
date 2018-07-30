@@ -143,10 +143,10 @@ class HttpConnection implements HasAbstract
 	public function sendFileOrIndexHtml(f:String):Void {
 		if (FileSystem.exists(f)) {
 			if (FileSystem.isDirectory(f)) {
-				if (FileSystem.exists(f+indexFileShort))
-					sendFile(f+indexFileShort);
-				else if (FileSystem.exists(f+indexFile))
-					sendFile(f+indexFile);
+				if (FileSystem.exists(f + indexFileShort))
+					sendFile(f + indexFileShort);
+				else if (FileSystem.exists(f + indexFile))
+					sendFile(f + indexFile);
 				else
 					notfound();
 			} else {
