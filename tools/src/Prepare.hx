@@ -59,7 +59,6 @@ class Prepare {
 
 		if (!Flags.NOTP && xml.hasNode.texturepacker)
 			new Texturepacker(xml.node.texturepacker, app, debug);
-		
 			
 		//if (xml.hasNode.build) try {
 		//	new Build(xml, app, debug).writeConfigIfNeed();

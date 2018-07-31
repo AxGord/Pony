@@ -42,6 +42,7 @@ class HttpServer
 	public static var querystring:Dynamic = Node.require('querystring');
 	
 	private static var spdy(get, never):Dynamic;
+
 	private var server:Server;
 	private var spdyServer:Dynamic;
 	public var storage:ServersideStorage;
@@ -51,15 +52,16 @@ class HttpServer
 	public function new(host:String=null, port:Int=80, ?spdyConf:Dynamic)
 	{
 		server = Http.createServer(listen);
+		server.on('error', errorHandler);
 		server.listen(port, host, createHandler);
 		storage = new ServersideStorage();
 		
 		if (spdyConf != null) {
 			trace(spdyConf);
 			var options = {
-			  key: Fs.readFileSync(Node.__dirname + '/keys/spdy-key.pem'),
-			  cert: Fs.readFileSync(Node.__dirname + '/keys/spdy-cert.pem'),
-			  ca: Fs.readFileSync(Node.__dirname + '/keys/spdy-csr.pem')
+				key: Fs.readFileSync(Node.__dirname + '/keys/spdy-key.pem'),
+				cert: Fs.readFileSync(Node.__dirname + '/keys/spdy-cert.pem'),
+				ca: Fs.readFileSync(Node.__dirname + '/keys/spdy-csr.pem')
 			};
 			
 			spdyServer = spdy.createServer(options, listen).listen(spdyConf.hasField('port') ? spdyConf.port : 443, createSpdyHandler);
@@ -140,19 +142,36 @@ class HttpServer
 				res.end();
 		}
 	}
+
+	public dynamic function onOpen():Void {}
+	public dynamic function onError():Void {}
 	
 	private function createHandler():Void {
 		var a:Dynamic = untyped server.address();
 		trace('HTTP Server running at http://' + a.address + ':' + a.port);
+		onOpen();
 	}
 	
 	private function createSpdyHandler():Void {
 		var a:Dynamic = untyped spdyServer.address();
 		trace('SPDY Server running at http://' + a.address + ':' + a.port);
+		onOpen();
 	}
+
+	private function errorHandler():Void onError();
 	
 	public dynamic function request(connection:IHttpConnection):Void {
 		connection.sendText('Welcome from Pony Http Server');
+	}
+
+	public function close(?cb:Void -> Void):Void {
+		server.close(cb);
+		server = null;
+		if (spdyServer != null) {
+			spdyServer.close();
+			spdyServer = null;
+		}
+		storage = null;
 	}
 	
 }
