@@ -38,6 +38,10 @@ class Bmfont extends NModule<BmfontConfig> {
 		initSections(PRIORITY, BASection.Prepare);
 	}
 
+	override public function run(cfg:BmfontConfig):Void {
+		if (!Flags.NOFNT) super.run(cfg);
+	}
+
 	override private function readConfig(ac:AppCfg):Void {
 		for (xml in nodes)
 			new BmfontReader(xml, {
