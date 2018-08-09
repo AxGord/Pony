@@ -30,6 +30,7 @@ import pixi.loaders.Resource;
 import pixi.plugins.spine.Spine;
 import pixi.plugins.spine.core.SkeletonData;
 import pony.ui.AssetManager;
+import pony.JsTools;
 
 /**
  * PixiAssets
@@ -62,6 +63,7 @@ class PixiAssets {
 				loader.add(asset, AssetManager.getPath(asset), { loadType: 2 }, s.loadHandler);
 			}
 		} else if (['frag', '.txt'].indexOf(asset.substr( -4)) != -1) {
+			asset = linuxReplace(asset);
 			if (!texts.exists(asset)) {
 				loader.add(asset, AssetManager.getPath(asset), { loadType: 0 }, function(r:Resource):Void {
 					texts[asset] = r.data;
@@ -77,6 +79,13 @@ class PixiAssets {
 			loader.add(asset, AssetManager.getPath(asset));
 		}
 		loader.load(cb);
+	}
+
+	public static function linuxReplace(asset:String):String {
+		if (JsTools.os.equals(OS.Linux(Ubuntu)) || JsTools.os.equals(OS.Linux(Other)))
+			return StringTools.replace(asset, '{linux}', '_linux');
+		else
+			return StringTools.replace(asset, '{linux}', '');
 	}
 	
 	public static function loadSpine(asset:String, cb:SkeletonData->Void):Void {
