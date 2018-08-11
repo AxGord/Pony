@@ -30,6 +30,7 @@ import pixi.core.Application.ApplicationOptions;
 import pixi.core.Pixi.RendererType;
 import pixi.core.sprites.Sprite;
 import pixi.core.ticker.Ticker;
+import pixi.core.graphics.Graphics;
 import pony.events.Signal0;
 import pony.events.Signal1;
 import pony.geom.Point;
@@ -97,6 +98,8 @@ class App implements HasSignal {
 
 	public var scale(default, null):Float;
 	public var resolution(get, never):Point<Int>;
+
+	private var border:Graphics;
 	
 	/**
 	 * @param	smallDeviceQuality - 1 ideal, 2 - low, 3 - normal, 4 - good
@@ -189,6 +192,22 @@ class App implements HasSignal {
 		JsDT.render = render;
 		
 		#if stats addStats(); #end
+	}
+
+	public function drawBorders(?color:UInt):Void {
+		border = new Graphics();
+		border.beginFill(color == null ? background : color);
+		var w:Int = _width * 2;
+		var h:Int = _height * 2;
+		border.drawRect(-w, -h, w, h * 3);
+		border.drawRect(_width, -h, w, h * 3);
+		border.drawRect(-w, -h, w * 3, h);
+		border.drawRect(-w, _height, w * 3, h);
+		container.addChild(border);
+	}
+
+	public inline function borderup():Void {
+		container.addChild(border);
 	}
 	
 	@:extern private inline function get_resolution():Point<Int> return new Point(_width, _height);

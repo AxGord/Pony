@@ -56,6 +56,8 @@ abstract Point<T:Float>(Point_<T>) from Point_<T> to Point_<T> to Point<Float> {
 
 	@:op(A - B) inline static public function sub1<T:Float>(lhs:Point<T>, rhs:T):Point<T>
 		return { x:lhs.x - rhs, y:lhs.y - rhs };
+
+	public static inline function random():Point<Float> return new Point<Float>(Math.random(), Math.random());
 }
 
 abstract IntPoint(Point_ < Int > ) to Point_ < Int > from Point_ < Int > {
