@@ -49,11 +49,11 @@ class HttpServer
 	
 	inline private static function get_spdy():Dynamic return Node.require('spdy');
 	
-	public function new(host:String=null, port:Int=80, ?spdyConf:Dynamic)
+	public function new(host:String = null, port:Int = 80, ?spdyConf:Dynamic)
 	{
 		server = Http.createServer(listen);
 		server.on('error', errorHandler);
-		server.listen(port, host, createHandler);
+		Node.process.nextTick(function() server.listen(port, host, createHandler));
 		storage = new ServersideStorage();
 		
 		if (spdyConf != null) {
@@ -165,7 +165,10 @@ class HttpServer
 	}
 
 	public function close(?cb:Void -> Void):Void {
-		server.close(cb);
+		Node.process.nextTick(cb); //How detect closed server???
+		server.removeAllListeners();
+		server.close();
+		server.unref();
 		server = null;
 		if (spdyServer != null) {
 			spdyServer.close();
