@@ -21,12 +21,14 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
+
 import haxe.xml.Fast;
 import pony.text.XmlConfigReader;
+import pony.text.TextTools;
 
 private typedef TPConfig = { > BaseConfig, > TPUnit,
-	from:String,
-	to:String
+	from: String,
+	to: String
 }
 
 private typedef TPUnit = {
@@ -35,7 +37,8 @@ private typedef TPUnit = {
 	?datascale: Float,
 	quality: Float,
 	input: Array<String>,
-	output: String
+	output: String,
+	rotation: Bool
 }
 
 class Texturepacker {
@@ -52,55 +55,75 @@ class Texturepacker {
 			quality: 1,
 			from: '',
 			to: '',
+			rotation: true,
 			input: [],
 			output: null
 		}, configHandler);
 
 		for (unit in units) {
-			var command = unit.input.copy();
+
 			var format = unit.format.split(' ');
-			command.push('--format');
-			command.push(format[0]);
-			
-			var outExt = switch format[0] {
-				case 'phaser-json-array', 'phaser-json-hash', 'pixijs': 'json';
-				case f: f;
-			}
+			var f:String = format.shift();
 
-			var datafile = unit.output + '.' + outExt;
-			command.push('--data');
-			command.push(datafile);
+			var first:Bool = true;
+			for (s in format) {
+				var command = unit.input.copy();
 
-			command.push('--sheet');
-			command.push(unit.output + '.' + format[1]);
+				command.push('--format');
+				command.push(f);
+				
+				var outExt = switch f {
+					case 'phaser-json-array', 'phaser-json-hash', 'pixijs': 'json';
+					case f: f;
+				}
 
-			command.push('--scale');
-			command.push(Std.string(unit.scale));
+				var datafile = unit.output + (first ? '' : '_$s') + '.' + outExt;
+				command.push('--data');
+				command.push(datafile);
+				
+				command.push('--sheet');
+				command.push(unit.output + '.' + s);
 
-			switch format[1] {
-				case 'png':
-					command.push('--png-opt-level');
-					command.push('7');
-				case 'jpg':
-					command.push('--jpg-quality');
-					command.push(Std.string(Std.int(unit.quality * 100)));
-				case _:
-			}
+				command.push('--scale');
+				command.push(Std.string(unit.scale));
 
-			command.push('--force-squared');
+				command.push('--scale-mode');
+				command.push('Smooth');
 
-			command.push('--pack-mode');
-			command.push('Best');
+				command.push(unit.rotation ? '--enable-rotation' : '--disable-rotation');
 
-			Utils.command('TexturePacker', command);
-
-			if (unit.datascale != null) {
-				switch outExt {
-					case 'json':
-						pony.text.TextTools.betweenReplaceFile(datafile, '"scale": "', '",', Std.string(unit.datascale));
+				switch format[1] {
+					case 'png':
+						command.push('--png-opt-level');
+						command.push('7');
+					case 'jpg':
+						command.push('--jpg-quality');
+						command.push(Std.string(Std.int(unit.quality * 100)));
 					case _:
 				}
+
+				command.push('--force-squared');
+
+				command.push('--pack-mode');
+				command.push('Best');
+
+				command.push('--algorithm');
+				command.push('MaxRects');
+
+				command.push('--maxrects-heuristics');
+				command.push('Best');
+
+				Utils.command('TexturePacker', command);
+
+				if (unit.datascale != null) {
+					switch outExt {
+						case 'json':
+							pony.text.TextTools.betweenReplaceFile(datafile, '"scale": "', '",', Std.string(unit.datascale));
+						case _:
+					}
+				}
 				
+				first = false;
 			}
 
 		}
@@ -114,7 +137,8 @@ class Texturepacker {
 			datascale: cfg.datascale,
 			quality: cfg.quality,
 			input: [for (e in cfg.input) cfg.from + e],
-			output: cfg.to + cfg.output
+			output: cfg.to + cfg.output,
+			rotation: cfg.rotation
 		});
 	}
 	
@@ -142,6 +166,7 @@ private class Path extends XmlConfigReader<TPConfig> {
 			case 'quality': cfg.quality = Std.parseFloat(val);
 			case 'from': cfg.from += val;
 			case 'to': cfg.to += val;
+			case 'rotation': cfg.rotation = !TextTools.isFalse(val);
 			case _:
 		}
 	}

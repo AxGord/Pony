@@ -25,6 +25,7 @@ package pony;
 
 import haxe.Constraints.Function;
 import js.Browser;
+import js.html.CanvasElement;
 import js.html.DOMElement;
 
 enum UserAgent {
@@ -61,6 +62,7 @@ class JsTools implements pony.magic.HasSignal {
 	
 	public static var isMobile(get, never):Bool;
 	public static var isFSE(get, never):Bool;
+	public static var webp(get, never):Bool;
 	
 	/**
 	 *  https://github.com/jfriend00/docReady
@@ -70,6 +72,7 @@ class JsTools implements pony.magic.HasSignal {
 	private static var _agent:UserAgent;
 	private static var _os:OS;
 	private static var _isa:ISA;
+	private static var _webp:Null<Bool>;
 	
 	private static var logFunction:Function;
 	
@@ -96,6 +99,11 @@ class JsTools implements pony.magic.HasSignal {
 	}
 
 	public static function abortEvent(e:js.html.Event):Void e.preventDefault();
+
+	public static function get_webp():Bool {
+		return _webp != null ? _webp : _webp =
+		cast(Browser.document.createElement('canvas'), CanvasElement).toDataURL('image/webp').indexOf('data:image/webp') == 0;
+	}
 
 	private static function get_agent():UserAgent {
 		if (_agent != null) return _agent;

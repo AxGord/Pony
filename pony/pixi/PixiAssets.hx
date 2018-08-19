@@ -70,12 +70,14 @@ class PixiAssets {
 				});
 			}
 		} else if (['json'].indexOf(asset.substr( -4)) != -1) {
+			asset = webpReplace(asset);
 			if (!jsons.exists(asset)) {
 				loader.add(asset, AssetManager.getPath(asset), { loadType: 0 }, function(r:Resource):Void {
 					jsons[asset] = r.data;
 				});
 			}
 		} else {
+			asset = webpReplace(asset);
 			loader.add(asset, AssetManager.getPath(asset));
 		}
 		loader.load(cb);
@@ -86,6 +88,10 @@ class PixiAssets {
 			return StringTools.replace(asset, '{linux}', '_linux');
 		else
 			return StringTools.replace(asset, '{linux}', '');
+	}
+
+	public static inline function webpReplace(asset:String):String {
+		return StringTools.replace(asset, '{webp}', JsTools.webp ? '_webp' : '');
 	}
 	
 	public static function loadSpine(asset:String, cb:SkeletonData->Void):Void {
