@@ -31,6 +31,7 @@ class Bmfont {
 	private var to:String;
 
 	public function new(cfg:BmfontConfig) {
+		if (cfg == null) return;
 		to = cfg.to;
 		Utils.createPath(to);
 		for (font in cfg.font)

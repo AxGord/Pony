@@ -109,6 +109,8 @@ class Main {
 		modules.register(new module.Hash());
 		modules.register(new module.Zip());
 		modules.register(new module.Bmfont());
+		modules.register(new module.Imagemin());
+		modules.register(new module.Copy());
 		modules.init();
 
 		commands.onNothing < showLogo;

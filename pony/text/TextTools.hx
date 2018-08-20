@@ -231,4 +231,7 @@ class TextTools {
 		return i == -1 ? new SPair(s, null) : new SPair(s.substr(0, i), s.substr(i + 1));
 	}
 
+	public static function addToStringsEnd(s:Array<String>, v:String):Array<String> return [for (e in s) e + v];
+	public static function addToStringsBegin(s:Array<String>, v:String):Array<String> return [for (e in s) v + e];
+
 }

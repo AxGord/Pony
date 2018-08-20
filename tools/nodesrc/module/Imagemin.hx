@@ -21,19 +21,40 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-import haxe.io.Bytes;
-import hxbit.Serializer;
-import pony.Tools;
+package module;
 
-class NMain {
+import pony.NPM;
+import types.ImageminConfig;
 
-	private static function main():Void {
-		var args = Sys.args();
-		var b:Bytes = Tools.hexToBytes(args.pop());
-		var serializer:Serializer = new Serializer();
-		var np:NProtocol = serializer.unserialize(b, NProtocol);
-		new module.Bmfont(np.bmfont);
-		new module.Imagemin(np.imagemin);
+using pony.text.TextTools;
+
+class Imagemin {
+
+	public function new(cfg:ImageminConfig) {
+		if (cfg == null) return;
+		var from:Array<String> = cfg.from.split(',').map(StringTools.trim).addToStringsEnd('*.');
+		Sys.println('From: ' + from);
+		NPM.imagemin(from.addToStringsEnd('jpg'), cfg.to, {
+			plugins: [
+				NPM.imagemin_jpegtran()
+			]
+		}).then(completeHandler);
+		NPM.imagemin(from.addToStringsEnd('png'), cfg.to, {
+			plugins: [
+				NPM.imagemin_pngquant(cfg.pngq != null ? {quality: cfg.pngq} : {})
+			]
+		}).then(completeHandler);
+		NPM.imagemin(from.addToStringsEnd('webp'), cfg.to, {
+			plugins: [
+				NPM.imagemin_webp({
+					nearLossless: cfg.webpq
+				})
+			]
+		}).then(completeHandler);
+	}
+
+	private function completeHandler(r:Array<{data:Dynamic, path:String}>):Void {
+		for (e in r) Sys.println(e.path);
 	}
 
 }

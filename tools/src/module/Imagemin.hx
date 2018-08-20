@@ -21,19 +21,58 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-import haxe.io.Bytes;
-import hxbit.Serializer;
-import pony.Tools;
+package module;
 
-class NMain {
+import haxe.xml.Fast;
+import types.BASection;
+import types.ImageminConfig;
 
-	private static function main():Void {
-		var args = Sys.args();
-		var b:Bytes = Tools.hexToBytes(args.pop());
-		var serializer:Serializer = new Serializer();
-		var np:NProtocol = serializer.unserialize(b, NProtocol);
-		new module.Bmfont(np.bmfont);
-		new module.Imagemin(np.imagemin);
+class Imagemin extends NModule<ImageminConfig> {
+
+	private static inline var PRIORITY:Int = 22;
+
+	public function new() super('imagemin');
+
+	override public function init():Void {
+		if (xml == null) return;
+		initSections(PRIORITY, BASection.Prepare);
+	}
+
+	override private function readConfig(ac:AppCfg):Void {
+		for (xml in nodes)
+			new ImageminReader(xml, {
+				debug: ac.debug,
+				app: ac.app,
+				before: false,
+				section: BASection.Prepare,
+				from: '',
+				to: '',
+				webpq: 50
+			}, configHandler);
+	}
+
+	override private function writeCfg(cfg:ImageminConfig):Void {
+		protocol.imagemin = cfg;
+	}
+
+}
+
+private class ImageminReader extends BAReader<ImageminConfig> {
+
+	override private function clean():Void {
+		cfg.from = '';
+		cfg.to = '';
+		cfg.pngq = null;
+	}
+
+	override private function readAttr(name:String, val:String):Void {
+		switch name {
+			case 'from': cfg.from = val;
+			case 'to': cfg.to = val;
+			case 'pngq': cfg.pngq = Std.parseInt(val);
+			case 'webpq': cfg.webpq = Std.parseInt(val);
+			case _:
+		}
 	}
 
 }

@@ -41,13 +41,20 @@ abstract Dir(Unit) from Unit {
 		if (v.isFile) throw 'This is not directory';
 		this = v;
 	}
+
+	private static function checkFilter(filter:Array<String>, unit:String):Bool {
+		if (filter == null) return true;
+		for (f in filter) if (unit.substr( -f.length) == f) return true;
+		return false;
+	}
 		
 	public function content(?filter:String, allowDir:Bool = false):Array<Unit> {
 		var result:Map<String, Unit> = new Map<String, Unit>();
+		var flt:Array<String> = filter == null ? null : filter.split(' ');
 		for (d in this) {
 			if (d.exists) for (e in FileSystem.readDirectory(d.first)) {
 				if (!result.exists(e) &&
-						(filter == null || e.substr( -filter.length) == filter ||
+						(checkFilter(flt, e) ||
 						(allowDir && FileSystem.isDirectory(d + '/' + e))))
 					result[e] = [for (d in this.wayStringIterator()) d + '/' + e];
 			}
@@ -89,6 +96,13 @@ abstract Dir(Unit) from Unit {
 		}
 		
 		return result;
+	}
+
+	public function copyTo(to:Dir, ?filter:String):Void {
+		for (f in contentRecursiveFiles(filter)) {
+			var w:String = f.fullDir.first.substr(first.length);
+			f.copyTo(to + w);
+		}
 	}
 	
 	public function file(name:String):File return addString(name);

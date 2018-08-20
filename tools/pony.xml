@@ -8,6 +8,10 @@
         <module>ftp</module>
         <module>http-proxy</module>
         <module>msdf-bmfont-xml</module>
+        <module>imagemin</module>
+        <module>imagemin-jpegtran</module>
+        <module>imagemin-pngquant</module>
+        <module>imagemin-webp</module>
     </npm>
 
 </project>

@@ -25,6 +25,7 @@ class NProtocol implements hxbit.Serializable {
 
 	@:s public var remote:types.RemoteConfig;
 	@:s public var bmfont:types.BmfontConfig;
+	@:s public var imagemin:types.ImageminConfig;
 
 	public function new() {}
 

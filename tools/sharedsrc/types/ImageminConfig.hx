@@ -21,19 +21,11 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-import haxe.io.Bytes;
-import hxbit.Serializer;
-import pony.Tools;
+package types;
 
-class NMain {
-
-	private static function main():Void {
-		var args = Sys.args();
-		var b:Bytes = Tools.hexToBytes(args.pop());
-		var serializer:Serializer = new Serializer();
-		var np:NProtocol = serializer.unserialize(b, NProtocol);
-		new module.Bmfont(np.bmfont);
-		new module.Imagemin(np.imagemin);
-	}
-
+typedef ImageminConfig = { > BAConfig,
+	from: String,
+	to: String,
+	?pngq: Int,
+	webpq: Int
 }

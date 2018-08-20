@@ -32,7 +32,7 @@ import types.BASection;
  */
 class Module extends pony.Logable implements pony.magic.HasAbstract {
 
-	private static inline var CONFIG_PRIORITY:Int = -20;
+	private static inline var CONFIG_PRIORITY:Int = -100;
 
 	public var modules:Modules;
 	private var xml(get, never):Fast;
@@ -87,14 +87,14 @@ class Module extends pony.Logable implements pony.magic.HasAbstract {
 		addListeners(priority, moduleBefore, moduleAfter);
 		
 		if (current != null) switch current {
-			case Server: modules.commands.onServer < moduleStart;
-			case Prepare: modules.commands.onPrepare < moduleStart;
-			case Build: modules.commands.onBuild < moduleStart;
-			case Run: modules.commands.onRun < moduleStart;
-			case Zip: modules.commands.onZip < moduleStart;
-			case Remote: modules.commands.onRemote < moduleStart;
-			case Hash: modules.commands.onHash < moduleStart;
-			case Unpack: modules.commands.onUnpack < moduleStart;
+			case Server: modules.commands.onServer.once(moduleStart, priority);
+			case Prepare: modules.commands.onPrepare.once(moduleStart, priority);
+			case Build: modules.commands.onBuild.once(moduleStart, priority);
+			case Run: modules.commands.onRun.once(moduleStart, priority);
+			case Zip: modules.commands.onZip.once(moduleStart, priority);
+			case Remote: modules.commands.onRemote.once(moduleStart, priority);
+			case Hash: modules.commands.onHash.once(moduleStart, priority);
+			case Unpack: modules.commands.onUnpack.once(moduleStart, priority);
 		}
 	}
 
