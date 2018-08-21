@@ -38,7 +38,8 @@ private typedef TPUnit = {
 	quality: Float,
 	input: Array<String>,
 	output: String,
-	rotation: Bool
+	rotation: Bool,
+	?trim: String
 }
 
 class Texturepacker {
@@ -113,6 +114,34 @@ class Texturepacker {
 				command.push('--maxrects-heuristics');
 				command.push('Best');
 
+				if (unit.trim != null) {
+					var a:Array<String> = unit.trim.split(' ');
+					if (a.length == 2) {
+						var v:Int = Std.parseInt(a[0]);
+						if (Std.string(v) == a[0]) {
+							command.push('--trim-mode');
+							command.push(a[1]);
+							command.push('--trim-threshold');
+							command.push(Std.string(v));
+						} else {
+							var v:Int = Std.parseInt(a[1]);
+							command.push('--trim-mode');
+							command.push(a[0]);
+							command.push('--trim-threshold');
+							command.push(Std.string(v));
+						}
+					} else if (a.length == 1) {
+						var v:Int = Std.parseInt(a[0]);
+						if (Std.string(v) == a[0]) {
+							command.push('--trim-threshold');
+							command.push(Std.string(v));
+						} else {
+							command.push('--trim-mode');
+							command.push(a[0]);
+						}
+					}
+				}
+
 				Utils.command('TexturePacker', command);
 
 				if (unit.datascale != null) {
@@ -138,7 +167,8 @@ class Texturepacker {
 			quality: cfg.quality,
 			input: [for (e in cfg.input) cfg.from + e],
 			output: cfg.to + cfg.output,
-			rotation: cfg.rotation
+			rotation: cfg.rotation,
+			trim: cfg.trim
 		});
 	}
 	
@@ -167,6 +197,7 @@ private class Path extends XmlConfigReader<TPConfig> {
 			case 'from': cfg.from += val;
 			case 'to': cfg.to += val;
 			case 'rotation': cfg.rotation = !TextTools.isFalse(val);
+			case 'trim': cfg.trim = StringTools.trim(val);
 			case _:
 		}
 	}
