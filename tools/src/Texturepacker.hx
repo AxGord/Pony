@@ -133,6 +133,8 @@ class Texturepacker {
 					} else if (a.length == 1) {
 						var v:Int = Std.parseInt(a[0]);
 						if (Std.string(v) == a[0]) {
+							command.push('--trim-mode');
+							command.push('Trim');
 							command.push('--trim-threshold');
 							command.push(Std.string(v));
 						} else {
