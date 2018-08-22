@@ -35,7 +35,7 @@ import types.BASection;
  */
 class Copy extends Module {
 
-	private static inline var PRIORITY:Int = 25;
+	private static inline var PRIORITY:Int = 21;
 
 	private var beforeDirs:Map<BASection, Array<String>> = new Map();
 	private var beforeUnits:Map<BASection, Array<String>> = new Map();
@@ -88,7 +88,7 @@ class Copy extends Module {
 			log('Copy file: $u');
 			var unit:Unit = cast u;
 			if (unit.isFile)
-				(unit:File).copyTo(to);
+				(unit:File).copyToDir(to);
 			else
 				error('Is not file!');
 		}

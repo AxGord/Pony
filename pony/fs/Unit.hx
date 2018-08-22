@@ -111,7 +111,7 @@ abstract Unit(Priority<String>) {
 	
 	@:arrayAccess public inline function arrayAccess(key:Int):Unit return this.data[key];
 	
-	@:op(A + B) inline public function addString(a:String):Unit return [for (e in this) e + '/' + a];
+	@:op(A + B) inline public function addString(a:String):Unit return [for (e in this) e + (a.indexOf('/') == 0 ? '' : '/') + a];
 
 	@:extern public inline function delete():Void {
 		if (isDir)
@@ -121,7 +121,7 @@ abstract Unit(Priority<String>) {
 	}
 
 	private static function removeLastSlash(v:String):String {
-		return v.substr(-1) == '/' ?  v.substr(0, -1) : v;
+		return v.substr(-1) == '/' ? removeLastSlash(v.substr(0, -1)) : v;
 	}
 
 }

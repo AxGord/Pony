@@ -80,8 +80,14 @@ abstract File(Unit) from Unit {
 	
 	inline private function get_ext():String return first.split('.').pop();
 	
-	inline public function copyTo(to:Unit):Void {
-		var to:File = to.isDir ? to + name : to;
+	inline public function copyToFile(to:Unit):Void {
+		var to:File = to.file;
+		to.createWays();
+		sys.io.File.copy(first, to.first);
+	}
+
+	inline public function copyToDir(to:Unit):Void {
+		var to:File = to + name;
 		to.createWays();
 		sys.io.File.copy(first, to.first);
 	}

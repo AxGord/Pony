@@ -24,6 +24,8 @@
 package module;
 
 import pony.NPM;
+import pony.fs.Dir;
+import pony.fs.File;
 import types.ImageminConfig;
 
 using pony.text.TextTools;
@@ -34,23 +36,55 @@ class Imagemin {
 		if (cfg == null) return;
 		var from:Array<String> = cfg.from.split(',').map(StringTools.trim).addToStringsEnd('*.');
 		Sys.println('From: ' + from);
-		NPM.imagemin(from.addToStringsEnd('jpg'), cfg.to, {
-			plugins: [
-				NPM.imagemin_jpegtran()
-			]
-		}).then(completeHandler);
-		NPM.imagemin(from.addToStringsEnd('png'), cfg.to, {
-			plugins: [
-				NPM.imagemin_pngquant(cfg.pngq != null ? {quality: cfg.pngq} : {})
-			]
-		}).then(completeHandler);
-		NPM.imagemin(from.addToStringsEnd('webp'), cfg.to, {
-			plugins: [
-				NPM.imagemin_webp({
-					nearLossless: cfg.webpq
-				})
-			]
-		}).then(completeHandler);
+		var formats:Array<String> = cfg.format == null ? ['jpg', 'png', 'webp'] : cfg.format.split(',').map(StringTools.trim);
+		Sys.println('Formats: ' + formats.join(', '));
+		if (formats.indexOf('jpg') != -1) {
+			NPM.imagemin(from.addToStringsEnd('jpg'), cfg.to, {
+				plugins: [
+					NPM.imagemin_jpegtran()
+				]
+			}).then(completeHandler);
+		}
+		if (formats.indexOf('png') != -1) {
+			NPM.imagemin(from.addToStringsEnd('png'), cfg.to, {
+				plugins: [
+					NPM.imagemin_pngquant(cfg.pngq != null ? {quality: cfg.pngq} : {})
+				]
+			}).then(completeHandler);
+		}
+		if (formats.indexOf('webp') != -1 || (cfg.webpfrompng && formats.indexOf('png') != -1)) {
+			if (cfg.webpfrompng) {
+				//Fnt helper
+				var ext:String = '.fnt';
+				for (file in from) {
+					var d:Dir = file.substr(0, -2);
+					for (u in d.content(ext)) {
+						var f:File = u.file;
+						var nf:File = cfg.to + f.shortName + '_webp' + ext;
+						nf.createWays();
+						nf.content = StringTools.replace(f.content, '"' + f.shortName + '.png"', '"' + f.shortName + '.webp"');
+					}
+				}
+				//json helper
+				var ext:String = '.json';
+				for (file in from) {
+					var d:Dir = file.substr(0, -2);
+					for (u in d.content(ext)) {
+						var f:File = u.file;
+						var nf:File = cfg.to + f.shortName + '_webp' + ext;
+						nf.createWays();
+						nf.content = StringTools.replace(f.content, '"' + f.shortName + '.png"', '"' + f.shortName + '.webp"');
+					}
+				}
+			}
+			NPM.imagemin(from.addToStringsEnd(cfg.webpfrompng ? '{png,webp}' : 'webp'), cfg.to, {
+				plugins: [
+					NPM.imagemin_webp({
+						nearLossless: cfg.webpq
+					})
+				]
+			}).then(completeHandler);
+		}
 	}
 
 	private function completeHandler(r:Array<{data:Dynamic, path:String}>):Void {

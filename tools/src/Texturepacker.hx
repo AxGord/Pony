@@ -25,10 +25,13 @@
 import haxe.xml.Fast;
 import pony.text.XmlConfigReader;
 import pony.text.TextTools;
+import pony.fs.File;
+import pony.fs.Dir;
 
 private typedef TPConfig = { > BaseConfig, > TPUnit,
 	from: String,
-	to: String
+	to: String,
+	?clean: Bool
 }
 
 private typedef TPUnit = {
@@ -45,6 +48,7 @@ private typedef TPUnit = {
 class Texturepacker {
 
 	private var units:Array<TPUnit> = [];
+	private var clean:Bool;
 
 	public function new(xml:Fast, app:String, debug:Bool) {
 		if (pony.text.XmlTools.isTrue(xml, 'disabled')) return;
@@ -60,6 +64,9 @@ class Texturepacker {
 			input: [],
 			output: null
 		}, configHandler);
+
+		var ignoreList:Array<String> = [];
+		var toList:Array<String> = [];
 
 		for (unit in units) {
 
@@ -82,8 +89,15 @@ class Texturepacker {
 				command.push('--data');
 				command.push(datafile);
 				
+				var sheetfile = unit.output + '.' + s;
 				command.push('--sheet');
-				command.push(unit.output + '.' + s);
+				command.push(sheetfile);
+
+				if (clean) {
+					ignoreList.push(datafile);
+					ignoreList.push(sheetfile);
+					toList.push((datafile:File).fullDir);
+				}
 
 				command.push('--scale');
 				command.push(Std.string(unit.scale));
@@ -159,6 +173,31 @@ class Texturepacker {
 
 		}
 
+		if (clean) {
+			var remList:Array<String> = toList.copy();
+			for (a in toList) {
+				for (b in toList) {
+					if (a.length > b.length) {
+						if (a.indexOf(b) == 0) remList.remove(a);
+					} 
+				}
+			}
+
+			Sys.println('Clean pathes: ' + remList.join(', '));
+			Sys.println('Ignores: ' + ignoreList.join(', '));
+
+			for (p in remList) {
+				var d:Dir = p;
+				for (f in d.contentRecursiveFiles()) {
+					if (ignoreList.indexOf(f.first) == -1) {
+						Sys.println('Delete file: ' + f.first);
+						f.delete();
+					}
+				}
+			}
+
+		}
+
 	}
 
 	private function configHandler(cfg:TPConfig):Void {
@@ -172,6 +211,7 @@ class Texturepacker {
 			rotation: cfg.rotation,
 			trim: cfg.trim
 		});
+		clean = cfg.clean;
 	}
 	
 }
@@ -200,6 +240,7 @@ private class Path extends XmlConfigReader<TPConfig> {
 			case 'to': cfg.to += val;
 			case 'rotation': cfg.rotation = !TextTools.isFalse(val);
 			case 'trim': cfg.trim = StringTools.trim(val);
+			case 'clean': cfg.clean = TextTools.isTrue(val);
 			case _:
 		}
 	}

@@ -26,6 +26,8 @@ package types;
 typedef ImageminConfig = { > BAConfig,
 	from: String,
 	to: String,
+	?format: String,
 	?pngq: Int,
-	webpq: Int
+	webpq: Int,
+	webpfrompng: Bool
 }
