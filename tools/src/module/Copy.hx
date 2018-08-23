@@ -33,47 +33,31 @@ import types.BASection;
  * Copy module
  * @author AxGord <axgord@gmail.com>
  */
-class Copy extends Module {
+class Copy extends CfgModule<CopyConfig> {
 
 	private static inline var PRIORITY:Int = 21;
 
-	private var beforeDirs:Map<BASection, Array<String>> = new Map();
-	private var beforeUnits:Map<BASection, Array<String>> = new Map();
-	private var afterDirs:Map<BASection, Array<String>> = new Map();
-	private var afterUnits:Map<BASection, Array<String>> = new Map();
-	private var beforeFilter:Map<BASection, String> = new Map();
-	private var afterFilter:Map<BASection, String> = new Map();
-	private var beforeTo:Map<BASection, String> = new Map();
-	private var afterTo:Map<BASection, String> = new Map();
-
 	public function new() super('copy');
 	
-	override public function init():Void {
-		if (xml == null) return;
-		addConfigListener();
-		addListeners(PRIORITY, before, after);
-	}
+	override public function init():Void initSections(PRIORITY, BASection.Prepare);
 
 	override private function readConfig(ac:AppCfg):Void {
-		new CopyReader(xml, {
-			debug: ac.debug,
-			app: ac.app,
-			before: false,
-			section: Prepare,
-			dirs: [],
-			units: [],
-			to: ''
-		}, configHandler);
+		for (xml in nodes) {
+			new CopyReader(xml, {
+				debug: ac.debug,
+				app: ac.app,
+				before: false,
+				section: Prepare,
+				dirs: [],
+				units: [],
+				to: ''
+			}, configHandler);
+		}
 	}
 
-	private function before(section:BASection):Void {
-		if (beforeDirs.exists(section)) copyDirs(beforeDirs[section], beforeTo[section], beforeFilter[section]);
-		if (beforeUnits.exists(section)) copyUnits(beforeUnits[section], beforeTo[section]);
-	}
-
-	private function after(section:BASection):Void {
-		if (afterDirs.exists(section)) copyDirs(afterDirs[section], afterTo[section], afterFilter[section]);
-		if (afterUnits.exists(section)) copyUnits(afterUnits[section], afterTo[section]);
+	override private function run(cfg:CopyConfig):Void {
+		copyDirs(cfg.dirs, cfg.to, cfg.filter);
+		copyUnits(cfg.units, cfg.to);
 	}
 
 	private function copyDirs(data:Array<String>, to:String, filter:String):Void {
@@ -91,46 +75,6 @@ class Copy extends Module {
 				(unit:File).copyToDir(to);
 			else
 				error('Is not file!');
-		}
-	}
-
-	private function configHandler(cfg:CopyConfig):Void {
-		if (cfg.before) {
-			if (cfg.dirs.length > 0) {
-				if (beforeDirs.exists(cfg.section)) {
-					beforeDirs[cfg.section] = beforeDirs[cfg.section].concat(cfg.dirs);
-				} else {
-					beforeDirs[cfg.section] = cfg.dirs;
-				}
-				beforeFilter[cfg.section] = cfg.filter;
-				beforeTo[cfg.section] = cfg.to;
-			}
-			if (cfg.units.length > 0) {
-				if (beforeUnits.exists(cfg.section)) {
-					beforeUnits[cfg.section] = beforeUnits[cfg.section].concat(cfg.units);
-				} else {
-					beforeUnits[cfg.section] = cfg.units;
-				}
-				beforeTo[cfg.section] = cfg.to;
-			}
-		} else {
-			if (cfg.dirs.length > 0) {
-				if (afterDirs.exists(cfg.section)) {
-					afterDirs[cfg.section] = afterDirs[cfg.section].concat(cfg.dirs);
-				} else {
-					afterDirs[cfg.section] = cfg.dirs;
-				}
-				afterFilter[cfg.section] = cfg.filter;
-				afterTo[cfg.section] = cfg.to;
-			}
-			if (cfg.units.length > 0) {
-				if (afterUnits.exists(cfg.section)) {
-					afterUnits[cfg.section] = afterUnits[cfg.section].concat(cfg.units);
-				} else {
-					afterUnits[cfg.section] = cfg.units;
-				}
-				afterTo[cfg.section] = cfg.to;
-			}
 		}
 	}
 
@@ -169,6 +113,5 @@ private class CopyReader extends BAReader<CopyConfig> {
 			case _:
 		}
 	}
-
 
 }

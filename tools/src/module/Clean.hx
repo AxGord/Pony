@@ -32,42 +32,30 @@ import types.BASection;
  * Clean module
  * @author AxGord <axgord@gmail.com>
  */
-class Clean extends Module {
+class Clean extends CfgModule<CleanConfig> {
 
 	private static inline var PRIORITY:Int = 10;
 
-	private var beforeDirs:Map<BASection, Array<String>> = new Map();
-	private var beforeUnits:Map<BASection, Array<String>> = new Map();
-	private var afterDirs:Map<BASection, Array<String>> = new Map();
-	private var afterUnits:Map<BASection, Array<String>> = new Map();
-
 	public function new() super('clean');
 
-	override public function init():Void {
-		if (xml == null) return;
-		addConfigListener();
-		addListeners(PRIORITY, before, after);
-	}
+	override public function init():Void initSections(PRIORITY, BASection.Prepare);
 
 	override private function readConfig(ac:AppCfg):Void {
-		new CleanReader(xml, {
-			debug: ac.debug,
-			app: ac.app,
-			before: false,
-			section: Prepare,
-			dirs: [],
-			units: []
-		}, configHandler);
+		for (xml in nodes) {
+			new CleanReader(xml, {
+				debug: ac.debug,
+				app: ac.app,
+				before: false,
+				section: Prepare,
+				dirs: [],
+				units: []
+			}, configHandler);
+		}
 	}
 
-	private function before(section:BASection):Void {
-		if (beforeDirs.exists(section)) cleanDirs(beforeDirs[section]);
-		if (beforeUnits.exists(section)) deleteUnits(beforeUnits[section]);
-	}
-
-	private function after(section:BASection):Void {
-		if (afterDirs.exists(section)) cleanDirs(afterDirs[section]);
-		if (afterUnits.exists(section)) deleteUnits(afterUnits[section]);
+	override private function run(cfg:CleanConfig):Void {
+		cleanDirs(cfg.dirs);
+		deleteUnits(cfg.units);
 	}
 
 	private function cleanDirs(data:Array<String>):Void {
@@ -81,40 +69,6 @@ class Clean extends Module {
 		for (u in data) {
 			log('Delete file: $u');
 			(u:Unit).delete();
-		}
-	}
-
-	private function configHandler(cfg:CleanConfig):Void {
-		if (cfg.before) {
-			if (cfg.dirs.length > 0) {
-				if (beforeDirs.exists(cfg.section)) {
-					beforeDirs[cfg.section] = beforeDirs[cfg.section].concat(cfg.dirs);
-				} else {
-					beforeDirs[cfg.section] = cfg.dirs;
-				}
-			}
-			if (cfg.units.length > 0) {
-				if (beforeUnits.exists(cfg.section)) {
-					beforeUnits[cfg.section] = beforeUnits[cfg.section].concat(cfg.units);
-				} else {
-					beforeUnits[cfg.section] = cfg.units;
-				}
-			}
-		} else {
-			if (cfg.dirs.length > 0) {
-				if (afterDirs.exists(cfg.section)) {
-					afterDirs[cfg.section] = afterDirs[cfg.section].concat(cfg.dirs);
-				} else {
-					afterDirs[cfg.section] = cfg.dirs;
-				}
-			}
-			if (cfg.units.length > 0) {
-				if (afterUnits.exists(cfg.section)) {
-					afterUnits[cfg.section] = afterUnits[cfg.section].concat(cfg.units);
-				} else {
-					afterUnits[cfg.section] = cfg.units;
-				}
-			}
 		}
 	}
 

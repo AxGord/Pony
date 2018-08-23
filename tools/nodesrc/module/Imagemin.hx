@@ -41,43 +41,57 @@ class Imagemin {
 		if (formats.indexOf('jpg') != -1) {
 			NPM.imagemin(from.addToStringsEnd('jpg'), cfg.to, {
 				plugins: [
-					NPM.imagemin_jpegtran()
+					// NPM.imagemin_jpegtran(),
+					// NPM.imagemin_jpeg_recompress(),
+					// NPM.imagemin_jpegoptim(),
+					NPM.imagemin_guetzli({nomemlimit: true, quality: cfg.jpgq})
 				]
 			}).then(completeHandler);
 		}
 		if (formats.indexOf('png') != -1) {
-			NPM.imagemin(from.addToStringsEnd('png'), cfg.to, {
-				plugins: [
-					NPM.imagemin_pngquant(cfg.pngq != null ? {quality: cfg.pngq} : {})
-				]
-			}).then(completeHandler);
+			if (cfg.pngq == null)
+				pngpack(from.addToStringsEnd('png'), cfg.to);
+			else
+				NPM.imagemin(from.addToStringsEnd('png'), cfg.to, {
+					plugins: [
+						NPM.imagemin_pngquant({quality: cfg.pngq, speed: 1})
+					]
+				}).then(_pngpack.bind(cfg.to));
 		}
 		if (formats.indexOf('webp') != -1 || (cfg.webpfrompng && formats.indexOf('png') != -1)) {
+			var cformats:Array<String> = [];
 			if (cfg.webpfrompng) {
+				cformats.push('png');
 				//Fnt helper
 				var ext:String = '.fnt';
 				for (file in from) {
 					var d:Dir = file.substr(0, -2);
-					for (u in d.content(ext)) {
-						var f:File = u.file;
+					for (f in d.files(ext)) {
+						var ef:File = (f.fullDir + f.shortName).first + '.png';
+						if (!ef.exists) continue;
 						var nf:File = cfg.to + f.shortName + '_webp' + ext;
 						nf.createWays();
-						nf.content = StringTools.replace(f.content, '"' + f.shortName + '.png"', '"' + f.shortName + '.webp"');
+						nf.content = StringTools.replace(f.content, '"' + ef.name + '"', '"' + f.shortName + '.webp"');
 					}
 				}
+			}
+			// if (cfg.webpfromjpg) formats.push('jpg');
+			for (e in cformats) {
 				//json helper
 				var ext:String = '.json';
 				for (file in from) {
 					var d:Dir = file.substr(0, -2);
-					for (u in d.content(ext)) {
-						var f:File = u.file;
+					for (f in d.files(ext)) {
+						var ef:File = (f.fullDir + f.shortName).first + '.$e';
+						if (!ef.exists) continue;
 						var nf:File = cfg.to + f.shortName + '_webp' + ext;
 						nf.createWays();
-						nf.content = StringTools.replace(f.content, '"' + f.shortName + '.png"', '"' + f.shortName + '.webp"');
+						nf.content = StringTools.replace(f.content, '"' + ef.name + '"', '"' + f.shortName + '.webp"');
 					}
 				}
 			}
-			NPM.imagemin(from.addToStringsEnd(cfg.webpfrompng ? '{png,webp}' : 'webp'), cfg.to, {
+			cformats.push('webp');
+			NPM.imagemin(from.addToStringsEnd('{' + cformats.join(',') + '}'), cfg.to, {
 				plugins: [
 					NPM.imagemin_webp({
 						nearLossless: cfg.webpq
@@ -87,8 +101,21 @@ class Imagemin {
 		}
 	}
 
-	private function completeHandler(r:Array<{data:Dynamic, path:String}>):Void {
-		for (e in r) Sys.println(e.path);
+	private function completeHandler(r:Array<{data:Dynamic, path:String}>):Void for (e in r) Sys.println(e.path);
+
+	private function pngpack(a:Array<String>, to:String):Void {
+		NPM.imagemin(a, to, {
+			plugins: [
+				NPM.imagemin_zopfli({more: true})
+			]
+		}).then(completeHandler);
+		// NPM.imagemin_pngcrush({reduce: true})
+		// NPM.imagemin_pngout({strategy: 0})
+		// NPM.imagemin_optipng({optimizationLevel: 7})
 	}
+
+	private function _pngpack(to:String, r:Array<{data:Dynamic, path:String}>):Void pngpack(r.map(getPath), to);
+
+	private static function getPath(e:{data:Dynamic, path:String}):String return e.path;
 
 }

@@ -9,8 +9,20 @@
         <module>http-proxy</module>
         <module>msdf-bmfont-xml</module>
         <module>imagemin</module>
-        <module>imagemin-jpegtran</module>
+
+        <!-- <module>imagemin-jpegtran</module>
+        <module>imagemin-jpeg-recompress</module>
+        <module>imagemin-jpegoptim</module> -->
+        <module>imagemin-guetzli</module>
+
         <module>imagemin-pngquant</module>
+        <module>imagemin-zopfli</module>
+
+        <!-- <module>imagemin-optipng</module>
+        <module>imagemin-pngcrush</module>
+        <module>imagemin-pngout</module>
+        <module>imagemin-advpng</module> -->
+        
         <module>imagemin-webp</module>
     </npm>
 

@@ -48,6 +48,7 @@ class Imagemin extends NModule<ImageminConfig> {
 				section: BASection.Prepare,
 				from: '',
 				to: '',
+				jpgq: 85,
 				webpq: 50,
 				webpfrompng: false
 			}, configHandler);
@@ -66,6 +67,7 @@ private class ImageminReader extends BAReader<ImageminConfig> {
 		cfg.to = '';
 		cfg.format = null;
 		cfg.pngq = null;
+		cfg.jpgq = 85;
 		cfg.webpq = 50;
 		cfg.webpfrompng = false;
 	}
@@ -76,6 +78,7 @@ private class ImageminReader extends BAReader<ImageminConfig> {
 			case 'to': cfg.to = val;
 			case 'format': cfg.format = val;
 			case 'pngq': cfg.pngq = Std.parseInt(val);
+			case 'jpgq': cfg.jpgq = Std.parseInt(val);
 			case 'webpq': cfg.webpq = Std.parseInt(val);
 			case 'webpfrompng': cfg.webpfrompng = TextTools.isTrue(val);
 			case _:

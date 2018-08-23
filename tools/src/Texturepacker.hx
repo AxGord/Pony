@@ -233,7 +233,7 @@ private class Path extends XmlConfigReader<TPConfig> {
 	override private function readAttr(name:String, val:String):Void {
 		switch name {
 			case 'format': cfg.format = val;
-			case 'scale': cfg.scale = Std.parseFloat(val);
+			case 'scale': cfg.scale = cfg.scale * Std.parseFloat(val);
 			case 'datascale': cfg.datascale = Std.parseFloat(val);
 			case 'quality': cfg.quality = Std.parseFloat(val);
 			case 'from': cfg.from += val;
