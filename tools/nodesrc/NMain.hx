@@ -32,13 +32,14 @@ import module.NModule;
 
 class NMain extends Logable {
 
-	private var stderr:Output;
+	// private var stderr:Output;
 
 	private function new():Void {
 		super();
 		onLog << Sys.println;
-		stderr = Sys.stderr();
-		onError << errorHandler;
+		// stderr = Sys.stderr();
+		// onError << errorHandler;
+		onError << Sys.println;
 		var args = Sys.args();
 		var b:Bytes = Tools.hexToBytes(args.pop());
 		var serializer:Serializer = new Serializer();
@@ -53,9 +54,9 @@ class NMain extends Logable {
 		m.start();
 	}
 
-	private function errorHandler(r:String):Void {
-		stderr.writeString(r + '\n');
-	}
+	// private function errorHandler(r:String):Void {
+	// 	stderr.writeString(r + '\n');
+	// }
 
 	private static function main():Void new NMain();
 
