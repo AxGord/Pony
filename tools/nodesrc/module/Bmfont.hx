@@ -24,14 +24,14 @@
 package module;
 
 import pony.fs.File;
+import types.ImageminConfig;
 import types.BmfontConfig;
 
-class Bmfont {
+class Bmfont extends NModule<BmfontConfig> {
 
 	private var to:String;
 
-	public function new(cfg:BmfontConfig) {
-		if (cfg == null) return;
+	override private function run(cfg:BmfontConfig) {
 		to = cfg.to;
 		Utils.createPath(to);
 		for (font in cfg.font)

@@ -30,14 +30,13 @@ import types.ImageminConfig;
 
 using pony.text.TextTools;
 
-class Imagemin {
+class Imagemin extends NModule<ImageminConfig> {
 
-	public function new(cfg:ImageminConfig) {
-		if (cfg == null) return;
+	override private function run(cfg:ImageminConfig) {
 		var from:Array<String> = cfg.from.split(',').map(StringTools.trim).addToStringsEnd('*.');
-		Sys.println('From: ' + from);
+		log('From: ' + from);
 		var formats:Array<String> = cfg.format == null ? ['jpg', 'png', 'webp'] : cfg.format.split(',').map(StringTools.trim);
-		Sys.println('Formats: ' + formats.join(', '));
+		log('Formats: ' + formats.join(', '));
 		if (formats.indexOf('jpg') != -1) {
 			NPM.imagemin(from.addToStringsEnd('jpg'), cfg.to, {
 				plugins: [
@@ -71,7 +70,9 @@ class Imagemin {
 						if (!ef.exists) continue;
 						var nf:File = cfg.to + f.shortName + '_webp' + ext;
 						nf.createWays();
-						nf.content = StringTools.replace(f.content, '"' + ef.name + '"', '"' + f.shortName + '.webp"');
+						var shn:String = f.shortName + '.webp';
+						log(f.name + ': ' + ef.name + ' -> ' + shn);
+						nf.content = f.content.replaceInQuote(ef.name, shn).replaceInSingleQuote(ef.name, shn);
 					}
 				}
 			}
@@ -101,7 +102,7 @@ class Imagemin {
 		}
 	}
 
-	private function completeHandler(r:Array<{data:Dynamic, path:String}>):Void for (e in r) Sys.println(e.path);
+	private function completeHandler(r:Array<{data:Dynamic, path:String}>):Void for (e in r) log(e.path);
 
 	private function pngpack(a:Array<String>, to:String):Void {
 		NPM.imagemin(a, to, {

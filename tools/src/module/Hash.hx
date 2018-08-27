@@ -80,6 +80,7 @@ class Hash extends Module {
 			units: [],
 			calc: createCalcConfig(),
 			stateFile: 'hashstate.txt',
+			allowCfg: true,
 			changesFile: null//'hashchanges.txt'
 		}, configHandler);
 	}

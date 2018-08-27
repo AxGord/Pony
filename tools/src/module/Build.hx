@@ -60,21 +60,21 @@ class Build extends CfgModule<BuildConfig> {
 		initSections(PRIORITY, BASection.Build);
 	}
 
-	override private function readConfig(ac:AppCfg):Void {
-		for (xml in nodes)
-			new BuildConfigReader(xml, {
-				debug: ac.debug,
-				app: ac.app,
-				before: false,
-				section: BASection.Build,
-				command: [],
-				haxeCompiler: 'haxe',
-				hxml: null,
-				runHxml: []
-			}, configHandler);
+	override private function readNodeConfig(xml:Fast, ac:AppCfg):Void {
+		new BuildConfigReader(xml, {
+			debug: ac.debug,
+			app: ac.app,
+			before: false,
+			section: BASection.Build,
+			command: [],
+			haxeCompiler: 'haxe',
+			hxml: null,
+			runHxml: [],
+			allowCfg: true
+		}, configHandler);
 	}
 
-	override private function run(cfg:BuildConfig):Void {
+	override private function runNode(cfg:BuildConfig):Void {
 		if (cfg.runHxml.length == 0) {
 			var cmd = cfg.command.concat(haxelib);
 			if (cfg.app != null) {

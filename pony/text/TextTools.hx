@@ -234,4 +234,15 @@ class TextTools {
 	public static function addToStringsEnd(s:Array<String>, v:String):Array<String> return [for (e in s) e + v];
 	public static function addToStringsBegin(s:Array<String>, v:String):Array<String> return [for (e in s) v + e];
 
+	public static inline function quote(s:String, q:String='"'):String return q + s + q;
+	public static inline function singleQuote(s:String):String return quote(s, "'");
+
+	public static inline function replaceInQuote(s:String, sub:String, by:String, q:String = '"'):String {
+		return StringTools.replace(s, quote(sub, q), quote(by, q));
+	}
+
+	public static inline function replaceInSingleQuote(s:String, sub:String, by:String):String {
+		return StringTools.replace(s, singleQuote(sub), singleQuote(by));
+	}
+
 }

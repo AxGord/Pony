@@ -90,8 +90,13 @@ class PixiAssets {
 			return StringTools.replace(asset, '{linux}', '');
 	}
 
-	public static inline function webpReplace(asset:String):String {
-		return StringTools.replace(asset, '{webp}', JsTools.webp ? '_webp' : '');
+	public static function webpReplace(asset:String):String {
+		asset = StringTools.replace(asset, '{webp}', JsTools.webp ? '_webp' : '');
+		asset = StringTools.replace(asset, '{webp|png}', JsTools.webp ? 'webp' : 'png');
+		asset = StringTools.replace(asset, '{png|webp}', JsTools.webp ? 'webp' : 'png');
+		asset = StringTools.replace(asset, '{webp|jpg}', JsTools.webp ? 'webp' : 'jpg');
+		asset = StringTools.replace(asset, '{jpg|webp}', JsTools.webp ? 'webp' : 'jpg');
+		return asset;
 	}
 	
 	public static function loadSpine(asset:String, cb:SkeletonData->Void):Void {
@@ -103,19 +108,19 @@ class PixiAssets {
 	}
 	
 	public static function image(asset:String, ?name:String):Sprite {
-		return name == null ? Sprite.fromImage(AssetManager.getPath(asset)) : Sprite.fromFrame(name);
+		return name == null ? Sprite.fromImage(AssetManager.getPath(webpReplace(asset))) : Sprite.fromFrame(name);
 	}
 	
 	public static function texture(asset:String, ?name:String):Texture {
-		return name == null ? Texture.fromImage(AssetManager.getPath(asset)) : Texture.fromFrame(name);
+		return name == null ? Texture.fromImage(AssetManager.getPath(webpReplace(asset))) : Texture.fromFrame(name);
 	}
 	
 	public static function cImage(asset:String, useSpriteSheet:Bool):Sprite {
-		return useSpriteSheet ? Sprite.fromFrame(asset) : Sprite.fromImage(AssetManager.getPath(asset));
+		return useSpriteSheet ? Sprite.fromFrame(asset) : Sprite.fromImage(AssetManager.getPath(webpReplace(asset)));
 	}
 	
 	public static function cTexture(asset:String, useSpriteSheet:Bool):Texture {
-		return useSpriteSheet ? Texture.fromFrame(asset) : Texture.fromImage(AssetManager.getPath(asset));
+		return useSpriteSheet ? Texture.fromFrame(asset) : Texture.fromImage(AssetManager.getPath(webpReplace(asset)));
 	}
 	
 	public static function sound(asset:String):PixiSound return sounds[asset];

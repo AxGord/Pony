@@ -58,7 +58,8 @@ class Unpack extends Module {
 			app: ac.app,
 			before: false,
 			section: BASection.Unpack,
-			zips: []
+			zips: [],
+			allowCfg: true
 		}, configHandler);
 	}
 

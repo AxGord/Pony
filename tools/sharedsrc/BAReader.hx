@@ -66,6 +66,18 @@ class BAReader<T:BAConfig> extends XmlConfigReader<T> implements pony.magic.HasA
 
 	@:abstract private function clean():Void;
 
-	override private function end():Void onConfig(cfg);
+	override private function end():Void if (cfg.allowCfg) onConfig(cfg);
+
+	private function allowCreate(xml:Fast):Void {
+		var cfg:T = copyCfg();
+		cfg.allowCfg = true;
+		_selfCreate(xml, cfg);
+	}
+
+	private function denyCreate(xml:Fast):Void {
+		var cfg:T = copyCfg();
+		cfg.allowCfg = false;
+		_selfCreate(xml, cfg);
+	}
 
 }

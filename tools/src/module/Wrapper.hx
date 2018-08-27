@@ -39,7 +39,7 @@ class Wrapper extends CfgModule<WrapperConfig> {
 
 	override public function init():Void initSections(PRIORITY);
 
-	override private function readConfig(ac:AppCfg):Void {
+	override private function readNodeConfig(xml:Fast, ac:AppCfg):Void {
 		new WrapperReader(xml, {
 			debug: ac.debug,
 			app: ac.app,
@@ -47,11 +47,12 @@ class Wrapper extends CfgModule<WrapperConfig> {
 			section: BASection.Build,
 			file: null,
 			pre: '',
-			post: ''
+			post: '',
+			allowCfg: true
 		}, configHandler);
 	}
 
-	override private function run(cfg:WrapperConfig):Void {
+	override private function runNode(cfg:WrapperConfig):Void {
 		var file = cfg.file;
 		var pre = cfg.pre;
 		var post = cfg.post;

@@ -32,7 +32,7 @@ class NModule<T:BAConfig> extends CfgModule<T> {
 
 	public var protocol:NProtocol;
 
-	override private function run(cfg:T):Void {
+	override private function run(cfg:Array<T>):Void {
 		protocol = new NProtocol();
 		writeCfg(cfg);
 		var bytes = serializer.serialize(protocol);
@@ -40,6 +40,6 @@ class NModule<T:BAConfig> extends CfgModule<T> {
 		protocol = null;
 	}
 
-	@:abstract private function writeCfg(cfg:T):Void;
+	@:abstract private function writeCfg(cfg:Array<T>):Void;
 
 }

@@ -38,7 +38,7 @@ class Zip extends CfgModule<ZipConfig> {
 
 	override public function init():Void initSections(PRIORITY, BASection.Zip);
 
-	override private function readConfig(ac:AppCfg):Void {
+	override private function readNodeConfig(xml:Fast, ac:AppCfg):Void {
 		new ZipConfigReader(xml, {
 			debug: ac.debug,
 			app: ac.app,
@@ -49,11 +49,12 @@ class Zip extends CfgModule<ZipConfig> {
 			prefix: 'bin/',
 			compressLvl: 9,
 			log: true,
-			hash: null
+			hash: null,
+			allowCfg: true
 		}, configHandler);
 	}
 
-	override private function run(cfg:ZipConfig):Void {
+	override private function runNode(cfg:ZipConfig):Void {
 		log('Archive name: ${cfg.output}');
 		var zip = new pony.ZipTool(cfg.output, cfg.prefix, cfg.compressLvl);
 		if (cfg.log) zip.onLog << log;

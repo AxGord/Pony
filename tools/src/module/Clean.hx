@@ -40,20 +40,19 @@ class Clean extends CfgModule<CleanConfig> {
 
 	override public function init():Void initSections(PRIORITY, BASection.Prepare);
 
-	override private function readConfig(ac:AppCfg):Void {
-		for (xml in nodes) {
-			new CleanReader(xml, {
-				debug: ac.debug,
-				app: ac.app,
-				before: false,
-				section: Prepare,
-				dirs: [],
-				units: []
-			}, configHandler);
-		}
+	override private function readNodeConfig(xml:Fast, ac:AppCfg):Void {
+		new CleanReader(xml, {
+			debug: ac.debug,
+			app: ac.app,
+			before: false,
+			section: Prepare,
+			dirs: [],
+			units: [],
+			allowCfg: true
+		}, configHandler);
 	}
 
-	override private function run(cfg:CleanConfig):Void {
+	override private function runNode(cfg:CleanConfig):Void {
 		cleanDirs(cfg.dirs);
 		deleteUnits(cfg.units);
 	}

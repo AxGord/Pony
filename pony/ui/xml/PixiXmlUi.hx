@@ -211,7 +211,7 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 				var data = if (attrs.name != null) {
 					var a = attrs.name.split('|');
 					var p = a[1].split('...');
-					[for (n in new IntIterator(Std.parseInt(p[0]), Std.parseInt(p[1]))) a[0] + n + a[2]];
+					[for (n in new IntIterator(Std.parseInt(p[0]), Std.parseInt(p[1]))) a[0] + Tools.FloatTools._toFixed(n, 0, p[0].length) + a[2]];
 				} else {
 					attrs.frames.split(',').map(StringTools.trim);
 				}
@@ -224,7 +224,7 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 				var data = if (attrs.name != null) {
 					var a = attrs.name.split('|');
 					var p = a[1].split('...');
-					[for (n in new IntIterator(Std.parseInt(p[0]), Std.parseInt(p[1]))) a[0] + n + a[2]];
+					[for (n in new IntIterator(Std.parseInt(p[0]), Std.parseInt(p[1]))) a[0] + Tools.FloatTools._toFixed(n, 0, p[0].length) + a[2]];
 				} else {
 					attrs.frames.split(',').map(StringTools.trim);
 				}

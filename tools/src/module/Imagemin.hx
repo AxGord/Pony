@@ -34,29 +34,24 @@ class Imagemin extends NModule<ImageminConfig> {
 
 	public function new() super('imagemin');
 
-	override public function init():Void {
-		if (xml == null) return;
-		initSections(PRIORITY, BASection.Prepare);
+	override public function init():Void initSections(PRIORITY, BASection.Prepare);
+
+	override private function readNodeConfig(xml:Fast, ac:AppCfg):Void {
+		new ImageminReader(xml, {
+			debug: ac.debug,
+			app: ac.app,
+			before: false,
+			section: BASection.Prepare,
+			from: '',
+			to: '',
+			jpgq: 85,
+			webpq: 50,
+			webpfrompng: false,
+			allowCfg: false
+		}, configHandler);
 	}
 
-	override private function readConfig(ac:AppCfg):Void {
-		for (xml in nodes)
-			new ImageminReader(xml, {
-				debug: ac.debug,
-				app: ac.app,
-				before: false,
-				section: BASection.Prepare,
-				from: '',
-				to: '',
-				jpgq: 85,
-				webpq: 50,
-				webpfrompng: false
-			}, configHandler);
-	}
-
-	override private function writeCfg(cfg:ImageminConfig):Void {
-		protocol.imagemin = cfg;
-	}
+	override private function writeCfg(cfg:Array<ImageminConfig>):Void protocol.imagemin = cfg;
 
 }
 
@@ -74,14 +69,24 @@ private class ImageminReader extends BAReader<ImageminConfig> {
 
 	override private function readAttr(name:String, val:String):Void {
 		switch name {
-			case 'from': cfg.from = val;
-			case 'to': cfg.to = val;
+			case 'from': cfg.from += val;
+			case 'to': cfg.to += val;
 			case 'format': cfg.format = val;
 			case 'pngq': cfg.pngq = Std.parseInt(val);
 			case 'jpgq': cfg.jpgq = Std.parseInt(val);
 			case 'webpq': cfg.webpq = Std.parseInt(val);
 			case 'webpfrompng': cfg.webpfrompng = TextTools.isTrue(val);
 			case _:
+		}
+	}
+
+	override private function readNode(xml:Fast):Void {
+		switch xml.name {
+
+			case 'dir': allowCreate(xml);
+			case 'path': denyCreate(xml);
+
+			case _: super.readNode(xml);
 		}
 	}
 

@@ -33,31 +33,24 @@ class Bmfont extends NModule<BmfontConfig> {
 
 	public function new() super('bmfont');
 
-	override public function init():Void {
-		if (xml == null) return;
-		initSections(PRIORITY, BASection.Prepare);
+	override public function init():Void initSections(PRIORITY, BASection.Prepare);
+
+	override public function run(cfg:Array<BmfontConfig>):Void if (!Flags.NOFNT) super.run(cfg);
+
+	override private function readNodeConfig(xml:Fast, ac:AppCfg):Void {
+		new BmfontReader(xml, {
+			debug: ac.debug,
+			app: ac.app,
+			before: false,
+			section: BASection.Prepare,
+			from: '',
+			to: '',
+			font: [],
+			allowCfg: true
+		}, configHandler);
 	}
 
-	override public function run(cfg:BmfontConfig):Void {
-		if (!Flags.NOFNT) super.run(cfg);
-	}
-
-	override private function readConfig(ac:AppCfg):Void {
-		for (xml in nodes)
-			new BmfontReader(xml, {
-				debug: ac.debug,
-				app: ac.app,
-				before: false,
-				section: BASection.Prepare,
-				from: '',
-				to: '',
-				font: []
-			}, configHandler);
-	}
-
-	override private function writeCfg(cfg:BmfontConfig):Void {
-		protocol.bmfont = cfg;
-	}
+	override private function writeCfg(cfg:Array<BmfontConfig>):Void protocol.bmfont = cfg;
 
 }
 

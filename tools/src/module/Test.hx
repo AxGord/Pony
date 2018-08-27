@@ -38,18 +38,19 @@ class Test extends CfgModule<TestConfig> {
 
 	override public function init():Void initSections(PRIORITY);
 
-	override private function readConfig(ac:AppCfg):Void {
+	override private function readNodeConfig(xml:Fast, ac:AppCfg):Void {
 		new TestReader(xml, {
 			debug: ac.debug,
 			app: ac.app,
 			before: false,
 			section: BASection.Build,
 			path: null,
-			test: []
+			test: [],
+			allowCfg: true
 		}, configHandler);
 	}
 
-	override private function run(cfg:TestConfig):Void {
+	override private function runNode(cfg:TestConfig):Void {
 		var cwd:Cwd = cfg.path;
 		cwd.sw();
 		for (t in cfg.test) {

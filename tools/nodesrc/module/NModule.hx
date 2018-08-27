@@ -21,42 +21,23 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
+package module;
 
-import haxe.io.Output;
-import haxe.io.Bytes;
-import hxbit.Serializer;
-import haxe.Log;
+import pony.magic.HasAbstract;
 import pony.Logable;
-import pony.Tools;
-import module.NModule;
 
-class NMain extends Logable {
+class NModule<T> extends Logable implements HasAbstract {
 
-	private var stderr:Output;
+	private var config:Array<T>;
 
-	private function new():Void {
+	public function new(cfg:Array<T>) {
+		if (cfg == null) return;
 		super();
-		onLog << Sys.println;
-		stderr = Sys.stderr();
-		onError << errorHandler;
-		var args = Sys.args();
-		var b:Bytes = Tools.hexToBytes(args.pop());
-		var serializer:Serializer = new Serializer();
-		var np:NProtocol = serializer.unserialize(b, NProtocol);
-		listen(cast new module.Bmfont(np.bmfont));
-		listen(cast new module.Imagemin(np.imagemin));
+		config = cfg;
 	}
 
-	private function listen(m:NModule<Any>):Void {
-		m.onLog << log;
-		m.onError << error;
-		m.start();
-	}
+	public function start():Void if (config != null) for (e in config) run(e);
 
-	private function errorHandler(r:String):Void {
-		stderr.writeString(r + '\n');
-	}
-
-	private static function main():Void new NMain();
+	@:abstract private function run(cfg:T):Void;
 
 }

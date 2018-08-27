@@ -20,8 +20,10 @@
 * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-**/package module;
+**/
+package module;
 
+import haxe.xml.Fast;
 import types.BAConfig;
 import types.BASection;
 
@@ -31,20 +33,43 @@ import types.BASection;
  */
 class CfgModule<T:BAConfig> extends Module implements pony.magic.HasAbstract {
 
-	private var cfgs:Array<T> = [];
+	private var lastcfgs:Array<T> = [];
+	private var allcfgs:Array<Array<T>> = [];
 
 	override public function init():Void throw 'Abstract';
 
-	private function configHandler(cfg:T):Void cfgs.push(cfg);
+	private function configHandler(cfg:T):Void lastcfgs.push(cfg);
 
-	override private function runModule(before:Bool, section:BASection):Void {
-		for (cfg in cfgs) if (cfg.before == before && cfg.section == section) {
-			begin();
-			run(cfg);
-			end();
+	private function savecfg():Void {
+		if (lastcfgs.length > 0) {
+			allcfgs.push(lastcfgs);
+			lastcfgs = [];
 		}
 	}
 
-	@:abstract private function run(cfg:T):Void;
+	override private function readConfig(ac:AppCfg):Void {
+		for (xml in nodes) {
+			readNodeConfig(xml, ac);
+			savecfg();
+		}
+	}
+
+	override private function runModule(before:Bool, section:BASection):Void {
+		for (cfgs in allcfgs) {
+			var actual:Array<T> = [];
+			for (cfg in cfgs)
+				if (cfg.before == before && cfg.section == section)
+					actual.push(cfg);
+			if (actual.length > 0) {
+				begin();
+				run(actual);
+				end();
+			}
+		}
+	}
+
+	private function run(cfg:Array<T>):Void for (e in cfg) runNode(e);
+	private function readNodeConfig(xml:Fast, ac:AppCfg):Void {}
+	private function runNode(cfg:T):Void {}
 
 }
