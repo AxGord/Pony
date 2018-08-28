@@ -42,7 +42,21 @@ class NpmInstall extends BaseInstall {
 		var cmds = ['sudo', 'npm', '-g', 'install'];
 		if (!sudo) cmds.shift();
 		var c = cmds.shift();
-		listInstall(c, cmds, Config.settings.npm);
+		if (Config.OS == TargetOS.Windows) {
+			var winmap:Map<String, String> = [for (e in Config.settings.winnpm) {
+				var a = e.split('@');
+				a[0] => a[1];
+			}];
+			listInstall(c, cmds, [for (npm in Config.settings.npm) {
+				var n:String = npm.split('@')[0];
+				if (winmap.exists(n))
+					n + '@' + winmap[n];
+				else
+					npm;
+			}]);
+		} else {
+			listInstall(c, cmds, Config.settings.npm);
+		}
 	}
 
 }

@@ -50,11 +50,14 @@ class Utils {
 	public static inline function cmdExists(c:String):Bool return cmdExistsa(c, ['-v']);
 
 	public static function cmdExistsa(c:String, a:Array<String>):Bool {
-		try {
-			return new Process(c, a).exitCode() == 0;
-		} catch (e:Any) {
-			return false;
-		}
+		beginColor(90);
+		Sys.print(c + ' ');
+		var r:Bool = Sys.command(c, a) == 0;
+		endColor();
+		return r;
 	}
+
+	public static inline function beginColor(c:Int):Void if (Config.OS != Windows) Sys.print('\x1b[${c}m');
+	public static inline function endColor():Void beginColor(0);
 
 }

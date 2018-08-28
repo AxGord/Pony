@@ -40,7 +40,9 @@ class PonyInstall extends BaseInstall {
 
 	private inline function compile():Void {
 		log('Compile pony');
+		Utils.beginColor(90);
 		cmd('haxe', ['--cwd', Config.SRC, 'build.hxml']);
+		Utils.endColor();
 		sys.FileSystem.deleteFile(Config.BIN + 'pony.n');
 	}
 
