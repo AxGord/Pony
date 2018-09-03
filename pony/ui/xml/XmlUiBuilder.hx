@@ -205,7 +205,8 @@ class XmlUiBuilder {
 			if (attrs.exists('path')) pathes.push(joinPath(path, attrs['path']));
 		}
 		if (xml.has.src) {
-			pathes.push(joinPath(path, xml.att.src));
+			for (s in xml.att.src.split(','))
+				pathes.push(joinPath(path, StringTools.trim(s)));
 		} else {
 			var attrs:Map<String, String> = new Map();
 			addStyle(xml.name, attrs, style);

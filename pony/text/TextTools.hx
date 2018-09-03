@@ -207,7 +207,7 @@ class TextTools {
 		if (sys.FileSystem.exists(file)) {
 			var text = betweenReplace(sys.io.File.getContent(file), begin, end, value);
 			if (text != null) sys.io.File.saveContent(file, text);
-		}		
+		}
 	}
 	#end
 	
@@ -243,6 +243,16 @@ class TextTools {
 
 	public static inline function replaceInSingleQuote(s:String, sub:String, by:String):String {
 		return StringTools.replace(s, singleQuote(sub), singleQuote(by));
+	}
+
+	public static inline function charCount(s:String, char:String):Int {
+		return charCodeCount(s, StringTools.fastCodeAt(char, 0));
+	}
+
+	public static function charCodeCount(s:String, char:Int):Int {
+		var n:Int = 0;
+		for (i in 0...s.length) if (s.charCodeAt(i) == char) n++;
+		return n;
 	}
 
 }

@@ -105,7 +105,7 @@ class MathTools {
 	
 	public static function shortValue(value:Int):String {
 		var s = Std.string(value);
-		var count = Std.int((s.length-1) / 3);
+		var count = Std.int((s.length - 1) / 3);
 		var sub = s.substr(0, s.length - 3 * count);
 		return sub + switch count {
 			case 0: '';
@@ -115,6 +115,46 @@ class MathTools {
 			case 4: 't';
 			case _: throw 'long';
 		}
+	}
+
+	public static function clipSmoothOdd(n:Int, count:Int):Map<Int, Int> {
+		var f:Array<Int> = clipSmoothFrames(n, count);
+		return [for (e in clipSmoothOddPlan(n, count)) e => f.shift()];
+	}
+
+	public static function clipSmoothOddSimple(n:Int, count:Int):Map<Int, Int> {
+		var f:Array<Int> = clipSmoothFrames(n, count);
+		return [for (e in clipSmoothOddPlanSimple(n, count)) e => f.shift()];
+	}
+
+	public static function clipSmooth(n:Int, count:Int):Map<Int, Int> {
+		var f:Array<Int> = clipSmoothFrames(n, count);
+		return [for (i in 0...3) i => f.shift()];
+	}
+
+	public static function clipSmoothFrames(a:Int, count:Int):Array<Int> {
+		var b:Int = a + 1;
+		if (b >= count) b -= count;
+		var c:Int = b + 1;
+		if (c >= count) c -= count;
+		return [a, b, c];
+	}
+
+	public static function clipSmoothOddPlan(n:Int, count:Int):Array<Int> {
+		var odd:Int = n % 2;
+		return if (n == count - 2) {
+			[odd, odd + 1, (1 - odd) * 2];
+		} else if (n == count - 1) {
+			[odd, 2 - odd * 2, 3];
+		} else {
+			[odd, 1 - odd, odd + 2];
+		}
+	}
+
+	public static function clipSmoothOddPlanSimple(n:Int, count:Int):Array<Int> {
+		var p:Array<Int> = clipSmoothOddPlan(n, count);
+		p.pop();
+		return p;
 	}
 	
 }

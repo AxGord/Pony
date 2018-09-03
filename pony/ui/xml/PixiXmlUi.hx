@@ -229,7 +229,7 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 					attrs.frames.split(',').map(StringTools.trim);
 				}
 				
-				var clip = FastMovieClip.fromStorage(data, Std.parseFloat(attrs.frameTime), attrs.fixedTime.isTrue());
+				var clip = FastMovieClip.fromStorage(data, Std.parseFloat(attrs.frameTime), attrs.fixedTime.isTrue(), attrs.smoothAnim, attrs.src.charCount(','));
 				clip.loop = !attrs.loop.isFalse();
 				if (attrs.play.isTrue()) clip.play();
 				
