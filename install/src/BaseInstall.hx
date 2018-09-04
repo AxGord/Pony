@@ -66,9 +66,26 @@ class BaseInstall {
 		return r == YCODE;
 	}
 
-	private function listInstall(c:String, a:Array<String>, l:Array<String>):Void for (e in l) cmd(c, a.concat(e.split(' ')));
+	private function listInstall(c:String, a:Array<String>, l:Array<String>):Void {
+		for (e in l) {
+			if (e.charAt(0) == '!') {
+				if (Config.OS == TargetOS.Windows)
+					cmd(c, a.concat(e.substr(1).split(' ')));
+				else
+					cmd('sudo', [c].concat(a.concat(e.substr(1).split(' '))));
+			} else {
+				cmd(c, a.concat(e.split(' ')));
+			}
+		}
+	}
 
 	private inline function log(s:String):Void Sys.println(s);
+
+	private inline function graylog(s:String):Void {
+		Utils.beginColor(90);
+		Sys.println(s);
+		Utils.endColor();
+	}
 
 	private inline function cmd(c:String, a:Array<String>):Void hard ? hardCmd(c, a) : softCmd(c, a);
 
@@ -81,6 +98,10 @@ class BaseInstall {
 		log([c].concat(a).join(' '));
 		var r = Sys.command(c, a);
 		if (r != 0) Sys.exit(r);
+	}
+
+	private inline function makedir(path:String):Void {
+		softCmd('sudo', ['mkdir', '-m', '777', '-p', path]);
 	}
 
 }

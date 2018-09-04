@@ -38,9 +38,14 @@ class NpmInstall extends BaseInstall {
 	}
 
 	override private function run():Void {
-		//Sys.command('sudo', ['chmod', '/usr/local/lib/node_modules', '777']);	
-		var cmds = ['sudo', 'npm', '-g', 'install'];
-		if (!sudo) cmds.shift();
+		var cmds = ['npm', '-g', 'install'];
+		var perm:Null<Int> = null;
+		if (sudo) {
+			perm = Utils.getPerm(Utils.npmPath);
+			graylog('Npm dir perm $perm');
+			if (perm == 777) perm = null;
+			Utils.setPerm(Utils.npmPath, 777, true);
+		}
 		var c = cmds.shift();
 		if (Config.OS == TargetOS.Windows) {
 			var winmap:Map<String, String> = [for (e in Config.settings.winnpm) {
@@ -57,6 +62,8 @@ class NpmInstall extends BaseInstall {
 		} else {
 			listInstall(c, cmds, Config.settings.npm);
 		}
+		if (perm != null)
+			Utils.setPerm(Utils.npmPath, perm, true);
 	}
 
 }

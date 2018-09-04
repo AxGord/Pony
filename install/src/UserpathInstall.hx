@@ -108,11 +108,10 @@ class UserpathInstall extends BaseInstall {
 		];
 
 		if (installNodePath && Utils.nodeExists) {
-			var npmPath = new Process('npm', ['prefix', '-g']).stdout.readLine() + '/lib/node_modules';
-			var line = 'export NODE_PATH=$npmPath';
+			var line = 'export NODE_PATH=${Utils.npmPath}';
 			if (installPonyPath) {
 				data.unshift(line);
-			} else {				
+			} else {
 				saveNpmLine(line, pFiles);
 			}
 		}
