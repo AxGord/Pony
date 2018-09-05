@@ -69,14 +69,18 @@ class Utils {
 	public static inline function endColor():Void beginColor(0);
 
 	public static function getPerm(dir:String):Int {
-		return Std.parseInt(new Process('sudo', ['stat', '-c', '%a', dir]).stdout.readLine());
+		return if (Config.OS == TargetOS.Mac)
+			Std.parseInt(new Process('sudo', ['stat', '-f', '%A', dir]).stdout.readLine());
+		else
+			Std.parseInt(new Process('sudo', ['stat', '-c', '%a', dir]).stdout.readLine());
 	}
 
 	public static function setPerm(dir:String, v:Int, r:Bool = false):Void {
 		beginColor(90);
 		Sys.println('Set perm $v for $dir');
-		var a = ['chmod', Std.string(v)];
+		var a = ['chmod'];
 		if (r) a.push('-R');
+		a.push(Std.string(v));
 		a.push(dir);
 		Sys.command('sudo', a);
 		endColor();
