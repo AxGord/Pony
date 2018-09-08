@@ -29,12 +29,12 @@ import haxe.macro.Expr;
 import haxe.macro.ExprTools;
 import haxe.xml.Fast;
 import sys.io.File;
-import pony.text.TextTools;
 import pony.time.Time;
 import pony.Pair;
 
 using Lambda;
 using pony.macro.Tools;
+using pony.text.TextTools;
 #end
 
 /**
@@ -59,18 +59,27 @@ class CommanderBuilder {
 		var fields:Array<Field> = Context.getBuildFields();
 
 		var help:Array<String> = [];
+		var helpAnsi:Array<String> = [];
 
 		var cases:Array<Case> = [];
 
 		var xml:Fast = new Fast(Xml.parse(File.getContent(file)));
 		for (x in xml.node.commands.elements) {
 			var cmd:String = x.name.toLowerCase();
+			if (cmd == 'comment') {
+				help.push(x.innerData);
+				helpAnsi.push(x.innerData.ansiForeground(AnsiForeground.LightGray));
+				continue;
+			}
 			var h:String = getHelp(x);
+			var hAnsi:String = h;
 			var bcmd:String = pony.text.TextTools.bigFirst(cmd);
 
 			if (x.nodes.arg.length > 0) {
 				h = h == null ? '' : h + '.\n\t';
 				h += 'Arguments:\n\t\t' + [for (a in x.nodes.arg) getHelp(a)].join('\n\t\t');
+				hAnsi = hAnsi == null ? '' : hAnsi + '.\n\t';
+				hAnsi += 'Arguments:'.ansiForeground(AnsiForeground.DarkGray) + '\n\t\t' + [for (a in x.nodes.arg) getHelp(a)].join('\n\t\t');
 			}
 
 			if (h != null) {
@@ -78,6 +87,7 @@ class CommanderBuilder {
 				if (x.nodes.syn.length > 0)
 					shelp = '(' + [for (s in x.nodes.syn) StringTools.trim(s.innerData)].join(', ') + ') ';
 				help.push(cmd + ' ' + shelp + '\n\t' + h);
+				helpAnsi.push(cmd.ansiForeground(AnsiForeground.LightCyan) + ' ' + shelp.ansiForeground(AnsiForeground.DarkGray) + '\n\t' + hAnsi);
 			}
 
 			var ed:String = 'e' + bcmd;
@@ -162,6 +172,13 @@ class CommanderBuilder {
 			access: [APublic],
 			pos: Context.currentPos(),
 			kind: FProp('default', 'never', macro:Array<String>, macro $v{help})
+		});
+
+		fields.push({
+			name: 'helpAnsiData',
+			access: [APublic],
+			pos: Context.currentPos(),
+			kind: FProp('default', 'never', macro:Array<String>, macro $v{helpAnsi})
 		});
 
 		return fields;

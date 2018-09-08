@@ -32,6 +32,26 @@ import haxe.macro.Expr;
 import haxe.Serializer;
 #end
 
+@:enum abstract AnsiForeground(UInt) to UInt {
+	var Default = 39;
+	var Black = 30;
+	var Red = 31;
+	var Green = 32;
+	var Yellow = 33;
+	var Blue = 34;
+	var Magenta = 35;
+	var Cyan = 36;
+	var LightGray = 37;
+	var DarkGray = 90;
+	var LightRed = 91;
+	var LightGreen = 92;
+	var LightYellow = 93;
+	var LightBlue = 94;
+	var LightMagenta = 95;
+	var LightCyan = 96;
+	var White = 97;
+}
+
 /**
  * TextTools
  * @author AxGord <axgord@gmail.com>
@@ -254,5 +274,8 @@ class TextTools {
 		for (i in 0...s.length) if (s.charCodeAt(i) == char) n++;
 		return n;
 	}
+
+	public static inline function ansiForeground(s:String, c:AnsiForeground):String return '\x1b[${c}m$s\x1b[${AnsiForeground.Default}m';
+	public static inline function ansiUnderlined(s:String):String return '\x1b[4m$s\x1b[24m';
 
 }
