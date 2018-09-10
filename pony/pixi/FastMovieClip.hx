@@ -61,7 +61,6 @@ class FastMovieClip extends AnimTextureCore {
 		super(frameTime, fixedTime, smooth, additionalSrc);
 		var data = converOr(data);
 		texture = data.splice(0, (smooth:Int) + additionalSrc + (additionalSrc == 1 && smooth == AnimSmoothMode.Simple && data.length % 2 == 1 ? 1 : 0));
-		trace(texture.length);
 		this.crop = crop;
 		this.data = [for (t in texture) new Pair(t.trim, t.frame)];
 		for (t in data) {
