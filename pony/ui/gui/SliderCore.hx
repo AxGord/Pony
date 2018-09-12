@@ -26,6 +26,7 @@ package pony.ui.gui;
 import pony.events.Event1;
 import pony.events.Signal1;
 import pony.ui.touch.Touch;
+import pony.ui.touch.Touchable;
 
 /**
  * SliderCore
@@ -45,6 +46,8 @@ class SliderCore extends BarCore {
 	
 	private var startPoint:Float = 0;
 	public var wheelSpeed:Float = 2;
+
+	public var track(default, set):Touchable;
 	
 	public function new(size:Float, isVertical:Bool = false, invert:Bool = false, draggable:Bool=true) {
 		super(size, isVertical, invert);
@@ -127,5 +130,20 @@ class SliderCore extends BarCore {
 			update();
 		}
 	}
-	
+
+	public function set_track(v:Touchable):Touchable {
+		if (track != v) {
+			if (track != null) {
+				track.onDown >> startDrag;
+				track.onDown >> stopDrag;
+			}
+			track = v;
+			if (v != null) {
+				v.onDown << startDrag;
+				v.onUp << stopDrag;
+			}
+		}
+		return v;
+	}
+
 }
