@@ -15,7 +15,7 @@
 		<syn>c</syn>
 		<syn>new</syn>
 		<syn>n</syn>
-		<arg>Target (server, node, pixi, xmlpixi, js, neko)</arg>
+		<arg>Target (server, node, pixi, xmlpixi, js, neko, electron, pixielectron, monacoelectron)</arg>
 		<arg>Project name (create fdt too)</arg>
 	</create>
 	<server>
@@ -90,4 +90,5 @@
 		<arg>...</arg>
 	</license>
 
+	<comment>Visit https://github.com/AxGord/Pony/wiki/Pony-Tools for more info</comment>
 </commands>

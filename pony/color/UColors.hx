@@ -31,7 +31,7 @@ using Std;
  * Colors
  * @author AxGord <axgord@gmail.com>
  */
-@:forward(push, pop, iterator)
+@:forward(push, pop, iterator, length)
 abstract UColors(Array<UColor>) from Array<UColor> to Array<UColor> {
 	/**
 	 * Middle color
@@ -67,4 +67,6 @@ abstract UColors(Array<UColor>) from Array<UColor> to Array<UColor> {
 	#if (flash && !doc_gen)
 	@:from inline public static function fromVector(a:flash.Vector<UInt>):UColors return [for(i in 0...a.length) a[i]];
 	#end
+
+	@:from @:extern public static inline function fromString(s:String):UColors return s.split(' ').map(UColor.fromString);
 }

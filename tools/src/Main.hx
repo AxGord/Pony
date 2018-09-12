@@ -26,6 +26,8 @@ import sys.FileSystem;
 import sys.io.File;
 import pony.Tools;
 
+using pony.text.TextTools;
+
 /**
  * Pony Command-Line Tools
  * @author AxGord <axgord@gmail.com>
@@ -35,22 +37,20 @@ class Main {
 	static var commands:Commands = new Commands();
 
 	static function showLogo():Void {
-		Sys.println(haxe.Resource.getString('logo'));
+		Sys.println(Utils.ansiForeground(haxe.Resource.getString('logo'), AnsiForeground.LightGray));
 		Sys.println('');
 		Sys.println('Command-Line Tools');
-		Sys.println('Library version: ' + Utils.ponyVersion + ' [' + Utils.getHaxelibVersion() + ']');
-		Sys.println('Library path: ' + Utils.libPath);
-		Sys.println('Build date: ' + Tools.getBuildDate());
-		Sys.println('https://github.com/AxGord/Pony');
-		Sys.println('http://lib.haxe.org/p/pony');
-		Sys.println('Type: "pony help" - for help');
+		Sys.println(Utils.ansiForeground('Library version: ', AnsiForeground.LightGray) + Utils.ponyVersion + ' [' + Utils.getHaxelibVersion() + ']');
+		Sys.println(Utils.ansiForeground('Library path: ', AnsiForeground.LightGray) + Utils.libPath);
+		Sys.println(Utils.ansiForeground('Build date: ', AnsiForeground.LightGray) + Tools.getBuildDate());
+		Sys.println(Utils.ansiUnderlined('https://github.com/AxGord/Pony'));
+		Sys.println(Utils.ansiUnderlined('http://lib.haxe.org/p/pony'));
+		Sys.println('Type:' + Utils.ansiForeground('pony help', AnsiForeground.LightCyan).quote().quote(' ') + '- for help');
 		Sys.exit(0);
 	}
 
 	static function showHelp():Void {
-		Sys.println(commands.helpData.join('\n\n'));
-		Sys.println('');
-		Sys.println('Visit https://github.com/AxGord/Pony/wiki/Pony-Tools for more info');
+		Sys.println('\n' + (Utils.isWindows ? commands.helpData.join('\n\n') : commands.helpAnsiData.join('\n\n')) + '\n');
 		Sys.exit(0);
 	}
 

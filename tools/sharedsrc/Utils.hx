@@ -25,6 +25,7 @@ import haxe.xml.Fast;
 import sys.io.File;
 import sys.FileSystem;
 import pony.text.XmlTools;
+import pony.text.TextTools;
 
 /**
  * Share
@@ -160,6 +161,14 @@ class Utils {
 		}
 		content.push('}\n');
 		createHaxeFile(file, content);
+	}
+
+	public static inline function ansiForeground(s:String, c:AnsiForeground):String {
+		return isWindows ? s : TextTools.ansiForeground(s, c);
+	}
+
+	public static inline function ansiUnderlined(s:String):String {
+		return isWindows ? s : TextTools.ansiUnderlined(s);
 	}
 
 	#if neko
