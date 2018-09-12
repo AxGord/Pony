@@ -106,6 +106,11 @@ class ColorPicker extends Sprite implements HasSignal {
 		marker.graphics.drawCircle(0, 0, 2);
 	}
 
+	public inline function removeMarker():Void {
+		markerColor = 1;
+		marker.graphics.clear();
+	}
+
 	public inline function clear():Void {
 		if (bitmap != null) {
 			removeChild(bitmap);
@@ -115,7 +120,7 @@ class ColorPicker extends Sprite implements HasSignal {
 
 	public function draw(w:UInt, h:UInt):Void {
 		clear();
-
+		removeMarker();
 		var m:Matrix = new Matrix();
 		m.createGradientBox(w, h);
 		graphics.beginGradientFill(GradientType.LINEAR, COLORS, alphas, ratios, m);
