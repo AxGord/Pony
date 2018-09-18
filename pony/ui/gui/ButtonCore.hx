@@ -90,6 +90,8 @@ class ButtonCore extends Tumbler implements HasSignal {
 		onEnable << allowChangeMode;
 		onDisable << disallowChangeMode;
 	}
+
+	public inline function sendVisual():Void eVisual.dispatch(mode, state);
 	
 	public function destroy():Void {
 		touch.destroy();
