@@ -138,9 +138,7 @@ class FastMovieClip extends AnimTextureCore {
 		}
 	}
 	
-	@:extern public inline function ret(s:FastMoviePlaySprite):Void {
-		pool.push(s);
-	}
+	@:extern public inline function ret(s:Sprite):Void pool.push(s);
 
 	override private function setTexture(n:Int, f:Int):Void setTextureFrame(texture[n], f);
 
