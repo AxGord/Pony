@@ -24,13 +24,16 @@
 package pony.time;
 #if js
 import js.Browser;
+import pony.events.Signal0;
 
 /**
  * JsDT
  * @author AxGord <axgord@gmail.com>
  */
-class JsDT {
-	
+class JsDT implements pony.magic.HasSignal {
+
+	@:auto public static var onRender:Signal0;
+
 	public static var half(default, set):Bool;
 	
 	/**
@@ -38,7 +41,8 @@ class JsDT {
 	 */
 	public static var halfMobile(never, set):Bool;
 	
-	private static var inited:Bool = false;
+	public static var inited(default, null):Bool = false;
+	
 	private static var afid:Int = -1;
 	private static var ms:Float = 0;
 	private static var allowFastTickAbort:Bool = false;
@@ -61,8 +65,6 @@ class JsDT {
 	
 	private static dynamic function raf(cb:Float -> Void):Int return throw 'Not set';
 	private static dynamic function caf(id:Int):Void return throw 'Not set';
-	
-	public static dynamic function render():Void {}
 	
 	private static function set_half(b:Bool):Bool {
 		if (!inited) {
@@ -111,13 +113,13 @@ class JsDT {
 	}
 	
 	private static function halfTick2(v:Float):Void {
-		render();
+		eRender.dispatch();
 		afid = raf(halfTick1);
 	}
 	
 	private static function fastTick(v:Float):Void {
 		tick(v);
-		render();
+		eRender.dispatch();
 		if (allowFastTickAbort)
 			afid = raf(fastTick);
 	}

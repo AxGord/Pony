@@ -36,7 +36,7 @@ class HtmlContainer extends pixi.core.sprites.Sprite implements pony.geom.IWH {
 	public var size(get, never):Point<Float>;
 	public var targetStyle(get, set):CSSStyleDeclaration;
 
-	private var htmlContainer:HtmlContainerBase;
+	public var htmlContainer(default, null):HtmlContainerBase;
 	private var targetRect(get, set):Rect<Float>;
 	private var _size:Point<Float>;
 

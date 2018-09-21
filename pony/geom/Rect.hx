@@ -51,6 +51,9 @@ abstract Rect<T>(SimpleRect<T>) to SimpleRect<T> from SimpleRect<T>  {
 	private inline function set_y(v:T):T return this.y = v;
 	private inline function set_width(v:T):T return this.width = v;
 	private inline function set_height(v:T):T return this.height = v;
+
+	@:to public static inline function fromIntToFloat(p:Rect<Int>):Rect<Float> return cast p;
+
 }
 
 abstract IntRect(SimpleRect<Int>) to SimpleRect<Int> from SimpleRect<Int> {

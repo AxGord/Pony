@@ -179,7 +179,28 @@ abstract UColor(UInt) from UInt to UInt {
 	/**
 	 * Convert color to string
 	 */
-	@:to inline public function toString():String return '#' + StringTools.hex(this);
+	@:to inline public function toString():String return '#' + StringTools.hex(rgb, 6);
+
+	/**
+	 * Convert color to string with alpha
+	 */
+	inline public function toStringWithAlpha():String return '#' + StringTools.hex(this, 8);
+
+	/**
+	 * Convert color to rgba string with inverted alpha
+	 */
+	inline public function toRGBAIString():String return 'rgba(${r}, ${g}, ${b}, ${invertAlpha.af})';
+
+	/**
+	 * Convert color to rgba string
+	 */
+	inline public function toRGBAString():String return 'rgba(${r}, ${g}, ${b}, ${af})';
+
+	/**
+	 * Convert color to rgb string
+	 */
+	inline public function toRGBString():String return 'rgb(${r}, ${g}, ${b})';
+
 	/**
 	 * Build color from string
 	 */

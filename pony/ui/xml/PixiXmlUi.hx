@@ -68,6 +68,8 @@ import pony.pixi.ui.ZeroPlace;
 import pony.pixi.ui.HtmlVideoUI;
 import pony.pixi.ui.HtmlVideoUIFS;
 import pony.pixi.ui.HtmlContainer;
+import pony.pixi.ui.SubApp;
+import pony.geom.Rect;
 import pony.pixi.ui.RenderBox;
 import pony.pixi.ui.LogableSprite;
 import pony.pixi.ui.Gradient;
@@ -114,6 +116,7 @@ using pony.pixi.PixiExtends;
 	video: pony.pixi.ui.HtmlVideoUI,
 	fsvideo: pony.pixi.ui.HtmlVideoUIFS,
 	html: pony.pixi.ui.HtmlContainer,
+	subapp: pony.pixi.ui.SubApp,
 	render: pony.pixi.ui.RenderBox,
 	drawshape: pony.pixi.ui.DrawShapeView,
 	#if pixi_particles
@@ -407,6 +410,24 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 					c.targetStyle = div.style;
 					c.element = div;
 				}
+				c;
+
+			case 'subapp':
+				var c = new SubApp({
+					x: parseAndScaleInt(attrs.x),
+					y: parseAndScaleInt(attrs.y),
+					width: parseAndScaleInt(attrs.w),
+					height: parseAndScaleInt(attrs.h)
+				}, app);
+				if (!attrs.div.isFalse()) {
+					var div = js.Browser.document.createDivElement();
+					if (attrs.color != null)
+						div.style.backgroundColor = attrs.color;
+					app.parentDom.appendChild(div);
+					c.targetStyle = div.style;
+					c.element = div;
+				}
+				c.init();
 				c;
 
 			case 'render':

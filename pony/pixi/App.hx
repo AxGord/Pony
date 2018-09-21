@@ -49,9 +49,11 @@ import pony.ui.touch.pixi.Touch;
 }
 
 typedef RenderOptions = {
-	?antialias: Null<Bool>,
-	?forceFXAA: Null<Bool>,
-	?roundPixels: Null<Bool>
+	?antialias: Bool,
+	?forceFXAA: Bool,
+	?roundPixels: Bool,
+	?transparent: Bool,
+	?forceCanvas: Bool
 }
 
 /**
@@ -85,6 +87,7 @@ class App implements HasSignal {
 	private var smallDeviceQuality:Float;
 	private var smallDeviceQualityOffset:Float;
 	private var resizeTimer:DTimer;
+	private var resizeEventName:String;
 	
 	private var ticker:Ticker;
 	
@@ -112,12 +115,14 @@ class App implements HasSignal {
 		?parentDom:Element,
 		smallDeviceQuality:SmallDeviceQuality = SmallDeviceQuality.normal,
 		resizeInterval:Time = DEFAULT_RESIZE_INTERVAL,
+		resizeEventName:String = 'resize',
 		?backImg:Sprite,
 		?ro:RenderOptions
 	) {
 		this.width = width;
 		this.height = height;
 		background = bg;
+		this.resizeEventName = resizeEventName;
 
 		this.parentDom = parentDom;
 		this.smallDeviceQuality = smallDeviceQuality;
@@ -127,7 +132,7 @@ class App implements HasSignal {
 		
 		Browser.window.addEventListener('orientationchange', refreshSize, true);
 		Browser.window.addEventListener('focus', refreshSize, true);
-		Browser.window.onresize = refreshSize;
+		registerResizeListener();
 		_width = width;
 		_height = height;
 		this.container = container;
@@ -162,6 +167,12 @@ class App implements HasSignal {
 				renderingOptions.forceFXAA = ro.forceFXAA;
 			if (ro.roundPixels != null)
 				renderingOptions.roundPixels = ro.roundPixels;
+			if (ro.transparent != null)
+				renderingOptions.transparent = ro.transparent;
+			#if !forcecanvas
+			if (ro.forceCanvas != null)
+				renderingOptions.forceCanvas = ro.forceCanvas;
+			#end
 		}
 
 		app = new pixi.core.Application(renderingOptions);
@@ -188,8 +199,8 @@ class App implements HasSignal {
 		app.stop();
 		app.ticker.stop();
 		
-		JsDT.start();
-		JsDT.render = render;
+		if (!JsDT.inited) JsDT.start();
+		JsDT.onRender << render;
 		
 		#if stats addStats(); #end
 	}
@@ -218,7 +229,7 @@ class App implements HasSignal {
 	
 	public dynamic function ratioMod(ratio:Float):Float return ratio;
 	
-	private function resizeHandler():Void {
+	public function resizeHandler():Void {
 
 		width = parentDom.clientWidth;
 		height = parentDom.clientHeight;
@@ -260,13 +271,17 @@ class App implements HasSignal {
 	
 	public function pauseRendering():Void {
 		renderPause = true;
-		Browser.window.onresize = null;
+		Browser.window.removeEventListener(resizeEventName, refreshSize, false);
 	}
 	
 	public function resumeRendering():Void {
 		renderPause = false;
-		Browser.window.onresize = refreshSize;
+		registerResizeListener();
 		refreshSize();
+	}
+
+	@:extern inline private function registerResizeListener():Void {
+		Browser.window.addEventListener(resizeEventName, refreshSize, false);
 	}
 	
 	public function refreshSize(?_):Void {
