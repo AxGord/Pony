@@ -356,7 +356,7 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 					y: parseAndScale(attrs.y),
 					width: parseAndScale(attrs.w),
 					height: parseAndScale(attrs.h)
-				}, attrs.css, app, attrs.fixed.isTrue());
+				}, attrs.css, app, attrs.ceil.isTrue(), attrs.fixed.isTrue());
 				var src = attrs.src;
 				if (src != null)
 					video.video.loadVideo(src);
@@ -385,6 +385,8 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 					attrs.fscss,
 					attrs.transition,
 					app,
+					attrs.clicktimeout,
+					attrs.ceil.isTrue(),
 					attrs.fixed.isTrue()
 				);
 				var src = attrs.src;
@@ -398,7 +400,7 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 					y: parseAndScale(attrs.y),
 					width: parseAndScale(attrs.w),
 					height: parseAndScale(attrs.h)
-				}, app);
+				}, app, attrs.ceil.isTrue(), attrs.fixed.isTrue());
 				if (attrs.div.isTrue()) {
 					var div = js.Browser.document.createDivElement();
 					if (attrs.src != null) {
@@ -418,7 +420,7 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 					y: parseAndScaleInt(attrs.y),
 					width: parseAndScaleInt(attrs.w),
 					height: parseAndScaleInt(attrs.h)
-				}, app);
+				}, app, !attrs.ceil.isFalse(), attrs.fixed.isTrue());
 				if (!attrs.div.isFalse()) {
 					var div = js.Browser.document.createDivElement();
 					if (attrs.color != null)

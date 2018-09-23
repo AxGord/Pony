@@ -189,10 +189,15 @@ class App implements HasSignal {
 		}
 
 		app.stage.addChild(container);
-		Mouse.reg(container);
-		Mouse.correction = correction;
-		Touch.reg(container);
-		Touch.correction = correction;
+		if (!Mouse.inited) {
+			Mouse.reg(container);
+			Mouse.correction = correction;
+		}
+
+		if (!Touch.inited) {
+			Touch.reg(container);
+			Touch.correction = correction;
+		}
 		resizeHandler();
 		if (main == null) main = this;
 		

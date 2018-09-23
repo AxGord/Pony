@@ -30,8 +30,8 @@ class HtmlVideoUI extends HtmlContainer {
 	public var video(default, null):HtmlVideo;
 	public var muted(get, set):Bool;
 
-	public function new(targetRect:pony.geom.Rect<Float>, ?css:String, ?app:pony.pixi.App, ?options:HtmlVideoOptions, fixed:Bool = false) {
-		super(targetRect, app, fixed);
+	public function new(targetRect:pony.geom.Rect<Float>, ?css:String, ?app:pony.pixi.App, ?options:HtmlVideoOptions, ceil:Bool = false, fixed:Bool = false) {
+		super(targetRect, app, ceil, fixed);
 		video = new HtmlVideo(options);
 		video.appendTo(app.parentDom);
 		htmlContainer.targetStyle = video.style;

@@ -37,14 +37,13 @@ import pony.ui.touch.Mouse as M;
 class Mouse {
 
 	private static var obj:Container;
-	private static var inited:Bool = false;
+
+	public static var inited(default, null):Bool = false;
 	
 	public static function reg(obj:Container):Void {
 		if (Mouse.obj == null) {
 			Mouse.obj = obj;
 			if (inited) _init();
-		} else {
-			regSub(obj);
 		}
 	}
 	

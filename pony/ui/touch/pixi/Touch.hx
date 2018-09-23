@@ -50,14 +50,13 @@ class Touch implements Declarator implements HasSignal {
 	private static var endStack:Array<TouchObj> = [];
 	
 	private static var obj:Container;
-	private static var inited:Bool = false;
+
+	public  static var inited(default, null):Bool = false;
 	
 	public static function reg(obj:Container):Void {
 		if (Touch.obj == null) {
 			Touch.obj = obj;
 			if (inited) _init();
-		} else {
-			regSub(obj);
 		}
 	}
 	

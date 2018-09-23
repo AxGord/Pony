@@ -49,10 +49,12 @@ class HtmlContainerBase implements HasSignal {
 	public var posUpdater:Tumbler = new Tumbler(true);
 
 	private var lastRect:Rect<Float> = null;
+	private var ceil:Bool;
 	private var fixed:Bool;
 
-	public function new(targetRect:Rect<Float>, ?app:App, ?targetStyle:CSSStyleDeclaration, fixed:Bool = false) {
+	public function new(targetRect:Rect<Float>, ?app:App, ?targetStyle:CSSStyleDeclaration, ceil:Bool = false, fixed:Bool = false) {
 		this.targetRect = targetRect;
+		this.ceil = ceil;
 		this.fixed = fixed;
 		if (app == null)
 			app = App.main;
@@ -97,7 +99,7 @@ class HtmlContainerBase implements HasSignal {
 		eResize.dispatch();
 	}
 
-	@:extern private static inline function px(v:Float):String return v + 'px';
+	@:extern private inline function px(v:Float):String return (ceil ? Std.int(v) : v) + 'px';
 
 	private function set_targetStyle(s:CSSStyleDeclaration):CSSStyleDeclaration {
 		targetStyle = s;
