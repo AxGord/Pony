@@ -53,7 +53,8 @@ typedef RenderOptions = {
 	?forceFXAA: Bool,
 	?roundPixels: Bool,
 	?transparent: Bool,
-	?forceCanvas: Bool
+	?forceCanvas: Bool,
+	?clearBeforeRender: Bool
 }
 
 /**
@@ -169,6 +170,8 @@ class App implements HasSignal {
 				renderingOptions.roundPixels = ro.roundPixels;
 			if (ro.transparent != null)
 				renderingOptions.transparent = ro.transparent;
+			if (ro.clearBeforeRender != null)
+				renderingOptions.clearBeforeRender = ro.clearBeforeRender;
 			#if !forcecanvas
 			if (ro.forceCanvas != null)
 				renderingOptions.forceCanvas = ro.forceCanvas;
