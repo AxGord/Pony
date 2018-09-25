@@ -48,9 +48,10 @@ class BTextLow extends BitmapText implements IWH {
 		try {
 			super(text, style);
 		} catch (_:Dynamic) {
-			throw 'Font error: '+style.font;
+			throw 'Font error: ' + style.font;
 		}
 		if (!this.nocache) cacheAsBitmap = true;
+
 	}
 	
 	private function get_size():Point<Float> return new Point(textWidth, textHeight);

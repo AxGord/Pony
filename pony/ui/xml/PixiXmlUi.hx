@@ -245,19 +245,32 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 				
 				clip.get();
 			case 'textbox':
-				var font = parseAndScaleInt(attrs.size) + 'px ' + attrs.font;
+				var font = {
+					name: attrs.font,
+					size: parseAndScaleInt(attrs.size)
+				};
 				var text = textTransform(_putData(content), attrs.transform);
 				var style = ETextStyle.BITMAP_TEXT_STYLE({font: font, tint: UColor.fromString(attrs.color).rgb});
 				var s = PixiAssets.image(attrs.src, attrs.name);
 				s.visible = !attrs.hidebg.isTrue();
 				new TextBox(s, text, style, scaleBorderInt(attrs.border), attrs.nocache.isTrue(), attrs.shadow.isTrue());
 			case 'text':
-				var font = parseAndScaleInt(attrs.size) + 'px ' + attrs.font;
+				// var font = parseAndScaleInt(attrs.size) + 'px ' + attrs.font;
+				var font = {
+					name: attrs.font,
+					size: parseAndScaleInt(attrs.size)
+				};
 				var text = textTransform(_putData(content), attrs.transform);
 				var style = {font: font, tint: UColor.fromString(attrs.color).rgb, align: cast attrs.align};
 				new BText(text, style, attrs.ansi, attrs.shadow.isTrue());
 			case 'lbutton':
-				var b = new LabelButton(splitAttr(attrs.skin), attrs.vert.isTrue(), scaleBorderInt(attrs.border), !attrs.padding.isFalse(), attrs.src, attrs.dac == null ? null : Std.parseFloat(attrs.dac));
+				var b = new LabelButton(
+					splitAttr(attrs.skin),
+					attrs.vert.isTrue(),
+					scaleBorderInt(attrs.border),
+					!attrs.padding.isFalse(),
+					attrs.src, attrs.dac == null ? null : Std.parseFloat(attrs.dac)
+				);
 				for (c in content) b.add(c);
 				b;
 			case 'button':

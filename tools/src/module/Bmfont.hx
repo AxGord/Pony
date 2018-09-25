@@ -65,6 +65,7 @@ private class BmfontReader extends BAReader<BmfontConfig> {
 					size: Std.parseInt(xml.att.size),
 					charset: xml.has.charset ? xml.att.charset : null,
 					output: xml.has.output ? xml.att.output : null,
+					lineHeight: xml.has.lineHeight ? Std.parseInt(xml.att.lineHeight) : null,
 				});
 			case _: super.readNode(xml);
 		}
