@@ -36,10 +36,16 @@ import pony.ui.touch.MouseButton;
 class Mouse {
 
 	private static var enabled:Bool = true;
+
+	private static var currentX(get, never):Float;
+	private static var currentY(get, never):Float;
 	
 	@:extern inline public static function init():Void {
 		DeltaTime.fixedUpdate.once(initNow, -2);
 	}
+
+	@:extern private static inline function get_currentX():Float return Lib.current.stage.mouseX;
+	@:extern private static inline function get_currentY():Float return Lib.current.stage.mouseY;
 	
 	public static function initNow():Void {
 		hackMove();
@@ -55,7 +61,7 @@ class Mouse {
 	
 	
 	private static function moveHandler(event:MouseEvent):Void {
-		M.moveHandler(event.stageX, event.stageY);
+		M.moveHandler(currentX, currentY);
 		tlock(event);
 	}
 	
@@ -66,7 +72,7 @@ class Mouse {
 	
 	private static function downHandler(event:MouseEvent):Void {
 		if (M.checkDown(MouseButton.LEFT))
-			M.downHandler(event.stageX, event.stageY, MouseButton.LEFT);
+			M.downHandler(currentX, currentY, MouseButton.LEFT);
 		tlock(event);
 	}
 	
@@ -77,7 +83,7 @@ class Mouse {
 	
 	private static function upHandler(event:MouseEvent):Void {
 		if (M.checkUp(MouseButton.LEFT))
-			M.upHandler(event.stageX, event.stageY, MouseButton.LEFT);
+			M.upHandler(currentX, currentY, MouseButton.LEFT);
 		tlock(event);
 	}
 	

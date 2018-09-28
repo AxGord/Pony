@@ -27,6 +27,7 @@ import pony.events.Signal0;
 import pony.events.Signal1;
 import pony.events.Signal2;
 import pony.magic.HasSignal;
+import pony.magic.HasLink;
 import pony.ui.touch.Touchable;
 import pony.ui.gui.ButtonCore;
 import pony.ui.gui.SliderCore;
@@ -35,13 +36,15 @@ import pony.ui.gui.SliderCore;
  * ScrollBoxBarCore
  * @author AxGord <axgord@gmail.com>
  */
-class ScrollBoxBarCore implements HasSignal {
+class ScrollBoxBarCore implements HasSignal implements HasLink {
 
 	@:auto public var onHide:Signal0;
 	@:auto public var onPos:Signal2<Float, Float>;
 	@:auto public var onSize:Signal2<Float, Float>;
 	@:auto public var onContentPos:Signal1<Float>;
 	@:auto public var onMaskSize:Signal1<Float>;
+
+	public var pos(link, set):Float = slider.pos;
 
 	public var c(default, null):Null<Float>;
 	private var slider:SliderCore;
@@ -63,6 +66,14 @@ class ScrollBoxBarCore implements HasSignal {
 			slider.changeX = posHandler;
 		}
 		slider.changeValue << valueHandler;
+	}
+
+	public inline function set_pos(v:Float):Float {
+		if (c > totalA) {
+			slider.pos = v;
+			slider.update();
+		}
+		return v;
 	}
 
 	private function set_totalA(v:Float):Float {

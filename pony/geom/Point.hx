@@ -58,6 +58,10 @@ abstract Point<T:Float>(Point_<T>) from Point_<T> to Point_<T> to Point<Float> {
 		return { x:lhs.x - rhs, y:lhs.y - rhs };
 
 	public static inline function random():Point<Float> return new Point<Float>(Math.random(), Math.random());
+
+	#if flash
+	@:from public static inline function fromFlashPoint(p:flash.geom.Point):Point<Float> return new Point(p.x, p.y);
+	#end
 }
 
 abstract IntPoint(Point_ < Int > ) to Point_ < Int > from Point_ < Int > {

@@ -25,6 +25,7 @@ package pony.ui.touch;
 
 import pony.events.Signal1;
 import pony.magic.HasSignal;
+import pony.geom.Point;
 
 /**
  * Touch
@@ -43,6 +44,7 @@ class Touch implements HasSignal {
 	
 	public var x(default, null):Float;
 	public var y(default, null):Float;
+	public var point(get, never):Point<Float>;
 	
 	public function new() {}
 	
@@ -62,5 +64,7 @@ class Touch implements HasSignal {
 		this.y = y;
 		return this;
 	}
+	
+	@:extern inline private function get_point():Point<Float> return new Point<Float>(x, y);
 	
 }

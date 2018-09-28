@@ -27,6 +27,7 @@ import pony.events.Signal0;
 import pony.events.Signal1;
 import pony.events.Signal2;
 import pony.magic.HasSignal;
+import pony.magic.HasLink;
 import pony.ui.touch.Touchable;
 import pony.ui.touch.Touch;
 import pony.ui.gui.ButtonCore;
@@ -36,7 +37,7 @@ import pony.ui.gui.SliderCore;
  * ScrollBoxCore
  * @author AxGord <axgord@gmail.com>
  */
-class ScrollBoxCore implements HasSignal {
+class ScrollBoxCore implements HasSignal implements HasLink {
 
 	@:auto public var onScrollVertPos:Signal2<Float, Float>;
 	@:auto public var onScrollVertSize:Signal2<Float, Float>;
@@ -51,6 +52,9 @@ class ScrollBoxCore implements HasSignal {
 	public var h(default, set):Float;
 	public var vert(default, null):Bool;
 	public var hor(default, null):Bool;
+
+	public var vertPos(link, link):Float = barVert.pos;
+	public var horPos(link, link):Float = barVert.pos;
 
 	private var tArea:Touchable;
 	private var barVert:ScrollBoxBarCore;
