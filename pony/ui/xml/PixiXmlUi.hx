@@ -68,6 +68,8 @@ import pony.pixi.ui.ZeroPlace;
 import pony.pixi.ui.HtmlVideoUI;
 import pony.pixi.ui.HtmlVideoUIFS;
 import pony.pixi.ui.HtmlContainer;
+import pony.pixi.ui.SubApp;
+import pony.geom.Rect;
 import pony.pixi.ui.RenderBox;
 import pony.pixi.ui.LogableSprite;
 import pony.pixi.ui.Gradient;
@@ -114,6 +116,7 @@ using pony.pixi.PixiExtends;
 	video: pony.pixi.ui.HtmlVideoUI,
 	fsvideo: pony.pixi.ui.HtmlVideoUIFS,
 	html: pony.pixi.ui.HtmlContainer,
+	subapp: pony.pixi.ui.SubApp,
 	render: pony.pixi.ui.RenderBox,
 	drawshape: pony.pixi.ui.DrawShapeView,
 	#if pixi_particles
@@ -242,19 +245,32 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 				
 				clip.get();
 			case 'textbox':
-				var font = parseAndScaleInt(attrs.size) + 'px ' + attrs.font;
+				var font = {
+					name: attrs.font,
+					size: parseAndScaleInt(attrs.size)
+				};
 				var text = textTransform(_putData(content), attrs.transform);
 				var style = ETextStyle.BITMAP_TEXT_STYLE({font: font, tint: UColor.fromString(attrs.color).rgb});
 				var s = PixiAssets.image(attrs.src, attrs.name);
 				s.visible = !attrs.hidebg.isTrue();
 				new TextBox(s, text, style, scaleBorderInt(attrs.border), attrs.nocache.isTrue(), attrs.shadow.isTrue());
 			case 'text':
-				var font = parseAndScaleInt(attrs.size) + 'px ' + attrs.font;
+				// var font = parseAndScaleInt(attrs.size) + 'px ' + attrs.font;
+				var font = {
+					name: attrs.font,
+					size: parseAndScaleInt(attrs.size)
+				};
 				var text = textTransform(_putData(content), attrs.transform);
 				var style = {font: font, tint: UColor.fromString(attrs.color).rgb, align: cast attrs.align};
 				new BText(text, style, attrs.ansi, attrs.shadow.isTrue());
 			case 'lbutton':
-				var b = new LabelButton(splitAttr(attrs.skin), attrs.vert.isTrue(), scaleBorderInt(attrs.border), !attrs.padding.isFalse(), attrs.src, attrs.dac == null ? null : Std.parseFloat(attrs.dac));
+				var b = new LabelButton(
+					splitAttr(attrs.skin),
+					attrs.vert.isTrue(),
+					scaleBorderInt(attrs.border),
+					!attrs.padding.isFalse(),
+					attrs.src, attrs.dac == null ? null : Std.parseFloat(attrs.dac)
+				);
 				for (c in content) b.add(c);
 				b;
 			case 'button':
@@ -353,7 +369,7 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 					y: parseAndScale(attrs.y),
 					width: parseAndScale(attrs.w),
 					height: parseAndScale(attrs.h)
-				}, attrs.css, app, attrs.fixed.isTrue());
+				}, attrs.css, app, attrs.ceil.isTrue(), attrs.fixed.isTrue());
 				var src = attrs.src;
 				if (src != null)
 					video.video.loadVideo(src);
@@ -382,6 +398,8 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 					attrs.fscss,
 					attrs.transition,
 					app,
+					attrs.clicktimeout,
+					attrs.ceil.isTrue(),
 					attrs.fixed.isTrue()
 				);
 				var src = attrs.src;
@@ -395,7 +413,7 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 					y: parseAndScale(attrs.y),
 					width: parseAndScale(attrs.w),
 					height: parseAndScale(attrs.h)
-				}, app);
+				}, app, attrs.ceil.isTrue(), attrs.fixed.isTrue());
 				if (attrs.div.isTrue()) {
 					var div = js.Browser.document.createDivElement();
 					if (attrs.src != null) {
@@ -407,6 +425,24 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 					c.targetStyle = div.style;
 					c.element = div;
 				}
+				c;
+
+			case 'subapp':
+				var c = new SubApp({
+					x: parseAndScaleInt(attrs.x),
+					y: parseAndScaleInt(attrs.y),
+					width: parseAndScaleInt(attrs.w),
+					height: parseAndScaleInt(attrs.h)
+				}, app, !attrs.ceil.isFalse(), attrs.fixed.isTrue());
+				if (!attrs.div.isFalse()) {
+					var div = js.Browser.document.createDivElement();
+					if (attrs.color != null)
+						div.style.backgroundColor = attrs.color;
+					app.parentDom.appendChild(div);
+					c.targetStyle = div.style;
+					c.element = div;
+				}
+				c.init();
 				c;
 
 			case 'render':

@@ -37,12 +37,14 @@ import pony.ui.touch.Mouse as M;
 class Mouse {
 
 	private static var obj:Container;
-	private static var inited:Bool = false;
+
+	public static var inited(default, null):Bool = false;
 	
 	public static function reg(obj:Container):Void {
-		if (Mouse.obj != null) throw 'ready';
-		Mouse.obj = obj;
-		if (inited) _init();
+		if (Mouse.obj == null) {
+			Mouse.obj = obj;
+			if (inited) _init();
+		}
 	}
 	
 	public static function init() {
@@ -52,6 +54,12 @@ class Mouse {
 	}
 	
 	public static function _init() {
+		regSub(obj);
+		M.eWheel.onTake << Browser.document.addEventListener.bind("wheel", wheelHandler, false);
+		M.eWheel.onLost << Browser.document.removeEventListener.bind("wheel", wheelHandler, false);
+	}
+
+	public static function regSub(obj:Container):Void {
 		obj.interactive = true;
 		obj.on('mousedown', downHandler);
 		obj.on('mouseup', upHandler);
@@ -59,8 +67,6 @@ class Mouse {
 		M.eMove.onLost << function() obj.removeListener('mousemove', moveHandler);
 		M.eLeave.onTake << function() obj.on('mouseupoutside', upoutsideHandler);
 		M.eLeave.onLost << function() obj.removeListener('mouseupoutside', upoutsideHandler);
-		M.eWheel.onTake << Browser.document.addEventListener.bind("wheel", wheelHandler, false);
-		M.eWheel.onLost << Browser.document.removeEventListener.bind("wheel", wheelHandler, false);
 	}
 	
 	private static function wheelHandler(e:Dynamic):Void {

@@ -25,6 +25,7 @@ package module;
 
 import pony.fs.File;
 import types.ImageminConfig;
+import pony.text.TextTools;
 import types.BmfontConfig;
 
 class Bmfont extends NModule<BmfontConfig> {
@@ -35,10 +36,10 @@ class Bmfont extends NModule<BmfontConfig> {
 		to = cfg.to;
 		Utils.createPath(to);
 		for (font in cfg.font)
-			packFont(cfg.from + font.file, font.size, font.face, font.charset, font.output);
+			packFont(cfg.from + font.file, font.size, font.face, font.charset, font.output, font.lineHeight);
 	}
 
-	private function packFont(font:File, size:Int, face:String, charset:String, output:String):Void {
+	private function packFont(font:File, size:Int, face:String, charset:String, output:String, lineHeight:Null<Int>):Void {
 		var short = font.shortName;
 		var ofn = output != null ? output : short + '_' + size;
 		var fntFile:String = to + ofn + '.fnt';
@@ -60,6 +61,7 @@ class Bmfont extends NModule<BmfontConfig> {
 			}
 			var f:String = face == null ? ofn : face;
 			var data = StringTools.replace(font.data, '<info face="$short"', '<info face="$f"');
+			if (lineHeight != null) data = TextTools.replaceXmlAttr(data, 'lineHeight', Std.string(lineHeight));
 			sys.io.File.saveContent(fntFile, data);
 			Sys.println('');
 			Sys.println(to + ofn + '.fnt');

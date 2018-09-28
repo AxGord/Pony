@@ -50,12 +50,14 @@ class Touch implements Declarator implements HasSignal {
 	private static var endStack:Array<TouchObj> = [];
 	
 	private static var obj:Container;
-	private static var inited:Bool = false;
+
+	public  static var inited(default, null):Bool = false;
 	
 	public static function reg(obj:Container):Void {
-		if (Touch.obj != null) throw 'ready';
-		Touch.obj = obj;
-		if (inited) _init();
+		if (Touch.obj == null) {
+			Touch.obj = obj;
+			if (inited) _init();
+		}
 	}
 	
 	public static function init() {
@@ -65,6 +67,10 @@ class Touch implements Declarator implements HasSignal {
 	}
 	
 	public static function _init() {
+		regSub(obj);
+	}
+
+	public static function regSub(obj:Container):Void {
 		obj.interactive = true;
 		eMove.onTake << function() obj.on('touchstart', startHandler);
 		eMove.onLost << function() obj.removeListener('touchstart', startHandler);
@@ -74,7 +80,6 @@ class Touch implements Declarator implements HasSignal {
 		eMove.onLost << function() obj.removeListener('touchmove', moveHandler);
 		eCancle.onTake << function() obj.on('touchendoutside', handleTouchEvent);
 		eCancle.onLost << function() obj.removeListener('touchendoutside', handleTouchEvent);
-		
 	}
 	
 	private static function handleTouchEvent(e:InteractionEvent):Void {

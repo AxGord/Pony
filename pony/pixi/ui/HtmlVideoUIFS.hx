@@ -44,6 +44,7 @@ class HtmlVideoUIFS extends HtmlVideoUI {
 	private var fsCss:String;
 	private var transition:String;
 	private var transitionDelay:DTimer;
+	private var clickTimer:DTimer;
 
 	public function new(
 		targetRect:Rect<Float>,
@@ -54,13 +55,15 @@ class HtmlVideoUIFS extends HtmlVideoUI {
 		?transition:String,
 		?app:pony.pixi.App,
 		?options:HtmlVideoOptions,
+		?clickTimeout:Time,
+		ceil:Bool = false,
 		fixed:Bool = false)
 	{
 		if (css != null) {
 			css = JsTools.normalizeCss(css);
 			normalCss = css;
 		}
-		super(targetRect, css, app, options, fixed);
+		super(targetRect, css, app, options, ceil, fixed);
 		if (fsRect != null) {
 			this.normalRect = targetRect;
 			generateTransition(transition);
@@ -74,7 +77,13 @@ class HtmlVideoUIFS extends HtmlVideoUI {
 				this.fsRect.x += fsPos.x;
 				this.fsRect.y += fsPos.y;
 			}
-			video.onClick << fullscreen.sw;
+			if (clickTimeout == null) {
+				video.onClick << fullscreen.sw;
+			} else {
+				clickTimer = DTimer.createFixedTimer(clickTimeout);
+				listenClick();
+				clickTimer.complete << listenClick;
+			}
 			(video.loadProgress.changeRun - false - true) || video.onEnd << fullscreen.disable;
 			fullscreen.onEnable << openFullScreenHandler;
 			fullscreen.onDisable << closeFullScreenHandler;
@@ -84,6 +93,14 @@ class HtmlVideoUIFS extends HtmlVideoUI {
 				fsCss = JsTools.normalizeCss(fscss);
 			}
 		}
+	}
+
+	private inline function listenClick():Void video.onClick < clickHandler;
+
+	private function clickHandler():Void {
+		fullscreen.sw();
+		clickTimer.reset();
+		clickTimer.start();
 	}
 
 	private function generateTransition(tr:String):Void {

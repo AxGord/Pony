@@ -27,17 +27,21 @@ import js.html.CSSStyleDeclaration;
 import pony.geom.Rect;
 import pony.geom.Point;
 import pony.Tumbler;
+import pony.magic.HasSignal;
+import pony.events.Signal0;
 
 /**
  * HtmlContainerBase
  * @author AxGord <axgord@gmail.com>
  */
-class HtmlContainerBase {
+class HtmlContainerBase implements HasSignal {
 
 	public static inline var POSITION:String = 'absolute';
 	public static inline var POSITION_FIXED:String = 'fixed';
 
-	private var app:App;
+	@:auto public var onResize:Signal0;
+
+	public var app(default, null):App;
 
 	public var targetStyle(default, set):CSSStyleDeclaration;
 	public var targetRect(default, set):Rect<Float>;
@@ -45,10 +49,12 @@ class HtmlContainerBase {
 	public var posUpdater:Tumbler = new Tumbler(true);
 
 	private var lastRect:Rect<Float> = null;
+	private var ceil:Bool;
 	private var fixed:Bool;
 
-	public function new(targetRect:Rect<Float>, ?app:App, ?targetStyle:CSSStyleDeclaration, fixed:Bool = false) {
+	public function new(targetRect:Rect<Float>, ?app:App, ?targetStyle:CSSStyleDeclaration, ceil:Bool = false, fixed:Bool = false) {
 		this.targetRect = targetRect;
+		this.ceil = ceil;
 		this.fixed = fixed;
 		if (app == null)
 			app = App.main;
@@ -78,7 +84,7 @@ class HtmlContainerBase {
 		resize();
 	}
 
-	private function resize():Void {
+	public function resize():Void {
 		if (!posUpdater.enabled) return;
 		if (fixed) {
 			var b = app.parentDom.getBoundingClientRect();
@@ -90,9 +96,10 @@ class HtmlContainerBase {
 		}
 		targetStyle.width = px(lastRect.width);
 		targetStyle.height = px(lastRect.height);
+		eResize.dispatch();
 	}
 
-	@:extern private static inline function px(v:Float):String return v + 'px';
+	@:extern private inline function px(v:Float):String return (ceil ? Std.int(v) : v) + 'px';
 
 	private function set_targetStyle(s:CSSStyleDeclaration):CSSStyleDeclaration {
 		targetStyle = s;

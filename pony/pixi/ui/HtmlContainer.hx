@@ -36,18 +36,18 @@ class HtmlContainer extends pixi.core.sprites.Sprite implements pony.geom.IWH {
 	public var size(get, never):Point<Float>;
 	public var targetStyle(get, set):CSSStyleDeclaration;
 
-	private var htmlContainer:HtmlContainerBase;
+	public var htmlContainer(default, null):HtmlContainerBase;
 	private var targetRect(get, set):Rect<Float>;
 	private var _size:Point<Float>;
 
-	public function new(targetRect:Rect<Float>, ?app:pony.pixi.App, fixed:Bool = false) {
+	public function new(targetRect:Rect<Float>, ?app:pony.pixi.App, ceil:Bool = false, fixed:Bool = false) {
 		super();
 		//var g = new pixi.core.graphics.Graphics();
 		//g.beginFill(0x0);
 		//g.drawRect(0, 0, targetRect.width, targetRect.height);
 		//addChild(g);
 		_size = new Point(targetRect.width, targetRect.height);
-		htmlContainer = new HtmlContainerBase(targetRect, app, fixed);
+		htmlContainer = new HtmlContainerBase(targetRect, app, ceil, fixed);
 		pony.time.DeltaTime.fixedUpdate < posUpdate;
 		pony.time.DeltaTime.skipUpdate(posUpdate);
 	}

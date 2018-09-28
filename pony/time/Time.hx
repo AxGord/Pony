@@ -51,11 +51,11 @@ abstract Time(Null<Int>) from Int to Int {
 	@:extern inline public function new(?ms:Null<Int>) this = ms;
 	@:from @:extern inline public static function fromFloat(ms:Null<Float>):Time return new Time(ms.int());
 	@:from public static function fromString(time:String):Time {
+		if (time == null) return null;
 		var ms:Int = 0;
 		time = time.trim();
 		var neg:Bool = time.charAt(0) == '-'; 
 		if (neg) time = time.substr(1);
-		
 		
 		var nbuf:String = '';
 		var chbuf:String = '';

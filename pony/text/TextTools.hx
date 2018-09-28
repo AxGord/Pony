@@ -278,4 +278,24 @@ class TextTools {
 	public static inline function ansiForeground(s:String, c:AnsiForeground):String return '\x1b[${c}m$s\x1b[${AnsiForeground.Default}m';
 	public static inline function ansiUnderlined(s:String):String return '\x1b[4m$s\x1b[24m';
 
+	public static function replaceXmlAttr(src:String, attr:String, newval:String):String {
+		var i:Int = src.indexOf(attr);
+		if (i == -1) return src;
+		i += attr.length;
+		var q1:String = '"';
+		var q2:String = "'";
+		var oq:Int = src.indexOf(q1, i);
+		var oq2:Int = src.indexOf(q2, i);
+		var q:String = null;
+		if (oq2 != -1 && oq2 < oq) {
+			oq = oq2;
+			q = q2;
+		} else {
+			q = q1;
+		}
+		oq++;
+		var cq:Int = src.indexOf(q, oq);
+		return src.substring(0, oq) + newval + src.substring(cq);
+	}
+
 }

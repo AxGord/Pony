@@ -31,6 +31,7 @@ typedef BmfontConfig = { > BAConfig,
 		face: String,
 		size: Int,
 		charset: String,
-		output: String
+		output: String,
+		?lineHeight: Int
 	}>
 }
