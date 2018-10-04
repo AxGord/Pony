@@ -21,17 +21,18 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-package types;
+package create.section;
 
-enum ProjectType {
-	Pixi;
-	Pixixml;
-	JS;
-	Server;
-	Node;
-	Neko;
-	Pixielectron;
-	Electron;
-	Monacoelectron;
-	CC;
+class Url extends Section {
+
+	public var list:Array<String> = [];
+
+	public function new() super('url');
+
+	public function result():Xml {
+		init();
+		for (url in list) add('url', url);
+		return xml;
+	}
+
 }

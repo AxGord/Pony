@@ -37,6 +37,7 @@ class Project {
 	public var uglify(default, null):Uglify = new Uglify();
 	public var seconduglify(default, null):Uglify = new Uglify();
 	public var npm(default, null):Npm = new Npm();
+	public var url(default, null):Url = new Url();
 
 	public var name:String;
 	public var rname(get, never):String;
@@ -75,6 +76,7 @@ class Project {
 				root.addChild(seconduglify.result());
 			}
 		}
+		if (url.active) root.addChild(url.result());
 		
 		if (root.firstChild() == null) {
 			root.addChild(Xml.createComment('Put configuration here'));

@@ -61,6 +61,7 @@ class Create {
 		if (type != null) switch type {
 			case ProjectType.Server: create.targets.Server.set(project);
 			case ProjectType.JS: create.targets.JS.set(project);
+			case ProjectType.CC: create.targets.CC.set(project);
 			case ProjectType.Pixi, ProjectType.Pixixml: create.targets.Pixi.set(project);
 			case ProjectType.Node: create.targets.Node.set(project);
 			case ProjectType.Pixielectron:
@@ -103,6 +104,14 @@ class Create {
 				sys.io.File.saveContent(main, data);
 				if (vscAllow) create.ides.VSCode.createChrome(project.server.httpPort);
 				needHtml = 'index.html';
+			case ProjectType.CC:
+				Utils.createPath(main);
+				var data:String = haxe.Resource.getString('cctemplate.hx.tpl');
+				sys.io.File.saveContent(main, data);
+				sys.FileSystem.createDirectory(project.build.outputPath);
+				var data:String = haxe.Resource.getString('cctemplate.js.tpl');
+				sys.io.File.saveContent(project.build.outputPath + 'main.js', data);
+				if (vscAllow) create.ides.VSCode.createChrome(project.server.httpPort);
 			case ProjectType.Pixi:
 				Utils.createPath(main);
 				var data:String = haxe.Resource.getString('pixitemplate.hx.tpl');
