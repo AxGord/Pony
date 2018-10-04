@@ -111,6 +111,7 @@ class Main {
 		modules.register(new module.Bmfont());
 		modules.register(new module.Imagemin());
 		modules.register(new module.Copy());
+		modules.register(new module.Url());
 		modules.init();
 
 		commands.onNothing < showLogo;
