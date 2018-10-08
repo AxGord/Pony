@@ -99,7 +99,7 @@ class BaseLayout<T:BaseLayoutCore<Container>> extends Sprite implements IWH {
 			new Point(o.width * o.scale.x, o.height * o.scale.y);
 	}
 	
-	private static function getSizeMod(o:Container, p:Point<Float>):Point<Float> return new Point(p.x * o.scale.x, p.y * o.scale.y);
+	private static function getSizeMod(o:Container, p:Point<Float>):Point<Float> return p == null ? null : new Point(p.x * o.scale.x, p.y * o.scale.y);
 	
 	inline private function get_size():Point<Float> return visible ? layout.size : new Point<Float>(0, 0);
 	

@@ -56,31 +56,49 @@ class AlignLayoutCore<T> extends BaseLayoutCore<T> {
 			if (align.horizontal != null) {
 				_w = 0;
 				var sizesX = [for (obj in objects) {
-					var s = getObjSize(obj).x;
-					if (s > _w) _w = s;
-					s;
+					var os = getObjSize(obj);
+					if (os != null) {
+						var s = os.x;
+						if (s > _w) _w = s;
+						s;
+					} else {
+						0;
+					}
 				}];
 				for (p in GeomTools.halign(align, _w, sizesX).pair(objects)) setXpos(p.b, Std.int(p.a) + _border.left);
 			} else {
 				_w = 0;
 				for (obj in objects) {
-					var s = getObjSize(obj).x;
-					if (s > _w) _w = s;
+					var os = getObjSize(obj);
+					if (os != null) {
+						var s = os.x;
+						if (s > _w) _w = s;
+					}
 				}
 			}
 			if (align.vertical != null) {
 				_h = 0;
 				var sizesY = [for (obj in objects) {
-					var s = getObjSize(obj).y;
-					if (s > _h) _h = s;
-					s;
+					var os = getObjSize(obj);
+					if (os != null) {
+						var s = os.y;
+						if (s > _h) _h = s;
+						s;
+					} else {
+						0;
+					}
 				}];
 				for (p in GeomTools.valign(align, _h, sizesY).pair(objects)) setYpos(p.b, Std.int(p.a) + _border.top);
 			} else {
 				_h = 0;
 				for (obj in objects) {
-					var s = getObjSize(obj).y;
-					if (s > _h) _h = s;
+					var os = getObjSize(obj);
+					if (os != null) {
+						var s = os.y;
+						if (s > _h) _h = s;
+					} else {
+						0;
+					}
 				}
 			}
 		}

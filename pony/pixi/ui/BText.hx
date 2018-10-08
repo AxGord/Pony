@@ -25,6 +25,7 @@ package pony.pixi.ui;
 
 import pixi.core.display.DisplayObject.DestroyOptions;
 import pixi.core.sprites.Sprite;
+import pixi.core.textures.RenderTexture;
 import pixi.extras.BitmapText;
 import pixi.filters.blur.BlurFilter;
 import pony.geom.IWH;
@@ -39,57 +40,105 @@ import pony.time.DeltaTime;
 class BText extends Sprite implements IWH {
 
 	private static var blurFilter:BlurFilter;
+	private static inline var SHADOW_OFFSET:Int = 4;
+	private static inline var NORMAL_OFFSET:Int = 4;
+	private static inline var WHITE:UInt = 0xFFFFFF;
 	
 	private static function __init__():Void {
 		blurFilter = new BlurFilter();
 		blurFilter.blur = 2;
+		blurFilter.passes = 1;
+		blurFilter.resolution = 0.5;
 	}
 	
-	public var t(get, set):String;
+	public var t(default, set):String;
 	public var size(get, never):Point<Float>;
+	private var _size:Point<Float>;
 	private var ansi:String;
-	private var current:BTextLow;
-	private var currentShadow:BTextLow;
 	public var style(default, null):BitmapTextStyle;
-	public var color(get, set):UInt;
+	public var color(default, set):UInt;
 	private var defColor:UInt;
+	private var renderTexture:RenderTexture;
+	private var renderSprite:Sprite;
 	private var shadow:Bool = false;
-	private var shadowStyle:BitmapTextStyle;
+	private var app:App;
 	
-	public function new(text:String, ?style:BitmapTextStyle, ?ansi:String, shadow:Bool = false) {
+	public function new(text:String, ?style:BitmapTextStyle, ?ansi:String, shadow:Bool = false, ?app:App) {
 		super();
-		this.style = style;
+		color = style.tint;
+		this.style = {font: style.font, align: style.align, tint: WHITE};
 		this.ansi = ansi;
 		this.shadow = shadow;
-		if (shadow)
-			shadowStyle = {font:style.font, tint:0x000000};
-		defColor = style.tint;
+		this.app = app == null ? App.main : app;
+		defColor = color;
 		t = text;
 	}
 	
-	private function get_size():Point<Float> return current == null ? null : current.size;
+	private function get_size():Point<Float> return _size;
 	
-	public function wait(cb:Void->Void):Void cb();
+	public function wait(cb:Void -> Void):Void cb();
 	
-	@:extern inline public function get_t():String return current == null ? null : current.text;
-	
-	@:extern inline public function safeSet(s:String):Void {
+	@:extern public inline function safeSet(s:String):Void {
 		t = StringTools.replace(s, ' ', '').length == 0 ? null : s;
 	}
 	
 	public function set_t(s:String):String {
-		if (current != null && current.t == s) return s;
+		if (t == s) return s;
 		destroyIfExists();
-		if (s == null) return s;
+		if (s == null || s == '') return s;
 		s = StringTools.replace(s, '\\n', '\n');
-		current = new BTextLow(s, style, ansi);
-		if (shadow) {
-			currentShadow = new BTextLow(s, shadowStyle, ansi, false);
-			currentShadow.filters = [blurFilter];
-			addChild(currentShadow);
+		var current:BTextLow = new BTextLow(s, style, ansi);
+		if (current.size.x == 0 || current.size.y == 0) {
+			current.destroy();
+			current = null;
+			return s;
 		}
-		addChild(current);
+		_size = current.size;
+		renderTexture = createTexture();
+		if (shadow) {
+			current.x += SHADOW_OFFSET;
+			current.y += SHADOW_OFFSET;
+		} else {
+			current.x += NORMAL_OFFSET;
+			current.y += NORMAL_OFFSET;
+		}
+		app.app.renderer.render(current, renderTexture, false);
+		current.destroy();
+		current = null;
+		renderSprite = new Sprite(renderTexture);
+		if (shadow) {
+			renderSprite.tint = 0;
+			renderSprite.filters = [blurFilter];
+
+			var shadowRenderTexture:RenderTexture = createTexture();
+			app.app.renderer.render(renderSprite, shadowRenderTexture, false);
+			app.app.renderer.render(renderSprite, shadowRenderTexture, false);
+			app.app.renderer.render(renderSprite, shadowRenderTexture, false);
+
+			renderSprite.tint = WHITE;
+			renderSprite.filters = null;
+			
+			app.app.renderer.render(renderSprite, shadowRenderTexture, false);
+
+			renderSprite.destroy(true);
+			renderTexture.destroy(true);
+
+			renderTexture = shadowRenderTexture;
+			renderSprite = new Sprite(renderTexture);
+			renderSprite.x -= SHADOW_OFFSET;
+			renderSprite.y -= SHADOW_OFFSET;
+		} else {
+			renderSprite.x -= NORMAL_OFFSET;
+			renderSprite.y -= NORMAL_OFFSET;
+		}
+		renderSprite.tint = color;
+		addChild(renderSprite);
 		return s;
+	}
+
+	@:extern private inline function createTexture():RenderTexture {
+		var b:Int = shadow ? SHADOW_OFFSET * 2 : NORMAL_OFFSET * 2;
+		return RenderTexture.create(Math.ceil(_size.x) + b, Math.ceil(_size.y) + b);
 	}
 	
 	override public function destroy(?options:haxe.extern.EitherType<Bool, DestroyOptions>):Void {
@@ -99,26 +148,24 @@ class BText extends Sprite implements IWH {
 		super.destroy(options);
 	}
 	
-	@:extern inline private function destroyIfExists():Void {
-		if (current != null) {
-			removeChild(current);
-			current.destroy();
-		}
-		if (currentShadow != null) {
-			removeChild(currentShadow);
-			currentShadow.destroy();
+	@:extern private inline function destroyIfExists():Void {
+		if (renderSprite != null) {
+			_size = null;
+			removeChild(renderSprite);
+			renderSprite.destroy(true);
+			renderSprite = null;
+			renderTexture.destroy(true);
+			renderTexture = null;
 		}
 	}
 	
-	@:extern inline private function get_color():UInt return style.tint;
-	
 	private function set_color(v:Null<UInt>):Null<UInt> {
 		if (v == null) v = defColor;
-		style.tint = v;
-		if (current == null) return v;
-		if (!current.nocache) current.cacheAsBitmap = false;
-		current.tint = v;
-		if (!current.nocache) current.cacheAsBitmap = true;
+		if (color != v) {
+			color = v;
+			if (renderSprite != null)
+				renderSprite.tint = v;
+		}
 		return v;
 	}
 	

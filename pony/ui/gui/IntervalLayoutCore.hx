@@ -54,24 +54,31 @@ class IntervalLayoutCore<T> extends BaseLayoutCore<T> {
 			pos = border.top;
 			var sizes = [for (obj in objects) {
 				var objSize = getObjSize(obj);
-				setYpos(obj, Std.int(pos));
-				pos += objSize.y + interval;
-				if (objSize.x > _w) _w = objSize.x;
-				objSize.x;
+				if (objSize != null) {
+					setYpos(obj, Std.int(pos));
+					pos += objSize.y + interval;
+					if (objSize.x > _w) _w = objSize.x;
+					objSize.x;
+				} else {
+					0;
+				}
 			}];
 			if (objects.length > 0) pos -= interval;
 			_h = pos;
 			for (p in GeomTools.halign(_align, _w, sizes).pair(objects)) setXpos(p.b, Std.int(p.a) + border.left);
 		} else {
-			[];
 			_h = 0;
 			pos = border.left;
 			var sizes = [for (obj in objects) {
 				var objSize = getObjSize(obj);
-				setXpos(obj, Std.int(pos));
-				pos += objSize.x + interval;
-				if (objSize.y > _h) _h = objSize.y;
-				objSize.y;
+				if (objSize != null) {
+					setXpos(obj, Std.int(pos));
+					pos += objSize.x + interval;
+					if (objSize.y > _h) _h = objSize.y;
+					objSize.y;
+				} else {
+					0;
+				}
 			}];
 			if (objects.length > 0) pos -= interval;
 			_w = pos;

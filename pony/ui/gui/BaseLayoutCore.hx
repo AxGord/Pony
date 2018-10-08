@@ -73,7 +73,7 @@ class BaseLayoutCore<T> implements Declarator implements HasSignal implements IW
 		addWait(o);
 	}
 	
-	private function addWait(o:T) {
+	private function addWait(o:T):Void {
 		if (Std.is(o, IWH)) {
 			tasks.add();
 			cast(o, IWH).wait(tasks.end);
@@ -116,7 +116,7 @@ class BaseLayoutCore<T> implements Declarator implements HasSignal implements IW
 		}
 	}
 	
-	public function wait(cb:Void->Void):Void {
+	public function wait(cb:Void -> Void):Void {
 		if (objects == null) return;
 		if (ready) cb();
 		else if (tasks.ready) {
@@ -127,7 +127,7 @@ class BaseLayoutCore<T> implements Declarator implements HasSignal implements IW
 	
 	public function update():Void {}
 	
-	@:extern inline private function getObjSize(o:T):Point<Float> {
+	@:extern private inline function getObjSize(o:T):Point<Float> {
 		return getSizeMod(o, Std.is(o, IWH) ? cast(o, IWH).size : getSize(o));
 	}
 	

@@ -54,7 +54,10 @@ class RubberLayoutCore<T> extends BaseLayoutCore<T> {
 		if (!ready) return;
 		var positions = GeomTools.pointsCeil(GeomTools.center(
 				new Point(width, height),
-				[for (obj in objects) getObjSize(obj)],
+				[for (obj in objects) {
+					var v:Point<Float> = getObjSize(obj);
+					v == null ? new Point<Float>(0, 0) : v;
+				}],
 				vert, border, padding, align
 			));
 		for (p in objects.pair(positions)) {
