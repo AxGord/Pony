@@ -45,7 +45,16 @@ class TextBox extends BaseLayout<RubberLayoutCore<Container>> {
 	
 	private var nocache:Bool;
 	
-	public function new(image:Sprite, text:String, style:ETextStyle, ?ansi:String, ?border:Border<Int>, nocache:Bool = false, shadow:Bool = false) {
+	public function new(
+		image:Sprite,
+		text:String,
+		style:ETextStyle,
+		?ansi:String,
+		?border:Border<Int>,
+		nocache:Bool = false,
+		shadow:Bool = false,
+		?app:App
+	) {
 		this.nocache = nocache;
 		layout = new RubberLayoutCore(border);
 		layout.tasks.add();
@@ -58,7 +67,7 @@ class TextBox extends BaseLayout<RubberLayoutCore<Container>> {
 		});
 		switch style {
 			case ETextStyle.BITMAP_TEXT_STYLE(s):
-				add(obj = new BText(text, s, ansi, shadow));
+				add(obj = new BText(text, s, ansi, shadow, app));
 			case _:
 				throw 'Not supported';
 		}

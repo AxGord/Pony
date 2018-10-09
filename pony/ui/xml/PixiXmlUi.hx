@@ -262,7 +262,7 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 				};
 				var text = textTransform(_putData(content), attrs.transform);
 				var style = {font: font, tint: UColor.fromString(attrs.color).rgb, align: cast attrs.align};
-				new BText(text, style, attrs.ansi, attrs.shadow.isTrue());
+				new BText(text, style, attrs.ansi, attrs.shadow.isTrue(), app);
 			case 'lbutton':
 				var b = new LabelButton(
 					splitAttr(attrs.skin),

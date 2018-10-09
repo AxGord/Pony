@@ -62,6 +62,7 @@ class BText extends Sprite implements IWH {
 	private var renderSprite:Sprite;
 	private var shadow:Bool = false;
 	private var app:App;
+	private var lastGeneratedSize:Point<Float>;
 	
 	public function new(text:String, ?style:BitmapTextStyle, ?ansi:String, shadow:Bool = false, ?app:App) {
 		super();
@@ -84,17 +85,31 @@ class BText extends Sprite implements IWH {
 	
 	public function set_t(s:String):String {
 		if (t == s) return s;
-		destroyIfExists();
-		if (s == null || s == '') return s;
+		if (s == null || s == '') {
+			destroyIfExists();
+			return s;
+		}
 		s = StringTools.replace(s, '\\n', '\n');
 		var current:BTextLow = new BTextLow(s, style, ansi);
 		if (current.size.x == 0 || current.size.y == 0) {
+			destroyIfExists();
 			current.destroy();
 			current = null;
 			return s;
 		}
-		_size = current.size;
-		renderTexture = createTexture();
+		var changeTexture:Bool = _size == null || current.size.x > _size.x || current.size.y > _size.y;
+		var createSize:Point<Float> = null;
+		if (changeTexture) {
+			destroyIfExists();
+			_size = createSize = current.size;
+			renderTexture = createTexture(createSize);
+		} else {
+			removeChild(renderSprite);
+			renderSprite.destroy();
+			var b:Int = shadow ? SHADOW_OFFSET * 2 : NORMAL_OFFSET * 2;
+			createSize = lastGeneratedSize;
+			_size = current.size;
+		}
 		if (shadow) {
 			current.x += SHADOW_OFFSET;
 			current.y += SHADOW_OFFSET;
@@ -102,7 +117,7 @@ class BText extends Sprite implements IWH {
 			current.x += NORMAL_OFFSET;
 			current.y += NORMAL_OFFSET;
 		}
-		app.app.renderer.render(current, renderTexture, false);
+		app.app.renderer.render(current, renderTexture, !changeTexture);
 		current.destroy();
 		current = null;
 		renderSprite = new Sprite(renderTexture);
@@ -110,7 +125,7 @@ class BText extends Sprite implements IWH {
 			renderSprite.tint = 0;
 			renderSprite.filters = [blurFilter];
 
-			var shadowRenderTexture:RenderTexture = createTexture();
+			var shadowRenderTexture:RenderTexture = createTexture(createSize);
 			app.app.renderer.render(renderSprite, shadowRenderTexture, false);
 			app.app.renderer.render(renderSprite, shadowRenderTexture, false);
 			app.app.renderer.render(renderSprite, shadowRenderTexture, false);
@@ -136,9 +151,10 @@ class BText extends Sprite implements IWH {
 		return s;
 	}
 
-	@:extern private inline function createTexture():RenderTexture {
+	@:extern private inline function createTexture(size:Point<Float>):RenderTexture {
+		lastGeneratedSize = size;
 		var b:Int = shadow ? SHADOW_OFFSET * 2 : NORMAL_OFFSET * 2;
-		return RenderTexture.create(Math.ceil(_size.x) + b, Math.ceil(_size.y) + b);
+		return RenderTexture.create(Math.ceil(size.x) + b, Math.ceil(size.y) + b);
 	}
 	
 	override public function destroy(?options:haxe.extern.EitherType<Bool, DestroyOptions>):Void {
