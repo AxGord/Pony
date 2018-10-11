@@ -35,11 +35,12 @@ class VSCode {
 
 	public static function createDir():Void FileSystem.createDirectory('.vscode');
 
-	public static function create(ponycmd:String):Void {
+	public static function create(ponycmd:String, auto:Bool = false):Void {
 		var tasks:Array<Any> = [];
 
 		if (ponycmd != null)
 			tasks.push({
+				auto: auto,
 				identifier: PRELAUNCH_TASK,
 				label: 'pony $ponycmd debug',
 				type: 'shell',
@@ -100,7 +101,8 @@ class VSCode {
 				url: 'http://localhost:$httpPort',
 				webRoot: "${workspaceRoot}",
 				preLaunchTask: PRELAUNCH_TASK,
-				internalConsoleOptions: 'openOnSessionStart'
+				internalConsoleOptions: 'openOnSessionStart',
+				breakOnLoad: true
 			}
 		];
 		

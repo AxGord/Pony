@@ -3,6 +3,8 @@
 
     <npm>
         <module>source-map-support</module>
+        <module>convert-source-map</module>
+        <module>offset-sourcemap-lines</module>
         <module>uglify-js</module>
         <module>poeditor-client</module>
         <module>ftp</module>

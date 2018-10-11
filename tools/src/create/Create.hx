@@ -93,6 +93,7 @@ class Create {
 
 		var needHtml:String = null;
 		var ponycmd:String = 'build';
+		var vscodeAuto:Bool = false;
 		if (type != null) switch type {
 			case ProjectType.Neko:
 				ponycmd = 'run';
@@ -112,6 +113,7 @@ class Create {
 				var data:String = haxe.Resource.getString('cctemplate.js.tpl');
 				sys.io.File.saveContent(project.build.outputPath + 'main.js', data);
 				if (vscAllow) create.ides.VSCode.createChrome(project.server.httpPort);
+				vscodeAuto = true;
 			case ProjectType.Pixi:
 				Utils.createPath(main);
 				var data:String = haxe.Resource.getString('pixitemplate.hx.tpl');
@@ -198,7 +200,7 @@ class Create {
 			createHtml(project.build.outputPath + needHtml, 'template.html', name == null ? 'App' : name, project.build.getOutputFile());
 		}
 		
-		if (vscAllow) create.ides.VSCode.create(ponycmd);
+		if (vscAllow) create.ides.VSCode.create(ponycmd, vscodeAuto);
 		create.ides.HaxeDevelop.create(name, main, project.getLibs(), project.getCps(), ponycmd);
 
 		Utils.command('pony', ['prepare']);

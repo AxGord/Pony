@@ -41,6 +41,7 @@ class UglifyMain {
 	var mapOutput:String = null;
 	var mapUrl:String = null;
 	var mapSource:String = null;
+	var mapOffset:Int = 0;
 	var mangle:Bool = false;
 	var compress:Bool = false;
 	
@@ -58,11 +59,15 @@ class UglifyMain {
 		
 		if (debug && xml.has.libcache && pony.text.TextTools.isTrue(xml.att.libcache)) {
 			
-			if (input.length == 1) return;
+			var lastFile = input.pop();
+
+			if (input.length == 0) {
+				patchMapFile(lastFile + '.map', mapOffset);
+				return;
+			}
 
 			var cachefile = 'libcache.js';
 
-			var lastFile = input.pop();
 			var lastContent = File.getContent(lastFile);
 
 			var libdata = '';
@@ -82,13 +87,7 @@ class UglifyMain {
 				File.saveContent(cachefile, libdata);
 			}
 			File.saveContent(lastFile, libdata + '\n' + lastContent);
-			var mapFile = lastFile + '.map';
-			var convert = Node.require('convert-source-map');
-			var offset = Node.require('offset-sourcemap-lines');
-			var originalMap = convert.fromJSON(File.getContent(mapFile)).toObject();
-			var offsettedMap = offset(originalMap, 1);
-			var newMapData = convert.fromObject(offsettedMap).toJSON();
-			File.saveContent(mapFile, newMapData);
+			patchMapFile(lastFile + '.map', 1 + mapOffset);
 		} else {
 			var inputContent:Dynamic<String> = {};
 			for (f in input) Reflect.setField(inputContent, f.split('/').pop(), File.getContent(f));
@@ -106,7 +105,8 @@ class UglifyMain {
 			});
 			
 			File.saveContent(output, r.code);
-			if (mapOutput != null) File.saveContent(mapOutput, r.map);
+			if (mapOutput != null)
+				File.saveContent(mapOutput, patchMap(r.map, mapOffset));
 		}
 	}
 	
@@ -123,6 +123,8 @@ class UglifyMain {
 					mapOutput = e.node.output.innerData;
 					mapUrl = e.node.url.innerData;
 					mapSource = e.node.source.innerData;
+					if (e.hasNode.offset)
+						mapOffset = Std.parseInt(e.node.offset.innerData);
 					
 				case 'debug': if (debug) run(e);
 				case 'release': if (!debug) run(e);
@@ -135,6 +137,19 @@ class UglifyMain {
 				}
 			}
 		}
+	}
+
+	public static function patchMapFile(file:String, offset:Int):Void {
+		if (offset == 0) return;
+		File.saveContent(file, patchMap(File.getContent(file), offset));
+	}
+
+	public static function patchMap(content:String, offset:Int):String {
+		if (offset == 0) return content;
+		Sys.println('Offset map: $offset');
+		var originalMap = NPM.convert_source_map.fromJSON(content).toObject();
+		var offsettedMap = NPM.offset_sourcemap_lines(originalMap, offset);
+		return NPM.convert_source_map.fromObject(offsettedMap).toJSON();
 	}
 	
 }

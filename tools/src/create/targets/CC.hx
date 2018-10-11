@@ -41,6 +41,9 @@ class CC {
 		build.target = types.HaxeTargets.JS;
 		build.outputPath = 'assets/Script/';
 		uglify.active = true;
+		uglify.mapOffset = 10;
+		uglify.c = false;
+		uglify.m = false;
 		project.url.active = true;
 		project.url.list.push('http://localhost:' + project.server.httpPort + '/update-db');
 	}
