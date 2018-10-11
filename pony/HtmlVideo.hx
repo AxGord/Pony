@@ -189,7 +189,11 @@ class HtmlVideo implements HasSignal implements HasLink {
 	private function playVideo():Void {
 		if (loadProgress.run) {
 			if (!loader.isPlaying) {
-				videoElement.play();
+				try {
+					videoElement.play();
+				} catch (_:Any) {
+					DTimer.fixedDelay(1000, playVideo);
+				}
 				if (!pony.JsTools.isMobile)
 					videoElement.muted = muted.enabled;
 			}
