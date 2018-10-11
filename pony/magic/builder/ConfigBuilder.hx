@@ -53,7 +53,7 @@ class ConfigBuilder {
 		#else
 		var debug = false;
 		#end
-		var cfg:PConfig = {app:Compiler.getDefine('app'), debug:debug, path:''};
+		var cfg:PConfig = {app:haxe.macro.Context.definedValue('app'), debug:debug, path:''};
 		if (xml.hasNode.config) {
 			new ReadXmlConfig(xml.node.config, cfg, function(cfg:PConfig):Void {
 
