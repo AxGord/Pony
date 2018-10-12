@@ -32,7 +32,7 @@ import pony.geom.Point;
 
 class ColorPicker extends Sprite implements HasSignal {
 	
-	private static var COLORS:Array<UInt> = [0xFF0000, 0xFFFF00, 0x00FF00, 0x00FFFF, 0x0000FF, 0xFF00FF, 0xFF0000];
+	private static var COLORS:Array<UInt> = [0xFF0000, 0xFFFF00, 0x00FF00, 0x00FFFF, 0x0000FF, 0xFF00FF, 0xFF0000, 0x888888];
 	private static var BRIGHTESS_COLORS:Array<UInt> = [0xFFFFFF, 0xFFFFFF, 0x000000, 0x000000];
 	private static var BRIGHTESS_ALPHAS:Array<Float> = [1, 0, 0, 1];
 	private static var BRIGHTESS_PARTS:Array<Float> = [0, 0x88, 0x88, 0xFF];
@@ -79,8 +79,8 @@ class ColorPicker extends Sprite implements HasSignal {
 		var py:Int = Std.int(mouseY);
 		if (px < 0) px = 0;
 		if (py < 0) py = 0;
-		if (px > bitmapData.width) px = bitmapData.width;
-		if (py > bitmapData.height) py = bitmapData.height;
+		if (px >= bitmapData.width) px = bitmapData.width - 1;
+		if (py >= bitmapData.height) py = bitmapData.height - 1;
 		if (px == prevX && py == prevY) return;
 		prevX = px;
 		prevY = py;

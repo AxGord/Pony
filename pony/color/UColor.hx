@@ -98,6 +98,12 @@ abstract UColor(UInt) from UInt to UInt {
 	 * Build from ARGB values
 	 */
 	inline public static function fromARGB(a:UInt, r:UInt, g:UInt, b:UInt):UColor return (a << 24) + (r << 16) + (g << 8) + b;
+
+	/**
+	 * Build from RGBAF values
+	 */
+	inline public static function fromRGBAF(rgb:UColor, af:Float):UColor return (lim(Std.int(af * 255)) << 24) + (rgb.r << 16) + (rgb.g << 8) + rgb.b;
+
 	/**
 	 * Safely building from RGB values
 	 * Values limited 0...255
