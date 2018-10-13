@@ -41,7 +41,7 @@ class CC {
 		build.target = types.HaxeTargets.JS;
 		build.outputPath = 'assets/Script/';
 		uglify.active = true;
-		uglify.mapOffset = 10;
+		uglify.mapOffset = 12;
 		uglify.c = false;
 		uglify.m = false;
 		project.url.active = true;
