@@ -54,6 +54,7 @@ class ServerMain {
 				path = sx.node.path.innerData;
 				var port:Int = Std.parseInt(sx.node.port.innerData);
 				var server:HttpServer = new HttpServer(port);
+				server.fixedHeaders['Access-Control-Allow-Origin'] = '*';
 				server.request = connectHandler;
 			}
 

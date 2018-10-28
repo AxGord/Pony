@@ -71,7 +71,6 @@ abstract Event2<T1,T2>(Priority<Listener2<T1,T2>>) from Priority<Listener2<T1,T2
 		}
 	}
 	
-	
 	public function dispatch(a1:T1, a2:T2, safe:Bool = false):Bool {
 		if (this == null || this.isDestroy() || (safe && this.counters.length > 1)) return false;
 		this.lock = true;

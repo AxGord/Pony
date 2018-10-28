@@ -22,6 +22,7 @@
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
 package;
+
 import haxe.xml.Fast;
 
 /**

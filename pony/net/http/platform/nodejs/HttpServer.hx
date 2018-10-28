@@ -46,6 +46,7 @@ class HttpServer
 	private var server:Server;
 	private var spdyServer:Dynamic;
 	public var storage:ServersideStorage;
+	public var fixedHeaders:Map<String, String> = ['Server' => 'PonyHttpServer'];
 	
 	inline private static function get_spdy():Dynamic return Node.require('spdy');
 	
@@ -71,7 +72,7 @@ class HttpServer
 	private function listen(req:IncomingMessage, res:ServerResponse):Void {
 		//trace(req.method+': ' + req.url);
 		//trace(req.headers);
-		res.setHeader('Server', 'PonyHttpServer');
+		for (k in fixedHeaders.keys()) res.setHeader(k, fixedHeaders[k]);
 		var multi = 'multipart/form-data';
 		switch (req.method/*.toUpperCase()*/) {
 			case 'POST' if ((req.headers.field('content-type'):String).substr(0, multi.length) == multi):

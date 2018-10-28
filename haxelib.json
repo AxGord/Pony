@@ -19,8 +19,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Uglify several files support. Electron. Upgrades and fixes.",
-"version": "0.8.3",
+"releasenote": "Fixes and improvements",
+"version": "0.8.4",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }

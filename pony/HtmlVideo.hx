@@ -74,7 +74,8 @@ class HtmlVideo implements HasSignal implements HasLink {
 	private var options:HtmlVideoOptions = {
 		bufferingTreshhold: 3,
 		retryDelay: 10000,
-		maxRetries: 4
+		maxRetries: 4,
+		virtualPlay: true
 	};
 
 	public var videoElement(default, null):VideoElement;
@@ -90,6 +91,8 @@ class HtmlVideo implements HasSignal implements HasLink {
 				this.options.retryDelay = options.retryDelay;
 			if (options.maxRetries != null)
 				this.options.maxRetries = options.maxRetries;
+			if (options.virtualPlay != null)
+				this.options.virtualPlay = options.virtualPlay;
 		}
 
 		createVideoElement();
@@ -99,6 +102,7 @@ class HtmlVideo implements HasSignal implements HasLink {
 		position = new HtmlVideoPlayProgress(videoElement);
 
 		position.changePosition << function(v:Time) loadState.targetTime = v;
+		position.onSync << playVideo;
 
 		loader.onUnload << loadState.reset;
 		loader.onUnload << position.reset;
@@ -140,6 +144,7 @@ class HtmlVideo implements HasSignal implements HasLink {
 		videoElement.addEventListener('canplay', playVideo);
 		videoElement.addEventListener('pause', playVideo);
 		videoElement.addEventListener('mousedown', videoClickHandler);
+		videoElement.addEventListener('touchstart', videoClickHandler);
 	}
 
 	public inline function loadVideo(url:String):Void {
@@ -155,6 +160,20 @@ class HtmlVideo implements HasSignal implements HasLink {
 		loadState.disable();
 		loader.unloadVideo();
 		position.dispathEnd();
+		startTime = 0;
+	}
+
+	public function reloadVideo():Void {
+		if (url == null) return;
+		var u:String = url;
+		var p:Time = position.position;
+		url = null;
+		stop();
+		loadState.disable();
+		loader.unloadVideo();
+		loadVideo(u);
+		startTime = p;
+		playVideo();
 	}
 	
 	public function play():Void {
@@ -302,6 +321,7 @@ class HtmlVideo implements HasSignal implements HasLink {
 
 	@:bindable public var position:Time;
 	@:auto public var onEnd:Signal0;
+	@:auto public var onSync:Signal0;
 
 	public var progress(default, null):Percent = new Percent();
 	public var current(get, never):Time;
@@ -326,9 +346,7 @@ class HtmlVideo implements HasSignal implements HasLink {
 		onDisable << disableHandler;
 	}
 
-	public function dispathEnd():Void {
-		eEnd.dispatch(true);
-	}
+	public inline function dispathEnd():Void eEnd.dispatch(true);
 
 	@:abstract private inline function get_elementCurrentTime():Float {
 		return try element.currentTime catch (_:Any) 0;
@@ -402,6 +420,7 @@ class HtmlVideo implements HasSignal implements HasLink {
 		position += 1000;
 		if (!pony.math.MathTools.approximately(position.totalSeconds, progress.current, 3)) {
 			progress.current = elementCurrentTime = position.totalSeconds;
+			eSync.dispatch();
 		}
 	}
 
