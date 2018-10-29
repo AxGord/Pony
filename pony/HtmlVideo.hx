@@ -252,8 +252,10 @@ class HtmlVideo implements HasSignal implements HasLink {
 	}
 
 	public function loadVideo(url:String):Void {
-		if (qualities != null)
+		if (qualities != null) {
 			url = StringTools.replace(url, '{quality}', qualities[qualityIndex]);
+			url = StringTools.replace(url, '/quality/', '/' + qualities[qualityIndex] + '/');
+		}
 		var playingbefore = isPlaying;
 		_unloadVideo();
 		videoSource = cast js.Browser.document.createElement('source'); // must play from <source> not .src coz mobile browsers are retarded
