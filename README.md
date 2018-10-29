@@ -2,6 +2,7 @@
 [![Haxelib](https://img.shields.io/badge/haxelib-0.8.4-blue.svg?style=flat-square&colorB=FBC707)](http://lib.haxe.org/p/pony)
 [![License](https://img.shields.io/badge/license-BSD-blue.svg?style=flat-square)](LICENSE.txt)
 [![Build status](https://img.shields.io/appveyor/ci/AxGord/pony.svg?label=windows&style=flat-square)](https://ci.appveyor.com/project/AxGord/pony) [![Join the chat at https://gitter.im/Ponylib/Lobby](https://img.shields.io/gitter/room/Ponylib/Lobby.svg?style=flat-square&colorB=71B79C)](https://gitter.im/Ponylib/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Donate PayPal](https://img.shields.io/badge/Donate-PayPal-green.svg?style=flat-square)](https://paypal.me/axgord)
 
 <p align="center"><img width="65%" src="http://qlex.ru/pony_logo_hor.svg?v=1"/></p>
 
