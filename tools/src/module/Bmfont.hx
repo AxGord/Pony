@@ -45,6 +45,8 @@ class Bmfont extends NModule<BmfontConfig> {
 			section: BASection.Prepare,
 			from: '',
 			to: '',
+			type: 'sdf', // msdf | sdf | psdf | svg
+			format: 'xml', // xml | json | fnt
 			font: [],
 			allowCfg: true
 		}, configHandler);
@@ -74,6 +76,8 @@ private class BmfontReader extends BAReader<BmfontConfig> {
 	override private function clean():Void {
 		cfg.from = '';
 		cfg.to = '';
+		cfg.type = 'sdf';
+		cfg.format = 'xml';
 		cfg.font = [];
 	}
 
@@ -81,6 +85,8 @@ private class BmfontReader extends BAReader<BmfontConfig> {
 		switch name {
 			case 'from': cfg.from = val;
 			case 'to': cfg.to = val;
+			case 'type': cfg.type = val;
+			case 'format': cfg.format = val;
 			case _:
 		}
 	}

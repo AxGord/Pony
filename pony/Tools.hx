@@ -570,4 +570,5 @@ class FloatTools {
 		else
 			return a[0] + d + a[1] + TextTools.repeat(endS, n - a[1].length);
 	}
+	
 }
