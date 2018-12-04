@@ -35,6 +35,8 @@ class SocketServer
 extends pony.net.nodejs.SocketServer
 #elseif cs
 extends pony.net.cs.SocketServer
+#elseif neko
+extends pony.net.neko.SocketServer
 #else
 extends pony.net.SocketServerBase
 #end

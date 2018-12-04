@@ -21,63 +21,100 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-package pony.net.nodejs;
+package pony.net.neko;
 
-#if nodejs
-
-import pony.Queue;
+#if neko
 import haxe.io.Bytes;
+import haxe.io.BytesData;
 import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
-import js.Node;
+import haxe.io.Error;
+import haxe.io.Eof;
+import sys.net.Socket;
+import sys.net.Host;
 import pony.net.SocketClientBase;
+import pony.time.DeltaTime;
 
 /**
  * SocketClient
  * @author AxGord <axgord@gmail.com>
  */
 class SocketClient extends SocketClientBase {
+
+	private var socket:Socket;
+	private var buffer:BytesOutput;
+	private var q:Queue < BytesOutput -> Void >;
 	
-	private var socket:js.node.net.Socket;
-	private var q:Queue < BytesOutput->Void > ;
-	
-	override private function open():Void {
+	override public function open():Void {
 		super.open();
-		socket = js.node.Net.connect(port, host);
-		socket.on('connect', connect);
-		nodejsInit(socket);
+		socket = new Socket();
+		socket.connect(new Host(host), port);
+		_init();
 	}
-	
-	@:allow(pony.net.nodejs.SocketServer)
-	private function nodejsInit(s:js.node.net.Socket):Void {
+
+	private function _init():Void {
 		q = new Queue(_send);
-		socket = s;
-		s.on('data', dataHandler);
-		s.on('end', close);
-		s.on('error', error.bind('socket error'));
+		socket.setBlocking(false);
+		buffer = new BytesOutput();
+		DeltaTime.fixedUpdate < connect;
+		DeltaTime.fixedUpdate << updateHandler;
 	}
-	
-	override private function close():Void {
-		super.close();
-		if (socket != null) {
-			socket.end();
-			socket.destroy();
-			socket = null;
+
+	@:allow(pony.net.neko.SocketServer)
+	private function nekoInit(client:Socket):Void {
+		socket = client;
+		_init();
+	}
+
+	private function updateHandler():Void {
+		try {
+			while (true) buffer.writeByte(socket.input.readByte());
+		} catch (e:Error) {
+			if (e != Error.Blocked)
+				error(e.getName());
+			else
+				processBuffer();
+		} catch (e:Eof) {
+			log('eof');
+			processBuffer();
+			close();
+		} catch (e:Any) {
+			error(e);
 		}
 	}
+
+	private function processBuffer():Void {
+		if (buffer.length > readLengthSize) {
+			joinData(new BytesInput(buffer.getBytes()));
+			buffer.flush();
+			buffer = new BytesOutput();
+		} else if (buffer.length > 0) {
+			buffer.flush();
+			buffer = new BytesOutput();
+		}
+	}
+	
+	private function closeHandler(_):Void close();
 	
 	public function send(data:BytesOutput):Void q.call(data);
 	
 	private function _send(data:BytesOutput):Void {
-		if (socket != null) socket.write(js.node.Buffer.hxFromBytes(data.getBytes()), sendNextAfterTimeout);
+		try {
+			socket.output.write(data.getBytes());
+			socket.output.flush();
+		} catch (e:Dynamic) {
+			error(e);
+		}
+		DeltaTime.fixedUpdate < q.next;
 	}
-
-	private function sendNextAfterTimeout():Void {
-		pony.time.DeltaTime.skipUpdate(q.next);
+	
+	override public function close():Void {
+		DeltaTime.fixedUpdate >> updateHandler;
+		super.close();
+		try {
+			socket.close();
+		} catch (_:Dynamic) {}
 	}
-
-	private function dataHandler(d:js.node.Buffer):Void joinData(new BytesInput(Bytes.ofData(d.buffer)));
 	
 }
-
 #end

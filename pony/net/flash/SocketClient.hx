@@ -71,7 +71,7 @@ class SocketClient extends SocketClientBase {
 	
 	private function connectHandler(_):Void connect();
 	
-	public function send(data:BytesOutput):Void	q.call(data);
+	public function send(data:BytesOutput):Void q.call(data);
 	
 	private function _send(data:BytesOutput):Void {
 		socket.addEventListener('outputProgress', outputProgressHandler);

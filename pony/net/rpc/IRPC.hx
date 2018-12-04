@@ -77,7 +77,7 @@ class RPCBuilder {
 						name: sn,
 						access: [APrivate],
 						pos: Context.currentPos(),
-						kind: FVar(macro:Signal1<Bytes>),
+						kind: FVar(macro:Signal1<haxe.io.Bytes>),
 						meta: [{name: ':rpc', pos: Context.currentPos()}]
 					});
 

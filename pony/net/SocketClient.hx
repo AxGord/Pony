@@ -40,6 +40,8 @@ extends pony.net.cs.SocketClient
 extends pony.net.flash.SocketClient
 #elseif openfl
 extends pony.net.openfl.SocketClient
+#elseif neko
+extends pony.net.neko.SocketClient
 #end
 implements ISocketClient {
 	

@@ -21,63 +21,55 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-package pony.net.nodejs;
+package pony.net.neko;
 
-#if nodejs
-
-import pony.Queue;
-import haxe.io.Bytes;
-import haxe.io.BytesInput;
-import haxe.io.BytesOutput;
-import js.Node;
-import pony.net.SocketClientBase;
+#if neko
+import sys.net.Socket;
+import sys.net.Host;
+import haxe.io.Error;
+import haxe.io.Eof;
+import pony.time.DeltaTime;
 
 /**
- * SocketClient
+ * SocketServer
  * @author AxGord <axgord@gmail.com>
  */
-class SocketClient extends SocketClientBase {
+class SocketServer extends pony.net.SocketServerBase {
+
+	// private var server:js.node.net.Server;
+	private var server:Socket = new Socket();
 	
-	private var socket:js.node.net.Socket;
-	private var q:Queue < BytesOutput->Void > ;
-	
-	override private function open():Void {
-		super.open();
-		socket = js.node.Net.connect(port, host);
-		socket.on('connect', connect);
-		nodejsInit(socket);
+	public function new(port:Int) {
+		super();
+		server.bind(new Host('127.0.0.1'), port);
+		server.listen(1000);
+		server.setBlocking(false);
+		DeltaTime.fixedUpdate << waitNewConnection;
 	}
 	
-	@:allow(pony.net.nodejs.SocketServer)
-	private function nodejsInit(s:js.node.net.Socket):Void {
-		q = new Queue(_send);
-		socket = s;
-		s.on('data', dataHandler);
-		s.on('end', close);
-		s.on('error', error.bind('socket error'));
-	}
-	
-	override private function close():Void {
-		super.close();
-		if (socket != null) {
-			socket.end();
-			socket.destroy();
-			socket = null;
+	private function waitNewConnection():Void {
+		try {
+			var client:Socket = server.accept();
+			var cl = addClient();
+			cl.nekoInit(client);
+		} catch (s:String) {
+			if (s != 'Blocking')
+				error(s);
+		} catch (e:Any) {
+			error(e);
 		}
 	}
-	
-	public function send(data:BytesOutput):Void q.call(data);
-	
-	private function _send(data:BytesOutput):Void {
-		if (socket != null) socket.write(js.node.Buffer.hxFromBytes(data.getBytes()), sendNextAfterTimeout);
-	}
 
-	private function sendNextAfterTimeout():Void {
-		pony.time.DeltaTime.skipUpdate(q.next);
-	}
-
-	private function dataHandler(d:js.node.Buffer):Void joinData(new BytesInput(Bytes.ofData(d.buffer)));
+	// private function connectionHandler(c:js.node.net.Socket):Void {
+	// 	var cl = addClient();
+	// 	cl.nodejsInit(c);
+	// 	@:privateAccess cl.connect();
+	// }
 	
+	override public function destroy():Void {
+		super.destroy();
+		server.close();
+		server = null;
+	}
 }
-
 #end
