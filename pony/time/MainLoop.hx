@@ -42,9 +42,8 @@ class MainLoop {
 		var nt:Float;
 		while (!_stop) {
 			nt = getTime();
-			try {
-				Sys.sleep(1 / 62 - (nt - lastTick));
-			} catch (e:Any) {}
+			var sleepTime:Float = 1 / 62 - (nt - lastTick);
+			if (sleepTime > 0) Sys.sleep(sleepTime);
 			nt = getTime();
 			DeltaTime.fixedValue = nt - lastTick;
 			lastTick = nt;
