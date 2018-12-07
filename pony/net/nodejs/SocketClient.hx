@@ -25,6 +25,7 @@ package pony.net.nodejs;
 
 #if nodejs
 
+
 import pony.Queue;
 import haxe.io.Bytes;
 import haxe.io.BytesInput;
@@ -39,7 +40,7 @@ import pony.net.SocketClientBase;
 class SocketClient extends SocketClientBase {
 	
 	private var socket:js.node.net.Socket;
-	private var q:Queue < BytesOutput->Void > ;
+	private var q:Queue < BytesOutput -> Void > ;
 	
 	override private function open():Void {
 		super.open();
@@ -66,6 +67,9 @@ class SocketClient extends SocketClientBase {
 		}
 	}
 	
+	#if !nodedt
+	@:deprecated('Node DeltaTime not activated! Please, use nodedt flag!')
+	#end
 	public function send(data:BytesOutput):Void q.call(data);
 	
 	private function _send(data:BytesOutput):Void {

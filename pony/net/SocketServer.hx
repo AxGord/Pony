@@ -51,7 +51,7 @@ implements ISocketServer
 		this.maxSize = maxSize;
 	}
 	#end
-	inline public function sendString(data:String):Void {
+	public inline function sendString(data:String):Void {
 		var bo = new BytesOutput();
 		bo.writeString(data);
 		send(bo);
