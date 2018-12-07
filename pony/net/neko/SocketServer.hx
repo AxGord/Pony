@@ -36,7 +36,6 @@ import pony.time.DeltaTime;
  */
 class SocketServer extends pony.net.SocketServerBase {
 
-	// private var server:js.node.net.Server;
 	private var server:Socket = new Socket();
 	
 	public function new(port:Int) {
@@ -59,14 +58,9 @@ class SocketServer extends pony.net.SocketServerBase {
 			error(e);
 		}
 	}
-
-	// private function connectionHandler(c:js.node.net.Socket):Void {
-	// 	var cl = addClient();
-	// 	cl.nodejsInit(c);
-	// 	@:privateAccess cl.connect();
-	// }
 	
 	override public function destroy():Void {
+		DeltaTime.fixedUpdate >> waitNewConnection;
 		super.destroy();
 		server.close();
 		server = null;
