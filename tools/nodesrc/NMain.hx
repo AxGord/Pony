@@ -46,10 +46,11 @@ class NMain extends Logable {
 
 	private function new() {
 		super();
-		
+		var port:Null<Int> = Std.parseInt(Sys.args()[0]);
+		if (port == null) throw 'Port not set';
 		NPM.capture_console.startCapture(Node.process.stdout, log);
 		NPM.capture_console.startCapture(Node.process.stderr, log);
-
+	
 		client = new SocketClient(Utils.NPORT);
 		Node.process.on('uncaughtException', errorHandler);
 		client.onLog << eLog;

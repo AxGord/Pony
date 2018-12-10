@@ -39,7 +39,7 @@ class Module extends pony.Logable implements pony.magic.HasAbstract implements p
 	public static var busy(link, never):Bool = GLOBALQUEUE.busy;
 
 	private static inline var CONFIG_PRIORITY:Int = -100;
-	private static var GLOBALQUEUE:Queue<(() -> Void) -> Void> = new Queue<(() -> Void) -> Void>(globalRunNextRun);
+	private static var GLOBALQUEUE:Queue<(Void -> Void) -> Void> = new Queue<(Void -> Void) -> Void>(globalRunNextRun);
 
 	public var modules:Modules;
 	private var xml(get, never):Fast;
