@@ -41,12 +41,14 @@ class Bmfont extends NModule<BmfontConfig> {
 	}
 
 	private function packFont(font:File, size:Int, face:String, type:String, charset:String, output:String, format:String, lineHeight:Null<Int>):Void {
+		tasks.add();
 		var short = font.shortName;
 		var ofn = output != null ? output : short + '_' + size;
 		var fntFile:String = to + ofn + '.fnt';
 		var convertToFnt:Bool = format == 'fnt';
 		if (convertToFnt) format = 'xml';
 		// if (sys.FileSystem.exists(fntFile)) return; //todo check xml
+		log('Begin generation: ' + output);
 		pony.NPM.msdf_bmfont_xml(font.fullPath.first, {
 			filename: ofn,
 			charset: charset,
@@ -58,8 +60,13 @@ class Bmfont extends NModule<BmfontConfig> {
 			outputType: format,
 			distanceRange: 2,
 			textureSize: [2048, 2048]
-		}, function(error:Any, textures:Array<{filename:String, texture:Dynamic}>, font:{filename:String, data:String, options:Dynamic}) {
-			if (error != null) throw error;
+		}, function(err:Any, textures:Array<{filename:String, texture:Dynamic}>, font:{filename:String, data:String, options:Dynamic}) {
+			log('End generation: ' + output);
+			if (err != null) {
+				error(err);
+				tasks.end();
+				return;
+			}
 			for (t in textures) {
 				js.node.Fs.writeFileSync(to + ofn + '.png', t.texture);
 			}
@@ -68,8 +75,9 @@ class Bmfont extends NModule<BmfontConfig> {
 			if (lineHeight != null) data = TextTools.replaceXmlAttr(data, 'lineHeight', Std.string(lineHeight));
 			if (convertToFnt) data = xmlToFnt(data);
 			sys.io.File.saveContent(fntFile, data);
-			Sys.println('');
-			Sys.println(to + ofn + '.fnt');
+			log('');
+			log(to + ofn + '.fnt');
+			tasks.end();
 		});
 	}
 

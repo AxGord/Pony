@@ -21,50 +21,11 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-package;
+package types;
 
-import haxe.xml.Fast;
-
-/**
- * Prepare
- * @author AxGord <axgord@gmail.com>
- */
-class Prepare {
-
-	public function new(xml:Fast, app:String, debug:Bool) {
-		if (sys.FileSystem.exists('libcache.js')) sys.FileSystem.deleteFile('libcache.js');
-		if (xml.hasNode.haxelib) {
-			Sys.println('update haxelib');
-			for (node in xml.node.haxelib.nodes.lib) {
-				var args = ['install'];
-				args = args.concat(node.innerData.split(' '));
-				args.push('--always');
-				Sys.command('haxelib', args);
-			}
-		}
-
-		if (xml.hasNode.npm) {
-			Sys.println('install npm');
-			var cwd = new Cwd(xml.node.npm.has.path ? xml.node.npm.att.path : null);
-			cwd.sw();
-			Sys.command('npm', ['install']);
-
-			if (pony.text.XmlTools.isTrue(xml.node.npm, 'autoinstall')) {
-				for (module in xml.node.npm.nodes.module) {
-					Sys.command('npm', ['install', module.innerData, '--prefix', './']);
-				}
-			}
-
-			cwd.sw();
-		}
-		if (!Flags.NOTP && xml.hasNode.texturepacker)
-			new Texturepacker(xml.node.texturepacker, app, debug);
-			
-		//if (xml.hasNode.build) try {
-		//	new Build(xml, app, debug).writeConfigIfNeed();
-		//} catch (e:String) {
-		//	Sys.println(e);
-		//}
-	}
-	
+typedef PoeditorConfig = { > BAConfig,
+	path: String,
+	id: Null<UInt>,
+	token: String,
+	list: Map<String, String>
 }

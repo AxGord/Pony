@@ -23,16 +23,23 @@
 **/
 package module;
 
+import pony.Tools;
 import haxe.xml.Fast;
+import pony.Queue;
 import types.BASection;
+import pony.events.Signal0;
 
 /**
  * Module
  * @author AxGord <axgord@gmail.com>
  */
-class Module extends pony.Logable implements pony.magic.HasAbstract {
+class Module extends pony.Logable implements pony.magic.HasAbstract implements pony.magic.HasLink {
+
+	@:auto public static var onEndQueue:Signal0;
+	public static var busy(link, never):Bool = GLOBALQUEUE.busy;
 
 	private static inline var CONFIG_PRIORITY:Int = -100;
+	private static var GLOBALQUEUE:Queue<(() -> Void) -> Void> = new Queue<(() -> Void) -> Void>(globalRunNextRun);
 
 	public var modules:Modules;
 	private var xml(get, never):Fast;
@@ -66,6 +73,24 @@ class Module extends pony.Logable implements pony.magic.HasAbstract {
 		return xname == null ? new List<Fast>() : modules.xml.nodes.resolve(xname);
 	}
 	#end
+
+	private static function globalRunNextRun(fn:Void -> Void):Void fn();
+	public static function lockQueue():Void GLOBALQUEUE.call(Tools.nullFunction0);
+	public static function unlockQueue():Void GLOBALQUEUE.next();
+
+	private function addToRun(fn:Void -> Void):Void {
+		GLOBALQUEUE.call(function():Void {
+			begin();
+			fn();
+		});
+	}
+
+	private function finishCurrentRun():Void {
+		end();
+		GLOBALQUEUE.next();
+		if (!GLOBALQUEUE.busy)
+			eEndQueue.dispatch();
+	}
 
 	private function begin():Void {
 		log('Start $xname');

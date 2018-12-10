@@ -21,51 +21,61 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-import sys.io.File;
+package module;
+
 import haxe.xml.Fast;
-import haxe.Json;
-import js.Node;
-import pony.NPM;
+import types.BASection;
+import types.PoeditorConfig;
+import pony.text.TextTools;
 
-/**
- * NodePrepare
- * @author AxGord <axgord@gmail.com>
- */
-class NodePrepareMain {
+class Poeditor extends NModule<PoeditorConfig> {
 
-	static var itetator:Iterator<Fast>;
-	
-	private static function main():Void {
-		NPM.source_map_support.install();
-		haxe.Log.trace('pony node prepare');
-		var file = 'pony.xml';
-		var xml = new Fast(Xml.parse(File.getContent(file)));
-		itetator = xml.node.project.elements;
-		runNext();
+	private static inline var PRIORITY:Int = 32;
+
+	public function new() super('poeditor');
+
+	override public function init():Void initSections(PRIORITY, BASection.Prepare);
+
+	override private function readNodeConfig(xml:Fast, ac:AppCfg):Void {
+		new PoeditorReader(xml, {
+			debug: ac.debug,
+			app: ac.app,
+			before: false,
+			section: BASection.Prepare,
+			path: '',
+			id: null,
+			token: null,
+			list: null,
+			allowCfg: true
+		}, configHandler);
 	}
-	
-	static function runNext():Void {
-		if (!itetator.hasNext()) {
-			Sys.println('Node prepare complete');
-			return;
-		}
-		var e = itetator.next();
-		switch e.name {
-			case 'poeditor':
-				
-				Sys.println(e.name);
-				var poe = new Poeditor(e);
-				poe.updateFiles(runNext);
-				
-			case 'download':
-				
-				Sys.println(e.name);
-				var d = new Download(e);
-				d.run(runNext);
-				
-			case _:
-				runNext();
+
+	override private function writeCfg(protocol:NProtocol, cfg:Array<PoeditorConfig>):Void {
+		for (c in cfg) sys.FileSystem.createDirectory(c.path);
+		protocol.poeditorRemote(cfg);
+	}
+
+}
+
+private class PoeditorReader extends BAReader<PoeditorConfig> {
+
+	override private function clean():Void {
+		cfg.path = '';
+		cfg.id = null;
+		cfg.token = null;
+		cfg.list = null;
+	}
+
+	override private function readNode(xml:Fast):Void {
+		switch xml.name {
+
+			case 'path': cfg.path = StringTools.trim(xml.innerData);
+			case 'id': cfg.id = Std.parseInt(xml.innerData);
+			case 'token': cfg.token = StringTools.trim(xml.innerData);
+			case 'list': cfg.list = [for (x in xml.elements) StringTools.trim(x.innerData) => x.name];
+
+			case _: super.readNode(xml);
 		}
 	}
-	
+
 }

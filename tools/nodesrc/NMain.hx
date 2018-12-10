@@ -24,39 +24,69 @@
 
 import haxe.io.Output;
 import haxe.io.Bytes;
+import js.Node;
 import hxbit.Serializer;
 import haxe.Log;
 import pony.Logable;
 import pony.Tools;
 import module.NModule;
+import types.ImageminConfig;
+import types.PoeditorConfig;
+import types.DownloadConfig;
+import types.BmfontConfig;
+import pony.net.rpc.RPC;
+import pony.net.SocketServer;
+import pony.net.SocketClient;
+import pony.NPM;
 
 class NMain extends Logable {
 
-	// private var stderr:Output;
+	private var client:SocketClient;
+	private var rpc:NProtocol;
 
-	private function new():Void {
+	private function new() {
 		super();
-		onLog << Sys.println;
-		// stderr = Sys.stderr();
-		// onError << errorHandler;
-		onError << Sys.println;
-		var args = Sys.args();
-		var b:Bytes = Tools.hexToBytes(args.pop());
-		var serializer:Serializer = new Serializer();
-		var np:NProtocol = serializer.unserialize(b, NProtocol);
-		listen(cast new module.Bmfont(np.bmfont));
-		listen(cast new module.Imagemin(np.imagemin));
+		
+		NPM.capture_console.startCapture(Node.process.stdout, log);
+		NPM.capture_console.startCapture(Node.process.stderr, log);
+
+		client = new SocketClient(Utils.NPORT);
+		Node.process.on('uncaughtException', errorHandler);
+		client.onLog << eLog;
+		client.onError << eError;
+		rpc = new NProtocol(client);
+		onLog << rpc.log.logRemote;
+		onError << rpc.log.errorRemote;
+		rpc.onBmfont << bmfontHandler;
+		rpc.onImagemin << imageminHandler;
+		rpc.onPoeditor << poeditorHandler;
+		rpc.onDownload << downloadHandler;
+	}
+
+	private function errorHandler(err:js.Error):Void error(err.stack);
+
+	private function bmfontHandler(cfg:Array<BmfontConfig>):Void {
+		listen(cast new module.Bmfont(cfg));
+	}
+
+	private function imageminHandler(cfg:Array<ImageminConfig>):Void {
+		listen(cast new module.Imagemin(cfg));
+	}
+
+	private function poeditorHandler(cfg:Array<PoeditorConfig>):Void {
+		listen(cast new module.Poeditor(cfg));
+	}
+
+	private function downloadHandler(cfg:Array<DownloadConfig>):Void {
+		listen(cast new module.Download(cfg));
 	}
 
 	private function listen(m:NModule<Any>):Void {
 		m.onLog << log;
 		m.onError << error;
+		m.onFinish < rpc.finishRemote;
 		m.start();
 	}
-
-	// private function errorHandler(r:String):Void {
-	// 	stderr.writeString(r + '\n');
-	// }
 
 	private static function main():Void new NMain();
 

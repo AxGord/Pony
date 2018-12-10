@@ -25,6 +25,8 @@ import haxe.xml.Fast;
 import sys.FileSystem;
 import sys.io.File;
 import pony.Tools;
+import module.Module;
+import pony.time.MainLoop;
 
 using pony.text.TextTools;
 
@@ -54,24 +56,6 @@ class Main {
 		Sys.exit(0);
 	}
 
-	static function prepare(cfg:AppCfg):Void {
-		var xml = Utils.getXml();
-		new Prepare(xml, cfg.app, cfg.debug);
-		Utils.runNode('ponyPrepare');
-	}
-
-	static function run(cfg:AppCfg):Void {
-		var xml = Utils.getXml();
-		if (!xml.hasNode.run)
-			Utils.error('Not exists run section');
-		var r = xml.node.run;
-		if (r.has.path)
-			Sys.setCwd(r.att.path);
-		var args = r.innerData.split(' ');
-		var cmd = args.shift();
-		Utils.command(cmd, args);
-	}
-
 	static function ftp(cfg:AppCfg):Void {
 		var startTime = Sys.time();
 		Utils.runNode('ponyFtp', addCfg(cfg));
@@ -83,6 +67,7 @@ class Main {
 	}
 
 	static function main():Void {
+		MainLoop.init();
 		var p = Utils.path(Sys.executablePath());
 		p = p.substr(0, p.lastIndexOf(Utils.PD) + 1);
 		if (p != Utils.toolsPath) {
@@ -98,6 +83,9 @@ class Main {
 		commands.onLog << Sys.println;
 
 		var modules:Modules = new Modules(commands);
+		modules.register(new module.Haxelib());
+		modules.register(new module.Npm());
+		modules.register(new module.Texturepacker());
 		modules.register(new module.Build());
 		modules.register(new module.Uglify());
 		modules.register(new module.Wrapper());
@@ -110,15 +98,15 @@ class Main {
 		modules.register(new module.Zip());
 		modules.register(new module.Bmfont());
 		modules.register(new module.Imagemin());
+		modules.register(new module.Poeditor());
+		modules.register(new module.Download());
 		modules.register(new module.Copy());
 		modules.register(new module.Url());
+		modules.register(new module.Run());
 		modules.init();
 
 		commands.onNothing < showLogo;
 		commands.onHelp < showHelp;
-		commands.onPrepare < cfgAndCall.bind(_, _, prepare);
-
-		commands.onRun < cfgAndCall.bind(_, _, run);
 		commands.onFtp < cfgAndCall.bind(_, _, ftp);
 
 		commands.onCreate < create.Create.run;
@@ -126,8 +114,13 @@ class Main {
 		commands.onChars < Chars.run;
 		commands.onLicense < License.run;
 		commands.onHaxelib < Haxelib.run;
+		Module.onEndQueue < MainLoop.stop;
 
+		Module.lockQueue();
 		commands.runArgs(grabFlags(Sys.args()));
+		Module.unlockQueue();
+		
+		if (Module.busy) MainLoop.start();
 
 		Sys.println('Total time: ' + Std.int((Sys.time() - startTime) * 1000) / 1000);
 	}

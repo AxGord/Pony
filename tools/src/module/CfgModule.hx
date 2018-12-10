@@ -61,14 +61,16 @@ class CfgModule<T:BAConfig> extends Module implements pony.magic.HasAbstract {
 				if (cfg.before == before && cfg.section == section)
 					actual.push(cfg);
 			if (actual.length > 0) {
-				begin();
-				run(actual);
-				end();
+				addToRun(run.bind(actual));
 			}
 		}
 	}
 
-	private function run(cfg:Array<T>):Void for (e in cfg) runNode(e);
+	private function run(cfg:Array<T>):Void {
+		for (e in cfg) runNode(e);
+		finishCurrentRun();
+	}
+
 	private function readNodeConfig(xml:Fast, ac:AppCfg):Void {}
 	private function runNode(cfg:T):Void {}
 

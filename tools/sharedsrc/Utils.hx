@@ -26,6 +26,7 @@ import sys.io.File;
 import sys.FileSystem;
 import pony.text.XmlTools;
 import pony.text.TextTools;
+import pony.time.DeltaTime;
 
 /**
  * Share
@@ -34,6 +35,7 @@ import pony.text.TextTools;
 class Utils {
 	
 	public static inline var MAIN_FILE:String = 'pony.xml';
+	public static inline var NPORT:Int = 48654;
 
 	public static var isWindows(get, never):Bool;
 	public static var PD(default, null):String;
@@ -184,6 +186,11 @@ class Utils {
 	public static function runAndKeepNode(name:String, ?args:Array<String>):Void {
 		Sys.println('Keep run: $name.js');
 		while (true) runNode(name, args);
+	}
+
+	public static function asyncRunNode(name:String, ?args:Array<String>):sys.io.Process {
+		Sys.println('Async run: $name.js');
+		return new sys.io.Process('node', [toolsPath + name + '.js'].concat(args));
 	}
 
 	public static function getHashes(file:String):Map<String, Array<String>> {

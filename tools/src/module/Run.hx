@@ -25,68 +25,63 @@ package module;
 
 import haxe.xml.Fast;
 import types.BASection;
-import types.ImageminConfig;
-import pony.text.TextTools;
+import types.BAConfig;
 
-class Imagemin extends NModule<ImageminConfig> {
+typedef RunConfig = { > BAConfig,
+	path: String,
+	cmd: String
+}
 
-	private static inline var PRIORITY:Int = 22;
+class Run extends CfgModule<RunConfig> {
 
-	public function new() super('imagemin');
+	private static inline var PRIORITY:Int = 0;
 
-	override public function init():Void initSections(PRIORITY, BASection.Prepare);
+	public function new() super('run');
+
+	override public function init():Void initSections(PRIORITY, BASection.Run);
 
 	override private function readNodeConfig(xml:Fast, ac:AppCfg):Void {
-		new ImageminReader(xml, {
+		new RunReader(xml, {
 			debug: ac.debug,
 			app: ac.app,
 			before: false,
-			section: BASection.Prepare,
-			from: '',
-			to: '',
-			jpgq: 85,
-			webpq: 50,
-			webpfrompng: false,
-			allowCfg: false
+			section: BASection.Run,
+			path: null,
+			cmd: null,
+			allowCfg: true
 		}, configHandler);
 	}
 
-	override private function writeCfg(protocol:NProtocol, cfg:Array<ImageminConfig>):Void protocol.imageminRemote(cfg);
+	override private function runNode(cfg:RunConfig):Void {
+		var cwd = new Cwd(cfg.path);
+		cwd.sw();
+
+		var args = cfg.cmd.split(' ');
+		var cmd = args.shift();
+		Utils.command(cmd, args);
+
+		cwd.sw();
+	}
 
 }
 
-private class ImageminReader extends BAReader<ImageminConfig> {
+private class RunReader extends BAReader<RunConfig> {
 
 	override private function clean():Void {
-		cfg.from = '';
-		cfg.to = '';
-		cfg.format = null;
-		cfg.pngq = null;
-		cfg.jpgq = 85;
-		cfg.webpq = 50;
-		cfg.webpfrompng = false;
+		cfg.path = null;
+		cfg.cmd = null;
+	}
+
+	override private function readXml(xml:Fast):Void {
+		for (a in xml.x.attributes()) readAttr(a, normalize(xml.x.get(a)));
+		cfg.cmd = normalize(xml.innerData);
+		if (allowEnd) end();
 	}
 
 	override private function readAttr(name:String, val:String):Void {
 		switch name {
-			case 'from': cfg.from += val;
-			case 'to': cfg.to += val;
-			case 'format': cfg.format = val;
-			case 'pngq': cfg.pngq = Std.parseInt(val);
-			case 'jpgq': cfg.jpgq = Std.parseInt(val);
-			case 'webpq': cfg.webpq = Std.parseInt(val);
-			case 'webpfrompng': cfg.webpfrompng = TextTools.isTrue(val);
+			case 'path': cfg.path = val;
 			case _:
-		}
-	}
-
-	override private function readNode(xml:Fast):Void {
-		switch xml.name {
-
-			case 'dir': allowCreate(xml);
-			case 'path': denyCreate(xml);
-
-			case _: super.readNode(xml);
 		}
 	}
 

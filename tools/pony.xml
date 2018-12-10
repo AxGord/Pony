@@ -2,6 +2,7 @@
 <project name="PonyTools">
 
     <npm>
+        <module>capture-console</module>
         <module>source-map-support</module>
         <module>convert-source-map</module>
         <module>offset-sourcemap-lines</module>

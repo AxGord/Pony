@@ -23,59 +23,53 @@
 **/
 package module;
 
+import pony.Pair;
 import haxe.xml.Fast;
 import types.BASection;
-import types.ImageminConfig;
+import types.DownloadConfig;
 import pony.text.TextTools;
 
-class Imagemin extends NModule<ImageminConfig> {
+/**
+ * Donwload
+ * @author AxGord <axgord@gmail.com>
+ */
+class Download extends NModule<DownloadConfig> {
 
-	private static inline var PRIORITY:Int = 22;
+	private static inline var PRIORITY:Int = 30;
 
-	public function new() super('imagemin');
+	public function new() super('download');
 
 	override public function init():Void initSections(PRIORITY, BASection.Prepare);
 
 	override private function readNodeConfig(xml:Fast, ac:AppCfg):Void {
-		new ImageminReader(xml, {
+		new DownloadReader(xml, {
 			debug: ac.debug,
 			app: ac.app,
 			before: false,
 			section: BASection.Prepare,
-			from: '',
-			to: '',
-			jpgq: 85,
-			webpq: 50,
-			webpfrompng: false,
-			allowCfg: false
+			path: '',
+			units: [],
+			allowCfg: true
 		}, configHandler);
 	}
 
-	override private function writeCfg(protocol:NProtocol, cfg:Array<ImageminConfig>):Void protocol.imageminRemote(cfg);
+	override private function writeCfg(protocol:NProtocol, cfg:Array<DownloadConfig>):Void {
+		for (c in cfg) sys.FileSystem.createDirectory(c.path);
+		protocol.downloadRemote(cfg);
+	}
 
 }
 
-private class ImageminReader extends BAReader<ImageminConfig> {
+private class DownloadReader extends BAReader<DownloadConfig> {
 
 	override private function clean():Void {
-		cfg.from = '';
-		cfg.to = '';
-		cfg.format = null;
-		cfg.pngq = null;
-		cfg.jpgq = 85;
-		cfg.webpq = 50;
-		cfg.webpfrompng = false;
+		cfg.path = '';
+		cfg.units = [];
 	}
 
 	override private function readAttr(name:String, val:String):Void {
 		switch name {
-			case 'from': cfg.from += val;
-			case 'to': cfg.to += val;
-			case 'format': cfg.format = val;
-			case 'pngq': cfg.pngq = Std.parseInt(val);
-			case 'jpgq': cfg.jpgq = Std.parseInt(val);
-			case 'webpq': cfg.webpq = Std.parseInt(val);
-			case 'webpfrompng': cfg.webpfrompng = TextTools.isTrue(val);
+			case 'path': cfg.path += val;
 			case _:
 		}
 	}
@@ -83,8 +77,14 @@ private class ImageminReader extends BAReader<ImageminConfig> {
 	override private function readNode(xml:Fast):Void {
 		switch xml.name {
 
-			case 'dir': allowCreate(xml);
-			case 'path': denyCreate(xml);
+			case 'unit':
+				var p:Pair<String, String> = if (xml.has.v) {
+					var v = xml.att.v;
+					new Pair(StringTools.replace(xml.att.url, '{v}', v), xml.has.check ? StringTools.replace(xml.att.check, '{v}', v) : null);
+				} else {
+					new Pair(xml.att.url, xml.has.check ? xml.att.check : null);
+				}
+				cfg.units.push(p);
 
 			case _: super.readNode(xml);
 		}

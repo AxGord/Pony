@@ -21,72 +21,46 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-#if nodejs
+package module;
+
 import js.node.http.IncomingMessage;
 import js.node.Fs;
 import js.node.Https;
-import sys.FileSystem;
-import sys.io.File;
-import pony.Tasks;
 import pony.NPM;
-import haxe.xml.Fast;
-import haxe.Json;
-import js.Node;
+import pony.fs.Dir;
+import pony.fs.File;
+import types.PoeditorConfig;
 
-/**
- * Poeditor
- * @author AxGord <axgord@gmail.com>
- */
-class Poeditor {
-	
-	private var id:Int;
-	private var path:String;
-	private var client:Dynamic;
-	private var files:Map<String, String>;
-	
-	public function new(xml:Fast) {
-		var token:String = null;
-		try {
-			token = xml.node.token.innerData;
-			id = Std.parseInt(xml.node.id.innerData);
-			path = xml.node.path.innerData;
-			FileSystem.createDirectory(path);
-			files = [for (e in xml.node.list.elements) e.innerData => e.name];
-		} catch (_:Dynamic) {
-			Sys.println('Configuration error');
-			return;
-		}
-		
-		client = Type.createInstance(NPM.poeditor_client, [token]);
-	}
-	
-	public function updateFiles(cb:Void -> Void):Void {
-		var tasks = new Tasks(cb);
-		client.projects.get(id).then(function(project){
+using pony.text.TextTools;
+
+class Poeditor extends NModule<PoeditorConfig> {
+
+	override private function run(cfg:PoeditorConfig):Void {
+		tasks.add();
+		var client:Dynamic = Type.createInstance(NPM.poeditor_client, [cfg.token]);
+		client.projects.get(cfg.id).then(function(project){
 			project.languages.list().then(function(languages:Array<{name:String, code:String, percentage:Int, export:Dynamic}>){
-				tasks.add();
 				for (i in 0...languages.length) {
 					var lang = languages[i];
-					Sys.println('Check lang: ' + lang.name);
-					if (lang.percentage == 100 && files.exists(lang.code)) {
+					log('Check lang: ' + lang.name);
+					if (lang.percentage == 100 && cfg.list.exists(lang.code)) {
 						tasks.add();
 						try {
 							lang.export({type: 'key_value_json'}).then(function(v) {
-								var file = path + files[lang.code] + '.json';
-								Sys.println('Update lang file: ' + file);
+								var file:String = cfg.path + cfg.list[lang.code] + '.json';
+								log('Update lang file: ' + file);
 								var f = Fs.createWriteStream(file);
 								Https.get(v, function(response:IncomingMessage) {
 									response.once('end', tasks.end);
 									response.pipe(f); 
 								});
 							});
-						} catch (e:Dynamic) trace(e);
+						} catch (e:Any) error(e);
 					}
 				}
 				tasks.end();
 			});
 		});
 	}
-	
+
 }
-#end

@@ -52,7 +52,7 @@ class Bmfont extends NModule<BmfontConfig> {
 		}, configHandler);
 	}
 
-	override private function writeCfg(cfg:Array<BmfontConfig>):Void protocol.bmfont = cfg;
+	override private function writeCfg(protocol:NProtocol, cfg:Array<BmfontConfig>):Void protocol.bmfontRemote(cfg);
 
 }
 

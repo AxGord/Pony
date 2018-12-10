@@ -38,6 +38,7 @@ class Imagemin extends NModule<ImageminConfig> {
 		var formats:Array<String> = cfg.format == null ? ['jpg', 'png', 'webp'] : cfg.format.split(',').map(StringTools.trim);
 		log('Formats: ' + formats.join(', '));
 		if (formats.indexOf('jpg') != -1) {
+			tasks.add();
 			NPM.imagemin(from.addToStringsEnd('jpg'), cfg.to, {
 				plugins: [
 					// NPM.imagemin_jpegtran(),
@@ -48,6 +49,7 @@ class Imagemin extends NModule<ImageminConfig> {
 			}).then(completeHandler);
 		}
 		if (formats.indexOf('png') != -1) {
+			tasks.add();
 			if (cfg.pngq == null)
 				pngpack(from.addToStringsEnd('png'), cfg.to);
 			else
@@ -58,6 +60,7 @@ class Imagemin extends NModule<ImageminConfig> {
 				}).then(_pngpack.bind(cfg.to));
 		}
 		if (formats.indexOf('webp') != -1 || (cfg.webpfrompng && formats.indexOf('png') != -1)) {
+			tasks.add();
 			var cformats:Array<String> = [];
 			if (cfg.webpfrompng) {
 				cformats.push('png');
@@ -102,7 +105,10 @@ class Imagemin extends NModule<ImageminConfig> {
 		}
 	}
 
-	private function completeHandler(r:Array<{data:Dynamic, path:String}>):Void for (e in r) log(e.path);
+	private function completeHandler(r:Array<{data:Dynamic, path:String}>):Void {
+		for (e in r) log(e.path);
+		tasks.end();
+	}
 
 	private function pngpack(a:Array<String>, to:String):Void {
 		NPM.imagemin(a, to, {

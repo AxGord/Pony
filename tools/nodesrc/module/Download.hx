@@ -21,57 +21,31 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-#if nodejs
+package module;
+
 import js.node.http.IncomingMessage;
-import pony.Tasks;
+import js.node.Fs;
 import js.node.Http;
 import js.node.Https;
-import js.node.Fs;
-import js.Node;
 import sys.FileSystem;
-import haxe.xml.Fast;
 import pony.Pair;
+import types.DownloadConfig;
 
-/**
- * Donwload
- * @author AxGord <axgord@gmail.com>
- */
-class Download {
-	
-	private var path:String;
-	private var units:Array<Pair<String, String>>;
-	
-	public function new(xml:Fast) {
-		try {
-			path = xml.att.path;
-			FileSystem.createDirectory(path);
-			units = [for (e in xml.nodes.unit) {
-				if (e.has.v) {
-					var v = e.att.v;
-					new Pair(StringTools.replace(e.att.url, '{v}', v), e.has.check ? StringTools.replace(e.att.check, '{v}', v) : null);
-				} else {
-					new Pair(e.att.url, e.has.check ? e.att.check : null);
-				}
-			}];
-		} catch (e:Dynamic) {
-			trace(e);
-			Sys.println('Configuration error');
-			return;
-		}
-	}
-	
-	public function run(cb:Void -> Void):Void {
-		var tasks = new Tasks(cb);
-		var downloadList = [];
+using pony.text.TextTools;
+
+class Download extends NModule<DownloadConfig> {
+
+	override private function run(cfg:DownloadConfig):Void {
+		var downloadList:Array<Pair<String, String>> = [];
 		
-		for (unit in units) {
+		for (unit in cfg.units) {
 			
-			var file = path + unit.a.split('/').pop();
-			var needDownload = false;
+			var file:String = cfg.path + unit.a.split('/').pop();
+			var needDownload:Bool = false;
 			
 			if (unit.b != null && FileSystem.exists(file)) {
 				if (unit.b != null) {
-					Sys.println('Check ' + file);
+					log('Check ' + file);
 					needDownload = sys.io.File.getContent(file).indexOf(unit.b) == -1;
 				} else {
 					needDownload = false;
@@ -85,31 +59,25 @@ class Download {
 			}
 			
 		}
-		tasks.add();
 		for (file in downloadList) {
-			Sys.println('Download ' + file.b);
+			log('Download ' + file.b);
 			tasks.add();
-			var protocol = file.b.substr(0, 7);
-			if (protocol == 'https:/') {
-				//Sys.println('https download');
-				Https.get(file.b, function(response:IncomingMessage) {
-					response.once('end', tasks.end);
-					response.pipe(Fs.createWriteStream(file.a)); 
-				});
-			} else if (protocol ==  'http://') {
-				//Sys.println('http download');
-				Http.get(file.b, function(response:IncomingMessage) {
-					response.once('end', tasks.end);
-					response.pipe(Fs.createWriteStream(file.a)); 
-				});
-			} else {
-				Sys.println('Unsupported protocol: $protocol');
-				tasks.end();
+			var protocol:String = file.b.substr(0, 7);
+			switch protocol {
+				case 'https:/':
+					Https.get(file.b, function(response:IncomingMessage) {
+						response.once('end', tasks.end);
+						response.pipe(Fs.createWriteStream(file.a)); 
+					});
+				case 'http://':
+					Http.get(file.b, function(response:IncomingMessage) {
+						response.once('end', tasks.end);
+						response.pipe(Fs.createWriteStream(file.a)); 
+					});
+				case _:
+					error('Unsupported protocol: $protocol');
 			}
 		}
-		tasks.end();
-		
 	}
-	
+
 }
-#end

@@ -23,69 +23,59 @@
 **/
 package module;
 
+import pony.Pair;
 import haxe.xml.Fast;
+import types.BAConfig;
 import types.BASection;
-import types.ImageminConfig;
 import pony.text.TextTools;
 
-class Imagemin extends NModule<ImageminConfig> {
+typedef HaxelibConfig = { > BAConfig,
+	list: Array<String>
+}
 
-	private static inline var PRIORITY:Int = 22;
+/**
+ * Haxelib
+ * @author AxGord <axgord@gmail.com>
+ */
+class Haxelib extends CfgModule<HaxelibConfig> {
 
-	public function new() super('imagemin');
+	private static inline var PRIORITY:Int = 1;
+
+	public function new() super('haxelib');
 
 	override public function init():Void initSections(PRIORITY, BASection.Prepare);
 
 	override private function readNodeConfig(xml:Fast, ac:AppCfg):Void {
-		new ImageminReader(xml, {
+		new HaxelibReader(xml, {
 			debug: ac.debug,
 			app: ac.app,
 			before: false,
 			section: BASection.Prepare,
-			from: '',
-			to: '',
-			jpgq: 85,
-			webpq: 50,
-			webpfrompng: false,
-			allowCfg: false
+			list: [],
+			allowCfg: true
 		}, configHandler);
 	}
 
-	override private function writeCfg(protocol:NProtocol, cfg:Array<ImageminConfig>):Void protocol.imageminRemote(cfg);
+	override private function runNode(cfg:HaxelibConfig):Void {
+		for (lib in cfg.list) {
+			var args:Array<String> = ['install'];
+			args = args.concat(lib.split(' '));
+			args.push('--always');
+			Sys.command('haxelib', args);
+		}
+	}
 
 }
 
-private class ImageminReader extends BAReader<ImageminConfig> {
+private class HaxelibReader extends BAReader<HaxelibConfig> {
 
 	override private function clean():Void {
-		cfg.from = '';
-		cfg.to = '';
-		cfg.format = null;
-		cfg.pngq = null;
-		cfg.jpgq = 85;
-		cfg.webpq = 50;
-		cfg.webpfrompng = false;
-	}
-
-	override private function readAttr(name:String, val:String):Void {
-		switch name {
-			case 'from': cfg.from += val;
-			case 'to': cfg.to += val;
-			case 'format': cfg.format = val;
-			case 'pngq': cfg.pngq = Std.parseInt(val);
-			case 'jpgq': cfg.jpgq = Std.parseInt(val);
-			case 'webpq': cfg.webpq = Std.parseInt(val);
-			case 'webpfrompng': cfg.webpfrompng = TextTools.isTrue(val);
-			case _:
-		}
+		cfg.list = [];
 	}
 
 	override private function readNode(xml:Fast):Void {
 		switch xml.name {
-
-			case 'dir': allowCreate(xml);
-			case 'path': denyCreate(xml);
-
+			case 'lib': cfg.list.push(StringTools.trim(xml.innerData));
 			case _: super.readNode(xml);
 		}
 	}

@@ -36,12 +36,19 @@ class Uglify extends Module {
 	override public function init():Void {
 		if (xml == null) return;
 		modules.commands.onBuild.add(run, PRIORITY);
+		modules.commands.onPrepare.add(removeCache, -120);
+	}
+
+	private function removeCache():Void {
+		if (sys.FileSystem.exists('libcache.js'))
+			sys.FileSystem.deleteFile('libcache.js');
 	}
 
 	private function run(a:String, b:String):Void {
-		begin();
-		Utils.runNode('ponyUglify', b != null ? [a, b] : (a != null ? [a] : []));
-		end();
+		addToRun(function(){
+			Utils.runNode('ponyUglify', b != null ? [a, b] : (a != null ? [a] : []));
+			finishCurrentRun();
+		});
 	}
 
 }

@@ -23,69 +23,77 @@
 **/
 package module;
 
+import pony.Pair;
 import haxe.xml.Fast;
+import types.BAConfig;
 import types.BASection;
-import types.ImageminConfig;
 import pony.text.TextTools;
 
-class Imagemin extends NModule<ImageminConfig> {
+typedef NpmConfig = { > BAConfig,
+	path: String,
+	autoinstall: Bool,
+	list: Array<String>
+}
 
-	private static inline var PRIORITY:Int = 22;
+/**
+ * Npm
+ * @author AxGord <axgord@gmail.com>
+ */
+class Npm extends CfgModule<NpmConfig> {
 
-	public function new() super('imagemin');
+	private static inline var PRIORITY:Int = 2;
+
+	public function new() super('npm');
 
 	override public function init():Void initSections(PRIORITY, BASection.Prepare);
 
 	override private function readNodeConfig(xml:Fast, ac:AppCfg):Void {
-		new ImageminReader(xml, {
+		new NpmReader(xml, {
 			debug: ac.debug,
 			app: ac.app,
 			before: false,
 			section: BASection.Prepare,
-			from: '',
-			to: '',
-			jpgq: 85,
-			webpq: 50,
-			webpfrompng: false,
-			allowCfg: false
+			path: null,
+			autoinstall: false,
+			list: [],
+			allowCfg: true
 		}, configHandler);
 	}
 
-	override private function writeCfg(protocol:NProtocol, cfg:Array<ImageminConfig>):Void protocol.imageminRemote(cfg);
+	override private function runNode(cfg:NpmConfig):Void {
+		var cwd = new Cwd(cfg.path);
+		cwd.sw();
+		Sys.command('npm', ['install']);
+
+		if (cfg.autoinstall) {
+			for (module in cfg.list) {
+				Sys.command('npm', ['install', module, '--prefix', './']);
+			}
+		}
+		cwd.sw();
+	}
 
 }
 
-private class ImageminReader extends BAReader<ImageminConfig> {
+private class NpmReader extends BAReader<NpmConfig> {
 
 	override private function clean():Void {
-		cfg.from = '';
-		cfg.to = '';
-		cfg.format = null;
-		cfg.pngq = null;
-		cfg.jpgq = 85;
-		cfg.webpq = 50;
-		cfg.webpfrompng = false;
+		cfg.path = null;
+		cfg.autoinstall = false;
+		cfg.list = [];
 	}
 
 	override private function readAttr(name:String, val:String):Void {
 		switch name {
-			case 'from': cfg.from += val;
-			case 'to': cfg.to += val;
-			case 'format': cfg.format = val;
-			case 'pngq': cfg.pngq = Std.parseInt(val);
-			case 'jpgq': cfg.jpgq = Std.parseInt(val);
-			case 'webpq': cfg.webpq = Std.parseInt(val);
-			case 'webpfrompng': cfg.webpfrompng = TextTools.isTrue(val);
+			case 'path': cfg.path = val;
+			case 'autoinstall': cfg.autoinstall = TextTools.isTrue(val);
 			case _:
 		}
 	}
 
 	override private function readNode(xml:Fast):Void {
 		switch xml.name {
-
-			case 'dir': allowCreate(xml);
-			case 'path': denyCreate(xml);
-
+			case 'module': cfg.list.push(StringTools.trim(xml.innerData));
 			case _: super.readNode(xml);
 		}
 	}
