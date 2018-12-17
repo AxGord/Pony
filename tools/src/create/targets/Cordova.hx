@@ -32,7 +32,7 @@ class Cordova {
 	public static function set(project:Project):Void {
 		Pixi.set(project);
 		project.build.outputPath = 'www/';
-		project.server.httpPath = 'www/'
+		project.server.httpPath = 'www/';
 		if (project.name == null) {
 			Utils.command('cordova', ['create', '.', 'org.apache.cordova.pony.App', 'App']);
 		} else {
