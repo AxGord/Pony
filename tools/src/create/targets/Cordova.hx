@@ -21,18 +21,27 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-package types;
+package create.targets;
 
-enum BASection {
-	Server;
-	Prepare;
-	Build;
-	Cordova;
-	Android;
-	Iphone;
-	Run;
-	Zip;
-	Remote;
-	Hash;
-	Unpack;
+import pony.fs.Dir;
+import pony.text.TextTools;
+import create.section.Config;
+
+class Cordova {
+
+	public static function set(project:Project):Void {
+		Pixi.set(project);
+		project.build.outputPath = 'www/';
+		project.server.httpPath = 'www/'
+		if (project.name == null) {
+			Utils.command('cordova', ['create', '.', 'org.apache.cordova.pony.App', 'App']);
+		} else {
+			var cl:String = TextTools.bigFirst(project.name);
+			Utils.command('cordova', ['create', '.', 'org.apache.cordova.pony.$cl', cl]);
+		}
+		Utils.command('cordova', ['platform', 'add', 'android']);
+		Utils.command('cordova', ['platform', 'add', 'ios']);
+		(project.build.outputPath:Dir).deleteContent();
+	}
+
 }

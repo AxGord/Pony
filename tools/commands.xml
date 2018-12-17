@@ -15,7 +15,7 @@
 		<syn>c</syn>
 		<syn>new</syn>
 		<syn>n</syn>
-		<arg>Target (server, node, pixi, xmlpixi, js, neko, electron, pixielectron, monacoelectron, cc)</arg>
+		<arg>Target (server, node, pixi, xmlpixi, js, neko, electron, pixielectron, monacoelectron, cc, cordova)</arg>
 		<arg>Project name (create fdt too)</arg>
 	</create>
 	<server>
@@ -27,31 +27,46 @@
 		<help>Run prepare tools set</help>
 		<syn>p</syn>
 		<arg>Configure name</arg>
-		<arg>Debug or release</arg>
+		<arg>Debug or release (default)</arg>
 	</prepare>
 	<build>
 		<help>Run build tools set</help>
 		<syn>b</syn>
 		<arg>Configure name</arg>
-		<arg>Debug or release</arg>
+		<arg>Debug or release (default)</arg>
 	</build>
+	<cordova>
+		<help>Build for cordova</help>
+		<arg>Configure name</arg>
+		<arg>Debug or release (default)</arg>
+	</cordova>
+	<android>
+		<help>Build for android cordova</help>
+		<arg>Configure name</arg>
+		<arg>Debug or release (default)</arg>
+	</android>
+	<iphone>
+		<help>Build for iphone cordova</help>
+		<arg>Configure name</arg>
+		<arg>Debug or release (default)</arg>
+	</iphone>
 	<run>
 		<help>Build project and run result after</help>
 		<syn>r</syn>
 		<arg>Configure name</arg>
-		<arg>Debug or release</arg>
+		<arg>Debug or release (default)</arg>
 	</run>
 	<zip>
 		<help>Build project and pack result after</help>
 		<syn>z</syn>
 		<arg>Configure name</arg>
-		<arg>Debug or release</arg>
+		<arg>Debug or release (default)</arg>
 	</zip>
 	<ftp>
 		<help>Build project and send result after on ftp server</help>
 		<syn>f</syn>
 		<arg>Configure name</arg>
-		<arg>Debug or release</arg>
+		<arg>Debug or release (default)</arg>
 	</ftp>
 	<remote>
 		<help>Run commands on remote pony build server</help>

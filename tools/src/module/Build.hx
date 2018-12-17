@@ -40,7 +40,9 @@ class Build extends CfgModule<BuildConfig> {
 	private static inline var PRIORITY:Int = 1;
 	private static inline var TIMEOUT:Int = 5;
 
+	private var flags(default, null):Array<String> = [];
 	private var haxelib:Array<String> = [];
+	private var postHaxelibs:Array<String> = [];
 	private var server:Bool = false;
 	private var lastCompilationOptions:LastCompilationOptions;
 	private var tryCounter:Int;
@@ -58,6 +60,16 @@ class Build extends CfgModule<BuildConfig> {
 		}
 		server = modules.xml.hasNode.server && modules.xml.node.server.hasNode.haxe;
 		initSections(PRIORITY, BASection.Build);
+	}
+
+	public function addHaxelib(lib:String):Void {
+		postHaxelibs.push('-lib');
+		postHaxelibs.push(lib);
+	}
+
+	public function addFlag(flag:String):Void {
+		flags.push('-D');
+		flags.push(flag);
 	}
 
 	override private function readNodeConfig(xml:Fast, ac:AppCfg):Void {
@@ -122,6 +134,7 @@ class Build extends CfgModule<BuildConfig> {
 	}
 
 	private function runCompilation(command:Array<String>, debug:Bool, compiler:String):Void {
+		command = command.concat(flags).concat(postHaxelibs);
 		if (debug && server && compiler == 'haxe') {
 			var newline = "\n";
 			tryCounter = 3;
@@ -194,7 +207,6 @@ class Build extends CfgModule<BuildConfig> {
 			var s = connectToHaxeServer();
 			s.close();
 		}
-		
 	}
 
 }

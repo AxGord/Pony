@@ -21,8 +21,10 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
+
 import haxe.xml.Fast;
 import pony.text.XmlTools;
+import module.Build;
 import module.Module;
 
 /**
@@ -35,6 +37,7 @@ class Modules extends pony.Logable {
 	private var _xml:Fast;
 	public var commands(default, null):Commands;
 	public var list:Array<Module> = [];
+	public var build:Build;
 
 	public function new(commands:Commands) {
 		super();
@@ -54,6 +57,11 @@ class Modules extends pony.Logable {
 		module.onError << error;
 		module.onLog << log;
 		list.push(module);
+		switch Type.getClass(module) {
+			case Build:
+				build = cast module;
+			case _:
+		}
 	}
 
 	public function init():Void {

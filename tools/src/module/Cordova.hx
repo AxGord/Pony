@@ -21,18 +21,44 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-package types;
+package module;
 
-enum BASection {
-	Server;
-	Prepare;
-	Build;
-	Cordova;
-	Android;
-	Iphone;
-	Run;
-	Zip;
-	Remote;
-	Hash;
-	Unpack;
+import sys.FileSystem;
+
+/**
+ * Cordova module
+ * @author AxGord <axgord@gmail.com>
+ */
+class Cordova extends Module {
+
+	public function new() super('cordova');
+
+	override public function init():Void {
+		modules.commands.onCordova << run;
+		modules.commands.onAndroid.add(cordovaHandler, -300);
+		modules.commands.onAndroid.add(androidHandler, -200);
+		modules.commands.onIphone.add(iphoneHandler, -200);
+	}
+
+	private function androidHandler():Void modules.build.addFlag('android');
+	private function iphoneHandler():Void modules.build.addFlag('iphone');
+	private function cordovaHandler():Void modules.build.addHaxelib('cordova');
+
+	private function run(a:String, b:String):Void {
+		addToRun(function(){
+			if (!FileSystem.exists('config.xml')) {
+				error('Cordova not inited');
+				Sys.exit(1);
+			}
+			// var cfg:AppCfg = Utils.parseArgs([a, b]);
+
+			// var cwd = new Cwd(PATH);
+			// cwd.sw();
+			// Utils.command('cordova', ['emulate']);
+			// cwd.sw();
+
+			finishCurrentRun();
+		});
+	}
+
 }

@@ -27,7 +27,6 @@ import types.ProjectType;
 
 class Create {
 
-	private static inline var outputDir:String = 'bin/';
 	private static inline var outputFile:String = 'app';
 
 	public static function run(a:String, b:String):Void {
@@ -63,6 +62,7 @@ class Create {
 			case ProjectType.JS: create.targets.JS.set(project);
 			case ProjectType.CC: create.targets.CC.set(project);
 			case ProjectType.Pixi, ProjectType.Pixixml: create.targets.Pixi.set(project);
+			case ProjectType.Cordova: create.targets.Cordova.set(project);
 			case ProjectType.Node: create.targets.Node.set(project);
 			case ProjectType.Pixielectron:
 				create.targets.Electron.set(project);
@@ -128,6 +128,15 @@ class Create {
 				sys.io.File.saveContent('app.xml', xdata);
 				if (vscAllow) create.ides.VSCode.createChrome(project.server.httpPort);
 				needHtml = 'index.html';
+			case ProjectType.Cordova:
+				Utils.createPath(main);
+				var data:String = haxe.Resource.getString('pixixmltemplate.hx.tpl');
+				sys.io.File.saveContent(main, data);
+				var xdata:String = haxe.Resource.getString('pixixmltemplate.xml');
+				sys.io.File.saveContent('app.xml', xdata);
+				if (vscAllow) create.ides.VSCode.createCordova(project.server.httpPort);
+				sys.FileSystem.createDirectory(project.build.outputPath);
+				createHtml(project.build.outputPath + 'index.html', 'template.html', name == null ? 'App' : name, project.build.getOutputFile());
 			case ProjectType.Node:
 				//ponycmd = 'run';
 				Utils.createEmptyMainFile(main);

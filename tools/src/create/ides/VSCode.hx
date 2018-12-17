@@ -28,8 +28,12 @@ import sys.FileSystem;
 class VSCode {
 
 	private static inline var PRELAUNCH_TASK:String = 'default';
+	private static inline var ANDROID_TASK:String = 'pony android';
+	private static inline var IPHONE_TASK:String = 'pony iphone';
 
 	public static var allowCreate(get, never):Bool;
+
+	private static var cordova:Bool = false;
 
 	private static function get_allowCreate():Bool return !FileSystem.exists('.vscode');
 
@@ -40,7 +44,7 @@ class VSCode {
 
 		if (ponycmd != null)
 			tasks.push({
-				auto: auto,
+				runOptions: {runOn: auto ? 'folderOpen' : 'default'},
 				identifier: PRELAUNCH_TASK,
 				label: 'pony $ponycmd debug',
 				type: 'shell',
@@ -51,12 +55,30 @@ class VSCode {
 				},
 				problemMatcher: ["$haxe"]
 			});
+			
+		if (cordova) {
+			tasks.push({
+				identifier: ANDROID_TASK,
+				label: 'pony android debug',
+				type: 'shell',
+				command: 'pony android debug',
+				problemMatcher: ["$haxe"]
+			});
+			tasks.push({
+				identifier: IPHONE_TASK,
+				label: 'pony iphone debug',
+				type: 'shell',
+				command: 'pony iphone debug',
+				problemMatcher: ["$haxe"]
+			});
+		}
+
 		tasks.push({
 			label: 'server',
 			type: 'shell',
 			command: 'pony server',
 			isBackground: true,
-			auto: true,
+			runOptions: {runOn: 'folderOpen'},
 			presentation: {
 				echo: false,
 				reveal: 'silent',
@@ -73,27 +95,121 @@ class VSCode {
 	}
 
 	public static function createNode(output:String, app:String):Void {
-		var data = {
-			version: '0.2.0',
-			configurations: [
-				{
-					type: 'node',
-					request: 'launch',
-					name: 'Launch Program',
-					program: "${workspaceFolder}/" + output + '/' + app,
-					cwd: "${workspaceFolder}/" + output,
-					preLaunchTask: PRELAUNCH_TASK,
-					console: 'internalConsole',
-					internalConsoleOptions: 'openOnSessionStart'
-				}
-			]
-		};
-		Utils.saveJson('.vscode/launch.json', data);
+		saveConfig([
+			{
+				type: 'node',
+				request: 'launch',
+				name: 'Launch Program',
+				program: "${workspaceFolder}/" + output + '/' + app,
+				cwd: "${workspaceFolder}/" + output,
+				preLaunchTask: PRELAUNCH_TASK,
+				console: 'internalConsole',
+				internalConsoleOptions: 'openOnSessionStart'
+			}
+		]);
 	}
 
 	public static function createChrome(httpPort:Int):Void {
+		saveConfig(chromeConfig(httpPort));
+	}
+
+	public static function createCordova(httpPort:Int):Void {
+		cordova = true;
+		saveConfig(chromeConfig(httpPort).concat([
+			{
+				"name": "Run Android on device",
+				"preLaunchTask": "pony android",
+				"type": "cordova",
+				"request": "launch",
+				"platform": "android",
+				"target": "device",
+				"port": 9222,
+				"sourceMaps": true,
+				"cwd": "${workspaceFolder}",
+				"ionicLiveReload": false
+			},
+			{
+				"name": "Run iOS on device",
+				"preLaunchTask": "pony iphone",
+				"type": "cordova",
+				"request": "launch",
+				"platform": "ios",
+				"target": "device",
+				"port": 9220,
+				"sourceMaps": true,
+				"cwd": "${workspaceFolder}",
+				"ionicLiveReload": false
+			},
+			{
+				"name": "Attach to running android on device",
+				"type": "cordova",
+				"request": "attach",
+				"platform": "android",
+				"target": "device",
+				"port": 9222,
+				"sourceMaps": true,
+				"cwd": "${workspaceFolder}"
+			},
+			{
+				"name": "Attach to running iOS on device",
+				"type": "cordova",
+				"request": "attach",
+				"platform": "ios",
+				"target": "device",
+				"port": 9220,
+				"sourceMaps": true,
+				"cwd": "${workspaceFolder}"
+			},
+			{
+				"name": "Run Android on emulator",
+				"type": "cordova",
+				"request": "launch",
+				"preLaunchTask": "pony android",
+				"platform": "android",
+				"target": "emulator",
+				"port": 9223,
+				"sourceMaps": true,
+				"cwd": "${workspaceFolder}",
+				"ionicLiveReload": false
+			},
+			{
+				"name": "Run iOS on simulator",
+				"type": "cordova",
+				"request": "launch",
+				"preLaunchTask": "pony iphone",
+				"platform": "ios",
+				"target": "emulator",
+				"port": 9220,
+				"sourceMaps": true,
+				"cwd": "${workspaceFolder}",
+				"ionicLiveReload": false
+			},
+			{
+				"name": "Attach to running android on emulator",
+				"type": "cordova",
+				"request": "attach",
+				"platform": "android",
+				"target": "emulator",
+				"port": 9222,
+				"sourceMaps": true,
+				"cwd": "${workspaceFolder}"
+			},
+			{
+				"name": "Attach to running iOS on simulator",
+				"type": "cordova",
+				"request": "attach",
+				"platform": "ios",
+				"target": "emulator",
+				"port": 9220,
+				"sourceMaps": true,
+				"cwd": "${workspaceFolder}"
+			}
+		]));
+	}
+
+	private static function chromeConfig(httpPort:Int):Array<Any> {
 		var launch:String = 'Launch Chrome';
-		var configurations:Array<Any> = [
+		return [
 			{
 				type: 'chrome',
 				request: 'launch',
@@ -105,7 +221,9 @@ class VSCode {
 				breakOnLoad: true
 			}
 		];
-		
+	}
+
+	private static function saveConfig(configurations:Array<Any>):Void {
 		var data = {
 			version: '0.2.0',
 			configurations: configurations

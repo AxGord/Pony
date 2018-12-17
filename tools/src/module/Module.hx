@@ -42,6 +42,7 @@ class Module extends pony.Logable implements pony.magic.HasAbstract implements p
 	private static var GLOBALQUEUE:Queue<(Void -> Void) -> Void> = new Queue<(Void -> Void) -> Void>(globalRunNextRun);
 
 	public var modules:Modules;
+	public var group(get, never):String;
 	private var xml(get, never):Fast;
 	#if (haxe_ver >= "4.0.0")
 	private var nodes(get, never):Array<Fast>;
@@ -63,6 +64,8 @@ class Module extends pony.Logable implements pony.magic.HasAbstract implements p
 			_xml = xname == null ? modules.xml : modules.getNode(xname);
 		return _xml;
 	}
+
+	@:extern private inline function get_group():String return xml != null && xml.has.group ? xml.att.group : null;
 
 	#if (haxe_ver >= "4.0.0")
 	private function get_nodes():Array<Fast> {
@@ -115,6 +118,9 @@ class Module extends pony.Logable implements pony.magic.HasAbstract implements p
 			case Server: modules.commands.onServer.once(moduleStart, priority);
 			case Prepare: modules.commands.onPrepare.once(moduleStart, priority);
 			case Build: modules.commands.onBuild.once(moduleStart, priority);
+			case Cordova: modules.commands.onCordova.once(moduleStart, priority);
+			case Android: modules.commands.onAndroid.once(moduleStart, priority);
+			case Iphone: modules.commands.onIphone.once(moduleStart, priority);
 			case Run: modules.commands.onRun.once(moduleStart, priority);
 			case Zip: modules.commands.onZip.once(moduleStart, priority);
 			case Remote: modules.commands.onRemote.once(moduleStart, priority);
@@ -131,6 +137,9 @@ class Module extends pony.Logable implements pony.magic.HasAbstract implements p
 		modules.commands.onServer.once(emptyConfig, CONFIG_PRIORITY);
 		modules.commands.onPrepare.once(getConfig, CONFIG_PRIORITY);
 		modules.commands.onBuild.once(getConfig, CONFIG_PRIORITY);
+		modules.commands.onCordova.once(getConfig, CONFIG_PRIORITY);
+		modules.commands.onAndroid.once(getConfig, CONFIG_PRIORITY);
+		modules.commands.onIphone.once(getConfig, CONFIG_PRIORITY);
 		modules.commands.onRun.once(getConfig, CONFIG_PRIORITY);
 		modules.commands.onZip.once(getConfig, CONFIG_PRIORITY);
 		modules.commands.onRemote.once(getConfig, CONFIG_PRIORITY);
@@ -142,6 +151,9 @@ class Module extends pony.Logable implements pony.magic.HasAbstract implements p
 		modules.commands.onServer >> emptyConfig;
 		modules.commands.onPrepare >> getConfig;
 		modules.commands.onBuild >> getConfig;
+		modules.commands.onCordova >> getConfig;
+		modules.commands.onIphone >> getConfig;
+		modules.commands.onAndroid >> getConfig;
 		modules.commands.onRun >> getConfig;
 		modules.commands.onZip >> getConfig;
 		modules.commands.onRemote >> getConfig;
@@ -153,6 +165,9 @@ class Module extends pony.Logable implements pony.magic.HasAbstract implements p
 		modules.commands.onServer.once(before.bind(Server), CONFIG_PRIORITY + priority);
 		modules.commands.onPrepare.once(before.bind(Prepare), CONFIG_PRIORITY + priority);
 		modules.commands.onBuild.once(before.bind(Build), CONFIG_PRIORITY + priority);
+		modules.commands.onCordova.once(before.bind(Cordova), CONFIG_PRIORITY + priority);
+		modules.commands.onAndroid.once(before.bind(Android), CONFIG_PRIORITY + priority);
+		modules.commands.onIphone.once(before.bind(Iphone), CONFIG_PRIORITY + priority);
 		modules.commands.onRun.once(before.bind(Run), CONFIG_PRIORITY + priority);
 		modules.commands.onZip.once(before.bind(Zip), CONFIG_PRIORITY + priority);
 		modules.commands.onRemote.once(before.bind(Remote), CONFIG_PRIORITY + priority);
@@ -162,6 +177,9 @@ class Module extends pony.Logable implements pony.magic.HasAbstract implements p
 		modules.commands.onServer.once(after.bind(Server), priority);
 		modules.commands.onPrepare.once(after.bind(Prepare), priority);
 		modules.commands.onBuild.once(after.bind(Build), priority);
+		modules.commands.onCordova.once(after.bind(Cordova), priority);
+		modules.commands.onAndroid.once(after.bind(Android), priority);
+		modules.commands.onIphone.once(after.bind(Iphone), priority);
 		modules.commands.onRun.once(after.bind(Run), priority);
 		modules.commands.onZip.once(after.bind(Zip), priority);
 		modules.commands.onRemote.once(after.bind(Remote), priority);

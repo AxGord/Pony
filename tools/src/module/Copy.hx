@@ -42,18 +42,16 @@ class Copy extends CfgModule<CopyConfig> {
 	override public function init():Void initSections(PRIORITY, BASection.Prepare);
 
 	override private function readNodeConfig(xml:Fast, ac:AppCfg):Void {
-		for (xml in nodes) {
-			new CopyReader(xml, {
-				debug: ac.debug,
-				app: ac.app,
-				before: false,
-				section: Prepare,
-				dirs: [],
-				units: [],
-				to: '',
-				allowCfg: true
-			}, configHandler);
-		}
+		new CopyReader(xml, {
+			debug: ac.debug,
+			app: ac.app,
+			before: false,
+			section: Prepare,
+			dirs: [],
+			units: [],
+			to: '',
+			allowCfg: true
+		}, configHandler);
 	}
 
 	override private function runNode(cfg:CopyConfig):Void {
@@ -71,7 +69,7 @@ class Copy extends CfgModule<CopyConfig> {
 	private function copyUnits(data:Array<String>, to:String):Void {
 		for (u in data) {
 			log('Copy file: $u');
-			var unit:Unit = cast u;
+			var unit:Unit = u;
 			if (unit.isFile)
 				(unit:File).copyToDir(to);
 			else

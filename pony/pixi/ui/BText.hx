@@ -97,7 +97,8 @@ class BText extends Sprite implements IWH {
 			current = null;
 			return s;
 		}
-		var changeTexture:Bool = _size == null || current.size.x > _size.x || current.size.y > _size.y;
+		var changeTexture:Bool = !app.isWebGL || _size == null || current.size.x > _size.x || current.size.y > _size.y;
+		// !app.isWebGL force create new texture, coz prev can'n be cleaned on some devices
 		var createSize:Point<Float> = null;
 		if (changeTexture) {
 			destroyIfExists();

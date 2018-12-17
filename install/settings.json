@@ -25,9 +25,7 @@
 		"imagemin-pngquant@5.1.0"
 	],
 	"vscode": [
-		"philfontaine.autolaunch",
 		"vshaxe.haxe-extension-pack",
-		"jarrio.hxmanager",
 		"msjsdiag.debugger-for-chrome"
 	]
 }

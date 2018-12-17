@@ -4,8 +4,9 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "type": "hxml",
-            "file": "build.hxml",
+            "label": "haxe",
+            "type": "shell",
+            "command": "haxe build.hxml",
             "problemMatcher": [
                 "$haxe"
             ],

@@ -34,4 +34,5 @@ enum ProjectType {
 	Electron;
 	Monacoelectron;
 	CC;
+	Cordova;
 }
