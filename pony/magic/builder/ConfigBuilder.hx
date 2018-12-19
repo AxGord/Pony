@@ -101,16 +101,6 @@ class ConfigBuilder {
 					pos: Context.currentPos(),
 					kind: FVar(type, value != null ? value : macro $a{map})
 				});
-				#if cordova
-				if (name == 'title') {
-					var cf:String = 'config.xml';
-					if (sys.FileSystem.exists(cf)) {
-						trace('config.xml change name');
-						var ns = pony.text.TextTools.betweenReplace(sys.io.File.getContent(cf), '<name>', '</name>', cfg.value);
-						sys.io.File.saveContent(cf, ns);
-					}
-				}
-				#end
 			});
 		}
 		return fields;
