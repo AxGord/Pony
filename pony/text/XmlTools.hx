@@ -77,4 +77,8 @@ class XmlTools {
 		return xml != null && xml.hasNode.resolve(name) ? xml.node.resolve(name) : null;
 	}
 
+	public static function intagReplace(text:String, tag:String, value:String):String {
+		return TextTools.betweenReplace(text, '<$tag>', '</$tag>', value);
+	}
+
 }

@@ -19,13 +19,16 @@
 		"imagemin-guetzli@1.0.0",
 		"imagemin-webp@4.1.0",
 		"imagemin-pngquant@6.0.0",
-		"imagemin-zopfli@5.1.0"
+		"imagemin-zopfli@5.1.0",
+		"cordova@8.1.2"
 	],
 	"winnpm": [
 		"imagemin-pngquant@5.1.0"
 	],
 	"vscode": [
 		"vshaxe.haxe-extension-pack",
-		"msjsdiag.debugger-for-chrome"
+		"msjsdiag.debugger-for-chrome",
+		"vsmobile.cordova-tools",
+		"coenraads.bracket-pair-colorizer"
 	]
 }

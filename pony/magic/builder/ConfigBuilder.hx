@@ -45,6 +45,7 @@ class ConfigBuilder {
 
 	macro public static function build():Array<Field> {
 		Context.registerModuleDependency(Context.getLocalModule(), file);
+		Context.registerModuleDependency(Context.getLocalModule(), 'pony.hxml');
 		var fields:Array<Field> = Context.getBuildFields();
 		if (!sys.FileSystem.exists(file)) return fields;
 		var xml = XmlTools.fast(File.getContent(file)).node.project;
@@ -93,12 +94,23 @@ class ConfigBuilder {
 					case _:
 				}
 
+				var name:String = cfg.path + cfg.key;
 				fields.push({
-					name: cfg.path + cfg.key,
+					name: name,
 					access: access,
 					pos: Context.currentPos(),
 					kind: FVar(type, value != null ? value : macro $a{map})
 				});
+				#if cordova
+				if (name == 'title') {
+					var cf:String = 'config.xml';
+					if (sys.FileSystem.exists(cf)) {
+						trace('config.xml change name');
+						var ns = pony.text.TextTools.betweenReplace(sys.io.File.getContent(cf), '<name>', '</name>', cfg.value);
+						sys.io.File.saveContent(cf, ns);
+					}
+				}
+				#end
 			});
 		}
 		return fields;

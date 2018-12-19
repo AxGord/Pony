@@ -38,6 +38,7 @@ class Project {
 	public var seconduglify(default, null):Uglify = new Uglify();
 	public var npm(default, null):Npm = new Npm();
 	public var url(default, null):Url = new Url();
+	public var cordova(default, null):Cordova = new Cordova();
 
 	public var name:String;
 	public var rname(get, never):String;
@@ -56,6 +57,10 @@ class Project {
 
 		if (run.active) root.addChild(run.result());
 		if (server.active) root.addChild(server.result());
+		if (cordova.active) {
+			cordova.title = name;
+			root.addChild(cordova.result());
+		}
 		if (config.active) root.addChild(config.result());
 		if (download.active) root.addChild(download.result());
 		if (haxelib.active) root.addChild(haxelib.result());
