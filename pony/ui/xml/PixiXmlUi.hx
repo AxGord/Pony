@@ -73,6 +73,7 @@ import pony.geom.Rect;
 import pony.pixi.ui.RenderBox;
 import pony.pixi.ui.LogableSprite;
 import pony.pixi.ui.Gradient;
+import pony.pixi.ui.SpinLoader;
 import pony.pixi.ui.slices.SliceTools;
 import pony.time.DeltaTime;
 import pony.time.Time;
@@ -90,6 +91,7 @@ using pony.pixi.PixiExtends;
 	mask: pony.pixi.ui.Mask,
 	vgrad: pony.pixi.ui.Gradient,
 	hgrad: pony.pixi.ui.Gradient,
+	spinloader: pony.pixi.ui.SpinLoader,
 	layout: pony.pixi.ui.TLayout,
 	zeroplace: pony.pixi.ui.ZeroPlace,
 	image: pixi.core.sprites.Sprite,
@@ -170,6 +172,8 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 				new Gradient(parseSizePointFloat(attrs), attrs.colors, false, app);
 			case 'vgrad':
 				new Gradient(parseSizePointFloat(attrs), attrs.colors, true, app);
+			case 'spinloader':
+				new SpinLoader(parseAndScaleInt(attrs.trackRadius), parseAndScaleInt(attrs.circleRadius), attrs.color, app);
 			case 'layout':
 				var align = Align.fromString(attrs.align);
 				if (attrs.src != null) {
