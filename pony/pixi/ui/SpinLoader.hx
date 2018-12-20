@@ -29,6 +29,7 @@ import pixi.core.textures.RenderTexture;
 import pony.geom.IWH;
 import pony.geom.Point;
 import pony.color.UColor;
+import pony.time.Tween;
 import pony.ui.gui.SmoothBarCore;
 
 class SpinLoader extends Sprite implements IWH {
@@ -44,6 +45,7 @@ class SpinLoader extends Sprite implements IWH {
 	private var circleRadius:Int;
 	private var steps:Int;
 	private var prevStep:Int = 0;
+	private var pulse:Tween = new Tween(1...0, TweenType.Square, 1000, false, true, true, true);
 
 	public function new(trackRadius:Int, circleRadius:Int, color:UColor, ?app:App) {
 		steps = Std.int(trackRadius / Math.sqrt(circleRadius) * 3);
@@ -62,11 +64,16 @@ class SpinLoader extends Sprite implements IWH {
 
 		core.smooth = true;
 		core.endInit();
+
+		pulse.onUpdate << pulseHandler;
 	}
 
 	private function get_size():Point<Float> return _size;
 	public function wait(cb:Void -> Void):Void cb();
 	public function destroyIWH():Void destroy();
+	private function pulseHandler(v:Float):Void alpha = v;
+	public inline function startPulse():Void pulse.play();
+	public inline function stopPulse():Void pulse.stopOnBegin();
 
 	public function changeHandler(v:Float):Void {
 		var current:Int = Std.int(v);
