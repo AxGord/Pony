@@ -47,6 +47,7 @@ class Imagemin extends NModule<ImageminConfig> {
 			jpgq: 85,
 			webpq: 50,
 			webpfrompng: false,
+			jpgfrompng: false,
 			allowCfg: false
 		}, configHandler);
 	}
@@ -65,6 +66,7 @@ private class ImageminReader extends BAReader<ImageminConfig> {
 		cfg.jpgq = 85;
 		cfg.webpq = 50;
 		cfg.webpfrompng = false;
+		cfg.jpgfrompng = false;
 	}
 
 	override private function readAttr(name:String, val:String):Void {
@@ -76,6 +78,7 @@ private class ImageminReader extends BAReader<ImageminConfig> {
 			case 'jpgq': cfg.jpgq = Std.parseInt(val);
 			case 'webpq': cfg.webpq = Std.parseInt(val);
 			case 'webpfrompng': cfg.webpfrompng = TextTools.isTrue(val);
+			case 'jpgfrompng': cfg.jpgfrompng = TextTools.isTrue(val);
 			case _:
 		}
 	}

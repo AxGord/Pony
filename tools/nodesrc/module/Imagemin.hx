@@ -23,6 +23,8 @@
 **/
 package module;
 
+import haxe.io.Bytes;
+import haxe.io.BytesData;
 import pony.NPM;
 import pony.fs.Dir;
 import pony.fs.File;
@@ -37,16 +39,28 @@ class Imagemin extends NModule<ImageminConfig> {
 		log('From: ' + from);
 		var formats:Array<String> = cfg.format == null ? ['jpg', 'png', 'webp'] : cfg.format.split(',').map(StringTools.trim);
 		log('Formats: ' + formats.join(', '));
-		if (formats.indexOf('jpg') != -1) {
-			tasks.add();
-			NPM.imagemin(from.addToStringsEnd('jpg'), cfg.to, {
-				plugins: [
-					// NPM.imagemin_jpegtran(),
-					// NPM.imagemin_jpeg_recompress(),
-					// NPM.imagemin_jpegoptim(),
-					NPM.imagemin_guetzli({nomemlimit: true, quality: cfg.jpgq})
-				]
-			}).then(completeHandler);
+		if (formats.indexOf('jpg') != -1 || (cfg.jpgfrompng && formats.indexOf('png') != -1)) {
+			var dir:Dir = cfg.from;
+			var filter:String = '.jpg';
+			if (cfg.jpgfrompng) filter += ' .png';
+			for (file in dir.files(filter)) {
+				tasks.add();
+				NPM.imagemin([file.first], {
+					plugins: [
+						// NPM.imagemin_jpegtran(),
+						// NPM.imagemin_jpeg_recompress(),
+						// NPM.imagemin_jpegoptim(),
+						NPM.imagemin_guetzli({nomemlimit: true, quality: cfg.jpgq})
+					]
+				}).then(function(r:Array<{data:BytesData, path:String}>):Void {
+					var n:String = cfg.to + file.shortName + '.jpg';
+					Utils.createPath(n);
+					var b:Bytes =  Bytes.ofData(r[0].data);
+					sys.io.File.saveBytes(n, b);
+					log(n);
+					tasks.end();
+				});
+			}
 		}
 		if (formats.indexOf('png') != -1) {
 			tasks.add();
@@ -105,7 +119,7 @@ class Imagemin extends NModule<ImageminConfig> {
 		}
 	}
 
-	private function completeHandler(r:Array<{data:Dynamic, path:String}>):Void {
+	private function completeHandler(r:Array<{data:BytesData, path:String}>):Void {
 		for (e in r) log(e.path);
 		tasks.end();
 	}

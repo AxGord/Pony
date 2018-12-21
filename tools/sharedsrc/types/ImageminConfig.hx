@@ -30,5 +30,6 @@ typedef ImageminConfig = { > BAConfig,
 	?pngq: Int,
 	jpgq: Int,
 	webpq: Int,
-	webpfrompng: Bool
+	webpfrompng: Bool,
+	jpgfrompng: Bool
 }
