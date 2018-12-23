@@ -34,11 +34,13 @@ typedef ConfigOptions = Map<String, Or<String, ConfigOptions>>;
 class Config extends Section {
 
 	public var options(default, null):ConfigOptions = new Map();
+	public var dep:Array<String> = [];
 
 	public function new() super('config');
 
 	public function result():Xml {
 		init();
+		if (dep.length > 0) xml.set('dep', dep.join(', '));
 		for (e in options.kv()) xml.addChild(make(e));
 		return xml;
 	}

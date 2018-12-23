@@ -516,14 +516,24 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 						var f:Void -> Void = null;
 						if (Std.is(obj, IWH)) {
 							f = function() {
-								obj.setFilterArea(s);
-								var size = cast(obj, IWH).size;
-								obj.filterArea.width = size.x + s * 2;
-								obj.filterArea.height = size.y + s * 2;
+								if (obj.parent == null) {
+									DeltaTime.fixedUpdate >> f;
+									app.onResize >> f;
+								} else {
+									obj.setFilterArea(s);
+									var size = cast(obj, IWH).size;
+									obj.filterArea.width = size.x + s * 2;
+									obj.filterArea.height = size.y + s * 2;
+								}
 							}
 						} else {
 							f = function() {
-								obj.setFilterArea(s);
+								if (obj.parent == null) {
+									DeltaTime.fixedUpdate >> f;
+									app.onResize >> f;
+								} else {
+									obj.setFilterArea(s);
+								}
 							}
 							
 						}

@@ -63,13 +63,17 @@ class Build extends CfgModule<BuildConfig> {
 	}
 
 	public function addHaxelib(lib:String):Void {
-		postHaxelibs.push('-lib');
-		postHaxelibs.push(lib);
+		if (postHaxelibs.indexOf(lib) == -1) {
+			postHaxelibs.push('-lib');
+			postHaxelibs.push(lib);
+		}
 	}
 
 	public function addFlag(flag:String):Void {
-		flags.push('-D');
-		flags.push(flag);
+		if (flags.indexOf(flag) == -1) {
+			flags.push('-D');
+			flags.push(flag);
+		}
 	}
 
 	override private function readNodeConfig(xml:Fast, ac:AppCfg):Void {
@@ -89,6 +93,7 @@ class Build extends CfgModule<BuildConfig> {
 	override private function runNode(cfg:BuildConfig):Void {
 		if (cfg.runHxml.length == 0) {
 			var cmd = cfg.command.concat(haxelib);
+			cmd = cmd.concat(flags).concat(postHaxelibs);
 			if (cfg.app != null) {
 				cmd.push('-D');
 				cmd.push('app=${cfg.app}');
@@ -104,6 +109,7 @@ class Build extends CfgModule<BuildConfig> {
 		}
 		for (e in cfg.runHxml) {
 			var cmd = cfg.command.copy();
+			cmd = cmd.concat(flags).concat(postHaxelibs);
 			cmd.push(e + '.hxml');
 			if (cfg.app != null) {
 				cmd.push('-D');
@@ -134,7 +140,7 @@ class Build extends CfgModule<BuildConfig> {
 	}
 
 	private function runCompilation(command:Array<String>, debug:Bool, compiler:String):Void {
-		command = command.concat(flags).concat(postHaxelibs);
+		
 		if (debug && server && compiler == 'haxe') {
 			var newline = "\n";
 			tryCounter = 3;

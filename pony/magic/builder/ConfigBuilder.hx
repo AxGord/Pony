@@ -45,19 +45,27 @@ class ConfigBuilder {
 
 	macro public static function build():Array<Field> {
 		Context.registerModuleDependency(Context.getLocalModule(), file);
-		Context.registerModuleDependency(Context.getLocalModule(), 'pony.hxml');
 		var fields:Array<Field> = Context.getBuildFields();
 		if (!sys.FileSystem.exists(file)) return fields;
 		var xml = XmlTools.fast(File.getContent(file)).node.project;
-		#if debug
-		var debug = true;
-		#else
-		var debug = false;
-		#end
-		var cfg:PConfig = {app:haxe.macro.Context.definedValue('app'), debug:debug, path:''};
 		if (xml.hasNode.config) {
-			new ReadXmlConfig(xml.node.config, cfg, function(cfg:PConfig):Void {
-
+			var xcfg:Fast = xml.node.config;
+			if (xcfg.has.dep)
+				for (f in xcfg.att.dep.split(','))
+					Context.registerModuleDependency(Context.getLocalModule(), StringTools.trim(f));
+			var cfg:PConfig = {
+				app: haxe.macro.Context.definedValue('app'),
+				#if debug
+				debug: true,
+				#else
+				debug: false,
+				#end
+				#if cordova
+				cordova: true,
+				#end
+				path: ''
+			};
+			new ReadXmlConfig(xcfg, cfg, function(cfg:PConfig):Void {
 				var type:ComplexType = switch cfg.type {
 					case CString: macro:String;
 					case CInt: macro:Int;
@@ -93,7 +101,6 @@ class ConfigBuilder {
 					case CString, CInt, CFloat: access.push(AInline);
 					case _:
 				}
-
 				var name:String = cfg.path + cfg.key;
 				fields.push({
 					name: name,
@@ -164,6 +171,7 @@ private class ReadXmlConfig extends XmlConfigReader<PConfig> {
 				new ReadXmlConfig(xml, {
 					app: cfg.app,
 					debug: cfg.debug,
+					cordova: cfg.cordova,
 					path: ''
 				}, function(conf:PConfig) {
 					if (mapType == null) mapType = conf.type;
@@ -214,6 +222,7 @@ private class ReadXmlConfig extends XmlConfigReader<PConfig> {
 				onConfig({
 					app: cfg.app,
 					debug: cfg.debug,
+					cordova: cfg.cordova,
 					path: cfg.path,
 					key: xml.name,
 					map: map,
@@ -224,6 +233,7 @@ private class ReadXmlConfig extends XmlConfigReader<PConfig> {
 				onConfig({
 					app: cfg.app,
 					debug: cfg.debug,
+					cordova: cfg.cordova,
 					path: cfg.path,
 					key: xml.name,
 					value: v,
@@ -234,6 +244,7 @@ private class ReadXmlConfig extends XmlConfigReader<PConfig> {
 				new ReadXmlConfig(xml, {
 					app: cfg.app,
 					debug: cfg.debug,
+					cordova: cfg.cordova,
 					path: cfg.path + xml.name + '_'
 				}, onConfig);
 

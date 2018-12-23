@@ -45,6 +45,10 @@ class Build extends Section {
 		libs[name] = version;
 	}
 
+	public function getDep():Array<String> {
+		return hxml ? [outputFile + '.hxml'] : [];
+	}
+
 	public function result():Xml {
 		init();
 

@@ -27,7 +27,8 @@ import haxe.xml.Fast;
 
 typedef BaseConfig = {
 	app: String,
-	debug: Bool
+	debug: Bool,
+	?cordova: Bool
 }
 
 class XmlConfigReader<T:BaseConfig> {
@@ -65,6 +66,12 @@ class XmlConfigReader<T:BaseConfig> {
 					locAllowEnd = false;
 				case 'release':
 					if (!cfg.debug) readXml(e);
+					locAllowEnd = false;
+				case '_cordova':
+					if (cfg.cordova) readXml(e);
+					locAllowEnd = false;
+				case '_notcordova':
+					if (!cfg.cordova) readXml(e);
 					locAllowEnd = false;
 				case _: readNode(e);
 			}

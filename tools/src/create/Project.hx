@@ -61,7 +61,10 @@ class Project {
 			cordova.title = name;
 			root.addChild(cordova.result());
 		}
-		if (config.active) root.addChild(config.result());
+		if (config.active) {
+			if (build.active) config.dep = config.dep.concat(build.getDep());
+			root.addChild(config.result());
+		}
 		if (download.active) root.addChild(download.result());
 		if (haxelib.active) root.addChild(haxelib.result());
 		if (npm.active) root.addChild(npm.result());

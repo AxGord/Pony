@@ -90,7 +90,7 @@ class BText extends Sprite implements IWH {
 			return s;
 		}
 		s = StringTools.replace(s, '\\n', '\n');
-		var current:BTextLow = new BTextLow(s, style, ansi);
+		var current:BTextLow = new BTextLow(s, style, ansi, true);
 		if (current.size.x == 0 || current.size.y == 0) {
 			destroyIfExists();
 			current.destroy();
