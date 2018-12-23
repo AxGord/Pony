@@ -82,6 +82,7 @@ class AnimBar extends Bar {
 	}
 	
 	override public function destroy(?options:haxe.extern.EitherType<Bool, DestroyOptions>):Void {
+		if (tween == null) return;
 		tween.destroy();
 		tween = null;
 		if (animation != null) {

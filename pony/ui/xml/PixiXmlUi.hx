@@ -173,7 +173,7 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 			case 'vgrad':
 				new Gradient(parseSizePointFloat(attrs), attrs.colors, true, app);
 			case 'spinloader':
-				new SpinLoader(parseAndScaleInt(attrs.trackRadius), parseAndScaleInt(attrs.circleRadius), attrs.color, app);
+				new SpinLoader(parseAndScaleInt(attrs.trackRadius), parseAndScaleInt(attrs.circleRadius), attrs.color, parseFloat(attrs.spin), app);
 			case 'layout':
 				var align = Align.fromString(attrs.align);
 				if (attrs.src != null) {
@@ -581,6 +581,10 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 		return new Point<Float>(parseAndScale(a.w), parseAndScale(a.h));
 	}
 	
+	@:extern private inline function parseFloat(s:String):Float {
+		return s == null ? 0 : Std.parseFloat(s);
+	}
+
 	@:extern private inline function parseAndScaleWithoutNull(s:String):Float {
 		return Std.parseFloat(s) * SCALE;
 	}
