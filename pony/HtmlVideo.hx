@@ -136,15 +136,27 @@ class HtmlVideo implements HasSignal implements HasLink {
 	@:extern private inline function createVideoElement():Void {
 		videoElement = cast js.Browser.document.createElement('video');
 		videoElement.setAttribute('playsinline', 'playsinline'); // for ios
+		videoElement.setAttribute('webkit-playsinline', 'playsinline');
 		videoElement.muted = true; // must be muted to play on mobiles
 		videoElement.autoplay = true; // for mobiles + desktop
 		videoElement.controls = false;
 		videoElement.loop = false;
 		videoElement.preload = 'auto';
 		videoElement.addEventListener('canplay', playVideo);
+		videoElement.addEventListener('canplaythrough', playVideo);
 		videoElement.addEventListener('pause', playVideo);
+		enableTouch();
+		if (videoElement.readyState > 3) playVideo();
+	}
+
+	public inline function enableTouch():Void {
 		videoElement.addEventListener('mousedown', videoClickHandler);
 		videoElement.addEventListener('touchstart', videoClickHandler);
+	}
+
+	public inline function disableTouch():Void {
+		videoElement.removeEventListener('mousedown', videoClickHandler);
+		videoElement.removeEventListener('touchstart', videoClickHandler);
 	}
 
 	public inline function loadVideo(url:String):Void {
@@ -200,8 +212,8 @@ class HtmlVideo implements HasSignal implements HasLink {
 	@:extern public inline function appendTo(parent:js.html.DOMElement):Void parent.appendChild(videoElement);
 	@:extern private inline function get_style():CSSStyleDeclaration return videoElement.style;
 
-	private function showHtmlElement():Void videoElement.style.display = 'block';
-	private function hideHtmlElement():Void videoElement.style.display = 'none';
+	private function showHtmlElement():Void videoElement.hidden = false;
+	private function hideHtmlElement():Void videoElement.hidden = true;
 
 	private function videoClickHandler():Void eClick.dispatch();
 

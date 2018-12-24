@@ -44,7 +44,16 @@ class HtmlVideoUIFS extends HtmlVideoUI {
 	private var fsCss:String;
 	private var transition:String;
 	private var transitionDelay:DTimer;
+	private var hideTransition:String;
+	public var hideTransitionDelay(default, null):DTimer;
+	private var showTransition:String;
+	public var showTransitionDelay(default, null):DTimer;
 	private var clickTimer:DTimer;
+	private var showAnimTime:Time = 500;
+	private var hideAnimTime:Time = 200;
+	private var fsHold:Bool = false;
+	private var hideProcess:Bool = false;
+	private var showProcess:Bool = false;
 
 	public function new(
 		targetRect:Rect<Float>,
@@ -93,6 +102,55 @@ class HtmlVideoUIFS extends HtmlVideoUI {
 				fsCss = JsTools.normalizeCss(fscss);
 			}
 		}
+		createShowAndHideTransitions();
+	}
+
+	@:extern private inline function createShowAndHideTransitions():Void {
+		hideTransition = getTransition('opacity ' + hideAnimTime.totalMs + 'ms');
+		hideTransitionDelay = DTimer.createFixedTimer(hideAnimTime);
+		hideTransitionDelay.complete << removeHideTransition;
+		hideTransitionDelay.complete << hide;
+		showTransition = getTransition('opacity ' + showAnimTime.totalMs + 'ms ease-in');
+		showTransitionDelay = DTimer.createFixedTimer(showAnimTime);
+		showTransitionDelay.complete << removeShowTransition;
+		showTransitionDelay.complete << video.enableTouch;
+	}
+
+	public inline function animHide():Void {
+		if (fsHold) return;
+		hideTransitionDelay.complete >> _animShow;
+		if (!showProcess)
+			_animHide();
+		else
+			showTransitionDelay.complete < _animHide;
+	}
+
+	private inline function _animHide():Void {
+		if (fsHold) return;
+		hideTransitionDelay.complete >> _animShow;
+		hideProcess = true;
+		video.disableTouch();
+		addHideTransition();
+		video.style.opacity = '0';
+	}
+
+	public inline function animShow():Void {
+		if (fsHold) return;
+		showTransitionDelay.complete >> _animHide;
+		if (!hideProcess)
+			_animShow();
+		else
+			hideTransitionDelay.complete < _animShow;
+	}
+
+	private function _animShow():Void {
+		if (fsHold) return;
+		showTransitionDelay.complete >> _animHide;
+		showProcess = true;
+		show();
+		video.style.opacity = '0';
+		addShowTransition();
+		video.style.opacity = '1';
 	}
 
 	private inline function listenClick():Void video.onClick < clickHandler;
@@ -103,12 +161,16 @@ class HtmlVideoUIFS extends HtmlVideoUI {
 		clickTimer.start();
 	}
 
+	private inline function getTransition(r:String):String {
+		return JsTools.normalizeCss('transition: ' + r + '; -webkit-transition: ' + r + ';');
+	}
+
 	private function generateTransition(tr:String):Void {
 		if (tr == null) return;
 		var a = tr.split(' ');
 		var t = a.shift();
 		var r = [for (e in a) '$e $t'].join(', ');
-		transition = JsTools.normalizeCss('transition: ' + r + '; -webkit-transition: ' + r + ';');
+		transition = getTransition(r);
 		transitionDelay = DTimer.createFixedTimer((t:Time) + 10);
 		transitionDelay.complete << removeTransition;
 	}
@@ -121,15 +183,44 @@ class HtmlVideoUIFS extends HtmlVideoUI {
 		}
 	}
 
-	private function removeTransition():Void {
+	private function addShowTransition():Void {
+		if (showTransition != null) {
+			video.style.cssText += showTransition;
+			showTransitionDelay.reset();
+			showTransitionDelay.start();
+		}
+	}
+
+	private function addHideTransition():Void {
+		if (hideTransition != null) {
+			video.style.cssText += hideTransition;
+			hideTransitionDelay.reset();
+			hideTransitionDelay.start();
+		}
+	}
+
+	private function removeTransition():Void rmTransition(transition);
+
+	private function removeHideTransition():Void {
+		rmTransition(hideTransition);
+		hideProcess = false;
+	}
+
+	private function removeShowTransition():Void {
+		rmTransition(showTransition);
+		showProcess = false;
+	}
+
+	private function rmTransition(tr:String):Void {
 		var css = JsTools.splitCss(video.style.cssText);
-		var t = JsTools.splitCss(transition);
+		var t = JsTools.splitCss(tr);
 		var ncss:Array<String> = [];
 		for (e in css) if (t.indexOf(e) == -1) ncss.push(e);
 		video.style.cssText = ncss.join('');
 	}
 
 	public function openFullScreenHandler():Void {
+		fsHold = true;
 		addTransition();
 		normalPos = htmlContainer.targetPos;
 		htmlContainer.targetPos = new Point<Float>(0, 0);
@@ -140,14 +231,23 @@ class HtmlVideoUIFS extends HtmlVideoUI {
 			transitionDelay.complete < _openFullScreenHandler;
 	}
 
-	private function _openFullScreenHandler():Void switchCss(normalCss, fsCss);
+	private function _openFullScreenHandler():Void {
+		switchCss(normalCss, fsCss);
+		fsHold = false;
+	}
 
 	public function closeFullScreenHandler():Void {
+		fsHold = true;
 		addTransition();
+		transitionDelay.complete < _closeFullScreenHandler;
 		htmlContainer.targetPos = normalPos;
 		normalPos = null;
 		targetRect = normalRect;
 		switchCss(fsCss, normalCss);
+	}
+
+	private function _closeFullScreenHandler():Void {
+		fsHold = false;
 	}
 
 	private function switchCss(a:String, b:String):Void {
