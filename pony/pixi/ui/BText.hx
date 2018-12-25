@@ -69,8 +69,8 @@ class BText extends Sprite implements IWH {
 		color = style.tint;
 		this.style = {font: style.font, align: style.align, tint: WHITE};
 		this.ansi = ansi;
-		this.shadow = shadow;
 		this.app = app == null ? App.main : app;
+		this.shadow = this.app.isWebGL ? shadow : false;
 		defColor = color;
 		t = text;
 	}
