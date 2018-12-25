@@ -68,12 +68,19 @@ class Main {
 
 	static function main():Void {
 		MainLoop.init();
+
+		var args:Array<String> = Sys.args();
+		if (args.indexOf('all') != -1) {
+			runSubProjects(args);
+			return;
+		}
+
 		var p = Utils.path(Sys.executablePath());
 		p = p.substr(0, p.lastIndexOf(Utils.PD) + 1);
 		if (p != Utils.toolsPath) {
 			var pony = Utils.toolsPath + 'pony';
 			if (Utils.isWindows) pony += '.exe';
-			Sys.exit(Sys.command(pony, Sys.args()));
+			Sys.exit(Sys.command(pony, args));
 			return;
 		}
 		
@@ -118,7 +125,7 @@ class Main {
 		Module.onEndQueue < MainLoop.stop;
 
 		Module.lockQueue();
-		commands.runArgs(grabFlags(Sys.args()));
+		commands.runArgs(grabFlags(args));
 		Module.unlockQueue();
 		
 		if (Module.busy) MainLoop.start();
@@ -144,4 +151,49 @@ class Main {
 		return na;
 	}
 	
+	static function runSubProjects(args:Array<String>):Void {
+		var xml:Fast = Utils.getXml();
+		if (xml == null) {
+			Sys.println('pony.xml not exists');
+		} else {
+			var startTime = Sys.time();
+			var apps:Array<String> = searchApps(xml.node.build);
+			var uapps:Array<String> = [];
+			for (app in apps) {
+				if (uapps.indexOf(app) == -1)
+					uapps.push(app);
+			}
+			var argsBefore:Array<String> = [];
+			var argsAfter:Array<String> = [];
+			var arg:String = null;
+			while (args.length > 0) {
+				arg = args.shift();
+				if (arg == 'all') break;
+				argsBefore.push(arg);
+			}
+			while (args.length > 0) {
+				arg = args.shift();
+				argsAfter.push(arg);
+			}
+			for (app in uapps) {
+				Utils.command('pony', argsBefore.concat([app]).concat(argsAfter));
+			}
+			Sys.println('All total time: ' + Std.int((Sys.time() - startTime) * 1000) / 1000);
+		}
+	}
+
+	static function searchApps(x:Fast):Array<String> {
+		var apps:Array<String> = [];
+		if (x.hasNode.apps) {
+			for (node in x.node.apps.elements) {
+				apps.push(node.name);
+			}
+		} else {
+			for (node in x.elements) {
+				apps = apps.concat(searchApps(node));
+			}
+		}
+		return apps;
+	}
+
 }

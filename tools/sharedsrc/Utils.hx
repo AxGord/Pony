@@ -210,6 +210,17 @@ class Utils {
 		File.saveContent(file, [for (k in map.keys()) k + ':' + map[k].join(',')].join('\n'));
 	}
 
+	public static function getBuildString():String {
+		var date:String = Date.now().toString();
+		date = StringTools.replace(date, ' ', '_');
+		date = StringTools.replace(date, ':', '-');
+		return date;
+	}
+
+	public static function replaceBuildDate(s:String):String {
+		return StringTools.replace(s, '{buildDate}', getBuildString());
+	}
+
 	#end
 
 }

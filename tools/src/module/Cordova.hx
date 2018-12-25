@@ -143,10 +143,7 @@ class Cordova extends CfgModule<CordovaConfig> {
 		}
 
 		if (cfg.versionBuildDate) {
-			var date:String = Date.now().toString();
-			date = StringTools.replace(date, ' ', '_');
-			date = StringTools.replace(date, ':', '-');
-			widgetLineXml.att.version = date;
+			widgetLineXml.att.version = Utils.getBuildString();
 			widgetLineChanged = true;
 		}
 
