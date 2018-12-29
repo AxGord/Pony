@@ -6,6 +6,7 @@
 	],
 	"npm": [
 		"!git+https://github.com/janjakubnanista/poeditor-client.git",
+		"capture-console@1.0.1",
 		"!uglify-js@3.3.11",
 		"ftp@0.3.10",
 		"send@0.16.2",

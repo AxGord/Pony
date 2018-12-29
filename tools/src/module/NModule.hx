@@ -83,7 +83,7 @@ class NModule<T:BAConfig> extends CfgModule<T> {
 
 	private function runProcess():Void {
 		if (process != null) return;
-		process = Utils.asyncRunNode('pony' ,[Std.string(port)]);
+		process = Utils.asyncRunNode('pony', [Std.string(port)]);
 		Module.onEndQueue < finishHandler;
 	}
 
