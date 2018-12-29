@@ -19,8 +19,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Upgrade Cordova support",
-"version": "0.8.6",
+"releasenote": "Fixes",
+"version": "0.8.7",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }
