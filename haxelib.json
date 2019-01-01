@@ -1,6 +1,6 @@
 {
 "name": "pony",
-"license": "BSD",
+"license": "MIT",
 "tags": [
 "cross",
 "tools",
@@ -13,7 +13,11 @@
 "nodejs",
 "cs",
 "php",
-"openfl"
+"openfl",
+"electron",
+"cordova",
+"cc",
+"cocoscreator"
 ],
 "description": "Haxe open-cross-library",
 "contributors": [

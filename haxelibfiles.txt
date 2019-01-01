@@ -8,6 +8,6 @@ tools/pony.xml
 tools/commands.xml
 install/user_path.cmd
 checkstyle.json
-LICENSE.txt
+LICENSE
 README.md
 run.n

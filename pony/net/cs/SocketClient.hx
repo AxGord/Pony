@@ -1,26 +1,3 @@
-/**
-* Copyright (c) 2012-2018 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
-* 
-* Redistribution and use in source and binary forms, with or without modification, are
-* permitted provided that the following conditions are met:
-* 
-* 1. Redistributions of source code must retain the above copyright notice, this list of
-*   conditions and the following disclaimer.
-* 
-* 2. Redistributions in binary form must reproduce the above copyright notice, this list
-*   of conditions and the following disclaimer in the documentation and/or other materials
-*   provided with the distribution.
-* 
-* THIS SOFTWARE IS PROVIDED BY ALEXANDER GORDEYKO ``AS IS'' AND ANY EXPRESS OR IMPLIED
-* WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
-* FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL ALEXANDER GORDEYKO OR
-* CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
-* ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-* NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-* ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-**/
 package pony.net.cs;
 
 #if cs
@@ -44,50 +21,56 @@ import pony.cs.Synchro;
 import pony.net.SocketClientBase;
 import pony.Queue.Queue;
 import haxe.Timer;//Use HUGS for this
- 
+
 /**
  * SocketClient
  * @author DIS
  * @author AxGord <axgord@gmail.com>
  */
-class SocketClient extends SocketClientBase
-{
-	
+class SocketClient extends SocketClientBase {
+
 	/**
 	 * A client socket used to begin and end asynchronous operations.
 	 **/
 	@:allow(pony.net.cs.SocketServer)
 	private var client:Socket;
+
 	/**
 	 * Indicates if a client sended first or second datagramm; the first one is being sended if isSet is false, true instead.
 	 **/
 	@:allow(pony.net.cs.SocketServer)
 	private var isSet:Bool = false;
+
 	/**
 	 * A receive buffer; by default, connection is considered to be with length so default size is 4.
 	 **/
 	@:allow(pony.net.cs.SocketServer)
 	private var receiveBuffer:NativeArray<UInt8> = new NativeArray(4);
+
 	/**
 	 * A queue using to synchronize sending.
 	 **/
 	@:allow(pony.net.cs.SocketServer)
 	private var sendQueue:Queue < BytesOutput -> Void > ;
+	
 	/**
 	 * An event that signals if send callback ends. Using in destroy function.
 	 **/
 	@:allow(pony.net.cs.SocketServer)
 	private var eventSend:ManualResetEvent = new ManualResetEvent(true);
+
 	/**
 	 * An event that signals if receive callback ends. Using in destroy function.
 	 **/
 	@:allow(pony.net.cs.SocketServer)
 	private var eventReceive:ManualResetEvent = new ManualResetEvent(true);
+
 	/**
 	 * A flag that indicates if send-receive process is running.
 	 **/
 	@:allow(pony.net.cs.SocketServer)
 	private var isRunning:Bool;
+	
 	/**
 	 * A flag that indicates if client is connected.
 	 **/

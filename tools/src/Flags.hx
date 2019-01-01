@@ -1,3 +1,7 @@
+/**
+ * Flags
+ * @author AxGord <axgord@gmail.com>
+ */
 class Flags {
 
 	public static var NOTP(default, null):Bool = false;

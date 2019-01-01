@@ -1,6 +1,6 @@
 [![Lang](https://img.shields.io/badge/language-haxe-orange.svg?style=flat-square&colorB=EA8220)](http://haxe.org)
 [![Haxelib](https://img.shields.io/badge/haxelib-0.8.7-blue.svg?style=flat-square&colorB=FBC707)](http://lib.haxe.org/p/pony)
-[![License](https://img.shields.io/badge/license-BSD-blue.svg?style=flat-square)](LICENSE.txt)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE)
 [![Build status](https://img.shields.io/appveyor/ci/AxGord/pony.svg?label=windows&style=flat-square)](https://ci.appveyor.com/project/AxGord/pony) [![Join the chat at https://gitter.im/Ponylib/Lobby](https://img.shields.io/gitter/room/Ponylib/Lobby.svg?style=flat-square&colorB=71B79C)](https://gitter.im/Ponylib/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Donate PayPal](https://img.shields.io/badge/Donate-PayPal-green.svg?style=flat-square)](https://paypal.me/axgord)
 
@@ -9,7 +9,7 @@
 
 The library has a set of tools for develop, prepare, building, testing and publication project.
 
-Can be used for create nodejs, php, pixijs, openfl, unity3d, flash applications.
+Can be used for create nodejs, php, pixijs, openfl, unity3d, flash, electron, cordova applications.
 
 Work on server or client sides.
 

@@ -1,27 +1,5 @@
-/**
-* Copyright (c) 2012-2018 Alexander Gordeyko <axgord@gmail.com>. All rights reserved.
-* 
-* Redistribution and use in source and binary forms, with or without modification, are
-* permitted provided that the following conditions are met:
-* 
-* 1. Redistributions of source code must retain the above copyright notice, this list of
-*   conditions and the following disclaimer.
-* 
-* 2. Redistributions in binary form must reproduce the above copyright notice, this list
-*   of conditions and the following disclaimer in the documentation and/or other materials
-*   provided with the distribution.
-* 
-* THIS SOFTWARE IS PROVIDED BY ALEXANDER GORDEYKO ``AS IS'' AND ANY EXPRESS OR IMPLIED
-* WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
-* FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL ALEXANDER GORDEYKO OR
-* CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
-* ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-* NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-* ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-**/
 package pony.flash.starling.converter;
+
 import flash.display.BitmapData;
 import flash.display.DisplayObject;
 import flash.filters.BevelFilter;
@@ -43,13 +21,14 @@ import pony.flash.starling.converter.MaxRectsBinPack.FreeRectangleChoiceHeuristi
 import pony.flash.starling.utils.ReusableBitmapData;
 import pony.ui.touch.starling.touchManager.TouchEventType;
 import pony.ui.touch.starling.touchManager.TouchManager;
+
 using pony.flash.FLTools;
+using pony.flash.starling.displayFactory.DisplayListStaticExtentions;
+
 /**
  * AtlasCreator
  * @author Maletin
  */
-using pony.flash.starling.displayFactory.DisplayListStaticExtentions;
- 
 class AtlasCreator 
 {
 	private var _atlases:Array<Atlas> = new Array<Atlas>();
