@@ -1,6 +1,7 @@
 {
 "name": "pony",
 "license": "MIT",
+"classPath": "src",
 "tags": [
 "cross",
 "tools",

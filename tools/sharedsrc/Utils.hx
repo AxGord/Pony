@@ -31,6 +31,7 @@ class Utils {
 		libPath = o.split('\n')[0];
 		#else
 		libPath = new sys.io.Process('haxelib', ['path', 'pony']).stdout.readLine();
+		libPath = libPath.substr(0, -4); // remove src/
 		#end
 		libPath = path(libPath);
 		toolsPath = libPath + 'tools' + PD + 'bin' + PD;
