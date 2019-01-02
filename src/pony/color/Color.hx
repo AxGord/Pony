@@ -12,7 +12,7 @@ abstract Color({a:Int, r:Int, g:Int, b:Int}) {
 	/**
 	 * RGB
 	 */
-	public var rgb(get,never):UInt;
+	public var rgb(get, never):UInt;
 	/**
 	 * Alpha 0...255
 	 */

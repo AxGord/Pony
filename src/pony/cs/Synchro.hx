@@ -8,8 +8,7 @@ import cs.system.threading.Mutex;
  * Synchro
  * @author DIS
  */
-class Synchro 
-{
+class Synchro {
 
 	/**
 	 * A method implementing C# lock via monitor. Returns true if executing is finished correct, false instead.

@@ -10,24 +10,24 @@ abstract UColor(UInt) from UInt to UInt {
 	/**
 	 * ARGB
 	 */
-	public var argb(get,never):UInt;
+	public var argb(get, never):UInt;
 	/**
 	 * RGB
 	 */
-	public var rgb(get,never):UInt;
+	public var rgb(get, never):UInt;
 	
 	/**
 	 * Alpha 0...255
 	 */
-	public var a(get,never):UInt;
+	public var a(get, never):UInt;
 	/**
 	 * Red 0...255
 	 */
-	public var r(get,never):UInt;
+	public var r(get, never):UInt;
 	/**
 	 * Green 0...255
 	 */
-	public var g(get,never):UInt;
+	public var g(get, never):UInt;
 	/**
 	 * Blue 0...255
 	 */
@@ -41,19 +41,19 @@ abstract UColor(UInt) from UInt to UInt {
 	/**
 	 * Alpha 0...1
 	 */
-	public var af(get,never):Float;
+	public var af(get, never):Float;
 	/**
 	 * Red 0...1
 	 */
-	public var rf(get,never):Float;
+	public var rf(get, never):Float;
 	/**
 	 * Green 0...1
 	 */
-	public var gf(get,never):Float;
+	public var gf(get, never):Float;
 	/**
 	 * Blue 0...1
 	 */
-	public var bf(get,never):Float;
+	public var bf(get, never):Float;
 	
 	/**
 	 * This color with inverted alpha
