@@ -25,6 +25,9 @@
 		{
 			"props": {
 				"ignoreExtern": true,
+				"tokens": [
+					"INLINE"
+				],
 				"format": "^[A-Z][A-Z0-9]*(_[A-Z0-9_]+)*$"
 			},
 			"type": "ConstantName"

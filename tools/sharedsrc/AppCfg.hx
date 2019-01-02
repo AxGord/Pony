@@ -1,5 +1,3 @@
-package;
-
 /**
  * @author AxGord <axgord@gmail.com>
  */

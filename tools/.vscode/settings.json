@@ -1,0 +1,11 @@
+{
+
+	"haxecheckstyle.configurationFile": "../checkstyle.json",
+	"haxecheckstyle.sourceFolders": [
+		"src",
+		"nodesrc",
+		"sharedsrc",
+		"../src"
+	]
+
+}

@@ -14,6 +14,8 @@ class Utils {
 	public static inline var MAIN_FILE:String = 'pony.xml';
 	public static inline var NPORT:Int = 48654;
 
+	private static inline var SRC:String = 'src/';
+
 	public static var isWindows(get, never):Bool;
 	public static var PD(default, null):String;
 	public static var toolsPath(default, null):String;
@@ -31,7 +33,8 @@ class Utils {
 		libPath = o.split('\n')[0];
 		#else
 		libPath = new sys.io.Process('haxelib', ['path', 'pony']).stdout.readLine();
-		libPath = libPath.substr(0, -4); // remove src/
+		if (libPath.substr(-SRC.length) == SRC)
+			libPath = libPath.substr(0, -SRC.length); // remove src/
 		#end
 		libPath = path(libPath);
 		toolsPath = libPath + 'tools' + PD + 'bin' + PD;
@@ -74,7 +77,7 @@ class Utils {
 		Sys.exit(errCode);
 	}
 
-	public static function saveJson(file:String, jdata:Dynamic):Void {
+	public static function saveJson(file:String, jdata:Any):Void {
 		var tdata = haxe.Json.stringify(jdata, '\n');
 		while (true) {
 			var ndata = StringTools.replace(tdata, '\n\n', '\n');
@@ -110,7 +113,7 @@ class Utils {
 	}
 
 	public static function getPath(file:String):String {
-		return file.substr(0, file.lastIndexOf('/')+1);
+		return file.substr(0, file.lastIndexOf('/') + 1);
 	}
 
 	public static function createPath(file:String):Void {

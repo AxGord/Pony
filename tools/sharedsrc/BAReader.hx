@@ -3,6 +3,10 @@ import pony.text.XmlConfigReader;
 import types.BAConfig;
 import types.BASection;
 
+/**
+ * BAReader
+ * @author AxGord <axgord@gmail.com>
+ */
 class BAReader<T:BAConfig> extends XmlConfigReader<T> implements pony.magic.HasAbstract {
 
 	override private function readNode(xml:Fast):Void {
