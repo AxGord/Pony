@@ -12,6 +12,8 @@ class Modules extends pony.Logable {
 	public var xml(get, null):Fast;
 	private var _xml:Fast;
 	public var commands(default, null):Commands;
+	public var deny(default, set):Array<String>;
+	public var allow(default, set):Array<String>;
 	public var list:Array<Module> = [];
 	public var build:Build;
 
@@ -46,6 +48,28 @@ class Modules extends pony.Logable {
 
 	@:extern public inline function getNode(name:String):Fast {
 		return XmlTools.getNode(xml, name);
+	}
+
+	public function set_deny(list:Array<String>):Array<String> {
+		if (list.length > 0) deny = list;
+		return deny;
+	}
+
+	public function set_allow(list:Array<String>):Array<String> {
+		if (list.length > 0) allow = list;
+		return allow;
+	}
+
+	public function checkAllowGroups(groups:Array<String>):Bool {
+		if (groups != null) {
+			if (deny != null) for (group in groups) {
+				if (deny.indexOf(group) != -1) return false;
+			}
+			if (allow != null) for (group in groups) {
+				if (allow.indexOf(group) != -1) return true;
+			}
+		}
+		return allow == null;
 	}
 
 }

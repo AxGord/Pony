@@ -16,8 +16,6 @@ class Bmfont extends NModule<BmfontConfig> {
 
 	override public function init():Void initSections(PRIORITY, BASection.Prepare);
 
-	override public function run(cfg:Array<BmfontConfig>):Void if (!Flags.NOFNT) super.run(cfg);
-
 	override private function readNodeConfig(xml:Fast, ac:AppCfg):Void {
 		new BmfontReader(xml, {
 			debug: ac.debug,

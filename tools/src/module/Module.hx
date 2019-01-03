@@ -19,7 +19,6 @@ class Module extends pony.Logable implements pony.magic.HasAbstract implements p
 	private static var GLOBALQUEUE:Queue<(Void -> Void) -> Void> = new Queue<(Void -> Void) -> Void>(globalRunNextRun);
 
 	public var modules:Modules;
-	public var group(get, never):String;
 	private var xml(get, never):Fast;
 	#if (haxe_ver >= "4.0.0")
 	private var nodes(get, never):Array<Fast>;
@@ -42,7 +41,16 @@ class Module extends pony.Logable implements pony.magic.HasAbstract implements p
 		return _xml;
 	}
 
-	@:extern private inline function get_group():String return xml != null && xml.has.group ? xml.att.group : null;
+	@:extern private inline function parseGroup(xml:Fast):Array<String> {
+		if (xml != null && xml.has.group) {
+			var r:Array<String> = xml.att.group.split(' ').filter(checkLength);
+			return r.length > 0 ? r : null;
+		} else {
+			return null;
+		}
+	}
+
+	private function checkLength(s:String):Bool return s.length > 0;
 
 	#if (haxe_ver >= "4.0.0")
 	private function get_nodes():Array<Fast> {

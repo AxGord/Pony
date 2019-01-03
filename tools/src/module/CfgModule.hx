@@ -27,6 +27,8 @@ class CfgModule<T:BAConfig> extends Module implements pony.magic.HasAbstract {
 	override private function readConfig(ac:AppCfg):Void {
 		for (xml in nodes) {
 			readNodeConfig(xml, ac);
+			for (cfg in lastcfgs)
+				cfg.group = parseGroup(xml);
 			savecfg();
 		}
 	}
@@ -35,7 +37,7 @@ class CfgModule<T:BAConfig> extends Module implements pony.magic.HasAbstract {
 		for (cfgs in allcfgs) {
 			var actual:Array<T> = [];
 			for (cfg in cfgs)
-				if (cfg.before == before && cfg.section == section)
+				if (cfg.before == before && cfg.section == section && modules.checkAllowGroups(cfg.group))
 					actual.push(cfg);
 			if (actual.length > 0) {
 				addToRun(run.bind(actual));

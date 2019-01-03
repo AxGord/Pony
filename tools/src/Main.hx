@@ -43,30 +43,65 @@ class Main {
 		f(Utils.parseArgs([a, b]));
 	}
 
-	static function main():Void {
-		MainLoop.init();
-
-		var args:Array<String> = Sys.args();
+	static function trySubProjects(args:Array<String>):Bool {
 		if (args.indexOf('all') != -1) {
 			runSubProjects(args);
-			return;
+			return true;
+		} else {
+			return false;
 		}
+	}
 
+	static function tryOtherPath(args:Array<String>):Bool {
 		var p = Utils.path(Sys.executablePath());
 		p = p.substr(0, p.lastIndexOf(Utils.PD) + 1);
 		if (p != Utils.toolsPath) {
 			var pony = Utils.toolsPath + 'pony';
 			if (Utils.isWindows) pony += '.exe';
 			Sys.exit(Sys.command(pony, args));
-			return;
+			return true;
+		} else {
+			return false;
 		}
-		
+	}
+
+	static function main():Void {
 		var startTime = Sys.time();
+		MainLoop.init();
+		var args:Array<String> = Sys.args();
+		if (trySubProjects(args) || tryOtherPath(args)) return;
 
 		commands.onError << Utils.error.bind(_, 1);
 		commands.onLog << Sys.println;
+		registerCommands();
 
 		var modules:Modules = new Modules(commands);
+		registerModules(modules);
+		modules.init();
+
+		Module.onEndQueue < MainLoop.stop;
+
+		Module.lockQueue();
+		commands.runArgs(setGroupsPerm(args, modules));
+		Module.unlockQueue();
+		
+		if (Module.busy) MainLoop.start();
+
+		Sys.println('Total time: ' + Std.int((Sys.time() - startTime) * 1000) / 1000);
+	}
+
+	static function registerCommands():Void {
+		commands.onNothing < showLogo;
+		commands.onHelp < showHelp;
+		commands.onFtp < cfgAndCall.bind(_, _, ftp);
+		commands.onCreate < create.Create.run;
+		commands.onLines < Lines.run;
+		commands.onChars < Chars.run;
+		commands.onLicense < License.run;
+		commands.onHaxelib < Haxelib.run;
+	}
+
+	static function registerModules(modules:Modules):Void {
 		modules.register(new module.Haxelib());
 		modules.register(new module.Npm());
 		modules.register(new module.Texturepacker());
@@ -88,26 +123,25 @@ class Main {
 		modules.register(new module.Copy());
 		modules.register(new module.Url());
 		modules.register(new module.Run());
-		modules.init();
+	}
 
-		commands.onNothing < showLogo;
-		commands.onHelp < showHelp;
-		commands.onFtp < cfgAndCall.bind(_, _, ftp);
-
-		commands.onCreate < create.Create.run;
-		commands.onLines < Lines.run;
-		commands.onChars < Chars.run;
-		commands.onLicense < License.run;
-		commands.onHaxelib < Haxelib.run;
-		Module.onEndQueue < MainLoop.stop;
-
-		Module.lockQueue();
-		commands.runArgs(grabFlags(args));
-		Module.unlockQueue();
-		
-		if (Module.busy) MainLoop.start();
-
-		Sys.println('Total time: ' + Std.int((Sys.time() - startTime) * 1000) / 1000);
+	static function setGroupsPerm(args:Array<String>, modules:Modules):Array<String> {
+		var nArgs:Array<String> = [];
+		var deny:Array<String> = [];
+		var allow:Array<String> = [];
+		for (a in args) {
+			switch a.charAt(0) {
+				case '-':
+					deny.push(a.substr(1));
+				case '+':
+					allow.push(a.substr(1));
+				case _:
+					nArgs.push(a);
+			}
+		}
+		modules.deny = deny;
+		modules.allow = allow;
+		return nArgs;
 	}
 	
 	static function addCfg(?a:Array<String>, args:AppCfg):Array<String> {
@@ -115,17 +149,6 @@ class Main {
 		if (args.app != null) a.push(args.app);
 		if (args.debug) a.push('debug');
 		return a;
-	}
-
-	static function grabFlags(args:Array<String>):Array<String> {
-		var na:Array<String> = [];
-		for (a in args) {
-			if (a.charAt(0) == '-')
-				Flags.set(a.substr(1));
-			else
-				na.push(a);
-		}
-		return na;
 	}
 	
 	static function runSubProjects(args:Array<String>):Void {
