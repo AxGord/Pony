@@ -15,7 +15,7 @@
 		},
 		{
 			"props": {
-				"format": "^(e)$"
+				"format": "^(_|[a-z]*)$"
 			},
 			"type": "CatchParameterName"
 		},

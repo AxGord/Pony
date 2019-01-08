@@ -138,10 +138,20 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 				g.lineTo(parseAndScale(attrs.w), parseAndScale(attrs.h));
 				g;
 			case 'circle':
-				var color = UColor.fromString(attrs.color);
 				var g = new Graphics();
-				g.lineStyle();
-				g.beginFill(color.rgb, color.invertAlpha.af);
+				if (attrs.line != null) {
+					var a = attrs.line.split(' ');
+					if (a[0].charAt(0) == '#') a.unshift(a.pop());
+					var lsize:Float = parseAndScale(a[0]);
+					var lcolor = UColor.fromString(a[1]);
+					g.lineStyle(lsize, lcolor.rgb, lcolor.invertAlpha.af);
+				} else {
+					g.lineStyle();
+				}
+				if (attrs.color != null) {
+					var color = UColor.fromString(attrs.color);
+					g.beginFill(color.rgb, color.invertAlpha.af);
+				}
 				g.drawCircle(0, 0, parseAndScale(attrs.r));
 				g.endFill();
 				g;

@@ -16,7 +16,7 @@ class BTextLow extends BitmapText implements IWH {
 	private var ansi:String;
 	public var nocache(default, null):Bool;
 	
-	public function new(text:String, ?style:BitmapTextStyle, ?ansi:String, nocache:Bool=false) {
+	public function new(text:String, ?style:BitmapTextStyle, ?ansi:String, nocache:Bool = false) {
 		this.ansi = ansi;
 		this.nocache = nocache;
 		if (text == null) text = ' ';
@@ -24,7 +24,7 @@ class BTextLow extends BitmapText implements IWH {
 			text = TextTools.convertToANSI(text, ansi);
 		try {
 			super(text, style);
-		} catch (_:Dynamic) {
+		} catch (_:Any) {
 			throw 'Font error: ' + style.font;
 		}
 		if (!this.nocache) cacheAsBitmap = true;
@@ -33,9 +33,9 @@ class BTextLow extends BitmapText implements IWH {
 	
 	private function get_size():Point<Float> return new Point(textWidth, textHeight);
 	
-	public function wait(cb:Void->Void):Void cb();
+	public function wait(cb:Void -> Void):Void cb();
 	
-	@:extern inline public function get_t():String return text;
+	@:extern public inline function get_t():String return text;
 	
 	public function set_t(s:String):String {
 		if (!nocache) cacheAsBitmap = false;

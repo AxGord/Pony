@@ -23,8 +23,8 @@ abstract UColors(Array<UColor>) from Array<UColor> to Array<UColor> {
 	 */
 	public var midInvertAlpha(get, never):UColor;
 	
-	inline private function get_mid():UColor return _mid(0);
-	inline private function get_midInvertAlpha():UColor return _mid(0xFF);
+	@:extern private inline function get_mid():UColor return _mid(0);
+	@:extern private inline function get_midInvertAlpha():UColor return _mid(0xFF);
 	
 	private function _mid(alp:UInt):UColor {
 		var r:Array<UInt> = [];
@@ -37,17 +37,20 @@ abstract UColors(Array<UColor>) from Array<UColor> to Array<UColor> {
 		}
 		return Color.fromRGB(r.arithmeticMean().int(), g.arithmeticMean().int(), b.arithmeticMean().int());
 	}
+
 	/**
 	 * Build from iterable colors
 	 */
-	@:from inline public static function fromIterable(it:Iterable<UColor>):UColors return Lambda.array(it);
+	@:from public static inline function fromIterable(it:Iterable<UColor>):UColors return Lambda.array(it);
+	
 	/**
 	 * Build from iterable UInt
 	 */
-	@:from inline public static function fromIterableUInt(it:Iterable<UInt>):UColors return Lambda.array(it);
+	@:from public static inline function fromIterableUInt(it:Iterable<UInt>):UColors return Lambda.array(it);
 	#if (flash && !doc_gen)
-	@:from inline public static function fromVector(a:flash.Vector<UInt>):UColors return [for(i in 0...a.length) a[i]];
+	@:from public static inline function fromVector(a:flash.Vector<UInt>):UColors return [for(i in 0...a.length) a[i]];
 	#end
 
 	@:from @:extern public static inline function fromString(s:String):UColors return s.split(' ').map(UColor.fromString);
+
 }
