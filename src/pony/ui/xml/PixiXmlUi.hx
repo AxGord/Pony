@@ -62,7 +62,7 @@ using pony.pixi.PixiExtends;
  * PixiXmlUi
  * @author AxGord <axgord@gmail.com>
  */
-#if (!macro)
+#if !macro
 @:autoBuild(pony.ui.xml.XmlUiBuilder.build({
 	free: pixi.core.sprites.Sprite,
 	mask: pony.pixi.ui.Mask,

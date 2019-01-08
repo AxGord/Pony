@@ -64,6 +64,7 @@ class BText extends Sprite implements IWH {
 		if (t == s) return s;
 		if (s == null || s == '') {
 			destroyIfExists();
+			t = '';
 			return s;
 		}
 		t = s;
