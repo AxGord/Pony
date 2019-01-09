@@ -14,7 +14,7 @@ class Utils {
 	public static inline var MAIN_FILE:String = 'pony.xml';
 	public static inline var NPORT:Int = 48654;
 
-	private static inline var SRC:String = 'src/';
+	private static inline var SRC:String = 'src';
 
 	public static var isWindows(get, never):Bool;
 	public static var PD(default, null):String;
@@ -33,8 +33,9 @@ class Utils {
 		libPath = o.split('\n')[0];
 		#else
 		libPath = new sys.io.Process('haxelib', ['path', 'pony']).stdout.readLine();
-		if (libPath.substr(-SRC.length) == SRC)
-			libPath = libPath.substr(0, -SRC.length); // remove src/
+		var src:String = SRC + PD;
+		if (libPath.substr(-src.length) == src)
+			libPath = libPath.substr(0, -src.length); // remove src/
 		#end
 		libPath = path(libPath);
 		toolsPath = libPath + 'tools' + PD + 'bin' + PD;
