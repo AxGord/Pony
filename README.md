@@ -27,6 +27,10 @@ Unstable version
 
     haxelib git pony https://github.com/AxGord/Pony
 
+Install Pony Tools
+
+    haxelib run pony
+
 Manual
 ------
 * [Home](https://github.com/AxGord/Pony/wiki)
