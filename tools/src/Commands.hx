@@ -12,7 +12,7 @@ class Commands extends pony.magic.Commander {
 		onFtp << eBuild;
 		onCordova.add(eBuild, MINIMAL_PRIORITY);
 		onAndroid.add(eCordova, MINIMAL_PRIORITY);
-		onIphone.add(eIphone, MINIMAL_PRIORITY);
+		onIphone.add(eCordova, MINIMAL_PRIORITY);
 		onRun << eBuild;
 	}
 

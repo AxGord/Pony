@@ -88,37 +88,50 @@ class TextTools {
 		return macro $v{s};
 	}
 	
+	macro public static function includePath(path:String = '.'):Expr {
+		var s:String = sys.FileSystem.absolutePath(path + '/');
+		return macro $v{s};
+	}
+
 	macro public static function includeFileFromCurrentDir(file:String):Expr {
 		var f:String = Context.getPosInfos(Context.currentPos()).file;
 		var i = MathTools.cmax(f.lastIndexOf('\\'), f.lastIndexOf('/'));
 		f = i != -1 ? f.substr(0, i) + '/' : '';
-		var s:String = sys.io.File.getContent(f+file);
+		var s:String = sys.io.File.getContent(f + file);
 		return macro $v{s};
 	}
 	
+	macro public static function includePathFromCurrentDir(path:String = '.'):Expr {
+		var f:String = Context.getPosInfos(Context.currentPos()).file;
+		var i = MathTools.cmax(f.lastIndexOf('\\'), f.lastIndexOf('/'));
+		f = i != -1 ? f.substr(0, i) + '/' : '';
+		var s:String = sys.FileSystem.absolutePath(f + path + '/');
+		return macro $v{s};
+	}
+
 	macro public static function includeJson(file:String):Expr {
 		var s:String = sys.io.File.getContent(file);
-		haxe.Json.parse(s);//check
-		return macro haxe.Json.parse($v{s});//todo: not parse on runtime
+		haxe.Json.parse(s); //check
+		return macro haxe.Json.parse($v{s}); //todo: not parse on runtime
 	}
 	
 	macro public static function includeJsonFromCurrentDir(file:String):Expr {
 		var f:String = Context.getPosInfos(Context.currentPos()).file;
 		var i = MathTools.cmax(f.lastIndexOf('\\'), f.lastIndexOf('/'));
 		f = i != -1 ? f.substr(0, i) + '/' : '';
-		var s:String = sys.io.File.getContent(f+file);
-		haxe.Json.parse(s);//check
-		return macro haxe.Json.parse($v{s});//todo: not parse on runtime
+		var s:String = sys.io.File.getContent(f + file);
+		haxe.Json.parse(s); //check
+		return macro haxe.Json.parse($v{s}); //todo: not parse on runtime
 	}
 	
-	inline public static function parsePercent(s:String):Float {
+	public static inline function parsePercent(s:String):Float {
 		if (s.indexOf('%') != -1) {
-			return Std.parseFloat(s.substr(0,s.length-1))/100;
+			return Std.parseFloat(s.substr(0, s.length - 1)) / 100;
 		} else
 			return Std.parseFloat(s);
 	}
 	
-	inline public static function last(s:String):String return s.charAt(s.length - 1);
+	public static inline function last(s:String):String return s.charAt(s.length - 1);
 	
 	public static function bigFirst(s:String):String return s.charAt(0).toUpperCase() + s.substr(1);
 	

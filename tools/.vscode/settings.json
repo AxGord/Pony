@@ -4,8 +4,7 @@
 	"haxecheckstyle.sourceFolders": [
 		"src",
 		"nodesrc",
-		"sharedsrc",
-		"../src"
+		"sharedsrc"
 	]
 
 }

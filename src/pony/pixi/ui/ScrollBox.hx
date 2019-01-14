@@ -96,7 +96,7 @@ class ScrollBox extends Sprite implements HasSignal implements IWH {
 
 	private function maximizeTouchArea(mw:Float, mh:Float):Void {
 		var b = content.getLocalBounds();
-		touchArea.scale.set(b.width, b.height);
+		touchArea.scale.set(b.x + b.width, b.y + b.height);
 		if (touchArea.scale.x < mw) touchArea.scale.x = mw;
 		if (touchArea.scale.y < mh) touchArea.scale.y = mh;
 	}
@@ -126,7 +126,7 @@ class ScrollBox extends Sprite implements HasSignal implements IWH {
 	public function update():Void {
 		touchArea.visible = false;
 		var b = content.getBounds();
-		core.content(b.width, b.height);
+		core.content(b.x + b.width, b.y + b.height);
 		touchArea.visible = true;
 	}
 

@@ -1,8 +1,8 @@
 class Main extends pony.pixi.SimpleXmlApp {
 
 	override private function init():Void {
-		super.init();
 		onLoaded < loadedHandler;
+		super.init();
 	}
 
 	private function loadedHandler():Void {

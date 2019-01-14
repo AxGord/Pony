@@ -35,6 +35,8 @@ abstract Unit(Priority<String>) {
 	
 	inline private function get_name():String return this.first.split('/').pop();
 	
+	inline public function rename(to:File):Void FileSystem.rename(first, to.first);
+	
 	private function get_exists():Bool {
 		for (e in this) if (FileSystem.exists(e)) return true;
 		return false;

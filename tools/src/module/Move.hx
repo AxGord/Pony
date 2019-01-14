@@ -8,19 +8,19 @@ import pony.fs.File;
 import types.BASection;
 
 /**
- * Copy module
+ * Move module
  * @author AxGord <axgord@gmail.com>
  */
-class Copy extends CfgModule<CopyConfig> {
+class Move extends CfgModule<MoveConfig> {
 
-	private static inline var PRIORITY:Int = 21;
+	public static inline var PRIORITY:Int = 20;
 
-	public function new() super('copy');
+	public function new() super('move');
 	
 	override public function init():Void initSections(PRIORITY, BASection.Prepare);
 
 	override private function readNodeConfig(xml:Fast, ac:AppCfg):Void {
-		new CopyReader(xml, {
+		new MoveReader(xml, {
 			debug: ac.debug,
 			app: ac.app,
 			before: false,
@@ -32,39 +32,40 @@ class Copy extends CfgModule<CopyConfig> {
 		}, configHandler);
 	}
 
-	override private function runNode(cfg:CopyConfig):Void {
-		copyDirs(cfg.dirs, cfg.to, cfg.filter);
-		copyUnits(cfg.units, cfg.to);
+	override private function runNode(cfg:MoveConfig):Void {
+		moveDirs(cfg.dirs, cfg.to, cfg.filter);
+		moveUnits(cfg.units, cfg.to);
 	}
 
-	private function copyDirs(data:Array<String>, to:String, filter:String):Void {
+	private function moveDirs(data:Array<String>, to:String, filter:String):Void {
 		for (d in data) {
-			log('Copy directory: $d');
+			log('Move directory: $d');
 			(d:Dir).copyTo(to, filter);
 		}
 	}
 
-	private function copyUnits(data:Array<Pair<String, String>>, to:String):Void {
+	private function moveUnits(data:Array<Pair<String, String>>, to:String):Void {
 		for (p in data) {
 			var unit:Unit = p.a;
-			log('Copy file: $unit');
-			if (unit.isFile)
-				(unit:File).copyToDir(to, Utils.replaceBuildDateIfNotNull(p.b));
-			else
+			log('Move file: $unit');
+			if (unit.isFile) {
+				(unit:File).moveToDir(to, Utils.replaceBuildDateIfNotNull(p.b));
+			} else {
 				error('Is not file!');
+			}
 		}
 	}
 
 }
 
-private typedef CopyConfig = { > types.BAConfig,
+private typedef MoveConfig = { > types.BAConfig,
 	dirs: Array<String>,
 	units: Array<Pair<String, String>>,
 	?filter: String,
 	to: String
 }
 
-private class CopyReader extends BAReader<CopyConfig> {
+private class MoveReader extends BAReader<MoveConfig> {
 
 	override private function readNode(xml:Fast):Void {
 		switch xml.name {

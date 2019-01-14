@@ -85,6 +85,7 @@ class ScrollBoxBarCore implements HasSignal implements HasLink {
 			eMaskSize.dispatch(totalB - scrollPanelSize);
 			slider.initValue(0, c - totalA);
 			slider.update();
+			posHandler(slider.pos);
 		}
 	}
 

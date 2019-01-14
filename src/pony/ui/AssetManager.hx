@@ -145,7 +145,7 @@ class AssetManager {
 			f(0, 0); //skip load
 	}
 
-	public static function cbjoin(cb:Int->Int->Void):Pair<Int->Int->Void, Int->Int->Void> {
+	public static function cbjoin(cb:Int -> Int -> Void):Pair<Int -> Int -> Void, Int -> Int -> Void> {
 		var aCurrent:Int = 0;
 		var aTotal:Int = 1;
 		var bCurrent:Int = 0;
@@ -153,12 +153,12 @@ class AssetManager {
 		function a(c:Int, t:Int) {
 			aCurrent = c;
 			aTotal = t;
-			cb(bCurrent+c, bTotal+t);
+			cb(bCurrent + c, bTotal + t);
 		}
 		function b(c:Int, t:Int) {
 			bCurrent = c;
 			bTotal = t;
-			cb(aCurrent+c, aTotal+t);
+			cb(aCurrent + c, aTotal + t);
 		}
 		return new Pair(a, b);
 	}

@@ -121,6 +121,7 @@ class Main {
 		modules.register(new module.Poeditor());
 		modules.register(new module.Download());
 		modules.register(new module.Copy());
+		modules.register(new module.Move());
 		modules.register(new module.Url());
 		modules.register(new module.Run());
 	}

@@ -1,5 +1,6 @@
 package pony.pixi;
 
+import haxe.Json;
 import pixi.core.sprites.Sprite;
 import pixi.core.textures.Texture;
 import pixi.loaders.Loader;
@@ -20,7 +21,7 @@ class PixiAssets {
 	private static var texts:Map<String, String> = new Map();
 	private static var jsons:Map<String, Dynamic> = new Map();
 	
-	public static function load(asset:String, cb:Void->Void):Void {
+	public static function load(asset:String, cb:Void -> Void):Void {
 		var loader = new Loader();
 		
 		var sp = asset.split('(spine)');
@@ -39,18 +40,21 @@ class PixiAssets {
 				sounds[asset] = s;
 				loader.add(asset, AssetManager.getPath(asset), { loadType: 2 }, s.loadHandler);
 			}
-		} else if (['frag', '.txt'].indexOf(asset.substr( -4)) != -1) {
+		} else if (['frag', '.txt', '.cdb'].indexOf(asset.substr( -4)) != -1) {
 			asset = linuxReplace(asset);
 			if (!texts.exists(asset)) {
 				loader.add(asset, AssetManager.getPath(asset), { loadType: 0 }, function(r:Resource):Void {
 					texts[asset] = r.data;
 				});
 			}
-		} else if (['json'].indexOf(asset.substr( -4)) != -1) {
+		} else if (['json', '.img'].indexOf(asset.substr( -4)) != -1) {
 			asset = webpReplace(asset);
 			if (!jsons.exists(asset)) {
 				loader.add(asset, AssetManager.getPath(asset), { loadType: 0 }, function(r:Resource):Void {
-					jsons[asset] = r.data;
+					if (asset.substr( -4) == 'json')
+						jsons[asset] = r.data;
+					else
+						jsons[asset] = Json.parse(r.data);
 				});
 			}
 		} else {
@@ -103,6 +107,6 @@ class PixiAssets {
 	public static function sound(asset:String):PixiSound return sounds[asset];
 	public static function spine(asset:String):SkeletonData return spines[asset];
 	public static function text(asset:String):String return texts[asset];
-	public static function json(asset:String):String return jsons[asset];
+	public static function json(asset:String):Dynamic return jsons[asset];
 	
 }

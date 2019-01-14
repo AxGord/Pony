@@ -236,7 +236,7 @@ class VSCode {
 						runtimeExecutable: electronExecutable + '.cmd'
 					},
 					preLaunchTask: PRELAUNCH_TASK,
-					internalConsoleOptions: 'openOnSessionStart'
+					internalConsoleOptions: 'neverOpen'
 				}:Dynamic),
 				({
 					name: renderConfName,

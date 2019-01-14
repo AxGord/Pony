@@ -34,8 +34,8 @@ class Cordova extends CfgModule<CordovaConfig> {
 		modules.commands.onCordova.add(cordovaHandler, -300);
 		modules.commands.onAndroid.add(androidHandler, -200);
 		modules.commands.onIphone.add(iphoneHandler, -200);
-		modules.commands.onAndroid.add(androidBuildHandler, 200);
-		modules.commands.onIphone.add(iphoneBuildHandler, 200);
+		modules.commands.onAndroid.add(androidBuildHandler, Move.PRIORITY);
+		modules.commands.onIphone.add(iphoneBuildHandler, Move.PRIORITY);
 	}
 
 	private function androidHandler():Void modules.build.addFlag('android');

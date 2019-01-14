@@ -7,7 +7,7 @@ import sys.FileSystem;
  * File
  * @author AxGord <axgord@gmail.com>
  */
-@:forward(exists, firstExists, takeExists)
+@:forward(exists, firstExists, takeExists, rename)
 abstract File(Unit) from Unit {
 
 	public var name(get, never):String;
@@ -63,10 +63,17 @@ abstract File(Unit) from Unit {
 		sys.io.File.copy(first, to.first);
 	}
 
-	inline public function copyToDir(to:Unit):Void {
-		var to:File = to + name;
+	inline public function copyToDir(to:Dir, ?newname:String):Void {
+		if (newname == null) newname = name;
+		var to:File = to + newname;
 		to.createWays();
 		sys.io.File.copy(first, to.first);
+	}
+
+	inline public function moveToDir(to:Dir, ?newname:String):Void {
+		to.createWays();
+		if (newname == null) newname = name;
+		this.rename(to + newname);
 	}
 	
 	inline public function copyFrom(from:File):Void {
@@ -92,7 +99,7 @@ abstract File(Unit) from Unit {
 		try {
 			for (e in this) if (e.exists) FileSystem.deleteFile(e.first);
 		} catch (_:Dynamic) {
-			throw "Can't delete file: "+name;
+			throw "Can't delete file: " + name;
 		}
 	}
 	

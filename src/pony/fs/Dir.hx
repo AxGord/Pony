@@ -9,7 +9,7 @@ using Lambda;
  * Directory
  * @author AxGord <axgord@gmail.com>
  */
-@:forward(addWay, addWayArray, name)
+@:forward(addWay, addWayArray, name, rename)
 abstract Dir(Unit) from Unit {
 
 	public var first(get, never):String;
@@ -83,6 +83,27 @@ abstract Dir(Unit) from Unit {
 		for (f in contentRecursiveFiles(filter)) {
 			var w:String = f.fullDir.first.substr(first.length);
 			f.copyToDir(to + w);
+		}
+	}
+
+	public function moveTo(to:Dir, ?filter:String):Void {
+		if (filter == null) {
+			to.createWays();
+			this.rename(to);
+		} else {
+			for (f in contentRecursiveFiles(filter)) {
+				var w:String = f.fullDir.first.substr(first.length);
+				f.moveToDir(to + w);
+			}
+		}
+	}
+
+	public function createWays():Void {
+		var a = first.split('/');
+		var d = a.shift();
+		for (e in a) {
+			d += '/' + e;
+			if (!FileSystem.exists(d)) FileSystem.createDirectory(d);
 		}
 	}
 	

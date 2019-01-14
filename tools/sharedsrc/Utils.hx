@@ -199,8 +199,12 @@ class Utils {
 		return date;
 	}
 
-	public static function replaceBuildDate(s:String):String {
+	public static inline function replaceBuildDate(s:String):String {
 		return StringTools.replace(s, '{buildDate}', getBuildString());
+	}
+
+	public static inline function replaceBuildDateIfNotNull(s:String):String {
+		return s == null ? null : replaceBuildDate(s);
 	}
 
 	#end

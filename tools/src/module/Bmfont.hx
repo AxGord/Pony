@@ -10,7 +10,7 @@ import types.BmfontConfig;
  */
 class Bmfont extends NModule<BmfontConfig> {
 
-	private static inline var PRIORITY:Int = 20;
+	private static inline var PRIORITY:Int = 19;
 
 	public function new() super('bmfont');
 
