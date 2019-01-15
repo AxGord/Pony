@@ -16,12 +16,16 @@ class NpmInstall extends BaseInstall {
 	override private function run():Void {
 		var cmds = ['npm', '-g', 'install'];
 		var perm:Null<Int> = null;
+		var homeperm:Null<Int> = null;
 		if (sudo) {
 			perm = Utils.getPerm(Utils.npmPath);
 			graylog('Npm dir perm $perm');
 			if (perm == 777) perm = null;
+			homeperm = Utils.getPerm(Utils.homeNpm);
+			graylog('Home npm dir perm $homeperm');
+			if (homeperm == 777) homeperm = null;
 			Utils.setPerm(Utils.npmPath, 777, true);
-			Utils.setPerm('~/.npm', 777, true);
+			Utils.setPerm(Utils.homeNpm, 777, true);
 		}
 		var c = cmds.shift();
 		if (Config.OS == TargetOS.Windows) {
@@ -41,6 +45,8 @@ class NpmInstall extends BaseInstall {
 		}
 		if (perm != null)
 			Utils.setPerm(Utils.npmPath, perm, true);
+		if (homeperm != null)
+			Utils.setPerm(Utils.homeNpm, homeperm, true);
 	}
 
 }

@@ -10,11 +10,15 @@ class Utils {
 	public static var codeExists(get, never):Bool;
 	public static var codeInsidersExists(get, never):Bool;
 	public static var npmPath(get, never):String;
+	public static var homePath(get, never):String;
+	public static var homeNpm(get, never):String;
 
 	private static var _nodeExists:Null<Bool>;
 	private static var _codeExists:Null<Bool>;
 	private static var _codeInsidersExists:Null<Bool>;
 	private static var _npmPath:String;
+	private static var _homePath:String;
+	private static var _homeNpm:String;
 
 	private static function get_nodeExists():Bool {
 		if (_nodeExists == null)
@@ -38,6 +42,18 @@ class Utils {
 		if (_npmPath == null)
 			_npmPath = new Process('npm', ['prefix', '-g']).stdout.readLine() + '/lib/node_modules';
 		return _npmPath;
+	}
+
+	private static function get_homePath():String {
+		if (_homePath == null)
+			_homePath = Sys.getEnv('HOME');
+		return _homePath;
+	}
+
+	private static function get_homeNpm():String {
+		if (_homeNpm == null)
+			_homeNpm = homePath + '/.npm';
+		return _homeNpm;
 	}
 
 	public static inline function cmdExists(c:String):Bool return cmdExistsa(c, ['-v']);
