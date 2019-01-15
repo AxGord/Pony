@@ -8,6 +8,7 @@ class PonyInstall extends BaseInstall {
 
 	override private function run():Void {
 		new VSCodePluginsInstall();
+		new VSCodeInsidersPluginsInstall();
 		new HaxelibInstall();
 		compile();
 		new NpmInstall();

@@ -8,10 +8,12 @@ class Utils {
 
 	public static var nodeExists(get, never):Bool;
 	public static var codeExists(get, never):Bool;
+	public static var codeInsidersExists(get, never):Bool;
 	public static var npmPath(get, never):String;
 
 	private static var _nodeExists:Null<Bool>;
 	private static var _codeExists:Null<Bool>;
+	private static var _codeInsidersExists:Null<Bool>;
 	private static var _npmPath:String;
 
 	private static function get_nodeExists():Bool {
@@ -24,6 +26,12 @@ class Utils {
 		if (_codeExists == null)
 			_codeExists = cmdExists('code');
 		return _codeExists;
+	}
+
+	private static function get_codeInsidersExists():Bool {
+		if (_codeInsidersExists == null)
+			_codeInsidersExists = cmdExists('code-insiders');
+		return _codeInsidersExists;
 	}
 
 	private static function get_npmPath():String {

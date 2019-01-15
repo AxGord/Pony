@@ -21,6 +21,7 @@ class NpmInstall extends BaseInstall {
 			graylog('Npm dir perm $perm');
 			if (perm == 777) perm = null;
 			Utils.setPerm(Utils.npmPath, 777, true);
+			Utils.setPerm('~/.npm', 777, true);
 		}
 		var c = cmds.shift();
 		if (Config.OS == TargetOS.Windows) {

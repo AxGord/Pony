@@ -15,7 +15,7 @@
 		"source-map-support@0.5.3",
 		"convert-source-map@1.5.1",
 		"offset-sourcemap-lines@1.0.0",
-		"!msdf-bmfont-xml@2.3.4",
+		"msdf-bmfont-xml@2.3.4",
 		"imagemin@6.0.0",
 		"imagemin-guetzli@1.0.0",
 		"imagemin-webp@4.1.0",
@@ -28,6 +28,7 @@
 	],
 	"vscode": [
 		"vshaxe.haxe-extension-pack",
+		"vshaxe.haxe-checkstyle",
 		"msjsdiag.debugger-for-chrome",
 		"vsmobile.cordova-tools",
 		"coenraads.bracket-pair-colorizer"
