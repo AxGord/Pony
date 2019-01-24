@@ -20,17 +20,26 @@ class AssetManager {
 
 	public static var baseUrl:String = '';
 	private static var loadedAssets:Array<String> = [];
-	private static var globalLoad:Map<String, Array<Void->Void>> = new Map();
+	private static var globalLoad:Map<String, Array<Void -> Void>> = new Map();
 	
 	public static var local:String = '';
+
+	public static function resetAll():Void {
+		for (e in loadedAssets.copy()) reset(e);
+	}
+
+	public static inline function reset(asset:String):Void {
+		loadedAssets.remove(asset);
+		_reset(asset);
+	}
 	
-	@:extern inline public static function getPath(asset:String):String {
+	@:extern public static inline function getPath(asset:String):String {
 		return baseUrl + StringTools.replace(asset, '{local}', local);
 	}
 	
 	public static dynamic function monitor(current:Int, total:Int):Void {}
 	
-	public static function loadPack(pathes:Array<String>, assets:Array<String>, cb:Int->Int->Void):Void {
+	public static function loadPack(pathes:Array<String>, assets:Array<String>, cb:Int -> Int -> Void):Void {
 		if (assets.length == 0) {
 			cb(0, 0);
 			return;
@@ -64,7 +73,7 @@ class AssetManager {
 		if (!called) cb(0, total);
 	}
 	
-	public static function loadPath(path:String = '', assets:Array<String>, cb:Int->Int->Void):Void {
+	public static function loadPath(path:String = '', assets:Array<String>, cb:Int -> Int -> Void):Void {
 		var i = 0;
 		var l = assets.length;
 		for (asset in assets) {
@@ -73,7 +82,7 @@ class AssetManager {
 		if (i == 0) cb(0, l);
 	}
 	
-	public static function load(path:String, asset:Or<String,Array<String>>, cb:Void->Void):Void {
+	public static function load(path:String, asset:Or<String, Array<String>>, cb:Void -> Void):Void {
 		switch asset {
 			case OrState.A(asset):
 				asset = (path == '' ? '' : path + '/') + asset;
@@ -104,7 +113,7 @@ class AssetManager {
 	private static function globalLoaded(asset:String):Void {
 		loadedAssets.push(asset);
 		for (f in globalLoad[asset]) f();
-		globalLoad[asset] = null;
+		globalLoad.remove(asset);
 		monitor(loadedAssets.length, globalLoad.count());
 	}
 	
@@ -171,7 +180,7 @@ class AssetManager {
 		return allCount(pathes, assets) + allCountChilds(chs);
 	}
 	
-	inline private static function allCountChilds(chs:Array<Dynamic>):Int {
+	private static inline function allCountChilds(chs:Array<Dynamic>):Int {
 		var sum = 0;
 		for (ch in chs) {
 			var s = Type.resolveClass(ch);
@@ -180,11 +189,11 @@ class AssetManager {
 		return sum;
 	}
 	
-	inline public static function allCount(pathes:Array<String>, assets:Array<String>):Int {
+	public static inline function allCount(pathes:Array<String>, assets:Array<String>):Int {
 		return pathes.length * assets.length;
 	}
 	
-	public static function loadComplete(source:(Int->Int->Void)->Void, cb:Void->Void):Void {
+	public static function loadComplete(source:(Int -> Int -> Void) -> Void, cb:Void -> Void):Void {
 		var last:Bool = true;
 		var check = function(c:Int, t:Int) last = c == t;
 		source(function(c:Int, t:Int) check(c, t));
@@ -205,20 +214,23 @@ class AssetManager {
 	}
 	
 	#if pixijs
-	@:extern inline public static function _load(asset:String, cb:Void->Void):Void PixiAssets.load(asset, cb);
-	@:extern inline public static function image(asset:String, ?name:String) return PixiAssets.image(asset, name);
-	@:extern inline public static function texture(asset:String, ?name:String) return PixiAssets.texture(asset, name);
-	@:extern inline public static function sound(asset:String) return PixiAssets.sound(asset);
-	@:extern inline public static function spine(asset:String) return PixiAssets.spine(asset);
-	@:extern inline public static function text(asset:String) return PixiAssets.text(asset);
-	@:extern inline public static function json(asset:String) return PixiAssets.json(asset);
+	@:extern public static inline function _load(asset:String, cb:Void -> Void):Void PixiAssets.load(asset, cb);
+	@:extern public static inline function _reset(asset:String):Void PixiAssets.reset(asset);
+	@:extern public static inline function image(asset:String, ?name:String) return PixiAssets.image(asset, name);
+	@:extern public static inline function texture(asset:String, ?name:String) return PixiAssets.texture(asset, name);
+	@:extern public static inline function sound(asset:String) return PixiAssets.sound(asset);
+	@:extern public static inline function spine(asset:String) return PixiAssets.spine(asset);
+	@:extern public static inline function text(asset:String) return PixiAssets.text(asset);
+	@:extern public static inline function json(asset:String) return PixiAssets.json(asset);
 	#elseif openfl
-	@:extern inline public static function _load(asset:String, cb:Void->Void):Void OpenflAssets.load(asset, cb);
-	@:extern inline public static function image(asset:String, ?name:String) return OpenflAssets.image(asset);
-	@:extern inline public static function texture(asset:String, ?name:String) return asset;
+	@:extern public static inline function _load(asset:String, cb:Void -> Void):Void OpenflAssets.load(asset, cb);
+	@:extern public static inline function _reset(asset:String):Void trace('Reset: $asset');
+	@:extern public static inline function image(asset:String, ?name:String) return OpenflAssets.image(asset);
+	@:extern public static inline function texture(asset:String, ?name:String) return asset;
 	#else
-	@:extern inline public static function _load(asset:String, cb:Void->Void):Void trace('Load: $asset');
-	@:extern inline public static function image(asset:String, ?name:String) return asset;
-	@:extern inline public static function texture(asset:String, ?name:String) return asset;
+	@:extern public static inline function _load(asset:String, cb:Void -> Void):Void trace('Load: $asset');
+	@:extern public static inline function _reset(asset:String):Void trace('Reset: $asset');
+	@:extern public static inline function image(asset:String, ?name:String) return asset;
+	@:extern public static inline function texture(asset:String, ?name:String) return asset;
 	#end
 }

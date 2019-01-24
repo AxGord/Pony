@@ -20,6 +20,13 @@ class PixiAssets {
 	private static var spines:Map<String, SkeletonData> = new Map();
 	private static var texts:Map<String, String> = new Map();
 	private static var jsons:Map<String, Dynamic> = new Map();
+
+	public static function reset(asset:String):Void {
+		sounds.remove(asset);
+		spines.remove(asset);
+		texts.remove(asset);
+		jsons.remove(asset);
+	}
 	
 	public static function load(asset:String, cb:Void -> Void):Void {
 		var loader = new Loader();
@@ -30,7 +37,6 @@ class PixiAssets {
 				spines[asset] = d;
 				cb();
 			});
-			
 			return;
 		}
 		
