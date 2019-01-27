@@ -1,3 +1,4 @@
+import js.node.Buffer;
 import js.node.Fs;
 #if nodejs
 import sys.io.File;
@@ -65,16 +66,12 @@ class ServerMain {
 									Utils.createPath(rpath);
 									requested.push(rpath);
 									var file:js.node.fs.WriteStream = Fs.createWriteStream(rpath);
-									// proxyRes.on('data', function() trace('data!'));
-									proxyRes.on('end', function() trace('Cache file: $rpath'));
 									proxyRes.pipe(file);
-									// file.on('finish', function() trace('Cache file: $rpath'));
 								}
-								// req.pipe(res);
 							});
 
 						js.node.Http.createServer(function(req:IncomingMessage, res:ServerResponse) {
-							var url = target + req.url;
+							var url = target; // + req.url;
 							if (px.has.slow) {
 								trace('Slow proxy request: ' + url);
 								Node.setTimeout(function () {
@@ -99,10 +96,11 @@ class ServerMain {
 										throw 'sorry';
 									}
 								} else {
+									trace('selfHandleResponse: ' + url);
+									req.headers.remove('accept-encoding');
 									proxy.web(req, res, cast {
 										target: url,
-										changeOrigin: true,
-										selfHandleResponse : requested.indexOf(rpath) == -1
+										changeOrigin: true
 									});
 								}
 							} else {
