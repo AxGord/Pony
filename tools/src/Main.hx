@@ -53,7 +53,8 @@ class Main {
 	}
 
 	static function tryOtherPath(args:Array<String>):Bool {
-		var p = Utils.path(Sys.executablePath());
+		var expath = new String(@:privateAccess Sys.sys_exe_path());
+		var p = Utils.path(expath);
 		p = p.substr(0, p.lastIndexOf(Utils.PD) + 1);
 		if (p != Utils.toolsPath) {
 			var pony = Utils.toolsPath + 'pony';
@@ -156,6 +157,7 @@ class Main {
 		var xml:Fast = Utils.getXml();
 		if (xml == null) {
 			Sys.println('pony.xml not exists');
+			Sys.exit(1);
 		} else {
 			var startTime = Sys.time();
 			var apps:Array<String> = searchApps(xml.node.build);

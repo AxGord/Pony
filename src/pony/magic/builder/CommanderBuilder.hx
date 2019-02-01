@@ -40,7 +40,13 @@ class CommanderBuilder {
 
 		var cases:Array<Case> = [];
 
-		var xml:Fast = new Fast(Xml.parse(File.getContent(file)));
+		var xml:Fast = null;
+		try {
+			xml = new Fast(Xml.parse(File.getContent(file)));
+		} catch (e:haxe.xml.Parser.XmlParserException) {
+			return throw new Error(e.message, Context.makePosition({min: e.position, max: e.position + 1, file: file}));
+		}
+
 		for (x in xml.node.commands.elements) {
 			var cmd:String = x.name.toLowerCase();
 			if (cmd == 'comment') {

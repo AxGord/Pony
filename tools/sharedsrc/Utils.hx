@@ -67,14 +67,28 @@ class Utils {
 	}
 	
 	public static function getXml():Fast {
-		if (FileSystem.exists(MAIN_FILE))
-			return XmlTools.fast(File.getContent(MAIN_FILE)).node.project;
-		else
-			return null;
+		if (FileSystem.exists(MAIN_FILE)) {
+			try {
+				return XmlTools.fast(File.getContent(MAIN_FILE)).node.project;
+			} catch (e:haxe.xml.Parser.XmlParserException) {
+				xmlError(MAIN_FILE, e);
+			}
+		} else {
+			error(MAIN_FILE + ' not exists!');
+		}
+		return null;
+	}
+
+	public static function xmlError(file:String, e:haxe.xml.Parser.XmlParserException):Void {
+		error('${FileSystem.absolutePath(file)}:${e.lineNumber}: characters ${e.positionAtLine}-${e.positionAtLine+1}: ${e.message}');
 	}
 
 	public static function error(message:String, errCode:Int = 1):Void {
+		#if neko
+		Sys.stderr().writeString(message + '\n');
+		#else
 		Sys.println(message);
+		#end
 		Sys.exit(errCode);
 	}
 

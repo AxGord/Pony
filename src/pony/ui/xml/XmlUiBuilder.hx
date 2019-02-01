@@ -3,6 +3,7 @@ package pony.ui.xml;
 #if macro
 import haxe.xml.Fast;
 import sys.io.File;
+import sys.FileSystem;
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import haxe.macro.Type;
@@ -134,11 +135,15 @@ class XmlUiBuilder {
 	
 	private static function getXml(file:String):Fast {
 		Context.registerModuleDependency(Context.getLocalModule(), file);
-		return new Fast(Xml.parse(File.getContent(StringTools.trim(file)))).elements.next();
+		try {
+			return new Fast(Xml.parse(File.getContent(StringTools.trim(file)))).elements.next();
+		} catch (e:haxe.xml.Parser.XmlParserException) {
+			return throw new Error(e.message, Context.makePosition({min: e.position, max: e.position + 1, file: file}));
+		}
 	}
 	
 	private static function getFilters(file:String):Style {
-		Context.registerModuleDependency(Context.getLocalModule(), file);		
+		Context.registerModuleDependency(Context.getLocalModule(), file);
 		var xml = getXml(file);
 		var path = xml.has.path ? xml.att.path : '';
 		return [for (x in xml.elements) x.name => 

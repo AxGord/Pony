@@ -1,6 +1,6 @@
+#if nodejs
 import js.node.Buffer;
 import js.node.Fs;
-#if nodejs
 import sys.io.File;
 import sys.FileSystem;
 import haxe.xml.Fast;
@@ -71,7 +71,7 @@ class ServerMain {
 							});
 
 						js.node.Http.createServer(function(req:IncomingMessage, res:ServerResponse) {
-							var url = target; // + req.url;
+							var url = target;
 							if (px.has.slow) {
 								trace('Slow proxy request: ' + url);
 								Node.setTimeout(function () {
@@ -84,10 +84,10 @@ class ServerMain {
 								trace('Proxy request: ' + req.url);
 								var rpath:String = path + req.url;
 								rpath = StringTools.replace(rpath, '//', '/').split('?')[0];
-								trace('get: $rpath');
+								// trace('get: $rpath');
 								if (FileSystem.exists(rpath)) {
 									if (sx.hasNode.path && path == sx.node.path.innerData) {
-										trace('http://127.0.0.1:$locport' + req.url);
+										// trace('http://127.0.0.1:$locport' + req.url);
 										proxy.web(req, res, cast {
 											target: 'http://127.0.0.1:$locport',
 											changeOrigin: true
@@ -96,7 +96,6 @@ class ServerMain {
 										throw 'sorry';
 									}
 								} else {
-									trace('selfHandleResponse: ' + url);
 									req.headers.remove('accept-encoding');
 									proxy.web(req, res, cast {
 										target: url,
