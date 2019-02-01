@@ -1,5 +1,8 @@
 #if nodejs
+import js.node.Buffer;
+import js.node.Fs;
 import sys.io.File;
+import sys.FileSystem;
 import haxe.xml.Fast;
 import haxe.Json;
 import js.Node;
@@ -39,8 +42,9 @@ class ServerMain {
 				for (px in sx.nodes.proxy) {
 					var target = px.node.target.innerData;
 					var port = px.node.port.innerData;
+					var locport:Int = Std.parseInt(sx.node.port.innerData);
 					trace('Start proxy server on $port to $target target');
-					if (!px.has.slow) {
+					if (!px.has.slow && !px.has.cache) {
 						NPM.http_proxy.createProxyServer({
 							target: target,
 							headers: {'Host': '127.0.0.1:$port'}
@@ -51,15 +55,56 @@ class ServerMain {
 							res.end('Something went wrong.');
 						}).listen(Std.parseInt(port));
 					} else {
-						var proxy = NPM.http_proxy.createProxyServer();
+						var proxy:Dynamic = NPM.http_proxy.createProxyServer();
+						var path:String = px.has.cache ? StringTools.trim(px.att.cache) : null;
+						var requested:Array<String> = [];
+						if (px.has.cache)
+							proxy.on('proxyRes', function (proxyRes:IncomingMessage, req:IncomingMessage, res:ServerResponse) {
+								var rpath:String = path + req.url;
+								rpath = StringTools.replace(rpath, '//', '/').split('?')[0];
+								if (!FileSystem.exists(rpath) && requested.indexOf(rpath) == -1) {
+									Utils.createPath(rpath);
+									requested.push(rpath);
+									var file:js.node.fs.WriteStream = Fs.createWriteStream(rpath);
+									proxyRes.pipe(file);
+								}
+							});
+
 						js.node.Http.createServer(function(req:IncomingMessage, res:ServerResponse) {
-							var url = target + req.url;
-							trace('Slow proxy request: ' + url);
-							Node.setTimeout(function () {
-								proxy.web(req, res, {
-									target: url
-								});
-							}, Std.parseInt(px.att.slow));
+							var url = target;
+							if (px.has.slow) {
+								trace('Slow proxy request: ' + url);
+								Node.setTimeout(function () {
+									proxy.web(req, res, {
+										target: url,
+										changeOrigin: true
+									});
+								}, Std.parseInt(px.att.slow));
+							} else if (px.has.cache) {
+								trace('Proxy request: ' + req.url);
+								var rpath:String = path + req.url;
+								rpath = StringTools.replace(rpath, '//', '/').split('?')[0];
+								// trace('get: $rpath');
+								if (FileSystem.exists(rpath)) {
+									if (sx.hasNode.path && path == sx.node.path.innerData) {
+										// trace('http://127.0.0.1:$locport' + req.url);
+										proxy.web(req, res, cast {
+											target: 'http://127.0.0.1:$locport',
+											changeOrigin: true
+										});
+									} else {
+										throw 'sorry';
+									}
+								} else {
+									req.headers.remove('accept-encoding');
+									proxy.web(req, res, cast {
+										target: url,
+										changeOrigin: true
+									});
+								}
+							} else {
+								throw 'error';
+							}
 						}).listen(port);
 					}
 				}
