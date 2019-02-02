@@ -24,8 +24,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Install fixes",
-"version": "0.9.3",
+"releasenote": "Handle xml errors",
+"version": "0.9.4",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }
