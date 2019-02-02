@@ -30,6 +30,11 @@ class Modules extends pony.Logable {
 		return _xml;
 	}
 
+	public function checkXml():Void {
+		if (xml == null)
+			error(Utils.MAIN_FILE + ' not exists');
+	}
+
 	public function register<T:Module>(module:T):Void {
 		module.modules = this;
 		module.onError << error;

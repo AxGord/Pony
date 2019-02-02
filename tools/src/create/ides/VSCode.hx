@@ -163,7 +163,8 @@ class VSCode {
 				"port": 9220,
 				"sourceMaps": true,
 				"cwd": "${workspaceFolder}",
-				"ionicLiveReload": false
+				"ionicLiveReload": false,
+				"runArguments": ["--target=iPhone-6"]
 			},
 			{
 				"name": "Attach to running android on emulator",

@@ -73,8 +73,6 @@ class Utils {
 			} catch (e:haxe.xml.Parser.XmlParserException) {
 				xmlError(MAIN_FILE, e);
 			}
-		} else {
-			error(MAIN_FILE + ' not exists!');
 		}
 		return null;
 	}

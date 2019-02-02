@@ -156,8 +156,7 @@ class Main {
 	static function runSubProjects(args:Array<String>):Void {
 		var xml:Fast = Utils.getXml();
 		if (xml == null) {
-			Sys.println('pony.xml not exists');
-			Sys.exit(1);
+			Utils.error(Utils.MAIN_FILE  + ' not exists');
 		} else {
 			var startTime = Sys.time();
 			var apps:Array<String> = searchApps(xml.node.build);

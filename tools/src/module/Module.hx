@@ -94,7 +94,6 @@ class Module extends pony.Logable implements pony.magic.HasAbstract implements p
 	private function readConfig(ac:AppCfg):Void {}
 
 	private function initSections(priority:Int, ?current:BASection):Void {
-		if (xml == null) return;
 		currentSection = current;
 		addConfigListener();
 		addListeners(priority, moduleBefore, moduleAfter);
@@ -173,11 +172,13 @@ class Module extends pony.Logable implements pony.magic.HasAbstract implements p
 	}
 
 	private function getConfig(a:String, b:String):Void {
+		modules.checkXml();
 		removeConfigListener();
 		readConfig(Utils.parseArgs([a, b]));
 	}
 
 	private function emptyConfig():Void {
+		modules.checkXml();
 		removeConfigListener();
 		readConfig({debug:false, app:null});
 	}
