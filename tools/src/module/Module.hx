@@ -105,6 +105,7 @@ class Module extends pony.Logable implements pony.magic.HasAbstract implements p
 			case Cordova: modules.commands.onCordova.once(moduleStart, priority);
 			case Android: modules.commands.onAndroid.once(moduleStart, priority);
 			case Iphone: modules.commands.onIphone.once(moduleStart, priority);
+			case Electron: modules.commands.onElectron.once(moduleStart, priority);
 			case Run: modules.commands.onRun.once(moduleStart, priority);
 			case Zip: modules.commands.onZip.once(moduleStart, priority);
 			case Remote: modules.commands.onRemote.once(moduleStart, priority);
@@ -124,6 +125,7 @@ class Module extends pony.Logable implements pony.magic.HasAbstract implements p
 		modules.commands.onCordova.once(getConfig, CONFIG_PRIORITY);
 		modules.commands.onAndroid.once(getConfig, CONFIG_PRIORITY);
 		modules.commands.onIphone.once(getConfig, CONFIG_PRIORITY);
+		modules.commands.onElectron.once(getConfig, CONFIG_PRIORITY);
 		modules.commands.onRun.once(getConfig, CONFIG_PRIORITY);
 		modules.commands.onZip.once(getConfig, CONFIG_PRIORITY);
 		modules.commands.onRemote.once(getConfig, CONFIG_PRIORITY);
@@ -138,6 +140,7 @@ class Module extends pony.Logable implements pony.magic.HasAbstract implements p
 		modules.commands.onCordova >> getConfig;
 		modules.commands.onIphone >> getConfig;
 		modules.commands.onAndroid >> getConfig;
+		modules.commands.onElectron >> getConfig;
 		modules.commands.onRun >> getConfig;
 		modules.commands.onZip >> getConfig;
 		modules.commands.onRemote >> getConfig;
@@ -152,6 +155,7 @@ class Module extends pony.Logable implements pony.magic.HasAbstract implements p
 		modules.commands.onCordova.once(before.bind(Cordova), CONFIG_PRIORITY + priority);
 		modules.commands.onAndroid.once(before.bind(Android), CONFIG_PRIORITY + priority);
 		modules.commands.onIphone.once(before.bind(Iphone), CONFIG_PRIORITY + priority);
+		modules.commands.onElectron.once(before.bind(Electron), CONFIG_PRIORITY + priority);
 		modules.commands.onRun.once(before.bind(Run), CONFIG_PRIORITY + priority);
 		modules.commands.onZip.once(before.bind(Zip), CONFIG_PRIORITY + priority);
 		modules.commands.onRemote.once(before.bind(Remote), CONFIG_PRIORITY + priority);
@@ -164,6 +168,7 @@ class Module extends pony.Logable implements pony.magic.HasAbstract implements p
 		modules.commands.onCordova.once(after.bind(Cordova), priority);
 		modules.commands.onAndroid.once(after.bind(Android), priority);
 		modules.commands.onIphone.once(after.bind(Iphone), priority);
+		modules.commands.onElectron.once(after.bind(Electron), priority);
 		modules.commands.onRun.once(after.bind(Run), priority);
 		modules.commands.onZip.once(after.bind(Zip), priority);
 		modules.commands.onRemote.once(after.bind(Remote), priority);

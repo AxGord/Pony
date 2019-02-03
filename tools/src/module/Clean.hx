@@ -1,5 +1,6 @@
 package module;
 
+import pony.text.TextTools;
 import haxe.xml.Fast;
 import pony.fs.Unit;
 import pony.fs.Dir;
@@ -25,19 +26,24 @@ class Clean extends CfgModule<CleanConfig> {
 			section: Prepare,
 			dirs: [],
 			units: [],
-			allowCfg: true
+			allowCfg: true,
+			rimraf: false
 		}, configHandler);
 	}
 
 	override private function runNode(cfg:CleanConfig):Void {
-		cleanDirs(cfg.dirs);
+		cleanDirs(cfg.dirs, cfg.rimraf);
 		deleteUnits(cfg.units);
 	}
 
-	private function cleanDirs(data:Array<String>):Void {
+	private function cleanDirs(data:Array<String>, rimraf:Bool):Void {
 		for (d in data) {
 			log('Clean directory: $d');
-			(d:Dir).deleteContent();
+			if (rimraf) {
+				Utils.command('rimraf', [d]);
+			} else {
+				(d:Dir).deleteContent();
+			}
 		}
 	}
 
@@ -52,7 +58,8 @@ class Clean extends CfgModule<CleanConfig> {
 
 private typedef CleanConfig = { > types.BAConfig,
 	dirs: Array<String>,
-	units: Array<String>
+	units: Array<String>,
+	rimraf: Bool
 }
 
 private class CleanReader extends BAReader<CleanConfig> {
@@ -70,6 +77,14 @@ private class CleanReader extends BAReader<CleanConfig> {
 	override private function clean():Void {
 		cfg.dirs = [];
 		cfg.units = [];
+		cfg.rimraf = false;
+	}
+
+	override private function readAttr(name:String, val:String):Void {
+		switch name {
+			case 'rimraf': cfg.rimraf = TextTools.isTrue(val);
+			case _:
+		}
 	}
 
 }

@@ -31,7 +31,7 @@ abstract Dir(Unit) from Unit {
 		for (d in this) {
 			if (d.exists) for (e in FileSystem.readDirectory(d.first)) {
 				var np:String = d + '/' + e;
-				var isDir:Bool = FileSystem.isDirectory(np);
+				var isDir:Bool = try FileSystem.isDirectory(np) catch (_:Any) false;
 				if (
 					(allowDir || !isDir) &&
 					(isDir || checkFilter(flt, e)) &&
@@ -87,6 +87,7 @@ abstract Dir(Unit) from Unit {
 	}
 
 	public function moveTo(to:Dir, ?filter:String):Void {
+		to = FileSystem.absolutePath(to.first) + '/' + this.name;
 		if (filter == null) {
 			to.createWays();
 			this.rename(to);

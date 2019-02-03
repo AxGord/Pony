@@ -7,6 +7,7 @@ enum BASection {
 	Cordova;
 	Android;
 	Iphone;
+	Electron;
 	Run;
 	Zip;
 	Remote;

@@ -50,6 +50,11 @@
 		<arg>Configure name</arg>
 		<arg>Debug or release (default)</arg>
 	</iphone>
+	<electron>
+		<help>Build for electron</help>
+		<arg>Configure name</arg>
+		<arg>Debug or release (default)</arg>
+	</electron>
 	<run>
 		<help>Build project and run result after</help>
 		<syn>r</syn>

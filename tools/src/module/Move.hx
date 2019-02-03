@@ -39,8 +39,8 @@ class Move extends CfgModule<MoveConfig> {
 
 	private function moveDirs(data:Array<String>, to:String, filter:String):Void {
 		for (d in data) {
-			log('Move directory: $d');
-			(d:Dir).copyTo(to, filter);
+			log('Move directory: $d, to $to');
+			(d:Dir).moveTo(to, filter);
 		}
 	}
 

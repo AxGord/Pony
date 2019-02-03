@@ -108,6 +108,7 @@ class Main {
 		modules.register(new module.Texturepacker());
 		modules.register(new module.Build());
 		modules.register(new module.Cordova());
+		modules.register(new module.Electron());
 		modules.register(new module.Uglify());
 		modules.register(new module.Wrapper());
 		modules.register(new module.Test());

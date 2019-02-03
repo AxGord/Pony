@@ -10,6 +10,7 @@ class Commands extends pony.magic.Commander {
 		super();
 		onZip << eBuild;
 		onFtp << eBuild;
+		onElectron << eBuild;
 		onCordova.add(eBuild, MINIMAL_PRIORITY);
 		onAndroid.add(eCordova, MINIMAL_PRIORITY);
 		onIphone.add(eCordova, MINIMAL_PRIORITY);

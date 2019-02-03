@@ -25,6 +25,7 @@ class BAReader<T:BAConfig> extends XmlConfigReader<T> implements pony.magic.HasA
 			case 'cordova': createSection(xml, Cordova);
 			case 'android': createSection(xml, Android);
 			case 'iphone': createSection(xml, Iphone);
+			case 'electron': createSection(xml, Electron);
 			case 'run': createSection(xml, Run);
 			case 'zip': createSection(xml, Zip);
 			case 'hash': createSection(xml, Hash);
