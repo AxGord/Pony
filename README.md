@@ -30,6 +30,10 @@ Unstable version
 Install Pony Tools
 
     haxelib run pony
+    
+
+[Installation Video Guide](https://www.youtube.com/watch?v=ufYIEmQcv4o)
+
 
 Manual
 ------
