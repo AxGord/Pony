@@ -1,4 +1,4 @@
-import haxe.xml.Fast;
+import pony.Fast;
 import pony.text.XmlTools;
 import module.Build;
 import module.Module;

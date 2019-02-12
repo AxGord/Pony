@@ -2,7 +2,7 @@
 import pony.fs.Dir;
 import pony.fs.File;
 import sys.FileSystem;
-import haxe.xml.Fast;
+import pony.Fast;
 import js.Node;
 import pony.NPM;
 

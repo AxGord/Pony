@@ -1,6 +1,6 @@
 #if nodejs
 import js.Node;
-import haxe.xml.Fast;
+import pony.Fast;
 import sys.io.File;
 import pony.NPM;
 

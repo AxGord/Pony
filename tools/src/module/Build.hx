@@ -1,6 +1,6 @@
 package module;
 
-import haxe.xml.Fast;
+import pony.Fast;
 import sys.FileSystem;
 import sys.io.File;
 import types.BASection;

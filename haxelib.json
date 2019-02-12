@@ -24,8 +24,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Handle xml errors",
-"version": "0.9.4",
+"releasenote": "Fix Windows path error and remove Fast warnings",
+"version": "0.9.5",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }

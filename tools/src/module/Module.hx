@@ -1,7 +1,7 @@
 package module;
 
 import pony.Tools;
-import haxe.xml.Fast;
+import pony.Fast;
 import pony.Queue;
 import types.BASection;
 import pony.events.Signal0;

@@ -1,6 +1,6 @@
 package pony.text;
 
-import haxe.xml.Fast;
+import pony.Fast;
 
 typedef BaseConfig = {
 	app: String,

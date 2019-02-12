@@ -1,6 +1,6 @@
 package module;
 
-import haxe.xml.Fast;
+import pony.Fast;
 import types.BASection;
 import types.PoeditorConfig;
 

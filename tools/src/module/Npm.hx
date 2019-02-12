@@ -1,7 +1,7 @@
 package module;
 
 import pony.Pair;
-import haxe.xml.Fast;
+import pony.Fast;
 import types.BAConfig;
 import types.BASection;
 import pony.text.TextTools;

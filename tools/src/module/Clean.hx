@@ -1,7 +1,7 @@
 package module;
 
 import pony.text.TextTools;
-import haxe.xml.Fast;
+import pony.Fast;
 import pony.fs.Unit;
 import pony.fs.Dir;
 import types.BASection;

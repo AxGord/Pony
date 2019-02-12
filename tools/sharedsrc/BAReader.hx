@@ -1,4 +1,4 @@
-import haxe.xml.Fast;
+import pony.Fast;
 import pony.text.XmlConfigReader;
 import types.BAConfig;
 import types.BASection;

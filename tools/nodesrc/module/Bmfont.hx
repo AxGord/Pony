@@ -3,7 +3,7 @@ package module;
 import pony.fs.File;
 import pony.text.TextTools;
 import types.BmfontConfig;
-import haxe.xml.Fast;
+import pony.Fast;
 
 /**
  * Bmfont module

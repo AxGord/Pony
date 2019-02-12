@@ -1,6 +1,6 @@
 package remote.client;
 
-import haxe.xml.Fast;
+import pony.Fast;
 import pony.text.XmlConfigReader;
 import types.RemoteConfig;
 

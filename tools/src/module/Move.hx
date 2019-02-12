@@ -1,7 +1,7 @@
 package module;
 
 import pony.Pair;
-import haxe.xml.Fast;
+import pony.Fast;
 import pony.fs.Unit;
 import pony.fs.Dir;
 import pony.fs.File;

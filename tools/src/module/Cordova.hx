@@ -2,7 +2,7 @@ package module;
 
 import pony.fs.File;
 import pony.text.XmlTools;
-import haxe.xml.Fast;
+import pony.Fast;
 import types.BAConfig;
 import types.BASection;
 

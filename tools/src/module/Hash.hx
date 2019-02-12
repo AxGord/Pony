@@ -1,6 +1,6 @@
 package module;
 
-import haxe.xml.Fast;
+import pony.Fast;
 import haxe.crypto.Crc32;
 import sys.io.File;
 import sys.FileSystem;

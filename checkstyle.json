@@ -36,11 +36,11 @@
 			"props": {
 				"thresholds": [
 					{
-						"complexity": 20,
+						"complexity": 32,
 						"severity": "WARNING"
 					},
 					{
-						"complexity": 25,
+						"complexity": 45,
 						"severity": "ERROR"
 					}
 				]
@@ -49,9 +49,6 @@
 		},
 		{
 			"type": "DefaultComesLast"
-		},
-		{
-			"type": "Dynamic"
 		},
 		{
 			"type": "ERegLiteral"
@@ -210,7 +207,7 @@
 		},
 		{
 			"props": {
-				"max": 50
+				"max": 100
 			},
 			"type": "MethodLength"
 		},

@@ -3,7 +3,7 @@ package remote.server;
 import pony.net.SocketServer;
 import pony.net.SocketClient;
 import pony.Pair;
-import haxe.xml.Fast;
+import pony.Fast;
 
 using pony.text.XmlTools;
 

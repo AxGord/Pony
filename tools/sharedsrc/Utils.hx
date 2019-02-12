@@ -1,4 +1,4 @@
-import haxe.xml.Fast;
+import pony.Fast;
 import sys.io.File;
 import sys.FileSystem;
 import pony.text.XmlTools;
@@ -33,9 +33,15 @@ class Utils {
 		libPath = o.split('\n')[0];
 		#else
 		libPath = new sys.io.Process('haxelib', ['path', 'pony']).stdout.readLine();
-		var src:String = SRC + PD;
-		if (libPath.substr(-src.length) == src)
-			libPath = libPath.substr(0, -src.length); // remove src/
+		libPath = FileSystem.fullPath(libPath);
+		// remove src
+		if (libPath.substr(-SRC.length) == SRC) {
+			libPath = libPath.substr(0, -SRC.length);
+		} else {
+			var src:String = SRC + PD;
+			if (libPath.substr(-src.length) == src)
+				libPath = libPath.substr(0, -src.length);
+		}
 		#end
 		libPath = path(libPath);
 		toolsPath = libPath + 'tools' + PD + 'bin' + PD;

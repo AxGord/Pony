@@ -1,4 +1,4 @@
-import haxe.xml.Fast;
+import pony.Fast;
 import haxe.Utf8;
 
 /**

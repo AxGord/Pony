@@ -1,6 +1,6 @@
 package module;
 
-import haxe.xml.Fast;
+import pony.Fast;
 import types.BASection;
 import types.ImageminConfig;
 import pony.text.TextTools;
