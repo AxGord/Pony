@@ -1,46 +1,46 @@
-# Flash 9+
--main TestMain
--lib munit
--lib hamcrest
--lib continuation
--cp ..
-
--cp test
--swf-version 12
--swf build/as3_test.swf
---next
-
-# JavaScript
--main TestMain
--lib munit
--lib hamcrest
--lib continuation
--cp ..
-
--cp test
--js build/js_test.js
-
---next
-
 # Neko
 -main TestMain
 -lib munit
--lib hamcrest
+# -lib hamcrest
 -lib continuation
--cp ..
+-cp ../src/
 
 -cp test
 -neko build/neko_test.n
 -debug
 
---next
+# --next
 
-# C++
-#-main TestMain
-#-lib munit
-#-lib hamcrest
-#-cp ..
-#-cp test
-#-cpp build/cpp
+# # Flash 9+
+# -main TestMain
+# -lib munit
+# # -lib hamcrest
+# -lib continuation
+# -cp ../src/
 
-#--next
+# -cp test
+# -swf-version 12
+# -swf build/as3_test.swf
+# --next
+
+# # JavaScript
+# -main TestMain
+# -lib munit
+# # -lib hamcrest
+# -lib continuation
+# -cp ../src/
+
+# -cp test
+# -js build/js_test.js
+
+# --next
+
+# # C++
+# #-main TestMain
+# #-lib munit
+# #-lib hamcrest
+# #-cp ..
+# #-cp test
+# #-cpp build/cpp
+
+# #--next

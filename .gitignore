@@ -7,3 +7,4 @@
 /api/
 *.dump
 .DS_Store
+tests/\.unittest/
