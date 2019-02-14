@@ -9,7 +9,7 @@
 
 The library has a set of tools for develop, prepare, building, testing and publication project.
 
-Can be used for create nodejs, php, pixijs, openfl, unity3d, flash, electron, cordova applications.
+Can be used for create nodejs, php, pixijs, openfl, unity3d, flash, electron, cordova, cocos creator applications.
 
 Work on server or client sides.
 
