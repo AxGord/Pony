@@ -285,7 +285,7 @@ class Tools {
 	public static function setFields(a:Dynamic, b:{}):Void {
 		for (p in b.fields()) {
 			var d:Dynamic = b.field(p);
-			if (d.isObject() && !Std.is(d, String))
+			if (a.hasField(p) && d.isObject() && !Std.is(d, String) && !Std.is(d, Array))
 				setFields(a.field(p), d);
 			else
 				a.setField(p, d);
