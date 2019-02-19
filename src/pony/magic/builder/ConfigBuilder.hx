@@ -4,7 +4,7 @@ package pony.magic.builder;
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import haxe.macro.Compiler;
-import haxe.xml.Fast;
+import pony.Fast;
 import sys.io.File;
 import pony.text.XmlConfigReader;
 import pony.text.XmlTools;

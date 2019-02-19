@@ -282,7 +282,7 @@ class Tools {
 		return {expr: EBlock(d), pos: Context.currentPos()};// Context.makeExpr(d, Context.currentPos());
 	}
 	
-	public static function setFields(a:{}, b:{}):Void {
+	public static function setFields(a:Dynamic, b:{}):Void {
 		for (p in b.fields()) {
 			var d:Dynamic = b.field(p);
 			if (d.isObject() && !Std.is(d, String))
