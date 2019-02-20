@@ -35,8 +35,9 @@ import haxe.Serializer;
  */
 class TextTools {
 	
+	public static inline var MODULE:String = 'pony.Tools';
 	public static var letters:Map<String, String> = ['ru' => 'АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ'];
-	inline private static var firstANSIId:Int = 192;
+	private static inline var firstANSIId:Int = 192;
 	
 	public static function convertToANSI(s:String, lang:String):String {
 		lang = lang.split('_')[0];
@@ -84,6 +85,7 @@ class TextTools {
 	}
 
 	macro public static function includeFile(file:String):Expr {
+		Context.registerModuleDependency(MODULE, file);
 		var s:String = sys.io.File.getContent(file);
 		return macro $v{s};
 	}
@@ -97,6 +99,7 @@ class TextTools {
 		var f:String = Context.getPosInfos(Context.currentPos()).file;
 		var i = MathTools.cmax(f.lastIndexOf('\\'), f.lastIndexOf('/'));
 		f = i != -1 ? f.substr(0, i) + '/' : '';
+		Context.registerModuleDependency(MODULE, f + file);
 		var s:String = sys.io.File.getContent(f + file);
 		return macro $v{s};
 	}
@@ -110,6 +113,7 @@ class TextTools {
 	}
 
 	macro public static function includeJson(file:String):Expr {
+		Context.registerModuleDependency(MODULE, file);
 		var s:String = sys.io.File.getContent(file);
 		haxe.Json.parse(s); //check
 		return macro haxe.Json.parse($v{s}); //todo: not parse on runtime
@@ -119,6 +123,7 @@ class TextTools {
 		var f:String = Context.getPosInfos(Context.currentPos()).file;
 		var i = MathTools.cmax(f.lastIndexOf('\\'), f.lastIndexOf('/'));
 		f = i != -1 ? f.substr(0, i) + '/' : '';
+		Context.registerModuleDependency(MODULE, f + file);
 		var s:String = sys.io.File.getContent(f + file);
 		haxe.Json.parse(s); //check
 		return macro haxe.Json.parse($v{s}); //todo: not parse on runtime

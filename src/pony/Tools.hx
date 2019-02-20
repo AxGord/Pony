@@ -147,9 +147,12 @@ class Tools {
 				_clone(obj);
 			case TClass(Array):
 				var obj:Array<Dynamic> = cast obj;
-				cast [for (i in 0...obj.length) clone(obj[i])];	
+				cast [for (i in 0...obj.length) clone(obj[i])];
 			case TClass(String):
 				obj;
+			case TClass(haxe.ds.IntMap):
+				var obj:Map<Int, Dynamic> = obj;
+				cast [for (k in obj.keys()) k => clone(obj[k])];
 			case TClass(_):
 				cast _clone(obj);
 			case _:
