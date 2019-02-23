@@ -1,5 +1,7 @@
 package create;
 
+import create.section.Config.ConfigOptions;
+import sys.FileSystem;
 import types.ProjectType;
 
 /**
@@ -45,6 +47,18 @@ class Create {
 			case ProjectType.Pixi, ProjectType.Pixixml: create.targets.Pixi.set(project);
 			case ProjectType.Cordova: create.targets.Cordova.set(project);
 			case ProjectType.Node: create.targets.Node.set(project);
+			case ProjectType.Site:
+				create.targets.Node.set(project);
+				project.config.active = true;
+				project.config.options['port'] = '8080';
+				project.config.options['mysql'] = ([
+					'host' => 'localhost',
+					'port' => 'port',
+					'user' => 'root',
+					'password' => '',
+					'database' => 'testdatabase'
+				]:ConfigOptions);
+				project.haxelib.addLib('continuation');
 			case ProjectType.Pixielectron:
 				create.targets.Electron.set(project);
 				create.targets.Pixi.set(project, true);
@@ -79,7 +93,6 @@ class Create {
 			case ProjectType.Neko:
 				ponycmd = 'run';
 				Utils.createEmptyMainFile(main);
-
 			case ProjectType.JS:
 				Utils.createPath(main);
 				var data:String = haxe.Resource.getString('jstemplate.hx.tpl');
@@ -116,11 +129,26 @@ class Create {
 				var xdata:String = haxe.Resource.getString('pixixmltemplate.xml');
 				sys.io.File.saveContent('app.xml', xdata);
 				if (vscAllow) create.ides.VSCode.createCordova(project.server.httpPort);
-				sys.FileSystem.createDirectory(project.build.outputPath);
+				FileSystem.createDirectory(project.build.outputPath);
 				createHtml(project.build.outputPath + 'index.html', 'template.html', name == null ? 'App' : name, project.build.getOutputFile());
 			case ProjectType.Node:
 				//ponycmd = 'run';
 				Utils.createEmptyMainFile(main);
+				if (vscAllow) create.ides.VSCode.createNode(project.build.outputPath, outputFile);
+			case ProjectType.Site:
+				var path:String = Utils.getPath(main);
+				FileSystem.createDirectory(path);
+				FileSystem.createDirectory(path + 'models');
+				FileSystem.createDirectory('bin/home/');
+				FileSystem.createDirectory('bin/home/language/');
+				FileSystem.createDirectory('bin/home/templates/');
+				FileSystem.createDirectory('bin/home/templates/Default/');
+				FileSystem.createDirectory('bin/home/templates/Default/includes/');
+				FileSystem.createDirectory('bin/home/templates/Default/pages/');
+				FileSystem.createDirectory('bin/home/templates/Default/static/');
+				sys.FileSystem.createDirectory(project.build.outputPath);
+				var mdata:String = haxe.Resource.getString('site.hx.tpl');
+				sys.io.File.saveContent(project.build.getMainhx(), mdata);
 				if (vscAllow) create.ides.VSCode.createNode(project.build.outputPath, outputFile);
 			case ProjectType.Pixielectron:
 				Utils.createPath(main);

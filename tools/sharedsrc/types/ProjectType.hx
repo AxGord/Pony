@@ -12,4 +12,5 @@ enum ProjectType {
 	Monacoelectron;
 	CC;
 	Cordova;
+	Site;
 }

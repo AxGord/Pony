@@ -37,7 +37,7 @@ abstract Dir(Unit) from Unit {
 					(isDir || checkFilter(flt, e)) &&
 					!result.exists(e)
 				)
-					result[e] = [for (d in this.wayStringIterator()) np];
+					result[e] = [for (d in this.wayStringIterator()) d + '/$e'];
 			}
 		}
 		return [for (e in result) e];
@@ -49,7 +49,7 @@ abstract Dir(Unit) from Unit {
 	}
 	
 	public function files(?filter:String):Array<File> return [for (u in content(filter)) if (u.isFile) u];
-	public function dirs(?filter:String):Array<Dir> return [for (u in content(filter)) if (u.isDir) u];
+	public function dirs(?filter:String):Array<Dir> return [for (u in content(filter, true)) if (u.isDir) u];
 	
 	inline public function delete():Void FileSystem.deleteDirectory(first);
 

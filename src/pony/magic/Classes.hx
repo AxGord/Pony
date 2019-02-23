@@ -1,5 +1,6 @@
 package pony.magic;
 
+import haxe.macro.Compiler;
 #if macro
 import haxe.macro.Expr;
 import haxe.macro.Context;
@@ -16,9 +17,9 @@ class Classes {
 
 	macro public static function dir(pack:String, dir:String):Expr {
 		var f:String = Context.getPosInfos(Context.currentPos()).file;
-		f = sys.FileSystem.fullPath(f).split('\\').slice(0, -1).join('/') + '/';
+		var d:String = Sys.systemName() == 'Windows' ? '\\' : '/';
+		f = sys.FileSystem.fullPath(f).split(d).slice(0, -1).join('/') + '/';
 		var d:String = f + dir + '/';
-		// trace(d);
 		var list:Array<Expr> = [];
 		var p:Array<String> = (pack != '' ? pack.split('.') : []).concat(dir.split('/'));
 		for (e in FileSystem.readDirectory(d))
@@ -30,7 +31,7 @@ class Classes {
 					else
 						ex = {expr: EField(ex, s), pos: Context.currentPos()};
 				// trace(e.substr(0, e.length-3));
-				ex = {expr: EField(ex, e.substr(0, e.length-3)), pos: Context.currentPos()};
+				ex = {expr: EField(ex, e.substr(0, e.length - 3)), pos: Context.currentPos()};
 				list.push(ex);
 			}
 		return {expr: EArrayDecl(list), pos: Context.currentPos()};

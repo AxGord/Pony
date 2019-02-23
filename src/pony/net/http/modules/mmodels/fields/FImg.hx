@@ -37,7 +37,7 @@ class FImg extends Field {
 }
 
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
-class FImgPut extends pony.text.tpl.TplPut<FImg, Dynamic> {
+@:keep class FImgPut extends pony.text.tpl.TplPut<FImg, Dynamic> {
 	
 	@:async
 	override public function tag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String 
@@ -61,7 +61,7 @@ class FImgPut extends pony.text.tpl.TplPut<FImg, Dynamic> {
 }
 
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
-class FImgPutSub extends pony.text.tpl.Valuator<FImgPut, String> {
+@:keep class FImgPutSub extends pony.text.tpl.Valuator<FImgPut, String> {
 	
 	@:async
 	override public function valu(name:String, arg:String):String {

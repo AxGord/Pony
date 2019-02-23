@@ -34,7 +34,7 @@ class FDate extends Field {
  * @author AxGord <axgord@gmail.com>
  */
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
-class CDatePut extends pony.text.tpl.TplPut<FDate, Dynamic> {
+@:keep class CDatePut extends pony.text.tpl.TplPut<FDate, Dynamic> {
 	
 	@:async
 	override public function tag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String 

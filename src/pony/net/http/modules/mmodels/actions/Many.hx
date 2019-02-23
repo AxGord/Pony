@@ -99,7 +99,6 @@ class ManyPut extends pony.text.tpl.TplPut<ManyConnect, CPQ> {
 	
 }
 
-
 /**
  * ManyPutSub
  * @author AxGord <axgord@gmail.com>

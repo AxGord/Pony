@@ -28,10 +28,10 @@ class Builder {
 				if (!f.meta.exists(function(m) return m.name == 'action'))
 					f.meta.push( { pos: Context.currentPos(), name: 'action', params: [EConst(CString(n)).expr()] } );*/
 		}
-		var pathes:Array<{ field : String, expr : Expr}> = [];
-		var activePathes:Array<{ field : String, expr : Expr}> = [];
-		var acc:Array<{ field : String, expr : Expr}> = [];
-		var data:Array<{ field : String, expr : Expr}> = [];
+		var pathes:Array<ObjectField> = [];
+		var activePathes:Array<ObjectField> = [];
+		var acc:Array<ObjectField> = [];
+		var data:Array<ObjectField> = [];
 		for (f in fields) {
 			for (m in f.meta) {
 				switch m.name {
@@ -70,7 +70,7 @@ class Builder {
 				
 			}
 		}
-		
+
 		fields.push( {
 			pos: Context.currentPos(),
 			name: '__methoArgs__',

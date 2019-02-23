@@ -28,21 +28,7 @@ class Utils {
 
 	private static function __init__():Void {
 		PD = isWindows ? '\\' : '/';
-		#if nodejs
-		var o:String = Std.string(js.node.ChildProcess.execSync('haxelib path pony'));
-		libPath = o.split('\n')[0];
-		#else
-		libPath = new sys.io.Process('haxelib', ['path', 'pony']).stdout.readLine();
-		libPath = FileSystem.fullPath(libPath);
-		// remove src
-		if (libPath.substr(-SRC.length) == SRC) {
-			libPath = libPath.substr(0, -SRC.length);
-		} else {
-			var src:String = SRC + PD;
-			if (libPath.substr(-src.length) == src)
-				libPath = libPath.substr(0, -src.length);
-		}
-		#end
+		libPath = pony.Tools.ponyPath();
 		libPath = path(libPath);
 		toolsPath = libPath + 'tools' + PD + 'bin' + PD;
 	}

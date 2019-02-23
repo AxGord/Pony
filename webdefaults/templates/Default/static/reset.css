@@ -1,0 +1,121 @@
+img { border:0 none; }
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section { display: block; }
+body { line-height: 1; }
+ol, ul { list-style: none; }
+blockquote, q { quotes: none; }
+blockquote:before, blockquote:after,
+q:before, q:after { content: ''; content: none; }
+table { border-collapse: collapse; border-spacing: 0; }
+
+
+body {
+	background: #FFF;
+	color: #000;
+	font-family: "Times New Roman";
+	margin: 10px;
+	padding: 0px;
+}
+
+a {
+	color: #0066FF;
+	text-decoration: none;
+}
+
+a.n {
+	color: #0066AA;
+}
+
+a.action {
+	color: #0066AA;
+	border-bottom: 1px dotted;
+}
+
+a:visited {
+	color: #0066AA;
+}
+
+a:hover, a:focus {
+    color: #04A5FF;
+}
+
+.empty {
+	font-size: 12px;
+	color: #B099B0;
+	text-align: center;
+}
+
+
+
+form {
+	margin-top: 30px;
+	width: 250px;
+	/*border: 1px solid #D0BBD0;*/
+}
+
+form label {
+	margin: 0px;
+	display: block;
+	text-align: left;
+	margin-bottom: 10px;
+}
+
+form label input {
+	float: right;
+	margin: 0px;
+}
+
+form label textarea {
+	display: block;
+	margin: 0px;
+	margin-top: 5px;
+	width: 248px;
+	height: 100px;
+}
+
+form div.capition {
+	text-align: center;
+	font-weight: bold;
+	margin-bottom: 10px;
+}
+
+form label input, form label textarea {
+	border: 1px solid #D0BBD0;
+}
+
+form label input:focus, form label textarea:focus {
+	border: 1px solid #04A5FF;
+}
+
+form button {
+	background: #D0BBD0;
+	border: 1px solid #B099B0;
+	cursor: pointer;
+	padding: 3px;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+form button:hover, form button:focus {
+	background: #B099B0;
+	border-color: #A088A0;
+}
+
+form *.error {
+	border-color: #D08890;
+}
+
+form *.error:focus  {
+	border-color: #884488;
+}
+
+form label div {
+	display: block;
+	width: 100%;
+	text-align: right;
+	background: #FFECF5;
+	margin-top: 5px;
+	font-size: 12px;
+	color: #884488;
+}

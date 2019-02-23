@@ -31,11 +31,24 @@ enum WhereElement {
  */
 typedef WhereData = Array<WhereElement>;
 
+@:forward()
+abstract Table(CTable) {
+
+	public function new(mysql:ISQL, table:String):Void {
+		this = new CTable(mysql, table);
+	}
+
+	@:op(a.b) public inline function resolve(s:String):Table {
+		return this.resolve(s);
+	}
+
+}
+
 /**
  * MySQL table, powerful instrument for work with database tables
  * @author AxGord <axgord@gmail.com>
  */
-class Table implements Dynamic < Table > implements Declarator implements Ninja
+class CTable /* implements Dynamic < Table > */ implements Declarator implements Ninja
 {
 	#if !macro
 	@:arg private var mysql:ISQL;

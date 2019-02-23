@@ -8,7 +8,7 @@ import pony.magic.Classes;
  */
 class DefaultActionsPack {
 	public static var list:Array<Dynamic>;
-	public static function __init__() {
+	public static function __init__():Void {
 		//list = new Hash<Dynamic>();
 		//list.set('Many', pony.net.http.modules.mmodels.actions.Many);
 		list = (Classes.dir('pony.net.http.modules.mmodels', 'actions'));

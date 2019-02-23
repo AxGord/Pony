@@ -32,7 +32,7 @@ class FText extends Field {
  * @author AxGord <axgord@gmail.com>
  */
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
-class CTextPut extends pony.text.tpl.TplPut<FText, Dynamic> {
+@:keep class CTextPut extends pony.text.tpl.TplPut<FText, Dynamic> {
 	
 	@:async
 	override public function tag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String 

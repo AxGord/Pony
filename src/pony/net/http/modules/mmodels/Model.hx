@@ -38,10 +38,11 @@ class Model {
 	public function new(mm:MModels, actionsClasses:Map<String, Dynamic>) {
 		lang = 'en';
 		name = Type.getClassName(Type.getClass(this));
-		name = name.substr(name.lastIndexOf('.')+1);
+		name = name.substr(name.lastIndexOf('.') + 1);
 		this.mm = mm;
 		var n = Type.getClassName(Type.getClass(this)) + 'Connect';
 		cl = cast Type.resolveClass(n);
+		if (cl == null) throw "Can't resolve class (dce?): " + n;
 		var ma:Dynamic<Array<{name: String, type: String}>> = untyped cl.__methoArgs__;
 		
 		var o = untyped cl.__methoPathes__;

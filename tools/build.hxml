@@ -19,6 +19,7 @@
 -resource resources/cctemplate.js.tpl@cctemplate.js.tpl
 -resource resources/electrontemplate.hx.tpl@electrontemplate.hx.tpl
 -resource resources/monacotemplate.hx.tpl@monacotemplate.hx.tpl
+-resource resources/site.hx.tpl@site.hx.tpl
 -debug
 
 --next

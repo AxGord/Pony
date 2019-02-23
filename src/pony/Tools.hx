@@ -22,6 +22,10 @@ using Lambda;
  * @author AxGord
  */
 class Tools {
+
+	public static var isWindows(get, never):Bool;
+	private static inline var SRC:String = 'src';
+	
 	#if macro
 	private static var _getBuildDate:String;
 	#end
@@ -30,6 +34,8 @@ class Tools {
         return Context.makeExpr(_getBuildDate, Context.currentPos());
     }
 	
+	@:extern private static inline function get_isWindows():Bool return Sys.systemName() == 'Windows';
+
 	/**
 	 * Null Or Empty
 	 * @author nadako <nadako@gmail.com>
@@ -253,6 +259,31 @@ class Tools {
 		f = StringTools.replace(sys.FileSystem.fullPath(f), '\\', '/').split('/').slice(0, -1).join('/') + '/';
 		return macro $v{f};
 	}
+
+	#if !macro
+	public static function ponyPath():String {
+		var pd:String = isWindows ? '\\' : '/';
+		var libPath:String = null;
+		#if nodejs
+		var o:String = Std.string(js.node.ChildProcess.execSync('haxelib path pony'));
+		libPath = o.split('\n')[0];
+		#elseif neko
+		libPath = new sys.io.Process('haxelib', ['path', 'pony']).stdout.readLine();
+		#else
+		throw 'Not supported';
+		#end
+		libPath = sys.FileSystem.fullPath(libPath);
+		// remove src
+		if (libPath.substr(-SRC.length) == SRC) {
+			libPath = libPath.substr(0, -SRC.length);
+		} else {
+			var src:String = SRC + pd;
+			if (libPath.substr(-src.length) == src)
+				libPath = libPath.substr(0, -src.length);
+		}
+		return libPath;
+	}
+	#end
 	
 	public static inline function exists<T>(a:Iterable<T>, e:T):Bool return a.indexOf(e) != -1;
 	
