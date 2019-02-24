@@ -21,7 +21,9 @@ class TplDir {
 				for (d in dir) {
 					var l:Int = d.toString().length;
 					if (e.toString().substr(0, l) == d.toString()) {
-						h[e.toString().substr(l) + f.shortName] = new Tpl(c, o, f.content);
+						var k = e.toString().substr(l + 1);
+						if (k.length > 0) k += '/';
+						h[k + f.shortName] = new Tpl(c, o, f.content);
 						brk = true;
 						break;
 					}

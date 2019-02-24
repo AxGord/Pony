@@ -22,7 +22,9 @@
 		"imagemin-pngquant@6.0.0",
 		"imagemin-zopfli@5.1.0",
 		"!cordova@8.1.2",
-		"!rimraf@2.6.3"
+		"!rimraf@2.6.3",
+		"send@0.16.2",
+		"mysql@2.16.0"
 	],
 	"winnpm": [
 		"imagemin-pngquant@5.1.0"
