@@ -105,7 +105,7 @@
 	</chars>
 	<license>
 		<help>Generate or put license</help>
-		<arg>Create or update</arg>
+		<arg>Create, update or remove</arg>
 		<arg>License type for create</arg>
 		<arg>...</arg>
 	</license>

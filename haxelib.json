@@ -24,8 +24,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Fix Windows path error and remove Fast warnings",
-"version": "0.9.5",
+"releasenote": "Pony Tools: create site",
+"version": "0.9.6",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }
