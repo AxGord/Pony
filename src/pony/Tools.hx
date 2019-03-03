@@ -33,8 +33,12 @@ class Tools {
         if (_getBuildDate == null) _getBuildDate = Date.now().toString();
         return Context.makeExpr(_getBuildDate, Context.currentPos());
     }
-	
+
+	#if (js && !nodejs)
+	@:extern private static inline function get_isWindows():Bool return pony.JsTools.os == pony.JsTools.OS.Windows;
+	#else
 	@:extern private static inline function get_isWindows():Bool return Sys.systemName() == 'Windows';
+	#end
 
 	/**
 	 * Null Or Empty
@@ -260,7 +264,7 @@ class Tools {
 		return macro $v{f};
 	}
 
-	#if !macro
+	#if (!macro && (!js || nodejs))
 	public static function ponyPath():String {
 		var pd:String = isWindows ? '\\' : '/';
 		var libPath:String = null;

@@ -24,8 +24,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Pony Tools: create site",
-"version": "0.9.6",
+"releasenote": "Fix conditional compilation for js",
+"version": "0.9.7",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }

@@ -1,7 +1,7 @@
 package pony.ui.xml;
 
 #if macro
-import haxe.xml.Fast;
+import pony.Fast;
 import sys.io.File;
 import sys.FileSystem;
 import haxe.macro.Context;
