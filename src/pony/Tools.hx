@@ -387,7 +387,7 @@ class Tools {
 	}
 	
 	#if (haxe_ver >= 3.30)
-	@:generic inline static public function sget<A,B:haxe.Constraints.Constructible<Dynamic>>(m:Map<A,B>, key:A):B
+	@:generic inline static public function sget<A,B:haxe.Constraints.Constructible<Void -> Void>>(m:Map<A,B>, key:A):B
 	#else
 	@:generic inline static public function sget<A,B:{function new():Void;}>(m:Map<A,B>, key:A):B
 	#end
