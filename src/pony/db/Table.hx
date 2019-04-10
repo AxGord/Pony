@@ -50,8 +50,12 @@ abstract Table(CTable) {
  */
 class CTable /* implements Dynamic < Table > */ implements Declarator implements Ninja
 {
+	#if macro // fix macro error
+	public function new(mysql:ISQL, table:String) {}
+	public function resolve(s:String) return new Table(null, null);
+	#end
 	#if !macro
-	@:arg private var mysql:ISQL;
+	@:arg public var mysql(default, null):ISQL;
 	@:arg private var table:String;
 	private var _select:Array<String> = [];
 	private var solo:Bool = false;
@@ -59,7 +63,7 @@ class CTable /* implements Dynamic < Table > */ implements Declarator implements
 	private var _limit:Null<Int>;
 	private var _begin:Int = 0;
 	private var _where:String = '';
-	private var _error:String->Void = Tools.nullFunction1;
+	private var _error:String -> Void = Tools.nullFunction1;
 	
 	inline private function ninjaCreate():Table return new Table(mysql, table);
 	/**
@@ -73,11 +77,11 @@ class CTable /* implements Dynamic < Table > */ implements Declarator implements
 	/**
 	 * Order asc for field
 	 */
-	@:n inline public function asc(field:String):Table order = ' ORDER BY '+mysql.escapeId(field)+' ASC';
+	@:n inline public function asc(field:String):Table order = ' ORDER BY ' + mysql.escapeId(field) + ' ASC';
 	/**
 	 * Order desc for field
 	 */
-	@:n inline public function desc(field:String):Table order = ' ORDER BY '+mysql.escapeId(field)+' DESC';
+	@:n inline public function desc(field:String):Table order = ' ORDER BY ' + mysql.escapeId(field) + ' DESC';
 	/**
 	 * Data for query 'where', helper for where function
 	 */
@@ -121,13 +125,13 @@ class CTable /* implements Dynamic < Table > */ implements Declarator implements
 	/**
 	 * Get result for current query
 	 */
-	public function get(cb:Array<Dynamic>->Void, ?p:PosInfos):Void {
+	public function get(cb:Array<Dynamic> -> Void, ?p:PosInfos):Void {
 		mysql.query(genGetQuery(), p, function(err:Dynamic, fields:Dynamic, _):Void {
 			if (err != null) {
 				_error(err);
 				mysql.error(err);
 			} else {
-				cb(solo ? fields.map(soloMap): fields);
+				cb(solo ? fields.map(soloMap) : fields);
 			}
 		});
 	}
@@ -146,17 +150,17 @@ class CTable /* implements Dynamic < Table > */ implements Declarator implements
 	 * Prepare this table
 	 * @param fields - table configuration
 	 */
-	inline public function prepare(fields:Array<Field>, cb:Bool->Void):Void new TablePrepare(mysql, table).prepare(fields, cb);
+	inline public function prepare(fields:Array<Field>, cb:Bool -> Void):Void new TablePrepare(mysql, table).prepare(fields, cb);
 	
 	/**
 	 * Clear this table
 	 */
-	inline public function clear(cb:Bool->Void, ?p:PosInfos):Void mysql.action('TRUNCATE TABLE $table', 'clear table', p, cb);
+	inline public function clear(cb:Bool -> Void, ?p:PosInfos):Void mysql.action('TRUNCATE TABLE $table', 'clear table', p, cb);
 	
 	/**
 	 * Insert data to table
 	 */
-	public function insert(data:Map<String, DBV>, cb:Bool->Void, ?p:PosInfos):Void {
+	public function insert(data:Map<String, DBV>, cb:Bool -> Void, ?p:PosInfos):Void {
 		var keys = [for (f in data.keys()) mysql.escapeId(f)];
 		var values = [for (d in data) d.get(mysql.escape)];
 		mysql.action('INSERT INTO $table (' + keys.join(', ') + ') VALUES (' + values.join(', ') + ')', 'insert', p, cb);
@@ -165,11 +169,11 @@ class CTable /* implements Dynamic < Table > */ implements Declarator implements
 	/**
 	 * Update data it table
 	 */
-	public function update(data:Map<String, DBV>, cb:Bool->Void, ?p:PosInfos):Void {
+	public function update(data:Map<String, DBV>, cb:Bool -> Void, ?p:PosInfos):Void {
 		var set = [for (f in data.keys()) mysql.escapeId(f) + '=' + data[f].get(mysql.escape)];
 		mysql.action('UPDATE $table SET ' + set.join(', ') + _where, cb);
 	}
-	 
+
 	/**
 	 * Delete selected rows from table
 	 */
@@ -184,7 +188,7 @@ class CTable /* implements Dynamic < Table > */ implements Declarator implements
 			}
 		});
 	}
-	 
+ 
 	#end
 	
 	/**
@@ -207,6 +211,5 @@ class CTable /* implements Dynamic < Table > */ implements Declarator implements
 		var ex = { expr:EArrayDecl(a), pos:th.pos };
 		return macro $th.whereData($ex);
 	}
-	
 	
 }

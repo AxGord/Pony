@@ -11,14 +11,14 @@ import pony.net.http.modules.mmodels.Field;
  */
 class FString extends Field {
 
-	public function new(?len:Int=32)
-	{
-		super(len);
+	public function new(?len:Int=32, hid:Bool = false) {
+		super(len, hid);
 		type = Types.CHAR;
 	}
 	
-	override public function htmlInput(cl:String, act:String, value:String, hidded:Bool=false):String {
-		var h = hidded ? 'type="hidden" ' : 'type="text" ';
+	override public function htmlInput(cl:String, act:String, value:String, ?hidden:Null<Bool>):String {
+		if (hidden == null) hidden = hid;
+		var h = hidden ? 'type="hidden" ' : 'type="text" ';
 		return
 			'<input ' + h + (cl != null?'class="' + cl + '" ':'') +
 			'name="' + model.name + '.' + act + '.' +

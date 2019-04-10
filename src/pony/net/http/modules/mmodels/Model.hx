@@ -10,6 +10,7 @@ import pony.net.http.WebServer.EConnect;
 import pony.Pair;
 import pony.net.http.modules.mmodels.fields.FInt;
 import pony.text.tpl.ITplPut;
+import pony.magic.SuperPuper;
 
 using pony.Tools;
 using Lambda;
@@ -23,7 +24,7 @@ enum ActResult {
  * @author AxGord <axgord@gmail.com>
  */
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
-class Model {
+class Model implements SuperPuper {
 	public var lang:String;
 	public var mm:MModels;
 	public var name:String;
@@ -63,7 +64,7 @@ class Model {
 				}
 		}
 		columns = new Map < String, pony.net.http.modules.mmodels.Field > ();
-		columns['id'] = new FInt();
+		columns['id'] = new FInt(10, true);
 		columns['id'].model = this;
 		columns['id'].name = 'id';
 		var cs = untyped Type.getClass(this).fields;
@@ -82,7 +83,7 @@ class Model {
 		
 	}
 	
-	@:async
+	@:async @:puper
 	public function prepare():Bool {
 		var a:Array<Field> = [
 			{name: 'id', type: Types.INT, flags: [Flags.UNSIGNED, Flags.NOT_NULL, Flags.PRI_KEY, Flags.AUTO_INCREMENT]}

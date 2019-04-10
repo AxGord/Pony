@@ -8,7 +8,7 @@ import js.Node;
  */
 class HttpTools {
 
-	public static function get(url:String, cb:String->Void):Void {
+	public static function get(url:String, cb:String -> Void):Void {
 		Node.http.get(Node.url.parse(url), function(res) {
 			if (res.statusCode == 200) {
 				var r = '';
@@ -20,7 +20,7 @@ class HttpTools {
 		}).on('error', function(e) cb(null));
 	}
 	
-	public static function getJson(url:String, cb:Dynamic->Void):Void {
+	public static function getJson(url:String, cb:Dynamic -> Void):Void {
 		get(url, function(s:String) cb(Node.json.parse(s)));
 	}
 	

@@ -31,7 +31,7 @@ class TableMacro {
 						a.push(genText(' OR ', expr.pos));
 						a = transExpr(e2, a);
 						return a;
-					case _: throw 'Unknown operation '+op;
+					case _: throw 'Unknown operation ' + op;
 				}
 				
 				a = a.concat(parseExpr(e1));
@@ -61,7 +61,7 @@ class TableMacro {
 				transExpr(e, a);
 				return a;
 				
-			case ECall({expr:EField(e, act),pos:_}, p):
+			case ECall({expr:EField(e, act), pos:_}, p):
 				switch act {
 					case 'like':
 						if (p.length != 1) throw 'Need 1 argument';
@@ -76,11 +76,10 @@ class TableMacro {
 								a.push(genText('$field LIKE \'$s\'', expr.pos));
 							case _: throw 'error';
 						}
-					case _: 'Unknown action';
+					case _: throw 'Unknown action';
 				}
 				
-				
-			case _: throw 'Unknown operation '+Std.string(expr.expr);
+			case _: throw 'Unknown operation ' + Std.string(expr.expr);
 		}
 		return a;
 	}
@@ -128,10 +127,10 @@ class TableMacro {
 						case OpNotEq: '!=';
 						case OpBoolAnd, OpAnd: 'AND';
 						case OpBoolOr, OpOr: 'OR';
-						case _: throw 'Unknown operation '+op;
+						case _: throw 'Unknown operation ' + op;
 					}
 					a = a.concat(parseExpr(e1));
-					a.push(genText(' '+o+' ', e.pos));
+					a.push(genText(' ' + o + ' ', e.pos));
 					a = a.concat(parseExpr(e2));
 				}
 				
@@ -142,7 +141,6 @@ class TableMacro {
 		}
 		return a;
 	}
-	
 	
 }
 #end

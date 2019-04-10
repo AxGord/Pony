@@ -25,7 +25,7 @@ class ActionConnect extends ModuleConnect<Action> {
 		super(base, cpq);
 		this.model = model;
 		method = Reflect.field(model, base.name);
-		methodCheck = Reflect.field(model, base.name+'Validate');
+		methodCheck = Reflect.field(model, base.name + 'Validate');
 		if (methodCheck == null)
 			methodCheck = Reflect.field(model, 'validate');
 	}
@@ -53,7 +53,6 @@ class ActionConnect extends ModuleConnect<Action> {
 				}
 			}
 		}
-		
 		if (model.base.pathes[base.name] != null) for (path in model.base.pathes[base.name]) {
 			hasPathArg = true;
 			var q = [cpq.page].concat(cpq.query);
@@ -92,11 +91,11 @@ class ActionConnect extends ModuleConnect<Action> {
 		return false;
 	}
 	
-	public function call(args:Array<Dynamic>, cb:Dynamic->Void):Void {
+	public function call(args:Array<Dynamic>, cb:Dynamic -> Void):Void {
 		Reflect.callMethod(model, method, args.concat([cb]));
 	}
 	
-	public function _callCheck(args:Array<Dynamic>):Errors {	
+	public function _callCheck(args:Array<Dynamic>):Errors {
 		return Reflect.callMethod(model, methodCheck, args);
 	}
 	
@@ -108,7 +107,7 @@ class ActionConnect extends ModuleConnect<Action> {
 		}
 	}
 		
-	public function callCheck(args:Array<Dynamic>, cb:ActResult->Void):Void {
+	public function callCheck(args:Array<Dynamic>, cb:ActResult -> Void):Void {
 		if (methodCheck != null) {
 			var r = _callCheck(args);
 			if (r.empty()) {
@@ -120,5 +119,4 @@ class ActionConnect extends ModuleConnect<Action> {
 			call(args, function(b:Bool) cb(b ? OK : DBERROR));
 	}
 
-	
 }

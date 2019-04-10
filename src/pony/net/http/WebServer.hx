@@ -65,10 +65,10 @@ class WebServer {
 				else
 					connection.sendFile(tpl.get(t)._static.get(p));
 				return true;
-			} else if (a[0] == 'usercontent') {
+			} else if (a[0] == usercontent) {
 				a.shift();
 				var p:String = a.join('/');
-				var u:Unit = usercontent + p;
+				var u:Unit = usercontent + '/' + p;
 				if (u.exists)
 					connection.sendFile(u);
 				else

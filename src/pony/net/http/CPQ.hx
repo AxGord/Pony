@@ -33,7 +33,7 @@ class CPQ implements Declarator {
 				tpl(n);
 				return;
 			} else
-				u.push(a.pop());
+				u.unshift(a.pop());
 		}
 		if (template.exists('index')) {
 			query = u;

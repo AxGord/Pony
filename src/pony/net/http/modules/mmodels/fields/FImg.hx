@@ -27,11 +27,11 @@ class FImg extends Field {
 		return {name: name, length: len, type: type, flags: notnull ? [Flags.NOT_NULL] : []};
 	}
 	
-	override public function htmlInput(cl:String, act:String, value:String, hidded:Bool=false):String {
+	override public function htmlInput(cl:String, act:String, value:String, ?hidden:Null<Bool>):String {
 		return
-			'<input ' + (cl != null?'class="' + cl + '" ':'') +
+			'<input ' + (cl != null ? 'class="' + cl + '" ' : '') +
 			'name="' + model.name + '.' + act + '.' +
-			name + '" type="file" value="'+value+'"/>';
+			name + '" type="file" value="' + value + '"/>';
 	}
 	
 }
@@ -53,7 +53,7 @@ class FImg extends Field {
 	
 	@:async
 	public function html(f:String):String {
-		return '<img src="'+get(f)+'" width="200px"/>';
+		return '<img src="' + get(f) + '" width="200px"/>';
 	}
 	
 	private function get(f:String):String return '/usercontent/' + Reflect.field(b, f);

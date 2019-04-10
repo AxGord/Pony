@@ -19,7 +19,7 @@ class Action {
 		this.args = new Map<String, String>();
 		for (a in args)
 			this.args.set(a.name, a.type);
-		id = model.mm.lastActionId++;	
+		id = model.mm.lastActionId++;
 	}
 		
 	public function connect(cpq:CPQ, modelConnect:ModelConnect):Pair<EConnect, ISubActionConnect> {

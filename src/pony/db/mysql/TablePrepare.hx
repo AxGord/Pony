@@ -29,7 +29,7 @@ class TablePrepare {
 			var cr:Array<String> = [];
 			for (f in fields) {
 				var name = mysql.escapeId(f.name);
-				cr.push(name+' '+f.type.toString()+decorateLength(f.length)+' '+Flags.array2string(f.flags));
+				cr.push(name + ' ' + f.type.toString() + decorateLength(f.length) + ' ' + Flags.array2string(f.flags));
 			}
 			if (!@await mysql.action('CREATE TABLE $table ('+ cr.join(', ') +')', 'create table')) return false;
 		} else {//Update table
@@ -53,7 +53,6 @@ class TablePrepare {
 				*/
 			}
 			
-			
 			var again:Bool = true;
 			//Drop
 			mysql.log('Search fields for drop');
@@ -68,7 +67,6 @@ class TablePrepare {
 				}
 			}
 			again = true;
-			
 			
 			//Add
 			if (fields.length > remote.length) {
@@ -110,7 +108,6 @@ class TablePrepare {
 		}
 		return true;
 	}
-	
 	
 	static private function chk1(f:Field, r:Field):Bool return f.type == r.type && f.flags.equal(r.flags) && f.length == r.length;
 	static private function chk2(f:Field, r:Field):Bool return f.type == r.type && f.flags.equal(r.flags);

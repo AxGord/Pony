@@ -16,7 +16,7 @@ class FBool extends Field {
 		type = Types.BIT;
 	}
 	
-	override public function htmlInput(cl:String, act:String, value:String, hidden:Bool=false):String {
+	override public function htmlInput(cl:String, act:String, value:String, ?hidden:Null<Bool>):String {
 		return
 			'<input ' + (cl != null?'class="' + cl + '" ':'') +
 			'name="' + model.name + '.' + act + '.' +

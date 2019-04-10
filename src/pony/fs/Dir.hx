@@ -107,6 +107,8 @@ abstract Dir(Unit) from Unit {
 			if (!FileSystem.exists(d)) FileSystem.createDirectory(d);
 		}
 	}
+
+	public inline function create():Void FileSystem.createDirectory(first);
 	
 	public function file(name:String):File return addString(name);
 	

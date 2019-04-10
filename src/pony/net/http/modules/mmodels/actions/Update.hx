@@ -25,9 +25,9 @@ class Update extends Action {
  */
 class UpdateConnect extends ActionConnect implements ISubActionConnect {
 	
-	public var storage(get,never):Map<Int,Dynamic>;
+	public var storage(get, never):Map<Int, Dynamic>;
 	
-	private function get_storage():Map<Int,Dynamic> {
+	private function get_storage():Map<Int, Dynamic> {
 		return cpq.connection.sessionStorage.get('modelsActions');
 	}
 	
@@ -98,10 +98,10 @@ class UpdatePut extends pony.text.tpl.TplPut < UpdateConnect, Dynamic > {
 		if (!a.checkAccess()) return '';
 		if (content == null || args.exists('auto')) {
 			var fixList = [];
-			if (args.exists('fix'))
+			if (args != null && args.exists('fix'))
 				fixList = args.get('fix').split(',');
 			var r:String = '';
-			var ma:Map<Int, Dynamic> = a.storage;
+			var ma:Map<Int, {values: Map<String, String>, result: ActResult}> = cast a.storage;
 			var m = ma.get(a.base.id);
 			if (m == null)
 				for (k in a.base.args.keys()) {
@@ -109,6 +109,7 @@ class UpdatePut extends pony.text.tpl.TplPut < UpdateConnect, Dynamic > {
 				}
 			else
 				for (k in a.base.args.keys()) {
+					trace(m.values.get(k));
 					r += inputE(k, m.values.exists(k) ? m.values.get(k) : '', fixList.indexOf(k) != -1);
 				}
 			a.clr();
@@ -124,14 +125,14 @@ class UpdatePut extends pony.text.tpl.TplPut < UpdateConnect, Dynamic > {
 		}
 	}
 	
-	
 	private function inputE(name:String, value:String, fix:Bool):String {
+		if (a.base.model.columns.get(name).hid) return input(name, null, value);
 		var s:String = a.st(name);
 		if (s == null)
-			return '<label>' + name.bigFirst() + input(name, null, value)+'</label>';
+			return '<label>' + name.bigFirst() + input(name, null, value) + '</label>';
 		if (s == '')
-			return '<label>' + name.bigFirst() + input(name, 'ok', fix ? value : '')+'</label>';
-		return '<label>' + name.bigFirst() + input(name, 'error', value)+'<div>'+s+'</div>'+'</label>';
+			return '<label>' + name.bigFirst() + input(name, 'ok', fix ? value : '') + '</label>';
+		return '<label>' + name.bigFirst() + input(name, 'error', value) + '<div>' + s + '</div>' + '</label>';
 	}
 	
 	private function input(name:String, cl:String, value:String):String {
@@ -159,7 +160,6 @@ class UpdatePutSub extends pony.text.tpl.TplPut < UpdateConnect, Dynamic > {
 		} else
 			return @await super.tag(name, content, arg, args, kid);
 	}
-	
 	
 }
 

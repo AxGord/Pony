@@ -16,14 +16,16 @@ class Field {
 	public var type:Types;
 	public var notnull:Bool;
 	public var len:Int;
+	public var hid(default, null):Bool;
 	public var isFile:Bool = false;
 	
 	public var tplPut:Class<ITplPut> = null;
 	
-	public function new(?len:Int) {
+	public function new(?len:Int, ?hid:Bool) {
 		type = Types.TEXT;
 		notnull = false;
 		this.len = len;
+		this.hid = hid;
 	}
 	
 	public function init(name:String, model:Model):Void {
@@ -32,7 +34,7 @@ class Field {
 		//trace(name);
 	}
 	
-	public function htmlInput(cl:String, act:String, value:String, hidden:Bool=false):String {
+	public function htmlInput(cl:String, act:String, value:String, ?hidden:Null<Bool>):String {
 		return '';
 	}
 	

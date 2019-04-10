@@ -11,6 +11,7 @@ import pony.net.http.modules.mmodels.MModels;
 import pony.net.http.modules.mmodels.Model;
 import pony.net.http.WebServer;
 import pony.Pair;
+import pony.fs.Dir;
 
 class SimpleWeb {
 
@@ -43,7 +44,9 @@ class SimpleWeb {
 		}
 		
 		var httpServer = new HttpServer(Config.port);
-		var webServer:WebServer = new WebServer(['home', pony.Tools.ponyPath() + 'webdefaults'], null, modules);
+		var usercontent:String = 'usercontent';
+		(usercontent:Dir).create();
+		var webServer:WebServer = new WebServer(['home', pony.Tools.ponyPath() + 'webdefaults'], usercontent, modules);
 		httpServer.request = webServer.connect;
 		
 		#if php

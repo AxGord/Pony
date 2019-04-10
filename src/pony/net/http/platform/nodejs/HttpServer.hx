@@ -74,7 +74,7 @@ class HttpServer {
 						}
 						for (k in files.fields()) {
 							var f:Dynamic = files.field(k)[0];
-							if (f.size > 0) map[k] = f.headers.field('content-type')+':'+f.path;
+							if (f.size > 0) map[k] = f.headers.field('content-type') + ':' + f.path;
 						}
 						me.request(new HttpConnection('http://' + host + req.url, me.storage, req, res, map));
 					}
