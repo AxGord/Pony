@@ -12,6 +12,13 @@ import pony.net.http.modules.mmodels.Model;
 import pony.net.http.WebServer;
 import pony.Pair;
 import pony.fs.Dir;
+import pony.fs.File;
+import haxe.Json;
+
+typedef SiteConfig = {
+	> pony.db.mysql.Config,
+	httpport: Int
+}
 
 class SimpleWeb {
 
@@ -20,22 +27,34 @@ class SimpleWeb {
 	private function phpLog(v:Dynamic, ?p:PosInfos):Void trc.push(new Pair(v, p));
 	#end
 
-	public function new(classes:Array<Class<Model>>) {
+	public function new(classes:Array<Class<Model>>, ?json:File, ?config:SiteConfig) {
 		#if php
 		Log.trace = phpLog;
 		#end
 
+		if (json != null && json.exists) config = Json.parse(json.content);
+
 		var db:MySQL = null;
-		if (Config.mysql != null && !Lambda.empty(Config.mysql)) {
-			db = new MySQL( {
+		if (config == null && Config.mysql != null && !Lambda.empty(Config.mysql)) {
+			config = {
 				host: Config.mysql['host'],
 				port: Std.parseInt(Config.mysql['port']),
 				user: Config.mysql['user'],
 				password: Config.mysql['password'],
-				database: Config.mysql['database']
-			} );
+				database: Config.mysql['database'],
+				httpport: Config.port
+			};
+		}
+
+		if (config != null) {
+			db = new MySQL(config);
 			db.onLog << Log.trace;
 			db.onError << Log.trace;
+		} else {
+			config = {
+				httpport: Config.port,
+				database: null
+			};
 		}
 
 		var modules:Array<IModule> = DefaultModulePack.create();
@@ -43,7 +62,7 @@ class SimpleWeb {
 			modules.push(cast new MModels(classes, DefaultActionsPack.list, db));
 		}
 		
-		var httpServer = new HttpServer(Config.port);
+		var httpServer = new HttpServer(config.httpport);
 		var usercontent:String = 'usercontent';
 		(usercontent:Dir).create();
 		var webServer:WebServer = new WebServer(['home', pony.Tools.ponyPath() + 'webdefaults'], usercontent, modules);
