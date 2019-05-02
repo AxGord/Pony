@@ -16,7 +16,23 @@ import pixi.core.graphics.Graphics;
  * NapeSpaceView
  * @author AxGord <axgord@gmail.com>
  */
-class NapeSpaceView extends Sprite implements pony.magic.HasLink implements Dynamic<NapeGroupView> {
+@:forward()
+abstract NapeSpaceView(NapeSpaceViewBase) from NapeSpaceViewBase to NapeSpaceViewBase {
+	
+	public inline function new(w:Float, h:Float, ?gravity:Point<Float>):Void {
+		this = new NapeSpaceViewBase(w, h, gravity);
+	}
+
+	@:op(a.b) public inline function resolve(s:String):NapeGroupView {
+		return this.resolve(s);
+	}
+}
+
+/**
+ * NapeSpaceViewBase
+ * @author AxGord <axgord@gmail.com>
+ */
+class NapeSpaceViewBase extends Sprite implements pony.magic.HasLink {
 
 	public var play(link, never):Void -> Void = core.play;
 	public var pause(link, never):Void -> Void = core.pause;

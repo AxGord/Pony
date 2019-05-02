@@ -12,7 +12,23 @@ import nape.geom.Vec2;
  * NapeSpace
  * @author AxGord <axgord@gmail.com>
  */
-class NapeSpace implements Dynamic<NapeGroup> {
+@:forward()
+abstract NapeSpace(NapeSpaceBase) from NapeSpaceBase to NapeSpaceBase {
+	
+	public inline function new(w:Float, h:Float, ?gravity:Point<Float>):Void {
+		this = new NapeSpaceBase(w, h, gravity);
+	}
+
+	@:op(a.b) public inline function resolve(s:String):NapeGroup {
+		return this.resolve(s);
+	}
+}
+
+/**
+ * NapeSpaceBase
+ * @author AxGord <axgord@gmail.com>
+ */
+class NapeSpaceBase {
 
 	public var space:Space;
 	public var minimalStep(default, null):Float;
