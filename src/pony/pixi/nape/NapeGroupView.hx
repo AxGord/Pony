@@ -4,6 +4,7 @@ import haxe.io.Bytes;
 import pixi.core.sprites.Sprite;
 import pony.geom.Point;
 import pony.geom.Rect;
+import nape.phys.Body;
 import pony.physics.nape.BodyBase;
 import pony.physics.nape.DebugLineStyle;
 import pony.physics.nape.NapeGroup;
@@ -71,6 +72,10 @@ class NapeGroupView extends Sprite {
 
 	public function createShape(data:Bytes, resolution:Float, isBullet:Bool = false):BodyShapeView {
 		return reg(new BodyShapeView(core.createShape(data, resolution, isBullet)));
+	}
+
+	public function createBody(data:Body, isBullet:Bool = false):BodyBodyView {
+		return reg(new BodyBodyView(core.createBody(data, isBullet)));
 	}
 
 }

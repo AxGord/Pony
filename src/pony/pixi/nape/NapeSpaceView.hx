@@ -9,6 +9,7 @@ import pony.physics.nape.BodyShape;
 import pony.physics.nape.DebugLineStyle;
 import pony.physics.nape.NapeSpace;
 import nape.space.Space;
+import nape.phys.Body;
 import pixi.core.sprites.Sprite;
 import pixi.core.graphics.Graphics;
 
@@ -133,6 +134,10 @@ class NapeSpaceViewBase extends Sprite implements pony.magic.HasLink {
 
 	public function createShape(data:Bytes, resolution:Float, isBullet:Bool = false):BodyShapeView {
 		return reg(new BodyShapeView(core.createShape(data, resolution, isBullet)));
+	}
+
+	public function createBody(data:Body, isBullet:Bool = false):BodyBodyView {
+		return reg(new BodyBodyView(core.createBody(data, isBullet)));
 	}
 
 	public static function clearCache():Void {

@@ -24,6 +24,7 @@ class SliderCore extends BarCore {
 	private var startPoint:Float = 0;
 	public var wheelSpeed:Float = 2;
 
+	public var trackStartPoint:Null<Float> = null;
 	public var track(default, set):Touchable;
 	
 	public function new(size:Float, isVertical:Bool = false, invert:Bool = false, draggable:Bool=true) {
@@ -108,6 +109,11 @@ class SliderCore extends BarCore {
 		}
 	}
 
+	private function moveTo(t:Touch):Void {
+		startPoint = -trackStartPoint;
+		pos = limit(detectPos(t.x, t.y));
+	}
+
 	public function set_track(v:Touchable):Touchable {
 		if (track != v) {
 			if (track != null) {
@@ -116,8 +122,11 @@ class SliderCore extends BarCore {
 			}
 			track = v;
 			if (v != null) {
+				if (trackStartPoint != null)
+					v.onDown << moveTo;
 				v.onDown << startDrag;
 				v.onUp << stopDrag;
+				v.onOutUp << stopDrag;
 			}
 		}
 		return v;

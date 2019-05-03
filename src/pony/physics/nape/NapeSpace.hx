@@ -5,6 +5,7 @@ import pony.geom.Point;
 import pony.geom.Rect;
 import pony.time.DeltaTime;
 import pony.time.DT;
+import nape.phys.Body;
 import nape.space.Space;
 import nape.geom.Vec2;
 
@@ -108,6 +109,10 @@ class NapeSpaceBase {
 
 	public function createShape(data:Bytes, resolution:Float, isBullet:Bool = false):BodyShape {
 		return new BodyShape(data, resolution, space, limits, false, isBullet);
+	}
+
+	public function createBody(data:Body, isBullet:Bool = false):BodyBody {
+		return new BodyBody(data, space, limits, false, isBullet);
 	}
 
 }

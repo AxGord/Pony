@@ -56,10 +56,17 @@ class BodyBase implements pony.magic.HasSignal implements pony.magic.HasLink imp
 
 	public var group(default, null):NapeGroup;
 
-	private function new(space:Space, limits:Rect<Float>, isStatic:Bool = false, isBullet:Bool = false, ?group:NapeGroup) {
+	private function new(
+		space:Space,
+		limits:Rect<Float>,
+		isStatic:Bool = false,
+		isBullet:Bool = false,
+		?pbody: Body,
+		?group:NapeGroup
+	) {
 		this.limits = limits;
 		this.group = group;
-		body = new Body(isStatic ? BodyType.STATIC : BodyType.KINEMATIC);
+		body = pbody == null ? new Body(isStatic ? BodyType.STATIC : BodyType.KINEMATIC) : pbody;
 		BODYMAP[body.id] = this;
 		body.isBullet = isBullet;
 		init();

@@ -10,6 +10,7 @@ import nape.callbacks.CbEvent;
 import nape.callbacks.InteractionType;
 import nape.callbacks.InteractionListener;
 import nape.space.Space;
+import nape.phys.Body;
 import nape.callbacks.CbType;
 
 /**
@@ -69,6 +70,10 @@ class NapeGroup {
 
 	public function createShape(data:Bytes, resolution:Float, isBullet:Bool = false):BodyShape {
 		return new BodyShape(data, resolution, space, ns.limits, false, isBullet, this);
+	}
+
+	public function createBody(data:Body, isBullet:Bool = false):BodyBody {
+		return new BodyBody(data, space, ns.limits, false, isBullet, this);
 	}
 
 }
