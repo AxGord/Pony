@@ -11,6 +11,7 @@ import nape.callbacks.InteractionType;
 import nape.callbacks.InteractionListener;
 import nape.space.Space;
 import nape.phys.Body;
+import nape.geom.Vec2;
 import nape.callbacks.CbType;
 
 /**
@@ -72,8 +73,8 @@ class NapeGroup {
 		return new BodyShape(data, resolution, space, ns.limits, false, isBullet, this);
 	}
 
-	public function createBody(data:Body, isBullet:Bool = false):BodyBody {
-		return new BodyBody(data, space, ns.limits, false, isBullet, this);
+	public function createBody(data:Body, ?anchor:Vec2, isBullet:Bool = false, isStatic:Bool = false):BodyBody {
+		return new BodyBody(data, anchor, space, ns.limits, isStatic, isBullet, this);
 	}
 
 }

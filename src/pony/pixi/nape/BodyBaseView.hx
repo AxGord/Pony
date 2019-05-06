@@ -33,10 +33,23 @@ import haxe.io.Bytes;
 		super();
 		this.core = core;
 		LIST[core.body.id] = this;
+		posHandler(core.pos.x, core.pos.y);
 		core.onPos << posHandler;
 		core.onRotation << rotationHandler;
 		core.onOut << out;
 		core.onDestroy < destroy.bind(null);
+	}
+
+	public inline function addView(s:Sprite):Void {
+		if (s.parent != null)
+			parent.removeChild(s); 
+		addChildAt(s, 0);
+		s.position.set(-core.anchor.x, -core.anchor.y);
+	}
+
+	public inline function addViewAndPos(s:Sprite):Void {
+		core.pos = new Point(s.x, s.y);
+		addView(s);
 	}
 
 	private function out():Void eOut.dispatch(this);
@@ -52,12 +65,12 @@ import haxe.io.Bytes;
 			debugView.destroy();
 			debugView = null;
 		}
-		if (v.pivotColor == null)
-			v.pivotColor = v.color;
-		if (v.pivotSize == null)
-			v.pivotSize = v.size;
 		debugLines = v;
 		if (v != null) {
+			if (v.pivotColor == null)
+				v.pivotColor = v.color;
+			if (v.pivotSize == null)
+				v.pivotSize = v.size;
 			var cid:Bytes = core.getCacheId();
 			if (cid != null) {
 				var cids:String = cid.toHex();
@@ -96,7 +109,7 @@ import haxe.io.Bytes;
 	@:abstract private function drawDebug(g:Graphics):Void;
 
 	private function posHandler(px:Float, py:Float):Void {
-		position.set(px, py);
+		position.set(px + core.anchor.x, py + core.anchor.y);
 	}
 
 	private function rotationHandler(r:Float):Void {

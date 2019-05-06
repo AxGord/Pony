@@ -103,16 +103,16 @@ class NapeSpaceBase {
 		return new BodyCircle(r, space, limits, false, isBullet);
 	}
 
-	public function createStaticCircle(r:Float, isBullet:Bool = false):BodyCircle {
-		return new BodyCircle(r, space, limits, true, isBullet);
+	public function createStaticCircle(r:Float, pos:Point<Float>, isBullet:Bool = false):BodyCircle {
+		return new BodyCircle(r, pos, space, limits, true, isBullet);
 	}
 
 	public function createShape(data:Bytes, resolution:Float, isBullet:Bool = false):BodyShape {
 		return new BodyShape(data, resolution, space, limits, false, isBullet);
 	}
 
-	public function createBody(data:Body, isBullet:Bool = false):BodyBody {
-		return new BodyBody(data, space, limits, false, isBullet);
+	public function createBody(data:Body, ?anchor:Vec2, isStatic:Bool = false, isBullet:Bool = false):BodyBody {
+		return new BodyBody(data, anchor, space, limits, isStatic, isBullet);
 	}
 
 }

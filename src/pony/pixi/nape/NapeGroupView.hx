@@ -5,6 +5,7 @@ import pixi.core.sprites.Sprite;
 import pony.geom.Point;
 import pony.geom.Rect;
 import nape.phys.Body;
+import nape.geom.Vec2;
 import pony.physics.nape.BodyBase;
 import pony.physics.nape.DebugLineStyle;
 import pony.physics.nape.NapeGroup;
@@ -74,8 +75,8 @@ class NapeGroupView extends Sprite {
 		return reg(new BodyShapeView(core.createShape(data, resolution, isBullet)));
 	}
 
-	public function createBody(data:Body, isBullet:Bool = false):BodyBodyView {
-		return reg(new BodyBodyView(core.createBody(data, isBullet)));
+	public function createBody(data:Body, ?anchor:Vec2, isBullet:Bool = false, isStatic:Bool = false):BodyBodyView {
+		return reg(new BodyBodyView(core.createBody(data, anchor, isBullet, isStatic)));
 	}
 
 }

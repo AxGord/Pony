@@ -10,6 +10,7 @@ import pony.physics.nape.DebugLineStyle;
 import pony.physics.nape.NapeSpace;
 import nape.space.Space;
 import nape.phys.Body;
+import nape.geom.Vec2;
 import pixi.core.sprites.Sprite;
 import pixi.core.graphics.Graphics;
 
@@ -128,16 +129,16 @@ class NapeSpaceViewBase extends Sprite implements pony.magic.HasLink {
 		return reg(new BodyCircleView(core.createCircle(r, isBullet)));
 	}
 
-	public function createStaticCircle(r:Float, isBullet:Bool = false):BodyCircleView {
-		return reg(new BodyCircleView(core.createStaticCircle(r, isBullet)));
+	public function createStaticCircle(r:Float, pos:Point<Float>, isBullet:Bool = false):BodyCircleView {
+		return reg(new BodyCircleView(core.createStaticCircle(r, pos, isBullet)));
 	}
 
 	public function createShape(data:Bytes, resolution:Float, isBullet:Bool = false):BodyShapeView {
 		return reg(new BodyShapeView(core.createShape(data, resolution, isBullet)));
 	}
 
-	public function createBody(data:Body, isBullet:Bool = false):BodyBodyView {
-		return reg(new BodyBodyView(core.createBody(data, isBullet)));
+	public function createBody(data:Body, ?anchor:Vec2, isBullet:Bool = false, isStatic:Bool = false):BodyBodyView {
+		return reg(new BodyBodyView(core.createBody(data, anchor, isStatic, isBullet)));
 	}
 
 	public static function clearCache():Void {

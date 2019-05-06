@@ -43,6 +43,7 @@ class BodyBase implements pony.magic.HasSignal implements pony.magic.HasLink imp
 	public var rotation(link, link):Float = body.rotation;
 
 	public var body(default, null):Body;
+	public var anchor:Vec2;
 	private var cbt:CbType;
 	private var addedListeners:Array<Listener> = [];
 	private var events0:Array<Event0> = [];
@@ -57,16 +58,29 @@ class BodyBase implements pony.magic.HasSignal implements pony.magic.HasLink imp
 	public var group(default, null):NapeGroup;
 
 	private function new(
+		?pos:Point<Float>,
 		space:Space,
 		limits:Rect<Float>,
 		isStatic:Bool = false,
 		isBullet:Bool = false,
 		?pbody: Body,
+		?anchor: Vec2,
 		?group:NapeGroup
 	) {
 		this.limits = limits;
 		this.group = group;
-		body = pbody == null ? new Body(isStatic ? BodyType.STATIC : BodyType.KINEMATIC) : pbody;
+		if (anchor == null)
+			anchor = new Vec2();
+		this.anchor = anchor;
+		if (pbody == null) {
+			body = new Body(isStatic ? BodyType.STATIC : BodyType.KINEMATIC);
+		} else {
+			body = pbody;
+			if (isStatic)
+				body.type = BodyType.STATIC;
+		}
+		if (pos != null)
+			body.position = new Vec2(pos.x - anchor.x, pos.y - anchor.y);
 		BODYMAP[body.id] = this;
 		body.isBullet = isBullet;
 		init();
@@ -142,7 +156,7 @@ class BodyBase implements pony.magic.HasSignal implements pony.magic.HasLink imp
 	@:abstract private function init():Void;
 
 	private function updateHandler():Void {
-		ePos.dispatch(body.position.x, body.position.y);
+		ePos.dispatch(body.position.x - anchor.x, body.position.y - anchor.y);
 		eRotation.dispatch(body.rotation);
 		if (limits != null) {
 			var mx = body.bounds.width * 2;
@@ -183,6 +197,18 @@ class BodyBase implements pony.magic.HasSignal implements pony.magic.HasLink imp
 		return e;
 	}
 
+	public function groupCollisionLost<T:NapeGroup>(with:T):Signal1<Int> {
+		var e = createEvent1();
+		body.space.listeners.add(new InteractionListener(
+			CbEvent.END,
+			with.sensor ? InteractionType.SENSOR : InteractionType.COLLISION,
+			cbt,
+			with.cbt,
+			function(ic:InteractionCallback):Void e.dispatch(ic.int2.id)
+		));
+		return e;
+	}
+
 	public function collision<T:BodyBase>(with:T):Signal0 {
 		var e = createEvent0();
 		body.space.listeners.add(new InteractionListener(
@@ -208,11 +234,11 @@ class BodyBase implements pony.magic.HasSignal implements pony.magic.HasLink imp
 	}
 
 	private function get_pos():Point<Float> {
-		return new Point<Float>(body.position.x, body.position.y);
+		return new Point<Float>(body.position.x - anchor.x, body.position.y - anchor.y);
 	}
 
 	private function set_pos(p:Point<Float>):Point<Float> {
-		body.position.setxy(p.x, p.y);
+		body.position.setxy(p.x + anchor.x, p.y + anchor.y);
 		ePos.dispatch(p.x, p.y);
 		return p;
 	}

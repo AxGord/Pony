@@ -18,9 +18,17 @@ class BodyCircle extends BodyBase {
 
 	public var radius(default, null):Float;
 
-	public function new(r:Float, space:Space, ?limits:Rect<Float>, isStatic:Bool = false, isBullet:Bool = false, ?group:NapeGroup) {
+	public function new(
+		r:Float,
+		?pos:Point<Float>,
+		space:Space,
+		?limits:Rect<Float>,
+		isStatic:Bool = false,
+		isBullet:Bool = false,
+		?group:NapeGroup
+	) {
 		this.radius = r;
-		super(space, limits, isStatic, isBullet, group);
+		super(pos, space, limits, isStatic, isBullet, group);
 	}
 
 	override private function init():Void {
