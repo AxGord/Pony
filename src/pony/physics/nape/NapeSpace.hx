@@ -42,7 +42,7 @@ class NapeSpaceBase {
 	public var limits:Rect<Float>;
 	private var groups:Map<String, NapeGroup> = new Map<String, NapeGroup>();
 
-	public function new(w:Float, h:Float, ?gravity:Point<Float>, minimalStep:Float = 1 / 60, skipVelIntegrations:Int = 10) {
+	public function new(w:Float, h:Float, ?gravity:Point<Float>, minimalStep:Float = 0.05, skipVelIntegrations:Int = 10) {
 		this.width = w;
 		this.height = h;
 		limits = new Rect<Float>(0, 0, w, h);

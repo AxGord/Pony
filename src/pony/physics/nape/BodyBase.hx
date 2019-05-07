@@ -73,11 +73,13 @@ class BodyBase implements pony.magic.HasSignal implements pony.magic.HasLink imp
 			anchor = new Vec2();
 		this.anchor = anchor;
 		if (pbody == null) {
-			body = new Body(isStatic ? BodyType.STATIC : BodyType.KINEMATIC);
+			body = new Body(isStatic ? BodyType.STATIC : isBullet ? BodyType.KINEMATIC : BodyType.DYNAMIC);
 		} else {
 			body = pbody;
 			if (isStatic)
 				body.type = BodyType.STATIC;
+			else if (isBullet)
+				body.type = BodyType.KINEMATIC;
 		}
 		if (pos != null)
 			body.position = new Vec2(pos.x - anchor.x, pos.y - anchor.y);
