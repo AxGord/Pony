@@ -276,6 +276,7 @@ class App implements HasSignal {
 	}
 	
 	#if stats
+	@:auto public var onStats:Signal0;
 	@:extern public inline function addStats():Void {
 		var perf = new Perf();
 		perf.addInfo(["UNKNOWN", "WEBGL", "CANVAS"][cast app.renderer.type]);
@@ -283,7 +284,10 @@ class App implements HasSignal {
 		if (perf.memory != null)
 			elements.push(perf.memory);
 			
-		function change() for (e in elements) e.style.opacity = e.style.opacity != "0.1" ? "0.1" : "0.8";
+		function change() {
+			eStats.dispatch();
+			for (e in elements) e.style.opacity = e.style.opacity != "0.1" ? "0.1" : "0.8";
+		}
 			
 		for (e in elements) {
 			#if !debug
