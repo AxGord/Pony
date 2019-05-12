@@ -47,12 +47,12 @@ class HtmlContainerBase implements HasSignal {
 		pony.time.DeltaTime.fixedUpdate < resize;
 	}
 
-	private function resizeHandler(scale:Float):Void {
+	private function resizeHandler():Void {
 		lastRect = {
-			x: scale * (targetRect.x + targetPos.x + app.container.x / app.container.width),
-			y: scale * (targetRect.y + targetPos.y + app.container.y / app.container.height),
-			width: scale * targetRect.width,
-			height: scale * targetRect.height
+			x: app.scale * (targetRect.x + targetPos.x + app.container.x / app.container.width),
+			y: app.scale * (targetRect.y + targetPos.y + app.container.y / app.container.height),
+			width: app.scale * targetRect.width,
+			height: app.scale * targetRect.height
 		};
 		if (!fixed) {
 			lastRect.x += lastRect.width;
@@ -64,12 +64,12 @@ class HtmlContainerBase implements HasSignal {
 	public function resize():Void {
 		if (!posUpdater.enabled) return;
 		if (fixed) {
-			var b = app.parentDom.getBoundingClientRect();
+			var b = app.element.getBoundingClientRect();
 			targetStyle.top = px(b.top + lastRect.y);
 			targetStyle.left = px(b.left + lastRect.x);
 		} else {
-			targetStyle.bottom = px(app.parentDom.clientHeight - lastRect.y);
-			targetStyle.right = px(app.parentDom.clientWidth - lastRect.x);
+			targetStyle.bottom = px(app.element.clientHeight - lastRect.y);
+			targetStyle.right = px(app.element.clientWidth - lastRect.x);
 		}
 		targetStyle.width = px(lastRect.width);
 		targetStyle.height = px(lastRect.height);
@@ -80,17 +80,15 @@ class HtmlContainerBase implements HasSignal {
 
 	private function set_targetStyle(s:CSSStyleDeclaration):CSSStyleDeclaration {
 		targetStyle = s;
-
 		if (s == null) {
-			app.onResize >> resizeHandler;
-			app.onFrequentResize >> resize;
+			app.onStageResize >> resizeHandler;
+			pony.js.Window.onMomentalResize >> resize;
 		} else {
 			s.position = fixed ? POSITION_FIXED : POSITION;
-			app.onResize << resizeHandler;
-			app.onFrequentResize << resize;
-			resizeHandler(app.scale);
+			app.onStageResize << resizeHandler;
+			pony.js.Window.onMomentalResize << resize;
+			resizeHandler();
 		}
-
 		return targetStyle;
 	}
 
@@ -103,7 +101,7 @@ class HtmlContainerBase implements HasSignal {
 		) {
 			targetRect = v;
 			if (targetStyle != null)
-				resizeHandler(app.scale);
+				resizeHandler();
 		}
 		return v;
 	}
@@ -111,7 +109,7 @@ class HtmlContainerBase implements HasSignal {
 	private function set_targetPos(v:Point<Float>):Point<Float> {
 		if (v.x != targetPos.x || v.y != targetPos.y) {
 			targetPos = v;
-			resizeHandler(app.scale);
+			resizeHandler();
 		}
 		return v;
 	}

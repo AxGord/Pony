@@ -263,9 +263,18 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 					attrs.src, attrs.dac == null ? null : Std.parseFloat(attrs.dac)
 				);
 				for (c in content) b.add(c);
+				if (attrs.w != null)
+					b.button.setWidth(parseAndScaleInt(attrs.w));
+				if (attrs.h != null)
+					b.button.setHeight(parseAndScaleInt(attrs.h));
 				b;
 			case 'button':
-				new Button(splitAttr(attrs.skin), attrs.src);
+				var b = new Button(splitAttr(attrs.skin), attrs.src);
+				if (attrs.w != null)
+					b.setWidth(parseAndScaleInt(attrs.w));
+				if (attrs.h != null)
+					b.setHeight(parseAndScaleInt(attrs.h));
+				b;
 			case 'rectbutton':
 				var b = new RectButton(
 					new Point(parseAndScaleInt(attrs.w), parseAndScaleInt(attrs.h)),
@@ -412,7 +421,7 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 					}
 					if (attrs.color != null)
 						div.style.backgroundColor = attrs.color;
-					app.parentDom.appendChild(div);
+					app.element.appendChild(div);
 					c.targetStyle = div.style;
 					c.element = div;
 				}
@@ -429,7 +438,7 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 					var div = js.Browser.document.createDivElement();
 					if (attrs.color != null)
 						div.style.backgroundColor = attrs.color;
-					app.parentDom.appendChild(div);
+					app.element.appendChild(div);
 					c.targetStyle = div.style;
 					c.element = div;
 				}

@@ -7,14 +7,14 @@ import pony.geom.GeomTools;
 using pony.Tools;
 
 /**
- * IntervalLayoutCore
+ * AlignLayoutCore
  * @author AxGord <axgord@gmail.com>
  */
 class AlignLayoutCore<T> extends BaseLayoutCore<T> {
 	
 	@:arg private var _align:Align = new Pair(VAlign.Middle, HAlign.Center);
 	@:arg private var _border:Border<Int> = 0;
-	
+
 	public var align(get, set):Align;
 	public var border(get, set):Border<Int>;
 	

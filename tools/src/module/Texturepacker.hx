@@ -117,6 +117,9 @@ class Texturepacker extends CfgModule<TPConfig> {
 			command.push('--pack-mode');
 			command.push('Best');
 
+			command.push('--extrude');
+			command.push('0');
+
 			command.push('--algorithm');
 			command.push('MaxRects');
 

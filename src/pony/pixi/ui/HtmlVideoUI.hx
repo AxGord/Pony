@@ -21,7 +21,7 @@ class HtmlVideoUI extends HtmlContainer {
 	) {
 		super(targetRect, app, ceil, fixed);
 		video = new HtmlVideo(options);
-		video.appendTo(app.parentDom);
+		video.appendTo(app.element);
 		htmlContainer.targetStyle = video.style;
 		if (css != null) video.style.cssText += css;
 	}

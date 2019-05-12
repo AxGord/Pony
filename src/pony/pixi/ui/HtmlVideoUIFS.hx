@@ -59,7 +59,7 @@ class HtmlVideoUIFS extends HtmlVideoUI {
 			generateTransition(transition);
 			switch fsRect {
 				case A(border):
-					this.fsRect = border.getRectFromSize(app.resolution);
+					this.fsRect = border.getRectFromSize(app.stageInitSize);
 				case B(rect):
 					this.fsRect = rect;
 			}

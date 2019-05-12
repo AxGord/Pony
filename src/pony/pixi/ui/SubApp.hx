@@ -24,15 +24,12 @@ class SubApp extends HtmlContainer {
 			Std.int(targetRect.width),
 			Std.int(targetRect.height),
 			element,
-			null,
-			null,
-			'noresize',
+			true,
 			{
 				transparent: true,
 				forceCanvas: true
 			}
 		);
-		htmlContainer.onResize << subApp.resizeHandler;
 	}
 
 }
