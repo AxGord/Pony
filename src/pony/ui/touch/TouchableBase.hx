@@ -14,8 +14,8 @@ import pony.TypedPool;
  */
 class TouchableBase implements HasSignal {
 
-	static private var touches:Map<UInt, Touch> = new Map<UInt, Touch>();
-	static private var touchPool:TypedPool<Touch> = new TypedPool<Touch>();
+	private static var touches:Map<UInt, Touch> = new Map<UInt, Touch>();
+	private static var touchPool:TypedPool<Touch> = new TypedPool<Touch>();
 	
 	@:auto public var onOver:Signal1<Touch>;
 	@:auto public var onOut:Signal1<Touch>;
@@ -161,7 +161,7 @@ class TouchableBase implements HasSignal {
 		eTap.dispatch(t);
 	}
 	
-	private function cancleTap() {
+	private function cancleTap():Void {
 		removeTapCancle();
 		onDown < beginTap;
 	}
@@ -240,16 +240,16 @@ class TouchableBase implements HasSignal {
 		removeTouch(id);
 	}
 	
-	static private function dispatchMove(id:UInt = 0, x:Float, y:Float):Void {
+	private static function dispatchMove(id:UInt = 0, x:Float, y:Float):Void {
 		if (touches.exists(id))
-			@:privateAccess touches[id].eMove.dispatch(touches[id].set(x,y));
+			@:privateAccess touches[id].eMove.dispatch(touches[id].set(x, y));
 	}
 	
-	static private function removeTouch(id:UInt):Void {
+	private static function removeTouch(id:UInt):Void {
 		if (id == 0 || !touches.exists(id)) return;
 		touches[id].clear();
 		touchPool.ret(touches[id]);
-		touches.remove(id);	
+		touches.remove(id);
 	}
 	
 }

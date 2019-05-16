@@ -88,7 +88,7 @@ class Mouse implements Declarator implements HasSignal {
 		return true;
 	}
 	
-	public static function upHandler(x:Float, y:Float, b:Int):Void {	
+	public static function upHandler(x:Float, y:Float, b:Int):Void {
 		upStack.push(b);
 		DeltaTime.fixedUpdate.once(upDispatch, -3);
 	}

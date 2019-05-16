@@ -117,13 +117,17 @@ class App extends SmartCanvas {
 		}
 		app.stage.addChild(container);
 		initTouch();
-		if (main == null) main = this;
+		if (main == null) {
+			main = this;
+			#if stats
+				pony.js.Perform.show(['UNKNOWN', 'WEBGL', 'CANVAS'][cast app.renderer.type]);
+			#end
+		}
 		app.stop();
 		app.ticker.stop();
 		if (!JsDT.inited) JsDT.start();
 		JsDT.onRender << render;
 		this.sizeUpdate = sizeUpdate;
-		#if stats addStats(); #end
 	}
 
 	private function set_sizeUpdate(b:Bool):Bool {
@@ -194,30 +198,5 @@ class App extends SmartCanvas {
 		if (sizeUpdate)
 			onStageResize << stageResizeHandler;
 	}
-
-	#if stats
-	@:auto public var onStats:Signal0;
-	@:extern public inline function addStats():Void {
-		var perf = new Perf();
-		perf.addInfo(['UNKNOWN', 'WEBGL', 'CANVAS'][cast app.renderer.type]);
-		var elements = [perf.fps, perf.info, perf.ms];
-		if (perf.memory != null)
-			elements.push(perf.memory);
-			
-		function change() {
-			eStats.dispatch();
-			for (e in elements) e.style.opacity = e.style.opacity != '0.1' ? '0.1' : '0.8';
-		}
-			
-		for (e in elements) {
-			#if !debug
-			e.style.opacity = '0.1';
-			#else
-			e.style.opacity = '0.8';
-			#end
-			e.onclick = change;
-		}
-	}
-	#end
 	
 }
