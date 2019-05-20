@@ -1,16 +1,20 @@
 package pony.nodejs;
 
+import js.node.Buffer;
+import js.Error;
 import haxe.io.Bytes;
 import haxe.io.BytesData;
 import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
 import haxe.Log;
-import js.Node.NodeBuffer;
-import pony.events.*;
+import haxe.PosInfos;
+import pony.events.Signal0;
+import pony.events.Signal1;
 import pony.magic.Declarator;
 import pony.nodejs.SerialPort.SerialPortConfig;
 import pony.Queue;
 import pony.time.Timer;
+import pony.NPM;
 
 using Lambda;
 
@@ -24,109 +28,164 @@ typedef SerialPortConfig = {
 	?xany:Bool,
 	?flowControl:Bool,
 	?bufferSize:Int,
+	?readString: Bool,
+	?notWaitFirstMessage: Bool
 };
 
 private typedef SerialPortFullConfig = {
-	?baudRate:Int,
-	?dataBits:Int,
-	?stopBits:Int,
-	?parity:String,
-	?xon:Bool,
-	?xoff:Bool,
-	?xany:Bool,
-	?flowControl:Bool,
-	?disconnectedCallback:Void->Void,
+	> SerialPortConfig,
+	?disconnectedCallback:Void -> Void
 };
+
+typedef SerialId = {
+	?comName: String,
+	?manufacturer: String,
+	?serialNumber: String,
+	?pnpId: String,
+	?locationId: String,
+	?vendorId: String,
+	?productId: String
+}
 
 /**
  * SerialPort
  * @author AxGord <axgord@gmail.com>
  */
-class SerialPort implements Declarator {
-
-	public var serialpack:Dynamic = untyped require("serialport");
+class SerialPort extends Logable implements Declarator {
 	
 	public var connected(default, null):Bool;
 	
-	public var open(default, null):Signal0<SerialPort> = Signal.create(this);
-	public var close(default, null):Signal0<SerialPort> = Signal.create(this);
-	public var data(default, null):Signal1<SerialPort, BytesInput> = Signal.create(this);
-	public var error(default, null):Signal1<SerialPort, String> = Signal.create(this);
+	@:auto public var onOpen:Signal0;
+	@:auto public var onClose:Signal0;
+	@:auto public var onData:Signal1<BytesInput>;
+	@:auto public var onString:Signal1<String>;
 	
 	private var sp:Dynamic;
 	
-	private var q:Queue<BytesOutput->Void>;
+	private var q:Queue<BytesOutput -> Void>;
 	
-	@:arg public var id:String;
-	@:arg private var cfg:SerialPortConfig;
+	@:arg public var id:SerialId;
+	@:arg private var cfg:SerialPortConfig = {};
 	
 	public function new() {
-		q = new Queue < BytesOutput->Void > (_write);
-		error << reconnect;
-		open << function() connected = true;
+		super();
+		q = new Queue < BytesOutput -> Void > (_write);
+		onError << reconnect;
+		onOpen << function() connected = true;
+		if (cfg.readString)
+			onData.add(dataHandler, 10);
 		connect();
+	}
+
+	public static function getList(cb:Array<SerialId> -> Void, err:String -> ?PosInfos -> Void):Void {
+		try {
+			NPM.serialport.list(function(e:Error, ports:Array<SerialId>):Void {
+				if (e != null)
+					err(e.message);
+				else
+					cb(ports);
+			});
+		} catch (e:Error) {
+			err(e.message);
+		}
+	}
+
+	private function dataHandler(bi:BytesInput):Void {
+		eString.dispatch(bi.readAll().toString());
 	}
 	
 	private function connect():Void {
-		try {
-			serialpack.list(_connect);
-		} catch (_:Dynamic) reconnect();
+		getList(connectHandler, error);
+	}
+
+	public function logPorts():Void {
+		getList(logPortsHandler, error);
+	}
+
+	private function logPortsHandler(ports:Array<SerialId>):Void {
+		for (port in ports) log(Std.string(port));
 	}
 	
-	private function _connect(err:Dynamic,ports:Array<Dynamic>):Void {
-		if (err != null) throw "Can't take com ports list";
-		else {
-			try {
-				Log.trace(ports);
-				if (ports.exists(function(e:Dynamic):Bool return e.comName == id)) {
-					var fcfg:SerialPortFullConfig = cast cfg;
-					fcfg.disconnectedCallback = reconnect;
-					sp = Type.createInstance(serialpack.SerialPort, [id, fcfg, true]);// , reconnect]);
-					sp.on('open', open.dispatch);
-					sp.on('error', error.dispatch);
-					sp.on('close', sp.open.bind(close.dispatch));
-					sp.on('data', readData);
+	private function connectHandler(ports:Array<SerialId>):Void {
+		var e:SerialId = ports.find(findPort);
+		if (e == null) return error("Can't find device");
+		log('Connect to ' + e.comName);
+		try {
+			var fcfg:SerialPortFullConfig = cast cfg;
+			fcfg.disconnectedCallback = reconnect;
+			sp = Type.createInstance(NPM.serialport, [e.comName, fcfg, false]);
+			sp.open(function (err:Error) {
+				if (err != null && err.message != 'Port is opening') {
+					error('Error opening port: ' + err.message);
 				} else {
-					reconnect();
+					if (cfg.notWaitFirstMessage) {
+						sp.drain(function(err:Dynamic) {
+							if (err == null) haxe.Timer.delay(eOpen.dispatch.bind(false), 1000);
+							else error('Error opening port: ' + err);
+						});
+					} else {
+						sp.once('data', eOpen.dispatch.bind(false));
+					}
 				}
-			} catch (_:Dynamic) reconnect();
+			});
+			sp.on('error', error);
+			sp.on('close', eClose.dispatch.bind(false));
+			sp.on('data', readData);
+		} catch (err:Dynamic) {
+			error(Std.string(err));
 		}
+	}
+
+	private function findPort(port:SerialId):Bool {
+		return checkPort(id, port);
+	}
+
+	/**
+	* Check a field in b
+	*/
+	public static function checkPort(a:SerialId, b:SerialId):Bool {
+		if (a.comName != null) if (a.comName != b.comName) return false;
+		if (a.manufacturer != null) if (a.manufacturer != b.manufacturer) return false;
+		if (a.serialNumber != null) if (a.serialNumber != b.serialNumber) return false;
+		if (a.pnpId != null) if (a.pnpId != b.pnpId) return false;
+		if (a.locationId != null) if (a.locationId != b.locationId) return false;
+		if (a.vendorId != null) if (a.vendorId != b.vendorId) return false;
+		if (a.productId != null) if (a.productId != b.productId) return false;
+		return true;
 	}
 	
 	private function reconnect():Void {
 		connected = false;
 		try {
-			error.silent = true;
 			sp.close(_reconnect);
 		} catch (err:Dynamic) {
 			_reconnect();
 		}
-		error.silent = false;
 	}
 	
 	private function _reconnect():Void {
-		Log.trace('SerialPort $id have problem, reconnect after 5sec...');
+		log('SerialPort ${id.comName} have problem, reconnect after 5sec...');
 		Timer.delay('5s', connect);
 	}
 	
 	private function readData(b:BytesData):Void {
-		data.dispatch(new BytesInput(Bytes.ofData(b)));
+		eData.dispatch(new BytesInput(Bytes.ofData(b)));
 	}
 	
 	private function check():Bool {
 		if (connected) return false;
 		else {
-			error.dispatch('Serial port not ready');
+			error('Serial port not ready');
 			return true;
 		}
 	}
 	
-	public function writeAsync(b:BytesOutput, ok:Void->Void, ?error:String->Void):Void {
+	public function writeAsync(b:BytesOutput, ok:Void -> Void, ?error:String -> ?PosInfos -> Void):Void {
 		if (check()) return;
-		sp.write(b.getBytes().getData(), function(err:Dynamic, result:Int) {
-			if (err == null && result > 0)
+		sp.write(Buffer.hxFromBytes(b.getBytes()), function(err:Dynamic) {
+			if (err == null)
 				sp.drain(function(err:Dynamic) {
-					if (err == null) haxe.Timer.delay(ok, 12);//More delays! >:)
+					if (err == null) haxe.Timer.delay(ok, 12);
 					else if (error != null) error(err);
 				});
 			else if (error != null) error(err);
@@ -139,9 +198,7 @@ class SerialPort implements Declarator {
 	}
 	
 	private function _write(b:BytesOutput):Void {
-		writeAsync(b, q.next, error.dispatch);
+		writeAsync(b, q.next, error);
 	}
-	
-	
 	
 }
