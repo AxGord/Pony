@@ -116,7 +116,7 @@ class HasAssetBuilder {
 					name: f == 'def' ? 'loadAsset' : 'loadAsset_' + f,
 					access: [APublic, AStatic],
 					kind: FieldType.FFun( {
-					args: [{name: 'asset', type:macro:pony.Or<Int,Array<Int>>, opt: true}, {name: 'cb', type:macro:Void->Void}],
+					args: [{name: 'asset', type:macro:pony.Or<Int,Array<Int>>, opt: true}, {name: 'cb', type:macro:Int->Int->Void}],
 							ret: macro:Void,
 							expr: macro pony.ui.AssetManager.load(
 								$v,
@@ -134,7 +134,7 @@ class HasAssetBuilder {
 				kind: FieldType.FFun( {
 				args: [{name: 'cb', type:macro:Int->Int->Void}],
 						ret: macro:Void,
-						expr: macro pony.ui.AssetManager.loadPath($v, ASSETS_LIST, cb)
+						expr: macro pony.ui.AssetManager.load($v, ASSETS_LIST, cb)
 					}),
 				pos: Context.currentPos()
 			});
@@ -170,7 +170,6 @@ class HasAssetBuilder {
 					}),
 				pos: Context.currentPos()
 			});
-			
 			fields.push({
 				name: f == 'def' ? 'image' : 'image_' + f,
 				access: [APublic, AStatic],
@@ -181,7 +180,6 @@ class HasAssetBuilder {
 					}),
 				pos: Context.currentPos()
 			});
-			
 			fields.push({
 				name: f == 'def' ? 'spine' : 'spine_' + f,
 				access: [APublic, AStatic],
@@ -211,6 +209,28 @@ class HasAssetBuilder {
 				args: [{name: 'asset', type:macro:Int}],
 						ret: null,
 						expr: macro return pony.ui.AssetManager.texture($v+'/'+ASSETS_LIST[asset], ASSETS_NAMES[asset])
+					}),
+				pos: Context.currentPos()
+			});
+
+			fields.push({
+				name: f == 'def' ? 'animation' : 'animation_' + f,
+				access: [APublic, AStatic],
+				kind: FieldType.FFun( {
+				args: [{name: 'asset', type:macro:Int}],
+						ret: null,
+						expr: macro return pony.ui.AssetManager.animation($v+'/'+ASSETS_LIST[asset], ASSETS_NAMES[asset])
+					}),
+				pos: Context.currentPos()
+			});
+
+			fields.push({
+				name: f == 'def' ? 'clip' : 'clip_' + f,
+				access: [APublic, AStatic],
+				kind: FieldType.FFun( {
+				args: [{name: 'asset', type:macro:Int}],
+						ret: null,
+						expr: macro return pony.ui.AssetManager.clip($v+'/'+ASSETS_LIST[asset], ASSETS_NAMES[asset])
 					}),
 				pos: Context.currentPos()
 			});

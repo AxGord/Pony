@@ -42,11 +42,11 @@ class SimpleXmlApp extends pony.ui.xml.PixiXmlUi {
 	private function init():Void {
 		createApp();
 		if (assetsForLoad == null) {
-			SimpleXmlApp.loadUI(preloadProgressHandler);
+			loadUI(preloadProgressHandler);
 		} else {
 			var pair:Pair<Int -> Int -> Void, Int -> Int -> Void> = AssetManager.cbjoin(preloadProgressHandler);
-			SimpleXmlApp.loadUI(pair.a);
-			AssetManager.loadPath(assetsForLoadPath, assetsForLoad, pair.b);
+			loadUI(pair.a);
+			AssetManager.load(assetsForLoadPath, assetsForLoad, pair.b);
 		}
 		if (!momentalLoad) {
 			var m:Int = Std.int(Math.min(Config.width, Config.height) / 20);

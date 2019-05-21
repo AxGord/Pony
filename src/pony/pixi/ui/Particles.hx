@@ -24,9 +24,9 @@ class Particles extends Sprite {
 		this.imagesurl = imagesurl;
 		this.asset = asset;
 		if (asset == null) {
-			AssetManager.load('', [cfgurl].concat(imagesurl), loadHandler);
+			AssetManager.loadComplete(AssetManager.load.bind('', [cfgurl].concat(imagesurl)), loadHandler);
 		} else {
-			AssetManager.load('', [cfgurl, asset], loadHandler);
+			AssetManager.loadComplete(AssetManager.load.bind('', [cfgurl, asset]), loadHandler);
 		}
 	}
 	

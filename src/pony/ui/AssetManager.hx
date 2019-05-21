@@ -1,7 +1,9 @@
 package pony.ui;
 
 import haxe.rtti.Meta;
-#if pixijs
+#if heaps
+import pony.heaps.HeapsAssets;
+#elseif pixijs
 import pony.pixi.PixiAssets;
 #elseif openfl
 import pony.openfl.OpenflAssets;
@@ -10,6 +12,7 @@ import pony.Or;
 import pony.Tasks;
 import pony.math.MathTools;
 import pony.time.DeltaTime;
+
 using Lambda;
 
 /**
@@ -20,7 +23,7 @@ class AssetManager {
 
 	public static var baseUrl:String = '';
 	private static var loadedAssets:Array<String> = [];
-	private static var globalLoad:Map<String, Array<Void -> Void>> = new Map();
+	private static var globalLoad:Map<String, Array<Int -> Int -> Void>> = new Map();
 	
 	public static var local:String = '';
 
@@ -45,76 +48,93 @@ class AssetManager {
 			return;
 		}
 		if (pathes.length == 0) {
-			loadPath(assets, cb);
+			load(assets, cb);
 			return;
 		} else if (pathes.length == 1) {
-			loadPath([for (a in assets) pathes[0] + '/' + a], cb);
+			load([for (a in assets) pathes[0] + '/' + a], cb);
 			return;
 		}
-		var total = pathes.length * assets.length;
-		var loaded:Array<Int> = [];
-		var i = 0;
-		function update() {
-			var s = 0;
-			for (l in loaded) s += l;
-			cb(s, total);
-		}
-		var called:Bool = false;
+		var loaded:Array<Int> = [for (_ in 0...pathes.length) 0];
+		var totals:Array<Int> = [for (_ in 0...pathes.length) 10];
+		var i:Int = 0;
+		var prevLoaded:Int = 0;
+		var prevTotals:Int = 0;
 		for (path in pathes) {
-			loaded.push(0);
-			var n = i++;
-			loadPath(path, assets, function(a:Int, _) {
-				if (a == 0) return;
+			var n:Int = i++;
+			load(path, assets, function(a:Int, t:Int) {
 				loaded[n] = a;
-				update();
-				called = true;
+				totals[n] = t;
+				var loadedSum = sum(loaded);
+				var totalSum = sum(totals);
+				if (loadedSum != prevLoaded || totalSum != prevTotals) {
+					prevLoaded = loadedSum;
+					prevTotals = totalSum;
+					cb(loadedSum, totalSum);
+				}
 			});
 		}
-		if (!called) cb(0, total);
 	}
 	
-	public static function loadPath(path:String = '', assets:Array<String>, cb:Int -> Int -> Void):Void {
-		var i = 0;
-		var l = assets.length;
-		for (asset in assets) {
-			load(path, asset, function() cb(++i, l));
+	public static function load(path:String = '', asset:Or<String, Array<String>>, cb:Int -> Int -> Void):Void {
+		switch asset {
+			case OrState.A(a):
+				var r:Array<String> = parseInterval(a);
+				if (r.length > 1) asset = OrState.B(r);
+			case OrState.B(a):
+				if (a.length == 1) asset = OrState.A(a.pop());
 		}
-		if (i == 0) cb(0, l);
-	}
-	
-	public static function load(path:String, asset:Or<String, Array<String>>, cb:Void -> Void):Void {
 		switch asset {
 			case OrState.A(asset):
 				asset = (path == '' ? '' : path + '/') + asset;
 				if (loadedAssets.indexOf(asset) != -1) {
-					cb();
+					cb(10, 10);
 					return;
 				}
 				if (globalLoad.exists(asset)) {
 					globalLoad[asset].push(cb);
 				} else {
 					globalLoad[asset] = [];
-					_load(asset, function() {
-						cb();
-						globalLoaded(asset);
+					var called:Bool = false;
+					_load(asset, function(c:Int, t:Int) {
+						cb(c, t);
+						globalLoaded(asset, c, t);
+						called = true;
 					});
+					if (!called) cb(0, 10);
 				}
 			case OrState.B(assets):
-				var tasks:Tasks = new Tasks(cb);
-				tasks.add();
+				var loaded:Array<Int> = [for (_ in 0...assets.length) 0];
+				var totals:Array<Int> = [for (_ in 0...assets.length) 10];
+				var i:Int = 0;
+				var prevLoaded:Int = 0;
+				var prevTotals:Int = 0;
 				for (asset in assets) {
-					tasks.add();
-					load(path, asset, tasks.end);
+					var n:Int = i++;
+					load(path, asset, function(c:Int, t:Int) {
+						loaded[n] = c;
+						totals[n] = t;
+						var loadedSum = sum(loaded);
+						var totalSum = sum(totals);
+						if (loadedSum != prevLoaded || totalSum != prevTotals) {
+							prevLoaded = loadedSum;
+							prevTotals = totalSum;
+							cb(loadedSum, totalSum);
+						}
+					});
 				}
-				tasks.end();
 		}
 	}
+
+	private static function sum(a:Array<Int>):Int return Lambda.fold(a, _sum, 0);
+	private static function _sum(v:Int, p:Int):Int return v + p;
 	
-	private static function globalLoaded(asset:String):Void {
+	private static function globalLoaded(asset:String, c:Int, t:Int):Void {
 		loadedAssets.push(asset);
-		for (f in globalLoad[asset]) f();
-		globalLoad.remove(asset);
-		monitor(loadedAssets.length, globalLoad.count());
+		for (f in globalLoad[asset]) f(c, t);
+		if (c == t) {
+			globalLoad.remove(asset);
+			monitor(loadedAssets.length, globalLoad.count());
+		}
 	}
 	
 	public static function backLoad(asset:String):Void {
@@ -125,7 +145,7 @@ class AssetManager {
 		}
 	}
 	
-	public static function loadPackWithChilds(cl:String, pathes:Array<String>, assets:Array<String>, cb:Int->Int->Void):Void {
+	public static function loadPackWithChilds(cl:String, pathes:Array<String>, assets:Array<String>, cb:Int -> Int -> Void):Void {
 		var chs = Meta.getType(Type.resolveClass(cl)).assets_childs;
 		if (chs == null) {
 			loadPack(pathes, assets, cb);
@@ -136,9 +156,9 @@ class AssetManager {
 		loadChildPack(chs, p.b);
 	}
 	
-	private static function loadChildPack(chs:Array<Dynamic>, cb:Int->Int->Void):Void {
+	private static function loadChildPack(chs:Array<Dynamic>, cb:Int -> Int -> Void):Void {
 		var f = cb;
-		for (i in 0...(chs.length-1)) {
+		for (i in 0...(chs.length - 1)) {
 			var p = cbjoin(f);
 			f = p.a;
 			var s = Type.resolveClass(chs[i]);
@@ -203,7 +223,7 @@ class AssetManager {
 		}
 	}
 	
-	public static function loadList(count:Int, cb:Int->Int->Void):Array<Int->Int->Void> {
+	public static function loadList(count:Int, cb:Int -> Int -> Void):Array<Int -> Int -> Void> {
 		var totals:Array<Int> = [for (_ in 0...count) 1];
 		var currents:Array<Int> = [for (_ in 0...count) 0];
 		return [for (i in 0...count) function(c:Int, t:Int) {
@@ -212,25 +232,56 @@ class AssetManager {
 			cb(MathTools.arraySum(currents), MathTools.arraySum(totals));
 		}];
 	}
+
+	public static function parseInterval(asset:String):Array<String> {
+		var a:Array<String> = asset.split('...');
+		if (a.length != 2) return [asset];
+		var right:Array<String> = a.pop().split('}');
+		var left:Array<String> = a.pop().split('{');
+		var begin:Int = Std.parseInt(left.pop());
+		var sBegin:String = left.pop();
+		var sEnd:String = right.pop();
+		var end:Int = Std.parseInt(right.pop());
+		return [for (i in begin...end) sBegin + i + sEnd];
+	}
 	
-	#if pixijs
-	@:extern public static inline function _load(asset:String, cb:Void -> Void):Void PixiAssets.load(asset, cb);
+	#if heaps
+	@:extern public static inline function _load(asset:String, cb:Int -> Int -> Void):Void HeapsAssets.load(asset, cb);
+	@:extern public static inline function _reset(asset:String):Void HeapsAssets.reset(asset);
+	@:extern public static inline function image(asset:String, ?name:String) return HeapsAssets.image(asset, name);
+	@:extern public static inline function texture(asset:String, ?name:String) return HeapsAssets.texture(asset, name);
+	@:extern public static inline function animation(asset:String, ?name:String) return HeapsAssets.animation(asset, name);
+	@:extern public static inline function clip(asset:String, ?name:String) return HeapsAssets.clip(asset, name);
+	@:extern public static inline function sound(asset:String) return asset;
+	@:extern public static inline function spine(asset:String) return asset;
+	#elseif pixijs
+	@:extern public static inline function _load(asset:String, cb:Int -> Int -> Void):Void PixiAssets.load(asset, cb.bind(10, 10));
 	@:extern public static inline function _reset(asset:String):Void PixiAssets.reset(asset);
 	@:extern public static inline function image(asset:String, ?name:String) return PixiAssets.image(asset, name);
 	@:extern public static inline function texture(asset:String, ?name:String) return PixiAssets.texture(asset, name);
+	@:extern public static inline function animation(asset:String, ?name:String) return asset;
+	@:extern public static inline function clip(asset:String, ?name:String) return asset;
 	@:extern public static inline function sound(asset:String) return PixiAssets.sound(asset);
 	@:extern public static inline function spine(asset:String) return PixiAssets.spine(asset);
 	@:extern public static inline function text(asset:String) return PixiAssets.text(asset);
 	@:extern public static inline function json(asset:String) return PixiAssets.json(asset);
 	#elseif openfl
-	@:extern public static inline function _load(asset:String, cb:Void -> Void):Void OpenflAssets.load(asset, cb);
+	@:extern public static inline function _load(asset:String, cb:Int -> Int -> Void):Void OpenflAssets.load(asset, cb.bind(10, 10));
 	@:extern public static inline function _reset(asset:String):Void trace('Reset: $asset');
 	@:extern public static inline function image(asset:String, ?name:String) return OpenflAssets.image(asset);
 	@:extern public static inline function texture(asset:String, ?name:String) return asset;
+	@:extern public static inline function animation(asset:String, ?name:String) return asset;
+	@:extern public static inline function clip(asset:String, ?name:String) return asset;
+	@:extern public static inline function sound(asset:String) return asset;
+	@:extern public static inline function spine(asset:String) return asset;
 	#else
-	@:extern public static inline function _load(asset:String, cb:Void -> Void):Void trace('Load: $asset');
+	@:extern public static inline function _load(asset:String, cb:Int -> Int -> Void):Void trace('Load: $asset');
 	@:extern public static inline function _reset(asset:String):Void trace('Reset: $asset');
 	@:extern public static inline function image(asset:String, ?name:String) return asset;
 	@:extern public static inline function texture(asset:String, ?name:String) return asset;
+	@:extern public static inline function animation(asset:String, ?name:String) return asset;
+	@:extern public static inline function clip(asset:String, ?name:String) return asset;
+	@:extern public static inline function sound(asset:String) return asset;
+	@:extern public static inline function spine(asset:String) return asset;
 	#end
 }

@@ -107,8 +107,8 @@ class XmlUiBuilder {
 				var pts = [];
 				for (p in pathes) if (pts.indexOf(p) == -1) pts.push(p);
 				var ps:Array<Expr> = [for (p in pts) macro $v{p}];
-				fields.push({name: 'loadUI', kind:FFun({args:[{name:'cb', type:macro:Int->Int->Void}], ret:null,
-					expr:macro pony.ui.AssetManager.loadPath('', $a{ps}, cb)}), pos: Context.currentPos(), access: [AStatic, APublic]});
+				fields.push({name: 'loadUI', kind:FFun({args:[{name:'cb', type:macro:Int -> Int -> Void}], ret:null,
+					expr:macro pony.ui.AssetManager.load('', $a{ps}, cb)}), pos: Context.currentPos(), access: [AStatic, APublic]});
 			case _: Context.error('Wrong ui type', meta.getMeta(':ui').params[0].pos);
 		}
 		
