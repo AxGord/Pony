@@ -7,15 +7,12 @@
 <p align="center"><img width="65%" src="http://qlex.ru/pony_logo_hor.svg?v=1"/></p>
 
 
-The library has a set of tools for develop, prepare, building, testing and publication project.
+Pony is a set of tools for developing, preparing, building, testing and publishing projects.
+It can be used for creating NodeJS, PHP, PixiJS, OpenFL, Unity3D, Flash, Electron, Cordova, and Cocos Creator applications.
 
-Can be used for create nodejs, php, pixijs, openfl, unity3d, flash, electron, cordova, cocos creator applications.
+It works on servers or client-side.
 
-Work on server or client sides.
-
-Library has XML based UI building system and components.
-
-Has powerful event system and many utils functional.
+The library has an XML-based UI building system and components, a powerful event system, and many utility functions.
 
 Installation
 ============
