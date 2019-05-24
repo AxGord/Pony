@@ -56,20 +56,19 @@ class SerialPort extends Logable implements Declarator {
 	public var connected(default, null):Bool;
 	
 	@:auto public var onOpen:Signal0;
-	@:auto public var onClose:Signal0;
+	@:auto public var onClose:Signal1<SerialPort>;
 	@:auto public var onData:Signal1<BytesInput>;
 	@:auto public var onString:Signal1<String>;
 	
 	private var sp:Dynamic;
-	
-	private var q:Queue<BytesOutput -> Void>;
+	private var q:Queue<BytesOutput -> Void> = new Queue < BytesOutput -> Void > (_write);
+	private var lastDelay:Timer;
 	
 	@:arg public var id:SerialId;
 	@:arg private var cfg:SerialPortConfig = {};
 	
 	public function new() {
 		super();
-		q = new Queue < BytesOutput -> Void > (_write);
 		onError << reconnect;
 		onOpen << function() connected = true;
 		if (cfg.readString)
@@ -102,8 +101,16 @@ class SerialPort extends Logable implements Declarator {
 		getList(logPortsHandler, error);
 	}
 
+	public static function tracePorts():Void {
+		getList(tracePortsHandler, haxe.Log.trace);
+	}
+
 	private function logPortsHandler(ports:Array<SerialId>):Void {
 		for (port in ports) log(Std.string(port));
+	}
+
+	private static function tracePortsHandler(ports:Array<SerialId>):Void {
+		for (port in ports) trace(port);
 	}
 	
 	private function connectHandler(ports:Array<SerialId>):Void {
@@ -120,20 +127,28 @@ class SerialPort extends Logable implements Declarator {
 				} else {
 					if (cfg.notWaitFirstMessage) {
 						sp.drain(function(err:Dynamic) {
-							if (err == null) haxe.Timer.delay(eOpen.dispatch.bind(false), 1000);
+							if (err == null) haxe.Timer.delay(openHandler, 1000);
 							else error('Error opening port: ' + err);
 						});
 					} else {
-						sp.once('data', eOpen.dispatch.bind(false));
+						sp.once('data', openHandler);
 					}
 				}
 			});
 			sp.on('error', error);
-			sp.on('close', eClose.dispatch.bind(false));
+			sp.on('close', closeHandler);
 			sp.on('data', readData);
 		} catch (err:Dynamic) {
 			error(Std.string(err));
 		}
+	}
+
+	private function openHandler():Void {
+		eOpen.dispatch();
+	}
+
+	private function closeHandler():Void {
+		eClose.dispatch(this);
 	}
 
 	private function findPort(port:SerialId):Bool {
@@ -165,7 +180,7 @@ class SerialPort extends Logable implements Declarator {
 	
 	private function _reconnect():Void {
 		log('SerialPort ${id.comName} have problem, reconnect after 5sec...');
-		Timer.delay('5s', connect);
+		lastDelay = Timer.delay('5s', connect);
 	}
 	
 	private function readData(b:BytesData):Void {
@@ -194,11 +209,24 @@ class SerialPort extends Logable implements Declarator {
 	
 	public function write(b:BytesOutput):Void {
 		if (check()) return;
-		q.call(b);
+		if (q != null) q.call(b);
 	}
 	
 	private function _write(b:BytesOutput):Void {
-		writeAsync(b, q.next, error);
+		if (q != null) writeAsync(b, q.next, error);
+	}
+
+	public function destroy():Void {
+		destroySignals();
+		q.destroy();
+		q = null;
+		sp = null;
+		id = null;
+		cfg == null;
+		if (lastDelay != null) {
+			lastDelay.destroy();
+			lastDelay = null;
+		}
 	}
 	
 }

@@ -28,4 +28,11 @@ class Queue<T> {
 	
 	inline public function next():Void list.length > 0 ? Reflect.callMethod(null, cast method, list.pop()) : busy = false;
 	
+	public function destroy():Void {
+		list.clear();
+		busy = true;
+		call = null;
+		method = null;
+	}
+
 }
