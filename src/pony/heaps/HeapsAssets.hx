@@ -11,6 +11,7 @@ import hxd.res.Atlas;
 import hxd.res.Loader;
 import pony.Pair;
 import pony.ui.AssetManager;
+import pony.ui.gui.slices.SliceTools;
 
 @:enum abstract Ext(String) to String {
 	var ATLAS = 'atlas';
@@ -108,7 +109,10 @@ class HeapsAssets {
 				p.b.getAnim(name);
 			case PNG, JPG, JPEG:
 				if (name != null) throw ERROR_NAME_SET;
-				[for (e in AssetManager.parseInterval(asset)) texture(e)];
+				var assets:Array<String> = AssetManager.parseInterval(asset);
+				if (assets.length == 1)
+					assets = SliceTools.getNames(assets[0]);
+				[for (e in assets) texture(e)];
 			case _:
 				throw ERROR_NOT_SUPPORTED;
 		};

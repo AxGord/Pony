@@ -12,6 +12,7 @@ import pony.Or;
 import pony.Tasks;
 import pony.math.MathTools;
 import pony.time.DeltaTime;
+import pony.ui.gui.slices.SliceTools;
 
 using Lambda;
 
@@ -79,6 +80,8 @@ class AssetManager {
 		switch asset {
 			case OrState.A(a):
 				var r:Array<String> = parseInterval(a);
+				if (r.length == 1)
+					r = SliceTools.getNames(r[0]);
 				if (r.length > 1) asset = OrState.B(r);
 			case OrState.B(a):
 				if (a.length == 1) asset = OrState.A(a.pop());
