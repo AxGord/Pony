@@ -5,14 +5,17 @@ import h2d.Object;
 import h2d.Tile;
 import pony.geom.Point;
 
-class NodeBitmap extends Node {
+/**
+ * NodeBitmap
+ * @author AxGord <axgord@gmail.com>
+ */
+@:final class NodeBitmap extends Node {
 
 	public var bitmap(default, null):Bitmap;
 
 	public function new(?tile:Tile, ?parent:Object) {
-		super(parent);
+		super(new Point(tile.width, tile.height), parent);
 		bitmap = new Bitmap(tile, this);
-		wh = new Point(tile.width, tile.height);
 		changeWh << updateScales;
 		changeFlipx << updateScales;
 		changeFlipy << updateScales;

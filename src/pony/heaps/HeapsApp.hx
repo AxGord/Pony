@@ -19,6 +19,10 @@ import js.Browser;
 import pony.magic.HasSignal;
 import hxd.App;
 
+/**
+ * HeapsApp
+ * @author AxGord <axgord@gmail.com>
+ */
 class HeapsApp extends App implements HasSignal {
 
 	public static var instance:HeapsApp;
