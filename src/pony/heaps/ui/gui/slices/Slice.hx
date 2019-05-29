@@ -10,7 +10,7 @@ import pony.ui.gui.slices.SliceData;
  */
 class Slice {
 	
-	public static function create(tiles:Array<Tile>, ?src:String, ?repeat:Bool, ?vert:Bool, ?parent:h2d.Object):INode {
+	public static function create(tiles:Array<Tile>, ?src:String, ?repeat:Bool, ?vert:Bool, ?parent:h2d.Object):Node {
 		if (src == null) {
 			return switch tiles.length {
 				case 1 if (repeat):
