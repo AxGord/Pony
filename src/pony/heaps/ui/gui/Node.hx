@@ -5,18 +5,20 @@ import h2d.Object;
 import pony.magic.HasSignal;
 import pony.magic.HasLink;
 import pony.geom.Point;
+import pony.geom.IWH;
 
 /**
  * Node
  * @author AxGord <axgord@gmail.com>
  */
-class Node extends Drawable implements HasSignal implements HasLink implements INode {
+class Node extends Drawable implements HasSignal implements HasLink implements INode implements IWH {
 
 	@:bindable public var wh:Point<Float>;
 	@:bindable public var flipx:Bool;
 	@:bindable public var flipy:Bool;
 	public var w(link, set):Float = wh.x;
 	public var h(link, set):Float = wh.y;
+	public var size(link, never):Point<Float> = wh;
 
 	public function new(size:Point<Float>, ?parent:Object) {
 		super(parent);
@@ -33,6 +35,8 @@ class Node extends Drawable implements HasSignal implements HasLink implements I
 		return v;
 	}
 
+	public function wait(cb:Void -> Void):Void cb();
+
 	public function destroy():Void {
 		removeChildren();
 		changeWh.clear();
@@ -41,5 +45,7 @@ class Node extends Drawable implements HasSignal implements HasLink implements I
 		parent = null;
 		destroySignals();
 	}
+
+	public function destroyIWH():Void destroy();
 
 }

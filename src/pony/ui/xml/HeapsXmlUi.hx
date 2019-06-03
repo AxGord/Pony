@@ -7,6 +7,7 @@ import h2d.Graphics;
 import pony.magic.HasAbstract;
 import pony.geom.Point;
 import pony.geom.Border;
+import pony.geom.Align;
 import pony.color.UColor;
 import pony.heaps.HeapsApp;
 import pony.heaps.HeapsAssets;
@@ -14,6 +15,11 @@ import pony.heaps.ui.gui.Node;
 import pony.heaps.ui.gui.NodeBitmap;
 import pony.heaps.ui.gui.NodeRepeat;
 import pony.heaps.ui.gui.slices.Slice;
+import pony.heaps.ui.gui.layout.IntervalLayout;
+import pony.heaps.ui.gui.layout.RubberLayout;
+import pony.heaps.ui.gui.layout.AlignLayout;
+import pony.heaps.ui.gui.layout.BGLayout;
+import pony.ui.xml.UiTags;
 
 using pony.text.TextTools;
 
@@ -29,7 +35,8 @@ using pony.text.TextTools;
 	circle: h2d.Graphics,
 	image: pony.heaps.ui.gui.NodeBitmap,
 	tile: pony.heaps.ui.gui.NodeRepeat,
-	slice: pony.heaps.ui.gui.Node
+	slice: pony.heaps.ui.gui.Node,
+	layout: pony.heaps.ui.gui.layout.TLayout
 }))
 #end
 class HeapsXmlUi extends Scene implements HasAbstract {
@@ -40,11 +47,11 @@ class HeapsXmlUi extends Scene implements HasAbstract {
 	private function createUIElement(name:String, attrs:Dynamic<String>, content:Array<Dynamic>):Dynamic {
 		if (attrs.reverse.isTrue()) content.reverse();
 		var obj:Object = switch name {
-			case 'node':
+			case UiTags.node:
 				var s:Object = new Object();
 				for (e in content) s.addChild(e);
 				s;
-			case 'rect':
+			case UiTags.rect:
 				var color:UColor = UColor.fromString(attrs.color);
 				var g:Graphics = new Graphics();
 				g.beginFill(color.rgb, color.invertAlpha.af);
@@ -54,14 +61,14 @@ class HeapsXmlUi extends Scene implements HasAbstract {
 					g.drawRoundedRect(0, 0, parseAndScale(attrs.w), parseAndScale(attrs.h), parseAndScaleInt(attrs.round));
 				g.endFill();
 				g;
-			case 'line':
+			case UiTags.line:
 				var color:UColor = UColor.fromString(attrs.color);
 				var g:Graphics = new Graphics();
 				g.lineStyle(parseAndScale(attrs.size), color.rgb, color.invertAlpha.af);
 				g.moveTo(0, 0);
 				g.lineTo(parseAndScale(attrs.w), parseAndScale(attrs.h));
 				g;
-			case 'circle':
+			case UiTags.circle:
 				var g = new Graphics();
 				if (attrs.line != null) {
 					var a = attrs.line.split(' ');
@@ -79,8 +86,10 @@ class HeapsXmlUi extends Scene implements HasAbstract {
 				g.drawCircle(0, 0, parseAndScale(attrs.r));
 				g.endFill();
 				g;
-			case 'image':
+			case UiTags.image:
 				Slice.create(HeapsAssets.animation(attrs.name != null ? attrs.name : attrs.src), attrs.src, attrs.repeat.isTrue());
+			case UiTags.layout:
+				createLayout(attrs, content);
 			case _:
 				customUIElement(name, attrs, content);
 		}
@@ -112,6 +121,38 @@ class HeapsXmlUi extends Scene implements HasAbstract {
 		if (attrs.y != null) obj.y = parseAndScale(attrs.y);
 		if (attrs.visible.isFalse()) obj.visible = false;
 		return obj;
+	}
+
+	@:extern private inline function createLayout(attrs:Dynamic<String>, content:Array<Dynamic>):Object {
+		var align = Align.fromString(attrs.align);
+		return if (attrs.src != null) {
+			var l = new BGLayout(HeapsAssets.image(attrs.src, attrs.name), attrs.vert.isTrue(), scaleBorderInt(attrs.border));
+			for (e in content) l.add(e);
+			l;
+		} else if (attrs.iv != null) {
+			var l = new IntervalLayout(parseAndScaleInt(attrs.iv), true, scaleBorderInt(attrs.border), align);
+			for (e in content) l.add(e);
+			l;
+		} else if (attrs.ih != null) {
+			var l = new IntervalLayout(parseAndScaleInt(attrs.iv), false, scaleBorderInt(attrs.border), align);
+			for (e in content) l.add(e);
+			l;
+		} else if (attrs.w != null || attrs.h != null) {
+			var r = new RubberLayout(
+				parseAndScale(attrs.w),
+				parseAndScale(attrs.h),
+				attrs.vert.isTrue(),
+				scaleBorderInt(attrs.border),
+				attrs.padding == null ? true : attrs.padding.isTrue(),
+				align
+			);
+			for (e in content) r.add(e);
+			r;
+		} else {
+			var s = new AlignLayout(align, scaleBorderInt(attrs.border));
+			for (e in content) s.add(e);
+			s;
+		}
 	}
 
 	@:extern private inline function parseSizePointFloat(a:Dynamic<String>):Point<Float> {
