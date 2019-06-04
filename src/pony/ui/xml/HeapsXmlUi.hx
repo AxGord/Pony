@@ -4,6 +4,7 @@ import h2d.Scene;
 import h2d.Object;
 import h2d.Drawable;
 import h2d.Graphics;
+import h2d.Text;
 import pony.magic.HasAbstract;
 import pony.geom.Point;
 import pony.geom.Border;
@@ -33,6 +34,7 @@ using pony.text.TextTools;
 	rect: h2d.Graphics,
 	line: h2d.Graphics,
 	circle: h2d.Graphics,
+	text: h2d.Text,
 	image: pony.heaps.ui.gui.NodeBitmap,
 	tile: pony.heaps.ui.gui.NodeRepeat,
 	slice: pony.heaps.ui.gui.Node,
@@ -87,9 +89,16 @@ class HeapsXmlUi extends Scene implements HasAbstract {
 				g.endFill();
 				g;
 			case UiTags.image:
-				Slice.create(HeapsAssets.animation(attrs.name != null ? attrs.name : attrs.src), attrs.src, attrs.repeat.isTrue());
+				Slice.create(
+					HeapsAssets.animation(attrs.src, attrs.name),
+					attrs.name == null ? attrs.src : attrs.name,
+					attrs.repeat.isTrue()
+				);
 			case UiTags.layout:
 				createLayout(attrs, content);
+			case UiTags.text:
+				// new Text(HeapsAssets.font(attrs.src));
+				throw 'todo';
 			case _:
 				customUIElement(name, attrs, content);
 		}
