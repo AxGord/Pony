@@ -28,6 +28,11 @@ abstract NapeSpaceView(NapeSpaceViewBase) from NapeSpaceViewBase to NapeSpaceVie
 	@:op(a.b) public inline function resolve(s:String):NapeGroupView {
 		return this.resolve(s);
 	}
+
+	public static inline function clearCache():Void {
+		NapeSpaceViewBase.clearCache();
+	}
+
 }
 
 /**

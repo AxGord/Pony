@@ -1,5 +1,6 @@
 package pony.ui.xml;
 
+import h2d.Font;
 import h2d.Scene;
 import h2d.Object;
 import h2d.Drawable;
@@ -43,6 +44,9 @@ using pony.text.TextTools;
 #end
 class HeapsXmlUi extends Scene implements HasAbstract {
 	
+	private static inline var HALF:Float = 0.5;
+	private static var fonts:Map<String, Font> = new Map();
+
 	private var SCALE:Float = 1;
 	public var app(default, null):HeapsApp;
 	
@@ -97,8 +101,7 @@ class HeapsXmlUi extends Scene implements HasAbstract {
 			case UiTags.layout:
 				createLayout(attrs, content);
 			case UiTags.text:
-				// new Text(HeapsAssets.font(attrs.src));
-				throw 'todo';
+				createText(attrs, content);
 			case _:
 				customUIElement(name, attrs, content);
 		}
@@ -129,7 +132,49 @@ class HeapsXmlUi extends Scene implements HasAbstract {
 		if (attrs.x != null) obj.x = parseAndScale(attrs.x);
 		if (attrs.y != null) obj.y = parseAndScale(attrs.y);
 		if (attrs.visible.isFalse()) obj.visible = false;
+		if (attrs.alpha != null) obj.alpha = Std.parseFloat(attrs.alpha);
+		if (attrs.scale != null) {
+			var a:Array<String> = attrs.scale.split(' ');
+			if (a.length == 1) {
+				obj.scale(Std.parseFloat(a[0]));
+			} else {
+				obj.scaleX = Std.parseFloat(a[0]);
+				obj.scaleY = Std.parseFloat(a[1]);
+			}
+		}
 		return obj;
+	}
+
+	@:extern private inline function createText(attrs:Dynamic<String>, content:Array<Dynamic>):Object {
+		var t:Text = new Text(getFont(attrs));
+		if (attrs.color != null)
+			t.textColor = UColor.fromString(attrs.color).rgb;
+		if (attrs.align != null)
+			t.textAlign = h2d.Text.Align.createByName(TextTools.bigFirst(attrs.align));
+		if (attrs.shadow != null && attrs.shadow.length > 0) {
+			var a:Array<String> = StringTools.trim(attrs.shadow).split(' ');
+			var color:UColor = 0;
+			if (a[0].charAt(0) == '#')
+				color = a.shift();
+			else if (a[a.length - 1].charAt(0) == '#')
+				color = a.pop();
+			var dx:Int = null;
+			var dy:Int = null;
+			if (a.length > 0)
+				dy = Std.parseInt(a.pop());
+			if (a.length > 0) {
+				dx = Std.parseInt(a.pop());
+			} else {
+				if (dx == null)
+					dx = 4;
+				dy = dx;
+			}
+			t.dropShadow = {dx: dx, dy: dy, color: color.rgb, alpha: color.invertAlpha.af};
+		}
+		if (attrs.smooth.isTrue())
+			t.smooth = true;
+		t.text = textTransform(_putData(content), attrs.transform);
+		return t;
 	}
 
 	@:extern private inline function createLayout(attrs:Dynamic<String>, content:Array<Dynamic>):Object {
@@ -164,6 +209,14 @@ class HeapsXmlUi extends Scene implements HasAbstract {
 		}
 	}
 
+	private static function textTransform(text:String, transform:String):String {
+		return switch transform {
+			case 'uppercase': text.toUpperCase();
+			case 'lowercase': text.toLowerCase();
+			case _: text;
+		}
+	}
+
 	@:extern private inline function parseSizePointFloat(a:Dynamic<String>):Point<Float> {
 		return new Point<Float>(parseAndScale(a.w), parseAndScale(a.h));
 	}
@@ -185,6 +238,20 @@ class HeapsXmlUi extends Scene implements HasAbstract {
 	}
 	
 	@:extern private inline function scaleBorderInt(s:String):Border<Int> return cast (Border.fromString(s) * SCALE);
+
+	private function getFont(attrs:Dynamic<String>):Font {
+		var name:String = attrs.src;
+		var cacheName:String = name;
+		var size:Int = parseAndScaleInt(attrs.size);
+		if (size != 0) cacheName += size;
+		var font:Font = fonts[cacheName];
+		if (font != null) return font;
+		font = HeapsAssets.font(attrs.src).clone();
+		HeapsAssets.setFontType(font, attrs.type);
+		if (size != 0) font.resizeTo(size);
+		fonts[cacheName] = font;
+		return font;
+	}
 
 	private function _putData(content:Array<Dynamic>):String return putData(content.length > 0 ? content[0] : '');
 	private function putData(c:String):String return c;

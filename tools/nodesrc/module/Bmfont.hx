@@ -39,6 +39,7 @@ class Bmfont extends NModule<BmfontConfig> {
 			fieldType: type,
 			outputType: format,
 			distanceRange: 2,
+			texturePadding: 0,
 			textureSize: [2048, 2048]
 		}, function(err:Any, textures:Array<{filename:String, texture:Dynamic}>, font:{filename:String, data:String, options:Dynamic}) {
 			log('End generation: ' + output);
@@ -67,6 +68,7 @@ class Bmfont extends NModule<BmfontConfig> {
 			printNodes(xml, 'info'),
 			printNodes(xml, 'common'),
 			printNodes(xml.node.pages, 'page'),
+			printNodes(xml, 'distanceField'),
 			printNodes(xml, 'chars'),
 			printNodes(xml.node.chars, 'char')
 		].join('\n');

@@ -247,6 +247,10 @@ class AssetManager {
 		var end:Int = Std.parseInt(right.pop());
 		return [for (i in begin...end) sBegin + i + sEnd];
 	}
+
+	public static inline function removeBase(path:String):String {
+		return path.substr(baseUrl.length);
+	}
 	
 	#if heaps
 	@:extern public static inline function _load(asset:String, cb:Int -> Int -> Void):Void HeapsAssets.load(asset, cb);

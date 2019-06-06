@@ -7,4 +7,5 @@ package pony.ui.xml;
 	var circle = 'circle';
 	var image = 'image';
 	var layout = 'layout';
+	var text = 'text';
 }
