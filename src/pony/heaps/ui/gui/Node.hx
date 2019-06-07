@@ -1,5 +1,6 @@
 package pony.heaps.ui.gui;
 
+import h3d.Vector;
 import h2d.Drawable;
 import h2d.Object;
 import pony.magic.HasSignal;
@@ -19,6 +20,7 @@ class Node extends Drawable implements HasSignal implements HasLink implements I
 	public var w(link, set):Float = wh.x;
 	public var h(link, set):Float = wh.y;
 	public var size(link, never):Point<Float> = wh;
+	@:bindable public var tint:Vector = new Vector(1, 1, 1, 1);
 
 	public function new(size:Point<Float>, ?parent:Object) {
 		super(parent);

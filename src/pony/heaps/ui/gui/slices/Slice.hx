@@ -38,6 +38,8 @@ class Slice {
 			}
 		} else {
 			return switch SliceTools.getType(src) {
+				case Not() if (repeat):
+					new NodeRepeat(tiles[0], parent);
 				case Not():
 					new NodeBitmap(tiles[0], parent);
 				case Hor2():

@@ -8,4 +8,5 @@ package pony.ui.xml;
 	var image = 'image';
 	var layout = 'layout';
 	var text = 'text';
+	var button = 'button';
 }

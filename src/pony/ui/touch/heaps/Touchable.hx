@@ -46,11 +46,10 @@ class Touchable extends TouchableBase {
 	private var over:Bool = false;
 	private var _down:Bool = false;
 	
-	public function new(obj:Drawable) {
+	public function new(interactive:Interactive) {
 		init();
 		super();
-		var s = obj.getSize();
-		interactive = new Interactive(s.width, s.height, obj);
+		this.interactive = interactive;
 		interactive.onOver = overHandler;
 		interactive.onOut = outHandler;
 		interactive.onPush = downHandler;

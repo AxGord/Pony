@@ -4,6 +4,7 @@ package pony.heaps.ui.gui;
 import h2d.Graphics;
 import h2d.Object;
 import h2d.Tile;
+import h3d.Vector;
 import pony.geom.Point;
 
 /**
@@ -22,6 +23,7 @@ import pony.geom.Point;
 		changeWh << updateSize;
 		changeFlipx << changeFlipxHandler;
 		changeFlipy << changeFlipyHandler;
+		changeTint << updateColor;
 		updateSize();
 	}
 
@@ -29,6 +31,10 @@ import pony.geom.Point;
 		graphics.clear();
 		graphics.drawRect(0, 0, w, h);
 		updatePosition();
+	}
+
+	private function updateColor(v:Vector):Void {
+		graphics.color = v;
 	}
 
 	private function changeFlipxHandler(flip:Bool):Void {

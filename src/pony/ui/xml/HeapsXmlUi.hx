@@ -1,5 +1,6 @@
 package pony.ui.xml;
 
+import h3d.Vector;
 import h2d.Font;
 import h2d.Scene;
 import h2d.Object;
@@ -16,6 +17,7 @@ import pony.heaps.HeapsAssets;
 import pony.heaps.ui.gui.Node;
 import pony.heaps.ui.gui.NodeBitmap;
 import pony.heaps.ui.gui.NodeRepeat;
+import pony.heaps.ui.gui.Button;
 import pony.heaps.ui.gui.slices.Slice;
 import pony.heaps.ui.gui.layout.IntervalLayout;
 import pony.heaps.ui.gui.layout.RubberLayout;
@@ -102,6 +104,8 @@ class HeapsXmlUi extends Scene implements HasAbstract {
 				createLayout(attrs, content);
 			case UiTags.text:
 				createText(attrs, content);
+			case UiTags.button:
+				new Button(cast content);
 			case _:
 				customUIElement(name, attrs, content);
 		}
@@ -141,6 +145,10 @@ class HeapsXmlUi extends Scene implements HasAbstract {
 				obj.scaleX = Std.parseFloat(a[0]);
 				obj.scaleY = Std.parseFloat(a[1]);
 			}
+		}
+		if (attrs.tint != null) {
+			var c:UColor = attrs.tint;
+			cast(obj, Drawable).color = Vector.fromColor(c.rgb);
 		}
 		return obj;
 	}

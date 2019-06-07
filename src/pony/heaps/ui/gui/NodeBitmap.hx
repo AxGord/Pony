@@ -3,6 +3,7 @@ package pony.heaps.ui.gui;
 import h2d.Bitmap;
 import h2d.Object;
 import h2d.Tile;
+import h3d.Vector;
 import pony.geom.Point;
 
 /**
@@ -19,6 +20,7 @@ import pony.geom.Point;
 		changeWh << updateScales;
 		changeFlipx << updateScales;
 		changeFlipy << updateScales;
+		changeTint << updateColor;
 	}
 
 	private function updateScales():Void {
@@ -27,6 +29,10 @@ import pony.geom.Point;
 		bitmap.scaleY = h / bitmap.tile.height;
 		if (flipy) bitmap.scaleY = -bitmap.scaleY;
 		bitmap.setPosition(flipx ? w : 0, flipy ? h : 0);
+	}
+
+	private function updateColor(v:Vector):Void {
+		bitmap.color = v;
 	}
 
 	override public function destroy():Void {

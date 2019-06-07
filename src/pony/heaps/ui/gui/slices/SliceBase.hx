@@ -1,5 +1,6 @@
 package pony.heaps.ui.gui.slices;
 
+import h3d.Vector;
 import h2d.Graphics;
 import h2d.Bitmap;
 import h2d.TileGroup;
@@ -51,6 +52,12 @@ import pony.magic.HasLink;
 			g.beginTileFill(tiles[i]);
 			this.wrap[i] = g;
 		}
+	}
+
+	public function setColor(v:Vector):Void {
+		for (s in solo) s.color = v;
+		for (w in wrap) w.color = v;
+		for (g in groups) g.color = v;
 	}
 
 	public static function unsupported():Void throw 'Unsupported';

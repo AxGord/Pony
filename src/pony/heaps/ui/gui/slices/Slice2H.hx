@@ -19,6 +19,7 @@ import pony.geom.Point;
 		changeWh << drawTiles;
 		changeFlipx << SliceBase.unsupported;
 		changeFlipy << SliceBase.unsupported;
+		changeTint << b.setColor;
 		drawTiles();
 	}
 
