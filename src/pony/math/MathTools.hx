@@ -51,9 +51,9 @@ class MathTools {
 	@:extern public static inline function cultureSub(a:Float, b:Float, min:Float):Float return a - b <= min ? min : a - b;
 	@:extern public static inline function cultureTarget(a:Float, b:Float, step:Float):Float return a > b ? cultureSub(a, step, b) : cultureAdd(a, step, b);
 	@:extern public static inline function midValue(a:Float, b:Float, aCount:Float, bCount:Float):Float return (aCount * a + bCount * b) / (aCount + bCount);
-	@:extern public static inline function cabs(v:Int):Int return v < 0 ? -v : v; 
-	@:extern public static inline function cmin(a:Int, b:Int):Int return a < b ? a : b; 
-	@:extern public static inline function cmax(a:Int, b:Int):Int return a > b ? a : b; 
+	public static inline function cabs(v:Int):Int return v < 0 ? -v : v; 
+	public static inline function cmin(a:Int, b:Int):Int return a < b ? a : b; 
+	public static inline function cmax(a:Int, b:Int):Int return a > b ? a : b; 
 	@:extern public static inline function roundTo(v:Float, count:Int):Float return Math.round(v * Math.pow(10, count)) / Math.pow(10, count);
 	@:extern public static inline function intTo(v:Float, count:Int):Float return Std.int(v * Math.pow(10, count)) / Math.pow(10, count);
 	@:extern public static inline function intNot(v:Int):Int return v == 0 ? 1 : 0;

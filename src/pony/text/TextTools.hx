@@ -63,7 +63,7 @@ class TextTools {
 		return false;
 	}
 	
-	public inline static function exists(s:String, ch:String):Bool return s.indexOf(ch) != -1;
+	public static inline function exists(s:String, ch:String):Bool return s.indexOf(ch) != -1;
 	
 	public static function repeat(s:String, count:Int):String {
 		var r:String = '';
@@ -71,8 +71,8 @@ class TextTools {
 		return r;
 	}
 	
-	inline public static function isTrue(s:String):Bool return return s != null && StringTools.trim(s.toLowerCase()) == 'true';
-	inline public static function isFalse(s:String):Bool return return s != null && StringTools.trim(s.toLowerCase()) != 'true';
+	public static inline function isTrue(s:String):Bool return return s != null && StringTools.trim(s.toLowerCase()) == 'true';
+	public static inline function isFalse(s:String):Bool return return s != null && StringTools.trim(s.toLowerCase()) != 'true';
 	
 	public static function explode(s:String, delimiters:Array<String>):Array<String> {
 		var r:Array<String> = [s];
@@ -142,15 +142,15 @@ class TextTools {
 	
 	public static function smallFirst(s:String):String return s.charAt(0).toLowerCase() + s.substr(1);
 	
-	public static function lines(s:String):Array<String> { 
- 		var a:Array<String> = s.split('\r\n'); 
- 		if (a.length == 1) { 
- 			a = s.split('\r'); 
- 			if (a.length == 1) 
- 				a = s.split('\n'); 
- 		} 
- 		return a; 
- 	}
+	public static function lines(s:String):Array<String> {
+		var a:Array<String> = s.split('\r\n');
+		if (a.length == 1) {
+			a = s.split('\r');
+			if (a.length == 1)
+				a = s.split('\n');
+		}
+		return a;
+	}
 	
 	public static function tabParser(s:String, ?tab:String):Dynamic {
 		var a = s.split('\n');
@@ -292,5 +292,12 @@ class TextTools {
 		var cq:Int = src.indexOf(q, oq);
 		return src.substring(0, oq) + newval + src.substring(cq);
 	}
+
+	public static inline function maxLength(a:String, b:String):Int return MathTools.cmax(a.length, b.length);
+	public static inline function minLength(a:String, b:String):Int return MathTools.cmin(a.length, b.length);
+	public static function getMaxLength(a:String, b:Int):Int return MathTools.cmax(a.length, b);
+	public static function getMinLength(a:String, b:Int):Int return MathTools.cmin(a.length, b);
+	@:extern public static inline function arrayMaxLength(a:Array<String>):Int return Lambda.fold(a, getMaxLength, 0);
+	@:extern public static inline function arrayMinLength(a:Array<String>):Int return Lambda.fold(a, getMinLength, MathTools.maxInt);
 
 }

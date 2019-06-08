@@ -31,14 +31,13 @@ class Serials extends Logable {
 	}
 
 	private function listHandler(plist:Array<SerialId>):Void {
-		for (key in list.keys()) {
+		var keys:Array<String> = [for (k in list.keys()) if (founded.indexOf(k) == -1) k];
+		for (key in keys) {
 			var o:SerialId = list[key];
 			for (e in plist) {
-				if (SerialPort.checkPort(o, e)) {
-					if (created.indexOf(e.comName) == -1 && founded.indexOf(key) == -1) {
-						created.push(e.comName);
-						new SerialWelcome(new SerialPort(e, cfg), key).onWelcome < connectHandler;
-					}
+				if (created.indexOf(e.comName) == -1 && SerialPort.checkPort(o, e)) {
+					created.push(e.comName);
+					new SerialWelcome(new SerialPort(e, cfg), keys).onWelcome < connectHandler;
 				}
 			}
 		}
@@ -57,8 +56,8 @@ class Serials extends Logable {
 	private function connectHandler(module:String, port:SerialPort):Void {
 		founded.push(module);
 		eConnect.dispatch(module, port);
-		port.onClose.add(function() founded.remove(module), 100);
-		port.onClose.add(closeHandler, 100);
+		port.onClose.once(function() founded.remove(module), 100);
+		port.onClose.once(closeHandler, 100);
 		updateTimerState();
 	}
 
@@ -69,7 +68,7 @@ class Serials extends Logable {
 	}
 
 	public function destroy():Void {
-		// todo destroy created serial ports
+		// todo destroy created serial ports?
 		destroySignals();
 		timer.destroy();
 		timer = null;
