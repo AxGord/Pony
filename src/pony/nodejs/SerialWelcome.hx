@@ -27,18 +27,19 @@ class SerialWelcome implements Declarator implements HasSignal {
 
 	private function dataHandler(s:String):Void {
 		buf += s;
+		var needDestroy:Bool = false;
 		for (w in welcome) {
 			if (buf.length >= w.length) {
 				if (buf.indexOf(w) != -1) {
 					eWelcome.dispatch(w, serial);
 					destroy();
-					break;
+					return;
 				} else if (buf.length > maxLength) {
-					destroy();
-					break;
+					needDestroy = true;
 				}
 			}
 		}
+		if (needDestroy) destroy();
 	}
 
 	public function destroy():Void {
