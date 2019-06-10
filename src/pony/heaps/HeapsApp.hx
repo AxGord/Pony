@@ -17,17 +17,19 @@ import pony.events.Signal0;
 import js.html.Element;
 import js.Browser;
 import pony.magic.HasSignal;
+import pony.magic.HasLink;
 import hxd.App;
 
 /**
  * HeapsApp
  * @author AxGord <axgord@gmail.com>
  */
-class HeapsApp extends App implements HasSignal {
+class HeapsApp extends App implements HasSignal implements HasLink {
 
 	public static var instance:HeapsApp;
 
 	@:auto public var onInit:Signal0;
+	public var noScale(link, link):Bool = canvas.noScale;
 	public var sizeUpdate(default, set):Bool = false;
 	private var renderPause:Bool = false;
 	public var canvas:SmartCanvas;
@@ -46,10 +48,21 @@ class HeapsApp extends App implements HasSignal {
 
 	override private function init():Void eInit.dispatch();
 
+	public inline function setScalableScene(scene:Scene, disposePrevious:Bool = true):Void {
+		// scene.defaultSmooth = true; // scale9 problem
+		noScale = false;
+		setScene(scene, disposePrevious);
+	}
+
+	public inline function setNotScalableScene(scene:Scene, disposePrevious:Bool = true):Void {
+		// scene.defaultSmooth = false;
+		noScale = true;
+		setScene(scene, disposePrevious);
+	}
+
 	override public function setScene(scene:InteractiveScene, disposePrevious:Bool = true):Void {
 		super.setScene(scene, disposePrevious);
-		if (sizeUpdate)
-			stageResizeHandler(canvas.ratio, canvas.rect);
+		if (sizeUpdate) canvas.updateSize();
 	}
 	
 	private function set_sizeUpdate(b:Bool):Bool {
@@ -66,7 +79,7 @@ class HeapsApp extends App implements HasSignal {
 	}
 
 	public function drawBorders(?color:UInt):Void {
-		border = new Graphics(s2d);
+		border = new Graphics();
 		border.beginFill(color == null ? engine.backgroundColor : color);
 		var w:Int = canvas.stageInitSize.x * 2;
 		var h:Int = canvas.stageInitSize.y * 2;
@@ -74,13 +87,12 @@ class HeapsApp extends App implements HasSignal {
 		border.drawRect(canvas.stageInitSize.x, -h, w, h * 3);
 		border.drawRect(-w, -h, w * 3, h);
 		border.drawRect(-w, canvas.stageInitSize.y, w * 3, h);
+		s2d.add(border, 100);
 	}
-
-	public inline function borderup():Void s2d.addChild(border);
 
 	public function stageResizeHandler(ratio:Float, rect:Rect<Float>):Void {
 		if (s2d != null) {
-			s2d.setFixedSize(Std.int(rect.width), Std.int(rect.height));
+			s2d.scaleMode = ScaleMode.Stretch(Std.int(rect.width), Std.int(rect.height));
 			s2d.setPosition(rect.x, rect.y);
 		}
 	}

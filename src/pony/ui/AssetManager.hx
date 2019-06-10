@@ -84,7 +84,8 @@ class AssetManager {
 					r = SliceTools.getNames(r[0]);
 				if (r.length > 1) asset = OrState.B(r);
 			case OrState.B(a):
-				if (a.length == 1) asset = OrState.A(a.pop());
+				if (a.length == 1)
+					return load(path, OrState.A(a.pop()), cb);
 		}
 		switch asset {
 			case OrState.A(asset):

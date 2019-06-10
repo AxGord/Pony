@@ -11,6 +11,7 @@ import pony.magic.HasAbstract;
 import pony.geom.Point;
 import pony.geom.Border;
 import pony.geom.Align;
+import pony.geom.Rect;
 import pony.color.UColor;
 import pony.heaps.HeapsApp;
 import pony.heaps.HeapsAssets;
@@ -23,7 +24,10 @@ import pony.heaps.ui.gui.layout.IntervalLayout;
 import pony.heaps.ui.gui.layout.RubberLayout;
 import pony.heaps.ui.gui.layout.AlignLayout;
 import pony.heaps.ui.gui.layout.BGLayout;
+import pony.heaps.ui.gui.layout.BaseLayout;
 import pony.ui.xml.UiTags;
+import pony.ui.xml.AttrVal;
+import pony.ui.gui.BaseLayoutCore;
 
 using pony.text.TextTools;
 
@@ -48,9 +52,11 @@ class HeapsXmlUi extends Scene implements HasAbstract {
 	
 	private static inline var HALF:Float = 0.5;
 	private static var fonts:Map<String, Font> = new Map();
+	private static var DYNS:Array<AttrVal> = [dynX, dynY, dynWidth, dynHeight, dyn];
 
 	private var SCALE:Float = 1;
 	public var app(default, null):HeapsApp;
+	private var watchList:Array<Pair<Object, Dynamic<String>>> = [];
 	
 	private function createUIElement(name:String, attrs:Dynamic<String>, content:Array<Dynamic>):Dynamic {
 		if (attrs.reverse.isTrue()) content.reverse();
@@ -109,30 +115,7 @@ class HeapsXmlUi extends Scene implements HasAbstract {
 			case _:
 				customUIElement(name, attrs, content);
 		}
-		if (Std.is(obj, Node)) {
-			var node:Node = cast obj;
-			var w:Float = null;
-			var h:Float = null;
-			if (attrs.wh != null) {
-				var a:Array<Float> = StringTools.trim(attrs.wh).split(' ').map(parseAndScaleWithoutNull);
-				w = a[0];
-				h = a.length == 1 ? a[0] : a[1];
-			}
-			if (attrs.w != null)
-				w = parseAndScaleWithoutNull(attrs.w);
-			if (attrs.h != null)
-				h = parseAndScaleWithoutNull(attrs.h);
-			if (w != null && h != null)
-				node.wh = new Point(w, h);
-			else if (w != null)
-				node.w = w;
-			else if (h != null)
-				node.h = h;
-			
-			if (attrs.flipx.isTrue()) node.flipx = true;
-			if (attrs.flipy.isTrue()) node.flipy = true;
-		
-		}
+		if (Std.is(obj, Node)) setNodeAttrs(cast obj, attrs);
 		if (attrs.x != null) obj.x = parseAndScale(attrs.x);
 		if (attrs.y != null) obj.y = parseAndScale(attrs.y);
 		if (attrs.visible.isFalse()) obj.visible = false;
@@ -150,7 +133,48 @@ class HeapsXmlUi extends Scene implements HasAbstract {
 			var c:UColor = attrs.tint;
 			cast(obj, Drawable).color = Vector.fromColor(c.rgb);
 		}
+		setWatchers(obj, attrs);
 		return obj;
+	}
+
+	private function getWhPoint(v:String):Point<Float> {
+		if (v != null) {
+			v = StringTools.trim(v);
+			return switch v {
+				case AttrVal.stage:
+					app.canvas.stageInitSize;
+				case AttrVal.dyn:
+					new Point(app.canvas.dynStage.width, app.canvas.dynStage.height);
+				case _:
+					var a:Array<Float> = v.split(' ').map(parseAndScaleWithoutNull);
+					new Point(a[0], a.length == 1 ? a[0] : a[1]);
+			}
+		} else {
+			return null;
+		}
+	}
+
+	@:extern private inline function setNodeAttrs(node:Node, attrs:Dynamic<String>):Void {
+		var w:Float = null;
+		var h:Float = null;
+		var p:Point<Float> = getWhPoint(attrs.wh);
+		if (p != null) {
+			w = p.x;
+			h = p.y;
+		}
+		if (attrs.w != null)
+			w = parseAndScaleWithoutNull(attrs.w);
+		if (attrs.h != null)
+			h = parseAndScaleWithoutNull(attrs.h);
+		if (w != null && h != null)
+			node.wh = new Point(w, h);
+		else if (w != null)
+			node.w = w;
+		else if (h != null)
+			node.h = h;
+		
+		if (attrs.flipx.isTrue()) node.flipx = true;
+		if (attrs.flipy.isTrue()) node.flipy = true;
 	}
 
 	@:extern private inline function createText(attrs:Dynamic<String>, content:Array<Dynamic>):Object {
@@ -210,6 +234,18 @@ class HeapsXmlUi extends Scene implements HasAbstract {
 			);
 			for (e in content) r.add(e);
 			r;
+		} else if (attrs.wh != null) {
+			var p:Point<Float> = getWhPoint(attrs.wh);
+			var r = new RubberLayout(
+				p.x,
+				p.y,
+				attrs.vert.isTrue(),
+				scaleBorderInt(attrs.border),
+				attrs.padding == null ? true : attrs.padding.isTrue(),
+				align
+			);
+			for (e in content) r.add(e);
+			r;
 		} else {
 			var s = new AlignLayout(align, scaleBorderInt(attrs.border));
 			for (e in content) s.add(e);
@@ -234,7 +270,22 @@ class HeapsXmlUi extends Scene implements HasAbstract {
 	}
 
 	private inline function parseAndScaleWithoutNull(s:String):Float {
-		return Std.parseFloat(s) * SCALE;
+		return switch s {
+			case AttrVal.stageWidth:
+				app.canvas.stageInitSize.x;
+			case AttrVal.stageHeight:
+				app.canvas.stageInitSize.y;
+			case AttrVal.dynWidth:
+				app.canvas.dynStage.width;
+			case AttrVal.dynHeight:
+				app.canvas.dynStage.height;
+			case AttrVal.dynX:
+				app.canvas.dynStage.x;
+			case AttrVal.dynY:
+				app.canvas.dynStage.y;
+			case _:
+				Std.parseFloat(s) * SCALE;
+		}
 	}
 	
 	private inline function parseAndScale(s:String):Float {
@@ -269,15 +320,79 @@ class HeapsXmlUi extends Scene implements HasAbstract {
 		return s.split(',').map(StringTools.trim).map(function(v):String return v == '' ? null : v);
 	}
 	
-	/* @:abstract  */private function _createUI():Object return null;
+	@:abstract private function _createUI():Object return null;
 	
 	private function createUI(?app:HeapsApp, scale:Float = 1):Void {
 		if (this.app == null)
 			this.app = app == null ? HeapsApp.instance : app;
 		SCALE = scale;
 		addChild(_createUI());
+		this.app.canvas.onDynStageResize << dynStageHandler;
 	}
 
 	private function createFilters(data:Dynamic<Dynamic<String>>):Void {}
+
+	private function setWatchers(obj:Object, attrs:Dynamic<String>):Void {
+		var na:Dynamic<String> = {};
+		var founded:Bool = false;
+		for (f in Reflect.fields(attrs)) {
+			var a = StringTools.trim(Reflect.field(attrs, f));
+			if (checkInDyns(a)) {
+				Reflect.setField(na, f, a);
+				founded = true;
+			}
+		}
+		if (founded) {
+			watchList.push(new Pair(obj, na));
+		}
+	}
+
+	private static inline function checkInDyns(v:String):Bool return DYNS.indexOf(v) != -1;
+
+	private function dynStageHandler(r:Rect<Float>):Void {
+		watchList = watchList.filter(watchFilter);
+		for (e in watchList) {
+			for (f in Reflect.fields(e.b)) {
+				var a = Reflect.field(e.b, f);
+				switch a {
+					case dyn:
+						var p:Point<Float> = new Point(r.width, r.height);
+						if (Std.is(e.a, BaseLayout)) {
+							var o:BaseLayout<Dynamic> = cast e.a;
+							o.wh = p;
+						} else if (Std.is(e.a, Node)) {
+							var o:Node = cast e.a;
+							o.wh = p;
+						} else {
+							Reflect.setProperty(e.a, f, p);
+						}
+					case dynWidth:
+						if (Std.is(e.a, BaseLayout)) {
+							var o:BaseLayout<Dynamic> = cast e.a;
+							o.w = r.width;
+						} else {
+							Reflect.setProperty(e.a, f, r.width);
+						}
+					case dynHeight:
+						if (Std.is(e.a, BaseLayout)) {
+							var o:BaseLayout<Dynamic> = cast e.a;
+							o.h = r.height;
+						} else {
+							Reflect.setProperty(e.a, f, r.height);
+						}
+					case dynX:
+						Reflect.setProperty(e.a, f, r.x);
+					case dynY:
+						Reflect.setProperty(e.a, f, r.y);
+					case _:
+				}
+				
+			}
+		}
+	}
+
+	private function watchFilter(p:Pair<Object, Dynamic<String>>):Bool {
+		return p.a.parent != null;
+	}
 
 }

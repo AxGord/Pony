@@ -6,7 +6,7 @@ typedef Point_<T> = { x:T, y:T }
  * Point / IntPoint
  * @author AxGord
  */
-abstract Point<T:Float>(Point_<T>) from Point_<T> to Point_<T> to Point<Float> {
+abstract Point<T:Float>(Point_<T>) from Point_<T> to Point_<T> {
 	public var x(get, set):T;
 	public var y(get, set):T;
 	inline public function new(x:T, y:T) this = { x:x, y:y };
@@ -15,6 +15,8 @@ abstract Point<T:Float>(Point_<T>) from Point_<T> to Point_<T> to Point<Float> {
 	inline private function set_x(v:T):T return this.x = v;
 	inline private function set_y(v:T):T return this.y = v;
 	public function toString():String return '(${this.x}, ${this.y})';
+	
+	@:to public inline function toFloat():Point_<Float> return cast this;
 
 	@:op(A * B) inline static public function mul2<T:Float>(lhs:Point<T>, rhs:Point<T>):Point<T>
 		return { x:lhs.x * rhs.x, y:lhs.y * rhs.y };

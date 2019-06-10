@@ -4,13 +4,20 @@ import h2d.Object;
 import pony.geom.IWH;
 import pony.geom.Point;
 import pony.ui.gui.BaseLayoutCore;
+import pony.magic.HasLink;
+import pony.magic.HasSignal;
 
 /**
  * BaseLayout
  * @author AxGord <axgord@gmail.com>
  */
-class BaseLayout<T:BaseLayoutCore<Object>> extends Object implements IWH {
+class BaseLayout<T:BaseLayoutCore<Object>> extends Object implements IWH implements HasLink implements HasSignal {
 
+	@:bindable public var wh:Point<Float> = new Point(0., 0.);
+	@:bindable public var flipx:Bool;
+	@:bindable public var flipy:Bool;
+	public var w(link, set):Float = wh.x;
+	public var h(link, set):Float = wh.y;
 	public var layout(default, null):T;
 	public var size(get, never):Point<Float>;
 
@@ -63,6 +70,16 @@ class BaseLayout<T:BaseLayoutCore<Object>> extends Object implements IWH {
 	public function destroyIWH():Void {
 		layout.destroy();
 		layout = null;
+	}
+
+	public function set_w(v:Float):Float {
+		if (v != wh.x) wh = new Point(v, wh.y);
+		return v;
+	}
+
+	public function set_h(v:Float):Float {
+		if (v != wh.y) wh = new Point(wh.x, v);
+		return v;
 	}
 
 }
