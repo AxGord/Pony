@@ -220,7 +220,7 @@ class HeapsXmlUi extends Scene implements HasAbstract {
 			for (e in content) l.add(e);
 			l;
 		} else if (attrs.ih != null) {
-			var l = new IntervalLayout(parseAndScaleInt(attrs.iv), false, scaleBorderInt(attrs.border), align);
+			var l = new IntervalLayout(parseAndScaleInt(attrs.ih), false, scaleBorderInt(attrs.border), align);
 			for (e in content) l.add(e);
 			l;
 		} else if (attrs.w != null || attrs.h != null) {
