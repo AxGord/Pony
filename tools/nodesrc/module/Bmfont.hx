@@ -17,10 +17,33 @@ class Bmfont extends NModule<BmfontConfig> {
 		to = cfg.to;
 		Utils.createPath(to);
 		for (font in cfg.font)
-			packFont(cfg.from + font.file, font.size, font.face, cfg.type, font.charset, font.output, cfg.format, font.lineHeight);
+			packFont(
+				cfg.from + font.file,
+				font.size,
+				font.face,
+				cfg.type,
+				font.charset,
+				font.output,
+				cfg.format,
+				font.lineHeight,
+				cfg.distance,
+				cfg.padding
+			);
 	}
 
-	private function packFont(font:File, size:Int, face:String, type:String, charset:String, output:String, format:String, lineHeight:Null<Int>):Void {
+	private function packFont(
+		font:File,
+		size:Int,
+		face:String,
+		type:String,
+		charset:String,
+		output:String,
+		format:String,
+		lineHeight:Null<Int>,
+		distance:Int,
+		padding:Int
+	):Void {
+		if (padding == -1) padding = 0;
 		tasks.add();
 		var short = font.shortName;
 		var ofn = output != null ? output : short + '_' + size;
@@ -38,8 +61,8 @@ class Bmfont extends NModule<BmfontConfig> {
 			fontSize: size,
 			fieldType: type,
 			outputType: format,
-			distanceRange: 2,
-			texturePadding: 0,
+			distanceRange: distance,
+			texturePadding: padding,
 			textureSize: [2048, 2048]
 		}, function(err:Any, textures:Array<{filename:String, texture:Dynamic}>, font:{filename:String, data:String, options:Dynamic}) {
 			log('End generation: ' + output);

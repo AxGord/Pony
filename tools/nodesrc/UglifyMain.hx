@@ -53,7 +53,8 @@ class UglifyMain {
 			} else {
 				var inputContent:Dynamic<String> = {};
 				for (f in input) Reflect.setField(inputContent, f.split('/').pop(), File.getContent(f));
-
+				var tries:Int = 3;
+				do {
 				var r = NPM.uglify_js.minify(inputContent, {
 					toplevel: true,
 					warnings: true,
@@ -61,6 +62,8 @@ class UglifyMain {
 					compress: untyped compress ? {} : false
 				});
 				libdata = r.code;
+				} while (libdata == null && --tries > 0);
+				if (libdata == null) throw "Can't generate lib data!";
 				File.saveContent(cachefile, libdata);
 			}
 			File.saveContent(lastFile, libdata + '\n' + lastContent);

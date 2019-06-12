@@ -27,6 +27,8 @@ class Bmfont extends NModule<BmfontConfig> {
 			type: 'sdf', // msdf | sdf | psdf | svg
 			format: 'xml', // xml | json | fnt
 			font: [],
+			distance: 2,
+			padding: -1,
 			allowCfg: true
 		}, configHandler);
 	}
@@ -58,14 +60,20 @@ private class BmfontReader extends BAReader<BmfontConfig> {
 		cfg.type = 'sdf';
 		cfg.format = 'xml';
 		cfg.font = [];
+		cfg.distance = 2;
+		cfg.padding = -1;
 	}
 
 	override private function readAttr(name:String, val:String):Void {
 		switch name {
 			case 'from': cfg.from = val;
 			case 'to': cfg.to = val;
-			case 'type': cfg.type = val;
+			case 'type': 
+				cfg.type = val;
+				if (val == 'msdf' && cfg.padding == -1)
+					cfg.padding = 1;
 			case 'format': cfg.format = val;
+			case 'distance': cfg.distance = Std.parseInt(val);
 			case _:
 		}
 	}

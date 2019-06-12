@@ -38,7 +38,7 @@ import pony.Fast;
 class HeapsAssets {
 
 	private static inline var SDF_ALPHA:Float = 0.5;
-	private static inline var SDF_SMOOTHING:Float = SDF_ALPHA;
+	private static inline var SDF_SMOOTHING:Float = 0;
 
 	private static var atlases:Map<String, Pair<Loader, Atlas>> = new Map();
 	private static var tiles:Map<String, Tile> = new Map();

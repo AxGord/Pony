@@ -4,6 +4,8 @@ typedef BmfontConfig = { > BAConfig,
 	from: String,
 	to: String,
 	type: String,
+	distance: Int,
+	padding: Int,
 	format: String,
 	font: Array<{
 		file: String,

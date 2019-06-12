@@ -1,5 +1,9 @@
 package pony.ui.xml;
 
+import h2d.filter.Filter;
+import h2d.filter.DropShadow;
+import h2d.filter.Group;
+import h2d.filter.Outline;
 import h3d.Vector;
 import h2d.Font;
 import h2d.Scene;
@@ -43,9 +47,8 @@ using pony.text.TextTools;
 	circle: h2d.Graphics,
 	text: h2d.Text,
 	image: pony.heaps.ui.gui.NodeBitmap,
-	tile: pony.heaps.ui.gui.NodeRepeat,
-	slice: pony.heaps.ui.gui.Node,
-	layout: pony.heaps.ui.gui.layout.TLayout
+	layout: pony.heaps.ui.gui.layout.TLayout,
+	button: pony.heaps.ui.gui.Button
 }))
 #end
 class HeapsXmlUi extends Scene implements HasAbstract {
@@ -133,6 +136,7 @@ class HeapsXmlUi extends Scene implements HasAbstract {
 			var c:UColor = attrs.tint;
 			cast(obj, Drawable).color = Vector.fromColor(c.rgb);
 		}
+		addFilters(cast obj, attrs);
 		setWatchers(obj, attrs);
 		return obj;
 	}
@@ -183,30 +187,60 @@ class HeapsXmlUi extends Scene implements HasAbstract {
 			t.textColor = UColor.fromString(attrs.color).rgb;
 		if (attrs.align != null)
 			t.textAlign = h2d.Text.Align.createByName(TextTools.bigFirst(attrs.align));
-		if (attrs.shadow != null && attrs.shadow.length > 0) {
-			var a:Array<String> = StringTools.trim(attrs.shadow).split(' ');
-			var color:UColor = 0;
-			if (a[0].charAt(0) == '#')
-				color = a.shift();
-			else if (a[a.length - 1].charAt(0) == '#')
-				color = a.pop();
-			var dx:Int = null;
-			var dy:Int = null;
-			if (a.length > 0)
-				dy = Std.parseInt(a.pop());
-			if (a.length > 0) {
-				dx = Std.parseInt(a.pop());
-			} else {
-				if (dx == null)
-					dx = 4;
-				dy = dx;
-			}
-			t.dropShadow = {dx: dx, dy: dy, color: color.rgb, alpha: color.invertAlpha.af};
-		}
 		if (attrs.smooth.isTrue())
 			t.smooth = true;
 		t.text = textTransform(_putData(content), attrs.transform);
 		return t;
+	}
+
+	@:extern private inline function addFilters(obj:Drawable, attrs:Dynamic<String>):Void {
+		var filters:Array<Filter> = [];
+		if (attrs.outline != null) {
+			var out:String = StringTools.trim(attrs.outline);
+			if (out.length > 0) {
+				var a:Array<String> = out.split(' ');
+				var color:UColor = 0;
+				if (a[0].charAt(0) == '#')
+					color = a.shift();
+				else if (a[a.length - 1].charAt(0) == '#')
+					color = a.pop();
+				var d:Int = null;
+				if (a.length > 0)
+					d = Std.parseInt(a.pop());
+				else
+					d = 4;
+				filters.push(new Outline(d, color.rgb, 0.1));
+			}
+		}
+		if (attrs.shadow != null) {
+			var sh:String = StringTools.trim(attrs.shadow);
+			if (sh.length > 0) {
+				var a:Array<String> = sh.split(' ');
+				var smooth:Bool = false;
+				if (a.indexOf('smooth') != -1) {
+					smooth = true;
+					a.remove('smooth');
+				}
+				var color:UColor = 0;
+				if (a[0].charAt(0) == '#')
+					color = a.shift();
+				else if (a[a.length - 1].charAt(0) == '#')
+					color = a.pop();
+				var d:Int = null;
+				var angle:Float = null;
+				if (a.length > 0)
+					d = Std.parseInt(a.pop());
+				if (a.length > 0) {
+					angle = Std.parseInt(a.pop()) / 180 * Math.PI;
+				} else {
+					if (d == null) d = 4;
+					angle = 0.785;
+				}
+				filters.push(new DropShadow(d, angle, color.rgb, color.invertAlpha.af, 1, color.invertAlpha.af, 0.1, smooth));
+			}
+		}
+		if (filters.length > 0)
+			obj.filter = filters.length > 1 ? new Group(filters) : filters[0];
 	}
 
 	@:extern private inline function createLayout(attrs:Dynamic<String>, content:Array<Dynamic>):Object {
