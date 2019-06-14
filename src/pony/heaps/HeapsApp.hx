@@ -49,13 +49,11 @@ class HeapsApp extends App implements HasSignal implements HasLink {
 	override private function init():Void eInit.dispatch();
 
 	public inline function setScalableScene(scene:Scene, disposePrevious:Bool = true):Void {
-		// scene.defaultSmooth = true; // scale9 problem
 		noScale = false;
 		setScene(scene, disposePrevious);
 	}
 
-	public inline function setNotScalableScene(scene:Scene, disposePrevious:Bool = true):Void {
-		// scene.defaultSmooth = false;
+	public inline function setFixedScene(scene:Scene, disposePrevious:Bool = true):Void {
 		noScale = true;
 		setScene(scene, disposePrevious);
 	}

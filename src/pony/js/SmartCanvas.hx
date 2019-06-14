@@ -39,11 +39,12 @@ class SmartCanvas extends ElementResizeControl {
 	public function new(
 		?size:Point<Int>,
 		?parentDom:Element,
-		smallDeviceQuality:SmallDeviceQuality = SmallDeviceQuality.ideal
+		smallDeviceQuality:SmallDeviceQuality = SmallDeviceQuality.ideal,
+		even:Bool = true
 	) {
 		if (parentDom == null)
 			parentDom = Browser.document.body;
-		super(parentDom);
+		super(parentDom, even);
 		canvas = Browser.document.createCanvasElement();
 		canvas.style.position = 'static';
 		if (size != null) {

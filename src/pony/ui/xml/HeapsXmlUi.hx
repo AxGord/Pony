@@ -183,12 +183,17 @@ class HeapsXmlUi extends Scene implements HasAbstract {
 
 	@:extern private inline function createText(attrs:Dynamic<String>, content:Array<Dynamic>):Object {
 		var t:Text = new Text(getFont(attrs));
+		t.maxWidth = parseAndScaleWithNull(attrs.maxWidth);
+		t.lineSpacing = parseAndScaleWithNull(attrs.lineSpacing);
+		t.letterSpacing = parseAndScaleWithNull(attrs.letterSpacing);
 		if (attrs.color != null)
 			t.textColor = UColor.fromString(attrs.color).rgb;
 		if (attrs.align != null)
 			t.textAlign = h2d.Text.Align.createByName(TextTools.bigFirst(attrs.align));
 		if (attrs.smooth.isTrue())
 			t.smooth = true;
+		else if (attrs.smooth.isFalse())
+			t.smooth = false;
 		t.text = textTransform(_putData(content), attrs.transform);
 		return t;
 	}
@@ -209,7 +214,7 @@ class HeapsXmlUi extends Scene implements HasAbstract {
 					d = Std.parseInt(a.pop());
 				else
 					d = 4;
-				filters.push(new Outline(d, color.rgb, 0.1));
+				filters.push(new Outline(d, color.rgb, 0.3));
 			}
 		}
 		if (attrs.shadow != null) {
@@ -303,7 +308,7 @@ class HeapsXmlUi extends Scene implements HasAbstract {
 		return s == null ? 0 : Std.parseFloat(s);
 	}
 
-	private inline function parseAndScaleWithoutNull(s:String):Float {
+	private function parseAndScaleWithoutNull(s:String):Float {
 		return switch s {
 			case AttrVal.stageWidth:
 				app.canvas.stageInitSize.x;
@@ -324,6 +329,10 @@ class HeapsXmlUi extends Scene implements HasAbstract {
 	
 	private inline function parseAndScale(s:String):Float {
 		return s == null ? 0 : parseAndScaleWithoutNull(s);
+	}
+
+	private inline function parseAndScaleWithNull(s:String):Float {
+		return s == null ? null : parseAndScaleWithoutNull(s);
 	}
 	
 	inline function parseAndScaleInt(s:String):Int {

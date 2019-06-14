@@ -10,15 +10,18 @@ class ElementResizeControl implements HasSignal {
 	@:bindable public var element:Element;
 	public var width(get, never):Int;
 	public var height(get, never):Int;
+	private var even:Bool = true;
 
-	public function new(element:Element) {
+	public function new(element:Element, even:Bool = true) {
 		this.element = element;
+		this.even = true;
 		eResize.onTake << listenResize;
 		eResize.onLost << unlistenResize;
 	}
 
-	@:extern private inline function get_width():Int return element.clientWidth;
-	@:extern private inline function get_height():Int return element.clientHeight;
+	@:extern private inline function get_width():Int return makeEven(element.clientWidth);
+	@:extern private inline function get_height():Int return makeEven(element.clientHeight);
+	@:extern private inline function makeEven(v:Int):Int return even ? v - v % 2 : v;
 
 	private function listenResize():Void {
 		Window.onResize << resizeHandler;
