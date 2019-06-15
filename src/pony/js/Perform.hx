@@ -5,12 +5,15 @@ import pony.magic.HasSignal;
 
 class Perform implements HasSignal {
 
+	#if perf.js
 	private static inline var SHOW_ALPHA:String = '0.8';
 	private static inline var HIDE_ALPHA:String = '0.1';
 
 	@:auto public static var onStats:Signal0;
+	#end
 
 	@:extern public static inline function show(?info:String):Void {
+		#if perf.js
 		var perf = new Perf();
 		if (info != null) perf.addInfo(info);
 		var elements = [perf.fps, perf.info, perf.ms];
@@ -28,6 +31,7 @@ class Perform implements HasSignal {
 			#end
 			e.onclick = change;
 		}
+		#end
 	}
 
 }
