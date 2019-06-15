@@ -3,6 +3,7 @@ package types;
 typedef ImageminConfig = { > BAConfig,
 	from: String,
 	to: String,
+	recursive: Bool,
 	?format: String,
 	?pngq: Int,
 	jpgq: Int,

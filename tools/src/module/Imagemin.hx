@@ -25,6 +25,7 @@ class Imagemin extends NModule<ImageminConfig> {
 			section: BASection.Prepare,
 			from: '',
 			to: '',
+			recursive: false,
 			jpgq: 85,
 			webpq: 50,
 			webpfrompng: false,
@@ -42,6 +43,7 @@ private class ImageminReader extends BAReader<ImageminConfig> {
 	override private function clean():Void {
 		cfg.from = '';
 		cfg.to = '';
+		cfg.recursive = false;
 		cfg.format = null;
 		cfg.pngq = null;
 		cfg.jpgq = 85;
@@ -54,6 +56,7 @@ private class ImageminReader extends BAReader<ImageminConfig> {
 		switch name {
 			case 'from': cfg.from += val;
 			case 'to': cfg.to += val;
+			case 'recursive': cfg.recursive = TextTools.isTrue(val);
 			case 'format': cfg.format = val;
 			case 'pngq': cfg.pngq = Std.parseInt(val);
 			case 'jpgq': cfg.jpgq = Std.parseInt(val);

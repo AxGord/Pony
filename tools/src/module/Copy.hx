@@ -28,25 +28,27 @@ class Copy extends CfgModule<CopyConfig> {
 			dirs: [],
 			units: [],
 			to: '',
+			from: '',
 			allowCfg: true
 		}, configHandler);
 	}
 
 	override private function runNode(cfg:CopyConfig):Void {
-		copyDirs(cfg.dirs, cfg.to, cfg.filter);
-		copyUnits(cfg.units, cfg.to);
+		copyDirs(cfg.dirs, cfg.from, cfg.to, cfg.filter);
+		copyUnits(cfg.units, cfg.from, cfg.to);
 	}
 
-	private function copyDirs(data:Array<String>, to:String, filter:String):Void {
+	private function copyDirs(data:Array<String>, from:String, to:String, filter:String):Void {
 		for (d in data) {
+			d = from + d;
 			log('Copy directory: $d');
 			(d:Dir).copyTo(to, filter);
 		}
 	}
 
-	private function copyUnits(data:Array<Pair<String, String>>, to:String):Void {
+	private function copyUnits(data:Array<Pair<String, String>>, from:String, to:String):Void {
 		for (p in data) {
-			var unit:Unit = p.a;
+			var unit:Unit = from + p.a;
 			log('Copy file: $unit');
 			if (unit.isFile)
 				(unit:File).copyToDir(to, Utils.replaceBuildDateIfNotNull(p.b));
@@ -61,14 +63,15 @@ private typedef CopyConfig = { > types.BAConfig,
 	dirs: Array<String>,
 	units: Array<Pair<String, String>>,
 	?filter: String,
-	to: String
+	to: String,
+	from: String
 }
 
 private class CopyReader extends BAReader<CopyConfig> {
 
 	override private function readNode(xml:Fast):Void {
 		switch xml.name {
-
+			case 'path': selfCreate(xml);
 			case 'dir': cfg.dirs.push(StringTools.trim(xml.innerData));
 			case 'unit': cfg.units.push(new Pair(StringTools.trim(xml.innerData), xml.has.name ? xml.att.name : null));
 
@@ -81,12 +84,14 @@ private class CopyReader extends BAReader<CopyConfig> {
 		cfg.units = [];
 		cfg.filter = null;
 		cfg.to = '';
+		cfg.from = '';
 	}
 
 	override private function readAttr(name:String, val:String):Void {
 		switch name {
 			case 'filter': cfg.filter = val;
 			case 'to': cfg.to = val;
+			case 'from': cfg.from = val;
 			case _:
 		}
 	}

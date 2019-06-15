@@ -20,6 +20,7 @@ private typedef TPUnit = {
 	quality: Float,
 	input: Array<String>,
 	output: String,
+	?ext: String,
 	rotation: Bool,
 	?trim: String
 }
@@ -75,7 +76,7 @@ class Texturepacker extends CfgModule<TPConfig> {
 			command.push('--format');
 			command.push(f);
 			
-			var outExt = switch f {
+			var outExt = cfg.ext != null ? cfg.ext : switch f {
 				case 'phaser-json-array', 'phaser-json-hash', 'pixijs': 'json';
 				case f: f;
 			}
@@ -219,6 +220,7 @@ private class Path extends BAReader<TPConfig> {
 		cfg.rotation = true;
 		cfg.input = [];
 		cfg.output = null;
+		cfg.ext = null;
 	}
 
 	override private function readXml(xml:Fast):Void {
@@ -241,6 +243,7 @@ private class Path extends BAReader<TPConfig> {
 			case 'quality': cfg.quality = Std.parseFloat(val);
 			case 'from': cfg.from += val;
 			case 'to': cfg.to += val;
+			case 'ext': cfg.ext = val;
 			case 'rotation': cfg.rotation = !TextTools.isFalse(val);
 			case 'trim': cfg.trim = StringTools.trim(val);
 			case 'clean': cfg.clean = TextTools.isTrue(val);

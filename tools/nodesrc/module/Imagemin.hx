@@ -15,7 +15,7 @@ using pony.text.TextTools;
  */
 class Imagemin extends NModule<ImageminConfig> {
 
-	override private function run(cfg:ImageminConfig) {
+	override private function run(cfg:ImageminConfig):Void {
 		var from:Array<String> = cfg.from.split(',').map(StringTools.trim).addToStringsEnd('*.');
 		log('From: ' + from);
 		var formats:Array<String> = cfg.format == null ? ['jpg', 'png', 'webp'] : cfg.format.split(',').map(StringTools.trim);
@@ -24,7 +24,8 @@ class Imagemin extends NModule<ImageminConfig> {
 			var dir:Dir = cfg.from;
 			var filter:String = '.jpg';
 			if (cfg.jpgfrompng) filter += ' .png';
-			for (file in dir.files(filter)) {
+			var files:Array<File> = cfg.recursive ? dir.contentRecursiveFiles(filter) : dir.files(filter);
+			for (file in files) {
 				tasks.add();
 				NPM.imagemin([file.first], {
 					plugins: [
@@ -34,7 +35,9 @@ class Imagemin extends NModule<ImageminConfig> {
 						NPM.imagemin_guetzli({nomemlimit: true, quality: cfg.jpgq})
 					]
 				}).then(function(r:Array<{data:BytesData, path:String}>):Void {
-					var n:String = cfg.to + file.shortName + '.jpg';
+					var p:String = file.first.substr(cfg.from.length);
+					p = p.substr(0, -4);
+					var n:String = cfg.to + p + '.jpg';
 					Utils.createPath(n);
 					var b:Bytes =  Bytes.ofData(r[0].data);
 					sys.io.File.saveBytes(n, b);
