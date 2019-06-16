@@ -7,6 +7,8 @@ package pony.color;
  */
 abstract UColor(UInt) from UInt to UInt {
 
+	public static var HALF_POWER:Int = 384;
+
 	/**
 	 * ARGB
 	 */
@@ -63,6 +65,11 @@ abstract UColor(UInt) from UInt to UInt {
 	 * Inverted color
 	 */
 	public var invert(get, never):UColor;
+
+	/**
+	 * White or black
+	 */
+	public var alternative(get, never):UColor;
 	
 	/**
 	 * Construct from ARGB values
@@ -102,6 +109,8 @@ abstract UColor(UInt) from UInt to UInt {
 		b = lim(b);
 		return fromARGB(a, r, g, b);
 	}
+
+	@:extern private inline function get_alternative():UColor return power > HALF_POWER ? 0 : 0xFFFFFF;
 	
 	inline static private function lim(v:Int):UInt {
 		if (v > 0xFF) v = 0xFF;

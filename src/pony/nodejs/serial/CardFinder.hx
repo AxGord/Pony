@@ -3,6 +3,7 @@ package pony.nodejs.serial;
 import pony.magic.HasSignal;
 import pony.events.Signal0;
 import pony.events.Signal1;
+import pony.events.Signal2;
 
 /**
  * CardFinder
@@ -10,7 +11,7 @@ import pony.events.Signal1;
  */
 class CardFinder implements HasSignal {
 
-	@:auto public var onFind:Signal1<String>;
+	@:auto public var onFind:Signal2<Int, String>;
 	@:auto public var onNotFind:Signal0;
 	@:auto public var onList:Signal1<Array<String>>;
 	@:auto public var onBusy:Signal0;
@@ -32,6 +33,7 @@ class CardFinder implements HasSignal {
 	public function find(id:String, ignoreBusy:Bool = false):Void {
 		if (isBusy(ignoreBusy)) return;
 		findTarget = id;
+		scanList = [];
 		reader.onKey << findHandler;
 		ppRotor.onLoop < findFailedHandler;
 	}
@@ -49,9 +51,11 @@ class CardFinder implements HasSignal {
 	}
 
 	private function findHandler(key:String):Void {
+		keyHandler(key);
 		if (key != findTarget) return;
+		var count:Int = scanList.length;
 		cancelFind();
-		eFind.dispatch(key);
+		eFind.dispatch(count, key);
 	}
 
 	private function findFailedHandler():Void {
@@ -64,6 +68,7 @@ class CardFinder implements HasSignal {
 		reader.onKey >> findHandler;
 		ppRotor.disable();
 		findTarget = null;
+		scanList = null;
 	}
 
 	public function cancel():Void {
