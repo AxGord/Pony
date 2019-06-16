@@ -22,6 +22,8 @@ import pony.Fast;
 	var JPG = 'jpg';
 	var JPEG = 'jpeg';
 	var FNT = 'fnt';
+	var TXT = 'txt';
+	var JSON = 'json';
 }
 
 @:enum abstract HAError(String) to String {
@@ -43,6 +45,7 @@ class HeapsAssets {
 	private static var atlases:Map<String, Pair<Loader, Atlas>> = new Map();
 	private static var tiles:Map<String, Tile> = new Map();
 	private static var fonts:Map<String, Font> = new Map();
+	private static var texts:Map<String, String> = new Map();
 
 	public static function load(asset:String, cb:Int -> Int -> Void):Void {
 		var realAsset:String = AssetManager.getPath(asset);
@@ -117,16 +120,23 @@ class HeapsAssets {
 					tiles[asset] = Any.fromBytes(realAsset, bytes).toTile();
 					cb(10, 10);
 				}
+			case TXT, JSON:
+				loader.load();
+				loader.onProgress = function(cur:Int, max:Int):Void if (cur != max) cb(Std.int(cur / max * 10), 10);
+				loader.onLoaded = function(bytes:Bytes):Void {
+					texts[asset] = Any.fromBytes(realAsset, bytes).toText();
+					cb(10, 10);
+				}
 			case _:
 				throw ERROR_NOT_SUPPORTED;
 		}
 	}
 
-	public static function ext(asset:String):String {
+	public static inline function ext(asset:String):String {
 		return asset.substr(asset.lastIndexOf('.') + 1);
 	}
 
-	public static function reset(asset:String):Void {
+	public static inline function reset(asset:String):Void {
 		atlases.remove(asset);
 	}
 
@@ -147,7 +157,7 @@ class HeapsAssets {
 		};
 	}
 
-	public static function image(asset:String, ?name:String):Bitmap {
+	public static inline function image(asset:String, ?name:String):Bitmap {
 		return new Bitmap(texture(asset, name));
 	}
 
@@ -170,12 +180,16 @@ class HeapsAssets {
 		};
 	}
 
-	public static function clip(asset:String, ?name:String, ?speed:Float):Anim {
+	public static inline function clip(asset:String, ?name:String, ?speed:Float):Anim {
 		return new Anim(animation(asset, name), speed);
 	}
 
-	public static function font(asset:String):Font {
+	public static inline function font(asset:String):Font {
 		return fonts[asset];
+	}
+
+	public static inline function text(asset:String):String {
+		return texts[asset];
 	}
 
 	public static function setFontType(font:Font, type:String):Void {

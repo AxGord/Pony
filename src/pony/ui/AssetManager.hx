@@ -86,6 +86,8 @@ class AssetManager {
 			case OrState.B(a):
 				if (a.length == 1)
 					return load(path, OrState.A(a.pop()), cb);
+				else if (a.length == 0)
+					return cb(0, 0);
 		}
 		switch asset {
 			case OrState.A(asset):
@@ -260,6 +262,7 @@ class AssetManager {
 	@:extern public static inline function texture(asset:String, ?name:String) return HeapsAssets.texture(asset, name);
 	@:extern public static inline function animation(asset:String, ?name:String) return HeapsAssets.animation(asset, name);
 	@:extern public static inline function clip(asset:String, ?name:String) return HeapsAssets.clip(asset, name);
+	@:extern public static inline function text(asset:String) return HeapsAssets.text(asset);
 	@:extern public static inline function sound(asset:String) return asset;
 	@:extern public static inline function spine(asset:String) return asset;
 	#elseif pixijs

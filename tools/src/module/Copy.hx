@@ -90,8 +90,8 @@ private class CopyReader extends BAReader<CopyConfig> {
 	override private function readAttr(name:String, val:String):Void {
 		switch name {
 			case 'filter': cfg.filter = val;
-			case 'to': cfg.to = val;
-			case 'from': cfg.from = val;
+			case 'to': cfg.to += val;
+			case 'from': cfg.from += val;
 			case _:
 		}
 	}
