@@ -1,4 +1,4 @@
-package pony.nodejs;
+package pony.nodejs.serial;
 
 import js.node.Buffer;
 import js.Error;
@@ -11,7 +11,6 @@ import haxe.PosInfos;
 import pony.events.Signal0;
 import pony.events.Signal1;
 import pony.magic.Declarator;
-import pony.nodejs.SerialPort.SerialPortConfig;
 import pony.Queue;
 import pony.time.Timer;
 import pony.NPM;

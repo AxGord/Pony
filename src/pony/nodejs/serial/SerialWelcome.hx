@@ -1,5 +1,4 @@
-
-package pony.nodejs;
+package pony.nodejs.serial;
 
 import pony.text.TextTools;
 import pony.events.Signal2;

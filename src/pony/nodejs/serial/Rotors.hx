@@ -1,4 +1,4 @@
-package pony.nodejs;
+package pony.nodejs.serial;
 
 import haxe.io.BytesOutput;
 import pony.Tumbler;
@@ -83,6 +83,7 @@ class Rotor extends Tumbler {
 
 	public function goBack():Void back = true;
 	public function goNormal():Void back = false;
+	public function reverse():Void back = !back;
 	public function goMax():Void max = true;
 	public function goHalf():Void max = false;
 

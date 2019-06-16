@@ -1,10 +1,10 @@
-package pony.nodejs;
+package pony.nodejs.serial;
 
 import pony.Pair;
 import pony.Logable;
 import pony.time.Timer;
 import pony.events.Signal2;
-import pony.nodejs.SerialPort;
+import pony.nodejs.serial.SerialPort;
 
 class Serials extends Logable {
 

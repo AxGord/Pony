@@ -1,10 +1,14 @@
-
-package pony.nodejs;
+package pony.nodejs.serial;
 
 import pony.events.Signal1;
 import pony.magic.HasSignal;
+import pony.magic.Declarator;
 
-class LimitSwitch implements HasSignal {
+/**
+ * LimitSwitch
+ * @author AxGord <axgord@gmail.com>
+ */
+class LimitSwitch implements Declarator implements HasSignal {
 
 	private static var LIMIT_SWITCH:String = 'LimitSwitch';
 	private static var END:String = ';';
@@ -14,9 +18,9 @@ class LimitSwitch implements HasSignal {
 
 	@:bindable public var state1:Bool = false;
 	@:bindable public var state2:Bool = false;
+	@:arg private var signal:Signal1<String>;
 
-	public function new(signal:Signal1<String>) {
-		// this.signal = signal;
+	public function new() {
 		signal << dataHandler;
 	}
 
@@ -37,6 +41,12 @@ class LimitSwitch implements HasSignal {
 		} else {
 			return null;
 		}
+	}
+
+	public function destroy():Void {
+		signal >> dataHandler;
+		signal = null;
+		destroySignals();
 	}
 
 }
