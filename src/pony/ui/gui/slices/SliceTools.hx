@@ -71,14 +71,43 @@ class SliceTools {
 		else
 			[name];
 	}
+
+	public static function clean(name:String):String {
+		return if (check(name, 2, 'v'))
+			remove(name, 2, 'v');
+		else if (check(name, 2, 'h'))
+			remove(name, 2, 'h');
+		else if (check(name, 3, 'v'))
+			remove(name, 3, 'v');
+		else if (check(name, 3, 'h'))
+			remove(name, 3, 'h');
+		else if (check(name, 4))
+			remove(name, 4);
+		else if (check(name, 6, 'v'))
+			remove(name, 6, 'v');
+		else if (check(name, 6, 'h'))
+			remove(name, 6, 'h');
+		else if (check(name, 9))
+			remove(name, 9);
+		else
+			name;
+	}
 	
 	@:extern private static inline function check(name:String, n:Int, letter:String = ''):Bool {
-		return name.indexOf('{slice$n$letter}') != -1;
+		return index(name, n, letter) != -1;
 	}
 	
 	private static function slice(name:String, n:Int, letter:String = ''):Array<String> {
 		var s = name.split('{slice$n$letter}');
 		return [for (i in 0...n) s[0] + i + s[1]];
+	}
+
+	@:extern private static inline function index(name:String, n:Int, letter:String = ''):Int {
+		return name.indexOf('{slice$n$letter}');
+	}
+
+	@:extern private static inline function remove(name:String, n:Int, letter:String = ''):String {
+		return name.substr(0, index(name, n, letter));
 	}
 	
 }

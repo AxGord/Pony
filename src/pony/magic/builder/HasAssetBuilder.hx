@@ -144,7 +144,7 @@ class HasAssetBuilder {
 				kind: FieldType.FFun( {
 				args: [{name: 'asset', type:macro:Int}],
 						ret: macro:String,
-						expr: macro return ASSETS_NAMES[asset] == null ? $v + '/' + ASSETS_LIST[asset] : ASSETS_NAMES[asset]
+						expr: macro return ASSETS_NAMES[asset] == null ? $v + ASSETS_LIST[asset] : ASSETS_NAMES[asset]
 					}),
 				pos: Context.currentPos()
 			});
@@ -166,7 +166,7 @@ class HasAssetBuilder {
 				kind: FieldType.FFun( {
 				args: [{name: 'asset', type:macro:Int}],
 						ret: macro:String,
-						expr: macro return $v + '/' + ASSETS_LIST[asset]
+						expr: macro return $v + ASSETS_LIST[asset]
 					}),
 				pos: Context.currentPos()
 			});
@@ -176,7 +176,7 @@ class HasAssetBuilder {
 				kind: FieldType.FFun( {
 				args: [{name: 'asset', type:macro:Int}],
 						ret: null,
-						expr: macro return pony.ui.AssetManager.image($v+'/'+ASSETS_LIST[asset], ASSETS_NAMES[asset])
+						expr: macro return pony.ui.AssetManager.image($v + ASSETS_LIST[asset], ASSETS_NAMES[asset])
 					}),
 				pos: Context.currentPos()
 			});
@@ -186,7 +186,7 @@ class HasAssetBuilder {
 				kind: FieldType.FFun( {
 				args: [{name: 'asset', type:macro:Int}],
 						ret: null,
-						expr: macro return pony.ui.AssetManager.spine($v+'/'+ASSETS_LIST[asset])
+						expr: macro return pony.ui.AssetManager.spine($v + ASSETS_LIST[asset])
 					}),
 				pos: Context.currentPos()
 			});
@@ -197,7 +197,7 @@ class HasAssetBuilder {
 				kind: FieldType.FFun( {
 				args: [{name: 'asset', type:macro:Int}],
 						ret: null,
-						expr: macro return pony.ui.AssetManager.sound($v+'/'+ASSETS_LIST[asset])
+						expr: macro return pony.ui.AssetManager.sound($v + ASSETS_LIST[asset])
 					}),
 				pos: Context.currentPos()
 			});
@@ -208,7 +208,7 @@ class HasAssetBuilder {
 				kind: FieldType.FFun( {
 				args: [{name: 'asset', type:macro:Int}],
 						ret: null,
-						expr: macro return pony.ui.AssetManager.texture($v+'/'+ASSETS_LIST[asset], ASSETS_NAMES[asset])
+						expr: macro return pony.ui.AssetManager.texture($v + ASSETS_LIST[asset], ASSETS_NAMES[asset])
 					}),
 				pos: Context.currentPos()
 			});
@@ -219,7 +219,7 @@ class HasAssetBuilder {
 				kind: FieldType.FFun( {
 				args: [{name: 'asset', type:macro:Int}],
 						ret: null,
-						expr: macro return pony.ui.AssetManager.animation($v+'/'+ASSETS_LIST[asset], ASSETS_NAMES[asset])
+						expr: macro return pony.ui.AssetManager.animation($v + ASSETS_LIST[asset], ASSETS_NAMES[asset])
 					}),
 				pos: Context.currentPos()
 			});
@@ -230,7 +230,7 @@ class HasAssetBuilder {
 				kind: FieldType.FFun( {
 				args: [{name: 'asset', type:macro:Int}],
 						ret: null,
-						expr: macro return pony.ui.AssetManager.clip($v+'/'+ASSETS_LIST[asset], ASSETS_NAMES[asset])
+						expr: macro return pony.ui.AssetManager.clip($v + ASSETS_LIST[asset], ASSETS_NAMES[asset])
 					}),
 				pos: Context.currentPos()
 			});

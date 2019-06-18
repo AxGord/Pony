@@ -168,7 +168,7 @@ class HeapsAssets {
 				var p:Pair<Loader, Atlas> = atlases[asset];
 				if (p == null) throw ERROR_NOT_LOADED;
 				Loader.currentInstance = p.a;
-				p.b.getAnim(name);
+				p.b.getAnim(SliceTools.clean(name));
 			case PNG, JPG, JPEG:
 				if (name != null) throw ERROR_NAME_SET;
 				var assets:Array<String> = AssetManager.parseInterval(asset);
