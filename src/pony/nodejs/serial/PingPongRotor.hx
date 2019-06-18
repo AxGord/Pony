@@ -29,18 +29,22 @@ class PingPongRotor extends Tumbler {
 		onStart = limit.changeState1 - false || limit.changeState2 - false;
 		firstCheckTimer.complete < rotor.reverse;
 		startCheckTimer.complete << rotor.reverse;
-		onStop << rotor.reverse;
-		onStop << startCheckTimer.restart.bind(0);
-		onStop < firstCheckTimer.stop;
+		onStop < firstStopHandler;
 		onStop << stopHandler;
-		onStart << startCheckTimer.stop;
 		onEnable << rotor.enable;
 		onEnable < firstCheckTimer.start.bind(0);
 		onDisable << rotor.disable;
 		onDisable << resetCounter;
 	}
 
+	private function firstStopHandler():Void {
+		firstCheckTimer.stop();
+	}
+
 	private function stopHandler():Void {
+		rotor.reverse();
+		startCheckTimer.restart(0);
+		startCheckTimer.stop();
 		if (--counter <= 0) {
 			disable();
 			eLoop.dispatch();

@@ -36,6 +36,7 @@ class CardFinder implements HasSignal {
 		scanList = [];
 		reader.onKey << findHandler;
 		ppRotor.onLoop < findFailedHandler;
+		ppRotor.enable();
 	}
 
 	private function isBusy(ignoreBusy:Bool = false):Bool {
@@ -88,6 +89,7 @@ class CardFinder implements HasSignal {
 		scanList = [];
 		reader.onKey << keyHandler;
 		ppRotor.onLoop < scanFinishHandler;
+		ppRotor.enable();
 	}
 
 	private function keyHandler(key:String):Void {

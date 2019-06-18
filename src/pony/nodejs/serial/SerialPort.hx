@@ -178,8 +178,10 @@ class SerialPort extends Logable implements Declarator {
 	}
 	
 	private function _reconnect():Void {
-		log('SerialPort ${id.comName} have problem, reconnect after 5sec...');
-		lastDelay = Timer.delay('5s', connect);
+		if (id != null) {
+			log('SerialPort ${id.comName} have problem, reconnect after 5sec...');
+			lastDelay = Timer.delay('5s', connect);
+		}
 	}
 	
 	private function readData(b:BytesData):Void {
@@ -196,14 +198,18 @@ class SerialPort extends Logable implements Declarator {
 	
 	public function writeAsync(b:BytesOutput, ok:Void -> Void, ?error:String -> ?PosInfos -> Void):Void {
 		if (check()) return;
-		sp.write(Buffer.hxFromBytes(b.getBytes()), function(err:Dynamic) {
-			if (err == null)
-				sp.drain(function(err:Dynamic) {
-					if (err == null) haxe.Timer.delay(ok, 12);
-					else if (error != null) error(err);
-				});
-			else if (error != null) error(err);
-		});
+		try {
+			sp.write(Buffer.hxFromBytes(b.getBytes()), function(err:Dynamic) {
+				if (err == null)
+					sp.drain(function(err:Dynamic) {
+						if (err == null) haxe.Timer.delay(ok, 12);
+						else if (error != null) error(err);
+					});
+				else if (error != null) error(err);
+			});
+		} catch (e:js.Error) {
+			error(e.message);
+		}
 	}
 	
 	public function write(b:BytesOutput):Void {

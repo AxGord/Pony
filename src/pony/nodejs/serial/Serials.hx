@@ -22,8 +22,8 @@ class Serials extends Logable {
 		if (cfg == null) cfg = {};
 		cfg.readString = true;
 		this.cfg = cfg;
-		updateList();
 		timer.complete << updateList;
+		Timer.delay(100, updateList);
 	}
 
 	private function updateList():Void {
