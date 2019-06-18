@@ -7,6 +7,10 @@ import pony.ui.AssetManager;
 import pony.time.DeltaTime;
 import pony.time.Tween;
 
+/**
+ * LazyBitmap
+ * @author AxGord <axgord@gmail.com>
+ */
 class LazyBitmap extends Bitmap {
 	
 	private var asset: String;

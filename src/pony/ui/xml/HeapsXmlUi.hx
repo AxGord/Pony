@@ -6,7 +6,6 @@ import h2d.filter.Group;
 import h2d.filter.Outline;
 import h3d.Vector;
 import h2d.Font;
-import h2d.Scene;
 import h2d.Object;
 import h2d.Drawable;
 import h2d.Graphics;
@@ -51,7 +50,7 @@ using pony.text.TextTools;
 	button: pony.heaps.ui.gui.Button
 }))
 #end
-class HeapsXmlUi extends Scene implements HasAbstract {
+class HeapsXmlUi extends Object implements HasAbstract {
 	
 	private static inline var HALF:Float = 0.5;
 	private static var fonts:Map<String, Font> = new Map();
