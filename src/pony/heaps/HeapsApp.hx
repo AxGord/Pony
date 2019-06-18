@@ -8,11 +8,11 @@ import h2d.Scene;
 import hxd.Window;
 import pony.Config;
 import pony.geom.Point;
-import pony.time.JsDT;
 import pony.geom.Rect;
 import pony.js.SmartCanvas;
 import pony.time.Time;
 import pony.time.DTimer;
+import pony.time.DeltaTime;
 import pony.events.Signal0;
 import js.html.Element;
 import js.Browser;
@@ -41,9 +41,13 @@ class HeapsApp extends App implements HasSignal implements HasLink {
 		super();
 		if (color != null)
 			engine.backgroundColor = color;
-		JsDT.start();
 		this.sizeUpdate = sizeUpdate;
 		if (instance == null) instance = this;
+	}
+
+	override private function update(dt:Float):Void {
+		DeltaTime.fixedValue = dt;
+		DeltaTime.fixedDispatch();
 	}
 
 	override private function init():Void eInit.dispatch();
