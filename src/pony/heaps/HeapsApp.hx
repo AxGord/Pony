@@ -32,6 +32,7 @@ class HeapsApp extends App implements HasSignal implements HasLink {
 	public var noScale(link, link):Bool = canvas.noScale;
 	public var sizeUpdate(default, set):Bool = false;
 	private var renderPause:Bool = false;
+	private var alignCenter:Bool = false;
 	public var canvas:SmartCanvas;
 	private var border:Graphics;
 
@@ -52,13 +53,15 @@ class HeapsApp extends App implements HasSignal implements HasLink {
 
 	override private function init():Void eInit.dispatch();
 
-	public inline function setScalableScene(scene:Scene, disposePrevious:Bool = true):Void {
+	public inline function setScalableScene(scene:Scene, alignCenter:Bool = true, disposePrevious:Bool = true):Void {
 		noScale = false;
+		this.alignCenter = alignCenter;
 		setScene(scene, disposePrevious);
 	}
 
-	public inline function setFixedScene(scene:Scene, disposePrevious:Bool = true):Void {
+	public inline function setFixedScene(scene:Scene, alignCenter:Bool = false, disposePrevious:Bool = true):Void {
 		noScale = true;
+		this.alignCenter = alignCenter;
 		setScene(scene, disposePrevious);
 	}
 
@@ -95,7 +98,8 @@ class HeapsApp extends App implements HasSignal implements HasLink {
 	public function stageResizeHandler(ratio:Float, rect:Rect<Float>):Void {
 		if (s2d != null) {
 			s2d.scaleMode = ScaleMode.Stretch(Std.int(rect.width), Std.int(rect.height));
-			s2d.setPosition(rect.x, rect.y);
+			if (alignCenter)
+				s2d.setPosition(rect.x, rect.y);
 		}
 	}
 

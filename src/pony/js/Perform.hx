@@ -15,8 +15,11 @@ class Perform implements HasSignal {
 	@:extern public static inline function show(?info:String):Void {
 		#if perf.js
 		var perf = new Perf();
-		if (info != null) perf.addInfo(info);
-		var elements = [perf.fps, perf.info, perf.ms];
+		var elements = [perf.fps, perf.ms];
+		if (info != null) {
+			perf.addInfo(info);
+			elements.push(perf.info);
+		}
 		if (perf.memory != null)
 			elements.push(perf.memory);
 		function change() {

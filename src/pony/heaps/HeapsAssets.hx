@@ -164,11 +164,23 @@ class HeapsAssets {
 	public static function animation(asset:String, ?name:String):Array<Tile> {
 		return switch ext(asset) {
 			case ATLAS:
+				var clname:String = null;
+				if (name != null) {
+					clname = SliceTools.clean(name);
+					if (clname == name) {
+						return [texture(asset, clname)];
+					}
+				} else {
+					var classet = SliceTools.clean(asset);
+					if (classet == asset) {
+						return [texture(classet)];
+					}
+				}
 				if (name == null) throw ERROR_NAME_NOT_SET;
 				var p:Pair<Loader, Atlas> = atlases[asset];
 				if (p == null) throw ERROR_NOT_LOADED;
 				Loader.currentInstance = p.a;
-				p.b.getAnim(SliceTools.clean(name));
+				p.b.getAnim(clname);
 			case PNG, JPG, JPEG:
 				if (name != null) throw ERROR_NAME_SET;
 				var assets:Array<String> = AssetManager.parseInterval(asset);

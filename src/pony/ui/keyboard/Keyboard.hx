@@ -14,23 +14,25 @@ import pony.ui.keyboard.Key;
  */
 class Keyboard implements Declarator implements HasSignal {
 	
-	@:auto static public var down:Signal1<Key>;
-	@:auto static public var up:Signal1<Key>;
-	@:auto static public var press:Signal1<Key>;
-	@:auto static public var click:Signal1<Key>;
+	@:auto public static var down:Signal1<Key>;
+	@:auto public static var up:Signal1<Key>;
+	@:auto public static var press:Signal1<Key>;
+	@:auto public static var click:Signal1<Key>;
 	
-	static public var pressedKeys:List<Key> = new List<Key>();
+	public static var pressedKeys:Array<Key> = [];
 	
-	static private var km:IKeyboard;
-	static private var _enabled:Bool = false;
+	private static var km:IKeyboard;
+	private static var _enabled:Bool = false;
 	
-	static public var enabled(default, set):Bool = false;
-	static public var disabled(default, set):Bool = false;
+	public static var enabled(default, set):Bool = false;
+	public static var disabled(default, set):Bool = false;
 	
-	static private var presser:Presser;
+	private static var presser:Presser;
 	
-	static private function __init__():Void {
-		#if (HUGS && !WITHOUTUNITY)
+	private static function __init__():Void {
+		#if heaps
+		km = new pony.ui.keyboard.heaps.Keyboard();
+		#elseif (HUGS && !WITHOUTUNITY)
 		km = new pony.ui.keyboard.unity.Keyboard();
 		#elseif flash
 		km = new pony.ui.keyboard.flash.Keyboard();
@@ -39,46 +41,51 @@ class Keyboard implements Declarator implements HasSignal {
 		autoEnableMode();
 	}
 	
-	static private function takeListeners():Void if (haveListeners()) enable();
-	static private function lostListeners():Void if (!haveListeners()) disable();
-	static private inline function haveListeners():Bool
+	private static function takeListeners():Void if (haveListeners()) enable();
+	private static function lostListeners():Void if (!haveListeners()) disable();
+	private static inline function haveListeners():Bool
 		return !down.empty || !up.empty  || !press.empty || !click.empty;
 	
-	static private function downPress(k:Key):Void {
-		if (pressedKeys.length == 0) presser = new Presser(_press);
+	private static function downPress(k:Key):Void {
+		if (presser == null) presser = new Presser(_press);
+		if (pressedKeys.indexOf(k) != -1) return;
 		pressedKeys.push(k);
-		km.up - k + k < upPress;
+		eDown.dispatch(k);
 		ePress.dispatch(k);
 	}
 	
-	static private function _press():Void for (k in pressedKeys) ePress.dispatch(k);
+	private static function _press():Void for (k in pressedKeys) ePress.dispatch(k);
 	
-	static inline private function upPress(k:Key):Void {
+	private static function upPress(k:Key):Void {
+		eUp.dispatch(k);
+		if (pressedKeys.indexOf(k) == -1) return;
 		eClick.dispatch(k);
 		pressedKeys.remove(k);
-		if (pressedKeys.length == 0) presser.destroy();
+		if (pressedKeys.length == 0) {
+			presser.destroy();
+			presser = null;
+		}
 	}
 	
-	static private function enable():Void {
-		if (_enabled == true) return;
+	private static function enable():Void {
+		if (_enabled) return;
 		_enabled = true;
 		km.enable();
 		km.down << downPress;
-		km.down << eDown;
-		km.up << eUp;
+		km.up << upPress;
 	}
 	
-	static private function disable():Void {
-		if (_enabled == false) return;
+	private static function disable():Void {
+		if (!_enabled) return;
 		_enabled = false;
 		if (presser != null) presser.destroy();
-		pressedKeys.clear();
+		pressedKeys = [];
 		km.up.clear();
 		km.down.clear();
 		km.disable();
 	}
 	
-	static private function set_enabled(b:Bool):Bool {
+	private static function set_enabled(b:Bool):Bool {
 		if (b == enabled) return b;
 		if (b) {
 			disabled = false;

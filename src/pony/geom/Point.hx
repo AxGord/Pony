@@ -9,31 +9,37 @@ typedef Point_<T> = { x:T, y:T }
 abstract Point<T:Float>(Point_<T>) from Point_<T> to Point_<T> {
 	public var x(get, set):T;
 	public var y(get, set):T;
-	inline public function new(x:T, y:T) this = { x:x, y:y };
-	inline private function get_x():T return this.x;
-	inline private function get_y():T return this.y;
-	inline private function set_x(v:T):T return this.x = v;
-	inline private function set_y(v:T):T return this.y = v;
-	public function toString():String return '(${this.x}, ${this.y})';
+	public inline function new(x:T, y:T) this = { x:x, y:y };
+	private inline function get_x():T return this.x;
+	private inline function get_y():T return this.y;
+	private inline function set_x(v:T):T return this.x = v;
+	private inline function set_y(v:T):T return this.y = v;
+	public inline function toString():String return '(${this.x}, ${this.y})';
 	
 	@:to public inline function toFloat():Point_<Float> return cast this;
 
-	@:op(A * B) inline static public function mul2<T:Float>(lhs:Point<T>, rhs:Point<T>):Point<T>
+	@:op(A / B) public static inline function div2<T:Float>(lhs:Point<T>, rhs:Point<T>):Point<Float>
+		return { x:lhs.x / rhs.x, y:lhs.y / rhs.y };
+
+	@:op(A / B) public static inline function div1<T:Float>(lhs:Point<T>, rhs:T):Point<Float>
+		return { x:lhs.x / rhs, y:lhs.y / rhs };
+
+	@:op(A * B) public static inline function mul2<T:Float>(lhs:Point<T>, rhs:Point<T>):Point<T>
 		return { x:lhs.x * rhs.x, y:lhs.y * rhs.y };
 
-	@:op(A * B) inline static public function mul1<T:Float>(lhs:Point<T>, rhs:T):Point<T>
+	@:op(A * B) public static inline function mul1<T:Float>(lhs:Point<T>, rhs:T):Point<T>
 		return { x:lhs.x * rhs, y:lhs.y * rhs };
 
-	@:op(A + B) inline static public function add2<T:Float>(lhs:Point<T>, rhs:Point<T>):Point<T>
+	@:op(A + B) public static inline function add2<T:Float>(lhs:Point<T>, rhs:Point<T>):Point<T>
 		return { x:lhs.x + rhs.x, y:lhs.y + rhs.y };
 
-	@:op(A + B) inline static public function add1<T:Float>(lhs:Point<T>, rhs:T):Point<T>
+	@:op(A + B) public static inline function add1<T:Float>(lhs:Point<T>, rhs:T):Point<T>
 		return { x:lhs.x + rhs, y:lhs.y + rhs };
 
-	@:op(A - B) inline static public function sub2<T:Float>(lhs:Point<T>, rhs:Point<T>):Point<T>
+	@:op(A - B) public static inline function sub2<T:Float>(lhs:Point<T>, rhs:Point<T>):Point<T>
 		return { x:lhs.x - rhs.x, y:lhs.y - rhs.y };
 
-	@:op(A - B) inline static public function sub1<T:Float>(lhs:Point<T>, rhs:T):Point<T>
+	@:op(A - B) public static inline function sub1<T:Float>(lhs:Point<T>, rhs:T):Point<T>
 		return { x:lhs.x - rhs, y:lhs.y - rhs };
 
 	public static inline function random():Point<Float> return new Point<Float>(Math.random(), Math.random());
