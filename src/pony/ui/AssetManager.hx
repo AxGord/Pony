@@ -52,7 +52,10 @@ class AssetManager {
 			load(assets, cb);
 			return;
 		} else if (pathes.length == 1) {
-			load([for (a in assets) pathes[0] + '/' + a], cb);
+			if (pathes[0] != '')
+				load([for (a in assets) pathes[0] + '/' + a], cb);
+			else
+				load(assets, cb);
 			return;
 		}
 		var loaded:Array<Int> = [for (_ in 0...pathes.length) 0];

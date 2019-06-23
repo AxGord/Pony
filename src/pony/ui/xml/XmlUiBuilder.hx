@@ -25,7 +25,7 @@ class XmlUiBuilder {
 		var cl = Context.getLocalClass().get();
 		var meta = cl.meta.get();
 		if (!meta.checkMeta([':ui'])) {
-			cl.superClass.t;//run build for super class
+			cl.superClass.t; //run build for super class
 			return Context.getBuildFields();
 		}
 		
@@ -152,7 +152,7 @@ class XmlUiBuilder {
 	}
 	
 	private static function getStyle(file:String):Style {
-		Context.registerModuleDependency(Context.getLocalModule(), file);		
+		Context.registerModuleDependency(Context.getLocalModule(), file);
 		var xml = getXml(file);
 		var path = xml.has.path ? xml.att.path : '';
 		return [for (x in xml.elements) x.name => 
