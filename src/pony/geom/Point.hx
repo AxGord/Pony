@@ -18,6 +18,8 @@ abstract Point<T:Float>(Point_<T>) from Point_<T> to Point_<T> {
 	
 	@:to public inline function toFloat():Point_<Float> return cast this;
 
+	@:to public static inline function toInt(p:Point<Float>):Point<Int> return new Point(Std.int(p.x), Std.int(p.y));
+
 	@:op(A / B) public static inline function div2<T:Float>(lhs:Point<T>, rhs:Point<T>):Point<Float>
 		return { x:lhs.x / rhs.x, y:lhs.y / rhs.y };
 
