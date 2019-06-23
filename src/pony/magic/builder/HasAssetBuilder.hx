@@ -234,6 +234,17 @@ class HasAssetBuilder {
 					}),
 				pos: Context.currentPos()
 			});
+
+			fields.push({
+				name: f == 'def' ? 'text' : 'text_' + f,
+				access: [APublic, AStatic],
+				kind: FieldType.FFun( {
+				args: [{name: 'asset', type:macro:Int}],
+						ret: null,
+						expr: macro return pony.ui.AssetManager.text($v + ASSETS_LIST[asset])
+					}),
+				pos: Context.currentPos()
+			});
 		}
 		
 		return fields;

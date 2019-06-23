@@ -24,6 +24,7 @@ import pony.Fast;
 	var FNT = 'fnt';
 	var TXT = 'txt';
 	var JSON = 'json';
+	var CDB = 'cdb';
 }
 
 @:enum abstract HAError(String) to String {
@@ -120,7 +121,7 @@ class HeapsAssets {
 					tiles[asset] = Any.fromBytes(realAsset, bytes).toTile();
 					cb(10, 10);
 				}
-			case TXT, JSON:
+			case TXT, JSON, CDB:
 				loader.load();
 				loader.onProgress = function(cur:Int, max:Int):Void if (cur != max) cb(Std.int(cur / max * 10), 10);
 				loader.onLoaded = function(bytes:Bytes):Void {

@@ -85,7 +85,7 @@ class AssetManager {
 				if (r.length > 1) asset = OrState.B(r);
 			case OrState.B(a):
 				if (a.length == 1)
-					return load(path, OrState.A(a.pop()), cb);
+					return load(path, OrState.A(a[0]), cb);
 				else if (a.length == 0)
 					return cb(0, 0);
 		}
