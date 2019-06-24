@@ -48,14 +48,16 @@ class Imagemin extends NModule<ImageminConfig> {
 		}
 		if (formats.indexOf('png') != -1) {
 			tasks.add();
-			if (cfg.pngq == null)
+			if (cfg.pngq == null) {
 				pngpack(from.addToStringsEnd('png'), cfg.to);
-			else
+			} else {
+				var q: Float = cfg.pngq / 100;
 				NPM.imagemin(from.addToStringsEnd('png'), cfg.to, {
 					plugins: [
-						NPM.imagemin_pngquant({quality: cfg.pngq, speed: 1})
+						NPM.imagemin_pngquant({quality: [Math.max(0, q - 0.1), Math.min(q + 0.1, 1)], speed: 1})
 					]
 				}).then(_pngpack.bind(cfg.to));
+			}
 		}
 		if (formats.indexOf('webp') != -1 || (cfg.webpfrompng && formats.indexOf('png') != -1)) {
 			tasks.add();
