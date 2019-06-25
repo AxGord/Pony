@@ -11,10 +11,11 @@ import pony.heaps.HeapsApp;
  * Touchable
  * @author AxGord <axgord@gmail.com>
  */
+@:access(pony.ui.touch.Mouse)
 class Touchable extends TouchableBase {
 
 	private static var inited:Bool = false;
-	
+
 	public static var down(default, null):Bool = false;
 	private static inline var MOUSEMOVE:String = 'mousemove';
 	private static inline var MOUSEUP:String = 'mouseup';
@@ -32,13 +33,18 @@ class Touchable extends TouchableBase {
 
 	@:access(h2d.Scene)
 	private static function globMouseMove(event : hxd.Event):Void {
-		if (event.button == 0 && event.kind == EMove) {
-			if (HeapsApp.instance != null && HeapsApp.instance.s2d != null)
-				TouchableBase.dispatchMove(
-					event.touchId == null ? 0 : event.touchId,
-					HeapsApp.instance.s2d.screenXToLocal(event.relX),
-					HeapsApp.instance.s2d.screenYToLocal(event.relY)
-				);
+		switch event.kind {
+			case EMove if (event.button == 0):
+				if (HeapsApp.instance != null && HeapsApp.instance.s2d != null)
+					TouchableBase.dispatchMove(
+						event.touchId == null ? 0 : event.touchId,
+						HeapsApp.instance.s2d.screenXToLocal(event.relX),
+						HeapsApp.instance.s2d.screenYToLocal(event.relY)
+					);
+			case EWheel:
+				pony.ui.touch.Mouse.eWheel.dispatch(event.wheelDelta > 0 ? 1 : -1);
+			case _:
+
 		}
 	}
 
