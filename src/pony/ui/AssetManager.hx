@@ -100,6 +100,7 @@ class AssetManager {
 					return;
 				}
 				if (globalLoad.exists(asset)) {
+					cb(0, 10);
 					globalLoad[asset].push(cb);
 				} else {
 					globalLoad[asset] = [];
