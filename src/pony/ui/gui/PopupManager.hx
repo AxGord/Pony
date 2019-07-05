@@ -13,7 +13,7 @@ class PopupManager<Popup> {
 	private var wantFromList:Bool = false;
 	
 	public var onStartClose:Void -> Void;
-	
+
 	public function new() {}
 	
 	public function showPopup(type:Popup):Void {

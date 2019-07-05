@@ -6,6 +6,7 @@ import h2d.Interactive;
 import hxd.Event;
 import pony.time.DeltaTime;
 import pony.heaps.HeapsApp;
+import pony.geom.Point;
 
 /**
  * Touchable
@@ -25,6 +26,8 @@ class Touchable extends TouchableBase {
 	private static inline var TOUCHEND:String = 'touchend';
 	private static inline var TOUCHCANCEL:String = 'touchcancel';
 
+	private static var lastPos: Point<Int> = new Point(0, 0);
+
 	public static function init():Void {
 		if (inited) return;
 		inited = true;
@@ -34,13 +37,18 @@ class Touchable extends TouchableBase {
 	@:access(h2d.Scene)
 	private static function globMouseMove(event : hxd.Event):Void {
 		switch event.kind {
-			case EMove if (event.button == 0):
-				if (HeapsApp.instance != null && HeapsApp.instance.s2d != null)
-					TouchableBase.dispatchMove(
-						event.touchId == null ? 0 : event.touchId,
+			case EMove:
+				if (HeapsApp.instance != null && HeapsApp.instance.s2d != null) {
+					lastPos = new Point(
 						HeapsApp.instance.s2d.screenXToLocal(event.relX),
 						HeapsApp.instance.s2d.screenYToLocal(event.relY)
 					);
+					TouchableBase.dispatchMove(
+						event.touchId == null ? 0 : event.touchId,
+						lastPos.x,
+						lastPos.y
+					);
+				}
 			case EWheel:
 				pony.ui.touch.Mouse.eWheel.dispatch(event.wheelDelta > 0 ? 1 : -1);
 			case _:
@@ -48,6 +56,10 @@ class Touchable extends TouchableBase {
 		}
 	}
 
+	public var propagateOver: Bool = false;
+	public var propagateOut: Bool = false;
+	public var propagateDown: Bool = false;
+	public var propagateUp: Bool = false;
 	private var interactive:Interactive;
 	private var over:Bool = false;
 	private var _down:Bool = false;
@@ -83,29 +95,33 @@ class Touchable extends TouchableBase {
 		interactive = null;
 	}
 	
-	private function overHandler(_):Void {
+	private function overHandler(event: Event):Void {
 		over = true;
 		down ? dispatchOverDown() : dispatchOver();
+		if (propagateOver) event.propagate = true;
 	}
 	
-	private function outHandler(_):Void {
+	private function outHandler(event: Event):Void {
 		over = false;
 		down ? dispatchOutDown() : dispatchOut();
+		if (propagateOut) event.propagate = true;
 	}
-	
-	private function downHandler(e:Event):Void {
+
+	private function downHandler(e: Event): Void {
 		if (e.button != 0) return;
 		if (!over) {
 			over = true;
 			dispatchOver();
 		}
 		_down = true;
-		dispatchDown(0, e.relX, e.relY);
+		dispatchDown(0, lastPos.x, lastPos.y);
+		if (propagateDown) e.propagate = true;
 	}
 	
-	private function upHandler(e:Event):Void {
+	private function upHandler(e: Event): Void {
 		if (e.button != 0) return;
 		_down = false;
+		if (propagateUp) e.propagate = true;
 	}
 
 	private function globUpHandler():Void DeltaTime.skipUpdate(_globUpHandler);

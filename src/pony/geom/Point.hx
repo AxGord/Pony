@@ -26,6 +26,18 @@ abstract Point<T:Float>(Point_<T>) from Point_<T> to Point_<T> {
 	@:op(A / B) public static inline function div1<T:Float>(lhs:Point<T>, rhs:T):Point<Float>
 		return { x:lhs.x / rhs, y:lhs.y / rhs };
 
+	@:op(A / B) public static inline function div2i<T:Int>(lhs:Point<T>, rhs:Point<T>):Point<Float>
+		return { x:lhs.x / rhs.x, y:lhs.y / rhs.y };
+
+	@:op(A / B) public static inline function div1i<T:Int>(lhs:Point<T>, rhs:T):Point<Float>
+		return { x:lhs.x / rhs, y:lhs.y / rhs };
+
+	@:op(A / B) public static inline function div2if<T:Int>(lhs:Point<T>, rhs:Point<Float>):Point<Float>
+		return { x:lhs.x / rhs.x, y:lhs.y / rhs.y };
+
+	@:op(A / B) public static inline function div1if<T:Int>(lhs:Point<T>, rhs:Float):Point<Float>
+		return { x:lhs.x / rhs, y:lhs.y / rhs };
+
 	@:op(A * B) public static inline function mul2<T:Float>(lhs:Point<T>, rhs:Point<T>):Point<T>
 		return { x:lhs.x * rhs.x, y:lhs.y * rhs.y };
 

@@ -24,7 +24,7 @@ class TouchableBase implements HasSignal {
 	@:auto public var onOutDown:Signal1<Touch>;
 	@:auto public var onDown:Signal1<Touch>;
 	@:auto public var onUp:Signal1<Touch>;
-	@:auto public var onClick:Signal0;
+	@:auto public var onClick:Signal1<Touch>;
 	@:auto public var onTap:Signal1<Touch>;
 	@:auto public var onWheel:Signal1<Int>;
 	@:auto public var onSwipe:Signal1<Direction>;
@@ -36,8 +36,8 @@ class TouchableBase implements HasSignal {
 	private var swipePoint:Point<Float>;
 	
 	public function new() {
-		onDown << function() onUp < eClick;
-		onOutUp << function() onUp >> eClick;
+		onDown << downHandlerWaitClick;
+		onOutUp << outUpHandlerStopWaitClick;
 		
 		eTap.onTake << eTapTake;
 		eTap.onLost << eTapLost;
@@ -48,6 +48,9 @@ class TouchableBase implements HasSignal {
 		eSwipe.onTake << addSwipe;
 		eSwipe.onLost << removeSwipe;
 	}
+
+	private function downHandlerWaitClick(): Void onUp < eClick;
+	private function outUpHandlerStopWaitClick(): Void onUp >> eClick;
 	
 	private function addSwipe():Void {
 		swipeTimer = DTimer.createFixedTimer(50);
