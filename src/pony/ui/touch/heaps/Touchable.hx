@@ -60,6 +60,7 @@ class Touchable extends TouchableBase {
 	public var propagateOut: Bool = false;
 	public var propagateDown: Bool = false;
 	public var propagateUp: Bool = false;
+	public var propagateWheel: Bool = false;
 	private var interactive:Interactive;
 	private var over:Bool = false;
 	private var _down:Bool = false;
@@ -72,6 +73,7 @@ class Touchable extends TouchableBase {
 		interactive.onOut = outHandler;
 		interactive.onPush = downHandler;
 		interactive.onRelease = upHandler;
+		interactive.onWheel = wheelHandler;
 		Browser.document.addEventListener(MOUSELEAVE, leaveHandler);
 		Browser.window.addEventListener(MOUSEUP, globUpHandler);
 		Browser.window.addEventListener(MOUSEDOWN, globDownHandler);
@@ -93,6 +95,14 @@ class Touchable extends TouchableBase {
 		Browser.window.removeEventListener(TOUCHCANCEL, leaveHandler);
 		interactive.remove();
 		interactive = null;
+	}
+
+	override private function addWheel(): Void {}
+	override private function removeWheel(): Void {}
+
+	private function wheelHandler(event: Event): Void {
+		eWheel.dispatch(event.wheelDelta > 0 ? 1 : -1);
+		if (propagateWheel) event.propagate = true;
 	}
 	
 	private function overHandler(event: Event):Void {
