@@ -342,15 +342,22 @@ class HeapsXmlUi extends Object implements HasAbstract {
 
 	private function getFont(attrs:Dynamic<String>):Font {
 		var name:String = attrs.src;
-		var cacheName:String = name;
 		var size:Int = parseAndScaleInt(attrs.size);
-		if (size != 0) cacheName += size;
-		var font:Font = fonts[cacheName];
-		if (font != null) return font;
-		font = HeapsAssets.font(attrs.src).clone();
-		HeapsAssets.setFontType(font, attrs.type);
+		var font:Font = null;
+		if (name == null) {
+			font = hxd.res.DefaultFont.get();
+			if (size != 0) font = font.clone();
+		} else {
+			var cacheName:String = name;
+			if (size != 0) cacheName += size;
+			font = fonts[cacheName];
+			if (font != null) return font;
+			font = HeapsAssets.font(attrs.src);
+			if (size != 0) font = font.clone();
+			HeapsAssets.setFontType(font, attrs.type);
+			fonts[cacheName] = font;
+		}
 		if (size != 0) font.resizeTo(size);
-		fonts[cacheName] = font;
 		return font;
 	}
 

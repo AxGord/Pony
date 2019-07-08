@@ -21,7 +21,8 @@ class Touchable extends TouchableBase {
 	private static inline var MOUSEMOVE:String = 'mousemove';
 	private static inline var MOUSEUP:String = 'mouseup';
 	private static inline var MOUSEDOWN:String = 'mousedown';
-	private static inline var MOUSELEAVE:String = 'mouseleave';
+	private static inline var MOUSELEAVE:String = 'mouseout';
+	private static inline var MOUSEENTER:String = 'mouseover';
 	private static inline var TOUCHESTART:String = 'touchstart';
 	private static inline var TOUCHEND:String = 'touchend';
 	private static inline var TOUCHCANCEL:String = 'touchcancel';
@@ -63,6 +64,7 @@ class Touchable extends TouchableBase {
 	public var propagateWheel: Bool = false;
 	private var interactive:Interactive;
 	private var over:Bool = false;
+	private var _over:Bool = false;
 	private var _down:Bool = false;
 	
 	public function new(interactive:Interactive) {
@@ -74,7 +76,8 @@ class Touchable extends TouchableBase {
 		interactive.onPush = downHandler;
 		interactive.onRelease = upHandler;
 		interactive.onWheel = wheelHandler;
-		Browser.document.addEventListener(MOUSELEAVE, leaveHandler);
+		Browser.window.addEventListener(MOUSELEAVE, leaveHandler);
+		Browser.window.addEventListener(MOUSEENTER, enterHandler);
 		Browser.window.addEventListener(MOUSEUP, globUpHandler);
 		Browser.window.addEventListener(MOUSEDOWN, globDownHandler);
 		Browser.window.addEventListener(TOUCHESTART, globDownHandler);
@@ -86,7 +89,8 @@ class Touchable extends TouchableBase {
 	override public function destroy():Void {
 		super.destroy();
 		leaveHandler();
-		Browser.document.removeEventListener(MOUSELEAVE, leaveHandler);
+		Browser.window.removeEventListener(MOUSELEAVE, leaveHandler);
+		Browser.window.removeEventListener(MOUSEENTER, enterHandler);
 		Browser.window.removeEventListener(MOUSEUP, globUpHandler);
 		Browser.window.removeEventListener(MOUSEDOWN, globDownHandler);
 		Browser.window.removeEventListener(TOUCHESTART, globDownHandler);
@@ -148,12 +152,21 @@ class Touchable extends TouchableBase {
 
 	private function leaveHandler():Void {
 		if (over) {
+			_over = true;
 			over = false;
 			_down ? dispatchOutDown() : dispatchOut();
 		}
 		if (_down) {
 			_down = false;
 			dispatchOutUp();
+		}
+	}
+
+	private function enterHandler():Void {
+		if (_over) {
+			_over = false;
+			over = true;
+			dispatchOver();
 		}
 	}
 	
