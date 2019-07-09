@@ -212,6 +212,16 @@ class TouchableBase implements HasSignal {
 			touches[id] = touchPool.get();
 		eOver.dispatch(touches[id], safe);
 	}
+
+	public function getTouch(id:UInt = 0):Touch {
+		if (!touches.exists(id))
+			touches[id] = touchPool.get();
+		return touches[id];
+	}
+
+	public function retTouch(id:UInt = 0):Void {
+		removeTouch(id);
+	}
 	
 	private function dispatchOutDown(id:UInt = 0, safe:Bool = false):Void {
 		if (!touches.exists(id)) return;
