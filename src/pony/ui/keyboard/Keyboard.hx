@@ -232,6 +232,8 @@ class Keyboard implements Declarator implements HasSignal {
 		188 => Quote,
 		190 => Dot,
 		191 => RightSlash,
-		220 => LeftSlash
+		219 => LeftSquareBracket,
+		220 => LeftSlash,
+		221 => RightSquareBracket
 	];
 }

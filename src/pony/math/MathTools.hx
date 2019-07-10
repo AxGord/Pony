@@ -62,6 +62,8 @@ class MathTools {
 	public static inline function float100(v:Float):Float return intTo(v, 2);
 	public static inline function float1000(v:Float):Float return intTo(v, 3);
 
+	public static function formatPercent(v:Float):String return float100(v * 100) + '%';
+
 	public static function lengthAfterComma(v:Float):Int {
 		var a = Std.string(v).split('.');
 		return a.length < 2 ? 0 : a[1].length;

@@ -84,4 +84,6 @@ enum Key {
 	LeftWin;
 	RightWin;
 	Applications;
+	LeftSquareBracket;
+	RightSquareBracket;
 }
