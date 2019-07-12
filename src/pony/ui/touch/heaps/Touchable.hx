@@ -64,8 +64,9 @@ class Touchable extends TouchableBase {
 	public var propagateWheel: Bool = false;
 	private var interactive:Interactive;
 	private var over:Bool = false;
-	private var _over:Bool = false;
+	private var outover:Bool = false;
 	private var _down:Bool = false;
+	private var _downRight:Bool = false;
 	
 	public function new(interactive:Interactive) {
 		init();
@@ -105,46 +106,68 @@ class Touchable extends TouchableBase {
 	override private function removeWheel(): Void {}
 
 	private function wheelHandler(event: Event): Void {
+		if (outover) return;
 		eWheel.dispatch(event.wheelDelta > 0 ? 1 : -1);
 		if (propagateWheel) event.propagate = true;
 	}
 	
 	private function overHandler(event: Event):Void {
+		if (outover) return;
 		over = true;
-		down ? dispatchOverDown() : dispatchOver();
+		down ? dispatchOverDown(event.button == 1) : dispatchOver();
 		if (propagateOver) event.propagate = true;
 	}
 	
 	private function outHandler(event: Event):Void {
+		if (outover) return;
 		over = false;
-		down ? dispatchOutDown() : dispatchOut();
+		down ? dispatchOutDown(event.button == 1) : dispatchOut();
 		if (propagateOut) event.propagate = true;
 	}
 
-	private function downHandler(e: Event): Void {
-		if (e.button != 0) return;
+	private function downHandler(event: Event): Void {
+		if (outover || event.button > 1) return;
 		if (!over) {
 			over = true;
 			dispatchOver();
 		}
-		_down = true;
-		dispatchDown(0, lastPos.x, lastPos.y);
-		if (propagateDown) e.propagate = true;
+		var right:Bool = event.button == 1;
+		if (right)
+			_downRight = true;
+		else
+			_down = true;
+		dispatchDown(0, lastPos.x, lastPos.y, right);
+		if (propagateDown) event.propagate = true;
 	}
 	
-	private function upHandler(e: Event): Void {
-		if (e.button != 0) return;
-		_down = false;
-		if (propagateUp) e.propagate = true;
+	private function upHandler(event: Event): Void {
+		if (outover || event.button > 1) return;
+		var right:Bool = event.button == 1;
+		if (right)
+			_downRight = false;
+		else
+			_down = false;
+		if (propagateUp) event.propagate = true;
 	}
 
 	private function globUpHandler():Void DeltaTime.skipUpdate(_globUpHandler);
 	
 	private function _globUpHandler():Void {
-		if (!over) dispatchOutUp();
-		else if (!_down) dispatchUp();
-		else leaveHandler();
+		if (!over) {
+			if (!_down)
+				dispatchOutUp();
+			if (!_downRight)
+				dispatchOutUp(true);
+		} else if (!_down || !_downRight) {
+			if (!_down)
+				dispatchUp();
+			if (!_downRight)
+				dispatchUp(true);
+		} else {
+			leaveHandler();
+		}
 		_down = false;
+		_downRight = false;
 		down = false;
 	}
 
@@ -152,19 +175,23 @@ class Touchable extends TouchableBase {
 
 	private function leaveHandler():Void {
 		if (over) {
-			_over = true;
+			outover = true;
 			over = false;
-			_down ? dispatchOutDown() : dispatchOut();
+			_down ? dispatchOutDown(_downRight) : dispatchOut();
 		}
 		if (_down) {
 			_down = false;
 			dispatchOutUp();
 		}
+		if (_downRight) {
+			_downRight = false;
+			dispatchOutUp(true);
+		}
 	}
 
 	private function enterHandler():Void {
-		if (_over) {
-			_over = false;
+		if (outover) {
+			outover = false;
 			over = true;
 			dispatchOver();
 		}

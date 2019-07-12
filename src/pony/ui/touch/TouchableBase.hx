@@ -9,7 +9,7 @@ import pony.time.DTimer;
 import pony.TypedPool;
 
 /**
- * Toucheble
+ * Touchable
  * @author AxGord <axgord@gmail.com>
  */
 class TouchableBase implements HasSignal {
@@ -20,11 +20,17 @@ class TouchableBase implements HasSignal {
 	@:auto public var onOver:Signal1<Touch>;
 	@:auto public var onOut:Signal1<Touch>;
 	@:auto public var onOutUp:Signal1<Touch>;
+	@:auto public var onOutRightUp:Signal1<Touch>;
 	@:auto public var onOverDown:Signal1<Touch>;
+	@:auto public var onOverRightDown:Signal1<Touch>;
 	@:auto public var onOutDown:Signal1<Touch>;
+	@:auto public var onOutRightDown:Signal1<Touch>;
 	@:auto public var onDown:Signal1<Touch>;
+	@:auto public var onRightDown:Signal1<Touch>;
 	@:auto public var onUp:Signal1<Touch>;
+	@:auto public var onRightUp:Signal1<Touch>;
 	@:auto public var onClick:Signal1<Touch>;
+	@:auto public var onRightClick:Signal1<Touch>;
 	@:auto public var onTap:Signal1<Touch>;
 	@:auto public var onWheel:Signal1<Int>;
 	@:auto public var onSwipe:Signal1<Direction>;
@@ -38,6 +44,8 @@ class TouchableBase implements HasSignal {
 	public function new() {
 		onDown << downHandlerWaitClick;
 		onOutUp << outUpHandlerStopWaitClick;
+		onRightDown << downRightHandlerWaitClick;
+		onOutRightUp << outUpRightHandlerStopWaitClick;
 		
 		eTap.onTake << eTapTake;
 		eTap.onLost << eTapLost;
@@ -51,6 +59,8 @@ class TouchableBase implements HasSignal {
 
 	private function downHandlerWaitClick(): Void onUp < eClick;
 	private function outUpHandlerStopWaitClick(): Void onUp >> eClick;
+	private function downRightHandlerWaitClick(): Void onRightUp < eRightClick;
+	private function outUpRightHandlerStopWaitClick(): Void onRightUp >> eRightClick;
 	
 	private function addSwipe():Void {
 		swipeTimer = DTimer.createFixedTimer(50);
@@ -191,18 +201,24 @@ class TouchableBase implements HasSignal {
 	 */
 	public function check():Void {}
 	
-	private function dispatchDown(id:UInt = 0, x:Float, y:Float, safe:Bool = false):Void {
+	private function dispatchDown(id:UInt = 0, x:Float, y:Float, right:Bool = false, safe:Bool = false):Void {
 		if (touches.exists(id)) 
 			@:privateAccess touches[id].eDown.dispatch(touches[id].set(x, y));
 		else
 			touches[id] = @:privateAccess touchPool.get().set(x, y);
-		eDown.dispatch(touches[id], safe);
+		if (right)
+			eRightDown.dispatch(touches[id], safe);
+		else
+			eDown.dispatch(touches[id], safe);
 	}
 	
-	private function dispatchUp(id:UInt = 0, safe:Bool = false):Void {
+	private function dispatchUp(id:UInt = 0, right:Bool = false, safe:Bool = false):Void {
 		if (!touches.exists(id)) return;
 		@:privateAccess touches[id].eUp.dispatch(touches[id]);
-		eUp.dispatch(touches[id], safe);
+		if (right)
+			eRightUp.dispatch(touches[id], safe);
+		else
+			eUp.dispatch(touches[id], safe);
 	}
 	
 	private function dispatchOver(id:UInt = 0, safe:Bool = false):Void {
@@ -223,18 +239,24 @@ class TouchableBase implements HasSignal {
 		removeTouch(id);
 	}
 	
-	private function dispatchOutDown(id:UInt = 0, safe:Bool = false):Void {
+	private function dispatchOutDown(id:UInt = 0, right: Bool = false, safe:Bool = false):Void {
 		if (!touches.exists(id)) return;
 		@:privateAccess touches[id].eOutDown.dispatch(touches[id]);
-		eOutDown.dispatch(touches[id], safe);
+		if (right)
+			eOutRightDown.dispatch(touches[id], safe);
+		else
+			eOutDown.dispatch(touches[id], safe);
 	}
 	
-	private function dispatchOverDown(id:UInt = 0, safe:Bool = false):Void {
-		if (touches.exists(id)) 
+	private function dispatchOverDown(id:UInt = 0, right: Bool = false, safe:Bool = false):Void {
+		if (touches.exists(id))
 			@:privateAccess touches[id].eOverDown.dispatch(touches[id]);
 		else
 			touches[id] = touchPool.get();
-		eOverDown.dispatch(touches[id], safe);
+		if (right)
+			eOverRightDown.dispatch(touches[id], safe);
+		else
+			eOverDown.dispatch(touches[id], safe);
 	}
 	
 	private function dispatchOut(id:UInt = 0, safe:Bool = false):Void {
@@ -246,10 +268,13 @@ class TouchableBase implements HasSignal {
 	
 	private function dispatchOutUpListener(id:UInt):Void dispatchOutUp(id);
 	
-	private function dispatchOutUp(id:UInt = 0, safe:Bool = false):Void {
+	private function dispatchOutUp(id:UInt = 0, right:Bool = false, safe:Bool = false):Void {
 		if (touches.exists(id))
 			@:privateAccess touches[id].eOutUp.dispatch(touches[id]);
-		eOutUp.dispatch(touches[id], safe);
+		if (right)
+			eOutRightUp.dispatch(touches[id], safe);
+		else
+			eOutUp.dispatch(touches[id], safe);
 		removeTouch(id);
 	}
 	
