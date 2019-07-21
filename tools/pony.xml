@@ -14,8 +14,8 @@
         <module>imagemin</module>
 
         <!-- <module>imagemin-jpegtran</module>
-        <module>imagemin-jpeg-recompress</module>
-        <module>imagemin-jpegoptim</module> -->
+        <module>imagemin-jpeg-recompress</module> -->
+        <module>imagemin-jpegoptim</module>
         <module>imagemin-guetzli</module>
 
         <module>imagemin-pngquant</module>

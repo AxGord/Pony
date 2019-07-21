@@ -9,5 +9,6 @@ typedef ImageminConfig = { > BAConfig,
 	jpgq: Int,
 	webpq: Int,
 	webpfrompng: Bool,
-	jpgfrompng: Bool
+	jpgfrompng: Bool,
+	fast: Bool
 }

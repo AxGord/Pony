@@ -31,8 +31,8 @@ class Imagemin extends NModule<ImageminConfig> {
 					plugins: [
 						// NPM.imagemin_jpegtran(),
 						// NPM.imagemin_jpeg_recompress(),
-						// NPM.imagemin_jpegoptim(),
-						NPM.imagemin_guetzli({nomemlimit: true, quality: cfg.jpgq})
+						cfg.fast ? NPM.imagemin_jpegoptim({progressive: true})
+						: NPM.imagemin_guetzli({nomemlimit: true, quality: cfg.jpgq})
 					]
 				}).then(function(r:Array<{data:BytesData, path:String}>):Void {
 					var p:String = file.first.substr(cfg.from.length);

@@ -18,6 +18,7 @@
 		"!msdf-bmfont-xml@2.5.0",
 		"imagemin@6.1.0",
 		"imagemin-guetzli@2.0.0",
+		"imagemin-jpegoptim@6.0.0",
 		"imagemin-webp@5.1.0",
 		"imagemin-pngquant@8.0.0",
 		"imagemin-zopfli@6.0.0",
