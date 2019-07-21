@@ -15,25 +15,33 @@ class LazyBitmap extends Bitmap {
 	
 	private var asset: String;
 	private var aname: String;
+	private var needAnim: Bool;
 	private var anim: Tween;
 	public var finalAlpha(default, set): Float = 1;
+	public var finalVisible(default, set): Bool;
+	private var inited: Bool = false;
 
-	public function new(asset: String, ?name: String, ?anim: Bool, ?parent: Object) {
+	public function new(asset: String, ?name: String, ?anim: Bool, ?hidden: Bool, ?parent: Object) {
 		super(parent);
-		visible = false;
 		this.asset = asset;
 		this.aname = name;
+		this.needAnim = anim;
+		finalVisible = !hidden;
+		if (!hidden) init();
+	}
+
+	private function init(): Void {
+		inited = true;
 		if (!AssetManager.isLoaded(asset)) {
-			if (anim) {
-				this.anim = new Tween(TweenType.Bezier, 300);
-				this.anim.onProgress << animHandler;
-				this.anim.onComplete << animCompleteHandler;
-				alpha = 0;
+			if (needAnim) {
+				anim = new Tween(TweenType.Bezier, 300);
+				anim.onProgress << animHandler;
+				anim.onComplete << animCompleteHandler;
+				setAlpha(0);
 			}
 			AssetManager.loadComplete(AssetManager.load.bind('', asset), loadedHandler);
 		} else {
 			setTile();
-			visible = true;
 		}
 	}
 
@@ -52,16 +60,28 @@ class LazyBitmap extends Bitmap {
 			anim.play();
 	}
 
-	private function animHandler(v: Float): Void alpha = v * finalAlpha;
+	private function animHandler(v: Float): Void setAlpha(v * finalAlpha);
 
 	private function animCompleteHandler(): Void {
 		anim.destroy();
 		anim = null;
 	}
 
-	private function set_finalAlpha(v: Float): Float {
+	private inline function set_finalAlpha(v: Float): Float {
 		finalAlpha = v;
-		if (anim == null) alpha = v;
+		if (anim == null) setAlpha(v);
+		return v;
+	}
+
+	public inline function setAlpha(v: Float): Void {
+		visible = finalVisible && v != 0;
+		alpha = v;
+	}
+
+	private inline function set_finalVisible(v: Bool): Bool {
+		visible = v && alpha != 0;
+		finalVisible = v;
+		if (v && !inited) init();
 		return v;
 	}
 
