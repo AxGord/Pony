@@ -50,7 +50,7 @@ class ButtonCore extends Tumbler implements HasSignal {
 		
 		changeState << function(v) if (lowMode != 1) eVisual.dispatch(lowMode, v);
 		
-		changeLowMode << function(v) eVisual.dispatch(v,state);
+		changeLowMode << function(v) eVisual.dispatch(v, state);
 		changeLowMode - 1 << disable;
 		changeLowMode / 1 << enable;
 		onEnable << function() lowMode = modeBeforeDisable;

@@ -1,5 +1,6 @@
 package pony.ui.touch.heaps;
 
+import js.html.MouseEvent;
 import js.Browser;
 import h2d.Drawable;
 import h2d.Interactive;
@@ -18,6 +19,7 @@ class Touchable extends TouchableBase {
 	private static var inited:Bool = false;
 
 	public static var down(default, null):Bool = false;
+	public static var downRight(default, null):Bool = false;
 	private static inline var MOUSEMOVE:String = 'mousemove';
 	private static inline var MOUSEUP:String = 'mouseup';
 	private static inline var MOUSEDOWN:String = 'mousedown';
@@ -65,8 +67,10 @@ class Touchable extends TouchableBase {
 	private var interactive:Interactive;
 	private var over:Bool = false;
 	private var outover:Bool = false;
-	private var _down:Bool = false;
-	private var _downRight:Bool = false;
+	private var _down:Null<Bool> = null;
+	private var _downRight:Null<Bool> = null;
+	private var wantUp:Bool = false;
+	private var wantUpRight:Bool = false;
 	
 	public function new(interactive:Interactive) {
 		init();
@@ -79,8 +83,8 @@ class Touchable extends TouchableBase {
 		interactive.onWheel = wheelHandler;
 		Browser.window.addEventListener(MOUSELEAVE, leaveHandler);
 		Browser.window.addEventListener(MOUSEENTER, enterHandler);
-		Browser.window.addEventListener(MOUSEUP, globUpHandler);
-		Browser.window.addEventListener(MOUSEDOWN, globDownHandler);
+		Browser.window.addEventListener(MOUSEUP, globMouseUpHandler);
+		Browser.window.addEventListener(MOUSEDOWN, globMouseDownHandler);
 		Browser.window.addEventListener(TOUCHESTART, globDownHandler);
 		Browser.window.addEventListener(TOUCHEND, globUpHandler);
 		Browser.window.addEventListener(TOUCHEND, leaveHandler);
@@ -92,8 +96,8 @@ class Touchable extends TouchableBase {
 		leaveHandler();
 		Browser.window.removeEventListener(MOUSELEAVE, leaveHandler);
 		Browser.window.removeEventListener(MOUSEENTER, enterHandler);
-		Browser.window.removeEventListener(MOUSEUP, globUpHandler);
-		Browser.window.removeEventListener(MOUSEDOWN, globDownHandler);
+		Browser.window.removeEventListener(MOUSEUP, globMouseUpHandler);
+		Browser.window.removeEventListener(MOUSEDOWN, globMouseDownHandler);
 		Browser.window.removeEventListener(TOUCHESTART, globDownHandler);
 		Browser.window.removeEventListener(TOUCHEND, globUpHandler);
 		Browser.window.removeEventListener(TOUCHEND, leaveHandler);
@@ -143,32 +147,67 @@ class Touchable extends TouchableBase {
 	private function upHandler(event: Event): Void {
 		if (outover || event.button > 1) return;
 		var right:Bool = event.button == 1;
-		if (right)
+		if (right) {
+			wantUpRight = true;
 			_downRight = false;
-		else
+		} else {
+			wantUp = true;
 			_down = false;
+		}
 		if (propagateUp) event.propagate = true;
+		_globUpHandler(right);
 	}
 
-	private function globUpHandler():Void DeltaTime.skipUpdate(_globUpHandler);
+	private function globMouseUpHandler(event: MouseEvent):Void {
+		if (event.button == 0)
+			DeltaTime.fixedUpdate < globMouseUpLeftHandler;
+		else if (event.button == 2)
+			DeltaTime.fixedUpdate < globMouseUpRightHandler;
+	}
+
+	private function globMouseUpLeftHandler(): Void {
+		if (wantUp)
+			wantUp = false;
+		else
+			_globUpHandler(false);
+	}
+
+	private function globMouseUpRightHandler(): Void {
+		if (wantUpRight)
+			wantUpRight = false;
+		else
+			_globUpHandler(true);
+	}
+
+	private function globUpHandler():Void {
+		DeltaTime.fixedUpdate < globMouseUpLeftHandler;
+	}
 	
-	private function _globUpHandler():Void {
-		if (!over) {
-			if (!_down)
-				dispatchOutUp();
-			if (!_downRight)
-				dispatchOutUp(true);
-		} else if (!_down || !_downRight) {
-			if (!_down)
-				dispatchUp();
-			if (!_downRight)
-				dispatchUp(true);
+	private function _globUpHandler(right:Bool):Void {
+		if (right) {
+			if (!over) {
+				if (_downRight != null) dispatchOutUp(true);
+			} else {
+				if (_downRight != null) dispatchUp(true);
+			}
+			_downRight = null;
+			downRight = false;
 		} else {
-			leaveHandler();
+			if (!over) {
+				if (_down != null) dispatchOutUp();
+			} else {
+				if (_down != null) dispatchUp();
+			}
+			_down = null;
+			down = false;
 		}
-		_down = false;
-		_downRight = false;
-		down = false;
+	}
+
+	private function globMouseDownHandler(event: MouseEvent):Void {
+		if (event.button == 0)
+			down = true;
+		else if (event.button == 2)
+			downRight = true;
 	}
 
 	private function globDownHandler():Void down = true;
@@ -177,16 +216,16 @@ class Touchable extends TouchableBase {
 		if (over) {
 			outover = true;
 			over = false;
-			_down ? dispatchOutDown(_downRight) : dispatchOut();
+			// _down ? dispatchOutDown() : dispatchOut();
 		}
-		if (_down) {
-			_down = false;
-			dispatchOutUp();
-		}
-		if (_downRight) {
-			_downRight = false;
-			dispatchOutUp(true);
-		}
+		// if (_down) {
+		// 	_down = null;
+		// 	dispatchOutUp();
+		// }
+		// if (_downRight) {
+		// 	_downRight = null;
+		// 	dispatchOutUp(true);
+		// }
 	}
 
 	private function enterHandler():Void {

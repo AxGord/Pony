@@ -8,7 +8,7 @@ typedef Touchable =
 pony.ui.touch.heaps.Touchable
 #elseif pixijs
 pony.ui.touch.pixi.Touchable
-#elseif (flash&&!starling)
+#elseif (flash && !starling)
 pony.ui.touch.flash.Touchable
 #elseif openfl
 pony.ui.touch.openfl.Touchable
