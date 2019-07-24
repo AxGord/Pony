@@ -87,7 +87,6 @@ class Touchable extends TouchableBase {
 		Browser.window.addEventListener(MOUSEDOWN, globMouseDownHandler);
 		Browser.window.addEventListener(TOUCHESTART, globDownHandler);
 		Browser.window.addEventListener(TOUCHEND, globUpHandler);
-		Browser.window.addEventListener(TOUCHEND, leaveHandler);
 		Browser.window.addEventListener(TOUCHCANCEL, leaveHandler);
 	}
 
@@ -100,7 +99,6 @@ class Touchable extends TouchableBase {
 		Browser.window.removeEventListener(MOUSEDOWN, globMouseDownHandler);
 		Browser.window.removeEventListener(TOUCHESTART, globDownHandler);
 		Browser.window.removeEventListener(TOUCHEND, globUpHandler);
-		Browser.window.removeEventListener(TOUCHEND, leaveHandler);
 		Browser.window.removeEventListener(TOUCHCANCEL, leaveHandler);
 		interactive.remove();
 		interactive = null;
@@ -181,6 +179,7 @@ class Touchable extends TouchableBase {
 
 	private function globUpHandler():Void {
 		DeltaTime.fixedUpdate < globMouseUpLeftHandler;
+		DeltaTime.fixedUpdate < touchUp;
 	}
 	
 	private function _globUpHandler(right:Bool):Void {
@@ -216,16 +215,7 @@ class Touchable extends TouchableBase {
 		if (over) {
 			outover = true;
 			over = false;
-			// _down ? dispatchOutDown() : dispatchOut();
 		}
-		// if (_down) {
-		// 	_down = null;
-		// 	dispatchOutUp();
-		// }
-		// if (_downRight) {
-		// 	_downRight = null;
-		// 	dispatchOutUp(true);
-		// }
 	}
 
 	private function enterHandler():Void {
@@ -233,6 +223,17 @@ class Touchable extends TouchableBase {
 			outover = false;
 			over = true;
 			dispatchOver();
+		}
+	}
+
+	private function touchUp(): Void {
+		if (over) {
+			_down ? dispatchOutDown() : dispatchOut();
+			over = false;
+		}
+		if (_down) {
+			_down = null;
+			dispatchOutUp();
 		}
 	}
 	
