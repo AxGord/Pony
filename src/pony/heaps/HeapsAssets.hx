@@ -23,6 +23,7 @@ import pony.Fast;
 	var JPEG = 'jpeg';
 	var FNT = 'fnt';
 	var TXT = 'txt';
+	var CSS = 'css';
 	var JSON = 'json';
 	var CDB = 'cdb';
 }
@@ -121,7 +122,7 @@ class HeapsAssets {
 					tiles[asset] = Any.fromBytes(realAsset, bytes).toTile();
 					cb(10, 10);
 				}
-			case TXT, JSON, CDB:
+			case TXT, CSS, JSON, CDB:
 				loader.load();
 				loader.onProgress = function(cur:Int, max:Int):Void if (cur != max) cb(Std.int(cur / max * 10), 10);
 				loader.onLoaded = function(bytes:Bytes):Void {

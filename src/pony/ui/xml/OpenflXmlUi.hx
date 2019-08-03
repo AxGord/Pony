@@ -28,7 +28,7 @@ using Std;
  * @author meerfolk<meerfolk@gmail.com>
  */
 #if !macro
-@:autoBuild(pony.ui.xml.XmlUiBuilder.build({
+@:autoBuild(pony.ui.xml.XmlUiBuilder.build(pony.ui.AssetManager, {
 	free: openfl.display.Sprite,
 	image: openfl.display.Bitmap,
 	layout : pony.openfl.ui.TLayout,
@@ -42,7 +42,7 @@ class OpenflXmlUi extends Sprite implements HasAbstract {
 	private var FILTERS:Map<String, BitmapFilter> = new Map();
 	private var SCALE:Float = 1;
 	
-	public function createUIElement (name:String, attrs:Dynamic<String>, content:Array<Dynamic>):Dynamic {
+	public function createUIElement(name:String, attrs:Dynamic<String>, content:Array<Dynamic>):Dynamic {
 		var obj : DisplayObject = 
 		switch name {
 			case 'free' :

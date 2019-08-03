@@ -280,7 +280,7 @@ class HasAssetBuilder {
 		
 		var patchesFields:Map<String, String> = new Map();
 		if (meta.checkMeta([':assets_path'])) {
-			var patches:Expr = meta.getMeta(':assets_path').params[0];	
+			var patches:Expr = meta.getMeta(':assets_path').params[0];
 			switch patches.expr {
 				case EObjectDecl(fs):
 					for (f in fs) {

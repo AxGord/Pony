@@ -21,7 +21,7 @@ typedef Style = Map<String, Map<String, String>>;
  */
 class XmlUiBuilder {
 
-	macro static public function build(typesExpr:Expr):Array<Field> {
+	macro static public function build(assetManager:Expr, typesExpr:Expr):Array<Field> {
 		var cl = Context.getLocalClass().get();
 		var meta = cl.meta.get();
 		if (!meta.checkMeta([':ui'])) {
@@ -108,7 +108,7 @@ class XmlUiBuilder {
 				for (p in pathes) if (pts.indexOf(p) == -1) pts.push(p);
 				var ps:Array<Expr> = [for (p in pts) macro $v{p}];
 				fields.push({name: 'loadUI', kind:FFun({args:[{name:'cb', type:macro:Int -> Int -> Void}], ret:null,
-					expr:macro pony.ui.AssetManager.load('', $a{ps}, cb)}), pos: Context.currentPos(), access: [AStatic, APublic]});
+					expr:macro ${assetManager}.load('', $a{ps}, cb)}), pos: Context.currentPos(), access: [AStatic, APublic]});
 			case _: Context.error('Wrong ui type', meta.getMeta(':ui').params[0].pos);
 		}
 		

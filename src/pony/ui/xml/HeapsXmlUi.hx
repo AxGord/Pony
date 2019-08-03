@@ -39,7 +39,7 @@ using pony.text.TextTools;
  * @author AxGord <axgord@gmail.com>
  */
 #if !macro
-@:autoBuild(pony.ui.xml.XmlUiBuilder.build({
+@:autoBuild(pony.ui.xml.XmlUiBuilder.build(pony.ui.AssetManager, {
 	node: h2d.Drawable,
 	rect: h2d.Graphics,
 	line: h2d.Graphics,
