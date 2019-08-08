@@ -50,7 +50,7 @@ class HasSignalBuilder {
 				} else if (f.meta.checkMeta([":lazy"])) {
 					flag = true;
 					fields.push( { name: eName, access:ast.concat([APrivate]), pos:f.pos, kind:FVar(
-						TPath( tp )
+						TPath( {name: 'Null', pack: [], params: [TPType(TPath(tp))]} )
 					) } );
 					var ex:Expr = { pos:f.pos, expr: ENew(tp, []) };
 					fields.push( { name:'get_' + f.name, access: ast.concat([AInline, APrivate]), meta: ext, pos:f.pos, kind:FFun(
@@ -97,14 +97,16 @@ class HasSignalBuilder {
 						setcontroll ?
 							{args: [ { name:'v', type:null } ], ret: null, expr: macro return $i { eventName } == null || v != $i { f.name } && !$i { eventName }.dispatch(v, $i { f.name }, true ) ?  $i { f.name } = v : $i { f.name } }
 							:
-							{args: [ { name:'v', type:null } ], ret: null, expr: macro { if ($i { eventName } == null || v != $i { f.name }) {var prev = $i { f.name }; $i { eventName }.dispatch($i { f.name } = v, prev, true );} return $i { f.name }; } }
+							{args: [ { name:'v', type:null } ], ret: null, expr: macro { if ($i { eventName } == null || v != $i { f.name }) {var prev = $i { f.name }; @:nullSafety(Off) $i { eventName }.dispatch($i { f.name } = v, prev, true );} return $i { f.name }; } }
 					) } );
-					fields.push( { name: eventName, access:ast.concat([APrivate]), pos:f.pos, kind:FVar(TPath(tp)) } );
+					fields.push( { name: eventName, access:ast.concat([APrivate]), pos:f.pos, kind:FVar(
+						TPath( {name: 'Null', pack: [], params: [TPType(TPath(tp))]} )
+					) } );
 					fields.push( { name:'get_' + changeName, access: ast.concat([AInline, APrivate]), meta: ext, pos:f.pos, kind:FFun(
-						{args: [], ret: tps, expr: macro return $i { eventName } == null ? $i { eventName } = ${ex} : $i { eventName }}
+						{args: [], ret: tps, expr: macro return $i { eventName } == null ? $i { eventName } = ${ex} : @:nullSafety(Off) $i { eventName }}
 					) } );
-					a.push(macro if ($i { eventName } != null) $i { eventName }.destroy());
-					a.push(macro $i { eventName } = null);
+					a.push(macro if ($i { eventName } != null) @:nullSafety(Off) $i { eventName }.destroy());
+					a.push(macro @:nullSafety(Off) $i { eventName } = null);
 				} else {
 					fields.push( { name:'set_' + f.name, access: ast.concat([AInline, APrivate]), meta: ext, pos:f.pos, kind:FFun(
 						setcontroll ?
@@ -117,7 +119,7 @@ class HasSignalBuilder {
 						{args: [], ret: tps, expr: macro return $i { eventName }}
 					) } );
 					a.push(macro $i { eventName }.destroy());
-					a.push(macro $i { eventName } = null);
+					a.push(macro @:nullSafety(Off) $i { eventName } = null);
 				}
 			case _:
 		}
