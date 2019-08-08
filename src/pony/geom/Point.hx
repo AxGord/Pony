@@ -56,6 +56,8 @@ abstract Point<T:Float>(Point_<T>) from Point_<T> to Point_<T> {
 	@:op(A - B) public static inline function sub1<T:Float>(lhs:Point<T>, rhs:T):Point<T>
 		return { x:lhs.x - rhs, y:lhs.y - rhs };
 
+	@:op(A == B) public inline function compare(b:Point<T>):Bool return x == b.x && y == b.y;
+
 	public static inline function random():Point<Float> return new Point<Float>(Math.random(), Math.random());
 
 	#if flash
