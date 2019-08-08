@@ -61,7 +61,7 @@ class HasSignalBuilder {
 				if (flag) {
 					f.kind = FProp('get', 'never', TPath(p));
 					f.meta = [];
-					a.push(macro $i { eName } = null);
+					a.push(macro @:nullSafety(Off) $i { eName } = null);
 				}
 				
 			case FVar(TPath(p), val) if (f.meta.checkMeta([":bindable", "bindable"])):
