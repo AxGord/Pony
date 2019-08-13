@@ -41,11 +41,15 @@ abstract Border<T:Float>({top:T, left:T, right:T, bottom:T}) {
 		}
 	}
 	
-	@:op(A * B) @:extern inline public function mul(rhs:Float):Border<Float>
+	@:op(A * B) @:extern public inline function mul(rhs:Float):Border<Float>
 		return new Border(top * rhs, left * rhs, right * rhs, bottom * rhs);
 
 	@:extern public inline function getRectFromSize(size:Point<T>):Rect<T> {
 		return {x: left, y: top, width: size.x - left - right, height: size.y - top - bottom};
+	}
+
+	@:extern public inline function toInt(): Border<Int> {
+		return new Border(Std.int(top), Std.int(left), Std.int(right), Std.int(bottom));
 	}
 	
 }
