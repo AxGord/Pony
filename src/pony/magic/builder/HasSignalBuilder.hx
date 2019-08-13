@@ -18,10 +18,11 @@ class HasSignalBuilder {
 		var fields:Array<Field> = Context.getBuildFields();
 		var pack = ['pony', 'events'];
 		#if (js||flash) //for interfaces work only js or flash
-		var ext = [ { name:':extern', pos: Context.currentPos() } ];
+		var ext: Metadata = [ { name:':extern', pos: Context.currentPos() } ];
 		#else
-		var ext = [];
+		var ext: Metadata = [];
 		#end
+		var nullsafetyOff: Metadata = [ { name:':nullSafety', pos: Context.currentPos(), params: [macro Off] } ];
 		var destrStatic:Array<Expr> = [];
 		var destr:Array<Expr> = [];
 		
@@ -49,9 +50,7 @@ class HasSignalBuilder {
 					a.push(macro $i { eName }.destroy());
 				} else if (f.meta.checkMeta([":lazy"])) {
 					flag = true;
-					fields.push( { name: eName, access:ast.concat([APrivate]), pos:f.pos, kind:FVar(
-						TPath( {name: 'Null', pack: [], params: [TPType(TPath(tp))]} )
-					) } );
+					fields.push( { name: eName, access:ast.concat([APrivate]), pos:f.pos, kind:FVar(TPath(tp)), meta: nullsafetyOff } );
 					var ex:Expr = { pos:f.pos, expr: ENew(tp, []) };
 					fields.push( { name:'get_' + f.name, access: ast.concat([AInline, APrivate]), meta: ext, pos:f.pos, kind:FFun(
 						{args: [], ret: null, expr: macro return $i { eName } == null ? $i { eName } = ${ex} : $i { eName }}
@@ -88,24 +87,22 @@ class HasSignalBuilder {
 				}
 				
 				var a = (isStatic ? destrStatic : destr);
-				var eventName = 'e'+TextTools.bigFirst(changeName);
+				var eventName = 'e' + TextTools.bigFirst(changeName);
 				fields.push( { name: changeName, access:ast.concat([priv?APrivate:APublic]), pos:f.pos, kind:FProp(
 					'get', 'never', TPath( { pack:pack, name:'Signal2', params:[ TPType(ttp), TPType(ttp) ] } )
 				) } );
 				if (lazy) {
-					fields.push({ name:'set_' + f.name, access: ast.concat([AInline, APrivate]), meta: ext, pos:f.pos, kind:FFun(
+					fields.push({ name: 'set_' + f.name, access: ast.concat([AInline, APrivate]), meta: ext, pos:f.pos, kind:FFun(
 						setcontroll ?
-							{args: [ { name:'v', type:null } ], ret: null, expr: macro return $i { eventName } == null || v != $i { f.name } && !$i { eventName }.dispatch(v, $i { f.name }, true ) ?  $i { f.name } = v : $i { f.name } }
+							{args: [ { name: 'v', type:null } ], ret: null, expr: macro return $i { eventName } == null || v != $i { f.name } && !$i { eventName }.dispatch(v, $i { f.name }, true ) ?  $i { f.name } = v : $i { f.name } }
 							:
-							{args: [ { name:'v', type:null } ], ret: null, expr: macro { if ($i { eventName } == null || v != $i { f.name }) {var prev = $i { f.name }; @:nullSafety(Off) $i { eventName }.dispatch($i { f.name } = v, prev, true );} return $i { f.name }; } }
+							{args: [ { name: 'v', type:null } ], ret: null, expr: macro { if ($i { eventName } == null || v != $i { f.name }) {var prev = $i { f.name }; $i { eventName }.dispatch($i { f.name } = v, prev, true );} return $i { f.name }; } }
 					) } );
-					fields.push( { name: eventName, access:ast.concat([APrivate]), pos:f.pos, kind:FVar(
-						TPath( {name: 'Null', pack: [], params: [TPType(TPath(tp))]} )
-					) } );
+					fields.push( { name: eventName, access:ast.concat([APrivate]), pos:f.pos, kind:FVar(TPath(tp)), meta: nullsafetyOff } );
 					fields.push( { name:'get_' + changeName, access: ast.concat([AInline, APrivate]), meta: ext, pos:f.pos, kind:FFun(
-						{args: [], ret: tps, expr: macro return $i { eventName } == null ? $i { eventName } = ${ex} : @:nullSafety(Off) $i { eventName }}
+						{args: [], ret: tps, expr: macro return $i { eventName } == null ? $i { eventName } = ${ex} : $i { eventName }}
 					) } );
-					a.push(macro if ($i { eventName } != null) @:nullSafety(Off) $i { eventName }.destroy());
+					a.push(macro if ($i { eventName } != null) $i { eventName }.destroy());
 					a.push(macro @:nullSafety(Off) $i { eventName } = null);
 				} else {
 					fields.push( { name:'set_' + f.name, access: ast.concat([AInline, APrivate]), meta: ext, pos:f.pos, kind:FFun(
@@ -119,7 +116,7 @@ class HasSignalBuilder {
 						{args: [], ret: tps, expr: macro return $i { eventName }}
 					) } );
 					a.push(macro $i { eventName }.destroy());
-					a.push(macro @:nullSafety(Off) $i { eventName } = null);
+					a.push(macro $i { eventName } = null);
 				}
 			case _:
 		}

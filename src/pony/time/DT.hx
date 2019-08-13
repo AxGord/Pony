@@ -8,10 +8,10 @@ using Std;
  * DT
  * @author AxGord <axgord@gmail.com>
  */
-abstract DT(Null<Float>) from Float to Float {
+abstract DT(Float) from Float to Float {
 	
 	public var ms(get, never):Float;
-	public var sec(get, never):Null<Float>;
+	public var sec(get, never):Float;
 	public var min(get, never):Float;
 	public var hour(get, never):Float;
 	public var day(get, never):Float;

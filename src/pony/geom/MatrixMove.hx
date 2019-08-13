@@ -40,7 +40,6 @@ class MatrixMove {
 		setToIndex(prev, index);
 	}
 	
-	
 	public function down():Void {
 		var prev:MatrixIndex = getIndex();
 		var index:MatrixIndex = {r:prev.r, c:prev.c};
