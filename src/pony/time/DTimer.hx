@@ -40,9 +40,10 @@ class DTimer implements HasSignal implements ITimer<DTimer> implements Declarato
 		return this;
 	}
 	
-	public inline function start(?dt:DT):DTimer {
+	public inline function start(?dt: DT): DTimer {
 		updateSignal.add(_update);
-		@:nullSafety(Off) if (dt != null) _update(dt);
+		if ((dt: Null<Float>) != null)
+			_update(@:nullSafety(Off) dt);
 		return this;
 	}
 	
@@ -106,44 +107,49 @@ class DTimer implements HasSignal implements ITimer<DTimer> implements Declarato
 	
 	public inline function toString():String return currentTime;
 	
-	static public inline function createTimer     (time:TimeInterval, repeat:Int = 0):DTimer return new DTimer(DeltaTime.update, time, repeat);
-	static public inline function createFixedTimer(time:TimeInterval, repeat:Int = 0):DTimer return new DTimer(DeltaTime.fixedUpdate, time, repeat);
+	public static inline function createTimer(time:TimeInterval, repeat:Int = 0):DTimer
+		return new DTimer(DeltaTime.update, time, repeat);
+
+	public static inline function createFixedTimer(time:TimeInterval, repeat:Int = 0):DTimer
+		return new DTimer(DeltaTime.fixedUpdate, time, repeat);
 	
-	static public inline function delay(time:Time, f:Listener1<DT>, ?dt:DT):DTimer {
+	public static inline function delay(time:Time, f:Listener1<DT>, ?dt:DT):DTimer {
 		var t = DTimer.createTimer(time);
 		t.complete.once(f);
 		t.complete.once(t.destroy);
 		t.start(dt);
 		return t;
 	}
-	static public inline function fixedDelay(time:Time, f:Listener1<DT>, ?dt:DT):DTimer {
+
+	public static inline function fixedDelay(time:Time, f:Listener1<DT>, ?dt:DT):DTimer {
 		var t = DTimer.createFixedTimer(time);
 		t.complete.once(f);
 		t.complete.once(t.destroy);
 		t.start(dt);
 		return t;
 	}
-	static public inline function repeat(time:Time, f:Listener1 < DT >, ?dt:DT):DTimer {
+
+	public static inline function repeat(time:Time, f:Listener1 < DT >, ?dt:DT):DTimer {
 		var t = DTimer.createTimer(time, -1);
 		t.complete.add(f);
 		t.start(dt);
 		return t;
 	}
-	static public inline function fixedRepeat(time:Time, f:Listener1 < DT > , ?dt:DT):DTimer {
+	public static inline function fixedRepeat(time:Time, f:Listener1 < DT >, ?dt:DT):DTimer {
 		var t = DTimer.createFixedTimer(time, -1);
 		t.complete.add(f);
 		t.start(dt);
 		return t;
 	}
 	
-	static public inline function clock(time:Time):DTimer {
+	public static inline function clock(time:Time):DTimer {
 		var t = createTimer(null);
 		t.currentTime = time;
 		t.start();
 		return t;
 	}
 	
-	static public inline function fixedClock(time:Time):DTimer {
+	public static inline function fixedClock(time:Time):DTimer {
 		var t = createFixedTimer(null);
 		t.currentTime = time;
 		t.start();

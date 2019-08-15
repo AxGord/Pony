@@ -80,7 +80,7 @@ class Tween implements HasSignal implements Declarator {
 		invert = false;
 		playing = true;
 		updateSignal << forward;
-		if (dt != null) forward(dt);
+		if ((dt: Null<Float>) != null) forward(dt);
 	}
 	
 	public function playBack(?dt:DT):Void {
@@ -88,7 +88,7 @@ class Tween implements HasSignal implements Declarator {
 		invert = true;
 		playing = true;
 		updateSignal << backward;
-		if (dt != null) backward(dt);
+		if ((dt: Null<Float>) != null) backward(dt);
 	}
 	
 	public function play(?dt:DT):Void {
@@ -107,10 +107,10 @@ class Tween implements HasSignal implements Declarator {
 		}
 		if (!invert) {
 			updateSignal << forward;
-			if (dt != null) forward(dt);
+			if ((dt: Null<Float>) != null) forward(dt);
 		} else {
 			updateSignal << backward;
-			if (dt != null) backward(dt);
+			if ((dt: Null<Float>) != null) backward(dt);
 		}
 	}
 	

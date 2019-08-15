@@ -23,7 +23,9 @@ using Lambda;
  */
 class Tools {
 
+	#if sys
 	public static var isWindows(get, never):Bool;
+	#end
 	private static inline var SRC:String = 'src';
 	
 	#if macro
@@ -34,10 +36,12 @@ class Tools {
         return Context.makeExpr(_getBuildDate, Context.currentPos());
     }
 
+	#if sys
 	#if (js && !nodejs)
 	@:extern private static inline function get_isWindows():Bool return pony.JsTools.os == pony.JsTools.OS.Windows;
 	#else
 	@:extern private static inline function get_isWindows():Bool return Sys.systemName() == 'Windows';
+	#end
 	#end
 
 	/**
@@ -264,7 +268,7 @@ class Tools {
 		return macro $v{f};
 	}
 
-	#if (!macro && (!js || nodejs))
+	#if (sys && !macro && (!js || nodejs))
 	public static function ponyPath():String {
 		var pd:String = isWindows ? '\\' : '/';
 		var libPath:String = null;
