@@ -138,7 +138,7 @@ class DeltaTime implements HasSignal {
 		return function() instant ? DeltaTime.fixedUpdate < cb : cb();
 	}
 	
-	#if (munit || dox)
+	#if (munit || dox || tink_unittest)
 	/**
 	 * For unit tests
 	 * @param	time
