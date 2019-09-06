@@ -5,7 +5,7 @@ package pony.geom;
  * @author AxGord
  */
 enum Direction { left; right; up; down; }
- 
+
 /**
  * DirectionContainer
  * @author AxGord

@@ -43,7 +43,7 @@ class DTimer implements HasSignal implements ITimer<DTimer> implements Declarato
 	public inline function start(?dt: DT): DTimer {
 		updateSignal.add(_update);
 		if ((dt: Null<Float>) != null)
-			_update(@:nullSafety(Off) dt);
+			@:nullSafety(Off) _update(dt);
 		return this;
 	}
 	
