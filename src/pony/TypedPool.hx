@@ -11,7 +11,7 @@ package pony;
 #end
 	public var list:Array<T> = [];
 	
-	inline public function new() {}
+	public inline function new() {}
 	
 	#if !flash
 	@:extern inline
