@@ -32,7 +32,11 @@ class ElementResizeControl implements HasSignal {
 	}
 
 	public function resizeHandler():Void {
+		for (i in 0...element.childElementCount)
+			element.children.item(i).hidden = true;
 		eResize.dispatch(width, height);
+		for (i in 0...element.childElementCount)
+			element.children.item(i).hidden = false;
 	}
 
 }
