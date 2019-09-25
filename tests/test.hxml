@@ -3,12 +3,11 @@
 -lib munit
 # -lib hamcrest
 -lib continuation
+-lib test-adapter
 -cp ../src/
-
 -cp test
 -neko build/neko_test.n
 -debug
--lib test-adapter
 
 # --next
 

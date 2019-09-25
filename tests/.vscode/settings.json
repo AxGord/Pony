@@ -1,6 +1,6 @@
 {
 	"haxeTestExplorer.testCommand": [
 		"${haxe}",
-		"run.hxml"
+		"runvs.hxml"
 	]
 }

@@ -22,6 +22,7 @@ install:
   - haxelib install munit || type log.txt && cmd /C exit 1
   - haxelib install hamcrest || type log.txt && cmd /C exit 1
   - haxelib install continuation || type log.txt && cmd /C exit 1
+  - haxelib install test-adapter
   - haxelib list
   - set PATH=%PATH%;C:\Program Files\AppVeyor\BuildAgent\
   - ps: $env:path
