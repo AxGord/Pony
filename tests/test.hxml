@@ -8,6 +8,7 @@
 -cp test
 -neko build/neko_test.n
 -debug
+-lib test-adapter
 
 # --next
 

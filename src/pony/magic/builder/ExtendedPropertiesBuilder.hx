@@ -70,7 +70,7 @@ class ExtendedPropertiesBuilder {
 				var a:Array<String> = lvlused();
 				for (arg in args) if (repList.indexOf(arg.name) != -1) a.push(arg.name);
 				used.set(lvl, a);
-			case EFunction(name, f):
+			case EFunction(FNamed(name), f):
 				var a:Array<String> = lvlused();
 				if (name != null) a.push(name);
 				used.set(lvl, a);
