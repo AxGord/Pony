@@ -127,7 +127,7 @@ abstract Signal1<T1>(Priority<Listener1<T1>>) from Event1<T1> {
 	}
 	
 	@:op(A & B) public function andOnce<T2>(s: Signal1<T2>): Signal2<T1, T2> {
-		var ns = new Event2();
+		var ns = new Event2<T1, T2>();
 		var listener1 = null;
 		var listener2 = null;
 		listener1 = function (a) {
@@ -144,7 +144,7 @@ abstract Signal1<T1>(Priority<Listener1<T1>>) from Event1<T1> {
 	}
 	
 	@:op(A && B) public function and<T2>(s: Signal1<T2>): Signal2<T1, T2> {
-		var ns = new Event2();
+		var ns = new Event2<T1, T2>();
 		var start: Void -> Void = null;
 		var listener1 = null;
 		var listener2 = null;

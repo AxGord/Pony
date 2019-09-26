@@ -31,17 +31,23 @@ typedef Listener2Impl<T1, T2> = {
 abstract Listener2<T1, T2>(Listener2Impl<T1, T2>) to Listener2Impl<T1, T2> from Listener2Impl<T1, T2> {
 	
 	@:from @:extern private static inline function f0<T1, T2>(f: Void -> Void): Listener2<T1, T2>
-		return { once: false, listener: LFunction0(cast f) };
+		return { once: false, listener: LFunction0(f) };
 	@:from @:extern private static inline function f0c<T1, T2>(f: SignalController2<T1, T2> -> Void): Listener2<T1, T2>
-		return { once: false, listener: LFunction0(cast f) };
+		return { once: false, listener: LFunction0c(f) };
+	@:from @:extern private static inline function f0ca<T1, T2>(f: SignalController -> Void): Listener2<T1, T2>
+		return { once: false, listener: LFunction0c(cast f) };
 	@:from @:extern private static inline function f1<T1, T2>(f: T1 -> Void): Listener2<T1, T2>
-		return { once: false,  listener: LFunction1(cast f) };
+		return { once: false,  listener: LFunction1(f) };
 	@:from @:extern private static inline function f1c<T1, T2>(f: T1 -> SignalController2<T1, T2> -> Void): Listener2<T1, T2>
-		return { once: false,  listener: LFunction1(cast f) };
+		return { once: false,  listener: LFunction1c(f) };
+	@:from @:extern private static inline function f1ca<T1, T2>(f: T1 -> SignalController -> Void): Listener2<T1, T2>
+		return { once: false,  listener: LFunction1c(cast f) };
 	@:from @:extern private static inline function f2<T1, T2>(f: T1 -> T2 -> Void): Listener2<T1, T2>
-		return { once: false,  listener: LFunction2(cast f) };
+		return { once: false,  listener: LFunction2(f) };
 	@:from @:extern private static inline function f2c<T1, T2>(f: T1 -> T2 -> SignalController2<T1, T2> -> Void): Listener2<T1, T2>
-		return { once: false,  listener: LFunction2(cast f) };
+		return { once: false,  listener: LFunction2c(f) };
+	@:from @:extern private static inline function f2ca<T1, T2>(f: T1 -> T2 -> SignalController -> Void): Listener2<T1, T2>
+		return { once: false,  listener: LFunction2c(cast f) };
 	@:from @:extern private static inline function s0<T1, T2>(f: Event0): Listener2<T1, T2>
 		return { once: false,  listener: LEvent0(f) };
 	@:from @:extern private static inline function s1<T1, T2>(f: Event1<T1>): Listener2<T1, T2>

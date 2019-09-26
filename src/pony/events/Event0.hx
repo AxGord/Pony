@@ -32,19 +32,20 @@ abstract Event0(Priority<Listener0>) from Priority<Listener0> to Priority<Listen
 		}
 	}
 	
-	public function dispatch(safe: Bool = false): Bool {
-		if (this == null || this.isDestroy() || (safe && this.counters.length > 1)) return false;
+	public function dispatch(safe: Bool = false): Void {
+		if (this == null || this.isDestroy() || (safe && this.counters.length > 1)) return;
+		var controller: SignalControllerInner0 = new SignalControllerInner0(this);
 		this.lock = true;
 		for (e in this) {
-			if (this.isDestroy()) return false;
+			if (this.isDestroy()) return;
 			if (e.once) this.remove(e);
-			if (e.call(safe)) {
+			e.call(controller, safe);
+			if (controller.stop) {
 				this.brk();
-				return true;
+				break;
 			}
 		}
 		this.lock = false;
-		return false;
 	}
 	
 	@:op(A && B) @:extern public inline function and(s: Event0): Event0 {

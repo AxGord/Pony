@@ -95,7 +95,8 @@ abstract Signal0(Priority<Listener0>) from Event0 {
 			once(listener1);
 			s.once(listener2);
 		}
-		start.call(false);
+		var c: SignalControllerInner0 = new SignalControllerInner0(this);
+		start.call(c, false);
 		return ns;
 	}
 

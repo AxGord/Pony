@@ -39,19 +39,20 @@ abstract Event1<T1>(Priority<Listener1<T1>>) from Priority<Listener1<T1>> to Pri
 		}
 	}
 	
-	public function dispatch(a1: T1, safe: Bool = false): Bool {
-		if (this == null || this.isDestroy() || (safe && this.counters.length > 1)) return false;
+	public function dispatch(a1: T1, safe: Bool = false): Void {
+		if (this == null || this.isDestroy() || (safe && this.counters.length > 1)) return;
+		var controller: SignalControllerInner1<T1> = new SignalControllerInner1<T1>(this);
 		this.lock = true;
 		for (e in this) {
-			if (this.isDestroy()) return false;
+			if (this.isDestroy()) return;
 			if (e.once) this.remove(e);
-			if (e.call(a1, safe)) {
+			e.call(a1, controller, safe);
+			if (controller.stop) {
 				this.brk();
-				return true;
+				break;
 			}
 		}
 		this.lock = false;
-		return false;
 	}
 	
 	@:extern public inline function sub(a1: T1, priority: Int = 0): Event0 {
