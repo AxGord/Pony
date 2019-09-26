@@ -48,6 +48,7 @@ abstract Listener2<T1, T2>(Listener2Impl<T1, T2>) to Listener2Impl<T1, T2> from 
 		return { once: false, listener: LEvent1(f) };
 	@:from @:extern private static inline function s2<T1, T2>(f: Event2<T1, T2>): Listener2<T1, T2>
 		return { once: false, listener: LEvent2(f) };
+
 	public inline function call(a1: T1, a2: T2, controller: SignalController2<T1, T2>, ?safe: Bool): Void switch this.listener {
 		case LFunction0(f): f();
 		case LFunction0c(f): f(controller);
@@ -66,4 +67,5 @@ abstract Listener2<T1, T2>(Listener2Impl<T1, T2>) to Listener2Impl<T1, T2> from 
 		case LNot2(s, v2) if (v2 != a2): s.dispatch(a1, a2, safe);
 		case _:
 	}
+
 }

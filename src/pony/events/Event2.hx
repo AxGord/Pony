@@ -66,7 +66,7 @@ abstract Event2<T1, T2>(Priority<Listener2<T1, T2>>) from Priority<Listener2<T1,
 	}
 	
 	@:extern public inline function sub(a1: T1, a2: T2, priority: Int = 0): Event0 {
-		return (new Event0():Signal0).add(dispatch.bind(a1, a2), priority);
+		return (new Event0(): Signal0).add(dispatch.bind(a1, a2), priority);
 	}
 	
 	@:extern public inline function subOnce(a1: T1, a2: T2, priority: Int = 0): Event0 {
