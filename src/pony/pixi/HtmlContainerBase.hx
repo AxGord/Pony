@@ -1,5 +1,6 @@
 package pony.pixi;
 
+import pony.time.DeltaTime;
 import js.html.CSSStyleDeclaration;
 import pony.geom.Rect;
 import pony.geom.Point;
@@ -44,10 +45,14 @@ class HtmlContainerBase implements HasSignal {
 	}
 
 	private function scrollHandler():Void {
-		pony.time.DeltaTime.fixedUpdate < resize;
+		DeltaTime.fixedUpdate < resize;
 	}
 
-	private function resizeHandler():Void {
+	private function resizeHandler(): Void {
+		DeltaTime.fixedUpdate < _resizeHandler;
+	}
+
+	private function _resizeHandler():Void {
 		lastRect = {
 			x: app.scale * (targetRect.x + targetPos.x + app.container.x / app.container.width),
 			y: app.scale * (targetRect.y + targetPos.y + app.container.y / app.container.height),

@@ -28,7 +28,7 @@ class DrawShapeView extends LogableSprite implements pony.geom.IWH {
 	public static inline var LINE_PROCESS_COLOR:Int = 0xFFFFFF;
 	public static inline var LINE_SHAPE_COLOR:Int = 0x82AAF7;
 
-	public var size(get, never):Point<Int>;
+	public var size(get, never):Point<Float>;
 	private var _size:Point<Int>;
 	public var touchArea(default, null):Sprite = new Sprite();
 	public var bgLayer(default, null):Sprite = new Sprite();
@@ -232,7 +232,7 @@ class DrawShapeView extends LogableSprite implements pony.geom.IWH {
 		destroy();
 	}
 
-	public function get_size():Point<Int> {
+	public function get_size():Point<Float> {
 		return _size;
 	}
 
