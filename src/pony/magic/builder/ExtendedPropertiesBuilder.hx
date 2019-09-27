@@ -70,7 +70,11 @@ class ExtendedPropertiesBuilder {
 				var a:Array<String> = lvlused();
 				for (arg in args) if (repList.indexOf(arg.name) != -1) a.push(arg.name);
 				used.set(lvl, a);
+			#if (haxe_ver >= 4)
+			case EFunction(FNamed(name), f):
+			#else
 			case EFunction(name, f):
+			#end
 				var a:Array<String> = lvlused();
 				if (name != null) a.push(name);
 				used.set(lvl, a);

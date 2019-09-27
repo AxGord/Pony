@@ -1,0 +1,1 @@
+--cmd "haxelib run munit test -neko"
