@@ -24,8 +24,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Fix conditional compilation for js",
-"version": "0.9.7",
+"releasenote": "Upgrade events system",
+"version": "0.9.8",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }
