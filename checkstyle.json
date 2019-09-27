@@ -2,6 +2,20 @@
 	"defaultSeverity": "INFO",
 	"checks": [
 		{
+			"type": "FieldDocComment",
+			"props": {
+				"fieldType": "FUNCTIONS",
+				"severity": "IGNORE"
+			}
+		},
+		{
+			"type": "DocCommentStyle",
+			"props": {
+				"lineStyle": "onestar",
+				"startStyle": "ignore"
+			}
+		},
+		{
 			"type": "Anonymous"
 		},
 		{
@@ -353,13 +367,13 @@
 		},
 		{
 			"props": {
-				"spaceIfCondition": true,
+				"spaceIfCondition": "should",
 				"spaceAroundBinop": true,
-				"spaceForLoop": true,
+				"spaceForLoop": "should",
 				"ignoreRangeOperator": true,
-				"spaceWhileLoop": true,
-				"spaceCatch": true,
-				"spaceSwitchCase": true,
+				"spaceWhileLoop": "should",
+				"spaceCatch": "should",
+				"spaceSwitchCase": "should",
 				"noSpaceAroundUnop": true
 			},
 			"type": "Spacing"

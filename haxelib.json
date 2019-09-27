@@ -24,8 +24,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Upgrade events system",
-"version": "0.9.8",
+"releasenote": "fixes",
+"version": "0.9.9",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }

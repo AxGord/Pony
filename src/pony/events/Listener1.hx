@@ -26,12 +26,12 @@ abstract Listener1<T1>(Listener1Impl<T1>) to Listener1Impl<T1> from Listener1Imp
 	
 	@:from @:extern private static inline function f0<T1>(f: Void -> Void): Listener1<T1>
 		return { once: false, listener: LFunction0(f) };
+	@:from @:extern private static inline function f1<T1>(f: T1 -> Void): Listener1<T1>
+		return { once: false, listener: LFunction1(f) };
 	@:from @:extern private static inline function f0c<T1>(f: SignalController1<T1> -> Void): Listener1<T1>
 		return { once: false, listener: LFunction0c(f) };
 	@:from @:extern private static inline function f0ca<T1>(f: SignalController -> Void): Listener1<T1>
 		return { once: false, listener: LFunction0c(cast f) };
-	@:from @:extern private static inline function f1<T1>(f: T1 -> Void): Listener1<T1>
-		return { once: false, listener: LFunction1(f) };
 	@:from @:extern private static inline function f1c<T1>(f: T1 -> SignalController1<T1> -> Void): Listener1<T1>
 		return { once: false, listener: LFunction1c(f) };
 	@:from @:extern private static inline function f1ca<T1>(f: T1 -> SignalController -> Void): Listener1<T1>

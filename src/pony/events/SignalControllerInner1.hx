@@ -1,5 +1,9 @@
 package pony.events;
 
+/**
+ * SignalControllerInner1
+ * @author AxGord <axgord@gmail.com>
+ */
 class SignalControllerInner1<T1> {
 	
 	public var signal(default, null): Signal1<T1>;
