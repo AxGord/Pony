@@ -275,10 +275,10 @@ class Tools {
 		libPath = o.split('\n')[0];
 		#elseif neko
 		libPath = new sys.io.Process('haxelib', ['path', 'pony']).stdout.readLine();
+		libPath = sys.FileSystem.fullPath(libPath);
 		#else
 		throw 'Not supported';
 		#end
-		libPath = sys.FileSystem.fullPath(libPath);
 		// remove src
 		if (libPath.substr(-SRC.length) == SRC) {
 			libPath = libPath.substr(0, -SRC.length);
