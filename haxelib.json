@@ -24,8 +24,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "fixes",
-"version": "0.9.9",
+"releasenote": "OS Windows fix and JS Keyboard",
+"version": "1.0.0",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }

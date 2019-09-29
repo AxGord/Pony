@@ -14,39 +14,38 @@ import pony.ui.keyboard.Key;
  */
 class Keyboard implements Declarator implements HasSignal {
 	
-	@:auto public static var down:Signal1<Key>;
-	@:auto public static var up:Signal1<Key>;
-	@:auto public static var press:Signal1<Key>;
-	@:auto public static var click:Signal1<Key>;
+	@:auto public static var down: Signal1<Key>;
+	@:auto public static var up: Signal1<Key>;
+	@:auto public static var press: Signal1<Key>;
+	@:auto public static var click: Signal1<Key>;
 	
-	public static var pressedKeys:Array<Key> = [];
+	public static var pressedKeys: Array<Key> = [];
 	
-	private static var km:IKeyboard;
-	private static var _enabled:Bool = false;
+	private static var km: IKeyboard;
+	private static var _enabled: Bool = false;
 	
-	public static var enabled(default, set):Bool = false;
-	public static var disabled(default, set):Bool = false;
+	public static var enabled(default, set): Bool = false;
+	public static var disabled(default, set): Bool = false;
 	
-	private static var presser:Presser;
+	private static var presser: Presser;
 	
-	private static function __init__():Void {
-		#if heaps
-		km = new pony.ui.keyboard.heaps.Keyboard();
+	private static function __init__(): Void {
+		#if js
+		km = new pony.ui.keyboard.js.Keyboard();
 		#elseif (HUGS && !WITHOUTUNITY)
 		km = new pony.ui.keyboard.unity.Keyboard();
 		#elseif flash
 		km = new pony.ui.keyboard.flash.Keyboard();
 		#end
-		
 		autoEnableMode();
 	}
 	
-	private static function takeListeners():Void if (haveListeners()) enable();
-	private static function lostListeners():Void if (!haveListeners()) disable();
-	private static inline function haveListeners():Bool
+	private static function takeListeners(): Void if (haveListeners()) enable();
+	private static function lostListeners(): Void if (!haveListeners()) disable();
+	private static inline function haveListeners(): Bool
 		return !down.empty || !up.empty  || !press.empty || !click.empty;
 	
-	private static function downPress(k:Key):Void {
+	private static function downPress(k: Key): Void {
 		if (presser == null) presser = new Presser(_press);
 		if (pressedKeys.indexOf(k) != -1) return;
 		pressedKeys.push(k);
@@ -54,9 +53,9 @@ class Keyboard implements Declarator implements HasSignal {
 		ePress.dispatch(k);
 	}
 	
-	private static function _press():Void for (k in pressedKeys) ePress.dispatch(k);
+	private static function _press(): Void for (k in pressedKeys) ePress.dispatch(k);
 	
-	private static function upPress(k:Key):Void {
+	private static function upPress(k: Key):Void {
 		eUp.dispatch(k);
 		if (pressedKeys.indexOf(k) == -1) return;
 		eClick.dispatch(k);
@@ -67,7 +66,7 @@ class Keyboard implements Declarator implements HasSignal {
 		}
 	}
 	
-	private static function enable():Void {
+	private static function enable(): Void {
 		if (_enabled) return;
 		_enabled = true;
 		km.enable();
@@ -75,7 +74,7 @@ class Keyboard implements Declarator implements HasSignal {
 		km.up << upPress;
 	}
 	
-	private static function disable():Void {
+	private static function disable(): Void {
 		if (!_enabled) return;
 		_enabled = false;
 		if (presser != null) presser.destroy();
@@ -85,7 +84,7 @@ class Keyboard implements Declarator implements HasSignal {
 		km.disable();
 	}
 	
-	private static function set_enabled(b:Bool):Bool {
+	private static function set_enabled(b: Bool): Bool {
 		if (b == enabled) return b;
 		if (b) {
 			disabled = false;
@@ -98,7 +97,7 @@ class Keyboard implements Declarator implements HasSignal {
 		return enabled = b;
 	}
 	
-	static private function set_disabled(b:Bool):Bool {
+	private static function set_disabled(b: Bool): Bool {
 		if (b == disabled) return b;
 		if (b) {
 			enabled = false;
@@ -111,7 +110,7 @@ class Keyboard implements Declarator implements HasSignal {
 		return disabled = b;
 	}
 	
-	static private function manualEnableMode():Void {
+	private static function manualEnableMode(): Void {
 		eDown.onTake.remove(takeListeners);
 		eUp.onTake.remove(takeListeners);
 		ePress.onTake.remove(takeListeners);
@@ -123,7 +122,7 @@ class Keyboard implements Declarator implements HasSignal {
 		eClick.onLost.remove(lostListeners);
 	}
 	
-	static private function autoEnableMode():Void {
+	private static function autoEnableMode(): Void {
 		eDown.onTake.add(takeListeners);
 		eUp.onTake.add(takeListeners);
 		ePress.onTake.add(takeListeners);
@@ -135,7 +134,7 @@ class Keyboard implements Declarator implements HasSignal {
 		eClick.onLost.add(lostListeners);
 	}
 	
-	static public var map:Map<Int, Key> = [
+	public static var map: Map<Int, Key> = [
 		8 => Backspace,
 		9 => Tab,
 		13 => Enter,
@@ -236,4 +235,5 @@ class Keyboard implements Declarator implements HasSignal {
 		220 => LeftSlash,
 		221 => RightSquareBracket
 	];
+
 }

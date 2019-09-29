@@ -252,15 +252,13 @@ class Tools {
 		return new BytesInput(out.getBytes());
 	}
 	
-	macro public static function currentFile():Expr
-	{
+	macro public static function currentFile():Expr {
 		var f:String = Context.getPosInfos(Context.currentPos()).file;
 		f = sys.FileSystem.fullPath(f);
 		return macro $v{f};
 	}
 	
-	macro public static function currentDir():Expr
-	{
+	macro public static function currentDir():Expr {
 		var f:String = Context.getPosInfos(Context.currentPos()).file;
 		f = StringTools.replace(sys.FileSystem.fullPath(f), '\\', '/').split('/').slice(0, -1).join('/') + '/';
 		return macro $v{f};
