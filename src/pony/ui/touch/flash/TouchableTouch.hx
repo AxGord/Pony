@@ -6,31 +6,31 @@ import flash.Lib;
 import pony.ui.touch.flash.Touch;
 
 /**
- * TouchebleTouch
+ * TouchableTouch
  * @author AxGord <axgord@gmail.com>
  */
 @:access(pony.ui.touch.TouchableBase)
 class TouchableTouch {
 
-	private static var inited:Bool = false;
+	private static var inited: Bool = false;
 	
-	public static function init():Void {
+	public static function init(): Void {
 		if (inited) return;
 		inited = true;
 		Lib.current.stage.addEventListener(TouchEvent.TOUCH_MOVE, globalTouchMoveHandler);
 	}
 	
-	static private function globalTouchMoveHandler(e:TouchEvent):Void {
+	private static function globalTouchMoveHandler(e: TouchEvent): Void {
 		TouchableBase.dispatchMove(e.touchPointID, e.stageX, e.stageY);
 	}
 	
-	private var obj:DisplayObject;
-	private var base:TouchableBase;
-	private var touchId:Int = -1;
-	private var over:Bool = false;
-	private var down:Bool = false;
+	private var obj: DisplayObject;
+	private var base: TouchableBase;
+	private var touchId: Int = -1;
+	private var over: Bool = false;
+	private var down: Bool = false;
 	
-	public function new(obj:DisplayObject, base:TouchableBase) {
+	public function new(obj: DisplayObject, base: TouchableBase) {
 		init();
 		this.obj = obj;
 		this.base = base;
@@ -40,7 +40,7 @@ class TouchableTouch {
 		Touch.onEnd << touchEndHandler;
 	}
 	
-	public function destroy():Void {
+	public function destroy(): Void {
 		if (touchId != -1) lost(touchId);
 		obj.removeEventListener(TouchEvent.TOUCH_BEGIN, touchBeginHandler);
 		obj.removeEventListener(TouchEvent.TOUCH_MOVE, touchMoveHandler);
@@ -50,7 +50,7 @@ class TouchableTouch {
 		base = null;
 	}
 	
-	private function isLock(t:Int):Bool {
+	private function isLock(t: Int): Bool {
 		if (isNotLock(t)) {
 			touchId = t;
 			return false;
@@ -58,10 +58,10 @@ class TouchableTouch {
 			return true;
 	}
 	
-	@:extern inline private function unlock(t:Int):Void touchId = -1;
-	@:extern inline private function isNotLock(t:Int):Bool return touchId == -1 || touchId == t;
+	@:extern private inline function unlock(t: Int): Void touchId = -1;
+	@:extern private inline function isNotLock(t: Int): Bool return touchId == -1 || touchId == t;
 	
-	private function touchBeginHandler(e:TouchEvent):Void {
+	private function touchBeginHandler(e: TouchEvent): Void {
 		if (isLock(e.touchPointID)) return;
 		over = true;
 		down = true;
@@ -69,7 +69,7 @@ class TouchableTouch {
 		base.dispatchDown(e.touchPointID, e.stageX, e.stageY);
 	}
 	
-	private function touchEndHandler(t:TO):Void {
+	private function touchEndHandler(t: TO): Void {
 		if (!down) return;
 		if (!isNotLock(t.id)) return;
 		if (over) {
@@ -83,7 +83,7 @@ class TouchableTouch {
 		unlock(t.id);
 	}
 	
-	private function touchMoveHandler(e:TouchEvent):Void {
+	private function touchMoveHandler(e: TouchEvent): Void {
 		if (!down) return;
 		if (isLock(e.touchPointID)) return;
 		e.stopPropagation();
@@ -92,7 +92,7 @@ class TouchableTouch {
 		base.dispatchOverDown(e.touchPointID);
 	}
 	
-	private function touchGlobalMoveHandler(e:TouchEvent):Void {
+	private function touchGlobalMoveHandler(e: TouchEvent): Void {
 		if (!over) return;
 		if (!isNotLock(e.touchPointID)) return;
 		over = false;
@@ -100,12 +100,12 @@ class TouchableTouch {
 		if (!down) unlock(e.touchPointID);
 	}
 	
-	private function cancleTouchHandler(id:Int):Void {
+	private function cancleTouchHandler(id: Int): Void {
 		if (!isNotLock(id)) return;
 		lost(id);
 	}
 	
-	private function lost(id:Int):Void {
+	private function lost(id: Int): Void {
 		down = false;
 		over = false;
 		base.dispatchOutDown(id);

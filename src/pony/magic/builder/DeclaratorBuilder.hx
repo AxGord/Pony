@@ -24,7 +24,7 @@ class DeclaratorBuilder {
 		var args:Array<FunctionArg> = [];
 		for (f in Context.getBuildFields()) {
 			switch [f.kind, f.name] {
-				case [FVar(t, e), _]:
+				case [FVar(t, e), _] if (Lambda.indexOf(f.access, AInline) == -1):
 					f.kind = FVar(t, null);
 					if (Tools.checkMeta(f.meta, [':arg', 'arg'])) {
 						var n = f.name;
