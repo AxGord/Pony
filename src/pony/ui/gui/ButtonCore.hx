@@ -16,17 +16,17 @@ enum ButtonState {
  */
 class ButtonCore extends Tumbler implements HasSignal {
 
-	public var touch:TouchableBase;
-	@:auto public var onClick:Signal1<Int>;
-	@:auto public var onVisual:Signal2<Int, ButtonState>;
-	@:bindable public var lowMode:Int = 0;
-	@:bindable public var mode:Int = 0;
-	@:bindable public var bMode:Bool = false;
-	@:bindable public var state:ButtonState = Default;
+	public var touch: TouchableBase;
+	@:auto public var onClick: Signal1<Int>;
+	@:auto public var onVisual: Signal2<Int, ButtonState>;
+	@:bindable public var lowMode: Int = 0;
+	@:bindable public var mode: Int = 0;
+	@:bindable public var bMode: Bool = false;
+	@:bindable public var state: ButtonState = Default;
 	
-	private var modeBeforeDisable:Int = 1;
+	private var modeBeforeDisable: Int = 1;
 	
-	public function new(t:TouchableBase) {
+	public function new(t: TouchableBase) {
 		super();
 		
 		touch = t;
@@ -59,7 +59,7 @@ class ButtonCore extends Tumbler implements HasSignal {
 			lowMode = 1;
 		}
 		changeLowMode / 1 << function(v) mode = v > 1 ? v - 1 : v;
-		changeBMode << function(v:Bool) {
+		changeBMode << function(v: Bool) {
 			mode = v ? 1 : 0;
 			if (!enabled) modeBeforeDisable = mode != 0 ? mode + 1 : mode;
 		}
@@ -68,49 +68,49 @@ class ButtonCore extends Tumbler implements HasSignal {
 		onDisable << disallowChangeMode;
 	}
 
-	public inline function sendVisual():Void eVisual.dispatch(mode, state);
+	public inline function sendVisual(): Void eVisual.dispatch(mode, state);
 	
-	public function destroy():Void {
+	public function destroy(): Void {
 		touch.destroy();
 		destroySignals();
 	}
 	
-	private function allowChangeMode():Void changeMode << changeModeHandler;
+	private function allowChangeMode(): Void changeMode << changeModeHandler;
 	
-	private function disallowChangeMode():Void changeMode >> changeModeHandler;
+	private function disallowChangeMode(): Void changeMode >> changeModeHandler;
 	
-	private function changeModeHandler(v:Int):Void {
+	private function changeModeHandler(v: Int): Void {
 		lowMode = v != 0 ? v + 1 : v;
 		bMode = v == 1;
 	}
 	
-	@:extern inline private function enableOverDown():Void {
+	@:extern private inline function enableOverDown(): Void {
 		touch.onOverDown << overDownHandler;
 		touch.onOutDown << outDownHandler;
 	}
 	
-	@:extern inline private function disableOverDown():Void {
+	@:extern private inline function disableOverDown(): Void {
 		touch.onOverDown >> overDownHandler;
 		touch.onOutDown >> outDownHandler;
 	}
 	
-	private function overDownHandler():Void {
+	private function overDownHandler(): Void {
 		eVisual.dispatch(lowMode, Press);
 	}
 	
-	private function outDownHandler():Void {
+	private function outDownHandler(): Void {
 		eVisual.dispatch(lowMode, Leave);
 	}
 	
-	@:extern inline public function switchMap(a:Array<Int>):Void {
+	public inline function switchMap(a: Array<Int>): Void {
 		onClick << function(v) mode = a[v];
 	}
 	
-	@:extern inline public function bswitch():Void {
+	public inline function bswitch(): Void {
 		onClick << function() bMode = !bMode;
 	}
 	
-	public function join(b:ButtonCore):Void {
+	public function join(b: ButtonCore): Void {
 		b.changeLowMode << setLowMode;
 		b.changeState << setState;
 		b.onClick << click;
@@ -119,7 +119,7 @@ class ButtonCore extends Tumbler implements HasSignal {
 		onClick << b.click;
 	}
 	
-	public function unjoin(b:ButtonCore):Void {
+	public function unjoin(b: ButtonCore): Void {
 		b.changeLowMode >> setLowMode;
 		b.changeState >> setState;
 		b.onClick >> click;
@@ -128,11 +128,11 @@ class ButtonCore extends Tumbler implements HasSignal {
 		onClick >> b.click;
 	}
 	
-	public function setLowMode(m:Int):Void lowMode = m;
-	public function setState(s:ButtonState):Void state = s;
-	public function click(mode:Int):Void eClick.dispatch(mode, true);
+	public function setLowMode(m: Int): Void lowMode = m;
+	public function setState(s: ButtonState): Void state = s;
+	public function click(mode: Int): Void eClick.dispatch(mode, true);
 
-	inline public function reset():Void {
+	public inline function reset(): Void {
 		lowMode = 0;
 		state = Default;
 	}

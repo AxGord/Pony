@@ -48,15 +48,15 @@ class Touch implements Declarator implements HasSignal {
 	}
 	
 	@:extern private static inline function hackMove(): Void {
-		Lib.current.stage.addEventListener(TouchEvent.TOUCH_MOVE, moveHandler, true, LOCK_PRIORITY);
+		Lib.current.stage.addEventListener(TouchEvent.TOUCH_MOVE, moveHandler, true, LOCK_PRIORITY, true);
 	}
 	
 	@:extern private static inline function hackDown(): Void {
-		Lib.current.stage.addEventListener(TouchEvent.TOUCH_BEGIN, startHandler, true, LOCK_PRIORITY);
+		Lib.current.stage.addEventListener(TouchEvent.TOUCH_BEGIN, startHandler, true, LOCK_PRIORITY, true);
 	}
 	
 	@:extern private static inline function hackUp(): Void {
-		Lib.current.stage.addEventListener(TouchEvent.TOUCH_END, endHandler, true, LOCK_PRIORITY);
+		Lib.current.stage.addEventListener(TouchEvent.TOUCH_END, endHandler, true, LOCK_PRIORITY, true);
 	}
 	
 	public static function enableStd(): Void {
@@ -70,11 +70,11 @@ class Touch implements Declarator implements HasSignal {
 	
 	public static function disableStd(): Void {
 		enabled = false;
-		Lib.current.stage.addEventListener(TouchEvent.TOUCH_OUT, lock, true, LOCK_PRIORITY);
-		Lib.current.stage.addEventListener(TouchEvent.TOUCH_OVER, lock, true, LOCK_PRIORITY);
-		Lib.current.stage.addEventListener(TouchEvent.TOUCH_ROLL_OUT, lock, true, LOCK_PRIORITY);
-		Lib.current.stage.addEventListener(TouchEvent.TOUCH_ROLL_OVER, lock, true, LOCK_PRIORITY);
-		Lib.current.stage.addEventListener(TouchEvent.TOUCH_TAP, lock, true, LOCK_PRIORITY);
+		Lib.current.stage.addEventListener(TouchEvent.TOUCH_OUT, lock, true, LOCK_PRIORITY, true);
+		Lib.current.stage.addEventListener(TouchEvent.TOUCH_OVER, lock, true, LOCK_PRIORITY, true);
+		Lib.current.stage.addEventListener(TouchEvent.TOUCH_ROLL_OUT, lock, true, LOCK_PRIORITY, true);
+		Lib.current.stage.addEventListener(TouchEvent.TOUCH_ROLL_OVER, lock, true, LOCK_PRIORITY, true);
+		Lib.current.stage.addEventListener(TouchEvent.TOUCH_TAP, lock, true, LOCK_PRIORITY, true);
 	}
 	
 	private static function moveHandler(e: TouchEvent): Void {

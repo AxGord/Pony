@@ -2,7 +2,7 @@ package pony.ui.touch.flash;
 
 import flash.display.DisplayObject;
 import flash.events.MouseEvent;
-import flash.Lib;
+import flash.events.Event;
 import pony.time.DeltaTime;
 import pony.ui.touch.Mouse;
 import pony.ui.touch.TouchableBase;
@@ -36,13 +36,21 @@ class TouchableMouse {
 		init();
 		this.obj = obj;
 		this.base = base;
-		obj.addEventListener(MouseEvent.MOUSE_OVER, overHandler);
-		obj.addEventListener(MouseEvent.MOUSE_OUT, outHandler);
-		obj.addEventListener(MouseEvent.MOUSE_DOWN, downHandler);
-		obj.addEventListener(MouseEvent.MOUSE_UP, upHandler);
-		Lib.current.stage.addEventListener(MouseEvent.MOUSE_UP, globUpHandler, false);
-		obj.addEventListener(MouseEvent.MOUSE_WHEEL, wheelHandler);
+		obj.addEventListener(MouseEvent.MOUSE_OVER, overHandler, false, 0, true);
+		obj.addEventListener(MouseEvent.MOUSE_OUT, outHandler, false, 0, true);
+		obj.addEventListener(MouseEvent.MOUSE_DOWN, downHandler, false, 0, true);
+		obj.addEventListener(MouseEvent.MOUSE_UP, upHandler, false, 0, true);
+		obj.addEventListener(MouseEvent.MOUSE_WHEEL, wheelHandler, false, 0, true);
+		if (obj.stage != null)
+			obj.stage.addEventListener(MouseEvent.MOUSE_UP, globUpHandler, false, 0, true);
+		else
+			obj.addEventListener(Event.ADDED_TO_STAGE, addedToStageHandler, false, 0, true);
 		Mouse.onLeave << leaveHandler;
+	}
+
+	private function addedToStageHandler(_): Void {
+		obj.removeEventListener(Event.ADDED_TO_STAGE, addedToStageHandler);
+		obj.stage.addEventListener(MouseEvent.MOUSE_UP, globUpHandler, false, 0, true);
 	}
 	
 	public function destroy(): Void {
@@ -51,8 +59,11 @@ class TouchableMouse {
 		obj.removeEventListener(MouseEvent.MOUSE_OUT, outHandler);
 		obj.removeEventListener(MouseEvent.MOUSE_DOWN, downHandler);
 		obj.removeEventListener(MouseEvent.MOUSE_UP, upHandler);
-		Lib.current.stage.removeEventListener(MouseEvent.MOUSE_UP, globUpHandler, false);
 		obj.removeEventListener(MouseEvent.MOUSE_WHEEL, wheelHandler);
+		if (obj.stage != null)
+			obj.stage.removeEventListener(MouseEvent.MOUSE_UP, globUpHandler, false);
+		else
+			obj.removeEventListener(Event.ADDED_TO_STAGE, addedToStageHandler);
 		Mouse.onLeave >> leaveHandler;
 		obj = null;
 		base = null;

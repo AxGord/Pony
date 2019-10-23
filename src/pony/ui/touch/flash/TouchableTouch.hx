@@ -1,9 +1,12 @@
 package pony.ui.touch.flash;
 
+import flash.display.Stage;
 import flash.display.DisplayObject;
+import flash.events.Event;
 import flash.events.TouchEvent;
 import flash.Lib;
 import pony.ui.touch.flash.Touch;
+import pony.flash.FLTools;
 
 /**
  * TouchableTouch
@@ -17,7 +20,11 @@ class TouchableTouch {
 	public static function init(): Void {
 		if (inited) return;
 		inited = true;
-		Lib.current.stage.addEventListener(TouchEvent.TOUCH_MOVE, globalTouchMoveHandler);
+		FLTools.getStage(getStageHandler);
+	}
+
+	private static function getStageHandler(stage: Stage): Void {
+		stage.addEventListener(TouchEvent.TOUCH_MOVE, globalTouchMoveHandler, false, 0, true);
 	}
 	
 	private static function globalTouchMoveHandler(e: TouchEvent): Void {
@@ -34,17 +41,28 @@ class TouchableTouch {
 		init();
 		this.obj = obj;
 		this.base = base;
-		obj.addEventListener(TouchEvent.TOUCH_BEGIN, touchBeginHandler);
-		obj.addEventListener(TouchEvent.TOUCH_MOVE, touchMoveHandler);
-		Lib.current.stage.addEventListener(TouchEvent.TOUCH_MOVE, touchGlobalMoveHandler);
+		obj.addEventListener(TouchEvent.TOUCH_BEGIN, touchBeginHandler, false, 0, true);
+		obj.addEventListener(TouchEvent.TOUCH_MOVE, touchMoveHandler, false, 0, true);
+		if (obj.stage != null)
+			obj.stage.addEventListener(TouchEvent.TOUCH_MOVE, touchGlobalMoveHandler, false, 0, true);
+		else
+			obj.addEventListener(Event.ADDED_TO_STAGE, addedToStageHandler, false, 0, true);
 		Touch.onEnd << touchEndHandler;
 	}
-	
+
+	private function addedToStageHandler(_): Void {
+		obj.removeEventListener(Event.ADDED_TO_STAGE, addedToStageHandler);
+		obj.stage.addEventListener(TouchEvent.TOUCH_MOVE, touchGlobalMoveHandler, false, 0, true);
+	}
+
 	public function destroy(): Void {
 		if (touchId != -1) lost(touchId);
 		obj.removeEventListener(TouchEvent.TOUCH_BEGIN, touchBeginHandler);
 		obj.removeEventListener(TouchEvent.TOUCH_MOVE, touchMoveHandler);
-		Lib.current.stage.removeEventListener(TouchEvent.TOUCH_MOVE, touchGlobalMoveHandler);
+		if (obj.stage != null)
+			obj.stage.removeEventListener(TouchEvent.TOUCH_MOVE, touchGlobalMoveHandler);
+		else
+			obj.removeEventListener(Event.ADDED_TO_STAGE, addedToStageHandler);
 		Touch.onEnd >> touchEndHandler;
 		obj = null;
 		base = null;

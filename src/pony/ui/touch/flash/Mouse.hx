@@ -36,8 +36,8 @@ class Mouse {
 	}
 	
 	@:extern private static inline function hackMove(): Void {
-		Lib.current.stage.addEventListener(MouseEvent.MOUSE_MOVE, moveHandler, false, EVENTS_PRIORITY);
-		Lib.current.stage.addEventListener(MouseEvent.MOUSE_MOVE, moveHandler, true, EVENTS_PRIORITY);
+		Lib.current.stage.addEventListener(MouseEvent.MOUSE_MOVE, moveHandler, false, EVENTS_PRIORITY, true);
+		Lib.current.stage.addEventListener(MouseEvent.MOUSE_MOVE, moveHandler, true, EVENTS_PRIORITY, true);
 	}
 	
 	private static function moveHandler(event: MouseEvent): Void {
@@ -46,8 +46,8 @@ class Mouse {
 	}
 	
 	@:extern private static inline function hackDown(): Void {
-		Lib.current.stage.addEventListener(MouseEvent.MOUSE_DOWN, downHandler, false, EVENTS_PRIORITY);
-		Lib.current.stage.addEventListener(MouseEvent.MOUSE_DOWN, downHandler, true, EVENTS_PRIORITY);
+		Lib.current.stage.addEventListener(MouseEvent.MOUSE_DOWN, downHandler, false, EVENTS_PRIORITY, true);
+		Lib.current.stage.addEventListener(MouseEvent.MOUSE_DOWN, downHandler, true, EVENTS_PRIORITY, true);
 	}
 	
 	private static function downHandler(event: MouseEvent): Void {
@@ -57,8 +57,8 @@ class Mouse {
 	}
 	
 	@:extern private static inline function hackUp():Void {
-		Lib.current.stage.addEventListener(MouseEvent.MOUSE_UP, upHandler, false, EVENTS_PRIORITY);
-		Lib.current.stage.addEventListener(MouseEvent.MOUSE_UP, upHandler, true, EVENTS_PRIORITY);
+		Lib.current.stage.addEventListener(MouseEvent.MOUSE_UP, upHandler, false, EVENTS_PRIORITY, true);
+		Lib.current.stage.addEventListener(MouseEvent.MOUSE_UP, upHandler, true, EVENTS_PRIORITY, true);
 	}
 	
 	private static function upHandler(event: MouseEvent): Void {
@@ -91,24 +91,24 @@ class Mouse {
 
 	public static function disableStd():Void {
 		enabled = false;
-		Lib.current.stage.addEventListener(MouseEvent.CLICK, lock, true, LOCK_PRIORITY);
-		Lib.current.stage.addEventListener(MouseEvent.DOUBLE_CLICK, lock, true, LOCK_PRIORITY);
+		Lib.current.stage.addEventListener(MouseEvent.CLICK, lock, true, LOCK_PRIORITY, true);
+		Lib.current.stage.addEventListener(MouseEvent.DOUBLE_CLICK, lock, true, LOCK_PRIORITY, true);
 		try {
-			Lib.current.stage.addEventListener(MouseEvent.MIDDLE_CLICK, lock, true, LOCK_PRIORITY);
-			Lib.current.stage.addEventListener(MouseEvent.MIDDLE_MOUSE_DOWN, lock, true, LOCK_PRIORITY);
-			Lib.current.stage.addEventListener(MouseEvent.MIDDLE_MOUSE_UP, lock, true, LOCK_PRIORITY);
+			Lib.current.stage.addEventListener(MouseEvent.MIDDLE_CLICK, lock, true, LOCK_PRIORITY, true);
+			Lib.current.stage.addEventListener(MouseEvent.MIDDLE_MOUSE_DOWN, lock, true, LOCK_PRIORITY, true);
+			Lib.current.stage.addEventListener(MouseEvent.MIDDLE_MOUSE_UP, lock, true, LOCK_PRIORITY, true);
 		} catch (_: Any) {}
-		Lib.current.stage.addEventListener(MouseEvent.MOUSE_OUT, lock, true, LOCK_PRIORITY);
-		Lib.current.stage.addEventListener(MouseEvent.MOUSE_OVER, lock, true, LOCK_PRIORITY);
+		Lib.current.stage.addEventListener(MouseEvent.MOUSE_OUT, lock, true, LOCK_PRIORITY, true);
+		Lib.current.stage.addEventListener(MouseEvent.MOUSE_OVER, lock, true, LOCK_PRIORITY, true);
 		try {
-			Lib.current.stage.addEventListener(MouseEvent.RIGHT_CLICK, lock, true, LOCK_PRIORITY);
+			Lib.current.stage.addEventListener(MouseEvent.RIGHT_CLICK, lock, true, LOCK_PRIORITY, true);
 		} catch (_: Any) {}
 		try {
-			Lib.current.stage.addEventListener(MouseEvent.RIGHT_MOUSE_DOWN, lock, true, LOCK_PRIORITY);
-			Lib.current.stage.addEventListener(MouseEvent.RIGHT_MOUSE_UP, lock, true, LOCK_PRIORITY);
+			Lib.current.stage.addEventListener(MouseEvent.RIGHT_MOUSE_DOWN, lock, true, LOCK_PRIORITY, true);
+			Lib.current.stage.addEventListener(MouseEvent.RIGHT_MOUSE_UP, lock, true, LOCK_PRIORITY, true);
 		} catch (_: Any) {}
-		Lib.current.stage.addEventListener(MouseEvent.ROLL_OUT, lock, true, LOCK_PRIORITY);
-		Lib.current.stage.addEventListener(MouseEvent.ROLL_OVER, lock, true, LOCK_PRIORITY);
+		Lib.current.stage.addEventListener(MouseEvent.ROLL_OUT, lock, true, LOCK_PRIORITY, true);
+		Lib.current.stage.addEventListener(MouseEvent.ROLL_OVER, lock, true, LOCK_PRIORITY, true);
 	}
 
 	private static function lock(event: MouseEvent): Void event.stopImmediatePropagation();

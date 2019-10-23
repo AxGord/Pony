@@ -24,8 +24,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Refactoring flash touchable",
-"version": "1.0.1",
+"releasenote": "Upgrade flash support",
+"version": "1.0.2",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }

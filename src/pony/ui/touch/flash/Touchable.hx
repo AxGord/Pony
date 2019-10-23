@@ -35,18 +35,22 @@ class Touchable extends TouchableBase {
 	}
 	
 	public static function init(?inputMode: MultitouchInputMode): Void {
-		if (inited) return;
-		inited = true;
-		Mouse.init();
-		if (touchSupport) {
-			Multitouch.inputMode = inputMode == null ? MultitouchInputMode.TOUCH_POINT : inputMode;
-			Touch.init();
-			DeltaTime.fixedUpdate < Touch.enableStd;
-			onAnyTouch = Touch.onEnd || Touch.onStart || Touch.onMove;
-			firstSwitchToTouch();
-			DeltaTime.fixedUpdate < Touch.enableStd;
+		if (!inited) {
+			inited = true;
+			Mouse.init();
+			if (touchSupport) {
+				Multitouch.inputMode = inputMode == null ? MultitouchInputMode.TOUCH_POINT : inputMode;
+				Touch.init();
+				DeltaTime.fixedUpdate < Touch.enableStd;
+				onAnyTouch = Touch.onEnd || Touch.onStart || Touch.onMove;
+				firstSwitchToTouch();
+				DeltaTime.fixedUpdate < Touch.enableStd;
+			} else {
+				DeltaTime.fixedUpdate < Mouse.enableStd;
+			}
 		} else {
-			DeltaTime.fixedUpdate < Mouse.enableStd;
+			if (touchSupport && inputMode != null)
+				Multitouch.inputMode = inputMode;
 		}
 	}
 	
