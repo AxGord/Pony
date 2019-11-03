@@ -37,19 +37,6 @@
 
 --next
 
--js bin/ponyFtp.js
--cp nodesrc
--cp sharedsrc
--main FtpMain
--lib hxnodejs
--lib pony
--dce full
--D analyzer-optimize
--D js-es6
--debug
-
---next
-
 -js bin/ponyServer.js
 -cp nodesrc
 -cp sharedsrc

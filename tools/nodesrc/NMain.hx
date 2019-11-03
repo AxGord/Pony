@@ -9,6 +9,7 @@ import pony.Tools;
 import module.NModule;
 import types.ImageminConfig;
 import types.PoeditorConfig;
+import types.FtpConfig;
 import types.DownloadConfig;
 import types.BmfontConfig;
 import pony.net.rpc.RPC;
@@ -42,6 +43,7 @@ class NMain extends Logable {
 		rpc.onBmfont << bmfontHandler;
 		rpc.onImagemin << imageminHandler;
 		rpc.onPoeditor << poeditorHandler;
+		rpc.onFtp << ftpHandler;
 		rpc.onDownload << downloadHandler;
 	}
 
@@ -57,6 +59,10 @@ class NMain extends Logable {
 
 	private function poeditorHandler(cfg:Array<PoeditorConfig>):Void {
 		listen(cast new module.Poeditor(cfg));
+	}
+
+	private function ftpHandler(cfg:Array<FtpConfig>):Void {
+		listen(cast new module.Ftp(cfg));
 	}
 
 	private function downloadHandler(cfg:Array<DownloadConfig>):Void {

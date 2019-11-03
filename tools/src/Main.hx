@@ -33,16 +33,6 @@ class Main {
 		Sys.exit(0);
 	}
 
-	static function ftp(cfg:AppCfg):Void {
-		var startTime = Sys.time();
-		Utils.runNode('ponyFtp', addCfg(cfg));
-		Sys.println('Ftp time: ' + Std.int((Sys.time() - startTime) * 1000) / 1000);
-	}
-
-	static function cfgAndCall(a:String, b:String, f:AppCfg -> Void):Void {
-		f(Utils.parseArgs([a, b]));
-	}
-
 	static function trySubProjects(args:Array<String>):Bool {
 		if (args.indexOf('all') != -1) {
 			runSubProjects(args);
@@ -94,7 +84,6 @@ class Main {
 	static function registerCommands():Void {
 		commands.onNothing < showLogo;
 		commands.onHelp < showHelp;
-		commands.onFtp < cfgAndCall.bind(_, _, ftp);
 		commands.onCreate < create.Create.run;
 		commands.onLines < Lines.run;
 		commands.onChars < Chars.run;
@@ -121,6 +110,7 @@ class Main {
 		modules.register(new module.Bmfont());
 		modules.register(new module.Imagemin());
 		modules.register(new module.Poeditor());
+		modules.register(new module.Ftp());
 		modules.register(new module.Download());
 		modules.register(new module.Copy());
 		modules.register(new module.Move());

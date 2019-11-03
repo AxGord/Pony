@@ -108,6 +108,7 @@ class Module extends pony.Logable implements pony.magic.HasAbstract implements p
 			case Electron: modules.commands.onElectron.once(moduleStart, priority);
 			case Run: modules.commands.onRun.once(moduleStart, priority);
 			case Zip: modules.commands.onZip.once(moduleStart, priority);
+			case Ftp: modules.commands.onFtp.once(moduleStart, priority);
 			case Remote: modules.commands.onRemote.once(moduleStart, priority);
 			case Hash: modules.commands.onHash.once(moduleStart, priority);
 			case Unpack: modules.commands.onUnpack.once(moduleStart, priority);
@@ -128,6 +129,7 @@ class Module extends pony.Logable implements pony.magic.HasAbstract implements p
 		modules.commands.onElectron.once(getConfig, CONFIG_PRIORITY);
 		modules.commands.onRun.once(getConfig, CONFIG_PRIORITY);
 		modules.commands.onZip.once(getConfig, CONFIG_PRIORITY);
+		modules.commands.onFtp.once(getConfig, CONFIG_PRIORITY);
 		modules.commands.onRemote.once(getConfig, CONFIG_PRIORITY);
 		modules.commands.onHash.once(getConfig, CONFIG_PRIORITY);
 		modules.commands.onUnpack.once(getConfig, CONFIG_PRIORITY);
@@ -143,6 +145,7 @@ class Module extends pony.Logable implements pony.magic.HasAbstract implements p
 		modules.commands.onElectron >> getConfig;
 		modules.commands.onRun >> getConfig;
 		modules.commands.onZip >> getConfig;
+		modules.commands.onFtp >> getConfig;
 		modules.commands.onRemote >> getConfig;
 		modules.commands.onHash >> emptyConfig;
 		modules.commands.onUnpack >> emptyConfig;
@@ -158,6 +161,7 @@ class Module extends pony.Logable implements pony.magic.HasAbstract implements p
 		modules.commands.onElectron.once(before.bind(Electron), CONFIG_PRIORITY + priority);
 		modules.commands.onRun.once(before.bind(Run), CONFIG_PRIORITY + priority);
 		modules.commands.onZip.once(before.bind(Zip), CONFIG_PRIORITY + priority);
+		modules.commands.onFtp.once(before.bind(Ftp), CONFIG_PRIORITY + priority);
 		modules.commands.onRemote.once(before.bind(Remote), CONFIG_PRIORITY + priority);
 		modules.commands.onHash.once(before.bind(Hash), CONFIG_PRIORITY + priority);
 		modules.commands.onUnpack.once(before.bind(Unpack), CONFIG_PRIORITY + priority);
@@ -171,6 +175,7 @@ class Module extends pony.Logable implements pony.magic.HasAbstract implements p
 		modules.commands.onElectron.once(after.bind(Electron), priority);
 		modules.commands.onRun.once(after.bind(Run), priority);
 		modules.commands.onZip.once(after.bind(Zip), priority);
+		modules.commands.onFtp.once(after.bind(Ftp), priority);
 		modules.commands.onRemote.once(after.bind(Remote), priority);
 		modules.commands.onHash.once(after.bind(Hash), priority);
 		modules.commands.onUnpack.once(after.bind(Unpack), priority);

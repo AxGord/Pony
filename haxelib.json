@@ -24,8 +24,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Upgrade flash support",
-"version": "1.0.2",
+"releasenote": "Pony Tools: Update Ftp Module",
+"version": "1.0.3",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }

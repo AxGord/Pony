@@ -13,4 +13,5 @@ enum BASection {
 	Remote;
 	Hash;
 	Unpack;
+	Ftp;
 }
