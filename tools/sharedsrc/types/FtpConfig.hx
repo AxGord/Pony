@@ -1,6 +1,7 @@
 package types;
 
-typedef FtpConfig = { > BAConfig,
+typedef FtpConfig = {
+	> BAConfig,
 	path: String,
 	user: String,
 	pass: String,

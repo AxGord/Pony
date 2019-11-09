@@ -15,6 +15,7 @@ class NProtocol extends RPC<NProtocol> implements IRPC {
 	@:rpc public var onImagemin: Signal1<Array<ImageminConfig>>;
 	@:rpc public var onPoeditor: Signal1<Array<PoeditorConfig>>;
 	@:rpc public var onFtp: Signal1<Array<FtpConfig>>;
+	@:rpc public var onUglify: Signal1<Array<UglifyConfig>>;
 	@:rpc public var onDownload: Signal1<Array<DownloadConfig>>;
 	@:rpc public var onFinish: Signal0;
 

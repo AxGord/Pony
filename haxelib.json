@@ -24,8 +24,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Pony Tools: Update Ftp Module",
-"version": "1.0.3",
+"releasenote": "Update uglify module",
+"version": "1.0.4",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }

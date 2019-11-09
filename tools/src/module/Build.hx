@@ -1,12 +1,17 @@
 package module;
 
 import pony.Fast;
+import types.BASection;
 import sys.FileSystem;
 import sys.io.File;
-import types.BASection;
 import sys.net.Socket;
+import sys.net.Host;
 
-typedef LastCompilationOptions = {command:Array<String>, debug:Bool, compiler:String};
+typedef LastCompilationOptions = {
+	command:Array<String>,
+	debug:Bool,
+	compiler:String
+}
 
 /**
  * Build module
@@ -14,19 +19,19 @@ typedef LastCompilationOptions = {command:Array<String>, debug:Bool, compiler:St
  */
 class Build extends CfgModule<BuildConfig> {
 
-	private static inline var PRIORITY:Int = 1;
-	private static inline var TIMEOUT:Int = 5;
+	private static inline var PRIORITY: Int = 1;
+	private static inline var TIMEOUT: Int = 5;
 
-	private var flags(default, null):Array<String> = [];
-	private var haxelib:Array<String> = [];
-	private var postHaxelibs:Array<String> = [];
-	private var server:Bool = false;
-	private var lastCompilationOptions:LastCompilationOptions;
-	private var tryCounter:Int;
+	private var flags(default, null): Array<String> = [];
+	private var haxelib: Array<String> = [];
+	private var postHaxelibs: Array<String> = [];
+	private var server: Bool = false;
+	private var lastCompilationOptions: LastCompilationOptions;
+	private var tryCounter: Int;
 
 	public function new() super('build');
 
-	override public function init():Void {
+	override public function init(): Void {
 		if (xml == null) return;
 		if (modules.xml.hasNode.haxelib) {
 			for (e in modules.xml.node.haxelib.nodes.lib) {
@@ -39,21 +44,21 @@ class Build extends CfgModule<BuildConfig> {
 		initSections(PRIORITY, BASection.Build);
 	}
 
-	public function addHaxelib(lib:String):Void {
+	public function addHaxelib(lib: String): Void {
 		if (postHaxelibs.indexOf(lib) == -1) {
 			postHaxelibs.push('-lib');
 			postHaxelibs.push(lib);
 		}
 	}
 
-	public function addFlag(flag:String):Void {
+	public function addFlag(flag: String): Void {
 		if (flags.indexOf(flag) == -1) {
 			flags.push('-D');
 			flags.push(flag);
 		}
 	}
 
-	override private function readNodeConfig(xml:Fast, ac:AppCfg):Void {
+	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
 		new BuildConfigReader(xml, {
 			debug: ac.debug,
 			app: ac.app,
@@ -67,7 +72,7 @@ class Build extends CfgModule<BuildConfig> {
 		}, configHandler);
 	}
 
-	override private function runNode(cfg:BuildConfig):Void {
+	override private function runNode(cfg: BuildConfig): Void {
 		if (cfg.runHxml.length == 0) {
 			var cmd = cfg.command.concat(haxelib);
 			cmd = cmd.concat(flags).concat(postHaxelibs);
@@ -100,28 +105,27 @@ class Build extends CfgModule<BuildConfig> {
 		checkCompilation();
 	}
 
-	private function saveHxml(name:String, commands:Array<String>):Void {
+	private function saveHxml(name: String, commands: Array<String>): Void {
 		name += '.hxml';
-		var f = false;
-		var s = '';
+		var f: Bool = false;
+		var s: String = '';
 		for (e in commands) {
 			s += e;
 			s += f ? '\n' : ' ';
 			f = !f;
 		}
-		var prev:String = sys.FileSystem.exists(name) ? File.getContent(name) : null;
+		var prev: String = FileSystem.exists(name) ? File.getContent(name) : null;
 		if (prev != s) {
-			if (sys.FileSystem.exists('libcache.js')) sys.FileSystem.deleteFile('libcache.js');
+			if (FileSystem.exists(Uglify.CACHE_FILE)) FileSystem.deleteFile(Uglify.CACHE_FILE);
 			File.saveContent(name, s);
 		}
 	}
 
-	private function runCompilation(command:Array<String>, debug:Bool, compiler:String):Void {
-		
+	private function runCompilation(command: Array<String>, debug: Bool, compiler: String): Void {
 		if (debug && server && compiler == 'haxe') {
 			var newline = "\n";
 			tryCounter = 3;
-			var s:sys.net.Socket = connectToHaxeServer();
+			var s: Socket = connectToHaxeServer();
 			var d = Sys.getCwd();
 			s.write('--cwd ' + d + newline);
 			var cmd = command.join(newline);
@@ -137,14 +141,13 @@ class Build extends CfgModule<BuildConfig> {
 				compilationServerError(Std.string(e));
 				return;
 			}
-			for (line in r.split(newline))
-			{
+			for (line in r.split(newline)) {
 				switch (line.charCodeAt(0)) {
 					case 0x01:
 						Sys.println(line.substr(1).split("\x01").join(newline));
 					case 0x02:
 						hasError = true;
-					default: 
+					default:
 						Sys.stderr().writeString(line + newline);
 				}
 			}
@@ -156,12 +159,12 @@ class Build extends CfgModule<BuildConfig> {
 		}
 	}
 
-	private function connectToHaxeServer():Socket {
-		var port:Int = Std.parseInt(modules.xml.node.server.node.haxe.innerData);
-		var s:sys.net.Socket = null;
+	private function connectToHaxeServer(): Socket {
+		var port: Int = Std.parseInt(modules.xml.node.server.node.haxe.innerData);
+		var s: Socket = null;
 		while (true) try {
-			s = new sys.net.Socket();
-			s.connect(new sys.net.Host('127.0.0.1'), port);
+			s = new Socket();
+			s.connect(new Host('127.0.0.1'), port);
 			return s;
 		} catch (e:Any) {
 			compilationServerError(Std.string(e));
@@ -169,7 +172,7 @@ class Build extends CfgModule<BuildConfig> {
 		return null;
 	}
 
-	private function compilationServerError(s:String):Void {
+	private function compilationServerError(s: String): Void {
 		Sys.stderr().writeString(s);
 		if (tryCounter-- <= 0) {
 			Sys.exit(1);
@@ -185,7 +188,7 @@ class Build extends CfgModule<BuildConfig> {
 		}
 	}
 
-	private function checkCompilation():Void {
+	private function checkCompilation(): Void {
 		if (lastCompilationOptions != null && lastCompilationOptions.debug && server && lastCompilationOptions.compiler == 'haxe') {
 			var s = connectToHaxeServer();
 			s.close();
@@ -194,7 +197,8 @@ class Build extends CfgModule<BuildConfig> {
 
 }
 
-private typedef BuildConfig = { > types.BAConfig,
+private typedef BuildConfig = {
+	> types.BAConfig,
 	command: Array<String>,
 	haxeCompiler: String,
 	hxml: String,
@@ -203,12 +207,12 @@ private typedef BuildConfig = { > types.BAConfig,
 
 private class BuildConfigReader extends BAReader<BuildConfig> {
 
-	private static inline var UT:String = 'Unknown tag';
+	private static inline var UT: String = 'Unknown tag';
 
-	override private function readNode(xml:Fast):Void {
+	override private function readNode(xml: Fast): Void {
 		try {
 			super.readNode(xml);
-		} catch (s:String) {
+		} catch (s: String) {
 			if (s.substr(0, UT.length) == UT) {
 				switch xml.name {
 					case 'hxml':
@@ -226,7 +230,7 @@ private class BuildConfigReader extends BAReader<BuildConfig> {
 						cfg.command.push('-' + a);
 						try {
 							cfg.command.push(xml.innerData);
-						} catch (_:Dynamic) {}
+						} catch (_: Dynamic) {}
 				}
 			} else {
 				throw s;
@@ -234,14 +238,14 @@ private class BuildConfigReader extends BAReader<BuildConfig> {
 		}
 	}
 
-	override private function clean():Void {
+	override private function clean(): Void {
 		cfg.command = [];
 		cfg.haxeCompiler = 'haxe';
 		cfg.hxml = null;
 		cfg.runHxml = [];
 	}
 
-	override private function readAttr(name:String, val:String):Void {
+	override private function readAttr(name: String, val: String): Void {
 		switch name {
 			case 'haxe': cfg.haxeCompiler = val;
 			case 'hxml': cfg.hxml = val;

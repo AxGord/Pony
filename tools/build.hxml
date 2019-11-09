@@ -24,19 +24,6 @@
 
 --next
 
--js bin/ponyUglify.js
--cp nodesrc
--cp sharedsrc
--main UglifyMain
--lib hxnodejs
--dce full
--D analyzer-optimize
--D js-es6
--lib pony
--debug
-
---next
-
 -js bin/ponyServer.js
 -cp nodesrc
 -cp sharedsrc
