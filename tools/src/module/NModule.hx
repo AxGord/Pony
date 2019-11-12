@@ -39,9 +39,9 @@ class NModule<T:BAConfig> extends CfgModule<T> {
 		} else {
 			writeCfg(protocol, cfg);
 		}
-		
+
 	}
-	
+
 	private function listenServer():Void {
 		initServer();
 		server.onLog << eLog;

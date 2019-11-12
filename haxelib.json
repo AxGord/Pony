@@ -24,8 +24,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Update server module",
-"version": "1.0.5",
+"releasenote": "Pony Tools: Set node client port error fix",
+"version": "1.0.6",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }

@@ -29,7 +29,7 @@ class NMain extends Logable {
 		NPM.capture_console.startCapture(Node.process.stdout, log);
 		NPM.capture_console.startCapture(Node.process.stderr, log);
 
-		client = new SocketClient(Utils.NPORT);
+		client = new SocketClient(port);
 		Node.process.on('uncaughtException', errorHandler);
 		client.onLog << eLog;
 		client.onError << eError;
