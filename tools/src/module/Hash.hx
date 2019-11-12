@@ -19,7 +19,7 @@ private typedef CalcConfig = {a: String, b: String, c: String, r:String};
  * @author AxGord <axgord@gmail.com>
  */
 class Hash extends Module {
-	
+
 	private static inline var PRIORITY:Int = 8;
 
 	public var ignore:Array<String> = [];
@@ -116,7 +116,7 @@ class Hash extends Module {
 		if (r != null)
 			for (bk in bh.keys())
 				if (!ah.exists(bk)) rm.push(bk);
-		
+
 		Utils.saveHashes(c, ch);
 		if (r != null) File.saveContent(r, rm.join('\n'));
 	}
@@ -142,7 +142,7 @@ class Hash extends Module {
 				unlock();
 				var nt = Std.string(stat.mtime.getTime());
 				var ns = Std.string(stat.size);
-				
+
 				if (map.exists(e)) {
 
 					if (nt != map[e][0] || ns != map[e][1]) {
@@ -260,6 +260,12 @@ private typedef HashConfig = { > types.BAConfig,
 
 private class HashReader extends BAReader<HashConfig> {
 
+	public static function cleanCfg(cfg: HashConfig): Void {
+		cfg.dirs = [];
+		cfg.units = [];
+		cfg.calc = module.Hash.createCalcConfig();
+	}
+
 	override private function readNode(xml:Fast):Void {
 		switch xml.name {
 			case 'dir': cfg.dirs.push(StringTools.trim(xml.innerData));
@@ -271,11 +277,7 @@ private class HashReader extends BAReader<HashConfig> {
 		}
 	}
 
-	override private function clean():Void {
-		cfg.dirs = [];
-		cfg.units = [];
-		cfg.calc = module.Hash.createCalcConfig();
-	}
+	override private function clean():Void cleanCfg(cfg);
 
 	override private function readAttr(name:String, val:String):Void {
 		switch name {
@@ -299,10 +301,6 @@ private class HashCalcReader extends BAReader<HashConfig> {
 		}
 	}
 
-	override private function clean():Void {
-		cfg.dirs = [];
-		cfg.units = [];
-		cfg.calc = {a: null, b: null, c: null, r: null};
-	}
+	override private function clean():Void HashReader.cleanCfg(cfg);
 
 }

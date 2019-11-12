@@ -3,8 +3,8 @@ package module;
 import pony.Tools;
 import pony.Fast;
 import pony.Queue;
-import types.BASection;
 import pony.events.Signal0;
+import types.BASection;
 
 /**
  * Module
@@ -97,7 +97,7 @@ class Module extends pony.Logable implements pony.magic.HasAbstract implements p
 		currentSection = current;
 		addConfigListener();
 		addListeners(priority, moduleBefore, moduleAfter);
-		
+
 		if (current != null) switch current {
 			case Server: modules.commands.onServer.once(moduleStart, priority);
 			case Prepare: modules.commands.onPrepare.once(moduleStart, priority);

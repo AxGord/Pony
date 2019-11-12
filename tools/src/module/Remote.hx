@@ -1,31 +1,65 @@
 package module;
 
-import sys.io.File;
-import sys.FileSystem;
+import pony.Fast;
+import types.BASection;
+import types.RemoteConfig;
 
 /**
  * Remote module
  * @author AxGord <axgord@gmail.com>
  */
-class Remote extends Module {
+class Remote extends NModule<RemoteConfig> {
+
+	private static inline var PRIORITY: Int = 0;
 
 	public function new() super('remote');
 
 	override public function init():Void {
 		if (xml == null) return;
-		modules.commands.onRemote << run;
+		initSections(PRIORITY, BASection.Remote);
 	}
 
-	private function run(a:String, b:String):Void {
-		var log = 'log.txt';
-		if (FileSystem.exists(log))
-			FileSystem.deleteFile(log);
-		var code = Utils.runNode('ponyRemote', b != null ? [a, b] : (a != null ? [a] : []));
-		if (code > 0) {
-			if (FileSystem.exists(log)) {
-				Sys.println(File.getContent(log));
-			}
-			Utils.error('Server build error', code);
+	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
+		new RemoteConfigReader(xml, {
+			debug: ac.debug,
+			app: ac.app,
+			before: false,
+			section: BASection.Remote,
+			allowCfg: true,
+			host: null,
+			port: null,
+			key: null,
+			commands: []
+		}, configHandler);
+	}
+
+	override private function writeCfg(protocol: NProtocol, cfg: Array<RemoteConfig>): Void {
+		protocol.remoteRemote(cfg);
+	}
+
+}
+
+private class RemoteConfigReader extends BAReader<RemoteConfig> {
+
+	override private function clean(): Void {
+		cfg.host = null;
+		cfg.port = null;
+		cfg.key = null;
+		cfg.commands = [];
+	}
+
+	override private function readNode(xml:Fast):Void {
+		switch xml.name {
+			case 'host': cfg.host = normalize(xml.innerData);
+			case 'port': cfg.port = Std.parseInt(xml.innerData);
+			case 'key': cfg.key = normalize(xml.innerData);
+
+			case 'get': cfg.commands.push(Get(normalize(xml.innerData)));
+			case 'send': cfg.commands.push(Send(normalize(xml.innerData)));
+			case 'exec': cfg.commands.push(Exec(normalize(xml.innerData)));
+			case 'command': cfg.commands.push(Command(normalize(xml.innerData)));
+
+			case _: super.readNode(xml);
 		}
 	}
 

@@ -24,8 +24,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Update uglify module",
-"version": "1.0.4",
+"releasenote": "Update server module",
+"version": "1.0.5",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }

@@ -1,64 +1,55 @@
 package remote.server;
-#if nodejs
+
+import types.RemoteServerConfig;
+import pony.Logable;
 import pony.net.SocketServer;
 import pony.net.SocketClient;
 import pony.Pair;
-import pony.Fast;
-
-using pony.text.XmlTools;
 
 /**
  * ServerRemote
  * @author AxGord <axgord@gmail.com>
  */
-class ServerRemote {
+class ServerRemote extends Logable {
 
-	private var socket:SocketServer;
-	private var key:String = null;
-	private var commands:Map<String, Array<Pair<Bool, String>>> = new Map();
-	private var instanse:ServerRemoteInstanse;
-	private var cmdLock:Bool = false;
-	private var allowForGet:Array<String>;
+	private var port: UInt;
+	private var socket: SocketServer;
+	private var key: Null<String>;
+	private var commands: Map<String, Array<Pair<Bool, String>>>;
+	private var instanse: ServerRemoteInstanse;
+	private var cmdLock: Bool = false;
+	private var allowForGet: Array<String>;
 
-	public function new(xml:Fast) {
-		var port = Std.parseInt(xml.node.port.innerData);
-		try {
-			key = StringTools.trim(xml.node.key.innerData);
-		} catch (_:Any) {}
+	public function new(cfg: RemoteServerConfig) {
+		super();
+		port = cfg.port;
+		key = cfg.key;
+		allowForGet = cfg.allow;
+		commands = cfg.commands;
+	}
 
-		allowForGet = [for (node in xml.nodes.allow) StringTools.trim(node.innerData)];
-
-		for (node in xml.node.commands.elements) {
-			var d:Pair<Bool, String> = new Pair(!node.isFalse('zipLog'), StringTools.trim(node.innerData));
-			if (!commands.exists(node.name))
-				commands[node.name] = [d];
-			else
-				commands[node.name].push(d);
-		}
-
-		Sys.println('Remote Server running at $port');
+	public function init(): Void {
+		log('Remote Server running at ${port}');
 		socket = new SocketServer(port);
 		socket.onConnect << connectHandler;
 	}
 
 	private function connectHandler(client:SocketClient):Void {
-		Sys.println('New connection');
+		log('New connection');
 		if (instanse == null && !cmdLock) {
-			Sys.println('Accept');
+			log('Accept');
 			instanse = new ServerRemoteInstanse(client, key, commands, allowForGet);
 			instanse.onBeginCommand = beginCommandHandler;
 			instanse.onEndCommand = endCommandHandler;
 			client.onClose < closeHandler;
 		} else {
-			Sys.println('Deny');
+			log('Deny');
 			client.destroy();
 		}
 	}
 
 	private function closeHandler():Void instanse = null;
-
 	private function beginCommandHandler():Void cmdLock = true;
 	private function endCommandHandler():Void cmdLock = false;
 
 }
-#end

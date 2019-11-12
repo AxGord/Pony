@@ -1,3 +1,4 @@
+import types.RemoteConfig;
 import js.Node;
 import js.Error;
 import module.NModule;
@@ -7,6 +8,7 @@ import types.FtpConfig;
 import types.UglifyConfig;
 import types.DownloadConfig;
 import types.BmfontConfig;
+import types.ServerConfig;
 import pony.net.SocketClient;
 import pony.NPM;
 import pony.Logable;
@@ -38,8 +40,10 @@ class NMain extends Logable {
 		rpc.onImagemin << imageminHandler;
 		rpc.onPoeditor << poeditorHandler;
 		rpc.onFtp << ftpHandler;
+		rpc.onServer << serverHandler;
 		rpc.onUglify << uglifyHandler;
 		rpc.onDownload << downloadHandler;
+		rpc.onRemote << remoteHandler;
 	}
 
 	private function errorHandler(err: Error):Void error(err.stack);
@@ -60,12 +64,20 @@ class NMain extends Logable {
 		listen(cast new module.Ftp(cfg));
 	}
 
+	private function serverHandler(cfg: Array<ServerConfig>): Void {
+		listen(cast new module.server.Server(cfg));
+	}
+
 	private function uglifyHandler(cfg: Array<UglifyConfig>): Void {
 		listen(cast new module.Uglify(cfg));
 	}
 
 	private function downloadHandler(cfg: Array<DownloadConfig>): Void {
 		listen(cast new module.Download(cfg));
+	}
+
+	private function remoteHandler(cfg: Array<RemoteConfig>): Void {
+		listen(cast new module.Remote(cfg));
 	}
 
 	private function listen(m: NModule<Any>): Void {
