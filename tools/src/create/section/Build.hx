@@ -1,5 +1,8 @@
 package create.section;
 
+import sys.FileSystem;
+import sys.io.File;
+import haxe.Resource;
 import pony.text.XmlTools;
 import types.*;
 
@@ -9,32 +12,32 @@ import types.*;
  */
 class Build extends Section {
 
-	public var libs:Map<String, String> = new Map();
-	public var target:HaxeTargets = null;
-	public var outputFile:String = 'app';
-	public var outputPath:String = 'bin/';
-	public var hxml:Bool = true;
-	public var cps:Array<String> = ['src'];
-	public var main:String = 'Main';
-	public var dce:String = 'full';
-	public var analyzerOptimize:Bool = true;
-	public var esVersion:Int = null;
+	public var libs: Map<String, String> = new Map();
+	public var target: HaxeTargets = null;
+	public var outputFile: String = 'app';
+	public var outputPath: String = 'bin/';
+	public var hxml: Bool = true;
+	public var cps: Array<String> = ['src'];
+	public var main: String = 'Main';
+	public var dce: String = 'full';
+	public var analyzerOptimize: Bool = true;
+	public var esVersion: Int = null;
 
 	public function new() super('build');
 
-	public function addLib(name:String, ?version:String):Void {
+	public function addLib(name: String, ?version: String): Void {
 		libs[name] = version;
 	}
 
-	public function getDep():Array<String> {
+	public function getDep(): Array<String> {
 		return hxml ? [outputFile + '.hxml'] : [];
 	}
 
-	public function result():Xml {
+	public function result(): Xml {
 		init();
 
 		if (hxml) {
-			var prepare = Xml.createElement('prepare');
+			var prepare: Xml = Xml.createElement('prepare');
 			prepare.set('hxml', outputFile);
 			prepare.addChild(XmlTools.node('main', main));
 			prepare.addChild(XmlTools.node(target, output()));
@@ -52,7 +55,7 @@ class Build extends Section {
 
 			xml.addChild(prepare);
 
-			var build = Xml.createElement('build');
+			var build: Xml = Xml.createElement('build');
 			build.addChild(XmlTools.node('hxml', outputFile));
 			xml.addChild(build);
 		} else {
@@ -74,17 +77,67 @@ class Build extends Section {
 		return xml;
 	}
 
-	public function output():String return outputPath + getOutputFile();
-	public function getOutputFile():String return outputFile + outputExt();
+	public function output(): String return outputPath + getOutputFile();
+	public function getOutputFile(): String return outputFile + outputExt();
 
-	public function outputExt():String {
+	public function outputExt(): String {
 		return switch target {
 			case HaxeTargets.JS: '.js';
 			case HaxeTargets.Neko: '.n';
 		}
 	}
 
-	public function getMainhx():String return gethx(main);
-	public function gethx(name:String):String return cps[0] + '/' + name + '.hx';
+	public function createOutputFile(file: String, template: String, ?replaces: Map<String, String>): Void {
+		createOutputPathIfNeed();
+		createFile(outputPath + file, template, replaces);
+	}
+
+	public function getMainhxPath(): String {
+		return cps[0];
+	}
+
+	public function getMainhx(): String return gethx(main);
+	public function gethx(name: String): String return getMainhxPath() + '/' + name + '.hx';
+
+	public function createMainhx(template: String, ?replaces: Map<String, String>): Void {
+		createPathToMainhxIfNeed();
+		createFile(getMainhx(), template, replaces);
+	}
+
+	public function createEmptyMainhx(): Void {
+		Utils.createEmptyMainFile(getMainhx());
+	}
+
+	private function createFile(file:String, template: String, ?replaces: Map<String, String>): Void {
+		var data: String = Resource.getString(template);
+		if (replaces != null) for (key in replaces.keys()) data = StringTools.replace(data, '::$key::', replaces[key]);
+		File.saveContent(file, data);
+	}
+
+	public function createOutputPathIfNeed(): Void {
+		if (!outputPathExists())
+			FileSystem.createDirectory(outputPath);
+	}
+
+	public function outputPathExists(): Bool {
+		return FileSystem.exists(outputPath);
+	}
+
+	public function createOutputPath(): Void {
+		FileSystem.createDirectory(outputPath);
+	}
+
+	public function createPathToMainhxIfNeed(): Void {
+		if (!pathToMainhxExists())
+			createPathToMainhx();
+	}
+
+	public function createPathToMainhx(): Void {
+		FileSystem.createDirectory(getMainhxPath());
+	}
+
+	public function pathToMainhxExists(): Bool {
+		return FileSystem.exists(getMainhxPath());
+	}
 
 }

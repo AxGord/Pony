@@ -1,7 +1,11 @@
 package create;
 
+import haxe.Resource;
 import create.section.Config.ConfigOptions;
+import create.ides.VSCode;
+import create.ides.HaxeDevelop;
 import sys.FileSystem;
+import sys.io.File;
 import types.ProjectType;
 
 /**
@@ -10,37 +14,28 @@ import types.ProjectType;
  */
 class Create {
 
-	private static inline var outputFile:String = 'app';
+	private static var outputFile: String = 'app';
 
-	public static function run(a:String, b:String):Void {
-
-		if (a == 'remote') {
-			if (Utils.runNode('ponyRemote', ['create', b]) > 0) return;
-			pony.ZipTool.unpackFile('init.zip');
-			sys.FileSystem.deleteFile('init.zip');
-			Utils.command('pony', ['prepare']);
-			return;
-		}
-
-		var type:ProjectType = null;
-		if (a != null) for (t in ProjectType.createAll()) {
-			if (t.getName().toLowerCase() == a.toLowerCase()) {
+	public static function run(sType: String, name: String): Void {
+		// todo: create remote key@host:port
+		var type: ProjectType = null;
+		if (sType != null) for (t in ProjectType.createAll()) {
+			if (t.getName().toLowerCase() == sType.toLowerCase()) {
 				type = t;
 				break;
 			}
 		}
+		if (type == null) Utils.error('Wrong app type');
+		if (FileSystem.exists(Utils.MAIN_FILE)) Utils.error(Utils.MAIN_FILE + ' exists');
+		var project: Project = new Project(name);
+		setProjectConfig(project, type);
+		Utils.savePonyProject(project.result());
+		createProjectData(project, type);
+		Utils.command('pony', ['prepare']);
+	}
 
-		if (type == null) {
-			Utils.error('Wrong app type');
-		}
-
-		var name:String = b;
-
-		if (sys.FileSystem.exists(Utils.MAIN_FILE)) Utils.error(Utils.MAIN_FILE + ' exists');
-				
-		var project = new Project(name);
-
-		if (type != null) switch type {
+	private static function setProjectConfig(project: Project, type: ProjectType): Void {
+		switch type {
 			case ProjectType.Server: create.targets.Server.set(project);
 			case ProjectType.JS: create.targets.JS.set(project);
 			case ProjectType.CC: create.targets.CC.set(project);
@@ -77,158 +72,148 @@ class Create {
 				project.haxelib.addLib('monaco-editor', '0.13.0');
 			case ProjectType.Neko: create.targets.Neko.set(project);
 		}
+	}
 
-		Utils.savePonyProject(project.result());
-
-		var main = project.getMain();
-
-		var vscAllow:Bool = create.ides.VSCode.allowCreate;
-
-		if (vscAllow) create.ides.VSCode.createDir();
-
-		var needHtml:String = null;
-		var ponycmd:String = 'build';
-		var vscodeAuto:Bool = false;
-		if (type != null) switch type {
+	public static function createProjectData(project: Project, type: ProjectType): Void {
+		var vscAllow: Bool = VSCode.allowCreate;
+		if (vscAllow) VSCode.createDir();
+		switch type {
 			case ProjectType.Neko:
-				ponycmd = 'run';
-				Utils.createEmptyMainFile(main);
+				project.build.createEmptyMainhx();
 			case ProjectType.JS:
-				Utils.createPath(main);
-				var data:String = haxe.Resource.getString('jstemplate.hx.tpl');
-				sys.io.File.saveContent(main, data);
-				if (vscAllow) create.ides.VSCode.createChrome(project.server.httpPort);
-				needHtml = 'index.html';
+				project.build.createMainhx('jstemplate.hx.tpl');
+				if (vscAllow) VSCode.createChrome(project.server.httpPort);
+				createIndexHtml(project);
 			case ProjectType.CC:
-				Utils.createPath(main);
-				var data:String = haxe.Resource.getString('cctemplate.hx.tpl');
-				sys.io.File.saveContent(main, data);
-				sys.FileSystem.createDirectory(project.build.outputPath);
-				var data:String = haxe.Resource.getString('cctemplate.js.tpl');
-				sys.io.File.saveContent(project.build.outputPath + 'main.js', data);
-				if (vscAllow) create.ides.VSCode.createChrome(project.server.httpPort);
-				vscodeAuto = true;
+				project.build.createMainhx('cctemplate.hx.tpl');
+				project.build.createOutputFile('main.js', 'cctemplate.js.tpl');
+				if (vscAllow) VSCode.createChrome(project.server.httpPort);
 			case ProjectType.Pixi:
-				Utils.createPath(main);
-				var data:String = haxe.Resource.getString('pixitemplate.hx.tpl');
-				sys.io.File.saveContent(main, data);
-				if (vscAllow) create.ides.VSCode.createChrome(project.server.httpPort);
-				needHtml = 'index.html';
+				project.build.createMainhx('pixitemplate.hx.tpl');
+				if (vscAllow) VSCode.createChrome(project.server.httpPort);
+				createIndexHtml(project);
 			case ProjectType.Pixixml:
-				Utils.createPath(main);
-				var data:String = haxe.Resource.getString('pixixmltemplate.hx.tpl');
-				sys.io.File.saveContent(main, data);
-				var xdata:String = haxe.Resource.getString('pixixmltemplate.xml');
-				sys.io.File.saveContent('app.xml', xdata);
-				if (vscAllow) create.ides.VSCode.createChrome(project.server.httpPort);
-				needHtml = 'index.html';
+				project.build.createMainhx('pixixmltemplate.hx.tpl');
+				saveTemplate('app.xml', 'pixixmltemplate.xml');
+				if (vscAllow) VSCode.createChrome(project.server.httpPort);
+				createIndexHtml(project);
 			case ProjectType.Cordova:
-				Utils.createPath(main);
-				var data:String = haxe.Resource.getString('pixixmltemplate.hx.tpl');
-				sys.io.File.saveContent(main, data);
-				var xdata:String = haxe.Resource.getString('pixixmltemplate.xml');
-				sys.io.File.saveContent('app.xml', xdata);
-				if (vscAllow) create.ides.VSCode.createCordova(project.server.httpPort);
-				FileSystem.createDirectory(project.build.outputPath);
-				createHtml(project.build.outputPath + 'index.html', 'template.html', name == null ? 'App' : name, project.build.getOutputFile());
+				project.build.createMainhx('pixixmltemplate.hx.tpl');
+				saveTemplate('app.xml', 'pixixmltemplate.xml');
+				if (vscAllow) VSCode.createCordova(project.server.httpPort);
+				createIndexHtml(project);
 			case ProjectType.Node:
-				//ponycmd = 'run';
-				Utils.createEmptyMainFile(main);
-				if (vscAllow) create.ides.VSCode.createNode(project.build.outputPath, outputFile);
+				project.build.createEmptyMainhx();
+				if (vscAllow) VSCode.createNode(project.build.outputPath, outputFile);
 			case ProjectType.Site:
-				var path:String = Utils.getPath(main);
-				FileSystem.createDirectory(path);
-				FileSystem.createDirectory(path + 'models');
-				FileSystem.createDirectory('bin/home/');
-				FileSystem.createDirectory('bin/home/language/');
-				FileSystem.createDirectory('bin/home/templates/');
-				FileSystem.createDirectory('bin/home/templates/Default/');
-				FileSystem.createDirectory('bin/home/templates/Default/includes/');
-				FileSystem.createDirectory('bin/home/templates/Default/pages/');
-				FileSystem.createDirectory('bin/home/templates/Default/static/');
-				sys.FileSystem.createDirectory(project.build.outputPath);
-				var mdata:String = haxe.Resource.getString('site.hx.tpl');
-				sys.io.File.saveContent(project.build.getMainhx(), mdata);
-				if (vscAllow) create.ides.VSCode.createNode(project.build.outputPath, outputFile);
+				createSiteData(project, vscAllow);
 			case ProjectType.Pixielectron:
-				Utils.createPath(main);
-				sys.FileSystem.createDirectory(project.build.outputPath);
-				var mdata:String = haxe.Resource.getString('electrontemplate.hx.tpl');
-				sys.io.File.saveContent(project.build.getMainhx(), mdata);
-				var data:String = haxe.Resource.getString('pixixmltemplate.hx.tpl');
-				sys.io.File.saveContent(project.secondbuild.getMainhx(), data);
-				var xdata:String = haxe.Resource.getString('pixixmltemplate.xml');
-				sys.io.File.saveContent('app.xml', xdata);
-				if (vscAllow) create.ides.VSCode.createElectron(project.build.outputPath);
-				createHtml(project.build.outputPath + 'default.html', 'template.html', name == null ? 'App' : name, project.secondbuild.getOutputFile());
-				create.targets.Node.createAndSaveNpmPackageToOutputDir(
-					project, null,
-					[
-						'electron' => '^2.0.3'
-					]
-				);
-
+				createPixiElectronData(project, vscAllow);
 			case ProjectType.Electron:
-				Utils.createPath(main);
-				sys.FileSystem.createDirectory(project.build.outputPath);
-				var mdata:String = haxe.Resource.getString('electrontemplate.hx.tpl');
-				sys.io.File.saveContent(project.build.getMainhx(), mdata);
-				var data:String = haxe.Resource.getString('jstemplate.hx.tpl');
-				sys.io.File.saveContent(project.secondbuild.getMainhx(), data);
-				if (vscAllow) create.ides.VSCode.createElectron(project.build.outputPath);
-				createHtml(project.build.outputPath + 'default.html', 'template.html', name == null ? 'App' : name, project.secondbuild.getOutputFile());
-				create.targets.Node.createAndSaveNpmPackageToOutputDir(
-					project, null,
-					[
-						'electron' => '^2.0.3'
-					]
-				);
-
+				createElectronData(project, vscAllow);
 			case ProjectType.Monacoelectron:
-				Utils.createPath(main);
-				sys.FileSystem.createDirectory(project.build.outputPath);
-				var mdata:String = haxe.Resource.getString('electrontemplate.hx.tpl');
-				sys.io.File.saveContent(project.build.getMainhx(), mdata);
-				var data:String = haxe.Resource.getString('monacotemplate.hx.tpl');
-				sys.io.File.saveContent(project.secondbuild.getMainhx(), data);
-				if (vscAllow) create.ides.VSCode.createElectron(project.build.outputPath);
-				createHtml(project.build.outputPath + 'default.html', 'template.html', name == null ? 'App' : name, project.secondbuild.getOutputFile());
-				create.targets.Node.createAndSaveNpmPackageToOutputDir(
-					project,
-					[
-						'monaco-editor' => '^0.13.0',
-						'monaco-editor-textmate' => '^1.0.1',
-						'monaco-loader' => '^0.8.2',
-						'monaco-textmate' => '^1.0.1',
-						'onigasm' => '^1.3.1'
-					],
-					[
-						'electron' => '^2.0.3'
-					]
-				);
-				
+				createMonacoElectronData(project, vscAllow);
 			case ProjectType.Server:
-				if (vscAllow) create.ides.VSCode.create(null);
+				if (vscAllow) VSCode.create(null);
 				return;
 			case _:
 		}
 
-		if (needHtml != null) {
-			sys.FileSystem.createDirectory(project.build.outputPath);
-			createHtml(project.build.outputPath + needHtml, 'template.html', name == null ? 'App' : name, project.build.getOutputFile());
-		}
-		
-		if (vscAllow) create.ides.VSCode.create(ponycmd, vscodeAuto);
-		create.ides.HaxeDevelop.create(name, main, project.getLibs(), project.getCps(), ponycmd);
-
-		Utils.command('pony', ['prepare']);
+		var ponycmd: String = type == ProjectType.Neko ? 'run' : 'build';
+		if (vscAllow) VSCode.create(ponycmd, type == ProjectType.CC);
+		if (project.name != null) HaxeDevelop.create(project.name, project.getMain(), project.getLibs(), project.getCps(), ponycmd);
 	}
 
-	private static function createHtml(file:String, template:String, title:String, app:String):Void {
-		var html:String = haxe.Resource.getString(template);
-		html = StringTools.replace(html, '::TITLE::', title);
-		html = StringTools.replace(html, '::APP::', app);
-		sys.io.File.saveContent(file, html);
+	public static function createIndexHtml(project: Project): Void {
+		project.build.createOutputFile('index.html', 'template.html', [
+			'TITLE' => project.rname,
+			'APP' => project.build.getOutputFile()
+		]);
+
+	}
+
+	private static function createElectronData(project: Project, vscAllow: Bool): Void {
+		project.build.createMainhx('electrontemplate.hx.tpl');
+		project.secondbuild.createMainhx('jstemplate.hx.tpl');
+		if (vscAllow) VSCode.createElectron(project.build.outputPath);
+		project.build.createOutputFile('default.html', 'template.html', [
+			'TITLE' => project.rname,
+			'APP' => project.secondbuild.getOutputFile()
+		]);
+		create.targets.Node.createAndSaveNpmPackageToOutputDir(
+			project, null,
+			[
+				'electron' => '^2.0.3'
+			]
+		);
+	}
+
+	private static function createPixiElectronData(project: Project, vscAllow: Bool): Void {
+		project.build.createMainhx('electrontemplate.hx.tpl');
+		project.secondbuild.createMainhx('pixixmltemplate.hx.tpl');
+		saveTemplate('app.xml', 'pixixmltemplate.xml');
+		if (vscAllow) VSCode.createElectron(project.build.outputPath);
+		project.build.createOutputFile('default.html', 'template.html', [
+			'TITLE' => project.rname,
+			'APP' => project.secondbuild.getOutputFile()
+		]);
+		create.targets.Node.createAndSaveNpmPackageToOutputDir(
+			project, null,
+			[
+				'electron' => '^2.0.3'
+			]
+		);
+	}
+
+	private static function createMonacoElectronData(project: Project, vscAllow: Bool): Void {
+		project.build.createMainhx('electrontemplate.hx.tpl');
+		project.secondbuild.createMainhx('monacotemplate.hx.tpl');
+		if (vscAllow) VSCode.createElectron(project.build.outputPath);
+		project.build.createOutputFile('default.html', 'template.html', [
+			'TITLE' => project.rname,
+			'APP' => project.secondbuild.getOutputFile()
+		]);
+		create.targets.Node.createAndSaveNpmPackageToOutputDir(
+			project,
+			[
+				'monaco-editor' => '^0.13.0',
+				'monaco-editor-textmate' => '^1.0.1',
+				'monaco-loader' => '^0.8.2',
+				'monaco-textmate' => '^1.0.1',
+				'onigasm' => '^1.3.1'
+			],
+			[
+				'electron' => '^2.0.3'
+			]
+		);
+	}
+
+	private static function createSiteData(project: Project, vscAllow: Bool): Void {
+		var path: String = project.build.getMainhxPath();
+		createDirs([
+			path,
+			path + 'models',
+			'bin/home/',
+			'bin/home/language/',
+			'bin/home/templates/',
+			'bin/home/templates/Default/',
+			'bin/home/templates/Default/includes/',
+			'bin/home/templates/Default/pages/',
+			'bin/home/templates/Default/static/',
+			project.build.outputPath
+		]);
+		project.build.createMainhx('site.hx.tpl');
+		if (vscAllow) VSCode.createNode(project.build.outputPath, outputFile);
+	}
+
+	@:extern private static inline function createDirs(a: Array<String>): Void {
+		for (d in a) FileSystem.createDirectory(d);
+	}
+
+	private static function saveTemplate(file:String, template:String, ?replaces: Map<String, String>):Void {
+		var data: String = Resource.getString(template);
+		if (replaces != null) for (key in replaces.keys()) data = StringTools.replace(data, '::$key::', replaces[key]);
+		File.saveContent(file, data);
 	}
 
 }
