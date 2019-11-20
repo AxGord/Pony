@@ -14,13 +14,13 @@ using pony.macro.Tools;
  * @author AxGord <axgord@gmail.com>
  */
 class HasAssetBuilder {
-	
-	macro static public function build():Array<Field> {
-		var keepMeta:MetadataEntry = { name:':keep', pos:Context.currentPos() };
-		var list:Array<Expr> = [];
-		var names:Array<Expr> = [];
-		var fields:Array<Field> = Context.getBuildFields();
-		for (f in fields) if (f.meta.checkMeta([':asset','asset'])) {
+
+	macro public static function build(): Array<Field> {
+		var keepMeta: MetadataEntry = { name: ':keep', pos: Context.currentPos() };
+		var list: Array<Expr> = [];
+		var names: Array<Expr> = [];
+		var fields: Array<Field> = Context.getBuildFields();
+		for (f in fields) if (f.meta.checkMeta([':asset', 'asset'])) {
 			if (f.access.indexOf(AStatic) == -1) Context.error('Asset can be only static', f.pos);
 			switch f.kind {
 				case FieldType.FVar(null, e):
@@ -52,40 +52,51 @@ class HasAssetBuilder {
 					Context.error('Asset can be only string var', f.pos);
 			}
 		}
+
+		var cl: Null<Ref<ClassType>> = Context.getLocalClass();
+		var meta: Metadata = cl.get().meta.get();
+		var patchesFields: Map<String, String> = getPatches(meta, cl);
+		if (patchesFields == null) Context.error('Wrong parent class', cl.get().pos);
+		addBaseFields(fields, names, list, patchesFields);
+		addBaseMethods(fields, cl);
+		for (f in patchesFields.keys()) addMethods(fields, f, patchesFields[f]);
+		return fields;
+	}
+
+	#if macro
+
+	private static function addBaseFields(
+		fields: Array<Field>, names: Array<Expr>, list: Array<Expr>, patchesFields: Map<String, String>
+	): Void {
+		var patches: Expr =  { expr: EArrayDecl([for (field in patchesFields) macro $v{field} ]), pos: Context.currentPos() };
 		fields.push( {
 				name: 'ASSETS_LIST',
 				access: [APrivate, AStatic],
 				kind: FieldType.FVar(macro:Array<String>, macro $a { list } ),
 				pos: Context.currentPos()
 			});
-			
 		fields.push( {
 				name: 'ASSETS_NAMES',
 				access: [APrivate, AStatic],
 				kind: FieldType.FVar(macro:Array<String>, macro $a { names } ),
 				pos: Context.currentPos()
 			});
-			
-		var cl = Context.getLocalClass();
-		var meta = cl.get().meta.get();
-		
-		var patchesFields:Map<String, String> = getPatches(meta, cl);
-		if (patchesFields == null) Context.error('Wrong parent class', cl.get().pos);
-		var patches:Expr =  { expr: EArrayDecl([for (field in patchesFields) macro $v{field} ]), pos: Context.currentPos() };
-		
 		fields.push( {
 				name: 'ASSETS_PATHES',
 				access: [APrivate, AStatic],
-				kind: FieldType.FVar(macro:Array<String>, macro $patches ),
+				kind: FieldType.FVar(macro: Array<String>, macro $patches ),
 				pos: Context.currentPos()
 			});
-			
+	}
+
+	private static function addBaseMethods(fields: Array<Field>, cl: Null<Ref<ClassType>>): Void {
+		var keepMeta: MetadataEntry = { name: ':keep', pos: Context.currentPos() };
 		fields.push({
 				name: 'loadAllAssets',
 				access: [APublic, AStatic],
 				kind: FieldType.FFun( {
-						args: [{name: 'childs', type:macro:Bool, value:macro true}, {name: 'cb', type:macro:Int->Int->Void}],
-						ret: macro:Void,
+						args: [{ name: 'childs', type: macro: Bool, value: macro true }, { name: 'cb', type: macro: Int -> Int -> Void }],
+						ret: macro: Void,
 						expr:
 							macro childs
 							? pony.ui.AssetManager.loadPackWithChilds($v { cl.toString() }, ASSETS_PATHES, ASSETS_LIST, cb)
@@ -94,12 +105,11 @@ class HasAssetBuilder {
 				pos: Context.currentPos(),
 				meta: [keepMeta]
 			});
-			
 		fields.push({
 				name: 'countAllAssets',
 				access: [APublic, AStatic],
 				kind: FieldType.FFun( {
-						args: [{name: 'childs', type:macro:Bool, value:macro true}],
+						args: [{ name: 'childs', type: macro: Bool, value: macro true }],
 						ret: macro:Int,
 						expr:
 							macro return childs
@@ -109,159 +119,157 @@ class HasAssetBuilder {
 				pos: Context.currentPos(),
 				meta: [keepMeta]
 			});
-		
-		for (f in patchesFields.keys()) {
-			var v = macro $v{patchesFields[f]};
-			fields.push({
-					name: f == 'def' ? 'loadAsset' : 'loadAsset_' + f,
-					access: [APublic, AStatic],
-					kind: FieldType.FFun( {
-					args: [{name: 'asset', type:macro:pony.Or<Int,Array<Int>>, opt: true}, {name: 'cb', type:macro:Int->Int->Void}],
-							ret: macro:Void,
-							expr: macro pony.ui.AssetManager.load(
-								$v,
-								switch asset {
-									case pony.Or.OrState.A(asset): ASSETS_LIST[asset];
-									case pony.Or.OrState.B(assets): [for (asset in assets) ASSETS_LIST[asset]];
-								},
-								cb)
-						}),
-					pos: Context.currentPos()
-				});
-			fields.push({//todo: childs
-				name: f == 'def' ? 'loadAssets' : 'loadAssets_' + f,
-				access: [APublic, AStatic],
-				kind: FieldType.FFun( {
-				args: [{name: 'cb', type:macro:Int->Int->Void}],
-						ret: macro:Void,
-						expr: macro pony.ui.AssetManager.load($v, ASSETS_LIST, cb)
-					}),
-				pos: Context.currentPos()
-			});
-			fields.push({
-				name: f == 'def' ? 'asset' : 'asset_' + f,
-				access: [APublic, AStatic],
-				kind: FieldType.FFun( {
-				args: [{name: 'asset', type:macro:Int}],
-						ret: macro:String,
-						expr: macro return ASSETS_NAMES[asset] == null ? $v + ASSETS_LIST[asset] : ASSETS_NAMES[asset]
-					}),
-				pos: Context.currentPos()
-			});
-			
-			fields.push({
-				name: f == 'def' ? 'assetName' : 'assetName_' + f,
-				access: [APublic, AStatic],
-				kind: FieldType.FFun( {
-				args: [{name: 'asset', type:macro:Int}],
-						ret: macro:String,
-						expr: macro return ASSETS_NAMES[asset]
-					}),
-				pos: Context.currentPos()
-			});
-			
-			fields.push({
-				name: f == 'def' ? 'assetValue' : 'assetValue_' + f,
-				access: [APublic, AStatic],
-				kind: FieldType.FFun( {
-				args: [{name: 'asset', type:macro:Int}],
-						ret: macro:String,
-						expr: macro return $v + ASSETS_LIST[asset]
-					}),
-				pos: Context.currentPos()
-			});
-			fields.push({
-				name: f == 'def' ? 'image' : 'image_' + f,
-				access: [APublic, AStatic],
-				kind: FieldType.FFun( {
-				args: [{name: 'asset', type:macro:Int}],
-						ret: null,
-						expr: macro return pony.ui.AssetManager.image($v + ASSETS_LIST[asset], ASSETS_NAMES[asset])
-					}),
-				pos: Context.currentPos()
-			});
-			fields.push({
-				name: f == 'def' ? 'spine' : 'spine_' + f,
-				access: [APublic, AStatic],
-				kind: FieldType.FFun( {
-				args: [{name: 'asset', type:macro:Int}],
-						ret: null,
-						expr: macro return pony.ui.AssetManager.spine($v + ASSETS_LIST[asset])
-					}),
-				pos: Context.currentPos()
-			});
-			
-			fields.push({
-				name: f == 'def' ? 'sound' : 'sound_' + f,
-				access: [APublic, AStatic],
-				kind: FieldType.FFun( {
-				args: [{name: 'asset', type:macro:Int}],
-						ret: null,
-						expr: macro return pony.ui.AssetManager.sound($v + ASSETS_LIST[asset])
-					}),
-				pos: Context.currentPos()
-			});
-			
-			fields.push({
-				name: f == 'def' ? 'getTexture' : 'getTexture_' + f,
-				access: [APublic, AStatic],
-				kind: FieldType.FFun( {
-				args: [{name: 'asset', type:macro:Int}],
-						ret: null,
-						expr: macro return pony.ui.AssetManager.texture($v + ASSETS_LIST[asset], ASSETS_NAMES[asset])
-					}),
-				pos: Context.currentPos()
-			});
-
-			fields.push({
-				name: f == 'def' ? 'animation' : 'animation_' + f,
-				access: [APublic, AStatic],
-				kind: FieldType.FFun( {
-				args: [{name: 'asset', type:macro:Int}],
-						ret: null,
-						expr: macro return pony.ui.AssetManager.animation($v + ASSETS_LIST[asset], ASSETS_NAMES[asset])
-					}),
-				pos: Context.currentPos()
-			});
-
-			fields.push({
-				name: f == 'def' ? 'clip' : 'clip_' + f,
-				access: [APublic, AStatic],
-				kind: FieldType.FFun( {
-				args: [{name: 'asset', type:macro:Int}],
-						ret: null,
-						expr: macro return pony.ui.AssetManager.clip($v + ASSETS_LIST[asset], ASSETS_NAMES[asset])
-					}),
-				pos: Context.currentPos()
-			});
-
-			fields.push({
-				name: f == 'def' ? 'text' : 'text_' + f,
-				access: [APublic, AStatic],
-				kind: FieldType.FFun( {
-				args: [{name: 'asset', type:macro:Int}],
-						ret: null,
-						expr: macro return pony.ui.AssetManager.text($v + ASSETS_LIST[asset])
-					}),
-				pos: Context.currentPos()
-			});
-		}
-		
-		return fields;
 	}
-	
-	#if macro
-	private static function getPatches(meta:Metadata, clss:Ref<ClassType>):Map<String, String> {
-		var parentPathes:Map<String, String> = null;
+
+	private static function addMethods(fields: Array<Field>, f: String, vs: String): Void {
+		if (vs.length > 0) vs += '/';
+		var v = macro $v{vs};
+		fields.push({
+				name: f == 'def' ? 'loadAsset' : 'loadAsset_' + f,
+				access: [APublic, AStatic],
+				kind: FieldType.FFun( {
+				args: [{name: 'asset', type:macro:pony.Or<Int,Array<Int>>, opt: true}, {name: 'cb', type:macro:Int->Int->Void}],
+						ret: macro:Void,
+						expr: macro pony.ui.AssetManager.load(
+							$v,
+							switch asset {
+								case pony.Or.OrState.A(asset): ASSETS_LIST[asset];
+								case pony.Or.OrState.B(assets): [for (asset in assets) ASSETS_LIST[asset]];
+							},
+							cb)
+					}),
+				pos: Context.currentPos()
+			});
+		fields.push({ //todo: childs
+			name: f == 'def' ? 'loadAssets' : 'loadAssets_' + f,
+			access: [APublic, AStatic],
+			kind: FieldType.FFun( {
+			args: [{ name: 'cb', type: macro: Int -> Int -> Void }],
+					ret: macro:Void,
+					expr: macro pony.ui.AssetManager.load($v, ASSETS_LIST, cb)
+				}),
+			pos: Context.currentPos()
+		});
+		fields.push({
+			name: f == 'def' ? 'asset' : 'asset_' + f,
+			access: [APublic, AStatic],
+			kind: FieldType.FFun( {
+			args: [{ name: 'asset', type: macro: Int }],
+					ret: macro:String,
+					expr: macro return ASSETS_NAMES[asset] == null ? $v + ASSETS_LIST[asset] : ASSETS_NAMES[asset]
+				}),
+			pos: Context.currentPos()
+		});
+
+		fields.push({
+			name: f == 'def' ? 'assetName' : 'assetName_' + f,
+			access: [APublic, AStatic],
+			kind: FieldType.FFun( {
+			args: [{name: 'asset', type:macro:Int}],
+					ret: macro:String,
+					expr: macro return ASSETS_NAMES[asset]
+				}),
+			pos: Context.currentPos()
+		});
+
+		fields.push({
+			name: f == 'def' ? 'assetValue' : 'assetValue_' + f,
+			access: [APublic, AStatic],
+			kind: FieldType.FFun( {
+			args: [{name: 'asset', type:macro:Int}],
+					ret: macro:String,
+					expr: macro return $v + ASSETS_LIST[asset]
+				}),
+			pos: Context.currentPos()
+		});
+		fields.push({
+			name: f == 'def' ? 'image' : 'image_' + f,
+			access: [APublic, AStatic],
+			kind: FieldType.FFun( {
+			args: [{name: 'asset', type:macro:Int}],
+					ret: null,
+					expr: macro return pony.ui.AssetManager.image($v + ASSETS_LIST[asset], ASSETS_NAMES[asset])
+				}),
+			pos: Context.currentPos()
+		});
+		fields.push({
+			name: f == 'def' ? 'spine' : 'spine_' + f,
+			access: [APublic, AStatic],
+			kind: FieldType.FFun( {
+			args: [{name: 'asset', type:macro:Int}],
+					ret: null,
+					expr: macro return pony.ui.AssetManager.spine($v + ASSETS_LIST[asset])
+				}),
+			pos: Context.currentPos()
+		});
+
+		fields.push({
+			name: f == 'def' ? 'sound' : 'sound_' + f,
+			access: [APublic, AStatic],
+			kind: FieldType.FFun( {
+			args: [{name: 'asset', type:macro:Int}],
+					ret: null,
+					expr: macro return pony.ui.AssetManager.sound($v + ASSETS_LIST[asset])
+				}),
+			pos: Context.currentPos()
+		});
+
+		fields.push({
+			name: f == 'def' ? 'getTexture' : 'getTexture_' + f,
+			access: [APublic, AStatic],
+			kind: FieldType.FFun( {
+			args: [{name: 'asset', type:macro:Int}],
+					ret: null,
+					expr: macro return pony.ui.AssetManager.texture($v + ASSETS_LIST[asset], ASSETS_NAMES[asset])
+				}),
+			pos: Context.currentPos()
+		});
+
+		fields.push({
+			name: f == 'def' ? 'animation' : 'animation_' + f,
+			access: [APublic, AStatic],
+			kind: FieldType.FFun( {
+			args: [{name: 'asset', type:macro:Int}],
+					ret: null,
+					expr: macro return pony.ui.AssetManager.animation($v + ASSETS_LIST[asset], ASSETS_NAMES[asset])
+				}),
+			pos: Context.currentPos()
+		});
+
+		fields.push({
+			name: f == 'def' ? 'clip' : 'clip_' + f,
+			access: [APublic, AStatic],
+			kind: FieldType.FFun( {
+			args: [{name: 'asset', type:macro:Int}],
+					ret: null,
+					expr: macro return pony.ui.AssetManager.clip($v + ASSETS_LIST[asset], ASSETS_NAMES[asset])
+				}),
+			pos: Context.currentPos()
+		});
+
+		fields.push({
+			name: f == 'def' ? 'text' : 'text_' + f,
+			access: [APublic, AStatic],
+			kind: FieldType.FFun( {
+			args: [{name: 'asset', type:macro:Int}],
+					ret: null,
+					expr: macro return pony.ui.AssetManager.text($v + ASSETS_LIST[asset])
+				}),
+			pos: Context.currentPos()
+		});
+	}
+
+	private static function getPatches(meta: Metadata, clss: Ref<ClassType>): Map<String, String> {
+		var parentPathes: Map<String, String> = null;
 		if (meta.checkMeta([':assets_parent'])) {
-			var parent:Expr = meta.getMeta(':assets_parent').params[0];
+			var parent: Expr = meta.getMeta(':assets_parent').params[0];
 			switch parent.expr {
 				case EConst(CIdent(s)):
 					switch Context.getType(s) {
 						case TInst(cl, _):
 							var m = cl.get().meta;
 							parentPathes = getPatches(m.get(), cl);
-							var e = { expr:EConst(CString(clss.toString())), pos:Context.currentPos() };
+							var e = { expr: EConst(CString(clss.toString())), pos: Context.currentPos() };
 							if (!m.has('assets_childs')) {
 								m.add('assets_childs', [e], Context.currentPos());
 							} else {
@@ -277,10 +285,10 @@ class HasAssetBuilder {
 					Context.error('Wrong assets_parent format', parent.pos);
 			}
 		}
-		
-		var patchesFields:Map<String, String> = new Map();
+
+		var patchesFields: Map<String, String> = new Map();
 		if (meta.checkMeta([':assets_path'])) {
-			var patches:Expr = meta.getMeta(':assets_path').params[0];
+			var patches: Expr = meta.getMeta(':assets_path').params[0];
 			switch patches.expr {
 				case EObjectDecl(fs):
 					for (f in fs) {
@@ -295,16 +303,17 @@ class HasAssetBuilder {
 					Context.error('Wrong assets_path format', patches.pos);
 			}
 		}
-		
+
 		if (parentPathes == null) {
 			return patchesFields.iterator().hasNext() ? patchesFields : null;
 		}
-		
-		var result:Map<String, String> = new Map();
+
+		var result: Map<String, String> = new Map();
 		for (pk in parentPathes.keys()) {
 			if (patchesFields.iterator().hasNext()) {
-				var prefix = pk == 'def' ? '' : pk + '_';
-				var path = parentPathes[pk] + '/';
+				var prefix: String = pk == 'def' ? '' : pk + '_';
+				var path: String = parentPathes[pk];
+				if (path.length > 0) path += '/';
 				for (k in patchesFields.keys()) {
 					result[prefix + k] = path + patchesFields[k];
 				}
@@ -315,5 +324,5 @@ class HasAssetBuilder {
 		return result;
 	}
 	#end
-	
+
 }

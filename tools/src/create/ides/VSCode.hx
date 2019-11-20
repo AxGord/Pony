@@ -36,7 +36,7 @@ class VSCode {
 				},
 				problemMatcher: ["$haxe"]
 			});
-			
+
 		if (cordova) {
 			tasks.push({
 				identifier: ANDROID_TASK,
@@ -73,6 +73,18 @@ class VSCode {
 			tasks: tasks
 		};
 		Utils.saveJson('.vscode/tasks.json', data);
+		createExtensions();
+	}
+
+	private static function createExtensions(): Void {
+		var data: Array<String> = [
+			'nadako.vshaxe',
+			'vshaxe.haxe-checkstyle',
+			'wiggin77.codedox'
+		];
+		if (cordova)
+			data.push('msjsdiag.cordova-tools');
+		Utils.saveJson('.vscode/extensions.json', { recommendations: data });
 	}
 
 	public static function createNode(output:String, app:String):Void {
