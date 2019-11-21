@@ -22,35 +22,33 @@ class VSCode {
 
 	public static function create(ponycmd:String, auto:Bool = false):Void {
 		var tasks:Array<Any> = [];
+		var matcher: Array<String> = ["$haxe-absolute", "$haxe", "$haxe-error", "$haxe-trace"];
 
 		if (ponycmd != null)
 			tasks.push({
 				runOptions: {runOn: auto ? 'folderOpen' : 'default'},
-				identifier: PRELAUNCH_TASK,
-				label: 'pony $ponycmd debug',
+				label: PRELAUNCH_TASK,
 				type: 'shell',
 				command: 'pony $ponycmd debug',
 				group: {
 					kind: 'build',
 					isDefault: true
 				},
-				problemMatcher: ["$haxe"]
+				problemMatcher: matcher
 			});
 
 		if (cordova) {
 			tasks.push({
-				identifier: ANDROID_TASK,
-				label: 'pony android debug',
+				label: ANDROID_TASK,
 				type: 'shell',
 				command: 'pony android debug',
-				problemMatcher: ["$haxe"]
+				problemMatcher: matcher
 			});
 			tasks.push({
-				identifier: IPHONE_TASK,
-				label: 'pony iphone debug',
+				label: IPHONE_TASK,
 				type: 'shell',
 				command: 'pony iphone debug',
-				problemMatcher: ["$haxe"]
+				problemMatcher: matcher
 			});
 		}
 
@@ -73,10 +71,9 @@ class VSCode {
 			tasks: tasks
 		};
 		Utils.saveJson('.vscode/tasks.json', data);
-		createExtensions();
 	}
 
-	private static function createExtensions(): Void {
+	public static function createExtensions(chrome: Bool): Void {
 		var data: Array<String> = [
 			'nadako.vshaxe',
 			'vshaxe.haxe-checkstyle',
@@ -84,6 +81,8 @@ class VSCode {
 		];
 		if (cordova)
 			data.push('msjsdiag.cordova-tools');
+		if (chrome)
+			data.push('msjsdiag.debugger-for-chrome');
 		Utils.saveJson('.vscode/extensions.json', { recommendations: data });
 	}
 
@@ -100,10 +99,12 @@ class VSCode {
 				internalConsoleOptions: 'openOnSessionStart'
 			}
 		]);
+		createExtensions(false);
 	}
 
 	public static function createChrome(httpPort:Int):Void {
 		saveConfig(chromeConfig(httpPort));
+		createExtensions(true);
 	}
 
 	public static function createCordova(httpPort:Int):Void {
@@ -199,6 +200,7 @@ class VSCode {
 				"cwd": "${workspaceFolder}"
 			}
 		]));
+		createExtensions(true);
 	}
 
 	private static function chromeConfig(httpPort:Int):Array<Any> {
@@ -269,6 +271,7 @@ class VSCode {
 			]
 		};
 		Utils.saveJson('.vscode/launch.json', data);
+		createExtensions(true);
 	}
 
 }

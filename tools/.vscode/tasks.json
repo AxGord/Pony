@@ -8,8 +8,11 @@
             "type": "shell",
             "command": "haxe build.hxml",
             "problemMatcher": [
-                "$haxe"
-            ],
+				"$haxe-absolute",
+				"$haxe",
+				"$haxe-error",
+				"$haxe-trace"
+			],
             "group": {
                 "kind": "build",
                 "isDefault": true

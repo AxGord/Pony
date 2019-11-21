@@ -80,6 +80,7 @@ class Create {
 		switch type {
 			case ProjectType.Neko:
 				project.build.createEmptyMainhx();
+				if (vscAllow) VSCode.createExtensions(false);
 			case ProjectType.JS:
 				project.build.createMainhx('jstemplate.hx.tpl');
 				if (vscAllow) VSCode.createChrome(project.server.httpPort);
