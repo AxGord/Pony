@@ -123,6 +123,7 @@ class Create {
 		var ponycmd: String = type == ProjectType.Neko ? 'run' : 'build';
 		if (vscAllow) VSCode.create(ponycmd, type == ProjectType.CC);
 		if (project.name != null) HaxeDevelop.create(project.name, project.getMain(), project.getLibs(), project.getCps(), ponycmd);
+		Gitignore.create(project, type);
 	}
 
 	public static function createIndexHtml(project: Project): Void {
