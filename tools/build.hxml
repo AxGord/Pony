@@ -15,13 +15,15 @@
 -resource resources/pixixmltemplate.hx.tpl@pixixmltemplate.hx.tpl
 -resource resources/pixixmltemplate.xml@pixixmltemplate.xml
 -resource resources/heapstemplate.hx.tpl@heapstemplate.hx.tpl
+-resource resources/heapsxmltemplate.hx.tpl@heapsxmltemplate.hx.tpl
+-resource resources/heapsxmltemplate.xml@heapsxmltemplate.xml
 -resource resources/jstemplate.hx.tpl@jstemplate.hx.tpl
 -resource resources/cctemplate.hx.tpl@cctemplate.hx.tpl
 -resource resources/cctemplate.js.tpl@cctemplate.js.tpl
 -resource resources/electrontemplate.hx.tpl@electrontemplate.hx.tpl
 -resource resources/monacotemplate.hx.tpl@monacotemplate.hx.tpl
 -resource resources/site.hx.tpl@site.hx.tpl
--debug
+# -debug
 
 --next
 
@@ -36,4 +38,4 @@
 -D analyzer-optimize
 -D js-es6
 -D nodedt
--debug
+# -debug

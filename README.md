@@ -8,7 +8,7 @@
 
 
 Pony is a set of tools for developing, preparing, building, testing and publishing projects.
-It can be used for creating NodeJS, PHP, PixiJS, OpenFL, Unity3D, Flash, Electron, Cordova, and Cocos Creator applications.
+It can be used for creating Heaps, PixiJS, NodeJS, Electron, Cordova, PHP, OpenFL, Unity3D, Flash and Cocos Creator applications.
 
 It works on servers or client-side.
 
@@ -27,7 +27,7 @@ Unstable version
 Install Pony Tools
 
     haxelib run pony
-    
+
 
 [Installation Video Guide](https://www.youtube.com/watch?v=ufYIEmQcv4o)
 
@@ -37,11 +37,12 @@ Manual
 * [Home](https://github.com/AxGord/Pony/wiki)
 
 * [Pony Tools](https://github.com/AxGord/Pony/wiki/Pony-Tools)
+
     * [Server section](https://github.com/AxGord/Pony/wiki/Server-section)
     * [Prepare sections](https://github.com/AxGord/Pony/wiki/Prepare-sections)
     * [Build sections](https://github.com/AxGord/Pony/wiki/Build-sections)
     * [Post build sections](https://github.com/AxGord/Pony/wiki/Post-build-sections)
-    
+
 
 Old Manual
 ------

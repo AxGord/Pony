@@ -1,0 +1,5 @@
+<node>
+	<layout wh="stage">
+		<text size="200">Hello world!</text>
+	</layout>
+</node>

@@ -4,6 +4,7 @@ enum ProjectType {
 	Pixi;
 	Pixixml;
 	Heaps;
+	Heapsxml;
 	JS;
 	Server;
 	Node;

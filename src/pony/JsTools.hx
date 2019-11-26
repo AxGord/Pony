@@ -1,9 +1,19 @@
 package pony;
 
+import pony.magic.HasSignal;
+import pony.events.Signal0;
 import haxe.Constraints.Function;
 import js.Browser;
+import js.Lib;
 import js.html.CanvasElement;
 import js.html.DOMElement;
+import js.html.DivElement;
+import js.html.Event;
+#if (haxe_ver >= '4.0.0')
+import js.lib.Error;
+#else
+import js.Error;
+#end
 
 enum UserAgent {
 	IE; Edge; Chrome; Safari; Firefox; Samsung; Unknown;
@@ -31,82 +41,73 @@ typedef JsMap<K, V> = {
  * JsTools
  * @author AxGord <axgord@gmail.com>
  */
-class JsTools implements pony.magic.HasSignal {
+class JsTools implements HasSignal {
 
-	public static var agent(get, never):UserAgent;
-	public static var os(get, never):OS;
-	public static var isa(get, never):ISA;
-	
-	public static var isMobile(get, never):Bool;
-	public static var isFSE(get, never):Bool;
-	public static var webp(get, never):Bool;
-	
+	public static var agent(get, never): UserAgent;
+	public static var os(get, never): OS;
+	public static var isa(get, never): ISA;
+
+	public static var isMobile(get, never): Bool;
+	public static var isFSE(get, never): Bool;
+	public static var webp(get, never): Bool;
+
 	/**
 	 *  https://github.com/jfriend00/docReady
 	 */
-	@:lazy public static var onDocReady:pony.events.Signal0;
+	@:lazy public static var onDocReady: Signal0;
 
-	private static var _agent:UserAgent;
-	private static var _os:OS;
-	private static var _isa:ISA;
-	private static var _webp:Null<Bool>;
-	
-	private static var logFunction:Function;
-	
-	private static function __init__():Void {
+	private static var _agent: UserAgent;
+	private static var _os: OS;
+	private static var _isa: ISA;
+	private static var _webp: Null<Bool>;
+
+	private static var logFunction: Function;
+
+	private static function __init__(): Void {
 		onDocReady.clear();
 		eDocReady.onTake < regDocReady;
 	}
 
-	private static function regDocReady():Void {
-		js.Lib.global.docReady(eDocReady.dispatch);
+	private static function regDocReady(): Void {
+		Lib.global.docReady(eDocReady.dispatch);
 	}
 
-	@:extern public static inline function removeEval():Void {
+	@:extern public static inline function removeEval(): Void {
 		untyped window.eval = evalHandler;
 	}
 
-	private static function evalHandler():Void {
-		throw new js.Error('Sorry, this app does not support window.eval().');
+	private static function evalHandler(): Void {
+		throw new Error('Sorry, this app does not support window.eval().');
 	}
 
-	@:extern public static inline function disableDrop():Void {
-		js.Browser.document.ondragover = abortEvent;
-		js.Browser.document.ondrop = abortEvent;
+	@:extern public static inline function disableDrop(): Void {
+		Browser.document.ondragover = abortEvent;
+		Browser.document.ondrop = abortEvent;
 	}
 
-	public static function abortEvent(e:js.html.Event):Void e.preventDefault();
+	public static function abortEvent(e: Event): Void e.preventDefault();
 
-	public static function get_webp():Bool {
+	public static function get_webp(): Bool {
 		return _webp != null ? _webp : _webp =
 		cast(Browser.document.createElement('canvas'), CanvasElement).toDataURL('image/webp').indexOf('data:image/webp') == 0;
 	}
 
-	private static function get_agent():UserAgent {
+	private static function get_agent(): UserAgent {
 		if (_agent != null) return _agent;
-		var ua = Browser.navigator.userAgent.toLowerCase();
-		if (ua.indexOf('msie') != -1
-		|| ua.indexOf('trident/') > 0) {
-			_agent = IE;
-		} else if (ua.indexOf('edge') != -1) {
-			_agent = Edge;
-		} else if (ua.indexOf('samsung') != -1) {
-			_agent = Samsung;
-		} else if (ua.indexOf('chrome') != -1) {
-			_agent = Chrome;
-		} else if (ua.indexOf('safari') != -1 && ua.indexOf('android') == -1) {
-			_agent = Safari;
-		} else if (ua.indexOf('firefox') != -1) {
-			_agent = Firefox;
-		} else {
-			_agent = UserAgent.Unknown;
-		}
+		var ua: String = Browser.navigator.userAgent.toLowerCase();
+		_agent = if (ua.indexOf('msie') != -1 || ua.indexOf('trident/') > 0) IE;
+		else if (ua.indexOf('edge') != -1) Edge;
+		else if (ua.indexOf('samsung') != -1) Samsung;
+		else if (ua.indexOf('chrome') != -1) Chrome;
+		else if (ua.indexOf('safari') != -1 && ua.indexOf('android') == -1) Safari;
+		else if (ua.indexOf('firefox') != -1) Firefox;
+		else UserAgent.Unknown;
 		return _agent;
 	}
-	
-	private static function get_os():OS {
+
+	private static function get_os(): OS {
 		if (_os != null) return _os;
-		var ua = Browser.navigator.userAgent.toLowerCase();
+		var ua: String = Browser.navigator.userAgent.toLowerCase();
 		if (ua.indexOf('windows') != -1) {
 			_os = Windows;
 		} else if (ua.indexOf('android') != -1) {
@@ -117,7 +118,7 @@ class JsTools implements pony.magic.HasSignal {
 			else
 				_os = Linux(Other);
 		} else {
-			var iDevices = [
+			var iDevices: Array<String> = [
 				'iPad Simulator',
 				'iPhone Simulator',
 				'iPod Simulator',
@@ -125,43 +126,40 @@ class JsTools implements pony.magic.HasSignal {
 				'iPhone',
 				'iPod'
 			];
-			if (Browser.navigator.platform != null)
-				while (iDevices.length > 0)
-					if (Browser.navigator.platform == iDevices.pop())
-						return _os = OS.IOS;
+			if (Browser.navigator.platform != null) while (iDevices.length > 0) {
+				if (Browser.navigator.platform == iDevices.pop()) {
+					_os = OS.IOS;
+					return _os;
+				}
+			}
 			_os = OS.Unknown;
 		}
 		return _os;
 	}
-	
-	private static function get_isa():ISA {
+
+	private static function get_isa(): ISA {
 		if (_isa != null) return _isa;
-		var ua = Browser.navigator.userAgent.toLowerCase();
-		if (ua.indexOf('x86_32') != -1 || ua.indexOf('x32') != -1) {
-			_isa = X32;
-		} else if (ua.indexOf('x86_64') != -1 || ua.indexOf('x64') != -1) {
-			_isa = X64;
-		} else {
-			_isa = ISA.Unknown;
-		}
+		var ua: String = Browser.navigator.userAgent.toLowerCase();
+		_isa = if (ua.indexOf('x86_32') != -1 || ua.indexOf('x32') != -1) X32;
+		else if (ua.indexOf('x86_64') != -1 || ua.indexOf('x64') != -1) X64;
+		else ISA.Unknown;
 		return _isa;
 	}
-	
-	@:extern inline private static function get_isMobile():Bool {
+
+	@:extern private static inline function get_isMobile(): Bool {
 		#if simmobile
 		return true;
 		#else
 		return untyped Browser.window.orientation != null;
 		#end
 	}
-	
-	@:extern inline public static function remove(el:DOMElement):Void {
+
+	@:extern public static inline function remove(el: DOMElement): Void {
 		agent == IE ? el.parentNode.removeChild(el) : el.remove();
 	}
-	
-	@:extern inline public static function get_isFSE():Bool {
-		return untyped 
-		{
+
+	@:extern public static inline function get_isFSE(): Bool {
+		return untyped {
 			Browser.document.fullscreenElement ||
 			Browser.document.mozFullScreen ||
 			Browser.document.mozFullscreenElement ||
@@ -169,8 +167,8 @@ class JsTools implements pony.magic.HasSignal {
 			Browser.document.msFullscreenElement;
 		};
 	}
-	
-	public static function closeFS():Void {
+
+	public static function closeFS(): Void {
 		untyped {
 			if (document.cancelFullScreen)
 				document.cancelFullScreen();
@@ -182,8 +180,8 @@ class JsTools implements pony.magic.HasSignal {
 				document.msCancelFullScreen();
 		}
 	}
-	
-	public static function fse(e:DOMElement):Void {
+
+	public static function fse(e: DOMElement): Void {
 		untyped {
 			if (e.requestFullscreen)
 				e.requestFullscreen();
@@ -195,50 +193,54 @@ class JsTools implements pony.magic.HasSignal {
 				e.msRequestFullscreen();
 		}
 	}
-	
-	public static function disableLog():Void {
+
+	public static function disableLog(): Void {
 		logFunction = Browser.console.log;
 		untyped Browser.console.log = Tools.nullFunction0;
 	}
-	
-	public static function enableLog():Void {
+
+	public static function enableLog(): Void {
 		untyped Browser.console.log = logFunction;
 	}
 
-	public static function disableContextMenuGlobal():Void {
-		js.Browser.window.oncontextmenu = contextMenuHandler;
+	public static function disableContextMenuGlobal(): Void {
+		Browser.window.oncontextmenu = contextMenuHandler;
 	}
 
-	private static function contextMenuHandler(event:js.html.Event):Bool {
+	private static function contextMenuHandler(event: Event): Bool {
 		event.preventDefault();
 		event.stopPropagation();
 		return false;
 	}
-	
-	public static function normalizeCss(s:String):String {
-		var n = Browser.document.createDivElement();
+
+	public static function normalizeCss(s: String): String {
+		var n: DivElement = Browser.document.createDivElement();
 		n.style.cssText = s;
 		return n.style.cssText;
 	}
 
-	public static function splitCss(s:String):Array<String> {
-		var a = s.split(';');
+	public static function splitCss(s: String): Array<String> {
+		var a: Array<String> = s.split(';');
 		a.pop();
-		return a.map(function(s:String) return StringTools.ltrim(s) + ';');
+		return a.map(splitCssReturnDelimiter);
 	}
 
-	public static function mapToJSMap<K, V>(map:Map<K, V>):JsMap<K, V> {
+	private static function splitCssReturnDelimiter(s: String): String {
+		return StringTools.ltrim(s) + ';';
+	}
+
+	public static function mapToJSMap<K, V>(map: Map<K, V>): JsMap<K, V> {
 		var n:JsMap<K, V> = untyped __js__('new Map()');
 		for (k in map.keys()) n.set(k, map[k]);
 		return n;
 	}
 
-	public static function stringJSMapToMap<K:String, V:Any>(map:JsMap<K, V>):Map<K, V> {
-		return [for (k in map.keys()) k => map.get(k)];
+	public static function stringJSMapToMap<K: String, V: Any>(map: JsMap<K, V>): Map<K, V> {
+		return [ for (k in map.keys()) k => map.get(k) ];
 	}
 
-	public static function intJSMapToMap<K:Int, V:Any>(map:JsMap<K, V>):Map<K, V> {
-		return [for (k in map.keys()) k => map.get(k)];
+	public static function intJSMapToMap<K: Int, V: Any>(map: JsMap<K, V>): Map<K, V> {
+		return [ for (k in map.keys()) k => map.get(k) ];
 	}
 
 }
