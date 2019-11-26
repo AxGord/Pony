@@ -1,6 +1,10 @@
 package pony.net.http.platform.nodejs;
 
+#if (haxe_ver >= '4.0.0')
+import js.lib.Error;
+#else
 import js.Error;
+#end
 import js.Node;
 import js.node.Buffer;
 import js.node.Fs;
@@ -21,29 +25,29 @@ using Reflect;
  * @author AxGord
  */
 class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnection {
-	
-	private static var _send(get, never):Dynamic;
-	private static var __send:Dynamic;
-	
-	inline private static function get__send():Dynamic return __send != null ? __send : __send = Node.require('send');
-	
-	private var res:ServerResponse;
-	private var req:IncomingMessage;
-	
-	public function new(url:String, storage:ServersideStorage, req:IncomingMessage, res:ServerResponse, post:Map<String, String>) {
+
+	private static var _send(get, never): Dynamic;
+	private static var __send: Dynamic;
+
+	private static inline function get__send(): Dynamic return __send != null ? __send : __send = Node.require('send');
+
+	private var res: ServerResponse;
+	private var req: IncomingMessage;
+
+	public function new(url: String, storage: ServersideStorage, req: IncomingMessage, res: ServerResponse, post: Map<String, String>) {
 		super(url);
 		method = req.method;
 		this.post = post;
 		this.res = res;
 		this.req = req;
 		if (req.headers.hasField('accept-language')) {
-			var pb:ParseBoy<Void> = new ParseBoy<Void>(req.headers.field('accept-language'));
-			var n:Int;
+			var pb: ParseBoy<Void> = new ParseBoy<Void>(req.headers.field('accept-language'));
+			var n: Int;
 			do {
 				n = pb.gt([',', ';']);
-				var s:String = pb.str();
+				var s: String = pb.str();
 				if (s.substr(0, 2) == 'q=') continue;
-				var a:Array<String> = s.toLowerCase().split('-');
+				var a: Array<String> = s.toLowerCase().split('-');
 				if (a.length == 1) {
 					langPush(a[0] + '-' + a[0]);
 					langPush(a[0]);
@@ -58,16 +62,16 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 		sessionStorage = storage.getClient(cookie);
 		rePost();
 	}
-	
-	private function langPush(s:String):Void {
+
+	private function langPush(s: String): Void {
 		if (s != '' && Lambda.indexOf(languages, s) == -1)
 			languages.push(s);
 	}
-	
-	override public function sendFile(file:File):Void {
+
+	override public function sendFile(file: File): Void {
 		writeCookie();
 		var f = file.firstExists;
-		Fs.stat(f, function(err:Error, stat:Stats):Void {
+		Fs.stat(f, function(err: Error, stat: Stats): Void {
 			if (err != null) {
 				error(err.name);
 			} else {
@@ -76,29 +80,29 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 		});
 	}
 
-	public function sendBytes(bytes:Bytes):Void {
+	public function sendBytes(bytes: Bytes): Void {
 		writeCookie();
 		res.end(new Buffer(bytes.getData()));
 	}
-	
-	override public function goto(url:String):Void {
+
+	override public function goto(url: String): Void {
 		writeCookie();
 		res.setHeader('Location', url);
 		res.setHeader('Cache-Control', 'private');
 		res.statusCode = 302;
-		var t:String = '<html><body><a href="$url">Click here</a></body></html>';
+		var t: String = '<html><body><a href="$url">Click here</a></body></html>';
 		setLength(t);
 		res.end(t);
 		end = true;
 	}
-	
-	@:extern private inline function setLength(t:String):Void {
+
+	@:extern private inline function setLength(t: String): Void {
 		return res.setHeader('Content-Length', Std.string(Buffer.byteLength(t, 'utf8')));
 	}
-	
-	override public function endActionPrevPage():Void goto(req.headers.field('referer'));
-	
-	override public function error(?message:String):Void {
+
+	override public function endActionPrevPage(): Void goto(req.headers.field('referer'));
+
+	override public function error(?message: String): Void {
 		writeCookie();
 		res.setHeader('Content-Type', 'text/html; charset=UTF-8');
 		res.writeHead(500);
@@ -106,31 +110,31 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 		end = true;
 	}
 
-	override public function notfound(?message:String):Void {
+	override public function notfound(?message: String): Void {
 		writeCookie();
 		res.setHeader('Content-Type', 'text/html; charset=UTF-8');
 		res.writeHead(404);
 		res.end(message == null ? 'Not found' : message);
 		end = true;
 	}
-	
-	public function sendHtml(text:String):Void {
+
+	public function sendHtml(text: String): Void {
 		writeCookie();
 		res.setHeader('Content-Type', 'text/html; charset=UTF-8');
 		setLength(text);
 		res.end(text);
 		end = true;
 	}
-	
-	public function sendText(text:String):Void {
+
+	public function sendText(text: String): Void {
 		writeCookie();
 		res.setHeader('Content-Type', 'text/plain; charset=UTF-8');
 		setLength(text);
 		res.end(text);
 		end = true;
 	}
-	
-	private function writeCookie():Void {
+
+	private function writeCookie(): Void {
 		var s:String = cookie.toString(host.split(':')[0]);
 		if (s != '') {
 			res.setHeader('Set-Cookie', s);
@@ -138,5 +142,5 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 		}
 		end = true;
 	}
-	
+
 }

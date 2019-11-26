@@ -36,7 +36,7 @@ class HeapsApp extends App implements HasSignal implements HasLink {
 	public var canvas:SmartCanvas;
 	private var border:Graphics;
 
-	public function new(size:Point<Int>, ?color:UColor, ?parentDom:Element, sizeUpdate:Bool = true) {
+	public function new(?size:Point<Int>, ?color:UColor, ?parentDom:Element, sizeUpdate:Bool = true) {
 		canvas = new SmartCanvas(size, parentDom);
 		@:privateAccess Window.inst = new Window(canvas.canvas);
 		super();
@@ -69,7 +69,7 @@ class HeapsApp extends App implements HasSignal implements HasLink {
 		super.setScene(scene, disposePrevious);
 		if (sizeUpdate) canvas.updateSize();
 	}
-	
+
 	private function set_sizeUpdate(b:Bool):Bool {
 		if (b != sizeUpdate) {
 			sizeUpdate = b;

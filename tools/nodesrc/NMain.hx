@@ -1,6 +1,10 @@
 import types.RemoteConfig;
 import js.Node;
+#if (haxe_ver >= '4.0.0')
+import js.lib.Error;
+#else
 import js.Error;
+#end
 import module.NModule;
 import types.ImageminConfig;
 import types.PoeditorConfig;

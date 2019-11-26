@@ -14,6 +14,7 @@
 -resource resources/pixitemplate.hx.tpl@pixitemplate.hx.tpl
 -resource resources/pixixmltemplate.hx.tpl@pixixmltemplate.hx.tpl
 -resource resources/pixixmltemplate.xml@pixixmltemplate.xml
+-resource resources/heapstemplate.hx.tpl@heapstemplate.hx.tpl
 -resource resources/jstemplate.hx.tpl@jstemplate.hx.tpl
 -resource resources/cctemplate.hx.tpl@cctemplate.hx.tpl
 -resource resources/cctemplate.js.tpl@cctemplate.js.tpl

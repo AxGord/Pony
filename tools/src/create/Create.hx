@@ -40,6 +40,7 @@ class Create {
 			case ProjectType.JS: create.targets.JS.set(project);
 			case ProjectType.CC: create.targets.CC.set(project);
 			case ProjectType.Pixi, ProjectType.Pixixml: create.targets.Pixi.set(project);
+			case ProjectType.Heaps: create.targets.Heaps.set(project);
 			case ProjectType.Cordova: create.targets.Cordova.set(project);
 			case ProjectType.Node: create.targets.Node.set(project);
 			case ProjectType.Site:
@@ -96,6 +97,10 @@ class Create {
 			case ProjectType.Pixixml:
 				project.build.createMainhx('pixixmltemplate.hx.tpl');
 				saveTemplate('app.xml', 'pixixmltemplate.xml');
+				if (vscAllow) VSCode.createChrome(project.server.httpPort);
+				createIndexHtml(project);
+			case ProjectType.Heaps:
+				project.build.createMainhx('heapstemplate.hx.tpl');
 				if (vscAllow) VSCode.createChrome(project.server.httpPort);
 				createIndexHtml(project);
 			case ProjectType.Cordova:

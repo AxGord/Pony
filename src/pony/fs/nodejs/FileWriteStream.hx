@@ -5,6 +5,11 @@ import haxe.io.BytesOutput;
 import js.node.Fs;
 import js.node.fs.Stats;
 import js.node.Buffer;
+#if (haxe_ver >= '4.0.0')
+import js.lib.Error;
+#else
+import js.Error;
+#end
 import pony.ds.ReadStream;
 import pony.ds.WriteStream;
 
@@ -14,24 +19,24 @@ import pony.ds.WriteStream;
  */
 class FileWriteStream extends WriteStream<Bytes> {
 
-	private var size:Float;
-	private var fd:Int;
-	private var path:String;
-	private var position:Int = 0;
+	private var size: Float;
+	private var fd: Int;
+	private var path: String;
+	private var position: Int = 0;
 
-	public function new(path:String) {
+	public function new(path: String) {
 		super();
 		this.path = path;
 		readStream.onData < getSize;
 	}
 
-	private function getSize(b:Bytes):Void {
+	private function getSize(b: Bytes): Void {
 		if (readStream.onData == null) return;
 		size = b.getFloat(0);
 		Fs.open(path, 'w', openHandler);
 	}
 
-	private function openHandler(err:js.Error, fd:Int):Void {
+	private function openHandler(err: Error, fd: Int): Void {
 		if (readStream.onData == null) return;
 		if (err == null) {
 			this.fd = fd;
@@ -43,13 +48,13 @@ class FileWriteStream extends WriteStream<Bytes> {
 			cancel();
 		}
 	}
-	
-	private function dataHandler(b:Bytes):Void {
+
+	private function dataHandler(b: Bytes): Void {
 		if (readStream.onData == null) return;
 		Fs.write(fd, Buffer.hxFromBytes(b), 0, b.length, position, writeHandler);
 	}
 
-	private function writeHandler(err:js.Error, len:Int, buf:Buffer):Void {
+	private function writeHandler(err: Error, len: Int, buf: Buffer): Void {
 		if (readStream.onData == null) return;
 		position += len;
 		if (err == null) {
@@ -59,12 +64,12 @@ class FileWriteStream extends WriteStream<Bytes> {
 		}
 	}
 
-	private function endHandler(b:Bytes):Void {
+	private function endHandler(b: Bytes): Void {
 		if (readStream.onData == null) return;
 		Fs.write(fd, Buffer.hxFromBytes(b), 0, b.length, position, lastWriteHandler);
 	}
 
-	private function lastWriteHandler(err:js.Error, len:Int, buf:Buffer):Void {
+	private function lastWriteHandler(err: Error, len: Int, buf: Buffer): Void {
 		if (readStream.onData == null) return;
 		if (err == null) {
 			Fs.close(fd, closeHandler);
@@ -73,7 +78,7 @@ class FileWriteStream extends WriteStream<Bytes> {
 		}
 	}
 
-	private function closeHandler(err:js.Error):Void {
+	private function closeHandler(err: Error): Void {
 		if (readStream.onData == null) return;
 		if (err != null) {
 			trace(err);
@@ -83,11 +88,11 @@ class FileWriteStream extends WriteStream<Bytes> {
 		}
 	}
 
-	public function cancel():Void {
+	public function cancel(): Void {
 		try {
 			Fs.closeSync(fd);
 			Fs.unlinkSync(path);
-		} catch (_:Any) {}
+		} catch (_: Any) {}
 		readStream.cancel();
 	}
 

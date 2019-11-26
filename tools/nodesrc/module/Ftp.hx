@@ -6,7 +6,11 @@ import pony.Logable;
 import pony.fs.File;
 import pony.fs.Dir;
 import pony.NPM;
+#if (haxe_ver >= '4.0.0')
+import js.lib.Error;
+#else
 import js.Error;
+#end
 import js.Node;
 import sys.FileSystem;
 
@@ -31,7 +35,7 @@ private class FtpInstance extends Logable {
 	private static inline var DELAY_TIMEOUT: Int = 2000;
 
 	@:auto public var onComplete: Signal0;
-	
+
 	private var ftp: Dynamic;
 	private var path: String;
 	private var input: Array<String> = [];
@@ -76,7 +80,7 @@ private class FtpInstance extends Logable {
 	private function binaryHandler(): Void {
 		ftp.cwd(output, cwdHandler);
 	}
-	
+
 	private function cwdHandler(e: Error): Void {
 		if (e != null) throw e;
 		log('Delete old files');
@@ -127,7 +131,7 @@ private class FtpInstance extends Logable {
 			var unit: String = fullunit.substr(path.length);
 			var a: Array<String> = unit.split('/');
 			var na: Array<String> = [for (e in a) if (e != '') e];
-			var dir: String = [for (i in 0...na.length - 1) na[i]].join('/'); 
+			var dir: String = [for (i in 0...na.length - 1) na[i]].join('/');
 			var _ftp: Dynamic = ftp;
 			var file: String = na.join('/');
 			log('Makedir: $dir');

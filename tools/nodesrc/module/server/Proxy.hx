@@ -1,8 +1,12 @@
 package module.server;
 
 import sys.FileSystem;
-import js.Node;
+#if (haxe_ver >= '4.0.0')
+import js.lib.Error;
+#else
 import js.Error;
+#end
+import js.Node;
 import js.node.Http;
 import js.node.http.ServerResponse;
 import js.node.http.IncomingMessage;
