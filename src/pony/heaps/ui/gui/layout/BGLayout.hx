@@ -11,13 +11,13 @@ import pony.ui.gui.RubberLayoutCore;
  * @author AxGord <axgord@gmail.com>
  */
 class BGLayout extends BaseLayout<RubberLayoutCore<Object>> {
-	
-	public function new(img:Bitmap, vert:Bool = false, ?border:Border<Int>) {
+
+	public function new(img: Bitmap, vert: Bool = false, ?border: Border<Int>) {
 		layout = new RubberLayoutCore<Object>(vert, border);
 		layout.width = img.tile.width * img.scaleX;
 		layout.height = img.tile.height * img.scaleY;
 		super();
 		addChild(img);
 	}
-	
+
 }

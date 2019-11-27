@@ -1,25 +1,25 @@
-
 package pony.heaps.ui.gui;
 
 import h2d.Graphics;
 import h2d.Object;
-import h2d.Tile;
 import h3d.Vector;
 import pony.geom.Point;
+import pony.color.UColor;
 
 /**
- * NodeRepeat
+ * NodeRect
  * @author AxGord <axgord@gmail.com>
  */
-@:final class NodeRepeat extends Node {
+@:final class NodeRect extends Node {
 
 	public var graphics: Graphics;
+	private var round: Float;
 
-	public function new(tile: Tile, ?parent: Object) {
-		super(new Point(tile.width, tile.height), parent);
+	public function new(size: Point<Float>, color: UColor, round: Float = 0, ?parent: Object) {
+		super(size, parent);
+		this.round = round;
 		graphics = new Graphics(this);
-		graphics.tileWrap = true;
-		graphics.beginTileFill(tile);
+		graphics.beginFill(color.rgb, color.invertAlpha.af);
 		changeWh << updateSize;
 		changeFlipx << changeFlipxHandler;
 		changeFlipy << changeFlipyHandler;
@@ -29,7 +29,10 @@ import pony.geom.Point;
 
 	private function updateSize(): Void {
 		graphics.clear();
-		graphics.drawRect(0, 0, w, h);
+		if (round == 0)
+			graphics.drawRect(0, 0, w, h);
+		else
+			graphics.drawRoundedRect(0, 0, w, h, round);
 		updatePosition();
 	}
 

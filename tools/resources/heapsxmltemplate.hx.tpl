@@ -13,6 +13,10 @@ class Main extends Scene {
 
 	private function new() {
 		super();
+		AssetManager.loadComplete(MainUI.loadUI, loadHandler);
+	}
+
+	private function loadHandler(): Void {
 		new MainUI(this).createUI(app);
 	}
 

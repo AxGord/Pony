@@ -12,9 +12,9 @@ import pony.geom.Point;
  */
 @:final class NodeBitmap extends Node {
 
-	public var bitmap(default, null):Bitmap;
+	public var bitmap(default, null): Bitmap;
 
-	public function new(?tile:Tile, ?parent:Object) {
+	public function new(?tile: Tile, ?parent: Object) {
 		super(new Point(tile.width, tile.height), parent);
 		bitmap = new Bitmap(tile, this);
 		changeWh << updateScales;
@@ -23,7 +23,7 @@ import pony.geom.Point;
 		changeTint << updateColor;
 	}
 
-	private function updateScales():Void {
+	private function updateScales(): Void {
 		bitmap.scaleX = w / bitmap.tile.width;
 		if (flipx) bitmap.scaleX = -bitmap.scaleX;
 		bitmap.scaleY = h / bitmap.tile.height;
@@ -31,13 +31,13 @@ import pony.geom.Point;
 		bitmap.setPosition(flipx ? w : 0, flipy ? h : 0);
 	}
 
-	private function updateColor(v:Vector):Void {
+	private function updateColor(v: Vector): Void {
 		bitmap.color = v;
 	}
 
-	override public function destroy():Void {
+	override public function destroy(): Void {
 		super.destroy();
 		bitmap = null;
 	}
-	
+
 }

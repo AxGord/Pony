@@ -41,29 +41,29 @@ import pony.Fast;
  */
 class HeapsAssets {
 
-	private static inline var SDF_ALPHA:Float = 0.5;
-	private static inline var SDF_SMOOTHING:Float = 0.5;
+	private static inline var SDF_ALPHA: Float = 0.5;
+	private static inline var SDF_SMOOTHING: Float = 0.5;
 
-	private static var atlases:Map<String, Pair<Loader, Atlas>> = new Map();
-	private static var tiles:Map<String, Tile> = new Map();
-	private static var fonts:Map<String, Font> = new Map();
-	private static var texts:Map<String, String> = new Map();
+	private static var atlases: Map<String, Pair<Loader, Atlas>> = new Map();
+	private static var tiles: Map<String, Tile> = new Map();
+	private static var fonts: Map<String, Font> = new Map();
+	private static var texts: Map<String, String> = new Map();
 
-	public static function load(asset:String, cb:Int -> Int -> Void):Void {
-		var realAsset:String = AssetManager.getPath(asset);
-		var loader:BinaryLoader = new BinaryLoader(realAsset);
+	public static function load(asset: String, cb: Int -> Int -> Void): Void {
+		var realAsset: String = AssetManager.getPath(asset);
+		var loader: BinaryLoader = new BinaryLoader(realAsset);
 		switch ext(asset) {
 			case ATLAS:
 				loader.load();
-				loader.onLoaded = function(textBytes:Bytes):Void {
+				loader.onLoaded = function(textBytes: Bytes): Void {
 					cb(1, 10);
-					var path:String = realAsset.substr(0, realAsset.lastIndexOf('/') + 1);
-					var imgFile:String = path + new BytesInput(textBytes).readLine();
-					var imgLoader:BinaryLoader = new BinaryLoader(imgFile);
+					var path: String = realAsset.substr(0, realAsset.lastIndexOf('/') + 1);
+					var imgFile: String = path + new BytesInput(textBytes).readLine();
+					var imgLoader: BinaryLoader = new BinaryLoader(imgFile);
 					imgLoader.load();
-					imgLoader.onProgress = function(cur:Int, max:Int):Void if (cur != max) cb(Std.int(1 + cur / max * 9), 10);
-					imgLoader.onLoaded = function(bytes:Bytes):Void {
-						var img:Any = Any.fromBytes(imgFile, bytes);
+					imgLoader.onProgress = function(cur: Int, max: Int): Void if (cur != max) cb(Std.int(1 + cur / max * 9), 10);
+					imgLoader.onLoaded = function(bytes: Bytes): Void {
+						var img: Any = Any.fromBytes(imgFile, bytes);
 						atlases[asset] = new Pair(
 							@:privateAccess img.loader,
 							Any.fromBytes(realAsset, textBytes).to(Atlas)
@@ -73,27 +73,27 @@ class HeapsAssets {
 				}
 			case FNT:
 				loader.load();
-				loader.onLoaded = function(fntbytes:Bytes):Void {
+				loader.onLoaded = function(fntbytes: Bytes): Void {
 					cb(1, 10);
-					var data:String = fntbytes.toString();
-					var image:String = null;
-					var type:String = null;
+					var data: String = fntbytes.toString();
+					var image: String = null;
+					var type: String = null;
 					try {
-						var xml:Fast = new Fast(Xml.parse(data)).node.font;
+						var xml: Fast = new Fast(Xml.parse(data)).node.font;
 						image = xml.node.pages.node.page.att.file;
 						try {
 							type = xml.node.distanceField.att.fieldType;
-						} catch (_:String) {}
-					} catch (_:String) {
-						var filePattern:String = '\npage id=0 file=';
-						var fileIndex:Int = data.indexOf(filePattern);
+						} catch (_: String) {}
+					} catch (_: String) {
+						var filePattern: String = '\npage id=0 file=';
+						var fileIndex: Int = data.indexOf(filePattern);
 						if (fileIndex != -1) {
 							fileIndex += filePattern.length;
 							image = data.substr(fileIndex);
 							image = image.substr(0, image.indexOf('\n'));
 						}
-						var typePattern:String = '\ndistanceField fieldType=';
-						var typeIndex:Int = data.indexOf(typePattern);
+						var typePattern: String = '\ndistanceField fieldType=';
+						var typeIndex: Int = data.indexOf(typePattern);
 						if (typeIndex != -1) {
 							typeIndex += typePattern.length;
 							type = data.substr(typeIndex);
@@ -101,31 +101,31 @@ class HeapsAssets {
 						}
 					}
 					if (image == null) throw "Can't get image url";
-					var path:String = realAsset.substr(0, realAsset.lastIndexOf('/') + 1);
-					var imgLoader:BinaryLoader = new BinaryLoader(path + image);
+					var path: String = realAsset.substr(0, realAsset.lastIndexOf('/') + 1);
+					var imgLoader: BinaryLoader = new BinaryLoader(path + image);
 					imgLoader.load();
-					imgLoader.onProgress = function(cur:Int, max:Int):Void if (cur != max) cb(Std.int(1 + cur / max * 9), 10);
-					imgLoader.onLoaded = function(imgbytes:Bytes):Void {
-						var font:Font = FontParser.parse(fntbytes, realAsset, function(path:String):Tile {
+					imgLoader.onProgress = function(cur: Int, max: Int): Void if (cur != max) cb(Std.int(1 + cur / max * 9), 10);
+					imgLoader.onLoaded = function(imgbytes: Bytes): Void {
+						var font:Font = FontParser.parse(fntbytes, realAsset, function(path: String): Tile {
 							return Any.fromBytes(path, imgbytes).toTile();
 						});
 						setFontType(font, type);
 						fonts[asset] = font;
 						cb(10, 10);
 					}
-					
+
 				}
 			case PNG, JPG, JPEG:
 				loader.load();
-				loader.onProgress = function(cur:Int, max:Int):Void if (cur != max) cb(Std.int(cur / max * 10), 10);
-				loader.onLoaded = function(bytes:Bytes):Void {
+				loader.onProgress = function(cur: Int, max: Int): Void if (cur != max) cb(Std.int(cur / max * 10), 10);
+				loader.onLoaded = function(bytes: Bytes): Void {
 					tiles[asset] = Any.fromBytes(realAsset, bytes).toTile();
 					cb(10, 10);
 				}
 			case TXT, CSS, JSON, CDB:
 				loader.load();
-				loader.onProgress = function(cur:Int, max:Int):Void if (cur != max) cb(Std.int(cur / max * 10), 10);
-				loader.onLoaded = function(bytes:Bytes):Void {
+				loader.onProgress = function(cur: Int, max: Int): Void if (cur != max) cb(Std.int(cur / max * 10), 10);
+				loader.onLoaded = function(bytes: Bytes): Void {
 					texts[asset] = Any.fromBytes(realAsset, bytes).toText();
 					cb(10, 10);
 				}
@@ -134,19 +134,19 @@ class HeapsAssets {
 		}
 	}
 
-	public static inline function ext(asset:String):String {
+	public static inline function ext(asset: String): String {
 		return asset.substr(asset.lastIndexOf('.') + 1);
 	}
 
-	public static inline function reset(asset:String):Void {
+	public static inline function reset(asset: String): Void {
 		atlases.remove(asset);
 	}
 
-	public static function texture(asset:String, ?name:String):Tile {
+	public static function texture(asset: String, ?name: String): Tile {
 		return switch ext(asset) {
 			case ATLAS:
 				if (name == null) throw ERROR_NAME_NOT_SET;
-				var p:Pair<Loader, Atlas> = atlases[asset];
+				var p: Pair<Loader, Atlas> = atlases[asset];
 				if (p == null) throw ERROR_NOT_LOADED;
 				Loader.currentInstance = p.a;
 				p.b.get(name);
@@ -159,33 +159,33 @@ class HeapsAssets {
 		};
 	}
 
-	public static inline function image(asset:String, ?name:String):Bitmap {
+	public static inline function image(asset: String, ?name: String): Bitmap {
 		return new Bitmap(texture(asset, name));
 	}
 
-	public static function animation(asset:String, ?name:String):Array<Tile> {
+	public static function animation(asset: String, ?name: String): Array<Tile> {
 		return switch ext(asset) {
 			case ATLAS:
-				var clname:String = null;
+				var clname: String = null;
 				if (name != null) {
 					clname = SliceTools.clean(name);
 					if (clname == name) {
 						return [texture(asset, clname)];
 					}
 				} else {
-					var classet = SliceTools.clean(asset);
+					var classet: String = SliceTools.clean(asset);
 					if (classet == asset) {
 						return [texture(classet)];
 					}
 				}
 				if (name == null) throw ERROR_NAME_NOT_SET;
-				var p:Pair<Loader, Atlas> = atlases[asset];
+				var p: Pair<Loader, Atlas> = atlases[asset];
 				if (p == null) throw ERROR_NOT_LOADED;
 				Loader.currentInstance = p.a;
 				p.b.getAnim(clname);
 			case PNG, JPG, JPEG:
 				if (name != null) throw ERROR_NAME_SET;
-				var assets:Array<String> = AssetManager.parseInterval(asset);
+				var assets: Array<String> = AssetManager.parseInterval(asset);
 				if (assets.length == 1)
 					assets = SliceTools.getNames(assets[0]);
 				[for (e in assets) texture(e)];
@@ -194,19 +194,19 @@ class HeapsAssets {
 		};
 	}
 
-	public static inline function clip(asset:String, ?name:String, ?speed:Float):Anim {
+	public static inline function clip(asset: String, ?name: String, ?speed: Float): Anim {
 		return new Anim(animation(asset, name), speed);
 	}
 
-	public static inline function font(asset:String):Font {
+	public static inline function font(asset: String): Font {
 		return fonts[asset];
 	}
 
-	public static inline function text(asset:String):String {
+	public static inline function text(asset: String): String {
 		return texts[asset];
 	}
 
-	public static function setFontType(font:Font, type:String):Void {
+	public static function setFontType(font: Font, type: String): Void {
 		switch type {
 			case null:
 			case 'msdf':

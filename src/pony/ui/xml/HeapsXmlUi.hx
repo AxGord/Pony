@@ -22,6 +22,7 @@ import pony.heaps.HeapsAssets;
 import pony.heaps.ui.gui.Node;
 import pony.heaps.ui.gui.NodeBitmap;
 import pony.heaps.ui.gui.NodeRepeat;
+import pony.heaps.ui.gui.NodeRect;
 import pony.heaps.ui.gui.Button;
 import pony.heaps.ui.gui.slices.Slice;
 import pony.heaps.ui.gui.layout.IntervalLayout;
@@ -42,7 +43,7 @@ using pony.text.TextTools;
 #if !macro
 @:autoBuild(pony.ui.xml.XmlUiBuilder.build(pony.ui.AssetManager, {
 	node: h2d.Drawable,
-	rect: h2d.Graphics,
+	rect: pony.heaps.ui.gui.NodeRect,
 	line: h2d.Graphics,
 	circle: h2d.Graphics,
 	text: h2d.Text,
@@ -69,15 +70,7 @@ class HeapsXmlUi extends Object implements HasAbstract {
 				for (e in content) s.addChild(e);
 				s;
 			case UiTags.rect:
-				var color: UColor = attrs.color;
-				var g: Graphics = new Graphics();
-				g.beginFill(color.rgb, color.invertAlpha.af);
-				if (attrs.round == null)
-					g.drawRect(0, 0, parseAndScale(attrs.w), parseAndScale(attrs.h));
-				else
-					g.drawRoundedRect(0, 0, parseAndScale(attrs.w), parseAndScale(attrs.h), parseAndScaleInt(attrs.round));
-				g.endFill();
-				g;
+				new NodeRect(new Point<Float>(parseAndScale(attrs.w), parseAndScale(attrs.h)), attrs.color, parseAndScaleInt(attrs.round));
 			case UiTags.line:
 				var color: UColor = attrs.color;
 				var g: Graphics = new Graphics();

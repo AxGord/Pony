@@ -9,8 +9,8 @@ import pony.ui.gui.slices.SliceData;
  * @author AxGord <axgord@gmail.com>
  */
 class Slice {
-	
-	public static function create(tiles:Array<Tile>, ?src:String, ?repeat:Bool, ?vert:Bool, ?parent:h2d.Object):Node {
+
+	public static function create(tiles: Array<Tile>, ?src: String, ?repeat: Bool, ?vert: Bool, ?parent: h2d.Object): Node {
 		if (src == null) {
 			return switch tiles.length {
 				case 1 if (repeat):
@@ -60,7 +60,7 @@ class Slice {
 					new Slice9(tiles, repeat, parent);
 				case _:
 					throw 'Not supported';
-				
+
 			}
 		}
 	}

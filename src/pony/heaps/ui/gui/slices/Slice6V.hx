@@ -10,9 +10,9 @@ import pony.geom.Point;
  */
 @:final class Slice6V extends Node {
 
-	private var b:SliceBase;
+	private var b: SliceBase;
 
-	public function new(tiles:Array<Tile>, ?repeat:Bool, ?parent:Object) {
+	public function new(tiles: Array<Tile>, ?repeat: Bool, ?parent: Object) {
 		tiles.insert(2, tiles[0]);
 		tiles.insert(5, tiles[3]);
 		tiles.insert(8, tiles[6]);
@@ -28,13 +28,13 @@ import pony.geom.Point;
 		drawTiles();
 	}
 
-	private function drawTiles():Void {
+	private function drawTiles(): Void {
 		b.clear();
 		b.drawTile(0);
-		var w0:Float = b.w0;
-		var h0:Float = b.h0;
-		var w:Float = w - w0 * 2;
-		var h:Float = h - h0 - b.tw(6);
+		var w0: Float = b.w0;
+		var h0: Float = b.h0;
+		var w: Float = w - w0 * 2;
+		var h: Float = h - h0 - b.tw(6);
 		b.drawTile(1, w0, 0, w);
 		b.drawTile(2, w0 + w, true);
 		b.drawTile(3, 0, h0, null, h);

@@ -10,9 +10,9 @@ import pony.geom.Point;
  */
 @:final class Slice2V extends Node {
 
-	private var b:SliceBase;
+	private var b: SliceBase;
 
-	public function new(tiles:Array<Tile>, ?repeat:Bool, ?parent:Object) {
+	public function new(tiles: Array<Tile>, ?repeat: Bool, ?parent: Object) {
 		tiles.push(tiles[0]);
 		super(new Point(tiles[0].width, GUIUtils.tilesHeightSum(tiles)), parent);
 		b = new SliceBase(this, tiles, repeat ? [1] : null);
@@ -23,11 +23,11 @@ import pony.geom.Point;
 		drawTiles();
 	}
 
-	private function drawTiles():Void {
+	private function drawTiles(): Void {
 		b.clear();
 		b.drawTile(0);
-		var h0:Float = b.h0;
-		var h:Float = h - h0 * 2;
+		var h0: Float = b.h0;
+		var h: Float = h - h0 * 2;
 		b.drawTile(1, 0, h0, null, h);
 		b.drawTile(2, 0, h0 + h, false, true);
 	}
