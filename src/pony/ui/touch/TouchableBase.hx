@@ -13,6 +13,7 @@ import pony.TypedPool;
  * Touchable
  * @author AxGord <axgord@gmail.com>
  */
+@:nullSafety
 class TouchableBase implements HasSignal {
 
 	private static inline var SWIPE_DELAY: Time = 50;
@@ -41,11 +42,11 @@ class TouchableBase implements HasSignal {
 	@:auto public var onWheel: Signal1<Int>;
 	@:auto public var onSwipe: Signal1<Direction>;
 
-	private var tapTimer: DTimer;
-	private var tapTouch: Touch;
-	private var swipeTimer: DTimer;
-	private var swipeTouch: Touch;
-	private var swipePoint: Point<Float>;
+	@:nullSafety(Off) private var tapTimer: DTimer;
+	@:nullSafety(Off) private var tapTouch: Touch;
+	@:nullSafety(Off) private var swipeTimer: DTimer;
+	@:nullSafety(Off) private var swipeTouch: Touch;
+	@:nullSafety(Off) private var swipePoint: Point<Float>;
 
 	public function new() {
 		onDown << downHandlerWaitClick;
@@ -78,7 +79,7 @@ class TouchableBase implements HasSignal {
 		onDown >> listenSwipe;
 		cancleSwipe();
 		swipeTimer.destroy();
-		swipeTimer = null;
+		@:nullSafety(Off) swipeTimer = null;
 	}
 
 	private function listenSwipe(t: Touch): Void {
@@ -128,9 +129,9 @@ class TouchableBase implements HasSignal {
 		if (swipeTouch != null) {
 			swipeTouch.onUp >> cancleSwipeAndListenDown;
 			swipeTouch.onOutUp >> cancleSwipeAndListenDown;
-			swipeTouch = null;
+			@:nullSafety(Off) swipeTouch = null;
 		}
-		swipePoint = null;
+		@:nullSafety(Off) swipePoint = null;
 	}
 
 	private function addWheel(): Void {
@@ -159,7 +160,7 @@ class TouchableBase implements HasSignal {
 	private function eTapLost(): Void {
 		if (tapTouch != null) removeTapCancle();
 		tapTimer.destroy();
-		tapTimer = null;
+		@:nullSafety(Off) tapTimer = null;
 		onDown >> beginTap;
 	}
 
@@ -191,7 +192,7 @@ class TouchableBase implements HasSignal {
 		tapTimer.reset();
 		tapTouch.onMove >> tapFirstMove;
 		tapTouch.onMove >> cancleTap;
-		tapTouch = null;
+		@:nullSafety(Off) tapTouch = null;
 	}
 
 	public function destroy(): Void {
@@ -208,37 +209,41 @@ class TouchableBase implements HasSignal {
 	public function check(): Void {}
 
 	private function dispatchDown(id: UInt = 0, x: Float, y: Float, right: Bool = false, safe: Bool = false): Void {
-		if (touches.exists(id))
-			@:privateAccess touches[id].eDown.dispatch(touches[id].set(x, y));
+		var t: Null<Touch> = touches[id];
+		if (t != null)
+			@:privateAccess t.eDown.dispatch(t.set(x, y));
 		else
-			touches[id] = @:privateAccess touchPool.get().set(x, y);
+			touches[id] = t = @:privateAccess touchPool.get().set(x, y);
 		if (right)
-			eRightDown.dispatch(touches[id], safe);
+			eRightDown.dispatch(t, safe);
 		else
-			eDown.dispatch(touches[id], safe);
+			eDown.dispatch(t, safe);
 	}
 
 	private function dispatchUp(id: UInt = 0, right: Bool = false, safe: Bool = false): Void {
-		if (!touches.exists(id)) return;
-		@:privateAccess touches[id].eUp.dispatch(touches[id]);
+		var t: Null<Touch> = touches[id];
+		if (t == null) return;
+		@:privateAccess t.eUp.dispatch(t);
 		if (right)
-			eRightUp.dispatch(touches[id], safe);
+			eRightUp.dispatch(t, safe);
 		else
-			eUp.dispatch(touches[id], safe);
+			eUp.dispatch(t, safe);
 	}
 
 	private function dispatchOver(id: UInt = 0, safe: Bool = false): Void {
-		if (touches.exists(id))
-			@:privateAccess touches[id].eOver.dispatch(touches[id]);
+		var t: Null<Touch> = touches[id];
+		if (t != null)
+			@:privateAccess t.eOver.dispatch(t);
 		else
-			touches[id] = touchPool.get();
-		eOver.dispatch(touches[id], safe);
+			touches[id] = t = touchPool.get();
+		eOver.dispatch(t, safe);
 	}
 
 	public function getTouch(id: UInt = 0): Touch {
-		if (!touches.exists(id))
-			touches[id] = touchPool.get();
-		return touches[id];
+		var t: Null<Touch> = touches[id];
+		if (t == null)
+			touches[id] = t = touchPool.get();
+		return t;
 	}
 
 	public function retTouch(id: UInt = 0): Void {
@@ -246,53 +251,60 @@ class TouchableBase implements HasSignal {
 	}
 
 	private function dispatchOutDown(id: UInt = 0, right:  Bool = false, safe: Bool = false): Void {
-		if (!touches.exists(id)) return;
-		@:privateAccess touches[id].eOutDown.dispatch(touches[id]);
+		var t: Null<Touch> = touches[id];
+		if (t == null) return;
+		@:privateAccess t.eOutDown.dispatch(t);
 		if (right)
-			eOutRightDown.dispatch(touches[id], safe);
+			eOutRightDown.dispatch(t, safe);
 		else
-			eOutDown.dispatch(touches[id], safe);
+			eOutDown.dispatch(t, safe);
 	}
 
 	private function dispatchOverDown(id: UInt = 0, right:  Bool = false, safe: Bool = false): Void {
-		if (touches.exists(id))
-			@:privateAccess touches[id].eOverDown.dispatch(touches[id]);
+		var t: Null<Touch> = touches[id];
+		if (t != null)
+			@:privateAccess t.eOverDown.dispatch(t);
 		else
-			touches[id] = touchPool.get();
+			touches[id] = t = touchPool.get();
 		if (right)
-			eOverRightDown.dispatch(touches[id], safe);
+			eOverRightDown.dispatch(t, safe);
 		else
-			eOverDown.dispatch(touches[id], safe);
+			eOverDown.dispatch(t, safe);
 	}
 
 	private function dispatchOut(id: UInt = 0, safe: Bool = false): Void {
-		if (!touches.exists(id)) return;
-		@:privateAccess touches[id].eOut.dispatch(touches[id]);
-		eOut.dispatch(touches[id], safe);
+		var t: Null<Touch> = touches[id];
+		if (t == null) return;
+		@:privateAccess t.eOut.dispatch(t);
+		eOut.dispatch(t, safe);
 		removeTouch(id);
 	}
 
 	private function dispatchOutUpListener(id: UInt): Void dispatchOutUp(id);
 
 	private function dispatchOutUp(id: UInt = 0, right: Bool = false, safe: Bool = false): Void {
-		if (touches.exists(id))
-			@:privateAccess touches[id].eOutUp.dispatch(touches[id]);
+		var t: Null<Touch> = touches[id];
+		if (t == null) return;
+		@:privateAccess t.eOutUp.dispatch(t);
 		if (right)
-			eOutRightUp.dispatch(touches[id], safe);
+			eOutRightUp.dispatch(t, safe);
 		else
-			eOutUp.dispatch(touches[id], safe);
+			eOutUp.dispatch(t, safe);
 		removeTouch(id);
 	}
 
 	private static function dispatchMove(id: UInt = 0, x: Float, y: Float): Void {
-		if (touches.exists(id))
-			@:privateAccess touches[id].eMove.dispatch(touches[id].set(x, y));
+		var t: Null<Touch> = touches[id];
+		if (t != null)
+			@:privateAccess t.eMove.dispatch(t.set(x, y));
 	}
 
 	private static function removeTouch(id: UInt): Void {
-		if (id == 0 || !touches.exists(id)) return;
-		touches[id].clear();
-		touchPool.ret(touches[id]);
+		if (id == 0) return;
+		var t: Null<Touch> = touches[id];
+		if (t == null) return;
+		t.clear();
+		touchPool.ret(t);
 		touches.remove(id);
 	}
 

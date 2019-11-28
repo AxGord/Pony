@@ -16,6 +16,7 @@ import pony.geom.Point;
  * Touchable
  * @author AxGord <axgord@gmail.com>
  */
+@:nullSafety
 @:access(pony.ui.touch.Mouse)
 class Touchable extends TouchableBase {
 
@@ -108,7 +109,7 @@ class Touchable extends TouchableBase {
 		Browser.window.removeEventListener(TOUCHCANCEL, leaveHandler);
 		#end
 		interactive.remove();
-		interactive = null;
+		@:nullSafety(Off) interactive = null;
 	}
 
 	override private function addWheel(): Void {}
@@ -237,10 +238,10 @@ class Touchable extends TouchableBase {
 
 	private function touchUp(): Void {
 		if (over) {
-			_down ? dispatchOutDown() : dispatchOut();
+			_down != null && _down ? dispatchOutDown() : dispatchOut();
 			over = false;
 		}
-		if (_down) {
+		if (_down != null && _down) {
 			_down = null;
 			dispatchOutUp();
 		}

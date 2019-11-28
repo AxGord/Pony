@@ -4,31 +4,32 @@ package pony.geom;
  * Align
  * @author AxGord <axgord@gmail.com>
  */
+@:nullSafety(Strict)
 abstract Align(AlignType) from AlignType to AlignType {
-	
-	public var vertical(get, never):VAlign;
-	public var horizontal(get, never):HAlign;
-	
-	@:extern inline public function new(v:AlignType) this = v;
-	
-	@:from @:extern inline public static function fromV(v:VAlign):Align {
+
+	public var vertical(get, never): VAlign;
+	public var horizontal(get, never): HAlign;
+
+	@:extern public inline function new(v: AlignType) this = v;
+
+	@:from @:extern public static inline function fromV(v: VAlign): Align {
 		return new Pair(v, HAlign.Center);
 	}
-	
-	@:from @:extern inline public static function fromH(v:HAlign):Align {
+
+	@:from @:extern public static inline function fromH(v: HAlign): Align {
 		return new Pair(VAlign.Middle, v);
 	}
-	
-	@:to @:extern inline private function toV():VAlign return this.a;
-	@:to @:extern inline private function toH():HAlign return this.b;
-	
-	@:extern inline private function get_vertical():VAlign return this.a;
-	@:extern inline private function get_horizontal():HAlign return this.b;
 
-	inline public static function fromString(s:String):Align {
+	@:to @:extern private inline function toV(): VAlign return this.a;
+	@:to @:extern private inline function toH(): HAlign return this.b;
+
+	@:extern private inline function get_vertical(): VAlign return this.a;
+	@:extern private inline function get_horizontal(): HAlign return this.b;
+
+	@:from public static inline function fromString(s: String): Null<Align> {
 		if (s == null) return null;
-		var hor:HAlign = null;
-		var vert:VAlign = null;
+		var hor: Null<HAlign> = null;
+		var vert: Null<VAlign> = null;
 		for (v in s.split(' ')) if (v != '') {
 			switch v.toLowerCase() {
 				case 'left':
@@ -51,13 +52,13 @@ abstract Align(AlignType) from AlignType to AlignType {
 	}
 
 	@:to @:extern public inline function toInt():Int return vertical.getIndex() + (1 + horizontal.getIndex()) * 3;
-	
+
 	@:from @:extern public static inline function fromInt(v:Int):Align {
 		return new Pair(VAlign.createByIndex(v % 3), HAlign.createByIndex(Std.int(v / 3) - 1));
 	}
-	
+
 }
- 
+
 typedef AlignType = Pair<VAlign, HAlign>;
 
 enum VAlign {
