@@ -131,7 +131,7 @@
 		{
 			"props": {
 				"allowMarkerInterfaces": true,
-				"allowProperties": false
+				"allowProperties": true
 			},
 			"type": "Interface"
 		},
@@ -168,8 +168,7 @@
 				"listeners": [
 					"addEventListener",
 					"addListener",
-					"on",
-					"once"
+					"on"
 				],
 				"format": "^_?[a-z][a-zA-Z0-9]*$"
 			},
@@ -272,8 +271,7 @@
 				"bitwiseOpPolicy": "around",
 				"boolOpPolicy": "around",
 				"intervalOpPolicy": "none",
-				"arrowPolicy": "around",
-				"functionArgPolicy": "around"
+				"arrowPolicy": "around"
 			},
 			"type": "OperatorWhitespace"
 		},
