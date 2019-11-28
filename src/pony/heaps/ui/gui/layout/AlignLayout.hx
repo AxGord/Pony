@@ -10,11 +10,11 @@ import pony.ui.gui.AlignLayoutCore;
  * AlignLayout
  * @author AxGord <axgord@gmail.com>
  */
+@:nullSafety(Strict)
 class AlignLayout extends BaseLayout<AlignLayoutCore<Object>> {
 
 	public function new(?align: Align, ?border: Border<Int>) {
-		layout = new AlignLayoutCore<Object>(align, border);
-		super();
+		super(new AlignLayoutCore<Object>(align, border));
 	}
 
 }

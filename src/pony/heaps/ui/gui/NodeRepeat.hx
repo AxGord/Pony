@@ -11,6 +11,7 @@ import pony.geom.Point;
  * NodeRepeat
  * @author AxGord <axgord@gmail.com>
  */
+@:nullSafety(Strict)
 @:final class NodeRepeat extends Node {
 
 	public var graphics: Graphics;
@@ -54,7 +55,7 @@ import pony.geom.Point;
 	override public function destroy(): Void {
 		super.destroy();
 		graphics.clear();
-		graphics = null;
+		@:nullSafety(Off) graphics = null;
 	}
 
 }

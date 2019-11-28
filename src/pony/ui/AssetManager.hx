@@ -20,30 +20,33 @@ using Lambda;
  * AssetManager
  * @author AxGord <axgord@gmail.com>
  */
+@:nullSafety(Strict)
 class AssetManager {
 
-	public static var baseUrl:String = '';
-	private static var loadedAssets:Array<String> = [];
-	private static var globalLoad:Map<String, Array<Int -> Int -> Void>> = new Map();
-	
-	public static var local:String = '';
+	public static inline var MAX_ASSET_PROGRESS: Int = 10;
 
-	public static function resetAll():Void {
+	public static var baseUrl: String = '';
+	private static var loadedAssets: Array<String> = [];
+	private static var globalLoad: Map<String, Array<Int -> Int -> Void>> = new Map();
+
+	public static var local: String = '';
+
+	public static function resetAll(): Void {
 		for (e in loadedAssets.copy()) reset(e);
 	}
 
-	public static inline function reset(asset:String):Void {
+	public static inline function reset(asset: String): Void {
 		loadedAssets.remove(asset);
 		_reset(asset);
 	}
-	
-	@:extern public static inline function getPath(asset:String):String {
+
+	@:extern public static inline function getPath(asset: String): String {
 		return baseUrl + StringTools.replace(asset, '{local}', local);
 	}
-	
-	public static dynamic function monitor(current:Int, total:Int):Void {}
-	
-	public static function loadPack(pathes:Array<String>, assets:Array<String>, cb:Int -> Int -> Void):Void {
+
+	public static dynamic function monitor(current: Int, total: Int): Void {}
+
+	public static function loadPack(pathes: Array<String>, assets: Array<String>, cb: Int -> Int -> Void): Void {
 		if (assets.length == 0) {
 			cb(0, 0);
 			return;
@@ -59,7 +62,7 @@ class AssetManager {
 			return;
 		}
 		var loaded:Array<Int> = [for (_ in 0...pathes.length) 0];
-		var totals:Array<Int> = [for (_ in 0...pathes.length) 10];
+		var totals:Array<Int> = [for (_ in 0...pathes.length) MAX_ASSET_PROGRESS];
 		var i:Int = 0;
 		var prevLoaded:Int = 0;
 		var prevTotals:Int = 0;
@@ -78,8 +81,8 @@ class AssetManager {
 			});
 		}
 	}
-	
-	public static function load(path:String = '', asset:Or<String, Array<String>>, cb:Int -> Int -> Void):Void {
+
+	public static function load(path: String = '', asset: Or<String, Array<String>>, cb: Int -> Int -> Void): Void {
 		switch asset {
 			case OrState.A(a):
 				var r:Array<String> = parseInterval(a);
@@ -96,12 +99,13 @@ class AssetManager {
 			case OrState.A(asset):
 				asset = (path == '' ? '' : path + '/') + asset;
 				if (loadedAssets.indexOf(asset) != -1) {
-					cb(10, 10);
+					cb(MAX_ASSET_PROGRESS, MAX_ASSET_PROGRESS);
 					return;
 				}
-				if (globalLoad.exists(asset)) {
-					cb(0, 10);
-					globalLoad[asset].push(cb);
+				var a: Null<Array<(Int, Int) -> Void>> = globalLoad[asset];
+				if (a != null) {
+					cb(0, MAX_ASSET_PROGRESS);
+					a.push(cb);
 				} else {
 					globalLoad[asset] = [];
 					var called:Bool = false;
@@ -110,11 +114,11 @@ class AssetManager {
 						globalLoaded(asset, c, t);
 						called = true;
 					});
-					if (!called) cb(0, 10);
+					if (!called) cb(0, MAX_ASSET_PROGRESS);
 				}
 			case OrState.B(assets):
 				var loaded:Array<Int> = [for (_ in 0...assets.length) 0];
-				var totals:Array<Int> = [for (_ in 0...assets.length) 10];
+				var totals:Array<Int> = [for (_ in 0...assets.length) MAX_ASSET_PROGRESS];
 				var i:Int = 0;
 				var prevLoaded:Int = 0;
 				var prevTotals:Int = 0;
@@ -135,19 +139,21 @@ class AssetManager {
 		}
 	}
 
-	private static function sum(a:Array<Int>):Int return Lambda.fold(a, _sum, 0);
-	private static function _sum(v:Int, p:Int):Int return v + p;
-	
-	private static function globalLoaded(asset:String, c:Int, t:Int):Void {
-		loadedAssets.push(asset);
-		for (f in globalLoad[asset]) f(c, t);
+	private static function sum(a: Array<Int>): Int return Lambda.fold(a, _sum, 0);
+	private static function _sum(v: Int, p: Int): Int return v + p;
+
+	private static function globalLoaded(asset: String, c: Int, t: Int): Void {
+		var a: Null<Array<(Int, Int) -> Void>> = globalLoad[asset];
+		if (a == null) return;
+		for (f in a) f(c, t);
 		if (c == t) {
+			loadedAssets.push(asset);
 			globalLoad.remove(asset);
 			monitor(loadedAssets.length, globalLoad.count());
 		}
 	}
-	
-	public static function backLoad(asset:String):Void {
+
+	public static function backLoad(asset: String): Void {
 		if (isLoaded(asset)) return;
 		if (!globalLoad.exists(asset)) {
 			globalLoad[asset] = [];
@@ -155,9 +161,9 @@ class AssetManager {
 		}
 	}
 
-	public static function isLoaded(asset:String): Bool return loadedAssets.indexOf(asset) != -1;
-	
-	public static function loadPackWithChilds(cl:String, pathes:Array<String>, assets:Array<String>, cb:Int -> Int -> Void):Void {
+	public static function isLoaded(asset: String):  Bool return loadedAssets.indexOf(asset) != -1;
+
+	public static function loadPackWithChilds(cl: String, pathes: Array<String>, assets: Array<String>, cb: Int -> Int -> Void): Void {
 		var chs = Meta.getType(Type.resolveClass(cl)).assets_childs;
 		if (chs == null) {
 			loadPack(pathes, assets, cb);
@@ -167,8 +173,8 @@ class AssetManager {
 		loadPack(pathes, assets, p.a);
 		loadChildPack(chs, p.b);
 	}
-	
-	private static function loadChildPack(chs:Array<Dynamic>, cb:Int -> Int -> Void):Void {
+
+	private static function loadChildPack(chs: Array<Dynamic>, cb: Int -> Int -> Void): Void {
 		var f = cb;
 		for (i in 0...(chs.length - 1)) {
 			var p = cbjoin(f);
@@ -186,24 +192,24 @@ class AssetManager {
 			f(0, 0); //skip load
 	}
 
-	public static function cbjoin(cb:Int -> Int -> Void):Pair<Int -> Int -> Void, Int -> Int -> Void> {
-		var aCurrent:Int = 0;
-		var aTotal:Int = 1;
-		var bCurrent:Int = 0;
-		var bTotal:Int = 1;
-		function a(c:Int, t:Int) {
+	public static function cbjoin(cb: Int -> Int -> Void): Pair<Int -> Int -> Void, Int -> Int -> Void> {
+		var aCurrent: Int = 0;
+		var aTotal: Int = 1;
+		var bCurrent: Int = 0;
+		var bTotal: Int = 1;
+		function a(c: Int, t: Int) {
 			aCurrent = c;
 			aTotal = t;
 			cb(bCurrent + c, bTotal + t);
 		}
-		function b(c:Int, t:Int) {
+		function b(c: Int, t: Int) {
 			bCurrent = c;
 			bTotal = t;
 			cb(aCurrent + c, aTotal + t);
 		}
 		return new Pair(a, b);
 	}
-	
+
 	public static function allCountWithChilds(cl:String, pathes:Array<String>, assets:Array<String>):Int {
 		var chs = Meta.getType(Type.resolveClass(cl)).assets_childs;
 		if (chs == null) {
@@ -211,94 +217,97 @@ class AssetManager {
 		}
 		return allCount(pathes, assets) + allCountChilds(chs);
 	}
-	
-	private static inline function allCountChilds(chs:Array<Dynamic>):Int {
-		var sum = 0;
+
+	private static inline function allCountChilds(chs: Array<Dynamic>): Int {
+		var sum: UInt = 0;
 		for (ch in chs) {
 			var s = Type.resolveClass(ch);
 			sum += Reflect.getProperty(s, 'countAllAssets')(true);
 		}
 		return sum;
 	}
-	
-	public static inline function allCount(pathes:Array<String>, assets:Array<String>):Int {
+
+	public static inline function allCount(pathes: Array<String>, assets: Array<String>): Int {
 		return pathes.length * assets.length;
 	}
-	
-	public static function loadComplete(source:(Int -> Int -> Void) -> Void, cb:Void -> Void):Void {
-		var last:Bool = true;
-		var check = function(c:Int, t:Int) last = c == t;
-		source(function(c:Int, t:Int) check(c, t));
+
+	public static function loadComplete(source: (Int -> Int -> Void) -> Void, cb: Void -> Void): Void {
+		var last: Bool = true;
+		var check = function(c: Int, t: Int) last = c == t;
+		source(function(c: Int, t: Int) check(c, t));
 		DeltaTime.fixedUpdate < function() {
 			if (last) cb();
-			else check = function(c:Int, t:Int) if (c == t) cb();
+			else check = function(c: Int, t: Int) if (c == t) cb();
 		}
 	}
-	
-	public static function loadList(count:Int, cb:Int -> Int -> Void):Array<Int -> Int -> Void> {
-		var totals:Array<Int> = [for (_ in 0...count) 1];
-		var currents:Array<Int> = [for (_ in 0...count) 0];
-		return [for (i in 0...count) function(c:Int, t:Int) {
+
+	public static function loadList(count: Int, cb: Int -> Int -> Void): Array<Int -> Int -> Void> {
+		var totals: Array<Int> = [for (_ in 0...count) 1];
+		var currents: Array<Int> = [for (_ in 0...count) 0];
+		return [for (i in 0...count) function(c: Int, t: Int) {
 			currents[i] = c;
 			totals[i] = t;
 			cb(MathTools.arraySum(currents), MathTools.arraySum(totals));
 		}];
 	}
 
-	public static function parseInterval(asset:String):Array<String> {
-		var a:Array<String> = asset.split('...');
+	@:nullSafety(Off)
+	public static function parseInterval(asset: String): Array<String> {
+		var a: Array<String> = asset.split('...');
 		if (a.length != 2) return [asset];
-		var right:Array<String> = a.pop().split('}');
-		var left:Array<String> = a.pop().split('{');
-		var begin:Int = Std.parseInt(left.pop());
-		var sBegin:String = left.pop();
-		var sEnd:String = right.pop();
-		var end:Int = Std.parseInt(right.pop());
+		var right: Array<String> = a.pop().split('}');
+		var left: Array<String> = a.pop().split('{');
+		var begin: Int = Std.parseInt(left.pop());
+		var sBegin: String = left.pop();
+		var sEnd: String = right.pop();
+		var end: Int = Std.parseInt(right.pop());
 		return [for (i in begin...end) sBegin + i + sEnd];
 	}
 
-	public static inline function removeBase(path:String):String {
+	public static inline function removeBase(path: String): String {
 		return path.substr(baseUrl.length);
 	}
-	
+
 	#if heaps
-	@:extern public static inline function _load(asset:String, cb:Int -> Int -> Void):Void HeapsAssets.load(asset, cb);
-	@:extern public static inline function _reset(asset:String):Void HeapsAssets.reset(asset);
-	@:extern public static inline function image(asset:String, ?name:String) return HeapsAssets.image(asset, name);
-	@:extern public static inline function texture(asset:String, ?name:String) return HeapsAssets.texture(asset, name);
-	@:extern public static inline function animation(asset:String, ?name:String) return HeapsAssets.animation(asset, name);
-	@:extern public static inline function clip(asset:String, ?name:String) return HeapsAssets.clip(asset, name);
-	@:extern public static inline function text(asset:String) return HeapsAssets.text(asset);
-	@:extern public static inline function sound(asset:String) return asset;
-	@:extern public static inline function spine(asset:String) return asset;
+	@:extern public static inline function _load(asset: String, cb: Int -> Int -> Void): Void HeapsAssets.load(asset, cb);
+	@:extern public static inline function _reset(asset: String): Void HeapsAssets.reset(asset);
+	@:extern public static inline function image(asset: String, ?name: String) return HeapsAssets.image(asset, name);
+	@:extern public static inline function texture(asset: String, ?name: String) return HeapsAssets.texture(asset, name);
+	@:extern public static inline function animation(asset: String, ?name: String) return HeapsAssets.animation(asset, name);
+	@:extern public static inline function clip(asset: String, ?name: String) return HeapsAssets.clip(asset, name);
+	@:extern public static inline function text(asset: String): String return HeapsAssets.text(asset);
+	@:extern public static inline function sound(asset: String) return asset;
+	@:extern public static inline function spine(asset: String) return asset;
 	#elseif pixijs
-	@:extern public static inline function _load(asset:String, cb:Int -> Int -> Void):Void PixiAssets.load(asset, cb.bind(10, 10));
-	@:extern public static inline function _reset(asset:String):Void PixiAssets.reset(asset);
-	@:extern public static inline function image(asset:String, ?name:String) return PixiAssets.image(asset, name);
-	@:extern public static inline function texture(asset:String, ?name:String) return PixiAssets.texture(asset, name);
-	@:extern public static inline function animation(asset:String, ?name:String) return asset;
-	@:extern public static inline function clip(asset:String, ?name:String) return asset;
-	@:extern public static inline function sound(asset:String) return PixiAssets.sound(asset);
-	@:extern public static inline function spine(asset:String) return PixiAssets.spine(asset);
-	@:extern public static inline function text(asset:String) return PixiAssets.text(asset);
-	@:extern public static inline function json(asset:String) return PixiAssets.json(asset);
+	@:extern public static inline function _load(asset: String, cb: Int -> Int -> Void): Void
+		PixiAssets.load(asset, cb.bind(MAX_ASSET_PROGRESS, MAX_ASSET_PROGRESS));
+	@:extern public static inline function _reset(asset: String): Void PixiAssets.reset(asset);
+	@:extern public static inline function image(asset: String, ?name: String) return PixiAssets.image(asset, name);
+	@:extern public static inline function texture(asset: String, ?name: String) return PixiAssets.texture(asset, name);
+	@:extern public static inline function animation(asset: String, ?name: String) return asset;
+	@:extern public static inline function clip(asset: String, ?name: String) return asset;
+	@:extern public static inline function sound(asset: String) return PixiAssets.sound(asset);
+	@:extern public static inline function spine(asset: String) return PixiAssets.spine(asset);
+	@:extern public static inline function text(asset: String): String return PixiAssets.text(asset);
+	@:extern public static inline function json(asset: String) return PixiAssets.json(asset);
 	#elseif openfl
-	@:extern public static inline function _load(asset:String, cb:Int -> Int -> Void):Void OpenflAssets.load(asset, cb.bind(10, 10));
-	@:extern public static inline function _reset(asset:String):Void trace('Reset: $asset');
-	@:extern public static inline function image(asset:String, ?name:String) return OpenflAssets.image(asset);
-	@:extern public static inline function texture(asset:String, ?name:String) return asset;
-	@:extern public static inline function animation(asset:String, ?name:String) return asset;
-	@:extern public static inline function clip(asset:String, ?name:String) return asset;
-	@:extern public static inline function sound(asset:String) return asset;
-	@:extern public static inline function spine(asset:String) return asset;
+	@:extern public static inline function _load(asset: String, cb: Int -> Int -> Void): Void
+		OpenflAssets.load(asset, cb.bind(1MAX_ASSET_PROGRESS, MAX_ASSET_PROGRESS));
+	@:extern public static inline function _reset(asset: String): Void trace('Reset: $asset');
+	@:extern public static inline function image(asset: String, ?name: String) return OpenflAssets.image(asset);
+	@:extern public static inline function texture(asset: String, ?name: String) return asset;
+	@:extern public static inline function animation(asset: String, ?name: String) return asset;
+	@:extern public static inline function clip(asset: String, ?name: String) return asset;
+	@:extern public static inline function sound(asset: String) return asset;
+	@:extern public static inline function spine(asset: String) return asset;
 	#else
-	@:extern public static inline function _load(asset:String, cb:Int -> Int -> Void):Void trace('Load: $asset');
-	@:extern public static inline function _reset(asset:String):Void trace('Reset: $asset');
-	@:extern public static inline function image(asset:String, ?name:String) return asset;
-	@:extern public static inline function texture(asset:String, ?name:String) return asset;
-	@:extern public static inline function animation(asset:String, ?name:String) return asset;
-	@:extern public static inline function clip(asset:String, ?name:String) return asset;
-	@:extern public static inline function sound(asset:String) return asset;
-	@:extern public static inline function spine(asset:String) return asset;
+	@:extern public static inline function _load(asset: String, cb: Int -> Int -> Void): Void trace('Load: $asset');
+	@:extern public static inline function _reset(asset: String): Void trace('Reset: $asset');
+	@:extern public static inline function image(asset: String, ?name: String) return asset;
+	@:extern public static inline function texture(asset: String, ?name: String) return asset;
+	@:extern public static inline function animation(asset: String, ?name: String) return asset;
+	@:extern public static inline function clip(asset: String, ?name: String) return asset;
+	@:extern public static inline function sound(asset: String) return asset;
+	@:extern public static inline function spine(asset: String) return asset;
 	#end
 }

@@ -8,11 +8,12 @@ import pony.geom.Point;
  * Slice2V
  * @author AxGord <axgord@gmail.com>
  */
+@:nullSafety(Strict)
 @:final class Slice2V extends Node {
 
 	private var b: SliceBase;
 
-	public function new(tiles: Array<Tile>, ?repeat: Bool, ?parent: Object) {
+	public function new(tiles: Array<Tile>, repeat: Bool = false, ?parent: Object) {
 		tiles.push(tiles[0]);
 		super(new Point(tiles[0].width, GUIUtils.tilesHeightSum(tiles)), parent);
 		b = new SliceBase(this, tiles, repeat ? [1] : null);

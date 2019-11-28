@@ -11,18 +11,20 @@ import pony.magic.HasSignal;
  * BaseLayout
  * @author AxGord <axgord@gmail.com>
  */
-class BaseLayout<T:BaseLayoutCore<Object>> extends Object implements IWH implements HasLink implements HasSignal {
+@:nullSafety(Strict)
+class BaseLayout<T: BaseLayoutCore<Object>> extends Object implements IWH implements HasLink implements HasSignal {
 
 	@:bindable public var wh: Point<Float> = new Point(0., 0.);
-	@:bindable public var flipx: Bool;
-	@:bindable public var flipy: Bool;
+	@:bindable public var flipx: Bool = false;
+	@:bindable public var flipy: Bool = false;
 	public var w(link, set): Float = wh.x;
 	public var h(link, set): Float = wh.y;
 	public var layout(default, null): T;
 	public var size(get, never): Point<Float>;
 
-	public function new() {
+	public function new(layout: T) {
 		super();
+		this.layout = layout;
 		layout.getSize = _getSize;
 		layout.getSizeMod = getSizeMod;
 		layout.setXpos = setXpos;
@@ -60,7 +62,7 @@ class BaseLayout<T:BaseLayoutCore<Object>> extends Object implements IWH impleme
 	}
 
 	private static function getSizeMod(o: Object, p: Point<Float>): Point<Float> {
-		return p == null ? null : new Point(p.x * o.scaleX, p.y * o.scaleY);
+		return new Point(p.x * o.scaleX, p.y * o.scaleY);
 	}
 
 	private inline function get_size(): Point<Float> {
@@ -69,7 +71,7 @@ class BaseLayout<T:BaseLayoutCore<Object>> extends Object implements IWH impleme
 
 	public function destroyIWH(): Void {
 		layout.destroy();
-		layout = null;
+		@:nullSafety(Off) layout = null;
 	}
 
 	public function set_w(v: Float): Float {

@@ -11,11 +11,12 @@ import pony.geom.IWH;
  * Node
  * @author AxGord <axgord@gmail.com>
  */
+@:nullSafety(Strict)
 class Node extends Object implements HasSignal implements HasLink implements INode implements IWH {
 
-	@:bindable public var wh: Point<Float>;
-	@:bindable public var flipx: Bool;
-	@:bindable public var flipy: Bool;
+	@:nullSafety(Off) @:bindable public var wh: Point<Float>;
+	@:bindable public var flipx: Bool = false;
+	@:bindable public var flipy: Bool = false;
 	public var w(link, set): Float = wh.x;
 	public var h(link, set): Float = wh.y;
 	public var size(link, never): Point<Float> = wh;
@@ -41,9 +42,9 @@ class Node extends Object implements HasSignal implements HasLink implements INo
 	public function destroy():Void {
 		removeChildren();
 		changeWh.clear();
-		wh = null;
+		@:nullSafety(Off) wh = null;
 		remove();
-		parent = null;
+		@:nullSafety(Off) parent = null;
 		destroySignals();
 	}
 

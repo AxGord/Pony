@@ -10,15 +10,16 @@ using pony.Tools;
  * AlignLayoutCore
  * @author AxGord <axgord@gmail.com>
  */
+@:nullSafety(Strict)
 class AlignLayoutCore<T> extends BaseLayoutCore<T> {
-	
-	@:arg private var _align:Align = new Pair(VAlign.Middle, HAlign.Center);
-	@:arg private var _border:Border<Int> = 0;
 
-	public var align(get, set):Align;
-	public var border(get, set):Border<Int>;
-	
-	override public function update():Void {
+	@:arg private var _align: Align = new Pair(VAlign.Middle, HAlign.Center);
+	@:arg private var _border: Border<Int> = 0;
+
+	public var align(get, set): Align;
+	public var border(get, set): Border<Int>;
+
+	override public function update(): Void {
 		if (objects == null) return;
 		if (!ready) return;
 		if (objects.length == 0) {
@@ -81,23 +82,23 @@ class AlignLayoutCore<T> extends BaseLayoutCore<T> {
 		}
 		super.update();
 	}
-	
-	@:extern inline private function get_align():Align return _align;
-	
-	@:extern inline private function set_align(v:Align):Align {
+
+	@:extern private inline function get_align(): Align return _align;
+
+	@:extern private inline function set_align(v: Align): Align {
 		if (align == v) return v;
 		_align = v;
 		update();
 		return v;
 	}
-	
-	@:extern inline private function get_border():Border<Int> return _border;
-	
-	@:extern inline private function set_border(v:Border<Int>):Border<Int> {
+
+	@:extern private inline function get_border(): Border<Int> return _border;
+
+	@:extern private inline function set_border(v: Border<Int>): Border<Int> {
 		if (border == v) return v;
 		_border = v;
 		update();
 		return v;
 	}
-	
+
 }

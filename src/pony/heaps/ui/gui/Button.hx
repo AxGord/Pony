@@ -6,6 +6,7 @@ import h3d.Vector;
 import pony.ui.touch.Touchable;
 import pony.ui.gui.ButtonCore;
 
+@:nullSafety(Strict)
 class Button extends Interactive {
 
 	private static inline var OVERTINT: Float = 1.2;
@@ -21,14 +22,14 @@ class Button extends Interactive {
 	public function new(nodes: Array<Node>, ?parent: Object) {
 		var first: Node = nodes[0];
 		super(first.w * first.scaleX, first.h * first.scaleY, parent);
+		this.nodes = nodes;
+		touchable = new Touchable(@:nullSafety(Off) this);
+		core = new ButtonCore(touchable);
 		for (node in nodes) {
 			node.visible = false;
 			addChild(node);
 		}
 		first.visible = true;
-		this.nodes = nodes;
-		touchable = new Touchable(this);
-		core = new ButtonCore(touchable);
 		switch nodes.length {
 			case 0:
 				throw 'Not supported';

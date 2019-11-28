@@ -14,6 +14,7 @@ import pony.magic.HasLink;
  * SliceBase
  * @author AxGord <axgord@gmail.com>
  */
+@:nullSafety(Strict)
 @:final class SliceBase implements HasLink {
 
 	private var tiles: Array<Tile>;
@@ -34,7 +35,7 @@ import pony.magic.HasLink;
 		for (t in tiles) {
 			var id: Int = t.getTexture().id;
 			if (!groups.exists(id)) {
-				var s: Int = soloTexture[id];
+				var s: Null<Int> = soloTexture[id];
 				if (s != null) {
 					soloTexture.remove(id);
 					groups[id] = new TileGroup(t, target);
@@ -83,14 +84,14 @@ import pony.magic.HasLink;
 			w = tile.width;
 		if (h == null)
 			h = tile.height;
-		var wr: Graphics = wrap[n];
+		var wr: Null<Graphics> = wrap[n];
 		if (wr != null) {
 			wr.drawRect(0, 0, w, h);
 			wr.setPosition(flipx ? x + w : x, flipy ? y + h : y);
 			wr.scaleX = flipx ? -1 : 1;
 			wr.scaleY = flipy ? -1 : 1;
 		} else {
-			var b: Bitmap = solo[n];
+			var b: Null<Bitmap> = solo[n];
 			var sx: Float = w / tile.width;
 			var sy: Float = h / tile.height;
 			if (b != null) {
@@ -100,7 +101,7 @@ import pony.magic.HasLink;
 				b.scaleY = flipy ? -sy : sy;
 			} else {
 				var id: Int = tile.getTexture().id;
-				var g: TileGroup = groups[id];
+				@:nullSafety(Off) var g: TileGroup = groups[id];
 				g.addTransform(
 					flipx ? x + w : x,
 					flipy ? y + h : y,

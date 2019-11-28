@@ -24,9 +24,10 @@ import hxd.App;
  * HeapsApp
  * @author AxGord <axgord@gmail.com>
  */
+@:nullSafety
 class HeapsApp extends App implements HasSignal implements HasLink {
 
-	public static var instance: HeapsApp;
+	public static var instance: Null<HeapsApp>;
 
 	@:auto public var onInit: Signal0;
 	public var noScale(link, link): Bool = canvas.noScale;
@@ -34,7 +35,7 @@ class HeapsApp extends App implements HasSignal implements HasLink {
 	private var renderPause: Bool = false;
 	private var alignCenter: Bool = false;
 	public var canvas: SmartCanvas;
-	private var border: Graphics;
+	private var border: Null<Graphics>;
 
 	public function new(?size: Point<Int>, ?color: UColor, ?parentDom: Element, sizeUpdate: Bool = true) {
 		canvas = new SmartCanvas(size, parentDom);
@@ -85,7 +86,7 @@ class HeapsApp extends App implements HasSignal implements HasLink {
 
 	public function drawBorders(?color: UInt): Void {
 		border = new Graphics();
-		border.beginFill(color == null ? engine.backgroundColor : color);
+		border.beginFill(@:nullSafety(Off) (color == null) ? engine.backgroundColor : color);
 		var w: Int = canvas.stageInitSize.x * 2;
 		var h: Int = canvas.stageInitSize.y * 2;
 		border.drawRect(-w, -h, w, h * 3);

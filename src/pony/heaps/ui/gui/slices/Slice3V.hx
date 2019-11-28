@@ -8,11 +8,12 @@ import pony.geom.Point;
  * Slice3V
  * @author AxGord <axgord@gmail.com>
  */
+@:nullSafety(Strict)
 @:final class Slice3V extends Node {
 
 	private var b: SliceBase;
 
-	public function new(tiles: Array<Tile>, ?repeat: Bool, ?parent: Object) {
+	public function new(tiles: Array<Tile>, repeat: Bool = false, ?parent: Object) {
 		super(new Point(tiles[0].width, GUIUtils.tilesHeightSum(tiles)), parent);
 		b = new SliceBase(this, tiles, repeat ? [1] : null);
 		changeWh << drawTiles;

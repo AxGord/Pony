@@ -11,8 +11,9 @@ import pony.time.Tween;
  * LazyBitmap
  * @author AxGord <axgord@gmail.com>
  */
+@:nullSafety(Strict)
 class LazyBitmap extends Bitmap {
-	
+
 	private var asset: String;
 	private var aname: String;
 	private var needAnim: Bool;

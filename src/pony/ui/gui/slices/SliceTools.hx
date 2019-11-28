@@ -6,9 +6,10 @@ using StringTools;
  * SliceTools
  * @author AxGord <axgord@gmail.com>
  */
+@:nullSafety(Strict)
 class SliceTools {
 
-	public static function parseSliceName(name:String):SliceData {
+	public static function parseSliceName(name: String): SliceData {
 		return if (check(name, 2, 'v'))
 			SliceData.Vert2(slice(name, 2, 'v'));
 		else if (check(name, 2, 'h'))
@@ -29,7 +30,7 @@ class SliceTools {
 			SliceData.Not(name);
 	}
 
-	public static function getType(name:String):SliceData {
+	public static function getType(name: String): SliceData {
 		return if (check(name, 2, 'v'))
 			SliceData.Vert2();
 		else if (check(name, 2, 'h'))
@@ -48,10 +49,9 @@ class SliceTools {
 			SliceData.Nine();
 		else
 			SliceData.Not();
-			return null;
 	}
 
-	public static function getNames(name:String):Array<String> {
+	public static function getNames(name: String): Array<String> {
 		return if (check(name, 2, 'v'))
 			slice(name, 2, 'v');
 		else if (check(name, 2, 'h'))
@@ -72,7 +72,7 @@ class SliceTools {
 			[name];
 	}
 
-	public static function clean(name:String):String {
+	public static function clean(name: String): String {
 		return if (check(name, 2, 'v'))
 			remove(name, 2, 'v');
 		else if (check(name, 2, 'h'))
@@ -92,22 +92,22 @@ class SliceTools {
 		else
 			name;
 	}
-	
-	@:extern private static inline function check(name:String, n:Int, letter:String = ''):Bool {
+
+	@:extern private static inline function check(name: String, n: Int, letter: String = ''): Bool {
 		return index(name, n, letter) != -1;
 	}
-	
-	private static function slice(name:String, n:Int, letter:String = ''):Array<String> {
-		var s = name.split('{slice$n$letter}');
+
+	private static function slice(name: String, n: Int, letter: String = ''): Array<String> {
+		var s: Array<String> = name.split('{slice$n$letter}');
 		return [for (i in 0...n) s[0] + i + s[1]];
 	}
 
-	@:extern private static inline function index(name:String, n:Int, letter:String = ''):Int {
+	@:extern private static inline function index(name: String, n: Int, letter: String = ''): Int {
 		return name.indexOf('{slice$n$letter}');
 	}
 
-	@:extern private static inline function remove(name:String, n:Int, letter:String = ''):String {
+	@:extern private static inline function remove(name: String, n: Int, letter: String = ''): String {
 		return name.substr(0, index(name, n, letter));
 	}
-	
+
 }

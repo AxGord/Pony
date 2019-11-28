@@ -10,19 +10,20 @@ using pony.Tools;
  * IntervalLayoutCore
  * @author AxGord <axgord@gmail.com>
  */
+@:nullSafety(Strict)
 class IntervalLayoutCore<T> extends BaseLayoutCore<T> {
-	
-	@:arg private var _interval:Int;
-	@:arg private var _vert:Bool = false;
-	@:arg private var _border:Border<Int> = 0;
-	@:arg private var _align:Align = new Pair(VAlign.Middle, HAlign.Center);
-	
-	public var interval(get, set):Int;
-	public var vert(get, set):Bool;
-	public var border(get, set):Border<Int>;
-	public var align(get, set):Align;
-	
-	override public function update():Void {
+
+	@:arg private var _interval: Int;
+	@:arg private var _vert: Bool = false;
+	@:arg private var _border: Border<Int> = 0;
+	@:arg private var _align: Align = new Pair(VAlign.Middle, HAlign.Center);
+
+	public var interval(get, set): Int;
+	public var vert(get, set): Bool;
+	public var border(get, set): Border<Int>;
+	public var align(get, set): Align;
+
+	override public function update(): Void {
 		if (objects == null) return;
 		if (!ready) return;
 		var pos:Float = 0;
@@ -63,38 +64,38 @@ class IntervalLayoutCore<T> extends BaseLayoutCore<T> {
 		}
 		super.update();
 	}
-	
-	@:extern inline private function get_interval():Int return _interval;
-	@:extern inline private function get_vert():Bool return _vert;
-	@:extern inline private function get_border():Border<Int> return _border;
-	@:extern inline private function get_align():Align return _align;
-	
-	@:extern inline private function set_interval(v:Int):Int {
+
+	@:extern private inline function get_interval(): Int return _interval;
+	@:extern private inline function get_vert(): Bool return _vert;
+	@:extern private inline function get_border(): Border<Int> return _border;
+	@:extern private inline function get_align(): Align return _align;
+
+	@:extern private inline function set_interval(v: Int): Int {
 		if (interval == v) return v;
 		_interval = v;
 		update();
 		return v;
 	}
-	
-	@:extern inline private function set_vert(v:Bool):Bool {
+
+	@:extern private inline function set_vert(v: Bool): Bool {
 		if (vert == v) return v;
 		_vert = v;
 		update();
 		return v;
 	}
-	
-	@:extern inline private function set_border(v:Border<Int>):Border<Int> {
+
+	@:extern private inline function set_border(v: Border<Int>): Border<Int> {
 		if (border == v) return v;
 		_border = v;
 		update();
 		return v;
 	}
-	
-	@:extern inline private function set_align(v:Align):Align {
+
+	@:extern private inline function set_align(v: Align): Align {
 		if (align == v) return v;
 		_align = v;
 		update();
 		return v;
 	}
-	
+
 }

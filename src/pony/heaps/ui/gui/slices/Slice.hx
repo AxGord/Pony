@@ -1,6 +1,7 @@
 package pony.heaps.ui.gui.slices;
 
 import h2d.Tile;
+import h2d.Object;
 import pony.ui.gui.slices.SliceTools;
 import pony.ui.gui.slices.SliceData;
 
@@ -8,9 +9,10 @@ import pony.ui.gui.slices.SliceData;
  * Slice
  * @author AxGord <axgord@gmail.com>
  */
+@:nullSafety(Strict)
 class Slice {
 
-	public static function create(tiles: Array<Tile>, ?src: String, ?repeat: Bool, ?vert: Bool, ?parent: h2d.Object): Node {
+	public static function create(tiles: Array<Tile>, ?src: String, repeat: Bool = false, vert: Bool = false, ?parent: Object): Node {
 		if (src == null) {
 			return switch tiles.length {
 				case 1 if (repeat):

@@ -10,6 +10,7 @@ import pony.color.UColor;
  * NodeRect
  * @author AxGord <axgord@gmail.com>
  */
+@:nullSafety(Strict)
 @:final class NodeRect extends Node {
 
 	public var graphics: Graphics;
@@ -57,7 +58,7 @@ import pony.color.UColor;
 	override public function destroy(): Void {
 		super.destroy();
 		graphics.clear();
-		graphics = null;
+		@:nullSafety(Off) graphics = null;
 	}
 
 }

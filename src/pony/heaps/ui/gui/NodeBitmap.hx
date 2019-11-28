@@ -10,11 +10,12 @@ import pony.geom.Point;
  * NodeBitmap
  * @author AxGord <axgord@gmail.com>
  */
+@:nullSafety(Strict)
 @:final class NodeBitmap extends Node {
 
 	public var bitmap(default, null): Bitmap;
 
-	public function new(?tile: Tile, ?parent: Object) {
+	public function new(tile: Tile, ?parent: Object) {
 		super(new Point(tile.width, tile.height), parent);
 		bitmap = new Bitmap(tile, this);
 		changeWh << updateScales;
@@ -37,7 +38,7 @@ import pony.geom.Point;
 
 	override public function destroy(): Void {
 		super.destroy();
-		bitmap = null;
+		@:nullSafety(Off) bitmap = null;
 	}
 
 }

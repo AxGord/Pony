@@ -32,7 +32,7 @@ class Touchable extends TouchableBase {
 	private static inline var TOUCHEND: String = 'touchend';
 	private static inline var TOUCHCANCEL: String = 'touchcancel';
 
-	private static var lastPos:  Point<Int> = new Point(0, 0);
+	private static var lastPos: Point<Int> = new Point(0, 0);
 
 	public static function init(): Void {
 		if (inited) return;

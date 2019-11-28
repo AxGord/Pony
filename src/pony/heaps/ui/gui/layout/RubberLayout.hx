@@ -10,11 +10,13 @@ import pony.ui.gui.RubberLayoutCore;
  * RubberLayout
  * @author AxGord <axgord@gmail.com>
  */
+@:nullSafety(Strict)
 class RubberLayout extends BaseLayout<RubberLayoutCore<Object>> {
 
-	public function new(layoutWidth: Float, layoutHeight: Float, vert: Bool = false, ?border: Border<Int>, padding: Bool = true, ?align: Align) {
-		layout = new RubberLayoutCore<Object>(vert, border, padding, align);
-		super();
+	public function new(
+		layoutWidth: Float, layoutHeight: Float, vert: Bool = false, ?border: Border<Int>, padding: Bool = true, ?align: Align
+	) {
+		super(new RubberLayoutCore<Object>(vert, border, padding, align));
 		changeWh << changeWhHandler;
 		wh = new Point(layoutWidth, layoutHeight);
 	}

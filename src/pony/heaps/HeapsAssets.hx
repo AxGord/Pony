@@ -39,6 +39,7 @@ import pony.Fast;
  * HeapsAssets
  * @author AxGord <axgord@gmail.com>
  */
+@:nullSafety(Strict)
 class HeapsAssets {
 
 	private static inline var SDF_ALPHA: Float = 0.5;
@@ -56,28 +57,29 @@ class HeapsAssets {
 			case ATLAS:
 				loader.load();
 				loader.onLoaded = function(textBytes: Bytes): Void {
-					cb(1, 10);
+					cb(1, AssetManager.MAX_ASSET_PROGRESS);
 					var path: String = realAsset.substr(0, realAsset.lastIndexOf('/') + 1);
 					var imgFile: String = path + new BytesInput(textBytes).readLine();
 					var imgLoader: BinaryLoader = new BinaryLoader(imgFile);
 					imgLoader.load();
-					imgLoader.onProgress = function(cur: Int, max: Int): Void if (cur != max) cb(Std.int(1 + cur / max * 9), 10);
+					imgLoader.onProgress = function(cur: Int, max: Int): Void
+						if (cur != max) cb(Std.int(1 + cur / max * (AssetManager.MAX_ASSET_PROGRESS - 1)), AssetManager.MAX_ASSET_PROGRESS);
 					imgLoader.onLoaded = function(bytes: Bytes): Void {
 						var img: Any = Any.fromBytes(imgFile, bytes);
 						atlases[asset] = new Pair(
 							@:privateAccess img.loader,
 							Any.fromBytes(realAsset, textBytes).to(Atlas)
 						);
-						cb(10, 10);
+						cb(AssetManager.MAX_ASSET_PROGRESS, AssetManager.MAX_ASSET_PROGRESS);
 					}
 				}
 			case FNT:
 				loader.load();
 				loader.onLoaded = function(fntbytes: Bytes): Void {
-					cb(1, 10);
+					cb(1, AssetManager.MAX_ASSET_PROGRESS);
 					var data: String = fntbytes.toString();
-					var image: String = null;
-					var type: String = null;
+					var image: Null<String> = null;
+					var type: Null<String> = null;
 					try {
 						var xml: Fast = new Fast(Xml.parse(data)).node.font;
 						image = xml.node.pages.node.page.att.file;
@@ -104,30 +106,32 @@ class HeapsAssets {
 					var path: String = realAsset.substr(0, realAsset.lastIndexOf('/') + 1);
 					var imgLoader: BinaryLoader = new BinaryLoader(path + image);
 					imgLoader.load();
-					imgLoader.onProgress = function(cur: Int, max: Int): Void if (cur != max) cb(Std.int(1 + cur / max * 9), 10);
+					imgLoader.onProgress = function(cur: Int, max: Int): Void
+						if (cur != max) cb(Std.int(1 + cur / max * (AssetManager.MAX_ASSET_PROGRESS - 1)), AssetManager.MAX_ASSET_PROGRESS);
 					imgLoader.onLoaded = function(imgbytes: Bytes): Void {
 						var font:Font = FontParser.parse(fntbytes, realAsset, function(path: String): Tile {
 							return Any.fromBytes(path, imgbytes).toTile();
 						});
 						setFontType(font, type);
 						fonts[asset] = font;
-						cb(10, 10);
+						cb(AssetManager.MAX_ASSET_PROGRESS, AssetManager.MAX_ASSET_PROGRESS);
 					}
 
 				}
 			case PNG, JPG, JPEG:
 				loader.load();
-				loader.onProgress = function(cur: Int, max: Int): Void if (cur != max) cb(Std.int(cur / max * 10), 10);
+				loader.onProgress = function(cur: Int, max: Int): Void
+					if (cur != max) cb(Std.int(cur / max * AssetManager.MAX_ASSET_PROGRESS), AssetManager.MAX_ASSET_PROGRESS);
 				loader.onLoaded = function(bytes: Bytes): Void {
 					tiles[asset] = Any.fromBytes(realAsset, bytes).toTile();
-					cb(10, 10);
+					cb(AssetManager.MAX_ASSET_PROGRESS, AssetManager.MAX_ASSET_PROGRESS);
 				}
 			case TXT, CSS, JSON, CDB:
 				loader.load();
-				loader.onProgress = function(cur: Int, max: Int): Void if (cur != max) cb(Std.int(cur / max * 10), 10);
+				loader.onProgress = function(cur: Int, max: Int): Void if (cur != max) cb(Std.int(cur / max * AssetManager.MAX_ASSET_PROGRESS), AssetManager.MAX_ASSET_PROGRESS);
 				loader.onLoaded = function(bytes: Bytes): Void {
 					texts[asset] = Any.fromBytes(realAsset, bytes).toText();
-					cb(10, 10);
+					cb(AssetManager.MAX_ASSET_PROGRESS, AssetManager.MAX_ASSET_PROGRESS);
 				}
 			case _:
 				throw ERROR_NOT_SUPPORTED;
@@ -146,7 +150,7 @@ class HeapsAssets {
 		return switch ext(asset) {
 			case ATLAS:
 				if (name == null) throw ERROR_NAME_NOT_SET;
-				var p: Pair<Loader, Atlas> = atlases[asset];
+				var p: Null<Pair<Loader, Atlas>> = atlases[asset];
 				if (p == null) throw ERROR_NOT_LOADED;
 				Loader.currentInstance = p.a;
 				p.b.get(name);
@@ -166,7 +170,7 @@ class HeapsAssets {
 	public static function animation(asset: String, ?name: String): Array<Tile> {
 		return switch ext(asset) {
 			case ATLAS:
-				var clname: String = null;
+				var clname: Null<String> = null;
 				if (name != null) {
 					clname = SliceTools.clean(name);
 					if (clname == name) {
@@ -179,7 +183,7 @@ class HeapsAssets {
 					}
 				}
 				if (name == null) throw ERROR_NAME_NOT_SET;
-				var p: Pair<Loader, Atlas> = atlases[asset];
+				var p: Null<Pair<Loader, Atlas>> = atlases[asset];
 				if (p == null) throw ERROR_NOT_LOADED;
 				Loader.currentInstance = p.a;
 				p.b.getAnim(clname);
@@ -199,14 +203,14 @@ class HeapsAssets {
 	}
 
 	public static inline function font(asset: String): Font {
-		return fonts[asset];
+		return cast fonts[asset];
 	}
 
 	public static inline function text(asset: String): String {
-		return texts[asset];
+		return cast texts[asset];
 	}
 
-	public static function setFontType(font: Font, type: String): Void {
+	public static function setFontType(font: Font, type: Null<String>): Void {
 		switch type {
 			case null:
 			case 'msdf':

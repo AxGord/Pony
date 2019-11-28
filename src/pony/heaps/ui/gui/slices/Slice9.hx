@@ -8,11 +8,12 @@ import pony.geom.Point;
  * Slice9
  * @author AxGord <axgord@gmail.com>
  */
+@:nullSafety(Strict)
 @:final class Slice9 extends Node {
 
 	private var b: SliceBase;
 
-	public function new(tiles: Array<Tile>, ?repeat: Bool, ?parent: Object) {
+	public function new(tiles: Array<Tile>, repeat: Bool = false, ?parent: Object) {
 		super(new Point(
 			GUIUtils.tilesWidthSum(tiles.slice(0, 3)),
 			tiles[0].height + tiles[3].height + tiles[6].height

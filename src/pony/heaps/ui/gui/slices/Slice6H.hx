@@ -8,11 +8,12 @@ import pony.geom.Point;
  * Slice6H
  * @author AxGord <axgord@gmail.com>
  */
+@:nullSafety(Strict)
 @:final class Slice6H extends Node {
 
 	private var b: SliceBase;
 
-	public function new(tiles: Array<Tile>, ?repeat: Bool, ?parent: Object) {
+	public function new(tiles: Array<Tile>, repeat: Bool = false, ?parent: Object) {
 		tiles.push(tiles[0]);
 		tiles.push(tiles[1]);
 		tiles.push(tiles[2]);
