@@ -1,5 +1,4 @@
 import h2d.Scene;
-import h2d.Text;
 import pony.ui.xml.HeapsXmlUi;
 import pony.ui.AssetManager;
 import pony.heaps.HeapsApp;
