@@ -13,6 +13,7 @@ class Uglify extends Section {
 	public var mapOffset:Int = 0;
 	public var c:Bool = true;
 	public var m:Bool = true;
+	public var libcache: Bool = true;
 
 	public var debugLibs:Array<String> = [];
 	public var releaseLibs:Array<String> = [];
@@ -22,7 +23,7 @@ class Uglify extends Section {
 
 	public function result():Xml {
 		init();
-		set('libcache', 'true');
+		if (libcache) set('libcache', 'true');
 
 		if (c || m || releaseLibs.length > 0) {
 			var release = Xml.createElement('release');

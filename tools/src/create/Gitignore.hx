@@ -21,6 +21,7 @@ class Gitignore {
 	private static var HXML: String = '.hxml';
 	private static var NODE_MODULES: String = 'node_modules/';
 	private static var PACKAGE_LOCK: String = 'package-lock.json';
+	private static var LIBCACHE: String = 'libcache.js';
 	private static var ROOT: String = '/';
 	private static var MAP: String = '.map';
 	private static var NEWLINE: String = '\n';
@@ -46,6 +47,8 @@ class Gitignore {
 		}
 		if (project.download.active && project.download.list.length > 0)
 			result.push(ROOT + project.download.path);
+		if ((project.uglify.active && project.uglify.libcache) || (project.seconduglify.active && project.seconduglify.libcache))
+			result.push(ROOT + LIBCACHE);
 		switch type {
 			case ProjectType.Pixielectron, ProjectType.Electron, ProjectType.Monacoelectron:
 				result.push(ROOT + project.build.outputPath + NODE_MODULES);
