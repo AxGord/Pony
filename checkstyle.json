@@ -239,7 +239,8 @@
 					"PUBLIC_PRIVATE",
 					"STATIC",
 					"INLINE",
-					"DYNAMIC"
+					"DYNAMIC",
+					"FINAL"
 				]
 			},
 			"type": "ModifierOrder"
