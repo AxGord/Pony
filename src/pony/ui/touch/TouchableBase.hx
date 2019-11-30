@@ -232,10 +232,12 @@ class TouchableBase implements HasSignal {
 
 	private function dispatchOver(id: UInt = 0, safe: Bool = false): Void {
 		var t: Null<Touch> = touches[id];
-		if (t != null)
+		if (t != null) {
 			@:privateAccess t.eOver.dispatch(t);
-		else
+		} else {
+			if (touchPool == null || touchPool.isDestroy) return;
 			touches[id] = t = touchPool.get();
+		}
 		eOver.dispatch(t, safe);
 	}
 
