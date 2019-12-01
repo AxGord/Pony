@@ -14,8 +14,8 @@ package pony;
 
 	public inline function new() {}
 
-	#if !flash
-	@:extern inline
+	#if (!flash && !debug)
+	inline
 	#end
 	public function get(): T {
 		var v: Null<T> = list.pop();
@@ -23,12 +23,12 @@ package pony;
 	}
 
 	#if !flash
-	@:extern inline
+	inline
 	#end
 	public function ret(obj: T): Void list.push(untyped obj);
 
 	#if !flash
-	@:extern inline
+	inline
 	#end
 	public function destroy(): Void {
 		list = null;
@@ -55,8 +55,8 @@ package pony;
 		this.a1 = a1;
 	}
 
-	#if !flash
-	@:extern inline
+	#if (!flash && !debug)
+	inline
 	#end
 	public function get(): T {
 		var v: Null<T> = list.pop();
@@ -64,12 +64,12 @@ package pony;
 	}
 
 	#if !flash
-	@:extern inline
+	inline
 	#end
 	public function ret(obj: T): Void list.push(untyped obj);
 
 	#if !flash
-	@:extern inline
+	inline
 	#end
 	public function destroy(): Void {
 		list = null;
@@ -99,8 +99,8 @@ package pony;
 		this.a2 = a2;
 	}
 
-	#if !flash
-	@:extern inline
+	#if (!flash && !debug)
+	inline
 	#end
 	public function get(): T {
 		var v: Null<T> = list.pop();
@@ -108,12 +108,12 @@ package pony;
 	}
 
 	#if !flash
-	@:extern inline
+	inline
 	#end
 	public function ret(obj: T): Void list.push(untyped obj);
 
 	#if !flash
-	@:extern inline
+	inline
 	#end
 	public function destroy(): Void {
 		list = null;
