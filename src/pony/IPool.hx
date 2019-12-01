@@ -5,8 +5,11 @@ package pony;
  * @author AxGord <axgord@gmail.com>
  */
 interface IPool<T> {
+
 	#if !cs
-	function get():T;
-	function ret(obj:T):Void;
+	function get(): T;
+	function ret(obj: T): Void;
+	function destroy(): Void;
 	#end
+
 }

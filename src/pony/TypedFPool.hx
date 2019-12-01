@@ -16,9 +16,9 @@ package pony;
 		return v == null ? fn() : v;
 	}
 
-	public inline function ret(obj: T):Void list.push(obj);
+	public inline function ret(obj: T): Void list.push(obj);
 
-	@:nullSafety(Off) public function destroy():Void {
+	@:nullSafety(Off) public inline function destroy(): Void {
 		list = null;
 		fn = null;
 	}
