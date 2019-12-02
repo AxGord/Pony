@@ -35,7 +35,7 @@ import haxe.Serializer;
  */
 class TextTools {
 
-	public static inline var MODULE: String = 'pony.Tools';
+	public static inline var MODULE: String = 'pony.text.TextTools';
 	public static var letters: Map<String, String> = ['ru' => 'АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ'];
 	private static inline var FIRST_ANSI_ID: Int = 192;
 
@@ -314,6 +314,19 @@ class TextTools {
 			if (charIndex == -1) return false;
 			charIndex++;
 			b = b.substr(0, charIndex - 1) + b.substr(charIndex);
+		}
+		return true;
+	}
+
+	/**
+	 * String have only unique symbols
+	 */
+	public static function uniqueSymbols(s: String): Bool {
+		var exists: String = '';
+		for (i in 0...s.length) {
+			var char: String = s.charAt(i);
+			if (exists.indexOf(char) != -1) return false;
+			exists += char;
 		}
 		return true;
 	}
