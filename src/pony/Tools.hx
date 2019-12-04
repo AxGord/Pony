@@ -13,6 +13,7 @@ import haxe.macro.Expr;
 using haxe.macro.Tools;
 #end
 import pony.text.TextTools;
+import pony.math.MathTools;
 
 using Reflect;
 using Lambda;
@@ -24,42 +25,46 @@ using Lambda;
 class Tools {
 
 	#if (sys || js)
-	public static var isWindows(get, never):Bool;
+	public static var isWindows(get, never): Bool;
 	#end
-	private static inline var SRC:String = 'src';
+
+	private static inline var SRC: String = 'src';
 
 	#if macro
-	private static var _getBuildDate:String;
+	private static var _getBuildDate: String;
 	#end
-	macro public static function getBuildDate() {
-        if (_getBuildDate == null) _getBuildDate = Date.now().toString();
-        return Context.makeExpr(_getBuildDate, Context.currentPos());
-    }
+
+	macro public static function getBuildDate(): Expr {
+		if (_getBuildDate == null) _getBuildDate = Date.now().toString();
+		return Context.makeExpr(_getBuildDate, Context.currentPos());
+	}
 
 	#if (js && !nodejs)
-	@:extern private static inline function get_isWindows():Bool return pony.JsTools.os == pony.JsTools.OS.Windows;
+	@:extern private static inline function get_isWindows(): Bool return pony.JsTools.os == pony.JsTools.OS.Windows;
 	#elseif (sys || nodejs)
-	@:extern private static inline function get_isWindows():Bool return Sys.systemName() == 'Windows';
+	@:extern private static inline function get_isWindows(): Bool return Sys.systemName() == 'Windows';
 	#end
 
 	/**
 	 * Null Or Empty
 	 * @author nadako <nadako@gmail.com>
 	 */
-	inline static public function nore<T:{var length(default,null):Int;}>(v:T):Bool
+	public static inline function nore<T: { var length(default, null): Int; }>(v: T): Bool
 		return v == null || v.length == 0;
 
-	inline public static function or<T>(v1:T, v2:T):T return v1 == null ? v2 : v1;
+	public static inline function or<T>(v1: T, v2: T): T return v1 == null ? v2 : v1;
 
 	/**
 	 * with
 	 * @author Simn <simon@haxe.org>
 	 * @link https://gist.github.com/Simn/87948652a840ff544a22
 	 */
-	macro static public function with(e1:Expr, el:Array<Expr>) {
-		var tempName = "tmp";
-		var acc = [macro var $tempName = $e1];
-		var eThis = macro $i{tempName};
+	macro public static function with(e1:Expr, el:Array<Expr>): Expr {
+		var tempName: String = 'tmp';
+		var acc: Array<Expr> = [
+			macro var $tempName = $e1
+		];
+		var eThis: Expr = macro $i{tempName};
 		for (e in el) {
 			var e = switch (e) {
 				case macro $i{s}($a{args}):
@@ -82,16 +87,6 @@ class Tools {
 		return macro $b{acc};
 	}
 
-	static public function randomString(string_length:Int = 36):String {
-		var chars:String = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz";
-		var randomstring:String = '';
-		for (i in 0...string_length) {
-			var rnum:Int = Math.floor(Math.random() * chars.length);
-			randomstring += chars.charAt(rnum);
-		}
-		return randomstring;
-	}
-
 	/**
 	 * Compare two value
 	 * @author	deep <system.grand@gmail.com>
@@ -100,16 +95,15 @@ class Tools {
 	 * @param	maxDepth -1 - infinity depth
 	 * @return
 	 */
-	public static function equal(a:Dynamic, b:Dynamic, maxDepth:Int = 1):Bool {
+	public static function equal(a: Dynamic, b: Dynamic, maxDepth: Int = 1): Bool {
 		if (a == b) return true;
 		if (maxDepth == 0) return false;
-		var type = Type.typeof(a);
-		switch (type) {
+		switch Type.typeof(a) {
 			case TInt, TFloat, TBool, TNull: return false;
 			case TFunction:
 				try {
 					return Reflect.compareMethods(a, b);
-				} catch (_:Dynamic) {
+				} catch (_: Dynamic) {
 					return false;
 				}
 			case TEnum(t):
@@ -125,10 +119,8 @@ class Tools {
 			case TUnknown:
 			case TClass(t):
 				if (t == Array) {
-					if (!Std.is(b, Array)) return false;
-					if (a.length != b.length) return false;
-					for (i in 0...a.length)
-						if (!equal(a[i], b[i], maxDepth - 1)) return false;
+					if (!Std.is(b, Array) || a.length != b.length) return false;
+					for (i in 0...a.length) if (!equal(a[i], b[i], maxDepth - 1)) return false;
 					return true;
 				}
 		}
@@ -139,19 +131,16 @@ class Tools {
 			case TClass(t): if (t == Array) return false;
 			case TUnknown:
 		}
-
-		var fields:Array<String> = a.fields();
+		var fields: Array<String> = a.fields();
 		if (fields.length == b.fields().length) {
 			if (fields.length == 0) return true;
-			for (f in fields)
-				if (!b.hasField(f) || !equal(a.field(f), b.field(f), maxDepth - 1))
-					return false;
+			for (f in fields) if (!b.hasField(f) || !equal(a.field(f), b.field(f), maxDepth - 1)) return false;
 				return true;
-			}
+		}
 		return false;
-    }
+	}
 
-	public static function clone<T:Dynamic>(obj:T):T {
+	public static function clone<T: Dynamic>(obj: T): T {
 		return switch Type.typeof(obj) {
 			case TEnum(t):
 				Type.createEnumIndex(t, Type.enumIndex(obj), [for (e in Type.enumParameters(obj)) clone(e)]);
@@ -172,24 +161,20 @@ class Tools {
 		}
 	}
 
-	private static function _clone<T:Dynamic>(obj:T):T {
-		var n = {};
-		for (p in obj.fields())
-			n.setField(p, clone(obj.field(p)));
-		return cast n;
+	private static function _clone<T: Dynamic>(obj: T): T {
+		var n: T = cast {};
+		for (p in obj.fields()) n.setField(p, clone(obj.field(p)));
+		return n;
 	}
 
-	public static function superIndexOf<T>(it:Iterable<T>, v:T, maxDepth:Int = 1):Int {
-		var i:Int = 0;
-		if (maxDepth == 0) //Avoiding extra function calls on maxDepth == 0
-		{
+	public static function superIndexOf<T>(it: Iterable<T>, v: T, maxDepth: Int = 1): Int {
+		var i: Int = 0;
+		if (maxDepth == 0) { //Avoiding extra function calls on maxDepth == 0
 			for (e in it) {
 				if (e == v) return i;
 				i++;
 			}
-		}
-		else
-		{
+		} else {
 			for (e in it) {
 				if (equal(e, v, maxDepth)) return i;
 				i++;
@@ -198,8 +183,8 @@ class Tools {
 		return -1;
 	}
 
-	public static function superMultyIndexOf<T>(it:Iterable<T>, av:Array<T>, maxDepth:Int = 1):Int {
-		var i:Int = 0;
+	public static function superMultyIndexOf<T>(it: Iterable<T>, av: Array<T>, maxDepth: Int = 1): Int {
+		var i: Int = 0;
 		for (e in it) {
 			for (v in av) if (equal(e, v, maxDepth)) return i;
 			i++;
@@ -207,8 +192,8 @@ class Tools {
 		return -1;
 	}
 
-	public static function multyIndexOf<T>(it:Iterable<T>, av:Array<T>):Int {
-		var i:Int = 0;
+	public static function multyIndexOf<T>(it: Iterable<T>, av: Array<T>): Int {
+		var i: Int = 0;
 		for (e in it) {
 			for (v in av) if (e == v) return i;
 			i++;
@@ -221,55 +206,51 @@ class Tools {
 	 * @param	b
 	 * @return
 	 */
-	public static function cut(inp:BytesInput):BytesInput {
-		var out:BytesOutput = new BytesOutput();
-		var cntNull:Int = 0;
-		var flagNull:Bool = true;
-		var cur:Int = -99;
-		while (true)
-		{
+	public static function cut(inp: BytesInput): BytesInput {
+		var out: BytesOutput = new BytesOutput();
+		var cntNull: Int = 0;
+		var flagNull: Bool = true;
+		var cur: Int = -99;
+		while (true) {
 			try {
 				cur = inp.readByte();
-			} catch (_:Dynamic) {
+			} catch (_: Dynamic) {
 				break;
 			}
-			if ( cur == 0 )
-			{
-				if ( !flagNull )
+			if (cur == 0) {
+				if (!flagNull)
 					flagNull = true;
 				cntNull++;
-			}
-			else
-			{
-				if ( flagNull )
-					while ( cntNull-- > 0 )
-						out.writeByte( 0 );
+			} else {
+				if (flagNull)
+					while (cntNull-- > 0)
+						out.writeByte(0);
 				flagNull = false;
-				out.writeByte ( cur );
+				out.writeByte(cur);
 			}
 		}
 		out.close();
 		return new BytesInput(out.getBytes());
 	}
 
-	macro public static function currentFile():Expr {
-		var f:String = Context.getPosInfos(Context.currentPos()).file;
+	macro public static function currentFile(): Expr {
+		var f: String = Context.getPosInfos(Context.currentPos()).file;
 		f = sys.FileSystem.fullPath(f);
 		return macro $v{f};
 	}
 
-	macro public static function currentDir():Expr {
-		var f:String = Context.getPosInfos(Context.currentPos()).file;
+	macro public static function currentDir(): Expr {
+		var f: String = Context.getPosInfos(Context.currentPos()).file;
 		f = StringTools.replace(sys.FileSystem.fullPath(f), '\\', '/').split('/').slice(0, -1).join('/') + '/';
 		return macro $v{f};
 	}
 
 	#if (!macro && (nodejs || sys))
-	public static function ponyPath():String {
-		var pd:String = isWindows ? '\\' : '/';
-		var libPath:String = null;
+	public static function ponyPath(): String {
+		var pd: String = isWindows ? '\\' : '/';
+		var libPath: String = null;
 		#if nodejs
-		var o:String = Std.string(js.node.ChildProcess.execSync('haxelib path pony'));
+		var o: String = Std.string(js.node.ChildProcess.execSync('haxelib path pony'));
 		libPath = o.split('\n')[0];
 		#elseif neko
 		libPath = new sys.io.Process('haxelib', ['path', 'pony']).stdout.readLine();
@@ -289,38 +270,37 @@ class Tools {
 	}
 	#end
 
-	public static inline function exists<T>(a:Iterable<T>, e:T):Bool return a.indexOf(e) != -1;
+	public static inline function exists<T>(a: Iterable<T>, e: T): Bool return a.indexOf(e) != -1;
 
-	public static inline function bytesIterator(b:Bytes):Iterator<Byte> {
-		var i:Int = 0;
+	public static inline function bytesIterator(b: Bytes): Iterator<Byte> {
+		var i: Int = 0;
 		return {
-			hasNext: function():Bool return i < b.length,
-			next: function():Byte return b.get(i++)
+			hasNext: function(): Bool return i < b.length,
+			next: function(): Byte return b.get(i++)
 		};
 	}
 
-	public static inline function bytesInputIterator(b:BytesInput):Iterator<Byte> {
+	public static inline function bytesInputIterator(b: BytesInput): Iterator<Byte> {
 		return {
-			hasNext: function():Bool return b.position < b.length,
-			next: function():Byte return b.readByte()
+			hasNext: function(): Bool return b.position < b.length,
+			next: function(): Byte return b.readByte()
 		};
 	}
 
-	macro public static function ifsw(e:Expr):Expr {
-		var d:Array<Expr> = [];
+	macro public static function ifsw(e: Expr): Expr {
+		var d: Array<Expr> = [];
 		switch e.expr {
 			case ESwitch(ex, cases, edef):
 				for (c in cases) {
-					var cond:Expr = { expr: EBinop(OpEq, ex, c.values[0]), pos: Context.currentPos() };
+					var cond: Expr = { expr: EBinop(OpEq, ex, c.values[0]), pos: Context.currentPos() };
 					d.push(macro if ($cond) ${c.expr});
 				}
 			default: throw 'This is not switch';
 		}
-		//return macro $b{d};
-		return {expr: EBlock(d), pos: Context.currentPos()};// Context.makeExpr(d, Context.currentPos());
+		return { expr: EBlock(d), pos: Context.currentPos() };
 	}
 
-	public static function setFields(a:Dynamic, b:{}):Void {
+	public static function setFields(a: Dynamic, b: {}): Void {
 		for (p in b.fields()) {
 			var d:Dynamic = b.field(p);
 			if (a.hasField(p) && d.isObject() && !Std.is(d, String) && !Std.is(d, Array))
@@ -330,18 +310,18 @@ class Tools {
 		}
 	}
 
-	inline public static function copyFields(a:{}, b:{}):Void for (p in b.fields()) a.setField(p, b.field(p));
+	public static inline function copyFields(a: {}, b: {}): Void for (p in b.fields()) a.setField(p, b.field(p));
 
-	public static function parsePrefixObjects(a:Dynamic<String>, delimiter:String = '_'):Dynamic<Dynamic> {
-		var result:Dynamic<Dynamic> = { };
+	public static function parsePrefixObjects(a: Dynamic<String>, delimiter: String = '_'): Dynamic<Dynamic> {
+		var result: Dynamic<Dynamic> = {};
 		for (f in a.fields()) {
 			var d = f.split(delimiter);
-			var obj = result;
+			var obj: Dynamic<Dynamic> = result;
 			for (i in 0...d.length - 1) {
 				if (obj.hasField(d[i])) {
 					obj = obj.field(d[i]);
 				} else {
-					var newObj = { };
+					var newObj: Dynamic<Dynamic> = {};
 					obj.setField(d[i], newObj);
 					obj = newObj;
 				}
@@ -351,64 +331,62 @@ class Tools {
 		return result;
 	}
 
-	public static function convertObject(a:{}, fun:Dynamic->Dynamic):Dynamic<Dynamic> {
-		var result:Dynamic<Dynamic> = { };
+	public static function convertObject(a: {}, fun: Dynamic -> Dynamic): Dynamic<Dynamic> {
+		var result: Dynamic<Dynamic> = {};
 		for (p in a.fields()) {
-			var d:Dynamic = a.field(p);
-			if (d.isObject() && !Std.is(d, String))
-				result.setField(p, convertObject(d, fun));
-			else
-				result.setField(p, fun(d));
+			var d: Dynamic = a.field(p);
+			result.setField(p, d.isObject() && !Std.is(d, String) ? convertObject(d, fun) : fun(d));
 		}
 		return result;
 	}
 
-	inline public static function traceThrow(e:String):Void {
+	public static inline function traceThrow(e: String): Void {
 		Log.trace(e, null);
 		Log.trace(CallStack.toString(CallStack.exceptionStack()), null);
 	}
 
-	inline public static function writeStr(b:BytesOutput, s:String):Void {
+	public static inline function writeStr(b: BytesOutput, s: String): Void {
 		b.writeInt32(s.length);
 		b.writeString(s);
 	}
 
-	static public function readStr(b:BytesInput):String {
+	public static function readStr(b: BytesInput): String {
 		try {
 			return b.readString(b.readInt32());
-		} catch (_:Dynamic) return null;
+		} catch (_: Dynamic) return null;
 	}
 
-	public static function hexToBytes(hex:String):Bytes {
-		var output = new BytesOutput();
+	public static function hexToBytes(hex: String): Bytes {
+		var output: BytesOutput = new BytesOutput();
 		for (i in 0...Std.int(hex.length / 2))
 			output.writeByte(Std.parseInt(('0x' + hex.substr(i * 2, 2))));
 		return output.getBytes();
 	}
 
 	#if (haxe_ver >= 3.30)
-	@:generic inline static public function sget<A,B:haxe.Constraints.Constructible<Void -> Void>>(m:Map<A,B>, key:A):B
+	@:generic public static inline function sget<A, B:haxe.Constraints.Constructible<Void -> Void>>(m: Map<A, B>, key: A): B
 	#else
-	@:generic inline static public function sget<A,B:{function new():Void;}>(m:Map<A,B>, key:A):B
+	@:generic public static inline function sget<A, B: { function new(): Void; }>(m: Map<A, B>, key: A): B
 	#end
 		return m.exists(key) ? m[key] : m[key] = new B();
+
 	#if !cs
-	inline static public function reverse<K:Dynamic,V:Dynamic>(map:Map<K, V>):Map<V, K> return [for (k in map.keys()) map[k] => k];
+	public static inline function reverse<K: Dynamic, V: Dynamic>(map: Map<K, V>): Map<V, K> return [ for (k in map.keys()) map[k] => k ];
 	#end
-	inline static public function min(it:IntIterator):Int return it.field('min');
-	inline static public function max(it:IntIterator):Int return it.field('max');
-	inline static public function copy(it:IntIterator):IntIterator return it.field('min')...it.field('max');
+	public static inline function min(it: IntIterator): Int return it.field('min');
+	public static inline function max(it: IntIterator): Int return it.field('max');
+	public static inline function copy(it: IntIterator): IntIterator return it.field('min')...it.field('max');
 
-	public static function nullFunction0():Void return;
-	public static function nullFunction1(_:Dynamic):Void return;
-	public static function nullFunction2(_:Dynamic, _:Dynamic):Void return;
-	public static function nullFunction3(_:Dynamic, _:Dynamic, _:Dynamic):Void return;
-	public static function nullFunction4(_:Dynamic, _:Dynamic, _:Dynamic, _:Dynamic):Void return;
-	public static function nullFunction5(_:Dynamic, _:Dynamic, _:Dynamic, _:Dynamic, _:Dynamic):Void return;
-	public static function errorFunction(e:Dynamic):Void throw e;
+	public static function nullFunction0(): Void return;
+	public static function nullFunction1(_: Dynamic): Void return;
+	public static function nullFunction2(_: Dynamic, _: Dynamic): Void return;
+	public static function nullFunction3(_: Dynamic, _: Dynamic, _: Dynamic): Void return;
+	public static function nullFunction4(_: Dynamic, _: Dynamic, _: Dynamic, _: Dynamic): Void return;
+	public static function nullFunction5(_: Dynamic, _: Dynamic, _: Dynamic, _: Dynamic, _: Dynamic): Void return;
+	public static function errorFunction(e: Dynamic): Void throw e;
 
-	public static function own(c1:Class<Dynamic>, c2:Class<Dynamic>):Bool {
-		var p = c2;
+	public static function own(c1: Class<Dynamic>, c2: Class<Dynamic>): Bool {
+		var p: Class<Dynamic> = c2;
 		while (p != null) {
 			if (c1 == p) return true;
 			p = Type.getSuperClass(c2);
@@ -416,14 +394,14 @@ class Tools {
 		return false;
 	}
 
-	#if (js||flash)
+	#if (js || flash)
 	@:extern inline
 	#end
-	public static function functionLength(f:Function):Int {
+	public static function functionLength(f: Function): Int {
 		#if php
 		var rf = untyped __php__("new ReflectionMethod($f[0], $f[1])");
 		return rf.getNumberOfParameters();
-		#elseif (js||flash)
+		#elseif (js || flash)
 		return untyped f.length;
 		#elseif cpp
 		return Std.parseInt(Std.string(f).substr(10));
@@ -565,6 +543,28 @@ class MapTools {
 		}
 	}
 
+	public static function minMaxKey<T>(map: Map<Int, T>): SPair<Int> {
+		var max: Int = 0;
+		var min: Int = MathTools.maxInt;
+		for (len in map.keys()) {
+			max = MathTools.cmax(max, len);
+			min = MathTools.cmin(min, len);
+		}
+		return new SPair<Int>(min, max);
+	}
+
+	public static function minKey<T>(map: Map<Int, T>): Int {
+		var min: Int = MathTools.maxInt;
+		for (len in map.keys()) min = MathTools.cmin(min, len);
+		return min;
+	}
+
+	public static function maxKey<T>(map: Map<Int, T>): Int {
+		var max: Int = 0;
+		for (len in map.keys()) max = MathTools.cmax(max, len);
+		return max;
+	}
+
 }
 
 class FloatTools {
@@ -586,14 +586,13 @@ class FloatTools {
 		return macro FloatTools._toFixed($a{[$ex, $v{a[1].length}, $v{a[0].length}, $v{s}, $v{beginS}, $v{endS}]});
 	}
 
-	public static function _toFixed(v: Float, n: Int, begin: Int = 0, d: String = '.', beginS: String='0', endS: String = '0'): String {
+	public static function _toFixed(v: Float, n: Int, begin: Int = 0, d: String = '.', beginS: String = '0', endS: String = '0'): String {
 		if (begin != 0) {
 			var s: String = _toFixed(v, n, 0, d, beginS, endS);
 			var a: Array<String> = s.split(d);
 			var d: Int = begin - a[0].length;
 			return TextTools.repeat(beginS, d) + s;
 		}
-
 		if (n == 0) return Std.string(Std.int(v));
 		var p: Float = Math.pow(10, n);
 		v = Math.floor(v * p) / p;

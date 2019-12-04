@@ -7,10 +7,10 @@ package pony;
 @:nullSafety(Strict) class Random {
 
 	public static inline function uint(to: UInt, from: UInt = 0): UInt
-		return from + Std.int((to - from + 1) * Math.random());
+		return from >= to ? to : from + Std.int((to - from + 1) * Math.random());
 
 	public static inline function int(to: Int, from: Int = 0): Int
-		return from + Std.int((to - from + 1) * Math.random());
+		return from >= to ? to : from + Std.int((to - from + 1) * Math.random());
 
 	public static inline function fromArray<T>(a: Array<T>): Null<T>
 		return a[uint(a.length - 1)];
@@ -32,6 +32,13 @@ package pony;
 		var r: String = '';
 		while (a.length > 0) r += @:nullSafety(Off) s.charAt(a.splice(uint(a.length - 1), 1).pop());
 		return r;
+	}
+
+	public static function randomString(len: Int = 36): String {
+		var chars: String = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz';
+		var randomstring: String = '';
+		for (i in 0...len) randomstring += chars.charAt(uint(chars.length - 1));
+		return randomstring;
 	}
 
 }
