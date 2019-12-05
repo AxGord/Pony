@@ -17,52 +17,55 @@ import pony.math.MathTools;
  * @author AxGord <axgord@gmail.com>
  */
 class Tween implements HasSignal implements Declarator {
-	
-	@:auto public var onUpdate:Signal1<Float>;
-	@:auto public var onProgress:Signal1<Float>;
-	@:auto public var onComplete:Signal1<Float>;
-	@:auto public var onSkip:Signal1<Int>;
-	
-	@:arg public var range:Interval<Float> = 0...1;
-	
+
+	private static inline var SECOND: UInt = 1000;
+	private static inline var HALF_SECOND: UInt = 500;
+
+	@:auto public var onUpdate: Signal1<Float>;
+	@:auto public var onProgress: Signal1<Float>;
+	@:auto public var onComplete: Signal1<Float>;
+	@:auto public var onSkip: Signal1<Int>;
+
+	@:arg public var range: Interval<Float> = 0...1;
+
 	/**
 	 * Next start will be backward
 	 */
-	private var invert:Bool;
-	
-	private var updateSignal:Signal1<DT>;
-	public var progress(default, null):Float = 0;
-	private var sr:Float;
-	private var playing:Bool = false;
-	private var type:TweenType;
-	private var skipTime:Float;
-	
+	private var invert: Bool;
+
+	private var updateSignal: Signal1<DT>;
+	public var progress(default, null): Float = 0;
+	private var sr: Float;
+	private var playing: Bool = false;
+	private var type: TweenType;
+	private var skipTime: Float;
+
 	public function new(
-		type:TweenType = TweenType.Linear,
-		time:Time = 1000,
-		invert:Bool = false,
-		loop:Bool = false,
-		pingpong:Bool = false,
-		fixedTime:Bool = false,
-		?skipTime:Time
+		type: TweenType = TweenType.Linear,
+		time: Time = 1000,
+		invert: Bool = false,
+		loop: Bool = false,
+		pingpong: Bool = false,
+		fixedTime: Bool = false,
+		?skipTime: Time
 	) {
 		this.type = type;
 		sr = 1000 / time;
 		this.invert = invert;
 		updateSignal = fixedTime ? DeltaTime.fixedUpdate : DeltaTime.update;
 		if (pingpong) {
-			if (skipTime == null) skipTime = time / 500;
+			if (skipTime == null) skipTime = time / HALF_SECOND;
 			onComplete << invertInvert;
 		} else {
-			if (skipTime == null) skipTime = time / 1000;
+			if (skipTime == null) skipTime = time / SECOND;
 		}
 		this.skipTime = skipTime;
 		onComplete << endPlay;
 		if (loop) onComplete << play;
 		onProgress << progressHandler;
 	}
-	
-	private function progressHandler(v:Float):Void {
+
+	private function progressHandler(v: Float): Void {
 		v = switch type {
 			case Linear: v;
 			case Square: v * v;
@@ -71,27 +74,27 @@ class Tween implements HasSignal implements Declarator {
 		};
 		eUpdate.dispatch(MathTools.percentCalc(v, range.min, range.max));
 	}
-	
-	private function invertInvert():Void invert = !invert;
-	private function endPlay():Void playing = false;
-	
-	public function playForward(?dt:DT):Void {
+
+	private function invertInvert(): Void invert = !invert;
+	private function endPlay(): Void playing = false;
+
+	public function playForward(?dt: DT): Void {
 		if (playing) pause();
 		invert = false;
 		playing = true;
 		updateSignal << forward;
 		if ((dt: Null<Float>) != null) forward(dt);
 	}
-	
-	public function playBack(?dt:DT):Void {
+
+	public function playBack(?dt: DT): Void {
 		if (playing) pause();
 		invert = true;
 		playing = true;
 		updateSignal << backward;
 		if ((dt: Null<Float>) != null) backward(dt);
 	}
-	
-	public function play(?dt:DT):Void {
+
+	public function play(?dt: DT): Void {
 		if (updateSignal == null) return;
 		if (playing) return;
 		playing = true;
@@ -113,17 +116,17 @@ class Tween implements HasSignal implements Declarator {
 			if ((dt: Null<Float>) != null) backward(dt);
 		}
 	}
-	
-	private function forward(dt:Float):Void {
+
+	private function forward(dt: Float): Void {
 		if (updateSignal == null) {
 			DeltaTime.fixedUpdate >> forward;
 			DeltaTime.update >> forward;
-			return;//todo: fix bug (check this)
+			return; //todo: fix bug (check this)
 		}
 		if (!playing) {
 			//trace('forward');
 			updateSignal >> forward;
-			return;//todo: fix bug (check this)
+			return; //todo: fix bug (check this)
 		}
 		progress += dt * sr;
 		if (progress >= 1) {
@@ -136,22 +139,22 @@ class Tween implements HasSignal implements Declarator {
 			update();
 		}
 	}
-	
-	private function backward(dt:Float):Void {
+
+	private function backward(dt: Float): Void {
 		if (updateSignal == null) {
 			DeltaTime.fixedUpdate >> backward;
 			DeltaTime.update >> backward;
-			return;//todo: fix bug (check this)
+			return; //todo: fix bug (check this)
 		}
 		if (!playing) {
 			//trace('backward');
 			updateSignal >> backward;
-			return;//todo: fix bug (check this)
+			return; //todo: fix bug (check this)
 		}
 		progress -= dt * sr;
 		if (progress <= 0) {
 			updateSignal >> backward;
-			var d = MathTools.range(progress, 0) / sr;
+			var d: Float = MathTools.range(progress, 0) / sr;
 			progress = 0;
 			update();
 			eComplete.dispatch(d);
@@ -159,36 +162,36 @@ class Tween implements HasSignal implements Declarator {
 			update();
 		}
 	}
-	
-	inline public function update():Void eProgress.dispatch(progress);
-	
-	public function pause():Void {
+
+	public inline function update(): Void eProgress.dispatch(progress);
+
+	public function pause(): Void {
 		if (updateSignal == null) return;
 		updateSignal.remove(invert ? backward : forward);
 		playing = false;
 	}
-	
-	public function stopOnBegin():Void {
+
+	public function stopOnBegin(): Void {
 		if (updateSignal == null) return;
 		pause();
 		invert = false;
 		progress = 0;
 		update();
 	}
-	
-	public function stopOnEnd():Void {
+
+	public function stopOnEnd(): Void {
 		if (updateSignal == null) return;
 		pause();
 		invert = true;
 		progress = 1;
 		update();
 	}
-	
-	public function destroy():Void {
+
+	public function destroy(): Void {
 		pause();
 		this.destroySignals();
 		updateSignal = null;
 		range = null;
 	}
-	
+
 }

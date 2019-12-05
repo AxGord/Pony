@@ -10,26 +10,26 @@ typedef BaseConfig = {
 
 /**
  * XmlConfigReader
- * @author AxGord
+ * @author AxGord <axgord@gmail.com>
  */
-class XmlConfigReader<T:BaseConfig> {
-	
-	public var cfg:T;
-	private var onConfig:T -> Void;
-	private var allowEnd:Bool = true;
+class XmlConfigReader<T: BaseConfig> {
 
-	public function new(xml:Fast, cfg:T, ?onConfig:T -> Void) {
+	public var cfg: T;
+	private var onConfig: T -> Void;
+	private var allowEnd: Bool = true;
+
+	public function new(xml: Fast, cfg: T, ?onConfig: T -> Void) {
 		this.cfg = cfg;
 		this.onConfig = onConfig;
 		readXml(xml);
 	}
 
-	private function readAttr(name:String, val:String):Void {}
-	private function readNode(xml:Fast):Void {}
-	private function end():Void {}
+	private function readAttr(name: String, val: String): Void {}
+	private function readNode(xml: Fast): Void {}
+	private function end(): Void {}
 
-	private function readXml(xml:Fast):Void {
-		var locAllowEnd:Bool = true;
+	private function readXml(xml: Fast): Void {
+		var locAllowEnd: Bool = true;
 		for (a in xml.x.attributes()) readAttr(a, normalize(xml.x.get(a)));
 		for (e in xml.elements) {
 			switch e.name {
@@ -60,15 +60,15 @@ class XmlConfigReader<T:BaseConfig> {
 		if (locAllowEnd && allowEnd) end();
 	}
 
-	private function normalize(s:String):String return StringTools.trim(s);
+	private function normalize(s: String): String return StringTools.trim(s);
 
-	private function copyCfg():T return pony.Tools.clone(cfg);
+	private function copyCfg(): T return pony.Tools.clone(cfg);
 
-	private function _selfCreate<C:XmlConfigReader<T>>(xml:Fast, conf:T):C {
+	private function _selfCreate<C: XmlConfigReader<T>>(xml: Fast, conf: T): C {
 		allowEnd = false;
 		return cast Type.createInstance(Type.getClass(this), [xml, conf, onConfig]);
 	}
 
-	private function selfCreate<C:XmlConfigReader<T>>(xml:Fast):C return _selfCreate(xml, copyCfg());
+	private function selfCreate<C: XmlConfigReader<T>>(xml: Fast): C return _selfCreate(xml, copyCfg());
 
 }

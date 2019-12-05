@@ -310,7 +310,7 @@ class TextTools {
 	 */
 	public static function strictCheckSymbols(a: String, b: String): Bool {
 		for (i in 0...a.length) {
-			var charIndex: UInt = b.indexOf(a.charAt(i));
+			var charIndex: Int = b.indexOf(a.charAt(i));
 			if (charIndex == -1) return false;
 			charIndex++;
 			b = b.substr(0, charIndex - 1) + b.substr(charIndex);

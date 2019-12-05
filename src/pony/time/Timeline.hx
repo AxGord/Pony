@@ -12,20 +12,19 @@ import pony.magic.HasSignal;
  */
 class Timeline implements Declarator implements HasSignal {
 
-	@:arg private var data:Array<Time>;
-	@:arg public var pauseOnStep:Bool = false;
-	
-	@:auto public var onStep:Signal1<Int>;
-	
-	public var isPlay(default, null):Bool = false;
-	
-	public var currentStep(default,null):Int = 0;
-	public var currentTime(default,null):Time = 0;
-	
-	private var lastdt:DT = 0;
-	private var timer:DTimer;
-	
-	public function play(dt:DT = 0):Void {
+	@:auto public var onStep: Signal1<Int>;
+
+	public var isPlay(default, null): Bool = false;
+	public var currentStep(default, null): Int = 0;
+	public var currentTime(default, null): Time = 0;
+
+	private var lastdt: DT = 0;
+	private var timer: DTimer;
+
+	@:arg private var data: Array<Time>;
+	@:arg public var pauseOnStep: Bool = false;
+
+	public function play(dt: DT = 0): Void {
 		if (isPlay) return;
 		if (currentStep >= data.length) return;
 		isPlay = true;
@@ -33,14 +32,14 @@ class Timeline implements Declarator implements HasSignal {
 		else timer.start(dt + lastdt);
 		lastdt = 0;
 	}
-	
-	public function pause():Void {
+
+	public function pause(): Void {
 		if (!isPlay) return;
 		timer.stop();
 		isPlay = false;
 	}
-	
-	private function endStep(dt:DT):Void {
+
+	private function endStep(dt: DT): Void {
 		timer = null;
 		currentTime = data[currentStep];
 		currentStep++;
@@ -49,8 +48,8 @@ class Timeline implements Declarator implements HasSignal {
 		if (!pauseOnStep) play();
 		eStep.dispatch(currentStep);
 	}
-	
-	public function reset():Void {
+
+	public function reset(): Void {
 		if (timer != null) {
 			timer.destroy();
 			timer = null;
@@ -59,16 +58,16 @@ class Timeline implements Declarator implements HasSignal {
 		currentTime = 0;
 		currentStep = 0;
 	}
-	
-	public function playTo(step:Int, dt:DT = 0):Void {
+
+	public function playTo(step: Int, dt: DT = 0): Void {
 		pauseOnStep = true;
-		var l:Listener1<Int> = null;
-		l = function(n:Int):Void {
+		var l: Listener1<Int> = null;
+		l = function(n: Int): Void {
 			if (n < step) play();
 			else onStep >> l;
 		}
 		onStep << l;
 		play(dt);
 	}
-	
+
 }

@@ -1,6 +1,6 @@
 package pony.time;
 
-import pony.events.*;
+import pony.events.Signal1;
 import pony.magic.Declarator;
 import pony.magic.HasSignal;
 import pony.math.MathTools;
@@ -10,27 +10,27 @@ import pony.math.MathTools;
  * @author AxGord
  */
 class Timer implements ITimer<Timer> implements Declarator implements HasSignal {
-	
+
 	#if (!neko && !dox && !cpp)
-	private var t:haxe.Timer;
+	private var t: haxe.Timer;
 	#elseif munit
-	private var t:massive.munit.util.Timer;
+	private var t: massive.munit.util.Timer;
 	#end
-	
-	public var currentTime:Time;
-	
-	public var started(get, never):Bool;
-	
-	@:auto public var update:Signal1<Time>;
-	@:auto public var progress:Signal1<Float>;
-	@:auto public var complete:Signal1<DT>;
-	
-	public var frequency:Time = 1000;
-	private var _frequency:Time;
-	
-	@:arg public var time:TimeInterval = null;
-	@:arg public var repeatCount:Int = 0;
-	
+
+	public var currentTime: Time;
+
+	public var started(get, never): Bool;
+
+	@:auto public var update: Signal1<Time>;
+	@:auto public var progress: Signal1<Float>;
+	@:auto public var complete: Signal1<DT>;
+
+	public var frequency: Time = 1000;
+	private var _frequency: Time;
+
+	@:arg public var time: TimeInterval = null;
+	@:arg public var repeatCount: Int = 0;
+
 	public function new() {
 		eProgress.onTake.add(takeProgress);
 		eProgress.onLost.add(lostProgress);
@@ -38,17 +38,19 @@ class Timer implements ITimer<Timer> implements Declarator implements HasSignal 
 		eProgress.onLost.add(lUpdate);
 		reset();
 	}
+
 	#if !dox
-	inline private function get_started():Bool return t != null;
+	private inline function get_started(): Bool return t != null;
 	#else
-	inline private function get_started():Bool return false;
+	private inline function get_started(): Bool return false;
 	#end
-	private function takeProgress():Void update.add(_progress);
-	private function lostProgress():Void update.remove(_progress);
-	
-	private function lUpdate():Void if (time != null) start();
-	
-	public function reset():Timer {
+
+	private function takeProgress(): Void update.add(_progress);
+	private function lostProgress(): Void update.remove(_progress);
+
+	private function lUpdate(): Void if (time != null) start();
+
+	public function reset(): Timer {
 		if (time != null) {
 			currentTime = time.min;
 			_frequency = frequency;
@@ -59,16 +61,16 @@ class Timer implements ITimer<Timer> implements Declarator implements HasSignal 
 		if (started) start();
 		return this;
 	}
-	
-	inline public function restart(?dt:DT):Void {
+
+	public inline function restart(?dt: DT): Void {
 		stop();
 		reset();
 		start(dt);
 	}
-	
-	public function start(?dt:DT):Timer {
+
+	public function start(?dt: DT): Timer {
 		stop();
-		var delay:Int = !eUpdate.empty || time == null ? _frequency : MathTools.cabs(time.max - currentTime);
+		var delay: Int = !eUpdate.empty || time == null ? _frequency : MathTools.cabs(time.max - currentTime);
 		#if (!neko && !dox && !cpp)
 		t = new haxe.Timer(delay);
 		t.run = !update.empty ? _update : _complite;
@@ -78,14 +80,14 @@ class Timer implements ITimer<Timer> implements Declarator implements HasSignal 
 		#end
 		return this;
 	}
-	
-	private function _complite():Void {
+
+	private function _complite(): Void {
 		eComplete.dispatch(0);
 		if (repeatCount == 0) stop();
 		else if (repeatCount > 0) repeatCount--;
 	}
-	
-	private function _update():Void {
+
+	private function _update(): Void {
 		if (time.back) {
 			currentTime -= _frequency;
 		} else {
@@ -102,8 +104,8 @@ class Timer implements ITimer<Timer> implements Declarator implements HasSignal 
 			} else dispatchUpdate();
 		}
 	}
-	
-	public function stop():Timer {
+
+	public function stop(): Timer {
 		#if ((!neko && !dox && !cpp) || munit)
 		if (t != null) {
 			t.stop();
@@ -112,13 +114,13 @@ class Timer implements ITimer<Timer> implements Declarator implements HasSignal 
 		#end
 		return this;
 	}
-	
-	public inline function dispatchUpdate():Timer {
+
+	public inline function dispatchUpdate(): Timer {
 		eUpdate.dispatch(currentTime);
 		return this;
 	}
-	
-	public function destroy():Void {
+
+	public function destroy(): Void {
 		stop();
 		eProgress.destroy();
 		eUpdate.destroy();
@@ -128,19 +130,19 @@ class Timer implements ITimer<Timer> implements Declarator implements HasSignal 
 		eComplete = null;
 		time = null;
 	}
-	
-	private function _progress():Void eProgress.dispatch(time.percent(currentTime));
-	
-	static public inline function delay (time:Time, f:Void->Void):Timer {
-		var t = new Timer(time);
+
+	private function _progress(): Void eProgress.dispatch(time.percent(currentTime));
+
+	public static inline function delay(time: Time, f:Void -> Void): Timer {
+		var t: Timer = new Timer(time);
 		t.complete.once(f);
 		t.complete.once(t.destroy);
 		return t.start();
 	}
-	static public inline function repeat(time:Time, f:Void->Void):Timer {
-		var t = new Timer(time, -1);
+	public static inline function repeat(time: Time, f: Void -> Void): Timer {
+		var t: Timer = new Timer(time, -1);
 		t.complete.add(f);
 		return t.start();
 	}
-	
+
 }

@@ -3,51 +3,55 @@ package pony.text;
 import pony.magic.Declarator;
 import pony.math.MathTools;
 
+typedef PosLen = {
+	pos: Int, len: Int
+}
+
 /**
  * All for good parse.
- * @author AxGord
+ * @author AxGord <axgord@gmail.com>
  */
 class ParseBoy<T> implements Declarator {
-	
-	@:arg public var t:String;
-	@:arg public var space:Bool = true;
-	
+
+	@:arg public var t: String;
+	@:arg public var space: Bool = true;
+
 	/**
 	 * Current position.
 	 */
-	public var pos:Int = 0;
-	
+	public var pos: Int = 0;
+
 	/**
 	 * Position before call 'goto' function.
 	 */
-	public var beforeGoto:Int;
-	
+	public var beforeGoto: Int;
+
 	/**
 	 * Count symbols skiped 'goto' function.
 	 */
-	public var lengthGoto:Int;
-	
+	public var lengthGoto: Int;
+
 	/**
-	 * Result data. Use functions: push, pop, beginContent, endContent.
+	 * Result data. Use functions:  push, pop, beginContent, endContent.
 	 */
-	public var data:Array<T> = new Array<T>();
-	private var stack:Array<Array<T>> = new Array<Array<T>>();
-	
+	public var data: Array<T> = [];
+	private var stack: Array<Array<T>> = [];
+
 	/**
 	 * Can igonre spaces.
 	 * @param v - search string.
 	 * @return begin position and searched string length.
 	 * @see indexOf
 	 */
-	public function indexOf(v:String):{pos: Int, len: Int} {
+	public function indexOf(v: String): PosLen {
 		if (space) {
-			var n:Int = 0, i:Int = pos, lc:Int = 0;
+			var n: Int = 0, i: Int = pos, lc: Int = 0;
 			while (i < t.length) {
-				var c:String = t.charAt(i);
+				var c: String = t.charAt(i);
 				if (c == v.charAt(n)) {
 					if (n >= v.length - 1) {
 						lc++;
-						return {pos: i - lc + 1, len: lc};
+						return { pos: i - lc + 1, len: lc };
 					} else {
 						n++;
 						lc++;
@@ -63,18 +67,18 @@ class ParseBoy<T> implements Declarator {
 		} else
 			return {pos: t.indexOf(v, pos), len: v.length};
 	}
-	
+
 	/**
 	 * Go to string.
 	 * @param	a searched strings.
 	 * @param nospace if true return -2 if no space.
 	 * @return string number, -1 if not.
 	 */
-	public function gt(a:Array<String>, nospace:Bool=false):Int {
+	public function gt(a: Array<String>, nospace: Bool = false): Int {
 		beforeGoto = pos;
 		var r:Int = -1;
 		var ipos:Int = MathTools.maxInt;
-		
+
 		if (nospace) {
 			for (i in pos...t.length) {
 				if (t.charAt(i) != ' ') {
@@ -85,10 +89,10 @@ class ParseBoy<T> implements Declarator {
 				}
 			}
 		}
-		
+
 		for (n in 0...a.length) {
 			if (a[n] == null) continue;
-			var io:{pos: Int, len: Int} = indexOf(a[n]);
+			var io: PosLen = indexOf(a[n]);
 			if (io != null)
 				if (io.pos <= ipos) {
 					r = n;
@@ -104,40 +108,40 @@ class ParseBoy<T> implements Declarator {
 		}
 		return r;
 	}
-	
-	public inline function str():String {
+
+	public inline function str(): String {
 		return t.substr(beforeGoto, pos - beforeGoto - lengthGoto);
 	}
-	
-	public function skipSpace():Void {
+
+	public function skipSpace(): Void {
 		if (space)
 			while (pos < t.length && t.charAt(pos) == ' ') pos++;
 	}
-	
-	public function beginContent():Void {
+
+	public function beginContent(): Void {
 		stack.push(data);
-		data = new Array<T>();
+		data = [];
 	}
-	
-	public inline function endContent():Void {
+
+	public inline function endContent(): Void {
 		data = stack.pop();
 	}
-	
-	public inline function push(v:T):Int {
+
+	public inline function push(v: T): Int {
 		return data.push(v);
 	}
-	
-	public inline function pop():T {
+
+	public inline function pop(): T {
 		return data.pop();
 	}
-	
+
 	//Next only for T == String
-	
-	public inline function pushStr():Int {
+
+	public inline function pushStr(): Int {
 		return push(cast str());
 	}
-	
-	public function gotoPushStr(search:String):Int {
+
+	public function gotoPushStr(search:String): Int {
 		return if (gt([search]) != -1)
 			pushStr();
 		else {
@@ -145,9 +149,9 @@ class ParseBoy<T> implements Declarator {
 			push(null);
 		}
 	}
-	
-	public inline function pushEnd():Int {
+
+	public inline function pushEnd(): Int {
 		return push(cast t.substr(pos));
 	}
-	
+
 }

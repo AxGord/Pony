@@ -2,7 +2,7 @@ package pony.text;
 
 /**
  * Encode/decode string
- * @author AxGord
+ * @author AxGord <axgord@gmail.com>
  */
 class TextCoder {
 

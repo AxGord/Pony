@@ -2,24 +2,26 @@ package pony.time;
 
 /**
  * MainLoop
- * @author AxGord
+ * @author AxGord <axgord@gmail.com>
  */
 class MainLoop {
 
-	public static var lastTick(default, null):Float;
-	private static var _stop:Bool = false;
+	private static inline var SLEEP_TIME: Float = 1 / 62;
 
-	public static inline function init():Void {
+	public static var lastTick(default, null): Float;
+	private static var _stop: Bool = false;
+
+	public static inline function init(): Void {
 		lastTick = getTime();
 	}
 
-	@:extern public static inline function getTime():Float return Sys.time();
+	@:extern public static inline function getTime(): Float return Sys.time();
 
-	public static function start():Void {
-		var nt:Float;
+	public static function start(): Void {
+		var nt: Float;
 		while (!_stop) {
 			nt = getTime();
-			var sleepTime:Float = 1 / 62 - (nt - lastTick);
+			var sleepTime: Float = SLEEP_TIME - (nt - lastTick);
 			if (sleepTime > 0) Sys.sleep(sleepTime);
 			nt = getTime();
 			DeltaTime.fixedValue = nt - lastTick;
@@ -28,6 +30,6 @@ class MainLoop {
 		}
 	}
 
-	public static inline function stop():Void _stop = true;
+	public static inline function stop(): Void _stop = true;
 
 }
