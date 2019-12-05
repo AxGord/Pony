@@ -100,14 +100,14 @@ class TouchableBase implements HasSignal {
 		if (ax > ay) {
 			if (ax >= SWIPE_STEP) {
 				onUp >> eClick;
-				eSwipe.dispatch(x > 0 ? Direction.left : Direction.right);
+				eSwipe.dispatch(x > 0 ? Direction.Left : Direction.Right);
 				cancleSwipeAndListenDown();
 				return;
 			}
 		} else if (ax < ay) {
 			if (ay >= SWIPE_STEP) {
 				onUp >> eClick;
-				eSwipe.dispatch(y > 0 ? Direction.up : Direction.down);
+				eSwipe.dispatch(y > 0 ? Direction.Up : Direction.Down);
 				cancleSwipeAndListenDown();
 				return;
 			}

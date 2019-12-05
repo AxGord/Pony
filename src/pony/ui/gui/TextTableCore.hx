@@ -19,18 +19,18 @@ typedef TableContent = Array < Array<String> > ;
  * @author AxGord <axgord@gmail.com>
  */
 class TextTableCore implements HasAbstract {
-	
+
 	public var data(default, set):TableContent;
-	
+
 	private function new() {}
-	
+
 	public function set_data(d:TableContent):TableContent {
 		if (data != null) clear();
 		data = d;
 		if (d != null) draw();
 		return d;
 	}
-	
+
 	private function drawLine(a:IntPoint, b:IntPoint, color:UColor, size:Int):Void {
 		if (a.x == b.x) drawBG({x:a.x, y:a.y, width: size, height: MathTools.cabs(b.y-a.y)}, color);
 		else drawBG({x:a.x, y:a.y, width: MathTools.cabs(b.x-a.x), height: size}, color);
@@ -38,12 +38,12 @@ class TextTableCore implements HasAbstract {
 	@:abstract private function drawBG(r:IntRect, color:UColor):Void;
 	@:abstract private function drawText(point:IntRect, text:String, style:FontStyle):Void;
 	@:abstract private function clear():Void;
-	
+
 	public dynamic function borderStyle(point:IntPoint, direct:Direction):Pair<Int,UColor> return new Pair(1,new UColor(0));
 	public dynamic function bgStyle(point:IntPoint):Pair<IntPoint, UColor> return new Pair({x:100,y:20}, new UColor(0xFFFFFFFF));
 	public dynamic function fontStyle(point:IntPoint):FontStyle
 		return {font:'Arial', size: 14, color: 0, bold: false, italic:false, underline: false};
-	
+
 	public function draw():Void {
 		var rl:Int = data.length-1;
 		var sdy:Int = 0;
@@ -55,10 +55,10 @@ class TextTableCore implements HasAbstract {
 				var dy:Int = sdy;
 				var point:IntPoint = { x: c.key, y: r.key };
 				var bg = bgStyle(point);
-				var top = borderStyle(point, Direction.up);
-				var left = borderStyle(point, Direction.left);
-				var right = borderStyle(point, Direction.right);
-				var bottom = borderStyle(point, Direction.down);
+				var top = borderStyle(point, Direction.Up);
+				var left = borderStyle(point, Direction.Left);
+				var right = borderStyle(point, Direction.Right);
+				var bottom = borderStyle(point, Direction.Down);
 				drawLine( { x: dx, y: dy }, { x: dx + bg.a.x + left.a, y: dy }, top.b, top.a);
 				dy += top.a;
 				drawLine( { x: dx, y: dy }, { x: dx, y: dy + bg.a.y }, left.b, left.a);
@@ -77,5 +77,5 @@ class TextTableCore implements HasAbstract {
 			sdy = mdy;
 		}
 	}
-	
+
 }

@@ -129,10 +129,10 @@ abstract IntPoint(PointImpl<Int> ) to PointImpl<Int> from PointImpl<Int> {
 
 	@:from public static function fromDirection(d: Direction): IntPoint {
 		return switch d {
-			case Direction.up: OneUp;
-			case Direction.down: OneDown;
-			case Direction.left: OneLeft;
-			case Direction.right: OneRight;
+			case Direction.Up: OneUp;
+			case Direction.Down: OneDown;
+			case Direction.Left: OneLeft;
+			case Direction.Right: OneRight;
 		}
 	}
 
