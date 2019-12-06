@@ -7,9 +7,9 @@ package pony.math;
  */
 class AutoFormula {
 
-	private var values:Map<Float, Float>;
-	
-	public function new(values:Map<Float,Float>) {
+	private var values: Map<Float, Float>;
+
+	public function new(values: Map<Float, Float>) {
 		this.values = values;
 	}
 	//todo
@@ -29,13 +29,13 @@ class AutoFormula {
 				var rk:Float;
 				if (k > prevKey) {
 					rk = k - prevKey;
-					rk -= 
+					rk -=
 				} else {
 					rk = prevKey - k;
-					
+
 				}
 				var rv = cur > prev ? cur - prev : prev - cur;
-				
+
 			}
 		}
 	}

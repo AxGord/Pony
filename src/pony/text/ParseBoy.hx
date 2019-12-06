@@ -77,7 +77,7 @@ class ParseBoy<T> implements Declarator {
 	public function gt(a: Array<String>, nospace: Bool = false): Int {
 		beforeGoto = pos;
 		var r:Int = -1;
-		var ipos:Int = MathTools.maxInt;
+		var ipos:Int = MathTools.MAX_INT;
 
 		if (nospace) {
 			for (i in pos...t.length) {
@@ -103,7 +103,7 @@ class ParseBoy<T> implements Declarator {
 		if (r != -1) {
 			pos = ipos + lengthGoto;
 		} else {
-			pos = MathTools.maxInt;
+			pos = MathTools.MAX_INT;
 			lengthGoto = 0;
 		}
 		return r;

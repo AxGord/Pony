@@ -21,7 +21,7 @@ typedef ObjWithSetPosition = {
 
 /**
  * Point / IntPoint
- * @author AxGord
+ * @author AxGord <axgord@gmail.com>
  */
 abstract Point<T: Float>(PointImpl<T>) from PointImpl<T> to PointImpl<T> {
 
@@ -134,6 +134,10 @@ abstract IntPoint(PointImpl<Int> ) to PointImpl<Int> from PointImpl<Int> {
 			case Direction.Left: OneLeft;
 			case Direction.Right: OneRight;
 		}
+	}
+
+	@:from public static function fromIntIterator(it: IntIterator): IntPoint {
+		return new IntPoint(@:privateAccess it.min, @:privateAccess it.max);
 	}
 
 	public inline function setXY(obj: ObjWithPointForSet): Void {

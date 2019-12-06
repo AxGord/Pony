@@ -295,7 +295,7 @@ class TextTools {
 	public static function getMaxLength(a: String, b: Int): Int return MathTools.cmax(a.length, b);
 	public static function getMinLength(a: String, b: Int): Int return MathTools.cmin(a.length, b);
 	@:extern public static inline function arrayMaxLength(a: Array<String>): Int return Lambda.fold(a, getMaxLength, 0);
-	@:extern public static inline function arrayMinLength(a: Array<String>): Int return Lambda.fold(a, getMinLength, MathTools.maxInt);
+	@:extern public static inline function arrayMinLength(a: Array<String>): Int return Lambda.fold(a, getMinLength, MathTools.MAX_INT);
 
 	/**
 	 * Checks a string contains b string symbols

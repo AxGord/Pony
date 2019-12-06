@@ -545,7 +545,7 @@ class MapTools {
 
 	public static function minMaxKey<T>(map: Map<Int, T>): SPair<Int> {
 		var max: Int = 0;
-		var min: Int = MathTools.maxInt;
+		var min: Int = MathTools.MAX_INT;
 		for (len in map.keys()) {
 			max = MathTools.cmax(max, len);
 			min = MathTools.cmin(min, len);
@@ -554,7 +554,7 @@ class MapTools {
 	}
 
 	public static function minKey<T>(map: Map<Int, T>): Int {
-		var min: Int = MathTools.maxInt;
+		var min: Int = MathTools.MAX_INT;
 		for (len in map.keys()) min = MathTools.cmin(min, len);
 		return min;
 	}

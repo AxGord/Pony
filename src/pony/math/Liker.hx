@@ -9,15 +9,15 @@ import pony.time.DeltaTime;
  */
 class Liker implements Declarator {
 
-	@:arg private var base:Array<Array<Float>>;
-	@:arg public var min:Float = 1;
-	@:arg public var max:Float = 1;
-	
-	public function like(data:Array<Float>):Int {
-		var id:Int = -1;
-		var k:Float = 0;
+	@:arg private var base: Array<Array<Float>>;
+	@:arg public var min: Float = 1;
+	@:arg public var max: Float = 1;
+
+	public function like(data: Array<Float>): Int {
+		var id: Int = -1;
+		var k: Float = 0;
 		for (i in 0...base.length) {
-			var r:Float = likek(base[i], data);
+			var r: Float = likek(base[i], data);
 			if (r > k) {
 				id = i;
 				k = r;
@@ -25,21 +25,21 @@ class Liker implements Declarator {
 		}
 		return id;
 	}
-	
-	public function likeAsync(data:Array<Float>, ok:Int->Void, ?error:Dynamic->Void):Void {
-		var id:Int = -1;
-		var k:Float = 0;
-		var i:Int = 0;
-		var f:Void->Void = null;
+
+	public function likeAsync(data: Array<Float>, ok: Int -> Void, ?error: Dynamic -> Void): Void {
+		var id: Int = -1;
+		var k: Float = 0;
+		var i: Int = 0;
+		var f: Void -> Void = null;
 		f = function() {
 			try {
-				var r:Float = likek(base[i], data);
+				var r: Float = likek(base[i], data);
 				if (r > k) {
 					id = i;
 					k = r;
 				}
 				i++;
-			} catch (e:Dynamic) {
+			} catch (e: Dynamic) {
 				if (error == null) throw e;
 				else error(e);
 			}
@@ -50,10 +50,10 @@ class Liker implements Declarator {
 		};
 		DeltaTime.fixedUpdate.add(f);
 	}
-	
-	public function likek(base:Array<Float>, data:Array<Float>):Float {
+
+	public function likek(base: Array<Float>, data: Array<Float>): Float {
 		if (base.length != data.length) throw 'data != base data';
-		var k:Float = 0;
+		var k: Float = 0;
 		for (i in 0...data.length) {
 			var a = data[i];
 			var b = base[i];
@@ -75,5 +75,5 @@ class Liker implements Declarator {
 		}
 		return k;
 	}
-	
+
 }

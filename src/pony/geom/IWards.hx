@@ -8,7 +8,7 @@ import pony.events.Signal1;
  */
 interface IWards {
 
-	public var currentPos(default,null):Int;
-	public var change(get,never):Signal1<Int>;
-	
+	public var currentPos(default, null): Int;
+	public var change(get, never): Signal1<Int>;
+
 }
