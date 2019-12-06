@@ -3,8 +3,9 @@
 /tests/dump/
 /tests/build/
 /tests/report/
+/tests/\.unittest/
+/tests/test/TestSuite.hx
 /socketTests/CSSocket/
 /api/
 *.dump
 .DS_Store
-tests/\.unittest/
