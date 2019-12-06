@@ -5,10 +5,11 @@ package pony.geom;
  * @author AxGord <axgord@gmail.com>
  */
 @:enum abstract Direction(Int) from Int to Int {
-	var Left = 0;
-	var Right = 1;
-	var Up = 2;
-	var Down = 3;
+	var Undefined = 0;
+	var Left = 1;
+	var Right = 2;
+	var Up = 3;
+	var Down = 4;
 }
 
 /**

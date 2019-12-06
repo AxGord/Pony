@@ -35,9 +35,9 @@ class DeclaratorBuilder {
 							case _:
 								args.push( { name: n, opt: e != null, type: t } );
 								if (e == null) toNew.push(macro this.$n = $i {n} );
-								else toNew.push(macro this.$n = if ($i{n} != null) $i{n} else $i{n} = $e);
+								else toNew.push(macro this.$n = $i{n} != null ? $i{n} : $i{n} = $e);
 						}
-						
+
 					} else if (e != null) {
 						var t = Lambda.indexOf(f.access, AStatic) == -1 ? toNew : toInit;
 						t.push(macro $i { f.name } = $e);
@@ -53,7 +53,7 @@ class DeclaratorBuilder {
 							case _:
 								args.push( { name: n, opt: e != null, type: t } );
 								if (e == null) toNew.push(macro this.$n = $i {n} );
-								else toNew.push(macro this.$n = if ($i{n} != null) $i{n} else $i{n} = $e);
+								else toNew.push(macro this.$n = $i{n} != null ? $i{n} : $i{n} = $e);
 						}
 					} else if (e != null) {
 						var t = Lambda.indexOf(f.access, AStatic) == -1 ? toNew : toInit;
@@ -80,7 +80,7 @@ class DeclaratorBuilder {
 				k.expr = macro $b{toInit};
 			case _: throw 'Error';
 		}
-		
+
 		if (fNew == null) {
 			var s = (Context.getLocalClass().get().superClass);
 			if (s != null) {
@@ -88,19 +88,19 @@ class DeclaratorBuilder {
 					toNew.push(macro super());
 				}
 			}
-			
+
 			fNew = Tools.createNew();
 			fields.push(fNew);
 		}
 		switch fNew.kind {
 			case FFun(k):
 				k.args = args.concat(k.args);
-				
+
 				if (k.expr != null) switch k.expr.expr {
 					case EBlock(a): toNew = toNew.concat(a);
 					case _: toNew.push(k.expr);
 				}
-				
+
 				k.expr = macro $b{toNew};
 			case _: throw 'Error';
 		}

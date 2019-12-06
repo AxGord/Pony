@@ -133,6 +133,7 @@ abstract IntPoint(PointImpl<Int> ) to PointImpl<Int> from PointImpl<Int> {
 			case Direction.Down: OneDown;
 			case Direction.Left: OneLeft;
 			case Direction.Right: OneRight;
+			case _: new IntPoint(0, 0);
 		}
 	}
 
