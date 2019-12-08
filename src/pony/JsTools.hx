@@ -243,4 +243,6 @@ class JsTools implements HasSignal {
 		return [ for (k in map.keys()) k => map.get(k) ];
 	}
 
+	public static inline function logBuildDate(): Void Browser.console.log('Build date: ' + Tools.getBuildDate());
+
 }

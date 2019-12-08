@@ -76,6 +76,15 @@ abstract Point<T: Float>(PointImpl<T>) from PointImpl<T> to PointImpl<T> {
 
 	@:op(A == B) public inline function compare(b: Point<T>): Bool return x == b.x && y == b.y;
 
+	public inline function minMax(b: Point<T>): Point<T>
+		return new Point<T>(this.x < b.x ? this.x : b.x, this.y > b.y ? this.y : b.y);
+
+	public inline function min(b: Point<T>): Point<T>
+		return new Point<T>(this.x < b.x ? this.x : b.x, this.y < b.y ? this.y : b.y);
+
+	public inline function max(b: Point<T>): Point<T>
+		return new Point<T>(this.x > b.x ? this.x : b.x, this.y > b.y ? this.y : b.y);
+
 	public static inline function random(): Point<Float> return new Point<Float>(Math.random(), Math.random());
 
 	public inline function setXY(obj: ObjWithPointForSet): Void {
