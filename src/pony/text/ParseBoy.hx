@@ -141,7 +141,7 @@ class ParseBoy<T> implements Declarator {
 		return push(cast str());
 	}
 
-	public function gotoPushStr(search:String): Int {
+	public function gotoPushStr(search: String): Int {
 		return if (gt([search]) != -1)
 			pushStr();
 		else {
