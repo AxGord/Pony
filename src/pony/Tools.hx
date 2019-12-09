@@ -543,6 +543,27 @@ class MapTools {
 		}
 	}
 
+	public static inline function addToMap<A, B: Int, T>(map: Map<A, Map<B, T>>, a: A, b: B, value: T): Bool {
+		var element: Null<Map<B, T>> = map[a];
+		if (element == null) {
+			map[a] = [ b => value ];
+			return true;
+		} else {
+			map[a][b] = value;
+			return false;
+		}
+	}
+
+	public static inline function addToMapIfExists<A, B, T>(map: Map<A, Map<B, T>>, a: A, b: B, value: T): Bool {
+		var element: Null<Map<B, T>> = map[a];
+		if (element != null) {
+			map[a][b] = value;
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	public static function minMaxKey<T>(map: Map<Int, T>): SPair<Int> {
 		var max: Int = 0;
 		var min: Int = MathTools.MAX_INT;

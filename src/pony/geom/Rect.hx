@@ -13,16 +13,15 @@ typedef SimpleRect<T> = {
 	height: T
 }
 
-abstract Rect<T>(SimpleRect<T>) to SimpleRect<T> from SimpleRect<T>  {
+abstract Rect<T: Float>(SimpleRect<T>) to SimpleRect<T> from SimpleRect<T>  {
 
 	public var x(get, set): T;
 	public var y(get, set): T;
 	public var width(get, set): T;
 	public var height(get, set): T;
 
-	public inline function new(x: T, y: T, width: T, height: T) {
+	public inline function new(x: T, y: T, width: T, height: T)
 		this = { x: x, y: y, width: width, height: height };
-	}
 
 	private inline function get_x(): T return this.x;
 	private inline function get_y(): T return this.y;
@@ -33,6 +32,8 @@ abstract Rect<T>(SimpleRect<T>) to SimpleRect<T> from SimpleRect<T>  {
 	private inline function set_y(v: T): T return this.y = v;
 	private inline function set_width(v: T): T return this.width = v;
 	private inline function set_height(v: T): T return this.height = v;
+
+	public inline function startAsPoint(): Point<T> return new Point<T>(x, y);
 
 	@:to public static inline function fromIntToFloat(p: Rect<Int>): Rect<Float> return cast p;
 
