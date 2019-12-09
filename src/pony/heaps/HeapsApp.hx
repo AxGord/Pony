@@ -1,5 +1,6 @@
 package pony.heaps;
 
+import h2d.Object;
 import h2d.Graphics;
 import hxd.SceneEvents.InteractiveScene;
 import pony.color.UColor;
@@ -103,5 +104,8 @@ class HeapsApp extends App implements HasSignal implements HasLink {
 				s2d.setPosition(rect.x, rect.y);
 		}
 	}
+
+	public inline function localToGlobal(obj: Object, ?pos: Point<Float>): Point<Float>
+		return pos != null ? pos + obj.localToGlobal() - canvas.rect.startAsPoint() : obj.localToGlobal() - canvas.rect.startAsPoint();
 
 }
