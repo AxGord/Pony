@@ -8,7 +8,7 @@ import pony.ui.keyboard.IKeyboard;
 import pony.ui.keyboard.Key;
 
 /**
- * Keyboard
+ * JS Keyboard
  * @author AxGord <axgord@gmail.com>
  */
 class Keyboard implements IKeyboard implements HasSignal {
@@ -18,14 +18,14 @@ class Keyboard implements IKeyboard implements HasSignal {
 
 	@:auto public var down:Signal1<Key>;
 	@:auto public var up:Signal1<Key>;
-	
+
 	public function new() {}
-	
+
 	public function enable():Void {
 		Browser.document.addEventListener(KEYDOWN, keyDownHandler);
 		Browser.document.addEventListener(KEYUP, keyUpHandler);
 	}
-	
+
 	public function disable():Void {
 		Browser.document.removeEventListener(KEYDOWN, keyDownHandler);
 		Browser.document.removeEventListener(KEYUP, keyUpHandler);

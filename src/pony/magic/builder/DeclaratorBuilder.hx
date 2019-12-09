@@ -15,13 +15,13 @@ import pony.macro.Tools;
  */
 class DeclaratorBuilder {
 
-	macro public static function build():Array<Field> {
-		var fields:Array<Field> = [];
-		var toInit:Array<Expr> = [];
-		var toNew:Array<Expr> = [];
-		var fInit:Field;
-		var fNew:Field;
-		var args:Array<FunctionArg> = [];
+	macro public static function build(): Array<Field> {
+		var fields: Array<Field> = [];
+		var toInit: Array<Expr> = [];
+		var toNew: Array<Expr> = [];
+		var fInit: Field;
+		var fNew: Field;
+		var args: Array<FunctionArg> = [];
 		for (f in Context.getBuildFields()) {
 			switch [f.kind, f.name] {
 				case [FVar(t, e), _] if (Lambda.indexOf(f.access, AInline) == -1):

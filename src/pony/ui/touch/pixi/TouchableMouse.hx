@@ -5,16 +5,16 @@ import pixi.interaction.InteractionEvent;
 import pony.ui.touch.Mouse;
 
 /**
- * TouchableMouse
+ * PixiJS TouchableMouse
  * @author AxGord <axgord@gmail.com>
  */
 @:access(pony.ui.touch.TouchableBase)
 class TouchableMouse {
 
-	private static var inited:Bool = false;
-	static public var down(default, null):Bool = false;
-	
-	public static function init():Void {
+	private static var inited: Bool = false;
+	public static var down(default, null): Bool = false;
+
+	public static function init(): Void {
 		if (inited) return;
 		inited = true;
 		pony.ui.touch.pixi.Mouse.init();
@@ -23,13 +23,13 @@ class TouchableMouse {
 		Mouse.onLeftUp << function() down = false;
 		Mouse.onLeave << function() down = false;
 	}
-	
-	private var obj:Container;
-	private var base:TouchableBase;
-	private var over:Bool = false;
-	private var _down:Bool = false;
-	
-	public function new(obj:Container, base:TouchableBase) {
+
+	private var obj: Container;
+	private var base: TouchableBase;
+	private var over: Bool = false;
+	private var _down: Bool = false;
+
+	public function new(obj: Container, base: TouchableBase) {
 		init();
 		this.obj = obj;
 		this.base = base;
@@ -40,8 +40,8 @@ class TouchableMouse {
 		Mouse.onLeftUp << globUpHandler;
 		Mouse.onLeave << leaveHandler;
 	}
-	
-	public function destroy() {
+
+	public function destroy(): Void {
 		leaveHandler();
 		obj.removeListener('mouseover', overHandler);
 		obj.removeListener('mouseout', outHandler);
@@ -52,18 +52,18 @@ class TouchableMouse {
 		obj = null;
 		base = null;
 	}
-	
-	private function overHandler(_):Void {
+
+	private function overHandler(_): Void {
 		over = true;
-		down ? base.dispatchOverDown() : base.dispatchOver();
+		down ? base.dispatchOverDown() :  base.dispatchOver();
 	}
-	
-	private function outHandler(_):Void {
+
+	private function outHandler(_): Void {
 		over = false;
-		down ? base.dispatchOutDown() : base.dispatchOut();
+		down ? base.dispatchOutDown() :  base.dispatchOut();
 	}
-	
-	private function downHandler(e:InteractionEvent):Void {
+
+	private function downHandler(e: InteractionEvent): Void {
 		if (untyped e.data.originalEvent.button != MouseButton.LEFT) return;
 		if (!over) {
 			over = true;
@@ -73,21 +73,21 @@ class TouchableMouse {
 		var p = pony.ui.touch.pixi.Mouse.correction(e.data.global.x, e.data.global.y);
 		base.dispatchDown(0, p.x, p.y);
 	}
-	
-	private function upHandler(e:InteractionEvent):Void {
+
+	private function upHandler(e: InteractionEvent): Void {
 		if (untyped e.data.originalEvent.button != MouseButton.LEFT) return;
 		_down = false;
 		if (!over) return;
 		base.dispatchUp();
 	}
-	
-	private function globUpHandler():Void {
+
+	private function globUpHandler(): Void {
 		_down = false;
 		if (!over) base.dispatchOutUp();
 		else base.dispatchUp();
 	}
-	
-	private function leaveHandler():Void {
+
+	private function leaveHandler(): Void {
 		if (over) {
 			over = false;
 			_down ? base.dispatchOutDown() : base.dispatchOut();
@@ -97,5 +97,5 @@ class TouchableMouse {
 			base.dispatchOutUp();
 		}
 	}
-	
+
 }

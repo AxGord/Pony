@@ -9,25 +9,25 @@ import pony.ui.touch.Touchable;
  * SliderCore
  * @author AxGord <axgord@gmail.com>
  */
-class SliderCore extends BarCore {
-	
-	@:arg private var button:ButtonCore = null;
-	private var draggable:Bool;
-	
-	@:bindable public var finalPercent:Float = 0;
-	@:bindable public var finalPos:Float = 0;
-	@:bindable public var finalValue:Float = 0;
-	
-	public var onStartDrag(default, null):Signal1<Touch>;
-	public var onStopDrag(default, null):Signal1<Touch>;
-	
-	private var startPoint:Float = 0;
-	public var wheelSpeed:Float = 2;
+@:nullSafety class SliderCore extends BarCore {
 
-	public var trackStartPoint:Null<Float> = null;
-	public var track(default, set):Touchable;
-	
-	public function new(size:Float, isVertical:Bool = false, invert:Bool = false, draggable:Bool=true) {
+	@:nullSafety(Off) @:bindable public var finalPercent: Float = 0;
+	@:nullSafety(Off) @:bindable public var finalPos: Float = 0;
+	@:nullSafety(Off) @:bindable public var finalValue: Float = 0;
+
+	public var onStartDrag(default, null): Signal1<Touch>;
+	public var onStopDrag(default, null): Signal1<Touch>;
+
+	private var draggable: Bool;
+	private var startPoint: Float = 0;
+	public var wheelSpeed: Float = 2;
+
+	public var trackStartPoint: Null<Float> = null;
+	public var track(default, set): Null<Touchable>;
+
+	@:arg private var button: Null<ButtonCore> = null;
+
+	public function new(size: Float, isVertical: Bool = false, invert: Bool = false, draggable: Bool = true) {
 		super(size, isVertical, invert);
 		this.draggable = draggable;
 		if (button != null) {
@@ -44,77 +44,62 @@ class SliderCore extends BarCore {
 		}
 		if (button != null) changePos << button.touch.check;
 	}
-	
-	@:extern inline
-	public static function create(?b:ButtonCore, width:Float, height:Float, invert:Bool=false, draggable:Bool=true):SliderCore {
-		var isVert = height > width;
+
+	@:extern public static inline function create(
+		?b: ButtonCore, width: Float, height: Float, invert: Bool = false, draggable: Bool = true
+	): SliderCore {
+		var isVert: Bool = height > width;
 		return new SliderCore(b, isVert ? height : width, isVert, invert, draggable);
 	}
-	
-	override public function destroy():Void {
+
+	override public function destroy(): Void {
 		destroySignals();
 		if (button != null) button.destroy();
 	}
-	
-	private function stopDragHandler(t:Touch):Void {
+
+	private function stopDragHandler(t: Touch): Void {
 		if (t != null) t.onMove >> moveHandler;
 		finalPos = pos;
 		finalPercent = percent;
 		finalValue = value;
 		if (button != null) changePos << button.touch.check;
 	}
-	
-	inline public function startDrag(t:Touch):Void untyped (onStartDrag:Event1<Touch>).dispatch(t);
-	inline public function stopDrag(t:Touch):Void untyped (onStopDrag:Event1<Touch>).dispatch(t);
-	
-	private function startXDragHandler(t:Touch):Void startPoint = inv(pos) - t.x;
-	private function startYDragHandler(t:Touch):Void startPoint = inv(pos) - t.y;
-	
-	private function startDragHandler(t:Touch):Void {
+
+	public inline function startDrag(t: Touch): Void untyped (onStartDrag: Event1<Touch>).dispatch(t);
+	public inline function stopDrag(t: Touch): Void untyped (onStopDrag: Event1<Touch>).dispatch(t);
+	private function startXDragHandler(t: Touch): Void startPoint = inv(pos) - t.x;
+	private function startYDragHandler(t: Touch): Void startPoint = inv(pos) - t.y;
+
+	private function startDragHandler(t: Touch): Void {
 		if (t != null) t.onMove << moveHandler;
 		if (button != null) changePos >> button.touch.check;
 	}
-	
-	private function moveHandler(t:Touch):Void pos = limit(detectPos(t.x, t.y));
-	
-	@:extern inline private function detectPos(x:Float, y:Float):Float {
-		return inv((isVertical ? y : x) + startPoint);
-	}
-	
-	@:extern inline private function limit(p:Float):Float {
-		return if (p < 0) 0;
-		else if (p > size) size;
-		else p;
-	}
 
-	public inline function wheel(v:Int):Void {
-		scroll(wheelSpeed * v);
-	}
+	private function moveHandler(t: Touch): Void pos = limit(detectPos(t.x, t.y));
+	@:extern private inline function detectPos(x: Float, y: Float): Float return inv((isVertical ? y : x) + startPoint);
+	@:extern private inline function limit(p: Float): Float return if (p < 0) 0 else if (p > size) size else p;
+	public inline function wheel(v: Int): Void scroll(wheelSpeed * v);
+	public inline function scroll(v: Float): Void if (size >= 1) pos = limit(pos - wheelSpeed * v);
 
-	public inline function scroll(v:Float):Void {
-		if (size >= 1)
-			pos = limit(pos - wheelSpeed * v);
-	}
-
-	public inline function update():Void {
-		var p = pos;
+	public inline function update(): Void {
+		var p: Float = pos;
 		pos = 0;
 		pos = limit(p);
 	}
 
-	public inline function setPosValue(v:Float):Void {
+	public inline function setPosValue(v: Float): Void {
 		if (size >= 1) {
 			value = v;
 			update();
 		}
 	}
 
-	private function moveTo(t:Touch):Void {
-		startPoint = -trackStartPoint;
+	private function moveTo(t: Touch): Void {
+		if (trackStartPoint != null) startPoint = -trackStartPoint;
 		pos = limit(detectPos(t.x, t.y));
 	}
 
-	public function set_track(v:Touchable):Touchable {
+	public function set_track(v: Null<Touchable>): Null<Touchable> {
 		if (track != v) {
 			if (track != null) {
 				track.onDown >> startDrag;

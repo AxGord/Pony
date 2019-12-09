@@ -13,8 +13,7 @@ import pony.TypedPool;
  * Touchable
  * @author AxGord <axgord@gmail.com>
  */
-@:nullSafety
-class TouchableBase implements HasSignal {
+@:nullSafety class TouchableBase implements HasSignal {
 
 	private static inline var SWIPE_DELAY: Time = 50;
 	private static inline var SWIPE_STEP: UInt = 4;

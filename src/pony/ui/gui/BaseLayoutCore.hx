@@ -14,8 +14,7 @@ using pony.Tools;
  * BaseLayoutCore
  * @author AxGord <axgord@gmail.com>
  */
-@:nullSafety(Strict)
-class BaseLayoutCore<T> implements Declarator implements HasSignal implements IWH {
+@:nullSafety(Strict) class BaseLayoutCore<T> implements Declarator implements HasSignal implements IWH {
 
 	public var objects(default, null): Array<T> = [];
 	public var size(get, never): Point<Float>;

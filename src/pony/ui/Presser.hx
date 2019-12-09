@@ -9,8 +9,7 @@ import pony.time.DT;
  * Presser
  * @author AxGord <axgord@gmail.com>
  */
-@:nullSafety
-class Presser {
+@:nullSafety class Presser {
 
 	public static var useDeltaTime: Bool = true;
 	public static var pressFirstDelay: Time = 500;

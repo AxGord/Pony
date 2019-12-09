@@ -9,27 +9,120 @@ import unityengine.Input;
 import unityengine.KeyCode;
 
 /**
- * Keyboard
+ * Unity Keyboard
  * @see pony.ui.Keyboard
  * @author AxGord <axgord@gmail.com>
  */
 class Keyboard implements IKeyboard implements HasSignal {
-	
-	@:auto public var down:Signal1<Key>;
-	@:auto public var up:Signal1<Key>;
-	
-	private var keys:Array<KeyCode>;
-	
-	public function new():Void {
-		keys = [KeyCode.A,KeyCode.B,KeyCode.C,KeyCode.D,KeyCode.E,KeyCode.F,KeyCode.G,KeyCode.H,KeyCode.I,KeyCode.J,KeyCode.K,KeyCode.L,KeyCode.M,KeyCode.N,KeyCode.O,KeyCode.P,KeyCode.Q,KeyCode.R,KeyCode.S,KeyCode.T,KeyCode.U,KeyCode.V,KeyCode.W,KeyCode.X,KeyCode.Y,KeyCode.Z,KeyCode.Backspace,KeyCode.Tab,KeyCode.Escape,KeyCode.Space,KeyCode.Keypad0,KeyCode.Keypad1,KeyCode.Keypad2,KeyCode.Keypad3,KeyCode.Keypad4,KeyCode.Keypad5,KeyCode.Keypad6,KeyCode.Keypad7,KeyCode.Keypad8,KeyCode.Keypad9,KeyCode.KeypadDivide,KeyCode.KeypadEquals,KeyCode.KeypadMultiply,KeyCode.KeypadMinus,KeyCode.KeypadPlus,KeyCode.KeypadEnter,KeyCode.KeypadPeriod,KeyCode.UpArrow,KeyCode.DownArrow,KeyCode.RightArrow,KeyCode.LeftArrow,KeyCode.Insert,KeyCode.Delete,KeyCode.Home,KeyCode.End,KeyCode.PageUp,KeyCode.PageDown,KeyCode.F1,KeyCode.F2,KeyCode.F3,KeyCode.F4,KeyCode.F5,KeyCode.F6,KeyCode.F7,KeyCode.F8,KeyCode.F9,KeyCode.F10,KeyCode.F11,KeyCode.F12,KeyCode.Alpha1,KeyCode.Alpha2,KeyCode.Alpha3,KeyCode.Alpha4,KeyCode.Alpha5,KeyCode.Alpha6,KeyCode.Alpha7,KeyCode.Alpha8,KeyCode.Alpha9,KeyCode.Alpha0,KeyCode.Print,KeyCode.Pause,KeyCode.ScrollLock,KeyCode.Numlock, KeyCode.Minus,KeyCode.BackQuote,KeyCode.Period,KeyCode.Slash,KeyCode.Backslash,KeyCode.Quote,KeyCode.LeftShift,KeyCode.LeftControl,KeyCode.LeftAlt,KeyCode.CapsLock,KeyCode.LeftWindows,KeyCode.RightWindows,KeyCode.Plus,KeyCode.Return];
-		//keys = KeyCode.createAll();
-	}
-	
-	public inline function enable():Void DeltaTime.fixedUpdate.add(update, -120);
-	
-	public inline function disable():Void DeltaTime.fixedUpdate.remove(update);
-	
-	private function update():Void {
+
+	private static var keys: Array<KeyCode> = [
+		KeyCode.A,
+		KeyCode.B,
+		KeyCode.C,
+		KeyCode.D,
+		KeyCode.E,
+		KeyCode.F,
+		KeyCode.G,
+		KeyCode.H,
+		KeyCode.I,
+		KeyCode.J,
+		KeyCode.K,
+		KeyCode.L,
+		KeyCode.M,
+		KeyCode.N,
+		KeyCode.O,
+		KeyCode.P,
+		KeyCode.Q,
+		KeyCode.R,
+		KeyCode.S,
+		KeyCode.T,
+		KeyCode.U,
+		KeyCode.V,
+		KeyCode.W,
+		KeyCode.X,
+		KeyCode.Y,
+		KeyCode.Z,
+		KeyCode.Backspace,
+		KeyCode.Tab,
+		KeyCode.Escape,
+		KeyCode.Space,
+		KeyCode.Keypad0,
+		KeyCode.Keypad1,
+		KeyCode.Keypad2,
+		KeyCode.Keypad3,
+		KeyCode.Keypad4,
+		KeyCode.Keypad5,
+		KeyCode.Keypad6,
+		KeyCode.Keypad7,
+		KeyCode.Keypad8,
+		KeyCode.Keypad9,
+		KeyCode.KeypadDivide,
+		KeyCode.KeypadEquals,
+		KeyCode.KeypadMultiply,
+		KeyCode.KeypadMinus,
+		KeyCode.KeypadPlus,
+		KeyCode.KeypadEnter,
+		KeyCode.KeypadPeriod,
+		KeyCode.UpArrow,
+		KeyCode.DownArrow,
+		KeyCode.RightArrow,
+		KeyCode.LeftArrow,
+		KeyCode.Insert,
+		KeyCode.Delete,
+		KeyCode.Home,
+		KeyCode.End,
+		KeyCode.PageUp,
+		KeyCode.PageDown,
+		KeyCode.F1,
+		KeyCode.F2,
+		KeyCode.F3,
+		KeyCode.F4,
+		KeyCode.F5,
+		KeyCode.F6,
+		KeyCode.F7,
+		KeyCode.F8,
+		KeyCode.F9,
+		KeyCode.F10,
+		KeyCode.F11,
+		KeyCode.F12,
+		KeyCode.Alpha1,
+		KeyCode.Alpha2,
+		KeyCode.Alpha3,
+		KeyCode.Alpha4,
+		KeyCode.Alpha5,
+		KeyCode.Alpha6,
+		KeyCode.Alpha7,
+		KeyCode.Alpha8,
+		KeyCode.Alpha9,
+		KeyCode.Alpha0,
+		KeyCode.Print,
+		KeyCode.Pause,
+		KeyCode.ScrollLock,
+		KeyCode.Numlock,
+		KeyCode.Minus,
+		KeyCode.BackQuote,
+		KeyCode.Period,
+		KeyCode.Slash,
+		KeyCode.Backslash,
+		KeyCode.Quote,
+		KeyCode.LeftShift,
+		KeyCode.LeftControl,
+		KeyCode.LeftAlt,
+		KeyCode.CapsLock,
+		KeyCode.LeftWindows,
+		KeyCode.RightWindows,
+		KeyCode.Plus,
+		KeyCode.Return
+	];
+
+	@:auto public var down: Signal1<Key>;
+	@:auto public var up: Signal1<Key>;
+
+	public function new() {}
+	public inline function enable(): Void DeltaTime.fixedUpdate.add(update, -120);
+	public inline function disable(): Void DeltaTime.fixedUpdate.remove(update);
+
+	private function update(): Void {
 		if (Input.anyKeyDown)
 			for (k in keys) {
 				if (Input.GetKeyDown(k)) dispatchKey(down, k);
@@ -39,8 +132,8 @@ class Keyboard implements IKeyboard implements HasSignal {
 			for (k in keys)
 				if (Input.GetKeyUp(k)) dispatchKey(up, k);
 	}
-	
-	private function dispatchKey(s:Signal1 < Keyboard, Key > , sk:KeyCode):Void {
+
+	private function dispatchKey(s: Signal1 < Keyboard, Key > , sk: KeyCode): Void {
 		var k:Key = null;
 		Tools.ifsw(switch sk {
 			case KeyCode.A: k = Key.A;
@@ -69,7 +162,7 @@ class Keyboard implements IKeyboard implements HasSignal {
 			case KeyCode.X: k = Key.X;
 			case KeyCode.Y: k = Key.Y;
 			case KeyCode.Z: k = Key.Z;
-			case KeyCode.Backspace: k = Key.Backspace; 
+			case KeyCode.Backspace: k = Key.Backspace;
 			case KeyCode.Tab: k = Key.Tab;
 			case KeyCode.Escape: k = Key.Escape;
 			case KeyCode.Space: k = Key.Space;
@@ -146,5 +239,5 @@ class Keyboard implements IKeyboard implements HasSignal {
 		});
 		if (k != null) s.dispatch(k);
 	}
-	
+
 }

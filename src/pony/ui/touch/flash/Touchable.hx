@@ -11,21 +11,21 @@ import pony.ui.touch.Mouse;
 import pony.ui.touch.TouchableBase;
 
 /**
- * Touchable
+ * Flash Touchable
  * @author AxGord <axgord@gmail.com>
  */
 class Touchable extends TouchableBase {
-	
+
 	private static inline var SWITCH_TO_MOUSE_DELAY: UInt = 500;
 
 	@:bindable public static var touchMode: Bool = false;
 	public static var onAnyTouch(default, null): Signal1<TO>;
 	public static var touchSupport(get, null): Bool;
-	
+
 	private static var inited: Bool = false;
 	private static var needSw: Bool = false;
 	private static var wait: Bool = false;
-	
+
 	@:extern private static inline function get_touchSupport(): Bool {
 		#if touchsim
 		return true;
@@ -33,7 +33,7 @@ class Touchable extends TouchableBase {
 		return Multitouch.supportsTouchEvents;
 		#end
 	}
-	
+
 	public static function init(?inputMode: MultitouchInputMode): Void {
 		if (!inited) {
 			inited = true;
@@ -53,7 +53,7 @@ class Touchable extends TouchableBase {
 				Multitouch.inputMode = inputMode;
 		}
 	}
-	
+
 	private static function switchToMouse(): Void {
 		needSw = false;
 		Touch.disableStd();
@@ -63,7 +63,7 @@ class Touchable extends TouchableBase {
 		touchMode = false;
 		Mouse.enableStd();
 	}
-	
+
 	private static function switchToTouch(): Void {
 		needSw = false;
 		Mouse.disableStd();
@@ -71,34 +71,34 @@ class Touchable extends TouchableBase {
 		firstSwitchToTouch();
 		onAnyTouch >> switchToTouch;
 	}
-	
+
 	private static function firstSwitchToTouch(): Void {
 		touchMode = true;
 		onAnyTouch << touchHandler;
 		Mouse.onMove << mouseHandler;
 	}
-	
+
 	private static function mouseHandler(): Void {
 		if (wait) return;
 		wait = true;
 		needSw = true;
 		DTimer.fixedDelay(SWITCH_TO_MOUSE_DELAY, needSwToMouse);
 	}
-	
+
 	private static function needSwToMouse(): Void {
 		wait = false;
 		if (needSw) switchToMouse();
 		needSw = false;
 	}
-		
+
 	private static function touchHandler(): Void {
 		needSw = false;
 	}
-	
+
 	private var obj: DisplayObject;
 	private var touch: TouchableTouch;
 	private var mouse: TouchableMouse;
-	
+
 	public function new(obj: DisplayObject) {
 		super();
 		this.obj = obj;
@@ -110,7 +110,7 @@ class Touchable extends TouchableBase {
 		changeTouchMode - true << toTouch;
 		changeTouchMode - false << toMouse;
 	}
-	
+
 	override public function destroy(): Void {
 		changeTouchMode - true >> toTouch;
 		changeTouchMode - false >> toMouse;
@@ -124,17 +124,17 @@ class Touchable extends TouchableBase {
 		}
 		super.destroy();
 	}
-	
+
 	private function toTouch(): Void {
 		mouse.destroy();
 		mouse = null;
 		touch = new TouchableTouch(obj, this);
 	}
-	
+
 	private function toMouse(): Void {
 		touch.destroy();
 		touch = null;
 		mouse = new TouchableMouse(obj, this);
 	}
-	
+
 }

@@ -14,7 +14,7 @@ enum ButtonState {
  * ButtonCore
  * @author AxGord <axgord@gmail.com>
  */
-class ButtonCore extends Tumbler implements HasSignal {
+@:nullSafety(Strict) class ButtonCore extends Tumbler implements HasSignal {
 
 	public var touch: TouchableBase;
 	@:auto public var onClick: Signal1<Int>;
@@ -23,15 +23,15 @@ class ButtonCore extends Tumbler implements HasSignal {
 	@:bindable public var mode: Int = 0;
 	@:bindable public var bMode: Bool = false;
 	@:bindable public var state: ButtonState = Default;
-	
+
 	private var modeBeforeDisable: Int = 1;
-	
+
 	public function new(t: TouchableBase) {
 		super();
-		
+
 		touch = t;
 		t.onClick << function() if (enabled) eClick.dispatch(mode);
-		
+
 		t.onDown << function() {
 			enableOverDown();
 			state = Press;
@@ -42,14 +42,14 @@ class ButtonCore extends Tumbler implements HasSignal {
 		}
 		t.onOver << function() state = Focus;
 		t.onOut << function() state = Default;
-		
+
 		t.onOutUp << function() {
 			disableOverDown();
 			state = Default;
 		}
-		
+
 		changeState << function(v) if (lowMode != 1) eVisual.dispatch(lowMode, v);
-		
+
 		changeLowMode << function(v) eVisual.dispatch(v, state);
 		changeLowMode - 1 << disable;
 		changeLowMode / 1 << enable;
@@ -69,47 +69,47 @@ class ButtonCore extends Tumbler implements HasSignal {
 	}
 
 	public inline function sendVisual(): Void eVisual.dispatch(mode, state);
-	
+
 	public function destroy(): Void {
 		touch.destroy();
 		destroySignals();
 	}
-	
+
 	private function allowChangeMode(): Void changeMode << changeModeHandler;
-	
+
 	private function disallowChangeMode(): Void changeMode >> changeModeHandler;
-	
+
 	private function changeModeHandler(v: Int): Void {
 		lowMode = v != 0 ? v + 1 : v;
 		bMode = v == 1;
 	}
-	
+
 	@:extern private inline function enableOverDown(): Void {
 		touch.onOverDown << overDownHandler;
 		touch.onOutDown << outDownHandler;
 	}
-	
+
 	@:extern private inline function disableOverDown(): Void {
 		touch.onOverDown >> overDownHandler;
 		touch.onOutDown >> outDownHandler;
 	}
-	
+
 	private function overDownHandler(): Void {
 		eVisual.dispatch(lowMode, Press);
 	}
-	
+
 	private function outDownHandler(): Void {
 		eVisual.dispatch(lowMode, Leave);
 	}
-	
+
 	public inline function switchMap(a: Array<Int>): Void {
 		onClick << function(v) mode = a[v];
 	}
-	
+
 	public inline function bswitch(): Void {
 		onClick << function() bMode = !bMode;
 	}
-	
+
 	public function join(b: ButtonCore): Void {
 		b.changeLowMode << setLowMode;
 		b.changeState << setState;
@@ -118,7 +118,7 @@ class ButtonCore extends Tumbler implements HasSignal {
 		changeState << b.setState;
 		onClick << b.click;
 	}
-	
+
 	public function unjoin(b: ButtonCore): Void {
 		b.changeLowMode >> setLowMode;
 		b.changeState >> setState;
@@ -127,7 +127,7 @@ class ButtonCore extends Tumbler implements HasSignal {
 		changeState >> b.setState;
 		onClick >> b.click;
 	}
-	
+
 	public function setLowMode(m: Int): Void lowMode = m;
 	public function setState(s: ButtonState): Void state = s;
 	public function click(mode: Int): Void eClick.dispatch(mode, true);
@@ -136,5 +136,5 @@ class ButtonCore extends Tumbler implements HasSignal {
 		lowMode = 0;
 		state = Default;
 	}
-	
+
 }

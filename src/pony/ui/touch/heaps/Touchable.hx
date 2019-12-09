@@ -13,7 +13,7 @@ import pony.heaps.HeapsApp;
 import pony.geom.Point;
 
 /**
- * Touchable
+ * Heaps Touchable
  * @author AxGord <axgord@gmail.com>
  */
 @:nullSafety

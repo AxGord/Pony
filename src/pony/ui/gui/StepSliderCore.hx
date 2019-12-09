@@ -9,57 +9,58 @@ import pony.ui.touch.Touch;
  */
 class StepSliderCore extends SliderCore {
 
-	public var posStep:Float = 0;
-	public var percentStep(get, set):Float;
-	public var valueStep(get, set):Float;
-	private var percentRound:Int = -1;
-	private var valueRound:Int = -1;
-	
-	public function new(button:ButtonCore = null, size:Float, isVertical:Bool = false, invert:Bool = false, draggable:Bool = true) {
+	public var posStep: Float = 0;
+	public var percentStep(get, set): Float;
+	public var valueStep(get, set): Float;
+	private var percentRound: Int = -1;
+	private var valueRound: Int = -1;
+
+	public function new(button: ButtonCore = null, size: Float, isVertical: Bool = false, invert: Bool = false, draggable: Bool = true) {
 		super(button, size, isVertical, invert, draggable);
 	}
-	
-	@:extern inline
-	public static function create(?button:ButtonCore, width:Float, height:Float, invert:Bool=false, draggable:Bool=true):StepSliderCore {
+
+	@:extern public static inline function create(
+		?button: ButtonCore, width: Float, height: Float, invert: Bool=false, draggable: Bool = true
+	): StepSliderCore {
 		var isVert = height > width;
-		return new StepSliderCore(button, isVert ? height : width, isVert, invert, draggable);
+		return new StepSliderCore(button, isVert ? height :  width, isVert, invert, draggable);
 	}
-	
-	@:extern inline private function set_percentStep(v:Float):Float {
+
+	@:extern private inline function set_percentStep(v: Float): Float {
 		posStep = size * v;
 		percentRound = MathTools.lengthAfterComma(v);
 		valueRound = -1;
 		return v;
 	}
-	
-	@:extern inline private function get_percentStep():Float return posStep == 0 ? 0 : posStep / size;
-	
-	@:extern inline private function set_valueStep(v:Float):Float {
+
+	@:extern private inline function get_percentStep(): Float return posStep == 0 ? 0 : posStep / size;
+
+	@:extern private inline function set_valueStep(v: Float): Float {
 		percentStep = v / (max - min);
 		valueRound = MathTools.lengthAfterComma(v);
 		percentRound = -1;
 		return v;
 	}
-	
-	@:extern inline private function get_valueStep():Float return percentStep * (max - min);
-	
-	override private function moveHandler(t:Touch):Void {
+
+	@:extern private inline function get_valueStep(): Float return percentStep * (max - min);
+
+	override private function moveHandler(t: Touch): Void {
 		var p = detectPos(t.x, t.y);
 		pos = limit(posStep == 0 ? p : (Math.round(p / posStep) * posStep));
 	}
-	
-	override function changePosHandler(v:Float):Void {
+
+	override function changePosHandler(v: Float): Void {
 		if (percentRound == -1)
 			super.changePosHandler(v);
 		else
 			percent = MathTools.roundTo(v / size, percentRound);
 	}
-	
-	override function updateValue(v:Float):Void {
+
+	override function updateValue(v: Float): Void {
 		if (valueRound == -1)
 			super.updateValue(v);
 		else
 			value = MathTools.roundTo(min + v * (max - min), valueRound);
 	}
-	
+
 }

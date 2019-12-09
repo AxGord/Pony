@@ -9,18 +9,16 @@ import pony.time.DeltaTime;
  */
 class SmoothBarCore extends BarCore {
 
-	@:bindable public var smooth:Bool = false;
-	
-	@:bindable public var smoothPercent:Float = 0;
-	@:bindable public var smoothPos:Float = 0;
-	
-	@:extern inline
-	public static function create(width:Float, height:Float, invert:Bool=false):SmoothBarCore {
+	@:bindable public var smooth: Bool = false;
+	@:bindable public var smoothPercent: Float = 0;
+	@:bindable public var smoothPos: Float = 0;
+
+	@:extern public static inline function create(width: Float, height: Float, invert: Bool = false): SmoothBarCore {
 		var isVert = height > width;
 		return new SmoothBarCore(isVert ? height : width, isVert, invert);
 	}
-	
-	public function new(size:Float, isVertical:Bool = false, invert:Bool = false) {
+
+	public function new(size: Float, isVertical: Bool = false, invert: Bool = false) {
 		super(size, isVertical, invert);
 		changeSmooth - true << enableSmoothPercent;
 		changeSmooth - false << disableSmoothPercent;
@@ -30,21 +28,21 @@ class SmoothBarCore extends BarCore {
 			changeSmoothPos << function(v) smoothChangeX(inv(v));
 		}
 	}
-	
-	private function enableSmoothPercent():Void {
+
+	private function enableSmoothPercent(): Void {
 		changePercent << updateSmoothPercentTarget;
 	}
-	
-	private function disableSmoothPercent():Void {
-		changePercent >> updateSmoothPercentTarget;	
+
+	private function disableSmoothPercent(): Void {
+		changePercent >> updateSmoothPercentTarget;
 	}
-	
-	private function updateSmoothPercentTarget(p:Float):Void {
+
+	private function updateSmoothPercentTarget(p: Float): Void {
 		if (p != smoothPercent)
 			DeltaTime.fixedUpdate << updateSmoothPercent;
 	}
-	
-	private function updateSmoothPercent(dt:DT):Void {
+
+	private function updateSmoothPercent(dt: DT): Void {
 		var d = percent - smoothPercent;
 		var n = smoothPercent + dt * d * (1000 / 200);
 		if (d > 0) {
@@ -61,26 +59,25 @@ class SmoothBarCore extends BarCore {
 		smoothPercent = n;
 		changeSmoothPercentHandler(smoothPercent);
 	}
-	
-	@:extern inline private function changeSmoothPercentHandler(v:Float):Void smoothPos = v * size;
-	
+
+	@:extern private inline function changeSmoothPercentHandler(v: Float): Void smoothPos = v * size;
+
 	/**
 	 * Use this method for connect view
 	 */
-	dynamic public function smoothChangeX(v:Float):Void { }
-	
+	public dynamic function smoothChangeX(v: Float): Void {}
+
 	/**
 	 * Use this method for connect view
 	 */
-	dynamic public function smoothChangeY(v:Float):Void {}
-	
-	override public function endInit():Void {
+	public dynamic function smoothChangeY(v: Float): Void {}
+
+	override public function endInit(): Void {
 		super.endInit();
-		if (isVertical) {
+		if (isVertical)
 			smoothChangeY(inv(0));
-		} else {
+		else
 			smoothChangeX(inv(0));
-		}
 	}
-	
+
 }

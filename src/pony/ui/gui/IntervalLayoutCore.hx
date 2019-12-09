@@ -10,8 +10,7 @@ using pony.Tools;
  * IntervalLayoutCore
  * @author AxGord <axgord@gmail.com>
  */
-@:nullSafety(Strict)
-class IntervalLayoutCore<T> extends BaseLayoutCore<T> {
+@:nullSafety(Strict) class IntervalLayoutCore<T> extends BaseLayoutCore<T> {
 
 	@:arg private var _interval: Int;
 	@:arg private var _vert: Bool = false;

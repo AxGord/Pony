@@ -6,7 +6,7 @@ package pony.ui.gui;
  */
 interface IPopup {
 
-	dynamic function onClose():Void;
-	function destroyPopup():Void;
-	
+	dynamic function onClose(): Void;
+	function destroyPopup(): Void;
+
 }

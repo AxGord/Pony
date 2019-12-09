@@ -10,7 +10,7 @@ using pony.Tools;
  * Time
  * @author AxGord <axgord@gmail.com>
  */
-abstract Time(Null<Int>) from Int to Int {
+@:nullSafety(Strict) abstract Time(Int) from Int to Int {
 
 	public var ms(get, never): Int;
 	public var seconds(get, never): Int;
@@ -26,11 +26,11 @@ abstract Time(Null<Int>) from Int to Int {
 	public var neg(get, never): Bool;
 	public var minimalPoint(get, never): Int;
 
-	@:extern public inline function new(?ms: Null<Int>) this = ms;
-	@:from @:extern public static inline function fromFloat(ms: Null<Float>): Time return new Time(ms.int());
+	@:extern public inline function new(ms: Int) this = ms;
+	@:from @:extern public static inline function fromFloat(ms: Null<Float>): Time return new Time(@:nullSafety(Off) ms.int());
 
 	@:from public static function fromString(time: String): Time {
-		if (time == null) return null;
+		if (time == null) return 0;
 		var ms: Int = 0;
 		time = time.trim();
 		var neg: Bool = time.charAt(0) == '-';
@@ -44,7 +44,7 @@ abstract Time(Null<Int>) from Int to Int {
 				chbuf += ch;
 			} else {
 				if (chbuf != '') {
-					ms += parseBuf(chbuf, nbuf.parseInt());
+					ms += @:nullSafety(Off) parseBuf(chbuf, nbuf.parseInt());
 					nbuf = '';
 					chbuf = '';
 				}
@@ -52,23 +52,23 @@ abstract Time(Null<Int>) from Int to Int {
 			}
 		}
 
-		if (chbuf != '' && nbuf != '') ms += parseBuf(chbuf, nbuf.parseInt());
+		if (chbuf != '' && nbuf != '') ms += @:nullSafety(Off) parseBuf(chbuf, nbuf.parseInt());
 
 		if (ms == 0) {
 			var s: Array<String> = time.split('.');
 			if (s.length == 2) {
-				ms = s[1].parseInt();
+				@:nullSafety(Off) ms = s[1].parseInt();
 				time = s[0];
 			}
 			var s: Array<String> = time.split(' ');
 			var t: String;
 			if (s.length == 2) {
-				ms += fromDays(s[0].parseInt());
+				@:nullSafety(Off) ms += fromDays(s[0].parseInt());
 				t = s[1];
 			} else {
 				t = time;
 			}
-			ms += parseTime(t.split(':'));
+			ms += @:nullSafety(Off) parseTime(t.split(':'));
 		}
 		if (neg) ms *= -1;
 		return new Time(ms);
@@ -90,7 +90,7 @@ abstract Time(Null<Int>) from Int to Int {
 		}
 	}
 
-	@:extern private static inline function parseTime(d: Array<String>): Int {
+	@:nullSafety(Off) @:extern private static inline function parseTime(d: Array<String>): Int {
 		return switch d.length {
 			case 1: fromSeconds(d[0] == '' ? 0 : d[0].parseInt());
 			case 2: fromSeconds(d[1] == '' ? 0 : d[1].parseInt()) + fromMinutes(d[0] == '' ? 0 : d[0].parseInt());
@@ -104,7 +104,7 @@ abstract Time(Null<Int>) from Int to Int {
 	}
 
 	@:extern public static inline function createft(days: String, hours: String, minutes: String, seconds: String): Time {
-		return create(days.parseInt(), hours.parseInt(), minutes.parseInt(), seconds.parseInt());
+		return @:nullSafety(Off) create(days.parseInt(), hours.parseInt(), minutes.parseInt(), seconds.parseInt());
 	}
 
 	@:extern private inline function get_ms(): Int return this % 1000;
@@ -146,7 +146,7 @@ abstract Time(Null<Int>) from Int to Int {
 		return print(totalSeconds);
 	}
 
-	public function clock(?autoHide: Bool): String {
+	public function clock(autoHide: Bool = false): String {
 		var s: String = '';
 		if (hours != 0 || !autoHide) {
 			s += print(hours) + ':' + showMinSec();

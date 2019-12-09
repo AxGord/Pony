@@ -9,14 +9,14 @@ import pony.ui.touch.flash.Touch;
 import pony.flash.FLTools;
 
 /**
- * TouchableTouch
+ * Flash TouchableTouch
  * @author AxGord <axgord@gmail.com>
  */
 @:access(pony.ui.touch.TouchableBase)
 class TouchableTouch {
 
 	private static var inited: Bool = false;
-	
+
 	public static function init(): Void {
 		if (inited) return;
 		inited = true;
@@ -26,17 +26,17 @@ class TouchableTouch {
 	private static function getStageHandler(stage: Stage): Void {
 		stage.addEventListener(TouchEvent.TOUCH_MOVE, globalTouchMoveHandler, false, 0, true);
 	}
-	
+
 	private static function globalTouchMoveHandler(e: TouchEvent): Void {
 		TouchableBase.dispatchMove(e.touchPointID, e.stageX, e.stageY);
 	}
-	
+
 	private var obj: DisplayObject;
 	private var base: TouchableBase;
 	private var touchId: Int = -1;
 	private var over: Bool = false;
 	private var down: Bool = false;
-	
+
 	public function new(obj: DisplayObject, base: TouchableBase) {
 		init();
 		this.obj = obj;
@@ -67,7 +67,7 @@ class TouchableTouch {
 		obj = null;
 		base = null;
 	}
-	
+
 	private function isLock(t: Int): Bool {
 		if (isNotLock(t)) {
 			touchId = t;
@@ -75,10 +75,10 @@ class TouchableTouch {
 		} else
 			return true;
 	}
-	
+
 	@:extern private inline function unlock(t: Int): Void touchId = -1;
 	@:extern private inline function isNotLock(t: Int): Bool return touchId == -1 || touchId == t;
-	
+
 	private function touchBeginHandler(e: TouchEvent): Void {
 		if (isLock(e.touchPointID)) return;
 		over = true;
@@ -86,7 +86,7 @@ class TouchableTouch {
 		base.dispatchOver(e.touchPointID);
 		base.dispatchDown(e.touchPointID, e.stageX, e.stageY);
 	}
-	
+
 	private function touchEndHandler(t: TO): Void {
 		if (!down) return;
 		if (!isNotLock(t.id)) return;
@@ -100,7 +100,7 @@ class TouchableTouch {
 		down = false;
 		unlock(t.id);
 	}
-	
+
 	private function touchMoveHandler(e: TouchEvent): Void {
 		if (!down) return;
 		if (isLock(e.touchPointID)) return;
@@ -109,7 +109,7 @@ class TouchableTouch {
 		over = true;
 		base.dispatchOverDown(e.touchPointID);
 	}
-	
+
 	private function touchGlobalMoveHandler(e: TouchEvent): Void {
 		if (!over) return;
 		if (!isNotLock(e.touchPointID)) return;
@@ -117,12 +117,12 @@ class TouchableTouch {
 		base.dispatchOutDown(e.touchPointID);
 		if (!down) unlock(e.touchPointID);
 	}
-	
+
 	private function cancleTouchHandler(id: Int): Void {
 		if (!isNotLock(id)) return;
 		lost(id);
 	}
-	
+
 	private function lost(id: Int): Void {
 		down = false;
 		over = false;
@@ -130,5 +130,5 @@ class TouchableTouch {
 		base.dispatchOutUp(id);
 		unlock(id);
 	}
-	
+
 }

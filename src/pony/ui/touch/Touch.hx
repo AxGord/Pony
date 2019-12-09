@@ -8,7 +8,7 @@ import pony.geom.Point;
  * Touch
  * @author AxGord <axgord@gmail.com>
  */
-class Touch implements HasSignal {
+@:nullSafety class Touch implements HasSignal {
 
 	@:auto public var onOver: Signal1<Touch>;
 	@:auto public var onOut: Signal1<Touch>;
@@ -19,8 +19,8 @@ class Touch implements HasSignal {
 	@:auto public var onUp: Signal1<Touch>;
 	@:auto public var onMove: Signal1<Touch>;
 
-	public var x(default, null): Float;
-	public var y(default, null): Float;
+	public var x(default, null): Float = 0;
+	public var y(default, null): Float = 0;
 	public var point(get, never): Point<Float>;
 
 	public function new() {}

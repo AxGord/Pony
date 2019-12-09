@@ -8,7 +8,7 @@ import pony.ui.touch.Mouse;
 import pony.ui.touch.TouchableBase;
 
 /**
- * TouchableMouse
+ * Flash TouchableMouse
  * @author AxGord <axgord@gmail.com>
  */
 @:access(pony.ui.touch.TouchableBase)
@@ -16,7 +16,7 @@ class TouchableMouse {
 
 	private static var inited: Bool = false;
 	public static var down(default, null): Bool = false;
-	
+
 	public static function init(): Void {
 		if (inited) return;
 		inited = true;
@@ -25,13 +25,13 @@ class TouchableMouse {
 		Mouse.onLeftUp << function() down = false;
 		Mouse.onLeave << function() down = false;
 	}
-	
+
 	private var obj: DisplayObject;
 	private var base: TouchableBase;
 	private var over: Bool = false;
 	private var _down: Bool = false;
 	private var overBeforeCheck: Bool;
-	
+
 	public function new(obj: DisplayObject, base: TouchableBase) {
 		init();
 		this.obj = obj;
@@ -52,7 +52,7 @@ class TouchableMouse {
 		obj.removeEventListener(Event.ADDED_TO_STAGE, addedToStageHandler);
 		obj.stage.addEventListener(MouseEvent.MOUSE_UP, globUpHandler, false, 0, true);
 	}
-	
+
 	public function destroy(): Void {
 		leaveHandler();
 		obj.removeEventListener(MouseEvent.MOUSE_OVER, overHandler);
@@ -68,28 +68,28 @@ class TouchableMouse {
 		obj = null;
 		base = null;
 	}
-	
+
 	private function overHandler(_): Void {
 		over = true;
 		down ? base.dispatchOverDown() : base.dispatchOver();
 	}
-	
+
 	private function outHandler(_): Void {
 		over = false;
 		down ? base.dispatchOutDown() : base.dispatchOut();
 	}
-	
+
 	private function downHandler(e: MouseEvent): Void {
 		_down = true;
 		base.dispatchDown(0, e.stageX, e.stageY);
 	}
-	
+
 	private function upHandler(_): Void {
 		_down = false;
 		if (!over) base.dispatchOutUp();
 		else base.dispatchUp();
 	}
-	
+
 	private function globUpHandler(_): Void {
 		_down = false;
 		if (!over) base.dispatchOutUp();
@@ -99,12 +99,12 @@ class TouchableMouse {
 	private function wheelHandler(e: MouseEvent): Void {
 		base.eWheel.dispatch(e.delta);
 	}
-	
+
 	private function up(): Void {
 		if (!over) base.dispatchOutUp();
 		else base.dispatchUp();
 	}
-	
+
 	private function leaveHandler(): Void {
 		if (over) {
 			over = false;
@@ -115,5 +115,5 @@ class TouchableMouse {
 			base.dispatchOutUp();
 		}
 	}
-	
+
 }

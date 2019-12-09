@@ -11,8 +11,7 @@ using pony.Tools;
  * RubberLayoutCore
  * @author AxGord <axgord@gmail.com>
  */
-@:nullSafety(Strict)
-class RubberLayoutCore<T> extends BaseLayoutCore<T> {
+@:nullSafety(Strict) class RubberLayoutCore<T> extends BaseLayoutCore<T> {
 
 	public var width(default, set): Float = 0;
 	public var height(default, set): Float = 0;

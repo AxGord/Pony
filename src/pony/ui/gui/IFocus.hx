@@ -8,9 +8,11 @@ import pony.events.Signal1;
  * @author AxGord <axgord@gmail.com>
  */
 interface IFocus {
-	public var onFocus(get, never):Signal1<Bool>;
-	public var focusPriority(default, null):Int;
-	public var focusGroup(default, null):String;
-	public function focus():Void;
-	public function unfocus():Void;
+
+	public var onFocus(get, never): Signal1<Bool>;
+	public var focusPriority(default, null): Int;
+	public var focusGroup(default, null): String;
+	public function focus(): Void;
+	public function unfocus(): Void;
+
 }

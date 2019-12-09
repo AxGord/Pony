@@ -10,8 +10,7 @@ using pony.Tools;
  * AlignLayoutCore
  * @author AxGord <axgord@gmail.com>
  */
-@:nullSafety(Strict)
-class AlignLayoutCore<T> extends BaseLayoutCore<T> {
+@:nullSafety(Strict) class AlignLayoutCore<T> extends BaseLayoutCore<T> {
 
 	@:arg private var _align: Align = new Pair(VAlign.Middle, HAlign.Center);
 	@:arg private var _border: Border<Int> = 0;

@@ -7,7 +7,7 @@ import pony.ui.touch.Mouse as M;
 import pony.ui.touch.MouseButton;
 
 /**
- * Mouse
+ * Flash Mouse
  * @author AxGord <axgord@gmail.com>
  */
 class Mouse {
@@ -20,53 +20,53 @@ class Mouse {
 
 	private static var currentX(get, never): Float;
 	private static var currentY(get, never): Float;
-	
+
 	@:extern public static inline function init(): Void {
 		DeltaTime.fixedUpdate.once(initNow, INIT_PRIORITY);
 	}
 
 	@:extern private static inline function get_currentX(): Float return Lib.current.stage.mouseX;
 	@:extern private static inline function get_currentY(): Float return Lib.current.stage.mouseY;
-	
+
 	public static function initNow(): Void {
 		hackMove();
 		hackDown();
 		hackUp();
 		disableStd();
 	}
-	
+
 	@:extern private static inline function hackMove(): Void {
 		Lib.current.stage.addEventListener(MouseEvent.MOUSE_MOVE, moveHandler, false, EVENTS_PRIORITY, true);
 		Lib.current.stage.addEventListener(MouseEvent.MOUSE_MOVE, moveHandler, true, EVENTS_PRIORITY, true);
 	}
-	
+
 	private static function moveHandler(event: MouseEvent): Void {
 		M.moveHandler(currentX, currentY);
 		tlock(event);
 	}
-	
+
 	@:extern private static inline function hackDown(): Void {
 		Lib.current.stage.addEventListener(MouseEvent.MOUSE_DOWN, downHandler, false, EVENTS_PRIORITY, true);
 		Lib.current.stage.addEventListener(MouseEvent.MOUSE_DOWN, downHandler, true, EVENTS_PRIORITY, true);
 	}
-	
+
 	private static function downHandler(event: MouseEvent): Void {
 		if (M.checkDown(MouseButton.LEFT))
 			M.downHandler(currentX, currentY, MouseButton.LEFT);
 		tlock(event);
 	}
-	
+
 	@:extern private static inline function hackUp():Void {
 		Lib.current.stage.addEventListener(MouseEvent.MOUSE_UP, upHandler, false, EVENTS_PRIORITY, true);
 		Lib.current.stage.addEventListener(MouseEvent.MOUSE_UP, upHandler, true, EVENTS_PRIORITY, true);
 	}
-	
+
 	private static function upHandler(event: MouseEvent): Void {
 		if (M.checkUp(MouseButton.LEFT))
 			M.upHandler(currentX, currentY, MouseButton.LEFT);
 		tlock(event);
 	}
-	
+
 	public static function enableStd(): Void {
 		enabled = true;
 		Lib.current.stage.removeEventListener(MouseEvent.CLICK, lock, true);
@@ -113,5 +113,5 @@ class Mouse {
 
 	private static function lock(event: MouseEvent): Void event.stopImmediatePropagation();
 	@:extern private static inline function tlock(event: MouseEvent): Void if (!enabled) event.stopImmediatePropagation();
-	
+
 }
