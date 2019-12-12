@@ -501,6 +501,12 @@ class ArrayTools {
 		return sum;
 	}
 
+	public static function strlen(a: Array<String>): UInt {
+		var sum: UInt = 0;
+		for (v in a) sum += a.length;
+		return sum;
+	}
+
 }
 
 class MapTools {
