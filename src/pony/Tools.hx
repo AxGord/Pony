@@ -602,6 +602,16 @@ class MapTools {
 		return max;
 	}
 
+	public static inline function mapCalcCount<K, T>(map: Map<K, T>, fn: K -> T -> UInt): UInt {
+		var r: UInt = 0;
+		#if (haxe_ver >= '4.0.0')
+		for (k => v in map) r += fn(k, v);
+		#else
+		for (k in map.keys()) r += fn(k, map[k]);
+		#end
+		return r;
+	}
+
 }
 
 class FloatTools {
