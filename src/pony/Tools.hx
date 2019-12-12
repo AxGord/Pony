@@ -413,6 +413,16 @@ class Tools {
 	}
 }
 
+class IterableTools {
+
+	public static inline function calcCount<T>(it: Iterable<T>, fn: T -> UInt): UInt {
+		var r: UInt = 0;
+		for (e in it) r += fn(e);
+		return r;
+	}
+
+}
+
 class ImmutableArrayTools {
 	@:extern public static inline function kv<T>(a: ImmutableArray<T>): Iterator<KeyValue<Int, T>> return ArrayTools.kv(cast a);
 }
