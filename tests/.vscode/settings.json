@@ -2,5 +2,9 @@
 	"haxeTestExplorer.testCommand": [
 		"${haxe}",
 		"runvs.hxml"
+	],
+	"haxecheckstyle.sourceFolders": [
+		"src",
+		"test"
 	]
 }

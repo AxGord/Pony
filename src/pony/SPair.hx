@@ -18,3 +18,7 @@ abstract SPair<T>(Pair<T, T>) to Pair<T, T> from Pair<T, T> {
 	}
 
 }
+
+typedef IntPair = SPair<Int>;
+typedef StrPair = SPair<String>;
+typedef UPair = SPair<UInt>;
