@@ -421,6 +421,8 @@ class IterableTools {
 		return r;
 	}
 
+	public static inline function array<T>(it: Iterator<T>): Array<T> return [ for (e in it) e ];
+
 }
 
 class ImmutableArrayTools {
