@@ -6,10 +6,10 @@ import pony.magic.HasSignal;
 
 /**
  * Delta Time
- * @author AxGord
+ * @author AxGord <axgord@gmail.com>
  */
 class DeltaTime implements HasSignal {
-	
+
 	@:lazy public static var update: Signal1<DT>;
 	@:lazy public static var fixedUpdate: Signal1<DT>;
 
@@ -24,57 +24,57 @@ class DeltaTime implements HasSignal {
 	#else
 	public static var fixedValue: Float = 0;
 	#end
-	
+
 	#if !((flash || openfl) || HUGS)
 	public static inline function init(?signal: Signal0): Void {
 		set();
 		if (signal != null) signal.add(tick);
 	}
 	#end
-	
+
 	#if openfl
 	public static function tick(): Void {
 		fixedValue = get();
 		set();
 		fixedDispatch();
 	}
-	
+
 	private static var lastNow:Date;
-	
+
 	inline private static function get_nowDate(): Date return lastNow;
-	
+
 	private inline static function set(): Void {
 		t = openfl.Lib.getTimer();
 		lastNow = Date.fromTime(t);
 	}
-	
+
 	private inline static function get(): Float return (openfl.Lib.getTimer() - t) / 1000;
-	
+
 	#elseif !HUGS
 	public static function tick(): Void {
 		fixedValue = get();
 		set();
 		fixedDispatch();
 	}
-	
+
 	private static var lastNow: Date;
-	
+
 	private static inline function get_nowDate(): Date return lastNow;
-	
+
 	private static inline function set(): Void {
 		lastNow = Date.now();
 		t = lastNow.getTime();
 	}
 	private static inline function get(): Float return (Date.now().getTime() - t) / 1000;
-	
+
 	#else
 	private static inline function get_nowDate(): Date return Date.now();
 	#end
-	
+
 	public static inline function fixedDispatch(): Void eFixedUpdate.dispatch(fixedValue);
-	
+
 	#if ((flash || openfl) && !munit)
-	
+
 	private static var addListenerTimer: haxe.Timer;
 
 	private static function __init__(): Void {
@@ -106,13 +106,13 @@ class DeltaTime implements HasSignal {
 	private static inline function _set(): Void set();
 
 	#end
-	
+
 	#if (!(flash || openfl) || munit)
 	private static function __init__(): Void {
 		createSignals();
 	}
 	#end
-	
+
 	#if (nodejs && nodedt)
 	private static var imm: Dynamic;
 	private static function __init__(): Void {
@@ -124,42 +124,42 @@ class DeltaTime implements HasSignal {
 		set();
 		imm = js.Node.setInterval(tick, Std.int(1000 / 60)); // 60 FPS
 	}
-	
+
 	private static function _flostListeners(): Void js.Node.clearInterval(imm);
 	#end
-	
+
 	private static inline function createSignals(): Void {
 		update; // Create update signal
 		fixedUpdate; // Create fixedUpdate signal
 		eUpdate.onTake.add(_takeListeners);
 		eUpdate.onLost.add(_lostListeners);
 	}
-	
+
 	private static function updateHandler(dt: DT): Void {
 		if (speed > 0 && dt > 0) {
 			value = dt * speed;
 			eUpdate.dispatch(value);
 		}
 	}
-	
+
 	private static function _takeListeners(): Void fixedUpdate.add(updateHandler);
 	private static function _lostListeners(): Void fixedUpdate.remove(updateHandler);
-	
+
 	public static function skipUpdate(f:Void -> Void): Void DeltaTime.fixedUpdate < function() DeltaTime.fixedUpdate < f;
-	
+
 	public static function skipFrames(n: Int, f:Void -> Void):Void {
 		if (n == 0)
 			f();
 		else
 			DeltaTime.fixedUpdate < skipFrames.bind(n - 1, f);
 	}
-	
+
 	public static function notInstant(cb: Void -> Void): Void -> Void {
 		var instant = true;
 		DeltaTime.fixedUpdate < function() instant = false;
 		return function() instant ? DeltaTime.fixedUpdate < cb : cb();
 	}
-	
+
 	#if (munit || dox || tink_unittest)
 	/**
 	 * For unit tests

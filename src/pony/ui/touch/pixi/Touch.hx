@@ -1,6 +1,5 @@
 package pony.ui.touch.pixi;
 
-import haxe.Int64;
 import pixi.core.display.Container;
 import pixi.interaction.InteractionEvent;
 import pony.events.Signal1;

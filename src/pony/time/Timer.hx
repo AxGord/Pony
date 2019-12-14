@@ -7,7 +7,7 @@ import pony.math.MathTools;
 
 /**
  * Timer with signals
- * @author AxGord
+ * @author AxGord <axgord@gmail.com>
  */
 class Timer implements ITimer<Timer> implements Declarator implements HasSignal {
 

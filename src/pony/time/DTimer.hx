@@ -8,7 +8,7 @@ import pony.magic.HasSignal;
 /**
  * DeltaTime Timer
  * Can work as Clock
- * @author AxGord
+ * @author AxGord <axgord@gmail.com>
  */
 class DTimer implements HasSignal implements ITimer<DTimer> implements Declarator {
 

@@ -29,13 +29,13 @@ class Keyboard implements IKeyboard implements HasSignal {
 	}
 
 	private function addKeyboardListeners(stage: Stage): Void {
-		stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler, true, 0, true);
-		stage.addEventListener(KeyboardEvent.KEY_UP, keyUpHandler, true, 0, true);
+		stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler, false, 0, true);
+		stage.addEventListener(KeyboardEvent.KEY_UP, keyUpHandler, false, 0, true);
 	}
 
 	private function removeKeyboardListeners(stage: Stage): Void {
-		stage.removeEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler, true);
-		stage.removeEventListener(KeyboardEvent.KEY_UP, keyUpHandler, true);
+		stage.removeEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler, false);
+		stage.removeEventListener(KeyboardEvent.KEY_UP, keyUpHandler, false);
 	}
 
 	private function keyDownHandler(event: KeyboardEvent): Void eDown.dispatch(pony.ui.keyboard.Keyboard.map.get(event.keyCode));

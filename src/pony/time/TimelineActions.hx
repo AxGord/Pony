@@ -6,7 +6,7 @@ import pony.events.Signal1;
 
 /**
  * TimelineActions
- * @author AxGord
+ * @author AxGord <axgord@gmail.com>
  */
 class TimelineActions {
 

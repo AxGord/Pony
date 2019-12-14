@@ -8,7 +8,7 @@ import pony.magic.HasSignal;
 
 /**
  * TimeLine
- * @author AxGord
+ * @author AxGord <axgord@gmail.com>
  */
 class Timeline implements Declarator implements HasSignal {
 
