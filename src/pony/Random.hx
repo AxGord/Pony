@@ -17,6 +17,10 @@ import pony.geom.Direction;
 	public static inline function fromArray<T>(a: Array<T>): Null<T>
 		return a[uint(a.length - 1)];
 
+	public static inline function getFromArray<T>(a: Array<T>, count: UInt): Array<T> {
+		return @:nullSafety(Off) [ while (count-- > 0 && a.length > 0) a.splice(uint(a.length - 1), 1).pop() ];
+	}
+
 	public static function genUniqueUIntArray(to: UInt, from: UInt = 0): Array<UInt>
 		return shuffleArrayMod([ for (i in from...to) i ]);
 

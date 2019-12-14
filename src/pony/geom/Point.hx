@@ -1,5 +1,7 @@
 package pony.geom;
 
+import pony.ds.UHPair;
+
 typedef PointImpl<T> = {
 	x: T,
 	y: T
@@ -37,6 +39,8 @@ abstract Point<T: Float>(PointImpl<T>) from PointImpl<T> to PointImpl<T> {
 	@:to public inline function toFloat(): PointImpl<Float> return cast this;
 
 	@:to public static inline function toInt(p: Point<Float>): Point<Int> return new Point(Std.int(p.x), Std.int(p.y));
+
+	@:from public static inline function fromUHPair(p: UHPair): Point<UInt> return new Point<UInt>(p.a, p.b);
 
 	@:op(A / B) public static inline function div2<T: Float>(lhs: Point<T>, rhs: Point<T>): Point<Float>
 		return { x: lhs.x / rhs.x, y: lhs.y / rhs.y };
