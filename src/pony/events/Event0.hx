@@ -17,7 +17,7 @@ abstract Event0(Priority<Listener0>) from Priority<Listener0> to Priority<Listen
 		this = new Priority(double);
 		this.compare = compare;
 	}
-	
+
 	private static function compare<T1>(a: Listener0, b: Listener0): Bool {
 		return switch [a.listener, b.listener] {
 			case [LFunction0(a), LFunction0(b)]:
@@ -31,7 +31,7 @@ abstract Event0(Priority<Listener0>) from Priority<Listener0> to Priority<Listen
 			case _: false;
 		}
 	}
-	
+
 	public function dispatch(safe: Bool = false): Void {
 		if (this == null || this.isDestroy() || (safe && this.counters.length > 1)) return;
 		var controller: SignalControllerInner0 = new SignalControllerInner0(this);
@@ -47,17 +47,17 @@ abstract Event0(Priority<Listener0>) from Priority<Listener0> to Priority<Listen
 		}
 		this.lock = false;
 	}
-	
+
 	@:op(A && B) @:extern public inline function and(s: Event0): Event0 {
 		return (new Event0(): Signal0).add(this).add(s);
 	}
-	
+
 	@:op(A & B) @:extern public inline function andOnce(s: Event0): Event0 {
 		return (new Event0(): Signal0).add(this).add(s);
 	}
-	
+
 	public inline function destroy(): Void {
 		if (this != null) this.destroy();
 	}
-	
+
 }

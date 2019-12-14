@@ -23,7 +23,7 @@ typedef Listener1Impl<T1> = {
  */
 @:forward(once, listener)
 abstract Listener1<T1>(Listener1Impl<T1>) to Listener1Impl<T1> from Listener1Impl<T1> {
-	
+
 	@:from @:extern private static inline function f0<T1>(f: Void -> Void): Listener1<T1>
 		return { once: false, listener: LFunction0(f) };
 	@:from @:extern private static inline function f1<T1>(f: T1 -> Void): Listener1<T1>

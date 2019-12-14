@@ -17,7 +17,7 @@ abstract Event2<T1, T2>(Priority<Listener2<T1, T2>>) from Priority<Listener2<T1,
 		this = new Priority(double);
 		this.compare = compare;
 	}
-	
+
 	private static function compare<T1, T2>(a: Listener2<T1, T2>, b: Listener2<T1, T2>): Bool {
 		return switch [a.listener, b.listener] {
 			case [LFunction0(a), LFunction0(b)]:
@@ -47,7 +47,7 @@ abstract Event2<T1, T2>(Priority<Listener2<T1, T2>>) from Priority<Listener2<T1,
 			case _: false;
 		}
 	}
-	
+
 	public function dispatch(a1: T1, a2: T2, safe: Bool = false): Void {
 		if (this == null || this.isDestroy() || (safe && this.counters.length > 1)) return;
 		var controller: SignalControllerInner2<T1, T2> = new SignalControllerInner2<T1, T2>(this);
@@ -63,43 +63,43 @@ abstract Event2<T1, T2>(Priority<Listener2<T1, T2>>) from Priority<Listener2<T1,
 		}
 		this.lock = false;
 	}
-	
+
 	@:extern public inline function sub(a1: T1, a2: T2, priority: Int = 0): Event0 {
 		return (new Event0(): Signal0).add(dispatch.bind(a1, a2), priority);
 	}
-	
+
 	@:extern public inline function subOnce(a1: T1, a2: T2, priority: Int = 0): Event0 {
 		return cast (new Event0(): Signal0).once(dispatch.bind(a1, a2), priority);
 	}
-	
+
 	@:extern public inline function sub1(a1: T1, priority: Int = 0): Event1<T2> {
 		return (new Event1(): Signal1<T2>).add(dispatch.bind(a1), priority);
 	}
-	
+
 	@:extern public inline function sub1Once(a1: T1, priority: Int = 0): Event1<T2> {
 		return cast (new Event1(): Signal1<T2>).once(dispatch.bind(a1), priority);
 	}
-	
+
 	@:op(A - B) @:extern private inline function sub1_op(a1: T1): Event1<T2> {
 		return sub1(a1);
 	}
-	
+
 	@:extern public inline function sub2(a2:T2, priority:Int = 0): Event1<T1> {
 		return (new Event1():Signal1<T1>).add(dispatch.bind(_, a2), priority);
 	}
-	
+
 	@:extern public inline function sub2Once(a2: T2, priority: Int = 0): Event1<T1> {
 		return cast (new Event1(): Signal1<T1>).once(dispatch.bind(_, a2), priority);
 	}
-	
+
 	@:op(A && B) @:extern public inline function and(s: Event2<T1, T2>): Event2<T1, T2> {
 		return (new Event2(): Signal2<T1, T2>).add(this).add(s);
 	}
-	
+
 	@:op(A & B) @:extern public inline function andOnce(s: Event2<T1, T2>): Event2<T1, T2> {
 		return (new Event2(): Signal2<T1, T2>).add(this).add(s);
 	}
-	
+
 	public inline function destroy(): Void {
 		if (this != null) this.destroy();
 	}

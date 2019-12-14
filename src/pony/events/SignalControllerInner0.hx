@@ -4,11 +4,11 @@ package pony.events;
  * SignalControllerInner0
  * @author AxGord <axgord@gmail.com>
  */
-class SignalControllerInner0 {
-	
+@:nullSafety(Strict) class SignalControllerInner0 {
+
 	public var signal(default, null): Signal0;
 	public var stop: Bool = false;
-	public var listener: Listener0;
+	@:nullSafety(Off) public var listener: Listener0;
 
 	public inline function new(signal: Signal0) {
 		this.signal = signal;
@@ -19,8 +19,10 @@ class SignalControllerInner0 {
 	}
 
 	public inline function destroy(): Void {
-		signal = null;
-		listener = null;
+		@:nullSafety(Off) {
+			signal = null;
+			listener = null;
+		}
 	}
 
 }

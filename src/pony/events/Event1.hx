@@ -18,7 +18,7 @@ abstract Event1<T1>(Priority<Listener1<T1>>) from Priority<Listener1<T1>> to Pri
 		this = new Priority(double);
 		this.compare = compare;
 	}
-	
+
 	private static function compare<T1>(a: Listener1<T1>, b: Listener1<T1>): Bool {
 		return switch [a.listener, b.listener] {
 			case [LFunction0(a), LFunction0(b)]:
@@ -38,7 +38,7 @@ abstract Event1<T1>(Priority<Listener1<T1>>) from Priority<Listener1<T1>> to Pri
 			case _: false;
 		}
 	}
-	
+
 	public function dispatch(a1: T1, safe: Bool = false): Void {
 		if (this == null || this.isDestroy() || (safe && this.counters.length > 1)) return;
 		var controller: SignalControllerInner1<T1> = new SignalControllerInner1<T1>(this);
@@ -54,27 +54,27 @@ abstract Event1<T1>(Priority<Listener1<T1>>) from Priority<Listener1<T1>> to Pri
 		}
 		this.lock = false;
 	}
-	
+
 	@:extern public inline function sub(a1: T1, priority: Int = 0): Event0 {
 		return (new Event0(): Signal0).add(dispatch.bind(a1), priority);
 	}
-	
+
 	@:extern public inline function subOnce(a1: T1, priority: Int = 0): Event0 {
 		return cast (new Event0(): Signal0).once(dispatch.bind(a1), priority);
 	}
-	
+
 	@:op(A - B) @:extern private inline function sub_op(a1: T1): Event0 {
 		return sub(a1);
 	}
-	
+
 	@:op(A && B) @:extern public inline function and(s: Event1<T1>): Event1<T1> {
 		return (new Event1(): Signal1<T1>).add(this).add(s);
 	}
-	
+
 	@:op(A & B) @:extern public inline function andOnce(s: Event1<T1>): Event1<T1> {
 		return (new Event1(): Signal1<T1>).add(this).add(s);
 	}
-	
+
 	public inline function destroy(): Void {
 		if (this != null) this.destroy();
 	}

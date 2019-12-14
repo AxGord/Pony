@@ -1,10 +1,12 @@
 package pony.ui.touch.flash;
 
 import flash.events.MouseEvent;
+import flash.display.Stage;
 import flash.Lib;
 import pony.time.DeltaTime;
 import pony.ui.touch.Mouse as M;
 import pony.ui.touch.MouseButton;
+import pony.flash.MultyStage;
 
 /**
  * Flash Mouse
@@ -18,52 +20,55 @@ class Mouse {
 
 	private static var enabled: Bool = true;
 
-	private static var currentX(get, never): Float;
-	private static var currentY(get, never): Float;
-
 	@:extern public static inline function init(): Void {
 		DeltaTime.fixedUpdate.once(initNow, INIT_PRIORITY);
 	}
 
-	@:extern private static inline function get_currentX(): Float return Lib.current.stage.mouseX;
-	@:extern private static inline function get_currentY(): Float return Lib.current.stage.mouseY;
-
 	public static function initNow(): Void {
-		hackMove();
-		hackDown();
-		hackUp();
+		MultyStage.apply(applyHackMove, removeHackMove);
+		MultyStage.apply(applyHackDown, removeHackDown);
+		MultyStage.apply(applyHackUp, removeHackUp);
 		disableStd();
 	}
 
-	@:extern private static inline function hackMove(): Void {
-		Lib.current.stage.addEventListener(MouseEvent.MOUSE_MOVE, moveHandler, false, EVENTS_PRIORITY, true);
-		Lib.current.stage.addEventListener(MouseEvent.MOUSE_MOVE, moveHandler, true, EVENTS_PRIORITY, true);
+	private static function applyHackMove(stage: Stage): Void {
+		stage.addEventListener(MouseEvent.MOUSE_MOVE, moveHandler, true, EVENTS_PRIORITY, true);
+	}
+
+	private static function removeHackMove(stage: Stage): Void {
+		stage.removeEventListener(MouseEvent.MOUSE_MOVE, moveHandler, true);
 	}
 
 	private static function moveHandler(event: MouseEvent): Void {
-		M.moveHandler(currentX, currentY);
+		M.moveHandler(event.stageX, event.stageY);
 		tlock(event);
 	}
 
-	@:extern private static inline function hackDown(): Void {
-		Lib.current.stage.addEventListener(MouseEvent.MOUSE_DOWN, downHandler, false, EVENTS_PRIORITY, true);
-		Lib.current.stage.addEventListener(MouseEvent.MOUSE_DOWN, downHandler, true, EVENTS_PRIORITY, true);
+	private static function applyHackDown(stage: Stage): Void {
+		stage.addEventListener(MouseEvent.MOUSE_DOWN, downHandler, true, EVENTS_PRIORITY, true);
+	}
+
+	private static function removeHackDown(stage: Stage): Void {
+		stage.removeEventListener(MouseEvent.MOUSE_DOWN, downHandler, true);
 	}
 
 	private static function downHandler(event: MouseEvent): Void {
 		if (M.checkDown(MouseButton.LEFT))
-			M.downHandler(currentX, currentY, MouseButton.LEFT);
+			M.downHandler(event.stageX, event.stageY, MouseButton.LEFT);
 		tlock(event);
 	}
 
-	@:extern private static inline function hackUp():Void {
-		Lib.current.stage.addEventListener(MouseEvent.MOUSE_UP, upHandler, false, EVENTS_PRIORITY, true);
-		Lib.current.stage.addEventListener(MouseEvent.MOUSE_UP, upHandler, true, EVENTS_PRIORITY, true);
+	private static function applyHackUp(stage: Stage): Void {
+		stage.addEventListener(MouseEvent.MOUSE_UP, upHandler, true, EVENTS_PRIORITY, true);
+	}
+
+	private static function removeHackUp(stage: Stage): Void {
+		stage.removeEventListener(MouseEvent.MOUSE_UP, upHandler, true);
 	}
 
 	private static function upHandler(event: MouseEvent): Void {
 		if (M.checkUp(MouseButton.LEFT))
-			M.upHandler(currentX, currentY, MouseButton.LEFT);
+			M.upHandler(event.stageX, event.stageY, MouseButton.LEFT);
 		tlock(event);
 	}
 

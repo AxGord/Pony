@@ -17,5 +17,5 @@ class SignalTools {
 	#else
 	@:extern public static inline function functionHashCompare(a: Function, b: Function): Bool return a == b;
 	#end
-	
+
 }
