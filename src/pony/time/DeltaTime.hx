@@ -51,7 +51,7 @@ class DeltaTime implements HasSignal {
 	private inline static function get(): Float return (openfl.Lib.getTimer() - t) / 1000;
 
 	#elseif !HUGS
-	public static function tick(): Void {
+	public static inline function tick(): Void {
 		fixedValue = get();
 		set();
 		fixedDispatch();
@@ -145,7 +145,7 @@ class DeltaTime implements HasSignal {
 	private static function _takeListeners(): Void fixedUpdate.add(updateHandler);
 	private static function _lostListeners(): Void fixedUpdate.remove(updateHandler);
 
-	public static function skipUpdate(f:Void -> Void): Void DeltaTime.fixedUpdate < function() DeltaTime.fixedUpdate < f;
+	public static function skipUpdate(f: Void -> Void): Void DeltaTime.fixedUpdate < function() DeltaTime.fixedUpdate < f;
 
 	public static function skipFrames(n: Int, f:Void -> Void):Void {
 		if (n == 0)

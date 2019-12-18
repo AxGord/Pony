@@ -56,10 +56,10 @@ class Button extends MovieClip {
 	}
 
 	#if swc
-	public function addClickListener(fn: Void -> Void, priority:Int = 0): Void core.onClick.add(fn, priority);
-	public function addOnceClickListener(fn: Void -> Void, priority:Int = 0): Void core.onClick.once(fn, priority);
-	public function removeClickListener(fn: Void -> Void): Void core.onClick.remove(fn);
-	@:setter(bMode) public function setBMode(value: Bool): Void bMode = value;
+	private function addClickListener(fn: Void -> Void, priority:Int = 0): Void core.onClick.add(fn, priority);
+	private function addOnceClickListener(fn: Void -> Void, priority:Int = 0): Void core.onClick.once(fn, priority);
+	private function removeClickListener(fn: Void -> Void): Void core.onClick.remove(fn);
+	@:setter(bMode) private function setBMode(value: Bool): Void bMode = value;
 	#end
 
 	@:getter(bMode) public inline function get_bMode(): Bool return core.bMode;
