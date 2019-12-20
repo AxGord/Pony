@@ -12,7 +12,16 @@ package pony.ds;
 	public static inline var MAX_VALUE_B: UInt = 99999;
 	public static inline var MID_VALUE_B: UInt = 49999;
 	public static inline var MAX_VALUE_B_MAX_A: UInt = 67295;
-	private static inline var ASTEP: UInt = 100000;
+	public static inline var MAP_MAX_VALUE_A: UInt = 21474;
+	public static inline var MAP_MID_VALUE_A: UInt = 10737;
+	public static inline var MAP_MAX_VALUE_B: UInt = 99999;
+	public static inline var MAP_MID_VALUE_B: UInt = 41823;
+	public static inline var MAP_MAX_VALUE_B_MAX_A: UInt = 83647;
+	public static inline var ASTEP: UInt = 100000;
+	public static inline var MAX_PAIR: UHPair = cast MAX_VALUE_A * ASTEP + MAX_VALUE_B_MAX_A;
+	public static inline var MID_PAIR: UHPair = cast MID_VALUE_A * ASTEP + MID_VALUE_B;
+	public static inline var MAP_MAX_PAIR: UHPair = cast MAP_MAX_VALUE_A * ASTEP + MAP_MAX_VALUE_B_MAX_A;
+	public static inline var MAP_MID_PAIR: UHPair = cast MAP_MID_VALUE_A * ASTEP + MAP_MID_VALUE_B;
 
 	public var a(get, set): UInt;
 	public var b(get, set): UInt;
