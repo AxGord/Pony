@@ -8,7 +8,9 @@ package pony.ds;
 @:nullSafety(Strict) abstract UHPair(UInt) to UInt {
 
 	public static inline var MAX_VALUE_A: UInt = 42949;
+	public static inline var MID_VALUE_A: UInt = 21474;
 	public static inline var MAX_VALUE_B: UInt = 99999;
+	public static inline var MID_VALUE_B: UInt = 49999;
 	public static inline var MAX_VALUE_B_MAX_A: UInt = 67295;
 	private static inline var ASTEP: UInt = 100000;
 

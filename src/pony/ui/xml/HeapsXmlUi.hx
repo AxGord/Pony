@@ -52,8 +52,7 @@ using pony.text.TextTools;
 	button: pony.heaps.ui.gui.Button
 }))
 #end
-@:nullSafety(Strict)
-class HeapsXmlUi extends Object implements HasAbstract {
+@:nullSafety(Strict) class HeapsXmlUi extends Object implements HasAbstract {
 
 	private static inline var HALF: Float = 0.5;
 	private static var fonts: Map<String, Font> = new Map();

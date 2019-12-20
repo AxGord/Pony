@@ -3,6 +3,10 @@ package pony.js;
 import pony.events.Signal0;
 import pony.magic.HasSignal;
 
+/**
+ * Perform
+ * @author AxGord <axgord@gmail.com>
+ */
 class Perform implements HasSignal {
 
 	#if perf.js

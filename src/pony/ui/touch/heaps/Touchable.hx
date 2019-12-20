@@ -51,7 +51,7 @@ class Touchable extends TouchableBase {
 						HeapsApp.instance.s2d.screenYToLocal(event.relY) + HeapsApp.instance.canvas.rect.y
 					);
 					TouchableBase.dispatchMove(
-						event.touchId == null ? 0 : event.touchId,
+						#if js event.touchId == null ? 0 : #end event.touchId,
 						lastPos.x,
 						lastPos.y
 					);

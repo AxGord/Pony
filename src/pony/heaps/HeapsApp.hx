@@ -2,31 +2,31 @@ package pony.heaps;
 
 import h2d.Object;
 import h2d.Graphics;
-import hxd.SceneEvents.InteractiveScene;
-import pony.color.UColor;
 import h2d.Drawable;
 import h2d.Scene;
+import hxd.SceneEvents.InteractiveScene;
 import hxd.Window;
+import hxd.App;
 import pony.Config;
+import pony.color.UColor;
 import pony.geom.Point;
 import pony.geom.Rect;
-import pony.js.SmartCanvas;
 import pony.time.Time;
 import pony.time.DTimer;
 import pony.time.DeltaTime;
 import pony.events.Signal0;
-import js.html.Element;
-import js.Browser;
 import pony.magic.HasSignal;
 import pony.magic.HasLink;
-import hxd.App;
+#if js
+import pony.js.SmartCanvas;
+import js.html.Element;
+#end
 
 /**
  * HeapsApp
  * @author AxGord <axgord@gmail.com>
  */
-@:nullSafety
-class HeapsApp extends App implements HasSignal implements HasLink {
+@:nullSafety class HeapsApp extends App implements HasSignal implements HasLink {
 
 	public static var instance: Null<HeapsApp>;
 
@@ -38,9 +38,13 @@ class HeapsApp extends App implements HasSignal implements HasLink {
 	public var canvas: SmartCanvas;
 	private var border: Null<Graphics>;
 
-	public function new(?size: Point<Int>, ?color: UColor, ?parentDom: Element, sizeUpdate: Bool = true) {
+	public function new(?size: Point<Int>, ?color: UColor, #if js ?parentDom: Element, #end sizeUpdate: Bool = true) {
+		#if js
 		canvas = new SmartCanvas(size, parentDom);
 		@:privateAccess Window.inst = new Window(canvas.canvas);
+		#else
+		canvas = new SmartCanvas(size);
+		#end
 		super();
 		if (color != null)
 			engine.backgroundColor = color;

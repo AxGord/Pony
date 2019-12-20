@@ -1,15 +1,19 @@
 package pony.js;
 
-import pony.time.DeltaTime;
 import js.Browser;
 import pony.magic.HasSignal;
 import pony.magic.Declarator;
 import pony.events.Signal0;
+import pony.time.DeltaTime;
 import pony.time.DTimer;
 import pony.time.Time;
 
+/**
+ * Window
+ * @author AxGord <axgord@gmail.com>
+ */
 class Window implements Declarator implements HasSignal {
-	
+
 	private static var DEFAULT_RESIZE_INTERVAL:Time = 200;
 	private static var DEFAULT_RESIZE_EVENT:String = 'resize';
 	private static var ORIENTATION_CHANGE_EVENT:String = 'orientationchange';
@@ -22,8 +26,8 @@ class Window implements Declarator implements HasSignal {
 	@:auto public static var onResize:Signal0;
 	@:auto public static var onMomentalResize:Signal0;
 
-	public static var resizeEventName(default, set):String = DEFAULT_RESIZE_EVENT; 
-	public static var resizeInterval(get, set):Time; 
+	public static var resizeEventName(default, set):String = DEFAULT_RESIZE_EVENT;
+	public static var resizeInterval(get, set):Time;
 	private static var resizeTimer:DTimer = DTimer.createFixedTimer(DEFAULT_RESIZE_INTERVAL);
 
 	private static function __init__():Void {
