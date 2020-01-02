@@ -44,6 +44,7 @@ import js.html.Element;
 		@:privateAccess Window.inst = new Window(canvas.canvas);
 		#else
 		canvas = new SmartCanvas(size);
+		onInit < sdlInitHandler;
 		#end
 		super();
 		if (color != null)
@@ -74,7 +75,26 @@ import js.html.Element;
 	override public function setScene(scene: InteractiveScene, disposePrevious: Bool = true): Void {
 		super.setScene(scene, disposePrevious);
 		if (sizeUpdate) canvas.updateSize();
+		#if !js
+		windowResizeHandler();
+		#end
 	}
+
+	#if !js
+
+	private function sdlInitHandler(): Void {
+		screenUpdate();
+		@:privateAccess engine.window.addResizeEvent(windowResizeHandler);
+	}
+
+	private function windowResizeHandler(): Void {
+		@:privateAccess canvas.setSize(engine.window.width, engine.window.height);
+		DeltaTime.fixedUpdate < screenUpdate;
+	}
+
+	private function screenUpdate(): Void @:privateAccess engine.window.window.setPosition(engine.window.window.x, engine.window.window.y);
+
+	#end
 
 	private function set_sizeUpdate(b: Bool): Bool {
 		if (b != sizeUpdate) {
