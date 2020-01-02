@@ -10,6 +10,7 @@ import h2d.Object;
 import h2d.Drawable;
 import h2d.Graphics;
 import h2d.Text;
+import h2d.TextInput;
 import hxd.res.DefaultFont;
 import pony.magic.HasAbstract;
 import pony.geom.Point;
@@ -47,6 +48,7 @@ using pony.text.TextTools;
 	line: h2d.Graphics,
 	circle: h2d.Graphics,
 	text: h2d.Text,
+	input: h2d.TextInput,
 	image: pony.heaps.ui.gui.NodeBitmap,
 	layout: pony.heaps.ui.gui.layout.TLayout,
 	button: pony.heaps.ui.gui.Button
@@ -106,6 +108,8 @@ using pony.text.TextTools;
 				createLayout(attrs, content);
 			case UiTags.text:
 				createText(attrs, content);
+			case UiTags.input:
+				createTextInput(attrs, content);
 			case UiTags.button:
 				new Button(cast content);
 			case _:
@@ -171,7 +175,14 @@ using pony.text.TextTools;
 	}
 
 	@:extern private inline function createText(attrs: Dynamic<String>, content: Array<Dynamic>): Object {
-		var t: Text = new Text(getFont(attrs));
+		return createTextBase(new Text(getFont(attrs)), attrs, content);
+	}
+
+	@:extern private inline function createTextInput(attrs: Dynamic<String>, content: Array<Dynamic>): Object {
+		return createTextBase(new TextInput(getFont(attrs)), attrs, content);
+	}
+
+	@:extern private inline function createTextBase(t: Text, attrs: Dynamic<String>, content: Array<Dynamic>): Object {
 		t.maxWidth = parseAndScaleWithNull(attrs.maxWidth);
 		t.lineSpacing = cast parseAndScaleWithNull(attrs.lineSpacing);
 		t.letterSpacing = cast parseAndScaleWithNull(attrs.letterSpacing);
