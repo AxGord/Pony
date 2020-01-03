@@ -1,5 +1,6 @@
 package pony.heaps.ui.gui;
 
+import hxd.Cursor;
 import h2d.Interactive;
 import h2d.Object;
 import h3d.Vector;
@@ -44,8 +45,10 @@ class Button extends Interactive {
 
 	private function visual1Handler(mode: Int, state: ButtonState): Void {
 		if (mode == 1) {
+			cursor = Cursor.Default;
 			nodes[0].tint = DOWNTINTV;
 		} else {
+			cursor = Cursor.Button;
 			switch state {
 				case Default:
 					nodes[0].tint = DEFTINTV;
@@ -59,10 +62,12 @@ class Button extends Interactive {
 
 	private function visual2Handler(mode: Int, state: ButtonState): Void {
 		if (mode == 1) {
+			cursor = Cursor.Default;
 			nodes[0].visible = false;
 			nodes[1].visible = true;
 			nodes[1].tint = DOWNTINTV;
 		} else {
+			cursor = Cursor.Button;
 			switch state {
 				case Default:
 					nodes[0].visible = true;
@@ -81,8 +86,10 @@ class Button extends Interactive {
 	private function visualNHandler(mode: Int, state: ButtonState): Void {
 		for (node in nodes) node.visible = false;
 		if (mode == 1) {
+			cursor = Cursor.Default;
 			nodes[3].visible = true;
 		} else {
+			cursor = Cursor.Button;
 			if (mode > 1) {
 				mode--;
 				mode *= 3;
