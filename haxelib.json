@@ -25,8 +25,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Pony Tools: Create heaps projects, fixes, refactoring",
-"version": "1.0.7",
+"releasenote": "Improvements",
+"version": "1.0.8",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }
