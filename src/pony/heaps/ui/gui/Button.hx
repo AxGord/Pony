@@ -7,8 +7,11 @@ import h3d.Vector;
 import pony.ui.touch.Touchable;
 import pony.ui.gui.ButtonCore;
 
-@:nullSafety(Strict)
-class Button extends Interactive {
+/**
+ * Button
+ * @author AxGord <axgord@gmail.com>
+ */
+@:nullSafety(Strict) class Button extends Interactive {
 
 	private static inline var OVERTINT: Float = 1.2;
 	private static inline var DOWNTINT: Float = 0.5;
@@ -25,6 +28,7 @@ class Button extends Interactive {
 		super(first.w * first.scaleX, first.h * first.scaleY, parent);
 		this.nodes = nodes;
 		touchable = new Touchable(@:nullSafety(Off) this);
+		touchable.propagateWheel = true;
 		core = new ButtonCore(touchable);
 		for (node in nodes) {
 			node.visible = false;
@@ -38,6 +42,8 @@ class Button extends Interactive {
 				core.onVisual << visual1Handler;
 			case 2:
 				core.onVisual << visual2Handler;
+			case 3:
+				core.onVisual << visual3Handler;
 			case _:
 				core.onVisual << visualNHandler;
 		}
@@ -83,6 +89,22 @@ class Button extends Interactive {
 		}
 	}
 
+	private function visual3Handler(mode: Int, state: ButtonState): Void {
+		for (node in nodes) node.visible = false;
+		if (mode == 1) {
+			cursor = Cursor.Default;
+			nodes[2].visible = true;
+		} else {
+			cursor = Cursor.Button;
+			var index: UInt = switch state {
+				case Default: 0;
+				case Focus, Leave: 1;
+				case Press: 2;
+			}
+			nodes[index].visible = true;
+		}
+	}
+
 	private function visualNHandler(mode: Int, state: ButtonState): Void {
 		for (node in nodes) node.visible = false;
 		if (mode == 1) {
@@ -95,14 +117,13 @@ class Button extends Interactive {
 				mode *= 3;
 				mode++;
 			}
-			switch state {
-				case Default:
-					nodes[mode].visible = true;
-				case Focus, Leave:
-					nodes[mode + 1].visible = true;
-				case Press:
-					nodes[mode + 2].visible = true;
+			var index: UInt = switch state {
+				case Default: mode;
+				case Focus, Leave: mode + 1;
+				case Press: mode + 2;
 			}
+			if (index >= nodes.length) index = nodes.length - 1;
+			nodes[index].visible = true;
 		}
 	}
 

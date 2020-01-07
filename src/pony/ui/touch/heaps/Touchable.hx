@@ -117,7 +117,7 @@ class Touchable extends TouchableBase {
 
 	private function wheelHandler(event: Event): Void {
 		if (outover) return;
-		eWheel.dispatch(event.wheelDelta > 0 ? 1 : -1);
+		eWheel.dispatch(event.wheelDelta);
 		if (propagateWheel) event.propagate = true;
 	}
 

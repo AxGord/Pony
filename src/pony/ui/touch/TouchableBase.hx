@@ -38,7 +38,7 @@ import pony.TypedPool;
 	@:auto public var onClick: Signal1<Touch>;
 	@:auto public var onRightClick: Signal1<Touch>;
 	@:auto public var onTap: Signal1<Touch>;
-	@:auto public var onWheel: Signal1<Int>;
+	@:auto public var onWheel: Signal1<Float>;
 	@:auto public var onSwipe: Signal1<Direction>;
 
 	@:nullSafety(Off) private var tapTimer: DTimer;

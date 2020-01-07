@@ -32,7 +32,7 @@ class Mouse implements Declarator implements HasSignal {
 	@:auto public static var onMiddleDown: Signal2<Float, Float>;
 	@:auto public static var onMiddleUp: Signal2<Float, Float>;
 	@:auto public static var onLeave: Signal0;
-	@:auto public static var onWheel: Signal1<Int>;
+	@:auto public static var onWheel: Signal1<Float>;
 
 	public static var x(default, null): Float;
 	public static var y(default, null): Float;

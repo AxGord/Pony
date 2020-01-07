@@ -78,8 +78,10 @@ import pony.ui.touch.Touchable;
 	private function moveHandler(t: Touch): Void pos = limit(detectPos(t.x, t.y));
 	@:extern private inline function detectPos(x: Float, y: Float): Float return inv((isVertical ? y : x) + startPoint);
 	@:extern private inline function limit(p: Float): Float return if (p < 0) 0 else if (p > size) size else p;
-	public inline function wheel(v: Int): Void scroll(wheelSpeed * v);
-	public inline function scroll(v: Float): Void if (size >= 1) pos = limit(pos - wheelSpeed * v);
+	public inline function wheel(v: Float): Void scroll(wheelSpeed * v);
+	public inline function scroll(v: Float): Void if (size >= 1) pos = limit(pos - v);
+	public inline function wheelValue(v: Float): Void scrollValue(-wheelSpeed * v);
+	public inline function scrollValue(v: Float): Void setPosValue(value - v);
 
 	public inline function update(): Void {
 		var p: Float = pos;

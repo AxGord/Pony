@@ -6,8 +6,7 @@ import h2d.Tile;
  * GUIUtils
  * @author AxGord <axgord@gmail.com>
  */
-@:nullSafety(Strict)
-class GUIUtils {
+@:nullSafety(Strict) class GUIUtils {
 
 	public static inline function tilesWidthSum(t: Array<Tile>): Float return Lambda.fold(t, _tilesWidthSum, 0);
 	public static inline function tilesHeightSum(t: Array<Tile>): Float return Lambda.fold(t, _tilesWidthSum, 0);

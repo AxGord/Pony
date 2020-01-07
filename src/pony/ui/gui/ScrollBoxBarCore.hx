@@ -89,7 +89,7 @@ import pony.ui.gui.SliderCore;
 
 	private function posHandler(pos: Float): Void ePos.dispatch(pos, totalB - scrollPanelSize);
 	private function valueHandler(v: Float): Void eContentPos.dispatch(-v);
-	public function wheelHandler(delta: Int): Void slider.wheel(delta);
+	public function wheelHandler(delta: Float): Void slider.wheelValue(delta);
 	public function start(p: Float): Void startPoint = slider.value + p;
 	public function move(p: Float): Void slider.setPosValue(startPoint - p);
 

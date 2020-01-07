@@ -16,6 +16,9 @@ import pony.ui.gui.SliderCore;
  */
 @:nullSafety(Strict) class ScrollBoxCore implements HasSignal implements HasLink {
 
+	public static inline var DEFAULT_BAR_SIZE: UInt = 8;
+	public static inline var DEFAULT_WHEEL_SPEED: Float = 100;
+
 	@:auto public var onScrollVertPos: Signal2<Float, Float>;
 	@:auto public var onScrollVertSize: Signal2<Float, Float>;
 	@:auto public var onHideScrollVert: Signal0;
@@ -42,7 +45,8 @@ import pony.ui.gui.SliderCore;
 
 	public function new(
 		w: Float, h: Float,
-		?tArea: Touchable, ?tScrollerVert: ButtonCore, ?tScrollerHor: ButtonCore, scrollSize: Float = 10, wheelSpeed: Float = 1
+		?tArea: Touchable, ?tScrollerVert: ButtonCore, ?tScrollerHor: ButtonCore,
+		scrollSize: Float = DEFAULT_BAR_SIZE, wheelSpeed: Float = DEFAULT_WHEEL_SPEED
 	) {
 		this.tArea = tArea;
 		mw = w;
