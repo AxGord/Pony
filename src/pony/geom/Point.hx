@@ -79,6 +79,10 @@ abstract Point<T: Float>(PointImpl<T>) from PointImpl<T> to PointImpl<T> {
 		return { x: lhs.x - rhs, y: lhs.y - rhs };
 
 	@:op(A == B) public inline function compare(b: Point<T>): Bool return x == b.x && y == b.y;
+	@:op(A > B) private inline function gt(b: Point<T>): Bool return x > b.x || y > b.y;
+	@:op(A >= B) private inline function gte(b: Point<T>): Bool return x >= b.x || y >= b.y;
+	@:op(A < B) private inline function lt(b: Point<T>): Bool return x < b.x || y < b.y;
+	@:op(A <= B) private inline function lte(b: Point<T>): Bool return x <= b.x || y <= b.y;
 
 	public inline function minMax(b: Point<T>): Point<T>
 		return new Point<T>(this.x < b.x ? this.x : b.x, this.y > b.y ? this.y : b.y);
@@ -104,6 +108,7 @@ abstract Point<T: Float>(PointImpl<T>) from PointImpl<T> to PointImpl<T> {
 
 	#if heaps
 	@:keep private function keepHackForHeaps(): Any return new h2d.Object().setPosition;
+	@:to public inline function toHeapsPoint(): h2d.col.Point return new h2d.col.Point(x, y);
 	#end
 }
 
