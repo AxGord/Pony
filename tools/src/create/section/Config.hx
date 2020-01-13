@@ -2,7 +2,7 @@ package create.section;
 
 import pony.Or;
 import pony.text.XmlTools;
-import pony.KeyValue;
+import pony.ds.KeyValue;
 
 using pony.Tools;
 
