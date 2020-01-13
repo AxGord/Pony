@@ -40,6 +40,8 @@ class DTimer implements HasSignal implements ITimer<DTimer> implements Declarato
 		return this;
 	}
 
+	public function start0(): Void start(0);
+
 	public inline function start(?dt: DT): DTimer {
 		updateSignal.add(_update);
 		if ((dt: Null<Float>) != null)
