@@ -1,5 +1,6 @@
 package pony;
 
+import pony.ds.KeyValue;
 import haxe.Constraints.Function;
 import haxe.CallStack;
 import haxe.io.Bytes;
@@ -425,10 +426,6 @@ class IterableTools {
 
 }
 
-class ImmutableArrayTools {
-	@:extern public static inline function kv<T>(a: ImmutableArray<T>): Iterator<KeyValue<Int, T>> return ArrayTools.kv(cast a);
-}
-
 class ArrayTools {
 
 	public static inline function exists<T>(a: Array<T>, e: T): Bool return a.indexOf(e) != -1;
@@ -438,7 +435,7 @@ class ArrayTools {
 		return false;
 	}
 
-	public static function kv<T>(a: Array<T>): Iterator < KeyValue < Int, T >> {
+	public static function kv<T>(a: Array<T>): Iterator < KeyValue< Int, T >> {
 		var i: Int = 0;
 		var it: Iterator<T> = a.iterator();
 		return {
