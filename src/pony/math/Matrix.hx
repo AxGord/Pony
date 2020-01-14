@@ -9,7 +9,7 @@ import pony.geom.Point;
 @:forward(push, pop, length) @:nullSafety(Strict)
 abstract Matrix<T>(Array<Array<T>>) from Array<Array<T>> to Array<Array<T>> {
 
-	public function cut(x: Int, y: Int): Matrix<T> return [ for (i in 0...y) [ for (j in 0...x) this[i][j] ] ];
+	public function cut(x: Int, y: Int): Matrix<T> return [ for (i in 0...x) [ for (j in 0...y) this[i][j] ] ];
 
 	public function hor(d: Int): Matrix<T> {
 		return if (d > 0)
@@ -50,14 +50,14 @@ abstract Matrix<T>(Array<Array<T>>) from Array<Array<T>> to Array<Array<T>> {
 	**/
 	public function map<B>(f: T -> B): Matrix<B> return [ for (y in this) [ for (x in y) f(x) ] ];
 
-	public inline function get(p: IntPoint): T return this[p.y][p.x];
-	public inline function set(p: IntPoint, value: T): T return this[p.y][p.x] = value;
+	public inline function get(p: Point<Int>): T return this[p.x][p.y];
+	public inline function set(p: Point<Int>, value: T): T return this[p.x][p.y] = value;
 
-	public function indexOf(e: T): Null<IntPoint> {
-		for (y in 0...this.length) {
-			var ye: Array<T> = this[y];
-			var x: Int = ye.indexOf(e);
-			if (x != -1) return new IntPoint(x, y);
+	public function indexOf(e: T): Null<Point<Int>> {
+		for (x in 0...this.length) {
+			var xe: Array<T> = this[x];
+			var y: Int = xe.indexOf(e);
+			if (y != -1) return new Point<Int>(x, y);
 		}
 		return null;
 	}
@@ -67,15 +67,15 @@ abstract Matrix<T>(Array<Array<T>>) from Array<Array<T>> to Array<Array<T>> {
 		var x: UInt = 0;
 		var y: UInt = 0;
 		return {
-			hasNext: () -> y < this.length && x < this[y].length,
+			hasNext: () -> x < this.length && y < this[x].length,
 			next: () -> {
-				final r: {key:Point<UInt>, value:T} = {
+				final r: { key: Point<UInt>, value: T } = {
 					key: new Point(x, y),
-					value: this[y++][x]
+					value: this[x++][y]
 				}
-				if (y >= this.length) {
-					y = 0;
-					x++;
+				if (x >= this.length) {
+					x = 0;
+					y++;
 				}
 				r;
 			}
@@ -83,7 +83,7 @@ abstract Matrix<T>(Array<Array<T>>) from Array<Array<T>> to Array<Array<T>> {
 	}
 	#end
 
-	public static function create<T>(x: Int, y: Int, v: T): Matrix<T> return [ for (_ in 0...y) [ for (_ in 0...x) v ] ];
+	public static function create<T>(x: Int, y: Int, v: T): Matrix<T> return [ for (_ in 0...x) [ for (_ in 0...y) v ] ];
 
 	//todo: ver, rotate, math op
 
