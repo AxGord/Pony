@@ -48,7 +48,7 @@ abstract Matrix<T>(Array<Array<T>>) from Array<Array<T>> to Array<Array<T>> {
 	 * Creates a new List by applying function `f` to all matrix elements.
 	 * The order of elements is preserved.
 	**/
-	public function map<B>(f: T -> B): Matrix<B> return [ for (y in this) [ for (x in y) f(x) ] ];
+	public function map<B>(f: T -> B): Matrix<B> return [ for (x in this) [ for (y in x) f(y) ] ];
 
 	public inline function get(p: Point<Int>): T return this[p.x][p.y];
 	public inline function set(p: Point<Int>, value: T): T return this[p.x][p.y] = value;
@@ -60,6 +60,24 @@ abstract Matrix<T>(Array<Array<T>>) from Array<Array<T>> to Array<Array<T>> {
 			if (y != -1) return new Point<Int>(x, y);
 		}
 		return null;
+	}
+
+	public function setAll(value: T): Void for (x in 0...this.length) for (y in 0...this[x].length) this[x][y] = value;
+
+	public function iterator(): Iterator<T> {
+		var x: UInt = 0;
+		var y: UInt = 0;
+		return {
+			hasNext: () -> x < this.length && y < this[x].length,
+			next: () -> {
+				var r: T = this[x++][y];
+				if (x >= this.length) {
+					x = 0;
+					y++;
+				}
+				r;
+			}
+		}
 	}
 
 	#if (haxe_ver >= '4.0.0')
