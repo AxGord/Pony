@@ -46,15 +46,15 @@ class Logable implements ILogable implements HasSignal {
 		#end
 	}
 
-	public inline function errorf(fn: Void -> String): Void {
+	public inline function errorf(fn: Void -> String, ?p: PosInfos): Void {
 		#if !disableErrors
-		if (eError != null && !eError.empty) error(@:nullSafety(Off) fn());
+		if (eError != null && !eError.empty) error(@:nullSafety(Off) fn(), p);
 		#end
 	}
 
-	public inline function logf(fn: Void -> String): Void {
+	public inline function logf(fn: Void -> String, ?p: PosInfos): Void {
 		#if !disableLogs
-		if (eLog != null && !eLog.empty) log(@:nullSafety(Off) fn());
+		if (eLog != null && !eLog.empty) log(@:nullSafety(Off) fn(), p);
 		#end
 	}
 
