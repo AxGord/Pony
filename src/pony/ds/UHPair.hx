@@ -1,5 +1,7 @@
 package pony.ds;
 
+import pony.geom.Point;
+
 /**
  * UHPair
  * UInt numbers pair
@@ -34,5 +36,6 @@ package pony.ds;
 	public inline function set_b(v: UInt): UInt return this = a * ASTEP + v;
 
 	@:to public inline function toString(): String return @:nullSafety(Off) '($a, $b)';
+	@:to public inline function toPoint(): Point<UInt> return new Point<UInt>(a, b);
 
 }

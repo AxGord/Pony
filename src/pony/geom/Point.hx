@@ -40,6 +40,8 @@ abstract Point<T: Float>(PointImpl<T>) from PointImpl<T> to PointImpl<T> {
 
 	@:to public static inline function toInt(p: Point<Float>): Point<Int> return new Point(Std.int(p.x), Std.int(p.y));
 
+	@:to public static inline function toUHPair(p: Point<UInt>): UHPair return new UHPair(p.x, p.y);
+
 	@:from public static inline function fromUHPair(p: UHPair): Point<UInt> return new Point<UInt>(p.a, p.b);
 
 	@:op(A / B) public static inline function div2<T: Float>(lhs: Point<T>, rhs: Point<T>): Point<Float>
