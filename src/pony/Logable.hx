@@ -10,12 +10,14 @@ import pony.magic.HasSignal;
  * Logable
  * @author AxGord <axgord@gmail.com>
  */
-class Logable implements ILogable implements HasSignal {
+@:nullSafety(Strict) class Logable implements ILogable implements HasSignal {
+
+	private static var origTrace: Null<Dynamic -> ?PosInfos -> Void>;
 
 	public function new() {}
 
-	@:lazy public var onLog: Signal2<String, PosInfos>;
-	@:lazy public var onError: Signal2<String, PosInfos>;
+	@:lazy public var onLog: Signal2<String, Null<PosInfos>>;
+	@:lazy public var onError: Signal2<String, Null<PosInfos>>;
 
 	public inline function listenError(l: ILogable): Void {
 		#if !disableErrors
@@ -73,6 +75,16 @@ class Logable implements ILogable implements HasSignal {
 	public inline function traceAll(): Void {
 		traceLogs();
 		traceErrors();
+	}
+
+	public static function vscodePatchTrace(): Void {
+		origTrace = Log.trace;
+		Log.trace = vscodeTrace;
+	}
+
+	private static function vscodeTrace(v: Dynamic, ?p: PosInfos): Void {
+		if (p != null) p.fileName = './' + p.fileName;
+		origTrace(v, p);
 	}
 
 }
