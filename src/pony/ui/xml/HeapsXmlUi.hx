@@ -25,6 +25,7 @@ import pony.heaps.ui.gui.NodeBitmap;
 import pony.heaps.ui.gui.NodeRepeat;
 import pony.heaps.ui.gui.NodeRect;
 import pony.heaps.ui.gui.Button;
+import pony.heaps.ui.gui.Switch;
 import pony.heaps.ui.gui.slices.Slice;
 import pony.heaps.ui.gui.layout.IntervalLayout;
 import pony.heaps.ui.gui.layout.RubberLayout;
@@ -45,6 +46,7 @@ using pony.text.TextTools;
 @:autoBuild(pony.ui.xml.XmlUiBuilder.build(pony.ui.AssetManager, {
 	node: h2d.Drawable,
 	rect: pony.heaps.ui.gui.NodeRect,
+	sw: pony.heaps.ui.gui.Switch,
 	line: h2d.Graphics,
 	circle: h2d.Graphics,
 	text: h2d.Text,
@@ -72,7 +74,16 @@ using pony.text.TextTools;
 				for (e in content) s.addChild(e);
 				s;
 			case UiTags.rect:
-				new NodeRect(new Point<Float>(parseAndScale(attrs.w), parseAndScale(attrs.h)), attrs.color, parseAndScaleInt(attrs.round));
+				var rect: NodeRect = new NodeRect(
+					new Point<Float>(parseAndScale(attrs.w), parseAndScale(attrs.h)),
+					parseLineStyle(attrs.line),
+					attrs.color == null ? null : attrs.color,
+					parseAndScaleInt(attrs.round)
+				);
+				for (e in content) rect.addChild(e);
+				rect;
+			case UiTags.sw:
+				return new Switch(cast content, attrs.def == null ? null : Std.parseInt(attrs.def));
 			case UiTags.line:
 				var color: UColor = attrs.color;
 				var g: Graphics = new Graphics();
@@ -136,6 +147,21 @@ using pony.text.TextTools;
 		addFilters(cast obj, attrs);
 		setWatchers(obj, attrs);
 		return obj;
+	}
+
+	private function parseLineStyle(attr: Null<String>): Null<Pair<UColor, Float>> {
+		if (attr == null) return null;
+		var a: Array<String> = StringTools.trim(attr).split(' ');
+		var color: UColor = 0;
+		var line: Float = 1;
+		if (a[0].charAt(0) == '#') {
+			color = a[0];
+			if (a.length > 1) line = parseAndScaleWithoutNull(a[1]);
+		} else {
+			line = parseAndScaleWithoutNull(a[0]);
+			if (a.length > 1) color = a[1];
+		}
+		return new Pair(color, line);
 	}
 
 	private function getWhPoint(v: String): Point<Float> {

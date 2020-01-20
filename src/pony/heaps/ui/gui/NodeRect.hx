@@ -3,6 +3,7 @@ package pony.heaps.ui.gui;
 import h2d.Graphics;
 import h2d.Object;
 import h3d.Vector;
+import pony.Pair;
 import pony.geom.Point;
 import pony.color.UColor;
 
@@ -10,17 +11,18 @@ import pony.color.UColor;
  * NodeRect
  * @author AxGord <axgord@gmail.com>
  */
-@:nullSafety(Strict)
-@:final class NodeRect extends Node {
+@:nullSafety @:final class NodeRect extends Node {
 
 	public var graphics: Graphics;
 	private var round: Float;
+	private var lineStyle: Null<Pair<UColor, Float>>;
 
-	public function new(size: Point<Float>, color: UColor, round: Float = 0, ?parent: Object) {
+	public function new(size: Point<Float>, ?lineStyle: Pair<UColor, Float>, ?color: UColor, round: Float = 0, ?parent: Object) {
 		super(size, parent);
 		this.round = round;
+		this.lineStyle = lineStyle;
 		graphics = new Graphics(this);
-		graphics.beginFill(color.rgb, color.invertAlpha.af);
+		if (color != null) graphics.beginFill(color.rgb, color.invertAlpha.af);
 		changeWh << updateSize;
 		changeFlipx << changeFlipxHandler;
 		changeFlipy << changeFlipyHandler;
@@ -30,6 +32,7 @@ import pony.color.UColor;
 
 	private function updateSize(): Void {
 		graphics.clear();
+		if (lineStyle != null) graphics.lineStyle(lineStyle.b, lineStyle.a.rgb, lineStyle.a.invertAlpha.af);
 		if (round == 0)
 			graphics.drawRect(0, 0, w, h);
 		else
