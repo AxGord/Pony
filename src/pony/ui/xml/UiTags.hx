@@ -12,4 +12,5 @@ package pony.ui.xml;
 	var text = 'text';
 	var input = 'input';
 	var button = 'button';
+	var lightButton = 'lightButton';
 }

@@ -3,7 +3,7 @@ package pony.heaps.ui.gui;
 import hxd.Cursor;
 import h2d.Object;
 import h2d.Interactive;
-import pony.color.UColor;
+import pony.color.UColors;
 import pony.geom.Point;
 import pony.ui.touch.Touchable;
 import pony.ui.gui.ButtonCore;
@@ -19,9 +19,9 @@ import pony.ui.gui.ButtonCore;
 
 	public var core(default, null): ButtonCore;
 	public var touchable(default, null): Touchable;
-	public var colors(default, null): Array<UInt>;
+	public var colors(default, null): UColors;
 
-	public function new(size: Point<UInt>, colors: Array<UColor>, ?parent: Object) {
+	public function new(size: Point<UInt>, colors: UColors, ?parent: Object) {
 		super(size.x, size.y, parent);
 		this.colors = [ for (color in colors) color.invertAlpha ];
 		if (colors.length > 0) backgroundColor = this.colors[0];

@@ -25,6 +25,7 @@ import pony.heaps.ui.gui.NodeBitmap;
 import pony.heaps.ui.gui.NodeRepeat;
 import pony.heaps.ui.gui.NodeRect;
 import pony.heaps.ui.gui.Button;
+import pony.heaps.ui.gui.LightButton;
 import pony.heaps.ui.gui.Switch;
 import pony.heaps.ui.gui.slices.Slice;
 import pony.heaps.ui.gui.layout.IntervalLayout;
@@ -53,7 +54,8 @@ using pony.text.TextTools;
 	input: h2d.TextInput,
 	image: pony.heaps.ui.gui.NodeBitmap,
 	layout: pony.heaps.ui.gui.layout.TLayout,
-	button: pony.heaps.ui.gui.Button
+	button: pony.heaps.ui.gui.Button,
+	lightButton: pony.heaps.ui.gui.LightButton
 }))
 #end
 @:nullSafety(Strict) class HeapsXmlUi extends Object implements HasAbstract {
@@ -123,6 +125,8 @@ using pony.text.TextTools;
 				createTextInput(attrs, content);
 			case UiTags.button:
 				new Button(cast content);
+			case UiTags.lightButton:
+				new LightButton(getSizeFromAttrs(attrs), attrs.color);
 			case _:
 				customUIElement(name, attrs, content);
 		}
@@ -175,6 +179,15 @@ using pony.text.TextTools;
 				var a: Array<Float> = v.split(' ').map(parseAndScaleWithoutNull);
 				new Point(a[0], a.length == 1 ? a[0] : a[1]);
 		}
+	}
+
+	private function getSizeFromAttrs(attrs: Dynamic<String>): Point<Float> {
+		var p: Null<Point<Float>> = attrs.wh != null ? getWhPoint(attrs.wh) : 0;
+		if (attrs.w != null)
+			p.x = parseAndScaleWithoutNull(attrs.w);
+		if (attrs.h != null)
+			p.y = parseAndScaleWithoutNull(attrs.h);
+		return p;
 	}
 
 	@:extern private inline function setNodeAttrs(node: Node, attrs: Dynamic<String>): Void {
