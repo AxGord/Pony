@@ -1,6 +1,7 @@
 package pony.ui.xml;
 
 @:enum abstract UiTags(String) from String {
+	var repeat = 'repeat';
 	var object = 'object';
 	var sw = 'sw';
 	var node = 'node';

@@ -27,6 +27,7 @@ import pony.heaps.ui.gui.NodeRect;
 import pony.heaps.ui.gui.Button;
 import pony.heaps.ui.gui.LightButton;
 import pony.heaps.ui.gui.Switch;
+import pony.heaps.ui.gui.Repeat;
 import pony.heaps.ui.gui.slices.Slice;
 import pony.heaps.ui.gui.layout.IntervalLayout;
 import pony.heaps.ui.gui.layout.RubberLayout;
@@ -52,6 +53,7 @@ using pony.text.TextTools;
 	circle: h2d.Graphics,
 	text: h2d.Text,
 	input: h2d.TextInput,
+	repeat: pony.heaps.ui.gui.Repeat,
 	image: pony.heaps.ui.gui.NodeBitmap,
 	layout: pony.heaps.ui.gui.layout.TLayout,
 	button: pony.heaps.ui.gui.Button,
@@ -71,6 +73,8 @@ using pony.text.TextTools;
 	private function createUIElement(name: String, attrs: Dynamic<String>, content: Array<Dynamic>): Dynamic {
 		if (attrs.reverse.isTrue()) content.reverse();
 		var obj: Object = switch (name: UiTags) {
+			case UiTags.repeat:
+				new Repeat(this, content[0], attrs.count != null ? Std.parseInt(attrs.count) : null);
 			case UiTags.node:
 				var s: Object = new Object();
 				for (e in content) s.addChild(e);
@@ -124,9 +128,13 @@ using pony.text.TextTools;
 			case UiTags.input:
 				createTextInput(attrs, content);
 			case UiTags.button:
-				new Button(cast content);
+				var b: Button = new Button(cast content);
+				if (attrs.disabled.isTrue()) b.core.disable();
+				b;
 			case UiTags.lightButton:
-				new LightButton(getSizeFromAttrs(attrs), attrs.color);
+				var b: LightButton = new LightButton(getSizeFromAttrs(attrs), attrs.color);
+				if (attrs.disabled.isTrue()) b.core.disable();
+				b;
 			case _:
 				customUIElement(name, attrs, content);
 		}

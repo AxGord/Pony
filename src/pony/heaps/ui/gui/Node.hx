@@ -49,5 +49,7 @@ class Node extends Object implements HasSignal implements HasLink implements INo
 	}
 
 	public function destroyIWH(): Void destroy();
+	public inline function show(): Void visible = true;
+	public inline function hide(): Void visible = false;
 
 }

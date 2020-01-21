@@ -208,11 +208,16 @@ class XmlUiBuilder {
 		for (x in xml.elements) getPathes(pathes, x, style, path);
 	}
 
-	private static function genExpr(xml: Fast, style: Style, prefix: String = '', path: String = ''): Expr {
-		if (xml.name == 'include') {
-			if (xml.has.path) path = joinPath(path, xml.att.path);
-			var xml = getXml(joinPath(gpath, xml.innerData));
-			return genExpr(xml, style, prefix, path);
+	private static function genExpr(xml: Fast, style: Style, prefix: String = '', path: String = '', repeat: Bool = false): Expr {
+		var inRepeat: Bool = repeat;
+		switch xml.name {
+			case 'include':
+				if (xml.has.path) path = joinPath(path, xml.att.path);
+				var xml = getXml(joinPath(gpath, xml.innerData));
+				return genExpr(xml, style, prefix, path, repeat);
+			case 'repeat':
+				repeat = true;
+			case _:
 		}
 
 		var attrs: Map<String, String> = new Map();
@@ -223,11 +228,14 @@ class XmlUiBuilder {
 		if (attrs.exists('path')) path = joinPath(path, attrs['path']);
 		if (attrs.exists('src')) attrs['src'] = joinPathA(path, attrs['src']);
 
-		var content: Array<Expr> = [for (x in xml.elements) genExpr(x, style, prefix + (xml.has.id ? xml.att.id + '_' : ''), path)];
+		var content: Array<Expr> = [
+			for (x in xml.elements) genExpr(x, style, prefix + (xml.has.id ? xml.att.id + '_' : ''), path, repeat)
+		];
 		if (content.length == 0 && xml.x.firstChild() != null) content.push(macro $v{xml.innerData});
 		var obj: Expr = { expr: EObjectDecl([for (k in attrs.keys()) {field: k, expr: macro $v{attrs[k]}}]), pos: Context.currentPos() };
 
-		var expr: Expr = macro createUIElement($v{name}, $obj, $a{content});
+		var expr: Expr = !inRepeat ? macro createUIElement($v{name}, $obj, $a{content}) :
+			macro { name: $v{name}, attrs: $obj, content: ($a{content}: Array<Dynamic>) };
 		if (xml.has.id)
 			return macro cast ($i{prefix + xml.att.id} = ${expr});
 		else

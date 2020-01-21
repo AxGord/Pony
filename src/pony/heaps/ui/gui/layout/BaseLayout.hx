@@ -33,17 +33,20 @@ class BaseLayout<T: BaseLayoutCore<Object>> extends Object implements IWH implem
 
 	public function add(obj: Object): Void {
 		addChild(obj);
-		layout.add(obj);
+		if (!Std.is(obj, Repeat))
+			layout.add(obj);
 	}
 
 	public function addAt(obj: Object, index: Int): Void {
 		addChildAt(obj, index);
-		layout.addAt(obj, index);
+		if (!Std.is(obj, Repeat))
+			layout.addAt(obj, index);
 	}
 
 	public function addToBegin(obj: Object): Void {
 		addChildAt(obj, 0);
-		layout.addToBegin(obj);
+		if (!Std.is(obj, Repeat))
+			layout.addToBegin(obj);
 	}
 
 	public function rm(obj: Object): Void {
@@ -83,5 +86,8 @@ class BaseLayout<T: BaseLayoutCore<Object>> extends Object implements IWH implem
 		if (v != wh.y) wh = new Point(wh.x, v);
 		return v;
 	}
+
+	public inline function show(): Void visible = true;
+	public inline function hide(): Void visible = false;
 
 }
