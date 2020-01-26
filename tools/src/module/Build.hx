@@ -135,7 +135,12 @@ private typedef LastCompilationOptions = {
 			if (hasError) Sys.exit(1);
 			lastCompilationOptions = { command: command, debug: debug, compiler: compiler };
 		} else {
-			Utils.command(compiler, cmdArrPairToArrStr(command));
+			var args: Array<String> = [];
+			for (c in command) {
+				args.push(c.a);
+				if (c.b.length > 0) args.push(c.b);
+			}
+			Utils.command(compiler, args);
 		}
 	}
 
