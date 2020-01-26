@@ -107,11 +107,11 @@ private typedef LastCompilationOptions = {
 			var s: Socket = connectToHaxeServer();
 			var d: String = Sys.getCwd();
 			s.write('--cwd ' + d + newline);
-			for (c in command) {
-				var l: String = cmdPairToStr(c) + newline;
-				Sys.println(l);
-				s.write(l);
+			for (c in cmdArrPairToArrStr(command)) {
+				Sys.print(c + ' ');
+				s.write(c + newline);
 			}
+			Sys.println('');
 			s.write("\000");
 			var hasError: Bool = false;
 			var r: String = null;
@@ -127,6 +127,8 @@ private typedef LastCompilationOptions = {
 						Sys.println(line.substr(1).split("\x01").join(newline));
 					case 0x02:
 						hasError = true;
+					case null:
+						break;
 					default:
 						Sys.stderr().writeString(line + newline);
 				}
