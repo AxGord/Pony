@@ -26,6 +26,7 @@ import pony.Fast;
 	var CSS = 'css';
 	var JSON = 'json';
 	var CDB = 'cdb';
+	var BIN = 'bin';
 }
 
 @:enum abstract HAError(String) to String {
@@ -49,10 +50,14 @@ class HeapsAssets {
 	private static var tiles: Map<String, Tile> = new Map();
 	private static var fonts: Map<String, Font> = new Map();
 	private static var texts: Map<String, String> = new Map();
+	private static var bins: Map<String, Bytes> = new Map();
 
 	public static function load(asset: String, cb: Int -> Int -> Void): Void {
 		var realAsset: String = AssetManager.getPath(asset);
 		var loader: BinaryLoader = new BinaryLoader(realAsset);
+		inline function finish(): Void cb(AssetManager.MAX_ASSET_PROGRESS, AssetManager.MAX_ASSET_PROGRESS);
+		function progressHandler(cur: Int, max: Int): Void
+			if (cur != max) cb(Std.int(1 + cur / max * (AssetManager.MAX_ASSET_PROGRESS - 1)), AssetManager.MAX_ASSET_PROGRESS);
 		switch ext(asset) {
 			case ATLAS:
 				loader.load();
@@ -62,15 +67,14 @@ class HeapsAssets {
 					var imgFile: String = path + new BytesInput(textBytes).readLine();
 					var imgLoader: BinaryLoader = new BinaryLoader(imgFile);
 					imgLoader.load();
-					imgLoader.onProgress = function(cur: Int, max: Int): Void
-						if (cur != max) cb(Std.int(1 + cur / max * (AssetManager.MAX_ASSET_PROGRESS - 1)), AssetManager.MAX_ASSET_PROGRESS);
+					imgLoader.onProgress = progressHandler;
 					imgLoader.onLoaded = function(bytes: Bytes): Void {
 						var img: Any = Any.fromBytes(imgFile, bytes);
 						atlases[asset] = new Pair(
 							@:privateAccess img.loader,
 							Any.fromBytes(realAsset, textBytes).to(Atlas)
 						);
-						cb(AssetManager.MAX_ASSET_PROGRESS, AssetManager.MAX_ASSET_PROGRESS);
+						finish();
 					}
 				}
 			case FNT:
@@ -106,32 +110,37 @@ class HeapsAssets {
 					var path: String = realAsset.substr(0, realAsset.lastIndexOf('/') + 1);
 					var imgLoader: BinaryLoader = new BinaryLoader(path + image);
 					imgLoader.load();
-					imgLoader.onProgress = function(cur: Int, max: Int): Void
-						if (cur != max) cb(Std.int(1 + cur / max * (AssetManager.MAX_ASSET_PROGRESS - 1)), AssetManager.MAX_ASSET_PROGRESS);
+					imgLoader.onProgress = progressHandler;
 					imgLoader.onLoaded = function(imgbytes: Bytes): Void {
 						var font:Font = FontParser.parse(fntbytes, realAsset, function(path: String): Tile {
 							return Any.fromBytes(path, imgbytes).toTile();
 						});
 						setFontType(font, type);
 						fonts[asset] = font;
-						cb(AssetManager.MAX_ASSET_PROGRESS, AssetManager.MAX_ASSET_PROGRESS);
+						finish();
 					}
 
 				}
 			case PNG, JPG, JPEG:
 				loader.load();
-				loader.onProgress = function(cur: Int, max: Int): Void
-					if (cur != max) cb(Std.int(cur / max * AssetManager.MAX_ASSET_PROGRESS), AssetManager.MAX_ASSET_PROGRESS);
+				loader.onProgress = progressHandler;
 				loader.onLoaded = function(bytes: Bytes): Void {
 					tiles[asset] = Any.fromBytes(realAsset, bytes).toTile();
-					cb(AssetManager.MAX_ASSET_PROGRESS, AssetManager.MAX_ASSET_PROGRESS);
+					finish();
 				}
 			case TXT, CSS, JSON, CDB:
 				loader.load();
-				loader.onProgress = function(cur: Int, max: Int): Void if (cur != max) cb(Std.int(cur / max * AssetManager.MAX_ASSET_PROGRESS), AssetManager.MAX_ASSET_PROGRESS);
+				loader.onProgress = progressHandler;
 				loader.onLoaded = function(bytes: Bytes): Void {
 					texts[asset] = Any.fromBytes(realAsset, bytes).toText();
-					cb(AssetManager.MAX_ASSET_PROGRESS, AssetManager.MAX_ASSET_PROGRESS);
+					finish();
+				}
+			case BIN:
+				loader.load();
+				loader.onProgress = progressHandler;
+				loader.onLoaded = function(bytes: Bytes): Void {
+					bins[asset] = bytes;
+					finish();
 				}
 			case _:
 				throw ERROR_NOT_SUPPORTED;
@@ -208,6 +217,10 @@ class HeapsAssets {
 
 	public static inline function text(asset: String): String {
 		return cast texts[asset];
+	}
+
+	public static inline function bin(asset: String): Bytes {
+		return cast bins[asset];
 	}
 
 	public static function setFontType(font: Font, type: Null<String>): Void {
