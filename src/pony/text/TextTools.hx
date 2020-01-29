@@ -36,8 +36,62 @@ import haxe.Serializer;
 class TextTools {
 
 	public static inline var MODULE: String = 'pony.text.TextTools';
-	public static var letters: Map<String, String> = ['ru' => 'АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ'];
+	public static var letters: Map<String, String> = [
+		'en' => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'ru' => 'АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ', 'num' => '0123456789'
+	];
 	private static inline var FIRST_ANSI_ID: Int = 192;
+
+	public static inline function firstSplit(str: String, delimiter: String, ?startIndex: Int): SPair<String> {
+		var index: Int = str.indexOf(delimiter, startIndex);
+		return index == -1 ? new SPair<String>(str, '') : new SPair<String>(str.substr(0, index), str.substr(index + 1));
+	}
+
+	public static inline function lastSplit(str: String, delimiter: String, ?startIndex: Int): SPair<String> {
+		var index: Int = str.lastIndexOf(delimiter, startIndex);
+		return index == -1 ? new SPair<String>(str, '') : new SPair<String>(str.substr(0, index), str.substr(index + 1));
+	}
+
+	public static inline function allAfter(str: String, delimiter: String, ?startIndex: Int): Null<String> {
+		var index: Int = str.indexOf(delimiter, startIndex);
+		return index == -1 ? null : str.substr(index + 1);
+	}
+
+	public static inline function allBefore(str: String, delimiter: String, ?startIndex: Int): Null<String> {
+		var index: Int = str.indexOf(delimiter, startIndex);
+		return index == -1 ? null : str.substr(0, index);
+	}
+
+	public static function onlyLetters(str: String, lang: String = 'en'): String {
+		var ls: String = letters[lang];
+		var result: String = '';
+		for (i in 0...str.length) {
+			var char: String = str.charAt(i);
+			if (ls.indexOf(char) != -1) result += char;
+		}
+		return result;
+	}
+
+	public static function onlyLettersWithLower(str: String, lang: String = 'en'): String {
+		var ls: String = letters[lang];
+		var result: String = '';
+		for (i in 0...str.length) {
+			var char: String = str.charAt(i);
+			if (ls.indexOf(char.toUpperCase()) != -1) result += char;
+		}
+		return result;
+	}
+
+	public static function haveAnySymbolFromList(str: String, list: String): Bool {
+		for (i in 0...list.length) if (str.indexOf(list.charAt(i)) != -1) return true;
+		return false;
+	}
+
+	public static function haveAllSymbolsFromList(str: String, list: String): Bool {
+		for (i in 0...list.length) if (str.indexOf(list.charAt(i)) == -1) return false;
+		return true;
+	}
+
+	public static inline function haveNumbers(str: String): Bool return haveAnySymbolFromList(str, letters['num']);
 
 	public static function convertToANSI(s: String, lang: String): String {
 		lang = lang.split('_')[0];

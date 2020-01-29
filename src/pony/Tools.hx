@@ -430,6 +430,12 @@ class ArrayTools {
 
 	public static inline function exists<T>(a: Array<T>, e: T): Bool return a.indexOf(e) != -1;
 
+	public static inline function existsOrPush<T>(a: Array<T>, e: T): Bool {
+		var r: Bool = exists(a, e);
+		if (!r) a.push(e);
+		return r;
+	}
+
 	public static function thereIs<T>(a: Iterable<Array<T>>, b: Array<T>): Bool {
 		for (e in a) if (Tools.equal(e, b)) return true;
 		return false;
@@ -569,6 +575,17 @@ class MapTools {
 		}
 	}
 
+	public static inline function addToMapStr<A, T>(map: Map<A, Map<String, T>>, a: A, b: String, value: T): Bool {
+		var element: Null<Map<String, T>> = map[a];
+		if (element == null) {
+			map[a] = [ b => value ];
+			return true;
+		} else {
+			map[a][b] = value;
+			return false;
+		}
+	}
+
 	public static inline function addToMapIfExists<A, B, T>(map: Map<A, Map<B, T>>, a: A, b: B, value: T): Bool {
 		var element: Null<Map<B, T>> = map[a];
 		if (element != null) {
@@ -609,6 +626,20 @@ class MapTools {
 		for (k in map.keys()) r += fn(k, map[k]);
 		#end
 		return r;
+	}
+
+	public static inline function changeKey<K, T>(map: Map<K, T>, from: K, to: K): Void {
+		var v: T = map[from];
+		map.remove(from);
+		map[to] = v;
+	}
+
+	public static inline function merge<K, T>(a: Map<K, T>, b: Map<K, T>): Void {
+		#if (haxe_ver >= '4.0.0')
+		for (k => v in b) a[k] = v;
+		#else
+		for (k in map.keys()) a[k] = b[k];
+		#end
 	}
 
 }
