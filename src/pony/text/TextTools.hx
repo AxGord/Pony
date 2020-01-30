@@ -58,7 +58,7 @@ class TextTools {
 
 	public static inline function allBefore(str: String, delimiter: String, ?startIndex: Int): Null<String> {
 		var index: Int = str.indexOf(delimiter, startIndex);
-		return index == -1 ? null : str.substr(0, index);
+		return index == -1 ? str : str.substr(0, index);
 	}
 
 	public static function onlyLetters(str: String, lang: String = 'en'): String {

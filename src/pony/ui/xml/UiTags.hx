@@ -11,6 +11,7 @@ package pony.ui.xml;
 	var image = 'image';
 	var layout = 'layout';
 	var text = 'text';
+	var simpleText = 'simpleText';
 	var input = 'input';
 	var button = 'button';
 	var lightButton = 'lightButton';

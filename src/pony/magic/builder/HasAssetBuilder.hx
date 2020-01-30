@@ -78,7 +78,7 @@ class HasAssetBuilder {
 		fields.push( {
 				name: 'ASSETS_NAMES',
 				access: [APrivate, AStatic],
-				kind: FieldType.FVar(macro:Array<String>, macro $a { names } ),
+				kind: FieldType.FVar(macro:Array<Null<String>>, macro $a { names } ),
 				pos: Context.currentPos()
 			});
 		fields.push( {
@@ -128,8 +128,8 @@ class HasAssetBuilder {
 				name: f == 'def' ? 'loadAsset' : 'loadAsset_' + f,
 				access: [APublic, AStatic],
 				kind: FieldType.FFun( {
-				args: [{name: 'asset', type:macro:pony.Or<Int,Array<Int>>, opt: true}, {name: 'cb', type:macro:Int->Int->Void}],
-						ret: macro:Void,
+				args: [{name: 'asset', type: macro: pony.Or<Int, Array<Int>>, opt: false}, {name: 'cb', type: macro: Int -> Int -> Void}],
+						ret: macro: Void,
 						expr: macro pony.ui.AssetManager.load(
 							$v,
 							switch asset {
@@ -155,8 +155,8 @@ class HasAssetBuilder {
 			access: [APublic, AStatic],
 			kind: FieldType.FFun( {
 			args: [{ name: 'asset', type: macro: Int }],
-					ret: macro:String,
-					expr: macro return ASSETS_NAMES[asset] == null ? $v + ASSETS_LIST[asset] : ASSETS_NAMES[asset]
+					ret: macro: String,
+					expr: macro @:nullSafety(Off) return ASSETS_NAMES[asset] == null ? $v + ASSETS_LIST[asset] : ASSETS_NAMES[asset]
 				}),
 			pos: Context.currentPos()
 		});
@@ -165,8 +165,8 @@ class HasAssetBuilder {
 			name: f == 'def' ? 'assetName' : 'assetName_' + f,
 			access: [APublic, AStatic],
 			kind: FieldType.FFun( {
-			args: [{name: 'asset', type:macro:Int}],
-					ret: macro:String,
+			args: [{ name: 'asset', type: macro: Int }],
+					ret: macro: Null<String>,
 					expr: macro return ASSETS_NAMES[asset]
 				}),
 			pos: Context.currentPos()

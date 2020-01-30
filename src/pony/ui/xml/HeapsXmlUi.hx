@@ -28,6 +28,7 @@ import pony.heaps.ui.gui.Button;
 import pony.heaps.ui.gui.LightButton;
 import pony.heaps.ui.gui.Switch;
 import pony.heaps.ui.gui.Repeat;
+import pony.heaps.ui.gui.DText;
 import pony.heaps.ui.gui.slices.Slice;
 import pony.heaps.ui.gui.layout.IntervalLayout;
 import pony.heaps.ui.gui.layout.RubberLayout;
@@ -38,6 +39,7 @@ import pony.ui.xml.UiTags;
 import pony.ui.xml.AttrVal;
 import pony.ui.gui.BaseLayoutCore;
 
+using StringTools;
 using pony.text.TextTools;
 
 /**
@@ -52,6 +54,7 @@ using pony.text.TextTools;
 	line: h2d.Graphics,
 	circle: h2d.Graphics,
 	text: h2d.Text,
+	dtext: pony.heaps.ui.gui.DText,
 	input: h2d.TextInput,
 	repeat: pony.heaps.ui.gui.Repeat,
 	image: pony.heaps.ui.gui.NodeBitmap,
@@ -124,6 +127,8 @@ using pony.text.TextTools;
 			case UiTags.layout:
 				createLayout(attrs, content);
 			case UiTags.text:
+				createDText(attrs, content);
+			case UiTags.simpleText:
 				createText(attrs, content);
 			case UiTags.input:
 				createTextInput(attrs, content);
@@ -225,16 +230,23 @@ using pony.text.TextTools;
 		return createTextBase(new Text(getFont(attrs)), attrs, content);
 	}
 
+	@:extern private inline function createDText(attrs: Dynamic<String>, content: Array<Dynamic>): Object {
+		var c: Null<String> = attrs.color;
+		if (c != null) c = attrs.color.trim().allAfter(' ');
+		var color: Null<UColor> = c == null ? null : UColor.fromString(c);
+		return createTextBase(new DText(getFont(attrs), color, attrs.disabled.isTrue()), attrs, content);
+	}
+
 	@:extern private inline function createTextInput(attrs: Dynamic<String>, content: Array<Dynamic>): Object {
 		return createTextBase(new TextInput(getFont(attrs)), attrs, content);
 	}
 
-	@:extern private inline function createTextBase(t: Text, attrs: Dynamic<String>, content: Array<Dynamic>): Object {
+	private function createTextBase(t: Text, attrs: Dynamic<String>, content: Array<Dynamic>): Object {
 		t.maxWidth = parseAndScaleWithNull(attrs.maxWidth);
 		t.lineSpacing = cast parseAndScaleWithNull(attrs.lineSpacing);
 		t.letterSpacing = cast parseAndScaleWithNull(attrs.letterSpacing);
 		if (attrs.color != null)
-			t.textColor = UColor.fromString(attrs.color).rgb;
+			t.textColor = UColor.fromString(attrs.color.allBefore(' ')).argb;
 		if (attrs.align != null)
 			t.textAlign = Align.createByName(TextTools.bigFirst(attrs.align));
 		if (attrs.smooth.isTrue())
