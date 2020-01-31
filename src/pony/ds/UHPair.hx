@@ -3,8 +3,7 @@ package pony.ds;
 import pony.geom.Point;
 
 /**
- * UHPair
- * UInt numbers pair
+ * Half UInt numbers pair
  * @author AxGord <axgord@gmail.com>
  */
 @:nullSafety(Strict) abstract UHPair(UInt) to UInt {
@@ -14,9 +13,10 @@ import pony.geom.Point;
 	public static inline var MAX_VALUE_B: UInt = 99999;
 	public static inline var MID_VALUE_B: UInt = 49999;
 	public static inline var MAX_VALUE_B_MAX_A: UInt = 67295;
+	public static inline var MID_VALUE_B_MAX_A: UInt = 33647;
 	public static inline var MAP_MAX_VALUE_A: UInt = 21474;
 	public static inline var MAP_MID_VALUE_A: UInt = 10737;
-	public static inline var MAP_MAX_VALUE_B: UInt = 99999;
+	public static inline var MAP_MAX_VALUE_B: UInt = MAX_VALUE_B;
 	public static inline var MAP_MID_VALUE_B: UInt = 41823;
 	public static inline var MAP_MAX_VALUE_B_MAX_A: UInt = 83647;
 	public static inline var ASTEP: UInt = 100000;
