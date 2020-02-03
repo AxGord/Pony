@@ -1,9 +1,10 @@
 package pony;
 
+import pony.time.DTimer;
 import haxe.Log;
 import haxe.PosInfos;
-import pony.events.Signal2;
 import pony.ILogable;
+import pony.events.Signal2;
 import pony.magic.HasSignal;
 
 /**
@@ -85,6 +86,17 @@ import pony.magic.HasSignal;
 	private static function vscodeTrace(v: Dynamic, ?p: PosInfos): Void {
 		if (p != null) p.fileName = './' + p.fileName;
 		origTrace(v, p);
+	}
+
+	public inline function bench(?name: String, f: Void -> Void, ?p: PosInfos): Void {
+		#if !disableLogs
+		name = name != null ? ': ' + name : '';
+		log('Begin bench' + name, p);
+		final timer: DTimer = DTimer.fixedClock(0);
+		f();
+		log('End bench' + name + ' ' + timer.currentTime.totalMs + ' ms', p);
+		timer.destroy();
+		#end
 	}
 
 }
