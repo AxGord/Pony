@@ -1,5 +1,6 @@
 package pony;
 
+import pony.ds.ROArray;
 import pony.ds.KeyValue;
 import haxe.Constraints.Function;
 import haxe.CallStack;
@@ -640,6 +641,16 @@ class MapTools {
 		#else
 		for (k in map.keys()) a[k] = b[k];
 		#end
+	}
+
+	public static inline function getOrEmptyMap<K: Int, A: Int, B>(map: Map<K, Map<A, B>>, k: K): Map<A, B> {
+		var r: Null<Map<A, B>> = map[k];
+		return r == null ? new Map<A, B>() : r;
+	}
+
+	public static inline function getOrEmptyArray<K: Int, B>(map: Map<K, ROArray<B>>, k: K): ROArray<B> {
+		var r: Null<ROArray<B>> = map[k];
+		return r == null ? [] : r;
 	}
 
 }
