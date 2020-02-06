@@ -14,6 +14,10 @@ import js.Error;
 import js.Node;
 import sys.FileSystem;
 
+import pony.ds.ROArray;
+
+using pony.text.TextTools;
+
 /**
  * Ftp
  * @author AxGord <axgord@gmail.com>
@@ -33,6 +37,8 @@ class Ftp extends NModule<FtpConfig> {
 private class FtpInstance extends Logable {
 
 	private static inline var DELAY_TIMEOUT: Int = 2000;
+
+	public static var ignore(default, null): ROArray<String> = ['.DS_Store', '.Spotlight-V100', '.Trashes', 'ehthumbs.db', 'Thumbs.db'];
 
 	@:auto public var onComplete: Signal0;
 
@@ -115,8 +121,13 @@ private class FtpInstance extends Logable {
 				fileIterator = new Dir(path + unit).contentRecursiveFiles().iterator();
 				uploadNextFile();
 			} else {
-				log('Upload file: $unit');
-				ftp.put(path + unit, unit, false, uploadNext);
+				if (!checkIgnore(unit)) {
+					log('Upload file: $unit');
+					ftp.put(path + unit, unit, false, uploadNext);
+				} else {
+					log('Ignore file: $unit');
+					uploadNext();
+				}
 			}
 		} else {
 			log('Finish upload');
@@ -124,6 +135,8 @@ private class FtpInstance extends Logable {
 			eComplete.dispatch();
 		}
 	}
+
+	private function checkIgnore(unit: String): Bool return ignore.indexOf(unit.allAfterLast('/')) != -1;
 
 	private function uploadNextFile(): Void {
 		if (fileIterator.hasNext()) {
@@ -136,8 +149,13 @@ private class FtpInstance extends Logable {
 			var file: String = na.join('/');
 			log('Makedir: $dir');
 			ftp.mkdir(dir, true, function(): Void {
-				log('Upload file: $file');
-				_ftp.put(path + file, file, false, uploadNextFile);
+				if (!checkIgnore(file)) {
+					log('Upload file: $file');
+					_ftp.put(path + file, file, false, uploadNextFile);
+				} else {
+					log('Ignore file: $unit');
+					uploadNextFile();
+				}
 			});
 		} else {
 			uploadNext();

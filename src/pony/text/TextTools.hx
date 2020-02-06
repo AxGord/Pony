@@ -56,8 +56,18 @@ class TextTools {
 		return index == -1 ? null : str.substr(index + 1);
 	}
 
+	public static inline function allAfterLast(str: String, delimiter: String, ?startIndex: Int): Null<String> {
+		var index: Int = str.lastIndexOf(delimiter, startIndex);
+		return index == -1 ? null : str.substr(index + 1);
+	}
+
 	public static inline function allBefore(str: String, delimiter: String, ?startIndex: Int): Null<String> {
 		var index: Int = str.indexOf(delimiter, startIndex);
+		return index == -1 ? str : str.substr(0, index);
+	}
+
+	public static inline function allBeforeLast(str: String, delimiter: String, ?startIndex: Int): Null<String> {
+		var index: Int = str.lastIndexOf(delimiter, startIndex);
 		return index == -1 ? str : str.substr(0, index);
 	}
 

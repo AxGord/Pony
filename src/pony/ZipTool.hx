@@ -7,6 +7,7 @@ import haxe.zip.Tools;
 import haxe.zip.Writer;
 import sys.FileSystem;
 import sys.io.File;
+import pony.ds.ROArray;
 
 /**
  * ZipTool
@@ -14,7 +15,7 @@ import sys.io.File;
  */
 class ZipTool extends pony.Logable {
 
-	public var ignore:Array<String> = ['.DS_Store'];
+	public static var ignore(default, null): ROArray<String> = ['.DS_Store', '.Spotlight-V100', '.Trashes', 'ehthumbs.db', 'Thumbs.db'];
 	public var allowList:Array<String> = null;
 
 	private var output:String;
@@ -61,7 +62,7 @@ class ZipTool extends pony.Logable {
 		}
 		return this;
 	}
-	
+
 	public function needIgnore(entry:String):Bool {
 		var index = entry.lastIndexOf('/');
 		return if (index == -1) {
@@ -77,7 +78,7 @@ class ZipTool extends pony.Logable {
 		}
 		return this;
 	}
-	
+
 	public function writeFile(file:String):ZipTool {
 		var f = prefix + file;
 		if (allowList != null && allowList.indexOf(f) == -1) return this;
@@ -97,7 +98,7 @@ class ZipTool extends pony.Logable {
 
 		writer.writeEntryHeader(entry);
 		fileOutput.writeFullBytes(entry.data, 0, entry.data.length);
-		
+
 		return this;
 	}
 
