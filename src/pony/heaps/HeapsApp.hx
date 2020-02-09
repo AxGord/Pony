@@ -14,7 +14,7 @@ import pony.geom.Rect;
 import pony.time.Time;
 import pony.time.DTimer;
 import pony.time.DeltaTime;
-import pony.events.Signal0;
+import pony.events.Signal1;
 import pony.magic.HasSignal;
 import pony.magic.HasLink;
 #if js
@@ -30,7 +30,7 @@ import js.html.Element;
 
 	public static var instance: Null<HeapsApp>;
 
-	@:auto public var onInit: Signal0;
+	@:auto public var onInit: Signal1<HeapsApp>;
 	public var noScale(link, link): Bool = canvas.noScale;
 	public var sizeUpdate(default, set): Bool = false;
 	private var renderPause: Bool = false;
@@ -58,7 +58,7 @@ import js.html.Element;
 		DeltaTime.fixedDispatch();
 	}
 
-	override private function init(): Void eInit.dispatch();
+	override private function init(): Void eInit.dispatch(this);
 
 	public inline function setScalableScene(scene: Scene, alignCenter: Bool = true, disposePrevious: Bool = true): Void {
 		noScale = false;

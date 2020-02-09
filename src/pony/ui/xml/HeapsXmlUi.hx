@@ -86,7 +86,7 @@ using pony.text.TextTools;
 					new Point<Float>(parseAndScale(attrs.w), parseAndScale(attrs.h)),
 					parseLineStyle(attrs.line),
 					attrs.color == null ? null : attrs.color,
-					parseAndScaleInt(attrs.round)
+					parseAndScale(attrs.round)
 				);
 				for (e in content) rect.addChild(e);
 				rect;

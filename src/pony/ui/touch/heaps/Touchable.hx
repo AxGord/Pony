@@ -24,14 +24,14 @@ class Touchable extends TouchableBase {
 
 	public static var down(default, null): Bool = false;
 	public static var downRight(default, null): Bool = false;
-	private static inline var MOUSEMOVE: String = 'mousemove';
-	private static inline var MOUSEUP: String = 'mouseup';
-	private static inline var MOUSEDOWN: String = 'mousedown';
-	private static inline var MOUSELEAVE: String = 'mouseout';
-	private static inline var MOUSEENTER: String = 'mouseover';
-	private static inline var TOUCHESTART: String = 'touchstart';
-	private static inline var TOUCHEND: String = 'touchend';
-	private static inline var TOUCHCANCEL: String = 'touchcancel';
+	private static var MOUSEMOVE: String = 'mousemove';
+	private static var MOUSEUP: String = 'mouseup';
+	private static var MOUSEDOWN: String = 'mousedown';
+	private static var MOUSELEAVE: String = 'mouseout';
+	private static var MOUSEENTER: String = 'mouseover';
+	private static var TOUCHESTART: String = 'touchstart';
+	private static var TOUCHEND: String = 'touchend';
+	private static var TOUCHCANCEL: String = 'touchcancel';
 
 	private static var lastPos: Point<Int> = new Point(0, 0);
 
@@ -83,7 +83,9 @@ class Touchable extends TouchableBase {
 		interactive.onOver = overHandler;
 		interactive.onOut = outHandler;
 		interactive.onPush = downHandler;
+		#if !js
 		interactive.onRelease = upHandler;
+		#end
 		interactive.onWheel = wheelHandler;
 		#if js
 		Browser.window.addEventListener(MOUSELEAVE, leaveHandler);
@@ -150,6 +152,7 @@ class Touchable extends TouchableBase {
 		if (propagateDown) event.propagate = true;
 	}
 
+	#if !js
 	private function upHandler(event: Event): Void {
 		if (outover || event.button > 1) return;
 		var right: Bool = event.button == 1;
@@ -163,13 +166,14 @@ class Touchable extends TouchableBase {
 		if (propagateUp) event.propagate = true;
 		_globUpHandler(right);
 	}
+	#end
 
 	#if js
 	private function globMouseUpHandler(event: MouseEvent): Void {
 		if (event.button == 0)
-			DeltaTime.fixedUpdate < globMouseUpLeftHandler;
+			globMouseUpLeftHandler();
 		else if (event.button == 2)
-			DeltaTime.fixedUpdate < globMouseUpRightHandler;
+			globMouseUpRightHandler();
 	}
 
 	private function globMouseDownHandler(event: MouseEvent): Void {
@@ -180,14 +184,14 @@ class Touchable extends TouchableBase {
 	}
 	#end
 
-	private function globMouseUpLeftHandler(): Void {
+	private inline function globMouseUpLeftHandler(): Void {
 		if (wantUp)
 			wantUp = false;
 		else
 			_globUpHandler(false);
 	}
 
-	private function globMouseUpRightHandler(): Void {
+	private inline function globMouseUpRightHandler(): Void {
 		if (wantUpRight)
 			wantUpRight = false;
 		else
@@ -195,8 +199,8 @@ class Touchable extends TouchableBase {
 	}
 
 	private function globUpHandler(): Void {
-		DeltaTime.fixedUpdate < globMouseUpLeftHandler;
-		DeltaTime.fixedUpdate < touchUp;
+		globMouseUpLeftHandler();
+		touchUp();
 	}
 
 	private function _globUpHandler(right: Bool): Void {
