@@ -96,9 +96,9 @@ class GridCore {
 
 	public function takePosInt(start: IntRect, mark: Bool = true): Rect<Int> {
 		for (d in searchWay) {
-			var r:Rect<Int> = start + d;
+			var r: Rect<Int> = start + d;
 			if (isOut(r)) continue;
-			var taked:Bool = false;
+			var taked: Bool = false;
 			for (y in r.y...r.y + r.height) for (x in r.x...r.x + r.width) if (slots[y][x]) {
 				taked = true;
 				break;

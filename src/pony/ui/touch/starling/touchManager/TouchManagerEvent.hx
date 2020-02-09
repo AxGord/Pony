@@ -1,36 +1,32 @@
 package pony.ui.touch.starling.touchManager;
 
 /**
- * ...
+ * TouchManagerEvent
  * @author Maletin
  */
- 
-class TouchManagerEvent
-{
-	public var type:TouchEventType;
-	
-	public var mouseOver:Bool;
-	
-	public var globalX:Float;
-	public var globalY:Float;
-	
-	public var previousGlobalX:Float;
-	public var previousGlobalY:Float;
-	
-	public var value:Float;
-	
-	public var gesture:TouchManagerGesture;
-	
-	public var speedX:Float;
-	public var speedY:Float;
-	
-	public var touchID:Int;
-	
-	public var target:Dynamic;
+class TouchManagerEvent {
 
-	public function new()
-	{
-		
-	}
-	
+	public var type: TouchEventType;
+
+	public var mouseOver: Bool;
+
+	public var globalX: Float;
+	public var globalY: Float;
+
+	public var previousGlobalX: Float;
+	public var previousGlobalY: Float;
+
+	public var value: Float;
+
+	public var gesture: TouchManagerGesture;
+
+	public var speedX: Float;
+	public var speedY: Float;
+
+	public var touchID: Int;
+
+	public var target: Dynamic;
+
+	public function new() {}
+
 }

@@ -6,6 +6,6 @@ package pony.flash;
  */
 @:native('HaxeInit') extern class HaxeInit {
 
-	static public function init():Void;
-	
+	public static function init(): Void;
+
 }

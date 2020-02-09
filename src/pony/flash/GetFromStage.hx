@@ -9,12 +9,10 @@ import flash.display.DisplayObjectContainer;
  */
 class GetFromStage<T> implements Dynamic<T> {
 
-	private var obj:DisplayObjectContainer;
-	
-	public function new(obj:DisplayObjectContainer) {
-		this.obj = obj;
-	}
-	
-	inline public function resolve(field:String):T return untyped obj[field];
-	
+	private var obj: DisplayObjectContainer;
+
+	public function new(obj: DisplayObjectContainer) this.obj = obj;
+
+	public inline function resolve(field: String): T return untyped obj[field];
+
 }

@@ -12,19 +12,19 @@ import pony.time.RealClock in RC;
  */
 class RealClock extends Sprite implements FLStage {
 
-	@:stage private var time:TextField;
-	@:stage private var date:TextField;
-	
+	@:stage private var time: TextField;
+	@:stage private var date: TextField;
+
 	public function new() {
 		super();
 		DeltaTime.fixedUpdate.once(init, -1);
 	}
-	
-	private function init():Void {
+
+	private function init(): Void {
 		if (time != null)
-			RC.updateTime << function(s:String) time.text = s;
+			RC.updateTime << function(s: String) time.text = s;
 		if (date != null)
-			RC.updateDate << function(s:String) date.text = s;
+			RC.updateDate << function(s: String) date.text = s;
 	}
-	
+
 }

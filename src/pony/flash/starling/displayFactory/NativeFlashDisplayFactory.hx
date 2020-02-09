@@ -11,34 +11,33 @@ import pony.flash.starling.displayFactory.DisplayFactory.ITextField;
  * NativeFlashDisplayFactory
  * @author Maletin
  */
-class NativeFlashDisplayFactory implements IDisplayFactory
-{
-	private static var _instance:NativeFlashDisplayFactory = new NativeFlashDisplayFactory();
+class NativeFlashDisplayFactory implements IDisplayFactory {
 
-	public function new() 
-	{
-		if (_instance != null) throw "Singletone creation error";
+	private static var _instance: NativeFlashDisplayFactory = new NativeFlashDisplayFactory();
+
+	public function new() {
+		if (_instance != null)
+			throw 'Singletone creation error';
 	}
-	
-	public static function getInstance():NativeFlashDisplayFactory { return _instance; }
-	
-	public function createSprite():IDisplayObjectContainer
-	{
+
+	public static function getInstance(): NativeFlashDisplayFactory {
+		return _instance;
+	}
+
+	public function createSprite(): IDisplayObjectContainer {
 		return cast new Sprite();
 	}
-	
-	public function createTextField(width:Float, height:Float, text:String):ITextField
-	{
-		var tf:TextField = new TextField();
+
+	public function createTextField(width: Float, height: Float, text: String): ITextField {
+		var tf: TextField = new TextField();
 		tf.width = width;
 		tf.height = height;
 		tf.text = text;
 		return cast tf;
 	}
-	
-	public function createMovieClip():IMovieClip
-	{
+
+	public function createMovieClip(): IMovieClip {
 		return cast new MovieClip();
 	}
-	
+
 }

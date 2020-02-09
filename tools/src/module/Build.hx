@@ -211,6 +211,8 @@ private class BuildConfigReader extends BAReader<BuildConfig> {
 						cfg.runHxml.push(d);
 					case 'd':
 						cfg.command.push(new SPair(D, xml.has.name ? normalize(xml.att.name) + '=' + d : d));
+					case 'm':
+						cfg.command.push(new SPair('--macro', d));
 					case 'i':
 						cfg.command.push(new SPair('--macro', '"include(\'$d\')"'));
 					case 'interp':

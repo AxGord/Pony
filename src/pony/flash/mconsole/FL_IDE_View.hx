@@ -8,12 +8,9 @@ import mconsole.Printer;
  * @author AxGord
  */
 class FL_IDE_View extends PrinterBase implements Printer {
-	
-	public function new() super();
-	
-	override function printLine(color:ConsoleColor, line:String, pos:PosInfos)
-	{
-		untyped __global__["trace"](line);
+
+	override function printLine(color: ConsoleColor, line: String, pos: PosInfos): Void {
+		untyped __global__['trace'](line);
 	}
-	
+
 }

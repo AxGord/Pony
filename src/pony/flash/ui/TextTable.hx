@@ -21,44 +21,44 @@ import pony.ui.gui.TextTableCore;
  */
 class TextTable extends TextTableCore {
 
-	private var area:DisplayObjectContainer;
-	private var shape:Shape;
-	private var g(get,never):Graphics;
-	
-	public function new(area:DisplayObjectContainer) {
+	private var area: DisplayObjectContainer;
+	private var shape: Shape;
+	private var g(get, never): Graphics;
+
+	public function new(area: DisplayObjectContainer) {
 		super();
 		this.area = area;
 		createShape();
 	}
-	
-	inline private function createShape():Void {
+
+	private inline function createShape(): Void {
 		shape = new Shape();
 		area.addChild(shape);
 	}
-	
-	private inline function get_g():Graphics return shape.graphics;
 
-	override private function drawBG(r:IntRect, color:UColor):Void {
+	private inline function get_g(): Graphics
+		return shape.graphics;
+
+	override private function drawBG(r: IntRect, color: UColor): Void {
 		g.lineStyle();
 		g.beginFill(color);
 		g.drawRect(r.getX(), r.getY(), r.getWidth(), r.getHeight());
 		g.endFill();
 	}
-	
-	override private function drawText(point:IntRect, text:String, style:FontStyle):Void {
+
+	override private function drawText(point: IntRect, text: String, style: FontStyle): Void {
 		var tf = new TextField();
 		tf.text = text;
-		trace(style);
 		tf.selectable = false;
 		tf.setTextFormat(new TextFormat(style.font, style.size, style.color, style.bold, style.italic, style.underline));
 		tf.x = point.x;
 		tf.y = point.y;
 		area.addChild(tf);
 	}
-	
-	override private function clear():Void {
+
+	override private function clear(): Void {
 		area.removeChild(shape);
 		createShape();
 	}
-	
+
 }

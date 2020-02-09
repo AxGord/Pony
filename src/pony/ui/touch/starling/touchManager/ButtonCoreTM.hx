@@ -1,29 +1,24 @@
 package pony.ui.touch.starling.touchManager;
+
 import pony.ui.gui.ButtonCore;
 
 /**
- * ...
+ * ButtonCoreTM
  * @author Maletin
  */
-class ButtonCoreTM extends ButtonCore
-{
+class ButtonCoreTM extends ButtonCore {
 
-	public function new(object:Dynamic) 
-	{
+	public function new(object: Dynamic) {
 		super();
-		
 		TouchManager.addListener(object, touchManagerListener);
 	}
-	
-	public function touchManagerListener(e:TouchManagerEvent):Void
-	{		
+
+	public function touchManagerListener(e: TouchManagerEvent): Void {
 		eventsTransition(e, this);
 	}
-	
-	public static function eventsTransition(e:TouchManagerEvent, core:ButtonCore):Void
-	{
-		switch (e.type)
-		{
+
+	public static function eventsTransition(e: TouchManagerEvent, core: ButtonCore): Void {
+		switch (e.type) {
 			case Hover:
 				core.mouseOver(false);
 			case Over:
@@ -44,5 +39,5 @@ class ButtonCoreTM extends ButtonCore
 			default:
 		}
 	}
-	
+
 }

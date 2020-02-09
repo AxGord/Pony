@@ -1,0 +1,26 @@
+{
+	"whitespace": {
+		"typeHintColonPolicy": "after"
+	},
+	"emptyLines": {
+		"classEmptyLines": {
+			"beginType": 1,
+			"endType": 1
+		},
+		"afterLeftCurly": "keep",
+		"beforeRightCurly": "keep",
+		"finalNewline": false,
+		"abstractEmptyLines": {
+			"beginType": 1,
+			"endType": 1
+		},
+		"interfaceEmptyLines": {
+			"beginType": 1,
+			"endType": 1
+		},
+		"externClassEmptyLines": {
+			"beginType": 1,
+			"endType": 1
+		}
+	}
+}

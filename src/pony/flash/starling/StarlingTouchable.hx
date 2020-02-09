@@ -1,15 +1,15 @@
 package pony.flash.starling;
 
-import pony.touchManager.TouchebleBase;
+import pony.ui.touch.TouchableBase;
 
 /**
  * StarlingTouchable
  * @author AxGord <axgord@gmail.com>
  */
-class StarlingTouchable extends TouchebleBase {
+class StarlingTouchable extends TouchableBase {
 
 	public function new() {
-		
+		super();
 	}
-	
+
 }

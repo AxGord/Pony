@@ -68,4 +68,8 @@ abstract IntRect(SimpleRect<Int>) to SimpleRect<Int> from SimpleRect<Int> {
 	private inline function get_y(): Int return this.y;
 	private inline function get_width(): Int return this.width;
 	private inline function get_height(): Int return this.height;
+
+	@:to public inline function toRect(): Rect<Int> return cast this;
+	@:from public static inline function fromRect(p: Rect<Int>): IntRect return cast p;
+
 }
