@@ -1,5 +1,6 @@
 package create;
 
+import pony.Tools;
 import haxe.Resource;
 import create.section.Config.ConfigOptions;
 import create.ides.VSCode;
@@ -15,6 +16,7 @@ import types.ProjectType;
 class Create {
 
 	private static var outputFile: String = 'app';
+	private static var formatFile: String = 'hxformat.json';
 
 	public static function run(sType: String, name: String): Void {
 		// todo: create remote key@host:port
@@ -31,6 +33,7 @@ class Create {
 		setProjectConfig(project, type);
 		Utils.savePonyProject(project.result());
 		createProjectData(project, type);
+		File.copy(Tools.ponyPath() + formatFile, Sys.getCwd() + formatFile);
 		Utils.command('pony', ['prepare']);
 	}
 
