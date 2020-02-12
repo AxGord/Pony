@@ -29,11 +29,13 @@ class UserpathInstall extends BaseInstall {
 			case Mac:
 				var home = Sys.getEnv('HOME');
 				writeProfileFiles([home + '/.bash_profile', home + '/.zshrc']);
+				log('Type "source ~/.bash_profile" for finish install');
 
 			case Linux:
 				var home = Sys.getEnv('HOME');
 				var pfile = home + '/.profile';
 				writeProfileFiles([pfile]);
+				log('Type "source ~/.profile" for finish install');
 
 		}
 	}
