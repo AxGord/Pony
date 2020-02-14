@@ -25,8 +25,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Improvements",
-"version": "1.0.9",
+"releasenote": "Installer empty npm bugfix. Ftp ignore list. Heaps js direct up. Html file dialog. Update flash package.",
+"version": "1.1.0",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }
