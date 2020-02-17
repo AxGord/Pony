@@ -1,5 +1,6 @@
 package pony.pixi.ui;
 
+import pony.ds.ROArray;
 import pony.geom.Point;
 
 /**
@@ -8,9 +9,9 @@ import pony.geom.Point;
  */
 class FSButton extends Button {
 
-	private var fs:FSButtonCore;
-	
-	public function new(imgs:ImmutableArray<String>, ?offset:Point<Float>, ?useSpriteSheet:String) {
+	private var fs: FSButtonCore;
+
+	public function new(imgs: ROArray<String>, ?offset: Point<Float>, ?useSpriteSheet: String) {
 		super(imgs, offset, useSpriteSheet);
 		fs = new FSButtonCore();
 		fs.onEnable = fsEnableHandler;
@@ -18,8 +19,8 @@ class FSButton extends Button {
 		core.onClick - 1 << fs.fsOff;
 		core.onClick - 0 << fs.fsOn;
 	}
-	
-	private function fsEnableHandler():Void core.bMode = true;
-	private function fsDisableHandler():Void core.bMode = false;
-	
+
+	private function fsEnableHandler(): Void core.bMode = true;
+	private function fsDisableHandler(): Void core.bMode = false;
+
 }

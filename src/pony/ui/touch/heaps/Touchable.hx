@@ -229,6 +229,7 @@ class Touchable extends TouchableBase {
 	}
 
 	private function _globUpHandler(right: Bool): Void {
+		wantUp = true;
 		denyUp = true;
 		DeltaTime.fixedUpdate < unlockUp;
 		if (right) {

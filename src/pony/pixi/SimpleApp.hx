@@ -1,29 +1,33 @@
 package pony.pixi;
 
+import js.Browser;
+import js.html.Element;
+import pixi.core.sprites.Sprite;
+import pony.JsTools;
+import pony.Config;
+
 /**
  * Simple Pixi.js Application
  * @author AxGord <axgord@gmail.com>
  */
-class SimpleApp extends pixi.core.sprites.Sprite {
+class SimpleApp extends Sprite {
 
-	public var app:App;
-	private var parentDomId:String;
+	public var app: App;
 
-	public function new(?parentDomId:String) {
+	private var parentDomId: String;
+
+	public function new(?parentDomId: String) {
 		super();
 		this.parentDomId = parentDomId;
-		pony.JsTools.disableContextMenuGlobal();
-		pony.JsTools.onDocReady < init;
+		JsTools.disableContextMenuGlobal();
+		JsTools.onDocReady < init;
 	}
 
-	private function init():Void {
-		app = new App(
-			this,
-			pony.Config.width,
-			pony.Config.height,
-			pony.Config.background,
-			parentDomId == null ? null : js.Browser.document.getElementById(parentDomId)
-		);
+	private function init(): Void {
+		var preloader: Element = Browser.document.getElementById('preloader');
+		if (preloader != null) preloader.remove();
+		app = new App(this, Config.width, Config.height, Config.background,
+			parentDomId == null ? null : Browser.document.getElementById(parentDomId));
 	}
 
 }
