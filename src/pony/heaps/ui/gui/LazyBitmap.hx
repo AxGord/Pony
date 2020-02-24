@@ -3,6 +3,7 @@ package pony.heaps.ui.gui;
 import h2d.Bitmap;
 import h2d.Object;
 import h2d.Tile;
+import pony.geom.Point;
 import pony.ui.AssetManager;
 import pony.time.DeltaTime;
 import pony.time.Tween;
@@ -11,24 +12,40 @@ import pony.time.Tween;
  * LazyBitmap
  * @author AxGord <axgord@gmail.com>
  */
-@:nullSafety(Strict)
-class LazyBitmap extends Bitmap {
+@:nullSafety class LazyBitmap extends Bitmap {
 
 	private var asset: String;
-	private var aname: String;
+	private var aname: Null<String>;
 	private var needAnim: Bool;
-	private var anim: Tween;
+	private var anim: Null<Tween>;
 	public var finalAlpha(default, set): Float = 1;
-	public var finalVisible(default, set): Bool;
+	public var finalVisible(default, set): Bool = false;
+	public var offset(default, set): Point<Float> = 0;
+	public var posWithOffset(get, set): Point<Float>;
+	public var posWitoutOffset(default, null): Point<Float> = 0;
 	private var inited: Bool = false;
 
-	public function new(asset: String, ?name: String, ?anim: Bool, ?hidden: Bool, ?parent: Object) {
+	public function new(asset: String, ?name: String, anim: Bool = false, hidden: Bool = false, ?parent: Object) {
 		super(parent);
 		this.asset = asset;
 		this.aname = name;
 		this.needAnim = anim;
 		finalVisible = !hidden;
 		if (!hidden) init();
+	}
+
+	@:extern private inline function get_posWithOffset(): Point<Float> return this;
+
+	public inline function set_posWithOffset(p: Point<Float>): Point<Float> {
+		posWitoutOffset = p;
+		(p - offset).setPosition(this);
+		return p;
+	}
+
+	public inline function set_offset(p: Point<Float>): Point<Float> {
+		offset = p;
+		posWithOffset = posWitoutOffset;
+		return p;
 	}
 
 	private function init(): Void {
@@ -64,8 +81,10 @@ class LazyBitmap extends Bitmap {
 	private function animHandler(v: Float): Void setAlpha(v * finalAlpha);
 
 	private function animCompleteHandler(): Void {
-		anim.destroy();
-		anim = null;
+		if (anim != null) {
+			anim.destroy();
+			anim = null;
+		}
 	}
 
 	private inline function set_finalAlpha(v: Float): Float {

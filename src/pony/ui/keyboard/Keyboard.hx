@@ -67,7 +67,7 @@ class Keyboard implements Declarator implements HasSignal {
 	}
 	
 	private static function enable(): Void {
-		if (_enabled) return;
+		if (_enabled || km == null) return;
 		_enabled = true;
 		km.enable();
 		km.down << downPress;
@@ -75,7 +75,7 @@ class Keyboard implements Declarator implements HasSignal {
 	}
 	
 	private static function disable(): Void {
-		if (!_enabled) return;
+		if (!_enabled || km == null) return;
 		_enabled = false;
 		if (presser != null) presser.destroy();
 		pressedKeys = [];

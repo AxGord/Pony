@@ -76,7 +76,7 @@ using pony.text.TextTools;
 		if (attrs.reverse.isTrue()) content.reverse();
 		var obj: Object = switch (name: UiTags) {
 			case UiTags.repeat:
-				new Repeat(this, content[0], attrs.count != null ? Std.parseInt(attrs.count) : null);
+				new Repeat(this, content[0], attrs.count != null ? Std.parseInt(attrs.count) : 0);
 			case UiTags.node:
 				var s: Object = new Object();
 				for (e in content) s.addChild(e);
@@ -91,7 +91,7 @@ using pony.text.TextTools;
 				for (e in content) rect.addChild(e);
 				rect;
 			case UiTags.sw:
-				return new Switch(cast content, attrs.def == null ? null : Std.parseInt(attrs.def));
+				return new Switch(cast content, attrs.def == null ? -1 : Std.parseInt(attrs.def));
 			case UiTags.line:
 				var color: UColor = attrs.color;
 				var g: Graphics = new Graphics();
