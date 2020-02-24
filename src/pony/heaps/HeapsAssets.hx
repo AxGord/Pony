@@ -6,7 +6,6 @@ import h2d.Anim;
 import h2d.Font;
 import haxe.io.Bytes;
 import haxe.io.BytesInput;
-import hxd.net.BinaryLoader;
 import hxd.res.Any;
 import hxd.res.Atlas;
 import hxd.res.Loader;
@@ -60,7 +59,6 @@ class HeapsAssets {
 			if (cur != max) cb(Std.int(1 + cur / max * (AssetManager.MAX_ASSET_PROGRESS - 1)), AssetManager.MAX_ASSET_PROGRESS);
 		switch ext(asset) {
 			case ATLAS:
-				loader.load();
 				loader.onLoaded = function(textBytes: Bytes): Void {
 					cb(1, AssetManager.MAX_ASSET_PROGRESS);
 					var path: String = realAsset.substr(0, realAsset.lastIndexOf('/') + 1);
@@ -78,7 +76,6 @@ class HeapsAssets {
 					}
 				}
 			case FNT:
-				loader.load();
 				loader.onLoaded = function(fntbytes: Bytes): Void {
 					cb(1, AssetManager.MAX_ASSET_PROGRESS);
 					var data: String = fntbytes.toString();
@@ -122,21 +119,19 @@ class HeapsAssets {
 
 				}
 			case PNG, JPG, JPEG:
-				loader.load();
 				loader.onProgress = progressHandler;
 				loader.onLoaded = function(bytes: Bytes): Void {
 					tiles[asset] = Any.fromBytes(realAsset, bytes).toTile();
 					finish();
 				}
 			case TXT, CSS, JSON, CDB:
-				loader.load();
 				loader.onProgress = progressHandler;
 				loader.onLoaded = function(bytes: Bytes): Void {
+					trace(asset);
 					texts[asset] = Any.fromBytes(realAsset, bytes).toText();
 					finish();
 				}
 			case BIN:
-				loader.load();
 				loader.onProgress = progressHandler;
 				loader.onLoaded = function(bytes: Bytes): Void {
 					bins[asset] = bytes;
@@ -145,6 +140,7 @@ class HeapsAssets {
 			case _:
 				throw ERROR_NOT_SUPPORTED;
 		}
+		loader.load();
 	}
 
 	public static inline function ext(asset: String): String {
