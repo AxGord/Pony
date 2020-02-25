@@ -1,5 +1,6 @@
 package pony.ui.touch.pixi;
 
+import js.html.AddEventListenerOptions;
 import js.Browser;
 import pixi.core.display.Container;
 import pixi.interaction.InteractionEvent;
@@ -12,6 +13,8 @@ import pony.ui.touch.Mouse as M;
  */
 @:access(pony.ui.touch.Mouse)
 class Mouse {
+
+	private static var wheelListenOptions: AddEventListenerOptions = { passive: false };
 
 	private static var obj: Container;
 
@@ -32,8 +35,8 @@ class Mouse {
 
 	public static function _init(): Void {
 		regSub(obj);
-		M.eWheel.onTake << Browser.document.addEventListener.bind('wheel', wheelHandler, false);
-		M.eWheel.onLost << Browser.document.removeEventListener.bind('wheel', wheelHandler, false);
+		M.eWheel.onTake << Browser.document.addEventListener.bind('wheel', wheelHandler, wheelListenOptions);
+		M.eWheel.onLost << Browser.document.removeEventListener.bind('wheel', wheelHandler);
 	}
 
 	public static function regSub(obj: Container): Void {
