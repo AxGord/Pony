@@ -34,10 +34,9 @@ import pony.heaps.ui.gui.layout.IntervalLayout;
 import pony.heaps.ui.gui.layout.RubberLayout;
 import pony.heaps.ui.gui.layout.AlignLayout;
 import pony.heaps.ui.gui.layout.BGLayout;
-import pony.heaps.ui.gui.layout.BaseLayout;
+import pony.heaps.ui.gui.layout.TLayout;
 import pony.ui.xml.UiTags;
 import pony.ui.xml.AttrVal;
-import pony.ui.gui.BaseLayoutCore;
 
 using StringTools;
 using pony.text.TextTools;
@@ -160,7 +159,7 @@ using pony.text.TextTools;
 			var c: UColor = attrs.tint;
 			cast(obj, Drawable).color = Vector.fromColor(c.rgb);
 		}
-		addFilters(cast obj, attrs);
+		if (Std.is(obj, Drawable)) addFilters(cast obj, attrs);
 		setWatchers(obj, attrs);
 		return obj;
 	}
@@ -264,10 +263,10 @@ using pony.text.TextTools;
 				var a: Array<String> = out.split(' ');
 				var color: UColor = 0;
 				if (a[0].charAt(0) == '#')
-					color = cast a.shift();
+					color = @:nullSafety(Off) UColor.fromString(a.shift());
 				else if (a[a.length - 1].charAt(0) == '#')
-					color = cast a.pop();
-				var d: Null<Int> = a.length > 0 ? Std.parseInt(cast a.pop()) : 4;
+					color = @:nullSafety(Off) UColor.fromString(a.pop());
+				var d: Null<Int> = a.length > 0 ? @:nullSafety(Off) Std.parseInt(a.pop()) : 4;
 				filters.push(new Outline(d, color.rgb, 0.3));
 			}
 		}
@@ -470,8 +469,8 @@ using pony.text.TextTools;
 				switch a {
 					case dyn:
 						var p: Point<Float> = new Point(r.width, r.height);
-						if (Std.is(e.a, BaseLayout)) {
-							var o: BaseLayout<Dynamic> = cast e.a;
+						if (Std.is(e.a, TLayout)) {
+							var o: TLayout = cast e.a;
 							o.wh = p;
 						} else if (Std.is(e.a, Node)) {
 							var o:Node = cast e.a;
@@ -480,15 +479,15 @@ using pony.text.TextTools;
 							Reflect.setProperty(e.a, f, p);
 						}
 					case dynWidth:
-						if (Std.is(e.a, BaseLayout)) {
-							var o: BaseLayout<Dynamic> = cast e.a;
+						if (Std.is(e.a, TLayout)) {
+							var o: TLayout = cast e.a;
 							o.w = r.width;
 						} else {
 							Reflect.setProperty(e.a, f, r.width);
 						}
 					case dynHeight:
-						if (Std.is(e.a, BaseLayout)) {
-							var o: BaseLayout<Dynamic> = cast e.a;
+						if (Std.is(e.a, TLayout)) {
+							var o: TLayout = cast e.a;
 							o.h = r.height;
 						} else {
 							Reflect.setProperty(e.a, f, r.height);

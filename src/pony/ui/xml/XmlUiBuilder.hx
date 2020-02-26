@@ -7,6 +7,7 @@ import sys.io.File;
 import sys.FileSystem;
 import haxe.macro.Context;
 import haxe.macro.Expr;
+import haxe.macro.ExprTools;
 import haxe.macro.Type;
 import haxe.macro.TypeTools;
 
@@ -128,14 +129,7 @@ class XmlUiBuilder {
 	private static var gpath: String;
 
 	private static function exprToComplex(expr: Expr): ComplexType {
-		return switch Context.typeof(expr) {
-			case TType(tt, _):
-				var st: Type = tt.get().type;
-				var c: Null<ComplexType> = TypeTools.toComplexType(st);
-				var tpt: Type = c.getParameters()[0].params[0];
-				tpt.getParameters()[0];
-			case _: throw 'err';
-		}
+		return TypeTools.toComplexType(Context.getType(ExprTools.toString(expr)));
 	}
 
 	private static function mapToOExprObject(map: Map<String, String>): Dynamic {

@@ -39,8 +39,7 @@ import pony.Fast;
  * HeapsAssets
  * @author AxGord <axgord@gmail.com>
  */
-@:nullSafety(Strict)
-class HeapsAssets {
+@:nullSafety(Strict) @:final class HeapsAssets {
 
 	private static inline var SDF_ALPHA: Float = 0.5;
 	private static inline var SDF_SMOOTHING: Float = 0.5;
@@ -64,7 +63,6 @@ class HeapsAssets {
 					var path: String = realAsset.substr(0, realAsset.lastIndexOf('/') + 1);
 					var imgFile: String = path + new BytesInput(textBytes).readLine();
 					var imgLoader: BinaryLoader = new BinaryLoader(imgFile);
-					imgLoader.load();
 					imgLoader.onProgress = progressHandler;
 					imgLoader.onLoaded = function(bytes: Bytes): Void {
 						var img: Any = Any.fromBytes(imgFile, bytes);
@@ -74,6 +72,7 @@ class HeapsAssets {
 						);
 						finish();
 					}
+					imgLoader.load();
 				}
 			case FNT:
 				loader.onLoaded = function(fntbytes: Bytes): Void {
@@ -106,7 +105,6 @@ class HeapsAssets {
 					if (image == null) throw "Can't get image url";
 					var path: String = realAsset.substr(0, realAsset.lastIndexOf('/') + 1);
 					var imgLoader: BinaryLoader = new BinaryLoader(path + image);
-					imgLoader.load();
 					imgLoader.onProgress = progressHandler;
 					imgLoader.onLoaded = function(imgbytes: Bytes): Void {
 						var font:Font = FontParser.parse(fntbytes, realAsset, function(path: String): Tile {
@@ -116,7 +114,7 @@ class HeapsAssets {
 						fonts[asset] = font;
 						finish();
 					}
-
+					imgLoader.load();
 				}
 			case PNG, JPG, JPEG:
 				loader.onProgress = progressHandler;
@@ -127,7 +125,6 @@ class HeapsAssets {
 			case TXT, CSS, JSON, CDB:
 				loader.onProgress = progressHandler;
 				loader.onLoaded = function(bytes: Bytes): Void {
-					trace(asset);
 					texts[asset] = Any.fromBytes(realAsset, bytes).toText();
 					finish();
 				}
