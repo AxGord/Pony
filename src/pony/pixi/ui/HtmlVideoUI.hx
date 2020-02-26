@@ -1,6 +1,7 @@
 package pony.pixi.ui;
 
 import pony.HtmlVideo;
+import pony.geom.Rect;
 
 /**
  * HtmlVideoUI
@@ -8,28 +9,24 @@ import pony.HtmlVideo;
  */
 class HtmlVideoUI extends HtmlContainer {
 
-	public var video(default, null):HtmlVideo;
-	public var muted(get, set):Bool;
+	public var video(default, null): HtmlVideo;
+	public var muted(get, set): Bool;
 
 	public function new(
-		targetRect:pony.geom.Rect<Float>,
-		?css:String,
-		?app:pony.pixi.App,
-		?options:HtmlVideoOptions,
-		ceil:Bool = false,
-		fixed:Bool = false
+		targetRect: Rect<Float>, ?css: String, ?app: App, ?options: HtmlVideoOptions, ceil: Bool = false, fixed: Bool = false
 	) {
 		super(targetRect, app, ceil, fixed);
 		video = new HtmlVideo(options);
 		video.appendTo(app.element);
 		htmlContainer.targetStyle = video.style;
 		if (css != null) video.style.cssText += css;
+		video.changeResultVisible << htmlContainer.posUpdater.set_enabled;
+		htmlContainer.posUpdater.enabled = video.resultVisible;
 	}
 
-	public inline function hide():Void video.visible.disable();
-	public inline function show():Void video.visible.enable();
-
-	@:extern private inline function get_muted():Bool return video.muted.enabled;
-	@:extern private inline function set_muted(v:Bool):Bool return video.muted.enabled = v;
+	public inline function hide(): Void video.visible.disable();
+	public inline function show(): Void video.visible.enable();
+	@:extern private inline function get_muted(): Bool return video.muted.enabled;
+	@:extern private inline function set_muted(v: Bool): Bool return video.muted.enabled = v;
 
 }

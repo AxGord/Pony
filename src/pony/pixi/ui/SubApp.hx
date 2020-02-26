@@ -10,26 +10,25 @@ import pony.time.DeltaTime;
  */
 class SubApp extends HtmlContainer {
 
-	public var content:Sprite = new Sprite();
-	public var subApp(default, null):App;
+	public var content: Sprite = new Sprite();
+	public var subApp(default, null): App;
 
-	public function new(targetRect:Rect<Int>, ?app:pony.pixi.App, ceil:Bool = false, fixed:Bool = false) {
+	public function new(targetRect: Rect<Int>, ?app: App, ceil: Bool = false, fixed: Bool = false) {
 		super(targetRect, app, ceil, fixed);
 	}
 
-	public function init():Void {
+	public function init(): Void {
 		element.style.pointerEvents = 'none';
-		subApp = new App(
-			content,
-			Std.int(targetRect.width),
-			Std.int(targetRect.height),
-			element,
-			true,
-			{
-				transparent: true,
-				forceCanvas: true
-			}
-		);
+		subApp = new App(content, Std.int(targetRect.width), Std.int(targetRect.height), element, false, {
+			transparent: true,
+			forceCanvas: true
+		});
+		htmlContainer.onResize << resizeHandler;
+	}
+
+	private function resizeHandler(r: Rect<Float>): Void {
+		subApp.setSize(Std.int(r.width), Std.int(r.height));
+		subApp.stageResizeHandler(subApp.ratio, subApp.rect);
 	}
 
 }

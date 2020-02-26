@@ -3,6 +3,7 @@ package pony;
 import js.html.CSSStyleDeclaration;
 import js.html.VideoElement;
 import js.html.SourceElement;
+import js.html.DOMElement;
 #if (haxe_ver >= 4)
 import js.lib.Error;
 #else
@@ -178,10 +179,10 @@ class HtmlVideo implements HasSignal implements HasLink {
 	private function updateResultVisible(): Void resultVisible = visible.enabled && loadProgress.run;
 	@:extern private inline function get_muted(): Bool return videoElement.muted;
 	@:extern private inline function set_muted(v: Bool): Bool return videoElement.muted = v;
-	@:extern public inline function appendTo(parent: js.html.DOMElement): Void parent.appendChild(videoElement);
+	@:extern public inline function appendTo(parent: DOMElement): Void parent.appendChild(videoElement);
 	@:extern private inline function get_style(): CSSStyleDeclaration return videoElement.style;
-	private function showHtmlElement(): Void videoElement.hidden = false;
-	private function hideHtmlElement(): Void videoElement.hidden = true;
+	private function showHtmlElement(): Void videoElement.style.display = 'block';
+	private function hideHtmlElement(): Void videoElement.style.display = 'none';
 	private function videoClickHandler(): Void eClick.dispatch();
 
 	private function playVideo(): Void {
