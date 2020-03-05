@@ -10,7 +10,7 @@ import pony.time.DeltaTime;
  * @author AxGord <axgord@gmail.com>
  */
 class Utils {
-	
+
 	public static inline var MAIN_FILE:String = 'pony.xml';
 	public static inline var NPORT:Int = 48654;
 
@@ -57,7 +57,7 @@ class Utils {
 		}
 		return {app: app, debug:debug};
 	}
-	
+
 	public static function getXml():Fast {
 		if (FileSystem.exists(MAIN_FILE)) {
 			try {
@@ -102,7 +102,7 @@ class Utils {
 	}
 
 	public static function savePonyProject(xml:Xml):Void saveXML(MAIN_FILE, xml);
-	
+
 	public static function get_ponyVersion():String {
 		if (_ponyVersion != null) {
 			return _ponyVersion;
@@ -164,7 +164,9 @@ class Utils {
 	public static function runNode(name:String, ?args:Array<String>):Int {
 		if (args == null) args = [];
 		Sys.println('Run: $name.js');
-		var a = [toolsPath + name + '.js'];
+		var jsFile: String = toolsPath + name + '.js';
+		if (!FileSystem.exists(jsFile)) error(jsFile + ' - not founded');
+		var a: Array<String> = [jsFile];
 		for (e in args) a.push(e);
 		return Sys.command('node', a);
 	}
@@ -176,7 +178,9 @@ class Utils {
 
 	public static function asyncRunNode(name:String, ?args:Array<String>):sys.io.Process {
 		Sys.println('Async run: $name.js');
-		return new sys.io.Process('node', [toolsPath + name + '.js'].concat(args));
+		var jsFile: String = toolsPath + name + '.js';
+		if (!FileSystem.exists(jsFile)) error(jsFile + ' - not founded');
+		return new sys.io.Process('node', [jsFile].concat(args));
 	}
 
 	public static function getHashes(file:String):Map<String, Array<String>> {

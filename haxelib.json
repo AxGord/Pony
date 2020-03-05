@@ -25,8 +25,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Hashlink and PixiJS fixes",
-"version": "1.1.2",
+"releasenote": "Pony Tools: check js file exists. Run node timeout.",
+"version": "1.2.0",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }
