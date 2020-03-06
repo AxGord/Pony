@@ -75,10 +75,13 @@ class Utils {
 	public static inline function md(dir: String): Int return new Process('sudo', ['mkdir', dir]).exitCode();
 
 	public static function getPerm(dir: String): Int {
-		return if (Config.OS == TargetOS.Mac)
-			Std.parseInt(new Process('sudo', ['stat', '-f', '%A', dir]).stdout.readLine());
-		else
-			Std.parseInt(new Process('sudo', ['stat', '-c', '%a', dir]).stdout.readLine());
+		return try {
+			Std.parseInt(new Process(
+				'sudo', Config.OS == TargetOS.Mac ? ['stat', '-f', '%A', dir] : ['stat', '-c', '%a', dir]
+			).stdout.readLine());
+		} catch (err: Dynamic) {
+			null;
+		}
 	}
 
 	public static function setPerm(dir: String, v: Int, r: Bool = false): Void {

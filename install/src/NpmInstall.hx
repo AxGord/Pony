@@ -22,16 +22,14 @@ class NpmInstall extends BaseInstall {
 			Utils.md(Utils.npmPath);
 			perm = Utils.getPerm(Utils.npmPath);
 			graylog('Npm dir perm $perm');
-			if (perm == 777)
-				perm = null;
+			if (perm == 777) perm = null;
 			graylog('Home npm path: ' + Utils.npmPath);
 			Utils.md(Utils.homeNpm);
 			homeperm = Utils.getPerm(Utils.homeNpm);
 			graylog('Home npm dir perm $homeperm');
-			if (homeperm == 777)
-				homeperm = null;
-			Utils.setPerm(Utils.npmPath, 777, true);
-			Utils.setPerm(Utils.homeNpm, 777, true);
+			if (homeperm == 777) homeperm = null;
+			if (perm != null) Utils.setPerm(Utils.npmPath, 777, true);
+			if (homeperm != null) Utils.setPerm(Utils.homeNpm, 777, true);
 		}
 		var c = cmds.shift();
 		if (Config.OS == TargetOS.Windows) {
