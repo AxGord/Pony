@@ -24,6 +24,7 @@ class NModule<T> extends Logable implements HasAbstract {
 	}
 
 	public function start():Void {
+		log('Start ' + Type.getClassName(Type.getClass(this)));
 		if (config != null) {
 			tasks.add();
 			for (e in config) run(e);
