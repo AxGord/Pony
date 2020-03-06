@@ -20,7 +20,7 @@ class NModule<T:BAConfig> extends CfgModule<T> {
 	private static var protocol: NProtocol;
 	private static var process: Process;
 	private static var port: Int = Utils.NPORT;
-	private static var timeout: DTimer = DTimer.createFixedTimer(5000);
+	private static var timeout: DTimer = DTimer.createFixedTimer(60000);
 
 	@:extern private static inline function initServer(): Void {
 		if (server != null) return;
