@@ -1,6 +1,4 @@
 import pony.Fast;
-import sys.FileSystem;
-import sys.io.File;
 import pony.Tools;
 import module.Module;
 import pony.time.MainLoop;
@@ -12,14 +10,17 @@ using pony.text.TextTools;
  * @author AxGord <axgord@gmail.com>
  */
 class Main {
-	
-	static var commands:Commands = new Commands();
 
-	static function showLogo():Void {
+	static var commands: Commands = new Commands();
+
+	static function showLogo(): Void {
 		Sys.println(Utils.ansiForeground(haxe.Resource.getString('logo'), AnsiForeground.LightGray));
 		Sys.println('');
 		Sys.println('Command-Line Tools');
-		Sys.println(Utils.ansiForeground('Library version: ', AnsiForeground.LightGray) + Utils.ponyVersion + ' [' + Utils.getHaxelibVersion() + ']');
+		Sys.println(
+			Utils.ansiForeground('Library version: ', AnsiForeground.LightGray) +
+			Utils.ponyVersion + ' [' + Utils.getHaxelibVersion() + ']'
+		);
 		Sys.println(Utils.ansiForeground('Library path: ', AnsiForeground.LightGray) + Utils.libPath);
 		Sys.println(Utils.ansiForeground('Build date: ', AnsiForeground.LightGray) + Tools.getBuildDate());
 		Sys.println(Utils.ansiUnderlined('https://github.com/AxGord/Pony'));
@@ -28,12 +29,12 @@ class Main {
 		Sys.exit(0);
 	}
 
-	static function showHelp():Void {
+	static function showHelp(): Void {
 		Sys.println('\n' + (Utils.isWindows ? commands.helpData.join('\n\n') : commands.helpAnsiData.join('\n\n')) + '\n');
 		Sys.exit(0);
 	}
 
-	static function trySubProjects(args:Array<String>):Bool {
+	static function trySubProjects(args: Array<String>): Bool {
 		if (args.indexOf('all') != -1) {
 			runSubProjects(args);
 			return true;
@@ -42,12 +43,12 @@ class Main {
 		}
 	}
 
-	static function tryOtherPath(args:Array<String>):Bool {
-		var expath = new String(@:privateAccess Sys.sys_exe_path());
-		var p = Utils.path(expath);
+	static function tryOtherPath(args: Array<String>): Bool {
+		var expath: String = new String(@:privateAccess Sys.sys_exe_path());
+		var p: String = Utils.path(expath);
 		p = p.substr(0, p.lastIndexOf(Utils.PD) + 1);
 		if (p != Utils.toolsPath) {
-			var pony = Utils.toolsPath + 'pony';
+			var pony: String = Utils.toolsPath + 'pony';
 			if (Utils.isWindows) pony += '.exe';
 			Sys.exit(Sys.command(pony, args));
 			return true;
@@ -56,17 +57,16 @@ class Main {
 		}
 	}
 
-	static function main():Void {
-		var startTime = Sys.time();
-		MainLoop.init();
-		var args:Array<String> = Sys.args();
+	static function main(): Void {
+		var startTime: Float = Sys.time();
+		var args: Array<String> = Sys.args();
 		if (trySubProjects(args) || tryOtherPath(args)) return;
 
 		commands.onError << Utils.error.bind(_, 1);
 		commands.onLog << Sys.println;
 		registerCommands();
 
-		var modules:Modules = new Modules(commands);
+		var modules: Modules = new Modules(commands);
 		registerModules(modules);
 		modules.init();
 
@@ -75,13 +75,16 @@ class Main {
 		Module.lockQueue();
 		commands.runArgs(setGroupsPerm(args, modules));
 		Module.unlockQueue();
-		
-		if (Module.busy) MainLoop.start();
+
+		if (Module.busy) {
+			MainLoop.init();
+			MainLoop.start();
+		}
 
 		Sys.println('Total time: ' + Std.int((Sys.time() - startTime) * 1000) / 1000);
 	}
 
-	static function registerCommands():Void {
+	static function registerCommands(): Void {
 		commands.onNothing < showLogo;
 		commands.onHelp < showHelp;
 		commands.onCreate < create.Create.run;
@@ -91,7 +94,7 @@ class Main {
 		commands.onHaxelib < Haxelib.run;
 	}
 
-	static function registerModules(modules:Modules):Void {
+	static function registerModules(modules: Modules): Void {
 		modules.register(new module.Haxelib());
 		modules.register(new module.Npm());
 		modules.register(new module.Texturepacker());
@@ -118,73 +121,60 @@ class Main {
 		modules.register(new module.Run());
 	}
 
-	static function setGroupsPerm(args:Array<String>, modules:Modules):Array<String> {
-		var nArgs:Array<String> = [];
-		var deny:Array<String> = [];
-		var allow:Array<String> = [];
-		for (a in args) {
-			switch a.charAt(0) {
-				case '-':
-					deny.push(a.substr(1));
-				case '+':
-					allow.push(a.substr(1));
-				case _:
-					nArgs.push(a);
-			}
+	static function setGroupsPerm(args: Array<String>, modules: Modules): Array<String> {
+		var nArgs: Array<String> = [];
+		var deny: Array<String> = [];
+		var allow: Array<String> = [];
+		for (a in args) switch a.charAt(0) {
+			case '-': deny.push(a.substr(1));
+			case '+': allow.push(a.substr(1));
+			case _: nArgs.push(a);
 		}
 		modules.deny = deny;
 		modules.allow = allow;
 		return nArgs;
 	}
-	
-	static function addCfg(?a:Array<String>, args:AppCfg):Array<String> {
+
+	static function addCfg(?a: Array<String>, args: AppCfg): Array<String> {
 		if (a == null) a = [];
 		if (args.app != null) a.push(args.app);
 		if (args.debug) a.push('debug');
 		return a;
 	}
-	
-	static function runSubProjects(args:Array<String>):Void {
-		var xml:Fast = Utils.getXml();
+
+	static function runSubProjects(args: Array<String>): Void {
+		var xml: Fast = Utils.getXml();
 		if (xml == null) {
-			Utils.error(Utils.MAIN_FILE  + ' not exists');
+			Utils.error(Utils.MAIN_FILE + ' not exists');
 		} else {
 			var startTime = Sys.time();
-			var apps:Array<String> = searchApps(xml.node.build);
-			var uapps:Array<String> = [];
-			for (app in apps) {
-				if (uapps.indexOf(app) == -1)
-					uapps.push(app);
-			}
-			var argsBefore:Array<String> = [];
-			var argsAfter:Array<String> = [];
-			var arg:String = null;
+			var apps: Array<String> = searchApps(xml.node.build);
+			var uapps: Array<String> = [];
+			for (app in apps) if (uapps.indexOf(app) == -1) uapps.push(app);
+			var argsBefore: Array<String> = [];
+			var argsAfter: Array<String> = [];
+			var arg: String = null;
 			while (args.length > 0) {
 				arg = args.shift();
-				if (arg == 'all') break;
+				if (arg == 'all')
+					break;
 				argsBefore.push(arg);
 			}
 			while (args.length > 0) {
 				arg = args.shift();
 				argsAfter.push(arg);
 			}
-			for (app in uapps) {
-				Utils.command('pony', argsBefore.concat([app]).concat(argsAfter));
-			}
+			for (app in uapps) Utils.command('pony', argsBefore.concat([app]).concat(argsAfter));
 			Sys.println('All total time: ' + Std.int((Sys.time() - startTime) * 1000) / 1000);
 		}
 	}
 
-	static function searchApps(x:Fast):Array<String> {
-		var apps:Array<String> = [];
+	static function searchApps(x: Fast): Array<String> {
+		var apps: Array<String> = [];
 		if (x.hasNode.apps) {
-			for (node in x.node.apps.elements) {
-				apps.push(node.name);
-			}
+			for (node in x.node.apps.elements) apps.push(node.name);
 		} else {
-			for (node in x.elements) {
-				apps = apps.concat(searchApps(node));
-			}
+			for (node in x.elements) apps = apps.concat(searchApps(node));
 		}
 		return apps;
 	}

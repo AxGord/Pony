@@ -22,7 +22,9 @@ private typedef TPUnit = {
 	output: String,
 	?ext: String,
 	rotation: Bool,
-	?trim: String
+	?trim: String,
+	forceSquared: Bool,
+	extrude: UInt
 }
 
 /**
@@ -55,7 +57,9 @@ class Texturepacker extends CfgModule<TPConfig> {
 			rotation: true,
 			input: [],
 			output: null,
-			allowCfg: false
+			allowCfg: false,
+			forceSquared: false,
+			extrude: 0
 		}, configHandler);
 	}
 
@@ -75,7 +79,7 @@ class Texturepacker extends CfgModule<TPConfig> {
 
 			command.push('--format');
 			command.push(f);
-			
+
 			var outExt = cfg.ext != null ? cfg.ext : switch f {
 				case 'phaser-json-array', 'phaser-json-hash', 'pixijs': 'json';
 				case f: f;
@@ -84,7 +88,7 @@ class Texturepacker extends CfgModule<TPConfig> {
 			var datafile = unit.output + (first ? '' : '_$s') + '.' + outExt;
 			command.push('--data');
 			command.push(datafile);
-			
+
 			var sheetfile = unit.output + '.' + s;
 			command.push('--sheet');
 			command.push(sheetfile);
@@ -113,13 +117,13 @@ class Texturepacker extends CfgModule<TPConfig> {
 				case _:
 			}
 
-			command.push('--force-squared');
+			if (unit.forceSquared) command.push('--force-squared');
 
 			command.push('--pack-mode');
 			command.push('Best');
 
 			command.push('--extrude');
-			command.push('0');
+			command.push('${unit.extrude}');
 
 			command.push('--algorithm');
 			command.push('MaxRects');
@@ -166,7 +170,7 @@ class Texturepacker extends CfgModule<TPConfig> {
 					case _:
 				}
 			}
-			
+
 			first = false;
 		}
 	}
@@ -187,7 +191,7 @@ class Texturepacker extends CfgModule<TPConfig> {
 				for (b in toList) {
 					if (a.length > b.length) {
 						if (a.indexOf(b) == 0) remList.remove(a);
-					} 
+					}
 				}
 			}
 
@@ -241,6 +245,8 @@ private class Path extends BAReader<TPConfig> {
 			case 'scale': cfg.scale = cfg.scale * Std.parseFloat(val);
 			case 'datascale': cfg.datascale = Std.parseFloat(val);
 			case 'quality': cfg.quality = Std.parseFloat(val);
+			case 'extrude': cfg.extrude = Std.parseInt(val);
+			case 'forceSquared': cfg.forceSquared = TextTools.isTrue(val);
 			case 'from': cfg.from += val;
 			case 'to': cfg.to += val;
 			case 'ext': cfg.ext = val;
