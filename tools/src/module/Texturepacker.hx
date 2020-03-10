@@ -24,7 +24,8 @@ private typedef TPUnit = {
 	rotation: Bool,
 	?trim: String,
 	forceSquared: Bool,
-	extrude: UInt
+	extrude: UInt,
+	alpha: Bool
 }
 
 /**
@@ -59,7 +60,8 @@ class Texturepacker extends CfgModule<TPConfig> {
 			output: null,
 			allowCfg: false,
 			forceSquared: false,
-			extrude: 0
+			extrude: 0,
+			alpha: true
 		}, configHandler);
 	}
 
@@ -80,16 +82,18 @@ class Texturepacker extends CfgModule<TPConfig> {
 			command.push('--format');
 			command.push(f);
 
-			var outExt = cfg.ext != null ? cfg.ext : switch f {
+			var outExt = unit.ext != null ? unit.ext : switch f {
 				case 'phaser-json-array', 'phaser-json-hash', 'pixijs': 'json';
-				case f: f;
+				case _: f;
 			}
 
 			var datafile = unit.output + (first ? '' : '_$s') + '.' + outExt;
 			command.push('--data');
 			command.push(datafile);
 
-			var sheetfile = unit.output + '.' + s;
+			var tExt = s == 'png8' ? 'png' : s;
+
+			var sheetfile = unit.output + '.' + tExt;
 			command.push('--sheet');
 			command.push(sheetfile);
 
@@ -107,10 +111,20 @@ class Texturepacker extends CfgModule<TPConfig> {
 
 			command.push(unit.rotation ? '--enable-rotation' : '--disable-rotation');
 
-			switch format[1] {
-				case 'png':
+			switch s {
+				case 'png', 'png8':
 					command.push('--png-opt-level');
 					command.push('7');
+					if (s == 'png8') {
+						command.push('--texture-format');
+						command.push('png8');
+						command.push('--dither-type');
+						command.push('PngQuantHigh');
+					}
+					if (!unit.alpha) {
+						command.push('--opt');
+						command.push('RGB888');
+					}
 				case 'jpg':
 					command.push('--jpg-quality');
 					command.push(Std.string(Std.int(unit.quality * 100)));
@@ -225,6 +239,9 @@ private class Path extends BAReader<TPConfig> {
 		cfg.input = [];
 		cfg.output = null;
 		cfg.ext = null;
+		cfg.extrude = 0;
+		cfg.forceSquared = false;
+		cfg.alpha = true;
 	}
 
 	override private function readXml(xml:Fast):Void {
@@ -253,6 +270,7 @@ private class Path extends BAReader<TPConfig> {
 			case 'rotation': cfg.rotation = !TextTools.isFalse(val);
 			case 'trim': cfg.trim = StringTools.trim(val);
 			case 'clean': cfg.clean = TextTools.isTrue(val);
+			case 'alpha': cfg.alpha = TextTools.isTrue(val);
 			case _:
 		}
 	}

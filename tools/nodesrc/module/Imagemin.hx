@@ -87,8 +87,10 @@ class Imagemin extends NModule<ImageminConfig> {
 					var d:Dir = file.substr(0, -2);
 					for (f in d.files(ext)) {
 						var ef:File = (f.fullDir + f.shortName).first + '.$e';
+						log('Generate webp json, check file: $f, $ef');
 						if (!ef.exists) continue;
 						var nf:File = cfg.to + f.shortName + '_webp' + ext;
+						log(nf);
 						nf.createWays();
 						nf.content = StringTools.replace(f.content, '"' + ef.name + '"', '"' + f.shortName + '.webp"');
 					}
