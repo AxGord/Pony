@@ -24,18 +24,28 @@ class DTimer implements HasSignal implements ITimer<DTimer> implements Declarato
 
 	@:arg private var updateSignal: Signal1<DT>;
 	@:arg public var time: TimeInterval = null;
-	@:arg public var repeatCount: Int = 0;
+	public var repeatCount(default, set): Int = 0;
 
-	public function new() {
+	private var repeatCounter: Int;
+
+	public function new(repeatCount: Int = 0) {
+		this.repeatCount = repeatCount;
 		eProgress.onTake.add(takeProgress);
 		eProgress.onLost.add(lostProgress);
 		reset();
+	}
+
+	public inline function set_repeatCount(value: Int): Int {
+		repeatCount = value;
+		repeatCounter = value;
+		return value;
 	}
 
 	private function takeProgress(): Void update.add(_progress);
 	private function lostProgress(): Void update.remove(_progress);
 
 	public function reset(): DTimer {
+		repeatCounter = repeatCount;
 		currentTime = time != null ? time.min : 0;
 		return this;
 	}
@@ -78,10 +88,10 @@ class DTimer implements HasSignal implements ITimer<DTimer> implements Declarato
 		if (eComplete == null) return true;
 		var result: Bool = false;
 		var d: DT = Math.abs(currentTime - time.max) / 1000 + sumdt;
-		if (repeatCount > 0) {
+		if (repeatCounter > 0) {
 			currentTime -= time.length;
-			repeatCount--;
-		} else if (repeatCount == -1) {
+			repeatCounter--;
+		} else if (repeatCounter == -1) {
 			currentTime -= time.length;
 		} else {
 			currentTime = time.max;

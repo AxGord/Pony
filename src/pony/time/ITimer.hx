@@ -15,7 +15,7 @@ interface ITimer<T: ITimer<Dynamic>> {
 	#end
 	var time: TimeInterval;
 	var currentTime: Time;
-	var repeatCount: Int;
+	var repeatCount(default, set): Int;
 
 	//Have cs problem now:
 	//function start(?dt: DT): T;

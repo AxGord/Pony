@@ -15,6 +15,8 @@ import pony.time.Time;
 class Window implements Declarator implements HasSignal {
 
 	private static var DEFAULT_RESIZE_INTERVAL: Time = 200;
+	private static var DEFAULT_FSRESIZE_INTERVAL: Time = 300;
+	private static var DEFAULT_FSRESIZE_REPEATS: Int = 4;
 	private static var DEFAULT_RESIZE_EVENT: String = 'resize';
 	private static var ORIENTATION_CHANGE_EVENT: String = 'orientationchange';
 	private static var FS_CHANGE_EVENT: String = 'fullscreenchange';
@@ -29,6 +31,7 @@ class Window implements Declarator implements HasSignal {
 	public static var resizeEventName(default, set): String = DEFAULT_RESIZE_EVENT;
 	public static var resizeInterval(get, set): Time;
 	private static var resizeTimer: DTimer = DTimer.createFixedTimer(DEFAULT_RESIZE_INTERVAL);
+	private static var fsResizeTimer: DTimer = DTimer.createFixedTimer(DEFAULT_FSRESIZE_INTERVAL, DEFAULT_FSRESIZE_REPEATS);
 
 	private static function __init__(): Void {
 		eResize.onTake << listenMomentalResize;
@@ -36,6 +39,7 @@ class Window implements Declarator implements HasSignal {
 		eMomentalResize.onTake << listenBrowserResize;
 		eMomentalResize.onLost << unlistenBrowserResize;
 		resizeTimer.complete << eResize;
+		fsResizeTimer.complete << eMomentalResize;
 	}
 
 	private static function set_resizeEventName(name: String): String {
@@ -88,8 +92,8 @@ class Window implements Declarator implements HasSignal {
 
 	private static function fsChangeHandler(): Void {
 		browserResizeHandler();
-		DeltaTime.fixedUpdate < browserResizeHandler;
-		DeltaTime.skipUpdate(browserResizeHandler);
+		fsResizeTimer.reset();
+		fsResizeTimer.start();
 	}
 
 	@:extern private static inline function listenResizeEvent(): Void {

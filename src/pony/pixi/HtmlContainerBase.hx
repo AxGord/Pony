@@ -1,5 +1,6 @@
 package pony.pixi;
 
+import js.html.DOMRect;
 import js.html.CSSStyleDeclaration;
 import js.Browser;
 import pony.Tumbler;
@@ -30,6 +31,7 @@ class HtmlContainerBase implements HasSignal {
 	private var lastRect: Rect<Float> = null;
 	private var ceil: Bool;
 	private var fixed: Bool;
+	private var haveTransform: Bool;
 
 	public function new(targetRect: Rect<Float>, ?app: App, ?targetStyle: CSSStyleDeclaration, ceil: Bool = false, fixed: Bool = false) {
 		this.targetRect = targetRect;
@@ -40,6 +42,8 @@ class HtmlContainerBase implements HasSignal {
 		this.targetStyle = targetStyle;
 		if (fixed) Browser.window.addEventListener('scroll', resize);
 		posUpdater.onEnable << resize;
+		var style: CSSStyleDeclaration = Browser.window.getComputedStyle(app.element);
+		haveTransform = style.transform != 'none';
 	}
 
 	private function scrollHandler(): Void DeltaTime.fixedUpdate < resize;
@@ -62,9 +66,14 @@ class HtmlContainerBase implements HasSignal {
 	public function resize(): Void {
 		if (!posUpdater.enabled) return;
 		if (fixed) {
-			var b = app.element.getBoundingClientRect();
-			targetStyle.top = px(b.top + lastRect.y);
-			targetStyle.left = px(b.left + lastRect.x);
+			if (!haveTransform) {
+				var b: DOMRect = app.element.getBoundingClientRect();
+				targetStyle.top = px(b.top + lastRect.y);
+				targetStyle.left = px(b.left + lastRect.x);
+			} else {
+				targetStyle.top = px(lastRect.y);
+				targetStyle.left = px(lastRect.x);
+			}
 		} else {
 			targetStyle.bottom = px(app.element.clientHeight - lastRect.y);
 			targetStyle.right = px(app.element.clientWidth - lastRect.x);

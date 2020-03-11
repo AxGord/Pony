@@ -29,14 +29,20 @@ class Timer implements ITimer<Timer> implements Declarator implements HasSignal 
 	private var _frequency: Time;
 
 	@:arg public var time: TimeInterval = null;
-	@:arg public var repeatCount: Int = 0;
+	public var repeatCount(default, set): Int = 0;
 
-	public function new() {
+	public function new(repeatCount: Int = 0) {
+		this.repeatCount = repeatCount;
 		eProgress.onTake.add(takeProgress);
 		eProgress.onLost.add(lostProgress);
 		eUpdate.onTake.add(lUpdate);
 		eProgress.onLost.add(lUpdate);
 		reset();
+	}
+
+	public inline function set_repeatCount(value: Int): Int {
+		repeatCount = value;
+		return value;
 	}
 
 	#if !dox
