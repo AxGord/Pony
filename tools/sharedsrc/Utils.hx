@@ -200,15 +200,20 @@ class Utils {
 		File.saveContent(file, [for (k in map.keys()) k + ':' + map[k].join(',')].join('\n'));
 	}
 
-	public static function getBuildString():String {
-		var date:String = Date.now().toString();
-		date = StringTools.replace(date, ' ', '_');
-		date = StringTools.replace(date, ':', '-');
+	public static function getBuildString(onlyNumbers: Bool = false, nosec: Bool = false): String {
+		var date: String = Date.now().toString();
+		date = StringTools.replace(date, ' ', onlyNumbers ? '' : '_');
+		date = StringTools.replace(date, ':', onlyNumbers ? '' : '-');
+		if (onlyNumbers) date = StringTools.replace(date, '-', '');
+		if (nosec) date = date.substr(0, -2);
 		return date;
 	}
 
 	public static inline function replaceBuildDate(s:String):String {
-		return StringTools.replace(s, '{buildDate}', getBuildString());
+		var str: String = StringTools.replace(s, '{buildDate}', getBuildString());
+		str = StringTools.replace(str, '{buildDate:onlyNumbers}', getBuildString(true));
+		str = StringTools.replace(str, '{buildDate:onlyNumbers,nosec}', getBuildString(true, true));
+		return str;
 	}
 
 	public static inline function replaceBuildDateIfNotNull(s:String):String {

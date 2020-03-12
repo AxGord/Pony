@@ -33,7 +33,7 @@ class Zip extends CfgModule<ZipConfig> {
 
 	override private function runNode(cfg:ZipConfig):Void {
 		log('Archive name: ${cfg.output}');
-		var zip = new pony.ZipTool(Utils.replaceBuildDate(cfg.output), cfg.prefix, cfg.compressLvl);
+		var zip = new pony.ZipTool(Utils.replaceBuildDate(cfg.output), cfg.prefix, cfg.compressLvl, Utils.replaceBuildDate(cfg.root));
 		if (cfg.log) zip.onLog << log;
 		zip.onError << function(err:String) throw err;
 		if (cfg.hash != null)
@@ -49,20 +49,22 @@ private typedef ZipConfig = { > types.BAConfig,
 	prefix: String,
 	compressLvl: Int,
 	hash: String,
-	log: Bool
+	log: Bool,
+	?root: String
 }
 
 private class ZipConfigReader extends BAReader<ZipConfig> {
 
 	override private function readNode(xml:Fast):Void {
 		switch xml.name {
-
-			case 'input': cfg.input.push(StringTools.trim(xml.innerData));
-			case 'output': cfg.output = StringTools.trim(xml.innerData);
-			case 'prefix': cfg.prefix = StringTools.trim(xml.innerData);
+			case 'input': cfg.input.push(normalize(xml.innerData));
+			case 'output': cfg.output = normalize(xml.innerData);
+			case 'prefix': cfg.prefix = normalize(xml.innerData);
 			case 'compress': cfg.compressLvl = Std.parseInt(xml.innerData);
-			case 'hash': cfg.hash = StringTools.trim(xml.innerData);
-
+			case 'hash': cfg.hash = normalize(xml.innerData);
+			case 'root':
+				cfg.root = normalize(xml.innerData);
+				if (cfg.root == '') cfg.root = null;
 			case _: super.readNode(xml);
 		}
 	}
@@ -74,6 +76,7 @@ private class ZipConfigReader extends BAReader<ZipConfig> {
 		cfg.compressLvl = 9;
 		cfg.hash = null;
 		cfg.log = true;
+		cfg.root = null;
 	}
 
 	override private function readAttr(name:String, val:String):Void {

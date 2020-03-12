@@ -100,7 +100,9 @@ class Imagemin extends NModule<ImageminConfig> {
 			NPM.imagemin(from.addToStringsEnd('{' + cformats.join(',') + '}'), cfg.to, {
 				plugins: [
 					NPM.imagemin_webp({
-						nearLossless: cfg.webpq
+						nearLossless: cfg.webpq,
+						quality: cfg.webpq,
+						method: 6
 					})
 				]
 			}).then(completeHandler);
