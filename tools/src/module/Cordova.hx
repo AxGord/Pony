@@ -52,7 +52,7 @@ class Cordova extends CfgModule<CordovaConfig> {
 
 	private function androidBuildHandler():Void addToRun(androidBuild);
 	private function iphoneBuildHandler():Void addToRun(iphoneBuild);
-	
+
 	private function androidBuild():Void {
 		Utils.command('cordova', ['build', 'android', '--release']);
 		finishCurrentRun();
@@ -81,7 +81,7 @@ class Cordova extends CfgModule<CordovaConfig> {
 	override private function runNode(cfg:CordovaConfig):Void {
 		if (!configFile.exists) {
 			error('Cordova not inited');
-			Sys.exit(1);
+			Utils.exit(1);
 		}
 
 		var content:String = configFile.content;
@@ -93,10 +93,10 @@ class Cordova extends CfgModule<CordovaConfig> {
 			if (s.substr(0, OPEN_WIDGET_TAG.length) == OPEN_WIDGET_TAG) {
 				if (s.substr(-1) != '>') {
 					error('Widget tag close on other line, please fix $configFile');
-					Sys.exit(1);
+					Utils.exit(1);
 				} else if (s.substr(-2) == '/>') {
 					error('Widget error, please fix $configFile');
-					Sys.exit(1);
+					Utils.exit(1);
 				} else {
 					wfounded = true;
 					break;
@@ -107,7 +107,7 @@ class Cordova extends CfgModule<CordovaConfig> {
 		}
 		if (!wfounded) {
 			error('Widget tag not founded, please fix $configFile');
-			Sys.exit(1);
+			Utils.exit(1);
 		}
 		var widgetLineXml:Fast = XmlTools.fast(contentLines[wline] + CLOSE_WIDGET_TAG).node.widget;
 		var changes:Bool = false;

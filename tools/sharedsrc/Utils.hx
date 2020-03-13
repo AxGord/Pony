@@ -17,6 +17,7 @@ class Utils {
 	private static inline var SRC:String = 'src';
 
 	public static var isWindows(get, never):Bool;
+	public static var isLinux(get, never):Bool;
 	public static var PD(default, null):String;
 	public static var toolsPath(default, null):String;
 	public static var libPath(default, null):String;
@@ -39,6 +40,7 @@ class Utils {
 	}
 
 	private static inline function get_isWindows():Bool return Sys.systemName() == 'Windows';
+	private static inline function get_isLinux():Bool return Sys.systemName() == 'Linux';
 
 	public static function path(s:String):String return StringTools.replace(StringTools.replace(s, '/', PD), '\\', PD);
 
@@ -78,6 +80,13 @@ class Utils {
 		Sys.stderr().writeString(message + '\n');
 		#else
 		Sys.println(message);
+		#end
+		exit(errCode);
+	}
+
+	public static function exit(errCode:Int = 0): Void {
+		#if neko
+		if (isLinux) Sys.sleep(0.3); // finish print messages
 		#end
 		Sys.exit(errCode);
 	}

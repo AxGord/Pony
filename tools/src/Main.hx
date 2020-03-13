@@ -26,12 +26,12 @@ class Main {
 		Sys.println(Utils.ansiUnderlined('https://github.com/AxGord/Pony'));
 		Sys.println(Utils.ansiUnderlined('http://lib.haxe.org/p/pony'));
 		Sys.println('Type:' + Utils.ansiForeground('pony help', AnsiForeground.LightCyan).quote().quote(' ') + '- for help');
-		Sys.exit(0);
+		Utils.exit();
 	}
 
 	static function showHelp(): Void {
 		Sys.println('\n' + (Utils.isWindows ? commands.helpData.join('\n\n') : commands.helpAnsiData.join('\n\n')) + '\n');
-		Sys.exit(0);
+		Utils.exit();
 	}
 
 	static function trySubProjects(args: Array<String>): Bool {
@@ -50,7 +50,7 @@ class Main {
 		if (p != Utils.toolsPath) {
 			var pony: String = Utils.toolsPath + 'pony';
 			if (Utils.isWindows) pony += '.exe';
-			Sys.exit(Sys.command(pony, args));
+			Utils.exit(Sys.command(pony, args));
 			return true;
 		} else {
 			return false;

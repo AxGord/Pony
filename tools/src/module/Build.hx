@@ -134,7 +134,7 @@ private typedef LastCompilationOptions = {
 				}
 			}
 			s.close();
-			if (hasError) Sys.exit(1);
+			if (hasError) Utils.exit(1);
 			lastCompilationOptions = { command: command, debug: debug, compiler: compiler };
 		} else {
 			var args: Array<String> = [];
@@ -164,7 +164,7 @@ private typedef LastCompilationOptions = {
 	private function compilationServerError(s: String): Void {
 		Sys.stderr().writeString(s);
 		if (tryCounter-- <= 0) {
-			Sys.exit(1);
+			Utils.exit(1);
 		} else {
 			Sys.println('');
 			Sys.println('Connect error, try again after $TIMEOUT sec...');
