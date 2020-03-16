@@ -21,38 +21,32 @@ class Utils {
 	private static var _homeNpm: String;
 
 	private static function get_nodeExists(): Bool {
-		if (_nodeExists == null)
-			_nodeExists = cmdExists('node') && cmdExists('npm');
+		if (_nodeExists == null) _nodeExists = cmdExists('node') && cmdExists('npm');
 		return _nodeExists;
 	}
 
 	private static function get_codeExists(): Bool {
-		if (_codeExists == null)
-			_codeExists = cmdExists('code');
+		if (_codeExists == null) _codeExists = cmdExists('code');
 		return _codeExists;
 	}
 
 	private static function get_codeInsidersExists(): Bool {
-		if (_codeInsidersExists == null)
-			_codeInsidersExists = cmdExists('code-insiders');
+		if (_codeInsidersExists == null) _codeInsidersExists = cmdExists('code-insiders');
 		return _codeInsidersExists;
 	}
 
 	private static function get_npmPath(): String {
-		if (_npmPath == null)
-			_npmPath = new Process('npm', ['prefix', '-g']).stdout.readLine() + '/lib/node_modules';
+		if (_npmPath == null) _npmPath = new Process('npm', ['prefix', '-g']).stdout.readLine() + '/lib/node_modules';
 		return _npmPath;
 	}
 
 	private static function get_homePath(): String {
-		if (_homePath == null)
-			_homePath = Sys.getEnv('HOME');
+		if (_homePath == null) _homePath = Sys.getEnv('HOME');
 		return _homePath;
 	}
 
 	private static function get_homeNpm(): String {
-		if (_homeNpm == null)
-			_homeNpm = homePath + '/.npm';
+		if (_homeNpm == null) _homeNpm = homePath + '/.npm';
 		return _homeNpm;
 	}
 
@@ -66,9 +60,7 @@ class Utils {
 		return r;
 	}
 
-	public static inline function beginColor(c: Int): Void
-		if (Config.OS != Windows)
-			Sys.print('\x1b[${c}m');
+	public static inline function beginColor(c: Int): Void if (Config.OS != Windows) Sys.print('\x1b[${c}m');
 
 	public static inline function endColor(): Void beginColor(0);
 
@@ -87,13 +79,19 @@ class Utils {
 	public static function setPerm(dir: String, v: Int, r: Bool = false): Void {
 		beginColor(90);
 		Sys.println('Set perm $v for $dir');
-		var a = ['chmod'];
-		if (r)
-			a.push('-R');
+		var a: Array<String> = ['chmod'];
+		if (r) a.push('-R');
 		a.push(Std.string(v));
 		a.push(dir);
 		Sys.command('sudo', a);
 		endColor();
+	}
+
+	public static function exit(errCode:Int = 0): Void {
+		#if neko
+		if (Config.OS == Linux) Sys.sleep(0.3); // finish print messages
+		#end
+		Sys.exit(errCode);
 	}
 
 }

@@ -8,7 +8,7 @@ class PonyInstall extends BaseInstall {
 
 	public function new() super('Pony Command-Line Tools', !Config.INSTALL, true);
 
-	override private function run():Void {
+	override private function run(): Void {
 		new VSCodePluginsInstall();
 		new VSCodeInsidersPluginsInstall();
 		new HaxelibInstall();
@@ -17,7 +17,7 @@ class PonyInstall extends BaseInstall {
 		new UserpathInstall();
 	}
 
-	private inline function compile():Void {
+	private inline function compile(): Void {
 		log('Prepare for compile pony');
 		if (FileSystem.exists(Config.BIN)) {
 			Utils.beginColor(90);

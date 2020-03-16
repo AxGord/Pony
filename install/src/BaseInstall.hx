@@ -4,22 +4,20 @@
  */
 class BaseInstall {
 
-	private static var YCODE:Int = 'y'.charCodeAt(0);
-	private static var NCODE:Int = 'n'.charCodeAt(0);
+	private static var YCODE: Int = 'y'.charCodeAt(0);
+	private static var NCODE: Int = 'n'.charCodeAt(0);
 
-	private var n:String;
-	private var hard:Bool;
+	private var n: String;
+	private var hard: Bool;
 
-	public function new(n:String, ?qn:String, q:Bool, hard:Bool) {
+	public function new(n: String, ?qn: String, q: Bool, hard: Bool) {
 		this.n = n;
 		this.hard = hard;
 		if (qn == null) qn = n;
-		if (q) {
-			switch Config.questionState(qn) {
-				case InstallQuestion.No: return;
-				case InstallQuestion.Yes: q = false;
-				case InstallQuestion.Say: q = true;
-			}
+		if (q) switch Config.questionState(qn) {
+			case InstallQuestion.No: return;
+			case InstallQuestion.Yes: q = false;
+			case InstallQuestion.Say: q = true;
 		}
 		if (!q || question()) {
 			log('');
@@ -29,10 +27,10 @@ class BaseInstall {
 		}
 	}
 
-	private function run():Void {}
+	private function run(): Void {}
 
-	private inline function question():Bool {
-		var r:Int = null;
+	private inline function question(): Bool {
+		var r: Int = null;
 		do {
 			log('');
 			log('Do you want install $n? (y/n)');
@@ -42,7 +40,7 @@ class BaseInstall {
 		return r == YCODE;
 	}
 
-	private function listInstall(c:String, a:Array<String>, l:Array<String>):Void {
+	private function listInstall(c: String, a: Array<String>, l: Array<String>): Void {
 		for (e in l) {
 			if (e.charAt(0) == '!') {
 				if (Config.OS == TargetOS.Windows)
@@ -55,29 +53,27 @@ class BaseInstall {
 		}
 	}
 
-	private inline function log(s:String):Void Sys.println(s);
+	private inline function log(s: String): Void Sys.println(s);
 
-	private inline function graylog(s:String):Void {
+	private inline function graylog(s: String): Void {
 		Utils.beginColor(90);
 		Sys.println(s);
 		Utils.endColor();
 	}
 
-	private inline function cmd(c:String, a:Array<String>):Void hard ? hardCmd(c, a) : softCmd(c, a);
+	private inline function cmd(c: String, a: Array<String>): Void hard ? hardCmd(c, a) : softCmd(c, a);
 
-	private inline function softCmd(c:String, a:Array<String>):Void {
+	private inline function softCmd(c: String, a: Array<String>): Void {
 		log([c].concat(a).join(' '));
 		Sys.command(c, a);
 	}
 
-	private inline function hardCmd(c:String, a:Array<String>):Void {
+	private inline function hardCmd(c: String, a: Array<String>): Void {
 		log([c].concat(a).join(' '));
-		var r = Sys.command(c, a);
-		if (r != 0) Sys.exit(r);
+		var r: Int = Sys.command(c, a);
+		if (r != 0) Utils.exit(r);
 	}
 
-	private inline function makedir(path:String):Void {
-		softCmd('sudo', ['mkdir', '-m', '777', '-p', path]);
-	}
+	private inline function makedir(path: String): Void softCmd('sudo', ['mkdir', '-m', '777', '-p', path]);
 
 }

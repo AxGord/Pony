@@ -5,23 +5,23 @@ import sys.FileSystem;
  * @author AxGord <axgord@gmail.com>
  */
 class Main {
-	
-	static function main():Void {
+
+	private static function main(): Void {
 		Config.init();
 		if (!Config.INSTALL) tryRun(Config.ARGS);
 		if (!Utils.nodeExists) Sys.println('Warning: nodejs not installed!');
 		new PonyInstall();
 	}
 
-	static function tryRun(args:Array<String>):Void {
+	private static function tryRun(args: Array<String>): Void {
 		if (args.length > 1) {
 			Sys.setCwd(args.pop());
-			var runfile = Config.BIN + (Config.OS == Windows ? 'pony.exe' : 'pony');
+			var runfile: String = Config.BIN + (Config.OS == Windows ? 'pony.exe' : 'pony');
 			if (FileSystem.exists(runfile)) {
-				Sys.exit(Sys.command(runfile, args));
-			} else  {
+				Utils.exit(Sys.command(runfile, args));
+			} else {
 				Sys.println('Pony not compiled');
-				Sys.exit(1);
+				Utils.exit(1);
 			}
 		}
 	}

@@ -9,8 +9,8 @@ import Config.*;
  */
 class UserpathInstall extends BaseInstall {
 
-	private var installNodePath:Bool = true;
-	private var installPonyPath:Bool = true;
+	private var installNodePath: Bool = true;
+	private var installPonyPath: Bool = true;
 
 	public function new() {
 		installNodePath = questionState('nodepath') != InstallQuestion.No;
@@ -18,52 +18,43 @@ class UserpathInstall extends BaseInstall {
 		super('userpath', true, true);
 	}
 
-	override public function run():Void {
+	override public function run(): Void {
 		switch OS {
 			case Windows:
-				if (installNodePath && Utils.nodeExists)
-					windowsNodeUserpath();
-				if (installPonyPath)
-					windowsPonyUserpath();
-				
+				if (installNodePath && Utils.nodeExists) windowsNodeUserpath();
+				if (installPonyPath) windowsPonyUserpath();
 			case Mac:
-				var home = Sys.getEnv('HOME');
+				var home: String = Sys.getEnv('HOME');
 				writeProfileFiles([home + '/.bash_profile', home + '/.zshrc']);
 				log('Type "source ~/.bash_profile" for finish install');
-
 			case Linux:
-				var home = Sys.getEnv('HOME');
-				var pfile = home + '/.profile';
+				var home: String = Sys.getEnv('HOME');
+				var pfile: String = home + '/.profile';
 				writeProfileFiles([pfile]);
 				log('Type "source ~/.profile" for finish install');
-
 		}
 	}
 
-	private inline function windowsNodeUserpath():Void {
+	private inline function windowsNodeUserpath(): Void {
 		if (Sys.getEnv('NODE_PATH') == null) {
-			var modulespath = Sys.getEnv('appdata') + PD + 'npm' + PD + 'node_modules';
+			var modulespath: String = Sys.getEnv('appdata') + PD + 'npm' + PD + 'node_modules';
 			setx('NODE_PATH', modulespath);
 		}
 	}
 
-	private inline function windowsPonyUserpath():Void {
-		
-		var envPath:String = Sys.getEnv(ENVKEY);
-		
+	private inline function windowsPonyUserpath(): Void {
+		var envPath: String = Sys.getEnv(ENVKEY);
 		if (envPath == null) {
-		
-			var user = Sys.getEnv('USERPROFILE') + PD;
-			
+			var user: String = Sys.getEnv('USERPROFILE') + PD;
 			if (FileSystem.exists(user + 'pony_user_path_bak.txt')) {
 				Sys.println('Error: path ready');
 				return;
 			}
-			
+
 			var stdout = new Process('cmd.exe', ['/C', 'install\\user_path.cmd']).stdout;
 			var data = stdout.readAll();
 			var path = StringTools.trim(data.toString());
-			
+
 			if (path != '') {
 				var np = path + (path.substr(-1) == ';' ? '' : ';') + '%$ENVKEY%';
 				setx('PATH', np);
@@ -77,13 +68,10 @@ class UserpathInstall extends BaseInstall {
 		}
 	}
 
-	private inline function setx(v:String, p:String):Void cmd('setx', [v, p]);
+	private inline function setx(v: String, p: String): Void cmd('setx', [v, p]);
 
-	private function writeProfileFiles(pFiles:Array<String>):Void {
-		var data = [
-			'export $ENVKEY=$BIN',
-			"export PATH=$PATH:$" + ENVKEY
-		];
+	private function writeProfileFiles(pFiles: Array<String>): Void {
+		var data: Array<String> = ['export $ENVKEY=$BIN', "export PATH=$PATH:$" + ENVKEY];
 
 		if (installNodePath && Utils.nodeExists) {
 			var line = 'export NODE_PATH=${Utils.npmPath}';
@@ -114,7 +102,7 @@ class UserpathInstall extends BaseInstall {
 		}
 	}
 
-	public static function saveNpmLine(line:String, pFiles:Array<String>):Void {
+	public static function saveNpmLine(line: String, pFiles: Array<String>): Void {
 		for (pFile in pFiles) {
 			if (FileSystem.exists(pFile)) {
 				var c = File.getContent(pFile);
