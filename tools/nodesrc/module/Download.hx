@@ -30,7 +30,7 @@ using pony.text.TextTools;
 					needDownload = false;
 				}
 			} else {
-				needDownload = true;
+				needDownload = !unit.c && FileSystem.exists(file);
 			}
 			if (needDownload) downloadList.push(new Pair(file, unit.a));
 		}

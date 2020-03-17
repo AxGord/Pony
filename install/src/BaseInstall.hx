@@ -4,8 +4,12 @@
  */
 class BaseInstall {
 
-	private static var YCODE: Int = 'y'.charCodeAt(0);
-	private static var NCODE: Int = 'n'.charCodeAt(0);
+	private inline static var YCODE: Int = 'y'.code;
+	private inline static var NCODE: Int = 'n'.code;
+	private inline static var ACODE: Int = 'a'.code;
+	private inline static var QCODE: Int = 'q'.code;
+
+	private static var allEnabled: Bool = false;
 
 	private var n: String;
 	private var hard: Bool;
@@ -29,15 +33,28 @@ class BaseInstall {
 
 	private function run(): Void {}
 
-	private inline function question(): Bool {
+	private function question(): Bool {
+		if (allEnabled) return true;
 		var r: Int = null;
 		do {
 			log('');
-			log('Do you want install $n? (y/n)');
+			log('Do you want install $n? (y/n/a/q)');
 			r = Sys.getChar(true);
 			log('');
-		} while (r != YCODE && r != NCODE);
-		return r == YCODE;
+			switch r {
+				case YCODE:
+					return true;
+				case NCODE:
+					return false;
+				case ACODE:
+					allEnabled = true;
+					return true;
+				case QCODE:
+					Utils.exit(0);
+					return false;
+			}
+		} while (true);
+		return false;
 	}
 
 	private function listInstall(c: String, a: Array<String>, l: Array<String>): Void {

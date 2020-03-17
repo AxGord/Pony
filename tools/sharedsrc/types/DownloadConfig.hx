@@ -1,8 +1,8 @@
 package types;
 
-import pony.Pair;
+import pony.ds.Triple;
 
 typedef DownloadConfig = { > BAConfig,
 	path: String,
-	units:Array<Pair<String, String>>
+	units:Array<Triple<String, String, Bool>>
 }

@@ -28,6 +28,29 @@ Install Pony Tools
 
     haxelib run pony
 
+Silent install example
+
+    haxelib run pony install +code -code-insiders +npm +userpath -nodepath +ponypath
+
+`+` - enable option
+
+`-` - disable option
+
+`code` - Install Visual Studio Code recommended plugins
+
+`code-insiders` - Install Visual Studio Code Insiders recommended plugins
+
+`npm` - Install NPM (Node Package Manager) modules
+
+`userpath` - Set user paths
+
+`nodepath` - Set user path to node_modules, only for Windows
+
+`ponypath` - Set user path to pony.exe, only for Windows
+
+CI install example
+
+    haxelib run pony install -code -code-insiders +npm +userpath
 
 [Installation Video Guide](https://www.youtube.com/watch?v=ufYIEmQcv4o)
 

@@ -1,30 +1,30 @@
 {
 	"envkey": "PONYTOOLS_PATH",
 	"haxelib": [
-		"hxnodejs 10.0.0",
+		"hxnodejs 12.0.0",
 		"hxbit 1.5.0"
 	],
 	"npm": [
 		"!git+https://github.com/janjakubnanista/poeditor-client.git",
 		"capture-console@1.0.1",
-		"!uglify-js@3.6.0",
+		"!uglify-js@3.8.0",
 		"ftp@0.3.10",
 		"send@0.17.1",
 		"multiparty@4.2.1",
-		"http-proxy@1.17.0",
-		"source-map-support@0.5.12",
-		"convert-source-map@1.6.0",
+		"http-proxy@1.18.0",
+		"source-map-support@0.5.16",
+		"convert-source-map@1.7.0",
 		"offset-sourcemap-lines@1.0.1",
-		"!msdf-bmfont-xml@2.5.0",
-		"imagemin@6.1.0",
+		"!msdf-bmfont-xml@2.5.4",
+		"imagemin@7.0.1",
 		"imagemin-guetzli@2.0.0",
 		"imagemin-jpegoptim@6.0.0",
 		"imagemin-webp@5.1.0",
 		"imagemin-pngquant@8.0.0",
 		"imagemin-zopfli@6.0.0",
 		"!cordova@9.0.0",
-		"!rimraf@2.6.3",
-		"mysql@2.17.1"
+		"!rimraf@3.0.2",
+		"mysql@2.18.1"
 	],
 	"winnpm": [
 		"imagemin-pngquant@5.1.0"
