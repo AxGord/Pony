@@ -68,12 +68,13 @@ private class BmfontReader extends BAReader<BmfontConfig> {
 		switch name {
 			case 'from': cfg.from = val;
 			case 'to': cfg.to = val;
-			case 'type': 
+			case 'type':
 				cfg.type = val;
 				if (val == 'msdf' && cfg.padding == -1)
 					cfg.padding = 1;
 			case 'format': cfg.format = val;
 			case 'distance': cfg.distance = Std.parseInt(val);
+			case 'padding': cfg.padding = Std.parseInt(val);
 			case _:
 		}
 	}
