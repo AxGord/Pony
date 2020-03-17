@@ -16,16 +16,20 @@ import types.ProxyConfig;
 import pony.Logable;
 import pony.NPM;
 
-class Proxy extends Logable {
+/**
+ * Proxy Server submodule
+ * @author AxGord <axgord@gmail.com>
+ */
+@:nullSafety(Strict) @:final class Proxy extends Logable {
 
-	private var cachePath: String;
+	private var cachePath: Null<String>;
 	private var requested: Array<String> = [];
-	private var target: String;
-	private var port: UInt;
+	private var target: Null<String>;
+	private var port: Null<UInt>;
 	private var slow: Null<UInt>;
 	private var httpPort: Null<UInt>;
 	private var httpPath: Null<String>;
-	private var proxy: Dynamic;
+	@:nullSafety(Off) private var proxy: Dynamic;
 
 	public function new(cfg: ProxyConfig, httpPort: Null<UInt>, httpPath: Null<String>) {
 		super();
@@ -38,20 +42,21 @@ class Proxy extends Logable {
 	}
 
 	public function init(): Void {
-		log('Start proxy server on ${port} to ${target} target');
-		if (slow == null && cachePath == null) {
+		if (@:nullSafety(Off) (port == null)) throw 'port not set';
+		logf(() -> 'Start proxy server on ${port} to ${target} target');
+		if (@:nullSafety(Off) (slow == null) && cachePath == null) {
 			NPM.http_proxy.createProxyServer({
 				target: target,
-				headers: {'Host': '127.0.0.1:${port}'}
+				headers: {'Host': @:nullSafety(Off) '127.0.0.1:${port}'}
 			}).on('error', errorHandler).listen(port);
 		} else {
 			proxy = NPM.http_proxy.createProxyServer();
 			if (cachePath != null)
 				proxy.on('proxyRes', proxyResHandler);
-			if (slow != null)
-				Http.createServer(httpSlowServerHandler).listen(port);
+			if (@:nullSafety(Off) (slow != null))
+				Http.createServer(httpSlowServerHandler).listen(cast port);
 			else if (cachePath != null)
-				Http.createServer(httpCacheServerHandler).listen(port);
+				Http.createServer(httpCacheServerHandler).listen(cast port);
 			else
 				throw 'error';
 		}
@@ -82,7 +87,7 @@ class Proxy extends Logable {
 				target: target,
 				changeOrigin: true
 			});
-		}, slow);
+		}, cast slow);
 	}
 
 	private function httpCacheServerHandler(req: IncomingMessage, res: ServerResponse): Void {
@@ -92,7 +97,7 @@ class Proxy extends Logable {
 		if (FileSystem.exists(rpath)) {
 			if (httpPath != null && cachePath == httpPath)
 				proxy.web(req, res, cast {
-					target: 'http://127.0.0.1:$httpPort',
+					target: @:nullSafety(Off) 'http://127.0.0.1:$httpPort',
 					changeOrigin: true
 				});
 			else

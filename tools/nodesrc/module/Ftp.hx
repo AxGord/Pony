@@ -1,11 +1,5 @@
 package module;
 
-import types.FtpConfig;
-import pony.events.Signal0;
-import pony.Logable;
-import pony.fs.File;
-import pony.fs.Dir;
-import pony.NPM;
 #if (haxe_ver >= '4.0.0')
 import js.lib.Error;
 #else
@@ -13,16 +7,21 @@ import js.Error;
 #end
 import js.Node;
 import sys.FileSystem;
-
+import pony.events.Signal0;
+import pony.Logable;
+import pony.fs.File;
+import pony.fs.Dir;
+import pony.NPM;
 import pony.ds.ROArray;
+import types.FtpConfig;
 
 using pony.text.TextTools;
 
 /**
- * Ftp
+ * Ftp Pony Tools Node Module
  * @author AxGord <axgord@gmail.com>
  */
-class Ftp extends NModule<FtpConfig> {
+@:nullSafety(Strict) @:final class Ftp extends NModule<FtpConfig> {
 
 	override private function run(cfg: FtpConfig): Void {
 		tasks.add();
@@ -34,7 +33,7 @@ class Ftp extends NModule<FtpConfig> {
 
 }
 
-private class FtpInstance extends Logable {
+@:nullSafety(Strict) @:final private class FtpInstance extends Logable {
 
 	private static inline var DELAY_TIMEOUT: Int = 2000;
 
@@ -46,8 +45,8 @@ private class FtpInstance extends Logable {
 	private var path: String;
 	private var input: Array<String> = [];
 	private var output: String;
-	private var inputIterator:Iterator<String>;
-	private var fileIterator:Iterator<File>;
+	@:nullSafety(Off) private var inputIterator: Iterator<String>;
+	@:nullSafety(Off) private var fileIterator: Iterator<File>;
 
 	public function new(cfg: FtpConfig) {
 		super();
@@ -56,8 +55,7 @@ private class FtpInstance extends Logable {
 		for (e in cfg.input) {
 			if (e.charCodeAt(e.length - 1) == '*'.code) {
 				var dir: Dir = path + e.substr(0, -1);
-				for (unit in dir.content(true))
-					input.push(unit.toString().substr(path.length));
+				for (unit in dir.content(true)) input.push(unit.toString().substr(path.length));
 			} else {
 				input.push(e);
 			}
@@ -110,9 +108,7 @@ private class FtpInstance extends Logable {
 		}
 	}
 
-	private function pauseDeleteNext(): Void {
-		Node.setTimeout(deleteNext, DELAY_TIMEOUT);
-	}
+	private function pauseDeleteNext(): Void Node.setTimeout(deleteNext, DELAY_TIMEOUT);
 
 	private function uploadNext(): Void {
 		if (inputIterator.hasNext()) {
@@ -136,15 +132,15 @@ private class FtpInstance extends Logable {
 		}
 	}
 
-	private function checkIgnore(unit: String): Bool return ignore.indexOf(unit.allAfterLast('/')) != -1;
+	private function checkIgnore(unit: String): Bool return ignore.indexOf(cast unit.allAfterLast('/')) != -1;
 
 	private function uploadNextFile(): Void {
 		if (fileIterator.hasNext()) {
 			var fullunit: String = fileIterator.next();
 			var unit: String = fullunit.substr(path.length);
 			var a: Array<String> = unit.split('/');
-			var na: Array<String> = [for (e in a) if (e != '') e];
-			var dir: String = [for (i in 0...na.length - 1) na[i]].join('/');
+			var na: Array<String> = [ for (e in a) if (e != '') e ];
+			var dir: String = [ for (i in 0...na.length - 1) na[i] ].join('/');
 			var _ftp: Dynamic = ftp;
 			var file: String = na.join('/');
 			log('Makedir: $dir');

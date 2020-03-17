@@ -4,16 +4,16 @@ import types.ServerConfig;
 import remote.server.ServerRemote;
 
 /**
- * Server
+ * Server Pony Tools Node Module
  * @author AxGord <axgord@gmail.com>
  */
-class Server extends NModule<ServerConfig> {
+@:nullSafety(Strict) @:final class Server extends NModule<ServerConfig> {
 
 	override private function run(cfg: ServerConfig): Void {
 		tasks.add();
-		if (cfg.port != null && cfg.path != null) {
+		if (@:nullSafety(Off) (cfg.port != null) && cfg.path != null) {
 			tasks.add();
-			var http: Http = new Http(cfg.port, cfg.path);
+			var http: Http = new Http(cast cfg.port, cast cfg.path);
 			http.onError << eError;
 			http.onLog << eLog;
 		}
@@ -24,16 +24,16 @@ class Server extends NModule<ServerConfig> {
 			proxy.onLog << eLog;
 			proxy.init();
 		}
-		if (cfg.haxe != null) {
+		if (@:nullSafety(Off) (cfg.haxe != null)) {
 			tasks.add();
-			var haxe = new Haxe(cfg.haxe);
+			var haxe = new Haxe(cast cfg.haxe);
 			haxe.onError << eError;
 			haxe.onLog << eLog;
 			haxe.init();
 		}
 		if (cfg.remote != null) {
 			tasks.add();
-			var remote: ServerRemote = new ServerRemote(cfg.remote);
+			var remote: ServerRemote = new ServerRemote(cast cfg.remote);
 			remote.onError << eError;
 			remote.onLog << eLog;
 			remote.init();

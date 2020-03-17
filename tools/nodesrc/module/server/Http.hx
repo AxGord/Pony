@@ -4,7 +4,11 @@ import pony.net.http.IHttpConnection;
 import pony.net.http.platform.nodejs.HttpServer;
 import pony.Logable;
 
-class Http extends Logable {
+/**
+ * Http Server submodule
+ * @author AxGord <axgord@gmail.com>
+ */
+@:nullSafety(Strict) @:final class Http extends Logable {
 
 	private var server: HttpServer;
 	private var path: String;
