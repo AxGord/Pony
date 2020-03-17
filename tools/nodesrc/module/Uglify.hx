@@ -7,16 +7,17 @@ import sys.FileSystem;
 import sys.io.File;
 
 /**
- * Uglify
+ * Uglify Pony Tools Node Module
  * @author AxGord <axgord@gmail.com>
  */
-class Uglify extends NModule<UglifyConfig> {
+@:nullSafety(Strict) @:final class Uglify extends NModule<UglifyConfig> {
 
 	private static var MAP_EXT: String = '.map';
 
 	override private function run(cfg: UglifyConfig): Void {
+		if (cfg.input.length == 0) throw 'Not inputs';
 		if (cfg.debug && cfg.libcache != null) {
-			var lastFile: String = cfg.input.pop();
+			@:nullSafety(Off) var lastFile: String = cfg.input.pop();
 			if (cfg.input.length == 0) {
 				patchMapFile(lastFile + MAP_EXT, cfg.sourcemap.offset);
 				return;
@@ -27,7 +28,7 @@ class Uglify extends NModule<UglifyConfig> {
 				libdata = File.getContent(cfg.libcache);
 			} else {
 				var inputContent: Dynamic<String> = {};
-				for (f in cfg.input) Reflect.setField(inputContent, f.split('/').pop(), File.getContent(f));
+				for (f in cfg.input) @:nullSafety(Off) Reflect.setField(inputContent, f.split('/').pop(), File.getContent(f));
 				var tries: Int = 3;
 				do {
 					var r = NPM.uglify_js.minify(inputContent, {
@@ -48,7 +49,7 @@ class Uglify extends NModule<UglifyConfig> {
 			patchMapFile(lastFile + MAP_EXT, 1 + cfg.sourcemap.offset);
 		} else {
 			var inputContent: Dynamic<String> = {};
-			for (f in cfg.input) Reflect.setField(inputContent, f.split('/').pop(), File.getContent(f));
+			for (f in cfg.input) @:nullSafety(Off)  Reflect.setField(inputContent, f.split('/').pop(), File.getContent(f));
 
 			var r = NPM.uglify_js.minify(inputContent, {
 				toplevel: true,
@@ -63,8 +64,7 @@ class Uglify extends NModule<UglifyConfig> {
 			});
 
 			File.saveContent(cfg.output, r.code);
-			if (cfg.sourcemap.output != null)
-				File.saveContent(cfg.sourcemap.output, patchMap(r.map, cfg.sourcemap.offset));
+			if (cfg.sourcemap.output != null) File.saveContent(cfg.sourcemap.output, patchMap(r.map, cfg.sourcemap.offset));
 		}
 	}
 

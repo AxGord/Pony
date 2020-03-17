@@ -6,11 +6,11 @@ import pony.sys.Process;
  * RemoteActionExec
  * @author AxGord <axgord@gmail.com>
  */
-class RemoteActionExec extends RemoteAction {
+@:nullSafety(Strict) @:final class RemoteActionExec extends RemoteAction {
 
-	private var process:Process;
+	@:nullSafety(Off) private var process: Process;
 
-	override private function run(data:String):Void {
+	override private function run(data: String): Void {
 		super.run(data);
 		process = new Process(data);
 		process.onComplete < end;
@@ -19,10 +19,10 @@ class RemoteActionExec extends RemoteAction {
 		process.run();
 	}
 
-	override public function destroy():Void {
+	override public function destroy(): Void {
 		super.destroy();
 		process.destroy();
-		process = null;
+		@:nullSafety(Off) process = null;
 	}
 
 }

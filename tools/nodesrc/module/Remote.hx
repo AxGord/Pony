@@ -4,7 +4,7 @@ import types.RemoteConfig;
 import remote.client.RemoteClient;
 
 /**
- * Remote
+ * Remote Pony Tools Node Module
  * @author AxGord <axgord@gmail.com>
  */
 class Remote extends NModule<RemoteConfig> {

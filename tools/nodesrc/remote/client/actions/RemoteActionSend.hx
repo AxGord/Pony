@@ -4,9 +4,9 @@ package remote.client.actions;
  * RemoteActionSend
  * @author AxGord <axgord@gmail.com>
  */
-class RemoteActionSend extends RemoteAction {
+@:nullSafety(Strict) @:final class RemoteActionSend extends RemoteAction {
 
-	override private function run(data:String):Void {
+	override private function run(data: String): Void {
 		super.run(data);
 		protocol.file.stream.onComplete < end;
 		protocol.file.stream.onGetData << streamDataHandler;
@@ -14,11 +14,10 @@ class RemoteActionSend extends RemoteAction {
 		protocol.file.sendFile(data);
 	}
 
-	private function streamErrorHandler():Void error('File stream error');
+	private function streamErrorHandler(): Void error('File stream error');
+	private function streamDataHandler(): Void Sys.print('.');
 
-	private function streamDataHandler():Void Sys.print('.');
-
-	override public function destroy():Void {
+	override public function destroy(): Void {
 		super.destroy();
 		protocol.file.stream.onComplete >> end;
 		protocol.file.stream.onGetData >> streamDataHandler;

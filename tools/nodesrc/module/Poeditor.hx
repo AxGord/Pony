@@ -10,33 +10,40 @@ import types.PoeditorConfig;
 
 using pony.text.TextTools;
 
+private typedef Lang = {
+	name: String,
+	code: String,
+	percentage: Int,
+	export: Dynamic
+};
+
 /**
- * Poeditor
+ * Poeditor Pony Tools Node Module
  * @author AxGord <axgord@gmail.com>
  */
-class Poeditor extends NModule<PoeditorConfig> {
+@:nullSafety(Strict) @:final class Poeditor extends NModule<PoeditorConfig> {
 
-	override private function run(cfg:PoeditorConfig):Void {
+	override private function run(cfg: PoeditorConfig): Void {
 		tasks.add();
-		var client:Dynamic = Type.createInstance(NPM.poeditor_client, [cfg.token]);
-		client.projects.get(cfg.id).then(function(project){
-			project.languages.list().then(function(languages:Array<{name:String, code:String, percentage:Int, export:Dynamic}>){
+		var client: Dynamic = Type.createInstance(NPM.poeditor_client, [cfg.token]);
+		client.projects.get(cfg.id).then(function(project) {
+			project.languages.list().then(function(languages: Array<Lang>) {
 				for (i in 0...languages.length) {
-					var lang = languages[i];
+					var lang: Lang = languages[i];
 					log('Check lang: ' + lang.name);
 					if (lang.percentage == 100 && cfg.list.exists(lang.code)) {
 						tasks.add();
 						try {
 							lang.export({type: 'key_value_json'}).then(function(v) {
-								var file:String = cfg.path + cfg.list[lang.code] + '.json';
+								var file: String = cfg.path + cfg.list[lang.code] + '.json';
 								log('Update lang file: ' + file);
 								var f = Fs.createWriteStream(file);
-								Https.get(v, function(response:IncomingMessage) {
+								Https.get(v, function(response: IncomingMessage) {
 									response.once('end', tasks.end);
-									response.pipe(f); 
+									response.pipe(f);
 								});
 							});
-						} catch (e:Any) error(e);
+						} catch (e: Any) error(e);
 					}
 				}
 				tasks.end();

@@ -12,28 +12,30 @@ import types.RemoteConfig;
  * Remote Client
  * @author AxGord <axgord@gmail.com>
  */
-class RemoteClient extends Logable {
+@:nullSafety @:final class RemoteClient extends Logable {
 
 	@:auto public var onComplete: Signal1<Int>;
 
 	private var cfg: RemoteConfig;
 	private var commands: Array<RemoteCommand>;
-	private var protocol: RemoteProtocol;
+	private var protocol: Null<RemoteProtocol>;
 
 	public function new(cfg: RemoteConfig) {
 		super();
+		this.cfg = cfg;
 		commands = cfg.commands;
 	}
 
 	public function init(): Void {
 		protocol = createProtocol(cfg.host, cfg.port, cfg.key);
+		if (protocol == null) return;
 		protocol.log.onLog << eLog;
 		protocol.onReady < readyHandler;
 		protocol.onZipLog << zipLogHandler;
 
 	}
 
-	public function createProtocol(host: String, port: Int, key: String): RemoteProtocol {
+	public function createProtocol(host: String, port: Int, key: String): Null<RemoteProtocol> {
 		if (host == null || port == null) {
 			error('Not setted port or host');
 			eComplete.dispatch(1);
@@ -53,7 +55,8 @@ class RemoteClient extends Logable {
 	}
 
 	private function readyHandler(): Void {
-		var runner = new RemoteActionRunner(protocol, commands);
+		if (protocol == null) return;
+		var runner: RemoteActionRunner = new RemoteActionRunner(protocol, commands);
 		runner.onLog << eLog;
 		runner.onError << eError;
 		runner.onError << errorHandler;
@@ -64,8 +67,10 @@ class RemoteClient extends Logable {
 	private function errorHandler():Void end(3);
 
 	private function end(code: Int = 0): Void {
-		protocol.socket.onDisconnect >> disconnectHandler;
-		protocol.socket.destroy();
+		if (protocol != null) {
+			protocol.socket.onDisconnect >> disconnectHandler;
+			protocol.socket.destroy();
+		}
 		eComplete.dispatch(code);
 	}
 

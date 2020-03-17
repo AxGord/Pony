@@ -9,54 +9,53 @@ import pony.sys.Process;
  * ServerRemoteInstanse
  * @author AxGord <axgord@gmail.com>
  */
-class ServerRemoteInstanse {
+@:nullSafety(Strict) @:final class ServerRemoteInstanse {
 
-	private var client:SocketClient;
-	private var currentCommand:String;
-	private var currentCommandN:Int;
-	private var key:String;
-	private var protocol:RemoteProtocol;
-	private var commands:Map<String, Array<Pair<Bool, String>>> = new Map();
-	private var allowForGet:Array<String>;
-	private var zipRLog:Bool = true;
-	private var packLog:BytesOutput;
-	private var activeProcess:Process;
-	private var activity:Void -> Void;
+	private var client: SocketClient;
+	private var currentCommand: String = '';
+	private var currentCommandN: Int = -1;
+	private var key: String;
+	private var protocol: RemoteProtocol;
+	private var commands: Map<String, Array<Pair<Bool, String>>> = new Map();
+	private var allowForGet: Array<String>;
+	private var zipRLog: Bool = true;
+	private var packLog: Null<BytesOutput>;
+	private var activeProcess: Null<Process>;
+	private var activity: Void->Void;
 
-	public function new(client:SocketClient, key:String, commands:Map<String, Array<Pair<Bool, String>>>, allowForGet:Array<String>) {
+	public function new(client: SocketClient, key: String, commands: Map<String, Array<Pair<Bool, String>>>, allowForGet: Array<String>) {
 		this.client = client;
 		this.key = key;
 		this.commands = commands;
 		this.allowForGet = allowForGet;
-		client.onClose < closeHandler;
 		protocol = new RemoteProtocol(client);
 		activity = protocol.ping.watch();
+		client.onClose < closeHandler;
 		client.onData << activity;
 		protocol.ping.onLostConnection < lostHandler;
 		protocol.ping.onWarning << warningHandler;
 		protocol.ping.onRestore << restoreHandler;
 
-		if (key == null) {
+		if (key == null)
 			start();
-		} else {
+		else
 			protocol.onAuth < authHandler;
-		}
 	}
 
-	private function warningHandler():Void Sys.println('Problem with connection');
-	private function restoreHandler():Void Sys.println('Connection restore');
+	private function warningHandler(): Void Sys.println('Problem with connection');
+	private function restoreHandler(): Void Sys.println('Connection restore');
 
-	private function closeHandler():Void {
+	private function closeHandler(): Void {
 		Sys.println('Disconnect');
 		closeConnection();
 	}
 
-	private function lostHandler():Void {
+	private function lostHandler(): Void {
 		Sys.println('Lost connection');
 		closeConnection();
 	}
 
-	private function closeConnection():Void {
+	private function closeConnection(): Void {
 		client.onClose >> closeHandler;
 		protocol.ping.onLostConnection >> lostHandler;
 		protocol.ping.onWarning >> warningHandler;
@@ -65,7 +64,7 @@ class ServerRemoteInstanse {
 		client.destroy();
 	}
 
-	private function authHandler(v:String):Void {
+	private function authHandler(v: String): Void {
 		if (v == key) {
 			log('Auth success');
 			start();
@@ -75,7 +74,7 @@ class ServerRemoteInstanse {
 		}
 	}
 
-	private function start():Void {
+	private function start(): Void {
 		protocol.file.enable();
 		protocol.file.onData << function() Sys.print('.');
 		protocol.onCommand << commandHandler;
@@ -84,7 +83,7 @@ class ServerRemoteInstanse {
 		protocol.readyRemote();
 	}
 
-	private function getFileHandler(file:String):Void {
+	private function getFileHandler(file: String): Void {
 		if (allowForGet.indexOf(file) != -1) {
 			Sys.println('Send file: $file');
 			protocol.file.sendFile(file);
@@ -93,31 +92,32 @@ class ServerRemoteInstanse {
 		}
 	}
 
-	private function getInitFileHandler():Void {
+	private function getInitFileHandler(): Void {
 		var file = 'init.zip';
 		Sys.println('Send file: $file');
 		protocol.file.sendFile(file);
 	}
 
-	private function log(s:String):Void {
+	private function log(s: String): Void {
 		activity();
 		Sys.println(s);
 		protocol.log.log(s);
 	}
 
-	private function prlog(s:String):Void {
+	private function prlog(s: String): Void {
 		activity();
 		if (s.substr(-1) == '\n')
 			s = s.substr(0, -1);
-		if (s == '') return;
+		if (s == '')
+			return;
 		Sys.println(s);
-		if (zipRLog)
-			packLog.writeString(s + '\n');
+		if (zipRLog && packLog != null)
+			@:nullSafety(Off) packLog.writeString(s + '\n');
 		else
 			protocol.log.log(s);
 	}
 
-	private function commandHandler(command:String):Void {
+	private function commandHandler(command: String): Void {
 		Sys.println('');
 		currentCommandN = 0;
 		packLog = new BytesOutput();
@@ -129,8 +129,8 @@ class ServerRemoteInstanse {
 		runNextCommand();
 	}
 
-	private function runNextCommand():Void {
-		var c:Pair<Bool, String> = commands[currentCommand][currentCommandN];
+	private function runNextCommand(): Void {
+		@:nullSafety(Off) var c: Pair<Bool, String> = commands[currentCommand][currentCommandN];
 		log('Command $currentCommand $currentCommandN');
 		log(c.b);
 		zipRLog = c.a;
@@ -139,30 +139,29 @@ class ServerRemoteInstanse {
 		activeProcess = new Process(c.b);
 		activeProcess.onLog << prlog;
 		activeProcess.onError << prlog;
-		activeProcess.onComplete < childExitHandler;
+		@:nullSafety(Off) activeProcess.onComplete < childExitHandler;
 	}
 
-	private function childExitHandler(code:Int):Void {
-		activeProcess.destroy();
+	private function childExitHandler(code: Int): Void {
+		if (activeProcess != null) @:nullSafety(Off) activeProcess.destroy();
 		trace('childExitHandler: $code');
 		onEndCommand();
 		activity();
 		currentCommandN++;
-		if (code == 0 && currentCommandN < commands[currentCommand].length) {
+		if (code == 0 && currentCommandN < @:nullSafety(Off) commands[currentCommand].length) {
 			runNextCommand();
 			return;
 		}
-
-		if (packLog.length > 0) {
-			packLog.flush();
-			//protocol.zipLogRemote(haxe.zip.Compress.run(packLog.getBytes(), 9));
-			protocol.zipLogRemote(packLog.getBytes());
+		if (packLog != null && @:nullSafety(Off) packLog.length > 0) {
+			@:nullSafety(Off) packLog.flush();
+			// protocol.zipLogRemote(haxe.zip.Compress.run(packLog.getBytes(), 9));
+			protocol.zipLogRemote(@:nullSafety(Off) packLog.getBytes());
 		}
-		//log('Child exited with code $code');
+		// log('Child exited with code $code');
 		protocol.commandCompleteRemote(currentCommand, code);
 	}
 
-	public dynamic function onBeginCommand():Void {}
-	public dynamic function onEndCommand():Void {}
+	public dynamic function onBeginCommand(): Void {}
+	public dynamic function onEndCommand(): Void {}
 
 }

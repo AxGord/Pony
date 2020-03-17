@@ -6,25 +6,25 @@ import pony.Tasks;
 import pony.events.Signal0;
 
 /**
- * NModule
+ * NModule - base class for Pony Tools Node Modules
  * @author AxGord <axgord@gmail.com>
  */
-class NModule<T> extends Logable implements HasAbstract {
+@:nullSafety(Strict) class NModule<T> extends Logable implements HasAbstract {
 
-	@:auto public var onFinish:Signal0;
+	@:auto public var onFinish: Signal0;
 
-	private var config:Array<T>;
-	private var tasks:Tasks;
+	private var config: Array<T>;
+	private var tasks: Tasks;
 
-	public function new(cfg:Array<T>) {
+	public function new(cfg: Array<T>) {
 		if (cfg == null) return;
 		super();
 		config = cfg;
 		tasks = new Tasks(finishTasksHandler);
 	}
 
-	public function start():Void {
-		log('Start ' + Type.getClassName(Type.getClass(this)));
+	public function start(): Void {
+		logf(() -> 'Start ' + Type.getClassName(Type.getClass(this)));
 		if (config != null) {
 			tasks.add();
 			for (e in config) run(e);
@@ -32,8 +32,7 @@ class NModule<T> extends Logable implements HasAbstract {
 		}
 	}
 
-	private function finishTasksHandler():Void eFinish.dispatch();
-
-	@:abstract private function run(cfg:T):Void;
+	private function finishTasksHandler(): Void eFinish.dispatch();
+	@:abstract private function run(cfg: T): Void;
 
 }
