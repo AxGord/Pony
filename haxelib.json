@@ -25,8 +25,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Upgrade Pony Tools Installer",
-"version": "1.2.4",
+"releasenote": "Pony Tools Installer: rm sudo for super, update download",
+"version": "1.2.5",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }
