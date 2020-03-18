@@ -1,10 +1,12 @@
 package module;
 
+import js.lib.Error;
 import js.node.http.IncomingMessage;
 import js.node.Fs;
 import js.node.Http;
 import js.node.Https;
 import sys.FileSystem;
+import sys.io.File;
 import pony.Pair;
 import types.DownloadConfig;
 
@@ -23,14 +25,9 @@ using pony.text.TextTools;
 			var file: String = cfg.path + unit.a.split('/').pop();
 			var needDownload: Bool = false;
 			if (unit.b != null && FileSystem.exists(file)) {
-				if (unit.b != null) {
-					log('Check ' + file);
-					needDownload = sys.io.File.getContent(file).indexOf(unit.b) == -1;
-				} else {
-					needDownload = false;
-				}
+				needDownload = sys.io.File.getContent(file).indexOf(unit.b) == -1;
 			} else {
-				needDownload = !unit.c && FileSystem.exists(file);
+				needDownload = unit.c || !FileSystem.exists(file);
 			}
 			if (needDownload) downloadList.push(new Pair(file, unit.a));
 		}
@@ -40,14 +37,18 @@ using pony.text.TextTools;
 			var protocol: String = file.b.substr(0, 7);
 			switch protocol {
 				case 'https:/':
-					Https.get(file.b, function(response: IncomingMessage): Void {
+					Https.get(file.b, { timeout: 7000 }, function(response: IncomingMessage): Void {
 						response.once('end', tasks.end);
 						response.pipe(Fs.createWriteStream(file.a));
+					}).on('error', function(e: Error) {
+						error('problem with request: ' + e.message);
 					});
 				case 'http://':
-					Http.get(file.b, function(response: IncomingMessage): Void {
+					Http.get(file.b, { timeout: 7000 }, function(response: IncomingMessage): Void {
 						response.once('end', tasks.end);
 						response.pipe(Fs.createWriteStream(file.a));
+					}).on('error', function(e: Error) {
+						error('problem with request: ' + e.message);
 					});
 				case _:
 					error('Unsupported protocol: $protocol');

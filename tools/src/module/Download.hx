@@ -60,7 +60,7 @@ private class DownloadReader extends BAReader<DownloadConfig> {
 			case 'unit':
 
 				var url: String = xml.att.url;
-				var update: Bool = !xml.isFalse('update');
+				var update: Bool = xml.isTrue('update');
 				var p: Triple<String, String, Bool> = if (xml.has.v) {
 					var v: String = xml.att.v;
 					new Triple(
