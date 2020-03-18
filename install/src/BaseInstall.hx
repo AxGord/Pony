@@ -2,12 +2,12 @@
  * BaseInstall
  * @author AxGord <axgord@gmail.com>
  */
-class BaseInstall {
+@:nullSafety(Strict) class BaseInstall {
 
-	private inline static var YCODE: Int = 'y'.code;
-	private inline static var NCODE: Int = 'n'.code;
-	private inline static var ACODE: Int = 'a'.code;
-	private inline static var QCODE: Int = 'q'.code;
+	private static inline var YCODE: Int = 'y'.code;
+	private static inline var NCODE: Int = 'n'.code;
+	private static inline var ACODE: Int = 'a'.code;
+	private static inline var QCODE: Int = 'q'.code;
 
 	private static var allEnabled: Bool = false;
 
@@ -35,7 +35,7 @@ class BaseInstall {
 
 	private function question(): Bool {
 		if (allEnabled) return true;
-		var r: Int = null;
+		var r: Int = -1;
 		do {
 			log('');
 			log('Do you want install $n? (y/n/a/q)');
@@ -60,10 +60,11 @@ class BaseInstall {
 	private function listInstall(c: String, a: Array<String>, l: Array<String>): Void {
 		for (e in l) {
 			if (e.charAt(0) == '!') {
-				if (Config.OS == TargetOS.Windows)
-					cmd(c, a.concat(e.substr(1).split(' ')));
+				var args: Array<String> = a.concat(e.substr(1).split(' '));
+				if (Config.OS == TargetOS.Windows || Utils.isSuper)
+					cmd(c, args);
 				else
-					cmd('sudo', [c].concat(a.concat(e.substr(1).split(' '))));
+					cmd('sudo', [c].concat(args));
 			} else {
 				cmd(c, a.concat(e.split(' ')));
 			}
@@ -90,7 +91,5 @@ class BaseInstall {
 		var r: Int = Sys.command(c, a);
 		if (r != 0) Utils.exit(r);
 	}
-
-	private inline function makedir(path: String): Void softCmd('sudo', ['mkdir', '-m', '777', '-p', path]);
 
 }
