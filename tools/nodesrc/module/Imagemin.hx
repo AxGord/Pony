@@ -10,6 +10,9 @@ import types.ImgFormat;
 
 using pony.text.TextTools;
 
+private typedef ImageminResultEntry = { data: BytesData, sourcePath: String, destinationPath: String };
+private typedef ImageminResult = Array<ImageminResultEntry>;
+
 /**
  * Imagemin Pony Tools Node Module
  * @author AxGord <axgord@gmail.com>
@@ -112,12 +115,12 @@ using pony.text.TextTools;
 		}
 	}
 
-	private function completeHandler(r: Array<{data: BytesData, path: String}>): Void {
-		for (e in r) log(e.path);
+	private function completeHandler(r: ImageminResult): Void {
+		for (e in r) log('${e.sourcePath} => ${e.destinationPath}');
 		tasks.end();
 	}
 
-	private function pngpack(a: Array<String>, to: String): Void {
+	private inline function pngpack(a: Array<String>, to: String): Void {
 		NPM.imagemin(a, to, {
 			plugins: [ NPM.imagemin_zopfli({more: true}) ]
 		}).then(completeHandler);
@@ -126,7 +129,11 @@ using pony.text.TextTools;
 		// NPM.imagemin_optipng({optimizationLevel: 7})
 	}
 
-	private function _pngpack(to: String, r: Array<{data: Dynamic, path: String}>): Void pngpack(r.map(getPath), to);
-	private static function getPath(e: {data: Dynamic, path: String}): String return e.path;
+	private inline function _pngpack(to: String, r: ImageminResult): Void {
+		for (e in r) log('${e.sourcePath} => ${e.destinationPath}'); // ? destinationPath
+		pngpack(r.map(getPath), to);
+	}
+
+	private static inline function getPath(e: ImageminResultEntry): String return e.destinationPath;
 
 }
