@@ -25,8 +25,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Pony Tools Installer: rm sudo for super, update download",
-"version": "1.2.5",
+"releasenote": "Pony Tools Installer: fix isSuper error",
+"version": "1.2.6",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }

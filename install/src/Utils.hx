@@ -58,7 +58,7 @@ import sys.io.Process;
 		return _userId;
 	}
 
-	private static inline function get_isSuper(): Bool return _userId == 0;
+	private static inline function get_isSuper(): Bool return userId == 0;
 
 	private static inline function processLine(process: String, args: Array<String>): String {
 		return new Process(process, args).stdout.readLine();
