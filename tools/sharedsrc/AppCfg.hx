@@ -5,4 +5,4 @@
 typedef AppCfg = {
 	app:String,
 	debug:Bool
-};
+}

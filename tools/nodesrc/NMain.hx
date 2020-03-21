@@ -18,10 +18,10 @@ import pony.NPM;
 import pony.Logable;
 
 /**
- * NMain
+ * Entry point for Pony Tools Node Module
  * @author AxGord <axgord@gmail.com>
  */
-class NMain extends Logable {
+@:final class NMain extends Logable {
 
 	private var client: SocketClient;
 	private var rpc: NProtocol;
@@ -50,38 +50,14 @@ class NMain extends Logable {
 	}
 
 	private function errorHandler(err: Error):Void error(err.stack);
-
-	private function bmfontHandler(cfg: Array<BmfontConfig>): Void {
-		listen(cast new module.Bmfont(cfg));
-	}
-
-	private function imageminHandler(cfg: Array<ImageminConfig>): Void {
-		listen(cast new module.Imagemin(cfg));
-	}
-
-	private function poeditorHandler(cfg: Array<PoeditorConfig>): Void {
-		listen(cast new module.Poeditor(cfg));
-	}
-
-	private function ftpHandler(cfg: Array<FtpConfig>): Void {
-		listen(cast new module.Ftp(cfg));
-	}
-
-	private function serverHandler(cfg: Array<ServerConfig>): Void {
-		listen(cast new module.server.Server(cfg));
-	}
-
-	private function uglifyHandler(cfg: Array<UglifyConfig>): Void {
-		listen(cast new module.Uglify(cfg));
-	}
-
-	private function downloadHandler(cfg: Array<DownloadConfig>): Void {
-		listen(cast new module.Download(cfg));
-	}
-
-	private function remoteHandler(cfg: Array<RemoteConfig>): Void {
-		listen(cast new module.Remote(cfg));
-	}
+	private function bmfontHandler(cfg: Array<BmfontConfig>): Void listen(cast new module.Bmfont(cfg));
+	private function imageminHandler(cfg: Array<ImageminConfig>): Void listen(cast new module.Imagemin(cfg));
+	private function poeditorHandler(cfg: Array<PoeditorConfig>): Void listen(cast new module.Poeditor(cfg));
+	private function ftpHandler(cfg: Array<FtpConfig>): Void listen(cast new module.Ftp(cfg));
+	private function serverHandler(cfg: Array<ServerConfig>): Void listen(cast new module.server.Server(cfg));
+	private function uglifyHandler(cfg: Array<UglifyConfig>): Void listen(cast new module.Uglify(cfg));
+	private function downloadHandler(cfg: Array<DownloadConfig>): Void listen(cast new module.Download(cfg));
+	private function remoteHandler(cfg: Array<RemoteConfig>): Void listen(cast new module.Remote(cfg));
 
 	private function listen(m: NModule<Any>): Void {
 		m.onLog << log;

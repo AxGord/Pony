@@ -1,5 +1,6 @@
 import pony.Fast;
 import pony.text.XmlConfigReader;
+import pony.magic.HasAbstract;
 import types.BAConfig;
 import types.BASection;
 
@@ -7,16 +8,16 @@ import types.BASection;
  * BAReader
  * @author AxGord <axgord@gmail.com>
  */
-class BAReader<T:BAConfig> extends XmlConfigReader<T> implements pony.magic.HasAbstract {
+@:nullSafety(Strict) class BAReader<T: BAConfig> extends XmlConfigReader<T> implements HasAbstract {
 
-	override private function readNode(xml:Fast):Void {
+	override private function readNode(xml: Fast): Void {
 		switch xml.name {
 			case 'before':
-				var cfg = copyCfg();
+				var cfg: T = copyCfg();
 				cfg.before = true;
 				_selfCreate(xml, cfg);
 			case 'after':
-				var cfg = copyCfg();
+				var cfg: T = copyCfg();
 				cfg.before = false;
 				_selfCreate(xml, cfg);
 			case 'server': createSection(xml, Server);
@@ -43,25 +44,25 @@ class BAReader<T:BAConfig> extends XmlConfigReader<T> implements pony.magic.HasA
 		}
 	}
 
-	private function createSection(xml:Fast, section:BASection):Void {
-		var cfg = copyCfg();
+	private function createSection(xml: Fast, section: BASection): Void {
+		var cfg: T = copyCfg();
 		clean();
 		cfg.section = section;
 		_selfCreate(xml, cfg);
 	}
 
-	@:abstract private function clean():Void;
+	@:abstract private function clean(): Void;
 
-	override private function end():Void if (cfg.allowCfg) onConfig(cfg);
+	override private function end(): Void if (cfg.allowCfg) onConfig(cfg);
 
-	private function allowCreate(xml:Fast):Void {
-		var cfg:T = copyCfg();
+	private function allowCreate(xml: Fast): Void {
+		var cfg: T = copyCfg();
 		cfg.allowCfg = true;
 		_selfCreate(xml, cfg);
 	}
 
-	private function denyCreate(xml:Fast):Void {
-		var cfg:T = copyCfg();
+	private function denyCreate(xml: Fast): Void {
+		var cfg: T = copyCfg();
 		cfg.allowCfg = false;
 		_selfCreate(xml, cfg);
 	}

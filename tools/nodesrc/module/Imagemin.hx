@@ -10,7 +10,12 @@ import types.ImgFormat;
 
 using pony.text.TextTools;
 
-private typedef ImageminResultEntry = { data: BytesData, sourcePath: String, destinationPath: String };
+private typedef ImageminResultEntry = {
+	data: BytesData,
+	sourcePath: String,
+	destinationPath: String
+}
+
 private typedef ImageminResult = Array<ImageminResultEntry>;
 
 /**
@@ -38,7 +43,7 @@ private typedef ImageminResult = Array<ImageminResultEntry>;
 						// NPM.imagemin_jpeg_recompress(),
 						cfg.fast ? NPM.imagemin_jpegoptim({progressive: true}) : NPM.imagemin_guetzli({nomemlimit: true, quality: cfg.jpgq})
 					]
-				}).then(function(r: Array<{data: BytesData, path: String}>): Void {
+				}).then(function(r: ImageminResult): Void {
 					var p: String = file.first.substr(cfg.from.length);
 					p = p.substr(0, -4);
 					var n: String = cfg.to + p + '.$JPG';
@@ -56,7 +61,8 @@ private typedef ImageminResult = Array<ImageminResultEntry>;
 				pngpack(from.addToStringsEnd(PNG), cfg.to);
 			} else {
 				var q: Float = @:nullSafety(Off) (cfg.pngq / 100);
-				NPM.imagemin(from.addToStringsEnd(PNG), cfg.to, {
+				NPM.imagemin(from.addToStringsEnd(PNG), {
+					destination: cfg.to,
 					plugins: [ NPM.imagemin_pngquant({quality: [Math.max(0, q - 0.1), Math.min(q + 0.1, 1)], speed: 1}) ]
 				}).then(_pngpack.bind(cfg.to));
 			}
@@ -103,7 +109,8 @@ private typedef ImageminResult = Array<ImageminResultEntry>;
 				}
 			}
 			cformats.push(WEBP);
-			NPM.imagemin(from.addToStringsEnd('{' + cformats.join(',') + '}'), cfg.to, {
+			NPM.imagemin(from.addToStringsEnd('{' + cformats.join(',') + '}'), {
+				destination: cfg.to,
 				plugins: [
 					NPM.imagemin_webp({
 						nearLossless: cfg.webpq,
@@ -121,7 +128,8 @@ private typedef ImageminResult = Array<ImageminResultEntry>;
 	}
 
 	private inline function pngpack(a: Array<String>, to: String): Void {
-		NPM.imagemin(a, to, {
+		NPM.imagemin(a, {
+			destination: to,
 			plugins: [ NPM.imagemin_zopfli({more: true}) ]
 		}).then(completeHandler);
 		// NPM.imagemin_pngcrush({reduce: true})
@@ -130,7 +138,7 @@ private typedef ImageminResult = Array<ImageminResultEntry>;
 	}
 
 	private inline function _pngpack(to: String, r: ImageminResult): Void {
-		for (e in r) log('${e.sourcePath} => ${e.destinationPath}'); // ? destinationPath
+		for (e in r) log('${e.sourcePath} => ${e.destinationPath}');
 		pngpack(r.map(getPath), to);
 	}
 

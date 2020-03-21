@@ -7,7 +7,7 @@ import remote.client.RemoteClient;
  * Remote Pony Tools Node Module
  * @author AxGord <axgord@gmail.com>
  */
-class Remote extends NModule<RemoteConfig> {
+@:nullSafety(Strict) @:final class Remote extends NModule<RemoteConfig> {
 
 	override private function run(cfg: RemoteConfig): Void {
 		tasks.add();
