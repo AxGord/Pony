@@ -47,12 +47,13 @@ class Create {
 			case ProjectType.Cordova: create.targets.Cordova.set(project);
 			case ProjectType.Node: create.targets.Node.set(project);
 			case ProjectType.Site:
+				FileSystem.createDirectory('src/models');
 				create.targets.Node.set(project);
 				project.config.active = true;
 				project.config.options['port'] = '8080';
 				project.config.options['mysql'] = ([
 					'host' => 'localhost',
-					'port' => 'port',
+					'port' => '3306',
 					'user' => 'root',
 					'password' => '',
 					'database' => 'testdatabase'

@@ -28,24 +28,24 @@ class Insert extends Action {
  * @author AxGord <axgord@gmail.com>
  */
 class InsertConnect extends ActionConnect {
-	
+
 	public var storage(get,never):Map<Int,Dynamic>;
-	
+
 	@:extern inline private function get_storage():Map<Int,Dynamic> {
 		return cpq.connection.sessionStorage.get('modelsActions');
 	}
-	
+
 	override public function tpl(parent:ITplPut):ITplPut {
 		return new InsertPut(this, cpq, parent);
 	}
-	
+
 	override public function action(h:Map<String, String>):Bool {
 		var ma:Map<Int,Dynamic> = storage;
 		if (ma.exists(base.id)) {
 			cpq.connection.error('Double send');
 			return true;
 		}
-		
+
 		var ca:Array<Dynamic> = [];
 		for (k in base.args.keys()) {
 			var v:String = h.get(k);
@@ -59,7 +59,7 @@ class InsertConnect extends ActionConnect {
 				switch (base.args.get(k)) {
 					case 'String': ca.push(StringTools.trim(v));
 					case 'Int': ca.push(Std.parseInt(v));
-					default: 
+					default:
 						cpq.connection.error('Type ' + base.args.get(k) + ' not supported');
 						return true;
 				}
@@ -73,11 +73,11 @@ class InsertConnect extends ActionConnect {
 		});
 		return true;
 	}
-	
+
 	@:extern inline public function clr():Void {
 		storage.remove(base.id);
 	}
-	
+
 }
 
 /**
@@ -86,7 +86,7 @@ class InsertConnect extends ActionConnect {
  */
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
 class InsertPut extends pony.text.tpl.TplPut < InsertConnect, CPQ > {
-	
+
 	@:async
 	override public function tag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String
 	{
@@ -120,7 +120,7 @@ class InsertPut extends pony.text.tpl.TplPut < InsertConnect, CPQ > {
 			return r;
 		}
 	}
-	
+
 	private function inputE(name:String, value:String, fix:Bool):String {
 		var s:String = st(name);
 		if (s == null)
@@ -129,13 +129,13 @@ class InsertPut extends pony.text.tpl.TplPut < InsertConnect, CPQ > {
 			return '<label>' + name.bigFirst() + input(name, 'ok', fix ? value : '')+'</label>';
 		return '<label>' + name.bigFirst() + input(name, 'error', value)+'<div>'+s+'</div>'+'</label>';
 	}
-	
+
 	private function input(name:String, cl:String, value:String):String {
 		return a.base.model.columns[name].htmlInput(cl, a.base.name, value);
 	}
-	
+
 	private function isFile(name:String):Bool return a.base.model.columns[name].isFile;
-	
+
 	private function st(arg:String):String {
 		var ma:Map<Int, Dynamic> = b.connection.sessionStorage.get('modelsActions');
 		var m = ma.get(a.base.id);
@@ -152,12 +152,12 @@ class InsertPut extends pony.text.tpl.TplPut < InsertConnect, CPQ > {
 		}
 		return st;
 	}
-	
+
 }
 
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
 class InsertPutSub extends pony.text.tpl.TplPut < InsertConnect, CPQ > {
-	
+
 	@:async
 	override public function tag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String
 	{
@@ -166,12 +166,12 @@ class InsertPutSub extends pony.text.tpl.TplPut < InsertConnect, CPQ > {
 		} else
 			return @await super.tag(name, content, arg, args, kid);
 	}
-	
+
 }
 
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
 class InsertPutArg extends pony.text.tpl.TplPut < {o: InsertConnect, arg: String}, CPQ > {
-	
+
 	private function st():String {
 		var ma:Map<Int, {values:Map<String, String>, result: ActResult}> = b.connection.sessionStorage.get('modelsActions');
 		var m = ma.get(a.o.base.id);
@@ -188,7 +188,7 @@ class InsertPutArg extends pony.text.tpl.TplPut < {o: InsertConnect, arg: String
 		}
 		return st;
 	}
-	
+
 	@:async
 	override public function tag(name:String, content:TplData, arg:String, args:Map<String,String>, ?kid:ITplPut):String
 	{
@@ -204,7 +204,7 @@ class InsertPutArg extends pony.text.tpl.TplPut < {o: InsertConnect, arg: String
 				return @await super.tag(name, content, arg, args, kid);
 		}
 	}
-	
+
 	@:async
 	override public function shortTag(name:String, arg:String, ?kid:ITplPut):String
 	{
@@ -227,5 +227,5 @@ class InsertPutArg extends pony.text.tpl.TplPut < {o: InsertConnect, arg: String
 			return @await super.shortTag(name, arg, kid);
 		}
 	}
-	
+
 }

@@ -91,7 +91,7 @@ class Button extends Sprite implements IWH {
 			img.sliceHeight = v;
 	}
 
-	@:extern inline private static function getInteractiveImg(img: String, useSpriteSheet: String): SliceSprite {
+	@:extern private static inline function getInteractiveImg(img: String, useSpriteSheet: String): SliceSprite {
 		return SliceTools.getSliceSprite(img, useSpriteSheet);
 	}
 
@@ -103,7 +103,6 @@ class Button extends Sprite implements IWH {
 	}
 
 	private function disableHandler(): Void cursor = false;
-
 	private function enableHandler(): Void cursor = true;
 
 	public inline function wait(cb: Void -> Void): Void wr.wait(cb);

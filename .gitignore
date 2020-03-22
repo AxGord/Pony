@@ -1,5 +1,8 @@
 /Pony.zip
-/tools/bin/
+/tools/bin/pony.n
+/tools/bin/pony.exe
+/tools/bin/pony.js
+/tools/bin/pony
 /tests/dump/
 /tests/build/
 /tests/report/

@@ -109,6 +109,11 @@
 		<arg>License type for create</arg>
 		<arg>...</arg>
 	</license>
+	<gen>
+		<help>Generate</help>
+		<arg>Type</arg>
+		<arg>Name</arg>
+	</gen>
 
 	<comment>Visit https://github.com/AxGord/Pony/wiki/Pony-Tools for more info</comment>
 </commands>

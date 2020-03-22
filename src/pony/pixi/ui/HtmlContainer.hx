@@ -49,7 +49,7 @@ class HtmlContainer extends Sprite implements IWH {
 		return value;
 	}
 
-	public function wait(f: Void->Void): Void f();
+	public function wait(f: Void -> Void): Void f();
 
 	public function posUpdate(): Void {
 		var gx: Float = 0;
