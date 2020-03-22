@@ -92,6 +92,7 @@ class Main {
 		commands.onChars < Chars.run;
 		commands.onLicense < License.run;
 		commands.onHaxelib < Haxelib.run;
+		commands.onGenerate << Generate.run;
 	}
 
 	static function registerModules(modules: Modules): Void {
