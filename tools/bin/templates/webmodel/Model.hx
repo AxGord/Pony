@@ -14,6 +14,14 @@ import pony.tests.Errors;
 
 }
 
+@:enum abstract ValidateErrors(String) to String {
+
+	var EMPTY = 'Empty';
+	var SHORT = 'Is short';
+	var LONG = 'Is long';
+
+}
+
 @:keep class ::NAME:: extends Model {
 
 	public static var NAME_MIN: Int = 3;
@@ -47,10 +55,10 @@ import pony.tests.Errors;
 
 	function validate(name: String): Errors {
 		var e: Errors = new Errors();
-		e.arg = 'name';
-		e.test(name == '', 'Empty');
-		e.test(name.length < Test.NAME_MIN, 'Is short');
-		e.test(name.length > Test.NAME_MAX, 'Is long');
+		e.arg = NAME;
+		e.test(name == '', EMPTY);
+		e.test(name.length < ::NAME::.NAME_MIN, SHORT);
+		e.test(name.length > ::NAME::.NAME_MAX, LONG);
 		return e;
 	}
 
