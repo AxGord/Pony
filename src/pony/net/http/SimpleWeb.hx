@@ -6,6 +6,7 @@ import pony.db.mysql.MySQL;
 import pony.magic.Classes;
 import pony.net.http.DefaultModulePack;
 import pony.net.http.HttpServer;
+import pony.net.http.modules.mvk.MVK;
 import pony.net.http.modules.mmodels.DefaultActionsPack;
 import pony.net.http.modules.mmodels.MModels;
 import pony.net.http.modules.mmodels.Model;
@@ -17,24 +18,27 @@ import haxe.Json;
 
 typedef SiteConfig = {
 	> pony.db.mysql.Config,
-	httpport: Int
+	httpport: Int,
+	?vk: Pair<Int, String>
 }
 
 class SimpleWeb {
 
 	#if php
-	private var trc:Array<Pair<Dynamic, PosInfos>> = [];
-	private function phpLog(v:Dynamic, ?p:PosInfos):Void trc.push(new Pair(v, p));
+	private var trc: Array<Pair<Dynamic, PosInfos>> = [];
+
+	private function phpLog(v: Dynamic, ?p: PosInfos): Void
+		trc.push(new Pair(v, p));
 	#end
 
-	public function new(classes:Array<Class<Model>>, ?json:File, ?config:SiteConfig) {
+	public function new(classes: Array<Class<Model>>, ?json: File, ?config: SiteConfig) {
 		#if php
 		Log.trace = phpLog;
 		#end
 
 		if (json != null && json.exists) config = Json.parse(json.content);
 
-		var db:MySQL = null;
+		var db: MySQL = null;
 		if (config == null && Config.mysql != null && !Lambda.empty(Config.mysql)) {
 			config = {
 				host: Config.mysql['host'],
@@ -42,7 +46,8 @@ class SimpleWeb {
 				user: Config.mysql['user'],
 				password: Config.mysql['password'],
 				database: Config.mysql['database'],
-				httpport: Config.port
+				httpport: Config.port,
+				vk: getVKPair()
 			};
 		}
 
@@ -53,28 +58,32 @@ class SimpleWeb {
 		} else {
 			config = {
 				httpport: Config.port,
-				database: null
+				database: null,
+				vk: getVKPair()
 			};
 		}
 
-		var modules:Array<IModule> = DefaultModulePack.create();
-		if (db != null) {
-			modules.push(cast new MModels(classes, DefaultActionsPack.list, db));
-		}
-		
-		var httpServer = new HttpServer(config.httpport);
-		var usercontent:String = 'usercontent';
-		(usercontent:Dir).create();
-		var webServer:WebServer = new WebServer(['home', pony.Tools.ponyPath() + 'webdefaults'], usercontent, modules);
+		var modules: Array<IModule> = DefaultModulePack.create();
+		if (db != null) modules.push(cast new MModels(classes, DefaultActionsPack.list, db));
+		if (config.vk != null) modules.push(cast new MVK(config.vk.a, config.vk.b));
+
+		var httpServer: HttpServer = new HttpServer(config.httpport);
+		var usercontent: String = 'usercontent';
+		(usercontent : Dir).create();
+		var webServer: WebServer = new WebServer(['home', pony.Tools.ponyPath() + 'webdefaults'], usercontent, modules);
 		httpServer.request = webServer.connect;
-		
+
 		#if php
 		httpServer.run(new pony.net.http.ServersideStorageDB(db.storage));
 		if (trc.length > 0) {
 			php.Lib.print('<hr><pre>');
-			for (p in trc) php.Lib.println(p.b.fileName + ':' + p.b.lineNumber + ': ' + p.a);
+			for (p in trc)
+				php.Lib.println(p.b.fileName + ':' + p.b.lineNumber + ': ' + p.a);
 		}
 		#end
 	}
+
+	private static inline function getVKPair(): Pair<Int, String>
+		return !Lambda.empty(Config.vk) ? new Pair(Std.parseInt(Config.vk['appid']), Config.vk['secret']) : null;
 
 }

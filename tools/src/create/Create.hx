@@ -57,7 +57,8 @@ class Create {
 					'user' => 'root',
 					'password' => '',
 					'database' => 'testdatabase'
-				]:ConfigOptions);
+				]: ConfigOptions);
+				project.config.options['vk'] = ([]: ConfigOptions);
 				project.haxelib.addLib('continuation');
 			case ProjectType.Pixielectron:
 				create.targets.Electron.set(project);

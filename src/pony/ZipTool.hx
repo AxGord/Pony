@@ -36,7 +36,7 @@ class ZipTool extends Logable {
 		this.prefix = prefix;
 		this.compressLvl = compressLvl;
 		if (root != null && root.charAt(root.length - 1) != '/') root += '/';
-		this.root = root;
+		this.root = root == null ? '' : root;
 		var a: Array<String> = output.split('/');
 		a.pop();
 		if (a.length > 0) FileSystem.createDirectory(a.join('/'));

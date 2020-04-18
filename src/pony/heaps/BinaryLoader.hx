@@ -1,11 +1,12 @@
 package pony.heaps;
 
-import sys.io.File;
-import haxe.io.Bytes;
-
 #if !hl
 typedef BinaryLoader = hxd.net.BinaryLoader;
 #else
+
+import haxe.io.Bytes;
+import sys.io.File;
+
 class BinaryLoader {
 
 	public var url: String;

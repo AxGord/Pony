@@ -17,7 +17,7 @@ import pony.text.tpl.TplPut;
  * @author AxGord <axgord@gmail.com>
  */
 @:final class MVK implements IModule {
-	
+
 	static private var sdk:Class<Dynamic> = Node.require('vksdk');
 
 	public var server:WebServer;
@@ -25,7 +25,7 @@ import pony.text.tpl.TplPut;
 	public var appid:Int;
 
 	public var vk:Dynamic;
-	
+
 	public function new(appid:Int, secret:String) {
 		this.appid = appid;
 		vk = Type.createInstance(sdk, [{
@@ -36,11 +36,11 @@ import pony.text.tpl.TplPut;
 		var s = TextTools.includeFileFromCurrentDir('mvk.tpl');
 		new Tpl(MVKPrePut, appid, s).gen(null, null, function(r) buttonData = r);
 	}
-	
+
 	public function init(dir:Dir, server:WebServer):Void {
 		this.server = server;
 	}
-	
+
 	public function connect(cpq:CPQ):EConnect {
 		if (cpq.connection.params.exists('vkauth')) {
 			cpq.connection.sessionStorage.set('vk_token', cpq.connection.params['vkauth']);
@@ -51,7 +51,7 @@ import pony.text.tpl.TplPut;
 			return REG(cast new MVKConnect(this, cpq));
 		}
 	}
-	
+
 }
 
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))

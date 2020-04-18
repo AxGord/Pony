@@ -17,26 +17,26 @@ using Reflect;
  * @author AxGord <axgord@gmail.com>
  */
 class HttpServer {
-	
+
 	public static var multipartyClass:Class<Dynamic> = Node.require('multiparty').Form;
 	public static var querystring:Dynamic = Node.require('querystring');
-	
+
 	private static var spdy(get, never):Dynamic;
 
 	private var server:Server;
 	private var spdyServer:Dynamic;
 	public var storage:ServersideStorage;
 	public var fixedHeaders:Map<String, String> = ['Server' => 'PonyHttpServer'];
-	
+
 	inline private static function get_spdy():Dynamic return Node.require('spdy');
-	
+
 	public function new(host:String = null, port:Int = 80, ?spdyConf:Dynamic)
 	{
 		server = Http.createServer(listen);
 		server.on('error', errorHandler);
 		Node.process.nextTick(function() server.listen(port, host, createHandler));
 		storage = new ServersideStorage();
-		
+
 		if (spdyConf != null) {
 			trace(spdyConf);
 			var options = {
@@ -44,18 +44,19 @@ class HttpServer {
 				cert: Fs.readFileSync(Node.__dirname + '/keys/spdy-cert.pem'),
 				ca: Fs.readFileSync(Node.__dirname + '/keys/spdy-csr.pem')
 			};
-			
+
 			spdyServer = spdy.createServer(options, listen).listen(spdyConf.hasField('port') ? spdyConf.port : 443, createSpdyHandler);
 		}
 	}
-	
+
 	private function listen(req:IncomingMessage, res:ServerResponse):Void {
 		//trace(req.method+': ' + req.url);
 		//trace(req.headers);
 		for (k in fixedHeaders.keys()) res.setHeader(k, fixedHeaders[k]);
-		var multi = 'multipart/form-data';
+		var multi: String = 'multipart/form-data';
+		var contentType: String = req.headers.field('content-type');
 		switch (req.method/*.toUpperCase()*/) {
-			case 'POST' if ((req.headers.field('content-type'):String).substr(0, multi.length) == multi):
+			case 'POST' if (contentType.length >= multi.length && contentType.substr(0, multi.length) == multi):
 				var me = this;
 				var multiparty = Type.createInstance(multipartyClass, []);
 				multiparty.parse(req, function(err, fields:Dynamic<Array<Dynamic>>, files:Dynamic<Array<Dynamic>>) {
@@ -79,9 +80,9 @@ class HttpServer {
 						me.request(new HttpConnection('http://' + host + req.url, me.storage, req, res, map));
 					}
 				});
-				
+
 				return;
-			
+
 			case 'POST':
 				var me = this;
 				var s:String = '';
@@ -93,7 +94,7 @@ class HttpServer {
 					var o:Dynamic = querystring.parse(s);
 					for (f in o.fields())
 						h.set(f, o.field(f));
-					
+
 					var host = if (req.headers.host != null) {
 						req.headers.host;
 					} else {
@@ -103,7 +104,7 @@ class HttpServer {
 					me.request(new HttpConnection('http://' + host + req.url, me.storage, req, res, h));
 				});
 				return;
-				
+
 			case 'GET':
 				var host = if (req.headers.exists('host')) {
 					req.headers.get('host');
@@ -126,13 +127,13 @@ class HttpServer {
 
 	public dynamic function onOpen():Void {}
 	public dynamic function onError():Void {}
-	
+
 	private function createHandler():Void {
 		var a:Dynamic = untyped server.address();
 		trace('HTTP Server running at http://' + a.address + ':' + a.port);
 		onOpen();
 	}
-	
+
 	private function createSpdyHandler():Void {
 		var a:Dynamic = untyped spdyServer.address();
 		trace('SPDY Server running at http://' + a.address + ':' + a.port);
@@ -140,7 +141,7 @@ class HttpServer {
 	}
 
 	private function errorHandler():Void onError();
-	
+
 	public dynamic function request(connection:IHttpConnection):Void {
 		connection.sendText('Welcome from Pony Http Server');
 	}
@@ -157,5 +158,5 @@ class HttpServer {
 		}
 		storage = null;
 	}
-	
+
 }
