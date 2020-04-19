@@ -111,6 +111,17 @@ class BodyBase implements pony.magic.HasSignal implements pony.magic.HasLink imp
 	public function lookAtVelLin(x:Float, y:Float, vel:Float):Void {
 		lookAtVelocity = vel;
 		lookAtTarget = Math.atan2(y - pos.y, x - pos.x);
+		// normalize rotation before look at with velocity
+		if (rotation >= Math.PI) rotation -= 2 * Math.PI;
+		if (rotation <= -Math.PI) rotation += 2 * Math.PI;
+		if (Math.abs(rotation) > Math.PI / 2 && Math.abs(lookAtTarget) > Math.PI / 2) {
+			var nR: Bool = rotation < 0;
+			var nL: Bool = lookAtTarget < 0;
+			if (nR != nL) {
+				if (nR) lookAtTarget -= 2 * Math.PI;
+				else lookAtTarget += 2 * Math.PI;
+			}
+		}
 		lookAtDirrect = lookAtTarget > rotation ? 1 : -1;
 		if (lookAtTarget == rotation) lookAtDirrect = 0;
 		angularVel = lookAtDirrect * vel;
@@ -136,6 +147,10 @@ class BodyBase implements pony.magic.HasSignal implements pony.magic.HasLink imp
 
 	public inline function setSpeed(v:Float):Void {
 		body.velocity = new Vec2(v * Math.cos(rotation), v * Math.sin(rotation));
+	}
+
+	public inline function addSpeed(v:Float):Void {
+		body.velocity = new Vec2(body.velocity.x + v * Math.cos(rotation), body.velocity.y + v * Math.sin(rotation));
 	}
 
 	private function addListener<T:Listener>(l:T):Void {

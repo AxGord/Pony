@@ -46,7 +46,7 @@ import pony.geom.Direction;
 		return randomstring;
 	}
 
-	public static inline function direction(): Direction return int(3);
+	public static inline function direction(): Direction return 1 << uint(3);
 	public static inline function bool(): Bool return Math.random() > 0.5;
 
 }
