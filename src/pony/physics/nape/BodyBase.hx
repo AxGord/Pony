@@ -57,6 +57,8 @@ class BodyBase implements pony.magic.HasSignal implements pony.magic.HasLink imp
 
 	public var group(default, null):NapeGroup;
 
+	private var _space: Space;
+
 	private function new(
 		?pos:Point<Float>,
 		space:Space,
@@ -187,19 +189,33 @@ class BodyBase implements pony.magic.HasSignal implements pony.magic.HasLink imp
 	}
 
 	private function wakeHandler(_):Void {
-		DeltaTime.update < wake;
+		DeltaTime.update < _wake;
 	}
 
-	private function wake():Void {
+	private function _wake():Void {
 		DeltaTime.update << updateHandler;
 	}
 
 	private function sleepHandler(_):Void {
-		DeltaTime.update < sleep;
+		DeltaTime.update < _sleep;
 	}
 
-	private function sleep():Void {
+	private function _sleep():Void {
 		DeltaTime.update >> updateHandler;
+	}
+
+	public function wake(): Void {
+		if (_space == null) return;
+		body.space = _space;
+		_space = null;
+		if (body.type != BodyType.STATIC) _wake();
+	}
+
+	public function sleep(): Void {
+		if (_space != null) return;
+		_space = body.space;
+		body.space = null;
+		_sleep();
 	}
 
 	public function groupCollision<T:NapeGroup>(with:T):Signal1<Int> {
