@@ -61,7 +61,7 @@ class NapeGroup {
 		return new BodyRect(size, space, ns.limits, true, isBullet, this);
 	}
 
-	public function createCircle(r:Float, isBullet:Bool = false, isBullet:Bool = false):BodyCircle {
+	public function createCircle(r:Float, isBullet:Bool = false):BodyCircle {
 		return new BodyCircle(r, space, ns.limits, false, isBullet, this);
 	}
 
