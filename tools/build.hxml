@@ -8,8 +8,6 @@
 -lib pony
 -lib hxbit
 -resource resources/logo.txt@logo
--resource resources/bsd.txt@bsd
--resource resources/closed.txt@closed
 -resource resources/template.html@template.html
 -resource resources/pixitemplate.hx.tpl@pixitemplate.hx.tpl
 -resource resources/pixixmltemplate.hx.tpl@pixixmltemplate.hx.tpl

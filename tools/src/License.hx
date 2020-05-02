@@ -1,65 +1,22 @@
 import pony.fs.Dir;
 import pony.fs.File;
 
+using pony.Tools;
+
 /**
  * License
  * @author AxGord <axgord@gmail.com>
  */
 class License {
 
-	public static function run(a:String, args:Array<String>):Void {
-		var file:File = 'LICENSE';
+	private static var LICENSE_TEMPLATE_PATH: String = 'license/';
+	private static var LICENSE_OUTPUT_FILE: String = 'LICENSE';
 
+	public static function run(a: String, args: Array<String>): Void {
+		var file:File = LICENSE_OUTPUT_FILE;
 		switch a {
 			case 'create':
-				switch args.shift().toLowerCase() {
-					case 'bsd':
-						var na = [];
-						var email:String = null;
-						for (a in args) {
-							if (a.indexOf('@') != -1)
-								email = a;
-							else
-								na.push(a);
-						}
-						var author = na.join(' ');
-						if (author == null) Utils.error('Author not set');
-						var data = haxe.Resource.getString('bsd');
-						var date = Date.now().getFullYear() + ' $author';
-						if (email != null) date += ' <$email>';
-						data = StringTools.replace(data, '::DATE::', date);
-						data = StringTools.replace(data, '::AUTHOR::', author.toUpperCase());
-						file.content = data;
-						Sys.println('Create $file');
-
-					case 'closed':
-						var na = [];
-						var a = null;
-						var company:String = [while ((a = args.shift()) != '-') a].join(' ');
-
-						var email:String = null;
-						for (a in args) {
-							if (a.indexOf('@') != -1)
-								email = a;
-							else
-								na.push(a);
-						}
-						var author = na.join(' ');
-						if (author == null) Utils.error('Author not set');
-						var data = haxe.Resource.getString('closed');
-						var date = Date.now().getFullYear();
-						if (email != null) author += ' <$email>';
-						data = StringTools.replace(data, '::COMPANY::', company);
-						data = StringTools.replace(data, '::DATE::', Std.string(date));
-						data = StringTools.replace(data, '::AUTHOR::', author);
-						
-						file.content = data;
-						Sys.println('Create $file');
-
-					case _:
-						Utils.error('Unknown license');
-				}
-
+				create(args);
 			case 'remove':
 				for (file in ('.':Dir).contentRecursiveFiles('.hx')) {
 					var lines:Array<String> = file.content.split('\n');
@@ -158,6 +115,50 @@ class License {
 			case _:
 				Utils.error('Unknown command');
 		}
+	}
+
+	private static function create(args: Array<String>): Void {
+		switch args.shift().toLowerCase() {
+			case 'bsd':
+				parseArgsAndGenLicense('bsd.txt', args);
+			case 'mit':
+				parseArgsAndGenLicense('mit.txt', args);
+			case 'closed':
+				var all: Array<String> = args.join(' ').split('@');
+				if (all.length < 2) Utils.error('Email not set');
+				var a: Array<String> = all[0].split(' ');
+				var b: Array<String> = all[1].split(' ');
+				var email: String = a.pop() + '@' + b.shift();
+				var author: String = a.join(' ');
+				var company: String = b.join(' ');
+				genLicense('closed.txt', author, email, company);
+			case _:
+				Utils.error('Unknown license');
+		}
+	}
+
+	private static function parseArgsAndGenLicense(tpl: String, args: Array<String>): Void {
+		var na: Array<String> = [];
+		var email: String = null;
+		for (a in args) {
+			if (a.indexOf('@') != -1)
+				email = a;
+			else
+				na.push(a);
+		}
+		var author: String = na.join(' ');
+		genLicense(tpl, author, email);
+	}
+
+	private static function genLicense(tpl: String, author: String, email: String, ?company: String): Void {
+		var date: Int = Date.now().getFullYear();
+		if (author.nore()) Utils.error('Author not set');
+		if (company.nore()) company = author;
+		if (email == null) email = '';
+		if (email != '') email = ' <$email>';
+		Template.gen(LICENSE_TEMPLATE_PATH, [tpl => LICENSE_OUTPUT_FILE], [
+			'COMPANY' => company, 'DATE' => '$date', 'author' => author, 'AUTHOR' => author.toUpperCase(), 'email' => email
+		]);
 	}
 
 }
