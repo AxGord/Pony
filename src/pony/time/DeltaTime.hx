@@ -105,9 +105,7 @@ class DeltaTime implements HasSignal {
 	private static function _tick(_): Void tick();
 	private static inline function _set(): Void set();
 
-	#end
-
-	#if (nodejs && nodedt)
+	#elseif (nodejs && nodedt)
 	private static var imm: Dynamic;
 	private static function __init__(): Void {
 		createSignals();
