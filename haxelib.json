@@ -25,8 +25,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Upgrade Nape and Web",
-"version": "1.2.7",
+"releasenote": "Pony Tools: Auto commit haxelib update",
+"version": "1.2.8",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }
