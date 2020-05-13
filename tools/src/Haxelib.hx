@@ -102,7 +102,7 @@ class Haxelib {
 		zip.onError << function(err: String) throw err;
 		zip.writeList(data).end();
 
-		// Sys.command('haxelib', ['submit', outputFile]);
+		Sys.command('haxelib', ['submit', outputFile]);
 		FileSystem.deleteFile(outputFile);
 	}
 
