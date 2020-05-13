@@ -107,12 +107,6 @@ class DeltaTime implements HasSignal {
 
 	#end
 
-	#if (!(flash || openfl) || munit)
-	private static function __init__(): Void {
-		createSignals();
-	}
-	#end
-
 	#if (nodejs && nodedt)
 	private static var imm: Dynamic;
 	private static function __init__(): Void {
@@ -126,6 +120,10 @@ class DeltaTime implements HasSignal {
 	}
 
 	private static function _flostListeners(): Void js.Node.clearInterval(imm);
+	#else
+	private static function __init__(): Void {
+		createSignals();
+	}
 	#end
 
 	private static inline function createSignals(): Void {
