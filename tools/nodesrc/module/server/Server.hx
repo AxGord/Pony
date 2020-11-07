@@ -38,6 +38,13 @@ import remote.server.ServerRemote;
 			remote.onLog << eLog;
 			remote.init();
 		}
+		if (cfg.sniff != null) {
+			tasks.add();
+			var sniff: Sniff = new Sniff(cast cfg.sniff);
+			sniff.onError << eError;
+			sniff.onLog << eLog;
+			sniff.init();
+		}
 		tasks.end();
 	}
 

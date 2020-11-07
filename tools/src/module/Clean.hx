@@ -10,15 +10,15 @@ import types.BASection;
  * Clean module
  * @author AxGord <axgord@gmail.com>
  */
-class Clean extends CfgModule<CleanConfig> {
+@:final class Clean extends CfgModule<CleanConfig> {
 
-	private static inline var PRIORITY:Int = 10;
+	private static inline var PRIORITY: Int = 10;
 
 	public function new() super('clean');
 
-	override public function init():Void initSections(PRIORITY, BASection.Prepare);
+	override public function init(): Void initSections(PRIORITY, BASection.Prepare);
 
-	override private function readNodeConfig(xml:Fast, ac:AppCfg):Void {
+	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
 		new CleanReader(xml, {
 			debug: ac.debug,
 			app: ac.app,
@@ -31,32 +31,33 @@ class Clean extends CfgModule<CleanConfig> {
 		}, configHandler);
 	}
 
-	override private function runNode(cfg:CleanConfig):Void {
+	override private function runNode(cfg: CleanConfig): Void {
 		cleanDirs(cfg.dirs, cfg.rimraf);
 		deleteUnits(cfg.units);
 	}
 
-	private function cleanDirs(data:Array<String>, rimraf:Bool):Void {
+	private function cleanDirs(data: Array<String>, rimraf: Bool): Void {
 		for (d in data) {
 			log('Clean directory: $d');
 			if (rimraf) {
 				Utils.command('rimraf', [d]);
 			} else {
-				(d:Dir).deleteContent();
+				(d : Dir).deleteContent();
 			}
 		}
 	}
 
-	private function deleteUnits(data:Array<String>):Void {
+	private function deleteUnits(data: Array<String>): Void {
 		for (u in data) {
 			log('Delete file: $u');
-			(u:Unit).delete();
+			(u : Unit).delete();
 		}
 	}
 
 }
 
-private typedef CleanConfig = { > types.BAConfig,
+private typedef CleanConfig = {
+	> types.BAConfig,
 	dirs: Array<String>,
 	units: Array<String>,
 	rimraf: Bool
@@ -64,25 +65,24 @@ private typedef CleanConfig = { > types.BAConfig,
 
 private class CleanReader extends BAReader<CleanConfig> {
 
-	override private function readNode(xml:Fast):Void {
+	override private function readNode(xml: Fast): Void {
 		switch xml.name {
-
 			case 'dir': cfg.dirs.push(StringTools.trim(xml.innerData));
 			case 'unit': cfg.units.push(StringTools.trim(xml.innerData));
-
 			case _: super.readNode(xml);
 		}
 	}
 
-	override private function clean():Void {
+	override private function clean(): Void {
 		cfg.dirs = [];
 		cfg.units = [];
 		cfg.rimraf = false;
 	}
 
-	override private function readAttr(name:String, val:String):Void {
+	override private function readAttr(name: String, val: String): Void {
 		switch name {
-			case 'rimraf': cfg.rimraf = TextTools.isTrue(val);
+			case 'rimraf':
+				cfg.rimraf = TextTools.isTrue(val);
 			case _:
 		}
 	}

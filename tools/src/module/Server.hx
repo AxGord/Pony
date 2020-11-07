@@ -1,5 +1,6 @@
 package module;
 
+import types.SniffConfig;
 import types.BASection;
 import types.BAConfig;
 import types.ServerConfig;
@@ -20,7 +21,7 @@ class Server extends NModule<ServerConfig> {
 
 	public function new() super('server');
 
-	override public function init():Void {
+	override public function init(): Void {
 		if (xml == null) return;
 		initSections(PRIORITY, BASection.Server);
 	}
@@ -36,7 +37,8 @@ class Server extends NModule<ServerConfig> {
 			path: null,
 			proxy: [],
 			haxe: null,
-			remote: null
+			remote: null,
+			sniff: null
 		}, configHandler);
 	}
 
@@ -54,13 +56,17 @@ private class ServerReader extends BAReader<ServerConfig> {
 		cfg.proxy = [];
 		cfg.haxe = null;
 		cfg.remote = null;
+		cfg.sniff = null;
 	}
 
 	override private function readNode(xml: Fast): Void {
 		switch xml.name {
-			case 'path': cfg.path = normalize(xml.innerData);
-			case 'port': cfg.port = Std.parseInt(xml.innerData);
-			case 'haxe': cfg.haxe = Std.parseInt(xml.innerData);
+			case 'path':
+				cfg.path = normalize(xml.innerData);
+			case 'port':
+				cfg.port = Std.parseInt(xml.innerData);
+			case 'haxe':
+				cfg.haxe = Std.parseInt(xml.innerData);
 			case 'proxy':
 				new ProxyReader(xml, {
 					debug: cfg.debug,
@@ -85,7 +91,19 @@ private class ServerReader extends BAReader<ServerConfig> {
 					allow: [],
 					commands: new Map()
 				}, remoteConfigHandler);
-			case _: super.readNode(xml);
+			case 'sniff':
+				new SniffReader(xml, {
+					debug: cfg.debug,
+					app: cfg.app,
+					before: cfg.before,
+					section: cfg.section,
+					allowCfg: true,
+					serverPort: 0,
+					clientHost: null,
+					clientPort: 0
+				}, sniffConfigHandler);
+			case _:
+				super.readNode(xml);
 		}
 	}
 
@@ -95,6 +113,10 @@ private class ServerReader extends BAReader<ServerConfig> {
 
 	private function remoteConfigHandler(remote: BARemoteServerConfig): Void {
 		cfg.remote = remote;
+	}
+
+	private function sniffConfigHandler(sniff: BASniffConfig): Void {
+		cfg.sniff = sniff;
 	}
 
 }
@@ -115,16 +137,21 @@ private class ProxyReader extends BAReader<BAProxyConfig> {
 
 	override private function readNode(xml: Fast): Void {
 		switch xml.name {
-			case 'target': cfg.target = normalize(xml.innerData);
-			case 'port': cfg.port = Std.parseInt(xml.innerData);
-			case _: super.readNode(xml);
+			case 'target':
+				cfg.target = normalize(xml.innerData);
+			case 'port':
+				cfg.port = Std.parseInt(xml.innerData);
+			case _:
+				super.readNode(xml);
 		}
 	}
 
-	override private function readAttr(name:String, val:String):Void {
+	override private function readAttr(name: String, val: String): Void {
 		switch name {
-			case 'slow': cfg.slow = Std.parseInt(val);
-			case 'cache': cfg.cache = normalize(val);
+			case 'slow':
+				cfg.slow = Std.parseInt(val);
+			case 'cache':
+				cfg.cache = normalize(val);
 			case _:
 		}
 	}
@@ -147,9 +174,12 @@ private class RemoteReader extends BAReader<BARemoteServerConfig> {
 
 	override private function readNode(xml: Fast): Void {
 		switch xml.name {
-			case 'port': cfg.port = Std.parseInt(xml.innerData);
-			case 'key': cfg.key = normalize(xml.innerData);
-			case 'allow': cfg.allow.push(normalize(xml.innerData));
+			case 'port':
+				cfg.port = Std.parseInt(xml.innerData);
+			case 'key':
+				cfg.key = normalize(xml.innerData);
+			case 'allow':
+				cfg.allow.push(normalize(xml.innerData));
 			case 'commands':
 				for (node in xml.elements) {
 					var d: Pair<Bool, String> = new Pair(!node.isFalse('zipLog'), normalize(node.innerData));
@@ -158,7 +188,36 @@ private class RemoteReader extends BAReader<BARemoteServerConfig> {
 					else
 						cfg.commands[node.name].push(d);
 				}
-			case _: super.readNode(xml);
+			case _:
+				super.readNode(xml);
+		}
+	}
+
+}
+
+typedef BASniffConfig = {
+	> BAConfig,
+	> SniffConfig,
+}
+
+private class SniffReader extends BAReader<BASniffConfig> {
+
+	override private function clean(): Void {
+		cfg.serverPort = 0;
+		cfg.clientHost = '';
+		cfg.clientPort = 0;
+	}
+
+	override private function readNode(xml: Fast): Void {
+		switch xml.name {
+			case 'server':
+				cfg.serverPort = Std.parseInt(xml.innerData);
+			case 'client':
+				var a: Array<String> = normalize(xml.innerData).split(':');
+				cfg.clientHost = a[0];
+				cfg.clientPort = Std.parseInt(a[1]);
+			case _:
+				super.readNode(xml);
 		}
 	}
 

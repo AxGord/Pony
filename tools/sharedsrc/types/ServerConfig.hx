@@ -6,5 +6,6 @@ typedef ServerConfig = {
 	path: Null<String>,
 	proxy: Array<ProxyConfig>,
 	haxe: Null<UInt>,
-	remote: Null<RemoteServerConfig>
+	remote: Null<RemoteServerConfig>,
+	sniff: Null<SniffConfig>
 }
