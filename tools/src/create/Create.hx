@@ -40,6 +40,7 @@ class Create {
 	private static function setProjectConfig(project: Project, type: ProjectType): Void {
 		switch type {
 			case ProjectType.Server: create.targets.Server.set(project);
+			case ProjectType.Sniff: create.targets.Server.sniff(project);
 			case ProjectType.JS: create.targets.JS.set(project);
 			case ProjectType.CC: create.targets.CC.set(project);
 			case ProjectType.Pixi, ProjectType.Pixixml: create.targets.Pixi.set(project);
@@ -130,7 +131,7 @@ class Create {
 				createElectronData(project, vscAllow);
 			case ProjectType.Monacoelectron:
 				createMonacoElectronData(project, vscAllow);
-			case ProjectType.Server:
+			case ProjectType.Server, ProjectType.Sniff:
 				if (vscAllow) VSCode.create(null);
 				return;
 			case _:

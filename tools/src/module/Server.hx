@@ -214,8 +214,13 @@ private class SniffReader extends BAReader<BASniffConfig> {
 				cfg.serverPort = Std.parseInt(xml.innerData);
 			case 'client':
 				var a: Array<String> = normalize(xml.innerData).split(':');
-				cfg.clientHost = a[0];
-				cfg.clientPort = Std.parseInt(a[1]);
+				if (a.length == 1) {
+					cfg.clientHost = '127.0.0.1';
+					cfg.clientPort = Std.parseInt(a[0]);
+				} else {
+					cfg.clientHost = a[0];
+					cfg.clientPort = Std.parseInt(a[1]);
+				}
 			case _:
 				super.readNode(xml);
 		}

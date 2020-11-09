@@ -6,9 +6,14 @@ package create.targets;
  */
 class Server {
 
-	public static function set(project:Project):Void {
+	public static function set(project: Project): Void {
 		project.server.active = true;
 		project.server.http = true;
+	}
+
+	public static function sniff(project: Project): Void {
+		project.server.active = true;
+		project.server.sniff = true;
 	}
 
 }

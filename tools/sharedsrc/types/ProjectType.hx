@@ -7,6 +7,7 @@ enum ProjectType {
 	Heapsxml;
 	JS;
 	Server;
+	Sniff;
 	Node;
 	Neko;
 	Pixielectron;

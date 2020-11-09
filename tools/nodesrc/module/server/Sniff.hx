@@ -20,12 +20,11 @@ import types.SniffConfig;
         super();
         this.cfg = cfg;
         server = new SocketServer(cfg.serverPort, false);
-    }
-
-	public function init(): Void {
         listenErrorAndLog(server);
         server.onConnect << socketServerConnectHandler;
     }
+
+	public function init(): Void log('Sniff: ' + Std.string(cfg));
 
     private function socketServerConnectHandler(a: SocketClient): Void {
         log('Connect to sniff');
@@ -33,16 +32,24 @@ import types.SniffConfig;
         listenErrorAndLog(b);
         a.onData << function(bi: BytesInput): Void {
             var bo: BytesOutput = new BytesOutput();
+            log('Send to server, length: ' + bi.length);
             bo.write(bi.readAll());
             b.send(bo);
         }
         b.onData << function(bi: BytesInput): Void {
             var bo: BytesOutput = new BytesOutput();
+            log('Send to client, length: ' + bi.length);
             bo.write(bi.readAll());
             a.send(bo);
-        };
-        a.onDisconnect < b.destroy;
-        b.onDisconnect < a.destroy;
+        }
+        a.onDisconnect < function(): Void {
+            log('Client disconnect');
+            b.destroy();
+        }
+        b.onDisconnect < function(): Void {
+            log('Server disconnect');
+            a.destroy();
+        }
     }
 
 }
