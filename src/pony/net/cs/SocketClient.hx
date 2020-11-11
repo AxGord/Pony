@@ -20,7 +20,7 @@ import haxe.io.BytesOutput;
 import pony.cs.Synchro;
 import pony.net.SocketClientBase;
 import pony.Queue.Queue;
-import haxe.Timer;//Use HUGS for this
+import haxe.Timer; // Use HUGS for this
 
 /**
  * SocketClient
@@ -31,235 +31,213 @@ class SocketClient extends SocketClientBase {
 
 	/**
 	 * A client socket used to begin and end asynchronous operations.
-	 **/
+	**/
 	@:allow(pony.net.cs.SocketServer)
-	private var client:Socket;
+	private var client: Socket;
 
 	/**
 	 * Indicates if a client sended first or second datagramm; the first one is being sended if isSet is false, true instead.
-	 **/
+	**/
 	@:allow(pony.net.cs.SocketServer)
-	private var isSet:Bool = false;
+	private var isSet: Bool = false;
 
 	/**
 	 * A receive buffer; by default, connection is considered to be with length so default size is 4.
-	 **/
+	**/
 	@:allow(pony.net.cs.SocketServer)
-	private var receiveBuffer:NativeArray<UInt8> = new NativeArray(4);
+	private var receiveBuffer: NativeArray<UInt8> = new NativeArray(4);
 
 	/**
 	 * A queue using to synchronize sending.
-	 **/
+	**/
 	@:allow(pony.net.cs.SocketServer)
-	private var sendQueue:Queue < BytesOutput -> Void > ;
-	
+	private var sendQueue: Queue<BytesOutput -> Void>;
+
 	/**
 	 * An event that signals if send callback ends. Using in destroy function.
-	 **/
+	**/
 	@:allow(pony.net.cs.SocketServer)
-	private var eventSend:ManualResetEvent = new ManualResetEvent(true);
+	private var eventSend: ManualResetEvent = new ManualResetEvent(true);
 
 	/**
 	 * An event that signals if receive callback ends. Using in destroy function.
-	 **/
+	**/
 	@:allow(pony.net.cs.SocketServer)
-	private var eventReceive:ManualResetEvent = new ManualResetEvent(true);
+	private var eventReceive: ManualResetEvent = new ManualResetEvent(true);
 
 	/**
 	 * A flag that indicates if send-receive process is running.
-	 **/
+	**/
 	@:allow(pony.net.cs.SocketServer)
-	private var isRunning:Bool;
-	
+	private var isRunning: Bool;
+
 	/**
 	 * A flag that indicates if client is connected.
-	 **/
-	private var isConnected:Bool = false;
-	
-	public override function new(aHost:String = "127.0.0.1", aPort:Int, aReconnect:Int = -1, aIsWithLength:Bool = true) 
-	{
+	**/
+	private var isConnected: Bool = false;
+
+	public override function new(aHost: String = '127.0.0.1', aPort: Int, aReconnect: Int = -1, aIsWithLength: Bool = true) {
 		isRunning = true;
 		host = aHost;
 		port = aPort;
 		this.reconnectDelay = aReconnect;
 		this.isWithLength = aIsWithLength;
 		client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-		client.NoDelay = true; //One should never forget that this may cause troubles in future.
+		client.NoDelay = true; // One should never forget that this may cause troubles in future.
 		super(host, port, reconnectDelay, aIsWithLength);
 	}
-	
-	public override function open():Void
-	{
-		try
-		{
+
+	public override function open(): Void {
+		try {
 			client.Connect(host, port);
 			isConnected = true;
-		}
-		catch (ex:SocketException)
-		{
+		} catch (ex:SocketException) {
 			isConnected = false;
 			tryAgain();
 		}
-		if (isConnected)
-		{
+		if (isConnected) {
 			sendQueue = new Queue(_send);
 			isSet = false;
-			Timer.delay(connect, 10);//allow add listener first
-			Timer.delay(begin, 20);//and begin take data after some delay
+			Timer.delay(connect, 10); // allow add listener first
+			Timer.delay(begin, 20); // and begin take data after some delay
 		}
 	}
-	
-	private function begin():Void {
+
+	private function begin(): Void {
 		client.BeginReceive(receiveBuffer, 0, receiveBuffer.Length, SocketFlags.None, new AsyncCallback(receiveCallback), this);
 	}
-	
-	public function send(data:BytesOutput):Void
-	{
+
+	public function send(data: BytesOutput): Void {
 		Synchro.lock(sendQueue, function() sendQueue.call(data));
 	}
-	
+
 	@:allow(pony.net.cs.SocketServer)
-	private function _send(data:BytesOutput):Void
-	{
-		var buffer:NativeArray<UInt8> = new NativeArray(data.length);
-		var b_out:BytesOutput = new BytesOutput();
-		var size:Int = buffer.Length;
+	private function _send(data: BytesOutput): Void {
+		var buffer: NativeArray<UInt8> = new NativeArray(data.length);
+		var b_out: BytesOutput = new BytesOutput();
+		var size: Int = buffer.Length;
 		b_out.writeBytes(data.getBytes(), 0, size);
-		var b_in:BytesInput = new BytesInput(b_out.getBytes());
-		for (i in 0...b_in.length) buffer[i] = b_in.readByte();
+		var b_in: BytesInput = new BytesInput(b_out.getBytes());
+		for (i in 0...b_in.length)
+			buffer[i] = b_in.readByte();
 		client.BeginSend(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(sendCallback), client);
 	}
-	
-	private function sendCallback(ar:IAsyncResult):Void
-	{
-		if (isRunning)
-		{
+
+	private function sendCallback(ar: IAsyncResult): Void {
+		if (isRunning) {
 			eventSend.Reset();
-			var s:Socket = cast(ar.AsyncState, Socket);
+			var s: Socket = cast(ar.AsyncState, Socket);
 			s.EndSend(ar);
 			Synchro.lock(sendQueue, function() sendQueue.next());
 		}
 		eventSend.Set();
 	}
-	
+
 	@:allow(pony.net.cs.SocketServer)
-	private function receiveCallback(ar:IAsyncResult):Void
-	{
-		if (isRunning)
-		{
+	private function receiveCallback(ar: IAsyncResult): Void {
+		if (isRunning) {
 			eventReceive.Reset();
-			try
-			{
-				var bytesRead:Int = client.EndReceive(ar);
-				if (0 != bytesRead)
-				{
-					var receiveBuffer:NativeArray<UInt8> = receiveBuffer;
-					var b_out:BytesOutput = new BytesOutput();
-					for (i in 0...bytesRead)
-					{
+			try {
+				var bytesRead: Int = client.EndReceive(ar);
+				if (0 != bytesRead) {
+					var b_out: BytesOutput = new BytesOutput();
+					for (i in 0...bytesRead) {
 						b_out.writeByte(receiveBuffer[i]);
 					}
-					var b_in:BytesInput = new BytesInput(b_out.getBytes());
-					if (isSet) 
-					{
-						//eventReceive.Set(); //Threre is a trouble like this: if eventReceive is set, then destroy inserted in onData handler executes every time the callback does,
-											  //so an exception is raised because of the client being equal to null and the callback crashes. But if one doesn't set the event, the destroy
-											  //stops waiting for event to set, so the callback stops too. Need to fix somehow. Fixed by adding a thread into destroy. 
+					var b_in: BytesInput = new BytesInput(b_out.getBytes());
+					if (isSet) {
+						// eventReceive.Set(); //Threre is a trouble like this: if eventReceive is set,
+						// then destroy inserted in onData handler executes every time the callback does,
+						// so an exception is raised because of the client being equal to null and the callback crashes.
+						// But if one doesn't set the event, the destroy stops waiting for event to set, so the callback stops too.
+						// Need to fix somehow. Fixed by adding a thread into destroy.
 						eData.dispatch(b_in, cast this);
-						var buffer:NativeArray<UInt8> = new NativeArray(4);
+						var buffer: NativeArray<UInt8> = new NativeArray(4);
 						this.receiveBuffer = buffer;
 						isSet = false;
-						Synchro.lock(client, function() 
-						{
-							if (client != null && client.Connected) client.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(receiveCallback), this); //Костыль для убиения бага. 
-						} );
-						
-					}
-					else
-					{
-						var buffer:NativeArray<UInt8>;
-						if (isWithLength)
-						{
-							var size:Int = b_in.readInt32();
+						Synchro.lock(client, function() {
+							if (client != null && client.Connected)
+								client.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(receiveCallback),
+									this); // Костыль для убиения бага.
+						});
+
+					} else {
+						var buffer: NativeArray<UInt8>;
+						if (isWithLength) {
+							var size: Int = b_in.readInt32();
 							buffer = new NativeArray(size);
-						}
-						else
-						{
+						} else {
 							buffer = new NativeArray(255);
-							eData.dispatch(b_in, cast this);//This will work uncorrect if length of datagramm is greater than 255. 
+							eData.dispatch(b_in, cast this); // This will work uncorrect if length of datagramm is greater than 255.
 						}
 						this.receiveBuffer = buffer;
 						isSet = true;
-						Synchro.lock(client, function() 
-						{
-							if (client != null && client.Connected) client.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(receiveCallback), this);
+						Synchro.lock(client, function() {
+							if (client != null && client.Connected)
+								client.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(receiveCallback), this);
 						});
-						
-					}
-				}
-				else
-				{
 
-				}
-			}
-			catch (ex:Dynamic)
-			{
+					}
+				} else {}
+
+			} catch (ex:Dynamic) {
 				error(ex);
 			}
 		}
-		//trace(isRunning); //This trace, being uncommented, comletely burns program to the ground. Although it doesn't do, fixed somehow. 
+		// trace(isRunning); //This trace, being uncommented, comletely burns program to the ground. Although it doesn't do, fixed somehow.
 		eventReceive.Set();
 	}
+
 	/*
-	public override function destroy():Void
-	{
-		isRunning = false;
-		var destrThread:Thread = new Thread(new cs.system.threading.ThreadStart(function()
+		public override function destroy():Void
 		{
-			eventReceive.WaitOne();
-			eventSend.WaitOne();
-			//trace("Client's close traced."); This one isn't traced. Need to fix. "three-fourth-fixed", see commetary below. Seems to be completely fixed, but there's one more bug. 
-			Synchro.lock(client, function() 
+			isRunning = false;
+			var destrThread:Thread = new Thread(new cs.system.threading.ThreadStart(function()
 			{
-				var flag:Bool = true;
-				try
+				eventReceive.WaitOne();
+				eventSend.WaitOne();
+				//trace("Client's close traced."); This one isn't traced. Need to fix. "three-fourth-fixed", see commetary below. Seems to be completely fixed, but there's one more bug.
+				Synchro.lock(client, function()
 				{
-					client.Shutdown(cs.system.net.sockets.SocketShutdown.Both);
-					client.Disconnect(false);//These two strings may cause a crash. Use them at your own risk - or just comment so as "trace(ex);" above too. The problem is: when Close
-											 //having been executed, receive callback tries to execute one more time (although it hasn't to) and crashes the program because client becomes
-											 //null. To prevent this trying to receive I added the Shutdown and Disconnect but they don't work the way it should - or I misunderstood their 
-											 //working.
-											 //There were a few time when Disconnect raised an exception as if it waits for client to be alive but one is not. It's really strange behaviour
-											 //because client must be alive - Close isn't called at the time Disconnect is. It looks like Disconnect is called twice for one client. The temporary 
-											 //solve of this problem is just not to use Disconnect and swallow the exception raising because of it. 
-											 //By now there's no need in commenting something because execption raised by Disconnect is caught by using try-catch block and Close executes anyhow.
-											 //But it isn't the best way to solve the problem, though.
-											 //By now client is locked so there is no race condition anymore, fixed. 
-				}
-				catch(ex:Dynamic)
-				{
-					flag = false;
-					client.Close();
-				}
-				if (flag) client.Close(); 
-			} );
-			
-			destroy();
-		}));
-		destrThread.IsBackground = true;
-		destrThread.Start();
-	}
-	*/
-	
-	override public function destroy():Void {
+					var flag:Bool = true;
+					try
+					{
+						client.Shutdown(cs.system.net.sockets.SocketShutdown.Both);
+						client.Disconnect(false);//These two strings may cause a crash. Use them at your own risk - or just comment so as "trace(ex);" above too. The problem is: when Close
+												 //having been executed, receive callback tries to execute one more time (although it hasn't to) and crashes the program because client becomes
+												 //null. To prevent this trying to receive I added the Shutdown and Disconnect but they don't work the way it should - or I misunderstood their
+												 //working.
+												 //There were a few time when Disconnect raised an exception as if it waits for client to be alive but one is not. It's really strange behaviour
+												 //because client must be alive - Close isn't called at the time Disconnect is. It looks like Disconnect is called twice for one client. The temporary
+												 //solve of this problem is just not to use Disconnect and swallow the exception raising because of it.
+												 //By now there's no need in commenting something because execption raised by Disconnect is caught by using try-catch block and Close executes anyhow.
+												 //But it isn't the best way to solve the problem, though.
+												 //By now client is locked so there is no race condition anymore, fixed.
+					}
+					catch(ex:Dynamic)
+					{
+						flag = false;
+						client.Close();
+					}
+					if (flag) client.Close();
+				} );
+
+				destroy();
+			}));
+			destrThread.IsBackground = true;
+			destrThread.Start();
+		}
+	 */
+
+	override public function destroy(): Void {
 		isRunning = false;
 		super.destroy();
 	}
-	
-	override function close():Void {
+
+	override function close(): Void {
 		if (opened) client.Close();
 		super.close();
 	}
-	
+
 }
 #end

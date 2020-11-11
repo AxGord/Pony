@@ -18,18 +18,18 @@ import pony.time.DeltaTime;
  */
 class SocketClient extends SocketClientBase {
 
-	private var socket:Socket;
-	private var buffer:BytesOutput;
-	private var q:Queue < BytesOutput -> Void >;
-	
-	override public function open():Void {
+	private var socket: Socket;
+	private var buffer: BytesOutput;
+	private var q: Queue<BytesOutput -> Void>;
+
+	override public function open(): Void {
 		super.open();
 		socket = new Socket();
 		socket.connect(new Host(host), port);
 		_init();
 	}
 
-	private function _init():Void {
+	private function _init(): Void {
 		q = new Queue(_send);
 		socket.setBlocking(false);
 		buffer = new BytesOutput();
@@ -38,12 +38,12 @@ class SocketClient extends SocketClientBase {
 	}
 
 	@:allow(pony.net.neko.SocketServer)
-	private function nekoInit(client:Socket):Void {
+	private function nekoInit(client: Socket): Void {
 		socket = client;
 		_init();
 	}
 
-	private function updateHandler():Void {
+	private function updateHandler(): Void {
 		try {
 			while (true) buffer.writeByte(socket.input.readByte());
 		} catch (e:Error) {
@@ -60,7 +60,7 @@ class SocketClient extends SocketClientBase {
 		}
 	}
 
-	private function processBuffer():Void {
+	private function processBuffer(): Void {
 		if (buffer.length > readLengthSize) {
 			joinData(new BytesInput(buffer.getBytes()));
 			buffer.flush();
@@ -70,12 +70,11 @@ class SocketClient extends SocketClientBase {
 			buffer = new BytesOutput();
 		}
 	}
-	
-	private function closeHandler(_):Void close();
-	
-	public function send(data:BytesOutput):Void q.call(data);
-	
-	private function _send(data:BytesOutput):Void {
+
+	private function closeHandler(_): Void close();
+	public function send(data: BytesOutput): Void q.call(data);
+
+	private function _send(data: BytesOutput): Void {
 		try {
 			socket.output.write(data.getBytes());
 			socket.output.flush();
@@ -84,14 +83,14 @@ class SocketClient extends SocketClientBase {
 		}
 		DeltaTime.fixedUpdate < q.next;
 	}
-	
-	override public function close():Void {
+
+	override public function close(): Void {
 		DeltaTime.fixedUpdate >> updateHandler;
 		super.close();
 		try {
 			socket.close();
-		} catch (_:Dynamic) {}
+		} catch (_: Dynamic) {}
 	}
-	
+
 }
 #end

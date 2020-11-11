@@ -19,10 +19,10 @@ import pony.time.DeltaTime;
  */
 class SocketClient extends SocketClientBase {
 
-	private var socket:Socket;
-	private var q:Queue < BytesOutput -> Void >;
-	
-	override public function open():Void {
+	private var socket: Socket;
+	private var q: Queue<BytesOutput -> Void>;
+
+	override public function open(): Void {
 		super.open();
 		q = new Queue(_send);
 		socket = new Socket(host, port);
@@ -32,47 +32,43 @@ class SocketClient extends SocketClientBase {
 		socket.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandler);
 		socket.addEventListener(SecurityErrorEvent.SECURITY_ERROR, securityErrorHandler);
 	}
-	
-	//private function skipOutputProgressHandler():Void outputProgressHandler(null);
-	
-	private function outputProgressHandler(_):Void {
+
+	// private function skipOutputProgressHandler():Void outputProgressHandler(null);
+
+	private function outputProgressHandler(_): Void {
 		socket.removeEventListener('outputProgress', outputProgressHandler);
 		DeltaTime.skipUpdate(q.next);
 	}
-	
-	private function securityErrorHandler(_):Void {}
-	
-	private function ioErrorHandler(event:IOErrorEvent):Void error(event.text);
-	
-	private function closeHandler(_):Void close();
-	
-	private function connectHandler(_):Void connect();
-	
-	public function send(data:BytesOutput):Void q.call(data);
-	
-	private function _send(data:BytesOutput):Void {
+
+	private function securityErrorHandler(_): Void {}
+	private function ioErrorHandler(event: IOErrorEvent): Void error(event.text);
+	private function closeHandler(_): Void close();
+	private function connectHandler(_): Void connect();
+	public function send(data: BytesOutput): Void q.call(data);
+
+	private function _send(data: BytesOutput): Void {
 		socket.addEventListener('outputProgress', outputProgressHandler);
 		try {
 			socket.writeBytes(data.getBytes().getData());
 			socket.flush();
-			//DeltaTime.skipUpdate(skipOutputProgressHandler);
-		} catch (e:Dynamic) {
+			// DeltaTime.skipUpdate(skipOutputProgressHandler);
+		} catch (e: Dynamic) {
 			error(e);
 		}
 	}
-	
-	override public function close():Void {
+
+	override public function close(): Void {
 		super.close();
 		try {
 			socket.close();
-		} catch (_:Dynamic) {}
+		} catch (_: Dynamic) {}
 	}
-	
-	private function socketDataHandler(_):Void {
-		var b:BytesData = new BytesData();
+
+	private function socketDataHandler(_): Void {
+		var b: BytesData = new BytesData();
 		socket.readBytes(b);
 		joinData(new BytesInput(Bytes.ofData(b)));
 	}
-	
+
 }
 #end

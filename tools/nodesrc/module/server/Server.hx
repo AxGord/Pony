@@ -1,5 +1,7 @@
 package module.server;
 
+import pony.time.Time;
+import haxe.PosInfos;
 import types.ServerConfig;
 import remote.server.ServerRemote;
 
@@ -41,11 +43,20 @@ import remote.server.ServerRemote;
 		if (cfg.sniff != null) {
 			tasks.add();
 			var sniff: Sniff = new Sniff(cast cfg.sniff);
-			sniff.onError << eError;
-			sniff.onLog << eLog;
+			sniff.onError << errorWithTime;
+			sniff.onLog << logWithTime;
 			sniff.init();
 		}
 		tasks.end();
+	}
+
+	private function errorWithTime(s: String, ?p: PosInfos): Void error(now() + ' ' + s, p);
+	private function logWithTime(s: String, ?p: PosInfos): Void log(now() + ' ' + s, p);
+
+	private function now(): String {
+		var d: Date = Date.now();
+		var z: Int = d.getTimezoneOffset();
+		return Time.fromFloat((d.getTime() - z * 60 * 1000) % (24 * 60 * 60 * 1000));
 	}
 
 }

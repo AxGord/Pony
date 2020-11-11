@@ -9,49 +9,46 @@ import haxe.io.BytesOutput;
  */
 #if (!js || nodejs)
 class SocketClient
-#if nodejs
-extends pony.net.nodejs.SocketClient
-#elseif cs
-extends pony.net.cs.SocketClient
-#elseif flash
-extends pony.net.flash.SocketClient
-#elseif openfl
-extends pony.net.openfl.SocketClient
-#elseif neko
-extends pony.net.neko.SocketClient
-#end
-implements ISocketClient {
-	
-	public var writeLengthSize:UInt;
-	
-	private var stack:Array<BytesOutput>;
-	
-	override function sharedInit():Void {
-		writeLengthSize = 4;
+	#if nodejs extends pony.net.nodejs.SocketClient
+	#elseif cs extends pony.net.cs.SocketClient
+	#elseif flash extends pony.net.flash.SocketClient
+	#elseif openfl extends pony.net.openfl.SocketClient
+	#elseif neko extends pony.net.neko.SocketClient
+#end implements ISocketClient {
+
+	private static inline var DEFAULT_LEN_BLOCK_SIZE: Int = 4;
+
+	public var writeLengthSize: UInt;
+
+	private var stack: Array<BytesOutput>;
+
+	override function sharedInit(): Void {
+		writeLengthSize = DEFAULT_LEN_BLOCK_SIZE;
 		stack = [];
 		super.sharedInit();
 	}
-	
-	#if !cs//Not working for CS
-	dynamic public function writeLength(bo:BytesOutput, length:UInt):Void bo.writeInt32(length);
+
+	#if !cs // Not working for CS
+	public dynamic function writeLength(bo: BytesOutput, length: UInt): Void bo.writeInt32(length);
 	#end
-	override public function send(data:BytesOutput):Void {
+
+	override public function send(data: BytesOutput): Void {
 		if (!opened) {
 			stack.push(data);
 			return;
 		}
-		var len:UInt = data.length;
-		var needSplit = maxSize != 0 && len > maxSize;
+		var len: UInt = data.length;
+		var needSplit: Bool = maxSize != 0 && len > maxSize;
 		if (isWithLength || needSplit) {
-			var bo = new BytesOutput();
+			var bo: BytesOutput = new BytesOutput();
 			#if cs
 			if (isWithLength) bo.writeInt32(len);
 			#else
 			if (isWithLength) writeLength(bo, len);
 			#end
 			if (needSplit) {
-				if (isWithLength && maxSize > 4 + writeLengthSize) maxSize -= writeLengthSize;
-				var b = new BytesInput(data.getBytes());
+				if (isWithLength && maxSize > SocketClientBase.MIN_DATA_SIZE + writeLengthSize) maxSize -= writeLengthSize;
+				var b: BytesInput = new BytesInput(data.getBytes());
 				while (len >= maxSize) {
 					bo.write(b.read(maxSize));
 					len -= maxSize;
@@ -65,21 +62,16 @@ implements ISocketClient {
 			super.send(data);
 		}
 	}
-	
-	public function sendString(data:String):Void {
-		var bo = new BytesOutput();
+
+	public function sendString(data: String): Void {
+		var bo: BytesOutput = new BytesOutput();
 		bo.writeString(data);
 		send(bo);
 	}
-	
-	public function sendStack():Void {
-		if (stack.length > 0) send(stack.shift());
-	}
-	
-	public function sendAllStack():Void {
-		while (stack.length > 0) send(stack.shift());
-	}
-	
+
+	public function sendStack(): Void if (stack.length > 0) send(stack.shift());
+	public function sendAllStack(): Void while (stack.length > 0) send(stack.shift());
+
 }
 #else
 typedef SocketClient = SocketClientBase;

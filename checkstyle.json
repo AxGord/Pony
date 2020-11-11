@@ -34,7 +34,12 @@
 			"type": "CatchParameterName"
 		},
 		{
-			"type": "ConditionalCompilation"
+			"type": "ConditionalCompilation",
+			"props": {
+				"allowSingleline": true,
+				"policy": "startOfLine",
+				"severity": "IGNORE"
+			}
 		},
 		{
 			"props": {

@@ -13,6 +13,8 @@ import pony.magic.HasSignal;
  */
 @:nullSafety(Strict) class Logable implements ILogable implements HasSignal {
 
+	private static inline var DLM: String = ' ';
+
 	private static var origTrace: Null<Dynamic -> ?PosInfos -> Void>;
 
 	public function new() {}
@@ -20,21 +22,27 @@ import pony.magic.HasSignal;
 	@:lazy public var onLog: Signal2<String, Null<PosInfos>>;
 	@:lazy public var onError: Signal2<String, Null<PosInfos>>;
 
-	public inline function listenError(l: ILogable): Void {
+	public inline function listenError(l: ILogable, ?id: String): Void {
 		#if !disableErrors
-		l.onError << eError;
+		if (id != null)
+			l.onError << function(s: String, p: PosInfos): Void eError.dispatch(id + DLM + s, p);
+		else
+			l.onError << eError;
 		#end
 	}
 
-	public inline function listenLog(l: ILogable): Void {
+	public inline function listenLog(l: ILogable, ?id: String): Void {
 		#if !disableLogs
-		l.onLog << eLog;
+		if (id != null)
+			l.onLog << function(s: String, p: PosInfos): Void eLog.dispatch(id + DLM + s, p);
+		else
+			l.onLog << eLog;
 		#end
 	}
 
-	public inline function listenErrorAndLog(l: ILogable): Void {
-		listenError(l);
-		listenLog(l);
+	public inline function listenErrorAndLog(l: ILogable, ?id: String): Void {
+		listenError(l, id);
+		listenLog(l, id);
 	}
 
 	public inline function error(s: String, ?p: PosInfos): Void {

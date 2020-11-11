@@ -14,25 +14,28 @@ import pony.events.Signal2;
 interface INet {
 
 	#if !flash
+
 	/**
 	 * onAccept in a server
 	 */
-	var onConnect(get, null):Signal1<SocketClient>;
-	var onOpen(get, null):Signal0;
-	
-	var onData(get, null):Signal2<BytesInput, SocketClient>;
-	var onString(get, null):Signal2<String, SocketClient>;
-	
-	var onClose(get, null):Signal0;
-	var onDisconnect(get, null):Signal1<SocketClient>;
-	
-	var opened(default,null):Bool;
-	
-	var isWithLength:Bool;
-	
-	function send(b:BytesOutput):Void;
-	function sendString(s:String):Void;
-	function destroy():Void;
+	var onConnect(get, null): Signal1<SocketClient>;
+
+	var onOpen(get, null): Signal0;
+
+	var onData(get, null): Signal2<BytesInput, SocketClient>;
+	var onString(get, null): Signal2<String, SocketClient>;
+
+	var onClose(get, null): Signal0;
+	var onDisconnect(get, null): Signal1<SocketClient>;
+
+	var opened(default, null): Bool;
+
+	var isWithLength: Bool;
+
+	function send(b: BytesOutput): Void;
+	function sendString(s: String): Void;
+	function destroy(): Void;
+
 	#end
-	
+
 }

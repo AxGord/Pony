@@ -5,6 +5,8 @@
 "cross",
 "tools",
 "utils",
+"ui",
+"gui",
 "heaps",
 "pixi",
 "pixijs",

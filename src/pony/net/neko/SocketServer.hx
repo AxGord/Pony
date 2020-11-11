@@ -13,34 +13,34 @@ import pony.time.DeltaTime;
  */
 class SocketServer extends pony.net.SocketServerBase {
 
-	private var server:Socket = new Socket();
-	
-	public function new(port:Int) {
+	private var server: Socket = new Socket();
+
+	public function new(port: Int) {
 		super();
 		server.bind(new Host('127.0.0.1'), port);
 		server.listen(1000);
 		server.setBlocking(false);
 		DeltaTime.fixedUpdate << waitNewConnection;
 	}
-	
-	private function waitNewConnection():Void {
+
+	private function waitNewConnection(): Void {
 		try {
-			var client:Socket = server.accept();
+			var client: Socket = server.accept();
 			var cl = addClient();
 			cl.nekoInit(client);
 		} catch (s:String) {
-			if (s != 'Blocking')
-				error(s);
+			if (s != 'Blocking') error(s);
 		} catch (e:Any) {
 			error(e);
 		}
 	}
-	
-	override public function destroy():Void {
+
+	override public function destroy(): Void {
 		DeltaTime.fixedUpdate >> waitNewConnection;
 		super.destroy();
 		server.close();
 		server = null;
 	}
+
 }
 #end
