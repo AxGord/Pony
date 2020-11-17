@@ -1,5 +1,7 @@
 package pony.net.zmq;
 
+import pony.events.Signal0;
+import pony.events.Signal1;
 import pony.events.Signal2;
 import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
@@ -8,7 +10,9 @@ import pony.net.SocketClient;
 
 class ZmqClient extends Logable {
 
-	private static inline var FIRST_MESSAGE_RESPONCE_LENGTH: Int = 11;
+	private static inline var RESPONCE_CODE_LENGTH: Int = 1;
+	private static inline var FIRST_MESSAGE_RESPONCE_LENGTH_A: Int = FIRST_MESSAGE_RESPONCE_LENGTH_B + RESPONCE_CODE_LENGTH;
+	private static inline var FIRST_MESSAGE_RESPONCE_LENGTH_B: Int = 10;
 	private static inline var SECOND_MESSAGE_RESPONCE_LENGTH_A: Int = 52;
 	private static inline var SECOND_MESSAGE_RESPONCE_LENGTH_B: Int = 80;
 	private static var REQUEST_RESPONSE_CODE: Array<Int> = [0x03];
@@ -22,13 +26,19 @@ class ZmqClient extends Logable {
 	private static var CLIENT_THIRD_POSTFIX: Array<Int> = [0x51, 0x08, 0x49, 0x64, 0x65, 0x6E, 0x74, 0x69, 0x74, 0x79, 0x00, 0x00, 0x00, 0x00];
 	private static var SERVER_THIRD_PREFIX: Array<Int> = [0x04, 0x19];
 	private static var SERVER_THIRD_POSTFIX: Array<Int> = [0x50];
+	private static inline var DATA_CODE: Int = 0x01;
 
+	@:auto public var onOpen: Signal0;
+	@:auto public var onData: Signal1<BytesInput>;
+	public var opened(default, null): Bool = false;
 	private var socket: SocketClient;
+	private var first03complete: Int = 0;
+	private var stack: Array<BytesOutput> = [];
 
 	public function new(host: String = '127.0.0.1', port: Int) {
 		super();
 		socket = new SocketClient(host, port, -1, 0, false);
-		listenErrorAndLog(socket);
+		listenErrorAndLog(socket, 'ZMQ');
 		socket.onConnect < connectHandler;
 	}
 
@@ -37,14 +47,27 @@ class ZmqClient extends Logable {
 	}
 
 	private function firstDataHandler(bi: BytesInput): Void {
-		if (bi.length == FIRST_MESSAGE_RESPONCE_LENGTH && checkBytes(bi, [FIRST_MESSAGE_REQUEST, REQUEST_RESPONSE_CODE]))
-			sendBytes([REQUEST_RESPONSE_CODE, SECOND_MESSAGE_REQUEST]) < secondDataHander;
-		else
-			wrongBytes(bi, 'first');
+		switch bi.length {
+			case FIRST_MESSAGE_RESPONCE_LENGTH_A if (checkBytes(bi, [FIRST_MESSAGE_REQUEST, REQUEST_RESPONSE_CODE])):
+				sendBytes([REQUEST_RESPONSE_CODE, SECOND_MESSAGE_REQUEST]) < secondDataHander;
+			case FIRST_MESSAGE_RESPONCE_LENGTH_B if (checkBytes(bi, [FIRST_MESSAGE_REQUEST])):
+				sendBytes([REQUEST_RESPONSE_CODE]) < first03DataHander;
+			case _:
+				wrongBytes(bi, 'first');
+		}
+	}
+
+	private function first03DataHander(bi: BytesInput): Void {
+		if (bi.length == RESPONCE_CODE_LENGTH && checkBytes(bi, [REQUEST_RESPONSE_CODE])) {
+			first03complete = 1;
+			sendBytes([SECOND_MESSAGE_REQUEST]) < secondDataHander;
+		} else {
+			wrongBytes(bi, 'first 03');
+		}
 	}
 
 	private function secondDataHander(bi: BytesInput): Void {
-		switch bi.length {
+		switch bi.length - first03complete {
 			case SECOND_MESSAGE_RESPONCE_LENGTH_A if (checkBytes(bi, [SECOND_MESSAGE_REQUEST])):
 				sendBytes([CLIENT_THIRD_PREFIX, THIRD_MESSAGE, CLIENT_THIRD_POSTFIX]) < thirdDataHander;
 
@@ -67,11 +90,32 @@ class ZmqClient extends Logable {
 
 	private function handshake(): Void {
 		log('Handshake');
+		opened = true;
 		socket.onData << dataHandler;
+		for (bo in stack) socket.send(bo);
+		stack = [];
+		eOpen.dispatch();
+	}
+
+	public function send(bo: BytesOutput): Void {
+		var r: BytesOutput = new BytesOutput();
+		r.writeByte(DATA_CODE);
+		r.writeByte(0x00);
+		r.writeByte(0x00);
+		r.writeByte(bo.length);
+		r.write(bo.getBytes());
+		if (opened)
+			socket.send(r);
+		else
+			stack.push(r);
 	}
 
 	private function dataHandler(bi: BytesInput): Void {
-		trace('data', bi.length);
+		if (bi.readByte() == DATA_CODE && bi.readByte() == 0x00 && bi.readByte() == 0x00) {
+			eData.dispatch(new BytesInput(bi.read(bi.readByte())));
+		} else {
+			wrongBytes(bi, 'data');
+		}
 	}
 
 	private function sendBytes(arrays: Array<Array<Int>>): Signal2<BytesInput, SocketClient> {
