@@ -19,7 +19,7 @@ class ZmqClient extends Logable {
 	private static var FIRST_MESSAGE_REQUEST: Array<Int> = [0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x7F];
 	private static var SECOND_MESSAGE_REQUEST: Array<Int> = [0x00, 0x4E, 0x55, 0x4C, 0x4C].concat([for (_ in 0...48) 0x00]);
 	private static var THIRD_MESSAGE: Array<Int> = [0x05, 0x52, 0x45, 0x41, 0x44, 0x59, 0x0B, 0x53, 0x6F, 0x63, 0x6B, 0x65, 0x74, 0x2D,
-		0x54, 0x79, 0x70, 0x65, 0x00, 0x00, 0x00, 0x03, 0x52, 0x45];
+		0x54, 0x79, 0x70, 0x65, 0x00, 0x00, 0x00, 0x03, 0x52, 0x45]; // 0003  5355 4200 0101 for publisher
 	private static var CLIENT_CONCAT_THIRD_PREFIX: Array<Int> = [0x04, 0x19];
 	private static var CLIENT_CONCAT_THIRD_POSTFIX: Array<Int> = [0x50];
 	private static var CLIENT_THIRD_PREFIX: Array<Int> = [0x04, 0x26];
@@ -27,6 +27,7 @@ class ZmqClient extends Logable {
 	private static var SERVER_THIRD_PREFIX: Array<Int> = [0x04, 0x19];
 	private static var SERVER_THIRD_POSTFIX: Array<Int> = [0x50];
 	private static inline var DATA_CODE: Int = 0x01;
+	private static inline var MAX_BYTE: Int = 0xFF;
 
 	@:auto public var onOpen: Signal0;
 	@:auto public var onData: Signal1<BytesInput>;
@@ -99,10 +100,19 @@ class ZmqClient extends Logable {
 
 	public function send(bo: BytesOutput): Void {
 		var r: BytesOutput = new BytesOutput();
-		r.writeByte(DATA_CODE);
-		r.writeByte(0x00);
-		r.writeByte(0x00);
-		r.writeByte(bo.length);
+		if (bo.length <= MAX_BYTE) {
+			r.writeByte(DATA_CODE);
+			r.writeByte(0x00);
+			r.writeByte(0x00);
+			r.writeByte(bo.length);
+		} else {
+			r.writeByte(DATA_CODE);
+			r.writeByte(0x00);
+			r.writeByte(0x02);
+			for (_ in 0...5) r.writeByte(0x00);
+			r.writeByte(DATA_CODE);
+			r.writeByte(bo.length - MAX_BYTE);
+		}
 		r.write(bo.getBytes());
 		if (opened)
 			socket.send(r);
@@ -111,8 +121,23 @@ class ZmqClient extends Logable {
 	}
 
 	private function dataHandler(bi: BytesInput): Void {
-		if (bi.readByte() == DATA_CODE && bi.readByte() == 0x00 && bi.readByte() == 0x00) {
-			eData.dispatch(new BytesInput(bi.read(bi.readByte())));
+		if (bi.readByte() == DATA_CODE && bi.readByte() == 0x00) {
+			switch bi.readByte() {
+				case 0x00:
+					eData.dispatch(new BytesInput(bi.read(bi.readByte())));
+				case 0x02:
+					for (_ in 0...5) if (bi.readByte() != 0x00) {
+						wrongBytes(bi, 'data');
+						return;
+					}
+					if (bi.readByte() != 0x01) {
+						wrongBytes(bi, 'data');
+						return;
+					}
+					eData.dispatch(new BytesInput(bi.read(bi.readByte() + MAX_BYTE)));
+				case _:
+					wrongBytes(bi, 'data');
+			}
 		} else {
 			wrongBytes(bi, 'data');
 		}
