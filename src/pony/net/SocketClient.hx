@@ -2,6 +2,8 @@ package pony.net;
 
 import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
+import pony.events.Signal1;
+import pony.events.Signal2;
 
 /**
  * SocketClient
@@ -18,9 +20,14 @@ class SocketClient
 
 	private static inline var DEFAULT_LEN_BLOCK_SIZE: Int = 4;
 
+	@:auto public var onTask: Signal2<BytesInput, SocketClient>;
+
 	public var writeLengthSize: UInt;
 
 	private var stack: Array<BytesOutput>;
+	private var taskPrefix: BytesInput;
+	private var taskDataLength: Int = -1;
+	private var taskBuffer: BytesOutput;
 
 	override function sharedInit(): Void {
 		writeLengthSize = DEFAULT_LEN_BLOCK_SIZE;
@@ -71,6 +78,47 @@ class SocketClient
 
 	public function sendStack(): Void if (stack.length > 0) send(stack.shift());
 	public function sendAllStack(): Void while (stack.length > 0) send(stack.shift());
+
+	public inline function setTask(?prefix: BytesInput, len: UInt): Signal2<BytesInput, SocketClient> {
+		taskBuffer = new BytesOutput();
+		taskPrefix = prefix;
+		taskDataLength = len;
+		onData << taskDataHandler;
+		return onTask;
+	}
+
+	public inline function removeTask(): Void {
+		taskPrefix = null;
+		taskDataLength = -1;
+		onData >> taskDataHandler;
+	}
+
+	private function taskDataHandler(bi: BytesInput): Void {
+		if (taskPrefix != null) {
+			if (bi.length < taskPrefix.length - taskPrefix.position) {
+				if (taskPrefix.read(bi.length).compare(bi.readAll()) != 0) taskError();
+				return;
+			} else if (bi.read(taskPrefix.length - taskPrefix.position).compare(taskPrefix.readAll()) != 0) {
+				taskError();
+				return;
+			} else {
+				taskPrefix = null;
+			}
+		}
+		taskBuffer.write(bi.readAll());
+		if (taskBuffer.length >= taskDataLength) {
+			var b: BytesInput = new BytesInput(taskBuffer.getBytes());
+			var r: BytesInput = new BytesInput(b.read(taskDataLength));
+			removeTask();
+			eTask.dispatch(r, this);
+			taskDataHandler(new BytesInput(b.readAll()));
+		}
+	}
+
+	private inline function taskError(): Void {
+		removeTask();
+		eTask.dispatch(null, this);
+	}
 
 }
 #else
