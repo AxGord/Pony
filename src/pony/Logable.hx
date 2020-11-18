@@ -17,7 +17,11 @@ import pony.magic.HasSignal;
 
 	private static var origTrace: Null<Dynamic -> ?PosInfos -> Void>;
 
-	public function new() {}
+	private var logPrefix: String;
+
+	public function new(?prefix: String) {
+		logPrefix = prefix == null ? '' : prefix + DLM;
+	}
 
 	@:lazy public var onLog: Signal2<String, Null<PosInfos>>;
 	@:lazy public var onError: Signal2<String, Null<PosInfos>>;
@@ -27,7 +31,7 @@ import pony.magic.HasSignal;
 		if (id != null)
 			l.onError << function(s: String, p: PosInfos): Void eError.dispatch(id + DLM + s, p);
 		else
-			l.onError << eError;
+			l.onError << error;
 		#end
 	}
 
@@ -36,7 +40,7 @@ import pony.magic.HasSignal;
 		if (id != null)
 			l.onLog << function(s: String, p: PosInfos): Void eLog.dispatch(id + DLM + s, p);
 		else
-			l.onLog << eLog;
+			l.onLog << log;
 		#end
 	}
 
@@ -47,13 +51,13 @@ import pony.magic.HasSignal;
 
 	public inline function error(s: String, ?p: PosInfos): Void {
 		#if !disableErrors
-		eError.dispatch(s, p);
+		eError.dispatch(logPrefix + s, p);
 		#end
 	}
 
 	public inline function log(s: String, ?p: PosInfos): Void {
 		#if !disableLogs
-		eLog.dispatch(s, p);
+		eLog.dispatch(logPrefix + s, p);
 		#end
 	}
 

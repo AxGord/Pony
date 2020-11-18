@@ -203,6 +203,12 @@ class Tools {
 		return -1;
 	}
 
+	public static function joinBytes(bs: Array<Bytes>): Bytes {
+		var bo: BytesOutput = new BytesOutput();
+		for (b in bs) bo.write(b);
+		return bo.getBytes();
+	}
+
 	/**
 	 * @author BoBaH6eToH
 	 * @param	b

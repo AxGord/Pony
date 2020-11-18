@@ -246,4 +246,12 @@ class SocketClientBase extends Logable implements HasSignal {
 		});
 	}
 
+	public inline function enableLogInputData(): Void onData.add(logInputDataHandler, -1000);
+	public inline function disableLogInputData(): Void onData >> logInputDataHandler;
+
+	private function logInputDataHandler(bi: BytesInput): Void {
+		logBytes('Get data', bi.readAll());
+		bi.position = 0;
+	}
+
 }
