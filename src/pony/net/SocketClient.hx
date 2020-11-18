@@ -73,6 +73,12 @@ class SocketClient
 		}
 	}
 
+	public function sendBytes(b: Bytes): Void {
+		var bo: BytesOutput = new BytesOutput();
+		bo.write(b);
+		send(bo);
+	}
+
 	public function sendString(data: String): Void {
 		var bo: BytesOutput = new BytesOutput();
 		bo.writeString(data);
