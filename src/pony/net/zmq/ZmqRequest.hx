@@ -28,10 +28,10 @@ class ZmqRequest extends ZmqBase {
 			Bytes.ofHex('0419'), [postfix, Bytes.ofHex('50')].joinBytes()
 		);
 		onOpen < openHandler;
+		onOpen < listenData;
 	}
 
 	private function openHandler(): Void {
-		listenData();
 		for (bo in stack) socket.send(bo);
 		stack = [];
 	}
