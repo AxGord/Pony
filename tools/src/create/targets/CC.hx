@@ -13,7 +13,7 @@ class CC {
 		project.server.haxe = true;
 		project.haxelib.active = true;
 		project.haxelib.addLib('pony', Utils.ponyHaxelibVersion);
-		project.haxelib.addLib('hcc', '2.0.1');
+		project.haxelib.addLib('hcc', '2.0.3');
 
 		var build = !second ? project.build : project.secondbuild;
 		var uglify = !second ? project.uglify : project.seconduglify;
