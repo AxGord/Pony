@@ -14,11 +14,8 @@ using pony.Tools;
  */
 class ZmqRequest extends ZmqBase {
 
-	private static inline var MAX_BYTE: Int = 0xFF;
-	private static var DATA_CODE: Bytes = Bytes.ofHex('0100');
-
 	@:auto public var onData: Signal1<BytesInput>;
-	private var stack: Array<BytesOutput> = [];
+	@:auto public var onString: Signal1<String>;
 
 	public function new(host: String = '127.0.0.1', port: Int) {
 		var postfix: Bytes = Bytes.ofHex('5245');
@@ -27,16 +24,16 @@ class ZmqRequest extends ZmqBase {
 			Bytes.ofHex('0426'), [postfix, Bytes.ofHex('51084964656E7469747900000000')].joinBytes(),
 			Bytes.ofHex('0419'), [postfix, Bytes.ofHex('50')].joinBytes()
 		);
-		onOpen < openHandler;
 		onOpen < listenData;
+		eString.onTake << takeStringListener;
+		eString.onLost << lostStringListener;
 	}
 
-	private function openHandler(): Void {
-		for (bo in stack) socket.send(bo);
-		stack = [];
-	}
+	private function takeStringListener(): Void onData << dataStringHandler;
+	private function lostStringListener(): Void onData >> dataStringHandler;
+	private function dataStringHandler(bi: BytesInput): Void eString.dispatch(bi.readAll().toString());
 
-	private function listenData(): Void socket.setTaskb(DATA_CODE, 1) < dataFirstHandler;
+	private function listenData(): Void socket.setTaskb(ZmqBase.DATA_CODE, 1) < dataFirstHandler;
 
 	private function dataFirstHandler(bi: BytesInput): Void {
 		switch bi.readByte() {
@@ -58,32 +55,22 @@ class ZmqRequest extends ZmqBase {
 		listenLen(Int64.make(bi.readInt32(), bi.readInt32()));
 	}
 
-	public function send(bo: BytesOutput): Signal1<BytesInput> {
-		var r: BytesOutput = new BytesOutput();
-		r.bigEndian = true;
-		if (bo.length <= MAX_BYTE) {
-			r.write(DATA_CODE);
-			r.writeByte(0x00);
-			r.writeByte(bo.length);
-		} else {
-			r.write(DATA_CODE);
-			r.writeByte(0x02);
-			var len: Int64 = bo.length;
-			r.writeInt32(len.high);
-			r.writeInt32(len.low);
-		}
-		r.write(bo.getBytes());
-		if (opened)
-			socket.send(r);
-		else
-			stack.push(r);
+	public inline function send(bo: BytesOutput): Signal1<BytesInput> {
+		_send(bo);
 		return onData;
 	}
 
-	public function sendb(b: Bytes): Signal1<BytesInput> {
+	public inline function sendBytes(b: Bytes): Signal1<BytesInput> {
 		var bo: BytesOutput = new BytesOutput();
 		bo.write(b);
 		return send(bo);
+	}
+
+	public inline function sendString(s: String): Signal1<String> {
+		var bo: BytesOutput = new BytesOutput();
+		bo.writeString(s);
+		send(bo);
+		return onString;
 	}
 
 }

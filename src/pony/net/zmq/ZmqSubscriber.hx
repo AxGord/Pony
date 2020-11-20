@@ -4,6 +4,7 @@ import haxe.Int64;
 import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
 import haxe.io.Bytes;
+import pony.events.Event2;
 import pony.events.Signal2;
 
 using pony.Tools;
@@ -14,40 +15,46 @@ using pony.Tools;
  */
 class ZmqSubscriber extends ZmqBase {
 
-	private static var SUBSCRIBE_CODE: Bytes = Bytes.ofHex('000101');
+	private static inline var SUBSCRIBE_CODE: Int = 0x01;
+	private static inline var UNSUBSCRIBE_CODE: Int = 0x00;
 
-	@:auto public var onData: Signal2<BytesInput, BytesInput>;
+	@:auto public var onData: Signal2<String, BytesInput>;
 
-	private var stack: Array<Bytes> = [];
-	private var currentSubject: BytesInput;
+	private var currentSubject: String;
+	private var subscribes: Map<String, Event2<String, BytesInput>> = new Map<String, Event2<String, BytesInput>>();
 
 	public function new(host: String = '127.0.0.1', port: Int) {
 		var prefix: Bytes = Bytes.ofHex('0419');
 		var postfix: Bytes = Bytes.ofHex('5542');
 		super(host, port, prefix, [Bytes.ofHex('53'), postfix].joinBytes(), prefix, [Bytes.ofHex('50'), postfix].joinBytes());
-		onOpen < openHandler;
 		onOpen < listenData;
 	}
 
-	public function subscribe(): Void {
-		sendBytes(SUBSCRIBE_CODE);
+	public function subscribe(subject: String = ''): Signal2<String, BytesInput> {
+		if (subscribes.exists(subject)) return subscribes[subject];
+		var bo: BytesOutput = new BytesOutput();
+		bo.writeByte(SUBSCRIBE_CODE);
+		bo.writeString(subject);
+		_send(bo);
+		var event: Event2<String, BytesInput> = new Event2<String, BytesInput>();
+		function dataHandler(s: String, b: BytesInput): Void if (s.substr(0, subject.length) == subject) event.dispatch(s, b);
+		event.onTake << function(): Void onData << dataHandler;
+		event.onLost << function(): Void onData >> dataHandler;
+		subscribes[subject] = event;
+		return event;
 	}
 
-	private function openHandler(): Void {
-		for (bo in stack) socket.sendBytes(bo);
-		stack = [];
+	public function unsubscribe(subject: String = ''): Void {
+		if (!subscribes.exists(subject)) return;
+		subscribes[subject].destroy();
+		subscribes.remove(subject);
+		var bo: BytesOutput = new BytesOutput();
+		bo.writeByte(UNSUBSCRIBE_CODE);
+		bo.writeString(subject);
+		_send(bo);
 	}
 
-	private function sendBytes(b: Bytes): Void {
-		if (opened)
-			socket.sendBytes(SUBSCRIBE_CODE);
-		else
-			stack.push(b);
-	}
-
-	private function listenData(): Void {
-		socket.setTask(1) < subjectDataHandler;
-	}
+	private function listenData(): Void socket.setTask(1) < subjectDataHandler;
 
 	private function subjectDataHandler(bi: BytesInput): Void {
 		switch bi.readByte() {
@@ -67,7 +74,7 @@ class ZmqSubscriber extends ZmqBase {
 	private inline function listenSubject(len: Int64): Void socket.setTask(len) < subjectHandler;
 
 	private function subjectHandler(bi: BytesInput): Void {
-		currentSubject = bi;
+		currentSubject = bi.readAll().toString();
 		socket.setTask(1) < contentDataHandler;
 	}
 

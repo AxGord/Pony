@@ -1,5 +1,6 @@
 package pony.net.zmq;
 
+import haxe.Int64;
 import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
 import haxe.io.Bytes;
@@ -14,6 +15,8 @@ using pony.Tools;
  */
 class ZmqBase extends Logable {
 
+	private static inline var MAX_BYTE: Int = 0xFF;
+	private static var DATA_CODE: Bytes = Bytes.ofHex('0100');
 	private static var REQUEST_RESPONSE_CODE: Bytes = Bytes.ofHex('03');
 	private static var FIRST_MESSAGE_REQUEST: Bytes = Bytes.ofHex('FF00000000000000017F');
 	private static var SECOND_MESSAGE_REQUEST: Bytes = Bytes.ofHex('004E554C4C' + [for (_ in 0...48) '00'].join(''));
@@ -26,6 +29,7 @@ class ZmqBase extends Logable {
 	private var clientMessagePostfix: Bytes;
 	private var serverMessagePrefix: Bytes;
 	private var serverMessagePostfix: Bytes;
+	private var outcoming: BytesOutput = new BytesOutput();
 
 	private function new(
 		host: String = '127.0.0.1', port: Int,
@@ -41,6 +45,16 @@ class ZmqBase extends Logable {
 		socket.onTaskError << fatal.bind('task error');
 		listenErrorAndLog(socket);
 		socket.onConnect < connectHandler;
+		onOpen << openHandler;
+	}
+
+	private function openHandler(): Void {
+		log('Handshake');
+		opened = true;
+		if (outcoming.length > 0) {
+			socket.send(outcoming);
+			outcoming = null;
+		}
 	}
 
 	private function connectHandler(): Void socket.sendSetTaskSym(FIRST_MESSAGE_REQUEST) < firstTaskHandler;
@@ -49,12 +63,27 @@ class ZmqBase extends Logable {
 	private function thirdTaskHandler(): Void socket.sendSetTask(
 		[clientMessagePrefix, THIRD_MESSAGE, clientMessagePostfix].joinBytes(),
 		[serverMessagePrefix, THIRD_MESSAGE, serverMessagePostfix].joinBytes()
-	) < handshake;
+	) < eOpen;
 
-	private function handshake(): Void {
-		log('Handshake');
-		opened = true;
-		eOpen.dispatch();
+	private function _send(bo: BytesOutput): Void {
+		var r: BytesOutput = new BytesOutput();
+		r.bigEndian = true;
+		if (bo.length <= MAX_BYTE) {
+			r.write(DATA_CODE);
+			r.writeByte(0x00);
+			r.writeByte(bo.length);
+		} else {
+			r.write(DATA_CODE);
+			r.writeByte(0x02);
+			var len: Int64 = bo.length;
+			r.writeInt32(len.high);
+			r.writeInt32(len.low);
+		}
+		r.write(bo.getBytes());
+		if (opened)
+			socket.send(r);
+		else
+			outcoming.write(r.getBytes());
 	}
 
 	public function fatal(msg: String): Void {
