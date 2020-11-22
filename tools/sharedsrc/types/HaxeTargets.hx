@@ -4,5 +4,6 @@ package types;
 
 	var JS = 'js';
 	var Neko = 'neko';
+	// var Swf = 'swf';
 
 }
