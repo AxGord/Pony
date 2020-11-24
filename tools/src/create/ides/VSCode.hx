@@ -106,7 +106,6 @@ class VSCode {
 				request: 'launch',
 				name: 'Launch Program',
 				program: "${workspaceFolder}/" + output + '/' + app,
-				runtimeExecutable: "flashplayerdebugger",
 				cwd: "${workspaceFolder}/" + output,
 				preLaunchTask: PRELAUNCH_TASK,
 				console: 'internalConsole',
