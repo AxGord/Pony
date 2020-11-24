@@ -8,20 +8,20 @@ import sys.FileSystem;
  */
 class VSCode {
 
-	private static inline var PRELAUNCH_TASK:String = 'default';
-	private static inline var ANDROID_TASK:String = 'pony android';
-	private static inline var IPHONE_TASK:String = 'pony iphone';
+	private static inline var PRELAUNCH_TASK: String = 'default';
+	private static inline var ANDROID_TASK: String = 'pony android';
+	private static inline var IPHONE_TASK: String = 'pony iphone';
 
-	public static var allowCreate(get, never):Bool;
+	public static var allowCreate(get, never): Bool;
 
-	private static var cordova:Bool = false;
+	private static var cordova: Bool = false;
 
-	private static function get_allowCreate():Bool return !FileSystem.exists('.vscode');
+	private static function get_allowCreate(): Bool return !FileSystem.exists('.vscode');
 
-	public static function createDir():Void FileSystem.createDirectory('.vscode');
+	public static function createDir(): Void FileSystem.createDirectory('.vscode');
 
-	public static function create(ponycmd:String, auto:Bool = false):Void {
-		var tasks:Array<Any> = [];
+	public static function create(ponycmd: String, auto: Bool = false): Void {
+		var tasks: Array<Any> = [];
 		var matcher: Array<String> = ["$haxe-absolute", "$haxe", "$haxe-error", "$haxe-trace"];
 
 		if (ponycmd != null)
@@ -73,28 +73,40 @@ class VSCode {
 		Utils.saveJson('.vscode/tasks.json', data);
 	}
 
-	public static function createExtensions(chrome: Bool, flash: Bool = false): Void {
-		var data: Array<String> = [
-			'nadako.vshaxe',
-			'vshaxe.haxe-checkstyle',
-			'wiggin77.codedox'
-		];
+	public static function createExtensions(chrome: Bool = false, flash: Bool = false): Void {
+		var data: Array<String> = ['nadako.vshaxe', 'vshaxe.haxe-checkstyle', 'wiggin77.codedox'];
 		if (cordova)
 			data.push('msjsdiag.cordova-tools');
 		if (chrome)
 			data.push('msjsdiag.debugger-for-chrome');
 		if (flash)
 			data.push('bowlerhatllc.vscode-swf-debug');
-		Utils.saveJson('.vscode/extensions.json', { recommendations: data });
+		Utils.saveJson('.vscode/extensions.json', {recommendations: data});
 	}
 
-	public static function createNode(output:String, app:String):Void {
+	public static function createFlash(output: String, app: String): Void {
+		saveConfig([
+			{
+				type: 'swf',
+				request: 'launch',
+				name: 'Launch Program',
+				program: '$output$app.swf',
+				preLaunchTask: PRELAUNCH_TASK,
+				console: 'internalConsole',
+				internalConsoleOptions: 'openOnSessionStart'
+			}
+		]);
+		createExtensions(false, true);
+	}
+
+	public static function createNode(output: String, app: String): Void {
 		saveConfig([
 			{
 				type: 'node',
 				request: 'launch',
 				name: 'Launch Program',
 				program: "${workspaceFolder}/" + output + '/' + app,
+				runtimeExecutable: "flashplayerdebugger",
 				cwd: "${workspaceFolder}/" + output,
 				preLaunchTask: PRELAUNCH_TASK,
 				console: 'internalConsole',
@@ -104,12 +116,12 @@ class VSCode {
 		createExtensions(false);
 	}
 
-	public static function createChrome(httpPort:Int):Void {
+	public static function createChrome(httpPort: Int): Void {
 		saveConfig(chromeConfig(httpPort));
 		createExtensions(true);
 	}
 
-	public static function createCordova(httpPort:Int):Void {
+	public static function createCordova(httpPort: Int): Void {
 		cordova = true;
 		saveConfig(chromeConfig(httpPort).concat([
 			{
@@ -205,8 +217,8 @@ class VSCode {
 		createExtensions(true);
 	}
 
-	private static function chromeConfig(httpPort:Int):Array<Any> {
-		var launch:String = 'Launch Chrome';
+	private static function chromeConfig(httpPort: Int): Array<Any> {
+		var launch: String = 'Launch Chrome';
 		return [
 			{
 				type: 'chrome',
@@ -221,7 +233,7 @@ class VSCode {
 		];
 	}
 
-	private static function saveConfig(configurations:Array<Any>):Void {
+	private static function saveConfig(configurations: Array<Any>): Void {
 		var data = {
 			version: '0.2.0',
 			configurations: configurations
@@ -229,13 +241,13 @@ class VSCode {
 		Utils.saveJson('.vscode/launch.json', data);
 	}
 
-	public static function createElectron(output:String):Void {
-		var confNamePrefix:String = 'Electron: ';
-		var mainConfName:String = confNamePrefix + 'Main';
-		var renderConfName:String = confNamePrefix + 'Renderer';
-		var resultDir:String = "${workspaceFolder}/" + output;
-		var electronExecutable:String = resultDir + 'node_modules/.bin/electron';
-		var port:Int = 9222;
+	public static function createElectron(output: String): Void {
+		var confNamePrefix: String = 'Electron: ';
+		var mainConfName: String = confNamePrefix + 'Main';
+		var renderConfName: String = confNamePrefix + 'Renderer';
+		var resultDir: String = "${workspaceFolder}/" + output;
+		var electronExecutable: String = resultDir + 'node_modules/.bin/electron';
+		var port: Int = 9222;
 		var data = {
 			version: '0.2.0',
 			configurations: [
@@ -245,16 +257,13 @@ class VSCode {
 					name: mainConfName,
 					protocol: 'inspector',
 					runtimeExecutable: electronExecutable,
-					runtimeArgs: [
-						output,
-						'--remote-debugging-port=$port'
-					],
+					runtimeArgs: [output, '--remote-debugging-port=$port'],
 					windows: {
 						runtimeExecutable: electronExecutable + '.cmd'
 					},
 					preLaunchTask: PRELAUNCH_TASK,
 					internalConsoleOptions: 'neverOpen'
-				}:Dynamic),
+				} : Dynamic),
 				({
 					name: renderConfName,
 					type: 'chrome',
@@ -263,7 +272,7 @@ class VSCode {
 					webRoot: resultDir,
 					timeout: 20000,
 					internalConsoleOptions: 'openOnSessionStart'
-				}:Dynamic)
+				} : Dynamic)
 			],
 			compounds: [
 				{

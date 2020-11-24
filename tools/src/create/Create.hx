@@ -88,10 +88,10 @@ class Create {
 		switch type {
 			case ProjectType.Neko:
 				project.build.createEmptyMainhx();
-				if (vscAllow) VSCode.createExtensions(false);
+				if (vscAllow) VSCode.createExtensions();
 			case ProjectType.Swf:
 				project.build.createEmptyMainhx();
-				if (vscAllow) VSCode.createExtensions(false, true);
+				if (vscAllow) VSCode.createFlash(project.build.outputPath, outputFile);
 			case ProjectType.JS:
 				project.build.createMainhx('jstemplate.hx.tpl');
 				if (vscAllow) VSCode.createChrome(project.server.httpPort);
