@@ -42,6 +42,7 @@ class Create {
 			case ProjectType.Server: create.targets.Server.set(project);
 			case ProjectType.Sniff: create.targets.Server.sniff(project);
 			case ProjectType.JS: create.targets.JS.set(project);
+			case ProjectType.Swf: create.targets.Swf.set(project);
 			case ProjectType.CC: create.targets.CC.set(project);
 			case ProjectType.Pixi, ProjectType.Pixixml: create.targets.Pixi.set(project);
 			case ProjectType.Heaps, ProjectType.Heapsxml: create.targets.Heaps.set(project);
@@ -88,6 +89,9 @@ class Create {
 			case ProjectType.Neko:
 				project.build.createEmptyMainhx();
 				if (vscAllow) VSCode.createExtensions(false);
+			case ProjectType.Swf:
+				project.build.createEmptyMainhx();
+				if (vscAllow) VSCode.createExtensions(false, true);
 			case ProjectType.JS:
 				project.build.createMainhx('jstemplate.hx.tpl');
 				if (vscAllow) VSCode.createChrome(project.server.httpPort);

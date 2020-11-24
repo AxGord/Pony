@@ -22,6 +22,7 @@ class Build extends Section {
 	public var dce: String = 'full';
 	public var analyzerOptimize: Bool = true;
 	public var esVersion: Int = null;
+	public var fdb: Bool = false;
 
 	public function new() super('build');
 
@@ -52,6 +53,7 @@ class Build extends Section {
 			if (dce != null) prepare.addChild(XmlTools.node('dce', dce));
 			if (analyzerOptimize) prepare.addChild(XmlTools.node('d', 'analyzer-optimize'));
 			if (esVersion != null) prepare.addChild(XmlTools.node('d', 'js-es$esVersion'));
+			if (fdb) prepare.addChild(XmlTools.node('d', 'fdb'));
 
 			xml.addChild(prepare);
 
@@ -84,6 +86,7 @@ class Build extends Section {
 		return switch target {
 			case HaxeTargets.JS: '.js';
 			case HaxeTargets.Neko: '.n';
+			case HaxeTargets.Swf: '.swf';
 		}
 	}
 

@@ -34,6 +34,7 @@
 		"vshaxe.haxe-checkstyle",
 		"msjsdiag.debugger-for-chrome",
 		"vsmobile.cordova-tools",
-		"coenraads.bracket-pair-colorizer"
+		"coenraads.bracket-pair-colorizer",
+		"bowlerhatllc.vscode-swf-debug"
 	]
 }

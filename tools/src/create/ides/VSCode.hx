@@ -73,7 +73,7 @@ class VSCode {
 		Utils.saveJson('.vscode/tasks.json', data);
 	}
 
-	public static function createExtensions(chrome: Bool): Void {
+	public static function createExtensions(chrome: Bool, flash: Bool = false): Void {
 		var data: Array<String> = [
 			'nadako.vshaxe',
 			'vshaxe.haxe-checkstyle',
@@ -83,6 +83,8 @@ class VSCode {
 			data.push('msjsdiag.cordova-tools');
 		if (chrome)
 			data.push('msjsdiag.debugger-for-chrome');
+		if (flash)
+			data.push('bowlerhatllc.vscode-swf-debug');
 		Utils.saveJson('.vscode/extensions.json', { recommendations: data });
 	}
 

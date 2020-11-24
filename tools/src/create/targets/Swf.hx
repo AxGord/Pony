@@ -12,7 +12,8 @@ class Swf {
 		project.haxelib.active = true;
 		project.haxelib.addLib('pony', Utils.ponyHaxelibVersion);
 		project.build.active = true;
-		// project.build.target = types.HaxeTargets.Swf;
+		project.build.target = types.HaxeTargets.Swf;
+		project.build.fdb = true;
 	}
 
 }
