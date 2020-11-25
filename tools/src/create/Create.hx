@@ -42,7 +42,7 @@ class Create {
 			case ProjectType.Server: create.targets.Server.set(project);
 			case ProjectType.Sniff: create.targets.Server.sniff(project);
 			case ProjectType.JS: create.targets.JS.set(project);
-			case ProjectType.Swf: create.targets.Swf.set(project);
+			case ProjectType.Swf, ProjectType.Air: create.targets.Swf.set(project);
 			case ProjectType.CC: create.targets.CC.set(project);
 			case ProjectType.Pixi, ProjectType.Pixixml: create.targets.Pixi.set(project);
 			case ProjectType.Heaps, ProjectType.Heapsxml: create.targets.Heaps.set(project);
@@ -92,6 +92,8 @@ class Create {
 			case ProjectType.Swf:
 				project.build.createEmptyMainhx();
 				if (vscAllow) VSCode.createFlash(project.build.outputPath, outputFile);
+			case ProjectType.Air:
+				createAirData(project, vscAllow);
 			case ProjectType.JS:
 				project.build.createMainhx('jstemplate.hx.tpl');
 				if (vscAllow) VSCode.createChrome(project.server.httpPort);
@@ -140,11 +142,15 @@ class Create {
 				return;
 			case _:
 		}
-
 		var ponycmd: String = type == ProjectType.Neko ? 'run' : 'build';
 		if (vscAllow) VSCode.create(ponycmd, type == ProjectType.CC);
 		if (project.name != null) HaxeDevelop.create(project.name, project.getMain(), project.getLibs(), project.getCps(), ponycmd);
 		Gitignore.create(project, type);
+	}
+
+	private static function createAirData(project: Project, vscAllow: Bool): Void {
+		project.build.createEmptyMainhx();
+		if (vscAllow) VSCode.createAir(project.build.outputPath, outputFile);
 	}
 
 	public static function createIndexHtml(project: Project): Void {

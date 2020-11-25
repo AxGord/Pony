@@ -73,30 +73,58 @@ class VSCode {
 		Utils.saveJson('.vscode/tasks.json', data);
 	}
 
-	public static function createExtensions(chrome: Bool = false, flash: Bool = false): Void {
+	public static function createExtensions(chrome: Bool = false, flash: Bool = false, asconfig: Bool = false): Void {
 		var data: Array<String> = ['nadako.vshaxe', 'vshaxe.haxe-checkstyle', 'wiggin77.codedox'];
 		if (cordova)
 			data.push('msjsdiag.cordova-tools');
 		if (chrome)
 			data.push('msjsdiag.debugger-for-chrome');
-		if (flash)
+		if (asconfig)
+			data.push('bowlerhatllc.vscode-nextgenas');
+		if (flash) {
 			data.push('bowlerhatllc.vscode-swf-debug');
+			data.push('lonewolf.vscode-astools');
+		}
 		Utils.saveJson('.vscode/extensions.json', {recommendations: data});
 	}
 
 	public static function createFlash(output: String, app: String): Void {
+		saveConfig([swfLaunch(output, app)]);
+		createExtensions(false, true);
+	}
+
+	public static function createAir(output: String, app: String): Void {
 		saveConfig([
+			swfLaunch(output, app),
 			{
 				type: 'swf',
 				request: 'launch',
-				name: 'Launch Program',
-				program: '$output$app.swf',
-				preLaunchTask: PRELAUNCH_TASK,
-				console: 'internalConsole',
+				name: 'Launch AIR desktop',
+				preLaunchTask: 'air_desktop_debug',
+				profile: 'desktop',
+				program: '${output}air-app.xml',
+				windows: {
+					runtimeExecutable: 'adl64'
+				},
+				osx: {
+					runtimeExecutable: 'adl'
+				},
 				internalConsoleOptions: 'openOnSessionStart'
 			}
 		]);
-		createExtensions(false, true);
+		createExtensions(false, true, true);
+	}
+
+	public static function swfLaunch(output: String, app: String): Any {
+		return {
+			type: 'swf',
+			request: 'launch',
+			name: 'Launch Flash Player',
+			program: '$output$app.swf',
+			preLaunchTask: PRELAUNCH_TASK,
+			console: 'internalConsole',
+			internalConsoleOptions: 'openOnSessionStart'
+		}
 	}
 
 	public static function createNode(output: String, app: String): Void {
