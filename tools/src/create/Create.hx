@@ -17,6 +17,7 @@ class Create {
 
 	private static var outputFile: String = 'app';
 	private static var formatFile: String = 'hxformat.json';
+	private static var testSertFile: String = 'testcert.p12';
 
 	public static function run(sType: String, name: String): Void {
 		// todo: create remote key@host:port
@@ -150,6 +151,14 @@ class Create {
 
 	private static function createAirData(project: Project, vscAllow: Bool): Void {
 		project.build.createEmptyMainhx();
+		Template.gen('air/', [
+			'asconfig.json' => 'asconfig.json'
+		], [
+			'OUTPUT' => project.build.outputPath,
+			'APP' => project.build.outputFile,
+			'SERT' => testSertFile
+		]);
+		File.copy(Utils.toolsPath + testSertFile, Sys.getCwd() + testSertFile);
 		if (vscAllow) VSCode.createAir(project.build.outputPath, outputFile);
 	}
 
@@ -158,7 +167,6 @@ class Create {
 			'TITLE' => project.rname,
 			'APP' => project.build.getOutputFile()
 		]);
-
 	}
 
 	private static function createElectronData(project: Project, vscAllow: Bool): Void {

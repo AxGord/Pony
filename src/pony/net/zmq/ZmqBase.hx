@@ -20,7 +20,7 @@ class ZmqBase extends Logable {
 	private static var REQUEST_RESPONSE_CODE: Bytes = Bytes.ofHex('03');
 	private static var FIRST_MESSAGE_REQUEST: Bytes = Bytes.ofHex('FF00000000000000017F');
 	private static var SECOND_MESSAGE_REQUEST: Bytes = Bytes.ofHex('004E554C4C' + [for (_ in 0...48) '00'].join(''));
-	private static var THIRD_MESSAGE: Bytes = Bytes.ofHex('0552454144590B536F636B65742D5479706500000003'); // 0003  5355 4200 0101 for publisher
+	private static var THIRD_MESSAGE: Bytes = Bytes.ofHex('0552454144590B536F636B65742D5479706500000003');
 
 	@:auto public var onOpen: Signal0;
 	public var opened(default, null): Bool = false;
