@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<application xmlns="http://ns.adobe.com/air/application/33.1">
+    <id>::APP::</id>
+    <architecture>64</architecture>
+    <versionNumber>0.0.1</versionNumber>
+    <filename>::APP::</filename>
+    <name>::APP::</name>
+    <copyright></copyright>
+    <initialWindow>
+        <title>::APP::</title>
+        <autoOrients>false</autoOrients>
+		<content>::APP::::EXT::</content>
+        <transparent>false</transparent>
+        <visible>true</visible>
+        <minSize>800 600</minSize>
+        <width>1024</width>
+        <height>768</height>
+        <renderMode>direct</renderMode>
+    </initialWindow>
+    <installFolder>::APP::</installFolder>
+    <programMenuFolder>::APP::</programMenuFolder>
+</application>

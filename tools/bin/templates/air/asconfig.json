@@ -16,7 +16,7 @@
 		"source-path": [
 			"src"
 		],
-        "output": "::OUTPUT::::APP::.swf",
+        "output": "::OUTPUT::::APP::::EXT::",
         "debug": true,
         "default-frame-rate": 24,
         "use-network": true

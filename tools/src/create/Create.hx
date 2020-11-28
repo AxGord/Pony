@@ -34,8 +34,16 @@ class Create {
 		setProjectConfig(project, type);
 		Utils.savePonyProject(project.result());
 		createProjectData(project, type);
-		File.copy(Tools.ponyPath() + formatFile, Sys.getCwd() + formatFile);
+		copyFromPony(formatFile);
 		Utils.command('pony', ['prepare']);
+	}
+
+	private static function copyFromPony(file: String, ?to: String): Void {
+		File.copy(Tools.ponyPath() + file, Sys.getCwd() + (to != null ? to : file));
+	}
+
+	private static function copyFromTools(file: String, ?to: String): Void {
+		File.copy(Utils.toolsPath + file, Sys.getCwd() + (to != null ? to : file));
 	}
 
 	private static function setProjectConfig(project: Project, type: ProjectType): Void {
@@ -152,13 +160,15 @@ class Create {
 	private static function createAirData(project: Project, vscAllow: Bool): Void {
 		project.build.createEmptyMainhx();
 		Template.gen('air/', [
-			'asconfig.json' => 'asconfig.json'
+			'asconfig.json' => 'asconfig.json',
+			'air-app.xml' => '::OUTPUT::air-app.xml'
 		], [
 			'OUTPUT' => project.build.outputPath,
 			'APP' => project.build.outputFile,
+			'EXT' => project.build.outputExt(),
 			'SERT' => testSertFile
 		]);
-		File.copy(Utils.toolsPath + testSertFile, Sys.getCwd() + testSertFile);
+		copyFromTools(testSertFile);
 		if (vscAllow) VSCode.createAir(project.build.outputPath, outputFile);
 	}
 

@@ -17,6 +17,11 @@ class Template {
 				Sys.println('File exists, skip: $out');
 			} else {
 				Sys.println('Generate: $out');
+				var index: Int = out.lastIndexOf('/');
+				if (index != -1) {
+					var p: String = out.substr(0, index);
+					if (!FileSystem.exists(p)) FileSystem.createDirectory(p);
+				}
 				File.saveContent(out, replaceVars(File.getContent(path + file), vars));
 			}
 		}

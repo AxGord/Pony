@@ -100,7 +100,7 @@ class VSCode {
 				type: 'swf',
 				request: 'launch',
 				name: 'Launch AIR desktop',
-				preLaunchTask: 'air_desktop_debug',
+				preLaunchTask: PRELAUNCH_TASK,
 				profile: 'desktop',
 				program: '${output}air-app.xml',
 				windows: {
