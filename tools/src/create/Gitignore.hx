@@ -54,6 +54,9 @@ class Gitignore {
 				result.push(ROOT + project.build.outputPath + NODE_MODULES);
 				result.push(ROOT + project.build.outputPath + PACKAGE_LOCK);
 			case ProjectType.Server: return;
+			case ProjectType.Air:
+				result.push(project.build.outputPath + project.build.outputFile + '.app'); // macos
+				result.push(project.build.outputPath + project.build.outputFile + '/'); // windows
 			case _:
 		}
 		Sys.println('Save gitignore file');

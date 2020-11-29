@@ -39,11 +39,11 @@ class Create {
 	}
 
 	private static function copyFromPony(file: String, ?to: String): Void {
-		File.copy(Tools.ponyPath() + file, Sys.getCwd() + (to != null ? to : file));
+		File.copy(Tools.ponyPath() + file, Sys.getCwd() + (to != null ? to + file : file));
 	}
 
 	private static function copyFromTools(file: String, ?to: String): Void {
-		File.copy(Utils.toolsPath + file, Sys.getCwd() + (to != null ? to : file));
+		File.copy(Utils.toolsPath + file, Sys.getCwd() + (to != null ? to + file : file));
 	}
 
 	private static function setProjectConfig(project: Project, type: ProjectType): Void {
@@ -51,7 +51,7 @@ class Create {
 			case ProjectType.Server: create.targets.Server.set(project);
 			case ProjectType.Sniff: create.targets.Server.sniff(project);
 			case ProjectType.JS: create.targets.JS.set(project);
-			case ProjectType.Swf, ProjectType.Air: create.targets.Swf.set(project);
+			case ProjectType.Swf, ProjectType.Air: create.targets.Swf.set(project, testSertFile);
 			case ProjectType.CC: create.targets.CC.set(project);
 			case ProjectType.Pixi, ProjectType.Pixixml: create.targets.Pixi.set(project);
 			case ProjectType.Heaps, ProjectType.Heapsxml: create.targets.Heaps.set(project);
@@ -160,15 +160,14 @@ class Create {
 	private static function createAirData(project: Project, vscAllow: Bool): Void {
 		project.build.createEmptyMainhx();
 		Template.gen('air/', [
-			'asconfig.json' => 'asconfig.json',
-			'air-app.xml' => '::OUTPUT::air-app.xml'
+			create.targets.Swf.APP_XML => '::OUTPUT::' + create.targets.Swf.APP_XML
 		], [
 			'OUTPUT' => project.build.outputPath,
 			'APP' => project.build.outputFile,
 			'EXT' => project.build.outputExt(),
 			'SERT' => testSertFile
 		]);
-		copyFromTools(testSertFile);
+		copyFromTools(testSertFile, project.build.outputPath);
 		if (vscAllow) VSCode.createAir(project.build.outputPath, outputFile);
 	}
 

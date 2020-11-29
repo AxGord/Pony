@@ -15,6 +15,7 @@ class VSCode {
 	public static var allowCreate(get, never): Bool;
 
 	private static var cordova: Bool = false;
+	private static var air: Bool = false;
 
 	private static function get_allowCreate(): Bool return !FileSystem.exists('.vscode');
 
@@ -24,7 +25,26 @@ class VSCode {
 		var tasks: Array<Any> = [];
 		var matcher: Array<String> = ["$haxe-absolute", "$haxe", "$haxe-error", "$haxe-trace"];
 
-		if (ponycmd != null)
+		if (air) {
+			tasks.push({
+				runOptions: {runOn: auto ? 'folderOpen' : 'default'},
+				label: PRELAUNCH_TASK,
+				type: 'shell',
+				command: 'pony $ponycmd debug',
+				problemMatcher: matcher
+			});
+			tasks.push({
+				runOptions: {runOn: auto ? 'folderOpen' : 'default'},
+				label: 'bundle',
+				type: 'shell',
+				command: 'pony run',
+				group: {
+					kind: 'build',
+					isDefault: true
+				},
+				problemMatcher: matcher
+			});
+		} else if (ponycmd != null) {
 			tasks.push({
 				runOptions: {runOn: auto ? 'folderOpen' : 'default'},
 				label: PRELAUNCH_TASK,
@@ -36,6 +56,7 @@ class VSCode {
 				},
 				problemMatcher: matcher
 			});
+		}
 
 		if (cordova) {
 			tasks.push({
@@ -94,6 +115,7 @@ class VSCode {
 	}
 
 	public static function createAir(output: String, app: String): Void {
+		air = true;
 		saveConfig([
 			swfLaunch(output, app),
 			{
@@ -103,11 +125,9 @@ class VSCode {
 				preLaunchTask: PRELAUNCH_TASK,
 				profile: 'desktop',
 				program: '${output}air-app.xml',
+				runtimeExecutable: 'adl',
 				windows: {
 					runtimeExecutable: 'adl64'
-				},
-				osx: {
-					runtimeExecutable: 'adl'
 				},
 				internalConsoleOptions: 'openOnSessionStart'
 			}
