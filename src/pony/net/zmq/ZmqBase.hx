@@ -87,7 +87,7 @@ class ZmqBase extends Logable {
 	}
 
 	public function fatal(msg: String): Void {
-		error(msg);
+		error('fatal error: $msg');
 		destroy();
 	}
 

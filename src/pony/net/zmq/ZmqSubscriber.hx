@@ -60,7 +60,7 @@ class ZmqSubscriber extends ZmqBase {
 		switch bi.readByte() {
 			case 0x01: socket.setTask(1) < subjectSmallReadSizeHandler;
 			case 0x03: socket.setTask(8) < subjectBigReadSizeHandler;
-			case _: fatal('subject');
+			case b: fatal('subject $b');
 		}
 	}
 
@@ -82,7 +82,7 @@ class ZmqSubscriber extends ZmqBase {
 		switch bi.readByte() {
 			case 0x00: socket.setTask(1) < contentSmallReadSizeHandler;
 			case 0x02: socket.setTask(8) < contentBigReadSizeHandler;
-			case _: fatal('content');
+			case b: fatal('content $b - $currentSubject');
 		}
 	}
 
