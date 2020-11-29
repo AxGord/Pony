@@ -15,7 +15,9 @@ class Swf {
 		project.haxelib.addLib('pony', Utils.ponyHaxelibVersion);
 		project.build.active = true;
 		project.build.target = types.HaxeTargets.Swf;
-		project.build.fdb = true;
+		project.build.flags.push('fdb');
+		project.build.flags.push('swf-compress-level=9');
+		project.build.args['swf-version'] = '33'; // (33 == 44)
 		project.run.active = true;
 		project.run.command = 'adt -package -storetype pkcs12 -keystore $cert -storepass  -target bundle app $APP_XML ' +
 			project.build.getOutputFile();

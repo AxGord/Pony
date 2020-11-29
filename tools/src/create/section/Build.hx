@@ -13,6 +13,8 @@ import types.*;
 class Build extends Section {
 
 	public var libs: Map<String, String> = new Map();
+	public var flags: Array<String> = [];
+	public var args: Map<String, String> = new Map();
 	public var target: HaxeTargets = null;
 	public var outputFile: String = 'app';
 	public var outputPath: String = 'bin/';
@@ -22,7 +24,6 @@ class Build extends Section {
 	public var dce: String = 'full';
 	public var analyzerOptimize: Bool = true;
 	public var esVersion: Int = null;
-	public var fdb: Bool = false;
 
 	public function new() super('build');
 
@@ -53,7 +54,8 @@ class Build extends Section {
 			if (dce != null) prepare.addChild(XmlTools.node('dce', dce));
 			if (analyzerOptimize) prepare.addChild(XmlTools.node('d', 'analyzer-optimize'));
 			if (esVersion != null) prepare.addChild(XmlTools.node('d', 'js-es$esVersion'));
-			if (fdb) prepare.addChild(XmlTools.node('d', 'fdb'));
+			for (name in flags) prepare.addChild(XmlTools.node('d', name));
+			for (key in args.keys()) prepare.addChild(XmlTools.node(key, args[key]));
 
 			xml.addChild(prepare);
 
@@ -74,6 +76,8 @@ class Build extends Section {
 			if (dce != null) add('dce', dce);
 			if (analyzerOptimize) add('d', 'analyzer-optimize');
 			if (esVersion != null) add('d', 'js-es$esVersion');
+			for (name in flags) add('d', name);
+			for (key in args.keys()) add(key, args[key]);
 		}
 
 		return xml;
