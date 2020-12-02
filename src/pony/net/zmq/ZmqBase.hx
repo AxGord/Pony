@@ -23,6 +23,7 @@ class ZmqBase extends Logable {
 	private static var THIRD_MESSAGE: Bytes = Bytes.ofHex('0552454144590B536F636B65742D5479706500000003');
 
 	@:auto public var onOpen: Signal0;
+	@:auto public var onClose: Signal0;
 	public var opened(default, null): Bool = false;
 	private var socket: SocketClient;
 	private var clientMessagePrefix: Bytes;
@@ -32,7 +33,7 @@ class ZmqBase extends Logable {
 	private var outcoming: BytesOutput = new BytesOutput();
 
 	private function new(
-		host: String = '127.0.0.1', port: Int,
+		host: String = '127.0.0.1', port: Int, reconnectDelay: Int = -1,
 		clientMessagePrefix: Bytes, clientMessagePostfix: Bytes, serverMessagePrefix: Bytes, serverMessagePostfix: Bytes
 	) {
 		super('ZMQ');
@@ -40,12 +41,28 @@ class ZmqBase extends Logable {
 		this.clientMessagePostfix = clientMessagePostfix;
 		this.serverMessagePrefix = serverMessagePrefix;
 		this.serverMessagePostfix = serverMessagePostfix;
-		socket = new SocketClient(host, port, -1, 0, false);
+		socket = new SocketClient(host, port, reconnectDelay, 0, false);
 		socket.enableLogInputData();
 		socket.onTaskError << fatal.bind('task error');
 		listenErrorAndLog(socket);
-		socket.onConnect < connectHandler;
+		socket.onConnect << connectHandler;
+		socket.onClose << eClose;
+		onClose << closeHandler;
 		onOpen << openHandler;
+	}
+
+	public inline function enableAutoReconnect(): Void onClose << reopen;
+	public inline function disableAutoReconnect(): Void onClose >> reopen;
+
+	public function reopen(): Void {
+		if (opened || socket.opened) return;
+		socket.tryAgain();
+	}
+
+	private function closeHandler(): Void {
+		opened = false;
+		socket.onTask.clear();
+		socket.removeTask();
 	}
 
 	private function openHandler(): Void {
@@ -53,7 +70,7 @@ class ZmqBase extends Logable {
 		opened = true;
 		if (outcoming.length > 0) {
 			socket.send(outcoming);
-			outcoming = null;
+			outcoming = new BytesOutput();
 		}
 	}
 

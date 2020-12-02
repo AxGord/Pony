@@ -17,14 +17,14 @@ class ZmqRequest extends ZmqBase {
 	@:auto public var onData: Signal1<BytesInput>;
 	@:auto public var onString: Signal1<String>;
 
-	public function new(host: String = '127.0.0.1', port: Int) {
+	public function new(host: String = '127.0.0.1', port: Int, reconnectDelay: Int = -1) {
 		var postfix: Bytes = Bytes.ofHex('5245');
 		super(
-			host, port,
+			host, port, reconnectDelay,
 			Bytes.ofHex('0426'), [postfix, Bytes.ofHex('51084964656E7469747900000000')].joinBytes(),
 			Bytes.ofHex('0419'), [postfix, Bytes.ofHex('50')].joinBytes()
 		);
-		onOpen < listenData;
+		onOpen << listenData;
 		eString.onTake << takeStringListener;
 		eString.onLost << lostStringListener;
 	}

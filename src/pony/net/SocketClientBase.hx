@@ -65,7 +65,7 @@ class SocketClientBase extends Logable implements HasSignal {
 		this.maxSize = maxSize;
 		this.isWithLength = isWithLength;
 		sharedInit();
-		_open();
+		reopen();
 	}
 
 	private function readString(b: BytesInput): Bool {
@@ -81,16 +81,16 @@ class SocketClientBase extends Logable implements HasSignal {
 		eString.onLost << function() onData.remove(readString);
 	}
 
-	private function tryAgain(): Void {
+	public function tryAgain(): Void {
 		close();
 		if (reconnectDelay == 0) {
 			log('Reconnect');
-			_open();
+			reopen();
 		}
 		#if ((!dox && HUGS) || nodejs || flash)
 		else if (reconnectDelay > 0) {
 			log('Reconnect after ' + reconnectDelay + ' ms');
-			Timer.delay(_open, reconnectDelay);
+			Timer.delay(reopen, reconnectDelay);
 		}
 		#end
 	}
@@ -129,7 +129,7 @@ class SocketClientBase extends Logable implements HasSignal {
 		eOpen.dispatch();
 	}
 
-	private function _open(): Void {
+	private function reopen(): Void {
 		if (tryCounter < tryCount) {
 			tryCounter++;
 			onError.once(badConnection, -100);

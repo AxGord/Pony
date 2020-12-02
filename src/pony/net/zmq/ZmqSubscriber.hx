@@ -18,40 +18,60 @@ class ZmqSubscriber extends ZmqBase {
 	private static inline var SUBSCRIBE_CODE: Int = 0x01;
 	private static inline var UNSUBSCRIBE_CODE: Int = 0x00;
 
-	@:auto public var onData: Signal2<String, BytesInput>;
+	@:auto public var onData: Signal2<BytesInput, String>;
 
 	private var currentSubject: String;
-	private var subscribes: Map<String, Event2<String, BytesInput>> = new Map<String, Event2<String, BytesInput>>();
+	private var subscribes: Map<String, Event2<BytesInput, String>> = new Map<String, Event2<BytesInput, String>>();
 
-	public function new(host: String = '127.0.0.1', port: Int) {
+	public function new(host: String = '127.0.0.1', port: Int, reconnectDelay: Int = -1) {
 		var prefix: Bytes = Bytes.ofHex('0419');
 		var postfix: Bytes = Bytes.ofHex('5542');
-		super(host, port, prefix, [Bytes.ofHex('53'), postfix].joinBytes(), prefix, [Bytes.ofHex('50'), postfix].joinBytes());
-		onOpen < listenData;
+		super(
+			host, port, reconnectDelay,
+			prefix, [Bytes.ofHex('53'), postfix].joinBytes(), prefix, [Bytes.ofHex('50'), postfix].joinBytes()
+		);
+		onOpen << resubscribe;
+		onOpen << listenData;
 	}
 
-	public function subscribe(subject: String = ''): Signal2<String, BytesInput> {
+	public function subscribe(subject: String = ''): Signal2<BytesInput, String> {
 		if (subscribes.exists(subject)) return subscribes[subject];
+		var event: Event2<BytesInput, String> = new Event2<BytesInput, String>();
+		function dataHandler(b: BytesInput, s: String): Void if (s.substr(0, subject.length) == subject) event.dispatch(b, s);
+		event.onTake << function(): Void {
+			sendSubscribe(subject);
+			onData << dataHandler;
+		}
+		event.onLost << function(): Void {
+			sendUnsubscribe(subject);
+			onData >> dataHandler;
+		}
+		subscribes[subject] = event;
+		return event;
+	}
+
+	private function sendSubscribe(subject: String): Void {
 		var bo: BytesOutput = new BytesOutput();
 		bo.writeByte(SUBSCRIBE_CODE);
 		bo.writeString(subject);
 		_send(bo);
-		var event: Event2<String, BytesInput> = new Event2<String, BytesInput>();
-		function dataHandler(s: String, b: BytesInput): Void if (s.substr(0, subject.length) == subject) event.dispatch(s, b);
-		event.onTake << function(): Void onData << dataHandler;
-		event.onLost << function(): Void onData >> dataHandler;
-		subscribes[subject] = event;
-		return event;
+	}
+
+	private function sendUnsubscribe(subject: String): Void {
+		var bo: BytesOutput = new BytesOutput();
+		bo.writeByte(UNSUBSCRIBE_CODE);
+		bo.writeString(subject);
+		_send(bo);
 	}
 
 	public function unsubscribe(subject: String = ''): Void {
 		if (!subscribes.exists(subject)) return;
 		subscribes[subject].destroy();
 		subscribes.remove(subject);
-		var bo: BytesOutput = new BytesOutput();
-		bo.writeByte(UNSUBSCRIBE_CODE);
-		bo.writeString(subject);
-		_send(bo);
+	}
+
+	private function resubscribe(): Void {
+		for (subject in subscribes.keys()) sendSubscribe(subject);
 	}
 
 	private function listenData(): Void socket.setTask(1) < subjectDataHandler;
@@ -96,7 +116,7 @@ class ZmqSubscriber extends ZmqBase {
 	private inline function listenContent(len: Int64): Void socket.setTask(len) < contentHandler;
 
 	private function contentHandler(bi: BytesInput): Void {
-		eData.dispatch(currentSubject, bi);
+		eData.dispatch(bi, currentSubject);
 		currentSubject = null;
 		listenData();
 	}
