@@ -15,7 +15,7 @@
 		<syn>c</syn>
 		<syn>new</syn>
 		<syn>n</syn>
-		<arg>Target (server, node, heaps, heapsxml, pixi, pixixml, js, swf, neko, electron, pixielectron, monacoelectron, cc, cordova, site)</arg>
+		<arg>Target (server, node, heaps, heapsxml, pixi, pixixml, js, swf, air, neko, electron, pixielectron, monacoelectron, cc, cordova, site)</arg>
 		<arg>Project name (create fdt too)</arg>
 	</create>
 	<server>

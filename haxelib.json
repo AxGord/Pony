@@ -27,8 +27,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Sniff, ZeroMQ, Update CC version",
-"version": "1.3.2",
+"releasenote": "Pony Tools: Create SWF and AIR targets",
+"version": "1.3.3",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }

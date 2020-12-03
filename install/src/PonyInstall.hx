@@ -22,6 +22,7 @@ class PonyInstall extends BaseInstall {
 		if (FileSystem.exists(Config.BIN)) {
 			Utils.beginColor(90);
 			for (e in FileSystem.readDirectory(Config.BIN)) {
+				if (e == 'testcert.p12') continue;
 				var f: String = Config.BIN + e;
 				if (FileSystem.isDirectory(f)) continue;
 				log('Delete: $e');
