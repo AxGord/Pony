@@ -15,8 +15,7 @@ using pony.Tools;
  * Single
  * @author AxGord <axgord@gmail.com>
  */
-class Single extends Action
-{
+class Single extends Action {
 	override public function connect(cpq:CPQ, modelConnect:ModelConnect):Pair<EConnect, ISubActionConnect> {
 		return new Pair(REG(cast new SingleConnect(this, cpq, modelConnect)), null);
 	}
@@ -27,12 +26,12 @@ class Single extends Action
  * @author AxGord <axgord@gmail.com>
  */
 class SingleConnect extends ActionConnect {
-	
+
 	override public function tpl(parent:ITplPut):ITplPut {
 		initTpl();
 		return new SinglePut(this, cpq, parent);
 	}
-	
+
 }
 
 /**
@@ -41,23 +40,19 @@ class SingleConnect extends ActionConnect {
  */
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
 @:final class SinglePut extends pony.text.tpl.TplPut<SingleConnect, CPQ> {
-	
+
 	@:async
-	override public function tag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String
-	{
-		if (Std.is(kid, SinglePutSub)) {
-			return @await parent.tag(name, content, arg, args, kid);
-		}
+	override public function tag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String {
+		if (Std.is(kid, SinglePutSub)) return @await parent.tag(name, content, arg, args, kid);
 		if (!a.checkAccess()) return '';
-		
 		var mp:ModelPut = cast parent;
 		var f = arg == null ? 'id' : arg;
 		var v:String = mp.b == null ? null : Reflect.field(mp.b, f);
 		var cargs:Array<String> = a.hasPathArg ? (v == null ? [a.pathQuery] : [v]) : (v == null ? [] : [v]);
 		var a:Dynamic = @await a.call(cargs);
-		if (args.exists('!'))
-			return a == null ? @await parent.tplData(content) : '';
-		else {
+		if (args.exists('!')) {
+			return a == null ? @await mp.tplData(content) : '';
+		} else {
 			if (a == null)
 				return '';
 			else if (args.exists('div')) {
@@ -66,7 +61,7 @@ class SingleConnect extends ActionConnect {
 				return @await sub(this, a, SinglePutSub, content);
 		}
 	}
-	
+
 	@:async
 	private function div(arg:String, args:Map<String, String>, e:Dynamic):String {
 		var n:String = args.get('div') == null ? 'single' : args.get('div');
@@ -90,7 +85,7 @@ class SingleConnect extends ActionConnect {
 		}
 		return na.join(arg == null ? '' : arg);
 	}
-	
+
 	@:async
 	private function html(e:Dynamic, f:String):String {
 		var c = a.base.model.columns[f];
@@ -101,12 +96,12 @@ class SingleConnect extends ActionConnect {
 			return Reflect.field(e, f);
 		}
 	}
-	
+
 }
 
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
 class SinglePutSub extends Valuator<SinglePut, Dynamic> {
-	
+
 	@:async
 	override public function tag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String
 	{
@@ -121,9 +116,9 @@ class SinglePutSub extends Valuator<SinglePut, Dynamic> {
 				return @await super1_tag(name, content, arg, args, kid);
 		}
 	}
-	
+
 	@:async
-	override public function shortTag(name:String, arg:String, ?kid:ITplPut):String 
+	override public function shortTag(name:String, arg:String, ?kid:ITplPut):String
 	{
 		if (a.a.model.subactions.exists(name)) {
 			return @await a.a.model.subactions[name].subtpl(parent, b).shortTag(name, arg, kid);
@@ -136,7 +131,7 @@ class SinglePutSub extends Valuator<SinglePut, Dynamic> {
 				return @await super1_shortTag(name, arg, kid);
 		}
 	}
-	
+
 	@:async
 	override public function valu(name:String, arg:String):String {
 		if (Reflect.hasField(b, name))
@@ -144,5 +139,5 @@ class SinglePutSub extends Valuator<SinglePut, Dynamic> {
 		else
 			return null;
 	}
-	
+
 }

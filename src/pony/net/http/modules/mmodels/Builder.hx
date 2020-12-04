@@ -14,7 +14,7 @@ using Lambda;
  * @author AxGord <axgord@gmail.com>
  */
 class Builder {
-	
+
 	macro public static function build():Array<Field> {
 		var fields:Array<Field> = Context.getBuildFields();
 		var cur = Context.getLocalClass().get();
@@ -67,7 +67,7 @@ class Builder {
 							}}}
 						);
 				}
-				
+
 			}
 		}
 
@@ -79,7 +79,7 @@ class Builder {
 			access: [AStatic, APrivate],
 			kind: FVar(null, {expr: EObjectDecl(data), pos: Context.currentPos()})
 		});
-		
+
 		fields.push( {
 			pos: Context.currentPos(),
 			name: '__methoPathes__',
@@ -88,7 +88,7 @@ class Builder {
 			access: [AStatic, APublic],
 			kind: FVar(null, {expr: EObjectDecl(pathes), pos: Context.currentPos()})
 		});
-		
+
 		fields.push( {
 			pos: Context.currentPos(),
 			name: '__methoActivePathes__',
@@ -97,7 +97,7 @@ class Builder {
 			access: [AStatic, APublic],
 			kind: FVar(null, {expr: EObjectDecl(activePathes), pos: Context.currentPos()})
 		});
-		
+
 		fields.push( {
 			pos: Context.currentPos(),
 			name: '__methoAccess__',
@@ -106,8 +106,8 @@ class Builder {
 			access: [AStatic, APublic],
 			kind: FVar(null, {expr: EObjectDecl(acc), pos: Context.currentPos()})
 		});
-		
+
 		return fields;
 	}
-	
+
 }
