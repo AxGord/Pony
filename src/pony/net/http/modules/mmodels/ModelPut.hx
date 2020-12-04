@@ -9,7 +9,7 @@ import pony.text.tpl.TplPut;
  * @author AxGord <axgord@gmail.com>
  */
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
-@:final class ModelPut extends TplPut<ModelConnect, Dynamic> {
+class ModelPut extends TplPut<ModelConnect, Dynamic> {
 
 	private var list:Map<String, ITplPut>;
 
