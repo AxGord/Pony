@@ -8,6 +8,7 @@ import create.ides.HaxeDevelop;
 import sys.FileSystem;
 import sys.io.File;
 import types.ProjectType;
+import types.HaxeTargets;
 
 /**
  * Create
@@ -51,7 +52,9 @@ class Create {
 			case ProjectType.Server: create.targets.Server.set(project);
 			case ProjectType.Sniff: create.targets.Server.sniff(project);
 			case ProjectType.JS: create.targets.JS.set(project);
-			case ProjectType.Swf, ProjectType.Air: create.targets.Swf.set(project, testSertFile);
+			case ProjectType.Swf: create.targets.Swf.swf(project);
+			case ProjectType.Swc: create.targets.Swf.swc(project);
+			case ProjectType.Air: create.targets.Swf.adt(project, testSertFile);
 			case ProjectType.CC: create.targets.CC.set(project);
 			case ProjectType.Pixi, ProjectType.Pixixml: create.targets.Pixi.set(project);
 			case ProjectType.Heaps, ProjectType.Heapsxml: create.targets.Heaps.set(project);
@@ -101,6 +104,8 @@ class Create {
 			case ProjectType.Swf:
 				project.build.createEmptyMainhx();
 				if (vscAllow) VSCode.createFlash(project.build.outputPath, outputFile);
+			case ProjectType.Swc:
+				if (vscAllow) VSCode.createExtensions(false, true);
 			case ProjectType.Air:
 				createAirData(project, vscAllow);
 			case ProjectType.JS:
@@ -152,7 +157,7 @@ class Create {
 			case _:
 		}
 		var ponycmd: String = type == ProjectType.Neko ? 'run' : 'build';
-		if (vscAllow) VSCode.create(ponycmd, type == ProjectType.CC);
+		if (vscAllow) VSCode.create(ponycmd, type == ProjectType.CC, project.server.active);
 		if (project.name != null) HaxeDevelop.create(project.name, project.getMain(), project.getLibs(), project.getCps(), ponycmd);
 		Gitignore.create(project, type);
 	}

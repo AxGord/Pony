@@ -12,13 +12,15 @@ import types.*;
  */
 class Build extends Section {
 
+	private static var HXML: String = '.hxml';
+
 	public var libs: Map<String, String> = new Map();
 	public var flags: Array<String> = [];
 	public var args: Map<String, String> = new Map();
 	public var target: HaxeTargets = null;
 	public var outputFile: String = 'app';
 	public var outputPath: String = 'bin/';
-	public var hxml: Bool = true;
+	public var hxml: String = 'app';
 	public var cps: Array<String> = ['src'];
 	public var main: String = 'Main';
 	public var dce: String = 'full';
@@ -27,22 +29,18 @@ class Build extends Section {
 
 	public function new() super('build');
 
-	public function addLib(name: String, ?version: String): Void {
-		libs[name] = version;
-	}
-
-	public function getDep(): Array<String> {
-		return hxml ? [outputFile + '.hxml'] : [];
-	}
+	public function addLib(name: String, ?version: String): Void libs[name] = version;
+	public function getHxmlFile(): String return hxml + HXML;
+	public function getDep(): Array<String> return hxml != null ? [getHxmlFile()] : [];
 
 	public function result(): Xml {
 		init();
 
-		if (hxml) {
+		if (hxml != null) {
 			var prepare: Xml = Xml.createElement('prepare');
-			prepare.set('hxml', outputFile);
-			prepare.addChild(XmlTools.node('main', main));
-			prepare.addChild(XmlTools.node(target, output()));
+			prepare.set('hxml', hxml);
+			if (main != null) prepare.addChild(XmlTools.node('main', main));
+			prepare.addChild(XmlTools.node(targetKey(), output()));
 			for (cp in cps) prepare.addChild(XmlTools.node('cp', cp));
 			for (name in libs.keys()) {
 				var v = libs[name];
@@ -60,11 +58,11 @@ class Build extends Section {
 			xml.addChild(prepare);
 
 			var build: Xml = Xml.createElement('build');
-			build.addChild(XmlTools.node('hxml', outputFile));
+			build.addChild(XmlTools.node('hxml', hxml));
 			xml.addChild(build);
 		} else {
 			add('main', main);
-			add(target, output());
+			add(targetKey(), output());
 			for (cp in cps) add('cp', cp);
 			for (name in libs.keys()) {
 				var v = libs[name];
@@ -91,6 +89,14 @@ class Build extends Section {
 			case HaxeTargets.JS: '.js';
 			case HaxeTargets.Neko: '.n';
 			case HaxeTargets.Swf: '.swf';
+			case HaxeTargets.Swc: '.swc';
+		}
+	}
+
+	private function targetKey(): String {
+		return switch target {
+			case HaxeTargets.Swc: 'swf';
+			case t: t;
 		}
 	}
 
@@ -99,9 +105,7 @@ class Build extends Section {
 		createFile(outputPath + file, template, replaces);
 	}
 
-	public function getMainhxPath(): String {
-		return cps[0];
-	}
+	public function getMainhxPath(): String return cps[0];
 
 	public function getMainhx(): String return gethx(main);
 	public function gethx(name: String): String return getMainhxPath() + '/' + name + '.hx';

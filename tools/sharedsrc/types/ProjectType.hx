@@ -7,6 +7,7 @@ enum ProjectType {
 	Heapsxml;
 	JS;
 	Swf;
+	Swc;
 	Air;
 	Server;
 	Sniff;

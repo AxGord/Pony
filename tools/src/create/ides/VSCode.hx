@@ -21,7 +21,7 @@ class VSCode {
 
 	public static function createDir(): Void FileSystem.createDirectory('.vscode');
 
-	public static function create(ponycmd: String, auto: Bool = false): Void {
+	public static function create(ponycmd: String, auto: Bool = false, server: Bool = true): Void {
 		var tasks: Array<Any> = [];
 		var matcher: Array<String> = ["$haxe-absolute", "$haxe", "$haxe-error", "$haxe-trace"];
 
@@ -73,19 +73,20 @@ class VSCode {
 			});
 		}
 
-		tasks.push({
-			label: 'server',
-			type: 'shell',
-			command: 'pony server',
-			isBackground: true,
-			runOptions: {runOn: 'folderOpen'},
-			presentation: {
-				echo: false,
-				reveal: 'silent',
-				focus: false,
-				panel: 'dedicated'
-			}
-		});
+		if (server)
+			tasks.push({
+				label: 'server',
+				type: 'shell',
+				command: 'pony server',
+				isBackground: true,
+				runOptions: {runOn: 'folderOpen'},
+				presentation: {
+					echo: false,
+					reveal: 'silent',
+					focus: false,
+					panel: 'dedicated'
+				}
+			});
 
 		var data = {
 			version: '2.0.0',
@@ -94,14 +95,12 @@ class VSCode {
 		Utils.saveJson('.vscode/tasks.json', data);
 	}
 
-	public static function createExtensions(chrome: Bool = false, flash: Bool = false, asconfig: Bool = false): Void {
+	public static function createExtensions(chrome: Bool = false, flash: Bool = false): Void {
 		var data: Array<String> = ['nadako.vshaxe', 'vshaxe.haxe-checkstyle', 'wiggin77.codedox'];
 		if (cordova)
 			data.push('msjsdiag.cordova-tools');
 		if (chrome)
 			data.push('msjsdiag.debugger-for-chrome');
-		if (asconfig)
-			data.push('bowlerhatllc.vscode-nextgenas');
 		if (flash) {
 			data.push('bowlerhatllc.vscode-swf-debug');
 			data.push('lonewolf.vscode-astools');
@@ -132,7 +131,7 @@ class VSCode {
 				internalConsoleOptions: 'openOnSessionStart'
 			}
 		]);
-		createExtensions(false, true, true);
+		createExtensions(false, true);
 	}
 
 	public static function swfLaunch(output: String, app: String): Any {

@@ -27,8 +27,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Web improvements",
-"version": "1.3.4",
+"releasenote": "Pony Tools: Create SWC, swf generation fixes",
+"version": "1.3.5",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }

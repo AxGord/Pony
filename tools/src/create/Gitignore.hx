@@ -18,7 +18,6 @@ class Gitignore {
 	];
 
 	private static var GITIGNORE: String = '.gitignore';
-	private static var HXML: String = '.hxml';
 	private static var NODE_MODULES: String = 'node_modules/';
 	private static var PACKAGE_LOCK: String = 'package-lock.json';
 	private static var LIBCACHE: String = 'libcache.js';
@@ -29,10 +28,10 @@ class Gitignore {
 	public static function create(project: Project, type: ProjectType): Void {
 		var result: Array<String> = OS.copy();
 		result.push('# Project files');
-		if (project.build.active && project.build.hxml)
-			result.push(ROOT + project.build.outputFile + HXML);
-		if (project.secondbuild.active && project.secondbuild.hxml)
-			result.push(ROOT + project.secondbuild.outputFile + HXML);
+		if (project.build.active && project.build.hxml != null)
+			result.push(ROOT + project.build.getHxmlFile());
+		if (project.secondbuild.active && project.secondbuild.hxml != null)
+			result.push(ROOT + project.secondbuild.getHxmlFile());
 		if (project.build.active) {
 			var output: String = project.build.output();
 			result.push(ROOT + output);
