@@ -37,6 +37,7 @@ import pony.heaps.ui.gui.layout.RubberLayout;
 import pony.heaps.ui.gui.layout.AlignLayout;
 import pony.heaps.ui.gui.layout.BGLayout;
 import pony.heaps.ui.gui.layout.TLayout;
+import pony.ui.gui.ScrollBoxCore;
 import pony.ui.xml.UiTags;
 import pony.ui.xml.AttrVal;
 
@@ -144,8 +145,11 @@ using pony.text.TextTools;
 			case UiTags.scrollBox:
 				var s: ScrollBox = new ScrollBox(
 					getSizeFromAttrs(attrs),
-					attrs.orient == null ? Orientation.Horizontal : attrs.orient,
-					attrs.color == null ? null : attrs.color
+					attrs.orient == null ? Orientation.Vertical : attrs.orient,
+					attrs.color == null ? null : attrs.color,
+					attrs.size == null ? ScrollBoxCore.DEFAULT_BAR_SIZE : parseAndScaleInt(attrs.size),
+					attrs.wheel == null ? ScrollBoxCore.DEFAULT_WHEEL_SPEED : parseAndScale(attrs.wheel)
+
 				);
 				for (c in content) s.add(c);
 				s;

@@ -52,12 +52,10 @@ class NModule<T:BAConfig> extends CfgModule<T> {
 	private function listenServer(): Void {
 		initServer();
 		server.onData < timeout.stop;
-		server.onLog << eLog;
-		server.onError << eError;
+		listenErrorAndLog(server);
 		// server.onDisconnect < unlistenServer;
 		// server.onDisconnect < finishCurrentRun;
-		protocol.log.onLog << eLog;
-		protocol.log.onError << eError;
+		listenErrorAndLog(protocol.log);
 		// protocol.onFinish < finishHandler;
 		protocol.onFinish < unlistenServer;
 		protocol.onFinish < finishCurrentRun;

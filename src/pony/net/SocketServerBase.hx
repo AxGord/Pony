@@ -46,6 +46,7 @@ class SocketServerBase extends Logable {
 
 	private function addClient(): SocketClient {
 		var cl: SocketClient = Type.createEmptyInstance(SocketClient);
+		@:privateAccess cl.logPrefix = '';
 		listenErrorAndLog(cl);
 		cl.init(cast this, clients.length);
 		clients.push(cl);

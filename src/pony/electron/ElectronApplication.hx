@@ -9,7 +9,7 @@ import pony.text.TextTools;
  * @author AxGord <axgord@gmail.com>
  */
 class ElectronApplication extends VSTraceHelper implements pony.magic.HasAbstract {
-	
+
 	public var windows(default, null):Map<String, BrowserWindow> = new Map<String, BrowserWindow>();
 
 	private var windowsPath:String;
@@ -55,6 +55,7 @@ class ElectronApplication extends VSTraceHelper implements pony.magic.HasAbstrac
 		var path = js.Node.__dirname + '/' + windowsPath + url + windowsExt;
 		path = sys.FileSystem.absolutePath(path);
 		win.loadURL('file://' + path);
+		// win.webContents.openDevTools();
 		return win;
 	}
 
