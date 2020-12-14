@@ -37,6 +37,8 @@ class Haxelib extends CfgModule<HaxelibConfig> {
 			var args:Array<String> = ['install'];
 			args = args.concat(lib.split(' '));
 			args.push('--always');
+			args.push('-R');
+			args.push('http://lib.haxe.org/');
 			Sys.command('haxelib', args);
 		}
 	}

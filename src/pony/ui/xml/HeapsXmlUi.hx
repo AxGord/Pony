@@ -17,6 +17,7 @@ import pony.geom.Point;
 import pony.geom.Border;
 import pony.geom.Align;
 import pony.geom.Rect;
+import pony.geom.Orientation;
 import pony.color.UColor;
 import pony.heaps.HeapsApp;
 import pony.heaps.HeapsAssets;
@@ -26,6 +27,7 @@ import pony.heaps.ui.gui.NodeRepeat;
 import pony.heaps.ui.gui.NodeRect;
 import pony.heaps.ui.gui.Button;
 import pony.heaps.ui.gui.LightButton;
+import pony.heaps.ui.gui.ScrollBox;
 import pony.heaps.ui.gui.Switch;
 import pony.heaps.ui.gui.Repeat;
 import pony.heaps.ui.gui.DText;
@@ -58,7 +60,8 @@ using pony.text.TextTools;
 	image: pony.heaps.ui.gui.NodeBitmap,
 	layout: pony.heaps.ui.gui.layout.TLayout,
 	button: pony.heaps.ui.gui.Button,
-	lightButton: pony.heaps.ui.gui.LightButton
+	lightButton: pony.heaps.ui.gui.LightButton,
+	scrollBox: pony.heaps.ui.gui.ScrollBox
 }))
 #end
 @:nullSafety(Strict) class HeapsXmlUi extends Object implements HasAbstract {
@@ -138,6 +141,14 @@ using pony.text.TextTools;
 				var b: LightButton = new LightButton(getSizeFromAttrs(attrs), attrs.color);
 				if (attrs.disabled.isTrue()) b.core.disable();
 				b;
+			case UiTags.scrollBox:
+				var s: ScrollBox = new ScrollBox(
+					getSizeFromAttrs(attrs),
+					attrs.orient == null ? Orientation.Horizontal : attrs.orient,
+					attrs.color == null ? null : attrs.color
+				);
+				for (c in content) s.add(c);
+				s;
 			case _:
 				customUIElement(name, attrs, content);
 		}

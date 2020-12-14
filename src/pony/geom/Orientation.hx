@@ -1,5 +1,7 @@
 package pony.geom;
 
+using StringTools;
+
 /**
  * Orientation
  * @author AxGord <axgord@gmail.com>
@@ -18,13 +20,23 @@ package pony.geom;
 	@:extern private inline function get_isVertical(): Bool return this & Vertical != 0;
 	public inline function checkDirection(d: Direction): Bool return this & d != null;
 
-	@:to(String) public function toString(): String {
+	@:to public function toString(): String {
 		return switch this {
 			case None: 'None';
 			case Horizontal: 'Horizontal';
 			case Vertical: 'Vertical';
 			case Any: 'Any';
 			case _: throw 'Error';
+		}
+	}
+
+	@:from public static function fromString(s: String): Orientation {
+		return switch s.trim().toLowerCase() {
+			case 'none', 'n': None;
+			case 'horizontal', 'hor', 'h': Horizontal;
+			case 'vertical', 'vert', 'v': Vertical;
+			case 'any', 'a': Any;
+			case _: throw "Can't get orientation";
 		}
 	}
 

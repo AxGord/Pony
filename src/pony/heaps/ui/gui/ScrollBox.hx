@@ -7,6 +7,7 @@ import h2d.Mask;
 import h2d.Object;
 import pony.time.DeltaTime;
 import pony.color.UColor;
+import pony.color.UColors;
 import pony.geom.Orientation;
 import pony.geom.IWH;
 import pony.geom.Point;
@@ -28,7 +29,7 @@ import pony.ui.gui.ButtonCore;
 	public var content(default, null): Object;
 
 	public function new(
-		size: Point<UInt>, orientation: Orientation = Orientation.Any, ?barColor: Array<UColor>,
+		size: Point<UInt>, orientation: Orientation = Orientation.Any, ?barColor: UColors,
 		barSize: UInt = ScrollBoxCore.DEFAULT_BAR_SIZE, wheelSpeed: Float = ScrollBoxCore.DEFAULT_WHEEL_SPEED
 	) {
 		super(size.x, size.y);

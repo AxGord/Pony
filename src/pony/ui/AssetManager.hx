@@ -161,7 +161,7 @@ class AssetManager {
 		}
 	}
 
-	public static function isLoaded(asset: String):  Bool return loadedAssets.indexOf(asset) != -1;
+	public static function isLoaded(asset: String): Bool return loadedAssets.indexOf(asset) != -1;
 
 	public static function loadPackWithChilds(cl: String, pathes: Array<String>, assets: Array<String>, cb: Int -> Int -> Void): Void {
 		var chs = Meta.getType(Type.resolveClass(cl)).assets_childs;

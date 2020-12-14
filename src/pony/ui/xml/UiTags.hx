@@ -15,4 +15,5 @@ package pony.ui.xml;
 	var input = 'input';
 	var button = 'button';
 	var lightButton = 'lightButton';
+	var scrollBox = 'scrollBox';
 }

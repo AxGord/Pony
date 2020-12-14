@@ -48,8 +48,8 @@ class Touchable extends TouchableBase {
 			case EMove:
 				if (HeapsApp.instance != null && HeapsApp.instance.s2d != null) {
 					lastPos = new Point(
-						HeapsApp.instance.s2d.screenXToLocal(event.relX) + HeapsApp.instance.canvas.rect.x,
-						HeapsApp.instance.s2d.screenYToLocal(event.relY) + HeapsApp.instance.canvas.rect.y
+						HeapsApp.instance.s2d.screenXToViewport(event.relX) + HeapsApp.instance.canvas.rect.x,
+						HeapsApp.instance.s2d.screenYToViewport(event.relY) + HeapsApp.instance.canvas.rect.y
 					);
 					TouchableBase.dispatchMove(
 						#if js event.touchId == null ? 0 : #end event.touchId,

@@ -291,6 +291,7 @@ class VSCode {
 		var confNamePrefix: String = 'Electron: ';
 		var mainConfName: String = confNamePrefix + 'Main';
 		var renderConfName: String = confNamePrefix + 'Renderer';
+		var onlyRenderConfName: String = confNamePrefix + 'Only Renderer';
 		var resultDir: String = "${workspaceFolder}/" + output;
 		var electronExecutable: String = resultDir + 'node_modules/.bin/electron';
 		var port: Int = 9222;
@@ -318,6 +319,21 @@ class VSCode {
 					webRoot: resultDir,
 					timeout: 20000,
 					internalConsoleOptions: 'openOnSessionStart'
+				} : Dynamic),
+				({
+					name: onlyRenderConfName,
+					type: 'chrome',
+					request: 'attach',
+					port: port,
+					webRoot: resultDir,
+					timeout: 20000,
+					internalConsoleOptions: 'openOnSessionStart',
+					preLaunchTask: PRELAUNCH_TASK,
+					runtimeExecutable: electronExecutable,
+					runtimeArgs: [output, '--remote-debugging-port=$port'],
+					windows: {
+						runtimeExecutable: electronExecutable + '.cmd'
+					},
 				} : Dynamic)
 			],
 			compounds: [

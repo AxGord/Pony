@@ -25,6 +25,7 @@ import pony.Fast;
 	var CSS = 'css';
 	var JSON = 'json';
 	var CDB = 'cdb';
+	var IMG = 'img';
 	var BIN = 'bin';
 }
 
@@ -122,7 +123,7 @@ import pony.Fast;
 					tiles[asset] = Any.fromBytes(realAsset, bytes).toTile();
 					finish();
 				}
-			case TXT, CSS, JSON, CDB:
+			case TXT, CSS, JSON, CDB, IMG:
 				loader.onProgress = progressHandler;
 				loader.onLoaded = function(bytes: Bytes): Void {
 					texts[asset] = Any.fromBytes(realAsset, bytes).toText();
@@ -134,7 +135,7 @@ import pony.Fast;
 					bins[asset] = bytes;
 					finish();
 				}
-			case _:
+			case v:
 				throw ERROR_NOT_SUPPORTED;
 		}
 		loader.load();
