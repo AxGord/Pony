@@ -27,8 +27,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Pony Tools: Create SWC, swf generation fixes",
-"version": "1.3.5",
+"releasenote": "Pony Tools: Create Heaps Electron",
+"version": "1.3.6",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }

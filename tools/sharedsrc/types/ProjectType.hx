@@ -3,8 +3,10 @@ package types;
 enum ProjectType {
 	Pixi;
 	Pixixml;
+	Pixielectron;
 	Heaps;
 	Heapsxml;
+	Heapselectron;
 	JS;
 	Swf;
 	Swc;
@@ -13,7 +15,6 @@ enum ProjectType {
 	Sniff;
 	Node;
 	Neko;
-	Pixielectron;
 	Electron;
 	Monacoelectron;
 	CC;
