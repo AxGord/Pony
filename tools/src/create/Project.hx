@@ -20,6 +20,7 @@ class Project {
 	public var npm(default, null):Npm = new Npm();
 	public var url(default, null):Url = new Url();
 	public var cordova(default, null):Cordova = new Cordova();
+	public var electron(default, null):Electron = new Electron();
 
 	public var name:String;
 	public var rname(get, never):String;
@@ -37,6 +38,7 @@ class Project {
 		}
 
 		if (run.active) root.addChild(run.result());
+		if (electron.active) root.addChild(electron.result());
 		if (server.active) root.addChild(server.result());
 		if (cordova.active) {
 			cordova.title = name;
@@ -66,7 +68,7 @@ class Project {
 			}
 		}
 		if (url.active) root.addChild(url.result());
-		
+
 		if (root.firstChild() == null) {
 			root.addChild(Xml.createComment('Put configuration here'));
 		}
@@ -74,7 +76,7 @@ class Project {
 	}
 
 	public function getMain():String {
-		return build.active ? build.getMainhx() : null; 
+		return build.active ? build.getMainhx() : null;
 	}
 
 	public function getCps():Array<String> {

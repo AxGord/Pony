@@ -52,6 +52,7 @@ class Create {
 		project.secondbuild.hxml = 'default';
 		project.secondbuild.outputFile = 'default';
 		project.secondbuild.esVersion = 6;
+		project.electron.active = true;
 	}
 
 	private static function setProjectConfig(project: Project, type: ProjectType): Void {

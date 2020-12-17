@@ -323,7 +323,7 @@ class VSCode {
 				({
 					name: onlyRenderConfName,
 					type: 'chrome',
-					request: 'attach',
+					request: 'launch',
 					port: port,
 					webRoot: resultDir,
 					timeout: 20000,
