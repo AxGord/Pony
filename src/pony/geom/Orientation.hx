@@ -18,7 +18,7 @@ using StringTools;
 
 	@:extern private inline function get_isHorizontal(): Bool return this & Horizontal != 0;
 	@:extern private inline function get_isVertical(): Bool return this & Vertical != 0;
-	public inline function checkDirection(d: Direction): Bool return this & d != null;
+	public inline function checkDirection(d: Direction): Bool return this & d != 0;
 
 	@:to public function toString(): String {
 		return switch this {
