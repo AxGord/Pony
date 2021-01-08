@@ -5,6 +5,7 @@ import haxe.Log;
 import haxe.PosInfos;
 import pony.ILogable;
 import pony.events.Signal2;
+import pony.events.Listener2;
 import pony.magic.HasSignal;
 
 /**
@@ -28,19 +29,33 @@ import pony.magic.HasSignal;
 
 	public inline function listenError(l: ILogable, ?id: String): Void {
 		#if !disableErrors
-		if (id != null)
-			l.onError << function(s: String, p: PosInfos): Void eError.dispatch(id + DLM + s, p);
-		else
-			l.onError << error;
+		if (id != null) {
+			var listener: Listener2<String, PosInfos> = function(s: String, p: PosInfos): Void error(id + DLM + s, p);
+			function listen(): Void l.onError << listener;
+			function unlisten(): Void l.onError >> listener;
+			listen();
+			@:privateAccess l.eLog.onTake << listen;
+			@:privateAccess l.eLog.onLost << unlisten;
+		} else {
+			onError; // init signal
+			l.onError << eError;
+		}
 		#end
 	}
 
 	public inline function listenLog(l: ILogable, ?id: String): Void {
 		#if !disableLogs
-		if (id != null)
-			l.onLog << function(s: String, p: PosInfos): Void eLog.dispatch(id + DLM + s, p);
-		else
-			l.onLog << log;
+		if (id != null) {
+			var listener: Listener2<String, PosInfos> = function(s: String, p: PosInfos): Void log(id + DLM + s, p);
+			function listen(): Void l.onLog << listener;
+			function unlisten(): Void l.onLog >> listener;
+			listen();
+			@:privateAccess l.eLog.onTake << listen;
+			@:privateAccess l.eLog.onLost << unlisten;
+		} else {
+			onLog; // init signal
+			l.onLog << eLog;
+		}
 		#end
 	}
 

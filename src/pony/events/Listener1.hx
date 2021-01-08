@@ -22,7 +22,7 @@ typedef Listener1Impl<T1> = {
  * @author AxGord <axgord@gmail.com>
  */
 @:forward(once, listener)
-abstract Listener1<T1>(Listener1Impl<T1>) to Listener1Impl<T1> from Listener1Impl<T1> {
+@:nullSafety(Strict) abstract Listener1<T1>(Listener1Impl<T1>) to Listener1Impl<T1> from Listener1Impl<T1> {
 
 	@:from @:extern private static inline function f0<T1>(f: Void -> Void): Listener1<T1>
 		return { once: false, listener: LFunction0(f) };
@@ -41,6 +41,9 @@ abstract Listener1<T1>(Listener1Impl<T1>) to Listener1Impl<T1> from Listener1Imp
 	@:from @:extern private static inline function s1<T1>(f: Event1<T1>): Listener1<T1>
 		return { once: false, listener: LEvent1(f) };
 
+	public var isEvent(get, never): Bool;
+	public var event(get, never): Null<Priority<Any>>;
+
 	public inline function call(a1: T1, controller: SignalController1<T1>, ?safe: Bool): Void switch this.listener {
 		case LFunction0(f): f();
 		case LFunction0c(f): f(controller);
@@ -52,6 +55,20 @@ abstract Listener1<T1>(Listener1Impl<T1>) to Listener1Impl<T1> from Listener1Imp
 		case LNot(s, v) if (v != a1): s.dispatch(a1, safe);
 		case LBind1(s, v1): s.dispatch(a1, v1, safe);
 		case _:
+	}
+
+	public inline function get_isEvent(): Bool return switch this.listener {
+		case LEvent0(_), LEvent1(_), LBind1(_), LSub(_), LNot(_): true;
+		case _: false;
+	}
+
+	public inline function get_event(): Null<Priority<Any>> return switch this.listener {
+		case LEvent0(e): cast e;
+		case LEvent1(e): cast e;
+		case LBind1(e, _): cast e;
+		case LSub(e, _): cast e;
+		case LNot(e, _): cast e;
+		case _: null;
 	}
 
 }

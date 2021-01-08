@@ -11,11 +11,17 @@ import pony.Priority;
 	onTake,
 	onLost
 )
-abstract Event0(Priority<Listener0>) from Priority<Listener0> to Priority<Listener0> {
+@:nullSafety(Strict) abstract Event0(Priority<Listener0>) from Priority<Listener0> to Priority<Listener0> {
 
 	@:extern public inline function new(double: Bool = false) {
 		this = new Priority(double);
 		this.compare = compare;
+		this.real = real;
+	}
+
+	private static function real(l: Listener0): Bool {
+		var e: Null<Priority<Any>> = l.event;
+		return e == null || !e.empty;
 	}
 
 	private static function compare<T1>(a: Listener0, b: Listener0): Bool {
@@ -38,7 +44,14 @@ abstract Event0(Priority<Listener0>) from Priority<Listener0> to Priority<Listen
 		this.lock = true;
 		for (e in this) {
 			if (this.isDestroy()) return;
-			if (e.once) this.remove(e);
+			if (e.once) {
+				var ev: Null<Priority<Any>> = e.event;
+				if (ev != null) {
+					ev.onLost >> this.changeReals;
+					ev.onTake >> this.changeReals;
+				}
+				this.remove(e);
+			}
 			e.call(controller, safe);
 			if (controller.stop) {
 				this.brk();
@@ -49,11 +62,15 @@ abstract Event0(Priority<Listener0>) from Priority<Listener0> to Priority<Listen
 	}
 
 	@:op(A && B) @:extern public inline function and(s: Event0): Event0 {
-		return (new Event0(): Signal0).add(this).add(s);
+		var e: Event0 = new Event0();
+		(e: Signal0) << this << s;
+		return e;
 	}
 
 	@:op(A & B) @:extern public inline function andOnce(s: Event0): Event0 {
-		return (new Event0(): Signal0).add(this).add(s);
+		var e: Event0 = new Event0();
+		(e: Signal0) << this << s << (e: Signal0).clear;
+		return e;
 	}
 
 	public inline function destroy(): Void {

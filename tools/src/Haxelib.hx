@@ -110,6 +110,7 @@ class Haxelib {
 		if (!FileSystem.exists('.git')) return;
 		try {
 			var message: String = StringTools.rtrim('Update haxelib v $version. $desc');
+			Utils.command('git', ['add', '--all']);
 			Utils.command('git', ['commit', '-a', '-m', message]);
 			Utils.command('git', ['push']);
 		} catch (e: Dynamic) {}

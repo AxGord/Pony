@@ -16,6 +16,12 @@ abstract Event2<T1, T2>(Priority<Listener2<T1, T2>>) from Priority<Listener2<T1,
 	@:extern public inline function new(double: Bool = false) {
 		this = new Priority(double);
 		this.compare = compare;
+		this.real = real;
+	}
+
+	private static function real<T1, T2>(l: Listener2<T1, T2>): Bool {
+		var e: Null<Priority<Any>> = l.event;
+		return e == null || !e.empty;
 	}
 
 	private static function compare<T1, T2>(a: Listener2<T1, T2>, b: Listener2<T1, T2>): Bool {
@@ -65,19 +71,27 @@ abstract Event2<T1, T2>(Priority<Listener2<T1, T2>>) from Priority<Listener2<T1,
 	}
 
 	@:extern public inline function sub(a1: T1, a2: T2, priority: Int = 0): Event0 {
-		return (new Event0(): Signal0).add(dispatch.bind(a1, a2), priority);
+		var e: Event0 = new Event0();
+		(e: Signal0).add(dispatch.bind(a1, a2), priority);
+		return e;
 	}
 
 	@:extern public inline function subOnce(a1: T1, a2: T2, priority: Int = 0): Event0 {
-		return cast (new Event0(): Signal0).once(dispatch.bind(a1, a2), priority);
+		var e: Event0 = new Event0();
+		(e: Signal0).once(dispatch.bind(a1, a2), priority);
+		return e;
 	}
 
 	@:extern public inline function sub1(a1: T1, priority: Int = 0): Event1<T2> {
-		return (new Event1(): Signal1<T2>).add(dispatch.bind(a1), priority);
+		var e: Event1<T2> = new Event1<T2>();
+		(e: Signal1<T2>).add(dispatch.bind(a1), priority);
+		return e;
 	}
 
 	@:extern public inline function sub1Once(a1: T1, priority: Int = 0): Event1<T2> {
-		return cast (new Event1(): Signal1<T2>).once(dispatch.bind(a1), priority);
+		var e: Event1<T2> = new Event1<T2>();
+		(e: Signal1<T2>).once(dispatch.bind(a1), priority);
+		return e;
 	}
 
 	@:op(A - B) @:extern private inline function sub1_op(a1: T1): Event1<T2> {
@@ -85,7 +99,9 @@ abstract Event2<T1, T2>(Priority<Listener2<T1, T2>>) from Priority<Listener2<T1,
 	}
 
 	@:extern public inline function sub2(a2:T2, priority:Int = 0): Event1<T1> {
-		return (new Event1():Signal1<T1>).add(dispatch.bind(_, a2), priority);
+		var e: Event1<T1> = new Event1<T1>();
+		(e: Signal1<T1>).add(dispatch.bind(_, a2), priority);
+		return e;
 	}
 
 	@:extern public inline function sub2Once(a2: T2, priority: Int = 0): Event1<T1> {
@@ -93,11 +109,15 @@ abstract Event2<T1, T2>(Priority<Listener2<T1, T2>>) from Priority<Listener2<T1,
 	}
 
 	@:op(A && B) @:extern public inline function and(s: Event2<T1, T2>): Event2<T1, T2> {
-		return (new Event2(): Signal2<T1, T2>).add(this).add(s);
+		var e: Event2<T1, T2> = new Event2<T1, T2>();
+		(e: Signal2<T1, T2>) << this << s;
+		return e;
 	}
 
 	@:op(A & B) @:extern public inline function andOnce(s: Event2<T1, T2>): Event2<T1, T2> {
-		return (new Event2(): Signal2<T1, T2>).add(this).add(s);
+		var e: Event2<T1, T2> = new Event2<T1, T2>();
+		(e: Signal2<T1, T2>) << this << s << (e: Signal2<T1, T2>).clear;
+		return e;
 	}
 
 	public inline function destroy(): Void {

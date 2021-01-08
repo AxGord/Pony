@@ -27,8 +27,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Pony Tools: Create electron build cfg",
-"version": "1.3.7",
+"releasenote": "Signals recursive take and lost listeners. Null safety.",
+"version": "1.3.8",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }

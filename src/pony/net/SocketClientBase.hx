@@ -19,14 +19,14 @@ import pony.magic.HasSignal;
  * SocketClientBase
  * @author AxGord <axgord@gmail.com>
  */
-class SocketClientBase extends Logable implements HasSignal {
+@:nullSafety(Strict) class SocketClientBase extends Logable implements HasSignal {
 
 	public static inline var MIN_DATA_SIZE: Int = 4;
 
-	public var readLengthSize: UInt;
+	public var readLengthSize: UInt = 0;
 
 	#if (!js || nodejs)
-	public var server(default, null): SocketServer;
+	public var server(default, null): Null<SocketServer>;
 	#end
 
 	@:auto public var onData: Signal2<BytesInput, SocketClient>;
@@ -38,9 +38,9 @@ class SocketClientBase extends Logable implements HasSignal {
 	@:lazy public var onOpen: Signal0;
 	@:lazy public var onConnect: Signal1<SocketClient>;
 
-	public var opened(default, null): Bool;
+	public var opened(default, null): Bool = false;
 
-	public var id(default, null): Int;
+	public var id(default, null): Int = -1;
 	public var host(default, null): String;
 	public var port(default, null): Int;
 	public var isWithLength: Bool;
@@ -50,7 +50,7 @@ class SocketClientBase extends Logable implements HasSignal {
 	private var maxSize: UInt;
 
 	// For big data
-	private var waitNext: UInt;
+	private var waitNext: UInt = 0;
 	private var waitBuf: BytesOutput = new BytesOutput();
 
 	private var tryCounter: Int = 0;
@@ -171,7 +171,7 @@ class SocketClientBase extends Logable implements HasSignal {
 		if (!server.eString.empty) onString << server.eString;
 	}
 
-	public inline function send2other(data: BytesOutput): Void server.send2other(data, cast this);
+	public inline function send2other(data: BytesOutput): Void if (server != null) server.send2other(data, cast this);
 
 	#end
 
@@ -213,21 +213,21 @@ class SocketClientBase extends Logable implements HasSignal {
 	public function destroy(): Void {
 		close();
 		eLostConnection.destroy();
-		eLostConnection = null;
+		@:nullSafety(Off) eLostConnection = null;
 		eReconnect.destroy();
-		eReconnect = null;
+		@:nullSafety(Off) eReconnect = null;
 		eString.destroy();
-		eString = null;
+		@:nullSafety(Off) eString = null;
 		eData.destroy();
-		eData = null;
+		@:nullSafety(Off) eData = null;
 		eConnect.destroy();
-		eConnect = null;
+		@:nullSafety(Off) eConnect = null;
 		eOpen.destroy();
-		eOpen = null;
+		@:nullSafety(Off) eOpen = null;
 		eClose.destroy();
-		eClose = null;
+		@:nullSafety(Off) eClose = null;
 		eDisconnect.destroy();
-		eDisconnect = null;
+		@:nullSafety(Off) eDisconnect = null;
 	}
 
 	private inline function logBytes(msg: String, b: Bytes): Void {

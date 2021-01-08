@@ -28,7 +28,7 @@ typedef Listener2Impl<T1, T2> = {
  * @author AxGord <axgord@gmail.com>
  */
 @:forward(once, listener)
-abstract Listener2<T1, T2>(Listener2Impl<T1, T2>) to Listener2Impl<T1, T2> from Listener2Impl<T1, T2> {
+@:nullSafety(Strict) abstract Listener2<T1, T2>(Listener2Impl<T1, T2>) to Listener2Impl<T1, T2> from Listener2Impl<T1, T2> {
 
 	@:from @:extern private static inline function f0<T1, T2>(f: Void -> Void): Listener2<T1, T2>
 		return { once: false, listener: LFunction0(f) };
@@ -55,6 +55,9 @@ abstract Listener2<T1, T2>(Listener2Impl<T1, T2>) to Listener2Impl<T1, T2> from 
 	@:from @:extern private static inline function s2<T1, T2>(f: Event2<T1, T2>): Listener2<T1, T2>
 		return { once: false, listener: LEvent2(f) };
 
+	public var isEvent(get, never): Bool;
+	public var event(get, never): Null<Priority<Any>>;
+
 	public inline function call(a1: T1, a2: T2, controller: SignalController2<T1, T2>, ?safe: Bool): Void switch this.listener {
 		case LFunction0(f): f();
 		case LFunction0c(f): f(controller);
@@ -72,6 +75,24 @@ abstract Listener2<T1, T2>(Listener2Impl<T1, T2>) to Listener2Impl<T1, T2> from 
 		case LNot1(s, v1) if (v1 != a1): s.dispatch(a1, a2, safe);
 		case LNot2(s, v2) if (v2 != a2): s.dispatch(a1, a2, safe);
 		case _:
+	}
+
+	public inline function get_isEvent(): Bool return switch this.listener {
+		case LEvent0(_), LEvent1(_), LEvent2(_), LSub(_), LSub1(_), LSub2(_), LNot(_), LNot1(_), LNot2(_): true;
+		case _: false;
+	}
+
+	public inline function get_event(): Null<Priority<Any>> return switch this.listener {
+		case LEvent0(e): cast e;
+		case LEvent1(e): cast e;
+		case LEvent2(e): cast e;
+		case LSub(e, _): cast e;
+		case LSub1(e, _): cast e;
+		case LSub2(e, _): cast e;
+		case LNot(e, _): cast e;
+		case LNot1(e, _): cast e;
+		case LNot2(e, _): cast e;
+		case _: null;
 	}
 
 }

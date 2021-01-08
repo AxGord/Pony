@@ -11,38 +11,54 @@ import pony.events.Listener2;
  */
 @:forward(
 	empty,
-	clear,
 	min,
 	max,
-	add,
-	remove,
 	change,
-	addToBegin,
-	addToEnd,
 	getPriority,
 	exists,
-	existsArray,
-	addArray,
-	removeArray
+	existsArray
 )
 abstract Signal2<T1, T2>(Priority<Listener2<T1, T2>>) from Event2<T1, T2> {
 
-	@:extern public inline function once(e: Listener2<T1, T2>, priority: Int = 0): Signal2<T1, T2> {
-		e.once = true;
+	public inline function add(e: Listener2<T1, T2>, priority: Int = 0): Signal2<T1, T2> {
+		var ev: Null<Priority<Any>> = e.event;
+		if (ev != null) {
+			@:privateAccess ev.onLost.directAdd(this.changeReals);
+			@:privateAccess ev.onTake.directAdd(this.changeReals);
+		}
 		return this.add(e, priority);
 	}
 
-	@:op(A << B) @:extern private inline function op_add(listener: Listener2<T1, T2>): Signal2<T1, T2> {
-		return this.add(listener);
+	private inline function directAdd(e: Listener2<T1, T2>): Signal2<T1, T2> return this.add(e);
+
+	public inline function remove(e: Listener2<T1, T2>): Bool {
+		unlistenSubChange(e);
+		return this.remove(e);
 	}
 
-	@:op(A < B) @:extern private inline function once_op(listener: Listener2<T1, T2>): Signal2<T1, T2> {
-		return once(listener);
+	private inline function directRemove(e: Listener2<T1, T2>): Bool return this.remove(e);
+
+	public inline function clear(): Signal2<T1, T2> {
+		for (e in this.data) unlistenSubChange(e);
+		return this.clear();
 	}
 
-	@:op(A >> B) @:extern private inline function remove_op(listener: Listener2<T1, T2>): Bool {
-		return this.remove(listener);
+	private inline function unlistenSubChange(l: Listener2<T1, T2>): Void {
+		var e: Null<Priority<Any>> = l.event;
+		if (e != null) {
+			@:privateAccess e.onLost.directRemove(this.changeReals);
+			@:privateAccess e.onTake.directRemove(this.changeReals);
+		}
 	}
+
+	@:extern public inline function once(e: Listener2<T1, T2>, priority: Int = 0): Signal2<T1, T2> {
+		e.once = true;
+		return add(e, priority);
+	}
+
+	@:op(A << B) @:extern private inline function op_add(listener: Listener2<T1, T2>): Signal2<T1, T2> return add(listener);
+	@:op(A < B) @:extern private inline function once_op(listener: Listener2<T1, T2>): Signal2<T1, T2> return once(listener);
+	@:op(A >> B) @:extern private inline function remove_op(listener: Listener2<T1, T2>): Bool return remove(listener);
 
 	public function sub(a1: T1, a2: T2, priority: Int = 0, once: Bool = false): Signal0 {
 		for (e in this) switch e.listener {
@@ -52,7 +68,7 @@ abstract Signal2<T1, T2>(Priority<Listener2<T1, T2>>) from Event2<T1, T2> {
 			case _:
 		}
 		var s = new Event0();
-		this.add({ once: once, listener: LSub(s, a1, a2) }, priority);
+		add({ once: once, listener: LSub(s, a1, a2) }, priority);
 		return s;
 	}
 
@@ -68,13 +84,11 @@ abstract Signal2<T1, T2>(Priority<Listener2<T1, T2>>) from Event2<T1, T2> {
 			case _:
 		}
 		var s = new Event1<T2>();
-		this.add({ once: once, listener: LSub1(s, a1) }, priority);
+		add({ once: once, listener: LSub1(s, a1) }, priority);
 		return s;
 	}
 
-	@:op(A - B) @:extern private inline function sub1_op(a1: T1): Signal1<T2> {
-		return sub1(a1);
-	}
+	@:op(A - B) @:extern private inline function sub1_op(a1: T1): Signal1<T2> return sub1(a1);
 
 	@:op(A -= B) @:extern public inline function removeSub1(a1: T1): Bool {
 		return this.remove({ once: false, listener: LSub1(null, a1) });
@@ -88,13 +102,11 @@ abstract Signal2<T1, T2>(Priority<Listener2<T1, T2>>) from Event2<T1, T2> {
 			case _:
 		}
 		var s = new Event1<T1>();
-		this.add({ once: once, listener: LSub2(s, a2) }, priority);
+		add({ once: once, listener: LSub2(s, a2) }, priority);
 		return s;
 	}
 
-	@:extern private inline function sub2_op(a2: T2): Signal1<T1> {
-		return sub2(a2);
-	}
+	@:extern private inline function sub2_op(a2: T2): Signal1<T1> return sub2(a2);
 
 	@:extern public inline function removeSub2(a: T2): Bool {
 		return this.remove({ once: false, listener: LSub2(null, a) });
@@ -108,7 +120,7 @@ abstract Signal2<T1, T2>(Priority<Listener2<T1, T2>>) from Event2<T1, T2> {
 			case _:
 		}
 		var s = new Event2();
-		this.add({ once: once, listener: LNot(s, a1, a2) }, priority);
+		add({ once: once, listener: LNot(s, a1, a2) }, priority);
 		return s;
 	}
 
@@ -124,17 +136,12 @@ abstract Signal2<T1, T2>(Priority<Listener2<T1, T2>>) from Event2<T1, T2> {
 			case _:
 		}
 		var s = new Event2();
-		this.add({ once: once, listener: LNot1(s, a1) }, priority);
+		add({ once: once, listener: LNot1(s, a1) }, priority);
 		return s;
 	}
 
-	@:op(A / B) @:extern private inline function not_op(a1: T1): Signal2<T1, T2> {
-		return not1(a1);
-	}
-
-	@:op(A % B) @:extern private inline function not_op1(a1: T1): Signal1<T2> {
-		return not1(a1).shift();
-	}
+	@:op(A / B) @:extern private inline function not_op(a1: T1): Signal2<T1, T2> return not1(a1);
+	@:op(A % B) @:extern private inline function not_op1(a1: T1): Signal1<T2> return not1(a1).shift();
 
 	@:op(A /= B) @:extern public inline function removeNot1(a1: T1): Bool {
 		return this.remove({ once: false, listener: LNot1(null, a1) });
@@ -148,7 +155,7 @@ abstract Signal2<T1, T2>(Priority<Listener2<T1, T2>>) from Event2<T1, T2> {
 			case _:
 		}
 		var s = new Event2();
-		this.add({ once: once, listener: LNot2(s, a1) }, priority);
+		add({ once: once, listener: LNot2(s, a1) }, priority);
 		return s;
 	}
 
@@ -158,7 +165,7 @@ abstract Signal2<T1, T2>(Priority<Listener2<T1, T2>>) from Event2<T1, T2> {
 
 	@:extern public inline function shift(): Signal1<T2> {
 		var s:Event1<T2> = new Event1<T2>();
-		this.add(function(_, v) s.dispatch(v));
+		add(function(_, v) s.dispatch(v));
 		return s;
 	}
 
@@ -182,7 +189,7 @@ abstract Signal2<T1, T2>(Priority<Listener2<T1, T2>>) from Event2<T1, T2> {
 
 	@:op(A || B) @:extern public inline function or(s: Signal2<T1, T2>): Signal2<T1, T2> {
 		var ns = new Event2();
-		this.add(ns);
+		add(ns);
 		s.add(ns);
 		return ns;
 	}
@@ -195,13 +202,13 @@ abstract Signal2<T1, T2>(Priority<Listener2<T1, T2>>) from Event2<T1, T2> {
 	}
 
 	@:extern public inline function join(s: Signal2<T1, T2>): Signal2<T1, T2> {
-		this.add({ once: false, listener: LEvent2((untyped s: Event2 <T1, T2>), true) });
+		add({ once: false, listener: LEvent2((untyped s: Event2 <T1, T2>), true) });
 		s.add({ once: false, listener: LEvent2((this: Event2 <T1, T2>), true) });
 		return this;
 	}
 
 	@:extern public inline function unjoin(s: Signal2<T1, T2>): Signal2<T1, T2> {
-		this.remove((untyped s: Event2 <T1, T2>));
+		remove((untyped s: Event2 <T1, T2>));
 		s.remove((this: Event2<T1, T2>));
 		return this;
 	}

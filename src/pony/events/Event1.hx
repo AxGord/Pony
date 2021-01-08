@@ -12,11 +12,17 @@ import pony.Priority;
 	onTake,
 	onLost
 )
-abstract Event1<T1>(Priority<Listener1<T1>>) from Priority<Listener1<T1>> to Priority<Listener1<T1>> {
+@:nullSafety(Strict) abstract Event1<T1>(Priority<Listener1<T1>>) from Priority<Listener1<T1>> to Priority<Listener1<T1>> {
 
 	@:extern public inline function new(double: Bool = false) {
 		this = new Priority(double);
 		this.compare = compare;
+		this.real = real;
+	}
+
+	private static function real<T1>(l: Listener1<T1>): Bool {
+		var e: Null<Priority<Any>> = l.event;
+		return e == null || !e.empty;
 	}
 
 	private static function compare<T1>(a: Listener1<T1>, b: Listener1<T1>): Bool {
@@ -45,7 +51,14 @@ abstract Event1<T1>(Priority<Listener1<T1>>) from Priority<Listener1<T1>> to Pri
 		this.lock = true;
 		for (e in this) {
 			if (this.isDestroy()) return;
-			if (e.once) this.remove(e);
+			if (e.once) {
+				var ev: Null<Priority<Any>> = e.event;
+				if (ev != null) {
+					ev.onLost >> this.changeReals;
+					ev.onTake >> this.changeReals;
+				}
+				this.remove(e);
+			}
 			e.call(a1, controller, safe);
 			if (controller.stop) {
 				this.brk();
@@ -56,11 +69,15 @@ abstract Event1<T1>(Priority<Listener1<T1>>) from Priority<Listener1<T1>> to Pri
 	}
 
 	@:extern public inline function sub(a1: T1, priority: Int = 0): Event0 {
-		return (new Event0(): Signal0).add(dispatch.bind(a1), priority);
+		var e: Event0 = new Event0();
+		(e: Signal0).add(dispatch.bind(a1), priority);
+		return e;
 	}
 
 	@:extern public inline function subOnce(a1: T1, priority: Int = 0): Event0 {
-		return cast (new Event0(): Signal0).once(dispatch.bind(a1), priority);
+		var e: Event0 = new Event0();
+		(e: Signal0).once(dispatch.bind(a1), priority);
+		return e;
 	}
 
 	@:op(A - B) @:extern private inline function sub_op(a1: T1): Event0 {
@@ -68,11 +85,15 @@ abstract Event1<T1>(Priority<Listener1<T1>>) from Priority<Listener1<T1>> to Pri
 	}
 
 	@:op(A && B) @:extern public inline function and(s: Event1<T1>): Event1<T1> {
-		return (new Event1(): Signal1<T1>).add(this).add(s);
+		var e: Event1<T1> = new Event1<T1>();
+		(e: Signal1<T1>) << this << s;
+		return e;
 	}
 
 	@:op(A & B) @:extern public inline function andOnce(s: Event1<T1>): Event1<T1> {
-		return (new Event1(): Signal1<T1>).add(this).add(s);
+		var e: Event1<T1> = new Event1<T1>();
+		(e: Signal1<T1>) << this << s << (e: Signal1<T1>).clear;
+		return e;
 	}
 
 	public inline function destroy(): Void {

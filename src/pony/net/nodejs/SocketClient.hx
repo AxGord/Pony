@@ -16,16 +16,16 @@ import pony.time.DeltaTime;
  * SocketClient
  * @author AxGord <axgord@gmail.com>
  */
-class SocketClient extends SocketClientBase {
+@:nullSafety(Strict) class SocketClient extends SocketClientBase {
 
-	private var socket: Socket;
-	private var q: Queue<BytesOutput -> Void>;
+	private var socket: Null<Socket>;
+	@:nullSafety(Off) private var q: Queue<BytesOutput -> Void>;
 
 	override private function open(): Void {
 		super.open();
-		socket = Net.createConnection(port, host);
-		socket.on('connect', connect);
-		nodejsInit(socket);
+		var s: Socket = Net.createConnection(port, host);
+		s.on('connect', connect);
+		nodejsInit(s);
 	}
 
 	@:allow(pony.net.nodejs.SocketServer)
@@ -41,7 +41,7 @@ class SocketClient extends SocketClientBase {
 		super.close();
 		if (socket != null) {
 			socket.end();
-			socket.destroy();
+			@:nullSafety(Off) socket.destroy();
 			socket = null;
 		}
 	}
@@ -55,7 +55,7 @@ class SocketClient extends SocketClientBase {
 		if (socket == null) return;
 		var b: Bytes = data.getBytes();
 		logBytes('Send data', b);
-		socket.write(Buffer.hxFromBytes(b), sendNextAfterTimeout);
+		@:nullSafety(Off) socket.write(Buffer.hxFromBytes(b), sendNextAfterTimeout);
 	}
 
 	private function sendNextAfterTimeout(): Void DeltaTime.skipUpdate(q.next);

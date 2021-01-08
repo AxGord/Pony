@@ -9,7 +9,6 @@ import pony.net.http.CPQ;
 import pony.net.http.WebServer.EConnect;
 import pony.Pair;
 import pony.net.http.modules.mmodels.fields.FInt;
-import pony.text.tpl.ITplPut;
 import pony.magic.SuperPuper;
 
 using pony.Tools;
@@ -35,7 +34,7 @@ class Model implements SuperPuper {
 	public var pathes:Map<String, Array<String>>;
 	public var activePathes:Map<String, {path:String, field:String}>;
 	public var access:Map<String, String>;
-	
+
 	public function new(mm:MModels, actionsClasses:Map<String, Dynamic>) {
 		lang = 'en';
 		name = Type.getClassName(Type.getClass(this));
@@ -45,15 +44,15 @@ class Model implements SuperPuper {
 		cl = cast Type.resolveClass(n);
 		if (cl == null) throw "Can't resolve class (dce?): " + n;
 		var ma:Dynamic<Array<{name: String, type: String}>> = untyped cl.__methoArgs__;
-		
+
 		var o = untyped cl.__methoPathes__;
 		var o2 = untyped cl.__methoActivePathes__;
 		pathes = [for (f in Reflect.fields(o)) f => Reflect.field(o, f)];
 		activePathes = [for (f in Reflect.fields(o2)) f => Reflect.field(o2, f)];
-		
+
 		var o = untyped cl.__methoAccess__;
 		access = [for (f in Reflect.fields(o)) f => Reflect.field(o, f)];
-		
+
 		actions = new Map<String, Action>();
 		var fields:Dynamic = Meta.getFields(cl);
 		for (f in Reflect.fields(fields)) {
@@ -73,16 +72,16 @@ class Model implements SuperPuper {
 			c.init(f, this);
 			columns.set(f, c);
 		}
-		
+
 		db = mm.db.resolve(name);
-		
+
 		init();
 	}
-	
+
 	private function init():Void {
-		
+
 	}
-	
+
 	@:async @:puper
 	public function prepare():Bool {
 		var a:Array<Field> = [
@@ -91,19 +90,19 @@ class Model implements SuperPuper {
 		for (c in columns.kv()) if (c.key != 'id') a.push(c.value.create());
 		return @await db.prepare(a);
 	}
-	
+
 	/*
 	public function update():Void {
 		db.describeAsync(function(r:Stream<DBDescribe>) {
-			
+
 			var f:Void->Void = null;
 			f = function() {
 				db.backup();
 				f = function() { };
 			};
-			
+
 			var el:List<String> = new List<String>();
-			
+
 			for (e in r)
 				if (e.Field == 'id')
 					el.push('id');
@@ -113,7 +112,7 @@ class Model implements SuperPuper {
 					f();
 					db.dropColumn(e.Field);
 				}
-		
+
 			if (el.indexOf('id') == -1) {
 				f();
 				db.addColumn('id', 'INT NOT NULL AUTO_INCREMENT PRIMARY KEY');
@@ -130,7 +129,7 @@ class Model implements SuperPuper {
 	public static function err(e:Dynamic):Void {
 		throw e;
 	}
-	
+
 	public function connect(cpq:CPQ):EConnect {
 		var mc:ModelConnect = Type.createInstance(cl, [this, cpq]);
 		var a = new Map<String, ActionConnect>();
@@ -148,7 +147,7 @@ class Model implements SuperPuper {
 		mc.subactions = sub;
 		return REG(cast mc);
 	}
-	
+
 	inline public static function dbr(r:Bool):ActResult return r ? OK : DBERROR;
-	
+
 }

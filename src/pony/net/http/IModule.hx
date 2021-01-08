@@ -1,7 +1,6 @@
 package pony.net.http;
 
 import pony.fs.Dir;
-import pony.text.tpl.ITplPut;
 import pony.net.http.WebServer;
 
 /**

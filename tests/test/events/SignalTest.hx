@@ -6,9 +6,9 @@ import massive.munit.async.AsyncFactory;
 import pony.events.*;
 import pony.Tools;
 
-class SignalTest 
+class SignalTest
 {
-	
+
 	@Test
 	public function shortCuts():Void
 	{
@@ -22,7 +22,7 @@ class SignalTest
 		Assert.areEqual(r, 'ok, glass!');
 		s.clear();
 	}
-	
+
 	@Test
 	public function clearDispath():Void
 	{
@@ -34,10 +34,10 @@ class SignalTest
 		Assert.areEqual(r, 'ok');
 		s.clear();
 	}
-	
+
 	@Test
 	public function remove():Void {
-		
+
 		var c:Int = 0;
 		var f:Void->Void = function() c++;
 		var e = new Event0();
@@ -49,7 +49,7 @@ class SignalTest
 		e.dispatch();
 		Assert.areEqual(c, 2);
 	}
-	
+
 	@Test
 	public function removeAll():Void {
 		var c:Int = 0;
@@ -101,7 +101,7 @@ class SignalTest
 		e.dispatch();
 		Assert.isTrue(f);
 	}
-	
+
 	@Test
 	public function sub():Void {
 		var f:Bool = false;
@@ -113,7 +113,7 @@ class SignalTest
 		e.dispatch(3);
 		Assert.isTrue(f);
 	}
-	
+
 	@Test
 	public function sub1():Void {
 		var f:Bool = false;
@@ -136,7 +136,7 @@ class SignalTest
 		s2.dispatch();
 		Assert.areEqual(c, 6);
 	}
-	
+
 	@Test
 	public function subSilent():Void {
 		var f:Bool = true;
@@ -151,7 +151,7 @@ class SignalTest
 		s.dispatch(1);
 		Assert.isFalse(f);
 	}
-	
+
 	@Test
 	public function listen():Void {
 		var f:Bool = false;
@@ -162,7 +162,7 @@ class SignalTest
 		s2.dispatch(2);
 		Assert.isTrue(f);
 	}
-	
+
 	@Test
 	public function sw1():Void {
 		var t:String = '';
@@ -175,7 +175,7 @@ class SignalTest
 		s.dispatch(5);
 		Assert.areEqual(t, 'ababa');
 	}
-	
+
 	@Test
 	public function signal2():Void {
 		var t:String = '';
@@ -185,7 +185,7 @@ class SignalTest
 		s.dispatch('v', 8);
 		Assert.areEqual(t, 'vv8');
 	}
-	
+
 	@Test
 	public function signal2subs():Void {
 		var r = '';
@@ -198,7 +198,7 @@ class SignalTest
 		s.dispatch(2, 'e');
 		Assert.areEqual(r, 'd--e');
 	}
-	
+
 	@Test
 	public function typedTarget():Void {
 		var t:SignalTest = null;
@@ -207,7 +207,7 @@ class SignalTest
 		s.dispatch();
 		Assert.areEqual(t, this);
 	}
-	
+
 	@Test
 	public function and():Void {
 		var flags = [for(_ in 0...3) false];
@@ -225,7 +225,7 @@ class SignalTest
 		s1.dispatch();
 		Assert.isTrue(Tools.equal(flags, [true, true, true]));
 	}
-	
+
 	@Test
 	public function shortSyntax():Void {
 		var s:Signal0<Void> = Signal.createEmpty();
@@ -240,7 +240,7 @@ class SignalTest
 		s.dispatch();
 		Assert.isFalse(a);
 	}
-	
+
 	@Test
 	public function shortSyntaxAnd():Void {
 		var s1:Signal0<Void> = Signal.createEmpty();
@@ -252,7 +252,7 @@ class SignalTest
 		s2.dispatch();
 		Assert.isTrue(v);
 	}
-	
+
 	@Test
 	public function arrows():Void {
 		var s1:Signal1<Void, Int> = Signal.createEmpty();
@@ -277,7 +277,7 @@ class SignalTest
 		Assert.areEqual(fsum, sum);
 		Assert.areEqual(sum, 16);
 	}
-	
+
 	@Test
 	public function toFunction():Void {
 		var s:Signal1<Void, Int> = Signal.createEmpty();
@@ -305,7 +305,7 @@ class SignalTest
 		Assert.isTrue(a);
 		Assert.isTrue(b);
 	}
-	
+
 	@Test
 	public function typed0Join():Void {
 		var s1:Signal0<Void> = Signal.createEmpty();
@@ -323,7 +323,7 @@ class SignalTest
 		Assert.isTrue(a);
 		Assert.isTrue(b);
 	}
-	
+
 	@Test
 	public function typed0bJoin():Void {
 		var s1:Signal0<Void> = Signal.createEmpty();
@@ -341,7 +341,7 @@ class SignalTest
 		Assert.isTrue(a);
 		Assert.isTrue(b);
 	}
-	
+
 	@Test
 	public function typed0brJoin():Void {
 		var s1:Signal0<Void> = Signal.createEmpty();
@@ -360,4 +360,20 @@ class SignalTest
 		Assert.isTrue(b);
 	}
 	*/
+
+	@Test
+	public function takeSubListener():Void {
+		var event: Event0 = new Event0();
+		var signal: Signal0 = event;
+		var subEvent: Event0 = new Event0();
+		var subSignal: Signal0 = subEvent;
+		signal << subEvent;
+		Assert.isTrue(event.empty);
+		function testfun() {};
+		subSignal << testfun;
+		Assert.isFalse(event.empty);
+		subSignal >> testfun;
+		Assert.isTrue(event.empty);
+	}
+
 }

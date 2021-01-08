@@ -12,7 +12,7 @@ import pony.events.Signal2;
  * @author AxGord <axgord@gmail.com>
  */
 #if (!js || nodejs)
-class SocketClient
+@:nullSafety(Strict) class SocketClient
 	#if nodejs extends pony.net.nodejs.SocketClient
 	#elseif cs extends pony.net.cs.SocketClient
 	#elseif flash extends pony.net.flash.SocketClient
@@ -22,15 +22,15 @@ class SocketClient
 
 	private static inline var DEFAULT_LEN_BLOCK_SIZE: Int = 4;
 
-	@:auto public var onTask: Signal2<BytesInput, SocketClient>;
+	@:auto public var onTask: Signal2<Null<BytesInput>, SocketClient>;
 	@:auto public var onTaskError: Signal1<SocketClient>;
 
-	public var writeLengthSize: UInt;
+	public var writeLengthSize: UInt = DEFAULT_LEN_BLOCK_SIZE;
 
-	private var stack: Array<BytesOutput>;
-	private var taskPrefix: BytesInput;
+	private var stack: Array<BytesOutput> = [];
+	private var taskPrefix: Null<BytesInput>;
 	private var taskDataLength: Int64 = -1;
-	private var taskBuffer: BytesOutput;
+	private var taskBuffer: Null<BytesOutput>;
 
 	override function sharedInit(): Void {
 		writeLengthSize = DEFAULT_LEN_BLOCK_SIZE;
@@ -85,8 +85,8 @@ class SocketClient
 		send(bo);
 	}
 
-	public function sendStack(): Void if (stack.length > 0) send(stack.shift());
-	public function sendAllStack(): Void while (stack.length > 0) send(stack.shift());
+	public function sendStack(): Void if (stack.length > 0) @:nullSafety(Off) send(stack.shift());
+	public function sendAllStack(): Void while (stack.length > 0) @:nullSafety(Off) send(stack.shift());
 
 	public inline function setTaskb(prefix: Bytes, ?len: Int64): Signal2<BytesInput, SocketClient> {
 		var bo: BytesOutput = new BytesOutput();
@@ -113,9 +113,9 @@ class SocketClient
 		if (taskDataLength == -1) return;
 		if (taskPrefix != null) {
 			if (bi.length < taskPrefix.length - taskPrefix.position) {
-				if (taskPrefix.read(bi.length).compare(bi.readAll()) != 0) taskError();
+				if (@:nullSafety(Off) taskPrefix.read(bi.length).compare(bi.readAll()) != 0) taskError();
 				return;
-			} else if (bi.read(taskPrefix.length - taskPrefix.position).compare(taskPrefix.readAll()) != 0) {
+			} else if (bi.read(taskPrefix.length - taskPrefix.position).compare(@:nullSafety(Off) taskPrefix.readAll()) != 0) {
 				taskError();
 				return;
 			} else {
@@ -128,9 +128,9 @@ class SocketClient
 			eTask.dispatch(null, this);
 			taskDataHandler(b);
 		} else {
-			taskBuffer.write(bi.readAll());
-			if (taskBuffer.length >= taskDataLength) {
-				var b: BytesInput = new BytesInput(taskBuffer.getBytes());
+			@:nullSafety(Off) taskBuffer.write(bi.readAll());
+			if (@:nullSafety(Off) taskBuffer.length >= taskDataLength) {
+				var b: BytesInput = new BytesInput(@:nullSafety(Off) taskBuffer.getBytes());
 				var r: BytesInput = new BytesInput(b.read(taskDataLength.low)); // todo high
 				removeTask();
 				eTask.dispatch(r, this);
