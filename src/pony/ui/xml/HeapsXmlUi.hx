@@ -81,7 +81,11 @@ using pony.text.TextTools;
 			case UiTags.repeat:
 				new Repeat(this, content[0], attrs.count != null ? Std.parseInt(attrs.count) : 0);
 			case UiTags.node:
+				#if js
 				var s: Object = new Object();
+				#else
+				var s: Drawable = @:privateAccess new Drawable(cast null);
+				#end
 				for (e in content) s.addChild(e);
 				s;
 			case UiTags.rect:
