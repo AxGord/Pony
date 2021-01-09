@@ -10,6 +10,8 @@ import pony.events.Event2;
  */
 interface ILogable {
 
+	var logActive(get, never): Bool;
+	var errorActive(get, never): Bool;
 	var onLog(get, never): Signal2<String, PosInfos>;
 	var onError(get, never): Signal2<String, PosInfos>;
 	function error(s: String, ?p: PosInfos): Void;

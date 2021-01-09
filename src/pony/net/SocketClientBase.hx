@@ -250,8 +250,10 @@ import pony.magic.HasSignal;
 	public inline function disableLogInputData(): Void onData >> logInputDataHandler;
 
 	private function logInputDataHandler(bi: BytesInput): Void {
-		logBytes('Get data', bi.readAll());
-		bi.position = 0;
+		if (logActive) {
+			logBytes('Get data', bi.readAll());
+			bi.position = 0;
+		}
 	}
 
 }

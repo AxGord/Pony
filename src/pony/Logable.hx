@@ -18,14 +18,33 @@ import pony.magic.HasSignal;
 
 	private static var origTrace: Null<Dynamic -> ?PosInfos -> Void>;
 
+	@:lazy public var onLog: Signal2<String, Null<PosInfos>>;
+	@:lazy public var onError: Signal2<String, Null<PosInfos>>;
+
+	public var logActive(get, never): Bool;
+	public var errorActive(get, never): Bool;
+
 	private var logPrefix: String;
 
 	public function new(?prefix: String) {
 		logPrefix = prefix == null ? '' : prefix + DLM;
 	}
 
-	@:lazy public var onLog: Signal2<String, Null<PosInfos>>;
-	@:lazy public var onError: Signal2<String, Null<PosInfos>>;
+	private inline function get_logActive(): Bool {
+		#if disableLogs
+		return false;
+		#else
+		return eLog != null && !eLog.empty;
+		#end
+	}
+
+	private inline function get_errorActive(): Bool {
+		#if disableLogs
+		return false;
+		#else
+		return eError != null && !eError.empty;
+		#end
+	}
 
 	public inline function listenError(l: ILogable, ?id: String): Void {
 		#if !disableErrors
@@ -78,13 +97,13 @@ import pony.magic.HasSignal;
 
 	public inline function errorf(fn: Void -> String, ?p: PosInfos): Void {
 		#if !disableErrors
-		if (eError != null && !eError.empty) error(@:nullSafety(Off) fn(), p);
+		if (errorActive) error(@:nullSafety(Off) fn(), p);
 		#end
 	}
 
 	public inline function logf(fn: Void -> String, ?p: PosInfos): Void {
 		#if !disableLogs
-		if (eLog != null && !eLog.empty) log(@:nullSafety(Off) fn(), p);
+		if (logActive) log(@:nullSafety(Off) fn(), p);
 		#end
 	}
 
