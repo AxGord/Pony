@@ -74,8 +74,6 @@ class Touchable extends TouchableBase {
 	private var outover: Bool = false;
 	private var _down: Null<Bool> = null;
 	private var _downRight: Null<Bool> = null;
-	private var wantUp: Bool = false;
-	private var wantUpRight: Bool = false;
 	private var denyDown: Bool = false;
 	private var denyUp: Bool = false;
 
@@ -166,10 +164,8 @@ class Touchable extends TouchableBase {
 		if (outover || event.button > 1) return;
 		var right: Bool = event.button == 1;
 		if (right) {
-			wantUpRight = true;
 			_downRight = false;
 		} else {
-			wantUp = true;
 			_down = false;
 		}
 		if (propagateUp) event.propagate = true;
@@ -181,7 +177,6 @@ class Touchable extends TouchableBase {
 		if (!denyUp && !down && _down != true && over) {
 			_down = true;
 			dispatchDown(0, lastPos.x, lastPos.y, false);
-			wantUp = true;
 			_down = false;
 			_globUpHandler(false);
 			denyDown = true;
@@ -209,19 +204,8 @@ class Touchable extends TouchableBase {
 	}
 	#end
 
-	private inline function globMouseUpLeftHandler(): Void {
-		if (wantUp)
-			wantUp = false;
-		else
-			_globUpHandler(false);
-	}
-
-	private inline function globMouseUpRightHandler(): Void {
-		if (wantUpRight)
-			wantUpRight = false;
-		else
-			_globUpHandler(true);
-	}
+	private inline function globMouseUpLeftHandler(): Void _globUpHandler(false);
+	private inline function globMouseUpRightHandler(): Void _globUpHandler(true);
 
 	private function globUpHandler(): Void {
 		globMouseUpLeftHandler();
@@ -229,7 +213,6 @@ class Touchable extends TouchableBase {
 	}
 
 	private function _globUpHandler(right: Bool): Void {
-		wantUp = true;
 		denyUp = true;
 		DeltaTime.fixedUpdate < unlockUp;
 		if (right) {
