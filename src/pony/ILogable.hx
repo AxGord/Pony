@@ -15,7 +15,4 @@ interface ILogable {
 	function error(s: String, ?p: PosInfos): Void;
 	function log(s: String, ?p: PosInfos): Void;
 
-	private var eLog: Event2<String, PosInfos>;
-	private var eError: Event2<String, PosInfos>;
-
 }

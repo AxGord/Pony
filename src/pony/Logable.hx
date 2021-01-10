@@ -52,9 +52,9 @@ import pony.magic.HasSignal;
 			var listener: Listener2<String, PosInfos> = function(s: String, p: PosInfos): Void error(id + DLM + s, p);
 			function listen(): Void l.onError << listener;
 			function unlisten(): Void l.onError >> listener;
-			listen();
-			@:privateAccess l.eLog.onTake << listen;
-			@:privateAccess l.eLog.onLost << unlisten;
+			if (!eError.empty) listen();
+			eError.onTake << listen;
+			eError.onLost << unlisten;
 		} else {
 			onError; // init signal
 			l.onError << eError;
@@ -68,9 +68,9 @@ import pony.magic.HasSignal;
 			var listener: Listener2<String, PosInfos> = function(s: String, p: PosInfos): Void log(id + DLM + s, p);
 			function listen(): Void l.onLog << listener;
 			function unlisten(): Void l.onLog >> listener;
-			listen();
-			@:privateAccess l.eLog.onTake << listen;
-			@:privateAccess l.eLog.onLost << unlisten;
+			if (!eLog.empty) listen();
+			eLog.onTake << listen;
+			eLog.onLost << unlisten;
 		} else {
 			onLog; // init signal
 			l.onLog << eLog;
