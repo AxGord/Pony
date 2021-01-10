@@ -48,6 +48,7 @@ import pony.magic.HasSignal;
 
 	public inline function listenError(l: ILogable, ?id: String): Void {
 		#if !disableErrors
+		onError; // init signal
 		if (id != null) {
 			var listener: Listener2<String, PosInfos> = function(s: String, p: PosInfos): Void error(id + DLM + s, p);
 			function listen(): Void l.onError << listener;
@@ -56,7 +57,6 @@ import pony.magic.HasSignal;
 			eError.onTake << listen;
 			eError.onLost << unlisten;
 		} else {
-			onError; // init signal
 			l.onError << eError;
 		}
 		#end
@@ -64,6 +64,7 @@ import pony.magic.HasSignal;
 
 	public inline function listenLog(l: ILogable, ?id: String): Void {
 		#if !disableLogs
+		onLog; // init signal
 		if (id != null) {
 			var listener: Listener2<String, PosInfos> = function(s: String, p: PosInfos): Void log(id + DLM + s, p);
 			function listen(): Void l.onLog << listener;
@@ -72,7 +73,6 @@ import pony.magic.HasSignal;
 			eLog.onTake << listen;
 			eLog.onLost << unlisten;
 		} else {
-			onLog; // init signal
 			l.onLog << eLog;
 		}
 		#end
