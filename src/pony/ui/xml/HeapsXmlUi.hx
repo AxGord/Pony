@@ -300,9 +300,9 @@ using pony.text.TextTools;
 				}
 				var color: UColor = 0;
 				if (a[0].charAt(0) == '#')
-					color = cast a.shift();
+					@:nullSafety(Off) color = a.shift();
 				else if (a[a.length - 1].charAt(0) == '#')
-					color = cast a.pop();
+					@:nullSafety(Off) color = a.pop();
 				var d: Null<Int> = null;
 				var angle: Float = 0;
 				if (a.length > 0)
