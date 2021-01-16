@@ -42,27 +42,25 @@ class Touchable extends TouchableBase {
 		Window.getInstance().addEventTarget(globMouseMove);
 	}
 
-	@:access(h2d.Scene)
-	private static function globMouseMove(event: Event): Void {
-		switch event.kind {
-			case EMove:
-				if (HeapsApp.instance != null && HeapsApp.instance.s2d != null) {
-					lastPos = new Point(
-						HeapsApp.instance.s2d.screenXToViewport(event.relX) + HeapsApp.instance.canvas.rect.x,
-						HeapsApp.instance.s2d.screenYToViewport(event.relY) + HeapsApp.instance.canvas.rect.y
-					);
-					TouchableBase.dispatchMove(
-						#if js event.touchId == null ? 0 : #end event.touchId,
-						lastPos.x,
-						lastPos.y
-					);
-				}
-			case EWheel:
-				Mouse.eWheel.dispatch(event.wheelDelta > 0 ? 1 : -1);
-			case _:
+	private static inline function setLastPos(event: Event): Void
+		lastPos = @:nullSafety(Off) HeapsApp.instance.globalToLocal(event.relX, event.relY);
 
+	private static function globMouseMove(event: Event): Void {
+		if (HeapsApp.s2dReady) switch event.kind {
+			case EPush:
+				setLastPos(event);
+			case EMove:
+				setLastPos(event);
+				TouchableBase.dispatchMove(getTouchId(event), lastPos.x, lastPos.y);
+			case EWheel:
+				Mouse.eWheel.dispatch(convertWheel(event));
+			case _:
 		}
 	}
+
+	private static inline function convertWheel(event: Event): Float return event.wheelDelta * #if js 1 #else -0.1 #end;
+
+	private static inline function getTouchId(event: Event): UInt return #if js event.touchId == null ? 0 : #end event.touchId;
 
 	public var propagateOver: Bool = false;
 	public var propagateOut: Bool = false;
@@ -83,9 +81,16 @@ class Touchable extends TouchableBase {
 		this.interactive = interactive;
 		interactive.onOver = overHandler;
 		interactive.onOut = outHandler;
-		interactive.onPush = downHandler;
-		#if !js
-		interactive.onRelease = upHandler;
+		#if ios
+			interactive.onPush = delayedDownHandler;
+			#if !js
+			interactive.onRelease = delayedUpHandler;
+			#end
+		#else
+			interactive.onPush = downHandler;
+			#if !js
+			interactive.onRelease = upHandler;
+			#end
 		#end
 		interactive.onWheel = wheelHandler;
 		#if js
@@ -97,6 +102,8 @@ class Touchable extends TouchableBase {
 		Browser.window.addEventListener(TOUCHEND, globUpHandler);
 		Browser.window.addEventListener(TOUCHCANCEL, leaveHandler);
 		Browser.window.addEventListener(CLICK, globTapHandler);
+		#else
+		Window.getInstance().addEventTarget(instanceMouseHandler);
 		#end
 	}
 
@@ -112,6 +119,8 @@ class Touchable extends TouchableBase {
 		Browser.window.removeEventListener(TOUCHEND, globUpHandler);
 		Browser.window.removeEventListener(TOUCHCANCEL, leaveHandler);
 		Browser.window.removeEventListener(CLICK, globTapHandler);
+		#else
+		Window.getInstance().removeEventTarget(instanceMouseHandler);
 		#end
 		interactive.remove();
 		@:nullSafety(Off) interactive = null;
@@ -122,23 +131,25 @@ class Touchable extends TouchableBase {
 
 	private function wheelHandler(event: Event): Void {
 		if (outover) return;
-		eWheel.dispatch(event.wheelDelta);
+		eWheel.dispatch(convertWheel(event));
 		if (propagateWheel) event.propagate = true;
 	}
 
 	private function overHandler(event: Event): Void {
 		if (outover) return;
 		over = true;
-		down ? dispatchOverDown(event.button == 1) : dispatchOver();
+		down ? dispatchOverDown(getTouchId(event), event.button == 1) : dispatchOver();
 		if (propagateOver) event.propagate = true;
 	}
 
 	private function outHandler(event: Event): Void {
 		if (outover) return;
 		over = false;
-		down ? dispatchOutDown(event.button == 1) : dispatchOut();
+		down ? dispatchOutDown(getTouchId(event), event.button == 1) : dispatchOut();
 		if (propagateOut) event.propagate = true;
 	}
+
+	private function delayedDownHandler(event: Event): Void DeltaTime.fixedUpdate < downHandler.bind(event);
 
 	private function downHandler(event: Event): Void {
 		if (outover || event.button > 1) return;
@@ -149,16 +160,18 @@ class Touchable extends TouchableBase {
 		}
 		if (!over) {
 			over = true;
-			dispatchOver();
+			dispatchOver(getTouchId(event));
 		}
 		var right: Bool = event.button == 1;
 		if (right)
 			_downRight = true;
 		else
 			_down = true;
-		dispatchDown(0, lastPos.x, lastPos.y, right);
+		dispatchDown(getTouchId(event), lastPos.x, lastPos.y, right);
 		if (propagateDown) event.propagate = true;
 	}
+
+	private function delayedUpHandler(event: Event): Void DeltaTime.fixedUpdate < upHandler.bind(event);
 
 	private function upHandler(event: Event): Void {
 		if (outover || event.button > 1) return;
@@ -169,7 +182,7 @@ class Touchable extends TouchableBase {
 			_down = false;
 		}
 		if (propagateUp) event.propagate = true;
-		_globUpHandler(right);
+		_globUpHandler(getTouchId(event), right);
 	}
 
 	#if js
@@ -202,6 +215,19 @@ class Touchable extends TouchableBase {
 		else if (event.button == 2)
 			downRight = true;
 	}
+
+	#else
+
+	private function instanceMouseHandler(event: Event): Void {
+		switch event.kind {
+			case EOut: leaveHandler();
+			case EOver: enterHandler();
+			case ERelease: globMouseUpLeftHandler();
+			case EPush: down = true;
+			case _:
+		}
+	}
+
 	#end
 
 	private inline function globMouseUpLeftHandler(): Void _globUpHandler(false);
@@ -212,22 +238,22 @@ class Touchable extends TouchableBase {
 		touchUp();
 	}
 
-	private function _globUpHandler(right: Bool): Void {
+	private function _globUpHandler(id: Int = 0, right: Bool): Void {
 		denyUp = true;
 		DeltaTime.fixedUpdate < unlockUp;
 		if (right) {
 			if (!over) {
-				if (_downRight != null) dispatchOutUp(true);
+				if (_downRight != null) dispatchOutUp(id, true);
 			} else {
-				dispatchUp(true);
+				dispatchUp(id, true);
 			}
 			_downRight = null;
 			downRight = false;
 		} else {
 			if (!over) {
-				if (_down != null) dispatchOutUp();
+				if (_down != null) dispatchOutUp(id);
 			} else {
-				dispatchUp();
+				dispatchUp(id);
 			}
 			_down = null;
 			down = false;

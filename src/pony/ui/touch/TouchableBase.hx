@@ -15,6 +15,8 @@ import pony.TypedPool;
  */
 @:nullSafety class TouchableBase implements HasSignal {
 
+	public static var touchScreen(get, never): Bool;
+
 	private static inline var SWIPE_DELAY: Time = 50;
 	private static inline var SWIPE_STEP: UInt = 4;
 	private static inline var SWIPE_REPEATS: UInt = 8;
@@ -308,5 +310,7 @@ import pony.TypedPool;
 		touchPool.ret(t);
 		touches.remove(id);
 	}
+
+	private static inline function get_touchScreen(): Bool return #if ios true; #else false; #end
 
 }

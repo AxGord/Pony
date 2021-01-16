@@ -38,7 +38,7 @@ enum ButtonState {
 		}
 		t.onUp << function() {
 			disableOverDown();
-			state = Focus;
+			state = TouchableBase.touchScreen ? Default : Focus;
 		}
 		t.onOver << function() state = Focus;
 		t.onOut << function() state = Default;

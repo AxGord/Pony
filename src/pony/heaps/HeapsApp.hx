@@ -29,13 +29,14 @@ import js.html.Element;
 @:nullSafety class HeapsApp extends App implements HasSignal implements HasLink {
 
 	public static var instance: Null<HeapsApp>;
+	public static var s2dReady(get, never): Bool;
 
 	@:auto public var onInit: Signal1<HeapsApp>;
 	public var noScale(link, link): Bool = canvas.noScale;
 	public var sizeUpdate(default, set): Bool = false;
+	public var canvas: SmartCanvas;
 	private var renderPause: Bool = false;
 	private var alignCenter: Bool = false;
-	public var canvas: SmartCanvas;
 	private var border: Null<Graphics>;
 
 	public function new(?size: Point<Int>, ?color: UColor, #if js ?parentDom: Element, #end sizeUpdate: Bool = true) {
@@ -47,8 +48,10 @@ import js.html.Element;
 		onInit < sdlInitHandler;
 		#end
 		super();
-		if (color != null)
-			engine.backgroundColor = color;
+		if (color != null) engine.backgroundColor = color;
+		#if ios
+		@:privateAccess engine.window.window.displayMode = DisplayMode.Fullscreen;
+		#end
 		this.sizeUpdate = sizeUpdate;
 		if (instance == null) instance = this;
 	}
@@ -88,7 +91,7 @@ import js.html.Element;
 	}
 
 	private function windowResizeHandler(): Void {
-		@:privateAccess canvas.setSize(engine.window.width, engine.window.height);
+		@:privateAccess canvas.setSize(engine.window.window.width, engine.window.window.height);
 		DeltaTime.fixedUpdate < screenUpdate;
 	}
 
@@ -124,12 +127,19 @@ import js.html.Element;
 	public function stageResizeHandler(ratio: Float, rect: Rect<Float>): Void {
 		if (s2d != null) {
 			s2d.scaleMode = ScaleMode.Stretch(Std.int(rect.width), Std.int(rect.height));
-			if (alignCenter)
-				s2d.setPosition(rect.x, rect.y);
+			if (alignCenter) s2d.setPosition(rect.x, rect.y);
 		}
 	}
 
 	public inline function localToGlobal(obj: Object, ?pos: Point<Float>): Point<Float>
 		return pos != null ? pos + obj.localToGlobal() - canvas.rect.startAsPoint() : obj.localToGlobal() - canvas.rect.startAsPoint();
+
+	public function globalToLocal(x: Float, y: Float): Point<Float>
+		return new Point(
+			@:privateAccess s2d.interactiveCamera.screenXToCamera(x, y) - canvas.rect.x,
+			@:privateAccess s2d.interactiveCamera.screenYToCamera(x, y) - canvas.rect.y
+		);
+
+	private static inline function get_s2dReady(): Bool return instance != null && instance.s2d != null;
 
 }
