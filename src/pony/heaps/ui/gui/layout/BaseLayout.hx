@@ -31,27 +31,29 @@ class BaseLayout<T: BaseLayoutCore<Object>> extends Object implements IWH implem
 		layout.setYpos = setYpos;
 	}
 
-	public function add(obj: Object): Void {
+	public inline function add(obj: Object): Void {
 		addChild(obj);
-		if (!Std.is(obj, Repeat))
-			layout.add(obj);
+		if (!Std.is(obj, Repeat)) layout.add(obj);
 	}
 
-	public function addAt(obj: Object, index: Int): Void {
+	public inline function addAt(obj: Object, index: Int): Void {
 		addChildAt(obj, index);
-		if (!Std.is(obj, Repeat))
-			layout.addAt(obj, index);
+		if (!Std.is(obj, Repeat)) layout.addAt(obj, index);
 	}
 
-	public function addToBegin(obj: Object): Void {
+	public inline function addToBegin(obj: Object): Void {
 		addChildAt(obj, 0);
-		if (!Std.is(obj, Repeat))
-			layout.addToBegin(obj);
+		if (!Std.is(obj, Repeat)) layout.addToBegin(obj);
 	}
 
-	public function rm(obj: Object): Void {
+	public inline function rm(obj: Object): Void {
 		removeChild(obj);
 		layout.remove(obj);
+	}
+
+	public inline function clear(): Void {
+		removeChildren();
+		layout.removeAll();
 	}
 
 	private function setXpos(obj: Object, v: Float): Void obj.x = v;

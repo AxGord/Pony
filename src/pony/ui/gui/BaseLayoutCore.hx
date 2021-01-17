@@ -30,22 +30,24 @@ using pony.Tools;
 		tasks = new Tasks(tasksReady);
 	}
 
-	public function add(o: T): Void {
+	public inline function add(o: T): Void {
 		objects.push(o);
 		addWait(o);
 	}
 
-	public function addAt(o: T, index: Int): Void {
+	public inline function addAt(o: T, index: Int): Void {
 		objects.insert(index, o);
 		addWait(o);
 	}
 
-	public function remove(o: T): Void {
+	public inline function remove(o: T): Void {
 		objects.remove(o);
 		needUpdate();
 	}
 
-	public function addToBegin(o: T): Void {
+	public inline function removeAll(): Void objects = [];
+
+	public inline function addToBegin(o: T): Void {
 		objects.unshift(o);
 		addWait(o);
 	}
