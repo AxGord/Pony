@@ -117,11 +117,19 @@ class Tools {
 				for (i in 0...a.length)
 					if (!equal(a[i], b[i], maxDepth - 1)) return false;
 				return true;
+			#if (haxe_ver >= 4.00)
+			case TObject: if (Std.isOfType(a, Class)) return false;
+			#else
 			case TObject: if (Std.is(a, Class)) return false;
+			#end
 			case TUnknown:
 			case TClass(t):
 				if (t == Array) {
+					#if (haxe_ver >= 4.00)
+					if (!Std.isOfType(b, Array) || a.length != b.length) return false;
+					#else
 					if (!Std.is(b, Array) || a.length != b.length) return false;
+					#end
 					for (i in 0...a.length) if (!equal(a[i], b[i], maxDepth - 1)) return false;
 					return true;
 				}
@@ -129,7 +137,11 @@ class Tools {
 		// a is Object on Unknown or Class instance
 		switch (Type.typeof(b)) {
 			case TInt, TFloat, TBool, TFunction, TEnum(_), TNull: return false;
+			#if (haxe_ver >= 4.00)
+			case TObject: if (Std.isOfType(b, Class)) return false;
+			#else
 			case TObject: if (Std.is(b, Class)) return false;
+			#end
 			case TClass(t): if (t == Array) return false;
 			case TUnknown:
 		}
@@ -146,7 +158,11 @@ class Tools {
 		return switch Type.typeof(obj) {
 			case TEnum(t):
 				Type.createEnumIndex(t, Type.enumIndex(obj), [for (e in Type.enumParameters(obj)) clone(e)]);
+			#if (haxe_ver >= 4.00)
+			case TObject if (!Std.isOfType(obj, Class)):
+			#else
 			case TObject if (!Std.is(obj, Class)):
+			#end
 				_clone(obj);
 			case TClass(Array):
 				var obj:Array<Dynamic> = cast obj;
@@ -311,7 +327,13 @@ class Tools {
 	public static function setFields(a: Dynamic, b: {}): Void {
 		for (p in b.fields()) {
 			var d:Dynamic = b.field(p);
-			if (a.hasField(p) && d.isObject() && !Std.is(d, String) && !Std.is(d, Array))
+			if (a.hasField(p) && d.isObject() &&
+				#if (haxe_ver >= 4.00)
+				!Std.isOfType(d, String) && !Std.isOfType(d, Array)
+				#else
+				!Std.is(d, String) && !Std.is(d, Array)
+				#end
+			)
 				setFields(a.field(p), d);
 			else
 				a.setField(p, d);
@@ -343,7 +365,15 @@ class Tools {
 		var result: Dynamic<Dynamic> = {};
 		for (p in a.fields()) {
 			var d: Dynamic = a.field(p);
-			result.setField(p, d.isObject() && !Std.is(d, String) ? convertObject(d, fun) : fun(d));
+			result.setField(
+				p, d.isObject() &&
+				#if (haxe_ver >= 4.00)
+				!Std.isOfType(d, String)
+				#else
+				!Std.is(d, String)
+				#end
+				? convertObject(d, fun) : fun(d)
+			);
 		}
 		return result;
 	}

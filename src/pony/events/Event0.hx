@@ -13,11 +13,15 @@ import pony.Priority;
 )
 @:nullSafety(Strict) abstract Event0(Priority<Listener0>) from Priority<Listener0> to Priority<Listener0> {
 
+	public var self(get, never): Event0;
+
 	@:extern public inline function new(double: Bool = false) {
 		this = new Priority(double);
 		this.compare = compare;
 		this.real = real;
 	}
+
+	@:extern private inline function get_self(): Event0 return this;
 
 	private static function real(l: Listener0): Bool {
 		var e: Null<Priority<Any>> = l.event;
@@ -40,7 +44,7 @@ import pony.Priority;
 
 	public function dispatch(safe: Bool = false): Void {
 		if (this == null || this.isDestroy() || (safe && this.counters.length > 1)) return;
-		var controller: SignalControllerInner0 = new SignalControllerInner0(this);
+		var controller: SignalControllerInner0 = new SignalControllerInner0(self);
 		this.lock = true;
 		for (e in this) {
 			if (this.isDestroy()) return;
@@ -63,13 +67,13 @@ import pony.Priority;
 
 	@:op(A && B) @:extern public inline function and(s: Event0): Event0 {
 		var e: Event0 = new Event0();
-		(e: Signal0) << this << s;
+		(e: Signal0) << self << s;
 		return e;
 	}
 
 	@:op(A & B) @:extern public inline function andOnce(s: Event0): Event0 {
 		var e: Event0 = new Event0();
-		(e: Signal0) << this << s << (e: Signal0).clear;
+		(e: Signal0) << self << s << (e: Signal0).clear;
 		return e;
 	}
 

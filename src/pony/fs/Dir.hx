@@ -13,7 +13,7 @@ using Lambda;
 abstract Dir(Unit) from Unit {
 
 	public var first(get, never):String;
-	
+
 	inline public function new(v:Unit) {
 		if (v.isFile) throw 'This is not directory';
 		this = v;
@@ -24,7 +24,7 @@ abstract Dir(Unit) from Unit {
 		for (f in filter) if (unit.substr( -f.length) == f) return true;
 		return false;
 	}
-		
+
 	public function content(?filter:String, allowDir:Bool = false):Array<Unit> {
 		var result:Map<String, Unit> = new Map<String, Unit>();
 		var flt:Array<String> = filter == null ? null : filter.split(' ');
@@ -47,14 +47,14 @@ abstract Dir(Unit) from Unit {
 		for (e in contentRecursiveFiles()) e.delete();
 		for (e in contentRecursiveDirs()) e.delete();
 	}
-	
+
 	public function files(?filter:String):Array<File> return [for (u in content(filter)) if (u.isFile) u];
 	public function dirs(?filter:String):Array<Dir> return [for (u in content(filter, true)) if (u.isDir) u];
-	
+
 	inline public function delete():Void FileSystem.deleteDirectory(first);
 
 	inline private function get_first():String return this.first;
-	
+
 	public function contentRecursiveFiles(?filter:String):Array<File> {
 		var result:Array<File> = [];
 		for (u in content(filter, true)) {
@@ -75,7 +75,7 @@ abstract Dir(Unit) from Unit {
 				result.push(u.dir);
 			}
 		}
-		
+
 		return result;
 	}
 
@@ -109,17 +109,17 @@ abstract Dir(Unit) from Unit {
 	}
 
 	public inline function create():Void FileSystem.createDirectory(first);
-	
+
 	public function file(name:String):File return addString(name);
-	
+
 	@:to inline private function toUnit():Unit return this;
-	
+
 	@:to inline public function toString():String return this.toString();
-	
+
 	@:arrayAccess public inline function arrayAccess(key:Int):Dir return this[key];
-	
+
 	public inline function iterator():Iterator<Dir> return this.iterator();
-	
+
 	@:op(A + B) inline public function addString(a:String):Unit return this.addString(a);
 
 }

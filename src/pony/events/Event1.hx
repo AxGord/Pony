@@ -14,11 +14,15 @@ import pony.Priority;
 )
 @:nullSafety(Strict) abstract Event1<T1>(Priority<Listener1<T1>>) from Priority<Listener1<T1>> to Priority<Listener1<T1>> {
 
+	public var self(get, never): Event1<T1>;
+
 	@:extern public inline function new(double: Bool = false) {
 		this = new Priority(double);
 		this.compare = compare;
 		this.real = real;
 	}
+
+	@:extern private inline function get_self(): Event1<T1> return this;
 
 	private static function real<T1>(l: Listener1<T1>): Bool {
 		var e: Null<Priority<Any>> = l.event;
@@ -47,7 +51,7 @@ import pony.Priority;
 
 	public function dispatch(a1: T1, safe: Bool = false): Void {
 		if (this == null || this.isDestroy() || (safe && this.counters.length > 1)) return;
-		var controller: SignalControllerInner1<T1> = new SignalControllerInner1<T1>(this);
+		var controller: SignalControllerInner1<T1> = new SignalControllerInner1<T1>(self);
 		this.lock = true;
 		for (e in this) {
 			if (this.isDestroy()) return;
@@ -86,13 +90,13 @@ import pony.Priority;
 
 	@:op(A && B) @:extern public inline function and(s: Event1<T1>): Event1<T1> {
 		var e: Event1<T1> = new Event1<T1>();
-		(e: Signal1<T1>) << this << s;
+		(e: Signal1<T1>) << self << s;
 		return e;
 	}
 
 	@:op(A & B) @:extern public inline function andOnce(s: Event1<T1>): Event1<T1> {
 		var e: Event1<T1> = new Event1<T1>();
-		(e: Signal1<T1>) << this << s << (e: Signal1<T1>).clear;
+		(e: Signal1<T1>) << self << s << (e: Signal1<T1>).clear;
 		return e;
 	}
 

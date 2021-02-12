@@ -143,12 +143,12 @@ using pony.text.TextTools;
 				if (attrs.disabled.isTrue()) b.core.disable();
 				b;
 			case UiTags.lightButton:
-				var b: LightButton = new LightButton(getSizeFromAttrs(attrs), attrs.color);
+				var b: LightButton = new LightButton(getSizeFromAttrs(attrs).toInt(), attrs.color);
 				if (attrs.disabled.isTrue()) b.core.disable();
 				b;
 			case UiTags.scrollBox:
 				var s: ScrollBox = new ScrollBox(
-					getSizeFromAttrs(attrs),
+					getSizeFromAttrs(attrs).toInt(),
 					attrs.orient == null ? Orientation.Vertical : attrs.orient,
 					attrs.color == null ? null : attrs.color,
 					attrs.size == null ? ScrollBoxCore.DEFAULT_BAR_SIZE : parseAndScaleInt(attrs.size),
@@ -202,7 +202,7 @@ using pony.text.TextTools;
 		v = StringTools.trim(v);
 		return switch v {
 			case AttrVal.stage:
-				app.canvas.stageInitSize;
+				app.canvas.stageInitSize.toFloat();
 			case AttrVal.dyn:
 				new Point(app.canvas.dynStage.width, app.canvas.dynStage.height);
 			case _:

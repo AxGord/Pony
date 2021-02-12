@@ -40,6 +40,7 @@ abstract TimeInterval(TimeIntervalImpl) {
 	}
 
 	@:from private static inline function fromTime(time: Time): TimeInterval return new TimeInterval( { min: 0, max: time } );
+	@:from private static inline function fromUInt(time: UInt): TimeInterval return new TimeInterval( { min: 0, max: time } );
 	public inline function check(t: Time): Bool return t >= min && t <= max;
 	private inline function get_back(): Bool return min > max;
 	private inline function get_length(): Time return max - min;

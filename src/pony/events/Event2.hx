@@ -11,13 +11,18 @@ import pony.Priority;
 	onTake,
 	onLost
 )
+@:access(pony.events.Listener1)
 abstract Event2<T1, T2>(Priority<Listener2<T1, T2>>) from Priority<Listener2<T1, T2>> to Priority<Listener2<T1, T2>> {
+
+	public var self(get, never): Event2<T1, T2>;
 
 	@:extern public inline function new(double: Bool = false) {
 		this = new Priority(double);
 		this.compare = compare;
 		this.real = real;
 	}
+
+	@:extern private inline function get_self(): Event2<T1, T2> return this;
 
 	private static function real<T1, T2>(l: Listener2<T1, T2>): Bool {
 		var e: Null<Priority<Any>> = l.event;
@@ -56,7 +61,7 @@ abstract Event2<T1, T2>(Priority<Listener2<T1, T2>>) from Priority<Listener2<T1,
 
 	public function dispatch(a1: T1, a2: T2, safe: Bool = false): Void {
 		if (this == null || this.isDestroy() || (safe && this.counters.length > 1)) return;
-		var controller: SignalControllerInner2<T1, T2> = new SignalControllerInner2<T1, T2>(this);
+		var controller: SignalControllerInner2<T1, T2> = new SignalControllerInner2<T1, T2>(self);
 		this.lock = true;
 		for (e in this) {
 			if (this.isDestroy()) return;
@@ -84,13 +89,13 @@ abstract Event2<T1, T2>(Priority<Listener2<T1, T2>>) from Priority<Listener2<T1,
 
 	@:extern public inline function sub1(a1: T1, priority: Int = 0): Event1<T2> {
 		var e: Event1<T2> = new Event1<T2>();
-		(e: Signal1<T2>).add(dispatch.bind(a1), priority);
+		(e: Signal1<T2>).add(Listener1.f1(dispatch.bind(a1)), priority);
 		return e;
 	}
 
 	@:extern public inline function sub1Once(a1: T1, priority: Int = 0): Event1<T2> {
 		var e: Event1<T2> = new Event1<T2>();
-		(e: Signal1<T2>).once(dispatch.bind(a1), priority);
+		(e: Signal1<T2>).once(Listener1.f1(dispatch.bind(a1)), priority);
 		return e;
 	}
 
@@ -100,7 +105,7 @@ abstract Event2<T1, T2>(Priority<Listener2<T1, T2>>) from Priority<Listener2<T1,
 
 	@:extern public inline function sub2(a2:T2, priority:Int = 0): Event1<T1> {
 		var e: Event1<T1> = new Event1<T1>();
-		(e: Signal1<T1>).add(dispatch.bind(_, a2), priority);
+		(e: Signal1<T1>).add(Listener1.f1(dispatch.bind(_, a2)), priority);
 		return e;
 	}
 
@@ -110,13 +115,13 @@ abstract Event2<T1, T2>(Priority<Listener2<T1, T2>>) from Priority<Listener2<T1,
 
 	@:op(A && B) @:extern public inline function and(s: Event2<T1, T2>): Event2<T1, T2> {
 		var e: Event2<T1, T2> = new Event2<T1, T2>();
-		(e: Signal2<T1, T2>) << this << s;
+		(e: Signal2<T1, T2>) << self << s;
 		return e;
 	}
 
 	@:op(A & B) @:extern public inline function andOnce(s: Event2<T1, T2>): Event2<T1, T2> {
 		var e: Event2<T1, T2> = new Event2<T1, T2>();
-		(e: Signal2<T1, T2>) << this << s << (e: Signal2<T1, T2>).clear;
+		(e: Signal2<T1, T2>) << self << s << (e: Signal2<T1, T2>).clear;
 		return e;
 	}
 

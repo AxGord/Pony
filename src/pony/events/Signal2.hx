@@ -18,9 +18,9 @@ import pony.events.Listener2;
 	exists,
 	existsArray
 )
-abstract Signal2<T1, T2>(Priority<Listener2<T1, T2>>) from Event2<T1, T2> {
+abstract Signal2<T1, T2>(Priority<Listener2<T1, T2>>) from Event2<T1, T2> from Priority<Listener2<T1, T2>> {
 
-	public inline function add(e: Listener2<T1, T2>, priority: Int = 0): Signal2<T1, T2> {
+	public function add(e: Listener2<T1, T2>, priority: Int = 0): Signal2<T1, T2> {
 		var ev: Null<Priority<Any>> = e.event;
 		if (ev != null) {
 			@:privateAccess ev.onLost.directAdd(this.changeReals);
@@ -31,7 +31,7 @@ abstract Signal2<T1, T2>(Priority<Listener2<T1, T2>>) from Event2<T1, T2> {
 
 	private inline function directAdd(e: Listener2<T1, T2>): Signal2<T1, T2> return this.add(e);
 
-	public inline function remove(e: Listener2<T1, T2>): Bool {
+	public function remove(e: Listener2<T1, T2>): Bool {
 		unlistenSubChange(e);
 		return this.remove(e);
 	}

@@ -55,6 +55,9 @@ import pony.magic.HasSignal;
 
 	private var tryCounter: Int = 0;
 
+	public var logOutputData: Bool = false;
+	public var logInputData(default, set): Bool = false;
+
 	public function new(?host: String, port: Int, reconnect: Int = -1, tryCount: Int = 0, isWithLength: Bool = true, maxSize: Int = 1024) {
 		super();
 		if (host == null) host = '127.0.0.1';
@@ -231,7 +234,7 @@ import pony.magic.HasSignal;
 	}
 
 	private inline function logBytes(msg: String, b: Bytes): Void {
-		logf(function(): String {
+		if (logOutputData) logf(function(): String {
 			var r: String = '';
 			var i: Int = 0;
 			for (s in b.toHex().toUpperCase().split('')) {
@@ -246,10 +249,15 @@ import pony.magic.HasSignal;
 		});
 	}
 
-	public inline function enableLogInputData(): Void onData.add(logInputDataHandler, -1000);
-	public inline function disableLogInputData(): Void onData >> logInputDataHandler;
+	public inline function set_logInputData(v: Bool): Bool {
+		if (v == logInputData) return v;
+		logInputData = v;
+		if (v) onData.add(logInputDataHandler, -1000);
+		else onData >> logInputDataHandler;
+		return v;
+	}
 
-	private function logInputDataHandler(bi: BytesInput): Void {
+	public function logInputDataHandler(bi: BytesInput): Void {
 		if (logActive) {
 			logBytes('Get data', bi.readAll());
 			bi.position = 0;

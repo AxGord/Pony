@@ -35,7 +35,7 @@ import sys.FileSystem;
 
 	private inline function get_name(): String return cast this.first.split('/').pop();
 
-	public inline function rename(to: File): Void FileSystem.rename(first, to.first);
+	public inline function rename(to: Unit): Void FileSystem.rename(first, to.first);
 
 	private function get_exists(): Bool {
 		for (e in this) if (FileSystem.exists(e)) return true;

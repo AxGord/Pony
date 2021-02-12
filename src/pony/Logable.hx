@@ -107,15 +107,15 @@ import pony.magic.HasSignal;
 		#end
 	}
 
-	public inline function traceLogs(): Void {
+	public inline function traceLogs(date: Bool = true): Void {
 		#if !disableLogs
-		onLog << Log.trace;
+		onLog << (date ? traceWithDate : Log.trace);
 		#end
 	}
 
-	public inline function traceErrors(): Void {
+	public inline function traceErrors(date: Bool = true): Void {
 		#if !disableErrors
-		onError << Log.trace;
+		onError << (date ? traceWithDate : Log.trace);
 		#end
 	}
 
@@ -129,9 +129,14 @@ import pony.magic.HasSignal;
 		Log.trace = vscodeTrace;
 	}
 
+	public static function traceWithDate(v: String, ?p: PosInfos): Void {
+		if (p != null) p.fileName = Date.now().toString() + ' ' + p.fileName;
+		Log.trace(v, p);
+	}
+
 	private static function vscodeTrace(v: Dynamic, ?p: PosInfos): Void {
 		if (p != null) p.fileName = './' + p.fileName;
-		origTrace(v, p);
+		@:nullSafety(Off) origTrace(v, p);
 	}
 
 	public inline function bench(?name: String, f: Void -> Void, ?p: PosInfos): Void {

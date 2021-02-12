@@ -18,9 +18,10 @@ import pony.events.Listener0;
 	exists,
 	existsArray
 )
-@:nullSafety(Strict) abstract Signal0(Priority<Listener0>) from Event0 {
+@:access(pony.events.Listener0)
+@:nullSafety(Strict) abstract Signal0(Priority<Listener0>) from Event0 from Priority<Listener0> {
 
-	public inline function add(e: Listener0, priority: Int = 0): Signal0 {
+	public function add(e: Listener0, priority: Int = 0): Signal0 {
 		var ev: Null<Priority<Any>> = e.event;
 		if (ev != null) {
 			ev.onLost.directAdd(this.changeReals);
@@ -31,7 +32,7 @@ import pony.events.Listener0;
 
 	private inline function directAdd(e: Listener0): Signal0 return this.add(e);
 
-	public inline function remove(e: Listener0): Bool {
+	public function remove(e: Listener0): Bool {
 		unlistenSubChange(e);
 		return this.remove(e);
 	}
@@ -82,14 +83,14 @@ import pony.events.Listener0;
 		var ns = new Event0();
 		var listener1: Listener0 = cast null;
 		var listener2: Listener0 = cast null;
-		listener1 = function() {
+		listener1 = Listener0.f0(function() {
 			s.remove(listener2);
 			s.once(ns);
-		}
-		listener2 = function() {
+		});
+		listener2 = Listener0.f0(function() {
 			this.remove(listener1);
 			once(ns);
-		}
+		});
 		once(listener1);
 		s.once(listener2);
 		return ns;
@@ -167,19 +168,19 @@ import pony.events.Listener0;
 
 	@:extern public inline function convert0(f: Event0 -> Void): Signal0 {
 		var ns = new Event0();
-		add(f.bind(ns));
+		add(Listener0.f0(f.bind(ns)));
 		return ns;
 	}
 
 	@:extern public inline function convert1<ST1>(f: Event1<ST1> -> Void): Signal1<ST1> {
 		var ns = new Event1();
-		add(f.bind(ns));
+		add(Listener0.f0(f.bind(ns)));
 		return ns;
 	}
 
 	@:extern public inline function convert2<ST1, ST2>(f: Event2<ST1, ST2> -> Void): Signal2<ST1, ST2> {
 		var ns = new Event2();
-		add(f.bind(ns));
+		add(Listener0.f0(f.bind(ns)));
 		return ns;
 	}
 
@@ -196,7 +197,7 @@ import pony.events.Listener0;
 	}
 
 	@:extern public inline function trace(?message: String, priority: Int = 0, ?pos: PosInfos): Void {
-		this.add(function() Log.trace(message, pos), priority);
+		this.add(Listener0.f0(function() Log.trace(message, pos)), priority);
 	}
 
 }

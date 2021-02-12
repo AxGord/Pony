@@ -43,7 +43,7 @@ class Touchable extends TouchableBase {
 	}
 
 	private static inline function setLastPos(event: Event): Void
-		lastPos = @:nullSafety(Off) HeapsApp.instance.globalToLocal(event.relX, event.relY);
+		lastPos = @:nullSafety(Off) HeapsApp.instance.globalToLocal(event.relX, event.relY).toInt();
 
 	private static function globMouseMove(event: Event): Void {
 		if (HeapsApp.s2dReady) switch event.kind {
