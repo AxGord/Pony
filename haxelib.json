@@ -27,8 +27,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Support for Haxe 4.2. Improving logs.",
-"version": "1.4.0",
+"releasenote": "Upgrade Flash HaxeInit",
+"version": "1.4.1",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }

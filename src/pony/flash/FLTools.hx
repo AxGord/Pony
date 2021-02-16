@@ -171,7 +171,14 @@ class FLTools {
 	public static function recursiveCompare(o: DisplayObjectContainer, t: Dynamic): Bool {
 		if (o == t) return true;
 		for (i in 0...o.numChildren)
-			if (Std.is(o.getChildAt(i), DisplayObjectContainer) && recursiveCompare(cast(o.getChildAt(i), DisplayObjectContainer), t))
+			if (
+				#if (haxe_ver >= 4.00)
+				Std.isOfType(o.getChildAt(i), DisplayObjectContainer)
+				#else
+				Std.is(o.getChildAt(i), DisplayObjectContainer)
+				#end
+				&& recursiveCompare(cast(o.getChildAt(i), DisplayObjectContainer), t)
+			)
 				return true;
 		return false;
 	}
