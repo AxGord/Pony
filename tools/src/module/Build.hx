@@ -214,7 +214,9 @@ private class BuildConfigReader extends BAReader<BuildConfig> {
 					case 'm':
 						cfg.command.push(new SPair('--macro', d));
 					case 'i':
-						cfg.command.push(new SPair('--macro', '"include(\'$d\')"'));
+						cfg.command.push(new SPair('--macro', 'include(\'$d\')'));
+					case 'k':
+						cfg.command.push(new SPair('--macro', 'keep(\'$d\')'));
 					case 'interp':
 						cfg.command.push(new SPair('--interp', ''));
 					case a:

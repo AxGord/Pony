@@ -27,8 +27,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Upgrade Flash HaxeInit",
-"version": "1.4.1",
+"releasenote": "Haxe flash init for haxe3 and pony.xml macro-keep short syntax",
+"version": "1.4.2",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }
