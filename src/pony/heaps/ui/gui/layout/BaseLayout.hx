@@ -33,17 +33,17 @@ class BaseLayout<T: BaseLayoutCore<Object>> extends Object implements IWH implem
 
 	public inline function add(obj: Object): Void {
 		addChild(obj);
-		if (!Std.is(obj, Repeat)) layout.add(obj);
+		if (canAdd(obj)) layout.add(obj);
 	}
 
 	public inline function addAt(obj: Object, index: Int): Void {
 		addChildAt(obj, index);
-		if (!Std.is(obj, Repeat)) layout.addAt(obj, index);
+		if (canAdd(obj)) layout.addAt(obj, index);
 	}
 
 	public inline function addToBegin(obj: Object): Void {
 		addChildAt(obj, 0);
-		if (!Std.is(obj, Repeat)) layout.addToBegin(obj);
+		if (canAdd(obj)) layout.addToBegin(obj);
 	}
 
 	public inline function rm(obj: Object): Void {
@@ -91,5 +91,13 @@ class BaseLayout<T: BaseLayoutCore<Object>> extends Object implements IWH implem
 
 	public inline function show(): Void visible = true;
 	public inline function hide(): Void visible = false;
+
+	private static inline function canAdd(obj: Object): Bool {
+		#if (haxe_ver >= 4.00)
+		return !Std.isOfType(obj, Repeat);
+		#else
+		return !Std.is(obj, Repeat);
+		#end
+	}
 
 }
