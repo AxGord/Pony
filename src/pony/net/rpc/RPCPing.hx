@@ -23,7 +23,7 @@ import pony.time.Timer;
 		onPing << pongRemote;
 	}
 
-	public function watch(repeatTime:Int = REPEAR):Void -> Void return new Watch(this, repeatTime).activity; 
+	public function watch(repeatTime:Int = REPEAR):Void -> Void return new Watch(this, repeatTime).activity;
 
 }
 

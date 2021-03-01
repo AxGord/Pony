@@ -24,7 +24,7 @@ using Lambda;
 #end
 interface IRPC
 #if !macro
-extends hxbit.Serializable
+extends hxbitmini.Serializable
 #end
 {
 	private function send():Void;
@@ -50,7 +50,7 @@ class RPCBuilder {
 			if (field.meta.checkMeta([':sub'])) switch field.kind {
 
 				case FieldType.FVar(TPath(t)):
-					
+
 					var n = field.name;
 					var sn = 'on' + pony.text.TextTools.bigFirst(n);
 
@@ -122,7 +122,7 @@ class RPCBuilder {
 
 					var nf = n.substr(0, 2);
 					var en = 'e' + (nf == 'on' ? n.substr(2) : pony.text.TextTools.bigFirst(n));
-					
+
 					{
 						var rn = nf == 'on' ? n.charAt(2).toLowerCase() + n.substr(3) : n;
 						var ae:Array<Expr> = [macro $i{flagName} = true];
@@ -158,7 +158,7 @@ class RPCBuilder {
 
 						rc.push({expr: ECall(macro $i{en}.dispatch, [for (arg in 0...args.length) macro $i{'arg$arg'}]), pos: Context.currentPos()});
 						var bl = {expr: EBlock(rc), pos: Context.currentPos()};
-						
+
 						var chname = n + 'RemoteCheck';
 						fields.push({
 							name: chname,
@@ -229,7 +229,7 @@ class RPCBuilder {
 						}
 						rc.push({expr: ECall(macro $i{n}, ca), pos: Context.currentPos()});
 						var bl = {expr: EBlock(rc), pos: Context.currentPos()};
-						
+
 						var chname = n + 'RemoteCheck';
 						fields.push({
 							name: chname,

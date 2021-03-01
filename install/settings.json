@@ -1,8 +1,8 @@
 {
 	"envkey": "PONYTOOLS_PATH",
 	"haxelib": [
-		"hxnodejs 12.0.0",
-		"hxbit 1.5.0"
+		"hxnodejs 12.1.0",
+		"hxbitmini 1.1.0"
 	],
 	"npm": [
 		"!git+https://github.com/janjakubnanista/poeditor-client.git",

@@ -18,6 +18,10 @@ import pony.time.DeltaTime;
  */
 @:nullSafety(Strict) class SocketClient extends SocketClientBase {
 
+	#if !nodedt
+	private static var SEND_TIMEOUT: Int = Std.int(1000 / 60);
+	#end
+
 	private var socket: Null<Socket>;
 	@:nullSafety(Off) private var q: Queue<BytesOutput -> Void>;
 
@@ -46,9 +50,6 @@ import pony.time.DeltaTime;
 		}
 	}
 
-	#if !nodedt
-	@:deprecated('Node DeltaTime not activated! Please, use nodedt flag!')
-	#end
 	public function send(data: BytesOutput): Void q.call(data);
 
 	private function _send(data: BytesOutput): Void {
@@ -58,7 +59,12 @@ import pony.time.DeltaTime;
 		@:nullSafety(Off) socket.write(Buffer.hxFromBytes(b), sendNextAfterTimeout);
 	}
 
+	#if nodedt
 	private function sendNextAfterTimeout(): Void DeltaTime.skipUpdate(q.next);
+	#else
+	private function sendNextAfterTimeout(): Void Node.setTimeout(q.next, SEND_TIMEOUT);
+	#end
+
 	private function dataHandler(d: Buffer): Void joinData(new BytesInput(Bytes.ofData(d.buffer)));
 
 }

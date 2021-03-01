@@ -234,7 +234,11 @@ import pony.magic.HasSignal;
 	}
 
 	private inline function logBytes(msg: String, b: Bytes): Void {
-		if (logOutputData) logf(function(): String {
+		if (logOutputData) _logBytes(msg, b);
+	}
+
+	private inline function _logBytes(msg: String, b: Bytes): Void {
+		logf(function(): String {
 			var r: String = '';
 			var i: Int = 0;
 			for (s in b.toHex().toUpperCase().split('')) {
@@ -259,7 +263,7 @@ import pony.magic.HasSignal;
 
 	public function logInputDataHandler(bi: BytesInput): Void {
 		if (logActive) {
-			logBytes('Get data', bi.readAll());
+			_logBytes('Get data', bi.readAll());
 			bi.position = 0;
 		}
 	}

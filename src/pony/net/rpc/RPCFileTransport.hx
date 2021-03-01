@@ -21,9 +21,7 @@ import pony.fs.FileWriteStream;
 	private var fileWrite:FileWriteStream;
 	private var readStream:ReadStream<Bytes>;
 
-	public function new() {
-		super();
-	}
+	public function new() super();
 
 	public inline function enable():Void {
 		onFile << fileHandler;
@@ -65,5 +63,5 @@ import pony.fs.FileWriteStream;
 		if (fileWrite != null)
 			fileWrite.cancel();
 	}
-	
+
 }

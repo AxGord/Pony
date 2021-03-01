@@ -21,14 +21,17 @@ import types.SniffConfig;
 		super();
 		this.cfg = cfg;
 		server = new SocketServer(cfg.serverPort, false);
-		listenErrorAndLog(server, '>>');
 		server.onConnect << socketServerConnectHandler;
 	}
 
 	public function init(): Void log('Sniff ' + Std.string(cfg));
 
 	private function socketServerConnectHandler(a: SocketClient): Void {
+		log('>> Connect');
+		a.logInputData = true;
+		listenErrorAndLog(a, '>>');
 		var b: SocketClient = new SocketClient(cfg.clientHost, cfg.clientPort, -1, 0, false);
+		b.logInputData = true;
 		listenErrorAndLog(b, '<<');
 		b.onOpen < b.sendAllStack;
 		a.onData << convertAndSend.bind(b);

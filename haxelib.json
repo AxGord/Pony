@@ -27,8 +27,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Haxe flash init for haxe3 and pony.xml macro-keep short syntax",
-"version": "1.4.2",
+"releasenote": "Net: rpc using hxbitmini instead of hxbit, fixes",
+"version": "1.4.3",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }

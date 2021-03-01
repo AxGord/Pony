@@ -18,7 +18,7 @@ import pony.ds.WriteStream;
 	@:rpc public var onStreamData:Signal1<Bytes>;
 	@:rpc public var onStreamEnd:Signal1<Bytes>;
 	@:rpc public var onError:Signal0;
-	
+
 	@:rpc public var onGetData:Signal0;
 	@:rpc public var onCancel:Signal0;
 	@:rpc public var onComplete:Signal0;

@@ -50,8 +50,10 @@ class SocketClient extends SocketClientBase {
 
 	private function _send(data: BytesOutput): Void {
 		socket.addEventListener('outputProgress', outputProgressHandler);
+		var b: Bytes = data.getBytes();
+		logBytes('Send data', b);
 		try {
-			socket.writeBytes(ByteArray.fromBytes(data.getBytes()));
+			socket.writeBytes(ByteArray.fromBytes(b));
 			socket.flush();
 			// DeltaTime.skipUpdate(skipOutputProgressHandler);
 		} catch (e: Dynamic) {

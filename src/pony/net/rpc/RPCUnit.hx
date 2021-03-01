@@ -13,8 +13,7 @@ import pony.events.Signal1;
 class RPCUnit<T:pony.net.rpc.IRPC> extends RPCBase<T> implements HasSignal {
 
 	@:auto public var onData:Signal1<Bytes>;
-	public function new() super();
 	private function send():Void eData.dispatch(pack());
 	public function data(b:Bytes):Void dataHandler(new BytesInput(b));
-	
+
 }

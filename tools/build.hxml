@@ -5,8 +5,10 @@
 -cmd nekotools boot bin/pony.n
 -dce full
 -D analyzer-optimize
+-D hxbitmini_nullsafety
 -lib pony
--lib hxbit
+-lib hxbitmini:1.1.0
+--macro keep('hxbitmini')
 -resource resources/logo.txt@logo
 -resource resources/template.html@template.html
 -resource resources/pixitemplate.hx.tpl@pixitemplate.hx.tpl
@@ -29,11 +31,13 @@
 -cp nodesrc
 -cp sharedsrc
 -main NMain
--lib hxnodejs
+-lib hxnodejs:12.1.0
 -lib pony
--lib hxbit
+-lib hxbitmini:1.1.0
 -dce full
 -D analyzer-optimize
 -D js-es6
 -D nodedt
+-D hxbitmini_nullsafety
+--macro keep('hxbitmini')
 # -debug

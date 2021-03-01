@@ -65,9 +65,6 @@ class SocketClient extends SocketClientBase {
 			joinData(new BytesInput(buffer.getBytes()));
 			buffer.flush();
 			buffer = new BytesOutput();
-		} else if (buffer.length > 0) {
-			buffer.flush();
-			buffer = new BytesOutput();
 		}
 	}
 
@@ -75,8 +72,10 @@ class SocketClient extends SocketClientBase {
 	public function send(data: BytesOutput): Void q.call(data);
 
 	private function _send(data: BytesOutput): Void {
+		var b: Bytes = data.getBytes();
+		logBytes('Send data', b);
 		try {
-			socket.output.write(data.getBytes());
+			socket.output.write(b);
 			socket.output.flush();
 		} catch (e:Dynamic) {
 			error(e);
