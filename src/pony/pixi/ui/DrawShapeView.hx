@@ -21,38 +21,44 @@ import pony.time.DeltaTime;
  */
 class DrawShapeView extends LogableSprite implements pony.geom.IWH {
 
-	public static inline var SNAP_LINE_WIDTH:Int = 4;
-	public static inline var SNAP_LINE_COLOR:Int = 0x2F2F2F;
+	public static inline var SNAP_LINE_WIDTH: Int = 4;
+	public static inline var SNAP_LINE_COLOR: Int = 0x2F2F2F;
 
-	public static inline var LINE_WIDTH:Int = 4;
-	public static inline var LINE_PROCESS_COLOR:Int = 0xFFFFFF;
-	public static inline var LINE_SHAPE_COLOR:Int = 0x82AAF7;
+	public static inline var LINE_WIDTH: Int = 4;
+	public static inline var LINE_PROCESS_COLOR: Int = 0xFFFFFF;
+	public static inline var LINE_SHAPE_COLOR: Int = 0x82AAF7;
 
-	public var size(get, never):Point<Float>;
-	private var _size:Point<Int>;
-	public var touchArea(default, null):Sprite = new Sprite();
-	public var bgLayer(default, null):Sprite = new Sprite();
-	public var snapLayer(default, null):Sprite = new Sprite();
-	public var drawLayer(default, null):Sprite = new Sprite();
-	public var tmpDrawLayer(default, null):Sprite = new Sprite();
-	public var pointerLayer(default, null):Sprite = new Sprite();
-	public var mainLayer(default, null):Sprite = new Sprite();
+	public var size(get, never): Point<Float>;
 
-	private var touchable:Touchable;
-	public var ds(default, null):DrawShape;
-	public var dsp(default, null):DrawShapePointer;
-	public var dpivot(default, null):DrawShapePivot;
-	private var snap:Graphics = new Graphics();
-	public var resultLines(default, null):Graphics = new Graphics();
-	public var polyLines(default, null):Graphics = new Graphics();
-	public var shapes(default, null):Graphics = new Graphics();
-	public var pathLine(default, null):Graphics = new Graphics();
-	private var startPoint:Graphics = new Graphics();
-	private var endPoint:Graphics = new Graphics();
+	private var _size: Point<Int>;
 
-	public var finalShapes:Array<Graphics> = [];
+	public var touchArea(default, null): Sprite = new Sprite();
+	public var bgLayer(default, null): Sprite = new Sprite();
+	public var snapLayer(default, null): Sprite = new Sprite();
+	public var drawLayer(default, null): Sprite = new Sprite();
+	public var tmpDrawLayer(default, null): Sprite = new Sprite();
+	public var pointerLayer(default, null): Sprite = new Sprite();
+	public var mainLayer(default, null): Sprite = new Sprite();
 
-	public function new(size:Point<Int>) {
+	private var touchable: Touchable;
+
+	public var ds(default, null): DrawShape;
+	public var dsp(default, null): DrawShapePointer;
+	public var dpivot(default, null): DrawShapePivot;
+
+	private var snap: Graphics = new Graphics();
+
+	public var resultLines(default, null): Graphics = new Graphics();
+	public var polyLines(default, null): Graphics = new Graphics();
+	public var shapes(default, null): Graphics = new Graphics();
+	public var pathLine(default, null): Graphics = new Graphics();
+
+	private var startPoint: Graphics = new Graphics();
+	private var endPoint: Graphics = new Graphics();
+
+	public var finalShapes: Array<Graphics> = [];
+
+	public function new(size: Point<Int>) {
 		super();
 		_size = size;
 
@@ -108,7 +114,7 @@ class DrawShapeView extends LogableSprite implements pony.geom.IWH {
 		endPoint.visible = false;
 	}
 
-	private function createBackground():Void {
+	private function createBackground(): Void {
 		var bg = new Graphics();
 		bg.beginFill(0x212121);
 		if (size.x > size.y)
@@ -126,7 +132,7 @@ class DrawShapeView extends LogableSprite implements pony.geom.IWH {
 		touchArea.addChild(tg);
 	}
 
-	private function createPointers():Void {
+	private function createPointers(): Void {
 		startPoint.beginFill(0xF78C6C);
 		startPoint.drawCircle(0, 0, 20);
 		pointerLayer.addChild(startPoint);
@@ -135,7 +141,7 @@ class DrawShapeView extends LogableSprite implements pony.geom.IWH {
 		pointerLayer.addChild(endPoint);
 	}
 
-	private function drawSnap():Void {
+	private function drawSnap(): Void {
 		snap.position.set(LINE_WIDTH / 2, LINE_WIDTH / 2);
 		for (r in dsp.drawSnap()) {
 			snap.lineStyle(LINE_WIDTH * (r.a ? 2 : 1), SNAP_LINE_COLOR);
@@ -145,49 +151,51 @@ class DrawShapeView extends LogableSprite implements pony.geom.IWH {
 		snapLayer.addChild(snap);
 	}
 
-	public function enable():Void {
+	public function enable(): Void {
 		ds.enable();
 		visible = true;
 	}
 
-	public function disable():Void {
+	public function disable(): Void {
 		ds.disable();
 		visible = false;
 		pathCancelHandler();
 		hidePointHandler();
 	}
 
-	private function drawPointHandler(p:DrawShapePointerData):Void {
+	private function drawPointHandler(p: DrawShapePointerData): Void {
 		endPoint.position.set(p.x, p.y);
 		endPoint.visible = true;
 	}
 
-	private function hidePointHandler():Void {
+	private function hidePointHandler(): Void {
 		endPoint.visible = false;
 	}
 
-	private function pathBeginHandler(p:DrawShapePointerData):Void {
+	private function pathBeginHandler(p: DrawShapePointerData): Void {
 		startPoint.position.set(p.x, p.y);
 		startPoint.visible = true;
 	}
 
-	private function pathCancelHandler():Void startPoint.visible = false;
+	private function pathCancelHandler(): Void
+		startPoint.visible = false;
 
-	private function clearPathLine():Void pathLine.clear();
+	private function clearPathLine(): Void
+		pathLine.clear();
 
-	private function clearStore():Void {
+	private function clearStore(): Void {
 		unfreeze();
 		resultLines.clear();
 		freeze();
 	}
 
-	private function pathDrawHandler(a:DrawShapePointerData, b:DrawShapePointerData):Void {
+	private function pathDrawHandler(a: DrawShapePointerData, b: DrawShapePointerData): Void {
 		pathLine.lineStyle(LINE_WIDTH, LINE_PROCESS_COLOR);
 		pathLine.moveTo(a.x, a.y);
 		pathLine.lineTo(b.x, b.y);
 	}
 
-	private function storeDrawHandler(a:DrawShapePointerData, b:DrawShapePointerData):Void {
+	private function storeDrawHandler(a: DrawShapePointerData, b: DrawShapePointerData): Void {
 		mainLayer.cacheAsBitmap = false;
 		resultLines.lineStyle(LINE_WIDTH, LINE_SHAPE_COLOR);
 		resultLines.moveTo(a.x, a.y);
@@ -195,30 +203,30 @@ class DrawShapeView extends LogableSprite implements pony.geom.IWH {
 		mainLayer.cacheAsBitmap = true;
 	}
 
-	private function unfreeze():Void {
+	private function unfreeze(): Void {
 		mainLayer.cacheAsBitmap = false;
 	}
 
-	private function freeze():Void {
+	private function freeze(): Void {
 		mainLayer.cacheAsBitmap = true;
 	}
 
-	private function drawPolygon(polygon:Array<Float>):Void {
+	private function drawPolygon(polygon: Array<Float>): Void {
 		shapes.beginFill(0x89DDFF, 0.5);
 		shapes.drawPolygon(polygon);
 	}
 
-	private function drawPolygonLines(polygon:Array<Float>):Void {
+	private function drawPolygonLines(polygon: Array<Float>): Void {
 		polyLines.lineStyle(LINE_WIDTH, LINE_SHAPE_COLOR);
 		polyLines.drawPolygon(polygon);
 	}
 
-	public function pivotMode():Void {
+	public function pivotMode(): Void {
 		ds.disable();
 		dpivot.start();
 	}
 
-	public function reset():Void {
+	public function reset(): Void {
 		dpivot.reset();
 		unfreeze();
 		ds.reset();
@@ -228,40 +236,40 @@ class DrawShapeView extends LogableSprite implements pony.geom.IWH {
 		freeze();
 	}
 
-	public function destroyIWH():Void {
+	public function destroyIWH(): Void {
 		destroy();
 	}
 
-	public function get_size():Point<Float> {
-		return _size;
+	public function get_size(): Point<Float> {
+		return _size.toFloat();
 	}
 
-	public function wait(fn:Void -> Void):Void {
+	public function wait(fn: Void -> Void): Void {
 		fn();
 	}
-	
+
 }
 
 class DrawShapePivot implements pony.magic.HasSignal {
 
-	@:auto public var onPivot:Signal1<Point<Int>>;
+	@:auto public var onPivot: Signal1<Point<Int>>;
 
-	private var pointer:DrawShapePointer;
+	private var pointer: DrawShapePointer;
 
-	public function new(pointer:DrawShapePointer) {
+	public function new(pointer: DrawShapePointer) {
 		this.pointer = pointer;
 	}
 
-	public function start():Void {	
+	public function start(): Void {
 		DeltaTime.fixedUpdate < pointer.enable;
 		pointer.onDownPoint < downPointHandler;
 	}
 
-	public function reset():Void {
+	public function reset(): Void {
 		pointer.onDownPoint >> downPointHandler;
 	}
 
-	private function downPointHandler(p:DrawShapePointerData):Void {
+	private function downPointHandler(p: DrawShapePointerData): Void {
 		ePivot.dispatch(new Point<Int>(p.col, p.row));
 	}
 

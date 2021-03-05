@@ -35,7 +35,7 @@ abstract Rect<T: Float>(SimpleRect<T>) to SimpleRect<T> from SimpleRect<T>  {
 
 	public inline function startAsPoint(): Point<T> return new Point<T>(x, y);
 
-	@:to public static inline function fromIntToFloat(p: Rect<Int>): Rect<Float> return cast p;
+	@:to public inline function toFloat(): Rect<Float> return cast this;
 
 }
 

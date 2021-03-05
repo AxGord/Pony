@@ -14,7 +14,7 @@ class SubApp extends HtmlContainer {
 	public var subApp(default, null): App;
 
 	public function new(targetRect: Rect<Int>, ?app: App, ceil: Bool = false, fixed: Bool = false) {
-		super(targetRect, app, ceil, fixed);
+		super(targetRect.toFloat(), app, ceil, fixed);
 	}
 
 	public function init(): Void {
