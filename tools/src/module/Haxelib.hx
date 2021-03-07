@@ -1,12 +1,15 @@
 package module;
 
 import pony.Fast;
+import pony.Pair;
 import types.BAConfig;
 import types.BASection;
-import pony.text.TextTools;
 
-typedef HaxelibConfig = { > BAConfig,
-	list: Array<String>
+using pony.text.XmlTools;
+
+typedef HaxelibConfig = {
+	> BAConfig,
+	list: Array<Pair<String, Bool>>
 }
 
 /**
@@ -15,13 +18,13 @@ typedef HaxelibConfig = { > BAConfig,
  */
 class Haxelib extends CfgModule<HaxelibConfig> {
 
-	private static inline var PRIORITY:Int = 1;
+	private static inline var PRIORITY: Int = 1;
 
 	public function new() super('haxelib');
 
-	override public function init():Void initSections(PRIORITY, BASection.Prepare);
+	override public function init(): Void initSections(PRIORITY, BASection.Prepare);
 
-	override private function readNodeConfig(xml:Fast, ac:AppCfg):Void {
+	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
 		new HaxelibReader(xml, {
 			debug: ac.debug,
 			app: ac.app,
@@ -32,10 +35,10 @@ class Haxelib extends CfgModule<HaxelibConfig> {
 		}, configHandler);
 	}
 
-	override private function runNode(cfg:HaxelibConfig):Void {
+	override private function runNode(cfg: HaxelibConfig): Void {
 		for (lib in cfg.list) {
-			var args:Array<String> = ['install'];
-			args = args.concat(lib.split(' '));
+			var args: Array<String> = ['install'];
+			args = args.concat(lib.a.split(' '));
 			args.push('--always');
 			args.push('-R');
 			args.push('http://lib.haxe.org/');
@@ -47,14 +50,16 @@ class Haxelib extends CfgModule<HaxelibConfig> {
 
 private class HaxelibReader extends BAReader<HaxelibConfig> {
 
-	override private function clean():Void {
+	override private function clean(): Void {
 		cfg.list = [];
 	}
 
-	override private function readNode(xml:Fast):Void {
+	override private function readNode(xml: Fast): Void {
 		switch xml.name {
-			case 'lib': cfg.list.push(StringTools.trim(xml.innerData));
-			case _: super.readNode(xml);
+			case 'lib':
+				cfg.list.push(new Pair(StringTools.trim(xml.innerData), xml.isTrue('mute')));
+			case _:
+				super.readNode(xml);
 		}
 	}
 

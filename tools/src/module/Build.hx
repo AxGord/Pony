@@ -12,6 +12,8 @@ import module.Build.HAXE;
 import module.Build.HXML;
 import module.Build.D;
 
+using pony.text.XmlTools;
+
 private typedef LastCompilationOptions = {
 	command: Array<SPair<String>>,
 	debug: Bool,
@@ -43,7 +45,7 @@ private typedef LastCompilationOptions = {
 	override public function init(): Void {
 		if (xml == null) return;
 		haxelib = modules.xml.hasNode.haxelib ?
-			[ for (e in modules.xml.node.haxelib.nodes.lib) e.innerData.split(' ').join(':') ] : [];
+			[ for (e in modules.xml.node.haxelib.nodes.lib) if (!e.isTrue('mute')) e.innerData.split(' ').join(':') ] : [];
 		server = modules.xml.hasNode.server && modules.xml.node.server.hasNode.haxe;
 		initSections(PRIORITY, BASection.Build);
 	}

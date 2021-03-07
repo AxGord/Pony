@@ -1,5 +1,6 @@
 package pony;
 
+import pony.text.TextTools;
 import haxe.crypto.Crc32;
 import haxe.io.Bytes;
 import haxe.io.Output;
@@ -12,6 +13,8 @@ import sys.FileStat;
 import sys.FileSystem;
 import sys.io.File;
 import sys.io.FileInput;
+
+using Lambda;
 
 /**
  * ZipTool
@@ -101,12 +104,24 @@ class ZipTool extends Logable {
 		return this;
 	}
 
-	public static function unpackFile(file: String, targetPath: String = '', ?log: String -> Void): Void {
+	public static function unpackFile(
+		file: String,
+		targetPath: String = '',
+		?extractFirstLevelDirs: Bool,
+		?filter: Array<String>,
+		?log: String -> Void
+	): Void {
 		var input: FileInput = File.read(file);
 		for (e in Reader.readZip(input)) {
-			if (e.fileName.substr(-1) == '/') continue;
-			if (log != null) log(e.fileName);
-			var f: String = targetPath + e.fileName;
+			var u: String = e.fileName;
+			if (u.substr(-1) == '/') continue;
+			if (log != null) log(u);
+			if (extractFirstLevelDirs) u = TextTools.allAfter(u, '/');
+			if (filter != null && filter.exists(function(f: String): Bool return u.substr(-f.length) == f)) {
+				log('skip');
+				continue;
+			}
+			var f: String = targetPath + u;
 			var path: String = f.substr(0, f.lastIndexOf('/') + 1);
 			if (path != '' && !FileSystem.exists(path)) FileSystem.createDirectory(path);
 			File.saveBytes(f, Reader.unzip(e));

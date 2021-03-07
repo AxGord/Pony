@@ -82,6 +82,13 @@ import sys.FileSystem;
 	@:arrayAccess public inline function arrayAccess(key: Int): Unit return this.data[key];
 	@:op(A + B) public inline function addString(a: String): Unit return [for (e in this) e + (a.indexOf('/') == 0 ? '' : '/') + a];
 
+	public inline function copyTo(path: String): Void {
+		if (isDir)
+			dir.copyTo(path);
+		else
+			file.copyToDir(path);
+	}
+
 	@:extern public inline function delete(): Void {
 		if (isDir)
 			dir.delete();
