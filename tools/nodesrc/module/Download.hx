@@ -1,12 +1,10 @@
 package module;
 
+import pony.NPM;
 import js.lib.Error;
 import js.node.http.IncomingMessage;
 import js.node.Fs;
-import js.node.Http;
-import js.node.Https;
 import sys.FileSystem;
-import sys.io.File;
 import pony.Pair;
 import types.DownloadConfig;
 
@@ -37,14 +35,14 @@ using pony.text.TextTools;
 			var protocol: String = file.b.substr(0, 7);
 			switch protocol {
 				case 'https:/':
-					Https.get(file.b, { timeout: 7000 }, function(response: IncomingMessage): Void {
+					NPM.follow_redirects.https.get(file.b, { timeout: 7000 }, function(response: IncomingMessage): Void {
 						response.once('end', tasks.end);
 						response.pipe(Fs.createWriteStream(file.a));
 					}).on('error', function(e: Error) {
 						error('problem with request: ' + e.message);
 					});
 				case 'http://':
-					Http.get(file.b, { timeout: 7000 }, function(response: IncomingMessage): Void {
+					NPM.follow_redirects.http.get(file.b, { timeout: 7000 }, function(response: IncomingMessage): Void {
 						response.once('end', tasks.end);
 						response.pipe(Fs.createWriteStream(file.a));
 					}).on('error', function(e: Error) {
