@@ -9,6 +9,7 @@ import pony.fs.File;
 import types.BASection;
 
 using pony.text.TextTools;
+using Lambda;
 
 /**
  * Hashlink module
@@ -32,6 +33,7 @@ class Hashlink extends CfgModule<HashlinkConfig> {
 			hl: null,
 			main: null,
 			data: [],
+			libs: [],
 			allowCfg: true
 		}, configHandler);
 	}
@@ -50,7 +52,12 @@ class Hashlink extends CfgModule<HashlinkConfig> {
 			log('Clear ' + output);
 			Utils.command('rimraf', [output]);
 		}
-		ZipTool.unpackFile(cfg.hl, output, true, ['.h', '.c'], function(s: String): Void log(s));
+		var ignoreLibs: Array<String> = ['mysql.hdll', 'mysql.lib'].filter(
+			function(lib: String): Bool return !cfg.libs.exists(function(f: String): Bool return lib.substr(0, f.length) == f)
+		);
+		ignoreLibs.push('.h');
+		ignoreLibs.push('.c');
+		ZipTool.unpackFile(cfg.hl, output, true, ignoreLibs, function(s: String): Void log(s));
 		(cfg.main: File).copyToDir(output, 'hlboot.dat');
 		for (d in cfg.data) {
 			var u: Unit = d.a + d.b;
@@ -68,7 +75,8 @@ private typedef HashlinkConfig = {
 	output: SPair<String>,
 	hl: String,
 	main: String,
-	data: Array<SPair<String>>
+	data: Array<SPair<String>>,
+	libs: Array<String>
 }
 
 private class HashlinkReader extends BAReader<HashlinkConfig> {
@@ -83,6 +91,8 @@ private class HashlinkReader extends BAReader<HashlinkConfig> {
 				cfg.main = normalize(xml.innerData);
 			case 'data':
 				cfg.data.push(new SPair(normalize(xml.att.from), normalize(xml.innerData)));
+			case 'lib':
+				cfg.libs.push(normalize(xml.innerData));
 			case _:
 				super.readNode(xml);
 		}
@@ -93,6 +103,7 @@ private class HashlinkReader extends BAReader<HashlinkConfig> {
 		cfg.hl = null;
 		cfg.main = null;
 		cfg.data = [];
+		cfg.libs = [];
 	}
 
 }

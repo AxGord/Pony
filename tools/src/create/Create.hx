@@ -19,7 +19,7 @@ class Create {
 	private static var outputFile: String = 'app';
 	private static var formatFile: String = 'hxformat.json';
 	private static var testSertFile: String = 'testcert.p12';
-	private static var electronVersion: Map<String, String> = ['electron' => '^2.0.18'];
+	private static var electronVersion: Map<String, String> = ['electron' => '^11.3.0'];
 
 	public static function run(sType: String, name: String): Void {
 		// todo: create remote key@host:port

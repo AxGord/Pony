@@ -86,7 +86,10 @@ class ElectronApplication extends VSTraceHelper implements pony.magic.HasAbstrac
 			resizable: !TextTools.isFalse(map['resizable']),
 			minWidth: Std.parseInt(map['minWidth']),
 			minHeight: Std.parseInt(map['minHeight']),
-			backgroundColor: map['background']
+			backgroundColor: map['background'],
+			webPreferences: {
+				nodeIntegration: true
+			}
 		});
 	}
 
