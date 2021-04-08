@@ -27,8 +27,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Net: rpc using hxbitmini instead of hxbit, fixes",
-"version": "1.4.3",
+"releasenote": "Signals for interp. Pony Tools haxelibs: git support and hide warning flag",
+"version": "1.4.4",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }

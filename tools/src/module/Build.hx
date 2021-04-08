@@ -4,8 +4,10 @@ import pony.Fast;
 import pony.SPair;
 import sys.FileSystem;
 import sys.io.File;
+import sys.io.Process;
 import sys.net.Socket;
 import sys.net.Host;
+import haxe.io.Eof;
 
 import types.BASection;
 import module.Build.HAXE;
@@ -35,6 +37,7 @@ private typedef LastCompilationOptions = {
 
 	private var flags(default, null): Array<String> = [];
 	private var haxelib: Array<String>;
+	private var hideWarningLibs: Array<String>;
 	private var postHaxelibs: Array<String> = [];
 	private var server: Bool = false;
 	private var lastCompilationOptions: LastCompilationOptions;
@@ -46,6 +49,8 @@ private typedef LastCompilationOptions = {
 		if (xml == null) return;
 		haxelib = modules.xml.hasNode.haxelib ?
 			[ for (e in modules.xml.node.haxelib.nodes.lib) if (!e.isTrue('mute')) e.innerData.split(' ').join(':') ] : [];
+		hideWarningLibs = modules.xml.hasNode.haxelib ?
+			[ for (e in modules.xml.node.haxelib.nodes.lib) if (e.isFalse('warning')) '/' + e.innerData.split(' ')[0] + '/' ] : [];
 		server = modules.xml.hasNode.server && modules.xml.node.server.hasNode.haxe;
 		initSections(PRIORITY, BASection.Build);
 	}
@@ -103,8 +108,8 @@ private typedef LastCompilationOptions = {
 	}
 
 	private function runCompilation(command: Array<SPair<String>>, debug: Bool, compiler: String): Void {
+		var newline: String = '\n';
 		if (debug && server && compiler == HAXE) {
-			var newline: String = "\n";
 			tryCounter = 3;
 			var s: Socket = connectToHaxeServer();
 			var d: String = Sys.getCwd();
@@ -114,7 +119,7 @@ private typedef LastCompilationOptions = {
 				s.write(c + newline);
 			}
 			Sys.println('');
-			s.write("\000");
+			s.write('\000');
 			var hasError: Bool = false;
 			var r: String = null;
 			try {
@@ -126,13 +131,13 @@ private typedef LastCompilationOptions = {
 			for (line in r.split(newline)) {
 				switch (line.charCodeAt(0)) {
 					case 0x01:
-						Sys.println(line.substr(1).split("\x01").join(newline));
+						Sys.println(StringTools.replace(line.substr(1), '\x01', ''));
 					case 0x02:
 						hasError = true;
 					case null:
 						break;
 					default:
-						Sys.stderr().writeString(line + newline);
+						if (!checkWarning(line)) Sys.stderr().writeString(line + newline);
 				}
 			}
 			s.close();
@@ -144,7 +149,19 @@ private typedef LastCompilationOptions = {
 				args.push(c.a);
 				if (c.b.length > 0) args.push(c.b);
 			}
-			Utils.command(compiler, args);
+			Sys.println(compiler + ' ' + args.join(' '));
+			var process: Process = new Process(compiler, args);
+			var r: Int = process.exitCode();
+			try {
+				while (true) Sys.println(process.stdout.readLine());
+			} catch (e: Eof) {}
+			try {
+				while (true) {
+					var line: String = process.stderr.readLine();
+					if (!checkWarning(line)) Sys.stderr().writeString(line + newline);
+				}
+			} catch (e: Eof) {}
+			if (r > 0) error('$compiler error $r');
 		}
 	}
 
@@ -182,6 +199,11 @@ private typedef LastCompilationOptions = {
 	private function checkCompilation(): Void {
 		if (lastCompilationOptions != null && lastCompilationOptions.debug && server && lastCompilationOptions.compiler == HAXE)
 			connectToHaxeServer().close();
+	}
+
+	private function checkWarning(s: String): Bool {
+		if (s.indexOf(': Warning :') != -1) for (lib in hideWarningLibs) if (s.indexOf(lib) != -1) return true;
+		return false;
 	}
 
 }

@@ -12,7 +12,7 @@ class SignalTools {
 	@:extern public static inline function functionHashCompare(a: Function, b: Function): Bool return untyped a.GetHashCode() == untyped b.GetHashCode();
 	#elseif java
 	@:extern public static inline function functionHashCompare(a: Function, b: Function): Bool return untyped a.hashCode() == untyped b.hashCode();
-	#elseif neko
+	#elseif (neko || interp)
 	@:extern public static inline function functionHashCompare(a: Function, b: Function): Bool return Reflect.compareMethods(a, b);
 	#else
 	@:extern public static inline function functionHashCompare(a: Function, b: Function): Bool return a == b;
