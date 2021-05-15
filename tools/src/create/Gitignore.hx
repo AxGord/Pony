@@ -24,10 +24,12 @@ class Gitignore {
 	private static var ROOT: String = '/';
 	private static var MAP: String = '.map';
 	private static var NEWLINE: String = '\n';
+	private static var BUILDS_DIR: String = 'builds/';
 
 	public static function create(project: Project, type: ProjectType): Void {
 		var result: Array<String> = OS.copy();
 		result.push('# Project files');
+		result.push(ROOT + BUILDS_DIR);
 		if (project.build.active && project.build.hxml != null)
 			result.push(ROOT + project.build.getHxmlFile());
 		if (project.secondbuild.active && project.secondbuild.hxml != null)

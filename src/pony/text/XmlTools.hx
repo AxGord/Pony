@@ -35,9 +35,9 @@ class XmlTools {
 		return Xml.createPCData(XML_REMSP_LEFT + data + XML_REMSP_RIGHT);
 	}
 
-	public static function node(v: String, t: String): Xml {
+	public static function node(v: String, ?t: String): Xml {
 		var e: Xml = Xml.createElement(v);
-		e.addChild(data(t));
+		if (t != null) e.addChild(data(t));
 		return e;
 	}
 

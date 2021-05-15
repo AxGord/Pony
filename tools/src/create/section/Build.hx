@@ -33,7 +33,7 @@ class Build extends Section {
 	public function getHxmlFile(): String return hxml + HXML;
 	public function getDep(): Array<String> return hxml != null ? [getHxmlFile()] : [];
 
-	public function result(): Xml {
+	override public function result(): Xml {
 		init();
 
 		if (hxml != null) {
@@ -44,15 +44,17 @@ class Build extends Section {
 			for (cp in cps) prepare.addChild(XmlTools.node('cp', cp));
 			for (name in libs.keys()) {
 				var v = libs[name];
-				if (v == null)
-					prepare.addChild(XmlTools.node('lib', name));
-				else
-					prepare.addChild(XmlTools.node('lib', '$name $v'));
+				prepare.addChild(XmlTools.node('lib', v == null ? name : '$name:$v'));
 			}
 			if (dce != null) prepare.addChild(XmlTools.node('dce', dce));
 			if (analyzerOptimize) prepare.addChild(XmlTools.node('d', 'analyzer-optimize'));
 			if (esVersion != null) prepare.addChild(XmlTools.node('d', 'js-es$esVersion'));
-			for (name in flags) prepare.addChild(XmlTools.node('d', name));
+			for (name in flags) {
+				var a: Array<String> = name.split(':').map(StringTools.trim);
+				var d: Xml = XmlTools.node('d', a.pop());
+				prepare.addChild(d);
+				if (a.length > 0) d.set('name', a.pop());
+			}
 			for (key in args.keys()) prepare.addChild(XmlTools.node(key, args[key]));
 
 			xml.addChild(prepare);
@@ -66,10 +68,7 @@ class Build extends Section {
 			for (cp in cps) add('cp', cp);
 			for (name in libs.keys()) {
 				var v = libs[name];
-				if (v == null)
-					add('lib', name);
-				else
-					add('lib', '$name $v');
+				add('lib', v == null ? name : '$name $v');
 			}
 			if (dce != null) add('dce', dce);
 			if (analyzerOptimize) add('d', 'analyzer-optimize');
@@ -78,7 +77,7 @@ class Build extends Section {
 			for (key in args.keys()) add(key, args[key]);
 		}
 
-		return xml;
+		return root;
 	}
 
 	public function output(): String return outputPath + getOutputFile();
@@ -90,6 +89,7 @@ class Build extends Section {
 			case HaxeTargets.Neko: '.n';
 			case HaxeTargets.Swf: '.swf';
 			case HaxeTargets.Swc: '.swc';
+			case HaxeTargets.HL: '.hl';
 		}
 	}
 

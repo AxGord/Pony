@@ -10,7 +10,7 @@ class Electron extends Section {
 
 	public function new() super('electron');
 
-	public function result(): Xml {
+	override public function result(): Xml {
 		init();
 		set('win', 'true');
 		set('win32', 'true');

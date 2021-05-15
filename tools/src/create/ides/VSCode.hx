@@ -16,6 +16,7 @@ class VSCode {
 
 	private static var cordova: Bool = false;
 	private static var air: Bool = false;
+	private static var heaps: Bool = false;
 
 	private static function get_allowCreate(): Bool return !FileSystem.exists('.vscode');
 
@@ -41,6 +42,67 @@ class VSCode {
 				group: {
 					kind: 'build',
 					isDefault: true
+				},
+				problemMatcher: matcher
+			});
+		} else if (heaps) {
+			tasks.push({
+				runOptions: {runOn: auto ? 'folderOpen' : 'default'},
+				label: PRELAUNCH_TASK,
+				type: 'shell',
+				command: 'pony $ponycmd js debug',
+				group: {
+					kind: 'build'
+				},
+				problemMatcher: matcher
+			});
+			tasks.push({
+				runOptions: {runOn: auto ? 'folderOpen' : 'default'},
+				label: 'win debug',
+				type: 'shell',
+				command: 'pony $ponycmd win debug',
+				group: {
+					kind: 'build'
+				},
+				problemMatcher: matcher
+			});
+			tasks.push({
+				runOptions: {runOn: auto ? 'folderOpen' : 'default'},
+				label: 'mac debug',
+				type: 'shell',
+				command: 'pony $ponycmd mac debug',
+				group: {
+					kind: 'build'
+				},
+				problemMatcher: matcher
+			});
+			tasks.push({
+				runOptions: {runOn: auto ? 'folderOpen' : 'default'},
+				label: 'js release',
+				type: 'shell',
+				command: 'pony $ponycmd js release',
+				group: {
+					kind: 'build'
+				},
+				problemMatcher: matcher
+			});
+			tasks.push({
+				runOptions: {runOn: auto ? 'folderOpen' : 'default'},
+				label: 'win release',
+				type: 'shell',
+				command: 'pony $ponycmd win release',
+				group: {
+					kind: 'build'
+				},
+				problemMatcher: matcher
+			});
+			tasks.push({
+				runOptions: {runOn: auto ? 'folderOpen' : 'default'},
+				label: 'mac release',
+				type: 'shell',
+				command: 'pony $ponycmd mac release',
+				group: {
+					kind: 'build'
 				},
 				problemMatcher: matcher
 			});
@@ -95,17 +157,39 @@ class VSCode {
 		Utils.saveJson('.vscode/tasks.json', data);
 	}
 
-	public static function createExtensions(chrome: Bool = false, flash: Bool = false): Void {
+	public static function createExtensions(chrome: Bool = false, flash: Bool = false, heaps: Bool = false): Void {
 		var data: Array<String> = ['nadako.vshaxe', 'vshaxe.haxe-checkstyle', 'wiggin77.codedox'];
-		if (cordova)
-			data.push('msjsdiag.cordova-tools');
-		if (chrome)
-			data.push('msjsdiag.debugger-for-chrome');
+		if (cordova) data.push('msjsdiag.cordova-tools');
+		if (heaps) data.push('haxefoundation.haxe-hl');
+		if (chrome) data.push('msjsdiag.debugger-for-chrome');
 		if (flash) {
 			data.push('bowlerhatllc.vscode-swf-debug');
 			data.push('lonewolf.vscode-astools');
 		}
 		Utils.saveJson('.vscode/extensions.json', {recommendations: data});
+	}
+
+	public static function createHeaps(httpPort: Int, output: String, app: String): Void {
+		heaps = true;
+		saveConfig(chromeConfig(httpPort).concat([
+			{
+				name: 'MacOS (HashLink SDL)',
+				type: 'hl',
+				program: "${workspaceFolder}/" + '$output$app.hl',
+				cwd: "${workspaceFolder}/" + output,
+				request: 'launch',
+				preLaunchTask: 'mac debug'
+			},
+			{
+				name: 'Windows (HashLink DirectX)',
+				type: 'hl',
+				program: "${workspaceFolder}/" + '$output$app.hl',
+				cwd: "${workspaceFolder}/" + output,
+				request: 'launch',
+				preLaunchTask: 'win debug'
+			}
+		]));
+		createExtensions(true, false, true);
 	}
 
 	public static function createFlash(output: String, app: String): Void {

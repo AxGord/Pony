@@ -294,7 +294,7 @@ class Tools {
 			if (libPath.substr(-src.length) == src)
 				libPath = libPath.substr(0, -src.length);
 		}
-		return libPath;
+		return TextTools.setLast(libPath, pd);
 	}
 	#end
 

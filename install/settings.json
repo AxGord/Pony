@@ -24,7 +24,8 @@
 		"imagemin-zopfli@6.0.0",
 		"!cordova@9.0.0",
 		"!rimraf@3.0.2",
-		"mysql@2.18.1"
+		"mysql@2.18.1",
+		"follow-redirects@1.14.1"
 	],
 	"winnpm": [
 		"imagemin-pngquant@5.1.0"

@@ -15,7 +15,7 @@ class Cordova extends Section {
 
 	public function new() super('cordova');
 
-	public function result():Xml {
+	override public function result():Xml {
 		init();
 
 		if (title != null) add('id', 'org.apache.cordova.pony.' + StringTools.replace(title, ' ', ''));

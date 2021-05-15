@@ -19,7 +19,7 @@ class Config extends Section {
 
 	public function new() super('config');
 
-	public function result():Xml {
+	override public function result():Xml {
 		init();
 		if (dep.length > 0) xml.set('dep', dep.join(', '));
 		for (e in options.kv()) xml.addChild(make(e));

@@ -15,12 +15,14 @@ class Project {
 	public var haxelib(default, null):Haxelib = new Haxelib();
 	public var build(default, null):Build = new Build();
 	public var secondbuild(default, null):Build = new Build();
+	public var thirdbuild(default, null):Build = new Build();
 	public var uglify(default, null):Uglify = new Uglify();
 	public var seconduglify(default, null):Uglify = new Uglify();
 	public var npm(default, null):Npm = new Npm();
 	public var url(default, null):Url = new Url();
 	public var cordova(default, null):Cordova = new Cordova();
 	public var electron(default, null):Electron = new Electron();
+	public var hashlink(default, null):Hashlink = new Hashlink();
 
 	public var name:String;
 	public var rname(get, never):String;
@@ -51,6 +53,19 @@ class Project {
 		if (download.active) root.addChild(download.result());
 		if (haxelib.active) root.addChild(haxelib.result());
 		if (npm.active) root.addChild(npm.result());
+		if (hashlink.active) root.addChild(hashlink.result());
+
+		addBuilds(root);
+
+		if (url.active) root.addChild(url.result());
+
+		if (root.firstChild() == null) {
+			root.addChild(Xml.createComment('Put configuration here'));
+		}
+		return root;
+	}
+
+	public function addBuilds(root: Xml): Void {
 		if (build.active) {
 			root.addChild(build.result());
 			if (uglify.active) {
@@ -60,19 +75,27 @@ class Project {
 			}
 		}
 		if (secondbuild.active) {
-			root.addChild(secondbuild.result());
+			if (build.active && build.appNode != null && secondbuild.appNode != null)
+				secondbuild.addTo(build);
+			else
+				root.addChild(secondbuild.result());
 			if (seconduglify.active) {
 				seconduglify.outputPath = secondbuild.outputPath;
 				seconduglify.outputFile = secondbuild.getOutputFile();
-				root.addChild(seconduglify.result());
+				if (uglify.active && uglify.appNode != null && seconduglify.appNode != null)
+					seconduglify.addTo(uglify);
+				else
+					root.addChild(seconduglify.result());
 			}
 		}
-		if (url.active) root.addChild(url.result());
-
-		if (root.firstChild() == null) {
-			root.addChild(Xml.createComment('Put configuration here'));
+		if (thirdbuild.active) {
+			if (build.active && build.appNode != null && thirdbuild.appNode != null)
+				thirdbuild.addTo(build);
+			else if (secondbuild.active && secondbuild.appNode != null && thirdbuild.appNode != null)
+				thirdbuild.addTo(secondbuild);
+			else
+				root.addChild(thirdbuild.result());
 		}
-		return root;
 	}
 
 	public function getMain():String {

@@ -72,7 +72,7 @@ class Create {
 			case ProjectType.Heaps, ProjectType.Heapsxml: create.targets.Heaps.set(project);
 			case ProjectType.Heapselectron:
 				create.targets.Electron.set(project);
-				create.targets.Heaps.set(project, true);
+				create.targets.Heaps.setJs(project, true);
 				setElectronSecondBuild(project);
 			case ProjectType.Cordova: create.targets.Cordova.set(project);
 			case ProjectType.Node: create.targets.Node.set(project);
@@ -196,7 +196,7 @@ class Create {
 
 	private static function createHeapsProjectsData(project: Project, vscAllow: Bool, mainTemplate: String): Void {
 		project.build.createMainhx(mainTemplate);
-		if (vscAllow) VSCode.createChrome(project.server.httpPort);
+		if (vscAllow) VSCode.createHeaps(project.server.httpPort, project.build.outputPath, outputFile);
 		createIndexHtml(project);
 	}
 
@@ -214,7 +214,7 @@ class Create {
 		if (!FileSystem.exists('ui')) FileSystem.createDirectory('ui');
 		saveTemplate('ui/main.xml', 'heapsxmltemplate.xml');
 		project.build.createMainhx('electrontemplate.hx.tpl');
-		project.secondbuild.createMainhx('heapsxmltemplate.hx.tpl');
+		project.secondbuild.createMainhx('heapsxmlelectrontemplate.hx.tpl');
 		if (vscAllow) VSCode.createElectron(project.build.outputPath);
 		genSecondBuildHtml(project);
 		create.targets.Node.createAndSaveNpmPackageToOutputDir(project, null, electronVersion);

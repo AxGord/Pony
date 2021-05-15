@@ -1,11 +1,9 @@
-import js.Browser;
 import h2d.Scene;
 import pony.ui.xml.HeapsXmlUi;
 import pony.ui.AssetManager;
 import pony.heaps.HeapsApp;
 import pony.geom.Point;
 import pony.Config;
-import pony.JsTools;
 
 class Main extends Scene {
 
@@ -18,13 +16,22 @@ class Main extends Scene {
 	}
 
 	private function loadHandler(): Void {
-		Browser.document.getElementById('preloader').remove();
+		#if js
+		js.Browser.document.getElementById('preloader').remove();
+		#end
 		new MainUI(this).createUI(app);
 	}
 
 	private static function main():Void {
 		AssetManager.baseUrl = Config.baseUrl;
-		JsTools.onDocReady < init;
+		#if js
+			pony.JsTools.onDocReady < init;
+		#else
+			#if (app == 'win')
+			hl.UI.closeConsole();
+			#end
+			inline init();
+		#end
 	}
 
 	private static function init(): Void new HeapsApp(new Point<Int>(Config.width, Config.height), Config.background).onInit < initHandler;

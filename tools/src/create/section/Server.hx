@@ -17,7 +17,7 @@ class Server extends Section {
 
 	public function new() super('server');
 
-	public function result(): Xml {
+	override public function result(): Xml {
 		init();
 		if (http) {
 			add('path', httpPath);

@@ -21,7 +21,7 @@ class Uglify extends Section {
 
 	public function new() super('uglify');
 
-	public function result():Xml {
+	override public function result():Xml {
 		init();
 		if (libcache) set('libcache', 'true');
 
@@ -52,7 +52,7 @@ class Uglify extends Section {
 		xml.addChild(XmlTools.node('input', outputPath + outputFile));
 		xml.addChild(XmlTools.node('output', outputPath + outputFile));
 
-		return xml;
+		return root;
 	}
 
 }

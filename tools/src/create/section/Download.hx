@@ -1,5 +1,7 @@
 package create.section;
 
+using StringTools;
+
 /**
  * Download
  * @author AxGord <axgord@gmail.com>
@@ -10,7 +12,7 @@ class Download extends Section {
 		'stacktrace' => new Library('https://raw.githubusercontent.com/stacktracejs/stacktrace.js/v{v}/dist/stacktrace.min.js', '1.3.1'),
 		'pixijs' => new Library('https://pixijs.download/v{v}/pixi.min.js', '4.8.8', 'pixi.js - v{v}'),
 		'docready' => new Library('https://raw.githubusercontent.com/jfriend00/docReady/master/docready.js'),
-		'hlwin' => new Library('https://github.com/HaxeFoundation/hashlink/releases/download/1.11/hl-1.11.0-win.zip')
+		'hlwin' => new Library('https://github.com/HaxeFoundation/hashlink/releases/download/{v}/hl-{v}.0-win.zip', '1.11')
 	];
 
 	public var list:Array<Library> = [];
@@ -20,7 +22,7 @@ class Download extends Section {
 
 	public function addLib(name:String):Void list.push(LIBS[name]);
 
-	public function result():Xml {
+	override public function result():Xml {
 		init();
 		set('path', path);
 		for (lib in list) {
@@ -36,25 +38,25 @@ class Download extends Section {
 private class Library {
 
 	var url:String;
-	var verison:String;
+	var version:String;
 	var check:String;
 
-	public function new(url:String, ?verison:String, ?check:String) {
+	public function new(url:String, ?version:String, ?check:String) {
 		this.url = url;
-		this.verison = verison;
+		this.version = version;
 		this.check = check;
 	}
 
 	public function xml():Xml {
 		var unit = Xml.createElement('unit');
 		unit.set('url', url);
-		if (verison != null)
-			unit.set('v', verison);
+		if (version != null)
+			unit.set('v', version);
 		if (check != null)
 			unit.set('check', check);
 		return unit;
 	}
 
-	public function getFinal():String return url.substr(url.lastIndexOf('/') + 1);
+	public function getFinal():String return url.substr(url.lastIndexOf('/') + 1).replace('{v}', version);
 
 }

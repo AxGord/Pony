@@ -1,5 +1,6 @@
 package module;
 
+import pony.Tools;
 import haxe.io.Eof;
 import sys.io.Process;
 import pony.Fast;
@@ -17,6 +18,11 @@ typedef HaxelibConfig = {
 		git: Null<String>,
 		warning: Bool
 	}>
+}
+
+@:enum abstract Source(String) from String to String {
+	var GIT = 'git';
+	var DEV = 'dev';
 }
 
 /**
@@ -44,9 +50,11 @@ class Haxelib extends CfgModule<HaxelibConfig> {
 
 	override private function runNode(cfg: HaxelibConfig): Void {
 		for (lib in cfg.list) {
-			if (lib.version == 'git' && lib.git == null) continue;
-			if (lib.version == 'dev') continue;
-			var args: Array<String> = lib.version == 'git' ? ['git', lib.name, lib.git] :
+			if (lib.version == GIT && lib.git == null) continue;
+			if (lib.version == DEV) continue;
+			var va: Array<String> = lib.version.split(':').map(StringTools.trim); // lib from lib
+			var args: Array<String> = va.length == 2 ? ['dev', lib.name, Tools.libPath(va[0]) + va[1]] :
+				lib.version == GIT ? [GIT, lib.name, lib.git] :
 				lib.version != null ? ['install', lib.name, lib.version] : ['install', lib.name];
 			Sys.println('haxelib ' + args.join(' '));
 			var process: Process = new Process('haxelib', args);

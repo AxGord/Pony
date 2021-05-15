@@ -13,7 +13,7 @@ class Run extends Section {
 
 	public function new() super('run');
 
-	public function result():Xml {
+	override public function result():Xml {
 		init();
 		if (path != null) set('path', path);
 		xml.addChild(XmlTools.data(command));

@@ -6,5 +6,6 @@ package types;
 	var Neko = 'neko';
 	var Swf = 'swf';
 	var Swc = 'swc';
+	var HL = 'hl';
 
 }

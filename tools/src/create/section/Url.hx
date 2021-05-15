@@ -10,7 +10,7 @@ class Url extends Section {
 
 	public function new() super('url');
 
-	public function result():Xml {
+	override public function result():Xml {
 		init();
 		for (url in list) add('url', url);
 		return xml;
