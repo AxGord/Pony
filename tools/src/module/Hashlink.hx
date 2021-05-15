@@ -62,13 +62,10 @@ class Hashlink extends CfgModule<HashlinkConfig> {
 		switch cfg.hl {
 			case 'mac':
 				var runhl: String = Utils.libPath + 'redist/runhl.app.zip';
-				var helper: String = Tools.libPath('redistHelper') + 'redistFiles/mac/';
-				log('Copy from: $helper');
-				ZipTool.unpackFile(runhl, output, true, function(s: String): Void log(s));
+				ZipTool.unpackFile(runhl, output, true, ignoreLibs, function(s: String): Void log(s));
 				output += 'Contents/';
 				var o: String = output;
 				output += 'Resources/';
-				(helper: Dir).copyTo(output); // todo: ignore libs and add libs if need
 				if (!Utils.isWindows) {
 					Utils.command('chmod', ['+x', o + 'MacOS/runhl']);
 					Utils.command('chmod', ['+x', output + 'hl']);
