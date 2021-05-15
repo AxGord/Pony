@@ -41,7 +41,7 @@ import pony.time.DeltaTime;
 		s.on('error', error.bind('socket error'));
 	}
 
-	override private function close(): Void {
+	override public function close(): Void {
 		super.close();
 		if (socket != null) {
 			socket.end();

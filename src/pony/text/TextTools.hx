@@ -194,16 +194,13 @@ class TextTools {
 	}
 
 	public static inline function parsePercent(s: String): Float {
-		if (s.indexOf('%') != -1) {
-			return Std.parseFloat(s.substr(0, s.length - 1)) / 100;
-		} else
-			return Std.parseFloat(s);
+		return s.indexOf('%') != -1 ? Std.parseFloat(s.substr(0, s.length - 1)) / 100 : Std.parseFloat(s);
 	}
 
 	public static inline function last(s: String): String return s.charAt(s.length - 1);
+	public static inline function setLast(s: String, ch: String): String return last(s) != ch ? s + ch : s;
 
 	public static function bigFirst(s: String): String return s.charAt(0).toUpperCase() + s.substr(1);
-
 	public static function smallFirst(s: String): String return s.charAt(0).toLowerCase() + s.substr(1);
 
 	public static function lines(s: String): Array<String> {

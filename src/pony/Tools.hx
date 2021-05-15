@@ -270,14 +270,18 @@ class Tools {
 	}
 
 	#if (!macro && (nodejs || sys))
-	public static function ponyPath(): String {
+	public static inline function ponyPath(): String {
+		return libPath('pony');
+	}
+
+	public static function libPath(lib: String): String {
 		var pd: String = isWindows ? '\\' : '/';
 		var libPath: String = null;
 		#if nodejs
-		var o: String = Std.string(js.node.ChildProcess.execSync('haxelib path pony'));
+		var o: String = Std.string(js.node.ChildProcess.execSync('haxelib path $lib'));
 		libPath = o.split('\n')[0];
 		#elseif neko
-		libPath = new sys.io.Process('haxelib', ['path', 'pony']).stdout.readLine();
+		libPath = new sys.io.Process('haxelib', ['path', lib]).stdout.readLine();
 		libPath = sys.FileSystem.fullPath(libPath);
 		#else
 		throw 'Not supported';

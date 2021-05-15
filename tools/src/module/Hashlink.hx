@@ -1,5 +1,6 @@
 package module;
 
+import pony.Tools;
 import pony.fs.Dir;
 import pony.SPair;
 import pony.ZipTool;
@@ -57,7 +58,24 @@ class Hashlink extends CfgModule<HashlinkConfig> {
 		);
 		ignoreLibs.push('.h');
 		ignoreLibs.push('.c');
-		ZipTool.unpackFile(cfg.hl, output, true, ignoreLibs, function(s: String): Void log(s));
+		output = output.setLast('/');
+		switch cfg.hl {
+			case 'mac':
+				var runhl: String = Utils.libPath + 'redist/runhl.app.zip';
+				var helper: String = Tools.libPath('redistHelper') + 'redistFiles/mac/';
+				log('Copy from: $helper');
+				ZipTool.unpackFile(runhl, output, true, function(s: String): Void log(s));
+				output += 'Contents/';
+				var o: String = output;
+				output += 'Resources/';
+				(helper: Dir).copyTo(output); // todo: ignore libs and add libs if need
+				if (!Utils.isWindows) {
+					Utils.command('chmod', ['+x', o + 'MacOS/runhl']);
+					Utils.command('chmod', ['+x', output + 'hl']);
+				}
+			case _:
+				ZipTool.unpackFile(cfg.hl, output, true, ignoreLibs, function(s: String): Void log(s));
+		}
 		(cfg.main: File).copyToDir(output, 'hlboot.dat');
 		for (d in cfg.data) {
 			var u: Unit = d.a + d.b;
