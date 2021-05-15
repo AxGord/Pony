@@ -27,7 +27,9 @@
 			log('');
 			log('Install $n');
 			run();
+			Utils.beginColor(32);
 			log('Complete install $n');
+			Utils.endColor();
 		}
 	}
 

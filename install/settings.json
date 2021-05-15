@@ -38,5 +38,8 @@
 		"coenraads.bracket-pair-colorizer",
 		"bowlerhatllc.vscode-swf-debug",
 		"lonewolf.vscode-astools"
+	],
+	"hideWarnings": [
+		"hxbitmini"
 	]
 }

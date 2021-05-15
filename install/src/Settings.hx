@@ -7,5 +7,6 @@ typedef Settings = {
 	haxelib: Array<String>,
 	npm: Array<String>,
 	winnpm: Array<String>,
-	vscode: Array<String>
+	vscode: Array<String>,
+	hideWarnings: Array<String>
 }

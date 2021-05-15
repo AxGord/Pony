@@ -9,7 +9,11 @@ class Main {
 	private static function main(): Void {
 		Config.init();
 		if (!Config.INSTALL) tryRun(Config.ARGS);
-		if (!Utils.nodeExists) Sys.println('Warning: nodejs not installed!');
+		if (!Utils.nodeExists) {
+			Utils.beginColor(31);
+			Sys.println('Warning: nodejs not installed!');
+			Utils.endColor();
+		}
 		new PonyInstall();
 	}
 
@@ -20,7 +24,9 @@ class Main {
 			if (FileSystem.exists(runfile)) {
 				Utils.exit(Sys.command(runfile, args));
 			} else {
+				Utils.beginColor(31);
 				Sys.println('Pony not compiled');
+				Utils.endColor();
 				Utils.exit(1);
 			}
 		}
