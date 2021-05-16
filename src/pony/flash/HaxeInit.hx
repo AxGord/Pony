@@ -35,7 +35,7 @@ import flash.Lib;
 			for (r in readyListeners) r();
 			readyListeners = null;
 		}
-		#if (haxe_ver >= 4.00)
+		#if (haxe_ver >= 4.10)
 		if (Std.isOfType(st.root, MovieClip)) {
 		#else
 		if (Std.is(st.root, MovieClip)) {

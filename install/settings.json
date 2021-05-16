@@ -35,9 +35,17 @@
 		"vshaxe.haxe-checkstyle",
 		"msjsdiag.debugger-for-chrome",
 		"vsmobile.cordova-tools",
-		"coenraads.bracket-pair-colorizer",
+		"coenraads.bracket-pair-colorizer-2",
 		"bowlerhatllc.vscode-swf-debug",
-		"lonewolf.vscode-astools"
+		"lonewolf.vscode-astools",
+		"haxefoundation.haxe-hl",
+		"jeremyfa.haxe-blocks",
+		"aaron-bond.better-comments",
+		"mhutchie.git-graph",
+		"hbenl.vscode-test-explorer",
+		"vshaxe.haxe-test-adapter",
+		"alefragnani.bookmarks",
+		"teabyii.ayu"
 	],
 	"hideWarnings": [
 		"hxbitmini"

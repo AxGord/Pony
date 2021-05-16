@@ -160,7 +160,7 @@ using pony.text.TextTools;
 			case _:
 				customUIElement(name, attrs, content);
 		}
-		#if (haxe_ver >= 4.00)
+		#if (haxe_ver >= 4.10)
 		if (Std.isOfType(obj, Node))
 		#else
 		if (Std.is(obj, Node))
@@ -183,7 +183,7 @@ using pony.text.TextTools;
 			var c: UColor = attrs.tint;
 			cast(obj, Drawable).color = Vector.fromColor(c.rgb);
 		}
-		#if (haxe_ver >= 4.00)
+		#if (haxe_ver >= 4.10)
 		if (Std.isOfType(obj, Drawable))
 		#else
 		if (Std.is(obj, Drawable))
@@ -498,14 +498,14 @@ using pony.text.TextTools;
 				switch a {
 					case dyn:
 						var p: Point<Float> = new Point(r.width, r.height);
-						#if (haxe_ver >= 4.00)
+						#if (haxe_ver >= 4.10)
 						if (Std.isOfType(e.a, TLayout)) {
 						#else
 						if (Std.is(e.a, TLayout)) {
 						#end
 							var o: TLayout = cast e.a;
 							o.wh = p;
-						#if (haxe_ver >= 4.00)
+						#if (haxe_ver >= 4.10)
 						} else if (Std.isOfType(e.a, Node)) {
 						#else
 						} else if (Std.is(e.a, Node)) {
@@ -516,7 +516,7 @@ using pony.text.TextTools;
 							Reflect.setProperty(e.a, f, p);
 						}
 					case dynWidth:
-						#if (haxe_ver >= 4.00)
+						#if (haxe_ver >= 4.10)
 						if (Std.isOfType(e.a, TLayout)) {
 						#else
 						if (Std.is(e.a, TLayout)) {
@@ -527,7 +527,7 @@ using pony.text.TextTools;
 							Reflect.setProperty(e.a, f, r.width);
 						}
 					case dynHeight:
-						#if (haxe_ver >= 4.00)
+						#if (haxe_ver >= 4.10)
 						if (Std.isOfType(e.a, TLayout)) {
 						#else
 						if (Std.is(e.a, TLayout)) {

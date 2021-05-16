@@ -17,7 +17,7 @@ class RPC<T:pony.net.rpc.IRPC> extends RPCBase<T> implements HasSignal {
 		super();
 		socket = s;
 		s.onData << dataHandler;
-		#if (haxe_ver >= 4.00)
+		#if (haxe_ver >= 4.10)
 		if (Std.isOfType(s, pony.net.SocketClient)) {
 		#else
 		if (Std.is(s, pony.net.SocketClient)) {

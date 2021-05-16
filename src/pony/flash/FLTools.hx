@@ -172,7 +172,7 @@ class FLTools {
 		if (o == t) return true;
 		for (i in 0...o.numChildren)
 			if (
-				#if (haxe_ver >= 4.00)
+				#if (haxe_ver >= 4.10)
 				Std.isOfType(o.getChildAt(i), DisplayObjectContainer)
 				#else
 				Std.is(o.getChildAt(i), DisplayObjectContainer)

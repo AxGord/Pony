@@ -93,7 +93,7 @@ class BaseLayout<T: BaseLayoutCore<Object>> extends Object implements IWH implem
 	public inline function hide(): Void visible = false;
 
 	private static inline function canAdd(obj: Object): Bool {
-		#if (haxe_ver >= 4.00)
+		#if (haxe_ver >= 4.10)
 		return !Std.isOfType(obj, Repeat);
 		#else
 		return !Std.is(obj, Repeat);

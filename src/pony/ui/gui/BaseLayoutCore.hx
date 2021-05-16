@@ -53,7 +53,7 @@ using pony.Tools;
 	}
 
 	private function addWait(o: T): Void {
-		#if (haxe_ver >= 4.00)
+		#if (haxe_ver >= 4.10)
 		if (Std.isOfType(o, IWH)) {
 		#else
 		if (Std.is(o, IWH)) {
@@ -112,7 +112,7 @@ using pony.Tools;
 
 	@:extern private inline function getObjSize(o: T): Point<Float> {
 		return getSizeMod(o,
-			#if (haxe_ver >= 4.00)
+			#if (haxe_ver >= 4.10)
 			Std.isOfType(o, IWH)
 			#else
 			Std.is(o, IWH)
@@ -122,7 +122,7 @@ using pony.Tools;
 
 	public function destroy(): Void {
 		for (o in objects) {
-			#if (haxe_ver >= 4.00)
+			#if (haxe_ver >= 4.10)
 			if (Std.isOfType(o, IWH))
 			#else
 			if (Std.is(o, IWH))
