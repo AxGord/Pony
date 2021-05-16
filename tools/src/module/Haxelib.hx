@@ -52,8 +52,7 @@ class Haxelib extends CfgModule<HaxelibConfig> {
 		for (lib in cfg.list) {
 			if (lib.version == GIT && lib.git == null) continue;
 			if (lib.version == DEV) continue;
-			var va: Array<String> = lib.version.split(':').map(StringTools.trim); // lib from lib
-			var args: Array<String> = va.length == 2 ? ['dev', lib.name, Tools.libPath(va[0]) + va[1]] :
+			var args: Array<String> =
 				lib.version == GIT ? [GIT, lib.name, lib.git] :
 				lib.version != null ? ['install', lib.name, lib.version] : ['install', lib.name];
 			Sys.println('haxelib ' + args.join(' '));
