@@ -88,7 +88,7 @@ class Create {
 					'password' => '',
 					'database' => 'testdatabase'
 				]: ConfigOptions);
-				project.config.options['vk'] = ([]: ConfigOptions);
+				project.config.options['vk'] = new ConfigOptions();
 				project.haxelib.addLib('continuation');
 			case ProjectType.Electron:
 				create.targets.Electron.set(project);

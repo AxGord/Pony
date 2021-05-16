@@ -1,7 +1,11 @@
 package module;
 
 import pony.NPM;
+#if (haxe_ver >= 4.00)
 import js.lib.Error;
+#else
+import js.Error;
+#end
 import js.node.http.IncomingMessage;
 import js.node.Fs;
 import sys.FileSystem;

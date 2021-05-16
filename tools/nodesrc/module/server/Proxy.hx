@@ -43,7 +43,7 @@ import pony.NPM;
 
 	public function init(): Void {
 		if (@:nullSafety(Off) (port == null)) throw 'port not set';
-		logf(() -> 'Start proxy server on ${port} to ${target} target');
+		logf(function() return 'Start proxy server on ${port} to ${target} target');
 		if (@:nullSafety(Off) (slow == null) && cachePath == null) {
 			NPM.http_proxy.createProxyServer({
 				target: target,

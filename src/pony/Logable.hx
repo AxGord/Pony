@@ -143,7 +143,7 @@ import pony.magic.HasSignal;
 		#if !disableLogs
 		name = name != null ? ': ' + name : '';
 		log('Begin bench' + name, p);
-		final timer: DTimer = DTimer.fixedClock(0);
+		var timer: DTimer = DTimer.fixedClock(0);
 		f();
 		log('End bench' + name + ' ' + timer.currentTime.totalMs + ' ms', p);
 		timer.destroy();

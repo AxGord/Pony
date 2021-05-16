@@ -55,7 +55,11 @@ import remote.server.ServerRemote;
 
 	private function now(): String {
 		var d: Date = Date.now();
+		#if (haxe_ver >= 4.00)
 		var z: Int = d.getTimezoneOffset();
+		#else
+		var z: Int = untyped __js__('new Date().getTimezoneOffset()');
+		#end
 		return Time.fromFloat((d.getTime() - z * 60 * 1000) % (24 * 60 * 60 * 1000));
 	}
 

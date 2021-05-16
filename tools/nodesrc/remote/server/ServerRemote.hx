@@ -30,7 +30,7 @@ import pony.Pair;
 	}
 
 	public function init(): Void {
-		logf(() -> 'Remote Server running at ${port}');
+		logf(function() return 'Remote Server running at ${port}');
 		socket = new SocketServer(port);
 		socket.onConnect << connectHandler;
 	}

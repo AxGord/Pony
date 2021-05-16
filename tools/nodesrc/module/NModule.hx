@@ -24,7 +24,7 @@ import pony.events.Signal0;
 	}
 
 	public function start(): Void {
-		logf(() -> 'Start ' + Type.getClassName(Type.getClass(this)));
+		logf(function() return 'Start ' + Type.getClassName(Type.getClass(this)));
 		if (config != null) {
 			tasks.add();
 			for (e in config) run(e);

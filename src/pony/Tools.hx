@@ -679,7 +679,7 @@ class MapTools {
 		#if (haxe_ver >= '4.0.0')
 		for (k => v in b) a[k] = v;
 		#else
-		for (k in map.keys()) a[k] = b[k];
+		for (k in b.keys()) a[k] = b[k];
 		#end
 	}
 
