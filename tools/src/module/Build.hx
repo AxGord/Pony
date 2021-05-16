@@ -1,5 +1,6 @@
 package module;
 
+import pony.text.TextTools;
 import pony.Fast;
 import pony.SPair;
 import sys.FileSystem;
@@ -19,7 +20,8 @@ using pony.text.XmlTools;
 private typedef LastCompilationOptions = {
 	command: Array<SPair<String>>,
 	debug: Bool,
-	compiler: String
+	compiler: String,
+	winfix: Bool
 }
 
 /**
@@ -66,6 +68,7 @@ private typedef LastCompilationOptions = {
 			section: BASection.Build,
 			command: [],
 			haxeCompiler: HAXE,
+			winfix: false,
 			hxml: null,
 			runHxml: [],
 			allowCfg: true
@@ -83,7 +86,7 @@ private typedef LastCompilationOptions = {
 			if (cfg.hxml != null) {
 				saveHxml(cfg.hxml, cmd);
 			} else {
-				runCompilation(cmd, cfg.debug, cfg.haxeCompiler);
+				runCompilation(cmd, cfg.debug, cfg.haxeCompiler, cfg.winfix && Utils.isWindows);
 			}
 		} else for (e in cfg.runHxml) {
 			var cmd: Array<SPair<String>> = cfg.command.copy();
@@ -92,7 +95,7 @@ private typedef LastCompilationOptions = {
 			cmd.push(new SPair(e + '.$HXML', ''));
 			if (cfg.app != null) cmd.push(new SPair(D, 'app=${cfg.app}'));
 			if (cfg.debug) cmd.push(new SPair('-debug', ''));
-			runCompilation(cmd, cfg.debug, cfg.haxeCompiler);
+			runCompilation(cmd, cfg.debug, cfg.haxeCompiler, cfg.winfix && Utils.isWindows);
 		}
 		checkCompilation();
 	}
@@ -107,9 +110,9 @@ private typedef LastCompilationOptions = {
 		}
 	}
 
-	private function runCompilation(command: Array<SPair<String>>, debug: Bool, compiler: String): Void {
+	private function runCompilation(command: Array<SPair<String>>, debug: Bool, compiler: String, winfix: Bool): Void {
 		var newline: String = '\n';
-		if (debug && server && compiler == HAXE) {
+		if (debug && server && compiler == HAXE && !winfix) {
 			tryCounter = 3;
 			var s: Socket = connectToHaxeServer();
 			var d: String = Sys.getCwd();
@@ -142,26 +145,30 @@ private typedef LastCompilationOptions = {
 			}
 			s.close();
 			if (hasError) Utils.exit(1);
-			lastCompilationOptions = { command: command, debug: debug, compiler: compiler };
+			lastCompilationOptions = { command: command, debug: debug, compiler: compiler, winfix: winfix };
 		} else {
 			var args: Array<String> = [];
 			for (c in command) {
 				args.push(c.a);
 				if (c.b.length > 0) args.push(c.b);
 			}
-			Sys.println(compiler + ' ' + args.join(' '));
-			var process: Process = new Process(compiler, args);
-			var r: Int = process.exitCode();
-			try {
-				while (true) Sys.println(process.stdout.readLine());
-			} catch (e: Eof) {}
-			try {
-				while (true) {
-					var line: String = process.stderr.readLine();
-					if (!checkWarning(line)) Sys.stderr().writeString(line + newline);
-				}
-			} catch (e: Eof) {}
-			if (r > 0) error('$compiler error $r');
+			if (winfix) {
+				Utils.command(compiler, args);
+			} else {
+				Sys.println(compiler + ' ' + args.join(' '));
+				var process: Process = new Process(compiler, args);
+				var r: Int = process.exitCode();
+				try {
+					while (true) Sys.println(process.stdout.readLine());
+				} catch (e: Eof) {}
+				try {
+					while (true) {
+						var line: String = process.stderr.readLine();
+						if (!checkWarning(line)) Sys.stderr().writeString(line + newline);
+					}
+				} catch (e: Eof) {}
+				if (r > 0) error('$compiler error $r');
+			}
 		}
 	}
 
@@ -191,7 +198,7 @@ private typedef LastCompilationOptions = {
 			if (lastCompilationOptions != null) {
 				var lco: LastCompilationOptions = lastCompilationOptions;
 				lastCompilationOptions = null;
-				runCompilation(lco.command, lco.debug, lco.compiler);
+				runCompilation(lco.command, lco.debug, lco.compiler, lco.winfix);
 			}
 		}
 	}
@@ -213,6 +220,7 @@ private typedef BuildConfig = {
 	command: Array<SPair<String>>,
 	haxeCompiler: String,
 	hxml: String,
+	winfix: Bool,
 	runHxml: Array<String>
 }
 
@@ -263,6 +271,7 @@ private class BuildConfigReader extends BAReader<BuildConfig> {
 		switch name {
 			case HAXE: cfg.haxeCompiler = val;
 			case HXML: cfg.hxml = val;
+			case 'winfix': cfg.winfix = TextTools.isTrue(val);
 			case _:
 		}
 	}
