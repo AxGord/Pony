@@ -34,6 +34,8 @@ class Gitignore {
 			result.push(ROOT + project.build.getHxmlFile());
 		if (project.secondbuild.active && project.secondbuild.hxml != null)
 			result.push(ROOT + project.secondbuild.getHxmlFile());
+		if (project.thirdbuild.active && project.thirdbuild.hxml != null)
+			result.push(ROOT + project.thirdbuild.getHxmlFile());
 		if (project.build.active) {
 			var output: String = project.build.output();
 			result.push(ROOT + output);
@@ -44,6 +46,12 @@ class Gitignore {
 			var output: String = project.secondbuild.output();
 			result.push(ROOT + output);
 			if (project.secondbuild.target == HaxeTargets.JS)
+				result.push(ROOT + output + MAP);
+		}
+		if (project.thirdbuild.active) {
+			var output: String = project.thirdbuild.output();
+			result.push(ROOT + output);
+			if (project.thirdbuild.target == HaxeTargets.JS)
 				result.push(ROOT + output + MAP);
 		}
 		if (project.download.active && project.download.list.length > 0)
@@ -60,8 +68,10 @@ class Gitignore {
 				result.push(project.build.outputPath + project.build.outputFile + '/'); // windows
 			case _:
 		}
+		var finalResult: Array<String> = [];
+		for (r in result) if (finalResult.indexOf(r) == -1) finalResult.push(r);
 		Sys.println('Save gitignore file');
-		File.saveContent(GITIGNORE, result.join(NEWLINE));
+		File.saveContent(GITIGNORE, finalResult.join(NEWLINE));
 	}
 
 }
