@@ -27,8 +27,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Pony Tools: Create Heaps JS, Win, Mac. Prev haxe ver compatibility. Winfix flag for build.",
-"version": "1.4.5",
+"releasenote": "Pony Tools Create: gitignore third build and rm duplicates. OpenFL fixes.",
+"version": "1.4.6",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }

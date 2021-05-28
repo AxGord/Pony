@@ -264,8 +264,8 @@ class FLTools {
 			function handler(e: Event): Void {
 				try {
 					removeEvents();
-					var src: BitmapData = new BitmapData(e.target.content.width, e.target.content.height);
-					src.draw(e.target.content);
+					var src: BitmapData = new BitmapData(Std.int(loader.content.width), Std.int(loader.content.height));
+					src.draw(loader.content);
 					ok(src);
 				} catch (e: Dynamic) error(e);
 			}

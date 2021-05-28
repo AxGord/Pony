@@ -11,7 +11,7 @@ import pony.events.Signal2;
  * SocketClient
  * @author AxGord <axgord@gmail.com>
  */
-#if (!js || nodejs)
+#if (!js || nodejs || openfl)
 @:nullSafety(Strict) class SocketClient
 	#if nodejs extends pony.net.nodejs.SocketClient
 	#elseif cs extends pony.net.cs.SocketClient

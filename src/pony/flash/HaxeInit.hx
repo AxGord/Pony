@@ -23,6 +23,7 @@ import flash.Lib;
 	 * @param st - root display object
 	 */
 	public static function init(st: DisplayObject, ?ready: Void -> Void): Void {
+		#if !openfl
 		if (readyListeners == null) {
 			if (ready != null) ready();
 			return;
@@ -60,6 +61,7 @@ import flash.Lib;
 				st.addEventListener(Event.ADDED_TO_STAGE, stAddedHandler);
 			}
 		}
+		#end
 	}
 
 	private static inline function initMath(): Void {
