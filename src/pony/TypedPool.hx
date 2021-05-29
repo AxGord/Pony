@@ -34,7 +34,7 @@ package pony;
 		list = null;
 	}
 
-	@:extern public inline function get_isDestroy(): Bool return list == null;
+	public inline function get_isDestroy(): Bool return list == null;
 
 }
 
@@ -76,7 +76,7 @@ package pony;
 		a1 = null;
 	}
 
-	@:extern public inline function get_isDestroy(): Bool return list == null;
+	public inline function get_isDestroy(): Bool return list == null;
 
 }
 
@@ -121,6 +121,6 @@ package pony;
 		a2 = null;
 	}
 
-	@:extern public inline function get_isDestroy(): Bool return list == null;
+	public inline function get_isDestroy(): Bool return list == null;
 
 }

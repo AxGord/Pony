@@ -41,6 +41,9 @@ class TextTools {
 	];
 	private static inline var FIRST_ANSI_ID: Int = 192;
 
+	public static inline function startWith(str: String, s: String): Bool return str.substr(0, s.length) == s;
+	public static inline function endWith(str: String, s: String): Bool return str.substr(str.length - s.length) == s;
+
 	public static inline function firstSplit(str: String, delimiter: String, ?startIndex: Int): SPair<String> {
 		var index: Int = str.indexOf(delimiter, startIndex);
 		return index == -1 ? new SPair<String>(str, '') : new SPair<String>(str.substr(0, index), str.substr(index + 1));

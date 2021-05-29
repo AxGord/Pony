@@ -29,7 +29,9 @@ abstract Point<T: Float>(PointImpl<T>) from PointImpl<T> to PointImpl<T> {
 
 	public var x(get, set): T;
 	public var y(get, set): T;
+	public var swap(get, never): Point<T>;
 	public inline function new(x: T, y: T) this = { x: x, y: y };
+	private inline function get_swap(): Point<T> return new Point(this.y, this.x);
 	private inline function get_x(): T return this.x;
 	private inline function get_y(): T return this.y;
 	private inline function set_x(v: T): T return this.x = v;
@@ -112,6 +114,7 @@ abstract Point<T: Float>(PointImpl<T>) from PointImpl<T> to PointImpl<T> {
 	@:keep private function keepHackForHeaps(): Any return new h2d.Object().setPosition;
 	@:to public inline function toHeapsPoint(): h2d.col.Point return new h2d.col.Point(x, y);
 	#end
+
 }
 
 abstract IntPoint(PointImpl<Int> ) to PointImpl<Int> from PointImpl<Int> {
