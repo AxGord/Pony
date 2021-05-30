@@ -6,6 +6,7 @@ import pony.Fast;
 import pony.text.TextTools;
 import pony.fs.File;
 import pony.fs.Dir;
+import pony.geom.Point;
 
 private typedef TPConfig = { > BAConfig, > TPUnit,
 	from: String,
@@ -25,7 +26,11 @@ private typedef TPUnit = {
 	?trim: String,
 	forceSquared: Bool,
 	extrude: UInt,
-	alpha: Bool
+	alpha: Bool,
+	multipack: Bool,
+	basicSortBy: String,
+	size: Point<Int>,
+	pot: Bool
 }
 
 /**
@@ -61,7 +66,11 @@ class Texturepacker extends CfgModule<TPConfig> {
 			allowCfg: false,
 			forceSquared: false,
 			extrude: 0,
-			alpha: true
+			alpha: true,
+			multipack: false,
+			basicSortBy: null,
+			size: null,
+			pot: false
 		}, configHandler);
 	}
 
@@ -103,11 +112,13 @@ class Texturepacker extends CfgModule<TPConfig> {
 				toList.push((datafile:File).fullDir);
 			}
 
-			command.push('--scale');
-			command.push(Std.string(unit.scale));
+			if (unit.scale != 1) {
+				command.push('--scale');
+				command.push(Std.string(unit.scale));
 
-			command.push('--scale-mode');
-			command.push('Smooth');
+				command.push('--scale-mode');
+				command.push('Smooth');
+			}
 
 			command.push(unit.rotation ? '--enable-rotation' : '--disable-rotation');
 
@@ -133,17 +144,40 @@ class Texturepacker extends CfgModule<TPConfig> {
 
 			if (unit.forceSquared) command.push('--force-squared');
 
+			if (unit.pot) {
+				command.push('--size-constraints');
+				command.push('POT');
+			}
+
+			if (unit.size != null) {
+				if (!unit.pot) {
+					command.push('--size-constraints');
+					command.push('AnySize');
+				}
+				command.push('--width');
+				command.push('${unit.size.x}');
+				command.push('--height');
+				command.push('${unit.size.y}');
+			}
+
 			command.push('--pack-mode');
 			command.push('Best');
 
 			command.push('--extrude');
 			command.push('${unit.extrude}');
 
-			command.push('--algorithm');
-			command.push('MaxRects');
+			if (unit.basicSortBy != null) {
+				command.push('--algorithm');
+				command.push('Basic');
+				command.push('--basic-sort-by');
+				command.push(unit.basicSortBy);
 
-			command.push('--maxrects-heuristics');
-			command.push('Best');
+			} else {
+				command.push('--algorithm');
+				command.push('MaxRects');
+				command.push('--maxrects-heuristics');
+				command.push('Best');
+			}
 
 			if (unit.trim != null) {
 				var a:Array<String> = unit.trim.split(' ');
@@ -174,6 +208,8 @@ class Texturepacker extends CfgModule<TPConfig> {
 					}
 				}
 			}
+
+			if (unit.multipack) command.push('--multipack');
 
 			Utils.command('TexturePacker', command);
 
@@ -242,6 +278,8 @@ private class Path extends BAReader<TPConfig> {
 		cfg.extrude = 0;
 		cfg.forceSquared = false;
 		cfg.alpha = true;
+		cfg.multipack = false;
+		cfg.basicSortBy = null;
 	}
 
 	override private function readXml(xml:Fast):Void {
@@ -271,6 +309,12 @@ private class Path extends BAReader<TPConfig> {
 			case 'trim': cfg.trim = StringTools.trim(val);
 			case 'clean': cfg.clean = TextTools.isTrue(val);
 			case 'alpha': cfg.alpha = TextTools.isTrue(val);
+			case 'multipack': cfg.multipack = TextTools.isTrue(val);
+			case 'pot': cfg.pot = TextTools.isTrue(val);
+			case 'basicSortBy': cfg.basicSortBy = normalize(val);
+			case 'size':
+				var a: Array<Int> = normalize(val).split(' ').map(Std.parseInt);
+				cfg.size = a.length == 1 ? new Point(a[0], a[0]) : new Point(a[0], a[1]);
 			case _:
 		}
 	}

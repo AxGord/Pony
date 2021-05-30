@@ -27,8 +27,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Pony Tools Create: gitignore third build and rm duplicates. OpenFL fixes.",
-"version": "1.4.6",
+"releasenote": "Heaps keyboard. Text tools. Point swap. Typed pool fix. Texture packer options.",
+"version": "1.4.7",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }
