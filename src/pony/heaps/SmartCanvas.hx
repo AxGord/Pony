@@ -33,6 +33,10 @@ import pony.geom.Rect;
 
 	public function new(?size: Point<UInt>, smallDeviceQuality: SmallDeviceQuality = SmallDeviceQuality.ideal) {
 		stageInitSize = size;
+		if (size != null) {
+			stageWidth = size.x;
+			stageHeight = size.y;
+		}
 		rect = new Rect<Float>(0, 0, size.x, size.y);
 		width = size.x;
 		height = size.y;
