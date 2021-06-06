@@ -12,7 +12,6 @@ import pony.color.UColor;
 import pony.geom.Point;
 import pony.geom.Rect;
 import pony.time.Time;
-import pony.time.DTimer;
 import pony.time.DeltaTime;
 import pony.events.Signal1;
 import pony.magic.HasSignal;
@@ -86,16 +85,12 @@ import js.html.Element;
 	#if !js
 
 	private function sdlInitHandler(): Void {
-		screenUpdate();
 		@:privateAccess engine.window.addResizeEvent(windowResizeHandler);
 	}
 
 	private function windowResizeHandler(): Void {
 		@:privateAccess canvas.setSize(engine.window.window.width, engine.window.window.height);
-		DeltaTime.fixedUpdate < screenUpdate;
 	}
-
-	private function screenUpdate(): Void @:privateAccess engine.window.window.setPosition(engine.window.window.x, engine.window.window.y);
 
 	#end
 

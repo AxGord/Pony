@@ -36,7 +36,13 @@ import pony.geom.Rect;
 		rect = new Rect<Float>(0, 0, size.x, size.y);
 		width = size.x;
 		height = size.y;
+		eDynStageResize.onTake << takeDynStageHandler;
+		eDynStageResize.onLost << lostDynStageHandler;
 	}
+
+	private function takeDynStageHandler(): Void onStageResize << dynStageResize;
+	private function lostDynStageHandler(): Void onStageResize >> dynStageResize;
+	private function dynStageResize(): Void eDynStageResize.dispatch(dynStage);
 
 	public inline function set_smallDeviceQuality(q: SmallDeviceQuality): SmallDeviceQuality {
 		if (this.smallDeviceQuality != q) {
