@@ -230,7 +230,11 @@ class JsTools implements HasSignal {
 	}
 
 	public static function mapToJSMap<K, V>(map: Map<K, V>): JsMap<K, V> {
+		#if (haxe_ver >= '4.0.0')
+		var n:JsMap<K, V> = js.Syntax.code('new Map()');
+		#else
 		var n:JsMap<K, V> = untyped __js__('new Map()');
+		#end
 		for (k in map.keys()) n.set(k, map[k]);
 		return n;
 	}

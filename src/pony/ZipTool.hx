@@ -62,7 +62,7 @@ class ZipTool extends Logable {
 	public function writeEntry(entry: String): ZipTool {
 		if (needIgnore(entry)) return this;
 		if (!FileSystem.exists(prefix + entry)) {
-			error('File not exists: ' + entry);
+			error('File not exists: ' + prefix + entry);
 			return this;
 		}
 		if (FileSystem.isDirectory(prefix + entry))
