@@ -4,25 +4,17 @@ package pony.events;
  * WaitReady Helper
  * @author AxGord <axgord@gmail.com>
  */
-class WaitReady {
+abstract WaitReady(Null<Array<Void -> Void>>) {
 
-	private var isReady: Bool = false;
-	private var list: Array<Void -> Void> = [];
+	@:extern public inline function new() this = [];
 
-	public function new() {}
-
-	public function ready(): Void {
-		if (list == null) return;
-		isReady = true;
-		for (f in list) f();
-		list = null;
+	@:extern public inline function ready(): Void {
+		if (this != null) {
+			for (f in this) f();
+			this = null;
+		}
 	}
 
-	public function wait(cb: Void -> Void): Void isReady ? cb() : list.push(cb);
-
-	@:extern public inline function destroy(): Void {
-		isReady = false;
-		list = null;
-	}
+	@:extern public inline function wait(cb: Void -> Void): Void this == null ? cb() : this.push(cb);
 
 }

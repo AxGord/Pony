@@ -8,6 +8,7 @@ tools/pony.xml
 tools/commands.xml
 install/user_path.cmd
 webdefaults/
+redist/
 checkstyle.json
 LICENSE
 README.md

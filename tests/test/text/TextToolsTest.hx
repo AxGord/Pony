@@ -18,20 +18,4 @@ class TextToolsTest {
 		Assert.areEqual(r['lvl1'][1], 'lvl2b');
 	}
 
-	@Test
-	public function startWith(): Void {
-		Assert.areEqual('abcd'.startWith('ab'), true);
-		Assert.areEqual('ab'.startWith('ab'), true);
-		Assert.areEqual('a'.startWith('ab'), false);
-		Assert.areEqual('acbn'.startWith('ab'), false);
-	}
-
-	@Test
-	public function endWith(): Void {
-		Assert.areEqual('abcd'.endWith('cd'), true);
-		Assert.areEqual('ab'.endWith('cd'), false);
-		Assert.areEqual('a'.endWith('a'), true);
-		Assert.areEqual('acbn'.endWith('n'), true);
-	}
-
 }

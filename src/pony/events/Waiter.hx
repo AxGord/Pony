@@ -9,6 +9,7 @@ class Waiter {
 	public var ready: Bool = false;
 	private var f: List<Void -> Void>;
 
+	@:deprecated('Please use WairReady')
 	public function new() {
 		f = new List<Void -> Void>();
 	}

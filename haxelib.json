@@ -27,8 +27,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Heaps keyboard. Text tools. Point swap. Typed pool fix. Texture packer options.",
-"version": "1.4.7",
+"releasenote": "Heaps redist. Upgrade WaitReady.",
+"version": "1.4.8",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }
