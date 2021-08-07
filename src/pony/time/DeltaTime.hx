@@ -51,9 +51,27 @@ class DeltaTime implements HasSignal {
 	private inline static function get(): Float return (openfl.Lib.getTimer() - t) / 1000;
 
 	#elseif !HUGS
+
+	#if sys
+
 	public static inline function tick(): Void {
-		fixedValue = get();
-		set();
+		var time: Float = Sys.time();
+		fixedValue = time - t;
+		t = time;
+		fixedDispatch();
+	}
+
+	private static inline function get_nowDate(): Date return Date.now();
+
+	private static inline function set(): Void t = Sys.time();
+
+	#else
+
+	public static inline function tick(): Void {
+		lastNow = Date.now();
+		var time: Float = lastNow.getTime();
+		fixedValue = (time - t) / 1000;
+		t = time;
 		fixedDispatch();
 	}
 
@@ -65,7 +83,8 @@ class DeltaTime implements HasSignal {
 		lastNow = Date.now();
 		t = lastNow.getTime();
 	}
-	private static inline function get(): Float return (Date.now().getTime() - t) / 1000;
+
+	#end
 
 	#else
 	private static inline function get_nowDate(): Date return Date.now();

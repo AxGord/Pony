@@ -87,6 +87,7 @@ abstract Point<T: Float>(PointImpl<T>) from PointImpl<T> to PointImpl<T> {
 	@:op(A >= B) private inline function gte(b: Point<T>): Bool return x >= b.x || y >= b.y;
 	@:op(A < B) private inline function lt(b: Point<T>): Bool return x < b.x || y < b.y;
 	@:op(A <= B) private inline function lte(b: Point<T>): Bool return x <= b.x || y <= b.y;
+	@:op(-A) private inline function neg(): Point<T> return new Point(-this.x, -this.y);
 
 	public inline function minMax(b: Point<T>): Point<T>
 		return new Point<T>(this.x < b.x ? this.x : b.x, this.y > b.y ? this.y : b.y);

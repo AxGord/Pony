@@ -27,8 +27,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Heaps redist. Upgrade WaitReady.",
-"version": "1.4.8",
+"releasenote": "Fixes and improvements",
+"version": "1.4.9",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }

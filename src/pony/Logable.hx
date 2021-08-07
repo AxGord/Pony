@@ -1,12 +1,17 @@
 package pony;
 
-import pony.time.DTimer;
 import haxe.Log;
 import haxe.PosInfos;
+
+import pony.SPair;
 import pony.ILogable;
+import pony.time.DTimer;
 import pony.events.Signal2;
 import pony.events.Listener2;
 import pony.magic.HasSignal;
+
+using pony.text.TextTools;
+using pony.Tools;
 
 /**
  * Logable
@@ -124,18 +129,22 @@ import pony.magic.HasSignal;
 		traceErrors();
 	}
 
+	public static function traceWithDate(v: String, ?p: PosInfos): Void {
+		if (p != null)
+			p.fileName = Date.now().toString() + Sys.time()._toFixed(3, -1) + ' ' + p.fileName;
+		Log.trace(v, p);
+	}
+
 	public static function vscodePatchTrace(): Void {
 		origTrace = Log.trace;
 		Log.trace = vscodeTrace;
 	}
 
-	public static function traceWithDate(v: String, ?p: PosInfos): Void {
-		if (p != null) p.fileName = Date.now().toString() + ' ' + p.fileName;
-		Log.trace(v, p);
-	}
-
 	private static function vscodeTrace(v: Dynamic, ?p: PosInfos): Void {
-		if (p != null) p.fileName = './' + p.fileName;
+		if (p != null) {
+			var r: SPair<String> = p.fileName.lastSplit(' ');
+			p.fileName = r.b != '' ? r.a + ' ./' + r.b : './' + r.a;
+		}
 		@:nullSafety(Off) origTrace(v, p);
 	}
 

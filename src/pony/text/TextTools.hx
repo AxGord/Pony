@@ -42,12 +42,12 @@ class TextTools {
 	private static inline var FIRST_ANSI_ID: Int = 192;
 
 	public static inline function firstSplit(str: String, delimiter: String, ?startIndex: Int): SPair<String> {
-		var index: Int = str.indexOf(delimiter, startIndex);
+		var index: Int = startIndex != null ? str.indexOf(delimiter, startIndex) : str.indexOf(delimiter);
 		return index == -1 ? new SPair<String>(str, '') : new SPair<String>(str.substr(0, index), str.substr(index + 1));
 	}
 
 	public static inline function lastSplit(str: String, delimiter: String, ?startIndex: Int): SPair<String> {
-		var index: Int = str.lastIndexOf(delimiter, startIndex);
+		var index: Int = startIndex != null ? str.lastIndexOf(delimiter, startIndex) : str.lastIndexOf(delimiter);
 		return index == -1 ? new SPair<String>(str, '') : new SPair<String>(str.substr(0, index), str.substr(index + 1));
 	}
 

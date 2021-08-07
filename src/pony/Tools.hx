@@ -584,6 +584,11 @@ class MapTools {
 		return r;
 	}
 
+	public static function toMap<T>(d: Dynamic<T>): Map<String, T> {
+		var fields: Array<String> = d.fields();
+		return [ for (field in fields) field => d.field(field) ];
+	}
+
 	public static inline function pushToMap<K, T>(map: Map<K, Array<T>>, key: K, value: T): Bool {
 		var element: Null<Array<T>> = map[key];
 		if (element == null) {
@@ -715,7 +720,7 @@ class FloatTools {
 	}
 
 	public static function _toFixed(v: Float, n: Int, begin: Int = 0, d: String = '.', beginS: String = '0', endS: String = '0'): String {
-		if (begin != 0) {
+		if (begin > 0) {
 			var s: String = _toFixed(v, n, 0, d, beginS, endS);
 			var a: Array<String> = s.split(d);
 			var d: Int = begin - a[0].length;
@@ -727,9 +732,9 @@ class FloatTools {
 		var s: String = Std.string(v);
 		var a: Array<String> = s.split('.');
 		if (a.length <= 1)
-			return s + d + TextTools.repeat(endS, n);
+			return (begin == -1 ? '' : s) + d + TextTools.repeat(endS, n);
 		else
-			return a[0] + d + a[1] + TextTools.repeat(endS, n - a[1].length);
+			return (begin == -1 ? '' : a[0]) + d + a[1] + TextTools.repeat(endS, n - a[1].length);
 	}
 
 }

@@ -167,4 +167,6 @@ class MathTools {
 		return p;
 	}
 
+	public static inline function lerp(start: Float, end: Float, t: Float): Float return start * (1 - t) + end * t;
+
 }

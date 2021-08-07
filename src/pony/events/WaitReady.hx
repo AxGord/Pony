@@ -10,7 +10,7 @@ abstract WaitReady(Null<Array<Void -> Void>>) {
 
 	@:extern public inline function ready(): Void {
 		if (this != null) {
-			for (f in this) f();
+			@:nullSafety(Off) for (f in this) f();
 			this = null;
 		}
 	}

@@ -19,6 +19,8 @@ abstract Rect<T: Float>(SimpleRect<T>) to SimpleRect<T> from SimpleRect<T>  {
 	public var y(get, set): T;
 	public var width(get, set): T;
 	public var height(get, set): T;
+	public var start(get, never): Point<T>;
+	public var end(get, never): Point<T>;
 
 	public inline function new(x: T, y: T, width: T, height: T)
 		this = { x: x, y: y, width: width, height: height };
@@ -33,7 +35,8 @@ abstract Rect<T: Float>(SimpleRect<T>) to SimpleRect<T> from SimpleRect<T>  {
 	private inline function set_width(v: T): T return this.width = v;
 	private inline function set_height(v: T): T return this.height = v;
 
-	public inline function startAsPoint(): Point<T> return new Point<T>(x, y);
+	public inline function get_start(): Point<T> return new Point<T>(x, y);
+	public inline function get_end(): Point<T> return new Point<T>(width, height);
 
 	@:to public inline function toFloat(): Rect<Float> return cast this;
 

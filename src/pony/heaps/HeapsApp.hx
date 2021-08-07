@@ -4,9 +4,11 @@ import h2d.Object;
 import h2d.Graphics;
 import h2d.Drawable;
 import h2d.Scene;
+
 import hxd.SceneEvents.InteractiveScene;
 import hxd.Window;
 import hxd.App;
+
 import pony.Config;
 import pony.color.UColor;
 import pony.geom.Point;
@@ -16,6 +18,7 @@ import pony.time.DeltaTime;
 import pony.events.Signal1;
 import pony.magic.HasSignal;
 import pony.magic.HasLink;
+
 #if js
 import pony.js.SmartCanvas;
 import js.html.Element;
@@ -127,7 +130,7 @@ import js.html.Element;
 	}
 
 	public inline function localToGlobal(obj: Object, ?pos: Point<Float>): Point<Float>
-		return pos != null ? pos + obj.localToGlobal() - canvas.rect.startAsPoint() : obj.localToGlobal() - canvas.rect.startAsPoint();
+		return pos != null ? pos + obj.localToGlobal() - canvas.rect.start : obj.localToGlobal() - canvas.rect.start;
 
 	public function globalToLocal(x: Float, y: Float): Point<Float>
 		return new Point(

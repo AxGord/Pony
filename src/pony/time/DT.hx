@@ -10,6 +10,8 @@ using Std;
  */
 @:nullSafety(Strict) abstract DT(Float) from Float to Float {
 
+	public var fps(get, never): Float;
+
 	public var ms(get, never): Float;
 	public var sec(get, never): Float;
 	public var min(get, never): Float;
@@ -54,22 +56,14 @@ using Std;
 
 	@:extern public inline function new(v: Float) this = v;
 	@:from @:extern public static inline function fromTime(v: Time): DT return new DT(v / 1000);
-	@:to @:extern public inline function toTime(): Time return this * 1000;
+	@:to @:extern public inline function toTime(): Time return ms;
 
-	/*
-	@:to public function toString():String {
-		var d:Float = this % 1;
-		var t:Time = toTime();
-		if (d == 0)
-			return t;
-		else if (t.ms > 0)
-			return t.toString() + '.' + Std.string(d).substr(1);
-		else
-			return t.toString() + '..' + Std.string(d).substr(1);
-	}*/
+	@:to public inline function toString():String return '${Std.int(ms * 100) / 100}';
 
-	@:extern private inline function get_ms   (): Float return this / 1000;
-	@:extern private inline function get_sec  (): Null<Float> return this;
+	@:extern private inline function get_fps  (): Float return 1 / this;
+
+	@:extern private inline function get_ms   (): Float return this * 1000;
+	@:extern private inline function get_sec  (): Float return this;
 	@:extern private inline function get_min  (): Float return sec * 60;
 	@:extern private inline function get_hour (): Float return min * 60;
 	@:extern private inline function get_day  (): Float return hour * 24;

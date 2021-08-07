@@ -113,6 +113,13 @@ private typedef LastCompilationOptions = {
 	private function runCompilation(command: Array<SPair<String>>, debug: Bool, compiler: String, winfix: Bool): Void {
 		var newline: String = '\n';
 		if (debug && server && compiler == HAXE && !winfix) {
+			try { // Fix compilation server error
+				var tpf: String = Utils.libPath + 'src/pony/TypedPool.hx';
+				log('Update $tpf');
+				File.saveContent(tpf, File.getContent(tpf));
+			} catch (e: Dynamic) {
+				error('Update failed');
+			}
 			tryCounter = 3;
 			var s: Socket = connectToHaxeServer();
 			var d: String = Sys.getCwd();

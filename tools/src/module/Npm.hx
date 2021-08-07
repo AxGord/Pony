@@ -2,9 +2,12 @@ package module;
 
 import pony.Pair;
 import pony.Fast;
+import pony.text.TextTools;
+
+import sys.FileSystem;
+
 import types.BAConfig;
 import types.BASection;
-import pony.text.TextTools;
 
 typedef NpmConfig = { > BAConfig,
 	path: String,
@@ -38,9 +41,10 @@ class Npm extends CfgModule<NpmConfig> {
 	}
 
 	override private function runNode(cfg:NpmConfig):Void {
-		var cwd = new Cwd(cfg.path);
+		var cwd = new Cwd(cfg.path, true);
 		cwd.sw();
-		Sys.command('npm', ['install']);
+
+		if (FileSystem.exists('package.json')) Sys.command('npm', ['install']);
 
 		if (cfg.autoinstall) {
 			for (module in cfg.list) {
