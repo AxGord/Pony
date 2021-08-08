@@ -72,6 +72,9 @@ class Haxelib extends CfgModule<HaxelibConfig> {
 			} catch (e: Eof) {}
 			var r: Int = process.exitCode();
 			if (r > 0) error('haxelib error $r');
+			if (lib.name == 'pony') Utils.command(
+				'haxelib', ['run', 'pony', 'install', '-code', '-code-insiders', '-npm', '-userpath', '-nodepath', '-ponypath']
+			);
 		}
 	}
 
