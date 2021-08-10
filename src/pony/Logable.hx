@@ -131,7 +131,7 @@ using pony.Tools;
 
 	public static function traceWithDate(v: String, ?p: PosInfos): Void {
 		if (p != null)
-			p.fileName = Date.now().toString() + Sys.time()._toFixed(3, -1) + ' ' + p.fileName;
+			p.fileName = Date.now().toString() + haxe.Timer.stamp()._toFixed(3, -1) + ' ' + p.fileName;
 		Log.trace(v, p);
 	}
 
