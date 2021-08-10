@@ -441,7 +441,7 @@ class Tools {
 	#end
 	public static function functionLength(f: Function): Int {
 		#if php
-		var rf = untyped __php__("new ReflectionMethod($f[0], $f[1])");
+		var rf = untyped __php__('new ReflectionMethod($f[0], $f[1])');
 		return rf.getNumberOfParameters();
 		#elseif (js || flash)
 		return untyped f.length;
@@ -627,7 +627,7 @@ class MapTools {
 			map[a] = [ b => value ];
 			return true;
 		} else {
-			map[a][b] = value;
+			@:nullSafety(Off) map[a][b] = value;
 			return false;
 		}
 	}
