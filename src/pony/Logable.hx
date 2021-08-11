@@ -64,7 +64,10 @@ using pony.Tools;
 			eError.onTake << listen;
 			eError.onLost << unlisten;
 		} else {
-			l.onError << eError;
+			if (logPrefix == '')
+				l.onError << eError;
+			else
+				l.onError << error;
 		}
 		#end
 	}
@@ -80,7 +83,10 @@ using pony.Tools;
 			eLog.onTake << listen;
 			eLog.onLost << unlisten;
 		} else {
-			l.onLog << eLog;
+			if (logPrefix == '')
+				l.onLog << eLog;
+			else
+				l.onLog << log;
 		}
 		#end
 	}
