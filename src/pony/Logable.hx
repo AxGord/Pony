@@ -2,6 +2,7 @@ package pony;
 
 import haxe.Log;
 import haxe.PosInfos;
+import haxe.Timer;
 
 import pony.SPair;
 import pony.ILogable;
@@ -30,6 +31,7 @@ using pony.Tools;
 	public var errorActive(get, never): Bool;
 
 	private var logPrefix: String;
+	private var benches: Map<String, Float> = new Map<String, Float>();
 
 	public function new(?prefix: String) {
 		logPrefix = prefix == null ? '' : prefix + DLM;
@@ -150,13 +152,43 @@ using pony.Tools;
 
 	public inline function bench(?name: String, f: Void -> Void, ?p: PosInfos): Void {
 		#if !disableLogs
+		if (!logActive) return;
 		name = name != null ? ': ' + name : '';
 		log('Begin bench' + name, p);
-		var timer: DTimer = DTimer.fixedClock(0);
+		var time: Float = Timer.stamp();
 		f();
-		log('End bench' + name + ' ' + timer.currentTime.totalMs + ' ms', p);
-		timer.destroy();
+		log('End bench' + name + ' ' + benchTime(time) + ' ms', p);
 		#end
 	}
+
+	public inline function benchAsync(?name: String, f: (Void -> Void) -> Void, ?p: PosInfos): Void {
+		#if !disableLogs
+		if (!logActive) return;
+		name = name != null ? ': ' + name : '';
+		log('Begin async bench' + name, p);
+		var time: Float = Timer.stamp();
+		f(function(): Void log('End async bench' + name + ' ' + benchTime(time) + ' ms', p));
+		#end
+	}
+
+	public inline function benchStart(name: String, ?p: PosInfos): Void {
+		#if !disableLogs
+		if (!logActive) return;
+		log('Begin bench: ' + name, p);
+		benches[name] = Timer.stamp();
+		#end
+	}
+
+	public inline function benchComplete(name: String, ?p: PosInfos): Void {
+		#if !disableLogs
+		if (!logActive) return;
+		var time: Null<Float> = benches[name];
+		if (time == null) throw 'Bench completed';
+		benches.remove(name);
+		log('End bench: ' + name + ' ' + benchTime(time)  + ' ms', p);
+		#end
+	}
+
+	private static inline function benchTime(time: Float): Float return Std.int((Timer.stamp() - time) * 100000) / 100;
 
 }
