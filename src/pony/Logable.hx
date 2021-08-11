@@ -60,14 +60,19 @@ using pony.Tools;
 			var listener: Listener2<String, PosInfos> = function(s: String, p: PosInfos): Void error(id + DLM + s, p);
 			function listen(): Void l.onError << listener;
 			function unlisten(): Void l.onError >> listener;
-			if (!eError.empty) listen();
+			if (!eError.empty) l.onError << listener;
 			eError.onTake << listen;
 			eError.onLost << unlisten;
 		} else {
-			if (logPrefix == '')
+			if (logPrefix == '') {
 				l.onError << eError;
-			else
-				l.onError << error;
+			} else {
+				function listen(): Void l.onError << error;
+				function unlisten(): Void l.onError >> error;
+				if (!eError.empty) l.onError << error;
+				eError.onTake << listen;
+				eError.onLost << unlisten;
+			}
 		}
 		#end
 	}
@@ -79,14 +84,19 @@ using pony.Tools;
 			var listener: Listener2<String, PosInfos> = function(s: String, p: PosInfos): Void log(id + DLM + s, p);
 			function listen(): Void l.onLog << listener;
 			function unlisten(): Void l.onLog >> listener;
-			if (!eLog.empty) listen();
+			if (!eLog.empty) l.onLog << listener;
 			eLog.onTake << listen;
 			eLog.onLost << unlisten;
 		} else {
-			if (logPrefix == '')
+			if (logPrefix == '') {
 				l.onLog << eLog;
-			else
-				l.onLog << log;
+			} else {
+				function listen(): Void l.onLog << log;
+				function unlisten(): Void l.onLog >> log;
+				if (!eLog.empty) l.onLog << log;
+				eLog.onTake << listen;
+				eLog.onLost << unlisten;
+			}
 		}
 		#end
 	}
