@@ -140,6 +140,9 @@ class DeltaTime implements HasSignal {
 	#else
 	private static function __init__(): Void {
 		createSignals();
+		#if jsdt
+		haxe.Timer.delay(JsDT.start, 0);
+		#end
 	}
 	#end
 

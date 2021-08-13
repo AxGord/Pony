@@ -4,10 +4,10 @@ package pony;
  * Queue
  * @author AxGord <axgord@gmail.com>
  */
-class Queue<T> {
+@:nullSafety(Strict) class Queue<T> {
 
 	public var busy(default, null): Bool = false;
-	public var call: T;
+	public var call(default, null): T;
 
 	private var list: List<Array<Dynamic>>;
 	private var method: T;
@@ -21,19 +21,21 @@ class Queue<T> {
 	private function _call(a: Array<Dynamic>): Void {
 		if (!busy) {
 			busy = true;
-			Reflect.callMethod(null, cast method, a);
+			cm(a);
 		} else {
 			list.add(a);
 		}
 	}
 
-	public inline function next(): Void list.length > 0 ? Reflect.callMethod(null, cast method, list.pop()) : busy = false;
+	public inline function next(): Void list.length > 0 ? @:nullSafety(Off) cm(list.pop()) : busy = false;
 
-	public function destroy(): Void {
+	private inline function cm(args: Array<Dynamic>): Void @:nullSafety(Off) Reflect.callMethod(null, cast method, args);
+
+	public inline function destroy(): Void {
 		list.clear();
 		busy = true;
-		call = null;
-		method = null;
+		@:nullSafety(Off) call = null;
+		@:nullSafety(Off) method = null;
 	}
 
 }
