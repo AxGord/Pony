@@ -1,6 +1,7 @@
 package pony.ui;
 
 import haxe.rtti.Meta;
+import haxe.io.Bytes;
 #if heaps
 import pony.heaps.HeapsAssets;
 #elseif pixijs
@@ -41,6 +42,7 @@ class AssetManager {
 	}
 
 	@:extern public static inline function getPath(asset: String): String {
+		if (asset.charAt(0) == '@') asset = asset.substr(1);
 		return baseUrl + StringTools.replace(asset, '{local}', local);
 	}
 
@@ -276,6 +278,7 @@ class AssetManager {
 	@:extern public static inline function animation(asset: String, ?name: String) return HeapsAssets.animation(asset, name);
 	@:extern public static inline function clip(asset: String, ?name: String) return HeapsAssets.clip(asset, name);
 	@:extern public static inline function text(asset: String): String return HeapsAssets.text(asset);
+	@:extern public static inline function bin(asset: String): Bytes return HeapsAssets.bin(asset);
 	@:extern public static inline function sound(asset: String) return asset;
 	@:extern public static inline function spine(asset: String) return asset;
 	#elseif pixijs

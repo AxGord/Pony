@@ -27,6 +27,7 @@ import pony.Fast;
 	var CDB = 'cdb';
 	var IMG = 'img';
 	var BIN = 'bin';
+	var LDTK = 'ldtk';
 }
 
 @:enum abstract HAError(String) to String {
@@ -123,7 +124,7 @@ import pony.Fast;
 					tiles[asset] = Any.fromBytes(realAsset, bytes).toTile();
 					finish();
 				}
-			case TXT, CSS, JSON, CDB, IMG:
+			case TXT, CSS, JSON, CDB, IMG, LDTK:
 				loader.onProgress = progressHandler;
 				loader.onLoaded = function(bytes: Bytes): Void {
 					texts[asset] = Any.fromBytes(realAsset, bytes).toText();
@@ -132,6 +133,7 @@ import pony.Fast;
 			case BIN:
 				loader.onProgress = progressHandler;
 				loader.onLoaded = function(bytes: Bytes): Void {
+					if (asset.charAt(0) == '@') asset = asset.substr(1);
 					bins[asset] = bytes;
 					finish();
 				}
@@ -142,7 +144,7 @@ import pony.Fast;
 	}
 
 	public static inline function ext(asset: String): String {
-		return asset.substr(asset.lastIndexOf('.') + 1);
+		return asset.charAt(0) == '@' ? BIN : asset.substr(asset.lastIndexOf('.') + 1);
 	}
 
 	public static inline function reset(asset: String): Void {
