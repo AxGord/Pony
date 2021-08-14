@@ -175,23 +175,17 @@ import pony.Fast;
 	public static function animation(asset: String, ?name: String): Array<Tile> {
 		return switch ext(asset) {
 			case ATLAS:
-				var clname: Null<String> = null;
 				if (name != null) {
-					clname = SliceTools.clean(name);
-					if (clname == name) {
-						return [texture(asset, clname)];
-					}
+					name = SliceTools.clean(name);
 				} else {
 					var classet: String = SliceTools.clean(asset);
-					if (classet == asset) {
-						return [texture(classet)];
-					}
+					if (classet == asset) return [texture(classet)];
 				}
 				if (name == null) throw ERROR_NAME_NOT_SET;
 				var p: Null<Pair<Loader, Atlas>> = atlases[asset];
 				if (p == null) throw ERROR_NOT_LOADED;
 				Loader.currentInstance = p.a;
-				p.b.getAnim(clname);
+				p.b.getAnim(name);
 			case PNG, JPG, JPEG:
 				if (name != null) throw ERROR_NAME_SET;
 				var assets: Array<String> = AssetManager.parseInterval(asset);
