@@ -27,8 +27,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Fixes and improvements",
-"version": "1.4.9",
+"releasenote": "Fixes and improvements. Heaps, queue, jsdt, logs, wr, tools.",
+"version": "1.5.0",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }
