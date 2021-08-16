@@ -6,14 +6,15 @@ package pony;
  */
 @:nullSafety(Strict) class Queue<T> {
 
-	public var busy(default, null): Bool = false;
+	public var busy(default, null): Bool;
 	public var call(default, null): T;
 
 	private var list: List<Array<Dynamic>>;
 	private var method: T;
 
-	public function new(method: T) {
+	public function new(method: T, busy: Bool = false) {
 		this.method = method;
+		this.busy = busy;
 		list = new List();
 		call = Reflect.makeVarArgs(_call);
 	}
