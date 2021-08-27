@@ -22,6 +22,7 @@ using pony.Tools;
 
 	private static inline var DLM: String = ' ';
 
+	@:nullSafety(Off) private static var usedLibs: Map<String, String>;
 	private static var origTrace: Null<Dynamic -> ?PosInfos -> Void>;
 
 	@:lazy public var onLog: Signal2<String, Null<PosInfos>>;
@@ -130,15 +131,15 @@ using pony.Tools;
 		#end
 	}
 
-	public inline function traceLogs(date: Bool = true): Void {
+	public inline function traceLogs(time: Bool = true, date: Bool = false): Void {
 		#if !disableLogs
-		onLog << (date ? traceWithDate : Log.trace);
+		onLog << (date ? traceWithDate : time ? traceWithTime : Log.trace);
 		#end
 	}
 
-	public inline function traceErrors(date: Bool = true): Void {
+	public inline function traceErrors(time: Bool = true, date: Bool = false): Void {
 		#if !disableErrors
-		onError << (date ? traceWithDate : Log.trace);
+		onError << (date ? traceWithDate : time ? traceWithTime : Log.trace);
 		#end
 	}
 
@@ -153,17 +154,53 @@ using pony.Tools;
 		Log.trace(v, p);
 	}
 
+	public static function traceWithTime(v: String, ?p: PosInfos): Void {
+		if (p != null)
+			p.fileName = DateTools.format(Date.now(), '%H:%M:%S') + haxe.Timer.stamp()._toFixed(3, -1) + ' ' + p.fileName;
+		Log.trace(v, p);
+	}
+
 	public static function vscodePatchTrace(): Void {
+		usedLibs = Tools.usedLibs();
 		origTrace = Log.trace;
 		Log.trace = vscodeTrace;
 	}
 
-	private static function vscodeTrace(v: Dynamic, ?p: PosInfos): Void {
+	private static inline function replaceLibPath(path: String): String {
+		var p: SPair<String> = path.firstSplit('/');
+		var lib: Null<String> = usedLibs[p.a];
+		return (lib != null ? lib : '.') + '/' + path;
+	}
+
+	private static inline function patchFileName(p: Null<PosInfos>): Void {
 		if (p != null) {
 			var r: SPair<String> = p.fileName.lastSplit(' ');
-			p.fileName = r.b != '' ? r.a + ' ./' + r.b : './' + r.a;
+			p.fileName = r.b != '' ? r.a + ' ' + replaceLibPath(r.b) : replaceLibPath(r.a);
 		}
-		@:nullSafety(Off) origTrace(v, p);
+	}
+
+	private static function vscodeTrace(v: Dynamic, ?p: PosInfos): Void {
+		#if js
+		var place: String = '';
+		var prms: Array<Dynamic> = [];
+		if (p != null) {
+			patchFileName(p);
+			place = '${p.fileName}:${p.lineNumber}';
+			var n: Int = 0;
+			if (p.customParams != null) prms = p.customParams;
+		}
+		var c: js.lib.Function = cast js.Browser.console.log;
+		if (prms.length == 0)
+			c = c.bind(js.Browser.console, '%c' + place, 'color: gray', v);
+		else
+			c = c.bind(js.Browser.console, place, v);
+		for (param in prms) c = c.bind(js.Browser.console, param);
+		try {
+			js.Syntax.code('queueMicrotask({0})', c);
+		} catch (_: Any) {}
+		#else
+		@:nullSafety(Off) origTrace(v, patchFileName(p));
+		#end
 	}
 
 	public inline function bench(?name: String, f: Void -> Void, ?p: PosInfos): Void {

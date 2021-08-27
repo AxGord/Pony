@@ -257,6 +257,22 @@ class Tools {
 		return new BytesInput(out.getBytes());
 	}
 
+	macro public static function usedLibs(): Expr {
+		var d: Map<String, String> = Context.getDefines();
+		var r: Map<String, String> = [];
+		for (k in d.keys()) {
+			var prev: String = null;
+			for (line in new sys.io.Process('haxelib', ['path', k]).stdout.readAll().toString().split('\n')) {
+				if (prev != null && line == '-D $k=${d[k]}') {
+					r[k] = prev;
+					break;
+				}
+				prev = line;
+			}
+		}
+		return macro $v{r};
+	}
+
 	macro public static function currentFile(): Expr {
 		var f: String = Context.getPosInfos(Context.currentPos()).file;
 		f = sys.FileSystem.fullPath(f);
