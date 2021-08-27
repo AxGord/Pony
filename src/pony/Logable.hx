@@ -169,7 +169,7 @@ using pony.Tools;
 	private static inline function replaceLibPath(path: String): String {
 		var p: SPair<String> = path.firstSplit('/');
 		var lib: Null<String> = usedLibs[p.a];
-		return (lib != null ? lib : '.') + '/' + path;
+		return (lib != null ? lib : './') + path;
 	}
 
 	private static inline function patchFileName(p: Null<PosInfos>): Void {
