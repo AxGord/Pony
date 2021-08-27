@@ -180,11 +180,11 @@ using pony.Tools;
 	}
 
 	private static function vscodeTrace(v: Dynamic, ?p: PosInfos): Void {
+		patchFileName(p);
 		#if js
 		var place: String = '';
 		var prms: Array<Dynamic> = [];
 		if (p != null) {
-			patchFileName(p);
 			place = '${p.fileName}:${p.lineNumber}';
 			var n: Int = 0;
 			if (p.customParams != null) prms = p.customParams;
@@ -199,7 +199,7 @@ using pony.Tools;
 			js.Syntax.code('queueMicrotask({0})', c);
 		} catch (_: Any) {}
 		#else
-		@:nullSafety(Off) origTrace(v, patchFileName(p));
+		@:nullSafety(Off) origTrace(v, p);
 		#end
 	}
 
