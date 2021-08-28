@@ -553,8 +553,8 @@ class ArrayTools {
 	}
 
 	public static function delete<T>(array: Array<T>, index: Int): Array<T> {
-		var na:Array<T> = [];
-		for (i in 0...array.length) if (i != index) na.push(array[i]);
+		var na:Array<T> = array.copy();
+		na.splice(index, 1);
 		return na;
 	}
 
