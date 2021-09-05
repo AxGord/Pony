@@ -148,6 +148,27 @@ using pony.Tools;
 		traceErrors();
 	}
 
+	public inline function stopTraceLogs(): Void {
+		#if !disableLogs
+		onLog >> traceWithDate;
+		onLog >> traceWithTime;
+		onLog >> Log.trace;
+		#end
+	}
+
+	public inline function stopTraceErrors(): Void {
+		#if !disableLogs
+		onLog >> traceWithDate;
+		onLog >> traceWithTime;
+		onLog >> Log.trace;
+		#end
+	}
+
+	public inline function stopTraceAll(): Void {
+		stopTraceLogs();
+		stopTraceErrors();
+	}
+
 	public static function traceWithDate(v: String, ?p: PosInfos): Void {
 		if (p != null)
 			p.fileName = Date.now().toString() + haxe.Timer.stamp()._toFixed(3, -1) + ' ' + p.fileName;
@@ -181,7 +202,7 @@ using pony.Tools;
 
 	private static function vscodeTrace(v: Dynamic, ?p: PosInfos): Void {
 		patchFileName(p);
-		#if js
+		#if (js && !nodejs)
 		var place: String = '';
 		var prms: Array<Dynamic> = [];
 		if (p != null) {
@@ -236,9 +257,12 @@ using pony.Tools;
 		#if !disableLogs
 		if (!logActive) return;
 		var time: Null<Float> = benches[name];
-		if (time == null) throw 'Bench completed';
-		benches.remove(name);
-		log('End bench: ' + name + ' ' + benchTime(time)  + ' ms', p);
+		if (time == null) {
+			error('Bench $name completed or not started');
+		} else {
+			benches.remove(name);
+			log('End bench: ' + name + ' ' + benchTime(time)  + ' ms', p);
+		}
 		#end
 	}
 
