@@ -211,7 +211,7 @@ using pony.Tools;
 			if (p.customParams != null) prms = p.customParams;
 		}
 		var c: js.lib.Function = cast js.Browser.console.log;
-		if (prms.length == 0)
+		if (Std.is(v, String))
 			c = c.bind(js.Browser.console, '%c' + place, 'color: gray', v);
 		else
 			c = c.bind(js.Browser.console, place, v);
