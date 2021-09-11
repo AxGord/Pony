@@ -1,8 +1,15 @@
 {
 	"whitespace": {
-		"typeHintColonPolicy": "after"
+		"typeHintColonPolicy": "after",
+		"typeCheckColonPolicy": "after"
 	},
 	"emptyLines": {
+		"importAndUsing": {
+			"betweenImportsLevel": "firstLevelPackage",
+			"betweenImports": 1,
+			"beforeUsing": 1
+		},
+		"maxAnywhereInFile": 1,
 		"classEmptyLines": {
 			"beginType": 1,
 			"endType": 1
@@ -22,5 +29,8 @@
 			"beginType": 1,
 			"endType": 1
 		}
+	},
+	"wrapping": {
+		"maxLineLength": 140
 	}
 }
