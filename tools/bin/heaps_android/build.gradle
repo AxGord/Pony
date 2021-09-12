@@ -1,0 +1,33 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:4.2.2'
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        ivy {
+            url 'https://github.com/'
+
+            patternLayout {
+                artifact '/[organisation]/[module]/archive/[revision].[ext]'
+            }
+
+            // This is required in Gradle 6.0+ as metadata file (ivy.xml)
+            // is mandatory. Docs linked below this code section
+            metadataSources { artifact() }
+        }
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}

@@ -1,6 +1,5 @@
 package module;
 
-import pony.Tools;
 import pony.fs.Dir;
 import pony.SPair;
 import pony.ZipTool;
@@ -35,23 +34,36 @@ class Hashlink extends CfgModule<HashlinkConfig> {
 			main: null,
 			data: [],
 			libs: [],
+			title: null,
+			id: null,
+			version: null,
+			versionName: null,
+			storeFile: null,
+			storePassword: null,
+			keyAlias: null,
+			keyPassword: null,
+			abiFilters: null,
 			allowCfg: true
 		}, configHandler);
 	}
 
 	override private function runNode(cfg: HashlinkConfig): Void {
 		var output: String = cfg.output.a;
-		if (output == null) error('HL outout not set');
+		if (output == null) error('HL output not set');
 		if (output.charAt(0) == '/') error('Wrong output path');
 		if (cfg.hl == null) error('HL binary not set');
-		if (cfg.main == null) error('Main file not set');
-		if (!(cfg.main: File).exists) error('Main file not found');
-		if (cfg.output.b.isTrue()) {
-			log('Clear ' + output);
-			(output : Dir).deleteContent();
-		} else if (cfg.output.b.toLowerCase() == 'rimraf') {
-			log('Clear ' + output);
-			Utils.command('rimraf', [output]);
+		if (cfg.hl != 'android') {
+			if (cfg.main == null) error('Main file not set');
+			if (!(cfg.main: File).exists) error('Main file not found');
+		}
+		if (cfg.output.b != null) {
+			if (cfg.output.b.isTrue()) {
+				log('Clear ' + output);
+				(output : Dir).deleteContent();
+			} else if (cfg.output.b.toLowerCase() == 'rimraf') {
+				log('Clear ' + output);
+				Utils.command('rimraf', [output]);
+			}
 		}
 		var ignoreLibs: Array<String> = ['mysql.hdll', 'mysql.lib'].filter(
 			function(lib: String): Bool return !cfg.libs.exists(function(f: String): Bool return lib.substr(0, f.length) == f)
@@ -70,16 +82,48 @@ class Hashlink extends CfgModule<HashlinkConfig> {
 					Utils.command('chmod', ['+x', o + 'MacOS/runhl']);
 					Utils.command('chmod', ['+x', output + 'hl']);
 				}
+			case 'android':
+				Utils.createPath(output);
+				var template: Dir = Utils.toolsPath + 'heaps_android/';
+				template.copyTo(output);
+				var gradleProps: Array<SPair<String>> = [
+					['org.gradle.jvmargs', '-Xmx2048m'],
+					['APPLICATION_ID', cfg.id],
+					['VERSION_CODE', cfg.version],
+					['VERSION_NAME', cfg.versionName],
+					['RELEASE_STORE_FILE', '../../../' + cfg.storeFile],
+					['RELEASE_STORE_PASSWORD', cfg.storePassword],
+					['RELEASE_KEY_ALIAS', cfg.keyAlias],
+					['RELEASE_KEY_PASSWORD', cfg.keyPassword]
+				];
+				if (cfg.abiFilters != null) gradleProps.push(['ABI_FILTERS', cfg.abiFilters]);
+				((output + 'gradle.properties'): File).content = [
+					for (p in gradleProps) '${p.a}=${p.b}'
+				].join('\n');
+				((output + 'app/src/main/res/values/strings.xml'): File).content =
+					'<resources><string name="app_name">${cfg.title}</string></resources>';
 			case _:
 				ZipTool.unpackFile(cfg.hl, output, true, ignoreLibs, function(s: String): Void log(s));
 		}
-		(cfg.main: File).copyToDir(output, 'hlboot.dat');
+		final dataOutput: String = output + (cfg.hl == 'android' ? 'app/src/main/assets/' : '');
 		for (d in cfg.data) {
 			var u: Unit = d.a + d.b;
 			if (u.exists)
-				u.copyTo(output + d.b);
+				u.copyTo(dataOutput + d.b);
 			else
 				error('data ' + u + ' not found');
+		}
+		if (cfg.hl == 'android') {
+			var cwd: Cwd = new Cwd(output);
+			cwd.sw();
+			var task: String = cfg.debug ? 'assembleDebug' : 'assembleRelease';
+			if (Utils.isWindows)
+				Utils.command('gradlew.bat', [task]);
+			else
+				Utils.command('sh', ['gradlew', task]);
+			cwd.sw();
+		} else {
+			(cfg.main: File).copyToDir(output, 'hlboot.dat');
 		}
 	}
 
@@ -91,7 +135,16 @@ private typedef HashlinkConfig = {
 	hl: String,
 	main: String,
 	data: Array<SPair<String>>,
-	libs: Array<String>
+	libs: Array<String>,
+	title: Null<String>,
+	id: Null<String>,
+	version: Null<String>,
+	versionName: Null<String>,
+	storeFile: Null<String>,
+	storePassword: Null<String>,
+	keyAlias: Null<String>,
+	keyPassword: Null<String>,
+	abiFilters: Null<String>
 }
 
 private class HashlinkReader extends BAReader<HashlinkConfig> {
@@ -99,7 +152,7 @@ private class HashlinkReader extends BAReader<HashlinkConfig> {
 	override private function readNode(xml: Fast): Void {
 		switch xml.name {
 			case 'output':
-				cfg.output = new SPair(normalize(xml.innerData), normalize(xml.att.clean));
+				cfg.output = new SPair(normalize(xml.innerData), xml.has.clean ? normalize(xml.att.clean) : null);
 			case 'hl':
 				cfg.hl = normalize(xml.innerData);
 			case 'main':
@@ -108,6 +161,24 @@ private class HashlinkReader extends BAReader<HashlinkConfig> {
 				cfg.data.push(new SPair(normalize(xml.att.from), normalize(xml.innerData)));
 			case 'lib':
 				cfg.libs.push(normalize(xml.innerData));
+			case 'title':
+				cfg.title = normalize(xml.innerData);
+			case 'id':
+				cfg.id = normalize(xml.innerData);
+			case 'version':
+				cfg.version = normalize(xml.innerData);
+			case 'versionName':
+				cfg.versionName = normalize(xml.innerData);
+			case 'storeFile':
+				cfg.storeFile = normalize(xml.innerData);
+			case 'storePassword':
+				cfg.storePassword = normalize(xml.innerData);
+			case 'keyAlias':
+				cfg.keyAlias = normalize(xml.innerData);
+			case 'keyPassword':
+				cfg.keyPassword = normalize(xml.innerData);
+			case 'abiFilters':
+				cfg.abiFilters = normalize(xml.innerData);
 			case _:
 				super.readNode(xml);
 		}
@@ -119,6 +190,15 @@ private class HashlinkReader extends BAReader<HashlinkConfig> {
 		cfg.main = null;
 		cfg.data = [];
 		cfg.libs = [];
+		cfg.title = null;
+		cfg.id = null;
+		cfg.version = null;
+		cfg.versionName = null;
+		cfg.storeFile = null;
+		cfg.storePassword = null;
+		cfg.keyAlias = null;
+		cfg.keyPassword = null;
+		cfg.abiFilters = null;
 	}
 
 }

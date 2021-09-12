@@ -6,6 +6,9 @@ tools/nodesrc/
 tools/build.hxml
 tools/pony.xml
 tools/commands.xml
+tools/bin/heaps_android/
+tools/bin/templates/
+tools/bin/testcert.p12
 install/user_path.cmd
 webdefaults/
 redist/
