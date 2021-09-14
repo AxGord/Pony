@@ -41,7 +41,7 @@ import js.Browser;
 
 	private function errorHandler(message: String, ?pos: PosInfos): Void {
 		container.innerHTML += pos != null ?
-			'<p><span class="gray"s>${pos.fileName}:${pos.lineNumber}:</span> <span class="error">$message</span></p>' :
+			'<p><span class="gray">${pos.fileName}:${pos.lineNumber}:</span> <span class="error">$message</span></p>' :
 			'<p><span class="error">$message</span></p>';
 	}
 

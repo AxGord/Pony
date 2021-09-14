@@ -51,7 +51,7 @@ import js.html.Element;
 		#end
 		super();
 		if (color != null) engine.backgroundColor = color;
-		#if ios
+		#if mobile
 		@:privateAccess engine.window.window.displayMode = DisplayMode.Fullscreen;
 		#end
 		this.sizeUpdate = sizeUpdate;

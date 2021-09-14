@@ -157,10 +157,10 @@ using pony.Tools;
 	}
 
 	public inline function stopTraceErrors(): Void {
-		#if !disableLogs
-		onLog >> traceWithDate;
-		onLog >> traceWithTime;
-		onLog >> Log.trace;
+		#if !disableErrors
+		onError >> traceWithDate;
+		onError >> traceWithTime;
+		onError >> Log.trace;
 		#end
 	}
 
