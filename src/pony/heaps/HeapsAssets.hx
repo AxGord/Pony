@@ -1,19 +1,23 @@
 package pony.heaps;
 
-import h2d.Bitmap;
-import h2d.Tile;
 import h2d.Anim;
+import h2d.Bitmap;
 import h2d.Font;
+import h2d.Tile;
+
 import haxe.io.Bytes;
 import haxe.io.BytesInput;
+
+import hxd.fmt.bfnt.FontParser;
 import hxd.res.Any;
 import hxd.res.Atlas;
 import hxd.res.Loader;
-import hxd.fmt.bfnt.FontParser;
+
+import pony.Fast;
 import pony.Pair;
+import pony.time.DeltaTime;
 import pony.ui.AssetManager;
 import pony.ui.gui.slices.SliceTools;
-import pony.Fast;
 
 @:enum abstract Ext(String) to String {
 	var ATLAS = 'atlas';
@@ -51,6 +55,10 @@ import pony.Fast;
 	private static var fonts: Map<String, Font> = new Map();
 	private static var texts: Map<String, String> = new Map();
 	private static var bins: Map<String, Bytes> = new Map();
+
+	#if mobile
+	private static var queue: Queue<String -> (Bytes -> Void) -> Void> = new Queue(getAsset);
+	#end
 
 	public static function load(asset: String, cb: Int -> Int -> Void): Void {
 		var realAsset: String = AssetManager.getPath(asset);
@@ -140,8 +148,19 @@ import pony.Fast;
 			case v:
 				throw ERROR_NOT_SUPPORTED;
 		}
+		#if mobile
+		queue.call(realAsset, loader.onLoaded);
+		#else
 		loader.load();
+		#end
 	}
+
+	#if mobile
+	private static function getAsset(name: String, cb: Bytes -> Void): Void {
+		cb(Native.getAsset(name));
+		DeltaTime.fixedUpdate < queue.next;
+	}
+	#end
 
 	public static inline function ext(asset: String): String {
 		return asset.charAt(0) == '@' ? BIN : asset.substr(asset.lastIndexOf('.') + 1);

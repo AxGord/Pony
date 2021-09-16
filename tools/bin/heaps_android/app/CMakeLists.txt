@@ -85,8 +85,12 @@ target_link_libraries(openal.hdll OpenAL)
 file(GLOB ui build/libs/hashlink/libs/ui/ui_stub.c)
 add_library(ui.hdll STATIC ${ui})
 
+# Android
+
+find_library(android-lib android)
+
 # Heaps Application
 
 add_library(heapsapp SHARED src/haxe/main.c src/main/pony.c src/main/jni.c)
 target_include_directories(heapsapp PRIVATE src/haxe)
-target_link_libraries(heapsapp hl sdl.hdll fmt.hdll openal.hdll ui.hdll)
+target_link_libraries(heapsapp ${android-lib} hl sdl.hdll fmt.hdll openal.hdll ui.hdll)
