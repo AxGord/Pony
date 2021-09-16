@@ -27,7 +27,7 @@ import hl.Bytes;
 	@:extern public static inline function getPrefPath(org: String, app: String): String {
 		#if mac
 		return '${Sys.getEnv('HOME')}/Library/Application Support/$org/$app/';
-		#else win
+		#elseif win
 		return '${Sys.getEnv('AppData')}/$org/$app/';
 		#elseif mobile
 		return @:privateAccess String.fromUTF8(get_pref_path(org.toUtf8(), app.toUtf8()));
