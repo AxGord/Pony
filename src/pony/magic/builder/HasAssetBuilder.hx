@@ -257,6 +257,17 @@ class HasAssetBuilder {
 				}),
 			pos: Context.currentPos()
 		});
+
+		fields.push({
+			name: f == 'def' ? 'bin' : 'bin_' + f,
+			access: [APublic, AStatic],
+			kind: FieldType.FFun( {
+			args: [{name: 'asset', type:macro:Int}],
+					ret: null,
+					expr: macro return pony.ui.AssetManager.bin($v + ASSETS_LIST[asset])
+				}),
+			pos: Context.currentPos()
+		});
 	}
 
 	private static function getPatches(meta: Metadata, clss: Ref<ClassType>): Map<String, String> {

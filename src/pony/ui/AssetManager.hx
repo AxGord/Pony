@@ -42,7 +42,7 @@ class AssetManager {
 	}
 
 	@:extern public static inline function getPath(asset: String): String {
-		if (asset.charAt(0) == '@') asset = asset.substr(1);
+		asset = StringTools.replace(asset, '@', '');
 		return baseUrl + StringTools.replace(asset, '{local}', local);
 	}
 

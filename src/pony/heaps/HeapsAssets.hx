@@ -141,7 +141,7 @@ import pony.ui.gui.slices.SliceTools;
 			case BIN:
 				loader.onProgress = progressHandler;
 				loader.onLoaded = function(bytes: Bytes): Void {
-					if (asset.charAt(0) == '@') asset = asset.substr(1);
+					asset = StringTools.replace(asset, '@', '');
 					bins[asset] = bytes;
 					finish();
 				}
@@ -163,7 +163,7 @@ import pony.ui.gui.slices.SliceTools;
 	#end
 
 	public static inline function ext(asset: String): String {
-		return asset.charAt(0) == '@' ? BIN : asset.substr(asset.lastIndexOf('.') + 1);
+		return asset.indexOf('@') != -1 ? BIN : asset.substr(asset.lastIndexOf('.') + 1);
 	}
 
 	public static inline function reset(asset: String): Void {
@@ -229,6 +229,7 @@ import pony.ui.gui.slices.SliceTools;
 	}
 
 	public static inline function bin(asset: String): Bytes {
+		asset = StringTools.replace(asset, '@', '');
 		return cast bins[asset];
 	}
 
