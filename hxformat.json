@@ -1,7 +1,10 @@
 {
 	"whitespace": {
 		"typeHintColonPolicy": "after",
-		"typeCheckColonPolicy": "after"
+		"typeCheckColonPolicy": "after",
+		"arrowFunctionsPolicy": "around",
+		"functionTypeHaxe3Policy": "around",
+		"functionTypeHaxe4Policy": "around"
 	},
 	"emptyLines": {
 		"importAndUsing": {
@@ -32,5 +35,9 @@
 	},
 	"wrapping": {
 		"maxLineLength": 140
+	},
+	"sameLine": {
+	  "functionBody": "same",
+	  "anonFunctionBody": "same"
 	}
 }
