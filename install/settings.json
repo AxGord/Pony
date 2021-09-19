@@ -33,7 +33,6 @@
 	"vscode": [
 		"vshaxe.haxe-extension-pack",
 		"vshaxe.haxe-checkstyle",
-		"msjsdiag.debugger-for-chrome",
 		"vsmobile.cordova-tools",
 		"coenraads.bracket-pair-colorizer-2",
 		"bowlerhatllc.vscode-swf-debug",
@@ -45,7 +44,8 @@
 		"hbenl.vscode-test-explorer",
 		"vshaxe.haxe-test-adapter",
 		"alefragnani.bookmarks",
-		"teabyii.ayu"
+		"teabyii.ayu",
+		"adelphes.android-dev-ext"
 	],
 	"hideWarnings": [
 		"hxbitmini"

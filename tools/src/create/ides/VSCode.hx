@@ -48,12 +48,24 @@ class VSCode {
 		} else if (heaps) {
 			tasks.push({
 				runOptions: {runOn: auto ? 'folderOpen' : 'default'},
+				label: 'Start emulator',
+				type: 'shell',
+				command: "emulator '@'`emulator -list-avds`",
+				group: 'build',
+				isBackgroun: true,
+				presentation: {
+					echo: false,
+					focus: false,
+					reveal: 'silent',
+					panel: 'dedicated'
+				}
+			});
+			tasks.push({
+				runOptions: {runOn: auto ? 'folderOpen' : 'default'},
 				label: PRELAUNCH_TASK,
 				type: 'shell',
 				command: 'pony $ponycmd js debug',
-				group: {
-					kind: 'build'
-				},
+				group: 'build',
 				problemMatcher: matcher
 			});
 			tasks.push({
@@ -61,9 +73,7 @@ class VSCode {
 				label: 'win debug',
 				type: 'shell',
 				command: 'pony $ponycmd win debug',
-				group: {
-					kind: 'build'
-				},
+				group: 'build',
 				problemMatcher: matcher
 			});
 			tasks.push({
@@ -71,9 +81,15 @@ class VSCode {
 				label: 'mac debug',
 				type: 'shell',
 				command: 'pony $ponycmd mac debug',
-				group: {
-					kind: 'build'
-				},
+				group: 'build',
+				problemMatcher: matcher
+			});
+			tasks.push({
+				runOptions: {runOn: auto ? 'folderOpen' : 'default'},
+				label: 'android debug',
+				type: 'shell',
+				command: 'pony $ponycmd android debug',
+				group: 'build',
 				problemMatcher: matcher
 			});
 			tasks.push({
@@ -81,9 +97,7 @@ class VSCode {
 				label: 'js release',
 				type: 'shell',
 				command: 'pony $ponycmd js release',
-				group: {
-					kind: 'build'
-				},
+				group: 'build',
 				problemMatcher: matcher
 			});
 			tasks.push({
@@ -91,9 +105,7 @@ class VSCode {
 				label: 'win release',
 				type: 'shell',
 				command: 'pony $ponycmd win release',
-				group: {
-					kind: 'build'
-				},
+				group: 'build',
 				problemMatcher: matcher
 			});
 			tasks.push({
@@ -101,9 +113,15 @@ class VSCode {
 				label: 'mac release',
 				type: 'shell',
 				command: 'pony $ponycmd mac release',
-				group: {
-					kind: 'build'
-				},
+				group: 'build',
+				problemMatcher: matcher
+			});
+			tasks.push({
+				runOptions: {runOn: auto ? 'folderOpen' : 'default'},
+				label: 'android release',
+				type: 'shell',
+				command: 'pony $ponycmd android release',
+				group: 'build',
 				problemMatcher: matcher
 			});
 		} else if (ponycmd != null) {
@@ -160,8 +178,10 @@ class VSCode {
 	public static function createExtensions(chrome: Bool = false, flash: Bool = false, heaps: Bool = false): Void {
 		var data: Array<String> = ['nadako.vshaxe', 'vshaxe.haxe-checkstyle', 'wiggin77.codedox'];
 		if (cordova) data.push('msjsdiag.cordova-tools');
-		if (heaps) data.push('haxefoundation.haxe-hl');
-		if (chrome) data.push('msjsdiag.debugger-for-chrome');
+		if (heaps) {
+			data.push('haxefoundation.haxe-hl');
+			data.push('adelphes.android-dev-ext');
+		}
 		if (flash) {
 			data.push('bowlerhatllc.vscode-swf-debug');
 			data.push('lonewolf.vscode-astools');
@@ -187,6 +207,26 @@ class VSCode {
 				cwd: "${workspaceFolder}/" + output,
 				request: 'launch',
 				preLaunchTask: 'win debug'
+			},
+			{
+				name: 'Android launch debug build',
+				type: 'android',
+				request: 'launch',
+				preLaunchTask: 'android debug',
+				appSrcRoot: "${workspaceRoot}/bin/android/app/src/main",
+				apkFile: "${workspaceRoot}/bin/android/app/build/outputs/apk/debug/app-debug.apk",
+				adbPort: 5037,
+				"trace": true
+			},
+			{
+				name: 'Android launch release build',
+				type: 'android',
+				request: 'launch',
+				preLaunchTask: 'android release',
+				appSrcRoot: "${workspaceRoot}/bin/android/app/src/main",
+				apkFile: "${workspaceRoot}/bin/android/app/build/outputs/apk/debug/app-release.apk",
+				adbPort: 5037,
+				"trace": true
 			}
 		]));
 		createExtensions(true, false, true);

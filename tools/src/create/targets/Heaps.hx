@@ -1,5 +1,6 @@
 package create.targets;
 
+import create.section.Config.ConfigOptions;
 import create.section.Download;
 
 /**
@@ -19,6 +20,14 @@ class Heaps {
 		project.config.options['height'] = '1024';
 		project.config.options['background'] = '#1A1A1A';
 		project.config.options['baseUrl'] = 'assets/';
+		var defBaseUrl: ConfigOptions = ['baseUrl' => 'assets/'];
+		var androidBaseUrl: ConfigOptions = ['baseUrl' => ''];
+		project.config.options['apps'] = ([
+			'mac' => defBaseUrl,
+			'win' => defBaseUrl,
+			'js' => defBaseUrl,
+			'android' => androidBaseUrl
+		]: ConfigOptions);
 		project.haxelib.addLib('heaps', '1.9.1');
 
 	}
