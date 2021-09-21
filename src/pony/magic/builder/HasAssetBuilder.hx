@@ -226,6 +226,17 @@ class HasAssetBuilder {
 		});
 
 		fields.push({
+			name: f == 'def' ? 'font' : 'font_' + f,
+			access: [APublic, AStatic],
+			kind: FieldType.FFun( {
+			args: [{name: 'asset', type:macro:Int}],
+					ret: null,
+					expr: macro return pony.ui.AssetManager.font($v + ASSETS_LIST[asset])
+				}),
+			pos: Context.currentPos()
+		});
+
+		fields.push({
 			name: f == 'def' ? 'animation' : 'animation_' + f,
 			access: [APublic, AStatic],
 			kind: FieldType.FFun( {

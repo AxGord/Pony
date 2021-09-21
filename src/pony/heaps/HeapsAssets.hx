@@ -113,6 +113,7 @@ import pony.ui.gui.slices.SliceTools;
 						}
 					}
 					if (image == null) throw "Can't get image url";
+					image = StringTools.replace(image, '"', '');
 					var path: String = realAsset.substr(0, realAsset.lastIndexOf('/') + 1);
 					var imgLoader: BinaryLoader = new BinaryLoader(path + image);
 					imgLoader.onProgress = progressHandler;

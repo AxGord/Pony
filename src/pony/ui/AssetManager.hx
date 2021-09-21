@@ -279,6 +279,7 @@ class AssetManager {
 	@:extern public static inline function clip(asset: String, ?name: String) return HeapsAssets.clip(asset, name);
 	@:extern public static inline function text(asset: String): String return HeapsAssets.text(asset);
 	@:extern public static inline function bin(asset: String): Bytes return HeapsAssets.bin(asset);
+	@:extern public static inline function font(asset: String): h2d.Font return HeapsAssets.font(asset);
 	@:extern public static inline function sound(asset: String) return asset;
 	@:extern public static inline function spine(asset: String) return asset;
 	#elseif pixijs
@@ -293,6 +294,7 @@ class AssetManager {
 	@:extern public static inline function spine(asset: String) return PixiAssets.spine(asset);
 	@:extern public static inline function text(asset: String): String return PixiAssets.text(asset);
 	@:extern public static inline function json(asset: String) return PixiAssets.json(asset);
+	@:extern public static inline function font(asset: String) return asset;
 	#elseif openfl
 	@:extern public static inline function _load(asset: String, cb: Int -> Int -> Void): Void
 		OpenflAssets.load(asset, cb.bind(1MAX_ASSET_PROGRESS, MAX_ASSET_PROGRESS));
@@ -303,6 +305,7 @@ class AssetManager {
 	@:extern public static inline function clip(asset: String, ?name: String) return asset;
 	@:extern public static inline function sound(asset: String) return asset;
 	@:extern public static inline function spine(asset: String) return asset;
+	@:extern public static inline function font(asset: String) return asset;
 	#else
 	@:extern public static inline function _load(asset: String, cb: Int -> Int -> Void): Void trace('Load: $asset');
 	@:extern public static inline function _reset(asset: String): Void trace('Reset: $asset');
@@ -312,5 +315,6 @@ class AssetManager {
 	@:extern public static inline function clip(asset: String, ?name: String) return asset;
 	@:extern public static inline function sound(asset: String) return asset;
 	@:extern public static inline function spine(asset: String) return asset;
+	@:extern public static inline function font(asset: String) return asset;
 	#end
 }
