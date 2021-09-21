@@ -1,5 +1,7 @@
 package pony.heaps;
 
+#if sys
+
 import hl.Bytes;
 
 /**
@@ -37,3 +39,4 @@ import hl.Bytes;
 	}
 
 }
+#end
