@@ -12,6 +12,7 @@ import hxd.fmt.bfnt.FontParser;
 import hxd.res.Any;
 import hxd.res.Atlas;
 import hxd.res.Loader;
+import hxd.res.Sound;
 
 import pony.Fast;
 import pony.Pair;
@@ -32,6 +33,7 @@ import pony.ui.gui.slices.SliceTools;
 	var IMG = 'img';
 	var BIN = 'bin';
 	var LDTK = 'ldtk';
+	var WAV = 'wav';
 }
 
 @:enum abstract HAError(String) to String {
@@ -55,6 +57,7 @@ import pony.ui.gui.slices.SliceTools;
 	private static var fonts: Map<String, Font> = new Map();
 	private static var texts: Map<String, String> = new Map();
 	private static var bins: Map<String, Bytes> = new Map();
+	private static var sounds: Map<String, Sound> = new Map();
 
 	#if mobile
 	private static var queue: Queue<String -> (Bytes -> Void) -> Void> = new Queue(getAsset);
@@ -146,6 +149,12 @@ import pony.ui.gui.slices.SliceTools;
 					bins[asset] = bytes;
 					finish();
 				}
+			case WAV:
+				loader.onProgress = progressHandler;
+				loader.onLoaded = function(bytes: Bytes): Void {
+					sounds[asset] = Any.fromBytes(realAsset, bytes).toSound();
+					finish();
+				}
 			case v:
 				throw ERROR_NOT_SUPPORTED;
 		}
@@ -227,6 +236,10 @@ import pony.ui.gui.slices.SliceTools;
 
 	public static inline function text(asset: String): String {
 		return cast texts[asset];
+	}
+
+	public static inline function sound(asset: String): Sound {
+		return cast sounds[asset];
 	}
 
 	public static inline function bin(asset: String): Bytes {

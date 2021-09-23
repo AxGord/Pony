@@ -280,7 +280,7 @@ class AssetManager {
 	@:extern public static inline function text(asset: String): String return HeapsAssets.text(asset);
 	@:extern public static inline function bin(asset: String): Bytes return HeapsAssets.bin(asset);
 	@:extern public static inline function font(asset: String): h2d.Font return HeapsAssets.font(asset);
-	@:extern public static inline function sound(asset: String) return asset;
+	@:extern public static inline function sound(asset: String) return HeapsAssets.sound(asset);
 	@:extern public static inline function spine(asset: String) return asset;
 	#elseif pixijs
 	@:extern public static inline function _load(asset: String, cb: Int -> Int -> Void): Void

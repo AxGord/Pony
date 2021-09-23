@@ -714,6 +714,8 @@ class MapTools {
 		return r == null ? [] : r;
 	}
 
+	public static inline function keysArray<T>(m: Map<T, Any>): Array<T> return [for (k in m.keys()) k];
+
 }
 
 class FloatTools {
