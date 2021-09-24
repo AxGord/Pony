@@ -33,6 +33,8 @@ import js.Browser;
 		@:nullSafety(Off) origTrace(v, p);
 	}
 
+	public inline function print(message: String): Void logHandler(message, null);
+
 	private function logHandler(message: String, ?pos: PosInfos): Void {
 		container.innerHTML += pos != null ?
 			'<p><span class="gray">${pos.fileName}:${pos.lineNumber}:</span> <span>$message</span></p>' :
