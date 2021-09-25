@@ -61,8 +61,6 @@ import pony.ui.gui.slices.SliceTools;
 	private static var bins: Map<String, Bytes> = new Map();
 	private static var sounds: Map<String, Sound> = new Map();
 
-	private static var loadStarted: Array<String> = [];
-
 	#if mobile
 	private static var queue: Queue<BinaryLoader -> Void> = new Queue(getAsset);
 	private static var assetLoader: Null<BinaryLoader>;
@@ -73,11 +71,6 @@ import pony.ui.gui.slices.SliceTools;
 
 	public static function load(asset: String, cb: Int -> Int -> Void): Void {
 		var realAsset: String = AssetManager.getPath(asset);
-		if (loadStarted.contains(realAsset)) {
-			cb(10, 10);
-			return;
-		}
-		loadStarted.push(realAsset);
 		var loader: BinaryLoader = new BinaryLoader(realAsset);
 		inline function finish(): Void cb(AssetManager.MAX_ASSET_PROGRESS, AssetManager.MAX_ASSET_PROGRESS);
 		function progressHandler(cur: Int, max: Int): Void
