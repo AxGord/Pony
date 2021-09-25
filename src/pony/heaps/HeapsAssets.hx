@@ -7,6 +7,8 @@ import h2d.Tile;
 
 import haxe.io.Bytes;
 import haxe.io.BytesInput;
+import haxe.io.BytesOutput;
+import haxe.Timer;
 
 import hxd.fmt.bfnt.FontParser;
 import hxd.res.Any;
@@ -59,12 +61,23 @@ import pony.ui.gui.slices.SliceTools;
 	private static var bins: Map<String, Bytes> = new Map();
 	private static var sounds: Map<String, Sound> = new Map();
 
+	private static var loadStarted: Array<String> = [];
+
 	#if mobile
-	private static var queue: Queue<String -> (Bytes -> Void) -> Void> = new Queue(getAsset);
+	private static var queue: Queue<BinaryLoader -> Void> = new Queue(getAsset);
+	private static var assetLoader: Null<BinaryLoader>;
+	private static var assetBytesOutput: Null<BytesOutput>;
+	private static var assetTotalSize: UInt = 0;
+	private static var lastAssetTime: Float = 0;
 	#end
 
 	public static function load(asset: String, cb: Int -> Int -> Void): Void {
 		var realAsset: String = AssetManager.getPath(asset);
+		if (loadStarted.contains(realAsset)) {
+			cb(10, 10);
+			return;
+		}
+		loadStarted.push(realAsset);
 		var loader: BinaryLoader = new BinaryLoader(realAsset);
 		inline function finish(): Void cb(AssetManager.MAX_ASSET_PROGRESS, AssetManager.MAX_ASSET_PROGRESS);
 		function progressHandler(cur: Int, max: Int): Void
@@ -85,7 +98,7 @@ import pony.ui.gui.slices.SliceTools;
 						);
 						finish();
 					}
-					imgLoader.load();
+					loadAsset(imgLoader);
 				}
 			case FNT:
 				loader.onLoaded = function(fntbytes: Bytes): Void {
@@ -128,7 +141,7 @@ import pony.ui.gui.slices.SliceTools;
 						fonts[asset] = font;
 						finish();
 					}
-					imgLoader.load();
+					loadAsset(imgLoader);
 				}
 			case PNG, JPG, JPEG:
 				loader.onProgress = progressHandler;
@@ -158,18 +171,52 @@ import pony.ui.gui.slices.SliceTools;
 			case v:
 				throw ERROR_NOT_SUPPORTED;
 		}
+		loadAsset(loader);
+	}
+
+	private static inline function loadAsset(loader: BinaryLoader): Void {
 		#if mobile
-		queue.call(realAsset, loader.onLoaded);
+		queue.call(loader);
 		#else
 		loader.load();
 		#end
 	}
 
 	#if mobile
-	private static function getAsset(name: String, cb: Bytes -> Void): Void {
-		cb(Native.getAsset(name));
-		DeltaTime.fixedUpdate < queue.next;
+
+	private static function getAsset(loader: BinaryLoader): Void {
+		lastAssetTime = Timer.stamp();
+		assetBytesOutput = new BytesOutput();
+		assetLoader = loader;
+		Native.getAsset(loader.url);
+		assetTotalSize = Native.assetBytesAvailable;
+		loadAssetStep();
 	}
+
+	private static function loadAssetStep(): Void {
+		if (Native.assetBytesAvailable > 0) {
+			@:nullSafety(Off) assetBytesOutput.write(Native.getAssetBytes());
+			@:nullSafety(Off) assetLoader.onProgress(assetTotalSize - Native.assetBytesAvailable, assetTotalSize);
+			runNext(loadAssetStep);
+		} else {
+			@:nullSafety(Off) assetLoader.onLoaded(assetBytesOutput.getBytes());
+			assetBytesOutput = null;
+			assetLoader = null;
+			Native.finishGetAsset();
+			DeltaTime.fixedUpdate < queue.next;
+		}
+	}
+
+	private static function runNext(cb: Void -> Void): Void {
+		var t: Float = Timer.stamp();
+		var nextFrame: Bool = t - lastAssetTime > 1 / 60;
+		lastAssetTime = t;
+		if (nextFrame)
+			DeltaTime.fixedUpdate < cb;
+		else
+			cb();
+	}
+
 	#end
 
 	public static inline function ext(asset: String): String {

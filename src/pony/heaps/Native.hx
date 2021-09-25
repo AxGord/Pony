@@ -1,7 +1,6 @@
 package pony.heaps;
 
 #if sys
-
 import hl.Bytes;
 
 /**
@@ -13,14 +12,28 @@ import hl.Bytes;
 	#if mobile
 
 	private static inline var SIZE_LEN: UInt = 4;
+	private static inline var BUFFER_SIZE: Int = 1024 * 1000;
 
-	private static function get_asset(name: Bytes): Bytes return null;
+	public static var assetBytesAvailable(default, null): Int = 0;
 
-	@:extern public static inline function getAsset(name: String): haxe.io.Bytes {
-		var b: Bytes = get_asset(@:privateAccess name.toUtf8());
-		var len: UInt = b.toBytes(SIZE_LEN).getInt32(0);
-		return b.toBytes(len + SIZE_LEN).sub(SIZE_LEN, len);
+	private static function get_asset(name: Bytes): Int return 0;
+	private static function get_asset_bytes(len: Int): Bytes return null;
+	private static function finish_get_asset(): Void {}
+
+	@:extern public static inline function getAsset(name: String): Void {
+		assetBytesAvailable =  get_asset(@:privateAccess name.toUtf8());
 	}
+
+	@:extern public static inline function getAssetBytes(): haxe.io.Bytes {
+		var s: Int = assetBytesAvailable > BUFFER_SIZE ? BUFFER_SIZE : assetBytesAvailable;
+		var b: Bytes = get_asset_bytes(s);
+		var r: haxe.io.Bytes = b.toBytes(s);
+		assetBytesAvailable -= BUFFER_SIZE;
+		if (assetBytesAvailable < 0) assetBytesAvailable = 0;
+		return r;
+	}
+
+	@:extern public static inline function finishGetAsset(): Void finish_get_asset();
 
 	private static function get_pref_path(org: Bytes, app: Bytes): Bytes return null;
 
