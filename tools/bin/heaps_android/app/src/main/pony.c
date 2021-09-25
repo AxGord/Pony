@@ -40,4 +40,5 @@ HL_PRIM vbyte *HL_NAME(get_asset_bytes)(int length) {
 
 HL_PRIM void HL_NAME(finish_get_asset)(int length) {
 	asset = NULL;
+	LOGI("Finish get asset");
 }

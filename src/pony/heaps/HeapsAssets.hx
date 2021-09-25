@@ -190,7 +190,10 @@ import pony.ui.gui.slices.SliceTools;
 		assetLoader = loader;
 		Native.getAsset(loader.url);
 		assetTotalSize = Native.assetBytesAvailable;
-		loadAssetStep();
+		if (assetTotalSize > Native.BUFFER_SIZE)
+			DeltaTime.fixedUpdate < loadAssetStep; // Prepare before large asset
+		else
+			loadAssetStep();
 	}
 
 	private static function loadAssetStep(): Void {
@@ -203,13 +206,13 @@ import pony.ui.gui.slices.SliceTools;
 			assetBytesOutput = null;
 			assetLoader = null;
 			Native.finishGetAsset();
-			DeltaTime.fixedUpdate < queue.next;
+			runNext(queue.next);
 		}
 	}
 
 	private static function runNext(cb: Void -> Void): Void {
 		var t: Float = Timer.stamp();
-		var nextFrame: Bool = t - lastAssetTime > 1 / 60;
+		var nextFrame: Bool = t - lastAssetTime > 1 / 120;
 		lastAssetTime = t;
 		if (nextFrame)
 			DeltaTime.fixedUpdate < cb;

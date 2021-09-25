@@ -11,8 +11,9 @@ import hl.Bytes;
 
 	#if mobile
 
+	public static inline var BUFFER_SIZE: Int = 1024 * 1000;
+
 	private static inline var SIZE_LEN: UInt = 4;
-	private static inline var BUFFER_SIZE: Int = 1024 * 1000;
 
 	public static var assetBytesAvailable(default, null): Int = 0;
 
