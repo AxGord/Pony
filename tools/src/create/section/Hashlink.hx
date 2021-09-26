@@ -21,7 +21,7 @@ class Hashlink extends Section {
 		var r: Xml = add('release');
 		r.addChild('main'.node(outputDir + outputFile));
 		var d: Xml = 'data'.node(assets);
-		d.set('from', outputDir + assets);
+		d.set('from', outputDir);
 		var a: Xml = 'apps'.node();
 		r.addChild(a);
 		if (win != null) {

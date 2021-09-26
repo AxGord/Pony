@@ -131,7 +131,10 @@
 			"type": "IndentationCharacter"
 		},
 		{
-			"type": "InnerAssignment"
+			"type": "InnerAssignment",
+			"props": {
+				"ignoreReturnAssignments": true
+			}
 		},
 		{
 			"props": {
