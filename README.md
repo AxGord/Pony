@@ -55,6 +55,7 @@ CI install example
 
 [Installation Video Guide](https://www.youtube.com/watch?v=ufYIEmQcv4o)
 
+[Haxe + Heaps + Pony - Making cross-platform application video](https://youtu.be/gAY77ESYOUY)
 
 Manual
 ------
