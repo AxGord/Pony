@@ -90,12 +90,14 @@ class Build extends Section {
 			case HaxeTargets.Swf: '.swf';
 			case HaxeTargets.Swc: '.swc';
 			case HaxeTargets.HL: '.hl';
+			case HaxeTargets.HLC: '.c';
 		}
 	}
 
 	private function targetKey(): String {
 		return switch target {
 			case HaxeTargets.Swc: 'swf';
+			case HaxeTargets.HLC: 'hl';
 			case t: t;
 		}
 	}

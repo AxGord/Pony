@@ -198,6 +198,7 @@ class Create {
 		project.build.createMainhx(mainTemplate);
 		if (vscAllow) VSCode.createHeaps(project.server.httpPort, project.build.outputPath, outputFile);
 		createIndexHtml(project);
+		if (project.hashlink.android != null) copyFromTools(testSertFile, project.build.outputPath);
 	}
 
 	private static function createHeapsData(project: Project, vscAllow: Bool): Void {

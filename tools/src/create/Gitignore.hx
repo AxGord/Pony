@@ -36,6 +36,8 @@ class Gitignore {
 			result.push(ROOT + project.secondbuild.getHxmlFile());
 		if (project.thirdbuild.active && project.thirdbuild.hxml != null)
 			result.push(ROOT + project.thirdbuild.getHxmlFile());
+		if (project.fourthbuild.active && project.fourthbuild.hxml != null)
+			result.push(ROOT + project.fourthbuild.getHxmlFile());
 		if (project.build.active) {
 			var output: String = project.build.output();
 			result.push(ROOT + output);
@@ -54,6 +56,12 @@ class Gitignore {
 			if (project.thirdbuild.target == HaxeTargets.JS)
 				result.push(ROOT + output + MAP);
 		}
+		if (project.fourthbuild.active) {
+			var output: String = project.fourthbuild.output();
+			result.push(ROOT + output);
+			if (project.fourthbuild.target == HaxeTargets.JS)
+				result.push(ROOT + output + MAP);
+		}
 		if (project.download.active && project.download.list.length > 0)
 			result.push(ROOT + project.download.path);
 		if ((project.uglify.active && project.uglify.libcache) || (project.seconduglify.active && project.seconduglify.libcache))
@@ -66,6 +74,10 @@ class Gitignore {
 			case ProjectType.Air:
 				result.push(project.build.outputPath + project.build.outputFile + '.app'); // macos
 				result.push(project.build.outputPath + project.build.outputFile + '/'); // windows
+			case ProjectType.Heaps, ProjectType.Heapsxml:
+				if (project.hashlink.mac) result.push(ROOT + project.build.outputPath +  project.build.outputFile + '.app');
+				if (project.hashlink.win != null) result.push(ROOT + project.build.outputPath +  project.build.outputFile + '/');
+				if (project.hashlink.android != null) result.push(ROOT + project.build.outputPath + project.hashlink.android);
 			case _:
 		}
 		var finalResult: Array<String> = [];

@@ -158,7 +158,11 @@ private class HashlinkReader extends BAReader<HashlinkConfig> {
 			case 'main':
 				cfg.main = normalize(xml.innerData);
 			case 'data':
-				cfg.data.push(new SPair(normalize(xml.att.from), normalize(xml.innerData)));
+				var data: String = '';
+				try {
+					data = normalize(xml.innerData);
+				} catch (e: Dynamic) {}
+				cfg.data.push(new SPair(normalize(xml.att.from), data));
 			case 'lib':
 				cfg.libs.push(normalize(xml.innerData));
 			case 'title':

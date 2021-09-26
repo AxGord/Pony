@@ -48,7 +48,7 @@ class VSCode {
 		} else if (heaps) {
 			tasks.push({
 				runOptions: {runOn: auto ? 'folderOpen' : 'default'},
-				label: 'Start emulator',
+				label: 'launch emulator',
 				type: 'shell',
 				command: "emulator '@'`emulator -list-avds`",
 				group: 'build',

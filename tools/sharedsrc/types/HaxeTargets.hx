@@ -7,5 +7,6 @@ package types;
 	var Swf = 'swf';
 	var Swc = 'swc';
 	var HL = 'hl';
+	var HLC = 'hlc';
 
 }

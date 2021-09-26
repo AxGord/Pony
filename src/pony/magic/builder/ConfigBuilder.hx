@@ -42,6 +42,7 @@ class ConfigBuilder {
 				#end
 				path: ''
 			};
+			var addedConfig: Array<String> = []; // Filter added configs because app define not set for completion server
 			new ReadXmlConfig(xcfg, cfg, function(cfg:PConfig):Void {
 				var type:ComplexType = switch cfg.type {
 					case CString: macro:String;
@@ -79,6 +80,8 @@ class ConfigBuilder {
 					case _:
 				}
 				var name:String = cfg.path + cfg.key;
+				if (addedConfig.contains(name)) return;
+				addedConfig.push(name);
 				fields.push({
 					name: name,
 					access: access,
@@ -226,7 +229,7 @@ private class ReadXmlConfig extends XmlConfigReader<PConfig> {
 				}, onConfig);
 
 		}
-		
+
 	}
 
 }

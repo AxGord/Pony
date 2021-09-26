@@ -16,6 +16,7 @@ class Config extends Section {
 
 	public var options(default, null): ConfigOptions = new Map();
 	public var dep: Array<String> = [];
+	public var stringmapAllowed: Bool = true;
 	public function new() super('config');
 
 	override public function result(): Xml {
@@ -31,7 +32,7 @@ class Config extends Section {
 			case OrState.A(v):
 				r.addChild(XmlTools.data(v));
 			case OrState.B(v):
-				var allString: Bool = true;
+				var allString: Bool = stringmapAllowed;
 				for (e in v.kv()) {
 					switch e.value {
 						case OrState.A(_):

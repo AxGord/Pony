@@ -27,8 +27,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Fixes and improvements. Heaps, queue, jsdt, logs, wr, tools.",
-"version": "1.5.0",
+"releasenote": "Create: heaps android support. Fix completion error in pony.Config.",
+"version": "1.6.0",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }

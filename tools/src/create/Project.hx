@@ -16,6 +16,7 @@ class Project {
 	public var build(default, null):Build = new Build();
 	public var secondbuild(default, null):Build = new Build();
 	public var thirdbuild(default, null):Build = new Build();
+	public var fourthbuild(default, null):Build = new Build();
 	public var uglify(default, null):Uglify = new Uglify();
 	public var seconduglify(default, null):Uglify = new Uglify();
 	public var npm(default, null):Npm = new Npm();
@@ -53,7 +54,10 @@ class Project {
 		if (download.active) root.addChild(download.result());
 		if (haxelib.active) root.addChild(haxelib.result());
 		if (npm.active) root.addChild(npm.result());
-		if (hashlink.active) root.addChild(hashlink.result());
+		if (hashlink.active) {
+			if (hashlink.needClean()) root.addChild(hashlink.getClean());
+			root.addChild(hashlink.result());
+		}
 
 		addBuilds(root);
 
@@ -93,6 +97,16 @@ class Project {
 				thirdbuild.addTo(build);
 			else if (secondbuild.active && secondbuild.appNode != null && thirdbuild.appNode != null)
 				thirdbuild.addTo(secondbuild);
+			else
+				root.addChild(thirdbuild.result());
+		}
+		if (fourthbuild.active) {
+			if (build.active && build.appNode != null && fourthbuild.appNode != null)
+				fourthbuild.addTo(build);
+			else if (secondbuild.active && secondbuild.appNode != null && fourthbuild.appNode != null)
+				fourthbuild.addTo(secondbuild);
+			else if (thirdbuild.active && thirdbuild.appNode != null && fourthbuild.appNode != null)
+				fourthbuild.addTo(thirdbuild);
 			else
 				root.addChild(thirdbuild.result());
 		}
