@@ -8,6 +8,7 @@ package pony;
 
 	public var busy(default, null): Bool;
 	public var call(default, null): T;
+	public var hasNext(get, never): Bool;
 
 	private var list: List<Array<Dynamic>>;
 	private var method: T;
@@ -28,7 +29,9 @@ package pony;
 		}
 	}
 
-	public inline function next(): Void list.length > 0 ? @:nullSafety(Off) cm(list.pop()) : busy = false;
+	private inline function get_hasNext(): Bool return list.length > 0;
+
+	public inline function next(): Void hasNext ? @:nullSafety(Off) cm(list.pop()) : busy = false;
 
 	private inline function cm(args: Array<Dynamic>): Void @:nullSafety(Off) Reflect.callMethod(null, cast method, args);
 

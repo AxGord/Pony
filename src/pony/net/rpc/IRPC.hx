@@ -15,7 +15,7 @@ using Lambda;
 
 /**
  * IRPC - Remove Procedure Call Build System
- * -lib hxbit
+ * -lib hxbitmini
  * use with RPC
  * @author AxGord <axgord@gmail.com>
  */

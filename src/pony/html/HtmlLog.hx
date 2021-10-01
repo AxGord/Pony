@@ -13,6 +13,7 @@ import js.Browser;
 
 	public function new(containerId: String = 'log', obj: ILogable = null, handleTrace: Bool = true, handleGlobalError: Bool = true) {
 		container = Browser.document.getElementById(containerId);
+		if (container == null) return;
 		if (handleTrace) {
 			origTrace = Log.trace;
 			Log.trace = traceHandler;
