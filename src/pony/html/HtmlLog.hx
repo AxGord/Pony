@@ -34,7 +34,7 @@ import js.Browser;
 		@:nullSafety(Off) origTrace(v, p);
 	}
 
-	public inline function print(message: String): Void logHandler(message, null);
+	public inline function print(message: String): Void if (container != null) logHandler(message, null);
 
 	private function logHandler(message: String, ?pos: PosInfos): Void {
 		container.innerHTML += pos != null ?
