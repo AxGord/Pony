@@ -68,14 +68,4 @@ Manual
     * [Build sections](https://github.com/AxGord/Pony/wiki/Build-sections)
     * [Post build sections](https://github.com/AxGord/Pony/wiki/Post-build-sections)
 
-
-Old Manual
-------
-- <a href="http://axgord.github.io/Pony/#signals">Signals</a>
-- <a href="http://axgord.github.io/Pony/#deltatime">DeltaTime</a>
-- <a href="http://axgord.github.io/Pony/#priority">Priority</a>
-- <a href="http://axgord.github.io/Pony/#declarator">Declarator</a>
-
-Reference book
---------------
-[Explore more feature](http://axgord.github.io/Pony/docs)
+* [Reference book](http://axgord.github.io/Pony/)
