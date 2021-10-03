@@ -59,13 +59,21 @@ CI install example
 
 Manual
 ------
-* [Home](https://github.com/AxGord/Pony/wiki)
+* [Home](/AxGord/Pony/wiki)
 
-* [Pony Tools](https://github.com/AxGord/Pony/wiki/Pony-Tools)
+* [Pony Tools](/AxGord/Pony/wiki/Pony-Tools)
+    * [Commands](/AxGord/Pony/wiki/Commands)
+    * [Server section](/AxGord/Pony/wiki/Server-section)
+    * [Config section](/AxGord/Pony/wiki/Config-section)
+    * [Prepare sections](/AxGord/Pony/wiki/Prepare-sections)
+    * [Build sections](/AxGord/Pony/wiki/Build-sections)
+    * [Post build sections](/AxGord/Pony/wiki/Post-build-sections)
 
-    * [Server section](https://github.com/AxGord/Pony/wiki/Server-section)
-    * [Prepare sections](https://github.com/AxGord/Pony/wiki/Prepare-sections)
-    * [Build sections](https://github.com/AxGord/Pony/wiki/Build-sections)
-    * [Post build sections](https://github.com/AxGord/Pony/wiki/Post-build-sections)
+* [Net](/AxGord/Pony/wiki/Net)
+    * [RPC](/AxGord/Pony/wiki/RPC)
+
+* Platforms
+    * [CS](/AxGord/Pony/wiki/CS)
+    * [Cocos Creator](/AxGord/Pony/wiki/Cocos-Creator)
 
 * [Reference book](http://axgord.github.io/Pony/)
