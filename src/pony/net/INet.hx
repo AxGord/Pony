@@ -13,8 +13,6 @@ import pony.events.Signal2;
  */
 interface INet {
 
-	#if !flash
-
 	/**
 	 * onAccept in a server
 	 */
@@ -35,7 +33,5 @@ interface INet {
 	function send(b: BytesOutput): Void;
 	function sendString(s: String): Void;
 	function destroy(): Void;
-
-	#end
 
 }

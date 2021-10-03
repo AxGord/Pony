@@ -1,12 +1,11 @@
 package pony.net;
 
 import haxe.io.Bytes;
-#if !dox
 import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
 import haxe.Timer;
+
 import pony.Logable;
-#end
 import pony.events.Signal0;
 import pony.events.Signal1;
 import pony.events.Signal2;

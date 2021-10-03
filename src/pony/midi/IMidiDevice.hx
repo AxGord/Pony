@@ -7,6 +7,6 @@ import pony.time.DT;
  * @author AxGord <axgord@gmail.com>
  */
 interface IMidiDevice {
-	var on:Signal2<IMidiDevice, MidiMessage, DT>;
+	var on(get, never):Signal2<MidiMessage, DT>;
 	function destroy():Void;
 }

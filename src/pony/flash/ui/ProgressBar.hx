@@ -12,12 +12,12 @@ import pony.time.DeltaTime;
 class ProgressBar extends MovieClip {
 
 	#if !starling
-	@:isVar public var auto(default, set): Void -> Float;
+	@:isVar public var auto(default, set): Null<Void -> Float> = null;
 
-	@:extern private var bar: MovieClip;
-	private var total: Float;
+	@:nullSafety(Off) @:extern private var bar: MovieClip;
+	private var total: Float = 0;
 
-	@:isVar public var value(default, set): Float;
+	@:isVar public var value(default, set): Float = 0;
 
 	public function new() {
 		super();
@@ -44,7 +44,7 @@ class ProgressBar extends MovieClip {
 	}
 
 	private function autoUpdate(): Void {
-		value = auto();
+		value = @:nullSafety(Off) auto();
 	}
 	#end
 

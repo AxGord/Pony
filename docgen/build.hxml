@@ -1,0 +1,39 @@
+base.hxml
+-cs cs
+-xml api/cs.xml
+-D WITHOUTUNITY
+--macro DocInclude.cs()
+
+--next
+
+base.hxml
+-swf fl.swf
+-xml api/flash.xml
+-swf-version 11.8
+--macro DocInclude.fl()
+
+--next
+
+base.hxml
+-neko n.n
+-xml api/neko.xml
+-cp ../tests/test
+-main TestMain
+-lib mconsole
+-lib munit
+--macro DocInclude.neko()
+
+--next
+
+base.hxml
+-lib hxnodejs:12.1.0
+-D nodejs
+-js node.js
+-xml api/nodejs.xml
+--macro allowPackage('sys')
+--macro DocInclude.node()
+
+--next
+
+--interp
+-main RemStars

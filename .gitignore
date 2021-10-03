@@ -9,6 +9,7 @@
 /tests/\.unittest/
 /tests/test/TestSuite.hx
 /socketTests/CSSocket/
-/api/
+/docgen/api/
+/docgen/docs/
 *.dump
 .DS_Store

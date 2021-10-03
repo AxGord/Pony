@@ -5,7 +5,7 @@ package pony.ds;
  * @author AxGord <axgord@gmail.com>
  */
 @:forward(a, b, c, array, toString)
-abstract STriple<T>(Triple<T, T>) to Triple<T, T> from Triple<T, T> {
+abstract STriple<T>(Triple<T, T, T>) to Triple<T, T, T> from Triple<T, T, T> {
 
     public inline function new(a: T, b: T, c: T) this = new Triple(a, b, c);
 
@@ -17,6 +17,7 @@ abstract STriple<T>(Triple<T, T>) to Triple<T, T> from Triple<T, T> {
             case 3: this.a;
             case 2: this.b;
             case 1: this.c;
+            case _: throw 'There is no next item';
         }
         };
     }

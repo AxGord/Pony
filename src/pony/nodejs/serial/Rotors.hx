@@ -4,6 +4,7 @@ import haxe.io.BytesOutput;
 import pony.Tumbler;
 import pony.time.DeltaTime;
 import pony.events.Signal0;
+import pony.ds.ROArray;
 
 enum abstract RotorMode(Int) to Int {
 	var Off = 1;
@@ -32,7 +33,7 @@ abstract Rotors(RotorsObj) {
 
 class RotorsObj {
 
-	public var rotors(default, null):ImmutableArray<Rotor>;
+	public var rotors(default, null):ROArray<Rotor>;
 
 	private var serial:SerialPort;
 

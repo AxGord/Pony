@@ -1,0 +1,9 @@
+-cp ../src
+--no-output
+-lib traits
+-lib hxbitmini
+-lib hx3compat
+-lib nape
+-lib continuation
+-D dox
+-D doc_gen

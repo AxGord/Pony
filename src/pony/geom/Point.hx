@@ -118,7 +118,8 @@ abstract Point<T: Float>(PointImpl<T>) from PointImpl<T> to PointImpl<T> {
 
 }
 
-abstract IntPoint(PointImpl<Int> ) to PointImpl<Int> from PointImpl<Int> {
+@:transitive
+abstract IntPoint(PointImpl<Int>) to PointImpl<Int> from PointImpl<Int> {
 
 	public static var OneUp: IntPoint = new IntPoint(0, -1);
 	public static var OneDown: IntPoint = new IntPoint(0, 1);

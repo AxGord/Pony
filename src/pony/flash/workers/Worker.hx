@@ -7,17 +7,17 @@ import flash.system.Worker;
 import flash.system.WorkerDomain;
 import flash.system.WorkerState;
 import haxe.io.Bytes;
-import pony.events.Signal;
 import pony.events.Signal1;
 import pony.Queue;
 import pony.time.DeltaTime;
 import pony.time.DTimer;
+import pony.magic.HasSignal;
 
 /**
  * Worker
  * @author AxGord <axgord@gmail.com>
  */
-class Worker implements IWorkerGatePool {
+class Worker implements IWorkerGatePool implements HasSignal {
 
 	public static function fromFile(f: String, cb: Worker -> Void): Void FLTools.loadBytes(f, fromBytes.bind(_, cb));
 
@@ -27,7 +27,7 @@ class Worker implements IWorkerGatePool {
 	private var lock: Bool = true;
 	private var unlockers: List<Void -> Void> = new List<Void -> Void>();
 
-	public var log: Signal1<Worker, String>;
+	@:auto public var log: Signal1<String>;
 
 	private var lw: WorkerInput<String, Int>;
 
@@ -35,13 +35,11 @@ class Worker implements IWorkerGatePool {
 		bgWorker = WorkerDomain.current.createWorker(b.getData(), true);
 		bgWorker.addEventListener(Event.WORKER_STATE, handleBGWorkerStateChange);
 		DeltaTime.fixedUpdate < bgWorker.start;
-
-		log = Signal.create(this);
 		lw = new WorkerInput('log', this);
 		lw.request = function(s: String) {
-			if (log == null)
+			if (eLog == null)
 				return;
-			log.dispatch(s);
+			eLog.dispatch(s);
 			lw.result(1);
 		}
 	}
@@ -97,9 +95,8 @@ class Worker implements IWorkerGatePool {
 
 	public function destroy(): Void {
 		lw.destroy();
-		log.dispatch('destroy worker');
-		log.destroy();
-		log = null;
+		eLog.dispatch('destroy worker');
+		destroySignals();
 		bgWorker.removeEventListener(Event.WORKER_STATE, handleBGWorkerStateChange);
 		bgWorker.terminate();
 		bgWorker = null;

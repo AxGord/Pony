@@ -1,6 +1,7 @@
 package pony.geom;
 
-import pony.events.Signal;
+import pony.events.Signal1;
+import pony.events.Event1;
 import pony.geom.IWards;
 import pony.ui.keyboard.Keyboard;
 import pony.ui.keyboard.Key;
@@ -19,14 +20,14 @@ typedef MatrixIndex = {
 class MatrixMove {
 
 	private var moveMatrix: Matrix;
-	private var wards: IWards<Dynamic>;
+	private var wards: IWards;
 
-	public var change: Signal;
+	public var change: Signal1<Int>;
 
-	public function new(moveMatrix: Matrix, wards: IWards<Dynamic>) {
+	public function new(moveMatrix: Matrix, wards: IWards) {
 		this.moveMatrix = moveMatrix;
 		this.wards = wards;
-		change = Reflect.field(wards, 'change');
+		change = wards.change;
 	}
 
 	public function arrowBinding(): Void {
@@ -79,7 +80,7 @@ class MatrixMove {
 	private function trySet(prev: MatrixIndex, i: MatrixIndex):Bool {
 		if (i.c == prev.c && i.r == prev.r) return true;
 		if (moveMatrix[i.r] != null && moveMatrix[i.r][i.c] != null && moveMatrix[i.r][i.c] != 0) {
-			change.dispatchArgs([moveMatrix[i.r][i.c] - 1]);
+			(untyped change: Event1<Int>).dispatch(moveMatrix[i.r][i.c] - 1);
 			return false;
 		} else
 			return true;

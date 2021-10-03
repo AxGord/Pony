@@ -1,18 +1,21 @@
 package pony.math;
 
-import pony.events.Signal;
+import pony.events.Signal1;
+import pony.magic.HasSignal;
+import pony.time.DeltaTime;
 
-using pony.Tools;
+using pony.math.MathTools;
 
 /**
  * Smooth
  * @author AxGord <axgord@gmail.com>
  */
-class Smooth {
+class Smooth implements HasSignal {
+
+	@:auto public var onUpdate: Signal1<Float>;
 
 	public var value(default, null): Null<Float> = null;
 	public var time: Float;
-	public var update(default, null): Signal;
 	private var vals: Array<Float>;
 	private var dtsum: Float;
 	private var last: Null<Float>;
@@ -21,14 +24,13 @@ class Smooth {
 		this.time = time;
 		dtsum = 0;
 		vals = [];
-		update = new Signal();
 		DeltaTime.update.add(tick);
 	}
 
 	public function set(v: Float): Void {
 		if (value == null) {
 			value = v;
-			update.dispatch(value);
+			eUpdate.dispatch(value);
 		}
 		vals.push(v);
 		last = v;
@@ -41,20 +43,20 @@ class Smooth {
 		if (vals.length == 0) {
 			if (last != null) {
 				value = last;
-				update.dispatch(value);
+				eUpdate.dispatch(value);
 				last = null;
 			}
 			return;
 		}
 		value = vals.arithmeticMean();
 		vals = [];
-		update.dispatch(value);
+		eUpdate.dispatch(value);
 	}
 
 	public function reset(): Void {
 		vals = [];
 		value = 0;
-		update.dispatch(value);
+		eUpdate.dispatch(value);
 	}
 
 }

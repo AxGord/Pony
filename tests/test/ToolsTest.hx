@@ -18,33 +18,35 @@ enum A {
 enum B { E; }
 
 class N {
-  
+
 }
 
 interface IA {}
 interface IB {}
 
 
-class ToolsTest 
+class ToolsTest
 {
-	
+
 	@Test
 	public function explode():Void
 	{
 		Assert.isTrue('1-2 3 - 4'.explode(['-', ' ']).equal(['1', '2', '3', '4']));
 	}
-	
+
 	@Test
 	public function mask():Void {
 		var number:Float = 54.7;
 		Assert.areEqual(number.toFixed('   ,00'), ' 54,70');
 	}
-	
+
+	#if !dox
 	@Test
 	public function includeFile():Void {
 		Assert.areEqual(TextTools.includeFile('test.txt'), 'Hello world!');
 	}
-	
+	#end
+
 	@Test
 	public function equal():Void {
 		Assert.isFalse(2.equal(3));
@@ -61,25 +63,25 @@ class ToolsTest
 		Assert.isTrue(E2(1).equal(E2(1)));
 		Assert.isTrue(E3({b:1}).equal(E3({b:1}), 5));
 		Assert.isFalse(E3({b:1}).equal(E2(0), 5));
-		
+
 		Assert.isTrue(Tools.equal({a:1, b:{c:1}, d:{}}, {a:1, b:{c:1}, d:{}}, 5));
 		Assert.isFalse(Tools.equal({a:1, b:{c:1}, d:{}}, {a:1, b:{c:1}, d:{e:3}}, 5));
-		
+
 		Assert.isTrue(Tools.equal([[[1]]], [[[1]]], 5));
-		
+
 		Assert.isFalse(Tools.equal([1], [1, 2]));
-		
+
 		var o = {b:{}};
 		o.b = o;
 		var p = {b:{}};
 		p.b = p;
 		Assert.isFalse(Tools.equal(o, p, 5)); // tada
-		
+
 		Assert.isFalse(Tools.equal(ToolsTest, N));
 		Assert.isFalse(Tools.equal(IA, IB));
 		Assert.isFalse(Tools.equal(A, B));
 	}
-	
+
 	@Test
 	public function culture():Void {
 		var v = 5.;
@@ -92,7 +94,7 @@ class ToolsTest
 		v = v.cultureTarget(target, 4.3);
 		Assert.areEqual(v, target);
 	}
-	
+
 	@Test
 	public function nore():Void {
 		Assert.isTrue([].nore());
@@ -100,7 +102,7 @@ class ToolsTest
 		Assert.isFalse([1].nore());
 		Assert.isFalse('1'.nore());
 	}
-	
+
 	@Test
 	public function or():Void {
 		var v:String = null;
@@ -108,7 +110,7 @@ class ToolsTest
 		v = 'w';
 		Assert.areEqual(v.or('q'), 'w');
 	}
-	
+
 	@Test
 	public function with ():Void {
 		var o = { x:4, y: 7 };
@@ -116,25 +118,25 @@ class ToolsTest
 		Assert.areEqual(o.x, 6);
 		Assert.areEqual(o.y, 8);
 	}
-	
+
 	@Test
-	public function cut():Void 
+	public function cut():Void
 	{
-		var b1:BytesOutput = new BytesOutput();	
+		var b1:BytesOutput = new BytesOutput();
 		b1.writeByte(1);
 		b1.writeByte(0);
 		b1.writeByte(1);
 		//b1.writeByte(34);
 		//b1.writeByte(12);
-		
+
 		var b2:BytesInput = new BytesInput(b1.getBytes());
-		
+
 		var b3 = Tools.cut(b2);
 		var bi = b3.bytesInputIterator();
 		for (b in b2.bytesInputIterator()) Assert.areEqual(b, bi.next());
-		
+
 	}
-	
+
 	@Test
 	public function setFields():Void {
 		var a = {
@@ -144,13 +146,13 @@ class ToolsTest
 				d: 8
 			}
 		};
-		
+
 		var b:Dynamic = {
 			b: {
 				c: 3
 			}
 		};
-		
+
 		var c:Dynamic = {
 			a: 5,
 			b: {
@@ -158,11 +160,11 @@ class ToolsTest
 				d: 8
 			}
 		};
-		
+
 		a.setFields(b);
 		Assert.isTrue(a.equal(c, 2));
 	}
-	
+
 	@Test
 	public function parsePrefixObjects():Void {
 		var obj = {
@@ -171,14 +173,14 @@ class ToolsTest
 			'f': '3'
 		};
 		Assert.isTrue(obj.parsePrefixObjects().equal({
-			a: { 
+			a: {
 				b: { c: '1' },
 				f: { c: '2' }
 			},
 			f: '3'
 		}, 3));
 	}
-	
+
 	@Test
 	public function convertObject():Void {
 		var a = {
@@ -191,7 +193,7 @@ class ToolsTest
 			b: {c:3}
 		}, 2));
 	}
-	
+
 	@Test
 	public function writeReadStr():Void {
 		var bo = new BytesOutput();
@@ -199,14 +201,14 @@ class ToolsTest
 		var bi = new BytesInput(bo.getBytes());
 		Assert.areEqual(bi.readStr(), 'hello world');
 	}
-	
+
 	@Test
 	public function swap():Void {
 		Assert.isTrue([1, 2, 3, 4].swap(0, 3).equal([4, 2, 3, 1]));
 		Assert.isTrue([1, 2, 3, 4].swap(0, 1).equal([2, 1, 3, 4]));
 		Assert.isTrue([3, 4].swap(1, 0).equal([4,3]));
 	}
-	
+
 	@Test
 	public function own():Void {
 		Assert.isTrue(OwnTest1.own(OwnTest1));
@@ -214,7 +216,7 @@ class ToolsTest
 		Assert.isTrue(OwnTest1.own(OwnTest3));
 		Assert.isFalse(OwnTest3.own(OwnTest1));
 	}
-	
+
 	@Test
 	public function clone():Void {
 		var a:Array<Dynamic> = ['sdas', {c:333}];
@@ -225,19 +227,19 @@ class ToolsTest
 		Assert.areEqual(o.b[1].c, n.b[1].c);
 		//todo: Test enum
 	}
-	
+
 }
 
 
 private class OwnTest1 {
-	
-	
+
+
 }
 
 private class OwnTest2 {
-	
+
 }
 
 private class OwnTest3 extends OwnTest1 {
-	
+
 }

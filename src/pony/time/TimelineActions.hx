@@ -1,20 +1,20 @@
 package pony.time;
 
-import pony.events.Signal;
 import pony.events.Signal0;
 import pony.events.Signal1;
+import pony.magic.HasSignal;
 
 /**
  * TimelineActions
  * @author AxGord <axgord@gmail.com>
  */
-class TimelineActions {
+class TimelineActions implements HasSignal {
 
-	public var onProccessBegin: Signal0<TimelineActions>;
-	public var onProccessEnd: Signal0<TimelineActions>;
-	public var onReset: Signal0<TimelineActions>;
-	public var onStepBegin: Signal1<TimelineActions, Int>;
-	public var onStepEnd: Signal1<TimelineActions, Int>;
+	@:auto public var onProccessBegin: Signal0;
+	@:auto public var onProccessEnd: Signal0;
+	@:auto public var onReset: Signal0;
+	@:auto public var onStepBegin: Signal1<Int>;
+	@:auto public var onStepEnd: Signal1<Int>;
 
 	private var timeline: Timeline;
 	private var toStep: Int = 0;
@@ -26,11 +26,6 @@ class TimelineActions {
 		this.superSpeed = superSpeed;
 		timeline = new Timeline(times, true);
 		timeline.onStep << timelineStepHandler;
-		onProccessBegin = Signal.create(this);
-		onProccessEnd = Signal.create(this);
-		onReset = Signal.create(this);
-		onStepBegin = Signal.create(this);
-		onStepEnd = Signal.create(this);
 	}
 
 	public dynamic function setSpeed(v: Float): Void {}
@@ -50,17 +45,17 @@ class TimelineActions {
 			play();
 			setSpeedForStep(n);
 			if (stepSpeed[n] > 0) timeline.play();
-			onStepBegin.dispatch(n);
+			eStepBegin.dispatch(n);
 		} else if (timeline.isPlay && n > timeline.currentStep) {
 			toStep = n;
 			timeline.playTo(n);
 			fast();
 		} else {
 			timeline.reset();
-			onReset.dispatch();
-			onStepBegin.dispatch(0);
+			eReset.dispatch();
+			eStepBegin.dispatch(0);
 			if (n > 0) {
-				onProccessBegin.dispatch();
+				eProccessBegin.dispatch();
 				toStep = n;
 				timeline.playTo(n);
 				fast();
@@ -76,7 +71,7 @@ class TimelineActions {
 	public function playNext(): Void {
 		setSpeedForStep(timeline.currentStep);
 		if (stepSpeed[timeline.currentStep] > 0) timeline.play();
-		onStepBegin.dispatch(timeline.currentStep);
+		eStepBegin.dispatch(timeline.currentStep);
 		play();
 	}
 
@@ -88,10 +83,10 @@ class TimelineActions {
 		} else if (n == toStep) {
 			setSpeedForStep(n);
 			if (stepSpeed[n] > 0) timeline.play();
-			onStepBegin.dispatch(n);
-			onProccessEnd.dispatch();
+			eStepBegin.dispatch(n);
+			eProccessEnd.dispatch();
 		}
-		onStepEnd.dispatch(n-1);
+		eStepEnd.dispatch(n-1);
 	}
 
 }

@@ -9,16 +9,16 @@ import pony.midi.devices.LaunchpadColor;
 /**
  * @author AxGord
  */
-interface ILaunchpad extends ILogable<ILaunchpad> {
-  
+interface ILaunchpad extends ILogable {
+
 	var areaState(default, null):Matrix<LaunchpadColor>;
 	var topState(default, null):Array<LaunchpadColor>;
 	var rightState(default, null):Array<LaunchpadColor>;
-	
-	var onArea(default, null):Signal2<ILaunchpad, IntPoint, Bool>;
-	var onTop(default, null):Signal2<ILaunchpad, Int, Bool>;
-	var onRight(default, null):Signal2<ILaunchpad, Int, Bool>;
-	
+
+	var onArea(get, never):Signal2<IntPoint, Bool>;
+	var onTop(get, never):Signal2<Int, Bool>;
+	var onRight(get, never):Signal2<Int, Bool>;
+
 	function setAreaPoint(p:IntPoint, color:LaunchpadColor = AmberFull):Void;
 	function setMatrixCI(m:Matrix<Int>):Void;
 	function setMatrix(m:Matrix<LaunchpadColor>):Void;

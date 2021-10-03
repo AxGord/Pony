@@ -14,10 +14,9 @@ class WorkerOutput<T1, T2> implements Declarator {
 
 	@:arg private var gate: IWorkerGatePool;
 
-	private var q: Queue<T1 -> (T2 -> Void) -> Void> = new Queue<T1 -> (T2 -> Void) -> Void>(_request);
+	private var q: Queue<T1 -> (T2 -> Void) -> Void> = new Queue<T1 -> (T2 -> Void) -> Void>(_request, true);
 
 	public function new() {
-		q.busy = true;
 		req = gate._registerOutput(name, response, q.next);
 	}
 
