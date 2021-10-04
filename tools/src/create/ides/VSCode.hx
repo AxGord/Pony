@@ -224,7 +224,7 @@ class VSCode {
 				request: 'launch',
 				preLaunchTask: 'android release',
 				appSrcRoot: "${workspaceRoot}/bin/android/app/src/main",
-				apkFile: "${workspaceRoot}/bin/android/app/build/outputs/apk/debug/app-release.apk",
+				apkFile: "${workspaceRoot}/bin/android/app/build/outputs/apk/release/app-release.apk",
 				adbPort: 5037,
 				"trace": true
 			}
