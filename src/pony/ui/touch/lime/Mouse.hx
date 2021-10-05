@@ -13,12 +13,12 @@ import pony.ui.touch.MouseButton;
 class Mouse {
 
 	private static var moveEvent: Event<Float -> Float -> Void>;
-	private static var downEvent: Event<Float -> Float -> Int -> Void>;
+	private static var downEvent: Event<Float -> Float -> lime.ui.MouseButton -> Void>;
 	private static var upEvent: Event<Float -> Float -> Int -> Void>;
 
 	private static var mouseDown: Bool = false;
 
-	@:extern inline public static function init(): Void {
+	@:extern public static inline function init(): Void {
 		DeltaTime.fixedUpdate.once(initNow, -2);
 	}
 
@@ -34,29 +34,29 @@ class Mouse {
 		moveEvent = Application.current.window.onMouseMove;
 		var event: Event<Float -> Float -> Void> = new Event<Float -> Float -> Void>();
 		event.add(M.moveHandler, false, 1000);
-		Application.current.window.onMouseMove = event;
+		untyped Application.current.window.onMouseMove = event;
 	}
 
 	@:extern private static inline function hackDown(): Void {
 		downEvent = Application.current.window.onMouseDown;
-		var event: Event<Float -> Float -> Int -> Void> = new Event<Float -> Float -> Int -> Void>();
+		var event: Event<Float -> Float -> lime.ui.MouseButton -> Void> = new Event<Float -> Float -> lime.ui.MouseButton -> Void>();
 		event.add(M.downHandler, false, 1000);
-		Application.current.window.onMouseDown = event;
+		untyped Application.current.window.onMouseDown = event;
 	}
 
 	@:extern private static inline function hackUp():Void {
 		upEvent = Application.current.window.onMouseUp;
 		var event:Event<Float -> Float -> Int -> Void> = new Event<Float -> Float -> Int -> Void>();
 		event.add(M.upHandler, false, 1000);
-		Application.current.window.onMouseUp = event;
+		untyped Application.current.window.onMouseUp = event;
 	}
 
 	public static function enableStd(): Void {
 		M.onMove.add(moveEvent.dispatch, 1);
-		M.onLeftDown.add(leftDown,1);
+		M.onLeftDown.add(leftDown, 1);
 		M.onMiddleDown.add(rightDown, 1);
 		M.onRightDown.add(middleDown, 1);
-		M.onLeftUp.add(leftUp,1);
+		M.onLeftUp.add(leftUp, 1);
 		M.onMiddleUp.add(rightUp, 1);
 		M.onRightUp.add(middleUp, 1);
 	}
@@ -71,9 +71,9 @@ class Mouse {
 		M.onRightUp.remove(middleUp);
 	}
 
-	private static function leftDown(x: Float, y: Float): Void downEvent.dispatch(x, y, MouseButton.LEFT);
-	private static function rightDown(x: Float, y: Float): Void downEvent.dispatch(x, y, MouseButton.RIGHT);
-	private static function middleDown(x: Float, y: Float): Void downEvent.dispatch(x, y, MouseButton.MIDDLE);
+	private static function leftDown(x: Float, y: Float): Void downEvent.dispatch(x, y, lime.ui.MouseButton.LEFT);
+	private static function rightDown(x: Float, y: Float): Void downEvent.dispatch(x, y, lime.ui.MouseButton.RIGHT);
+	private static function middleDown(x: Float, y: Float): Void downEvent.dispatch(x, y, lime.ui.MouseButton.MIDDLE);
 	private static function leftUp(x: Float, y: Float): Void upEvent.dispatch(x, y, MouseButton.LEFT);
 	private static function rightUp(x: Float, y: Float): Void upEvent.dispatch(x, y, MouseButton.RIGHT);
 	private static function middleUp(x: Float, y: Float): Void upEvent.dispatch(x, y, MouseButton.MIDDLE);
