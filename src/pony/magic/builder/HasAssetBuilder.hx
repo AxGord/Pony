@@ -20,13 +20,16 @@ class HasAssetBuilder {
 		var list: Array<Expr> = [];
 		var names: Array<Expr> = [];
 		var fields: Array<Field> = Context.getBuildFields();
+		var cl: Null<Ref<ClassType>> = Context.getLocalClass();
+		var meta: Metadata = cl.get().meta.get();
+		var prefix: String = getPrefix(meta);
 		for (f in fields) if (f.meta.checkMeta([':asset', 'asset'])) {
 			if (f.access.indexOf(AStatic) == -1) Context.error('Asset can be only static', f.pos);
 			switch f.kind {
 				case FieldType.FVar(null, e):
 					if (e == null) Context.error('Need value', f.pos);
 					switch e.expr {
-						case EConst(CString(_)):
+						case EConst(CString(s)):
 							f.kind = FieldType.FVar(null, macro $v { list.length } );
 							if (f.access.indexOf(AInline) == -1) f.access.push(AInline);
 							list.push(e);
@@ -34,14 +37,14 @@ class HasAssetBuilder {
 								if (f.meta.getMeta(':asset').params.length == 0)
 									names.push(macro null);
 								else if (f.meta.getMeta(':asset').params.length == 1)
-									names.push(f.meta.getMeta(':asset').params[0]);
+									names.push({expr: EConst(CString(prefix + getAssetName(f.meta, true))), pos: f.pos});
 								else
 									Context.error('Wrong :asset format', f.pos);
 							} else {
 								if (f.meta.getMeta('asset').params.length == 0)
 									names.push(macro null);
 								else if (f.meta.getMeta('asset').params.length == 1)
-									names.push(f.meta.getMeta('asset').params[0]);
+									names.push({expr: EConst(CString(prefix + getAssetName(f.meta))), pos: f.pos});
 								else
 									Context.error('Wrong :asset format', f.pos);
 							}
@@ -52,9 +55,6 @@ class HasAssetBuilder {
 					Context.error('Asset can be only string var', f.pos);
 			}
 		}
-
-		var cl: Null<Ref<ClassType>> = Context.getLocalClass();
-		var meta: Metadata = cl.get().meta.get();
 		var patchesFields: Map<String, String> = getPatches(meta, cl);
 		if (patchesFields == null) Context.error('Wrong parent class', cl.get().pos);
 		addBaseFields(fields, names, list, patchesFields);
@@ -344,6 +344,46 @@ class HasAssetBuilder {
 			}
 		}
 		return result;
+	}
+
+	private static function getPrefix(meta: Metadata): String {
+		var parentPrefix: String = '';
+		if (meta.checkMeta([':assets_parent'])) {
+			var parent: Expr = meta.getMeta(':assets_parent').params[0];
+			switch parent.expr {
+				case EConst(CIdent(s)):
+					switch Context.getType(s) {
+						case TInst(cl, _):
+							var m = cl.get().meta;
+							parentPrefix = getPrefix(m.get());
+						case _:
+							Context.error('Wrong assets_parent type', parent.pos);
+					}
+				case _:
+					Context.error('Wrong assets_parent format', parent.pos);
+			}
+		}
+		if (meta.checkMeta([':assets_prefix'])) {
+			var patches: Expr = meta.getMeta(':assets_prefix').params[0];
+			switch patches.expr {
+				case EConst(CString(s)):
+					return parentPrefix + s;
+				case _:
+					Context.error('Wrong assets_prefix format', patches.pos);
+			}
+		}
+		return parentPrefix;
+	}
+
+	private static function getAssetName(meta: Metadata, colon: Bool = false): String {
+		var p: Expr = meta.getMeta((colon ? ':' : '') + 'asset').params[0];
+		return switch p.expr {
+			case EConst(CString(s)):
+				s;
+			case _:
+				Context.error('Wrong asset format', p.pos);
+				'';
+		}
 	}
 	#end
 
