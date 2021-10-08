@@ -10,8 +10,12 @@ import js.Browser;
 
 	private final origTrace: Null<Dynamic -> ?PosInfos -> Void>;
 	private final container: Element;
+	private final reverse: Bool;
 
-	public function new(containerId: String = 'log', obj: ILogable = null, handleTrace: Bool = true, handleGlobalError: Bool = true) {
+	public function new(
+		containerId: String = 'log', obj: ILogable = null, handleTrace: Bool = true, handleGlobalError: Bool = true, reverse: Bool = false
+	) {
+		this.reverse = reverse;
 		container = Browser.document.getElementById(containerId);
 		if (container == null) return;
 		if (handleTrace) {
@@ -37,20 +41,27 @@ import js.Browser;
 	public inline function print(message: String): Void if (container != null) logHandler(message, null);
 
 	private function logHandler(message: String, ?pos: PosInfos): Void {
-		container.innerHTML += pos != null ?
+		addToContainer(pos != null ?
 			'<p><span class="gray">${pos.fileName}:${pos.lineNumber}:</span> <span>$message</span></p>' :
-			'<p><span>$message</span></p>';
+			'<p><span>$message</span></p>');
 	}
 
 	private function errorHandler(message: String, ?pos: PosInfos): Void {
-		container.innerHTML += pos != null ?
+		addToContainer(pos != null ?
 			'<p><span class="gray">${pos.fileName}:${pos.lineNumber}:</span> <span class="error">$message</span></p>' :
-			'<p><span class="error">$message</span></p>';
+			'<p><span class="error">$message</span></p>');
 	}
 
 	private function windowsErrorHandler(_, _, _, _, _): Bool {
-		container.innerHTML += '<p><span class="error">Fatal error</span></p>';
+		addToContainer('<p><span class="error">Fatal error</span></p>');
 		return false;
+	}
+
+	private function addToContainer(s: String): Void {
+		if (reverse)
+			container.innerHTML = s + container.innerHTML;
+		else
+			container.innerHTML += s;
 	}
 
 }
