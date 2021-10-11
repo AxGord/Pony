@@ -53,12 +53,12 @@ class TextTools {
 
 	public static inline function allAfter(str: String, delimiter: String, ?startIndex: Int): Null<String> {
 		var index: Int = str.indexOf(delimiter, startIndex);
-		return index == -1 ? null : str.substr(index + 1);
+		return index == -1 ? null : str.substr(index + delimiter.length);
 	}
 
 	public static inline function allAfterLast(str: String, delimiter: String, ?startIndex: Int): Null<String> {
 		var index: Int = startIndex == null ? str.lastIndexOf(delimiter) : str.lastIndexOf(delimiter, startIndex);
-		return index == -1 ? null : str.substr(index + 1);
+		return index == -1 ? null : str.substr(index + delimiter.length);
 	}
 
 	public static inline function allBefore(str: String, delimiter: String, ?startIndex: Int): Null<String> {
