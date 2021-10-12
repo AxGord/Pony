@@ -146,16 +146,16 @@ import pony.events.Listener1;
 		var ns = new Event2<T1, T2>();
 		var listener1: Listener1<T1> = cast null;
 		var listener2: Listener1<T2> = cast null;
-		listener1 = function(a) {
+		listener1 = {once: true, listener: Listener1.Listener1Type.LFunction1(function(a: T1) {
 			s.remove(listener2);
-			s.once(ns.dispatch.bind(a));
-		}
-		listener2 = function(b) {
+			s.add({ once: true, listener: Listener1.Listener1Type.LFunction1(ns.dispatch.bind(a))});
+		})};
+		listener2 = {once: true, listener: Listener1.Listener1Type.LFunction1(function(b: T2) {
 			remove(listener1);
-			once(ns.dispatch.bind(_, b));
-		}
-		once(listener1);
-		s.once(listener2);
+			add({ once: true, listener: Listener1.Listener1Type.LFunction1(ns.dispatch.bind(_, b))});
+		})};
+		add(listener1);
+		s.add(listener2);
 		return ns;
 	}
 
@@ -184,19 +184,19 @@ import pony.events.Listener1;
 
 	@:extern public inline function convert0(f: Event0 -> T1 -> Void): Signal0 {
 		var ns = new Event0();
-		add(f.bind(ns));
+		add({ once: false, listener: Listener1.Listener1Type.LFunction1(f.bind(ns))});
 		return ns;
 	}
 
 	@:extern public inline function convert1<ST1>(f: Event1<ST1> -> T1 -> Void): Signal1<ST1> {
 		var ns = new Event1();
-		add(f.bind(ns));
+		add({ once: false, listener: Listener1.Listener1Type.LFunction1(f.bind(ns))});
 		return ns;
 	}
 
 	@:extern public inline function convert2<ST1, ST2>(f: Event2<ST1, ST2> -> T1 -> Void): Signal2<ST1, ST2> {
 		var ns = new Event2();
-		add(f.bind(ns));
+		add({ once: false, listener: Listener1.Listener1Type.LFunction1(f.bind(ns))});
 		return ns;
 	}
 
