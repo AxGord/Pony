@@ -4,8 +4,11 @@ package pony.magic.builder;
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import haxe.macro.Compiler;
+
 import pony.Fast;
+
 import sys.io.File;
+
 import pony.text.XmlConfigReader;
 import pony.text.XmlTools;
 
@@ -18,19 +21,20 @@ using Lambda;
  */
 class ConfigBuilder {
 
-	private static inline var file:String = 'pony.xml';
+	private static inline var file: String = 'pony.xml';
 
-	macro public static function build():Array<Field> {
+	macro public static function build(): Array<Field> {
 		Context.registerModuleDependency(Context.getLocalModule(), file);
-		var fields:Array<Field> = Context.getBuildFields();
-		if (!sys.FileSystem.exists(file)) return fields;
+		var fields: Array<Field> = Context.getBuildFields();
+		if (!sys.FileSystem.exists(file))
+			return fields;
 		var xml = XmlTools.fast(File.getContent(file)).node.project;
 		if (xml.hasNode.config) {
-			var xcfg:Fast = xml.node.config;
+			var xcfg: Fast = xml.node.config;
 			if (xcfg.has.dep)
 				for (f in xcfg.att.dep.split(','))
 					Context.registerModuleDependency(Context.getLocalModule(), StringTools.trim(f));
-			var cfg:PConfig = {
+			var cfg: PConfig = {
 				app: haxe.macro.Context.definedValue('app'),
 				#if debug
 				debug: true,
@@ -43,8 +47,8 @@ class ConfigBuilder {
 				path: ''
 			};
 			var addedConfig: Array<String> = []; // Filter added configs because app define not set for completion server
-			new ReadXmlConfig(xcfg, cfg, function(cfg:PConfig):Void {
-				var type:ComplexType = switch cfg.type {
+			new ReadXmlConfig(xcfg, cfg, function(cfg: PConfig): Void {
+				var type: ComplexType = switch cfg.type {
 					case CString: macro:String;
 					case CInt: macro:Int;
 					case CFloat: macro:Float;
@@ -56,31 +60,35 @@ class ConfigBuilder {
 					case _: throw 'Error';
 				}
 
-				var value:Expr = switch cfg.type {
+				var value: Expr = switch cfg.type {
 					case CString: Context.makeExpr(cfg.value, Context.currentPos());
 					case CInt: Context.makeExpr(Std.parseInt(cfg.value), Context.currentPos());
 					case CFloat: Context.makeExpr(Std.parseFloat(cfg.value), Context.currentPos());
-					case CColor: Context.makeExpr((pony.color.Color.fromString(cfg.value):Int), Context.currentPos());
+					case CColor: Context.makeExpr((pony.color.Color.fromString(cfg.value): Int), Context.currentPos());
 					case CStringMap, CIntMap, CFloatMap: null;
 					case _: throw 'Error';
 				}
 
-				var map:Array<Expr> = switch cfg.type {
+				var map: Array<Expr> = switch cfg.type {
 					case CString, CInt, CFloat, CColor: null;
 					case CStringMap: [for (k in cfg.map.keys()) macro $v{k} => $v{cfg.map[k]}];
 					case CIntMap: [for (k in cfg.map.keys()) macro $v{k} => $v{Std.parseInt(cfg.map[k])}];
 					case CFloatMap: [for (k in cfg.map.keys()) macro $v{k} => $v{Std.parseFloat(cfg.map[k])}];
-					case CColorMap: [for (k in cfg.map.keys()) macro $v{k} => $v{(pony.color.Color.fromString(cfg.value):Int)}];
+					case CColorMap: [
+							for (k in cfg.map.keys()) macro $v{k} => $v{(pony.color.Color.fromString(cfg.value): Int)}
+						];
 					case _: throw 'Error';
 				}
 
 				var access = [APublic, AStatic];
 				switch cfg.type {
-					case CString, CInt, CFloat: access.push(AInline);
+					case CString, CInt, CFloat:
+						access.push(AInline);
 					case _:
 				}
-				var name:String = cfg.path + cfg.key;
-				if (addedConfig.contains(name)) return;
+				var name: String = cfg.path + cfg.key;
+				if (addedConfig.contains(name))
+					return;
 				addedConfig.push(name);
 				fields.push({
 					name: name,
@@ -94,8 +102,10 @@ class ConfigBuilder {
 	}
 
 }
+
 #if macro
-private typedef PConfig = { > BaseConfig,
+private typedef PConfig = {
+	> BaseConfig,
 	path: String,
 	?key: String,
 	?value: String,
@@ -117,8 +127,8 @@ private enum ConfigTypes {
 
 private class ReadXmlConfig extends XmlConfigReader<PConfig> {
 
-	override private function readNode(xml:Fast):Void {
-		var v:String = null;
+	override private function readNode(xml: Fast): Void {
+		var v: String = null;
 		try {
 			v = xml.innerData;
 			if (v.charAt(0) == '$') {
@@ -132,14 +142,14 @@ private class ReadXmlConfig extends XmlConfigReader<PConfig> {
 			}
 		} catch (_:Any) {}
 
-		var stype:String = xml.has.type ? xml.att.type : null;
+		var stype: String = xml.has.type ? xml.att.type : null;
 
-		var map:Map<String, String> = null;
+		var map: Map<String, String> = null;
 
-		var type:ConfigTypes = switch stype {
+		var type: ConfigTypes = switch stype {
 
 			case 'map', 'intmap', 'floatmap', 'stringmap':
-				var mapType:ConfigTypes = switch stype {
+				var mapType: ConfigTypes = switch stype {
 					case 'map': null;
 					case 'intmap': CInt;
 					case 'floatmap': CFloat;
@@ -153,10 +163,9 @@ private class ReadXmlConfig extends XmlConfigReader<PConfig> {
 					debug: cfg.debug,
 					cordova: cfg.cordova,
 					path: ''
-				}, function(conf:PConfig) {
+				}, function(conf: PConfig) {
 					if (mapType == null) mapType = conf.type;
-					if (stype == 'map' && mapType != conf.type)
-						throw 'Type error';
+					if (stype == 'map' && mapType != conf.type) throw 'Type error';
 					map[conf.path + conf.key] = conf.value;
 				});
 
@@ -175,7 +184,6 @@ private class ReadXmlConfig extends XmlConfigReader<PConfig> {
 			case 'color': CColor;
 
 			case _:
-
 				var nt = xml.x.count();
 				if (nt > 1) {
 					CVars;

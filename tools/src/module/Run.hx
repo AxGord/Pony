@@ -87,6 +87,10 @@ private class RunReader extends BAReader<RunConfig> {
 				cfg.command.push({cmd: 'haxe --run ' + normalize(xml.innerData), path: xml.has.path ? normalize(xml.att.path) : null});
 			case 'lime':
 				cfg.command.push({cmd: 'haxelib run lime ' + normalize(xml.innerData), path: xml.has.path ? normalize(xml.att.path) : null});
+			case 'ax3':
+				cfg.command.push({cmd: 'haxelib run ax3 ' + normalize(xml.innerData), path: xml.has.path ? normalize(xml.att.path) : null});
+			case 'pony':
+				cfg.command.push({cmd: 'haxelib run pony ' + normalize(xml.innerData), path: xml.has.path ? normalize(xml.att.path) : null});
 			case _:
 				super.readNode(xml);
 		}
