@@ -200,13 +200,17 @@ using pony.Tools;
 		}
 	}
 
+	public static function formatPos(?p: PosInfos, endSpace: Bool = false): String {
+		return p != null ? '${p.fileName}:${p.lineNumber}:' + (endSpace ? ' ' : '') : '';
+	}
+
 	private static function vscodeTrace(v: Dynamic, ?p: PosInfos): Void {
 		patchFileName(p);
 		#if (js && !nodejs)
 		var place: String = '';
 		var prms: Array<Dynamic> = [];
 		if (p != null) {
-			place = '${p.fileName}:${p.lineNumber}';
+			place = formatPos(p);
 			var n: Int = 0;
 			if (p.customParams != null) prms = p.customParams;
 		}
