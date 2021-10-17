@@ -17,7 +17,7 @@ typedef RunConfig = {
  */
 @:nullSafety(Strict) class Run extends CfgModule<RunConfig> {
 
-	private static inline var PRIORITY: Int = 0;
+	private static inline var PRIORITY: Int = 35;
 
 	public function new() super('run');
 
@@ -91,6 +91,10 @@ private class RunReader extends BAReader<RunConfig> {
 				cfg.command.push({cmd: 'haxelib run ax3 ' + normalize(xml.innerData), path: xml.has.path ? normalize(xml.att.path) : null});
 			case 'pony':
 				cfg.command.push({cmd: 'haxelib run pony ' + normalize(xml.innerData), path: xml.has.path ? normalize(xml.att.path) : null});
+			case 'formatter':
+				cfg.command.push({
+					cmd: 'haxelib run formatter -s ' + normalize(xml.innerData), path: xml.has.path ? normalize(xml.att.path) : null
+				});
 			case _:
 				super.readNode(xml);
 		}

@@ -74,9 +74,16 @@ class Haxelib extends CfgModule<HaxelibConfig> {
 			} catch (e: Eof) {}
 			var r: Int = process.exitCode();
 			if (r > 0) error('haxelib error $r');
-			if (lib.name == 'pony' && lib.version != Utils.ponyVersion) Utils.command(
-				'haxelib', ['run', 'pony', 'install', '-code', '-code-insiders', '-npm', '-userpath', '-nodepath', '-ponypath']
-			) else {
+			if (lib.name == 'pony') {
+				if (![null, 'dev', 'git'].contains(lib.version) && lib.version != Utils.ponyVersion) {
+					// Build and run new version
+					Utils.command(
+						'haxelib', ['run', 'pony', 'install', '-code', '-code-insiders', '-npm', '-userpath', '-nodepath', '-ponypath']
+					);
+					Utils.command('haxelib', ['run', 'pony', 'prepare']);
+					Sys.exit(0);
+				}
+			} else {
 				var path: String = Tools.libPath(lib.name);
 				log('Lib installed to $path');
 				var pony: String = path + 'pony.xml';
