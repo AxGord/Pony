@@ -153,6 +153,14 @@ class VSCode {
 			});
 		}
 
+		tasks.push({
+			label: 'prepare',
+			type: 'shell',
+			command: 'pony prepare',
+			runOptions: {runOn: 'default'},
+			group: 'build'
+		});
+
 		if (server)
 			tasks.push({
 				label: 'server',
