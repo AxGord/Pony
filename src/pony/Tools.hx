@@ -295,9 +295,11 @@ class Tools {
 		var libPath: String = null;
 		#if nodejs
 		var o: String = Std.string(js.node.ChildProcess.execSync('haxelib path $lib'));
-		libPath = o.split('\n')[0];
+		var lines: Array<String> = o.split('\n');
+		do libPath = lines.shift() while (StringTools.startsWith(libPath, '-'));
 		#elseif neko
-		libPath = new sys.io.Process('haxelib', ['path', lib]).stdout.readLine();
+		var out: haxe.io.Input = new sys.io.Process('haxelib', ['path', lib]).stdout;
+		do libPath = out.readLine() while (StringTools.startsWith(libPath, '-'));
 		libPath = sys.FileSystem.fullPath(libPath);
 		#else
 		throw 'Not supported';
