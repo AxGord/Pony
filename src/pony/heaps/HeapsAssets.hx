@@ -179,6 +179,7 @@ import pony.ui.gui.slices.SliceTools;
 		#end
 	}
 
+	#if sys
 	private static function getAsset(loader: BinaryLoader): Void {
 		lastAssetTime = Timer.stamp();
 		assetLoader = loader;
@@ -226,6 +227,7 @@ import pony.ui.gui.slices.SliceTools;
 			cb();
 		}
 	}
+	#end
 
 	public static inline function ext(asset: String): String {
 		return asset.indexOf('@') != -1 ? BIN : asset.substr(asset.lastIndexOf('.') + 1);
