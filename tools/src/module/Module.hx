@@ -97,27 +97,10 @@ class Module extends pony.Logable implements pony.magic.HasAbstract implements p
 		currentSection = current;
 		addConfigListener();
 		addListeners(priority, moduleBefore, moduleAfter);
-
-		if (current != null) switch current {
-			case Server: modules.commands.onServer.once(moduleStart, priority);
-			case Prepare: modules.commands.onPrepare.once(moduleStart, priority);
-			case Build: modules.commands.onBuild.once(moduleStart, priority);
-			case Cordova: modules.commands.onCordova.once(moduleStart, priority);
-			case Android: modules.commands.onAndroid.once(moduleStart, priority);
-			case Iphone: modules.commands.onIphone.once(moduleStart, priority);
-			case Electron: modules.commands.onElectron.once(moduleStart, priority);
-			case Run: modules.commands.onRun.once(moduleStart, priority);
-			case Zip: modules.commands.onZip.once(moduleStart, priority);
-			case Ftp: modules.commands.onFtp.once(moduleStart, priority);
-			case Remote: modules.commands.onRemote.once(moduleStart, priority);
-			case Hash: modules.commands.onHash.once(moduleStart, priority);
-			case Unpack: modules.commands.onUnpack.once(moduleStart, priority);
-		}
 	}
 
-	private function moduleStart():Void runModule(false, currentSection);
-	private function moduleBefore(section:BASection):Void if (section != currentSection) runModule(true, section);
-	private function moduleAfter(section:BASection):Void if (section != currentSection) runModule(false, section);
+	private function moduleBefore(section:BASection):Void runModule(true, section);
+	private function moduleAfter(section:BASection):Void runModule(false, section);
 
 	private function addConfigListener():Void {
 		modules.commands.onServer.once(emptyConfig, CONFIG_PRIORITY);
