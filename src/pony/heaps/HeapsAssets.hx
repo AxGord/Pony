@@ -18,6 +18,7 @@ import hxd.res.Sound;
 
 import pony.Fast;
 import pony.Pair;
+import pony.Queue.Queue1;
 import pony.time.DeltaTime;
 import pony.ui.AssetManager;
 import pony.ui.gui.slices.SliceTools;
@@ -61,12 +62,15 @@ import pony.ui.gui.slices.SliceTools;
 	private static var bins: Map<String, Bytes> = new Map();
 	private static var sounds: Map<String, Sound> = new Map();
 
-	#if mobile
-	private static var queue: Queue<BinaryLoader -> Void> = new Queue(getAsset);
+	#if sys
+	private static var queue: Queue1<BinaryLoader> = new Queue1(getAsset);
+	private static var lastAssetTime: Float = 0;
 	private static var assetLoader: Null<BinaryLoader>;
+	#end
+
+	#if mobile
 	private static var assetBytesOutput: Null<BytesOutput>;
 	private static var assetTotalSize: UInt = 0;
-	private static var lastAssetTime: Float = 0;
 	#end
 
 	public static function load(asset: String, cb: Int -> Int -> Void): Void {
@@ -168,28 +172,28 @@ import pony.ui.gui.slices.SliceTools;
 	}
 
 	private static inline function loadAsset(loader: BinaryLoader): Void {
-		#if mobile
+		#if sys
 		queue.call(loader);
 		#else
 		loader.load();
 		#end
 	}
 
-	#if mobile
-
 	private static function getAsset(loader: BinaryLoader): Void {
 		lastAssetTime = Timer.stamp();
-		assetBytesOutput = new BytesOutput();
 		assetLoader = loader;
+		#if mobile
+		assetBytesOutput = new BytesOutput();
 		Native.getAsset(loader.url);
 		assetTotalSize = Native.assetBytesAvailable;
 		if (assetTotalSize > Native.BUFFER_SIZE)
 			DeltaTime.fixedUpdate < loadAssetStep; // Prepare before large asset
-		else
+		else #end
 			loadAssetStep();
 	}
 
 	private static function loadAssetStep(): Void {
+		#if mobile
 		if (Native.assetBytesAvailable > 0) {
 			@:nullSafety(Off) assetBytesOutput.write(Native.getAssetBytes());
 			@:nullSafety(Off) assetLoader.onProgress(assetTotalSize - Native.assetBytesAvailable, assetTotalSize);
@@ -201,19 +205,27 @@ import pony.ui.gui.slices.SliceTools;
 			Native.finishGetAsset();
 			runNext(queue.next);
 		}
+		#else
+		var onLoaded = @:nullSafety(Off) assetLoader.onLoaded;
+		@:nullSafety(Off) assetLoader.onLoaded = function(bytes: Bytes): Void {
+			onLoaded(bytes);
+			assetLoader = null;
+			runNext(queue.next);
+		}
+		assetLoader.load();
+		#end
 	}
 
 	private static function runNext(cb: Void -> Void): Void {
 		var t: Float = Timer.stamp();
 		var nextFrame: Bool = t - lastAssetTime > 1 / 120;
-		lastAssetTime = t;
-		if (nextFrame)
-			DeltaTime.fixedUpdate < cb;
-		else
+		if (nextFrame) {
+			lastAssetTime = t;
+			DeltaTime.skipUpdate(cb);
+		} else {
 			cb();
+		}
 	}
-
-	#end
 
 	public static inline function ext(asset: String): String {
 		return asset.indexOf('@') != -1 ? BIN : asset.substr(asset.lastIndexOf('.') + 1);

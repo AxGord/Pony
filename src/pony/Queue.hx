@@ -43,3 +43,42 @@ package pony;
 	}
 
 }
+
+/**
+ * Queue1
+ * @author AxGord <axgord@gmail.com>
+ */
+@:nullSafety(Strict) class Queue1<T1> {
+
+	public var busy(default, null): Bool;
+	public var hasNext(get, never): Bool;
+
+	private var list: List<T1>;
+	private var method: T1 -> Void;
+
+	public function new(method: T1 -> Void, busy: Bool = false) {
+		this.method = method;
+		this.busy = busy;
+		list = new List();
+	}
+
+	public function call(a1: T1): Void {
+		if (!busy) {
+			busy = true;
+			method(a1);
+		} else {
+			list.add(a1);
+		}
+	}
+
+	private inline function get_hasNext(): Bool return list.length > 0;
+
+	public inline function next(): Void hasNext ? @:nullSafety(Off) method(list.pop()) : busy = false;
+
+	public inline function destroy(): Void {
+		list.clear();
+		busy = true;
+		@:nullSafety(Off) method = null;
+	}
+
+}
