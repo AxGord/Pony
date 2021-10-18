@@ -109,25 +109,25 @@ using pony.Tools;
 
 	public inline function error(s: String, ?p: PosInfos): Void {
 		#if !disableErrors
-		eError.dispatch(logPrefix + s, p);
+		if (errorActive) eError.dispatch(logPrefix + s, p);
 		#end
 	}
 
 	public inline function log(s: String, ?p: PosInfos): Void {
 		#if !disableLogs
-		eLog.dispatch(logPrefix + s, p);
+		if (logActive) eLog.dispatch(logPrefix + s, p);
 		#end
 	}
 
 	public inline function errorf(fn: Void -> String, ?p: PosInfos): Void {
 		#if !disableErrors
-		if (errorActive) error(@:nullSafety(Off) fn(), p);
+		if (errorActive) eError.dispatch(@:nullSafety(Off) fn(), p);
 		#end
 	}
 
 	public inline function logf(fn: Void -> String, ?p: PosInfos): Void {
 		#if !disableLogs
-		if (logActive) log(@:nullSafety(Off) fn(), p);
+		if (logActive) eLog.dispatch(@:nullSafety(Off) fn(), p);
 		#end
 	}
 
