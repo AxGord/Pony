@@ -45,6 +45,41 @@ package pony;
 }
 
 /**
+ * Queue0
+ * @author AxGord <axgord@gmail.com>
+ */
+@:nullSafety(Strict) class Queue0 {
+
+	public var hasNext(get, never): Bool;
+
+	private var count: UInt = 0;
+	private var method: Void -> Void;
+
+	public function new(method: Void -> Void, busy: Bool = false) {
+		this.method = method;
+		count = busy ? 1 : 0;
+	}
+
+	public function call(): Void {
+		if (count == 0) method();
+		count++;
+	}
+
+	private inline function get_hasNext(): Bool return count > 1;
+
+	public inline function next(): Void {
+		if (hasNext) method();
+		count--;
+	}
+
+	public inline function destroy(): Void {
+		count = 0;
+		@:nullSafety(Off) method = null;
+	}
+
+}
+
+/**
  * Queue1
  * @author AxGord <axgord@gmail.com>
  */
