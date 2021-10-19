@@ -96,7 +96,7 @@ class Hashlink extends CfgModule<HashlinkConfig> {
 					['RELEASE_KEY_ALIAS', cfg.keyAlias],
 					['RELEASE_KEY_PASSWORD', cfg.keyPassword]
 				];
-				gradleProps.push(['ABI_FILTERS', cfg.abiFilters != null ? cfg.abiFilters : 'x86,x86_64,armeabi,armeabi-v7a,arm64-v8a']);
+				gradleProps.push(['ABI_FILTERS', cfg.abiFilters != null ? cfg.abiFilters : 'x86,x86_64,armeabi-v7a,arm64-v8a']);
 				((output + 'gradle.properties'): File).content = [
 					for (p in gradleProps) '${p.a}=${p.b}'
 				].join('\n');
