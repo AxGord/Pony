@@ -1,5 +1,4 @@
 package pony.magic.builder;
-
 #if macro
 import haxe.macro.Context;
 import haxe.macro.Expr;
@@ -9,6 +8,7 @@ import pony.Fast;
 
 import sys.io.File;
 
+import pony.text.TextTools;
 import pony.text.XmlConfigReader;
 import pony.text.XmlTools;
 
@@ -52,10 +52,12 @@ class ConfigBuilder {
 					case CString: macro:String;
 					case CInt: macro:Int;
 					case CFloat: macro:Float;
+					case CBool: macro:Bool;
 					case CColor: macro:pony.color.Color;
 					case CStringMap: macro:Map<String, String>;
 					case CIntMap: macro:Map<String, Int>;
 					case CFloatMap: macro:Map<String, Float>;
+					case CBoolMap: macro:Map<String, Bool>;
 					case CColorMap: macro:Map<String, pony.color.Color>;
 					case _: throw 'Error';
 				}
@@ -64,31 +66,32 @@ class ConfigBuilder {
 					case CString: Context.makeExpr(cfg.value, Context.currentPos());
 					case CInt: Context.makeExpr(Std.parseInt(cfg.value), Context.currentPos());
 					case CFloat: Context.makeExpr(Std.parseFloat(cfg.value), Context.currentPos());
+					case CBool: Context.makeExpr(TextTools.isTrue(cfg.value), Context.currentPos());
 					case CColor: Context.makeExpr((pony.color.Color.fromString(cfg.value): Int), Context.currentPos());
 					case CStringMap, CIntMap, CFloatMap: null;
 					case _: throw 'Error';
 				}
 
 				var map: Array<Expr> = switch cfg.type {
-					case CString, CInt, CFloat, CColor: null;
+					case CString, CInt, CFloat, CBool, CColor: null;
 					case CStringMap: [for (k in cfg.map.keys()) macro $v{k} => $v{cfg.map[k]}];
 					case CIntMap: [for (k in cfg.map.keys()) macro $v{k} => $v{Std.parseInt(cfg.map[k])}];
 					case CFloatMap: [for (k in cfg.map.keys()) macro $v{k} => $v{Std.parseFloat(cfg.map[k])}];
+					case CBoolMap: [for (k in cfg.map.keys()) macro $v{k} => $v{TextTools.isTrue(cfg.map[k])}];
 					case CColorMap: [
 							for (k in cfg.map.keys()) macro $v{k} => $v{(pony.color.Color.fromString(cfg.value): Int)}
 						];
-					case _: throw 'Error';
+					case t: throw 'Error $t';
 				}
 
 				var access = [APublic, AStatic];
 				switch cfg.type {
-					case CString, CInt, CFloat:
+					case CString, CInt, CFloat, CBool:
 						access.push(AInline);
 					case _:
 				}
 				var name: String = cfg.path + cfg.key;
-				if (addedConfig.contains(name))
-					return;
+				if (addedConfig.contains(name)) return;
 				addedConfig.push(name);
 				fields.push({
 					name: name,
@@ -117,11 +120,13 @@ private enum ConfigTypes {
 	CString;
 	CInt;
 	CFloat;
+	CBool;
 	CColor;
 	CVars;
 	CStringMap;
 	CIntMap;
 	CFloatMap;
+	CBoolMap;
 	CColorMap;
 }
 
@@ -148,11 +153,12 @@ private class ReadXmlConfig extends XmlConfigReader<PConfig> {
 
 		var type: ConfigTypes = switch stype {
 
-			case 'map', 'intmap', 'floatmap', 'stringmap':
+			case 'map', 'intmap', 'floatmap', 'boolmap', 'stringmap':
 				var mapType: ConfigTypes = switch stype {
 					case 'map': null;
 					case 'intmap': CInt;
 					case 'floatmap': CFloat;
+					case 'boolmap': CBool;
 					case 'stringmap': CString;
 					case 'colormap': CColor;
 					case _: throw 'Error';
@@ -172,6 +178,7 @@ private class ReadXmlConfig extends XmlConfigReader<PConfig> {
 				switch mapType {
 					case CInt: CIntMap;
 					case CFloat: CFloatMap;
+					case CBool: CBoolMap;
 					case CString: CStringMap;
 					case CColor: CColorMap;
 					case _: throw 'Type error';
@@ -180,16 +187,19 @@ private class ReadXmlConfig extends XmlConfigReader<PConfig> {
 			case 'vars': CVars;
 			case 'int': CInt;
 			case 'float': CFloat;
+			case 'bool': CBool;
 			case 'string': CString;
 			case 'color': CColor;
 
 			case _:
-				var nt = xml.x.count();
+				var nt: Int = xml.x.count();
 				if (nt > 1) {
 					CVars;
 				} else if (nt == 1) {
 					if (v == null)
 						CString;
+					else if (TextTools.isTrue(v) || StringTools.trim(v.toLowerCase()) == 'false')
+						CBool;
 					else if (Std.string(Std.parseInt(v)) == v)
 						CInt;
 					else if (Std.string(Std.parseFloat(v)) == v)
@@ -206,7 +216,7 @@ private class ReadXmlConfig extends XmlConfigReader<PConfig> {
 
 		switch type {
 
-			case CIntMap, CFloatMap, CStringMap, CColorMap:
+			case CIntMap, CFloatMap, CBoolMap, CStringMap, CColorMap:
 				onConfig({
 					app: cfg.app,
 					debug: cfg.debug,
@@ -217,7 +227,7 @@ private class ReadXmlConfig extends XmlConfigReader<PConfig> {
 					type: type
 				});
 
-			case CInt, CFloat, CString, CColor:
+			case CInt, CFloat, CBool, CString, CColor:
 				onConfig({
 					app: cfg.app,
 					debug: cfg.debug,

@@ -42,3 +42,7 @@ HL_PRIM void HL_NAME(finish_get_asset)(int length) {
 	asset = NULL;
 	LOGI("Finish get asset");
 }
+
+HL_PRIM const char *HL_NAME(get_sdl_error)() {
+	return SDL_GetError();
+}
