@@ -36,10 +36,6 @@ import hl.Bytes;
 
 	@:extern public static inline function finishGetAsset(): Void finish_get_asset();
 
-	private static function get_sdl_error(): Bytes return null;
-
-	@:extern public static inline function getSdlError(): String return @:privateAccess String.fromUTF8(get_sdl_error());
-
 	private static function get_pref_path(org: Bytes, app: Bytes): Bytes return null;
 
 	#end
@@ -55,6 +51,14 @@ import hl.Bytes;
 		throw 'Not supported for current platform';
 		#end
 	}
+
+	#if sys
+
+	private static function get_sdl_error(): Bytes return null;
+
+	@:extern public static inline function getSdlError(): String return @:privateAccess String.fromUTF8(get_sdl_error());
+
+	#end
 
 }
 #end
