@@ -200,9 +200,8 @@ using pony.Tools;
 		}
 	}
 
-	public static function formatPos(?p: PosInfos, endSpace: Bool = false): String {
-		return p != null ? '${p.fileName}:${p.lineNumber}:' + (endSpace ? ' ' : '') : '';
-	}
+	public static inline function formatPos(p: Null<PosInfos>): String return p != null ? '${p.fileName}:${p.lineNumber}:' : '';
+	public static inline function formatPosWithSpace(p: Null<PosInfos>): String return p != null ? formatPos(p) + ' ' : '';
 
 	private static function vscodeTrace(v: Dynamic, ?p: PosInfos): Void {
 		patchFileName(p);

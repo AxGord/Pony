@@ -62,6 +62,7 @@ import sys.FileSystem;
 		return null;
 	}
 
+	@:op(A + B) public inline function addString(a: String): Unit return [for (e in this) e + (a.indexOf('/') == 0 ? '' : '/') + a];
 	@:from private static inline function fromString(s: String): Unit return s.split(';').map(StringTools.trim);
 	@:from public static inline function join(a: Array<Unit>): Unit return new Priority<String>(cast a);
 	@:from private static inline function fromPriority(p: Priority<String>): Unit return new Unit(p);
@@ -80,7 +81,6 @@ import sys.FileSystem;
 	}
 
 	@:arrayAccess public inline function arrayAccess(key: Int): Unit return this.data[key];
-	@:op(A + B) public inline function addString(a: String): Unit return [for (e in this) e + (a.indexOf('/') == 0 ? '' : '/') + a];
 
 	public inline function copyTo(path: String): Void {
 		if (isDir)

@@ -9,7 +9,7 @@ using Lambda;
  * Directory
  * @author AxGord <axgord@gmail.com>
  */
-@:forward(addWay, addWayArray, name, rename)
+@:forward(addWay, addWayArray, name, rename, exists)
 abstract Dir(Unit) from Unit {
 
 	public var first(get, never):String;

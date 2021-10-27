@@ -1,5 +1,6 @@
 package module;
 
+import haxe.io.Path;
 import pony.fs.Dir;
 import pony.SPair;
 import pony.ZipTool;
@@ -43,6 +44,7 @@ class Hashlink extends CfgModule<HashlinkConfig> {
 			keyAlias: null,
 			keyPassword: null,
 			abiFilters: null,
+			platformData: null,
 			allowCfg: true
 		}, configHandler);
 	}
@@ -100,8 +102,26 @@ class Hashlink extends CfgModule<HashlinkConfig> {
 				((output + 'gradle.properties'): File).content = [
 					for (p in gradleProps) '${p.a}=${p.b}'
 				].join('\n');
-				((output + 'app/src/main/res/values/strings.xml'): File).content =
-					'<resources><string name="app_name">${cfg.title}</string></resources>';
+
+				final outputMain: Dir = output + 'app/src/main';
+				final outputRes: Dir = outputMain + 'res';
+
+				if (cfg.platformData != null) {
+					final platformData: Dir = cfg.platformData;
+					final resSrc: Dir = platformData + 'res';
+					if (resSrc.exists) {
+						log('Remove default icon');
+						for (dir in outputRes.dirs()) {
+							if (StringTools.startsWith(dir.name, 'drawable') || StringTools.startsWith(dir.name, 'mipmap')) {
+								dir.deleteContent();
+								dir.delete();
+							}
+						}
+					}
+					platformData.copyTo(outputMain);
+				}
+
+				((outputRes + 'values/strings.xml'): File).content = '<resources><string name="app_name">${cfg.title}</string></resources>';
 			case _:
 				ZipTool.unpackFile(cfg.hl, output, true, ignoreLibs, function(s: String): Void log(s));
 		}
@@ -144,7 +164,8 @@ private typedef HashlinkConfig = {
 	storePassword: Null<String>,
 	keyAlias: Null<String>,
 	keyPassword: Null<String>,
-	abiFilters: Null<String>
+	abiFilters: Null<String>,
+	platformData: Null<String>
 }
 
 private class HashlinkReader extends BAReader<HashlinkConfig> {
@@ -183,6 +204,8 @@ private class HashlinkReader extends BAReader<HashlinkConfig> {
 				cfg.keyPassword = normalize(xml.innerData);
 			case 'abiFilters':
 				cfg.abiFilters = normalize(xml.innerData);
+			case 'platformData':
+				cfg.platformData = normalize(xml.innerData);
 			case _:
 				super.readNode(xml);
 		}
