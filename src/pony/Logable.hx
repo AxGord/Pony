@@ -170,16 +170,25 @@ using pony.Tools;
 		stopTraceErrors();
 	}
 
-	public static function traceWithDate(v: String, ?p: PosInfos): Void {
-		if (p != null)
-			p.fileName = Date.now().toString() + haxe.Timer.stamp()._toFixed(3, -1) + ' ' + p.fileName;
-		Log.trace(v, p);
+	public static function traceWithDate(v: String, ?p: PosInfos): Void Log.trace(v, addDateToPosInfosFileName(p));
+	public static function traceWithTime(v: String, ?p: PosInfos): Void Log.trace(v, addTimeToPosInfosFileName(p));
+
+	public static inline function addDateToPosInfosFileName(p: Null<PosInfos>): Null<PosInfos> {
+		return addToPosInfosFileName(Date.now().toString() + haxe.Timer.stamp()._toFixed(3, -1), p);
 	}
 
-	public static function traceWithTime(v: String, ?p: PosInfos): Void {
-		if (p != null)
-			p.fileName = DateTools.format(Date.now(), '%H:%M:%S') + haxe.Timer.stamp()._toFixed(3, -1) + ' ' + p.fileName;
-		Log.trace(v, p);
+	public static inline function addTimeToPosInfosFileName(p: Null<PosInfos>): Null<PosInfos> {
+		return addToPosInfosFileName(DateTools.format(Date.now(), '%H:%M:%S') + haxe.Timer.stamp()._toFixed(3, -1), p);
+	}
+
+	public static inline function addToPosInfosFileName(v: String, p: Null<PosInfos>): Null<PosInfos> {
+		return p == null ? null : {
+			fileName: '$v ${p.fileName}',
+			customParams: p.customParams,
+			methodName: p.methodName,
+			className: p.className,
+			lineNumber: p.lineNumber
+		};
 	}
 
 	public static function vscodePatchTrace(): Void {
@@ -194,18 +203,24 @@ using pony.Tools;
 		return (lib != null ? lib : './') + path;
 	}
 
-	private static inline function patchFileName(p: Null<PosInfos>): Void {
-		if (p != null) {
+	private static inline function patchFileName(p: Null<PosInfos>): Null<PosInfos> {
+		return if (p == null) null else {
 			var r: SPair<String> = p.fileName.lastSplit(' ');
-			p.fileName = r.b != '' ? r.a + ' ' + replaceLibPath(r.b) : replaceLibPath(r.a);
-		}
+			{
+				fileName: r.b != '' ? r.a + ' ' + replaceLibPath(r.b) : replaceLibPath(r.a),
+				customParams: p.customParams,
+				methodName: p.methodName,
+				className: p.className,
+				lineNumber: p.lineNumber
+			}
+		};
 	}
 
 	public static inline function formatPos(p: Null<PosInfos>): String return p != null ? '${p.fileName}:${p.lineNumber}:' : '';
 	public static inline function formatPosWithSpace(p: Null<PosInfos>): String return p != null ? formatPos(p) + ' ' : '';
 
 	private static function vscodeTrace(v: Dynamic, ?p: PosInfos): Void {
-		patchFileName(p);
+		var p: Null<PosInfos> = patchFileName(p);
 		#if (js && !nodejs)
 		var place: String = '';
 		var prms: Array<Dynamic> = [];
@@ -273,7 +288,7 @@ using pony.Tools;
 	private static inline function benchTime(time: Float): Float return Std.int((Timer.stamp() - time) * 100000) / 100;
 
 	public static inline function debugGetObjectId(obj: {}): UInt {
-		final id: Int = debugObjects.indexOf(obj);
+		var id: Int = debugObjects.indexOf(obj);
 		return id == -1 ? debugObjects.push(obj) - 1 : id;
 	}
 
