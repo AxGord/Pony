@@ -24,6 +24,7 @@ using pony.Tools;
 
 	@:nullSafety(Off) private static var usedLibs: Map<String, String>;
 	private static var origTrace: Null<Dynamic -> ?PosInfos -> Void>;
+	private static var debugObjects: Array<{}> = [];
 
 	@:lazy public var onLog: Signal2<String, Null<PosInfos>>;
 	@:lazy public var onError: Signal2<String, Null<PosInfos>>;
@@ -270,5 +271,12 @@ using pony.Tools;
 	}
 
 	private static inline function benchTime(time: Float): Float return Std.int((Timer.stamp() - time) * 100000) / 100;
+
+	public static inline function debugGetObjectId(obj: {}): UInt {
+		final id: Int = debugObjects.indexOf(obj);
+		return id == -1 ? debugObjects.push(obj) - 1 : id;
+	}
+
+	public static inline function debugClearObjectsId(): Void debugObjects.resize(0);
 
 }
