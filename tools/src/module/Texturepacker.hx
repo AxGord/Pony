@@ -30,7 +30,8 @@ private typedef TPUnit = {
 	multipack: Bool,
 	basicSortBy: String,
 	size: Point<Int>,
-	pot: Bool
+	pot: Bool,
+	padding: UInt
 }
 
 /**
@@ -66,6 +67,7 @@ class Texturepacker extends CfgModule<TPConfig> {
 			allowCfg: false,
 			forceSquared: false,
 			extrude: 0,
+			padding: 0,
 			alpha: true,
 			multipack: false,
 			basicSortBy: null,
@@ -165,6 +167,9 @@ class Texturepacker extends CfgModule<TPConfig> {
 
 			command.push('--extrude');
 			command.push('${unit.extrude}');
+
+			command.push('--padding');
+			command.push('${unit.padding}');
 
 			if (unit.basicSortBy != null) {
 				command.push('--algorithm');
@@ -276,6 +281,7 @@ private class Path extends BAReader<TPConfig> {
 		cfg.output = null;
 		cfg.ext = null;
 		cfg.extrude = 0;
+		cfg.padding = 0;
 		cfg.forceSquared = false;
 		cfg.alpha = true;
 		cfg.multipack = false;
@@ -301,6 +307,7 @@ private class Path extends BAReader<TPConfig> {
 			case 'datascale': cfg.datascale = Std.parseFloat(val);
 			case 'quality': cfg.quality = Std.parseFloat(val);
 			case 'extrude': cfg.extrude = Std.parseInt(val);
+			case 'padding': cfg.padding = Std.parseInt(val);
 			case 'forceSquared': cfg.forceSquared = TextTools.isTrue(val);
 			case 'from': cfg.from += val;
 			case 'to': cfg.to += val;
