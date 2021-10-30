@@ -28,7 +28,7 @@ import js.html.Element;
  * HeapsApp
  * @author AxGord <axgord@gmail.com>
  */
-@:nullSafety class HeapsApp extends App implements HasSignal implements HasLink {
+@:nullSafety(Strict) class HeapsApp extends App implements HasSignal implements HasLink {
 
 	public static var instance: Null<HeapsApp>;
 	public static var s2dReady(get, never): Bool;
@@ -65,15 +65,17 @@ import js.html.Element;
 
 	override private function init(): Void eInit.dispatch(this);
 
-	public inline function setScalableScene(scene: Scene, alignCenter: Bool = true, disposePrevious: Bool = true): Void {
+	public inline function setScalableScene(?scene: Scene, alignCenter: Bool = true, disposePrevious: Bool = true): Void {
 		noScale = false;
 		this.alignCenter = alignCenter;
+		if (scene == null) scene = new Scene();
 		setScene(scene, disposePrevious);
 	}
 
-	public inline function setFixedScene(scene: Scene, alignCenter: Bool = false, disposePrevious: Bool = true): Void {
+	public inline function setFixedScene(?scene: Scene, alignCenter: Bool = false, disposePrevious: Bool = true): Void {
 		noScale = true;
 		this.alignCenter = alignCenter;
+		if (scene == null) scene = new Scene();
 		setScene(scene, disposePrevious);
 	}
 
@@ -111,7 +113,8 @@ import js.html.Element;
 	}
 
 	public function drawBorders(?color: UInt): Void {
-		border = new Graphics();
+		final border: Graphics = new Graphics();
+		this.border = border;
 		border.beginFill(@:nullSafety(Off) (color == null) ? engine.backgroundColor : color);
 		var w: Int = canvas.stageInitSize.x * 2;
 		var h: Int = canvas.stageInitSize.y * 2;
