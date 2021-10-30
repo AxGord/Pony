@@ -58,7 +58,7 @@ using pony.text.TextTools;
 	text: pony.heaps.ui.gui.DText,
 	input: h2d.TextInput,
 	repeat: pony.heaps.ui.gui.Repeat,
-	image: pony.heaps.ui.gui.NodeBitmap,
+	image: pony.heaps.ui.gui.Node,
 	layout: pony.heaps.ui.gui.layout.TLayout,
 	button: pony.heaps.ui.gui.Button,
 	lightButton: pony.heaps.ui.gui.LightButton,
