@@ -490,6 +490,13 @@ using pony.text.TextTools;
 		this.app.canvas.onDynStageResize << dynStageHandler;
 	}
 
+	public function destroy(): Void {
+		app.canvas.onDynStageResize >> dynStageHandler;
+		@:nullSafety(Off) watchList = null;
+		remove();
+		@:nullSafety(Off) app = null;
+	}
+
 	private function createFilters(data: Dynamic<Dynamic<String>>): Void {}
 
 	private function setWatchers(obj: Object, attrs: Dynamic<String>): Void {
