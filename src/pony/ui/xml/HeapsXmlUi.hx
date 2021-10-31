@@ -77,6 +77,7 @@ using pony.text.TextTools;
 
 	private function createUIElement(name: String, attrs: Dynamic<String>, content: Array<Dynamic>): Dynamic {
 		if (attrs.reverse.isTrue()) content.reverse();
+		var allowFilters: Bool = true;
 		var obj: Object = switch (name: UiTags) {
 			case UiTags.repeat:
 				new Repeat(this, content[0], attrs.count != null ? Std.parseInt(attrs.count) : 0);
@@ -133,8 +134,10 @@ using pony.text.TextTools;
 			case UiTags.layout:
 				createLayout(attrs, content);
 			case UiTags.text:
+				allowFilters = false;
 				createDText(attrs, content);
 			case UiTags.simpleText:
+				allowFilters = false;
 				createText(attrs, content);
 			case UiTags.input:
 				createTextInput(attrs, content);
@@ -183,12 +186,14 @@ using pony.text.TextTools;
 			var c: UColor = attrs.tint;
 			cast(obj, Drawable).color = Vector.fromColor(c.rgb);
 		}
-		#if (haxe_ver >= 4.10)
-		if (Std.isOfType(obj, Drawable))
-		#else
-		if (Std.is(obj, Drawable))
-		#end
-			addFilters(cast obj, attrs);
+		if (allowFilters) {
+			#if (haxe_ver >= 4.10)
+			if (Std.isOfType(obj, Drawable))
+			#else
+			if (Std.is(obj, Drawable))
+			#end
+				addFilters(cast obj, attrs);
+		}
 		setWatchers(obj, attrs);
 		return obj;
 	}
@@ -280,6 +285,20 @@ using pony.text.TextTools;
 			t.smooth = true;
 		else if (attrs.smooth.isFalse())
 			t.smooth = false;
+		if (attrs.shadow != null) {
+			var shadow: String = StringTools.trim(attrs.shadow);
+			if (shadow.length > 0) {
+				var a: Array<String> = shadow.split(' ');
+				var color: UColor = 0;
+				if (a[0].charAt(0) == '#')
+					color = @:nullSafety(Off) UColor.fromString(a.shift());
+				else if (a[a.length - 1].charAt(0) == '#')
+					color = @:nullSafety(Off) UColor.fromString(a.pop());
+				@:nullSafety(Off) var dx: Int = a.length > 0 ? Std.parseInt(a.pop()) : 4;
+				@:nullSafety(Off) var dy: Int = a.length > 0 ? Std.parseInt(a.pop()) : dx;
+				t.dropShadow = {dx: dx, dy: dy, color: color, alpha: color.invertAlpha.af};
+			}
+		}
 		t.text = textTransform(_putData(content), attrs.transform);
 		return t;
 	}
