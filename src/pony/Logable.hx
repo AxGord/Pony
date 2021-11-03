@@ -22,9 +22,9 @@ using pony.Tools;
 
 	private static inline var DLM: String = ' ';
 
-	@:nullSafety(Off) private static var usedLibs: Map<String, String>;
-	private static var origTrace: Null<Dynamic -> ?PosInfos -> Void>;
-	private static var debugObjects: Array<{}> = [];
+	@:nullSafety(Off) private static var l_usedLibs: Map<String, String>;
+	private static var l_origTrace: Null<Dynamic -> ?PosInfos -> Void>;
+	private static var l_debugObjects: Array<{}> = [];
 
 	@:lazy public var onLog: Signal2<String, Null<PosInfos>>;
 	@:lazy public var onError: Signal2<String, Null<PosInfos>>;
@@ -33,7 +33,7 @@ using pony.Tools;
 	public var errorActive(get, never): Bool;
 
 	private var logPrefix: String;
-	private var benches: Map<String, Float> = new Map<String, Float>();
+	private var l_benches: Map<String, Float> = new Map<String, Float>();
 
 	public function new(?prefix: String) {
 		logPrefix = prefix == null ? '' : prefix + DLM;
@@ -141,14 +141,14 @@ using pony.Tools;
 	public inline function traceErrors(time: Bool = true, date: Bool = false): Void {
 		#if !disableErrors
 		#if (js && !nodejs)
-		onError << (date ? errorWithDate : time ? errorWithTime : errorLogTrace);
+		onError << (date ? l_errorWithDate : time ? l_errorWithTime : l_errorLogTrace);
 		#else
 		onError << (date ? traceWithDate : time ? traceWithTime : Log.trace);
 		#end
 		#end
 	}
 
-	private function pathErrorPosInfos(p: Null<PosInfos>): Null<PosInfos> {
+	private function l_pathErrorPosInfos(p: Null<PosInfos>): Null<PosInfos> {
 		return if (p != null) {
 			final params: Array<Dynamic> = ['color: darkred'];
 			if (p.customParams != null) params.concat(p.customParams);
@@ -164,19 +164,19 @@ using pony.Tools;
 		}
 	}
 
-	private function errorWithDate(v: String, ?p: PosInfos): Void {
+	private function l_errorWithDate(v: String, ?p: PosInfos): Void {
 		if (p != null) v = '%c$v';
-		traceWithDate(v, pathErrorPosInfos(p));
+		traceWithDate(v, l_pathErrorPosInfos(p));
 	}
 
-	private function errorWithTime(v: String, ?p: PosInfos): Void {
+	private function l_errorWithTime(v: String, ?p: PosInfos): Void {
 		if (p != null) v = '%c$v';
-		traceWithTime(v, pathErrorPosInfos(p));
+		traceWithTime(v, l_pathErrorPosInfos(p));
 	}
 
-	private function errorLogTrace(v: String, ?p: PosInfos): Void {
+	private function l_errorLogTrace(v: String, ?p: PosInfos): Void {
 		if (p != null) v = '%c$v';
-		Log.trace(v, pathErrorPosInfos(p));
+		Log.trace(v, l_pathErrorPosInfos(p));
 	}
 
 	public inline function traceAll(): Void {
@@ -227,22 +227,22 @@ using pony.Tools;
 	}
 
 	public static function vscodePatchTrace(): Void {
-		usedLibs = Tools.usedLibs();
-		origTrace = Log.trace;
-		Log.trace = vscodeTrace;
+		l_usedLibs = Tools.usedLibs();
+		l_origTrace = Log.trace;
+		Log.trace = l_vscodeTrace;
 	}
 
-	private static inline function replaceLibPath(path: String): String {
+	private static inline function l_replaceLibPath(path: String): String {
 		var p: SPair<String> = path.firstSplit('/');
-		var lib: Null<String> = usedLibs[p.a];
+		var lib: Null<String> = l_usedLibs[p.a];
 		return (lib != null ? lib : './') + path;
 	}
 
-	private static inline function patchFileName(p: Null<PosInfos>): Null<PosInfos> {
+	private static inline function l_patchFileName(p: Null<PosInfos>): Null<PosInfos> {
 		return if (p == null) null else {
 			var r: SPair<String> = p.fileName.lastSplit(' ');
 			{
-				fileName: r.b != '' ? r.a + ' ' + replaceLibPath(r.b) : replaceLibPath(r.a),
+				fileName: r.b != '' ? r.a + ' ' + l_replaceLibPath(r.b) : l_replaceLibPath(r.a),
 				customParams: p.customParams,
 				methodName: p.methodName,
 				className: p.className,
@@ -254,8 +254,8 @@ using pony.Tools;
 	public static inline function formatPos(p: Null<PosInfos>): String return p != null ? '${p.fileName}:${p.lineNumber}:' : '';
 	public static inline function formatPosWithSpace(p: Null<PosInfos>): String return p != null ? formatPos(p) + ' ' : '';
 
-	private static function vscodeTrace(v: Dynamic, ?p: PosInfos): Void {
-		var p: Null<PosInfos> = patchFileName(p);
+	private static function l_vscodeTrace(v: Dynamic, ?p: PosInfos): Void {
+		var p: Null<PosInfos> = l_patchFileName(p);
 		#if (js && !nodejs)
 		var place: String = '';
 		var prms: Array<Dynamic> = [];
@@ -276,7 +276,7 @@ using pony.Tools;
 			js.Syntax.code('queueMicrotask({0})', c);
 		} catch (_: Any) {}
 		#else
-		@:nullSafety(Off) origTrace(v, p);
+		@:nullSafety(Off) l_origTrace(v, p);
 		#end
 	}
 
@@ -287,7 +287,7 @@ using pony.Tools;
 		log('Begin bench' + name, p);
 		var time: Float = Timer.stamp();
 		f();
-		log('End bench' + name + ' ' + benchTime(time) + ' ms', p);
+		log('End bench' + name + ' ' + l_benchTime(time) + ' ms', p);
 		#end
 	}
 
@@ -297,7 +297,7 @@ using pony.Tools;
 		name = name != null ? ': ' + name : '';
 		log('Begin async bench' + name, p);
 		var time: Float = Timer.stamp();
-		f(function(): Void log('End async bench' + name + ' ' + benchTime(time) + ' ms', p));
+		f(function(): Void log('End async bench' + name + ' ' + l_benchTime(time) + ' ms', p));
 		#end
 	}
 
@@ -305,30 +305,30 @@ using pony.Tools;
 		#if !disableLogs
 		if (!logActive) return;
 		log('Begin bench: ' + name, p);
-		benches[name] = Timer.stamp();
+		l_benches[name] = Timer.stamp();
 		#end
 	}
 
 	public inline function benchComplete(name: String, ?p: PosInfos): Void {
 		#if !disableLogs
 		if (!logActive) return;
-		var time: Null<Float> = benches[name];
+		var time: Null<Float> = l_benches[name];
 		if (time == null) {
 			error('Bench $name completed or not started');
 		} else {
-			benches.remove(name);
-			log('End bench: ' + name + ' ' + benchTime(time)  + ' ms', p);
+			l_benches.remove(name);
+			log('End bench: ' + name + ' ' + l_benchTime(time)  + ' ms', p);
 		}
 		#end
 	}
 
-	private static inline function benchTime(time: Float): Float return Std.int((Timer.stamp() - time) * 100000) / 100;
+	private static inline function l_benchTime(time: Float): Float return Std.int((Timer.stamp() - time) * 100000) / 100;
 
 	public static inline function debugGetObjectId(obj: {}): UInt {
-		var id: Int = debugObjects.indexOf(obj);
-		return id == -1 ? debugObjects.push(obj) - 1 : id;
+		var id: Int = l_debugObjects.indexOf(obj);
+		return id == -1 ? l_debugObjects.push(obj) - 1 : id;
 	}
 
-	public static inline function debugClearObjectsId(): Void debugObjects.resize(0);
+	public static inline function debugClearObjectsId(): Void l_debugObjects.resize(0);
 
 }
