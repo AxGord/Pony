@@ -6,6 +6,8 @@ import pony.ILogable;
 import js.html.Element;
 import js.Browser;
 
+using StringTools;
+
 @:nullSafety(Strict) class HtmlLog {
 
 	private final origTrace: Null<Dynamic -> ?PosInfos -> Void>;
@@ -34,7 +36,9 @@ import js.Browser;
 	}
 
 	private function traceHandler(v: Dynamic, ?p: PosInfos): Void {
-		logHandler([Std.string(v)].concat(p != null && p.customParams != null ? p.customParams.map(Std.string) : []).join(', '), p);
+		('$v'.startsWith('Catch error') ? errorHandler : logHandler)(
+			[Std.string(v)].concat(p != null && p.customParams != null ? p.customParams.map(Std.string) : []).join(', '), p
+		);
 		@:nullSafety(Off) origTrace(v, p);
 	}
 

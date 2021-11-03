@@ -140,8 +140,43 @@ using pony.Tools;
 
 	public inline function traceErrors(time: Bool = true, date: Bool = false): Void {
 		#if !disableErrors
+		#if (js && !nodejs)
+		onError << (date ? errorWithDate : time ? errorWithTime : errorLogTrace);
+		#else
 		onError << (date ? traceWithDate : time ? traceWithTime : Log.trace);
 		#end
+		#end
+	}
+
+	private function pathErrorPosInfos(p: Null<PosInfos>): Null<PosInfos> {
+		return if (p != null) {
+			final params: Array<Dynamic> = ['color: darkred'];
+			if (p.customParams != null) params.concat(p.customParams);
+			{
+				fileName: p.fileName,
+				customParams: params,
+				methodName: p.methodName,
+				className: p.className,
+				lineNumber: p.lineNumber
+			};
+		} else {
+			null;
+		}
+	}
+
+	private function errorWithDate(v: String, ?p: PosInfos): Void {
+		if (p != null) v = '%c$v';
+		traceWithDate(v, pathErrorPosInfos(p));
+	}
+
+	private function errorWithTime(v: String, ?p: PosInfos): Void {
+		if (p != null) v = '%c$v';
+		traceWithTime(v, pathErrorPosInfos(p));
+	}
+
+	private function errorLogTrace(v: String, ?p: PosInfos): Void {
+		if (p != null) v = '%c$v';
+		Log.trace(v, pathErrorPosInfos(p));
 	}
 
 	public inline function traceAll(): Void {
@@ -230,8 +265,10 @@ using pony.Tools;
 			if (p.customParams != null) prms = p.customParams;
 		}
 		var c: js.lib.Function = cast js.Browser.console.log;
-		if (Std.is(v, String))
+		if (prms.length == 0 && Std.is(v, String))
 			c = c.bind(js.Browser.console, '%c' + place, 'color: gray', v);
+		else if (prms.length == 1 && v.startsWith('%c'))
+			c = c.bind(js.Browser.console, '%c' + place + ' ' + v, 'color: gray');
 		else
 			c = c.bind(js.Browser.console, place, v);
 		for (param in prms) c = c.bind(js.Browser.console, param);
