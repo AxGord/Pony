@@ -54,11 +54,13 @@ class ConfigBuilder {
 					case CFloat: macro:Float;
 					case CBool: macro:Bool;
 					case CColor: macro:pony.color.Color;
+					case CPoint: macro:pony.geom.Point<Int>;
 					case CStringMap: macro:Map<String, String>;
 					case CIntMap: macro:Map<String, Int>;
 					case CFloatMap: macro:Map<String, Float>;
 					case CBoolMap: macro:Map<String, Bool>;
 					case CColorMap: macro:Map<String, pony.color.Color>;
+					case CPointMap: macro:Map<String, pony.color.Color>;
 					case _: throw 'Error';
 				}
 
@@ -68,12 +70,13 @@ class ConfigBuilder {
 					case CFloat: Context.makeExpr(Std.parseFloat(cfg.value), Context.currentPos());
 					case CBool: Context.makeExpr(TextTools.isTrue(cfg.value), Context.currentPos());
 					case CColor: Context.makeExpr((pony.color.Color.fromString(cfg.value): Int), Context.currentPos());
-					case CStringMap, CIntMap, CFloatMap: null;
+					case CPoint: Context.makeExpr((pony.geom.Point.fromString(cfg.value)), Context.currentPos());
+					case CStringMap, CIntMap, CFloatMap, CPointMap: null;
 					case _: throw 'Error';
 				}
 
 				var map: Array<Expr> = switch cfg.type {
-					case CString, CInt, CFloat, CBool, CColor: null;
+					case CString, CInt, CFloat, CBool, CColor, CPoint: null;
 					case CStringMap: [for (k in cfg.map.keys()) macro $v{k} => $v{cfg.map[k]}];
 					case CIntMap: [for (k in cfg.map.keys()) macro $v{k} => $v{Std.parseInt(cfg.map[k])}];
 					case CFloatMap: [for (k in cfg.map.keys()) macro $v{k} => $v{Std.parseFloat(cfg.map[k])}];
@@ -81,6 +84,9 @@ class ConfigBuilder {
 					case CColorMap: [
 							for (k in cfg.map.keys()) macro $v{k} => $v{(pony.color.Color.fromString(cfg.value): Int)}
 						];
+					case CPointMap: [
+						for (k in cfg.map.keys()) macro $v{k} => $v{(pony.geom.Point.fromString(cfg.value))}
+					];
 					case t: throw 'Error $t';
 				}
 
@@ -123,11 +129,13 @@ private enum ConfigTypes {
 	CBool;
 	CColor;
 	CVars;
+	CPoint;
 	CStringMap;
 	CIntMap;
 	CFloatMap;
 	CBoolMap;
 	CColorMap;
+	CPointMap;
 }
 
 private class ReadXmlConfig extends XmlConfigReader<PConfig> {
@@ -153,7 +161,7 @@ private class ReadXmlConfig extends XmlConfigReader<PConfig> {
 
 		var type: ConfigTypes = switch stype {
 
-			case 'map', 'intmap', 'floatmap', 'boolmap', 'stringmap':
+			case 'map', 'intmap', 'floatmap', 'boolmap', 'stringmap', 'pointmap':
 				var mapType: ConfigTypes = switch stype {
 					case 'map': null;
 					case 'intmap': CInt;
@@ -161,6 +169,7 @@ private class ReadXmlConfig extends XmlConfigReader<PConfig> {
 					case 'boolmap': CBool;
 					case 'stringmap': CString;
 					case 'colormap': CColor;
+					case 'pointmap': CPointMap;
 					case _: throw 'Error';
 				};
 				map = new Map();
@@ -181,6 +190,7 @@ private class ReadXmlConfig extends XmlConfigReader<PConfig> {
 					case CBool: CBoolMap;
 					case CString: CStringMap;
 					case CColor: CColorMap;
+					case CPoint: CPointMap;
 					case _: throw 'Type error';
 				}
 
@@ -190,6 +200,7 @@ private class ReadXmlConfig extends XmlConfigReader<PConfig> {
 			case 'bool': CBool;
 			case 'string': CString;
 			case 'color': CColor;
+			case 'point': CPoint;
 
 			case _:
 				var nt: Int = xml.x.count();
@@ -206,6 +217,8 @@ private class ReadXmlConfig extends XmlConfigReader<PConfig> {
 						CFloat;
 					else if (v.charAt(0) == '#')
 						CColor;
+					else if (isPoint(v))
+						CPoint;
 					else
 						CString;
 				} else {
@@ -216,7 +229,7 @@ private class ReadXmlConfig extends XmlConfigReader<PConfig> {
 
 		switch type {
 
-			case CIntMap, CFloatMap, CBoolMap, CStringMap, CColorMap:
+			case CIntMap, CFloatMap, CBoolMap, CStringMap, CColorMap, CPointMap:
 				onConfig({
 					app: cfg.app,
 					debug: cfg.debug,
@@ -227,7 +240,7 @@ private class ReadXmlConfig extends XmlConfigReader<PConfig> {
 					type: type
 				});
 
-			case CInt, CFloat, CBool, CString, CColor:
+			case CInt, CFloat, CBool, CString, CColor, CPoint:
 				onConfig({
 					app: cfg.app,
 					debug: cfg.debug,
@@ -248,6 +261,11 @@ private class ReadXmlConfig extends XmlConfigReader<PConfig> {
 
 		}
 
+	}
+
+	private function isPoint(s: String): Bool {
+		var a: Array<Null<Int>> = s.split('x').map(Std.parseInt);
+		return a.length == 2 && !a.contains(null);
 	}
 
 }

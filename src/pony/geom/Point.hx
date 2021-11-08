@@ -29,6 +29,8 @@ abstract Point<T: Float>(PointImpl<T>) from PointImpl<T> to PointImpl<T> {
 
 	public var x(get, set): T;
 	public var y(get, set): T;
+	public var minValue(get, never): T;
+	public var maxValue(get, never): T;
 	public var swap(get, never): Point<T>;
 	public inline function new(x: T, y: T) this = { x: x, y: y };
 	private inline function get_swap(): Point<T> return new Point(this.y, this.x);
@@ -36,6 +38,8 @@ abstract Point<T: Float>(PointImpl<T>) from PointImpl<T> to PointImpl<T> {
 	private inline function get_y(): T return this.y;
 	private inline function set_x(v: T): T return this.x = v;
 	private inline function set_y(v: T): T return this.y = v;
+	private inline function get_minValue(): T return this.x < this.y ? this.x : this.y;
+	private inline function get_maxValue(): T return this.x > this.y ? this.x : this.y;
 	public inline function toString(): String return '(${this.x}, ${this.y})';
 
 	@:to public inline function toFloat(): PointImpl<Float> return cast this;
@@ -59,6 +63,9 @@ abstract Point<T: Float>(PointImpl<T>) from PointImpl<T> to PointImpl<T> {
 		return { x: lhs.x / rhs, y: lhs.y / rhs };
 
 	@:op(A / B) public static inline function div2if<T:Int>(lhs:Point<T>, rhs:Point<Float>):Point<Float>
+		return { x:lhs.x / rhs.x, y:lhs.y / rhs.y };
+
+	@:op(A / B) public static inline function div2fi<T:Float>(lhs:Point<T>, rhs:Point<Int>):Point<Float>
 		return { x:lhs.x / rhs.x, y:lhs.y / rhs.y };
 
 	@:op(A / B) public static inline function div1if<T: Int>(lhs: Point<T>, rhs: Float): Point<Float>
@@ -111,7 +118,18 @@ abstract Point<T: Float>(PointImpl<T>) from PointImpl<T> to PointImpl<T> {
 	@:from public static inline function ofFloat(v: Float): Point<Float> return new Point<Float>(v, v);
 	@:from public static inline function ofInt(v: Int): Point<Int> return new Point<Int>(v, v);
 
-	#if heaps
+	@:from public static inline function fromString(s: String): Point<Int> {
+		s = StringTools.trim(s);
+		var index: Int = -1;
+		for (char in [' ', ',', ';', 'x']) {
+			index = s.indexOf(char);
+			if (index != -1) break;
+		}
+		if (index == -1) return Std.parseInt(s);
+		return new Point<Int>(Std.parseInt(s.substr(0, index)), Std.parseInt(s.substr(index + 1)));
+	}
+
+	#if (heaps && !macro)
 	@:keep private function keepHackForHeaps(): Any return new h2d.Object().setPosition;
 	@:to public inline function toHeapsPoint(): h2d.col.Point return new h2d.col.Point(x, y);
 	#end
