@@ -13,8 +13,8 @@ import pony.ui.gui.AlignLayoutCore;
 @:nullSafety(Strict)
 class AlignLayout extends BaseLayout<AlignLayoutCore<Object>> {
 
-	public function new(?align: Align, ?border: Border<Int>) {
-		super(new AlignLayoutCore<Object>(align, border));
+	public function new(?align: Align, ?border: Border<Int>, mask: Bool = false) {
+		super(new AlignLayoutCore<Object>(align, border), mask);
 	}
 
 }

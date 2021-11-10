@@ -42,7 +42,7 @@ abstract Point<T: Float>(PointImpl<T>) from PointImpl<T> to PointImpl<T> {
 	private inline function get_maxValue(): T return this.x > this.y ? this.x : this.y;
 	public inline function toString(): String return '(${this.x}, ${this.y})';
 
-	@:to public inline function toFloat(): PointImpl<Float> return cast this;
+	@:to public inline function toFloat(): Point<Float> return cast this;
 
 	@:to public static inline function toInt(p: Point<Float>): Point<Int> return new Point(Std.int(p.x), Std.int(p.y));
 

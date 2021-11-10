@@ -1,6 +1,8 @@
 package pony.heaps.ui.gui.layout;
 
+import h2d.RenderContext;
 import h2d.Object;
+import h2d.Mask;
 import pony.geom.IWH;
 import pony.geom.Point;
 import pony.ui.gui.BaseLayoutCore;
@@ -21,14 +23,22 @@ class BaseLayout<T: BaseLayoutCore<Object>> extends Object implements IWH implem
 	public var h(link, set): Float = wh.y;
 	public var layout(default, null): T;
 	public var size(get, never): Point<Float>;
+	public var mask: Bool;
 
-	public function new(layout: T) {
+	public function new(layout: T, mask: Bool = false) {
 		super();
 		this.layout = layout;
+		this.mask = mask;
 		layout.getSize = _getSize;
 		layout.getSizeMod = getSizeMod;
 		layout.setXpos = setXpos;
 		layout.setYpos = setYpos;
+	}
+
+	override private function drawRec(ctx: RenderContext): Void {
+		if (mask) Mask.maskWith(ctx, this, Std.int(w), Std.int(h), 0, 0);
+		super.drawRec(ctx);
+		if (mask) Mask.unmask(ctx);
 	}
 
 	public inline function add(obj: Object): Void {

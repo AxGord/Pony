@@ -351,15 +351,17 @@ using pony.text.TextTools;
 
 	@:extern private inline function createLayout(attrs: Dynamic<String>, content: Array<Dynamic>): Object {
 		return if (attrs.src != null) {
-			var l = new BGLayout(HeapsAssets.image(attrs.src, attrs.name), attrs.vert.isTrue(), scaleBorderInt(attrs.border));
+			var l = new BGLayout(
+				HeapsAssets.image(attrs.src, attrs.name), attrs.vert.isTrue(), scaleBorderInt(attrs.border), attrs.mask.isTrue()
+			);
 			for (e in content) l.add(e);
 			l;
 		} else if (attrs.iv != null) {
-			var l = new IntervalLayout(parseAndScaleInt(attrs.iv), true, scaleBorderInt(attrs.border), attrs.align);
+			var l = new IntervalLayout(parseAndScaleInt(attrs.iv), true, scaleBorderInt(attrs.border), attrs.align, attrs.mask.isTrue());
 			for (e in content) l.add(e);
 			l;
 		} else if (attrs.ih != null) {
-			var l = new IntervalLayout(parseAndScaleInt(attrs.ih), false, scaleBorderInt(attrs.border), attrs.align);
+			var l = new IntervalLayout(parseAndScaleInt(attrs.ih), false, scaleBorderInt(attrs.border), attrs.align, attrs.mask.isTrue());
 			for (e in content) l.add(e);
 			l;
 		} else if (attrs.w != null || attrs.h != null) {
@@ -369,7 +371,8 @@ using pony.text.TextTools;
 				attrs.vert.isTrue(),
 				scaleBorderInt(attrs.border),
 				attrs.padding == null ? true : attrs.padding.isTrue(),
-				attrs.align
+				attrs.align,
+				attrs.mask.isTrue()
 			);
 			for (e in content) r.add(e);
 			r;
@@ -381,12 +384,13 @@ using pony.text.TextTools;
 				attrs.vert.isTrue(),
 				scaleBorderInt(attrs.border),
 				attrs.padding == null ? true : attrs.padding.isTrue(),
-				attrs.align
+				attrs.align,
+				attrs.mask.isTrue()
 			);
 			for (e in content) r.add(e);
 			r;
 		} else {
-			var s: AlignLayout = new AlignLayout(attrs.align, scaleBorderInt(attrs.border));
+			var s: AlignLayout = new AlignLayout(attrs.align, scaleBorderInt(attrs.border), attrs.mask.isTrue());
 			for (e in content) s.add(e);
 			s;
 		}
