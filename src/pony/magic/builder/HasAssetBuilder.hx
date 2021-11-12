@@ -303,6 +303,24 @@ class HasAssetBuilder {
 						case _:
 							Context.error('Wrong assets_parent type', parent.pos);
 					}
+					case EField({expr: EConst(CIdent(pack))}, field):
+						var name: String = pack + '.' + field;
+						for (f in Context.getModule(name)) switch f {
+							case TInst(t, params) if (t.toString() == name):
+								var m = t.get().meta;
+								parentPathes = getPatches(m.get(), t);
+								var e = { expr: EConst(CString(clss.toString())), pos: Context.currentPos() };
+								if (!m.has('assets_childs')) {
+									m.add('assets_childs', [e], Context.currentPos());
+								} else {
+									var a = m.get().find(function(v) return v.name == 'assets_childs').params;
+									a.push(e);
+									m.remove('assets_childs');
+									m.add('assets_childs', a, Context.currentPos());
+								}
+								break;
+							case _:
+						}
 				case _:
 					Context.error('Wrong assets_parent format', parent.pos);
 			}
@@ -354,12 +372,19 @@ class HasAssetBuilder {
 				case EConst(CIdent(s)):
 					switch Context.getType(s) {
 						case TInst(cl, _):
-							var m = cl.get().meta;
-							parentPrefix = getPrefix(m.get());
+							parentPrefix = getPrefix(cl.get().meta.get());
 						case _:
 							Context.error('Wrong assets_parent type', parent.pos);
 					}
-				case _:
+				case EField({expr: EConst(CIdent(pack))}, field):
+					var name: String = pack + '.' + field;
+					for (f in Context.getModule(name)) switch f {
+						case TInst(t, params) if (t.toString() == name):
+							parentPrefix = getPrefix(t.get().meta.get());
+							break;
+						case _:
+					}
+				case v: trace(v);
 					Context.error('Wrong assets_parent format', parent.pos);
 			}
 		}
