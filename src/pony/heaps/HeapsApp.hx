@@ -1,28 +1,29 @@
 package pony.heaps;
 
-import h2d.Object;
-import h2d.Graphics;
 import h2d.Drawable;
+import h2d.Graphics;
+import h2d.Object;
 import h2d.Scene;
 
+import haxe.Timer;
+
+import hxd.App;
 import hxd.SceneEvents.InteractiveScene;
 import hxd.Window;
-import hxd.App;
 
 import pony.Config;
 import pony.color.UColor;
+import pony.events.Signal1;
 import pony.geom.Point;
 import pony.geom.Rect;
-import pony.time.Time;
-import pony.time.DeltaTime;
-import pony.events.Signal1;
-import pony.magic.HasSignal;
 import pony.magic.HasLink;
-
+import pony.magic.HasSignal;
+import pony.time.DeltaTime;
+import pony.time.Time;
 #if js
-import pony.js.SmartCanvas;
 import js.html.Element;
-#end
+
+import pony.js.SmartCanvas;#end
 
 /**
  * HeapsApp
@@ -62,6 +63,32 @@ import js.html.Element;
 		DeltaTime.fixedValue = dt;
 		DeltaTime.fixedDispatch();
 	}
+
+	#if hl
+
+	private var lastTick: Float = Timer.stamp();
+
+	override private function mainLoop(): Void {
+		super.mainLoop();
+		var sleepTime: Float = 1 / (hxd.Timer.wantedFPS * 1.05) - (Timer.stamp() - lastTick);
+		if (sleepTime > 0) Sys.sleep(sleepTime);
+		lastTick = Timer.stamp();
+	}
+
+	#elseif js
+
+	private var skipNextFrame: Bool = false;
+
+	override private function mainLoop(): Void {
+		if (!skipNextFrame) {
+			super.mainLoop();
+			skipNextFrame = hxd.Timer.dt < 1 / hxd.Timer.wantedFPS;
+		} else {
+			skipNextFrame = false;
+		}
+	}
+
+	#end
 
 	override private function init(): Void eInit.dispatch(this);
 
