@@ -1,17 +1,23 @@
 package pony.heaps.ui.gui;
 
-import hxd.Cursor;
 import h2d.Interactive;
 import h2d.Object;
+
 import h3d.Vector;
-import pony.ui.touch.Touchable;
+
+import hxd.Cursor;
+
+import pony.geom.Point;
+import pony.geom.IWH;
+import pony.magic.HasLink;
 import pony.ui.gui.ButtonCore;
+import pony.ui.touch.Touchable;
 
 /**
  * Button
  * @author AxGord <axgord@gmail.com>
  */
-@:nullSafety(Strict) class Button extends Interactive {
+@:nullSafety(Strict) class Button extends Interactive implements HasLink implements IWH {
 
 	private static inline var OVERTINT: Float = 1.2;
 	private static inline var DOWNTINT: Float = 0.5;
@@ -22,6 +28,7 @@ import pony.ui.gui.ButtonCore;
 	public var core(default, null): ButtonCore;
 	public var touchable(default, null): Touchable;
 	public var nodes(default, null): Array<Node>;
+	public var size(link, never): Point<Float> = nodes[0].wh;
 
 	public function new(nodes: Array<Node>, ?parent: Object) {
 		var first: Node = nodes[0];
@@ -126,5 +133,20 @@ import pony.ui.gui.ButtonCore;
 			nodes[index].visible = true;
 		}
 	}
+
+	public function destroy():Void {
+		core.destroy();
+		touchable.destroy();
+		@:nullSafety(Off) {
+			core = null;
+			touchable = null;
+			nodes = null;
+		}
+		removeChildren();
+		remove();
+	}
+
+	public function wait(cb: Void -> Void): Void cb();
+	public function destroyIWH(): Void destroy();
 
 }
