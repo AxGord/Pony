@@ -9,6 +9,7 @@ abstract Align(AlignType) from AlignType to AlignType {
 
 	public var vertical(get, never): VAlign;
 	public var horizontal(get, never): HAlign;
+	public var defaultCenter(get, never): Align;
 
 	@:extern public inline function new(v: AlignType) this = v;
 
@@ -26,26 +27,23 @@ abstract Align(AlignType) from AlignType to AlignType {
 	@:extern private inline function get_vertical(): VAlign return this.a;
 	@:extern private inline function get_horizontal(): HAlign return this.b;
 
+	private inline function get_defaultCenter(): Align {
+		return new Pair(vertical == null ? VAlign.Middle : vertical, horizontal == null ? HAlign.Center : horizontal);
+	}
+
 	@:from public static inline function fromString(s: String): Null<Align> {
 		if (s == null) return null;
 		var hor: Null<HAlign> = null;
 		var vert: Null<VAlign> = null;
 		for (v in s.split(' ')) if (v != '') {
 			switch v.toLowerCase() {
-				case 'left':
-					hor = HAlign.Left;
-				case 'center':
-					hor = HAlign.Center;
-				case 'right':
-					hor = HAlign.Right;
-				case 'top':
-					vert = VAlign.Top;
-				case 'middle':
-					vert = VAlign.Middle;
-				case 'bottom':
-					vert = VAlign.Bottom;
-				case _:
-					throw 'error';
+				case 'left': hor = HAlign.Left;
+				case 'center': hor = HAlign.Center;
+				case 'right': hor = HAlign.Right;
+				case 'top': vert = VAlign.Top;
+				case 'middle': vert = VAlign.Middle;
+				case 'bottom': vert = VAlign.Bottom;
+				case _: throw 'error';
 			}
 		}
 		return new Pair(vert, hor);

@@ -1,10 +1,12 @@
 package pony.heaps.ui.gui;
 
-import h3d.Vector;
-import pony.color.UColor;
-import h2d.Object;
 import h2d.Font;
+import h2d.Object;
 import h2d.Text;
+
+import h3d.Vector;
+
+import pony.color.UColor;
 
 /**
  * Text with disable function
