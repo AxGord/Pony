@@ -22,21 +22,23 @@ class Keyboard implements IKeyboard implements HasSignal {
 	public function new() {}
 
 	public function enable():Void {
-		Browser.document.addEventListener(KEYDOWN, keyDownHandler);
-		Browser.document.addEventListener(KEYUP, keyUpHandler);
+		Browser.window.addEventListener(KEYDOWN, keyDownHandler, true);
+		Browser.window.addEventListener(KEYUP, keyUpHandler, true);
 	}
 
 	public function disable():Void {
-		Browser.document.removeEventListener(KEYDOWN, keyDownHandler);
-		Browser.document.removeEventListener(KEYUP, keyUpHandler);
+		Browser.window.removeEventListener(KEYDOWN, keyDownHandler, true);
+		Browser.window.removeEventListener(KEYUP, keyUpHandler, true);
 	}
 
 	private function keyDownHandler(event: KeyboardEvent): Void {
 		eDown.dispatch(pony.ui.keyboard.Keyboard.map.get(event.keyCode));
+		event.preventDefault();
 	}
 
 	private function keyUpHandler(event: KeyboardEvent): Void {
 		eUp.dispatch(pony.ui.keyboard.Keyboard.map.get(event.keyCode));
+		event.preventDefault();
 	}
 
 }
