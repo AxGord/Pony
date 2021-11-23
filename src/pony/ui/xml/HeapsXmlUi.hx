@@ -356,12 +356,16 @@ using pony.text.TextTools;
 			);
 			for (e in content) l.add(e);
 			l;
-		} else if (attrs.iv != null) {
-			var l = new IntervalLayout(parseAndScaleInt(attrs.iv), true, scaleBorderInt(attrs.border), attrs.align, attrs.mask.isTrue());
-			for (e in content) l.add(e);
-			l;
-		} else if (attrs.ih != null) {
-			var l = new IntervalLayout(parseAndScaleInt(attrs.ih), false, scaleBorderInt(attrs.border), attrs.align, attrs.mask.isTrue());
+		} else if (attrs.iv != null || attrs.ih != null) {
+			var vert = attrs.iv != null;
+			var l = new IntervalLayout(
+				parseAndScaleInt(vert ? attrs.iv : attrs.ih),
+				vert,
+				scaleBorderInt(attrs.border),
+				attrs.align,
+				parseAndScaleInt(attrs.limit),
+				attrs.mask.isTrue()
+			);
 			for (e in content) l.add(e);
 			l;
 		} else if (attrs.w != null || attrs.h != null) {

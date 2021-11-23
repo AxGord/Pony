@@ -30,7 +30,7 @@ using pony.Tools;
 		if (objects == null) return;
 		if (!ready) return;
 		var positions: Array<IntPoint> = GeomTools.pointsCeil(GeomTools.center(
-				new Point(width, height),
+				size,
 				[for (obj in objects) {
 					var v: Point<Float> = getObjSize(obj);
 					v == null ? new Point<Float>(0, 0) : v;
