@@ -376,6 +376,7 @@ using pony.text.TextTools;
 				scaleBorderInt(attrs.border),
 				attrs.padding == null ? true : attrs.padding.isTrue(),
 				attrs.align,
+				attrs.limit.isTrue(),
 				attrs.mask.isTrue()
 			);
 			for (e in content) r.add(e);
@@ -389,6 +390,7 @@ using pony.text.TextTools;
 				scaleBorderInt(attrs.border),
 				attrs.padding == null ? true : attrs.padding.isTrue(),
 				attrs.align,
+				attrs.limit.isTrue(),
 				attrs.mask.isTrue()
 			);
 			for (e in content) r.add(e);

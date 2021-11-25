@@ -3,7 +3,10 @@ package pony.heaps.ui.gui;
 import h2d.Bitmap;
 import h2d.Object;
 import h2d.Tile;
+
 import h3d.Vector;
+
+import pony.geom.Border;
 import pony.geom.Point;
 
 /**
@@ -15,9 +18,16 @@ import pony.geom.Point;
 
 	public var bitmap(default, null): Bitmap;
 
-	public function new(tile: Tile, ?parent: Object) {
-		super(new Point(tile.width, tile.height), parent);
+	public function new(tile: Tile, ?size: Point<Int>, ?border: Border<Int>, ?parent: Object) {
+		super(size != null ? size : new Point(tile.width, tile.height), border, parent);
 		bitmap = new Bitmap(tile, this);
+		if (size != null) {
+			bitmap.setPosition((size.x - tile.width) / 2, (size.y - tile.height) / 2);
+		}
+		if (border != null) {
+			bitmap.x += border.left;
+			bitmap.y += border.top;
+		}
 		changeWh << updateScales;
 		changeFlipx << updateScales;
 		changeFlipy << updateScales;
@@ -29,7 +39,7 @@ import pony.geom.Point;
 		if (flipx) bitmap.scaleX = -bitmap.scaleX;
 		bitmap.scaleY = h / bitmap.tile.height;
 		if (flipy) bitmap.scaleY = -bitmap.scaleY;
-		bitmap.setPosition(flipx ? w : 0, flipy ? h : 0);
+		bitmap.setPosition((flipx ? w : 0) + border.left, (flipy ? h : 0 + border.top));
 	}
 
 	private function updateColor(v: Vector): Void {

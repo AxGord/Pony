@@ -28,11 +28,11 @@ import pony.ui.touch.Touchable;
 	public var core(default, null): ButtonCore;
 	public var touchable(default, null): Touchable;
 	public var nodes(default, null): Array<Node>;
-	public var size(link, never): Point<Float> = nodes[0].wh;
+	public var size(link, never): Point<Float> = nodes[0].size;
 
 	public function new(nodes: Array<Node>, ?parent: Object) {
 		var first: Node = nodes[0];
-		super(first.w * first.scaleX, first.h * first.scaleY, parent);
+		super(first.size.x * first.scaleX, first.size.y * first.scaleY, parent);
 		this.nodes = nodes;
 		touchable = new Touchable(@:nullSafety(Off) this);
 		touchable.propagateWheel = true;

@@ -1,11 +1,14 @@
 package pony.heaps.ui.gui;
 
-import h3d.Vector;
 import h2d.Object;
-import pony.magic.HasSignal;
-import pony.magic.HasLink;
-import pony.geom.Point;
+
+import h3d.Vector;
+
+import pony.geom.Border;
 import pony.geom.IWH;
+import pony.geom.Point;
+import pony.magic.HasLink;
+import pony.magic.HasSignal;
 
 /**
  * Node
@@ -19,21 +22,27 @@ class Node extends Object implements HasSignal implements HasLink implements INo
 	@:bindable public var flipy: Bool = false;
 	public var w(link, set): Float = wh.x;
 	public var h(link, set): Float = wh.y;
-	public var size(link, never): Point<Float> = wh;
+	public var size(get, never): Point<Float>;
 	@:bindable public var tint: Vector = new Vector(1, 1, 1, 1);
+	private var border: Border<Int>;
 
-	public function new(size: Point<Float>, ?parent: Object) {
+	public function new(size: Point<Float>, ?border: Border<Int>, ?parent: Object) {
 		super(parent);
 		wh = size;
+		this.border = border == null ? 0 : border;
+	}
+
+	private inline function get_size(): Point<Float> {
+		return new Point(w + border.left + border.right, h + border.top + border.bottom);
 	}
 
 	public inline function set_w(v: Float): Float {
-		if (v != wh.x) wh = new Point(v, wh.y);
+		if (v != w) wh = new Point(v, h);
 		return v;
 	}
 
 	public inline function set_h(v: Float): Float {
-		if (v != wh.y) wh = new Point(wh.x, v);
+		if (v != h) wh = new Point(w, v);
 		return v;
 	}
 
