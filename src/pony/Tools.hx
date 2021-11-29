@@ -290,7 +290,7 @@ class Tools {
 		return libPath('pony');
 	}
 
-	public static function libPath(lib: String): Null<String> {
+	public static function libPath(lib: String): String {
 		var pd: String = isWindows ? '\\' : '/';
 		var libPath: String = null;
 		#if nodejs
