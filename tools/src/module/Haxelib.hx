@@ -84,15 +84,19 @@ class Haxelib extends CfgModule<HaxelibConfig> {
 					Sys.exit(0);
 				}
 			} else {
-				var path: String = Tools.libPath(lib.name);
-				log('Lib installed to $path');
-				var pony: String = path + 'pony.xml';
-				if (FileSystem.exists(pony)) {
-					var cwd: Cwd = new Cwd(path);
-					cwd.sw();
-					Utils.command('haxelib', ['run', 'pony', 'prepare']);
-					if (lib.pony != null) Utils.command('haxelib', ['run', 'pony'].concat(lib.pony.split(' ')));
-					cwd.sw();
+				try {
+					var path: String = Tools.libPath(lib.name);
+					log('Lib installed to $path');
+					var pony: String = path + 'pony.xml';
+					if (FileSystem.exists(pony)) {
+						var cwd: Cwd = new Cwd(path);
+						cwd.sw();
+						Utils.command('haxelib', ['run', 'pony', 'prepare']);
+						if (lib.pony != null) Utils.command('haxelib', ['run', 'pony'].concat(lib.pony.split(' ')));
+						cwd.sw();
+					}
+				} catch (e: String) {
+					error(e);
 				}
 			}
 		}

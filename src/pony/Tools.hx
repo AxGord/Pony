@@ -290,7 +290,7 @@ class Tools {
 		return libPath('pony');
 	}
 
-	public static function libPath(lib: String): String {
+	public static function libPath(lib: String): Null<String> {
 		var pd: String = isWindows ? '\\' : '/';
 		var libPath: String = null;
 		#if nodejs
@@ -300,10 +300,14 @@ class Tools {
 		#elseif neko
 		var out: haxe.io.Input = new sys.io.Process('haxelib', ['path', lib]).stdout;
 		do libPath = out.readLine() while (StringTools.startsWith(libPath, '-'));
-		libPath = sys.FileSystem.fullPath(libPath);
 		#else
 		throw 'Not supported';
 		#end
+		try {
+			libPath = sys.FileSystem.fullPath(libPath);
+		} catch (_) {
+			throw libPath;
+		}
 		// remove src
 		if (libPath.substr(-SRC.length) == SRC) {
 			libPath = libPath.substr(0, -SRC.length);
