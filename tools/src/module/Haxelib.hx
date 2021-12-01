@@ -1,10 +1,13 @@
 package module;
 
-import sys.FileSystem;
-import pony.Tools;
 import haxe.io.Eof;
-import sys.io.Process;
+
 import pony.Fast;
+import pony.Tools;
+
+import sys.FileSystem;
+import sys.io.Process;
+
 import types.BAConfig;
 import types.BASection;
 
@@ -18,7 +21,8 @@ typedef HaxelibConfig = {
 		mute: Bool,
 		git: Null<String>,
 		warning: Bool,
-		pony: String
+		pony: String,
+		haxe: String
 	}>
 }
 
@@ -87,12 +91,17 @@ class Haxelib extends CfgModule<HaxelibConfig> {
 				try {
 					var path: String = Tools.libPath(lib.name);
 					log('Lib installed to $path');
+					var cwd: Cwd = new Cwd(path);
 					var pony: String = path + 'pony.xml';
 					if (FileSystem.exists(pony)) {
-						var cwd: Cwd = new Cwd(path);
 						cwd.sw();
 						Utils.command('haxelib', ['run', 'pony', 'prepare']);
 						if (lib.pony != null) Utils.command('haxelib', ['run', 'pony'].concat(lib.pony.split(' ')));
+						cwd.sw();
+					}
+					if (lib.haxe != null) {
+						cwd.sw();
+						Utils.command('haxe', lib.haxe.split(' '));
 						cwd.sw();
 					}
 				} catch (e: String) {
@@ -120,7 +129,8 @@ private class HaxelibReader extends BAReader<HaxelibConfig> {
 					git: xml.has.git ? normalize(xml.att.git) : null,
 					mute: xml.isTrue('mute'),
 					warning: !xml.isFalse('warning'),
-					pony: xml.has.pony ? normalize(xml.att.pony) : null
+					pony: xml.has.pony ? normalize(xml.att.pony) : null,
+					haxe: xml.has.haxe ? normalize(xml.att.haxe) : null
 				});
 			case _:
 				super.readNode(xml);
