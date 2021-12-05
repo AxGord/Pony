@@ -78,4 +78,10 @@ import pony.magic.HasSignal;
 		return v;
 	}
 
+	public function setSizeKeepValue(v: Float): Float {
+		size = v;
+		changePercentHandler(percent);
+		return v;
+	}
+
 }

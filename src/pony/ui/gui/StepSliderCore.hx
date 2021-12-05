@@ -44,10 +44,7 @@ class StepSliderCore extends SliderCore {
 
 	@:extern private inline function get_valueStep(): Float return percentStep * (max - min);
 
-	override private function moveHandler(t: Touch): Void {
-		var p = detectPos(t.x, t.y);
-		pos = limit(posStep == 0 ? p : (Math.round(p / posStep) * posStep));
-	}
+	override private function moveHandler(t: Touch): Void setStepPos(detectPos(t.x, t.y));
 
 	override function changePosHandler(v: Float): Void {
 		if (percentRound == -1)
@@ -62,5 +59,7 @@ class StepSliderCore extends SliderCore {
 		else
 			value = MathTools.roundTo(min + v * (max - min), valueRound);
 	}
+
+	public function setStepPos(p: Float): Void pos = limit(posStep == 0 ? p : (Math.round(p / posStep) * posStep));
 
 }

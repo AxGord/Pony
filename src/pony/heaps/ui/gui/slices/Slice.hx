@@ -1,9 +1,11 @@
 package pony.heaps.ui.gui.slices;
 
-import h2d.Tile;
 import h2d.Object;
-import pony.ui.gui.slices.SliceTools;
+import h2d.Tile;
+
+import pony.geom.Border;
 import pony.ui.gui.slices.SliceData;
+import pony.ui.gui.slices.SliceTools;
 
 /**
  * Slice
@@ -12,13 +14,15 @@ import pony.ui.gui.slices.SliceData;
 @:nullSafety(Strict)
 class Slice {
 
-	public static function create(tiles: Array<Tile>, ?src: String, repeat: Bool = false, vert: Bool = false, ?parent: Object): Node {
+	public static function create(
+		tiles: Array<Tile>, ?src: String, repeat: Bool = false, vert: Bool = false, ?border: Border<Int>, ?parent: Object
+	): Node {
 		if (src == null) {
 			return switch tiles.length {
 				case 1 if (repeat):
 					new NodeRepeat(tiles[0], parent);
 				case 1:
-					new NodeBitmap(tiles[0], parent);
+					new NodeBitmap(tiles[0], border, parent);
 				case 2 if (vert):
 					new Slice2V(tiles, repeat, parent);
 				case 2:
@@ -43,7 +47,7 @@ class Slice {
 				case Not() if (repeat):
 					new NodeRepeat(tiles[0], parent);
 				case Not():
-					new NodeBitmap(tiles[0], parent);
+					new NodeBitmap(tiles[0], border, parent);
 				case Hor2():
 					new Slice2H(tiles, repeat, parent);
 				case Hor3():

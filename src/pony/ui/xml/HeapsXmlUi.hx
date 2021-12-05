@@ -1,49 +1,53 @@
 package pony.ui.xml;
 
-import h2d.filter.Filter;
-import h2d.filter.DropShadow;
-import h2d.filter.Group;
-import h2d.filter.Outline;
-import h3d.Vector;
-import h2d.Font;
-import h2d.Object;
 import h2d.Drawable;
+import h2d.Font;
 import h2d.Graphics;
+import h2d.Object;
 import h2d.Text;
 import h2d.TextInput;
+import h2d.filter.DropShadow;
+import h2d.filter.Filter;
+import h2d.filter.Group;
+import h2d.filter.Outline;
+
+import h3d.Vector;
+
 import hxd.res.DefaultFont;
-import pony.magic.HasAbstract;
-import pony.geom.Point;
-import pony.geom.Border;
-import pony.geom.Align;
-import pony.geom.Rect;
-import pony.geom.Orientation;
+
 import pony.color.UColor;
+import pony.geom.Align;
+import pony.geom.Border;
+import pony.geom.Orientation;
+import pony.geom.Point;
+import pony.geom.Rect;
 import pony.heaps.HeapsApp;
 import pony.heaps.HeapsAssets;
+import pony.heaps.ui.gui.Button;
+import pony.heaps.ui.gui.DText;
+import pony.heaps.ui.gui.LightButton;
 import pony.heaps.ui.gui.Node;
 import pony.heaps.ui.gui.NodeBitmap;
-import pony.heaps.ui.gui.NodeRepeat;
 import pony.heaps.ui.gui.NodeRect;
-import pony.heaps.ui.gui.Button;
-import pony.heaps.ui.gui.LightButton;
-import pony.heaps.ui.gui.ScrollBox;
-import pony.heaps.ui.gui.Switch;
+import pony.heaps.ui.gui.NodeRepeat;
 import pony.heaps.ui.gui.Repeat;
-import pony.heaps.ui.gui.DText;
-import pony.heaps.ui.gui.slices.Slice;
-import pony.heaps.ui.gui.layout.IntervalLayout;
-import pony.heaps.ui.gui.layout.RubberLayout;
+import pony.heaps.ui.gui.ScrollBox;
+import pony.heaps.ui.gui.StepSlider;
+import pony.heaps.ui.gui.Switch;
 import pony.heaps.ui.gui.layout.AlignLayout;
 import pony.heaps.ui.gui.layout.BGLayout;
+import pony.heaps.ui.gui.layout.IntervalLayout;
+import pony.heaps.ui.gui.layout.RubberLayout;
 import pony.heaps.ui.gui.layout.TLayout;
+import pony.heaps.ui.gui.slices.Slice;
+import pony.magic.HasAbstract;
 import pony.ui.gui.ScrollBoxCore;
-import pony.ui.xml.UiTags;
 import pony.ui.xml.AttrVal;
+import pony.ui.xml.UiTags;
 
 using StringTools;
-using pony.text.TextTools;
 
+using pony.text.TextTools;
 /**
  * HeapsXmlUi
  * @author AxGord <axgord@gmail.com>
@@ -62,7 +66,8 @@ using pony.text.TextTools;
 	layout: pony.heaps.ui.gui.layout.TLayout,
 	button: pony.heaps.ui.gui.Button,
 	lightButton: pony.heaps.ui.gui.LightButton,
-	scrollBox: pony.heaps.ui.gui.ScrollBox
+	scrollBox: pony.heaps.ui.gui.ScrollBox,
+	slider: pony.heaps.ui.gui.StepSlider
 }))
 #end
 @:nullSafety(Strict) class HeapsXmlUi extends Object implements HasAbstract {
@@ -129,7 +134,8 @@ using pony.text.TextTools;
 				Slice.create(
 					HeapsAssets.animation(attrs.src, attrs.name),
 					attrs.name == null ? attrs.src : attrs.name,
-					attrs.repeat.isTrue()
+					attrs.repeat.isTrue(),
+					scaleBorderInt(attrs.border)
 				);
 			case UiTags.layout:
 				createLayout(attrs, content);
@@ -160,6 +166,15 @@ using pony.text.TextTools;
 				);
 				for (c in content) s.add(c);
 				s;
+			case UiTags.slider:
+				var slider: StepSlider = new StepSlider(app, cast content);
+				slider.sliderCore.initValue(
+					attrs.min != null ? Std.parseFloat(attrs.min) : 0,
+					attrs.max != null ? Std.parseFloat(attrs.max) : 100
+				);
+				if (attrs.step != null) slider.valueStep = Std.parseFloat(attrs.step);
+				slider.sliderCore.value = slider.sliderCore.min;
+				slider;
 			case _:
 				customUIElement(name, attrs, content);
 		}

@@ -2,6 +2,7 @@ package pony.ui.gui;
 
 import pony.events.Event1;
 import pony.events.Signal1;
+import pony.geom.Point;
 import pony.ui.touch.Touch;
 import pony.ui.touch.Touchable;
 
@@ -96,7 +97,9 @@ import pony.ui.touch.Touchable;
 		}
 	}
 
-	private function moveTo(t: Touch): Void {
+	private function moveTo(t: Touch): Void moveToPoint(t.point);
+
+	public function moveToPoint(t: Point<Float>): Void {
 		if (trackStartPoint != null) startPoint = -trackStartPoint;
 		pos = limit(detectPos(t.x, t.y));
 	}
