@@ -22,7 +22,8 @@ typedef HaxelibConfig = {
 		git: Null<String>,
 		warning: Bool,
 		pony: String,
-		haxe: String
+		haxe: String,
+		haxelib: String
 	}>
 }
 
@@ -99,6 +100,11 @@ class Haxelib extends CfgModule<HaxelibConfig> {
 						if (lib.pony != null) Utils.command('haxelib', ['run', 'pony'].concat(lib.pony.split(' ')));
 						cwd.sw();
 					}
+					if (lib.haxelib != null) {
+						cwd.sw();
+						Utils.command('haxelib', lib.haxe.split(' '));
+						cwd.sw();
+					}
 					if (lib.haxe != null) {
 						cwd.sw();
 						Utils.command('haxe', lib.haxe.split(' '));
@@ -130,7 +136,8 @@ private class HaxelibReader extends BAReader<HaxelibConfig> {
 					mute: xml.isTrue('mute'),
 					warning: !xml.isFalse('warning'),
 					pony: xml.has.pony ? normalize(xml.att.pony) : null,
-					haxe: xml.has.haxe ? normalize(xml.att.haxe) : null
+					haxe: xml.has.haxe ? normalize(xml.att.haxe) : null,
+					haxelib: xml.has.haxelib ? normalize(xml.att.haxelib) : null
 				});
 			case _:
 				super.readNode(xml);
