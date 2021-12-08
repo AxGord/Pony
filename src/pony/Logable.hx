@@ -267,7 +267,7 @@ using pony.Tools;
 		var c: js.lib.Function = cast js.Browser.console.log;
 		if (prms.length == 0 && Std.is(v, String))
 			c = c.bind(js.Browser.console, '%c' + place, 'color: gray', v);
-		else if (prms.length == 1 && v.startsWith('%c'))
+		else if (prms.length == 1 && Std.is(v, String) && v.startsWith('%c'))
 			c = c.bind(js.Browser.console, '%c' + place + ' ' + v, 'color: gray');
 		else
 			c = c.bind(js.Browser.console, place, v);

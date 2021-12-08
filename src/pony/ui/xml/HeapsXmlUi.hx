@@ -150,10 +150,12 @@ using pony.text.TextTools;
 			case UiTags.button:
 				var b: Button = new Button(cast content);
 				if (attrs.disabled.isTrue()) b.core.disable();
+				if (attrs.bsw.isTrue()) b.core.bswitch();
 				b;
 			case UiTags.lightButton:
 				var b: LightButton = new LightButton(getSizeFromAttrs(attrs).toInt(), attrs.color);
 				if (attrs.disabled.isTrue()) b.core.disable();
+				if (attrs.bsw.isTrue()) b.core.bswitch();
 				b;
 			case UiTags.scrollBox:
 				var s: ScrollBox = new ScrollBox(
@@ -200,6 +202,17 @@ using pony.text.TextTools;
 		if (attrs.tint != null) {
 			var c: UColor = attrs.tint;
 			cast(obj, Drawable).color = Vector.fromColor(c.rgb);
+		}
+		if (attrs.light != null) {
+			var v: Float = Std.parseFloat(attrs.light);
+			#if (haxe_ver >= 4.10)
+			if (Std.isOfType(obj, NodeBitmap))
+			#else
+			if (Std.is(obj, NodeBitmap))
+			#end
+				cast(obj, NodeBitmap).tint = cast(obj, NodeBitmap).tint.add(new Vector(v, v, v));
+			else
+				cast(obj, Drawable).color = cast(obj, Drawable).color.add(new Vector(v, v, v));
 		}
 		if (allowFilters) {
 			#if (haxe_ver >= 4.10)
