@@ -102,7 +102,7 @@ class Haxelib extends CfgModule<HaxelibConfig> {
 					}
 					if (lib.haxelib != null) {
 						cwd.sw();
-						Utils.command('haxelib', lib.haxe.split(' '));
+						Utils.command('haxelib', lib.haxelib.split(' '));
 						cwd.sw();
 					}
 					if (lib.haxe != null) {
