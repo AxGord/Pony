@@ -13,6 +13,7 @@ import hxd.Window;
 
 import pony.Config;
 import pony.color.UColor;
+import pony.events.Signal0;
 import pony.events.Signal1;
 import pony.geom.Point;
 import pony.geom.Rect;
@@ -35,12 +36,14 @@ import pony.js.SmartCanvas;#end
 	public static var s2dReady(get, never): Bool;
 
 	@:auto public var onInit: Signal1<HeapsApp>;
+	@:auto public var onSkipFrame: Signal0;
 	public var noScale(link, link): Bool = canvas.noScale;
 	public var sizeUpdate(default, set): Bool = false;
 	public var canvas: SmartCanvas;
 	private var renderPause: Bool = false;
 	private var alignCenter: Bool = false;
 	private var border: Null<Graphics>;
+	private var lastTick: Float = Timer.stamp();
 
 	public function new(?size: Point<Int>, ?color: UColor, #if js ?parentDom: Element, #end sizeUpdate: Bool = true) {
 		#if js
@@ -64,27 +67,25 @@ import pony.js.SmartCanvas;#end
 		DeltaTime.fixedDispatch();
 	}
 
-	#if hl
+	private inline function calcSleepTime(): Float return 1 / (hxd.Timer.wantedFPS * 1.05) - (Timer.stamp() - lastTick);
 
-	private var lastTick: Float = Timer.stamp();
+	#if hl
 
 	override private function mainLoop(): Void {
 		super.mainLoop();
-		var sleepTime: Float = 1 / (hxd.Timer.wantedFPS * 1.05) - (Timer.stamp() - lastTick);
+		var sleepTime: Float = calcSleepTime();
 		if (sleepTime > 0) Sys.sleep(sleepTime);
 		lastTick = Timer.stamp();
 	}
 
 	#elseif js
 
-	private var skipNextFrame: Bool = false;
-
 	override private function mainLoop(): Void {
-		if (!skipNextFrame) {
-			super.mainLoop();
-			skipNextFrame = hxd.Timer.dt < 1 / hxd.Timer.wantedFPS;
+		if (calcSleepTime() > 0) {
+			eSkipFrame.dispatch();
 		} else {
-			skipNextFrame = false;
+			super.mainLoop();
+			lastTick = Timer.stamp();
 		}
 	}
 
