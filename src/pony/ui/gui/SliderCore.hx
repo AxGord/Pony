@@ -93,6 +93,7 @@ import pony.ui.touch.Touchable;
 	public inline function setPosValue(v: Float): Void {
 		if (size >= 1) {
 			value = v;
+			finalValue = v;
 			update();
 		}
 	}
