@@ -228,7 +228,6 @@ using pony.Tools;
 
 	public static function vscodePatchTrace(): Void {
 		#if (haxe_ver > 4.220)
-		#error
 		l_usedLibs = Tools.usedLibs();
 		#else
 		l_usedLibs = new Map();
