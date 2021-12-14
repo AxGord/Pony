@@ -20,7 +20,7 @@ class Module extends pony.Logable implements pony.magic.HasAbstract implements p
 
 	public var modules:Modules;
 	private var xml(get, never):Fast;
-	#if (haxe_ver >= "4.0.0")
+	#if (haxe_ver >= 4.000)
 	private var nodes(get, never):Array<Fast>;
 	#else
 	private var nodes(get, never):List<Fast>;
@@ -52,7 +52,7 @@ class Module extends pony.Logable implements pony.magic.HasAbstract implements p
 
 	private function checkLength(s:String):Bool return s.length > 0;
 
-	#if (haxe_ver >= "4.0.0")
+	#if (haxe_ver >= 4.000)
 	private function get_nodes():Array<Fast> {
 		return xname == null ? [] : modules.xml.nodes.resolve(xname);
 	}

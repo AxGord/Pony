@@ -117,7 +117,7 @@ class Tools {
 				for (i in 0...a.length)
 					if (!equal(a[i], b[i], maxDepth - 1)) return false;
 				return true;
-			#if (haxe_ver >= 4.10)
+			#if (haxe_ver >= 4.100)
 			case TObject: if (Std.isOfType(a, Class)) return false;
 			#else
 			case TObject: if (Std.is(a, Class)) return false;
@@ -125,7 +125,7 @@ class Tools {
 			case TUnknown:
 			case TClass(t):
 				if (t == Array) {
-					#if (haxe_ver >= 4.10)
+					#if (haxe_ver >= 4.100)
 					if (!Std.isOfType(b, Array) || a.length != b.length) return false;
 					#else
 					if (!Std.is(b, Array) || a.length != b.length) return false;
@@ -137,7 +137,7 @@ class Tools {
 		// a is Object on Unknown or Class instance
 		switch (Type.typeof(b)) {
 			case TInt, TFloat, TBool, TFunction, TEnum(_), TNull: return false;
-			#if (haxe_ver >= 4.10)
+			#if (haxe_ver >= 4.100)
 			case TObject: if (Std.isOfType(b, Class)) return false;
 			#else
 			case TObject: if (Std.is(b, Class)) return false;
@@ -158,7 +158,7 @@ class Tools {
 		return switch Type.typeof(obj) {
 			case TEnum(t):
 				Type.createEnumIndex(t, Type.enumIndex(obj), [for (e in Type.enumParameters(obj)) clone(e)]);
-			#if (haxe_ver >= 4.10)
+			#if (haxe_ver >= 4.100)
 			case TObject if (!Std.isOfType(obj, Class)):
 			#else
 			case TObject if (!Std.is(obj, Class)):
@@ -354,7 +354,7 @@ class Tools {
 		for (p in b.fields()) {
 			var d:Dynamic = b.field(p);
 			if (a.hasField(p) && d.isObject() &&
-				#if (haxe_ver >= 4.10)
+				#if (haxe_ver >= 4.100)
 				!Std.isOfType(d, String) && !Std.isOfType(d, Array)
 				#else
 				!Std.is(d, String) && !Std.is(d, Array)
@@ -393,7 +393,7 @@ class Tools {
 			var d: Dynamic = a.field(p);
 			result.setField(
 				p, d.isObject() &&
-				#if (haxe_ver >= 4.10)
+				#if (haxe_ver >= 4.100)
 				!Std.isOfType(d, String)
 				#else
 				!Std.is(d, String)
@@ -427,7 +427,7 @@ class Tools {
 		return output.getBytes();
 	}
 
-	#if (haxe_ver >= 3.30)
+	#if (haxe_ver >= 3.300)
 	@:generic public static inline function sget<A, B:haxe.Constraints.Constructible<Void -> Void>>(m: Map<A, B>, key: A): B
 	#else
 	@:generic public static inline function sget<A, B: { function new(): Void; }>(m: Map<A, B>, key: A): B
@@ -688,7 +688,7 @@ class MapTools {
 
 	public static inline function mapCalcCount<K, T>(map: Map<K, T>, fn: K -> T -> UInt): UInt {
 		var r: UInt = 0;
-		#if (haxe_ver >= '4.0.0')
+		#if (haxe_ver >= 4.000)
 		for (k => v in map) r += fn(k, v);
 		#else
 		for (k in map.keys()) r += fn(k, map[k]);
@@ -703,7 +703,7 @@ class MapTools {
 	}
 
 	public static inline function merge<K, T>(a: Map<K, T>, b: Map<K, T>): Void {
-		#if (haxe_ver >= '4.0.0')
+		#if (haxe_ver >= 4.000)
 		for (k => v in b) a[k] = v;
 		#else
 		for (k in b.keys()) a[k] = b[k];

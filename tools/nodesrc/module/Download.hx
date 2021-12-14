@@ -1,7 +1,7 @@
 package module;
 
 import pony.NPM;
-#if (haxe_ver >= 4.00)
+#if (haxe_ver >= 4.000)
 import js.lib.Error;
 #else
 import js.Error;

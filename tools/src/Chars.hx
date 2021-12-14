@@ -10,7 +10,7 @@ class Chars {
 	public static function run(file: String): Void {
 		var c: String = File.getContent(file);
 		var x: Fast = new Fast(Xml.parse(c));
-		#if (haxe_ver >= '4.0.0')
+		#if (haxe_ver >= 4.000)
 		var chars: Array<Fast> = x.node.font.node.chars.nodes.char;
 		var rs: neko.Utf8 = new neko.Utf8(chars.length);
 		#else

@@ -1,6 +1,6 @@
 package module;
 
-#if (haxe_ver >= '4.0.0')
+#if (haxe_ver >= 4.000)
 import js.lib.Error;
 #else
 import js.Error;
