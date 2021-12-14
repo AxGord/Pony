@@ -36,7 +36,6 @@ import pony.js.SmartCanvas;#end
 	public static var s2dReady(get, never): Bool;
 
 	@:auto public var onInit: Signal1<HeapsApp>;
-	@:auto public var onSkipFrame: Signal0;
 	public var noScale(link, link): Bool = canvas.noScale;
 	public var sizeUpdate(default, set): Bool = false;
 	public var canvas: SmartCanvas;
@@ -81,9 +80,7 @@ import pony.js.SmartCanvas;#end
 	#elseif js
 
 	override private function mainLoop(): Void {
-		if (calcSleepTime() > 0) {
-			eSkipFrame.dispatch();
-		} else {
+		if (calcSleepTime() <= 0) {
 			super.mainLoop();
 			lastTick = Timer.stamp();
 		}
