@@ -4,6 +4,7 @@
 		"src",
 		"nodesrc",
 		"sharedsrc"
-	]
+	],
+	"cmake.configureOnOpen": false
 
 }

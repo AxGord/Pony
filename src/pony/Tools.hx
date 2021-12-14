@@ -303,11 +303,6 @@ class Tools {
 		#else
 		throw 'Not supported';
 		#end
-		try {
-			libPath = sys.FileSystem.fullPath(libPath);
-		} catch (_) {
-			throw libPath;
-		}
 		// remove src
 		if (libPath.substr(-SRC.length) == SRC) {
 			libPath = libPath.substr(0, -SRC.length);
