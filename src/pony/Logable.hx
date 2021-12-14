@@ -227,7 +227,11 @@ using pony.Tools;
 	}
 
 	public static function vscodePatchTrace(): Void {
+		#if (haxe_ver >= '4.2.3')
 		l_usedLibs = Tools.usedLibs();
+		#else
+		l_usedLibs = new Map();
+		#end
 		l_origTrace = Log.trace;
 		Log.trace = l_vscodeTrace;
 	}
