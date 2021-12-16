@@ -317,7 +317,7 @@ class Tools {
 					libPath = libPath.substr(0, -src.length);
 			}
 		}
-		return libPath.endsWith('\\') || TextTools.setLast(libPath, pd);
+		return StringTools.endsWith(libPath, '\\') ? libPath : TextTools.setLast(libPath, pd);
 	}
 	#end
 
