@@ -27,22 +27,31 @@ import types.BASection;
 			dirs: [],
 			units: [],
 			allowCfg: true,
-			rimraf: false
+			rimraf: false,
+			md: false
 		}, configHandler);
 	}
 
 	override private function runNode(cfg: CleanConfig): Void {
-		cleanDirs(cfg.dirs, cfg.rimraf);
+		cleanDirs(cfg.dirs, cfg.rimraf, cfg.md);
 		deleteUnits(cfg.units);
 	}
 
-	private function cleanDirs(data: Array<String>, rimraf: Bool): Void {
+	private function cleanDirs(data: Array<String>, rimraf: Bool, md: Bool): Void {
 		for (d in data) {
+			var dir: Dir = d;
+			if (!dir.exists) {
+				if (md) {
+					log('Create directory: $d');
+					dir.create();
+				}
+				continue;
+			}
 			log('Clean directory: $d');
 			if (rimraf) {
 				Utils.command('rimraf', [d]);
 			} else {
-				(d : Dir).deleteContent();
+				dir.deleteContent();
 			}
 		}
 	}
@@ -60,7 +69,8 @@ private typedef CleanConfig = {
 	> types.BAConfig,
 	dirs: Array<String>,
 	units: Array<String>,
-	rimraf: Bool
+	rimraf: Bool,
+	md: Bool
 }
 
 private class CleanReader extends BAReader<CleanConfig> {
@@ -77,12 +87,13 @@ private class CleanReader extends BAReader<CleanConfig> {
 		cfg.dirs = [];
 		cfg.units = [];
 		cfg.rimraf = false;
+		cfg.md = false;
 	}
 
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
-			case 'rimraf':
-				cfg.rimraf = TextTools.isTrue(val);
+			case 'rimraf': cfg.rimraf = TextTools.isTrue(val);
+			case 'md': cfg.md = TextTools.isTrue(val);
 			case _:
 		}
 	}
