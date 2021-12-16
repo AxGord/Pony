@@ -296,10 +296,10 @@ class Tools {
 		#if nodejs
 		var o: String = Std.string(js.node.ChildProcess.execSync('haxelib path $lib'));
 		var lines: Array<String> = o.split('\n');
-		do libPath = lines.shift() while (StringTools.startsWith(libPath, '-'));
+		do libPath = lines.shift() while (libPath == null || StringTools.startsWith(libPath, '-'));
 		#elseif neko
 		var out: haxe.io.Input = new sys.io.Process('haxelib', ['path', lib]).stdout;
-		do libPath = out.readLine() while (StringTools.startsWith(libPath, '-'));
+		do libPath = out.readLine() while (libPath == null || StringTools.startsWith(libPath, '-'));
 		#else
 		throw 'Not supported';
 		#end
@@ -317,7 +317,7 @@ class Tools {
 					libPath = libPath.substr(0, -src.length);
 			}
 		}
-		return TextTools.setLast(libPath, pd);
+		return libPath.endsWith('\\') || TextTools.setLast(libPath, pd);
 	}
 	#end
 
