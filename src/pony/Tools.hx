@@ -291,7 +291,7 @@ class Tools {
 	}
 
 	public static function libPath(lib: String): String {
-		var pd: String = isWindows ? '\\' : '/';
+		var pd: String = '/';
 		var libPath: String = null;
 		#if nodejs
 		var o: String = Std.string(js.node.ChildProcess.execSync('haxelib path $lib'));
@@ -308,8 +308,14 @@ class Tools {
 			libPath = libPath.substr(0, -SRC.length);
 		} else {
 			var src:String = SRC + pd;
-			if (libPath.substr(-src.length) == src)
+			if (libPath.substr(-src.length) == src) {
 				libPath = libPath.substr(0, -src.length);
+			} else if (isWindows) {
+				var pd: String = '\\';
+				var src:String = SRC + pd;
+				if (libPath.substr(-src.length) == src)
+					libPath = libPath.substr(0, -src.length);
+			}
 		}
 		return TextTools.setLast(libPath, pd);
 	}
