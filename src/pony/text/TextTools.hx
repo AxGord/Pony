@@ -136,7 +136,7 @@ class TextTools {
 	}
 
 	public static inline function isTrue(s: String): Bool return return s != null && StringTools.trim(s.toLowerCase()) == 'true';
-	public static inline function isFalse(s: String): Bool return return s != null && StringTools.trim(s.toLowerCase()) != 'true';
+	public static inline function isFalse(s: String): Bool return return s != null && StringTools.trim(s.toLowerCase()) == 'false';
 
 	public static function explode(s: String, delimiters: Array<String>): Array<String> {
 		var r: Array<String> = [s];

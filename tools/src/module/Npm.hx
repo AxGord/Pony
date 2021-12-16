@@ -9,10 +9,12 @@ import sys.FileSystem;
 import types.BAConfig;
 import types.BASection;
 
+using pony.text.XmlTools;
+
 typedef NpmConfig = { > BAConfig,
 	path: String,
 	autoinstall: Bool,
-	list: Array<String>
+	list: Array<Pair<String, Bool>>
 }
 
 /**
@@ -47,8 +49,8 @@ class Npm extends CfgModule<NpmConfig> {
 		if (FileSystem.exists('package.json')) Sys.command('npm', ['install']);
 
 		if (cfg.autoinstall) {
-			for (module in cfg.list) {
-				Sys.command('npm', ['install', module, '--prefix', './']);
+			for (module in cfg.list) if (!Utils.isWindows || module.b) {
+				Sys.command('npm', ['install', module.a, '--prefix', './']);
 			}
 		}
 		cwd.sw();
@@ -74,7 +76,7 @@ private class NpmReader extends BAReader<NpmConfig> {
 
 	override private function readNode(xml:Fast):Void {
 		switch xml.name {
-			case 'module': cfg.list.push(StringTools.trim(xml.innerData));
+			case 'module': cfg.list.push(new Pair(StringTools.trim(xml.innerData), !xml.isFalse('windows')));
 			case _: super.readNode(xml);
 		}
 	}
