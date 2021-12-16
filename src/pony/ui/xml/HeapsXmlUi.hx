@@ -48,6 +48,7 @@ import pony.ui.xml.UiTags;
 using StringTools;
 
 using pony.text.TextTools;
+
 /**
  * HeapsXmlUi
  * @author AxGord <axgord@gmail.com>
@@ -554,56 +555,76 @@ using pony.text.TextTools;
 
 	private static inline function checkInDyns(v: String): Bool return DYNS.indexOf(v) != -1;
 
+	private static inline function isLayout(obj: Dynamic): Bool {
+		#if (haxe_ver >= 4.10)
+		return Std.isOfType(obj, TLayout);
+		#else
+		return Std.is(obj, TLayout);
+		#end
+	}
+
+	private static inline function isNode(obj: Dynamic): Bool {
+		#if (haxe_ver >= 4.10)
+		return Std.isOfType(obj, Node);
+		#else
+		return Std.is(obj, Node);
+		#end
+	}
+
 	private function dynStageHandler(r: Rect<Float>): Void {
 		watchList = watchList.filter(watchFilter);
 		for (e in watchList) {
 			for (f in Reflect.fields(e.b)) {
 				var a = Reflect.field(e.b, f);
-				switch a {
-					case dyn:
+				switch [a, f] {
+					case [dyn, 'wh']:
 						var p: Point<Float> = new Point(r.width, r.height);
-						#if (haxe_ver >= 4.10)
-						if (Std.isOfType(e.a, TLayout)) {
-						#else
-						if (Std.is(e.a, TLayout)) {
-						#end
+						if (isLayout(e.a)) {
 							var o: TLayout = cast e.a;
 							o.wh = p;
-						#if (haxe_ver >= 4.10)
-						} else if (Std.isOfType(e.a, Node)) {
-						#else
-						} else if (Std.is(e.a, Node)) {
-						#end
+						} else if (isNode(e.a)) {
 							var o:Node = cast e.a;
 							o.wh = p;
 						} else {
 							Reflect.setProperty(e.a, f, p);
 						}
-					case dynWidth:
-						#if (haxe_ver >= 4.10)
-						if (Std.isOfType(e.a, TLayout)) {
-						#else
-						if (Std.is(e.a, TLayout)) {
-						#end
+					case [dynWidth, 'w']:
+						if (isLayout(e.a)) {
 							var o: TLayout = cast e.a;
+							o.w = r.width;
+						} else if (isNode(e.a)) {
+							var o:Node = cast e.a;
 							o.w = r.width;
 						} else {
 							Reflect.setProperty(e.a, f, r.width);
 						}
-					case dynHeight:
-						#if (haxe_ver >= 4.10)
-						if (Std.isOfType(e.a, TLayout)) {
-						#else
-						if (Std.is(e.a, TLayout)) {
-						#end
+					case [dynWidth, 'x']:
+						if (isLayout(e.a)) {
 							var o: TLayout = cast e.a;
+							o.x = r.width;
+						} else {
+							Reflect.setProperty(e.a, f, r.width);
+						}
+					case [dynHeight, 'h']:
+						if (isLayout(e.a)) {
+							var o: TLayout = cast e.a;
+							o.h = r.height;
+						} else if (isNode(e.a)) {
+							var o:Node = cast e.a;
 							o.h = r.height;
 						} else {
 							Reflect.setProperty(e.a, f, r.height);
 						}
-					case dynX:
+					case [dynHeight, 'y']:
+						if (isLayout(e.a)) {
+							var o: TLayout = cast e.a;
+							o.y = r.height;
+						} else {
+							Reflect.setProperty(e.a, f, r.height);
+						}
+					case [dynX, _]:
 						Reflect.setProperty(e.a, f, r.x);
-					case dynY:
+					case [dynY, _]:
 						Reflect.setProperty(e.a, f, r.y);
 					case _:
 				}

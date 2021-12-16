@@ -2,10 +2,12 @@ package pony.heaps.ui.gui;
 
 import h2d.Graphics;
 import h2d.Object;
+
 import h3d.Vector;
+
 import pony.Pair;
-import pony.geom.Point;
 import pony.color.UColor;
+import pony.geom.Point;
 
 /**
  * NodeRect
@@ -37,7 +39,6 @@ import pony.color.UColor;
 			graphics.drawRect(0, 0, w, h);
 		else
 			graphics.drawRoundedRect(0, 0, w, h, round);
-		updatePosition();
 	}
 
 	private function updateColor(v: Vector): Void {
@@ -55,7 +56,7 @@ import pony.color.UColor;
 	}
 
 	@:extern private inline function updatePosition(): Void {
-		graphics.setPosition(flipx ? x + w : x, flipy ? y + w : y);
+		graphics.setPosition(flipx ? w : 0, flipy ? h : 0);
 	}
 
 	override public function destroy(): Void {
