@@ -1,5 +1,6 @@
 package module;
 
+import pony.text.XmlConfigReader;
 import pony.Fast;
 
 import types.BASection;
@@ -11,6 +12,7 @@ using StringTools;
 typedef RunConfig = {
 	> BAConfig,
 	?path: String,
+	haxelib: Array<String>,
 	command: Array<{?path: String, cmd: String}>,
 }
 
@@ -28,7 +30,6 @@ typedef RunConfig = {
 	public function new() super('run');
 
 	override public function init(): Void {
-		if (xml == null) return;
 		haxelib = modules.xml.hasNode.haxelib ?
 			[ for (e in modules.xml.node.haxelib.nodes.lib) if (!e.isTrue('mute')) e.innerData.split(' ').join(':') ] : [];
 		initSections(PRIORITY, BASection.Run);
@@ -42,6 +43,7 @@ typedef RunConfig = {
 			section: BASection.Run,
 			path: null,
 			command: [],
+			haxelib: haxelib,
 			allowCfg: true
 		}, configHandler);
 	}
@@ -49,8 +51,6 @@ typedef RunConfig = {
 	override private function runNode(cfg: RunConfig): Void {
 		var path: String = cfg.path != null ? cfg.path : '';
 		for (cmd in cfg.command) {
-			if (cmd.cmd.startsWith('haxe ') && haxelib.length > 0)
-				cmd.cmd += ' ' + [ for (l in haxelib) LIB + ' ' + l ].join(' ');
 			var p: String = path + (cmd.path != null ? cmd.path : '');
 			var cwd = new Cwd(p);
 			if (p != '') cwd.sw();
@@ -65,7 +65,7 @@ typedef RunConfig = {
 
 }
 
-private class RunReader extends BAReader<RunConfig> {
+@:nullSafety(Strict) private class RunReader extends BAReader<RunConfig> {
 
 	override private function clean(): Void {
 		cfg.path = null;
@@ -99,6 +99,7 @@ private class RunReader extends BAReader<RunConfig> {
 			case 'haxe':
 				var cmd: Array<String> = ['haxe'];
 				if (xml.has.cp) cmd.push('-cp ' + normalize(xml.att.cp));
+				for (lib in cfg.haxelib) cmd.push('-lib ' + normalize(lib));
 				cmd.push('--run ' + normalize(xml.innerData));
 				cfg.command.push({cmd: cmd.join(' '), path: xml.has.path ? normalize(xml.att.path) : null});
 			case 'lime':
