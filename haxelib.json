@@ -27,8 +27,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Create: heaps android support. Fix completion error in pony.Config.",
-"version": "1.6.0",
+"releasenote": "Upgrade build system. Heaps fps limit and ui improvements.",
+"version": "1.6.1",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }

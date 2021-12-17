@@ -5,6 +5,9 @@ import pony.Fast;
 import types.BASection;
 import types.BAConfig;
 
+using pony.text.XmlTools;
+using StringTools;
+
 typedef RunConfig = {
 	> BAConfig,
 	?path: String,
@@ -18,10 +21,18 @@ typedef RunConfig = {
 @:nullSafety(Strict) class Run extends CfgModule<RunConfig> {
 
 	private static inline var PRIORITY: Int = 35;
+	private static inline var LIB: String = '-lib';
+
+	private var haxelib: Array<String> = [];
 
 	public function new() super('run');
 
-	override public function init(): Void initSections(PRIORITY, BASection.Run);
+	override public function init(): Void {
+		if (xml == null) return;
+		haxelib = modules.xml.hasNode.haxelib ?
+			[ for (e in modules.xml.node.haxelib.nodes.lib) if (!e.isTrue('mute')) e.innerData.split(' ').join(':') ] : [];
+		initSections(PRIORITY, BASection.Run);
+	}
 
 	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
 		new RunReader(xml, {
@@ -38,6 +49,8 @@ typedef RunConfig = {
 	override private function runNode(cfg: RunConfig): Void {
 		var path: String = cfg.path != null ? cfg.path : '';
 		for (cmd in cfg.command) {
+			if (cmd.cmd.startsWith('haxe ') && haxelib.length > 0)
+				cmd.cmd += ' ' + [ for (l in haxelib) LIB + ' ' + l ].join(' ');
 			var p: String = path + (cmd.path != null ? cmd.path : '');
 			var cwd = new Cwd(p);
 			if (p != '') cwd.sw();
@@ -84,7 +97,10 @@ private class RunReader extends BAReader<RunConfig> {
 			case 'command':
 				cfg.command.push({cmd: normalize(xml.innerData), path: xml.has.path ? normalize(xml.att.path) : null});
 			case 'haxe':
-				cfg.command.push({cmd: 'haxe --run ' + normalize(xml.innerData), path: xml.has.path ? normalize(xml.att.path) : null});
+				var cmd: Array<String> = ['haxe'];
+				if (xml.has.cp) cmd.push('-cp ' + normalize(xml.att.cp));
+				cmd.push('--run ' + normalize(xml.innerData));
+				cfg.command.push({cmd: cmd.join(' '), path: xml.has.path ? normalize(xml.att.path) : null});
 			case 'lime':
 				cfg.command.push({cmd: 'haxelib run lime ' + normalize(xml.innerData), path: xml.has.path ? normalize(xml.att.path) : null});
 			case 'ax3':
