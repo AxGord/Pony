@@ -27,6 +27,7 @@
 		"mysql@2.18.1",
 		"follow-redirects@1.14.1"
 	],
+	"winnpm": [],
 	"vscode": [
 		"vshaxe.haxe-extension-pack",
 		"vshaxe.haxe-checkstyle",
