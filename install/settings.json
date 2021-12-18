@@ -27,9 +27,6 @@
 		"mysql@2.18.1",
 		"follow-redirects@1.14.1"
 	],
-	"winnpm": [
-		"imagemin-pngquant@5.1.0"
-	],
 	"vscode": [
 		"vshaxe.haxe-extension-pack",
 		"vshaxe.haxe-checkstyle",
