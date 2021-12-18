@@ -27,8 +27,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Upgrade build system. Heaps fps limit and ui improvements.",
-"version": "1.6.1",
+"releasenote": "Fixes and improvements",
+"version": "1.6.2",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }
