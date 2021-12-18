@@ -1,6 +1,6 @@
 package pony.fs;
 
-#if (neko || cpp || nodejs || php)
+#if (sys || nodejs)
 import haxe.io.Bytes;
 import sys.FileSystem;
 import sys.io.File as SysFile;

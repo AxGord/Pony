@@ -25,6 +25,7 @@ import types.BASection;
 			before: false,
 			section: Prepare,
 			dirs: [],
+			empty: [],
 			units: [],
 			allowCfg: true,
 			rimraf: false,
@@ -35,6 +36,7 @@ import types.BASection;
 	override private function runNode(cfg: CleanConfig): Void {
 		cleanDirs(cfg.dirs, cfg.rimraf, cfg.md);
 		deleteUnits(cfg.units);
+		cleanEmpty(cfg.empty);
 	}
 
 	private function cleanDirs(data: Array<String>, rimraf: Bool, md: Bool): Void {
@@ -56,6 +58,21 @@ import types.BASection;
 		}
 	}
 
+	private function cleanEmpty(data: Array<String>): Void {
+		for (d in data) {
+			log('Remove empty directories in $d');
+			for (dir in (d: Dir).contentRecursiveDirs()) {
+				var content: Array<Unit> = dir.content(true);
+				if (content.length == 1 && content[0].name == '.DS_Store') {
+					content[0].delete();
+					dir.delete();
+				} else if (content.length == 0) {
+					dir.delete();
+				}
+			}
+		}
+	}
+
 	private function deleteUnits(data: Array<String>): Void {
 		for (u in data) {
 			log('Delete file: $u');
@@ -68,6 +85,7 @@ import types.BASection;
 private typedef CleanConfig = {
 	> types.BAConfig,
 	dirs: Array<String>,
+	empty: Array<String>,
 	units: Array<String>,
 	rimraf: Bool,
 	md: Bool
@@ -78,6 +96,7 @@ private class CleanReader extends BAReader<CleanConfig> {
 	override private function readNode(xml: Fast): Void {
 		switch xml.name {
 			case 'dir': cfg.dirs.push(StringTools.trim(xml.innerData));
+			case 'empty': cfg.empty.push(StringTools.trim(xml.innerData));
 			case 'unit': cfg.units.push(StringTools.trim(xml.innerData));
 			case _: super.readNode(xml);
 		}
@@ -85,6 +104,7 @@ private class CleanReader extends BAReader<CleanConfig> {
 
 	override private function clean(): Void {
 		cfg.dirs = [];
+		cfg.empty = [];
 		cfg.units = [];
 		cfg.rimraf = false;
 		cfg.md = false;

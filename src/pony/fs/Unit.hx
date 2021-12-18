@@ -1,6 +1,6 @@
 package pony.fs;
 
-#if (neko || cpp || nodejs || php)
+#if (sys || nodejs)
 import pony.Priority;
 import sys.FileSystem;
 
