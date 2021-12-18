@@ -30,7 +30,7 @@ typedef RunConfig = {
 	public function new() super('run');
 
 	override public function init(): Void {
-		haxelib = modules.xml.hasNode.haxelib ?
+		haxelib = modules.xml != null && modules.xml.hasNode.haxelib ?
 			[ for (e in modules.xml.node.haxelib.nodes.lib) if (!e.isTrue('mute')) e.innerData.split(' ').join(':') ] : [];
 		initSections(PRIORITY, BASection.Run);
 	}
