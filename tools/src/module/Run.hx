@@ -100,6 +100,7 @@ typedef RunConfig = {
 				var cmd: Array<String> = ['haxe'];
 				if (xml.has.cp) cmd.push('-cp ' + normalize(xml.att.cp));
 				for (lib in cfg.haxelib) cmd.push('-lib ' + normalize(lib));
+				if (xml.has.d) for (d in normalize(xml.att.d).split(' ')) cmd.push('-D ' + d);
 				cmd.push('--run ' + normalize(xml.innerData));
 				cfg.command.push({cmd: cmd.join(' '), path: xml.has.path ? normalize(xml.att.path) : null});
 			case 'lime':
