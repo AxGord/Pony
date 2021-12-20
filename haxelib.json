@@ -27,8 +27,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Fixes and improvements",
-"version": "1.6.2",
+"releasenote": "Heaps binary atlases",
+"version": "1.6.3",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }

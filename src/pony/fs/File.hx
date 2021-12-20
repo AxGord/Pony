@@ -2,6 +2,7 @@ package pony.fs;
 
 #if (sys || nodejs)
 import haxe.io.Bytes;
+import haxe.io.Path;
 import sys.FileSystem;
 import sys.io.File as SysFile;
 
@@ -18,8 +19,9 @@ import sys.io.File as SysFile;
 	public var content(get, set): Null<String>;
 	public var bytes(get, set): Null<Bytes>;
 	public var ext(get, never): String;
+	public var withoutExt(get, never): String;
 	public var fullPath(get, never): Unit;
-	public var fullDir(get, never): Unit;
+	public var fullDir(get, never): Dir;
 	public var size(get, never): Int;
 
 	inline public function new(v: Unit) {
@@ -63,7 +65,8 @@ import sys.io.File as SysFile;
 	private inline function get_name(): String return this.name;
 	private inline function get_shortName(): String return name.split('.')[0];
 	private inline function get_first(): String return this.first;
-	private inline function get_ext(): String return cast first.split('.').pop();
+	private inline function get_ext(): String return cast Path.extension(first);
+	private inline function get_withoutExt(): String return Path.withoutExtension(first);
 
 	public inline function copyToFile(to: Unit): Void {
 		var to: File = to.file;
@@ -101,7 +104,7 @@ import sys.io.File as SysFile;
 	}
 
 	private inline function get_fullPath(): Unit return this.fullPath;
-	inline private function get_fullDir(): Unit return [ for (e in this.wayStringIterator()) e.substr(0, e.lastIndexOf('/')) ];
+	inline private function get_fullDir(): Dir return [ for (e in this.wayStringIterator()) e.substr(0, e.lastIndexOf('/')) ];
 
 	public function delete(): Void {
 		try {

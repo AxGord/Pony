@@ -114,6 +114,7 @@ class Main {
 		modules.register(new module.Zip());
 		modules.register(new module.Bmfont());
 		modules.register(new module.Imagemin());
+		modules.register(new module.Atlas());
 		modules.register(new module.Poeditor());
 		modules.register(new module.Ftp());
 		modules.register(new module.Download());

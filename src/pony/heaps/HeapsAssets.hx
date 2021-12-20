@@ -25,6 +25,9 @@ import pony.ui.gui.slices.SliceTools;
 
 @:enum abstract Ext(String) to String {
 	var ATLAS = 'atlas';
+	#if hxbitmini
+	var BINATLAS = 'atlas.bin';
+	#end
 	var PNG = 'png';
 	var JPG = 'jpg';
 	var JPEG = 'jpeg';
@@ -97,6 +100,26 @@ import pony.ui.gui.slices.SliceTools;
 					}
 					loadAsset(imgLoader);
 				}
+			#if hxbitmini
+			case BINATLAS:
+				loader.onLoaded = function(textBytes: Bytes): Void {
+					cb(1, AssetManager.MAX_ASSET_PROGRESS);
+					var path: String = realAsset.substr(0, realAsset.lastIndexOf('/') + 1);
+					var data: pony.ui.BinaryAtlas = pony.ui.BinaryAtlas.fromBytes(textBytes);
+					var imgFile: String = path + data.file;
+					var imgLoader: BinaryLoader = new BinaryLoader(imgFile);
+					imgLoader.onProgress = progressHandler;
+					imgLoader.onLoaded = function(bytes: Bytes): Void {
+						var img: Any = Any.fromBytes(imgFile, bytes);
+						atlases[asset] = new Pair(
+							@:privateAccess img.loader,
+							cast Any.fromBytes(realAsset, textBytes).to(HeapsBinaryAtlas)
+						);
+						finish();
+					}
+					loadAsset(imgLoader);
+				}
+			#end
 			case FNT:
 				loader.onLoaded = function(fntbytes: Bytes): Void {
 					cb(1, AssetManager.MAX_ASSET_PROGRESS);
@@ -230,16 +253,25 @@ import pony.ui.gui.slices.SliceTools;
 	#end
 
 	public static inline function ext(asset: String): String {
-		return asset.indexOf('@') != -1 ? BIN : asset.substr(asset.lastIndexOf('.') + 1);
+		return asset.indexOf('@') != -1 ? BIN : asset.substr(asset.indexOf('.', asset.lastIndexOf('/')) + 1);
 	}
 
 	public static inline function reset(asset: String): Void {
 		atlases.remove(asset);
+		tiles.remove(asset);
+		fonts.remove(asset);
+		texts.remove(asset);
+		bins.remove(asset);
+		sounds.remove(asset);
 	}
 
 	public static function texture(asset: String, ?name: String): Tile {
 		return switch ext(asset) {
+			#if hxbitmini
+			case ATLAS, BINATLAS:
+			#else
 			case ATLAS:
+			#end
 				if (name == null) throw ERROR_NAME_NOT_SET;
 				var p: Null<Pair<Loader, Atlas>> = atlases[asset];
 				if (p == null) throw ERROR_NOT_LOADED;
@@ -260,7 +292,11 @@ import pony.ui.gui.slices.SliceTools;
 
 	public static function animation(asset: String, ?name: String): Array<Tile> {
 		return switch ext(asset) {
+			#if hxbitmini
+			case ATLAS, BINATLAS:
+			#else
 			case ATLAS:
+			#end
 				if (name != null) {
 					name = SliceTools.clean(name);
 				} else {
