@@ -27,8 +27,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Heaps binary atlases",
-"version": "1.6.3",
+"releasenote": "Added hxformat.json to haxelib",
+"version": "1.6.4",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }

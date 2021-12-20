@@ -13,6 +13,7 @@ install/user_path.cmd
 webdefaults/
 redist/
 checkstyle.json
+hxformat.json
 LICENSE
 README.md
 run.n
