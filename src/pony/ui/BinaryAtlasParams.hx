@@ -6,7 +6,7 @@ import hxbitmini.Serializable;
  * Binary atlas params
  * @author AxGord <axgord@gmail.com>
  */
-@:nullSafety(Strict) class BinaryAtlasParams implements Serializable {
+@:nullSafety(Strict) @:keep class BinaryAtlasParams implements Serializable {
 
 	@:s public var x: UInt = 0;
 	@:s public var y: UInt = 0;

@@ -32,11 +32,7 @@ private typedef AtlasConfig = {
 
 	public function new() super('atlas');
 
-	override public function init(): Void {
-		hxbitNekoFix(BinaryAtlas);
-		hxbitNekoFix(BinaryAtlasParams);
-		initSections(PRIORITY, BASection.Prepare);
-	}
+	override public function init(): Void initSections(PRIORITY, BASection.Prepare);
 
 	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
 		new AtlasReader(xml, {
@@ -141,14 +137,6 @@ private typedef AtlasConfig = {
 		for (tl in data.contents) if (tl.length > 1 && tl[0] == null) tl.shift();
 
 		to.bytes = data.toBytes();
-	}
-
-	private static function hxbitNekoFix(cl: Class<Dynamic>): Void {
-		Reflect.setField(cl, 'initCLID', hxbitNekoFixHandler.bind(cl));
-	}
-
-	private static function hxbitNekoFixHandler(cl: Class<Dynamic>): Void {
-		Reflect.setField(cl, '__clid', @:privateAccess hxbitmini.Serializer.registerClass(cl));
 	}
 
 }

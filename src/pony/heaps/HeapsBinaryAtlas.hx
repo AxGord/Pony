@@ -15,7 +15,7 @@ using pony.text.TextTools;
  */
 @:nullSafety(Strict) class HeapsBinaryAtlas extends Atlas {
 
-	override public function getContents(): Map<String,Array<{ t: Tile, width: Int, height: Int }>> {
+	override public function getContents(): Map<String, Array<{ t: Tile, width: Int, height: Int }>> {
 		if (contents != null) return contents;
 		var data: BinaryAtlas = BinaryAtlas.fromBytes(entry.getBytes());
 		var basePath: String = entry.path.allBeforeLast('/') + '/';

@@ -9,7 +9,7 @@ import hxbitmini.Serializer;
  * Binary atlas
  * @author AxGord <axgord@gmail.com>
  */
-class BinaryAtlas implements Serializable {
+@:keep class BinaryAtlas implements Serializable {
 
 	@:s public var file: String;
 	@:s public var width: Int;
