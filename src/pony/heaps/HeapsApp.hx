@@ -21,10 +21,11 @@ import pony.magic.HasLink;
 import pony.magic.HasSignal;
 import pony.time.DeltaTime;
 import pony.time.Time;
+
 #if js
 import js.html.Element;
-
-import pony.js.SmartCanvas;#end
+import pony.js.SmartCanvas;
+#end
 
 /**
  * HeapsApp
@@ -34,6 +35,9 @@ import pony.js.SmartCanvas;#end
 
 	public static var instance: Null<HeapsApp>;
 	public static var s2dReady(get, never): Bool;
+	public static var fps(get, set): Float;
+	public static inline var FPS_COMPENSATION: Float = 1.05;
+	private static var fpsInterval: Float = 1 / (hxd.Timer.wantedFPS * FPS_COMPENSATION);
 
 	@:auto public var onInit: Signal1<HeapsApp>;
 	public var noScale(link, link): Bool = canvas.noScale;
@@ -61,28 +65,38 @@ import pony.js.SmartCanvas;#end
 		if (instance == null) instance = this;
 	}
 
+	private static inline function get_fps(): Float return hxd.Timer.wantedFPS;
+
+	public static inline function set_fps(value: Float): Float {
+		hxd.Timer.wantedFPS = value;
+		fpsInterval = 1 / (value * FPS_COMPENSATION);
+		return value;
+	}
+
 	override private function update(dt: Float): Void {
 		DeltaTime.fixedValue = dt;
 		DeltaTime.fixedDispatch();
 	}
 
-	private inline function calcSleepTime(): Float return 1 / (hxd.Timer.wantedFPS * 1.05) - (Timer.stamp() - lastTick);
-
 	#if hl
 
 	override private function mainLoop(): Void {
 		super.mainLoop();
-		var sleepTime: Float = calcSleepTime();
+		var now: Float = Timer.stamp();
+		var elapsed: Float = now - lastTick;
+		var sleepTime: Float = fpsInterval - elapsed;
+		lastTick = now - elapsed % fpsInterval;
 		if (sleepTime > 0) Sys.sleep(sleepTime);
-		lastTick = Timer.stamp();
 	}
 
 	#elseif js
 
 	override private function mainLoop(): Void {
-		if (calcSleepTime() <= 0) {
+		var now: Float = Timer.stamp();
+		var elapsed: Float = now - lastTick;
+		if (elapsed >= fpsInterval) {
+			lastTick = now - elapsed % fpsInterval;
 			super.mainLoop();
-			lastTick = Timer.stamp();
 		}
 	}
 
@@ -138,7 +152,7 @@ import pony.js.SmartCanvas;#end
 	}
 
 	public function drawBorders(?color: UInt): Void {
-		final border: Graphics = new Graphics();
+		var border: Graphics = new Graphics();
 		this.border = border;
 		border.beginFill(@:nullSafety(Off) (color == null) ? engine.backgroundColor : color);
 		var w: Int = canvas.stageInitSize.x * 2;
