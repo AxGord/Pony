@@ -3,6 +3,7 @@ package pony.ui.keyboard;
 import pony.events.Signal1;
 import pony.magic.Declarator;
 import pony.magic.HasSignal;
+import pony.magic.HasLink;
 import pony.ui.keyboard.IKeyboard;
 import pony.ui.keyboard.Key;
 
@@ -12,7 +13,7 @@ import pony.ui.keyboard.Key;
  * @see pony.ui.Key
  * @author AxGord <axgord@gmail.com>
  */
-class Keyboard implements Declarator implements HasSignal {
+class Keyboard implements Declarator implements HasSignal implements HasLink {
 
 	@:auto public static var down: Signal1<Key>;
 	@:auto public static var up: Signal1<Key>;
@@ -26,6 +27,7 @@ class Keyboard implements Declarator implements HasSignal {
 
 	public static var enabled(default, set): Bool = false;
 	public static var disabled(default, set): Bool = false;
+	public static var preventDefault(link, link): Bool = km.preventDefault;
 
 	private static var presser: Presser;
 

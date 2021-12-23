@@ -17,6 +17,8 @@ class Keyboard implements IKeyboard implements HasSignal {
 	@:auto public var down:Signal1<Key>;
 	@:auto public var up:Signal1<Key>;
 
+	public var preventDefault: Bool = false;
+
 	public function new() {}
 
 	public function enable():Void {
