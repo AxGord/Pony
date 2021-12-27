@@ -51,7 +51,8 @@ class Haxelib extends CfgModule<HaxelibConfig> {
 			before: false,
 			section: BASection.Prepare,
 			list: [],
-			allowCfg: true
+			allowCfg: true,
+			cordova: false
 		}, configHandler);
 	}
 

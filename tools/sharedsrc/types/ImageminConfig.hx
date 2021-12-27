@@ -1,6 +1,7 @@
 package types;
 
-typedef ImageminConfig = { > BAConfig,
+typedef ImageminConfig = {
+	> BAConfig,
 	from: String,
 	to: String,
 	recursive: Bool,
@@ -10,5 +11,7 @@ typedef ImageminConfig = { > BAConfig,
 	webpq: Int,
 	webpfrompng: Bool,
 	jpgfrompng: Bool,
-	fast: Bool
+	fast: Bool,
+	checkHash: Bool,
+	ignore: Array<String>
 }

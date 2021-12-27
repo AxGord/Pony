@@ -1,6 +1,7 @@
 package types;
 
-typedef PoeditorConfig = { > BAConfig,
+typedef PoeditorConfig = {
+	> BAConfig,
 	path: String,
 	id: Null<UInt>,
 	token: String,

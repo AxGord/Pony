@@ -1,7 +1,9 @@
 package module;
 
 import pony.Fast;
+
 import sys.io.File;
+
 import types.BASection;
 
 /**
@@ -10,13 +12,13 @@ import types.BASection;
  */
 class Wrapper extends CfgModule<WrapperConfig> {
 
-	private static inline var PRIORITY:Int = 4;
+	private static inline var PRIORITY: Int = 4;
 
 	public function new() super('wrapper');
 
-	override public function init():Void initSections(PRIORITY);
+	override public function init(): Void initSections(PRIORITY);
 
-	override private function readNodeConfig(xml:Fast, ac:AppCfg):Void {
+	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
 		new WrapperReader(xml, {
 			debug: ac.debug,
 			app: ac.app,
@@ -25,11 +27,12 @@ class Wrapper extends CfgModule<WrapperConfig> {
 			file: null,
 			pre: '',
 			post: '',
-			allowCfg: true
+			allowCfg: true,
+			cordova: false
 		}, configHandler);
 	}
 
-	override private function runNode(cfg:WrapperConfig):Void {
+	override private function runNode(cfg: WrapperConfig): Void {
 		var file = cfg.file;
 		var pre = cfg.pre;
 		var post = cfg.post;
@@ -44,7 +47,8 @@ class Wrapper extends CfgModule<WrapperConfig> {
 
 }
 
-private typedef WrapperConfig = { > types.BAConfig,
+private typedef WrapperConfig = {
+	> types.BAConfig,
 	pre: String,
 	post: String,
 	file: String
@@ -52,20 +56,16 @@ private typedef WrapperConfig = { > types.BAConfig,
 
 private class WrapperReader extends BAReader<WrapperConfig> {
 
-	override private function readNode(xml:Fast):Void {
+	override private function readNode(xml: Fast): Void {
 		switch xml.name {
-			case 'file':
-				cfg.file = StringTools.trim(xml.innerData);
-			case 'pre':
-				cfg.pre = StringTools.trim(xml.innerData);
-			case 'post':
-				cfg.post = StringTools.trim(xml.innerData);
-			case _:
-				super.readNode(xml);
+			case 'file': cfg.file = StringTools.trim(xml.innerData);
+			case 'pre': cfg.pre = StringTools.trim(xml.innerData);
+			case 'post': cfg.post = StringTools.trim(xml.innerData);
+			case _: super.readNode(xml);
 		}
 	}
 
-	override private function clean():Void {
+	override private function clean(): Void {
 		cfg.file = null;
 		cfg.pre = '';
 		cfg.post = '';

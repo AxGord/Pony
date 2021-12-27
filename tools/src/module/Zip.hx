@@ -1,6 +1,7 @@
 package module;
 
 import pony.Fast;
+
 import types.BASection;
 
 /**
@@ -9,13 +10,13 @@ import types.BASection;
  */
 class Zip extends CfgModule<ZipConfig> {
 
-	private static inline var PRIORITY:Int = 12;
+	private static inline var PRIORITY: Int = 12;
 
 	public function new() super('zip');
 
-	override public function init():Void initSections(PRIORITY, BASection.Zip);
+	override public function init(): Void initSections(PRIORITY, BASection.Zip);
 
-	override private function readNodeConfig(xml:Fast, ac:AppCfg):Void {
+	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
 		new ZipConfigReader(xml, {
 			debug: ac.debug,
 			app: ac.app,
@@ -27,11 +28,12 @@ class Zip extends CfgModule<ZipConfig> {
 			compressLvl: 9,
 			log: true,
 			hash: null,
-			allowCfg: true
+			allowCfg: true,
+			cordova: false
 		}, configHandler);
 	}
 
-	override private function runNode(cfg:ZipConfig):Void {
+	override private function runNode(cfg: ZipConfig): Void {
 		log('Archive name: ${cfg.output}');
 		var zip = new pony.ZipTool(
 			Utils.replaceBuildDate(cfg.output),
@@ -40,15 +42,15 @@ class Zip extends CfgModule<ZipConfig> {
 			cfg.root == null ? null : Utils.replaceBuildDate(cfg.root)
 		);
 		if (cfg.log) zip.onLog << log;
-		zip.onError << function(err:String) throw err;
-		if (cfg.hash != null)
-			zip.writeHash(Utils.getHashes(cfg.hash));
+		zip.onError << function(err: String) throw err;
+		if (cfg.hash != null) zip.writeHash(Utils.getHashes(cfg.hash));
 		zip.writeList(cfg.input).end();
 	}
 
 }
 
-private typedef ZipConfig = { > types.BAConfig,
+private typedef ZipConfig = {
+	> types.BAConfig,
 	input: Array<String>,
 	output: String,
 	prefix: String,
@@ -60,7 +62,7 @@ private typedef ZipConfig = { > types.BAConfig,
 
 private class ZipConfigReader extends BAReader<ZipConfig> {
 
-	override private function readNode(xml:Fast):Void {
+	override private function readNode(xml: Fast): Void {
 		switch xml.name {
 			case 'input': cfg.input.push(normalize(xml.innerData));
 			case 'output': cfg.output = normalize(xml.innerData);
@@ -74,7 +76,7 @@ private class ZipConfigReader extends BAReader<ZipConfig> {
 		}
 	}
 
-	override private function clean():Void {
+	override private function clean(): Void {
 		cfg.input = [];
 		cfg.output = 'app.zip';
 		cfg.prefix = 'bin/';
@@ -84,7 +86,7 @@ private class ZipConfigReader extends BAReader<ZipConfig> {
 		cfg.root = null;
 	}
 
-	override private function readAttr(name:String, val:String):Void {
+	override private function readAttr(name: String, val: String): Void {
 		switch name {
 			case 'log': cfg.log = !pony.text.TextTools.isFalse(val);
 			case _:

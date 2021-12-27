@@ -1,11 +1,13 @@
 package module;
 
 import pony.Fast;
-import types.BASection;
-import types.BAConfig;
 import pony.text.TextTools;
 
-typedef ElectronConfig = { > BAConfig,
+import types.BAConfig;
+import types.BASection;
+
+typedef ElectronConfig = {
+	> BAConfig,
 	path: String,
 	mac: Bool,
 	win: Bool,
@@ -16,13 +18,13 @@ typedef ElectronConfig = { > BAConfig,
 
 class Electron extends CfgModule<ElectronConfig> {
 
-	private static inline var PRIORITY:Int = 0;
+	private static inline var PRIORITY: Int = 0;
 
 	public function new() super('electron');
-	
-	override public function init():Void initSections(PRIORITY, BASection.Electron);
 
-	override private function readNodeConfig(xml:Fast, ac:AppCfg):Void {
+	override public function init(): Void initSections(PRIORITY, BASection.Electron);
+
+	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
 		new ElectronReader(xml, {
 			debug: ac.debug,
 			app: ac.app,
@@ -34,15 +36,16 @@ class Electron extends CfgModule<ElectronConfig> {
 			win: false,
 			win32: false,
 			linux: false,
-			pack: false
+			pack: false,
+			cordova: false
 		}, configHandler);
 	}
 
-	override private function runNode(cfg:ElectronConfig):Void {
+	override private function runNode(cfg: ElectronConfig): Void {
 		if (cfg.mac || cfg.win || cfg.linux) {
-			var cwd:Cwd = new Cwd(cfg.path);
+			var cwd: Cwd = new Cwd(cfg.path);
 			cwd.sw();
-			var args:Array<String> = [];
+			var args: Array<String> = [];
 			if (cfg.mac && cfg.win && cfg.linux) {
 				args.push('-mwl');
 			} else {
@@ -50,8 +53,7 @@ class Electron extends CfgModule<ElectronConfig> {
 				if (cfg.mac) args.push('--mac');
 				if (cfg.win || cfg.win32) {
 					args.push('--win');
-					if (cfg.win32)
-						args.push('--ia32');
+					if (cfg.win32) args.push('--ia32');
 				}
 			}
 			if (!cfg.pack) args.push('--dir');
@@ -64,7 +66,7 @@ class Electron extends CfgModule<ElectronConfig> {
 
 private class ElectronReader extends BAReader<ElectronConfig> {
 
-	override private function clean():Void {
+	override private function clean(): Void {
 		cfg.path = 'bin/';
 		cfg.mac = false;
 		cfg.win = false;
@@ -73,7 +75,7 @@ private class ElectronReader extends BAReader<ElectronConfig> {
 		cfg.pack = false;
 	}
 
-	override private function readAttr(name:String, val:String):Void {
+	override private function readAttr(name: String, val: String): Void {
 		switch name {
 			case 'path': cfg.path = normalize(val);
 			case 'mac': cfg.mac = TextTools.isTrue(val);

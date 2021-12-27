@@ -1,9 +1,10 @@
 package module;
 
-import pony.text.TextTools;
 import pony.Fast;
-import pony.fs.Unit;
 import pony.fs.Dir;
+import pony.fs.Unit;
+import pony.text.TextTools;
+
 import types.BASection;
 
 /**
@@ -27,19 +28,31 @@ import types.BASection;
 			dirs: [],
 			empty: [],
 			units: [],
+			keepFiles: [],
 			allowCfg: true,
 			rimraf: false,
-			md: false
+			md: false,
+			keepHashed: false,
+			cordova: false
 		}, configHandler);
 	}
 
 	override private function runNode(cfg: CleanConfig): Void {
-		cleanDirs(cfg.dirs, cfg.rimraf, cfg.md);
+		var keep: Array<String> = cfg.keepFiles;
+		if (cfg.keepHashed) {
+			var hashModule: Null<module.Hash> = modules.getModule(module.Hash);
+			if (hashModule != null && hashModule.xml != null) {
+				var hashed: Array<String> = hashModule.getHashed();
+				keep = keep.concat(hashed);
+				if (hashed.length > 1) hashModule.runCleanAfter = true;
+			}
+		}
+		cleanDirs(cfg.dirs, keep, cfg.rimraf, cfg.md);
 		deleteUnits(cfg.units);
 		cleanEmpty(cfg.empty);
 	}
 
-	private function cleanDirs(data: Array<String>, rimraf: Bool, md: Bool): Void {
+	private function cleanDirs(data: Array<String>, keepFiles: Array<String>, rimraf: Bool, md: Bool): Void {
 		for (d in data) {
 			var dir: Dir = d;
 			if (!dir.exists) {
@@ -53,7 +66,7 @@ import types.BASection;
 			if (rimraf) {
 				Utils.command('rimraf', [d]);
 			} else {
-				dir.deleteContent();
+				dir.deleteContent(keepFiles);
 			}
 		}
 	}
@@ -73,7 +86,7 @@ import types.BASection;
 		}
 	}
 
-	private function deleteUnits(data: Array<String>): Void {
+	public function deleteUnits(data: Array<String>): Void {
 		for (u in data) {
 			log('Delete file: $u');
 			(u : Unit).delete();
@@ -87,17 +100,20 @@ private typedef CleanConfig = {
 	dirs: Array<String>,
 	empty: Array<String>,
 	units: Array<String>,
+	keepFiles: Array<String>,
 	rimraf: Bool,
-	md: Bool
+	md: Bool,
+	keepHashed: Bool
 }
 
 private class CleanReader extends BAReader<CleanConfig> {
 
 	override private function readNode(xml: Fast): Void {
 		switch xml.name {
-			case 'dir': cfg.dirs.push(StringTools.trim(xml.innerData));
-			case 'empty': cfg.empty.push(StringTools.trim(xml.innerData));
-			case 'unit': cfg.units.push(StringTools.trim(xml.innerData));
+			case 'dir': cfg.dirs.push(normalize(xml.innerData));
+			case 'empty': cfg.empty.push(normalize(xml.innerData));
+			case 'unit': cfg.units.push(normalize(xml.innerData));
+			case 'keep': cfg.keepFiles.push(normalize(xml.innerData));
 			case _: super.readNode(xml);
 		}
 	}
@@ -106,14 +122,17 @@ private class CleanReader extends BAReader<CleanConfig> {
 		cfg.dirs = [];
 		cfg.empty = [];
 		cfg.units = [];
+		cfg.keepFiles = [];
 		cfg.rimraf = false;
 		cfg.md = false;
+		cfg.keepHashed = false;
 	}
 
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
 			case 'rimraf': cfg.rimraf = TextTools.isTrue(val);
 			case 'md': cfg.md = TextTools.isTrue(val);
+			case 'keepHashed': cfg.keepHashed = TextTools.isTrue(val);
 			case _:
 		}
 	}

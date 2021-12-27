@@ -1,6 +1,7 @@
 package module;
 
 import pony.Fast;
+
 import types.BASection;
 import types.BmfontConfig;
 
@@ -29,7 +30,8 @@ class Bmfont extends NModule<BmfontConfig> {
 			font: [],
 			distance: 2,
 			padding: -1,
-			allowCfg: true
+			allowCfg: true,
+			cordova: false
 		}, configHandler);
 	}
 

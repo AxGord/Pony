@@ -1,9 +1,10 @@
 package module;
 
-import sys.FileSystem;
-import pony.ds.Triple;
-import pony.fs.File;
 import pony.Fast;
+import pony.ds.Triple;
+
+import sys.FileSystem;
+
 import types.BASection;
 import types.DownloadConfig;
 
@@ -29,7 +30,8 @@ class Download extends NModule<DownloadConfig> {
 			section: BASection.Prepare,
 			path: '',
 			units: [],
-			allowCfg: true
+			allowCfg: true,
+			cordova: false
 		}, configHandler);
 	}
 
@@ -56,9 +58,7 @@ private class DownloadReader extends BAReader<DownloadConfig> {
 
 	override private function readNode(xml: Fast): Void {
 		switch xml.name {
-
 			case 'unit':
-
 				var url: String = xml.att.url;
 				var update: Bool = xml.isTrue('update');
 				var p: Triple<String, String, Bool> = if (xml.has.v) {
@@ -72,7 +72,6 @@ private class DownloadReader extends BAReader<DownloadConfig> {
 					new Triple(url, xml.has.check ? xml.att.check : null, update);
 				}
 				cfg.units.push(p);
-
 			case _:
 				super.readNode(xml);
 		}

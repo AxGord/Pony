@@ -1,6 +1,7 @@
+import module.Module;
+
 import pony.Fast;
 import pony.Tools;
-import module.Module;
 import pony.time.MainLoop;
 
 using pony.text.TextTools;

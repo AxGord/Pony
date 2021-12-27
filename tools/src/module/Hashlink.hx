@@ -1,16 +1,16 @@
 package module;
 
-import haxe.io.Path;
-import pony.fs.Dir;
+import pony.Fast;
 import pony.SPair;
 import pony.ZipTool;
-import pony.Fast;
-import pony.fs.Unit;
+import pony.fs.Dir;
 import pony.fs.File;
+import pony.fs.Unit;
+
 import types.BASection;
 
-using pony.text.TextTools;
 using Lambda;
+using pony.text.TextTools;
 
 /**
  * Hashlink module
@@ -45,7 +45,8 @@ class Hashlink extends CfgModule<HashlinkConfig> {
 			keyPassword: null,
 			abiFilters: null,
 			platformData: null,
-			allowCfg: true
+			allowCfg: true,
+			cordova: false
 		}, configHandler);
 	}
 

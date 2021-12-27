@@ -36,14 +36,8 @@ class ConfigBuilder {
 					Context.registerModuleDependency(Context.getLocalModule(), StringTools.trim(f));
 			var cfg: PConfig = {
 				app: haxe.macro.Context.definedValue('app'),
-				#if debug
-				debug: true,
-				#else
-				debug: false,
-				#end
-				#if cordova
-				cordova: true,
-				#end
+				debug: #if debug true #else false #end,
+				cordova: #if cordova true #else false #end,
 				path: ''
 			};
 			var addedConfig: Array<String> = []; // Filter added configs because app define not set for completion server

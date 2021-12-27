@@ -1,6 +1,7 @@
 package module;
 
 import pony.Fast;
+
 import types.BASection;
 import types.RemoteConfig;
 
@@ -29,7 +30,8 @@ class Remote extends NModule<RemoteConfig> {
 			host: null,
 			port: null,
 			key: null,
-			commands: []
+			commands: [],
+			cordova: false
 		}, configHandler);
 	}
 

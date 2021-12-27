@@ -1,306 +1,215 @@
 package module;
 
+import haxe.crypto.Sha224;
+import haxe.io.Bytes;
+import haxe.io.BytesOutput;
+
+import hxbitmini.Serializable;
+import hxbitmini.Serializer;
+
 import pony.Fast;
-import haxe.crypto.Crc32;
-import sys.io.File;
-import sys.FileSystem;
 import pony.fs.Dir;
-import pony.Pair;
-import pony.SPair;
-import pony.ThreadTasks;
+import pony.fs.File;
+
 import types.BASection;
 
-private typedef HashTargets = Pair<SPair<String>, Array<String>>;
-
-private typedef CalcConfig = {a: String, b: String, c: String, r:String};
+using StringTools;
+using pony.text.TextTools;
 
 /**
  * Hash module
  * @author AxGord <axgord@gmail.com>
  */
-class Hash extends Module {
+@:nullSafety(Strict) class Hash extends CfgModule<HashConfig> {
 
-	private static inline var PRIORITY:Int = 8;
+	public static inline var DEFAULT_FILE_NAME: String = 'hash.bin';
+	private static inline var PRIORITY: Int = 40;
 
-	public var ignore:Array<String> = [];
-
-	private var map:Map<String, String>;
-
-	private var beforeDirs:Map<BASection, HashTargets> = new Map();
-	private var beforeUnits:Map<BASection, HashTargets> = new Map();
-	private var beforeCalc:Map<BASection, CalcConfig> = new Map();
-	private var afterDirs:Map<BASection, HashTargets> = new Map();
-	private var afterUnits:Map<BASection, HashTargets> = new Map();
-	private var afterCalc:Map<BASection, CalcConfig> = new Map();
-
-	private var threads:Int = 1;
-	private var hash:Bool = false;
+	public var runCleanAfter: Bool = false;
+	private var updated: Bool = false;
+	private var file: File = DEFAULT_FILE_NAME;
+	private var binary: Bool = true;
+	private var root: String = '';
+	private var source: String = '';
+	private var inited: Bool = false;
+	private var units: Map<String, Bytes> = [];
+	private var newUnits: Map<String, Bytes> = [];
+	private var notChangedUnits: Array<String> = [];
 
 	public function new() super('hash');
 
-	override public function init():Void {
-		if (xml == null) return;
-		if (xml.has.threads) threads = Std.parseInt(xml.att.threads);
-		hash = pony.text.XmlTools.isTrue(xml, 'hash');
-		addConfigListener();
-		addListeners(PRIORITY, before, after);
+	override public function init(): Void {
+		initSections(PRIORITY, BASection.Prepare);
 		modules.commands.onHash < start;
 	}
 
-	override private function readConfig(ac:AppCfg):Void {
+	private function start(): Void error('Deprecated');
+
+	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
 		new HashReader(xml, {
 			debug: ac.debug,
 			app: ac.app,
 			before: false,
-			section: Hash,
-			dirs: [],
-			units: [],
-			calc: createCalcConfig(),
-			stateFile: 'hashstate.txt',
+			section: Prepare,
+			file: DEFAULT_FILE_NAME,
+			binary: true,
 			allowCfg: true,
-			changesFile: null//'hashchanges.txt'
+			root: '',
+			source: '',
+			input: [],
+			cordova: false
 		}, configHandler);
 	}
 
-	private function start():Void {
-		if (afterCalc.exists(BASection.Hash)) {
-			var ac = afterCalc[BASection.Hash];
-			calc(ac.a, ac.b, ac.c, ac.r);
+	override private function configHandler(cfg: HashConfig): Void {
+		super.configHandler(cfg);
+		file = cfg.file;
+		binary = cfg.binary;
+		root = cfg.root;
+		source = cfg.source;
+	}
+
+	private function initHash(): Void {
+		if (inited) return;
+		inited = true;
+		var bytes: Null<Bytes> = file.bytes;
+		if (bytes != null) units = pony.ui.Hash.fromBytes(bytes).units;
+	}
+
+	private inline function pathKey(key: String): String {
+		if (key.startsWith(root)) key = key.substr(root.length);
+		if (key.startsWith(source)) key = key.substr(source.length);
+		return key;
+	}
+
+	public function dirChanged(key: String, dirs: Array<String>, ?filter: String): Bool {
+		initHash();
+		key = pathKey(key);
+		var dirs: Array<Dir> = [ for (dir in dirs) dir ];
+		dirs.sort(cast Dir.compareNames);
+		return compareStates(key, Sha224.make(DirState.fromDirs(dirs, filter)));
+	}
+
+	public function fileChanged(key: String, unit: File): Bool {
+		if (unit.name == '.DS_Store') return false;
+		initHash();
+		key = pathKey(key);
+		var date: Null<Date> = unit.mtime;
+		if (date == null) return true;
+		var bo: BytesOutput = new BytesOutput();
+		bo.writeInt32(Std.int(date.getTime()));
+		return compareStates(key, bo.getBytes());
+	}
+
+	override private function runNode(cfg: HashConfig): Void {
+		for (input in cfg.input) {
+			var bytes: Null<Bytes> = (root: Dir).file(input).bytes;
+			if (bytes == null) return error('Hash input file not exists: $input');
+			compareStates(input, Sha224.make(bytes));
 		}
-		if (!afterDirs.exists(BASection.Hash) && !afterUnits.exists(BASection.Hash)) return;
-		if (afterDirs.exists(BASection.Hash)) dirs(afterDirs[BASection.Hash]);
-		if (afterUnits.exists(BASection.Hash)) units(afterUnits[BASection.Hash]);
-	}
-
-	private function before(section:BASection):Void {
-		if (section == BASection.Hash) return;
-		if (beforeCalc.exists(section)) calc(beforeCalc[section].a, beforeCalc[section].b, beforeCalc[section].c, beforeCalc[section].r);
-		if (!beforeDirs.exists(section) && !beforeUnits.exists(section)) return;
-		//todo: look files
-		if (beforeDirs.exists(section)) dirs(beforeDirs[section]);
-		if (beforeUnits.exists(section)) units(beforeUnits[section]);
-	}
-
-	private function after(section:BASection):Void {
-		if (section == BASection.Hash) return;
-		if (afterCalc.exists(section)) calc(afterCalc[section].a, afterCalc[section].b, afterCalc[section].c, afterCalc[section].r);
-		if (!afterDirs.exists(section) && !afterUnits.exists(section)) return;
-		if (afterDirs.exists(section)) dirs(afterDirs[section]);
-		if (afterUnits.exists(section)) units(afterUnits[section]);
-	}
-
-	private function dirs(data:HashTargets):Void {
-		var list:Array<String> = [];
-		for (e in data.b) {
-			var d:Dir = e;
-			for (f in d.contentRecursiveFiles())
-				if (f.name.charAt(0) != '.' && ignore.indexOf(f.name) == -1) list.push(f);
-		}
-		files(data.a, list);
-	}
-
-	private function units(data:HashTargets):Void {
-		files(data.a, data.b);
-	}
-
-	private function calc(a:String, b:String, c:String, r:String):Void {
-		var ah = Utils.getHashes(a);
-		var bh = Utils.getHashes(b);
-		var ch:Map<String, Array<String>> = new Map();
-		var rm:Array<String> = [];
-		for (ak in ah.keys()) {
-			if (!(bh.exists(ak) && compareHash(ah[ak], bh[ak]))) {
-				ch[ak] = ah[ak];
+		var lost: Array<String> = getLost();
+		if (lost.length > 0) updated = true;
+		if (updated) {
+			log('Write hash to ' + file);
+			file.bytes = new pony.ui.Hash(newUnits).toBytes();
+			if (runCleanAfter) {
+				var cleanModule: Null<Clean> = modules.getModule(Clean);
+				if (cleanModule != null) cleanModule.deleteUnits(lost);
 			}
 		}
-		if (r != null)
-			for (bk in bh.keys())
-				if (!ah.exists(bk)) rm.push(bk);
-
-		Utils.saveHashes(c, ch);
-		if (r != null) File.saveContent(r, rm.join('\n'));
 	}
 
-	private static function compareHash(a:Array<String>, b:Array<String>):Bool {
-		if (a.length != b.length) return false;
-		for (i in 0...a.length) {
-			if (a[i] != b[i]) return false;
-		}
-		return true;
-	}
-
-	private function files(file:SPair<String>, list:Array<String>):Void {
-		var map:Map<String, Array<String>> = Utils.getHashes(file.a);
-		var nmap:Map<String, Array<String>> = new Map();
-		var changesMap:Map<String, Array<String>> = new Map();
-		Sys.println('Hashing');
-		var startTime = Sys.time();
-		ThreadTasksWhile.multyTask(threads, function(lock:Void->Void, unlock:Void->Void) {
-			if (list.length > 0) {
-				var e = list.pop();
-				var stat = FileSystem.stat(e);
-				unlock();
-				var nt = Std.string(stat.mtime.getTime());
-				var ns = Std.string(stat.size);
-
-				if (map.exists(e)) {
-
-					if (nt != map[e][0] || ns != map[e][1]) {
-						var nd = [nt, ns];
-						if (hash) {
-							var nHash = Std.string(Crc32.make(File.getBytes(e)));
-							nd.push(nHash);
-							if (map[e][2] != nHash) {
-								changesMap[e] = nd;
-								Sys.print('!');
-							} else {
-								Sys.print('.');
-							}
-						} else {
-							changesMap[e] = nd;
-							Sys.print('!');
-						}
-						nmap[e] = nd;
-					} else {
-						nmap[e] = map[e];
-						Sys.print('.');
-					}
-
-				} else {
-					var nd = [nt, ns];
-					if (hash)
-						nd.push(Std.string(Crc32.make(File.getBytes(e))));
-					changesMap[e] = nd;
-					nmap[e] = nd;
-					Sys.print('+');
-				}
-
-				return true;
-			} else {
-				Sys.print('^');
-				return false;
-			}
-		});
-		Utils.saveHashes(file.a, nmap);
-		if (file.b != null) Utils.saveHashes(file.b, changesMap);
-		Sys.println('');
-		Sys.println('Hashing time: ' + Std.int((Sys.time() - startTime) * 1000) / 1000);
-	}
-
-	private function configHandler(cfg:HashConfig):Void {
-		var filesPair = new SPair(cfg.stateFile, cfg.changesFile);
-		var a = cfg.calc.a;
-		var b = cfg.calc.b;
-		var c = cfg.calc.c;
-		var r = cfg.calc.r;
-		if (cfg.before) {
-			if (a != null || b != null || c != null || r != null) {
-				if (!beforeCalc.exists(cfg.section))
-					beforeCalc[cfg.section] = createCalcConfig();
-
-				if (a != null) beforeCalc[cfg.section].a = a;
-				if (b != null) beforeCalc[cfg.section].b = b;
-				if (c != null) beforeCalc[cfg.section].c = c;
-				if (r != null) beforeCalc[cfg.section].r = r;
-			}
-
-			if (cfg.dirs.length > 0) {
-				if (beforeDirs.exists(cfg.section)) {
-					beforeDirs[cfg.section].b = beforeDirs[cfg.section].b.concat(cfg.dirs);
-				} else {
-					beforeDirs[cfg.section] = new Pair(filesPair, cfg.dirs);
-				}
-			}
-			if (cfg.units.length > 0) {
-				if (beforeUnits.exists(cfg.section)) {
-					beforeUnits[cfg.section].b = beforeUnits[cfg.section].b.concat(cfg.units);
-				} else {
-					beforeUnits[cfg.section] = new Pair(filesPair, cfg.units);
-				}
-			}
+	private function compareStates(key: String, newState: Bytes): Bool {
+		var oldState: Null<Bytes> = units[key];
+		var changed: Bool = oldState == null || oldState.compare(newState) != 0;
+		if (changed) {
+			log('$key - changed');
+			updated = true;
 		} else {
-			if (a != null || b != null || c != null || r != null) {
-				if (!afterCalc.exists(cfg.section))
-					afterCalc[cfg.section] = createCalcConfig();
+			log('$key - not changed');
+			notChangedUnits.push(key);
+		}
+		newUnits[key] = newState;
+		return changed;
+	}
 
-				if (a != null) afterCalc[cfg.section].a = a;
-				if (b != null) afterCalc[cfg.section].b = b;
-				if (c != null) afterCalc[cfg.section].c = c;
-				if (r != null) afterCalc[cfg.section].r = r;
-			}
+	public function getHashed(): Array<String> {
+		initHash();
+		var r: Array<String> = buildUnitsList(units.keys());
+		r.push(file.first);
+		return r;
+	}
 
-			if (cfg.dirs.length > 0) {
-				if (afterDirs.exists(cfg.section)) {
-					afterDirs[cfg.section].b = afterDirs[cfg.section].b.concat(cfg.dirs);
-				} else {
-					afterDirs[cfg.section] = new Pair(filesPair, cfg.dirs);
-				}
-			}
-			if (cfg.units.length > 0) {
-				if (afterUnits.exists(cfg.section)) {
-					afterUnits[cfg.section].b = afterUnits[cfg.section].b.concat(cfg.units);
-				} else {
-					afterUnits[cfg.section] = new Pair(filesPair, cfg.units);
-				}
+	private function getLost(): Array<String> {
+		return [ for (key in units.keys()) if (!newUnits.exists(key)) root + key ];
+	}
+
+	private function buildUnitsList(a: Iterator<String>): Array<String> {
+		var r: Array<String> = [];
+		for (key in a) {
+			r.push(root + key);
+			if (key.endsWith('.atlas')) {
+				r.push(root + key.substr(0, -5) + 'png');
+				r.push(root + key + '.bin');
 			}
 		}
+		return r;
 	}
 
-	@:extern public static inline function createCalcConfig():CalcConfig return {a: null, b: null, c: null, r: null};
+	public inline function getNotChangedUnits(): Array<String> return buildUnitsList(notChangedUnits.iterator());
 
 }
 
-private typedef HashConfig = { > types.BAConfig,
-	dirs: Array<String>,
-	units: Array<String>,
-	stateFile: String,
-	changesFile: String,
-	calc: CalcConfig
-}
+@:keep private class DirState implements Serializable {
 
-private class HashReader extends BAReader<HashConfig> {
+	@:s public var units: Map<String, UInt>;
 
-	public static function cleanCfg(cfg: HashConfig): Void {
-		cfg.dirs = [];
-		cfg.units = [];
-		cfg.calc = module.Hash.createCalcConfig();
+	private function new(dirs: Array<Dir>, filter: Null<String>) {
+		units = new Map<String, UInt>();
+		for (dir in dirs) for (file in dir.contentRecursiveFiles(filter, true))
+			if (file.name != '.DS_Store')
+				units[file.first] = Std.int(file.mtime.getTime());
 	}
 
-	override private function readNode(xml:Fast):Void {
+	private inline function toBytes(): Bytes return new Serializer().serialize(this);
+	public static inline function fromDirs(dirs: Array<Dir>, filter: Null<String>): Bytes return new DirState(dirs, filter).toBytes();
+
+}
+
+private typedef HashConfig = {
+	> types.BAConfig,
+	file: String,
+	binary: Bool,
+	root: String,
+	source: String,
+	input: Array<String>
+}
+
+@:nullSafety(Strict) private class HashReader extends BAReader<HashConfig> {
+
+	override private function clean(): Void {
+		cfg.file = module.Hash.DEFAULT_FILE_NAME;
+		cfg.binary = true;
+		cfg.root = '';
+		cfg.source = '';
+		cfg.input = [];
+	}
+
+	override private function readNode(xml: Fast): Void {
 		switch xml.name {
-			case 'dir': cfg.dirs.push(StringTools.trim(xml.innerData));
-			case 'unit': cfg.units.push(StringTools.trim(xml.innerData));
-			case 'calc':
-				allowEnd = false;
-				new HashCalcReader(xml, copyCfg(), onConfig);
+			case 'output': cfg.file = normalize(xml.innerData);
+			case 'input': cfg.input.push(normalize(xml.innerData));
 			case _: super.readNode(xml);
 		}
 	}
 
-	override private function clean():Void cleanCfg(cfg);
-
-	override private function readAttr(name:String, val:String):Void {
+	override private function readAttr(name: String, val: String): Void {
 		switch name {
-			case 'state': cfg.stateFile = val;
-			case 'changes': cfg.changesFile = val;
+			case 'binary': cfg.binary = !val.isFalse();
+			case 'root': cfg.root = normalize(val);
+			case 'source': cfg.source = normalize(val);
 			case _:
 		}
 	}
-
-}
-
-private class HashCalcReader extends BAReader<HashConfig> {
-
-	override private function readNode(xml:Fast):Void {
-		switch xml.name {
-			case 'a': cfg.calc.a = StringTools.trim(xml.innerData);
-			case 'b': cfg.calc.b = StringTools.trim(xml.innerData);
-			case 'c': cfg.calc.c = StringTools.trim(xml.innerData);
-			case 'r': cfg.calc.r = StringTools.trim(xml.innerData);
-			case _: super.readNode(xml);
-		}
-	}
-
-	override private function clean():Void HashReader.cleanCfg(cfg);
 
 }

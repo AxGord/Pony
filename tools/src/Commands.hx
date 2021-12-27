@@ -4,7 +4,7 @@
  */
 class Commands extends pony.magic.Commander {
 
-	private static inline var MINIMAL_PRIORITY:Int = -200;
+	private static inline var MINIMAL_PRIORITY: Int = -200;
 
 	public function new() {
 		super();

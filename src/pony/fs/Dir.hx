@@ -17,7 +17,7 @@ abstract Dir(Unit) from Unit {
 
 	public var first(get, never): String;
 
-	inline public function new(v: Unit) {
+	public inline function new(v: Unit) {
 		if (v.isFile) throw 'This is not directory';
 		this = v;
 	}
@@ -28,7 +28,7 @@ abstract Dir(Unit) from Unit {
 		return false;
 	}
 
-	public function content(?filter: String, allowDir: Bool = false): Array<Unit> {
+	public function content(?filter: String, allowDir: Bool = false, sortByName: Bool = false): Array<Unit> {
 		var result: Map<String, Unit> = new Map<String, Unit>();
 		var flt: Array<String> = filter == null ? null : filter.split(' ');
 		for (d in this) {
@@ -40,24 +40,37 @@ abstract Dir(Unit) from Unit {
 						result[e] = [for (d in this.wayStringIterator()) d + '/$e'];
 				}
 		}
-		return [for (e in result) e];
+		var r: Array<Unit> = [for (e in result) e];
+		if (sortByName) r.sort(compareNames);
+		return r;
 	}
 
-	public function deleteContent(): Void {
-		for (e in contentRecursiveFiles()) e.delete();
-		for (e in contentRecursiveDirs()) e.delete();
+	public function deleteContent(?keepFiles: Array<String>): Void {
+		if (keepFiles == null) {
+			for (e in contentRecursiveFiles()) e.delete();
+			for (e in contentRecursiveDirs()) e.delete();
+		} else {
+			for (e in contentRecursiveFiles()) if (!keepFiles.contains(e.first)) e.delete();
+			for (e in contentRecursiveDirs()) if (e.content().length == 0) e.delete();
+		}
 	}
 
-	public function files(?filter: String): Array<File> return [for (u in content(filter)) if (u.isFile) u];
-	public function dirs(?filter: String): Array<Dir> return [for (u in content(filter, true)) if (u.isDir) u];
-	inline public function delete(): Void FileSystem.deleteDirectory(first);
-	inline private function get_first(): String return this.first;
+	public function files(?filter: String, sortByName: Bool = false): Array<File> {
+		return [ for (u in content(filter, false, sortByName)) if (u.isFile) u ];
+	}
 
-	public function contentRecursiveFiles(?filter: String): Array<File> {
+	public function dirs(?filter: String, sortByName: Bool = false): Array<Dir> {
+		return [ for (u in content(filter, true, sortByName)) if (u.isDir) u ];
+	}
+
+	public inline function delete(): Void FileSystem.deleteDirectory(first);
+	private inline function get_first(): String return this.first;
+
+	public function contentRecursiveFiles(?filter: String, sortByName: Bool = false): Array<File> {
 		var result: Array<File> = [];
-		for (u in content(filter, true)) {
+		for (u in content(filter, true, sortByName)) {
 			if (u.isDir) {
-				result = result.concat(u.dir.contentRecursiveFiles(filter));
+				result = result.concat(u.dir.contentRecursiveFiles(filter, sortByName));
 			} else {
 				result.push(u.file);
 			}
@@ -65,11 +78,11 @@ abstract Dir(Unit) from Unit {
 		return result;
 	}
 
-	public function contentRecursiveDirs(?filter: String): Array<Dir> {
+	public function contentRecursiveDirs(?filter: String, sortByName: Bool = false): Array<Dir> {
 		var result: Array<Dir> = [];
-		for (u in content(filter, true)) {
+		for (u in content(filter, true, sortByName)) {
 			if (u.isDir) {
-				result = result.concat(u.dir.contentRecursiveDirs(filter));
+				result = result.concat(u.dir.contentRecursiveDirs(filter, sortByName));
 				result.push(u.dir);
 			}
 		}
@@ -112,6 +125,12 @@ abstract Dir(Unit) from Unit {
 	@:arrayAccess public inline function arrayAccess(key: Int): Dir return this[key];
 	public inline function iterator(): Iterator<Dir> return this.iterator();
 	@:op(A + B) inline public function addString(a: String): Unit return this.addString(a);
+
+	public static function compareNames(a: Unit, b: Unit): Int {
+		var an: String = a.name.toLowerCase();
+		var bn: String = b.name.toLowerCase();
+		return an == bn ? 0 : an > bn ? 1 : -1;
+	}
 
 }
 #end

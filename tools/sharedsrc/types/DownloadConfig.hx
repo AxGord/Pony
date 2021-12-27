@@ -2,7 +2,8 @@ package types;
 
 import pony.ds.Triple;
 
-typedef DownloadConfig = { > BAConfig,
+typedef DownloadConfig = {
+	> BAConfig,
 	path: String,
-	units:Array<Triple<String, String, Bool>>
+	units: Array<Triple<String, String, Bool>>
 }

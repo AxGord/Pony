@@ -1,9 +1,11 @@
 package module;
 
-import pony.time.DTimer;
-import types.BAConfig;
-import sys.io.Process;
 import pony.net.SocketServer;
+import pony.time.DTimer;
+
+import sys.io.Process;
+
+import types.BAConfig;
 
 /**
  * NModule

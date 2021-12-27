@@ -1,13 +1,14 @@
 package module;
 
-import types.SniffConfig;
-import types.BASection;
+import pony.Fast;
+import pony.Pair;
+
 import types.BAConfig;
-import types.ServerConfig;
+import types.BASection;
 import types.ProxyConfig;
 import types.RemoteServerConfig;
-import pony.Pair;
-import pony.Fast;
+import types.ServerConfig;
+import types.SniffConfig;
 
 using pony.text.XmlTools;
 
@@ -38,7 +39,8 @@ class Server extends NModule<ServerConfig> {
 			proxy: [],
 			haxe: null,
 			remote: null,
-			sniff: null
+			sniff: null,
+			cordova: false
 		}, configHandler);
 	}
 
@@ -77,7 +79,8 @@ private class ServerReader extends BAReader<ServerConfig> {
 					target: null,
 					port: null,
 					slow: null,
-					cache: null
+					cache: null,
+					cordova: false
 				}, proxyConfigHandler);
 			case 'remote':
 				new RemoteReader(xml, {
@@ -89,7 +92,8 @@ private class ServerReader extends BAReader<ServerConfig> {
 					port: null,
 					key: null,
 					allow: [],
-					commands: new Map()
+					commands: new Map(),
+					cordova: false
 				}, remoteConfigHandler);
 			case 'sniff':
 				new SniffReader(xml, {
@@ -100,7 +104,8 @@ private class ServerReader extends BAReader<ServerConfig> {
 					allowCfg: true,
 					serverPort: 0,
 					clientHost: null,
-					clientPort: 0
+					clientPort: 0,
+					cordova: false
 				}, sniffConfigHandler);
 			case _:
 				super.readNode(xml);
@@ -137,10 +142,8 @@ private class ProxyReader extends BAReader<BAProxyConfig> {
 
 	override private function readNode(xml: Fast): Void {
 		switch xml.name {
-			case 'target':
-				cfg.target = normalize(xml.innerData);
-			case 'port':
-				cfg.port = Std.parseInt(xml.innerData);
+			case 'target': cfg.target = normalize(xml.innerData);
+			case 'port': cfg.port = Std.parseInt(xml.innerData);
 			case _:
 				super.readNode(xml);
 		}
@@ -148,10 +151,8 @@ private class ProxyReader extends BAReader<BAProxyConfig> {
 
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
-			case 'slow':
-				cfg.slow = Std.parseInt(val);
-			case 'cache':
-				cfg.cache = normalize(val);
+			case 'slow': cfg.slow = Std.parseInt(val);
+			case 'cache': cfg.cache = normalize(val);
 			case _:
 		}
 	}

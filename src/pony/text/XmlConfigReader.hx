@@ -5,23 +5,23 @@ import pony.Fast;
 typedef BaseConfig = {
 	app: String,
 	debug: Bool,
-	?cordova: Bool
+	cordova: Bool
 }
 
 /**
  * XmlConfigReader
  * @author AxGord <axgord@gmail.com>
  */
-class XmlConfigReader<T: BaseConfig> {
+@:nullSafety(Strict) class XmlConfigReader<T: BaseConfig> {
 
 	public var cfg: T;
-	private var onConfig: T -> Void;
+	private var onConfig: Null<T -> Void>;
 	private var allowEnd: Bool = true;
 
-	public function new(xml: Fast, cfg: T, ?onConfig: T -> Void) {
+	public function new(xml: Null<Fast>, cfg: T, ?onConfig: T -> Void) {
 		this.cfg = cfg;
 		this.onConfig = onConfig;
-		readXml(xml);
+		if (xml != null) readXml(xml);
 	}
 
 	private function readAttr(name: String, val: String): Void {}
@@ -66,7 +66,7 @@ class XmlConfigReader<T: BaseConfig> {
 
 	private function _selfCreate<C: XmlConfigReader<T>>(xml: Fast, conf: T): C {
 		allowEnd = false;
-		return cast Type.createInstance(Type.getClass(this), [xml, conf, onConfig]);
+		@:nullSafety(Off) return cast Type.createInstance(Type.getClass(this), [xml, conf, onConfig]);
 	}
 
 	private function selfCreate<C: XmlConfigReader<T>>(xml: Fast): C return _selfCreate(xml, copyCfg());

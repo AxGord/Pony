@@ -1,10 +1,12 @@
 package module;
 
-import types.BASection;
-import types.UglifyConfig;
 import pony.Fast;
 import pony.text.TextTools;
+
 import sys.FileSystem;
+
+import types.BASection;
+import types.UglifyConfig;
 
 /**
  * Uglify module
@@ -25,8 +27,7 @@ class Uglify extends NModule<UglifyConfig> {
 	}
 
 	private function removeCache(): Void {
-		if (FileSystem.exists(CACHE_FILE))
-			FileSystem.deleteFile(CACHE_FILE);
+		if (FileSystem.exists(CACHE_FILE)) FileSystem.deleteFile(CACHE_FILE);
 	}
 
 	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
@@ -47,7 +48,8 @@ class Uglify extends NModule<UglifyConfig> {
 			libcache: null,
 			output: '',
 			input: [],
-			allowCfg: true
+			allowCfg: true,
+			cordova: false
 		}, configHandler);
 	}
 

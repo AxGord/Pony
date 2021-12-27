@@ -1,108 +1,113 @@
 package module;
 
-import pony.Tools;
 import pony.Fast;
+import pony.Logable;
 import pony.Queue;
+import pony.Tools;
 import pony.events.Signal0;
+import pony.magic.HasAbstract;
+import pony.magic.HasLink;
+
 import types.BASection;
 
 /**
  * Module
  * @author AxGord <axgord@gmail.com>
  */
-class Module extends pony.Logable implements pony.magic.HasAbstract implements pony.magic.HasLink {
+@:nullSafety(Strict) class Module extends Logable implements HasAbstract implements HasLink {
 
-	@:auto public static var onEndQueue:Signal0;
-	public static var busy(link, never):Bool = GLOBALQUEUE.busy;
+	@:auto public static var onEndQueue: Signal0;
+	public static var busy(link, never): Bool = GLOBALQUEUE.busy;
 
-	private static inline var CONFIG_PRIORITY:Int = -100;
-	private static var GLOBALQUEUE:Queue<(Void -> Void) -> Void> = new Queue<(Void -> Void) -> Void>(globalRunNextRun);
+	private static inline var CONFIG_PRIORITY: Int = -100;
+	private static var GLOBALQUEUE: Queue<(Void -> Void) -> Void> = new Queue<(Void -> Void) -> Void>(globalRunNextRun);
 
-	public var modules:Modules;
-	private var xml(get, never):Fast;
+	@:nullSafety(Off) public var modules: Modules;
+
+	private var xml(get, never): Null<Fast>;
 	#if (haxe_ver >= 4.000)
-	private var nodes(get, never):Array<Fast>;
+	private var nodes(get, never): Array<Fast>;
 	#else
-	private var nodes(get, never):List<Fast>;
+	private var nodes(get, never): List<Fast>;
 	#end
-	private var _xml:Fast;
-	private var xname:String;
-	private var currentSection:BASection;
-	private var startTime:Float;
+	private var _xml: Null<Fast>;
 
-	public function new(?xname:String) {
+	public var xname(default, null): Null<String>;
+
+	private var currentSection: Null<BASection>;
+	private var startTime: Float = 0;
+
+	public function new(?xname: String) {
 		super();
 		this.xname = xname;
 	}
 
-	private function get_xml():Fast {
-		if (_xml == null)
-			_xml = xname == null ? modules.xml : modules.getNode(xname);
+	private function get_xml(): Null<Fast> {
+		if (_xml == null) _xml = xname == null ? modules.xml : modules.getNode(xname);
 		return _xml;
 	}
 
-	@:extern private inline function parseGroup(xml:Fast):Array<String> {
+	@:extern private inline function parseGroup(xml: Fast): Null<Array<String>> {
 		if (xml != null && xml.has.group) {
-			var r:Array<String> = xml.att.group.split(' ').filter(checkLength);
+			var r: Array<String> = xml.att.group.split(' ').filter(checkLength);
 			return r.length > 0 ? r : null;
 		} else {
 			return null;
 		}
 	}
 
-	private function checkLength(s:String):Bool return s.length > 0;
+	private function checkLength(s: String): Bool return s.length > 0;
 
 	#if (haxe_ver >= 4.000)
-	private function get_nodes():Array<Fast> {
-		return xname == null ? [] : modules.xml.nodes.resolve(xname);
+	private function get_nodes(): Array<Fast> {
+		return xname == null ? [] : @:nullSafety(Off) modules.xml.nodes.resolve(xname);
 	}
 	#else
-	private function get_nodes():List<Fast> {
-		return xname == null ? new List<Fast>() : modules.xml.nodes.resolve(xname);
+	private function get_nodes(): List<Fast> {
+		return xname == null ? new List<Fast>() : @:nullSafety(Off) modules.xml.nodes.resolve(xname);
 	}
 	#end
 
-	private static function globalRunNextRun(fn:Void -> Void):Void fn();
-	public static function lockQueue():Void GLOBALQUEUE.call(Tools.nullFunction0);
-	public static function unlockQueue():Void GLOBALQUEUE.next();
+	private static function globalRunNextRun(fn: Void -> Void): Void fn();
+	public static function lockQueue(): Void GLOBALQUEUE.call(Tools.nullFunction0);
+	public static function unlockQueue(): Void GLOBALQUEUE.next();
 
-	private function addToRun(fn:Void -> Void):Void {
-		GLOBALQUEUE.call(function():Void {
+	private function addToRun(fn: Void -> Void): Void {
+		GLOBALQUEUE.call(function(): Void {
 			begin();
 			fn();
 		});
 	}
 
-	private function finishCurrentRun():Void {
+	private function finishCurrentRun(): Void {
 		end();
 		GLOBALQUEUE.next();
-		if (!GLOBALQUEUE.busy)
-			eEndQueue.dispatch();
+		if (!GLOBALQUEUE.busy) eEndQueue.dispatch();
 	}
 
-	private function begin():Void {
+	private function begin(): Void {
 		log('Start $xname');
 		startTime = Sys.time();
 	}
 
-	private function end():Void {
+	private function end(): Void {
 		log('Complete $xname, time: ' + Std.int((Sys.time() - startTime) * 1000) / 1000);
 	}
 
-	@:abstract public function init():Void;
-	private function runModule(before:Bool, section:BASection):Void throw 'Abstract';
-	private function readConfig(ac:AppCfg):Void {}
+	@:abstract public function init(): Void;
+	@:abstract private function runModule(before: Bool, section: BASection): Void;
+	@:abstract private function readConfig(ac: AppCfg): Void;
 
-	private function initSections(priority:Int, ?current:BASection):Void {
+	private function initSections(priority: Int, ?current: BASection): Void {
 		currentSection = current;
 		addConfigListener();
 		addListeners(priority, moduleBefore, moduleAfter);
 	}
 
-	private function moduleBefore(section:BASection):Void runModule(true, section);
-	private function moduleAfter(section:BASection):Void runModule(false, section);
+	private function moduleBefore(section: BASection): Void runModule(true, section);
+	private function moduleAfter(section: BASection): Void runModule(false, section);
 
-	private function addConfigListener():Void {
+	private function addConfigListener(): Void {
 		modules.commands.onServer.once(emptyConfig, CONFIG_PRIORITY);
 		modules.commands.onPrepare.once(getConfig, CONFIG_PRIORITY);
 		modules.commands.onBuild.once(getConfig, CONFIG_PRIORITY);
@@ -118,7 +123,7 @@ class Module extends pony.Logable implements pony.magic.HasAbstract implements p
 		modules.commands.onUnpack.once(getConfig, CONFIG_PRIORITY);
 	}
 
-	private function removeConfigListener():Void {
+	private function removeConfigListener(): Void {
 		modules.commands.onServer >> emptyConfig;
 		modules.commands.onPrepare >> getConfig;
 		modules.commands.onBuild >> getConfig;
@@ -134,7 +139,7 @@ class Module extends pony.Logable implements pony.magic.HasAbstract implements p
 		modules.commands.onUnpack >> emptyConfig;
 	}
 
-	private function addListeners(priority:Int, before:BASection -> Void, after:BASection -> Void):Void {
+	private function addListeners(priority: Int, before: BASection -> Void, after: BASection -> Void): Void {
 		modules.commands.onServer.once(before.bind(Server), CONFIG_PRIORITY + priority);
 		modules.commands.onPrepare.once(before.bind(Prepare), CONFIG_PRIORITY + priority);
 		modules.commands.onBuild.once(before.bind(Build), CONFIG_PRIORITY + priority);
@@ -164,16 +169,16 @@ class Module extends pony.Logable implements pony.magic.HasAbstract implements p
 		modules.commands.onUnpack.once(after.bind(Unpack), priority);
 	}
 
-	private function getConfig(a:String, b:String):Void {
+	private function getConfig(a: String, b: String): Void {
 		modules.checkXml();
 		removeConfigListener();
 		readConfig(Utils.parseArgs([a, b]));
 	}
 
-	private function emptyConfig():Void {
+	private function emptyConfig(): Void {
 		modules.checkXml();
 		removeConfigListener();
-		readConfig({debug:false, app:null});
+		readConfig({debug: false, app: null});
 	}
 
 }

@@ -1,13 +1,12 @@
 package module;
 
-import pony.text.XmlConfigReader;
 import pony.Fast;
 
-import types.BASection;
 import types.BAConfig;
+import types.BASection;
 
-using pony.text.XmlTools;
 using StringTools;
+using pony.text.XmlTools;
 
 typedef RunConfig = {
 	> BAConfig,
@@ -30,7 +29,7 @@ typedef RunConfig = {
 	public function new() super('run');
 
 	override public function init(): Void {
-		haxelib = modules.xml != null && modules.xml.hasNode.haxelib ?
+		@:nullSafety(Off) haxelib = modules.xml != null && modules.xml.hasNode.haxelib ?
 			[ for (e in modules.xml.node.haxelib.nodes.lib) if (!e.isTrue('mute')) e.innerData.split(' ').join(':') ] : [];
 		initSections(PRIORITY, BASection.Run);
 	}
@@ -44,7 +43,8 @@ typedef RunConfig = {
 			path: null,
 			command: [],
 			haxelib: haxelib,
-			allowCfg: true
+			allowCfg: true,
+			cordova: false
 		}, configHandler);
 	}
 
@@ -75,10 +75,8 @@ typedef RunConfig = {
 	override private function readXml(xml: Fast): Void {
 		try {
 			cfg.command.push({cmd: normalize(xml.innerData)});
-			for (a in xml.x.attributes())
-				readAttr(a, normalize(xml.x.get(a)));
-			if (allowEnd)
-				end();
+			for (a in xml.x.attributes()) readAttr(a, normalize(xml.x.get(a)));
+			if (allowEnd) end();
 		} catch (e: Dynamic) {
 			super.readXml(xml);
 		}
@@ -86,8 +84,7 @@ typedef RunConfig = {
 
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
-			case 'path':
-				cfg.path = val;
+			case 'path': cfg.path = val;
 			case _:
 		}
 	}

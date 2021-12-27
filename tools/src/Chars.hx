@@ -1,4 +1,5 @@
 import pony.Fast;
+
 import sys.io.File;
 
 /**
@@ -17,8 +18,7 @@ class Chars {
 		var chars: List<Fast> = x.node.font.node.chars.nodes.char;
 		var rs: haxe.Utf8 = new haxe.Utf8();
 		#end
-		for (char in chars)
-			rs.addChar(Std.parseInt(char.att.id));
+		for (char in chars) rs.addChar(Std.parseInt(char.att.id));
 		Sys.println(rs.toString());
 	}
 

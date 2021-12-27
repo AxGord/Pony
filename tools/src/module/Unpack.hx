@@ -1,6 +1,7 @@
 package module;
 
 import pony.Fast;
+
 import types.BASection;
 
 using pony.text.XmlTools;
@@ -11,36 +12,39 @@ using pony.text.XmlTools;
  */
 class Unpack extends Module {
 
-	private static inline var PRIORITY:Int = 6;
+	private static inline var PRIORITY: Int = 6;
 
-	private var beforeZips:Map<BASection, Array<ZipConfig>> = new Map();
-	private var afterZips:Map<BASection, Array<ZipConfig>> = new Map();
+	private var beforeZips: Map<BASection, Array<ZipConfig>> = new Map();
+	private var afterZips: Map<BASection, Array<ZipConfig>> = new Map();
 
 	public function new() super('unpack');
 
-	override public function init():Void {
+	override public function init(): Void {
 		if (xml == null) return;
 		addConfigListener();
 		addListeners(PRIORITY, before, after);
 		modules.commands.onUnpack < start;
 	}
 
-	private function start():Void {
+	private function start(): Void {
 		for (c in afterZips[BASection.Unpack]) unzip(c);
 	}
 
-	override private function readConfig(ac:AppCfg):Void {
+	override private function runModule(before: Bool, section: BASection): Void {}
+
+	override private function readConfig(ac: AppCfg): Void {
 		new UnpackReader(xml, {
 			debug: ac.debug,
 			app: ac.app,
 			before: false,
 			section: BASection.Unpack,
 			zips: [],
-			allowCfg: true
+			allowCfg: true,
+			cordova: false
 		}, configHandler);
 	}
 
-	private function configHandler(cfg:UnpackConfig):Void {
+	private function configHandler(cfg: UnpackConfig): Void {
 		if (cfg.zips.length == 0) return;
 		if (cfg.before) {
 			if (beforeZips.exists(cfg.section))
@@ -55,28 +59,27 @@ class Unpack extends Module {
 		}
 	}
 
-	private function before(section:BASection):Void {
+	private function before(section: BASection): Void {
 		if (section == BASection.Unpack) return;
 		if (!beforeZips.exists(section)) return;
 		for (c in beforeZips[section]) unzip(c);
 	}
 
-	private function after(section:BASection):Void {
+	private function after(section: BASection): Void {
 		if (section == BASection.Unpack) return;
 		if (!afterZips.exists(section)) return;
 		for (c in afterZips[section]) unzip(c);
 	}
 
-	private function unzip(c:ZipConfig):Void {
+	private function unzip(c: ZipConfig): Void {
 		log('Unzip: ' + c.file);
-		pony.ZipTool.unpackFile(c.file, c.path, c.log ? function(s:String) log(s) : null);
+		pony.ZipTool.unpackFile(c.file, c.path, c.log ? function(s: String) log(s) : null);
 		if (c.rm) {
 			log('Delete: ' + c.file);
 			sys.FileSystem.deleteFile(c.file);
 		}
-
 	}
-	
+
 }
 
 private typedef ZipConfig = {
@@ -86,27 +89,28 @@ private typedef ZipConfig = {
 	log: Bool
 }
 
-private typedef UnpackConfig = { > types.BAConfig,
+private typedef UnpackConfig = {
+	> types.BAConfig,
 	zips: Array<ZipConfig>
 }
 
 private class UnpackReader extends BAReader<UnpackConfig> {
 
-	override private function readNode(xml:Fast):Void {
+	override private function readNode(xml: Fast): Void {
 		switch xml.name {
-			case 'zip': 
+			case 'zip':
 				cfg.zips.push({
 					path: try StringTools.trim(xml.innerData) catch (_:Any) '',
 					file: xml.att.file,
 					rm: xml.isTrue('rm'),
 					log: !xml.isFalse('log')
 				});
-
-			case _: super.readNode(xml);
+			case _:
+				super.readNode(xml);
 		}
 	}
 
-	override private function clean():Void {
+	override private function clean(): Void {
 		cfg.zips = [];
 	}
 

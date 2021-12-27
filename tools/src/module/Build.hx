@@ -1,19 +1,22 @@
 package module;
 
-import pony.text.TextTools;
+import haxe.io.Eof;
+
+import module.Build.D;
+import module.Build.HAXE;
+import module.Build.HXML;
+
 import pony.Fast;
 import pony.SPair;
+import pony.text.TextTools;
+
 import sys.FileSystem;
 import sys.io.File;
 import sys.io.Process;
-import sys.net.Socket;
 import sys.net.Host;
-import haxe.io.Eof;
+import sys.net.Socket;
 
 import types.BASection;
-import module.Build.HAXE;
-import module.Build.HXML;
-import module.Build.D;
 
 using pony.text.XmlTools;
 
@@ -71,7 +74,8 @@ private typedef LastCompilationOptions = {
 			winfix: false,
 			hxml: null,
 			runHxml: [],
-			allowCfg: true
+			allowCfg: true,
+			cordova: false
 		}, configHandler);
 	}
 

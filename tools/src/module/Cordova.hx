@@ -1,12 +1,14 @@
 package module;
 
+import pony.Fast;
 import pony.fs.File;
 import pony.text.XmlTools;
-import pony.Fast;
+
 import types.BAConfig;
 import types.BASection;
 
-typedef CordovaConfig = { > BAConfig,
+typedef CordovaConfig = {
+	> BAConfig,
 	name: String,
 	desc: String,
 	id: String,
@@ -20,16 +22,16 @@ typedef CordovaConfig = { > BAConfig,
  */
 class Cordova extends CfgModule<CordovaConfig> {
 
-	private static inline var PRIORITY:Int = 0;
-	private static inline var AVC:String = 'android-versionCode';
-	private static inline var OPEN_WIDGET_TAG:String = '<widget';
-	private static inline var CLOSE_WIDGET_TAG:String = '</widget>';
+	private static inline var PRIORITY: Int = 0;
+	private static inline var AVC: String = 'android-versionCode';
+	private static inline var OPEN_WIDGET_TAG: String = '<widget';
+	private static inline var CLOSE_WIDGET_TAG: String = '</widget>';
 
-	private var configFile:File = 'config.xml';
+	private var configFile: File = 'config.xml';
 
 	public function new() super('cordova');
 
-	override public function init():Void {
+	override public function init(): Void {
 		initSections(PRIORITY, BASection.Cordova);
 		modules.commands.onCordova.add(cordovaHandler, -300);
 		modules.commands.onAndroid.add(androidHandler, -200);
@@ -38,32 +40,32 @@ class Cordova extends CfgModule<CordovaConfig> {
 		modules.commands.onIphone.add(iphoneBuildHandler, Move.PRIORITY);
 	}
 
-	private function androidHandler():Void modules.build.addFlag('android');
-	private function iphoneHandler():Void modules.build.addFlag('iphone');
+	private function androidHandler(): Void modules.build.addFlag('android');
+	private function iphoneHandler(): Void modules.build.addFlag('iphone');
 
-	private function cordovaHandler(a:String, b:String):Void {
+	private function cordovaHandler(a: String, b: String): Void {
 		modules.build.addHaxelib('cordova');
-		var cfg:AppCfg = Utils.parseArgs([a, b]);
+		var cfg: AppCfg = Utils.parseArgs([a, b]);
 		if (cfg.debug) {
 			modules.commands.onAndroid >> androidBuildHandler;
 			modules.commands.onIphone >> iphoneBuildHandler;
 		}
 	}
 
-	private function androidBuildHandler():Void addToRun(androidBuild);
-	private function iphoneBuildHandler():Void addToRun(iphoneBuild);
+	private function androidBuildHandler(): Void addToRun(androidBuild);
+	private function iphoneBuildHandler(): Void addToRun(iphoneBuild);
 
-	private function androidBuild():Void {
+	private function androidBuild(): Void {
 		Utils.command('cordova', ['build', 'android', '--release']);
 		finishCurrentRun();
 	}
 
-	private function iphoneBuild():Void {
+	private function iphoneBuild(): Void {
 		Utils.command('cordova', ['build', 'ios', '--release']);
 		finishCurrentRun();
 	}
 
-	override private function readNodeConfig(xml:Fast, ac:AppCfg):Void {
+	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
 		new CordovaReader(xml, {
 			debug: ac.debug,
 			app: ac.app,
@@ -74,20 +76,21 @@ class Cordova extends CfgModule<CordovaConfig> {
 			id: null,
 			versionBuildDate: false,
 			incrementAndroidVersionCode: false,
-			allowCfg: true
+			allowCfg: true,
+			cordova: false
 		}, configHandler);
 	}
 
-	override private function runNode(cfg:CordovaConfig):Void {
+	override private function runNode(cfg: CordovaConfig): Void {
 		if (!configFile.exists) {
 			error('Cordova not inited');
 			Utils.exit(1);
 		}
 
-		var content:String = configFile.content;
-		var contentLines:Array<String> = content.split('\n');
-		var wline:Int = 0;
-		var wfounded:Bool = false;
+		var content: String = configFile.content;
+		var contentLines: Array<String> = content.split('\n');
+		var wline: Int = 0;
+		var wfounded: Bool = false;
 		for (s in contentLines) {
 			s = StringTools.trim(s);
 			if (s.substr(0, OPEN_WIDGET_TAG.length) == OPEN_WIDGET_TAG) {
@@ -109,9 +112,9 @@ class Cordova extends CfgModule<CordovaConfig> {
 			error('Widget tag not founded, please fix $configFile');
 			Utils.exit(1);
 		}
-		var widgetLineXml:Fast = XmlTools.fast(contentLines[wline] + CLOSE_WIDGET_TAG).node.widget;
-		var changes:Bool = false;
-		var widgetLineChanged:Bool = false;
+		var widgetLineXml: Fast = XmlTools.fast(contentLines[wline] + CLOSE_WIDGET_TAG).node.widget;
+		var changes: Bool = false;
+		var widgetLineChanged: Bool = false;
 
 		if (cfg.id != null && cfg.id != widgetLineXml.att.id) {
 			widgetLineXml.att.id = cfg.id;
@@ -124,7 +127,7 @@ class Cordova extends CfgModule<CordovaConfig> {
 		}
 
 		if (cfg.incrementAndroidVersionCode) {
-			var currentVersion:Int = widgetLineXml.has.resolve(AVC) ? Std.parseInt(widgetLineXml.att.resolve(AVC)) : 0;
+			var currentVersion: Int = widgetLineXml.has.resolve(AVC) ? Std.parseInt(widgetLineXml.att.resolve(AVC)) : 0;
 			currentVersion++;
 			widgetLineXml.x.set(AVC, Std.string(currentVersion));
 			widgetLineChanged = true;
@@ -138,7 +141,7 @@ class Cordova extends CfgModule<CordovaConfig> {
 		}
 
 		if (cfg.name != null) {
-			var nc:String = XmlTools.intagReplace(content, 'name', cfg.name);
+			var nc: String = XmlTools.intagReplace(content, 'name', cfg.name);
 			if (nc != content) {
 				content = nc;
 				changes = true;
@@ -146,7 +149,7 @@ class Cordova extends CfgModule<CordovaConfig> {
 		}
 
 		if (cfg.desc != null) {
-			var nc:String = XmlTools.intagReplace(content, 'description', cfg.desc);
+			var nc: String = XmlTools.intagReplace(content, 'description', cfg.desc);
 			if (nc != content) {
 				content = nc;
 				changes = true;
@@ -163,7 +166,7 @@ class Cordova extends CfgModule<CordovaConfig> {
 
 private class CordovaReader extends BAReader<CordovaConfig> {
 
-	override private function clean():Void {
+	override private function clean(): Void {
 		cfg.name = null;
 		cfg.desc = null;
 		cfg.id = null;
@@ -171,7 +174,7 @@ private class CordovaReader extends BAReader<CordovaConfig> {
 		cfg.incrementAndroidVersionCode = false;
 	}
 
-	override private function readNode(xml:Fast):Void {
+	override private function readNode(xml: Fast): Void {
 		switch xml.name {
 			case 'name': cfg.name = normalize(xml.innerData);
 			case 'id': cfg.id = normalize(xml.innerData);

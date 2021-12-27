@@ -1,9 +1,10 @@
 package module;
 
 import pony.Fast;
+import pony.text.TextTools;
+
 import types.BASection;
 import types.ImageminConfig;
-import pony.text.TextTools;
 
 /**
  * Imagemin module
@@ -11,13 +12,13 @@ import pony.text.TextTools;
  */
 class Imagemin extends NModule<ImageminConfig> {
 
-	private static inline var PRIORITY:Int = 22;
+	private static inline var PRIORITY: Int = 22;
 
 	public function new() super('imagemin');
 
-	override public function init():Void initSections(PRIORITY, BASection.Prepare);
+	override public function init(): Void initSections(PRIORITY, BASection.Prepare);
 
-	override private function readNodeConfig(xml:Fast, ac:AppCfg):Void {
+	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
 		new ImageminReader(xml, {
 			debug: ac.debug,
 			app: ac.app,
@@ -31,17 +32,25 @@ class Imagemin extends NModule<ImageminConfig> {
 			webpfrompng: false,
 			jpgfrompng: false,
 			fast: false,
-			allowCfg: false
+			checkHash: false,
+			ignore: [],
+			allowCfg: false,
+			cordova: false
 		}, configHandler);
 	}
 
-	override private function writeCfg(protocol:NProtocol, cfg:Array<ImageminConfig>):Void protocol.imageminRemote(cfg);
+	override private function writeCfg(protocol: NProtocol, cfg: Array<ImageminConfig>): Void {
+		var hash: Null<module.Hash> = cast modules.getModule(module.Hash);
+		if (hash != null && hash.xml != null) for (c in cfg)
+			if (c.checkHash) c.ignore = c.ignore.concat(hash.getNotChangedUnits());
+		protocol.imageminRemote(cfg);
+	}
 
 }
 
 private class ImageminReader extends BAReader<ImageminConfig> {
 
-	override private function clean():Void {
+	override private function clean(): Void {
 		cfg.from = '';
 		cfg.to = '';
 		cfg.recursive = false;
@@ -52,9 +61,11 @@ private class ImageminReader extends BAReader<ImageminConfig> {
 		cfg.webpfrompng = false;
 		cfg.jpgfrompng = false;
 		cfg.fast = false;
+		cfg.checkHash = false;
+		cfg.ignore = [];
 	}
 
-	override private function readAttr(name:String, val:String):Void {
+	override private function readAttr(name: String, val: String): Void {
 		switch name {
 			case 'from': cfg.from += val;
 			case 'to': cfg.to += val;
@@ -66,16 +77,15 @@ private class ImageminReader extends BAReader<ImageminConfig> {
 			case 'webpfrompng': cfg.webpfrompng = TextTools.isTrue(val);
 			case 'jpgfrompng': cfg.jpgfrompng = TextTools.isTrue(val);
 			case 'fast': cfg.fast = TextTools.isTrue(val);
+			case 'checkHash': cfg.checkHash = TextTools.isTrue(val);
 			case _:
 		}
 	}
 
-	override private function readNode(xml:Fast):Void {
+	override private function readNode(xml: Fast): Void {
 		switch xml.name {
-
 			case 'dir': allowCreate(xml);
 			case 'path': denyCreate(xml);
-
 			case _: super.readNode(xml);
 		}
 	}

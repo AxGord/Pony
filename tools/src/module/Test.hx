@@ -1,6 +1,7 @@
 package module;
 
 import pony.Fast;
+
 import types.BASection;
 
 /**
@@ -9,13 +10,13 @@ import types.BASection;
  */
 class Test extends CfgModule<TestConfig> {
 
-	private static inline var PRIORITY:Int = 5;
+	private static inline var PRIORITY: Int = 5;
 
 	public function new() super('test');
 
-	override public function init():Void initSections(PRIORITY);
+	override public function init(): Void initSections(PRIORITY);
 
-	override private function readNodeConfig(xml:Fast, ac:AppCfg):Void {
+	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
 		new TestReader(xml, {
 			debug: ac.debug,
 			app: ac.app,
@@ -23,12 +24,13 @@ class Test extends CfgModule<TestConfig> {
 			section: BASection.Build,
 			path: null,
 			test: [],
-			allowCfg: true
+			allowCfg: true,
+			cordova: false
 		}, configHandler);
 	}
 
-	override private function runNode(cfg:TestConfig):Void {
-		var cwd:Cwd = cfg.path;
+	override private function runNode(cfg: TestConfig): Void {
+		var cwd: Cwd = cfg.path;
 		cwd.sw();
 		for (t in cfg.test) {
 			var args = t.split(' ');
@@ -40,28 +42,27 @@ class Test extends CfgModule<TestConfig> {
 
 }
 
-private typedef TestConfig = { > types.BAConfig,
+private typedef TestConfig = {
+	> types.BAConfig,
 	path: String,
 	test: Array<String>
 }
 
 private class TestReader extends BAReader<TestConfig> {
 
-	override private function readNode(xml:Fast):Void {
+	override private function readNode(xml: Fast): Void {
 		switch xml.name {
-			case 'test':
-				cfg.test.push(StringTools.trim(xml.innerData));
-			case _:
-				super.readNode(xml);
+			case 'test': cfg.test.push(StringTools.trim(xml.innerData));
+			case _: super.readNode(xml);
 		}
 	}
 
-	override private function clean():Void {
+	override private function clean(): Void {
 		cfg.path = null;
 		cfg.test = [];
 	}
 
-	override private function readAttr(name:String, val:String):Void {
+	override private function readAttr(name: String, val: String): Void {
 		switch name {
 			case 'test': cfg.path = val;
 			case _:

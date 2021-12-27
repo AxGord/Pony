@@ -1,6 +1,7 @@
 package types;
 
-typedef BmfontConfig = { > BAConfig,
+typedef BmfontConfig = {
+	> BAConfig,
 	from: String,
 	to: String,
 	type: String,

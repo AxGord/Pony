@@ -23,13 +23,19 @@ import sys.io.File as SysFile;
 	public var fullPath(get, never): Unit;
 	public var fullDir(get, never): Dir;
 	public var size(get, never): Int;
+	public var mtime(get, never): Null<Date>;
 
-	inline public function new(v: Unit) {
+	public inline function new(v: Unit) {
 		if (v.isDir) throw 'This is not file';
 		this = v;
 	}
 
-	private function get_size(): Int {
+	private inline function get_mtime(): Null<Date> {
+		var e: Null<String> = this.firstExists;
+		return e == null ? null : FileSystem.stat(e).mtime;
+	}
+
+	private inline function get_size(): Int {
 		var e: Null<String> = this.firstExists;
 		return e == null ? -1 : FileSystem.stat(e).size;
 	}

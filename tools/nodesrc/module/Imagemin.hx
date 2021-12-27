@@ -57,11 +57,22 @@ private typedef ImageminResult = Array<ImageminResultEntry>;
 		}
 		if (formats.indexOf(PNG) != -1) {
 			tasks.add();
+			var target: Array<String> = [];
+			if (cfg.ignore.length > 0) {
+				for (f in from) {
+					f = f.substr(0, -2);
+					for (file in (f: Dir).contentRecursiveFiles('.png'))
+						if (!cfg.ignore.contains(file.first)) target.push(file.first);
+				}
+			} else {
+				target = from.addToStringsEnd(PNG);
+			}
+
 			if (cfg.pngq == null) {
-				pngpack(from.addToStringsEnd(PNG), cfg.to);
+				pngpack(target, cfg.to);
 			} else {
 				var q: Float = @:nullSafety(Off) (cfg.pngq / 100);
-				NPM.imagemin(from.addToStringsEnd(PNG), {
+				NPM.imagemin(target, {
 					destination: cfg.to,
 					plugins: [ NPM.imagemin_pngquant({quality: [Math.max(0, q - 0.1), Math.min(q + 0.1, 1)], speed: 1}) ]
 				}).then(_pngpack.bind(cfg.to));

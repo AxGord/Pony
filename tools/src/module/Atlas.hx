@@ -9,8 +9,8 @@ import pony.ui.BinaryAtlasParams;
 
 import types.BASection;
 
-using pony.text.TextTools;
 using StringTools;
+using pony.text.TextTools;
 
 private typedef AtlasConfig = {
 	> types.BAConfig,
@@ -44,7 +44,8 @@ private typedef AtlasConfig = {
 			from: '.',
 			filter: '.atlas',
 			deleteSource: true,
-			allowCfg: true
+			allowCfg: true,
+			cordova: false
 		}, configHandler);
 	}
 

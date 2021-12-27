@@ -2,7 +2,8 @@ package types;
 
 import pony.text.XmlConfigReader;
 
-typedef BAConfig = { > BaseConfig,
+typedef BAConfig = {
+	> BaseConfig,
 	before: Bool,
 	section: BASection,
 	?group: Array<String>,

@@ -53,7 +53,7 @@ import types.BASection;
 
 	@:abstract private function clean(): Void;
 
-	override private function end(): Void if (cfg.allowCfg) onConfig(cfg);
+	override private function end(): Void if (cfg.allowCfg && onConfig != null) onConfig(cfg);
 
 	private function allowCreate(xml: Fast): Void {
 		var cfg: T = copyCfg();

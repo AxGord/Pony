@@ -1,8 +1,9 @@
 package module;
 
-import types.FtpConfig;
-import types.BASection;
 import pony.Fast;
+
+import types.BASection;
+import types.FtpConfig;
 
 /**
  * Ftp module
@@ -29,7 +30,8 @@ class Ftp extends NModule<FtpConfig> {
 			port: 21,
 			output: '',
 			input: [],
-			allowCfg: true
+			allowCfg: true,
+			cordova: false
 		}, configHandler);
 	}
 
