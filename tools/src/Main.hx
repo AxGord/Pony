@@ -106,6 +106,7 @@ class Main {
 		modules.register(new module.Hashlink());
 		modules.register(new module.Uglify());
 		modules.register(new module.Wrapper());
+		modules.register(new module.Template());
 		modules.register(new module.Test());
 		modules.register(new module.Clean());
 		modules.register(new module.Unpack());

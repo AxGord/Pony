@@ -1,5 +1,6 @@
 package pony.ui;
 
+import haxe.crypto.Base64;
 import haxe.rtti.Meta;
 import haxe.io.Bytes;
 #if heaps
@@ -16,6 +17,8 @@ import pony.time.DeltaTime;
 import pony.ui.gui.slices.SliceTools;
 
 using Lambda;
+using StringTools;
+using pony.text.TextTools;
 
 /**
  * AssetManager
@@ -27,10 +30,27 @@ class AssetManager {
 	public static inline var MAX_ASSET_PROGRESS: Int = 10;
 
 	public static var baseUrl: String = '';
+	public static var local: String = '';
+	private static var units: Map<String, Bytes> = new Map<String, Bytes>();
 	private static var loadedAssets: Array<String> = [];
 	private static var globalLoad: Map<String, Array<Int -> Int -> Void>> = new Map();
 
-	public static var local: String = '';
+	public static function initHash(cb: Void -> Void): Void {
+		#if (hxbitmini && js)
+		var url: Null<String> = Tools.getHashFile();
+		if (url != null) {
+			var url: String = url;
+			load('', url, function(c: Int, t: Int): Void if (c == t) {
+				units = Hash.fromBytes(bin(url.allBefore('?'))).units;
+				cb();
+			});
+		} else {
+			cb();
+		}
+		#else
+		cb();
+		#end
+	}
 
 	public static function resetAll(): Void {
 		for (e in loadedAssets.copy()) reset(e);
@@ -270,8 +290,13 @@ class AssetManager {
 		return path.substr(baseUrl.length);
 	}
 
+	public static inline function _load(asset: String, cb: Int -> Int -> Void): Void {
+		var bytes: Null<Bytes> = units[asset.endsWith('.atlas.bin') ? asset.substr(0, -4) : asset];
+		__load(bytes == null ? asset : asset + '?' + Base64.urlEncode(bytes), cb);
+	}
+
 	#if heaps
-	@:extern public static inline function _load(asset: String, cb: Int -> Int -> Void): Void HeapsAssets.load(asset, cb);
+	@:extern public static inline function __load(asset: String, cb: Int -> Int -> Void): Void HeapsAssets.load(asset, cb);
 	@:extern public static inline function _reset(asset: String): Void HeapsAssets.reset(asset);
 	@:extern public static inline function image(asset: String, ?name: String) return HeapsAssets.image(asset, name);
 	@:extern public static inline function texture(asset: String, ?name: String) return HeapsAssets.texture(asset, name);
@@ -283,7 +308,7 @@ class AssetManager {
 	@:extern public static inline function sound(asset: String) return HeapsAssets.sound(asset);
 	@:extern public static inline function spine(asset: String) return asset;
 	#elseif pixijs
-	@:extern public static inline function _load(asset: String, cb: Int -> Int -> Void): Void
+	@:extern public static inline function __load(asset: String, cb: Int -> Int -> Void): Void
 		PixiAssets.load(asset, cb.bind(MAX_ASSET_PROGRESS, MAX_ASSET_PROGRESS));
 	@:extern public static inline function _reset(asset: String): Void PixiAssets.reset(asset);
 	@:extern public static inline function image(asset: String, ?name: String) return PixiAssets.image(asset, name);
@@ -296,7 +321,7 @@ class AssetManager {
 	@:extern public static inline function json(asset: String) return PixiAssets.json(asset);
 	@:extern public static inline function font(asset: String) return asset;
 	#elseif openfl
-	@:extern public static inline function _load(asset: String, cb: Int -> Int -> Void): Void
+	@:extern public static inline function __load(asset: String, cb: Int -> Int -> Void): Void
 		OpenflAssets.load(asset, cb.bind(1MAX_ASSET_PROGRESS, MAX_ASSET_PROGRESS));
 	@:extern public static inline function _reset(asset: String): Void trace('Reset: $asset');
 	@:extern public static inline function image(asset: String, ?name: String) return OpenflAssets.image(asset);
@@ -307,7 +332,7 @@ class AssetManager {
 	@:extern public static inline function spine(asset: String) return asset;
 	@:extern public static inline function font(asset: String) return asset;
 	#else
-	@:extern public static inline function _load(asset: String, cb: Int -> Int -> Void): Void trace('Load: $asset');
+	@:extern public static inline function __load(asset: String, cb: Int -> Int -> Void): Void trace('Load: $asset');
 	@:extern public static inline function _reset(asset: String): Void trace('Reset: $asset');
 	@:extern public static inline function image(asset: String, ?name: String) return asset;
 	@:extern public static inline function texture(asset: String, ?name: String) return asset;

@@ -1,6 +1,6 @@
 package module;
 
-import haxe.crypto.Sha224;
+import haxe.crypto.Sha1;
 import haxe.io.Bytes;
 import haxe.io.BytesOutput;
 
@@ -87,7 +87,7 @@ using pony.text.TextTools;
 		key = pathKey(key);
 		var dirs: Array<Dir> = [ for (dir in dirs) dir ];
 		dirs.sort(cast Dir.compareNames);
-		return compareStates(key, Sha224.make(DirState.fromDirs(dirs, filter)));
+		return compareStates(key, Sha1.make(DirState.fromDirs(dirs, filter)));
 	}
 
 	public function fileChanged(key: String, unit: File): Bool {
@@ -97,7 +97,7 @@ using pony.text.TextTools;
 		var date: Null<Date> = unit.mtime;
 		if (date == null) return true;
 		var bo: BytesOutput = new BytesOutput();
-		bo.writeInt32(Std.int(date.getTime()));
+		bo.writeInt32(Std.int(date.getTime() / 1000));
 		return compareStates(key, bo.getBytes());
 	}
 
@@ -105,7 +105,7 @@ using pony.text.TextTools;
 		for (input in cfg.input) {
 			var bytes: Null<Bytes> = (root: Dir).file(input).bytes;
 			if (bytes == null) return error('Hash input file not exists: $input');
-			compareStates(input, Sha224.make(bytes));
+			compareStates(input, Sha1.make(bytes));
 		}
 		var lost: Array<String> = getLost();
 		if (lost.length > 0) updated = true;

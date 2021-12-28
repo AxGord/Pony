@@ -23,6 +23,8 @@ import pony.time.DeltaTime;
 import pony.ui.AssetManager;
 import pony.ui.gui.slices.SliceTools;
 
+using pony.text.TextTools;
+
 @:enum abstract Ext(String) to String {
 	var ATLAS = 'atlas';
 	#if hxbitmini
@@ -78,6 +80,9 @@ import pony.ui.gui.slices.SliceTools;
 
 	public static function load(asset: String, cb: Int -> Int -> Void): Void {
 		var realAsset: String = AssetManager.getPath(asset);
+		var a: Array<String> = asset.split('?');
+		asset = a[0];
+		var version: Null<String> = a[1];
 		var loader: BinaryLoader = new BinaryLoader(realAsset);
 		inline function finish(): Void cb(AssetManager.MAX_ASSET_PROGRESS, AssetManager.MAX_ASSET_PROGRESS);
 		function progressHandler(cur: Int, max: Int): Void
@@ -88,7 +93,7 @@ import pony.ui.gui.slices.SliceTools;
 					cb(1, AssetManager.MAX_ASSET_PROGRESS);
 					var path: String = realAsset.substr(0, realAsset.lastIndexOf('/') + 1);
 					var imgFile: String = path + new BytesInput(textBytes).readLine();
-					var imgLoader: BinaryLoader = new BinaryLoader(imgFile);
+					var imgLoader: BinaryLoader = new BinaryLoader(imgFile + (version != null ? '?$version' : ''));
 					imgLoader.onProgress = progressHandler;
 					imgLoader.onLoaded = function(bytes: Bytes): Void {
 						var img: Any = Any.fromBytes(imgFile, bytes);
@@ -107,7 +112,7 @@ import pony.ui.gui.slices.SliceTools;
 					var path: String = realAsset.substr(0, realAsset.lastIndexOf('/') + 1);
 					var data: pony.ui.BinaryAtlas = pony.ui.BinaryAtlas.fromBytes(textBytes);
 					var imgFile: String = path + data.file;
-					var imgLoader: BinaryLoader = new BinaryLoader(imgFile);
+					var imgLoader: BinaryLoader = new BinaryLoader(imgFile + (version != null ? '?$version' : ''));
 					imgLoader.onProgress = progressHandler;
 					imgLoader.onLoaded = function(bytes: Bytes): Void {
 						var img: Any = Any.fromBytes(imgFile, bytes);
@@ -151,7 +156,7 @@ import pony.ui.gui.slices.SliceTools;
 					if (image == null) throw "Can't get image url";
 					image = StringTools.replace(image, '"', '');
 					var path: String = realAsset.substr(0, realAsset.lastIndexOf('/') + 1);
-					var imgLoader: BinaryLoader = new BinaryLoader(path + image);
+					var imgLoader: BinaryLoader = new BinaryLoader(path + image + (version != null ? '?$version' : ''));
 					imgLoader.onProgress = progressHandler;
 					imgLoader.onLoaded = function(imgbytes: Bytes): Void {
 						var font:Font = FontParser.parse(fntbytes, realAsset, function(path: String): Tile {
