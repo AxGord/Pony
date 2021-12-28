@@ -35,7 +35,9 @@ using pony.text.XmlTools;
 			to: '',
 			from: '',
 			title: '',
-			hash: null,
+			appFile: null,
+			appPath: '',
+			fast: false,
 			units: [],
 			cordova: false,
 			allowCfg: true
@@ -43,15 +45,21 @@ using pony.text.XmlTools;
 	}
 
 	override private function runNode(cfg: TemplateConfig): Void {
+		var hash: Null<module.Hash> = cast modules.getModule(module.Hash);
 		for (unit in cfg.units) {
 			var file: File = cfg.from + unit;
 			var content: Null<String> = file.content;
-			if (content != null)
-				(((cfg.to + unit): File).withoutExt: File).content = replaceVars(content, [
-					'title' => cfg.title,
-					'hash' => (cfg.hash == null ? '' : cfg.hash.a ? fastHash(cfg.hash.b) : calcHash(cfg.hash.b)),
-					'buildDate' => Date.now().toString()
-				]);
+			if (content == null) continue;
+			var appHash: String = cfg.appFile == null ? '' : cfg.fast ?
+				fastHash(cfg.appPath + cfg.appFile) : calcHash(cfg.appPath + cfg.appFile);
+			(((cfg.to + unit): File).withoutExt: File).content = replaceVars(content, [
+				'title' => cfg.title,
+				'app' => (cfg.appFile != null ? cfg.appFile + '?' + appHash : ''),
+				'appHash' => appHash,
+				'assetsHash' => (hash != null && hash.xml != null ? hash.getHashHash() : ''),
+				'buildDate' => Date.now().toString()
+			]);
+
 		}
 	}
 
@@ -83,7 +91,9 @@ private typedef TemplateConfig = {
 	to: String,
 	from: String,
 	title: String,
-	hash: Null<Pair<Bool, String>>,
+	appFile: Null<String>,
+	appPath: String,
+	fast: Bool,
 	units: Array<String>
 }
 
@@ -93,14 +103,17 @@ private typedef TemplateConfig = {
 		cfg.to = '';
 		cfg.from = '';
 		cfg.title = '';
-		cfg.hash = null;
+		cfg.appFile = null;
 		cfg.units = [];
 	}
 
 	override private function readNode(xml: Fast): Void {
 		switch xml.name {
 			case 'title': cfg.title = normalize(xml.innerData);
-			case 'hash': cfg.hash = new Pair(xml.isTrue('fast'), normalize(xml.innerData));
+			case 'app':
+				cfg.appFile = normalize(xml.innerData);
+				cfg.appPath = xml.has.path ? normalize(xml.att.path) : '';
+				cfg.fast = xml.isTrue('fast');
 			case 'unit': cfg.units.push(normalize(xml.innerData));
 			case _: super.readNode(xml);
 		}

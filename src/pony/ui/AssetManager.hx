@@ -35,15 +35,37 @@ class AssetManager {
 	private static var loadedAssets: Array<String> = [];
 	private static var globalLoad: Map<String, Array<Int -> Int -> Void>> = new Map();
 
-	public static function initHash(cb: Void -> Void): Void {
+	@:extern public static inline function initHash(cb: Void -> Void): Void {
 		#if (hxbitmini && js)
-		var url: Null<String> = Tools.getHashFile();
+		var url: Null<String> = Tools.getHashFileWithHash();
 		if (url != null) {
 			var url: String = url;
 			load('', url, function(c: Int, t: Int): Void if (c == t) {
 				units = Hash.fromBytes(bin(url.allBefore('?'))).units;
 				cb();
 			});
+		} else {
+			cb();
+		}
+		#else
+		cb();
+		#end
+	}
+
+	@:extern public static inline function initHashVersion(version: Null<String>, cb: Void -> Void): Void {
+		#if (hxbitmini && js)
+		if (version != null) {
+			var version: String = version;
+			var url: Null<String> = Tools.getHashFile();
+			if (url != null) {
+				var url: String = url;
+				load('', url + '?' + version, function(c: Int, t: Int): Void if (c == t) {
+					units = Hash.fromBytes(bin(url)).units;
+					cb();
+				});
+			} else {
+				cb();
+			}
 		} else {
 			cb();
 		}

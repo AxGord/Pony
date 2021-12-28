@@ -285,17 +285,30 @@ class Tools {
 		return macro $v{f};
 	}
 
-	macro public static function getHashFile(): Expr {
+	#if macro
+	private static function getHashPath(): Null<SPair<String>> {
 		var pony: String = 'pony.xml';
-		if (!sys.FileSystem.exists(pony)) return macro null;
+		if (!sys.FileSystem.exists(pony)) return null;
 		Context.registerModuleDependency(Context.getLocalModule(), pony);
 		var xml = new Fast(Xml.parse(sys.io.File.getContent(pony))).elements.next();
-		if (!xml.hasNode.hash) return macro null;
+		if (!xml.hasNode.hash) return null;
 		var hash: Fast = xml.node.hash;
-		var root: String = hash.has.root ? hash.att.root : '';
-		var path: String = hash.node.output.innerData;
-		var asset: String = StringTools.startsWith(path, root) ? path.substr(root.length) : path;
-		var version: String = haxe.crypto.Base64.urlEncode(haxe.crypto.Sha1.make(sys.io.File.getBytes(path)));
+		return new Pair(hash.has.root ? hash.att.root : '', hash.node.output.innerData);
+	}
+	#end
+
+	macro public static function getHashFile(): Expr {
+		var path: Null<SPair<String>> = getHashPath();
+		if (path == null) return macro null;
+		var asset: String = StringTools.startsWith(path.b, path.a) ? path.b.substr(path.a.length) : path.b;
+		return macro $v{asset};
+	}
+
+	macro public static function getHashFileWithHash(): Expr {
+		var path: Null<SPair<String>> = getHashPath();
+		if (path == null) return macro null;
+		var asset: String = StringTools.startsWith(path.b, path.a) ? path.b.substr(path.a.length) : path.b;
+		var version: String = haxe.crypto.Base64.urlEncode(haxe.crypto.Sha1.make(sys.io.File.getBytes(path.b)));
 		var r: String = asset + '?' + version;
 		return macro $v{r};
 	}

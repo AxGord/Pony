@@ -1,5 +1,6 @@
 package module;
 
+import haxe.crypto.Base64;
 import haxe.crypto.Sha1;
 import haxe.io.Bytes;
 import haxe.io.BytesOutput;
@@ -158,6 +159,11 @@ using pony.text.TextTools;
 
 	public inline function getNotChangedUnits(): Array<String> return buildUnitsList(notChangedUnits.iterator());
 
+	public function getHashHash(): String {
+		var bytes: Null<Bytes> = file.bytes;
+		return bytes != null ? Base64.encode(Sha1.make(bytes)) : '';
+	}
+
 }
 
 @:keep private class DirState implements Serializable {
@@ -168,7 +174,7 @@ using pony.text.TextTools;
 		units = new Map<String, UInt>();
 		for (dir in dirs) for (file in dir.contentRecursiveFiles(filter, true))
 			if (file.name != '.DS_Store')
-				units[file.first] = Std.int(file.mtime.getTime());
+				units[file.first] = Std.int(file.mtime.getTime() / 1000);
 	}
 
 	private inline function toBytes(): Bytes return new Serializer().serialize(this);
