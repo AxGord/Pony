@@ -27,8 +27,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Added hxformat.json to haxelib",
-"version": "1.6.4",
+"releasenote": "Upgrade heaps fps limit. New hash system. Assets hash. TP licence env.",
+"version": "1.6.5",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }
