@@ -14,7 +14,7 @@ private typedef TPConfig = {
 	> TPUnit,
 	from: String,
 	to: String,
-	?clean: Bool
+	clean: Bool
 }
 
 private typedef TPUnit = {
@@ -41,13 +41,13 @@ private typedef TPUnit = {
  * Texturepacker module
  * @author AxGord <axgord@gmail.com>
  */
-class Texturepacker extends CfgModule<TPConfig> {
+@:nullSafety(Strict) class Texturepacker extends CfgModule<TPConfig> {
 
 	private static inline var PRIORITY: Int = 3;
 
-	private var ignoreList: Array<String>;
-	private var toList: Array<String>;
-	private var haveClean: Bool;
+	private var ignoreList: Array<String> = [];
+	private var toList: Array<String> = [];
+	private var haveClean: Bool = false;
 
 	public function new() super('texturepacker');
 
@@ -76,26 +76,35 @@ class Texturepacker extends CfgModule<TPConfig> {
 			basicSortBy: null,
 			size: null,
 			pot: false,
+			clean: false,
 			cordova: false
 		}, configHandler);
+	}
+
+	private function notChanged(key: String, dirs: Array<String>): Bool {
+		var hash: Null<module.Hash> = cast modules.getModule(module.Hash);
+		return hash != null && hash.xml != null && !hash.dirChanged(key, dirs, '.png');
 	}
 
 	override private function runNode(cfg: TPConfig): Void {
 		var unit: TPUnit = cfg;
 		unit.input = [for (e in cfg.input) cfg.from + e];
 		unit.output = cfg.to + cfg.output;
-
-		var hash: Null<module.Hash> = cast modules.getModule(module.Hash);
-		if (hash != null && hash.xml != null && !hash.dirChanged(cfg.output + '.' + cfg.ext, unit.input, '.png')) return;
-
+		if (notChanged(cfg.output + '.' + cfg.ext, unit.input)) return;
 		if (cfg.clean) haveClean = true;
 
 		var format = unit.format.split(' ');
-		var f: String = format.shift();
+		@:nullSafety(Off) var f: String = format.shift();
 
+		var licence: Null<String> = Sys.getEnv('TEXTURE_PACKER_LICENCE');
 		var first: Bool = true;
 		for (s in format) {
 			var command = unit.input.copy();
+
+			if (licence != null) {
+				command.push('--activate-license');
+				command.push(licence);
+			}
 
 			command.push('--format');
 			command.push(f);
@@ -109,7 +118,7 @@ class Texturepacker extends CfgModule<TPConfig> {
 			command.push('--data');
 			command.push(datafile);
 
-			var tExt = s == 'png8' ? 'png' : s;
+			var tExt: String = s == 'png8' ? 'png' : s;
 
 			var sheetfile = unit.output + '.' + tExt;
 			command.push('--sheet');
@@ -151,8 +160,7 @@ class Texturepacker extends CfgModule<TPConfig> {
 				case _:
 			}
 
-			if (unit.forceSquared)
-				command.push('--force-squared');
+			if (unit.forceSquared) command.push('--force-squared');
 
 			if (unit.pot) {
 				command.push('--size-constraints');
@@ -195,22 +203,24 @@ class Texturepacker extends CfgModule<TPConfig> {
 			if (unit.trim != null) {
 				var a: Array<String> = unit.trim.split(' ');
 				if (a.length == 2) {
-					var v: Int = Std.parseInt(a[0]);
-					if (Std.string(v) == a[0]) {
+					var v: Null<Int> = Std.parseInt(a[0]);
+					if (v != null && Std.string(v) == a[0]) {
 						command.push('--trim-mode');
 						command.push(a[1]);
 						command.push('--trim-threshold');
 						command.push(Std.string(v));
 					} else {
-						var v: Int = Std.parseInt(a[1]);
+						var v: Null<Int> = Std.parseInt(a[1]);
 						command.push('--trim-mode');
 						command.push(a[0]);
-						command.push('--trim-threshold');
-						command.push(Std.string(v));
+						if (v != null) {
+							command.push('--trim-threshold');
+							command.push(Std.string(v));
+						}
 					}
 				} else if (a.length == 1) {
-					var v: Int = Std.parseInt(a[0]);
-					if (Std.string(v) == a[0]) {
+					var v: Null<Int> = Std.parseInt(a[0]);
+					if (v != null && Std.string(v) == a[0]) {
 						command.push('--trim-mode');
 						command.push('Trim');
 						command.push('--trim-threshold');
@@ -222,10 +232,9 @@ class Texturepacker extends CfgModule<TPConfig> {
 				}
 			}
 
-			if (unit.multipack)
-				command.push('--multipack');
+			if (unit.multipack) command.push('--multipack');
 
-			Utils.command('TexturePacker', command);
+			Utils.command('TexturePacker', command, licence != null ? [licence] : null);
 
 			if (unit.datascale != null) {
 				switch outExt {
@@ -243,8 +252,7 @@ class Texturepacker extends CfgModule<TPConfig> {
 		ignoreList = [];
 		toList = [];
 		haveClean = false;
-		for (e in cfg)
-			runNode(e);
+		for (e in cfg) runNode(e);
 		clean();
 		finishCurrentRun();
 	}
@@ -297,6 +305,7 @@ private class Path extends BAReader<TPConfig> {
 		cfg.alpha = true;
 		cfg.multipack = false;
 		cfg.basicSortBy = null;
+		cfg.clean = false;
 	}
 
 	override private function readXml(xml: Fast): Void {

@@ -47,8 +47,10 @@ class Utils {
 
 	public static function path(s: String): String return StringTools.replace(StringTools.replace(s, '/', PD), '\\', PD);
 
-	public static function command(name: String, args: Array<String>): Void {
-		Sys.println(name + ' ' + args.join(' '));
+	public static function command(name: String, args: Array<String>, ?hide: Array<String>): Void {
+		var s: String = name + ' ' + args.join(' ');
+		if (hide != null) for (h in hide) s = StringTools.replace(s, h, TextTools.repeat('*', h.length));
+		Sys.println(s);
 		var r: Int = Sys.command(name, args);
 		if (r > 0) error('$name error $r');
 	}
