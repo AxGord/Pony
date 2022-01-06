@@ -27,8 +27,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Upgrade heaps fps limit. New hash system. Assets hash. TP licence env.",
-"version": "1.6.5",
+"releasenote": "Set NODE_PATH before run node",
+"version": "1.6.6",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }

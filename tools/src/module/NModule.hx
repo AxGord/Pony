@@ -11,13 +11,14 @@ import types.BAConfig;
  * NModule
  * @author AxGord <axgord@gmail.com>
  */
-class NModule<T:BAConfig> extends CfgModule<T> {
+@:nullSafety(Strict) class NModule<T:BAConfig> extends CfgModule<T> {
 
 	private static var PORT_TRIES: Int = 1000;
+	private static var NODE_PATH: String = 'NODE_PATH';
 
-	private static var server: SocketServer;
-	private static var protocol: NProtocol;
-	private static var process: Process;
+	private static var server: Null<SocketServer>;
+	private static var protocol: Null<NProtocol>;
+	private static var process: Null<Process>;
 	private static var port: Int = Utils.NPORT;
 	private static var timeout: DTimer = DTimer.createFixedTimer(60000);
 
@@ -34,10 +35,10 @@ class NModule<T:BAConfig> extends CfgModule<T> {
 				port++;
 			}
 		}
-		protocol = new NProtocol(server);
+		protocol = @:nullSafety(Off) new NProtocol(server);
 	}
 
-	override private function run(cfg: Array<T>): Void {
+	@:nullSafety(Off) override private function run(cfg: Array<T>): Void {
 		listenServer();
 		if (server.clients.length == 0) {
 			server.onConnect < writeCfg.bind(protocol, cfg);
@@ -48,7 +49,7 @@ class NModule<T:BAConfig> extends CfgModule<T> {
 
 	}
 
-	private function listenServer(): Void {
+	@:nullSafety(Off) private function listenServer(): Void {
 		initServer();
 		server.onData < timeout.stop;
 		listenErrorAndLog(server);
@@ -60,7 +61,7 @@ class NModule<T:BAConfig> extends CfgModule<T> {
 		protocol.onFinish < finishCurrentRun;
 	}
 
-	private function unlistenServer(): Void {
+	@:nullSafety(Off) private function unlistenServer(): Void {
 		server.onLog >> eLog;
 		server.onError >> eError;
 		protocol.log.onLog >> eLog;
@@ -71,12 +72,17 @@ class NModule<T:BAConfig> extends CfgModule<T> {
 		if (process != null) return;
 		timeout.reset();
 		timeout.start();
+		var env: Null<String> = Sys.getEnv(NODE_PATH);
+		if (env == null) {
+			env = new Process('npm', ['root', '-g']).stdout.readLine();
+			Sys.putEnv(NODE_PATH, env);
+		}
 		process = Utils.asyncRunNode('pony', [Std.string(port)]);
 		Module.onEndQueue < finishHandler;
 	}
 
 	private function finishHandler(): Void {
-		process.kill();
+		@:nullSafety(Off) process.kill();
 		process = null;
 		// log('Finish process');
 	}
