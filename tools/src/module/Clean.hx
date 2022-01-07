@@ -43,7 +43,7 @@ import types.BASection;
 			var hashModule: Null<module.Hash> = modules.getModule(module.Hash);
 			if (hashModule != null && hashModule.xml != null) {
 				var hashed: Array<String> = hashModule.getHashed();
-				keep = keep.concat(hashed);
+				keep = keep.concat(hashed).concat(hashed.map(function(f: String): String return f + '.bin'));
 				if (hashed.length > 1) hashModule.runCleanAfter = true;
 			}
 		}

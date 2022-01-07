@@ -41,6 +41,7 @@ using pony.text.TextTools;
 	var IMG = 'img';
 	var BIN = 'bin';
 	var LDTK = 'ldtk';
+	var BINWAV = 'wav.bin';
 	var WAV = 'wav';
 }
 
@@ -187,7 +188,7 @@ using pony.text.TextTools;
 					bins[asset] = bytes;
 					finish();
 				}
-			case WAV:
+			case WAV, BINWAV:
 				loader.onProgress = progressHandler;
 				loader.onLoaded = function(bytes: Bytes): Void {
 					sounds[asset] = Any.fromBytes(realAsset, bytes).toSound();

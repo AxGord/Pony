@@ -313,7 +313,7 @@ class AssetManager {
 	}
 
 	public static inline function _load(asset: String, cb: Int -> Int -> Void): Void {
-		var bytes: Null<Bytes> = units[asset.endsWith('.atlas.bin') ? asset.substr(0, -4) : asset];
+		var bytes: Null<Bytes> = units[asset.endsWith('.atlas.bin') || asset.endsWith('.wav.bin') ? asset.substr(0, -4) : asset];
 		__load(bytes == null ? asset : asset + '?' + Base64.urlEncode(bytes), cb);
 	}
 

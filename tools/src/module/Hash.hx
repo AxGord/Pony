@@ -222,8 +222,8 @@ private typedef HashConfig = {
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
 			case 'binary': cfg.binary = !val.isFalse();
-			case 'root': cfg.root = normalize(val);
-			case 'source': cfg.source = normalize(val);
+			case 'root': cfg.root = val;
+			case 'source': cfg.source = val;
 			case _:
 		}
 	}

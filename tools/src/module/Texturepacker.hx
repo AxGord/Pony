@@ -355,9 +355,9 @@ private class Path extends BAReader<TPConfig> {
 			case 'pot':
 				cfg.pot = TextTools.isTrue(val);
 			case 'basicSortBy':
-				cfg.basicSortBy = normalize(val);
+				cfg.basicSortBy = val;
 			case 'size':
-				var a: Array<Int> = normalize(val).split(' ').map(Std.parseInt);
+				var a: Array<Int> = val.split(' ').map(Std.parseInt);
 				cfg.size = a.length == 1 ? new Point(a[0], a[0]) : new Point(a[0], a[1]);
 			case _:
 		}

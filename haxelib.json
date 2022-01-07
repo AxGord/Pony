@@ -27,8 +27,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Haxelib trim inner data for build",
-"version": "1.6.8",
+"releasenote": "Binwav and addext for file copy",
+"version": "1.6.9",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }

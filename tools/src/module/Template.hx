@@ -121,8 +121,8 @@ private typedef TemplateConfig = {
 
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
-			case 'to': cfg.to = normalize(val);
-			case 'from': cfg.from = normalize(val);
+			case 'to': cfg.to = val;
+			case 'from': cfg.from = val;
 			case _:
 		}
 	}

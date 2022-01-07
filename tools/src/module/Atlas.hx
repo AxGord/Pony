@@ -164,9 +164,9 @@ private class AtlasReader extends BAReader<AtlasConfig> {
 
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
-			case 'filter': cfg.filter = normalize(val);
-			case 'from': cfg.from += normalize(val);
-			case 'deleteSource': cfg.deleteSource = !normalize(val).isFalse();
+			case 'filter': cfg.filter = val;
+			case 'from': cfg.from += val;
+			case 'deleteSource': cfg.deleteSource = !val.isFalse();
 			case _:
 		}
 	}

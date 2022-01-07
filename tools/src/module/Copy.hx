@@ -33,17 +33,18 @@ class Copy extends CfgModule<CopyConfig> {
 			to: '',
 			from: '',
 			hash: false,
+			addext: '',
 			allowCfg: true,
 			cordova: false
 		}, configHandler);
 	}
 
 	override private function runNode(cfg: CopyConfig): Void {
-		copyDirs(cfg.dirs, cfg.from, cfg.to, cfg.filter, cfg.hash);
-		copyUnits(cfg.units, cfg.from, cfg.to, cfg.hash);
+		copyDirs(cfg.dirs, cfg.from, cfg.to, cfg.filter, cfg.hash, cfg.addext);
+		copyUnits(cfg.units, cfg.from, cfg.to, cfg.hash, cfg.addext);
 	}
 
-	private function copyDirs(data: Array<String>, from: String, to: String, filter: String, hash: Bool): Void {
+	private function copyDirs(data: Array<String>, from: String, to: String, filter: String, hash: Bool, addext: String): Void {
 		var hashModule: Null<module.Hash> = hash ? modules.getModule(module.Hash) : null;
 		for (d in data) {
 			var dir: Dir = from + d;
@@ -52,15 +53,22 @@ class Copy extends CfgModule<CopyConfig> {
 				for (f in dir.contentRecursiveFiles(filter)) {
 					if (!hashModule.fileChanged(f.first, f)) continue;
 					var w: String = f.fullDir.first.substr(dir.first.length);
-					f.copyToDir(to + w);
+					f.copyToDir(to + w, f.name + addext);
 				}
 			} else {
-				dir.copyTo(to, filter);
+				if (addext.length == 0) {
+					dir.copyTo(to, filter);
+				} else {
+					for (f in dir.contentRecursiveFiles(filter)) {
+						var w: String = f.fullDir.first.substr(dir.first.length);
+						f.copyToDir(to + w, f.name + addext);
+					}
+				}
 			}
 		}
 	}
 
-	private function copyUnits(data: Array<Pair<String, String>>, from: String, to: String, hash: Bool): Void {
+	private function copyUnits(data: Array<Pair<String, String>>, from: String, to: String, hash: Bool, addext: String): Void {
 		var hashModule: Null<module.Hash> = hash ? modules.getModule(module.Hash) : null;
 		for (p in data) {
 			var unit: Unit = from + p.a;
@@ -69,7 +77,7 @@ class Copy extends CfgModule<CopyConfig> {
 				var unit: File = unit;
 				if (hashModule != null && hashModule.xml != null && !hashModule.fileChanged(p.b != null ? from + p.b : unit.first, unit))
 					continue;
-				unit.copyToDir(to, Utils.replaceBuildDateIfNotNull(p.b));
+				unit.copyToDir(to, Utils.replaceBuildDateIfNotNull(p.b == null ? null : p.b + addext));
 			} else {
 				error('Is not file!');
 			}
@@ -85,7 +93,8 @@ private typedef CopyConfig = {
 	?filter: String,
 	to: String,
 	from: String,
-	hash: Bool
+	hash: Bool,
+	addext: String
 }
 
 private class CopyReader extends BAReader<CopyConfig> {
@@ -106,6 +115,7 @@ private class CopyReader extends BAReader<CopyConfig> {
 		cfg.to = '';
 		cfg.from = '';
 		cfg.hash = false;
+		cfg.addext = '';
 	}
 
 	override private function readAttr(name: String, val: String): Void {
@@ -114,6 +124,7 @@ private class CopyReader extends BAReader<CopyConfig> {
 			case 'to': cfg.to += val;
 			case 'from': cfg.from += val;
 			case 'hash': cfg.hash = val.isTrue();
+			case 'addext': cfg.addext = val;
 			case _:
 		}
 	}

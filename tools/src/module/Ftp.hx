@@ -55,7 +55,7 @@ private class FtpReader extends BAReader<FtpConfig> {
 
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
-			case 'path': cfg.path = normalize(val);
+			case 'path': cfg.path = val;
 			case _:
 		}
 	}

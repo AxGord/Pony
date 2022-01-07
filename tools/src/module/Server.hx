@@ -152,7 +152,7 @@ private class ProxyReader extends BAReader<BAProxyConfig> {
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
 			case 'slow': cfg.slow = Std.parseInt(val);
-			case 'cache': cfg.cache = normalize(val);
+			case 'cache': cfg.cache = val;
 			case _:
 		}
 	}

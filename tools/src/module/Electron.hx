@@ -77,7 +77,7 @@ private class ElectronReader extends BAReader<ElectronConfig> {
 
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
-			case 'path': cfg.path = normalize(val);
+			case 'path': cfg.path = val;
 			case 'mac': cfg.mac = TextTools.isTrue(val);
 			case 'win': cfg.win = TextTools.isTrue(val);
 			case 'win32': cfg.win32 = TextTools.isTrue(val);
