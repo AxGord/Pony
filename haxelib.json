@@ -27,8 +27,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Set NODE_PATH before run node",
-"version": "1.6.6",
+"releasenote": "Using git for get file mtime if can. Haxelib git commit and y attrs.",
+"version": "1.6.7",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }

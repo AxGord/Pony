@@ -21,9 +21,11 @@ typedef HaxelibConfig = {
 		mute: Bool,
 		git: Null<String>,
 		warning: Bool,
-		pony: String,
-		haxe: String,
-		haxelib: String
+		pony: Null<String>,
+		haxe: Null<String>,
+		haxelib: Null<String>,
+		y: Bool,
+		commit: Null<String>
 	}>
 }
 
@@ -36,7 +38,7 @@ typedef HaxelibConfig = {
  * Haxelib
  * @author AxGord <axgord@gmail.com>
  */
-class Haxelib extends CfgModule<HaxelibConfig> {
+@:nullSafety(Strict) class Haxelib extends CfgModule<HaxelibConfig> {
 
 	private static inline var PRIORITY: Int = 1;
 
@@ -61,8 +63,9 @@ class Haxelib extends CfgModule<HaxelibConfig> {
 			if (lib.version == GIT && lib.git == null) continue;
 			if (lib.version == DEV) continue;
 			var args: Array<String> =
-				lib.version == GIT ? [GIT, lib.name, lib.git] :
+				lib.version == GIT ? @:nullSafety(Off) [GIT, lib.name, lib.git] :
 				lib.version != null ? ['install', lib.name, lib.version] : ['install', lib.name];
+			if (lib.version == GIT && lib.commit != null) args.push(lib.commit);
 			Sys.println('haxelib ' + args.join(' '));
 			var process: Process = new Process('haxelib', args);
 			try {
@@ -70,15 +73,15 @@ class Haxelib extends CfgModule<HaxelibConfig> {
 					var ch = process.stdout.readString(1);
 					Sys.print(ch);
 					if (ch == '?') {
-						process.stdin.writeString('n\n');
-						Sys.println('');
+						process.stdin.writeString(lib.y ? 'y\n' : 'n\n');
+						Sys.println(lib.y ? 'y\n' : 'n\n');
 					}
 				}
 			} catch (e: Eof) {}
 			try {
 				while (true) Sys.stderr().writeString(process.stderr.readLine() + '\n');
 			} catch (e: Eof) {}
-			var r: Int = process.exitCode();
+			@:nullSafety(Off) var r: Int = process.exitCode();
 			if (r > 0) error('haxelib error $r');
 			if (lib.name == 'pony') {
 				if (![null, 'dev', 'git'].contains(lib.version) && lib.version != Utils.ponyVersion) {
@@ -102,13 +105,15 @@ class Haxelib extends CfgModule<HaxelibConfig> {
 						cwd.sw();
 					}
 					if (lib.haxelib != null) {
+						var haxelib: String = lib.haxelib;
 						cwd.sw();
-						Utils.command('haxelib', lib.haxelib.split(' '));
+						Utils.command('haxelib', haxelib.split(' '));
 						cwd.sw();
 					}
 					if (lib.haxe != null) {
+						var haxe: String = lib.haxe;
 						cwd.sw();
-						Utils.command('haxe', lib.haxe.split(' '));
+						Utils.command('haxe', haxe.split(' '));
 						cwd.sw();
 					}
 				} catch (e: String) {
@@ -120,7 +125,7 @@ class Haxelib extends CfgModule<HaxelibConfig> {
 
 }
 
-private class HaxelibReader extends BAReader<HaxelibConfig> {
+@:nullSafety(Strict) private class HaxelibReader extends BAReader<HaxelibConfig> {
 
 	override private function clean(): Void {
 		cfg.list = [];
@@ -130,15 +135,18 @@ private class HaxelibReader extends BAReader<HaxelibConfig> {
 		switch xml.name {
 			case 'lib':
 				var a: Array<String> = normalize(xml.innerData).split(' ');
+				@:nullSafety(Off) var name: String = a[0];
 				cfg.list.push({
-					name: a[0],
+					name: name,
 					version: a[1],
 					git: xml.has.git ? normalize(xml.att.git) : null,
 					mute: xml.isTrue('mute'),
 					warning: !xml.isFalse('warning'),
 					pony: xml.has.pony ? normalize(xml.att.pony) : null,
 					haxe: xml.has.haxe ? normalize(xml.att.haxe) : null,
-					haxelib: xml.has.haxelib ? normalize(xml.att.haxelib) : null
+					haxelib: xml.has.haxelib ? normalize(xml.att.haxelib) : null,
+					y: xml.isTrue('y'),
+					commit: xml.has.commit ? normalize(xml.att.commit) : null
 				});
 			case _:
 				super.readNode(xml);

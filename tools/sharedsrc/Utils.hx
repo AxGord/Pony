@@ -1,12 +1,14 @@
-import sys.io.File;
-import sys.FileSystem;
-import sys.io.Process;
-import haxe.xml.Parser.XmlParserException;
 import haxe.Json;
+import haxe.xml.Parser.XmlParserException;
+
 import pony.Fast;
-import pony.text.XmlTools;
+import pony.SPair;
 import pony.text.TextTools;
-import pony.time.DeltaTime;
+import pony.text.XmlTools;
+
+import sys.FileSystem;
+import sys.io.File;
+import sys.io.Process;
 
 /**
  * Share
@@ -63,6 +65,41 @@ class Utils {
 			break;
 		}
 		return {app: app, debug: debug};
+	}
+
+	public static function dirIsGit(path: String): Bool {
+		var cwd = new Cwd(path);
+		cwd.sw();
+		var r: Bool = try {
+			TextTools.isTrue(new Process('git', ['rev-parse', '--is-inside-work-tree']).stdout.readLine());
+		} catch (err) {
+			false;
+		}
+		cwd.sw();
+		return r;
+	}
+
+	public static function gitMTime(file: String): UInt {
+		var a: SPair<String> = TextTools.lastSplit(file, '/');
+		var path: String = a.b == '' ? '' : a.a;
+		var file: String = a.b == '' ? a.a : a.b;
+		var cwd = new Cwd(path);
+		cwd.sw();
+		var p: Process = new Process('git', ['log', '--format=%ct', file]);
+		var s: String = '';
+		while (true) {
+			try {
+				var ch: String = p.stdout.readString(1);
+				if (ch == null) break;
+				s += ch;
+			} catch (err) {
+				break;
+			}
+		}
+		cwd.sw();
+		var r: Null<UInt> = Std.parseInt(s);
+		if (r == null) error("Can't get git file mtime");
+		return r;
 	}
 
 	public static function getXml(): Fast {

@@ -95,10 +95,14 @@ using pony.text.TextTools;
 		if (unit.name == '.DS_Store') return false;
 		initHash();
 		key = pathKey(key);
-		var date: Null<Date> = unit.mtime;
-		if (date == null) return true;
 		var bo: BytesOutput = new BytesOutput();
-		bo.writeInt32(Std.int(date.getTime() / 1000));
+		if (Utils.dirIsGit(unit.fullDir.first)) {
+			bo.writeInt32(Utils.gitMTime(unit.first));
+		} else {
+			var date: Null<Date> = unit.mtime;
+			if (date == null) return true;
+			bo.writeInt32(Std.int(date.getTime() / 1000));
+		}
 		return compareStates(key, bo.getBytes());
 	}
 
@@ -172,9 +176,15 @@ using pony.text.TextTools;
 
 	private function new(dirs: Array<Dir>, filter: Null<String>) {
 		units = new Map<String, UInt>();
-		for (dir in dirs) for (file in dir.contentRecursiveFiles(filter, true))
-			if (file.name != '.DS_Store')
-				units[file.first] = Std.int(file.mtime.getTime() / 1000);
+		for (dir in dirs) {
+			if (Utils.dirIsGit(dir.first)) {
+				for (file in dir.contentRecursiveFiles(filter, true))
+					if (file.name != '.DS_Store') units[file.first] = Utils.gitMTime(file.first);
+			} else {
+				for (file in dir.contentRecursiveFiles(filter, true))
+					if (file.name != '.DS_Store') units[file.first] = Std.int(file.mtime.getTime() / 1000);
+			}
+		}
 	}
 
 	private inline function toBytes(): Bytes return new Serializer().serialize(this);
