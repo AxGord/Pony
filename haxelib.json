@@ -27,8 +27,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Using git for get file mtime if can. Haxelib git commit and y attrs.",
-"version": "1.6.7",
+"releasenote": "Haxelib trim inner data for build",
+"version": "1.6.8",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }

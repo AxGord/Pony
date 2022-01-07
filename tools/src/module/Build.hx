@@ -53,9 +53,9 @@ private typedef LastCompilationOptions = {
 	override public function init(): Void {
 		if (xml == null) return;
 		haxelib = modules.xml.hasNode.haxelib ?
-			[ for (e in modules.xml.node.haxelib.nodes.lib) if (!e.isTrue('mute')) e.innerData.split(' ').join(':') ] : [];
+			[ for (e in modules.xml.node.haxelib.nodes.lib) if (!e.isTrue('mute')) StringTools.trim(e.innerData).split(' ').join(':') ] : [];
 		hideWarningLibs = modules.xml.hasNode.haxelib ?
-			[ for (e in modules.xml.node.haxelib.nodes.lib) if (e.isFalse('warning')) '/' + e.innerData.split(' ')[0] + '/' ] : [];
+			[ for (e in modules.xml.node.haxelib.nodes.lib) if (e.isFalse('warning')) '/' + StringTools.trim(e.innerData).split(' ')[0] + '/' ] : [];
 		server = modules.xml.hasNode.server && modules.xml.node.server.hasNode.haxe;
 		initSections(PRIORITY, BASection.Build);
 	}
