@@ -71,7 +71,10 @@ class Utils {
 		var cwd = new Cwd(path);
 		cwd.sw();
 		var r: Bool = try {
-			TextTools.isTrue(new Process('git', ['rev-parse', '--is-inside-work-tree']).stdout.readLine());
+			var p: Process = new Process('git', ['rev-parse', '--is-inside-work-tree']);
+			var line: String = p.stdout.readLine();
+			p.close();
+			TextTools.isTrue(line);
 		} catch (err) {
 			false;
 		}
@@ -85,6 +88,8 @@ class Utils {
 		var file: String = a.b == '' ? a.a : a.b;
 		var cwd = new Cwd(path);
 		cwd.sw();
+		Sys.println('gitMTime cwd: $path');
+		Sys.println('gitMTime file: $file');
 		var p: Process = new Process('git', ['log', '--format=%ct', file]);
 		var s: String = '';
 		while (true) {
@@ -96,6 +101,7 @@ class Utils {
 				break;
 			}
 		}
+		p.close();
 		cwd.sw();
 		var r: Null<UInt> = Std.parseInt(s);
 		if (r == null) error("Can't get git file mtime");

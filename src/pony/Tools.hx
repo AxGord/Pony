@@ -30,6 +30,13 @@ class Tools {
 	public static var isWindows(get, never): Bool;
 	#end
 
+	/**
+	 * Time zone offset in secconds
+	 */
+	public static var tz(get, never): UInt;
+
+	private static var _tz: Null<UInt>;
+
 	private static inline var SRC: String = 'src';
 
 	#if macro
@@ -46,6 +53,11 @@ class Tools {
 	#elseif (sys || nodejs)
 	@:extern private static inline function get_isWindows(): Bool return Sys.systemName() == 'Windows';
 	#end
+
+	private static function get_tz(): UInt {
+		if (_tz == null) _tz = Date.now().getTimezoneOffset() * 60;
+		return _tz;
+	}
 
 	/**
 	 * Null Or Empty

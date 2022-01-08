@@ -1,5 +1,6 @@
 package module;
 
+import pony.Tools;
 import haxe.crypto.Base64;
 import haxe.crypto.Sha1;
 import haxe.io.Bytes;
@@ -97,11 +98,11 @@ using pony.text.TextTools;
 		key = pathKey(key);
 		var bo: BytesOutput = new BytesOutput();
 		if (Utils.dirIsGit(unit.fullDir.first)) {
-			bo.writeInt32(Utils.gitMTime(unit.first));
+			bo.writeInt32(Utils.gitMTime(unit.first) + Tools.tz);
 		} else {
 			var date: Null<Date> = unit.mtime;
 			if (date == null) return true;
-			bo.writeInt32(Std.int(date.getTime() / 1000));
+			bo.writeInt32(Std.int(date.getTime() / 1000 + Tools.tz));
 		}
 		return compareStates(key, bo.getBytes());
 	}
@@ -179,10 +180,10 @@ using pony.text.TextTools;
 		for (dir in dirs) {
 			if (Utils.dirIsGit(dir.first)) {
 				for (file in dir.contentRecursiveFiles(filter, true))
-					if (file.name != '.DS_Store') units[file.first] = Utils.gitMTime(file.first);
+					if (file.name != '.DS_Store') units[file.first] = Utils.gitMTime(file.first) + Tools.tz;
 			} else {
 				for (file in dir.contentRecursiveFiles(filter, true))
-					if (file.name != '.DS_Store') units[file.first] = Std.int(file.mtime.getTime() / 1000);
+					if (file.name != '.DS_Store') units[file.first] = Std.int(file.mtime.getTime() / 1000 + Tools.tz);
 			}
 		}
 	}
