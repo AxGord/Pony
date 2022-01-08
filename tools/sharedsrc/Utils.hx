@@ -88,8 +88,6 @@ class Utils {
 		var file: String = a.b == '' ? a.a : a.b;
 		var cwd = new Cwd(path);
 		cwd.sw();
-		Sys.println('gitMTime cwd: $path');
-		Sys.println('gitMTime file: $file');
 		var p: Process = new Process('git', ['log', '--format=%ct', file]);
 		var s: String = '';
 		while (true) {
