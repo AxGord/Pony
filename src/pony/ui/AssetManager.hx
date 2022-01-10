@@ -34,6 +34,7 @@ class AssetManager {
 	private static var units: Map<String, Bytes> = new Map<String, Bytes>();
 	private static var loadedAssets: Array<String> = [];
 	private static var globalLoad: Map<String, Array<Int -> Int -> Void>> = new Map();
+	private static var changedNames: Bool = false;
 
 	@:extern public static inline function initHash(cb: Void -> Void): Void {
 		#if (hxbitmini && js)
@@ -52,20 +53,15 @@ class AssetManager {
 		#end
 	}
 
-	@:extern public static inline function initHashVersion(version: Null<String>, cb: Void -> Void): Void {
+	@:extern public static inline function initHashVersion(url: Null<String>, cb: Void -> Void): Void {
 		#if (hxbitmini && js)
-		if (version != null) {
-			var version: String = version;
-			var url: Null<String> = Tools.getHashFile();
-			if (url != null) {
-				var url: String = url;
-				load('', url + '?' + version, function(c: Int, t: Int): Void if (c == t) {
-					units = Hash.fromBytes(bin(url)).units;
-					cb();
-				});
-			} else {
+		if (url != null) {
+			changedNames = true;
+			var url: String = url;
+			load('', url, function(c: Int, t: Int): Void if (c == t) {
+				units = Hash.fromBytes(bin(extractHash(url).a)).units;
 				cb();
-			}
+			});
 		} else {
 			cb();
 		}
@@ -314,7 +310,29 @@ class AssetManager {
 
 	public static inline function _load(asset: String, cb: Int -> Int -> Void): Void {
 		var bytes: Null<Bytes> = units[asset.endsWith('.atlas.bin') || asset.endsWith('.wav.bin') ? asset.substr(0, -4) : asset];
-		__load(bytes == null ? asset : asset + '?' + Base64.urlEncode(bytes), cb);
+		__load(bytes == null ? asset : hashNameConvert(asset, Base64.urlEncode(bytes)), cb);
+	}
+
+	public static function hashNameConvert(asset: String, hash: String): String {
+		if (hash.length == 0) return asset;
+		if (changedNames) {
+			var p: SPair<String> = asset.lastSplit('.');
+			return [p.a, hash, p.b].join('.');
+		} else {
+			return '$asset?$hash';
+		}
+	}
+
+	public static function extractHash(asset: String): SPair<String> {
+		if (changedNames) {
+			var a: Array<String> = asset.split('.');
+			@:nullSafety(Off) var ext: String = a.pop();
+			var hash: Null<String> = a.pop();
+			a.push(ext);
+			return a.length > 0 && hash != null && hash != 'atlas' && hash != 'wav' ? new Pair(a.join('.'), hash) : new Pair(asset, '');
+		} else {
+			return asset.firstSplit('?');
+		}
 	}
 
 	#if heaps

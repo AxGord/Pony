@@ -81,9 +81,9 @@ using pony.text.TextTools;
 
 	public static function load(asset: String, cb: Int -> Int -> Void): Void {
 		var realAsset: String = AssetManager.getPath(asset);
-		var a: Array<String> = asset.split('?');
-		asset = a[0];
-		var version: Null<String> = a[1];
+		var p: SPair<String> = AssetManager.extractHash(asset);
+		var version: String = p.b;
+		asset = p.a;
 		var loader: BinaryLoader = new BinaryLoader(realAsset);
 		inline function finish(): Void cb(AssetManager.MAX_ASSET_PROGRESS, AssetManager.MAX_ASSET_PROGRESS);
 		function progressHandler(cur: Int, max: Int): Void
@@ -94,7 +94,7 @@ using pony.text.TextTools;
 					cb(1, AssetManager.MAX_ASSET_PROGRESS);
 					var path: String = realAsset.substr(0, realAsset.lastIndexOf('/') + 1);
 					var imgFile: String = path + new BytesInput(textBytes).readLine();
-					var imgLoader: BinaryLoader = new BinaryLoader(imgFile + (version != null ? '?$version' : ''));
+					var imgLoader: BinaryLoader = new BinaryLoader(AssetManager.hashNameConvert(imgFile, version));
 					imgLoader.onProgress = progressHandler;
 					imgLoader.onLoaded = function(bytes: Bytes): Void {
 						var img: Any = Any.fromBytes(imgFile, bytes);
@@ -113,7 +113,7 @@ using pony.text.TextTools;
 					var path: String = realAsset.substr(0, realAsset.lastIndexOf('/') + 1);
 					var data: pony.ui.BinaryAtlas = pony.ui.BinaryAtlas.fromBytes(textBytes);
 					var imgFile: String = path + data.file;
-					var imgLoader: BinaryLoader = new BinaryLoader(imgFile + (version != null ? '?$version' : ''));
+					var imgLoader: BinaryLoader = new BinaryLoader(AssetManager.hashNameConvert(imgFile, version));
 					imgLoader.onProgress = progressHandler;
 					imgLoader.onLoaded = function(bytes: Bytes): Void {
 						var img: Any = Any.fromBytes(imgFile, bytes);
@@ -157,7 +157,7 @@ using pony.text.TextTools;
 					if (image == null) throw "Can't get image url";
 					image = StringTools.replace(image, '"', '');
 					var path: String = realAsset.substr(0, realAsset.lastIndexOf('/') + 1);
-					var imgLoader: BinaryLoader = new BinaryLoader(path + image + (version != null ? '?$version' : ''));
+					var imgLoader: BinaryLoader = new BinaryLoader(path + image);
 					imgLoader.onProgress = progressHandler;
 					imgLoader.onLoaded = function(imgbytes: Bytes): Void {
 						var font:Font = FontParser.parse(fntbytes, realAsset, function(path: String): Tile {
@@ -259,7 +259,13 @@ using pony.text.TextTools;
 	#end
 
 	public static inline function ext(asset: String): String {
-		return asset.indexOf('@') != -1 ? BIN : asset.substr(asset.indexOf('.', asset.lastIndexOf('/')) + 1);
+		if (asset.indexOf('@') != -1) return BIN;
+		var a: Array<String> = asset.split('.');
+		@:nullSafety(Off) var ext: String = a.pop();
+		var preExt: Null<String> = a.pop();
+		if (preExt != null && ['atlas', 'wav'].indexOf(preExt) == -1) preExt = a.pop();
+		if (a.length > 0 && preExt != null) ext = preExt + '.' + ext;
+		return ext;
 	}
 
 	public static inline function reset(asset: String): Void {

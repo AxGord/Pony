@@ -6,7 +6,6 @@ import haxe.io.Bytes;
 import haxe.io.BytesOutput;
 
 import pony.Fast;
-import pony.Pair;
 import pony.fs.File;
 
 using pony.Tools;
@@ -52,14 +51,20 @@ using pony.text.XmlTools;
 			if (content == null) continue;
 			var appHash: String = cfg.appFile == null ? '' : cfg.fast ?
 				fastHash(cfg.appPath + cfg.appFile) : calcHash(cfg.appPath + cfg.appFile);
+			var appFileName: String = '';
+			if (cfg.appFile != null) {
+				var appFile: File = cfg.appPath + cfg.appFile;
+				var newFile: File = '${appFile.withoutExt}.$appHash.${appFile.ext}';
+				appFile.rename(newFile);
+				appFileName = newFile.name;
+			}
 			(((cfg.to + unit): File).withoutExt: File).content = replaceVars(content, [
 				'title' => cfg.title,
-				'app' => (cfg.appFile != null ? cfg.appFile + '?' + appHash : ''),
+				'app' => appFileName,
 				'appHash' => appHash,
 				'assetsHash' => (hash != null && hash.xml != null ? hash.getHashHash() : ''),
 				'buildDate' => Date.now().toString()
 			]);
-
 		}
 	}
 

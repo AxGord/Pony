@@ -1,21 +1,23 @@
 package module;
 
-import pony.Tools;
 import haxe.crypto.Base64;
 import haxe.crypto.Sha1;
 import haxe.io.Bytes;
 import haxe.io.BytesOutput;
+import haxe.xml.Printer;
 
 import hxbitmini.Serializable;
 import hxbitmini.Serializer;
 
 import pony.Fast;
+import pony.Tools;
 import pony.fs.Dir;
 import pony.fs.File;
 
 import types.BASection;
 
 using StringTools;
+
 using pony.text.TextTools;
 
 /**
@@ -33,6 +35,7 @@ using pony.text.TextTools;
 	private var binary: Bool = true;
 	private var root: String = '';
 	private var source: String = '';
+	private var build: Null<String> = null;
 	private var inited: Bool = false;
 	private var units: Map<String, Bytes> = [];
 	private var newUnits: Map<String, Bytes> = [];
@@ -43,6 +46,7 @@ using pony.text.TextTools;
 	override public function init(): Void {
 		initSections(PRIORITY, BASection.Prepare);
 		modules.commands.onHash < start;
+		modules.commands.onBuild.once(addToRun.bind(buildCompleteHandler), 100);
 	}
 
 	private function start(): Void error('Deprecated');
@@ -58,6 +62,7 @@ using pony.text.TextTools;
 			allowCfg: true,
 			root: '',
 			source: '',
+			build: null,
 			input: [],
 			cordova: false
 		}, configHandler);
@@ -69,6 +74,74 @@ using pony.text.TextTools;
 		binary = cfg.binary;
 		root = cfg.root;
 		source = cfg.source;
+		build = cfg.build;
+	}
+
+	private function buildCompleteHandler(): Void {
+		if (build != null) {
+			initHash();
+			log('Copy files to build');
+			for (file in (root: Dir).contentRecursiveFiles()) {
+				var newContent: Null<String> = null;
+				var f: String = file.first.substr(root.length);
+				if (file.first == this.file.first) {
+					var r: String = build + getHashHash();
+					file.copyToFile(r);
+					continue;
+				}
+				var u: Null<Bytes> = units[f];
+				if (u == null && f.endsWith('.bin')) u = units[f.substr(0, -4)];
+				if (u == null && f.endsWith('.png')) u = units[f.substr(0, -4) + '.atlas'];
+				if (u != null && f.endsWith('.fnt')) {
+					var image: String = '';
+					@:nullSafety(Off) var data: String = file.content;
+					var xmlMode: Bool = false;
+					try {
+						var xml: Fast = new Fast(Xml.parse(data)).node.font;
+						image = xml.node.pages.node.page.att.file;
+						xmlMode = true;
+					} catch (_: String) {
+						var filePattern: String = '\npage id=0 file=';
+						var fileIndex: Int = data.indexOf(filePattern);
+						if (fileIndex != -1) {
+							fileIndex += filePattern.length;
+							image = data.substr(fileIndex);
+							image = image.substr(0, image.indexOf('\n'));
+						}
+					}
+					image = StringTools.replace(image, '"', '');
+					var path: Null<String> = f.allBefore('/');
+					var imgU: Null<Bytes> = units[path != null ? '$path/$image' : image];
+					if (imgU != null) {
+						log('Change font file in $file');
+						var imageFile: File = image;
+						var newFontName: String = [imageFile.withoutExt, Base64.urlEncode(imgU), imageFile.ext].join('.');
+						if (xmlMode) {
+							var xml: Fast = new Fast(Xml.parse(data)).node.font;
+							xml.node.pages.node.page.x.set('file', newFontName);
+							newContent = Printer.print(xml.x, true);
+						} else {
+							var filePattern: String = '\npage id=0 file=';
+							var fileIndex: Int = data.indexOf(filePattern);
+							if (fileIndex != -1) {
+								fileIndex += filePattern.length;
+								var endIndex: Int = data.indexOf('\n', fileIndex);
+								newContent = data.substr(0, fileIndex) + '"$newFontName"' + data.substr(endIndex);
+							}
+						}
+					}
+				}
+				if (u == null) {
+					log('Warning: Hash for $f not found');
+				} else {
+					var f: File = f;
+					var r: String = build + [f.withoutExt, Base64.urlEncode(u), f.ext].join('.');
+					file.copyToFile(r);
+					if (newContent != null) (r: File).content = newContent;
+				}
+			}
+		}
+		finishCurrentRun();
 	}
 
 	private function initHash(): Void {
@@ -96,14 +169,15 @@ using pony.text.TextTools;
 		if (unit.name == '.DS_Store') return false;
 		initHash();
 		key = pathKey(key);
-		var bo: BytesOutput = new BytesOutput();
-		if (Utils.dirIsGit(unit.fullDir.first)) {
-			bo.writeInt32(Utils.gitMTime(unit.first) + Tools.tz);
-		} else {
+		var mtime: Null<UInt> = null;
+		if (Utils.dirIsGit(unit.fullDir.first)) mtime = Utils.gitMTime(unit.first);
+		if (@:nullSafety(Off) (mtime == null)) {
 			var date: Null<Date> = unit.mtime;
 			if (date == null) return true;
-			bo.writeInt32(Std.int(date.getTime() / 1000 + Tools.tz));
+			mtime = Std.int(date.getTime() / 1000);
 		}
+		var bo: BytesOutput = new BytesOutput();
+		bo.writeInt32(@:nullSafety(Off) (mtime + Tools.tz));
 		return compareStates(key, bo.getBytes());
 	}
 
@@ -142,6 +216,7 @@ using pony.text.TextTools;
 	public function getHashed(): Array<String> {
 		initHash();
 		var r: Array<String> = buildUnitsList(units.keys());
+		trace('Keep', file);
 		r.push(file.first);
 		return r;
 	}
@@ -166,7 +241,8 @@ using pony.text.TextTools;
 
 	public function getHashHash(): String {
 		var bytes: Null<Bytes> = file.bytes;
-		return bytes != null ? Base64.encode(Sha1.make(bytes)) : '';
+		var f: String = bytes != null ? [file.withoutExt, Base64.urlEncode(Sha1.make(bytes)), file.ext].join('.') : file.first;
+		return f.substr(root.length);
 	}
 
 }
@@ -179,8 +255,11 @@ using pony.text.TextTools;
 		units = new Map<String, UInt>();
 		for (dir in dirs) {
 			if (Utils.dirIsGit(dir.first)) {
-				for (file in dir.contentRecursiveFiles(filter, true))
-					if (file.name != '.DS_Store') units[file.first] = Utils.gitMTime(file.first) + Tools.tz;
+				for (file in dir.contentRecursiveFiles(filter, true)) if (file.name != '.DS_Store') {
+					var mtime: Null<UInt> = Utils.gitMTime(file.first);
+					if (mtime == null) mtime = Std.int(file.mtime.getTime() / 1000);
+					units[file.first] = mtime + Tools.tz;
+				}
 			} else {
 				for (file in dir.contentRecursiveFiles(filter, true))
 					if (file.name != '.DS_Store') units[file.first] = Std.int(file.mtime.getTime() / 1000 + Tools.tz);
@@ -199,6 +278,7 @@ private typedef HashConfig = {
 	binary: Bool,
 	root: String,
 	source: String,
+	build: Null<String>,
 	input: Array<String>
 }
 
@@ -209,6 +289,7 @@ private typedef HashConfig = {
 		cfg.binary = true;
 		cfg.root = '';
 		cfg.source = '';
+		cfg.build = null;
 		cfg.input = [];
 	}
 
@@ -216,6 +297,7 @@ private typedef HashConfig = {
 		switch xml.name {
 			case 'output': cfg.file = normalize(xml.innerData);
 			case 'input': cfg.input.push(normalize(xml.innerData));
+			case 'build': cfg.build = normalize(xml.innerData);
 			case _: super.readNode(xml);
 		}
 	}

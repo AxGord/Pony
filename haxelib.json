@@ -27,8 +27,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Binwav and addext for file copy",
-"version": "1.6.9",
+"releasenote": "Upgrade hash system. Imagemin not recursive.",
+"version": "1.7.0",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }

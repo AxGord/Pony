@@ -82,7 +82,7 @@ class Utils {
 		return r;
 	}
 
-	public static function gitMTime(file: String): UInt {
+	public static function gitMTime(file: String): Null<UInt> {
 		var a: SPair<String> = TextTools.lastSplit(file, '/');
 		var path: String = a.b == '' ? '' : a.a;
 		var file: String = a.b == '' ? a.a : a.b;
@@ -101,9 +101,7 @@ class Utils {
 		}
 		p.close();
 		cwd.sw();
-		var r: Null<UInt> = Std.parseInt(s);
-		if (r == null) error("Can't get git file mtime");
-		return r;
+		return Std.parseInt(s);
 	}
 
 	public static function getXml(): Fast {

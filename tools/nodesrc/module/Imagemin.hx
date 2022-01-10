@@ -61,7 +61,7 @@ private typedef ImageminResult = Array<ImageminResultEntry>;
 			if (cfg.ignore.length > 0) {
 				for (f in from) {
 					f = f.substr(0, -2);
-					for (file in (f: Dir).contentRecursiveFiles('.png'))
+					for (file in (f: Dir).files('.png'))
 						if (!cfg.ignore.contains(file.first)) target.push(file.first);
 				}
 			} else {
