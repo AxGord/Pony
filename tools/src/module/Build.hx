@@ -56,7 +56,7 @@ private typedef LastCompilationOptions = {
 			[ for (e in modules.xml.node.haxelib.nodes.lib) if (!e.isTrue('mute')) StringTools.trim(e.innerData).split(' ').join(':') ] : [];
 		hideWarningLibs = modules.xml.hasNode.haxelib ?
 			[ for (e in modules.xml.node.haxelib.nodes.lib) if (e.isFalse('warning')) '/' + StringTools.trim(e.innerData).split(' ')[0] + '/' ] : [];
-		server = modules.xml.hasNode.server && modules.xml.node.server.hasNode.haxe;
+		server = modules.xml.hasNode.server && modules.xml.node.server.hasNode.haxe && !TextTools.isTrue(Sys.getEnv('PONY_DISABLE_BUILD_SERVER'));
 		initSections(PRIORITY, BASection.Build);
 	}
 
