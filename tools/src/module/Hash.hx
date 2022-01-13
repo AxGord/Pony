@@ -220,7 +220,7 @@ using pony.text.TextTools;
 	public function getHashed(): Array<String> {
 		initHash();
 		var r: Array<String> = buildUnitsList(units.keys());
-		trace('Keep', file);
+		log('Keep $file');
 		r.push(file.first);
 		return r;
 	}

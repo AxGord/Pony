@@ -143,6 +143,7 @@ private typedef TemplateConfig = {
 		switch name {
 			case 'to': cfg.to = val;
 			case 'from': cfg.from = val;
+			case 'hash': cfg.hash = val;
 			case _:
 		}
 	}

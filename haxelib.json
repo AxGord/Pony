@@ -27,8 +27,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Hash for templates. Not run hash module if not need.",
-"version": "1.7.2",
+"releasenote": "Fix get hash from config",
+"version": "1.7.3",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }
