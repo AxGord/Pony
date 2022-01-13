@@ -27,8 +27,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "PONY_DISABLE_BUILD_SERVER env",
-"version": "1.7.1",
+"releasenote": "Hash for templates. Not run hash module if not need.",
+"version": "1.7.2",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }

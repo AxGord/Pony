@@ -46,7 +46,7 @@ using pony.text.TextTools;
 	override public function init(): Void {
 		initSections(PRIORITY, BASection.Prepare);
 		modules.commands.onHash < start;
-		modules.commands.onBuild.once(addToRun.bind(buildCompleteHandler), 100);
+		if (xml != null) modules.commands.onBuild.once(addToRun.bind(buildCompleteHandler), 100);
 	}
 
 	private function start(): Void error('Deprecated');
@@ -168,17 +168,21 @@ using pony.text.TextTools;
 	public function fileChanged(key: String, unit: File): Bool {
 		if (unit.name == '.DS_Store') return false;
 		initHash();
-		key = pathKey(key);
+		var bytes: Null<Bytes> = getMTimeBytes(unit);
+		return bytes == null ? true : compareStates(pathKey(key), bytes);
+	}
+
+	public function getMTimeBytes(unit: File): Null<Bytes> {
 		var mtime: Null<UInt> = null;
 		if (Utils.dirIsGit(unit.fullDir.first)) mtime = Utils.gitMTime(unit.first);
 		if (@:nullSafety(Off) (mtime == null)) {
 			var date: Null<Date> = unit.mtime;
-			if (date == null) return true;
+			if (date == null) return null;
 			mtime = Std.int(date.getTime() / 1000);
 		}
 		var bo: BytesOutput = new BytesOutput();
 		bo.writeInt32(@:nullSafety(Off) (mtime + Tools.tz));
-		return compareStates(key, bo.getBytes());
+		return bo.getBytes();
 	}
 
 	override private function runNode(cfg: HashConfig): Void {

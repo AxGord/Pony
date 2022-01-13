@@ -20,6 +20,7 @@ using pony.text.XmlTools;
 	private static inline var PRIORITY: Int = 6;
 
 	private var hash: Null<String> = null;
+	private var usedFiles: Map<String, Bytes> = new Map<String, Bytes>();
 
 	public function new() super('template');
 
@@ -36,6 +37,7 @@ using pony.text.XmlTools;
 			title: '',
 			appFile: null,
 			appPath: '',
+			hash: null,
 			fast: false,
 			units: [],
 			cordova: false,
@@ -45,27 +47,43 @@ using pony.text.XmlTools;
 
 	override private function runNode(cfg: TemplateConfig): Void {
 		var hash: Null<module.Hash> = cast modules.getModule(module.Hash);
+		var hashMethod: (String -> Dynamic) -> String -> String = hashFile.bind(hash, cfg.from, cfg.to);
+		var appHash: String = cfg.appFile == null ? '' : cfg.fast ?
+			fastHash(cfg.appPath + cfg.appFile) : calcHash(cfg.appPath + cfg.appFile);
+		var appFileName: String = '';
+		if (cfg.appFile != null) {
+			var appFile: File = cfg.appPath + cfg.appFile;
+			var newFile: File = '${appFile.withoutExt}.$appHash.${appFile.ext}';
+			appFile.rename(newFile);
+			appFileName = newFile.name;
+		}
 		for (unit in cfg.units) {
 			var file: File = cfg.from + unit;
 			var content: Null<String> = file.content;
 			if (content == null) continue;
-			var appHash: String = cfg.appFile == null ? '' : cfg.fast ?
-				fastHash(cfg.appPath + cfg.appFile) : calcHash(cfg.appPath + cfg.appFile);
-			var appFileName: String = '';
-			if (cfg.appFile != null) {
-				var appFile: File = cfg.appPath + cfg.appFile;
-				var newFile: File = '${appFile.withoutExt}.$appHash.${appFile.ext}';
-				appFile.rename(newFile);
-				appFileName = newFile.name;
-			}
-			(((cfg.to + unit): File).withoutExt: File).content = replaceVars(content, [
-				'title' => cfg.title,
-				'app' => appFileName,
-				'appHash' => appHash,
-				'assetsHash' => (hash != null && hash.xml != null ? hash.getHashHash() : ''),
-				'buildDate' => Date.now().toString()
-			]);
+			(((cfg.to + unit): File).withoutExt: File).content = new haxe.Template(content).execute({
+				title: cfg.title,
+				app: appFileName,
+				appHash: appHash,
+				assetsHash: hash != null && hash.xml != null ? hash.getHashHash() : '',
+				buildDate: Date.now().toString()
+			}, { hash: hashMethod });
 		}
+		if (cfg.hash != null && Lambda.count(usedFiles) > 0) ((cfg.to + cfg.hash): File).bytes = new pony.ui.Hash(usedFiles).toBytes();
+	}
+
+	private function hashFile(hash: Null<module.Hash>, from: String, to: String, resolve: String -> Dynamic, fileName: String): String {
+		if (hash == null) return fileName;
+		var bytes: Null<Bytes> = usedFiles[fileName];
+		var file: File = fileName;
+		if (bytes != null) return [file.withoutExt, Base64.urlEncode(bytes), file.ext].join('.');
+		var fromFile: File = from + fileName;
+		var bytes: Null<Bytes> = hash.getMTimeBytes(fromFile);
+		if (bytes == null) return fileName;
+		usedFiles[fileName] = bytes;
+		var newName: String = [file.withoutExt, Base64.urlEncode(bytes), file.ext].join('.');
+		fromFile.copyToFile(to + newName);
+		return newName;
 	}
 
 	private function calcHash(file: File): String {
@@ -77,16 +95,11 @@ using pony.text.XmlTools;
 		var mtime: Null<Date> = file.mtime;
 		if (mtime != null) {
 			var bo: BytesOutput = new BytesOutput();
-			bo.writeInt32(Std.int(mtime.getTime() / 1000));
+			bo.writeInt32(Std.int(mtime.getTime() / 1000 + Tools.tz));
 			return Base64.urlEncode(bo.getBytes());
 		} else {
 			return '';
 		}
-	}
-
-	public static function replaceVars(content: String, vars: Map<String, String>): String {
-		for (k in vars.keys()) content = @:nullSafety(Off) StringTools.replace(content, '::$k::', vars[k]);
-		return content;
 	}
 
 }
@@ -98,6 +111,7 @@ private typedef TemplateConfig = {
 	title: String,
 	appFile: Null<String>,
 	appPath: String,
+	hash: Null<String>,
 	fast: Bool,
 	units: Array<String>
 }
@@ -109,6 +123,7 @@ private typedef TemplateConfig = {
 		cfg.from = '';
 		cfg.title = '';
 		cfg.appFile = null;
+		cfg.hash = null;
 		cfg.units = [];
 	}
 
