@@ -5,10 +5,10 @@ import h2d.Bitmap;
 import h2d.Font;
 import h2d.Tile;
 
+import haxe.Timer;
 import haxe.io.Bytes;
 import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
-import haxe.Timer;
 
 import hxd.fmt.bfnt.FontParser;
 import hxd.res.Any;
@@ -19,6 +19,8 @@ import hxd.res.Sound;
 import pony.Fast;
 import pony.Pair;
 import pony.Queue.Queue1;
+import pony.events.Signal1;
+import pony.magic.HasSignal;
 import pony.time.DeltaTime;
 import pony.ui.AssetManager;
 import pony.ui.gui.slices.SliceTools;
@@ -56,11 +58,14 @@ using pony.text.TextTools;
  * HeapsAssets
  * @author AxGord <axgord@gmail.com>
  */
-@:nullSafety(Strict) @:final class HeapsAssets {
+@:nullSafety(Strict) @:final class HeapsAssets implements HasSignal {
 
 	private static inline var SDF_ALPHA: Float = 0.5;
 	private static inline var SDF_SMOOTHING: Float = 0.5;
 
+	@:auto public static var onError: Signal1<String>;
+
+	private static var hasError: Bool = false;
 	private static var atlases: Map<String, Pair<Loader, Atlas>> = new Map();
 	private static var tiles: Map<String, Tile> = new Map();
 	private static var fonts: Map<String, Font> = new Map();
@@ -80,23 +85,28 @@ using pony.text.TextTools;
 	#end
 
 	public static function load(asset: String, cb: Int -> Int -> Void): Void {
+		if (hasError) return;
 		var realAsset: String = AssetManager.getPath(asset);
 		var p: SPair<String> = AssetManager.extractHash(asset);
 		var version: String = p.b;
 		asset = p.a;
 		var loader: BinaryLoader = new BinaryLoader(realAsset);
+		loader.onError = errorHandler.bind(asset);
 		inline function finish(): Void cb(AssetManager.MAX_ASSET_PROGRESS, AssetManager.MAX_ASSET_PROGRESS);
-		function progressHandler(cur: Int, max: Int): Void
-			if (cur != max) cb(Std.int(1 + cur / max * (AssetManager.MAX_ASSET_PROGRESS - 1)), AssetManager.MAX_ASSET_PROGRESS);
+		function progressHandler(cur: Int, max: Int): Void if (!hasError && cur != max)
+			cb(Std.int(1 + cur / max * (AssetManager.MAX_ASSET_PROGRESS - 1)), AssetManager.MAX_ASSET_PROGRESS);
 		switch ext(asset) {
 			case ATLAS:
 				loader.onLoaded = function(textBytes: Bytes): Void {
+					if (hasError) return;
 					cb(1, AssetManager.MAX_ASSET_PROGRESS);
 					var path: String = realAsset.substr(0, realAsset.lastIndexOf('/') + 1);
 					var imgFile: String = path + new BytesInput(textBytes).readLine();
 					var imgLoader: BinaryLoader = new BinaryLoader(AssetManager.hashNameConvert(imgFile, version));
+					imgLoader.onError = errorHandler.bind(imgFile);
 					imgLoader.onProgress = progressHandler;
 					imgLoader.onLoaded = function(bytes: Bytes): Void {
+						if (hasError) return;
 						var img: Any = Any.fromBytes(imgFile, bytes);
 						atlases[asset] = new Pair(
 							@:privateAccess img.loader,
@@ -109,13 +119,16 @@ using pony.text.TextTools;
 			#if hxbitmini
 			case BINATLAS:
 				loader.onLoaded = function(textBytes: Bytes): Void {
+					if (hasError) return;
 					cb(1, AssetManager.MAX_ASSET_PROGRESS);
 					var path: String = realAsset.substr(0, realAsset.lastIndexOf('/') + 1);
 					var data: pony.ui.BinaryAtlas = pony.ui.BinaryAtlas.fromBytes(textBytes);
 					var imgFile: String = path + data.file;
 					var imgLoader: BinaryLoader = new BinaryLoader(AssetManager.hashNameConvert(imgFile, version));
+					imgLoader.onError = errorHandler.bind(imgFile);
 					imgLoader.onProgress = progressHandler;
 					imgLoader.onLoaded = function(bytes: Bytes): Void {
+						if (hasError) return;
 						var img: Any = Any.fromBytes(imgFile, bytes);
 						atlases[asset] = new Pair(
 							@:privateAccess img.loader,
@@ -128,6 +141,7 @@ using pony.text.TextTools;
 			#end
 			case FNT:
 				loader.onLoaded = function(fntbytes: Bytes): Void {
+					if (hasError) return;
 					cb(1, AssetManager.MAX_ASSET_PROGRESS);
 					var data: String = fntbytes.toString();
 					var image: Null<String> = null;
@@ -158,8 +172,10 @@ using pony.text.TextTools;
 					image = StringTools.replace(image, '"', '');
 					var path: String = realAsset.substr(0, realAsset.lastIndexOf('/') + 1);
 					var imgLoader: BinaryLoader = new BinaryLoader(path + image);
+					imgLoader.onError = errorHandler.bind(path + image);
 					imgLoader.onProgress = progressHandler;
 					imgLoader.onLoaded = function(imgbytes: Bytes): Void {
+						if (hasError) return;
 						var font:Font = FontParser.parse(fntbytes, realAsset, function(path: String): Tile {
 							return Any.fromBytes(path, imgbytes).toTile();
 						});
@@ -172,18 +188,21 @@ using pony.text.TextTools;
 			case PNG, JPG, JPEG:
 				loader.onProgress = progressHandler;
 				loader.onLoaded = function(bytes: Bytes): Void {
+					if (hasError) return;
 					tiles[asset] = Any.fromBytes(realAsset, bytes).toTile();
 					finish();
 				}
 			case TXT, CSS, JSON, CDB, IMG, LDTK:
 				loader.onProgress = progressHandler;
 				loader.onLoaded = function(bytes: Bytes): Void {
+					if (hasError) return;
 					texts[asset] = Any.fromBytes(realAsset, bytes).toText();
 					finish();
 				}
 			case BIN:
 				loader.onProgress = progressHandler;
 				loader.onLoaded = function(bytes: Bytes): Void {
+					if (hasError) return;
 					asset = StringTools.replace(asset, '@', '');
 					bins[asset] = bytes;
 					finish();
@@ -191,6 +210,7 @@ using pony.text.TextTools;
 			case WAV, BINWAV:
 				loader.onProgress = progressHandler;
 				loader.onLoaded = function(bytes: Bytes): Void {
+					if (hasError) return;
 					sounds[asset] = Any.fromBytes(realAsset, bytes).toSound();
 					finish();
 				}
@@ -198,6 +218,11 @@ using pony.text.TextTools;
 				throw ERROR_NOT_SUPPORTED;
 		}
 		loadAsset(loader);
+	}
+
+	private static function errorHandler(asset: String, msg: String): Void {
+		hasError = true;
+		eError.dispatch(asset);
 	}
 
 	private static inline function loadAsset(loader: BinaryLoader): Void {

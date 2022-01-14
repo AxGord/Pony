@@ -168,28 +168,15 @@ using pony.text.TextTools;
 	public function fileChanged(key: String, unit: File): Bool {
 		if (unit.name == '.DS_Store') return false;
 		initHash();
-		var bytes: Null<Bytes> = getMTimeBytes(unit);
+		var bytes: Null<Bytes> = Utils.gitHash(unit);
 		return bytes == null ? true : compareStates(pathKey(key), bytes);
-	}
-
-	public function getMTimeBytes(unit: File): Null<Bytes> {
-		var mtime: Null<UInt> = null;
-		if (Utils.dirIsGit(unit.fullDir.first)) mtime = Utils.gitMTime(unit.first);
-		if (@:nullSafety(Off) (mtime == null)) {
-			var date: Null<Date> = unit.mtime;
-			if (date == null) return null;
-			mtime = Std.int(date.getTime() / 1000);
-		}
-		var bo: BytesOutput = new BytesOutput();
-		bo.writeInt32(@:nullSafety(Off) (mtime + Tools.tz));
-		return bo.getBytes();
 	}
 
 	override private function runNode(cfg: HashConfig): Void {
 		for (input in cfg.input) {
-			var bytes: Null<Bytes> = (root: Dir).file(input).bytes;
-			if (bytes == null) return error('Hash input file not exists: $input');
-			compareStates(input, Sha1.make(bytes));
+			var f: File = (root: Dir).file(input);
+			if (!f.exists) return error('Hash input file not exists: $input');
+			compareStates(input, Utils.gitHash(f));
 		}
 		var lost: Array<String> = getLost();
 		if (lost.length > 0) updated = true;
@@ -244,8 +231,7 @@ using pony.text.TextTools;
 	public inline function getNotChangedUnits(): Array<String> return buildUnitsList(notChangedUnits.iterator());
 
 	public function getHashHash(): String {
-		var bytes: Null<Bytes> = file.bytes;
-		var f: String = bytes != null ? [file.withoutExt, Base64.urlEncode(Sha1.make(bytes)), file.ext].join('.') : file.first;
+		var f: String = file.exists ? [file.withoutExt, Base64.urlEncode(Utils.gitHash(file.first)), file.ext].join('.') : file.first;
 		return f.substr(root.length);
 	}
 
@@ -253,22 +239,13 @@ using pony.text.TextTools;
 
 @:keep private class DirState implements Serializable {
 
-	@:s public var units: Map<String, UInt>;
+	@:s public var units: Map<String, Bytes>;
 
 	private function new(dirs: Array<Dir>, filter: Null<String>) {
-		units = new Map<String, UInt>();
-		for (dir in dirs) {
-			if (Utils.dirIsGit(dir.first)) {
-				for (file in dir.contentRecursiveFiles(filter, true)) if (file.name != '.DS_Store') {
-					var mtime: Null<UInt> = Utils.gitMTime(file.first);
-					if (mtime == null) mtime = Std.int(file.mtime.getTime() / 1000);
-					units[file.first] = mtime + Tools.tz;
-				}
-			} else {
-				for (file in dir.contentRecursiveFiles(filter, true))
-					if (file.name != '.DS_Store') units[file.first] = Std.int(file.mtime.getTime() / 1000 + Tools.tz);
-			}
-		}
+		units = new Map<String, Bytes>();
+		for (dir in dirs)
+			for (file in dir.contentRecursiveFiles(filter, true)) if (file.name != '.DS_Store')
+				units[file.first] = Utils.gitHash(file.first);
 	}
 
 	private inline function toBytes(): Bytes return new Serializer().serialize(this);

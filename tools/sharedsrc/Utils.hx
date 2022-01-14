@@ -1,4 +1,5 @@
 import haxe.Json;
+import haxe.io.Bytes;
 import haxe.xml.Parser.XmlParserException;
 
 import pony.Fast;
@@ -82,18 +83,18 @@ class Utils {
 		return r;
 	}
 
-	public static function gitMTime(file: String): Null<UInt> {
+	public static function gitHash(file: String): Bytes {
 		var a: SPair<String> = TextTools.lastSplit(file, '/');
 		var path: String = a.b == '' ? '' : a.a;
 		var file: String = a.b == '' ? a.a : a.b;
 		var cwd = new Cwd(path);
 		cwd.sw();
-		var p: Process = new Process('git', ['log', '--format=%ct', file]);
+		var p: Process = new Process('git', ['hash-object', file]);
 		var s: String = '';
 		while (true) {
 			try {
 				var ch: String = p.stdout.readString(1);
-				if (ch == null) break;
+				if (ch == null || ch == '\n') break;
 				s += ch;
 			} catch (err) {
 				break;
@@ -101,7 +102,7 @@ class Utils {
 		}
 		p.close();
 		cwd.sw();
-		return Std.parseInt(s);
+		return Bytes.ofHex(s);
 	}
 
 	public static function getXml(): Fast {

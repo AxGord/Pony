@@ -1,8 +1,17 @@
 package pony.ui;
 
 import haxe.crypto.Base64;
-import haxe.rtti.Meta;
 import haxe.io.Bytes;
+import haxe.rtti.Meta;
+
+import pony.Or;
+import pony.Tasks;
+import pony.events.Signal1;
+import pony.magic.HasLink;
+import pony.math.MathTools;
+import pony.time.DeltaTime;
+import pony.ui.gui.slices.SliceTools;
+
 #if heaps
 import pony.heaps.HeapsAssets;
 #elseif pixijs
@@ -10,14 +19,10 @@ import pony.pixi.PixiAssets;
 #elseif openfl
 import pony.openfl.OpenflAssets;
 #end
-import pony.Or;
-import pony.Tasks;
-import pony.math.MathTools;
-import pony.time.DeltaTime;
-import pony.ui.gui.slices.SliceTools;
 
 using Lambda;
 using StringTools;
+
 using pony.text.TextTools;
 
 /**
@@ -25,9 +30,13 @@ using pony.text.TextTools;
  * @author AxGord <axgord@gmail.com>
  */
 @:nullSafety(Strict)
-class AssetManager {
+class AssetManager implements HasLink {
 
 	public static inline var MAX_ASSET_PROGRESS: Int = 10;
+
+	#if heaps
+	public static var onError(link, never): Signal1<String> = HeapsAssets.onError;
+	#end
 
 	public static var baseUrl: String = '';
 	public static var local: String = '';

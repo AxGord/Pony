@@ -27,8 +27,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Fix get hash from config",
-"version": "1.7.3",
+"releasenote": "Html element resize control bugfix. Handle heaps asset loading error. Using git for hashes.",
+"version": "1.7.4",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }

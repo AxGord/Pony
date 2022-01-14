@@ -3,6 +3,7 @@ package pony.js;
 import js.html.Element;
 import pony.magic.HasSignal;
 import pony.events.Signal2;
+import pony.time.DeltaTime;
 
 /**
  * ElementResizeControl
@@ -15,6 +16,7 @@ class ElementResizeControl implements HasSignal {
 	public var width(get, never): Int;
 	public var height(get, never): Int;
 	private var even: Bool;
+	private var initCheckCounter: Int = 8;
 
 	public function new(element: Element, even: Bool = true) {
 		this.element = element;
@@ -27,7 +29,16 @@ class ElementResizeControl implements HasSignal {
 	@:extern private inline function get_height(): Int return makeEven(element.clientHeight);
 	@:extern private inline function makeEven(v: Int): Int return even ? v - v % 2 : v;
 
-	private function listenResize(): Void Window.onResize << resizeHandler;
+	private function listenResize(): Void {
+		Window.onResize << resizeHandler;
+		DeltaTime.fixedUpdate << check;
+	}
+
+	private function check(): Void {
+		resizeHandler();
+		if (--initCheckCounter <= 0) DeltaTime.fixedUpdate >> check;
+	}
+
 	private function unlistenResize(): Void Window.onResize >> resizeHandler;
 
 	public function resizeHandler(): Void {

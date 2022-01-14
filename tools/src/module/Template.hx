@@ -38,7 +38,6 @@ using pony.text.XmlTools;
 			appFile: null,
 			appPath: '',
 			hash: null,
-			fast: false,
 			units: [],
 			cordova: false,
 			allowCfg: true
@@ -48,8 +47,7 @@ using pony.text.XmlTools;
 	override private function runNode(cfg: TemplateConfig): Void {
 		var hash: Null<module.Hash> = cast modules.getModule(module.Hash);
 		var hashMethod: (String -> Dynamic) -> String -> String = hashFile.bind(hash, cfg.from, cfg.to);
-		var appHash: String = cfg.appFile == null ? '' : cfg.fast ?
-			fastHash(cfg.appPath + cfg.appFile) : calcHash(cfg.appPath + cfg.appFile);
+		var appHash: String = cfg.appFile == null ? '' : Base64.urlEncode(Utils.gitHash(cfg.appPath + cfg.appFile));
 		var appFileName: String = '';
 		if (cfg.appFile != null) {
 			var appFile: File = cfg.appPath + cfg.appFile;
@@ -78,28 +76,12 @@ using pony.text.XmlTools;
 		var file: File = fileName;
 		if (bytes != null) return [file.withoutExt, Base64.urlEncode(bytes), file.ext].join('.');
 		var fromFile: File = from + fileName;
-		var bytes: Null<Bytes> = hash.getMTimeBytes(fromFile);
-		if (bytes == null) return fileName;
+		if (!fromFile.exists) return fileName;
+		var bytes: Bytes = Utils.gitHash(fromFile.first);
 		usedFiles[fileName] = bytes;
 		var newName: String = [file.withoutExt, Base64.urlEncode(bytes), file.ext].join('.');
 		fromFile.copyToFile(to + newName);
 		return newName;
-	}
-
-	private function calcHash(file: File): String {
-		var bytes: Null<Bytes> = file.bytes;
-		return bytes != null ? Base64.urlEncode(Sha1.make(bytes)) : '';
-	}
-
-	private function fastHash(file: File): String {
-		var mtime: Null<Date> = file.mtime;
-		if (mtime != null) {
-			var bo: BytesOutput = new BytesOutput();
-			bo.writeInt32(Std.int(mtime.getTime() / 1000 + Tools.tz));
-			return Base64.urlEncode(bo.getBytes());
-		} else {
-			return '';
-		}
 	}
 
 }
@@ -112,7 +94,6 @@ private typedef TemplateConfig = {
 	appFile: Null<String>,
 	appPath: String,
 	hash: Null<String>,
-	fast: Bool,
 	units: Array<String>
 }
 
@@ -133,7 +114,6 @@ private typedef TemplateConfig = {
 			case 'app':
 				cfg.appFile = normalize(xml.innerData);
 				cfg.appPath = xml.has.path ? normalize(xml.att.path) : '';
-				cfg.fast = xml.isTrue('fast');
 			case 'unit': cfg.units.push(normalize(xml.innerData));
 			case _: super.readNode(xml);
 		}
