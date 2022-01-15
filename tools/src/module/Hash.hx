@@ -3,14 +3,13 @@ package module;
 import haxe.crypto.Base64;
 import haxe.crypto.Sha1;
 import haxe.io.Bytes;
-import haxe.io.BytesOutput;
 import haxe.xml.Printer;
 
 import hxbitmini.Serializable;
 import hxbitmini.Serializer;
 
 import pony.Fast;
-import pony.Tools;
+import pony.ds.STriple;
 import pony.fs.Dir;
 import pony.fs.File;
 
@@ -84,11 +83,7 @@ using pony.text.TextTools;
 			for (file in (root: Dir).contentRecursiveFiles()) {
 				var newContent: Null<String> = null;
 				var f: String = file.first.substr(root.length);
-				if (file.first == this.file.first) {
-					var r: String = build + getHashHash();
-					file.copyToFile(r);
-					continue;
-				}
+				if (file.first == this.file.first) continue;
 				var u: Null<Bytes> = units[f];
 				if (u == null && f.endsWith('.bin')) u = units[f.substr(0, -4)];
 				if (u == null && f.endsWith('.png')) u = units[f.substr(0, -4) + '.atlas'];
@@ -230,9 +225,8 @@ using pony.text.TextTools;
 
 	public inline function getNotChangedUnits(): Array<String> return buildUnitsList(notChangedUnits.iterator());
 
-	public function getHashHash(): String {
-		var f: String = file.exists ? [file.withoutExt, Base64.urlEncode(Utils.gitHash(file.first)), file.ext].join('.') : file.first;
-		return f.substr(root.length);
+	public function getBuildResHashFile(): Null<STriple<String>> {
+		return build != null ? @:nullSafety(Off) new STriple<String>(file.fullDir, build, file.name) : null;
 	}
 
 }

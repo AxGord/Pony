@@ -1,6 +1,5 @@
 package pony;
 
-import pony.text.TextTools;
 import haxe.crypto.Crc32;
 import haxe.io.Bytes;
 import haxe.io.Output;
@@ -8,13 +7,17 @@ import haxe.zip.Entry;
 import haxe.zip.Reader;
 import haxe.zip.Tools;
 import haxe.zip.Writer;
+
 import pony.ds.ROArray;
+import pony.text.TextTools;
+
 import sys.FileStat;
 import sys.FileSystem;
 import sys.io.File;
 import sys.io.FileInput;
 
 using Lambda;
+using StringTools;
 
 /**
  * ZipTool
@@ -84,6 +87,7 @@ class ZipTool extends Logable {
 	}
 
 	public function writeFile(file: String): ZipTool {
+		if (prefix.endsWith('/') && file.startsWith('/')) file = file.substr(1);
 		var f: String = prefix + file;
 		if (allowList != null && allowList.indexOf(f) == -1) return this;
 		log(f);

@@ -27,8 +27,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Html element resize control bugfix. Handle heaps asset loading error. Using git for hashes.",
-"version": "1.7.4",
+"releasenote": "Upgrade template module hash system. ZipTool bugfix.",
+"version": "1.7.5",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }

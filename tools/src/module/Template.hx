@@ -1,12 +1,13 @@
 package module;
 
 import haxe.crypto.Base64;
-import haxe.crypto.Sha1;
 import haxe.io.Bytes;
-import haxe.io.BytesOutput;
 
 import pony.Fast;
+import pony.ds.STriple;
 import pony.fs.File;
+
+using StringTools;
 
 using pony.Tools;
 using pony.text.XmlTools;
@@ -36,6 +37,7 @@ using pony.text.XmlTools;
 			from: '',
 			title: '',
 			appFile: null,
+			appRm: true,
 			appPath: '',
 			hash: null,
 			units: [],
@@ -45,16 +47,12 @@ using pony.text.XmlTools;
 	}
 
 	override private function runNode(cfg: TemplateConfig): Void {
-		var hash: Null<module.Hash> = cast modules.getModule(module.Hash);
-		var hashMethod: (String -> Dynamic) -> String -> String = hashFile.bind(hash, cfg.from, cfg.to);
-		var appHash: String = cfg.appFile == null ? '' : Base64.urlEncode(Utils.gitHash(cfg.appPath + cfg.appFile));
-		var appFileName: String = '';
-		if (cfg.appFile != null) {
-			var appFile: File = cfg.appPath + cfg.appFile;
-			var newFile: File = '${appFile.withoutExt}.$appHash.${appFile.ext}';
-			appFile.rename(newFile);
-			appFileName = newFile.name;
-		}
+		var hashModule: Null<module.Hash> = cast modules.getModule(module.Hash);
+		var assetsHashFile: Null<STriple<String>> = hashModule != null && hashModule.xml != null ? hashModule.getBuildResHashFile() : null;
+		var buildDate: String = Date.now().toString();
+		var hashMethod: (String -> Dynamic) -> String -> String = hashFile.bind(cfg.from, cfg.to, false);
+		var appFileName: String = cfg.appFile != null ? hashFile(cfg.appPath, cfg.to, cfg.appRm, dummy, cfg.appFile) : '';
+		var assetsHash: String = assetsHashFile != null ? hashFile(assetsHashFile.a, assetsHashFile.b, false, dummy, assetsHashFile.c) : '';
 		for (unit in cfg.units) {
 			var file: File = cfg.from + unit;
 			var content: Null<String> = file.content;
@@ -62,16 +60,16 @@ using pony.text.XmlTools;
 			(((cfg.to + unit): File).withoutExt: File).content = new haxe.Template(content).execute({
 				title: cfg.title,
 				app: appFileName,
-				appHash: appHash,
-				assetsHash: hash != null && hash.xml != null ? hash.getHashHash() : '',
-				buildDate: Date.now().toString()
+				assetsHash: assetsHash,
+				buildDate: buildDate,
 			}, { hash: hashMethod });
 		}
 		if (cfg.hash != null && Lambda.count(usedFiles) > 0) ((cfg.to + cfg.hash): File).bytes = new pony.ui.Hash(usedFiles).toBytes();
 	}
 
-	private function hashFile(hash: Null<module.Hash>, from: String, to: String, resolve: String -> Dynamic, fileName: String): String {
-		if (hash == null) return fileName;
+	private function hashFile(from: String, to: String, rm: Bool, resolve: String -> Dynamic, fileName: String): String {
+		if (from.length > 0 && !from.endsWith('/')) from += '/';
+		if (to.length > 0 && !to.endsWith('/')) to += '/';
 		var bytes: Null<Bytes> = usedFiles[fileName];
 		var file: File = fileName;
 		if (bytes != null) return [file.withoutExt, Base64.urlEncode(bytes), file.ext].join('.');
@@ -81,8 +79,11 @@ using pony.text.XmlTools;
 		usedFiles[fileName] = bytes;
 		var newName: String = [file.withoutExt, Base64.urlEncode(bytes), file.ext].join('.');
 		fromFile.copyToFile(to + newName);
+		if (rm) fromFile.delete();
 		return newName;
 	}
+
+	private static function dummy(s: String): Dynamic return s;
 
 }
 
@@ -93,6 +94,7 @@ private typedef TemplateConfig = {
 	title: String,
 	appFile: Null<String>,
 	appPath: String,
+	appRm: Bool,
 	hash: Null<String>,
 	units: Array<String>
 }
@@ -104,6 +106,7 @@ private typedef TemplateConfig = {
 		cfg.from = '';
 		cfg.title = '';
 		cfg.appFile = null;
+		cfg.appRm = true;
 		cfg.hash = null;
 		cfg.units = [];
 	}
@@ -114,6 +117,7 @@ private typedef TemplateConfig = {
 			case 'app':
 				cfg.appFile = normalize(xml.innerData);
 				cfg.appPath = xml.has.path ? normalize(xml.att.path) : '';
+				cfg.appRm = !xml.isFalse('rm');
 			case 'unit': cfg.units.push(normalize(xml.innerData));
 			case _: super.readNode(xml);
 		}
