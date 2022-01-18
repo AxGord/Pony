@@ -1,8 +1,11 @@
 package pony.heaps.ui.gui;
 
+import h2d.Interactive;
 import h2d.Object;
 
 import h3d.Vector;
+
+import hxd.Cursor;
 
 import pony.geom.Border;
 import pony.geom.IWH;
@@ -24,12 +27,30 @@ class Node extends Object implements HasSignal implements HasLink implements INo
 	public var h(link, set): Float = wh.y;
 	public var size(get, never): Point<Float>;
 	@:bindable public var tint: Vector = new Vector(1, 1, 1, 1);
+	public var interactive(default, null): Null<Interactive>;
 	private var border: Border<Int>;
 
 	public function new(size: Point<Float>, ?border: Border<Int>, ?parent: Object) {
 		super(parent);
 		wh = size;
 		this.border = border == null ? 0 : border;
+	}
+
+	public function makeInteractive(): Void {
+		interactive = new Interactive(w, h, this);
+		interactive.cursor = null;
+		changeWh << setInteractiveSize;
+	}
+
+	public function unmakeInteractive(): Void {
+		changeWh >> setInteractiveSize;
+		interactive.remove();
+		interactive = null;
+	}
+
+	@:nullSafety(Off) private function setInteractiveSize(wh: Point<Float>): Void {
+		interactive.width = wh.x;
+		interactive.height = wh.y;
 	}
 
 	private inline function get_size(): Point<Float> {

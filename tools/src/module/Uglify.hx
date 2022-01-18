@@ -54,6 +54,7 @@ class Uglify extends NModule<UglifyConfig> {
 	}
 
 	override private function writeCfg(protocol: NProtocol, cfg: Array<UglifyConfig>): Void {
+		if (TextTools.isTrue(Sys.getEnv('PONY_FORCE_DISABLE_LIBCACHE'))) for (c in cfg) c.libcache = null;
 		protocol.uglifyRemote(cfg);
 	}
 

@@ -223,6 +223,14 @@ using pony.text.TextTools;
 			#end
 				addFilters(cast obj, attrs);
 		}
+		if (attrs.interactive.isTrue()) {
+			#if (haxe_ver >= 4.10)
+			if (Std.isOfType(obj, Node))
+			#else
+			if (Std.is(obj, Node))
+			#end
+				cast(obj, Node).makeInteractive();
+		}
 		setWatchers(obj, attrs);
 		return obj;
 	}

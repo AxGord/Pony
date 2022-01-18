@@ -27,8 +27,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Upgrade template module hash system. ZipTool bugfix.",
-"version": "1.7.5",
+"releasenote": "Force disable libcache env. Heaps ui node interactive flag.",
+"version": "1.7.6",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }
