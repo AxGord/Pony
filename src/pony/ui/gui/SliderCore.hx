@@ -46,6 +46,8 @@ import pony.ui.touch.Touchable;
 		if (button != null) changePos << button.touch.check;
 	}
 
+	public dynamic function convertPos(p: Point<Float>): Point<Float> return p;
+
 	@:extern public static inline function create(
 		?b: ButtonCore, width: Float, height: Float, invert: Bool = false, draggable: Bool = true
 	): SliderCore {
@@ -68,16 +70,21 @@ import pony.ui.touch.Touchable;
 
 	public inline function startDrag(t: Touch): Void untyped (onStartDrag: Event1<Touch>).dispatch(t);
 	public inline function stopDrag(t: Touch): Void untyped (onStopDrag: Event1<Touch>).dispatch(t);
-	private function startXDragHandler(t: Touch): Void startPoint = inv(pos) - t.x;
-	private function startYDragHandler(t: Touch): Void startPoint = inv(pos) - t.y;
+	private function startXDragHandler(t: Touch): Void startPoint = inv(pos) - convertPos(t).x;
+	private function startYDragHandler(t: Touch): Void startPoint = inv(pos) - convertPos(t).y;
 
 	private function startDragHandler(t: Touch): Void {
 		if (t != null) t.onMove << moveHandler;
 		if (button != null) changePos >> button.touch.check;
 	}
 
-	private function moveHandler(t: Touch): Void pos = limit(detectPos(t.x, t.y));
-	@:extern private inline function detectPos(x: Float, y: Float): Float return inv((isVertical ? y : x) + startPoint);
+	private function moveHandler(t: Touch): Void pos = limit(detectPos(t.point));
+
+	@:extern private inline function detectPos(p: Point<Float>): Float {
+		p = convertPos(p);
+		return inv((isVertical ? p.y : p.x) + startPoint);
+	}
+
 	@:extern private inline function limit(p: Float): Float return if (p < 0) 0 else if (p > size) size else p;
 	public inline function wheel(v: Float): Void scroll(wheelSpeed * v);
 	public inline function scroll(v: Float): Void if (size >= 1) pos = limit(pos - v);
@@ -102,7 +109,7 @@ import pony.ui.touch.Touchable;
 
 	public function moveToPoint(t: Point<Float>): Void {
 		if (trackStartPoint != null) startPoint = -trackStartPoint;
-		pos = limit(detectPos(t.x, t.y));
+		pos = limit(detectPos(t));
 	}
 
 	public function set_track(v: Null<Touchable>): Null<Touchable> {

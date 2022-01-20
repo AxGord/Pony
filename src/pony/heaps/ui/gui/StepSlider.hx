@@ -18,7 +18,6 @@ import pony.ui.touch.Touchable;
 
 	public var button(default, null): Button;
 	public var sliderCore(default, null): StepSliderCore;
-	public var scaleState(default, set): Point<Float> = 1;
 	public var bg(default, null): Node;
 	public var valueStep(default, set): Float = 0;
 
@@ -46,42 +45,24 @@ import pony.ui.touch.Touchable;
 		interactive.y += bg.border.top;
 		var track: Touchable = new Touchable(interactive);
 		button = new Button(nodes, @:nullSafety(Off) this);
-		sliderCore = StepSliderCore.create(button.core, size.x, size.y, invert, draggable);
+		sliderCore = StepSliderCore.create(button.core, size.x - button.width, size.y - button.height, invert, draggable);
+		sliderCore.convertPos = convertPos;
 		sliderCore.changeX = changeXHandler;
 		sliderCore.changeY = changeYHandler;
-		if (sliderCore.isVertical)
-			track.onDown << vertTrackClickHandler;
-		else
-			track.onDown << horTrackClickHandler;
+		track.onDown << trackClickHandler;
 	}
 
-	private function horTrackClickHandler(t: Touch): Void {
-		var b: Bounds = bg.getBounds();
-		sliderCore.setStepPos(t.x - b.x + app.canvas.rect.x - button.size.x / 2 / scaleState.x);
-	}
-
-	private function vertTrackClickHandler(t: Touch): Void {
-		var b: Bounds = bg.getBounds();
-		sliderCore.setStepPos(t.y - b.y + app.canvas.rect.y - button.size.y / 2 / scaleState.y);
-	}
-
-	private function set_scaleState(value: Point<Float>): Point<Float> {
-		scaleState = 1 / value;
-		button.x = sliderX * scaleState.x;
-		button.y = sliderY * scaleState.y;
-		sliderCore.setSizeKeepValue(Std.int(sliderCore.isVertical ? (bg.h - button.size.y) * value.y : (bg.w - button.size.x) * value.x));
-		sliderCore.valueStep = valueStep;
-		return value;
-	}
+	private function convertPos(p: Point<Float>): Point<Float> return globalToLocal(p);
+	private function trackClickHandler(t: Touch): Void sliderCore.moveToPoint(t.point);
 
 	private function changeXHandler(v: Float): Void {
 		sliderX = v;
-		button.x = v * scaleState.x;
+		button.x = v;
 	}
 
 	private function changeYHandler(v: Float): Void {
 		sliderY = v;
-		button.y = v * scaleState.y;
+		button.y = v;
 	}
 
 	public function set_valueStep(v: Float): Float {

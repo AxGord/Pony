@@ -41,6 +41,7 @@ using pony.text.XmlTools;
 			appPath: '',
 			hash: null,
 			units: [],
+			files: [],
 			cordova: false,
 			allowCfg: true
 		}, configHandler);
@@ -63,6 +64,11 @@ using pony.text.XmlTools;
 				assetsHash: assetsHash,
 				buildDate: buildDate,
 			}, { hash: hashMethod });
+		}
+		for (file in cfg.files) {
+			var f: File = cfg.from + file;
+			f.copyToDir(cfg.to);
+			if (cfg.hash != null) usedFiles[file] = Utils.gitHash(f.first);
 		}
 		if (cfg.hash != null && Lambda.count(usedFiles) > 0) ((cfg.to + cfg.hash): File).bytes = new pony.ui.Hash(usedFiles).toBytes();
 	}
@@ -96,7 +102,8 @@ private typedef TemplateConfig = {
 	appPath: String,
 	appRm: Bool,
 	hash: Null<String>,
-	units: Array<String>
+	units: Array<String>,
+	files: Array<String>
 }
 
 @:nullSafety(Strict) private class TemplateReader extends BAReader<TemplateConfig> {
@@ -109,6 +116,7 @@ private typedef TemplateConfig = {
 		cfg.appRm = true;
 		cfg.hash = null;
 		cfg.units = [];
+		cfg.files = [];
 	}
 
 	override private function readNode(xml: Fast): Void {
@@ -119,6 +127,7 @@ private typedef TemplateConfig = {
 				cfg.appPath = xml.has.path ? normalize(xml.att.path) : '';
 				cfg.appRm = !xml.isFalse('rm');
 			case 'unit': cfg.units.push(normalize(xml.innerData));
+			case 'file': cfg.files.push(normalize(xml.innerData));
 			case _: super.readNode(xml);
 		}
 	}

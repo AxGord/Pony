@@ -62,7 +62,7 @@ import sys.io.File;
 				mangle: cfg.mangle,
 				compress: untyped cfg.compress ? {} : false
 			});
-
+			if (r.error != null) return error(r.error);
 			File.saveContent(cfg.output, r.code);
 			if (cfg.sourcemap.output != null) File.saveContent(cfg.sourcemap.output, patchMap(r.map, cfg.sourcemap.offset));
 		}

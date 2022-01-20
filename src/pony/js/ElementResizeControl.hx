@@ -16,7 +16,7 @@ class ElementResizeControl implements HasSignal {
 	public var width(get, never): Int;
 	public var height(get, never): Int;
 	private var even: Bool;
-	private var initCheckCounter: Int = 8;
+	private var initCheckCounter: Int = 0;
 
 	public function new(element: Element, even: Bool = true) {
 		this.element = element;
@@ -31,6 +31,7 @@ class ElementResizeControl implements HasSignal {
 
 	private function listenResize(): Void {
 		Window.onResize << resizeHandler;
+		initCheckCounter = 8;
 		DeltaTime.fixedUpdate << check;
 	}
 

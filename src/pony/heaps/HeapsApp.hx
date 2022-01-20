@@ -174,11 +174,8 @@ import pony.js.SmartCanvas;
 	public inline function localToGlobal(obj: Object, ?pos: Point<Float>): Point<Float>
 		return pos != null ? pos + obj.localToGlobal() - canvas.rect.start : obj.localToGlobal() - canvas.rect.start;
 
-	public function globalToLocal(x: Float, y: Float): Point<Float>
-		return new Point(
-			@:privateAccess s2d.interactiveCamera.screenXToCamera(x, y) - canvas.rect.x,
-			@:privateAccess s2d.interactiveCamera.screenYToCamera(x, y) - canvas.rect.y
-		);
+	public inline function globalToLocal(x: Float, y: Float): Point<Float>
+		return @:privateAccess new Point(s2d.interactiveCamera.screenXToCamera(x, y), s2d.interactiveCamera.screenYToCamera(x, y));
 
 	private static inline function get_s2dReady(): Bool return instance != null && instance.s2d != null;
 

@@ -27,8 +27,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Force disable libcache env. Heaps ui node interactive flag.",
-"version": "1.7.6",
+"releasenote": "Update uglify and show error if need. Js elements resize init bugfix. Absolute positions for heaps touchable. Template section file.",
+"version": "1.7.7",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }

@@ -34,7 +34,7 @@ class Touchable extends TouchableBase {
 	private static var TOUCHCANCEL: String = 'touchcancel';
 	private static var CLICK: String = 'click';
 
-	private static var lastPos: Point<Int> = new Point(0, 0);
+	private static var lastPos: Point<Float> = new Point<Float>(0, 0);
 
 	public static function init(): Void {
 		if (inited) return;
@@ -43,7 +43,7 @@ class Touchable extends TouchableBase {
 	}
 
 	private static inline function setLastPos(event: Event): Void
-		lastPos = @:nullSafety(Off) HeapsApp.instance.globalToLocal(event.relX, event.relY).toInt();
+		lastPos = @:nullSafety(Off) HeapsApp.instance.globalToLocal(event.relX, event.relY);
 
 	private static function globMouseMove(event: Event): Void {
 		if (HeapsApp.s2dReady) switch event.kind {

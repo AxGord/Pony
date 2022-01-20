@@ -44,7 +44,7 @@ class StepSliderCore extends SliderCore {
 
 	@:extern private inline function get_valueStep(): Float return percentStep * (max - min);
 
-	override private function moveHandler(t: Touch): Void setStepPos(detectPos(t.x, t.y));
+	override private function moveHandler(t: Touch): Void setStepPos(detectPos(t.point));
 
 	override function changePosHandler(v: Float): Void {
 		if (percentRound == -1)
