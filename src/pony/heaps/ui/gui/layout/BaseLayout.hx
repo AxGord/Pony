@@ -16,7 +16,7 @@ import pony.magic.HasSignal;
 @:nullSafety(Strict)
 class BaseLayout<T: BaseLayoutCore<Object>> extends Object implements IWH implements HasLink implements HasSignal {
 
-	@:bindable public var wh: Point<Float> = new Point(0., 0.);
+	@:bindable public var wh: Point<Float> = new Point<Float>(0, 0);
 	@:bindable public var flipx: Bool = false;
 	@:bindable public var flipy: Bool = false;
 	public var w(link, set): Float = wh.x;
@@ -73,7 +73,7 @@ class BaseLayout<T: BaseLayoutCore<Object>> extends Object implements IWH implem
 
 	private function _getSize(o: Object): Point<Float> {
 		var b = o.getBounds();
-		return new Point(b.width, b.height);
+		return new Point(b.width / scaleX, b.height / scaleY);
 	}
 
 	private static function getSizeMod(o: Object, p: Point<Float>): Point<Float> {

@@ -187,6 +187,7 @@ using pony.text.TextTools;
 		if (Std.is(obj, Node))
 		#end
 			setNodeAttrs(cast obj, attrs);
+		obj.name = attrs.name;
 		if (attrs.x != null) obj.x = parseAndScale(attrs.x);
 		if (attrs.y != null) obj.y = parseAndScale(attrs.y);
 		if (attrs.visible.isFalse()) obj.visible = false;

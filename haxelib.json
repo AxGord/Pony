@@ -27,8 +27,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Update uglify and show error if need. Js elements resize init bugfix. Absolute positions for heaps touchable. Template section file.",
-"version": "1.7.7",
+"releasenote": "Heaps Xml UI set object name. Layout scale getSize.",
+"version": "1.7.8",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }
