@@ -33,7 +33,7 @@ import haxe.Serializer;
  * TextTools
  * @author AxGord <axgord@gmail.com>
  */
-class TextTools {
+@:nullSafety(Strict) class TextTools {
 
 	public static inline var MODULE: String = 'pony.text.TextTools';
 	public static var letters: Map<String, String> = [
@@ -61,18 +61,29 @@ class TextTools {
 		return index == -1 ? null : str.substr(index + delimiter.length);
 	}
 
-	public static inline function allBefore(str: String, delimiter: String, ?startIndex: Int): Null<String> {
+	public static inline function allBeforeWithNull(str: String, delimiter: String, ?startIndex: Int): Null<String> {
 		var index: Int = str.indexOf(delimiter, startIndex);
-		return index == -1 ? str : str.substr(0, index);
+		return index == -1 ? null : str.substr(0, index);
 	}
 
-	public static inline function allBeforeLast(str: String, delimiter: String, ?startIndex: Int): Null<String> {
+	public static function allBefore(str: String, delimiter: String, ?startIndex: Int): String {
+		var r: Null<String> = allBeforeWithNull(str, delimiter, startIndex);
+		return r != null ? r : str;
+	}
+
+	public static inline function allBeforeLastWithNull(str: String, delimiter: String, ?startIndex: Int): Null<String> {
 		var index: Int = startIndex == null ? str.lastIndexOf(delimiter) : str.lastIndexOf(delimiter, startIndex);
-		return index == -1 ? str : str.substr(0, index);
+		return index == -1 ? null : str.substr(0, index);
+	}
+
+	public static function allBeforeLast(str: String, delimiter: String, ?startIndex: Int): String {
+		var r: Null<String> = allBeforeLastWithNull(str, delimiter, startIndex);
+		return r != null ? r : str;
 	}
 
 	public static function onlyLetters(str: String, lang: String = 'en'): String {
-		var ls: String = letters[lang];
+		var ls: Null<String> = letters[lang];
+		if (ls == null) throw 'Not supported lang';
 		var result: String = '';
 		for (i in 0...str.length) {
 			var char: String = str.charAt(i);
@@ -82,7 +93,8 @@ class TextTools {
 	}
 
 	public static function onlyLettersWithLower(str: String, lang: String = 'en'): String {
-		var ls: String = letters[lang];
+		var ls: Null<String> = letters[lang];
+		if (ls == null) throw 'Not supported lang';
 		var result: String = '';
 		for (i in 0...str.length) {
 			var char: String = str.charAt(i);
@@ -101,7 +113,7 @@ class TextTools {
 		return true;
 	}
 
-	public static inline function haveNumbers(str: String): Bool return haveAnySymbolFromList(str, letters['num']);
+	public static inline function haveNumbers(str: String): Bool return @:nullSafety(Off) haveAnySymbolFromList(str, letters['num']);
 
 	public static function convertToANSI(s: String, lang: String): String {
 		lang = lang.split('_')[0];
@@ -112,7 +124,8 @@ class TextTools {
 	}
 
 	private static function getANSILetter(s: String, lang: String): String {
-		var l: String = letters[lang];
+		var l: Null<String> = letters[lang];
+		if (l == null) throw 'Not supported lang';
 		for (i in 0...l.length) if (l.charAt(i) == s)
 			return String.fromCharCode(i + FIRST_ANSI_ID);
 		l = l.toLowerCase();
@@ -122,7 +135,8 @@ class TextTools {
 	}
 
 	public static function checkLang(s: String, lang: String): Bool {
-		var l: String = letters[lang];
+		var l: Null<String> = letters[lang];
+		if (l == null) throw 'Not supported lang';
 		for (i in 0...s.length) if (l.indexOf(s.charAt(i).toUpperCase()) != -1) return true;
 		return false;
 	}
@@ -215,17 +229,17 @@ class TextTools {
 
 	public static function tabParser(s: String, ?tab: String): Dynamic {
 		var a: Array<String> = s.split('\n');
-		var name: String = StringTools.trim(a.shift());
+		var name: String = @:nullSafety(Off) StringTools.trim(a.shift());
 		if (a.length == 0) return StringTools.trim(name);
 		var section: Map<String, Dynamic> = new Map<String, Dynamic>();
 		var entry: Array<String> = [];
 		var arr: Array<String> = [];
 		for (e in a) {
 			if (tab == null) tab = detectTab(e);
-			if (e.substr(0, tab.length) == tab) {
+			if (tab != null && e.substr(0, tab.length) == tab) {
 				entry.push(removeTab(e, tab));
 			} else {
-				var data: Dynamic = null;
+				var data: Null<Dynamic> = null;
 				if (entry.length == 0) {
 					data = StringTools.trim(e);
 					arr.push(name);
@@ -248,12 +262,12 @@ class TextTools {
 		return section;
 	}
 
-	public static function removeTab(s: String, ?tab: String): String {
+	public static function removeTab(s: String, ?tab: Null<String>): String {
 		if (tab == null) tab = detectTab(s);
-		return s.substr(tab.length);
+		return tab != null ? s.substr(tab.length) : s;
 	}
 
-	private static function detectTab(s: String): String {
+	private static function detectTab(s: String): Null<String> {
 		for (t in ['    ', '		', '	', '  ', ' '])
 			if (s.substr(0, t.length) == t)
 				return t;
@@ -265,7 +279,7 @@ class TextTools {
 		return (f == '"' || f == "'") ? s.substring(1, s.length - 1) : s;
 	}
 
-	public static function betweenReplace(text: String, begin: String, end: String, value: String): String {
+	public static function betweenReplace(text: String, begin: String, end: String, value: String): Null<String> {
 		var beginIndex: Int = text.indexOf(begin);
 		if (beginIndex == -1) return null;
 		beginIndex += begin.length;
@@ -339,7 +353,7 @@ class TextTools {
 		var q2: String = "'";
 		var oq: Int = src.indexOf(q1, i);
 		var oq2: Int = src.indexOf(q2, i);
-		var q: String = null;
+		var q: Null<String> = null;
 		if (oq2 != -1 && oq2 < oq) {
 			oq = oq2;
 			q = q2;

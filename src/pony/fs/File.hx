@@ -6,6 +6,8 @@ import haxe.io.Path;
 import sys.FileSystem;
 import sys.io.File as SysFile;
 
+using pony.text.TextTools;
+
 /**
  * File
  * @author AxGord <axgord@gmail.com>
@@ -110,7 +112,13 @@ import sys.io.File as SysFile;
 	}
 
 	private inline function get_fullPath(): Unit return this.fullPath;
-	inline private function get_fullDir(): Dir return [ for (e in this.wayStringIterator()) e.substr(0, e.lastIndexOf('/')) ];
+
+	private inline function get_fullDir(): Dir {
+		return [ for (e in this.wayStringIterator()) {
+			var r: Null<String> = e.allBeforeLastWithNull('/');
+			r != null ? (r: String) : '.';
+		} ];
+	}
 
 	public function delete(): Void {
 		try {

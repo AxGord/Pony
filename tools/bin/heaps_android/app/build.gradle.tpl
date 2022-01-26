@@ -16,10 +16,20 @@ android {
                 cppFlags "-frtti -fexceptions"
             }
         }
+        ::if (split)::
+        splits {
+            abi {
+                enable true
+                reset()
+                include ::abiInclude::
+            }
+        }
+        ::else::
         ndk {
             abiFilters = []
             abiFilters.addAll(ABI_FILTERS.split(',').collect{it as String})
         }
+        ::end::
     }
     signingConfigs {
         release {

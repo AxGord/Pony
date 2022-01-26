@@ -11,6 +11,7 @@ import types.BASection;
 
 using Lambda;
 using pony.text.TextTools;
+using pony.text.XmlTools;
 
 /**
  * Hashlink module
@@ -44,6 +45,7 @@ class Hashlink extends CfgModule<HashlinkConfig> {
 			keyAlias: null,
 			keyPassword: null,
 			abiFilters: null,
+			splitAbi: false,
 			platformData: null,
 			allowCfg: true,
 			cordova: false
@@ -87,8 +89,18 @@ class Hashlink extends CfgModule<HashlinkConfig> {
 				}
 			case 'android':
 				Utils.createPath(output);
+				var outputDir: Dir = output;
 				var template: Dir = Utils.toolsPath + 'heaps_android/';
 				template.copyTo(output);
+				var outputApp: Dir = outputDir + 'app';
+				var buildGradle: File = outputApp.file('build.gradle');
+				var buildGradleTemplate: File = outputApp.file('build.gradle.tpl');
+				var abiFilters: String = cfg.abiFilters != null ? cfg.abiFilters : 'x86,x86_64,armeabi-v7a,arm64-v8a';
+				buildGradle.content = new haxe.Template(buildGradleTemplate.content).execute({
+					split: cfg.splitAbi,
+					abiInclude: abiFilters.split(',').map(TextTools.quote.bind(_, '"')).join(', ')
+				});
+				buildGradleTemplate.delete();
 				var gradleProps: Array<SPair<String>> = [
 					['org.gradle.jvmargs', '-Xmx2048m'],
 					['APPLICATION_ID', cfg.id],
@@ -99,8 +111,8 @@ class Hashlink extends CfgModule<HashlinkConfig> {
 					['RELEASE_KEY_ALIAS', cfg.keyAlias],
 					['RELEASE_KEY_PASSWORD', cfg.keyPassword]
 				];
-				gradleProps.push(['ABI_FILTERS', cfg.abiFilters != null ? cfg.abiFilters : 'x86,x86_64,armeabi-v7a,arm64-v8a']);
-				((output + 'gradle.properties'): File).content = [
+				gradleProps.push(['ABI_FILTERS', abiFilters]);
+				outputDir.file('gradle.properties').content = [
 					for (p in gradleProps) '${p.a}=${p.b}'
 				].join('\n');
 
@@ -166,7 +178,8 @@ private typedef HashlinkConfig = {
 	keyAlias: Null<String>,
 	keyPassword: Null<String>,
 	abiFilters: Null<String>,
-	platformData: Null<String>
+	platformData: Null<String>,
+	splitAbi: Bool
 }
 
 private class HashlinkReader extends BAReader<HashlinkConfig> {
@@ -204,6 +217,7 @@ private class HashlinkReader extends BAReader<HashlinkConfig> {
 			case 'keyPassword':
 				cfg.keyPassword = normalize(xml.innerData);
 			case 'abiFilters':
+				cfg.splitAbi = xml.isTrue('split');
 				cfg.abiFilters = normalize(xml.innerData);
 			case 'platformData':
 				cfg.platformData = normalize(xml.innerData);
@@ -227,6 +241,7 @@ private class HashlinkReader extends BAReader<HashlinkConfig> {
 		cfg.keyAlias = null;
 		cfg.keyPassword = null;
 		cfg.abiFilters = null;
+		cfg.splitAbi = false;
 	}
 
 }

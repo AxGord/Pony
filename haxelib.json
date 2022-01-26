@@ -27,8 +27,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Heaps Xml UI set object name. Layout scale getSize.",
-"version": "1.7.8",
+"releasenote": "FS get full dir bugfix. Heaps binary atlas base path bugfix. String tools before/after with null. Heaps step slider drag on bg. HL android split apk mode.",
+"version": "1.7.9",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }

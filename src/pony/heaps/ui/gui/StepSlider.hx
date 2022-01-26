@@ -50,6 +50,8 @@ import pony.ui.touch.Touchable;
 		sliderCore.changeX = changeXHandler;
 		sliderCore.changeY = changeYHandler;
 		track.onDown << trackClickHandler;
+		track.onDown << sliderCore.startDrag;
+		(track.onUp || track.onOutUp) << sliderCore.stopDrag;
 	}
 
 	private function convertPos(p: Point<Float>): Point<Float> return globalToLocal(p);
