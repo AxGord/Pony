@@ -46,6 +46,7 @@ class Hashlink extends CfgModule<HashlinkConfig> {
 			keyPassword: null,
 			abiFilters: null,
 			splitAbi: false,
+			roundIcon: true,
 			platformData: null,
 			allowCfg: true,
 			cordova: false
@@ -92,6 +93,7 @@ class Hashlink extends CfgModule<HashlinkConfig> {
 				var outputDir: Dir = output;
 				var template: Dir = Utils.toolsPath + 'heaps_android/';
 				template.copyTo(output);
+
 				var outputApp: Dir = outputDir + 'app';
 				var buildGradle: File = outputApp.file('build.gradle');
 				var buildGradleTemplate: File = outputApp.file('build.gradle.tpl');
@@ -101,6 +103,16 @@ class Hashlink extends CfgModule<HashlinkConfig> {
 					abiInclude: abiFilters.split(',').map(TextTools.quote.bind(_, '"')).join(', ')
 				});
 				buildGradleTemplate.delete();
+
+				var outputMain: Dir = outputApp + 'src/main';
+				var manifest: File = outputMain.file('AndroidManifest.xml');
+				var manifestTemplate: File = outputMain.file('AndroidManifest.xml.tpl');
+				manifest.content = new haxe.Template(manifestTemplate.content).execute({
+					id: cfg.id,
+					roundIcon: cfg.roundIcon
+				});
+				manifestTemplate.delete();
+
 				var gradleProps: Array<SPair<String>> = [
 					['org.gradle.jvmargs', '-Xmx2048m'],
 					['APPLICATION_ID', cfg.id],
@@ -179,7 +191,8 @@ private typedef HashlinkConfig = {
 	keyPassword: Null<String>,
 	abiFilters: Null<String>,
 	platformData: Null<String>,
-	splitAbi: Bool
+	splitAbi: Bool,
+	roundIcon: Bool
 }
 
 private class HashlinkReader extends BAReader<HashlinkConfig> {
@@ -198,6 +211,7 @@ private class HashlinkReader extends BAReader<HashlinkConfig> {
 					data = normalize(xml.innerData);
 				} catch (e: Dynamic) {}
 				cfg.data.push(new SPair(normalize(xml.att.from), data));
+				cfg.roundIcon = !xml.isFalse('roundIcon');
 			case 'lib':
 				cfg.libs.push(normalize(xml.innerData));
 			case 'title':
@@ -242,6 +256,7 @@ private class HashlinkReader extends BAReader<HashlinkConfig> {
 		cfg.keyPassword = null;
 		cfg.abiFilters = null;
 		cfg.splitAbi = false;
+		cfg.roundIcon = true;
 	}
 
 }

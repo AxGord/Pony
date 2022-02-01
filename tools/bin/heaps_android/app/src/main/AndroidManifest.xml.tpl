@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
-    package="io.heaps.android"
+    package="::id::"
     android:installLocation="auto"
 >
     <!-- OpenGL ES 2.0 -->
@@ -18,7 +18,9 @@
     <application
         android:label="@string/app_name"
         android:icon="@mipmap/ic_launcher"
+        ::if (roundIcon)::
         android:roundIcon="@mipmap/ic_launcher_round"
+        ::end::
         android:allowBackup="true"
         android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
         android:hardwareAccelerated="true"
@@ -28,7 +30,7 @@
          -->
 
         <activity
-            android:name=".HeapsActivity"
+            android:name="io.heaps.android.HeapsActivity"
             android:label="@string/app_name"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
             android:exported="true"

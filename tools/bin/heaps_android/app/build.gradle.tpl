@@ -13,16 +13,13 @@ android {
         versionName VERSION_NAME
         externalNativeBuild {
             cmake {
+                arguments "-DCMAKE_BUILD_TYPE=BetaTest"
                 cppFlags "-frtti -fexceptions"
             }
         }
         ::if (split)::
-        splits {
-            abi {
-                enable true
-                reset()
-                include ::abiInclude::
-            }
+        ndk {
+            abiFilters.clear()
         }
         ::else::
         ndk {
@@ -31,6 +28,15 @@ android {
         }
         ::end::
     }
+    ::if (split)::
+    splits {
+        abi {
+            enable true
+            reset()
+            include ::abiInclude::
+        }
+    }
+    ::end::
     signingConfigs {
         release {
             storeFile file(RELEASE_STORE_FILE)

@@ -51,14 +51,24 @@ import haxe.Serializer;
 		return index == -1 ? new SPair<String>(str, '') : new SPair<String>(str.substr(0, index), str.substr(index + 1));
 	}
 
-	public static inline function allAfter(str: String, delimiter: String, ?startIndex: Int): Null<String> {
+	public static inline function allAfterWithNull(str: String, delimiter: String, ?startIndex: Int): Null<String> {
 		var index: Int = str.indexOf(delimiter, startIndex);
 		return index == -1 ? null : str.substr(index + delimiter.length);
 	}
 
-	public static inline function allAfterLast(str: String, delimiter: String, ?startIndex: Int): Null<String> {
+	public static function allAfter(str: String, delimiter: String, ?startIndex: Int): Null<String> {
+		var r: Null<String> = allAfterWithNull(str, delimiter, startIndex);
+		return r != null ? r : str;
+	}
+
+	public static inline function allAfterLastWithNull(str: String, delimiter: String, ?startIndex: Int): Null<String> {
 		var index: Int = startIndex == null ? str.lastIndexOf(delimiter) : str.lastIndexOf(delimiter, startIndex);
 		return index == -1 ? null : str.substr(index + delimiter.length);
+	}
+
+	public static function allAfterLast(str: String, delimiter: String, ?startIndex: Int): Null<String> {
+		var r: Null<String> = allAfterLastWithNull(str, delimiter, startIndex);
+		return r != null ? r : str;
 	}
 
 	public static inline function allBeforeWithNull(str: String, delimiter: String, ?startIndex: Int): Null<String> {
