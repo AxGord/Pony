@@ -16,6 +16,10 @@ HL_PRIM const char *HL_NAME(get_pref_path)(const char *org, const char *app) {
 	return SDL_GetPrefPath(org, app);
 }
 
+HL_PRIM const char *HL_NAME(get_internal_storage_path)() {
+	return SDL_AndroidGetInternalStoragePath();
+}
+
 HL_PRIM int HL_NAME(get_asset)(const char *filename) {
 	if (mgr == NULL) {
 		JNIEnv* env = (JNIEnv*)SDL_AndroidGetJNIEnv();
