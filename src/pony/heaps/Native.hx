@@ -36,7 +36,7 @@ import hl.Bytes;
 
 	@:extern public static inline function finishGetAsset(): Void finish_get_asset();
 
-	private static function get_pref_path(org: Bytes, app: Bytes): Bytes return null;
+	private static function get_internal_storage_path(): Bytes return null;
 
 	#end
 
@@ -46,7 +46,7 @@ import hl.Bytes;
 		#elseif win
 		return '${Sys.getEnv('AppData')}/$org/$app/';
 		#elseif mobile
-		return @:privateAccess String.fromUTF8(get_pref_path(org.toUtf8(), app.toUtf8()));
+		return @:privateAccess String.fromUTF8(get_internal_storage_path());
 		#else
 		throw 'Not supported for current platform';
 		#end
