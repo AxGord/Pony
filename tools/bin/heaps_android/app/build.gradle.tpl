@@ -68,12 +68,12 @@ tasks.whenTaskAdded { task ->
         task.dependsOn 'unzip-SDL'
         task.dependsOn 'unzip-android-libjpeg-turbo'
         task.dependsOn 'unzip-openal-soft'
-        task.dependsOn 'unzip-openal-nativetools'
         task.dependsOn 'unzip-hashlink'
     }
     if (task.name.startsWith('compile') && task.name.endsWith('JavaWithJavac')) {
         task.dependsOn copySDLJava
         task.dependsOn copyPatchedSDLJava
+        task.dependsOn buildOpenalNativeTools
     }
 }
 
@@ -85,7 +85,6 @@ dependencies {
     lib 'libsdl-org:SDL:release-2.0.16@zip'
     lib 'openstf:android-libjpeg-turbo:46be77d8b8287ea3687da6ab245032929363515b@zip'
     lib 'kcat:openal-soft:openal-soft-1.19.1@zip'
-    lib 'AxGord:openal-nativetools:1.19.1@zip'
     lib 'HaxeFoundation:hashlink:a46d1483cdfe7e6356dd0ffa3de732853f1a43d1@zip'
 }
 
@@ -93,7 +92,6 @@ dependencies {
     'SDL': 'sdl2',
     'android-libjpeg-turbo': 'libjpeg-turbo',
     'openal-soft': 'openal-soft',
-    'openal-nativetools': 'openal-nativetools',
     'hashlink': 'hashlink'
 ].each {
     def rep = it.key
@@ -121,4 +119,16 @@ task copySDLJava(type: Copy, dependsOn: 'unzip-SDL') {
 task copyPatchedSDLJava(type: Copy) {
     from './src/patchedsdl'
     into './src/main/java/org/libsdl/app'
+}
+
+task prepareOpenalNativeTools(type:Exec) {
+    workingDir './build/libs/openal-soft/native-tools'
+    commandLine 'cmake', '.'
+    dependsOn 'unzip-openal-soft'
+}
+
+task buildOpenalNativeTools(type:Exec) {
+    workingDir './build/libs/openal-soft/native-tools'
+    commandLine 'cmake', '--build', '.'
+    dependsOn prepareOpenalNativeTools
 }
