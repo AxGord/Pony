@@ -141,8 +141,12 @@ private class ReadXmlConfig extends XmlConfigReader<PConfig> {
 			if (v.charAt(0) == '$') {
 				var nv = Sys.getEnv(v.substr(1));
 				if (nv == null) {
-					Sys.println('Warning: Not exists env: ' + v);
-					v = '';
+					if (xml.has.def) {
+						v = normalize(xml.att.def);
+					} else {
+						Sys.println('Warning: Not exists env: ' + v);
+						v = '';
+					}
 				} else {
 					v = nv;
 				}
