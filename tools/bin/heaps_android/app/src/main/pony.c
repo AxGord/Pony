@@ -3,7 +3,9 @@
 #include <hl.h>
 #include <jni.h>
 #include <android/asset_manager.h>
+#include <android/asset_manager_jni.h>
 #include <android/log.h>
+#include <SDL.h>
 
 #define LOG_TAG "Pony"
 #define LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
@@ -31,12 +33,12 @@ HL_PRIM int HL_NAME(get_asset)(const char *filename) {
 	}
 	asset = AAssetManager_open(mgr, filename, AASSET_MODE_STREAMING);
 	off_t length = AAsset_getLength(asset);
-	LOGI("Get asset: %s, length: %d", filename, length);
+	LOGI("Get asset: %s, length: %ld", filename, length);
 	return length;
 }
 
 HL_PRIM vbyte *HL_NAME(get_asset_bytes)(int length) {
-	char c[length];
+	unsigned char c[length];
 	AAsset_read(asset, c, length);
 	vbyte* bytes = hl_copy_bytes(c, length);
 	return bytes;
