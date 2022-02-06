@@ -7,14 +7,17 @@ import h2d.Text;
 import h3d.Vector;
 
 import pony.color.UColor;
+import pony.geom.IWH;
+import pony.geom.Point;
 
 /**
  * Text with disable function
  * @author AxGord <axgord@gmail.com>
  */
-@:nullSafety class DText extends Text {
+@:nullSafety class DText extends Text implements IWH {
 
 	public var enabled(default, set): Bool = true;
+	public var size(get, never): Point<Float>;
 
 	private var normalColor: Vector = Vector.fromColor(0xFFFFFFFF);
 	private var disabledColor: Vector = Vector.fromColor(0x70707070);
@@ -42,5 +45,9 @@ import pony.color.UColor;
 		if (enabled) color = normalColor;
 		return c;
 	}
+
+	public function wait(cb: Void -> Void): Void cb();
+	private function get_size(): Point<Float> return new Point<Float>(textWidth * scaleX, textHeight * scaleY);
+	public function destroyIWH(): Void {}
 
 }

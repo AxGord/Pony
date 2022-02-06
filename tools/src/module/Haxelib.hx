@@ -84,8 +84,8 @@ typedef HaxelibConfig = {
 			@:nullSafety(Off) var r: Int = process.exitCode();
 			if (r > 0) error('haxelib error $r');
 			if (lib.name == 'pony') {
-				// todo check current version
-				if (![null, 'dev', 'git'].contains(lib.version) && lib.version != Utils.ponyVersion) {
+				var exceptions: Array<Null<String>> = [null, 'dev', 'git'];
+				if (!exceptions.contains(lib.version) && !exceptions.contains(Utils.ponyVersion) && lib.version != Utils.ponyVersion) {
 					// Build and run new version
 					Utils.command(
 						'haxelib', ['run', 'pony', 'install', '-code', '-code-insiders', '-npm', '-userpath', '-nodepath', '-ponypath']

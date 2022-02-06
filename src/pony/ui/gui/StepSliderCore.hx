@@ -1,5 +1,6 @@
 package pony.ui.gui;
 
+import pony.geom.Point;
 import pony.math.MathTools;
 import pony.ui.touch.Touch;
 
@@ -60,6 +61,11 @@ class StepSliderCore extends SliderCore {
 			value = MathTools.roundTo(min + v * (max - min), valueRound);
 	}
 
-	public function setStepPos(p: Float): Void pos = limit(posStep == 0 ? p : (Math.round(p / posStep) * posStep));
+	public inline function setStepPos(p: Float): Void pos = limit(posStep == 0 ? p : (Math.round(p / posStep) * posStep));
+
+	public inline function stepMoveToPoint(t: Point<Float>): Void {
+		if (trackStartPoint != null) startPoint = -trackStartPoint;
+		setStepPos(detectPos(t));
+	}
 
 }

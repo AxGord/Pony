@@ -6,6 +6,7 @@ import h2d.col.Bounds;
 
 import pony.geom.Border;
 import pony.geom.Point;
+import pony.magic.HasLink;
 import pony.ui.gui.StepSliderCore;
 import pony.ui.touch.Touch;
 import pony.ui.touch.Touchable;
@@ -14,12 +15,13 @@ import pony.ui.touch.Touchable;
  * Step slider
  * @author AxGord <axgord@gmail.com>
  */
-@:nullSafety(Strict) class StepSlider extends Node {
+@:nullSafety(Strict) class StepSlider extends Node implements HasLink {
 
 	public var button(default, null): Button;
 	public var sliderCore(default, null): StepSliderCore;
 	public var bg(default, null): Node;
 	public var valueStep(default, set): Float = 0;
+	public var useTouchPos(link, link): Bool = sliderCore.useTouchPos;
 
 	private var sliderX: Float = 0;
 	private var sliderY: Float = 0;
@@ -46,6 +48,7 @@ import pony.ui.touch.Touchable;
 		var track: Touchable = new Touchable(interactive);
 		button = new Button(nodes, @:nullSafety(Off) this);
 		sliderCore = StepSliderCore.create(button.core, size.x - button.width, size.y - button.height, invert, draggable);
+		sliderCore.trackStartPoint = (sliderCore.isVertical ? button.height : button.width) / 2;
 		sliderCore.convertPos = convertPos;
 		sliderCore.changeX = changeXHandler;
 		sliderCore.changeY = changeYHandler;
@@ -55,7 +58,7 @@ import pony.ui.touch.Touchable;
 	}
 
 	private function convertPos(p: Point<Float>): Point<Float> return globalToLocal(p);
-	private function trackClickHandler(t: Touch): Void sliderCore.moveToPoint(t.point);
+	private function trackClickHandler(t: Touch): Void sliderCore.stepMoveToPoint(t.point);
 
 	private function changeXHandler(v: Float): Void {
 		sliderX = v;

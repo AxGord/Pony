@@ -171,6 +171,7 @@ using pony.text.TextTools;
 				s;
 			case UiTags.slider:
 				var slider: StepSlider = new StepSlider(app, cast content);
+				if (attrs.useTouchPos.isTrue()) slider.useTouchPos = true;
 				slider.sliderCore.initValue(
 					attrs.min != null ? Std.parseFloat(attrs.min) : 0,
 					attrs.max != null ? Std.parseFloat(attrs.max) : 100

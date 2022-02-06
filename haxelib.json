@@ -27,8 +27,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Hl gradle build OpenAl tools. Android internal storage path, BetaTest build type, round icon flag. Config def values. TextTools improvements.",
-"version": "1.8.0",
+"releasenote": "Tools dir copy filters. Check current pony version for reinstall. Heaps dtext correct size, slider useTouchPos mode and fixes.",
+"version": "1.8.1",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }

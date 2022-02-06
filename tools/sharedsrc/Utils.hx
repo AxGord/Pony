@@ -253,7 +253,7 @@ class Utils {
 		return str;
 	}
 
-	public static inline function replaceBuildDateIfNotNull(s: String): String return s == null ? null : replaceBuildDate(s);
+	public static inline function replaceBuildDateIfNotNull(s: Null<String>): Null<String> return s != null ? replaceBuildDate(s) : null;
 	#end
 
 }

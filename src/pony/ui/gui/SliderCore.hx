@@ -16,6 +16,7 @@ import pony.ui.touch.Touchable;
 	@:nullSafety(Off) @:bindable public var finalPos: Float = 0;
 	@:nullSafety(Off) @:bindable public var finalValue: Float = 0;
 
+	public var useTouchPos: Bool = false;
 	public var onStartDrag(default, null): Signal1<Touch>;
 	public var onStopDrag(default, null): Signal1<Touch>;
 
@@ -70,8 +71,14 @@ import pony.ui.touch.Touchable;
 
 	public inline function startDrag(t: Touch): Void untyped (onStartDrag: Event1<Touch>).dispatch(t);
 	public inline function stopDrag(t: Touch): Void untyped (onStopDrag: Event1<Touch>).dispatch(t);
-	private function startXDragHandler(t: Touch): Void startPoint = inv(pos) - convertPos(t).x;
-	private function startYDragHandler(t: Touch): Void startPoint = inv(pos) - convertPos(t).y;
+
+	private function startXDragHandler(t: Touch): Void {
+		startPoint = useTouchPos || trackStartPoint == null ? inv(pos) - convertPos(t).x : -trackStartPoint;
+	}
+
+	private function startYDragHandler(t: Touch): Void {
+		startPoint = useTouchPos || trackStartPoint == null ? inv(pos) - convertPos(t).y : -trackStartPoint;
+	}
 
 	private function startDragHandler(t: Touch): Void {
 		if (t != null) t.onMove << moveHandler;

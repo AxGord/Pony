@@ -14,7 +14,7 @@ using pony.text.TextTools;
  * Copy module
  * @author AxGord <axgord@gmail.com>
  */
-class Copy extends CfgModule<CopyConfig> {
+@:nullSafety(Strict) class Copy extends CfgModule<CopyConfig> {
 
 	private static inline var PRIORITY: Int = 21;
 
@@ -40,15 +40,16 @@ class Copy extends CfgModule<CopyConfig> {
 	}
 
 	override private function runNode(cfg: CopyConfig): Void {
-		copyDirs(cfg.dirs, cfg.from, cfg.to, cfg.filter, cfg.hash, cfg.addext);
+		copyDirs(cfg.dirs, cfg.from, cfg.to, cfg.hash, cfg.addext);
 		copyUnits(cfg.units, cfg.from, cfg.to, cfg.hash, cfg.addext);
 	}
 
-	private function copyDirs(data: Array<String>, from: String, to: String, filter: String, hash: Bool, addext: String): Void {
+	private function copyDirs(data: Array<Pair<String, Null<String>>>, from: String, to: String, hash: Bool, addext: String): Void {
 		var hashModule: Null<module.Hash> = hash ? modules.getModule(module.Hash) : null;
 		for (d in data) {
-			var dir: Dir = from + d;
-			log('Copy directory: $d');
+			var dir: Dir = from + d.a;
+			var filter: Null<String> = d.b;
+			log('Copy directory: ${d.a}');
 			if (hashModule != null && hashModule.xml != null) {
 				for (f in dir.contentRecursiveFiles(filter)) {
 					if (!hashModule.fileChanged(f.first, f)) continue;
@@ -68,7 +69,7 @@ class Copy extends CfgModule<CopyConfig> {
 		}
 	}
 
-	private function copyUnits(data: Array<Pair<String, String>>, from: String, to: String, hash: Bool, addext: String): Void {
+	private function copyUnits(data: Array<Pair<String, Null<String>>>, from: String, to: String, hash: Bool, addext: String): Void {
 		var hashModule: Null<module.Hash> = hash ? modules.getModule(module.Hash) : null;
 		for (p in data) {
 			var unit: Unit = from + p.a;
@@ -77,7 +78,7 @@ class Copy extends CfgModule<CopyConfig> {
 				var unit: File = unit;
 				if (hashModule != null && hashModule.xml != null && !hashModule.fileChanged(p.b != null ? from + p.b : unit.first, unit))
 					continue;
-				unit.copyToDir(to, Utils.replaceBuildDateIfNotNull(p.b == null ? null : p.b + addext));
+				unit.copyToDir(to, Utils.replaceBuildDateIfNotNull(p.b != null ? p.b + addext : null));
 			} else {
 				error('Is not file!');
 			}
@@ -88,22 +89,21 @@ class Copy extends CfgModule<CopyConfig> {
 
 private typedef CopyConfig = {
 	> types.BAConfig,
-	dirs: Array<String>,
-	units: Array<Pair<String, String>>,
-	?filter: String,
+	dirs: Array<Pair<String, Null<String>>>,
+	units: Array<Pair<String, Null<String>>>,
 	to: String,
 	from: String,
 	hash: Bool,
 	addext: String
 }
 
-private class CopyReader extends BAReader<CopyConfig> {
+@:nullSafety(Strict) private class CopyReader extends BAReader<CopyConfig> {
 
 	override private function readNode(xml: Fast): Void {
 		switch xml.name {
 			case 'path': selfCreate(xml);
-			case 'dir': cfg.dirs.push(StringTools.trim(xml.innerData));
-			case 'unit': cfg.units.push(new Pair(StringTools.trim(xml.innerData), xml.has.name ? xml.att.name : null));
+			case 'dir': cfg.dirs.push(new Pair(normalize(xml.innerData), xml.has.filter ? normalize(xml.att.filter) : null));
+			case 'unit': cfg.units.push(new Pair(normalize(xml.innerData), xml.has.name ? xml.att.name : null));
 			case _: super.readNode(xml);
 		}
 	}
@@ -111,7 +111,6 @@ private class CopyReader extends BAReader<CopyConfig> {
 	override private function clean(): Void {
 		cfg.dirs = [];
 		cfg.units = [];
-		cfg.filter = null;
 		cfg.to = '';
 		cfg.from = '';
 		cfg.hash = false;
@@ -120,7 +119,6 @@ private class CopyReader extends BAReader<CopyConfig> {
 
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
-			case 'filter': cfg.filter = val;
 			case 'to': cfg.to += val;
 			case 'from': cfg.from += val;
 			case 'hash': cfg.hash = val.isTrue();
