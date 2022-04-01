@@ -318,7 +318,10 @@ class AssetManager implements HasLink {
 	}
 
 	public static inline function _load(asset: String, cb: Int -> Int -> Void): Void {
-		var bytes: Null<Bytes> = units[asset.endsWith('.atlas.bin') || asset.endsWith('.wav.bin') ? asset.substr(0, -4) : asset];
+		var bytes: Null<Bytes> = units[
+			asset.endsWith('.atlas.bin') || asset.endsWith('.wav.bin') || asset.endsWith('.mp3.bin') || asset.endsWith('.ogg.bin') ?
+			asset.substr(0, -4) : asset
+		];
 		__load(bytes == null ? asset : hashNameConvert(asset, Base64.urlEncode(bytes)), cb);
 	}
 
@@ -338,7 +341,7 @@ class AssetManager implements HasLink {
 			@:nullSafety(Off) var ext: String = a.pop();
 			var hash: Null<String> = a.pop();
 			a.push(ext);
-			return a.length > 0 && hash != null && hash != 'atlas' && hash != 'wav' ? new Pair(a.join('.'), hash) : new Pair(asset, '');
+			return a.length > 0 && ![null, 'atlas', 'wav', 'mp3', 'ogg'].contains(hash) ? new Pair(a.join('.'), hash) : new Pair(asset, '');
 		} else {
 			return asset.firstSplit('?');
 		}
@@ -369,6 +372,7 @@ class AssetManager implements HasLink {
 	@:extern public static inline function text(asset: String): String return PixiAssets.text(asset);
 	@:extern public static inline function json(asset: String) return PixiAssets.json(asset);
 	@:extern public static inline function font(asset: String) return asset;
+	@:extern public static inline function bin(asset: String) return asset;
 	#elseif openfl
 	@:extern public static inline function __load(asset: String, cb: Int -> Int -> Void): Void
 		OpenflAssets.load(asset, cb.bind(1MAX_ASSET_PROGRESS, MAX_ASSET_PROGRESS));
@@ -380,6 +384,7 @@ class AssetManager implements HasLink {
 	@:extern public static inline function sound(asset: String) return asset;
 	@:extern public static inline function spine(asset: String) return asset;
 	@:extern public static inline function font(asset: String) return asset;
+	@:extern public static inline function bin(asset: String) return asset;
 	#else
 	@:extern public static inline function __load(asset: String, cb: Int -> Int -> Void): Void trace('Load: $asset');
 	@:extern public static inline function _reset(asset: String): Void trace('Reset: $asset');
@@ -390,5 +395,6 @@ class AssetManager implements HasLink {
 	@:extern public static inline function sound(asset: String) return asset;
 	@:extern public static inline function spine(asset: String) return asset;
 	@:extern public static inline function font(asset: String) return asset;
+	@:extern public static inline function bin(asset: String) return asset;
 	#end
 }

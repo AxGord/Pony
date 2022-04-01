@@ -225,13 +225,13 @@ class XmlUiBuilder {
 		var content: Array<Expr> = [
 			for (x in xml.elements) genExpr(x, style, prefix + (xml.has.id ? xml.att.id + '_' : ''), path, repeat)
 		];
-		if (content.length == 0 && xml.x.firstChild() != null) content.push(macro $v{xml.innerData});
+		var textContent: String = content.length == 0 && xml.x.firstChild() != null ? xml.innerData : '';
 		var obj: Expr = { expr: EObjectDecl([for (k in attrs.keys()) {field: k, expr: macro $v{attrs[k]}}]), pos: Context.currentPos() };
 
-		var expr: Expr = !inRepeat ? macro createUIElement($v{name}, $obj, $a{content}) :
-			macro { name: $v{name}, attrs: $obj, content: ($a{content}: Array<Dynamic>) };
+		var expr: Expr = !inRepeat ? macro createUIElement($v{name}, $obj, $a{content}, $v{textContent}) :
+			macro { name: $v{name}, attrs: $obj, content: ($a{content}: Array<Dynamic>), textContent: textContent };
 		if (xml.has.id)
-			return macro cast ($i{prefix + xml.att.id} = ${expr});
+			return macro cast ($i{prefix + xml.att.id} = cast ${expr});
 		else
 			return macro ${expr};
 	}

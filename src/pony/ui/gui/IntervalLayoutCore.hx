@@ -44,7 +44,8 @@ using pony.Tools;
 			}];
 			if (objects.length > 0) pos -= interval;
 			_h = pos;
-			for (p in GeomTools.halign(_align, _w, sizes).pair(objects)) setXpos(p.b, Std.int(p.a) + border.left);
+			var hlist = GeomTools.halign(_align, _w, sizes);
+			for (i in 0...hlist.length) setXpos(objects[i], Std.int(hlist[i]) + border.left);
 		} else {
 			_h = 0;
 			_w = 0;
@@ -84,7 +85,8 @@ using pony.Tools;
 			for (i in 0...objGroups.length) {
 				var g = objGroups[i];
 				var vp = vPositions[i];
-				for (p in GeomTools.valign(_align, _h, g.a).pair(g.b)) setYpos(p.b, Std.int(p.a) + border.top + vp);
+				var vlist = GeomTools.valign(_align, _h, g.a);
+				for (i in 0...vlist.length) setYpos(g.b[i], Std.int(vlist[i]) + border.top + vp);
 			}
 		}
 		super.update();

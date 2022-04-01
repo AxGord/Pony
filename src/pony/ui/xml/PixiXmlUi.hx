@@ -105,14 +105,14 @@ using pony.pixi.PixiExtends;
 #end
 class PixiXmlUi extends LogableSprite implements HasAbstract {
 
-	private static inline var PX:String = 'px ';
-	private static inline var GLOW_FILTER_OFFSET:Int = 2;
-	
-	private var FILTERS:Map<String, Filter> = new Map();
-	private var SCALE:Float = 1;
-	public var app(default, null):App;
-	
-	private function createUIElement(name:String, attrs:Dynamic<String>, content:Array<Dynamic>):Dynamic {
+	private static inline var PX: String = 'px ';
+	private static inline var GLOW_FILTER_OFFSET: Int = 2;
+
+	private var FILTERS: Map<String, Filter> = new Map();
+	private var SCALE: Float = 1;
+	public var app(default, null): App;
+
+	private function createUIElement(name: String, attrs: Dynamic<String>, content: Array<Dynamic>, textContent: String):Dynamic {
 		if (attrs.reverse.isTrue()) content.reverse();
 		var obj:DisplayObject = switch name {
 			case 'free':
@@ -229,18 +229,18 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 				} else {
 					attrs.frames.split(',').map(StringTools.trim);
 				}
-				
+
 				var clip = FastMovieClip.fromStorage(data, Std.parseFloat(attrs.frameTime), attrs.fixedTime.isTrue(), attrs.smoothAnim, attrs.src.charCount(','));
 				clip.loop = !attrs.loop.isFalse();
 				if (attrs.play.isTrue()) clip.play();
-				
+
 				clip.get();
 			case 'textbox':
 				var font = {
 					name: attrs.font,
 					size: parseAndScaleInt(attrs.size)
 				};
-				var text = textTransform(_putData(content), attrs.transform);
+				var text = textTransform(putData(textContent), attrs.transform);
 				var style = ETextStyle.BITMAP_TEXT_STYLE({font: font, tint: UColor.fromString(attrs.color).rgb});
 				var s = PixiAssets.image(attrs.src, attrs.name);
 				s.visible = !attrs.hidebg.isTrue();
@@ -251,7 +251,7 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 					name: attrs.font,
 					size: parseAndScaleInt(attrs.size)
 				};
-				var text = textTransform(_putData(content), attrs.transform);
+				var text = textTransform(putData(textContent), attrs.transform);
 				var style = {font: font, tint: UColor.fromString(attrs.color).rgb, align: cast attrs.align};
 				new BText(text, style, attrs.ansi, attrs.shadow.isTrue(), app);
 			case 'lbutton':
@@ -301,7 +301,7 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 				b;
 			case 'textbutton':
 				var font = parseAndScaleInt(attrs.size) + PX + attrs.font;
-				var text = textTransform(_putData(content), attrs.transform);
+				var text = textTransform(putData(textContent), attrs.transform);
 				new TextButton(
 					attrs.color.split(' ').map(UColor.fromString),
 					text, font, attrs.ansi,
@@ -467,11 +467,11 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 					new Particles(cfg, src);
 				}
 			#end
-			
+
 			case _:
 				customUIElement(name, attrs, content);
 		}
-		
+
 		if (attrs.pivot != null) {
 			var a = attrs.pivot.split(' ');
 			var w = cast(obj, Sprite).width;
@@ -481,7 +481,7 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 			else
 				obj.pivot.set(Std.parseFloat(a[0]) * w, Std.parseFloat(a[1]) * h);
 		}
-		
+
 		if (attrs.notouch.isTrue()) {
 			obj.interactive = false;
 			obj.interactiveChildren = false;
@@ -500,7 +500,7 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 			else
 				obj.scale.set(Std.parseFloat(a[0]), Std.parseFloat(a[1]));
 		}
-		
+
 		if (attrs.filters != null) {
 			var a = [];
 			for (f in splitAttr(attrs.filters)) if (FILTERS.exists(f)) {
@@ -531,9 +531,9 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 									obj.setFilterArea(s);
 								}
 							}
-							
+
 						}
-						
+
 					if (attrs.dyn.isTrue()) {
 						DeltaTime.fixedUpdate << f;
 					} else {
@@ -544,27 +544,27 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 			}
 			if (a.length > 0) obj.filters = a;
 		}
-		
+
 		if (attrs.x != null) obj.x = parseAndScale(attrs.x);
 		if (attrs.y != null) obj.y = parseAndScale(attrs.y);
-		
+
 		if (attrs.flipx.isTrue()) {
 			PixiExtends.flipX(cast obj);
 			PixiExtends.flipXpos(cast obj);
 		}
-		
+
 		if (attrs.flipy.isTrue()) {
 			PixiExtends.flipY(cast obj);
 			PixiExtends.flipYpos(cast obj);
 		}
-		
+
 		if (attrs.visible.isFalse()) {
 			obj.visible = false;
 		}
-		
+
 		return obj;
 	}
-	
+
 	private static function textTransform(text:String, transform:String):String {
 		return switch transform {
 			case 'uppercase': text.toUpperCase();
@@ -576,7 +576,7 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 	@:extern private inline function parseSizePointFloat(a:Dynamic<String>):Point<Float> {
 		return new Point<Float>(parseAndScale(a.w), parseAndScale(a.h));
 	}
-	
+
 	@:extern private inline function parseFloat(s:String):Float {
 		return s == null ? 0 : Std.parseFloat(s);
 	}
@@ -584,40 +584,39 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 	@:extern private inline function parseAndScaleWithoutNull(s:String):Float {
 		return Std.parseFloat(s) * SCALE;
 	}
-	
+
 	@:extern private inline function parseAndScale(s:String):Float {
 		return s == null ? 0 : parseAndScaleWithoutNull(s);
 	}
-	
+
 	@:extern inline function parseAndScaleInt(s:String):Int {
 		return s == null ? 0 : Std.int(Std.parseInt(s) * SCALE);
 	}
-	
+
 	@:extern private inline function scaleBorderInt(s:String):Border<Int> return cast (Border.fromString(s) * SCALE);
-	
-	private function _putData(content:Array<Dynamic>):String return putData(content.length > 0 ? content[0] : '');
+
 	private function putData(c:String):String return c;
 	private function customUIElement(name:String, attrs:Dynamic<String>, content:Array<Dynamic>):Dynamic throw 'Unknown component $name';
-	
+
 	private static function splitAttr(s:String):Array<String> {
 		return s.split(',').map(StringTools.trim).map(function(v):String return v == '' ? null : v);
 	}
-	
+
 	@:abstract private function _createUI():DisplayObject;
-	
+
 	private function createUI(?app:App, scale:Float = 1):Void {
 		if (this.app == null)
 			this.app = app == null ? App.main : app;
 		SCALE = scale;
 		addChild(_createUI());
 	}
-	
+
 	private function createFilters(data:Dynamic<Dynamic<String>>):Void {
-		
+
 		for (name in Reflect.fields(data)) {
 			var d:Dynamic<String> = Reflect.field(data, name);
 			if (d.nomobile.isTrue() && JsTools.isMobile) continue;
-			
+
 			var f:Filter = switch Reflect.field(d, 'extends') {
 				//case 'shadow':
 					//new DropShadowFilter();
@@ -632,12 +631,12 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 				case _:
 					throw 'Unknown filter';
 			}
-			
+
 			//for (n in Reflect.fields(d)) if (n != 'extends')
 			//	Reflect.setProperty(f, n, Std.parseFloat(Reflect.field(d, n)));
 			FILTERS[name] = f;
 		}
-		
+
 	}
-	
+
 }

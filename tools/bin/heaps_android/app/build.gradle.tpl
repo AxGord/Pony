@@ -85,7 +85,7 @@ dependencies {
     lib 'libsdl-org:SDL:release-2.0.16@zip'
     lib 'openstf:android-libjpeg-turbo:46be77d8b8287ea3687da6ab245032929363515b@zip'
     lib 'kcat:openal-soft:openal-soft-1.19.1@zip'
-    lib 'HaxeFoundation:hashlink:a46d1483cdfe7e6356dd0ffa3de732853f1a43d1@zip'
+    lib 'HaxeFoundation:hashlink:5f0633b053fa4d62495a127a211088686ae5479c@zip'
 }
 
 [

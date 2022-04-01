@@ -38,12 +38,12 @@ using Std;
 }))
 #end
 class OpenflXmlUi extends Sprite implements HasAbstract {
-	
+
 	private var FILTERS:Map<String, BitmapFilter> = new Map();
 	private var SCALE:Float = 1;
-	
-	public function createUIElement(name:String, attrs:Dynamic<String>, content:Array<Dynamic>):Dynamic {
-		var obj : DisplayObject = 
+
+	public function createUIElement(name:String, attrs:Dynamic<String>, content:Array<Dynamic>, textContent: String):Dynamic {
+		var obj : DisplayObject =
 		switch name {
 			case 'free' :
 				var s = new Sprite();
@@ -53,11 +53,11 @@ class OpenflXmlUi extends Sprite implements HasAbstract {
 					s.graphics.drawRect(0, 0, attrs.w.parseFloat(), attrs.h.parseFloat());
 					s.graphics.endFill();
 				}
-				for (e in content) 
-					if (e != null) 
+				for (e in content)
+					if (e != null)
 						s.addChild(e);
 				s;
-			case 'image' : 
+			case 'image' :
 				var b = AssetManager.image(attrs.src, name);
 				b;
 			case 'layout':
@@ -97,12 +97,11 @@ class OpenflXmlUi extends Sprite implements HasAbstract {
 					attrs.color = attrs.color.replace('#', '0x');
 				}
 				var format : TextFormat = new TextFormat(attrs.font, Std.parseInt(attrs.size),Std.parseInt(attrs.color));
-				var text = _putData(content);
 				var t : TextField = new TextField();
 				t.autoSize = TextFieldAutoSize.LEFT;
 				t.selectable = false;
 				t.defaultTextFormat = format;
-				t.text = text;
+				t.text = putData(textContent);
 				t;
 			case _:
 				customUIElement(name, attrs, content);
@@ -128,34 +127,33 @@ class OpenflXmlUi extends Sprite implements HasAbstract {
 	@:extern inline private function parseAndScaleWithNull(s:String):Float {
 		return Std.parseFloat(s) * SCALE;
 	}
-	
+
 	@:extern inline private function parseAndScale(s:String):Float {
 		return s == null ? 0 : parseAndScaleWithNull(s);
 	}
-	
+
 	@:extern inline private function parseAndScaleInt(s:String):Int {
 		return s == null ? 0 : Std.int(Std.parseInt(s) * SCALE);
 	}
-	
+
 	@:extern inline private function scaleBorderInt(s:String):Border<Int> return cast (Border.fromString(s) * SCALE);
-	
-	private function _putData(content:Array<Dynamic>):String return putData(content.length > 0 ? content[0] : '');
+
 	private function putData(c:String):String return c;
 	private function customUIElement(name:String, attrs:Dynamic<String>, content:Array<Dynamic>):Dynamic throw 'Unknown component $name';
-	
+
 	static private function splitAttr(s:String):Array<String> {
 		return s.split(',').map(StringTools.trim).map(function(v) return v == '' ? null : v);
 	}
-	
+
 	inline static private function isTrue(s:String):Bool return s != null && s.toLowerCase() == 'true';
-	
+
 	@:abstract private function _createUI():DisplayObject;
-	
+
 	private function createUI():Void {
 		SCALE = 1;
 		addChild(_createUI());
 	}
-	
+
 	private function createFilters(data:Dynamic<Dynamic<String>>):Void {
 		for (name in Reflect.fields(data)) {
 			var d = Reflect.field(data, name);

@@ -45,6 +45,10 @@ using pony.text.TextTools;
 	var LDTK = 'ldtk';
 	var BINWAV = 'wav.bin';
 	var WAV = 'wav';
+	var BINMP3 = 'mp3.bin';
+	var MP3 = 'mp3';
+	var BINOGG = 'ogg.bin';
+	var OGG = 'ogg';
 }
 
 @:enum abstract HAError(String) to String {
@@ -207,7 +211,7 @@ using pony.text.TextTools;
 					bins[asset] = bytes;
 					finish();
 				}
-			case WAV, BINWAV:
+			case WAV, BINWAV, MP3, BINMP3, OGG, BINOGG:
 				loader.onProgress = progressHandler;
 				loader.onLoaded = function(bytes: Bytes): Void {
 					if (hasError) return;
@@ -288,7 +292,7 @@ using pony.text.TextTools;
 		var a: Array<String> = asset.split('.');
 		@:nullSafety(Off) var ext: String = a.pop();
 		var preExt: Null<String> = a.pop();
-		if (preExt != null && ['atlas', 'wav'].indexOf(preExt) == -1) preExt = a.pop();
+		if (preExt != null && ['atlas', 'wav', 'mp3', 'ogg'].indexOf(preExt) == -1) preExt = a.pop();
 		if (a.length > 0 && preExt != null) ext = preExt + '.' + ext;
 		return ext;
 	}

@@ -45,16 +45,18 @@ import haxe.macro.Expr;
 		return {name: 'new', access: [APublic], kind: FFun({args:[], ret: ComplexType.TPath({pack:[],name:'Void'}), expr: null}), pos: Context.currentPos()};
 	}
 
-	public static function patch(methods: Map<String, Expr>, ?addToEnd: Map<String, Expr>): Array<Field> {
+	public static function patch(?newFields: ComplexType, ?methods: Map<String, Expr>, ?addToEnd: Map<String, Expr>): Array<Field> {
 		var fields: Array<Field> = Context.getBuildFields();
-		for (field in fields) {
-			var ex: Null<Expr> = methods[field.name];
-			if (ex != null) {
-				switch field.kind {
-					case FFun(f):
-						f.expr = ex;
-					case _:
-						Context.error('This is not method', field.pos);
+		if (methods != null || addToEnd != null) for (field in fields) {
+			if (methods != null) {
+				var ex: Null<Expr> = methods[field.name];
+				if (ex != null) {
+					switch field.kind {
+						case FFun(f):
+							f.expr = ex;
+						case _:
+							Context.error('This is not method', field.pos);
+					}
 				}
 			}
 			if (addToEnd != null) {
@@ -73,6 +75,13 @@ import haxe.macro.Expr;
 					}
 				}
 			}
+		}
+		switch newFields {
+			case TAnonymous(f):
+				fields = fields.concat(f);
+			case null:
+			case _:
+				Context.error('Wrong type', Context.currentPos());
 		}
 		return fields;
 	}

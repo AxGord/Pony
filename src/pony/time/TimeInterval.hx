@@ -58,7 +58,7 @@ abstract TimeInterval(TimeIntervalImpl) {
 	}
 
 	private inline function get_minimalPoint(): Time return MathTools.cmin(min.minimalPoint, max.minimalPoint);
-	private inline function get_mid(): Time return Math.abs(max - min) / 2;
+	private inline function get_mid(): Time return Math.abs(length) / 2;
 	public static inline function create(min: Time, max: Time): TimeInterval return new TimeInterval({ min: min, max: max });
 
 }

@@ -61,6 +61,7 @@ using pony.text.TextTools;
 	line: h2d.Graphics,
 	circle: h2d.Graphics,
 	text: pony.heaps.ui.gui.DText,
+	simpleText: h2d.Text,
 	input: h2d.TextInput,
 	repeat: pony.heaps.ui.gui.Repeat,
 	image: pony.heaps.ui.gui.Node,
@@ -81,12 +82,12 @@ using pony.text.TextTools;
 	@:nullSafety(Off) public var app(default, null): HeapsApp;
 	private var watchList: Array<Pair<Object, Dynamic<String>>> = [];
 
-	private function createUIElement(name: String, attrs: Dynamic<String>, content: Array<Dynamic>): Dynamic {
+	private function createUIElement(name: String, attrs: Dynamic<String>, content: Array<Object>, textContent: String): Object {
 		if (attrs.reverse.isTrue()) content.reverse();
 		var allowFilters: Bool = true;
 		var obj: Object = switch (name: UiTags) {
 			case UiTags.repeat:
-				new Repeat(this, content[0], attrs.count != null ? Std.parseInt(attrs.count) : 0);
+				new Repeat(this, cast content[0], attrs.count != null ? Std.parseInt(attrs.count) : 0);
 			case UiTags.node:
 				#if js
 				var s: Object = new Object();
@@ -142,12 +143,12 @@ using pony.text.TextTools;
 				createLayout(attrs, content);
 			case UiTags.text:
 				allowFilters = false;
-				createDText(attrs, content);
+				createDText(attrs, textContent);
 			case UiTags.simpleText:
 				allowFilters = false;
-				createText(attrs, content);
+				createText(attrs, textContent);
 			case UiTags.input:
-				createTextInput(attrs, content);
+				createTextInput(attrs, textContent);
 			case UiTags.button:
 				var b: Button = new Button(cast content);
 				if (attrs.disabled.isTrue()) b.core.disable();
@@ -297,22 +298,22 @@ using pony.text.TextTools;
 		if (attrs.flipy.isTrue()) node.flipy = true;
 	}
 
-	@:extern private inline function createText(attrs: Dynamic<String>, content: Array<Dynamic>): Object {
+	@:extern private inline function createText(attrs: Dynamic<String>, content: String): Object {
 		return createTextBase(new Text(getFont(attrs)), attrs, content);
 	}
 
-	@:extern private inline function createDText(attrs: Dynamic<String>, content: Array<Dynamic>): Object {
+	@:extern private inline function createDText(attrs: Dynamic<String>, content: String): Object {
 		var c: Null<String> = attrs.color;
 		if (c != null) c = attrs.color.trim().allAfter(' ');
 		var color: Null<UColor> = c == null ? null : UColor.fromString(c);
 		return createTextBase(new DText(getFont(attrs), color, attrs.disabled.isTrue()), attrs, content);
 	}
 
-	@:extern private inline function createTextInput(attrs: Dynamic<String>, content: Array<Dynamic>): Object {
+	@:extern private inline function createTextInput(attrs: Dynamic<String>, content: String): Object {
 		return createTextBase(new TextInput(getFont(attrs)), attrs, content);
 	}
 
-	private function createTextBase(t: Text, attrs: Dynamic<String>, content: Array<Dynamic>): Object {
+	private function createTextBase(t: Text, attrs: Dynamic<String>, content: String): Object {
 		t.maxWidth = parseAndScaleWithNull(attrs.maxWidth);
 		t.lineSpacing = cast parseAndScaleWithNull(attrs.lineSpacing);
 		t.letterSpacing = cast parseAndScaleWithNull(attrs.letterSpacing);
@@ -338,7 +339,7 @@ using pony.text.TextTools;
 				t.dropShadow = {dx: dx, dy: dy, color: color, alpha: color.invertAlpha.af};
 			}
 		}
-		t.text = textTransform(_putData(content), attrs.transform);
+		t.text = textTransform(putData(content), attrs.transform);
 		return t;
 	}
 
@@ -516,7 +517,6 @@ using pony.text.TextTools;
 		return font;
 	}
 
-	private function _putData(content: Array<Dynamic>): String return putData(content.length > 0 ? content[0] : '');
 	private function putData(c: String): String return c;
 	private function customUIElement(name: String, attrs: Dynamic<String>, content: Array<Dynamic>): Dynamic throw 'Unknown component $name';
 
