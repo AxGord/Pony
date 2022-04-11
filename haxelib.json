@@ -27,8 +27,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Tools dir copy filters. Check current pony version for reinstall. Heaps dtext correct size, slider useTouchPos mode and fixes.",
-"version": "1.8.1",
+"releasenote": "Upgrade macro patch function and audio system",
+"version": "1.8.2",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }
