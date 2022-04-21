@@ -81,12 +81,10 @@ import pony.js.SmartCanvas;
 	#if hl
 
 	override private function mainLoop(): Void {
-		super.mainLoop();
-		var now: Float = Timer.stamp();
-		var elapsed: Float = now - lastTick;
-		var sleepTime: Float = fpsInterval - elapsed;
-		lastTick = now - elapsed % fpsInterval;
+		var sleepTime: Float = fpsInterval - (Timer.stamp() - lastTick);
 		if (sleepTime > 0) Sys.sleep(sleepTime);
+		lastTick = Timer.stamp();
+		super.mainLoop();
 	}
 
 	#elseif js
