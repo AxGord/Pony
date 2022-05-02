@@ -64,13 +64,9 @@ android {
 }
 
 tasks.whenTaskAdded { task ->
-    if (task.name.startsWith('generateJsonModel')) {
-        task.dependsOn 'unzip-SDL'
-        task.dependsOn 'unzip-android-libjpeg-turbo'
-        task.dependsOn 'unzip-openal-soft'
-        task.dependsOn 'unzip-hashlink'
-    }
     if (task.name.startsWith('compile') && task.name.endsWith('JavaWithJavac')) {
+        task.dependsOn 'unzip-android-libjpeg-turbo'
+        task.dependsOn copyPatchedHL
         task.dependsOn copySDLJava
         task.dependsOn copyPatchedSDLJava
         task.dependsOn buildOpenalNativeTools
@@ -82,10 +78,10 @@ configurations {
 }
 
 dependencies {
-    lib 'libsdl-org:SDL:release-2.0.16@zip'
+    lib 'libsdl-org:SDL:release-2.0.20@zip'
     lib 'openstf:android-libjpeg-turbo:46be77d8b8287ea3687da6ab245032929363515b@zip'
     lib 'kcat:openal-soft:openal-soft-1.19.1@zip'
-    lib 'HaxeFoundation:hashlink:5f0633b053fa4d62495a127a211088686ae5479c@zip'
+    lib 'HaxeFoundation:hashlink:1.12@zip'
 }
 
 [
@@ -108,6 +104,11 @@ dependencies {
             fcp.relativePath = new RelativePath(!fcp.file.isDirectory(), pathsegments)
         }
     }
+}
+
+task copyPatchedHL(type: Copy, dependsOn: 'unzip-hashlink') {
+    from './src/patchedhl'
+    into './build/libs/hashlink/src'
 }
 
 task copySDLJava(type: Copy, dependsOn: 'unzip-SDL') {

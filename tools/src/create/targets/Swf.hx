@@ -37,7 +37,7 @@ class Swf {
 
 	private static function share(project: Project): Void {
 		project.haxelib.active = true;
-		project.haxelib.addLib('pony', Utils.ponyHaxelibVersion);
+		project.haxelib.addLib({name: 'pony', version: Utils.ponyHaxelibVersion});
 		project.build.active = true;
 		project.build.flags.push('fdb');
 		project.build.flags.push('swf-compress-level=9');

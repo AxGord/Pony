@@ -12,8 +12,8 @@ class CC {
 		project.server.httpPort = 7456;
 		project.server.haxe = true;
 		project.haxelib.active = true;
-		project.haxelib.addLib('pony', Utils.ponyHaxelibVersion);
-		project.haxelib.addLib('hcc', '2.0.3');
+		project.haxelib.addLib({name: 'pony', version: Utils.ponyHaxelibVersion});
+		project.haxelib.addLib({name: 'hcc', version: '2.0.3'});
 
 		var build = !second ? project.build : project.secondbuild;
 		var uglify = !second ? project.uglify : project.seconduglify;

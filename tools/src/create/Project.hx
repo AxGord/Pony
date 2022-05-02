@@ -123,7 +123,7 @@ class Project {
 	public function getLibs():Map<String, String> {
 		var map = new Map<String, String>();
 		if (haxelib.active) {
-			for (lib in haxelib.libs.keys()) map[lib] = haxelib.libs[lib];
+			for (lib in haxelib.libs) map[lib.name] = lib.version;
 		}
 		if (build.active) {
 			for (lib in build.libs.keys()) map[lib] = build.libs[lib];

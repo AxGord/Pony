@@ -13,7 +13,7 @@ class JS {
 		//project.download.addLib('stacktrace');
 		project.download.addLib('docready');
 		project.haxelib.active = true;
-		project.haxelib.addLib('pony', Utils.ponyHaxelibVersion);
+		project.haxelib.addLib({name: 'pony', version: Utils.ponyHaxelibVersion});
 
 		var build = !second ? project.build : project.secondbuild;
 		var uglify = !second ? project.uglify : project.seconduglify;

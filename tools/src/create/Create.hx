@@ -89,7 +89,7 @@ class Create {
 					'database' => 'testdatabase'
 				]: ConfigOptions);
 				project.config.options['vk'] = new ConfigOptions();
-				project.haxelib.addLib('continuation');
+				project.haxelib.addLib({name: 'continuation'});
 			case ProjectType.Electron:
 				create.targets.Electron.set(project);
 				create.targets.JS.set(project, true);
@@ -98,7 +98,7 @@ class Create {
 				create.targets.Electron.set(project);
 				create.targets.JS.set(project, true);
 				setElectronSecondBuild(project);
-				project.haxelib.addLib('monaco-editor', '0.13.0');
+				project.haxelib.addLib({name: 'monaco-editor', version: '0.13.0'});
 			case ProjectType.Neko: create.targets.Neko.set(project);
 		}
 	}

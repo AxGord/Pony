@@ -24,6 +24,8 @@ typedef HaxelibConfig = {
 		pony: Null<String>,
 		haxe: Null<String>,
 		haxelib: Null<String>,
+		path: Null<String>,
+		parent: Null<String>,
 		y: Bool,
 		commit: Null<String>
 	}>
@@ -61,9 +63,11 @@ typedef HaxelibConfig = {
 	override private function runNode(cfg: HaxelibConfig): Void {
 		for (lib in cfg.list) {
 			if (lib.version == GIT && lib.git == null) continue;
-			if (lib.version == DEV) continue;
+			if (lib.version == DEV && lib.path == null) continue;
+			Utils.command('haxelib', ['dev', lib.name]);
 			var args: Array<String> =
 				lib.version == GIT ? @:nullSafety(Off) [GIT, lib.name, lib.git] :
+				lib.version == DEV && lib.path != null ? [DEV, lib.name, getLibPath(lib)] :
 				lib.version != null ? ['install', lib.name, lib.version] : ['install', lib.name];
 			if (lib.version == GIT && lib.commit != null) args.push(lib.commit);
 			Sys.println('haxelib ' + args.join(' '));
@@ -124,6 +128,10 @@ typedef HaxelibConfig = {
 		}
 	}
 
+	private static inline function getLibPath(lib: {path: String, parent: Null<String>}): String {
+		return lib.parent != null ? Tools.libPath(lib.parent) + lib.path : lib.path;
+	}
+
 }
 
 @:nullSafety(Strict) private class HaxelibReader extends BAReader<HaxelibConfig> {
@@ -146,6 +154,8 @@ typedef HaxelibConfig = {
 					pony: xml.has.pony ? normalize(xml.att.pony) : null,
 					haxe: xml.has.haxe ? normalize(xml.att.haxe) : null,
 					haxelib: xml.has.haxelib ? normalize(xml.att.haxelib) : null,
+					path: xml.has.path ? normalize(xml.att.path) : null,
+					parent: xml.has.parent ? normalize(xml.att.parent) : null,
 					y: xml.isTrue('y'),
 					commit: xml.has.commit ? normalize(xml.att.commit) : null
 				});

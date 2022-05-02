@@ -12,7 +12,7 @@ class Download extends Section {
 		'stacktrace' => new Library('https://raw.githubusercontent.com/stacktracejs/stacktrace.js/v{v}/dist/stacktrace.min.js', '1.3.1'),
 		'pixijs' => new Library('https://pixijs.download/v{v}/pixi.min.js', '4.8.8', 'pixi.js - v{v}'),
 		'docready' => new Library('https://raw.githubusercontent.com/jfriend00/docReady/master/docready.js'),
-		'hlwin' => new Library('https://github.com/HaxeFoundation/hashlink/releases/download/{v}/hl-{v}.0-win.zip', '1.11')
+		'hlwin' => new Library('https://github.com/HaxeFoundation/hashlink/releases/download/{v}/hl-{v}.0-win.zip', '1.12')
 	];
 
 	public var list:Array<Library> = [];

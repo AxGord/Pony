@@ -17,8 +17,8 @@ class Node {
 		project.server.active = true;
 		project.server.haxe = true;
 		project.haxelib.active = true;
-		project.haxelib.addLib('pony', Utils.ponyHaxelibVersion);
-		project.haxelib.addLib('hxnodejs', '12.1.0');
+		project.haxelib.addLib({name: 'pony', version: Utils.ponyHaxelibVersion});
+		project.haxelib.addLib({name: 'hxnodejs', version: '12.1.0'});
 		project.build.active = true;
 		project.build.target = types.HaxeTargets.JS;
 		project.build.esVersion = 6;

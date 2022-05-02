@@ -43,6 +43,16 @@ import pony.js.SmartCanvas;
 	public var noScale(link, link): Bool = canvas.noScale;
 	public var sizeUpdate(default, set): Bool = false;
 	public var canvas: SmartCanvas;
+
+	#if debugTimes
+	public var heapsTime: Float = 0;
+	public var systemTime: Float = 0;
+	public var updateTime: Float = 0;
+	#if js
+	private var lastHashlinkTime: Float = 0;
+	#end
+	#end
+
 	private var renderPause: Bool = false;
 	private var alignCenter: Bool = false;
 	private var border: Null<Graphics>;
@@ -74,17 +84,29 @@ import pony.js.SmartCanvas;
 	}
 
 	override private function update(dt: Float): Void {
+		#if debugTimes
+		var now: Float = Timer.stamp();
+		#end
 		DeltaTime.fixedValue = dt;
 		DeltaTime.fixedDispatch();
+		#if debugTimes
+		updateTime = Timer.stamp() - now;
+		#end
 	}
 
 	#if hl
 
 	override private function mainLoop(): Void {
+		#if debugTimes
+		systemTime = Timer.stamp() - lastTick - heapsTime - updateTime;
+		#end
 		var sleepTime: Float = fpsInterval - (Timer.stamp() - lastTick);
 		if (sleepTime > 0) Sys.sleep(sleepTime);
 		lastTick = Timer.stamp();
 		super.mainLoop();
+		#if debugTimes
+		heapsTime = Timer.stamp() - lastTick - updateTime;
+		#end
 	}
 
 	#elseif js
@@ -93,8 +115,15 @@ import pony.js.SmartCanvas;
 		var now: Float = Timer.stamp();
 		var elapsed: Float = now - lastTick;
 		if (elapsed >= fpsInterval) {
+			#if debugTimes
+			systemTime = now - lastHashlinkTime;
+			#end
 			lastTick = now - elapsed % fpsInterval;
 			super.mainLoop();
+			#if debugTimes
+			lastHashlinkTime = Timer.stamp();
+			heapsTime = lastHashlinkTime - now - updateTime;
+			#end
 		}
 	}
 

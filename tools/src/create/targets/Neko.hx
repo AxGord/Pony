@@ -10,7 +10,7 @@ class Neko {
 		project.server.active = true;
 		project.server.haxe = true;
 		project.haxelib.active = true;
-		project.haxelib.addLib('pony', Utils.ponyHaxelibVersion);
+		project.haxelib.addLib({name: 'pony', version: Utils.ponyHaxelibVersion});
 		project.build.active = true;
 		project.build.target = types.HaxeTargets.Neko;
 		project.setRun('neko');

@@ -16,6 +16,7 @@ class Build extends Section {
 
 	public var libs: Map<String, String> = new Map();
 	public var flags: Array<String> = [];
+	public var macros: Array<String> = [];
 	public var args: Map<String, String> = new Map();
 	public var target: HaxeTargets = null;
 	public var outputFile: String = 'app';
@@ -55,6 +56,7 @@ class Build extends Section {
 				prepare.addChild(d);
 				if (a.length > 0) d.set('name', a.pop());
 			}
+			for (m in macros) prepare.addChild(XmlTools.node('m', m));
 			for (key in args.keys()) prepare.addChild(XmlTools.node(key, args[key]));
 
 			xml.addChild(prepare);
