@@ -27,8 +27,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Upgrade macro patch function and audio system",
-"version": "1.8.2",
+"releasenote": "HL1.12 support",
+"version": "1.8.3",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }
