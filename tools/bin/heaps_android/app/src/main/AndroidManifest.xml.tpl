@@ -34,6 +34,9 @@
             android:label="@string/app_name"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
             android:exported="true"
+            ::if (fixedOrientation)::
+            android:screenOrientation="::orientation::"
+            ::end::
         >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

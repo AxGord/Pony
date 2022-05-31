@@ -334,8 +334,8 @@ using pony.text.TextTools;
 					color = @:nullSafety(Off) UColor.fromString(a.shift());
 				else if (a[a.length - 1].charAt(0) == '#')
 					color = @:nullSafety(Off) UColor.fromString(a.pop());
-				@:nullSafety(Off) var dx: Int = a.length > 0 ? Std.parseInt(a.pop()) : 4;
-				@:nullSafety(Off) var dy: Int = a.length > 0 ? Std.parseInt(a.pop()) : dx;
+				@:nullSafety(Off) var dx: Float = a.length > 0 ? Std.parseFloat(a.pop()) : 4;
+				@:nullSafety(Off) var dy: Float = a.length > 0 ? Std.parseFloat(a.pop()) : dx;
 				t.dropShadow = {dx: dx, dy: dy, color: color, alpha: color.invertAlpha.af};
 			}
 		}

@@ -48,6 +48,7 @@ class Hashlink extends CfgModule<HashlinkConfig> {
 			splitAbi: false,
 			roundIcon: true,
 			platformData: null,
+			orientation: null,
 			allowCfg: true,
 			cordova: false
 		}, configHandler);
@@ -104,14 +105,22 @@ class Hashlink extends CfgModule<HashlinkConfig> {
 				});
 				buildGradleTemplate.delete();
 
-				var outputMain: Dir = outputApp + 'src/main';
-				var manifest: File = outputMain.file('AndroidManifest.xml');
-				var manifestTemplate: File = outputMain.file('AndroidManifest.xml.tpl');
-				manifest.content = new haxe.Template(manifestTemplate.content).execute({
+				var outputSrc: Dir = outputApp + 'src';
+				var outputMain: Dir = outputSrc + 'main';
+
+				log('Orientation ${cfg.orientation}');
+
+				processTemplate(outputMain.file('AndroidManifest.xml'), {
 					id: cfg.id,
-					roundIcon: cfg.roundIcon
+					roundIcon: cfg.roundIcon,
+					fixedOrientation: cfg.orientation != null,
+					orientation: cfg.orientation
 				});
-				manifestTemplate.delete();
+
+				var patchedsdl: Dir = outputSrc + 'patchedsdl';
+				processTemplate(patchedsdl.file('SDLActivity.java'), {
+					autoOrientation: cfg.orientation == null
+				});
 
 				var gradleProps: Array<SPair<String>> = [
 					['org.gradle.jvmargs', '-Xmx2048m'],
@@ -128,12 +137,11 @@ class Hashlink extends CfgModule<HashlinkConfig> {
 					for (p in gradleProps) '${p.a}=${p.b}'
 				].join('\n');
 
-				final outputMain: Dir = output + 'app/src/main';
-				final outputRes: Dir = outputMain + 'res';
+				var outputRes: Dir = outputMain + 'res';
 
 				if (cfg.platformData != null) {
-					final platformData: Dir = cfg.platformData;
-					final resSrc: Dir = platformData + 'res';
+					var platformData: Dir = cfg.platformData;
+					var resSrc: Dir = platformData + 'res';
 					if (resSrc.exists) {
 						log('Remove default icon');
 						for (dir in outputRes.dirs()) {
@@ -150,7 +158,7 @@ class Hashlink extends CfgModule<HashlinkConfig> {
 			case _:
 				ZipTool.unpackFile(cfg.hl, output, true, ignoreLibs, function(s: String): Void log(s));
 		}
-		final dataOutput: String = output + (cfg.hl == 'android' ? 'app/src/main/assets/' : '');
+		var dataOutput: String = output + (cfg.hl == 'android' ? 'app/src/main/assets/' : '');
 		for (d in cfg.data) {
 			var u: Unit = d.a + d.b;
 			if (u.exists)
@@ -170,6 +178,13 @@ class Hashlink extends CfgModule<HashlinkConfig> {
 		} else {
 			(cfg.main: File).copyToDir(output, 'hlboot.dat');
 		}
+	}
+
+	private function processTemplate(file: File, context: Dynamic): Void {
+		var templateFile: File = file.first + '.tpl';
+		log('processTemplate $templateFile -> $file');
+		file.content = new haxe.Template(templateFile.content).execute(context);
+		templateFile.delete();
 	}
 
 }
@@ -192,7 +207,8 @@ private typedef HashlinkConfig = {
 	abiFilters: Null<String>,
 	platformData: Null<String>,
 	splitAbi: Bool,
-	roundIcon: Bool
+	roundIcon: Bool,
+	orientation: Null<String>
 }
 
 private class HashlinkReader extends BAReader<HashlinkConfig> {
@@ -235,6 +251,8 @@ private class HashlinkReader extends BAReader<HashlinkConfig> {
 				cfg.abiFilters = normalize(xml.innerData);
 			case 'platformData':
 				cfg.platformData = normalize(xml.innerData);
+			case 'orientation':
+				cfg.orientation = normalize(xml.innerData);
 			case _:
 				super.readNode(xml);
 		}
@@ -257,6 +275,7 @@ private class HashlinkReader extends BAReader<HashlinkConfig> {
 		cfg.abiFilters = null;
 		cfg.splitAbi = false;
 		cfg.roundIcon = true;
+		cfg.orientation = null;
 	}
 
 }
