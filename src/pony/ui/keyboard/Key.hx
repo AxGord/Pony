@@ -86,4 +86,5 @@ enum Key {
 	Applications;
 	LeftSquareBracket;
 	RightSquareBracket;
+	Back;
 }

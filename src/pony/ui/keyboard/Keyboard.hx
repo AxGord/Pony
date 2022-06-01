@@ -239,7 +239,8 @@ class Keyboard implements Declarator implements HasSignal implements HasLink {
 		191 => RightSlash,
 		219 => LeftSquareBracket,
 		220 => LeftSlash,
-		221 => RightSquareBracket
+		221 => RightSquareBracket,
+		1270 => Back
 	];
 
 }
