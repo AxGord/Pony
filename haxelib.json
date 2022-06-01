@@ -27,8 +27,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "HL1.12 support",
-"version": "1.8.3",
+"releasenote": "HL Android orientation option and back key. Heaps float pos for text shadow.",
+"version": "1.8.4",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }
