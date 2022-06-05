@@ -49,6 +49,7 @@ class Hashlink extends CfgModule<HashlinkConfig> {
 			roundIcon: true,
 			platformData: null,
 			orientation: null,
+			gcMarkThreshold: 0.2,
 			allowCfg: true,
 			cordova: false
 		}, configHandler);
@@ -120,6 +121,11 @@ class Hashlink extends CfgModule<HashlinkConfig> {
 				var patchedsdl: Dir = outputSrc + 'patchedsdl';
 				processTemplate(patchedsdl.file('SDLActivity.java'), {
 					autoOrientation: cfg.orientation == null
+				});
+
+				var patchedhl: Dir = outputSrc + 'patchedhl';
+				processTemplate(patchedhl.file('gc.c'), {
+					gcMarkThreshold: cfg.gcMarkThreshold
 				});
 
 				var gradleProps: Array<SPair<String>> = [
@@ -208,7 +214,8 @@ private typedef HashlinkConfig = {
 	platformData: Null<String>,
 	splitAbi: Bool,
 	roundIcon: Bool,
-	orientation: Null<String>
+	orientation: Null<String>,
+	gcMarkThreshold: Float
 }
 
 private class HashlinkReader extends BAReader<HashlinkConfig> {
@@ -253,6 +260,8 @@ private class HashlinkReader extends BAReader<HashlinkConfig> {
 				cfg.platformData = normalize(xml.innerData);
 			case 'orientation':
 				cfg.orientation = normalize(xml.innerData);
+			case 'gcMarkThreshold':
+				cfg.gcMarkThreshold = Std.parseFloat(normalize(xml.innerData));
 			case _:
 				super.readNode(xml);
 		}
@@ -276,6 +285,7 @@ private class HashlinkReader extends BAReader<HashlinkConfig> {
 		cfg.splitAbi = false;
 		cfg.roundIcon = true;
 		cfg.orientation = null;
+		cfg.gcMarkThreshold = 0.2;
 	}
 
 }
