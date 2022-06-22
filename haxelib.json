@@ -27,8 +27,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "HL Android orientation option and back key. Heaps float pos for text shadow.",
-"version": "1.8.4",
+"releasenote": "HL gcMarkThreshold option for android. Heaps ExtendedTextInput.",
+"version": "1.8.5",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }

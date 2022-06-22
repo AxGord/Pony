@@ -5,7 +5,6 @@ import h2d.Font;
 import h2d.Graphics;
 import h2d.Object;
 import h2d.Text;
-import h2d.TextInput;
 import h2d.filter.DropShadow;
 import h2d.filter.Filter;
 import h2d.filter.Group;
@@ -25,6 +24,7 @@ import pony.heaps.HeapsApp;
 import pony.heaps.HeapsAssets;
 import pony.heaps.ui.gui.Button;
 import pony.heaps.ui.gui.DText;
+import pony.heaps.ui.gui.ExtendedTextInput;
 import pony.heaps.ui.gui.LightButton;
 import pony.heaps.ui.gui.Node;
 import pony.heaps.ui.gui.NodeBitmap;
@@ -62,7 +62,7 @@ using pony.text.TextTools;
 	circle: h2d.Graphics,
 	text: pony.heaps.ui.gui.DText,
 	simpleText: h2d.Text,
-	input: h2d.TextInput,
+	input: pony.heaps.ui.gui.ExtendedTextInput,
 	repeat: pony.heaps.ui.gui.Repeat,
 	image: pony.heaps.ui.gui.Node,
 	layout: pony.heaps.ui.gui.layout.TLayout,
@@ -310,10 +310,18 @@ using pony.text.TextTools;
 	}
 
 	@:extern private inline function createTextInput(attrs: Dynamic<String>, content: String): Object {
-		return createTextBase(new TextInput(getFont(attrs)), attrs, content);
+		var t: ExtendedTextInput = createTextBase(new ExtendedTextInput(getFont(attrs)), attrs, content);
+		t.transform = attrs.transform;
+		if (attrs.onlyEn.isTrue()) t.onlyEn = true;
+		if (attrs.inputCursor != null) {
+			var a: Array<Null<Int>> = attrs.inputCursor.trim().split(' ').map(Std.parseInt);
+			@:nullSafety(Off) t.setCursorParams(a[0] != null ? a[0] : t.cursorTile.dy, a[1] != null ? a[1] : 0);
+		}
+		if (attrs.maxChars != null) @:nullSafety(Off) t.maxChars = Std.parseInt(attrs.maxChars);
+		return t;
 	}
 
-	private function createTextBase(t: Text, attrs: Dynamic<String>, content: String): Object {
+	private function createTextBase<T: Text>(t: T, attrs: Dynamic<String>, content: String): T {
 		t.maxWidth = parseAndScaleWithNull(attrs.maxWidth);
 		t.lineSpacing = cast parseAndScaleWithNull(attrs.lineSpacing);
 		t.letterSpacing = cast parseAndScaleWithNull(attrs.letterSpacing);

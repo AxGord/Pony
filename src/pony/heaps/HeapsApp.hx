@@ -21,6 +21,7 @@ import pony.magic.HasLink;
 import pony.magic.HasSignal;
 import pony.time.DeltaTime;
 import pony.time.Time;
+import pony.ui.keyboard.Keyboard;
 
 #if js
 import js.html.Element;
@@ -59,9 +60,10 @@ import pony.js.SmartCanvas;
 	private var lastTick: Float = Timer.stamp();
 
 	public function new(?size: Point<Int>, ?color: UColor, #if js ?parentDom: Element, #end sizeUpdate: Bool = true) {
+		Keyboard.preventDefault = false;
 		#if js
 		canvas = new SmartCanvas(size, parentDom);
-		@:privateAccess Window.inst = new Window(canvas.canvas);
+		@:privateAccess Window.inst = new Window(canvas.canvas, true);
 		#else
 		canvas = new SmartCanvas(size);
 		onInit < sdlInitHandler;
