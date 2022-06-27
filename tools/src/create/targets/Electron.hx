@@ -24,7 +24,7 @@ class Electron {
 			'default' => defWindow
 		];
 		project.config.options['window'] = windows;
-		project.haxelib.addLib({name: 'electron', version: '11.3.0'});
+		project.haxelib.addLib({name: 'electron', version: '19.0.4'});
 		project.npm.active = true;
 		project.npm.path = project.build.outputPath;
 	}

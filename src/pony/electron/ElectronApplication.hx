@@ -2,6 +2,7 @@ package pony.electron;
 
 import electron.main.App;
 import electron.main.BrowserWindow;
+
 import pony.text.TextTools;
 
 /**
@@ -10,13 +11,15 @@ import pony.text.TextTools;
  */
 class ElectronApplication extends VSTraceHelper implements pony.magic.HasAbstract {
 
-	public var windows(default, null):Map<String, BrowserWindow> = new Map<String, BrowserWindow>();
+	public var windows(default, null): Map<String, BrowserWindow> = new Map<String, BrowserWindow>();
 
-	private var windowsPath:String;
-	private var windowsExt:String;
-	private var macnoexit:Bool;
+	private var windowsPath: String;
+	private var windowsExt: String;
+	private var macnoexit: Bool;
 
-	private function new(windowsPath:String = '', windowsExt = '.html', macnoexit:Bool = false) {
+	private function new(
+		windowsPath: String = '', windowsExt: String = '.html', macnoexit: Bool = false, disableHardwareAcceleration: Bool = false
+	) {
 		super();
 		this.windowsPath = windowsPath;
 		this.windowsExt = windowsExt;
@@ -31,52 +34,55 @@ class ElectronApplication extends VSTraceHelper implements pony.magic.HasAbstrac
 			App.on('window-all-closed', pony.Tools.nullFunction1);
 			App.on('activate', activateHandler);
 		}
+		if (disableHardwareAcceleration) {
+			log('Disable Hardware Acceleration');
+			App.disableHardwareAcceleration();
+			App.commandLine.appendSwitch('disable-software-rasterizer');
+		}
 	}
 
-	private function readyHandler(_):Void init();
+	private function readyHandler(_): Void init();
+	private function init(): Void createMainWindow();
+	@:abstract private function createMainWindow(): Void;
 
-	private function init():Void createMainWindow();
-
-	@:abstract private function createMainWindow():Void;
-
-	public function createWindow(url:String, ?id:String, ?opt):BrowserWindow {
+	public function createWindow(url: String, ?id: String, ?opt): BrowserWindow {
 		if (id == null) id = url;
 		if (windows.exists(id)) {
 			error('Windows already created, ignore create again');
 			return windows[id];
 		}
-		var win = new BrowserWindow( opt );
+		var win: BrowserWindow = new BrowserWindow(opt);
 		windows[id] = win;
 		log('Create window: $id ($url)');
-		win.on( closed, function() {
+		win.on(closed, function() {
 			windows.remove(id);
 			log('Close window: $id ($url)');
 		});
-		var path = js.Node.__dirname + '/' + windowsPath + url + windowsExt;
+		var path: String = js.Node.__dirname + '/' + windowsPath + url + windowsExt;
 		path = sys.FileSystem.absolutePath(path);
 		win.loadURL('file://' + path);
 		// win.webContents.openDevTools();
 		return win;
 	}
 
-	public function closeWindow(id:String):Void {
+	public function closeWindow(id: String): Void {
 		if (!windows.exists(id)) return;
 		windows[id].close();
 		windows.remove(id);
 	}
 
-	private function closeAllHandler(_):Void {
+	private function closeAllHandler(_): Void {
 		log('All windows closed, exit');
 		App.quit();
 	}
 
-	private function activateHandler(_):Void {
+	private function activateHandler(_): Void {
 		log('Activate');
 		if (Lambda.count(windows) == 0) createMainWindow();
 	}
 
-	public function mapCreateWindow(map:Map<String, String>, ?id:String):BrowserWindow {
-		var frame = !TextTools.isFalse(map['frame']);
+	public function mapCreateWindow(map: Map<String, String>, ?id: String): BrowserWindow {
+		var frame: Bool = !TextTools.isFalse(map['frame']);
 		return createWindow(map['name'], id, {
 			width: Std.parseInt(map['width']),
 			height: Std.parseInt(map['height']),
@@ -93,6 +99,6 @@ class ElectronApplication extends VSTraceHelper implements pony.magic.HasAbstrac
 		});
 	}
 
-	public inline function mapCloseWindow(map:Map<String, String>):Void return closeWindow(map['name']);
+	public inline function mapCloseWindow(map: Map<String, String>): Void return closeWindow(map['name']);
 
 }

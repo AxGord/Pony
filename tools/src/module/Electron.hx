@@ -13,6 +13,8 @@ typedef ElectronConfig = {
 	win: Bool,
 	win32: Bool,
 	linux: Bool,
+	armv7l: Bool,
+	arm64: Bool,
 	pack: Bool
 }
 
@@ -37,6 +39,8 @@ class Electron extends CfgModule<ElectronConfig> {
 			win32: false,
 			linux: false,
 			pack: false,
+			armv7l: false,
+			arm64: false,
 			cordova: false
 		}, configHandler);
 	}
@@ -45,11 +49,16 @@ class Electron extends CfgModule<ElectronConfig> {
 		if (cfg.mac || cfg.win || cfg.linux) {
 			var cwd: Cwd = new Cwd(cfg.path);
 			cwd.sw();
-			var args: Array<String> = [];
+			var args: Array<String> = ['electron-builder'];
 			if (cfg.mac && cfg.win && cfg.linux) {
 				args.push('-mwl');
 			} else {
-				if (cfg.linux) args.push('--linux');
+				if (cfg.linux) {
+					args.push('--linux');
+					if (cfg.pack) args.push('appImage');
+					if (cfg.armv7l) args.push('--armv7l');
+					if (cfg.arm64) args.push('--arm64');
+				}
 				if (cfg.mac) args.push('--mac');
 				if (cfg.win || cfg.win32) {
 					args.push('--win');
@@ -57,7 +66,7 @@ class Electron extends CfgModule<ElectronConfig> {
 				}
 			}
 			if (!cfg.pack) args.push('--dir');
-			Utils.command('electron-builder', args);
+			Utils.command('npx', args);
 			cwd.sw();
 		}
 	}
@@ -72,6 +81,8 @@ private class ElectronReader extends BAReader<ElectronConfig> {
 		cfg.win = false;
 		cfg.win32 = false;
 		cfg.linux = false;
+		cfg.armv7l = false;
+		cfg.arm64 = false;
 		cfg.pack = false;
 	}
 
@@ -82,6 +93,8 @@ private class ElectronReader extends BAReader<ElectronConfig> {
 			case 'win': cfg.win = TextTools.isTrue(val);
 			case 'win32': cfg.win32 = TextTools.isTrue(val);
 			case 'linux': cfg.linux = TextTools.isTrue(val);
+			case 'armv7l': cfg.armv7l = TextTools.isTrue(val);
+			case 'arm64': cfg.arm64 = TextTools.isTrue(val);
 			case 'pack': cfg.pack = TextTools.isTrue(val);
 			case _:
 		}

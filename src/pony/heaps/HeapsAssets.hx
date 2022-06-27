@@ -251,22 +251,22 @@ using pony.text.TextTools;
 			loadAssetStep();
 	}
 
-	private static function loadAssetStep(): Void {
+	@:nullSafety(Off) private static function loadAssetStep(): Void {
 		#if mobile
 		if (Native.assetBytesAvailable > 0) {
-			@:nullSafety(Off) assetBytesOutput.write(Native.getAssetBytes());
-			@:nullSafety(Off) assetLoader.onProgress(assetTotalSize - Native.assetBytesAvailable, assetTotalSize);
+			assetBytesOutput.write(Native.getAssetBytes());
+			assetLoader.onProgress(assetTotalSize - Native.assetBytesAvailable, assetTotalSize);
 			runNext(loadAssetStep);
 		} else {
-			@:nullSafety(Off) assetLoader.onLoaded(assetBytesOutput.getBytes());
+			assetLoader.onLoaded(assetBytesOutput.getBytes());
 			assetBytesOutput = null;
 			assetLoader = null;
 			Native.finishGetAsset();
 			runNext(queue.next);
 		}
 		#else
-		var onLoaded = @:nullSafety(Off) assetLoader.onLoaded;
-		@:nullSafety(Off) assetLoader.onLoaded = function(bytes: Bytes): Void {
+		var onLoaded = assetLoader.onLoaded;
+		assetLoader.onLoaded = function(bytes: Bytes): Void {
 			onLoaded(bytes);
 			assetLoader = null;
 			runNext(queue.next);

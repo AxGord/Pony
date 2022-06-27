@@ -27,8 +27,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "HL gcMarkThreshold option for android. Heaps ExtendedTextInput.",
-"version": "1.8.5",
+"releasenote": "Fix neko AssetManager build error. Electron improvements.",
+"version": "1.8.6",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }

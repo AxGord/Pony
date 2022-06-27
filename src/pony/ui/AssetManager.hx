@@ -230,13 +230,13 @@ class AssetManager implements HasLink {
 			f = p.a;
 			var s = Type.resolveClass(chs[i]);
 			if (s != null)
-				Reflect.getProperty(s, 'loadAllAssets')(true, p.b);
+				@:nullSafety(Off) Reflect.getProperty(s, 'loadAllAssets')(true, p.b);
 			else
 				p.b(0, 0); //skip load
 		}
 		var s = Type.resolveClass(chs[chs.length - 1]);
 		if (s != null)
-			Reflect.getProperty(s, 'loadAllAssets')(true, f);
+			@:nullSafety(Off) Reflect.getProperty(s, 'loadAllAssets')(true, f);
 		else
 			f(0, 0); //skip load
 	}
@@ -271,7 +271,7 @@ class AssetManager implements HasLink {
 		var sum: UInt = 0;
 		for (ch in chs) {
 			var s = Type.resolveClass(ch);
-			sum += Reflect.getProperty(s, 'countAllAssets')(true);
+			sum += @:nullSafety(Off) Reflect.getProperty(s, 'countAllAssets')(true);
 		}
 		return sum;
 	}
