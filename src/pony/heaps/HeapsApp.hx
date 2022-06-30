@@ -60,9 +60,10 @@ import pony.js.SmartCanvas;
 	private var lastTick: Float = Timer.stamp();
 
 	public function new(?size: Point<Int>, ?color: UColor, #if js ?parentDom: Element, #end sizeUpdate: Bool = true) {
-		Keyboard.preventDefault = false;
 		#if js
+		Keyboard.preventDefault = false;
 		canvas = new SmartCanvas(size, parentDom);
+		canvas.canvas.setAttribute('propagateKeyEvents', 'false');
 		@:privateAccess Window.inst = new Window(canvas.canvas, true);
 		#else
 		canvas = new SmartCanvas(size);

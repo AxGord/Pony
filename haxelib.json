@@ -27,8 +27,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Fix neko AssetManager build error. Electron improvements.",
-"version": "1.8.6",
+"releasenote": "Heaps disable propagateKeyEvents and js os macos",
+"version": "1.8.7",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }

@@ -20,7 +20,7 @@ enum UserAgent {
 }
 
 enum OS {
-	Windows; Linux(type:Linux); Android; Unknown; IOS;
+	Windows; Macos; Linux(type:Linux); Android; Unknown; IOS;
 }
 
 enum Linux {
@@ -112,6 +112,8 @@ class JsTools implements HasSignal {
 			_os = Windows;
 		} else if (ua.indexOf('android') != -1) {
 			_os = Android;
+		} else if (ua.indexOf('macintosh') != -1) {
+			_os = Macos;
 		} else if (ua.indexOf('linux') != -1) {
 			if (ua.indexOf('ubuntu') != -1)
 				_os = Linux(Ubuntu);
