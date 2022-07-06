@@ -83,14 +83,10 @@ class Touchable extends TouchableBase {
 		interactive.onOut = outHandler;
 		#if ios
 			interactive.onPush = delayedDownHandler;
-			#if !js
 			interactive.onRelease = delayedUpHandler;
-			#end
 		#else
 			interactive.onPush = downHandler;
-			#if !js
 			interactive.onRelease = upHandler;
-			#end
 		#end
 		interactive.onWheel = wheelHandler;
 		#if js

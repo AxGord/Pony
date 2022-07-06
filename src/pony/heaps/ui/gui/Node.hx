@@ -1,5 +1,7 @@
 package pony.heaps.ui.gui;
 
+import h2d.Bitmap;
+import h2d.Tile;
 import h2d.Interactive;
 import h2d.Object;
 
@@ -78,8 +80,36 @@ class Node extends Object implements HasSignal implements HasLink implements INo
 		destroySignals();
 	}
 
+	public function setContentRotation(degrees: Float, px: Null<Float>, py: Null<Float>): Void {
+		for (child in children) {
+			#if (haxe_ver >= 4.10)
+			if (Std.isOfType(child, Bitmap)) {
+			#else
+			if (Std.is(child, Bitmap)) {
+			#end
+				if (px != null || py != null)
+					cast(child, Bitmap).tile.setCenterRatio(px != null ? px : 0, py != null ? py : 0);
+				child.rotation = degrees * Math.PI / 180;
+			}
+		}
+	}
+
+	public function setTile(tile: Tile): Void {
+		for (child in children) {
+			#if (haxe_ver >= 4.10)
+			if (Std.isOfType(child, Bitmap)) {
+			#else
+			if (Std.is(child, Bitmap)) {
+			#end
+				cast(child, Bitmap).tile = tile;
+				break;
+			}
+		}
+	}
+
 	public function destroyIWH(): Void destroy();
 	public inline function show(): Void visible = true;
 	public inline function hide(): Void visible = false;
+
 
 }

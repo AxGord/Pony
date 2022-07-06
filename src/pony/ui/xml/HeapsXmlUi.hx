@@ -296,6 +296,11 @@ using pony.text.TextTools;
 
 		if (attrs.flipx.isTrue()) node.flipx = true;
 		if (attrs.flipy.isTrue()) node.flipy = true;
+
+		if (attrs.rotation != null) {
+			final a: Array<Float> = attrs.rotation.trim().split(' ').map(Std.parseFloat);
+			node.setContentRotation(a[0], a[1], a[2]);
+		}
 	}
 
 	@:extern private inline function createText(attrs: Dynamic<String>, content: String): Object {
