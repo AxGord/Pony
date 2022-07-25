@@ -17,14 +17,15 @@ import pony.geom.Point;
 
 	public var graphics: Graphics;
 	private var round: Float;
+	private var color: Null<UColor>;
 	private var lineStyle: Null<Pair<UColor, Float>>;
 
 	public function new(size: Point<Float>, ?lineStyle: Pair<UColor, Float>, ?color: UColor, round: Float = 0, ?parent: Object) {
 		super(size, parent);
 		this.round = round;
+		this.color = color;
 		this.lineStyle = lineStyle;
 		graphics = new Graphics(this);
-		if (color != null) graphics.beginFill(color.rgb, color.invertAlpha.af);
 		changeWh << updateSize;
 		changeFlipx << changeFlipxHandler;
 		changeFlipy << changeFlipyHandler;
@@ -34,9 +35,10 @@ import pony.geom.Point;
 
 	private function updateSize(): Void {
 		graphics.clear();
+		if (color != null) graphics.beginFill(color, color.invertAlpha.af);
 		if (lineStyle != null) graphics.lineStyle(lineStyle.b, lineStyle.a.rgb, lineStyle.a.invertAlpha.af);
 		if (round == 0)
-			graphics.drawRect(0, 0, w, h);
+			graphics.drawRect(0, 0, 100, 100);
 		else
 			graphics.drawRoundedRect(0, 0, w, h, round);
 	}
