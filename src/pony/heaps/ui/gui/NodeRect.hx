@@ -38,7 +38,7 @@ import pony.geom.Point;
 		if (color != null) graphics.beginFill(color, color.invertAlpha.af);
 		if (lineStyle != null) graphics.lineStyle(lineStyle.b, lineStyle.a.rgb, lineStyle.a.invertAlpha.af);
 		if (round == 0)
-			graphics.drawRect(0, 0, 100, 100);
+			graphics.drawRect(0, 0, w, h);
 		else
 			graphics.drawRoundedRect(0, 0, w, h, round);
 	}
