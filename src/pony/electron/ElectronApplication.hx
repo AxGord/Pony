@@ -3,13 +3,17 @@ package pony.electron;
 import electron.main.App;
 import electron.main.BrowserWindow;
 
+import js.Node;
+
+import pony.Tools;
+import pony.magic.HasAbstract;
 import pony.text.TextTools;
 
 /**
  * ElectronApplication
  * @author AxGord <axgord@gmail.com>
  */
-class ElectronApplication extends VSTraceHelper implements pony.magic.HasAbstract {
+class ElectronApplication extends VSTraceHelper implements HasAbstract {
 
 	public var windows(default, null): Map<String, BrowserWindow> = new Map<String, BrowserWindow>();
 
@@ -23,15 +27,16 @@ class ElectronApplication extends VSTraceHelper implements pony.magic.HasAbstrac
 		super();
 		this.windowsPath = windowsPath;
 		this.windowsExt = windowsExt;
-		this.macnoexit = macnoexit && js.Node.process.platform == 'darwin';
-		log('Build date: ' + pony.Tools.getBuildDate());
-		log('Platform: ' + js.Node.process.platform);
+		this.macnoexit = macnoexit && Node.process.platform == 'darwin';
+		Node.process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true';
+		log('Build date: ' + Tools.getBuildDate());
+		log('Platform: ' + Node.process.platform);
 		if (this.macnoexit) log('Mac OS keep opened');
 		App.on('ready', readyHandler);
 		if (!this.macnoexit) {
 			App.on('window-all-closed', closeAllHandler);
 		} else {
-			App.on('window-all-closed', pony.Tools.nullFunction1);
+			App.on('window-all-closed', Tools.nullFunction1);
 			App.on('activate', activateHandler);
 		}
 		if (disableHardwareAcceleration) {
@@ -89,12 +94,14 @@ class ElectronApplication extends VSTraceHelper implements pony.magic.HasAbstrac
 			frame: frame,
 			titleBarStyle: frame ? null : 'hiddenInset',
 			fullscreen: map.exists('fullscreen') ? TextTools.isTrue(map['fullscreen']) : null,
+			fullscreenable: true,
 			resizable: !TextTools.isFalse(map['resizable']),
 			minWidth: Std.parseInt(map['minWidth']),
 			minHeight: Std.parseInt(map['minHeight']),
 			backgroundColor: map['background'],
 			webPreferences: {
-				nodeIntegration: true
+				nodeIntegration: true,
+				contextIsolation: false
 			}
 		});
 	}

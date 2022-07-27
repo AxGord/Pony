@@ -40,6 +40,7 @@ class Move extends CfgModule<MoveConfig> {
 	}
 
 	private function moveDirs(data: Array<String>, to: String, filter: String): Void {
+		Utils.createPath(to);
 		for (d in data) {
 			log('Move directory: $d, to $to');
 			(d: Dir).moveTo(to, filter);
@@ -47,6 +48,7 @@ class Move extends CfgModule<MoveConfig> {
 	}
 
 	private function moveUnits(data: Array<Pair<String, String>>, to: String): Void {
+		Utils.createPath(to);
 		for (p in data) {
 			var unit: Unit = p.a;
 			log('Move file: $unit');

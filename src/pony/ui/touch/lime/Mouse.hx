@@ -54,21 +54,21 @@ class Mouse {
 	public static function enableStd(): Void {
 		M.onMove.add(moveEvent.dispatch, 1);
 		M.onLeftDown.add(leftDown, 1);
-		M.onMiddleDown.add(rightDown, 1);
-		M.onRightDown.add(middleDown, 1);
+		M.onMiddleDown.add(middleDown, 1);
+		M.onRightDown.add(rightDown, 1);
 		M.onLeftUp.add(leftUp, 1);
-		M.onMiddleUp.add(rightUp, 1);
-		M.onRightUp.add(middleUp, 1);
+		M.onMiddleUp.add(middleUp, 1);
+		M.onRightUp.add(rightUp, 1);
 	}
 
 	public static function disableStd(): Void {
 		M.onMove.remove(moveEvent.dispatch);
 		M.onLeftDown.remove(leftDown);
-		M.onMiddleDown.remove(rightDown);
-		M.onRightDown.remove(middleDown);
+		M.onMiddleDown.remove(middleDown);
+		M.onRightDown.remove(rightDown);
 		M.onLeftUp.remove(leftUp);
-		M.onMiddleUp.remove(rightUp);
-		M.onRightUp.remove(middleUp);
+		M.onMiddleUp.remove(middleUp);
+		M.onRightUp.remove(rightUp);
 	}
 
 	private static function leftDown(x: Float, y: Float): Void downEvent.dispatch(x, y, lime.ui.MouseButton.LEFT);

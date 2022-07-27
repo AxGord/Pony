@@ -15,7 +15,9 @@ using StringTools;
 	private final reverse: Bool;
 
 	public function new(
-		containerId: String = 'log', obj: ILogable = null, handleTrace: Bool = true, handleGlobalError: Bool = true, reverse: Bool = false
+		containerId: String = 'log', obj: ILogable = null,
+		handleTrace: Bool = true, handleGlobalError: Bool = true,
+		reverse: Bool = false, objLogs: Bool = false
 	) {
 		this.reverse = reverse;
 		container = Browser.document.getElementById(containerId);
@@ -24,12 +26,12 @@ using StringTools;
 			origTrace = Log.trace;
 			Log.trace = traceHandler;
 			if (obj != null) @:nullSafety(Off) {
-				obj.onLog << origTrace;
+				if (objLogs) obj.onLog << origTrace;
 				obj.onError << origTrace;
 			}
 		}
 		if (obj != null) {
-			obj.onLog << logHandler;
+			if (objLogs) obj.onLog << logHandler;
 			obj.onError << errorHandler;
 		}
 		if (handleGlobalError) Browser.window.onerror = windowsErrorHandler;

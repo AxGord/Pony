@@ -16,7 +16,7 @@ enum ButtonState {
  */
 @:nullSafety(Strict) class ButtonCore extends Tumbler implements HasSignal {
 
-	public var touch: TouchableBase;
+	public var touch(default, null): TouchableBase;
 	@:auto public var onClick: Signal1<Int>;
 	@:auto public var onVisual: Signal2<Int, ButtonState>;
 	@:bindable public var lowMode: Int = 0;

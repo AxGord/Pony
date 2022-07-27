@@ -15,7 +15,8 @@ typedef ElectronConfig = {
 	linux: Bool,
 	armv7l: Bool,
 	arm64: Bool,
-	pack: Bool
+	pack: Bool,
+	config: String
 }
 
 class Electron extends CfgModule<ElectronConfig> {
@@ -41,7 +42,8 @@ class Electron extends CfgModule<ElectronConfig> {
 			pack: false,
 			armv7l: false,
 			arm64: false,
-			cordova: false
+			cordova: false,
+			config: null
 		}, configHandler);
 	}
 
@@ -66,6 +68,12 @@ class Electron extends CfgModule<ElectronConfig> {
 				}
 			}
 			if (!cfg.pack) args.push('--dir');
+
+			if (cfg.config != null) {
+				args.push('-c');
+				args.push('../${cfg.config}');
+			}
+
 			Utils.command('npx', args);
 			cwd.sw();
 		}
@@ -84,6 +92,7 @@ private class ElectronReader extends BAReader<ElectronConfig> {
 		cfg.armv7l = false;
 		cfg.arm64 = false;
 		cfg.pack = false;
+		cfg.config = null;
 	}
 
 	override private function readAttr(name: String, val: String): Void {
@@ -96,6 +105,7 @@ private class ElectronReader extends BAReader<ElectronConfig> {
 			case 'armv7l': cfg.armv7l = TextTools.isTrue(val);
 			case 'arm64': cfg.arm64 = TextTools.isTrue(val);
 			case 'pack': cfg.pack = TextTools.isTrue(val);
+			case 'config': cfg.config = normalize(val);
 			case _:
 		}
 	}

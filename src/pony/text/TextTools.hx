@@ -43,12 +43,12 @@ import haxe.Serializer;
 
 	public static inline function firstSplit(str: String, delimiter: String, ?startIndex: Int): SPair<String> {
 		var index: Int = startIndex != null ? str.indexOf(delimiter, startIndex) : str.indexOf(delimiter);
-		return index == -1 ? new SPair<String>(str, '') : new SPair<String>(str.substr(0, index), str.substr(index + 1));
+		return index == -1 ? new SPair<String>(str, '') : new SPair<String>(str.substr(0, index), str.substr(index + delimiter.length));
 	}
 
 	public static inline function lastSplit(str: String, delimiter: String, ?startIndex: Int): SPair<String> {
 		var index: Int = startIndex != null ? str.lastIndexOf(delimiter, startIndex) : str.lastIndexOf(delimiter);
-		return index == -1 ? new SPair<String>(str, '') : new SPair<String>(str.substr(0, index), str.substr(index + 1));
+		return index == -1 ? new SPair<String>(str, '') : new SPair<String>(str.substr(0, index), str.substr(index + delimiter.length));
 	}
 
 	public static inline function allAfterWithNull(str: String, delimiter: String, ?startIndex: Int): Null<String> {

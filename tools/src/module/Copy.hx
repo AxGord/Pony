@@ -54,14 +54,17 @@ using pony.text.TextTools;
 				for (f in dir.contentRecursiveFiles(filter)) {
 					if (!hashModule.fileChanged(f.first, f)) continue;
 					var w: String = f.fullDir.first.substr(dir.first.length);
+					Utils.createPath(to + w);
 					f.copyToDir(to + w, f.name + addext);
 				}
 			} else {
 				if (addext.length == 0) {
+					Utils.createPath(to);
 					dir.copyTo(to, filter);
 				} else {
 					for (f in dir.contentRecursiveFiles(filter)) {
 						var w: String = f.fullDir.first.substr(dir.first.length);
+						Utils.createPath(to + w);
 						f.copyToDir(to + w, f.name + addext);
 					}
 				}

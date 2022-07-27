@@ -27,8 +27,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Heaps xml ui: rotation, set tile and js touch up bugfix",
-"version": "1.8.8",
+"releasenote": "Utils fixes. Heaps ui rect color bugfix. Openfl mouse buttons bugfix. Electron improvements.",
+"version": "1.8.9",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }
