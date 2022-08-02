@@ -10,6 +10,16 @@ import pony.math.MathTools;
 	var Square = 1;
 	var BackSquare = 2;
 	var Bezier = 3;
+
+	@:from public static function fromString(s: String): TweenType {
+		return switch StringTools.trim(s).toLowerCase() {
+			case 'linear': Linear;
+			case 'square': Square;
+			case 'backsquare': BackSquare;
+			case 'bezier': Bezier;
+			case _: throw 'Unsupported tween type';
+		};
+	}
 }
 
 /**
@@ -34,6 +44,7 @@ class Tween implements HasSignal implements Declarator {
 	private var invert: Bool;
 
 	private var updateSignal: Signal1<DT>;
+	public var time(get, set): Time;
 	public var progress(default, null): Float = 0;
 	private var sr: Float;
 	private var playing: Bool = false;
@@ -50,6 +61,7 @@ class Tween implements HasSignal implements Declarator {
 		?skipTime: Time
 	) {
 		this.type = type;
+		this.time = time;
 		sr = 1000 / time;
 		this.invert = invert;
 		updateSignal = fixedTime ? DeltaTime.fixedUpdate : DeltaTime.update;
@@ -64,6 +76,9 @@ class Tween implements HasSignal implements Declarator {
 		if (loop) onComplete << play;
 		onProgress << progressHandler;
 	}
+
+	private inline function get_time(): Time return 1000 / sr;
+	private inline function set_time(time: Time): Time return sr = 1000 / time;
 
 	private function progressHandler(v: Float): Void {
 		v = switch type {

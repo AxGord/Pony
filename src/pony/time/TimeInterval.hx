@@ -31,6 +31,10 @@ abstract TimeInterval(TimeIntervalImpl) {
 
 	@:to public inline function toString(): String return (min: String) + ' ... ' + (max: String);
 
+	@:from private static inline function fromNullString(time: Null<String>): Null<TimeInterval> {
+		return time != null ? fromString(time) : null;
+	}
+
 	@:from private static function fromString(time: String): TimeInterval {
 		var a = time.split('...');
 		if (a.length > 1)

@@ -1,5 +1,7 @@
 package pony.heaps.ui.gui;
 
+import pony.time.TimeInterval;
+import pony.time.Tween;
 import h2d.Interactive;
 import h2d.Object;
 
@@ -30,10 +32,15 @@ import pony.ui.touch.Touchable;
 	public var nodes(default, null): Array<Node>;
 	public var size(link, never): Point<Float> = nodes[0].size;
 
-	public function new(nodes: Array<Node>, ?parent: Object) {
+	private var tween: Tween = new Tween(300, false, false, false, true);
+	private var anim: Null<TimeInterval>;
+	private var prevState: ButtonState = ButtonState.Default;
+
+	public function new(nodes: Array<Node>, ?anim: TimeInterval, ?parent: Object) {
 		var first: Node = nodes[0];
 		super(first.size.x * first.scaleX, first.size.y * first.scaleY, parent);
 		this.nodes = nodes;
+		this.anim = anim;
 		touchable = new Touchable(@:nullSafety(Off) this);
 		touchable.propagateWheel = true;
 		core = new ButtonCore(touchable);
@@ -42,17 +49,21 @@ import pony.ui.touch.Touchable;
 			addChild(node);
 		}
 		first.visible = true;
-		switch nodes.length {
-			case 0:
-				throw 'Not supported';
-			case 1:
-				core.onVisual << visual1Handler;
-			case 2:
-				core.onVisual << visual2Handler;
-			case 3:
-				core.onVisual << visual3Handler;
-			case _:
-				core.onVisual << visualNHandler;
+		if (anim != null) {
+			switch nodes.length {
+				case 1:
+					tween.onUpdate << tweenUpdateHandler;
+					core.onVisual << animVisual1Handler;
+				case _: throw 'Not supported';
+			}
+		} else {
+			switch nodes.length {
+				case 0: throw 'Not supported';
+				case 1: core.onVisual << visual1Handler;
+				case 2: core.onVisual << visual2Handler;
+				case 3: core.onVisual << visual3Handler;
+				case _: core.onVisual << visualNHandler;
+			}
 		}
 	}
 
@@ -132,6 +143,34 @@ import pony.ui.touch.Touchable;
 			if (index >= nodes.length) index = nodes.length - 1;
 			nodes[index].visible = true;
 		}
+	}
+
+	private function animVisual1Handler(mode: Int, state: ButtonState): Void {
+		if (mode == 1) {
+			cursor = Cursor.Default;
+			tween.range = new Pair<Float, Float>(nodes[0].tint.x, DOWNTINT);
+			@:nullSafety(Off) tween.time = anim.min;
+			tween.stopOnBegin();
+			tween.playForward();
+		} else if (prevState != state || cursor == Cursor.Default) {
+			cursor = Cursor.Button;
+			tween.range = new Pair<Float, Float>(nodes[0].tint.x, switch state {
+				case Default: 1;
+				case Focus, Leave: OVERTINT;
+				case Press: DOWNTINT;
+			});
+			@:nullSafety(Off) tween.time = prevState == Press ? anim.max : switch state {
+				case Focus, Press: anim.min;
+				case Default, Leave: anim.max;
+			}
+			prevState = state;
+			tween.stopOnBegin();
+			tween.playForward();
+		}
+	}
+
+	private function tweenUpdateHandler(v: Float): Void {
+		nodes[0].tint = new Vector(v, v, v);
 	}
 
 	public function destroy():Void {

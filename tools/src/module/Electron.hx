@@ -11,7 +11,7 @@ typedef ElectronConfig = {
 	path: String,
 	mac: Bool,
 	win: Bool,
-	win32: Bool,
+	ia32: Bool,
 	linux: Bool,
 	armv7l: Bool,
 	arm64: Bool,
@@ -37,7 +37,7 @@ class Electron extends CfgModule<ElectronConfig> {
 			path: 'bin/',
 			mac: false,
 			win: false,
-			win32: false,
+			ia32: false,
 			linux: false,
 			pack: false,
 			armv7l: false,
@@ -58,14 +58,14 @@ class Electron extends CfgModule<ElectronConfig> {
 				if (cfg.linux) {
 					args.push('--linux');
 					if (cfg.pack) args.push('appImage');
-					if (cfg.armv7l) args.push('--armv7l');
-					if (cfg.arm64) args.push('--arm64');
 				}
 				if (cfg.mac) args.push('--mac');
-				if (cfg.win || cfg.win32) {
+				if (cfg.win) {
 					args.push('--win');
-					if (cfg.win32) args.push('--ia32');
 				}
+				if (cfg.armv7l) args.push('--armv7l');
+				if (cfg.arm64) args.push('--arm64');
+				if (cfg.ia32) args.push('--ia32');
 			}
 			if (!cfg.pack) args.push('--dir');
 
@@ -87,7 +87,7 @@ private class ElectronReader extends BAReader<ElectronConfig> {
 		cfg.path = 'bin/';
 		cfg.mac = false;
 		cfg.win = false;
-		cfg.win32 = false;
+		cfg.ia32 = false;
 		cfg.linux = false;
 		cfg.armv7l = false;
 		cfg.arm64 = false;
@@ -100,7 +100,7 @@ private class ElectronReader extends BAReader<ElectronConfig> {
 			case 'path': cfg.path = val;
 			case 'mac': cfg.mac = TextTools.isTrue(val);
 			case 'win': cfg.win = TextTools.isTrue(val);
-			case 'win32': cfg.win32 = TextTools.isTrue(val);
+			case 'ia32': cfg.ia32 = TextTools.isTrue(val);
 			case 'linux': cfg.linux = TextTools.isTrue(val);
 			case 'armv7l': cfg.armv7l = TextTools.isTrue(val);
 			case 'arm64': cfg.arm64 = TextTools.isTrue(val);

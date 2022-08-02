@@ -20,6 +20,7 @@ import pony.geom.Border;
 import pony.geom.Orientation;
 import pony.geom.Point;
 import pony.geom.Rect;
+import pony.time.TimeInterval;
 import pony.heaps.HeapsApp;
 import pony.heaps.HeapsAssets;
 import pony.heaps.ui.gui.Button;
@@ -47,6 +48,7 @@ import pony.ui.xml.UiTags;
 
 using StringTools;
 
+using pony.Tools;
 using pony.text.TextTools;
 
 /**
@@ -81,6 +83,7 @@ using pony.text.TextTools;
 	private var _scale: Float = 1;
 	@:nullSafety(Off) public var app(default, null): HeapsApp;
 	private var watchList: Array<Pair<Object, Dynamic<String>>> = [];
+	private var tweens: TweenMap<Object> = [];
 
 	private function createUIElement(name: String, attrs: Dynamic<String>, content: Array<Object>, textContent: String): Object {
 		if (attrs.reverse.isTrue()) content.reverse();
@@ -150,7 +153,7 @@ using pony.text.TextTools;
 			case UiTags.input:
 				createTextInput(attrs, textContent);
 			case UiTags.button:
-				var b: Button = new Button(cast content);
+				var b: Button = new Button(cast content, attrs.anim);
 				if (attrs.disabled.isTrue()) b.core.disable();
 				if (attrs.bsw.isTrue()) b.core.bswitch();
 				b;
@@ -233,6 +236,15 @@ using pony.text.TextTools;
 			if (Std.is(obj, Node))
 			#end
 				cast(obj, Node).makeInteractive();
+		}
+		if (attrs.tween != null) {
+			var a: Array<String> = attrs.tween.trim().split(' ');
+			if (a[1] != 'pos') throw 'Not supported';
+			tweens.pushToMap(a[0], {
+				target: obj,
+				startPos: new Point<Float>(obj.x, obj.y),
+				endPos: new Point<Float>(parseAndScale(a[2]), parseAndScale(a[3]))
+			});
 		}
 		setWatchers(obj, attrs);
 		return obj;

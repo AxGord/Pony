@@ -111,6 +111,7 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 	private var FILTERS: Map<String, Filter> = new Map();
 	private var SCALE: Float = 1;
 	public var app(default, null): App;
+	private var tweens: TweenMap<Dynamic> = [];
 
 	private function createUIElement(name: String, attrs: Dynamic<String>, content: Array<Dynamic>, textContent: String):Dynamic {
 		if (attrs.reverse.isTrue()) content.reverse();

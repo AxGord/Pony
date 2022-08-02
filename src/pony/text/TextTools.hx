@@ -41,11 +41,25 @@ import haxe.Serializer;
 	];
 	private static inline var FIRST_ANSI_ID: Int = 192;
 
+	/**
+	 * Using delimiter for get splited string pair. Search from left to right.
+	 * @param str - string
+	 * @param delimiter - symbol for split string
+	 * @param startIndex - start search delimiter from this value
+	 * @return splited string pair
+	 */
 	public static inline function firstSplit(str: String, delimiter: String, ?startIndex: Int): SPair<String> {
 		var index: Int = startIndex != null ? str.indexOf(delimiter, startIndex) : str.indexOf(delimiter);
 		return index == -1 ? new SPair<String>(str, '') : new SPair<String>(str.substr(0, index), str.substr(index + delimiter.length));
 	}
 
+	/**
+	 * Using delimiter for get splited string pair. Search from right to left.
+	 * @param str - string
+	 * @param delimiter - symbol for split string
+	 * @param startIndex - start search delimiter from this value
+	 * @return splited string pair
+	 */
 	public static inline function lastSplit(str: String, delimiter: String, ?startIndex: Int): SPair<String> {
 		var index: Int = startIndex != null ? str.lastIndexOf(delimiter, startIndex) : str.lastIndexOf(delimiter);
 		return index == -1 ? new SPair<String>(str, '') : new SPair<String>(str.substr(0, index), str.substr(index + delimiter.length));

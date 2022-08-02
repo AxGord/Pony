@@ -90,14 +90,14 @@ class Touchable extends TouchableBase {
 		#end
 		interactive.onWheel = wheelHandler;
 		#if js
-		Browser.window.addEventListener(MOUSELEAVE, leaveHandler);
-		Browser.window.addEventListener(MOUSEENTER, enterHandler);
-		Browser.window.addEventListener(MOUSEUP, globMouseUpHandler);
-		Browser.window.addEventListener(MOUSEDOWN, globMouseDownHandler);
-		Browser.window.addEventListener(TOUCHESTART, globDownHandler);
-		Browser.window.addEventListener(TOUCHEND, globUpHandler);
-		Browser.window.addEventListener(TOUCHCANCEL, leaveHandler);
-		Browser.window.addEventListener(CLICK, globTapHandler);
+		Browser.window.addEventListener(MOUSELEAVE, leaveHandler, true);
+		Browser.window.addEventListener(MOUSEENTER, enterHandler, true);
+		Browser.window.addEventListener(MOUSEUP, globMouseUpHandler, true);
+		Browser.window.addEventListener(MOUSEDOWN, globMouseDownHandler, true);
+		Browser.window.addEventListener(TOUCHESTART, globDownHandler, true);
+		Browser.window.addEventListener(TOUCHEND, globUpHandler, true);
+		Browser.window.addEventListener(TOUCHCANCEL, leaveHandler, true);
+		Browser.window.addEventListener(CLICK, globTapHandler, true);
 		#else
 		Window.getInstance().addEventTarget(instanceMouseHandler);
 		#end
@@ -107,14 +107,14 @@ class Touchable extends TouchableBase {
 		super.destroy();
 		leaveHandler();
 		#if js
-		Browser.window.removeEventListener(MOUSELEAVE, leaveHandler);
-		Browser.window.removeEventListener(MOUSEENTER, enterHandler);
-		Browser.window.removeEventListener(MOUSEUP, globMouseUpHandler);
-		Browser.window.removeEventListener(MOUSEDOWN, globMouseDownHandler);
-		Browser.window.removeEventListener(TOUCHESTART, globDownHandler);
-		Browser.window.removeEventListener(TOUCHEND, globUpHandler);
-		Browser.window.removeEventListener(TOUCHCANCEL, leaveHandler);
-		Browser.window.removeEventListener(CLICK, globTapHandler);
+		Browser.window.removeEventListener(MOUSELEAVE, leaveHandler, true);
+		Browser.window.removeEventListener(MOUSEENTER, enterHandler, true);
+		Browser.window.removeEventListener(MOUSEUP, globMouseUpHandler, true);
+		Browser.window.removeEventListener(MOUSEDOWN, globMouseDownHandler, true);
+		Browser.window.removeEventListener(TOUCHESTART, globDownHandler, true);
+		Browser.window.removeEventListener(TOUCHEND, globUpHandler, true);
+		Browser.window.removeEventListener(TOUCHCANCEL, leaveHandler, true);
+		Browser.window.removeEventListener(CLICK, globTapHandler, true);
 		#else
 		Window.getInstance().removeEventTarget(instanceMouseHandler);
 		#end

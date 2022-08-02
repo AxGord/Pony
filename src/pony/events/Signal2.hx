@@ -73,7 +73,7 @@ abstract Signal2<T1, T2>(Priority<Listener2<T1, T2>>) from Event2<T1, T2> from P
 	}
 
 	@:extern public inline function removeSub(a1: T1, a2: T2): Bool {
-		return this.remove({ once: false, listener: LSub(null, a1, a2) });
+		return this.remove({ once: false, listener: @:nullSafety(Off) LSub(null, a1, a2) });
 	}
 
 	public function sub1(a1: T1, priority: Int = 0, once: Bool = false): Signal1<T2> {

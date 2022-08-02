@@ -12,6 +12,7 @@ import haxe.macro.Type;
 import haxe.macro.TypeTools;
 
 using pony.macro.Tools;
+using pony.text.XmlTools;
 
 typedef Style = Map<String, Map<String, String>>;
 #end
@@ -21,6 +22,8 @@ typedef Style = Map<String, Map<String, String>>;
  * @author AxGord <axgord@gmail.com>
  */
 class XmlUiBuilder {
+
+	private static var toConsructor: Array<Expr>;
 
 	macro public static function build(assetManager: Expr, typesExpr: Expr): Array<Field> {
 		var cl: ClassType = Context.getLocalClass().get();
@@ -35,6 +38,8 @@ class XmlUiBuilder {
 				[for (t in ts) t.field => exprToComplex(t.expr)];
 			case _: Context.error('Types list wrong type', typesExpr.pos);
 		}
+
+		types['tween'] = macro:pony.time.Tween;
 
 		if (cl.superClass != null) {
 			var submeta: Metadata = cl.superClass.t.get().meta.get();
@@ -99,18 +104,19 @@ class XmlUiBuilder {
 					expr: EObjectDecl([ for (k in filters.keys()) { field: k, expr: mapToOExprObject(filters[k]) } ]),
 					pos: Context.currentPos()
 				};
-
-				var exprs: Array<Expr> = [
-					macro createFilters($obj),
-					macro return ${genExpr(xml, style)}
-				];
-
+				toConsructor = [];
 				fields.push({
 					name: '_createUI',
-					kind: FFun({args: [], ret: null, expr: macro $b{exprs}}),
+					kind: FFun({args: [], ret: null, expr: macro {
+						createFilters($obj);
+						var root = ${genExpr(xml, style)};
+						$a{toConsructor};
+						return root;
+					}}),
 					pos: Context.currentPos(),
 					access: [AOverride, APrivate]
 				});
+				toConsructor = [];
 				var pathes: Array<String> = [];
 				getPathes(pathes, xml, style);
 				var pts: Array<String> = [];
@@ -223,10 +229,34 @@ class XmlUiBuilder {
 		if (attrs.exists('src')) attrs['src'] = joinPathA(path, attrs['src']);
 
 		var content: Array<Expr> = [
-			for (x in xml.elements) genExpr(x, style, prefix + (xml.has.id ? xml.att.id + '_' : ''), path, repeat)
+			for (x in xml.elements) {
+				var e: Null<Expr> = genExpr(x, style, prefix + (xml.has.id ? xml.att.id + '_' : ''), path, repeat);
+				if (e != null) e;
+			}
 		];
 		var textContent: String = content.length == 0 && xml.x.firstChild() != null ? xml.innerData : '';
 		var obj: Expr = { expr: EObjectDecl([for (k in attrs.keys()) {field: k, expr: macro $v{attrs[k]}}]), pos: Context.currentPos() };
+
+		if (name == 'tween') {
+			if (!xml.has.id) throw 'Not have id';
+			if (inRepeat) throw 'Repeat not supported for tween';
+			var id: String = prefix + xml.att.id;
+			toConsructor.push(macro {
+				$i{id} = new pony.time.Tween(
+					$v{xml.has.type ? xml.att.type : 'linear'},
+					$v{xml.has.time ? xml.att.time : '1s'},
+					$v{xml.isTrue('invert')},
+					$v{xml.isTrue('loop')},
+					$v{xml.isTrue('pingpong')},
+					$v{xml.isFalse('fixedTime')}
+				);
+				$i{id}.onUpdate << function(value: Float): Void {
+					var d = tweens[$v{id}];
+					if (d != null) for (e in d) (e.startPos + e.endPos * value).setPosition(e.target);
+				}
+			});
+			return null;
+		}
 
 		var expr: Expr = !inRepeat ? macro createUIElement($v{name}, $obj, $a{content}, $v{textContent}) :
 			macro { name: $v{name}, attrs: $obj, content: ($a{content}: Array<Dynamic>), textContent: textContent };

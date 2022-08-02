@@ -658,7 +658,7 @@ class MapTools {
 			map[key] = [value];
 			return true;
 		} else {
-			map[key].push(value);
+			@:nullSafety(Off) map[key].push(value);
 			return false;
 		}
 	}

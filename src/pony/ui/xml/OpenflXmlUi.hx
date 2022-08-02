@@ -41,6 +41,7 @@ class OpenflXmlUi extends Sprite implements HasAbstract {
 
 	private var FILTERS:Map<String, BitmapFilter> = new Map();
 	private var SCALE:Float = 1;
+	private var tweens: TweenMap<Dynamic> = [];
 
 	public function createUIElement(name:String, attrs:Dynamic<String>, content:Array<Dynamic>, textContent: String):Dynamic {
 		var obj : DisplayObject =

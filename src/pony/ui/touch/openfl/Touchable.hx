@@ -27,6 +27,8 @@ class Touchable extends TouchableBase {
 	@:extern private static inline function get_touchSupport(): Bool {
 		#if touchsim
 		return true;
+		#elseif notouch
+		return false;
 		#else
 		return Multitouch.supportsTouchEvents;
 		#end
