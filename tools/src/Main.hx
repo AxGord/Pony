@@ -36,7 +36,7 @@ class Main {
 	}
 
 	static function trySubProjects(args: Array<String>): Bool {
-		if (args.indexOf('all') != -1) {
+		if (args[0] != 'haxelib' && args.indexOf('all') != -1) {
 			runSubProjects(args);
 			return true;
 		} else {

@@ -6,20 +6,27 @@ import pony.text.TextTools;
 import types.BAConfig;
 import types.BASection;
 
+using StringTools;
+using pony.text.XmlTools;
+
 typedef ElectronConfig = {
 	> BAConfig,
 	path: String,
-	mac: Bool,
-	win: Bool,
-	ia32: Bool,
-	linux: Bool,
-	armv7l: Bool,
-	arm64: Bool,
 	pack: Bool,
-	config: String
+	config: Null<String>,
+	name: Null<String>,
+	version: Null<String>,
+	author: Null<String>,
+	description: Null<String>,
+	artifactName: Null<String>,
+	productName: Null<String>,
+	copyright: Null<String>,
+	category: Null<String>,
+	os: Array<String>,
+	arch: Array<String>
 }
 
-class Electron extends CfgModule<ElectronConfig> {
+@:nullSafety(Strict) class Electron extends CfgModule<ElectronConfig> {
 
 	private static inline var PRIORITY: Int = 0;
 
@@ -35,38 +42,79 @@ class Electron extends CfgModule<ElectronConfig> {
 			section: BASection.Electron,
 			allowCfg: true,
 			path: 'bin/',
-			mac: false,
-			win: false,
-			ia32: false,
-			linux: false,
 			pack: false,
-			armv7l: false,
-			arm64: false,
 			cordova: false,
-			config: null
+			config: null,
+			name: null,
+			version: null,
+			author: null,
+			description: null,
+			artifactName: null,
+			productName: null,
+			copyright: null,
+			category: null,
+			os: [],
+			arch: []
 		}, configHandler);
 	}
 
 	override private function runNode(cfg: ElectronConfig): Void {
-		if (cfg.mac || cfg.win || cfg.linux) {
+		if (cfg.os.length > 0) {
 			var cwd: Cwd = new Cwd(cfg.path);
 			cwd.sw();
 			var args: Array<String> = ['electron-builder'];
-			if (cfg.mac && cfg.win && cfg.linux) {
-				args.push('-mwl');
-			} else {
-				if (cfg.linux) {
-					args.push('--linux');
+
+			if (cfg.name != null) {
+				args.push('-c.extraMetadata.name');
+				@:nullSafety(Off) args.push(cfg.name);
+			}
+
+			if (cfg.version != null) {
+				args.push('-c.extraMetadata.version');
+				@:nullSafety(Off) args.push(cfg.version);
+			}
+
+			if (cfg.author != null) {
+				args.push('-c.extraMetadata.author');
+				@:nullSafety(Off) args.push(cfg.author);
+			}
+
+			if (cfg.description != null) {
+				args.push('-c.extraMetadata.description');
+				@:nullSafety(Off) args.push(cfg.description);
+			}
+
+			if (cfg.productName != null) {
+				args.push('-c.productName');
+				@:nullSafety(Off) args.push(cfg.productName);
+			}
+
+			if (cfg.copyright != null) {
+				args.push('-c.copyright');
+				@:nullSafety(Off) args.push(cfg.copyright);
+			}
+
+			var linux: Bool = false;
+
+			for (os in cfg.os) {
+				args.push((os.length > 1 ? '-' : '') + '-$os');
+				if ((os == 'l' || os == 'linux')) {
+					linux = true;
 					if (cfg.pack) args.push('appImage');
 				}
-				if (cfg.mac) args.push('--mac');
-				if (cfg.win) {
-					args.push('--win');
-				}
-				if (cfg.armv7l) args.push('--armv7l');
-				if (cfg.arm64) args.push('--arm64');
-				if (cfg.ia32) args.push('--ia32');
 			}
+
+			if (linux && cfg.category != null) {
+				args.push('-c.linux.category');
+				@:nullSafety(Off) args.push(cfg.category);
+			}
+
+			if (cfg.artifactName != null) {
+				args.push('-c.artifactName');
+				@:nullSafety(Off) args.push(cfg.artifactName + (linux && cfg.pack ? '.AppImage' : ''));
+			}
+
+			for (arch in cfg.arch) args.push('--$arch');
 			if (!cfg.pack) args.push('--dir');
 
 			if (cfg.config != null) {
@@ -76,37 +124,72 @@ class Electron extends CfgModule<ElectronConfig> {
 
 			Utils.command('npx', args);
 			cwd.sw();
+		} else {
+			log('OS not set, skip');
 		}
 	}
 
 }
 
 private class ElectronReader extends BAReader<ElectronConfig> {
+	private static var SUPPORTED_OS: Array<String> = ['m', 'mac', 'macos', 'l', 'linux', 'w', 'win', 'windows'];
+	private static var SUPPORTED_ARCH: Array<String> = ['x64', 'ia32', 'armv7l', 'arm64', 'universal'];
 
 	override private function clean(): Void {
 		cfg.path = 'bin/';
-		cfg.mac = false;
-		cfg.win = false;
-		cfg.ia32 = false;
-		cfg.linux = false;
-		cfg.armv7l = false;
-		cfg.arm64 = false;
 		cfg.pack = false;
 		cfg.config = null;
+		cfg.name = null;
+		cfg.version = null;
+		cfg.author = null;
+		cfg.description = null;
+		cfg.artifactName = null;
+		cfg.productName = null;
+		cfg.copyright = null;
+		cfg.category = null;
+		cfg.os = [];
+		cfg.arch = [];
 	}
 
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
 			case 'path': cfg.path = val;
-			case 'mac': cfg.mac = TextTools.isTrue(val);
-			case 'win': cfg.win = TextTools.isTrue(val);
-			case 'ia32': cfg.ia32 = TextTools.isTrue(val);
-			case 'linux': cfg.linux = TextTools.isTrue(val);
-			case 'armv7l': cfg.armv7l = TextTools.isTrue(val);
-			case 'arm64': cfg.arm64 = TextTools.isTrue(val);
 			case 'pack': cfg.pack = TextTools.isTrue(val);
-			case 'config': cfg.config = normalize(val);
 			case _:
+		}
+	}
+
+	override private function readNode(xml: Fast): Void {
+		switch xml.name {
+			case 'name':
+				var name: Null<String> = normalizeWithNull(xml.innerData);
+				if (name != null) {
+					if (xml.isTrue('rmspace')) name = name.replace(' ', '');
+					if (xml.has.replaceSpace) name = name.replace(' ', xml.att.replaceSpace);
+				}
+				cfg.name = name;
+			case 'version': cfg.version = normalizeWithNull(xml.innerData);
+			case 'author': cfg.author = normalizeWithNull(xml.innerData);
+			case 'description': cfg.description = normalizeWithNull(xml.innerData);
+			case 'artifactName': cfg.artifactName = normalizeWithNull(xml.innerData);
+			case 'productName': cfg.productName = normalizeWithNull(xml.innerData);
+			case 'copyright': cfg.copyright = normalizeWithNull(xml.innerData);
+			case 'category': cfg.category = normalizeWithNull(xml.innerData);
+			case 'config': cfg.config = normalizeWithNull(xml.innerData);
+			case 'os':
+				var os: Null<String> = normalizeWithNull(xml.innerData);
+				if (os != null) {
+					if (SUPPORTED_OS.indexOf(os) == -1) Utils.error('Unsupported OS');
+					cfg.os.push(os);
+				}
+			case 'arch':
+				var arch: Null<String> = normalizeWithNull(xml.innerData);
+				if (arch != null) {
+					if (SUPPORTED_ARCH.indexOf(arch) == -1) Utils.error('Unsupported arch');
+					cfg.arch.push(arch);
+				}
+			case _:
+				super.readNode(xml);
 		}
 	}
 

@@ -2,6 +2,8 @@ package pony.text;
 
 import pony.Fast;
 
+using StringTools;
+
 typedef BaseConfig = {
 	app: String,
 	debug: Bool,
@@ -60,7 +62,15 @@ typedef BaseConfig = {
 		if (locAllowEnd && allowEnd) end();
 	}
 
-	private function normalize(s: String): String return StringTools.trim(s);
+	private function normalize(s: String): String {
+		var v: Null<String> = normalizeWithNull(s);
+		return v != null ? v.trim() : s.trim();
+	}
+
+	private function normalizeWithNull(s: String): Null<String> {
+		s = s.trim();
+		return s.startsWith('$') ? @:nullSafety(Off) Sys.getEnv(s.substr(1)) : s;
+	}
 
 	private function copyCfg(): T return pony.Tools.clone(cfg);
 

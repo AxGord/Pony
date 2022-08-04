@@ -27,8 +27,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "XML UI tweens. Heaps simple button animation. Touch fixes.",
-"version": "1.9.0",
+"releasenote": "Env vars support for all params in pony.xml. Npm package.json generator. Upgrade electron.",
+"version": "1.9.1",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }
