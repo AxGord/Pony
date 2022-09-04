@@ -1,5 +1,6 @@
 package pony.ui.xml;
 
+import hxd.Cursor;
 import h2d.Drawable;
 import h2d.Font;
 import h2d.Graphics;
@@ -229,13 +230,24 @@ using pony.text.TextTools;
 			#end
 				addFilters(cast obj, attrs);
 		}
-		if (attrs.interactive.isTrue()) {
-			#if (haxe_ver >= 4.10)
-			if (Std.isOfType(obj, Node))
-			#else
-			if (Std.is(obj, Node))
-			#end
-				cast(obj, Node).makeInteractive();
+		if (attrs.interactive != null) {
+			if (attrs.interactive.isTrue()) {
+				#if (haxe_ver >= 4.10)
+				if (Std.isOfType(obj, Node))
+				#else
+				if (Std.is(obj, Node))
+				#end
+					cast(obj, Node).makeInteractive();
+			} else {
+				try {
+					#if (haxe_ver >= 4.10)
+					if (Std.isOfType(obj, Node))
+					#else
+					if (Std.is(obj, Node))
+					#end
+						cast(obj, Node).makeInteractive(Cursor.createByName(attrs.interactive));
+				} catch (e: Dynamic) {}
+			}
 		}
 		if (attrs.tween != null) {
 			var a: Array<String> = attrs.tween.trim().split(' ');
@@ -328,11 +340,25 @@ using pony.text.TextTools;
 
 	@:extern private inline function createTextInput(attrs: Dynamic<String>, content: String): Object {
 		var t: ExtendedTextInput = createTextBase(new ExtendedTextInput(getFont(attrs)), attrs, content);
+		t.multiline = attrs.multiline.isTrue();
+		t.lockFocus = attrs.lockFocus.isTrue();
 		t.transform = attrs.transform;
+		if (attrs.maxLines != null) {
+			var v: Null<Int> = Std.parseInt(attrs.maxLines);
+			if (v != null) t.maxLines = v;
+		}
 		if (attrs.onlyEn.isTrue()) t.onlyEn = true;
 		if (attrs.inputCursor != null) {
-			var a: Array<Null<Int>> = attrs.inputCursor.trim().split(' ').map(Std.parseInt);
-			@:nullSafety(Off) t.setCursorParams(a[0] != null ? a[0] : t.cursorTile.dy, a[1] != null ? a[1] : 0);
+			var a: Array<String> = attrs.inputCursor.trim().split(' ');
+			var color: Null<UColor> = null;
+			var ia: Array<Null<Int>> = [];
+			for (e in a) {
+				if (e.startsWith('#'))
+					color = e;
+				else
+					ia.push(Std.parseInt(e));
+			}
+			@:nullSafety(Off) t.setCursorParams(ia[0] != null ? ia[0] : t.cursorTile.dy, ia[1] != null ? ia[1] : 0, color);
 		}
 		if (attrs.maxChars != null) @:nullSafety(Off) t.maxChars = Std.parseInt(attrs.maxChars);
 		return t;

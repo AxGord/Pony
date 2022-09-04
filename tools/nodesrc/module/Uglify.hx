@@ -49,7 +49,7 @@ import sys.io.File;
 			patchMapFile(lastFile + MAP_EXT, 1 + cfg.sourcemap.offset);
 		} else {
 			var inputContent: Dynamic<String> = {};
-			for (f in cfg.input) @:nullSafety(Off)  Reflect.setField(inputContent, f.split('/').pop(), File.getContent(f));
+			for (f in cfg.input) @:nullSafety(Off) Reflect.setField(inputContent, f.split('/').pop(), File.getContent(f));
 
 			var r = NPM.uglify_js.minify(inputContent, {
 				toplevel: true,

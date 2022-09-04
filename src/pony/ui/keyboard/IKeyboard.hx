@@ -12,6 +12,7 @@ interface IKeyboard {
 	var preventDefault: Bool;
 	var down(get, never): Signal1<Key>;
 	var up(get, never): Signal1<Key>;
+	var input(get, never): Signal1<UInt>;
 	function enable(): Void;
 	function disable(): Void;
 

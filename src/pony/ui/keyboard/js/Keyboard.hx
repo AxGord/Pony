@@ -18,6 +18,7 @@ class Keyboard implements IKeyboard implements HasSignal {
 
 	@:auto public var down:Signal1<Key>;
 	@:auto public var up:Signal1<Key>;
+	@:auto public var input:Signal1<UInt>;
 
 	public var preventDefault: Bool = true;
 
@@ -35,6 +36,7 @@ class Keyboard implements IKeyboard implements HasSignal {
 
 	private function keyDownHandler(event: KeyboardEvent): Void {
 		eDown.dispatch(pony.ui.keyboard.Keyboard.map.get(event.keyCode));
+		if (event.key.length == 1) eInput.dispatch(event.key.charCodeAt(0));
 		if (preventDefault) event.preventDefault();
 	}
 

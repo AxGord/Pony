@@ -44,6 +44,7 @@ import pony.magic.HasSignal;
 	public var port(default, null): Int;
 	public var isWithLength: Bool;
 	public var tryCount: Int;
+	public var sendTimeout: Int = -1;
 
 	private var reconnectDelay: Int = -1;
 	private var maxSize: UInt;

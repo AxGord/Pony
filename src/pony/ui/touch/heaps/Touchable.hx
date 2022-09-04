@@ -67,7 +67,7 @@ class Touchable extends TouchableBase {
 	public var propagateDown: Bool = false;
 	public var propagateUp: Bool = false;
 	public var propagateWheel: Bool = false;
-	private var interactive: Interactive;
+	public var interactive(default, null): Interactive;
 	private var over: Bool = false;
 	private var outover: Bool = false;
 	private var _down: Null<Bool> = null;

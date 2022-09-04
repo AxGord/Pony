@@ -23,6 +23,8 @@ import pony.Logable;
  */
 @:final class NMain extends Logable {
 
+	private static inline var SEND_TIMEOUT: Int = 300;
+
 	private var client: SocketClient;
 	private var rpc: NProtocol;
 
@@ -33,6 +35,7 @@ import pony.Logable;
 		NPM.capture_console.startCapture(Node.process.stdout, log);
 		NPM.capture_console.startCapture(Node.process.stderr, log);
 		client = new SocketClient(port);
+		client.sendTimeout = SEND_TIMEOUT;
 		Node.process.on('uncaughtException', errorHandler);
 		client.onLog << eLog;
 		client.onError << eError;

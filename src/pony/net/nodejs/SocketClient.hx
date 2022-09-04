@@ -10,7 +10,6 @@ import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
 import pony.Queue;
 import pony.net.SocketClientBase;
-import pony.time.DeltaTime;
 
 /**
  * SocketClient
@@ -59,11 +58,19 @@ import pony.time.DeltaTime;
 		@:nullSafety(Off) socket.write(Buffer.hxFromBytes(b), sendNextAfterTimeout);
 	}
 
-	#if nodedt
-	private function sendNextAfterTimeout(): Void DeltaTime.skipUpdate(q.next);
-	#else
-	private function sendNextAfterTimeout(): Void Node.setTimeout(q.next, SEND_TIMEOUT);
-	#end
+	private function sendNextAfterTimeout(): Void {
+		if (sendTimeout == 0) {
+			q.next();
+		} else if (sendTimeout > 0) {
+			Node.setTimeout(q.next, sendTimeout);
+		} else {
+			#if nodedt
+			pony.time.DeltaTime.skipUpdate(q.next);
+			#else
+			Node.setTimeout(q.next, SEND_TIMEOUT);
+			#end
+		}
+	}
 
 	private function dataHandler(d: Buffer): Void joinData(new BytesInput(Bytes.ofData(d.buffer)));
 

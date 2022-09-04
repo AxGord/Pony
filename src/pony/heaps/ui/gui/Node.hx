@@ -38,9 +38,9 @@ class Node extends Object implements HasSignal implements HasLink implements INo
 		this.border = border == null ? 0 : border;
 	}
 
-	public function makeInteractive(): Void {
+	public function makeInteractive(?cursor: Cursor): Void {
 		interactive = new Interactive(w, h, this);
-		interactive.cursor = null;
+		interactive.cursor = cursor;
 		changeWh << setInteractiveSize;
 	}
 
@@ -110,6 +110,5 @@ class Node extends Object implements HasSignal implements HasLink implements INo
 	public function destroyIWH(): Void destroy();
 	public inline function show(): Void visible = true;
 	public inline function hide(): Void visible = false;
-
 
 }

@@ -16,6 +16,7 @@ class Keyboard implements IKeyboard implements HasSignal {
 
 	@:auto public var down:Signal1<Key>;
 	@:auto public var up:Signal1<Key>;
+	@:auto public var input:Signal1<UInt>;
 
 	public var preventDefault: Bool = false;
 
@@ -31,6 +32,7 @@ class Keyboard implements IKeyboard implements HasSignal {
 
 	private function eventHandler(event : hxd.Event): Void {
 		switch event.kind {
+			case ETextInput: eInput.dispatch(event.charCode);
 			case EKeyDown: eDown.dispatch(pony.ui.keyboard.Keyboard.map.get(event.keyCode));
 			case EKeyUp: eUp.dispatch(pony.ui.keyboard.Keyboard.map.get(event.keyCode));
 			case _:
