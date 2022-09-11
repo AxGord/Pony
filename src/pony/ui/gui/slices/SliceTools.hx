@@ -2,6 +2,8 @@ package pony.ui.gui.slices;
 
 using StringTools;
 
+using pony.text.TextTools;
+
 /**
  * SliceTools
  * @author AxGord <axgord@gmail.com>
@@ -47,6 +49,8 @@ class SliceTools {
 			SliceData.Hor6();
 		else if (check(name, 9))
 			SliceData.Nine();
+		else if (checkAnim(name))
+			parseAnimSpeed(name);
 		else
 			SliceData.Not();
 	}
@@ -89,8 +93,14 @@ class SliceTools {
 			remove(name, 6, 'h');
 		else if (check(name, 9))
 			remove(name, 9);
+		else if (checkAnim(name))
+			removeAnim(name);
 		else
 			name;
+	}
+
+	@:extern private static inline function checkAnim(name: String): Bool {
+		return name.indexOf('{anim') != -1;
 	}
 
 	@:extern private static inline function check(name: String, n: Int, letter: String = ''): Bool {
@@ -108,6 +118,21 @@ class SliceTools {
 
 	@:extern private static inline function remove(name: String, n: Int, letter: String = ''): String {
 		return name.substr(0, index(name, n, letter));
+	}
+
+	@:extern private static inline function removeAnim(name: String): String {
+		var p: SPair<String> = name.firstSplit('{anim');
+		return p.a + p.b.allAfter('}');
+	}
+
+	@:extern private static inline function parseAnimSpeed(name: String): SliceData {
+		var r: Null<String> = name.extract('{anim', '}');
+		if (r != null) {
+			var s: SPair<String> = r.firstSplit(',');
+			return SliceData.Anim(Std.parseFloat(s.a), s.b != null ? s.b : null);
+		} else {
+			return SliceData.Anim();
+		}
 	}
 
 }

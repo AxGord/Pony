@@ -27,8 +27,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Upgrade heaps text input. Keyboard input. Interactive access. Xml ui cursor for interactive. Net send timeout for nodejs tools.",
-"version": "1.9.2",
+"releasenote": "Heaps ui layout bugfix, animation support and upgrade extended text input. TextTools extract.",
+"version": "1.9.3",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }

@@ -19,28 +19,13 @@ class Slice {
 	): Node {
 		if (src == null) {
 			return switch tiles.length {
+				case 0: throw 'Tiles not found';
 				case 1 if (repeat):
 					new NodeRepeat(tiles[0], parent);
 				case 1:
 					new NodeBitmap(tiles[0], border, parent);
-				case 2 if (vert):
-					new Slice2V(tiles, repeat, parent);
-				case 2:
-					new Slice2H(tiles, repeat, parent);
-				case 3 if (vert):
-					new Slice3V(tiles, repeat, parent);
-				case 3:
-					new Slice3H(tiles, repeat, parent);
-				case 4:
-					new Slice4(tiles, repeat, parent);
-				case 6 if (vert):
-					new Slice6V(tiles, repeat, parent);
-				case 6:
-					new Slice6H(tiles, repeat, parent);
-				case 9:
-					new Slice9(tiles, repeat, parent);
 				case _:
-					throw 'Not supported';
+					new NodeAnim(tiles, parent);
 			}
 		} else {
 			return switch SliceTools.getType(src) {
@@ -64,6 +49,8 @@ class Slice {
 					new Slice6V(tiles, repeat, parent);
 				case Nine():
 					new Slice9(tiles, repeat, parent);
+				case Anim(speed, delay):
+					new NodeAnim(tiles, speed, delay, parent);
 				case _:
 					throw 'Not supported';
 

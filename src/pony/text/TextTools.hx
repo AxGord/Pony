@@ -70,7 +70,7 @@ import haxe.Serializer;
 		return index == -1 ? null : str.substr(index + delimiter.length);
 	}
 
-	public static function allAfter(str: String, delimiter: String, ?startIndex: Int): Null<String> {
+	public static function allAfter(str: String, delimiter: String, ?startIndex: Int): String {
 		var r: Null<String> = allAfterWithNull(str, delimiter, startIndex);
 		return r != null ? r : str;
 	}
@@ -103,6 +103,11 @@ import haxe.Serializer;
 	public static function allBeforeLast(str: String, delimiter: String, ?startIndex: Int): String {
 		var r: Null<String> = allBeforeLastWithNull(str, delimiter, startIndex);
 		return r != null ? r : str;
+	}
+
+	public static inline function extract(str: String, begin: String, end: String): Null<String> {
+		var after: Null<String> = allAfterWithNull(str, begin);
+		return after != null ? allBeforeWithNull(after, end) : null;
 	}
 
 	public static function onlyLetters(str: String, lang: String = 'en'): String {

@@ -8,6 +8,7 @@ import h2d.Tile;
 
 import hxd.Event;
 import hxd.Key;
+import hxd.System;
 
 import pony.color.UColor;
 import pony.geom.IWH;
@@ -107,18 +108,51 @@ import pony.ui.keyboard.Keyboard;
 		handleKey(event);
 	}
 
+	private inline function writeSelectedToClipboard(): Void {
+		writeToClipboard(getSelectedText());
+	}
+
+	private function writeText(t: String): Void {
+		if (t != null && t.length > 0) {
+			beforeChange();
+			if (selectionRange != null) cutSelection();
+			var before: String = text;
+			text = text.substr(0, cursorIndex) + t + text.substr(cursorIndex);
+			cursorIndex += t.length;
+			checkChangedText(before, true);
+		}
+	}
+
+	private inline function doUndo(): Void {
+		nextChar = null;
+		if (undo.length > 0 && canEdit) {
+			redo.push(curHistoryState());
+			@:nullSafety(Off) setState(undo.pop());
+			onChange();
+		}
+	}
+
+	private inline function doRedo(): Void {
+		nextChar = null;
+		if (redo.length > 0 && canEdit) {
+			undo.push(curHistoryState());
+			@:nullSafety(Off) setState(redo.pop());
+			onChange();
+		}
+	}
+
 	override private function handleKey(e: Event): Void {
 		if (!canEdit) {
 			nextChar = null;
 			super.handleKey(e);
-		} else switch e.keyCode {
-			case #if sys 0 #else null #end: nextChar = String.fromCharCode(e.charCode);
-			case Key.UP:
+		} else switch [e.keyCode, isMod()] {
+			case [#if sys 0 #else null #end, _]: nextChar = String.fromCharCode(e.charCode);
+			case [Key.UP, _]:
 				var oldIndex: Int = cursorIndex;
 				var index: Int = text.lastIndexOf('\n', cursorIndex - 1);
 				cursorIndex = index != -1 ? MathTools.cmin(text.lastIndexOf('\n', index - 1) + (cursorIndex - index), index) : 0;
 				updateSelection(oldIndex);
-			case Key.DOWN:
+			case [Key.DOWN, _]:
 				var oldIndex: Int = cursorIndex;
 				var index: Int = text.indexOf('\n', cursorIndex);
 				if (index != -1) {
@@ -130,6 +164,38 @@ import pony.ui.keyboard.Keyboard;
 					cursorIndex = text.length;
 				}
 				updateSelection(oldIndex);
+			case [Key.Z, true]:
+				if (Key.isDown(Key.SHIFT))
+					doRedo();
+				else
+					doUndo();
+			case [Key.Y, true]:
+				doRedo();
+			case [Key.A, true]:
+				nextChar = null;
+				if (text != '') {
+					cursorIndex = text.length;
+					selectionRange = {start: 0, length: text.length};
+					selectionSize = 0;
+				}
+			case [Key.C, true]:
+				nextChar = null;
+				if (text != '' && selectionRange != null) writeSelectedToClipboard();
+			case [Key.X, true]:
+				nextChar = null;
+				if (canEdit && text != '' && selectionRange != null) {
+					writeSelectedToClipboard();
+					beforeChange();
+					cutSelection();
+					onChange();
+				}
+			case [Key.V, true]:
+				nextChar = null;
+				if (canEdit) readFromClipboard(writeText);
+			case [_, true]:
+				nextChar = null;
+			case _ if (Key.isDown(Key.CTRL)):
+				nextChar = null;
 			case _:
 				var textBeforeChange: String = text;
 				var changed: Bool = false;
@@ -156,19 +222,23 @@ import pony.ui.keyboard.Keyboard;
 				}
 				nextChar = null;
 				super.handleKey(e);
-				if (text.length > textBeforeChange.length) {
-					if (
-						(maxChars > 0 && text.length > maxChars) ||
-						(maxLines > 0 && getLinesCount() > maxLines) ||
-						(maxWidth != null && textWidth > maxWidth)
-					) {
-						cursorIndex--;
-						text = textBeforeChange;
-						changed = false;
-					}
-				}
-				if (changed) onChange();
+				checkChangedText(textBeforeChange, changed);
 		}
+	}
+
+	private function checkChangedText(textBeforeChange: String, changed: Bool): Void {
+		if (text.length > textBeforeChange.length) {
+			if (
+				(maxChars > 0 && text.length > maxChars) ||
+				(maxLines > 0 && getLinesCount() > maxLines) ||
+				(maxWidth != null && textWidth > maxWidth)
+			) {
+				cursorIndex--;
+				text = textBeforeChange;
+				changed = false;
+			}
+		}
+		if (changed) onChange();
 	}
 
 	private function updateSelection(oldIndex: Int): Void {
@@ -213,9 +283,68 @@ import pony.ui.keyboard.Keyboard;
 		}
 	}
 
-	override function sync(ctx: RenderContext): Void {
+	override private function sync(ctx: RenderContext): Void {
 		super.sync(ctx);
 		if (maxLines > 0) interactive.height = font.lineHeight * maxLines;
+	}
+
+	override private function getCursorYOffset(): Float {
+		var lines: Array<String> = getAllLines();
+		var currIndex: UInt = 0;
+		var lineNum: UInt = 0;
+		for (i in 0...lines.length) {
+			currIndex += lines[i].length;
+			if (cursorIndex < currIndex) {
+				lineNum = i;
+				break;
+			}
+		}
+		return lineNum * (font.lineHeight + lineSpacing);
+	}
+
+	@:access(h2d.Tile)
+	override private function draw(ctx: RenderContext): Void {
+		if (selectionRange != null) {
+			var lines: Array<String> = getAllLines();
+			var lineOffset: Int = 0;
+
+			for (i in 0...lines.length) {
+				var line: String = lines[i];
+				var selEnd: UInt = line.length;
+				if (selectionRange.start > lineOffset + line.length || selectionRange.start + selectionRange.length < lineOffset) {
+					lineOffset += line.length;
+					continue;
+				}
+
+				var selStart: Int = Math.floor(Math.max(0, selectionRange.start - lineOffset));
+				var selEnd: Int = Math.floor(Math.min(
+					line.length - selStart, selectionRange.length + selectionRange.start - lineOffset - selStart
+				));
+
+				selectionPos = calcTextWidth(line.substr(0, selStart));
+				selectionSize = calcTextWidth(line.substr(selStart, selEnd));
+				if (selectionRange.start + selectionRange.length == text.length) selectionSize += cursorTile.width; // last pixel
+
+				selectionTile.dx += selectionPos;
+				selectionTile.dy += i * (font.lineHeight + lineSpacing);
+				selectionTile.width += selectionSize;
+				emitTile(ctx, selectionTile);
+				selectionTile.dx -= selectionPos;
+				selectionTile.dy -= i * (font.lineHeight + lineSpacing);
+				selectionTile.width -= selectionSize;
+				lineOffset += line.length;
+			}
+		}
+		var range: {start:Int, length:Int} = selectionRange;
+		@:nullSafety(Off) selectionRange = null;
+		super.draw(ctx);
+		selectionRange = range;
+	}
+
+	public function clear(): Void {
+		undo.resize(0);
+		redo.resize(0);
+		text = '';
 	}
 
 	public function wait(cb: Void -> Void): Void cb();
@@ -223,7 +352,35 @@ import pony.ui.keyboard.Keyboard;
 
 	public function destroyIWH(): Void {
 		enabled = false;
+		clear();
 		remove();
 	}
+
+	private static inline function readFromClipboard(cb: String -> Void): Void {
+		#if js
+		try js.Browser.navigator.clipboard.readText().then(cb) catch (_: Dynamic) {}
+		#else
+		cb(System.getClipboardText());
+		#end
+	}
+
+	private static inline function writeToClipboard(s: String): Void {
+		#if js
+		try js.Browser.navigator.clipboard.writeText(s) catch (_: Dynamic) {}
+		#else
+		System.setClipboardText(s);
+		#end
+	}
+
+	private static inline function isMacMod(): Bool return Key.isDown(Key.LEFT_WINDOW_KEY) || Key.isDown(Key.RIGHT_WINDOW_KEY);
+	private static inline function isOtherMod(): Bool return Key.isDown(Key.CTRL);
+
+	#if js
+	private static inline function isMod(): Bool return pony.JsTools.os == Macos ? isMacMod() : isOtherMod();
+	#elseif mac
+	private static inline function isMod(): Bool return isMacMod();
+	#else
+	private static inline function isMod(): Bool return isOtherMod();
+	#end
 
 }

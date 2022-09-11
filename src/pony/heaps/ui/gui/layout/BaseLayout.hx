@@ -1,13 +1,15 @@
 package pony.heaps.ui.gui.layout;
 
-import h2d.RenderContext;
-import h2d.Object;
 import h2d.Mask;
+import h2d.Object;
+import h2d.RenderContext;
+import h2d.col.Bounds;
+
 import pony.geom.IWH;
 import pony.geom.Point;
-import pony.ui.gui.BaseLayoutCore;
 import pony.magic.HasLink;
 import pony.magic.HasSignal;
+import pony.ui.gui.BaseLayoutCore;
 
 /**
  * BaseLayout
@@ -72,8 +74,8 @@ class BaseLayout<T: BaseLayoutCore<Object>> extends Object implements IWH implem
 	public function wait(cb: Void -> Void): Void layout.wait(cb);
 
 	private function _getSize(o: Object): Point<Float> {
-		var b = o.getBounds();
-		return new Point(b.width / scaleX, b.height / scaleY);
+		var b: Bounds = o.getBounds(this);
+		return new Point(b.width, b.height);
 	}
 
 	private static function getSizeMod(o: Object, p: Point<Float>): Point<Float> {
