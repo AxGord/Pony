@@ -59,16 +59,17 @@
 		return false;
 	}
 
-	private function listInstall(c: String, a: Array<String>, l: Array<String>): Void {
+	private function listInstall(c: String, a: Array<String>, l: Array<String>, ?opt: Array<String>): Void {
+		if (opt == null) opt = [];
 		for (e in l) {
 			if (e.charAt(0) == '!') {
 				var args: Array<String> = a.concat(e.substr(1).split(' '));
 				if (Config.OS == TargetOS.Windows || Utils.isSuper)
-					cmd(c, args);
+					cmd(c, args.concat(opt));
 				else
-					cmd('sudo', [c].concat(args));
+					cmd('sudo', [c].concat(args).concat(opt));
 			} else {
-				cmd(c, a.concat(e.split(' ')));
+				cmd(c, a.concat(e.split(' ')).concat(opt));
 			}
 		}
 	}

@@ -2,6 +2,7 @@ version: "{build}"
 
 environment:
   global:
+    HAXELIB_NO_SSL: 1
     HAXELIB_ROOT: C:\projects\haxelib
 
 install:
