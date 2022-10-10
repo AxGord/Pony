@@ -27,8 +27,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Heaps ui layout bugfix, animation support and upgrade extended text input. TextTools extract.",
-"version": "1.9.3",
+"releasenote": "Destroy for logable. Geom center bugfix. Show time in html log. Text allAfter type fix.",
+"version": "1.9.4",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }
