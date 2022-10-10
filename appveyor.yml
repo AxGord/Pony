@@ -2,7 +2,6 @@ version: "{build}"
 
 environment:
   global:
-    HAXELIB_NO_SSL: 1
     HAXELIB_ROOT: C:\projects\haxelib
 
 install:
@@ -20,10 +19,10 @@ install:
   #- haxe flash/install.hxml
   # Install project dependencies
   # `> log.txt || type log.txt` is for muting the output unless there is an error
-  - haxelib install munit || type log.txt && cmd /C exit 1
-  - haxelib install hamcrest || type log.txt && cmd /C exit 1
-  - haxelib install continuation || type log.txt && cmd /C exit 1
-  - haxelib install test-adapter
+  - haxelib install munit -R http://lib.haxe.org/ || type log.txt && cmd /C exit 1
+  - haxelib install hamcrest -R http://lib.haxe.org/ || type log.txt && cmd /C exit 1
+  - haxelib install continuation -R http://lib.haxe.org/ || type log.txt && cmd /C exit 1
+  - haxelib install test-adapter -R http://lib.haxe.org/
   - haxelib list
   - set PATH=%PATH%;C:\Program Files\AppVeyor\BuildAgent\
   - ps: $env:path
