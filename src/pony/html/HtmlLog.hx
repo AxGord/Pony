@@ -47,12 +47,14 @@ using StringTools;
 	public inline function print(message: String): Void if (container != null) logHandler(message, null);
 
 	private function logHandler(message: String, ?pos: PosInfos): Void {
+		pos = Logable.addTimeToPosInfosFileName(pos);
 		addToContainer(pos != null ?
 			'<p><span class="gray">${pos.fileName}:${pos.lineNumber}:</span> <span>$message</span></p>' :
 			'<p><span>$message</span></p>');
 	}
 
 	private function errorHandler(message: String, ?pos: PosInfos): Void {
+		pos = Logable.addTimeToPosInfosFileName(pos);
 		addToContainer(pos != null ?
 			'<p><span class="gray">${pos.fileName}:${pos.lineNumber}:</span> <span class="error">$message</span></p>' :
 			'<p><span class="error">$message</span></p>');

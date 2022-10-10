@@ -77,16 +77,16 @@ class Process extends pony.Logable implements pony.sys.IProcess implements pony.
 		}
 	}
 
-	public function destroy():Void {
+	override public function destroy():Void {
 		kill();
-		destroySignals();
+		super.destroy();
 		runCmd = null;
 	}
 
 	public static function stderr(v:String):Void {
 		js.Node.console.error(v);
 	}
-	
+
 	/*
 	public static function killAll():Void {
 		var pids = getPidsFile().split('\n').map(function(v:String):Int return Std.parseInt(v));

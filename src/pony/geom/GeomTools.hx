@@ -60,7 +60,7 @@ class GeomTools {
 		padding: Bool = true,
 		?align: Align
 	): Array<Point<Float>> {
-		align = align.defaultCenter;
+		align = align != null ? align.defaultCenter : Align.createDefaultCenter();
 		var cfun = if (align != null)  {
 			if (vert) switch align.horizontal {
 				case HAlign.Left: begin;

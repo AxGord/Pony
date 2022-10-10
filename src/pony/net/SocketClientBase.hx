@@ -213,24 +213,9 @@ import pony.magic.HasSignal;
 		}
 	}
 
-	public function destroy(): Void {
+	override public function destroy(): Void {
 		close();
-		eLostConnection.destroy();
-		@:nullSafety(Off) eLostConnection = null;
-		eReconnect.destroy();
-		@:nullSafety(Off) eReconnect = null;
-		eString.destroy();
-		@:nullSafety(Off) eString = null;
-		eData.destroy();
-		@:nullSafety(Off) eData = null;
-		eConnect.destroy();
-		@:nullSafety(Off) eConnect = null;
-		eOpen.destroy();
-		@:nullSafety(Off) eOpen = null;
-		eClose.destroy();
-		@:nullSafety(Off) eClose = null;
-		eDisconnect.destroy();
-		@:nullSafety(Off) eDisconnect = null;
+		super.destroy();
 	}
 
 	private inline function logBytes(msg: String, b: Bytes): Void {

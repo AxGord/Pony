@@ -41,8 +41,8 @@ class Keyboard implements Declarator implements HasSignal implements HasLink {
 		km = new pony.ui.keyboard.flash.Keyboard();
 		#elseif heaps
 		km = new pony.ui.keyboard.heaps.Keyboard();
-		#else
-		#error "Keyboard not supported for current target"
+		#elseif !(neko && munit)
+		#error 'Keyboard not supported for current target'
 		#end
 		autoEnableMode();
 	}

@@ -57,7 +57,7 @@ class SocketServerBase extends Logable {
 
 	/**
 	 * Sends a data to all the clients.
-	**/
+	 */
 	public function send(data: BytesOutput): Void {
 		var bs: Bytes = data.getBytes();
 		for (c in clients) {
@@ -69,7 +69,7 @@ class SocketServerBase extends Logable {
 
 	/**
 	 * Sends a data to all the clients except chosen one.
-	**/
+	 */
 	public function send2other(data: BytesOutput, exception: SocketClient): Void {
 		var bs: Bytes = data.getBytes();
 		for (c in clients) {
@@ -82,22 +82,10 @@ class SocketServerBase extends Logable {
 
 	/**
 	 * One should remember that a destroy function _must_ be called from a thread in which the server was created.
-	**/
-	public function destroy(): Void {
+	 */
+	override public function destroy(): Void {
 		opened = false;
-		eClose.dispatch();
-		eString.destroy();
-		eString = null;
-		eData.destroy();
-		eData = null;
-		eConnect.destroy();
-		eConnect = null;
-		eOpen.destroy();
-		eOpen = null;
-		eClose.destroy();
-		eClose = null;
-		eDisconnect.destroy();
-		eDisconnect = null;
+		super.destroy();
 	}
 
 }

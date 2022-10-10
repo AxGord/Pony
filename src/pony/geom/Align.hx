@@ -13,6 +13,8 @@ abstract Align(AlignType) from AlignType to AlignType {
 
 	@:extern public inline function new(v: AlignType) this = v;
 
+	@:extern public static inline function createDefaultCenter(): Align return new Pair(VAlign.Middle, HAlign.Center);
+
 	@:from @:extern public static inline function fromV(v: VAlign): Align {
 		return new Pair(v, HAlign.Center);
 	}

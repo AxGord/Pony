@@ -28,6 +28,4 @@ import pony.magic.HasAbstract;
 		destroy();
 	}
 
-	public function destroy(): Void destroySignals();
-
 }

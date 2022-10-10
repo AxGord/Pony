@@ -48,7 +48,7 @@ using pony.Tools;
 	}
 
 	private inline function get_errorActive(): Bool {
-		#if disableLogs
+		#if disableErrors
 		return false;
 		#else
 		return eError != null && !eError.empty;
@@ -334,5 +334,17 @@ using pony.Tools;
 	}
 
 	public static inline function debugClearObjectsId(): Void l_debugObjects.resize(0);
+
+	public function destroy(): Void {
+		if (eLog != null) {
+			eLog.onTake.clear();
+			eLog.onLost.clear();
+		}
+		if (eError != null) {
+			eError.onTake.clear();
+			eError.onLost.clear();
+		}
+		destroySignals();
+	}
 
 }
