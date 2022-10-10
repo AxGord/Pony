@@ -22,7 +22,7 @@ install:
   # `> log.txt || type log.txt` is for muting the output unless there is an error
   - haxelib install munit -R http://lib.haxe.org/ || type log.txt && cmd /C exit 1
   - haxelib install hamcrest -R http://lib.haxe.org/ || type log.txt && cmd /C exit 1
-  - haxelib install continuation -R http://lib.haxe.org/ || type log.txt && cmd /C exit 1
+  - haxelib git continuation https://github.com/haxe-continuation/haxe-continuation.git 52cd6aada4b79711c32b4666f2807b4fd41db787 || type log.txt && cmd /C exit 1
   - haxelib install test-adapter -R http://lib.haxe.org/
   - haxelib list
   - set PATH=%PATH%;C:\Program Files\AppVeyor\BuildAgent\
