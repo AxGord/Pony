@@ -269,7 +269,14 @@ class Tools {
 		return new BytesInput(out.getBytes());
 	}
 
-	macro public static function usedLibs(): Expr {
+	macro public static function usedLibs(): Expr return macro $v{getUsedLibs()};
+
+	macro public static function usedLibsDirs(): Expr {
+		return macro $v{[ for (path in getUsedLibs()) for (dir in sys.FileSystem.readDirectory(path)) dir => path ]};
+	}
+
+	#if macro
+	private static function getUsedLibs(): Map<String, String> {
 		var d: Map<String, String> = Context.getDefines();
 		var r: Map<String, String> = [];
 		for (k in d.keys()) {
@@ -282,8 +289,9 @@ class Tools {
 				prev = line;
 			}
 		}
-		return macro $v{r};
+		return r;
 	}
+	#end
 
 	macro public static function currentFile(): Expr {
 		var f: String = Context.getPosInfos(Context.currentPos()).file;

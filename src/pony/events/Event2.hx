@@ -126,6 +126,10 @@ abstract Event2<T1, T2>(Priority<Listener2<T1, T2>>) from Priority<Listener2<T1,
 	}
 
 	public inline function destroy(): Void {
-		if (this != null) this.destroy();
+		if (this != null) {
+			(this: Signal2<T1, T2>).clear();
+			this.destroy();
+		}
 	}
+
 }

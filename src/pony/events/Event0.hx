@@ -78,7 +78,10 @@ import pony.Priority;
 	}
 
 	public inline function destroy(): Void {
-		if (this != null) this.destroy();
+		if (this != null) {
+			(this: Signal0).clear();
+			this.destroy();
+		}
 	}
 
 }

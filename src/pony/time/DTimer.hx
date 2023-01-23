@@ -141,13 +141,13 @@ class DTimer implements HasSignal implements ITimer<DTimer> implements Declarato
 		return t;
 	}
 
-	public static inline function repeat(time: Time, f: Listener1 < DT >, ?dt: DT): DTimer {
+	public static inline function repeat(time: Time, f: Listener1<DT>, ?dt: DT): DTimer {
 		var t: DTimer = DTimer.createTimer(time, -1);
 		t.complete.add(f);
 		t.start(dt);
 		return t;
 	}
-	public static inline function fixedRepeat(time: Time, f: Listener1 < DT >, ?dt: DT): DTimer {
+	public static inline function fixedRepeat(time: Time, f: Listener1<DT>, ?dt: DT): DTimer {
 		var t: DTimer = DTimer.createFixedTimer(time, -1);
 		t.complete.add(f);
 		t.start(dt);

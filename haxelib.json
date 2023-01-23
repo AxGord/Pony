@@ -27,8 +27,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Destroy for logable. Geom center bugfix. Show time in html log. Text allAfter type fix.",
-"version": "1.9.4",
+"releasenote": "Signals and Logable bugfixes",
+"version": "1.9.5",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }

@@ -4,15 +4,17 @@ import haxe.Log;
 import haxe.PosInfos;
 import haxe.Timer;
 
-import pony.SPair;
 import pony.ILogable;
-import pony.time.DTimer;
-import pony.events.Signal2;
+import pony.SPair;
 import pony.events.Listener2;
+import pony.events.Signal2;
 import pony.magic.HasSignal;
+import pony.time.DTimer;
 
-using pony.text.TextTools;
+using Lambda;
+
 using pony.Tools;
+using pony.text.TextTools;
 
 /**
  * Logable
@@ -21,8 +23,11 @@ using pony.Tools;
 @:nullSafety(Strict) class Logable implements ILogable implements HasSignal {
 
 	private static inline var DLM: String = ' ';
+	private static inline var MS: String = ' ms';
+	private static inline var MS_LEN: UInt = 1000;
+	private static inline var FRACTION_TO_ROUND: UInt = 100;
 
-	@:nullSafety(Off) private static var l_usedLibs: Map<String, String>;
+	@:nullSafety(Off) private static var l_usedLibs: Map<String, String> = null;
 	private static var l_origTrace: Null<Dynamic -> ?PosInfos -> Void>;
 	private static var l_debugObjects: Array<{}> = [];
 
@@ -55,50 +60,34 @@ using pony.Tools;
 		#end
 	}
 
-	public inline function listenError(l: ILogable, ?id: String): Void {
+	public function listenError(l: ILogable, ?id: String): Void {
 		#if !disableErrors
 		onError; // init signal
-		if (id != null) {
-			var listener: Listener2<String, PosInfos> = function(s: String, p: PosInfos): Void error(id + DLM + s, p);
+		if (id == null && logPrefix == '') {
+			l.onError << eError;
+		} else {
+			var listener: Listener2<String, PosInfos> = id != null ? function(s: String, p: PosInfos): Void error(id + DLM + s, p) : error;
 			function listen(): Void l.onError << listener;
 			function unlisten(): Void l.onError >> listener;
 			if (!eError.empty) l.onError << listener;
 			eError.onTake << listen;
 			eError.onLost << unlisten;
-		} else {
-			if (logPrefix == '') {
-				l.onError << eError;
-			} else {
-				function listen(): Void l.onError << error;
-				function unlisten(): Void l.onError >> error;
-				if (!eError.empty) l.onError << error;
-				eError.onTake << listen;
-				eError.onLost << unlisten;
-			}
 		}
 		#end
 	}
 
-	public inline function listenLog(l: ILogable, ?id: String): Void {
+	public function listenLog(l: ILogable, ?id: String): Void {
 		#if !disableLogs
 		onLog; // init signal
-		if (id != null) {
-			var listener: Listener2<String, PosInfos> = function(s: String, p: PosInfos): Void log(id + DLM + s, p);
+		if (id == null && logPrefix == '') {
+			l.onLog << eLog;
+		} else {
+			var listener: Listener2<String, PosInfos> = id != null ? function(s: String, p: PosInfos): Void log(id + DLM + s, p) : log;
 			function listen(): Void l.onLog << listener;
 			function unlisten(): Void l.onLog >> listener;
 			if (!eLog.empty) l.onLog << listener;
 			eLog.onTake << listen;
 			eLog.onLost << unlisten;
-		} else {
-			if (logPrefix == '') {
-				l.onLog << eLog;
-			} else {
-				function listen(): Void l.onLog << log;
-				function unlisten(): Void l.onLog >> log;
-				if (!eLog.empty) l.onLog << log;
-				eLog.onTake << listen;
-				eLog.onLost << unlisten;
-			}
 		}
 		#end
 	}
@@ -140,11 +129,7 @@ using pony.Tools;
 
 	public inline function traceErrors(time: Bool = true, date: Bool = false): Void {
 		#if !disableErrors
-		#if (js && !nodejs)
-		onError << (date ? l_errorWithDate : time ? l_errorWithTime : l_errorLogTrace);
-		#else
-		onError << (date ? traceWithDate : time ? traceWithTime : Log.trace);
-		#end
+		onError << (date ? traceErrorWithDate : time ? traceErrorWithTime : traceError);
 		#end
 	}
 
@@ -164,21 +149,6 @@ using pony.Tools;
 		}
 	}
 
-	private function l_errorWithDate(v: String, ?p: PosInfos): Void {
-		if (p != null) v = '%c$v';
-		traceWithDate(v, l_pathErrorPosInfos(p));
-	}
-
-	private function l_errorWithTime(v: String, ?p: PosInfos): Void {
-		if (p != null) v = '%c$v';
-		traceWithTime(v, l_pathErrorPosInfos(p));
-	}
-
-	private function l_errorLogTrace(v: String, ?p: PosInfos): Void {
-		if (p != null) v = '%c$v';
-		Log.trace(v, l_pathErrorPosInfos(p));
-	}
-
 	public inline function traceAll(): Void {
 		traceLogs();
 		traceErrors();
@@ -194,9 +164,9 @@ using pony.Tools;
 
 	public inline function stopTraceErrors(): Void {
 		#if !disableErrors
-		onError >> traceWithDate;
-		onError >> traceWithTime;
-		onError >> Log.trace;
+		onError >> traceErrorWithDate;
+		onError >> traceErrorWithTime;
+		onError >> traceError;
 		#end
 	}
 
@@ -207,6 +177,25 @@ using pony.Tools;
 
 	public static function traceWithDate(v: String, ?p: PosInfos): Void Log.trace(v, addDateToPosInfosFileName(p));
 	public static function traceWithTime(v: String, ?p: PosInfos): Void Log.trace(v, addTimeToPosInfosFileName(p));
+
+	public static function traceErrorWithDate(v: String, ?p: PosInfos): Void {
+		traceError(v, addDateToPosInfosFileName(p));
+	}
+
+	public static function traceErrorWithTime(v: String, ?p: PosInfos): Void {
+		traceError(v, addTimeToPosInfosFileName(p));
+	}
+
+	public static function traceError(value: String, ?pos: PosInfos): Void {
+		#if js
+		if (l_usedLibs != null)
+			l_vscodeError(value, pos);
+		else
+			js.Browser.console.error(formatPosWithSpace(pos) + value);
+		#else
+		Log.trace(value, pos);
+		#end
+	}
 
 	public static inline function addDateToPosInfosFileName(p: Null<PosInfos>): Null<PosInfos> {
 		return addToPosInfosFileName(Date.now().toString() + haxe.Timer.stamp()._toFixed(3, -1), p);
@@ -227,8 +216,9 @@ using pony.Tools;
 	}
 
 	public static function vscodePatchTrace(): Void {
-		#if (haxe_ver > 4.220)
-		l_usedLibs = Tools.usedLibs();
+		@SuppressWarnings('checkstyle:MagicNumber')
+		#if (haxe_ver > 4.2)
+		l_usedLibs = Tools.usedLibsDirs();
 		#else
 		l_usedLibs = new Map();
 		#end
@@ -258,31 +248,46 @@ using pony.Tools;
 	public static inline function formatPos(p: Null<PosInfos>): String return p != null ? '${p.fileName}:${p.lineNumber}:' : '';
 	public static inline function formatPosWithSpace(p: Null<PosInfos>): String return p != null ? formatPos(p) + ' ' : '';
 
-	private static function l_vscodeTrace(v: Dynamic, ?p: PosInfos): Void {
-		var p: Null<PosInfos> = l_patchFileName(p);
-		#if (js && !nodejs)
-		var place: String = '';
-		var prms: Array<Dynamic> = [];
-		if (p != null) {
-			place = formatPos(p);
-			var n: Int = 0;
-			if (p.customParams != null) prms = p.customParams;
-		}
-		var c: js.lib.Function = cast js.Browser.console.log;
-		if (prms.length == 0 && Std.is(v, String))
-			c = c.bind(js.Browser.console, '%c' + place, 'color: gray', v);
-		else if (prms.length == 1 && Std.is(v, String) && v.startsWith('%c'))
-			c = c.bind(js.Browser.console, '%c' + place + ' ' + v, 'color: gray');
-		else
-			c = c.bind(js.Browser.console, place, v);
-		for (param in prms) c = c.bind(js.Browser.console, param);
-		try {
-			js.Syntax.code('queueMicrotask({0})', c);
-		} catch (_: Any) {}
+	public static function l_vscodeTrace(value: Dynamic, ?pos: PosInfos): Void {
+		#if js
+		l_vscodeTraceBase(js.Browser.console.log, value, pos);
 		#else
-		@:nullSafety(Off) l_origTrace(v, p);
+		@:nullSafety(Off) l_origTrace(value, pos);
 		#end
 	}
+
+	public static function l_vscodeError(value: Dynamic, ?pos: PosInfos): Void {
+		#if js
+		l_vscodeTraceBase(js.Browser.console.error, value, pos);
+		#else
+		@:nullSafety(Off) l_origTrace(value, pos);
+		#end
+	}
+
+	#if js
+	private static function l_vscodeTraceBase(method: haxe.extern.Rest<Dynamic> -> Void, value: Dynamic, ?p: PosInfos): Void {
+		var p: Null<PosInfos> = l_patchFileName(p);
+		var place: String = '';
+		var prms: Array<Dynamic> = [value];
+		if (p != null) {
+			place = formatPos(p);
+			if (p.customParams != null) prms = prms.concat(p.customParams);
+		}
+		if (prms.foreach(isSimpleType)) {
+			#if nodejs
+			prms.unshift('\x1b[2m$place\x1b[0m');
+			#else
+			prms.unshift('color: gray');
+			prms.unshift('%c' + place);
+			#end
+		} else {
+			prms.unshift(place);
+		}
+		try {
+			Reflect.callMethod(js.Browser.console, method, prms);
+		} catch (_: Any) {}
+	}
+	#end
 
 	public inline function bench(?name: String, f: Void -> Void, ?p: PosInfos): Void {
 		#if !disableLogs
@@ -291,7 +296,7 @@ using pony.Tools;
 		log('Begin bench' + name, p);
 		var time: Float = Timer.stamp();
 		f();
-		log('End bench' + name + ' ' + l_benchTime(time) + ' ms', p);
+		log('End bench' + name + ' ' + l_benchTime(time) + MS, p);
 		#end
 	}
 
@@ -301,7 +306,7 @@ using pony.Tools;
 		name = name != null ? ': ' + name : '';
 		log('Begin async bench' + name, p);
 		var time: Float = Timer.stamp();
-		f(function(): Void log('End async bench' + name + ' ' + l_benchTime(time) + ' ms', p));
+		f(function(): Void log('End async bench' + name + ' ' + l_benchTime(time) + MS, p));
 		#end
 	}
 
@@ -321,12 +326,14 @@ using pony.Tools;
 			error('Bench $name completed or not started');
 		} else {
 			l_benches.remove(name);
-			log('End bench: ' + name + ' ' + l_benchTime(time)  + ' ms', p);
+			log('End bench: ' + name + ' ' + l_benchTime(time)  + MS, p);
 		}
 		#end
 	}
 
-	private static inline function l_benchTime(time: Float): Float return Std.int((Timer.stamp() - time) * 100000) / 100;
+	private static inline function l_benchTime(time: Float): Float {
+		return Std.int((Timer.stamp() - time) * FRACTION_TO_ROUND * MS_LEN) / FRACTION_TO_ROUND;
+	}
 
 	public static inline function debugGetObjectId(obj: {}): UInt {
 		var id: Int = l_debugObjects.indexOf(obj);
@@ -335,16 +342,15 @@ using pony.Tools;
 
 	public static inline function debugClearObjectsId(): Void l_debugObjects.resize(0);
 
-	public function destroy(): Void {
-		if (eLog != null) {
-			eLog.onTake.clear();
-			eLog.onLost.clear();
-		}
-		if (eError != null) {
-			eError.onTake.clear();
-			eError.onLost.clear();
-		}
-		destroySignals();
+	public function destroy(): Void destroySignals();
+
+	private static function isSimpleType(value: Dynamic): Bool {
+		@SuppressWarnings('checkstyle:MagicNumber')
+		#if (haxe_ver >= 4.100)
+		return value == null || Std.isOfType(value, String) || Std.isOfType(value, Float);
+		#else
+		return value == null || Std.is(value, String) || Std.is(value, Float);
+		#end
 	}
 
 }
