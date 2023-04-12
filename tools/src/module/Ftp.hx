@@ -15,7 +15,8 @@ class Ftp extends NModule<FtpConfig> {
 
 	public function new() super('ftp');
 
-	override public function init(): Void initSections(PRIORITY, BASection.Ftp);
+	#if (haxe_ver < 4.2) override #end
+	public function init(): Void initSections(PRIORITY, BASection.Ftp);
 
 	override private function readNodeConfig(xml: Fast, ac: AppCfg):Void {
 		new FtpReader(xml, {
@@ -35,7 +36,8 @@ class Ftp extends NModule<FtpConfig> {
 		}, configHandler);
 	}
 
-	override private function writeCfg(protocol: NProtocol, cfg: Array<FtpConfig>): Void {
+	#if (haxe_ver < 4.2) override #end
+	private function writeCfg(protocol: NProtocol, cfg: Array<FtpConfig>): Void {
 		protocol.ftpRemote(cfg);
 	}
 
@@ -43,7 +45,8 @@ class Ftp extends NModule<FtpConfig> {
 
 private class FtpReader extends BAReader<FtpConfig> {
 
-	override private function clean(): Void {
+	#if (haxe_ver < 4.2) override #end
+	private function clean(): Void {
 		cfg.path = '';
 		cfg.user = 'anonymous';
 		cfg.pass = 'anonymous@';

@@ -25,7 +25,8 @@ using StringTools;
 
 	public function new() super('shntool');
 
-	override public function init(): Void initSections(PRIORITY, BASection.Prepare);
+	#if (haxe_ver < 4.2) override #end
+	public function init(): Void initSections(PRIORITY, BASection.Prepare);
 
 	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
 		new ShntoolReader(xml, {
@@ -142,7 +143,8 @@ private typedef WavConfig = {
 		cfg.wav.push(wav);
 	}
 
-	override private function clean(): Void {
+	#if (haxe_ver < 4.2) override #end
+	private function clean(): Void {
 		cfg.wav = [];
 		cfg.to = '';
 		cfg.from = '';
@@ -172,7 +174,8 @@ private typedef WavConfig = {
 		}
 	}
 
-	override private function clean(): Void {
+	#if (haxe_ver < 4.2) override #end
+	private function clean(): Void {
 		cfg.dirs = [];
 		cfg.units = [];
 		cfg.output = 'sounds.wav';

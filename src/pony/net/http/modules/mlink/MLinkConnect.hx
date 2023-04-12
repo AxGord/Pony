@@ -7,9 +7,8 @@ import pony.text.tpl.ITplPut;
  * @author AxGord <axgord@gmail.com>
  */
 @:final class MLinkConnect extends ModuleConnect<{}> {
-	
-	override public function tpl(parent:ITplPut):ITplPut {
-		return new MLinkPut(this, null, parent);
-	}
-	
+
+	#if (haxe_ver < 4.2) override #end
+	public function tpl(parent: ITplPut): ITplPut return new MLinkPut(this, null, parent);
+
 }

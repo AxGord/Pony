@@ -51,7 +51,8 @@ private typedef TPUnit = {
 
 	public function new() super('texturepacker');
 
-	override public function init(): Void initSections(PRIORITY, BASection.Prepare);
+	#if (haxe_ver < 4.2) override #end
+	public function init(): Void initSections(PRIORITY, BASection.Prepare);
 
 	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
 		new Path(xml, {
@@ -289,7 +290,8 @@ private typedef TPUnit = {
 
 private class Path extends BAReader<TPConfig> {
 
-	override private function clean(): Void {
+	#if (haxe_ver < 4.2) override #end
+	private function clean(): Void {
 		cfg.format = 'json png';
 		cfg.scale = 1;
 		cfg.quality = 1;

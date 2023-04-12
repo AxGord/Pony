@@ -28,7 +28,8 @@ typedef RunConfig = {
 
 	public function new() super('run');
 
-	override public function init(): Void {
+	#if (haxe_ver < 4.2) override #end
+	public function init(): Void {
 		@:nullSafety(Off) haxelib = modules.xml != null && modules.xml.hasNode.haxelib ?
 			[ for (e in modules.xml.node.haxelib.nodes.lib) if (!e.isTrue('mute')) e.innerData.split(' ').join(':') ] : [];
 		initSections(PRIORITY, BASection.Run);
@@ -67,7 +68,8 @@ typedef RunConfig = {
 
 @:nullSafety(Strict) private class RunReader extends BAReader<RunConfig> {
 
-	override private function clean(): Void {
+	#if (haxe_ver < 4.2) override #end
+	private function clean(): Void {
 		cfg.path = null;
 		cfg.command = [];
 	}

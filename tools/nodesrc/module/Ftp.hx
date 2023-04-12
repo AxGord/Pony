@@ -23,7 +23,8 @@ using pony.text.TextTools;
  */
 @:nullSafety(Strict) @:final class Ftp extends NModule<FtpConfig> {
 
-	override private function run(cfg: FtpConfig): Void {
+	#if (haxe_ver < 4.2) override #end
+	private function run(cfg: FtpConfig): Void {
 		tasks.add();
 		var ftp: FtpInstance = new FtpInstance(cfg);
 		ftp.onLog << eLog;

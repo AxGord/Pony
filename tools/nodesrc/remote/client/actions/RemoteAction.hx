@@ -7,7 +7,9 @@ import pony.magic.HasAbstract;
  * RemoteAction
  * @author AxGord <axgord@gmail.com>
  */
-@:nullSafety(Strict) class RemoteAction extends Logable implements HasAbstract {
+@:nullSafety(Strict)
+#if (haxe_ver >= 4.2) abstract #end
+class RemoteAction extends Logable implements HasAbstract {
 
 	private var protocol: RemoteProtocol;
 
@@ -19,13 +21,15 @@ import pony.magic.HasAbstract;
 
 	public dynamic function onEnd(): Void {}
 
-	@:abstract private function run(data: String): Void {
-		log(Type.getClassName(Type.getClass(this)) + ': ' + data);
-	}
+	@:abstract private function run(data: String): Void;
 
 	public function end(): Void {
 		onEnd();
 		destroy();
+	}
+
+	private inline function logData(data: String): Void {
+		log(Type.getClassName(@:nullSafety(Off) Type.getClass(this)) + ': ' + data);
 	}
 
 }

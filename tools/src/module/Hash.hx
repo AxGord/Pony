@@ -42,7 +42,8 @@ using pony.text.TextTools;
 
 	public function new() super('hash');
 
-	override public function init(): Void {
+	#if (haxe_ver < 4.2) override #end
+	public function init(): Void {
 		initSections(PRIORITY, BASection.Prepare);
 		modules.commands.onHash < start;
 		if (xml != null) modules.commands.onBuild.once(addToRun.bind(buildCompleteHandler), 100);
@@ -259,7 +260,8 @@ private typedef HashConfig = {
 
 @:nullSafety(Strict) private class HashReader extends BAReader<HashConfig> {
 
-	override private function clean(): Void {
+	#if (haxe_ver < 4.2) override #end
+	private function clean(): Void {
 		cfg.file = module.Hash.DEFAULT_FILE_NAME;
 		cfg.binary = true;
 		cfg.root = '';

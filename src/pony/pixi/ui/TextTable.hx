@@ -19,11 +19,11 @@ import pony.ui.gui.TextTableCore;
  * @author AxGord <axgord@gmail.com>
  */
 class TextTable extends TextTableCore {
-	
+
 	private var graphics:Graphics;
 	private var target:Sprite;
 	private var texts:Array<BitmapText>;
-	
+
 	public function new(target:Sprite) {
 		super();
 		this.target = target;
@@ -31,20 +31,21 @@ class TextTable extends TextTableCore {
 		target.addChild(graphics);
 		create();
 	}
-	
+
 	private function create():Void {
 		texts = [];
 	}
-	
-	override private function drawBG(r:IntRect, color:UColor):Void {
+
+	#if (haxe_ver < 4.2) override #end
+	private function drawBG(r:IntRect, color:UColor):Void {
 		if (color.a == 0xFF) return;
 		graphics.lineStyle();
 		graphics.beginFill(color.rgb, color.invertAlpha.af);
 		graphics.drawRect(r.getX(), r.getY(), r.getWidth(), r.getHeight());
 		graphics.endFill();
 	}
-	
-	override function drawLine(a:IntPoint, b:IntPoint, color:UColor, size:Int):Void {
+
+	override private function drawLine(a:IntPoint, b:IntPoint, color:UColor, size:Int):Void {
 		if (color.a == 0xFF) return;
 		graphics.lineStyle(size, color.rgb, color.invertAlpha.af);
 		var d = size / 2;
@@ -56,14 +57,15 @@ class TextTable extends TextTableCore {
 			graphics.lineTo(b.x, b.y+d);
 		}
 	}
-	
-	override private function drawText(point:IntRect, text:String, style:FontStyle):Void {
+
+	#if (haxe_ver < 4.2) override #end
+	private function drawText(point:IntRect, text:String, style:FontStyle):Void {
 		var t = new BitmapText(text, { font:style.size+'px ' + style.font, tint:style.color } );
 		var align = if (style.border != null && style.align == null)
 			new Pair(VAlign.Top, HAlign.Left);
-		else 
+		else
 			style.align;
-		
+
 		if (align != null) {
 			var pos = GeomTools.center(new Point<Float>(point.width, point.height), [new Point(t.width, t.height)], style.border, false, align)[0];
 			t.x = point.x + pos.x;
@@ -75,8 +77,9 @@ class TextTable extends TextTableCore {
 		texts.push(t);
 		target.addChild(t);
 	}
-	
-	override private function clear():Void {
+
+	#if (haxe_ver < 4.2) override #end
+	private function clear():Void {
 		for (t in texts) {
 			target.removeChild(t);
 			t.destroy();
@@ -84,7 +87,7 @@ class TextTable extends TextTableCore {
 		graphics.clear();
 		create();
 	}
-	
+
 	public function destroy():Void {
 		for (t in texts) {
 			target.removeChild(t);
@@ -96,5 +99,5 @@ class TextTable extends TextTableCore {
 		graphics = null;
 		target = null;
 	}
-	
+
 }

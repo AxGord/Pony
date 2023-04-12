@@ -14,7 +14,8 @@ class Zip extends CfgModule<ZipConfig> {
 
 	public function new() super('zip');
 
-	override public function init(): Void initSections(PRIORITY, BASection.Zip);
+	#if (haxe_ver < 4.2) override #end
+	public function init(): Void initSections(PRIORITY, BASection.Zip);
 
 	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
 		new ZipConfigReader(xml, {
@@ -76,7 +77,8 @@ private class ZipConfigReader extends BAReader<ZipConfig> {
 		}
 	}
 
-	override private function clean(): Void {
+	#if (haxe_ver < 4.2) override #end
+	private function clean(): Void {
 		cfg.input = [];
 		cfg.output = 'app.zip';
 		cfg.prefix = 'bin/';

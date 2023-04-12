@@ -15,7 +15,8 @@ class Bmfont extends NModule<BmfontConfig> {
 
 	public function new() super('bmfont');
 
-	override public function init():Void initSections(PRIORITY, BASection.Prepare);
+	#if (haxe_ver < 4.2) override #end
+	public function init():Void initSections(PRIORITY, BASection.Prepare);
 
 	override private function readNodeConfig(xml:Fast, ac:AppCfg):Void {
 		new BmfontReader(xml, {
@@ -35,7 +36,8 @@ class Bmfont extends NModule<BmfontConfig> {
 		}, configHandler);
 	}
 
-	override private function writeCfg(protocol:NProtocol, cfg:Array<BmfontConfig>):Void protocol.bmfontRemote(cfg);
+	#if (haxe_ver < 4.2) override #end
+	private function writeCfg(protocol:NProtocol, cfg:Array<BmfontConfig>):Void protocol.bmfontRemote(cfg);
 
 }
 
@@ -56,7 +58,8 @@ private class BmfontReader extends BAReader<BmfontConfig> {
 		}
 	}
 
-	override private function clean():Void {
+	#if (haxe_ver < 4.2) override #end
+	private function clean():Void {
 		cfg.from = '';
 		cfg.to = '';
 		cfg.type = 'sdf';

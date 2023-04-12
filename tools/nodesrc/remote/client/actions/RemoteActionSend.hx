@@ -6,8 +6,9 @@ package remote.client.actions;
  */
 @:nullSafety(Strict) @:final class RemoteActionSend extends RemoteAction {
 
-	override private function run(data: String): Void {
-		super.run(data);
+	#if (haxe_ver < 4.2) override #end
+	private function run(data: String): Void {
+		logData(data);
 		protocol.file.stream.onComplete < end;
 		protocol.file.stream.onGetData << streamDataHandler;
 		protocol.file.stream.onCancel << streamErrorHandler;

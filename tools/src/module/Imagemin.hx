@@ -16,7 +16,8 @@ class Imagemin extends NModule<ImageminConfig> {
 
 	public function new() super('imagemin');
 
-	override public function init(): Void initSections(PRIORITY, BASection.Prepare);
+	#if (haxe_ver < 4.2) override #end
+	public function init(): Void initSections(PRIORITY, BASection.Prepare);
 
 	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
 		new ImageminReader(xml, {
@@ -39,7 +40,8 @@ class Imagemin extends NModule<ImageminConfig> {
 		}, configHandler);
 	}
 
-	override private function writeCfg(protocol: NProtocol, cfg: Array<ImageminConfig>): Void {
+	#if (haxe_ver < 4.2) override #end
+	private function writeCfg(protocol: NProtocol, cfg: Array<ImageminConfig>): Void {
 		var hash: Null<module.Hash> = cast modules.getModule(module.Hash);
 		if (hash != null && hash.xml != null) for (c in cfg)
 			if (c.checkHash) c.ignore = c.ignore.concat(hash.getNotChangedUnits());
@@ -50,7 +52,8 @@ class Imagemin extends NModule<ImageminConfig> {
 
 private class ImageminReader extends BAReader<ImageminConfig> {
 
-	override private function clean(): Void {
+	#if (haxe_ver < 4.2) override #end
+	private function clean(): Void {
 		cfg.from = '';
 		cfg.to = '';
 		cfg.recursive = false;

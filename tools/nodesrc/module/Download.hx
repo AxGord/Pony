@@ -20,7 +20,8 @@ using pony.text.TextTools;
  */
 @:nullSafety(Strict) @:final class Download extends NModule<DownloadConfig> {
 
-	override private function run(cfg: DownloadConfig): Void {
+	#if (haxe_ver < 4.2) override #end
+	private function run(cfg: DownloadConfig): Void {
 		var downloadList: Array<Pair<String, String>> = [];
 
 		for (unit in cfg.units) {

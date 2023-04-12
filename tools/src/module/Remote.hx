@@ -15,7 +15,8 @@ class Remote extends NModule<RemoteConfig> {
 
 	public function new() super('remote');
 
-	override public function init():Void {
+	#if (haxe_ver < 4.2) override #end
+	public function init():Void {
 		if (xml == null) return;
 		initSections(PRIORITY, BASection.Remote);
 	}
@@ -35,7 +36,8 @@ class Remote extends NModule<RemoteConfig> {
 		}, configHandler);
 	}
 
-	override private function writeCfg(protocol: NProtocol, cfg: Array<RemoteConfig>): Void {
+	#if (haxe_ver < 4.2) override #end
+	private function writeCfg(protocol: NProtocol, cfg: Array<RemoteConfig>): Void {
 		protocol.remoteRemote(cfg);
 	}
 
@@ -43,7 +45,8 @@ class Remote extends NModule<RemoteConfig> {
 
 private class RemoteConfigReader extends BAReader<RemoteConfig> {
 
-	override private function clean(): Void {
+	#if (haxe_ver < 4.2) override #end
+	private function clean(): Void {
 		cfg.host = null;
 		cfg.port = null;
 		cfg.key = null;

@@ -50,7 +50,8 @@ private typedef LastCompilationOptions = {
 
 	public function new() super('build');
 
-	override public function init(): Void {
+	#if (haxe_ver < 4.2) override #end
+	public function init(): Void {
 		if (xml == null) return;
 		haxelib = modules.xml.hasNode.haxelib ?
 			[ for (e in modules.xml.node.haxelib.nodes.lib) if (!e.isTrue('mute')) StringTools.trim(e.innerData).split(' ').join(':') ] : [];
@@ -271,7 +272,8 @@ private class BuildConfigReader extends BAReader<BuildConfig> {
 		}
 	}
 
-	override private function clean(): Void {
+	#if (haxe_ver < 4.2) override #end
+	private function clean(): Void {
 		cfg.command = [];
 		cfg.haxeCompiler = HAXE;
 		cfg.hxml = null;

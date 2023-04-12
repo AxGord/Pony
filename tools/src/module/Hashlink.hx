@@ -23,7 +23,8 @@ class Hashlink extends CfgModule<HashlinkConfig> {
 
 	public function new() super('hl');
 
-	override public function init(): Void initSections(PRIORITY, BASection.Build);
+	#if (haxe_ver < 4.2) override #end
+	public function init(): Void initSections(PRIORITY, BASection.Build);
 
 	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
 		new HashlinkReader(xml, {
@@ -267,7 +268,8 @@ private class HashlinkReader extends BAReader<HashlinkConfig> {
 		}
 	}
 
-	override private function clean(): Void {
+	#if (haxe_ver < 4.2) override #end
+	private function clean(): Void {
 		cfg.output = null;
 		cfg.hl = null;
 		cfg.main = null;

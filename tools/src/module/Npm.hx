@@ -34,7 +34,8 @@ typedef NpmConfig = {
 
 	public function new() super('npm');
 
-	override public function init(): Void initSections(PRIORITY, BASection.Prepare);
+	#if (haxe_ver < 4.2) override #end
+	public function init(): Void initSections(PRIORITY, BASection.Prepare);
 
 	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
 		new NpmReader(xml, {
@@ -74,7 +75,8 @@ typedef NpmConfig = {
 
 private class NpmReader extends BAReader<NpmConfig> {
 
-	override private function clean(): Void {
+	#if (haxe_ver < 4.2) override #end
+	private function clean(): Void {
 		cfg.path = null;
 		cfg.autoinstall = false;
 		cfg.list = [];

@@ -22,7 +22,8 @@ class Server extends NModule<ServerConfig> {
 
 	public function new() super('server');
 
-	override public function init(): Void {
+	#if (haxe_ver < 4.2) override #end
+	public function init(): Void {
 		if (xml == null) return;
 		initSections(PRIORITY, BASection.Server);
 	}
@@ -44,7 +45,8 @@ class Server extends NModule<ServerConfig> {
 		}, configHandler);
 	}
 
-	override private function writeCfg(protocol: NProtocol, cfg: Array<ServerConfig>): Void {
+	#if (haxe_ver < 4.2) override #end
+	private function writeCfg(protocol: NProtocol, cfg: Array<ServerConfig>): Void {
 		protocol.serverRemote(cfg);
 	}
 
@@ -52,7 +54,8 @@ class Server extends NModule<ServerConfig> {
 
 private class ServerReader extends BAReader<ServerConfig> {
 
-	override private function clean(): Void {
+	#if (haxe_ver < 4.2) override #end
+	private function clean(): Void {
 		cfg.port = null;
 		cfg.path = null;
 		cfg.proxy = [];
@@ -133,7 +136,8 @@ typedef BAProxyConfig = {
 
 private class ProxyReader extends BAReader<BAProxyConfig> {
 
-	override private function clean(): Void {
+	#if (haxe_ver < 4.2) override #end
+	private function clean(): Void {
 		cfg.target = null;
 		cfg.port = null;
 		cfg.slow = null;
@@ -166,7 +170,8 @@ typedef BARemoteServerConfig = {
 
 private class RemoteReader extends BAReader<BARemoteServerConfig> {
 
-	override private function clean(): Void {
+	#if (haxe_ver < 4.2) override #end
+	private function clean(): Void {
 		cfg.port = null;
 		cfg.key = null;
 		cfg.allow = [];
@@ -203,7 +208,8 @@ typedef BASniffConfig = {
 
 private class SniffReader extends BAReader<BASniffConfig> {
 
-	override private function clean(): Void {
+	#if (haxe_ver < 4.2) override #end
+	private function clean(): Void {
 		cfg.serverPort = 0;
 		cfg.clientHost = '';
 		cfg.clientPort = 0;

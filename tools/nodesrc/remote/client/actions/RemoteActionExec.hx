@@ -10,8 +10,9 @@ import pony.sys.Process;
 
 	@:nullSafety(Off) private var process: Process;
 
-	override private function run(data: String): Void {
-		super.run(data);
+	#if (haxe_ver < 4.2) override #end
+	private function run(data: String): Void {
+		logData(data);
 		process = new Process(data);
 		process.onComplete < end;
 		process.onError < error;

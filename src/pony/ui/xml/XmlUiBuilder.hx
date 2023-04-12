@@ -114,7 +114,7 @@ class XmlUiBuilder {
 						return root;
 					}}),
 					pos: Context.currentPos(),
-					access: [AOverride, APrivate]
+					access: [ #if (haxe_ver < 4.2) AOverride, #end APrivate ]
 				});
 				toConsructor = [];
 				var pathes: Array<String> = [];

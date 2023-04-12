@@ -14,7 +14,8 @@ class Test extends CfgModule<TestConfig> {
 
 	public function new() super('test');
 
-	override public function init(): Void initSections(PRIORITY);
+	#if (haxe_ver < 4.2) override #end
+	public function init(): Void initSections(PRIORITY);
 
 	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
 		new TestReader(xml, {
@@ -57,7 +58,8 @@ private class TestReader extends BAReader<TestConfig> {
 		}
 	}
 
-	override private function clean(): Void {
+	#if (haxe_ver < 4.2) override #end
+	private function clean(): Void {
 		cfg.path = null;
 		cfg.test = [];
 	}

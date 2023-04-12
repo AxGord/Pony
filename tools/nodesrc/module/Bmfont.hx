@@ -15,7 +15,8 @@ import types.BmfontConfig;
 
 	@:nullSafety(Off) private var to: String;
 
-	override private function run(cfg: BmfontConfig): Void {
+	#if (haxe_ver < 4.2) override #end
+	private function run(cfg: BmfontConfig): Void {
 		to = cfg.to;
 		Utils.createPath(to);
 		for (font in cfg.font)

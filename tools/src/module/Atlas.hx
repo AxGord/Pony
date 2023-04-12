@@ -32,7 +32,8 @@ private typedef AtlasConfig = {
 
 	public function new() super('atlas');
 
-	override public function init(): Void initSections(PRIORITY, BASection.Prepare);
+	#if (haxe_ver < 4.2) override #end
+	public function init(): Void initSections(PRIORITY, BASection.Prepare);
 
 	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
 		new AtlasReader(xml, {
@@ -155,7 +156,8 @@ private class AtlasReader extends BAReader<AtlasConfig> {
 		}
 	}
 
-	override private function clean(): Void {
+	#if (haxe_ver < 4.2) override #end
+	private function clean(): Void {
 		cfg.units = [];
 		cfg.filter = '.atlas';
 		cfg.from = '.';

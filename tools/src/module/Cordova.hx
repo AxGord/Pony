@@ -31,7 +31,8 @@ class Cordova extends CfgModule<CordovaConfig> {
 
 	public function new() super('cordova');
 
-	override public function init(): Void {
+	#if (haxe_ver < 4.2) override #end
+	public function init(): Void {
 		initSections(PRIORITY, BASection.Cordova);
 		modules.commands.onCordova.add(cordovaHandler, -300);
 		modules.commands.onAndroid.add(androidHandler, -200);
@@ -166,7 +167,8 @@ class Cordova extends CfgModule<CordovaConfig> {
 
 private class CordovaReader extends BAReader<CordovaConfig> {
 
-	override private function clean(): Void {
+	#if (haxe_ver < 4.2) override #end
+	private function clean(): Void {
 		cfg.name = null;
 		cfg.desc = null;
 		cfg.id = null;

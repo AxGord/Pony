@@ -20,7 +20,8 @@ class Download extends NModule<DownloadConfig> {
 
 	public function new() super('download');
 
-	override public function init(): Void initSections(PRIORITY, BASection.Prepare);
+	#if (haxe_ver < 4.2) override #end
+	public function init(): Void initSections(PRIORITY, BASection.Prepare);
 
 	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
 		new DownloadReader(xml, {
@@ -35,7 +36,8 @@ class Download extends NModule<DownloadConfig> {
 		}, configHandler);
 	}
 
-	override private function writeCfg(protocol: NProtocol, cfg: Array<DownloadConfig>): Void {
+	#if (haxe_ver < 4.2) override #end
+	private function writeCfg(protocol: NProtocol, cfg: Array<DownloadConfig>): Void {
 		for (c in cfg) FileSystem.createDirectory(c.path);
 		protocol.downloadRemote(cfg);
 	}
@@ -44,7 +46,8 @@ class Download extends NModule<DownloadConfig> {
 
 private class DownloadReader extends BAReader<DownloadConfig> {
 
-	override private function clean(): Void {
+	#if (haxe_ver < 4.2) override #end
+	private function clean(): Void {
 		cfg.path = '';
 		cfg.units = [];
 	}

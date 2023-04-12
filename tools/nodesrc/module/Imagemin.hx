@@ -24,7 +24,8 @@ private typedef ImageminResult = Array<ImageminResultEntry>;
  */
 @:nullSafety(Strict) @:final class Imagemin extends NModule<ImageminConfig> {
 
-	override private function run(cfg: ImageminConfig): Void {
+	#if (haxe_ver < 4.2) override #end
+	private function run(cfg: ImageminConfig): Void {
 		var from: Array<String> = cfg.from.split(',').map(StringTools.trim).addToStringsEnd('*.');
 		log('From: ' + from);
 		var formats: Array<String> = cfg.format == null ?

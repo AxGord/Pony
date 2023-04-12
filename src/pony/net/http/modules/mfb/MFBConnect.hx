@@ -9,27 +9,25 @@ import pony.text.tpl.ITplPut;
  */
 @:final class MFBConnect extends ModuleConnect<MFB> {
 
-	public var token(get, set):String;
-	
-	private var data:FBData;
-	
-	override public function tpl(parent:ITplPut):ITplPut
-		return new MFBPut(this, null, parent);
-	
-	inline private function get_token():String
-		return cpq.connection.sessionStorage['fb_token'];
-	
-	inline private function set_token(t:String):String
-		return cpq.connection.sessionStorage['fb_token'] = t;
-	
-	public function getBaseData(cb:FBData->Void):Void {
+	public var token(get, set): String;
+
+	private var data: FBData;
+
+	#if (haxe_ver < 4.2) override #end
+	public function tpl(parent: ITplPut): ITplPut return new MFBPut(this, null, parent);
+
+	private inline function get_token(): String return cpq.connection.sessionStorage['fb_token'];
+
+	private inline function set_token(t: String): String return cpq.connection.sessionStorage['fb_token'] = t;
+
+	public function getBaseData(cb: FBData -> Void): Void {
 		if (data != null) {
 			cb(data);
 		} else {
 			if (token == null) {
 				cb(null);
 			} else
-				base.fb.me(token, function(d:FBData) {
+				base.fb.me(token, function(d: FBData) {
 					if (d == null) {
 						token = null;
 						cpq.connection.endAction();
@@ -39,8 +37,7 @@ import pony.text.tpl.ITplPut;
 				});
 		}
 	}
-	
-	public function getId(cb:String->Void):Void
-		getBaseData(function(d) cb(d == null?'0':d.id));
-	
+
+	public function getId(cb: String -> Void): Void getBaseData(function(d) cb(d == null ? '0' : d.id));
+
 }

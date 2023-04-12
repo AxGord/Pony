@@ -19,7 +19,8 @@ class Unpack extends Module {
 
 	public function new() super('unpack');
 
-	override public function init(): Void {
+	#if (haxe_ver < 4.2) override #end
+	public function init(): Void {
 		if (xml == null) return;
 		addConfigListener();
 		addListeners(PRIORITY, before, after);
@@ -30,9 +31,11 @@ class Unpack extends Module {
 		for (c in afterZips[BASection.Unpack]) unzip(c);
 	}
 
-	override private function runModule(before: Bool, section: BASection): Void {}
+	#if (haxe_ver < 4.2) override #end
+	private function runModule(before: Bool, section: BASection): Void {}
 
-	override private function readConfig(ac: AppCfg): Void {
+	#if (haxe_ver < 4.2) override #end
+	private function readConfig(ac: AppCfg): Void {
 		new UnpackReader(xml, {
 			debug: ac.debug,
 			app: ac.app,
@@ -110,7 +113,8 @@ private class UnpackReader extends BAReader<UnpackConfig> {
 		}
 	}
 
-	override private function clean(): Void {
+	#if (haxe_ver < 4.2) override #end
+	private function clean(): Void {
 		cfg.zips = [];
 	}
 

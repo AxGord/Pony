@@ -24,7 +24,8 @@ typedef Lib = {
 
 	public function addLib(lib: Lib): Void libs.push(lib);
 
-	override public function result(): Xml {
+	#if (haxe_ver < 4.2) override #end
+	public function result(): Xml {
 		init();
 		for (lib in libs) {
 			var n: Xml = add('lib', lib.version == null ? lib.name : '${lib.name} ${lib.version}');

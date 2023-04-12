@@ -14,7 +14,8 @@ import sys.io.File;
 
 	private static var MAP_EXT: String = '.map';
 
-	override private function run(cfg: UglifyConfig): Void {
+	#if (haxe_ver < 4.2) override #end
+	private function run(cfg: UglifyConfig): Void {
 		if (cfg.input.length == 0) throw 'Not inputs';
 		if (cfg.debug && cfg.libcache != null) {
 			@:nullSafety(Off) var lastFile: String = cfg.input.pop();

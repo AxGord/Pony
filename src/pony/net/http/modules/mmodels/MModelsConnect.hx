@@ -9,17 +9,16 @@ import pony.text.tpl.ITplPut;
  */
 @:final class MModelsConnect extends ModuleConnect<MModels> {
 
-	public var list:Map<String,ModelConnect>;
-	
-	public function new(base:MModels, cpq:CPQ, list:Map<String,ModelConnect>) {
+	public var list: Map<String, ModelConnect>;
+
+	public function new(base: MModels, cpq: CPQ, list: Map<String, ModelConnect>) {
 		super(base, cpq);
 		this.list = list;
 	}
-	
-	override public function tpl(parent:ITplPut):ITplPut {
-		return new MModelsPut(this,
-			[for (k in list.keys()) k => list[k].tpl(parent)],
-			parent);
+
+	#if (haxe_ver < 4.2) override #end
+	public function tpl(parent: ITplPut): ITplPut {
+		return new MModelsPut(this, [ for (k in list.keys()) k => list[k].tpl(parent) ], parent);
 	}
-	
+
 }

@@ -14,7 +14,9 @@ import types.BASection;
  * Module
  * @author AxGord <axgord@gmail.com>
  */
-@:nullSafety(Strict) class Module extends Logable implements HasAbstract implements HasLink {
+@:nullSafety(Strict)
+#if (haxe_ver >= 4.2) abstract #end
+class Module extends Logable implements HasAbstract implements HasLink {
 
 	@:auto public static var onEndQueue: Signal0;
 	public static var busy(link, never): Bool = GLOBALQUEUE.busy;

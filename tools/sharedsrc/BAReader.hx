@@ -8,7 +8,9 @@ import types.BASection;
  * BAReader
  * @author AxGord <axgord@gmail.com>
  */
-@:nullSafety(Strict) class BAReader<T: BAConfig> extends XmlConfigReader<T> implements HasAbstract {
+@:nullSafety(Strict)
+#if (haxe_ver >= 4.2) abstract #end
+class BAReader<T: BAConfig> extends XmlConfigReader<T> implements HasAbstract {
 
 	override private function readNode(xml: Fast): Void {
 		switch xml.name {

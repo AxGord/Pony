@@ -9,7 +9,8 @@ import remote.client.RemoteClient;
  */
 @:nullSafety(Strict) @:final class Remote extends NModule<RemoteConfig> {
 
-	override private function run(cfg: RemoteConfig): Void {
+	#if (haxe_ver < 4.2) override #end
+	private function run(cfg: RemoteConfig): Void {
 		tasks.add();
 		var remote: RemoteClient = new RemoteClient(cfg);
 		remote.onError << eError;

@@ -32,7 +32,8 @@ typedef ElectronConfig = {
 
 	public function new() super('electron');
 
-	override public function init(): Void initSections(PRIORITY, BASection.Electron);
+	#if (haxe_ver < 4.2) override #end
+	public function init(): Void initSections(PRIORITY, BASection.Electron);
 
 	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
 		new ElectronReader(xml, {
@@ -135,7 +136,8 @@ private class ElectronReader extends BAReader<ElectronConfig> {
 	private static var SUPPORTED_OS: Array<String> = ['m', 'mac', 'macos', 'l', 'linux', 'w', 'win', 'windows'];
 	private static var SUPPORTED_ARCH: Array<String> = ['x64', 'ia32', 'armv7l', 'arm64', 'universal'];
 
-	override private function clean(): Void {
+	#if (haxe_ver < 4.2) override #end
+	private function clean(): Void {
 		cfg.path = 'bin/';
 		cfg.pack = false;
 		cfg.config = null;

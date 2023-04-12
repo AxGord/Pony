@@ -6,8 +6,9 @@ package remote.client.actions;
  */
 @:nullSafety(Strict) @:final class RemoteActionCommand extends RemoteAction {
 
-	override private function run(data: String): Void {
-		super.run(data);
+	#if (haxe_ver < 4.2) override #end
+	private function run(data: String): Void {
+		logData(data);
 		protocol.onCommandComplete < end;
 		protocol.commandRemote(data);
 	}

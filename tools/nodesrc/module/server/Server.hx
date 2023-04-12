@@ -11,7 +11,8 @@ import remote.server.ServerRemote;
  */
 @:nullSafety(Strict) @:final class Server extends NModule<ServerConfig> {
 
-	override private function run(cfg: ServerConfig): Void {
+	#if (haxe_ver < 4.2) override #end
+	private function run(cfg: ServerConfig): Void {
 		tasks.add();
 		if (@:nullSafety(Off) (cfg.port != null) && cfg.path != null) {
 			tasks.add();

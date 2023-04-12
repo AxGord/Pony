@@ -25,7 +25,8 @@ using pony.text.XmlTools;
 
 	public function new() super('template');
 
-	override public function init(): Void initSections(PRIORITY, Build);
+	#if (haxe_ver < 4.2) override #end
+	public function init(): Void initSections(PRIORITY, Build);
 
 	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
 		new TemplateReader(xml, {
@@ -108,7 +109,8 @@ private typedef TemplateConfig = {
 
 @:nullSafety(Strict) private class TemplateReader extends BAReader<TemplateConfig> {
 
-	override private function clean(): Void {
+	#if (haxe_ver < 4.2) override #end
+	private function clean(): Void {
 		cfg.to = '';
 		cfg.from = '';
 		cfg.title = '';

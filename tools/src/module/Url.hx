@@ -14,7 +14,8 @@ class Url extends CfgModule<UrlConfig> {
 
 	public function new() super('url');
 
-	override public function init(): Void initSections(PRIORITY, BASection.Build);
+	#if (haxe_ver < 4.2) override #end
+	public function init(): Void initSections(PRIORITY, BASection.Build);
 
 	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
 		new UrlReader(xml, {
@@ -53,7 +54,8 @@ private class UrlReader extends BAReader<UrlConfig> {
 		}
 	}
 
-	override private function clean(): Void {
+	#if (haxe_ver < 4.2) override #end
+	private function clean(): Void {
 		cfg.url = [];
 	}
 

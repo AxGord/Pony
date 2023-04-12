@@ -64,11 +64,11 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 	}
 
 	private function langPush(s: String): Void {
-		if (s != '' && Lambda.indexOf(languages, s) == -1)
-			languages.push(s);
+		if (s != '' && Lambda.indexOf(languages, s) == -1) languages.push(s);
 	}
 
-	override public function sendFile(file: File): Void {
+	#if (haxe_ver < 4.2) override #end
+	public function sendFile(file: File): Void {
 		writeCookie();
 		var f = file.firstExists;
 		Fs.stat(f, function(err: Error, stat: Stats): Void {
@@ -85,7 +85,8 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 		res.end(new Buffer(bytes.getData()));
 	}
 
-	override public function goto(url: String): Void {
+	#if (haxe_ver < 4.2) override #end
+	public function goto(url: String): Void {
 		writeCookie();
 		res.setHeader('Location', url);
 		res.setHeader('Cache-Control', 'private');
@@ -100,9 +101,11 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 		return res.setHeader('Content-Length', Std.string(Buffer.byteLength(t, 'utf8')));
 	}
 
-	override public function endActionPrevPage(): Void goto(req.headers.field('referer'));
+	#if (haxe_ver < 4.2) override #end
+	public function endActionPrevPage(): Void goto(req.headers.field('referer'));
 
-	override public function error(?message: String): Void {
+	#if (haxe_ver < 4.2) override #end
+	public function error(?message: String): Void {
 		writeCookie();
 		res.setHeader('Content-Type', 'text/html; charset=UTF-8');
 		res.writeHead(500);
@@ -110,7 +113,8 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 		end = true;
 	}
 
-	override public function notfound(?message: String): Void {
+	#if (haxe_ver < 4.2) override #end
+	public function notfound(?message: String): Void {
 		writeCookie();
 		res.setHeader('Content-Type', 'text/html; charset=UTF-8');
 		res.writeHead(404);

@@ -34,7 +34,8 @@ class Build extends Section {
 	public function getHxmlFile(): String return hxml + HXML;
 	public function getDep(): Array<String> return hxml != null ? [getHxmlFile()] : [];
 
-	override public function result(): Xml {
+	#if (haxe_ver < 4.2) override #end
+	public function result(): Xml {
 		init();
 
 		if (hxml != null) {

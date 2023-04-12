@@ -11,7 +11,9 @@ import types.BAConfig;
  * NModule
  * @author AxGord <axgord@gmail.com>
  */
-@:nullSafety(Strict) class NModule<T:BAConfig> extends CfgModule<T> {
+@:nullSafety(Strict)
+#if (haxe_ver >= 4.2) abstract #end
+class NModule<T:BAConfig> extends CfgModule<T> {
 
 	private static var PORT_TRIES: Int = 1000;
 	private static var NODE_PATH: String = 'NODE_PATH';

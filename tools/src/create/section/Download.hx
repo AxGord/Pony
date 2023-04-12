@@ -22,7 +22,8 @@ class Download extends Section {
 
 	public function addLib(name:String):Void list.push(LIBS[name]);
 
-	override public function result():Xml {
+	#if (haxe_ver < 4.2) override #end
+	public function result():Xml {
 		init();
 		set('path', path);
 		for (lib in list) {

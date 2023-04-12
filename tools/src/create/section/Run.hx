@@ -13,7 +13,8 @@ class Run extends Section {
 
 	public function new() super('run');
 
-	override public function result():Xml {
+	#if (haxe_ver < 4.2) override #end
+	public function result():Xml {
 		init();
 		if (path != null) set('path', path);
 		xml.addChild(XmlTools.data(command));

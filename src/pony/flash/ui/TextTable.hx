@@ -39,14 +39,16 @@ class TextTable extends TextTableCore {
 	private inline function get_g(): Graphics
 		return shape.graphics;
 
-	override private function drawBG(r: IntRect, color: UColor): Void {
+	#if (haxe_ver < 4.2) override #end
+	private function drawBG(r: IntRect, color: UColor): Void {
 		g.lineStyle();
 		g.beginFill(color);
 		g.drawRect(r.getX(), r.getY(), r.getWidth(), r.getHeight());
 		g.endFill();
 	}
 
-	override private function drawText(point: IntRect, text: String, style: FontStyle): Void {
+	#if (haxe_ver < 4.2) override #end
+	private function drawText(point: IntRect, text: String, style: FontStyle): Void {
 		var tf = new TextField();
 		tf.text = text;
 		tf.selectable = false;
@@ -56,7 +58,8 @@ class TextTable extends TextTableCore {
 		area.addChild(tf);
 	}
 
-	override private function clear(): Void {
+	#if (haxe_ver < 4.2) override #end
+	private function clear(): Void {
 		area.removeChild(shape);
 		createShape();
 	}

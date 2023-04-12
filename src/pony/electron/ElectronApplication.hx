@@ -13,6 +13,7 @@ import pony.text.TextTools;
  * ElectronApplication
  * @author AxGord <axgord@gmail.com>
  */
+#if (haxe_ver >= 4.2) abstract #end
 class ElectronApplication extends VSTraceHelper implements HasAbstract {
 
 	public var windows(default, null): Map<String, BrowserWindow> = new Map<String, BrowserWindow>();

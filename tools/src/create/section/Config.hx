@@ -19,7 +19,8 @@ class Config extends Section {
 	public var stringmapAllowed: Bool = true;
 	public function new() super('config');
 
-	override public function result(): Xml {
+	#if (haxe_ver < 4.2) override #end
+	public function result(): Xml {
 		init();
 		if (dep.length > 0) xml.set('dep', dep.join(', '));
 		for (e in options.kv()) xml.addChild(make(e));

@@ -133,12 +133,12 @@ class Haxelib {
 		}
 		var jdata = {
 			name: name,
-			url: "",
-			license: "",
+			url: '',
+			license: '',
 			tags: [],
-			description: "",
-			version: "0.0.1",
-			releasenote: "Init",
+			description: '',
+			version: '0.0.1',
+			releasenote: 'Init',
 			contributors: [author],
 			dependencies: {}
 		};

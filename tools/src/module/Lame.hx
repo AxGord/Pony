@@ -21,7 +21,8 @@ using pony.text.TextTools;
 
 	public function new() super('lame');
 
-	override public function init(): Void initSections(PRIORITY, BASection.Prepare);
+	#if (haxe_ver < 4.2) override #end
+	public function init(): Void initSections(PRIORITY, BASection.Prepare);
 
 	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
 		new LameReader(xml, {
@@ -145,7 +146,8 @@ private typedef LameConfig = {
 		}
 	}
 
-	override private function clean(): Void {
+	#if (haxe_ver < 4.2) override #end
+	private function clean(): Void {
 		cfg.dirs = [];
 		cfg.units = [];
 		cfg.to = '';

@@ -18,6 +18,7 @@ typedef TableContent = Array < Array<String> > ;
  * TableCore
  * @author AxGord <axgord@gmail.com>
  */
+#if (haxe_ver >= 4.2) abstract #end
 class TextTableCore implements HasAbstract {
 
 	public var data(default, set): TableContent;

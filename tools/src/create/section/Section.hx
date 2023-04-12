@@ -7,6 +7,7 @@ import pony.text.XmlTools;
  * Section
  * @author AxGord <axgord@gmail.com>
  */
+#if (haxe_ver >= 4.2) abstract #end
 class Section implements HasAbstract {
 
 	public var appNode:String = null;

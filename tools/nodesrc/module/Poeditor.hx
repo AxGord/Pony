@@ -23,7 +23,8 @@ private typedef Lang = {
  */
 @:nullSafety(Strict) @:final class Poeditor extends NModule<PoeditorConfig> {
 
-	override private function run(cfg: PoeditorConfig): Void {
+	#if (haxe_ver < 4.2) override #end
+	private function run(cfg: PoeditorConfig): Void {
 		tasks.add();
 		var client: Dynamic = Type.createInstance(NPM.poeditor_client, [cfg.token]);
 		client.projects.get(cfg.id).then(function(project) {

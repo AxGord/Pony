@@ -9,7 +9,9 @@ import pony.events.Signal0;
  * NModule - base class for Pony Tools Node Modules
  * @author AxGord <axgord@gmail.com>
  */
-@:nullSafety(Strict) class NModule<T> extends Logable implements HasAbstract {
+@:nullSafety(Strict)
+#if (haxe_ver >= 4.2) abstract #end
+class NModule<T> extends Logable implements HasAbstract {
 
 	@:auto public var onFinish: Signal0;
 

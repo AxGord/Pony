@@ -37,6 +37,7 @@ using Std;
 	text: openfl.text.TextField
 }))
 #end
+#if (haxe_ver >= 4.2) abstract #end
 class OpenflXmlUi extends Sprite implements HasAbstract {
 
 	private var FILTERS:Map<String, BitmapFilter> = new Map();

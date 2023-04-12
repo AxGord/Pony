@@ -15,7 +15,8 @@ class Poeditor extends NModule<PoeditorConfig> {
 
 	public function new() super('poeditor');
 
-	override public function init(): Void initSections(PRIORITY, BASection.Prepare);
+	#if (haxe_ver < 4.2) override #end
+	public function init(): Void initSections(PRIORITY, BASection.Prepare);
 
 	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
 		new PoeditorReader(xml, {
@@ -32,7 +33,8 @@ class Poeditor extends NModule<PoeditorConfig> {
 		}, configHandler);
 	}
 
-	override private function writeCfg(protocol: NProtocol, cfg: Array<PoeditorConfig>): Void {
+	#if (haxe_ver < 4.2) override #end
+	private function writeCfg(protocol: NProtocol, cfg: Array<PoeditorConfig>): Void {
 		for (c in cfg) sys.FileSystem.createDirectory(c.path);
 		protocol.poeditorRemote(cfg);
 	}
@@ -41,7 +43,8 @@ class Poeditor extends NModule<PoeditorConfig> {
 
 private class PoeditorReader extends BAReader<PoeditorConfig> {
 
-	override private function clean(): Void {
+	#if (haxe_ver < 4.2) override #end
+	private function clean(): Void {
 		cfg.path = '';
 		cfg.id = null;
 		cfg.token = null;

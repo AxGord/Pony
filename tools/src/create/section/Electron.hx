@@ -10,7 +10,8 @@ class Electron extends Section {
 
 	public function new() super('electron');
 
-	override public function result(): Xml {
+	#if (haxe_ver < 4.2) override #end
+	public function result(): Xml {
 		init();
 		set('win', 'true');
 		set('win32', 'true');

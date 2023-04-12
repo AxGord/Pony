@@ -9,8 +9,7 @@ import pony.text.tpl.ITplPut;
  */
 @:final class MTplConnect extends ModuleConnect<MTpl> {
 
-	override public function tpl(parent:ITplPut):ITplPut {
-		return new MTplPut(base, cpq, parent);
-	}
-	
+	#if (haxe_ver < 4.2) override #end
+	public function tpl(parent: ITplPut): ITplPut return new MTplPut(base, cpq, parent);
+
 }

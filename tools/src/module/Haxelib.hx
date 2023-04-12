@@ -46,7 +46,8 @@ typedef HaxelibConfig = {
 
 	public function new() super('haxelib');
 
-	override public function init(): Void initSections(PRIORITY, BASection.Prepare);
+	#if (haxe_ver < 4.2) override #end
+	public function init(): Void initSections(PRIORITY, BASection.Prepare);
 
 	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
 		new HaxelibReader(xml, {
@@ -136,7 +137,8 @@ typedef HaxelibConfig = {
 
 @:nullSafety(Strict) private class HaxelibReader extends BAReader<HaxelibConfig> {
 
-	override private function clean(): Void {
+	#if (haxe_ver < 4.2) override #end
+	private function clean(): Void {
 		cfg.list = [];
 	}
 

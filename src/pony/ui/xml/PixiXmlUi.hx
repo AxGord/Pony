@@ -103,6 +103,7 @@ using pony.pixi.PixiExtends;
 	#end
 }))
 #end
+#if (haxe_ver >= 4.2) abstract #end
 class PixiXmlUi extends LogableSprite implements HasAbstract {
 
 	private static inline var PX: String = 'px ';

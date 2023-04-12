@@ -20,7 +20,8 @@ class Uglify extends NModule<UglifyConfig> {
 
 	public function new() super('uglify');
 
-	override public function init(): Void {
+	#if (haxe_ver < 4.2) override #end
+	public function init(): Void {
 		if (xml == null) return;
 		initSections(PRIORITY, BASection.Build);
 		modules.commands.onPrepare.add(removeCache, REMOVE_CACHE_PRIORITY);
@@ -53,7 +54,8 @@ class Uglify extends NModule<UglifyConfig> {
 		}, configHandler);
 	}
 
-	override private function writeCfg(protocol: NProtocol, cfg: Array<UglifyConfig>): Void {
+	#if (haxe_ver < 4.2) override #end
+	private function writeCfg(protocol: NProtocol, cfg: Array<UglifyConfig>): Void {
 		if (TextTools.isTrue(Sys.getEnv('PONY_FORCE_DISABLE_LIBCACHE'))) for (c in cfg) c.libcache = null;
 		protocol.uglifyRemote(cfg);
 	}
@@ -62,7 +64,8 @@ class Uglify extends NModule<UglifyConfig> {
 
 private class UglifyReader extends BAReader<UglifyConfig> {
 
-	override private function clean(): Void {
+	#if (haxe_ver < 4.2) override #end
+	private function clean(): Void {
 		cfg.output = null;
 		cfg.input = [];
 		cfg.sourcemap = {

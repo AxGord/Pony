@@ -75,6 +75,7 @@ using pony.text.TextTools;
 	slider: pony.heaps.ui.gui.StepSlider
 }))
 #end
+#if (haxe_ver >= 4.2) abstract #end
 @:nullSafety(Strict) class HeapsXmlUi extends Object implements HasAbstract {
 
 	private static inline var HALF: Float = 0.5;

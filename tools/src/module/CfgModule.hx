@@ -10,12 +10,16 @@ import types.BASection;
  * CfgModule
  * @author AxGord <axgord@gmail.com>
  */
-@:nullSafety(Strict) class CfgModule<T:BAConfig> extends Module implements HasAbstract {
+@:nullSafety(Strict)
+#if (haxe_ver >= 4.2) abstract #end
+class CfgModule<T:BAConfig> extends Module implements HasAbstract {
 
 	private var lastcfgs: Array<T> = [];
 	private var allcfgs: Array<Array<T>> = [];
 
+	#if (haxe_ver < 4.2)
 	override public function init(): Void throw 'Abstract';
+	#end
 
 	private function configHandler(cfg: T): Void lastcfgs.push(cfg);
 
@@ -26,7 +30,8 @@ import types.BASection;
 		}
 	}
 
-	override private function readConfig(ac: AppCfg): Void {
+	#if (haxe_ver < 4.2) override #end
+	private function readConfig(ac: AppCfg): Void {
 		for (xml in nodes) {
 			readNodeConfig(xml, ac);
 			for (cfg in lastcfgs) cfg.group = parseGroup(xml);
@@ -34,7 +39,8 @@ import types.BASection;
 		}
 	}
 
-	override private function runModule(before: Bool, section: BASection): Void {
+	#if (haxe_ver < 4.2) override #end
+	private function runModule(before: Bool, section: BASection): Void {
 		for (cfgs in allcfgs) {
 			var actual: Array<T> = [
 				for (cfg in cfgs) if (cfg.before == before && cfg.section == section && modules.checkAllowGroups(cfg.group)) cfg

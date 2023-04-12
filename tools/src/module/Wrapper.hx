@@ -16,7 +16,8 @@ class Wrapper extends CfgModule<WrapperConfig> {
 
 	public function new() super('wrapper');
 
-	override public function init(): Void initSections(PRIORITY);
+	#if (haxe_ver < 4.2) override #end
+	public function init(): Void initSections(PRIORITY);
 
 	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
 		new WrapperReader(xml, {
@@ -65,7 +66,8 @@ private class WrapperReader extends BAReader<WrapperConfig> {
 		}
 	}
 
-	override private function clean(): Void {
+	#if (haxe_ver < 4.2) override #end
+	private function clean(): Void {
 		cfg.file = null;
 		cfg.pre = '';
 		cfg.post = '';
