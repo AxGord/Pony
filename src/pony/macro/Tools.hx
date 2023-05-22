@@ -86,5 +86,12 @@ import haxe.macro.Expr;
 		return fields;
 	}
 
+	public static function replaceToBlock(e: Expr): Expr {
+		return switch e.expr {
+			case EBlock(block): e;
+			case _: macro $b{[e]};
+		}
+	}
+
 }
 #end
