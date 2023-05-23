@@ -2,7 +2,7 @@
 [![Haxelib](https://img.shields.io/badge/haxelib-1.9.5-blue.svg?style=flat-square&colorB=FBC707)](http://lib.haxe.org/p/pony)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE)
 [![Build status](https://img.shields.io/appveyor/ci/AxGord/pony.svg?label=windows&style=flat-square)](https://ci.appveyor.com/project/AxGord/pony) [![Join the chat at https://gitter.im/Ponylib/Lobby](https://img.shields.io/gitter/room/Ponylib/Lobby.svg?style=flat-square&colorB=71B79C)](https://gitter.im/Ponylib/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![Donate PayPal](https://img.shields.io/badge/Donate-PayPal-green.svg?style=flat-square)](https://paypal.me/axgord)
+[![Donate PayPal](https://img.shields.io/badge/Donate-PayPal-green.svg?style=flat-square)](https://paypal.me/axgorde)
 
 <br/><br/>
 <p align="center"><img width="65%" src="https://raw.githubusercontent.com/AxGord/Pony/haxe3/logo/pony_logo_hor.svg"/></p>
@@ -59,21 +59,21 @@ CI install example
 
 Manual
 ------
-* [Home](/AxGord/Pony/wiki)
+* [Home](//github.com/AxGord/Pony/wiki)
 
-* [Pony Tools](/AxGord/Pony/wiki/Pony-Tools)
-    * [Commands](/AxGord/Pony/wiki/Commands)
-    * [Server section](/AxGord/Pony/wiki/Server-section)
-    * [Config section](/AxGord/Pony/wiki/Config-section)
-    * [Prepare sections](/AxGord/Pony/wiki/Prepare-sections)
-    * [Build sections](/AxGord/Pony/wiki/Build-sections)
-    * [Post build sections](/AxGord/Pony/wiki/Post-build-sections)
+* [Pony Tools](//github.com/AxGord/Pony/wiki/Pony-Tools)
+    * [Commands](//github.com/AxGord/Pony/wiki/Commands)
+    * [Server section](//github.com/AxGord/Pony/wiki/Server-section)
+    * [Config section](//github.com/AxGord/Pony/wiki/Config-section)
+    * [Prepare sections](//github.com/AxGord/Pony/wiki/Prepare-sections)
+    * [Build sections](//github.com/AxGord/Pony/wiki/Build-sections)
+    * [Post build sections](//github.com/AxGord/Pony/wiki/Post-build-sections)
 
-* [Net](/AxGord/Pony/wiki/Net)
-    * [RPC](/AxGord/Pony/wiki/RPC)
+* [Net](//github.com/AxGord/Pony/wiki/Net)
+    * [RPC](//github.com/AxGord/Pony/wiki/RPC)
 
 * Platforms
-    * [CS](/AxGord/Pony/wiki/CS)
-    * [Cocos Creator](/AxGord/Pony/wiki/Cocos-Creator)
+    * [CS](//github.com/AxGord/Pony/wiki/CS)
+    * [Cocos Creator](//github.com/AxGord/Pony/wiki/Cocos-Creator)
 
 * [Reference book](http://axgord.github.io/Pony/)
