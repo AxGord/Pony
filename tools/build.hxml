@@ -6,6 +6,7 @@
 -dce full
 -D analyzer-optimize
 -D hxbitmini_nullsafety
+-D message.reporting=pretty
 -lib pony
 -lib hxbitmini:1.1.0
 --macro keep('hxbitmini')
@@ -40,5 +41,6 @@
 -D js-es6
 -D nodedt
 -D hxbitmini_nullsafety
+-D message.reporting=pretty
 --macro keep('hxbitmini')
 # -debug

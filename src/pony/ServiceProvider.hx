@@ -56,14 +56,14 @@ private typedef WCB = Or<() -> Void, WR -> Void>;
 		};
 	}
 
-	public function get<T>(name: String): T {
+	@:nullSafety(Off) public function get<T>(name: String): T {
 		var service: Null<T> = services.get(name);
 		if (service == null) {
 			if (parent == null) throw new Exception('Service not exists');
 			service = parent.get(name);
 			set(name, service);
 		}
-		@:nullSafety(Off) return service;
+		return service;
 	}
 
 	public function waitReady(name: String, ?cb: () -> Void, ?wcb: WR -> Void): Void {

@@ -1,10 +1,13 @@
 package create.section;
 
+import haxe.Resource;
+
+import pony.text.XmlTools;
+
 import sys.FileSystem;
 import sys.io.File;
-import haxe.Resource;
-import pony.text.XmlTools;
-import types.*;
+
+import types.HaxeTargets;
 
 /**
  * Build

@@ -18,6 +18,7 @@ import sys.net.Socket;
 
 import types.BASection;
 
+using StringTools;
 using pony.text.XmlTools;
 
 private typedef LastCompilationOptions = {
@@ -117,7 +118,16 @@ private typedef LastCompilationOptions = {
 
 	private function runCompilation(command: Array<SPair<String>>, debug: Bool, compiler: String, winfix: Bool): Void {
 		var newline: String = '\n';
+		var firstOutput: Bool = true;
+		function writeError(line: String): Void {
+			if (firstOutput) {
+				firstOutput = false;
+				Sys.stderr().writeString(newline);
+			}
+			Sys.stderr().writeString(line + newline);
+		}
 		if (debug && server && compiler == HAXE && !winfix) {
+			#if (haxe_ver < 4.3)
 			try { // Fix compilation server error
 				var tpf: String = Utils.libPath + 'src/pony/TypedPool.hx';
 				log('Update $tpf');
@@ -125,6 +135,7 @@ private typedef LastCompilationOptions = {
 			} catch (e: Dynamic) {
 				error('Update failed');
 			}
+			#end
 			tryCounter = 3;
 			var s: Socket = connectToHaxeServer();
 			var d: String = Sys.getCwd();
@@ -143,16 +154,26 @@ private typedef LastCompilationOptions = {
 				compilationServerError(Std.string(e));
 				return;
 			}
+			var inWarning: Bool = false;
 			for (line in r.split(newline)) {
 				switch (line.charCodeAt(0)) {
 					case 0x01:
-						Sys.println(StringTools.replace(line.substr(1), '\x01', ''));
+						writeError(StringTools.replace(line.substr(1), '\x01', ''));
 					case 0x02:
 						hasError = true;
 					case null:
-						break;
-					default:
-						if (!checkWarning(line)) Sys.stderr().writeString(line + newline);
+						if (!firstOutput && !inWarning) writeError('');
+					case v:
+						if (inWarning) {
+							if (v == ' '.code)
+								continue;
+							else
+								inWarning = false;
+						}
+						if (checkWarning(line))
+							inWarning = true;
+						else
+							writeError(line);
 				}
 			}
 			s.close();
@@ -169,16 +190,23 @@ private typedef LastCompilationOptions = {
 			} else {
 				Sys.println(compiler + ' ' + args.join(' '));
 				var process: Process = new Process(compiler, args);
-				var r: Int = process.exitCode();
 				try {
-					while (true) Sys.println(process.stdout.readLine());
-				} catch (e: Eof) {}
-				try {
+					var inWarning: Bool = false;
 					while (true) {
 						var line: String = process.stderr.readLine();
-						if (!checkWarning(line)) Sys.stderr().writeString(line + newline);
+						if (inWarning) {
+							if (line == '' || line.startsWith(' '))
+								continue;
+							else
+								inWarning = false;
+						}
+						if (checkWarning(line))
+							inWarning = true;
+						else
+							writeError(line);
 					}
 				} catch (e: Eof) {}
+				var r: Int = process.exitCode();
 				if (r > 0) error('$compiler error $r');
 			}
 		}
@@ -221,7 +249,7 @@ private typedef LastCompilationOptions = {
 	}
 
 	private function checkWarning(s: String): Bool {
-		if (s.indexOf(': Warning :') != -1) for (lib in hideWarningLibs) if (s.indexOf(lib) != -1) return true;
+		if (s.toUpperCase().indexOf('WARNING') != -1) for (lib in hideWarningLibs) if (s.indexOf(lib) != -1) return true;
 		return false;
 	}
 

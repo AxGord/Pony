@@ -18,15 +18,17 @@ using pony.macro.Tools;
 @SuppressWarnings('checkstyle:CyclomaticComplexity', 'checkstyle:MethodLength')
 final class DIBuilder {
 
+	#if macro
+
 	private static inline final UNEXPECTED_ERROR: String = 'Unexpected error';
 	private static inline final DI: String = 'pony.magic.DI';
 	private static inline final WR: String = 'pony.magic.WR';
-	private static final diList: Array<String> = [];
+
+	#end
 
 	macro public static function build(): Array<Field> {
 		final localClass: ClassType = Context.getLocalClass().get();
 		final isExt: Bool = !localClass.interfaces.exists(f -> f.t.toString() == DI);
-		if (isExt) diList.push(Context.getLocalClass().toString());
 		final ctp: TypePath = @:privateAccess TypeTools.toTypePath(localClass, []);
 		final ct: ComplexType = TPath(ctp);
 		final fields: Array<Field> = Context.getBuildFields();
@@ -45,7 +47,7 @@ final class DIBuilder {
 		final loads: Array<Expr> = [];
 		final creates: Array<Expr> = [];
 		final blocks: Array<Expr> = [];
-		final destroys: Array<Expr> = [isExt ? macro super.destroy() : macro provider.destroy()];
+		final destroys: Array<Expr> = [ isExt ? macro super.destroy() : macro provider.destroy() ];
 		for (field in fields) switch field.kind {
 			case FVar(t, e) if (t != null && field.meta.checkMeta([':service'])):
 				if (isExt && localClass.superClass.t.get().fields.get().exists(f -> f.name == field.name))
@@ -57,9 +59,9 @@ final class DIBuilder {
 						case ENew(t, args):
 							final t: ComplexType = TPath(t);
 							switch t.toType() {
-								case TInst(inst, _) if (diList.contains(inst.toString()) || inst.get().interfaces.exists(f -> f.t.toString() == DI)):
+								case TInst(inst, _) if (checkDI(inst)):
 									loads.push(macro provider.load($v{field.name}));
-									destroys.push(macro $i{field.name}.destroy());
+									destroys.unshift(macro $i{field.name}.destroy());
 									creates.push(macro tasks.add());
 									final cr = if (inst.get().interfaces.exists(f -> f.t.toString() == WR))
 										macro $i{t.toString()}.create(provider, instance -> {
@@ -84,7 +86,7 @@ final class DIBuilder {
 					field.kind = FVar(t, null);
 				} else {
 					switch t.toType() {
-						case TInst(inst, _) if (diList.contains(inst.toString()) || inst.get().interfaces.exists(f -> f.t.toString() == DI)):
+						case TInst(inst, _) if (checkDI(inst)):
 							creates.push(macro tasks.add());
 							if (inst.get().interfaces.exists(f -> f.t.toString() == WR))
 								creates.push(macro provider.waitReady($v{field.name}, instance -> instance.waitReady(tasks.end)));
@@ -144,7 +146,15 @@ final class DIBuilder {
 				switch fun.expr.expr {
 					case EBlock(lines):
 						for (block in blocks) lines.unshift(block);
-						if (!isExt) lines.unshift(macro this.provider = provider);
+						if (!isExt) {
+							lines.unshift(macro this.provider = provider);
+						} else {
+							for (line in lines) switch line.expr {
+								case ECall({expr: EConst(CIdent('super'))}, params):
+									params.unshift(macro provider);
+								case _:
+							}
+						}
 					case _: throw UNEXPECTED_ERROR;
 				}
 			case _: throw UNEXPECTED_ERROR;
@@ -153,7 +163,7 @@ final class DIBuilder {
 			case FFun(fun):
 				fun.expr = fun.expr.replaceToBlock();
 				switch fun.expr.expr {
-					case EBlock(lines): lines.unshift(macro $b{destroys});
+					case EBlock(lines): lines.push(macro $b{destroys});
 					case _: throw UNEXPECTED_ERROR;
 				}
 			case _: throw UNEXPECTED_ERROR;
@@ -172,5 +182,14 @@ final class DIBuilder {
 		}).fields.pop());
 		return fields;
 	}
+
+	#if macro
+
+	private static function checkDI(inst: haxe.macro.Type.Ref<ClassType>): Bool {
+		final type: ClassType = inst.get();
+		return type.interfaces.exists(f -> f.t.toString() == DI) || (type.superClass != null && checkDI(type.superClass.t));
+	}
+
+	#end
 
 }

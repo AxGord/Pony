@@ -11,7 +11,7 @@ import pony.events.WaitReady;
 #end
 interface WR {
 
-	private final _waitReady: WaitReady;
+	private var _waitReady: WaitReady;
 
 	public function waitReady(cb: () -> Void): Void;
 	private function ready(): Void;
