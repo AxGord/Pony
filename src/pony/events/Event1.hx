@@ -49,7 +49,10 @@ import pony.Priority;
 		}
 	}
 
-	public function dispatch(a1: T1, safe: Bool = false): Void {
+	@:op(a()) public inline function dispatch(a1: T1): Void dispatchWithFlag(a1, false);
+	public inline function saveDispatch(a1: T1): Void dispatchWithFlag(a1, true);
+
+	public function dispatchWithFlag(a1: T1, safe: Bool): Void {
 		if (this == null || this.isDestroy() || (safe && this.counters.length > 1)) return;
 		var controller: SignalControllerInner1<T1> = new SignalControllerInner1<T1>(self);
 		this.lock = true;

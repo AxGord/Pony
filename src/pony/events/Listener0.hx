@@ -30,12 +30,12 @@ typedef Listener0Impl = {
 	public var isEvent(get, never): Bool;
 	public var event(get, never): Null<Priority<Any>>;
 
-	public inline function call(controller: SignalController0, ?safe: Bool): Void switch this.listener {
+	public inline function call(controller: SignalController0, safe: Bool = false): Void switch this.listener {
 		case LFunction0(f): f();
 		case LFunction0c(f): f(controller);
-		case LEvent0(s, sv): s.dispatch(sv || safe);
-		case LBind1(s, v): s.dispatch(v, safe);
-		case LBind2(s, v1, v2): s.dispatch(v1, v2, safe);
+		case LEvent0(s, sv): s.dispatchWithFlag(sv || safe);
+		case LBind1(s, v): s.dispatchWithFlag(v, safe);
+		case LBind2(s, v1, v2): s.dispatchWithFlag(v1, v2, safe);
 	}
 
 	public inline function get_isEvent(): Bool return switch this.listener {

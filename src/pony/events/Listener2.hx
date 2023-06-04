@@ -58,22 +58,22 @@ typedef Listener2Impl<T1, T2> = {
 	public var isEvent(get, never): Bool;
 	public var event(get, never): Null<Priority<Any>>;
 
-	public inline function call(a1: T1, a2: T2, controller: SignalController2<T1, T2>, ?safe: Bool): Void switch this.listener {
+	public inline function call(a1: T1, a2: T2, controller: SignalController2<T1, T2>, safe: Bool = false): Void switch this.listener {
 		case LFunction0(f): f();
 		case LFunction0c(f): f(controller);
 		case LFunction1(f): f(a1);
 		case LFunction1c(f): f(a1, controller);
 		case LFunction2(f): f(a1, a2);
 		case LFunction2c(f): f(a1, a2, controller);
-		case LEvent0(s, sv): s.dispatch(sv || safe);
-		case LEvent1(s, sv): s.dispatch(a1, sv || safe);
-		case LEvent2(s, sv): s.dispatch(a1, a2, sv || safe);
-		case LSub(s, v1, v2) if (v1 == a1 && v2 == a2): s.dispatch(safe);
-		case LSub1(s, v1) if (v1 == a1): s.dispatch(a2, safe);
-		case LSub2(s, v2) if (v2 == a2): s.dispatch(a1, safe);
-		case LNot(s, v1, v2) if (v1 != a1 && v2 != a2): s.dispatch(a1, a2, safe);
-		case LNot1(s, v1) if (v1 != a1): s.dispatch(a1, a2, safe);
-		case LNot2(s, v2) if (v2 != a2): s.dispatch(a1, a2, safe);
+		case LEvent0(s, sv): s.dispatchWithFlag(sv || safe);
+		case LEvent1(s, sv): s.dispatchWithFlag(a1, sv || safe);
+		case LEvent2(s, sv): s.dispatchWithFlag(a1, a2, sv || safe);
+		case LSub(s, v1, v2) if (v1 == a1 && v2 == a2): s.dispatchWithFlag(safe);
+		case LSub1(s, v1) if (v1 == a1): s.dispatchWithFlag(a2, safe);
+		case LSub2(s, v2) if (v2 == a2): s.dispatchWithFlag(a1, safe);
+		case LNot(s, v1, v2) if (v1 != a1 && v2 != a2): s.dispatchWithFlag(a1, a2, safe);
+		case LNot1(s, v1) if (v1 != a1): s.dispatchWithFlag(a1, a2, safe);
+		case LNot2(s, v2) if (v2 != a2): s.dispatchWithFlag(a1, a2, safe);
 		case _:
 	}
 

@@ -59,7 +59,10 @@ abstract Event2<T1, T2>(Priority<Listener2<T1, T2>>) from Priority<Listener2<T1,
 		}
 	}
 
-	public function dispatch(a1: T1, a2: T2, safe: Bool = false): Void {
+	@:op(a()) public inline function dispatch(a1: T1, a2: T2): Void dispatchWithFlag(a1, a2, false);
+	public inline function saveDispatch(a1: T1, a2: T2): Void dispatchWithFlag(a1, a2, true);
+
+	public function dispatchWithFlag(a1: T1, a2: T2, safe: Bool): Void {
 		if (this == null || this.isDestroy() || (safe && this.counters.length > 1)) return;
 		var controller: SignalControllerInner2<T1, T2> = new SignalControllerInner2<T1, T2>(self);
 		this.lock = true;

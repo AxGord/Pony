@@ -26,7 +26,7 @@ class Mouse {
 		hackMove();
 		hackDown();
 		hackUp();
-		Application.current.window.onLeave.add(M.eLeave.dispatch.bind(false));
+		Application.current.window.onLeave.add(M.eLeave.dispatch);
 	}
 
 	@:extern private static inline function hackMove(): Void {

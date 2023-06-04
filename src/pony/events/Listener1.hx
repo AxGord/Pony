@@ -44,16 +44,16 @@ typedef Listener1Impl<T1> = {
 	public var isEvent(get, never): Bool;
 	public var event(get, never): Null<Priority<Any>>;
 
-	public inline function call(a1: T1, controller: SignalController1<T1>, ?safe: Bool): Void switch this.listener {
+	public inline function call(a1: T1, controller: SignalController1<T1>, safe: Bool = false): Void switch this.listener {
 		case LFunction0(f): f();
 		case LFunction0c(f): f(controller);
 		case LFunction1(f): f(a1);
 		case LFunction1c(f): f(a1, controller);
-		case LEvent0(s, sv): s.dispatch(sv || safe);
-		case LEvent1(s, sv): s.dispatch(a1, sv || safe);
-		case LSub(s, v) if (v == a1): s.dispatch(safe);
-		case LNot(s, v) if (v != a1): s.dispatch(a1, safe);
-		case LBind1(s, v1): s.dispatch(a1, v1, safe);
+		case LEvent0(s, sv): s.dispatchWithFlag(sv || safe);
+		case LEvent1(s, sv): s.dispatchWithFlag(a1, sv || safe);
+		case LSub(s, v) if (v == a1): s.dispatchWithFlag(safe);
+		case LNot(s, v) if (v != a1): s.dispatchWithFlag(a1, safe);
+		case LBind1(s, v1): s.dispatchWithFlag(a1, v1, safe);
 		case _:
 	}
 

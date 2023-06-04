@@ -19,7 +19,7 @@ class SocketServer extends SocketServerBase {
 		super();
 		server = Net.createServer(null, null);
 		server.on('connection', connectionHandler);
-		server.listen(port, eOpen.dispatch.bind(false));
+		server.listen(port, eOpen.dispatch);
 	}
 
 	private function connectionHandler(c: Socket): Void {

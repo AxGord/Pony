@@ -92,9 +92,9 @@ class HasSignalBuilder {
 				if (lazy) {
 					fields.push({ name: 'set_' + f.name, access: ast.concat([AInline, setterAccess]), meta: null, pos:f.pos, kind:FFun(
 						setcontroll ?
-							{args: [ { name: 'v', type:null } ], ret: null, expr: macro return $i { eventName } == null || v != $i { f.name } && !$i { eventName }.dispatch(v, $i { f.name }, $v{ !notsave } ) ?  $i { f.name } = v : $i { f.name } }
+							{args: [ { name: 'v', type:null } ], ret: null, expr: macro return $i { eventName } == null || v != $i { f.name } && !$i { eventName }.dispatchWithFlag(v, $i { f.name }, $v{ !notsave } ) ?  $i { f.name } = v : $i { f.name } }
 							:
-							{args: [ { name: 'v', type:null } ], ret: null, expr: macro { if ($i { eventName } == null || v != $i { f.name }) {var prev = $i { f.name }; $i { eventName }.dispatch($i { f.name } = v, prev, $v{ !notsave } );} return $i { f.name }; } }
+							{args: [ { name: 'v', type:null } ], ret: null, expr: macro { if ($i { eventName } == null || v != $i { f.name }) {var prev = $i { f.name }; $i { eventName }.dispatchWithFlag($i { f.name } = v, prev, $v{ !notsave } );} return $i { f.name }; } }
 					) } );
 					fields.push( { name: eventName, access:ast.concat([APrivate]), pos:f.pos, kind:FVar(TPath(tp)), meta: nullsafetyOff } );
 					fields.push( { name:'get_' + changeName, access: ast.concat([AInline, APrivate]), meta: null, pos:f.pos, kind:FFun(
@@ -105,9 +105,9 @@ class HasSignalBuilder {
 				} else {
 					fields.push( { name:'set_' + f.name, access: ast.concat([AInline, setterAccess]), meta: null, pos:f.pos, kind:FFun(
 						setcontroll ?
-							{args: [ { name:'v', type:null } ], ret: null, expr: macro return v != $i { f.name } && !( untyped $i { changeName } :Event2 < $ttp, $ttp > ).dispatch(v, $i { f.name }, $v{ !notsave } ) ?  $i { f.name } = v : $i { f.name } }
+							{args: [ { name:'v', type:null } ], ret: null, expr: macro return v != $i { f.name } && !( untyped $i { changeName } :Event2 < $ttp, $ttp > ).dispatchWithFlag(v, $i { f.name }, $v{ !notsave } ) ?  $i { f.name } = v : $i { f.name } }
 							:
-							{args: [ { name:'v', type:null } ], ret: null, expr: macro { if (v != $i { f.name }) {var prev = $i { f.name }; ( untyped $i { changeName } :Event2 < $ttp, $ttp > ).dispatch($i { f.name } = v, prev, $v{ !notsave } ); } return $i { f.name }; }}
+							{args: [ { name:'v', type:null } ], ret: null, expr: macro { if (v != $i { f.name }) {var prev = $i { f.name }; ( untyped $i { changeName } :Event2 < $ttp, $ttp > ).dispatchWithFlag($i { f.name } = v, prev, $v{ !notsave } ); } return $i { f.name }; }}
 					) } );
 					fields.push( { name: eventName, access:ast.concat([APrivate]), pos:f.pos, kind:FVar(TPath(tp), ex) } );
 					fields.push( { name:'get_' + changeName, access: ast.concat([AInline, APrivate]), meta: null, pos:f.pos, kind:FFun(

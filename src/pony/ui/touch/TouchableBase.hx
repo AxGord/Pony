@@ -216,9 +216,9 @@ import pony.TypedPool;
 		else
 			touches[id] = t = @:privateAccess touchPool.get().set(x, y);
 		if (right)
-			eRightDown.dispatch(t, safe);
+			eRightDown.dispatchWithFlag(t, safe);
 		else
-			eDown.dispatch(t, safe);
+			eDown.dispatchWithFlag(t, safe);
 	}
 
 	private function dispatchUp(id: UInt = 0, right: Bool = false, safe: Bool = false): Void {
@@ -226,9 +226,9 @@ import pony.TypedPool;
 		if (t == null) return;
 		@:privateAccess t.eUp.dispatch(t);
 		if (right)
-			eRightUp.dispatch(t, safe);
+			eRightUp.dispatchWithFlag(t, safe);
 		else
-			eUp.dispatch(t, safe);
+			eUp.dispatchWithFlag(t, safe);
 	}
 
 	private function dispatchOver(id: UInt = 0, safe: Bool = false): Void {
@@ -239,7 +239,7 @@ import pony.TypedPool;
 			if (touchPool == null || touchPool.isDestroy) return;
 			touches[id] = t = touchPool.get();
 		}
-		eOver.dispatch(t, safe);
+		eOver.dispatchWithFlag(t, safe);
 	}
 
 	public function getTouch(id: UInt = 0): Touch {
@@ -258,9 +258,9 @@ import pony.TypedPool;
 		if (t == null) return;
 		@:privateAccess t.eOutDown.dispatch(t);
 		if (right)
-			eOutRightDown.dispatch(t, safe);
+			eOutRightDown.dispatchWithFlag(t, safe);
 		else
-			eOutDown.dispatch(t, safe);
+			eOutDown.dispatchWithFlag(t, safe);
 	}
 
 	private function dispatchOverDown(id: UInt = 0, right:  Bool = false, safe: Bool = false): Void {
@@ -270,16 +270,16 @@ import pony.TypedPool;
 		else
 			touches[id] = t = touchPool.get();
 		if (right)
-			eOverRightDown.dispatch(t, safe);
+			eOverRightDown.dispatchWithFlag(t, safe);
 		else
-			eOverDown.dispatch(t, safe);
+			eOverDown.dispatchWithFlag(t, safe);
 	}
 
 	private function dispatchOut(id: UInt = 0, safe: Bool = false): Void {
 		var t: Null<Touch> = touches[id];
 		if (t == null) return;
 		@:privateAccess t.eOut.dispatch(t);
-		eOut.dispatch(t, safe);
+		eOut.dispatchWithFlag(t, safe);
 		removeTouch(id);
 	}
 
@@ -290,9 +290,9 @@ import pony.TypedPool;
 		if (t == null) return;
 		@:privateAccess t.eOutUp.dispatch(t);
 		if (right)
-			eOutRightUp.dispatch(t, safe);
+			eOutRightUp.dispatchWithFlag(t, safe);
 		else
-			eOutUp.dispatch(t, safe);
+			eOutUp.dispatchWithFlag(t, safe);
 		removeTouch(id);
 	}
 
