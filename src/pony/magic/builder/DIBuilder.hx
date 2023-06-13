@@ -15,7 +15,7 @@ using pony.macro.Tools;
  * DIBuilder
  * @author AxGord <axgord@gmail.com>
  */
-@SuppressWarnings('checkstyle:CyclomaticComplexity', 'checkstyle:MethodLength')
+@SuppressWarnings('checkstyle:CyclomaticComplexity', 'checkstyle:MethodLength', 'checkstyle:InnerAssignment')
 final class DIBuilder {
 
 	#if macro
@@ -23,6 +23,9 @@ final class DIBuilder {
 	private static inline final UNEXPECTED_ERROR: String = 'Unexpected error';
 	private static inline final DI: String = 'pony.magic.DI';
 	private static inline final WR: String = 'pony.magic.WR';
+	private static inline final SERVICE: String = ':service';
+	private static inline final IMPORT_SERVICE: String = 'imprt';
+	private static inline final EXPORT_SERVICE: String = 'exprt';
 
 	#end
 
@@ -49,7 +52,16 @@ final class DIBuilder {
 		final blocks: Array<Expr> = [];
 		final destroys: Array<Expr> = [ isExt ? macro super.destroy() : macro provider.destroy() ];
 		for (field in fields) switch field.kind {
-			case FVar(t, e) if (t != null && field.meta.checkMeta([':service'])):
+			case FVar(t, e) if (t != null):
+				final meta: Null<MetadataEntry> = field.meta.getMeta(SERVICE);
+				if (meta == null) continue;
+				var importService: Bool = false;
+				var exportService: Bool = false;
+				for (param in meta.params) switch param.expr {
+					case EConst(CIdent(IMPORT_SERVICE)): importService = true;
+					case EConst(CIdent(EXPORT_SERVICE)): exportService = true;
+					case _: throw 'Unsupported flag';
+				}
 				if (isExt && localClass.superClass.t.get().fields.get().exists(f -> f.name == field.name))
 					fields.remove(field);
 				else
@@ -58,32 +70,40 @@ final class DIBuilder {
 					switch e.expr {
 						case ENew(t, args):
 							final t: ComplexType = TPath(t);
+							function checkExpr(expr: Expr): Expr {
+								return importService ? macro if (!provider.existsInParents($v{field.name})) $expr : expr;
+							}
 							switch t.toType() {
 								case TInst(inst, _) if (checkDI(inst)):
-									loads.push(macro provider.load($v{field.name}));
-									destroys.unshift(macro $i{field.name}.destroy());
-									creates.push(macro tasks.add());
+									loads.push(checkExpr(macro provider.load($v{field.name}, $v{exportService})));
+									destroys.unshift(importService && exportService ?
+										macro if (provider.isExported($v{field.name})) $i{field.name}.destroy()
+										: macro $i{field.name}.destroy()
+									);
+									creates.push(checkExpr(macro tasks.add()));
 									final cr = if (inst.get().interfaces.exists(f -> f.t.toString() == WR))
 										macro $i{t.toString()}.create(provider, instance -> {
-											provider.set($v{field.name}, instance);
+											provider.set($v{field.name}, instance, $v{exportService});
 											instance.waitReady(tasks.end);
 										});
 									else
 										macro $i{t.toString()}.create(provider, instance -> {
-											provider.set($v{field.name}, instance);
+											provider.set($v{field.name}, instance, $v{exportService});
 											tasks.end();
 										});
 									switch cr.expr {
 										case ECall(_, params): for (arg in args) params.push(arg);
 										case _: throw UNEXPECTED_ERROR;
 									}
-									creates.push(cr);
+									creates.push(checkExpr(cr));
 								case _:
-									loads.push(macro provider.set($v{field.name}, $e));
+									loads.push(checkExpr(macro provider.set($v{field.name}, $e, $v{exportService})));
 							}
 						case _: throw 'Not supported';
 					}
 					field.kind = FVar(t, null);
+				} else if (importService) {
+					throw 'Expr not set';
 				} else {
 					switch t.toType() {
 						case TInst(inst, _) if (checkDI(inst)):
