@@ -29,6 +29,7 @@ import pony.math.MathTools;
  * AnimTextureCore
  * @author AxGord <axgord@gmail.com>
  */
+#if (haxe_ver >= 4.2) abstract #end
 class AnimTextureCore extends AnimCore {
 
 	private var smooth: AnimSmoothMode;
@@ -80,6 +81,8 @@ class AnimTextureCore extends AnimCore {
 
 	@:abstract private function setTexture(n: Int, f: Int): Void;
 
-	override private function get_totalFrames(): Int return throw 'abstract';
+	#if (haxe_ver < 4.2)
+	private function get_totalFrames(): Int return throw 'abstract';
+	#end
 
 }

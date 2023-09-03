@@ -43,7 +43,7 @@ class JsDT implements HasSignal {
 	}
 
 	private static dynamic function raf(cb:Float -> Void): Int return throw 'Not set';
-	private static dynamic function caf(id: Int): Void return throw 'Not set';
+	private static dynamic function caf(id: Int): Void throw 'Not set';
 
 	private static function set_half(b: Bool): Bool {
 		if (!inited) {

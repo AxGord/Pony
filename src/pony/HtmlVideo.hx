@@ -316,7 +316,7 @@ class HtmlVideo implements HasSignal implements HasLink {
 		onDisable << disableHandler;
 	}
 
-	public inline function dispathEnd(): Void eEnd.dispatch(true);
+	public inline function dispathEnd(): Void eEnd.saveDispatch();
 
 	@:abstract private inline function get_elementCurrentTime(): Float return try element.currentTime catch (_:Any) 0;
 

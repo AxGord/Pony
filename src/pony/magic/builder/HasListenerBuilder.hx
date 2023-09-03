@@ -65,6 +65,28 @@ class HasListenerBuilder {
 								);
 								unlisten.push(macro if ($cond) $expr.remove($i{field.name}));
 								switch cond.expr {
+									case EBinop(_, { expr: EField({expr: EConst(CIdent(parent))}, s, _) }, _):
+										final name: String = 'change${s.bigFirst()}';
+										final listenerName: String = '${parent}_${name}Handler';
+										listen.push(macro $i{parent}.$name.add($i{listenerName}));
+										unlisten.push(macro $i{parent}.$name.remove($i{listenerName}));
+										final prevName: String = 'prev${s.bigFirst()}';
+										var handler: Null<Handler> = handlers[listenerName];
+										if (handler == null) {
+											final type: ComplexType = getType(s);
+											handler = new Triple({ name: s, type: type }, { name: prevName, type: type }, []);
+											handlers[listenerName] = handler;
+										}
+										handler.c.push(
+											macro if ($cond) {
+												$i{s} = $i{prevName};
+												if (!($cond)) $e{isOnce ? macro $expr.once($i{field.name}) : macro $expr.add($i{field.name})};
+											} else {
+												$i{s} = $i{prevName};
+												if (!($cond)) $expr.remove($i{field.name});
+											}
+										);
+
 									case EBinop(_, { expr: EConst(CIdent(s)) }, _):
 										final name: String = 'change${s.bigFirst()}';
 										final listenerName: String = '${name}Handler';
@@ -104,6 +126,8 @@ class HasListenerBuilder {
 			ext = false;
 			break;
 		}
+
+		// todo: check listeners exists before create methods?
 		if (ext) listen.unshift(macro super.listen());
 		final listenMethod: Field = (macro class {
 			public function listen(): Void $b{listen}

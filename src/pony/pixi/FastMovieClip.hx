@@ -117,7 +117,8 @@ class FastMovieClip extends AnimTextureCore {
 
 	@:extern public inline function ret(s:Sprite):Void pool.push(s);
 
-	override private function setTexture(n:Int, f:Int):Void setTextureFrame(texture[n], f);
+	#if (haxe_ver < 4.2) override #end
+	private function setTexture(n:Int, f:Int):Void setTextureFrame(texture[n], f);
 
 	private function setTextureFrame(t:Texture, n:Int):Void {
 		t.trim = data[n].a;
@@ -144,7 +145,8 @@ class FastMovieClip extends AnimTextureCore {
 		data = null;
 	}
 
-	override private function get_totalFrames():Int return data.length;
+	#if (haxe_ver < 4.2) override #end
+	private function get_totalFrames():Int return data.length;
 
 }
 
@@ -164,7 +166,7 @@ class FastMoviePlaySprite extends Sprite implements HasAbstract {
 	public function pcenter():Void for (s in sprites) s.pivotCenter();
 
 	@:abstract public function frame(n:Int):Void;
-	@:abstract public function progress(v:Int):Void;
+	@:abstract public function progress(v:Float):Void;
 
 	@:extern private inline function remAll():Void {
 		while (children.length > 0) removeChildAt(0);
