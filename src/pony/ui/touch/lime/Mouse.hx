@@ -10,6 +10,7 @@ import pony.ui.touch.MouseButton;
  * Lime Mouse
  * @author AxGord <axgord@gmail.com>
  */
+@SuppressWarnings('checkstyle:MagicNumber')
 class Mouse {
 	#if !notouch
 	private static var moveEvent: Event<Float -> Float -> Void>;
@@ -17,7 +18,8 @@ class Mouse {
 	private static var upEvent: Event<Float -> Float -> Int -> Void>;
 	#end
 
-	@:extern public static inline function init(): Void {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function init(): Void {
 		DeltaTime.fixedUpdate.once(initNow, -2);
 	}
 
@@ -29,7 +31,8 @@ class Mouse {
 		Application.current.window.onLeave.add(M.eLeave.dispatch);
 	}
 
-	@:extern private static inline function hackMove(): Void {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function hackMove(): Void {
 		#if !notouch
 		moveEvent = Application.current.window.onMouseMove;
 		var event: Event<Float -> Float -> Void> = new Event<Float -> Float -> Void>();
@@ -40,7 +43,8 @@ class Mouse {
 		event.add(M.moveHandler, false, 1000);
 	}
 
-	@:extern private static inline function hackDown(): Void {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function hackDown(): Void {
 		#if !notouch
 		downEvent = Application.current.window.onMouseDown;
 		var event: Event<Float -> Float -> lime.ui.MouseButton -> Void> = new Event<Float -> Float -> lime.ui.MouseButton -> Void>();
@@ -51,7 +55,8 @@ class Mouse {
 		event.add(M.downHandler, false, 1000);
 	}
 
-	@:extern private static inline function hackUp():Void {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function hackUp():Void {
 		#if !notouch
 		upEvent = Application.current.window.onMouseUp;
 		var event :Event<Float -> Float -> Int -> Void> = new Event<Float -> Float -> Int -> Void>();

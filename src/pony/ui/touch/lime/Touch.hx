@@ -15,6 +15,7 @@ import pony.time.DeltaTime;
  * Lime Touch
  * @author AxGord <axgord@gmail.com>
  */
+@SuppressWarnings('checkstyle:MagicNumber')
 class Touch implements Declarator implements HasSignal {
 
 	@:auto public static var onMove: Signal1<T>;
@@ -31,7 +32,8 @@ class Touch implements Declarator implements HasSignal {
 	private static var startEvent: Event<lime.ui.Touch -> Void>;
 	private static var endEvent: Event<lime.ui.Touch -> Void>;
 
-	@:extern public static inline function init(): Void {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function init(): Void {
 		DeltaTime.fixedUpdate.once(initNow, -2);
 	}
 
@@ -47,21 +49,21 @@ class Touch implements Declarator implements HasSignal {
 
 	private static function hackMove(): Void {
 		moveEvent = T.onMove;
-		var moveEvent = new Event<lime.ui.Touch -> Void>();
-		moveEvent.add(moveHandler, false, 1000);
-		T.onMove = moveEvent;
+		var event: Event<lime.ui.Touch -> Void> = new Event<lime.ui.Touch -> Void>();
+		event.add(moveHandler, false, 1000);
+		T.onMove = event;
 	}
 
 	private static function hackDown(): Void {
 		startEvent = T.onStart;
-		var event = new Event<lime.ui.Touch -> Void>();
+		var event: Event<lime.ui.Touch -> Void> = new Event<lime.ui.Touch -> Void>();
 		event.add(startHandler, false, 1000);
 		T.onStart = event;
 	}
 
 	private static function hackUp(): Void {
 		endEvent = T.onEnd;
-		var event = new Event<lime.ui.Touch -> Void>();
+		var event: Event<lime.ui.Touch -> Void> = new Event<lime.ui.Touch -> Void>();
 		event.add(endHandler, false, 1000);
 		T.onEnd = event;
 	}

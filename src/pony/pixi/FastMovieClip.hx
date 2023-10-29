@@ -51,8 +51,8 @@ class FastMovieClip extends AnimTextureCore {
 		frameTime:Time,
 		fixedTime:Bool = false,
 		smooth:AnimSmoothMode = AnimSmoothMode.None,
-		crop:Int = 0):FastMovieClip
-	{
+		crop:Int = 0
+	):FastMovieClip {
 		var n = idFromTexture(converOrFirst(data));
 		if (!storage.exists(n)) {
 			return storage[n] = new FastMovieClip(data, frameTime, fixedTime, smooth, crop);

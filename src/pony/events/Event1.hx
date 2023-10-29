@@ -7,8 +7,10 @@ import pony.Priority;
  * Event1
  * @author AxGord <axgord@gmail.com>
  */
+@SuppressWarnings('checkstyle:MagicNumber')
 @:forward(
 	empty,
+	#if pony_experimental changeEmpty, #end
 	onTake,
 	onLost
 )
@@ -16,13 +18,15 @@ import pony.Priority;
 
 	public var self(get, never): Event1<T1>;
 
-	@:extern public inline function new(double: Bool = false) {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function new(double: Bool = false) {
 		this = new Priority(double);
 		this.compare = compare;
 		this.real = real;
 	}
 
-	@:extern private inline function get_self(): Event1<T1> return this;
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function get_self(): Event1<T1> return this;
 
 	private static function real<T1>(l: Listener1<T1>): Bool {
 		var e: Null<Priority<Any>> = l.event;
@@ -75,29 +79,36 @@ import pony.Priority;
 		this.lock = false;
 	}
 
-	@:extern public inline function sub(a1: T1, priority: Int = 0): Event0 {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function sub(a1: T1, priority: Int = 0): Event0 {
 		var e: Event0 = new Event0();
 		(e: Signal0).add(dispatch.bind(a1), priority);
 		return e;
 	}
 
-	@:extern public inline function subOnce(a1: T1, priority: Int = 0): Event0 {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function subOnce(a1: T1, priority: Int = 0): Event0 {
 		var e: Event0 = new Event0();
 		(e: Signal0).once(dispatch.bind(a1), priority);
 		return e;
 	}
 
-	@:op(A - B) @:extern private inline function sub_op(a1: T1): Event0 {
+	@:op(A - B)
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function sub_op(a1: T1): Event0 {
 		return sub(a1);
 	}
 
-	@:op(A && B) @:extern public inline function and(s: Event1<T1>): Event1<T1> {
+	@:op(A && B)
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function and(s: Event1<T1>): Event1<T1> {
 		var e: Event1<T1> = new Event1<T1>();
 		(e: Signal1<T1>) << self << s;
 		return e;
 	}
 
-	@:op(A & B) @:extern public inline function andOnce(s: Event1<T1>): Event1<T1> {
+	@:op(A & B) #if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function andOnce(s: Event1<T1>): Event1<T1> {
 		var e: Event1<T1> = new Event1<T1>();
 		(e: Signal1<T1>) << self << s << (e: Signal1<T1>).clear;
 		return e;
@@ -109,4 +120,5 @@ import pony.Priority;
 			this.destroy();
 		}
 	}
+
 }

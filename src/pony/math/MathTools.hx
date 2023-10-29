@@ -4,6 +4,7 @@ package pony.math;
  * MathTools
  * @author AxGord <axgord@gmail.com>
  */
+@SuppressWarnings('checkstyle:MagicNumber')
 class MathTools {
 
 	/**
@@ -40,34 +41,44 @@ class MathTools {
 		return s;
 	}
 
-	@:extern public static inline function percentCalc(p: Float, min: Float, max: Float): Float
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function percentCalc(p: Float, min: Float, max: Float): Float
 		return (max - min) * p + min;
 
-	@:extern public static inline function percentBackCalc(p: Float, min: Float, max: Float): Float
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function percentBackCalc(p: Float, min: Float, max: Float): Float
 		return (p - min) / (max - min);
 
-	@:extern public static inline function percentCalcd(p: Float, a: Float, b: Float): Float
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function percentCalcd(p: Float, a: Float, b: Float): Float
 		return a > b ? percentCalc(p, b, a) : percentCalc(p, a, b);
 
-	@:extern public static inline function inRange(v: Float, min: Float, max: Float): Bool
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function inRange(v: Float, min: Float, max: Float): Bool
 		return min <= v && v <= max;
 
-	@:extern public static inline function approximately(a: Float, b: Float, range: Float = 1): Bool
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function approximately(a: Float, b: Float, range: Float = 1): Bool
 		return inRange(a, b - range, b + range);
 
-	@:extern public static inline function limit(v: Float, min: Float, max: Float): Float
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function limit(v: Float, min: Float, max: Float): Float
 		return if (v < min) min; else if (v > max) max; else v;
 
-	@:extern public static inline function cultureAdd(a: Float, b: Float, max: Float): Float
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function cultureAdd(a: Float, b: Float, max: Float): Float
 		return a + b >= max ? max : a + b;
 
-	@:extern public static inline function cultureSub(a: Float, b: Float, min: Float): Float
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function cultureSub(a: Float, b: Float, min: Float): Float
 		return a - b <= min ? min : a - b;
 
-	@:extern public static inline function cultureTarget(a: Float, b: Float, step: Float): Float
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function cultureTarget(a: Float, b: Float, step: Float): Float
 		return a > b ? cultureSub(a, step, b) : cultureAdd(a, step, b);
 
-	@:extern public static inline function midValue(a: Float, b: Float, aCount: Float, bCount: Float): Float
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function midValue(a: Float, b: Float, aCount: Float, bCount: Float): Float
 		return (aCount * a + bCount * b) / (aCount + bCount);
 
 	public static inline function cabs(v: Int): Int
@@ -82,13 +93,16 @@ class MathTools {
 	public static inline function pcMinMax(a: SPair<Int>, b: SPair<Int>): SPair<Int>
 		return new SPair<Int>(cmin(a.a, b.a), cmax(b.a, b.b));
 
-	@:extern public static inline function roundTo(v: Float, count: Int): Float
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function roundTo(v: Float, count: Int): Float
 		return Math.round(v * Math.pow(10, count)) / Math.pow(10, count);
 
-	@:extern public static inline function intTo(v: Float, count: Int): Float
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function intTo(v: Float, count: Int): Float
 		return Std.int(v * Math.pow(10, count)) / Math.pow(10, count);
 
-	@:extern public static inline function intNot(v: Int): Int
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function intNot(v: Int): Int
 		return v == 0 ? 1 : 0;
 
 	public static inline function float10(v: Float): Float return intTo(v, 1);

@@ -21,24 +21,48 @@ typedef Listener1Impl<T1> = {
  * Listener1
  * @author AxGord <axgord@gmail.com>
  */
+@SuppressWarnings('checkstyle:MagicNumber')
 @:forward(once, listener)
 @:nullSafety(Strict) abstract Listener1<T1>(Listener1Impl<T1>) to Listener1Impl<T1> from Listener1Impl<T1> {
 
-	@:from @:extern private static inline function f0<T1>(f: Void -> Void): Listener1<T1>
+	@:from
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function f0<T1>(f: Void -> Void): Listener1<T1>
 		return { once: false, listener: LFunction0(f) };
-	@:from @:extern private static inline function f1<T1>(f: T1 -> Void): Listener1<T1>
+
+	@:from
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function f1<T1>(f: T1 -> Void): Listener1<T1>
 		return { once: false, listener: LFunction1(f) };
-	@:from @:extern private static inline function f0c<T1>(f: SignalController1<T1> -> Void): Listener1<T1>
+
+	@:from
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function f0c<T1>(f: SignalController1<T1> -> Void): Listener1<T1>
 		return { once: false, listener: LFunction0c(f) };
-	@:from @:extern private static inline function f0ca<T1>(f: SignalController -> Void): Listener1<T1>
+
+	@:from
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function f0ca<T1>(f: SignalController -> Void): Listener1<T1>
 		return { once: false, listener: LFunction0c(cast f) };
-	@:from @:extern private static inline function f1c<T1>(f: T1 -> SignalController1<T1> -> Void): Listener1<T1>
+
+	@:from
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function f1c<T1>(f: T1 -> SignalController1<T1> -> Void): Listener1<T1>
 		return { once: false, listener: LFunction1c(f) };
-	@:from @:extern private static inline function f1ca<T1>(f: T1 -> SignalController -> Void): Listener1<T1>
+
+	@:from
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function f1ca<T1>(f: T1 -> SignalController -> Void): Listener1<T1>
 		return { once: false, listener: LFunction1c(cast f) };
-	@:from @:extern private static inline function s0<T1>(f: Event0): Listener1<T1>
+
+	@:from
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function s0<T1>(f: Event0): Listener1<T1>
 		return { once: false, listener: LEvent0(f) };
-	@:from @:extern private static inline function s1<T1>(f: Event1<T1>): Listener1<T1>
+
+	@:from
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function s1<T1>(f: Event1<T1>): Listener1<T1>
 		return { once: false, listener: LEvent1(f) };
 
 	public var isEvent(get, never): Bool;

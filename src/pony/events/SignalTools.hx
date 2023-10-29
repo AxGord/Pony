@@ -6,16 +6,18 @@ import haxe.Constraints.Function;
  * SignalTools
  * @author AxGord <axgord@gmail.com>
  */
+@SuppressWarnings('checkstyle:MagicNumber')
 class SignalTools {
 
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	#if cs
-	@:extern public static inline function functionHashCompare(a: Function, b: Function): Bool return untyped a.GetHashCode() == untyped b.GetHashCode();
+	public static inline function functionHashCompare(a: Function, b: Function): Bool return untyped a.GetHashCode() == untyped b.GetHashCode();
 	#elseif java
-	@:extern public static inline function functionHashCompare(a: Function, b: Function): Bool return untyped a.hashCode() == untyped b.hashCode();
+	public static inline function functionHashCompare(a: Function, b: Function): Bool return untyped a.hashCode() == untyped b.hashCode();
 	#elseif (neko || interp)
-	@:extern public static inline function functionHashCompare(a: Function, b: Function): Bool return Reflect.compareMethods(a, b);
+	public static inline function functionHashCompare(a: Function, b: Function): Bool return Reflect.compareMethods(a, b);
 	#else
-	@:extern public static inline function functionHashCompare(a: Function, b: Function): Bool return a == b;
+	public static inline function functionHashCompare(a: Function, b: Function): Bool return a == b;
 	#end
 
 }

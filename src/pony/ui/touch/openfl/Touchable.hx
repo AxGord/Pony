@@ -14,6 +14,7 @@ import pony.ui.touch.TouchableBase;
  * OpenFL Touchable
  * @author AxGord <axgord@gmail.com>
  */
+@SuppressWarnings('checkstyle:MagicNumber')
 class Touchable extends TouchableBase {
 
 	@:bindable public static var touchMode: Bool = false;
@@ -24,7 +25,8 @@ class Touchable extends TouchableBase {
 	private static var needSw: Bool = false;
 	private static var wait: Bool = false;
 
-	@:extern private static inline function get_touchSupport(): Bool {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function get_touchSupport(): Bool {
 		#if touchsim
 		return true;
 		#elseif notouch
@@ -34,7 +36,8 @@ class Touchable extends TouchableBase {
 		#end
 	}
 
-	@:extern private static inline function init(): Void {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function init(): Void {
 		if (inited) return;
 		inited = true;
 		Mouse.init();

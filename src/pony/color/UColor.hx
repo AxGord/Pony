@@ -125,7 +125,9 @@ abstract UColor(UInt) from UInt to UInt {
 		return fromARGB(a, r, g, b);
 	}
 
-	@:extern private inline function get_alternative(): UColor return power > HALF_POWER ? 0 : Color.WHITE;
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function get_alternative(): UColor return power > HALF_POWER ? 0 : Color.WHITE;
 
 	private static inline function lim(v: Int): UInt {
 		if (v > Color.MAX_CHANNEL) v = Color.MAX_CHANNEL;

@@ -8,6 +8,7 @@ import pony.geom.Point;
  * Touch
  * @author AxGord <axgord@gmail.com>
  */
+@SuppressWarnings('checkstyle:MagicNumber')
 @:nullSafety class Touch implements HasSignal {
 
 	@:auto public var onOver: Signal1<Touch>;
@@ -36,12 +37,14 @@ import pony.geom.Point;
 		onMove.clear();
 	}
 
-	@:extern private inline function set(x: Float, y: Float): Touch {
-		this.x = x;
-		this.y = y;
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function set(newX: Float, newY: Float): Touch {
+		x = newX;
+		y = newY;
 		return this;
 	}
 
-	@:extern private inline function get_point(): Point<Float> return new Point<Float>(x, y);
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function get_point(): Point<Float> return new Point<Float>(x, y);
 
 }

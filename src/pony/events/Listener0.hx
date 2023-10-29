@@ -17,15 +17,27 @@ typedef Listener0Impl = {
  * Listener0
  * @author AxGord <axgord@gmail.com>
  */
+@SuppressWarnings('checkstyle:MagicNumber')
 @:forward(once, listener)
 @:nullSafety(Strict) abstract Listener0(Listener0Impl) to Listener0Impl from Listener0Impl {
 
-	@:from @:extern private static inline function f0<T1>(f: Void -> Void): Listener0 return { once: false, listener: LFunction0(cast f) };
-	@:from @:extern private static inline function f0c<T1>(f: SignalController0 -> Void): Listener0
+	@:from
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function f0<T1>(f: Void -> Void): Listener0 return { once: false, listener: LFunction0(cast f) };
+
+	@:from
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function f0c<T1>(f: SignalController0 -> Void): Listener0
 		return { once: false, listener: LFunction0c(f) };
-	@:from @:extern private static inline function f0ca<T1>(f: SignalController -> Void): Listener0
+
+	@:from
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function f0ca<T1>(f: SignalController -> Void): Listener0
 		return { once: false, listener: LFunction0c(cast f) };
-	@:from @:extern private static inline function s0<T1>(f: Event0): Listener0 return { once: false, listener: LEvent0(f) };
+
+	@:from
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function s0<T1>(f: Event0): Listener0 return { once: false, listener: LEvent0(f) };
 
 	public var isEvent(get, never): Bool;
 	public var event(get, never): Null<Priority<Any>>;

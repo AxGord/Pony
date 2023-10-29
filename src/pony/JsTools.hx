@@ -41,6 +41,7 @@ typedef JsMap<K, V> = {
  * JsTools
  * @author AxGord <axgord@gmail.com>
  */
+@SuppressWarnings('checkstyle:MagicNumber')
 class JsTools implements HasSignal {
 
 	public static var agent(get, never): UserAgent;
@@ -72,7 +73,8 @@ class JsTools implements HasSignal {
 		Lib.global.docReady(eDocReady.dispatch);
 	}
 
-	@:extern public static inline function removeEval(): Void {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function removeEval(): Void {
 		untyped window.eval = evalHandler;
 	}
 
@@ -80,7 +82,8 @@ class JsTools implements HasSignal {
 		throw new Error('Sorry, this app does not support window.eval().');
 	}
 
-	@:extern public static inline function disableDrop(): Void {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function disableDrop(): Void {
 		Browser.document.ondragover = abortEvent;
 		Browser.document.ondrop = abortEvent;
 	}
@@ -148,7 +151,8 @@ class JsTools implements HasSignal {
 		return _isa;
 	}
 
-	@:extern private static inline function get_isMobile(): Bool {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function get_isMobile(): Bool {
 		#if simmobile
 		return true;
 		#else
@@ -156,11 +160,13 @@ class JsTools implements HasSignal {
 		#end
 	}
 
-	@:extern public static inline function remove(el: DOMElement): Void {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function remove(el: DOMElement): Void {
 		agent == IE ? el.parentNode.removeChild(el) : el.remove();
 	}
 
-	@:extern public static inline function get_isFSE(): Bool {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function get_isFSE(): Bool {
 		return untyped {
 			Browser.document.fullscreenElement ||
 			Browser.document.mozFullScreen ||

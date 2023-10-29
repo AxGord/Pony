@@ -1,20 +1,22 @@
 package pony.geom.drawshape;
 
-import pony.geom.Point;
+import haxe.io.Bytes;
+import haxe.io.BytesOutput;
+
 import pony.Byte;
+import pony.events.Event1;
 import pony.events.Signal0;
 import pony.events.Signal1;
 import pony.events.Signal2;
-import pony.events.Event1;
+import pony.geom.Point;
 import pony.ui.touch.Touch;
-import haxe.io.Bytes;
-import haxe.io.BytesOutput;
 
 /**
  * DrawShape
  * @author AxGord <axgord@gmail.com>
  */
-class DrawShape extends pony.Logable {
+class DrawShape extends pony.Logable
+#if pony_experimental implements pony.magic.HasListener #end {
 
 	private static inline var PRIORITY:Int = -8;
 
@@ -26,9 +28,16 @@ class DrawShape extends pony.Logable {
 	@:auto public var onStoreClear:Signal0;
 
 	@:auto public var onFinishShape:Signal1<Array<IntPoint>>;
+
+	#if pony_experimental
+	@:auto public var onDrawFinishShape:Signal1<Array<Point<Float>>>;
+	@:auto public var onDrawFinishPolygon:Signal1<Array<Float>>;
+	@:auto public var onFinishBinary:Signal1<Bytes>;
+	#else
 	public var onDrawFinishShape(default, null):Signal1<Array<Point<Float>>>;
 	public var onDrawFinishPolygon(default, null):Signal1<Array<Float>>;
 	public var onFinishBinary:Signal1<Bytes>;
+	#end
 
 	private var pointer:DrawShapePointer;
 	private var downPointData:DrawShapePointerData;
@@ -40,27 +49,41 @@ class DrawShape extends pony.Logable {
 	public function new(pointer:DrawShapePointer) {
 		super();
 		this.pointer = pointer;
+		#if !pony_experimental
 		onDrawFinishShape = onFinishShape.convert1(convertPoints);
 		onDrawFinishPolygon = onDrawFinishShape.convert1(pointsToPolygon);
 		onFinishBinary = onFinishShape.convert1(shapeToBytes);
+		#end
 	}
 
-	public function reset():Void {
-		shape = [];
+	#if pony_experimental
+
+	@:listen(onFinishShape, eDrawFinishShape.empty == false)
+	private function drawFinishShape(points: Array<IntPoint>): Void {
+		eDrawFinishShape.dispatch(points.map(pointer.convertPoint));
 	}
 
-	public function enable():Void {
-		log('enable draw shape');
-		pointer.enable();
-		addStartListeners();
+	@:listen(onDrawFinishShape, eDrawFinishPolygon.empty == false)
+	private function drawFinishPolygon(points: Array<Point<Float>>): Void {
+		var result:Array<Float> = [];
+		for (v in points) {
+			result.push(v.x);
+			result.push(v.y);
+		}
+		result.push(points[0].x);
+		result.push(points[0].y);
+		eDrawFinishPolygon.dispatch(result);
 	}
 
-	public function disable():Void {
-		log('disable draw shape');
-		pointer.disable();
-		removeDrawListeners();
-		removeStartListeners();
+	@:listen(onFinishShape, eFinishBinary.empty == false)
+	private function finishBinary(points: Array<IntPoint>): Void {
+		var b:BytesOutput = new BytesOutput();
+		for (v in points) b.writeByte(Byte.create(v.x, v.y));
+		log('Bytes size: ' + b.length);
+		eFinishBinary.dispatch(b.getBytes());
 	}
+
+	#else
 
 	private function convertPoints(e:Event1<Array<Point<Float>>>, p:Array<IntPoint>):Void {
 		e.dispatch(p.map(pointer.convertPoint));
@@ -82,6 +105,25 @@ class DrawShape extends pony.Logable {
 		for (v in p) b.writeByte(Byte.create(v.x, v.y));
 		log('Bytes size: ' + b.length);
 		e.dispatch(b.getBytes());
+	}
+
+	#end
+
+	public function reset():Void {
+		shape = [];
+	}
+
+	public function enable():Void {
+		log('enable draw shape');
+		pointer.enable();
+		addStartListeners();
+	}
+
+	public function disable():Void {
+		log('disable draw shape');
+		pointer.disable();
+		removeDrawListeners();
+		removeStartListeners();
 	}
 
 	private function stopListenDownTouch():Void {
@@ -164,7 +206,7 @@ class DrawShape extends pony.Logable {
 	private function checkDeny(p1:IntPoint, p2:IntPoint):Bool {
 		if (p2 == null) return false;
 
-		if (p1.x == targetPointData.col && p1.y == targetPointData.row) return false;//allow for clear
+		if (p1.x == targetPointData.col && p1.y == targetPointData.row) return false; // Allow for clear
 		if (p2.x == targetPointData.col && p2.y == targetPointData.row) return true;
 
 		if (eq3(p1.x, p2.x, targetPointData.col)) return true;
@@ -209,7 +251,7 @@ class DrawShape extends pony.Logable {
 		} else {
 			psh = sh = shape.pop();
 		}
-		
+
 		if (shape.length > 0 && checkDeny(sh, psh)) {
 			// trace(sh, psh);
 			// trace(targetPointData.col, targetPointData.row);
@@ -253,5 +295,12 @@ class DrawShape extends pony.Logable {
 		log('Write shape point: $p');
 		shape.push(p);
 	}
-	
+
+	#if pony_experimental
+	override public function destroy(): Void {
+		unlisten();
+		super.destroy();
+	}
+	#end
+
 }

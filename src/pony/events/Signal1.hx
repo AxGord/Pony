@@ -9,6 +9,7 @@ import pony.events.Listener1;
  * Signal1
  * @author AxGord <axgord@gmail.com>
  */
+@SuppressWarnings('checkstyle:MagicNumber')
 @:forward(
 	empty,
 	min,
@@ -51,14 +52,23 @@ import pony.events.Listener1;
 		}
 	}
 
-	@:extern public inline function once(e: Listener1<T1>, priority: Int = 0): Signal1<T1> {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function once(e: Listener1<T1>, priority: Int = 0): Signal1<T1> {
 		e.once = true;
 		return add(e, priority);
 	}
 
-	@:op(A << B) @:extern private inline function op_add(listener: Listener1<T1>): Signal1<T1> return add(listener);
-	@:op(A < B) @:extern private inline function once_op(listener: Listener1<T1>): Signal1<T1> return once(listener);
-	@:op(A >> B) @:extern private inline function remove_op(listener: Listener1<T1>): Bool return remove(listener);
+	@:op(A << B)
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function op_add(listener: Listener1<T1>): Signal1<T1> return add(listener);
+
+	@:op(A < B)
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function once_op(listener: Listener1<T1>): Signal1<T1> return once(listener);
+
+	@:op(A >> B)
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function remove_op(listener: Listener1<T1>): Bool return remove(listener);
 
 	public function sub(a1: T1, priority: Int = 0, once: Bool = false): Signal0 {
 		for (e in this) switch e.listener {
@@ -72,13 +82,14 @@ import pony.events.Listener1;
 		return s;
 	}
 
-	@:op(A - B) @:extern private inline function sub_op(a1: T1): Signal0 {
-		return sub(a1);
-	}
+	@:op(A - B)
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function sub_op(a1: T1): Signal0 return sub(a1);
 
-	@:op(A -= B) @:extern public inline function removeSub(a1: T1): Bool {
-		return this.remove({ once: false, listener: LSub(cast null, a1) });
-	}
+	@SuppressWarnings('checkstyle:InnerAssignment')
+	@:op(A -= B)
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function removeSub(a1: T1): Bool return this.remove({ once: false, listener: LSub(cast null, a1) });
 
 	public function bind1<T2>(a1: T2, priority: Int = 0, _once: Bool = false): Signal2<T1, T2> {
 		for (e in this) switch e.listener {
@@ -92,13 +103,13 @@ import pony.events.Listener1;
 		return s;
 	}
 
-	@:op(A + B) @:extern private inline function bind1_op<T2>(a1: T2): Signal2<T1, T2> {
-		return bind1(a1);
-	}
+	@:op(A + B)
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function bind1_op<T2>(a1: T2): Signal2<T1, T2> return bind1(a1);
 
-	@:op(A * B) @:extern private inline function bind1Once_op<T2>(a1: T2): Signal2<T1, T2> {
-		return bind1(a1, 0, true);
-	}
+	@:op(A * B)
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function bind1Once_op<T2>(a1: T2): Signal2<T1, T2> return bind1(a1, 0, true);
 
 	public function not(a1: T1, priority: Int = 0, once: Bool = false): Signal1<T1> {
 		for (e in this) switch e.listener {
@@ -112,30 +123,35 @@ import pony.events.Listener1;
 		return s;
 	}
 
-	@:op(A / B) @:extern private inline function not_op(a1: T1): Signal1<T1> {
-		return not(a1);
-	}
+	@:op(A / B)
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function not_op(a1: T1): Signal1<T1> return not(a1);
 
-	@:op(A % B) @:extern private inline function not_op0(a1: T1): Signal0 {
-		return not(a1);
-	}
+	@:op(A % B)
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function not_op0(a1: T1): Signal0 return not(a1);
 
-	@:op(A /= B) @:extern public inline function removeNot(a1: T1): Bool {
-		return this.remove({ once: false, listener: LNot(cast null, a1) });
-	}
+	@SuppressWarnings('checkstyle:InnerAssignment')
+	@:op(A /= B)
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function removeNot(a1: T1): Bool return this.remove({ once: false, listener: LNot(cast null, a1) });
 
-	@:from @:extern private static inline function signal2<T1, T2>(s: Signal2<T1, T2>): Signal1<T1> {
-		return cast s;
-	}
+	@:from
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function signal2<T1, T2>(s: Signal2<T1, T2>): Signal1<T1> return cast s;
 
-	@:op(A || B) @:extern public inline function or(s: Signal1<T1>): Signal1<T1> {
+	@:op(A || B)
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function or(s: Signal1<T1>): Signal1<T1> {
 		var ns = new Event1();
 		add(ns);
 		s.add(ns);
 		return ns;
 	}
 
-	@:op(A | B) @:extern public inline function orOnce(s: Signal1<T1>): Signal1<T1> {
+	@:op(A | B)
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function orOnce(s: Signal1<T1>): Signal1<T1> {
 		var ns = new Event1();
 		once(ns);
 		s.once(ns);
@@ -182,37 +198,71 @@ import pony.events.Listener1;
 		return ns;
 	}
 
-	@:extern public inline function convert0(f: Event0 -> T1 -> Void): Signal0 {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function convert0(f: Event0 -> T1 -> Void): Signal0 {
 		var ns = new Event0();
 		add({ once: false, listener: Listener1.Listener1Type.LFunction1(f.bind(ns))});
 		return ns;
 	}
 
-	@:extern public inline function convert1<ST1>(f: Event1<ST1> -> T1 -> Void): Signal1<ST1> {
+	#if pony_experimental
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function convert1<ST1>(f: Event1<ST1> -> T1 -> Void): Pair<Signal1<ST1>, () -> Void> {
+		var event: Event1<ST1> = new Event1<ST1>();
+		var listener: Listener1<T1> = { once: false, listener: Listener1.Listener1Type.LFunction1(f.bind(event)) };
+		function listen(): Void add(listener);
+		function unlisten(): Void remove(listener);
+		event.onTake << listen;
+		event.onLost << unlisten;
+		if (!this.empty) listen();
+		return new Pair(event, function(): Void {
+			unlisten();
+			event.onTake >> listen;
+			event.onLost >> unlisten;
+			event.destroy();
+		});
+	}
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function mod1<ST1>(f: T1 -> ST1): Pair<Signal1<ST1>, () -> Void> {
+		return convert1(function(event: Event1<ST1>, v1: T1): Void event.dispatch(f(v1)));
+	}
+
+	#else
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function convert1<ST1>(f: Event1<ST1> -> T1 -> Void): Signal1<ST1> {
 		var ns = new Event1();
 		add({ once: false, listener: Listener1.Listener1Type.LFunction1(f.bind(ns))});
 		return ns;
 	}
 
-	@:extern public inline function convert2<ST1, ST2>(f: Event2<ST1, ST2> -> T1 -> Void): Signal2<ST1, ST2> {
+	#end
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function convert2<ST1, ST2>(f: Event2<ST1, ST2> -> T1 -> Void): Signal2<ST1, ST2> {
 		var ns = new Event2();
 		add({ once: false, listener: Listener1.Listener1Type.LFunction1(f.bind(ns))});
 		return ns;
 	}
 
-	@:extern public inline function join(s: Signal1<T1>): Signal1<T1> {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function join(s: Signal1<T1>): Signal1<T1> {
 		add({ once: false, listener: LEvent1((untyped s: Event1<T1>), true) });
 		s.add({ once: false, listener: LEvent1((this: Event1<T1>), true) });
 		return this;
 	}
 
-	@:extern public inline function unjoin(s: Signal1<T1>): Signal1<T1> {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function unjoin(s: Signal1<T1>): Signal1<T1> {
 		remove((untyped s: Event1<T1>));
 		s.remove((this: Event1<T1>));
 		return this;
 	}
 
-	@:extern public inline function trace(?message: String, priority: Int = 0, ?pos: PosInfos): Void {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function trace(?message: String, priority: Int = 0, ?pos: PosInfos): Void {
 		this.add(function() Log.trace(message, pos), priority);
 	}
 

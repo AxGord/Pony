@@ -7,10 +7,13 @@ import pony.Tools.ArrayTools;
  * Thanks for idea: Dima (deep)
  * @author AxGord <axgord@gmail.com>
  */
+@SuppressWarnings('checkstyle:MagicNumber')
 @:forward(length, concat, join, toString, indexOf, lastIndexOf, copy, iterator, map, filter)
 abstract ROArray<T>(Array<T>) from Array<T> to Iterable<T> {
 
-	@:arrayAccess @:extern public inline function arrayAccess(key: Int): T return this[key];
+	@:arrayAccess
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function arrayAccess(key: Int): T return this[key];
 
 	#if (haxe_ver >= '4.0.0')
 	public inline function keyValueIterator(): KeyValueIterator<UInt, T> {
@@ -18,7 +21,8 @@ abstract ROArray<T>(Array<T>) from Array<T> to Iterable<T> {
 	}
 	#end
 
-	@:extern public inline function kv<T>(): Iterator<KeyValue<Int, T>> return ArrayTools.kv(cast this);
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function kv<T>(): Iterator<KeyValue<Int, T>> return ArrayTools.kv(cast this);
 
 }
 

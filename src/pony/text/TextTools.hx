@@ -9,7 +9,9 @@ import haxe.macro.Expr;
 import haxe.Serializer;
 #end
 
-@:enum abstract AnsiForeground(UInt) to UInt {
+#if (haxe_ver >= 4.2) enum #else @:enum #end
+abstract AnsiForeground(UInt) to UInt {
+
 	var Default = 39;
 	var Black = 30;
 	var Red = 31;
@@ -27,12 +29,14 @@ import haxe.Serializer;
 	var LightMagenta = 95;
 	var LightCyan = 96;
 	var White = 97;
+
 }
 
 /**
  * TextTools
  * @author AxGord <axgord@gmail.com>
  */
+@SuppressWarnings('checkstyle:MagicNumber')
 @:nullSafety(Strict) class TextTools {
 
 	public static inline var MODULE: String = 'pony.text.TextTools';
@@ -398,8 +402,12 @@ import haxe.Serializer;
 	public static inline function minLength(a: String, b: String): Int return MathTools.cmin(a.length, b.length);
 	public static function getMaxLength(a: String, b: Int): Int return MathTools.cmax(a.length, b);
 	public static function getMinLength(a: String, b: Int): Int return MathTools.cmin(a.length, b);
-	@:extern public static inline function arrayMaxLength(a: Array<String>): Int return Lambda.fold(a, getMaxLength, 0);
-	@:extern public static inline function arrayMinLength(a: Array<String>): Int return Lambda.fold(a, getMinLength, MathTools.MAX_INT);
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function arrayMaxLength(a: Array<String>): Int return Lambda.fold(a, getMaxLength, 0);
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function arrayMinLength(a: Array<String>): Int return Lambda.fold(a, getMinLength, MathTools.MAX_INT);
 
 	/**
 	 * Checks a string contains b string symbols

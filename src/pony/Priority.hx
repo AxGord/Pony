@@ -15,6 +15,7 @@ typedef PriorityIds = Priority<{
  * todo: get element priority
  * @author AxGord
  */
+@SuppressWarnings('checkstyle:MagicNumber')
 @:nullSafety(Strict) @:final class Priority<T:Dynamic> implements HasSignal {
 
 	#if (!macro)
@@ -50,7 +51,11 @@ typedef PriorityIds = Priority<{
 	/**
 	 * True if priority list not have element and false if have.
 	 */
+	#if pony_experimental
+	@:bindable public var empty: Bool = true;
+	#else
 	public var empty(default, null): Bool = true;
+	#end
 
 	/**
 	 * if true: [[1, 1, 3]] - normal. Default false.
@@ -153,7 +158,8 @@ typedef PriorityIds = Priority<{
 	 * @param	a elements array for adding.
 	 * @param	priority priority, smalest first, bigest last, default 0 (0 - normal priority).
 	 */
-	@:extern public inline function addArray(a: Array<T>, priority: Int = 0): Priority<T> {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function addArray(a: Array<T>, priority: Int = 0): Priority<T> {
 		for (e in a) add(e, priority);
 		return this;
 	}
@@ -188,12 +194,14 @@ typedef PriorityIds = Priority<{
 	/**
 	 * Call this method if you use break
 	 */
-	@:extern public inline function brk(): Void if (counters != null) counters.splice(1, counters.length);
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function brk(): Void if (counters != null) counters.splice(1, counters.length);
 
 	/**
 	 * Remove all elements
 	 */
-	@:extern public inline function clear(): Priority<T> {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function clear(): Priority<T> {
 		var needOnLost: Bool = !empty;
 		_clear();
 		if (needOnLost) {
@@ -208,7 +216,8 @@ typedef PriorityIds = Priority<{
 	/**
 	 * Remove all elements
 	 */
-	@:extern private inline function _clear(): Priority<T> {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function _clear(): Priority<T> {
 		hash = new Map<Int, Int>();
 		data = [];
 		counters = [0];
@@ -237,16 +246,23 @@ typedef PriorityIds = Priority<{
 	 * @param	b
 	 */
 	public dynamic function compare(a: T, b: T): Bool return a == b;
-	@:extern public inline function exists(element: T): Bool return existsFunction(compare.bind(element));
-	@:extern public inline function existsFunction(f: T -> Bool): Bool return data.exists(f);
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function exists(element: T): Bool return existsFunction(compare.bind(element));
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function existsFunction(f: T -> Bool): Bool return data.exists(f);
 
 	public function existsArray(a: Array<T>): Bool {
 		for (e in a) if (exists(e)) return true;
 		return false;
 	}
 
-	@:extern public inline function indexOfFunction(f: T -> Bool): Int return pony.Tools.ArrayTools.fIndexOf(data, f);
-	@:extern public inline function indexOfElement(element: T): Int return indexOfFunction(compare.bind(element));
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function indexOfFunction(f: T -> Bool): Int return pony.Tools.ArrayTools.fIndexOf(data, f);
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function indexOfElement(element: T): Int return indexOfFunction(compare.bind(element));
 
 	/**
 	 * Some time need take object with custom value.
@@ -322,12 +338,14 @@ typedef PriorityIds = Priority<{
 		return true;
 	}
 
-	@:extern public inline function removeFunction(f: T -> Bool): Bool {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function removeFunction(f: T -> Bool): Bool {
 		var e: Null<T> = search(f);
 		return if (e != null) remove(e); else false;
 	}
 
-	@:extern public inline function removeArray(a: Array<T>): Bool {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function removeArray(a: Array<T>): Bool {
 		var f: Bool = true;
 		for (e in a) if (!remove(e)) f = false;
 		return f;
@@ -337,7 +355,8 @@ typedef PriorityIds = Priority<{
 	 * All elements taking new priority, but save order.
 	 * @param	priority New priority, default 0
 	 */
-	@:extern public inline function repriority(priority: Int = 0): Void {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function repriority(priority: Int = 0): Void {
 		hash = new Map<Int, Int>();
 		hash.set(priority, data.length);
 	}
@@ -363,11 +382,20 @@ typedef PriorityIds = Priority<{
 		return this;
 	}
 
-	@:extern public inline function toString(): String return data.toString();
-	@:extern public inline function join(sep: String): String return data.join(sep);
-	@:extern private inline function get_first(): T return data[0];
-	@:extern private inline function get_last(): T return data[data.length - 1];
-	@:extern private inline function get_length(): Int return data.length;
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function toString(): String return data.toString();
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function join(sep: String): String return data.join(sep);
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function get_first(): T return data[0];
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function get_last(): T return data[data.length - 1];
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function get_length(): Int return data.length;
 
 	/**
 	 * Make infinity loop. This good method for devolopment UI.
@@ -384,7 +412,8 @@ typedef PriorityIds = Priority<{
 	/**
 	 * Next time loop return first element.
 	 */
-	@:extern public inline function resetLoop(): Priority<T> {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function resetLoop(): Priority<T> {
 		counters[0] = 0;
 		return this;
 	}
@@ -394,12 +423,14 @@ typedef PriorityIds = Priority<{
 	 * Use exists() before call this function for safely run.
 	 * @param	e first element for loop.
 	 */
-	@:extern public inline function reloop(e: T): Void while (loop() != e) null;
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function reloop(e: T): Void while (loop() != e) null;
 
 	/**
 	 * @return Current element in loop.
 	 */
-	@:extern private inline function get_current(): T {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function get_current(): T {
 		return if (counters[0] > length) data[0] else if (counters[0] < 1) data[length - 1] else data[counters[0] - 1];
 	}
 
@@ -444,17 +475,21 @@ typedef PriorityIds = Priority<{
 	 * Add element with lowest priority.
 	 * @param	o T or Array&lt;T&gt;.
 	 */
-	@:extern public inline function addToBegin(e: T): Void add(e, min - 1);
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function addToBegin(e: T): Void add(e, min - 1);
 
 	/**
 	 * Add element with hightest priority.
 	 * @param	o T or Array&lt;T&gt;.
 	 */
-	@:extern public inline function addToEnd(e: T): Void add(e, max + 1);
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function addToEnd(e: T): Void add(e, max + 1);
 
-	@:extern public inline function isDestroy(): Bool return data == null;
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function isDestroy(): Bool return data == null;
 
-	@:extern public static inline function createIds(a: Array<String>): PriorityIds {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function createIds(a: Array<String>): PriorityIds {
 		var i: Int = 0;
 		return new Priority([for (e in a) {id: i++, name: e}]);
 	}

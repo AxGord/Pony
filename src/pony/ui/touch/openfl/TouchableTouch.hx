@@ -10,6 +10,7 @@ import pony.ui.touch.lime.Touch;
  * OpenFL TouchableTouch
  * @author AxGord <axgord@gmail.com>
  */
+@SuppressWarnings('checkstyle:MagicNumber')
 @:access(pony.ui.touch.TouchableBase)
 class TouchableTouch {
 
@@ -61,8 +62,11 @@ class TouchableTouch {
 			return true;
 	}
 
-	@:extern private inline function unlock(t: Int): Void touchId = -1;
-	@:extern private inline function isNotLock(t: Int): Bool return touchId == -1 || touchId == t;
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function unlock(t: Int): Void touchId = -1;
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function isNotLock(t: Int): Bool return touchId == -1 || touchId == t;
 
 	private function touchBeginHandler(e: TouchEvent): Void {
 		if (isLock(e.touchPointID)) return;

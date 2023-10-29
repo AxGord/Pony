@@ -12,6 +12,7 @@ import pony.time.Time;
  * Window
  * @author AxGord <axgord@gmail.com>
  */
+@SuppressWarnings('checkstyle:MagicNumber')
 class Window implements Declarator implements HasSignal {
 
 	private static var DEFAULT_RESIZE_INTERVAL: Time = 200;
@@ -58,7 +59,8 @@ class Window implements Declarator implements HasSignal {
 		return name;
 	}
 
-	@:extern private static inline function get_resizeInterval(): Time return resizeTimer.time.max;
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function get_resizeInterval(): Time return resizeTimer.time.max;
 
 	private static function set_resizeInterval(value: Time): Time {
 		if (value == null)
@@ -96,11 +98,13 @@ class Window implements Declarator implements HasSignal {
 		fsResizeTimer.start();
 	}
 
-	@:extern private static inline function listenResizeEvent(): Void {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function listenResizeEvent(): Void {
 		Browser.window.addEventListener(resizeEventName, browserResizeHandler, false);
 	}
 
-	@:extern private static inline function unlistenResizeEvent(): Void {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function unlistenResizeEvent(): Void {
 		Browser.window.removeEventListener(resizeEventName, browserResizeHandler, false);
 	}
 

@@ -6,8 +6,10 @@ import pony.Priority;
  * Event2
  * @author AxGord <axgord@gmail.com>
  */
+@SuppressWarnings('checkstyle:MagicNumber')
 @:forward(
 	empty,
+	#if pony_experimental changeEmpty, #end
 	onTake,
 	onLost
 )
@@ -16,13 +18,15 @@ abstract Event2<T1, T2>(Priority<Listener2<T1, T2>>) from Priority<Listener2<T1,
 
 	public var self(get, never): Event2<T1, T2>;
 
-	@:extern public inline function new(double: Bool = false) {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function new(double: Bool = false) {
 		this = new Priority(double);
 		this.compare = compare;
 		this.real = real;
 	}
 
-	@:extern private inline function get_self(): Event2<T1, T2> return this;
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function get_self(): Event2<T1, T2> return this;
 
 	private static function real<T1, T2>(l: Listener2<T1, T2>): Bool {
 		var e: Null<Priority<Any>> = l.event;
@@ -78,51 +82,63 @@ abstract Event2<T1, T2>(Priority<Listener2<T1, T2>>) from Priority<Listener2<T1,
 		this.lock = false;
 	}
 
-	@:extern public inline function sub(a1: T1, a2: T2, priority: Int = 0): Event0 {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function sub(a1: T1, a2: T2, priority: Int = 0): Event0 {
 		var e: Event0 = new Event0();
 		(e: Signal0).add(dispatch.bind(a1, a2), priority);
 		return e;
 	}
 
-	@:extern public inline function subOnce(a1: T1, a2: T2, priority: Int = 0): Event0 {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function subOnce(a1: T1, a2: T2, priority: Int = 0): Event0 {
 		var e: Event0 = new Event0();
 		(e: Signal0).once(dispatch.bind(a1, a2), priority);
 		return e;
 	}
 
-	@:extern public inline function sub1(a1: T1, priority: Int = 0): Event1<T2> {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function sub1(a1: T1, priority: Int = 0): Event1<T2> {
 		var e: Event1<T2> = new Event1<T2>();
 		(e: Signal1<T2>).add(Listener1.f1(dispatch.bind(a1)), priority);
 		return e;
 	}
 
-	@:extern public inline function sub1Once(a1: T1, priority: Int = 0): Event1<T2> {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function sub1Once(a1: T1, priority: Int = 0): Event1<T2> {
 		var e: Event1<T2> = new Event1<T2>();
 		(e: Signal1<T2>).once(Listener1.f1(dispatch.bind(a1)), priority);
 		return e;
 	}
 
-	@:op(A - B) @:extern private inline function sub1_op(a1: T1): Event1<T2> {
+	@:op(A - B)
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function sub1_op(a1: T1): Event1<T2> {
 		return sub1(a1);
 	}
 
-	@:extern public inline function sub2(a2:T2, priority:Int = 0): Event1<T1> {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function sub2(a2:T2, priority:Int = 0): Event1<T1> {
 		var e: Event1<T1> = new Event1<T1>();
 		(e: Signal1<T1>).add(Listener1.f1(dispatch.bind(_, a2)), priority);
 		return e;
 	}
 
-	@:extern public inline function sub2Once(a2: T2, priority: Int = 0): Event1<T1> {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function sub2Once(a2: T2, priority: Int = 0): Event1<T1> {
 		return cast (new Event1(): Signal1<T1>).once(dispatch.bind(_, a2), priority);
 	}
 
-	@:op(A && B) @:extern public inline function and(s: Event2<T1, T2>): Event2<T1, T2> {
+	@:op(A && B)
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function and(s: Event2<T1, T2>): Event2<T1, T2> {
 		var e: Event2<T1, T2> = new Event2<T1, T2>();
 		(e: Signal2<T1, T2>) << self << s;
 		return e;
 	}
 
-	@:op(A & B) @:extern public inline function andOnce(s: Event2<T1, T2>): Event2<T1, T2> {
+	@:op(A & B)
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function andOnce(s: Event2<T1, T2>): Event2<T1, T2> {
 		var e: Event2<T1, T2> = new Event2<T1, T2>();
 		(e: Signal2<T1, T2>) << self << s << (e: Signal2<T1, T2>).clear;
 		return e;

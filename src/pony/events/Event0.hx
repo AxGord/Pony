@@ -6,8 +6,10 @@ import pony.Priority;
  * Event0
  * @author AxGord <axgord@gmail.com>
  */
+@SuppressWarnings('checkstyle:MagicNumber')
 @:forward(
 	empty,
+	#if pony_experimental changeEmpty, #end
 	onTake,
 	onLost
 )
@@ -15,13 +17,15 @@ import pony.Priority;
 
 	public var self(get, never): Event0;
 
-	@:extern public inline function new(double: Bool = false) {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function new(double: Bool = false) {
 		this = new Priority(double);
 		this.compare = compare;
 		this.real = real;
 	}
 
-	@:extern private inline function get_self(): Event0 return this;
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function get_self(): Event0 return this;
 
 	private static function real(l: Listener0): Bool {
 		var e: Null<Priority<Any>> = l.event;
@@ -68,13 +72,17 @@ import pony.Priority;
 		this.lock = false;
 	}
 
-	@:op(A && B) @:extern public inline function and(s: Event0): Event0 {
+	@:op(A && B)
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function and(s: Event0): Event0 {
 		var e: Event0 = new Event0();
 		(e: Signal0) << self << s;
 		return e;
 	}
 
-	@:op(A & B) @:extern public inline function andOnce(s: Event0): Event0 {
+	@:op(A & B)
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function andOnce(s: Event0): Event0 {
 		var e: Event0 = new Event0();
 		(e: Signal0) << self << s << (e: Signal0).clear;
 		return e;

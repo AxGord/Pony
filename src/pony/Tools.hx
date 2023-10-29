@@ -24,6 +24,7 @@ using Lambda;
  * Tools
  * @author AxGord
  */
+@SuppressWarnings('checkstyle:MagicNumber')
 class Tools {
 
 	#if (sys || js)
@@ -49,9 +50,15 @@ class Tools {
 	}
 
 	#if (js && !nodejs)
-	@:extern private static inline function get_isWindows(): Bool return pony.JsTools.os == pony.JsTools.OS.Windows;
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function get_isWindows(): Bool return pony.JsTools.os == pony.JsTools.OS.Windows;
+
 	#elseif (sys || nodejs)
-	@:extern private static inline function get_isWindows(): Bool return Sys.systemName() == 'Windows';
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function get_isWindows(): Bool return Sys.systemName() == 'Windows';
+
 	#end
 
 	private static function get_tz(): UInt {
@@ -508,7 +515,8 @@ class Tools {
 	}
 
 	#if (js || flash)
-	@:extern inline
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	inline
 	#end
 	public static function functionLength(f: Function): Int {
 		#if php
@@ -590,6 +598,7 @@ class ArrayTools {
 		return a;
 	}
 
+	@SuppressWarnings('checkstyle:MagicNumber')
 	private static function randomizeSort(_: Dynamic, _: Dynamic): Int return Math.random() > 0.5 ? 1 : -1;
 
 	public static inline function last<T: Dynamic>(a: Array<T>): T return a[a.length - 1];
@@ -636,6 +645,7 @@ class ArrayTools {
 
 }
 
+@SuppressWarnings('checkstyle:MagicNumber')
 class MapTools {
 
 	public static function kv<K, T>(a: Map<K, T>): Iterator<KeyValue<K, T>> {
@@ -800,6 +810,7 @@ class FloatTools {
 			return TextTools.repeat(beginS, d) + s;
 		}
 		if (n == 0) return Std.string(Std.int(v));
+		@SuppressWarnings('checkstyle:MagicNumber')
 		var p: Float = Math.pow(10, n);
 		v = Math.floor(v * p) / p;
 		var s: String = Std.string(v);

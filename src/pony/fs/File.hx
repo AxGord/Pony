@@ -122,7 +122,7 @@ using pony.text.TextTools;
 
 	public function delete(): Void {
 		try {
-			for (e in this) if (e.exists) FileSystem.deleteFile(e.first);
+			for (e in this) FileSystem.deleteFile(e.first);
 		} catch (_:Dynamic) {
 			throw "Can't delete file: " + name;
 		}
