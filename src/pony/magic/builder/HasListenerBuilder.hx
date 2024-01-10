@@ -3,6 +3,7 @@ package pony.magic.builder;
 #if macro
 import haxe.macro.Context;
 import haxe.macro.Expr;
+import haxe.macro.Type;
 
 import pony.ds.Triple;
 
@@ -18,6 +19,7 @@ private typedef Handler = Triple<FunctionArg, FunctionArg, Array<Expr>>;
  */
 class HasListenerBuilder {
 
+	@SuppressWarnings('checkstyle:MethodLength', 'checkstyle:CyclomaticComplexity')
 	macro public static function build(): Array<Field> {
 		final fields: Array<Field> = Context.getBuildFields();
 		final handlers: Map<String, Handler> = [];
@@ -150,9 +152,17 @@ class HasListenerBuilder {
 		}
 
 		if (!hasDestroy && !ext) {
-			fields.push((macro class {
-				public function destroy(): Void unlisten();
-			}).fields.pop());
+			if (checkDestroy(Context.getLocalClass().get()))
+				fields.push((macro class {
+					override public function destroy(): Void {
+						super.destroy();
+						unlisten();
+					}
+				}).fields.pop());
+			else
+				fields.push((macro class {
+					public function destroy(): Void unlisten();
+				}).fields.pop());
 		}
 
 		for (name => checks in handlers) {
@@ -171,5 +181,17 @@ class HasListenerBuilder {
 		}
 		return fields;
 	}
+
+	#if macro
+	private static function checkDestroy(ct: ClassType): Bool {
+		var sc: Null<{t:Ref<ClassType>, params:Array<Type>}> = ct.superClass;
+		if (sc != null) {
+			for (f in sc.t.get().fields.get()) if (f.name == 'destroy') return true;
+			return checkDestroy(sc.t.get());
+		} else {
+			return false;
+		}
+	}
+	#end
 
 }

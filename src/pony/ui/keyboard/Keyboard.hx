@@ -107,7 +107,8 @@ class Keyboard implements Declarator implements HasSignal implements HasLink {
 			autoEnableMode();
 			lostListeners();
 		}
-		return enabled = b;
+		enabled = b;
+		return b;
 	}
 
 	private static function set_disabled(b: Bool): Bool {
@@ -120,7 +121,8 @@ class Keyboard implements Declarator implements HasSignal implements HasLink {
 			autoEnableMode();
 			lostListeners();
 		}
-		return disabled = b;
+		disabled = b;
+		return b;
 	}
 
 	private static function manualEnableMode(): Void {

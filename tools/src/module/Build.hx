@@ -83,24 +83,26 @@ private typedef LastCompilationOptions = {
 
 	override private function runNode(cfg: BuildConfig): Void {
 		if (cfg.runHxml.length == 0) {
-			var cmd: Array<SPair<String>> = cfg.command.copy();
+			var cmd: Array<SPair<String>> = [];
 			for (l in haxelib) cmd.push(new SPair(LIB, l));
 			for (d in flags) cmd.push(new SPair(D, d));
 			for (l in postHaxelibs) cmd.push(new SPair(LIB, l));
 			if (cfg.app != null) cmd.push(new SPair(D, 'app=${cfg.app}'));
 			if (cfg.debug) cmd.push(new SPair('-debug', ''));
+			cmd = cmd.concat(cfg.command);
 			if (cfg.hxml != null) {
 				saveHxml(cfg.hxml, cmd);
 			} else {
 				runCompilation(cmd, cfg.debug, cfg.haxeCompiler, cfg.winfix && Utils.isWindows);
 			}
 		} else for (e in cfg.runHxml) {
-			var cmd: Array<SPair<String>> = cfg.command.copy();
+			var cmd: Array<SPair<String>> = [];
 			for (d in flags) cmd.push(new SPair(D, d));
 			for (l in postHaxelibs) cmd.push(new SPair(LIB, l));
-			cmd.push(new SPair(e + '.$HXML', ''));
 			if (cfg.app != null) cmd.push(new SPair(D, 'app=${cfg.app}'));
 			if (cfg.debug) cmd.push(new SPair('-debug', ''));
+			cmd = cmd.concat(cfg.command);
+			cmd.push(new SPair(e + '.$HXML', ''));
 			runCompilation(cmd, cfg.debug, cfg.haxeCompiler, cfg.winfix && Utils.isWindows);
 		}
 		checkCompilation();
@@ -289,6 +291,8 @@ private class BuildConfigReader extends BAReader<BuildConfig> {
 						cfg.command.push(new SPair('--macro', 'include(\'$d\')'));
 					case 'k':
 						cfg.command.push(new SPair('--macro', 'keep(\'$d\')'));
+					case 'r':
+						cfg.command.push(new SPair('--run', d));
 					case 'interp':
 						cfg.command.push(new SPair('--interp', ''));
 					case a:

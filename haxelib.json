@@ -27,8 +27,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Signals and Logable bugfixes",
-"version": "1.9.5",
+"releasenote": "Haxe 4.3 support. DI. Listen meta. Signals: split dispatch and saveDispatch methods. pony_experimental flag. Xml build r option.",
+"version": "1.9.6",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }

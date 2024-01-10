@@ -89,7 +89,9 @@ import sys.FileSystem;
 			file.copyToDir(path);
 	}
 
-	@:extern public inline function delete(): Void {
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function delete(): Void {
 		if (isDir)
 			dir.delete();
 		else
