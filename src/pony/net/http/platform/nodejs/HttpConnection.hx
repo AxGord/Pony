@@ -24,6 +24,7 @@ using Reflect;
  * HttpConnection
  * @author AxGord
  */
+@SuppressWarnings('checkstyle:MagicNumber')
 class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnection {
 
 	private static var _send(get, never): Dynamic;
@@ -97,9 +98,11 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 		end = true;
 	}
 
-	@:extern private inline function setLength(t: String): Void {
-		return res.setHeader('Content-Length', Std.string(Buffer.byteLength(t, 'utf8')));
-	}
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function setLength(t: String): Void return res.setHeader('Content-Length', Std.string(Buffer.byteLength(t, 'utf8')));
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function setHtmlUtf8(): Void res.setHeader('Content-Type', 'text/html; charset=UTF-8');
 
 	#if (haxe_ver < 4.2) override #end
 	public function endActionPrevPage(): Void goto(req.headers.field('referer'));
@@ -107,7 +110,7 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 	#if (haxe_ver < 4.2) override #end
 	public function error(?message: String): Void {
 		writeCookie();
-		res.setHeader('Content-Type', 'text/html; charset=UTF-8');
+		setHtmlUtf8();
 		res.writeHead(500);
 		res.end(message == null ? 'Error' : message);
 		end = true;
@@ -116,7 +119,7 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 	#if (haxe_ver < 4.2) override #end
 	public function notfound(?message: String): Void {
 		writeCookie();
-		res.setHeader('Content-Type', 'text/html; charset=UTF-8');
+		setHtmlUtf8();
 		res.writeHead(404);
 		res.end(message == null ? 'Not found' : message);
 		end = true;
@@ -124,7 +127,7 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 
 	public function sendHtml(text: String): Void {
 		writeCookie();
-		res.setHeader('Content-Type', 'text/html; charset=UTF-8');
+		setHtmlUtf8();
 		setLength(text);
 		res.end(text);
 		end = true;

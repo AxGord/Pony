@@ -54,7 +54,9 @@ using Lambda;
 		for (m in list) m.init();
 	}
 
-	@:extern public inline function getNode(name: String): Fast {
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function getNode(name: String): Fast {
 		return @:nullSafety(Off) XmlTools.getNode(xml, name);
 	}
 
@@ -76,6 +78,7 @@ using Lambda;
 		return allow.length == 0;
 	}
 
+	@SuppressWarnings('checkstyle:MagicNumber')
 	public function getModule<T: Module>(cls: Class<T>): Null<T> {
 		return cast list.find( function(m: Module): Bool return #if (haxe_ver >= 4.100) Std.isOfType(m, cls) #else Std.is(m, cls) #end );
 	}

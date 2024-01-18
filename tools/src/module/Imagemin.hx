@@ -10,6 +10,7 @@ import types.ImageminConfig;
  * Imagemin module
  * @author AxGord <axgord@gmail.com>
  */
+@SuppressWarnings('checkstyle:MagicNumber')
 class Imagemin extends NModule<ImageminConfig> {
 
 	private static inline var PRIORITY: Int = 22;
@@ -50,6 +51,7 @@ class Imagemin extends NModule<ImageminConfig> {
 
 }
 
+@SuppressWarnings('checkstyle:MagicNumber')
 private class ImageminReader extends BAReader<ImageminConfig> {
 
 	#if (haxe_ver < 4.2) override #end

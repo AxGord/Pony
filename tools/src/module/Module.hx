@@ -27,6 +27,8 @@ class Module extends Logable implements HasAbstract implements HasLink {
 	@:nullSafety(Off) public var modules: Modules;
 
 	private var xml(get, never): Null<Fast>;
+
+	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.000)
 	private var nodes(get, never): Array<Fast>;
 	#else
@@ -49,7 +51,9 @@ class Module extends Logable implements HasAbstract implements HasLink {
 		return _xml;
 	}
 
-	@:extern private inline function parseGroup(xml: Fast): Null<Array<String>> {
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function parseGroup(xml: Fast): Null<Array<String>> {
 		if (xml != null && xml.has.group) {
 			var r: Array<String> = xml.att.group.split(' ').filter(checkLength);
 			return r.length > 0 ? r : null;
@@ -60,6 +64,7 @@ class Module extends Logable implements HasAbstract implements HasLink {
 
 	private function checkLength(s: String): Bool return s.length > 0;
 
+	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.000)
 	private function get_nodes(): Array<Fast> {
 		return xname == null ? [] : @:nullSafety(Off) modules.xml.nodes.resolve(xname);

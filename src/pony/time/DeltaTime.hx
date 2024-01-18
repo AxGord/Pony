@@ -184,6 +184,7 @@ class DeltaTime implements HasSignal {
 	 * @param	time
 	 * @see pony.time.Time
 	 */
+	@SuppressWarnings('checkstyle:MagicNumber')
 	public static function testRun(time: Time = 60000): Void {
 		var sec:Float = time / 1000;
 		var d = if (sec < 100) 10 else if (sec < 1000) 50 else 100; // d > 100 sec - not normal lag

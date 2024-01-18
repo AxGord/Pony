@@ -31,7 +31,9 @@ typedef HaxelibConfig = {
 	}>
 }
 
-@:enum abstract Source(String) from String to String {
+@SuppressWarnings('checkstyle:MagicNumber')
+#if (haxe_ver >= 4.2) enum #else @:enum #end
+abstract Source(String) from String to String {
 	var GIT = 'git';
 	var DEV = 'dev';
 }
@@ -46,6 +48,7 @@ typedef HaxelibConfig = {
 
 	public function new() super('haxelib');
 
+	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver < 4.2) override #end
 	public function init(): Void initSections(PRIORITY, BASection.Prepare);
 

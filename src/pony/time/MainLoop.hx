@@ -15,7 +15,9 @@ class MainLoop {
 		lastTick = getTime();
 	}
 
-	@:extern public static inline function getTime(): Float return Sys.time();
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function getTime(): Float return Sys.time();
 
 	public static function start(): Void {
 		var nt: Float;

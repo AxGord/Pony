@@ -131,6 +131,7 @@ class Utils {
 
 	public static function exit(errCode: Int = 0): Void {
 		#if neko
+		@SuppressWarnings('checkstyle:MagicNumber')
 		if (isLinux) Sys.sleep(0.3); // finish print messages
 		#end
 		Sys.exit(errCode);
@@ -242,6 +243,7 @@ class Utils {
 		date = StringTools.replace(date, ' ', onlyNumbers ? '' : '_');
 		date = StringTools.replace(date, ':', onlyNumbers ? '' : '-');
 		if (onlyNumbers) date = StringTools.replace(date, '-', '');
+		@SuppressWarnings('checkstyle:MagicNumber')
 		if (nosec) date = date.substr(0, -2);
 		return date;
 	}

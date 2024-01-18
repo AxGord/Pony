@@ -16,6 +16,7 @@ using pony.text.XmlTools;
  * Server module
  * @author AxGord <axgord@gmail.com>
  */
+@SuppressWarnings('checkstyle:MagicNumber')
 class Server extends NModule<ServerConfig> {
 
 	private static inline var PRIORITY: Int = 0;
@@ -52,6 +53,7 @@ class Server extends NModule<ServerConfig> {
 
 }
 
+@SuppressWarnings('checkstyle:MagicNumber')
 private class ServerReader extends BAReader<ServerConfig> {
 
 	#if (haxe_ver < 4.2) override #end
@@ -136,6 +138,7 @@ typedef BAProxyConfig = {
 
 private class ProxyReader extends BAReader<BAProxyConfig> {
 
+	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver < 4.2) override #end
 	private function clean(): Void {
 		cfg.target = null;
@@ -170,6 +173,7 @@ typedef BARemoteServerConfig = {
 
 private class RemoteReader extends BAReader<BARemoteServerConfig> {
 
+	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver < 4.2) override #end
 	private function clean(): Void {
 		cfg.port = null;
@@ -208,6 +212,7 @@ typedef BASniffConfig = {
 
 private class SniffReader extends BAReader<BASniffConfig> {
 
+	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver < 4.2) override #end
 	private function clean(): Void {
 		cfg.serverPort = 0;

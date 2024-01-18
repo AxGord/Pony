@@ -51,6 +51,7 @@ class Create {
 	private static function setElectronSecondBuild(project: Project): Void {
 		project.secondbuild.hxml = 'default';
 		project.secondbuild.outputFile = 'default';
+		@SuppressWarnings('checkstyle:MagicNumber')
 		project.secondbuild.esVersion = 6;
 		project.electron.active = true;
 	}
@@ -286,7 +287,9 @@ class Create {
 		]);
 	}
 
-	@:extern private static inline function createDirs(a: Array<String>): Void for (d in a) FileSystem.createDirectory(d);
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function createDirs(a: Array<String>): Void for (d in a) FileSystem.createDirectory(d);
 
 	private static function saveTemplate(file:String, template:String, ?replaces: Map<String, String>):Void {
 		var data: String = Resource.getString(template);

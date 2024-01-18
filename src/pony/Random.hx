@@ -6,6 +6,7 @@ import pony.geom.Direction;
  * Random
  * @author AxGord <axgord@gmail.com>
  */
+@SuppressWarnings('checkstyle:MagicNumber')
 @:nullSafety(Strict) class Random {
 
 	public static inline function uint(to: UInt, from: UInt = 0): UInt

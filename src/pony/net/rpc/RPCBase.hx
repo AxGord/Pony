@@ -15,7 +15,9 @@ class RPCBase<T: pony.net.rpc.IRPC> {
 
 	public function new() {}
 
-	@:extern private inline function get_object(): T return cast this;
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function get_object(): T return cast this;
 
 	private function dataHandler(b: BytesInput):Void {
 		serializer.setInput(b.readAll(), 0);
@@ -44,6 +46,8 @@ class RPCBase<T: pony.net.rpc.IRPC> {
 		object.checkRemoteCalls();
 	}
 
-	@:extern private inline function pack(): Bytes return serializer.serialize(object);
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function pack(): Bytes return serializer.serialize(object);
 
 }

@@ -32,6 +32,7 @@ private typedef LastCompilationOptions = {
  * Build module
  * @author AxGord <axgord@gmail.com>
  */
+@SuppressWarnings('checkstyle:MagicNumber')
 @:final class Build extends CfgModule<BuildConfig> {
 
 	public static inline var HAXE: String = 'haxe';
@@ -304,6 +305,7 @@ private class BuildConfigReader extends BAReader<BuildConfig> {
 		}
 	}
 
+	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver < 4.2) override #end
 	private function clean(): Void {
 		cfg.command = [];

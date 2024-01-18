@@ -24,7 +24,9 @@ class NModule<T:BAConfig> extends CfgModule<T> {
 	private static var port: Int = Utils.NPORT;
 	private static var timeout: DTimer = DTimer.createFixedTimer(60000);
 
-	@:extern private static inline function initServer(): Void {
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function initServer(): Void {
 		if (server != null) return;
 		timeout.complete << Utils.error.bind('Timeout');
 		var n: Int = 0;

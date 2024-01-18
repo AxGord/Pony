@@ -45,6 +45,7 @@
 		"adelphes.android-dev-ext"
 	],
 	"hideWarnings": [
-		"hxbitmini"
+		"hxbitmini",
+		"hxnodejs"
 	]
 }

@@ -9,7 +9,9 @@ import pony.events.Signal2;
  * RPCLog
  * @author AxGord <axgord@gmail.com>
  */
-@:final class RPCLog
+@SuppressWarnings('checkstyle:MagicNumber')
+#if (haxe_ver >= 4.2) final #else @:final #end
+class RPCLog
 extends pony.net.rpc.RPCUnit<RPCLog>
 #if !macro implements pony.ILogable #end
 implements pony.net.rpc.IRPC {

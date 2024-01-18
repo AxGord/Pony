@@ -23,9 +23,10 @@ class NPMBuilder {
 	private static var replaces:Array<String> = ['-', '.'];
 	#end
 
+	@SuppressWarnings('checkstyle:MagicNumber')
 	macro public static function build():Array<Field> {
-		var access = [APublic, AStatic];
-		var faccess = [APrivate, AStatic, AInline];
+		var access = [ APublic, AStatic ];
+		var faccess = [ APrivate, AStatic, AInline #if (haxe_ver >= 4.2), AExtern #end  ];
 		Context.registerModuleDependency(Context.getLocalModule(), file);
 		var fields:Array<Field> = Context.getBuildFields();
 		if (!sys.FileSystem.exists(file)) return fields;
@@ -45,7 +46,7 @@ class NPMBuilder {
 				fields.push({
 					name: 'get_$name',
 					access: faccess,
-					meta: [{name : ':extern', pos: Context.currentPos()}],
+					meta: [ #if (haxe_ver < 4.2) { name: ':extern', pos: Context.currentPos() } #end ],
 					pos: Context.currentPos(),
 					kind: FFun({
 						args: [],
