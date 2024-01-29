@@ -29,6 +29,7 @@ using pony.text.TextTools;
  * AssetManager
  * @author AxGord <axgord@gmail.com>
  */
+@SuppressWarnings('checkstyle:MagicNumber')
 @:nullSafety(Strict)
 class AssetManager implements HasLink {
 
@@ -45,7 +46,8 @@ class AssetManager implements HasLink {
 	private static var globalLoad: Map<String, Array<Int -> Int -> Void>> = new Map();
 	private static var changedNames: Bool = false;
 
-	@:extern public static inline function initHash(cb: Void -> Void): Void {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function initHash(cb: Void -> Void): Void {
 		#if (hxbitmini && js)
 		var url: Null<String> = Tools.getHashFileWithHash();
 		if (url != null) {
@@ -62,7 +64,8 @@ class AssetManager implements HasLink {
 		#end
 	}
 
-	@:extern public static inline function initHashVersion(url: Null<String>, cb: Void -> Void): Void {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function initHashVersion(url: Null<String>, cb: Void -> Void): Void {
 		#if (hxbitmini && js)
 		if (url != null) {
 			changedNames = true;
@@ -88,7 +91,8 @@ class AssetManager implements HasLink {
 		_reset(asset);
 	}
 
-	@:extern public static inline function getPath(asset: String): String {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function getPath(asset: String): String {
 		asset = StringTools.replace(asset, '@', '');
 		return baseUrl + StringTools.replace(asset, '{local}', local);
 	}
@@ -348,53 +352,141 @@ class AssetManager implements HasLink {
 	}
 
 	#if heaps
-	@:extern public static inline function __load(asset: String, cb: Int -> Int -> Void): Void HeapsAssets.load(asset, cb);
-	@:extern public static inline function _reset(asset: String): Void HeapsAssets.reset(asset);
-	@:extern public static inline function image(asset: String, ?name: String) return HeapsAssets.image(asset, name);
-	@:extern public static inline function texture(asset: String, ?name: String) return HeapsAssets.texture(asset, name);
-	@:extern public static inline function animation(asset: String, ?name: String) return HeapsAssets.animation(asset, name);
-	@:extern public static inline function clip(asset: String, ?name: String) return HeapsAssets.clip(asset, name);
-	@:extern public static inline function text(asset: String): String return HeapsAssets.text(asset);
-	@:extern public static inline function bin(asset: String): Bytes return HeapsAssets.bin(asset);
-	@:extern public static inline function font(asset: String): h2d.Font return HeapsAssets.font(asset);
-	@:extern public static inline function sound(asset: String) return HeapsAssets.sound(asset);
-	@:extern public static inline function spine(asset: String) return asset;
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function __load(asset: String, cb: Int -> Int -> Void): Void HeapsAssets.load(asset, cb);
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function _reset(asset: String): Void HeapsAssets.reset(asset);
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function image(asset: String, ?name: String) return HeapsAssets.image(asset, name);
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function texture(asset: String, ?name: String) return HeapsAssets.texture(asset, name);
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function animation(asset: String, ?name: String) return HeapsAssets.animation(asset, name);
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function clip(asset: String, ?name: String) return HeapsAssets.clip(asset, name);
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function text(asset: String): String return HeapsAssets.text(asset);
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function bin(asset: String): Bytes return HeapsAssets.bin(asset);
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function font(asset: String): h2d.Font return HeapsAssets.font(asset);
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function sound(asset: String) return HeapsAssets.sound(asset);
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function spine(asset: String) return asset;
 	#elseif pixijs
-	@:extern public static inline function __load(asset: String, cb: Int -> Int -> Void): Void
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function __load(asset: String, cb: Int -> Int -> Void): Void
 		PixiAssets.load(asset, cb.bind(MAX_ASSET_PROGRESS, MAX_ASSET_PROGRESS));
-	@:extern public static inline function _reset(asset: String): Void PixiAssets.reset(asset);
-	@:extern public static inline function image(asset: String, ?name: String) return PixiAssets.image(asset, name);
-	@:extern public static inline function texture(asset: String, ?name: String) return PixiAssets.texture(asset, name);
-	@:extern public static inline function animation(asset: String, ?name: String) return asset;
-	@:extern public static inline function clip(asset: String, ?name: String) return asset;
-	@:extern public static inline function sound(asset: String) return PixiAssets.sound(asset);
-	@:extern public static inline function spine(asset: String) return PixiAssets.spine(asset);
-	@:extern public static inline function text(asset: String): String return PixiAssets.text(asset);
-	@:extern public static inline function json(asset: String) return PixiAssets.json(asset);
-	@:extern public static inline function font(asset: String) return asset;
-	@:extern public static inline function bin(asset: String) return asset;
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function _reset(asset: String): Void PixiAssets.reset(asset);
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function image(asset: String, ?name: String) return PixiAssets.image(asset, name);
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function texture(asset: String, ?name: String) return PixiAssets.texture(asset, name);
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function animation(asset: String, ?name: String) return asset;
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function clip(asset: String, ?name: String) return asset;
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function sound(asset: String) return PixiAssets.sound(asset);
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function spine(asset: String) return PixiAssets.spine(asset);
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function text(asset: String): String return PixiAssets.text(asset);
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function json(asset: String) return PixiAssets.json(asset);
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function font(asset: String) return asset;
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function bin(asset: String) return asset;
 	#elseif openfl
-	@:extern public static inline function __load(asset: String, cb: Int -> Int -> Void): Void
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function __load(asset: String, cb: Int -> Int -> Void): Void
 		OpenflAssets.load(asset, cb.bind(1MAX_ASSET_PROGRESS, MAX_ASSET_PROGRESS));
-	@:extern public static inline function _reset(asset: String): Void trace('Reset: $asset');
-	@:extern public static inline function image(asset: String, ?name: String) return OpenflAssets.image(asset);
-	@:extern public static inline function texture(asset: String, ?name: String) return asset;
-	@:extern public static inline function animation(asset: String, ?name: String) return asset;
-	@:extern public static inline function clip(asset: String, ?name: String) return asset;
-	@:extern public static inline function sound(asset: String) return asset;
-	@:extern public static inline function spine(asset: String) return asset;
-	@:extern public static inline function font(asset: String) return asset;
-	@:extern public static inline function bin(asset: String) return asset;
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function _reset(asset: String): Void trace('Reset: $asset');
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function image(asset: String, ?name: String) return OpenflAssets.image(asset);
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function texture(asset: String, ?name: String) return asset;
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function animation(asset: String, ?name: String) return asset;
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function clip(asset: String, ?name: String) return asset;
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function sound(asset: String) return asset;
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function spine(asset: String) return asset;
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function font(asset: String) return asset;
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function bin(asset: String) return asset;
+
 	#else
-	@:extern public static inline function __load(asset: String, cb: Int -> Int -> Void): Void trace('Load: $asset');
-	@:extern public static inline function _reset(asset: String): Void trace('Reset: $asset');
-	@:extern public static inline function image(asset: String, ?name: String) return asset;
-	@:extern public static inline function texture(asset: String, ?name: String) return asset;
-	@:extern public static inline function animation(asset: String, ?name: String) return asset;
-	@:extern public static inline function clip(asset: String, ?name: String) return asset;
-	@:extern public static inline function sound(asset: String) return asset;
-	@:extern public static inline function spine(asset: String) return asset;
-	@:extern public static inline function font(asset: String) return asset;
-	@:extern public static inline function bin(asset: String) return asset;
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function __load(asset: String, cb: Int -> Int -> Void): Void trace('Load: $asset');
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function _reset(asset: String): Void trace('Reset: $asset');
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function image(asset: String, ?name: String) return asset;
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function texture(asset: String, ?name: String) return asset;
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function animation(asset: String, ?name: String) return asset;
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function clip(asset: String, ?name: String) return asset;
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function sound(asset: String) return asset;
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function spine(asset: String) return asset;
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function font(asset: String) return asset;
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function bin(asset: String) return asset;
+
 	#end
 }

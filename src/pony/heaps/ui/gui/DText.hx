@@ -4,7 +4,11 @@ import h2d.Font;
 import h2d.Object;
 import h2d.Text;
 
+#if (heaps >= '2.0.0')
+import h3d.Vector4 as Vector;
+#else
 import h3d.Vector;
+#end
 
 import pony.color.UColor;
 import pony.geom.IWH;

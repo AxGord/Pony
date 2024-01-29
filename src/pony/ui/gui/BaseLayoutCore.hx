@@ -110,7 +110,8 @@ using pony.Tools;
 
 	public function update(): Void {}
 
-	@:extern private inline function getObjSize(o: T): Point<Float> {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function getObjSize(o: T): Point<Float> {
 		return getSizeMod(o,
 			#if (haxe_ver >= 4.10)
 			Std.isOfType(o, IWH)

@@ -10,6 +10,7 @@ using pony.Tools;
  * AlignLayoutCore
  * @author AxGord <axgord@gmail.com>
  */
+@SuppressWarnings('checkstyle:MagicNumber')
 @:nullSafety(Strict) class AlignLayoutCore<T> extends BaseLayoutCore<T> {
 
 	@:arg private var _align: Align = new Pair(VAlign.Middle, HAlign.Center);
@@ -82,18 +83,22 @@ using pony.Tools;
 		super.update();
 	}
 
-	@:extern private inline function get_align(): Align return _align;
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function get_align(): Align return _align;
 
-	@:extern private inline function set_align(v: Align): Align {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function set_align(v: Align): Align {
 		if (align == v) return v;
 		_align = v;
 		update();
 		return v;
 	}
 
-	@:extern private inline function get_border(): Border<Int> return _border;
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function get_border(): Border<Int> return _border;
 
-	@:extern private inline function set_border(v: Border<Int>): Border<Int> {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function set_border(v: Border<Int>): Border<Int> {
 		if (border == v) return v;
 		_border = v;
 		update();

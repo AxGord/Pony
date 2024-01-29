@@ -30,7 +30,9 @@ import pony.magic.HasSignal;
 		}
 	}
 
-	@:extern public static inline function create(width: Float, height: Float, invert: Bool = false): BarCore {
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function create(width: Float, height: Float, invert: Bool = false): BarCore {
 		var isVert: Bool = height > width;
 		return new BarCore(isVert ? height : width, isVert, invert);
 	}
@@ -41,7 +43,10 @@ import pony.magic.HasSignal;
 	private function changePosHandler(v: Float): Void percent = v / size;
 	private function changeValueHandler(v: Float): Void percent =  (v - min) / (max - min);
 	private function updateValue(v: Float): Void value = min + v * (max - min);
-	@:extern private inline function inv(p: Float): Float return invert ? size - p : p;
+
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function inv(p: Float): Float return invert ? size - p : p;
 
 	/**
 	 * Set view to default position

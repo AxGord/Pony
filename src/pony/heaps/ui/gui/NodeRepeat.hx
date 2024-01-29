@@ -4,7 +4,13 @@ package pony.heaps.ui.gui;
 import h2d.Graphics;
 import h2d.Object;
 import h2d.Tile;
+
+#if (heaps >= '2.0.0')
+import h3d.Vector4 as Vector;
+#else
 import h3d.Vector;
+#end
+
 import pony.geom.Point;
 
 /**
@@ -48,7 +54,9 @@ import pony.geom.Point;
 		updatePosition();
 	}
 
-	@:extern private inline function updatePosition(): Void {
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function updatePosition(): Void {
 		graphics.setPosition(flipx ? x + w : x, flipy ? y + w : y);
 	}
 

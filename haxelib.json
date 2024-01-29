@@ -27,8 +27,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Install on windows bugfix and remove install warnings",
-"version": "1.9.7",
+"releasenote": "Heaps 2 support. Clean fix delete not exists file error.",
+"version": "1.9.8",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }

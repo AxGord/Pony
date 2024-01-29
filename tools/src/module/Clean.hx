@@ -88,9 +88,14 @@ import types.BASection;
 	}
 
 	public function deleteUnits(data: Array<String>): Void {
-		for (u in data) {
-			log('Delete file: $u');
-			(u : Unit).delete();
+		for (unit in data) {
+			final u: Unit = unit;
+			if (u.exists) {
+				log('Delete file: $u');
+				u.delete();
+			} else {
+				log('Skip delete file: $u (file not exists)');
+			}
 		}
 	}
 

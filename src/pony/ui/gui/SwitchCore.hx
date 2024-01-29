@@ -25,7 +25,9 @@ import pony.magic.HasSignal;
 		if (active != -1) eOpen.dispatch(objects[active], active);
 	}
 
-	@:extern private inline function get_active(): Int return _active;
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function get_active(): Int return _active;
 
 	public function set_active(id: Int): Int {
 		if (id < 0) id = 0;

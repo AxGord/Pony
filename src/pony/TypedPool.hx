@@ -4,11 +4,9 @@ package pony;
  * Typed object pool
  * @author AxGord <axgord@gmail.com>
  */
-#if (haxe_ver >= 3.30)
-@:generic class TypedPool<T: haxe.Constraints.Constructible<Void -> Void>> implements IPool<T> {
-#else
-@:generic class TypedPool<T: { function new(): Void; }> implements IPool<T> {
-#end
+@:generic class TypedPool<T:
+#if (haxe_ver >= 3.30) haxe.Constraints.Constructible<Void -> Void> #else { function new(): Void; } #end
+> implements IPool<T> {
 	public var list: Array<T> = [];
 	public var isDestroy(get, never): Bool;
 

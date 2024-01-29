@@ -130,15 +130,13 @@ private typedef LastCompilationOptions = {
 			Sys.stderr().writeString(line + newline);
 		}
 		if (debug && server && compiler == HAXE && !winfix) {
-			#if (haxe_ver < 4.3)
 			try { // Fix compilation server error
-				var tpf: String = Utils.libPath + 'src/pony/TypedPool.hx';
+				var tpf: String = Utils.libPath + 'src/pony/heaps/HeapsAssets.hx';
 				log('Update $tpf');
 				File.saveContent(tpf, File.getContent(tpf));
 			} catch (e: Dynamic) {
 				error('Update failed');
 			}
-			#end
 			tryCounter = 3;
 			var s: Socket = connectToHaxeServer();
 			var d: String = Sys.getCwd();

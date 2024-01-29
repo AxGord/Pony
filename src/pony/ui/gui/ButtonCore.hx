@@ -84,12 +84,16 @@ enum ButtonState {
 		bMode = v == 1;
 	}
 
-	@:extern private inline function enableOverDown(): Void {
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function enableOverDown(): Void {
 		touch.onOverDown << overDownHandler;
 		touch.onOutDown << outDownHandler;
 	}
 
-	@:extern private inline function disableOverDown(): Void {
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function disableOverDown(): Void {
 		touch.onOverDown >> overDownHandler;
 		touch.onOutDown >> outDownHandler;
 	}

@@ -132,6 +132,7 @@ abstract Point<T: Float>(PointImpl<T>) from PointImpl<T> to PointImpl<T> {
 	#if (heaps && !macro)
 	@:keep private function keepHackForHeaps(): Any return new h2d.Object().setPosition;
 	@:to public inline function toHeapsPoint(): h2d.col.Point return new h2d.col.Point(x, y);
+	@:from public static inline function fromHeapsPoint(p: h2d.col.Point): Point<Float> return new Point<Float>(p.x, p.y);
 	#end
 
 }

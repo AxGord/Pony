@@ -5,7 +5,7 @@ import pony.magic.Declarator;
 import pony.magic.HasSignal;
 import pony.math.MathTools;
 
-@:enum abstract TweenType(Int) {
+#if (haxe_ver >= 4.2) enum #else @:enum #end abstract TweenType(Int) {
 	var Linear = 0;
 	var Square = 1;
 	var BackSquare = 2;

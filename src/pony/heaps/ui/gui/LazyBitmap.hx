@@ -34,7 +34,9 @@ import pony.time.Tween;
 		if (!hidden) init();
 	}
 
-	@:extern private inline function get_posWithOffset(): Point<Float> return this;
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function get_posWithOffset(): Point<Float> return this;
 
 	public inline function set_posWithOffset(p: Point<Float>): Point<Float> {
 		posWitoutOffset = p;
@@ -63,7 +65,9 @@ import pony.time.Tween;
 		}
 	}
 
-	@:extern private inline function setTile(): Void {
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function setTile(): Void {
 		tile = AssetManager.texture(asset, aname);
 	}
 

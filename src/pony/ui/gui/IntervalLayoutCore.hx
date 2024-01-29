@@ -10,6 +10,7 @@ using pony.Tools;
  * IntervalLayoutCore
  * @author AxGord <axgord@gmail.com>
  */
+@SuppressWarnings('checkstyle:MagicNumber')
 @:nullSafety(Strict) class IntervalLayoutCore<T> extends BaseLayoutCore<T> {
 
 	@:arg private var _interval: Int;
@@ -92,41 +93,55 @@ using pony.Tools;
 		super.update();
 	}
 
-	@:extern private inline function get_interval(): Int return _interval;
-	@:extern private inline function get_vert(): Bool return _vert;
-	@:extern private inline function get_border(): Border<Int> return _border;
-	@:extern private inline function get_align(): Align return _align;
-	@:extern private inline function get_limit(): Float return _limit;
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function get_interval(): Int return _interval;
 
-	@:extern private inline function set_interval(v: Int): Int {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function get_vert(): Bool return _vert;
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function get_border(): Border<Int> return _border;
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function get_align(): Align return _align;
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function get_limit(): Float return _limit;
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function set_interval(v: Int): Int {
 		if (interval == v) return v;
 		_interval = v;
 		update();
 		return v;
 	}
 
-	@:extern private inline function set_vert(v: Bool): Bool {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function set_vert(v: Bool): Bool {
 		if (vert == v) return v;
 		_vert = v;
 		update();
 		return v;
 	}
 
-	@:extern private inline function set_border(v: Border<Int>): Border<Int> {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function set_border(v: Border<Int>): Border<Int> {
 		if (border == v) return v;
 		_border = v;
 		update();
 		return v;
 	}
 
-	@:extern private inline function set_align(v: Align): Align {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function set_align(v: Align): Align {
 		if (align == v) return v;
 		_align = v;
 		update();
 		return v;
 	}
 
-	@:extern private inline function set_limit(v: Float): Float {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function set_limit(v: Float): Float {
 		if (limit == v) return v;
 		_limit = v;
 		update();

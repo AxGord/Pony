@@ -6,7 +6,8 @@ import pony.magic.HasSignal;
 import pony.geom.Point;
 import pony.geom.Rect;
 
-@:enum abstract SmallDeviceQuality(Int) to Int {
+#if (haxe_ver >= 4.2) enum #else @:enum #end
+abstract SmallDeviceQuality(Int) to Int {
 	var ideal = 1;
 	var low = 2;
 	var normal = 3;
@@ -57,7 +58,9 @@ import pony.geom.Rect;
 		return q;
 	}
 
-	@:extern private inline function get_dynStage(): Rect<Float> {
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function get_dynStage(): Rect<Float> {
 		return new Rect(-rect.x, -rect.y, width / scale, height / scale);
 	}
 
@@ -70,7 +73,9 @@ import pony.geom.Rect;
 	public inline function updateSize(): Void {}
 	public dynamic function ratioMod(value: Float): Float return value;
 
-	@:extern private inline function setStageSize(w: Int, h: Int): Void {
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function setStageSize(w: Int, h: Int): Void {
 		if (noScale) {
 			scale = 1;
 			ratio = 1;

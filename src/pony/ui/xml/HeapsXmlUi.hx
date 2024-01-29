@@ -11,7 +11,11 @@ import h2d.filter.Filter;
 import h2d.filter.Group;
 import h2d.filter.Outline;
 
+#if (heaps >= '2.0.0')
+import h3d.Vector4 as Vector;
+#else
 import h3d.Vector;
+#end
 
 import hxd.res.DefaultFont;
 
@@ -75,8 +79,9 @@ using pony.text.TextTools;
 	slider: pony.heaps.ui.gui.StepSlider
 }))
 #end
+@:nullSafety(Strict)
 #if (haxe_ver >= 4.2) abstract #end
-@:nullSafety(Strict) class HeapsXmlUi extends Object implements HasAbstract {
+class HeapsXmlUi extends Object implements HasAbstract {
 
 	private static inline var HALF: Float = 0.5;
 	private static var fonts: Map<String, Font> = new Map();
@@ -300,7 +305,8 @@ using pony.text.TextTools;
 		return p;
 	}
 
-	@:extern private inline function setNodeAttrs(node: Node, attrs: Dynamic<String>): Void {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function setNodeAttrs(node: Node, attrs: Dynamic<String>): Void {
 		var w: Null<Float> = null;
 		var h: Null<Float> = null;
 		if (attrs.wh != null) {
@@ -328,18 +334,21 @@ using pony.text.TextTools;
 		}
 	}
 
-	@:extern private inline function createText(attrs: Dynamic<String>, content: String): Object {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function createText(attrs: Dynamic<String>, content: String): Object {
 		return createTextBase(new Text(getFont(attrs)), attrs, content);
 	}
 
-	@:extern private inline function createDText(attrs: Dynamic<String>, content: String): Object {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function createDText(attrs: Dynamic<String>, content: String): Object {
 		var c: Null<String> = attrs.color;
 		if (c != null) c = attrs.color.trim().allAfter(' ');
 		var color: Null<UColor> = c == null ? null : UColor.fromString(c);
 		return createTextBase(new DText(getFont(attrs), color, attrs.disabled.isTrue()), attrs, content);
 	}
 
-	@:extern private inline function createTextInput(attrs: Dynamic<String>, content: String): Object {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function createTextInput(attrs: Dynamic<String>, content: String): Object {
 		var t: ExtendedTextInput = createTextBase(new ExtendedTextInput(getFont(attrs)), attrs, content);
 		t.multiline = attrs.multiline.isTrue();
 		t.lockFocus = attrs.lockFocus.isTrue();
@@ -379,15 +388,16 @@ using pony.text.TextTools;
 			t.smooth = false;
 		if (attrs.shadow != null) {
 			var shadow: String = StringTools.trim(attrs.shadow);
-			if (shadow.length > 0) {
+			if (shadow.length > 0) @:nullSafety(Off) {
 				var a: Array<String> = shadow.split(' ');
-				var color: UColor = 0;
-				if (a[0].charAt(0) == '#')
-					color = @:nullSafety(Off) UColor.fromString(a.shift());
+				var color: UColor = if (a[0].charAt(0) == '#')
+					UColor.fromString(a.shift());
 				else if (a[a.length - 1].charAt(0) == '#')
-					color = @:nullSafety(Off) UColor.fromString(a.pop());
-				@:nullSafety(Off) var dx: Float = a.length > 0 ? Std.parseFloat(a.pop()) : 4;
-				@:nullSafety(Off) var dy: Float = a.length > 0 ? Std.parseFloat(a.pop()) : dx;
+					UColor.fromString(a.pop());
+				else
+					0;
+				var dx: Float = a.length > 0 ? Std.parseFloat(a.pop()) : 4;
+				var dy: Float = a.length > 0 ? Std.parseFloat(a.pop()) : dx;
 				t.dropShadow = {dx: dx, dy: dy, color: color, alpha: color.invertAlpha.af};
 			}
 		}
@@ -395,7 +405,8 @@ using pony.text.TextTools;
 		return t;
 	}
 
-	@:extern private inline function addFilters(obj: Drawable, attrs: Dynamic<String>): Void {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function addFilters(obj: Drawable, attrs: Dynamic<String>): Void {
 		var filters: Array<Filter> = [];
 		if (attrs.outline != null) {
 			var out: String = StringTools.trim(attrs.outline);
@@ -441,7 +452,8 @@ using pony.text.TextTools;
 			obj.filter = filters.length > 1 ? new Group(filters) : filters[0];
 	}
 
-	@:extern private inline function createLayout(attrs: Dynamic<String>, content: Array<Dynamic>): Object {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function createLayout(attrs: Dynamic<String>, content: Array<Dynamic>): Object {
 		return if (attrs.src != null) {
 			var l = new BGLayout(
 				HeapsAssets.image(attrs.src, attrs.name), attrs.vert.isTrue(), scaleBorderInt(attrs.border), attrs.mask.isTrue()
@@ -502,7 +514,8 @@ using pony.text.TextTools;
 		}
 	}
 
-	@:extern private inline function parseSizePointFloat(a: Dynamic<String>): Point<Float> {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function parseSizePointFloat(a: Dynamic<String>): Point<Float> {
 		return new Point<Float>(parseAndScale(a.w), parseAndScale(a.h));
 	}
 
@@ -546,7 +559,8 @@ using pony.text.TextTools;
 		}
 	}
 
-	@:extern private inline function scaleBorderInt(s: String): Border<Int> return cast (Border.fromString(s) * _scale);
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function scaleBorderInt(s: String): Border<Int> return cast (Border.fromString(s) * _scale);
 
 	private function getFont(attrs: Dynamic<String>): Font {
 		var name: String = attrs.src;
@@ -581,7 +595,11 @@ using pony.text.TextTools;
 		return s == '' ? null : s;
 	}
 
+	#if (haxe_ver >= 4.2)
+	abstract private function _createUI(): Object;
+	#else
 	@:abstract private function _createUI(): Object return null;
+	#end
 
 	public function createUI(?app: HeapsApp, scale: Float = 1): Void {
 		if (this.app == null)

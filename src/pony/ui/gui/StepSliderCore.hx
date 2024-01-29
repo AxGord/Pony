@@ -8,6 +8,7 @@ import pony.ui.touch.Touch;
  * StepSliderCore
  * @author AxGord <axgord@gmail.com>
  */
+@SuppressWarnings('checkstyle:MagicNumber')
 class StepSliderCore extends SliderCore {
 
 	public var posStep: Float = 0;
@@ -20,30 +21,35 @@ class StepSliderCore extends SliderCore {
 		super(button, size, isVertical, invert, draggable);
 	}
 
-	@:extern public static inline function create(
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function create(
 		?button: ButtonCore, width: Float, height: Float, invert: Bool=false, draggable: Bool = true
 	): StepSliderCore {
 		var isVert = height > width;
 		return new StepSliderCore(button, isVert ? height :  width, isVert, invert, draggable);
 	}
 
-	@:extern private inline function set_percentStep(v: Float): Float {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function set_percentStep(v: Float): Float {
 		posStep = size * v;
 		percentRound = MathTools.lengthAfterComma(v);
 		valueRound = -1;
 		return v;
 	}
 
-	@:extern private inline function get_percentStep(): Float return posStep == 0 ? 0 : posStep / size;
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function get_percentStep(): Float return posStep == 0 ? 0 : posStep / size;
 
-	@:extern private inline function set_valueStep(v: Float): Float {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function set_valueStep(v: Float): Float {
 		percentStep = v / (max - min);
 		valueRound = MathTools.lengthAfterComma(v);
 		percentRound = -1;
 		return v;
 	}
 
-	@:extern private inline function get_valueStep(): Float return percentStep * (max - min);
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function get_valueStep(): Float return percentStep * (max - min);
 
 	override private function moveHandler(t: Touch): Void setStepPos(detectPos(t.point));
 

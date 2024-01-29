@@ -49,7 +49,9 @@ import pony.ui.touch.Touchable;
 
 	public dynamic function convertPos(p: Point<Float>): Point<Float> return p;
 
-	@:extern public static inline function create(
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function create(
 		?b: ButtonCore, width: Float, height: Float, invert: Bool = false, draggable: Bool = true
 	): SliderCore {
 		var isVert: Bool = height > width;
@@ -87,12 +89,17 @@ import pony.ui.touch.Touchable;
 
 	private function moveHandler(t: Touch): Void pos = limit(detectPos(t.point));
 
-	@:extern private inline function detectPos(p: Point<Float>): Float {
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function detectPos(p: Point<Float>): Float {
 		p = convertPos(p);
 		return inv((isVertical ? p.y : p.x) + startPoint);
 	}
 
-	@:extern private inline function limit(p: Float): Float return if (p < 0) 0 else if (p > size) size else p;
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function limit(p: Float): Float return if (p < 0) 0 else if (p > size) size else p;
+
 	public inline function wheel(v: Float): Void scroll(wheelSpeed * v);
 	public inline function scroll(v: Float): Void if (size >= 1) pos = limit(pos - v);
 	public inline function wheelValue(v: Float): Void scrollValue(-wheelSpeed * v);

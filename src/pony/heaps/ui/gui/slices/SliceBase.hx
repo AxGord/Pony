@@ -1,6 +1,11 @@
 package pony.heaps.ui.gui.slices;
 
+#if (heaps >= '2.0.0')
+import h3d.Vector4 as Vector;
+#else
 import h3d.Vector;
+#end
+
 import h2d.Graphics;
 import h2d.Bitmap;
 import h2d.TileGroup;

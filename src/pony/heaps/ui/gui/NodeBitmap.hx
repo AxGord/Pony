@@ -4,7 +4,11 @@ import h2d.Bitmap;
 import h2d.Object;
 import h2d.Tile;
 
+#if (heaps >= '2.0.0')
+import h3d.Vector4 as Vector;
+#else
 import h3d.Vector;
+#end
 
 import pony.geom.Border;
 import pony.geom.Point;

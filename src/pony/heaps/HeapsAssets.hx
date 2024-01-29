@@ -27,7 +27,7 @@ import pony.ui.gui.slices.SliceTools;
 
 using pony.text.TextTools;
 
-@:enum abstract Ext(String) to String {
+#if (haxe_ver >= 4.2) enum #else @:enum #end abstract Ext(String) to String {
 	var ATLAS = 'atlas';
 	#if hxbitmini
 	var BINATLAS = 'atlas.bin';
@@ -51,7 +51,7 @@ using pony.text.TextTools;
 	var OGG = 'ogg';
 }
 
-@:enum abstract HAError(String) to String {
+#if (haxe_ver >= 4.2) enum #else @:enum #end abstract HAError(String) to String {
 	var ERROR_NOT_SUPPORTED = 'Type not supported';
 	var ERROR_NAME_NOT_SET = 'Name not set';
 	var ERROR_NAME_SET = 'Name set';

@@ -3,7 +3,11 @@ package pony.heaps.ui.gui;
 import h2d.Graphics;
 import h2d.Object;
 
+#if (heaps >= '2.0.0')
+import h3d.Vector4 as Vector;
+#else
 import h3d.Vector;
+#end
 
 import pony.Pair;
 import pony.color.UColor;
@@ -57,7 +61,9 @@ import pony.geom.Point;
 		updatePosition();
 	}
 
-	@:extern private inline function updatePosition(): Void {
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function updatePosition(): Void {
 		graphics.setPosition(flipx ? w : 0, flipy ? h : 0);
 	}
 

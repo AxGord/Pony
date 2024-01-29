@@ -139,7 +139,9 @@ import pony.ui.gui.SliderCore;
 		updateMaskSize();
 	}
 
-	@:extern private inline function updateMaskSize(): Void {
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function updateMaskSize(): Void {
 		eMaskSize.dispatch(mw, mh);
 	}
 
@@ -160,7 +162,9 @@ import pony.ui.gui.SliderCore;
 		updateContentPos();
 	}
 
-	@:extern private inline function updateContentPos(): Void {
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function updateContentPos(): Void {
 		eContentPos.dispatch(cx, cy);
 	}
 

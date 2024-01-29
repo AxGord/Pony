@@ -5,7 +5,11 @@ import pony.time.Tween;
 import h2d.Interactive;
 import h2d.Object;
 
+#if (heaps >= '2.0.0')
+import h3d.Vector4 as Vector;
+#else
 import h3d.Vector;
+#end
 
 import hxd.Cursor;
 
