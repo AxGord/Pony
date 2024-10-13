@@ -58,16 +58,13 @@ import pony.events.Listener1;
 		return add(e, priority);
 	}
 
-	@:op(A << B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A << B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function op_add(listener: Listener1<T1>): Signal1<T1> return add(listener);
 
-	@:op(A < B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A < B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function once_op(listener: Listener1<T1>): Signal1<T1> return once(listener);
 
-	@:op(A >> B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A >> B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function remove_op(listener: Listener1<T1>): Bool return remove(listener);
 
 	public function sub(a1: T1, priority: Int = 0, once: Bool = false): Signal0 {
@@ -82,13 +79,11 @@ import pony.events.Listener1;
 		return s;
 	}
 
-	@:op(A - B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A - B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function sub_op(a1: T1): Signal0 return sub(a1);
 
 	@SuppressWarnings('checkstyle:InnerAssignment')
-	@:op(A -= B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A -= B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function removeSub(a1: T1): Bool return this.remove({ once: false, listener: LSub(cast null, a1) });
 
 	public function bind1<T2>(a1: T2, priority: Int = 0, _once: Bool = false): Signal2<T1, T2> {
@@ -103,12 +98,10 @@ import pony.events.Listener1;
 		return s;
 	}
 
-	@:op(A + B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A + B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function bind1_op<T2>(a1: T2): Signal2<T1, T2> return bind1(a1);
 
-	@:op(A * B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A * B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function bind1Once_op<T2>(a1: T2): Signal2<T1, T2> return bind1(a1, 0, true);
 
 	public function not(a1: T1, priority: Int = 0, once: Bool = false): Signal1<T1> {
@@ -123,12 +116,10 @@ import pony.events.Listener1;
 		return s;
 	}
 
-	@:op(A / B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A / B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function not_op(a1: T1): Signal1<T1> return not(a1);
 
-	@:op(A % B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A % B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function not_op0(a1: T1): Signal0 return not(a1);
 
 	@SuppressWarnings('checkstyle:InnerAssignment')
@@ -136,12 +127,10 @@ import pony.events.Listener1;
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function removeNot(a1: T1): Bool return this.remove({ once: false, listener: LNot(cast null, a1) });
 
-	@:from
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:from #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function signal2<T1, T2>(s: Signal2<T1, T2>): Signal1<T1> return cast s;
 
-	@:op(A || B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A || B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function or(s: Signal1<T1>): Signal1<T1> {
 		var ns = new Event1();
 		add(ns);
@@ -149,8 +138,7 @@ import pony.events.Listener1;
 		return ns;
 	}
 
-	@:op(A | B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A | B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function orOnce(s: Signal1<T1>): Signal1<T1> {
 		var ns = new Event1();
 		once(ns);

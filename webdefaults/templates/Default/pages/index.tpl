@@ -1,11 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="utf-8">
-	<title>PonyNode</title>
-	%include=css%
-</head>
-<body>
+<_include=base title=PonyNode>
 	<center>
 		<h1><_l>Welcome to PonyNode!</_l></h1>
 		<small>
@@ -16,6 +9,4 @@
 			</p>
 		</small>
 	</center>
-	
-</body>
-</html>
+</_include>

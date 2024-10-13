@@ -8,7 +8,8 @@ import pony.geom.Rect;
 import pony.events.Signal1;
 import pony.events.Signal2;
 
-@:enum abstract SmallDeviceQuality(Int) to Int {
+#if (haxe_ver >= 4.2) enum #else @:enum #end
+abstract SmallDeviceQuality(Int) to Int {
 	var ideal = 1;
 	var low = 2;
 	var normal = 3;
@@ -68,7 +69,9 @@ class SmartCanvas extends ElementResizeControl {
 	private function lostDynStageHandler(): Void onStageResize >> dynStageResize;
 	private function dynStageResize(): Void eDynStageResize.dispatch(dynStage);
 
-	@:extern private inline function get_dynStage(): Rect<Float> {
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function get_dynStage(): Rect<Float> {
 		return new Rect(-rect.x, -rect.y, width / scale, height / scale);
 	}
 
@@ -108,12 +111,16 @@ class SmartCanvas extends ElementResizeControl {
 			setStageSize(w, h);
 	}
 
-	@:extern private inline function setCanvasSize(w: Int, h: Int): Void {
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function setCanvasSize(w: Int, h: Int): Void {
 		canvas.style.width = w + PX;
 		canvas.style.height = h + PX;
 	}
 
-	@:extern private inline function setStageSize(w: Int, h: Int): Void {
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function setStageSize(w: Int, h: Int): Void {
 		if (noScale) {
 			scale = 1;
 			ratio = 1;

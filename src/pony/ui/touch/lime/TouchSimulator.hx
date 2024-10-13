@@ -30,8 +30,12 @@ class TouchSimulator {
 		@:privateAccess Touch.eMove.dispatch(new lime.ui.Touch(x / w(), y / h(), id, 0, 0, 1, 0));
 	}
 
-	@:extern private static inline function w(): Float return Lib.current.stage.stageWidth;
-	@:extern private static inline function h(): Float return Lib.current.stage.stageHeight;
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function w(): Float return Lib.current.stage.stageWidth;
 
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function h(): Float return Lib.current.stage.stageHeight;
 
 }

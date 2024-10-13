@@ -1,82 +1,102 @@
 package pony.pixi;
 
+import pixi.core.display.Container;
 import pixi.core.math.Point;
 import pixi.core.math.shapes.Rectangle;
 import pixi.core.sprites.Sprite;
-import pixi.core.display.Container;
 import pixi.core.text.Text;
 import pixi.core.text.TextStyle;
 import pixi.core.textures.Texture;
 import pixi.extras.BitmapText;
 import pixi.filters.blur.BlurFilter;
 import pixi.filters.colormatrix.ColorMatrixFilter;
+
 import pony.geom.Rect;
 
 /**
  * PixijsExtends
  * @author AxGord <axgord@gmail.com>
  */
+@SuppressWarnings('checkstyle:MagicNumber')
 class PixiExtends {
 
-	@:extern inline public static function loaded(s:Sprite, f:Void->Void):Void {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function loaded(s: Sprite, f: Void -> Void): Void {
 		PixiExtendsTexture.loaded(s.texture, f);
 	}
-	
-	public static function loadedList(a:Array<Sprite>, f:Void->Void):Void {
+
+	public static function loadedList(a: Array<Sprite>, f: Void -> Void): Void {
 		var i = a.length;
-		if (i == 0) f();
-		else for (s in a) loaded(s, function() if (--i == 0) f());
+		if (i == 0)
+			f();
+		else
+			for (s in a) loaded(s, function() if (--i == 0) f());
 	}
-	
-	@:extern inline public static function darkness(c:ColorMatrixFilter, v:Float):Void {
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function darkness(c: ColorMatrixFilter, v: Float): Void {
 		c.matrix = [v, 0, 0, 0, 0, 0, v, 0, 0, 0, 0, 0, v, 0, 0, 1];
 	}
-	
-	@:extern inline public static function darknessFilter(v:Float):ColorMatrixFilter {
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function darknessFilter(v: Float): ColorMatrixFilter {
 		var c = new ColorMatrixFilter();
 		darkness(c, v);
 		return c;
 	}
-	
-	@:extern inline public static function brightnessFilter(v:Float):ColorMatrixFilter {
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function brightnessFilter(v: Float): ColorMatrixFilter {
 		var c = new ColorMatrixFilter();
 		c.brightness(v, true);
 		return c;
 	}
-	
-	@:extern inline public static function blurFilter():BlurFilter {
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function blurFilter(): BlurFilter {
 		var b = new BlurFilter();
 		b.passes = 3;
 		return b;
 	}
-	
-	public static function childLevel(s:Sprite, lvl:Int):Sprite {
+
+	public static function childLevel(s: Sprite, lvl: Int): Sprite {
 		for (_ in 0...lvl) s = cast s.getChildAt(0);
 		return s;
 	}
-	
-	@:extern inline public static function flipX(o:Sprite):Void o.scale.x = -o.scale.x;
-	@:extern inline public static function flipY(o:Sprite):Void o.scale.y = -o.scale.y;
-	@:extern inline public static function flipXpos(o:Sprite):Void o.x += o.width;
-	@:extern inline public static function flipYpos(o:Sprite):Void o.y += o.height;
 
-	@:extern inline public static function setFilterArea(o:Sprite, size:Float):Void {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function flipX(o: Sprite): Void o.scale.x = -o.scale.x;
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function flipY(o: Sprite): Void o.scale.y = -o.scale.y;
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function flipXpos(o: Sprite): Void o.x += o.width;
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function flipYpos(o: Sprite): Void o.y += o.height;
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function setFilterArea(o: Sprite, size: Float): Void {
 		setFilterAreaXY(o, size, size);
 	}
-	
-	@:extern inline public static function setFilterAreaXY(o:Sprite, sx:Float, sy:Float):Void {
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function setFilterAreaXY(o: Sprite, sx: Float, sy: Float): Void {
 		var p = o.toGlobal(new Point());
 		o.filterArea = new Rectangle(p.x - sx, p.y - sy, o.width + sx * 2, o.height + sy * 2);
 	}
 
-	@:extern inline public static function getPonyRect(o:Container):Rect<Float> {
-		return {x: o.x, y: o.y, width: o.width, height: o.height};
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function getPonyRect(o: Container): Rect<Float> {
+		return { x: o.x, y: o.y, width: o.width, height: o.height };
 	}
 
-	@:extern public static inline function pivotCenter(s:Container):Void {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function pivotCenter(s: Container): Void {
 		s.pivot.set(s.width / 2, s.height / 2);
 	}
-	
+
 }
 
 /**
@@ -84,12 +104,14 @@ class PixiExtends {
  * @author AxGord <axgord@gmail.com>
  */
 class PixiExtendsTexture {
-	
-	public static function loaded(t:Texture, f:Void->Void):Void {
-		if (t.baseTexture.hasLoaded) f();
-		else t.baseTexture.once('loaded', function(_) f());
+
+	public static function loaded(t: Texture, f: Void -> Void): Void {
+		if (t.baseTexture.hasLoaded)
+			f();
+		else
+			t.baseTexture.once('loaded', function(_) f());
 	}
-	
+
 }
 
 /**
@@ -97,8 +119,8 @@ class PixiExtendsTexture {
  * @author AxGord <axgord@gmail.com>
  */
 class PixiExtendsText {
-	
-	public static function glow(t:Text, blur:Int=10, ?color:Null<UInt>):Text {
+
+	public static function glow(t: Text, blur: Int = 10, ?color: Null<UInt>): Text {
 		var f = new BlurFilter();
 		f.blur = blur;
 		var s = Reflect.copy(t.style);
@@ -109,17 +131,19 @@ class PixiExtendsText {
 		ct.filters = [f];
 		return ct;
 	}
-	
-}/**
+
+}
+
+/**
  * PixijsExtendsBitmapText
  * @author AxGord <axgord@gmail.com>
  */
 class PixiExtendsBitmapText {
-	
-	public static function glow(t:BitmapText, style:BitmapTextStyle, blur:Int=10, ?color:Null<UInt>):BitmapText {
+
+	public static function glow(t: BitmapText, style: BitmapTextStyle, blur: Int = 10, ?color: Null<UInt>): BitmapText {
 		var f = new BlurFilter();
 		f.blur = blur;
-		var s:BitmapTextStyle = Reflect.copy(style);
+		var s: BitmapTextStyle = Reflect.copy(style);
 		if (color != null) s.tint = color;
 		var ct = new BitmapText(t.text, s);
 		ct.x = t.x;
@@ -127,5 +151,5 @@ class PixiExtendsBitmapText {
 		ct.filters = [f];
 		return ct;
 	}
-	
+
 }

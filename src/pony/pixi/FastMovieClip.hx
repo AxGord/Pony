@@ -18,6 +18,7 @@ using pony.pixi.PixiExtends;
  * FastMovieClip
  * @author AxGord <axgord@gmail.com>
  */
+@SuppressWarnings('checkstyle:MagicNumber')
 class FastMovieClip extends AnimTextureCore {
 
 	private static var storage:Map<String, FastMovieClip> = new Map();
@@ -61,18 +62,25 @@ class FastMovieClip extends AnimTextureCore {
 		}
 	}
 
-	@:extern public static inline function fromSprite(s:Sprite):FastMovieClip return fromTexture(s.texture);
-	@:extern public static inline function fromTexture(t:Texture):FastMovieClip return storage[idFromTexture(t)];
-	@:extern private static inline function idFromTexture(t:Texture):String return t.baseTexture.imageUrl + '_' + t.frame.x + '_' + t.frame.y;
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function fromSprite(s:Sprite):FastMovieClip return fromTexture(s.texture);
 
-	@:extern private static inline function converOr(data:Or<Array<Texture>, Array<String>>):Array<Texture> {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function fromTexture(t:Texture):FastMovieClip return storage[idFromTexture(t)];
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function idFromTexture(t:Texture):String return t.baseTexture.imageUrl + '_' + t.frame.x + '_' + t.frame.y;
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function converOr(data:Or<Array<Texture>, Array<String>>):Array<Texture> {
 		return switch data {
 			case OrState.A(t): t;
 			case OrState.B(s): [for (e in s) Texture.fromFrame(e)];
 		};
 	}
 
-	@:extern private static inline function converOrFirst(data:Or<Array<Texture>, Array<String>>):Texture {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function converOrFirst(data:Or<Array<Texture>, Array<String>>):Texture {
 		return switch data {
 			case OrState.A(t): t[0];
 			case OrState.B(s): Texture.fromFrame(s[0]);
@@ -115,7 +123,8 @@ class FastMovieClip extends AnimTextureCore {
 		}
 	}
 
-	@:extern public inline function ret(s:Sprite):Void pool.push(s);
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function ret(s:Sprite):Void pool.push(s);
 
 	#if (haxe_ver < 4.2) override #end
 	private function setTexture(n:Int, f:Int):Void setTextureFrame(texture[n], f);
@@ -168,7 +177,9 @@ class FastMoviePlaySprite extends Sprite implements HasAbstract {
 	@:abstract public function frame(n:Int):Void;
 	@:abstract public function progress(v:Float):Void;
 
-	@:extern private inline function remAll():Void {
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function remAll():Void {
 		while (children.length > 0) removeChildAt(0);
 	}
 

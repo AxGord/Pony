@@ -60,7 +60,9 @@ class LabelButton extends BaseLayout<RubberLayoutCore<Container>> {
 		super.add(obj);
 	}
 
-	@:extern private inline function get_core(): ButtonCore return button.core;
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function get_core(): ButtonCore return button.core;
 
 	override function destroy(?options: EitherType<Bool, DestroyOptions>): Void {
 		removeChild(button);

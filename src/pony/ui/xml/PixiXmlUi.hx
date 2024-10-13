@@ -575,27 +575,39 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 		}
 	}
 
-	@:extern private inline function parseSizePointFloat(a:Dynamic<String>):Point<Float> {
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function parseSizePointFloat(a:Dynamic<String>):Point<Float> {
 		return new Point<Float>(parseAndScale(a.w), parseAndScale(a.h));
 	}
 
-	@:extern private inline function parseFloat(s:String):Float {
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function parseFloat(s:String):Float {
 		return s == null ? 0 : Std.parseFloat(s);
 	}
 
-	@:extern private inline function parseAndScaleWithoutNull(s:String):Float {
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function parseAndScaleWithoutNull(s:String):Float {
 		return Std.parseFloat(s) * SCALE;
 	}
 
-	@:extern private inline function parseAndScale(s:String):Float {
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function parseAndScale(s:String):Float {
 		return s == null ? 0 : parseAndScaleWithoutNull(s);
 	}
 
-	@:extern inline function parseAndScaleInt(s:String):Int {
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function parseAndScaleInt(s:String):Int {
 		return s == null ? 0 : Std.int(Std.parseInt(s) * SCALE);
 	}
 
-	@:extern private inline function scaleBorderInt(s:String):Border<Int> return cast (Border.fromString(s) * SCALE);
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function scaleBorderInt(s:String):Border<Int> return cast (Border.fromString(s) * SCALE);
 
 	private function putData(c:String):String return c;
 	private function customUIElement(name:String, attrs:Dynamic<String>, content:Array<Dynamic>):Dynamic throw 'Unknown component $name';

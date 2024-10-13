@@ -4,7 +4,8 @@ package pony.unity3d;
  * DefaultLayers
  * @author AxGord
  */
-@:enum abstract DefaultLayers(Int) from Int to Int {
+#if (haxe_ver >= 4.2) enum #else @:enum #end
+abstract DefaultLayers(Int) from Int to Int {
 
 	var Default = 0;
 	var TransparentFX = 1;
@@ -14,5 +15,5 @@ package pony.unity3d;
 	var UI = 5;
 	var Layer6 = 6;
 	var Layer7 = 7;
-	
+
 }

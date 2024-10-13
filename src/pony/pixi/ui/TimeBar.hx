@@ -13,10 +13,10 @@ import pony.time.TimeInterval;
  * @author AxGord <axgord@gmail.com>
  */
 class TimeBar extends LabelBar {
-	
+
 	public var timer:DTimer;
 	private var ignoreBeginAnimation:Bool = false;
-	
+
 	public function new(
 		bg:String,
 		fillBegin:String,
@@ -35,7 +35,7 @@ class TimeBar extends LabelBar {
 		timer = DTimer.createFixedTimer(null);
 		onReady < timerInit;
 	}
-	
+
 	private function timerInit(p:Point<Int>):Void {
 		timer.progress << progressHandler;
 		timer.update << updateHandler;
@@ -43,10 +43,10 @@ class TimeBar extends LabelBar {
 		text = '00:00';
 		if (!ignoreBeginAnimation) startAnimation();
 	}
-	
+
 	private function progressHandler(p:Float):Void core.percent = p;
 	private function updateHandler(t:Time):Void text = t.showMinSec();
-	
+
 	public function start(t:TimeInterval, ?cur:Time):Void {
 		ignoreBeginAnimation = true;
 		stopAnimation();
@@ -55,14 +55,19 @@ class TimeBar extends LabelBar {
 		if (cur != null) timer.currentTime = cur;
 		timer.start();
 	}
-	
-	@:extern inline public function pause():Void timer.stop();
-	@:extern inline public function play():Void timer.start();
-	
+
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function pause():Void timer.stop();
+
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function play():Void timer.start();
+
 	override public function destroy(?options:haxe.extern.EitherType<Bool, DestroyOptions>):Void {
 		timer.destroy();
 		timer = null;
 		super.destroy(options);
 	}
-	
+
 }

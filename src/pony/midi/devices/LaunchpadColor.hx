@@ -5,7 +5,8 @@ package pony.midi.devices;
  * From Launchpad Programmer’s Reference
  * @author AxGord
  */
-@:enum abstract LaunchpadColor(MidiCode) to MidiCode from MidiCode {
+#if (haxe_ver >= 4.2) enum #else @:enum #end
+abstract LaunchpadColor(MidiCode) to MidiCode from MidiCode {
 
 	var Off = 12;
 	var RedLow = 13;
@@ -15,7 +16,7 @@ package pony.midi.devices;
 	var YellowFull = 62;
 	var GreenLow = 28;
 	var GreenFull = 60;
-	
+
 	public static function fromIndex(index:Int):LaunchpadColor {
 		return switch index {
 			case 0: Off;
@@ -29,5 +30,5 @@ package pony.midi.devices;
 			case _: throw 'Unknown color index';
 		}
 	}
-	
+
 }

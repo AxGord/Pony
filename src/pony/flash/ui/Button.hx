@@ -12,6 +12,7 @@ using pony.flash.FLExtends;
  * @see pony.ui.ButtonCore
  * @author AxGord
  */
+@SuppressWarnings('checkstyle:MagicNumber')
 class Button extends MovieClip {
 
 	#if !starling
@@ -63,7 +64,9 @@ class Button extends MovieClip {
 	#end
 
 	@:getter(bMode) public inline function get_bMode(): Bool return core.bMode;
-	@:extern public inline function set_bMode(value: Bool): Bool return core.bMode = value;
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function set_bMode(value: Bool): Bool return core.bMode = value;
 
 	private function change(img: Int): Void {
 		if (img == 4) {

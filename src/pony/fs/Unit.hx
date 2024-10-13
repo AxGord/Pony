@@ -4,6 +4,8 @@ package pony.fs;
 import pony.Priority;
 import sys.FileSystem;
 
+using StringTools;
+
 /**
  * File system Unit
  * @author AxGord <axgord@gmail.com>
@@ -21,10 +23,19 @@ import sys.FileSystem;
 	public var first(get, never): String;
 	public var firstExists(get, never): Null<String>;
 	public var takeExists(get, never): Array<String>;
+	public var parent(get, never): Dir;
 
 	public inline function new(v: Priority<String>) {
 		for (e in v) if (e.length == 0) throw 'Wrong way detected';
 		this = v;
+	}
+
+	private function get_parent(): Dir {
+		return [ for ( u in this ) {
+			var p: String = u.endsWith('/') ? u.substr(0, -1) : u;
+			var i: Int = p.lastIndexOf('/');
+			return i > 0 ? p.substr(0, i) : '';
+		} ];
 	}
 
 	private function get_takeExists(): Array<String> {

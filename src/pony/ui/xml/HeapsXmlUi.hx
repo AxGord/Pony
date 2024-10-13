@@ -92,6 +92,7 @@ class HeapsXmlUi extends Object implements HasAbstract {
 	private var watchList: Array<Pair<Object, Dynamic<String>>> = [];
 	private var tweens: TweenMap<Object> = [];
 
+	@SuppressWarnings('checkstyle:MagicNumber')
 	private function createUIElement(name: String, attrs: Dynamic<String>, content: Array<Object>, textContent: String): Object {
 		if (attrs.reverse.isTrue()) content.reverse();
 		var allowFilters: Bool = true;
@@ -305,6 +306,7 @@ class HeapsXmlUi extends Object implements HasAbstract {
 		return p;
 	}
 
+	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function setNodeAttrs(node: Node, attrs: Dynamic<String>): Void {
 		var w: Null<Float> = null;
@@ -334,11 +336,13 @@ class HeapsXmlUi extends Object implements HasAbstract {
 		}
 	}
 
+	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function createText(attrs: Dynamic<String>, content: String): Object {
 		return createTextBase(new Text(getFont(attrs)), attrs, content);
 	}
 
+	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function createDText(attrs: Dynamic<String>, content: String): Object {
 		var c: Null<String> = attrs.color;
@@ -347,6 +351,7 @@ class HeapsXmlUi extends Object implements HasAbstract {
 		return createTextBase(new DText(getFont(attrs), color, attrs.disabled.isTrue()), attrs, content);
 	}
 
+	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function createTextInput(attrs: Dynamic<String>, content: String): Object {
 		var t: ExtendedTextInput = createTextBase(new ExtendedTextInput(getFont(attrs)), attrs, content);
@@ -405,6 +410,7 @@ class HeapsXmlUi extends Object implements HasAbstract {
 		return t;
 	}
 
+	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function addFilters(obj: Drawable, attrs: Dynamic<String>): Void {
 		var filters: Array<Filter> = [];
@@ -452,6 +458,7 @@ class HeapsXmlUi extends Object implements HasAbstract {
 			obj.filter = filters.length > 1 ? new Group(filters) : filters[0];
 	}
 
+	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function createLayout(attrs: Dynamic<String>, content: Array<Dynamic>): Object {
 		return if (attrs.src != null) {
@@ -514,6 +521,7 @@ class HeapsXmlUi extends Object implements HasAbstract {
 		}
 	}
 
+	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function parseSizePointFloat(a: Dynamic<String>): Point<Float> {
 		return new Point<Float>(parseAndScale(a.w), parseAndScale(a.h));
@@ -559,6 +567,7 @@ class HeapsXmlUi extends Object implements HasAbstract {
 		}
 	}
 
+	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function scaleBorderInt(s: String): Border<Int> return cast (Border.fromString(s) * _scale);
 
@@ -595,6 +604,7 @@ class HeapsXmlUi extends Object implements HasAbstract {
 		return s == '' ? null : s;
 	}
 
+	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2)
 	abstract private function _createUI(): Object;
 	#else
@@ -636,6 +646,7 @@ class HeapsXmlUi extends Object implements HasAbstract {
 	private static inline function checkInDyns(v: String): Bool return DYNS.indexOf(v) != -1;
 
 	private static inline function isLayout(obj: Dynamic): Bool {
+		@SuppressWarnings('checkstyle:MagicNumber')
 		#if (haxe_ver >= 4.10)
 		return Std.isOfType(obj, TLayout);
 		#else
@@ -644,6 +655,7 @@ class HeapsXmlUi extends Object implements HasAbstract {
 	}
 
 	private static inline function isNode(obj: Dynamic): Bool {
+		@SuppressWarnings('checkstyle:MagicNumber')
 		#if (haxe_ver >= 4.10)
 		return Std.isOfType(obj, Node);
 		#else

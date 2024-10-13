@@ -23,7 +23,7 @@ class WebServer {
 	public var _static:Dir;
 	public var defaults:Defaults;
 	public var usercontent:String;
-	
+
 	public function new(dir:Dir, usercontent:String, modules:Array<IModule>, ?defaults:Defaults)
 	{
 		this.usercontent = usercontent;
@@ -31,10 +31,9 @@ class WebServer {
 		this.modules = modules;
 		tpl = new Templates(dir, WebServerPut, this);
 		_static = dir + 'static';
-		
 		for (m in modules) m.init(dir, this);
 	}
-	
+
 	public function connect(connection:IHttpConnection):Void {
 		if (connection.end) return;
 		if (connection.url != '' && sendStatic(connection)) return;
@@ -48,7 +47,7 @@ class WebServer {
 		}
 		cpq.run();
 	}
-	
+
 	private function sendStatic(connection:IHttpConnection):Bool {
 		var u:Unit = _static + connection.url;
 		if (u.exists) {
@@ -78,5 +77,5 @@ class WebServer {
 		}
 		return false;
 	}
-	
+
 }

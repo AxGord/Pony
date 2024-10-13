@@ -74,6 +74,8 @@ class PopupManager<Popup> {
 		_showPopup(list.shift());
 	}
 
-	@:extern public inline function clearList(): Void list = [];
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function clearList(): Void list = [];
 
 }

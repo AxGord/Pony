@@ -20,7 +20,9 @@ class Mouse {
 
 	private static var enabled: Bool = true;
 
-	@:extern public static inline function init(): Void {
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function init(): Void {
 		DeltaTime.fixedUpdate.once(initNow, INIT_PRIORITY);
 	}
 
@@ -110,6 +112,9 @@ class Mouse {
 	}
 
 	private static function lock(event: MouseEvent): Void event.stopImmediatePropagation();
-	@:extern private static inline function tlock(event: MouseEvent): Void if (!enabled) event.stopImmediatePropagation();
+
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function tlock(event: MouseEvent): Void if (!enabled) event.stopImmediatePropagation();
 
 }

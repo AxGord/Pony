@@ -4,6 +4,7 @@ package pony.geom;
  * Align
  * @author AxGord <axgord@gmail.com>
  */
+@SuppressWarnings('checkstyle:MagicNumber')
 @:nullSafety(Strict)
 abstract Align(AlignType) from AlignType to AlignType {
 
@@ -11,23 +12,33 @@ abstract Align(AlignType) from AlignType to AlignType {
 	public var horizontal(get, never): HAlign;
 	public var defaultCenter(get, never): Align;
 
-	@:extern public inline function new(v: AlignType) this = v;
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function new(v: AlignType) this = v;
 
-	@:extern public static inline function createDefaultCenter(): Align return new Pair(VAlign.Middle, HAlign.Center);
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function createDefaultCenter(): Align return new Pair(VAlign.Middle, HAlign.Center);
 
-	@:from @:extern public static inline function fromV(v: VAlign): Align {
+	@:from #if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function fromV(v: VAlign): Align {
 		return new Pair(v, HAlign.Center);
 	}
 
-	@:from @:extern public static inline function fromH(v: HAlign): Align {
+	@:from #if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function fromH(v: HAlign): Align {
 		return new Pair(VAlign.Middle, v);
 	}
 
-	@:to @:extern private inline function toV(): VAlign return this.a;
-	@:to @:extern private inline function toH(): HAlign return this.b;
+	@:to #if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function toV(): VAlign return this.a;
 
-	@:extern private inline function get_vertical(): VAlign return this.a;
-	@:extern private inline function get_horizontal(): HAlign return this.b;
+	@:to #if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function toH(): HAlign return this.b;
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function get_vertical(): VAlign return this.a;
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function get_horizontal(): HAlign return this.b;
 
 	private inline function get_defaultCenter(): Align {
 		return new Pair(vertical == null ? VAlign.Middle : vertical, horizontal == null ? HAlign.Center : horizontal);
@@ -51,9 +62,11 @@ abstract Align(AlignType) from AlignType to AlignType {
 		return new Pair(vert, hor);
 	}
 
-	@:to @:extern public inline function toInt(): Int return vertical.getIndex() + (1 + horizontal.getIndex()) * 3;
+	@:to #if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function toInt(): Int return vertical.getIndex() + (1 + horizontal.getIndex()) * 3;
 
-	@:from @:extern public static inline function fromInt(v: Int): Align {
+	@:from #if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function fromInt(v: Int): Align {
 		return new Pair(VAlign.createByIndex(v % 3), HAlign.createByIndex(Std.int(v / 3) - 1));
 	}
 

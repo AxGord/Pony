@@ -16,7 +16,7 @@ using pony.text.TextTools;
  */
 @:nullSafety(Strict) class Copy extends CfgModule<CopyConfig> {
 
-	private static inline var PRIORITY: Int = 21;
+	private static inline var PRIORITY: Int = 20;
 
 	public function new() super('copy');
 

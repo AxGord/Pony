@@ -83,7 +83,9 @@ class HtmlContainerBase implements HasSignal {
 		eResize.dispatch(lastRect);
 	}
 
-	@:extern private inline function px(v: Float): String return (ceil ? Std.int(v) : v) + 'px';
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function px(v: Float): String return (ceil ? Std.int(v) : v) + 'px';
 
 	private function set_targetStyle(s: CSSStyleDeclaration): CSSStyleDeclaration {
 		targetStyle = s;

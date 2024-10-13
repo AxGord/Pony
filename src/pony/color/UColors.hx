@@ -7,6 +7,7 @@ using Std;
  * Colors
  * @author AxGord <axgord@gmail.com>
  */
+@SuppressWarnings('checkstyle:MagicNumber')
 @:forward(push, pop, iterator, length)
 abstract UColors(Array<UColor>) from Array<UColor> to Array<UColor> {
 
@@ -20,8 +21,11 @@ abstract UColors(Array<UColor>) from Array<UColor> to Array<UColor> {
 	 */
 	public var midInvertAlpha(get, never): UColor;
 
-	@:extern private inline function get_mid(): UColor return _mid(0);
-	@:extern private inline function get_midInvertAlpha(): UColor return _mid(Color.MAX_CHANNEL);
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function get_mid(): UColor return _mid(0);
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function get_midInvertAlpha(): UColor return _mid(Color.MAX_CHANNEL);
 
 	private function _mid(alp: UInt): UColor {
 		var r: Array<UInt> = [];
@@ -49,6 +53,7 @@ abstract UColors(Array<UColor>) from Array<UColor> to Array<UColor> {
 	@:from public static inline function fromVector(a: flash.Vector<UInt>): UColors return [ for (i in 0...a.length) a[i] ];
 	#end
 
-	@:from @:extern public static inline function fromString(s: String): UColors return s.split(' ').map(UColor.fromString);
+	@:from #if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function fromString(s: String): UColors return s.split(' ').map(UColor.fromString);
 
 }

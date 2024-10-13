@@ -7,14 +7,16 @@ import pony.net.http.modules.mmodels.Field;
 import pony.net.http.modules.mmodels.fields.FString;
 import pony.tests.Errors;
 
-@:enum abstract ::NAME::Fields(String) to String {
+#if (haxe_ver >= 4.2) enum #else @:enum #end
+abstract ::NAME::Fields(String) to String {
 
 	var ID = 'id';
 	var NAME = 'name';
 
 }
 
-@:enum abstract ValidateErrors(String) to String {
+#if (haxe_ver >= 4.2) enum #else @:enum #end
+abstract ValidateErrors(String) to String {
 
 	var EMPTY = 'Empty';
 	var SHORT = 'Is short';

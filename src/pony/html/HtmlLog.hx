@@ -10,6 +10,8 @@ using StringTools;
 
 @:nullSafety(Strict) class HtmlLog {
 
+	public var visible(get, set):Bool;
+
 	private final origTrace: Null<Dynamic -> ?PosInfos -> Void>;
 	private final container: Element;
 	private final reverse: Bool;
@@ -20,10 +22,10 @@ using StringTools;
 		reverse: Bool = false, objLogs: Bool = false
 	) {
 		this.reverse = reverse;
+		origTrace = Log.trace;
 		container = Browser.document.getElementById(containerId);
 		if (container == null) return;
 		if (handleTrace) {
-			origTrace = Log.trace;
 			Log.trace = traceHandler;
 			if (obj != null) @:nullSafety(Off) {
 				if (objLogs) obj.onLog << origTrace;
@@ -37,7 +39,17 @@ using StringTools;
 		if (handleGlobalError) Browser.window.onerror = windowsErrorHandler;
 	}
 
-	private function traceHandler(v: Dynamic, ?p: PosInfos): Void {
+	public inline function get_visible():Bool return container != null ? !container.hidden : false;
+
+	public inline function set_visible(value:Bool):Bool {
+		if (container != null) container.hidden = !value;
+		return value;
+	}
+
+	public dynamic function traceFilter(pos:Null<PosInfos>):Bool return true;
+
+	public function traceHandler(v: Dynamic, ?p: PosInfos): Void {
+		if (!traceFilter(p)) return;
 		('$v'.startsWith('Catch error') ? errorHandler : logHandler)(
 			[Std.string(v)].concat(p != null && p.customParams != null ? p.customParams.map(Std.string) : []).join(', '), p
 		);
@@ -65,11 +77,13 @@ using StringTools;
 		return false;
 	}
 
-	private function addToContainer(s: String): Void {
-		if (reverse)
-			container.innerHTML = s + container.innerHTML;
-		else
-			container.innerHTML += s;
+	private inline function addToContainer(s: String): Void {
+		if (container != null) {
+			if (reverse)
+				container.innerHTML = s + container.innerHTML;
+			else
+				container.innerHTML += s;
+		}
 	}
 
 }

@@ -68,8 +68,13 @@ import pony.magic.HasLink;
 
 	public static function unsupported(): Void throw 'Unsupported';
 
-	@:extern public inline function tw(n: Int): Float return tiles[n].width;
-	@:extern public inline function th(n: Int): Float return tiles[n].height;
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function tw(n: Int): Float return tiles[n].width;
+
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function th(n: Int): Float return tiles[n].height;
 
 	public function clear(): Void {
 		for (s in solo) s.visible = false;
@@ -77,7 +82,9 @@ import pony.magic.HasLink;
 		for (g in groups) g.clear();
 	}
 
-	@:extern public inline function drawTile(
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function drawTile(
 		n: Int, x: Float = 0, y: Float = 0, ?w: Float, ?h: Float, flipx: Bool = false, flipy: Bool = false
 	): Void {
 		if ((w == null || w > 0) && (h == null || h > 0)) _drawTile(n, x, y, w, h, flipx, flipy);

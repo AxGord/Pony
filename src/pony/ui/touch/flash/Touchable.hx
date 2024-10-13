@@ -26,7 +26,9 @@ class Touchable extends TouchableBase {
 	private static var needSw: Bool = false;
 	private static var wait: Bool = false;
 
-	@:extern private static inline function get_touchSupport(): Bool {
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function get_touchSupport(): Bool {
 		#if touchsim
 		return true;
 		#else

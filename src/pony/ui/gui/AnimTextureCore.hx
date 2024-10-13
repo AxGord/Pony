@@ -7,7 +7,8 @@ import pony.math.MathTools;
  * AnimSmoothMode
  * @author AxGord <axgord@gmail.com>
  */
-@:enum abstract AnimSmoothMode(Int) to Int from Int {
+#if (haxe_ver >= 4.2) enum #else @:enum #end
+abstract AnimSmoothMode(Int) to Int from Int {
 
 	var None = 1;
 	var Simple = 2;

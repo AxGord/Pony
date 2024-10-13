@@ -13,7 +13,7 @@ import pony.ui.touch.Touch;
  * @author AxGord <axgord@gmail.com>
  */
 class ScrollBar extends Sprite {
-	
+
 	public var onReady:Signal0;
 	private var bar:Bar;
 	private var totalSize:Float;
@@ -23,7 +23,7 @@ class ScrollBar extends Sprite {
 	private var startTPos:Float;
 	private var startTPosBefore:Int;
 	private var vert:Bool;
-	
+
 	public function new(
 		size:Int,
 		begin:String,
@@ -41,19 +41,21 @@ class ScrollBar extends Sprite {
 		addChild(bar);
 		onReady = bar.onReady;
 	}
-	
+
 	public function updateContent(size:Float):Void {
 		contentSize = size;
 		bar.core.percent = size > totalSize ? totalSize / size : 1;
 		if (pos < totalSize - contentSize) pos = Std.int(totalSize - contentSize);
 		updatePos();
 	}
-	
+
 	public dynamic function onChangePosition(v:Int):Void {}
-	
+
 	public function scroll(delta:Int):Void pos += delta;
-	
-	@:extern inline private function set_pos(v:Int):Int {
+
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function set_pos(v:Int):Int {
 		if (v != pos) {
 			pos = v;
 			if (pos > 0) pos = 0;
@@ -62,8 +64,10 @@ class ScrollBar extends Sprite {
 		}
 		return pos;
 	}
-	
-	@:extern inline private function updatePos():Void {
+
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function updatePos():Void {
 		onChangePosition(pos);
 		var p = ( pos / (totalSize - contentSize));
 		var v = (totalSize - bar.core.pos) * p;
@@ -72,12 +76,12 @@ class ScrollBar extends Sprite {
 		else
 			bar.x = v;
 	}
-	
+
 	public function setTouchable(t:Touchable):Void {
 		touchable = t;
 		touchable.onDown < beginMove;
 	}
-	
+
 	private function beginMove(t:Touch):Void {
 		startTPosBefore = pos;
 		startTPos = vert ? t.y : t.x;
@@ -85,7 +89,7 @@ class ScrollBar extends Sprite {
 		t.onUp < endMove;
 		t.onOutUp < endMove;
 	}
-	
+
 	private function endMove(t:Touch):Void {
 		t.onUp >> endMove;
 		t.onOutUp >> endMove;
@@ -94,9 +98,9 @@ class ScrollBar extends Sprite {
 		move(t);
 		touchable.onDown < beginMove;
 	}
-	
+
 	private function move(t:Touch):Void pos = startTPosBefore - Std.int(startTPos - (vert ? t.y : t.x));
-	
+
 	override public function destroy(?options:haxe.extern.EitherType<Bool, DestroyOptions>):Void {
 		onChangePosition = null;
 		removeChild(bar);
@@ -106,5 +110,5 @@ class ScrollBar extends Sprite {
 		touchable = null;
 		super.destroy(options);
 	}
-	
+
 }

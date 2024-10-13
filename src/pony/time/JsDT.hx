@@ -60,7 +60,9 @@ class JsDT implements HasSignal {
 		return b;
 	}
 
-	@:extern private static inline function set_halfMobile(b: Bool): Bool {
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function set_halfMobile(b: Bool): Bool {
 		if (JsTools.isMobile) half = b;
 		return half;
 	}
@@ -76,7 +78,9 @@ class JsDT implements HasSignal {
 		}
 	}
 
-	@:extern public static inline function stop(): Void {
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function stop(): Void {
 		caf(afid);
 		afid = -1;
 		if (half)

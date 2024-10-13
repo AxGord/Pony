@@ -8,6 +8,7 @@ using pony.text.TextTools;
  * SliceTools
  * @author AxGord <axgord@gmail.com>
  */
+@SuppressWarnings('checkstyle:MagicNumber')
 @:nullSafety(Strict)
 class SliceTools {
 
@@ -99,11 +100,13 @@ class SliceTools {
 			name;
 	}
 
-	@:extern private static inline function checkAnim(name: String): Bool {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function checkAnim(name: String): Bool {
 		return name.indexOf('{anim') != -1;
 	}
 
-	@:extern private static inline function check(name: String, n: Int, letter: String = ''): Bool {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function check(name: String, n: Int, letter: String = ''): Bool {
 		return index(name, n, letter) != -1;
 	}
 
@@ -112,20 +115,24 @@ class SliceTools {
 		return [for (i in 0...n) s[0] + i + s[1]];
 	}
 
-	@:extern private static inline function index(name: String, n: Int, letter: String = ''): Int {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function index(name: String, n: Int, letter: String = ''): Int {
 		return name.indexOf('{slice$n$letter}');
 	}
 
-	@:extern private static inline function remove(name: String, n: Int, letter: String = ''): String {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function remove(name: String, n: Int, letter: String = ''): String {
 		return name.substr(0, index(name, n, letter));
 	}
 
-	@:extern private static inline function removeAnim(name: String): String {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function removeAnim(name: String): String {
 		var p: SPair<String> = name.firstSplit('{anim');
 		return p.a + p.b.allAfter('}');
 	}
 
-	@:extern private static inline function parseAnimSpeed(name: String): SliceData {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function parseAnimSpeed(name: String): SliceData {
 		var r: Null<String> = name.extract('{anim', '}');
 		if (r != null) {
 			var s: SPair<String> = r.firstSplit(',');

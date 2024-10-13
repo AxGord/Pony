@@ -76,8 +76,13 @@ class TouchableTouch {
 			return true;
 	}
 
-	@:extern private inline function unlock(t: Int): Void touchId = -1;
-	@:extern private inline function isNotLock(t: Int): Bool return touchId == -1 || touchId == t;
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function unlock(t: Int): Void touchId = -1;
+
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function isNotLock(t: Int): Bool return touchId == -1 || touchId == t;
 
 	private function touchBeginHandler(e: TouchEvent): Void {
 		if (isLock(e.touchPointID)) return;

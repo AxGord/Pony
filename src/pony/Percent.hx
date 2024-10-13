@@ -1,5 +1,6 @@
 package pony;
 
+@SuppressWarnings('checkstyle:MagicNumber')
 class Percent implements pony.magic.HasSignal {
 
 	@:bindable public var percent:Float = 0;
@@ -13,8 +14,9 @@ class Percent implements pony.magic.HasSignal {
 		this.allow = allow;
 		this.total = total;
 	}
-	
-	@:extern private inline function set_current(v:Float):Float {
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function set_current(v:Float):Float {
 		if (current != v) {
 			current = v;
 			update();
@@ -22,7 +24,8 @@ class Percent implements pony.magic.HasSignal {
 		return v;
 	}
 
-	@:extern private inline function set_total(v:Float):Float {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function set_total(v:Float):Float {
 		if (total != v) {
 			total = v;
 			update();
@@ -30,7 +33,8 @@ class Percent implements pony.magic.HasSignal {
 		return v;
 	}
 
-	@:extern private inline function set_allow(v:Float):Float {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function set_allow(v:Float):Float {
 		if (allow != v) {
 			allow = v;
 			update();
@@ -38,7 +42,8 @@ class Percent implements pony.magic.HasSignal {
 		return v;
 	}
 
-	@:extern private inline function update():Void {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function update():Void {
 		if (total == -1) {
 			percent = 0;
 			full = false;

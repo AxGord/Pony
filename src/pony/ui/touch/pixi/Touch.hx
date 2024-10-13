@@ -66,7 +66,9 @@ class Touch implements Declarator implements HasSignal {
 		eCancle.dispatch(untyped e.data.identifier);
 	}
 
-	@:extern private static inline function pack(e: InteractionEvent): TouchObj {
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function pack(e: InteractionEvent): TouchObj {
 		var p = correction(e.data.global.x, e.data.global.y);
 		return { id: untyped e.data.identifier, x:p.x, y:p.y };
 	}

@@ -18,10 +18,8 @@ typedef PriorityIds = Priority<{
 @SuppressWarnings('checkstyle:MagicNumber')
 @:nullSafety(Strict) @:final class Priority<T:Dynamic> implements HasSignal {
 
-	#if (!macro)
 	@:lazy public var onTake: Signal0;
 	@:lazy public var onLost: Signal0;
-	#end
 
 	/**
 	 * Total elements count.

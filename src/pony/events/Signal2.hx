@@ -58,16 +58,13 @@ abstract Signal2<T1, T2>(Priority<Listener2<T1, T2>>) from Event2<T1, T2> from P
 		return add(e, priority);
 	}
 
-	@:op(A << B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A << B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function op_add(listener: Listener2<T1, T2>): Signal2<T1, T2> return add(listener);
 
-	@:op(A < B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A < B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function once_op(listener: Listener2<T1, T2>): Signal2<T1, T2> return once(listener);
 
-	@:op(A >> B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A >> B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function remove_op(listener: Listener2<T1, T2>): Bool return remove(listener);
 
 	public function sub(a1: T1, a2: T2, priority: Int = 0, once: Bool = false): Signal0 {
@@ -99,13 +96,11 @@ abstract Signal2<T1, T2>(Priority<Listener2<T1, T2>>) from Event2<T1, T2> from P
 		return s;
 	}
 
-	@:op(A - B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A - B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function sub1_op(a1: T1): Signal1<T2> return sub1(a1);
 
 	@SuppressWarnings('checkstyle:InnerAssignment')
-	@:op(A -= B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A -= B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function removeSub1(a1: T1): Bool {
 		return this.remove({ once: false, listener: LSub1(null, a1) });
 	}
@@ -159,17 +154,14 @@ abstract Signal2<T1, T2>(Priority<Listener2<T1, T2>>) from Event2<T1, T2> from P
 		return s;
 	}
 
-	@:op(A / B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A / B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function not_op(a1: T1): Signal2<T1, T2> return not1(a1);
 
-	@:op(A % B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A % B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function not_op1(a1: T1): Signal1<T2> return not1(a1).shift();
 
 	@SuppressWarnings('checkstyle:InnerAssignment')
-	@:op(A /= B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A /= B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function removeNot1(a1: T1): Bool return this.remove({ once: false, listener: LNot1(null, a1) });
 
 	public function not2(a1: T2, priority: Int = 0, once: Bool = false): Signal2<T1, T2> {
@@ -215,8 +207,7 @@ abstract Signal2<T1, T2>(Priority<Listener2<T1, T2>>) from Event2<T1, T2> from P
 		return ns;
 	}
 
-	@:op(A || B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A || B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function or(s: Signal2<T1, T2>): Signal2<T1, T2> {
 		var ns = new Event2();
 		add(ns);
@@ -224,8 +215,7 @@ abstract Signal2<T1, T2>(Priority<Listener2<T1, T2>>) from Event2<T1, T2> from P
 		return ns;
 	}
 
-	@:op(A | B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A | B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function orOnce(s: Signal2<T1, T2>): Signal2<T1, T2> {
 		var ns = new Event2();
 		once(ns);

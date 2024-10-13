@@ -19,9 +19,9 @@ class TextSizedBox extends BaseLayout<RubberLayoutCore<Container>> {
 	public var text(get, set):String;
 	public var obj(default, null):BText;
 	public var noupdate:Bool = false;
-	
+
 	private var nocache:Bool;
-	
+
 	public function new(w:Float, h:Float, text:String, style:ETextStyle, ?border:Border<Int>, ?align:Align, nocache:Bool=false, shadow:Bool = false) {
 		var f = align != null && align.horizontal != HAlign.Center;
 		this.nocache = nocache;
@@ -41,9 +41,9 @@ class TextSizedBox extends BaseLayout<RubberLayoutCore<Container>> {
 		}
 		layout.tasks.end();
 	}
-	
-	inline private function get_text():String return obj.t;
-	
+
+	private inline function get_text():String return obj.t;
+
 	private function set_text(v:String):String {
 		if (obj.t != v) {
 //			obj.toContainer().cacheAsBitmap = false;
@@ -54,21 +54,23 @@ class TextSizedBox extends BaseLayout<RubberLayoutCore<Container>> {
 		}
 		return v;
 	}
-	
-	@:extern inline private function update():Void {
+
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function update():Void {
 		layout.update();
 		_update();
 		DeltaTime.fixedUpdate < _update;
 	}
-	
-	inline private function _update():Void {
+
+	private inline function _update():Void {
 		DeltaTime.fixedUpdate < layout.update;
 	}
-	
+
 	override function destroy(?options:haxe.extern.EitherType<Bool, DestroyOptions>):Void {
 		DeltaTime.fixedUpdate >> _update;
 		DeltaTime.fixedUpdate >> layout.update;
 		super.destroy(options);
 	}
-	
+
 }

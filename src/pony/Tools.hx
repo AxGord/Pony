@@ -282,6 +282,10 @@ class Tools {
 		return macro $v{[ for (path in getUsedLibs()) for (dir in sys.FileSystem.readDirectory(path)) dir => path ]};
 	}
 
+	macro public static function getLibPath(lib:String): Expr {
+		return macro $v{new sys.io.Process('haxelib', ['path', lib]).stdout.readLine()};
+	}
+
 	#if macro
 	private static function getUsedLibs(): Map<String, String> {
 		var d: Map<String, String> = Context.getDefines();

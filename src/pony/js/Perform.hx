@@ -16,7 +16,9 @@ class Perform implements HasSignal {
 	@:auto public static var onStats:Signal0;
 	#end
 
-	@:extern public static inline function show(?info:String):Void {
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function show(?info:String):Void {
 		#if perf.js
 		var perf = new Perf();
 		var elements = [perf.fps, perf.ms];

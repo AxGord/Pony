@@ -15,7 +15,7 @@ import nape.geom.Vec2;
  */
 @:forward()
 abstract NapeSpace(NapeSpaceBase) from NapeSpaceBase to NapeSpaceBase {
-	
+
 	public inline function new(w:Float, h:Float, ?gravity:Point<Float>):Void {
 		this = new NapeSpaceBase(w, h, gravity);
 	}
@@ -51,9 +51,17 @@ class NapeSpaceBase {
 		this.skipVelIntegrations = skipVelIntegrations;
 	}
 
-	@:extern private inline function get_minSide():Float return Math.min(width, height);
-	@:extern private inline function get_maxSide():Float return Math.max(width, height);
-	@:extern private inline function get_snap():Float return minSide / 100;
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function get_minSide():Float return Math.min(width, height);
+
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function get_maxSide():Float return Math.max(width, height);
+
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function get_snap():Float return minSide / 100;
 
 	public function resolve(name:String):NapeGroup {
 		if (!groups.exists(name))

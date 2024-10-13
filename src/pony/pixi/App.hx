@@ -39,7 +39,7 @@ class App extends SmartCanvas {
 	 * First pixi app
 	 */
 	public static var main:App;
-	
+
 	/**
 	 * Pixi Application
 	 * Read-only
@@ -54,7 +54,7 @@ class App extends SmartCanvas {
 	private var renderPause:Bool = false;
 	private var backImgcontainer:Sprite;
 	private var border:Graphics;
-	
+
 	/**
 	 * @param	smallDeviceQuality - 1 ideal, 2 - low, 3 - normal, 4 - good
 	 */
@@ -143,7 +143,9 @@ class App extends SmartCanvas {
 		return b;
 	}
 
-	@:extern private inline function initTouch():Void {
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function initTouch():Void {
 		if (!Mouse.inited) {
 			Mouse.reg(container);
 			Mouse.correction = correction;
@@ -171,7 +173,7 @@ class App extends SmartCanvas {
 	}
 
 	private function render():Void if (!renderPause) app.render();
-	
+
 	public function stageResizeHandler(ratio:Float, rect:Rect<Float>):Void {
 		container.scale.set(ratio);
 		container.x = rect.x;
@@ -182,21 +184,21 @@ class App extends SmartCanvas {
 			backImgcontainer.height = rect.height / stageInitSize.y;
 		}
 	}
-	
+
 	private function correction(x:Float, y:Float):Point<Float> {
 		return new Point((x - container.x) / container.width, (y - container.y) / container.height);
 	}
-	
+
 	public function pauseRendering():Void {
 		renderPause = true;
 		if (sizeUpdate)
 			onStageResize >> stageResizeHandler;
 	}
-	
+
 	public function resumeRendering():Void {
 		renderPause = false;
 		if (sizeUpdate)
 			onStageResize << stageResizeHandler;
 	}
-	
+
 }

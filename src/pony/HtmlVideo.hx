@@ -29,6 +29,7 @@ typedef HtmlVideoOptions = {
  * HtmlVideo
  * @author AxGord <axgord@gmail.com>
  */
+@SuppressWarnings('checkstyle:MagicNumber')
 class HtmlVideo implements HasSignal implements HasLink {
 
 	@:auto public var onClick: Signal0;
@@ -109,13 +110,22 @@ class HtmlVideo implements HasSignal implements HasLink {
 		loadState.onQualityDown << loader.qualityDown;
 	}
 
-	@:extern private inline function set_qualities(q: Array<String>): Array<String> return loader.qualities = q;
-	@:extern private inline function set_qualityIndex(q: Int): Int return loader.qualityIndex = q;
-	@:extern private inline function set_qualityUpSpeed(v: Float): Float return loadState.qualityUpSpeed = v;
-	@:extern private inline function set_qualityDownSpeed(v: Float): Float return loadState.qualityDownSpeed = v;
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function set_qualities(q: Array<String>): Array<String> return loader.qualities = q;
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function set_qualityIndex(q: Int): Int return loader.qualityIndex = q;
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function set_qualityUpSpeed(v: Float): Float return loadState.qualityUpSpeed = v;
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function set_qualityDownSpeed(v: Float): Float return loadState.qualityDownSpeed = v;
+
 	private function muteUpdate(): Void muted.enabled = muted1.enabled || muted2.enabled;
 
-	@:extern private inline function createVideoElement(): Void {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function createVideoElement(): Void {
 		videoElement = cast js.Browser.document.createElement('video');
 		videoElement.setAttribute('playsinline', 'playsinline'); // for ios
 		videoElement.setAttribute('webkit-playsinline', 'playsinline');
@@ -172,15 +182,27 @@ class HtmlVideo implements HasSignal implements HasLink {
 
 	public function play(): Void if (options.virtualPlay) position.enable();
 	public function stop(): Void if (options.virtualPlay) position.disable();
-	@:extern private inline function set_startTime(v: Time): Time return position.start = v;
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function set_startTime(v: Time): Time return position.start = v;
+
 	private function muteHandler(): Void videoElement.muted = true;
 	private function unmuteHandler(): Void if (loadProgress.run) videoElement.muted = false;
 	private function setActualMuted(): Void videoElement.muted = muted.enabled;
 	private function updateResultVisible(): Void resultVisible = visible.enabled && loadProgress.run;
-	@:extern private inline function get_muted(): Bool return videoElement.muted;
-	@:extern private inline function set_muted(v: Bool): Bool return videoElement.muted = v;
-	@:extern public inline function appendTo(parent: DOMElement): Void parent.appendChild(videoElement);
-	@:extern private inline function get_style(): CSSStyleDeclaration return videoElement.style;
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function get_muted(): Bool return videoElement.muted;
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function set_muted(v: Bool): Bool return videoElement.muted = v;
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function appendTo(parent: DOMElement): Void parent.appendChild(videoElement);
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function get_style(): CSSStyleDeclaration return videoElement.style;
+
 	private function showHtmlElement(): Void videoElement.style.display = 'block';
 	private function hideHtmlElement(): Void videoElement.style.display = 'none';
 	private function videoClickHandler(): Void eClick.dispatch();
@@ -220,7 +242,8 @@ class HtmlVideo implements HasSignal implements HasLink {
 		this.maxRetries = maxRetries;
 	}
 
-	@:extern private inline function get_isPlaying(): Bool {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function get_isPlaying(): Bool {
 		return element.currentTime > 0 && !element.paused && !element.ended && element.readyState > 2;
 	}
 
@@ -277,7 +300,8 @@ class HtmlVideo implements HasSignal implements HasLink {
 		}
 	}
 
-	@:extern private inline function set_qualities(q: Array<String>): Array<String> {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function set_qualities(q: Array<String>): Array<String> {
 		if (qualityIndex >= q.length) qualityIndex = q.length - 1;
 		return qualities = q;
 	}
@@ -330,7 +354,8 @@ class HtmlVideo implements HasSignal implements HasLink {
 	private function enableHandler(): Void timer.start();
 	private function disableHandler(): Void timer.stop();
 
-	@:extern private inline function get_current(): Time return Time.fromSeconds(Std.int(element.currentTime));
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function get_current(): Time return Time.fromSeconds(Std.int(element.currentTime));
 
 	private function set_start(v: Time): Time {
 		if (v != start) {
@@ -454,7 +479,8 @@ class HtmlVideo implements HasSignal implements HasLink {
 		beginLoadTime = null;
 	}
 
-	@:extern private inline function get_isReady(): Bool {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function get_isReady(): Bool {
 		return enabled && element.readyState > 2 && element.duration != 0 && element.buffered.length > 0;
 	}
 

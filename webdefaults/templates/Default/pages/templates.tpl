@@ -1,4 +1,4 @@
-<_include=all title="Templates">
+<_include=page title=Templates>
 	<center>
 		<_templates=
 		><p>

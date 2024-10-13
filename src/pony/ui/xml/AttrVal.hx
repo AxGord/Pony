@@ -1,6 +1,7 @@
 package pony.ui.xml;
 
-@:enum abstract AttrVal(String) from String to String {
+#if (haxe_ver >= 4.2) enum #else @:enum #end
+abstract AttrVal(String) from String to String {
 	var stage = 'stage';
 	var stageWidth = 'stageWidth';
 	var stageHeight = 'stageHeight';

@@ -5,8 +5,9 @@ package pony.db.mysql;
  * based on field_flags.js (nodejs mysql, author Felix Geisendörfer <felix@debuggable.com>)
  * @author AxGord <axgord@gmail.com>
  */
-@:enum abstract Flags(Int) to Int from Int {
-	
+#if (haxe_ver >= 4.2) enum #else @:enum #end
+abstract Flags(Int) to Int from Int {
+
 	// Manually extracted from mysql-5.5.23/include/mysql_com.h
 	var NOT_NULL     = 1; /* Field can't be NULL */
 	var PRI_KEY      = 2; /* Field is part of a primary key */
@@ -28,11 +29,11 @@ package pony.db.mysql;
 
 	@:to public function toString():String return toStr[this];
 	@:from public static function fromString(s:String):Flags return fromStr[s];
-	
+
 	public static var toStr:Map<Int, String>;
-	
+
 	public static var fromStr:Map<String, Int>;
-	
+
 	private static function __init__():Void {
 		toStr = [
 			NOT_NULL => 'NOT NULL',
@@ -42,7 +43,7 @@ package pony.db.mysql;
 		];
 		fromStr = [for (k in toStr.keys()) toStr[k] => k];
 	}
-	
+
 	//inline public static function array2string(a:Array<Flags>):String return a.map(toStr.get).join(' ');//hate this :(
 	inline public static function array2string(a:Array<Flags>):String return a.map(_array2string).join(' ');
 	inline private static function _array2string(f:Flags):String return f.toString();

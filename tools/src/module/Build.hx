@@ -292,6 +292,8 @@ private class BuildConfigReader extends BAReader<BuildConfig> {
 						cfg.command.push(new SPair('--macro', 'keep(\'$d\')'));
 					case 'r':
 						cfg.command.push(new SPair('--run', d));
+					case 'cmd':
+						cfg.command.push(new SPair('--cmd', d));
 					case 'interp':
 						cfg.command.push(new SPair('--interp', ''));
 					case a:

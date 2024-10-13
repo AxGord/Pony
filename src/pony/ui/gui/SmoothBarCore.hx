@@ -13,7 +13,9 @@ class SmoothBarCore extends BarCore {
 	@:bindable public var smoothPercent: Float = 0;
 	@:bindable public var smoothPos: Float = 0;
 
-	@:extern public static inline function create(width: Float, height: Float, invert: Bool = false): SmoothBarCore {
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function create(width: Float, height: Float, invert: Bool = false): SmoothBarCore {
 		var isVert = height > width;
 		return new SmoothBarCore(isVert ? height : width, isVert, invert);
 	}
@@ -60,7 +62,9 @@ class SmoothBarCore extends BarCore {
 		changeSmoothPercentHandler(smoothPercent);
 	}
 
-	@:extern private inline function changeSmoothPercentHandler(v: Float): Void smoothPos = v * size;
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function changeSmoothPercentHandler(v: Float): Void smoothPos = v * size;
 
 	/**
 	 * Use this method for connect view

@@ -15,7 +15,7 @@ class BTextLow extends BitmapText implements IWH {
 	public var size(get, never):Point<Float>;
 	private var ansi:String;
 	public var nocache(default, null):Bool;
-	
+
 	public function new(text:String, ?style:BitmapTextStyle, ?ansi:String, nocache:Bool = false) {
 		this.ansi = ansi;
 		this.nocache = nocache;
@@ -30,13 +30,15 @@ class BTextLow extends BitmapText implements IWH {
 		if (!this.nocache) cacheAsBitmap = true;
 
 	}
-	
+
 	private function get_size():Point<Float> return new Point(textWidth, textHeight);
-	
+
 	public function wait(cb:Void -> Void):Void cb();
-	
-	@:extern public inline function get_t():String return text;
-	
+
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function get_t():String return text;
+
 	public function set_t(s:String):String {
 		if (!nocache) cacheAsBitmap = false;
 		if (s == null) s = ' ';
@@ -47,7 +49,7 @@ class BTextLow extends BitmapText implements IWH {
 		if (!nocache) cacheAsBitmap = true;
 		return s;
 	}
-	
+
 	public function destroyIWH():Void destroy();
-	
+
 }

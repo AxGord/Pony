@@ -9,7 +9,7 @@ import pony.ui.touch.pixi.Touchable;
  * @author AxGord <axgord@gmail.com>
  */
 class Scrollable extends Touchable {
-	
+
 	public var pos(default, set):Int = 0;
 	private var totalSize:Float;
 	private var contentSize:Float;
@@ -23,14 +23,14 @@ class Scrollable extends Touchable {
 		this.totalSize = totalSize;
 		this.vert = vert;
 	}
-	
+
 	public function updateContent(obj:Container):Void {
 		if (vert)
 			_updateContent(obj.height);
 		else
 			_updateContent(obj.width);
 	}
-	
+
 	public function _updateContent(size:Float):Void {
 		if (!inited) {
 			inited = true;
@@ -41,14 +41,16 @@ class Scrollable extends Touchable {
 		if (pos < totalSize - contentSize) pos = Std.int(totalSize - contentSize);
 		updatePos();
 	}
-	
+
 	public dynamic function onChangePosition(v:Int):Void {}
-	
+
 	private function mouseWheelHandler(delta:Int):Void scroll(Std.int(delta / 2));
-	
+
 	public function scroll(delta:Int):Void pos += delta;
-	
-	@:extern inline private function set_pos(v:Int):Int {
+
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function set_pos(v:Int):Int {
 		if (v != pos) {
 			pos = v;
 			if (pos > 0) pos = 0;
@@ -57,20 +59,22 @@ class Scrollable extends Touchable {
 		}
 		return pos;
 	}
-	
+
 	public function scrollToEnd():Void {
 		pos = Std.int(totalSize - contentSize);
 		updatePos();
 	}
-	
-	@:extern inline private function updatePos():Void {
+
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function updatePos():Void {
 		if (vert)
 			obj.y = pos;
 		else
 			obj.x = pos;
 		onChangePosition(pos);
 	}
-	
+
 	private function beginMove(t:Touch):Void {
 		startTPosBefore = pos;
 		startTPos = vert ? t.y : t.x;
@@ -78,7 +82,7 @@ class Scrollable extends Touchable {
 		t.onUp < endMove;
 		t.onOutUp < endMove;
 	}
-	
+
 	private function endMove(t:Touch):Void {
 		t.onUp >> endMove;
 		t.onOutUp >> endMove;
@@ -86,7 +90,7 @@ class Scrollable extends Touchable {
 		move(t);
 		onDown < beginMove;
 	}
-	
+
 	private function move(t:Touch):Void pos = startTPosBefore - Std.int(startTPos - (vert ? t.y : t.x));
-	
+
 }

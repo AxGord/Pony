@@ -25,9 +25,17 @@ class ElementResizeControl implements HasSignal {
 		eResize.onLost << unlistenResize;
 	}
 
-	@:extern private inline function get_width(): Int return makeEven(element.clientWidth);
-	@:extern private inline function get_height(): Int return makeEven(element.clientHeight);
-	@:extern private inline function makeEven(v: Int): Int return even ? v - v % 2 : v;
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function get_width(): Int return makeEven(element.clientWidth);
+
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function get_height(): Int return makeEven(element.clientHeight);
+
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function makeEven(v: Int): Int return even ? v - v % 2 : v;
 
 	private function listenResize(): Void {
 		Window.onResize << resizeHandler;

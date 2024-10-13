@@ -26,7 +26,13 @@ class HtmlVideoUI extends HtmlContainer {
 
 	public inline function hide(): Void video.visible.disable();
 	public inline function show(): Void video.visible.enable();
-	@:extern private inline function get_muted(): Bool return video.muted.enabled;
-	@:extern private inline function set_muted(v: Bool): Bool return video.muted.enabled = v;
+
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function get_muted(): Bool return video.muted.enabled;
+
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function set_muted(v: Bool): Bool return video.muted.enabled = v;
 
 }

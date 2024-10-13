@@ -10,12 +10,14 @@ import pony.net.http.modules.mlang.MLang;
  */
 class DefaultModulePack {
 
-	@:extern inline public static function create():Array<IModule> {
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function create():Array<IModule> {
 		return [
 			cast new MLang(),
 			cast new MTpl(),
 			cast new MLink()
 		];
 	}
-	
+
 }

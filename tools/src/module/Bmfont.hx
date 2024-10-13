@@ -11,14 +11,14 @@ import types.BmfontConfig;
  */
 class Bmfont extends NModule<BmfontConfig> {
 
-	private static inline var PRIORITY:Int = 19;
+	private static inline var PRIORITY: Int = 18;
 
 	public function new() super('bmfont');
 
 	#if (haxe_ver < 4.2) override #end
-	public function init():Void initSections(PRIORITY, BASection.Prepare);
+	public function init(): Void initSections(PRIORITY, BASection.Prepare);
 
-	override private function readNodeConfig(xml:Fast, ac:AppCfg):Void {
+	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
 		new BmfontReader(xml, {
 			debug: ac.debug,
 			app: ac.app,
@@ -37,13 +37,13 @@ class Bmfont extends NModule<BmfontConfig> {
 	}
 
 	#if (haxe_ver < 4.2) override #end
-	private function writeCfg(protocol:NProtocol, cfg:Array<BmfontConfig>):Void protocol.bmfontRemote(cfg);
+	private function writeCfg(protocol: NProtocol, cfg: Array<BmfontConfig>): Void protocol.bmfontRemote(cfg);
 
 }
 
 private class BmfontReader extends BAReader<BmfontConfig> {
 
-	override private function readNode(xml:Fast):Void {
+	override private function readNode(xml: Fast): Void {
 		switch xml.name {
 			case 'font':
 				cfg.font.push({
@@ -54,12 +54,13 @@ private class BmfontReader extends BAReader<BmfontConfig> {
 					output: xml.has.output ? xml.att.output : null,
 					lineHeight: xml.has.lineHeight ? Std.parseInt(xml.att.lineHeight) : null,
 				});
-			case _: super.readNode(xml);
+			case _:
+				super.readNode(xml);
 		}
 	}
 
 	#if (haxe_ver < 4.2) override #end
-	private function clean():Void {
+	private function clean(): Void {
 		cfg.from = '';
 		cfg.to = '';
 		cfg.type = 'sdf';
@@ -69,17 +70,22 @@ private class BmfontReader extends BAReader<BmfontConfig> {
 		cfg.padding = -1;
 	}
 
-	override private function readAttr(name:String, val:String):Void {
+	override private function readAttr(name: String, val: String): Void {
 		switch name {
-			case 'from': cfg.from = val;
-			case 'to': cfg.to = val;
+			case 'from':
+				cfg.from = val;
+			case 'to':
+				cfg.to = val;
 			case 'type':
 				cfg.type = val;
 				if (val == 'msdf' && cfg.padding == -1)
 					cfg.padding = 1;
-			case 'format': cfg.format = val;
-			case 'distance': cfg.distance = Std.parseInt(val);
-			case 'padding': cfg.padding = Std.parseInt(val);
+			case 'format':
+				cfg.format = val;
+			case 'distance':
+				cfg.distance = Std.parseInt(val);
+			case 'padding':
+				cfg.padding = Std.parseInt(val);
 			case _:
 		}
 	}

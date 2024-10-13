@@ -5,7 +5,8 @@ package pony.db.mysql;
  * based on types.js (nodejs mysql, author Felix Geisendörfer <felix@debuggable.com>)
  * @author AxGord <axgord@gmail.com>
  */
-@:enum abstract Types(Int) to Int from Int {
+#if (haxe_ver >= 4.2) enum #else @:enum #end
+abstract Types(Int) to Int from Int {
 	// Manually extracted from mysql-5.5.23/include/mysql_com.h
 	// some more info here: http://dev.mysql.com/doc/refman/5.5/en/c-api-prepared-statement-type-codes.html
 	var DECIMAL     = 0x00; // aka DECIMAL (http://dev.mysql.com/doc/refman/5.0/en/precision-math-decimal-changes.html)
@@ -35,14 +36,14 @@ package pony.db.mysql;
 	var VARCHAR     = 0xfd;
 	var CHAR        = 0xfe;
 	var GEOMETRY    = 0xff;
-	
+
 	@:to public function toString():String return toStr[this];
 	@:from public static function fromString(s:String):Types return fromStr[s.toUpperCase()];
-	
+
 	public static var toStr:Map<Int, String>;
-	
+
 	public static var fromStr:Map<String, Int>;
-	
+
 	static function __init__():Void {
 		toStr = [
 			DECIMAL => 'DECIMAL',

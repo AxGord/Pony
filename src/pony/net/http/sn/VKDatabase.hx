@@ -15,7 +15,8 @@ private typedef VKDBShortResponse = {
 
 typedef VKDBItem = { id:Int, title:String, ?area:String };
 
-@:enum abstract VKDBMethod(String) from String to String {
+#if (haxe_ver >= 4.2) enum #else @:enum #end
+abstract VKDBMethod(String) from String to String {
 	var getCountries = 'getCountries';
 	var getRegions = 'getRegions';
 	var getCities = 'getCities';
@@ -26,7 +27,7 @@ typedef VKDBItem = { id:Int, title:String, ?area:String };
  * @author AxGord
  */
 class VKDatabase {
-	
+
 	public static function vkRequest(method:VKDBMethod, ?lang:String, ?country_id:Null<Int>, ?region_id:Null<Int>, ?code:String, cb:VKDB->Void, offset:Int=0):Void {
 		var url = 'http://api.vk.com/method/database.$method?v=5.30&need_all=1&count=1000';
 		if (lang != null) url += '&lang=$lang';
@@ -42,18 +43,18 @@ class VKDatabase {
 						items: r.response.items.concat(nr.items)
 					});
 				}, offset + 1000);
-				
+
 			} else {
 				cb(r.response);
 			}
 		} );
 	}
-	
+
 	public static function getCountry(id:Int, cb:String->Void):Void {
 		var url = 'http://api.vk.com/method/database.getCountriesById?v=5.30&country_ids=$id';
 		HttpTools.getJson(url, function(r:VKDBShortResponse) cb(r.response[0].title));
 	}
-	
+
 	public static function getRegion(country_id:Int, id:Int, cb:String->Void):Void {
 		VKDatabase.vkRequest(VKDBMethod.getRegions, country_id, function(r:VKDB){
 			for (item in r.items) {
@@ -65,7 +66,7 @@ class VKDatabase {
 			cb(Std.string(id));
 		});
 	}
-	
+
 	public static function getCity(id:Int, cb:String->Void):Void {
 		var url = 'http://api.vk.com/method/database.getCitiesById?v=5.30&city_ids=$id';
 		HttpTools.getJson(url, function(r:VKDBShortResponse) cb(r.response[0].title));

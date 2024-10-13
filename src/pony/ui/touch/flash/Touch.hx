@@ -17,6 +17,7 @@ typedef TO = {
  * Flash Touch
  * @author AxGord <axgord@gmail.com>
  */
+@SuppressWarnings('checkstyle:MagicNumber')
 class Touch implements Declarator implements HasSignal {
 
 	private static inline var INIT_PRIORITY: Int = -2;
@@ -36,7 +37,8 @@ class Touch implements Declarator implements HasSignal {
 	private static var startStack: Array<TO> = [];
 	private static var endStack: Array<TO> = [];
 
-	@:extern public static inline function init(): Void {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function init(): Void {
 		DeltaTime.fixedUpdate.once(initNow, INIT_PRIORITY);
 	}
 
@@ -47,15 +49,18 @@ class Touch implements Declarator implements HasSignal {
 		disableStd();
 	}
 
-	@:extern private static inline function hackMove(): Void {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function hackMove(): Void {
 		Lib.current.stage.addEventListener(TouchEvent.TOUCH_MOVE, moveHandler, true, LOCK_PRIORITY, true);
 	}
 
-	@:extern private static inline function hackDown(): Void {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function hackDown(): Void {
 		Lib.current.stage.addEventListener(TouchEvent.TOUCH_BEGIN, startHandler, true, LOCK_PRIORITY, true);
 	}
 
-	@:extern private static inline function hackUp(): Void {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function hackUp(): Void {
 		Lib.current.stage.addEventListener(TouchEvent.TOUCH_END, endHandler, true, LOCK_PRIORITY, true);
 	}
 
@@ -111,6 +116,8 @@ class Touch implements Declarator implements HasSignal {
 	}
 
 	private static function lock(event: TouchEvent): Void event.stopImmediatePropagation();
-	@:extern private static inline function tlock(event: TouchEvent): Void if (!enabled) event.stopImmediatePropagation();
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function tlock(event: TouchEvent): Void if (!enabled) event.stopImmediatePropagation();
 
 }

@@ -6,11 +6,14 @@ import haxe.MainLoop;
  * Thread Tasks
  * @author AxGord <axgord@gmail.com>
  */
+@SuppressWarnings('checkstyle:MagicNumber')
 abstract ThreadTasks(UInt) {
 
-	@:extern public inline function new() this = 0;
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function new() this = 0;
 
-	@:extern public inline function add(f:UInt -> Void):Void {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function add(f:UInt -> Void):Void {
 		this++;
 		MainLoop.addThread(function():Void {
 			f(this);
@@ -18,9 +21,11 @@ abstract ThreadTasks(UInt) {
 		});
 	}
 
-	@:extern public inline function wait():Void while (this > 0) Sys.sleep(0.1);
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function wait():Void while (this > 0) Sys.sleep(0.1);
 
-	@:extern public static inline function multyTask(count:Int, f:UInt -> Void):Void {
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function multyTask(count:Int, f:UInt -> Void):Void {
 		if (count == 1) {
 			f(1);
 		} else if (count > 1) {
@@ -73,9 +78,11 @@ class ThreadTasksWhile {
 		});
 	}
 
-	@:extern public inline function ended():Bool return error || states.length == endedCount;
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function ended():Bool return error || states.length == endedCount;
 
-	@:extern public inline function wait():Void while (!ended()) Sys.sleep(0.01);
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function wait():Void while (!ended()) Sys.sleep(0.01);
 
 	public static function multyTask(count:Int, f:(Void -> Void) -> (Void -> Void) -> Bool):Void {
 		if (count == 1) {

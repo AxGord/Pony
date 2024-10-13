@@ -20,14 +20,14 @@ class BText extends Sprite implements IWH {
 	private static inline var SHADOW_OFFSET:Int = 4;
 	private static inline var NORMAL_OFFSET:Int = 4;
 	private static inline var WHITE:UInt = 0xFFFFFF;
-	
+
 	private static function __init__():Void {
 		blurFilter = new BlurFilter();
 		blurFilter.blur = 2;
 		blurFilter.passes = 1;
 		blurFilter.resolution = 0.5;
 	}
-	
+
 	public var t(default, set):String;
 	public var size(get, never):Point<Float>;
 	private var _size:Point<Float>;
@@ -40,7 +40,7 @@ class BText extends Sprite implements IWH {
 	private var shadow:Bool = false;
 	private var app:App;
 	private var lastGeneratedSize:Point<Float>;
-	
+
 	public function new(text:String, ?style:BitmapTextStyle, ?ansi:String, shadow:Bool = false, ?app:App) {
 		super();
 		color = style.tint;
@@ -51,15 +51,17 @@ class BText extends Sprite implements IWH {
 		defColor = color;
 		t = text;
 	}
-	
+
 	private function get_size():Point<Float> return _size;
-	
+
 	public function wait(cb:Void -> Void):Void cb();
-	
-	@:extern public inline function safeSet(s:String):Void {
+
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function safeSet(s:String):Void {
 		t = StringTools.replace(s, ' ', '').length == 0 ? null : s;
 	}
-	
+
 	public function set_t(s:String):String {
 		if (t == s) return s;
 		if (s == null || s == '') {
@@ -112,7 +114,7 @@ class BText extends Sprite implements IWH {
 
 			renderSprite.tint = WHITE;
 			renderSprite.filters = null;
-			
+
 			app.app.renderer.render(renderSprite, shadowRenderTexture, false);
 
 			renderSprite.destroy(true);
@@ -131,20 +133,24 @@ class BText extends Sprite implements IWH {
 		return s;
 	}
 
-	@:extern private inline function createTexture(size:Point<Float>):RenderTexture {
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function createTexture(size:Point<Float>):RenderTexture {
 		lastGeneratedSize = size;
 		var b:Int = shadow ? SHADOW_OFFSET * 2 : NORMAL_OFFSET * 2;
 		return RenderTexture.create(Math.ceil(size.x) + b, Math.ceil(size.y) + b);
 	}
-	
+
 	override public function destroy(?options:haxe.extern.EitherType<Bool, DestroyOptions>):Void {
 		destroyIfExists();
 		ansi = null;
 		style = null;
 		super.destroy(options);
 	}
-	
-	@:extern private inline function destroyIfExists():Void {
+
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function destroyIfExists():Void {
 		if (renderSprite != null) {
 			_size = null;
 			removeChild(renderSprite);
@@ -154,7 +160,7 @@ class BText extends Sprite implements IWH {
 			renderTexture = null;
 		}
 	}
-	
+
 	private function set_color(v:Null<UInt>):Null<UInt> {
 		if (v == null) v = defColor;
 		if (color != v) {
@@ -164,7 +170,7 @@ class BText extends Sprite implements IWH {
 		}
 		return v;
 	}
-	
+
 	public function destroyIWH():Void destroy();
-	
+
 }

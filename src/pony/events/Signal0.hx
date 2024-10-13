@@ -65,16 +65,13 @@ import pony.events.Listener0;
 		return add(e, priority);
 	}
 
-	@:op(A << B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A << B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function add_op(listener: Listener0): Signal0 return add(listener);
 
-	@:op(A < B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A < B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function once_op(e: Listener0): Signal0 return once(e);
 
-	@:op(A || B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A || B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function or(s: Signal0): Signal0 {
 		var ns = new Event0();
 		add(ns);
@@ -82,8 +79,7 @@ import pony.events.Listener0;
 		return ns;
 	}
 
-	@:op(A | B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A | B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function orOnce(s: Signal0): Signal0 {
 		var ns = new Event0();
 		once(ns);
@@ -144,14 +140,12 @@ import pony.events.Listener0;
 		return s;
 	}
 
-	@:op(A + B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A + B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function bind1_op<T1>(a1: T1): Signal1<T1> {
 		return bind1(a1);
 	}
 
-	@:op(A * B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A * B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function bind1Once_op<T1>(a1: T1): Signal1<T1> {
 		return bind1(a1, true);
 	}
@@ -178,8 +172,7 @@ import pony.events.Listener0;
 		return this.remove({ once: false, listener: LBind2(cast null, a1, a2) });
 	}
 
-	@:from
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:from #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function fromSignal1<T1>(s: Signal1<T1>): Signal0 {
 		var ns = new Event0();
 		s.add(ns);

@@ -14,7 +14,10 @@ class ProgressBar extends MovieClip {
 	#if !starling
 	@:isVar public var auto(default, set): Null<Void -> Float> = null;
 
-	@:nullSafety(Off) @:extern private var bar: MovieClip;
+	@SuppressWarnings('checkstyle:MagicNumber')
+	@:nullSafety(Off) #if (haxe_ver >= 4.2) extern #else @:extern #end
+	private var bar: MovieClip;
+
 	private var total: Float = 0;
 
 	@:isVar public var value(default, set): Float = 0;

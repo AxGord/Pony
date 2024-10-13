@@ -16,6 +16,7 @@ using pony.pixi.PixiExtends;
  * HtmlContainer
  * @author AxGord <axgord@gmail.com>
  */
+@SuppressWarnings('checkstyle:MagicNumber')
 class HtmlContainer extends Sprite implements IWH {
 
 	public var element: Element;
@@ -63,11 +64,21 @@ class HtmlContainer extends Sprite implements IWH {
 		htmlContainer.targetPos = new Point(gx, gy);
 	}
 
-	@:extern private inline function get_targetStyle(): CSSStyleDeclaration return htmlContainer.targetStyle;
-	@:extern private inline function set_targetStyle(v: CSSStyleDeclaration): CSSStyleDeclaration return htmlContainer.targetStyle = v;
-	@:extern private inline function get_targetRect(): Rect<Float> return htmlContainer.targetRect;
-	@:extern private inline function set_targetRect(r: Rect<Float>): Rect<Float> return htmlContainer.targetRect = r;
-	@:extern private inline function get_size(): Point<Float> return _size;
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function get_targetStyle(): CSSStyleDeclaration return htmlContainer.targetStyle;
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function set_targetStyle(v: CSSStyleDeclaration): CSSStyleDeclaration return htmlContainer.targetStyle = v;
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function get_targetRect(): Rect<Float> return htmlContainer.targetRect;
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function set_targetRect(r: Rect<Float>): Rect<Float> return htmlContainer.targetRect = r;
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function get_size(): Point<Float> return _size;
+
 	public function destroyIWH(): Void destroy();
 
 }

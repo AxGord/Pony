@@ -35,7 +35,9 @@ import pony.geom.Point;
 	public inline function getFirstGlyphPos(?pos: Point<Float>): Point<Float>
 		return @:nullSafety(Off) glyphsPoints[0].a;
 
-	@:extern private inline function get_glyphsPos(): Array<Point<Float>>
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function get_glyphsPos(): Array<Point<Float>>
 		return [ for (gp in glyphsPoints) gp.a ];
 
 	public inline function getGlyphsPos(?pos: Point<Float>): Array<Point<Float>>

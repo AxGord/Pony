@@ -20,7 +20,9 @@ class Touchable extends TouchableBase {
 	private static var needSw: Bool = false;
 	private static var wait: Bool = false;
 
-	@:extern inline private static function init(): Void {
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function init(): Void {
 		if (inited) return;
 		inited = true;
 		Mouse.init();

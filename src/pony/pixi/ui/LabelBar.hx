@@ -12,13 +12,13 @@ import pony.pixi.ui.TextSizedBox;
 class LabelBar extends AnimBar {
 
 	public var text(get, set):String;
-	
+
 	private var label:TextSizedBox;
 	private var style:ETextStyle;
 	private var shadow:Bool;
 	private var labelInitVisible:Bool = true;
 	private var border:Border<Int>;
-	
+
 	public function new(
 		bg:String,
 		fillBegin:String,
@@ -39,16 +39,21 @@ class LabelBar extends AnimBar {
 		super(bg, fillBegin, fill, animation, animationSpeed, border == null ? null : new Point(border.left, border.top), invert, useSpriteSheet, creep, smooth);
 		if (style != null) onReady < labelInit;
 	}
-	
+
 	private function labelInit(p:Point<Int>):Void {
 		label = new TextSizedBox(p.x, p.y, '', style, border, true, shadow);
 		label.visible = labelInitVisible;
 		addChild(label);
 		style = null;
 	}
-	
-	@:extern inline function get_text():String return label == null ? null : label.text;
-	@:extern inline function set_text(s:String):String return label == null ? null : label.text = s;
+
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function get_text():String return label == null ? null : label.text;
+
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function set_text(s:String):String return label == null ? null : label.text = s;
 
 	override public function startAnimation():Void {
 		if (label == null)
@@ -57,7 +62,7 @@ class LabelBar extends AnimBar {
 			label.visible = false;
 		super.startAnimation();
 	}
-	
+
 	override public function stopAnimation():Void {
 		if (label == null)
 			labelInitVisible = true;
@@ -65,7 +70,7 @@ class LabelBar extends AnimBar {
 			label.visible = true;
 		super.stopAnimation();
 	}
-	
+
 	override public function destroy(?options:haxe.extern.EitherType<Bool, DestroyOptions>):Void {
 		border = null;
 		style = null;
@@ -75,7 +80,7 @@ class LabelBar extends AnimBar {
 		}
 		super.destroy(options);
 	}
-	
+
 	override public function destroyIWH():Void destroy();
-	
+
 }

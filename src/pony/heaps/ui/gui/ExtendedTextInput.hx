@@ -17,6 +17,7 @@ import pony.math.MathTools;
 import pony.text.TextTools;
 import pony.time.DeltaTime;
 import pony.ui.keyboard.Keyboard;
+
 #if (haxe_ver >= 4.2) enum #else @:enum #end
 abstract Transform(Int) {
 	var uppercase = 1;

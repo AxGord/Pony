@@ -30,8 +30,7 @@ using pony.Tools;
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function new(ms: Int) this = ms;
 
-	@:from
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:from #if (haxe_ver >= 4.2) extern #else @:extern #end
 	public static inline function fromFloat(ms: Null<Float>): Time return new Time(@:nullSafety(Off) ms.int());
 
 	@:from public static function fromString(time: String): Time {
@@ -155,11 +154,10 @@ using pony.Tools;
 	public static inline function fromMinutes(minutes: Int): Time return fromSeconds(minutes * 60);
 	public static inline function fromSeconds(seconds: Int): Time return seconds * 1000;
 
-	@:to
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:to #if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function toFloat(): Float return this;
-	@:to
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+
+	@:to #if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function toArray(): Array<Int> return [days, hours, minutes, seconds, ms];
 
 	#if !macro
@@ -194,112 +192,85 @@ using pony.Tools;
 	private static inline function print(v: Float): String return Math.abs(v).toFixed('00');
 	#end
 
-	@:op(A + B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A + B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function add(a: Time, b: Time): Time return (a: Int) + (b: Int);
 
-	@:op(A + B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A + B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function addInt(a: Time, b: Int): Time return (a: Int) + b;
 
-	@:op(A + B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A + B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function addToInt(a: Int, b: Time): Time return a + (b: Int);
 
-	@:op(A - B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A - B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function sub(a: Time, b: Time): Time return (a: Int) - (b: Int);
 
-	@:op(A - B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A - B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function subInt(a: Time, b: Int): Time return (a: Int) - b;
 
-	@:op(A - B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A - B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function subToInt(a: Int, b: Time): Time return a - (b: Int);
 
-	@:op(A * B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A * B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function multiply1(a: Time, b: Int): Time return (a: Int) * b;
 
-	@:op(A * B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A * B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function multiply2(a: Int, b: Time): Time return a * (b: Int);
 
-	@:op(A * B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A * B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function divide(a: Time, b: Int): Time return ((a: Int) / b).int();
 
-	@:op(A > B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A > B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function sb(a: Time, b: Time): Bool return (a: Int) > (b: Int);
 
-	@:op(A > B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A > B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function sbInt(a: Time, b: Int): Bool return (a: Int) > b;
 
-	@:op(A > B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A > B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function sbToInt(a: Int, b: Time): Bool return a > (b: Int);
 
-	@:op(A < B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A < B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function sm(a: Time, b: Time): Bool return (a: Int) < (b: Int);
 
-	@:op(A < B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A < B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function smInt(a: Time, b: Int): Bool return (a: Int) < b;
 
-	@:op(A < B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A < B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function smToInt(a: Int, b: Time): Bool return a < (b: Int);
 
-	@:op(A >= B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A >= B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function sbr(a: Time, b: Time): Bool return (a: Int) >= (b: Int);
 
-	@:op(A >= B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A >= B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function sbrInt(a: Time, b: Int): Bool return (a: Int) >= b;
 
-	@:op(A >= B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A >= B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function sbrToInt(a: Int, b: Time): Bool return a >= (b: Int);
 
-	@:op(A <= B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A <= B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function smr(a: Time, b: Time): Bool return (a: Int) <= (b: Int);
 
-	@:op(A <= B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A <= B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function smrInt(a: Time, b: Int): Bool return (a: Int) <= b;
 
-	@:op(A <= B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A <= B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function smrToInt(a: Int, b: Time): Bool return a <= (b: Int);
 
-	@:op(A == B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A == B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function sr(a: Time, b: Time): Bool return (a: Int) == (b: Int);
 
-	@:op(A == B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A == B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function srInt(a: Time, b: Int): Bool return (a: Int) == b;
 
-	@:op(A == B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A == B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function srToInt(a: Int, b: Time): Bool return a == (b: Int);
 
-	@:op(A != B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A != B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function snr(a: Time, b: Time): Bool return (a: Int) != (b: Int);
 
-	@:op(A != B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A != B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function snrInt(a: Time, b: Int): Bool return (a: Int) != b;
 
-	@:op(A != B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	@:op(A != B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function snrToInt(a: Int, b: Time): Bool return a != (b: Int);
 
 	private function get_minimalPoint(): Int {

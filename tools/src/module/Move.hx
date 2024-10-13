@@ -14,7 +14,7 @@ import types.BASection;
  */
 class Move extends CfgModule<MoveConfig> {
 
-	public static inline var PRIORITY: Int = 20;
+	public static inline var PRIORITY: Int = 19;
 
 	public function new() super('move');
 

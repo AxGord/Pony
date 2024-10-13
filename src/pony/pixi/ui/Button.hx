@@ -91,7 +91,9 @@ class Button extends Sprite implements IWH {
 			img.sliceHeight = v;
 	}
 
-	@:extern private static inline function getInteractiveImg(img: String, useSpriteSheet: String): SliceSprite {
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function getInteractiveImg(img: String, useSpriteSheet: String): SliceSprite {
 		return SliceTools.getSliceSprite(img, useSpriteSheet);
 	}
 

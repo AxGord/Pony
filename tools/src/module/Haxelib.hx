@@ -27,7 +27,8 @@ typedef HaxelibConfig = {
 		path: Null<String>,
 		parent: Null<String>,
 		y: Bool,
-		commit: Null<String>
+		commit: Null<String>,
+		keepDev: Bool
 	}>
 }
 
@@ -68,7 +69,7 @@ abstract Source(String) from String to String {
 		for (lib in cfg.list) {
 			if (lib.version == GIT && lib.git == null) continue;
 			if (lib.version == DEV && lib.path == null) continue;
-			Utils.command('haxelib', ['dev', lib.name]);
+			if (!lib.keepDev) Utils.command('haxelib', ['dev', lib.name]);
 			var args: Array<String> =
 				lib.version == GIT ? @:nullSafety(Off) [GIT, lib.name, lib.git] :
 				lib.version == DEV && lib.path != null ? [DEV, lib.name, getLibPath(lib)] :
@@ -162,7 +163,8 @@ abstract Source(String) from String to String {
 					path: xml.has.path ? normalize(xml.att.path) : null,
 					parent: xml.has.parent ? normalize(xml.att.parent) : null,
 					y: xml.isTrue('y'),
-					commit: xml.has.commit ? normalize(xml.att.commit) : null
+					commit: xml.has.commit ? normalize(xml.att.commit) : null,
+					keepDev: xml.isTrue('keepDev')
 				});
 			case _:
 				super.readNode(xml);

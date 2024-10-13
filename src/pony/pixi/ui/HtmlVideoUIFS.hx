@@ -80,7 +80,9 @@ class HtmlVideoUIFS extends HtmlVideoUI {
 		} createShowAndHideTransitions();
 	}
 
-	@:extern private inline function createShowAndHideTransitions(): Void {
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function createShowAndHideTransitions(): Void {
 		hideTransition = getTransition('opacity ' + hideAnimTime.totalMs + 'ms');
 		hideTransitionDelay = DTimer.createFixedTimer(hideAnimTime);
 		hideTransitionDelay.complete << removeHideTransition;
