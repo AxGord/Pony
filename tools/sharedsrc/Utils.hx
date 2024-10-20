@@ -45,6 +45,10 @@ class Utils {
 		return s.substring(s.indexOf('[') + 1, s.length - 1);
 	}
 
+	public static function getLibPath(lib:String): Null<String> {
+		return new sys.io.Process('haxelib', ['path', lib]).stdout.readLine();
+	}
+
 	private static inline function get_isWindows(): Bool return Sys.systemName() == 'Windows';
 	private static inline function get_isLinux(): Bool return Sys.systemName() == 'Linux';
 

@@ -11,7 +11,8 @@ import pony.ds.WriteStream;
  * RPC Bytes Stream
  * @author AxGord <axgord@gmail.com>
  */
-@:final class RPCStream extends pony.net.rpc.RPCUnit<RPCStream> implements pony.net.rpc.IRPC {
+#if (haxe_ver >= 4.2) final #else @:final #end
+class RPCStream extends pony.net.rpc.RPCUnit<RPCStream> implements pony.net.rpc.IRPC {
 
 	@:auto public var onRead:Signal1<ReadStream<Bytes>>;
 

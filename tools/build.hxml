@@ -9,7 +9,7 @@
 -D message.reporting=pretty
 -lib pony
 -lib hxbitmini:1.1.0
---macro keep('hxbitmini')
+--macro keep('hxbitmini.Schema')
 -resource resources/logo.txt@logo
 -resource resources/template.html@template.html
 -resource resources/pixitemplate.hx.tpl@pixitemplate.hx.tpl
@@ -33,7 +33,7 @@
 -cp nodesrc
 -cp sharedsrc
 -main NMain
--lib hxnodejs:12.1.0
+-lib hxnodejs:12.2.0
 -lib pony
 -lib hxbitmini:1.1.0
 -dce full
@@ -42,5 +42,5 @@
 -D nodedt
 -D hxbitmini_nullsafety
 -D message.reporting=pretty
---macro keep('hxbitmini')
+--macro keep('hxbitmini.Schema')
 # -debug

@@ -23,7 +23,7 @@ class SocketServer extends SocketServerBase {
 	}
 
 	private function connectionHandler(c: Socket): Void {
-		var cl: SocketClient = addClient();
+		var cl: SocketClient = cast addClient();
 		cl.nodejsInit(c);
 		@:privateAccess cl.connect();
 	}

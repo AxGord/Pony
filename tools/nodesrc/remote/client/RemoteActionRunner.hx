@@ -12,7 +12,9 @@ import remote.client.actions.RemoteActionCommand;
  * RemoteActionRunner
  * @author AxGord <axgord@gmail.com>
  */
-@:nullSafety(Strict) @:final class RemoteActionRunner extends Logable {
+@:nullSafety(Strict)
+#if (haxe_ver >= 4.2) final #else @:final #end
+class RemoteActionRunner extends Logable {
 
 	private var protocol: RemoteProtocol;
 	private var commands: Array<RemoteCommand>;

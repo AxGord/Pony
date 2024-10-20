@@ -12,7 +12,7 @@ using pony.text.TextTools;
  * File
  * @author AxGord <axgord@gmail.com>
  */
-@:forward(exists, firstExists, takeExists, rename)
+@:forward(exists, firstExists, takeExists, rename, parent)
 @:nullSafety(Strict) abstract File(Unit) from Unit {
 
 	public var name(get, never): String;

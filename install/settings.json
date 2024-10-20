@@ -1,7 +1,7 @@
 {
 	"envkey": "PONYTOOLS_PATH",
 	"haxelib": [
-		"hxnodejs 12.1.0",
+		"hxnodejs 12.2.0",
 		"hxbitmini 1.1.0"
 	],
 	"npm": [
@@ -45,7 +45,6 @@
 		"adelphes.android-dev-ext"
 	],
 	"hideWarnings": [
-		"hxbitmini",
-		"hxnodejs"
+		"hxbitmini"
 	]
 }

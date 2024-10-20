@@ -6,7 +6,9 @@ import pony.sys.Process;
  * RemoteActionExec
  * @author AxGord <axgord@gmail.com>
  */
-@:nullSafety(Strict) @:final class RemoteActionExec extends RemoteAction {
+@:nullSafety(Strict)
+#if (haxe_ver >= 4.2) final #else @:final #end
+class RemoteActionExec extends RemoteAction {
 
 	@:nullSafety(Off) private var process: Process;
 

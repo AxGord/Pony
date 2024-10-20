@@ -1,16 +1,19 @@
 package remote.server;
 
-import types.RemoteServerConfig;
 import pony.Logable;
-import pony.net.SocketServer;
-import pony.net.SocketClient;
 import pony.Pair;
+import pony.net.ISocketClient;
+import pony.net.SocketServer;
+
+import types.RemoteServerConfig;
 
 /**
  * ServerRemote
  * @author AxGord <axgord@gmail.com>
  */
-@:nullSafety @:final class ServerRemote extends Logable {
+@:nullSafety
+#if (haxe_ver >= 4.2) final #else @:final #end
+class ServerRemote extends Logable {
 
 	private var port: UInt;
 	private var socket: Null<SocketServer>;
@@ -35,7 +38,7 @@ import pony.Pair;
 		socket.onConnect << connectHandler;
 	}
 
-	private function connectHandler(client: SocketClient): Void {
+	private function connectHandler(client: ISocketClient): Void {
 		log('New connection');
 		if (instanse == null && !cmdLock && key != null) {
 			log('Accept');

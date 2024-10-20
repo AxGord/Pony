@@ -1,17 +1,21 @@
 package remote.server;
 
 import haxe.io.BytesOutput;
-import pony.net.SocketClient;
+
 import pony.Pair;
+import pony.net.ISocketClient;
+import pony.net.SocketClient;
 import pony.sys.Process;
 
 /**
  * ServerRemoteInstanse
  * @author AxGord <axgord@gmail.com>
  */
-@:nullSafety(Strict) @:final class ServerRemoteInstanse {
+@:nullSafety(Strict)
+#if (haxe_ver >= 4.2) final #else @:final #end
+class ServerRemoteInstanse {
 
-	private var client: SocketClient;
+	private var client: ISocketClient;
 	private var currentCommand: String = '';
 	private var currentCommandN: Int = -1;
 	private var key: String;
@@ -23,7 +27,7 @@ import pony.sys.Process;
 	private var activeProcess: Null<Process>;
 	private var activity: Void->Void;
 
-	public function new(client: SocketClient, key: String, commands: Map<String, Array<Pair<Bool, String>>>, allowForGet: Array<String>) {
+	public function new(client: ISocketClient, key: String, commands: Map<String, Array<Pair<Bool, String>>>, allowForGet: Array<String>) {
 		this.client = client;
 		this.key = key;
 		this.commands = commands;

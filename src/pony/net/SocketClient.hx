@@ -22,8 +22,8 @@ import pony.events.Signal2;
 
 	private static inline var DEFAULT_LEN_BLOCK_SIZE: Int = 4;
 
-	@:auto public var onTask: Signal2<Null<BytesInput>, SocketClient>;
-	@:auto public var onTaskError: Signal1<SocketClient>;
+	@:auto public var onTask: Signal2<Null<BytesInput>, ISocketClient>;
+	@:auto public var onTaskError: Signal1<ISocketClient>;
 
 	public var writeLengthSize: UInt = DEFAULT_LEN_BLOCK_SIZE;
 
@@ -88,13 +88,13 @@ import pony.events.Signal2;
 	public function sendStack(): Void if (stack.length > 0) @:nullSafety(Off) send(stack.shift());
 	public function sendAllStack(): Void while (stack.length > 0) @:nullSafety(Off) send(stack.shift());
 
-	public inline function setTaskb(prefix: Bytes, ?len: Int64): Signal2<BytesInput, SocketClient> {
+	public inline function setTaskb(prefix: Bytes, ?len: Int64): Signal2<BytesInput, ISocketClient> {
 		var bo: BytesOutput = new BytesOutput();
 		bo.write(prefix);
 		return setTask(bo, len);
 	}
 
-	public inline function setTask(?prefix: BytesOutput, ?len: Int64): Signal2<BytesInput, SocketClient> {
+	public inline function setTask(?prefix: BytesOutput, ?len: Int64): Signal2<BytesInput, ISocketClient> {
 		taskBuffer = new BytesOutput();
 		taskPrefix = prefix == null ? null : new BytesInput(prefix.getBytes());
 		taskDataLength = len == null ? 0 : len;
@@ -144,7 +144,7 @@ import pony.events.Signal2;
 		eTaskError.dispatch(this);
 	}
 
-	public function sendSetTask(out: Bytes, ?prefix: Bytes, len: UInt = 0): Signal2<BytesInput, SocketClient> {
+	public function sendSetTask(out: Bytes, ?prefix: Bytes, len: UInt = 0): Signal2<BytesInput, ISocketClient> {
 		var ob: BytesOutput = new BytesOutput();
 		ob.write(out);
 		send(ob);
@@ -157,7 +157,7 @@ import pony.events.Signal2;
 		}
 	}
 
-	public inline function sendSetTaskSym(b: Bytes, len: UInt = 0): Signal2<BytesInput, SocketClient> {
+	public inline function sendSetTaskSym(b: Bytes, len: UInt = 0): Signal2<BytesInput, ISocketClient> {
 		return sendSetTask(b, b, len);
 	}
 

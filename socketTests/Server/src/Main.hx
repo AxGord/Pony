@@ -1,5 +1,6 @@
 package ;
 
+import pony.net.ISocketClient;
 import haxe.io.BytesOutput;
 import js.Node;
 import pony.net.SocketClient;
@@ -13,14 +14,14 @@ using pony.Tools;
  */
 
 class Main {
-	
+
 	static function main() {
 		var s = new SocketServer(13579);
-		s.onConnect << function(cl:SocketClient):Void {
+		s.onConnect << function(cl:ISocketClient):Void {
 			var bo = new BytesOutput();
 			bo.writeStr('Hello man!');
 			cl.send(bo);
 		}
 	}
-	
+
 }

@@ -33,6 +33,7 @@ using pony.text.TextTools;
 			units: [],
 			to: '',
 			from: '',
+			fromLib: null,
 			hash: false,
 			addext: '',
 			allowCfg: true,
@@ -41,8 +42,14 @@ using pony.text.TextTools;
 	}
 
 	override private function runNode(cfg: CopyConfig): Void {
-		copyDirs(cfg.dirs, cfg.from, cfg.to, cfg.hash, cfg.addext);
-		copyUnits(cfg.units, cfg.from, cfg.to, cfg.hash, cfg.addext);
+		var from:String = cfg.from;
+		if (cfg.fromLib != null) {
+			var path:Null<String> = Utils.getLibPath(cfg.fromLib);
+			if (path == null) error('Lib ${cfg.fromLib} not found');
+			from = '$path$from';
+		}
+		copyDirs(cfg.dirs, from, cfg.to, cfg.hash, cfg.addext);
+		copyUnits(cfg.units, from, cfg.to, cfg.hash, cfg.addext);
 	}
 
 	private function copyDirs(data: Array<Pair<String, Null<String>>>, from: String, to: String, hash: Bool, addext: String): Void {
@@ -97,6 +104,7 @@ private typedef CopyConfig = {
 	units: Array<Pair<String, Null<String>>>,
 	to: String,
 	from: String,
+	fromLib: Null<String>,
 	hash: Bool,
 	addext: String
 }
@@ -118,6 +126,7 @@ private typedef CopyConfig = {
 		cfg.units = [];
 		cfg.to = '';
 		cfg.from = '';
+		cfg.fromLib = null;
 		cfg.hash = false;
 		cfg.addext = '';
 	}
@@ -126,6 +135,7 @@ private typedef CopyConfig = {
 		switch name {
 			case 'to': cfg.to += val;
 			case 'from': cfg.from += val;
+			case 'fromLib': cfg.fromLib = val;
 			case 'hash': cfg.hash = val.isTrue();
 			case 'addext': cfg.addext = val;
 			case _:

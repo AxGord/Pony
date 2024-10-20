@@ -1,0 +1,5 @@
+--cs CSSocket
+-m Main
+-cp src
+-lib Pony
+-lib hx3compat

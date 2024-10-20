@@ -1,0 +1,5 @@
+--js bin/Server.js
+-m Main
+-cp src
+-lib Pony
+-lib hxnodejs

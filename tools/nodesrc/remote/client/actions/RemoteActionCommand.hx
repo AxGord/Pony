@@ -4,7 +4,9 @@ package remote.client.actions;
  * RemoteActionCommand
  * @author AxGord <axgord@gmail.com>
  */
-@:nullSafety(Strict) @:final class RemoteActionCommand extends RemoteAction {
+@:nullSafety(Strict)
+#if (haxe_ver >= 4.2) final #else @:final #end
+class RemoteActionCommand extends RemoteAction {
 
 	#if (haxe_ver < 4.2) override #end
 	private function run(data: String): Void {

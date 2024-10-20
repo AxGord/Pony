@@ -9,8 +9,9 @@ import haxe.io.BytesOutput;
 interface ISocketServer extends INet {
 
 	var isAbleToSend: Bool;
-	var clients(default, null): Array<SocketClient>;
+	var clients(default, null): Array<ISocketClient>;
+	var maxSize: Int;
 
-	function send2other(data: BytesOutput, exception: SocketClient): Void;
+	function send2other(data: BytesOutput, exception: ISocketClient): Void;
 
 }

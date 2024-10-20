@@ -25,17 +25,17 @@ import pony.magic.HasSignal;
 	public var readLengthSize: UInt = 0;
 
 	#if (!js || nodejs)
-	public var server(default, null): Null<SocketServer>;
+	public var server(default, null): Null<ISocketServer>;
 	#end
 
-	@:auto public var onData: Signal2<BytesInput, SocketClient>;
-	@:auto public var onString: Signal2<String, SocketClient>;
+	@:auto public var onData: Signal2<BytesInput, ISocketClient>;
+	@:auto public var onString: Signal2<String, ISocketClient>;
 	@:auto public var onClose: Signal0;
-	@:auto public var onDisconnect: Signal1<SocketClient>;
+	@:auto public var onDisconnect: Signal1<ISocketClient>;
 	@:lazy public var onLostConnection: Signal0;
 	@:lazy public var onReconnect: Signal0;
 	@:lazy public var onOpen: Signal0;
-	@:lazy public var onConnect: Signal1<SocketClient>;
+	@:lazy public var onConnect: Signal1<ISocketClient>;
 
 	public var opened(default, null): Bool = false;
 
@@ -148,19 +148,19 @@ import pony.magic.HasSignal;
 	#if (!js || nodejs)
 
 	@:access(pony.net.SocketServer)
-	public function init(server: SocketServer, id: Int): Void {
-		eData = new Event2<BytesInput, SocketClient>();
-		eString = new Event2<String, SocketClient>();
+	public function init(server: ISocketServer, id: Int): Void {
+		eData = new Event2<BytesInput, ISocketClient>();
+		eString = new Event2<String, ISocketClient>();
 		eClose = new Event0();
-		eDisconnect = new Event1<SocketClient>();
+		eDisconnect = new Event1<ISocketClient>();
 		eLostConnection = new Event0();
 		eReconnect = new Event0();
 		eOpen = new Event0();
-		eConnect = new Event1<SocketClient>();
+		eConnect = new Event1<ISocketClient>();
 
-		onData << server.eData;
-		onDisconnect << server.eDisconnect;
-		onConnect << server.eConnect;
+		onData << @:privateAccess server.eData;
+		onDisconnect << @:privateAccess server.eDisconnect;
+		onConnect << @:privateAccess server.eConnect;
 
 		sharedInit();
 		this.server = server;
@@ -171,7 +171,7 @@ import pony.magic.HasSignal;
 		waitNext = 0;
 		waitBuf = new BytesOutput();
 
-		if (!server.eString.empty) onString << server.eString;
+		@:privateAccess if (!server.eString.empty) onString << server.eString;
 	}
 
 	public inline function send2other(data: BytesOutput): Void if (server != null) server.send2other(data, cast this);

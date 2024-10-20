@@ -21,7 +21,8 @@ import pony.Logable;
  * Entry point for Pony Tools Node Module
  * @author AxGord <axgord@gmail.com>
  */
-@:final class NMain extends Logable {
+ #if (haxe_ver >= 4.2) final #else @:final #end
+class NMain extends Logable {
 
 	private static inline var SEND_TIMEOUT: Int = 300;
 

@@ -1,0 +1,5 @@
+--swf bin/client.swf
+--swf-version 32
+-m Main
+-cp src
+-lib Pony

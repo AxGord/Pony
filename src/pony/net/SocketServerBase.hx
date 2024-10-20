@@ -14,22 +14,22 @@ import pony.Logable;
  */
 class SocketServerBase extends Logable {
 
-	@:auto public var onData: Signal2<BytesInput, SocketClient>;
-	@:auto public var onString: Signal2<String, SocketClient>;
+	@:auto public var onData: Signal2<BytesInput, ISocketClient>;
+	@:auto public var onString: Signal2<String, ISocketClient>;
 
-	@:auto public var onConnect: Signal1<SocketClient>;
+	@:auto public var onConnect: Signal1<ISocketClient>;
 	@:auto public var onOpen: Signal0;
 
 	@:auto public var onClose: Signal0;
-	@:auto public var onDisconnect: Signal1<SocketClient>;
+	@:auto public var onDisconnect: Signal1<ISocketClient>;
 
 	public var opened(default, null): Bool;
 
-	public var clients(default, null): Array<SocketClient> = [];
+	public var clients(default, null): Array<ISocketClient> = [];
 	public var isAbleToSend: Bool = false;
 
-	@:allow(pony.net.SocketClientBase) public var isWithLength: Bool = true;
-	@:allow(pony.net.SocketClientBase) private var maxSize: Int;
+	public var isWithLength: Bool = true;
+	public var maxSize: Int;
 
 	private function new() {
 		super();
@@ -44,7 +44,7 @@ class SocketServerBase extends Logable {
 	private function beginString(): Void for (c in clients) c.onString << eString;
 	private function endString(): Void for (c in clients) c.onString >> eString;
 
-	private function addClient(): SocketClient {
+	private function addClient(): ISocketClient {
 		var cl: SocketClient = Type.createEmptyInstance(SocketClient);
 		@:privateAccess cl.logPrefix = '';
 		listenErrorAndLog(cl);
@@ -53,7 +53,7 @@ class SocketServerBase extends Logable {
 		return cl;
 	}
 
-	private function removeClient(cl: SocketClient): Void clients.remove(cl);
+	private function removeClient(cl: ISocketClient): Void clients.remove(cl);
 
 	/**
 	 * Sends a data to all the clients.
@@ -70,7 +70,7 @@ class SocketServerBase extends Logable {
 	/**
 	 * Sends a data to all the clients except chosen one.
 	 */
-	public function send2other(data: BytesOutput, exception: SocketClient): Void {
+	public function send2other(data: BytesOutput, exception: ISocketClient): Void {
 		var bs: Bytes = data.getBytes();
 		for (c in clients) {
 			if (c == exception) continue;

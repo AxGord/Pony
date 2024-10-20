@@ -12,7 +12,9 @@ import types.RemoteConfig;
  * Remote Client
  * @author AxGord <axgord@gmail.com>
  */
-@:nullSafety @:final class RemoteClient extends Logable {
+@:nullSafety
+#if (haxe_ver >= 4.2) final #else @:final #end
+class RemoteClient extends Logable {
 
 	@:auto public var onComplete: Signal1<Int>;
 

@@ -2,7 +2,7 @@
 -cp nodesrc
 -cp sharedsrc
 -main NMain
--lib hxnodejs:12.1.0
+-lib hxnodejs:12.2.0
 -lib pony
 -lib hxbitmini:1.1.0
 -dce full
@@ -10,4 +10,5 @@
 -D js-es6
 -D nodedt
 -D hxbitmini_nullsafety
+--macro keep('hxbitmini.Schema')
 -debug
