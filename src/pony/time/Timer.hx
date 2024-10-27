@@ -145,6 +145,7 @@ class Timer implements ITimer<Timer> implements Declarator implements HasSignal 
 		t.complete.once(t.destroy);
 		return t.start();
 	}
+
 	public static inline function repeat(time: Time, f: Void -> Void): Timer {
 		var t: Timer = new Timer(time, -1);
 		t.complete.add(f);

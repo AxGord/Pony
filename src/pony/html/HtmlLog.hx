@@ -2,19 +2,36 @@ package pony.html;
 
 import haxe.Log;
 import haxe.PosInfos;
-import pony.ILogable;
-import js.html.Element;
+
 import js.Browser;
+import js.html.Element;
+
+import pony.ILogable;
 
 using StringTools;
+using pony.text.TextTools;
+
+private enum LastLogMessage {
+	None;
+	Normal(m: LastLogMessageObj);
+	Error(m: LastLogMessageObj);
+}
+
+private typedef LastLogMessageObj = {
+	text: String,
+	pos: Null<PosInfos>,
+	count: UInt
+}
 
 @:nullSafety(Strict) class HtmlLog {
 
 	public var visible(get, set):Bool;
 
+	public final container: Element;
 	private final origTrace: Null<Dynamic -> ?PosInfos -> Void>;
-	private final container: Element;
 	private final reverse: Bool;
+
+	private var lastMessage: LastLogMessage = None;
 
 	public function new(
 		containerId: String = 'log', obj: ILogable = null,
@@ -56,23 +73,56 @@ using StringTools;
 		@:nullSafety(Off) origTrace(v, p);
 	}
 
-	public inline function print(message: String): Void if (container != null) logHandler(message, null);
+	public inline function print(message: String): Void if (container != null) addLogToContainer(message, null);
+
+	public function addLogToContainer(message: String, count: Int = 1, ?pos: PosInfos): Void {
+		final current: LastLogMessageObj = { text: message, pos: pos, count: count };
+		switch lastMessage {
+			case Normal(m) if (equalMessageObj(m, current)):
+				if (reverse)
+					container.firstElementChild.remove();
+				else
+					container.lastElementChild.remove();
+				count += m.count;
+				current.count = count;
+			case _:
+		}
+		lastMessage = Normal(current);
+		addToContainer(pos != null ?
+			'<p><span class="gray">${pos.fileName}:${pos.lineNumber}:</span> <span>$message</span>${renderCount(count)}</p>' :
+			'<p><span>$message</span>${renderCount(count)}</p>'
+		);
+	}
+
+	public function addErrorToContainer(message: String, count: Int = 1, ?pos: PosInfos): Void {
+		final current: LastLogMessageObj = { text: message, pos: pos, count: count };
+		switch lastMessage {
+			case Error(m) if (equalMessageObj(m, current)):
+				if (reverse)
+					container.firstElementChild.remove();
+				else
+					container.lastElementChild.remove();
+				count += m.count;
+				current.count = count;
+			case _:
+		}
+		lastMessage = Error(current);
+		addToContainer(pos != null ?
+			'<p><span class="gray">${pos.fileName}:${pos.lineNumber}:</span> <span class="error">$message</span>${renderCount(count)}</p>' :
+			'<p><span class="error">$message</span>${renderCount(count)}</p>'
+		);
+	}
 
 	private function logHandler(message: String, ?pos: PosInfos): Void {
-		pos = Logable.addTimeToPosInfosFileName(pos);
-		addToContainer(pos != null ?
-			'<p><span class="gray">${pos.fileName}:${pos.lineNumber}:</span> <span>$message</span></p>' :
-			'<p><span>$message</span></p>');
+		addLogToContainer(message, Logable.addTimeToPosInfosFileName(pos));
 	}
 
 	private function errorHandler(message: String, ?pos: PosInfos): Void {
-		pos = Logable.addTimeToPosInfosFileName(pos);
-		addToContainer(pos != null ?
-			'<p><span class="gray">${pos.fileName}:${pos.lineNumber}:</span> <span class="error">$message</span></p>' :
-			'<p><span class="error">$message</span></p>');
+		addErrorToContainer(message, Logable.addTimeToPosInfosFileName(pos));
 	}
 
 	private function windowsErrorHandler(_, _, _, _, _): Bool {
+		lastMessage = None;
 		addToContainer('<p><span class="error">Fatal error</span></p>');
 		return false;
 	}
@@ -84,6 +134,17 @@ using StringTools;
 			else
 				container.innerHTML += s;
 		}
+	}
+
+	private static function renderCount(count: UInt): String {
+		return count > 1 ? ' <span class="gray">(${count})</span>' : '';
+	}
+
+	@:nullSafety(Off)
+	private static function equalMessageObj(a: LastLogMessageObj, b: LastLogMessageObj): Bool {
+		return a.text == b.text && (
+			(a.pos == null && b.pos == null) || (a.pos.lineNumber == b.pos.lineNumber && a.pos.fileName.allAfterLast(' ') == b.pos.fileName.allAfterLast(' '))
+		);
 	}
 
 }

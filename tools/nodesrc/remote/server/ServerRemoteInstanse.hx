@@ -33,7 +33,7 @@ class ServerRemoteInstanse {
 		this.commands = commands;
 		this.allowForGet = allowForGet;
 		protocol = new RemoteProtocol(client);
-		activity = protocol.ping.watch();
+		activity = protocol.ping.watch().activity;
 		client.onClose < closeHandler;
 		client.onData << activity;
 		protocol.ping.onLostConnection < lostHandler;
