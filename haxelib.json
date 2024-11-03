@@ -27,8 +27,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Heaps 2 support. Clean fix delete not exists file error.",
-"version": "1.9.8",
+"releasenote": "Tools, net, web, signals improvements",
+"version": "1.9.9",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }
