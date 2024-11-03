@@ -16,8 +16,8 @@ class SocketServer
 #if !flash implements ISocketServer #end {
 
 	#if !flash
-	public function new(port: Int, isWithLength: Bool = true, maxSize: Int = 1024) {
-		super(port);
+	public function new(host: String = '0.0.0.0', port: Int, isWithLength: Bool = true, maxSize: Int = 1024) {
+		super(host, port);
 		this.isWithLength = isWithLength;
 		this.maxSize = maxSize;
 	}

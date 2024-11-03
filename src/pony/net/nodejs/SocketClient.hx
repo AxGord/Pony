@@ -35,6 +35,8 @@ import pony.net.SocketClientBase;
 	private function nodejsInit(s: Socket): Void {
 		q = new Queue(_send);
 		socket = s;
+		host = s.remoteAddress;
+		port = s.remotePort;
 		s.on('data', dataHandler);
 		s.on('end', close);
 		s.on('error', error.bind('socket error'));
@@ -55,7 +57,8 @@ import pony.net.SocketClientBase;
 		if (socket == null) return;
 		var b: Bytes = data.getBytes();
 		logBytes('Send data', b);
-		@:nullSafety(Off) socket.write(Buffer.hxFromBytes(b), sendNextAfterTimeout);
+		final buffer: Buffer = #if oldnode new Buffer(b.getData()) #else Buffer.hxFromBytes(b) #end;
+		@:nullSafety(Off) socket.write(buffer, sendNextAfterTimeout);
 	}
 
 	private function sendNextAfterTimeout(): Void {

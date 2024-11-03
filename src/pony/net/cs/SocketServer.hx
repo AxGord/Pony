@@ -53,10 +53,10 @@ class SocketServer extends SocketServerBase {
 	**/
 	private var isRunning: Bool;
 
-	public override function new(aPort: Int) {
+	public override function new(aHost: String, aPort: Int) {
 		super();
 		port = aPort;
-		var ep: IPEndPoint = new IPEndPoint(IPAddress.Parse('127.0.0.1'), port);
+		var ep: IPEndPoint = new IPEndPoint(IPAddress.Parse(aHost), port);
 		server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 		server.NoDelay = true;
 		server.Bind(ep);

@@ -15,9 +15,9 @@ class SocketServer extends pony.net.SocketServerBase {
 
 	private var server: Socket = new Socket();
 
-	public function new(port: Int) {
+	public function new(host: String, port: Int) {
 		super();
-		server.bind(new Host('127.0.0.1'), port);
+		server.bind(new Host(host), port);
 		server.listen(1000);
 		server.setBlocking(false);
 		DeltaTime.fixedUpdate << waitNewConnection;

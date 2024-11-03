@@ -107,7 +107,9 @@ class JsDT implements HasSignal {
 			afid = raf(fastTick);
 	}
 
-	@:extern private static inline function tick(v: Float): Void {
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function tick(v: Float): Void {
 		DeltaTime.fixedValue = (v - ms) / 1000;
 		ms = v;
 		DeltaTime.fixedDispatch();

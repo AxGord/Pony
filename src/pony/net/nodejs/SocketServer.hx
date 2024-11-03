@@ -15,11 +15,11 @@ class SocketServer extends SocketServerBase {
 
 	private var server: Server;
 
-	public function new(port: Int) {
+	public function new(host: String, port: Int) {
 		super();
 		server = Net.createServer(null, null);
 		server.on('connection', connectionHandler);
-		server.listen(port, eOpen.dispatch);
+		server.listen(port, host, eOpen.dispatch);
 	}
 
 	private function connectionHandler(c: Socket): Void {
