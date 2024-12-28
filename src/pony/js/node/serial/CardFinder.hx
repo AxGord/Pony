@@ -1,4 +1,4 @@
-package pony.nodejs.serial;
+package pony.js.node.serial;
 
 import pony.magic.HasSignal;
 import pony.events.Signal0;

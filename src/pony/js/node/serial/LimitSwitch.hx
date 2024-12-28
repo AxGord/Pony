@@ -1,4 +1,4 @@
-package pony.nodejs.serial;
+package pony.js.node.serial;
 
 import pony.events.Signal1;
 import pony.magic.HasSignal;
@@ -12,7 +12,7 @@ class LimitSwitch implements Declarator implements HasSignal {
 
 	private static var LIMIT_SWITCH:String = 'LimitSwitch';
 	private static var END:String = ';';
-	
+
 	private static var LSW1:String = LIMIT_SWITCH + '1_';
 	private static var LSW2:String = LIMIT_SWITCH + '2_';
 

@@ -27,8 +27,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Tools, net, web, signals improvements",
-"version": "1.9.9",
+"releasenote": "NodeJSUtils bytes <-> buffer for used node version. HtmlLog check container exists. TplDir empty names bugfix.",
+"version": "1.9.10",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }

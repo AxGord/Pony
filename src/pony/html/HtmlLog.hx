@@ -73,9 +73,10 @@ private typedef LastLogMessageObj = {
 		@:nullSafety(Off) origTrace(v, p);
 	}
 
-	public inline function print(message: String): Void if (container != null) addLogToContainer(message, null);
+	public inline function print(message: String): Void addLogToContainer(message, null);
 
 	public function addLogToContainer(message: String, count: Int = 1, ?pos: PosInfos): Void {
+		if (container == null) return;
 		final current: LastLogMessageObj = { text: message, pos: pos, count: count };
 		switch lastMessage {
 			case Normal(m) if (equalMessageObj(m, current)):
@@ -95,6 +96,7 @@ private typedef LastLogMessageObj = {
 	}
 
 	public function addErrorToContainer(message: String, count: Int = 1, ?pos: PosInfos): Void {
+		if (container == null) return;
 		final current: LastLogMessageObj = { text: message, pos: pos, count: count };
 		switch lastMessage {
 			case Error(m) if (equalMessageObj(m, current)):

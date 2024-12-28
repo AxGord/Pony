@@ -1,4 +1,4 @@
-package pony.nodejs.serial;
+package pony.js.node.serial;
 
 import haxe.io.BytesOutput;
 import pony.Tumbler;

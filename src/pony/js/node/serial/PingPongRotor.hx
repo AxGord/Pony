@@ -1,8 +1,8 @@
-package pony.nodejs.serial;
+package pony.js.node.serial;
 
 import pony.events.Signal0;
 import pony.events.Event0;
-import pony.nodejs.serial.Rotors.Rotor;
+import pony.js.node.serial.Rotors.Rotor;
 import pony.time.Timer;
 
 /**

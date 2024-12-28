@@ -1,15 +1,19 @@
 package pony.net.nodejs;
 
 #if nodejs
+import haxe.io.Bytes;
+import haxe.io.BytesInput;
+import haxe.io.BytesOutput;
+
 import js.Node;
 import js.node.Buffer;
 import js.node.Net;
 import js.node.net.Socket;
-import haxe.io.Bytes;
-import haxe.io.BytesInput;
-import haxe.io.BytesOutput;
+
 import pony.Queue;
 import pony.net.SocketClientBase;
+
+using pony.js.node.NodeJSUtils;
 
 /**
  * SocketClient
@@ -57,8 +61,7 @@ import pony.net.SocketClientBase;
 		if (socket == null) return;
 		var b: Bytes = data.getBytes();
 		logBytes('Send data', b);
-		final buffer: Buffer = #if oldnode new Buffer(b.getData()) #else Buffer.hxFromBytes(b) #end;
-		@:nullSafety(Off) socket.write(buffer, sendNextAfterTimeout);
+		@:nullSafety(Off) socket.write(b.bytesToBuffer(), sendNextAfterTimeout);
 	}
 
 	private function sendNextAfterTimeout(): Void {
@@ -75,7 +78,7 @@ import pony.net.SocketClientBase;
 		}
 	}
 
-	private function dataHandler(d: Buffer): Void joinData(new BytesInput(Bytes.ofData(d.buffer)));
+	private function dataHandler(d: Buffer): Void joinData(new BytesInput(d.bufferToBytes()));
 
 }
 #end

@@ -13,7 +13,7 @@ import pony.text.tpl.TplData.TplStyle;
 class TplDir {
 
 	private var h:Map<String, Tpl> = new Map<String, Tpl>();
-	
+
 	public function new(dir:Dir, ?c:Class<ITplPut>, o:Dynamic, ?s:TplStyle) {
 		for (f in dir.contentRecursiveFiles('.tpl')) {
 			for (e in f.fullDir) {
@@ -23,7 +23,9 @@ class TplDir {
 					if (e.toString().substr(0, l) == d.toString()) {
 						var k = e.toString().substr(l + 1);
 						if (k.length > 0) k += '/';
-						h[k + f.shortName] = new Tpl(c, o, f.content);
+						final n:String = f.shortName;
+						if (n == '') break; // skip empty name
+						h[k + n] = new Tpl(c, o, f.content);
 						brk = true;
 						break;
 					}
@@ -32,13 +34,13 @@ class TplDir {
 			}
 		}
 	}
-	
+
 	public inline function gen(n:String, ?d:Dynamic, ?p:Dynamic, cb:String -> Void):Void {
 		return h[n].gen(d, p, cb);
 	}
-	
+
 	public inline function exists(n:String):Bool {
 		return h.exists(n);
 	}
-	
+
 }

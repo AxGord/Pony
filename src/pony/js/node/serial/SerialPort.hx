@@ -1,4 +1,4 @@
-package pony.nodejs.serial;
+package pony.js.node.serial;
 
 import js.node.Buffer;
 import js.Error;
@@ -51,21 +51,21 @@ typedef SerialId = {
  * @author AxGord <axgord@gmail.com>
  */
 class SerialPort extends Logable implements Declarator {
-	
+
 	public var connected(default, null):Bool;
-	
+
 	@:auto public var onOpen:Signal0;
 	@:auto public var onClose:Signal1<SerialPort>;
 	@:auto public var onData:Signal1<BytesInput>;
 	@:auto public var onString:Signal1<String>;
-	
+
 	private var sp:Dynamic;
 	private var q:Queue<BytesOutput -> Void> = new Queue < BytesOutput -> Void > (_write);
 	private var lastDelay:Timer;
-	
+
 	@:arg public var id:SerialId;
 	@:arg private var cfg:SerialPortConfig = {};
-	
+
 	public function new() {
 		super();
 		onError << reconnect;
@@ -91,7 +91,7 @@ class SerialPort extends Logable implements Declarator {
 	private function dataHandler(bi:BytesInput):Void {
 		eString.dispatch(bi.readAll().toString());
 	}
-	
+
 	private function connect():Void {
 		getList(connectHandler, error);
 	}
@@ -111,7 +111,7 @@ class SerialPort extends Logable implements Declarator {
 	private static function tracePortsHandler(ports:Array<SerialId>):Void {
 		for (port in ports) trace(port);
 	}
-	
+
 	private function connectHandler(ports:Array<SerialId>):Void {
 		var e:SerialId = ports.find(findPort);
 		if (e == null) return error("Can't find device");
@@ -167,7 +167,7 @@ class SerialPort extends Logable implements Declarator {
 		if (a.productId != null) if (a.productId != b.productId) return false;
 		return true;
 	}
-	
+
 	private function reconnect():Void {
 		connected = false;
 		try {
@@ -176,18 +176,18 @@ class SerialPort extends Logable implements Declarator {
 			_reconnect();
 		}
 	}
-	
+
 	private function _reconnect():Void {
 		if (id != null) {
 			log('SerialPort ${id.comName} have problem, reconnect after 5sec...');
 			lastDelay = Timer.delay('5s', connect);
 		}
 	}
-	
+
 	private function readData(b:BytesData):Void {
 		eData.dispatch(new BytesInput(Bytes.ofData(b)));
 	}
-	
+
 	private function check():Bool {
 		if (connected) return false;
 		else {
@@ -195,7 +195,7 @@ class SerialPort extends Logable implements Declarator {
 			return true;
 		}
 	}
-	
+
 	public function writeAsync(b:BytesOutput, ok:Void -> Void, ?error:String -> ?PosInfos -> Void):Void {
 		if (check()) return;
 		try {
@@ -211,12 +211,12 @@ class SerialPort extends Logable implements Declarator {
 			error(e.message);
 		}
 	}
-	
+
 	public function write(b:BytesOutput):Void {
 		if (check()) return;
 		if (q != null) q.call(b);
 	}
-	
+
 	private function _write(b:BytesOutput):Void {
 		if (q != null) writeAsync(b, q.next, error);
 	}
@@ -233,5 +233,5 @@ class SerialPort extends Logable implements Declarator {
 			lastDelay = null;
 		}
 	}
-	
+
 }
