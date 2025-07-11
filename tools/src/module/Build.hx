@@ -296,6 +296,8 @@ private class BuildConfigReader extends BAReader<BuildConfig> {
 						cfg.command.push(new SPair('--cmd', d));
 					case 'interp':
 						cfg.command.push(new SPair('--interp', ''));
+					case 'remap':
+						cfg.command.push(new SPair('--remap', d));
 					case a:
 						cfg.command.push(new SPair('-$a', d));
 				}

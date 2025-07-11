@@ -109,6 +109,15 @@ using pony.text.TextTools;
 		#end
 	}
 
+	/**
+	 * Verbose log
+	 * @param message log text message
+	 * @param pos call place information
+	 */
+	public inline function verbose(message: String, ?pos: PosInfos): Void {
+		#if verbose log(message, p); #end
+	}
+
 	public inline function errorf(fn: Void -> String, ?p: PosInfos): Void {
 		#if !disableErrors
 		if (errorActive) eError.dispatch(@:nullSafety(Off) fn(), p);
@@ -291,22 +300,32 @@ using pony.text.TextTools;
 
 	public inline function bench(?name: String, f: Void -> Void, ?p: PosInfos): Void {
 		#if !disableLogs
-		if (!logActive) return;
-		name = name != null ? ': ' + name : '';
-		log('Begin bench' + name, p);
-		var time: Float = Timer.stamp();
+		if (!logActive) {
+			f();
+		} else {
+			name = name != null ? ': ' + name : '';
+			log('Begin bench' + name, p);
+			var time: Float = Timer.stamp();
+			f();
+			log('End bench' + name + ' ' + l_benchTime(time) + MS, p);
+		}
+		#else
 		f();
-		log('End bench' + name + ' ' + l_benchTime(time) + MS, p);
 		#end
 	}
 
 	public inline function benchAsync(?name: String, f: (Void -> Void) -> Void, ?p: PosInfos): Void {
 		#if !disableLogs
-		if (!logActive) return;
-		name = name != null ? ': ' + name : '';
-		log('Begin async bench' + name, p);
-		var time: Float = Timer.stamp();
-		f(function(): Void log('End async bench' + name + ' ' + l_benchTime(time) + MS, p));
+		if (!logActive) {
+			f(Tools.nullFunction0);
+		} else {
+			name = name != null ? ': ' + name : '';
+			log('Begin async bench' + name, p);
+			var time: Float = Timer.stamp();
+			f(function(): Void log('End async bench' + name + ' ' + l_benchTime(time) + MS, p));
+		}
+		#else
+		f(Tools.nullFunction0);
 		#end
 	}
 

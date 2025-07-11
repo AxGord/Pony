@@ -89,7 +89,7 @@ class HasListenerBuilder {
 											}
 										);
 
-									case EBinop(_, { expr: EConst(CIdent(s)) }, _):
+									case EBinop(_, { expr: EConst(CIdent(s)) }, _), EConst(CIdent(s)):
 										final name: String = 'change${s.bigFirst()}';
 										final listenerName: String = '${name}Handler';
 										listen.push(macro $i{name}.add($i{listenerName}));
@@ -103,11 +103,11 @@ class HasListenerBuilder {
 										}
 										handler.c.push(
 											macro if ($cond) {
-												$i{s} = $i{prevName};
-												if (!($cond)) $e{isOnce ? macro $expr.once($i{field.name}) : macro $expr.add($i{field.name})};
+												final $s = $i{prevName}; // Set $s for check condition with prev value
+												if (!$cond) $e{isOnce ? macro $expr.once($i{field.name}) : macro $expr.add($i{field.name})};
 											} else {
-												$i{s} = $i{prevName};
-												if (!($cond)) $expr.remove($i{field.name});
+												final $s = $i{prevName}; // Set $s for check condition with prev value
+												if ($cond) $expr.remove($i{field.name});
 											}
 										);
 									case _:
