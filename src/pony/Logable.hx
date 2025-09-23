@@ -115,7 +115,7 @@ using pony.text.TextTools;
 	 * @param pos call place information
 	 */
 	public inline function verbose(message: String, ?pos: PosInfos): Void {
-		#if verbose log(message, p); #end
+		#if verbose log(message, pos); #end
 	}
 
 	public inline function errorf(fn: Void -> String, ?p: PosInfos): Void {

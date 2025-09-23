@@ -27,8 +27,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Tools build remap. HasListener bugfix and const for check. Logable verbose.",
-"version": "1.9.11",
+"releasenote": "NodeJS bytesToBuffer bugfix for all node versions. Logable verbose bugfix.",
+"version": "1.9.12",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }
