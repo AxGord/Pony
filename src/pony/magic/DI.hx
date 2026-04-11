@@ -11,6 +11,4 @@ interface DI {
 
 	private final provider: ServiceProvider;
 
-	public function destroy(): Void;
-
 }

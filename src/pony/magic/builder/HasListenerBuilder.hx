@@ -27,6 +27,10 @@ class HasListenerBuilder {
 		final unlisten: Array<Expr> = [];
 		var hasNew: Bool = false;
 		var hasDestroy: Bool = false;
+		// DI-classes delegate destroy-method generation and teardown to DIBuilder, which also
+		// inserts unlisten() into its teardown chain. HasListenerBuilder stays out of destroy
+		// entirely for DI classes to avoid double-unlisten and order-dependent bugs.
+		final hasDI: Bool = checkDI(Context.getLocalClass().get());
 		function getType(name: String): Null<ComplexType> {
 			for (field in fields) if (field.name == name) {
 				return switch field.kind {
@@ -45,7 +49,7 @@ class HasListenerBuilder {
 					case EBlock(exprs): exprs.push(macro listen());
 					case _: throw 'Constructor type error';
 				}
-			case { name: 'destroy', kind: FFun(f) }:
+			case { name: 'destroy', kind: FFun(f) } if (!hasDI):
 				hasDestroy = true;
 				f.expr = f.expr.replaceToBlock();
 				switch f.expr.expr {
@@ -115,6 +119,7 @@ class HasListenerBuilder {
 								}
 							} else {
 								listen.push(isOnce ? macro $expr.once($i{field.name}) : macro $expr.add($i{field.name}));
+								unlisten.push(macro $expr.remove($i{field.name}));
 							}
 						} else {
 							throw 'Expr not set';
@@ -151,18 +156,19 @@ class HasListenerBuilder {
 			}).fields.pop());
 		}
 
-		if (!hasDestroy && !ext) {
-			if (checkDestroy(Context.getLocalClass().get()))
+		if (!hasDestroy && !ext && !hasDI) {
+			if (checkDestroy(Context.getLocalClass().get())) {
 				fields.push((macro class {
 					override public function destroy(): Void {
 						super.destroy();
 						unlisten();
 					}
 				}).fields.pop());
-			else
+			} else {
 				fields.push((macro class {
 					public function destroy(): Void unlisten();
 				}).fields.pop());
+			}
 		}
 
 		for (name => checks in handlers) {
@@ -191,6 +197,12 @@ class HasListenerBuilder {
 		} else {
 			return false;
 		}
+	}
+
+	private static function checkDI(ct: ClassType): Bool {
+		for (i in ct.interfaces) if (i.t.toString() == 'pony.magic.DI') return true;
+		if (ct.superClass != null) return checkDI(ct.superClass.t.get());
+		return false;
 	}
 	#end
 

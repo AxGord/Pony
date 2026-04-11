@@ -93,5 +93,41 @@ import haxe.macro.Expr;
 		}
 	}
 
+	/**
+	 * Walk expression tree and wrap every `return` with `beforeReturn` expression so cleanup
+	 * code runs on every return path. Return value is preserved via a local temporary.
+	 * Nested functions are NOT traversed — their `return` belongs to the inner function scope.
+	 */
+	public static function rewriteReturns(e: Expr, beforeReturn: Expr): Expr {
+		return switch e.expr {
+			case EReturn(null):
+				macro { $beforeReturn; return; };
+			case EReturn(v):
+				macro { final __r = $v; $beforeReturn; return __r; };
+			case EFunction(_, _):
+				e;
+			case _:
+				haxe.macro.ExprTools.map(e, sub -> rewriteReturns(sub, beforeReturn));
+		};
+	}
+
+	/**
+	 * Check whether an expression tree contains a direct call to the given function name.
+	 * Nested functions are skipped — a call inside a lambda doesn't count as the outer
+	 * function calling `name`.
+	 */
+	public static function containsCall(e: Expr, name: String): Bool {
+		return switch e.expr {
+			case ECall({ expr: EConst(CIdent(n)) }, _) if (n == name):
+				true;
+			case EFunction(_, _):
+				false;
+			case _:
+				var found: Bool = false;
+				haxe.macro.ExprTools.iter(e, sub -> if (!found && containsCall(sub, name)) found = true);
+				found;
+		};
+	}
+
 }
 #end
