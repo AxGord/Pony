@@ -6,8 +6,12 @@ import haxe.macro.Expr;
 import haxe.macro.Type.ClassType;
 import haxe.macro.TypeTools;
 
+import pony.magic.builder.DIVerifier.DIClassSummary;
+
 using Lambda;
+
 using haxe.macro.ComplexTypeTools;
+
 using pony.macro.Tools;
 #end
 
@@ -43,6 +47,11 @@ final class DIBuilder {
 		final ctp: TypePath = @:privateAccess TypeTools.toTypePath(localClass, []);
 		final ct: ComplexType = TPath(ctp);
 		final fields: Array<Field> = Context.getBuildFields();
+		final diSuperTypeName: Null<String> = isExt && localClass.superClass != null
+			? typeNameOf(localClass.superClass.t.get()) : null;
+		final diSummary: DIClassSummary = DIVerifier.beginClass(
+			typeNameOf(localClass), localClass.pos, diSuperTypeName
+		);
 		var constuctor: Null<Field> = fields.find(f -> f.name == 'new');
 		if (constuctor == null) {
 			if (Context.getLocalClass().get().superClass == null) {
@@ -91,7 +100,9 @@ final class DIBuilder {
 				// Field's declared type — used as the lookup key on the consumer side. The resolver
 				// walks the scope chain and finds any registered instance assignable to this type.
 				final fieldTypeName: String = complexTypeName(t);
-				if (isExt && localClass.superClass.t.get().fields.get().exists(f -> f.name == field.name))
+				final isSubclassShadow: Bool = isExt
+					&& localClass.superClass.t.get().fields.get().exists(f -> f.name == field.name);
+				if (isSubclassShadow)
 					fields.remove(field);
 				else
 					blocks.unshift(macro $i{field.name} = provider.get($v{fieldTypeName}, $v{field.name}));
@@ -106,6 +117,20 @@ final class DIBuilder {
 								case _: [fieldTypeName];
 							};
 							final primaryTypeName: String = producerTypeNames[0];
+							// Producer collection runs even for subclass-shadow fields: the runtime
+							// load/register logic still fires, only the Haxe field declaration is dropped.
+							final childDITypeName: Null<String> = switch t.toType() {
+								case TInst(inst, _) if (checkDI(inst)): typeNameOf(inst.get());
+								case _: null;
+							};
+							DIVerifier.addProducer(diSummary, {
+								fieldName: field.name,
+								producerTypeNames: producerTypeNames,
+								childDITypeName: childDITypeName,
+								imprt: importService,
+								exprt: exportService,
+								pos: field.pos
+							});
 							function checkExpr(expr: Expr): Expr {
 								return importService ? macro if (!provider.existsInParents($v{primaryTypeName}, $v{field.name})) $expr : expr;
 							}
@@ -157,6 +182,11 @@ final class DIBuilder {
 				} else if (importService) {
 					throw 'Expr not set';
 				} else {
+					if (!isSubclassShadow) DIVerifier.addConsumer(diSummary, {
+						fieldName: field.name,
+						consumerTypeName: fieldTypeName,
+						pos: field.pos
+					});
 					switch t.toType() {
 						case TInst(inst, _) if (checkDI(inst)):
 							creates.push(macro tasks.add());
