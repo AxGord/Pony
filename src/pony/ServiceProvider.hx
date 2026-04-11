@@ -7,48 +7,85 @@ import pony.magic.WR;
 
 private typedef WCB = Or<() -> Void, WR -> Void>;
 
+private typedef Export = { typeName: String, name: String };
+
 /**
- * ServiceProvider
+ * ServiceProvider — type-based DI container.
+ *
+ * Services are registered under all type names they are assignable to (concrete class,
+ * super classes, implemented interfaces). Lookup walks the scope chain looking for the
+ * requested type. At each level, if a single instance of the requested type exists it
+ * is returned regardless of name; if multiple exist, the field name disambiguates them.
+ *
  * @author AxGord <axgord@gmail.com>
  */
 @:nullSafety(Strict) final class ServiceProvider {
 
 	private final parent: Null<ServiceProvider>;
-	private final services: Map<String, Dynamic>;
-	private final waits: Map<String, Array<WCB>> = [];
-	private final exports: Array<String> = [];
+	// typeName -> (name -> instance). One instance may appear under multiple typeNames.
+	private final byType: Map<String, Map<String, Dynamic>>;
+	// typeName -> (name -> pending callbacks). Acts both as the "loading" marker and the waiter list.
+	private final waits: Map<String, Map<String, Array<WCB>>> = [];
+	private final exports: Array<Export> = [];
 
-	public function new(?parent: ServiceProvider, ?services: Map<String, Dynamic>) {
+	public function new(?parent: ServiceProvider) {
 		this.parent = parent;
-		this.services = services != null ? services : [];
+		this.byType = [];
 	}
 
-	public function load<T>(name: String, export: Bool = false): Void {
+	public function load(typeNames: Array<String>, name: String, export: Bool = false): Void {
 		if (export) {
-			exports.push(name);
+			for (tn in typeNames) if (!isExported(tn, name)) exports.push({typeName: tn, name: name});
 			if (parent != null)
-				parent.load(name, true);
+				parent.load(typeNames, name, true);
 			else
-				load(name);
+				loadLocal(typeNames, name);
 		} else {
-			if (waits.exists(name)) throw new Exception('Second load $name');
-			waits[name] = [];
+			loadLocal(typeNames, name);
 		}
 	}
 
-	public function set<T>(name: String, service: T, export: Bool = false): Void {
+	private function loadLocal(typeNames: Array<String>, name: String): Void {
+		for (tn in typeNames) {
+			var byName: Null<Map<String, Array<WCB>>> = waits.get(tn);
+			if (byName == null) {
+				byName = [];
+				waits.set(tn, byName);
+			}
+			if (byName.exists(name)) throw new Exception('Second load: type=$tn name=$name');
+			byName.set(name, []);
+		}
+	}
+
+	public function register(typeNames: Array<String>, name: String, service: Dynamic, export: Bool = false): Void {
 		if (export) {
-			if (!exports.contains(name)) exports.push(name);
+			for (tn in typeNames) if (!isExported(tn, name)) exports.push({typeName: tn, name: name});
 			if (parent != null)
-				parent.set(name, service, true);
+				parent.register(typeNames, name, service, true);
 			else
-				set(name, service);
+				registerLocal(typeNames, name, service);
 		} else {
-			services.set(name, service);
-			final w: Null<Array<WCB>> = waits[name];
-			if (w != null) {
-				for (wcb in w) callw(wcb, service);
-				waits.remove(name);
+			registerLocal(typeNames, name, service);
+		}
+	}
+
+	private function registerLocal(typeNames: Array<String>, name: String, service: Dynamic): Void {
+		for (tn in typeNames) {
+			var byName: Null<Map<String, Dynamic>> = byType.get(tn);
+			if (byName == null) {
+				byName = [];
+				byType.set(tn, byName);
+			}
+			byName.set(name, service);
+			// Fire pending waiters for this (type, name).
+			final waitersByName: Null<Map<String, Array<WCB>>> = waits.get(tn);
+			if (waitersByName != null) {
+				final w: Null<Array<WCB>> = waitersByName.get(name);
+				if (w != null) {
+					for (wcb in w) callw(wcb, service);
+					waitersByName.remove(name);
+					if (!waitersByName.iterator().hasNext()) waits.remove(tn);
+				}
 			}
 		}
 	}
@@ -73,49 +110,68 @@ private typedef WCB = Or<() -> Void, WR -> Void>;
 		};
 	}
 
-	public inline function exists(name: String): Bool {
-		return existsInCurrent(name) || existsInParents(name);
+	public inline function exists(typeName: String, name: String): Bool {
+		return existsInCurrent(typeName, name) || existsInParents(typeName, name);
 	}
 
-	public inline function existsInParents(name: String): Bool {
-		return !isExported(name) && parent != null && parent.exists(name);
+	public inline function existsInParents(typeName: String, name: String): Bool {
+		return !isExported(typeName, name) && parent != null && parent.exists(typeName, name);
 	}
 
-	public inline function existsInCurrent(name: String): Bool {
-		return waits.exists(name) || services.exists(name);
+	public function existsInCurrent(typeName: String, name: String): Bool {
+		final byName: Null<Map<String, Dynamic>> = byType.get(typeName);
+		if (byName != null && byName.exists(name)) return true;
+		final waitersByName: Null<Map<String, Array<WCB>>> = waits.get(typeName);
+		return waitersByName != null && waitersByName.exists(name);
 	}
 
-	public inline function isExported(name: String): Bool {
-		return exports.contains(name);
+	public function isExported(typeName: String, name: String): Bool {
+		for (e in exports) if (e.typeName == typeName && e.name == name) return true;
+		return false;
 	}
 
-	@:nullSafety(Off) public function get<T>(name: String): T {
-		var service: Null<T> = services.get(name);
-		if (service == null) {
-			if (parent == null) throw new Exception('Service not exists: $name');
-			service = parent.get(name);
-		}
-		return service;
-	}
-
-	public inline function waitReady(name: String, ?cb: () -> Void, ?wcb: WR -> Void): Void {
-		waitReadyWcb(name, toWcb(cb, wcb));
-	}
-
-	private function waitReadyWcb(name: String, wcb: WCB): Void {
-		final w: Null<Array<WCB>> = waits[name];
-		if (w != null) {
-			w.push(wcb);
-		} else {
-			var service: Null<Dynamic> = try get(name) catch (_: Dynamic) null;
-			if (service != null) {
-				callw(wcb, service);
-			} else {
-				if (parent != null)
-					parent.waitReadyWcb(name, wcb);
-				else
-					throw new Exception('Service not exists');
+	@:nullSafety(Off) public function get<T>(typeName: String, name: String): T {
+		final byName: Null<Map<String, Dynamic>> = byType.get(typeName);
+		if (byName != null) {
+			var count: Int = 0;
+			var only: Null<Dynamic> = null;
+			var firstName: Null<String> = null;
+			for (k => v in byName) {
+				count++;
+				if (count == 1) { only = v; firstName = k; }
+				if (count > 1) break;
 			}
+			if (count == 1) return only;
+			if (count > 1) {
+				final exact: Null<Dynamic> = byName.get(name);
+				if (exact != null) return exact;
+				throw new Exception('Ambiguous service: type=$typeName has multiple entries, name="$name" matches none');
+			}
+		}
+		if (parent == null) throw new Exception('Service not exists: type=$typeName name=$name');
+		return parent.get(typeName, name);
+	}
+
+	public inline function waitReady(typeName: String, name: String, ?cb: () -> Void, ?wcb: WR -> Void): Void {
+		waitReadyWcb(typeName, name, toWcb(cb, wcb));
+	}
+
+	private function waitReadyWcb(typeName: String, name: String, wcb: WCB): Void {
+		final waitersByName: Null<Map<String, Array<WCB>>> = waits.get(typeName);
+		if (waitersByName != null) {
+			final w: Null<Array<WCB>> = waitersByName.get(name);
+			if (w != null) {
+				w.push(wcb);
+				return;
+			}
+		}
+		var service: Null<Dynamic> = try get(typeName, name) catch (_: Dynamic) null;
+		if (service != null) {
+			callw(wcb, service);
+		} else if (parent != null) {
+			parent.waitReadyWcb(typeName, name, wcb);
+		} else {
+			throw new Exception('Service not exists: type=$typeName name=$name');
 		}
 	}
 
@@ -123,7 +179,7 @@ private typedef WCB = Or<() -> Void, WR -> Void>;
 
 	public function destroy(): Void {
 		exports.resize(0);
-		services.clear();
+		byType.clear();
 		waits.clear();
 	}
 

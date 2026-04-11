@@ -88,26 +88,36 @@ final class DIBuilder {
 					case EConst(CIdent(EXPORT_SERVICE)): exportService = true;
 					case _: throw 'Unsupported flag';
 				}
+				// Field's declared type — used as the lookup key on the consumer side. The resolver
+				// walks the scope chain and finds any registered instance assignable to this type.
+				final fieldTypeName: String = complexTypeName(t);
 				if (isExt && localClass.superClass.t.get().fields.get().exists(f -> f.name == field.name))
 					fields.remove(field);
 				else
-					blocks.unshift(macro $i{field.name} = provider.get($v{field.name}));
+					blocks.unshift(macro $i{field.name} = provider.get($v{fieldTypeName}, $v{field.name}));
 				if (e != null) {
 					switch e.expr {
 						case ENew(t, args):
 							final t: ComplexType = TPath(t);
+							// Producer registers the instance under all type names it is assignable to,
+							// so a consumer asking for any super class or interface still finds it.
+							final producerTypeNames: Array<String> = switch t.toType() {
+								case TInst(inst, _): collectAssignableTypeNames(inst);
+								case _: [fieldTypeName];
+							};
+							final primaryTypeName: String = producerTypeNames[0];
 							function checkExpr(expr: Expr): Expr {
-								return importService ? macro if (!provider.existsInParents($v{field.name})) $expr : expr;
+								return importService ? macro if (!provider.existsInParents($v{primaryTypeName}, $v{field.name})) $expr : expr;
 							}
 							switch t.toType() {
 								case TInst(inst, _) if (checkDI(inst)):
 									final childIsAsync: Bool = checkAsyncDestroy(inst);
 									if (childIsAsync && !isAsync)
 										Context.error('Service "${field.name}" implements AsyncDestroy, but this class does not. Add `implements pony.magic.AsyncDestroy` to this class.', field.pos);
-									loads.push(checkExpr(macro provider.load($v{field.name}, $v{exportService})));
+									loads.push(checkExpr(macro provider.load($v{producerTypeNames}, $v{field.name}, $v{exportService})));
 									if (childIsAsync) {
 										destroysAsync.unshift(importService && exportService ?
-											macro if (provider.isExported($v{field.name})) {
+											macro if (provider.isExported($v{primaryTypeName}, $v{field.name})) {
 												tasks.add();
 												$i{field.name}.destroyAsync(function(): Void tasks.end());
 											}
@@ -118,19 +128,19 @@ final class DIBuilder {
 										);
 									} else {
 										destroys.unshift(importService && exportService ?
-											macro if (provider.isExported($v{field.name})) $i{field.name}.destroy()
+											macro if (provider.isExported($v{primaryTypeName}, $v{field.name})) $i{field.name}.destroy()
 											: macro $i{field.name}.destroy()
 										);
 									}
 									creates.push(checkExpr(macro tasks.add()));
 									final cr = if (inst.get().interfaces.exists(f -> f.t.toString() == WR))
 										macro $i{t.toString()}.create(provider, instance -> {
-											provider.set($v{field.name}, instance, $v{exportService});
+											provider.register($v{producerTypeNames}, $v{field.name}, instance, $v{exportService});
 											instance.waitReady(tasks.end);
 										});
 									else
 										macro $i{t.toString()}.create(provider, instance -> {
-											provider.set($v{field.name}, instance, $v{exportService});
+											provider.register($v{producerTypeNames}, $v{field.name}, instance, $v{exportService});
 											tasks.end();
 										});
 									switch cr.expr {
@@ -139,7 +149,7 @@ final class DIBuilder {
 									}
 									creates.push(checkExpr(cr));
 								case _:
-									loads.push(checkExpr(macro provider.set($v{field.name}, $e, $v{exportService})));
+									loads.push(checkExpr(macro provider.register($v{producerTypeNames}, $v{field.name}, $e, $v{exportService})));
 							}
 						case _: throw 'Not supported';
 					}
@@ -151,9 +161,9 @@ final class DIBuilder {
 						case TInst(inst, _) if (checkDI(inst)):
 							creates.push(macro tasks.add());
 							if (inst.get().interfaces.exists(f -> f.t.toString() == WR))
-								creates.push(macro provider.waitReady($v{field.name}, instance -> instance.waitReady(tasks.end)));
+								creates.push(macro provider.waitReady($v{fieldTypeName}, $v{field.name}, instance -> instance.waitReady(tasks.end)));
 							else
-								creates.push(macro provider.waitReady($v{field.name}, tasks.end));
+								creates.push(macro provider.waitReady($v{fieldTypeName}, $v{field.name}, tasks.end));
 						case _: // skip
 					}
 				}
@@ -342,6 +352,39 @@ final class DIBuilder {
 	private static function checkAsyncDestroy(inst: haxe.macro.Type.Ref<ClassType>): Bool {
 		final type: ClassType = inst.get();
 		return type.interfaces.exists(f -> f.t.toString() == ASYNC_DESTROY) || (type.superClass != null && checkAsyncDestroy(type.superClass.t));
+	}
+
+	/**
+	 * Collect all type names that the given class is assignable to: itself, all super classes,
+	 * all directly and transitively implemented interfaces. Used for type-based service registration:
+	 * one instance gets registered under every assignable type so consumers can request any of them.
+	 */
+	private static function collectAssignableTypeNames(inst: haxe.macro.Type.Ref<ClassType>): Array<String> {
+		final result: Array<String> = [];
+		final visited: Map<String, Bool> = [];
+		function add(c: ClassType): Void {
+			final name: String = typeNameOf(c);
+			if (visited.exists(name)) return;
+			visited.set(name, true);
+			result.push(name);
+			for (i in c.interfaces) add(i.t.get());
+			if (c.superClass != null) add(c.superClass.t.get());
+		}
+		add(inst.get());
+		return result;
+	}
+
+	private static function typeNameOf(c: ClassType): String {
+		final segs: Array<String> = c.module.split('.');
+		final lastSeg: String = segs[segs.length - 1];
+		return c.name == lastSeg ? c.module : (c.module + '.' + c.name);
+	}
+
+	private static function complexTypeName(t: ComplexType): String {
+		return switch t.toType() {
+			case TInst(inst, _): typeNameOf(inst.get());
+			case _: throw 'Cannot resolve type name from non-class ComplexType';
+		};
 	}
 
 	#end
