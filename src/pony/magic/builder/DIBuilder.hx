@@ -254,24 +254,30 @@ final class DIBuilder {
 		// to guard against re-running — skip the guard to avoid polluting user's destroyAsync
 		// with a flag that would also swallow their own early-return logic.
 		final needsGuard: Bool = !(isAsync && !hasChildren);
-		// Guard field lives on the base class only. Subclasses access it via private inheritance
-		// (Haxe `private` = subclass-accessible), so one flag covers the whole chain.
-		if (needsGuard && !isExt) fields.push((macro class {
-			private var __diDestroyed: Bool = false;
-		}).fields.pop());
+		// Guard field is unique per class level (__diDestroyed_<ClassName>). Subclasses need
+		// their own flag because a shared inherited flag would block super.destroy() chain:
+		// when child.destroy sets the flag before calling super, parent.destroy's own guard
+		// check would see the flag set and early-return, skipping parent's cleanup.
+		final guardFieldName: String = '__diDestroyed_' + localClass.name;
+		if (needsGuard) fields.push({
+			name: guardFieldName,
+			access: [APrivate],
+			kind: FVar(macro: Bool, macro false),
+			pos: Context.currentPos()
+		});
 		// Framework-owned idempotency: user can write `if (something) return;` freely, the guard
 		// ensures teardown runs exactly once regardless. This makes user-written `_destroyed`
 		// flags redundant — their branch will never fire because the guard short-circuits first.
 		final guardPrefix: Expr = if (needsGuard) {
 			if (isAsync)
 				macro {
-					if (__diDestroyed) { cb(); return; }
-					__diDestroyed = true;
+					if ($i{guardFieldName}) { cb(); return; }
+					$i{guardFieldName} = true;
 				};
 			else
 				macro {
-					if (__diDestroyed) return;
-					__diDestroyed = true;
+					if ($i{guardFieldName}) return;
+					$i{guardFieldName} = true;
 				};
 		} else macro {};
 		if (destructor != null) switch destructor.kind {
