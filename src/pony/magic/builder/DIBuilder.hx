@@ -6,8 +6,7 @@ import haxe.macro.Expr;
 import haxe.macro.Type.ClassType;
 import haxe.macro.TypeTools;
 
-import pony.magic.builder.DIVerifier.DIClassSummary;
-import pony.magic.builder.DIVerifier.ProducerKind;
+import pony.magic.builder.DIVerifier;
 
 using Lambda;
 
@@ -191,8 +190,22 @@ final class DIBuilder {
 											provider.register($v{producerTypeNames}, $v{field.name}, instance, $v{exportService});
 											tasks.end();
 										});
+									final childConsumers: Array<ConsumerEntry> = DIVerifier.getConsumers(typeNameOf(inst.get()));
 									switch cr.expr {
-										case ECall(_, params): for (arg in args) params.push(arg);
+										case ECall(callTarget, params):
+											if (childConsumers.length > 0) {
+												switch callTarget.expr {
+													case EField(obj, _):
+														callTarget.expr = EField(obj, 'createFast');
+													case _: throw UNEXPECTED_ERROR;
+												}
+												var insertIdx: Int = 1;
+												for (consumer in childConsumers) {
+													params.insert(insertIdx, macro provider.get($v{consumer.consumerTypeName}, $v{consumer.fieldName}));
+													insertIdx++;
+												}
+											}
+											for (arg in args) params.push(arg);
 										case _: throw UNEXPECTED_ERROR;
 									}
 									creates.push(checkExpr(cr));

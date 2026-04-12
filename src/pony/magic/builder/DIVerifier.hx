@@ -103,6 +103,12 @@ typedef DIClassSummary = {
 		summary.consumers.push(entry);
 	}
 
+	/** Returns the class's own consumers (not merged with super chain). */
+	public static function getConsumers(className: String): Array<ConsumerEntry> {
+		final summary: Null<DIClassSummary> = summaries[className];
+		return summary != null ? summary.consumers : [];
+	}
+
 	/** Returns the resolved producer for a consumer field, or null if unresolved / conflicting paths. */
 	public static function getResolution(className: String, fieldName: String): Null<ResolvedRef> {
 		final classMap: Null<Map<String, Null<ResolvedRef>>> = resolutions[className];
