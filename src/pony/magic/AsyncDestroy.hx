@@ -11,7 +11,7 @@ package pony.magic;
  * AsyncDestroy child must also implement AsyncDestroy. DIBuilder enforces this at compile
  * time and generates the destroyAsync coordination via `pony.Tasks`.
  *
- * Leaf classes (AsyncDestroy with no @:service children) own their destroyAsync body
+ * Leaf classes (AsyncDestroy with no @:own/@:share children) own their destroyAsync body
  * completely — framework does not inject teardown or cb-firing code.
  *
  * @author AxGord <axgord@gmail.com>

@@ -7,6 +7,7 @@ import haxe.macro.Type.ClassType;
 import haxe.macro.TypeTools;
 
 import pony.magic.builder.DIVerifier.DIClassSummary;
+import pony.magic.builder.DIVerifier.ProducerKind;
 
 using Lambda;
 
@@ -29,9 +30,10 @@ final class DIBuilder {
 	private static inline final WR: String = 'pony.magic.WR';
 	private static inline final ASYNC_DESTROY: String = 'pony.magic.AsyncDestroy';
 	private static inline final HAS_LISTENER: String = 'pony.magic.HasListener';
-	private static inline final SERVICE: String = ':service';
-	private static inline final IMPORT_SERVICE: String = 'imprt';
-	private static inline final EXPORT_SERVICE: String = 'exprt';
+	private static inline final OWN: String = ':own';
+	private static inline final SHARE: String = ':share';
+	private static inline final USE: String = ':use';
+	private static inline final LEGACY_SERVICE: String = ':service';
 
 	#end
 
@@ -88,15 +90,19 @@ final class DIBuilder {
 		}
 		for (field in fields) switch field.kind {
 			case FVar(t, e) if (t != null):
-				final meta: Null<MetadataEntry> = field.meta.getMeta(SERVICE);
-				if (meta == null) continue;
-				var importService: Bool = false;
-				var exportService: Bool = false;
-				for (param in meta.params) switch param.expr {
-					case EConst(CIdent(IMPORT_SERVICE)): importService = true;
-					case EConst(CIdent(EXPORT_SERVICE)): exportService = true;
-					case _: throw 'Unsupported flag';
-				}
+				if (field.meta.getMeta(LEGACY_SERVICE) != null)
+					Context.error('DI: @:service is replaced. Use @:own, @:share, or @:use.', field.pos);
+				final ownMeta: Null<MetadataEntry> = field.meta.getMeta(OWN);
+				final shareMeta: Null<MetadataEntry> = field.meta.getMeta(SHARE);
+				final useMeta: Null<MetadataEntry> = field.meta.getMeta(USE);
+				final presentCount: Int = (ownMeta != null ? 1 : 0) + (shareMeta != null ? 1 : 0) + (useMeta != null ? 1 : 0);
+				if (presentCount == 0) continue;
+				if (presentCount > 1)
+					Context.error('DI: field has multiple service attributes. Pick one of @:own, @:share, @:use.', field.pos);
+				if ((ownMeta != null || shareMeta != null) && e == null)
+					Context.error('DI: @:${ownMeta != null ? "own" : "share"} requires an initializer.', field.pos);
+				if (useMeta != null && e != null)
+					Context.error('DI: @:use must not have an initializer. Use @:own or @:share to create the instance.', field.pos);
 				// Field's declared type — used as the lookup key on the consumer side. The resolver
 				// walks the scope chain and finds any registered instance assignable to this type.
 				final fieldTypeName: String = complexTypeName(t);
@@ -106,7 +112,26 @@ final class DIBuilder {
 					fields.remove(field);
 				else
 					blocks.unshift(macro $i{field.name} = provider.get($v{fieldTypeName}, $v{field.name}));
-				if (e != null) {
+				if (useMeta != null) {
+					if (!isSubclassShadow) DIVerifier.addConsumer(diSummary, {
+						fieldName: field.name,
+						consumerTypeName: fieldTypeName,
+						pos: field.pos
+					});
+					switch t.toType() {
+						case TInst(inst, _) if (checkDI(inst)):
+							creates.push(macro tasks.add());
+							if (inst.get().interfaces.exists(f -> f.t.toString() == WR))
+								creates.push(macro provider.waitReady($v{fieldTypeName}, $v{field.name}, instance -> instance.waitReady(tasks.end)));
+							else
+								creates.push(macro provider.waitReady($v{fieldTypeName}, $v{field.name}, tasks.end));
+						case _: // skip
+					}
+				} else {
+					final kind: ProducerKind = shareMeta != null ? Share : Own;
+					// Share = imprt + exprt: guarded on ancestor fallback, published to root.
+					final importService: Bool = kind == Share;
+					final exportService: Bool = kind == Share;
 					switch e.expr {
 						case ENew(t, args):
 							final t: ComplexType = TPath(t);
@@ -127,8 +152,7 @@ final class DIBuilder {
 								fieldName: field.name,
 								producerTypeNames: producerTypeNames,
 								childDITypeName: childDITypeName,
-								imprt: importService,
-								exprt: exportService,
+								kind: kind,
 								pos: field.pos
 							});
 							function checkExpr(expr: Expr): Expr {
@@ -179,23 +203,6 @@ final class DIBuilder {
 						case _: throw 'Not supported';
 					}
 					field.kind = FVar(t, null);
-				} else if (importService) {
-					throw 'Expr not set';
-				} else {
-					if (!isSubclassShadow) DIVerifier.addConsumer(diSummary, {
-						fieldName: field.name,
-						consumerTypeName: fieldTypeName,
-						pos: field.pos
-					});
-					switch t.toType() {
-						case TInst(inst, _) if (checkDI(inst)):
-							creates.push(macro tasks.add());
-							if (inst.get().interfaces.exists(f -> f.t.toString() == WR))
-								creates.push(macro provider.waitReady($v{fieldTypeName}, $v{field.name}, instance -> instance.waitReady(tasks.end)));
-							else
-								creates.push(macro provider.waitReady($v{fieldTypeName}, $v{field.name}, tasks.end));
-						case _: // skip
-					}
 				}
 			case _:
 		}

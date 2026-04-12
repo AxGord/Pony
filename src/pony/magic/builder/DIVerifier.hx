@@ -8,19 +8,27 @@ import haxe.macro.Expr.Position;
 using Lambda;
 
 /**
- * Producer entry collected from a DI class's `@:service` field with an initializer.
+ * Kind of a producer field. `Own` registers the instance in the local scope only;
+ * `Share` guards construction on an ancestor fallback and publishes the instance at root.
+ */
+enum ProducerKind {
+	Own;
+	Share;
+}
+
+/**
+ * Producer entry collected from a DI class's `@:own` / `@:share` field.
  */
 typedef ProducerEntry = {
 	final fieldName: String;
 	final producerTypeNames: Array<String>;
 	final childDITypeName: Null<String>;
-	final imprt: Bool;
-	final exprt: Bool;
+	final kind: ProducerKind;
 	final pos: Position;
 };
 
 /**
- * Consumer entry collected from a DI class's use-form `@:service` field (no initializer).
+ * Consumer entry collected from a DI class's `@:use` field.
  */
 typedef ConsumerEntry = {
 	final fieldName: String;
@@ -198,7 +206,7 @@ typedef DIClassSummary = {
 		final summary: Null<DIClassSummary> = summaries[typeName];
 		if (summary == null) return;
 		for (producer in summary.producers) {
-			if (producer.exprt) out.push(producer);
+			if (producer.kind == Share) out.push(producer);
 			final child: Null<String> = producer.childDITypeName;
 			if (child != null) collectExportsInSubtree(child, out, visited);
 		}
