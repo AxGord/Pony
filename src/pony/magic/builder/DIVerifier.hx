@@ -57,6 +57,7 @@ typedef DIClassSummary = {
 	final superTypeName: Null<String>;
 	final producers: Array<ProducerEntry>;
 	final consumers: Array<ConsumerEntry>;
+	final usesProviderDirectly: Bool;
 };
 
 /**
@@ -79,13 +80,16 @@ typedef DIClassSummary = {
 	 * Create the summary for `typeName`. The first call installs the `onAfterTyping`
 	 * analyzer hook.
 	 */
-	public static function beginClass(typeName: String, pos: Position, ?superTypeName: String): DIClassSummary {
+	public static function beginClass(
+		typeName: String, pos: Position, ?superTypeName: String, usesProviderDirectly: Bool = false
+	): DIClassSummary {
 		final summary: DIClassSummary = {
 			typeName: typeName,
 			pos: pos,
 			superTypeName: superTypeName,
 			producers: [],
-			consumers: []
+			consumers: [],
+			usesProviderDirectly: usesProviderDirectly
 		};
 		summaries[typeName] = summary;
 		if (!analyzerInstalled) {
@@ -113,6 +117,20 @@ typedef DIClassSummary = {
 	public static function getResolution(className: String, fieldName: String): Null<ResolvedRef> {
 		final classMap: Null<Map<String, Null<ResolvedRef>>> = resolutions[className];
 		return classMap != null ? classMap[fieldName] : null;
+	}
+
+	/**
+	 * Check if a class is eligible for L3 static optimization.
+	 * A class is eligible when it has no `@:share` producers and no direct
+	 * `provider` references in user code, recursively through the DI super chain.
+	 */
+	public static function isStaticEligible(className: String): Bool {
+		final summary: Null<DIClassSummary> = summaries[className];
+		if (summary == null) return false;
+		if (summary.usesProviderDirectly) return false;
+		if (summary.producers.exists(p -> p.kind == Share)) return false;
+		final superName: Null<String> = summary.superTypeName;
+		return superName == null || isStaticEligible(superName);
 	}
 
 	private static function analyze(): Void {

@@ -112,6 +112,21 @@ import haxe.macro.Expr;
 	}
 
 	/**
+	 * Check whether an expression tree contains a reference to the given identifier.
+	 * Nested functions are skipped — a reference inside a lambda doesn't count.
+	 */
+	public static function containsIdent(e: Expr, name: String): Bool {
+		return switch e.expr {
+			case EConst(CIdent(n)) if (n == name): true;
+			case EFunction(_, _): false;
+			case _:
+				var found: Bool = false;
+				haxe.macro.ExprTools.iter(e, sub -> if (!found && containsIdent(sub, name)) found = true);
+				found;
+		};
+	}
+
+	/**
 	 * Check whether an expression tree contains a direct call to the given function name.
 	 * Nested functions are skipped — a call inside a lambda doesn't count as the outer
 	 * function calling `name`.

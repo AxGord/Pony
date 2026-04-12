@@ -50,9 +50,6 @@ final class DIBuilder {
 		final fields: Array<Field> = Context.getBuildFields();
 		final diSuperTypeName: Null<String> = isExt && localClass.superClass != null
 			? typeNameOf(localClass.superClass.t.get()) : null;
-		final diSummary: DIClassSummary = DIVerifier.beginClass(
-			typeNameOf(localClass), localClass.pos, diSuperTypeName
-		);
 		var constuctor: Null<Field> = fields.find(f -> f.name == 'new');
 		if (constuctor == null) {
 			if (Context.getLocalClass().get().superClass == null) {
@@ -64,6 +61,22 @@ final class DIBuilder {
 				throw 'Constructor not exists';
 			}
 		}
+		// Detect user-code references to `provider` (before framework modifications).
+		var usesProvider: Bool = false;
+		switch constuctor.kind {
+			case FFun(fun) if (fun.expr != null):
+				usesProvider = fun.expr.containsIdent('provider');
+			case _:
+		}
+		if (!usesProvider) for (f in fields) if (f.name != 'new') switch f.kind {
+			case FFun(fun) if (fun.expr != null && fun.expr.containsIdent('provider')):
+				usesProvider = true;
+				break;
+			case _:
+		}
+		final diSummary: DIClassSummary = DIVerifier.beginClass(
+			typeNameOf(localClass), localClass.pos, diSuperTypeName, usesProvider
+		);
 		final destructor: Null<Field> = fields.find(f -> f.name == 'destroy' || f.name == 'destroyAsync');
 		if (destructor != null) {
 			if (isAsync && destructor.name != 'destroyAsync')
@@ -87,8 +100,11 @@ final class DIBuilder {
 		} else {
 			destroys.push(macro provider.destroy());
 		}
-		// Pre-scan: collect @:own non-DI producers for local var optimization in createFast calls.
+		// Pre-scan: collect @:own producers for local var optimization in createFast calls.
+		// ownNonDIVars — non-DI types (L2 optimization).
+		// ownStaticDIVars — L3-eligible DI types (no @:share, no WR, no provider refs).
 		final ownNonDIVars: Map<String, {varName: String, typeNames: Array<String>}> = [];
+		final ownStaticDIVars: Map<String, {varName: String, typeNames: Array<String>}> = [];
 		for (field in fields) switch field.kind {
 			case FVar(t, {expr: ENew(tp, _)}) if (
 				t != null && field.meta.getMeta(OWN) != null
@@ -97,6 +113,13 @@ final class DIBuilder {
 				switch TPath(tp).toType() {
 					case TInst(inst, _) if (!checkDI(inst)):
 						ownNonDIVars[field.name] = {
+							varName: '_di_${field.name}',
+							typeNames: collectAssignableTypeNames(inst)
+						};
+					case TInst(inst, _) if (
+						checkDI(inst) && !checkWR(inst) && DIVerifier.isStaticEligible(typeNameOf(inst.get()))
+					):
+						ownStaticDIVars[field.name] = {
 							varName: '_di_${field.name}',
 							typeNames: collectAssignableTypeNames(inst)
 						};
@@ -178,7 +201,20 @@ final class DIBuilder {
 									final childIsAsync: Bool = checkAsyncDestroy(inst);
 									if (childIsAsync && !isAsync)
 										Context.error('Service "${field.name}" implements AsyncDestroy, but this class does not. Add `implements pony.magic.AsyncDestroy` to this class.', field.pos);
-									loads.push(checkExpr(macro provider.load($v{producerTypeNames}, $v{field.name}, $v{exportService})));
+									// L3: skip provider.load for static-eligible DI children; declare local var instead.
+									final staticDIVar: Null<{varName: String, typeNames: Array<String>}> = ownStaticDIVars[field.name];
+									if (staticDIVar != null)
+										loads.push({
+											expr: EVars([{
+												name: staticDIVar.varName,
+												type: TPath({pack: [], name: 'Null', params: [TPType(t)]}),
+												expr: macro null,
+												isFinal: false
+											}]),
+											pos: Context.currentPos()
+										})
+									else
+										loads.push(checkExpr(macro provider.load($v{producerTypeNames}, $v{field.name}, $v{exportService})));
 									if (childIsAsync) {
 										destroysAsync.unshift(importService && exportService ?
 											macro if (provider.isExported($v{primaryTypeName}, $v{field.name})) {
@@ -197,11 +233,18 @@ final class DIBuilder {
 										);
 									}
 									creates.push(checkExpr(macro tasks.add()));
-									final cr = if (inst.get().interfaces.exists(f -> f.t.toString() == WR))
+									// L3: for static-eligible DI children, store instance in local var.
+									final cr = if (staticDIVar != null)
+										macro $i{t.toString()}.create(provider, instance -> {
+											$i{staticDIVar.varName} = instance;
+											provider.register($v{producerTypeNames}, $v{field.name}, instance, $v{exportService});
+											tasks.end();
+										})
+									else if (inst.get().interfaces.exists(f -> f.t.toString() == WR))
 										macro $i{t.toString()}.create(provider, instance -> {
 											provider.register($v{producerTypeNames}, $v{field.name}, instance, $v{exportService});
 											instance.waitReady(tasks.end);
-										});
+										})
 									else
 										macro $i{t.toString()}.create(provider, instance -> {
 											provider.register($v{producerTypeNames}, $v{field.name}, instance, $v{exportService});
@@ -218,7 +261,7 @@ final class DIBuilder {
 												}
 												var insertIdx: Int = 1;
 												for (consumer in childConsumers) {
-													final matchedVar: Null<String> = resolveLocalVar(consumer, ownNonDIVars);
+													final matchedVar: Null<String> = resolveLocalVar(consumer, ownNonDIVars, ownStaticDIVars);
 													params.insert(insertIdx, matchedVar != null
 														? macro $i{matchedVar}
 														: macro provider.get($v{consumer.consumerTypeName}, $v{consumer.fieldName})
@@ -512,12 +555,15 @@ final class DIBuilder {
 	}
 
 	/**
-	 * Find a same-level @:own non-DI producer matching a child consumer by type.
+	 * Find a same-level @:own producer matching a child consumer by type.
+	 * Checks both non-DI local vars (L2) and static-eligible DI local vars (L3).
 	 * Mirrors ServiceProvider.get resolution: single type match returns directly,
 	 * multiple matches disambiguate by field name, no match returns null.
 	 */
 	private static function resolveLocalVar(
-		consumer: ConsumerEntry, ownNonDIVars: Map<String, {varName: String, typeNames: Array<String>}>
+		consumer: ConsumerEntry,
+		ownNonDIVars: Map<String, {varName: String, typeNames: Array<String>}>,
+		ownStaticDIVars: Map<String, {varName: String, typeNames: Array<String>}>
 	): Null<String> {
 		var matched: Null<String> = null;
 		var count: Int = 0;
@@ -526,7 +572,17 @@ final class DIBuilder {
 			if (count == 1) matched = info.varName;
 			if (fieldName == consumer.fieldName) return info.varName;
 		}
+		for (fieldName => info in ownStaticDIVars) if (info.typeNames.contains(consumer.consumerTypeName)) {
+			count++;
+			if (count == 1) matched = info.varName;
+			if (fieldName == consumer.fieldName) return info.varName;
+		}
 		return count == 1 ? matched : null;
+	}
+
+	private static function checkWR(inst: haxe.macro.Type.Ref<ClassType>): Bool {
+		final type: ClassType = inst.get();
+		return type.interfaces.exists(f -> f.t.toString() == WR) || (type.superClass != null && checkWR(type.superClass.t));
 	}
 
 	#end
