@@ -128,6 +128,9 @@ final class DIBuilder {
 			case _:
 		}
 		final depDescriptors: Array<{paramName: String, type: ComplexType}> = [];
+		// L3-stage4: @:own static-eligible DI fields passed as constructor params.
+		// Unlike depDescriptors (@:use, external input), these are self-created in load().
+		final ownStaticDepDescriptors: Array<{paramName: String, type: ComplexType}> = [];
 		for (field in fields) switch field.kind {
 			case FVar(t, e) if (t != null):
 				if (field.meta.getMeta(LEGACY_SERVICE) != null)
@@ -157,17 +160,30 @@ final class DIBuilder {
 						consumerTypeName: fieldTypeName,
 						pos: field.pos
 					});
+					// L3-stage3: skip waitReady for static-eligible DI deps — passed directly via createFast.
 					switch t.toType() {
 						case TInst(inst, _) if (checkDI(inst)):
-							creates.push(macro tasks.add());
-							if (inst.get().interfaces.exists(f -> f.t.toString() == WR))
-								creates.push(macro provider.waitReady($v{fieldTypeName}, $v{field.name}, instance -> instance.waitReady(tasks.end)));
-							else
-								creates.push(macro provider.waitReady($v{fieldTypeName}, $v{field.name}, tasks.end));
+							final depIsStatic: Bool = !checkWR(inst) && DIVerifier.isStaticEligible(typeNameOf(inst.get()));
+							if (!depIsStatic) {
+								creates.push(macro tasks.add());
+								if (inst.get().interfaces.exists(f -> f.t.toString() == WR))
+									creates.push(macro provider.waitReady($v{fieldTypeName}, $v{field.name}, instance -> instance.waitReady(tasks.end)));
+								else
+									creates.push(macro provider.waitReady($v{fieldTypeName}, $v{field.name}, tasks.end));
+							}
 						case _: // skip
 					}
 				} else {
-					blocks.unshift(macro $i{field.name} = provider.get($v{fieldTypeName}, $v{field.name}));
+					// L3-stage4: static-eligible @:own DI fields use constructor param with provider.get fallback
+					// (create path passes null, createFast path passes load-local var).
+					final isOwnStaticDI: Bool = ownStaticDIVars.exists(field.name);
+					if (isOwnStaticDI) {
+						final depParamName: String = '_di_${field.name}';
+						ownStaticDepDescriptors.push({paramName: depParamName, type: t});
+						blocks.unshift(macro $i{field.name} = $i{depParamName} != null ? $i{depParamName} : provider.get($v{fieldTypeName}, $v{field.name}));
+					} else {
+						blocks.unshift(macro $i{field.name} = provider.get($v{fieldTypeName}, $v{field.name}));
+					}
 					final kind: ProducerKind = shareMeta != null ? Share : Own;
 					// Share = imprt + exprt: guarded on ancestor fallback, published to root.
 					final importService: Bool = kind == Share;
@@ -234,6 +250,7 @@ final class DIBuilder {
 									}
 									creates.push(checkExpr(macro tasks.add()));
 									// L3: for static-eligible DI children, store instance in local var.
+									// Register kept for create() backward compat; createFast skips it.
 									final cr = if (staticDIVar != null)
 										macro $i{t.toString()}.create(provider, instance -> {
 											$i{staticDIVar.varName} = instance;
@@ -303,6 +320,9 @@ final class DIBuilder {
 		// DIBuilder owns the unlisten() call in teardown (rather than HasListenerBuilder prepending
 		// it to user destroy) so builder order becomes irrelevant and async classes compose cleanly.
 		if (hasListener) destroys.unshift(macro unlisten());
+		// L3-stage3: self is static-eligible when all conditions met.
+		final selfIsStatic: Bool = !usesProvider && !isAsync
+			&& DIVerifier.isStaticEligible(typeNameOf(localClass));
 		switch constuctor.kind {
 			case FFun(fun):
 				fun.expr = fun.expr.replaceToBlock();
@@ -318,16 +338,18 @@ final class DIBuilder {
 				switch nw.expr {
 					case ENew(_, params):
 						for (_ in depDescriptors) params.push(macro null);
+						for (_ in ownStaticDepDescriptors) params.push(macro null);
 						for (arg in fun.args) params.push(macro $i{arg.name});
 					case _:
 						throw UNEXPECTED_ERROR;
 				}
 
+				final loadBody: Array<Expr> = loads.concat(creates);
 				final load: Field = (macro class {
 					public static function load(provider: pony.ServiceProvider, cb: () -> Void): Void {
 						final tasks: pony.Tasks = new pony.Tasks(cb);
 						tasks.add();
-						$b{loads.concat(creates)}
+						$b{loadBody}
 						tasks.end();
 					}
 				}).fields.pop();
@@ -344,21 +366,68 @@ final class DIBuilder {
 				// trace(new haxe.macro.Printer().printField(create));
 				fields.unshift(load);
 				fields.unshift(create);
-				if (depDescriptors.length > 0) {
+				final hasDepDescriptors: Bool = depDescriptors.length > 0 || ownStaticDepDescriptors.length > 0;
+				if (hasDepDescriptors) {
+					// nwFast for non-selfIsStatic: @:use deps from createFast params, @:own static as null (fallback).
+					// nwFastInlined for selfIsStatic: all deps from scope (params + load-local vars).
 					final nwFast: Expr = macro new $ctp(provider);
 					switch nwFast.expr {
 						case ENew(_, params):
 							for (dep in depDescriptors) params.push(macro $i{dep.paramName});
+							for (_ in ownStaticDepDescriptors) params.push(macro null);
 							for (arg in fun.args) params.push(macro $i{arg.name});
 						case _:
 							throw UNEXPECTED_ERROR;
 					}
-					final createFast: Field = (macro class {
-						public static function createFast(?serviceProvider: pony.ServiceProvider, cb: $ct -> Void): Void {
-							final provider: pony.ServiceProvider = serviceProvider != null ? serviceProvider.sub() : new pony.ServiceProvider();
-							load(provider, () -> cb($nwFast));
+					final nwFastInlined: Expr = if (selfIsStatic) {
+						final e: Expr = macro new $ctp(provider);
+						switch e.expr {
+							case ENew(_, params):
+								for (dep in depDescriptors) params.push(macro $i{dep.paramName});
+								for (dep in ownStaticDepDescriptors) params.push({expr: EConst(CIdent(dep.paramName)), pos: Context.currentPos()});
+								for (arg in fun.args) params.push(macro $i{arg.name});
+							case _:
+								throw UNEXPECTED_ERROR;
 						}
-					}).fields.pop();
+						e;
+					} else macro null; // unused
+					// L3-stage3+4: static-eligible classes skip provider.sub() and inline load
+					// body into createFast so @:own static local vars are in scope for nwFast.
+					// Loads (var declarations) go before Tasks so closures can capture them.
+					// All exprs in one flat block to keep var scoping correct.
+					final createFast: Field = if (selfIsStatic) {
+						// Split loads: var declarations first (before Tasks closure for capture),
+						// then non-var loads (super.load etc.) after Tasks (they reference tasks).
+						final body: Array<Expr> = [macro final provider: pony.ServiceProvider = cast serviceProvider];
+						for (e in loads) switch e.expr {
+							case EVars(_): body.push(e);
+							case _:
+						}
+						body.push(macro final tasks: pony.Tasks = new pony.Tasks(() -> cb($nwFastInlined)));
+						body.push(macro tasks.add());
+						for (e in loads) switch e.expr {
+							case EVars(_):
+							case _: body.push(e);
+						}
+						for (e in creates) body.push(e);
+						body.push(macro tasks.end());
+						final f: Field = (macro class {
+							public static function createFast(?serviceProvider: pony.ServiceProvider, cb: $ct -> Void): Void {}
+						}).fields.pop();
+						switch f.kind {
+							case FFun(fun):
+								fun.expr = macro $b{body};
+							case _: throw UNEXPECTED_ERROR;
+						}
+						f;
+					} else {
+						(macro class {
+							public static function createFast(?serviceProvider: pony.ServiceProvider, cb: $ct -> Void): Void {
+								final provider: pony.ServiceProvider = serviceProvider != null ? serviceProvider.sub() : new pony.ServiceProvider();
+								load(provider, () -> cb($nwFast));
+							}
+						}).fields.pop();
+					};
 					switch createFast.kind {
 						case FFun(f):
 							var depIdx: Int = 1;
@@ -378,6 +447,15 @@ final class DIBuilder {
 				});
 				var depArgIdx: Int = 1;
 				for (dep in depDescriptors) {
+					fun.args.insert(depArgIdx, {
+						name: dep.paramName,
+						type: TPath({pack: [], name: 'Null', params: [TPType(dep.type)]}),
+						value: macro null
+					});
+					depArgIdx++;
+				}
+				// L3-stage4: @:own static DI fields as constructor params (after @:use deps).
+				for (dep in ownStaticDepDescriptors) {
 					fun.args.insert(depArgIdx, {
 						name: dep.paramName,
 						type: TPath({pack: [], name: 'Null', params: [TPType(dep.type)]}),
