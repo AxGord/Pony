@@ -87,6 +87,23 @@ final class DIBuilder {
 		} else {
 			destroys.push(macro provider.destroy());
 		}
+		// Pre-scan: collect @:own non-DI producers for local var optimization in createFast calls.
+		final ownNonDIVars: Map<String, {varName: String, typeNames: Array<String>}> = [];
+		for (field in fields) switch field.kind {
+			case FVar(t, {expr: ENew(tp, _)}) if (
+				t != null && field.meta.getMeta(OWN) != null
+				&& field.meta.getMeta(SHARE) == null && field.meta.getMeta(USE) == null
+			):
+				switch TPath(tp).toType() {
+					case TInst(inst, _) if (!checkDI(inst)):
+						ownNonDIVars[field.name] = {
+							varName: '_di_${field.name}',
+							typeNames: collectAssignableTypeNames(inst)
+						};
+					case _:
+				}
+			case _:
+		}
 		final depDescriptors: Array<{paramName: String, type: ComplexType}> = [];
 		for (field in fields) switch field.kind {
 			case FVar(t, e) if (t != null):
@@ -201,7 +218,11 @@ final class DIBuilder {
 												}
 												var insertIdx: Int = 1;
 												for (consumer in childConsumers) {
-													params.insert(insertIdx, macro provider.get($v{consumer.consumerTypeName}, $v{consumer.fieldName}));
+													final matchedVar: Null<String> = resolveLocalVar(consumer, ownNonDIVars);
+													params.insert(insertIdx, matchedVar != null
+														? macro $i{matchedVar}
+														: macro provider.get($v{consumer.consumerTypeName}, $v{consumer.fieldName})
+													);
 													insertIdx++;
 												}
 											}
@@ -210,7 +231,25 @@ final class DIBuilder {
 									}
 									creates.push(checkExpr(cr));
 								case _:
-									loads.push(checkExpr(macro provider.register($v{producerTypeNames}, $v{field.name}, $e, $v{exportService})));
+									final localVar: Null<{varName: String, typeNames: Array<String>}> = ownNonDIVars[field.name];
+									if (localVar != null) {
+										loads.push({
+											expr: EVars([{
+												name: localVar.varName,
+												type: t,
+												expr: e,
+												isFinal: true
+											}]),
+											pos: Context.currentPos()
+										});
+										loads.push(checkExpr(macro provider.register(
+											$v{producerTypeNames}, $v{field.name}, $i{localVar.varName}, $v{exportService}
+										)));
+									} else {
+										loads.push(checkExpr(macro provider.register(
+											$v{producerTypeNames}, $v{field.name}, $e, $v{exportService}
+										)));
+									}
 							}
 						case _: throw 'Not supported';
 					}
@@ -470,6 +509,24 @@ final class DIBuilder {
 			case TInst(inst, _): typeNameOf(inst.get());
 			case _: throw 'Cannot resolve type name from non-class ComplexType';
 		};
+	}
+
+	/**
+	 * Find a same-level @:own non-DI producer matching a child consumer by type.
+	 * Mirrors ServiceProvider.get resolution: single type match returns directly,
+	 * multiple matches disambiguate by field name, no match returns null.
+	 */
+	private static function resolveLocalVar(
+		consumer: ConsumerEntry, ownNonDIVars: Map<String, {varName: String, typeNames: Array<String>}>
+	): Null<String> {
+		var matched: Null<String> = null;
+		var count: Int = 0;
+		for (fieldName => info in ownNonDIVars) if (info.typeNames.contains(consumer.consumerTypeName)) {
+			count++;
+			if (count == 1) matched = info.varName;
+			if (fieldName == consumer.fieldName) return info.varName;
+		}
+		return count == 1 ? matched : null;
 	}
 
 	#end
