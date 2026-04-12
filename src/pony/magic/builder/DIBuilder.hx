@@ -396,21 +396,26 @@ final class DIBuilder {
 					// Loads (var declarations) go before Tasks so closures can capture them.
 					// All exprs in one flat block to keep var scoping correct.
 					final createFast: Field = if (selfIsStatic) {
-						// Split loads: var declarations first (before Tasks closure for capture),
-						// then non-var loads (super.load etc.) after Tasks (they reference tasks).
+						// L3-stage5: when no async work remains (no non-EVars loads, no creates),
+						// skip Tasks wrapper entirely and call cb synchronously.
+						final hasNonEVarLoads: Bool = loads.exists(e -> switch e.expr { case EVars(_): false; case _: true; });
 						final body: Array<Expr> = [macro final provider: pony.ServiceProvider = cast serviceProvider];
 						for (e in loads) switch e.expr {
 							case EVars(_): body.push(e);
 							case _:
 						}
-						body.push(macro final tasks: pony.Tasks = new pony.Tasks(() -> cb($nwFastInlined)));
-						body.push(macro tasks.add());
-						for (e in loads) switch e.expr {
-							case EVars(_):
-							case _: body.push(e);
+						if (!hasNonEVarLoads && creates.length == 0) {
+							body.push(macro cb($nwFastInlined));
+						} else {
+							body.push(macro final tasks: pony.Tasks = new pony.Tasks(() -> cb($nwFastInlined)));
+							body.push(macro tasks.add());
+							for (e in loads) switch e.expr {
+								case EVars(_):
+								case _: body.push(e);
+							}
+							for (e in creates) body.push(e);
+							body.push(macro tasks.end());
 						}
-						for (e in creates) body.push(e);
-						body.push(macro tasks.end());
 						final f: Field = (macro class {
 							public static function createFast(?serviceProvider: pony.ServiceProvider, cb: $ct -> Void): Void {}
 						}).fields.pop();
