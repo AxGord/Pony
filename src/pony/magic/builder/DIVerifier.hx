@@ -37,6 +37,18 @@ typedef ConsumerEntry = {
 };
 
 /**
+ * Resolved producer reference for a consumer field. Stored per (className, fieldName)
+ * by the verifier after graph analysis; consumed by `DIBuilder` in stage 3 to choose
+ * `createFast` vs `create` at call sites.
+ */
+typedef ResolvedRef = {
+	final ownerClass: String;
+	final fieldName: String;
+	final scopeLevel: Int;
+	final fromRootExport: Bool;
+};
+
+/**
  * Per-class summary collected by `DIBuilder` and consumed by `DIVerifier.analyze`.
  */
 typedef DIClassSummary = {
@@ -60,6 +72,7 @@ typedef DIClassSummary = {
 
 	private static final summaries: Map<String, DIClassSummary> = [];
 	private static final erroredPositions: Array<String> = [];
+	private static final resolutions: Map<String, Map<String, Null<ResolvedRef>>> = [];
 	private static var analyzerInstalled: Bool = false;
 
 	/**
@@ -88,6 +101,12 @@ typedef DIClassSummary = {
 
 	public static inline function addConsumer(summary: DIClassSummary, entry: ConsumerEntry): Void {
 		summary.consumers.push(entry);
+	}
+
+	/** Returns the resolved producer for a consumer field, or null if unresolved / conflicting paths. */
+	public static function getResolution(className: String, fieldName: String): Null<ResolvedRef> {
+		final classMap: Null<Map<String, Null<ResolvedRef>>> = resolutions[className];
+		return classMap != null ? classMap[fieldName] : null;
 	}
 
 	private static function analyze(): Void {
@@ -219,7 +238,7 @@ typedef DIClassSummary = {
 		if (mergedConsumers.length == 0) return;
 		final paths: Array<Array<String>> = enumeratePaths(summary.typeName, parentsOf);
 		for (consumer in mergedConsumers) for (path in paths)
-			if (!checkConsumerOnPath(consumer, path, rootExports)) break;
+			if (!checkConsumerOnPath(summary.typeName, consumer, path, rootExports)) break;
 	}
 
 	private static function collectMergedConsumers(summary: DIClassSummary): Array<ConsumerEntry> {
@@ -266,9 +285,11 @@ typedef DIClassSummary = {
 	 * own producers (folded with its DI super chain); the final level additionally
 	 * includes the root's collected `exprt` producers. Returns `true` when the
 	 * consumer resolves on this path, `false` when an error has been emitted.
+	 * Records the resolved producer ref into the `resolutions` table for Level 2.
 	 */
 	private static function checkConsumerOnPath(
-		consumer: ConsumerEntry, path: Array<String>, rootExports: Map<String, Array<ProducerEntry>>
+		verifiedClass: String, consumer: ConsumerEntry, path: Array<String>,
+		rootExports: Map<String, Array<ProducerEntry>>
 	): Bool {
 		final lastIndex: Int = path.length - 1;
 		for (i in 0...path.length) {
@@ -280,13 +301,32 @@ typedef DIClassSummary = {
 				p -> p.producerTypeNames.contains(consumer.consumerTypeName)
 			);
 			if (candidates.length == 0) continue;
-			if (candidates.length == 1) return true;
+			if (candidates.length == 1) {
+				final producer: ProducerEntry = candidates[0];
+				recordResolution(verifiedClass, consumer.fieldName, {
+					ownerClass: levelClass,
+					fieldName: producer.fieldName,
+					scopeLevel: i,
+					fromRootExport: exports != null && !locals.contains(producer)
+				});
+				return true;
+			}
 			final named: Null<ProducerEntry> = candidates.find(p -> p.fieldName == consumer.fieldName);
-			if (named != null) return true;
+			if (named != null) {
+				recordResolution(verifiedClass, consumer.fieldName, {
+					ownerClass: levelClass,
+					fieldName: named.fieldName,
+					scopeLevel: i,
+					fromRootExport: exports != null && !locals.contains(named)
+				});
+				return true;
+			}
 			emitAmbiguityError(consumer, levelClass, candidates);
+			recordResolution(verifiedClass, consumer.fieldName, null);
 			return false;
 		}
 		emitMissingError(consumer);
+		recordResolution(verifiedClass, consumer.fieldName, null);
 		return false;
 	}
 
@@ -333,6 +373,32 @@ typedef DIClassSummary = {
 		if (erroredPositions.contains(key)) return true;
 		erroredPositions.push(key);
 		return false;
+	}
+
+	/**
+	 * Record a resolved producer reference for a consumer field. Multi-path: if a
+	 * different resolution was already recorded from a prior path, null it out
+	 * (conflicting paths = runtime fallback).
+	 */
+	private static function recordResolution(className: String, fieldName: String, ref: Null<ResolvedRef>): Void {
+		final existing: Null<Map<String, Null<ResolvedRef>>> = resolutions[className];
+		final classMap: Map<String, Null<ResolvedRef>> = if (existing != null) existing else {
+			final fresh: Map<String, Null<ResolvedRef>> = [];
+			resolutions[className] = fresh;
+			fresh;
+		};
+		if (!classMap.exists(fieldName)) {
+			classMap[fieldName] = ref;
+			return;
+		}
+		if (ref == null) {
+			classMap[fieldName] = null;
+			return;
+		}
+		final prior: Null<ResolvedRef> = classMap[fieldName];
+		if (prior == null || prior.ownerClass != ref.ownerClass || prior.fieldName != ref.fieldName) {
+			classMap[fieldName] = null;
+		}
 	}
 
 }

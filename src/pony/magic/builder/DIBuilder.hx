@@ -88,6 +88,7 @@ final class DIBuilder {
 		} else {
 			destroys.push(macro provider.destroy());
 		}
+		final depDescriptors: Array<{paramName: String, type: ComplexType}> = [];
 		for (field in fields) switch field.kind {
 			case FVar(t, e) if (t != null):
 				if (field.meta.getMeta(LEGACY_SERVICE) != null)
@@ -106,14 +107,13 @@ final class DIBuilder {
 				// Field's declared type — used as the lookup key on the consumer side. The resolver
 				// walks the scope chain and finds any registered instance assignable to this type.
 				final fieldTypeName: String = complexTypeName(t);
-				final isSubclassShadow: Bool = isExt
-					&& localClass.superClass.t.get().fields.get().exists(f -> f.name == field.name);
-				if (isSubclassShadow)
-					fields.remove(field);
-				else
-					blocks.unshift(macro $i{field.name} = provider.get($v{fieldTypeName}, $v{field.name}));
+				if (isExt && localClass.superClass.t.get().fields.get().exists(f -> f.name == field.name))
+					Context.error('DI: field "${field.name}" shadows parent field. Rename or remove.', field.pos);
 				if (useMeta != null) {
-					if (!isSubclassShadow) DIVerifier.addConsumer(diSummary, {
+					final depParamName: String = '_di_${field.name}';
+					depDescriptors.push({paramName: depParamName, type: t});
+					blocks.unshift(macro $i{field.name} = $i{depParamName} != null ? $i{depParamName} : provider.get($v{fieldTypeName}, $v{field.name}));
+					DIVerifier.addConsumer(diSummary, {
 						fieldName: field.name,
 						consumerTypeName: fieldTypeName,
 						pos: field.pos
@@ -128,6 +128,7 @@ final class DIBuilder {
 						case _: // skip
 					}
 				} else {
+					blocks.unshift(macro $i{field.name} = provider.get($v{fieldTypeName}, $v{field.name}));
 					final kind: ProducerKind = shareMeta != null ? Share : Own;
 					// Share = imprt + exprt: guarded on ancestor fallback, published to root.
 					final importService: Bool = kind == Share;
@@ -142,8 +143,6 @@ final class DIBuilder {
 								case _: [fieldTypeName];
 							};
 							final primaryTypeName: String = producerTypeNames[0];
-							// Producer collection runs even for subclass-shadow fields: the runtime
-							// load/register logic still fires, only the Haxe field declaration is dropped.
 							final childDITypeName: Null<String> = switch t.toType() {
 								case TInst(inst, _) if (checkDI(inst)): typeNameOf(inst.get());
 								case _: null;
@@ -220,10 +219,10 @@ final class DIBuilder {
 					});
 				}
 
-				final nw = macro new $ctp(provider);
-
+				final nw: Expr = macro new $ctp(provider);
 				switch nw.expr {
 					case ENew(_, params):
+						for (_ in depDescriptors) params.push(macro null);
 						for (arg in fun.args) params.push(macro $i{arg.name});
 					case _:
 						throw UNEXPECTED_ERROR;
@@ -250,11 +249,47 @@ final class DIBuilder {
 				// trace(new haxe.macro.Printer().printField(create));
 				fields.unshift(load);
 				fields.unshift(create);
+				if (depDescriptors.length > 0) {
+					final nwFast: Expr = macro new $ctp(provider);
+					switch nwFast.expr {
+						case ENew(_, params):
+							for (dep in depDescriptors) params.push(macro $i{dep.paramName});
+							for (arg in fun.args) params.push(macro $i{arg.name});
+						case _:
+							throw UNEXPECTED_ERROR;
+					}
+					final createFast: Field = (macro class {
+						public static function createFast(?serviceProvider: pony.ServiceProvider, cb: $ct -> Void): Void {
+							final provider: pony.ServiceProvider = serviceProvider != null ? serviceProvider.sub() : new pony.ServiceProvider();
+							load(provider, () -> cb($nwFast));
+						}
+					}).fields.pop();
+					switch createFast.kind {
+						case FFun(f):
+							var depIdx: Int = 1;
+							for (dep in depDescriptors) {
+								f.args.insert(depIdx, {name: dep.paramName, type: dep.type});
+								depIdx++;
+							}
+							for (arg in fun.args) f.args.push(arg);
+						case _: throw UNEXPECTED_ERROR;
+					}
+					fields.unshift(createFast);
+				}
 
 				fun.args.unshift(switch (macro function(provider: pony.ServiceProvider) {}).expr {
 					case EFunction(_, v): v.args.pop();
 					case _: throw UNEXPECTED_ERROR;
 				});
+				var depArgIdx: Int = 1;
+				for (dep in depDescriptors) {
+					fun.args.insert(depArgIdx, {
+						name: dep.paramName,
+						type: TPath({pack: [], name: 'Null', params: [TPType(dep.type)]}),
+						value: macro null
+					});
+					depArgIdx++;
+				}
 				switch fun.expr.expr {
 					case EBlock(lines):
 						for (block in blocks) lines.unshift(block);
