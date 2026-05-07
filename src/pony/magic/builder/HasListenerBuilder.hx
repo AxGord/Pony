@@ -119,7 +119,15 @@ class HasListenerBuilder {
 								}
 							} else {
 								listen.push(isOnce ? macro $expr.once($i{field.name}) : macro $expr.add($i{field.name}));
-								unlisten.push(macro $expr.remove($i{field.name}));
+								// Null-guard: @:auto signals on the listened object may have been
+								// destroyed (eName = null) by an earlier teardown step before this
+								// unlisten() runs (e.g. owner.close() destroys the socket, then
+								// owner.destroy() generates the unlisten). @:auto getter does not
+								// recreate the signal, so a direct .remove on null would crash.
+								unlisten.push(macro {
+									final s = $expr;
+									if (s != null) s.remove($i{field.name});
+								});
 							}
 						} else {
 							throw 'Expr not set';

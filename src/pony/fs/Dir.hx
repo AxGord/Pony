@@ -17,6 +17,9 @@ abstract Dir(Unit) from Unit {
 
 	public var first(get, never): String;
 
+	/** Recursive sum of all files' sizes in bytes — triggers full directory walk. */
+	public var size(get, never): Int;
+
 	public inline function new(v: Unit) {
 		if (v.isFile) throw 'This is not directory';
 		this = v;
@@ -65,6 +68,12 @@ abstract Dir(Unit) from Unit {
 
 	public inline function delete(): Void FileSystem.deleteDirectory(first);
 	private inline function get_first(): String return this.first;
+
+	private function get_size(): Int {
+		var result: Int = 0;
+		for (f in contentRecursiveFiles()) result += f.size;
+		return result;
+	}
 
 	public function contentRecursiveFiles(?filter: String, sortByName: Bool = false): Array<File> {
 		var result: Array<File> = [];
