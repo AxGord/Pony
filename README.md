@@ -101,6 +101,8 @@ Manual
     * [Build sections](//github.com/AxGord/Pony/wiki/Build-sections)
     * [Post build sections](//github.com/AxGord/Pony/wiki/Post-build-sections)
 
+* [Dependency injection](docs/DI.md)
+
 * [Net](//github.com/AxGord/Pony/wiki/Net)
     * [RPC](//github.com/AxGord/Pony/wiki/RPC)
 

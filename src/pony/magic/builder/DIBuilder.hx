@@ -144,6 +144,16 @@ final class DIBuilder {
 					Context.error('DI: field has multiple service attributes. Pick one of @:own, @:share, @:use.', field.pos);
 				if ((ownMeta != null || shareMeta != null) && e == null)
 					Context.error('DI: @:${ownMeta != null ? "own" : "share"} requires an initializer.', field.pos);
+				if (ownMeta != null || shareMeta != null) {
+					final blocked: Null<String> = instanceReference(e, fields, constuctor);
+					if (blocked != null)
+						Context.error(
+							'DI: @:${ownMeta != null ? "own" : "share"} initializer is evaluated in the generated ' +
+							'static load(), so it cannot use "$blocked". Depend on another service with @:use, ' +
+							'or build from a static, a constant or a literal.',
+							field.pos
+						);
+				}
 				if (useMeta != null && e != null)
 					Context.error('DI: @:use must not have an initializer. Use @:own or @:share to create the instance.', field.pos);
 				// Field's declared type — used as the lookup key on the consumer side. The resolver
@@ -635,6 +645,29 @@ final class DIBuilder {
 			case TInst(inst, _): typeNameOf(inst.get());
 			case _: throw 'Cannot resolve type name from non-class ComplexType';
 		};
+	}
+
+	/**
+	 * Name of the first instance-scoped identifier an @:own / @:share initializer reaches
+	 * for, or null when the initializer is static-safe.
+	 *
+	 * Initializers are spliced into the generated static load(), where `this`, instance
+	 * members and constructor arguments do not exist. Haxe reports that as a bare
+	 * "Cannot access X in static function" pointing at the user's initializer, which says
+	 * nothing about why the context is static — so it is caught here instead.
+	 */
+	private static function instanceReference(e: Null<Expr>, fields: Array<Field>, constuctor: Field): Null<String> {
+		if (e == null) return null;
+		if (e.containsIdent('this')) return 'this';
+		for (f in fields) {
+			if (f.name == 'new' || (f.access != null && f.access.contains(AStatic))) continue;
+			if (e.containsIdent(f.name)) return f.name;
+		}
+		switch constuctor.kind {
+			case FFun(fun): for (arg in fun.args) if (e.containsIdent(arg.name)) return arg.name;
+			case _:
+		}
+		return null;
 	}
 
 	/**
