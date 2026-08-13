@@ -14,6 +14,7 @@ import js.node.http.ServerResponse;
 import haxe.io.Bytes;
 import pony.fs.File;
 import pony.net.http.Cookie;
+import pony.net.http.EventStream;
 import pony.net.http.IHttpConnection;
 import pony.net.http.ServersideStorage;
 import pony.text.ParseBoy;
@@ -81,6 +82,17 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 		});
 	}
 
+	/**
+	 * Opens an event stream on this response. The response is marked as ended so nothing
+	 * downstream tries to write a body over the frames; the stream itself stays open until
+	 * the client disconnects or the caller closes it.
+	 */
+	public function openEventStream(): EventStream {
+		writeCookie();
+		end = true;
+		return new EventStream(res);
+	}
+
 	public function sendBytes(bytes: Bytes): Void {
 		writeCookie();
 		res.end(new Buffer(bytes.getData()));
@@ -129,6 +141,19 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 		writeCookie();
 		setHtmlUtf8();
 		setLength(text);
+		res.end(text);
+		end = true;
+	}
+
+	/**
+	 * Sends a JSON body, with `status` for the failure shapes an API needs: `error` and
+	 * `notfound` answer in HTML, which a client that asked for JSON cannot parse.
+	 */
+	public function sendJson(text: String, status: Int = 200): Void {
+		writeCookie();
+		res.setHeader('Content-Type', 'application/json; charset=UTF-8');
+		setLength(text);
+		res.writeHead(status);
 		res.end(text);
 		end = true;
 	}

@@ -1,5 +1,6 @@
 package pony.net.http.platform.php;
 
+import haxe.io.Bytes;
 import pony.fs.File;
 import pony.text.ParseBoy;
 
@@ -24,7 +25,9 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 	#if (haxe_ver < 4.2) override #end
 	public function sendFile(file: File): Void {
 		php.Web.setHeader('Content-Description', 'File Transfer');
-		php.Web.setHeader('Content-Type', Mime.get[file.ext]);
+		// Through `contentType`, so an unknown extension is a generic type rather than a
+		// header reading `null`, and a text file states its charset.
+		php.Web.setHeader('Content-Type', Mime.contentType(file.first));
 		// php.Web.setHeader('Content-Disposition', 'attachment; filename=' + file.name);
 		php.Web.setHeader('Content-Transfer-Encoding', 'binary');
 		php.Web.setHeader('Expires', '0');

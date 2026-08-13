@@ -40,6 +40,7 @@ class Mime {
 		"atomsvc"		=>	"application/atomsvc+xml",
 		"atx"			=>	"application/vnd.antix.game-component",
 		"au"			=>	"audio/basic",
+		"avif"			=>	"image/avif",
 		"avi"			=>	"video/x-msvideo",
 		"aw"			=>	"application/applixware",
 		"azf"			=>	"application/vnd.airzip.filesecure.azf",
@@ -310,6 +311,7 @@ class Mime {
 		"mid"			=>	"audio/midi",
 		"mif"			=>	"application/vnd.mif",
 		"mj2"			=>	"video/mj2",
+		"mjs"			=>	"text/javascript",
 		"mlp"			=>	"application/vnd.dolby.mlp",
 		"mmd"			=>	"application/vnd.chipnuts.karaoke-mmd",
 		"mmf"			=>	"application/vnd.smaf",
@@ -613,6 +615,7 @@ class Mime {
 		"vtu"			=>	"model/vnd.vtu",
 		"vxml"			=>	"application/voicexml+xml",
 		"wad"			=>	"application/x-doom",
+		"wasm"			=>	"application/wasm",
 		"wav"			=>	"audio/x-wav",
 		"wax"			=>	"audio/x-ms-wax",
 		"wbmp"			=>	"image/vnd.wap.wbmp",
@@ -634,7 +637,9 @@ class Mime {
 		"wmv"			=>	"video/x-ms-wmv",
 		"wmx"			=>	"video/x-ms-wmx",
 		"wmz"			=>	"application/x-ms-wmz",
+		"webmanifest"	=>	"application/manifest+json",
 		"woff"			=>	"application/x-font-woff",
+		"woff2"			=>	"font/woff2",
 		"wpd"			=>	"application/vnd.wordperfect",
 		"wpl"			=>	"application/vnd.ms-wpl",
 		"wps"			=>	"application/vnd.ms-works",
@@ -691,5 +696,40 @@ class Mime {
 		"zir"			=>	"application/vnd.zul",
 		"zmm"			=>	"application/vnd.handheld-entertainment+xml"
 	];
-	
+
+	private static inline var DEFAULT:String = "application/octet-stream";
+
+	/**
+		Text formats whose media type does not start with `text/`. They still need a charset:
+		a browser handed one of these without it falls back to guessing, and guesses wrong on
+		anything outside ASCII.
+	**/
+	private static var TEXTUAL:Array<String> = [
+		"application/javascript",
+		"application/json",
+		"application/manifest+json",
+		"application/xml",
+		"image/svg+xml"
+	];
+
+	/** Media type for a file extension, case-insensitive; null when the extension is unknown. **/
+	public static function ofExtension(extension:String):Null<String> return get[extension.toLowerCase()];
+
+	/**
+		Media type for a path, falling back to `application/octet-stream`. A wrong-but-generic
+		type makes a browser download the file; a missing one makes it guess, which is worse.
+	**/
+	public static function ofPath(path:String):String {
+		var dot:Int = path.lastIndexOf(".");
+		if (dot == -1) return DEFAULT;
+		var type:Null<String> = ofExtension(path.substr(dot + 1));
+		return type == null ? DEFAULT : type;
+	}
+
+	/** `ofPath` plus the UTF-8 charset for text formats — what a `Content-Type` header wants. **/
+	public static function contentType(path:String):String {
+		var type:String = ofPath(path);
+		return StringTools.startsWith(type, "text/") || TEXTUAL.indexOf(type) != -1 ? type + "; charset=utf-8" : type;
+	}
+
 }

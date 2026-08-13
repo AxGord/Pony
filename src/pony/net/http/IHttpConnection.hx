@@ -21,6 +21,18 @@ interface IHttpConnection {
 	var cookie:Cookie;
 	var end:Bool;
 	
+	#if nodejs
+	/** Sends a JSON body; `status` carries the API's failure codes. **/
+	function sendJson(text:String, status:Int = 200):Void;
+
+	/**
+	 * Turns this response into a Server-Sent Events stream. Declared for nodejs only: on
+	 * other targets a response is produced and finished in one step, and there is nothing
+	 * to hold open.
+	 */
+	function openEventStream():EventStream;
+	#end
+
 	function sendFile(file:File):Void;
 	function sendBytes(bytes:Bytes):Void;
 	function sendFileOrIndexHtml(path:String):Void;

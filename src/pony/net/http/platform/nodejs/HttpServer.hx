@@ -18,7 +18,15 @@ using Reflect;
  */
 class HttpServer {
 
-	public static var multipartyClass:Class<Dynamic> = Node.require('multiparty').Form;
+	/**
+	 * Loaded on the first multipart POST, not when this class is loaded: `multiparty` is
+	 * an optional npm package, and requiring it eagerly makes the whole server unusable —
+	 * a service that serves JSON and static files never sees a multipart body, yet could
+	 * not start without the dependency. Assign it before the first such request to
+	 * substitute an implementation.
+	 */
+	public static var multipartyClass:Null<Class<Dynamic>> = null;
+
 	public static var querystring:Dynamic = Node.require('querystring');
 
 	private static var spdy(get, never):Dynamic;
@@ -26,9 +34,21 @@ class HttpServer {
 	private var server:Server;
 	private var spdyServer:Dynamic;
 	public var storage:ServersideStorage;
+
+	/**
+	 * Whether to announce the listening address. A service that prints its own startup
+	 * line — or has that line parsed by a supervisor — wants this off, and cannot silence
+	 * a `trace` any other way.
+	 */
+	public var verbose:Bool = true;
 	public var fixedHeaders:Map<String, String> = ['Server' => 'PonyHttpServer'];
 
 	inline private static function get_spdy():Dynamic return Node.require('spdy');
+
+	private static function multipartyForm():Class<Dynamic> {
+		if (multipartyClass == null) multipartyClass = Node.require('multiparty').Form;
+		return multipartyClass;
+	}
 
 	public function new(host:String = null, port:Int = 80, ?spdyConf:Dynamic)
 	{
@@ -58,7 +78,7 @@ class HttpServer {
 		switch (req.method/*.toUpperCase()*/) {
 			case 'POST' if (contentType.length >= multi.length && contentType.substr(0, multi.length) == multi):
 				var me = this;
-				var multiparty = Type.createInstance(multipartyClass, []);
+				var multiparty = Type.createInstance(multipartyForm(), []);
 				multiparty.parse(req, function(err, fields:Dynamic<Array<Dynamic>>, files:Dynamic<Array<Dynamic>>) {
 					if (fields == null || files == null) {
 						res.end('error');
@@ -129,8 +149,10 @@ class HttpServer {
 	public dynamic function onError():Void {}
 
 	private function createHandler():Void {
-		var a:Dynamic = untyped server.address();
-		trace('HTTP Server running at http://' + a.address + ':' + a.port);
+		if (verbose) {
+			var a:Dynamic = untyped server.address();
+			trace('HTTP Server running at http://' + a.address + ':' + a.port);
+		}
 		onOpen();
 	}
 
