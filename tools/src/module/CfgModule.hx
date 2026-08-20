@@ -14,7 +14,7 @@ import types.BASection;
 class CfgModule<T:BAConfig> extends Module implements HasAbstract {
 
 	private var lastcfgs: Array<T> = [];
-	private var allcfgs: Array<Array<T>> = [];
+	private final allcfgs: Array<Array<T>> = [];
 
 	#if (haxe_ver < 4.2)
 	override public function init(): Void throw 'Abstract';
@@ -41,7 +41,7 @@ class CfgModule<T:BAConfig> extends Module implements HasAbstract {
 	#if (haxe_ver < 4.2) override #end
 	private function runModule(before: Bool, section: BASection): Void {
 		for (cfgs in allcfgs) {
-			var actual: Array<T> = [
+			final actual: Array<T> = [
 				for (cfg in cfgs) if (cfg.before == before && cfg.section == section && modules.checkAllowGroups(cfg.group)) cfg
 			];
 			if (actual.length > 0) addToRun(run.bind(actual));

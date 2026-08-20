@@ -26,7 +26,7 @@ private typedef LastLogMessageObj = {
 	public var visible(get, set): Bool;
 
 	public final container: Element;
-	private final origTrace: Null<Dynamic -> ?PosInfos -> Void>;
+	private final origTrace: Null<Dynamic -> ?PosInfos -> Void> = Log.trace;
 	private final reverse: Bool;
 
 	private var lastMessage: LastLogMessage = None;
@@ -36,7 +36,6 @@ private typedef LastLogMessageObj = {
 		objLogs: Bool = false
 	) {
 		this.reverse = reverse;
-		origTrace = Log.trace;
 		container = Browser.document.getElementById(containerId);
 		if (container == null) return;
 		if (handleTrace) {

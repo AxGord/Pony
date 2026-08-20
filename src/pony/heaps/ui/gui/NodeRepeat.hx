@@ -15,7 +15,7 @@ import pony.geom.Point;
  * @author AxGord <axgord@gmail.com>
  */
 @:nullSafety(Strict)
-@:final class NodeRepeat extends Node {
+final class NodeRepeat extends Node {
 
 	public var graphics: Graphics;
 

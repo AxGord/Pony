@@ -25,7 +25,7 @@ class V implements IXRModule implements ICanBeCopied<V> {
 	}
 
 	public function copy(): V {
-		var o = new V();
+		final o = new V();
 		o.values = values;
 		return o;
 	}

@@ -29,7 +29,7 @@ class Config extends Section {
 	}
 
 	private function make(e: KeyValue<String, Or<String, ConfigOptions>>): Xml {
-		var r: Xml = Xml.createElement(e.key);
+		final r: Xml = Xml.createElement(e.key);
 		switch e.value {
 			case OrState.A(v):
 				r.addChild(XmlTools.data(v));

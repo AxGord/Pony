@@ -30,17 +30,17 @@ abstract Dir(Unit) from Unit {
 	}
 
 	public function content(?filter: String, allowDir: Bool = false, sortByName: Bool = false): Array<Unit> {
-		var result: Map<String, Unit> = [];
-		var flt: Array<String> = filter == null ? null : filter.split(' ');
+		final result: Map<String, Unit> = [];
+		final flt: Array<String> = filter == null ? null : filter.split(' ');
 		for (d in this) {
 			if (d.exists) for (e in FileSystem.readDirectory(d.first)) {
-				var np: String = '$d/$e';
-				var isDir: Bool = try FileSystem.isDirectory(np) catch (_: Any) false;
+				final np: String = '$d/$e';
+				final isDir: Bool = try FileSystem.isDirectory(np) catch (_: Any) false;
 				if ((allowDir || !isDir) && (isDir || checkFilter(flt, e)) && !result.exists(e))
 					result[e] = [for (d in this.wayStringIterator()) '$d/$e'];
 			}
 		}
-		var r: Array<Unit> = [for (e in result) e];
+		final r: Array<Unit> = [for (e in result) e];
 		if (sortByName) r.sort(compareNames);
 		return r;
 	}
@@ -98,7 +98,7 @@ abstract Dir(Unit) from Unit {
 
 	public function copyTo(to: Dir, ?filter: String): Void {
 		for (f in contentRecursiveFiles(filter)) {
-			var w: String = f.fullDir.first.substr(first.length);
+			final w: String = f.fullDir.first.substr(first.length);
 			f.copyToDir(to + w);
 		}
 	}
@@ -110,14 +110,14 @@ abstract Dir(Unit) from Unit {
 			this.rename(to);
 		} else {
 			for (f in contentRecursiveFiles(filter)) {
-				var w: String = f.fullDir.first.substr(first.length);
+				final w: String = f.fullDir.first.substr(first.length);
 				f.moveToDir(to + w);
 			}
 		}
 	}
 
 	public function createWays(): Void {
-		var a = first.split('/');
+		final a = first.split('/');
 		var d = a.shift();
 		for (e in a) {
 			d += '/$e';
@@ -140,8 +140,8 @@ abstract Dir(Unit) from Unit {
 	@:op(A + B) inline public function addString(a: String): Unit return this.addString(a);
 
 	public static function compareNames(a: Unit, b: Unit): Int {
-		var an: String = a.name.toLowerCase();
-		var bn: String = b.name.toLowerCase();
+		final an: String = a.name.toLowerCase();
+		final bn: String = b.name.toLowerCase();
 		return an == bn ? 0 : an > bn ? 1 : -1;
 	}
 

@@ -46,7 +46,7 @@ class SocketServerBase extends Logable {
 	private function endString(): Void for (c in clients) c.onString >> eString;
 
 	private function addClient(): ISocketClient {
-		var cl: SocketClient = Type.createEmptyInstance(SocketClient);
+		final cl: SocketClient = Type.createEmptyInstance(SocketClient);
 		@:privateAccess cl.logPrefix = '';
 		listenErrorAndLog(cl);
 		cl.init(cast this, clients.length);
@@ -60,9 +60,9 @@ class SocketServerBase extends Logable {
 	 * Sends a data to all the clients.
 	 */
 	public function send(data: BytesOutput): Void {
-		var bs: Bytes = data.getBytes();
+		final bs: Bytes = data.getBytes();
 		for (c in clients) {
-			var b: BytesOutput = new BytesOutput();
+			final b: BytesOutput = new BytesOutput();
 			b.write(bs);
 			c.send(b);
 		}
@@ -72,10 +72,10 @@ class SocketServerBase extends Logable {
 	 * Sends a data to all the clients except chosen one.
 	 */
 	public function send2other(data: BytesOutput, exception: ISocketClient): Void {
-		var bs: Bytes = data.getBytes();
+		final bs: Bytes = data.getBytes();
 		for (c in clients) {
 			if (c == exception) continue;
-			var b: BytesOutput = new BytesOutput();
+			final b: BytesOutput = new BytesOutput();
 			b.write(bs);
 			c.send(b);
 		}

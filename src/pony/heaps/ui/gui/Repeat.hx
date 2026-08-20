@@ -17,8 +17,8 @@ import h2d.Object;
 	public var count(get, set): UInt;
 	public var created(default, null): Array<Object> = [];
 
-	private var ui: HeapsXmlUi;
-	private var ro: RepeatObject;
+	private final ui: HeapsXmlUi;
+	private final ro: RepeatObject;
 	private var targetCount: UInt = 0;
 
 	public function new(ui: HeapsXmlUi, ro: RepeatObject, count: UInt = 0) {

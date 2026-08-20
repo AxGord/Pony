@@ -7,7 +7,7 @@ package pony.math;
  */
 class AutoFormula {
 
-	private var values: Map<Float, Float>;
+	private final values: Map<Float, Float>;
 
 	public function new(values: Map<Float, Float>) {
 		this.values = values;

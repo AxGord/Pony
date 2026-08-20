@@ -13,8 +13,8 @@ import types.BAConfig;
 #if (haxe_ver >= 4.2) abstract #end
 class NModule<T:BAConfig> extends CfgModule<T> {
 
-	private static var PORT_TRIES: Int = 1000;
-	private static var NODE_PATH: String = 'NODE_PATH';
+	private static inline final PORT_TRIES: Int = 1000;
+	private static final NODE_PATH: String = 'NODE_PATH';
 
 	private static var server: Null<SocketServer>;
 	private static var protocol: Null<NProtocol>;

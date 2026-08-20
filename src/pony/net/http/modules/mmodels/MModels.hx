@@ -16,7 +16,7 @@ using Lambda;
  * @author AxGord <axgord@gmail.com>
  */
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
-@:final class MModels implements IModule {
+final class MModels implements IModule {
 
 	public var lastActionId: Int;
 	public var list: Map<String, Model>;
@@ -26,9 +26,9 @@ using Lambda;
 		this.db = db;
 
 		lastActionId = 0;
-		var actionsH = new Map<String, Dynamic>();
+		final actionsH = new Map<String, Dynamic>();
 		for (cl in actions) {
-			var n: String = Type.getClassName(cl);
+			final n: String = Type.getClassName(cl);
 			actionsH.set(n.substr(n.lastIndexOf('.') + 1), cl);
 		}
 		list = [];
@@ -58,7 +58,7 @@ using Lambda;
 		if (!cpq.connection.sessionStorage.exists('modelsActions'))
 			cpq.connection.sessionStorage['modelsActions'] = new Map<Int, Dynamic>();
 
-		var connectList: Map<String, ModelConnect> = [];
+		final connectList: Map<String, ModelConnect> = [];
 
 		for (k in list.keys()) switch (list[k].connect(cpq)) {
 			case BREAK:
@@ -68,10 +68,10 @@ using Lambda;
 			case NOTREG:
 		}
 
-		var post: Map<String, String> = cpq.connection.mix();
-		var h = new Map<String, Map<String, Map<String, String>>>();
+		final post: Map<String, String> = cpq.connection.mix();
+		final h = new Map<String, Map<String, Map<String, String>>>();
 		for (k in post.keys()) {
-			var a: Array<String> = k.split('.');
+			final a: Array<String> = k.split('.');
 			if (a.length == 3) {
 				if (!h.exists(a[0])) h.set(a[0], new Map<String, Map<String, String>>());
 				if (!h.get(a[0]).exists(a[1])) h.get(a[0]).set(a[1], new Map<String, String>());

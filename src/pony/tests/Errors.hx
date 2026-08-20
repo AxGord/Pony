@@ -7,11 +7,9 @@ package pony.tests;
 class Errors {
 
 	public var arg: String;
-	public var result: Map<String, String>;
+	public var result: Map<String, String> = [];
 
-	public function new() {
-		result = [];
-	}
+	public function new() {}
 
 	public inline function test(cond: Bool, message: String) {
 		if (cond && !result.exists(arg)) set(message);

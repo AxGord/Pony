@@ -22,9 +22,9 @@ class FB implements IFB {
 		}
 		var graphObject = null;
 		try {
-			var session = untyped __call__('new \\Facebook\\FacebookSession', token);
-			var request = untyped __call__('new \\Facebook\\FacebookRequest', session, 'GET', r);
-			var response = request.execute();
+			final session = untyped __call__('new \\Facebook\\FacebookSession', token);
+			final request = untyped __call__('new \\Facebook\\FacebookRequest', session, 'GET', r);
+			final response = request.execute();
 			graphObject = response.getGraphObject();
 		} catch (_: Dynamic) {}
 		cb(graphObject);

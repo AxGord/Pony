@@ -17,7 +17,7 @@ import starling.text.TextField;
  */
 class StarlingTouchInputVisualized extends StarlingTouchInput {
 
-	private var _visualizers: Map<Int, DisplayObject> = [];
+	private final _visualizers: Map<Int, DisplayObject> = [];
 
 	public function new(displayObject: DisplayObjectContainer) {
 		super(displayObject);
@@ -26,9 +26,9 @@ class StarlingTouchInputVisualized extends StarlingTouchInput {
 	override private function onTouch(e: TouchEvent): Void {
 		super.onTouch(e);
 
-		var touches: Vector<Touch> = e.getTouches(cast(e.target, DisplayObject));
+		final touches: Vector<Touch> = e.getTouches(cast(e.target, DisplayObject));
 		for (i in 0...touches.length) {
-			var touch: Touch = touches[i];
+			final touch: Touch = touches[i];
 
 			if (touch == null) return;
 
@@ -48,7 +48,7 @@ class StarlingTouchInputVisualized extends StarlingTouchInput {
 
 	private function addVisualizer(touch: Touch): Void {
 		if (!_visualizers.exists(touch.id)) {
-			var tf: TextField = new TextField(200, 50, '${touch.id}');
+			final tf: TextField = new TextField(200, 50, '${touch.id}');
 			tf.border = true;
 			tf.touchable = false;
 			untyped _displayObject.addChild(tf);
@@ -62,7 +62,7 @@ class StarlingTouchInputVisualized extends StarlingTouchInput {
 	private function moveVisualizer(touch: Touch): Void {
 		if (!_visualizers.exists(touch.id)) return;
 
-		var tf = _visualizers[touch.id];
+		final tf = _visualizers[touch.id];
 
 		var point: Point = new Point(touch.globalX, touch.globalY);
 		point = _displayObject.globalToLocal(point);
@@ -74,7 +74,7 @@ class StarlingTouchInputVisualized extends StarlingTouchInput {
 	private function destroyVisualizer(touch: Touch): Void {
 		if (!_visualizers.exists(touch.id)) return;
 
-		var tf = _visualizers[touch.id];
+		final tf = _visualizers[touch.id];
 		untyped _displayObject.removeChild(tf);
 		_visualizers.remove(touch.id);
 	}

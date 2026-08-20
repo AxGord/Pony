@@ -26,7 +26,7 @@ class TurningCore implements Declarator implements ExtendedProperties implements
 			v -= maxAngle;
 			minAngle -= maxAngle;
 
-			var mid: Angle = minAngle / 2;
+			final mid: Angle = minAngle / 2;
 			if (v < minAngle && v > mid * 1.5)
 				v = minAngle;
 			else if (v < mid * 0.5)
@@ -48,7 +48,7 @@ class TurningCore implements Declarator implements ExtendedProperties implements
 
 	private function angleToValue(a: Angle): Float {
 		if (minAngle != null && maxAngle != null) {
-			var m: Angle = 360 - minAngle;
+			final m: Angle = 360 - minAngle;
 			return MathTools.percentBackCalc(a + m, 0, maxAngle + m);
 		} else {
 			return MathTools.percentBackCalc(a, 0, 360);
@@ -57,7 +57,7 @@ class TurningCore implements Declarator implements ExtendedProperties implements
 
 	private function valueToAngle(v: Float): Angle {
 		if (minAngle != null && maxAngle != null) {
-			var m: Angle = 360 - minAngle;
+			final m: Angle = 360 - minAngle;
 			return MathTools.percentCalc(v, 0, maxAngle + m) - m;
 		} else {
 			return MathTools.percentCalc(v, 0, 360);

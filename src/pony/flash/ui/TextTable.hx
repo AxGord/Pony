@@ -21,7 +21,7 @@ import pony.ui.gui.TextTableCore;
  */
 class TextTable extends TextTableCore {
 
-	private var area: DisplayObjectContainer;
+	private final area: DisplayObjectContainer;
 	private var shape: Shape;
 	private var g(get, never): Graphics;
 
@@ -48,7 +48,7 @@ class TextTable extends TextTableCore {
 
 	#if (haxe_ver < 4.2) override #end
 	private function drawText(point: IntRect, text: String, style: FontStyle): Void {
-		var tf = new TextField();
+		final tf = new TextField();
 		tf.text = text;
 		tf.selectable = false;
 		tf.setTextFormat(new TextFormat(style.font, style.size, style.color, style.bold, style.italic, style.underline));

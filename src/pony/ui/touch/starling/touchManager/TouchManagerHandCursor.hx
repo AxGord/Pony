@@ -16,7 +16,7 @@ class TouchManagerHandCursor {
 	private static var _currentHand: Bool = false;
 	private static var _initialized: Bool = false;
 
-	private var _object: Dynamic;
+	private final _object: Dynamic;
 	private var _hoveringOver: Bool = false;
 
 	public var enabled(default, set): Bool = true;

@@ -13,9 +13,9 @@ class Object implements IXRModule {
 	public function new() {}
 
 	public function run(xr: XmlRequest, x: Fast, result: Dynamic -> Void): Void {
-		var a = [for (e in x.elements) e];
+		final a = [for (e in x.elements) e];
 		var counter = 0;
-		var r: Dynamic = {};
+		final r: Dynamic = {};
 		for (i in 0...a.length) {
 			if (a[i].name != 'e' || !a[i].has.n) {
 				xr._error('Wrong tag');

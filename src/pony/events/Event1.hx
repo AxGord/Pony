@@ -28,7 +28,7 @@ import pony.Priority;
 	private inline function get_self(): Event1<T1> return this;
 
 	private static function real<T1>(l: Listener1<T1>): Bool {
-		var e: Null<Priority<Any>> = l.event;
+		final e: Null<Priority<Any>> = l.event;
 		return e == null || !e.empty;
 	}
 
@@ -58,12 +58,12 @@ import pony.Priority;
 
 	public function dispatchWithFlag(a1: T1, safe: Bool): Void {
 		if (this == null || this.isDestroy() || (safe && this.counters.length > 1)) return;
-		var controller: SignalControllerInner1<T1> = new SignalControllerInner1<T1>(self);
+		final controller: SignalControllerInner1<T1> = new SignalControllerInner1<T1>(self);
 		this.lock = true;
 		for (e in this) {
 			if (this.isDestroy()) return;
 			if (e.once) {
-				var ev: Null<Priority<Any>> = e.event;
+				final ev: Null<Priority<Any>> = e.event;
 				if (ev != null) {
 					ev.onLost >> this.changeReals;
 					ev.onTake >> this.changeReals;
@@ -81,14 +81,14 @@ import pony.Priority;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function sub(a1: T1, priority: Int = 0): Event0 {
-		var e: Event0 = new Event0();
+		final e: Event0 = new Event0();
 		(e: Signal0).add(dispatch.bind(a1), priority);
 		return e;
 	}
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function subOnce(a1: T1, priority: Int = 0): Event0 {
-		var e: Event0 = new Event0();
+		final e: Event0 = new Event0();
 		(e: Signal0).once(dispatch.bind(a1), priority);
 		return e;
 	}
@@ -102,14 +102,14 @@ import pony.Priority;
 	@:op(A && B)
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function and(s: Event1<T1>): Event1<T1> {
-		var e: Event1<T1> = new Event1<T1>();
+		final e: Event1<T1> = new Event1<T1>();
 		(e: Signal1<T1>) << self << s;
 		return e;
 	}
 
 	@:op(A & B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function andOnce(s: Event1<T1>): Event1<T1> {
-		var e: Event1<T1> = new Event1<T1>();
+		final e: Event1<T1> = new Event1<T1>();
 		(e: Signal1<T1>) << self << s << (e: Signal1<T1>).clear;
 		return e;
 	}

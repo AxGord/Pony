@@ -16,8 +16,8 @@ import pony.time.DeltaTime;
  */
 class HtmlContainerBase implements HasSignal {
 
-	public static inline var POSITION: String = 'absolute';
-	public static inline var POSITION_FIXED: String = 'fixed';
+	public static inline final POSITION: String = 'absolute';
+	public static inline final POSITION_FIXED: String = 'fixed';
 
 	@:auto public var onResize: Signal1<Rect<Float>>;
 
@@ -29,9 +29,9 @@ class HtmlContainerBase implements HasSignal {
 	public var posUpdater: Tumbler = new Tumbler(true);
 
 	private var lastRect: Rect<Float> = null;
-	private var ceil: Bool;
-	private var fixed: Bool;
-	private var haveTransform: Bool;
+	private final ceil: Bool;
+	private final fixed: Bool;
+	private final haveTransform: Bool;
 
 	public function new(
 		targetRect: Rect<Float>, ?app: App, ?targetStyle: CSSStyleDeclaration, ceil: Bool = false, fixed: Bool = false
@@ -44,7 +44,7 @@ class HtmlContainerBase implements HasSignal {
 		this.targetStyle = targetStyle;
 		if (fixed) Browser.window.addEventListener('scroll', resize);
 		posUpdater.onEnable << resize;
-		var style: CSSStyleDeclaration = Browser.window.getComputedStyle(app.element);
+		final style: CSSStyleDeclaration = Browser.window.getComputedStyle(app.element);
 		haveTransform = style.transform != 'none';
 	}
 
@@ -70,7 +70,7 @@ class HtmlContainerBase implements HasSignal {
 		if (!posUpdater.enabled) return;
 		if (fixed) {
 			if (!haveTransform) {
-				var b: DOMRect = app.element.getBoundingClientRect();
+				final b: DOMRect = app.element.getBoundingClientRect();
 				targetStyle.top = px(b.top + lastRect.y);
 				targetStyle.left = px(b.left + lastRect.x);
 			} else {
@@ -88,7 +88,7 @@ class HtmlContainerBase implements HasSignal {
 
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function px(v: Float): String return '${(ceil ? Std.int(v) : v)}px';
+	private inline function px(v: Float): String return '${ceil ? Std.int(v) : v}px';
 
 	private function set_targetStyle(s: CSSStyleDeclaration): CSSStyleDeclaration {
 		targetStyle = s;

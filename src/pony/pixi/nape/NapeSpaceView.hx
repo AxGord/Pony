@@ -54,7 +54,7 @@ class NapeSpaceViewBase extends Sprite implements pony.magic.HasLink {
 	public function new(w: Float, h: Float, ?gravity: Point<Float>) {
 		super();
 		core = new NapeSpace(w, h, gravity);
-		var bgm = new Graphics();
+		final bgm = new Graphics();
 		bgm.beginFill(0x212121);
 		bgm.drawRect(0, 0, w, h);
 		addChild(bgm);
@@ -70,7 +70,7 @@ class NapeSpaceViewBase extends Sprite implements pony.magic.HasLink {
 
 	public function resolve(name: String): NapeGroupView {
 		if (!groups.exists(name)) {
-			var g = new NapeGroupView(core.resolve(name));
+			final g = new NapeGroupView(core.resolve(name));
 			g.debugLines = debugLines;
 			groups[name] = g;
 			addChild(g);
@@ -85,7 +85,7 @@ class NapeSpaceViewBase extends Sprite implements pony.magic.HasLink {
 	 *  @return Graphics - for adding to stage
 	 */
 	public function bg(?color: Null<Int>): Graphics {
-		var g = new Graphics();
+		final g = new Graphics();
 		if (color == null)
 			g.beginFill(0, 0);
 		else

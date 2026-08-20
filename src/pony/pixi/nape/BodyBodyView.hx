@@ -17,11 +17,11 @@ class BodyBodyView extends BodyBaseView<BodyBody> {
 	override private function drawDebug(g: Graphics): Void {
 		var shapes: ShapeList = core.body.shapes;
 		for (i in 0...shapes.length) {
-			var sh: Shape = shapes.at(i);
-			var v = sh.castPolygon.localVerts;
+			final sh: Shape = shapes.at(i);
+			final v = sh.castPolygon.localVerts;
 			var first: Vec2 = null;
 			for (j in 0...v.length) {
-				var p: Vec2 = v.at(j);
+				final p: Vec2 = v.at(j);
 				if (first == null) {
 					first = p;
 					g.moveTo(p.x, p.y);

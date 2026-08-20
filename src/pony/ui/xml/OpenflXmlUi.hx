@@ -40,14 +40,14 @@ using StringTools;
 #if (haxe_ver >= 4.2) abstract #end
 class OpenflXmlUi extends Sprite implements HasAbstract {
 
-	private var FILTERS: Map<String, BitmapFilter> = [];
+	private final FILTERS: Map<String, BitmapFilter> = [];
 	private var SCALE: Float = 1;
-	private var tweens: TweenMap<Dynamic> = [];
+	private final tweens: TweenMap<Dynamic> = [];
 
 	public function createUIElement(name: String, attrs: Dynamic<String>, content: Array<Dynamic>, textContent: String): Dynamic {
-		var obj: DisplayObject = switch name {
+		final obj: DisplayObject = switch name {
 			case 'free':
-				var s = new Sprite();
+				final s = new Sprite();
 				if (attrs.w != null && attrs.h != null) {
 					s.graphics.clear();
 					s.graphics.beginFill(0xFF0000, 0.2);
@@ -57,27 +57,27 @@ class OpenflXmlUi extends Sprite implements HasAbstract {
 				for (e in content) if (e != null) s.addChild(e);
 				s;
 			case 'image':
-				var b = AssetManager.image(attrs.src, name);
+				final b = AssetManager.image(attrs.src, name);
 				b;
 			case 'layout':
-				var align = Align.fromString(attrs.align);
+				final align = Align.fromString(attrs.align);
 				if (attrs.iv != null) {
-					var l = new IntervalLayout(Std.parseInt(attrs.iv), true, cast Border.fromString(attrs.border), align);
+					final l = new IntervalLayout(Std.parseInt(attrs.iv), true, cast Border.fromString(attrs.border), align);
 					for (e in content) l.add(e);
 					l;
 				} else if (attrs.ih != null) {
-					var l = new IntervalLayout(Std.parseInt(attrs.ih), false, cast Border.fromString(attrs.border), align);
+					final l = new IntervalLayout(Std.parseInt(attrs.ih), false, cast Border.fromString(attrs.border), align);
 					for (e in content) l.add(e);
 					l;
 				} else if (attrs.w != null || attrs.h != null) {
-					var r = new RubberLayout(
+					final r = new RubberLayout(
 						Std.parseFloat(attrs.w), Std.parseFloat(attrs.h), isTrue(attrs.vert), cast Border.fromString(attrs.border),
 						attrs.padding == null ? true : isTrue(attrs.padding), align
 					);
 					for (e in content) r.add(e);
 					r;
 				} else {
-					var s = new AlignLayout(align);
+					final s = new AlignLayout(align);
 					for (e in content) s.add(e);
 					s;
 				}
@@ -91,8 +91,8 @@ class OpenflXmlUi extends Sprite implements HasAbstract {
 				if (attrs.color != null) {
 					attrs.color = attrs.color.replace('#', '0x');
 				}
-				var format: TextFormat = new TextFormat(attrs.font, Std.parseInt(attrs.size), Std.parseInt(attrs.color));
-				var t: TextField = new TextField();
+				final format: TextFormat = new TextFormat(attrs.font, Std.parseInt(attrs.size), Std.parseInt(attrs.color));
+				final t: TextField = new TextField();
 				t.autoSize = TextFieldAutoSize.LEFT;
 				t.selectable = false;
 				t.defaultTextFormat = format;
@@ -108,7 +108,7 @@ class OpenflXmlUi extends Sprite implements HasAbstract {
 			obj.alpha = Std.parseFloat(attrs.alpha);
 		}
 		if (attrs.scale != null) {
-			var s = Std.parseFloat(attrs.scale);
+			final s = Std.parseFloat(attrs.scale);
 			obj.scaleX = s;
 			obj.scaleY = s;
 		}
@@ -162,8 +162,8 @@ class OpenflXmlUi extends Sprite implements HasAbstract {
 
 	private function createFilters(data: Dynamic<Dynamic<String>>): Void {
 		for (name in Reflect.fields(data)) {
-			var d = Reflect.field(data, name);
-			var f: BitmapFilter = switch Reflect.field(d, 'extends') {
+			final d = Reflect.field(data, name);
+			final f: BitmapFilter = switch Reflect.field(d, 'extends') {
 				case 'shadow':
 					new DropShadowFilter();
 				case _:

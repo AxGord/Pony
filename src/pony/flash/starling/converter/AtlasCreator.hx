@@ -31,15 +31,15 @@ using pony.flash.starling.displayFactory.DisplayListStaticExtentions;
  */
 class AtlasCreator {
 
-	private var _atlases: Array<Atlas> = [];
+	private final _atlases: Array<Atlas> = [];
 
-	private static var _loadedTextures: Map<String, TextureStorage> = initStorageMap();
-	private static var _framesLoadedTextures: Map<String, Map<Int, TextureStorage>> = [];
+	private static final _loadedTextures: Map<String, TextureStorage> = initStorageMap();
+	private static final _framesLoadedTextures: Map<String, Map<Int, TextureStorage>> = [];
 
-	private static var _border: Int = 1;
+	private static inline final _border: Int = 1;
 
-	private static var _additionalBufferSize: Int = 20;
-	private static var _additionalBufferSizeLimit: Int = 1024;
+	private static inline final _additionalBufferSize: Int = 20;
+	private static inline final _additionalBufferSizeLimit: Int = 1024;
 
 	public function new() {
 		_atlases.push(new Atlas());
@@ -49,15 +49,15 @@ class AtlasCreator {
 		source: flash.display.DisplayObject, coordinateSpace: flash.display.DisplayObject, disposeable: Bool, frame: Null<Int> = -1,
 		ignoreCache: Bool = false
 	): Image {
-		var className: String = Type.getClassName(Type.getClass(source));
+		final className: String = Type.getClassName(Type.getClass(source));
 
 		var result: Image;
 
 		var rect: Rectangle = source.getBounds(coordinateSpace);
 		rectToInt(rect);
 
-		var matrix = StarlingConverter.matrixCalculation(source, coordinateSpace);
-		var matrixPoint: Point = matrix.transformPoint(new Point(0, 0));
+		final matrix = StarlingConverter.matrixCalculation(source, coordinateSpace);
+		final matrixPoint: Point = matrix.transformPoint(new Point(0, 0));
 
 		var texture: Texture = null;
 		var preloadedTextures: Dynamic = null;
@@ -74,11 +74,11 @@ class AtlasCreator {
 			dPivot = preloadedTextures.dPivot;
 			// trace("Using existing texture");
 		} else {
-			var drawResult: Dynamic = draw(source, coordinateSpace);
+			final drawResult: Dynamic = draw(source, coordinateSpace);
 
-			var nonAlphaRect: Rectangle = drawResult.nonAlphaRect;
+			final nonAlphaRect: Rectangle = drawResult.nonAlphaRect;
 
-			var textureBase: Dynamic = createTexture(
+			final textureBase: Dynamic = createTexture(
 				drawResult.bitmapData, drawResult.bitmapDataRect, !disposeable, drawResult.restorationCallback
 			);
 
@@ -113,7 +113,7 @@ class AtlasCreator {
 		source.gotoAndStop(1);
 		var maxRect: Rectangle = null;
 		var rect: Rectangle;
-		var className: String = Type.getClassName(Type.getClass(source));
+		final className: String = Type.getClassName(Type.getClass(source));
 		var matrix: Matrix = StarlingConverter.matrixCalculation(source, coordinateSpace);
 
 		var preloadedTextures: Dynamic = null;
@@ -128,9 +128,9 @@ class AtlasCreator {
 			// trace("Using existing textures");
 		} else {
 			textures = new Vector<Texture>();
-			var rects: Array<Rectangle> = [];
-			var addedRects: Array<Rectangle> = [];
-			var addedTextures: Array<Texture> = [];
+			final rects: Array<Rectangle> = [];
+			final addedRects: Array<Rectangle> = [];
+			final addedTextures: Array<Texture> = [];
 
 			for (i in 0...source.totalFrames) {
 				source.gotoAndStop(i + 1); // Because first frame on a flash timeline is 1, not 0
@@ -152,15 +152,15 @@ class AtlasCreator {
 
 				matrix = StarlingConverter.matrixCalculation(source, coordinateSpace);
 
-				var matrixPoint: Point = matrix.transformPoint(new Point(0, 0));
+				final matrixPoint: Point = matrix.transformPoint(new Point(0, 0));
 
 				matrix.translate(_additionalBufferSize - rect.x, _additionalBufferSize - rect.y);
 
-				var drawResult: Dynamic = draw(source, coordinateSpace);
+				final drawResult: Dynamic = draw(source, coordinateSpace);
 
-				var nonAlphaRect: Rectangle = drawResult.nonAlphaRect;
+				final nonAlphaRect: Rectangle = drawResult.nonAlphaRect;
 
-				var textureBase: Dynamic = createTexture(
+				final textureBase: Dynamic = createTexture(
 					drawResult.bitmapData, drawResult.bitmapDataRect, !disposeable,
 					frameRestorationCallback.bind(source, i, drawResult.restorationCallback)
 				);
@@ -176,7 +176,7 @@ class AtlasCreator {
 			var maxRect: Rectangle = null;
 
 			for (i in 0...rects.length) {
-				var currentRect: Rectangle = rects[i];
+				final currentRect: Rectangle = rects[i];
 
 				if (currentRect == null) continue;
 
@@ -195,8 +195,8 @@ class AtlasCreator {
 				if (addedTextures[i] == null) {
 					textures.push(new SubTexture(Texture.fromColor(maxRect.width, maxRect.height, 0x0), maxRect, true, maxRect));
 				} else {
-					var currentRect: Rectangle = rects[i];
-					var frame: Rectangle = new Rectangle(
+					final currentRect: Rectangle = rects[i];
+					final frame: Rectangle = new Rectangle(
 						maxRect.x - currentRect.x, maxRect.y - currentRect.y, maxRect.width, maxRect.height
 					);
 					textures.push(new SubTexture(addedTextures[i], addedRects[i], disposeable, frame));
@@ -211,12 +211,12 @@ class AtlasCreator {
 
 		source.gotoAndStop(1);
 		matrix = StarlingConverter.matrixCalculation(source, coordinateSpace);
-		var matrixPoint: Point = matrix.transformPoint(new Point(0, 0));
+		final matrixPoint: Point = matrix.transformPoint(new Point(0, 0));
 
 		if (!_loadedTextures.exists(className)) _loadedTextures[className] = new TextureStorage();
 		_loadedTextures[className].add(matrix.a, matrix.b, matrix.c, matrix.d, source.filters, textures, dPivot);
 
-		var clip: MovieClip = new MovieClip(textures, 60);
+		final clip: MovieClip = new MovieClip(textures, 60);
 
 		clip.pivotX = dPivot.x;
 		clip.pivotY = dPivot.y;
@@ -239,7 +239,7 @@ class AtlasCreator {
 		var rect: Rectangle = source.getBounds(coordinateSpace);
 		rectToInt(rect);
 
-		var matrix: Matrix = StarlingConverter.matrixCalculation(source, coordinateSpace);
+		final matrix: Matrix = StarlingConverter.matrixCalculation(source, coordinateSpace);
 
 		matrix.translate(additionalSize - rect.x, additionalSize - rect.y);
 
@@ -250,7 +250,7 @@ class AtlasCreator {
 			buffer.draw(source, matrix, null, null, null, true);
 
 			var bufferRect: Rectangle = buffer.getColorBoundsRect(0xFF000000, 0x00000000, false);
-			var nonAlphaRect: Rectangle = bufferRect.clone();
+			final nonAlphaRect: Rectangle = bufferRect.clone();
 
 			nonAlphaRect.x -= additionalSize;
 			nonAlphaRect.y -= additionalSize;
@@ -320,7 +320,7 @@ class AtlasCreator {
 				// Can't place it in a smaller bitmapData
 				texture = Texture.fromBitmapData(bitmapData, false);
 				texture.root.onRestore = function(): Void {
-					var bmpd = restorationCallback();
+					final bmpd = restorationCallback();
 					texture.root.uploadBitmapData(bmpd);
 				}
 				return { texture: texture, addedTo: area };
@@ -332,7 +332,7 @@ class AtlasCreator {
 				area.x = area.y = 0;
 
 				texture.root.onRestore = function(): Void {
-					var bmpd = restorationCallback();
+					final bmpd = restorationCallback();
 					var smallerBmpd: BitmapData = ReusableBitmapData.getPowTwo(cast area.width, cast area.height);
 					smallerBmpd.copyPixels(bmpd, area, new Point(0, 0));
 					texture.root.uploadBitmapData(smallerBmpd);
@@ -348,7 +348,7 @@ class AtlasCreator {
 	}
 
 	private static function initStorageMap(): Map<String, TextureStorage> {
-		var result: Map<String, TextureStorage> = [];
+		final result: Map<String, TextureStorage> = [];
 		result['flash.display.MovieClip'] = new TextureStorage(false);
 		result['flash.text.StaticText'] = new TextureStorage(false);
 		result['flash.text.TextField'] = new TextureStorage(false);
@@ -378,7 +378,7 @@ private class Atlas {
 	public var upToDate: Bool = false;
 	public var full: Bool = false;
 
-	private var _bitmapDataRestoration: Array<BitmapData -> Void> = [];
+	private final _bitmapDataRestoration: Array<BitmapData -> Void> = [];
 
 	public function new() {
 		// trace("NEW ATLAS CREATED");
@@ -396,7 +396,7 @@ private class Atlas {
 		rect.bottom += AtlasCreator.getBorder();
 		rect.right += AtlasCreator.getBorder();
 
-		var placedRect: Rectangle = pack.insert(cast rect.width, cast rect.height, FreeRectangleChoiceHeuristic.BottomLeftRule);
+		final placedRect: Rectangle = pack.insert(cast rect.width, cast rect.height, FreeRectangleChoiceHeuristic.BottomLeftRule);
 
 		if (placedRect.width == 0 || placedRect.height == 0) {
 			generate(true);
@@ -449,8 +449,8 @@ private class Atlas {
 
 private class TextureStorage {
 
-	private var _allowsAddition: Bool;
-	private var _textures: Array<Dynamic> = [];
+	private final _allowsAddition: Bool;
+	private final _textures: Array<Dynamic> = [];
 
 	public function new(allowsAddition: Bool = true) {
 		_allowsAddition = allowsAddition;
@@ -478,7 +478,7 @@ private class TextureStorage {
 		if (!_allowsAddition) return null;
 
 		for (i in 0..._textures.length) {
-			var texture: Dynamic = _textures[i];
+			final texture: Dynamic = _textures[i];
 			if ((texture.a == a) && (texture.b == b) && (texture.c == c) && (texture.d == d) && (filtersEqual(texture.filters, filters)))
 				return texture;
 		}

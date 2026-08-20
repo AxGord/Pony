@@ -32,7 +32,7 @@ class Particles extends Sprite {
 
 	private function loadHandler(): Void {
 		if (cfgurl == null) return;
-		var textures = asset == null
+		final textures = asset == null
 			? [for (e in imagesurl) AssetManager.texture(e)]
 			: [for (e in imagesurl) AssetManager.texture(asset, e)];
 		emitter = new Emitter(this, textures, AssetManager.json(cfgurl));

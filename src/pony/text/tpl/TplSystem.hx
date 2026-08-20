@@ -30,18 +30,17 @@ typedef Manifest = {
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
 class TplSystem {
 
-	private var pages: TplDir;
+	private final pages: TplDir;
 	public var includes: TplDir;
-	public var manifest: Manifest;
+	public var manifest: Manifest = null;
 	public var name: String;
 	public var _static: Map<String, File>;
 
 	public function new(dir: Dir, ?c: Class<ITplPut>, o: Dynamic, ?s: TplStyle) {
-		manifest = null;
 		name = (dir: Unit).name;
 		pages = new TplDir('${dir}pages', c, o, s);
 		includes = new TplDir('${dir}includes', TplPut, null, s);
-		_static = [for (e in (('${dir}static'): Dir).contentRecursiveFiles()) e.name => e];
+		_static = [for (e in ('${dir}static': Dir).contentRecursiveFiles()) e.name => e];
 	}
 
 	@:async
@@ -52,8 +51,8 @@ class TplSystem {
 	public inline function exists(n: String): Bool return pages.exists(n);
 
 	public static function parseManifest(f: File): Manifest {
-		var x: Fast = XmlTools.fast(f.content).node.manifest;
-		var g = function(n: String) return x.hasNode.resolve(n) ? StringTools.trim(x.node.resolve(n).innerData) : null;
+		final x: Fast = XmlTools.fast(f.content).node.manifest;
+		final g = function(n: String) return x.hasNode.resolve(n) ? StringTools.trim(x.node.resolve(n).innerData) : null;
 		return {
 			title: g('title'),
 			author: g('author'),
@@ -61,7 +60,7 @@ class TplSystem {
 			www: g('www'),
 			version: {
 				if (x.hasNode.resolve('version')) {
-					var v: Array<Int> = x.node.resolve('version').innerData.split('.').map(StringTools.trim).map(Std.parseInt);
+					final v: Array<Int> = x.node.resolve('version').innerData.split('.').map(StringTools.trim).map(Std.parseInt);
 					{ major: v[0], minor: v[1] };
 				} else
 					null;
@@ -77,7 +76,7 @@ class TplSystem {
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
 class PagesPut extends TplPut<TplSystem, {}> {
 
-	private var included: List<String> = new List<String>();
+	private final included: List<String> = new List<String>();
 
 	@:async
 	override public function tag(name: String, content: TplData, arg: String, args: Map<String, String>, ?kid: ITplPut): String {
@@ -92,7 +91,7 @@ class PagesPut extends TplPut<TplSystem, {}> {
 					return '';
 				}
 			}
-			var d: TplDir = a.includes;
+			final d: TplDir = a.includes;
 			if (d.exists(arg)) {
 				var c: String = null;
 				if (kid != null)
@@ -124,7 +123,7 @@ class IncludePut extends TplPut<{ content: String, args: Map<String, String> }, 
 		if (name == 'content') {
 			return a.content;
 		} else if (a.args.exists(name)) {
-			var r: String = a.args.get(name);
+			final r: String = a.args.get(name);
 			return r;
 		} else
 			return @await super.shortTag(name, arg, kid);

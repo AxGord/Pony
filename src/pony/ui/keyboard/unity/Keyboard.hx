@@ -15,7 +15,7 @@ import unityengine.KeyCode;
  */
 class Keyboard implements IKeyboard implements HasSignal {
 
-	private static var keys: Array<KeyCode> = [
+	private static final keys: Array<KeyCode> = [
 		KeyCode.A,
 		KeyCode.B,
 		KeyCode.C,

@@ -14,13 +14,13 @@ import types.RemoteServerConfig;
 #if (haxe_ver >= 4.2) final #else @:final #end
 class ServerRemote extends Logable {
 
-	private var port: UInt;
+	private final port: UInt;
 	private var socket: Null<SocketServer>;
-	private var key: Null<String>;
-	private var commands: Map<String, Array<Pair<Bool, String>>>;
+	private final key: Null<String>;
+	private final commands: Map<String, Array<Pair<Bool, String>>>;
 	private var instanse: Null<ServerRemoteInstanse>;
 	private var cmdLock: Bool = false;
-	private var allowForGet: Array<String>;
+	private final allowForGet: Array<String>;
 
 	public function new(cfg: RemoteServerConfig) {
 		super();

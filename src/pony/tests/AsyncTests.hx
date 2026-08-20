@@ -17,11 +17,11 @@ using pony.Tools;
 class AsyncTests extends TestCase {
 
 	public static var isRead: Map<Int, Bool>;
-	private static var assertList: List<{ a: Dynamic, b: Dynamic, pos: PosInfos }> = new List();
+	private static final assertList: List<{ a: Dynamic, b: Dynamic, pos: PosInfos }> = new List();
 	private static var testCount: Int = 0;
 	private static var complite: Bool = false;
-	private static var dec: String = '----------';
-	private static var waitList: List<{ it: IntIterator, cb: Void -> Void }> = new List<{ it: IntIterator, cb: Void -> Void }>();
+	private static final dec: String = '----------';
+	private static final waitList: List<{ it: IntIterator, cb: Void -> Void }> = new List<{ it: IntIterator, cb: Void -> Void }>();
 	private static var counter: Int = 0;
 	private static var lock: Bool;
 
@@ -55,7 +55,7 @@ class AsyncTests extends TestCase {
 			lock = false;
 			return;
 		}
-		var test: TestRunner = new TestRunner();
+		final test: TestRunner = new TestRunner();
 		test.add(new AsyncTests());
 		test.run();
 		#if cs

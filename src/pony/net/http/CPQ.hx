@@ -18,10 +18,10 @@ class CPQ implements Declarator {
 	public var modules: Map<String, ModuleConnect<IModule>> = [];
 
 	public function run(): Void {
-		var a: Array<String> = connection.url.split('/');
-		var u: Array<String> = [];
+		final a: Array<String> = connection.url.split('/');
+		final u: Array<String> = [];
 		while (a.length != 0) {
-			var n: String = a.join('/');
+			final n: String = a.join('/');
 			if (template.exists('$n/index')) {
 				page = n;
 				query = u;

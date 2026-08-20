@@ -36,10 +36,10 @@ class Mouse {
 	private static inline function hackMove(): Void {
 		#if !notouch
 		moveEvent = Application.current.window.onMouseMove;
-		var event: Event<Float -> Float -> Void> = new Event<Float -> Float -> Void>();
+		final event: Event<Float -> Float -> Void> = new Event<Float -> Float -> Void>();
 		untyped Application.current.window.onMouseMove = event;
 		#else
-		var event: Event<Float -> Float -> Void> = Application.current.window.onMouseMove;
+		final event: Event<Float -> Float -> Void> = Application.current.window.onMouseMove;
 		#end
 		event.add(M.moveHandler, false, 1000);
 	}
@@ -48,10 +48,10 @@ class Mouse {
 	private static inline function hackDown(): Void {
 		#if !notouch
 		downEvent = Application.current.window.onMouseDown;
-		var event: Event<Float -> Float -> lime.ui.MouseButton -> Void> = new Event<Float -> Float -> lime.ui.MouseButton -> Void>();
+		final event: Event<Float -> Float -> lime.ui.MouseButton -> Void> = new Event<Float -> Float -> lime.ui.MouseButton -> Void>();
 		untyped Application.current.window.onMouseDown = event;
 		#else
-		var event: Event<Float -> Float -> lime.ui.MouseButton -> Void> = Application.current.window.onMouseDown;
+		final event: Event<Float -> Float -> lime.ui.MouseButton -> Void> = Application.current.window.onMouseDown;
 		#end
 		event.add(M.downHandler, false, 1000);
 	}
@@ -60,10 +60,10 @@ class Mouse {
 	private static inline function hackUp(): Void {
 		#if !notouch
 		upEvent = Application.current.window.onMouseUp;
-		var event: Event<Float -> Float -> Int -> Void> = new Event<Float -> Float -> Int -> Void>();
+		final event: Event<Float -> Float -> Int -> Void> = new Event<Float -> Float -> Int -> Void>();
 		untyped Application.current.window.onMouseUp = event;
 		#else
-		var event: Event<Float -> Float -> Int -> Void> = Application.current.window.onMouseUp;
+		final event: Event<Float -> Float -> Int -> Void> = Application.current.window.onMouseUp;
 		#end
 		event.add(M.upHandler, false, 1000);
 	}

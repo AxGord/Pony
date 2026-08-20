@@ -66,8 +66,8 @@ class FLTools {
 	 * Вписывает объект внутрь прямоугольника, сохраняя пропорции. Размещает по центру.
 	 */
 	public static function setSize(o: DisplayObject, w: Float, h: Float): Void {
-		var d1: Float = w / h;
-		var d2: Float = o.width / o.height;
+		final d1: Float = w / h;
+		final d2: Float = o.width / o.height;
 		if (d1 < d2) {
 			o.width = w;
 			o.scaleY = o.scaleX;
@@ -94,7 +94,7 @@ class FLTools {
 			cb(Lib.current.stage);
 			return null;
 		} else {
-			var timer: Timer = new Timer(100);
+			final timer: Timer = new Timer(100);
 			timer.run = function() {
 				if (Lib.current != null && Lib.current.stage != null) {
 					timer.stop();
@@ -143,10 +143,10 @@ class FLTools {
 		// 	objs.push(_target.getChildAt(0));
 		// 	_target.removeChildAt(0);
 		// }
-		var chs: Array<Rectangle> = [];
+		final chs: Array<Rectangle> = [];
 		// var zr:Rectangle = new Rectangle(1, 1);
 		for (i in 0..._target.numChildren) {
-			var ch: DisplayObject = _target.getChildAt(i);
+			final ch: DisplayObject = _target.getChildAt(i);
 			chs.push(getRect(ch));
 			ch.x = ch.y = 1;
 			ch.width = ch.height = 0;
@@ -158,7 +158,7 @@ class FLTools {
 		_target.removeChild(_shape);
 
 		for (i in 0..._target.numChildren) {
-			var ch: DisplayObject = _target.getChildAt(i);
+			final ch: DisplayObject = _target.getChildAt(i);
 			setRect(ch, chs[i]);
 		}
 		// for (o in objs) _target.addChild(o);
@@ -179,7 +179,7 @@ class FLTools {
 	}
 
 	public static function childrens(d: DisplayObjectContainer): Iterator<DisplayObject> {
-		var it: IntIterator = 0...d.numChildren;
+		final it: IntIterator = 0...d.numChildren;
 		return {
 			hasNext: it.hasNext,
 			next: function(): DisplayObject return d.getChildAt(it.next())
@@ -187,7 +187,7 @@ class FLTools {
 	}
 
 	public static function brightness(v: Int): ColorTransform {
-		var t = new ColorTransform();
+		final t = new ColorTransform();
 		t.with(greenOffset = v, redOffset = v, blueOffset = v);
 		return t;
 	}
@@ -199,8 +199,8 @@ class FLTools {
 	}
 
 	public static function makeBigBorders(color: Int = 0x666666): Void {
-		var size: Float = 100000;
-		var sprite: Sprite = new Sprite();
+		final size: Float = 100000;
+		final sprite: Sprite = new Sprite();
 		sprite.graphics.beginFill(color);
 		sprite.graphics.drawRect(-size, -size, size * 2 + width, size);
 		sprite.graphics.drawRect(-size, 0, size, width + size);
@@ -211,14 +211,14 @@ class FLTools {
 	}
 
 	public static function reverseChildren(container: DisplayObjectContainer): Void {
-		var children: Array<DisplayObject> = [for (i in 0...container.numChildren) container.getChildAt(i)];
+		final children: Array<DisplayObject> = [for (i in 0...container.numChildren) container.getChildAt(i)];
 		container.removeChildren();
 		for (i in 0...children.length) container.addChild(children[children.length - i - 1]);
 	}
 	#end
 
 	macro public static function includeAS(dir: String): Expr {
-		var from = Tools.currentDir();
+		final from = Tools.currentDir();
 		asCopy('HaxeInit', from, dir);
 		asCopy('ExtendedMovieClip', from, dir);
 		return macro null;
@@ -233,7 +233,7 @@ class FLTools {
 	public static function base64ToBitmapDataAsync(base64: String, ok: BitmapData -> Void, ?error: Dynamic -> Void): Void {
 		if (error == null) error = Tools.errorFunction;
 		base64 = {
-			var s = base64.split(',');
+			final s = base64.split(',');
 			s.length == 1 ? s[0] : s[1];
 		}; // Remove header
 		try {
@@ -245,7 +245,7 @@ class FLTools {
 	public static function bytesToBitmapData(bytes: Bytes, ok: BitmapData -> Void, ?error: Dynamic -> Void): Void {
 		if (error == null) error = Tools.errorFunction;
 		try {
-			var loader = new Loader();
+			final loader = new Loader();
 			var removeEvents: Void -> Void = null;
 			function errorHandler(e: IOErrorEvent): Void {
 				removeEvents();
@@ -277,7 +277,7 @@ class FLTools {
 	public static function loadText(url: String, ok: String -> Void, ?error: Dynamic -> Void): Void {
 		if (error == null) error = Tools.errorFunction;
 		try {
-			var loader = new URLLoader(new URLRequest(url));
+			final loader = new URLLoader(new URLRequest(url));
 			loader.dataFormat = URLLoaderDataFormat.TEXT;
 			var removeEvents: Void -> Void = null;
 			function errorHandler(e: IOErrorEvent): Void {
@@ -305,7 +305,7 @@ class FLTools {
 	public static function loadBytes(url: String, ok: Bytes -> Void, ?error: Dynamic -> Void): Void {
 		if (error == null) error = Tools.errorFunction;
 		try {
-			var loader = new URLLoader(new URLRequest(url));
+			final loader = new URLLoader(new URLRequest(url));
 			loader.dataFormat = URLLoaderDataFormat.BINARY;
 			var removeEvents: Void -> Void = null;
 			function errorHandler(e: IOErrorEvent): Void {

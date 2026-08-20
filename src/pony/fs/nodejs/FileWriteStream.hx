@@ -21,7 +21,7 @@ class FileWriteStream extends WriteStream<Bytes> {
 
 	private var size: Float;
 	private var fd: Int;
-	private var path: String;
+	private final path: String;
 	private var position: Int = 0;
 
 	public function new(path: String) {

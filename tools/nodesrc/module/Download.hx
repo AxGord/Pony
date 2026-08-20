@@ -18,14 +18,14 @@ using pony.text.TextTools;
  * Download Pony Tools Node Module
  * @author AxGord <axgord@gmail.com>
  */
-@:nullSafety(Strict) @:final class Download extends NModule<DownloadConfig> {
+@:nullSafety(Strict) final class Download extends NModule<DownloadConfig> {
 
 	#if (haxe_ver < 4.2) override #end
 	private function run(cfg: DownloadConfig): Void {
-		var downloadList: Array<Pair<String, String>> = [];
+		final downloadList: Array<Pair<String, String>> = [];
 
 		for (unit in cfg.units) {
-			var file: String = cfg.path + unit.a.split('/').pop();
+			final file: String = cfg.path + unit.a.split('/').pop();
 			var needDownload: Bool = false;
 			if (unit.b != null && FileSystem.exists(file)) {
 				needDownload = sys.io.File.getContent(file).indexOf(unit.b) == -1;
@@ -37,7 +37,7 @@ using pony.text.TextTools;
 		for (file in downloadList) {
 			log('Download ${file.b}');
 			tasks.add();
-			var protocol: String = file.b.substr(0, 7);
+			final protocol: String = file.b.substr(0, 7);
 			switch protocol {
 				case 'https:/':
 					NPM.follow_redirects.https.get(file.b, { timeout: 7000 }, function(response: IncomingMessage): Void {

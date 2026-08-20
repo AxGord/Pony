@@ -25,11 +25,11 @@ class Worker implements IWorkerGatePool implements HasSignal {
 
 	private var bgWorker: flash.system.Worker;
 	private var lock: Bool = true;
-	private var unlockers: List<Void -> Void> = new List<Void -> Void>();
+	private final unlockers: List<Void -> Void> = new List<Void -> Void>();
 
 	@:auto public var log: Signal1<String>;
 
-	private var lw: WorkerInput<String, Int>;
+	private final lw: WorkerInput<String, Int>;
 
 	public function new(b: Bytes): Void {
 		bgWorker = WorkerDomain.current.createWorker(b.getData(), true);
@@ -47,7 +47,7 @@ class Worker implements IWorkerGatePool implements HasSignal {
 		var resultChannel: MessageChannel = bgWorker.createMessageChannel(flash.system.Worker.current);
 		resultChannel.addEventListener(Event.CHANNEL_MESSAGE, function(event: Event): Void {
 			while (resultChannel.messageAvailable) {
-				var message: T2 = resultChannel.receive();
+				final message: T2 = resultChannel.receive();
 				if (message != null) response(message);
 			}
 		});
@@ -71,7 +71,7 @@ class Worker implements IWorkerGatePool implements HasSignal {
 		var resultChannel: MessageChannel = bgWorker.createMessageChannel(flash.system.Worker.current);
 		resultChannel.addEventListener(Event.CHANNEL_MESSAGE, function(event: Event): Void {
 			while (resultChannel.messageAvailable) {
-				var message: T1 = resultChannel.receive();
+				final message: T1 = resultChannel.receive();
 				if (message != null) request(message);
 			}
 		});

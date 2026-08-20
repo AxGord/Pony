@@ -9,7 +9,7 @@ import pony.time.DeltaTime;
  */
 @:keep class HCC {
 
-	private var node: Node;
+	private final node: Node;
 
 	public function new(node: Node) {
 		this.node = node;

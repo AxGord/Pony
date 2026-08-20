@@ -16,9 +16,9 @@ using pony.Tools;
 class Main {
 
 	static function main() {
-		var s = new SocketServer(13579);
+		final s = new SocketServer(13579);
 		s.onConnect << function(cl: ISocketClient): Void {
-			var bo = new BytesOutput();
+			final bo = new BytesOutput();
 			bo.writeStr('Hello man!');
 			cl.send(bo);
 		}

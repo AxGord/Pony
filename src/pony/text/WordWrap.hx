@@ -15,10 +15,10 @@ class WordWrap {
 	public static var splitChars: Array<String> = [' ', '-', '\t'];
 
 	public static function wordWrap(str: String, width: Int): String {
-		var words: Array<String> = TextTools.explode(str, splitChars);
+		final words: Array<String> = TextTools.explode(str, splitChars);
 
 		var curLineLength: Int = 0;
-		var strBuilder: StringBuf = new StringBuf();
+		final strBuilder: StringBuf = new StringBuf();
 		for (word in words) {
 			// If adding the new word to the current line would be too long,
 			// then put it on a new line (and split it up if it's too long).

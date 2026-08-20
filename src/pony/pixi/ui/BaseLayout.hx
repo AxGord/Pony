@@ -58,7 +58,7 @@ class BaseLayout<T:BaseLayoutCore<Container>> extends Sprite implements IWH {
 
 	private function destroyChild(obj: Container): Void {
 		if (Std.is(obj, DisplayObject)) {
-			var s: DisplayObject = cast obj;
+			final s: DisplayObject = cast obj;
 			removeChild(s);
 			s.destroy();
 		}

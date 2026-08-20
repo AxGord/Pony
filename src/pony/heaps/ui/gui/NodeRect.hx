@@ -15,12 +15,12 @@ import pony.geom.Point;
  * NodeRect
  * @author AxGord <axgord@gmail.com>
  */
-@:nullSafety @:final class NodeRect extends Node {
+@:nullSafety final class NodeRect extends Node {
 
 	public var graphics: Graphics;
-	private var round: Float;
+	private final round: Float;
 	private var color: Null<UColor>;
-	private var lineStyle: Null<Pair<UColor, Float>>;
+	private final lineStyle: Null<Pair<UColor, Float>>;
 
 	public function new(
 		size: Point<Float>, ?lineStyle: Pair<UColor, Float>, ?color: UColor, round: Float = 0, ?parent: Object

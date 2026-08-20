@@ -20,12 +20,12 @@ import pony.time.DeltaTime;
  */
 class DrawShapeView extends LogableSprite implements pony.geom.IWH {
 
-	public static inline var SNAP_LINE_WIDTH: Int = 4;
-	public static inline var SNAP_LINE_COLOR: Int = 0x2F2F2F;
+	public static inline final SNAP_LINE_WIDTH: Int = 4;
+	public static inline final SNAP_LINE_COLOR: Int = 0x2F2F2F;
 
-	public static inline var LINE_WIDTH: Int = 4;
-	public static inline var LINE_PROCESS_COLOR: Int = 0xFFFFFF;
-	public static inline var LINE_SHAPE_COLOR: Int = 0x82AAF7;
+	public static inline final LINE_WIDTH: Int = 4;
+	public static inline final LINE_PROCESS_COLOR: Int = 0xFFFFFF;
+	public static inline final LINE_SHAPE_COLOR: Int = 0x82AAF7;
 
 	public var size(get, never): Point<Float>;
 
@@ -114,7 +114,7 @@ class DrawShapeView extends LogableSprite implements pony.geom.IWH {
 	}
 
 	private function createBackground(): Void {
-		var bg = new Graphics();
+		final bg = new Graphics();
 		bg.beginFill(0x212121);
 		if (size.x > size.y)
 			bg.drawRect(dsp.xbegin, 0, size.y, size.y);
@@ -122,7 +122,7 @@ class DrawShapeView extends LogableSprite implements pony.geom.IWH {
 			bg.drawRect(0, dsp.ybegin, size.x, size.x);
 		bgLayer.addChild(bg);
 
-		var tg = new Graphics();
+		final tg = new Graphics();
 		tg.beginFill(0, 0);
 		if (size.x > size.y)
 			tg.drawRect(

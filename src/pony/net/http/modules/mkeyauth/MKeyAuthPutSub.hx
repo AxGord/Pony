@@ -10,14 +10,14 @@ import pony.text.tpl.TplPut;
  * @author AxGord <axgord@gmail.com>
  */
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
-@:final class MKeyAuthPutSub extends TplPut<MKeyAuthConnect, ITplPut> {
+final class MKeyAuthPutSub extends TplPut<MKeyAuthConnect, ITplPut> {
 
 	@:async
 	override public function shortTag(name: String, arg: String, ?kid: ITplPut): String {
 		if (name == 'logout') {
-			var url = '?${MKeyAuth.PARAM}';
+			final url = '?${MKeyAuth.PARAM}';
 			if (arg == 'a') {
-				var lang: MLangConnect = cast a.cpq.modules['MLang'];
+				final lang: MLangConnect = cast a.cpq.modules['MLang'];
 				var text = 'Logout';
 				if (lang != null) text = lang.translate('en', text);
 				return '<a href="$url">$text</a>';

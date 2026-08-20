@@ -38,9 +38,9 @@ class Download extends Section {
 
 private class Library {
 
-	var url: String;
-	var version: String;
-	var check: String;
+	final url: String;
+	final version: String;
+	final check: String;
 
 	public function new(url: String, ?version: String, ?check: String) {
 		this.url = url;
@@ -49,7 +49,7 @@ private class Library {
 	}
 
 	public function xml(): Xml {
-		var unit = Xml.createElement('unit');
+		final unit = Xml.createElement('unit');
 		unit.set('url', url);
 		if (version != null) unit.set('v', version);
 		if (check != null) unit.set('check', check);

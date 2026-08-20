@@ -20,7 +20,7 @@ class TextButton extends Sprite implements IWH {
 	public var btext(default, null): BTextLow;
 	public var size(get, never): Point<Float>;
 
-	private var color: Array<UColor>;
+	private final color: Array<UColor>;
 	private var lines: Array<Graphics>;
 	private var prevline: Graphics;
 
@@ -31,7 +31,7 @@ class TextButton extends Sprite implements IWH {
 		btext.interactive = false;
 		btext.interactiveChildren = false;
 		addChild(btext);
-		var g = new Graphics();
+		final g = new Graphics();
 		g.lineStyle();
 		g.beginFill(0, 0);
 		g.drawRect(0, 0, size.x, size.y);
@@ -41,7 +41,7 @@ class TextButton extends Sprite implements IWH {
 		if (line > 0) {
 			lines = [];
 			for (c in color) {
-				var g = new Graphics();
+				final g = new Graphics();
 				g.lineStyle(line, c.rgb, 1 - c.af);
 
 				var pos: Float = 0;

@@ -14,8 +14,8 @@ import pony.ui.gui.ButtonCore;
  */
 @:nullSafety(Strict) class LightButton extends Interactive {
 
-	private static inline var ONECOLOR_PRESS_ALPHA: Float = 0.5;
-	private static inline var ONECOLOR_DEFAULT_ALPHA: Float = 0.7;
+	private static inline final ONECOLOR_PRESS_ALPHA: Float = 0.5;
+	private static inline final ONECOLOR_DEFAULT_ALPHA: Float = 0.7;
 
 	public var core(default, null): ButtonCore;
 	public var touchable(default, null): Touchable;

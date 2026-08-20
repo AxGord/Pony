@@ -19,7 +19,7 @@ class GridCore {
 
 	private var slots: Array<Array<Bool>>;
 
-	private static var searchWay: Array<IntPoint> = [
+	private static final searchWay: Array<IntPoint> = [
 		{ x: 0, y: 0 },
 		{ x: 1, y: 0 },
 		{ x: 0, y: 1 },
@@ -89,7 +89,7 @@ class GridCore {
 
 	public function mark(rect: Rect<Float>): Void {
 		markOff();
-		var r: Rect<Int> = intRect(rect);
+		final r: Rect<Int> = intRect(rect);
 		if (isOut(r)) return;
 		for (i in r.y ... r.y + r.height) for (j in r.x ... r.x + r.width) makeMark(i, j, true);
 	}
@@ -117,7 +117,7 @@ class GridCore {
 
 	public function takePosInt(start: IntRect, mark: Bool = true): Rect<Int> {
 		for (d in searchWay) {
-			var r: Rect<Int> = start + d;
+			final r: Rect<Int> = start + d;
 			if (isOut(r)) continue;
 			var taked: Bool = false;
 			for (y in r.y ... r.y + r.height) for (x in r.x ... r.x + r.width) if (slots[y][x]) {

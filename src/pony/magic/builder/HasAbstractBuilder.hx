@@ -19,13 +19,13 @@ using pony.macro.Tools;
  */
 class HasAbstractBuilder {
 
-	private static inline var PUBKEYWORD: String = 'abstract';
-	private static inline var KEYWORD: String = ':$PUBKEYWORD';
-	private static var META: Array<String> = [KEYWORD, PUBKEYWORD];
+	private static inline final PUBKEYWORD: String = 'abstract';
+	private static inline final KEYWORD: String = ':$PUBKEYWORD';
+	private static final META: Array<String> = [KEYWORD, PUBKEYWORD];
 
 	macro public static function build(): Array<Field> {
-		var fields: Array<Field> = [];
-		var cCur = Context.getLocalClass().get();
+		final fields: Array<Field> = [];
+		final cCur = Context.getLocalClass().get();
 		for (f in Context.getBuildFields()) {
 			if (f.meta.checkMeta(META)) {
 				#if (haxe_ver >= 4.2)
@@ -57,7 +57,7 @@ class HasAbstractBuilder {
 			}
 		}
 		#if (haxe_ver < 4.2)
-		var fieldMap = [for (f in fields) f.name => true];
+		final fieldMap = [for (f in fields) f.name => true];
 		function loop(c: ClassType) {
 			for (f in c.fields.get()) {
 				if (f.meta.has(KEYWORD) || f.meta.has(PUBKEYWORD)) {

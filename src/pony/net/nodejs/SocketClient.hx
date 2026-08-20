@@ -28,7 +28,7 @@ using pony.js.node.NodeJSUtils;
 
 	override private function open(): Void {
 		super.open();
-		var s: Socket = Net.createConnection(port, host);
+		final s: Socket = Net.createConnection(port, host);
 		s.on('connect', connect);
 		nodejsInit(s);
 	}
@@ -57,7 +57,7 @@ using pony.js.node.NodeJSUtils;
 
 	private function _send(data: BytesOutput): Void {
 		if (socket == null) return;
-		var b: Bytes = data.getBytes();
+		final b: Bytes = data.getBytes();
 		logBytes('Send data', b);
 		@:nullSafety(Off) socket.write(b.bytesToBuffer(), sendNextAfterTimeout);
 	}

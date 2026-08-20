@@ -11,15 +11,15 @@ import pony.text.tpl.TplSystem;
  */
 class Templates {
 
-	private var list: Map<String, TplSystem>;
+	private final list: Map<String, TplSystem>;
 
 	public function new(dir: Dir, ?c: Class<ITplPut>, o: Dynamic) {
 		list = [];
-		var td: Dir = '${dir}templates';
+		final td: Dir = '${dir}templates';
 		for (d in td.dirs()) {
-			var mf: File = '${d}manifest.xml';
+			final mf: File = '${d}manifest.xml';
 			if (mf.exists) {
-				var manifest: Manifest = TplSystem.parseManifest(mf);
+				final manifest: Manifest = TplSystem.parseManifest(mf);
 				if (manifest.title == null) manifest.title = d.name;
 				for (e in manifest._extends) {
 					// d.list.repriority(1);
@@ -27,7 +27,7 @@ class Templates {
 					d.addWayArray(td + e);
 				}
 				// trace(d);
-				var ts: TplSystem = new TplSystem(d, c, o);
+				final ts: TplSystem = new TplSystem(d, c, o);
 				ts.manifest = manifest;
 				list[d.name] = ts;
 			} else

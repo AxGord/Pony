@@ -11,10 +11,10 @@ import pony.events.Signal2;
 #if (haxe_ver >= 4.2) enum #else @:enum #end
 abstract SmallDeviceQuality(Int) to Int {
 
-	var ideal = 1;
-	var low = 2;
-	var normal = 3;
-	var good = 4;
+	final ideal = 1;
+	final low = 2;
+	final normal = 3;
+	final good = 4;
 
 }
 
@@ -24,7 +24,7 @@ abstract SmallDeviceQuality(Int) to Int {
  */
 class SmartCanvas extends ElementResizeControl {
 
-	private static inline var PX: String = 'px';
+	private static inline final PX: String = 'px';
 
 	@:auto public var onStageResize: Signal2<Float, Rect<Float>>;
 	@:auto public var onDynStageResize: Signal1<Rect<Float>>;
@@ -127,16 +127,16 @@ class SmartCanvas extends ElementResizeControl {
 			ratio = 1;
 			rect = new Rect((w - stageInitSize.x) / 2, (h - stageInitSize.y) / 2, w, h);
 		} else {
-			var wd = w / stageInitSize.x;
-			var hd = h / stageInitSize.y;
+			final wd = w / stageInitSize.x;
+			final hd = h / stageInitSize.y;
 			scale = wd > hd ? hd : wd;
 
 			ratio = (smallDeviceQuality: Int) <= 1 ? 1 : smallDeviceQualityOffset + scale / smallDeviceQuality;
 			if (ratio > 1) ratio = 1;
 			ratio = ratioMod(ratio);
 
-			var wr: Float = w / scale * ratio;
-			var hr: Float = h / scale * ratio;
+			final wr: Float = w / scale * ratio;
+			final hr: Float = h / scale * ratio;
 
 			var xr: Float = 0;
 			var yr: Float = 0;

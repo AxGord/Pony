@@ -20,10 +20,10 @@ using pony.text.TextTools;
  */
 @:nullSafety(Strict) class Logable implements ILogable implements HasSignal {
 
-	private static inline var DLM: String = ' ';
-	private static inline var MS: String = ' ms';
-	private static inline var MS_LEN: UInt = 1000;
-	private static inline var FRACTION_TO_ROUND: UInt = 100;
+	private static inline final DLM: String = ' ';
+	private static inline final MS: String = ' ms';
+	private static inline final MS_LEN: UInt = 1000;
+	private static inline final FRACTION_TO_ROUND: UInt = 100;
 
 	@:nullSafety(Off) private static var l_usedLibs: Map<String, String> = null;
 	private static var l_origTrace: Null<Dynamic -> ?PosInfos -> Void>;
@@ -64,7 +64,8 @@ using pony.text.TextTools;
 		if (id == null && logPrefix == '') {
 			l.onError << eError;
 		} else {
-			var listener: Listener2<String, PosInfos> = id != null ? function(s: String, p: PosInfos): Void error(id + DLM + s, p) : error;
+			final listener: Listener2<String, PosInfos> =
+				id != null ? function(s: String, p: PosInfos): Void error(id + DLM + s, p) : error;
 			function listen(): Void l.onError << listener;
 			function unlisten(): Void l.onError >> listener;
 			if (!eError.empty) l.onError << listener;
@@ -80,7 +81,7 @@ using pony.text.TextTools;
 		if (id == null && logPrefix == '') {
 			l.onLog << eLog;
 		} else {
-			var listener: Listener2<String, PosInfos> = id != null ? function(s: String, p: PosInfos): Void log(id + DLM + s, p) : log;
+			final listener: Listener2<String, PosInfos> = id != null ? function(s: String, p: PosInfos): Void log(id + DLM + s, p) : log;
 			function listen(): Void l.onLog << listener;
 			function unlisten(): Void l.onLog >> listener;
 			if (!eLog.empty) l.onLog << listener;
@@ -235,8 +236,8 @@ using pony.text.TextTools;
 	}
 
 	private static inline function l_replaceLibPath(path: String): String {
-		var p: SPair<String> = path.firstSplit('/');
-		var lib: Null<String> = l_usedLibs[p.a];
+		final p: SPair<String> = path.firstSplit('/');
+		final lib: Null<String> = l_usedLibs[p.a];
 		return (lib ?? './') + path;
 	}
 
@@ -244,7 +245,7 @@ using pony.text.TextTools;
 		return if (p == null)
 			null
 		else {
-			var r: SPair<String> = p.fileName.lastSplit(' ');
+			final r: SPair<String> = p.fileName.lastSplit(' ');
 			{
 				fileName: r.b != '' ? '${r.a} ${l_replaceLibPath(r.b)}' : l_replaceLibPath(r.a),
 				customParams: p.customParams,
@@ -277,7 +278,7 @@ using pony.text.TextTools;
 
 	#if js
 	private static function l_vscodeTraceBase(method: haxe.extern.Rest<Dynamic> -> Void, value: Dynamic, ?p: PosInfos): Void {
-		var p: Null<PosInfos> = l_patchFileName(p);
+		final p: Null<PosInfos> = l_patchFileName(p);
 		var place: String = '';
 		var prms: Array<Dynamic> = [value];
 		if (p != null) {
@@ -307,7 +308,7 @@ using pony.text.TextTools;
 		} else {
 			name = name != null ? ': $name' : '';
 			log('Begin bench$name', p);
-			var time: Float = Timer.stamp();
+			final time: Float = Timer.stamp();
 			f();
 			log('End bench$name ${l_benchTime(time)}$MS', p);
 		}
@@ -323,7 +324,7 @@ using pony.text.TextTools;
 		} else {
 			name = name != null ? ': $name' : '';
 			log('Begin async bench$name', p);
-			var time: Float = Timer.stamp();
+			final time: Float = Timer.stamp();
 			f(function(): Void log('End async bench$name ${l_benchTime(time)}$MS', p));
 		}
 		#else
@@ -342,7 +343,7 @@ using pony.text.TextTools;
 	public inline function benchComplete(name: String, ?p: PosInfos): Void {
 		#if !disableLogs
 		if (!logActive) return;
-		var time: Null<Float> = l_benches[name];
+		final time: Null<Float> = l_benches[name];
 		if (time == null) {
 			error('Bench $name completed or not started');
 		} else {
@@ -357,7 +358,7 @@ using pony.text.TextTools;
 	}
 
 	public static inline function debugGetObjectId(obj: {}): UInt {
-		var id: Int = l_debugObjects.indexOf(obj);
+		final id: Int = l_debugObjects.indexOf(obj);
 		return id == -1 ? l_debugObjects.push(obj) - 1 : id;
 	}
 

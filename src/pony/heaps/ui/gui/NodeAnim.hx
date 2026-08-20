@@ -13,7 +13,7 @@ import pony.time.Time;
  */
 @:nullSafety(Strict) class NodeAnim extends Node {
 
-	private var anim: Anim;
+	private final anim: Anim;
 	private var delay: Null<DTimer>;
 
 	public function new(tiles: Array<Tile>, speed: Float = 15, ?delay: Time, ?parent: Object) {

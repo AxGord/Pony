@@ -16,18 +16,18 @@ import pony.macro.Tools;
 class DeclaratorBuilder {
 
 	macro public static function build(): Array<Field> {
-		var fields: Array<Field> = [];
+		final fields: Array<Field> = [];
 		var toInit: Array<Expr> = [];
 		var toNew: Array<Expr> = [];
 		var fInit: Field;
 		var fNew: Field;
-		var args: Array<FunctionArg> = [];
+		final args: Array<FunctionArg> = [];
 		for (f in Context.getBuildFields()) {
 			switch [f.kind, f.name] {
 				case [FVar(t, e), _] if (Lambda.indexOf(f.access, AInline) == -1):
 					f.kind = FVar(t, null);
 					if (Tools.checkMeta(f.meta, [':arg', 'arg'])) {
-						var n = f.name;
+						final n = f.name;
 						switch ComplexTypeTools.toString(t) {
 							case 'Int', 'Float' if (Tools.staticPlatform):
 								args.push({
@@ -46,13 +46,13 @@ class DeclaratorBuilder {
 						}
 
 					} else if (e != null) {
-						var t = Lambda.indexOf(f.access, AStatic) == -1 ? toNew : toInit;
+						final t = Lambda.indexOf(f.access, AStatic) == -1 ? toNew : toInit;
 						t.push(macro $i{f.name} = $e);
 					}
 				case [FProp(g, s, t, e), _] if (s != 'set'):
 					f.kind = FProp(g, s, t, null);
 					if (Tools.checkMeta(f.meta, [':arg', 'arg'])) {
-						var n = f.name;
+						final n = f.name;
 						switch ComplexTypeTools.toString(t) {
 							case 'Int', 'Float' if (Tools.staticPlatform):
 								args.push({
@@ -70,7 +70,7 @@ class DeclaratorBuilder {
 									toNew.push(macro this.$n = $i{n} != null ? $i{n} : $i{n} = $e);
 						}
 					} else if (e != null) {
-						var t = Lambda.indexOf(f.access, AStatic) == -1 ? toNew : toInit;
+						final t = Lambda.indexOf(f.access, AStatic) == -1 ? toNew : toInit;
 						t.push(macro $i{f.name} = $e);
 					}
 				case [FFun(_), '__init__']:
@@ -99,7 +99,7 @@ class DeclaratorBuilder {
 		}
 
 		if (fNew == null) {
-			var s = Context.getLocalClass().get().superClass;
+			final s = Context.getLocalClass().get().superClass;
 			if (s != null) {
 				if (haveArgs(s.t.get().constructor.get().type)) {
 					toNew.push(macro super());

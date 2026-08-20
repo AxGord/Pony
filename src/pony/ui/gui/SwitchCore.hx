@@ -14,7 +14,7 @@ import pony.magic.HasSignal;
 
 	public var active(get, set): Int;
 	private var _active: Int;
-	private var objects: Array<T>;
+	private final objects: Array<T>;
 
 	public function new(objects: Array<T>, def: Int = -1) {
 		this.objects = objects;

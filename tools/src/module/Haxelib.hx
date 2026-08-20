@@ -33,8 +33,8 @@ typedef HaxelibConfig = {
 #if (haxe_ver >= 4.2) enum #else @:enum #end
 abstract Source(String) from String to String {
 
-	var GIT = 'git';
-	var DEV = 'dev';
+	final GIT = 'git';
+	final DEV = 'dev';
 
 }
 
@@ -44,7 +44,7 @@ abstract Source(String) from String to String {
  */
 @:nullSafety(Strict) class Haxelib extends CfgModule<HaxelibConfig> {
 
-	private static inline var PRIORITY: Int = 1;
+	private static inline final PRIORITY: Int = 1;
 
 	public function new() super('haxelib');
 
@@ -69,17 +69,17 @@ abstract Source(String) from String to String {
 			if (lib.version == GIT && lib.git == null) continue;
 			if (lib.version == DEV && lib.path == null) continue;
 			if (!lib.keepDev) Utils.command('haxelib', ['dev', lib.name]);
-			var args: Array<String> = lib.version == GIT
+			final args: Array<String> = lib.version == GIT
 				? @:nullSafety(Off) [GIT, lib.name, lib.git]
 				: lib.version == DEV && lib.path != null
 					? [DEV, lib.name, getLibPath(lib)]
 					: lib.version != null ? ['install', lib.name, lib.version] : ['install', lib.name];
 			if (lib.version == GIT && lib.commit != null) args.push(lib.commit);
 			Sys.println('haxelib ${args.join(' ')}');
-			var process: Process = new Process('haxelib', args);
+			final process: Process = new Process('haxelib', args);
 			try {
 				while (true) {
-					var ch = process.stdout.readString(1);
+					final ch = process.stdout.readString(1);
 					Sys.print(ch);
 					if (ch == '?') {
 						process.stdin.writeString(lib.y ? 'y\n' : 'n\n');
@@ -93,7 +93,7 @@ abstract Source(String) from String to String {
 			@:nullSafety(Off) var r: Int = process.exitCode();
 			if (r > 0) error('haxelib error $r');
 			if (lib.name == 'pony') {
-				var exceptions: Array<Null<String>> = [null, 'dev', 'git'];
+				final exceptions: Array<Null<String>> = [null, 'dev', 'git'];
 				if (!exceptions.contains(lib.version) && !exceptions.contains(Utils.ponyVersion) && lib.version != Utils.ponyVersion) {
 					// Build and run new version
 					Utils.command('haxelib', [
@@ -112,10 +112,10 @@ abstract Source(String) from String to String {
 				}
 			} else {
 				try {
-					var path: String = Tools.libPath(lib.name);
+					final path: String = Tools.libPath(lib.name);
 					log('Lib installed to $path');
 					var cwd: Cwd = new Cwd(path);
-					var pony: String = '${path}pony.xml';
+					final pony: String = '${path}pony.xml';
 					if (FileSystem.exists(pony)) {
 						cwd.sw();
 						Utils.command('haxelib', ['run', 'pony', 'prepare']);
@@ -123,13 +123,13 @@ abstract Source(String) from String to String {
 						cwd.sw();
 					}
 					if (lib.haxelib != null) {
-						var haxelib: String = lib.haxelib;
+						final haxelib: String = lib.haxelib;
 						cwd.sw();
 						Utils.command('haxelib', haxelib.split(' '));
 						cwd.sw();
 					}
 					if (lib.haxe != null) {
-						var haxe: String = lib.haxe;
+						final haxe: String = lib.haxe;
 						cwd.sw();
 						Utils.command('haxe', haxe.split(' '));
 						cwd.sw();
@@ -157,7 +157,7 @@ abstract Source(String) from String to String {
 	override private function readNode(xml: Fast): Void {
 		switch xml.name {
 			case 'lib':
-				var a: Array<String> = normalize(xml.innerData).split(' ');
+				final a: Array<String> = normalize(xml.innerData).split(' ');
 				@:nullSafety(Off) var name: String = a[0];
 				cfg.list.push({
 					name: name,

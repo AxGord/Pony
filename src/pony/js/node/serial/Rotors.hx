@@ -35,13 +35,13 @@ class RotorsObj {
 
 	public var rotors(default, null): ROArray<Rotor>;
 
-	private var serial: SerialPort;
+	private final serial: SerialPort;
 
 	public function new(serial: SerialPort, count: Int) {
 		this.serial = serial;
 		rotors = [
 			for (_ in 0...count) {
-				var r: Rotor = new Rotor();
+				final r: Rotor = new Rotor();
 				r.onUpdate << updateHandler;
 				r;
 			}
@@ -53,7 +53,7 @@ class RotorsObj {
 	}
 
 	public function push(): Void {
-		var bo = new BytesOutput();
+		final bo = new BytesOutput();
 		for (r in rotors) r.writeState(bo);
 		serial.write(bo);
 	}
@@ -62,8 +62,8 @@ class RotorsObj {
 
 class Rotor extends Tumbler {
 
-	public static inline var HALF: Int = 130;
-	public static inline var MAX: Int = 255;
+	public static inline final HALF: Int = 130;
+	public static inline final MAX: Int = 255;
 
 	@:auto public var onUpdate: Signal0;
 

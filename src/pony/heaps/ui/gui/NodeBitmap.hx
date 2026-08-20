@@ -16,7 +16,7 @@ import pony.geom.Point;
  * @author AxGord <axgord@gmail.com>
  */
 @:nullSafety(Strict)
-@:final class NodeBitmap extends Node {
+final class NodeBitmap extends Node {
 
 	public var bitmap(default, null): Bitmap;
 

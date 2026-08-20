@@ -26,14 +26,14 @@ class XmlUiBuilder {
 	private static var toConsructor: Array<Expr>;
 
 	macro public static function build(assetManager: Expr, typesExpr: Expr): Array<Field> {
-		var cl: ClassType = Context.getLocalClass().get();
-		var meta: Metadata = cl.meta.get();
+		final cl: ClassType = Context.getLocalClass().get();
+		final meta: Metadata = cl.meta.get();
 		if (!meta.checkMeta([':ui'])) {
 			cl.superClass.t; // run build for super class
 			return Context.getBuildFields();
 		}
 
-		var types = switch typesExpr.expr {
+		final types = switch typesExpr.expr {
 			case EObjectDecl(ts):
 				[for (t in ts) t.field => exprToComplex(t.expr)];
 			case _: Context.error('Types list wrong type', typesExpr.pos);
@@ -42,9 +42,9 @@ class XmlUiBuilder {
 		types['tween'] = macro :pony.time.Tween;
 
 		if (cl.superClass != null) {
-			var submeta: Metadata = cl.superClass.t.get().meta.get();
+			final submeta: Metadata = cl.superClass.t.get().meta.get();
 			if (submeta.checkMeta([':ui_types'])) {
-				var m = submeta.getMeta(':ui_types').params[0];
+				final m = submeta.getMeta(':ui_types').params[0];
 				switch m.expr {
 					case EObjectDecl(ts):
 						for (t in ts) types[t.field] = exprToComplex(t.expr);
@@ -55,7 +55,7 @@ class XmlUiBuilder {
 		}
 
 		if (meta.checkMeta([':ui_types'])) {
-			var m = meta.getMeta(':ui_types').params[0];
+			final m = meta.getMeta(':ui_types').params[0];
 			switch m.expr {
 				case EObjectDecl(ts):
 					for (t in ts) types[t.field] = exprToComplex(t.expr);
@@ -64,13 +64,13 @@ class XmlUiBuilder {
 			}
 		}
 
-		var fields: Array<Field> = Context.getBuildFields();
+		final fields: Array<Field> = Context.getBuildFields();
 
-		var style: Style = [];
+		final style: Style = [];
 		if (meta.checkMeta([':style'])) {
 			for (p in meta.getMeta(':style').params) switch p.expr {
 				case EConst(CString(styleFile)):
-					var s = getStyle(styleFile);
+					final s = getStyle(styleFile);
 					for (k in s.keys()) style[k] = s[k];
 				case _:
 					Context.error('Wrong style type', meta.getMeta(':style').params[0].pos);
@@ -79,15 +79,15 @@ class XmlUiBuilder {
 
 		switch meta.getMeta(':ui').params[0].expr {
 			case EConst(CString(uiFile)):
-				var ps = uiFile.split('/');
+				final ps = uiFile.split('/');
 				ps.pop();
 				gpath = ps.join('/');
-				var xml = getXml(uiFile);
+				final xml = getXml(uiFile);
 
-				var filters: Style = [];
+				final filters: Style = [];
 				if (xml.has.filters) {
 					for (f in parseAttr(xml.att.filters)) {
-						var s = getFilters(joinPath(gpath, f));
+						final s = getFilters(joinPath(gpath, f));
 						for (k in s.keys()) filters[k] = s[k];
 					}
 					xml.x.remove('filters');
@@ -95,14 +95,14 @@ class XmlUiBuilder {
 
 				if (xml.has.style) {
 					for (f in parseAttr(xml.att.style)) {
-						var s = getStyle(joinPath(gpath, f));
+						final s = getStyle(joinPath(gpath, f));
 						for (k in s.keys()) style[k] = s[k];
 					}
 				}
 
 				addId(fields, xml, style, types);
 
-				var obj: Expr = {
+				final obj: Expr = {
 					expr: EObjectDecl([for (k in filters.keys()) { field: k, expr: mapToOExprObject(filters[k]) }]),
 					pos: Context.currentPos()
 				};
@@ -123,11 +123,11 @@ class XmlUiBuilder {
 					access: [#if (haxe_ver < 4.2) AOverride, #end APrivate]
 				});
 				toConsructor = [];
-				var pathes: Array<String> = [];
+				final pathes: Array<String> = [];
 				getPathes(pathes, xml, style);
-				var pts: Array<String> = [];
+				final pts: Array<String> = [];
 				for (p in pathes) if (pts.indexOf(p) == -1) pts.push(p);
-				var ps: Array<Expr> = [for (p in pts) macro $v{p}];
+				final ps: Array<Expr> = [for (p in pts) macro $v{p}];
 				fields.push({
 					name: 'loadUI',
 					kind: FFun({
@@ -167,7 +167,7 @@ class XmlUiBuilder {
 
 	private static function getFilters(file: String): Style {
 		Context.registerModuleDependency(Context.getLocalModule(), file);
-		var xml: Fast = getXml(file);
+		final xml: Fast = getXml(file);
 		var path: String = xml.has.path ? xml.att.path : '';
 		return [
 			for (x in xml.elements) x.name => [for (a in x.x.attributes()) a => x.att.resolve(a)]
@@ -176,8 +176,8 @@ class XmlUiBuilder {
 
 	private static function getStyle(file: String): Style {
 		Context.registerModuleDependency(Context.getLocalModule(), file);
-		var xml: Fast = getXml(file);
-		var path: String = xml.has.path ? xml.att.path : '';
+		final xml: Fast = getXml(file);
+		final path: String = xml.has.path ? xml.att.path : '';
 		return [
 			for (x in xml.elements) x.name => [
 				for (a in x.x.attributes()) a => (a == 'src' ? joinPathA(path, x.att.resolve(a)) : x.att.resolve(a))
@@ -200,21 +200,21 @@ class XmlUiBuilder {
 	private static function getPathes(pathes: Array<String>, xml: Fast, style: Style, path: String = ''): Void {
 		if (xml.name == 'include') {
 			if (xml.has.path) path = joinPath(path, xml.att.path);
-			var xml = getXml(joinPath(gpath, xml.innerData));
+			final xml = getXml(joinPath(gpath, xml.innerData));
 			getPathes(pathes, xml, style, path);
 			return;
 		}
 		if (xml.has.path) {
 			path = joinPath(path, xml.att.path);
 		} else {
-			var attrs: Map<String, String> = [];
+			final attrs: Map<String, String> = [];
 			addStyle(xml.name, attrs, style);
 			if (attrs.exists('path')) pathes.push(joinPath(path, attrs['path']));
 		}
 		if (xml.has.src) {
 			for (s in xml.att.src.split(',')) pathes.push(joinPath(path, StringTools.trim(s)));
 		} else {
-			var attrs: Map<String, String> = [];
+			final attrs: Map<String, String> = [];
 			addStyle(xml.name, attrs, style);
 			if (attrs.exists('src')) for (e in joinPathA(path, attrs['src']).split(',')) pathes.push(StringTools.ltrim(e));
 		}
@@ -222,37 +222,40 @@ class XmlUiBuilder {
 	}
 
 	private static function genExpr(xml: Fast, style: Style, prefix: String = '', path: String = '', repeat: Bool = false): Expr {
-		var inRepeat: Bool = repeat;
+		final inRepeat: Bool = repeat;
 		switch xml.name {
 			case 'include':
 				if (xml.has.path) path = joinPath(path, xml.att.path);
-				var xml = getXml(joinPath(gpath, xml.innerData));
+				final xml = getXml(joinPath(gpath, xml.innerData));
 				return genExpr(xml, style, prefix, path, repeat);
 			case 'repeat':
 				repeat = true;
 			case _:
 		}
 
-		var attrs: Map<String, String> = [];
-		var name = addStyle(xml.name, attrs, style);
+		final attrs: Map<String, String> = [];
+		final name = addStyle(xml.name, attrs, style);
 		for (k in xml.x.attributes()) if (k != 'id') attrs[k] = xml.att.resolve(k);
 
 		if (attrs.exists('path')) path = joinPath(path, attrs['path']);
 		if (attrs.exists('src')) attrs['src'] = joinPathA(path, attrs['src']);
 
-		var content: Array<Expr> = [
+		final content: Array<Expr> = [
 			for (x in xml.elements) {
-				var e: Null<Expr> = genExpr(x, style, prefix + (xml.has.id ? '${xml.att.id}_' : ''), path, repeat);
+				final e: Null<Expr> = genExpr(x, style, prefix + (xml.has.id ? '${xml.att.id}_' : ''), path, repeat);
 				if (e != null) e;
 			}
 		];
-		var textContent: String = content.length == 0 && xml.x.firstChild() != null ? xml.innerData : '';
-		var obj: Expr = { expr: EObjectDecl([for (k in attrs.keys()) { field: k, expr: macro $v{attrs[k]} }]), pos: Context.currentPos() };
+		final textContent: String = content.length == 0 && xml.x.firstChild() != null ? xml.innerData : '';
+		final obj: Expr = {
+			expr: EObjectDecl([for (k in attrs.keys()) { field: k, expr: macro $v{attrs[k]} }]),
+			pos: Context.currentPos()
+		};
 
 		if (name == 'tween') {
 			if (!xml.has.id) throw 'Not have id';
 			if (inRepeat) throw 'Repeat not supported for tween';
-			var id: String = prefix + xml.att.id;
+			final id: String = prefix + xml.att.id;
 			toConsructor.push(macro {
 				$i{id} = new pony.time.Tween(
 					$v{xml.has.type ? xml.att.type : 'linear'}, $v{xml.has.time ? xml.att.time : '1s'}, $v{xml.isTrue('invert')},
@@ -266,7 +269,7 @@ class XmlUiBuilder {
 			return null;
 		}
 
-		var expr: Expr = !inRepeat
+		final expr: Expr = !inRepeat
 			? macro createUIElement($v{name}, $obj, $a{content}, $v{textContent})
 			: macro {
 				name: $v{name},
@@ -285,9 +288,9 @@ class XmlUiBuilder {
 		var n: String = name;
 		if (style[name].exists('extends')) n = addStyle(style[name]['extends'], attrs, style);
 		for (k in style[name].keys()) if (k != 'extends') {
-			var s: String = style[name][k];
-			var att1: Bool = attrs[k] != null && attrs[k].charAt(0) == ',';
-			var att2: Bool = s.charAt(0) == ',';
+			final s: String = style[name][k];
+			final att1: Bool = attrs[k] != null && attrs[k].charAt(0) == ',';
+			final att2: Bool = s.charAt(0) == ',';
 			attrs[k] = switch [att1, att2] {
 				case [false, false]:
 					s;
@@ -306,7 +309,7 @@ class XmlUiBuilder {
 		fields: Array<Field>, xml: Fast, style: Style, types: Map<String, ComplexType>, prefix: String = ''
 	): Void {
 		if (xml.name == 'include') {
-			var xml = getXml(joinPath(gpath, xml.innerData));
+			final xml = getXml(joinPath(gpath, xml.innerData));
 			addId(fields, xml, style, types, prefix);
 		}
 		var id: String = prefix;

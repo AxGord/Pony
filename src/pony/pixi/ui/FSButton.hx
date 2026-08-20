@@ -9,7 +9,7 @@ import pony.geom.Point;
  */
 class FSButton extends Button {
 
-	private var fs: FSButtonCore;
+	private final fs: FSButtonCore;
 
 	public function new(imgs: ROArray<String>, ?offset: Point<Float>, ?useSpriteSheet: String) {
 		super(imgs, offset, useSpriteSheet);

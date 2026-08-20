@@ -26,8 +26,8 @@ typedef NpmConfig = {
  */
 @:nullSafety(Strict) class Npm extends CfgModule<NpmConfig> {
 
-	private static inline var PRIORITY: Int = 2;
-	private static inline var PACKAGE: String = 'package.json';
+	private static inline final PRIORITY: Int = 2;
+	private static inline final PACKAGE: String = 'package.json';
 
 	public function new() super('npm');
 
@@ -51,10 +51,11 @@ typedef NpmConfig = {
 	}
 
 	override private function runNode(cfg: NpmConfig): Void {
-		var cwd = new Cwd(cfg.path, true);
+		// var, not final: sw() is an inline abstract member that writes `this`
+		var cwd = new Cwd(cfg.path, true); // noqa: prefer-final
 		cwd.sw();
 		if (cfg.name != null && cfg.main != null) {
-			var a: Array<String> = cfg.name.split('@');
+			final a: Array<String> = cfg.name.split('@');
 			File.saveContent(
 				PACKAGE, Json.stringify({
 					main: cfg.main,

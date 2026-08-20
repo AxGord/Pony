@@ -39,7 +39,7 @@ class ConsoleView extends PrinterBase implements Printer {
 	public function new() {
 		super();
 
-		var backzone: Float = 100000;
+		final backzone: Float = 100000;
 
 		atBottom = true;
 
@@ -67,7 +67,7 @@ class ConsoleView extends PrinterBase implements Printer {
 		textField.multiline = true;
 		textField.wordWrap = true;
 
-		var format = new TextFormat();
+		final format = new TextFormat();
 		format.font = '_typewriter';
 		format.size = 13;
 		format.color = 0xFFFFFF;
@@ -96,7 +96,7 @@ class ConsoleView extends PrinterBase implements Printer {
 	 * Resize the log panel when the stage resizes.
 	 */
 	function resize(_): Void {
-		var stage = flash.Lib.current.stage;
+		final stage = flash.Lib.current.stage;
 
 		background.width = stage.stageWidth;
 		background.height = stage.stageHeight;
@@ -126,7 +126,7 @@ class ConsoleView extends PrinterBase implements Printer {
 	 * of the output if atBottom is true.
 	 */
 	override function printLine(color: ConsoleColor, line: String, pos: PosInfos): Void {
-		var format = new TextFormat();
+		final format = new TextFormat();
 		format.color = switch (color) {
 			case none: 0x839496;
 			case white: 0xffffff;
@@ -136,7 +136,7 @@ class ConsoleView extends PrinterBase implements Printer {
 			case red: 0xdc322f; // noqa: unused-case-binder
 		};
 
-		var start = textField.text.length;
+		final start = textField.text.length;
 		textField.appendText('$line\n');
 		textField.setTextFormat(format, start, textField.text.length);
 

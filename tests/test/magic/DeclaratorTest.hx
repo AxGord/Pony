@@ -16,19 +16,19 @@ class DeclaratorTest {
 
 	@Test
 	public function const(): Void {
-		var d = new DeclaratorTestHelper(5, 6);
+		final d = new DeclaratorTestHelper(5, 6);
 		Assert.areEqual(d.sum(), 11);
 
-		var d = new DeclaratorTestHelper(5);
+		final d = new DeclaratorTestHelper(5);
 		Assert.areEqual(d.sum(), 8);
 	}
 
 	@Test
 	public function subEmpty(): Void {
-		var d = new DeclaratorTestHelperSub(3, 5, 6);
+		final d = new DeclaratorTestHelperSub(3, 5, 6);
 		Assert.areEqual(d.sum(), 33);
 
-		var d = new DeclaratorTestHelperSub(2, 5);
+		final d = new DeclaratorTestHelperSub(2, 5);
 		Assert.areEqual(d.sum(), 14);
 	}
 

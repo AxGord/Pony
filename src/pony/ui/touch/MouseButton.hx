@@ -6,8 +6,8 @@ package pony.ui.touch;
 #if (haxe_ver >= 4.2) enum #else @:enum #end
 abstract MouseButton(Int) from Int to Int {
 
-	var LEFT = 0;
-	var MIDDLE = 1;
-	var RIGHT = 2;
+	final LEFT = 0;
+	final MIDDLE = 1;
+	final RIGHT = 2;
 
 }

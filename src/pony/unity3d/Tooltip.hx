@@ -47,7 +47,7 @@ using pony.math.MathTools;
 
 	private static var target: Dynamic;
 	private static var longTextDY: Float = 0;
-	private static var distanceToLong: Float = 5;
+	private static inline final distanceToLong: Float = 5;
 
 	private static function init(): Void {
 
@@ -93,8 +93,8 @@ using pony.math.MathTools;
 
 		r = guiTextObject.GetScreenRect();
 
-		var w = panel && Fixed2dCamera.exists ? Fixed2dCamera.SIZE : Screen.width - Fixed2dCamera.SIZE;
-		var h = Screen.height;
+		final w = panel && Fixed2dCamera.exists ? Fixed2dCamera.SIZE : Screen.width - Fixed2dCamera.SIZE;
+		final h = Screen.height;
 
 		var rectWidth: Float = r.width;
 		var rectHeight: Float = r.height;
@@ -137,12 +137,12 @@ using pony.math.MathTools;
 	}
 
 	private static function moveText(): Void {
-		var limx: Float = limitBorder / (Screen.width - Fixed2dCamera.SIZE);
-		var limy: Float = limitBorder / Screen.height;
+		final limx: Float = limitBorder / (Screen.width - Fixed2dCamera.SIZE);
+		final limy: Float = limitBorder / Screen.height;
 		var x: Float = (Input.mousePosition.x - r.width / 2) / (Screen.width - Fixed2dCamera.SIZE);
 		var y: Float = (Input.mousePosition.y + r.height + border * 2) / Screen.height;
-		var dw: Float = 1 - r.width / (Screen.width - Fixed2dCamera.SIZE);
-		var dh: Float = r.height / Screen.height;
+		final dw: Float = 1 - r.width / (Screen.width - Fixed2dCamera.SIZE);
+		final dh: Float = r.height / Screen.height;
 		x = x.limit(limx, dw - limx);
 		y = y.limit(dh + limy, 1 - limy);
 		textObject.transform.position = new Vector3(x, y, 500);

@@ -9,9 +9,9 @@ class StreamTest {
 
 	@Test
 	public function afterTake(): Void {
-		var a = [false, false, false];
+		final a = [false, false, false];
 		var e = false;
-		var s = new Stream<Int>();
+		final s = new Stream<Int>();
 		s.take(function(d: Int) a[d] = true, function() e = true);
 		s.dataListener(0);
 		s.dataListener(1);
@@ -26,9 +26,9 @@ class StreamTest {
 
 	@Test
 	public function beforeTake(): Void {
-		var a = [false, false, false];
+		final a = [false, false, false];
 		var e = false;
-		var s = new Stream<Int>();
+		final s = new Stream<Int>();
 		s.dataListener(0);
 		s.dataListener(1);
 		s.dataListener(2);
@@ -42,9 +42,9 @@ class StreamTest {
 
 	@Test
 	public function mapAfter(): Void {
-		var a = [false, false, false];
+		final a = [false, false, false];
 		var e = false;
-		var s = new Stream<Int>();
+		final s = new Stream<Int>();
 		s.map(function(n) return n - 1).take(function(d: Int) a[d] = true, function() e = true);
 		s.dataListener(1);
 		s.dataListener(2);

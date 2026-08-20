@@ -22,15 +22,14 @@ abstract StarlingWindows(StarlingWindowsImpl) {
 @:nullSafety(Strict)
 @:final private class StarlingWindowsImpl {
 
-	private var map: Map<String, StarlingWindow>;
-	private var st: Sprite;
+	private final map: Map<String, StarlingWindow> = [];
+	private final st: Sprite;
 
 	public function new(st: Sprite) {
-		map = [];
 		this.st = st;
-		var windows: Array<StarlingWindow> = [];
+		final windows: Array<StarlingWindow> = [];
 		for (i in 0...st.numChildren) {
-			var child = st.getChildAt(i);
+			final child = st.getChildAt(i);
 			if (Std.is(child, StarlingWindow)) windows.push(cast child);
 		}
 		for (window in windows) {

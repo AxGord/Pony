@@ -12,12 +12,12 @@ class Button extends Sprite {
 
 	public var core(default, null): ButtonImgN;
 
-	private var states: Array<SBitmap>;
+	private final states: Array<SBitmap>;
 	private var zone: SBitmap;
 
 	public function new(states: Array<String>) {
 		super();
-		var created: Map<String, SBitmap> = [];
+		final created: Map<String, SBitmap> = [];
 		this.states = [
 			for (s in states) {
 				if (s == null)
@@ -25,7 +25,7 @@ class Button extends Sprite {
 				else if (created.exists(s))
 					created[s];
 				else {
-					var b = new SBitmap(s);
+					final b = new SBitmap(s);
 					addChild(b);
 					b.visible = false;
 					created[s] = b;
@@ -39,7 +39,7 @@ class Button extends Sprite {
 		} else {
 			zone = new SBitmap(states[0]);
 		}
-		var z = new Sprite();
+		final z = new Sprite();
 		z.addChild(zone);
 		z.alpha = 0;
 		z.buttonMode = true;

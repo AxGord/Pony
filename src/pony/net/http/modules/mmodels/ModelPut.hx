@@ -11,7 +11,7 @@ import pony.text.tpl.TplPut;
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
 class ModelPut extends TplPut<ModelConnect, Dynamic> {
 
-	private var list: Map<String, ITplPut>;
+	private final list: Map<String, ITplPut>;
 
 	public function new(a: ModelConnect, b: Dynamic, parent: ITplPut) {
 		super(a, b, parent);

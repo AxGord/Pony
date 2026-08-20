@@ -60,9 +60,9 @@ typedef ITextField = {
 class DisplayFactory {
 
 	#if starling
-	private static var _current: IDisplayFactory = StarlingDisplayFactory.getInstance();
+	private static final _current: IDisplayFactory = StarlingDisplayFactory.getInstance();
 	#else
-	private static var _current: IDisplayFactory = NativeFlashDisplayFactory.getInstance();
+	private static final _current: IDisplayFactory = NativeFlashDisplayFactory.getInstance();
 	#end
 
 	public static function createSprite(): IDisplayObjectContainer {

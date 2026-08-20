@@ -24,15 +24,14 @@ abstract Windows(WindowsImpl) {
 @:nullSafety(Strict)
 private class WindowsImpl {
 
-	private var map: Map<String, Window>;
-	private var st: MovieClip;
+	private final map: Map<String, Window> = [];
+	private final st: MovieClip;
 
 	public function new(st: MovieClip) {
-		map = [];
 		this.st = st;
-		var chs = [for (e in st.childrens()) e];
+		final chs = [for (e in st.childrens()) e];
 		for (ch in chs) if (Std.is(ch, Window)) {
-			var e: Window = cast ch;
+			final e: Window = cast ch;
 			map[e.name] = e;
 			e.initm(cast this);
 			st.removeChild(e);
@@ -43,7 +42,7 @@ private class WindowsImpl {
 	@:nullSafety(Off) public inline function resolve(field: String): Window return map[field];
 
 	public function blurOn(): Void {
-		var filter = new BlurFilter();
+		final filter = new BlurFilter();
 		filter.quality = 3;
 		switch (st.stage.quality) {
 			case StageQuality.LOW:

@@ -28,7 +28,7 @@ typedef Lib = {
 	public function result(): Xml {
 		init();
 		for (lib in libs) {
-			var n: Xml = add('lib', lib.version == null ? lib.name : '${lib.name} ${lib.version}');
+			final n: Xml = add('lib', lib.version == null ? lib.name : '${lib.name} ${lib.version}');
 			if (lib.parent != null) n.set('parent', lib.parent);
 			if (lib.path != null) n.set('path', lib.path);
 			if (lib.git != null) n.set('git', lib.git);

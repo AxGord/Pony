@@ -13,7 +13,7 @@ using pony.text.TextTools;
  */
 @:nullSafety(Strict) class Rename extends CfgModule<RenameConfig> {
 
-	private static inline var PRIORITY: Int = 21;
+	private static inline final PRIORITY: Int = 21;
 
 	public function new() super('rename');
 
@@ -39,8 +39,8 @@ using pony.text.TextTools;
 
 	private function renameUnits(data: Array<Pair<String, Null<String>>>, path: String): Void {
 		for (p in data) {
-			var from: Unit = path + p.b;
-			var to: Unit = path + p.a;
+			final from: Unit = path + p.b;
+			final to: Unit = path + p.a;
 			log('Rename file: $from to $to');
 			from.rename(to);
 		}

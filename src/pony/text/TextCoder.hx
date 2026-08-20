@@ -6,12 +6,12 @@ package pony.text;
  */
 class TextCoder {
 
-	private static var numbers: String = '0123456789';
-	private static var letters: String = 'QWERTYUIOPASDFGHJKLZXCVBNM';
-	private static var symbols: String = '~!@#$%^&*()_+|{:"<>?`-=\\[];\',./№';
+	private static final numbers: String = '0123456789';
+	private static final letters: String = 'QWERTYUIOPASDFGHJKLZXCVBNM';
+	private static final symbols: String = '~!@#$%^&*()_+|{:"<>?`-=\\[];\',./№';
 
-	private var key: String;
-	private var allowLowercase: Bool;
+	private final key: String;
+	private final allowLowercase: Bool;
 	private var chars: String;
 
 	public function new(key: String, ?allowLowercase: Bool, ?allowSymbols: Bool) {
@@ -24,7 +24,7 @@ class TextCoder {
 
 	public function encode(text: String): String {
 		if (!allowLowercase) text = text.toUpperCase();
-		var s: String = core(text);
+		final s: String = core(text);
 		if (text == core(s, -1))
 			return s;
 		else
@@ -33,7 +33,7 @@ class TextCoder {
 
 	public function decode(text: String, k = null): String {
 		if (!allowLowercase) text = text.toUpperCase();
-		var s: String = core(text, -1);
+		final s: String = core(text, -1);
 		if (text == core(s))
 			return s;
 		else
@@ -46,8 +46,8 @@ class TextCoder {
 		var s: String = '';
 		for (i in 0...text.length) {
 			if (n >= key.length) n = 0;
-			var tp: Int = chars.indexOf(text.charAt(i));
-			var kp: Int = chars.indexOf(key.charAt(n));
+			final tp: Int = chars.indexOf(text.charAt(i));
+			final kp: Int = chars.indexOf(key.charAt(n));
 			var np: Int = tp + kp * mode;
 			if (np >= chars.length) np -= chars.length;
 			if (np < 0) np += chars.length;

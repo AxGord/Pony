@@ -20,14 +20,14 @@ import pony.ui.touch.Touchable;
 	public var onStartDrag(default, null): Signal1<Touch>;
 	public var onStopDrag(default, null): Signal1<Touch>;
 
-	private var draggable: Bool;
+	private final draggable: Bool;
 	private var startPoint: Float = 0;
 	public var wheelSpeed: Float = 2;
 
 	public var trackStartPoint: Null<Float> = null;
 	public var track(default, set): Null<Touchable>;
 
-	@:arg private var button: Null<ButtonCore> = null;
+	@:arg private final button: Null<ButtonCore> = null;
 
 	public function new(size: Float, isVertical: Bool = false, invert: Bool = false, draggable: Bool = true) {
 		super(size, isVertical, invert);
@@ -54,7 +54,7 @@ import pony.ui.touch.Touchable;
 	public static inline function create(
 		?b: ButtonCore, width: Float, height: Float, invert: Bool = false, draggable: Bool = true
 	): SliderCore {
-		var isVert: Bool = height > width;
+		final isVert: Bool = height > width;
 		return new SliderCore(b, isVert ? height : width, isVert, invert, draggable);
 	}
 
@@ -115,7 +115,7 @@ import pony.ui.touch.Touchable;
 	public inline function scrollValue(v: Float): Void setPosValue(value - v);
 
 	public inline function update(): Void {
-		var p: Float = pos;
+		final p: Float = pos;
 		pos = 0;
 		pos = limit(p);
 	}

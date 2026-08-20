@@ -45,13 +45,13 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 		this.res = res;
 		this.req = req;
 		if (req.headers.hasField('accept-language')) {
-			var pb: ParseBoy<Void> = new ParseBoy<Void>(req.headers.field('accept-language'));
+			final pb: ParseBoy<Void> = new ParseBoy<Void>(req.headers.field('accept-language'));
 			var n: Int;
 			do {
 				n = pb.gt([',', ';']);
-				var s: String = pb.str();
+				final s: String = pb.str();
 				if (s.substr(0, 2) == 'q=') continue;
-				var a: Array<String> = s.toLowerCase().split('-');
+				final a: Array<String> = s.toLowerCase().split('-');
 				if (a.length == 1) {
 					langPush('${a[0]}-${a[0]}');
 					langPush(a[0]);
@@ -74,7 +74,7 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 	#if (haxe_ver < 4.2) override #end
 	public function sendFile(file: File): Void {
 		writeCookie();
-		var f = file.firstExists;
+		final f = file.firstExists;
 		Fs.stat(f, function(err: Error, stat: Stats): Void {
 			if (err != null) {
 				error(err.name);
@@ -106,7 +106,7 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 		res.setHeader('Location', url);
 		res.setHeader('Cache-Control', 'private');
 		res.statusCode = 302;
-		var t: String = '<html><body><a href="$url">Click here</a></body></html>';
+		final t: String = '<html><body><a href="$url">Click here</a></body></html>';
 		setLength(t);
 		res.end(t);
 		end = true;
@@ -169,7 +169,7 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 	}
 
 	private function writeCookie(): Void {
-		var s: String = cookie.toString(host.split(':')[0]);
+		final s: String = cookie.toString(host.split(':')[0]);
 		if (s != '') {
 			res.setHeader('Set-Cookie', s);
 			// res.setHeader('Cookie Domain', host);

@@ -4,8 +4,8 @@ package types;
 #if (haxe_ver >= 4.2) enum #else @:enum #end
 abstract ImgFormat(String) to String {
 
-	var PNG = 'png';
-	var JPG = 'jpg';
-	var WEBP = 'webp';
+	final PNG = 'png';
+	final JPG = 'jpg';
+	final WEBP = 'webp';
 
 }

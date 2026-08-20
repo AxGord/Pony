@@ -8,9 +8,9 @@ import sys.FileSystem;
  */
 class VSCode {
 
-	private static inline var PRELAUNCH_TASK: String = 'default';
-	private static inline var ANDROID_TASK: String = 'pony android';
-	private static inline var IPHONE_TASK: String = 'pony iphone';
+	private static inline final PRELAUNCH_TASK: String = 'default';
+	private static inline final ANDROID_TASK: String = 'pony android';
+	private static inline final IPHONE_TASK: String = 'pony iphone';
 
 	public static var allowCreate(get, never): Bool;
 
@@ -23,8 +23,8 @@ class VSCode {
 	public static function createDir(): Void FileSystem.createDirectory('.vscode');
 
 	public static function create(ponycmd: String, auto: Bool = false, server: Bool = true): Void {
-		var tasks: Array<Any> = [];
-		var matcher: Array<String> = ["$haxe-absolute", "$haxe", "$haxe-error", "$haxe-trace"];
+		final tasks: Array<Any> = [];
+		final matcher: Array<String> = ["$haxe-absolute", "$haxe", "$haxe-error", "$haxe-trace"];
 
 		if (air) {
 			tasks.push({
@@ -175,7 +175,7 @@ class VSCode {
 			}
 		});
 
-		var data = {
+		final data = {
 			version: '2.0.0',
 			tasks: tasks
 		};
@@ -183,7 +183,7 @@ class VSCode {
 	}
 
 	public static function createExtensions(chrome: Bool = false, flash: Bool = false, heaps: Bool = false): Void {
-		var data: Array<String> = ['nadako.vshaxe', 'vshaxe.haxe-checkstyle', 'wiggin77.codedox'];
+		final data: Array<String> = ['nadako.vshaxe', 'vshaxe.haxe-checkstyle', 'wiggin77.codedox'];
 		if (cordova) data.push('msjsdiag.cordova-tools');
 		if (heaps) {
 			data.push('haxefoundation.haxe-hl');
@@ -395,7 +395,7 @@ class VSCode {
 	}
 
 	private static function chromeConfig(httpPort: Int): Array<Any> {
-		var launch: String = 'Launch Chrome';
+		final launch: String = 'Launch Chrome';
 		return [
 			{
 				type: 'chrome',
@@ -411,7 +411,7 @@ class VSCode {
 	}
 
 	private static function saveConfig(configurations: Array<Any>): Void {
-		var data = {
+		final data = {
 			version: '0.2.0',
 			configurations: configurations
 		};
@@ -419,14 +419,14 @@ class VSCode {
 	}
 
 	public static function createElectron(output: String): Void {
-		var confNamePrefix: String = 'Electron: ';
-		var mainConfName: String = '${confNamePrefix}Main';
-		var renderConfName: String = '${confNamePrefix}Renderer';
-		var onlyRenderConfName: String = '${confNamePrefix}Only Renderer';
-		var resultDir: String = '$${workspaceFolder}/$output';
-		var electronExecutable: String = '${resultDir}node_modules/.bin/electron';
-		var port: Int = 9222;
-		var data = {
+		final confNamePrefix: String = 'Electron: ';
+		final mainConfName: String = '${confNamePrefix}Main';
+		final renderConfName: String = '${confNamePrefix}Renderer';
+		final onlyRenderConfName: String = '${confNamePrefix}Only Renderer';
+		final resultDir: String = '$${workspaceFolder}/$output';
+		final electronExecutable: String = '${resultDir}node_modules/.bin/electron';
+		final port: Int = 9222;
+		final data = {
 			version: '0.2.0',
 			configurations: [
 				({

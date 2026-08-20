@@ -10,7 +10,7 @@ import hxbitmini.Serializer;
  */
 class RPCBase<T:pony.net.rpc.IRPC> {
 
-	private var serializer: Serializer = new Serializer();
+	private final serializer: Serializer = new Serializer();
 	private var object(get, never): T;
 
 	public function new() {}
@@ -23,18 +23,18 @@ class RPCBase<T:pony.net.rpc.IRPC> {
 		serializer.setInput(b.readAll(), 0);
 		var clidx: Int = object.getCLID();
 		if (@:privateAccess serializer.convert != null && @:privateAccess serializer.convert[clidx] != null) {
-			var conv = @:privateAccess serializer.convert[clidx];
+			final conv = @:privateAccess serializer.convert[clidx];
 			if (conv.hadCID) {
-				var realIdx = serializer.getCLID();
+				final realIdx = serializer.getCLID();
 				if (conv.hasCID) {
-					var c = @:privateAccess cast Serializer.CL_BYID[realIdx];
+					final c = @:privateAccess cast Serializer.CL_BYID[realIdx];
 					clidx = (c: Dynamic).__clid;
 				}
 			}
 		} else {
 			if (@:privateAccess Serializer.CLIDS[clidx] != 0) {
-				var realIdx = serializer.getCLID();
-				var c = @:privateAccess cast Serializer.CL_BYID[realIdx];
+				final realIdx = serializer.getCLID();
+				final c = @:privateAccess cast Serializer.CL_BYID[realIdx];
 				if (@:privateAccess serializer.convert != null) clidx = (c: Dynamic).__clid; // real class convert
 			}
 		}

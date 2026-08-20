@@ -24,7 +24,7 @@ class XmlRequest extends Logable<XmlRequest> implements ICanBeCopied<XmlRequest>
 	}
 
 	public function copy(): XmlRequest {
-		var o = new XmlRequest([]);
+		final o = new XmlRequest([]);
 		o.modules = [
 			for (m in modules.mkv()) m.key => (Std.is(m.value, ICanBeCopied) ? untyped m.value.copy() : m.value)
 		];
@@ -36,10 +36,10 @@ class XmlRequest extends Logable<XmlRequest> implements ICanBeCopied<XmlRequest>
 	inline public function run(
 		x: Fast, initModules: Array<Class<Dynamic> -> IXRModule -> Void>, result: Dynamic -> Void, ?gxr: XmlRequest -> Void
 	): Void {
-		var xr = copy();
+		final xr = copy();
 		if (gxr != null) gxr(xr);
 		for (m in xr.modules.mkv()) if (Std.is(m.value, ICanBeCopied)) for (im in initModules) im(Type.getClass(m.value), m.value);
-		var it = x.elements;
+		final it = x.elements;
 		if (!it.hasNext()) {
 			_error('Empty');
 			return;
@@ -59,15 +59,15 @@ class XmlRequest extends Logable<XmlRequest> implements ICanBeCopied<XmlRequest>
 	}
 
 	public function rf(x: Fast, result: Dynamic -> Void): Void {
-		var it = x.elements;
+		final it = x.elements;
 		if (it.hasNext()) {
-			var e = it.next();
+			final e = it.next();
 			if (it.hasNext())
 				_error('Not single node');
 			else
 				_run(e, result);
 		} else {
-			var d: String = try {
+			final d: String = try {
 				x.innerData;
 			} catch (_: Dynamic) null;
 			try {
@@ -75,8 +75,8 @@ class XmlRequest extends Logable<XmlRequest> implements ICanBeCopied<XmlRequest>
 					result(null);
 				else {
 					if (d.charAt(0) == '%' && d.last() == '%') {
-						var d = d.substr(1, d.length - 2);
-						var m: V = cast modules['v'];
+						final d = d.substr(1, d.length - 2);
+						final m: V = cast modules['v'];
 						result(m.values[d]);
 					} else
 						result(d);
@@ -87,14 +87,14 @@ class XmlRequest extends Logable<XmlRequest> implements ICanBeCopied<XmlRequest>
 	}
 
 	public function ab(x: Fast, result: Dynamic -> Dynamic -> Void): Void {
-		var it = x.elements;
+		final it = x.elements;
 		if (it.hasNext()) {
-			var e = it.next();
+			final e = it.next();
 			if (!it.hasNext()) {
 				_error('Not two node');
 				return;
 			}
-			var e2 = it.next();
+			final e2 = it.next();
 			if (it.hasNext())
 				_error('Not two node');
 			else {

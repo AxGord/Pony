@@ -14,13 +14,13 @@ import haxe.macro.TypeTools;
 class MixinBuilder {
 
 	#if macro
-	private static var ready: Array<String> = [];
+	private static final ready: Array<String> = [];
 	#end
 
 	macro public static function build(): Array<Field> {
-		var fields: Array<Field> = Context.getBuildFields();
-		var local = Context.getLocalClass();
-		var localName: String = local.toString();
+		final fields: Array<Field> = Context.getBuildFields();
+		final local = Context.getLocalClass();
+		final localName: String = local.toString();
 		if (ready.indexOf(localName) != -1) return fields;
 		ready.push(localName);
 

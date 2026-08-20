@@ -25,7 +25,7 @@ class HttpTools {
 			cb(r);
 			getJsonQueue.next();
 		});
-		var script = Browser.document.createElement('SCRIPT');
+		final script = Browser.document.createElement('SCRIPT');
 		url += '&callback=ponyCallbackFunc';
 		untyped script.src = url;
 		snode = Browser.document.getElementsByTagName('head')[0].appendChild(script);

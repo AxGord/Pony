@@ -12,7 +12,7 @@ import hl.Bytes;
 	#if mobile
 	public static inline var BUFFER_SIZE: Int = 1024 * 1000;
 
-	private static inline var SIZE_LEN: UInt = 4;
+	private static inline final SIZE_LEN: UInt = 4;
 
 	public static var assetBytesAvailable(default, null): Int = 0;
 
@@ -29,9 +29,9 @@ import hl.Bytes;
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public static inline function getAssetBytes(): haxe.io.Bytes {
-		var s: Int = assetBytesAvailable > BUFFER_SIZE ? BUFFER_SIZE : assetBytesAvailable;
-		var b: Bytes = get_asset_bytes(s);
-		var r: haxe.io.Bytes = b.toBytes(s);
+		final s: Int = assetBytesAvailable > BUFFER_SIZE ? BUFFER_SIZE : assetBytesAvailable;
+		final b: Bytes = get_asset_bytes(s);
+		final r: haxe.io.Bytes = b.toBytes(s);
 		assetBytesAvailable -= BUFFER_SIZE;
 		if (assetBytesAvailable < 0) assetBytesAvailable = 0;
 		return r;

@@ -13,7 +13,7 @@ import pony.text.tpl.ITplPut;
 #end
 class ModelConnect extends ModuleConnect<Model> {
 
-	private var db: Table;
+	private final db: Table;
 
 	public var actions: Map<String, ActionConnect>;
 	public var subactions: Map<String, ISubActionConnect>;

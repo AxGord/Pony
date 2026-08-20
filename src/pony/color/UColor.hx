@@ -7,10 +7,10 @@ package pony.color;
  */
 abstract UColor(UInt) from UInt to UInt {
 
-	public static inline var HALF_POWER: UInt = 384;
-	public static inline var POS_ALPHA: UInt = 24;
-	public static inline var POS_RED: UInt = 16;
-	public static inline var POS_GREEN: UInt = 8;
+	public static inline final HALF_POWER: UInt = 384;
+	public static inline final POS_ALPHA: UInt = 24;
+	public static inline final POS_RED: UInt = 16;
+	public static inline final POS_GREEN: UInt = 8;
 
 	/**
 	 * ARGB
@@ -228,7 +228,7 @@ abstract UColor(UInt) from UInt to UInt {
 		} else if (s.substr(0, 3) == 'rgb') {
 			s = StringTools.ltrim(s.substr(3));
 			if (StringTools.startsWith(s, '(') && StringTools.endsWith(s, ')')) {
-				var d = s.substr(1, s.length - 2).split(',').map(Std.parseInt);
+				final d = s.substr(1, s.length - 2).split(',').map(Std.parseInt);
 				if (d.length != 3) throw 'Color params error';
 				fromRGB(d[0], d[1], d[2]);
 			} else
@@ -236,7 +236,7 @@ abstract UColor(UInt) from UInt to UInt {
 		} else if (s.substr(0, 4) == 'argb') {
 			s = StringTools.ltrim(s.substr(4));
 			if (StringTools.startsWith(s, '(') && StringTools.endsWith(s, ')')) {
-				var d = s.substr(1, s.length - 2).split(',').map(Std.parseInt);
+				final d = s.substr(1, s.length - 2).split(',').map(Std.parseInt);
 				if (d.length != 4) throw 'Color params error';
 				fromARGB(d[0], d[1], d[2], d[3]);
 			} else

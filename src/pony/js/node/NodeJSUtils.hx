@@ -23,7 +23,7 @@ using pony.text.TextTools;
 
 	private static inline function get_majorVersion(): UInt {
 		if (_majorVersion == -1) {
-			var s: Null<Int> = Std.parseInt(Node.process.version.substr(1).allBefore('.'));
+			final s: Null<Int> = Std.parseInt(Node.process.version.substr(1).allBefore('.'));
 			_majorVersion = s ?? 0;
 		}
 		return _majorVersion;

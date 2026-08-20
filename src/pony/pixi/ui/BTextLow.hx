@@ -13,7 +13,7 @@ class BTextLow extends BitmapText implements IWH {
 
 	public var t(get, set): String;
 	public var size(get, never): Point<Float>;
-	private var ansi: String;
+	private final ansi: String;
 	public var nocache(default, null): Bool;
 
 	public function new(text: String, ?style: BitmapTextStyle, ?ansi: String, nocache: Bool = false) {

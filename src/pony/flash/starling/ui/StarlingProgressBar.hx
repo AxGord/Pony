@@ -20,8 +20,8 @@ class StarlingProgressBar extends Sprite {
 
 	@:isVar public var auto(default, set): Void -> Float;
 
-	private var bar: DisplayObject;
-	private var total: Float;
+	private final bar: DisplayObject;
+	private final total: Float;
 
 	@:isVar public var value(default, set): Float;
 

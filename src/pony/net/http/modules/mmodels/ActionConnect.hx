@@ -34,12 +34,12 @@ class ActionConnect extends ModuleConnect<Action> {
 	private function initTpl(): Void {
 		if (tplInited) return;
 		tplInited = true;
-		var p = model.base.activePathes[base.name];
+		final p = model.base.activePathes[base.name];
 		if (p != null) {
 			activePathTarget = p.field == null ? 'id' : p.field;
-			var apath: String = p.path;
+			final apath: String = p.path;
 			if (apath != null) {
-				var q = [cpq.page].concat(cpq.query);
+				final q = [cpq.page].concat(cpq.query);
 				var takeNext = false;
 				var i = 0;
 				for (e in q) {
@@ -57,7 +57,7 @@ class ActionConnect extends ModuleConnect<Action> {
 		}
 		if (model.base.pathes[base.name] != null) for (path in model.base.pathes[base.name]) {
 			hasPathArg = true;
-			var q = [cpq.page].concat(cpq.query);
+			final q = [cpq.page].concat(cpq.query);
 			var takeNext = false;
 			var i = 0;
 			for (e in q) {
@@ -113,7 +113,7 @@ class ActionConnect extends ModuleConnect<Action> {
 
 	public function callCheck(args: Array<Dynamic>, cb: ActResult -> Void): Void {
 		if (methodCheck != null) {
-			var r = _callCheck(args);
+			final r = _callCheck(args);
 			if (r.empty()) {
 				call(args, function(b: Bool) cb(b ? OK : DBERROR));
 			} else {

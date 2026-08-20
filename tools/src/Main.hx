@@ -11,7 +11,7 @@ using pony.text.TextTools;
  */
 class Main {
 
-	static var commands: Commands = new Commands();
+	static final commands: Commands = new Commands();
 
 	static function showLogo(): Void {
 		Sys.println(Utils.ansiForeground(haxe.Resource.getString('logo'), AnsiForeground.LightGray));
@@ -43,7 +43,7 @@ class Main {
 	}
 
 	static function tryOtherPath(args: Array<String>): Bool {
-		var expath: String = new String(@:privateAccess Sys.sys_exe_path());
+		final expath: String = new String(@:privateAccess Sys.sys_exe_path());
 		var p: String = Utils.path(expath);
 		p = p.substr(0, p.lastIndexOf(Utils.PD) + 1);
 		if (p != Utils.toolsPath) {
@@ -57,15 +57,15 @@ class Main {
 	}
 
 	static function main(): Void {
-		var startTime: Float = Sys.time();
-		var args: Array<String> = Sys.args();
+		final startTime: Float = Sys.time();
+		final args: Array<String> = Sys.args();
 		if (trySubProjects(args) || tryOtherPath(args)) return;
 
 		commands.onError << Utils.error.bind(_, 1);
 		commands.onLog << Sys.println;
 		registerCommands();
 
-		var modules: Modules = new Modules(commands);
+		final modules: Modules = new Modules(commands);
 		registerModules(modules);
 		modules.init();
 
@@ -129,9 +129,9 @@ class Main {
 	}
 
 	static function setGroupsPerm(args: Array<String>, modules: Modules): Array<String> {
-		var nArgs: Array<String> = [];
-		var deny: Array<String> = [];
-		var allow: Array<String> = [];
+		final nArgs: Array<String> = [];
+		final deny: Array<String> = [];
+		final allow: Array<String> = [];
 		for (a in args) switch a.charAt(0) {
 			case '-':
 				deny.push(a.substr(1));
@@ -153,16 +153,16 @@ class Main {
 	}
 
 	static function runSubProjects(args: Array<String>): Void {
-		var xml: Fast = Utils.getXml();
+		final xml: Fast = Utils.getXml();
 		if (xml == null) {
 			Utils.error('${Utils.MAIN_FILE} not exists');
 		} else {
-			var startTime = Sys.time();
-			var apps: Array<String> = searchApps(xml.node.build);
-			var uapps: Array<String> = [];
+			final startTime = Sys.time();
+			final apps: Array<String> = searchApps(xml.node.build);
+			final uapps: Array<String> = [];
 			for (app in apps) if (uapps.indexOf(app) == -1) uapps.push(app);
-			var argsBefore: Array<String> = [];
-			var argsAfter: Array<String> = [];
+			final argsBefore: Array<String> = [];
+			final argsAfter: Array<String> = [];
 			var arg: String = null;
 			while (args.length > 0) {
 				arg = args.shift();

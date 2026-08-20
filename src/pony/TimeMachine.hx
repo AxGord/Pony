@@ -11,7 +11,7 @@ class TimeMachine<T> {
 	public var state(default, null): T;
 	public var canUndo(get, never): Bool;
 	private var states: Array<T> = [];
-	private var defaultState: T;
+	private final defaultState: T;
 
 	public function new(def: T) {
 		defaultState = def;
@@ -26,7 +26,7 @@ class TimeMachine<T> {
 	}
 
 	public function fullReset(): Void {
-		var l = states.length > 0;
+		final l = states.length > 0;
 		states = [];
 		reset();
 		if (l) onNotCanUndo();

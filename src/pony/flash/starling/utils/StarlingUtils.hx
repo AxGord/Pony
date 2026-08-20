@@ -28,17 +28,17 @@ class StarlingUtils {
 		if ((data.width <= 2048) && (data.height <= 2048)) {
 			result.addChild(new Image(Texture.fromBitmapData(data, mipMaps)));
 		} else {
-			var xTextures: Int = Math.ceil(data.width / 2048);
-			var yTextures: Int = Math.ceil(data.height / 2048);
+			final xTextures: Int = Math.ceil(data.width / 2048);
+			final yTextures: Int = Math.ceil(data.height / 2048);
 
-			var rect: Rectangle = new Rectangle();
-			var zeroPoint: Point = new Point(0, 0);
+			final rect: Rectangle = new Rectangle();
+			final zeroPoint: Point = new Point(0, 0);
 
 			for (i in 0...xTextures) {
 				for (j in 0...yTextures) {
-					var textureSourceInit: Void -> BitmapData = function(): BitmapData {
-						var textureWidth: Int = i == xTextures - 1 ? data.width - i * 2048 : 2048;
-						var textureHeight: Int = j == yTextures - 1 ? data.height - j * 2048 : 2048;
+					final textureSourceInit: Void -> BitmapData = function(): BitmapData {
+						final textureWidth: Int = i == xTextures - 1 ? data.width - i * 2048 : 2048;
+						final textureHeight: Int = j == yTextures - 1 ? data.height - j * 2048 : 2048;
 
 						var bmpd: BitmapData = ReusableBitmapData.getPowTwo(textureWidth, textureHeight);
 
@@ -61,7 +61,7 @@ class StarlingUtils {
 						texture = new SubTexture(texture, new Rectangle(0, 0, data.width - i * 2048, data.height - j * 2048), true);
 					}
 
-					var image: Image = new Image(texture);
+					final image: Image = new Image(texture);
 					image.x = i * 2048;
 					image.y = j * 2048;
 
@@ -76,14 +76,14 @@ class StarlingUtils {
 	public static function disposeWithChildren(object: DisplayObject): Void {
 		object.removeFromParent(true);
 		if (Std.is(object, DisplayObjectContainer)) {
-			var container = cast(object, DisplayObjectContainer);
+			final container = cast(object, DisplayObjectContainer);
 			while (container.numChildren > 0) {
 				disposeWithChildren(container.getChildAt(0));
 			}
 		}
 		if (Std.is(object, Image)) untyped object.texture.dispose();
 		if (Std.is(object, MovieClip)) {
-			var clip = cast(object, MovieClip);
+			final clip = cast(object, MovieClip);
 			for (i in 0...clip.numFrames) {
 				clip.getFrameTexture(i).dispose();
 			}
@@ -95,7 +95,7 @@ class StarlingUtils {
 	public static function enableChildrenTouchable(container: DisplayObjectContainer, enableContainerTouchable: Bool = true): Void {
 		if (enableContainerTouchable) container.touchable = true;
 		for (i in 0...container.numChildren) {
-			var child: DisplayObject = container.getChildAt(i);
+			final child: DisplayObject = container.getChildAt(i);
 			child.touchable = true;
 			if (Std.is(child, DisplayObjectContainer)) enableChildrenTouchable(cast child);
 		}
@@ -103,7 +103,7 @@ class StarlingUtils {
 
 	public static function alphaToUntouchable(container: starling.display.DisplayObjectContainer): Void {
 		for (i in 0...container.numChildren) {
-			var child: starling.display.DisplayObject = container.getChildAt(i);
+			final child: starling.display.DisplayObject = container.getChildAt(i);
 			if (!child.touchable) child.alpha = 0.2;
 			if (Std.is(child, starling.display.DisplayObjectContainer)) alphaToUntouchable(cast child);
 		}
@@ -111,7 +111,7 @@ class StarlingUtils {
 
 	public static function playChildren(container: DisplayObjectContainer): Void {
 		for (i in 0...container.numChildren) {
-			var child: DisplayObject = container.getChildAt(i);
+			final child: DisplayObject = container.getChildAt(i);
 			if (Std.is(child, MovieClip)) untyped child.play();
 			if (Std.is(child, DisplayObjectContainer)) playChildren(cast child);
 		}
@@ -119,7 +119,7 @@ class StarlingUtils {
 
 	public static function setChildrenTextureSmoothing(container: DisplayObjectContainer, smoothing: String = 'none'): Void {
 		for (i in 0...container.numChildren) {
-			var child: DisplayObject = container.getChildAt(i);
+			final child: DisplayObject = container.getChildAt(i);
 			if (Std.is(child, Image)) cast(child, Image).smoothing = smoothing;
 			if (Std.is(child, DisplayObjectContainer)) setChildrenTextureSmoothing(cast child, smoothing);
 		}
@@ -128,7 +128,7 @@ class StarlingUtils {
 	public static function syncAll(root: IDisplayObject): Void {
 		DeltaTime.fixedUpdate << function() {
 			for (e in Lib.current.childrens()) {
-				var o: IDisplayObject = untyped root.getChildByName(e.name);
+				final o: IDisplayObject = untyped root.getChildByName(e.name);
 				if (o == null) continue;
 				o.x = e.x;
 				o.y = e.y;

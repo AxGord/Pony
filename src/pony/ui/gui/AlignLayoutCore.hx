@@ -33,11 +33,11 @@ using pony.Tools;
 		} else {
 			if (align.horizontal != null) {
 				_w = 0;
-				var sizesX = [
+				final sizesX = [
 					for (obj in objects) {
-						var os = getObjSize(obj);
+						final os = getObjSize(obj);
 						if (os != null) {
-							var s = os.x;
+							final s = os.x;
 							if (s > _w) _w = s;
 							s;
 						} else {
@@ -49,20 +49,20 @@ using pony.Tools;
 			} else {
 				_w = 0;
 				for (obj in objects) {
-					var os = getObjSize(obj);
+					final os = getObjSize(obj);
 					if (os != null) {
-						var s = os.x;
+						final s = os.x;
 						if (s > _w) _w = s;
 					}
 				}
 			}
 			if (align.vertical != null) {
 				_h = 0;
-				var sizesY = [
+				final sizesY = [
 					for (obj in objects) {
-						var os = getObjSize(obj);
+						final os = getObjSize(obj);
 						if (os != null) {
-							var s = os.y;
+							final s = os.y;
 							if (s > _h) _h = s;
 							s;
 						} else {
@@ -74,9 +74,9 @@ using pony.Tools;
 			} else {
 				_h = 0;
 				for (obj in objects) {
-					var os = getObjSize(obj);
+					final os = getObjSize(obj);
 					if (os != null) {
-						var s = os.y;
+						final s = os.y;
 						if (s > _h) _h = s;
 					} else {
 						0;

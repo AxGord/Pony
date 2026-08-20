@@ -9,7 +9,7 @@ import types.BASection;
  */
 class Test extends CfgModule<TestConfig> {
 
-	private static inline var PRIORITY: Int = 5;
+	private static inline final PRIORITY: Int = 5;
 
 	public function new() super('test');
 
@@ -33,8 +33,8 @@ class Test extends CfgModule<TestConfig> {
 		var cwd: Cwd = cfg.path;
 		cwd.sw();
 		for (t in cfg.test) {
-			var args = t.split(' ');
-			var cmd = args.shift();
+			final args = t.split(' ');
+			final cmd = args.shift();
 			Utils.command(cmd, args);
 		}
 		cwd.sw();

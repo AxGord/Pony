@@ -11,16 +11,16 @@ import pony.geom.Point.IntPoint;
 class GeomTools {
 
 	public static function inPoly<T:Float>(point: Point<T>, poly: Polygon<T>): Bool {
-		var xp = [];
-		var yp = [];
+		final xp = [];
+		final yp = [];
 		// Maybe use poly direct?
 		for (p in poly) {
 			xp.push(p.x);
 			yp.push(p.y);
 		}
-		var x = point.x;
-		var y = point.y;
-		var npol = xp.length;
+		final x = point.x;
+		final y = point.y;
+		final npol = xp.length;
 		var j = npol - 1;
 		var c = false;
 		for (i in 0...npol) {
@@ -59,7 +59,7 @@ class GeomTools {
 		?align: Align
 	): Array<Point<Float>> {
 		align = align != null ? align.defaultCenter : Align.createDefaultCenter();
-		var cfun = if (align != null) {
+		final cfun = if (align != null) {
 			if (vert)
 				switch align.horizontal {
 					case HAlign.Left: begin;
@@ -74,8 +74,8 @@ class GeomTools {
 				}
 		} else
 			centerA;
-		var _fc = !padding && objects.length > 1 ? centerC : centerB;
-		var fc = if (align != null) {
+		final _fc = !padding && objects.length > 1 ? centerC : centerB;
+		final fc = if (align != null) {
 			if (!vert)
 				switch align.horizontal {
 					case HAlign.Left: begin;
@@ -91,13 +91,13 @@ class GeomTools {
 		} else
 			_fc;
 
-		var fa = vert ? cfun : fc;
-		var fb = vert ? fc : cfun;
+		final fa = vert ? cfun : fc;
+		final fb = vert ? fc : cfun;
 		if (border == null) border = 0;
-		var w = container.x - (border.left + border.right);
-		var h = container.y - (border.top + border.bottom);
-		var a = fa(w, [for (obj in objects) obj.x]);
-		var b = fb(h, [for (obj in objects) obj.y]);
+		final w = container.x - (border.left + border.right);
+		final h = container.y - (border.top + border.bottom);
+		final a = fa(w, [for (obj in objects) obj.x]);
+		final b = fb(h, [for (obj in objects) obj.y]);
 		return [for (i in 0...a.length) new Point(a[i] + border.left, b[i] + border.top)];
 	}
 
@@ -109,9 +109,9 @@ class GeomTools {
 	public static function centerB(size: Float, objects: Array<Float>): Array<Float> {
 		var sum: Float = 0;
 		for (obj in objects) sum += obj;
-		var d: Float = (size - sum) / (objects.length + 1);
+		final d: Float = (size - sum) / (objects.length + 1);
 		var pos: Float = d;
-		var r = [];
+		final r = [];
 		for (obj in objects) {
 			r.push(pos);
 			pos += obj + d;
@@ -122,9 +122,9 @@ class GeomTools {
 	public static function centerC(size: Float, objects: Array<Float>): Array<Float> {
 		var sum: Float = 0;
 		for (obj in objects) sum += obj;
-		var d: Float = (size - sum) / (objects.length - 1);
+		final d: Float = (size - sum) / (objects.length - 1);
 		var pos: Float = 0;
-		var r = [];
+		final r = [];
 		for (obj in objects) {
 			r.push(pos);
 			pos += obj + d;

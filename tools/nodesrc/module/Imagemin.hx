@@ -22,19 +22,21 @@ private typedef ImageminResult = Array<ImageminResultEntry>;
  * Imagemin Pony Tools Node Module
  * @author AxGord <axgord@gmail.com>
  */
-@:nullSafety(Strict) @:final class Imagemin extends NModule<ImageminConfig> {
+@:nullSafety(Strict) final class Imagemin extends NModule<ImageminConfig> {
 
 	#if (haxe_ver < 4.2) override #end
 	private function run(cfg: ImageminConfig): Void {
-		var from: Array<String> = cfg.from.split(',').map(StringTools.trim).addToStringsEnd('*.');
+		final from: Array<String> = cfg.from.split(',').map(StringTools.trim).addToStringsEnd('*.');
 		log('From: $from');
-		var formats: Array<String> = cfg.format == null ? [JPG, PNG, WEBP] : @:nullSafety(Off) cfg.format.split(',').map(StringTools.trim);
+		final formats: Array<String> = cfg.format == null
+			? [JPG, PNG, WEBP]
+			: @:nullSafety(Off) cfg.format.split(',').map(StringTools.trim);
 		log('Formats: ${formats.join(', ')}');
 		if (formats.indexOf(JPG) != -1 || (cfg.jpgfrompng && formats.indexOf(PNG) != -1)) {
-			var dir: Dir = cfg.from;
+			final dir: Dir = cfg.from;
 			var filter: String = '.$JPG';
 			if (cfg.jpgfrompng) filter += ' .$JPG';
-			var files: Array<File> = cfg.recursive ? dir.contentRecursiveFiles(filter) : dir.files(filter);
+			final files: Array<File> = cfg.recursive ? dir.contentRecursiveFiles(filter) : dir.files(filter);
 			for (file in files) {
 				tasks.add();
 				NPM.imagemin([file.first], {
@@ -48,9 +50,9 @@ private typedef ImageminResult = Array<ImageminResultEntry>;
 				}).then(function(r: ImageminResult): Void {
 					var p: String = file.first.substr(cfg.from.length);
 					p = p.substr(0, -4);
-					var n: String = '${cfg.to + p}.$JPG';
+					final n: String = '${cfg.to + p}.$JPG';
 					Utils.createPath(n);
-					var b: Bytes = Bytes.ofData(r[0].data);
+					final b: Bytes = Bytes.ofData(r[0].data);
 					sys.io.File.saveBytes(n, b);
 					log(n);
 					tasks.end();
@@ -72,7 +74,7 @@ private typedef ImageminResult = Array<ImageminResultEntry>;
 			if (cfg.pngq == null) {
 				pngpack(target, cfg.to);
 			} else {
-				var q: Float = @:nullSafety(Off) (cfg.pngq / 100);
+				final q: Float = @:nullSafety(Off) (cfg.pngq / 100);
 				NPM.imagemin(target, {
 					destination: cfg.to,
 					plugins: [
@@ -83,19 +85,19 @@ private typedef ImageminResult = Array<ImageminResultEntry>;
 		}
 		if (formats.indexOf(WEBP) != -1 || (cfg.webpfrompng && formats.indexOf(PNG) != -1)) {
 			tasks.add();
-			var cformats: Array<String> = [];
+			final cformats: Array<String> = [];
 			if (cfg.webpfrompng) {
 				cformats.push(PNG);
 				// Fnt helper
-				var ext: String = '.fnt';
+				final ext: String = '.fnt';
 				for (file in from) {
-					var d: Dir = file.substr(0, -2);
+					final d: Dir = file.substr(0, -2);
 					for (f in d.files(ext)) {
-						var ef: File = '${(f.fullDir + f.shortName).first}.$PNG';
+						final ef: File = '${(f.fullDir + f.shortName).first}.$PNG';
 						if (!ef.exists) continue;
-						var nf: File = '${cfg.to + f.shortName}_$WEBP$ext';
+						final nf: File = '${cfg.to + f.shortName}_$WEBP$ext';
 						nf.createWays();
-						var shn: String = '${f.shortName}.$WEBP';
+						final shn: String = '${f.shortName}.$WEBP';
 						log('${f.name}: ${ef.name} -> $shn');
 						nf.content = (
 							@:nullSafety(Off)
@@ -107,14 +109,14 @@ private typedef ImageminResult = Array<ImageminResultEntry>;
 			// if (cfg.webpfromjpg) formats.push('jpg');
 			for (e in cformats) {
 				// json helper
-				var ext: String = '.json';
+				final ext: String = '.json';
 				for (file in from) {
-					var d: Dir = file.substr(0, -2);
+					final d: Dir = file.substr(0, -2);
 					for (f in d.files(ext)) {
-						var ef: File = '${(f.fullDir + f.shortName).first}.$e';
+						final ef: File = '${(f.fullDir + f.shortName).first}.$e';
 						log('Generate $WEBP json, check file: $f, $ef');
 						if (!ef.exists) continue;
-						var nf: File = '${cfg.to + f.shortName}_$WEBP$ext';
+						final nf: File = '${cfg.to + f.shortName}_$WEBP$ext';
 						log(nf);
 						nf.createWays();
 						nf.content = StringTools.replace(@:nullSafety(Off) (f.content: String), '"${ef.name}"', '"${f.shortName}.$WEBP"');

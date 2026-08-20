@@ -15,9 +15,9 @@ import pony.text.tpl.TplPut;
  * MVK
  * @author AxGord <axgord@gmail.com>
  */
-@:final class MVK implements IModule {
+final class MVK implements IModule {
 
-	static private var sdk: Class<Dynamic> = Node.require('vksdk');
+	static private final sdk: Class<Dynamic> = Node.require('vksdk');
 
 	public var server: WebServer;
 	public var buttonData: String;
@@ -34,7 +34,7 @@ import pony.text.tpl.TplPut;
 				secure: true
 			}
 		]);
-		var s = TextTools.includeFileFromCurrentDir('mvk.tpl');
+		final s = TextTools.includeFileFromCurrentDir('mvk.tpl');
 		new Tpl(MVKPrePut, appid, s).gen(null, null, function(r) buttonData = r);
 	}
 
@@ -56,7 +56,7 @@ import pony.text.tpl.TplPut;
 }
 
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
-@:final class MVKPrePut extends TplPut<Int, {}> {
+final class MVKPrePut extends TplPut<Int, {}> {
 
 	@:async
 	override public function shortTag(name: String, arg: String, ?kid: ITplPut): String {

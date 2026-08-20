@@ -14,11 +14,11 @@ class SwitchableList implements IWards implements HasSignal {
 	@:auto public var lostState: Signal1<Int>;
 	public var currentPos(default, null): Int;
 
-	private var list: Array<ButtonCore>;
+	private final list: Array<ButtonCore>;
 	public var state(get, set): Int;
-	private var swto: Int;
-	private var ret: Bool;
-	private var def: Int;
+	private final swto: Int;
+	private final ret: Bool;
+	private final def: Int;
 
 	public function new(a: Array<ButtonCore>, def: Int = 0, swto: Int = 2, ret: Bool = false) {
 		this.swto = swto;

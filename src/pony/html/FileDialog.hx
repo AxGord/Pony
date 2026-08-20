@@ -24,8 +24,8 @@ import pony.magic.HasSignal;
 	@:auto public var onDragEnter: Signal0;
 	@:auto public var onDragLeave: Signal0;
 
-	private var input: InputElement;
-	private var dropElement: Null<Element>;
+	private final input: InputElement;
+	private final dropElement: Null<Element>;
 
 	public function new(?dropElement: Element) {
 		this.dropElement = dropElement;
@@ -80,7 +80,7 @@ import pony.magic.HasSignal;
 	 * uglify: <input>jslib/FileSaver.min.js</input>
 	 */
 	public static function save(bytes: Bytes, name: String = 'file'): Void {
-		var blob: Blob = new Blob([bytes.getData()], { type: 'application/octet-stream' });
+		final blob: Blob = new Blob([bytes.getData()], { type: 'application/octet-stream' });
 		Lib.global.saveAs(blob, name);
 	}
 

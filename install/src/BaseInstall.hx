@@ -4,15 +4,15 @@
  */
 @:nullSafety(Strict) class BaseInstall {
 
-	private static inline var YCODE: Int = 'y'.code;
-	private static inline var NCODE: Int = 'n'.code;
-	private static inline var ACODE: Int = 'a'.code;
-	private static inline var QCODE: Int = 'q'.code;
+	private static inline final YCODE: Int = 'y'.code;
+	private static inline final NCODE: Int = 'n'.code;
+	private static inline final ACODE: Int = 'a'.code;
+	private static inline final QCODE: Int = 'q'.code;
 
 	private static var allEnabled: Bool = false;
 
-	private var n: String;
-	private var hard: Bool;
+	private final n: String;
+	private final hard: Bool;
 
 	public function new(n: String, ?qn: String, q: Bool, hard: Bool) {
 		this.n = n;
@@ -66,7 +66,7 @@
 		if (opt == null) opt = [];
 		for (e in l) {
 			if (e.charAt(0) == '!') {
-				var args: Array<String> = a.concat(e.substr(1).split(' '));
+				final args: Array<String> = a.concat(e.substr(1).split(' '));
 				if (Config.OS == TargetOS.Windows || Utils.isSuper)
 					cmd(c, args.concat(opt));
 				else
@@ -94,7 +94,7 @@
 
 	private inline function hardCmd(c: String, a: Array<String>): Void {
 		log([c].concat(a).join(' '));
-		var r: Int = Sys.command(c, a);
+		final r: Int = Sys.command(c, a);
 		if (r != 0) Utils.exit(r);
 	}
 

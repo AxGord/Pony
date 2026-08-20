@@ -9,12 +9,12 @@ import pony.text.tpl.TplPut;
  * @author AxGord <axgord@gmail.com>
  */
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
-@:final class MFBPutSub extends TplPut<MFBConnect, {}> {
+final class MFBPutSub extends TplPut<MFBConnect, {}> {
 
 	@:async
 	override public function tag(name: String, content: TplData, arg: String, args: Map<String, String>, ?kid: ITplPut): String {
 		if (name == 'ready') {
-			var token = a.token;
+			final token = a.token;
 			if (args.exists('!')) {
 				if (token == null) {
 					return @await sub(a, null, MFBPutSub, content);

@@ -19,9 +19,9 @@ import pony.ui.keyboard.Keyboard;
 #if (haxe_ver >= 4.2) enum #else @:enum #end
 abstract Transform(Int) {
 
-	var uppercase = 1;
-	var none = 0;
-	var lowercase = -1;
+	final uppercase = 1;
+	final none = 0;
+	final lowercase = -1;
 
 	@:from public static inline function fromString(s: String): Transform {
 		return switch s {
@@ -107,7 +107,7 @@ abstract Transform(Int) {
 	}
 
 	private function inputHandler(charCode: UInt): Void {
-		var event: Event = new Event(ETextInput);
+		final event: Event = new Event(ETextInput);
 		event.charCode = charCode;
 		onTextInput(event);
 		handleKey(event);
@@ -121,7 +121,7 @@ abstract Transform(Int) {
 		if (t != null && t.length > 0) {
 			beforeChange();
 			if (selectionRange != null) cutSelection();
-			var before: String = text;
+			final before: String = text;
 			text = text.substr(0, cursorIndex) + t + text.substr(cursorIndex);
 			cursorIndex += t.length;
 			checkChangedText(before, true);
@@ -155,15 +155,15 @@ abstract Transform(Int) {
 				case [#if sys 0 #else null #end, _]:
 					nextChar = String.fromCharCode(e.charCode);
 				case [Key.UP, _]:
-					var oldIndex: Int = cursorIndex;
-					var index: Int = text.lastIndexOf('\n', cursorIndex - 1);
+					final oldIndex: Int = cursorIndex;
+					final index: Int = text.lastIndexOf('\n', cursorIndex - 1);
 					cursorIndex = index != -1 ? MathTools.cmin(text.lastIndexOf('\n', index - 1) + (cursorIndex - index), index) : 0;
 					updateSelection(oldIndex);
 				case [Key.DOWN, _]:
-					var oldIndex: Int = cursorIndex;
-					var index: Int = text.indexOf('\n', cursorIndex);
+					final oldIndex: Int = cursorIndex;
+					final index: Int = text.indexOf('\n', cursorIndex);
 					if (index != -1) {
-						var prevIndex: Int = text.lastIndexOf('\n', cursorIndex - 1);
+						final prevIndex: Int = text.lastIndexOf('\n', cursorIndex - 1);
 						var lastIndex: Int = text.indexOf('\n', index + 1);
 						if (lastIndex == -1) lastIndex = text.length;
 						cursorIndex = MathTools.cmin(index + (cursorIndex - prevIndex), lastIndex);
@@ -204,12 +204,12 @@ abstract Transform(Int) {
 				case _ if (Key.isDown(Key.CTRL)):
 					nextChar = null;
 				case _:
-					var textBeforeChange: String = text;
+					final textBeforeChange: String = text;
 					var changed: Bool = false;
 					if (nextChar != null) {
 						var char: String = nextChar;
 						if (onlyEn) {
-							var ch: String = String.fromCharCode(e.keyCode).toUpperCase();
+							final ch: String = String.fromCharCode(e.keyCode).toUpperCase();
 							if (@:nullSafety(Off) TextTools.letters['en'].indexOf(ch) != -1)
 								char = char == char.toLowerCase() ? ch.toLowerCase() : ch;
 						}
@@ -298,7 +298,7 @@ abstract Transform(Int) {
 	}
 
 	override private function getCursorYOffset(): Float {
-		var lines: Array<String> = getAllLines();
+		final lines: Array<String> = getAllLines();
 		var currIndex: UInt = 0;
 		var lineNum: UInt = 0;
 		for (i in 0...lines.length) {
@@ -314,19 +314,19 @@ abstract Transform(Int) {
 	@:access(h2d.Tile)
 	override private function draw(ctx: RenderContext): Void {
 		if (selectionRange != null) {
-			var lines: Array<String> = getAllLines();
+			final lines: Array<String> = getAllLines();
 			var lineOffset: Int = 0;
 
 			for (i in 0...lines.length) {
-				var line: String = lines[i];
-				var selEnd: UInt = line.length;
+				final line: String = lines[i];
+				final selEnd: UInt = line.length;
 				if (selectionRange.start > lineOffset + line.length || selectionRange.start + selectionRange.length < lineOffset) {
 					lineOffset += line.length;
 					continue;
 				}
 
-				var selStart: Int = Math.floor(Math.max(0, selectionRange.start - lineOffset));
-				var selEnd: Int = Math.floor(
+				final selStart: Int = Math.floor(Math.max(0, selectionRange.start - lineOffset));
+				final selEnd: Int = Math.floor(
 					Math.min(line.length - selStart, selectionRange.length + selectionRange.start - lineOffset - selStart)
 				);
 

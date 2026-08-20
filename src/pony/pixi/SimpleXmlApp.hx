@@ -19,12 +19,13 @@ import pixi.filters.extras.GlowFilter;
 class SimpleXmlApp extends PixiXmlUi {
 
 	@:auto private var onLoaded: Signal0;
-	private var parentDomId: String;
+	private final parentDomId: String;
 	private var preloader: SpinLoader;
 	private var momentalLoad: Bool = false;
 
-	private var assetsForLoadPath: String = '';
-	private var assetsForLoad: Array<String> = null;
+	private static final assetsForLoadPath: String = '';
+
+	private final assetsForLoad: Array<String> = null;
 
 	public function new(?parentDomId: String) {
 		super();
@@ -40,18 +41,18 @@ class SimpleXmlApp extends PixiXmlUi {
 	}
 
 	private function init(): Void {
-		var dpreloader: Element = Browser.document.getElementById('preloader');
+		final dpreloader: Element = Browser.document.getElementById('preloader');
 		if (dpreloader != null) dpreloader.remove();
 		createApp();
 		if (assetsForLoad == null) {
 			loadUI(preloadProgressHandler);
 		} else {
-			var pair: Pair<Int -> Int -> Void, Int -> Int -> Void> = AssetManager.cbjoin(preloadProgressHandler);
+			final pair: Pair<Int -> Int -> Void, Int -> Int -> Void> = AssetManager.cbjoin(preloadProgressHandler);
 			loadUI(pair.a);
 			AssetManager.load(assetsForLoadPath, assetsForLoad, pair.b);
 		}
 		if (!momentalLoad) {
-			var m: Int = Std.int(Math.min(Config.width, Config.height) / 20);
+			final m: Int = Std.int(Math.min(Config.width, Config.height) / 20);
 			preloader = new SpinLoader(m, Std.int(m / 10), Config.background.invert, 3, app);
 			preloader.position.set(Config.width / 2, Config.height / 2);
 			addChild(preloader);

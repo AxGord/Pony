@@ -22,7 +22,7 @@ using pony.Tools;
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
 class MySQL extends SQLBase {
 
-	private static var mysqlClass: NodeMySQL = Node.require('mysql');
+	private static final mysqlClass: NodeMySQL = Node.require('mysql');
 
 	private var connection: NodeMySQL_Connection;
 
@@ -36,17 +36,17 @@ class MySQL extends SQLBase {
 	}
 
 	@:async private function init(config: Config): Void {
-		var db = config.database;
-		var c = Reflect.copy(config);
+		final db = config.database;
+		final c = Reflect.copy(config);
 		Reflect.deleteField(c, 'database');
 		connection = mysqlClass.createConnection(c);
-		var err = @await connection.connect();
+		final err = @await connection.connect();
 		if (err != null) {
 			error('Error connecting: ${err.stack}');
 			return;
 		}
-		var h = config.host == null ? 'localhost' : config.host;
-		var p = config.port == null ? '' : ':${config.port}';
+		final h = config.host == null ? 'localhost' : config.host;
+		final p = config.port == null ? '' : ':${config.port}';
 		log('Connected to $h$p');
 
 		if (@await prepareDatabase(db)) {
@@ -74,7 +74,7 @@ class MySQL extends SQLBase {
 	inline public function query(q: String, ?p: PosInfos, cb: Dynamic -> Dynamic -> Array<Field> -> Void): Void {
 		connection.query(q, function(err: Dynamic, res: Dynamic, f: Array<Dynamic>) {
 			if (err) error(err);
-			var fields: Array<Field> = f == null ? null : parseFields(f);
+			final fields: Array<Field> = f == null ? null : parseFields(f);
 			cb(err, res, fields);
 		});
 		log(q, p);
@@ -108,7 +108,7 @@ class MySQL extends SQLBase {
 	 * Query with stream
 	 */
 	public function stream(q: String, ?p: PosInfos): Stream<Dynamic> {
-		var s = new Stream();
+		final s = new Stream();
 		connection.query(q).on('error', errorHandler).on('error', s.errorListener).on('result', s.dataListener).on('end', s.endListener);
 		log(q, p);
 		return s;
@@ -139,7 +139,7 @@ class MySQL extends SQLBase {
 	@:async private function prepareDatabase(database: String): Bool {
 		if (!@await action(Const.createDB + database + Const.createDBPostfix, 'create database')) return false;
 
-		var err = @await connection.changeUser({ database: database });
+		final err = @await connection.changeUser({ database: database });
 		if (err != null) {
 			error('Can\'t open database: ${err.stack}');
 			return false;

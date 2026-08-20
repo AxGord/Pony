@@ -22,7 +22,7 @@ import pony.magic.HasSignal;
  */
 @:nullSafety(Strict) class EventStream implements HasSignal {
 
-	private static inline var OK: Int = 200;
+	private static inline final OK: Int = 200;
 
 	/** Fires when the client disconnects; the stream is unusable afterwards. */
 	@:auto public var onClose: Signal0;
@@ -34,7 +34,7 @@ import pony.magic.HasSignal;
 	public function new(res: ServerResponse) {
 		this.res = res;
 
-		var headers: DynamicAccess<String> = {};
+		final headers: DynamicAccess<String> = {};
 		headers['Content-Type'] = 'text/event-stream';
 		// A proxy that buffers or compresses this stream would hold frames back until it
 		// had "enough" of them, which for an event stream is indistinguishable from silence.
@@ -47,7 +47,7 @@ import pony.magic.HasSignal;
 
 	/** Sends one named event. `data` is written as a single line, so it must not contain newlines. */
 	public function send(event: String, data: String): Void {
-		var target: Null<ServerResponse> = res;
+		final target: Null<ServerResponse> = res;
 		if (target != null) target.write('event: $event\ndata: $data\n\n');
 	}
 
@@ -56,12 +56,12 @@ import pony.magic.HasSignal;
 	 * makes it the way to keep an idle connection from being reaped by an intermediary.
 	 */
 	public function comment(text: String): Void {
-		var target: Null<ServerResponse> = res;
+		final target: Null<ServerResponse> = res;
 		if (target != null) target.write(': $text\n\n');
 	}
 
 	public function close(): Void {
-		var target: Null<ServerResponse> = res;
+		final target: Null<ServerResponse> = res;
 		if (target == null) return;
 
 		res = null;

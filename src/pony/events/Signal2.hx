@@ -14,7 +14,7 @@ import pony.events.Listener2;
 abstract Signal2<T1, T2>(Priority<Listener2<T1, T2>>) from Event2<T1, T2> from Priority<Listener2<T1, T2>> {
 
 	public function add(e: Listener2<T1, T2>, priority: Int = 0): Signal2<T1, T2> {
-		var ev: Null<Priority<Any>> = e.event;
+		final ev: Null<Priority<Any>> = e.event;
 		if (ev != null) {
 			@:privateAccess ev.onLost.directAdd(this.changeReals);
 			@:privateAccess ev.onTake.directAdd(this.changeReals);
@@ -37,7 +37,7 @@ abstract Signal2<T1, T2>(Priority<Listener2<T1, T2>>) from Event2<T1, T2> from P
 	}
 
 	private inline function unlistenSubChange(l: Listener2<T1, T2>): Void {
-		var e: Null<Priority<Any>> = l.event;
+		final e: Null<Priority<Any>> = l.event;
 		if (e != null) {
 			@:privateAccess e.onLost.directRemove(this.changeReals);
 			@:privateAccess e.onTake.directRemove(this.changeReals);
@@ -66,7 +66,7 @@ abstract Signal2<T1, T2>(Priority<Listener2<T1, T2>>) from Event2<T1, T2> from P
 				return sig;
 			case _:
 		}
-		var s = new Event0();
+		final s = new Event0();
 		add({ once: once, listener: LSub(s, a1, a2) }, priority);
 		return s;
 	}
@@ -83,7 +83,7 @@ abstract Signal2<T1, T2>(Priority<Listener2<T1, T2>>) from Event2<T1, T2> from P
 				return sig;
 			case _:
 		}
-		var s = new Event1<T2>();
+		final s = new Event1<T2>();
 		add({ once: once, listener: LSub1(s, a1) }, priority);
 		return s;
 	}
@@ -104,7 +104,7 @@ abstract Signal2<T1, T2>(Priority<Listener2<T1, T2>>) from Event2<T1, T2> from P
 				return sig;
 			case _:
 		}
-		var s = new Event1<T1>();
+		final s = new Event1<T1>();
 		add({ once: once, listener: LSub2(s, a2) }, priority);
 		return s;
 	}
@@ -124,7 +124,7 @@ abstract Signal2<T1, T2>(Priority<Listener2<T1, T2>>) from Event2<T1, T2> from P
 				return sig;
 			case _:
 		}
-		var s = new Event2();
+		final s = new Event2();
 		add({ once: once, listener: LNot(s, a1, a2) }, priority);
 		return s;
 	}
@@ -141,7 +141,7 @@ abstract Signal2<T1, T2>(Priority<Listener2<T1, T2>>) from Event2<T1, T2> from P
 				return sig;
 			case _:
 		}
-		var s = new Event2();
+		final s = new Event2();
 		add({ once: once, listener: LNot1(s, a1) }, priority);
 		return s;
 	}
@@ -163,7 +163,7 @@ abstract Signal2<T1, T2>(Priority<Listener2<T1, T2>>) from Event2<T1, T2> from P
 				return sig;
 			case _:
 		}
-		var s = new Event2();
+		final s = new Event2();
 		add({ once: once, listener: LNot2(s, a1) }, priority);
 		return s;
 	}
@@ -173,35 +173,35 @@ abstract Signal2<T1, T2>(Priority<Listener2<T1, T2>>) from Event2<T1, T2> from P
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function shift(): Signal1<T2> {
-		var s: Event1<T2> = new Event1<T2>();
+		final s: Event1<T2> = new Event1<T2>();
 		add(function(_, v) s.dispatch(v));
 		return s;
 	}
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function convert0(f: Event0 -> T1 -> T2 -> Void): Signal0 {
-		var ns = new Event0();
+		final ns = new Event0();
 		this.add(f.bind(ns));
 		return ns;
 	}
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function convert1<ST1>(f: Event1<ST1> -> T1 -> T2 -> Void): Signal1<ST1> {
-		var ns = new Event1();
+		final ns = new Event1();
 		this.add(f.bind(ns));
 		return ns;
 	}
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function convert2<ST1, ST2>(f: Event2<ST1, ST2> -> T1 -> T2 -> Void): Signal2<ST1, ST2> {
-		var ns = new Event2<ST1, ST2>();
+		final ns = new Event2<ST1, ST2>();
 		this.add(f.bind(ns));
 		return ns;
 	}
 
 	@:op(A || B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function or(s: Signal2<T1, T2>): Signal2<T1, T2> {
-		var ns = new Event2();
+		final ns = new Event2();
 		add(ns);
 		s.add(ns);
 		return ns;
@@ -209,7 +209,7 @@ abstract Signal2<T1, T2>(Priority<Listener2<T1, T2>>) from Event2<T1, T2> from P
 
 	@:op(A | B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function orOnce(s: Signal2<T1, T2>): Signal2<T1, T2> {
-		var ns = new Event2();
+		final ns = new Event2();
 		once(ns);
 		s.once(ns);
 		return ns;

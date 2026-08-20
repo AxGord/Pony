@@ -18,7 +18,7 @@ import pony.time.DeltaTime;
 #if (haxe_ver >= 4.2) abstract #end
 class WorkerUnit implements HasAbstract implements IWorkerGatePool {
 
-	private var _log: WorkerOutput<String, Void>;
+	private final _log: WorkerOutput<String, Void>;
 
 	public function new() {
 		_log = new WorkerOutput('log', this);
@@ -40,7 +40,7 @@ class WorkerUnit implements HasAbstract implements IWorkerGatePool {
 		var commandChannel: MessageChannel = Worker.current.getSharedProperty('response2_$name');
 		commandChannel.addEventListener(Event.CHANNEL_MESSAGE, function(event: Event): Void {
 			while (commandChannel.messageAvailable) {
-				var message: T2 = commandChannel.receive();
+				final message: T2 = commandChannel.receive();
 				if (message != null) response(message);
 			}
 		});
@@ -61,7 +61,7 @@ class WorkerUnit implements HasAbstract implements IWorkerGatePool {
 		var commandChannel: MessageChannel = Worker.current.getSharedProperty('response_$name');
 		commandChannel.addEventListener(Event.CHANNEL_MESSAGE, function(event: Event): Void {
 			while (commandChannel.messageAvailable) {
-				var message: T1 = commandChannel.receive();
+				final message: T1 = commandChannel.receive();
 				if (message != null) request(message);
 			}
 		});

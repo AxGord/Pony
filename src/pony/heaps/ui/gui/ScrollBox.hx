@@ -22,7 +22,7 @@ import pony.ui.gui.ButtonCore;
  */
 @:nullSafety(Strict) class ScrollBox extends Mask implements HasSignal implements IWH {
 
-	public static inline var DEFAULT_BAR_COLOR: UColor = 0;
+	public static inline final DEFAULT_BAR_COLOR: UColor = 0;
 
 	public var size(get, never): Point<Float>;
 	public var core(default, null): ScrollBoxCore;
@@ -34,11 +34,11 @@ import pony.ui.gui.ButtonCore;
 	) {
 		super(size.x, size.y);
 		if (barColor == null) barColor = [DEFAULT_BAR_COLOR];
-		var tai: Interactive = new Interactive(size.x, size.y, @:nullSafety(Off) this);
+		final tai: Interactive = new Interactive(size.x, size.y, @:nullSafety(Off) this);
 		tai.cursor = Cursor.Default;
 		content = new Object(@:nullSafety(Off) this);
-		var vbutton: Null<LightButton> = orientation.isVertical ? new LightButton(barSize, barColor, @:nullSafety(Off) this) : null;
-		var hbutton: Null<LightButton> = orientation.isHorizontal ? new LightButton(barSize, barColor, @:nullSafety(Off) this) : null;
+		final vbutton: Null<LightButton> = orientation.isVertical ? new LightButton(barSize, barColor, @:nullSafety(Off) this) : null;
+		final hbutton: Null<LightButton> = orientation.isHorizontal ? new LightButton(barSize, barColor, @:nullSafety(Off) this) : null;
 		core = new ScrollBoxCore(
 			size.x, size.y, new Touchable(tai), vbutton != null ? vbutton.core : null, hbutton != null ? hbutton.core : null, barSize,
 			wheelSpeed
@@ -64,7 +64,7 @@ import pony.ui.gui.ButtonCore;
 	}
 
 	public function update(): Void {
-		var b: h2d.col.Bounds = content.getBounds();
+		final b: h2d.col.Bounds = content.getBounds();
 		core.content(b.x + b.width, b.y + b.height);
 	}
 

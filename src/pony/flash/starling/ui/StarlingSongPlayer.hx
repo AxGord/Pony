@@ -19,13 +19,13 @@ import starling.textures.TextureSmoothing;
  */
 class StarlingSongPlayer extends Sprite {
 
-	private var playBar: StarlingBar;
-	private var loadProgress: StarlingProgressBar;
-	private var bPlay: StarlingButton;
-	private var tTitle: TextField;
-	private var bMute: StarlingButton;
-	private var volume: StarlingBar;
-	private var tTime: TextField;
+	private final playBar: StarlingBar;
+	private final loadProgress: StarlingProgressBar;
+	private final bPlay: StarlingButton;
+	private final tTitle: TextField;
+	private final bMute: StarlingButton;
+	private final volume: StarlingBar;
+	private final tTime: TextField;
 
 	public var core: SongPlayerCore;
 

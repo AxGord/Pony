@@ -25,13 +25,13 @@ class BodyBox extends BodyBase {
 	}
 
 	override function init(): Void {
-		var sh = new Polygon(Polygon.box(size.x, size.y), material);
+		final sh = new Polygon(Polygon.box(size.x, size.y), material);
 		sh.sensorEnabled = body.isBullet;
 		body.shapes.add(sh);
 	}
 
 	override public function getCacheId(): Bytes {
-		var b: BytesOutput = new BytesOutput();
+		final b: BytesOutput = new BytesOutput();
 		b.writeByte(0x01); // shape code
 		b.writeInt32(Std.int(size.x * 1000));
 		b.writeInt32(Std.int(size.y * 1000));

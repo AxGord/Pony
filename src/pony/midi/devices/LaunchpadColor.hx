@@ -8,14 +8,14 @@ package pony.midi.devices;
 #if (haxe_ver >= 4.2) enum #else @:enum #end
 abstract LaunchpadColor(MidiCode) to MidiCode from MidiCode {
 
-	var Off = 12;
-	var RedLow = 13;
-	var RedFull = 15;
-	var AmberLow = 29;
-	var AmberFull = 63;
-	var YellowFull = 62;
-	var GreenLow = 28;
-	var GreenFull = 60;
+	final Off = 12;
+	final RedLow = 13;
+	final RedFull = 15;
+	final AmberLow = 29;
+	final AmberFull = 63;
+	final YellowFull = 62;
+	final GreenLow = 28;
+	final GreenFull = 60;
 
 	public static function fromIndex(index: Int): LaunchpadColor {
 		return switch index {

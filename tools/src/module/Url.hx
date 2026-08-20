@@ -9,7 +9,7 @@ import types.BASection;
  */
 class Url extends CfgModule<UrlConfig> {
 
-	private static inline var PRIORITY: Int = 25;
+	private static inline final PRIORITY: Int = 25;
 
 	public function new() super('url');
 

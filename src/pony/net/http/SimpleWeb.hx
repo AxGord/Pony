@@ -25,7 +25,7 @@ typedef SiteConfig = {
 class SimpleWeb {
 
 	#if php
-	private var trc: Array<Pair<Dynamic, PosInfos>> = [];
+	private final trc: Array<Pair<Dynamic, PosInfos>> = [];
 
 	private function phpLog(v: Dynamic, ?p: PosInfos): Void trc.push(new Pair(v, p));
 	#end
@@ -62,14 +62,14 @@ class SimpleWeb {
 			};
 		}
 
-		var modules: Array<IModule> = DefaultModulePack.create();
+		final modules: Array<IModule> = DefaultModulePack.create();
 		if (db != null) modules.push(cast new MModels(classes, DefaultActionsPack.list, db));
 		if (config.vk != null) modules.push(cast new MVK(config.vk.a, config.vk.b));
 
-		var httpServer: HttpServer = new HttpServer(config.httpport);
-		var usercontent: String = 'usercontent';
+		final httpServer: HttpServer = new HttpServer(config.httpport);
+		final usercontent: String = 'usercontent';
 		(usercontent: Dir).create();
-		var webServer: WebServer = new WebServer(['home', '${pony.Tools.ponyPath()}webdefaults'], usercontent, modules);
+		final webServer: WebServer = new WebServer(['home', '${pony.Tools.ponyPath()}webdefaults'], usercontent, modules);
 		httpServer.request = webServer.connect;
 
 		#if php

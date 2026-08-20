@@ -23,15 +23,15 @@ class NetDebug {
 	#end
 
 	public static function client(name: String, ?host: String, port: Int = 60666): Void {
-		var c: SocketClient = new SocketClient(host, port);
-		var old = Log.trace;
+		final c: SocketClient = new SocketClient(host, port);
+		final old = Log.trace;
 		Log.trace = function(d: Dynamic, ?p: PosInfos): Void {
 			old(d, p);
 			if (trstr != '') trstr += '\n';
-			trstr += '$name => ${(p == null ? '' : p.fileName + ':' + p.lineNumber + ': ')}$d';
+			trstr += '$name => ${p == null ? '' : p.fileName + ':' + p.lineNumber + ': '}$d';
 		}
 		DeltaTime.fixedUpdate << function(): Void if (trstr != '') {
-			var b: BytesOutput = new BytesOutput();
+			final b: BytesOutput = new BytesOutput();
 			b.writeStr(trstr);
 			trstr = '';
 			c.send(b);

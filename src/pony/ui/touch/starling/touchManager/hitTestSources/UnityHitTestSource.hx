@@ -14,15 +14,15 @@ import unityengine.Transform;
  */
 class UnityHitTestSource implements IHitTestSource {
 
-	private var _camera: Camera;
+	private final _camera: Camera;
 
 	public function new(camera: Camera) {
 		_camera = camera;
 	}
 
 	public function hitTest(x: Float, y: Float): Dynamic {
-		var vHit = new RaycastHit();
-		var vRay: Ray = _camera.ScreenPointToRay(new Vector3(x, y, 0));
+		final vHit = new RaycastHit();
+		final vRay: Ray = _camera.ScreenPointToRay(new Vector3(x, y, 0));
 		// if(Physics.Raycast(vRay, vHit, 1000))
 		if (Physics.Raycast(vRay, vHit)) {
 			return vHit.transform;
@@ -33,7 +33,7 @@ class UnityHitTestSource implements IHitTestSource {
 
 	public function parent(object: Dynamic): Dynamic {
 		if (!Std.is(object, Transform)) return null;
-		var objectsParent = object.parent;
+		final objectsParent = object.parent;
 		return objectsParent;
 	}
 

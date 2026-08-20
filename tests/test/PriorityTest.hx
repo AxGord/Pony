@@ -54,7 +54,7 @@ class PriorityTest {
 
 	@Test
 	public function linean(): Void {
-		var p: Priority<Int> = new Priority<Int>();
+		final p: Priority<Int> = new Priority<Int>();
 		for (i in -50...50) {
 			p.add(i, i);
 		}
@@ -69,9 +69,9 @@ class PriorityTest {
 
 	@Test
 	public function random(): Void {
-		var p: Priority<Int> = new Priority<Int>();
+		final p: Priority<Int> = new Priority<Int>();
 		for (i in 0...100) {
-			var r: Int = Math.round(Math.random() * 10) - 5;
+			final r: Int = Math.round(Math.random() * 10) - 5;
 			p.add(r, r);
 		}
 		var prev: Null<Int> = null;
@@ -197,7 +197,7 @@ class PriorityTest {
 
 	@Test
 	public function addArray(): Void {
-		var p: Priority<Int> = new Priority<Int>();
+		final p: Priority<Int> = new Priority<Int>();
 		p.addArray([4, 5, 6]);
 		p.addArray([1, 2, 3], -4);
 		var i: Int = 1;
@@ -213,7 +213,7 @@ class PriorityTest {
 
 	@Test
 	public function loopTest(): Void {
-		var p: Priority<Int> = new Priority<Int>([3]);
+		final p: Priority<Int> = new Priority<Int>([3]);
 		Assert.areEqual(p.loop(), 3);
 		Assert.areEqual(p.loop(), 3);
 		Assert.areEqual(p.loop(), 3);
@@ -222,7 +222,7 @@ class PriorityTest {
 
 	@Test
 	public function addBigp(): Void {
-		var p: Priority<Int> = new Priority<Int>();
+		final p: Priority<Int> = new Priority<Int>();
 		p.add(4, 1005001005);
 		p.add(6);
 		Assert.areEqual(p.first, 6);
@@ -231,7 +231,7 @@ class PriorityTest {
 
 	@Test
 	public function many(): Void {
-		var p: Priority<Int> = new Priority<Int>();
+		final p: Priority<Int> = new Priority<Int>();
 		for (i in 0...500) p.add(i, 10000 + i);
 		var i = 0;
 		for (e in p) Assert.areEqual(e, i++);
@@ -249,7 +249,7 @@ class PriorityTest {
 
 	@Test
 	public function someProblemWithRemoveElementFromHash(): Void {
-		var p: Priority<String> = new Priority<String>();
+		final p: Priority<String> = new Priority<String>();
 		p.add('E', 50);
 		p.add('P', 29);
 

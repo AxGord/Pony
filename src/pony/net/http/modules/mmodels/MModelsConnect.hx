@@ -7,7 +7,7 @@ import pony.text.tpl.ITplPut;
  * MModelsConnect
  * @author AxGord <axgord@gmail.com>
  */
-@:final class MModelsConnect extends ModuleConnect<MModels> {
+final class MModelsConnect extends ModuleConnect<MModels> {
 
 	public var list: Map<String, ModelConnect>;
 

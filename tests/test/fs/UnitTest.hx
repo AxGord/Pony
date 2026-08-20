@@ -11,7 +11,7 @@ class UnitTest {
 	#if (neko || cpp || nodejs)
 	@Test
 	public function test(): Void {
-		var v: Dir = '.';
+		final v: Dir = '.';
 		Assert.areEqual(v.toString(), '.');
 	}
 	#end

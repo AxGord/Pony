@@ -34,13 +34,13 @@ using pony.Tools;
 		if (!ready) return;
 		if (limit) {
 			var line: Float = 0;
-			var groupSize: Array<Float> = [];
+			final groupSize: Array<Float> = [];
 			var currentSize: Float = 0;
-			var objGroups: Array<Pair<Array<T>, Array<Point<Float>>>> = [];
+			final objGroups: Array<Pair<Array<T>, Array<Point<Float>>>> = [];
 			var objGroup: Array<T> = [];
 			var objSizes: Array<Point<Float>> = [];
 			for (obj in objects) {
-				var v: Point<Float> = getObjSize(obj);
+				final v: Point<Float> = getObjSize(obj);
 				line += vert ? v.y : v.x;
 				if (line > (vert ? height : width)) {
 					line = vert ? v.y : v.x;
@@ -60,14 +60,14 @@ using pony.Tools;
 			var yd: Float = 0;
 			var lastPositions: Null<Array<Point<Float>>> = null;
 			for (i in 0...objGroups.length) {
-				var group: Pair<Array<T>, Array<Point<Float>>> = objGroups[i];
-				var s: Float = groupSize[i];
-				var positions: Array<IntPoint> = GeomTools.pointsCeil(GeomTools.center(
+				final group: Pair<Array<T>, Array<Point<Float>>> = objGroups[i];
+				final s: Float = groupSize[i];
+				final positions: Array<IntPoint> = GeomTools.pointsCeil(GeomTools.center(
 					new Point(vert ? s : width, !vert ? s : height), group.b, vert, border, padding,
 					new Pair(!vert ? align.vertical : VAlign.Middle, vert ? align.horizontal : HAlign.Center)
 				));
 				var xSetted: Bool = false;
-				var ySetted: Bool = false;
+				final ySetted: Bool = false;
 				if (lastPositions != null && group.a.length != lastPositions.length) {
 					if (!vert) switch align.horizontal {
 						case HAlign.Left:
@@ -90,7 +90,7 @@ using pony.Tools;
 				yd += !vert ? s : 0;
 			}
 		} else {
-			var positions: Array<IntPoint> = GeomTools.pointsCeil(
+			final positions: Array<IntPoint> = GeomTools.pointsCeil(
 				GeomTools.center(size, [for (obj in objects) getObjSize(obj)], vert, border, padding, align)
 			);
 			for (p in objects.pair(positions)) {

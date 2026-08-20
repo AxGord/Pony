@@ -20,14 +20,14 @@ class Gradient extends Sprite implements IWH implements HasLink {
 
 	public var size(link, never): Point<Float> = _size;
 
-	private var _size: Point<Float>;
+	private final _size: Point<Float>;
 
 	public function new(size: Point<Float>, colors: UColors, isVert: Bool = false, ?app: App) {
 		if (app == null) app = App.main;
 		_size = size;
 		var canvas: CanvasElement = Browser.document.createCanvasElement();
-		var ctx = canvas.getContext2d();
-		var l: Int = colors.length;
+		final ctx = canvas.getContext2d();
+		final l: Int = colors.length;
 		if (isVert) {
 			canvas.width = 1;
 			canvas.height = l;

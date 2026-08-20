@@ -11,7 +11,7 @@ import pony.magic.HasAbstract;
 #if (haxe_ver >= 4.2) abstract #end
 class RemoteAction extends Logable implements HasAbstract {
 
-	private var protocol: RemoteProtocol;
+	private final protocol: RemoteProtocol;
 
 	public function new(protocol: RemoteProtocol, data: String) {
 		super();

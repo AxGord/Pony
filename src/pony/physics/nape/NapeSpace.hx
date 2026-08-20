@@ -34,14 +34,14 @@ class NapeSpaceBase {
 
 	public var space: Space;
 	public var minimalStep(default, null): Float;
-	private var skipVelIntegrations: Int;
+	private final skipVelIntegrations: Int;
 	public var width: Float;
 	public var height: Float;
 	public var minSide(get, never): Float;
 	public var maxSide(get, never): Float;
 	public var snap(get, never): Float;
 	public var limits: Rect<Float>;
-	private var groups: Map<String, NapeGroup> = [];
+	private final groups: Map<String, NapeGroup> = [];
 
 	public function new(w: Float, h: Float, ?gravity: Point<Float>, minimalStep: Float = 0.2, skipVelIntegrations: Int = 10) {
 		width = w;
@@ -79,8 +79,8 @@ class NapeSpaceBase {
 
 	public function update(dt: DT): Void {
 		var f: Float = dt;
-		var integrations: Int = Std.int(f / minimalStep);
-		var sumf: Float = minimalStep * integrations;
+		final integrations: Int = Std.int(f / minimalStep);
+		final sumf: Float = minimalStep * integrations;
 		f -= sumf;
 		if (integrations > 0) {
 			var vi: Int = Std.int(integrations / skipVelIntegrations);

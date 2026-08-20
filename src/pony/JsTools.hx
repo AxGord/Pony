@@ -112,7 +112,7 @@ class JsTools implements HasSignal {
 
 	private static function get_agent(): UserAgent {
 		if (_agent != null) return _agent;
-		var ua: String = Browser.navigator.userAgent.toLowerCase();
+		final ua: String = Browser.navigator.userAgent.toLowerCase();
 		_agent = if (ua.indexOf('msie') != -1 || ua.indexOf('trident/') > 0)
 			IE;
 		else if (ua.indexOf('edge') != -1)
@@ -132,7 +132,7 @@ class JsTools implements HasSignal {
 
 	private static function get_os(): OS {
 		if (_os != null) return _os;
-		var ua: String = Browser.navigator.userAgent.toLowerCase();
+		final ua: String = Browser.navigator.userAgent.toLowerCase();
 		if (ua.indexOf('windows') != -1) {
 			_os = Windows;
 		} else if (ua.indexOf('android') != -1) {
@@ -145,7 +145,7 @@ class JsTools implements HasSignal {
 			else
 				_os = Linux(Other);
 		} else {
-			var iDevices: Array<String> = [
+			final iDevices: Array<String> = [
 				'iPad Simulator',
 				'iPhone Simulator',
 				'iPod Simulator',
@@ -166,7 +166,7 @@ class JsTools implements HasSignal {
 
 	private static function get_isa(): ISA {
 		if (_isa != null) return _isa;
-		var ua: String = Browser.navigator.userAgent.toLowerCase();
+		final ua: String = Browser.navigator.userAgent.toLowerCase();
 		_isa = if (ua.indexOf('x86_32') != -1 || ua.indexOf('x32') != -1)
 			X32;
 		else if (ua.indexOf('x86_64') != -1 || ua.indexOf('x64') != -1)
@@ -250,7 +250,7 @@ class JsTools implements HasSignal {
 	}
 
 	public static function splitCss(s: String): Array<String> {
-		var a: Array<String> = s.split(';');
+		final a: Array<String> = s.split(';');
 		a.pop();
 		return a.map(splitCssReturnDelimiter);
 	}
@@ -261,9 +261,9 @@ class JsTools implements HasSignal {
 
 	public static function mapToJSMap<K, V>(map: Map<K, V>): JsMap<K, V> {
 		#if (haxe_ver >= '4.0.0')
-		var n: JsMap<K, V> = js.Syntax.code('new Map()');
+		final n: JsMap<K, V> = js.Syntax.code('new Map()');
 		#else
-		var n: JsMap<K, V> = untyped __js__('new Map()');
+		final n: JsMap<K, V> = untyped __js__('new Map()');
 		#end
 		for (k in map.keys()) n.set(k, map[k]);
 		return n;

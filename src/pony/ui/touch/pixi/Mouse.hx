@@ -14,7 +14,7 @@ import pony.ui.touch.Mouse as M;
 @:access(pony.ui.touch.Mouse)
 class Mouse {
 
-	private static var wheelListenOptions: AddEventListenerOptions = { passive: false };
+	private static final wheelListenOptions: AddEventListenerOptions = { passive: false };
 
 	private static var obj: Container;
 
@@ -59,17 +59,17 @@ class Mouse {
 	}
 
 	private static function downHandler(e: InteractionEvent): Void {
-		var p = correction(e.data.global.x, e.data.global.y);
+		final p = correction(e.data.global.x, e.data.global.y);
 		M.downHandler(p.x, p.y, untyped e.data.originalEvent.button);
 	}
 
 	private static function upHandler(e: InteractionEvent): Void {
-		var p = correction(e.data.global.x, e.data.global.y);
+		final p = correction(e.data.global.x, e.data.global.y);
 		M.upHandler(p.x, p.y, untyped e.data.originalEvent.button);
 	}
 
 	private static function moveHandler(e: InteractionEvent): Void {
-		var p = correction(e.data.global.x, e.data.global.y);
+		final p = correction(e.data.global.x, e.data.global.y);
 		M.moveHandler(p.x, p.y);
 	}
 

@@ -5,8 +5,8 @@ class LogableTest {
 
 	@Test
 	public function complex(): Void {
-		var first: Logable = new Logable('First');
-		var second: Logable = new Logable('Second');
+		final first: Logable = new Logable('First');
+		final second: Logable = new Logable('Second');
 		second.listenErrorAndLog(first);
 		var msg: String = '';
 		function writeMsg(s: String): Void msg += s;

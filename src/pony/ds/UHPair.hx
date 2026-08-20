@@ -8,18 +8,18 @@ import pony.geom.Point;
  */
 @:nullSafety(Strict) abstract UHPair(UInt) to UInt {
 
-	public static inline var MAX_VALUE_A: UInt = 42949;
-	public static inline var MID_VALUE_A: UInt = 21474;
-	public static inline var MAX_VALUE_B: UInt = 99999;
-	public static inline var MID_VALUE_B: UInt = 49999;
-	public static inline var MAX_VALUE_B_MAX_A: UInt = 67295;
-	public static inline var MID_VALUE_B_MAX_A: UInt = 33647;
-	public static inline var MAP_MAX_VALUE_A: UInt = 21474;
-	public static inline var MAP_MID_VALUE_A: UInt = 10737;
+	public static inline final MAX_VALUE_A: UInt = 42949;
+	public static inline final MID_VALUE_A: UInt = 21474;
+	public static inline final MAX_VALUE_B: UInt = 99999;
+	public static inline final MID_VALUE_B: UInt = 49999;
+	public static inline final MAX_VALUE_B_MAX_A: UInt = 67295;
+	public static inline final MID_VALUE_B_MAX_A: UInt = 33647;
+	public static inline final MAP_MAX_VALUE_A: UInt = 21474;
+	public static inline final MAP_MID_VALUE_A: UInt = 10737;
 	public static inline var MAP_MAX_VALUE_B: UInt = MAX_VALUE_B;
-	public static inline var MAP_MID_VALUE_B: UInt = 41823;
-	public static inline var MAP_MAX_VALUE_B_MAX_A: UInt = 83647;
-	public static inline var ASTEP: UInt = 100000;
+	public static inline final MAP_MID_VALUE_B: UInt = 41823;
+	public static inline final MAP_MAX_VALUE_B_MAX_A: UInt = 83647;
+	public static inline final ASTEP: UInt = 100000;
 	public static inline var MAX_PAIR: UHPair = cast MAX_VALUE_A * ASTEP + MAX_VALUE_B_MAX_A;
 	public static inline var MID_PAIR: UHPair = cast MID_VALUE_A * ASTEP + MID_VALUE_B;
 	public static inline var MAP_MAX_PAIR: UHPair = cast MAP_MAX_VALUE_A * ASTEP + MAP_MAX_VALUE_B_MAX_A;

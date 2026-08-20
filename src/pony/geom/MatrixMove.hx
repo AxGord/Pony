@@ -19,8 +19,8 @@ typedef MatrixIndex = {
  */
 class MatrixMove {
 
-	private var moveMatrix: Matrix;
-	private var wards: IWards;
+	private final moveMatrix: Matrix;
+	private final wards: IWards;
 
 	public var change: Signal1<Int>;
 
@@ -38,29 +38,29 @@ class MatrixMove {
 	}
 
 	public function up(): Void {
-		var prev: MatrixIndex = getIndex();
-		var index: MatrixIndex = { r: prev.r, c: prev.c };
+		final prev: MatrixIndex = getIndex();
+		final index: MatrixIndex = { r: prev.r, c: prev.c };
 		index.c++;
 		setToIndex(prev, index);
 	}
 
 	public function down(): Void {
-		var prev: MatrixIndex = getIndex();
-		var index: MatrixIndex = { r: prev.r, c: prev.c };
+		final prev: MatrixIndex = getIndex();
+		final index: MatrixIndex = { r: prev.r, c: prev.c };
 		index.c--;
 		setToIndex(prev, index);
 	}
 
 	public function right(): Void {
-		var prev: MatrixIndex = getIndex();
-		var index: MatrixIndex = { r: prev.r, c: prev.c };
+		final prev: MatrixIndex = getIndex();
+		final index: MatrixIndex = { r: prev.r, c: prev.c };
 		index.r++;
 		setToIndex(prev, index);
 	}
 
 	public function left(): Void {
-		var prev: MatrixIndex = getIndex();
-		var index: MatrixIndex = { r: prev.r, c: prev.c };
+		final prev: MatrixIndex = getIndex();
+		final index: MatrixIndex = { r: prev.r, c: prev.c };
 		index.r--;
 		setToIndex(prev, index);
 	}

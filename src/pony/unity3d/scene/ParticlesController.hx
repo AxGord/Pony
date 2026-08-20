@@ -11,11 +11,11 @@ import unityengine.MonoBehaviour;
  */
 class ParticlesController extends MonoBehaviour {
 
-	private var playAfter: Float = 0;
-	private var stopAfter: Float = 0;
-	private var abortAfter: Float = 0;
+	private static inline final playAfter: Float = 0;
+	private static inline final stopAfter: Float = 0;
+	private static inline final abortAfter: Float = 0;
 
-	private var playOnAwake: Bool = true;
+	private static inline final playOnAwake: Bool = true;
 
 	private var playTimer: DTimer;
 	private var stopTimer: DTimer;

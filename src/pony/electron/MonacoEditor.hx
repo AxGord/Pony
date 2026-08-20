@@ -44,11 +44,11 @@ class MonacoEditor extends pony.Logable {
 
 	public var monaco(default, null): Monaco;
 
-	private var tasks: Tasks;
-	private var wmodule: String;
-	private var monacoDir: String;
-	private var themes: Map<String, IStandaloneThemeData> = [];
-	private var langs: Map<String, LangLoaded> = [];
+	private final tasks: Tasks;
+	private final wmodule: String;
+	private final monacoDir: String;
+	private final themes: Map<String, IStandaloneThemeData> = [];
+	private final langs: Map<String, LangLoaded> = [];
 
 	private function new(
 		home: String = 'monaco/', modulesPath: String = '', onigasm: String = 'node_modules/onigasm/lib/onigasm.wasm',
@@ -56,7 +56,7 @@ class MonacoEditor extends pony.Logable {
 	) {
 		super();
 
-		var dir: String = '${js.Node.__dirname}/$modulesPath';
+		final dir: String = '${js.Node.__dirname}/$modulesPath';
 		monacoDir = dir + home;
 		wmodule = dir + onigasm;
 
@@ -92,14 +92,14 @@ class MonacoEditor extends pony.Logable {
 	private function loadLangs(langs: Array<Lang>): Void {
 		if (langs != null) for (lang in langs) {
 			tasks.add();
-			var l: LangLoaded = {
+			final l: LangLoaded = {
 				name: lang.name,
 				ext: lang.ext,
 				tm: null,
 				conf: null
 			};
 			this.langs[lang.name] = l;
-			var st: Tasks = new Tasks(tasks.end);
+			final st: Tasks = new Tasks(tasks.end);
 			st.add();
 			readMonacoFile(lang.tm, function(s: String): Void {
 				log('${l.name} tm loaded');
@@ -151,14 +151,14 @@ class MonacoEditor extends pony.Logable {
 	private function needLoadTheme(theme: String): Bool return [null, 'vs', 'vs-dark', 'hc-black'].indexOf(theme) == -1;
 
 	private function _init(): Void {
-		var registryClass = NPM.monaco_textmate.Registry;
-		var registry = Type.createInstance(registryClass, [
+		final registryClass = NPM.monaco_textmate.Registry;
+		final registry = Type.createInstance(registryClass, [
 			{
 				getGrammarDefinition: getGrammarDefinition
 			}
 		]);
 
-		var grammars = pony.JsTools.mapToJSMap([for (l in langs) l.name => 'source.${l.ext}']);
+		final grammars = pony.JsTools.mapToJSMap([for (l in langs) l.name => 'source.${l.ext}']);
 		for (l in langs) {
 			monaco.languages.register({ id: l.name, extensions: [l.ext] });
 			if (l.conf != null) monaco.languages.setLanguageConfiguration(l.name, l.conf);

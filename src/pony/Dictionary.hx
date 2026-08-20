@@ -24,7 +24,7 @@ class Dictionary<K, V> {
 	inline public function getIndex(k: K): Int return ks.superIndexOf(k, maxDepth);
 
 	public function set(k: K, v: V): Int {
-		var i: Int = getIndex(k);
+		final i: Int = getIndex(k);
 		if (i != -1) {
 			vs[i] = v;
 			return i;
@@ -35,7 +35,7 @@ class Dictionary<K, V> {
 	}
 
 	public function get(k: K): V {
-		var i: Int = getIndex(k);
+		final i: Int = getIndex(k);
 		if (i == -1)
 			return null;
 		else
@@ -45,7 +45,7 @@ class Dictionary<K, V> {
 	inline public function exists(k: K): Bool return getIndex(k) != -1;
 
 	public function remove(k: K): Bool {
-		var i: Int = getIndex(k);
+		final i: Int = getIndex(k);
 		if (i != -1) {
 			removeIndex(i);
 			return true;
@@ -73,7 +73,7 @@ class Dictionary<K, V> {
 	}
 
 	public function removeValue(v: V): Void {
-		var i: Int = getValueIndex(v);
+		final i: Int = getValueIndex(v);
 		if (i != -1) {
 			ks.splice(i, 1);
 			vs.splice(i, 1);
@@ -81,7 +81,7 @@ class Dictionary<K, V> {
 	}
 
 	public function getKey(v: V): K {
-		var i: Int = getValueIndex(v);
+		final i: Int = getValueIndex(v);
 		if (i == -1) return null;
 		return ks[i];
 	}

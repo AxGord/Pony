@@ -27,7 +27,7 @@ typedef ElectronConfig = {
 
 @:nullSafety(Strict) class Electron extends CfgModule<ElectronConfig> {
 
-	private static inline var PRIORITY: Int = 0;
+	private static inline final PRIORITY: Int = 0;
 
 	public function new() super('electron');
 
@@ -62,7 +62,7 @@ typedef ElectronConfig = {
 		if (cfg.os.length > 0) {
 			var cwd: Cwd = new Cwd(cfg.path);
 			cwd.sw();
-			var args: Array<String> = ['electron-builder'];
+			final args: Array<String> = ['electron-builder'];
 
 			if (cfg.name != null) {
 				args.push('-c.extraMetadata.name');
@@ -97,7 +97,7 @@ typedef ElectronConfig = {
 			var linux: Bool = false;
 
 			for (os in cfg.os) {
-				args.push('${(os.length > 1 ? '-' : '')}-$os');
+				args.push('${os.length > 1 ? '-' : ''}-$os');
 				if (os == 'l' || os == 'linux') {
 					linux = true;
 					if (cfg.pack) args.push('appImage');
@@ -133,8 +133,8 @@ typedef ElectronConfig = {
 
 private class ElectronReader extends BAReader<ElectronConfig> {
 
-	private static var SUPPORTED_OS: Array<String> = ['m', 'mac', 'macos', 'l', 'linux', 'w', 'win', 'windows'];
-	private static var SUPPORTED_ARCH: Array<String> = ['x64', 'ia32', 'armv7l', 'arm64', 'universal'];
+	private static final SUPPORTED_OS: Array<String> = ['m', 'mac', 'macos', 'l', 'linux', 'w', 'win', 'windows'];
+	private static final SUPPORTED_ARCH: Array<String> = ['x64', 'ia32', 'armv7l', 'arm64', 'universal'];
 
 	#if (haxe_ver < 4.2) override #end
 	private function clean(): Void {
@@ -189,13 +189,13 @@ private class ElectronReader extends BAReader<ElectronConfig> {
 			case 'config':
 				cfg.config = normalizeWithNull(xml.innerData);
 			case 'os':
-				var os: Null<String> = normalizeWithNull(xml.innerData);
+				final os: Null<String> = normalizeWithNull(xml.innerData);
 				if (os != null) {
 					if (SUPPORTED_OS.indexOf(os) == -1) Utils.error('Unsupported OS');
 					cfg.os.push(os);
 				}
 			case 'arch':
-				var arch: Null<String> = normalizeWithNull(xml.innerData);
+				final arch: Null<String> = normalizeWithNull(xml.innerData);
 				if (arch != null) {
 					if (SUPPORTED_ARCH.indexOf(arch) == -1) Utils.error('Unsupported arch');
 					cfg.arch.push(arch);

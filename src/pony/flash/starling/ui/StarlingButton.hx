@@ -31,21 +31,21 @@ class StarlingButton extends Sprite {
 		disabled: 5
 	};
 
-	private var mc: Array<MovieClip>;
+	private final mc: Array<MovieClip>;
 
 	public var core: ButtonImgN;
 
 	private var _handCursor: TouchManagerHandCursor;
-	private var _hitArea: Rectangle;
+	private final _hitArea: Rectangle;
 
-	private var _framerate: Int;
+	private final _framerate: Int;
 	private var prev: Int = -1;
 
 	public function new(textures: Array<MovieClip>, framerate: Int) {
 		super();
 		mc = textures;
 		_framerate = framerate;
-		var hitAreaFrame: Int = mc.length > config.zone - 1 ? config.zone : config.def;
+		final hitAreaFrame: Int = mc.length > config.zone - 1 ? config.zone : config.def;
 		_hitArea = new Rectangle(mc[hitAreaFrame - 1].x, mc[hitAreaFrame - 1].y, mc[hitAreaFrame - 1].width, mc[hitAreaFrame - 1].height);
 		gotoAndStop(config.def);
 		core = new ButtonImgN(new Touchable(this));
@@ -65,7 +65,7 @@ class StarlingButton extends Sprite {
 	}
 
 	public inline function clone(): StarlingButton {
-		var b = new StarlingButton(mc, _framerate);
+		final b = new StarlingButton(mc, _framerate);
 		b.x = x;
 		b.y = y;
 		return b;
@@ -93,12 +93,12 @@ class StarlingButton extends Sprite {
 	): starling.display.DisplayObject {
 
 		var mc: flash.display.MovieClip = cast source;
-		var movies: Array<starling.display.MovieClip> = [];
+		final movies: Array<starling.display.MovieClip> = [];
 		var j = 0;
 		for (i in 1...mc.totalFrames + 1) {
 			mc.gotoAndStop(i);
 			var clip: starling.display.MovieClip = null;
-			var v: Vector<Texture> = new Vector<Texture>();
+			final v: Vector<Texture> = new Vector<Texture>();
 			for (o in mc.childrens()) if (Std.is(o, flash.display.MovieClip)) {
 
 				var m: flash.display.MovieClip = cast o;
@@ -106,7 +106,7 @@ class StarlingButton extends Sprite {
 				var str = null;
 				for (i in 1...m.totalFrames + 1) {
 					m.gotoAndStop(i);
-					var im = _atlasCreator.addImage(source, coordinateSpace, disposeable, j++);
+					final im = _atlasCreator.addImage(source, coordinateSpace, disposeable, j++);
 					v.push(im.texture);
 					if (str == null) str = im.transformationMatrix;
 				}
@@ -118,16 +118,16 @@ class StarlingButton extends Sprite {
 				break;
 			}
 			if (clip == null) {
-				var im = _atlasCreator.addImage(source, coordinateSpace, disposeable, j++);
+				final im = _atlasCreator.addImage(source, coordinateSpace, disposeable, j++);
 				v.push(im.texture);
 				clip = new starling.display.MovieClip(v, 60);
 				clip.transformationMatrix = im.transformationMatrix;
 			}
 			movies.push(clip);
 		}
-		var starlingChild = new StarlingButton(movies, 60);
+		final starlingChild = new StarlingButton(movies, 60);
 
-		var a = @:privateAccess source._sw;
+		final a = @:privateAccess source._sw;
 		if (a != null) starlingChild.core.switchMap(a);
 		if (@:privateAccess source._bsw) starlingChild.core.bswitch();
 

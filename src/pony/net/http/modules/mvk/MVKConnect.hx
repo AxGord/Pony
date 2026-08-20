@@ -6,7 +6,7 @@ import pony.text.tpl.ITplPut;
  * MVKConnect
  * @author AxGord <axgord@gmail.com>
  */
-@:final class MVKConnect extends ModuleConnect<MVK> {
+final class MVKConnect extends ModuleConnect<MVK> {
 
 	public var token(get, set): String;
 

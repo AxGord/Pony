@@ -52,10 +52,10 @@ using hugs.HUGSWrapper;
 
 	#if !touchscript
 	private function Update(): Void {
-		var h = panel || !Fixed2dCamera.exists
+		final h = panel || !Fixed2dCamera.exists
 			? guiTexture.HitTest(new Vector3(Input.mousePosition.x - Fixed2dCamera.begin, Input.mousePosition.y))
 			: guiTexture.HitTest(new Vector3(Input.mousePosition.x + (Screen.width - Fixed2dCamera.begin) / 2, Input.mousePosition.y));
-		var down = Input.GetMouseButton(0);
+		final down = Input.GetMouseButton(0);
 		if (prevState != h) {
 			if (h)
 				core.mouseOver(down);
@@ -70,7 +70,7 @@ using hugs.HUGSWrapper;
 	}
 	#else
 	private function Update(): Void {
-		var h = panel || !Fixed2dCamera.exists
+		final h = panel || !Fixed2dCamera.exists
 			? guiTexture.HitTest(new Vector3(Input.mousePosition.x - Fixed2dCamera.begin, Input.mousePosition.y))
 			: guiTexture.HitTest(new Vector3(Input.mousePosition.x + (Screen.width - Fixed2dCamera.begin) / 2, Input.mousePosition.y));
 		if (Helper.touchDown && h) {

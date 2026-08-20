@@ -42,7 +42,7 @@ private typedef TPUnit = {
  */
 @:nullSafety(Strict) class Texturepacker extends CfgModule<TPConfig> {
 
-	private static inline var PRIORITY: Int = 3;
+	private static inline final PRIORITY: Int = 3;
 
 	private var ignoreList: Array<String> = [];
 	private var toList: Array<String> = [];
@@ -82,24 +82,24 @@ private typedef TPUnit = {
 	}
 
 	private function notChanged(key: String, dirs: Array<String>): Bool {
-		var hash: Null<module.Hash> = cast modules.getModule(module.Hash);
+		final hash: Null<module.Hash> = cast modules.getModule(module.Hash);
 		return hash != null && hash.xml != null && !hash.dirChanged(key, dirs, '.png');
 	}
 
 	override private function runNode(cfg: TPConfig): Void {
-		var unit: TPUnit = cfg;
+		final unit: TPUnit = cfg;
 		unit.input = [for (e in cfg.input) cfg.from + e];
 		unit.output = cfg.to + cfg.output;
 		if (notChanged('${cfg.output}.${cfg.ext}', unit.input)) return;
 		if (cfg.clean) haveClean = true;
 
-		var format = unit.format.split(' ');
+		final format = unit.format.split(' ');
 		@:nullSafety(Off) var f: String = format.shift();
 
-		var licence: Null<String> = Sys.getEnv('TEXTURE_PACKER_LICENCE');
+		final licence: Null<String> = Sys.getEnv('TEXTURE_PACKER_LICENCE');
 		var first: Bool = true;
 		for (s in format) {
-			var command = unit.input.copy();
+			final command = unit.input.copy();
 
 			if (licence != null) {
 				command.push('--activate-license');
@@ -109,20 +109,20 @@ private typedef TPUnit = {
 			command.push('--format');
 			command.push(f);
 
-			var outExt = unit.ext != null
+			final outExt = unit.ext != null
 				? unit.ext
 				: switch f {
 					case 'phaser-json-array', 'phaser-json-hash', 'pixijs': 'json';
 					case _: f;
 				}
 
-			var datafile = '${unit.output + (first ? '' : '_$s')}.$outExt';
+			final datafile = '${unit.output + (first ? '' : '_$s')}.$outExt';
 			command.push('--data');
 			command.push(datafile);
 
-			var tExt: String = s == 'png8' ? 'png' : s;
+			final tExt: String = s == 'png8' ? 'png' : s;
 
-			var sheetfile = '${unit.output}.$tExt';
+			final sheetfile = '${unit.output}.$tExt';
 			command.push('--sheet');
 			command.push(sheetfile);
 
@@ -203,16 +203,16 @@ private typedef TPUnit = {
 			}
 
 			if (unit.trim != null) {
-				var a: Array<String> = unit.trim.split(' ');
+				final a: Array<String> = unit.trim.split(' ');
 				if (a.length == 2) {
-					var v: Null<Int> = Std.parseInt(a[0]);
+					final v: Null<Int> = Std.parseInt(a[0]);
 					if (v != null && '$v' == a[0]) {
 						command.push('--trim-mode');
 						command.push(a[1]);
 						command.push('--trim-threshold');
 						command.push('$v');
 					} else {
-						var v: Null<Int> = Std.parseInt(a[1]);
+						final v: Null<Int> = Std.parseInt(a[1]);
 						command.push('--trim-mode');
 						command.push(a[0]);
 						if (v != null) {
@@ -221,7 +221,7 @@ private typedef TPUnit = {
 						}
 					}
 				} else if (a.length == 1) {
-					var v: Null<Int> = Std.parseInt(a[0]);
+					final v: Null<Int> = Std.parseInt(a[0]);
 					if (v != null && '$v' == a[0]) {
 						command.push('--trim-mode');
 						command.push('Trim');
@@ -261,7 +261,7 @@ private typedef TPUnit = {
 
 	private function clean(): Void {
 		if (haveClean) {
-			var remList: Array<String> = toList.copy();
+			final remList: Array<String> = toList.copy();
 			for (a in toList) {
 				for (b in toList) {
 					if (a.length > b.length) {
@@ -274,7 +274,7 @@ private typedef TPUnit = {
 			log('Ignores: ${ignoreList.join(', ')}');
 
 			for (p in remList) {
-				var d: Dir = p;
+				final d: Dir = p;
 				for (f in d.contentRecursiveFiles()) {
 					if (ignoreList.indexOf(f.first) == -1) {
 						log('Delete file: ${f.first}');
@@ -311,7 +311,7 @@ private class Path extends BAReader<TPConfig> {
 	}
 
 	override private function readXml(xml: Fast): Void {
-		var variants: Array<TPConfig> = [for (node in xml.nodes.variant) cast(selfCreate(node), Path).cfg];
+		final variants: Array<TPConfig> = [for (node in xml.nodes.variant) cast(selfCreate(node), Path).cfg];
 		if (variants.length > 0) {
 			for (v in variants) {
 				cfg = v;
@@ -359,7 +359,7 @@ private class Path extends BAReader<TPConfig> {
 			case 'basicSortBy':
 				cfg.basicSortBy = val;
 			case 'size':
-				var a: Array<Int> = val.split(' ').map(Std.parseInt);
+				final a: Array<Int> = val.split(' ').map(Std.parseInt);
 				cfg.size = a.length == 1 ? new Point(a[0], a[0]) : new Point(a[0], a[1]);
 			case _:
 		}
@@ -384,7 +384,7 @@ private class Unit extends Path {
 	override private function readNode(xml: Fast): Void {
 		switch xml.name {
 			case 'path':
-				var from = normalize(xml.att.from);
+				final from = normalize(xml.att.from);
 				for (node in xml.nodes.input) {
 					cfg.input.push(from + normalize(node.innerData));
 				}

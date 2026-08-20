@@ -36,7 +36,7 @@ class WebServer {
 	public function connect(connection: IHttpConnection): Void {
 		if (connection.end) return;
 		if (connection.url != '' && sendStatic(connection)) return;
-		var cpq = new CPQ(connection, usercontent, tpl.get(defaults.template), defaults.lang);
+		final cpq = new CPQ(connection, usercontent, tpl.get(defaults.template), defaults.lang);
 		for (m in modules) {
 			switch m.connect(cpq) {
 				case BREAK:
@@ -50,16 +50,16 @@ class WebServer {
 	}
 
 	private function sendStatic(connection: IHttpConnection): Bool {
-		var u: Unit = _static + connection.url;
+		final u: Unit = _static + connection.url;
 		if (u.exists) {
 			connection.sendFile(u);
 			return true;
 		} else {
-			var a: Array<String> = connection.url.split('/');
+			final a: Array<String> = connection.url.split('/');
 			if (a[0] == 'tpl') {
 				a.shift();
-				var t: String = a.shift();
-				var p: String = a.join('/');
+				final t: String = a.shift();
+				final p: String = a.join('/');
 				if (!tpl.exists(t))
 					connection.error('Not exists template: $t');
 				else if (!tpl.get(t)._static.exists(p))
@@ -69,8 +69,8 @@ class WebServer {
 				return true;
 			} else if (a[0] == usercontent) {
 				a.shift();
-				var p: String = a.join('/');
-				var u: Unit = '$usercontent/$p';
+				final p: String = a.join('/');
+				final u: Unit = '$usercontent/$p';
 				if (u.exists)
 					connection.sendFile(u);
 				else

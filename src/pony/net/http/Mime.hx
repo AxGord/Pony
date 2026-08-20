@@ -697,14 +697,14 @@ class Mime {
 		'zmm' => 'application/vnd.handheld-entertainment+xml'
 	];
 
-	private static inline var DEFAULT: String = 'application/octet-stream';
+	private static inline final DEFAULT: String = 'application/octet-stream';
 
 	/**
 		Text formats whose media type does not start with `text/`. They still need a charset:
 		a browser handed one of these without it falls back to guessing, and guesses wrong on
 		anything outside ASCII.
 	**/
-	private static var TEXTUAL: Array<String> = [
+	private static final TEXTUAL: Array<String> = [
 		'application/javascript',
 		'application/json',
 		'application/manifest+json',
@@ -720,15 +720,15 @@ class Mime {
 		type makes a browser download the file; a missing one makes it guess, which is worse.
 	**/
 	public static function ofPath(path: String): String {
-		var dot: Int = path.lastIndexOf('.');
+		final dot: Int = path.lastIndexOf('.');
 		if (dot == -1) return DEFAULT;
-		var type: Null<String> = ofExtension(path.substr(dot + 1));
+		final type: Null<String> = ofExtension(path.substr(dot + 1));
 		return type == null ? DEFAULT : type;
 	}
 
 	/** `ofPath` plus the UTF-8 charset for text formats — what a `Content-Type` header wants. **/
 	public static function contentType(path: String): String {
-		var type: String = ofPath(path);
+		final type: String = ofPath(path);
 		return StringTools.startsWith(type, 'text/') || TEXTUAL.indexOf(type) != -1 ? '$type; charset=utf-8' : type;
 	}
 

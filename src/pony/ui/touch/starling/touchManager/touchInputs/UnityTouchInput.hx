@@ -16,7 +16,7 @@ class UnityTouchInput {
 	}
 
 	public function update(): Void {
-		var mousePos = Input.mousePosition;
+		final mousePos = Input.mousePosition;
 
 		if (Input.GetMouseButtonDown(0)) {
 			TouchManager.down(mousePos.x, mousePos.y, false);

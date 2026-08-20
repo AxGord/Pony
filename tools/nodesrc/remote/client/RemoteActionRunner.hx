@@ -16,8 +16,8 @@ import remote.client.actions.RemoteActionCommand;
 #if (haxe_ver >= 4.2) final #else @:final #end
 class RemoteActionRunner extends Logable {
 
-	private var protocol: RemoteProtocol;
-	private var commands: Array<RemoteCommand>;
+	private final protocol: RemoteProtocol;
+	private final commands: Array<RemoteCommand>;
 
 	public function new(protocol: RemoteProtocol, commands: Array<RemoteCommand>) {
 		super();

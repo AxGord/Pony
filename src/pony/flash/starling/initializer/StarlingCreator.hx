@@ -14,12 +14,11 @@ class StarlingCreator {
 
 	public var starling: Starling;
 
-	private var _stage: Stage;
-	private var _initialWidth: Int;
-	private var _initialHeight: Int;
+	private final _stage: Stage = Lib.current.stage;
+	private final _initialWidth: Int;
+	private final _initialHeight: Int;
 
 	public function new(showStats: Bool) {
-		_stage = Lib.current.stage;
 
 		Starling.handleLostContext = true;
 		Starling.multitouchEnabled = true;

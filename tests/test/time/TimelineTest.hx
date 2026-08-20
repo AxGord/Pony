@@ -10,7 +10,7 @@ class TimelineTest {
 
 	@Test
 	public function testPlay(): Void {
-		var t = new Timeline(['2s', '5s', '12s']);
+		final t = new Timeline(['2s', '5s', '12s']);
 		var lastStep: Int = 0;
 		t.onStep << function(step: Int) lastStep = step;
 		t.play();
@@ -28,7 +28,7 @@ class TimelineTest {
 
 	@Test
 	public function testPlayWithPause(): Void {
-		var t = new Timeline(['2s', '5s', '12s'], true);
+		final t = new Timeline(['2s', '5s', '12s'], true);
 		var lastStep: Int = 0;
 		t.onStep << function(step: Int) lastStep = step;
 		t.play();
@@ -54,7 +54,7 @@ class TimelineTest {
 
 	@Test
 	public function testPause(): Void {
-		var t = new Timeline(['2s', '5s', '12s'], true);
+		final t = new Timeline(['2s', '5s', '12s'], true);
 		var lastStep: Int = 0;
 		t.onStep << function(step: Int) lastStep = step;
 		t.play();
@@ -70,7 +70,7 @@ class TimelineTest {
 
 	@Test
 	public function testPlayTo(): Void {
-		var t = new Timeline(['2s', '5s', '12s'], true);
+		final t = new Timeline(['2s', '5s', '12s'], true);
 		var lastStep: Int = 0;
 		t.onStep << function(step: Int) lastStep = step;
 		t.playTo(2);

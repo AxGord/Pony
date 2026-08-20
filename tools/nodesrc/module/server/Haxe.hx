@@ -8,9 +8,9 @@ import pony.Logable;
  * Haxe Server submodule
  * @author AxGord <axgord@gmail.com>
  */
-@:nullSafety(Strict) @:final class Haxe extends Logable {
+@:nullSafety(Strict) final class Haxe extends Logable {
 
-	private var port: UInt;
+	private final port: UInt;
 
 	public function new(port: UInt) {
 		super();
@@ -18,7 +18,7 @@ import pony.Logable;
 	}
 
 	public function init(): Void {
-		var r: String = @:nullSafety(Off) 'haxe --wait $port';
+		final r: String = @:nullSafety(Off) 'haxe --wait $port';
 		log(r);
 		var p: ChildProcessObject = ChildProcess.exec(r, execHandler);
 		p.stdout.on('data', log);

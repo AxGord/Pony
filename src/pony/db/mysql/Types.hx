@@ -10,33 +10,33 @@ abstract Types(Int) to Int from Int {
 
 	// Manually extracted from mysql-5.5.23/include/mysql_com.h
 	// some more info here: http://dev.mysql.com/doc/refman/5.5/en/c-api-prepared-statement-type-codes.html
-	var DECIMAL = 0x00; // aka DECIMAL (http://dev.mysql.com/doc/refman/5.0/en/precision-math-decimal-changes.html)
-	var TINYINT = 0x01;
-	var SMALLINT = 0x02;
-	var INT = 0x03;
-	var FLOAT = 0x04;
-	var DOUBLE = 0x05;
-	var NULL = 0x06;
-	var TIMESTAMP = 0x07;
-	var BIGINT = 0x08;
-	var MEDIUMINT = 0x09;
-	var DATE = 0x0a;
-	var TIME = 0x0b;
-	var DATETIME = 0x0c;
-	var YEAR = 0x0d;
-	var NEWDATE = 0x0e;
-	var NEWVARCHAR = 0x0f;
-	var BIT = 0x10;
-	var NEWDECIMAL = 0xf6;
-	var ENUM = 0xf7;
-	var SET = 0xf8;
-	var TINY_BLOB = 0xf9;
-	var MEDIUM_BLOB = 0xfa;
-	var LONG_BLOB = 0xfb;
-	var TEXT = 0xfc;
-	var VARCHAR = 0xfd;
-	var CHAR = 0xfe;
-	var GEOMETRY = 0xff;
+	final DECIMAL = 0x00; // aka DECIMAL (http://dev.mysql.com/doc/refman/5.0/en/precision-math-decimal-changes.html)
+	final TINYINT = 0x01;
+	final SMALLINT = 0x02;
+	final INT = 0x03;
+	final FLOAT = 0x04;
+	final DOUBLE = 0x05;
+	final NULL = 0x06;
+	final TIMESTAMP = 0x07;
+	final BIGINT = 0x08;
+	final MEDIUMINT = 0x09;
+	final DATE = 0x0a;
+	final TIME = 0x0b;
+	final DATETIME = 0x0c;
+	final YEAR = 0x0d;
+	final NEWDATE = 0x0e;
+	final NEWVARCHAR = 0x0f;
+	final BIT = 0x10;
+	final NEWDECIMAL = 0xf6;
+	final ENUM = 0xf7;
+	final SET = 0xf8;
+	final TINY_BLOB = 0xf9;
+	final MEDIUM_BLOB = 0xfa;
+	final LONG_BLOB = 0xfb;
+	final TEXT = 0xfc;
+	final VARCHAR = 0xfd;
+	final CHAR = 0xfe;
+	final GEOMETRY = 0xff;
 
 	@:to public function toString(): String return toStr[this];
 

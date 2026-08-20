@@ -47,9 +47,9 @@ class ServersideStorageDB implements Declarator {
 	}
 
 	public function getClient(cookie: Cookie): Map<String, Dynamic> {
-		var key: String = cookie.get(keyName);
+		final key: String = cookie.get(keyName);
 		if (key == null) {
-			var k: String = Tools.randomString();
+			final k: String = Tools.randomString();
 			cookie.set(keyName, k);
 			return getClientByKey(k);
 		} else {
@@ -77,7 +77,7 @@ class ServersideStorageDB implements Declarator {
 				'value' => (Serializer.run(client[k]): DBV)
 			], function(r) if (!r) throw 'Can\'t save storage');
 		} else {
-			var s = Serializer.run(client[k]);
+			final s = Serializer.run(client[k]);
 			if (s != orig[k]) table.where(client == $key && key == $k).update(['value' => (s: DBV)], function(r) if (!r) throw 'Can\'t '
 			+ 'save ' + 'storage');
 		}

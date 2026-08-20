@@ -37,7 +37,7 @@ abstract TimeInterval(TimeIntervalImpl) {
 	}
 
 	@:from private static function fromString(time: String): TimeInterval {
-		var a = time.split('...');
+		final a = time.split('...');
 		if (a.length > 1)
 			return new TimeInterval({ min: a[0], max: a[1] });
 		else
@@ -56,12 +56,12 @@ abstract TimeInterval(TimeIntervalImpl) {
 
 	public inline function percent(time: Time): Float {
 		if (max > min) {
-			var t: Float = time - min;
-			var m: Float = max - min;
+			final t: Float = time - min;
+			final m: Float = max - min;
 			return t / m;
 		} else {
-			var t: Float = time - max;
-			var m: Float = min - max;
+			final t: Float = time - max;
+			final m: Float = min - max;
 			return t / m;
 		}
 	}

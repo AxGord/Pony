@@ -10,13 +10,13 @@ class NinjaTest {
 
 	@Test
 	public function test(): Void {
-		var n = new NinjaClass(1);
+		final n = new NinjaClass(1);
 		Assert.areEqual(n._number, 0);
 		Assert.areEqual(n.def, 1);
-		var n = n.number(5);
+		final n = n.number(5);
 		Assert.areEqual(n.def, 1);
 		Assert.areEqual(n._number, 5);
-		var n = n.text('hello');
+		final n = n.text('hello');
 		Assert.areEqual(n.def, 1);
 		Assert.areEqual(n._number, 5);
 		Assert.areEqual(n._text, 'hello');

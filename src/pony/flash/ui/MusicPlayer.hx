@@ -23,7 +23,7 @@ class MusicPlayer extends SongPlayer {
 	private var songHeight: Float;
 	private var sw: SwitchableList;
 
-	private var songList: List<MovieClip> = new List();
+	private final songList: List<MovieClip> = new List();
 	private var currentList: Array<SongInfo>;
 
 	override private function init(): Void {
@@ -40,20 +40,20 @@ class MusicPlayer extends SongPlayer {
 		if (visible) unloadPlaylist();
 		visible = true;
 		currentList = pl;
-		var bcs: Array<ButtonCore> = [];
+		final bcs: Array<ButtonCore> = [];
 		var i = 0;
 		for (e in pl) {
-			var o: MovieClip = Type.createInstance(songClass, []);
+			final o: MovieClip = Type.createInstance(songClass, []);
 			o.x = beginPoint.x;
 			o.y = beginPoint.y + i * songHeight;
 			addChild(o);
 			songList.push(o);
-			var b: Button = untyped o.b;
+			final b: Button = untyped o.b;
 			bcs.push(b.core);
-			var t: TextField = untyped o.tTitle;
+			final t: TextField = untyped o.tTitle;
 			t.text = SongPlayerCore.formatSong(e);
 			t.mouseEnabled = false;
-			var t: TextField = untyped o.tTime;
+			final t: TextField = untyped o.tTime;
 			t.text = e.length;
 			t.mouseEnabled = false;
 			i++;
@@ -65,7 +65,7 @@ class MusicPlayer extends SongPlayer {
 	}
 
 	public function select(n: Int): Void {
-		var song = currentList[n];
+		final song = currentList[n];
 		core.loadSong(song);
 	}
 

@@ -41,9 +41,9 @@ class Bar extends Sprite implements HasSignal implements IWH {
 		super();
 		this.invert = invert;
 		this.smooth = smooth;
-		var loadList = switch bg {
+		final loadList = switch bg {
 			case OrState.A(v):
-				var s = PixiAssets.cImage(v, useSpriteSheet);
+				final s = PixiAssets.cImage(v, useSpriteSheet);
 				addChild(s);
 				this.bg = s;
 				[s];
@@ -87,7 +87,7 @@ class Bar extends Sprite implements HasSignal implements IWH {
 		end.y = begin.y;
 
 		barContainter.addChild(end);
-		var size = switch bg {
+		final size = switch bg {
 			case OrState.A(v): new Point<Int>(Std.int(v.width), Std.int(v.height));
 			case OrState.B(v): v;
 		}

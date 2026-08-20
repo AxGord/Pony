@@ -6,10 +6,10 @@ package pony;
  */
 abstract Byte(Int) from Int to Int {
 
-	inline public static var b0001 = 1;
-	inline public static var b0010 = 2;
-	inline public static var b0100 = 4;
-	inline public static var b1000 = 8;
+	inline public static final b0001 = 1;
+	inline public static final b0010 = 2;
+	inline public static final b0100 = 4;
+	inline public static final b1000 = 8;
 
 	public var a(get, never): Int;
 	public var b(get, never): Int;

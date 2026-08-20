@@ -28,7 +28,7 @@ class Server extends Section {
 			add('haxe', '$haxePort');
 		}
 		if (sniff) {
-			var sniff: Xml = Xml.createElement('sniff');
+			final sniff: Xml = Xml.createElement('sniff');
 			sniff.addChild(XmlTools.node('server', '3000'));
 			sniff.addChild(XmlTools.node('client', '3001'));
 			xml.addChild(sniff);

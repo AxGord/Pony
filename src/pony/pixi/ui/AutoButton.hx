@@ -21,22 +21,22 @@ class AutoButton extends Sprite implements IWH {
 	private static var DARK_FILTER: Array<Filter>;
 
 	private static function __init__(): Void {
-		var f = new ColorMatrixFilter();
+		final f = new ColorMatrixFilter();
 		f.kodachrome(true);
 		LIGHT_FILTER = [f];
-		var f = new ColorMatrixFilter();
+		final f = new ColorMatrixFilter();
 		f.desaturate(true);
 		GRAY_FILTER = [f];
-		var f = new ColorMatrixFilter();
+		final f = new ColorMatrixFilter();
 		f.vintage(true);
 		DARK_FILTER = [f];
 	}
 
 	public var size(get, never): Point<Float>;
-	private var _size: Point<Float>;
+	private final _size: Point<Float>;
 
 	public var core(default, null): ButtonCore;
-	private var img: Sprite;
+	private final img: Sprite;
 
 	public function new(s: Sprite) {
 		super();

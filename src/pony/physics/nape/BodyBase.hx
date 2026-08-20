@@ -108,8 +108,8 @@ class BodyBase implements pony.magic.HasSignal implements pony.magic.HasLink imp
 		if (rotation >= Math.PI) rotation -= 2 * Math.PI;
 		if (rotation <= -Math.PI) rotation += 2 * Math.PI;
 		if (Math.abs(rotation) > Math.PI / 2 && Math.abs(lookAtTarget) > Math.PI / 2) {
-			var nR: Bool = rotation < 0;
-			var nL: Bool = lookAtTarget < 0;
+			final nR: Bool = rotation < 0;
+			final nL: Bool = lookAtTarget < 0;
 			if (nR != nL) {
 				if (nR)
 					lookAtTarget -= 2 * Math.PI;
@@ -155,13 +155,13 @@ class BodyBase implements pony.magic.HasSignal implements pony.magic.HasLink imp
 	}
 
 	private function createEvent0(): Event0 {
-		var e = new Event0();
+		final e = new Event0();
 		events0.push(e);
 		return e;
 	}
 
 	private function createEvent1(): Event1<Int> {
-		var e = new Event1<Int>();
+		final e = new Event1<Int>();
 		events1.push(e);
 		return e;
 	}
@@ -172,8 +172,8 @@ class BodyBase implements pony.magic.HasSignal implements pony.magic.HasLink imp
 		ePos.dispatch(body.position.x - anchor.x, body.position.y - anchor.y);
 		eRotation.dispatch(body.rotation);
 		if (limits != null) {
-			var mx = body.bounds.width * 2;
-			var my = body.bounds.height * 2;
+			final mx = body.bounds.width * 2;
+			final my = body.bounds.height * 2;
 			if (
 				body.position.x < limits.x - mx || body.position.x > limits.width + mx || body.position.y < limits.y - my
 				|| body.position.y > limits.height + my
@@ -213,7 +213,7 @@ class BodyBase implements pony.magic.HasSignal implements pony.magic.HasLink imp
 	}
 
 	public function groupCollision<T:NapeGroup>(with: T): Signal1<Int> {
-		var e = createEvent1();
+		final e = createEvent1();
 		body.space.listeners.add(new InteractionListener(
 			CbEvent.BEGIN, with.sensor ? InteractionType.SENSOR : InteractionType.COLLISION, cbt, with.cbt,
 			function(ic: InteractionCallback): Void e.dispatch(ic.int2.id)
@@ -222,7 +222,7 @@ class BodyBase implements pony.magic.HasSignal implements pony.magic.HasLink imp
 	}
 
 	public function groupCollisionLost<T:NapeGroup>(with: T): Signal1<Int> {
-		var e = createEvent1();
+		final e = createEvent1();
 		body.space.listeners.add(new InteractionListener(
 			CbEvent.END, with.sensor ? InteractionType.SENSOR : InteractionType.COLLISION, cbt, with.cbt,
 			function(ic: InteractionCallback): Void e.dispatch(ic.int2.id)
@@ -231,7 +231,7 @@ class BodyBase implements pony.magic.HasSignal implements pony.magic.HasLink imp
 	}
 
 	public function collision<T:BodyBase>(with: T): Signal0 {
-		var e = createEvent0();
+		final e = createEvent0();
 		body.space.listeners.add(new InteractionListener(
 			CbEvent.BEGIN, body.isBullet ? InteractionType.SENSOR : InteractionType.COLLISION, cbt, with.cbt, function(_) e.dispatch()
 		));
@@ -239,7 +239,7 @@ class BodyBase implements pony.magic.HasSignal implements pony.magic.HasLink imp
 	}
 
 	public function collisionLost<T:BodyBase>(with: T): Signal0 {
-		var e = new Event0();
+		final e = new Event0();
 		addListener(new InteractionListener(
 			CbEvent.END, body.isBullet ? InteractionType.SENSOR : InteractionType.COLLISION, cbt, with.cbt, function(_) e.dispatch()
 		));

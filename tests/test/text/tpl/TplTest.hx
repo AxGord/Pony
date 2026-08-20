@@ -25,7 +25,7 @@ class TplTest {
 
 	@Test
 	public function test(): Void {
-		var t: Tpl = new Tpl(this, '123 < _ f=", ">%id%</_f>  e% qwe = "15%df% <_n2>weg</_n2>6" %');
+		final t: Tpl = new Tpl(this, '123 < _ f=", ">%id%</_f>  e% qwe = "15%df% <_n2>weg</_n2>6" %');
 		var flag = false;
 		t.gen(null, null, function(r: String): Void {
 			Assert.areEqual('123 0, 1, 2  e15df n26', r);
@@ -38,8 +38,8 @@ class TplTest {
 	#if neko
 	@Test
 	public function dir(): Void {
-		var d: Dir = '${Tools.currentDir()}tpls';
-		var td: TplDir = new TplDir(d, this);
+		final d: Dir = '${Tools.currentDir()}tpls';
+		final td: TplDir = new TplDir(d, this);
 		var flag = false;
 		td.gen('index', null, null, function(r: String): Void {
 			Assert.areEqual('hello world', r);
@@ -50,8 +50,8 @@ class TplTest {
 
 	@Test
 	public function system(): Void {
-		var d: Dir = '${Tools.currentDir()}system';
-		var s: TplSystem = new TplSystem(d, this);
+		final d: Dir = '${Tools.currentDir()}system';
+		final s: TplSystem = new TplSystem(d, this);
 		// s.gen('index', null, function(r:String) trace(r));
 		var first = false;
 		var second = false;

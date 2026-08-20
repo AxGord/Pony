@@ -9,7 +9,7 @@ import pixi.core.textures.Texture;
  */
 class TextureCut {
 
-	private static var list: Array<String> = [];
+	private static final list: Array<String> = [];
 
 	public static function apply(texture: Texture, crop: Float): Void {
 		if (list.indexOf(([

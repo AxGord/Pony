@@ -16,10 +16,10 @@ using pony.text.XmlTools;
  */
 @:nullSafety(Strict) class Template extends CfgModule<TemplateConfig> {
 
-	private static inline var PRIORITY: Int = 6;
+	private static inline final PRIORITY: Int = 6;
 
 	private var hash: Null<String> = null;
-	private var usedFiles: Map<String, Bytes> = [];
+	private final usedFiles: Map<String, Bytes> = [];
 
 	public function new() super('template');
 
@@ -47,15 +47,18 @@ using pony.text.XmlTools;
 	}
 
 	override private function runNode(cfg: TemplateConfig): Void {
-		var hashModule: Null<module.Hash> = cast modules.getModule(module.Hash);
-		var assetsHashFile: Null<STriple<String>> = hashModule != null && hashModule.xml != null ? hashModule.getBuildResHashFile() : null;
-		var buildDate: String = Date.now().toString();
-		var hashMethod: (String -> Dynamic) -> String -> String = hashFile.bind(cfg.from, cfg.to, false);
-		var appFileName: String = cfg.appFile != null ? hashFile(cfg.appPath, cfg.to, cfg.appRm, dummy, cfg.appFile) : '';
-		var assetsHash: String = assetsHashFile != null ? hashFile(assetsHashFile.a, assetsHashFile.b, false, dummy, assetsHashFile.c) : '';
+		final hashModule: Null<module.Hash> = cast modules.getModule(module.Hash);
+		final assetsHashFile: Null<STriple<String>> =
+			hashModule != null && hashModule.xml != null ? hashModule.getBuildResHashFile() : null;
+		final buildDate: String = Date.now().toString();
+		final hashMethod: (String -> Dynamic) -> String -> String = hashFile.bind(cfg.from, cfg.to, false);
+		final appFileName: String = cfg.appFile != null ? hashFile(cfg.appPath, cfg.to, cfg.appRm, dummy, cfg.appFile) : '';
+		final assetsHash: String = assetsHashFile != null
+			? hashFile(assetsHashFile.a, assetsHashFile.b, false, dummy, assetsHashFile.c)
+			: '';
 		for (unit in cfg.units) {
-			var file: File = cfg.from + unit;
-			var content: Null<String> = file.content;
+			final file: File = cfg.from + unit;
+			final content: Null<String> = file.content;
 			if (content == null) continue;
 			(((cfg.to + unit): File).withoutExt: File).content = new haxe.Template(content).execute({
 				title: cfg.title,
@@ -65,7 +68,7 @@ using pony.text.XmlTools;
 			}, { hash: hashMethod });
 		}
 		for (file in cfg.files) {
-			var f: File = cfg.from + file;
+			final f: File = cfg.from + file;
 			f.copyToDir(cfg.to);
 			if (cfg.hash != null) usedFiles[file] = Utils.gitHash(f.first);
 		}
@@ -75,14 +78,14 @@ using pony.text.XmlTools;
 	private function hashFile(from: String, to: String, rm: Bool, resolve: String -> Dynamic, fileName: String): String {
 		if (from.length > 0 && !from.endsWith('/')) from += '/';
 		if (to.length > 0 && !to.endsWith('/')) to += '/';
-		var bytes: Null<Bytes> = usedFiles[fileName];
-		var file: File = fileName;
+		final bytes: Null<Bytes> = usedFiles[fileName];
+		final file: File = fileName;
 		if (bytes != null) return [file.withoutExt, Base64.urlEncode(bytes), file.ext].join('.');
-		var fromFile: File = from + fileName;
+		final fromFile: File = from + fileName;
 		if (!fromFile.exists) return fileName;
-		var bytes: Bytes = Utils.gitHash(fromFile.first);
+		final bytes: Bytes = Utils.gitHash(fromFile.first);
 		usedFiles[fileName] = bytes;
-		var newName: String = [file.withoutExt, Base64.urlEncode(bytes), file.ext].join('.');
+		final newName: String = [file.withoutExt, Base64.urlEncode(bytes), file.ext].join('.');
 		fromFile.copyToFile(to + newName);
 		if (rm) fromFile.delete();
 		return newName;

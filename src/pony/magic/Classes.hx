@@ -17,11 +17,11 @@ class Classes {
 
 	macro public static function dir(pack: String, dir: String): Expr {
 		var f: String = Context.getPosInfos(Context.currentPos()).file;
-		var d: String = Sys.systemName() == 'Windows' ? '\\' : '/';
+		final d: String = Sys.systemName() == 'Windows' ? '\\' : '/';
 		f = '${sys.FileSystem.fullPath(f).split(d).slice(0, -1).join('/')}/';
-		var d: String = '${f + dir}/';
-		var list: Array<Expr> = [];
-		var p: Array<String> = (pack != '' ? pack.split('.') : []).concat(dir.split('/'));
+		final d: String = '${f + dir}/';
+		final list: Array<Expr> = [];
+		final p: Array<String> = (pack != '' ? pack.split('.') : []).concat(dir.split('/'));
 		for (e in FileSystem.readDirectory(d)) if (e.substr(-3) == '.hx') {
 			var ex: Expr = null;
 			for (s in p) if (ex == null)

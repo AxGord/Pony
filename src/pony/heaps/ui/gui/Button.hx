@@ -22,23 +22,23 @@ import pony.ui.touch.Touchable;
  */
 @:nullSafety(Strict) class Button extends Interactive implements HasLink implements IWH {
 
-	private static inline var OVERTINT: Float = 1.2;
-	private static inline var DOWNTINT: Float = 0.5;
-	private static var DEFTINTV: Vector = new Vector(1, 1, 1);
-	private static var OVERTINTV: Vector = new Vector(OVERTINT, OVERTINT, OVERTINT);
-	private static var DOWNTINTV: Vector = new Vector(DOWNTINT, DOWNTINT, DOWNTINT);
+	private static inline final OVERTINT: Float = 1.2;
+	private static inline final DOWNTINT: Float = 0.5;
+	private static final DEFTINTV: Vector = new Vector(1, 1, 1);
+	private static final OVERTINTV: Vector = new Vector(OVERTINT, OVERTINT, OVERTINT);
+	private static final DOWNTINTV: Vector = new Vector(DOWNTINT, DOWNTINT, DOWNTINT);
 
 	public var core(default, null): ButtonCore;
 	public var touchable(default, null): Touchable;
 	public var nodes(default, null): Array<Node>;
 	public var size(link, never): Point<Float> = nodes[0].size;
 
-	private var tween: Tween = new Tween(300, false, false, false, true);
-	private var anim: Null<TimeInterval>;
+	private final tween: Tween = new Tween(300, false, false, false, true);
+	private final anim: Null<TimeInterval>;
 	private var prevState: ButtonState = ButtonState.Default;
 
 	public function new(nodes: Array<Node>, ?anim: TimeInterval, ?parent: Object) {
-		var first: Node = nodes[0];
+		final first: Node = nodes[0];
 		super(first.size.x * first.scaleX, first.size.y * first.scaleY, parent);
 		this.nodes = nodes;
 		this.anim = anim;
@@ -121,7 +121,7 @@ import pony.ui.touch.Touchable;
 			nodes[2].visible = true;
 		} else {
 			cursor = Cursor.Button;
-			var index: UInt = switch state {
+			final index: UInt = switch state {
 				case Default: 0;
 				case Focus, Leave: 1;
 				case Press: 2;

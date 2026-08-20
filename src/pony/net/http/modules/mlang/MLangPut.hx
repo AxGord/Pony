@@ -10,7 +10,7 @@ import pony.text.tpl.TplSystem.Manifest;
  * @author AxGord <axgord@gmail.com>
  */
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
-@:final class MLangPut extends TplPut<MLangConnect, {}> {
+final class MLangPut extends TplPut<MLangConnect, {}> {
 
 	@:async
 	override public function tag(name: String, content: TplData, arg: String, args: Map<String, String>, ?kid: ITplPut): String {
@@ -18,7 +18,7 @@ import pony.text.tpl.TplSystem.Manifest;
 			if (args.exists('not'))
 				return a.cpq.lang == args['not'] ? '' : @await tplData(content);
 			else {
-				var d: String = kid != null ? @await kid.tplData(content) : @await tplData(content);
+				final d: String = kid != null ? @await kid.tplData(content) : @await tplData(content);
 				return l(d, args);
 			}
 		} else if (name == 'languages') {
@@ -42,9 +42,11 @@ import pony.text.tpl.TplSystem.Manifest;
 	}
 
 	private function l(d: String, args: Map<String, String>): String {
-		var m: Manifest = a.cpq.template.manifest;
-		var from: String = args.exists('from') ? args['from'] : m != null && m.language != null ? m.language : a.base.server.defaults.lang;
-		var to: String = args.exists('to') ? args['to'] : a.cpq.lang;
+		final m: Manifest = a.cpq.template.manifest;
+		final from: String = args.exists('from')
+			? args['from']
+			: m != null && m.language != null ? m.language : a.base.server.defaults.lang;
+		final to: String = args.exists('to') ? args['to'] : a.cpq.lang;
 		return a.base.langTable.translate(from, to, d);
 	}
 

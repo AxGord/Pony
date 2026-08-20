@@ -6,7 +6,7 @@ package pony.time;
  */
 class MainLoop {
 
-	private static inline var SLEEP_TIME: Float = 1 / 62;
+	private static inline final SLEEP_TIME: Float = 1 / 62;
 
 	public static var lastTick(default, null): Float;
 	private static var _stop: Bool = false;
@@ -23,7 +23,7 @@ class MainLoop {
 		var nt: Float;
 		while (!_stop) {
 			nt = getTime();
-			var sleepTime: Float = SLEEP_TIME - (nt - lastTick);
+			final sleepTime: Float = SLEEP_TIME - (nt - lastTick);
 			if (sleepTime > 0) Sys.sleep(sleepTime);
 			nt = getTime();
 			DeltaTime.fixedValue = nt - lastTick;

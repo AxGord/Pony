@@ -91,7 +91,7 @@ class TimeoutActivity implements Declarator implements HasSignal {
 	public function applyIdle(listener: Listener0): Void {
 		onIdle << listener;
 		if (sleep) {
-			var c: SignalControllerInner0 = new SignalControllerInner0(onIdle);
+			final c: SignalControllerInner0 = new SignalControllerInner0(onIdle);
 			listener.call(c);
 			c.destroy();
 		}
@@ -100,7 +100,7 @@ class TimeoutActivity implements Declarator implements HasSignal {
 	public function applyWakeup(listener: Listener0): Void {
 		onWakeup << listener;
 		if (!sleep) {
-			var c: SignalControllerInner0 = new SignalControllerInner0(onWakeup);
+			final c: SignalControllerInner0 = new SignalControllerInner0(onWakeup);
 			listener.call(c);
 			c.destroy();
 		}

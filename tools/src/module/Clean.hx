@@ -10,9 +10,9 @@ import types.BASection;
  * Clean module
  * @author AxGord <axgord@gmail.com>
  */
-@:final class Clean extends CfgModule<CleanConfig> {
+final class Clean extends CfgModule<CleanConfig> {
 
-	private static inline var PRIORITY: Int = 10;
+	private static inline final PRIORITY: Int = 10;
 
 	public function new() super('clean');
 
@@ -40,9 +40,9 @@ import types.BASection;
 	override private function runNode(cfg: CleanConfig): Void {
 		var keep: Array<String> = cfg.keepFiles;
 		if (cfg.keepHashed) {
-			var hashModule: Null<module.Hash> = modules.getModule(module.Hash);
+			final hashModule: Null<module.Hash> = modules.getModule(module.Hash);
 			if (hashModule != null && hashModule.xml != null) {
-				var hashed: Array<String> = hashModule.getHashed();
+				final hashed: Array<String> = hashModule.getHashed();
 				keep = keep.concat(hashed).concat(hashed.map(function(f: String): String return '$f.bin'));
 				if (hashed.length > 1) hashModule.runCleanAfter = true;
 			}
@@ -54,7 +54,7 @@ import types.BASection;
 
 	private function cleanDirs(data: Array<String>, keepFiles: Array<String>, rimraf: Bool, md: Bool): Void {
 		for (d in data) {
-			var dir: Dir = d;
+			final dir: Dir = d;
 			if (!dir.exists) {
 				if (md) {
 					log('Create directory: $d');
@@ -75,7 +75,7 @@ import types.BASection;
 		for (d in data) {
 			log('Remove empty directories in $d');
 			for (dir in (d: Dir).contentRecursiveDirs()) {
-				var content: Array<Unit> = dir.content(true);
+				final content: Array<Unit> = dir.content(true);
 				if (content.length == 1 && content[0].name == '.DS_Store') {
 					content[0].delete();
 					dir.delete();

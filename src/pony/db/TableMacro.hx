@@ -14,7 +14,7 @@ class TableMacro {
 	static public function transExpr(expr: Expr, a: Array<Expr>): Array<Expr> {
 		switch expr.expr {
 			case EBinop(op, e1, e2):
-				var o = switch op {
+				final o = switch op {
 					case OpGt: '>';
 					case OpGte: '>=';
 					case OpLt: '<';
@@ -66,7 +66,7 @@ class TableMacro {
 				switch act {
 					case 'like':
 						if (p.length != 1) throw 'Need 1 argument';
-						var field = takeFieldName(e);
+						final field = takeFieldName(e);
 						switch p[0].expr {
 							case EConst(CIdent(s)):
 								a.push(genText('$field LIKE ', expr.pos));
@@ -87,7 +87,7 @@ class TableMacro {
 	}
 
 	static private function genText(s: String, p: Position): Expr {
-		var e: Expr = { expr: EConst(CString(s)), pos: p };
+		final e: Expr = { expr: EConst(CString(s)), pos: p };
 		return macro pony.db.Table.WhereElement.Text($e);
 	}
 
@@ -98,14 +98,14 @@ class TableMacro {
 		}
 	}
 
-	static private var printer: Printer = new Printer();
+	static private final printer: Printer = new Printer();
 
 	static private function parseExpr(e: Expr): Array<Expr> {
 		var a: Array<Expr> = [];
 		switch e.expr {
 			case EConst(CIdent(s)):
 				if (s.charAt(0) == '$') {
-					var v: Expr = { expr: EConst(CIdent(s.substr(1))), pos: e.pos };
+					final v: Expr = { expr: EConst(CIdent(s.substr(1))), pos: e.pos };
 					a.push(macro pony.db.Table.WhereElement.Value($v));
 				} else {
 					a.push(genText('`$s`', e.pos));
@@ -117,10 +117,10 @@ class TableMacro {
 
 			case EBinop(op, e1, e2):
 				try {
-					var v = ExprTools.getValue(e);
+					final v = ExprTools.getValue(e);
 					a.push(genText('$v', e.pos));
 				} catch (_: Dynamic) {
-					var o = switch op {
+					final o = switch op {
 						case OpGt: '>';
 						case OpGte: '>=';
 						case OpLt: '<';

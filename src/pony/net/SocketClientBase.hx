@@ -19,7 +19,7 @@ import pony.magic.HasSignal;
  */
 @:nullSafety(Strict) class SocketClientBase extends Logable implements HasSignal {
 
-	public static inline var MIN_DATA_SIZE: Int = 4;
+	public static inline final MIN_DATA_SIZE: Int = 4;
 
 	public var readLengthSize: UInt = 0;
 

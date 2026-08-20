@@ -11,8 +11,8 @@ class SignalTest {
 	@Test
 	public function shortCuts(): Void {
 		var r: String;
-		var e = new Event2();
-		var s: Signal2<String, String> = e;
+		final e = new Event2();
+		final s: Signal2<String, String> = e;
 		s.add(function(name: String, end: String) r = 'ok, $name$end');
 		e.dispatch('men', '?');
 		Assert.areEqual(r, 'ok, men?');
@@ -24,8 +24,8 @@ class SignalTest {
 	@Test
 	public function clearDispath(): Void {
 		var r: String;
-		var e = new Event0();
-		var s: Signal0 = e;
+		final e = new Event0();
+		final s: Signal0 = e;
 		s.add(function() r = 'ok');
 		e.dispatch();
 		Assert.areEqual(r, 'ok');
@@ -36,9 +36,9 @@ class SignalTest {
 	public function remove(): Void {
 
 		var c: Int = 0;
-		var f: Void -> Void = function() c++;
-		var e = new Event0();
-		var s: Signal0 = e;
+		final f: Void -> Void = function() c++;
+		final e = new Event0();
+		final s: Signal0 = e;
 		s.add(f);
 		e.dispatch();
 		e.dispatch();
@@ -50,9 +50,9 @@ class SignalTest {
 	@Test
 	public function removeAll(): Void {
 		var c: Int = 0;
-		var f = function() c++;
-		var e = new Event0();
-		var s: Signal0 = e;
+		final f = function() c++;
+		final e = new Event0();
+		final s: Signal0 = e;
 		s.add(f);
 		e.dispatch();
 		e.dispatch();
@@ -93,8 +93,8 @@ class SignalTest {
 	@Test
 	public function s0(): Void {
 		var f: Bool = false;
-		var e = new Event0();
-		var s: Signal0 = e;
+		final e = new Event0();
+		final s: Signal0 = e;
 		s.add(function() f = true);
 		e.dispatch();
 		Assert.isTrue(f);
@@ -103,8 +103,8 @@ class SignalTest {
 	@Test
 	public function sub(): Void {
 		var f: Bool = false;
-		var e = new Event1();
-		var s: Signal1<Int> = e;
+		final e = new Event1();
+		final s: Signal1<Int> = e;
 		s.sub(3).add(function() f = true);
 		e.dispatch(5);
 		Assert.isFalse(f);
@@ -115,8 +115,8 @@ class SignalTest {
 	@Test
 	public function sub1(): Void {
 		var f: Bool = false;
-		var e = new Event2();
-		var s: Signal2<Int, Int> = e;
+		final e = new Event2();
+		final s: Signal2<Int, Int> = e;
 		s.sub1(3).add(function() f = true);
 		e.dispatch(5, 4);
 		Assert.isFalse(f);
@@ -362,10 +362,10 @@ class SignalTest {
 
 	@Test
 	public function takeSubListener(): Void {
-		var event: Event0 = new Event0();
-		var signal: Signal0 = event;
-		var subEvent: Event0 = new Event0();
-		var subSignal: Signal0 = subEvent;
+		final event: Event0 = new Event0();
+		final signal: Signal0 = event;
+		final subEvent: Event0 = new Event0();
+		final subSignal: Signal0 = subEvent;
 		signal << subEvent;
 		Assert.isTrue(event.empty);
 		function testfun() {}

@@ -18,16 +18,16 @@ abstract Balance(Array<Float>) from Array<Float> {
 			for (i in 0...this.length) if (key != i) this[i] = 0;
 			this[key] = value;
 		} else {
-			var c: Float = value - this[key];
-			var na: Array<Float> = [];
+			final c: Float = value - this[key];
+			final na: Array<Float> = [];
 			for (i in 0...this.length) {
 				if (i == key) {
 					na.push(value);
 					continue;
 				}
-				var a: Float = this[i];
-				var b: Float = getSum(i, key);
-				var x: Float = c * (1 - (1 / (a / b + 1)));
+				final a: Float = this[i];
+				final b: Float = getSum(i, key);
+				final x: Float = c * (1 - (1 / (a / b + 1)));
 				na.push(this[i] - x);
 			}
 			for (i in 0...na.length) this[i] = na[i];

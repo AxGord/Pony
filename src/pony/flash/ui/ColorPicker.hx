@@ -13,30 +13,30 @@ import pony.geom.Point;
  */
 class ColorPicker extends Sprite implements HasSignal {
 
-	private static var COLORS: Array<UInt> = [0xFF0000, 0xFFFF00, 0x00FF00, 0x00FFFF, 0x0000FF, 0xFF00FF, 0xFF0000, 0x888888];
-	private static var BRIGHTESS_COLORS: Array<UInt> = [0xFFFFFF, 0xFFFFFF, 0x000000, 0x000000];
-	private static var BRIGHTESS_ALPHAS: Array<Float> = [1, 0, 0, 1];
-	private static var BRIGHTESS_PARTS: Array<Float> = [0, 0x88, 0x88, 0xFF];
+	private static final COLORS: Array<UInt> = [0xFF0000, 0xFFFF00, 0x00FF00, 0x00FFFF, 0x0000FF, 0xFF00FF, 0xFF0000, 0x888888];
+	private static final BRIGHTESS_COLORS: Array<UInt> = [0xFFFFFF, 0xFFFFFF, 0x000000, 0x000000];
+	private static final BRIGHTESS_ALPHAS: Array<Float> = [1, 0, 0, 1];
+	private static final BRIGHTESS_PARTS: Array<Float> = [0, 0x88, 0x88, 0xFF];
 
 	@:bindable public var color: UInt;
 
-	private var ratios: Array<Float>;
-	private var alphas: Array<Float>;
+	private final ratios: Array<Float>;
+	private final alphas: Array<Float>;
 
 	private var bitmapData: BitmapData;
 	private var bitmap: Bitmap;
 
-	private var marker: Sprite = new Sprite();
+	private final marker: Sprite = new Sprite();
 	private var markerColor: UInt = 1;
 
-	private var touchable: Touchable;
+	private final touchable: Touchable;
 	private var prevX: Int;
 	private var prevY: Int;
 
 	public function new(?size: Point<UInt>) {
 		super();
 
-		var part: Float = 0xFF / (COLORS.length - 1);
+		final part: Float = 0xFF / (COLORS.length - 1);
 		ratios = [for (i in 0...COLORS.length) part * i];
 		alphas = [for (_ in 0...COLORS.length) 1];
 
@@ -102,12 +102,12 @@ class ColorPicker extends Sprite implements HasSignal {
 	public function draw(w: UInt, h: UInt): Void {
 		clear();
 		removeMarker();
-		var m: Matrix = new Matrix();
+		final m: Matrix = new Matrix();
 		m.createGradientBox(w, h);
 		graphics.beginGradientFill(GradientType.LINEAR, COLORS, alphas, ratios, m);
 		graphics.drawRect(0, 0, w, h);
 
-		var m: Matrix = new Matrix();
+		final m: Matrix = new Matrix();
 		m.createGradientBox(w, h, Math.PI / 2);
 		graphics.beginGradientFill(GradientType.LINEAR, BRIGHTESS_COLORS, BRIGHTESS_ALPHAS, BRIGHTESS_PARTS, m);
 		graphics.drawRect(0, 0, w, h);

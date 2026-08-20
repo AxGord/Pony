@@ -49,21 +49,21 @@ class Touch implements Declarator implements HasSignal {
 
 	private static function hackMove(): Void {
 		moveEvent = T.onMove;
-		var event: Event<lime.ui.Touch -> Void> = new Event<lime.ui.Touch -> Void>();
+		final event: Event<lime.ui.Touch -> Void> = new Event<lime.ui.Touch -> Void>();
 		event.add(moveHandler, false, 1000);
 		T.onMove = event;
 	}
 
 	private static function hackDown(): Void {
 		startEvent = T.onStart;
-		var event: Event<lime.ui.Touch -> Void> = new Event<lime.ui.Touch -> Void>();
+		final event: Event<lime.ui.Touch -> Void> = new Event<lime.ui.Touch -> Void>();
 		event.add(startHandler, false, 1000);
 		T.onStart = event;
 	}
 
 	private static function hackUp(): Void {
 		endEvent = T.onEnd;
-		var event: Event<lime.ui.Touch -> Void> = new Event<lime.ui.Touch -> Void>();
+		final event: Event<lime.ui.Touch -> Void> = new Event<lime.ui.Touch -> Void>();
 		event.add(endHandler, false, 1000);
 		T.onEnd = event;
 	}

@@ -23,7 +23,7 @@ class RectButton extends BaseLayout<RubberLayoutCore<Container>> {
 	public var cursor(get, set): Bool;
 
 	private var g: Graphics = new Graphics();
-	private var colors: Array<UColor>;
+	private final colors: Array<UColor>;
 
 	public function new(
 		size: Point<Int>, colors: Array<UColor>, vert: Bool = false, ?border: Border<Int>, ?offset: Point<Float>

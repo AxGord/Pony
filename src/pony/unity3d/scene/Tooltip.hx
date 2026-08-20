@@ -21,7 +21,7 @@ using hugs.HUGSWrapper;
  */
 @:nativeGen class Tooltip extends MonoBehaviour {
 
-	private static var colorVariants = ['_Color', '_MainTint'];
+	private static final colorVariants = ['_Color', '_MainTint'];
 
 	public var text: String = 'tooltip';
 	public var bigText: String = '';
@@ -48,7 +48,7 @@ using hugs.HUGSWrapper;
 			pony.unity3d.Tooltip.defaultColorMod.value = colorMod;
 		if (pony.unity3d.Tooltip.texture == null) pony.unity3d.Tooltip.texture = texture;
 
-		var it: NativeArrayIterator<Transform> = cast gameObject.getComponentsInChildrenOfType(Transform);
+		final it: NativeArrayIterator<Transform> = cast gameObject.getComponentsInChildrenOfType(Transform);
 		subObjects = [for (e in it) if (e != transform && e.renderer != null) e];
 		subs = subObjects.length > 0;
 		if (!subs) {
@@ -107,7 +107,7 @@ using hugs.HUGSWrapper;
 		lighted = true;
 		for (e in subObjects) {
 			for (cname in colorVariants) if (e.renderer.material.HasProperty(cname)) {
-				var sColor = e.renderer.material.GetColor(cname);
+				final sColor = e.renderer.material.GetColor(cname);
 				e.renderer.material.SetColor(cname, new Color(sColor.r + colorMod.r, sColor.g + colorMod.g, sColor.b + colorMod.b));
 				break;
 			}

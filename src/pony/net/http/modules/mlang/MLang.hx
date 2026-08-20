@@ -9,7 +9,7 @@ import pony.net.http.WebServer;
  * MLang
  * @author AxGord <axgord@gmail.com>
  */
-@:final class MLang implements IModule {
+final class MLang implements IModule {
 
 	public var server: WebServer;
 	public var langTable: LangTable;
@@ -23,7 +23,7 @@ import pony.net.http.WebServer;
 
 	public function connect(cpq: CPQ): EConnect {
 		if (cpq.connection.params.exists('language')) {
-			var tc: String = cpq.connection.params['language'];
+			final tc: String = cpq.connection.params['language'];
 			if (langTable.langs.exists(tc)) {
 				cpq.connection.sessionStorage['language'] = tc;
 				cpq.connection.params.remove('language');
@@ -36,7 +36,7 @@ import pony.net.http.WebServer;
 			if (cpq.connection.params.exists('tryLanguage'))
 				cpq.lang = cpq.connection.params['tryLanguage'];
 			else {
-				var st: Map<String, Dynamic> = cpq.connection.sessionStorage;
+				final st: Map<String, Dynamic> = cpq.connection.sessionStorage;
 				if (st.exists('language'))
 					cpq.lang = st['language'];
 				else {

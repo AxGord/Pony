@@ -13,9 +13,9 @@ class ServersideStorage implements Declarator {
 	@:arg private var keyName: String = 'PonyKey';
 
 	public function getClient(cookie: Cookie): Map<String, Dynamic> {
-		var key: String = cookie.get(keyName);
+		final key: String = cookie.get(keyName);
 		if (key == null) {
-			var k: String = Random.randomString();
+			final k: String = Random.randomString();
 			cookie.set(keyName, k);
 			return getClientByKey(k);
 		} else {

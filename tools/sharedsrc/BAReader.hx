@@ -15,11 +15,11 @@ class BAReader<T:BAConfig> extends XmlConfigReader<T> implements HasAbstract {
 	override private function readNode(xml: Fast): Void {
 		switch xml.name {
 			case 'before':
-				var cfg: T = copyCfg();
+				final cfg: T = copyCfg();
 				cfg.before = true;
 				_selfCreate(xml, cfg);
 			case 'after':
-				var cfg: T = copyCfg();
+				final cfg: T = copyCfg();
 				cfg.before = false;
 				_selfCreate(xml, cfg);
 			case 'server':
@@ -61,7 +61,7 @@ class BAReader<T:BAConfig> extends XmlConfigReader<T> implements HasAbstract {
 	}
 
 	private function createSection(xml: Fast, section: BASection): Void {
-		var cfg: T = copyCfg();
+		final cfg: T = copyCfg();
 		clean();
 		cfg.section = section;
 		_selfCreate(xml, cfg);
@@ -72,13 +72,13 @@ class BAReader<T:BAConfig> extends XmlConfigReader<T> implements HasAbstract {
 	override private function end(): Void if (cfg.allowCfg && onConfig != null) onConfig(cfg);
 
 	private function allowCreate(xml: Fast): Void {
-		var cfg: T = copyCfg();
+		final cfg: T = copyCfg();
 		cfg.allowCfg = true;
 		_selfCreate(xml, cfg);
 	}
 
 	private function denyCreate(xml: Fast): Void {
-		var cfg: T = copyCfg();
+		final cfg: T = copyCfg();
 		cfg.allowCfg = false;
 		_selfCreate(xml, cfg);
 	}

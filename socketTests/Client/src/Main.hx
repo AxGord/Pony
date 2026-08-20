@@ -16,12 +16,12 @@ using pony.Tools;
 class Main {
 
 	static function main() {
-		var stage = Lib.current.stage;
+		final stage = Lib.current.stage;
 		stage.scaleMode = StageScaleMode.NO_SCALE;
 		stage.align = StageAlign.TOP_LEFT;
 		// entry point
 
-		var cl = new SocketClient(13579, 300);
+		final cl = new SocketClient(13579, 300);
 		cl.onConnect << function() {
 			trace('Connected');
 		};

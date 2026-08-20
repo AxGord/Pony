@@ -10,7 +10,7 @@ import types.RemoteConfig;
  */
 class Remote extends NModule<RemoteConfig> {
 
-	private static inline var PRIORITY: Int = 0;
+	private static inline final PRIORITY: Int = 0;
 
 	public function new() super('remote');
 

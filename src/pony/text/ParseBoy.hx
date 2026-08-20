@@ -49,7 +49,7 @@ class ParseBoy<T> implements Declarator {
 		if (space) {
 			var n: Int = 0, i: Int = pos, lc: Int = 0;
 			while (i < t.length) {
-				var c: String = t.charAt(i);
+				final c: String = t.charAt(i);
 				if (c == v.charAt(n)) {
 					if (n >= v.length - 1) {
 						lc++;
@@ -94,7 +94,7 @@ class ParseBoy<T> implements Declarator {
 
 		for (n in 0...a.length) {
 			if (a[n] == null) continue;
-			var io: PosLen = indexOf(a[n]);
+			final io: PosLen = indexOf(a[n]);
 			if (io != null) if (io.pos <= ipos) {
 				r = n;
 				ipos = io.pos;

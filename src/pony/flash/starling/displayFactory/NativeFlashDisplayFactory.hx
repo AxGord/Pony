@@ -13,7 +13,7 @@ import pony.flash.starling.displayFactory.DisplayFactory.ITextField;
  */
 class NativeFlashDisplayFactory implements IDisplayFactory {
 
-	private static var _instance: NativeFlashDisplayFactory = new NativeFlashDisplayFactory();
+	private static final _instance: NativeFlashDisplayFactory = new NativeFlashDisplayFactory();
 
 	public function new() {
 		if (_instance != null) throw 'Singletone creation error';
@@ -28,7 +28,7 @@ class NativeFlashDisplayFactory implements IDisplayFactory {
 	}
 
 	public function createTextField(width: Float, height: Float, text: String): ITextField {
-		var tf: TextField = new TextField();
+		final tf: TextField = new TextField();
 		tf.width = width;
 		tf.height = height;
 		tf.text = text;

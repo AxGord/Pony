@@ -9,7 +9,7 @@ import types.BASection;
  */
 class Zip extends CfgModule<ZipConfig> {
 
-	private static inline var PRIORITY: Int = 12;
+	private static inline final PRIORITY: Int = 12;
 
 	public function new() super('zip');
 
@@ -35,7 +35,7 @@ class Zip extends CfgModule<ZipConfig> {
 
 	override private function runNode(cfg: ZipConfig): Void {
 		log('Archive name: ${cfg.output}');
-		var zip = new pony.ZipTool(
+		final zip = new pony.ZipTool(
 			Utils.replaceBuildDate(cfg.output), cfg.prefix, cfg.compressLvl, cfg.root == null ? null : Utils.replaceBuildDate(cfg.root)
 		);
 		if (cfg.log) zip.onLog << log;

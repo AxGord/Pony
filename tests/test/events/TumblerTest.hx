@@ -10,7 +10,7 @@ class TumblerTest {
 	@Test
 	public function testDisable() {
 		var flag: Bool = false;
-		var t: Tumbler = new Tumbler();
+		final t: Tumbler = new Tumbler();
 		t.onDisable << function() flag = true;
 		t.disable();
 		Assert.isTrue(flag);
@@ -19,7 +19,7 @@ class TumblerTest {
 	@Test
 	public function testEnable() {
 		var flag: Bool = false;
-		var t: Tumbler = new Tumbler(false);
+		final t: Tumbler = new Tumbler(false);
 		t.onEnable << function() flag = true;
 		t.enable();
 		Assert.isTrue(flag);
@@ -29,7 +29,7 @@ class TumblerTest {
 	public function testSet() {
 		var flag: Bool = false;
 		var flag2: Bool = false;
-		var t: Tumbler = new Tumbler();
+		final t: Tumbler = new Tumbler();
 		t.onDisable << function() flag = true;
 		t.onEnable << function() flag2 = true;
 		t.enabled = !t.enabled;

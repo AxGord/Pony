@@ -14,7 +14,7 @@ import pony.events.Listener1;
 @:nullSafety(Strict) abstract Signal1<T1>(Priority<Listener1<T1>>) from Event1<T1> from Priority<Listener1<T1>> {
 
 	public function add(e: Listener1<T1>, priority: Int = 0): Signal1<T1> {
-		var ev: Null<Priority<Any>> = e.event;
+		final ev: Null<Priority<Any>> = e.event;
 		if (ev != null) {
 			@:privateAccess ev.onLost.directAdd(this.changeReals);
 			@:privateAccess ev.onTake.directAdd(this.changeReals);
@@ -37,7 +37,7 @@ import pony.events.Listener1;
 	}
 
 	private inline function unlistenSubChange(l: Listener1<T1>): Void {
-		var e: Null<Priority<Any>> = l.event;
+		final e: Null<Priority<Any>> = l.event;
 		if (e != null) {
 			@:privateAccess e.onLost.directRemove(this.changeReals);
 			@:privateAccess e.onTake.directRemove(this.changeReals);
@@ -66,7 +66,7 @@ import pony.events.Listener1;
 				return sig;
 			case _:
 		}
-		var s = new Event0();
+		final s = new Event0();
 		add({ once: once, listener: LSub(s, a1) }, priority);
 		return s;
 	}
@@ -85,7 +85,7 @@ import pony.events.Listener1;
 				return cast sig;
 			case _:
 		}
-		var s = new Event2();
+		final s = new Event2();
 		add({ once: _once, listener: LBind1(s, a1) }, priority);
 		return s;
 	}
@@ -103,7 +103,7 @@ import pony.events.Listener1;
 				return sig;
 			case _:
 		}
-		var s = new Event1();
+		final s = new Event1();
 		add({ once: once, listener: LNot(s, a1) }, priority);
 		return s;
 	}
@@ -124,7 +124,7 @@ import pony.events.Listener1;
 
 	@:op(A || B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function or(s: Signal1<T1>): Signal1<T1> {
-		var ns = new Event1();
+		final ns = new Event1();
 		add(ns);
 		s.add(ns);
 		return ns;
@@ -132,14 +132,14 @@ import pony.events.Listener1;
 
 	@:op(A | B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function orOnce(s: Signal1<T1>): Signal1<T1> {
-		var ns = new Event1();
+		final ns = new Event1();
 		once(ns);
 		s.once(ns);
 		return ns;
 	}
 
 	@:op(A & B) public function andOnce<T2>(s: Signal1<T2>): Signal2<T1, T2> {
-		var ns = new Event2<T1, T2>();
+		final ns = new Event2<T1, T2>();
 		var listener1: Listener1<T1> = cast null;
 		var listener2: Listener1<T2> = cast null;
 		listener1 = {
@@ -162,7 +162,7 @@ import pony.events.Listener1;
 	}
 
 	@:op(A && B) public function and<T2>(s: Signal1<T2>): Signal2<T1, T2> {
-		var ns = new Event2<T1, T2>();
+		final ns = new Event2<T1, T2>();
 		var start: Void -> Void = cast null;
 		var listener1: Listener1<T1> = cast null;
 		var listener2: Listener1<T2> = cast null;
@@ -186,7 +186,7 @@ import pony.events.Listener1;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function convert0(f: Event0 -> T1 -> Void): Signal0 {
-		var ns = new Event0();
+		final ns = new Event0();
 		add({ once: false, listener: Listener1.Listener1Type.LFunction1(f.bind(ns)) });
 		return ns;
 	}
@@ -194,8 +194,8 @@ import pony.events.Listener1;
 	#if pony_experimental
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function convert1<ST1>(f: Event1<ST1> -> T1 -> Void): Pair<Signal1<ST1>, () -> Void> {
-		var event: Event1<ST1> = new Event1<ST1>();
-		var listener: Listener1<T1> = { once: false, listener: Listener1.Listener1Type.LFunction1(f.bind(event)) };
+		final event: Event1<ST1> = new Event1<ST1>();
+		final listener: Listener1<T1> = { once: false, listener: Listener1.Listener1Type.LFunction1(f.bind(event)) };
 		function listen(): Void add(listener);
 		function unlisten(): Void remove(listener);
 		event.onTake << listen;
@@ -216,7 +216,7 @@ import pony.events.Listener1;
 	#else
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function convert1<ST1>(f: Event1<ST1> -> T1 -> Void): Signal1<ST1> {
-		var ns = new Event1();
+		final ns = new Event1();
 		add({ once: false, listener: Listener1.Listener1Type.LFunction1(f.bind(ns)) });
 		return ns;
 	}
@@ -224,7 +224,7 @@ import pony.events.Listener1;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function convert2<ST1, ST2>(f: Event2<ST1, ST2> -> T1 -> Void): Signal2<ST1, ST2> {
-		var ns = new Event2();
+		final ns = new Event2();
 		add({ once: false, listener: Listener1.Listener1Type.LFunction1(f.bind(ns)) });
 		return ns;
 	}

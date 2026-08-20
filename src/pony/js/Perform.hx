@@ -10,8 +10,8 @@ import pony.magic.HasSignal;
 class Perform implements HasSignal {
 
 	#if perf.js
-	private static inline var SHOW_ALPHA: String = '0.8';
-	private static inline var HIDE_ALPHA: String = '0.1';
+	private static inline final SHOW_ALPHA: String = '0.8';
+	private static inline final HIDE_ALPHA: String = '0.1';
 
 	@:auto public static var onStats: Signal0;
 	#end
@@ -20,8 +20,8 @@ class Perform implements HasSignal {
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public static inline function show(?info: String): Void {
 		#if perf.js
-		var perf = new Perf();
-		var elements = [perf.fps, perf.ms];
+		final perf = new Perf();
+		final elements = [perf.fps, perf.ms];
 		if (info != null) {
 			perf.addInfo(info);
 			elements.push(perf.info);

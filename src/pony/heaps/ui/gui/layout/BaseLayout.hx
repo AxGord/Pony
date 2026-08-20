@@ -74,7 +74,7 @@ class BaseLayout<T:BaseLayoutCore<Object>> extends Object implements IWH impleme
 	public function wait(cb: Void -> Void): Void layout.wait(cb);
 
 	private function _getSize(o: Object): Point<Float> {
-		var b: Bounds = o.getBounds(this);
+		final b: Bounds = o.getBounds(this);
 		return new Point(b.width, b.height);
 	}
 

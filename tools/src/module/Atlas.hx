@@ -25,9 +25,9 @@ private typedef AtlasConfig = {
  */
 @:nullSafety(Strict) class Atlas extends CfgModule<AtlasConfig> {
 
-	private static inline var PRIORITY: Int = 4;
-	private static inline var PARAM_DELEMITER: String = ': ';
-	private static inline var VALUE_DELEMITER: String = ', ';
+	private static inline final PRIORITY: Int = 4;
+	private static inline final PARAM_DELEMITER: String = ': ';
+	private static inline final VALUE_DELEMITER: String = ', ';
 
 	public function new() super('atlas');
 
@@ -52,7 +52,7 @@ private typedef AtlasConfig = {
 	override private function runNode(cfg: AtlasConfig): Void {
 		for (unit in cfg.units) {
 			if (unit.isFile) {
-				var file: File = unit;
+				final file: File = unit;
 				convert(file, '$file.bin');
 				if (cfg.deleteSource) file.delete();
 			} else {
@@ -66,54 +66,54 @@ private typedef AtlasConfig = {
 
 	private function convert(from: File, to: File): Void {
 		log('Convert file: $from');
-		var data: BinaryAtlas = new BinaryAtlas();
+		final data: BinaryAtlas = new BinaryAtlas();
 		// https://github.com/HeapsIO/heaps/blob/437697b0847fb5139d485ac768487678a58afa53/hxd/res/Atlas.hx#L56-L135
-		var lines: Array<String> = @:nullSafety(Off) from.content.trim().split('\n');
+		final lines: Array<String> = @:nullSafety(Off) from.content.trim().split('\n');
 		if (lines.length == 0) error('Atlas empty');
 		data.file = @:nullSafety(Off) lines.shift().trim();
 		while (lines.length > 0) {
 			if (lines[0].indexOf(PARAM_DELEMITER) < 0) break;
-			var line: Array<String> = @:nullSafety(Off) lines.shift().trim().split(PARAM_DELEMITER);
+			final line: Array<String> = @:nullSafety(Off) lines.shift().trim().split(PARAM_DELEMITER);
 			switch line[0] {
 				case 'size':
-					var wh: Array<String> = line[1].split(',');
+					final wh: Array<String> = line[1].split(',');
 					@:nullSafety(Off) data.width = Std.parseInt(wh[0]);
 				case _:
 			}
 		}
 		while (lines.length > 0) {
-			var line: String = @:nullSafety(Off) lines.shift().trim();
+			final line: String = @:nullSafety(Off) lines.shift().trim();
 			if (line == '') break;
-			var prop: Array<String> = line.split(PARAM_DELEMITER);
+			final prop: Array<String> = line.split(PARAM_DELEMITER);
 			if (prop.length > 1) continue;
-			var key: String = line;
-			var params: BinaryAtlasParams = new BinaryAtlasParams();
+			final key: String = line;
+			final params: BinaryAtlasParams = new BinaryAtlasParams();
 			var index: Int = 0;
 			while (lines.length > 0) {
-				var line: String = @:nullSafety(Off) lines.shift().trim();
-				var prop: Array<String> = line.split(PARAM_DELEMITER);
+				final line: String = @:nullSafety(Off) lines.shift().trim();
+				final prop: Array<String> = line.split(PARAM_DELEMITER);
 				if (prop.length == 1) {
 					lines.unshift(line);
 					break;
 				}
-				var v: String = prop[1];
+				final v: String = prop[1];
 				switch prop[0] {
 					case 'rotate':
 						if (v == 'true') error('Rotation not supported in atlas');
 					case 'xy':
-						var vals: Array<String> = v.split(VALUE_DELEMITER);
+						final vals: Array<String> = v.split(VALUE_DELEMITER);
 						@:nullSafety(Off) params.x = Std.parseInt(vals[0]);
 						@:nullSafety(Off) params.y = Std.parseInt(vals[1]);
 					case 'size':
-						var vals: Array<String> = v.split(VALUE_DELEMITER);
+						final vals: Array<String> = v.split(VALUE_DELEMITER);
 						@:nullSafety(Off) params.w = Std.parseInt(vals[0]);
 						@:nullSafety(Off) params.h = Std.parseInt(vals[1]);
 					case 'offset':
-						var vals: Array<String> = v.split(VALUE_DELEMITER);
+						final vals: Array<String> = v.split(VALUE_DELEMITER);
 						@:nullSafety(Off) params.dx = Std.parseInt(vals[0]);
 						@:nullSafety(Off) params.dy = Std.parseInt(vals[1]);
 					case 'orig':
-						var vals: Array<String> = v.split(VALUE_DELEMITER);
+						final vals: Array<String> = v.split(VALUE_DELEMITER);
 						@:nullSafety(Off) params.origW = Std.parseInt(vals[0]);
 						@:nullSafety(Off) params.origH = Std.parseInt(vals[1]);
 					case 'index':

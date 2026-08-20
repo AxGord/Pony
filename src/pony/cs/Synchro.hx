@@ -39,7 +39,7 @@ class Synchro {
 	**/
 	public static function mutex(func: Void -> Void): Bool {
 		var isSynchred: Bool = true;
-		var m: Mutex = new Mutex();
+		final m: Mutex = new Mutex();
 		try {
 			m.WaitOne();
 			func();

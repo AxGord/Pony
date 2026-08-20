@@ -20,7 +20,7 @@ class Main {
 	private static function tryRun(args: Array<String>): Void {
 		if (args.length > 1) {
 			Sys.setCwd(args.pop());
-			var runfile: String = Config.BIN + (Config.OS == Windows ? 'pony.exe' : 'pony');
+			final runfile: String = Config.BIN + (Config.OS == Windows ? 'pony.exe' : 'pony');
 			if (FileSystem.exists(runfile)) {
 				Utils.exit(Sys.command(runfile, args));
 			} else {

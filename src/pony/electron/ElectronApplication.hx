@@ -16,9 +16,9 @@ class ElectronApplication extends VSTraceHelper implements HasAbstract {
 
 	public var windows(default, null): Map<String, BrowserWindow> = [];
 
-	private var windowsPath: String;
-	private var windowsExt: String;
-	private var macnoexit: Bool;
+	private final windowsPath: String;
+	private final windowsExt: String;
+	private final macnoexit: Bool;
 
 	private function new(
 		windowsPath: String = '', windowsExt: String = '.html', macnoexit: Bool = false, disableHardwareAcceleration: Bool = false
@@ -88,7 +88,7 @@ class ElectronApplication extends VSTraceHelper implements HasAbstract {
 	}
 
 	public function mapCreateWindow(map: Map<String, String>, ?id: String): BrowserWindow {
-		var frame: Bool = !TextTools.isFalse(map['frame']);
+		final frame: Bool = !TextTools.isFalse(map['frame']);
 		return createWindow(map['name'], id, {
 			width: Std.parseInt(map['width']),
 			height: Std.parseInt(map['height']),

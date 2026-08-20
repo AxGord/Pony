@@ -11,14 +11,14 @@ import pony.text.tpl.Valuator;
  * @author AxGord <axgord@gmail.com>
  */
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
-@:final class MTplPutSub extends Valuator<MTplPut, TplSystem> {
+final class MTplPutSub extends Valuator<MTplPut, TplSystem> {
 
 	@:async
 	override public function tag(name: String, content: TplData, arg: String, args: Map<String, String>, ?kid: ITplPut): String {
 		if (name == 'selected')
 			return @await super.tag(name, content, arg, args, kid);
 		else {
-			var r = @await valu(name, arg);
+			final r = @await valu(name, arg);
 			if (r != null) {
 				if (content != null) {
 					return @await super.tag(name, content, arg, args, kid);
@@ -33,7 +33,7 @@ import pony.text.tpl.Valuator;
 	@:async
 	override public function valuBool(name: String): Bool {
 		if (name == 'selected') {
-			var c: CPQ = a.b;
+			final c: CPQ = a.b;
 			return c.template == b;
 		} else
 			return null;
@@ -41,7 +41,7 @@ import pony.text.tpl.Valuator;
 
 	@:async
 	override public function valu(name: String, arg: String): String {
-		var m: Manifest = b.manifest;
+		final m: Manifest = b.manifest;
 		return switch (name) {
 			case 'name': b.name;
 			case 'title': sie(m, 'title', b.name);

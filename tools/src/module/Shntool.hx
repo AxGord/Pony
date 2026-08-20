@@ -20,7 +20,7 @@ using StringTools;
  */
 @:nullSafety(Strict) class Shntool extends CfgModule<ShntoolConfig> {
 
-	private static inline var PRIORITY: Int = 23;
+	private static inline final PRIORITY: Int = 23;
 
 	public function new() super('shntool');
 
@@ -45,15 +45,15 @@ using StringTools;
 
 	override private function runNode(cfg: ShntoolConfig): Void {
 		for (wav in cfg.wav) {
-			var files: Array<String> = [];
+			final files: Array<String> = [];
 			for (d in wav.dirs) {
-				var dir: Dir = cfg.from + d.a;
-				var filter: Null<String> = d.b;
+				final dir: Dir = cfg.from + d.a;
+				final filter: Null<String> = d.b;
 				log('Shntool directory: $dir');
 				for (f in dir.contentRecursiveFiles(filter)) files.push(f.first);
 			}
 			for (u in wav.units) {
-				var unit: Unit = cfg.from + u;
+				final unit: Unit = cfg.from + u;
 				log('Shntool file: $unit');
 				if (unit.isFile) {
 					files.push(unit.first);
@@ -61,7 +61,7 @@ using StringTools;
 					error('Is not file!');
 				}
 			}
-			var process: Process = new Process('shntool', ['join', '-O', 'always'].concat(files));
+			final process: Process = new Process('shntool', ['join', '-O', 'always'].concat(files));
 			if (process.exitCode() != 0) {
 				try {
 					while (true) log(process.stderr.readLine());
@@ -78,7 +78,7 @@ using StringTools;
 						if (s == null || !s.startsWith('Joining [')) break;
 						s = s.substr(9, s.indexOf(') --> [', 9) - 9);
 						if (s == '') break;
-						var a: Array<String> = s.split('] (');
+						final a: Array<String> = s.split('] (');
 						if (a.length != 2) break;
 						var name: String = a[0].substr(cfg.from.length);
 						name = name.substr(0, -4);

@@ -19,11 +19,11 @@ import pony.magic.HasLink;
  * @author AxGord <axgord@gmail.com>
  */
 @:nullSafety(Strict)
-@:final class SliceBase implements HasLink {
+final class SliceBase implements HasLink {
 
-	private var tiles: Array<Tile>;
-	private var groups: Map<Int, TileGroup> = [];
-	private var solo: Map<Int, Bitmap> = [];
+	private final tiles: Array<Tile>;
+	private final groups: Map<Int, TileGroup> = [];
+	private final solo: Map<Int, Bitmap> = [];
 	private var wrap: Map<Int, Graphics> = [];
 
 	public var twsum(link, never): Float = GUIUtils.tilesWidthSum(tiles);
@@ -34,12 +34,12 @@ import pony.magic.HasLink;
 	public function new(target: Object, tiles: Array<Tile>, ?wrap: Array<Int>) {
 		this.tiles = tiles;
 		if (wrap == null) wrap = [];
-		var soloTexture: Map<Int, Int> = [];
+		final soloTexture: Map<Int, Int> = [];
 		var i: Int = 0;
 		for (t in tiles) {
-			var id: Int = t.getTexture().id;
+			final id: Int = t.getTexture().id;
 			if (!groups.exists(id)) {
-				var s: Null<Int> = soloTexture[id];
+				final s: Null<Int> = soloTexture[id];
 				if (s != null) {
 					soloTexture.remove(id);
 					groups[id] = new TileGroup(t, target);
@@ -92,23 +92,23 @@ import pony.magic.HasLink;
 		var tile: Tile = tiles[n];
 		if (w == null) w = tile.width;
 		if (h == null) h = tile.height;
-		var wr: Null<Graphics> = wrap[n];
+		final wr: Null<Graphics> = wrap[n];
 		if (wr != null) {
 			wr.drawRect(0, 0, w, h);
 			wr.setPosition(flipx ? x + w : x, flipy ? y + h : y);
 			wr.scaleX = flipx ? -1 : 1;
 			wr.scaleY = flipy ? -1 : 1;
 		} else {
-			var b: Null<Bitmap> = solo[n];
-			var sx: Float = w / tile.width;
-			var sy: Float = h / tile.height;
+			final b: Null<Bitmap> = solo[n];
+			final sx: Float = w / tile.width;
+			final sy: Float = h / tile.height;
 			if (b != null) {
 				b.visible = true;
 				b.setPosition(flipx ? x + w : x, flipy ? y + h : y);
 				b.scaleX = flipx ? -sx : sx;
 				b.scaleY = flipy ? -sy : sy;
 			} else {
-				var id: Int = tile.getTexture().id;
+				final id: Int = tile.getTexture().id;
 				@:nullSafety(Off) var g: TileGroup = groups[id];
 				g.addTransform(flipx ? x + w : x, flipy ? y + h : y, flipx ? -sx : sx, flipy ? -sy : sy, 0, tile);
 			}

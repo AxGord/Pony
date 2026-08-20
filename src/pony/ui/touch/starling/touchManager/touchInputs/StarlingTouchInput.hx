@@ -16,7 +16,7 @@ import pony.ui.touch.starling.touchManager.InputMode;
  */
 class StarlingTouchInput {
 
-	private var _displayObject: DisplayObject;
+	private final _displayObject: DisplayObject;
 
 	public function new(displayObject: DisplayObject) {
 		_displayObject = displayObject;
@@ -28,9 +28,9 @@ class StarlingTouchInput {
 	}
 
 	private function onTouch(e: TouchEvent): Void {
-		var touches: Vector<Touch> = e.getTouches(cast(e.target, DisplayObject));
+		final touches: Vector<Touch> = e.getTouches(cast(e.target, DisplayObject));
 		for (i in 0...touches.length) {
-			var touch: Touch = touches[i];
+			final touch: Touch = touches[i];
 
 			if (touch == null) return;
 

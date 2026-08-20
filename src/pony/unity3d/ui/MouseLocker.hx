@@ -18,7 +18,7 @@ import unityengine.Vector3;
 	private var prevState: Bool = false;
 
 	private function Update() {
-		var h = !panel
+		final h = !panel
 			? guiTexture.HitTest(new Vector3(Input.mousePosition.x - Fixed2dCamera.begin, Input.mousePosition.y))
 			: guiTexture.HitTest(new Vector3(Input.mousePosition.x + (Screen.width - Fixed2dCamera.begin) / 2, Input.mousePosition.y));
 		if (prevState != h) {

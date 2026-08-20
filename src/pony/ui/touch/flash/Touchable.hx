@@ -16,7 +16,7 @@ import pony.ui.touch.TouchableBase;
  */
 class Touchable extends TouchableBase {
 
-	private static inline var SWITCH_TO_MOUSE_DELAY: UInt = 500;
+	private static inline final SWITCH_TO_MOUSE_DELAY: UInt = 500;
 
 	@:bindable public static var touchMode: Bool = false;
 	public static var onAnyTouch(default, null): Signal1<TO>;

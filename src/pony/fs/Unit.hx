@@ -33,8 +33,8 @@ using StringTools;
 	private function get_parent(): Dir {
 		return [
 			for (u in this) {
-				var p: String = u.endsWith('/') ? u.substr(0, -1) : u;
-				var i: Int = p.lastIndexOf('/');
+				final p: String = u.endsWith('/') ? u.substr(0, -1) : u;
+				final i: Int = p.lastIndexOf('/');
 				return i > 0 ? p.substr(0, i) : '';
 			}
 		];
@@ -102,7 +102,7 @@ using StringTools;
 	public inline function addWayArray(way: Array<String>, priority: Int = 0): Void this.addArray(way, priority);
 
 	public function iterator(): Iterator<Unit> {
-		var it: Iterator<String> = this.iterator();
+		final it: Iterator<String> = this.iterator();
 		return { hasNext: it.hasNext, next: function(): Unit return it.next() };
 	}
 

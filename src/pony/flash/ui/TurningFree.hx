@@ -17,7 +17,7 @@ class TurningFree extends Turning {
 	@:stage public var lmin: MovieClip;
 	@:stage public var lmax: MovieClip;
 
-	private var _zero: Point = new Point(0, 0);
+	private final _zero: Point = new Point(0, 0);
 
 	public function new() {
 		super();
@@ -29,7 +29,7 @@ class TurningFree extends Turning {
 		if (lmax != null) core.maxAngle = lmax.rotation;
 		core.currentAngle = handle.rotation;
 		handle.mouseEnabled = false;
-		var t = new Touchable(this);
+		final t = new Touchable(this);
 		t.onDown << downHandler;
 	}
 

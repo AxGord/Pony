@@ -7,7 +7,7 @@ import pony.net.http.WebServer.EConnect;
  * MLink
  * @author AxGord <axgord@gmail.com>
  */
-@:final class MLink implements IModule {
+final class MLink implements IModule {
 
 	public function new() {}
 

@@ -41,17 +41,17 @@ class SingleConnect extends ActionConnect {
  * @author AxGord <axgord@gmail.com>
  */
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
-@:final class SinglePut extends pony.text.tpl.TplPut<SingleConnect, CPQ> {
+final class SinglePut extends pony.text.tpl.TplPut<SingleConnect, CPQ> {
 
 	@:async
 	override public function tag(name: String, content: TplData, arg: String, args: Map<String, String>, ?kid: ITplPut): String {
 		if (Std.is(kid, SinglePutSub)) return @await parent.tag(name, content, arg, args, kid);
 		if (!a.checkAccess()) return '';
-		var mp: ModelPut = cast parent;
-		var f = arg == null ? 'id' : arg;
-		var v: String = mp.b == null ? null : Reflect.field(mp.b, f);
-		var cargs: Array<String> = a.hasPathArg ? (v == null ? [a.pathQuery] : [v]) : v == null ? [] : [v];
-		var a: Dynamic = @await a.call(cargs);
+		final mp: ModelPut = cast parent;
+		final f = arg == null ? 'id' : arg;
+		final v: String = mp.b == null ? null : Reflect.field(mp.b, f);
+		final cargs: Array<String> = a.hasPathArg ? (v == null ? [a.pathQuery] : [v]) : v == null ? [] : [v];
+		final a: Dynamic = @await a.call(cargs);
 		if (args.exists('!')) {
 			return a == null ? @await mp.tplData(content) : '';
 		} else {
@@ -66,8 +66,8 @@ class SingleConnect extends ActionConnect {
 
 	@:async
 	private function div(arg: String, args: Map<String, String>, e: Dynamic): String {
-		var n: String = args['div'] == null ? 'single' : args['div'];
-		var na: Array<String> = [];
+		final n: String = args['div'] == null ? 'single' : args['div'];
+		final na: Array<String> = [];
 		if (args.exists('cols')) {
 			var s: String = '<div class="$n">';
 			for (f in args['cols'].split(',').map(StringTools.trim)) s += '<div class="$f">${@await html(e, f) + '</div>'}';
@@ -84,9 +84,9 @@ class SingleConnect extends ActionConnect {
 
 	@:async
 	private function html(e: Dynamic, f: String): String {
-		var c = a.base.model.columns[f];
+		final c = a.base.model.columns[f];
 		if (c.tplPut != null) {
-			var o: Dynamic = Type.createInstance(c.tplPut, [c, e, this]);
+			final o: Dynamic = Type.createInstance(c.tplPut, [c, e, this]);
 			return @await o.html(f);
 		} else {
 			return Reflect.field(e, f);
@@ -103,9 +103,9 @@ class SinglePutSub extends Valuator<SinglePut, Dynamic> {
 		if (a.a.model.subactions.exists(name)) {
 			return @await a.a.model.subactions[name].subtpl(parent, b).tag(name, content, arg, args, kid);
 		} else {
-			var c = a.a.base.model.columns[name];
+			final c = a.a.base.model.columns[name];
 			if (c != null && c.tplPut != null) {
-				var o = Type.createInstance(c.tplPut, [c, b, this]);
+				final o = Type.createInstance(c.tplPut, [c, b, this]);
 				return @await o.tag(name, content, arg, args, kid);
 			} else
 				return @await super1_tag(name, content, arg, args, kid);
@@ -117,9 +117,9 @@ class SinglePutSub extends Valuator<SinglePut, Dynamic> {
 		if (a.a.model.subactions.exists(name)) {
 			return @await a.a.model.subactions[name].subtpl(parent, b).shortTag(name, arg, kid);
 		} else {
-			var c = a.a.base.model.columns[name];
+			final c = a.a.base.model.columns[name];
 			if (c != null && c.tplPut != null) {
-				var o = Type.createInstance(c.tplPut, [c, b, this]);
+				final o = Type.createInstance(c.tplPut, [c, b, this]);
 				return @await o.shortTag(name, arg, kid);
 			} else
 				return @await super1_shortTag(name, arg, kid);

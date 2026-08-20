@@ -36,15 +36,15 @@ class DrawArrow {
 	public function drawHead(?g: Graphics, a: Point<Float>, b: Point<Float>, color: Int = -1): Void {
 		if (g == null) g = this.g;
 		if (color == -1) color = this.color;
-		var dx = b.x - a.x;
-		var dy = b.y - a.y;
-		var angle: Float = Math.atan2(dy, dx);
-		var bangle = angle - arrowheadAngle * MathTools.DEG2RAD;
-		var cangle = angle + arrowheadAngle * MathTools.DEG2RAD;
-		var b1: Float = b.x - arrowheadLen * Math.cos(bangle);
-		var b2: Float = b.y - arrowheadLen * Math.sin(bangle);
-		var c1: Float = b.x - arrowheadLen * Math.cos(cangle);
-		var c2: Float = b.y - arrowheadLen * Math.sin(cangle);
+		final dx = b.x - a.x;
+		final dy = b.y - a.y;
+		final angle: Float = Math.atan2(dy, dx);
+		final bangle = angle - arrowheadAngle * MathTools.DEG2RAD;
+		final cangle = angle + arrowheadAngle * MathTools.DEG2RAD;
+		final b1: Float = b.x - arrowheadLen * Math.cos(bangle);
+		final b2: Float = b.y - arrowheadLen * Math.sin(bangle);
+		final c1: Float = b.x - arrowheadLen * Math.cos(cangle);
+		final c2: Float = b.y - arrowheadLen * Math.sin(cangle);
 		g.lineStyle(linew, color);
 		g.beginFill(color);
 		g.moveTo(b.x, b.y);

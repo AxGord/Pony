@@ -15,11 +15,11 @@ using pony.text.TextTools;
 
 	override public function getContents(): Map<String, Array<{ t: Tile, width: Int, height: Int }>> {
 		if (contents != null) return contents;
-		var data: BinaryAtlas = BinaryAtlas.fromBytes(entry.getBytes());
+		final data: BinaryAtlas = BinaryAtlas.fromBytes(entry.getBytes());
 		var basePath: Null<String> = entry.path.allBeforeLastWithNull('/');
 		basePath = basePath != null ? '$basePath/' : '';
 		var file: Tile = Loader.currentInstance.load(basePath + data.file).toTile();
-		var scale: Float = file.width / data.width;
+		final scale: Float = file.width / data.width;
 		@:nullSafety(Off) return [
 			for (key in data.contents.keys())
 				key => [

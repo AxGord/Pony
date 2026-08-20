@@ -191,7 +191,7 @@ class HasListenerBuilder {
 
 	#if macro
 	private static function checkDestroy(ct: ClassType): Bool {
-		var sc: Null<{ t: Ref<ClassType>, params: Array<Type> }> = ct.superClass;
+		final sc: Null<{ t: Ref<ClassType>, params: Array<Type> }> = ct.superClass;
 		if (sc != null) {
 			for (f in sc.t.get().fields.get()) if (f.name == 'destroy') return true;
 			return checkDestroy(sc.t.get());

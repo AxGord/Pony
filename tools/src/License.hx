@@ -9,8 +9,8 @@ using pony.Tools;
  */
 class License {
 
-	private static var LICENSE_TEMPLATE_PATH: String = 'license/';
-	private static var LICENSE_OUTPUT_FILE: String = 'LICENSE';
+	private static final LICENSE_TEMPLATE_PATH: String = 'license/';
+	private static final LICENSE_OUTPUT_FILE: String = 'LICENSE';
 
 	public static function run(a: String, args: Array<String>): Void {
 		var file: File = LICENSE_OUTPUT_FILE;
@@ -19,11 +19,11 @@ class License {
 				create(args);
 			case 'remove':
 				for (file in ('.': Dir).contentRecursiveFiles('.hx')) {
-					var lines: Array<String> = file.content.split('\n');
+					final lines: Array<String> = file.content.split('\n');
 					var allowRemove: Bool = false;
 					var n: Int = 0;
 					while (n < lines.length) {
-						var c: String = StringTools.trim(lines[n]);
+						final c: String = StringTools.trim(lines[n]);
 						if (c == '/**') {
 							allowRemove = true;
 							break;
@@ -59,13 +59,13 @@ class License {
 						return;
 					}
 				}
-				var data = file.content.split('\n');
+				final data = file.content.split('\n');
 				for (line in 0...data.length) data[line] = '* ${data[line]}';
 				data.unshift('/**');
 				data.push('**/');
 				for (file in ('.': Dir).contentRecursiveFiles('.hx')) {
-					var fcontent = file.content;
-					var lines: Array<String> = fcontent.split('\n');
+					final fcontent = file.content;
+					final lines: Array<String> = fcontent.split('\n');
 					if (StringTools.trim(lines[0]) == '/**') {
 						var n: Int = 0;
 						var error = true;
@@ -124,13 +124,13 @@ class License {
 			case 'mit':
 				parseArgsAndGenLicense('mit.txt', args);
 			case 'closed':
-				var all: Array<String> = args.join(' ').split('@');
+				final all: Array<String> = args.join(' ').split('@');
 				if (all.length < 2) Utils.error('Email not set');
-				var a: Array<String> = all[0].split(' ');
-				var b: Array<String> = all[1].split(' ');
-				var email: String = '${a.pop()}@${b.shift()}';
-				var author: String = a.join(' ');
-				var company: String = b.join(' ');
+				final a: Array<String> = all[0].split(' ');
+				final b: Array<String> = all[1].split(' ');
+				final email: String = '${a.pop()}@${b.shift()}';
+				final author: String = a.join(' ');
+				final company: String = b.join(' ');
 				genLicense('closed.txt', author, email, company);
 			case _:
 				Utils.error('Unknown license');
@@ -138,7 +138,7 @@ class License {
 	}
 
 	private static function parseArgsAndGenLicense(tpl: String, args: Array<String>): Void {
-		var na: Array<String> = [];
+		final na: Array<String> = [];
 		var email: String = null;
 		for (a in args) {
 			if (a.indexOf('@') != -1)
@@ -146,12 +146,12 @@ class License {
 			else
 				na.push(a);
 		}
-		var author: String = na.join(' ');
+		final author: String = na.join(' ');
 		genLicense(tpl, author, email);
 	}
 
 	private static function genLicense(tpl: String, author: String, email: String, ?company: String): Void {
-		var date: Int = Date.now().getFullYear();
+		final date: Int = Date.now().getFullYear();
 		if (author.nore()) Utils.error('Author not set');
 		if (company.nore()) company = author;
 		if (email == null) email = '';

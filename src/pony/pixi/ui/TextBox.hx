@@ -20,7 +20,7 @@ class TextBox extends BaseLayout<RubberLayoutCore<Container>> {
 	public var text(get, set): String;
 	public var obj(default, null): BText;
 
-	private var nocache: Bool;
+	private final nocache: Bool;
 
 	public function new(
 		image: Sprite, text: String, style: ETextStyle, ?ansi: String, ?border: Border<Int>, nocache: Bool = false, shadow: Bool = false,

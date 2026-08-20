@@ -16,7 +16,7 @@ using pony.text.TextTools;
  */
 @:nullSafety(Strict) class Lame extends CfgModule<LameConfig> {
 
-	private static inline var PRIORITY: Int = 24;
+	private static inline final PRIORITY: Int = 24;
 
 	public function new() super('lame');
 
@@ -48,7 +48,7 @@ using pony.text.TextTools;
 	}
 
 	private function process(from: String, to: String, preset: Null<String>): Void {
-		var args: Array<String> = [];
+		final args: Array<String> = [];
 		if (preset != null) {
 			args.push('--preset');
 			args.push(preset);
@@ -65,22 +65,22 @@ using pony.text.TextTools;
 	private function lameDirs(
 		data: Array<Pair<String, Null<String>>>, from: Dir, to: Dir, hash: Bool, addext: String, preset: Null<String>
 	): Void {
-		var hashModule: Null<module.Hash> = hash ? modules.getModule(module.Hash) : null;
+		final hashModule: Null<module.Hash> = hash ? modules.getModule(module.Hash) : null;
 		for (d in data) {
-			var dir: Dir = from + d.a;
-			var filter: Null<String> = d.b;
+			final dir: Dir = from + d.a;
+			final filter: Null<String> = d.b;
 			log('Lame directory: ${d.a}');
 			if (hashModule != null && hashModule.xml != null) {
 				for (f in dir.contentRecursiveFiles(filter)) {
-					var w: Dir = to + f.fullDir.first.substr(dir.first.length);
-					var k: String = w + replaceExt(f.name);
+					final w: Dir = to + f.fullDir.first.substr(dir.first.length);
+					final k: String = w + replaceExt(f.name);
 					if (!hashModule.fileChanged(k, f)) continue;
 					Utils.createPath(k);
 					process(f.first, k + addext, preset);
 				}
 			} else {
 				for (f in dir.contentRecursiveFiles(filter)) {
-					var w: Dir = to + f.fullDir.first.substr(dir.first.length);
+					final w: Dir = to + f.fullDir.first.substr(dir.first.length);
 					Utils.createPath(w);
 					process(f.first, w + replaceExt(f.name) + addext, preset);
 				}
@@ -92,13 +92,13 @@ using pony.text.TextTools;
 		data: Array<Triple<String, Null<String>, Null<String>>>, from: String, to: String, hash: Bool, addext: String,
 		preset: Null<String>, rm: Bool
 	): Void {
-		var hashModule: Null<module.Hash> = hash ? modules.getModule(module.Hash) : null;
+		final hashModule: Null<module.Hash> = hash ? modules.getModule(module.Hash) : null;
 		for (p in data) {
-			var unit: Unit = from + p.a;
+			final unit: Unit = from + p.a;
 			log('Lame file: $unit');
 			if (unit.isFile) {
-				var unit: File = unit;
-				var k: String = to + @:nullSafety(Off) replaceExt(p.b != null ? p.b : unit.name);
+				final unit: File = unit;
+				final k: String = to + @:nullSafety(Off) replaceExt(p.b != null ? p.b : unit.name);
 				if (hashModule != null && hashModule.xml != null) {
 					if (p.c == null) {
 						if (!hashModule.fileChanged(k, unit)) continue;

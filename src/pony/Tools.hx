@@ -40,7 +40,7 @@ class Tools {
 
 	private static var _tz: Null<UInt>;
 
-	private static inline var SRC: String = 'src';
+	private static inline final SRC: String = 'src';
 
 	#if macro
 	private static var _getBuildDate: String;
@@ -78,11 +78,11 @@ class Tools {
 	 * @link https://gist.github.com/Simn/87948652a840ff544a22
 	 */
 	macro public static function with(e1: Expr, el: Array<Expr>): Expr {
-		var tempName: String = 'tmp';
-		var acc: Array<Expr> = [macro var $tempName = $e1];
-		var eThis: Expr = macro $i{tempName};
+		final tempName: String = 'tmp';
+		final acc: Array<Expr> = [macro var $tempName = $e1];
+		final eThis: Expr = macro $i{tempName};
 		for (e in el) {
-			var e = switch (e) {
+			final e = switch (e) {
 				case macro $i{s}($a{args}):
 					macro $eThis.$s($a{args});
 				case macro $i{s} = $e:
@@ -123,8 +123,8 @@ class Tools {
 			case TEnum(t):
 				if (t != Type.getEnum(b)) return false;
 				if (Type.enumIndex(a) != Type.enumIndex(b)) return false;
-				var a = Type.enumParameters(a);
-				var b = Type.enumParameters(b);
+				final a = Type.enumParameters(a);
+				final b = Type.enumParameters(b);
 				if (a.length != b.length) return false;
 				for (i in 0...a.length) if (!equal(a[i], b[i], maxDepth - 1)) return false;
 				return true;
@@ -162,7 +162,7 @@ class Tools {
 				if (t == Array) return false;
 			case TUnknown:
 		}
-		var fields: Array<String> = a.fields();
+		final fields: Array<String> = a.fields();
 		if (fields.length == b.fields().length) {
 			if (fields.length == 0) return true;
 			for (f in fields) if (!b.hasField(f) || !equal(a.field(f), b.field(f), maxDepth - 1)) return false;
@@ -182,12 +182,12 @@ class Tools {
 			#end
 				_clone(obj);
 			case TClass(Array):
-				var obj: Array<Dynamic> = cast obj;
+				final obj: Array<Dynamic> = cast obj;
 				cast [for (i in 0...obj.length) clone(obj[i])];
 			case TClass(String):
 				obj;
 			case TClass(haxe.ds.IntMap):
-				var obj: Map<Int, Dynamic> = obj;
+				final obj: Map<Int, Dynamic> = obj;
 				cast [for (k in obj.keys()) k => clone(obj[k])];
 			case TClass(_):
 				cast _clone(obj);
@@ -237,7 +237,7 @@ class Tools {
 	}
 
 	public static function joinBytes(bs: Array<Bytes>): Bytes {
-		var bo: BytesOutput = new BytesOutput();
+		final bo: BytesOutput = new BytesOutput();
 		for (b in bs) bo.write(b);
 		return bo.getBytes();
 	}
@@ -246,7 +246,7 @@ class Tools {
 	 * @author BoBaH6eToH
 	 */
 	public static function cut(inp: BytesInput): BytesInput {
-		var out: BytesOutput = new BytesOutput();
+		final out: BytesOutput = new BytesOutput();
 		var cntNull: Int = 0;
 		var flagNull: Bool = true;
 		var cur: Int = -99;
@@ -283,8 +283,8 @@ class Tools {
 
 	#if macro
 	private static function getUsedLibs(): Map<String, String> {
-		var d: Map<String, String> = Context.getDefines();
-		var r: Map<String, String> = [];
+		final d: Map<String, String> = Context.getDefines();
+		final r: Map<String, String> = [];
 		for (k in d.keys()) {
 			var prev: String = null;
 			for (line in new sys.io.Process('haxelib', ['path', k]).stdout.readAll().toString().split('\n')) {
@@ -316,29 +316,29 @@ class Tools {
 
 	#if macro
 	private static function getHashPath(): Null<SPair<String>> {
-		var pony: String = 'pony.xml';
+		final pony: String = 'pony.xml';
 		if (!sys.FileSystem.exists(pony)) return null;
 		Context.registerModuleDependency(Context.getLocalModule(), pony);
-		var xml = new Fast(Xml.parse(sys.io.File.getContent(pony))).elements.next();
+		final xml = new Fast(Xml.parse(sys.io.File.getContent(pony))).elements.next();
 		if (!xml.hasNode.hash) return null;
-		var hash: Fast = xml.node.hash;
+		final hash: Fast = xml.node.hash;
 		return new Pair(hash.has.root ? hash.att.root : '', hash.node.output.innerData);
 	}
 	#end
 
 	macro public static function getHashFile(): Expr {
-		var path: Null<SPair<String>> = getHashPath();
+		final path: Null<SPair<String>> = getHashPath();
 		if (path == null) return macro null;
-		var asset: String = StringTools.startsWith(path.b, path.a) ? path.b.substr(path.a.length) : path.b;
+		final asset: String = StringTools.startsWith(path.b, path.a) ? path.b.substr(path.a.length) : path.b;
 		return macro $v{asset};
 	}
 
 	macro public static function getHashFileWithHash(): Expr {
-		var path: Null<SPair<String>> = getHashPath();
+		final path: Null<SPair<String>> = getHashPath();
 		if (path == null) return macro null;
-		var asset: String = StringTools.startsWith(path.b, path.a) ? path.b.substr(path.a.length) : path.b;
-		var version: String = haxe.crypto.Base64.urlEncode(haxe.crypto.Sha1.make(sys.io.File.getBytes(path.b)));
-		var r: String = '$asset?$version';
+		final asset: String = StringTools.startsWith(path.b, path.a) ? path.b.substr(path.a.length) : path.b;
+		final version: String = haxe.crypto.Base64.urlEncode(haxe.crypto.Sha1.make(sys.io.File.getBytes(path.b)));
+		final r: String = '$asset?$version';
 		return macro $v{r};
 	}
 
@@ -348,15 +348,15 @@ class Tools {
 	}
 
 	public static function libPath(lib: String): String {
-		var pd: String = '/';
+		final pd: String = '/';
 		var libPath: String = null;
 		#if nodejs
-		var o: String = Std.string(js.node.ChildProcess.execSync('haxelib path $lib'));
-		var lines: Array<String> = o.split('\n');
+		final o: String = Std.string(js.node.ChildProcess.execSync('haxelib path $lib'));
+		final lines: Array<String> = o.split('\n');
 		do
 			libPath = lines.shift() while (libPath == null || StringTools.startsWith(libPath, '-'));
 		#elseif neko
-		var out: haxe.io.Input = new sys.io.Process('haxelib', ['path', lib]).stdout;
+		final out: haxe.io.Input = new sys.io.Process('haxelib', ['path', lib]).stdout;
 		do
 			libPath = out.readLine() while (libPath == null || StringTools.startsWith(libPath, '-'));
 		#else
@@ -366,12 +366,12 @@ class Tools {
 		if (libPath.substr(-SRC.length) == SRC) {
 			libPath = libPath.substr(0, -SRC.length);
 		} else {
-			var src: String = SRC + pd;
+			final src: String = SRC + pd;
 			if (libPath.substr(-src.length) == src) {
 				libPath = libPath.substr(0, -src.length);
 			} else if (isWindows) {
-				var pd: String = '\\';
-				var src: String = SRC + pd;
+				final pd: String = '\\';
+				final src: String = SRC + pd;
 				if (libPath.substr(-src.length) == src) libPath = libPath.substr(0, -src.length);
 			}
 		}
@@ -397,11 +397,11 @@ class Tools {
 	}
 
 	macro public static function ifsw(e: Expr): Expr {
-		var d: Array<Expr> = [];
+		final d: Array<Expr> = [];
 		switch e.expr {
 			case ESwitch(ex, cases, edef):
 				for (c in cases) {
-					var cond: Expr = { expr: EBinop(OpEq, ex, c.values[0]), pos: Context.currentPos() };
+					final cond: Expr = { expr: EBinop(OpEq, ex, c.values[0]), pos: Context.currentPos() };
 					d.push(macro if ($cond) ${c.expr});
 				}
 			case _:
@@ -412,7 +412,7 @@ class Tools {
 
 	public static function setFields(a: Dynamic, b: {}): Void {
 		for (p in b.fields()) {
-			var d: Dynamic = b.field(p);
+			final d: Dynamic = b.field(p);
 			if (
 				a.hasField(p) && d.isObject() && #if (haxe_ver >= 4.100)
 					!Std.isOfType(d, String) && !Std.isOfType(d, Array)
@@ -429,15 +429,15 @@ class Tools {
 	public static inline function copyFields(a: {}, b: {}): Void for (p in b.fields()) a.setField(p, b.field(p));
 
 	public static function parsePrefixObjects(a: Dynamic<String>, delimiter: String = '_'): Dynamic<Dynamic> {
-		var result: Dynamic<Dynamic> = {};
+		final result: Dynamic<Dynamic> = {};
 		for (f in a.fields()) {
-			var d = f.split(delimiter);
+			final d = f.split(delimiter);
 			var obj: Dynamic<Dynamic> = result;
 			for (i in 0...d.length - 1) {
 				if (obj.hasField(d[i])) {
 					obj = obj.field(d[i]);
 				} else {
-					var newObj: Dynamic<Dynamic> = {};
+					final newObj: Dynamic<Dynamic> = {};
 					obj.setField(d[i], newObj);
 					obj = newObj;
 				}
@@ -448,9 +448,9 @@ class Tools {
 	}
 
 	public static function convertObject(a: {}, fun: Dynamic -> Dynamic): Dynamic<Dynamic> {
-		var result: Dynamic<Dynamic> = {};
+		final result: Dynamic<Dynamic> = {};
 		for (p in a.fields()) {
-			var d: Dynamic = a.field(p);
+			final d: Dynamic = a.field(p);
 			result.setField(
 				p, d.isObject() && #if (haxe_ver >= 4.100)
 						!Std.isOfType(d, String)
@@ -482,7 +482,7 @@ class Tools {
 	}
 
 	public static function hexToBytes(hex: String): Bytes {
-		var output: BytesOutput = new BytesOutput();
+		final output: BytesOutput = new BytesOutput();
 		for (i in 0...Std.int(hex.length / 2)) output.writeByte(Std.parseInt('0x${hex.substr(i * 2, 2)}'));
 		return output.getBytes();
 	}
@@ -533,7 +533,7 @@ class Tools {
 	#end
 	public static function functionLength(f: Function): Int {
 		#if php
-		var rf = untyped __php__('new ReflectionMethod($f[0], $f[1])');
+		final rf = untyped __php__('new ReflectionMethod($f[0], $f[1])');
 		return rf.getNumberOfParameters();
 		#elseif (js || flash)
 		return untyped f.length;
@@ -565,7 +565,7 @@ class ArrayTools {
 	public static inline function exists<T>(a: Array<T>, e: T): Bool return a.indexOf(e) != -1;
 
 	public static inline function existsOrPush<T>(a: Array<T>, e: T): Bool {
-		var r: Bool = exists(a, e);
+		final r: Bool = exists(a, e);
 		if (!r) a.push(e);
 		return r;
 	}
@@ -577,11 +577,11 @@ class ArrayTools {
 
 	public static function kv<T>(a: Array<T>): Iterator<KeyValue<Int, T>> {
 		var i: Int = 0;
-		var it: Iterator<T> = a.iterator();
+		final it: Iterator<T> = a.iterator();
 		return {
 			hasNext: it.hasNext,
 			next: function() {
-				var p = new Pair(i, it.next());
+				final p = new Pair(i, it.next());
 				i++;
 				return p;
 			}
@@ -589,8 +589,8 @@ class ArrayTools {
 	}
 
 	public static function pair<A, B>(a: Iterable<A>, b: Iterable<B>): Iterator<Pair<A, B>> {
-		var itA: Iterator<A> = a.iterator();
-		var itB: Iterator<B> = b.iterator();
+		final itA: Iterator<A> = a.iterator();
+		final itB: Iterator<B> = b.iterator();
 		return {
 			hasNext: function() return itA.hasNext() && itB.hasNext(),
 			next: function() return new Pair(itA.next(), itB.next())
@@ -598,7 +598,7 @@ class ArrayTools {
 	}
 
 	public static inline function toBytes(a: Array<Int>): BytesOutput {
-		var b: BytesOutput = new BytesOutput();
+		final b: BytesOutput = new BytesOutput();
 		for (e in a) b.writeByte(e);
 		return b;
 	}
@@ -622,18 +622,18 @@ class ArrayTools {
 			return swap(array, b, a);
 		else if (a == b)
 			return array;
-		var v1 = array[a];
-		var v2 = array[b];
-		var p1 = a == 0 ? [] : array.slice(0, a);
-		var p2 = array.slice(a + 1, b);
-		var p3 = array.slice(b + 1);
+		final v1 = array[a];
+		final v2 = array[b];
+		final p1 = a == 0 ? [] : array.slice(0, a);
+		final p2 = array.slice(a + 1, b);
+		final p3 = array.slice(b + 1);
 		p1.push(v2);
 		p2.push(v1);
 		return p1.concat(p2).concat(p3);
 	}
 
 	public static function delete<T>(array: Array<T>, index: Int): Array<T> {
-		var na: Array<T> = array.copy();
+		final na: Array<T> = array.copy();
 		na.splice(index, 1);
 		return na;
 	}
@@ -665,29 +665,29 @@ class ArrayTools {
 class MapTools {
 
 	public static function kv<K, T>(a: Map<K, T>): Iterator<KeyValue<K, T>> {
-		var it: Iterator<K> = a.keys();
+		final it: Iterator<K> = a.keys();
 		return {
 			hasNext: it.hasNext,
 			next: function() {
-				var k: K = it.next();
+				final k: K = it.next();
 				return new Pair(k, a[k]);
 			}
 		};
 	}
 
 	public static function toDynamic<T>(map: Map<String, T>): Dynamic<T> {
-		var r: Dynamic<T> = {};
+		final r: Dynamic<T> = {};
 		for (e in kv(map)) r.setField(e.key, e.value);
 		return r;
 	}
 
 	public static function toMap<T>(d: Dynamic<T>): Map<String, T> {
-		var fields: Array<String> = d.fields();
+		final fields: Array<String> = d.fields();
 		return [for (field in fields) field => d.field(field)];
 	}
 
 	public static inline function pushToMap<K, T>(map: Map<K, Array<T>>, key: K, value: T): Bool {
-		var element: Null<Array<T>> = map[key];
+		final element: Null<Array<T>> = map[key];
 		if (element == null) {
 			map[key] = [value];
 			return true;
@@ -698,7 +698,7 @@ class MapTools {
 	}
 
 	public static inline function pushToMapIfExists<K, T>(map: Map<K, Array<T>>, key: K, value: T): Bool {
-		var element: Null<Array<T>> = map[key];
+		final element: Null<Array<T>> = map[key];
 		if (element != null) {
 			map[key].push(value);
 			return true;
@@ -708,7 +708,7 @@ class MapTools {
 	}
 
 	public static inline function addToMap<A, B:Int, T>(map: Map<A, Map<B, T>>, a: A, b: B, value: T): Bool {
-		var element: Null<Map<B, T>> = map[a];
+		final element: Null<Map<B, T>> = map[a];
 		if (element == null) {
 			map[a] = [b => value];
 			return true;
@@ -719,7 +719,7 @@ class MapTools {
 	}
 
 	public static inline function addToMapStr<A, T>(map: Map<A, Map<String, T>>, a: A, b: String, value: T): Bool {
-		var element: Null<Map<String, T>> = map[a];
+		final element: Null<Map<String, T>> = map[a];
 		if (element == null) {
 			map[a] = [b => value];
 			return true;
@@ -730,7 +730,7 @@ class MapTools {
 	}
 
 	public static inline function addToMapIfExists<A, B, T>(map: Map<A, Map<B, T>>, a: A, b: B, value: T): Bool {
-		var element: Null<Map<B, T>> = map[a];
+		final element: Null<Map<B, T>> = map[a];
 		if (element != null) {
 			map[a][b] = value;
 			return true;
@@ -772,7 +772,7 @@ class MapTools {
 	}
 
 	public static inline function changeKey<K, T>(map: Map<K, T>, from: K, to: K): Void {
-		var v: T = map[from];
+		final v: T = map[from];
 		map.remove(from);
 		map[to] = v;
 	}
@@ -786,12 +786,12 @@ class MapTools {
 	}
 
 	public static inline function getOrEmptyMap<K:Int, A:Int, B>(map: Map<K, Map<A, B>>, k: K): Map<A, B> {
-		var r: Null<Map<A, B>> = map[k];
+		final r: Null<Map<A, B>> = map[k];
 		return r ?? new Map<A, B>();
 	}
 
 	public static inline function getOrEmptyArray<K:Int, B>(map: Map<K, ROArray<B>>, k: K): ROArray<B> {
-		var r: Null<ROArray<B>> = map[k];
+		final r: Null<ROArray<B>> = map[k];
 		return r ?? [];
 	}
 
@@ -811,26 +811,26 @@ class FloatTools {
 			',';
 		else
 			'!';
-		var a: Array<String> = s == '!' ? [mask, ''] : mask.split(s);
+		final a: Array<String> = s == '!' ? [mask, ''] : mask.split(s);
 		if (s == '!') s = '.';
-		var beginS: String = a[0].length > 0 ? a[0].charAt(0) : '0';
-		var endS: String = a[1].length > 0 ? a[1].charAt(0) : '0';
+		final beginS: String = a[0].length > 0 ? a[0].charAt(0) : '0';
+		final endS: String = a[1].length > 0 ? a[1].charAt(0) : '0';
 		return macro FloatTools._toFixed($a{[$ex, $v{a[1].length}, $v{a[0].length}, $v{s}, $v{beginS}, $v{endS}]});
 	}
 
 	public static function _toFixed(v: Float, n: Int, begin: Int = 0, d: String = '.', beginS: String = '0', endS: String = '0'): String {
 		if (begin > 0) {
-			var s: String = _toFixed(v, n, 0, d, beginS, endS);
-			var a: Array<String> = s.split(d);
-			var d: Int = begin - a[0].length;
+			final s: String = _toFixed(v, n, 0, d, beginS, endS);
+			final a: Array<String> = s.split(d);
+			final d: Int = begin - a[0].length;
 			return TextTools.repeat(beginS, d) + s;
 		}
 		if (n == 0) return '${Std.int(v)}';
 		@SuppressWarnings('checkstyle:MagicNumber')
 		var p: Float = Math.pow(10, n);
 		v = Math.floor(v * p) / p;
-		var s: String = '$v';
-		var a: Array<String> = s.split('.');
+		final s: String = '$v';
+		final a: Array<String> = s.split('.');
 		if (a.length <= 1)
 			return (begin == -1 ? '' : s) + d + TextTools.repeat(endS, n);
 		else

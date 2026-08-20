@@ -9,7 +9,7 @@ class SuperPuperTest {
 
 	@Test
 	public function testExample(): Void {
-		var obj = new SecondChildClass();
+		final obj = new SecondChildClass();
 		var result = null;
 		obj.test('Hello', function(r) result = r);
 		Assert.areEqual(result, 'Hello world!');
@@ -17,7 +17,7 @@ class SuperPuperTest {
 
 }
 
-@:final class SecondChildClass extends ChildClass {
+final class SecondChildClass extends ChildClass {
 
 	override public function test(arg: String, cb: String -> Void): Void {
 		addSpace(arg, function(s) super.test(s, cb));

@@ -9,7 +9,7 @@ import pony.text.tpl.Valuator;
  * @author AxGord <axgord@gmail.com>
  */
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
-@:final class MLinkPutSub extends Valuator<MLinkPut, String> {
+final class MLinkPutSub extends Valuator<MLinkPut, String> {
 
 	@:async
 	override public function valuBool(name: String): Bool {
@@ -24,7 +24,7 @@ import pony.text.tpl.Valuator;
 		if (name == 'selected')
 			return @await super.tag(name, content, arg, args, kid);
 		else {
-			var r = @await valu(name, arg);
+			final r = @await valu(name, arg);
 			if (r != null)
 				return @await super.tag(name, content, arg, args, kid);
 			else

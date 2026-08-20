@@ -52,7 +52,7 @@ class Protobuf<A:ProtobufBuilder, B:ProtobufBuilder> implements Declarator {
 	private function queueNext(): Void DeltaTime.skipUpdate(_queue.next);
 
 	private function dataHandler(d: BytesInput, s: SocketClient): Void {
-		var b: B = new B();
+		final b: B = new B();
 		bmerge(b, new LimitableBytesInput(d.readAll()));
 		onData.dispatch(b, s);
 	}
@@ -73,7 +73,7 @@ class Protobuf<A:ProtobufBuilder, B:ProtobufBuilder> implements Declarator {
 		if (fs == null) return;
 		if (fs.length == 0) return;
 		if (socket == null) return;
-		var builder: A = new A();
+		final builder: A = new A();
 		onSend.dispatch(builder);
 		for (f in fs) f(builder);
 		fs = null;
@@ -86,13 +86,13 @@ class Protobuf<A:ProtobufBuilder, B:ProtobufBuilder> implements Declarator {
 	}
 
 	public function sendTo(builder: A, socket: INet): Void {
-		var output: BytesOutput = new BytesOutput();
+		final output: BytesOutput = new BytesOutput();
 		awrite(builder, output);
 		socket.send(output);
 	}
 
 	public function send2Other(builder: A, socket: SocketClient): Void {
-		var output: BytesOutput = new BytesOutput();
+		final output: BytesOutput = new BytesOutput();
 		awrite(builder, output);
 		socket.send2other(output);
 	}

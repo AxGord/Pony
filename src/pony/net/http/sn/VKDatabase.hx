@@ -18,9 +18,9 @@ typedef VKDBItem = { id: Int, title: String, ?area: String };
 #if (haxe_ver >= 4.2) enum #else @:enum #end
 abstract VKDBMethod(String) from String to String {
 
-	var getCountries = 'getCountries';
-	var getRegions = 'getRegions';
-	var getCities = 'getCities';
+	final getCountries = 'getCountries';
+	final getRegions = 'getRegions';
+	final getCities = 'getCities';
 
 }
 
@@ -55,7 +55,7 @@ class VKDatabase {
 	}
 
 	public static function getCountry(id: Int, cb: String -> Void): Void {
-		var url = 'http://api.vk.com/method/database.getCountriesById?v=5.30&country_ids=$id';
+		final url = 'http://api.vk.com/method/database.getCountriesById?v=5.30&country_ids=$id';
 		HttpTools.getJson(url, function(r: VKDBShortResponse) cb(r.response[0].title));
 	}
 
@@ -72,7 +72,7 @@ class VKDatabase {
 	}
 
 	public static function getCity(id: Int, cb: String -> Void): Void {
-		var url = 'http://api.vk.com/method/database.getCitiesById?v=5.30&city_ids=$id';
+		final url = 'http://api.vk.com/method/database.getCitiesById?v=5.30&city_ids=$id';
 		HttpTools.getJson(url, function(r: VKDBShortResponse) cb(r.response[0].title));
 	}
 

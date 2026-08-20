@@ -22,14 +22,13 @@ private typedef Export = { typeName: String, name: String };
 
 	private final parent: Null<ServiceProvider>;
 	// typeName -> (name -> instance). One instance may appear under multiple typeNames.
-	private final byType: Map<String, Map<String, Dynamic>>;
+	private final byType: Map<String, Map<String, Dynamic>> = [];
 	// typeName -> (name -> pending callbacks). Acts both as the "loading" marker and the waiter list.
 	private final waits: Map<String, Map<String, Array<WCB>>> = [];
 	private final exports: Array<Export> = [];
 
 	public function new(?parent: ServiceProvider) {
 		this.parent = parent;
-		byType = [];
 	}
 
 	public function load(typeNames: Array<String>, name: String, export: Bool = false): Void {
@@ -169,7 +168,7 @@ private typedef Export = { typeName: String, name: String };
 				return;
 			}
 		}
-		var service: Null<Dynamic> = try get(typeName, name) catch (_: Dynamic) null;
+		final service: Null<Dynamic> = try get(typeName, name) catch (_: Dynamic) null;
 		if (service != null) {
 			callw(wcb, service);
 		} else if (parent != null) {

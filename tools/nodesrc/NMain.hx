@@ -24,14 +24,14 @@ import pony.Logable;
 #if (haxe_ver >= 4.2) final #else @:final #end
 class NMain extends Logable {
 
-	private static inline var SEND_TIMEOUT: Int = 300;
+	private static inline final SEND_TIMEOUT: Int = 300;
 
-	private var client: SocketClient;
-	private var rpc: NProtocol;
+	private final client: SocketClient;
+	private final rpc: NProtocol;
 
 	private function new() {
 		super();
-		var port: Null<Int> = Std.parseInt(Sys.args()[0]);
+		final port: Null<Int> = Std.parseInt(Sys.args()[0]);
 		if (port == null) throw 'Port not set';
 		NPM.capture_console.startCapture(Node.process.stdout, log);
 		NPM.capture_console.startCapture(Node.process.stderr, log);

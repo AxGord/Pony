@@ -12,7 +12,7 @@ import pony.text.ParseBoy;
 #if (haxe_ver >= 4.2) abstract #end
 class HttpConnection implements HasAbstract {
 
-	private static inline var indexFileShort: String = 'index.htm';
+	private static inline final indexFileShort: String = 'index.htm';
 	private static inline var indexFile: String = indexFileShort + 'l';
 
 	public var method: String;
@@ -20,20 +20,17 @@ class HttpConnection implements HasAbstract {
 	public var fullUrl: String;
 	public var url: String;
 	public var params: Map<String, String>;
-	public var sessionStorage: Map<String, Dynamic>;
+	public var sessionStorage: Map<String, Dynamic> = [];
 	public var host: String;
 	public var protocol: String;
-	public var languages: Array<String>;
+	public var languages: Array<String> = [];
 	public var cookie: Cookie;
-	public var end: Bool;
+	public var end: Bool = false;
 
 	public function new(fullUrl: String) {
 		// trace(fullUrl);
-		end = false;
-		languages = [];
-		sessionStorage = [];
 		this.fullUrl = fullUrl;
-		var pb: ParseBoy<Void> = new ParseBoy<Void>(fullUrl);
+		final pb: ParseBoy<Void> = new ParseBoy<Void>(fullUrl);
 		pb.gt(['://']);
 		protocol = pb.str();
 		pb.gt(['/']);
@@ -71,19 +68,19 @@ class HttpConnection implements HasAbstract {
 	@:abstract public function sendFile(file: File): Void;
 
 	private function parseData(pb: ParseBoy<Void>): Map<String, String> {
-		var params = new Map<String, String>();
+		final params = new Map<String, String>();
 		var loop: Bool = true;
 		while (loop) {
 			switch (pb.gt(['=', '&'])) {
 				case 0:
-					var v: String = pb.str();
+					final v: String = pb.str();
 					if (pb.gt(['&']) == -1) loop = false;
 					params.set(v, pb.str());
 				case 1:
-					var p: String = pb.str();
+					final p: String = pb.str();
 					if (p != '') params.set(p, null);
 				case _:
-					var p: String = pb.str();
+					final p: String = pb.str();
 					if (p != '') params.set(p, null);
 					loop = false;
 			}
@@ -92,7 +89,7 @@ class HttpConnection implements HasAbstract {
 	}
 
 	public function mix(): Map<String, String> {
-		var h = new Map<String, String>();
+		final h = new Map<String, String>();
 		for (k in params.keys()) h.set(k, params[k]);
 		for (k in post.keys()) h.set(k, post[k]);
 		return h;

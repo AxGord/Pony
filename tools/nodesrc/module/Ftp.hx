@@ -21,12 +21,12 @@ using pony.text.TextTools;
  * Ftp Pony Tools Node Module
  * @author AxGord <axgord@gmail.com>
  */
-@:nullSafety(Strict) @:final class Ftp extends NModule<FtpConfig> {
+@:nullSafety(Strict) final class Ftp extends NModule<FtpConfig> {
 
 	#if (haxe_ver < 4.2) override #end
 	private function run(cfg: FtpConfig): Void {
 		tasks.add();
-		var ftp: FtpInstance = new FtpInstance(cfg);
+		final ftp: FtpInstance = new FtpInstance(cfg);
 		ftp.onLog << eLog;
 		ftp.onError << eError;
 		ftp.onComplete < tasks.end;
@@ -36,16 +36,16 @@ using pony.text.TextTools;
 
 @:nullSafety(Strict) @:final private class FtpInstance extends Logable {
 
-	private static inline var DELAY_TIMEOUT: Int = 2000;
+	private static inline final DELAY_TIMEOUT: Int = 2000;
 
 	public static var ignore(default, null): ROArray<String> = ['.DS_Store', '.Spotlight-V100', '.Trashes', 'ehthumbs.db', 'Thumbs.db'];
 
 	@:auto public var onComplete: Signal0;
 
-	private var ftp: Dynamic;
-	private var path: String;
-	private var input: Array<String> = [];
-	private var output: String;
+	private final ftp: Dynamic;
+	private final path: String;
+	private final input: Array<String> = [];
+	private final output: String;
 	@:nullSafety(Off) private var inputIterator: Iterator<String>;
 	@:nullSafety(Off) private var fileIterator: Iterator<File>;
 
@@ -55,7 +55,7 @@ using pony.text.TextTools;
 		output = cfg.output;
 		for (e in cfg.input) {
 			if (e.charCodeAt(e.length - 1) == '*'.code) {
-				var dir: Dir = path + e.substr(0, -1);
+				final dir: Dir = path + e.substr(0, -1);
 				for (unit in dir.content(true)) input.push(unit.toString().substr(path.length));
 			} else {
 				input.push(e);
@@ -95,7 +95,7 @@ using pony.text.TextTools;
 
 	private function deleteNext(): Void {
 		if (inputIterator.hasNext()) {
-			var unit: String = inputIterator.next();
+			final unit: String = inputIterator.next();
 			log('Delete: $unit');
 			if (FileSystem.isDirectory(path + unit))
 				ftp.rmdir(unit, true, pauseDeleteNext);
@@ -113,7 +113,7 @@ using pony.text.TextTools;
 
 	private function uploadNext(): Void {
 		if (inputIterator.hasNext()) {
-			var unit: String = inputIterator.next();
+			final unit: String = inputIterator.next();
 			if (FileSystem.isDirectory(path + unit)) {
 				fileIterator = new Dir(path + unit).contentRecursiveFiles().iterator();
 				uploadNextFile();
@@ -137,13 +137,13 @@ using pony.text.TextTools;
 
 	private function uploadNextFile(): Void {
 		if (fileIterator.hasNext()) {
-			var fullunit: String = fileIterator.next();
-			var unit: String = fullunit.substr(path.length);
-			var a: Array<String> = unit.split('/');
-			var na: Array<String> = [for (e in a) if (e != '') e];
-			var dir: String = [for (i in 0...na.length - 1) na[i]].join('/');
-			var _ftp: Dynamic = ftp;
-			var file: String = na.join('/');
+			final fullunit: String = fileIterator.next();
+			final unit: String = fullunit.substr(path.length);
+			final a: Array<String> = unit.split('/');
+			final na: Array<String> = [for (e in a) if (e != '') e];
+			final dir: String = [for (i in 0...na.length - 1) na[i]].join('/');
+			final _ftp: Dynamic = ftp;
+			final file: String = na.join('/');
 			log('Makedir: $dir');
 			ftp.mkdir(dir, true, function(): Void {
 				if (!checkIgnore(file)) {

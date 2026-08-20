@@ -20,7 +20,7 @@ using StringTools;
  */
 class MySQL extends SQLBase {
 
-	private var connection: Connection;
+	private final connection: Connection;
 
 	/**
 	 * Create MySQL object and connect
@@ -70,7 +70,7 @@ class MySQL extends SQLBase {
 		var e = null;
 		try {
 			if (hack != null) {
-				var d = connection.request('SHOW COLUMNS FROM $hack').results().array();
+				final d = connection.request('SHOW COLUMNS FROM $hack').results().array();
 				f = parseFields(d);
 				hack = null;
 			}
@@ -98,7 +98,7 @@ class MySQL extends SQLBase {
 	inline private static function parseType(s: String): String return Types.fromString(s.split('(')[0]);
 
 	inline private static function parseFlags(o: Dynamic<String>): Array<Flags> {
-		var flags: Array<Flags> = [];
+		final flags: Array<Flags> = [];
 		for (f in Reflect.fields(o)) {
 			switch [f, Reflect.field(o, f)] {
 				case ['Key', 'PRI']:
@@ -121,7 +121,7 @@ class MySQL extends SQLBase {
 	 */
 	public function stream(q: String, ?p: PosInfos): Stream<Dynamic> {
 		log(q, p);
-		var s = new Stream();
+		final s = new Stream();
 		try {
 			s.putIterable(connection.request(q).results());
 		} catch (err: Dynamic) {

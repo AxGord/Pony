@@ -15,7 +15,7 @@ using pony.flash.FLExtends;
  */
 class Grid extends Sprite {
 
-	private var slots: Array<Array<GridSlot>>;
+	private final slots: Array<Array<GridSlot>>;
 
 	public var core: GridCore;
 
@@ -29,9 +29,9 @@ class Grid extends Sprite {
 		core.setTotal(width, height);
 		for (_ in 0...numChildren) removeChildAt(0);
 		for (iy in 0...core.cy) {
-			var a: Array<GridSlot> = [];
+			final a: Array<GridSlot> = [];
 			for (ix in 0...core.cx) {
-				var g: GridSlot = new GridSlot();
+				final g: GridSlot = new GridSlot();
 				addChild(g);
 				g.x = ix * core.slotWidth;
 				g.y = iy * core.slotHeight;

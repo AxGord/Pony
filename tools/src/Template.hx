@@ -7,19 +7,19 @@ import sys.io.File;
  */
 class Template {
 
-	private static var TEMPLATE_PATH: String = 'templates/';
+	private static final TEMPLATE_PATH: String = 'templates/';
 
 	public static function gen(path: String, files: Map<String, String>, vars: Map<String, String>): Void {
 		path = Utils.toolsPath + TEMPLATE_PATH + path;
 		for (file in files.keys()) {
-			var out: String = replaceVars(files[file], vars);
+			final out: String = replaceVars(files[file], vars);
 			if (FileSystem.exists(out)) {
 				Sys.println('File exists, skip: $out');
 			} else {
 				Sys.println('Generate: $out');
-				var index: Int = out.lastIndexOf('/');
+				final index: Int = out.lastIndexOf('/');
 				if (index != -1) {
-					var p: String = out.substr(0, index);
+					final p: String = out.substr(0, index);
 					if (!FileSystem.exists(p)) FileSystem.createDirectory(p);
 				}
 				File.saveContent(out, replaceVars(File.getContent(path + file), vars));

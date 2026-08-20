@@ -13,37 +13,38 @@ using hugs.HUGSWrapper;
 	public var target: unityengine.Transform;
 
 	private var distance: Float = 10.0;
-	private var distanceX: Float = 0;
+
+	private static inline final distanceX: Float = 0;
 
 	private var xActualSpeed: Float = 0.0;
 	private var yActualSpeed: Float = 0.0;
 
-	private var xConstSpeed: Float = 250.0;
-	private var yConstSpeed: Float = 125.0;
+	private static inline final xConstSpeed: Float = 250.0;
+	private static inline final yConstSpeed: Float = 125.0;
 
-	private var xDempf: Float = 0.95;
-	private var yDempf: Float = 0.95;
+	private static inline final xDempf: Float = 0.95;
+	private static inline final yDempf: Float = 0.95;
 
-	private var yMinLimit: Int = -20;
-	private var yMaxLimit: Int = 80;
+	private static inline final yMinLimit: Int = -20;
+	private static inline final yMaxLimit: Int = 80;
 
-	private var maxDist: Float = 200;
-	private var minDist: Float = 30;
-	private var zoomSpeed: Float = 5;
+	private static inline final maxDist: Float = 200;
+	private static inline final minDist: Float = 30;
+	private static inline final zoomSpeed: Float = 5;
 
-	private var keyZoomUp: unityengine.KeyCode = unityengine.KeyCode.KeypadPlus;
-	private var keyZoomOut: unityengine.KeyCode = unityengine.KeyCode.KeypadMinus;
+	private final keyZoomUp: unityengine.KeyCode = unityengine.KeyCode.KeypadPlus;
+	private final keyZoomOut: unityengine.KeyCode = unityengine.KeyCode.KeypadMinus;
 
-	private var keyTurnUp: unityengine.KeyCode = unityengine.KeyCode.UpArrow;
-	private var keyTurnDown: unityengine.KeyCode = unityengine.KeyCode.DownArrow;
-	private var keyTurnLeft: unityengine.KeyCode = unityengine.KeyCode.LeftArrow;
-	private var keyTurnRight: unityengine.KeyCode = unityengine.KeyCode.RightArrow;
+	private final keyTurnUp: unityengine.KeyCode = unityengine.KeyCode.UpArrow;
+	private final keyTurnDown: unityengine.KeyCode = unityengine.KeyCode.DownArrow;
+	private final keyTurnLeft: unityengine.KeyCode = unityengine.KeyCode.LeftArrow;
+	private final keyTurnRight: unityengine.KeyCode = unityengine.KeyCode.RightArrow;
 
 	private var isInverted: Bool;
 
-	private var isInerted: Bool = false;
+	private static inline final isInerted: Bool = false;
 
-	private var liveUpdate: Bool = false;
+	private static inline final liveUpdate: Bool = false;
 
 	@:meta(UnityEngine.HideInInspector)
 	private var x: Float = 0.0;
@@ -60,7 +61,7 @@ using hugs.HUGSWrapper;
 
 
 	private function Start(): Void {
-		var angles: unityengine.Vector3 = this.transform.eulerAngles;
+		final angles: unityengine.Vector3 = this.transform.eulerAngles;
 		x = angles.y;
 		y = angles.x;
 		// if (target.rigidbody != null && target.rigidbody.active)
@@ -88,7 +89,7 @@ using hugs.HUGSWrapper;
 		}
 		#end
 
-		var dt: Float = Time.timeScale == 0 ? 0 : Time.deltaTime / Time.timeScale;
+		final dt: Float = Time.timeScale == 0 ? 0 : Time.deltaTime / Time.timeScale;
 
 		if (unityengine.Input.GetKey(keyTurnUp)) {
 			yActualSpeed = (1 - yDempf) * yConstSpeed + yDempf * yActualSpeed;
@@ -179,13 +180,13 @@ using hugs.HUGSWrapper;
 		}
 		#end
 		if (unityengine.Input.GetKey(keyZoomOut) && distance < maxDist) {
-			var zs = zoomSpeed * dt * 10;
+			final zs = zoomSpeed * dt * 10;
 			distance += zs;
 			transform.Translate(unityengine.Vector3.forward.mul(-zs));
 		}
 
 		if (unityengine.Input.GetKey(keyZoomUp) && distance > minDist) {
-			var zs = zoomSpeed * dt * 10;
+			final zs = zoomSpeed * dt * 10;
 			distance -= zs;
 			transform.Translate(unityengine.Vector3.forward.mul(zs));
 		}

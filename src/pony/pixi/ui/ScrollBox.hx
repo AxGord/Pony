@@ -31,20 +31,20 @@ class ScrollBox extends Sprite implements HasSignal implements IWH {
 	private var vbar: Sprite;
 	private var hbar: Sprite;
 	private var content: Sprite = new Sprite();
-	private var core: ScrollBoxCore;
+	private final core: ScrollBoxCore;
 	private var touchArea: Sprite = new Sprite();
 
 	public function new(
 		w: Float, h: Float, vert: Bool = true, hor: Bool = false, color: UInt = 0, barsize: Float = 8, wheelSpeed: Float = 1
 	) {
 		super();
-		var tag = new Graphics();
+		final tag = new Graphics();
 		tag.beginFill(0, 0);
 		tag.drawRect(0, 0, 1, 1);
 		touchArea.addChild(tag);
 		content.addChild(touchArea);
 
-		var g = new Graphics();
+		final g = new Graphics();
 		g.beginFill(0x606060);
 		g.drawRect(0, 0, 1, 1);
 		addChild(g);
@@ -54,7 +54,7 @@ class ScrollBox extends Sprite implements HasSignal implements IWH {
 
 		var vbutton: ButtonCore = null;
 		if (vert) {
-			var gvbar = new Graphics();
+			final gvbar = new Graphics();
 			gvbar.beginFill(color);
 			gvbar.drawRect(0, 0, 1, 1);
 			vbar = new Sprite();
@@ -67,7 +67,7 @@ class ScrollBox extends Sprite implements HasSignal implements IWH {
 
 		var hbutton: ButtonCore = null;
 		if (hor) {
-			var ghbar = new Graphics();
+			final ghbar = new Graphics();
 			ghbar.beginFill(color);
 			ghbar.drawRect(0, 0, 1, 1);
 			hbar = new Sprite();
@@ -97,7 +97,7 @@ class ScrollBox extends Sprite implements HasSignal implements IWH {
 	}
 
 	private function maximizeTouchArea(mw: Float, mh: Float): Void {
-		var b = content.getLocalBounds();
+		final b = content.getLocalBounds();
 		touchArea.scale.set(b.x + b.width, b.y + b.height);
 		if (touchArea.scale.x < mw) touchArea.scale.x = mw;
 		if (touchArea.scale.y < mh) touchArea.scale.y = mh;
@@ -130,7 +130,7 @@ class ScrollBox extends Sprite implements HasSignal implements IWH {
 
 	public function update(): Void {
 		touchArea.visible = false;
-		var b = content.getBounds();
+		final b = content.getBounds();
 		core.content(b.x + b.width, b.y + b.height);
 		touchArea.visible = true;
 	}

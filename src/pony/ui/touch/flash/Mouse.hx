@@ -14,9 +14,9 @@ import pony.flash.MultyStage;
  */
 class Mouse {
 
-	private static inline var INIT_PRIORITY: Int = -2;
-	private static inline var EVENTS_PRIORITY: Int = -999;
-	private static inline var LOCK_PRIORITY: Int = -1000;
+	private static inline final INIT_PRIORITY: Int = -2;
+	private static inline final EVENTS_PRIORITY: Int = -999;
+	private static inline final LOCK_PRIORITY: Int = -1000;
 
 	private static var enabled: Bool = true;
 

@@ -17,9 +17,9 @@ import types.HaxeTargets;
 class Create {
 
 	private static var outputFile: String = 'app';
-	private static var formatFile: String = 'hxformat.json';
-	private static var testSertFile: String = 'testcert.p12';
-	private static var electronVersion: Map<String, String> = ['electron' => '^19.0.6', 'electron-builder' => '^23.1.0'];
+	private static final formatFile: String = 'hxformat.json';
+	private static final testSertFile: String = 'testcert.p12';
+	private static final electronVersion: Map<String, String> = ['electron' => '^19.0.6', 'electron-builder' => '^23.1.0'];
 
 	public static function run(sType: String, name: String): Void {
 		// todo: create remote key@host:port
@@ -32,7 +32,7 @@ class Create {
 		}
 		if (type == null) Utils.error('Wrong app type');
 		if (FileSystem.exists(Utils.MAIN_FILE)) Utils.error('${Utils.MAIN_FILE} exists');
-		var project: Project = new Project(name);
+		final project: Project = new Project(name);
 		setProjectConfig(project, type);
 		Utils.savePonyProject(project.result());
 		createProjectData(project, type);
@@ -117,7 +117,7 @@ class Create {
 	}
 
 	public static function createProjectData(project: Project, type: ProjectType): Void {
-		var vscAllow: Bool = VSCode.allowCreate;
+		final vscAllow: Bool = VSCode.allowCreate;
 		if (vscAllow) VSCode.createDir();
 		switch type {
 			case ProjectType.Neko:
@@ -162,7 +162,7 @@ class Create {
 				return;
 			case _:
 		}
-		var ponycmd: String = type == ProjectType.Neko ? 'run' : 'build';
+		final ponycmd: String = type == ProjectType.Neko ? 'run' : 'build';
 		if (vscAllow) VSCode.create(ponycmd, type == ProjectType.CC, project.server.active);
 		if (project.name != null) HaxeDevelop.create(project.name, project.getMain(), project.getLibs(), project.getCps(), ponycmd);
 		Gitignore.create(project, type);
@@ -273,7 +273,7 @@ class Create {
 	}
 
 	private static function createSiteData(project: Project, vscAllow: Bool): Void {
-		var path: String = project.build.getMainhxPath();
+		final path: String = project.build.getMainhxPath();
 		createDirs([
 			path,
 			'${path}models',

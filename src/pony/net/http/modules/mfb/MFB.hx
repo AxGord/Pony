@@ -14,7 +14,7 @@ import pony.text.tpl.TplPut;
  * MFB
  * @author AxGord
  */
-@:final class MFB implements IModule {
+final class MFB implements IModule {
 
 	public var fb: FB;
 
@@ -29,7 +29,7 @@ import pony.text.tpl.TplPut;
 		fb = new FB(appid, secret);
 		#end
 		this.appid = appid;
-		var s = TextTools.includeFileFromCurrentDir('mfb.tpl');
+		final s = TextTools.includeFileFromCurrentDir('mfb.tpl');
 		new Tpl(MFBPrePut, appid, s).gen(null, null, function(r) buttonData = r);
 	}
 
@@ -51,7 +51,7 @@ import pony.text.tpl.TplPut;
 }
 
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
-@:final class MFBPrePut extends TplPut<String, {}> {
+final class MFBPrePut extends TplPut<String, {}> {
 
 	@:async
 	override public function shortTag(name: String, arg: String, ?kid: ITplPut): String {

@@ -25,7 +25,7 @@ class TooltipSource extends MovieClip {
 
 	#if starling
 	public function convert(coordinateSpace: flash.display.DisplayObject): starling.display.DisplayObject {
-		var result = StarlingConverter.getSprite(this, coordinateSpace, false);
+		final result = StarlingConverter.getSprite(this, coordinateSpace, false);
 		StarlingUtils.setChildrenTextureSmoothing(result);
 		Tooltip.instance = new Tooltip(untyped result);
 		return result;

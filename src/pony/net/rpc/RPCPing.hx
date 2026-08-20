@@ -12,7 +12,7 @@ import pony.time.Timer;
 #if (haxe_ver >= 4.2) final #else @:final #end
 class RPCPing extends pony.net.rpc.RPCUnit<RPCPing> implements pony.net.rpc.IRPC {
 
-	private static inline var REPEAR: Int = 5000;
+	private static inline final REPEAR: Int = 5000;
 
 	@:auto public var onWarning: Signal0;
 	@:auto public var onRestore: Signal0;
@@ -36,10 +36,10 @@ class RPCPing extends pony.net.rpc.RPCUnit<RPCPing> implements pony.net.rpc.IRPC
 #if (haxe_ver >= 4.2) final #else @:final #end
 class Watch implements HasListener {
 
-	private var rpc: RPCPing;
+	private final rpc: RPCPing;
 	private var silent: Bool = false;
 	private var ping: Bool = true;
-	private var timer: Timer;
+	private final timer: Timer;
 	private var startTime: Float = now();
 
 	public function new(rpc: RPCPing, repeatTime: Int) {

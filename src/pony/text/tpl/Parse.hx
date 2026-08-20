@@ -16,11 +16,11 @@ class Parse extends ParseBoy<TplContent> {
 	public static var VAR_SYMBOLS: String = 'qwertyuiopasdfghjklzxcvbnm1234567890-';
 
 	public static function parse(t: String, s: TplStyle): TplData {
-		var o: Parse = new Parse(t, s);
+		final o: Parse = new Parse(t, s);
 		return o.data;
 	}
 
-	private var s: TplStyle;
+	private final s: TplStyle;
 
 	public function new(t: String, s: TplStyle) {
 		/////
@@ -51,19 +51,19 @@ class Parse extends ParseBoy<TplContent> {
 
 		// BEGIN CHECK VARS
 		gt([s.shortBegin]);
-		var p_sh = pos;
+		final p_sh = pos;
 		pos = beforeGoto;
 		gt([s.begin]);
-		var p_nrml = pos;
+		final p_nrml = pos;
 		pos = beforeGoto;
 
 		if (p_sh < p_nrml) {
-			var bef = pos;
+			final bef = pos;
 			pos = p_sh;
 			switch gt([s.args.set, s.shortEnd]) {
 				case 0:
 					var r: Bool = false;
-					var name = StringTools.trim(str());
+					final name = StringTools.trim(str());
 					for (i in 0...name.length) {
 						if (VAR_SYMBOLS.indexOf(name.charAt(i)) == -1) {
 							beforeGoto = bef;
@@ -76,7 +76,7 @@ class Parse extends ParseBoy<TplContent> {
 					pos = !r ? bef : p_sh;
 				case 1:
 					var r: Bool = false;
-					var name = StringTools.trim(str());
+					final name = StringTools.trim(str());
 					for (i in 0...name.length) {
 						if (VAR_SYMBOLS.indexOf(name.charAt(i)) == -1) {
 							beforeGoto = bef;
@@ -121,7 +121,7 @@ class Parse extends ParseBoy<TplContent> {
 					case 0:
 						data.push(ShortTag({ name: parseName(str()), arg: null }));
 					case 1:
-						var name: String = str();
+						final name: String = str();
 						switch (gt([s.shortEnd, s.args.valueq])) {
 							case 0:
 								if (s.args.qalltime) throw '["] - not found';
@@ -144,12 +144,12 @@ class Parse extends ParseBoy<TplContent> {
 	}
 
 	private function pushText(): Void {
-		var t: String = str();
+		final t: String = str();
 		if (t != '') data.push(Text(t));
 	}
 
 	private function pushEndText(): Void {
-		var t: String = t.substr(pos);
+		final t: String = t.substr(pos);
 		if (t != '') data.push(Text(t));
 	}
 
@@ -157,7 +157,7 @@ class Parse extends ParseBoy<TplContent> {
 		var lvl: Int = 0;
 		var i: Int = -1;
 		while (++i < n.length) {
-			var c: String = n.charAt(i);
+			final c: String = n.charAt(i);
 			if (c == s.up)
 				lvl++;
 			else if (s.space && c == ' ')
@@ -175,8 +175,8 @@ class Parse extends ParseBoy<TplContent> {
 		skipSpace();
 		switch (gt([s.end, s.endClose, s.args.begin, s.args.set])) {
 			case 0:
-				var name: String = str();
-				var d: TplData = tagContent(name);
+				final name: String = str();
+				final d: TplData = tagContent(name);
 				data.push(Tag({
 					name: parseName(name),
 					arg: null,
@@ -193,9 +193,9 @@ class Parse extends ParseBoy<TplContent> {
 				}));
 				result = true;
 			case 2:
-				var name: String = str();
+				final name: String = str();
 				var a: { args: Map<String, TplData>, closedTag: Bool } = args();
-				var d: TplData = a.closedTag ? null : tagContent(name);
+				final d: TplData = a.closedTag ? null : tagContent(name);
 				data.push(Tag({
 					name: parseName(name),
 					arg: null,
@@ -203,13 +203,13 @@ class Parse extends ParseBoy<TplContent> {
 					content: d
 				}));
 			case 3:
-				var name: String = str();
+				final name: String = str();
 				switch (gt([s.end, s.endClose, s.args.valueq], true)) {
 					case -2:
 						switch (gt([s.end, s.endClose, s.args.begin])) {
 							case 0:
-								var arg: TplData = parse(str(), s);
-								var d: TplData = tagContent(name);
+								final arg: TplData = parse(str(), s);
+								final d: TplData = tagContent(name);
 								data.push(Tag({
 									name: parseName(name),
 									arg: arg,
@@ -217,7 +217,7 @@ class Parse extends ParseBoy<TplContent> {
 									content: d
 								}));
 							case 1:
-								var arg: TplData = parse(str(), s);
+								final arg: TplData = parse(str(), s);
 								data.push(Tag({
 									name: parseName(name),
 									arg: arg,
@@ -225,9 +225,9 @@ class Parse extends ParseBoy<TplContent> {
 									content: null
 								}));
 							case 2:
-								var arg: TplData = parse(str(), s);
+								final arg: TplData = parse(str(), s);
 								var a: { args: Map<String, TplData>, closedTag: Bool } = args();
-								var d: TplData = a.closedTag ? null : tagContent(name);
+								final d: TplData = a.closedTag ? null : tagContent(name);
 								data.push(Tag({
 									name: parseName(name),
 									arg: arg,
@@ -250,10 +250,10 @@ class Parse extends ParseBoy<TplContent> {
 					 */
 					case 2:
 						if (gt([s.args.valueq]) == -1) throw '["] - not closed';
-						var arg: TplData = parse(str(), s);
+						final arg: TplData = parse(str(), s);
 						switch (gt([s.end, s.endClose, s.args.begin])) {
 							case 0:
-								var d: TplData = tagContent(name);
+								final d: TplData = tagContent(name);
 								data.push(Tag({
 									name: parseName(name),
 									arg: arg,
@@ -269,7 +269,7 @@ class Parse extends ParseBoy<TplContent> {
 								}));
 							case 2:
 								var a: { args: Map<String, TplData>, closedTag: Bool } = args();
-								var d: TplData = a.closedTag ? null : tagContent(name);
+								final d: TplData = a.closedTag ? null : tagContent(name);
 								data.push(Tag({
 									name: parseName(name),
 									arg: arg,
@@ -289,13 +289,13 @@ class Parse extends ParseBoy<TplContent> {
 	}
 
 	private function args(): { args: Map<String, TplData>, closedTag: Bool } {
-		var args: Map<String, TplData> = [];
+		final args: Map<String, TplData> = [];
 		while (true) {
 			switch (gt([s.args.end, s.end, s.endClose], true)) {
 				case -2:
 					switch (gt([s.args.set, s.args.delemiter, s.args.end, s.end, s.endClose])) {
 						case 0:
-							var n: String = str();
+							final n: String = str();
 							switch (gt([s.args.valueq], true)) {
 								case -2:
 									switch (gt([s.args.delemiter, s.end, s.args.end, s.endClose])) {
@@ -353,7 +353,7 @@ class Parse extends ParseBoy<TplContent> {
 		beginContent();
 		searchOpen(true);
 		closeTag(name);
-		var d: TplData = data;
+		final d: TplData = data;
 		endContent();
 		return d;
 	}
@@ -372,14 +372,14 @@ class Parse extends ParseBoy<TplContent> {
 
 	private function openPos(): Int {
 		gt([s.begin, s.shortBegin]);
-		var p: Int = pos - lengthGoto;
+		final p: Int = pos - lengthGoto;
 		pos = beforeGoto;
 		return p;
 	}
 
 	private function closePos(): Int {
 		gt([s.closeBegin]);
-		var p: Int = pos - lengthGoto;
+		final p: Int = pos - lengthGoto;
 		pos = beforeGoto;
 		return p;
 	}

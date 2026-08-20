@@ -28,9 +28,9 @@ abstract UColors(Array<UColor>) from Array<UColor> to Array<UColor> {
 	private inline function get_midInvertAlpha(): UColor return _mid(Color.MAX_CHANNEL);
 
 	private function _mid(alp: UInt): UColor {
-		var r: Array<UInt> = [];
-		var g: Array<UInt> = [];
-		var b: Array<UInt> = [];
+		final r: Array<UInt> = [];
+		final g: Array<UInt> = [];
+		final b: Array<UInt> = [];
 		for (e in this) if (e.a == alp) {
 			r.push(e.r);
 			g.push(e.g);

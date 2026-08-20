@@ -54,7 +54,7 @@ import haxe.macro.Expr;
 		var fields: Array<Field> = Context.getBuildFields();
 		if (methods != null || addToEnd != null) for (field in fields) {
 			if (methods != null) {
-				var ex: Null<Expr> = methods[field.name];
+				final ex: Null<Expr> = methods[field.name];
 				if (ex != null) {
 					switch field.kind {
 						case FFun(f):
@@ -65,7 +65,7 @@ import haxe.macro.Expr;
 				}
 			}
 			if (addToEnd != null) {
-				var ex: Null<Expr> = addToEnd[field.name];
+				final ex: Null<Expr> = addToEnd[field.name];
 				if (ex != null) {
 					switch field.kind {
 						case FFun(f):

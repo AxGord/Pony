@@ -19,14 +19,13 @@ typedef LangInfo = {
 class LangTable {
 
 	// private var h:Hash < Array<String> > ;
-	private var defaultLang: String;
+	private final defaultLang: String;
 
-	public var langs: Map<String, LangInfo>;
+	public var langs: Map<String, LangInfo> = [];
 
 	private var h: Map<String, Array<String>>;
 
 	public function new(dir: Dir, defaultLang: String = 'en') {
-		langs = [];
 		this.defaultLang = defaultLang;
 		// h = new Hash < Array<String> > ();
 		h = [];
@@ -34,14 +33,14 @@ class LangTable {
 			var li: LangInfo = null;
 			var a: Array<String> = [];
 			for (sf in f.takeExists) {
-				var sf: File = sf;
-				var lines: Array<String> = sf.content.lines();
+				final sf: File = sf;
+				final lines: Array<String> = sf.content.lines();
 				if (lines[0].charAt(0) == '!') {
-					var s: String = lines.shift();
+					final s: String = lines.shift();
 					if (li == null) {
 						li = { title: f.shortName, author: null };
 						for (e in s.substr(1).split(',')) {
-							var aa: Array<String> = e.split(':').map(StringTools.trim);
+							final aa: Array<String> = e.split(':').map(StringTools.trim);
 							switch (aa[0]) {
 								case 'title':
 									li.title = aa[1];
@@ -96,12 +95,12 @@ class LangTable {
 
 	public function translate(from: String, to: String, text: String): String {
 		if (!h.exists(from)) return text;
-		var s: String = text.bigFirst();
-		var i: Int = h[from].indexOf(s);
+		final s: String = text.bigFirst();
+		final i: Int = h[from].indexOf(s);
 		if (i == -1) return text;
 		if (!h.exists(to)) to = defaultLang;
-		var a = h[to];
-		var r: String = a[i];
+		final a = h[to];
+		final r: String = a[i];
 		return s == text ? r : r.smallFirst();
 	}
 

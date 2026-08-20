@@ -12,7 +12,7 @@ import pony.ui.touch.starling.touchManager.TouchManager;
  */
 class NativeFlashTouchInput {
 
-	private var _displayObject: DisplayObject;
+	private final _displayObject: DisplayObject;
 
 	public function new(displayObject: DisplayObject) {
 		_displayObject = displayObject;

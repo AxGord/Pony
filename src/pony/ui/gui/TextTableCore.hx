@@ -69,20 +69,20 @@ class TextTableCore implements HasAbstract {
 	};
 
 	public function draw(): Void {
-		var rl: Int = data.length - 1;
+		final rl: Int = data.length - 1;
 		var sdy: Int = 0;
 		for (r in data.kv()) {
 			var dx: Int = 0;
 			var mdy: Int = sdy;
-			var cl: Int = r.value.length - 1;
+			final cl: Int = r.value.length - 1;
 			for (c in r.value.kv()) {
 				var dy: Int = sdy;
-				var point: IntPoint = { x: c.key, y: r.key };
-				var bg = bgStyle(point);
-				var top = borderStyle(point, Direction.Up);
-				var left = borderStyle(point, Direction.Left);
-				var right = borderStyle(point, Direction.Right);
-				var bottom = borderStyle(point, Direction.Down);
+				final point: IntPoint = { x: c.key, y: r.key };
+				final bg = bgStyle(point);
+				final top = borderStyle(point, Direction.Up);
+				final left = borderStyle(point, Direction.Left);
+				final right = borderStyle(point, Direction.Right);
+				final bottom = borderStyle(point, Direction.Down);
 				drawLine({ x: dx, y: dy }, { x: dx + bg.a.x + left.a, y: dy }, top.b, top.a);
 				dy += top.a;
 				drawLine({ x: dx, y: dy }, { x: dx, y: dy + bg.a.y }, left.b, left.a);
@@ -93,7 +93,7 @@ class TextTableCore implements HasAbstract {
 					width: bg.a.x,
 					height: bg.a.y
 				}, bg.b);
-				var tf = fontStyle(point);
+				final tf = fontStyle(point);
 				drawText({
 					x: dx,
 					y: dy,

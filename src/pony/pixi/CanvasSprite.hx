@@ -16,9 +16,9 @@ import pony.time.DeltaTime;
  */
 class CanvasSprite extends Sprite {
 
-	private var sourse: Sprite;
-	private var size: Point<Int>;
-	private var offset: Point<Int>;
+	private final sourse: Sprite;
+	private final size: Point<Int>;
+	private final offset: Point<Int>;
 
 	public function new(sourse: Sprite, size: Point<Int>, ?offset: Point<Int>) {
 		super();
@@ -39,18 +39,18 @@ class CanvasSprite extends Sprite {
 
 	private function render(): Void {
 		if (children.length > 0) {
-			var sp = children[0];
+			final sp = children[0];
 			removeChildAt(0);
 			sp.destroy(true);
 		}
 		addChild(sourse);
 
-		var _renderer = new CanvasRenderer(size.x, size.y);
+		final _renderer = new CanvasRenderer(size.x, size.y);
 		_renderer.transparent = true;
 		_renderer.render(this);
 
 		removeChildAt(0);
-		var result = new Sprite(Texture.fromCanvas(_renderer.view));
+		final result = new Sprite(Texture.fromCanvas(_renderer.view));
 		if (offset != null) {
 			result.x = -offset.x;
 			result.y = -offset.y;

@@ -11,26 +11,26 @@ class PoolTest {
 	@Test
 	public function testTypedPool(): Void {
 		Obj.counter = 0;
-		var p = new TypedPool<Obj>();
-		var a: Obj = p.get();
+		final p = new TypedPool<Obj>();
+		final a: Obj = p.get();
 		Assert.areEqual(a.id, 0);
-		var b: Obj = p.get();
+		final b: Obj = p.get();
 		Assert.areEqual(b.id, 1);
 		p.ret(a);
-		var c: Obj = p.get();
+		final c: Obj = p.get();
 		Assert.areEqual(c.id, 0);
 	}
 
 	@Test
 	public function testDynPool(): Void {
 		Obj.counter = 0;
-		var p = new Pool<Obj>(Obj);
-		var a: Obj = p.get();
+		final p = new Pool<Obj>(Obj);
+		final a: Obj = p.get();
 		Assert.areEqual(a.id, 0);
-		var b: Obj = p.get();
+		final b: Obj = p.get();
 		Assert.areEqual(b.id, 1);
 		p.ret(a);
-		var c: Obj = p.get();
+		final c: Obj = p.get();
 		Assert.areEqual(c.id, 0);
 	}
 

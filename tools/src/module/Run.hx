@@ -21,8 +21,8 @@ typedef RunConfig = {
  */
 @:nullSafety(Strict) class Run extends CfgModule<RunConfig> {
 
-	private static inline var PRIORITY: Int = 35;
-	private static inline var LIB: String = '-lib';
+	private static inline final PRIORITY: Int = 35;
+	private static inline final LIB: String = '-lib';
 
 	private var haxelib: Array<String> = [];
 
@@ -56,7 +56,7 @@ typedef RunConfig = {
 		if (cfg.lib != null) {
 			final lib: String = cfg.lib;
 			log('Command in lib $lib');
-			var libPath: Null<String> = Utils.getLibPath(lib);
+			final libPath: Null<String> = Utils.getLibPath(lib);
 			if (libPath == null) error('Lib $lib not found');
 			path = '$libPath$path';
 		}
@@ -65,14 +65,15 @@ typedef RunConfig = {
 			if (cmd.lib != null) {
 				final lib: String = cmd.lib;
 				log('Command in lib $lib');
-				var libPath: Null<String> = Utils.getLibPath(lib);
+				final libPath: Null<String> = Utils.getLibPath(lib);
 				if (libPath == null) error('Lib $lib not found');
 				p = '$libPath$p';
 			}
-			var cwd = new Cwd(p);
+			// var, not final: sw() is an inline abstract member that writes `this`
+			var cwd = new Cwd(p); // noqa: prefer-final
 			if (p != '') cwd.sw();
 
-			var args = cmd.cmd.split(' ');
+			final args = cmd.cmd.split(' ');
 			@:nullSafety(Off) var cmd: String = args.shift();
 			Utils.command(cmd, args);
 
@@ -116,7 +117,7 @@ typedef RunConfig = {
 			case 'command':
 				cfg.command.push({ cmd: normalize(xml.innerData), path: getPath(xml), lib: getLib(xml) });
 			case 'haxe':
-				var cmd: Array<String> = ['haxe'];
+				final cmd: Array<String> = ['haxe'];
 				if (xml.has.cp) cmd.push('-cp ${normalize(xml.att.cp)}');
 				for (lib in cfg.haxelib) cmd.push('-lib ${normalize(lib)}');
 				if (xml.has.d) for (d in normalize(xml.att.d).split(' ')) cmd.push('-D $d');

@@ -6,20 +6,20 @@ import sys.FileSystem;
  */
 class Haxelib {
 
-	private static inline var listFile: String = 'haxelibfiles.txt';
-	private static inline var outputFile: String = 'haxelib.zip';
-	private static inline var haxelibFile: String = 'haxelib.json';
-	private static inline var readmeFile: String = 'README.md';
-	private static inline var badgeVersionBegin: String = '[![Haxelib](https://img.shields.io/badge/haxelib-';
-	private static inline var badgeVersionEnd: String = '-';
+	private static inline final listFile: String = 'haxelibfiles.txt';
+	private static inline final outputFile: String = 'haxelib.zip';
+	private static inline final haxelibFile: String = 'haxelib.json';
+	private static inline final readmeFile: String = 'README.md';
+	private static inline final badgeVersionBegin: String = '[![Haxelib](https://img.shields.io/badge/haxelib-';
+	private static inline final badgeVersionEnd: String = '-';
 
 	public static function run(command: String, args: Array<String>): Void {
 		switch command {
 			case 'submit':
-				var a = args.shift();
+				final a = args.shift();
 				submit(a, args.join(' '));
 			case 'create':
-				var a = args.shift();
+				final a = args.shift();
 				create(a, args.join(' '));
 			case 'micro':
 				upver(2, args.join(' '));
@@ -37,8 +37,8 @@ class Haxelib {
 	}
 
 	private static function upver(index: Int, desc: String): Void {
-		var jdata = getData();
-		var ver = parseVersion(jdata.version);
+		final jdata = getData();
+		final ver = parseVersion(jdata.version);
 		ver[index]++;
 		for (i in index + 1...ver.length) ver[i] = 0;
 		_submit(jdata, ver.join('.'), desc);
@@ -49,8 +49,8 @@ class Haxelib {
 			Utils.error('$haxelibFile not exists');
 			return null;
 		}
-		var tdata = sys.io.File.getContent(haxelibFile);
-		var jdata = haxe.Json.parse(tdata);
+		final tdata = sys.io.File.getContent(haxelibFile);
+		final jdata = haxe.Json.parse(tdata);
 		return jdata;
 	}
 
@@ -60,15 +60,15 @@ class Haxelib {
 			return;
 		}
 
-		var jdata = getData();
+		final jdata = getData();
 
 		if (jdata.version == version) {
 			Utils.error('Wrong new version');
 			return;
 		}
 
-		var oldver = parseVersion(jdata.version);
-		var newver = parseVersion(version);
+		final oldver = parseVersion(jdata.version);
+		final newver = parseVersion(version);
 
 		if (!(newver[0] > oldver[0] || newver[1] > oldver[1] || newver[2] > oldver[2])) {
 			Utils.error('Wrong new version');
@@ -95,9 +95,9 @@ class Haxelib {
 	}
 
 	private static function upload(): Void {
-		var data = sys.io.File.getContent(listFile).split('\n');
+		final data = sys.io.File.getContent(listFile).split('\n');
 		if (data.indexOf(haxelibFile) == -1) data.push(haxelibFile);
-		var zip = new pony.ZipTool(outputFile, 0);
+		final zip = new pony.ZipTool(outputFile, 0);
 		zip.onLog << Sys.println;
 		zip.onError << function(err: String) throw err;
 		zip.writeList(data).end();
@@ -109,7 +109,7 @@ class Haxelib {
 	private static function git(version: String, desc: String): Void {
 		if (!FileSystem.exists('.git')) return;
 		try {
-			var message: String = StringTools.rtrim('Update haxelib v $version. $desc');
+			final message: String = StringTools.rtrim('Update haxelib v $version. $desc');
 			Utils.command('git', ['add', '--all']);
 			Utils.command('git', ['commit', '-a', '-m', message]);
 			Utils.command('git', ['push']);
@@ -131,7 +131,7 @@ class Haxelib {
 			Utils.error('$haxelibFile exists');
 			return;
 		}
-		var jdata = {
+		final jdata = {
 			name: name,
 			url: '',
 			license: '',

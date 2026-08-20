@@ -4,7 +4,7 @@ import sys.io.Process;
  * Utils
  * @author AxGord <axgord@gmail.com>
  */
-@:nullSafety @:final class Utils {
+@:nullSafety final class Utils {
 
 	public static var nodeExists(get, never): Bool;
 	public static var codeExists(get, never): Bool;
@@ -77,7 +77,7 @@ import sys.io.Process;
 	public static function cmdExistsa(c: String, a: Array<String>): Bool {
 		beginColor(90);
 		Sys.print('$c ');
-		var r: Bool = Sys.command(c, a) == 0;
+		final r: Bool = Sys.command(c, a) == 0;
 		endColor();
 		return r;
 	}
@@ -101,7 +101,7 @@ import sys.io.Process;
 	public static function setPerm(dir: String, v: Int, r: Bool = false): Void {
 		beginColor(90);
 		Sys.println('Set perm $v for $dir');
-		var a: Array<String> = ['chmod'];
+		final a: Array<String> = ['chmod'];
 		if (r) a.push('-R');
 		a.push('$v');
 		a.push(dir);

@@ -39,21 +39,21 @@ class PixiExtends {
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public static inline function darknessFilter(v: Float): ColorMatrixFilter {
-		var c = new ColorMatrixFilter();
+		final c = new ColorMatrixFilter();
 		darkness(c, v);
 		return c;
 	}
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public static inline function brightnessFilter(v: Float): ColorMatrixFilter {
-		var c = new ColorMatrixFilter();
+		final c = new ColorMatrixFilter();
 		c.brightness(v, true);
 		return c;
 	}
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public static inline function blurFilter(): BlurFilter {
-		var b = new BlurFilter();
+		final b = new BlurFilter();
 		b.passes = 3;
 		return b;
 	}
@@ -82,7 +82,7 @@ class PixiExtends {
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public static inline function setFilterAreaXY(o: Sprite, sx: Float, sy: Float): Void {
-		var p = o.toGlobal(new Point());
+		final p = o.toGlobal(new Point());
 		o.filterArea = new Rectangle(p.x - sx, p.y - sy, o.width + sx * 2, o.height + sy * 2);
 	}
 
@@ -125,11 +125,11 @@ class PixiExtendsTexture {
 class PixiExtendsText {
 
 	public static function glow(t: Text, blur: Int = 10, ?color: Null<UInt>): Text {
-		var f = new BlurFilter();
+		final f = new BlurFilter();
 		f.blur = blur;
-		var s = Reflect.copy(t.style);
+		final s = Reflect.copy(t.style);
 		if (color != null) s.fill = color;
-		var ct = new Text(t.text, s);
+		final ct = new Text(t.text, s);
 		ct.x = t.x;
 		ct.y = t.y;
 		ct.filters = [f];
@@ -145,11 +145,11 @@ class PixiExtendsText {
 class PixiExtendsBitmapText {
 
 	public static function glow(t: BitmapText, style: BitmapTextStyle, blur: Int = 10, ?color: Null<UInt>): BitmapText {
-		var f = new BlurFilter();
+		final f = new BlurFilter();
 		f.blur = blur;
 		var s: BitmapTextStyle = Reflect.copy(style);
 		if (color != null) s.tint = color;
-		var ct = new BitmapText(t.text, s);
+		final ct = new BitmapText(t.text, s);
 		ct.x = t.x;
 		ct.y = t.y;
 		ct.filters = [f];

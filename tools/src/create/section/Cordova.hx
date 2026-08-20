@@ -22,16 +22,16 @@ class Cordova extends Section {
 		if (title != null) add('id', 'org.apache.cordova.pony.${StringTools.replace(title, ' ', '')}');
 
 		if (versionBuildDate) {
-			var version = Xml.createElement('version');
+			final version = Xml.createElement('version');
 			version.set('buildDate', 'true');
 			xml.addChild(version);
 		}
 
 		if (title != null || androidVersionIncrement) {
-			var release = Xml.createElement('release');
+			final release = Xml.createElement('release');
 			if (title != null) release.addChild(XmlTools.node('name', title));
 			if (androidVersionIncrement) {
-				var av = Xml.createElement('androidVersionCode');
+				final av = Xml.createElement('androidVersionCode');
 				av.set('increment', 'true');
 				release.addChild(av);
 			}
@@ -39,7 +39,7 @@ class Cordova extends Section {
 		}
 
 		if (title != null) {
-			var debug = Xml.createElement('debug');
+			final debug = Xml.createElement('debug');
 			debug.addChild(XmlTools.node('name', '$title Debug'));
 			xml.addChild(debug);
 		}

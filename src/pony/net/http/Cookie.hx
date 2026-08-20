@@ -6,16 +6,14 @@ package pony.net.http;
  */
 class Cookie {
 
-	private var oldCookie: Map<String, String>;
-	private var newCookie: Map<String, String>;
+	private var oldCookie: Map<String, String> = [];
+	private final newCookie: Map<String, String> = [];
 
 	public function new(?cookie: String, ?mapCookie: Map<String, String>) {
-		newCookie = [];
-		oldCookie = [];
 		if (cookie != null) {
-			var a: Array<String> = cookie.split(';');
+			final a: Array<String> = cookie.split(';');
 			for (e in a) {
-				var kv: Array<String> = e.split('=').map(StringTools.trim);
+				final kv: Array<String> = e.split('=').map(StringTools.trim);
 				// todo: fix double cookie problem
 				oldCookie[kv[0]] = kv[1];
 			}

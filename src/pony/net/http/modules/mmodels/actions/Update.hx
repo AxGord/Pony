@@ -15,7 +15,7 @@ using pony.text.TextTools;
 class Update extends Action {
 
 	override public function connect(cpq: CPQ, modelConnect: ModelConnect): Pair<EConnect, ISubActionConnect> {
-		var obj = new UpdateConnect(this, cpq, modelConnect);
+		final obj = new UpdateConnect(this, cpq, modelConnect);
 		return new Pair(REG(cast obj), cast obj);
 	}
 
@@ -43,9 +43,9 @@ class UpdateConnect extends ActionConnect implements ISubActionConnect {
 			return true;
 		}
 
-		var ca: Array<Dynamic> = [];
+		final ca: Array<Dynamic> = [];
 		for (k in base.args.keys()) {
-			var v: String = h[k];
+			final v: String = h[k];
 			if (Std.is(v, Array)) {
 				cpq.connection.error('Array not supported');
 				return true;
@@ -76,8 +76,8 @@ class UpdateConnect extends ActionConnect implements ISubActionConnect {
 	}
 
 	public function st(arg: String): String {
-		var m = storage[base.id];
-		var r: ActResult = m == null ? null : m.result;
+		final m = storage[base.id];
+		final r: ActResult = m == null ? null : m.result;
 		var st: String = null;
 		if (r != null) switch (r) {
 			case OK:
@@ -109,8 +109,8 @@ class UpdatePut extends pony.text.tpl.TplPut<UpdateConnect, Dynamic> {
 			var fixList = [];
 			if (args != null && args.exists('fix')) fixList = args['fix'].split(',');
 			var r: String = '';
-			var ma: Map<Int, { values: Map<String, String>, result: ActResult }> = cast a.storage;
-			var m = ma[a.base.id];
+			final ma: Map<Int, { values: Map<String, String>, result: ActResult }> = cast a.storage;
+			final m = ma[a.base.id];
 			if (m == null)
 				for (k in a.base.args.keys()) {
 					r += inputE(k, Reflect.field(b, k), fixList.indexOf(k) != -1);
@@ -121,13 +121,12 @@ class UpdatePut extends pony.text.tpl.TplPut<UpdateConnect, Dynamic> {
 					r += inputE(k, m.values.exists(k) ? m.values.get(k) : '', fixList.indexOf(k) != -1);
 				}
 			a.clr();
-			return
-				'<form action="" method="POST">${(content != null ? '<div class="capition">' + @await tplData(content) + '</div>' : '')}'
-					+ '$r<button>Send</button> <a href="" class="action">Clear</a></form>';
+			return '<form action="" method="POST">${content != null ? '<div class="capition">' + @await tplData(content) + '</div>' : ''}'
+				+ '$r<button>Send</button> <a href="" class="action">Clear</a></form>';
 		} else {
 			trace(name);
 			trace('------------');
-			var r: String = @await sub(a, b, UpdatePutSub, content);
+			final r: String = @await sub(a, b, UpdatePutSub, content);
 			a.clr();
 			return r;
 		}
@@ -135,7 +134,7 @@ class UpdatePut extends pony.text.tpl.TplPut<UpdateConnect, Dynamic> {
 
 	private function inputE(name: String, value: String, fix: Bool): String {
 		if (a.base.model.columns.get(name).hid) return input(name, null, value);
-		var s: String = a.st(name);
+		final s: String = a.st(name);
 		if (s == null) return '<label>${name.bigFirst()}${input(name, null, value)}</label>';
 		if (s == '') return '<label>${name.bigFirst()}${input(name, 'ok', fix ? value : '')}</label>';
 		return '<label>${name.bigFirst()}${input(name, 'error', value)}<div>$s</div></label>';
@@ -179,7 +178,7 @@ class UpdatePutArg extends pony.text.tpl.TplPut<{ o: UpdateConnect, arg: String 
 			case 'ok':
 				return a.o.st(a.arg) == '' ? @await tplData(content) : '';
 			case 'error':
-				var s = a.o.st(a.arg);
+				final s = a.o.st(a.arg);
 				return s != null && s != '' ? @await tplData(content) : '';
 			case _:
 				return @await super.tag(name, content, arg, args, kid);
@@ -189,14 +188,14 @@ class UpdatePutArg extends pony.text.tpl.TplPut<{ o: UpdateConnect, arg: String 
 	@:async
 	override public function shortTag(name: String, arg: String, ?kid: ITplPut): String {
 		if (name == 'error') {
-			var s = a.o.st(a.arg);
+			final s = a.o.st(a.arg);
 			if (s != null)
 				return s;
 			else
 				return '';
 		} else if (name == 'value') {
-			var ma: Map<Int, Dynamic> = a.o.cpq.connection.sessionStorage.get('modelsActions');
-			var m = ma[a.o.base.id];
+			final ma: Map<Int, Dynamic> = a.o.cpq.connection.sessionStorage.get('modelsActions');
+			final m = ma[a.o.base.id];
 			if (m == null) {
 				return b;
 			} else {

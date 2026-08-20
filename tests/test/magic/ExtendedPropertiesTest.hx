@@ -52,7 +52,7 @@ class ExtendedPropertiesTestHelper implements ExtendedProperties {
 	public function tvget(p: Int = 3) return this.p;
 
 	public function dget() {
-		var p = 12;
+		final p = 12;
 		return p;
 	}
 

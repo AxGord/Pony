@@ -25,14 +25,14 @@ using hugs.HUGSWrapper;
  */
 @:nativeGen class GUI {
 
-	static private var textures: Map<Int, Dynamic> = [];
+	static private final textures: Map<Int, Dynamic> = [];
 
 	public static function text(f: Vector3, point: IntPoint, text: String, style: FontStyle): GameObject {
-		var b = new GameObject();
+		final b = new GameObject();
 		b.name = 'gui_text';
 		b.transform.position = f;
 		b.transform.localScale = new Vector3(0, 0, 0);
-		var g = b.addTypedComponent(GUIText);
+		final g = b.addTypedComponent(GUIText);
 		g.pixelOffset = new Vector2(point.x, -point.y);
 		g.text = text;
 		g.font = HUGS.fonts.get(style.font);
@@ -54,9 +54,9 @@ using hugs.HUGSWrapper;
 			t.Apply();
 			textures[color] = t;
 		}
-		var b = new GameObject();
+		final b = new GameObject();
 		b.name = 'gui_rect';
-		var g = b.addTypedComponent(GUITexture);
+		final g = b.addTypedComponent(GUITexture);
 		b.guiTexture.texture = textures[color];
 		b.transform.position = f;
 		b.transform.localScale = new Vector3(0, 0, 0);

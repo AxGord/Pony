@@ -14,7 +14,7 @@ using pony.text.XmlTools;
  */
 class Download extends NModule<DownloadConfig> {
 
-	private static inline var PRIORITY: Int = 30;
+	private static inline final PRIORITY: Int = 30;
 
 	public function new() super('download');
 
@@ -61,10 +61,10 @@ private class DownloadReader extends BAReader<DownloadConfig> {
 	override private function readNode(xml: Fast): Void {
 		switch xml.name {
 			case 'unit':
-				var url: String = xml.att.url;
-				var update: Bool = xml.isTrue('update');
-				var p: Triple<String, String, Bool> = if (xml.has.v) {
-					var v: String = xml.att.v;
+				final url: String = xml.att.url;
+				final update: Bool = xml.isTrue('update');
+				final p: Triple<String, String, Bool> = if (xml.has.v) {
+					final v: String = xml.att.v;
 					new Triple(
 						StringTools.replace(url, '{v}', v), xml.has.check ? StringTools.replace(xml.att.check, '{v}', v) : null, update
 					);

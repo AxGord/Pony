@@ -44,9 +44,9 @@ import pony.events.Signal2;
 			return;
 		}
 		var len: UInt = data.length;
-		var needSplit: Bool = maxSize != 0 && len > maxSize;
+		final needSplit: Bool = maxSize != 0 && len > maxSize;
 		if (isWithLength || needSplit) {
-			var bo: BytesOutput = new BytesOutput();
+			final bo: BytesOutput = new BytesOutput();
 			#if cs
 			if (isWithLength) bo.writeInt32(len);
 			#else
@@ -54,7 +54,7 @@ import pony.events.Signal2;
 			#end
 			if (needSplit) {
 				if (isWithLength && maxSize > SocketClientBase.MIN_DATA_SIZE + writeLengthSize) maxSize -= writeLengthSize;
-				var b: BytesInput = new BytesInput(data.getBytes());
+				final b: BytesInput = new BytesInput(data.getBytes());
 				while (len >= maxSize) {
 					bo.write(b.read(maxSize));
 					len -= maxSize;
@@ -70,13 +70,13 @@ import pony.events.Signal2;
 	}
 
 	public function sendBytes(b: Bytes): Void {
-		var bo: BytesOutput = new BytesOutput();
+		final bo: BytesOutput = new BytesOutput();
 		bo.write(b);
 		send(bo);
 	}
 
 	public function sendString(data: String): Void {
-		var bo: BytesOutput = new BytesOutput();
+		final bo: BytesOutput = new BytesOutput();
 		bo.writeString(data);
 		send(bo);
 	}
@@ -86,7 +86,7 @@ import pony.events.Signal2;
 	public function sendAllStack(): Void while (stack.length > 0) @:nullSafety(Off) send(stack.shift());
 
 	public inline function setTaskb(prefix: Bytes, ?len: Int64): Signal2<BytesInput, ISocketClient> {
-		var bo: BytesOutput = new BytesOutput();
+		final bo: BytesOutput = new BytesOutput();
 		bo.write(prefix);
 		return setTask(bo, len);
 	}
@@ -121,15 +121,15 @@ import pony.events.Signal2;
 			}
 		}
 		if (taskDataLength == 0) {
-			var b: BytesInput = new BytesInput(bi.readAll());
+			final b: BytesInput = new BytesInput(bi.readAll());
 			removeTask();
 			eTask.dispatch(null, this);
 			taskDataHandler(b);
 		} else {
 			@:nullSafety(Off) taskBuffer.write(bi.readAll());
 			if (@:nullSafety(Off) taskBuffer.length >= taskDataLength) {
-				var b: BytesInput = new BytesInput(@:nullSafety(Off) taskBuffer.getBytes());
-				var r: BytesInput = new BytesInput(b.read(taskDataLength.low)); // todo high
+				final b: BytesInput = new BytesInput(@:nullSafety(Off) taskBuffer.getBytes());
+				final r: BytesInput = new BytesInput(b.read(taskDataLength.low)); // todo high
 				removeTask();
 				eTask.dispatch(r, this);
 				taskDataHandler(new BytesInput(b.readAll()));
@@ -143,11 +143,11 @@ import pony.events.Signal2;
 	}
 
 	public function sendSetTask(out: Bytes, ?prefix: Bytes, len: UInt = 0): Signal2<BytesInput, ISocketClient> {
-		var ob: BytesOutput = new BytesOutput();
+		final ob: BytesOutput = new BytesOutput();
 		ob.write(out);
 		send(ob);
 		if (prefix != null) {
-			var pb: BytesOutput = new BytesOutput();
+			final pb: BytesOutput = new BytesOutput();
 			pb.write(prefix);
 			return setTask(pb, len);
 		} else {

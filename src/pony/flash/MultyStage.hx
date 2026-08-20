@@ -10,7 +10,7 @@ import flash.display.Stage;
  * MultyStage
  * @author AxGord <axgord@gmail.com>
  */
-@:nullSafety(Strict) @:final class MultyStage implements HasSignal {
+@:nullSafety(Strict) final class MultyStage implements HasSignal {
 
 	@:auto public static var onAdd: Signal1<Stage>;
 	@:auto public static var onRemove: Signal1<Stage>;
@@ -25,7 +25,7 @@ import flash.display.Stage;
 	public static function apply(applyListener: Listener1<Stage>, ?removeListener: Listener1<Stage>): Void {
 		onAdd << applyListener;
 		if (removeListener != null) onRemove << removeListener;
-		var controller: SignalControllerInner1<Stage> = new SignalControllerInner1<Stage>(onAdd);
+		final controller: SignalControllerInner1<Stage> = new SignalControllerInner1<Stage>(onAdd);
 		for (stage in MultyStage) {
 			applyListener.call(stage, controller);
 			if (controller.stop) break;
@@ -37,7 +37,7 @@ import flash.display.Stage;
 		onAdd >> applyListener;
 		if (removeListener != null) {
 			onRemove >> removeListener;
-			var controller: SignalControllerInner1<Stage> = new SignalControllerInner1<Stage>(onRemove);
+			final controller: SignalControllerInner1<Stage> = new SignalControllerInner1<Stage>(onRemove);
 			for (stage in MultyStage) {
 				removeListener.call(stage, controller);
 				if (controller.stop) break;

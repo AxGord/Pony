@@ -14,7 +14,7 @@ import starling.textures.Texture;
  */
 class StarlingSpritePack extends Sprite {
 
-	private var data: Array<Image>;
+	private final data: Array<Image>;
 
 	public var currentFrame(default, set): Int = 0;
 
@@ -36,8 +36,8 @@ class StarlingSpritePack extends Sprite {
 	public static function builder(
 		_atlasCreator: AtlasCreator, source: DisplayObject, coordinateSpace: DisplayObject, disposeable: Bool = false
 	): starling.display.DisplayObject {
-		var m: SpritePack = cast source;
-		var a: Array<Image> = [];
+		final m: SpritePack = cast source;
+		final a: Array<Image> = [];
 
 		for (f in 1...(m.totalFrames + 1)) {
 			m.gotoAndStop(f);

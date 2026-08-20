@@ -19,23 +19,23 @@ using Lambda;
 class NPMBuilder {
 
 	#if macro
-	private static inline var file: String = 'pony.xml';
-	private static var replaces: Array<String> = ['-', '.'];
+	private static inline final file: String = 'pony.xml';
+	private static final replaces: Array<String> = ['-', '.'];
 	#end
 
 	@SuppressWarnings('checkstyle:MagicNumber')
 	macro public static function build(): Array<Field> {
-		var access = [APublic, AStatic];
-		var faccess = [APrivate, AStatic, AInline #if (haxe_ver >= 4.2), AExtern #end];
+		final access = [APublic, AStatic];
+		final faccess = [APrivate, AStatic, AInline #if (haxe_ver >= 4.2), AExtern #end];
 		Context.registerModuleDependency(Context.getLocalModule(), file);
-		var fields: Array<Field> = Context.getBuildFields();
+		final fields: Array<Field> = Context.getBuildFields();
 		if (!sys.FileSystem.exists(file)) return fields;
-		var xml = XmlTools.fast(File.getContent(file)).node.project;
+		final xml = XmlTools.fast(File.getContent(file)).node.project;
 		if (xml.hasNode.npm) {
-			var npm = xml.node.npm;
+			final npm = xml.node.npm;
 			for (module in npm.nodes.module) {
-				var req: String = module.innerData;
-				var name: String = module.has.name ? module.att.name : filterName(req);
+				final req: String = module.innerData;
+				final name: String = module.has.name ? module.att.name : filterName(req);
 				if (fields.exists(function(f: Field) return f.name == name)) continue;
 				fields.push({
 					name: name,

@@ -24,15 +24,15 @@ class Touchable extends TouchableBase {
 
 	public static var down(default, null): Bool = false;
 	public static var downRight(default, null): Bool = false;
-	private static var MOUSEMOVE: String = 'mousemove';
-	private static var MOUSEUP: String = 'mouseup';
-	private static var MOUSEDOWN: String = 'mousedown';
-	private static var MOUSELEAVE: String = 'mouseout';
-	private static var MOUSEENTER: String = 'mouseover';
-	private static var TOUCHESTART: String = 'touchstart';
-	private static var TOUCHEND: String = 'touchend';
-	private static var TOUCHCANCEL: String = 'touchcancel';
-	private static var CLICK: String = 'click';
+	private static final MOUSEMOVE: String = 'mousemove';
+	private static final MOUSEUP: String = 'mouseup';
+	private static final MOUSEDOWN: String = 'mousedown';
+	private static final MOUSELEAVE: String = 'mouseout';
+	private static final MOUSEENTER: String = 'mouseover';
+	private static final TOUCHESTART: String = 'touchstart';
+	private static final TOUCHEND: String = 'touchend';
+	private static final TOUCHCANCEL: String = 'touchcancel';
+	private static final CLICK: String = 'click';
 
 	private static var lastPos: Point<Float> = new Point<Float>(0, 0);
 
@@ -159,7 +159,7 @@ class Touchable extends TouchableBase {
 			over = true;
 			dispatchOver(getTouchId(event));
 		}
-		var right: Bool = event.button == 1;
+		final right: Bool = event.button == 1;
 		if (right)
 			_downRight = true;
 		else
@@ -172,7 +172,7 @@ class Touchable extends TouchableBase {
 
 	private function upHandler(event: Event): Void {
 		if (outover || event.button > 1) return;
-		var right: Bool = event.button == 1;
+		final right: Bool = event.button == 1;
 		if (right) {
 			_downRight = false;
 		} else {

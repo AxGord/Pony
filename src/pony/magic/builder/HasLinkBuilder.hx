@@ -16,14 +16,14 @@ using pony.macro.Tools;
 class HasLinkBuilder {
 
 	macro public static function build(): Array<Field> {
-		var fields: Array<Field> = Context.getBuildFields();
+		final fields: Array<Field> = Context.getBuildFields();
 		for (field in fields) {
 			switch field.kind {
 				case FProp(get, set, type, expr) if (get == 'link' || set == 'link'):
 					if (get == 'link') {
 						get = 'get';
 
-						var access = [AInline, APrivate];
+						final access = [AInline, APrivate];
 						if (field.access.indexOf(AStatic) != -1) access.push(AStatic);
 						fields.push({
 							name: 'get_${field.name}',
@@ -44,7 +44,7 @@ class HasLinkBuilder {
 					if (set == 'link') {
 						set = 'set';
 
-						var access = [AInline, APrivate];
+						final access = [AInline, APrivate];
 						if (field.access.indexOf(AStatic) != -1) access.push(AStatic);
 						fields.push({
 							name: 'set_${field.name}',

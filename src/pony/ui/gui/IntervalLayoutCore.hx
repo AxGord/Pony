@@ -32,9 +32,9 @@ using pony.Tools;
 		if (vert) {
 			_w = 0;
 			pos = border.top;
-			var sizes = [
+			final sizes = [
 				for (obj in objects) {
-					var objSize = getObjSize(obj);
+					final objSize = getObjSize(obj);
 					if (objSize != null) {
 						setYpos(obj, Std.int(pos));
 						pos += objSize.y + interval;
@@ -47,19 +47,19 @@ using pony.Tools;
 			];
 			if (objects.length > 0) pos -= interval;
 			_h = pos;
-			var hlist = GeomTools.halign(_align, _w, sizes);
+			final hlist = GeomTools.halign(_align, _w, sizes);
 			for (i in 0...hlist.length) setXpos(objects[i], Std.int(hlist[i]) + border.left);
 		} else {
 			_h = 0;
 			_w = 0;
 			pos = border.left;
 			var maxvsize: Float = 0;
-			var vPositions: Array<Float> = [];
-			var objGroups: Array<Pair<Array<Float>, Array<T>>> = [];
+			final vPositions: Array<Float> = [];
+			final objGroups: Array<Pair<Array<Float>, Array<T>>> = [];
 			var objGroup: Array<T> = [];
 			var objSizes: Array<Float> = [];
 			for (obj in objects) {
-				var objSize = getObjSize(obj);
+				final objSize = getObjSize(obj);
 				if (objSize != null) {
 					if (limit != 0 && pos + objSize.x > limit - border.right) {
 						pos = border.left;
@@ -86,9 +86,9 @@ using pony.Tools;
 			_h += maxvsize;
 			objGroups.push(new Pair(objSizes, objGroup));
 			for (i in 0...objGroups.length) {
-				var g = objGroups[i];
-				var vp = vPositions[i];
-				var vlist = GeomTools.valign(_align, _h, g.a);
+				final g = objGroups[i];
+				final vp = vPositions[i];
+				final vlist = GeomTools.valign(_align, _h, g.a);
 				for (i in 0...vlist.length) setYpos(g.b[i], Std.int(vlist[i]) + border.top + vp);
 			}
 		}

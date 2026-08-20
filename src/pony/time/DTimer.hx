@@ -67,7 +67,7 @@ class DTimer implements HasSignal implements ITimer<DTimer> implements Declarato
 	private function _update(dt: DT): Void {
 		sumdt += dt;
 		if (sumdt >= MINIMAL_TIME_STEP) {
-			var t: Time = sumdt.toTime();
+			final t: Time = sumdt.toTime();
 			sumdt -= DT.fromTime(t);
 			if (time != null) {
 				if (time.back) {
@@ -87,7 +87,7 @@ class DTimer implements HasSignal implements ITimer<DTimer> implements Declarato
 	private function loop(): Bool {
 		if (eComplete == null) return true;
 		var result: Bool = false;
-		var d: DT = Math.abs(currentTime - time.max) / 1000 + sumdt;
+		final d: DT = Math.abs(currentTime - time.max) / 1000 + sumdt;
 		if (repeatCounter > 0) {
 			currentTime -= time.length;
 			repeatCounter--;
@@ -126,7 +126,7 @@ class DTimer implements HasSignal implements ITimer<DTimer> implements Declarato
 		return new DTimer(DeltaTime.fixedUpdate, time, repeat);
 
 	public static inline function delay(time: Time, f: Listener1<DT>, ?dt: DT): DTimer {
-		var t: DTimer = DTimer.createTimer(time);
+		final t: DTimer = DTimer.createTimer(time);
 		t.complete.once(f);
 		t.complete.once(t.destroy);
 		t.start(dt);
@@ -134,7 +134,7 @@ class DTimer implements HasSignal implements ITimer<DTimer> implements Declarato
 	}
 
 	public static inline function fixedDelay(time: Time, f: Listener1<DT>, ?dt: DT): DTimer {
-		var t: DTimer = DTimer.createFixedTimer(time);
+		final t: DTimer = DTimer.createFixedTimer(time);
 		t.complete.once(f);
 		t.complete.once(t.destroy);
 		t.start(dt);
@@ -142,28 +142,28 @@ class DTimer implements HasSignal implements ITimer<DTimer> implements Declarato
 	}
 
 	public static inline function repeat(time: Time, f: Listener1<DT>, ?dt: DT): DTimer {
-		var t: DTimer = DTimer.createTimer(time, -1);
+		final t: DTimer = DTimer.createTimer(time, -1);
 		t.complete.add(f);
 		t.start(dt);
 		return t;
 	}
 
 	public static inline function fixedRepeat(time: Time, f: Listener1<DT>, ?dt: DT): DTimer {
-		var t: DTimer = DTimer.createFixedTimer(time, -1);
+		final t: DTimer = DTimer.createFixedTimer(time, -1);
 		t.complete.add(f);
 		t.start(dt);
 		return t;
 	}
 
 	public static inline function clock(time: Time): DTimer {
-		var t: DTimer = createTimer(null);
+		final t: DTimer = createTimer(null);
 		t.currentTime = time;
 		t.start();
 		return t;
 	}
 
 	public static inline function fixedClock(time: Time): DTimer {
-		var t: DTimer = createFixedTimer(null);
+		final t: DTimer = createFixedTimer(null);
 		t.currentTime = time;
 		t.start();
 		return t;

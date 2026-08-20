@@ -9,7 +9,7 @@ import pony.ui.touch.Mouse;
  */
 class TouchSimulator {
 
-	private static var id: Int = 1;
+	private static final id: Int = 1;
 
 	public static function run(): Void {
 		Mouse.onLeftDown << down;

@@ -6,7 +6,7 @@ import types.HaxeTargets;
 
 class Gitignore {
 
-	private static var OS: Array<String> = [
+	private static final OS: Array<String> = [
 		'# OS generated files',
 		'.DS_Store',
 		'.DS_Store?',
@@ -17,17 +17,17 @@ class Gitignore {
 		'Thumbs.db'
 	];
 
-	private static var GITIGNORE: String = '.gitignore';
-	private static var NODE_MODULES: String = 'node_modules/';
-	private static var PACKAGE_LOCK: String = 'package-lock.json';
-	private static var LIBCACHE: String = 'libcache.js';
-	private static var ROOT: String = '/';
-	private static var MAP: String = '.map';
-	private static var NEWLINE: String = '\n';
-	private static var BUILDS_DIR: String = 'builds/';
+	private static final GITIGNORE: String = '.gitignore';
+	private static final NODE_MODULES: String = 'node_modules/';
+	private static final PACKAGE_LOCK: String = 'package-lock.json';
+	private static final LIBCACHE: String = 'libcache.js';
+	private static final ROOT: String = '/';
+	private static final MAP: String = '.map';
+	private static final NEWLINE: String = '\n';
+	private static final BUILDS_DIR: String = 'builds/';
 
 	public static function create(project: Project, type: ProjectType): Void {
-		var result: Array<String> = OS.copy();
+		final result: Array<String> = OS.copy();
 		result.push('# Project files');
 		result.push(ROOT + BUILDS_DIR);
 		if (project.build.active && project.build.hxml != null) result.push(ROOT + project.build.getHxmlFile());
@@ -35,22 +35,22 @@ class Gitignore {
 		if (project.thirdbuild.active && project.thirdbuild.hxml != null) result.push(ROOT + project.thirdbuild.getHxmlFile());
 		if (project.fourthbuild.active && project.fourthbuild.hxml != null) result.push(ROOT + project.fourthbuild.getHxmlFile());
 		if (project.build.active) {
-			var output: String = project.build.output();
+			final output: String = project.build.output();
 			result.push(ROOT + output);
 			if (project.build.target == HaxeTargets.JS) result.push(ROOT + output + MAP);
 		}
 		if (project.secondbuild.active) {
-			var output: String = project.secondbuild.output();
+			final output: String = project.secondbuild.output();
 			result.push(ROOT + output);
 			if (project.secondbuild.target == HaxeTargets.JS) result.push(ROOT + output + MAP);
 		}
 		if (project.thirdbuild.active) {
-			var output: String = project.thirdbuild.output();
+			final output: String = project.thirdbuild.output();
 			result.push(ROOT + output);
 			if (project.thirdbuild.target == HaxeTargets.JS) result.push(ROOT + output + MAP);
 		}
 		if (project.fourthbuild.active) {
-			var output: String = project.fourthbuild.output();
+			final output: String = project.fourthbuild.output();
 			result.push(ROOT + output);
 			if (project.fourthbuild.target == HaxeTargets.JS) result.push(ROOT + output + MAP);
 		}
@@ -72,7 +72,7 @@ class Gitignore {
 				if (project.hashlink.android != null) result.push(ROOT + project.build.outputPath + project.hashlink.android);
 			case _:
 		}
-		var finalResult: Array<String> = [];
+		final finalResult: Array<String> = [];
 		for (r in result) if (finalResult.indexOf(r) == -1) finalResult.push(r);
 		Sys.println('Save gitignore file');
 		File.saveContent(GITIGNORE, finalResult.join(NEWLINE));

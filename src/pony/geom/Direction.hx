@@ -7,11 +7,11 @@ package pony.geom;
 #if (haxe_ver >= 4.2) enum #else @:enum #end
 abstract Direction(Int) from Int to Int {
 
-	var Undefined = 0;
-	var Left = 1 << 0;
-	var Right = 1 << 1;
-	var Up = 1 << 2;
-	var Down = 1 << 3;
+	final Undefined = 0;
+	final Left = 1 << 0;
+	final Right = 1 << 1;
+	final Up = 1 << 2;
+	final Down = 1 << 3;
 
 	@:to(String) public function toString(): String {
 		return switch this {
@@ -33,7 +33,7 @@ abstract Direction(Int) from Int to Int {
 abstract Directions(UInt) from UInt to UInt {
 
 	@:to(String) public static function toString(v: UInt): String {
-		var r: Array<String> = [];
+		final r: Array<String> = [];
 		if (v & Up != 0) r.push(Up);
 		if (v & Down != 0) r.push(Down);
 		if (v & Left != 0) r.push(Left);

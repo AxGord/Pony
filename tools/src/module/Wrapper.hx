@@ -10,7 +10,7 @@ import types.BASection;
  */
 class Wrapper extends CfgModule<WrapperConfig> {
 
-	private static inline var PRIORITY: Int = 4;
+	private static inline final PRIORITY: Int = 4;
 
 	public function new() super('wrapper');
 
@@ -32,9 +32,9 @@ class Wrapper extends CfgModule<WrapperConfig> {
 	}
 
 	override private function runNode(cfg: WrapperConfig): Void {
-		var file = cfg.file;
-		var pre = cfg.pre;
-		var post = cfg.post;
+		final file = cfg.file;
+		final pre = cfg.pre;
+		final post = cfg.post;
 		if (cfg.file != null && (pre != '' || post != '')) {
 			Sys.println('Apply wrapper to $file');
 			var data = File.getContent(file);

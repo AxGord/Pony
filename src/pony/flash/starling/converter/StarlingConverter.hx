@@ -51,7 +51,7 @@ using pony.flash.FLExtends;
  */
 class StarlingConverter {
 
-	private static var _atlasCreator: AtlasCreator = new AtlasCreator();
+	private static final _atlasCreator: AtlasCreator = new AtlasCreator();
 
 	public static function getObject(
 		source: flash.display.DisplayObject, coordinateSpace: flash.display.DisplayObject, disposeable: Bool = false
@@ -156,7 +156,7 @@ class StarlingConverter {
 		result.pivotY = 0;
 
 		for (i in 0...untyped source.numChildren) {
-			var starlingChild: starling.display.DisplayObject = getObjectInternal(
+			final starlingChild: starling.display.DisplayObject = getObjectInternal(
 				untyped source.getChildAt(i), coordinateSpace, disposeable, atlasGeneration
 			);
 
@@ -200,9 +200,9 @@ class StarlingConverter {
 	private static function getStarlingTextField(
 		source: flash.text.TextField, coordinateSpace: flash.display.DisplayObject
 	): starling.text.TextField {
-		var format: TextFormat = source.getTextFormat();
+		final format: TextFormat = source.getTextFormat();
 
-		var selfRect: Rectangle = source.getBounds(source);
+		final selfRect: Rectangle = source.getBounds(source);
 
 		var result: starling.text.TextField = new starling.text.TextField(
 			cast(selfRect.width, Int), cast(selfRect.height, Int), source.text, format.font, format.size, format.color, format.bold
@@ -219,7 +219,7 @@ class StarlingConverter {
 				result.hAlign = HAlign.LEFT;
 		}
 
-		var matrix: flash.geom.Matrix = source.transform.matrix.clone();
+		final matrix: flash.geom.Matrix = source.transform.matrix.clone();
 
 		var parent: flash.display.DisplayObject = source.parent;
 		while (parent != coordinateSpace) {
@@ -230,7 +230,7 @@ class StarlingConverter {
 		result.transformationMatrix = matrix;
 
 		var rect: Rectangle = source.getBounds(coordinateSpace);
-		var matrixPoint: Point = matrix.transformPoint(new Point(selfRect.x, selfRect.y));
+		final matrixPoint: Point = matrix.transformPoint(new Point(selfRect.x, selfRect.y));
 
 		result.x = matrixPoint.x;
 		result.y = matrixPoint.y;
@@ -240,7 +240,7 @@ class StarlingConverter {
 
 	public static function childrenWithNames(clip: flash.display.Sprite): Bool {
 		for (i in 0...clip.numChildren) {
-			var child: flash.display.DisplayObject = clip.getChildAt(i);
+			final child: flash.display.DisplayObject = clip.getChildAt(i);
 			if (hasName(child)) return true;
 		}
 		return false;
@@ -253,11 +253,11 @@ class StarlingConverter {
 	private static function setPivotPointAndPosition(
 		result: starling.display.DisplayObject, source: flash.display.DisplayObject, coordinateSpace: flash.display.DisplayObject
 	): Void {
-		var rect: Rectangle = source.getBounds(coordinateSpace);
+		final rect: Rectangle = source.getBounds(coordinateSpace);
 
-		var matrix: Matrix = matrixCalculation(source, coordinateSpace);
+		final matrix: Matrix = matrixCalculation(source, coordinateSpace);
 
-		var matrixPoint: Point = matrix.transformPoint(new Point(0, 0));
+		final matrixPoint: Point = matrix.transformPoint(new Point(0, 0));
 
 		result.pivotX = matrixPoint.x - rect.x;
 		result.pivotY = matrixPoint.y - rect.y;
@@ -269,7 +269,7 @@ class StarlingConverter {
 	public static function matrixCalculation(
 		source: flash.display.DisplayObject, coordinateSpace: flash.display.DisplayObject
 	): flash.geom.Matrix {
-		var matrix: flash.geom.Matrix = source.transform.matrix.clone();
+		final matrix: flash.geom.Matrix = source.transform.matrix.clone();
 		var parent: flash.display.DisplayObject = source.parent;
 		while (parent != coordinateSpace && parent != null) {
 			matrix.concat(parent.transform.matrix);

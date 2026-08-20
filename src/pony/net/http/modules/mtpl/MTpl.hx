@@ -8,7 +8,7 @@ import pony.net.http.WebServer;
  * MTpl
  * @author AxGord
  */
-@:final class MTpl implements IModule {
+final class MTpl implements IModule {
 
 	public var server: WebServer;
 
@@ -20,7 +20,7 @@ import pony.net.http.WebServer;
 
 	public function connect(cpq: CPQ): EConnect {
 		if (cpq.connection.params.exists('template')) {
-			var tc: String = cpq.connection.params['template'];
+			final tc: String = cpq.connection.params['template'];
 			if (server.tpl.exists(tc)) {
 				cpq.connection.sessionStorage['template'] = tc;
 				cpq.connection.params.remove('template');
@@ -33,7 +33,7 @@ import pony.net.http.WebServer;
 			if (cpq.connection.params.exists('tryTemplate')) {
 				cpq.template = server.tpl.get(cpq.connection.params['tryTemplate']);
 			} else {
-				var st: Map<String, Dynamic> = cpq.connection.sessionStorage;
+				final st: Map<String, Dynamic> = cpq.connection.sessionStorage;
 				if (st.exists('template')) cpq.template = server.tpl.get(st['template']);
 			}
 			return REG(cast new MTplConnect(this, cpq));

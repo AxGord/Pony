@@ -16,7 +16,7 @@ typedef PriorityIds = Priority<{
  * @author AxGord
  */
 @SuppressWarnings('checkstyle:MagicNumber')
-@:nullSafety(Strict) @:final class Priority<T:Dynamic> implements HasSignal {
+@:nullSafety(Strict) final class Priority<T:Dynamic> implements HasSignal {
 
 	@:lazy public var onTake: Signal0;
 	@:lazy public var onLost: Signal0;
@@ -92,7 +92,7 @@ typedef PriorityIds = Priority<{
 	public dynamic function real(e: T): Bool return true;
 
 	public function changeReals(): Void {
-		var empt: Bool = checkEmpty();
+		final empt: Bool = checkEmpty();
 		if (empt != empty) {
 			empty = empt;
 			#if (!macro)
@@ -120,9 +120,9 @@ typedef PriorityIds = Priority<{
 			addStack.push(new Pair(e, priority));
 			return this;
 		}
-		var needOnTake: Bool = real(e) && empty;
-		var hv: Null<Int> = hash[priority];
-		var s: Int = hv ?? 0;
+		final needOnTake: Bool = real(e) && empty;
+		final hv: Null<Int> = hash[priority];
+		final s: Int = hv ?? 0;
 		var c: Int = 0;
 		for (k in hash.keys()) if (k < priority) @:nullSafety(Off) c += hash[k];
 		c += s;
@@ -171,8 +171,8 @@ typedef PriorityIds = Priority<{
 	 * This funcion not crashed if you make operations with Priority object. You can remove and add elements in "for" body.
 	 */
 	public function iterator(): Iterator<T> {
-		var n: Int = counters.push(0) - 1;
-		var i: Int = 0;
+		final n: Int = counters.push(0) - 1;
+		final i: Int = 0;
 		return {
 			hasNext: function(): Bool {
 				if (counters == null) return false; // if destroy in iteration
@@ -199,7 +199,7 @@ typedef PriorityIds = Priority<{
 	 */
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function clear(): Priority<T> {
-		var needOnLost: Bool = !empty;
+		final needOnLost: Bool = !empty;
 		_clear();
 		if (needOnLost) {
 			empty = true;
@@ -279,7 +279,7 @@ typedef PriorityIds = Priority<{
 	 * @param	e Element
 	 */
 	public function getPriority(e: T): Null<Int> {
-		var a: Array<Int> = [for (k in hash.keys()) k];
+		final a: Array<Int> = [for (k in hash.keys()) k];
 		a.sort(asort);
 		var i: Int = 0;
 		for (k in a) {
@@ -303,12 +303,12 @@ typedef PriorityIds = Priority<{
 
 		var i: Int = indexOfElement(e);
 		if (i == -1) return false;
-		var needOnLost: Bool = real(e) && !empty;
+		final needOnLost: Bool = real(e) && !empty;
 		for (k in 0...counters.length) if (i < counters[k]) counters[k]--;
 
 		data.splice(i, 1);
 
-		var a: Array<Int> = [for (k in hash.keys()) k];
+		final a: Array<Int> = [for (k in hash.keys()) k];
 		a.sort(asort);
 		for (k in a) {
 			@:nullSafety(Off) var n: Int = hash[k];
@@ -334,7 +334,7 @@ typedef PriorityIds = Priority<{
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function removeFunction(f: T -> Bool): Bool {
-		var e: Null<T> = search(f);
+		final e: Null<T> = search(f);
 		return if (e != null)
 			remove(e);
 		else
@@ -370,7 +370,7 @@ typedef PriorityIds = Priority<{
 	}
 
 	public function changeFunction(f: T -> Bool, priority: Int = 0): Priority<T> {
-		var e: Null<T> = search(f);
+		final e: Null<T> = search(f);
 		return e == null ? this : change(e, priority);
 	}
 

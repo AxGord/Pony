@@ -34,14 +34,14 @@ class Tree extends Sprite implements FLStage {
 
 	#if !starling
 	private var _header: TreeElement;
-	private var _nodes: Array<DisplayObject> = [];
+	private final _nodes: Array<DisplayObject> = [];
 	private var _xDisplacement: Int = 50;
 
 	private var _headerButton: Button;
 	private var _heightChangeCallback: Void -> Void;
 	private var _nodesSprite: Sprite = new Sprite();
 
-	private var _bufferRect: Rectangle = new Rectangle();
+	private final _bufferRect: Rectangle = new Rectangle();
 
 	public var core: TreeCore;
 
@@ -62,7 +62,7 @@ class Tree extends Sprite implements FLStage {
 
 		if (_header != null) {
 			switch (_header) {
-				case Group(text, t):
+				case Group(text, _):
 					drawGroup(new IntPoint(0, 0), text);
 				case _:
 			}
@@ -73,7 +73,7 @@ class Tree extends Sprite implements FLStage {
 		_header = header;
 		this.core = core;
 		switch (_header) {
-			case Group(text, t):
+			case Group(text, _):
 				drawGroup(new IntPoint(0, 0), text);
 			case _:
 		}
@@ -84,7 +84,7 @@ class Tree extends Sprite implements FLStage {
 		for (n in core.nodes) {
 			switch (n) {
 				case Group(text, t):
-					var subTree: Tree = cast getNewObject(this);
+					final subTree: Tree = cast getNewObject(this);
 					subTree.setHeaderAndCore(n, t);
 					subTree.draw();
 					subTree.x = _xDisplacement;
@@ -125,7 +125,7 @@ class Tree extends Sprite implements FLStage {
 
 		if (_headerButton != null) _headerButton.core.mode = minimized ? 2 : 0;
 
-		var toY: Float = minimized ? -nodesSpriteBottom() : 0;
+		final toY: Float = minimized ? -nodesSpriteBottom() : 0;
 		if (animated) {
 			#if tweenmax
 			TweenMax.killTweensOf(_nodesSprite);
@@ -157,31 +157,31 @@ class Tree extends Sprite implements FLStage {
 	}
 
 	private function drawUnit(p: IntPoint, text: String, func: Void -> Void): Void {
-		var button: Button = cast getNewObject(unit);
+		final button: Button = cast getNewObject(unit);
 
 		button.core.onClick.add(func);
 
-		var node = new Sprite();
+		final node = new Sprite();
 		node.addChild(button);
 		addToPoint(p, node);
 		_nodes.push(node);
 
-		var textField = drawText(p, text, cast getNewObject(unitText));
+		final textField = drawText(p, text, cast getNewObject(unitText));
 		node.addChild(textField);
 	}
 
 	private function drawGroup(p: IntPoint, text: String): Void {
-		var button: Button = cast getNewObject(group);
+		final button: Button = cast getNewObject(group);
 		_headerButton = button;
 		button.core.onClick.add(toggleMinimize);
 
-		var node = new Sprite();
+		final node = new Sprite();
 		node.addChild(button);
 		button.x = p.x;
 		button.y = p.y;
 		addChild(node);
 
-		var textField = drawText(p, text, cast getNewObject(groupText));
+		final textField = drawText(p, text, cast getNewObject(groupText));
 		node.addChild(textField);
 	}
 

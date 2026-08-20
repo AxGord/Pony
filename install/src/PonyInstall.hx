@@ -25,7 +25,7 @@ class PonyInstall extends BaseInstall {
 			Utils.beginColor(90);
 			for (e in FileSystem.readDirectory(Config.BIN)) {
 				if (e == 'testcert.p12') continue;
-				var f: String = Config.BIN + e;
+				final f: String = Config.BIN + e;
 				if (FileSystem.isDirectory(f)) continue;
 				log('Delete: $e');
 				FileSystem.deleteFile(f);
@@ -34,18 +34,18 @@ class PonyInstall extends BaseInstall {
 		}
 		log('Compile pony');
 		Utils.beginColor(90);
-		var newline: String = '\n';
-		var compiler: String = 'haxe';
-		var args: Array<String> = ['--cwd', Config.SRC, 'build.hxml'];
+		final newline: String = '\n';
+		final compiler: String = 'haxe';
+		final args: Array<String> = ['--cwd', Config.SRC, 'build.hxml'];
 		Sys.println('$compiler ${args.join(' ')}');
-		var r: Int = if (Config.OS == TargetOS.Windows) {
+		final r: Int = if (Config.OS == TargetOS.Windows) {
 			Sys.command(compiler, args);
 		} else {
-			var process: Process = new Process(compiler, args);
+			final process: Process = new Process(compiler, args);
 			try {
 				var inWarning: Bool = false;
 				while (true) {
-					var line: String = process.stderr.readLine();
+					final line: String = process.stderr.readLine();
 					if (inWarning) {
 						if (line == '' || line.charAt(0) == ' ')
 							continue;

@@ -688,7 +688,7 @@ final class DIBuilder {
 	private static function typeNameOf(c: ClassType): String {
 		final segs: Array<String> = c.module.split('.');
 		final lastSeg: String = segs[segs.length - 1];
-		return c.name == lastSeg ? c.module : ('${c.module}.${c.name}');
+		return c.name == lastSeg ? c.module : '${c.module}.${c.name}';
 	}
 
 	private static function complexTypeName(t: ComplexType): String {

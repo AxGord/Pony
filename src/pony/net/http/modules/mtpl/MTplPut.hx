@@ -10,7 +10,7 @@ import pony.text.tpl.TplSystem;
  * @author AxGord <axgord@gmail.com>
  */
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
-@:final class MTplPut extends TplPut<MTpl, CPQ> {
+final class MTplPut extends TplPut<MTpl, CPQ> {
 
 	@:async
 	override public function tag(name: String, content: TplData, arg: String, args: Map<String, String>, ?kid: ITplPut): String {

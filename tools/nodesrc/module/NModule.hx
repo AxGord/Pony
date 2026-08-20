@@ -15,8 +15,8 @@ class NModule<T> extends Logable implements HasAbstract {
 
 	@:auto public var onFinish: Signal0;
 
-	private var config: Array<T>;
-	private var tasks: Tasks;
+	private final config: Array<T>;
+	private final tasks: Tasks;
 
 	public function new(cfg: Array<T>) {
 		if (cfg == null) return;

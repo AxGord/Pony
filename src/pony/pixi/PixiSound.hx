@@ -16,9 +16,9 @@ import pony.ui.AssetManager;
  */
 class PixiSound implements HasSignal {
 
-	inline static private var shift: Float = 0; // 0.076;
-	inline static private var ending: Float = 0.300;
-	inline static private var loopEnd: Float = 6.000;
+	inline static private final shift: Float = 0; // 0.076;
+	inline static private final ending: Float = 0.300;
+	inline static private final loopEnd: Float = 6.000;
 
 	@:auto public var onEnd: Signal0;
 	@:auto private var onEndTrack: Signal0;

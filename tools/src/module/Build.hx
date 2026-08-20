@@ -29,19 +29,19 @@ private typedef LastCompilationOptions = {
  * @author AxGord <axgord@gmail.com>
  */
 @SuppressWarnings('checkstyle:MagicNumber')
-@:final class Build extends CfgModule<BuildConfig> {
+final class Build extends CfgModule<BuildConfig> {
 
-	public static inline var HAXE: String = 'haxe';
-	public static inline var HXML: String = 'hxml';
-	public static inline var D: String = '-D';
-	private static inline var PRIORITY: Int = 1;
-	private static inline var TIMEOUT: Int = 5;
-	private static inline var LIB: String = '-lib';
+	public static inline final HAXE: String = 'haxe';
+	public static inline final HXML: String = 'hxml';
+	public static inline final D: String = '-D';
+	private static inline final PRIORITY: Int = 1;
+	private static inline final TIMEOUT: Int = 5;
+	private static inline final LIB: String = '-lib';
 
 	private var flags(default, null): Array<String> = [];
 	private var haxelib: Array<String>;
 	private var hideWarningLibs: Array<String>;
-	private var postHaxelibs: Array<String> = [];
+	private final postHaxelibs: Array<String> = [];
 	private var server: Bool = false;
 	private var lastCompilationOptions: LastCompilationOptions;
 	private var tryCounter: Int;
@@ -111,8 +111,8 @@ private typedef LastCompilationOptions = {
 
 	private function saveHxml(name: String, commands: Array<SPair<String>>): Void {
 		name += '.$HXML';
-		var s: String = cmdArrPairToArrStr(commands).join('\n');
-		var prev: String = FileSystem.exists(name) ? File.getContent(name) : null;
+		final s: String = cmdArrPairToArrStr(commands).join('\n');
+		final prev: String = FileSystem.exists(name) ? File.getContent(name) : null;
 		if (prev != s) {
 			if (FileSystem.exists(Uglify.CACHE_FILE)) FileSystem.deleteFile(Uglify.CACHE_FILE);
 			File.saveContent(name, s);
@@ -120,7 +120,7 @@ private typedef LastCompilationOptions = {
 	}
 
 	private function runCompilation(command: Array<SPair<String>>, debug: Bool, compiler: String, winfix: Bool): Void {
-		var newline: String = '\n';
+		final newline: String = '\n';
 		var firstOutput: Bool = true;
 		function writeError(line: String): Void {
 			if (firstOutput) {
@@ -131,15 +131,15 @@ private typedef LastCompilationOptions = {
 		}
 		if (debug && server && compiler == HAXE && !winfix) {
 			try { // Fix compilation server error
-				var tpf: String = '${Utils.libPath}src/pony/heaps/HeapsAssets.hx';
+				final tpf: String = '${Utils.libPath}src/pony/heaps/HeapsAssets.hx';
 				log('Update $tpf');
 				File.saveContent(tpf, File.getContent(tpf));
 			} catch (e: Dynamic) {
 				error('Update failed');
 			}
 			tryCounter = 3;
-			var s: Socket = connectToHaxeServer();
-			var d: String = Sys.getCwd();
+			final s: Socket = connectToHaxeServer();
+			final d: String = Sys.getCwd();
 			s.write('--cwd $d$newline');
 			for (c in cmdArrPairToArrStr(command)) {
 				Sys.print('$c ');
@@ -186,7 +186,7 @@ private typedef LastCompilationOptions = {
 				winfix: winfix
 			};
 		} else {
-			var args: Array<String> = [];
+			final args: Array<String> = [];
 			for (c in command) {
 				args.push(c.a);
 				if (c.b.length > 0) args.push(c.b);
@@ -195,11 +195,11 @@ private typedef LastCompilationOptions = {
 				Utils.command(compiler, args);
 			} else {
 				Sys.println('$compiler ${args.join(' ')}');
-				var process: Process = new Process(compiler, args);
+				final process: Process = new Process(compiler, args);
 				try {
 					var inWarning: Bool = false;
 					while (true) {
-						var line: String = process.stderr.readLine();
+						final line: String = process.stderr.readLine();
 						if (inWarning) {
 							if (line == '' || line.startsWith(' '))
 								continue;
@@ -212,7 +212,7 @@ private typedef LastCompilationOptions = {
 							writeError(line);
 					}
 				} catch (e: Eof) {}
-				var r: Int = process.exitCode();
+				final r: Int = process.exitCode();
 				if (r > 0) error('$compiler error $r');
 			}
 		}
@@ -223,9 +223,9 @@ private typedef LastCompilationOptions = {
 	private static inline function cmdArrPairToArrStr(a: Array<SPair<String>>): Array<String> return [for (c in a) cmdPairToStr(c)];
 
 	private function connectToHaxeServer(): Socket {
-		var port: Int = Std.parseInt(modules.xml.node.server.node.haxe.innerData);
+		final port: Int = Std.parseInt(modules.xml.node.server.node.haxe.innerData);
 		while (true) try {
-			var s: Socket = new Socket();
+			final s: Socket = new Socket();
 			s.connect(new Host('127.0.0.1'), port);
 			return s;
 		} catch (e: Any) {
@@ -243,7 +243,7 @@ private typedef LastCompilationOptions = {
 			Sys.println('Connect error, try again after $TIMEOUT sec...');
 			Sys.sleep(TIMEOUT);
 			if (lastCompilationOptions != null) {
-				var lco: LastCompilationOptions = lastCompilationOptions;
+				final lco: LastCompilationOptions = lastCompilationOptions;
 				lastCompilationOptions = null;
 				runCompilation(lco.command, lco.debug, lco.compiler, lco.winfix);
 			}
@@ -273,14 +273,14 @@ private typedef BuildConfig = {
 
 private class BuildConfigReader extends BAReader<BuildConfig> {
 
-	private static inline var UT: String = 'Unknown tag';
+	private static inline final UT: String = 'Unknown tag';
 
 	override private function readNode(xml: Fast): Void {
 		try {
 			super.readNode(xml);
 		} catch (s: String) {
 			if (s.substr(0, UT.length) == UT) {
-				var d: String = try {
+				final d: String = try {
 					normalize(xml.innerData);
 				} catch (_: Dynamic) {
 					'';

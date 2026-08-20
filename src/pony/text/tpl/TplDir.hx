@@ -12,14 +12,14 @@ import pony.text.tpl.TplData.TplStyle;
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
 class TplDir {
 
-	private var h: Map<String, Tpl> = [];
+	private final h: Map<String, Tpl> = [];
 
 	public function new(dir: Dir, ?c: Class<ITplPut>, o: Dynamic, ?s: TplStyle) {
 		for (f in dir.contentRecursiveFiles('.tpl')) {
 			for (e in f.fullDir) {
 				var brk: Bool = false;
 				for (d in dir) {
-					var l: Int = d.toString().length;
+					final l: Int = d.toString().length;
 					if (e.toString().substr(0, l) == d.toString()) {
 						var k = e.toString().substr(l + 1);
 						if (k.length > 0) k += '/';

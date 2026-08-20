@@ -16,13 +16,13 @@ using pony.macro.Tools;
 class SuperPuperBuilder {
 
 	macro public static function build(): Array<Field> {
-		var fields: Array<Field> = Context.getBuildFields();
+		final fields: Array<Field> = Context.getBuildFields();
 		var lvl = 0;
 		var sup = Context.getLocalClass().get().superClass;
 		while (sup != null) {
 			lvl++;
 			for (field in sup.t.get().fields.get()) {
-				var f = fields.find(checkName.bind(field.name));
+				final f = fields.find(checkName.bind(field.name));
 				if (f == null) continue;
 				if (field.meta.has(':puper'))
 					f.meta.push({
@@ -54,7 +54,7 @@ class SuperPuperBuilder {
 		}
 
 		for (field in fields) if (field.meta.checkMeta([':puper', 'puper'])) {
-			var meta = field.meta.filter(function(m) return m.name != ':puper' && m.name != 'puper');
+			final meta = field.meta.filter(function(m) return m.name != ':puper' && m.name != 'puper');
 			fields.push({
 				name: 'super${lvl}_${field.name}',
 				access: [APrivate],
@@ -65,8 +65,8 @@ class SuperPuperBuilder {
 			switch field.kind {
 				case FFun(fun):
 					convertSuper(fun.expr, field.name, detectMethodLvl(field.name, lvl));
-					var args = [for (arg in fun.args) macro $i{arg.name}];
-					var expr = macro return @await $i{'super${lvl}_' + field.name}($a{args});
+					final args = [for (arg in fun.args) macro $i{arg.name}];
+					final expr = macro return @await $i{'super${lvl}_' + field.name}($a{args});
 					field.kind = FFun({
 						args: fun.args,
 						ret: fun.ret,

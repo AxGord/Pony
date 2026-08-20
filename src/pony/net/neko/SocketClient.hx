@@ -73,7 +73,7 @@ class SocketClient extends SocketClientBase {
 	public function send(data: BytesOutput): Void q.call(data);
 
 	private function _send(data: BytesOutput): Void {
-		var b: Bytes = data.getBytes();
+		final b: Bytes = data.getBytes();
 		logBytes('Send data', b);
 		try {
 			socket.output.write(b);

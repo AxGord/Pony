@@ -17,13 +17,13 @@ import pony.TypedPool;
 
 	public static var touchScreen(get, never): Bool;
 
-	private static inline var SWIPE_DELAY: Time = 50;
-	private static inline var SWIPE_STEP: UInt = 4;
-	private static inline var SWIPE_REPEATS: UInt = 8;
-	private static inline var TAP_DELAY: Time = 300;
+	private static inline final SWIPE_DELAY: Time = 50;
+	private static inline final SWIPE_STEP: UInt = 4;
+	private static inline final SWIPE_REPEATS: UInt = 8;
+	private static inline final TAP_DELAY: Time = 300;
 
-	private static var touches: Map<UInt, Touch> = [];
-	private static var touchPool: TypedPool<Touch> = new TypedPool<Touch>();
+	private static final touches: Map<UInt, Touch> = [];
+	private static final touchPool: TypedPool<Touch> = new TypedPool<Touch>();
 
 	@:auto public var onOver: Signal1<Touch>;
 	@:auto public var onOut: Signal1<Touch>;
@@ -97,10 +97,10 @@ import pony.TypedPool;
 	}
 
 	private function checkSwipe(): Void {
-		var x = swipePoint.x - swipeTouch.x;
-		var y = swipePoint.y - swipeTouch.y;
-		var ax = Math.abs(x);
-		var ay = Math.abs(y);
+		final x = swipePoint.x - swipeTouch.x;
+		final y = swipePoint.y - swipeTouch.y;
+		final ax = Math.abs(x);
+		final ay = Math.abs(y);
 		if (ax > ay) {
 			if (ax >= SWIPE_STEP) {
 				onUp >> eClick;
@@ -225,7 +225,7 @@ import pony.TypedPool;
 	}
 
 	private function dispatchUp(id: UInt = 0, right: Bool = false, safe: Bool = false): Void {
-		var t: Null<Touch> = touches[id];
+		final t: Null<Touch> = touches[id];
 		if (t == null) return;
 		@:privateAccess t.eUp.dispatch(t);
 		if (right)
@@ -256,7 +256,7 @@ import pony.TypedPool;
 	}
 
 	private function dispatchOutDown(id: UInt = 0, right: Bool = false, safe: Bool = false): Void {
-		var t: Null<Touch> = touches[id];
+		final t: Null<Touch> = touches[id];
 		if (t == null) return;
 		@:privateAccess t.eOutDown.dispatch(t);
 		if (right)
@@ -278,7 +278,7 @@ import pony.TypedPool;
 	}
 
 	private function dispatchOut(id: UInt = 0, safe: Bool = false): Void {
-		var t: Null<Touch> = touches[id];
+		final t: Null<Touch> = touches[id];
 		if (t == null) return;
 		@:privateAccess t.eOut.dispatch(t);
 		eOut.dispatchWithFlag(t, safe);
@@ -288,7 +288,7 @@ import pony.TypedPool;
 	private function dispatchOutUpListener(id: UInt): Void dispatchOutUp(id);
 
 	private function dispatchOutUp(id: UInt = 0, right: Bool = false, safe: Bool = false): Void {
-		var t: Null<Touch> = touches[id];
+		final t: Null<Touch> = touches[id];
 		if (t == null) return;
 		@:privateAccess t.eOutUp.dispatch(t);
 		if (right)
@@ -299,13 +299,13 @@ import pony.TypedPool;
 	}
 
 	private static function dispatchMove(id: UInt = 0, x: Float, y: Float): Void {
-		var t: Null<Touch> = touches[id];
+		final t: Null<Touch> = touches[id];
 		if (t != null) @:privateAccess t.eMove.dispatch(t.set(x, y));
 	}
 
 	private static function removeTouch(id: UInt): Void {
 		if (id == 0) return;
-		var t: Null<Touch> = touches[id];
+		final t: Null<Touch> = touches[id];
 		if (t == null) return;
 		t.clear();
 		touchPool.ret(t);

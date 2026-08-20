@@ -10,7 +10,7 @@ import types.PoeditorConfig;
  */
 class Poeditor extends NModule<PoeditorConfig> {
 
-	private static inline var PRIORITY: Int = 32;
+	private static inline final PRIORITY: Int = 32;
 
 	public function new() super('poeditor');
 

@@ -33,12 +33,12 @@ using pony.text.TextTools;
 	}
 
 	private inline function get_mtime(): Null<Date> {
-		var e: Null<String> = this.firstExists;
+		final e: Null<String> = this.firstExists;
 		return e == null ? null : FileSystem.stat(e).mtime;
 	}
 
 	private inline function get_size(): Int {
-		var e: Null<String> = this.firstExists;
+		final e: Null<String> = this.firstExists;
 		return e == null ? -1 : FileSystem.stat(e).size;
 	}
 
@@ -81,14 +81,14 @@ using pony.text.TextTools;
 	private inline function get_withoutExt(): String return Path.withoutExtension(first);
 
 	public inline function copyToFile(to: Unit): Void {
-		var to: File = to.file;
+		final to: File = to.file;
 		to.createWays();
 		SysFile.copy(first, to.first);
 	}
 
 	public inline function copyToDir(to: Dir, ?newname: String): Void {
 		if (newname == null) newname = name;
-		var to: File = to + newname;
+		final to: File = to + newname;
 		to.createWays();
 		SysFile.copy(first, to.first);
 	}
@@ -106,7 +106,7 @@ using pony.text.TextTools;
 
 	public function createWays(): Void {
 		for (e in fullDir) {
-			var a: Array<String> = e.first.split('/');
+			final a: Array<String> = e.first.split('/');
 			var d: String = cast a.shift();
 			for (e in a) {
 				d += '/$e';
@@ -120,7 +120,7 @@ using pony.text.TextTools;
 	private inline function get_fullDir(): Dir {
 		return [
 			for (e in this.wayStringIterator()) {
-				var r: Null<String> = e.allBeforeLastWithNull('/');
+				final r: Null<String> = e.allBeforeLastWithNull('/');
 				r != null ? (r: String) : '.';
 			}
 		];

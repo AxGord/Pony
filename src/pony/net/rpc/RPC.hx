@@ -25,14 +25,14 @@ class RPC<T:pony.net.rpc.IRPC> extends RPCBase<T> implements HasSignal {
 			if (Std.is(s, pony.net.SocketClient))
 			#end
 		{
-			var sc: pony.net.SocketClient = cast s;
+			final sc: pony.net.SocketClient = cast s;
 			sc.onConnect << sc.sendAllStack;
 		}
 		#end
 	}
 
 	private function send(): Void {
-		var bo: BytesOutput = new BytesOutput();
+		final bo: BytesOutput = new BytesOutput();
 		bo.write(pack());
 		socket.send(bo);
 	}

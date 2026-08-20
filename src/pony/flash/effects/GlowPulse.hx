@@ -13,9 +13,9 @@ class GlowPulse {
 
 	public var targer: DisplayObject;
 
-	private var filter: GlowFilter;
-	private var maxStrength: Int;
-	private var speed: Float;
+	private final filter: GlowFilter;
+	private final maxStrength: Int;
+	private final speed: Float;
 
 	private var d: Int = 1;
 

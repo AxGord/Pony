@@ -23,7 +23,7 @@ using hugs.HUGSWrapper;
 			trace('Can\'t find $gameObject game object');
 			throw null;
 		}
-		var c = g.getTypedComponent(cl);
+		final c = g.getTypedComponent(cl);
 		if (c == null) {
 			trace('Can\'t find component ${Type.getClassName(cl)} in $gameObject game object');
 			throw null;

@@ -68,19 +68,19 @@ import haxe.io.Bytes;
 		if (v != null) {
 			if (v.pivotColor == null) v.pivotColor = v.color;
 			if (v.pivotSize == null) v.pivotSize = v.size;
-			var cid: Bytes = core.getCacheId();
+			final cid: Bytes = core.getCacheId();
 			if (cid != null) {
-				var cids: String = cid.toHex();
+				final cids: String = cid.toHex();
 				var ct: Pair<Point<Float>, RenderTexture> = DEBUG_CACHE[cids];
 				if (ct == null) {
 					var g: Graphics = new Graphics();
 					g.lineStyle(v.size, v.color);
 					drawDebug(g);
-					var p = new Point(g.x, g.y);
+					final p = new Point(g.x, g.y);
 					g.x = v.size;
 					g.y = v.size;
-					var w = (-p.x + g.width + v.size) * 2;
-					var h = (-p.y + g.height + v.size) * 2;
+					final w = (-p.x + g.width + v.size) * 2;
+					final h = (-p.y + g.height + v.size) * 2;
 					g.scale.set(2);
 					ct = new Pair(p, RenderTexture.create(w, h));
 					App.main.app.renderer.render(g, ct.b, true);
@@ -116,7 +116,7 @@ import haxe.io.Bytes;
 	override public function destroy(?options: EitherType<Bool, DestroyOptions>): Void {
 		if (core == null) return;
 		LIST.remove(core.body.id);
-		var c = core;
+		final c = core;
 		core = null;
 		c.destroy();
 		if (debugView != null) {

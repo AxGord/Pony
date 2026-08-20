@@ -16,24 +16,24 @@ using pony.macro.Tools;
 class HasSignalBuilder {
 
 	macro public static function build(): Array<Field> {
-		var fields: Array<Field> = Context.getBuildFields();
-		var pack: Array<String> = ['pony', 'events'];
-		var nullsafetyOff: Metadata = [{ name: ':nullSafety', pos: Context.currentPos(), params: [macro Off] }];
-		var destrStatic: Array<Expr> = [];
-		var destr: Array<Expr> = [];
+		final fields: Array<Field> = Context.getBuildFields();
+		final pack: Array<String> = ['pony', 'events'];
+		final nullsafetyOff: Metadata = [{ name: ':nullSafety', pos: Context.currentPos(), params: [macro Off] }];
+		final destrStatic: Array<Expr> = [];
+		final destr: Array<Expr> = [];
 
 		for (f in fields) switch f.kind {
 			case FProp(_, _, TPath(p), _) if (p.name.substr(0, 6) == 'Signal' && f.meta.checkMeta([':auto', ':lazy'])):
 				Context.error('${f.name} - can\'t be property', f.pos);
 			case FVar(TPath(p), _) if (p.name.substr(0, 6) == 'Signal'):
-				var on = !(f.name.substr(0, 2) != 'on' && f.name.charAt(3).toLowerCase() == f.name.charAt(3));
+				final on = !(f.name.substr(0, 2) != 'on' && f.name.charAt(3).toLowerCase() == f.name.charAt(3));
 				// Context.error('Incorrect signal name: ${f.name}', f.pos);
-				var isStatic = f.access.indexOf(AStatic) != -1;
-				var ast = !isStatic ? [] : [AStatic];
-				var eName = 'e${TextTools.bigFirst(f.name.substr(on ? 2 : 0))}';
-				var tp = { name: 'Event${p.name.substr(6)}', pack: pack, params: p.params };
+				final isStatic = f.access.indexOf(AStatic) != -1;
+				final ast = !isStatic ? [] : [AStatic];
+				final eName = 'e${TextTools.bigFirst(f.name.substr(on ? 2 : 0))}';
+				final tp = { name: 'Event${p.name.substr(6)}', pack: pack, params: p.params };
 				var flag = false;
-				var a = isStatic ? destrStatic : destr;
+				final a = isStatic ? destrStatic : destr;
 				if (f.meta.checkMeta([':auto'])) {
 					flag = true;
 					fields.push({
@@ -60,7 +60,7 @@ class HasSignalBuilder {
 						kind: FVar(TPath(tp)),
 						meta: nullsafetyOff
 					});
-					var ex: Expr = { pos: f.pos, expr: ENew(tp, []) };
+					final ex: Expr = { pos: f.pos, expr: ENew(tp, []) };
 					fields.push({
 						name: 'get_${f.name}',
 						access: ast.concat([AInline, APrivate]),
@@ -77,15 +77,15 @@ class HasSignalBuilder {
 				}
 
 			case FVar(TPath(p), val) if (f.meta.checkMeta([':bindable', 'bindable'])):
-				var isStatic = f.access.indexOf(AStatic) != -1;
-				var ast = !isStatic ? [] : [AStatic];
-				var changeName = 'change${TextTools.bigFirst(f.name)}';
+				final isStatic = f.access.indexOf(AStatic) != -1;
+				final ast = !isStatic ? [] : [AStatic];
+				final changeName = 'change${TextTools.bigFirst(f.name)}';
 				f.kind = FProp('default', 'set', TPath(p), val);
-				var ttp = TPath(p);
-				var tp = { pack: pack, name: 'Event2', params: [TPType(ttp), TPType(ttp)] };
+				final ttp = TPath(p);
+				final tp = { pack: pack, name: 'Event2', params: [TPType(ttp), TPType(ttp)] };
 
-				var ex: Expr = { pos: f.pos, expr: ENew(tp, []) };
-				var tps = TPath({ pack: pack, name: 'Signal2', params: [TPType(TPath(p)), TPType(TPath(p))] });
+				final ex: Expr = { pos: f.pos, expr: ENew(tp, []) };
+				final tps = TPath({ pack: pack, name: 'Signal2', params: [TPType(TPath(p)), TPType(TPath(p))] });
 				var m = f.meta.getMeta(':bindable');
 				if (m == null) m = f.meta.getMeta('bindable');
 
@@ -105,9 +105,9 @@ class HasSignalBuilder {
 					case _:
 						Context.error('Incorrect bindable parameter', f.pos);
 				}
-				var a: Array<Expr> = isStatic ? destrStatic : destr;
-				var eventName: String = 'e${TextTools.bigFirst(changeName)}';
-				var setterAccess: Access = f.access.indexOf(APrivate) == -1 ? APublic : APrivate;
+				final a: Array<Expr> = isStatic ? destrStatic : destr;
+				final eventName: String = 'e${TextTools.bigFirst(changeName)}';
+				final setterAccess: Access = f.access.indexOf(APrivate) == -1 ? APublic : APrivate;
 				fields.push({
 					name: changeName,
 					access: ast.concat([priv ? APrivate : APublic]),
@@ -212,7 +212,7 @@ class HasSignalBuilder {
 			});
 		}
 		if (destr.length > 0) {
-			var acc = [APrivate];
+			final acc = [APrivate];
 			var b = false;
 			var cl = Context.getLocalClass().get();
 			while (cl.superClass != null) {

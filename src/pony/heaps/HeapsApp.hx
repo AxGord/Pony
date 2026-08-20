@@ -33,7 +33,7 @@ import pony.js.SmartCanvas;
 	public static var instance: Null<HeapsApp>;
 	public static var s2dReady(get, never): Bool;
 	public static var fps(get, set): Float;
-	public static inline var FPS_COMPENSATION: Float = 1.05;
+	public static inline final FPS_COMPENSATION: Float = 1.05;
 	private static var fpsInterval: Float = 1 / (hxd.Timer.wantedFPS * FPS_COMPENSATION);
 
 	@:auto public var onInit: Signal1<HeapsApp>;
@@ -50,7 +50,8 @@ import pony.js.SmartCanvas;
 	#end
 	#end
 
-	private var renderPause: Bool = false;
+	private static inline final renderPause: Bool = false;
+
 	private var alignCenter: Bool = false;
 	private var border: Null<Graphics>;
 	private var lastTick: Float = Timer.stamp();
@@ -84,7 +85,7 @@ import pony.js.SmartCanvas;
 
 	override private function update(dt: Float): Void {
 		#if debugTimes
-		var now: Float = Timer.stamp();
+		final now: Float = Timer.stamp();
 		#end
 		DeltaTime.fixedValue = dt;
 		DeltaTime.fixedDispatch();
@@ -98,7 +99,7 @@ import pony.js.SmartCanvas;
 		#if debugTimes
 		systemTime = Timer.stamp() - lastTick - heapsTime - updateTime;
 		#end
-		var sleepTime: Float = fpsInterval - (Timer.stamp() - lastTick);
+		final sleepTime: Float = fpsInterval - (Timer.stamp() - lastTick);
 		if (sleepTime > 0) Sys.sleep(sleepTime);
 		lastTick = Timer.stamp();
 		super.mainLoop();
@@ -108,8 +109,8 @@ import pony.js.SmartCanvas;
 	}
 	#elseif js
 	override private function mainLoop(): Void {
-		var now: Float = Timer.stamp();
-		var elapsed: Float = now - lastTick;
+		final now: Float = Timer.stamp();
+		final elapsed: Float = now - lastTick;
 		if (elapsed >= fpsInterval) {
 			#if debugTimes
 			systemTime = now - lastHashlinkTime;
@@ -175,8 +176,8 @@ import pony.js.SmartCanvas;
 		var border: Graphics = new Graphics();
 		this.border = border;
 		border.beginFill(@:nullSafety(Off) (color == null) ? engine.backgroundColor : color);
-		var w: Int = canvas.stageInitSize.x * 2;
-		var h: Int = canvas.stageInitSize.y * 2;
+		final w: Int = canvas.stageInitSize.x * 2;
+		final h: Int = canvas.stageInitSize.y * 2;
 		border.drawRect(-w, -h, w, h * 3);
 		border.drawRect(canvas.stageInitSize.x, -h, w, h * 3);
 		border.drawRect(-w, -h, w * 3, h);

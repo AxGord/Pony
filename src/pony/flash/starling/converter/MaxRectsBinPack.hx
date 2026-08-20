@@ -20,7 +20,7 @@ import flash.Vector;
 
 class MaxRectsBinPack {
 
-	public static inline var MAX_VALUE: Int = 2147483647;
+	public static inline final MAX_VALUE: Int = 2147483647;
 
 	public var binWidth: Int = 0;
 	public var binHeight: Int = 0;
@@ -47,7 +47,7 @@ class MaxRectsBinPack {
 		binHeight = height;
 		allowRotations = rotations;
 
-		var n: Rectangle = new Rectangle();
+		final n: Rectangle = new Rectangle();
 		n.x = 0;
 		n.y = 0;
 		n.width = width;
@@ -99,9 +99,9 @@ class MaxRectsBinPack {
 			var bestRectangleIndex: Int = -1;
 			var bestNode: Rectangle = new Rectangle();
 			for (i in 0...rectangles.length) {
-				var score1: Int = 0;
-				var score2: Int = 0;
-				var newNode: Rectangle = scoreRectangle(cast rectangles[i].width, cast rectangles[i].height, method, score1, score2);
+				final score1: Int = 0;
+				final score2: Int = 0;
+				final newNode: Rectangle = scoreRectangle(cast rectangles[i].width, cast rectangles[i].height, method, score1, score2);
 				if (score1 < bestScore1 || (score1 == bestScore1 && score2 < bestScore2)) {
 					bestScore1 = score1;
 					bestScore2 = score2;
@@ -170,7 +170,7 @@ class MaxRectsBinPack {
 	}
 
 	private function findPositionForNewNodeBottomLeft(width: Int, height: Int, bestY: Int, bestX: Int): Rectangle {
-		var bestNode: Rectangle = new Rectangle();
+		final bestNode: Rectangle = new Rectangle();
 		// memset(bestNode, 0, sizeof(Rectangle));
 
 		bestY = MAX_VALUE;
@@ -206,7 +206,7 @@ class MaxRectsBinPack {
 	}
 
 	private function findPositionForNewNodeBestShortSideFit(width: Int, height: Int): Rectangle {
-		var bestNode: Rectangle = new Rectangle();
+		final bestNode: Rectangle = new Rectangle();
 		// memset(&bestNode, 0, sizeof(Rectangle));
 
 		bestShortSideFit = MAX_VALUE;
@@ -265,7 +265,7 @@ class MaxRectsBinPack {
 	private function findPositionForNewNodeBestLongSideFit(
 		width: Int, height: Int, bestShortSideFit: Int, bestLongSideFit: Int
 	): Rectangle {
-		var bestNode: Rectangle = new Rectangle();
+		final bestNode: Rectangle = new Rectangle();
 		// memset(&bestNode, 0, sizeof(Rectangle));
 		bestLongSideFit = MAX_VALUE;
 		var rect: Rectangle;
@@ -314,7 +314,7 @@ class MaxRectsBinPack {
 	}
 
 	private function findPositionForNewNodeBestAreaFit(width: Int, height: Int, bestAreaFit: Int, bestShortSideFit: Int): Rectangle {
-		var bestNode: Rectangle = new Rectangle();
+		final bestNode: Rectangle = new Rectangle();
 		// memset(&bestNode, 0, sizeof(Rectangle));
 
 		bestAreaFit = MAX_VALUE;
@@ -387,7 +387,7 @@ class MaxRectsBinPack {
 	}
 
 	private function findPositionForNewNodeContactPoInt(width: Int, height: Int, bestContactScore: Int): Rectangle {
-		var bestNode: Rectangle = new Rectangle();
+		final bestNode: Rectangle = new Rectangle();
 		// memset(&bestNode, 0, sizeof(Rectangle));
 
 		bestContactScore = -1;
@@ -493,10 +493,10 @@ class MaxRectsBinPack {
 
 class FreeRectangleChoiceHeuristic {
 
-	public static inline var BestShortSideFit: Int = 0; ///< -BSSF: Positions the Rectangle against the short side of a free Rectangle Into which it fits the best.
-	public static inline var BestLongSideFit: Int = 1; ///< -BLSF: Positions the Rectangle against the long side of a free Rectangle Into which it fits the best.
-	public static inline var BestAreaFit: Int = 2; ///< -BAF: Positions the Rectangle Into the smallest free Rectangle Into which it fits.
-	public static inline var BottomLeftRule: Int = 3; ///< -BL: Does the Tetris placement.
-	public static inline var ContactPoIntRule: Int = 4; ///< -CP: Choosest the placement where the Rectangle touches other Rectangles as much as possible.
+	public static inline final BestShortSideFit: Int = 0; ///< -BSSF: Positions the Rectangle against the short side of a free Rectangle Into which it fits the best.
+	public static inline final BestLongSideFit: Int = 1; ///< -BLSF: Positions the Rectangle against the long side of a free Rectangle Into which it fits the best.
+	public static inline final BestAreaFit: Int = 2; ///< -BAF: Positions the Rectangle Into the smallest free Rectangle Into which it fits.
+	public static inline final BottomLeftRule: Int = 3; ///< -BL: Does the Tetris placement.
+	public static inline final ContactPoIntRule: Int = 4; ///< -CP: Choosest the placement where the Rectangle touches other Rectangles as much as possible.
 
 }

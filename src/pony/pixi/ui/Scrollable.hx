@@ -11,11 +11,11 @@ import pony.ui.touch.pixi.Touchable;
 class Scrollable extends Touchable {
 
 	public var pos(default, set): Int = 0;
-	private var totalSize: Float;
+	private final totalSize: Float;
 	private var contentSize: Float;
 	private var startTPos: Float;
 	private var startTPosBefore: Int;
-	private var vert: Bool;
+	private final vert: Bool;
 	private var inited: Bool = false;
 
 	public function new(obj: Container, totalSize: Float, vert: Bool) {

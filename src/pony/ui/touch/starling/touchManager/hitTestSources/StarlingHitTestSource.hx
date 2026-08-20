@@ -10,8 +10,8 @@ import starling.core.Starling;
  */
 class StarlingHitTestSource implements IHitTestSource {
 
-	private var _container: DisplayObjectContainer;
-	private var _point: Point = new Point();
+	private final _container: DisplayObjectContainer;
+	private final _point: Point = new Point();
 
 	public function new(container: DisplayObjectContainer) {
 		_container = container;
@@ -27,7 +27,7 @@ class StarlingHitTestSource implements IHitTestSource {
 	public function parent(object: Dynamic): Dynamic {
 		if (!Std.is(object, starling.display.DisplayObject)) return null;
 		if (object == _container) return null;
-		var objectsParent = object.parent;
+		final objectsParent = object.parent;
 		return objectsParent;
 	}
 

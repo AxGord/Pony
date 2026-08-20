@@ -18,8 +18,8 @@ class RemoteClient extends Logable {
 
 	@:auto public var onComplete: Signal1<Int>;
 
-	private var cfg: RemoteConfig;
-	private var commands: Array<RemoteCommand>;
+	private final cfg: RemoteConfig;
+	private final commands: Array<RemoteCommand>;
 	private var protocol: Null<RemoteProtocol>;
 
 	public function new(cfg: RemoteConfig) {
@@ -43,9 +43,9 @@ class RemoteClient extends Logable {
 			eComplete.dispatch(1);
 			return null;
 		} else {
-			var client: SocketClient = new SocketClient(host, port);
+			final client: SocketClient = new SocketClient(host, port);
 			client.onDisconnect < disconnectHandler;
-			var p: RemoteProtocol = new RemoteProtocol(client);
+			final p: RemoteProtocol = new RemoteProtocol(client);
 			if (key != null) p.authRemote(key);
 			return p;
 		}
@@ -58,7 +58,7 @@ class RemoteClient extends Logable {
 
 	private function readyHandler(): Void {
 		if (protocol == null) return;
-		var runner: RemoteActionRunner = new RemoteActionRunner(protocol, commands);
+		final runner: RemoteActionRunner = new RemoteActionRunner(protocol, commands);
 		runner.onLog << eLog;
 		runner.onError << eError;
 		runner.onError << errorHandler;

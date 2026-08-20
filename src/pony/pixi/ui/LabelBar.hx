@@ -15,7 +15,7 @@ class LabelBar extends AnimBar {
 
 	private var label: TextSizedBox;
 	private var style: ETextStyle;
-	private var shadow: Bool;
+	private final shadow: Bool;
 	private var labelInitVisible: Bool = true;
 	private var border: Border<Int>;
 

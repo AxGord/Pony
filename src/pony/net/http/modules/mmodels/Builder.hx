@@ -16,8 +16,8 @@ using Lambda;
 class Builder {
 
 	macro public static function build(): Array<Field> {
-		var fields: Array<Field> = Context.getBuildFields();
-		var cur = Context.getLocalClass().get();
+		final fields: Array<Field> = Context.getBuildFields();
+		final cur = Context.getLocalClass().get();
 		if (cur.name == 'Model') return fields;
 		for (f in fields) switch (f.name) {
 			case 'many', 'insert', 'single', 'update', 'delete':
@@ -31,10 +31,10 @@ class Builder {
 				if (!f.meta.exists(function(m) return m.name == 'action'))
 					f.meta.push( { pos: Context.currentPos(), name: 'action', params: [EConst(CString(n)).expr()] } ); */
 		}
-		var pathes: Array<ObjectField> = [];
-		var activePathes: Array<ObjectField> = [];
-		var acc: Array<ObjectField> = [];
-		var data: Array<ObjectField> = [];
+		final pathes: Array<ObjectField> = [];
+		final activePathes: Array<ObjectField> = [];
+		final acc: Array<ObjectField> = [];
+		final data: Array<ObjectField> = [];
 		for (f in fields) {
 			for (m in f.meta) {
 				switch m.name {
@@ -52,7 +52,7 @@ class Builder {
 							}
 						});
 					case 'action':
-						var d: Array<Expr> = [];
+						final d: Array<Expr> = [];
 						switch f.kind {
 							case FFun(fun):
 								for (a in fun.args) switch a.type {

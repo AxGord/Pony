@@ -39,19 +39,19 @@ abstract Matrix<T>(Array<Array<T>>) from Array<Array<T>> to Array<Array<T>> {
 	 * 0 > value > 9
 	 */
 	public static function parse(text: String): Matrix<Int> {
-		var result: Matrix<Int> = [];
+		final result: Matrix<Int> = [];
 		var row: Array<Int> = [];
 		var x: Int = 0;
 		var y: Int = 0;
 		for (i in 0...text.length) {
-			var c: String = text.charAt(i);
+			final c: String = text.charAt(i);
 			if (c == '\n') {
 				y++;
 				x = 0;
 				result.push(row);
 				row = [];
 			} else {
-				var p: Null<Int> = Std.parseInt(c);
+				final p: Null<Int> = Std.parseInt(c);
 				row.push(p != null && p > 0 ? p : 0);
 			}
 		}
@@ -71,8 +71,8 @@ abstract Matrix<T>(Array<Array<T>>) from Array<Array<T>> to Array<Array<T>> {
 
 	public function indexOf(e: T): Null<Point<Int>> {
 		for (x in 0...this.length) {
-			var xe: Array<T> = this[x];
-			var y: Int = xe.indexOf(e);
+			final xe: Array<T> = this[x];
+			final y: Int = xe.indexOf(e);
 			if (y != -1) return new Point<Int>(x, y);
 		}
 		return null;
@@ -86,7 +86,7 @@ abstract Matrix<T>(Array<Array<T>>) from Array<Array<T>> to Array<Array<T>> {
 		return {
 			hasNext: () -> x < this.length && y < this[x].length,
 			next: () -> {
-				var r: T = this[x++][y];
+				final r: T = this[x++][y];
 				if (x >= this.length) {
 					x = 0;
 					y++;

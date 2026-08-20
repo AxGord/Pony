@@ -21,15 +21,15 @@ class Button extends MovieClip {
 	public var core(default, null): ButtonImgN;
 	public var bMode(get, set): Bool;
 
-	private var zone: Button;
-	private var visual: Button;
+	private final zone: Button;
+	private final visual: Button;
 
 	public function new() {
 		super();
 		FLTools.setTrace();
 		stop();
 		removeChildren();
-		var cl: Class<Button> = Type.getClass(this);
+		final cl: Class<Button> = Type.getClass(this);
 
 		visual = Type.createEmptyInstance(cl);
 		visual.gotoAndStop(1);

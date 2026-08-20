@@ -17,7 +17,7 @@ class InputMode {
 	private static var _activeTouchesCounter: Int = 0;
 
 	private static var _ignoreMouseMoveUntil: Float = 0;
-	private static var _ignoreMouseMoveTimeMills: Int = 200;
+	private static inline final _ignoreMouseMoveTimeMills: Int = 200;
 
 	public static function init(): Void {
 		if (_initialized) return;

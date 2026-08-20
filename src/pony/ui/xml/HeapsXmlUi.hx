@@ -79,32 +79,32 @@ using pony.text.TextTools;
 #if (haxe_ver >= 4.2) abstract #end
 class HeapsXmlUi extends Object implements HasAbstract {
 
-	private static inline var HALF: Float = 0.5;
-	private static var fonts: Map<String, Font> = [];
-	private static var DYNS: Array<AttrVal> = [dynX, dynY, dynWidth, dynHeight, dyn];
+	private static inline final HALF: Float = 0.5;
+	private static final fonts: Map<String, Font> = [];
+	private static final DYNS: Array<AttrVal> = [dynX, dynY, dynWidth, dynHeight, dyn];
 
 	private var _scale: Float = 1;
 	@:nullSafety(Off) public var app(default, null): HeapsApp;
 	private var watchList: Array<Pair<Object, Dynamic<String>>> = [];
-	private var tweens: TweenMap<Object> = [];
+	private final tweens: TweenMap<Object> = [];
 
 	@SuppressWarnings('checkstyle:MagicNumber')
 	private function createUIElement(name: String, attrs: Dynamic<String>, content: Array<Object>, textContent: String): Object {
 		if (attrs.reverse.isTrue()) content.reverse();
 		var allowFilters: Bool = true;
-		var obj: Object = switch (name: UiTags) {
+		final obj: Object = switch (name: UiTags) {
 			case UiTags.repeat:
 				new Repeat(this, cast content[0], attrs.count != null ? Std.parseInt(attrs.count) : 0);
 			case UiTags.node:
 				#if js
-				var s: Object = new Object();
+				final s: Object = new Object();
 				#else
 				var s: Drawable = @:privateAccess new Drawable(cast null);
 				#end
 				for (e in content) s.addChild(e);
 				s;
 			case UiTags.rect:
-				var rect: NodeRect = new NodeRect(
+				final rect: NodeRect = new NodeRect(
 					new Point<Float>(parseAndScale(attrs.w), parseAndScale(attrs.h)), parseLineStyle(attrs.line),
 					attrs.color == null ? null : attrs.color, parseAndScale(attrs.round)
 				);
@@ -113,7 +113,7 @@ class HeapsXmlUi extends Object implements HasAbstract {
 			case UiTags.sw:
 				return new Switch(cast content, attrs.def == null ? -1 : Std.parseInt(attrs.def));
 			case UiTags.line:
-				var color: UColor = attrs.color;
+				final color: UColor = attrs.color;
 				var g: Graphics = new Graphics();
 				g.lineStyle(parseAndScale(attrs.size), color.rgb, color.invertAlpha.af);
 				g.moveTo(0, 0);
@@ -122,16 +122,16 @@ class HeapsXmlUi extends Object implements HasAbstract {
 			case UiTags.circle:
 				var g: Graphics = new Graphics();
 				if (attrs.line != null) {
-					var a: Array<String> = attrs.line.split(' ');
+					final a: Array<String> = attrs.line.split(' ');
 					if (a[0].charAt(0) == '#') a.unshift(cast a.pop());
-					var lsize: Float = parseAndScale(a[0]);
-					var lcolor: UColor = a[1];
+					final lsize: Float = parseAndScale(a[0]);
+					final lcolor: UColor = a[1];
 					g.lineStyle(lsize, lcolor.rgb, lcolor.invertAlpha.af);
 				} else {
 					g.lineStyle();
 				}
 				if (attrs.color != null) {
-					var color: UColor = attrs.color;
+					final color: UColor = attrs.color;
 					g.beginFill(color.rgb, color.invertAlpha.af);
 				}
 				g.drawCircle(0, 0, parseAndScale(attrs.r));
@@ -153,17 +153,17 @@ class HeapsXmlUi extends Object implements HasAbstract {
 			case UiTags.input:
 				createTextInput(attrs, textContent);
 			case UiTags.button:
-				var b: Button = new Button(cast content, attrs.anim);
+				final b: Button = new Button(cast content, attrs.anim);
 				if (attrs.disabled.isTrue()) b.core.disable();
 				if (attrs.bsw.isTrue()) b.core.bswitch();
 				b;
 			case UiTags.lightButton:
-				var b: LightButton = new LightButton(getSizeFromAttrs(attrs).toInt(), attrs.color);
+				final b: LightButton = new LightButton(getSizeFromAttrs(attrs).toInt(), attrs.color);
 				if (attrs.disabled.isTrue()) b.core.disable();
 				if (attrs.bsw.isTrue()) b.core.bswitch();
 				b;
 			case UiTags.scrollBox:
-				var s: ScrollBox = new ScrollBox(
+				final s: ScrollBox = new ScrollBox(
 					getSizeFromAttrs(attrs).toInt(), attrs.orient == null ? Orientation.Vertical : attrs.orient,
 					attrs.color == null ? null : attrs.color,
 					attrs.size == null ? ScrollBoxCore.DEFAULT_BAR_SIZE : parseAndScaleInt(attrs.size),
@@ -172,7 +172,7 @@ class HeapsXmlUi extends Object implements HasAbstract {
 				for (c in content) s.add(c);
 				s;
 			case UiTags.slider:
-				var slider: StepSlider = new StepSlider(app, cast content);
+				final slider: StepSlider = new StepSlider(app, cast content);
 				if (attrs.useTouchPos.isTrue()) slider.useTouchPos = true;
 				slider.sliderCore.initValue(
 					attrs.min != null ? Std.parseFloat(attrs.min) : 0, attrs.max != null ? Std.parseFloat(attrs.max) : 100
@@ -195,7 +195,7 @@ class HeapsXmlUi extends Object implements HasAbstract {
 		if (attrs.visible.isFalse()) obj.visible = false;
 		if (attrs.alpha != null) obj.alpha = Std.parseFloat(attrs.alpha);
 		if (attrs.scale != null) {
-			var a: Array<String> = attrs.scale.split(' ');
+			final a: Array<String> = attrs.scale.split(' ');
 			if (a.length == 1) {
 				obj.scale(Std.parseFloat(a[0]));
 			} else {
@@ -204,11 +204,11 @@ class HeapsXmlUi extends Object implements HasAbstract {
 			}
 		}
 		if (attrs.tint != null) {
-			var c: UColor = attrs.tint;
+			final c: UColor = attrs.tint;
 			cast(obj, Drawable).color = Vector.fromColor(c.rgb);
 		}
 		if (attrs.light != null) {
-			var v: Float = Std.parseFloat(attrs.light);
+			final v: Float = Std.parseFloat(attrs.light);
 			#if (haxe_ver >= 4.10)
 			if (Std.isOfType(obj, NodeBitmap))
 			#else
@@ -245,7 +245,7 @@ class HeapsXmlUi extends Object implements HasAbstract {
 			}
 		}
 		if (attrs.tween != null) {
-			var a: Array<String> = attrs.tween.trim().split(' ');
+			final a: Array<String> = attrs.tween.trim().split(' ');
 			if (a[1] != 'pos') throw 'Not supported';
 			tweens.pushToMap(a[0], {
 				target: obj,
@@ -259,7 +259,7 @@ class HeapsXmlUi extends Object implements HasAbstract {
 
 	private function parseLineStyle(attr: Null<String>): Null<Pair<UColor, Float>> {
 		if (attr == null) return null;
-		var a: Array<String> = StringTools.trim(attr).split(' ');
+		final a: Array<String> = StringTools.trim(attr).split(' ');
 		var color: UColor = 0;
 		var line: Float = 1;
 		if (a[0].charAt(0) == '#') {
@@ -280,13 +280,13 @@ class HeapsXmlUi extends Object implements HasAbstract {
 			case AttrVal.dyn:
 				new Point(app.canvas.dynStage.width, app.canvas.dynStage.height);
 			case _:
-				var a: Array<Float> = v.split(' ').map(parseAndScaleWithoutNull);
+				final a: Array<Float> = v.split(' ').map(parseAndScaleWithoutNull);
 				new Point(a[0], a.length == 1 ? a[0] : a[1]);
 		}
 	}
 
 	private function getSizeFromAttrs(attrs: Dynamic<String>): Point<Float> {
-		var p: Null<Point<Float>> = attrs.wh != null ? getWhPoint(attrs.wh) : 0;
+		final p: Null<Point<Float>> = attrs.wh != null ? getWhPoint(attrs.wh) : 0;
 		if (attrs.w != null) p.x = parseAndScaleWithoutNull(attrs.w);
 		if (attrs.h != null) p.y = parseAndScaleWithoutNull(attrs.h);
 		return p;
@@ -298,7 +298,7 @@ class HeapsXmlUi extends Object implements HasAbstract {
 		var w: Null<Float> = null;
 		var h: Null<Float> = null;
 		if (attrs.wh != null) {
-			var p: Point<Float> = getWhPoint(attrs.wh);
+			final p: Point<Float> = getWhPoint(attrs.wh);
 			w = p.x;
 			h = p.y;
 		}
@@ -331,26 +331,26 @@ class HeapsXmlUi extends Object implements HasAbstract {
 	private inline function createDText(attrs: Dynamic<String>, content: String): Object {
 		var c: Null<String> = attrs.color;
 		if (c != null) c = attrs.color.trim().allAfter(' ');
-		var color: Null<UColor> = c == null ? null : UColor.fromString(c);
+		final color: Null<UColor> = c == null ? null : UColor.fromString(c);
 		return createTextBase(new DText(getFont(attrs), color, attrs.disabled.isTrue()), attrs, content);
 	}
 
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function createTextInput(attrs: Dynamic<String>, content: String): Object {
-		var t: ExtendedTextInput = createTextBase(new ExtendedTextInput(getFont(attrs)), attrs, content);
+		final t: ExtendedTextInput = createTextBase(new ExtendedTextInput(getFont(attrs)), attrs, content);
 		t.multiline = attrs.multiline.isTrue();
 		t.lockFocus = attrs.lockFocus.isTrue();
 		t.transform = attrs.transform;
 		if (attrs.maxLines != null) {
-			var v: Null<Int> = Std.parseInt(attrs.maxLines);
+			final v: Null<Int> = Std.parseInt(attrs.maxLines);
 			if (v != null) t.maxLines = v;
 		}
 		if (attrs.onlyEn.isTrue()) t.onlyEn = true;
 		if (attrs.inputCursor != null) {
-			var a: Array<String> = attrs.inputCursor.trim().split(' ');
+			final a: Array<String> = attrs.inputCursor.trim().split(' ');
 			var color: Null<UColor> = null;
-			var ia: Array<Null<Int>> = [];
+			final ia: Array<Null<Int>> = [];
 			for (e in a) {
 				if (e.startsWith('#'))
 					color = e;
@@ -374,17 +374,17 @@ class HeapsXmlUi extends Object implements HasAbstract {
 		else if (attrs.smooth.isFalse())
 			t.smooth = false;
 		if (attrs.shadow != null) {
-			var shadow: String = StringTools.trim(attrs.shadow);
+			final shadow: String = StringTools.trim(attrs.shadow);
 			if (shadow.length > 0) @:nullSafety(Off) {
-				var a: Array<String> = shadow.split(' ');
-				var color: UColor = if (a[0].charAt(0) == '#')
+				final a: Array<String> = shadow.split(' ');
+				final color: UColor = if (a[0].charAt(0) == '#')
 					UColor.fromString(a.shift());
 				else if (a[a.length - 1].charAt(0) == '#')
 					UColor.fromString(a.pop());
 				else
 					0;
-				var dx: Float = a.length > 0 ? Std.parseFloat(a.pop()) : 4;
-				var dy: Float = a.length > 0 ? Std.parseFloat(a.pop()) : dx;
+				final dx: Float = a.length > 0 ? Std.parseFloat(a.pop()) : 4;
+				final dy: Float = a.length > 0 ? Std.parseFloat(a.pop()) : dx;
 				t.dropShadow = {
 					dx: dx,
 					dy: dy,
@@ -400,24 +400,24 @@ class HeapsXmlUi extends Object implements HasAbstract {
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function addFilters(obj: Drawable, attrs: Dynamic<String>): Void {
-		var filters: Array<Filter> = [];
+		final filters: Array<Filter> = [];
 		if (attrs.outline != null) {
-			var out: String = StringTools.trim(attrs.outline);
+			final out: String = StringTools.trim(attrs.outline);
 			if (out.length > 0) {
-				var a: Array<String> = out.split(' ');
+				final a: Array<String> = out.split(' ');
 				var color: UColor = 0;
 				if (a[0].charAt(0) == '#')
 					color = @:nullSafety(Off) UColor.fromString(a.shift());
 				else if (a[a.length - 1].charAt(0) == '#')
 					color = @:nullSafety(Off) UColor.fromString(a.pop());
-				var d: Null<Int> = a.length > 0 ? @:nullSafety(Off) Std.parseInt(a.pop()) : 4;
+				final d: Null<Int> = a.length > 0 ? @:nullSafety(Off) Std.parseInt(a.pop()) : 4;
 				filters.push(new Outline(d, color.rgb, 0.3));
 			}
 		}
 		if (attrs.shadow != null) {
-			var sh: String = StringTools.trim(attrs.shadow);
+			final sh: String = StringTools.trim(attrs.shadow);
 			if (sh.length > 0) {
-				var a: Array<String> = sh.split(' ');
+				final a: Array<String> = sh.split(' ');
 				var smooth: Bool = false;
 				if (a.indexOf('smooth') != -1) {
 					smooth = true;
@@ -447,36 +447,36 @@ class HeapsXmlUi extends Object implements HasAbstract {
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function createLayout(attrs: Dynamic<String>, content: Array<Dynamic>): Object {
 		return if (attrs.src != null) {
-			var l = new BGLayout(
+			final l = new BGLayout(
 				HeapsAssets.image(attrs.src, attrs.name), attrs.vert.isTrue(), scaleBorderInt(attrs.border), attrs.mask.isTrue()
 			);
 			for (e in content) l.add(e);
 			l;
 		} else if (attrs.iv != null || attrs.ih != null) {
-			var vert = attrs.iv != null;
-			var l = new IntervalLayout(
+			final vert = attrs.iv != null;
+			final l = new IntervalLayout(
 				parseAndScaleInt(vert ? attrs.iv : attrs.ih), vert, scaleBorderInt(attrs.border), attrs.align,
 				parseAndScaleInt(attrs.limit), attrs.mask.isTrue()
 			);
 			for (e in content) l.add(e);
 			l;
 		} else if (attrs.w != null || attrs.h != null) {
-			var r = new RubberLayout(
+			final r = new RubberLayout(
 				parseAndScale(attrs.w), parseAndScale(attrs.h), attrs.vert.isTrue(), scaleBorderInt(attrs.border),
 				attrs.padding == null ? true : attrs.padding.isTrue(), attrs.align, attrs.limit.isTrue(), attrs.mask.isTrue()
 			);
 			for (e in content) r.add(e);
 			r;
 		} else if (attrs.wh != null) {
-			var p: Point<Float> = getWhPoint(attrs.wh);
-			var r: RubberLayout = new RubberLayout(
+			final p: Point<Float> = getWhPoint(attrs.wh);
+			final r: RubberLayout = new RubberLayout(
 				p.x, p.y, attrs.vert.isTrue(), scaleBorderInt(attrs.border), attrs.padding == null ? true : attrs.padding.isTrue(),
 				attrs.align, attrs.limit.isTrue(), attrs.mask.isTrue()
 			);
 			for (e in content) r.add(e);
 			r;
 		} else {
-			var s: AlignLayout = new AlignLayout(attrs.align, scaleBorderInt(attrs.border), attrs.mask.isTrue());
+			final s: AlignLayout = new AlignLayout(attrs.align, scaleBorderInt(attrs.border), attrs.mask.isTrue());
 			for (e in content) s.add(e);
 			s;
 		}
@@ -531,7 +531,7 @@ class HeapsXmlUi extends Object implements HasAbstract {
 		if (s == null) {
 			return 0;
 		} else {
-			var v: Null<Int> = Std.parseInt(s);
+			final v: Null<Int> = Std.parseInt(s);
 			return v == null ? 0 : Std.int(v * _scale);
 		}
 	}
@@ -541,8 +541,8 @@ class HeapsXmlUi extends Object implements HasAbstract {
 	private inline function scaleBorderInt(s: String): Border<Int> return cast(Border.fromString(s) * _scale);
 
 	private function getFont(attrs: Dynamic<String>): Font {
-		var name: String = attrs.src;
-		var size: Int = parseAndScaleInt(attrs.size);
+		final name: String = attrs.src;
+		final size: Int = parseAndScaleInt(attrs.size);
 		var font: Null<Font> = null;
 		if (name == null) {
 			font = DefaultFont.get();
@@ -599,10 +599,10 @@ class HeapsXmlUi extends Object implements HasAbstract {
 	private function createFilters(data: Dynamic<Dynamic<String>>): Void {}
 
 	private function setWatchers(obj: Object, attrs: Dynamic<String>): Void {
-		var na: Dynamic<String> = {};
+		final na: Dynamic<String> = {};
 		var founded: Bool = false;
 		for (f in Reflect.fields(attrs)) {
-			var a = StringTools.trim(Reflect.field(attrs, f));
+			final a = StringTools.trim(Reflect.field(attrs, f));
 			if (checkInDyns(a)) {
 				Reflect.setField(na, f, a);
 				founded = true;
@@ -637,49 +637,49 @@ class HeapsXmlUi extends Object implements HasAbstract {
 		watchList = watchList.filter(watchFilter);
 		for (e in watchList) {
 			for (f in Reflect.fields(e.b)) {
-				var a = Reflect.field(e.b, f);
+				final a = Reflect.field(e.b, f);
 				switch [a, f] {
 					case [dyn, 'wh']:
-						var p: Point<Float> = new Point(r.width, r.height);
+						final p: Point<Float> = new Point(r.width, r.height);
 						if (isLayout(e.a)) {
-							var o: TLayout = cast e.a;
+							final o: TLayout = cast e.a;
 							o.wh = p;
 						} else if (isNode(e.a)) {
-							var o: Node = cast e.a;
+							final o: Node = cast e.a;
 							o.wh = p;
 						} else {
 							Reflect.setProperty(e.a, f, p);
 						}
 					case [dynWidth, 'w']:
 						if (isLayout(e.a)) {
-							var o: TLayout = cast e.a;
+							final o: TLayout = cast e.a;
 							o.w = r.width;
 						} else if (isNode(e.a)) {
-							var o: Node = cast e.a;
+							final o: Node = cast e.a;
 							o.w = r.width;
 						} else {
 							Reflect.setProperty(e.a, f, r.width);
 						}
 					case [dynWidth, 'x']:
 						if (isLayout(e.a)) {
-							var o: TLayout = cast e.a;
+							final o: TLayout = cast e.a;
 							o.x = r.width;
 						} else {
 							Reflect.setProperty(e.a, f, r.width);
 						}
 					case [dynHeight, 'h']:
 						if (isLayout(e.a)) {
-							var o: TLayout = cast e.a;
+							final o: TLayout = cast e.a;
 							o.h = r.height;
 						} else if (isNode(e.a)) {
-							var o: Node = cast e.a;
+							final o: Node = cast e.a;
 							o.h = r.height;
 						} else {
 							Reflect.setProperty(e.a, f, r.height);
 						}
 					case [dynHeight, 'y']:
 						if (isLayout(e.a)) {
-							var o: TLayout = cast e.a;
+							final o: TLayout = cast e.a;
 							o.y = r.height;
 						} else {
 							Reflect.setProperty(e.a, f, r.height);

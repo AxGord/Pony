@@ -18,13 +18,13 @@ using pony.flash.starling.displayFactory.DisplayListStaticExtentions;
  */
 class PageScroller {
 
-	private var _pageAreaHeight: Int;
+	private final _pageAreaHeight: Int;
 	private var pageHeight: Int;
 	private var kineticDragged: Bool = false;
 	private var activelyDragged: Bool = false;
 	private var dragged(get, null): Bool;
-	private var _scrollBar: Bar;
-	private var _page: IDisplayObject;
+	private final _scrollBar: Bar;
+	private final _page: IDisplayObject;
 
 	public function new(pageAreaHeight: Int, scrollBar: Bar, page: IDisplayObject) {
 		_scrollBar = scrollBar;
@@ -44,7 +44,7 @@ class PageScroller {
 
 	private function onAreaDrag(e: TouchManagerEvent): Void {
 		activelyDragged = true;
-		var dHeight: Int = dSize();
+		final dHeight: Int = dSize();
 		_page.startUniversalDrag(false, new Rectangle(_page.x, -dHeight, 0, dHeight));
 	}
 
@@ -68,7 +68,7 @@ class PageScroller {
 
 	private function dragScrollUpdate(e: TouchManagerEvent): Void {
 		if (dragged) {
-			var dHeight: Int = dSize();
+			final dHeight: Int = dSize();
 			if (dHeight == 0) {
 				_scrollBar.setPositionPercent(0);
 			} else {

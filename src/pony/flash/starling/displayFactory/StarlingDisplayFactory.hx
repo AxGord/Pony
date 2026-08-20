@@ -13,7 +13,7 @@ import pony.flash.starling.displayFactory.DisplayFactory.ITextField;
  */
 class StarlingDisplayFactory implements IDisplayFactory {
 
-	private static var _instance: StarlingDisplayFactory = new StarlingDisplayFactory();
+	private static final _instance: StarlingDisplayFactory = new StarlingDisplayFactory();
 
 	public function new() {
 		if (_instance != null) throw 'Singletone creation error';

@@ -110,7 +110,7 @@ class SliceTools {
 	}
 
 	private static function slice(name: String, n: Int, letter: String = ''): Array<String> {
-		var s: Array<String> = name.split('{slice$n$letter}');
+		final s: Array<String> = name.split('{slice$n$letter}');
 		return [for (i in 0...n) s[0] + i + s[1]];
 	}
 
@@ -126,15 +126,15 @@ class SliceTools {
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function removeAnim(name: String): String {
-		var p: SPair<String> = name.firstSplit('{anim');
+		final p: SPair<String> = name.firstSplit('{anim');
 		return p.a + p.b.allAfter('}');
 	}
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function parseAnimSpeed(name: String): SliceData {
-		var r: Null<String> = name.extract('{anim', '}');
+		final r: Null<String> = name.extract('{anim', '}');
 		if (r != null) {
-			var s: SPair<String> = r.firstSplit(',');
+			final s: SPair<String> = r.firstSplit(',');
 			return SliceData.Anim(Std.parseFloat(s.a), s.b != null ? s.b : null);
 		} else {
 			return SliceData.Anim();

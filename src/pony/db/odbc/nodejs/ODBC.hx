@@ -18,7 +18,7 @@ using StringTools;
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
 class ODBC extends SQLBase {
 
-	static private var constructor: Void -> Dynamic = Node.require('odbc');
+	static private final constructor: Void -> Dynamic = Node.require('odbc');
 
 	private var db: Dynamic;
 
@@ -65,7 +65,7 @@ class ODBC extends SQLBase {
 	 * Query with stream
 	 */
 	public function stream(q: String, ?p: PosInfos): Stream<Dynamic> {
-		var s = new Stream();
+		final s = new Stream();
 		query(q, p, function(_, res: Array<Dynamic>, _): Void s.putIterable(res));
 		return s;
 	}

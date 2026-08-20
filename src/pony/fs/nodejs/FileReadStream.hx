@@ -20,15 +20,15 @@ import pony.ds.WriteStream;
 class FileReadStream extends ReadStream<Bytes> {
 
 	/** 4 mb */
-	private static inline var DEFAULT_BLOCK_SIZE: Int = 4 * 1024 * 1024;
+	private static inline final DEFAULT_BLOCK_SIZE: Int = 4 * 1024 * 1024;
 
-	private var writeStream: WriteStream<Bytes>;
+	private final writeStream: WriteStream<Bytes>;
 	private var fd: Int;
 	private var buffer: Buffer;
 	private var size: Int;
 	private var position: Int = 0;
 	private var stop: Bool = false;
-	private var path: String;
+	private final path: String;
 	private var readLast: Bool = false;
 
 	public function new(path: String) {
@@ -61,7 +61,7 @@ class FileReadStream extends ReadStream<Bytes> {
 		if (err == null) {
 			size = cast stats.size;
 			buffer = new Buffer(stats.blksize ?? DEFAULT_BLOCK_SIZE);
-			var b: BytesOutput = new BytesOutput();
+			final b: BytesOutput = new BytesOutput();
 			b.writeFloat(size);
 			writeStream.data(b.getBytes());
 		} else {
@@ -85,7 +85,7 @@ class FileReadStream extends ReadStream<Bytes> {
 	private function readHandler(err: Error, bytesRead: Int, buffer: Buffer): Void {
 		if (stop) return;
 		if (err == null) {
-			var b: Bytes = Bytes.ofData(buffer.buffer.slice(0, bytesRead));
+			final b: Bytes = Bytes.ofData(buffer.buffer.slice(0, bytesRead));
 			if (readLast)
 				writeStream.end(b);
 			else

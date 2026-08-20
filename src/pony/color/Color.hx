@@ -13,11 +13,11 @@ typedef ColorImpl = {
  */
 abstract Color(ColorImpl) {
 
-	public static inline var MAX_CHANNEL: Int = 0xFF;
-	public static inline var WHITE: UInt = 0xFFFFFF;
-	public static inline var RED: UInt = 0xFF0000;
-	public static inline var GREEN: UInt = 0x00FF00;
-	public static inline var BLUE: UInt = 0x0000FF;
+	public static inline final MAX_CHANNEL: Int = 0xFF;
+	public static inline final WHITE: UInt = 0xFFFFFF;
+	public static inline final RED: UInt = 0xFF0000;
+	public static inline final GREEN: UInt = 0x00FF00;
+	public static inline final BLUE: UInt = 0x0000FF;
 
 	/**
 	 * ARGB

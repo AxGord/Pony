@@ -56,30 +56,30 @@ import pony.geom.Point;
 		var xMax: Float = 0.;
 		var xMin: Float = 0.;
 		var prevChar: Int = -1;
-		var align: Align = handleAlign ? textAlign : Left;
+		final align: Align = handleAlign ? textAlign : Left;
 		switch align {
 			case Center, Right, MultilineCenter, MultilineRight:
 				lines = [];
 				initGlyphs(text, false, false, lines);
-				var max: Int = if (align == MultilineCenter || align == MultilineRight)
+				final max: Int = if (align == MultilineCenter || align == MultilineRight)
 					Math.ceil(calcWidth)
 				else
 					realMaxWidth < 0 ? 0 : Math.ceil(realMaxWidth);
-				var k: Int = align == Center || align == MultilineCenter ? 1 : 0;
+				final k: Int = align == Center || align == MultilineCenter ? 1 : 0;
 				for (i in 0...lines.length) lines[i] = (max - lines[i]) >> k;
 				@:nullSafety(Off) x = lines.shift();
 				xMin = x;
 			case _:
 		}
-		var dl: Float = font.lineHeight + lineSpacing;
-		var calcLines: Bool = !handleAlign && !rebuild && lines != null;
+		final dl: Float = font.lineHeight + lineSpacing;
+		final calcLines: Bool = !handleAlign && !rebuild && lines != null;
 		var yMin: Float = 0.;
-		var t: String = splitText(text);
+		final t: String = splitText(text);
 		for (i in 0...t.length) {
 			@:nullSafety(Off) var cc: Int = t.charCodeAt(i);
-			var e: Null<FontChar> = font.getChar(cc);
-			var offs: Float = e.getKerningOffset(prevChar);
-			var esize: Float = e.width + offs;
+			final e: Null<FontChar> = font.getChar(cc);
+			final offs: Float = e.getKerningOffset(prevChar);
+			final esize: Float = e.width + offs;
 			// if the next word goes past the max width, change it into a newline
 			if (cc == '\n'.code) {
 				if (x > xMax) xMax = x;

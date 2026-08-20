@@ -54,7 +54,7 @@ class CardFinder implements HasSignal {
 	private function findHandler(key: String): Void {
 		keyHandler(key);
 		if (key != findTarget) return;
-		var count: Int = scanList.length;
+		final count: Int = scanList.length;
 		cancelFind();
 		eFind.dispatch(count, key);
 	}
@@ -98,7 +98,7 @@ class CardFinder implements HasSignal {
 	}
 
 	private function scanFinishHandler(): Void {
-		var list: Array<String> = scanList;
+		final list: Array<String> = scanList;
 		cancelScan();
 		eList.dispatch(list);
 	}

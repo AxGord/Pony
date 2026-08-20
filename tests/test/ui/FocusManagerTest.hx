@@ -14,7 +14,7 @@ class FocusManagerTest {
 
 	@Test
 	public function test(): Void {
-		var elements: Array<Element> = [for (_ in 0...5) new Element()];
+		final elements: Array<Element> = [for (_ in 0...5) new Element()];
 		elements[0].focus();
 		Assert.areEqual(elements[0], FocusManager.current);
 		elements[2].focus();

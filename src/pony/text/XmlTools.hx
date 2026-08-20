@@ -8,8 +8,8 @@ import pony.Fast;
  */
 class XmlTools {
 
-	public static inline var XML_REMSP_LEFT: String = '{REMSP_LEFT}';
-	public static inline var XML_REMSP_RIGHT: String = '{REMSP_RIGHT}';
+	public static inline final XML_REMSP_LEFT: String = '{REMSP_LEFT}';
+	public static inline final XML_REMSP_RIGHT: String = '{REMSP_RIGHT}';
 
 	public static inline function isTrue(x: Fast, name: String): Bool return x.has.resolve(name) && TextTools.isTrue(x.att.resolve(name));
 
@@ -18,7 +18,7 @@ class XmlTools {
 	public static inline function fast(text: String): Fast return new Fast(Xml.parse(text));
 
 	public static function document(xml: Xml): String {
-		var doc: Xml = Xml.createDocument();
+		final doc: Xml = Xml.createDocument();
 		doc.addChild(Xml.createProcessingInstruction('xml version="1.0" encoding="utf-8"'));
 		doc.addChild(xml);
 		var r: String = haxe.xml.Printer.print(doc, true);
@@ -38,19 +38,19 @@ class XmlTools {
 	}
 
 	public static function node(v: String, ?t: String): Xml {
-		var e: Xml = Xml.createElement(v);
+		final e: Xml = Xml.createElement(v);
 		if (t != null) e.addChild(data(t));
 		return e;
 	}
 
 	public static function att(v: String, att: String, data: String): Xml {
-		var e: Xml = Xml.createElement(v);
+		final e: Xml = Xml.createElement(v);
 		e.set(att, data);
 		return e;
 	}
 
 	public static function mapToNode(name: String, tag: String, map: Map<String, String>): Xml {
-		var r: Xml = Xml.createElement(name);
+		final r: Xml = Xml.createElement(name);
 		for (key in map.keys()) r.addChild(att(tag, key, map[key]));
 		return r;
 	}

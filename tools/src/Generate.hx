@@ -4,9 +4,9 @@
  */
 class Generate {
 
-	private static var WEB_PAGES_PATH: String = 'bin/home/templates/Default/pages/';
-	private static var WEB_MODELS_PATH: String = 'src/models/';
-	private static var WEB_MODEL_TEMPLATE_PATH: String = 'webmodel/';
+	private static final WEB_PAGES_PATH: String = 'bin/home/templates/Default/pages/';
+	private static final WEB_MODELS_PATH: String = 'src/models/';
+	private static final WEB_MODEL_TEMPLATE_PATH: String = 'webmodel/';
 
 	public static function run(type: String, name: String): Void {
 		if (name == null) Utils.error('Name not set');

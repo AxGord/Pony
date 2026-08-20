@@ -12,7 +12,7 @@ import flash.text.TextField;
  */
 class NativeHitTestSource implements IHitTestSource {
 
-	private var _container: DisplayObjectContainer;
+	private final _container: DisplayObjectContainer;
 	private var _point: Point = new Point();
 
 	public function new(container: DisplayObjectContainer) {
@@ -35,14 +35,14 @@ class NativeHitTestSource implements IHitTestSource {
 		if ((!container.mouseChildren && !container.mouseEnabled) || !container.visible) return null;
 		var i: Int = container.numChildren - 1;
 		while (i >= 0) {
-			var child: DisplayObject = container.getChildAt(i);
+			final child: DisplayObject = container.getChildAt(i);
 			if (child == null || !child.visible) {
 				i--;
 				continue;
 			}
 			if (child.hitTestPoint(x, y, testShape)) {
 				if (Std.is(child, DisplayObjectContainer)) {
-					var containerChild: Dynamic = childUnderPoint(x, y, cast child, testShape);
+					final containerChild: Dynamic = childUnderPoint(x, y, cast child, testShape);
 					if (containerChild != null) return containerChild;
 				} else if (Std.is(child, InteractiveObject)) {
 					if (untyped child.mouseEnabled && !isStaticTextField(child)) return child;
@@ -63,7 +63,7 @@ class NativeHitTestSource implements IHitTestSource {
 	public function parent(object: Dynamic): Dynamic {
 		if (!Std.is(object, flash.display.DisplayObject)) return null;
 		if (object == _container) return null;
-		var objectsParent = object.parent;
+		final objectsParent = object.parent;
 		return objectsParent;
 	}
 

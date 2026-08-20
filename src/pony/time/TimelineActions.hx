@@ -16,10 +16,10 @@ class TimelineActions implements HasSignal {
 	@:auto public var onStepBegin: Signal1<Int>;
 	@:auto public var onStepEnd: Signal1<Int>;
 
-	private var timeline: Timeline;
+	private final timeline: Timeline;
 	private var toStep: Int = 0;
-	private var stepSpeed: Array<Float>;
-	private var superSpeed: Float;
+	private final stepSpeed: Array<Float>;
+	private final superSpeed: Float;
 
 	public function new(times: Array<Time>, speeds: Array<Float>, superSpeed: Float = 10) {
 		stepSpeed = speeds;

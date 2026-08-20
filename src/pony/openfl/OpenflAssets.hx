@@ -24,7 +24,7 @@ import openfl.net.URLLoaderDataFormat;
  */
 class OpenflAssets {
 
-	static var assets: Map<String, DisplayObject> = [];
+	static final assets: Map<String, DisplayObject> = [];
 	static var loader: Loader;
 
 	static var loadCompleteHandler: Void -> Void;
@@ -47,7 +47,7 @@ class OpenflAssets {
 	public static function loadBytes(url: String, ok: ByteArray -> Void, ?error: Dynamic -> Void): Void {
 		if (error == null) error = Tools.errorFunction;
 		try {
-			var loader = new URLLoader(new URLRequest(url));
+			final loader = new URLLoader(new URLRequest(url));
 			loader.dataFormat = URLLoaderDataFormat.BINARY;
 			var removeEvents: Void -> Void = null;
 			function errorHandler(e: IOErrorEvent): Void {
@@ -74,7 +74,7 @@ class OpenflAssets {
 	public static function bytesToBitmapData(bytes: ByteArray, ok: BitmapData -> Void, ?error: Dynamic -> Void): Void {
 		if (error == null) error = Tools.errorFunction;
 		try {
-			var loader = new Loader();
+			final loader = new Loader();
 			var removeEvents: Void -> Void = null;
 			function errorHandler(e: IOErrorEvent): Void {
 				removeEvents();

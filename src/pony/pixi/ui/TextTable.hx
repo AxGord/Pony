@@ -47,7 +47,7 @@ class TextTable extends TextTableCore {
 	override private function drawLine(a: IntPoint, b: IntPoint, color: UColor, size: Int): Void {
 		if (color.a == 0xFF) return;
 		graphics.lineStyle(size, color.rgb, color.invertAlpha.af);
-		var d = size / 2;
+		final d = size / 2;
 		if (a.x == b.x) {
 			graphics.moveTo(a.x + d, a.y);
 			graphics.lineTo(b.x + d, b.y);
@@ -59,14 +59,14 @@ class TextTable extends TextTableCore {
 
 	#if (haxe_ver < 4.2) override #end
 	private function drawText(point: IntRect, text: String, style: FontStyle): Void {
-		var t = new BitmapText(text, { font: '${style.size}px ${style.font}', tint: style.color });
-		var align = if (style.border != null && style.align == null)
+		final t = new BitmapText(text, { font: '${style.size}px ${style.font}', tint: style.color });
+		final align = if (style.border != null && style.align == null)
 			new Pair(VAlign.Top, HAlign.Left);
 		else
 			style.align;
 
 		if (align != null) {
-			var pos = GeomTools.center(
+			final pos = GeomTools.center(
 				new Point<Float>(point.width, point.height),
 				[new Point(t.width, t.height)],
 				style.border, false, align

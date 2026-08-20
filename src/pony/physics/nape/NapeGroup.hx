@@ -21,8 +21,8 @@ import nape.callbacks.CbType;
 class NapeGroup {
 
 	public var cbt: CbType = new CbType();
-	private var space: Space;
-	private var ns: NapeSpace;
+	private final space: Space;
+	private final ns: NapeSpace;
 	public var sensor: Bool = true;
 
 	public function new(ns: NapeSpace) {
@@ -31,12 +31,12 @@ class NapeGroup {
 	}
 
 	public function collision(with: NapeGroup): Signal2<BodyBase, BodyBase> {
-		var e = new Event2<BodyBase, BodyBase>();
+		final e = new Event2<BodyBase, BodyBase>();
 		space.listeners.add(
 			new InteractionListener(
 				CbEvent.BEGIN, sensor ? InteractionType.SENSOR : InteractionType.COLLISION, cbt, with.cbt,
 				function(cb: InteractionCallback) if (cb.arbiters.length > 0) {
-					var a = cb.arbiters.iterator().next();
+					final a = cb.arbiters.iterator().next();
 					e.dispatch(BodyBase.BODYMAP[a.body1.id], BodyBase.BODYMAP[a.body2.id]);
 				}
 			)

@@ -21,8 +21,8 @@ abstract Temp(Float) {
 
 	@:from static public function fromString(s: String): Temp {
 		s = StringTools.trim(s);
-		var ch = s.substr(s.length - 1).toLowerCase();
-		var v: Float = Std.parseFloat(s.substr(0, s.length - 1));
+		final ch = s.substr(s.length - 1).toLowerCase();
+		final v: Float = Std.parseFloat(s.substr(0, s.length - 1));
 		return switch ch {
 			case 'c': fromC(v);
 			case 'k': fromK(v);

@@ -18,7 +18,7 @@ class FText extends Field {
 	}
 
 	override public function htmlInput(cl: String, act: String, value: String, ?hidden: Null<Bool>): String {
-		return '<textarea ${(cl != null ? 'class="' + cl + '" ' : '')}name="${model.name}.$act.$name">$value</textarea>';
+		return '<textarea ${cl != null ? 'class="' + cl + '" ' : ''}name="${model.name}.$act.$name">$value</textarea>';
 	}
 
 }

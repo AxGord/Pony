@@ -39,7 +39,7 @@ import unityengine.Screen;
 			Screen.SetResolution(defWidth, defHeight, false);
 
 		if (camera == null) return true;
-		var cam: GameObject = GameObject.Find(camera);
+		final cam: GameObject = GameObject.Find(camera);
 		if (cam == null) return true;
 		compEnabled(cam, 'AntialiasingAsPostEffect', cfg.quality >= 1);
 		compEnabled(
@@ -58,20 +58,20 @@ import unityengine.Screen;
 	}
 
 	public static function getArgs(?vs: Array<String>, ?ks: Dynamic<String>): Dynamic {
-		var r: Dynamic = {};
-		var vls: Map<String, String> = [];
+		final r: Dynamic = {};
+		final vls: Map<String, String> = [];
 		if (ks != null) for (f in Reflect.fields(ks)) {
 			Reflect.setField(r, f, false);
 			vls['-${Reflect.field(ks, f)}'] = f;
 		}
-		var pvs: Array<String> = [];
+		final pvs: Array<String> = [];
 		if (vs != null) {
 			for (v in vs) {
 				Reflect.setField(r, v, null);
 				pvs.push('-$v');
 			}
 		}
-		var a: NativeArray<String> = cs.system.Environment.GetCommandLineArgs();
+		final a: NativeArray<String> = cs.system.Environment.GetCommandLineArgs();
 		var skip: Bool = true;
 		for (i in 0...a.Length) if (skip)
 			skip = false;
@@ -87,7 +87,7 @@ import unityengine.Screen;
 	}
 
 	public static function compEnabled(g: GameObject, name: String, enabled: Bool): Bool {
-		var c: Behaviour = cast g.GetComponent(name);
+		final c: Behaviour = cast g.GetComponent(name);
 		if (c != null) c.enabled = enabled;
 		return enabled;
 	}

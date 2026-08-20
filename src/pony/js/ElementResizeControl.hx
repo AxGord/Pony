@@ -15,7 +15,7 @@ class ElementResizeControl implements HasSignal {
 	@:bindable public var element: Element;
 	public var width(get, never): Int;
 	public var height(get, never): Int;
-	private var even: Bool;
+	private final even: Bool;
 	private var initCheckCounter: Int = 0;
 
 	public function new(element: Element, even: Bool = true) {

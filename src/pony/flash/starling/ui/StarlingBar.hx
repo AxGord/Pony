@@ -19,13 +19,13 @@ import starling.textures.TextureSmoothing;
  */
 class StarlingBar extends StarlingProgressBar implements HasSignal {
 
-	private var zone: DisplayObject;
-	private var b: DisplayObject;
+	private final zone: DisplayObject;
+	private final b: DisplayObject;
 
 	@:auto public var onDynamic: Signal1<Float>;
 	@:auto public var onComplete: Signal1<Float>;
 
-	private var source: Sprite;
+	private final source: Sprite;
 
 	public function new(source: Sprite) {
 		super(source);
@@ -50,7 +50,7 @@ class StarlingBar extends StarlingProgressBar implements HasSignal {
 	}
 
 	private function touchHandler(e: TouchManagerEvent): Void {
-		var p = source.globalToLocal(new Point(e.globalX, e.globalY));
+		final p = source.globalToLocal(new Point(e.globalX, e.globalY));
 		p.x = p.x + 1.5;
 		if (p.x < 0)
 			p.x = 0;

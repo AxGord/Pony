@@ -77,7 +77,7 @@ class Timer implements ITimer<Timer> implements Declarator implements HasSignal 
 
 	public function start(?dt: DT): Timer {
 		stop();
-		var delay: Int = !eUpdate.empty || time == null ? _frequency : MathTools.cabs(time.max - currentTime);
+		final delay: Int = !eUpdate.empty || time == null ? _frequency : MathTools.cabs(time.max - currentTime);
 		#if (!neko && !dox && !cpp)
 		t = new haxe.Timer(delay);
 		t.run = !update.empty ? _update : _complite;
@@ -146,14 +146,14 @@ class Timer implements ITimer<Timer> implements Declarator implements HasSignal 
 	private function _progress(): Void eProgress.dispatch(time.percent(currentTime));
 
 	public static inline function delay(time: Time, f: Void -> Void): Timer {
-		var t: Timer = new Timer(time);
+		final t: Timer = new Timer(time);
 		t.complete.once(f);
 		t.complete.once(t.destroy);
 		return t.start();
 	}
 
 	public static inline function repeat(time: Time, f: Void -> Void): Timer {
-		var t: Timer = new Timer(time, -1);
+		final t: Timer = new Timer(time, -1);
 		t.complete.add(f);
 		return t.start();
 	}

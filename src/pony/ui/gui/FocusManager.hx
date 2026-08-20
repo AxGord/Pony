@@ -9,7 +9,7 @@ import pony.Priority;
  */
 class FocusManager {
 
-	private static var list: Map<String, Priority<IFocus>> = [];
+	private static final list: Map<String, Priority<IFocus>> = [];
 
 	/**
 	 * Current focused element.
@@ -27,7 +27,7 @@ class FocusManager {
 	 */
 	public static function reg(o: IFocus): Void {
 		if (!list.exists(o.focusGroup)) list[o.focusGroup] = new Priority<IFocus>();
-		var g: Priority<IFocus> = list[o.focusGroup];
+		final g: Priority<IFocus> = list[o.focusGroup];
 		#if cs
 		g.add(o, Reflect.field(o, 'focusPriority'));
 		#else
@@ -69,7 +69,7 @@ class FocusManager {
 	 */
 	public static function next(): IFocus {
 		if (current == null) return null;
-		var e: IFocus = p.loop();
+		final e: IFocus = p.loop();
 		e.focus();
 		return e;
 	}
@@ -80,7 +80,7 @@ class FocusManager {
 	 */
 	public static function prev(): IFocus {
 		if (current == null) return null;
-		var e: IFocus = p.backLoop();
+		final e: IFocus = p.backLoop();
 		e.focus();
 		return e;
 	}

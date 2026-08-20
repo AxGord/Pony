@@ -10,7 +10,7 @@ import openfl.text.TextFormat;
  */
 class TextButton extends Button {
 
-	private var tf: TextField;
+	private final tf: TextField;
 
 	public function new(states: Array<String>, text: String, ?format: TextFormat, w: Float = 0, h: Float = 0) {
 		super(states);

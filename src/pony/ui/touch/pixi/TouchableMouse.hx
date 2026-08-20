@@ -70,7 +70,7 @@ class TouchableMouse {
 			base.dispatchOver();
 		}
 		_down = true;
-		var p = pony.ui.touch.pixi.Mouse.correction(e.data.global.x, e.data.global.y);
+		final p = pony.ui.touch.pixi.Mouse.correction(e.data.global.x, e.data.global.y);
 		base.dispatchDown(0, p.x, p.y);
 	}
 

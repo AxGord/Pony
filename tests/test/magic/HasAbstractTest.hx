@@ -7,7 +7,7 @@ class HasAbstractTest {
 
 	@Test
 	public function test(): Void {
-		var x = new ChildClass();
+		final x = new ChildClass();
 		Assert.areEqual(x.intToString(12), 'foo');
 		Assert.areEqual(x.common(), 'bar');
 

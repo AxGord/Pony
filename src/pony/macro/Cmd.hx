@@ -17,8 +17,8 @@ class Cmd {
 	 * @param	file FD project file
 	 */
 	public static function fd(file: String): Void {
-		var x: Fast = new Fast(Xml.parse(File.getContent(file)));
-		var cp = Context.getClassPath();
+		final x: Fast = new Fast(Xml.parse(File.getContent(file)));
+		final cp = Context.getClassPath();
 		for (n in x.node.project.node.compileTargets.nodes.compile) {
 			var s = StringTools.replace(n.att.path, '\\', '/');
 			for (e in cp) s = StringTools.replace(s, e, '');

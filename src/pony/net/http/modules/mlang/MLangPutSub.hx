@@ -9,14 +9,14 @@ import pony.text.tpl.Valuator;
  * @author AxGord <axgord@gmail.com>
  */
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
-@:final class MLangPutSub extends Valuator<MLangPut, String> {
+final class MLangPutSub extends Valuator<MLangPut, String> {
 
 	@:async
 	override public function tag(name: String, content: TplData, arg: String, args: Map<String, String>, ?kid: ITplPut): String {
 		if (name == 'selected')
 			return @await super.tag(name, content, arg, args, kid);
 		else {
-			var r = @await valu(name, arg);
+			final r = @await valu(name, arg);
 			if (r != null)
 				return @await super.tag(name, content, arg, args, kid);
 			else
@@ -38,7 +38,7 @@ import pony.text.tpl.Valuator;
 			case 'name': b;
 			case 'title': a.a.base.langTable.langs.get(b).title;
 			case 'author':
-				var a: String = a.a.base.langTable.langs.get(b).author;
+				final a: String = a.a.base.langTable.langs.get(b).author;
 				a != null ? a : '';
 			case _: null;
 		}

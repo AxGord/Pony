@@ -29,7 +29,7 @@ class Node {
 	public static function createNpmPackage(
 		project: Project, ?dependencies: Map<String, String>, ?devDependencies: Map<String, String>
 	): NpmPackage {
-		var r: NpmPackage = {
+		final r: NpmPackage = {
 			name: project.rname,
 			version: '0.0.1',
 			main: project.build.getOutputFile(),

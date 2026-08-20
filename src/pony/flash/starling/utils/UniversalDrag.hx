@@ -19,7 +19,7 @@ import starling.display.DisplayObject;
  */
 class UniversalDrag {
 
-	public static inline var KINETIC_DRAG_DURATION: Float = 0.7;
+	public static inline final KINETIC_DRAG_DURATION: Float = 0.7;
 
 	private static var _dragged: IDisplayObject;
 	private static var _dragBounds: Rectangle;
@@ -27,8 +27,8 @@ class UniversalDrag {
 	private static var _xSpeed: Float;
 	private static var _ySpeed: Float;
 
-	private static var SPEED_MP: Float = 350;
-	private static var SPEED_POW: Float = 1.4;
+	private static inline final SPEED_MP: Float = 350;
+	private static inline final SPEED_POW: Float = 1.4;
 
 	private static var _startX: Float = 0;
 	private static var _startY: Float = 0;
@@ -50,7 +50,7 @@ class UniversalDrag {
 		_xSpeed = 0;
 		_ySpeed = 0;
 
-		var lastEvent = TouchManager.getLastDownEvent();
+		final lastEvent = TouchManager.getLastDownEvent();
 		_dragTouchId = lastEvent.touchID;
 
 		if (lockCenter) {
@@ -110,16 +110,16 @@ class UniversalDrag {
 		if (_dragged == null) return;
 
 		#if tweenmax
-		var prevX: Float = _dragged.x;
-		var prevY: Float = _dragged.y;
+		final prevX: Float = _dragged.x;
+		final prevY: Float = _dragged.y;
 
 		_dragged.x += SPEED_MP * Math.pow(Math.abs(_xSpeed), SPEED_POW) * sign(_xSpeed);
 		_dragged.y += SPEED_MP * Math.pow(Math.abs(_ySpeed), SPEED_POW) * sign(_ySpeed);
 
 		toBounds();
 
-		var toX: Float = _dragged.x;
-		var toY: Float = _dragged.y;
+		final toX: Float = _dragged.x;
+		final toY: Float = _dragged.y;
 
 		_dragged.x = prevX;
 		_dragged.y = prevY;

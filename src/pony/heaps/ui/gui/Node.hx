@@ -31,7 +31,7 @@ class Node extends Object implements HasSignal implements HasLink implements INo
 	public var size(get, never): Point<Float>;
 	@:bindable public var tint: Vector = new Vector(1, 1, 1, 1);
 	public var interactive(default, null): Null<Interactive>;
-	private var border: Border<Int>;
+	private final border: Border<Int>;
 
 	public function new(size: Point<Float>, ?border: Border<Int>, ?parent: Object) {
 		super(parent);

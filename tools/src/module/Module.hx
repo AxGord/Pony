@@ -20,7 +20,7 @@ class Module extends Logable implements HasAbstract implements HasLink {
 	@:auto public static var onEndQueue: Signal0;
 	public static var busy(link, never): Bool = GLOBALQUEUE.busy;
 
-	private static inline var CONFIG_PRIORITY: Int = -100;
+	private static inline final CONFIG_PRIORITY: Int = -100;
 	private static var GLOBALQUEUE: Queue<(Void -> Void) -> Void> = new Queue<(Void -> Void) -> Void>(globalRunNextRun);
 
 	@:nullSafety(Off) public var modules: Modules;
@@ -54,7 +54,7 @@ class Module extends Logable implements HasAbstract implements HasLink {
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function parseGroup(xml: Fast): Null<Array<String>> {
 		if (xml != null && xml.has.group) {
-			var r: Array<String> = xml.att.group.split(' ').filter(checkLength);
+			final r: Array<String> = xml.att.group.split(' ').filter(checkLength);
 			return r.length > 0 ? r : null;
 		} else {
 			return null;

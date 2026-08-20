@@ -23,7 +23,7 @@ class Button extends Sprite implements IWH {
 	public var core(default, null): ButtonImgN;
 	public var size(get, never): Point<Float>;
 
-	private var hideDisabled: Bool;
+	private final hideDisabled: Bool;
 
 	public var touchActive(get, set): Bool;
 	public var cursor(get, set): Bool;
@@ -34,7 +34,7 @@ class Button extends Sprite implements IWH {
 	private var wr: WaitReady;
 
 	public function new(imgs: ROArray<String>, ?offset: Point<Float>, ?useSpriteSheet: String) {
-		var imgs = imgs.copy();
+		final imgs = imgs.copy();
 		wr = new WaitReady();
 		if (imgs[0] == null) throw 'Need first img';
 		if (imgs[1] == null) imgs[1] = imgs[2] != null ? imgs[2] : imgs[0];
@@ -89,7 +89,7 @@ class Button extends Sprite implements IWH {
 	}
 
 	private static function getImg(img: String, useSpriteSheet: String): SliceSprite {
-		var s = getInteractiveImg(img, useSpriteSheet);
+		final s = getInteractiveImg(img, useSpriteSheet);
 		s.interactive = false;
 		s.interactiveChildren = false;
 		return s;

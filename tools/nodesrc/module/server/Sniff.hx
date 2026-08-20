@@ -13,10 +13,10 @@ import types.SniffConfig;
  * Sniff submodule
  * @author AxGord <axgord@gmail.com>
  */
-@:nullSafety(Strict) @:final class Sniff extends Logable {
+@:nullSafety(Strict) final class Sniff extends Logable {
 
-	private var cfg: SniffConfig;
-	private var server: SocketServer;
+	private final cfg: SniffConfig;
+	private final server: SocketServer;
 
 	public function new(cfg: SniffConfig) {
 		super();
@@ -31,7 +31,7 @@ import types.SniffConfig;
 		log('>> Connect');
 		a.logInputData = true;
 		listenErrorAndLog(a, '>>');
-		var b: SocketClient = new SocketClient(cfg.clientHost, cfg.clientPort, -1, 0, false);
+		final b: SocketClient = new SocketClient(cfg.clientHost, cfg.clientPort, -1, 0, false);
 		b.logInputData = true;
 		listenErrorAndLog(b, '<<');
 		b.onOpen < b.sendAllStack;
@@ -44,8 +44,8 @@ import types.SniffConfig;
 	private function convertAndSend(client: ISocketClient, bi: BytesInput): Void client.send(convertBytes(bi));
 
 	private inline function convertBytes(bi: BytesInput): BytesOutput {
-		var bo: BytesOutput = new BytesOutput();
-		var bt: Bytes = bi.readAll();
+		final bo: BytesOutput = new BytesOutput();
+		final bt: Bytes = bi.readAll();
 		bo.write(bt);
 		return bo;
 	}

@@ -15,7 +15,7 @@ using pony.text.TextTools;
 class Delete extends Action {
 
 	override public function connect(cpq: CPQ, modelConnect: ModelConnect): Pair<EConnect, ISubActionConnect> {
-		var obj = new DeleteConnect(this, cpq, modelConnect);
+		final obj = new DeleteConnect(this, cpq, modelConnect);
 		return new Pair(REG(cast obj), cast obj);
 	}
 
@@ -39,9 +39,9 @@ class DeleteConnect extends ActionConnect implements ISubActionConnect {
 			return true;
 		}
 
-		var ca: Array<Dynamic> = [];
+		final ca: Array<Dynamic> = [];
 		for (k in base.args.keys()) {
-			var v: String = h[k];
+			final v: String = h[k];
 			if (Std.is(v, Array)) {
 				cpq.connection.error('Array not supported');
 				return true;
@@ -91,8 +91,8 @@ class DeletePut extends pony.text.tpl.TplPut<DeleteConnect, Dynamic> {
 			var fixList = [];
 			if (args.exists('fix')) fixList = args['fix'].split(',');
 			var r: String = '';
-			var ma: Map<Int, Dynamic> = a.storage;
-			var m = ma[a.base.id];
+			final ma: Map<Int, Dynamic> = a.storage;
+			final m = ma[a.base.id];
 			if (m == null)
 				for (k in a.base.args.keys()) {
 					r += input(k, Reflect.field(b, k));
@@ -102,7 +102,7 @@ class DeletePut extends pony.text.tpl.TplPut<DeleteConnect, Dynamic> {
 					r += input(k, m.values.exists(k) ? m.values.get(k) : '');
 				}
 			a.clr();
-			return '<form action="" method="POST">$r<button>${(content != null ? @await tplData(content) : 'Delete')}</button></form>';
+			return '<form action="" method="POST">$r<button>${content != null ? @await tplData(content) : 'Delete'}</button></form>';
 		} else {
 			var r: String = @await sub(a, b, DeletePutSub, content);
 			a.clr();

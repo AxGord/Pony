@@ -8,7 +8,7 @@ import pony.Logable;
  * Http Server submodule
  * @author AxGord <axgord@gmail.com>
  */
-@:nullSafety(Strict) @:final class Http extends Logable {
+@:nullSafety(Strict) final class Http extends Logable {
 
 	private var server: HttpServer;
 	private var path: String;

@@ -11,7 +11,7 @@ import types.BmfontConfig;
  * Bmfont Pony Tools Node Module
  * @author AxGord <axgord@gmail.com>
  */
-@:nullSafety(Strict) @:final class Bmfont extends NModule<BmfontConfig> {
+@:nullSafety(Strict) final class Bmfont extends NModule<BmfontConfig> {
 
 	@:nullSafety(Off) private var to: String;
 
@@ -33,9 +33,9 @@ import types.BmfontConfig;
 		if (padding == -1) padding = 0;
 		tasks.add();
 		@:nullSafety(Off) var short: String = font.shortName;
-		var ofn: String = output != null ? output : '${short}_$size';
-		var fntFile: File = '${to + ofn}.fnt';
-		var convertToFnt: Bool = format == 'fnt';
+		final ofn: String = output != null ? output : '${short}_$size';
+		final fntFile: File = '${to + ofn}.fnt';
+		final convertToFnt: Bool = format == 'fnt';
 		if (convertToFnt) format = 'xml';
 		// if (sys.FileSystem.exists(fntFile)) return; //todo check xml
 		log('Begin generation: $output');
@@ -62,7 +62,7 @@ import types.BmfontConfig;
 					return;
 				}
 				for (t in textures) Fs.writeFileSync('${to + ofn}.png', t.texture);
-				var f: String = face == null ? ofn : face;
+				final f: String = face == null ? ofn : face;
 				var data: String = StringTools.replace(font.data, '<info face="$short"', '<info face="$f"');
 				if (lineHeight != null) data = TextTools.replaceXmlAttr(data, 'lineHeight', @:nullSafety(Off) '$lineHeight');
 				if (convertToFnt) data = xmlToFnt(data);
@@ -75,7 +75,7 @@ import types.BmfontConfig;
 	}
 
 	private static function xmlToFnt(s: String): String {
-		var xml: Fast = new Fast(Xml.parse(s)).node.font;
+		final xml: Fast = new Fast(Xml.parse(s)).node.font;
 		return [
 			printNodes(xml, 'info'),
 			printNodes(xml, 'common'),

@@ -18,9 +18,9 @@ using pony.flash.starling.displayFactory.DisplayListStaticExtentions;
  */
 class Tooltip {
 
-	private var _tooltip: IDisplayObject;
+	private final _tooltip: IDisplayObject;
 	private var _container: IDisplayObjectContainer;
-	private var _data: Map<IDisplayObject, Dynamic> = [];
+	private final _data: Map<IDisplayObject, Dynamic> = [];
 
 	private var _previousTarget: Dynamic;
 
@@ -45,10 +45,10 @@ class Tooltip {
 	}
 
 	private function defaultDataSet(tooltip: IDisplayObject, data: Dynamic): Void {
-		var textField: ITextField = untyped tooltip.getChildByName('textField');
-		var longTextField: ITextField = untyped tooltip.getChildByName('longTextField');
-		var background: IDisplayObject = untyped tooltip.getChildByName('background');
-		var longBackground: IDisplayObject = untyped tooltip.getChildByName('longBackground');
+		final textField: ITextField = untyped tooltip.getChildByName('textField');
+		final longTextField: ITextField = untyped tooltip.getChildByName('longTextField');
+		final background: IDisplayObject = untyped tooltip.getChildByName('background');
+		final longBackground: IDisplayObject = untyped tooltip.getChildByName('longBackground');
 
 		var distanceBetweenTextFields: Int = 0;
 		if (textField != null && longTextField != null)
@@ -62,8 +62,8 @@ class Tooltip {
 		if (longBackground != null && longTextField != null)
 			longBgExtraHeight = Std.int(longBackground.y + longBackground.height - (longTextField.getTextHeight() + longTextField.y));
 
-		var text: String = Std.is(data, String) ? data : data.text;
-		var longText: String = Std.is(data, String) ? '' : data.longText;
+		final text: String = Std.is(data, String) ? data : data.text;
+		final longText: String = Std.is(data, String) ? '' : data.longText;
 
 		if (textField != null) {
 			textField.text = text;
@@ -126,13 +126,13 @@ class Tooltip {
 	}
 
 	private function place(x: Float, y: Float): Void {
-		var point = _tooltip.parent.globalToLocal(new Point(x, y));
-		var rect = _tooltip.getBounds(_tooltip);
+		final point = _tooltip.parent.globalToLocal(new Point(x, y));
+		final rect = _tooltip.getBounds(_tooltip);
 		_tooltip.x = Std.int(point.x - rect.width / 2);
 		_tooltip.y = Std.int(point.y - rect.height - distanceFromMouse);
 
-		var stageWidth: Float = FLTools.width;
-		var stageHeight: Float = FLTools.height;
+		final stageWidth: Float = FLTools.width;
+		final stageHeight: Float = FLTools.height;
 
 		if (_tooltip.x < distanceFromBorder) _tooltip.x = distanceFromBorder;
 		if (_tooltip.y < distanceFromBorder) _tooltip.y = distanceFromBorder;

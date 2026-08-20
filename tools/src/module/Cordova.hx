@@ -21,12 +21,12 @@ typedef CordovaConfig = {
  */
 class Cordova extends CfgModule<CordovaConfig> {
 
-	private static inline var PRIORITY: Int = 0;
-	private static inline var AVC: String = 'android-versionCode';
-	private static inline var OPEN_WIDGET_TAG: String = '<widget';
-	private static inline var CLOSE_WIDGET_TAG: String = '</widget>';
+	private static inline final PRIORITY: Int = 0;
+	private static inline final AVC: String = 'android-versionCode';
+	private static inline final OPEN_WIDGET_TAG: String = '<widget';
+	private static inline final CLOSE_WIDGET_TAG: String = '</widget>';
 
-	private var configFile: File = 'config.xml';
+	private static final configFile: File = 'config.xml';
 
 	public function new() super('cordova');
 
@@ -46,7 +46,7 @@ class Cordova extends CfgModule<CordovaConfig> {
 
 	private function cordovaHandler(a: String, b: String): Void {
 		modules.build.addHaxelib('cordova');
-		var cfg: AppCfg = Utils.parseArgs([a, b]);
+		final cfg: AppCfg = Utils.parseArgs([a, b]);
 		if (cfg.debug) {
 			modules.commands.onAndroid >> androidBuildHandler;
 			modules.commands.onIphone >> iphoneBuildHandler;
@@ -90,7 +90,7 @@ class Cordova extends CfgModule<CordovaConfig> {
 		}
 
 		var content: String = configFile.content;
-		var contentLines: Array<String> = content.split('\n');
+		final contentLines: Array<String> = content.split('\n');
 		var wline: Int = 0;
 		var wfounded: Bool = false;
 		for (s in contentLines) {
@@ -114,7 +114,7 @@ class Cordova extends CfgModule<CordovaConfig> {
 			error('Widget tag not founded, please fix $configFile');
 			Utils.exit(1);
 		}
-		var widgetLineXml: Fast = XmlTools.fast(contentLines[wline] + CLOSE_WIDGET_TAG).node.widget;
+		final widgetLineXml: Fast = XmlTools.fast(contentLines[wline] + CLOSE_WIDGET_TAG).node.widget;
 		var changes: Bool = false;
 		var widgetLineChanged: Bool = false;
 
@@ -137,13 +137,13 @@ class Cordova extends CfgModule<CordovaConfig> {
 
 		if (widgetLineChanged) {
 			changes = true;
-			var c = widgetLineXml.x.toString().substr(0, -CLOSE_WIDGET_TAG.length);
+			final c = widgetLineXml.x.toString().substr(0, -CLOSE_WIDGET_TAG.length);
 			contentLines[wline] = c;
 			content = contentLines.join('\n');
 		}
 
 		if (cfg.name != null) {
-			var nc: String = XmlTools.intagReplace(content, 'name', cfg.name);
+			final nc: String = XmlTools.intagReplace(content, 'name', cfg.name);
 			if (nc != content) {
 				content = nc;
 				changes = true;
@@ -151,7 +151,7 @@ class Cordova extends CfgModule<CordovaConfig> {
 		}
 
 		if (cfg.desc != null) {
-			var nc: String = XmlTools.intagReplace(content, 'description', cfg.desc);
+			final nc: String = XmlTools.intagReplace(content, 'description', cfg.desc);
 			if (nc != content) {
 				content = nc;
 				changes = true;

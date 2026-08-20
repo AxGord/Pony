@@ -38,23 +38,23 @@ interface IRPC #if !macro
  */
 class RPCBuilder {
 
-	public static inline var META: String = ':rpc';
-	public static inline var ON: String = 'on';
+	public static inline final META: String = ':rpc';
+	public static inline final ON: String = 'on';
 
 	macro public static function build(): Array<Field> {
-		var smeta = [{ name: ':s', pos: Context.currentPos() }];
-		var fields: Array<Field> = Context.getBuildFields();
-		var checks: Array<String> = [];
+		final smeta = [{ name: ':s', pos: Context.currentPos() }];
+		final fields: Array<Field> = Context.getBuildFields();
+		final checks: Array<String> = [];
 
 		// function reg(name:String)
 
-		var tonew: Array<Expr> = [];
+		final tonew: Array<Expr> = [];
 
 		for (field in fields) {
 			if (field.meta.checkMeta([':sub'])) switch field.kind {
 				case FieldType.FVar(TPath(t)):
-					var n = field.name;
-					var sn = ON + pony.text.TextTools.bigFirst(n);
+					final n = field.name;
+					final sn = ON + pony.text.TextTools.bigFirst(n);
 
 					fields.push({
 						name: sn,
@@ -64,7 +64,7 @@ class RPCBuilder {
 						meta: [{ name: META, pos: Context.currentPos() }]
 					});
 
-					var en: Expr = { expr: ENew(t, []), pos: Context.currentPos() };
+					final en: Expr = { expr: ENew(t, []), pos: Context.currentPos() };
 					tonew.push(macro $i{n} = ${en});
 					tonew.push(macro $i{n}.onData << $i{n + 'Remote'});
 					tonew.push(macro $i{sn} << $i{n}.data);
@@ -85,8 +85,8 @@ class RPCBuilder {
 			if (field.meta.checkMeta([META])) switch field.kind {
 				case FieldType.FVar(t):
 					field.meta = [{ name: ':auto', pos: Context.currentPos() }];
-					var n = field.name;
-					var flagName = '${n}RemoteCall';
+					final n = field.name;
+					final flagName = '${n}RemoteCall';
 					fields.push({
 						name: flagName,
 						access: [APrivate],
@@ -95,7 +95,7 @@ class RPCBuilder {
 						meta: smeta
 					});
 
-					var args: Array<ComplexType> = [];
+					final args: Array<ComplexType> = [];
 					switch t {
 						case TPath(p):
 							for (param in p.params) {
@@ -119,12 +119,12 @@ class RPCBuilder {
 						});
 					}
 
-					var nf = n.substr(0, 2);
-					var en = 'e${(nf == ON ? n.substr(2) : pony.text.TextTools.bigFirst(n))}';
+					final nf = n.substr(0, 2);
+					final en = 'e${nf == ON ? n.substr(2) : pony.text.TextTools.bigFirst(n)}';
 
 					{
-						var rn = nf == ON ? n.charAt(2).toLowerCase() + n.substr(3) : n;
-						var ae: Array<Expr> = [macro $i{flagName} = true];
+						final rn = nf == ON ? n.charAt(2).toLowerCase() + n.substr(3) : n;
+						final ae: Array<Expr> = [macro $i{flagName} = true];
 						for (arg in 0...args.length) ae.push(macro $i{n + '_' + arg} = $i{'arg' + arg});
 						ae.push(macro send());
 						for (arg in 0...args.length) ae.push(macro $i{n + '_' + arg} = null);
@@ -141,8 +141,8 @@ class RPCBuilder {
 						});
 					}
 					{
-						var rc: Array<Expr> = [macro $i{flagName} = false];
-						var ca: Array<Expr> = [];
+						final rc: Array<Expr> = [macro $i{flagName} = false];
+						final ca: Array<Expr> = [];
 						for (arg in 0...args.length) {
 							rc.push({
 								expr: EVars([
@@ -162,9 +162,9 @@ class RPCBuilder {
 							expr: ECall(macro $i{en}.dispatch, [for (arg in 0...args.length) macro $i{'arg$arg'}]),
 							pos: Context.currentPos()
 						});
-						var bl = { expr: EBlock(rc), pos: Context.currentPos() };
+						final bl = { expr: EBlock(rc), pos: Context.currentPos() };
 
-						var chname = '${n}RemoteCheck';
+						final chname = '${n}RemoteCheck';
 						@SuppressWarnings('checkstyle:MagicNumber')
 						fields.push({
 							name: chname,
@@ -182,8 +182,8 @@ class RPCBuilder {
 					}
 
 				case FieldType.FFun(f) if (field.meta.checkMeta([META])):
-					var n = field.name;
-					var flagName = '${n}RemoteCall';
+					final n = field.name;
+					final flagName = '${n}RemoteCall';
 					fields.push({
 						name: flagName,
 						access: [APrivate],
@@ -203,7 +203,7 @@ class RPCBuilder {
 					}
 
 					{
-						var ae: Array<Expr> = [macro $i{flagName} = true];
+						final ae: Array<Expr> = [macro $i{flagName} = true];
 						for (arg in f.args) ae.push(macro $i{n + '_' + arg.name} = $i{arg.name});
 						ae.push(macro send());
 						for (arg in f.args) ae.push(macro $i{n + '_' + arg.name} = null);
@@ -220,8 +220,8 @@ class RPCBuilder {
 						});
 					}
 					{
-						var rc: Array<Expr> = [macro $i{flagName} = false];
-						var ca: Array<Expr> = [];
+						final rc: Array<Expr> = [macro $i{flagName} = false];
+						final ca: Array<Expr> = [];
 						for (arg in f.args) {
 							rc.push({
 								expr: EVars([
@@ -237,9 +237,9 @@ class RPCBuilder {
 							ca.push(macro $i{arg.name});
 						}
 						rc.push({ expr: ECall(macro $i{n}, ca), pos: Context.currentPos() });
-						var bl = { expr: EBlock(rc), pos: Context.currentPos() };
+						final bl = { expr: EBlock(rc), pos: Context.currentPos() };
 
-						var chname = '${n}RemoteCheck';
+						final chname = '${n}RemoteCheck';
 						@SuppressWarnings('checkstyle:MagicNumber')
 						fields.push({
 							name: chname,

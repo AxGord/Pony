@@ -53,7 +53,7 @@ class SocketClient extends SocketClientBase {
 
 	private function _send(data: BytesOutput): Void {
 		socket.addEventListener('outputProgress', outputProgressHandler);
-		var b: Bytes = data.getBytes();
+		final b: Bytes = data.getBytes();
 		logBytes('Send data', b);
 		try {
 			socket.writeBytes(ByteArray.fromBytes(b));
@@ -72,7 +72,7 @@ class SocketClient extends SocketClientBase {
 	}
 
 	private function socketDataHandler(_): Void {
-		var b: ByteArray = new ByteArray();
+		final b: ByteArray = new ByteArray();
 		socket.readBytes(b);
 		joinData(new BytesInput(b));
 	}

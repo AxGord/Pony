@@ -12,8 +12,8 @@ import types.UglifyConfig;
  */
 class Uglify extends NModule<UglifyConfig> {
 
-	private static inline var PRIORITY: Int = 3;
-	private static inline var REMOVE_CACHE_PRIORITY: Int = -120;
+	private static inline final PRIORITY: Int = 3;
+	private static inline final REMOVE_CACHE_PRIORITY: Int = -120;
 	public static var CACHE_FILE: String = 'libcache.js';
 
 	public function new() super('uglify');

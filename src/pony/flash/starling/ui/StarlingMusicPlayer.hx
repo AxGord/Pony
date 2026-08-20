@@ -19,9 +19,9 @@ using pony.Tools;
 class StarlingMusicPlayer extends StarlingSongPlayer {
 
 	private var song: DisplayObject;
-	private var _b: StarlingButton;
-	private var _tTitle: TextField;
-	private var _tTime: TextField;
+	private final _b: StarlingButton;
+	private final _tTitle: TextField;
+	private final _tTime: TextField;
 
 	private var songClass: Class<DisplayObject>;
 
@@ -29,10 +29,10 @@ class StarlingMusicPlayer extends StarlingSongPlayer {
 	private var songHeight: Float;
 	private var sw: SwitchableList;
 
-	private var songList: List<DisplayObject> = new List();
+	private final songList: List<DisplayObject> = new List();
 	private var currentList: Array<SongInfo>;
 
-	private var source: Sprite;
+	private final source: Sprite;
 
 	override public function new(source: Sprite) {
 		super(source);
@@ -58,7 +58,7 @@ class StarlingMusicPlayer extends StarlingSongPlayer {
 		if (visible) unloadPlaylist();
 		visible = true;
 		currentList = pl;
-		var bcs: Array<ButtonCore> = [];
+		final bcs: Array<ButtonCore> = [];
 		var i = 0;
 		for (e in pl) {
 			var o: Sprite = new Sprite(); // Type.createInstance(songClass, []);
@@ -67,11 +67,11 @@ class StarlingMusicPlayer extends StarlingSongPlayer {
 			source.addChild(o);
 			songList.push(o);
 
-			var b: StarlingButton = _b.clone();
+			final b: StarlingButton = _b.clone();
 			o.addChild(b);
 			bcs.push(b.core);
 
-			var t: TextField = new TextField(
+			final t: TextField = new TextField(
 				Std.int(_tTitle.width), Std.int(_tTitle.height), SongPlayerCore.formatSong(e), _tTitle.fontName, _tTitle.fontSize,
 				_tTitle.color, _tTitle.bold
 			);
@@ -82,7 +82,7 @@ class StarlingMusicPlayer extends StarlingSongPlayer {
 			t.touchable = false;
 			o.addChild(t);
 
-			var t: TextField = new TextField(
+			final t: TextField = new TextField(
 				Std.int(_tTime.width), Std.int(_tTime.height), e.length, _tTime.fontName, _tTime.fontSize, _tTime.color, _tTime.bold
 			);
 			t.hAlign = _tTime.hAlign;
@@ -112,7 +112,7 @@ class StarlingMusicPlayer extends StarlingSongPlayer {
 	}
 
 	public function select(n: Int): Void {
-		var song = currentList[n];
+		final song = currentList[n];
 		core.loadSong(song);
 	}
 

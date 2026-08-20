@@ -32,7 +32,7 @@ abstract Interval<T:Dynamic>(Pair<T, T>) {
 	inline public static function create<V>(min: V, max: V): Interval<V> return new Pair<V, V>(min, max);
 
 	@:from inline static public function fromString(s: String): Interval<String> {
-		var a = s.split('...');
+		final a = s.split('...');
 		if (a.length > 1)
 			return create(StringTools.trim(a[0]), StringTools.trim(a[1]));
 		else

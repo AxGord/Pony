@@ -18,21 +18,21 @@ import com.greensock.TweenMax;
  */
 class StarlingTree extends Sprite {
 
-	private var _flashSource: flash.display.Sprite;
-	private var _header: TreeElement;
-	private var _nodes: Array<DisplayObject> = [];
+	private final _flashSource: flash.display.Sprite;
+	private final _header: TreeElement;
+	private final _nodes: Array<DisplayObject> = [];
 	private var _xDisplacement: Int = 50;
 
 	private var _headerButton: StarlingButton;
 	private var _heightChangeCallback: Void -> Void;
 	private var _nodesSprite: Sprite = new Sprite();
 
-	private var _bufferRect: Rectangle = new Rectangle();
+	private final _bufferRect: Rectangle = new Rectangle();
 
-	private var group: Button;
-	private var unit: Button;
-	private var groupText: flash.display.Sprite;
-	private var unitText: flash.display.Sprite;
+	private final group: Button;
+	private final unit: Button;
+	private final groupText: flash.display.Sprite;
+	private final unitText: flash.display.Sprite;
 
 	public var core: TreeCore;
 
@@ -57,7 +57,7 @@ class StarlingTree extends Sprite {
 
 		if (_header != null) {
 			switch (_header) {
-				case Group(text, t):
+				case Group(text, _):
 					drawGroup(new IntPoint(0, 0), text);
 				case _:
 			}
@@ -70,7 +70,7 @@ class StarlingTree extends Sprite {
 		for (n in core.nodes) {
 			switch (n) {
 				case Group(text, t):
-					var subTree = new StarlingTree(_flashSource, n, t);
+					final subTree = new StarlingTree(_flashSource, n, t);
 					subTree.draw();
 					subTree.x = _xDisplacement;
 					subTree.y = this.height;
@@ -109,7 +109,7 @@ class StarlingTree extends Sprite {
 
 		if (_headerButton != null) _headerButton.core.mode = minimized ? 2 : 0;
 
-		var toY: Float = minimized ? -_nodesSprite.height : 0;
+		final toY: Float = minimized ? -_nodesSprite.height : 0;
 		if (animated) {
 			#if tweenmax
 			TweenMax.to(
@@ -136,31 +136,31 @@ class StarlingTree extends Sprite {
 	}
 
 	private function drawUnit(p: IntPoint, text: String, func: Void -> Void): Void {
-		var button: StarlingButton = cast getNewObject(unit);
+		final button: StarlingButton = cast getNewObject(unit);
 
 		button.core.onClick.add(func);
 
-		var node = new Sprite();
+		final node = new Sprite();
 		node.addChild(button);
 		addToPoint(p, node);
 		_nodes.push(node);
 
-		var textField = drawText(p, text, cast getNewObject(unitText));
+		final textField = drawText(p, text, cast getNewObject(unitText));
 		node.addChild(textField);
 	}
 
 	private function drawGroup(p: IntPoint, text: String): Void {
-		var button: StarlingButton = cast getNewObject(group);
+		final button: StarlingButton = cast getNewObject(group);
 		_headerButton = button;
 		button.core.onClick.add(toggleMinimize);
 
-		var node = new Sprite();
+		final node = new Sprite();
 		node.addChild(button);
 		button.x = p.x;
 		button.y = p.y;
 		addChild(node);
 
-		var textField = drawText(p, text, cast getNewObject(groupText));
+		final textField = drawText(p, text, cast getNewObject(groupText));
 		node.addChild(textField);
 	}
 

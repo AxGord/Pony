@@ -113,7 +113,7 @@ class Tween implements HasSignal implements Declarator {
 		if (playing) return;
 		playing = true;
 		if (dt > skipTime) {
-			var c = Std.int(dt.sec / skipTime);
+			final c = Std.int(dt.sec / skipTime);
 			dt -= skipTime * c;
 			eSkip.dispatch(c);
 		}
@@ -145,7 +145,7 @@ class Tween implements HasSignal implements Declarator {
 		progress += dt * sr;
 		if (progress >= 1) {
 			updateSignal >> forward;
-			var d = MathTools.range(progress, 1) / sr;
+			final d = MathTools.range(progress, 1) / sr;
 			progress = 1;
 			update();
 			eComplete.dispatch(d);
@@ -168,7 +168,7 @@ class Tween implements HasSignal implements Declarator {
 		progress -= dt * sr;
 		if (progress <= 0) {
 			updateSignal >> backward;
-			var d: Float = MathTools.range(progress, 0) / sr;
+			final d: Float = MathTools.range(progress, 0) / sr;
 			progress = 0;
 			update();
 			eComplete.dispatch(d);

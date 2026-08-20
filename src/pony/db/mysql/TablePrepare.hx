@@ -12,8 +12,8 @@ using pony.Tools;
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
 class TablePrepare {
 
-	private var mysql: ISQL;
-	private var table: String;
+	private final mysql: ISQL;
+	private final table: String;
 
 	inline public function new(mysql: ISQL, table: String) {
 		this.mysql = mysql;
@@ -25,17 +25,17 @@ class TablePrepare {
 		mysql.hack = table;
 		var err, _, remote = @await mysql.query('SELECT * FROM $table LIMIT 0');
 		if (err != null) { // Create table
-			var cr: Array<String> = [];
+			final cr: Array<String> = [];
 			for (f in fields) {
-				var name = mysql.escapeId(f.name);
+				final name = mysql.escapeId(f.name);
 				cr.push('$name ${f.type.toString()}${decorateLength(f.length)} ${Flags.array2string(f.flags)}');
 			}
 			if (!@await mysql.action('CREATE TABLE $table (${cr.join(', ')})', 'create table')) return false;
 		} else { // Update table
-			var map: Map<String, Int> = makeFieldsMap(fields);
+			final map: Map<String, Int> = makeFieldsMap(fields);
 			{ // Rename
 				mysql.log('Search fields for rename');
-				var remMap: Map<String, Int> = makeFieldsMap(remote);
+				final remMap: Map<String, Int> = makeFieldsMap(remote);
 				var free: Array<Field> = remote.copy();
 				for (f in fields) if (remMap.exists(f.name)) free = free.delete(remMap[f.name]);
 				free = @await renameTableFields(fields, remote, remMap, free, chk1);
@@ -56,7 +56,7 @@ class TablePrepare {
 			while (again) {
 				again = false;
 				for (f in remote.kv()) if (!map.exists(f.value.name)) {
-					var name = mysql.escapeId(f.value.name);
+					final name = mysql.escapeId(f.value.name);
 					if (!@await mysql.action('ALTER TABLE $table DROP $name', 'drop table field')) return false;
 					remote = remote.delete(f.key);
 					again = true;
@@ -80,8 +80,8 @@ class TablePrepare {
 				again = false;
 				for (f in remote.kv()) {
 					if (map[f.value.name] != f.key) {
-						var i = map[f.value.name];
-						var postfix = i == 0 ? ' FIRST' : ' AFTER ${mysql.escapeId(fields[i - 1].name)}';
+						final i = map[f.value.name];
+						final postfix = i == 0 ? ' FIRST' : ' AFTER ${mysql.escapeId(fields[i - 1].name)}';
 						if (!@await mysql.action(alter(fields[i], f.value) + postfix, 'move table field')) return false;
 						remote = remote.swap(i, f.key);
 						remote[i] = fields[i];
@@ -93,8 +93,8 @@ class TablePrepare {
 			// Update
 			mysql.log('Search fields for update');
 			for (_ in 0...fields.length) {
-				var f = fields.shift();
-				var r = remote.shift();
+				final f = fields.shift();
+				final r = remote.shift();
 				if (r == null) return false;
 				var ef: Bool = false;
 				for (fl in f.flags) if (!r.flags.exists(fl)) ef = true;
@@ -122,7 +122,7 @@ class TablePrepare {
 		for (f in fields) if (!remMap.exists(f.name)) for (r in free) if (chk(f, r)) {
 			if (!@await mysql.action(alter(f, r), 'rename table field')) return null;
 			free.remove(r);
-			var i = remote.indexOf(r);
+			final i = remote.indexOf(r);
 			remMap.remove(r.name);
 			remMap[f.name] = i;
 			remote[i].copyFields(f);
@@ -131,17 +131,17 @@ class TablePrepare {
 	}
 
 	public function alter(f: Field, r: Field): String {
-		var name = mysql.escapeId(f.name);
-		var name2 = mysql.escapeId(r.name);
+		final name = mysql.escapeId(f.name);
+		final name2 = mysql.escapeId(r.name);
 		var flags = f.flags.copy();
-		var i = flags.indexOf(PRI_KEY);
+		final i = flags.indexOf(PRI_KEY);
 		if (r.flags.indexOf(PRI_KEY) != -1 && i != -1) flags = flags.delete(i); // Don't add primary key if him exists
 		return 'ALTER TABLE $table CHANGE $name2 $name ${f.type.toString()}${decorateLength(f.length)} ${Flags.array2string(flags)}';
 	}
 
 	public function alterAdd(f: Field): String {
-		var name = mysql.escapeId(f.name);
-		var flags = f.flags.copy();
+		final name = mysql.escapeId(f.name);
+		final flags = f.flags.copy();
 		return 'ALTER TABLE $table ADD $name ${f.type.toString()}${decorateLength(f.length)} ${Flags.array2string(flags)}';
 	}
 

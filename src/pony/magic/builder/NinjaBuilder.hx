@@ -17,9 +17,9 @@ using haxe.macro.Tools;
 class NinjaBuilder {
 
 	macro public static function build(): Array<Field> {
-		var fields: Array<Field> = Context.getBuildFields();
+		final fields: Array<Field> = Context.getBuildFields();
 
-		var vars: Array<String> = [];
+		final vars: Array<String> = [];
 		var ninjaCreate: Bool = false;
 
 		for (field in fields) {
@@ -32,7 +32,7 @@ class NinjaBuilder {
 			}
 		}
 
-		var used: Array<String> = [];
+		final used: Array<String> = [];
 
 		for (field in fields) switch field.kind {
 			case FFun(fun) if (check(field)):
@@ -46,14 +46,14 @@ class NinjaBuilder {
 
 		for (field in fields) switch field.kind {
 			case FFun(fun) if (check(field)):
-				var a = extract(fun.expr);
+				final a = extract(fun.expr);
 				switch Context.getLocalType().toComplexType() {
 					case TPath(p):
-						var nowUsed = [];
-						var na = [];
+						final nowUsed = [];
+						final na = [];
 						for (e in a) switch e.expr {
 							case EBinop(OpAssign, { expr: EConst(CIdent(s)), pos: _ }, e2) if (used.indexOf(s) != -1):
-								var e1 = { expr: EField({ expr: EConst(CIdent('__obj__')), pos: e2.pos }, s), pos: e2.pos };
+								final e1 = { expr: EField({ expr: EConst(CIdent('__obj__')), pos: e2.pos }, s), pos: e2.pos };
 								na.push(macro $e1 = $e2);
 								nowUsed.push(s);
 							case _:
@@ -64,8 +64,8 @@ class NinjaBuilder {
 						else
 							na.unshift(macro var __obj__ = new $p());
 						for (u in used) if (nowUsed.indexOf(u) == -1) {
-							var e1 = { expr: EField({ expr: EConst(CIdent('__obj__')), pos: field.pos }, u), pos: field.pos };
-							var e2 = { expr: EField({ expr: EConst(CIdent('this')), pos: field.pos }, u), pos: field.pos };
+							final e1 = { expr: EField({ expr: EConst(CIdent('__obj__')), pos: field.pos }, u), pos: field.pos };
+							final e2 = { expr: EField({ expr: EConst(CIdent('this')), pos: field.pos }, u), pos: field.pos };
 							na.push(macro $e1 = $e2);
 						}
 						na.push(macro return __obj__);

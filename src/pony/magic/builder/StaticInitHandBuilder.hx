@@ -13,11 +13,11 @@ import haxe.macro.Expr.Field;
 class StaticInitHandBuilder {
 
 	macro public static function build(): Array<Field> {
-		var fields: Array<Field> = Context.getBuildFields();
-		var exprs: Array<Expr> = [];
+		final fields: Array<Field> = Context.getBuildFields();
+		final exprs: Array<Expr> = [];
 		for (f in fields) if (f.access.indexOf(AInline) == -1) {
 			if (f.kind.getParameters()[1] != null) {
-				var ex = { expr: f.kind.getParameters()[1].expr, pos: Context.currentPos() };
+				final ex = { expr: f.kind.getParameters()[1].expr, pos: Context.currentPos() };
 				exprs.push(macro $i{f.name} = $e{ex});
 			}
 			f.kind.getParameters()[1] = null;

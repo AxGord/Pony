@@ -15,13 +15,13 @@ import pony.time.DeltaTime;
  */
 class DrawShapePointer extends pony.Tumbler {
 
-	private static inline var PRIORITY: Int = -10;
+	private static inline final PRIORITY: Int = -10;
 
 	@:auto public var onDrawPoint: Signal2<DrawShapePointerData, Touch>;
 	@:auto public var onHidePoint: Signal1<Touch>;
 	@:auto public var onDownPoint: Signal2<DrawShapePointerData, Touch>;
 
-	private var touchable: Touchable;
+	private final touchable: Touchable;
 
 	private var width: Float;
 	private var height: Float;

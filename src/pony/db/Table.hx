@@ -120,7 +120,7 @@ class CTable implements Declarator implements Ninja {
 	 * Get stream for current query
 	 */
 	public function stream(?p: PosInfos): Stream<Dynamic> {
-		var s = mysql.stream(genGetQuery(), p);
+		final s = mysql.stream(genGetQuery(), p);
 		return solo ? s.map(soloMap) : s;
 	}
 
@@ -146,7 +146,7 @@ class CTable implements Declarator implements Ninja {
 	}
 
 	inline private function genGetQuery(): String
-		return 'SELECT ${(_select.length == 0 ? '*' : _select.map(mysql.escapeId).join(', '))} FROM $table$_where$order'
+		return 'SELECT ${_select.length == 0 ? '*' : _select.map(mysql.escapeId).join(', ')} FROM $table$_where$order'
 			+ (_limit == null ? '' : ' LIMIT $_begin, $_limit');
 
 	/**
@@ -164,8 +164,8 @@ class CTable implements Declarator implements Ninja {
 	 * Insert data to table
 	 */
 	public function insert(data: Map<String, DBV>, cb: Bool -> Void, ?p: PosInfos): Void {
-		var keys = [for (f in data.keys()) mysql.escapeId(f)];
-		var values = [for (d in data) d.get(mysql.escape)];
+		final keys = [for (f in data.keys()) mysql.escapeId(f)];
+		final values = [for (d in data) d.get(mysql.escape)];
 		mysql.action('INSERT INTO $table (${keys.join(', ')}) VALUES (${values.join(', ')})', 'insert', p, cb);
 	}
 
@@ -173,7 +173,7 @@ class CTable implements Declarator implements Ninja {
 	 * Update data it table
 	 */
 	public function update(data: Map<String, DBV>, cb: Bool -> Void, ?p: PosInfos): Void {
-		var set = [for (f in data.keys()) '${mysql.escapeId(f)}=${data[f].get(mysql.escape)}'];
+		final set = [for (f in data.keys()) '${mysql.escapeId(f)}=${data[f].get(mysql.escape)}'];
 		mysql.action('UPDATE $table SET ${set.join(', ')}$_where', cb);
 	}
 
@@ -181,7 +181,7 @@ class CTable implements Declarator implements Ninja {
 	 * Delete selected rows from table
 	 */
 	public function delete(cb: Bool -> Void, ?p: PosInfos): Void {
-		var q = 'DELETE FROM $table$_where$order${(_limit == null ? '' : ' LIMIT $_begin, $_limit')}';
+		final q = 'DELETE FROM $table$_where$order${_limit == null ? '' : ' LIMIT $_begin, $_limit'}';
 		mysql.query(q, p, function(err: Dynamic, fields: Dynamic, _): Void {
 			if (err != null) {
 				_error(err);
@@ -198,7 +198,7 @@ class CTable implements Declarator implements Ninja {
 	 */
 	macro public function select(args: Array<Expr>): Expr {
 		if (args.length < 2) throw 'need arguments';
-		var th: Expr = args.shift();
+		final th: Expr = args.shift();
 		return macro $th.selectArray([$a{args}]);
 	}
 
@@ -207,10 +207,10 @@ class CTable implements Declarator implements Ninja {
 	 */
 	macro public function where(args: Array<Expr>): Expr {
 		if (args.length != 2) throw 'need one argument';
-		var e: Expr = args.pop();
-		var th: Expr = args.pop();
-		var a = TableMacro.transExpr(e, []);
-		var ex = { expr: EArrayDecl(a), pos: th.pos };
+		final e: Expr = args.pop();
+		final th: Expr = args.pop();
+		final a = TableMacro.transExpr(e, []);
+		final ex = { expr: EArrayDecl(a), pos: th.pos };
 		return macro $th.whereData($ex);
 	}
 

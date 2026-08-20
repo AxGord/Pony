@@ -20,8 +20,8 @@ class Heaps {
 		project.config.options['width'] = '1280';
 		project.config.options['height'] = '1024';
 		project.config.options['background'] = '#1A1A1A';
-		var defBaseUrl: ConfigOptions = ['baseUrl' => 'assets/'];
-		var androidBaseUrl: ConfigOptions = ['baseUrl' => ''];
+		final defBaseUrl: ConfigOptions = ['baseUrl' => 'assets/'];
+		final androidBaseUrl: ConfigOptions = ['baseUrl' => ''];
 		project.config.options['apps'] = ([
 			'mac' => defBaseUrl,
 			'win' => defBaseUrl,

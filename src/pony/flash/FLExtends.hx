@@ -38,7 +38,7 @@ class FLExtends {
 	public static inline function v(f: Void -> Void): Dynamic return function(Void) f();
 
 	public static function childrens(d: DisplayObjectContainer): Iterator<DisplayObject> {
-		var it: IntIterator = 0...d.numChildren;
+		final it: IntIterator = 0...d.numChildren;
 		return {
 			hasNext: it.hasNext,
 			next: function(): DisplayObject return d.getChildAt(it.next())
@@ -53,7 +53,7 @@ class FLExtends {
 	};
 
 	public static function border(rect: Rectangle, x: Float, ?y: Float): Rectangle {
-		var r = rect.clone();
+		final r = rect.clone();
 		if (y == null) y = x;
 		r.x += x;
 		r.y += y;
@@ -65,7 +65,7 @@ class FLExtends {
 	public static inline function removeAllChild(d: DisplayObjectContainer): Void while (d.numChildren > 0) d.removeChildAt(0);
 
 	public static function toCenter(o: DisplayObject, width: Float, height: Float): Void {
-		var b = o.getBounds(Lib.current.stage);
+		final b = o.getBounds(Lib.current.stage);
 		o.x = width / 2 - (o.width / 2 - (o.x - b.x));
 		o.y = height / 2 - (o.height / 2 - (o.y - b.y));
 	}
@@ -80,20 +80,20 @@ class FLExtends {
 	// inline public static function button(o:DisplayObjectContainer, name:String):ButtonCore return getTyped(o, name, Button).core;
 
 	public static function vlinGrad(graphics: Graphics, c1: UInt, c2: UInt, width: Float, height: Float): Void {
-		var colors: Array<UInt> = [c1, c2];
-		var alphas: Array<Float> = [1, 1];
-		var ratios: Array<Int> = [0x00, 0xFF];
-		var matr: Matrix = new Matrix();
+		final colors: Array<UInt> = [c1, c2];
+		final alphas: Array<Float> = [1, 1];
+		final ratios: Array<Int> = [0x00, 0xFF];
+		final matr: Matrix = new Matrix();
 		matr.createGradientBox(height, height, Math.PI / 2, 0, 0);
 		graphics.beginGradientFill(GradientType.LINEAR, colors, alphas, ratios, matr, SpreadMethod.PAD);
 		graphics.drawRect(0, 0, width, height);
 	}
 
 	public static function hlinGrad(graphics: Graphics, c1: UInt, c2: UInt, width: Float, height: Float): Void {
-		var colors: Array<UInt> = [c1, c2];
-		var alphas: Array<Float> = [1, 1];
-		var ratios: Array<Int> = [0x00, 0xFF];
-		var matr: Matrix = new Matrix();
+		final colors: Array<UInt> = [c1, c2];
+		final alphas: Array<Float> = [1, 1];
+		final ratios: Array<Int> = [0x00, 0xFF];
+		final matr: Matrix = new Matrix();
 		matr.createGradientBox(width, width, 0, 0, 0);
 		graphics.beginGradientFill(GradientType.LINEAR, colors, alphas, ratios, matr, SpreadMethod.PAD);
 		graphics.drawRect(0, 0, width, height);

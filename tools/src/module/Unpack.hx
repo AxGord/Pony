@@ -11,10 +11,10 @@ using pony.text.XmlTools;
  */
 class Unpack extends Module {
 
-	private static inline var PRIORITY: Int = 6;
+	private static inline final PRIORITY: Int = 6;
 
-	private var beforeZips: Map<BASection, Array<ZipConfig>> = [];
-	private var afterZips: Map<BASection, Array<ZipConfig>> = [];
+	private final beforeZips: Map<BASection, Array<ZipConfig>> = [];
+	private final afterZips: Map<BASection, Array<ZipConfig>> = [];
 
 	public function new() super('unpack');
 

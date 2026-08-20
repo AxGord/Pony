@@ -24,12 +24,12 @@ class UserpathInstall extends BaseInstall {
 				if (installNodePath && Utils.nodeExists) windowsNodeUserpath();
 				if (installPonyPath) windowsPonyUserpath();
 			case Mac:
-				var home: String = Sys.getEnv('HOME');
+				final home: String = Sys.getEnv('HOME');
 				writeProfileFiles(['$home/.bash_profile', '$home/.zshrc']);
 				log('Type "source ~/.bash_profile" for finish install');
 			case Linux:
-				var home: String = Sys.getEnv('HOME');
-				var pfile: String = '$home/.profile';
+				final home: String = Sys.getEnv('HOME');
+				final pfile: String = '$home/.profile';
 				writeProfileFiles([pfile]);
 				log('Type "source ~/.profile" for finish install');
 		}
@@ -37,26 +37,26 @@ class UserpathInstall extends BaseInstall {
 
 	private inline function windowsNodeUserpath(): Void {
 		if (Sys.getEnv('NODE_PATH') == null) {
-			var modulespath: String = '${Sys.getEnv('appdata') + PD}npm${PD}node_modules';
+			final modulespath: String = '${Sys.getEnv('appdata') + PD}npm${PD}node_modules';
 			setx('NODE_PATH', modulespath);
 		}
 	}
 
 	private inline function windowsPonyUserpath(): Void {
-		var envPath: String = Sys.getEnv(ENVKEY);
+		final envPath: String = Sys.getEnv(ENVKEY);
 		if (envPath == null) {
-			var user: String = Sys.getEnv('USERPROFILE') + PD;
+			final user: String = Sys.getEnv('USERPROFILE') + PD;
 			if (FileSystem.exists('${user}pony_user_path_bak.txt')) {
 				Sys.println('Error: path ready');
 				return;
 			}
 
-			var stdout = new Process('cmd.exe', ['/C', 'install\\user_path.cmd']).stdout;
-			var data = stdout.readAll();
-			var path = StringTools.trim(data.toString());
+			final stdout = new Process('cmd.exe', ['/C', 'install\\user_path.cmd']).stdout;
+			final data = stdout.readAll();
+			final path = StringTools.trim(data.toString());
 
 			if (path != '') {
-				var np = '${path + (path.substr(-1) == ';' ? '' : ';')}%$ENVKEY%';
+				final np = '${path + (path.substr(-1) == ';' ? '' : ';')}%$ENVKEY%';
 				setx('PATH', np);
 				setx(ENVKEY, BIN);
 			} else {
@@ -71,10 +71,10 @@ class UserpathInstall extends BaseInstall {
 	private inline function setx(v: String, p: String): Void cmd('setx', [v, p]);
 
 	private function writeProfileFiles(pFiles: Array<String>): Void {
-		var data: Array<String> = ['export $ENVKEY=$BIN', 'export PATH=$$PATH:$$$ENVKEY'];
+		final data: Array<String> = ['export $ENVKEY=$BIN', 'export PATH=$$PATH:$$$ENVKEY'];
 
 		if (installNodePath && Utils.nodeExists) {
-			var line = 'export NODE_PATH=${Utils.npmPath}';
+			final line = 'export NODE_PATH=${Utils.npmPath}';
 			if (installPonyPath) {
 				data.unshift(line);
 			} else {
@@ -86,14 +86,14 @@ class UserpathInstall extends BaseInstall {
 
 		for (pFile in pFiles) {
 			if (FileSystem.exists(pFile)) {
-				var c = File.getContent(pFile);
+				final c = File.getContent(pFile);
 				if (c.indexOf(ENVKEY) == -1) {
 					File.saveContent(pFile, '$c\n' + data.join('\n'));
 				} else {
-					var d1 = c.split('$ENVKEY=');
-					var d2 = d1[1].split('\n');
+					final d1 = c.split('$ENVKEY=');
+					final d2 = d1[1].split('\n');
 					d2.shift();
-					var s = '${d1[0] + ENVKEY}=$BIN\n' + d2.join('\n');
+					final s = '${d1[0] + ENVKEY}=$BIN\n' + d2.join('\n');
 					File.saveContent(pFile, s);
 				}
 			} else {
@@ -105,7 +105,7 @@ class UserpathInstall extends BaseInstall {
 	public static function saveNpmLine(line: String, pFiles: Array<String>): Void {
 		for (pFile in pFiles) {
 			if (FileSystem.exists(pFile)) {
-				var c = File.getContent(pFile);
+				final c = File.getContent(pFile);
 				if (c.indexOf(line) == -1) {
 					File.saveContent(pFile, '$c\n$line\n');
 				}

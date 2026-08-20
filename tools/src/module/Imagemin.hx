@@ -12,7 +12,7 @@ import types.ImageminConfig;
 @SuppressWarnings('checkstyle:MagicNumber')
 class Imagemin extends NModule<ImageminConfig> {
 
-	private static inline var PRIORITY: Int = 22;
+	private static inline final PRIORITY: Int = 22;
 
 	public function new() super('imagemin');
 
@@ -42,7 +42,7 @@ class Imagemin extends NModule<ImageminConfig> {
 
 	#if (haxe_ver < 4.2) override #end
 	private function writeCfg(protocol: NProtocol, cfg: Array<ImageminConfig>): Void {
-		var hash: Null<module.Hash> = cast modules.getModule(module.Hash);
+		final hash: Null<module.Hash> = cast modules.getModule(module.Hash);
 		if (hash != null && hash.xml != null) for (c in cfg) if (c.checkHash) c.ignore = c.ignore.concat(hash.getNotChangedUnits());
 		protocol.imageminRemote(cfg);
 	}

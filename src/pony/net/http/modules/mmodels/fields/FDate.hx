@@ -41,7 +41,7 @@ class FDate extends Field {
 
 	@:async
 	override public function tag(name: String, content: TplData, arg: String, args: Map<String, String>, ?kid: ITplPut): String {
-		var v = Date.fromTime(Std.int(Reflect.field(b, name)) * 1000);
+		final v = Date.fromTime(Std.int(Reflect.field(b, name)) * 1000);
 		if (content.length == 1)
 			switch content[0] {
 				case TplContent.Text(t) if (t != ''):
@@ -60,7 +60,7 @@ class FDate extends Field {
 
 	@:async
 	public function html(f: String): String {
-		var v = Date.fromTime(Std.int(Reflect.field(b, f)) * 1000);
+		final v = Date.fromTime(Std.int(Reflect.field(b, f)) * 1000);
 		return v.toString();
 	}
 

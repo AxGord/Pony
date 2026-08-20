@@ -19,26 +19,26 @@ using Lambda;
  */
 class ConfigBuilder {
 
-	private static inline var file: String = 'pony.xml';
+	private static inline final file: String = 'pony.xml';
 
 	macro public static function build(): Array<Field> {
 		Context.registerModuleDependency(Context.getLocalModule(), file);
-		var fields: Array<Field> = Context.getBuildFields();
+		final fields: Array<Field> = Context.getBuildFields();
 		if (!sys.FileSystem.exists(file)) return fields;
-		var xml = XmlTools.fast(File.getContent(file)).node.project;
+		final xml = XmlTools.fast(File.getContent(file)).node.project;
 		if (xml.hasNode.config) {
-			var xcfg: Fast = xml.node.config;
+			final xcfg: Fast = xml.node.config;
 			if (xcfg.has.dep) for (f in xcfg.att.dep.split(','))
 				Context.registerModuleDependency(Context.getLocalModule(), StringTools.trim(f));
-			var cfg: PConfig = {
+			final cfg: PConfig = {
 				app: haxe.macro.Context.definedValue('app'),
 				debug: #if debug true #else false #end,
 				cordova: #if cordova true #else false #end,
 				path: ''
 			};
-			var addedConfig: Array<String> = []; // Filter added configs because app define not set for completion server
+			final addedConfig: Array<String> = []; // Filter added configs because app define not set for completion server
 			new ReadXmlConfig(xcfg, cfg, function(cfg: PConfig): Void {
-				var type: ComplexType = switch cfg.type {
+				final type: ComplexType = switch cfg.type {
 					case CString: macro :String;
 					case CInt: macro :Int;
 					case CFloat: macro :Float;
@@ -54,7 +54,7 @@ class ConfigBuilder {
 					case _: throw 'Error';
 				}
 
-				var value: Expr = switch cfg.type {
+				final value: Expr = switch cfg.type {
 					case CString: Context.makeExpr(cfg.value, Context.currentPos());
 					case CInt: Context.makeExpr(Std.parseInt(cfg.value), Context.currentPos());
 					case CFloat: Context.makeExpr(Std.parseFloat(cfg.value), Context.currentPos());
@@ -65,7 +65,7 @@ class ConfigBuilder {
 					case _: throw 'Error';
 				}
 
-				var map: Array<Expr> = switch cfg.type {
+				final map: Array<Expr> = switch cfg.type {
 					case CString, CInt, CFloat, CBool, CColor, CPoint: null;
 					case CStringMap: [for (k in cfg.map.keys()) macro $v{k} => $v{cfg.map[k]}];
 					case CIntMap: [for (k in cfg.map.keys()) macro $v{k} => $v{Std.parseInt(cfg.map[k])}];
@@ -80,13 +80,13 @@ class ConfigBuilder {
 					case t: throw 'Error $t';
 				}
 
-				var access = [APublic, AStatic];
+				final access = [APublic, AStatic];
 				switch cfg.type {
 					case CString, CInt, CFloat, CBool:
 						access.push(AInline);
 					case _:
 				}
-				var name: String = cfg.path + cfg.key;
+				final name: String = cfg.path + cfg.key;
 				if (addedConfig.contains(name)) return;
 				addedConfig.push(name);
 				fields.push({
@@ -135,7 +135,7 @@ private class ReadXmlConfig extends XmlConfigReader<PConfig> {
 		try {
 			v = xml.innerData;
 			if (v.charAt(0) == '$') {
-				var nv = Sys.getEnv(v.substr(1));
+				final nv = Sys.getEnv(v.substr(1));
 				if (nv == null) {
 					if (xml.has.def) {
 						v = normalize(xml.att.def);
@@ -149,11 +149,11 @@ private class ReadXmlConfig extends XmlConfigReader<PConfig> {
 			}
 		} catch (_: Any) {}
 
-		var stype: String = xml.has.type ? xml.att.type : null;
+		final stype: String = xml.has.type ? xml.att.type : null;
 
 		var map: Map<String, String> = null;
 
-		var type: ConfigTypes = switch stype {
+		final type: ConfigTypes = switch stype {
 			case 'map', 'intmap', 'floatmap', 'boolmap', 'stringmap', 'pointmap':
 				var mapType: ConfigTypes = switch stype {
 					case 'map': null;
@@ -196,7 +196,7 @@ private class ReadXmlConfig extends XmlConfigReader<PConfig> {
 			case 'point': CPoint;
 
 			case _:
-				var nt: Int = xml.x.count();
+				final nt: Int = xml.x.count();
 				if (nt > 1) {
 					CVars;
 				} else if (nt == 1) {
@@ -254,7 +254,7 @@ private class ReadXmlConfig extends XmlConfigReader<PConfig> {
 	}
 
 	private function isPoint(s: String): Bool {
-		var a: Array<Null<Int>> = s.split('x').map(Std.parseInt);
+		final a: Array<Null<Int>> = s.split('x').map(Std.parseInt);
 		return a.length == 2 && !a.contains(null);
 	}
 

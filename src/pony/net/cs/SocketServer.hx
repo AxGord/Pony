@@ -56,7 +56,7 @@ class SocketServer extends SocketServerBase {
 	public override function new(aHost: String, aPort: Int) {
 		super();
 		port = aPort;
-		var ep: IPEndPoint = new IPEndPoint(IPAddress.Parse(aHost), port);
+		final ep: IPEndPoint = new IPEndPoint(IPAddress.Parse(aHost), port);
 		server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 		server.NoDelay = true;
 		server.Bind(ep);
@@ -70,8 +70,8 @@ class SocketServer extends SocketServerBase {
 	private function acceptCallback(ar: IAsyncResult): Void {
 		if (isRunning) {
 			eventAccept.Reset();
-			var s: Socket = cast ar.AsyncState;
-			var cl: SocketClient = clInit();
+			final s: Socket = cast ar.AsyncState;
+			final cl: SocketClient = clInit();
 			cl.client = s.EndAccept(ar);
 			cl.client.NoDelay = true; // One should never forget that this may cause troubles in future.
 			Synchro.lock(clients, function() clients.push(cl));
@@ -97,7 +97,7 @@ class SocketServer extends SocketServerBase {
 	}
 
 	private function clInit(): SocketClient {
-		var cl: SocketClient = Type.createEmptyInstance(SocketClient);
+		final cl: SocketClient = Type.createEmptyInstance(SocketClient);
 		Synchro.lock(clients, function() cl.init(cast this, clients.length));
 		cl.sendQueue = new Queue(cl._send);
 		cl.isRunning = true;
@@ -109,7 +109,7 @@ class SocketServer extends SocketServerBase {
 	override public function destroy(): Void {
 		super.destroy();
 		isRunning = false;
-		var destrThread: Thread = new Thread(new cs.system.threading.ThreadStart(function() {
+		final destrThread: Thread = new Thread(new cs.system.threading.ThreadStart(function() {
 			eventReceive.WaitOne();
 			// trace("Server's close traced.");
 			// The events DO guarantee that executing callbacks finish correct and

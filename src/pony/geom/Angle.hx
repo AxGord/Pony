@@ -6,7 +6,7 @@ package pony.geom;
  */
 abstract Angle(Float) to Float {
 
-	public static inline var MAX: Int = 360;
+	public static inline final MAX: Int = 360;
 
 	public var percent(get, never): Float;
 

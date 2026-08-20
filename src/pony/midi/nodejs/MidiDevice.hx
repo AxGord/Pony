@@ -14,10 +14,10 @@ import pony.magic.HasSignal;
  */
 class MidiDevice implements IMidiDevice implements HasSignal {
 
-	private static var midiInputClass: Class<Dynamic> = Node.require('midi').input;
-	private static var midiOutputClass: Class<Dynamic> = Node.require('midi').output;
+	private static final midiInputClass: Class<Dynamic> = Node.require('midi').input;
+	private static final midiOutputClass: Class<Dynamic> = Node.require('midi').output;
 
-	private static var preCore: Dynamic = Type.createInstance(midiInputClass, []);
+	private static final preCore: Dynamic = Type.createInstance(midiInputClass, []);
 
 	private static var firstCreated: Bool = false;
 
@@ -26,9 +26,9 @@ class MidiDevice implements IMidiDevice implements HasSignal {
 	public static function list(): Array<String> return [for (i in 0...preCore.getPortCount()) preCore.getPortName(i)];
 
 	public static function listWithName(name: String): Map<Int, String> {
-		var m = new Map<Int, String>();
+		final m = new Map<Int, String>();
 		for (i in 0...preCore.getPortCount()) {
-			var n: String = preCore.getPortName(i);
+			final n: String = preCore.getPortName(i);
 			if (n.indexOf(name) != -1) m[i] = n;
 		}
 		return m;
@@ -37,14 +37,14 @@ class MidiDevice implements IMidiDevice implements HasSignal {
 	public static function countWithName(name: String): Int {
 		var c: Int = 0;
 		for (i in 0...preCore.getPortCount()) {
-			var n: String = preCore.getPortName(i);
+			final n: String = preCore.getPortName(i);
 			if (n.indexOf(name) != -1) c++;
 		}
 		return c;
 	}
 
 	private var input: Dynamic;
-	private var output: Dynamic;
+	private final output: Dynamic;
 
 	@:auto public var on: Signal2<MidiMessage, DT>;
 
@@ -52,7 +52,7 @@ class MidiDevice implements IMidiDevice implements HasSignal {
 		input = firstCreated ? Type.createInstance(midiInputClass, []) : preCore;
 		firstCreated = true;
 		output = Type.createInstance(midiOutputClass, []);
-		var name = input.getPortName(id);
+		final name = input.getPortName(id);
 		trace('Open midi: $name($id)');
 		input.openPort(id);
 		for (i in 0...output.getPortCount()) {

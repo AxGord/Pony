@@ -16,15 +16,15 @@ using Lambda;
 class ExtendedPropertiesBuilder {
 
 	#if macro
-	inline private static var hprefix: String = '_';
+	inline private static final hprefix: String = '_';
 	private static var used: Map<Int, Array<String>>;
-	private static var repList: Array<String> = [];
+	private static final repList: Array<String> = [];
 	private static var lvl: Int;
 	#end
 
 	macro public static function hidden(): Array<Field> {
-		var fields: Array<Field> = Context.getBuildFields();
-		var fs: Array<Field> = [];
+		final fields: Array<Field> = Context.getBuildFields();
+		final fs: Array<Field> = [];
 		final funs: Array<String> = [for (f in fields) if (f.kind.match(FFun(_))) f.name];
 		for (f in fields) {
 			switch f.kind {
@@ -38,7 +38,7 @@ class ExtendedPropertiesBuilder {
 						access: f.access.indexOf(AStatic) != -1 ? [AStatic] : []
 					});
 					repList.push(f.name);
-					var fn = 'get_${f.name}';
+					final fn = 'get_${f.name}';
 					if (funs.indexOf(fn) == -1) {
 						fs.push({
 							kind: FFun({
@@ -72,12 +72,12 @@ class ExtendedPropertiesBuilder {
 	inline private static function lvlused(): Array<String> return used.exists(lvl) ? used[lvl] : [];
 
 	private static function repl(e: Expr): Expr {
-		var curRepl = repList.copy();
+		final curRepl = repList.copy();
 		for (a in used) for (b in a) curRepl.remove(b);
 
 		switch e.expr {
 			case EVars(args):
-				var a: Array<String> = lvlused();
+				final a: Array<String> = lvlused();
 				for (arg in args) if (repList.indexOf(arg.name) != -1) a.push(arg.name);
 				used[lvl] = a;
 			#if (haxe_ver >= 4)
@@ -85,7 +85,7 @@ class ExtendedPropertiesBuilder {
 			#else
 			case EFunction(name, f):
 			#end
-				var a: Array<String> = lvlused();
+				final a: Array<String> = lvlused();
 				if (name != null) a.push(name);
 				used[lvl] = a;
 			case _:
@@ -94,7 +94,7 @@ class ExtendedPropertiesBuilder {
 
 		switch e.expr {
 			case EFunction(_, f):
-				var a: Array<String> = lvlused();
+				final a: Array<String> = lvlused();
 				for (arg in f.args) if (repList.indexOf(arg.name) != -1) a.push(arg.name);
 				used[lvl] = a;
 			case _:
@@ -119,15 +119,15 @@ class ExtendedPropertiesBuilder {
 		return e;
 	}
 
-	static private var pmeta = [':toProp', 'toProp', ':prop', 'prop'];
+	static private final pmeta = [':toProp', 'toProp', ':prop', 'prop'];
 	#end
 
 	macro static public function f2p(): Array<Field> {
-		var fs: Array<Field> = [];
+		final fs: Array<Field> = [];
 		for (f in Context.getBuildFields()) {
 			switch f.kind {
 				case FFun(fun) if (Tools.checkMeta(f.meta, pmeta)):
-					var access: Array<Access> = f.access.copy();
+					final access: Array<Access> = f.access.copy();
 					access.remove(AInline);
 					fs.push({
 						kind: FProp('get', 'never', fun.ret),
@@ -135,7 +135,7 @@ class ExtendedPropertiesBuilder {
 						pos: f.pos,
 						access: access
 					});
-					var access: Array<Access> = [];
+					final access: Array<Access> = [];
 					if (f.access.indexOf(AStatic) != -1) access.push(AStatic);
 					if (f.access.indexOf(AInline) != -1) access.push(AInline);
 					fs.push({
@@ -145,7 +145,7 @@ class ExtendedPropertiesBuilder {
 						access: access
 					});
 				case FVar(t, e) if (Tools.checkMeta(f.meta, pmeta)):
-					var access: Array<Access> = f.access.copy();
+					final access: Array<Access> = f.access.copy();
 					access.remove(AInline);
 					fs.push({
 						kind: FProp('get', 'never', t),
@@ -153,7 +153,7 @@ class ExtendedPropertiesBuilder {
 						pos: f.pos,
 						access: access
 					});
-					var access: Array<Access> = [];
+					final access: Array<Access> = [];
 					if (f.access.indexOf(AStatic) != -1) access.push(AStatic);
 					if (f.access.indexOf(AInline) != -1) access.push(AInline);
 					fs.push({

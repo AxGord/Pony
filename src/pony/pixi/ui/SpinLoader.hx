@@ -20,21 +20,21 @@ class SpinLoader extends Sprite implements IWH {
 	public var core(default, null): SmoothBarCore;
 	public var size(get, never): Point<Float>;
 
-	private var _size: Point<Float>;
-	private var app: App;
+	private final _size: Point<Float>;
+	private final app: App;
 	private var renderTexture: RenderTexture;
 	private var graphics: Graphics = new Graphics();
-	private var trackRadius: Int;
-	private var circleRadius: Int;
-	private var steps: Int;
+	private final trackRadius: Int;
+	private final circleRadius: Int;
+	private final steps: Int;
 	private var prevStep: Int = 0;
 	private var pulse: Tween = new Tween(1...0, TweenType.Square, 1000, false, true, true, true);
-	private var spin: Float;
+	private final spin: Float;
 
 	public function new(trackRadius: Int, circleRadius: Int, color: UColor, spin: Float = 0, ?app: App) {
 		steps = Std.int(trackRadius / Math.sqrt(circleRadius) * 3);
 		core = new SmoothBarCore(steps);
-		var w: Int = (trackRadius + circleRadius) * 2;
+		final w: Int = (trackRadius + circleRadius) * 2;
 		_size = new Point<Float>(w, w);
 		this.app = app == null ? App.main : app;
 		this.trackRadius = trackRadius;
@@ -76,14 +76,14 @@ class SpinLoader extends Sprite implements IWH {
 	public inline function stopPulse(): Void pulse.stopOnBegin();
 
 	private function changeHandler(v: Float): Void {
-		var current: Int = Std.int(v);
+		final current: Int = Std.int(v);
 		for (i in prevStep ... current) draw(i / steps);
 		if (current != v) draw(v / steps);
 		prevStep = current;
 	}
 
 	private inline function draw(n: Float): Void {
-		var angle: Float = n * Math.PI * 2;
+		final angle: Float = n * Math.PI * 2;
 		graphics.x = trackRadius * Math.cos(angle) + trackRadius + circleRadius;
 		graphics.y = trackRadius * Math.sin(angle) + trackRadius + circleRadius;
 		app.app.renderer.render(graphics, renderTexture, false);

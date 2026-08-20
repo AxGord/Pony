@@ -21,19 +21,19 @@ using pony.pixi.PixiExtends;
 @SuppressWarnings('checkstyle:MagicNumber')
 class FastMovieClip extends AnimTextureCore {
 
-	private static var storage: Map<String, FastMovieClip> = [];
+	private static final storage: Map<String, FastMovieClip> = [];
 
 	private var pool: Array<Sprite> = [];
 	private var data: Array<Pair<Rectangle, Rectangle>>;
 	public var texture(default, null): Array<Texture>;
-	private var crop: Int;
+	private final crop: Int;
 
 	public function new(
 		data: Or<Array<Texture>, Array<String>>, frameTime: Time, fixedTime: Bool = false, smooth: AnimSmoothMode = AnimSmoothMode.None,
 		additionalSrc: UInt = 0, crop: Int = 0
 	) {
 		super(frameTime, fixedTime, smooth, additionalSrc);
-		var data = converOr(data);
+		final data = converOr(data);
 		texture = data.splice(
 			0, (smooth: Int) + additionalSrc + (additionalSrc == 1 && smooth == AnimSmoothMode.Simple && data.length % 2 == 1 ? 1 : 0)
 		);
@@ -49,7 +49,7 @@ class FastMovieClip extends AnimTextureCore {
 		data: Or<Array<Texture>, Array<String>>, frameTime: Time, fixedTime: Bool = false, smooth: AnimSmoothMode = AnimSmoothMode.None,
 		crop: Int = 0
 	): FastMovieClip {
-		var n = idFromTexture(converOrFirst(data));
+		final n = idFromTexture(converOrFirst(data));
 		if (!storage.exists(n)) {
 			return storage[n] = new FastMovieClip(data, frameTime, fixedTime, smooth, crop);
 		} else {
@@ -91,12 +91,12 @@ class FastMovieClip extends AnimTextureCore {
 					case AnimSmoothMode.None:
 						new Sprite(texture[0]);
 					case AnimSmoothMode.Simple:
-						var r = new FastMoviePlaySpriteSimple(texture, totalFrames);
+						final r = new FastMoviePlaySpriteSimple(texture, totalFrames);
 						timer.progress << r.progress;
 						onFrame.add(r.frame, -1);
 						r;
 					case AnimSmoothMode.Super:
-						var r = new FastMoviePlaySpriteSuper(texture, totalFrames);
+						final r = new FastMoviePlaySpriteSuper(texture, totalFrames);
 						timer.progress << r.progress;
 						onFrame.add(r.frame, -1);
 						r;
@@ -104,16 +104,16 @@ class FastMovieClip extends AnimTextureCore {
 			else
 				switch smooth {
 					case AnimSmoothMode.None:
-						var r = new FastMoviePlaySpriteNone(texture, totalFrames);
+						final r = new FastMoviePlaySpriteNone(texture, totalFrames);
 						onFrame.add(r.frame, -1);
 						r;
 					case AnimSmoothMode.Simple:
-						var r = new FastMoviePlaySpriteOddSimple(texture, totalFrames);
+						final r = new FastMoviePlaySpriteOddSimple(texture, totalFrames);
 						timer.progress << r.progress;
 						onFrame.add(r.frame, -1);
 						r;
 					case AnimSmoothMode.Super:
-						var r = new FastMoviePlaySpriteOddSuper(texture, totalFrames);
+						final r = new FastMoviePlaySpriteOddSuper(texture, totalFrames);
 						timer.progress << r.progress;
 						onFrame.add(r.frame, -1);
 						r;
@@ -129,7 +129,7 @@ class FastMovieClip extends AnimTextureCore {
 
 	private function setTextureFrame(t: Texture, n: Int): Void {
 		t.trim = data[n].a;
-		var r = data[n].b;
+		final r = data[n].b;
 		t.frame = r;
 		if (crop > 0) {
 			if (t.trim == null)
@@ -145,7 +145,7 @@ class FastMovieClip extends AnimTextureCore {
 		for (s in pool) s.destroy();
 		pool = null;
 
-		var n = texture[0].baseTexture.imageUrl;
+		final n = texture[0].baseTexture.imageUrl;
 		storage.remove(n);
 		for (t in texture) t.destroy(true);
 		texture = null;
@@ -160,8 +160,8 @@ class FastMovieClip extends AnimTextureCore {
 #if (haxe_ver >= 4.2) abstract #end
 class FastMoviePlaySprite extends Sprite implements HasAbstract {
 
-	private var count: Int;
-	private var sprites: Array<Sprite>;
+	private final count: Int;
+	private final sprites: Array<Sprite>;
 
 	public function new(texture: Array<Texture>, count: Int) {
 		this.count = count;

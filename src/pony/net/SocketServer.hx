@@ -19,7 +19,7 @@ class SocketServer #if nodejs extends pony.net.nodejs.SocketServer #elseif cs ex
 	#end
 
 	public inline function sendString(data: String): Void {
-		var bo: BytesOutput = new BytesOutput();
+		final bo: BytesOutput = new BytesOutput();
 		bo.writeString(data);
 		send(bo);
 	}

@@ -33,7 +33,7 @@ import pony.magic.HasSignal;
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public static inline function create(width: Float, height: Float, invert: Bool = false): BarCore {
-		var isVert: Bool = height > width;
+		final isVert: Bool = height > width;
 		return new BarCore(isVert ? height : width, isVert, invert);
 	}
 

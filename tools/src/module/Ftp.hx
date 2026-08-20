@@ -10,7 +10,7 @@ import types.FtpConfig;
  */
 class Ftp extends NModule<FtpConfig> {
 
-	private static inline var PRIORITY: Int = 34;
+	private static inline final PRIORITY: Int = 34;
 
 	public function new() super('ftp');
 
@@ -72,7 +72,7 @@ private class FtpReader extends BAReader<FtpConfig> {
 			case 'pass':
 				cfg.pass = normalize(xml.innerData);
 			case 'host':
-				var a: Array<String> = normalize(xml.innerData).split(':');
+				final a: Array<String> = normalize(xml.innerData).split(':');
 				cfg.host = a[0];
 				if (a.length > 1) cfg.port = Std.parseInt(a[1]);
 			case 'port':

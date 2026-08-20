@@ -29,7 +29,8 @@ abstract ThreadTasks(UInt) {
 		if (count == 1) {
 			f(1);
 		} else if (count > 1) {
-			var t = new ThreadTasks();
+			// var, not final: add() is an inline abstract member that writes `this`
+			var t = new ThreadTasks(); // noqa: prefer-final
 			while (count-- > 0) t.add(f);
 			t.wait();
 		}
@@ -39,15 +40,15 @@ abstract ThreadTasks(UInt) {
 
 class ThreadTasksWhile {
 
-	private var states: Array<Bool> = [];
-	private var waits: Array<Bool> = [];
+	private final states: Array<Bool> = [];
+	private final waits: Array<Bool> = [];
 	private var endedCount: Int = 0;
 	public var error: Bool = false;
 
 	public function new() {}
 
 	public function add(f: (Void -> Void) -> (Void -> Void) -> Bool): Void {
-		var id: Int = states.length;
+		final id: Int = states.length;
 		states.push(false);
 		waits.push(false);
 		function lock() states[id] = true;
@@ -88,7 +89,7 @@ class ThreadTasksWhile {
 		if (count == 1) {
 			while (f(Tools.nullFunction0, Tools.nullFunction0)) {}
 		} else if (count > 1) {
-			var t = new ThreadTasksWhile();
+			final t = new ThreadTasksWhile();
 			while (count-- > 0) t.add(f);
 			t.wait();
 			if (t.error) Sys.exit(1);

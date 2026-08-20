@@ -67,7 +67,7 @@ class App extends SmartCanvas {
 		background = bg;
 		this.container = container;
 
-		var renderingOptions: ApplicationOptions = {
+		final renderingOptions: ApplicationOptions = {
 			width: width,
 			height: height,
 			view: canvas,
@@ -147,8 +147,8 @@ class App extends SmartCanvas {
 	public function drawBorders(?color: UInt): Void {
 		border = new Graphics();
 		border.beginFill(color == null ? background : color);
-		var w: Int = stageInitSize.x * 2;
-		var h: Int = stageInitSize.y * 2;
+		final w: Int = stageInitSize.x * 2;
+		final h: Int = stageInitSize.y * 2;
 		border.drawRect(-w, -h, w, h * 3);
 		border.drawRect(stageInitSize.x, -h, w, h * 3);
 		border.drawRect(-w, -h, w * 3, h);

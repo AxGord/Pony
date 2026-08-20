@@ -112,11 +112,11 @@ class SerialPort extends Logable implements Declarator {
 	}
 
 	private function connectHandler(ports: Array<SerialId>): Void {
-		var e: SerialId = ports.find(findPort);
+		final e: SerialId = ports.find(findPort);
 		if (e == null) return error("Can't find device");
 		log('Connect to ${e.comName}');
 		try {
-			var fcfg: SerialPortFullConfig = cast cfg;
+			final fcfg: SerialPortFullConfig = cast cfg;
 			fcfg.disconnectedCallback = reconnect;
 			sp = Type.createInstance(NPM.serialport, [e.comName, fcfg, false]);
 			sp.open(function(err: Error) {

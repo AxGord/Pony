@@ -27,12 +27,12 @@ class ZipTool extends Logable {
 
 	public var allowList: Array<String> = null;
 
-	private var output: String;
-	private var prefix: String;
-	private var compressLvl: Int;
+	private final output: String;
+	private final prefix: String;
+	private final compressLvl: Int;
 	private var root: String;
-	private var fileOutput: Output;
-	private var writer: Writer;
+	private final fileOutput: Output;
+	private final writer: Writer;
 
 	public function new(output: String = '', prefix: String = '', compressLvl: Int = 9, ?root: String) {
 		super();
@@ -41,7 +41,7 @@ class ZipTool extends Logable {
 		this.compressLvl = compressLvl;
 		if (root != null && root.charAt(root.length - 1) != '/') root += '/';
 		this.root = root ?? '';
-		var a: Array<String> = output.split('/');
+		final a: Array<String> = output.split('/');
 		a.pop();
 		if (a.length > 0) FileSystem.createDirectory(a.join('/'));
 		if (FileSystem.exists(output)) FileSystem.deleteFile(output);
@@ -74,7 +74,7 @@ class ZipTool extends Logable {
 	}
 
 	public function needIgnore(entry: String): Bool {
-		var index: Int = entry.lastIndexOf('/');
+		final index: Int = entry.lastIndexOf('/');
 		return ignore.indexOf(index == -1 ? entry : entry.substr(index + 1)) != -1;
 	}
 
@@ -85,12 +85,12 @@ class ZipTool extends Logable {
 
 	public function writeFile(file: String): ZipTool {
 		if (prefix.endsWith('/') && file.startsWith('/')) file = file.substr(1);
-		var f: String = prefix + file;
+		final f: String = prefix + file;
 		if (allowList != null && allowList.indexOf(f) == -1) return this;
 		log(f);
-		var stat: FileStat = FileSystem.stat(f);
-		var b: Bytes = File.getBytes(f);
-		var entry: Entry = {
+		final stat: FileStat = FileSystem.stat(f);
+		final b: Bytes = File.getBytes(f);
+		final entry: Entry = {
 			fileName: root + file,
 			fileSize: stat.size,
 			fileTime: stat.mtime,
@@ -108,7 +108,7 @@ class ZipTool extends Logable {
 	public static function unpackFile(
 		file: String, targetPath: String = '', ?extractFirstLevelDirs: Bool, ?filter: Array<String>, ?log: String -> Void
 	): Void {
-		var input: FileInput = File.read(file);
+		final input: FileInput = File.read(file);
 		for (e in Reader.readZip(input)) {
 			var u: String = e.fileName;
 			if (u.substr(-1) == '/') continue;
@@ -118,8 +118,8 @@ class ZipTool extends Logable {
 				log('skip');
 				continue;
 			}
-			var f: String = targetPath + u;
-			var path: String = f.substr(0, f.lastIndexOf('/') + 1);
+			final f: String = targetPath + u;
+			final path: String = f.substr(0, f.lastIndexOf('/') + 1);
 			if (path != '' && !FileSystem.exists(path)) FileSystem.createDirectory(path);
 			File.saveBytes(f, Reader.unzip(e));
 		}
@@ -129,12 +129,12 @@ class ZipTool extends Logable {
 	public function writeHash(hash: Map<String, Array<String>>): ZipTool {
 		if (hash == null) return this;
 		for (file in hash.keys()) {
-			var f: String = prefix + file;
+			final f: String = prefix + file;
 			if (allowList != null && allowList.indexOf(f) == -1) continue;
 			log(f);
-			var h: Array<String> = hash[file];
-			var b: Bytes = File.getBytes(f);
-			var entry: Entry = {
+			final h: Array<String> = hash[file];
+			final b: Bytes = File.getBytes(f);
+			final entry: Entry = {
 				fileName: file,
 				fileSize: Std.parseInt(h[1]),
 				fileTime: Date.fromTime(Std.parseFloat(h[0])),

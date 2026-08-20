@@ -27,7 +27,7 @@ class HtmlContainer extends Sprite implements IWH {
 	public var hidden(default, set): Bool = false;
 
 	private var targetRect(get, set): Rect<Float>;
-	private var _size: Point<Float>;
+	private final _size: Point<Float>;
 
 	public function new(targetRect: Rect<Float>, ?app: App, ceil: Bool = false, fixed: Bool = false) {
 		super();

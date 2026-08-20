@@ -27,7 +27,7 @@ import pony.Priority;
 	private inline function get_self(): Event0 return this;
 
 	private static function real(l: Listener0): Bool {
-		var e: Null<Priority<Any>> = l.event;
+		final e: Null<Priority<Any>> = l.event;
 		return e == null || !e.empty;
 	}
 
@@ -51,12 +51,12 @@ import pony.Priority;
 
 	public function dispatchWithFlag(safe: Bool): Void {
 		if (this == null || this.isDestroy() || (safe && this.counters.length > 1)) return;
-		var controller: SignalControllerInner0 = new SignalControllerInner0(self);
+		final controller: SignalControllerInner0 = new SignalControllerInner0(self);
 		this.lock = true;
 		for (e in this) {
 			if (this.isDestroy()) return;
 			if (e.once) {
-				var ev: Null<Priority<Any>> = e.event;
+				final ev: Null<Priority<Any>> = e.event;
 				if (ev != null) {
 					ev.onLost >> this.changeReals;
 					ev.onTake >> this.changeReals;
@@ -75,7 +75,7 @@ import pony.Priority;
 	@:op(A && B)
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function and(s: Event0): Event0 {
-		var e: Event0 = new Event0();
+		final e: Event0 = new Event0();
 		(e: Signal0) << self << s;
 		return e;
 	}
@@ -83,7 +83,7 @@ import pony.Priority;
 	@:op(A & B)
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function andOnce(s: Event0): Event0 {
-		var e: Event0 = new Event0();
+		final e: Event0 = new Event0();
 		(e: Signal0) << self << s << (e: Signal0).clear;
 		return e;
 	}

@@ -52,7 +52,7 @@ class DeltaTime implements HasSignal {
 	#elseif !HUGS
 	#if sys
 	public static inline function tick(): Void {
-		var time: Float = Sys.time();
+		final time: Float = Sys.time();
 		fixedValue = time - t;
 		t = time;
 		fixedDispatch();
@@ -64,7 +64,7 @@ class DeltaTime implements HasSignal {
 	#else
 	public static inline function tick(): Void {
 		lastNow = Date.now();
-		var time: Float = lastNow.getTime();
+		final time: Float = lastNow.getTime();
 		fixedValue = (time - t) / 1000;
 		t = time;
 		fixedDispatch();
@@ -178,7 +178,7 @@ class DeltaTime implements HasSignal {
 	@SuppressWarnings('checkstyle:MagicNumber')
 	public static function testRun(time: Time = 60000): Void {
 		var sec: Float = time / 1000;
-		var d = if (sec < 100)
+		final d = if (sec < 100)
 			10
 		else if (sec < 1000)
 			50

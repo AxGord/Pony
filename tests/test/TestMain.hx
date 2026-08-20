@@ -19,18 +19,18 @@ class TestMain {
 	}
 
 	public function new() {
-		var suites = new Array<Class<massive.munit.TestSuite>>();
+		final suites = new Array<Class<massive.munit.TestSuite>>();
 		suites.push(TestSuite);
 
 		#if MCOVER
-		var client = new mcover.coverage.munit.client.MCoverPrintClient();
-		var httpClient = new HTTPClient(new mcover.coverage.munit.client.MCoverSummaryReportClient());
+		final client = new mcover.coverage.munit.client.MCoverPrintClient();
+		final httpClient = new HTTPClient(new mcover.coverage.munit.client.MCoverSummaryReportClient());
 		#else
-		var client = new RichPrintClient();
-		var httpClient = new HTTPClient(new SummaryReportClient());
+		final client = new RichPrintClient();
+		final httpClient = new HTTPClient(new SummaryReportClient());
 		#end
 
-		var runner: TestRunner = new TestRunner(client);
+		final runner: TestRunner = new TestRunner(client);
 		runner.addResultClient(httpClient);
 		// runner.addResultClient(new HTTPClient(new JUnitReportClient()));
 

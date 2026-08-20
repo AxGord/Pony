@@ -13,7 +13,7 @@ class Commander extends pony.Logable {
 		if (args.length == 0) {
 			runCommand(null);
 		} else {
-			var cmd: String = args.shift();
+			final cmd: String = args.shift();
 			runCommand(cmd, args);
 		}
 	}

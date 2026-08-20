@@ -15,7 +15,7 @@ import unityengine.GameObject;
  */
 @:nativeGen class TintButton extends Button {
 
-	private var tint: Single = 0.2;
+	private static inline final tint: Single = 0.2;
 
 	@:meta(UnityEngine.HideInInspector)
 	private var sclr: Color;

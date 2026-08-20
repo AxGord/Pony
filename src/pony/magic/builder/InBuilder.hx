@@ -16,7 +16,7 @@ using Lambda;
 class InBuilder {
 
 	macro public static function build(): Array<Field> {
-		var fs: Array<Field> = Context.getBuildFields();
+		final fs: Array<Field> = Context.getBuildFields();
 		for (f in fs) switch f.kind {
 			case FFun(f):
 				f.expr = ExprTools.map(f.expr, repl);

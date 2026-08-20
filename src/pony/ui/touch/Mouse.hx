@@ -85,7 +85,7 @@ class Mouse implements Declarator implements HasSignal {
 
 	public static function checkUp(b: Int): Bool {
 		if (upStack.length > 0) {
-			var l = ArrayTools.last(upStack);
+			final l = ArrayTools.last(upStack);
 			if (l == b) return false;
 		}
 		return true;
@@ -93,7 +93,7 @@ class Mouse implements Declarator implements HasSignal {
 
 	public static function checkDown(b: Int): Bool {
 		if (upStack.length > 0) {
-			var l = ArrayTools.last(downStack);
+			final l = ArrayTools.last(downStack);
 			if (l == null || l.b == b) return false;
 		}
 		return true;

@@ -18,7 +18,7 @@ using pony.text.XmlTools;
 @SuppressWarnings('checkstyle:MagicNumber')
 class Server extends NModule<ServerConfig> {
 
-	private static inline var PRIORITY: Int = 0;
+	private static inline final PRIORITY: Int = 0;
 
 	public function new() super('server');
 
@@ -195,7 +195,7 @@ private class RemoteReader extends BAReader<BARemoteServerConfig> {
 				cfg.allow.push(normalize(xml.innerData));
 			case 'commands':
 				for (node in xml.elements) {
-					var d: Pair<Bool, String> = new Pair(!node.isFalse('zipLog'), normalize(node.innerData));
+					final d: Pair<Bool, String> = new Pair(!node.isFalse('zipLog'), normalize(node.innerData));
 					if (!cfg.commands.exists(node.name))
 						cfg.commands[node.name] = [d];
 					else
@@ -228,7 +228,7 @@ private class SniffReader extends BAReader<BASniffConfig> {
 			case 'server':
 				cfg.serverPort = Std.parseInt(xml.innerData);
 			case 'client':
-				var a: Array<String> = normalize(xml.innerData).split(':');
+				final a: Array<String> = normalize(xml.innerData).split(':');
 				if (a.length == 1) {
 					cfg.clientHost = '127.0.0.1';
 					cfg.clientPort = Std.parseInt(a[0]);

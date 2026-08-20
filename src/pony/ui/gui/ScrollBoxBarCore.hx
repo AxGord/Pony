@@ -24,8 +24,8 @@ import pony.ui.gui.SliderCore;
 	public var pos(link, set): Float = slider.pos;
 
 	public var c(default, null): Null<Float>;
-	private var slider: SliderCore;
-	private var scrollPanelSize: Float;
+	private final slider: SliderCore;
+	private final scrollPanelSize: Float;
 	public var totalA(default, set): Float = 0;
 	public var totalB(default, set): Float = 0;
 	private var scrollerSize: Float = 0;

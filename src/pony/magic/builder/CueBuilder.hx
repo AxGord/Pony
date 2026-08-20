@@ -20,12 +20,12 @@ using pony.macro.Tools;
 class CueBuilder {
 
 	#if macro
-	inline private static var INDEX: String = 'INDEX';
-	inline private static var TITLE: String = 'TITLE ';
+	inline private static final INDEX: String = 'INDEX';
+	inline private static final TITLE: String = 'TITLE ';
 	#end
 	macro public static function build(): Array<Field> {
-		var cl = Context.getLocalClass();
-		var meta = cl.get().meta.get();
+		final cl = Context.getLocalClass();
+		final meta = cl.get().meta.get();
 		var cueFile = null;
 		for (m in meta) switch m {
 			case { name: ':cue', params: [{ expr: EConst(CString(v)) }] }:
@@ -34,9 +34,9 @@ class CueBuilder {
 		}
 		if (cueFile == null) throw 'Error';
 		Context.registerModuleDependency(Context.getLocalModule(), cueFile);
-		var cue = File.getContent(cueFile);
-		var map: Map<String, Map<String, Array<String>>> = TextTools.tabParser(cue);
-		var data: Array<Pair<String, Int>> = [];
+		final cue = File.getContent(cueFile);
+		final map: Map<String, Map<String, Array<String>>> = TextTools.tabParser(cue);
+		final data: Array<Pair<String, Int>> = [];
 		for (e in map.iterator().next()) {
 			var title: String = null;
 			var time: String = null;
@@ -50,12 +50,12 @@ class CueBuilder {
 		}
 		data.sort(function(a, b) return a.b - b.b);
 
-		var fields: Array<Field> = Context.getBuildFields();
+		final fields: Array<Field> = Context.getBuildFields();
 
-		var map: Map<String, { min: Int, max: Int }> = [
+		final map: Map<String, { min: Int, max: Int }> = [
 			for (i in 0...data.length) {
-				var title = data[i].a;
-				var t: Pair<Time, Time> = i != data.length - 1 ? { a: data[i].b, b: data[i + 1].b } : { a: data[i].b, b: 0 };
+				final title = data[i].a;
+				final t: Pair<Time, Time> = i != data.length - 1 ? { a: data[i].b, b: data[i + 1].b } : { a: data[i].b, b: 0 };
 				fields.push({
 					name: title,
 					access: [APublic, AStatic],

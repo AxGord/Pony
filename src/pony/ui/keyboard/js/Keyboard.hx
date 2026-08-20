@@ -13,8 +13,8 @@ import pony.ui.keyboard.Key;
  */
 class Keyboard implements IKeyboard implements HasSignal {
 
-	private static var KEYDOWN: String = 'keydown';
-	private static var KEYUP: String = 'keyup';
+	private static final KEYDOWN: String = 'keydown';
+	private static final KEYUP: String = 'keyup';
 
 	@:auto public var down: Signal1<Key>;
 	@:auto public var up: Signal1<Key>;

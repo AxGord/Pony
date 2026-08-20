@@ -7,10 +7,10 @@ import pony.net.http.WebServer.EConnect;
  * MKeyAuth
  * @author AxGord <axgord@gmail.com>
  */
-@:final class MKeyAuth implements IModule {
+final class MKeyAuth implements IModule {
 
-	inline public static var PARAM: String = 'authkey';
-	inline public static var SESSION: String = 'keyAuthed';
+	inline public static final PARAM: String = 'authkey';
+	inline public static final SESSION: String = 'keyAuthed';
 
 	private var keys: Array<String>;
 	public var server: WebServer;
@@ -23,7 +23,7 @@ import pony.net.http.WebServer.EConnect;
 
 	public function connect(cpq: CPQ): EConnect {
 		if (cpq.connection.params.exists(PARAM)) {
-			var key: String = cpq.connection.params[PARAM];
+			final key: String = cpq.connection.params[PARAM];
 			if (key == null) {
 				cpq.connection.sessionStorage[SESSION] = false;
 				cpq.connection.params.remove(PARAM);

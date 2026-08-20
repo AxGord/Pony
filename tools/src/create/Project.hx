@@ -31,11 +31,11 @@ class Project {
 	public function new(name: String) this.name = name;
 
 	public function result(): Xml {
-		var root = Xml.createElement('project');
+		final root = Xml.createElement('project');
 		if (name != null) root.set('name', name);
 
 		if (!config.active && build.active) {
-			var cfg = Xml.createElement('config');
+			final cfg = Xml.createElement('config');
 			cfg.addChild(Xml.createComment('Put configuration here'));
 			root.addChild(cfg);
 		}
@@ -121,7 +121,7 @@ class Project {
 	}
 
 	public function getLibs(): Map<String, String> {
-		var map = new Map<String, String>();
+		final map = new Map<String, String>();
 		if (haxelib.active) {
 			for (lib in haxelib.libs) map[lib.name] = lib.version;
 		}

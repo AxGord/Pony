@@ -13,9 +13,9 @@ import pony.text.tpl.ITplPut;
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
 class Tpl {
 
-	private var data: TplData;
+	private final data: TplData;
 	private var c: Class<ITplPut>;
-	private var o: Dynamic;
+	private final o: Dynamic;
 
 	public function new(?c: Class<ITplPut>, o: Dynamic, t: String, ?s: TplStyle) {
 		this.c = c;
@@ -35,7 +35,7 @@ class Tpl {
 			c = o.tplPut;
 			if (c == null) throw 'Need tplPut';
 		}
-		var r: ITplPut = Type.createInstance(c, [o, d, p]);
+		final r: ITplPut = Type.createInstance(c, [o, d, p]);
 		return @await r.tplData(content);
 	}
 

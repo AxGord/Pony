@@ -13,7 +13,7 @@ import types.BASection;
  */
 class Move extends CfgModule<MoveConfig> {
 
-	public static inline var PRIORITY: Int = 19;
+	public static inline final PRIORITY: Int = 19;
 
 	public function new() super('move');
 
@@ -50,7 +50,7 @@ class Move extends CfgModule<MoveConfig> {
 	private function moveUnits(data: Array<Pair<String, String>>, to: String): Void {
 		Utils.createPath(to);
 		for (p in data) {
-			var unit: Unit = p.a;
+			final unit: Unit = p.a;
 			log('Move file: $unit');
 			if (unit.isFile) {
 				(unit: File).moveToDir(to, Utils.replaceBuildDateIfNotNull(p.b));

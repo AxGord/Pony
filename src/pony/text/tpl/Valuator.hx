@@ -17,7 +17,7 @@ class Valuator<C1, C2> extends TplPut<C1, C2> {
 
 	@:async
 	override public function tag(name: String, content: TplData, arg: String, args: Map<String, String>, ?kid: ITplPut): String {
-		var b: Null<Bool> = @await valuBool(name);
+		final b: Null<Bool> = @await valuBool(name);
 		if (b != null) {
 			if (args.exists('!'))
 				return b ? '' : @await tplData(content);
@@ -43,7 +43,7 @@ class Valuator<C1, C2> extends TplPut<C1, C2> {
 
 	@:async
 	override public function shortTag(name: String, arg: String, ?kid: ITplPut): String {
-		var v: String = @await valu(name, arg);
+		final v: String = @await valu(name, arg);
 		if (v != null)
 			return v;
 		else

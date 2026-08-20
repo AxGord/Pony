@@ -13,9 +13,9 @@ class SizePulse {
 
 	public var targer: DisplayObject;
 
-	private var maxSize: Float;
-	private var speed: Float;
-	private var mid: Bool;
+	private final maxSize: Float;
+	private final speed: Float;
+	private final mid: Bool;
 
 	private var d: Int = 1;
 
@@ -81,8 +81,8 @@ class SizePulse {
 	}
 
 	private function updateMid(): Void {
-		var dw = targer.width - bRect.width;
-		var dh = targer.height - bRect.height;
+		final dw = targer.width - bRect.width;
+		final dh = targer.height - bRect.height;
 		targer.x = bRect.x - dw / 2;
 		targer.y = bRect.y - dh / 2;
 

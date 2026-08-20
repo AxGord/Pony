@@ -38,8 +38,8 @@ class RealClock implements Declarator implements HasSignal {
 	private static function disableDate(): Void DeltaTime.fixedUpdate >> updaterDate;
 
 	private static function updaterDate(): Void {
-		var d: Date = DeltaTime.nowDate;
-		var a: Array<String> = ['${d.getFullYear()}', months[d.getMonth()], d.getDate().toFixed('00')];
+		final d: Date = DeltaTime.nowDate;
+		final a: Array<String> = ['${d.getFullYear()}', months[d.getMonth()], d.getDate().toFixed('00')];
 		if (invertDate) a.reverse();
 		eUpdateDate.dispatch(a.join(dateSep));
 	}

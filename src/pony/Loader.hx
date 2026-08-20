@@ -18,7 +18,7 @@ class Loader implements HasSignal {
 	public var intensivity: Int;
 	public var beginWait: Int;
 
-	private var actions: List<Void -> Void>;
+	private final actions: List<Void -> Void> = new List<Void -> Void>();
 	private var totalActions(default, null): Int = 0;
 
 	public var total: Int = 0;
@@ -29,7 +29,6 @@ class Loader implements HasSignal {
 	public function new(intensivity: Int = 10, beginWait: Int = 0) {
 		this.intensivity = intensivity;
 		this.beginWait = beginWait;
-		actions = new List<Void -> Void>();
 		onComplete.once(end);
 	}
 

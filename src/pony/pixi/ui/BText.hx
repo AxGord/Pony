@@ -17,9 +17,9 @@ import pony.time.DeltaTime;
 class BText extends Sprite implements IWH {
 
 	private static var blurFilter: BlurFilter;
-	private static inline var SHADOW_OFFSET: Int = 4;
-	private static inline var NORMAL_OFFSET: Int = 4;
-	private static inline var WHITE: UInt = 0xFFFFFF;
+	private static inline final SHADOW_OFFSET: Int = 4;
+	private static inline final NORMAL_OFFSET: Int = 4;
+	private static inline final WHITE: UInt = 0xFFFFFF;
 
 	private static function __init__(): Void {
 		blurFilter = new BlurFilter();
@@ -34,11 +34,11 @@ class BText extends Sprite implements IWH {
 	private var ansi: String;
 	public var style(default, null): BitmapTextStyle;
 	public var color(default, set): UInt;
-	private var defColor: UInt;
+	private final defColor: UInt;
 	private var renderTexture: RenderTexture;
 	private var renderSprite: Sprite;
 	private var shadow: Bool = false;
-	private var app: App;
+	private final app: App;
 	private var lastGeneratedSize: Point<Float>;
 
 	public function new(text: String, ?style: BitmapTextStyle, ?ansi: String, shadow: Bool = false, ?app: App) {
@@ -78,7 +78,7 @@ class BText extends Sprite implements IWH {
 			current = null;
 			return s;
 		}
-		var changeTexture: Bool = !app.isWebGL || _size == null || current.size.x > _size.x || current.size.y > _size.y;
+		final changeTexture: Bool = !app.isWebGL || _size == null || current.size.x > _size.x || current.size.y > _size.y;
 		// !app.isWebGL force create new texture, coz prev can'n be cleaned on some devices
 		var createSize: Point<Float> = null;
 		if (changeTexture) {
@@ -106,7 +106,7 @@ class BText extends Sprite implements IWH {
 			renderSprite.tint = 0;
 			renderSprite.filters = [blurFilter];
 
-			var shadowRenderTexture: RenderTexture = createTexture(createSize);
+			final shadowRenderTexture: RenderTexture = createTexture(createSize);
 			app.app.renderer.render(renderSprite, shadowRenderTexture, false);
 			app.app.renderer.render(renderSprite, shadowRenderTexture, false);
 			app.app.renderer.render(renderSprite, shadowRenderTexture, false);
@@ -136,7 +136,7 @@ class BText extends Sprite implements IWH {
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function createTexture(size: Point<Float>): RenderTexture {
 		lastGeneratedSize = size;
-		var b: Int = shadow ? SHADOW_OFFSET * 2 : NORMAL_OFFSET * 2;
+		final b: Int = shadow ? SHADOW_OFFSET * 2 : NORMAL_OFFSET * 2;
 		return RenderTexture.create(Math.ceil(size.x) + b, Math.ceil(size.y) + b);
 	}
 

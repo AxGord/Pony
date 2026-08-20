@@ -11,23 +11,23 @@ import haxe.Serializer;
 #if (haxe_ver >= 4.2) enum #else @:enum #end
 abstract AnsiForeground(UInt) to UInt {
 
-	var Default = 39;
-	var Black = 30;
-	var Red = 31;
-	var Green = 32;
-	var Yellow = 33;
-	var Blue = 34;
-	var Magenta = 35;
-	var Cyan = 36;
-	var LightGray = 37;
-	var DarkGray = 90;
-	var LightRed = 91;
-	var LightGreen = 92;
-	var LightYellow = 93;
-	var LightBlue = 94;
-	var LightMagenta = 95;
-	var LightCyan = 96;
-	var White = 97;
+	final Default = 39;
+	final Black = 30;
+	final Red = 31;
+	final Green = 32;
+	final Yellow = 33;
+	final Blue = 34;
+	final Magenta = 35;
+	final Cyan = 36;
+	final LightGray = 37;
+	final DarkGray = 90;
+	final LightRed = 91;
+	final LightGreen = 92;
+	final LightYellow = 93;
+	final LightBlue = 94;
+	final LightMagenta = 95;
+	final LightCyan = 96;
+	final White = 97;
 
 }
 
@@ -38,13 +38,13 @@ abstract AnsiForeground(UInt) to UInt {
 @SuppressWarnings('checkstyle:MagicNumber')
 @:nullSafety(Strict) class TextTools {
 
-	public static inline var MODULE: String = 'pony.text.TextTools';
+	public static inline final MODULE: String = 'pony.text.TextTools';
 	public static var letters: Map<String, String> = [
 		'en' => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
 		'ru' => 'АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ',
 		'num' => '0123456789'
 	];
-	private static inline var FIRST_ANSI_ID: Int = 192;
+	private static inline final FIRST_ANSI_ID: Int = 192;
 
 	/**
 	 * Using delimiter for get splited string pair. Search from left to right.
@@ -54,7 +54,7 @@ abstract AnsiForeground(UInt) to UInt {
 	 * @return splited string pair
 	 */
 	public static inline function firstSplit(str: String, delimiter: String, ?startIndex: Int): SPair<String> {
-		var index: Int = startIndex != null ? str.indexOf(delimiter, startIndex) : str.indexOf(delimiter);
+		final index: Int = startIndex != null ? str.indexOf(delimiter, startIndex) : str.indexOf(delimiter);
 		return index == -1 ? new SPair<String>(str, '') : new SPair<String>(str.substr(0, index), str.substr(index + delimiter.length));
 	}
 
@@ -66,72 +66,72 @@ abstract AnsiForeground(UInt) to UInt {
 	 * @return splited string pair
 	 */
 	public static inline function lastSplit(str: String, delimiter: String, ?startIndex: Int): SPair<String> {
-		var index: Int = startIndex != null ? str.lastIndexOf(delimiter, startIndex) : str.lastIndexOf(delimiter);
+		final index: Int = startIndex != null ? str.lastIndexOf(delimiter, startIndex) : str.lastIndexOf(delimiter);
 		return index == -1 ? new SPair<String>(str, '') : new SPair<String>(str.substr(0, index), str.substr(index + delimiter.length));
 	}
 
 	public static inline function allAfterWithNull(str: String, delimiter: String, ?startIndex: Int): Null<String> {
-		var index: Int = str.indexOf(delimiter, startIndex);
+		final index: Int = str.indexOf(delimiter, startIndex);
 		return index == -1 ? null : str.substr(index + delimiter.length);
 	}
 
 	public static function allAfter(str: String, delimiter: String, ?startIndex: Int): String {
-		var r: Null<String> = allAfterWithNull(str, delimiter, startIndex);
+		final r: Null<String> = allAfterWithNull(str, delimiter, startIndex);
 		return r ?? str;
 	}
 
 	public static inline function allAfterLastWithNull(str: String, delimiter: String, ?startIndex: Int): Null<String> {
-		var index: Int = startIndex == null ? str.lastIndexOf(delimiter) : str.lastIndexOf(delimiter, startIndex);
+		final index: Int = startIndex == null ? str.lastIndexOf(delimiter) : str.lastIndexOf(delimiter, startIndex);
 		return index == -1 ? null : str.substr(index + delimiter.length);
 	}
 
 	public static function allAfterLast(str: String, delimiter: String, ?startIndex: Int): String {
-		var r: Null<String> = allAfterLastWithNull(str, delimiter, startIndex);
+		final r: Null<String> = allAfterLastWithNull(str, delimiter, startIndex);
 		return r ?? str;
 	}
 
 	public static inline function allBeforeWithNull(str: String, delimiter: String, ?startIndex: Int): Null<String> {
-		var index: Int = str.indexOf(delimiter, startIndex);
+		final index: Int = str.indexOf(delimiter, startIndex);
 		return index == -1 ? null : str.substr(0, index);
 	}
 
 	public static function allBefore(str: String, delimiter: String, ?startIndex: Int): String {
-		var r: Null<String> = allBeforeWithNull(str, delimiter, startIndex);
+		final r: Null<String> = allBeforeWithNull(str, delimiter, startIndex);
 		return r ?? str;
 	}
 
 	public static inline function allBeforeLastWithNull(str: String, delimiter: String, ?startIndex: Int): Null<String> {
-		var index: Int = startIndex == null ? str.lastIndexOf(delimiter) : str.lastIndexOf(delimiter, startIndex);
+		final index: Int = startIndex == null ? str.lastIndexOf(delimiter) : str.lastIndexOf(delimiter, startIndex);
 		return index == -1 ? null : str.substr(0, index);
 	}
 
 	public static function allBeforeLast(str: String, delimiter: String, ?startIndex: Int): String {
-		var r: Null<String> = allBeforeLastWithNull(str, delimiter, startIndex);
+		final r: Null<String> = allBeforeLastWithNull(str, delimiter, startIndex);
 		return r ?? str;
 	}
 
 	public static inline function extract(str: String, begin: String, end: String): Null<String> {
-		var after: Null<String> = allAfterWithNull(str, begin);
+		final after: Null<String> = allAfterWithNull(str, begin);
 		return after != null ? allBeforeWithNull(after, end) : null;
 	}
 
 	public static function onlyLetters(str: String, lang: String = 'en'): String {
-		var ls: Null<String> = letters[lang];
+		final ls: Null<String> = letters[lang];
 		if (ls == null) throw 'Not supported lang';
 		var result: String = '';
 		for (i in 0...str.length) {
-			var char: String = str.charAt(i);
+			final char: String = str.charAt(i);
 			if (ls.indexOf(char) != -1) result += char;
 		}
 		return result;
 	}
 
 	public static function onlyLettersWithLower(str: String, lang: String = 'en'): String {
-		var ls: Null<String> = letters[lang];
+		final ls: Null<String> = letters[lang];
 		if (ls == null) throw 'Not supported lang';
 		var result: String = '';
 		for (i in 0...str.length) {
-			var char: String = str.charAt(i);
+			final char: String = str.charAt(i);
 			if (ls.indexOf(char.toUpperCase()) != -1) result += char;
 		}
 		return result;
@@ -167,7 +167,7 @@ abstract AnsiForeground(UInt) to UInt {
 	}
 
 	public static function checkLang(s: String, lang: String): Bool {
-		var l: Null<String> = letters[lang];
+		final l: Null<String> = letters[lang];
 		if (l == null) throw 'Not supported lang';
 		for (i in 0...s.length) if (l.indexOf(s.charAt(i).toUpperCase()) != -1) return true;
 		return false;
@@ -196,45 +196,45 @@ abstract AnsiForeground(UInt) to UInt {
 
 	macro public static function includeFile(file: String): Expr {
 		Context.registerModuleDependency(MODULE, file);
-		var s: String = sys.io.File.getContent(file);
+		final s: String = sys.io.File.getContent(file);
 		return macro $v{s};
 	}
 
 	macro public static function includePath(path: String = '.'): Expr {
-		var s: String = sys.FileSystem.absolutePath('$path/');
+		final s: String = sys.FileSystem.absolutePath('$path/');
 		return macro $v{s};
 	}
 
 	macro public static function includeFileFromCurrentDir(file: String): Expr {
 		var f: String = Context.getPosInfos(Context.currentPos()).file;
-		var i: Int = MathTools.cmax(f.lastIndexOf('\\'), f.lastIndexOf('/'));
+		final i: Int = MathTools.cmax(f.lastIndexOf('\\'), f.lastIndexOf('/'));
 		f = i != -1 ? '${f.substr(0, i)}/' : '';
 		Context.registerModuleDependency(MODULE, f + file);
-		var s: String = sys.io.File.getContent(f + file);
+		final s: String = sys.io.File.getContent(f + file);
 		return macro $v{s};
 	}
 
 	macro public static function includePathFromCurrentDir(path: String = '.'): Expr {
 		var f: String = Context.getPosInfos(Context.currentPos()).file;
-		var i: Int = MathTools.cmax(f.lastIndexOf('\\'), f.lastIndexOf('/'));
+		final i: Int = MathTools.cmax(f.lastIndexOf('\\'), f.lastIndexOf('/'));
 		f = i != -1 ? '${f.substr(0, i)}/' : '';
-		var s: String = sys.FileSystem.absolutePath('${f + path}/');
+		final s: String = sys.FileSystem.absolutePath('${f + path}/');
 		return macro $v{s};
 	}
 
 	macro public static function includeJson(file: String): Expr {
 		Context.registerModuleDependency(MODULE, file);
-		var s: String = sys.io.File.getContent(file);
+		final s: String = sys.io.File.getContent(file);
 		haxe.Json.parse(s); // check
 		return macro haxe.Json.parse($v{s}); // todo: not parse on runtime
 	}
 
 	macro public static function includeJsonFromCurrentDir(file: String): Expr {
 		var f: String = Context.getPosInfos(Context.currentPos()).file;
-		var i: Int = MathTools.cmax(f.lastIndexOf('\\'), f.lastIndexOf('/'));
+		final i: Int = MathTools.cmax(f.lastIndexOf('\\'), f.lastIndexOf('/'));
 		f = i != -1 ? '${f.substr(0, i)}/' : '';
 		Context.registerModuleDependency(MODULE, f + file);
-		var s: String = sys.io.File.getContent(f + file);
+		final s: String = sys.io.File.getContent(f + file);
 		haxe.Json.parse(s); // check
 		return macro haxe.Json.parse($v{s}); // todo: not parse on runtime
 	}
@@ -261,12 +261,12 @@ abstract AnsiForeground(UInt) to UInt {
 	}
 
 	public static function tabParser(s: String, ?tab: String): Dynamic {
-		var a: Array<String> = s.split('\n');
+		final a: Array<String> = s.split('\n');
 		var name: String = @:nullSafety(Off) StringTools.trim(a.shift());
 		if (a.length == 0) return StringTools.trim(name);
-		var section: Map<String, Dynamic> = [];
+		final section: Map<String, Dynamic> = [];
 		var entry: Array<String> = [];
-		var arr: Array<String> = [];
+		final arr: Array<String> = [];
 		for (e in a) {
 			if (tab == null) tab = detectTab(e);
 			if (tab != null && e.substr(0, tab.length) == tab) {
@@ -289,7 +289,7 @@ abstract AnsiForeground(UInt) to UInt {
 			return arr;
 		}
 		if (entry.length > 0) {
-			var data: Dynamic = tabParser(entry.join('\n'), tab);
+			final data: Dynamic = tabParser(entry.join('\n'), tab);
 			section[name] = data;
 		}
 		return section;
@@ -306,7 +306,7 @@ abstract AnsiForeground(UInt) to UInt {
 	}
 
 	public static function removeQuotes(s: String): String {
-		var f: String = s.charAt(0);
+		final f: String = s.charAt(0);
 		return f == '"' || f == "'" ? s.substring(1, s.length - 1) : s;
 	}
 
@@ -314,7 +314,7 @@ abstract AnsiForeground(UInt) to UInt {
 		var beginIndex: Int = text.indexOf(begin);
 		if (beginIndex == -1) return null;
 		beginIndex += begin.length;
-		var beginData: String = text.substr(0, beginIndex);
+		final beginData: String = text.substr(0, beginIndex);
 		var endData: String = text.substr(beginIndex);
 		endData = endData.substr(endData.indexOf(end));
 		return beginData + value + endData;
@@ -323,7 +323,7 @@ abstract AnsiForeground(UInt) to UInt {
 	#if (neko || nodejs || php)
 	public static function betweenReplaceFile(file: String, begin: String, end: String, value: String): Void {
 		if (sys.FileSystem.exists(file)) {
-			var text = betweenReplace(sys.io.File.getContent(file), begin, end, value);
+			final text = betweenReplace(sys.io.File.getContent(file), begin, end, value);
 			if (text != null) sys.io.File.saveContent(file, text);
 		}
 	}
@@ -345,7 +345,7 @@ abstract AnsiForeground(UInt) to UInt {
 	}
 
 	public static function ext(s: String): SPair<String> {
-		var i: Int = s.lastIndexOf('.');
+		final i: Int = s.lastIndexOf('.');
 		return i == -1 ? new SPair(s, null) : new SPair(s.substr(0, i), s.substr(i + 1));
 	}
 
@@ -383,10 +383,10 @@ abstract AnsiForeground(UInt) to UInt {
 		var i: Int = src.indexOf(attr);
 		if (i == -1) return src;
 		i += attr.length;
-		var q1: String = '"';
-		var q2: String = "'";
+		final q1: String = '"';
+		final q2: String = "'";
 		var oq: Int = src.indexOf(q1, i);
-		var oq2: Int = src.indexOf(q2, i);
+		final oq2: Int = src.indexOf(q2, i);
 		var q: Null<String> = null;
 		if (oq2 != -1 && oq2 < oq) {
 			oq = oq2;
@@ -395,7 +395,7 @@ abstract AnsiForeground(UInt) to UInt {
 			q = q1;
 		}
 		oq++;
-		var cq: Int = src.indexOf(q, oq);
+		final cq: Int = src.indexOf(q, oq);
 		return src.substring(0, oq) + newval + src.substring(cq);
 	}
 
@@ -440,7 +440,7 @@ abstract AnsiForeground(UInt) to UInt {
 	public static function uniqueSymbols(s: String): Bool {
 		var exists: String = '';
 		for (i in 0...s.length) {
-			var char: String = s.charAt(i);
+			final char: String = s.charAt(i);
 			if (exists.indexOf(char) != -1) return false;
 			exists += char;
 		}

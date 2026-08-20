@@ -84,7 +84,7 @@ class TouchableTouch {
 		over = true;
 		down = true;
 		base.dispatchOver(untyped e.data.identifier);
-		var p = Touch.correction(untyped e.data.global.x, e.data.global.y);
+		final p = Touch.correction(untyped e.data.global.x, e.data.global.y);
 		base.dispatchDown(untyped e.data.identifier, p.x, p.y);
 	}
 
@@ -107,10 +107,10 @@ class TouchableTouch {
 
 	private function touchMoveHandler(e: InteractionEvent): Void {
 		if (!down) return;
-		var id = untyped e.data.identifier;
+		final id = untyped e.data.identifier;
 		if (isLock(id)) return;
-		var p = e.data.global;
-		var c = obj.getBounds().contains(p.x, p.y);
+		final p = e.data.global;
+		final c = obj.getBounds().contains(p.x, p.y);
 		if (over) {
 			if (!c) {
 				over = false;

@@ -7,13 +7,13 @@ package pony.unity3d;
 #if (haxe_ver >= 4.2) enum #else @:enum #end
 abstract DefaultLayers(Int) from Int to Int {
 
-	var Default = 0;
-	var TransparentFX = 1;
-	var IgnoreRaycast = 2;
-	var Layer3 = 3;
-	var Water = 4;
-	var UI = 5;
-	var Layer6 = 6;
-	var Layer7 = 7;
+	final Default = 0;
+	final TransparentFX = 1;
+	final IgnoreRaycast = 2;
+	final Layer3 = 3;
+	final Water = 4;
+	final UI = 5;
+	final Layer6 = 6;
+	final Layer7 = 7;
 
 }

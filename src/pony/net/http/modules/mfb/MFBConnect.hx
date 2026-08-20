@@ -7,7 +7,7 @@ import pony.text.tpl.ITplPut;
  * MFBConnect
  * @author AxGord <axgord@gmail.com>
  */
-@:final class MFBConnect extends ModuleConnect<MFB> {
+final class MFBConnect extends ModuleConnect<MFB> {
 
 	public var token(get, set): String;
 

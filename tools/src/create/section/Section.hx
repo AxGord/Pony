@@ -16,7 +16,7 @@ class Section implements HasAbstract {
 	private var xml: Xml;
 	private var root: Xml;
 	private var apps: Xml;
-	private var name: String;
+	private final name: String;
 
 	public function new(name: String) {
 		this.name = name;
@@ -44,7 +44,7 @@ class Section implements HasAbstract {
 	}
 
 	private function add(name: String, ?value: String): Xml {
-		var node: Xml = XmlTools.node(name, value);
+		final node: Xml = XmlTools.node(name, value);
 		xml.addChild(node);
 		return node;
 	}

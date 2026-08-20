@@ -11,7 +11,7 @@ class TempTest {
 
 	@Test
 	public function testExample(): Void {
-		var t: TempInterval = '5C...8C';
+		final t: TempInterval = '5C...8C';
 		Assert.areEqual(t.mid.c, 6.5);
 	}
 

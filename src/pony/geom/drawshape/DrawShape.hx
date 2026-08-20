@@ -62,7 +62,7 @@ class DrawShape extends pony.Logable #if pony_experimental implements pony.magic
 
 	@:listen(onDrawFinishShape, eDrawFinishPolygon.empty == false)
 	private function drawFinishPolygon(points: Array<Point<Float>>): Void {
-		var result: Array<Float> = [];
+		final result: Array<Float> = [];
 		for (v in points) {
 			result.push(v.x);
 			result.push(v.y);
@@ -74,7 +74,7 @@ class DrawShape extends pony.Logable #if pony_experimental implements pony.magic
 
 	@:listen(onFinishShape, eFinishBinary.empty == false)
 	private function finishBinary(points: Array<IntPoint>): Void {
-		var b: BytesOutput = new BytesOutput();
+		final b: BytesOutput = new BytesOutput();
 		for (v in points) b.writeByte(Byte.create(v.x, v.y));
 		log('Bytes size: ${b.length}');
 		eFinishBinary.dispatch(b.getBytes());
@@ -85,7 +85,7 @@ class DrawShape extends pony.Logable #if pony_experimental implements pony.magic
 	}
 
 	private function pointsToPolygon(e: Event1<Array<Float>>, p: Array<Point<Float>>): Void {
-		var r: Array<Float> = [];
+		final r: Array<Float> = [];
 		for (v in p) {
 			r.push(v.x);
 			r.push(v.y);
@@ -96,7 +96,7 @@ class DrawShape extends pony.Logable #if pony_experimental implements pony.magic
 	}
 
 	private function shapeToBytes(e: Event1<Bytes>, p: Array<IntPoint>): Void {
-		var b = new BytesOutput();
+		final b = new BytesOutput();
 		for (v in p) b.writeByte(Byte.create(v.x, v.y));
 		log('Bytes size: ${b.length}');
 		e.dispatch(b.getBytes());
@@ -205,13 +205,13 @@ class DrawShape extends pony.Logable #if pony_experimental implements pony.magic
 		if (eq3(p1.x, p2.x, targetPointData.col)) return true;
 		if (eq3(p1.y, p2.y, targetPointData.row)) return true;
 
-		var r1 = p1.x - p1.y;
-		var r2 = p2.x - p2.y;
-		var r3 = targetPointData.col - targetPointData.row;
+		final r1 = p1.x - p1.y;
+		final r2 = p2.x - p2.y;
+		final r3 = targetPointData.col - targetPointData.row;
 		if (eq3(r1, r2, r3)) return true;
-		var r1b = p1.x + p1.y;
-		var r2b = p2.x + p2.y;
-		var r3b = targetPointData.col + targetPointData.row;
+		final r1b = p1.x + p1.y;
+		final r2b = p2.x + p2.y;
+		final r3b = targetPointData.col + targetPointData.row;
 		if (eq3(r1, r2, r3)) return true;
 		for (i in 1...Std.int(pointer.snapCellCounts.x / 2)) {
 			if ((r2 - r1) * i == r3 - r2 && (r2b - r1b) * i == r3b - r2b) return true;
@@ -282,7 +282,7 @@ class DrawShape extends pony.Logable #if pony_experimental implements pony.magic
 	}
 
 	private function writeShapePoint(): Void {
-		var p = new IntPoint(downPointData.col, downPointData.row);
+		final p = new IntPoint(downPointData.col, downPointData.row);
 		log('Write shape point: $p');
 		shape.push(p);
 	}

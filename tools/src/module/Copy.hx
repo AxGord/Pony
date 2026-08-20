@@ -15,7 +15,7 @@ using pony.text.TextTools;
  */
 @:nullSafety(Strict) class Copy extends CfgModule<CopyConfig> {
 
-	private static inline var PRIORITY: Int = 20;
+	private static inline final PRIORITY: Int = 20;
 
 	public function new() super('copy');
 
@@ -43,7 +43,7 @@ using pony.text.TextTools;
 	override private function runNode(cfg: CopyConfig): Void {
 		var from: String = cfg.from;
 		if (cfg.fromLib != null) {
-			var path: Null<String> = Utils.getLibPath(cfg.fromLib);
+			final path: Null<String> = Utils.getLibPath(cfg.fromLib);
 			if (path == null) error('Lib ${cfg.fromLib} not found');
 			from = '$path$from';
 		}
@@ -52,15 +52,15 @@ using pony.text.TextTools;
 	}
 
 	private function copyDirs(data: Array<Pair<String, Null<String>>>, from: String, to: String, hash: Bool, addext: String): Void {
-		var hashModule: Null<module.Hash> = hash ? modules.getModule(module.Hash) : null;
+		final hashModule: Null<module.Hash> = hash ? modules.getModule(module.Hash) : null;
 		for (d in data) {
-			var dir: Dir = from + d.a;
-			var filter: Null<String> = d.b;
+			final dir: Dir = from + d.a;
+			final filter: Null<String> = d.b;
 			log('Copy directory: ${d.a}');
 			if (hashModule != null && hashModule.xml != null) {
 				for (f in dir.contentRecursiveFiles(filter)) {
 					if (!hashModule.fileChanged(f.first, f)) continue;
-					var w: String = f.fullDir.first.substr(dir.first.length);
+					final w: String = f.fullDir.first.substr(dir.first.length);
 					Utils.createPath(to + w);
 					f.copyToDir(to + w, f.name + addext);
 				}
@@ -70,7 +70,7 @@ using pony.text.TextTools;
 					dir.copyTo(to, filter);
 				} else {
 					for (f in dir.contentRecursiveFiles(filter)) {
-						var w: String = f.fullDir.first.substr(dir.first.length);
+						final w: String = f.fullDir.first.substr(dir.first.length);
 						Utils.createPath(to + w);
 						f.copyToDir(to + w, f.name + addext);
 					}
@@ -80,12 +80,12 @@ using pony.text.TextTools;
 	}
 
 	private function copyUnits(data: Array<Pair<String, Null<String>>>, from: String, to: String, hash: Bool, addext: String): Void {
-		var hashModule: Null<module.Hash> = hash ? modules.getModule(module.Hash) : null;
+		final hashModule: Null<module.Hash> = hash ? modules.getModule(module.Hash) : null;
 		for (p in data) {
-			var unit: Unit = from + p.a;
+			final unit: Unit = from + p.a;
 			log('Copy file: $unit');
 			if (unit.isFile) {
-				var unit: File = unit;
+				final unit: File = unit;
 				if (hashModule != null && hashModule.xml != null && !hashModule.fileChanged(p.b != null ? from + p.b : unit.first, unit))
 					continue;
 				unit.copyToDir(to, Utils.replaceBuildDateIfNotNull(p.b != null ? p.b + addext : null));

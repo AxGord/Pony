@@ -23,7 +23,7 @@ using hugs.HUGSWrapper;
 	}
 
 	private function Start(): Void {
-		var a: NativeArrayIterator<TintButton> = getComponentsInChildrenOfType(TintButton);
+		final a: NativeArrayIterator<TintButton> = getComponentsInChildrenOfType(TintButton);
 		names = [for (e in a) e.name];
 		a.i = 0;
 		core = new SwitchableList([for (e in a) e.core], 0, 1);

@@ -9,9 +9,9 @@ import pony.geom.Point;
  * @author AxGord <axgord@gmail.com>
  */
 @:nullSafety(Strict)
-@:final class Slice3H extends Node {
+final class Slice3H extends Node {
 
-	private var b: SliceBase;
+	private final b: SliceBase;
 
 	public function new(tiles: Array<Tile>, repeat: Bool = false, ?parent: Object) {
 		super(new Point(GUIUtils.tilesWidthSum(tiles), tiles[0].height), parent);
@@ -26,8 +26,8 @@ import pony.geom.Point;
 	private function drawTiles(): Void {
 		b.clear();
 		b.drawTile(0);
-		var w0: Float = b.w0;
-		var w: Float = w - w0 - b.tw(2);
+		final w0: Float = b.w0;
+		final w: Float = w - w0 - b.tw(2);
 		b.drawTile(1, w0, 0, w);
 		b.drawTile(2, w0 + w);
 	}

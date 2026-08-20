@@ -18,18 +18,18 @@ import pony.ui.touch.starling.touchManager.touchInputs.NativeFlashTouchInput;
 class TouchManager {
 
 	public static var GLOBAL(default, never): Dynamic = { object: 'Global' };
-	public static inline var MOUSE_ID: Int = 0;
+	public static inline final MOUSE_ID: Int = 0;
 
-	private static var _objects: ObjectMap<Dynamic, Array<TouchListener>> = new ObjectMap<Dynamic, Array<TouchListener>>();
+	private static final _objects: ObjectMap<Dynamic, Array<TouchListener>> = new ObjectMap<Dynamic, Array<TouchListener>>();
 
-	private static var _mouse: Touch = new Touch();
+	private static final _mouse: Touch = new Touch();
 
-	private static var _touches: Map<Int, Touch> = [];
+	private static final _touches: Map<Int, Touch> = [];
 
 	private static var _gesture: Bool = false;
-	private static var _gestureTouches: Map<Int, Touch> = [];
+	private static final _gestureTouches: Map<Int, Touch> = [];
 
-	private static var _screens: Array<IHitTestSource> = [];
+	private static final _screens: Array<IHitTestSource> = [];
 	private static var _initialized: Bool = false;
 
 	private static var _lastDownEvent: TouchManagerEvent = null;
@@ -72,10 +72,10 @@ class TouchManager {
 	public static function addListener(displayObject: Dynamic, listener: TouchManagerEvent -> Void, ?types: Array<TouchEventType>): Void {
 		if (!_initialized) init();
 
-		var exists = _objects.exists(displayObject);
+		final exists = _objects.exists(displayObject);
 
 		if (exists) {
-			var listenersArray = _objects.get(displayObject);
+			final listenersArray = _objects.get(displayObject);
 			for (i in 0...listenersArray.length) {
 				if (listenersArray[i].listener == listener) return;
 			}
@@ -89,7 +89,7 @@ class TouchManager {
 	public static function removeListener(displayObject: Dynamic, listener: TouchManagerEvent -> Void): Void {
 		if (!_objects.exists(displayObject)) return;
 
-		var listenersArray = _objects.get(displayObject);
+		final listenersArray = _objects.get(displayObject);
 
 		for (i in 0...listenersArray.length) {
 			if (listenersArray[i].listener == listener) {
@@ -108,7 +108,7 @@ class TouchManager {
 		if (_gestureTouches.exists(id)) {
 			// Gesture
 
-			var touch: Touch = _gestureTouches[id];
+			final touch: Touch = _gestureTouches[id];
 			var other: Touch = null;
 
 			for (key in _gestureTouches.keys()) {
@@ -132,15 +132,15 @@ class TouchManager {
 
 		if (touchInputMode && !_touches.exists(id)) return;
 
-		var touch: Touch = touchInputMode ? _touches[id] : _mouse;
+		final touch: Touch = touchInputMode ? _touches[id] : _mouse;
 
 		touch.setPos(x, y);
 
-		var newCurrentObject: Dynamic = getObject(x, y);
+		final newCurrentObject: Dynamic = getObject(x, y);
 
-		var newCurrentObjectChain: Array<Dynamic> = getObjectChain(newCurrentObject);
-		var currentObjectChain: Array<Dynamic> = getObjectChain(touch.current);
-		var activeObjectChain: Array<Dynamic> = getObjectChain(touch.active);
+		final newCurrentObjectChain: Array<Dynamic> = getObjectChain(newCurrentObject);
+		final currentObjectChain: Array<Dynamic> = getObjectChain(touch.current);
+		final activeObjectChain: Array<Dynamic> = getObjectChain(touch.active);
 
 		var maxLength: Int = newCurrentObjectChain.length;
 		if (currentObjectChain.length > maxLength) maxLength = currentObjectChain.length;
@@ -179,9 +179,9 @@ class TouchManager {
 		if (touchInputMode) {
 			if (_mouse.current != null) dispatch(_mouse.current, HoverOut, false, _mouse);
 
-			var touchObject: Dynamic = getObject(x, y);
+			final touchObject: Dynamic = getObject(x, y);
 
-			var touch: Touch = new Touch();
+			final touch: Touch = new Touch();
 			touch.id = id;
 			touch.active = touchObject;
 			touch.current = touchObject;
@@ -189,10 +189,10 @@ class TouchManager {
 			touch.currentY = touch.previousY = y;
 
 			// Gesture detection
-			var firstKey: Int = firstKey(_touches, touchObject);
+			final firstKey: Int = firstKey(_touches, touchObject);
 			if (firstKey != -1) {
 				// trace("Gesture");
-				var otherTouch: Touch = _touches[firstKey];
+				final otherTouch: Touch = _touches[firstKey];
 
 				if (_gesture) return; // TODO 3 points gestures?
 
@@ -212,7 +212,7 @@ class TouchManager {
 			_touches[id] = touch;
 
 			dispatch(GLOBAL, Down, true, touch);
-			var touchObjectChain: Array<Dynamic> = getObjectChain(touchObject);
+			final touchObjectChain: Array<Dynamic> = getObjectChain(touchObject);
 			for (i in 0...touchObjectChain.length) {
 				dispatch(touchObjectChain[i], Down, true, touch);
 			}
@@ -221,8 +221,8 @@ class TouchManager {
 
 			_mouse.setPos(x, y);
 
-			var mouseActiveObjectChain: Array<Dynamic> = getObjectChain(_mouse.active);
-			var mouseCurrentObjectChain: Array<Dynamic> = getObjectChain(_mouse.current);
+			final mouseActiveObjectChain: Array<Dynamic> = getObjectChain(_mouse.active);
+			final mouseCurrentObjectChain: Array<Dynamic> = getObjectChain(_mouse.current);
 			// for (i in 0...mouseCurrentObjectChain.length)
 			// {
 			// 	if (commonParent(mouseActiveObjectChain, mouseCurrentObjectChain, i)) dispatch(mouseCurrentObjectChain[i], HoverOut, false, _mouse);
@@ -240,7 +240,7 @@ class TouchManager {
 		if (_gestureTouches.exists(id)) {
 			_gesture = false;
 
-			var touch: Touch = _gestureTouches[id];
+			final touch: Touch = _gestureTouches[id];
 
 			dispatch(touch.active, GestureEnd, true, touch, 0);
 
@@ -257,12 +257,12 @@ class TouchManager {
 
 		if (touchInputMode && !_touches.exists(id)) return;
 
-		var touch: Touch = touchInputMode ? _touches[id] : _mouse;
+		final touch: Touch = touchInputMode ? _touches[id] : _mouse;
 
 		touch.setPos(x, y);
 
-		var activeChain: Array<Dynamic> = getObjectChain(touch.active);
-		var currentChain: Array<Dynamic> = getObjectChain(touch.current);
+		final activeChain: Array<Dynamic> = getObjectChain(touch.active);
+		final currentChain: Array<Dynamic> = getObjectChain(touch.current);
 
 		dispatch(GLOBAL, Up, true, touch);
 
@@ -289,7 +289,7 @@ class TouchManager {
 		if ((object != null) && (_objects.exists(object))) {
 			// trace("object = " + object + ", name = " + object.name + ", dispatching type = " + type + ", mouseOver = " + mouseOver);
 
-			var event = new TouchManagerEvent();
+			final event = new TouchManagerEvent();
 			event.type = type;
 			event.mouseOver = mouseOver;
 			event.globalX = touch.currentX;
@@ -307,9 +307,9 @@ class TouchManager {
 				_lastDownEvent = event;
 			}
 
-			var listeners = _objects.get(object);
+			final listeners = _objects.get(object);
 
-			var copy = listeners.copy();
+			final copy = listeners.copy();
 			for (i in 0...copy.length) {
 				if (listeners.indexOf(copy[i]) == -1) continue;
 				if ((copy[i].types == null) || (copy[i].types.indexOf(type) != -1)) copy[i].listener(event);
@@ -327,10 +327,10 @@ class TouchManager {
 	}
 
 	private static function calculateGesture(touch: Touch, other: Touch): TouchManagerGesture {
-		var gesture: TouchManagerGesture = new TouchManagerGesture();
+		final gesture: TouchManagerGesture = new TouchManagerGesture();
 
-		var previousScale: Float = hyp(touch.previousX - other.currentX, touch.previousY - other.currentY);
-		var newScale: Float = hyp(touch.currentX - other.currentX, touch.currentY - other.currentY);
+		final previousScale: Float = hyp(touch.previousX - other.currentX, touch.previousY - other.currentY);
+		final newScale: Float = hyp(touch.currentX - other.currentX, touch.currentY - other.currentY);
 
 		gesture.scale = newScale / previousScale;
 
@@ -340,8 +340,8 @@ class TouchManager {
 		gesture.centerX = (touch.currentX + other.currentX) / 2;
 		gesture.centerY = (touch.currentY + other.currentY) / 2;
 
-		var currentAngle: Float = Math.atan2(touch.previousX - other.currentX, touch.previousY - other.currentY);
-		var previousAngle: Float = Math.atan2(touch.currentX - other.currentX, touch.currentY - other.currentY);
+		final currentAngle: Float = Math.atan2(touch.previousX - other.currentX, touch.previousY - other.currentY);
+		final previousAngle: Float = Math.atan2(touch.currentX - other.currentX, touch.currentY - other.currentY);
 		gesture.angle = currentAngle - previousAngle;
 
 		return gesture;
@@ -368,7 +368,7 @@ class TouchManager {
 	}
 
 	private static function getObjectChain(object: Dynamic): Array<Dynamic> {
-		var result: Array<Dynamic> = [];
+		final result: Array<Dynamic> = [];
 		result.insert(0, object);
 
 		var i: Int = _screens.length - 1;
@@ -431,11 +431,11 @@ private class Touch {
 	public var speedX: Float = 0;
 	public var speedY: Float = 0;
 
-	private var speedListX: Array<Float> = [];
-	private var speedListY: Array<Float> = [];
-	private var speedListTime: Array<Float> = [];
+	private final speedListX: Array<Float> = [];
+	private final speedListY: Array<Float> = [];
+	private final speedListTime: Array<Float> = [];
 
-	private static var SPEED_LIST_MAX_SIZE: Int = 5;
+	private static inline final SPEED_LIST_MAX_SIZE: Int = 5;
 
 	public function new() {}
 
@@ -459,7 +459,7 @@ private class Touch {
 			listsLength--;
 		}
 
-		var dt: Float = speedListTime[listsLength - 1] - speedListTime[0];
+		final dt: Float = speedListTime[listsLength - 1] - speedListTime[0];
 
 		speedX = dt == 0 ? 0 : (speedListX[listsLength - 1] - speedListX[0]) / dt;
 		speedY = dt == 0 ? 0 : (speedListY[listsLength - 1] - speedListY[0]) / dt;

@@ -9,7 +9,7 @@ import pony.text.tpl.TplPut;
  * @author AxGord <axgord@gmail.com>
  */
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
-@:final class MKeyAuthPut extends TplPut<MKeyAuthConnect, {}> {
+final class MKeyAuthPut extends TplPut<MKeyAuthConnect, {}> {
 
 	@:async
 	override public function tag(name: String, content: TplData, arg: String, args: Map<String, String>, ?kid: ITplPut): String {

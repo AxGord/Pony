@@ -10,9 +10,9 @@ import pony.math.MathTools;
 #if (haxe_ver >= 4.2) enum #else @:enum #end
 abstract AnimSmoothMode(Int) to Int from Int {
 
-	var None = 1;
-	var Simple = 2;
-	var Super = 3;
+	final None = 1;
+	final Simple = 2;
+	final Super = 3;
 
 	@:from public static function fromString(s: String): AnimSmoothMode {
 		return if (s == null)
@@ -34,8 +34,8 @@ abstract AnimSmoothMode(Int) to Int from Int {
 #if (haxe_ver >= 4.2) abstract #end
 class AnimTextureCore extends AnimCore {
 
-	private var smooth: AnimSmoothMode;
-	private var additionalSrc: UInt;
+	private final smooth: AnimSmoothMode;
+	private final additionalSrc: UInt;
 
 	public function new(
 		frameTime: Time, fixedTime: Bool = false, smooth: AnimSmoothMode = AnimSmoothMode.None, additionalSrc: UInt = 0
@@ -78,17 +78,17 @@ class AnimTextureCore extends AnimCore {
 	}
 
 	private function frameSimpleOddHandler(n: Int): Void {
-		var map: Map<Int, Int> = MathTools.clipSmoothOddSimple(n, totalFrames);
+		final map: Map<Int, Int> = MathTools.clipSmoothOddSimple(n, totalFrames);
 		for (k in map.keys()) setTexture(k, map[k]);
 	}
 
 	private function frameSuperHandler(n: Int): Void {
-		var map: Map<Int, Int> = MathTools.clipSmooth(n, totalFrames);
+		final map: Map<Int, Int> = MathTools.clipSmooth(n, totalFrames);
 		for (k in map.keys()) setTexture(k, map[k]);
 	}
 
 	private function frameSuperOddHandler(n: Int): Void {
-		var map: Map<Int, Int> = MathTools.clipSmoothOdd(n, totalFrames);
+		final map: Map<Int, Int> = MathTools.clipSmoothOdd(n, totalFrames);
 		for (k in map.keys()) setTexture(k, map[k]);
 	}
 

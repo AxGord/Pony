@@ -15,10 +15,10 @@ import sys.io.Process;
  */
 class Utils {
 
-	public static inline var MAIN_FILE: String = 'pony.xml';
-	public static inline var NPORT: Int = 48654;
+	public static inline final MAIN_FILE: String = 'pony.xml';
+	public static inline final NPORT: Int = 48654;
 
-	private static inline var SRC: String = 'src';
+	private static inline final SRC: String = 'src';
 
 	public static var isWindows(get, never): Bool;
 	public static var isLinux(get, never): Bool;
@@ -29,7 +29,7 @@ class Utils {
 	public static var ponyVersion(get, never): String;
 	public static var ponyHaxelibVersion(get, never): String;
 	private static var _ponyVersion: String;
-	private static var hashesCache: Map<String, Map<String, Array<String>>> = [];
+	private static final hashesCache: Map<String, Map<String, Array<String>>> = [];
 
 	private static function __init__(): Void {
 		PD = isWindows ? '\\' : '/';
@@ -39,7 +39,7 @@ class Utils {
 	}
 
 	public static function getHaxelibVersion(): String {
-		var s: String = new Process('haxelib', ['list', 'pony']).stdout.readLine();
+		final s: String = new Process('haxelib', ['list', 'pony']).stdout.readLine();
 		return s.substring(s.indexOf('[') + 1, s.length - 1);
 	}
 
@@ -57,12 +57,12 @@ class Utils {
 		var s: String = '$name ${args.join(' ')}';
 		if (hide != null) for (h in hide) s = StringTools.replace(s, h, TextTools.repeat('*', h.length));
 		Sys.println(s);
-		var r: Int = Sys.command(name, args);
+		final r: Int = Sys.command(name, args);
 		if (r > 0) error('$name error $r');
 	}
 
 	public static function parseArgs(args: Array<String>): AppCfg {
-		var debug: Bool = args.indexOf('debug') != -1;
+		final debug: Bool = args.indexOf('debug') != -1;
 		var app: String = null;
 		for (a in args) if (a != 'debug' && a != 'release') {
 			app = a;
@@ -72,11 +72,12 @@ class Utils {
 	}
 
 	public static function dirIsGit(path: String): Bool {
-		var cwd = new Cwd(path);
+		// var, not final: sw() is an inline abstract member that writes `this`
+		var cwd = new Cwd(path); // noqa: prefer-final
 		cwd.sw();
-		var r: Bool = try {
-			var p: Process = new Process('git', ['rev-parse', '--is-inside-work-tree']);
-			var line: String = p.stdout.readLine();
+		final r: Bool = try {
+			final p: Process = new Process('git', ['rev-parse', '--is-inside-work-tree']);
+			final line: String = p.stdout.readLine();
 			p.close();
 			TextTools.isTrue(line);
 		} catch (err) {
@@ -87,16 +88,17 @@ class Utils {
 	}
 
 	public static function gitHash(file: String): Bytes {
-		var a: SPair<String> = TextTools.lastSplit(file, '/');
-		var path: String = a.b == '' ? '' : a.a;
-		var file: String = a.b == '' ? a.a : a.b;
-		var cwd = new Cwd(path);
+		final a: SPair<String> = TextTools.lastSplit(file, '/');
+		final path: String = a.b == '' ? '' : a.a;
+		final file: String = a.b == '' ? a.a : a.b;
+		// var, not final: sw() is an inline abstract member that writes `this`
+		var cwd = new Cwd(path); // noqa: prefer-final
 		cwd.sw();
-		var p: Process = new Process('git', ['hash-object', file]);
+		final p: Process = new Process('git', ['hash-object', file]);
 		var s: String = '';
 		while (true) {
 			try {
-				var ch: String = p.stdout.readString(1);
+				final ch: String = p.stdout.readString(1);
 				if (ch == null || ch == '\n') break;
 				s += ch;
 			} catch (err) {
@@ -144,7 +146,7 @@ class Utils {
 	public static function saveJson(file: String, jdata: Any): Void {
 		var tdata = haxe.Json.stringify(jdata, '\n');
 		while (true) {
-			var ndata = StringTools.replace(tdata, '\n\n', '\n');
+			final ndata = StringTools.replace(tdata, '\n\n', '\n');
 			if (ndata == tdata) {
 				tdata = ndata;
 				break;
@@ -164,8 +166,8 @@ class Utils {
 		if (_ponyVersion != null) {
 			return _ponyVersion;
 		} else {
-			var file: String = '${libPath}haxelib.json';
-			var data: Dynamic = Json.parse(File.getContent(file));
+			final file: String = '${libPath}haxelib.json';
+			final data: Dynamic = Json.parse(File.getContent(file));
 			return _ponyVersion = data.version;
 		}
 	}
@@ -175,15 +177,15 @@ class Utils {
 	public static function getPath(file: String): String return file.substr(0, file.lastIndexOf('/') + 1);
 
 	public static function createPath(file: String): Void {
-		var path: String = getPath(file);
+		final path: String = getPath(file);
 		if (path != '' && !FileSystem.exists(path)) FileSystem.createDirectory(path);
 	}
 
 	public static function createHaxeFile(file: String, ?content: Array<String>): Void {
 		if (FileSystem.exists(file)) return;
 		createPath(file);
-		var f: String = file.substr(file.lastIndexOf('/') + 1);
-		var cl: String = f.substr(0, f.lastIndexOf('.'));
+		final f: String = file.substr(file.lastIndexOf('/') + 1);
+		final cl: String = f.substr(0, f.lastIndexOf('.'));
 		var c: String = 'class $cl {\n\n';
 		if (content != null) for (e in content) c += '\t$e\n';
 		c += '}';
@@ -191,7 +193,7 @@ class Utils {
 	}
 
 	public static function createEmptyMainFile(file: String, ?main: Array<String>): Void {
-		var content: Array<String> = ['private static function main():Void {'];
+		final content: Array<String> = ['private static function main():Void {'];
 		if (main != null)
 			for (e in main) content.push('\t$e');
 		else
@@ -209,9 +211,9 @@ class Utils {
 	public static function runNode(name: String, ?args: Array<String>): Int {
 		if (args == null) args = [];
 		Sys.println('Run: $name.js');
-		var jsFile: String = '${toolsPath + name}.js';
+		final jsFile: String = '${toolsPath + name}.js';
 		if (!FileSystem.exists(jsFile)) error('$jsFile - not founded');
-		var a: Array<String> = [jsFile];
+		final a: Array<String> = [jsFile];
 		for (e in args) a.push(e);
 		return Sys.command('node', a);
 	}
@@ -223,17 +225,17 @@ class Utils {
 
 	public static function asyncRunNode(name: String, ?args: Array<String>): Process {
 		Sys.println('Async run: $name.js');
-		var jsFile: String = '${toolsPath + name}.js';
+		final jsFile: String = '${toolsPath + name}.js';
 		if (!FileSystem.exists(jsFile)) error('$jsFile - not founded');
 		return new Process('node', [jsFile].concat(args));
 	}
 
 	public static function getHashes(file: String): Map<String, Array<String>> {
 		if (hashesCache.exists(file)) return hashesCache[file];
-		var c: String = FileSystem.exists(file) ? File.getContent(file) : '';
-		var m: Map<String, Array<String>> = [];
+		final c: String = FileSystem.exists(file) ? File.getContent(file) : '';
+		final m: Map<String, Array<String>> = [];
 		for (e in c.split('\n')) {
-			var a: Array<String> = e.split(':');
+			final a: Array<String> = e.split(':');
 			if (a.length > 1) m[a[0]] = a[1].split(',');
 		}
 		return hashesCache[file] = m;

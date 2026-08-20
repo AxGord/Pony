@@ -10,9 +10,9 @@ import sys.io.File;
  * Uglify Pony Tools Node Module
  * @author AxGord <axgord@gmail.com>
  */
-@:nullSafety(Strict) @:final class Uglify extends NModule<UglifyConfig> {
+@:nullSafety(Strict) final class Uglify extends NModule<UglifyConfig> {
 
-	private static var MAP_EXT: String = '.map';
+	private static final MAP_EXT: String = '.map';
 
 	#if (haxe_ver < 4.2) override #end
 	private function run(cfg: UglifyConfig): Void {
@@ -23,16 +23,16 @@ import sys.io.File;
 				patchMapFile(lastFile + MAP_EXT, cfg.sourcemap.offset);
 				return;
 			}
-			var lastContent: String = File.getContent(lastFile);
+			final lastContent: String = File.getContent(lastFile);
 			var libdata: String = '';
 			if (FileSystem.exists(cfg.libcache)) {
 				libdata = File.getContent(cfg.libcache);
 			} else {
-				var inputContent: Dynamic<String> = {};
+				final inputContent: Dynamic<String> = {};
 				for (f in cfg.input) @:nullSafety(Off) Reflect.setField(inputContent, f.split('/').pop(), File.getContent(f));
 				var tries: Int = 3;
 				do {
-					var r = NPM.uglify_js.minify(inputContent, {
+					final r = NPM.uglify_js.minify(inputContent, {
 						toplevel: true,
 						warnings: true,
 						mangle: cfg.mangle,
@@ -49,10 +49,10 @@ import sys.io.File;
 			File.saveContent(lastFile, '$libdata\n$lastContent');
 			patchMapFile(lastFile + MAP_EXT, 1 + cfg.sourcemap.offset);
 		} else {
-			var inputContent: Dynamic<String> = {};
+			final inputContent: Dynamic<String> = {};
 			for (f in cfg.input) @:nullSafety(Off) Reflect.setField(inputContent, f.split('/').pop(), File.getContent(f));
 
-			var r = NPM.uglify_js.minify(inputContent, {
+			final r = NPM.uglify_js.minify(inputContent, {
 				toplevel: true,
 				warnings: true,
 				sourceMap: cfg.sourcemap.input == null ? null : {
@@ -77,8 +77,8 @@ import sys.io.File;
 	public function patchMap(content: String, offset: Int): String {
 		if (offset == 0) return content;
 		log('Offset map: $offset');
-		var originalMap = NPM.convert_source_map.fromJSON(content).toObject();
-		var offsettedMap = NPM.offset_sourcemap_lines(originalMap, offset);
+		final originalMap = NPM.convert_source_map.fromJSON(content).toObject();
+		final offsettedMap = NPM.offset_sourcemap_lines(originalMap, offset);
 		return NPM.convert_source_map.fromObject(offsettedMap).toJSON();
 	}
 

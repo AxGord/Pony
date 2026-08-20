@@ -13,8 +13,8 @@ import haxe.macro.Expr.Field;
 class ChainBuilder {
 
 	macro public static function build(): Array<Field> {
-		var fields: Array<Field> = Context.getBuildFields();
-		var ch = Type.getClassName(Chain);
+		final fields: Array<Field> = Context.getBuildFields();
+		final ch = Type.getClassName(Chain);
 		var cl: String = null;
 		for (i in Context.getLocalClass().get().interfaces) {
 			if (i.t.toString() == ch) {
@@ -26,8 +26,8 @@ class ChainBuilder {
 		#if display
 		try {
 		#end
-		var a = cl.split('.');
-		var name = a.pop();
+		final a = cl.split('.');
+		final name = a.pop();
 
 		fields.push({
 			pos: Context.currentPos(),
@@ -38,13 +38,13 @@ class ChainBuilder {
 			kind: FVar(TPath({ name: 'Array', pack: [], params: [TPType(TPath({ name: name, pack: a, params: [] }))] }))
 		});
 
-		var exprs: Array<Expr> = [Context.parse('list = new Array<$cl>()', Context.currentPos())];
-		var list: Array<String> = [];
+		final exprs: Array<Expr> = [Context.parse('list = new Array<$cl>()', Context.currentPos())];
+		final list: Array<String> = [];
 		for (f in fields) {
 			if (f.meta.length > 0 && f.meta[0].name == 'chain') {
 				// trace(f.name);
 				// trace(f.kind.getParameters()[1].expr);
-				var ex = { expr: f.kind.getParameters()[1].expr, pos: Context.currentPos() };
+				final ex = { expr: f.kind.getParameters()[1].expr, pos: Context.currentPos() };
 				exprs.push(macro list.push($i{f.name} = $e{ex}));
 				list.push(f.name);
 			}
@@ -53,8 +53,8 @@ class ChainBuilder {
 
 		var i: Int = 0;
 		for (e in list) {
-			var next: Expr = list[i + 1] == null ? macro null : macro $i{list[i + 1]};
-			var prev: Expr = list[i - 1] == null ? macro null : macro $i{list[i - 1]};
+			final next: Expr = list[i + 1] == null ? macro null : macro $i{list[i + 1]};
+			final prev: Expr = list[i - 1] == null ? macro null : macro $i{list[i - 1]};
 			exprs.push(macro $i{e}.chain($v{i}, $e{prev}, $e{next}, this));
 			i++;
 		}

@@ -21,8 +21,8 @@ using pony.text.TextTools;
  */
 @:nullSafety(Strict) class Hash extends CfgModule<HashConfig> {
 
-	public static inline var DEFAULT_FILE_NAME: String = 'hash.bin';
-	private static inline var PRIORITY: Int = 40;
+	public static inline final DEFAULT_FILE_NAME: String = 'hash.bin';
+	private static inline final PRIORITY: Int = 40;
 
 	public var runCleanAfter: Bool = false;
 	private var updated: Bool = false;
@@ -79,7 +79,7 @@ using pony.text.TextTools;
 			log('Copy files to build');
 			for (file in (root: Dir).contentRecursiveFiles()) {
 				var newContent: Null<String> = null;
-				var f: String = file.first.substr(root.length);
+				final f: String = file.first.substr(root.length);
 				if (file.first == this.file.first) continue;
 				var u: Null<Bytes> = units[f];
 				if (u == null && f.endsWith('.bin')) u = units[f.substr(0, -4)];
@@ -89,11 +89,11 @@ using pony.text.TextTools;
 					@:nullSafety(Off) var data: String = file.content;
 					var xmlMode: Bool = false;
 					try {
-						var xml: Fast = new Fast(Xml.parse(data)).node.font;
+						final xml: Fast = new Fast(Xml.parse(data)).node.font;
 						image = xml.node.pages.node.page.att.file;
 						xmlMode = true;
 					} catch (_: String) {
-						var filePattern: String = '\npage id=0 file=';
+						final filePattern: String = '\npage id=0 file=';
 						var fileIndex: Int = data.indexOf(filePattern);
 						if (fileIndex != -1) {
 							fileIndex += filePattern.length;
@@ -102,22 +102,22 @@ using pony.text.TextTools;
 						}
 					}
 					image = StringTools.replace(image, '"', '');
-					var path: Null<String> = f.allBefore('/');
-					var imgU: Null<Bytes> = units[path != null ? '$path/$image' : image];
+					final path: Null<String> = f.allBefore('/');
+					final imgU: Null<Bytes> = units[path != null ? '$path/$image' : image];
 					if (imgU != null) {
 						log('Change font file in $file');
-						var imageFile: File = image;
-						var newFontName: String = [imageFile.withoutExt, Base64.urlEncode(imgU), imageFile.ext].join('.');
+						final imageFile: File = image;
+						final newFontName: String = [imageFile.withoutExt, Base64.urlEncode(imgU), imageFile.ext].join('.');
 						if (xmlMode) {
-							var xml: Fast = new Fast(Xml.parse(data)).node.font;
+							final xml: Fast = new Fast(Xml.parse(data)).node.font;
 							xml.node.pages.node.page.x.set('file', newFontName);
 							newContent = Printer.print(xml.x, true);
 						} else {
-							var filePattern: String = '\npage id=0 file=';
+							final filePattern: String = '\npage id=0 file=';
 							var fileIndex: Int = data.indexOf(filePattern);
 							if (fileIndex != -1) {
 								fileIndex += filePattern.length;
-								var endIndex: Int = data.indexOf('\n', fileIndex);
+								final endIndex: Int = data.indexOf('\n', fileIndex);
 								newContent = '${data.substr(0, fileIndex)}"$newFontName"${data.substr(endIndex)}';
 							}
 						}
@@ -126,8 +126,8 @@ using pony.text.TextTools;
 				if (u == null) {
 					log('Warning: Hash for $f not found');
 				} else {
-					var f: File = f;
-					var r: String = build + [f.withoutExt, Base64.urlEncode(u), f.ext].join('.');
+					final f: File = f;
+					final r: String = build + [f.withoutExt, Base64.urlEncode(u), f.ext].join('.');
 					file.copyToFile(r);
 					if (newContent != null) (r: File).content = newContent;
 				}
@@ -139,7 +139,7 @@ using pony.text.TextTools;
 	private function initHash(): Void {
 		if (inited) return;
 		inited = true;
-		var bytes: Null<Bytes> = file.bytes;
+		final bytes: Null<Bytes> = file.bytes;
 		if (bytes != null) units = pony.ui.Hash.fromBytes(bytes).units;
 	}
 
@@ -152,7 +152,7 @@ using pony.text.TextTools;
 	public function dirChanged(key: String, dirs: Array<String>, ?filter: String): Bool {
 		initHash();
 		key = pathKey(key);
-		var dirs: Array<Dir> = [for (dir in dirs) dir];
+		final dirs: Array<Dir> = [for (dir in dirs) dir];
 		dirs.sort(cast Dir.compareNames);
 		return compareStates(key, Sha1.make(DirState.fromDirs(dirs, filter)));
 	}
@@ -160,31 +160,31 @@ using pony.text.TextTools;
 	public function fileChanged(key: String, unit: File): Bool {
 		if (unit.name == '.DS_Store') return false;
 		initHash();
-		var bytes: Null<Bytes> = Utils.gitHash(unit);
+		final bytes: Null<Bytes> = Utils.gitHash(unit);
 		return bytes == null ? true : compareStates(pathKey(key), bytes);
 	}
 
 	override private function runNode(cfg: HashConfig): Void {
 		for (input in cfg.input) {
-			var f: File = (root: Dir).file(input);
+			final f: File = (root: Dir).file(input);
 			if (!f.exists) return error('Hash input file not exists: $input');
 			compareStates(input, Utils.gitHash(f));
 		}
-		var lost: Array<String> = getLost();
+		final lost: Array<String> = getLost();
 		if (lost.length > 0) updated = true;
 		if (updated) {
 			log('Write hash to $file');
 			file.bytes = new pony.ui.Hash(newUnits).toBytes();
 			if (runCleanAfter) {
-				var cleanModule: Null<Clean> = modules.getModule(Clean);
+				final cleanModule: Null<Clean> = modules.getModule(Clean);
 				if (cleanModule != null) cleanModule.deleteUnits(lost);
 			}
 		}
 	}
 
 	private function compareStates(key: String, newState: Bytes): Bool {
-		var oldState: Null<Bytes> = units[key];
-		var changed: Bool = oldState == null || oldState.compare(newState) != 0;
+		final oldState: Null<Bytes> = units[key];
+		final changed: Bool = oldState == null || oldState.compare(newState) != 0;
 		if (changed) {
 			log('$key - changed');
 			updated = true;
@@ -198,7 +198,7 @@ using pony.text.TextTools;
 
 	public function getHashed(): Array<String> {
 		initHash();
-		var r: Array<String> = buildUnitsList(units.keys());
+		final r: Array<String> = buildUnitsList(units.keys());
 		log('Keep $file');
 		r.push(file.first);
 		return r;
@@ -209,7 +209,7 @@ using pony.text.TextTools;
 	}
 
 	private function buildUnitsList(a: Iterator<String>): Array<String> {
-		var r: Array<String> = [];
+		final r: Array<String> = [];
 		for (key in a) {
 			r.push(root + key);
 			if (key.endsWith('.atlas')) {

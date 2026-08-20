@@ -113,11 +113,11 @@ class SocketClient extends SocketClientBase {
 
 	@:allow(pony.net.cs.SocketServer)
 	private function _send(data: BytesOutput): Void {
-		var buffer: NativeArray<UInt8> = new NativeArray(data.length);
-		var b_out: BytesOutput = new BytesOutput();
-		var size: Int = buffer.Length;
+		final buffer: NativeArray<UInt8> = new NativeArray(data.length);
+		final b_out: BytesOutput = new BytesOutput();
+		final size: Int = buffer.Length;
 		b_out.writeBytes(data.getBytes(), 0, size);
-		var b_in: BytesInput = new BytesInput(b_out.getBytes());
+		final b_in: BytesInput = new BytesInput(b_out.getBytes());
 		for (i in 0...b_in.length) buffer[i] = b_in.readByte();
 		client.BeginSend(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(sendCallback), client);
 	}
@@ -125,7 +125,7 @@ class SocketClient extends SocketClientBase {
 	private function sendCallback(ar: IAsyncResult): Void {
 		if (isRunning) {
 			eventSend.Reset();
-			var s: Socket = cast ar.AsyncState;
+			final s: Socket = cast ar.AsyncState;
 			s.EndSend(ar);
 			Synchro.lock(sendQueue, function() sendQueue.next());
 		}
@@ -137,13 +137,13 @@ class SocketClient extends SocketClientBase {
 		if (isRunning) {
 			eventReceive.Reset();
 			try {
-				var bytesRead: Int = client.EndReceive(ar);
+				final bytesRead: Int = client.EndReceive(ar);
 				if (0 != bytesRead) {
-					var b_out: BytesOutput = new BytesOutput();
+					final b_out: BytesOutput = new BytesOutput();
 					for (i in 0...bytesRead) {
 						b_out.writeByte(receiveBuffer[i]);
 					}
-					var b_in: BytesInput = new BytesInput(b_out.getBytes());
+					final b_in: BytesInput = new BytesInput(b_out.getBytes());
 					if (isSet) {
 						// eventReceive.Set(); //Threre is a trouble like this: if eventReceive is set,
 						// then destroy inserted in onData handler executes every time the callback does,
@@ -151,7 +151,7 @@ class SocketClient extends SocketClientBase {
 						// But if one doesn't set the event, the destroy stops waiting for event to set, so the callback stops too.
 						// Need to fix somehow. Fixed by adding a thread into destroy.
 						eData.dispatch(b_in, cast this);
-						var buffer: NativeArray<UInt8> = new NativeArray(4);
+						final buffer: NativeArray<UInt8> = new NativeArray(4);
 						receiveBuffer = buffer;
 						isSet = false;
 						Synchro.lock(client, function() {
@@ -162,7 +162,7 @@ class SocketClient extends SocketClientBase {
 					} else {
 						var buffer: NativeArray<UInt8>;
 						if (isWithLength) {
-							var size: Int = b_in.readInt32();
+							final size: Int = b_in.readInt32();
 							buffer = new NativeArray(size);
 						} else {
 							buffer = new NativeArray(255);

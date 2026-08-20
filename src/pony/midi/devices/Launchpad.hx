@@ -63,16 +63,16 @@ class Launchpad extends Logable implements ILaunchpad {
 	private function midiHandler(m: MidiMessage): Void {
 		switch m.chanel {
 			case 144:
-				var i = rightBlock.indexOf(m.key);
+				final i = rightBlock.indexOf(m.key);
 				if (i != -1)
 					eRight.dispatch(i, m.value == 127);
 				else {
-					var p = area.indexOf(m.key);
+					final p = area.indexOf(m.key);
 					if (p == null) return error('Unknown button');
 					eArea.dispatch(p, m.value == 127);
 				}
 			case 176:
-				var i = topBlock.indexOf(m.key);
+				final i = topBlock.indexOf(m.key);
 				if (i == -1) return error('Unknown button');
 				eTop.dispatch(i, m.value == 127);
 			case _:

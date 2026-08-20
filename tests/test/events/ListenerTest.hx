@@ -24,7 +24,7 @@ class ListenerTest {
 	@Test
 	public function empty(): Void {
 		var b: Bool = false;
-		var l: Listener0 = function() b = true;
+		final l: Listener0 = function() b = true;
 		l.call(new SignalControllerInner0(null));
 		Assert.isTrue(b);
 	}
@@ -32,11 +32,11 @@ class ListenerTest {
 	@Test
 	public function arg(): Void {
 		var b: Bool = false;
-		var l: Listener1<Bool> = function(f: Bool, c: SignalController): Void {
+		final l: Listener1<Bool> = function(f: Bool, c: SignalController): Void {
 			b = !f;
 			if (f) c.stop();
 		}
-		var c: SignalControllerInner1<Bool> = new SignalControllerInner1<Bool>(null);
+		final c: SignalControllerInner1<Bool> = new SignalControllerInner1<Bool>(null);
 		l.call(false, c);
 		Assert.isFalse(c.stop);
 		Assert.isTrue(b);
@@ -47,8 +47,8 @@ class ListenerTest {
 
 	@Test
 	public function enumTest(): Void {
-		var l: Listener1<L> = enumHandler;
-		var c: SignalControllerInner1<L> = new SignalControllerInner1<L>(null);
+		final l: Listener1<L> = enumHandler;
+		final c: SignalControllerInner1<L> = new SignalControllerInner1<L>(null);
 		l.call(L.B, c);
 		Assert.areEqual(tl, L.B);
 	}

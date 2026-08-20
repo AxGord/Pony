@@ -20,13 +20,13 @@ class TextSizedBox extends BaseLayout<RubberLayoutCore<Container>> {
 	public var obj(default, null): BText;
 	public var noupdate: Bool = false;
 
-	private var nocache: Bool;
+	private final nocache: Bool;
 
 	public function new(
 		w: Float, h: Float, text: String, style: ETextStyle, ?border: Border<Int>, ?align: Align, nocache: Bool = false,
 		shadow: Bool = false
 	) {
-		var f = align != null && align.horizontal != HAlign.Center;
+		final f = align != null && align.horizontal != HAlign.Center;
 		this.nocache = nocache;
 		layout = new RubberLayoutCore(f, border, align);
 		layout.tasks.add();

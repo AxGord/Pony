@@ -35,19 +35,19 @@ class Initializer {
 	private var _sprite: IDisplayObjectContainer;
 	private var _content: IDisplayObject;
 
-	private var _initCallback: IDisplayObjectContainer -> IDisplayObject -> Void;
+	private final _initCallback: IDisplayObjectContainer -> IDisplayObject -> Void;
 
-	private var _initialWidth: Int;
-	private var _initialHeight: Int;
-	private var _aspectRatio: Float;
+	private final _initialWidth: Int = FLTools.width != -1 ? Std.int(FLTools.width) : Lib.current.stage.stageWidth;
+	private final _initialHeight: Int = FLTools.height != -1 ? Std.int(FLTools.height) : Lib.current.stage.stageHeight;
+	private final _aspectRatio: Float;
 
 	#if starling
 	private var _starlingCreator: StarlingCreator;
-	private var _viewLimiterA: Quad = new Quad(1, 1, Lib.current.stage.color);
-	private var _viewLimiterB: Quad = new Quad(1, 1, Lib.current.stage.color);
+	private final _viewLimiterA: Quad = new Quad(1, 1, Lib.current.stage.color);
+	private final _viewLimiterB: Quad = new Quad(1, 1, Lib.current.stage.color);
 	#else
-	private var _viewLimiterA: Bitmap = new Bitmap(new BitmapData(1, 1, false, Lib.current.stage.color));
-	private var _viewLimiterB: Bitmap = new Bitmap(new BitmapData(1, 1, false, Lib.current.stage.color));
+	private final _viewLimiterA: Bitmap = new Bitmap(new BitmapData(1, 1, false, Lib.current.stage.color));
+	private final _viewLimiterB: Bitmap = new Bitmap(new BitmapData(1, 1, false, Lib.current.stage.color));
 	#end
 
 	public static function init(initCallback: IDisplayObjectContainer -> IDisplayObject -> Void): Void {
@@ -66,8 +66,6 @@ class Initializer {
 
 		_content = content != null ? untyped content : untyped Lib.current;
 
-		_initialWidth = FLTools.width != -1 ? Std.int(FLTools.width) : Lib.current.stage.stageWidth;
-		_initialHeight = FLTools.height != -1 ? Std.int(FLTools.height) : Lib.current.stage.stageHeight;
 		FLTools.width = _initialWidth;
 		FLTools.height = _initialHeight;
 		_aspectRatio = _initialWidth / _initialHeight;
@@ -117,17 +115,17 @@ class Initializer {
 	}
 
 	private function resizeStage(?e: Event): Void {
-		var stage = Lib.current.stage;
-		var smallerWidth: Bool = stage.stageWidth / stage.stageHeight < _aspectRatio;
+		final stage = Lib.current.stage;
+		final smallerWidth: Bool = stage.stageWidth / stage.stageHeight < _aspectRatio;
 
-		var newWidth: Int = Std.int(smallerWidth ? stage.stageWidth : stage.stageHeight * _aspectRatio);
-		var newHeight: Int = Std.int(!smallerWidth ? stage.stageHeight : stage.stageWidth / _aspectRatio);
+		final newWidth: Int = Std.int(smallerWidth ? stage.stageWidth : stage.stageHeight * _aspectRatio);
+		final newHeight: Int = Std.int(!smallerWidth ? stage.stageHeight : stage.stageWidth / _aspectRatio);
 
 		_sprite.scaleX = newWidth / _initialWidth;
 		_sprite.scaleY = newHeight / _initialHeight;
 
 		#if starling
-		var viewPortRectangle: Rectangle = new Rectangle();
+		final viewPortRectangle: Rectangle = new Rectangle();
 		viewPortRectangle.width = stage.stageWidth;
 		viewPortRectangle.height = stage.stageHeight;
 		Starling.current.viewPort = viewPortRectangle;
@@ -142,8 +140,8 @@ class Initializer {
 	}
 
 	private function updateLimiters(): Void {
-		var stage = Lib.current.stage;
-		var smallerWidth: Bool = stage.stageWidth / stage.stageHeight < _aspectRatio;
+		final stage = Lib.current.stage;
+		final smallerWidth: Bool = stage.stageWidth / stage.stageHeight < _aspectRatio;
 
 		_viewLimiterA.x = 0;
 		_viewLimiterA.y = 0;

@@ -10,12 +10,12 @@ class MathTools {
 	/**
 	 * The largest representable 32-bit signed integer, which is 2,147,483,647
 	 */
-	public static inline var MAX_INT: Int = 2147483647;
+	public static inline final MAX_INT: Int = 2147483647;
 
 	/**
 	 * The smallest representable 32-bit signed integer, which is -2,147,483,648
 	 */
-	public static inline var MIN_INT: Int = -2147483648;
+	public static inline final MIN_INT: Int = -2147483648;
 
 	/**
 	 * The largest representable 32-bit unsigned integer, which is 4,294,967,295
@@ -107,23 +107,23 @@ class MathTools {
 	public static inline function lengthBeforeComma(v: Float): Int return '$v'.split('.')[0].length;
 
 	public static inline function lengthAfterComma(v: Float): Int {
-		var a: Array<String> = '$v'.split('.');
+		final a: Array<String> = '$v'.split('.');
 		return a.length < 2 ? 0 : a[1].length;
 	}
 
 	public static function range(a: Float, b: Float): Float {
 		var max: Float = Math.max(a, b);
 		var min: Float = Math.min(a, b);
-		var up: Float = min < 0 ? -min : 0;
+		final up: Float = min < 0 ? -min : 0;
 		max += up;
 		min += up;
 		return max - min;
 	}
 
 	public static function shortValue(value: Int): String {
-		var s: String = '$value';
-		var count: Int = Std.int((s.length - 1) / 3);
-		var sub: String = s.substr(0, s.length - 3 * count);
+		final s: String = '$value';
+		final count: Int = Std.int((s.length - 1) / 3);
+		final sub: String = s.substr(0, s.length - 3 * count);
 		return sub + switch count {
 			case 0: '';
 			case 1: 'k';
@@ -135,17 +135,17 @@ class MathTools {
 	}
 
 	public static function clipSmoothOdd(n: Int, count: Int): Map<Int, Int> {
-		var f: Array<Int> = clipSmoothFrames(n, count);
+		final f: Array<Int> = clipSmoothFrames(n, count);
 		return [for (e in clipSmoothOddPlan(n, count)) e => f.shift()];
 	}
 
 	public static function clipSmoothOddSimple(n: Int, count: Int): Map<Int, Int> {
-		var f: Array<Int> = clipSmoothFrames(n, count);
+		final f: Array<Int> = clipSmoothFrames(n, count);
 		return [for (e in clipSmoothOddPlanSimple(n, count)) e => f.shift()];
 	}
 
 	public static function clipSmooth(n: Int, count: Int): Map<Int, Int> {
-		var f: Array<Int> = clipSmoothFrames(n, count);
+		final f: Array<Int> = clipSmoothFrames(n, count);
 		return [for (i in 0...3) i => f.shift()];
 	}
 
@@ -158,7 +158,7 @@ class MathTools {
 	}
 
 	public static function clipSmoothOddPlan(n: Int, count: Int): Array<Int> {
-		var odd: Int = n % 2;
+		final odd: Int = n % 2;
 		return if (n == count - 2) {
 			[odd, odd + 1, (1 - odd) * 2];
 		} else if (n == count - 1) {
@@ -169,7 +169,7 @@ class MathTools {
 	}
 
 	public static function clipSmoothOddPlanSimple(n: Int, count: Int): Array<Int> {
-		var p: Array<Int> = clipSmoothOddPlan(n, count);
+		final p: Array<Int> = clipSmoothOddPlan(n, count);
 		p.pop();
 		return p;
 	}

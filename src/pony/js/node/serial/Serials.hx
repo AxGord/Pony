@@ -31,9 +31,9 @@ class Serials extends Logable {
 	}
 
 	private function listHandler(plist: Array<SerialId>): Void {
-		var keys: Array<String> = [for (k in list.keys()) if (founded.indexOf(k) == -1) k];
+		final keys: Array<String> = [for (k in list.keys()) if (founded.indexOf(k) == -1) k];
 		for (key in keys) {
-			var o: SerialId = list[key];
+			final o: SerialId = list[key];
 			for (e in plist) {
 				if (created.indexOf(e.comName) == -1 && SerialPort.checkPort(o, e)) {
 					created.push(e.comName);

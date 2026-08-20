@@ -12,7 +12,7 @@ package pony;
 	public function new(fn: Void -> T) this.fn = fn;
 
 	public inline function get(): T {
-		var v: Null<T> = list.pop();
+		final v: Null<T> = list.pop();
 		return v ?? fn();
 	}
 

@@ -37,7 +37,7 @@ class RPCFileTransport extends pony.net.rpc.RPCUnit<RPCFileTransport> implements
 	public function sendFile(path: String, ?newPath: String): Void {
 		if (newPath == null) newPath = path;
 		fileRemote(newPath);
-		var fs: FileReadStream = new FileReadStream(path);
+		final fs: FileReadStream = new FileReadStream(path);
 		stream.write(fs);
 	}
 

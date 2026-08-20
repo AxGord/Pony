@@ -30,7 +30,7 @@ class TplPut<T1, T2> implements ITplPut implements SuperPuper {
 		if (d.length > 0) for (e in d) switch (e) {
 			case Text(t1):
 				if (nt != null) {
-					var tt = killSpaceLeft(t1);
+					final tt = killSpaceLeft(t1);
 					if (tt != t1)
 						r = killSpaceRight(r) + nt + tt;
 					else
@@ -39,10 +39,10 @@ class TplPut<T1, T2> implements ITplPut implements SuperPuper {
 				} else
 					r += t1;
 			case Tag(t2):
-				var s: String = @await tplTag(t2);
+				final s: String = @await tplTag(t2);
 
 				if (nt != null) {
-					var tt = killSpaceLeft(s);
+					final tt = killSpaceLeft(s);
 					if (tt != s)
 						r = killSpaceRight(r) + nt;
 					else
@@ -50,14 +50,14 @@ class TplPut<T1, T2> implements ITplPut implements SuperPuper {
 					nt = null;
 				}
 
-				var o = tagTrim(r, s, nt);
+				final o = tagTrim(r, s, nt);
 				nt = o.f;
 				r = o.r;
 			case ShortTag(t3):
-				var s: String = @await tplShortTag(t3);
+				final s: String = @await tplShortTag(t3);
 
 				if (nt != null) {
-					var tt = killSpaceLeft(s);
+					final tt = killSpaceLeft(s);
 					if (tt != s)
 						r = killSpaceRight(r) + nt;
 					else
@@ -65,7 +65,7 @@ class TplPut<T1, T2> implements ITplPut implements SuperPuper {
 					nt = null;
 				}
 
-				var o = tagTrim(r, s, nt);
+				final o = tagTrim(r, s, nt);
 				nt = o.f;
 				r = o.r;
 		}
@@ -74,19 +74,19 @@ class TplPut<T1, T2> implements ITplPut implements SuperPuper {
 
 	private static function tagTrim(r: String, s: String, nt: String): { r: String, f: String } {
 		if (s == '') {
-			var nr = killSpaceRight(r);
+			final nr = killSpaceRight(r);
 			if (nr != r) nt = s;
 		} else {
 			{
-				var ch: String = s.charAt(0);
-				var ch2: String = s.charAt(1);
+				final ch: String = s.charAt(0);
+				final ch2: String = s.charAt(1);
 
 				if (ch == '\r') {
 					if (ch2 == '\n') {
 						r = killSpaceRight(r);
 						s = s.substr(2);
 					} else {
-						var nr = killSpaceRight(r);
+						final nr = killSpaceRight(r);
 						if (nr != r) s = s.substr(1);
 						r = nr;
 					}
@@ -96,8 +96,8 @@ class TplPut<T1, T2> implements ITplPut implements SuperPuper {
 				}
 			}
 			{
-				var ch: String = s.charAt(s.length - 1);
-				var ch2: String = s.charAt(s.length - 2);
+				final ch: String = s.charAt(s.length - 1);
+				final ch2: String = s.charAt(s.length - 2);
 				if (ch == '\r') {
 					if (ch2 == '\n') {
 						s = s.substr(0, s.length - 2);
@@ -114,8 +114,8 @@ class TplPut<T1, T2> implements ITplPut implements SuperPuper {
 	}
 
 	private static function killSpaceRight(s: String): String {
-		var n: Int = s.lastIndexOf('\n');
-		var r: Int = s.lastIndexOf('\r');
+		final n: Int = s.lastIndexOf('\n');
+		final r: Int = s.lastIndexOf('\r');
 		if (n == -1) {
 			if (r == -1)
 				return s;
@@ -135,8 +135,8 @@ class TplPut<T1, T2> implements ITplPut implements SuperPuper {
 	}
 
 	private static function killSpaceLeft(s: String): String {
-		var n: Int = s.indexOf('\n');
-		var r: Int = s.indexOf('\r');
+		final n: Int = s.indexOf('\n');
+		final r: Int = s.indexOf('\r');
 		if (n == -1) {
 			if (r == -1)
 				return s;
@@ -160,12 +160,12 @@ class TplPut<T1, T2> implements ITplPut implements SuperPuper {
 
 	@:async
 	public function tplTag(d: TplTag): String {
-		var na: Map<String, String> = [];
+		final na: Map<String, String> = [];
 		if (d.args.iterator().hasNext()) for (k in d.args.keys()) na[k] = @await tplData(d.args[k]);
 
-		var arg: String = @await tplData(d.arg);
+		final arg: String = @await tplData(d.arg);
 		var content: TplData = d.content;
-		var n: Array<String> = d.name.name.copy();
+		final n: Array<String> = d.name.name.copy();
 		var name: String = null;
 		if (n.length > 1) {
 			name = n.shift();
@@ -194,7 +194,7 @@ class TplPut<T1, T2> implements ITplPut implements SuperPuper {
 		return if (parent == null)
 			@await shortTag(name, arg);
 		else {
-			var r: String = @await parentTag(name, content, arg, args, kid);
+			final r: String = @await parentTag(name, content, arg, args, kid);
 			if (r == '%$name%')
 				@await shortTag(name, arg);
 			else
@@ -215,9 +215,9 @@ class TplPut<T1, T2> implements ITplPut implements SuperPuper {
 
 	@:async
 	public function tplShortTag(d: TplShortTag): String {
-		var arg: String = @await tplData(d.arg);
+		final arg: String = @await tplData(d.arg);
 		var content: TplData = null;
-		var n: Array<String> = d.name.name.copy();
+		final n: Array<String> = d.name.name.copy();
 		var name: String = null;
 		if (n.length > 1) {
 			name = n.shift();

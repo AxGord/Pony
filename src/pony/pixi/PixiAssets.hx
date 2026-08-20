@@ -16,10 +16,10 @@ import pony.JsTools;
  */
 class PixiAssets {
 
-	private static var sounds: Map<String, PixiSound> = [];
-	private static var spines: Map<String, SkeletonData> = [];
-	private static var texts: Map<String, String> = [];
-	private static var jsons: Map<String, Dynamic> = [];
+	private static final sounds: Map<String, PixiSound> = [];
+	private static final spines: Map<String, SkeletonData> = [];
+	private static final texts: Map<String, String> = [];
+	private static final jsons: Map<String, Dynamic> = [];
 
 	public static function reset(asset: String): Void {
 		sounds.remove(asset);
@@ -29,9 +29,9 @@ class PixiAssets {
 	}
 
 	public static function load(asset: String, cb: Void -> Void): Void {
-		var loader = new Loader();
+		final loader = new Loader();
 
-		var sp = asset.split('(spine)');
+		final sp = asset.split('(spine)');
 		if (sp.length > 1) {
 			loadSpine(sp.join(''), function(d: SkeletonData) {
 				spines[asset] = d;
@@ -42,7 +42,7 @@ class PixiAssets {
 
 		if (['.mp3', '.wav', '.ogg'].indexOf(asset.substr(-4)) != -1) {
 			if (!sounds.exists(asset)) {
-				var s = new PixiSound();
+				final s = new PixiSound();
 				sounds[asset] = s;
 				loader.add(asset, AssetManager.getPath(asset), { loadType: 2 }, s.loadHandler);
 			}
@@ -87,7 +87,7 @@ class PixiAssets {
 	}
 
 	public static function loadSpine(asset: String, cb: SkeletonData -> Void): Void {
-		var loader = new Loader();
+		final loader = new Loader();
 		loader.add(asset, AssetManager.getPath(asset));
 		loader.load(function(_, resources) {
 			cb(Reflect.field(resources, asset).spineData);

@@ -78,7 +78,7 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 	}
 
 	private function writeCookie(): Void {
-		var s: String = cookie.toString();
+		final s: String = cookie.toString();
 		if (s != '') {
 			php.Web.setHeader('Set-Cookie', s);
 			php.Web.setHeader('Cookie Domain', host);

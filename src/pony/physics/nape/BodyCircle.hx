@@ -26,13 +26,13 @@ class BodyCircle extends BodyBase {
 	}
 
 	override private function init(): Void {
-		var sh = new Circle(radius, material);
+		final sh = new Circle(radius, material);
 		sh.sensorEnabled = body.isBullet;
 		body.shapes.add(sh);
 	}
 
 	override public function getCacheId(): Bytes {
-		var b: BytesOutput = new BytesOutput();
+		final b: BytesOutput = new BytesOutput();
 		b.writeByte(0x03); // shape code
 		b.writeInt32(Std.int(radius * 1000));
 		return b.getBytes();

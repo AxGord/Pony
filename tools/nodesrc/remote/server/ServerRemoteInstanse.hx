@@ -14,17 +14,17 @@ import pony.sys.Process;
 #if (haxe_ver >= 4.2) final #else @:final #end
 class ServerRemoteInstanse {
 
-	private var client: ISocketClient;
+	private final client: ISocketClient;
 	private var currentCommand: String = '';
 	private var currentCommandN: Int = -1;
-	private var key: String;
-	private var protocol: RemoteProtocol;
+	private final key: String;
+	private final protocol: RemoteProtocol;
 	private var commands: Map<String, Array<Pair<Bool, String>>> = [];
-	private var allowForGet: Array<String>;
+	private final allowForGet: Array<String>;
 	private var zipRLog: Bool = true;
 	private var packLog: Null<BytesOutput>;
 	private var activeProcess: Null<Process>;
-	private var activity: Void -> Void;
+	private final activity: Void -> Void;
 
 	public function new(
 		client: ISocketClient, key: String, commands: Map<String, Array<Pair<Bool, String>>>, allowForGet: Array<String>
@@ -99,7 +99,7 @@ class ServerRemoteInstanse {
 	}
 
 	private function getInitFileHandler(): Void {
-		var file = 'init.zip';
+		final file = 'init.zip';
 		Sys.println('Send file: $file');
 		protocol.file.sendFile(file);
 	}

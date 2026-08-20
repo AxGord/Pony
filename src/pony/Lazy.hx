@@ -13,7 +13,7 @@ abstract Lazy<T>(Void -> T) {
 	@:from public static inline function fromF<V>(f: Void -> V): Lazy<V> return new Lazy<V>(f);
 
 	@:to public inline function toT(): T {
-		var v: T = this();
+		final v: T = this();
 		this = fromT(v);
 		return v;
 	}

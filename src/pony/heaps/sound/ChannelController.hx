@@ -15,7 +15,7 @@ import pony.time.TimeInterval;
  */
 @:nullSafety(Strict) class ChannelController implements HasSignal implements HasLink {
 
-	private static inline var END_OFFSET: Int = 64;
+	private static inline final END_OFFSET: Int = 64;
 
 	@:auto public var onComplete: Signal1<ChannelController>;
 
@@ -25,13 +25,12 @@ import pony.time.TimeInterval;
 	public var timeLeft(link, never): Time = timer.time.max - timer.currentTime;
 	public var loop(default, null): Bool = false;
 
-	private var channel: Channel;
-	private var timer: DTimer;
+	private final channel: Channel;
+	private final timer: DTimer = DTimer.createFixedTimer(0);
 	private var completed: Bool = true;
 
 	public function new(channel: Channel) {
 		this.channel = channel;
-		timer = DTimer.createFixedTimer(0);
 		timer.complete << completeHandler;
 	}
 

@@ -29,14 +29,14 @@ import pony.geom.Direction;
 		return @:nullSafety(Off) [while (a.length > 0) a.splice(uint(a.length - 1), 1).pop()];
 
 	public static function shuffleString(s: String): String {
-		var a: Array<UInt> = [for (i in 0...s.length) i];
+		final a: Array<UInt> = [for (i in 0...s.length) i];
 		var r: String = '';
 		while (a.length > 0) r += @:nullSafety(Off) s.charAt(a.splice(uint(a.length - 1), 1).pop());
 		return r;
 	}
 
 	public static function randomString(len: Int = 36): String {
-		var chars: String = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz';
+		final chars: String = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz';
 		var randomstring: String = '';
 		for (i in 0...len) randomstring += chars.charAt(uint(chars.length - 1));
 		return randomstring;

@@ -47,14 +47,14 @@ using hugs.HUGSWrapper;
 
 		if (background != null) {
 			bgTextureObject = new GameObject('GUITexture LoadScreen Background');
-			var guiTextureObject: GUITexture = cast bgTextureObject.AddComponent('GUITexture');
+			final guiTextureObject: GUITexture = cast bgTextureObject.AddComponent('GUITexture');
 			guiTextureObject.texture = background;
 			bgTextureObject.transform.position = new Vector3(0.5, 0.5, 100);
 		}
 
 		if (main != null) {
 			mainTextureObject = new GameObject('GUITexture LoadScreen Main');
-			var mguiTextureObject: GUITexture = cast mainTextureObject.AddComponent('GUITexture');
+			final mguiTextureObject: GUITexture = cast mainTextureObject.AddComponent('GUITexture');
 			mguiTextureObject.texture = main;
 			mguiTextureObject.transform.localScale = new Vector3(0, 0);
 			mguiTextureObject.pixelInset = new Rect(-main.width / 2, -main.height / 2, main.width, main.height);

@@ -8,11 +8,11 @@ import flash.display.BitmapData;
  */
 class ReusableBitmapData {
 
-	private static var _instance: ReusableBitmapData = new ReusableBitmapData();
-	private static var _sizeLimit: Int = 4096;
-	private static var _fillColor: Int = 0x0;
+	private static final _instance: ReusableBitmapData = new ReusableBitmapData();
+	private static inline final _sizeLimit: Int = 4096;
+	private static inline final _fillColor: Int = 0x0;
 
-	private var _cache: Map<Int, Map<Int, BitmapData>> = [];
+	private final _cache: Map<Int, Map<Int, BitmapData>> = [];
 
 	public function new() {
 		if (_instance != null) throw 'Singletone creation error';
@@ -32,7 +32,7 @@ class ReusableBitmapData {
 		if (height > _sizeLimit) height = _sizeLimit;
 
 		var bmpd: BitmapData = null;
-		var cacheWidth = _instance._cache[width];
+		final cacheWidth = _instance._cache[width];
 		if (cacheWidth.exists(height))
 		// if (false)
 		{

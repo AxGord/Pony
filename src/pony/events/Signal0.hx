@@ -15,7 +15,7 @@ import pony.events.Listener0;
 @:nullSafety(Strict) abstract Signal0(Priority<Listener0>) from Event0 from Priority<Listener0> {
 
 	public function add(e: Listener0, priority: Int = 0): Signal0 {
-		var ev: Null<Priority<Any>> = e.event;
+		final ev: Null<Priority<Any>> = e.event;
 		if (ev != null) {
 			ev.onLost.directAdd(this.changeReals);
 			ev.onTake.directAdd(this.changeReals);
@@ -38,7 +38,7 @@ import pony.events.Listener0;
 	}
 
 	private inline function unlistenSubChange(l: Listener0): Void {
-		var e: Null<Priority<Any>> = l.event;
+		final e: Null<Priority<Any>> = l.event;
 		if (e != null) {
 			@:privateAccess e.onLost.directRemove(this.changeReals);
 			@:privateAccess e.onTake.directRemove(this.changeReals);
@@ -65,7 +65,7 @@ import pony.events.Listener0;
 
 	@:op(A || B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function or(s: Signal0): Signal0 {
-		var ns = new Event0();
+		final ns = new Event0();
 		add(ns);
 		s.add(ns);
 		return ns;
@@ -73,14 +73,14 @@ import pony.events.Listener0;
 
 	@:op(A | B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function orOnce(s: Signal0): Signal0 {
-		var ns = new Event0();
+		final ns = new Event0();
 		once(ns);
 		s.once(ns);
 		return ns;
 	}
 
 	@:op(A & B) public function andOnce(s: Signal0): Signal0 {
-		var ns = new Event0();
+		final ns = new Event0();
 		var listener1: Listener0 = cast null;
 		var listener2: Listener0 = cast null;
 		listener1 = Listener0.f0(function() {
@@ -97,7 +97,7 @@ import pony.events.Listener0;
 	}
 
 	@:op(A && B) public function and(s: Signal0): Signal0 {
-		var ns = new Event0();
+		final ns = new Event0();
 		var start: Listener0 = cast null;
 		var listener1: Listener0 = cast null;
 		var listener2: Listener0 = cast null;
@@ -115,7 +115,7 @@ import pony.events.Listener0;
 			once(listener1);
 			s.once(listener2);
 		}
-		var c: SignalControllerInner0 = new SignalControllerInner0(this);
+		final c: SignalControllerInner0 = new SignalControllerInner0(this);
 		start.call(c, false);
 		return ns;
 	}
@@ -127,7 +127,7 @@ import pony.events.Listener0;
 				return cast sig;
 			case _:
 		}
-		var s = new Event1();
+		final s = new Event1();
 		this.add({ once: _once, listener: LBind1(s, a1) }, priority);
 		return s;
 	}
@@ -154,7 +154,7 @@ import pony.events.Listener0;
 				return cast sig;
 			case _:
 		}
-		var s = new Event2();
+		final s = new Event2();
 		add({ once: _once, listener: LBind2(s, a1, a2) }, priority);
 		return s;
 	}
@@ -166,28 +166,28 @@ import pony.events.Listener0;
 
 	@:from #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function fromSignal1<T1>(s: Signal1<T1>): Signal0 {
-		var ns = new Event0();
+		final ns = new Event0();
 		s.add(ns);
 		return ns;
 	}
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function convert0(f: Event0 -> Void): Signal0 {
-		var ns = new Event0();
+		final ns = new Event0();
 		add(Listener0.f0(f.bind(ns)));
 		return ns;
 	}
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function convert1<ST1>(f: Event1<ST1> -> Void): Signal1<ST1> {
-		var ns = new Event1();
+		final ns = new Event1();
 		add(Listener0.f0(f.bind(ns)));
 		return ns;
 	}
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function convert2<ST1, ST2>(f: Event2<ST1, ST2> -> Void): Signal2<ST1, ST2> {
-		var ns = new Event2();
+		final ns = new Event2();
 		add(Listener0.f0(f.bind(ns)));
 		return ns;
 	}

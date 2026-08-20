@@ -15,8 +15,8 @@ class CC {
 		project.haxelib.addLib({ name: 'pony', version: Utils.ponyHaxelibVersion });
 		project.haxelib.addLib({ name: 'hcc', version: '2.0.3' });
 
-		var build = !second ? project.build : project.secondbuild;
-		var uglify = !second ? project.uglify : project.seconduglify;
+		final build = !second ? project.build : project.secondbuild;
+		final uglify = !second ? project.uglify : project.seconduglify;
 
 		build.active = true;
 		build.target = types.HaxeTargets.JS;

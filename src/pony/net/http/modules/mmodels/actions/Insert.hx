@@ -44,15 +44,15 @@ class InsertConnect extends ActionConnect {
 	}
 
 	override public function action(h: Map<String, String>): Bool {
-		var ma: Map<Int, Dynamic> = storage;
+		final ma: Map<Int, Dynamic> = storage;
 		if (ma.exists(base.id)) {
 			cpq.connection.error('Double send');
 			return true;
 		}
 
-		var ca: Array<Dynamic> = [];
+		final ca: Array<Dynamic> = [];
 		for (k in base.args.keys()) {
-			var v: String = h[k];
+			final v: String = h[k];
 			if (Std.is(v, Array)) {
 				cpq.connection.error('Array not supported');
 				return true;
@@ -105,8 +105,8 @@ class InsertPut extends pony.text.tpl.TplPut<InsertConnect, CPQ> {
 			if (args.exists('fix')) fixList = args['fix'].split(',');
 			var r: String = '';
 			var hasFile: Bool = false;
-			var ma: Map<Int, { values: Map<String, String>, result: ActResult }> = cast a.storage;
-			var m = ma[a.base.id];
+			final ma: Map<Int, { values: Map<String, String>, result: ActResult }> = cast a.storage;
+			final m = ma[a.base.id];
 			if (m == null)
 				for (k in a.base.args.keys()) {
 					r += inputE(k, '', fixList.indexOf(k) != -1);
@@ -118,19 +118,19 @@ class InsertPut extends pony.text.tpl.TplPut<InsertConnect, CPQ> {
 					if (isFile(k)) hasFile = true;
 				}
 			a.clr();
-			var f = hasFile ? ' enctype="multipart/form-data"' : '';
-			return '<form action="" method="POST"$f>'
-				+ '${(content != null ? '<div class="capition">' + @await tplData(content) + '</div>' : '')}$r'
-				+ '<button>Send</button> <a href="" class="action">Clear</a></form>';
+			final f = hasFile ? ' enctype="multipart/form-data"' : '';
+			return
+				'<form action="" method="POST"$f>${content != null ? '<div class="capition">' + @await tplData(content) + '</div>' : ''}'
+					+ '$r<button>Send</button> <a href="" class="action">Clear</a></form>';
 		} else {
-			var r: String = @await sub(a, b, InsertPutSub, content);
+			final r: String = @await sub(a, b, InsertPutSub, content);
 			a.clr();
 			return r;
 		}
 	}
 
 	private function inputE(name: String, value: String, fix: Bool): String {
-		var s: String = st(name);
+		final s: String = st(name);
 		if (s == null) return '<label>${name.bigFirst()}${input(name, null, value)}</label>';
 		if (s == '') return '<label>${name.bigFirst()}${input(name, 'ok', fix ? value : '')}</label>';
 		return '<label>${name.bigFirst()}${input(name, 'error', value)}<div>$s</div></label>';
@@ -143,9 +143,9 @@ class InsertPut extends pony.text.tpl.TplPut<InsertConnect, CPQ> {
 	private function isFile(name: String): Bool return a.base.model.columns[name].isFile;
 
 	private function st(arg: String): String {
-		var ma: Map<Int, Dynamic> = b.connection.sessionStorage.get('modelsActions');
-		var m = ma[a.base.id];
-		var r: ActResult = m == null ? null : m.result;
+		final ma: Map<Int, Dynamic> = b.connection.sessionStorage.get('modelsActions');
+		final m = ma[a.base.id];
+		final r: ActResult = m == null ? null : m.result;
 		var st: String = null;
 		if (r != null) switch (r) {
 			case OK:
@@ -180,9 +180,9 @@ class InsertPutSub extends pony.text.tpl.TplPut<InsertConnect, CPQ> {
 class InsertPutArg extends pony.text.tpl.TplPut<{ o: InsertConnect, arg: String }, CPQ> {
 
 	private function st(): String {
-		var ma: Map<Int, { values: Map<String, String>, result: ActResult }> = b.connection.sessionStorage.get('modelsActions');
-		var m = ma[a.o.base.id];
-		var r: ActResult = m == null ? null : m.result;
+		final ma: Map<Int, { values: Map<String, String>, result: ActResult }> = b.connection.sessionStorage.get('modelsActions');
+		final m = ma[a.o.base.id];
+		final r: ActResult = m == null ? null : m.result;
 		var st: String = null;
 		if (r != null) switch (r) {
 			case OK:
@@ -206,7 +206,7 @@ class InsertPutArg extends pony.text.tpl.TplPut<{ o: InsertConnect, arg: String 
 			case 'ok':
 				return st() == '' ? @await tplData(content) : '';
 			case 'error':
-				var s = st();
+				final s = st();
 				return s != null && s != '' ? @await tplData(content) : '';
 			case _:
 				return @await super.tag(name, content, arg, args, kid);
@@ -216,14 +216,14 @@ class InsertPutArg extends pony.text.tpl.TplPut<{ o: InsertConnect, arg: String 
 	@:async
 	override public function shortTag(name: String, arg: String, ?kid: ITplPut): String {
 		if (name == 'error') {
-			var s = st();
+			final s = st();
 			if (s != null)
 				return s;
 			else
 				return '';
 		} else if (name == 'value') {
-			var ma: Map<Int, { values: Map<String, String>, result: ActResult }> = b.connection.sessionStorage.get('modelsActions');
-			var m = ma[a.o.base.id];
+			final ma: Map<Int, { values: Map<String, String>, result: ActResult }> = b.connection.sessionStorage.get('modelsActions');
+			final m = ma[a.o.base.id];
 			if (m == null)
 				return '';
 			else {

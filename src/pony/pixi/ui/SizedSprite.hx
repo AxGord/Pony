@@ -12,7 +12,7 @@ class SizedSprite extends Sprite implements IWH {
 
 	public var size(get, never): Point<Float>;
 
-	private var _size: Point<Float>;
+	private final _size: Point<Float>;
 
 	public function new(p: Point<Float>) {
 		_size = p;

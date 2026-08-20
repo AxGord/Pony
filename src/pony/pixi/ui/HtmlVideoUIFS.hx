@@ -35,8 +35,10 @@ class HtmlVideoUIFS extends HtmlVideoUI {
 	public var showTransitionDelay(default, null): DTimer;
 
 	private var clickTimer: DTimer;
-	private var showAnimTime: Time = 500;
-	private var hideAnimTime: Time = 200;
+
+	private static inline final showAnimTime: Time = 500;
+	private static inline final hideAnimTime: Time = 200;
+
 	private var fsHold: Bool = false;
 	private var hideProcess: Bool = false;
 	private var showProcess: Bool = false;
@@ -146,9 +148,9 @@ class HtmlVideoUIFS extends HtmlVideoUI {
 
 	private function generateTransition(tr: String): Void {
 		if (tr == null) return;
-		var a = tr.split(' ');
-		var t = a.shift();
-		var r = [for (e in a) '$e $t'].join(', ');
+		final a = tr.split(' ');
+		final t = a.shift();
+		final r = [for (e in a) '$e $t'].join(', ');
 		transition = getTransition(r);
 		transitionDelay = DTimer.createFixedTimer((t: Time) + 10);
 		transitionDelay.complete << removeTransition;
@@ -191,8 +193,8 @@ class HtmlVideoUIFS extends HtmlVideoUI {
 	}
 
 	private function rmTransition(tr: String): Void {
-		var css = JsTools.splitCss(video.style.cssText);
-		var t = JsTools.splitCss(tr);
+		final css = JsTools.splitCss(video.style.cssText);
+		final t = JsTools.splitCss(tr);
 		final ncss: Array<String> = [for (e in css) if (t.indexOf(e) == -1) e];
 		video.style.cssText = ncss.join('');
 	}
@@ -229,11 +231,11 @@ class HtmlVideoUIFS extends HtmlVideoUI {
 	}
 
 	private function switchCss(a: String, b: String): Void {
-		var css = JsTools.splitCss(video.style.cssText);
+		final css = JsTools.splitCss(video.style.cssText);
 		var ncss: Array<String> = null;
 		if (a != null) {
 			ncss = [];
-			var r = JsTools.splitCss(a);
+			final r = JsTools.splitCss(a);
 			for (e in css) {
 				if (r.indexOf(e) == -1) ncss.push(e);
 			}

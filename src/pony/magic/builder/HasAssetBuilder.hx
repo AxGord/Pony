@@ -17,12 +17,12 @@ class HasAssetBuilder {
 
 	macro public static function build(): Array<Field> {
 		var keepMeta: MetadataEntry = { name: ':keep', pos: Context.currentPos() };
-		var list: Array<Expr> = [];
-		var names: Array<Expr> = [];
-		var fields: Array<Field> = Context.getBuildFields();
-		var cl: Null<Ref<ClassType>> = Context.getLocalClass();
-		var meta: Metadata = cl.get().meta.get();
-		var prefix: String = getPrefix(meta);
+		final list: Array<Expr> = [];
+		final names: Array<Expr> = [];
+		final fields: Array<Field> = Context.getBuildFields();
+		final cl: Null<Ref<ClassType>> = Context.getLocalClass();
+		final meta: Metadata = cl.get().meta.get();
+		final prefix: String = getPrefix(meta);
 		for (f in fields) if (f.meta.checkMeta([':asset', 'asset'])) {
 			if (f.access.indexOf(AStatic) == -1) Context.error('Asset can be only static', f.pos);
 			switch f.kind {
@@ -55,7 +55,7 @@ class HasAssetBuilder {
 					Context.error('Asset can be only string var', f.pos);
 			}
 		}
-		var patchesFields: Map<String, String> = getPatches(meta, cl);
+		final patchesFields: Map<String, String> = getPatches(meta, cl);
 		if (patchesFields == null) Context.error('Wrong parent class', cl.get().pos);
 		addBaseFields(fields, names, list, patchesFields);
 		addBaseMethods(fields, cl);
@@ -67,7 +67,7 @@ class HasAssetBuilder {
 	private static function addBaseFields(
 		fields: Array<Field>, names: Array<Expr>, list: Array<Expr>, patchesFields: Map<String, String>
 	): Void {
-		var patches: Expr = { expr: EArrayDecl([for (field in patchesFields) macro $v{field}]), pos: Context.currentPos() };
+		final patches: Expr = { expr: EArrayDecl([for (field in patchesFields) macro $v{field}]), pos: Context.currentPos() };
 		fields.push({
 			name: 'ASSETS_LIST',
 			access: [APrivate, AStatic],
@@ -89,7 +89,7 @@ class HasAssetBuilder {
 	}
 
 	private static function addBaseMethods(fields: Array<Field>, cl: Null<Ref<ClassType>>): Void {
-		var keepMeta: MetadataEntry = { name: ':keep', pos: Context.currentPos() };
+		final keepMeta: MetadataEntry = { name: ':keep', pos: Context.currentPos() };
 		fields.push({
 			name: 'loadAllAssets',
 			access: [APublic, AStatic],
@@ -123,7 +123,7 @@ class HasAssetBuilder {
 
 	private static function addMethods(fields: Array<Field>, f: String, vs: String): Void {
 		if (vs.length > 0) vs += '/';
-		var v = macro $v{vs};
+		final v = macro $v{vs};
 		fields.push({
 			name: f == 'def' ? 'loadAsset' : 'loadAsset_$f',
 			access: [APublic, AStatic],
@@ -287,18 +287,18 @@ class HasAssetBuilder {
 	private static function getPatches(meta: Metadata, clss: Ref<ClassType>): Map<String, String> {
 		var parentPathes: Map<String, String> = null;
 		if (meta.checkMeta([':assets_parent'])) {
-			var parent: Expr = meta.getMeta(':assets_parent').params[0];
+			final parent: Expr = meta.getMeta(':assets_parent').params[0];
 			switch parent.expr {
 				case EConst(CIdent(s)):
 					switch Context.getType(s) {
 						case TInst(cl, _):
-							var m = cl.get().meta;
+							final m = cl.get().meta;
 							parentPathes = getPatches(m.get(), cl);
-							var e = { expr: EConst(CString(clss.toString())), pos: Context.currentPos() };
+							final e = { expr: EConst(CString(clss.toString())), pos: Context.currentPos() };
 							if (!m.has('assets_childs')) {
 								m.add('assets_childs', [e], Context.currentPos());
 							} else {
-								var a = m.get().find(function(v) return v.name == 'assets_childs').params;
+								final a = m.get().find(function(v) return v.name == 'assets_childs').params;
 								a.push(e);
 								m.remove('assets_childs');
 								m.add('assets_childs', a, Context.currentPos());
@@ -307,16 +307,16 @@ class HasAssetBuilder {
 							Context.error('Wrong assets_parent type', parent.pos);
 					}
 				case EField({ expr: EConst(CIdent(pack)) }, field):
-					var name: String = '$pack.$field';
+					final name: String = '$pack.$field';
 					for (f in Context.getModule(name)) switch f {
 						case TInst(t, _) if (t.toString() == name):
-							var m = t.get().meta;
+							final m = t.get().meta;
 							parentPathes = getPatches(m.get(), t);
-							var e = { expr: EConst(CString(clss.toString())), pos: Context.currentPos() };
+							final e = { expr: EConst(CString(clss.toString())), pos: Context.currentPos() };
 							if (!m.has('assets_childs')) {
 								m.add('assets_childs', [e], Context.currentPos());
 							} else {
-								var a = m.get().find(function(v) return v.name == 'assets_childs').params;
+								final a = m.get().find(function(v) return v.name == 'assets_childs').params;
 								a.push(e);
 								m.remove('assets_childs');
 								m.add('assets_childs', a, Context.currentPos());
@@ -329,9 +329,9 @@ class HasAssetBuilder {
 			}
 		}
 
-		var patchesFields: Map<String, String> = [];
+		final patchesFields: Map<String, String> = [];
 		if (meta.checkMeta([':assets_path'])) {
-			var patches: Expr = meta.getMeta(':assets_path').params[0];
+			final patches: Expr = meta.getMeta(':assets_path').params[0];
 			switch patches.expr {
 				case EObjectDecl(fs):
 					for (f in fs) {
@@ -351,10 +351,10 @@ class HasAssetBuilder {
 			return patchesFields.iterator().hasNext() ? patchesFields : null;
 		}
 
-		var result: Map<String, String> = [];
+		final result: Map<String, String> = [];
 		for (pk in parentPathes.keys()) {
 			if (patchesFields.iterator().hasNext()) {
-				var prefix: String = pk == 'def' ? '' : '${pk}_';
+				final prefix: String = pk == 'def' ? '' : '${pk}_';
 				var path: String = parentPathes[pk];
 				if (path.length > 0) path += '/';
 				for (k in patchesFields.keys()) {
@@ -370,7 +370,7 @@ class HasAssetBuilder {
 	private static function getPrefix(meta: Metadata): String {
 		var parentPrefix: String = '';
 		if (meta.checkMeta([':assets_parent'])) {
-			var parent: Expr = meta.getMeta(':assets_parent').params[0];
+			final parent: Expr = meta.getMeta(':assets_parent').params[0];
 			switch parent.expr {
 				case EConst(CIdent(s)):
 					switch Context.getType(s) {
@@ -380,7 +380,7 @@ class HasAssetBuilder {
 							Context.error('Wrong assets_parent type', parent.pos);
 					}
 				case EField({ expr: EConst(CIdent(pack)) }, field):
-					var name: String = '$pack.$field';
+					final name: String = '$pack.$field';
 					for (f in Context.getModule(name)) switch f {
 						case TInst(t, _) if (t.toString() == name):
 							parentPrefix = getPrefix(t.get().meta.get());
@@ -393,7 +393,7 @@ class HasAssetBuilder {
 			}
 		}
 		if (meta.checkMeta([':assets_prefix'])) {
-			var patches: Expr = meta.getMeta(':assets_prefix').params[0];
+			final patches: Expr = meta.getMeta(':assets_prefix').params[0];
 			switch patches.expr {
 				case EConst(CString(s)):
 					return parentPrefix + s;
@@ -405,7 +405,7 @@ class HasAssetBuilder {
 	}
 
 	private static function getAssetName(meta: Metadata, colon: Bool = false): String {
-		var p: Expr = meta.getMeta('${(colon ? ':' : '')}asset').params[0];
+		final p: Expr = meta.getMeta('${colon ? ':' : ''}asset').params[0];
 		return switch p.expr {
 			case EConst(CString(s)):
 				s;

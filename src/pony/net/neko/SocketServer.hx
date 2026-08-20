@@ -25,8 +25,8 @@ class SocketServer extends pony.net.SocketServerBase {
 
 	private function waitNewConnection(): Void {
 		try {
-			var client: Socket = server.accept();
-			var cl: SocketClient = cast addClient();
+			final client: Socket = server.accept();
+			final cl: SocketClient = cast addClient();
 			cl.nekoInit(client);
 		} catch (s: String) {
 			if (s != 'Blocking') error(s);

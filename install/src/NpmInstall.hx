@@ -2,9 +2,9 @@
  * NpmInstall
  * @author AxGord <axgord@gmail.com>
  */
-@:nullSafety(Strict) @:final class NpmInstall extends BaseInstall {
+@:nullSafety(Strict) final class NpmInstall extends BaseInstall {
 
-	private static inline var PRIV_ALL: Int = 777;
+	private static inline final PRIV_ALL: Int = 777;
 
 	private var sudo: Bool = false;
 
@@ -16,7 +16,7 @@
 	}
 
 	override private function run(): Void {
-		var cmds: Array<String> = ['npm', '-g', 'install'];
+		final cmds: Array<String> = ['npm', '-g', 'install'];
 		var perm: Int = -1;
 		var homeperm: Int = -1;
 		if (sudo) {
@@ -38,17 +38,17 @@
 				if (homeperm != -1) Utils.setPerm(Utils.homeNpm, PRIV_ALL, true);
 			}
 		}
-		var c: String = cast cmds.shift();
+		final c: String = cast cmds.shift();
 		if (Config.OS == TargetOS.Windows) {
-			var winmap: Map<String, String> = [
+			final winmap: Map<String, String> = [
 				for (e in Config.settings.winnpm) {
-					var a = e.split('@');
+					final a = e.split('@');
 					a[0] => a[1];
 				}
 			];
 			listInstall(c, cmds, [
 				for (npm in Config.settings.npm) {
-					var n: String = npm.split('@')[0];
+					final n: String = npm.split('@')[0];
 					winmap.exists(n) ? '$n@${winmap[n]}' : npm;
 				}
 			]);

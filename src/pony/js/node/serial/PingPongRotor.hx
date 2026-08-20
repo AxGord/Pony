@@ -67,7 +67,7 @@ class PingPongRotor extends Tumbler {
 	}
 
 	private function destroySignal(s: Signal0): Void {
-		var e: Event0 = cast s;
+		final e: Event0 = cast s;
 		e.destroy();
 	}
 

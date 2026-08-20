@@ -14,9 +14,9 @@ import pony.time.Tween;
  */
 @:nullSafety class LazyBitmap extends Bitmap {
 
-	private var asset: String;
-	private var aname: Null<String>;
-	private var needAnim: Bool;
+	private final asset: String;
+	private final aname: Null<String>;
+	private final needAnim: Bool;
 	private var anim: Null<Tween>;
 	public var finalAlpha(default, set): Float = 1;
 	public var finalVisible(default, set): Bool = false;

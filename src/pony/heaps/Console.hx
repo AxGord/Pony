@@ -11,8 +11,8 @@ import hxd.res.DefaultFont;
  */
 @:nullSafety(Strict) class Console extends h2d.Console {
 
-	public static inline var DEFAULT_FONT_SIZE: UInt = 28;
-	public static inline var DEFAULT_TRACE_COLOR: UInt = 0xBBBBFF;
+	public static inline final DEFAULT_FONT_SIZE: UInt = 28;
+	public static inline final DEFAULT_TRACE_COLOR: UInt = 0xBBBBFF;
 
 	@:nullSafety(Off) private var origTrace: Dynamic -> ?PosInfos -> Void;
 	private var traceColor: Int = -1;
@@ -54,7 +54,7 @@ import hxd.res.DefaultFont;
 	private function traceHandler(v: Dynamic, ?p: PosInfos): Void {
 		origTrace(v, p);
 		log(
-			p == null ? v : '${p.fileName}:${p.lineNumber}: $v${(p.customParams != null ? ', ' + p.customParams.join(', ') : '')}',
+			p == null ? v : '${p.fileName}:${p.lineNumber}: $v${p.customParams != null ? ', ' + p.customParams.join(', ') : ''}',
 			traceColor
 		);
 	}

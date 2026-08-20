@@ -37,12 +37,12 @@ using pony.Tools;
 		if (time == null) return 0;
 		var ms: Int = 0;
 		time = time.trim();
-		var neg: Bool = time.charAt(0) == '-';
+		final neg: Bool = time.charAt(0) == '-';
 		if (neg) time = time.substr(1);
 		var nbuf: String = '';
 		var chbuf: String = '';
 		for (i in 0...time.length) {
-			var ch: String = time.charAt(i);
+			final ch: String = time.charAt(i);
 			if (ch == ' ') {
 				continue;
 			} else if (ch.parseInt() == null) {
@@ -60,12 +60,12 @@ using pony.Tools;
 		if (chbuf != '' && nbuf != '') ms += @:nullSafety(Off) parseBuf(chbuf, nbuf.parseInt());
 
 		if (ms == 0) {
-			var s: Array<String> = time.split('.');
+			final s: Array<String> = time.split('.');
 			if (s.length == 2) {
 				@:nullSafety(Off) ms = s[1].parseInt();
 				time = s[0];
 			}
-			var s: Array<String> = time.split(' ');
+			final s: Array<String> = time.split(' ');
 			var t: String;
 			if (s.length == 2) {
 				@:nullSafety(Off) ms += fromDays(s[0].parseInt());

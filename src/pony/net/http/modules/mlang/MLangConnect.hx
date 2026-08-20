@@ -7,7 +7,7 @@ import pony.text.tpl.ITplPut;
  * MLangConnect
  * @author AxGord <axgord@gmail.com>
  */
-@:final class MLangConnect extends ModuleConnect<MLang> {
+final class MLangConnect extends ModuleConnect<MLang> {
 
 	#if (haxe_ver < 4.2) override #end
 	public function tpl(parent: ITplPut): ITplPut return new MLangPut(this, null, parent);

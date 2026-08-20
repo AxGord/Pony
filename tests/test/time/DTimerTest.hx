@@ -27,7 +27,7 @@ class DTimerTest {
 	@Test
 	public function backTimerShort(): Void {
 		var c = 0;
-		var t = DTimer.createTimer('2sec...5sec', 3);
+		final t = DTimer.createTimer('2sec...5sec', 3);
 		t.complete << function() c++;
 		t.start();
 		DeltaTime.testRun('10sec');
@@ -37,7 +37,7 @@ class DTimerTest {
 	@Test
 	public function backTimerLong(): Void {
 		var c = 0;
-		var t = DTimer.createTimer('2sec...5sec', 3);
+		final t = DTimer.createTimer('2sec...5sec', 3);
 		t.complete << function() c++;
 		t.start();
 		DeltaTime.testRun('10h');

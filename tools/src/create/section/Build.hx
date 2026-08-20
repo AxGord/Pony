@@ -12,7 +12,7 @@ import types.HaxeTargets;
  */
 class Build extends Section {
 
-	private static var HXML: String = '.hxml';
+	private static final HXML: String = '.hxml';
 
 	public var libs: Map<String, String> = [];
 	public var flags: Array<String> = [];
@@ -41,21 +41,21 @@ class Build extends Section {
 		init();
 
 		if (hxml != null) {
-			var prepare: Xml = Xml.createElement('prepare');
+			final prepare: Xml = Xml.createElement('prepare');
 			prepare.set('hxml', hxml);
 			if (main != null) prepare.addChild(XmlTools.node('main', main));
 			prepare.addChild(XmlTools.node(targetKey(), output()));
 			for (cp in cps) prepare.addChild(XmlTools.node('cp', cp));
 			for (name in libs.keys()) {
-				var v = libs[name];
+				final v = libs[name];
 				prepare.addChild(XmlTools.node('lib', v == null ? name : '$name:$v'));
 			}
 			if (dce != null) prepare.addChild(XmlTools.node('dce', dce));
 			if (analyzerOptimize) prepare.addChild(XmlTools.node('d', 'analyzer-optimize'));
 			if (esVersion != null) prepare.addChild(XmlTools.node('d', 'js-es$esVersion'));
 			for (name in flags) {
-				var a: Array<String> = name.split(':').map(StringTools.trim);
-				var d: Xml = XmlTools.node('d', a.pop());
+				final a: Array<String> = name.split(':').map(StringTools.trim);
+				final d: Xml = XmlTools.node('d', a.pop());
 				prepare.addChild(d);
 				if (a.length > 0) d.set('name', a.pop());
 			}
@@ -64,7 +64,7 @@ class Build extends Section {
 
 			xml.addChild(prepare);
 
-			var build: Xml = Xml.createElement('build');
+			final build: Xml = Xml.createElement('build');
 			build.addChild(XmlTools.node('hxml', hxml));
 			xml.addChild(build);
 		} else {
@@ -72,7 +72,7 @@ class Build extends Section {
 			add(targetKey(), output());
 			for (cp in cps) add('cp', cp);
 			for (name in libs.keys()) {
-				var v = libs[name];
+				final v = libs[name];
 				add('lib', v == null ? name : '$name $v');
 			}
 			if (dce != null) add('dce', dce);

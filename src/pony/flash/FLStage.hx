@@ -20,9 +20,9 @@ interface FLStage {}
 class FLStageBuilder {
 
 	macro public static function build(): Array<Field> {
-		var fields: Array<Field> = Context.getBuildFields();
+		final fields: Array<Field> = Context.getBuildFields();
 		for (f in fields) {
-			var m = f.meta.getMeta('stage', true);
+			final m = f.meta.getMeta('stage', true);
 			if (m != null) {
 				var allowSet = false;
 				for (p in m.params) switch p.expr {

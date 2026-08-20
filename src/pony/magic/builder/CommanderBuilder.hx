@@ -20,7 +20,7 @@ using pony.text.TextTools;
  */
 class CommanderBuilder {
 
-	private static inline var DEFAULT_FILE: String = 'commands.xml';
+	private static inline final DEFAULT_FILE: String = 'commands.xml';
 
 	macro public static function build(): Array<Field> {
 		var file: String = DEFAULT_FILE;
@@ -34,12 +34,12 @@ class CommanderBuilder {
 		} catch (_: Any) {}
 
 		Context.registerModuleDependency(Context.getLocalModule(), file);
-		var fields: Array<Field> = Context.getBuildFields();
+		final fields: Array<Field> = Context.getBuildFields();
 
-		var help: Array<String> = [];
-		var helpAnsi: Array<String> = [];
+		final help: Array<String> = [];
+		final helpAnsi: Array<String> = [];
 
-		var cases: Array<Case> = [];
+		final cases: Array<Case> = [];
 
 		var xml: Fast = null;
 		try {
@@ -49,7 +49,7 @@ class CommanderBuilder {
 		}
 
 		for (x in xml.node.commands.elements) {
-			var cmd: String = x.name.toLowerCase();
+			final cmd: String = x.name.toLowerCase();
 			if (cmd == 'comment') {
 				help.push(x.innerData);
 				helpAnsi.push(x.innerData.ansiForeground(AnsiForeground.LightGray));
@@ -57,7 +57,7 @@ class CommanderBuilder {
 			}
 			var h: String = getHelp(x);
 			var hAnsi: String = h;
-			var bcmd: String = pony.text.TextTools.bigFirst(cmd);
+			final bcmd: String = pony.text.TextTools.bigFirst(cmd);
 
 			if (x.nodes.arg.length > 0) {
 				h = (h == null ? '' : '$h.\n\t') + ('Arguments:\n\t\t' + [for (a in x.nodes.arg) getHelp(a)].join('\n\t\t'));
@@ -73,9 +73,9 @@ class CommanderBuilder {
 				helpAnsi.push('${cmd.ansiForeground(AnsiForeground.LightCyan)} ${shelp.ansiForeground(AnsiForeground.DarkGray)}\n\t$hAnsi');
 			}
 
-			var ed: String = 'e$bcmd';
+			final ed: String = 'e$bcmd';
 
-			var values: Array<Expr> = [macro $v{cmd}];
+			final values: Array<Expr> = [macro $v{cmd}];
 
 			if (cmd == 'nothing') values.push(macro null);
 
@@ -91,7 +91,7 @@ class CommanderBuilder {
 				}
 			});
 
-			var signalType: ComplexType = switch x.nodes.arg.length {
+			final signalType: ComplexType = switch x.nodes.arg.length {
 				case 0: macro :pony.events.Signal0;
 				case 1: macro :pony.events.Signal1<String>;
 				case 2: macro :pony.events.Signal2<String, String>;
@@ -107,7 +107,7 @@ class CommanderBuilder {
 				doc: h
 			});
 
-			var args: Array<FunctionArg> = switch x.nodes.arg.length {
+			final args: Array<FunctionArg> = switch x.nodes.arg.length {
 				case 0: [];
 				case 1: [{ name: 'arg1', type: macro :String }];
 				case 2: [{ name: 'arg1', type: macro :String }, { name: 'arg2', type: macro :String }];
@@ -117,7 +117,7 @@ class CommanderBuilder {
 				];
 			}
 
-			var cbody: Expr = switch x.nodes.arg.length {
+			final cbody: Expr = switch x.nodes.arg.length {
 				case 0: macro $i{ed}.dispatch();
 				case 1: macro $i{ed}.dispatch(arg1);
 				case 2: macro $i{ed}.dispatch(arg1, arg2);
@@ -137,7 +137,7 @@ class CommanderBuilder {
 			});
 		}
 
-		var body: ExprDef = ESwitch(macro cmd, cases, macro error('Unknown command: ' + cmd));
+		final body: ExprDef = ESwitch(macro cmd, cases, macro error('Unknown command: ' + cmd));
 
 		fields.push({
 			name: 'runCommand',

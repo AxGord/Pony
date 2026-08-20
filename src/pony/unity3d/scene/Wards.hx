@@ -50,7 +50,7 @@ using hugs.HUGSWrapper;
 	public function readWards(): Void {
 		wards = [];
 		for (i in 1...10000) {
-			var t: Transform = transform.Find('$i');
+			final t: Transform = transform.Find('$i');
 			if (t == null) break;
 			wards.push(t);
 		}
@@ -73,9 +73,9 @@ using hugs.HUGSWrapper;
 
 	public function Update(): Void {
 		if (toObj == null) return;
-		var dt: Single = withTimeScale ? Time.deltaTime : Time.fixedDeltaTime;
-		var p: Vector3 = toObj.position;
-		var r: Quaternion = toObj.rotation;
+		final dt: Single = withTimeScale ? Time.deltaTime : Time.fixedDeltaTime;
+		final p: Vector3 = toObj.position;
+		final r: Quaternion = toObj.rotation;
 		target.transform.position = Vector3.MoveTowards(target.transform.position, p, speed * dt);
 		if (withRotation) target.transform.rotation = Quaternion.Slerp(target.transform.rotation, r, speed * (rn += speed * 2) * dt);
 		if (target.transform.position == p) {

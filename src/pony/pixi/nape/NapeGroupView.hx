@@ -19,7 +19,7 @@ class NapeGroupView extends Sprite {
 	public var debugLines(default, set): DebugLineStyle;
 
 	public var core(default, null): NapeGroup;
-	private var objects: Array<BodyBaseView<BodyBase>> = [];
+	private final objects: Array<BodyBaseView<BodyBase>> = [];
 
 	public function new(core: NapeGroup) {
 		super();

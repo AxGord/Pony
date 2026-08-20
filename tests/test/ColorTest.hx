@@ -10,7 +10,7 @@ class ColorTest {
 
 	@Test
 	public function split(): Void {
-		var c: UColor = 0xFF559922;
+		final c: UColor = 0xFF559922;
 		Assert.areEqual(c.a, 0xFF);
 		Assert.areEqual(c.r, 0x55);
 		Assert.areEqual(c.g, 0x99);
@@ -22,27 +22,27 @@ class ColorTest {
 
 	@Test
 	public function parse(): Void {
-		var c: UColor = '#3388CC';
+		final c: UColor = '#3388CC';
 		Assert.areEqual(c, 0x3388CC);
 	}
 
 	@Test
 	public function rgb(): Void {
-		var c: UColor = 'rgb(255, 0, 155)';
+		final c: UColor = 'rgb(255, 0, 155)';
 		Assert.areEqual(c, 0xFF009B);
 	}
 
 	@Test
 	public function argb(): Void {
-		var c: UColor = 'argb(120, 255, 0, 155)';
+		final c: UColor = 'argb(120, 255, 0, 155)';
 		Assert.areEqual(c, 0x78FF009B);
 	}
 
 	@Test
 	public function addNegative(): Void {
-		var a: Color = new Color(0, 255, -67, 0);
-		var b: Color = new Color(0, 66, 66, 66);
-		var c: Color = b + a;
+		final a: Color = new Color(0, 255, -67, 0);
+		final b: Color = new Color(0, 66, 66, 66);
+		final c: Color = b + a;
 		Assert.areEqual(c.a, 0);
 		Assert.areEqual(c.r, 255);
 		Assert.areEqual(c.g, -1);
