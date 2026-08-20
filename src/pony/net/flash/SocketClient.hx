@@ -33,7 +33,7 @@ class SocketClient extends SocketClientBase {
 		socket.addEventListener(SecurityErrorEvent.SECURITY_ERROR, securityErrorHandler);
 	}
 
-	public function send(data: BytesOutput): Void q.call(data);
+	public inline function send(data: BytesOutput): Void q.call(data);
 
 	override public function close(): Void {
 		super.close();

@@ -51,13 +51,13 @@ class StarlingConverter {
 
 	private static final _atlasCreator: AtlasCreator = new AtlasCreator();
 
-	public static function getObject(
+	public static inline function getObject(
 		source: flash.display.DisplayObject, coordinateSpace: flash.display.DisplayObject, disposeable: Bool = false
 	): starling.display.DisplayObject {
 		return getObjectInternal(source, coordinateSpace, disposeable, true);
 	}
 
-	public static function getSprite(
+	public static inline function getSprite(
 		source: flash.display.Sprite, coordinateSpace: flash.display.DisplayObject, disposeable: Bool
 	): starling.display.Sprite {
 		return getSpriteInternal(source, coordinateSpace, disposeable, true);
@@ -73,11 +73,11 @@ class StarlingConverter {
 		return getObject(source, sprite, disposeable);
 	}
 
-	public static function getBorder(): Int {
+	public static inline function getBorder(): Int {
 		return AtlasCreator.getBorder();
 	}
 
-	public static function showAtlases(): Void {
+	public static inline function showAtlases(): Void {
 		_atlasCreator.showAtlases();
 	}
 

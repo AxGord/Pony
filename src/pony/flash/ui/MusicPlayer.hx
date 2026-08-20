@@ -58,7 +58,7 @@ class MusicPlayer extends SongPlayer {
 		core.loadSong(song);
 	}
 
-	public function unloadPlaylist(): Void {
+	public inline function unloadPlaylist(): Void {
 		visible = false;
 	}
 

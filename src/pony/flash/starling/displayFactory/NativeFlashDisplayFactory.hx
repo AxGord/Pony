@@ -35,7 +35,7 @@ class NativeFlashDisplayFactory implements IDisplayFactory {
 		return cast new MovieClip();
 	}
 
-	public static function getInstance(): NativeFlashDisplayFactory {
+	public static inline function getInstance(): NativeFlashDisplayFactory {
 		return _instance;
 	}
 

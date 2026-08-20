@@ -31,7 +31,7 @@ class Project {
 
 	public function new(name: String) this.name = name;
 
-	private function get_rname(): String return name == null ? 'App' : name;
+	private inline function get_rname(): String return name == null ? 'App' : name;
 
 	public function result(): Xml {
 		final root: Xml = Xml.createElement('project');

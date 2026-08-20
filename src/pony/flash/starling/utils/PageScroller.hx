@@ -42,7 +42,7 @@ class PageScroller {
 		TouchManager.addListener(page, onAreaStopDrag, [TouchEventType.Up]);
 	}
 
-	private function get_dragged(): Bool {
+	private inline function get_dragged(): Bool {
 		return kineticDragged || activelyDragged;
 	}
 

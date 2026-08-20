@@ -38,15 +38,10 @@ class RemoteClient extends Logable {
 	}
 
 	public function createProtocol(host: String, port: Int, key: String): Null<RemoteProtocol> {
-		if (host == null || port == null) {
-			error('Not setted port or host');
-			eComplete.dispatch(1);
-			return null;
-		}
 		final client: SocketClient = new SocketClient(host, port);
 		client.onDisconnect < disconnectHandler;
 		final p: RemoteProtocol = new RemoteProtocol(client);
-		if (key != null) p.authRemote(key);
+		p.authRemote(key);
 		return p;
 	}
 

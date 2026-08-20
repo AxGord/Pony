@@ -505,7 +505,7 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 		return obj;
 	}
 
-	private function putData(c: String): String return c;
+	private function putData(c: String): String return c; // noqa: prefer-inline
 
 	private function customUIElement(name: String, attrs: Dynamic<String>, content: Array<Dynamic>): Dynamic
 		throw 'Unknown component $name';

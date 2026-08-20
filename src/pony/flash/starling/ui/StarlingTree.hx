@@ -98,7 +98,7 @@ class StarlingTree extends Sprite {
 		if (_heightChangeCallback != null) _heightChangeCallback();
 	}
 
-	public function setHeightChangeCallback(callback: Void -> Void): Void {
+	public inline function setHeightChangeCallback(callback: Void -> Void): Void {
 		_heightChangeCallback = callback;
 	}
 

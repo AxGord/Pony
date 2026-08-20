@@ -108,14 +108,14 @@ class TimeoutActivity implements Declarator implements HasSignal {
 	}
 
 	#if swc
-	public function applyIdleFn(listener: Void -> Void): Void applyIdle(listener);
-	public function applyWakeupFN(listener: Void -> Void): Void applyWakeup(listener);
-	public function addIdleListener(listener: Void -> Void): Void onIdle << listener;
-	public function removeIdleListener(listener: Void -> Void): Void onIdle >> listener;
-	public function addWakeupListener(listener: Void -> Void): Void onWakeup << listener;
-	public function removeWakeupListener(listener: Void -> Void): Void onWakeup >> listener;
-	public static function addGlobWakeupListener(listener: Void -> Void): Void onGlobWakeup << listener;
-	public static function removeGlobWakeupListener(listener: Void -> Void): Void onGlobWakeup >> listener;
+	public inline function applyIdleFn(listener: Void -> Void): Void applyIdle(listener);
+	public inline function applyWakeupFN(listener: Void -> Void): Void applyWakeup(listener);
+	public inline function addIdleListener(listener: Void -> Void): Void onIdle << listener;
+	public inline function removeIdleListener(listener: Void -> Void): Void onIdle >> listener;
+	public inline function addWakeupListener(listener: Void -> Void): Void onWakeup << listener;
+	public inline function removeWakeupListener(listener: Void -> Void): Void onWakeup >> listener;
+	public static inline function addGlobWakeupListener(listener: Void -> Void): Void onGlobWakeup << listener;
+	public static inline function removeGlobWakeupListener(listener: Void -> Void): Void onGlobWakeup >> listener;
 	#end
 
 }

@@ -65,15 +65,15 @@ class DisplayFactory {
 	private static final _current: IDisplayFactory = NativeFlashDisplayFactory.getInstance();
 	#end
 
-	public static function createSprite(): IDisplayObjectContainer {
+	public static inline function createSprite(): IDisplayObjectContainer {
 		return _current.createSprite();
 	}
 
-	public static function createTextField(width: Float, height: Float, text: String): ITextField {
+	public static inline function createTextField(width: Float, height: Float, text: String): ITextField {
 		return _current.createTextField(width, height, text);
 	}
 
-	public static function createMovieClip(): IMovieClip {
+	public static inline function createMovieClip(): IMovieClip {
 		return _current.createMovieClip();
 	}
 

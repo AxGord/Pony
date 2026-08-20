@@ -67,7 +67,7 @@ class FLExtends {
 		o.y = height / 2 - (o.height / 2 - (o.y - b.y));
 	}
 
-	public static function toScreenCenter(o: DisplayObject): Void toCenter(o, FLTools.width, FLTools.height);
+	public static inline function toScreenCenter(o: DisplayObject): Void toCenter(o, FLTools.width, FLTools.height);
 
 	// inline public static function button(o:DisplayObjectContainer, name:String):ButtonCore return getTyped(o, name, Button).core;
 

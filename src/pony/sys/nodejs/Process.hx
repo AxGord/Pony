@@ -68,7 +68,7 @@ class Process extends pony.Logable implements pony.sys.IProcess implements pony.
 	private function endProcess(code: Int): Void {
 		if (!waitEnd) return;
 		waitEnd = false;
-		if (code != null && code > 0) error('Child ($runCmd) exited with code $code');
+		if (code > 0) error('Child ($runCmd) exited with code $code');
 		if (keep) {
 			if (runned) runProccess();
 		} else {

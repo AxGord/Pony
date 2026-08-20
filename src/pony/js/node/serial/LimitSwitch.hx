@@ -26,9 +26,9 @@ class LimitSwitch implements Declarator implements HasSignal {
 
 	private function dataHandler(s: String): Void {
 		var v: Int = extract(s, LSW1);
-		if (v != null) state1 = v == 1;
+		state1 = v == 1;
 		v = extract(s, LSW2);
-		if (v != null) state2 = v == 1;
+		state2 = v == 1;
 	}
 
 	private function extract(buf: String, key: String): Int {

@@ -101,7 +101,7 @@ class HtmlContainerBase implements HasSignal {
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function px(v: Float): String return (ceil ? Std.int(v) : v) + 'px';
 
-	private function scrollHandler(): Void DeltaTime.fixedUpdate < resize;
+	private inline function scrollHandler(): Void DeltaTime.fixedUpdate < resize;
 
 	private function resizeHandler(): Void DeltaTime.fixedUpdate < _resizeHandler;
 

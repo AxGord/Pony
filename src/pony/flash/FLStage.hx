@@ -7,11 +7,9 @@ import haxe.macro.Expr;
 import haxe.macro.Expr.Field;
 
 using pony.macro.Tools;
-#end
+#else
+@:autoBuild(pony.flash.FLStageBuilder.build()) #end
 
-#if !macro
-@:autoBuild(pony.flash.FLStageBuilder.build())
-#end
 interface FLStage {}
 
 /**

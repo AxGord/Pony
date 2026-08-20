@@ -138,7 +138,7 @@ class OpenflXmlUi extends Sprite implements HasAbstract {
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function scaleBorderInt(s: String): Border<Int> return cast(Border.fromString(s) * SCALE);
 
-	private function putData(c: String): String return c;
+	private function putData(c: String): String return c; // noqa: prefer-inline
 
 	private function customUIElement(name: String, attrs: Dynamic<String>, content: Array<Dynamic>): Dynamic
 		throw 'Unknown component $name';

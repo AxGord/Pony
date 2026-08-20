@@ -21,7 +21,7 @@ class Builder {
 		final cur: ClassType = Context.getLocalClass().get();
 		if (cur.name == 'Model') return fields;
 		for (f in fields) switch (f.name) {
-			case 'many', 'insert', 'single', 'update', 'delete': if (!f.meta.exists(m -> m.name == 'action'))
+			case 'many', 'insert', 'single', 'update', 'delete' if (!f.meta.exists(m -> m.name == 'action')):
 				f.meta.push({ pos: Context.currentPos(), name: 'action', params: [{ expr: EConst(CString(f.name.bigFirst())), pos: Context.currentPos() }] });
 			/*case 'manyAsync', 'insertAsync':
 				var n:String = f.name.substr(0, f.name.length - 5).bigFirst();

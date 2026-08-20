@@ -32,7 +32,7 @@ class StarlingDisplayFactory implements IDisplayFactory {
 		throw 'Starling movieclip creation not implemented yet';
 	}
 
-	public static function getInstance(): StarlingDisplayFactory {
+	public static inline function getInstance(): StarlingDisplayFactory {
 		return _instance;
 	}
 

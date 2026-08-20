@@ -64,7 +64,7 @@ import pony.ui.touch.Touchable;
 	}
 
 	private function stopDragHandler(t: Touch): Void {
-		if (t != null) t.onMove >> moveHandler;
+		t.onMove >> moveHandler;
 		finalPos = pos;
 		finalPercent = percent;
 		finalValue = value;
@@ -84,7 +84,7 @@ import pony.ui.touch.Touchable;
 	}
 
 	private function startDragHandler(t: Touch): Void {
-		if (t != null) t.onMove << moveHandler;
+		t.onMove << moveHandler;
 		if (button != null) changePos >> button.touch.check;
 	}
 

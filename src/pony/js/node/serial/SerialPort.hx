@@ -94,11 +94,11 @@ class SerialPort extends Logable implements Declarator {
 		getList(connectHandler, error);
 	}
 
-	public function logPorts(): Void {
+	public inline function logPorts(): Void {
 		getList(logPortsHandler, error);
 	}
 
-	public static function tracePorts(): Void {
+	public static inline function tracePorts(): Void {
 		getList(tracePortsHandler, haxe.Log.trace);
 	}
 

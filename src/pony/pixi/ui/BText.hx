@@ -49,7 +49,7 @@ class BText extends Sprite implements IWH {
 		t = text;
 	}
 
-	private function get_size(): Point<Float> return _size;
+	private inline function get_size(): Point<Float> return _size;
 
 	public function set_t(s: String): String {
 		if (t == s) return s;

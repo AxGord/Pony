@@ -25,7 +25,7 @@ class ExtendedPropertiesTest {
 	}
 
 	@Test
-	public function prop(): Void {
+	public inline function prop(): Void {
 		Assert.areEqual(o.value, 3);
 	}
 
@@ -41,15 +41,15 @@ class ExtendedPropertiesTestHelper implements ExtendedProperties {
 		p = 4;
 	}
 
-	public function get_p(): Int return p + 3;
+	public inline function get_p(): Int return p + 3;
 
 	@prop public inline function value(): Int return 3;
 
-	public function tget(): Int return p;
+	public inline function tget(): Int return p;
 
-	public function vget(p: Int = 3): Int return p;
+	public inline function vget(p: Int = 3): Int return p;
 
-	public function tvget(p: Int = 3): Int return this.p;
+	public inline function tvget(p: Int = 3): Int return this.p;
 
 	public function dget(): Int {
 		return (12: Int);

@@ -55,7 +55,7 @@ class Scrollable extends Touchable {
 
 	public dynamic function onChangePosition(v: Int): Void {}
 
-	public function scroll(delta: Int): Void pos += delta;
+	public inline function scroll(delta: Int): Void pos += delta;
 
 	public function scrollToEnd(): Void {
 		pos = Std.int(totalSize - contentSize);

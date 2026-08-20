@@ -34,7 +34,7 @@ class Build extends Section {
 
 	public function addLib(name: String, ?version: String): Void libs[name] = version;
 
-	public function getHxmlFile(): String return hxml + HXML;
+	public inline function getHxmlFile(): String return hxml + HXML;
 
 	public function getDep(): Array<String> return hxml != null ? [getHxmlFile()] : [];
 
@@ -53,7 +53,7 @@ class Build extends Section {
 			}
 			if (dce != null) prepare.addChild(XmlTools.node('dce', dce));
 			if (analyzerOptimize) prepare.addChild(XmlTools.node('d', 'analyzer-optimize'));
-			if (esVersion != null) prepare.addChild(XmlTools.node('d', 'js-es$esVersion'));
+			prepare.addChild(XmlTools.node('d', 'js-es$esVersion'));
 			for (name in flags) {
 				final a: Array<String> = name.split(':').map(StringTools.trim);
 				final d: Xml = XmlTools.node('d', a.pop());
@@ -77,7 +77,7 @@ class Build extends Section {
 			}
 			if (dce != null) add('dce', dce);
 			if (analyzerOptimize) add('d', 'analyzer-optimize');
-			if (esVersion != null) add('d', 'js-es$esVersion');
+			add('d', 'js-es$esVersion');
 			for (name in flags) add('d', name);
 			for (key => value in args) add(key, value);
 		}
@@ -107,7 +107,7 @@ class Build extends Section {
 
 	public function getMainhxPath(): String return cps[0];
 
-	public function getMainhx(): String return gethx(main);
+	public inline function getMainhx(): String return gethx(main);
 
 	public function gethx(name: String): String return '${getMainhxPath()}/$name.hx';
 
@@ -124,11 +124,11 @@ class Build extends Section {
 		if (!outputPathExists()) FileSystem.createDirectory(outputPath);
 	}
 
-	public function outputPathExists(): Bool {
+	public inline function outputPathExists(): Bool {
 		return FileSystem.exists(outputPath);
 	}
 
-	public function createOutputPath(): Void {
+	public inline function createOutputPath(): Void {
 		FileSystem.createDirectory(outputPath);
 	}
 

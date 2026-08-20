@@ -109,7 +109,7 @@ class Tree extends Sprite implements FLStage {
 		if (_heightChangeCallback != null) _heightChangeCallback();
 	}
 
-	public function setHeightChangeCallback(callback: Void -> Void): Void {
+	public inline function setHeightChangeCallback(callback: Void -> Void): Void {
 		_heightChangeCallback = callback;
 	}
 
@@ -195,7 +195,7 @@ class Tree extends Sprite implements FLStage {
 		_nodesSprite.addChild(o);
 	}
 
-	private function headerHeight(): Float return _header != null ? _headerButton.height : 0;
+	private inline function headerHeight(): Float return _header != null ? _headerButton.height : 0;
 	#end
 
 }

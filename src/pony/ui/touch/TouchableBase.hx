@@ -168,10 +168,10 @@ import pony.TypedPool;
 	}
 
 	private function removeWheel(): Void {
-		if (onOver != null) onOver >> listenWheel;
-		if (onUp != null) onUp >> listenWheel;
-		if (onOut != null) onOut >> unlistenWheel;
-		if (onOutUp != null) onOutUp >> unlistenWheel;
+		onOver >> listenWheel;
+		onUp >> listenWheel;
+		onOut >> unlistenWheel;
+		onOutUp >> unlistenWheel;
 	}
 
 	private function listenWheel(): Void Mouse.onWheel << eWheel;
@@ -249,7 +249,7 @@ import pony.TypedPool;
 		if (t != null) {
 			@:privateAccess t.eOver.dispatch(t);
 		} else {
-			if (touchPool == null || touchPool.isDestroy) return;
+			if (touchPool.isDestroy) return;
 			touches[id] = t = touchPool.get();
 		}
 		eOver.dispatchWithFlag(t, safe);

@@ -28,15 +28,15 @@ class DisplayListStaticExtentions {
 		return Std.is(object, flash.display.DisplayObject) && FlashStaticExtentions.getTouchable(cast object);
 	}
 
-	public static function startUniversalDrag(dragged: IDisplayObject, lockCenter: Bool = false, ?bounds: Rectangle): Void {
+	public static inline function startUniversalDrag(dragged: IDisplayObject, lockCenter: Bool = false, ?bounds: Rectangle): Void {
 		UniversalDrag.startUniversalDrag(dragged, lockCenter, bounds);
 	}
 
-	public static function stopUniversalDrag(dragged: IDisplayObject): Void {
+	public static inline function stopUniversalDrag(dragged: IDisplayObject): Void {
 		UniversalDrag.stopUniversalDrag(dragged);
 	}
 
-	public static function stopUniversalDragKinetic(dragged: IDisplayObject): Void {
+	public static inline function stopUniversalDragKinetic(dragged: IDisplayObject): Void {
 		UniversalDrag.stopUniversalDragKinetic(dragged);
 	}
 
@@ -73,11 +73,11 @@ class DisplayListStaticExtentions {
 #if starling
 class StarlingStaticExtentions {
 
-	public static function setTouchable(object: starling.display.DisplayObject, value: Bool): Void {
+	public static inline function setTouchable(object: starling.display.DisplayObject, value: Bool): Void {
 		object.touchable = value;
 	}
 
-	public static function getTouchable(object: starling.display.DisplayObject): Bool {
+	public static inline function getTouchable(object: starling.display.DisplayObject): Bool {
 		return object.touchable;
 	}
 
@@ -93,11 +93,11 @@ class StarlingStaticExtentions {
 		UniversalDrag.stopUniversalDragKinetic(cast dragged);
 	}
 
-	public static function getTextWidth(textField: starling.text.TextField): Float {
+	public static inline function getTextWidth(textField: starling.text.TextField): Float {
 		return textField.textBounds.width;
 	}
 
-	public static function getTextHeight(textField: starling.text.TextField): Float {
+	public static inline function getTextHeight(textField: starling.text.TextField): Float {
 		return textField.textBounds.height;
 	}
 
@@ -137,11 +137,11 @@ class FlashStaticExtentions {
 		UniversalDrag.stopUniversalDragKinetic(cast dragged);
 	}
 
-	public static function getTextWidth(textField: flash.text.TextField): Float {
+	public static inline function getTextWidth(textField: flash.text.TextField): Float {
 		return textField.textWidth;
 	}
 
-	public static function getTextHeight(textField: flash.text.TextField): Float {
+	public static inline function getTextHeight(textField: flash.text.TextField): Float {
 		return textField.textHeight;
 	}
 

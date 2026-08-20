@@ -23,7 +23,7 @@ class StepSlider extends Sprite {
 		sliderCore.changeY = changeYHandler;
 	}
 
-	public function add(obj: Container): Void labelButton.add(obj);
+	public inline function add(obj: Container): Void labelButton.add(obj);
 
 	private function changeXHandler(v: Float): Void labelButton.x = v;
 

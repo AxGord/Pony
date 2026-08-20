@@ -61,7 +61,7 @@ class Hashlink extends Section {
 		return xml;
 	}
 
-	public function needClean(): Bool return android != null;
+	public inline function needClean(): Bool return android != null;
 
 	public function getClean(): Xml {
 		final clean: Xml = 'clean'.node();

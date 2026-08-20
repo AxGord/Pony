@@ -36,7 +36,7 @@ class TouchManagerHandCursor {
 		return enabled;
 	}
 
-	public function dispose(): Void {
+	public inline function dispose(): Void {
 		TouchManager.removeListener(_object, onTouch);
 	}
 

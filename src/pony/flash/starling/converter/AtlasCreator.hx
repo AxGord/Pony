@@ -337,7 +337,7 @@ class AtlasCreator {
 		return { texture: texture, addedTo: area };
 	}
 
-	public static function getBorder(): Int return _border;
+	public static inline function getBorder(): Int return _border;
 
 	private static function initStorageMap(): Map<String, TextureStorage> {
 		final result: Map<String, TextureStorage> = [];
@@ -442,7 +442,7 @@ private class TextureStorage {
 		_allowsAddition = allowsAddition;
 	}
 
-	public function canAdd(): Bool {
+	public inline function canAdd(): Bool {
 		return _allowsAddition;
 	}
 

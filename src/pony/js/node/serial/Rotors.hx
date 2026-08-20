@@ -83,14 +83,14 @@ class Rotor extends Tumbler {
 		bo.writeByte(max ? MAX : HALF);
 	}
 
-	public function goBack(): Void back = true;
+	public inline function goBack(): Void back = true;
 
-	public function goNormal(): Void back = false;
+	public inline function goNormal(): Void back = false;
 
 	public function reverse(): Void back = !back;
 
-	public function goMax(): Void max = true;
+	public inline function goMax(): Void max = true;
 
-	public function goHalf(): Void max = false;
+	public inline function goHalf(): Void max = false;
 
 }

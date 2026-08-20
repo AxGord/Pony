@@ -60,7 +60,7 @@ class ScrollBar extends Sprite {
 
 	public dynamic function onChangePosition(v: Int): Void {}
 
-	public function scroll(delta: Int): Void pos += delta;
+	public inline function scroll(delta: Int): Void pos += delta;
 
 	public function setTouchable(t: Touchable): Void {
 		touchable = t;

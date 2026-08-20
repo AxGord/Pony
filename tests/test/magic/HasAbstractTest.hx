@@ -22,7 +22,7 @@ class MyAbstractBaseClass implements HasAbstract {
 
 	@:abstract public function intToString(i: Int): String;
 
-	public function common(): String {
+	public inline function common(): String {
 		return 'bar';
 	}
 

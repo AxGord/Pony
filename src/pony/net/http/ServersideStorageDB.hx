@@ -31,12 +31,10 @@ class ServersideStorageDB implements Declarator {
 
 	public function getClient(cookie: Cookie): Map<String, Dynamic> {
 		final key: String = cookie.get(keyName);
-		if (key == null) {
-			final k: String = Tools.randomString();
-			cookie.set(keyName, k);
-			return getClientByKey(k);
-		}
-		return getClientByKey(key);
+		if (key != null) return getClientByKey(key);
+		final k: String = Tools.randomString();
+		cookie.set(keyName, k);
+		return getClientByKey(k);
 	}
 
 	public function getClientByKey(key: String): Map<String, Dynamic> {

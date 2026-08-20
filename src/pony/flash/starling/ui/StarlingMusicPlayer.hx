@@ -101,7 +101,7 @@ class StarlingMusicPlayer extends StarlingSongPlayer {
 		core.loadSong(song);
 	}
 
-	public function unloadPlaylist(): Void {
+	public inline function unloadPlaylist(): Void {
 		visible = false;
 	}
 

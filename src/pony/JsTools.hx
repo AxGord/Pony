@@ -216,7 +216,7 @@ class JsTools implements HasSignal {
 		untyped Browser.console.log = logFunction;
 	}
 
-	public static function disableContextMenuGlobal(): Void {
+	public static inline function disableContextMenuGlobal(): Void {
 		Browser.window.oncontextmenu = contextMenuHandler;
 	}
 

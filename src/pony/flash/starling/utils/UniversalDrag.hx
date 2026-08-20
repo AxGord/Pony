@@ -126,7 +126,7 @@ class UniversalDrag {
 		if (_dragged.y < _dragBounds.y) _dragged.y = _dragBounds.y;
 	}
 
-	private static function sign(value: Float): Int {
+	private static inline function sign(value: Float): Int {
 		return value >= 0 ? 1 : -1;
 	}
 
