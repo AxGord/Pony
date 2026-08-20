@@ -5,8 +5,6 @@ import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 import flash.system.Capabilities;
 
-using pony.flash.FLExtends;
-
 /**
  * Initialization
  * @author AxGord

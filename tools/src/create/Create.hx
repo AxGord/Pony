@@ -7,7 +7,6 @@ import haxe.Resource;
 import pony.Tools;
 import sys.FileSystem;
 import sys.io.File;
-import types.HaxeTargets;
 import types.ProjectType;
 
 using StringTools;

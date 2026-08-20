@@ -5,8 +5,6 @@ import pony.flash.FLTools;
 import pony.ui.gui.ButtonImgN;
 import pony.ui.touch.Touchable;
 
-using pony.flash.FLExtends;
-
 /**
  * Button
  * @see pony.ui.ButtonCore

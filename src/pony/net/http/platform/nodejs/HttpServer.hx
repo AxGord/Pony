@@ -6,7 +6,6 @@ import js.node.Http;
 import js.node.http.IncomingMessage;
 import js.node.http.Server;
 import js.node.http.ServerResponse;
-import pony.Pair;
 import pony.net.http.IHttpConnection;
 import pony.net.http.ServersideStorage;
 

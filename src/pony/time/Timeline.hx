@@ -1,7 +1,6 @@
 package pony.time;
 
 import pony.events.Listener1;
-import pony.events.Signal0;
 import pony.events.Signal1;
 import pony.magic.Declarator;
 import pony.magic.HasSignal;

@@ -8,15 +8,10 @@ import pixi.core.Pixi.RendererType;
 import pixi.core.graphics.Graphics;
 import pixi.core.sprites.Sprite;
 import pixi.core.ticker.Ticker;
-import pony.events.Signal0;
-import pony.events.Signal1;
 import pony.geom.Point;
 import pony.geom.Rect;
 import pony.js.SmartCanvas;
-import pony.magic.HasSignal;
-import pony.time.DTimer;
 import pony.time.JsDT;
-import pony.time.Time;
 import pony.ui.touch.pixi.Mouse;
 import pony.ui.touch.pixi.Touch;
 

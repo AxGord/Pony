@@ -1,6 +1,5 @@
 package remote.client;
 
-import haxe.PosInfos;
 import haxe.io.Bytes;
 import pony.Logable;
 import pony.events.Signal1;

@@ -4,10 +4,7 @@ import flash.display.MovieClip;
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.geom.Rectangle;
-import pony.geom.Rect;
 import pony.ui.gui.GridCore;
-
-using pony.flash.FLExtends;
 
 /**
  * Grid

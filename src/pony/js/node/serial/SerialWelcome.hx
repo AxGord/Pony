@@ -1,6 +1,5 @@
 package pony.js.node.serial;
 
-import haxe.io.BytesInput;
 import pony.events.Signal2;
 import pony.magic.Declarator;
 import pony.magic.HasSignal;

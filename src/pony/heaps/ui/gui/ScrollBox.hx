@@ -12,7 +12,6 @@ import pony.geom.Orientation;
 import pony.geom.Point;
 import pony.magic.HasSignal;
 import pony.time.DeltaTime;
-import pony.ui.gui.ButtonCore;
 import pony.ui.gui.ScrollBoxCore;
 import pony.ui.touch.Touchable;
 

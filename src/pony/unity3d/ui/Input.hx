@@ -5,7 +5,6 @@ import pony.events.Signal1;
 import pony.ui.gui.FocusManager;
 import pony.ui.gui.IFocus;
 import pony.unity3d.ui.TextureButton;
-import pony.unity3d.ui.TintButton;
 import unityengine.GUIText;
 import unityengine.Rect;
 import unityengine.Time;

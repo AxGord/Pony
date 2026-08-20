@@ -8,7 +8,6 @@ import pony.SPair;
 import pony.events.Listener2;
 import pony.events.Signal2;
 import pony.magic.HasSignal;
-import pony.time.DTimer;
 
 using Lambda;
 using pony.Tools;

@@ -1,10 +1,6 @@
 package physics;
 
 import massive.munit.Assert;
-import massive.munit.async.AsyncFactory;
-import massive.munit.util.Timer;
-import pony.Interval;
-import pony.physics.Temp;
 import pony.physics.TempInterval;
 
 class TempTest {

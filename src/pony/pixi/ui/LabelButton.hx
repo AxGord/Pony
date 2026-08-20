@@ -10,8 +10,6 @@ import pony.geom.Point;
 import pony.ui.gui.ButtonCore;
 import pony.ui.gui.RubberLayoutCore;
 
-using pony.pixi.PixiExtends;
-
 /**
  * LabelButton
  * @author AxGord <axgord@gmail.com>

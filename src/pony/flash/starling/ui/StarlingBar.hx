@@ -3,7 +3,6 @@ package pony.flash.starling.ui;
 import flash.geom.Point;
 import flash.Lib;
 import pony.events.Signal1;
-import pony.flash.FLTools;
 import pony.magic.HasSignal;
 import pony.ui.touch.starling.touchManager.TouchEventType;
 import pony.ui.touch.starling.touchManager.TouchManager;

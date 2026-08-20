@@ -1,6 +1,5 @@
 package pony.text.tpl;
 
-import pony.text.tpl.Tpl;
 import pony.text.tpl.TplPut;
 
 /**

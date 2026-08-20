@@ -9,7 +9,6 @@ import pixi.core.textures.RenderTexture;
 import pony.Pair;
 import pony.events.Signal1;
 import pony.geom.Point;
-import pony.geom.Rect;
 import pony.physics.nape.BodyBase;
 import pony.physics.nape.DebugLineStyle;
 import pony.pixi.App;

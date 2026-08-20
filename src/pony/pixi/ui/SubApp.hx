@@ -2,7 +2,6 @@ package pony.pixi.ui;
 
 import pixi.core.sprites.Sprite;
 import pony.geom.Rect;
-import pony.time.DeltaTime;
 
 /**
  * SubApp

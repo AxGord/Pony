@@ -1,6 +1,5 @@
 package pony.midi.devices;
 
-import pony.events.Signal1;
 import pony.events.Signal2;
 import pony.geom.Point.IntPoint;
 import pony.Logable;

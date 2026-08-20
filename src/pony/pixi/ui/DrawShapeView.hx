@@ -3,7 +3,6 @@ package pony.pixi.ui;
 import pixi.core.graphics.Graphics;
 import pixi.core.sprites.Sprite;
 import pony.events.Signal1;
-import pony.events.Signal2;
 import pony.geom.Point;
 import pony.geom.drawshape.DrawShape;
 import pony.geom.drawshape.DrawShapePointer;

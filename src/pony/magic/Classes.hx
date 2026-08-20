@@ -1,6 +1,5 @@
 package pony.magic;
 
-import haxe.macro.Compiler;
 #if macro
 import haxe.macro.Expr;
 import haxe.macro.Context;

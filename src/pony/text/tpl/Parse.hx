@@ -5,7 +5,6 @@ import pony.text.tpl.Tpl;
 import pony.text.tpl.TplData;
 
 using StringTools;
-using pony.Tools;
 
 /**
  * Tpl parser

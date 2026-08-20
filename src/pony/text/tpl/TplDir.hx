@@ -1,7 +1,6 @@
 package pony.text.tpl;
 
 import pony.fs.Dir;
-import pony.fs.File;
 import pony.text.tpl.Tpl;
 import pony.text.tpl.TplData.TplStyle;
 

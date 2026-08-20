@@ -4,7 +4,6 @@ import openfl.display.Bitmap;
 import openfl.display.Sprite;
 import pony.openfl.Button;
 import pony.ui.gui.ButtonCore;
-import pony.ui.gui.SliderCore;
 
 private typedef SliderType = {
 	public function new(?button: ButtonCore, size: Float, ?isVertical: Bool, ?invert: Bool, ?draggable: Bool): Void;

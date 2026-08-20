@@ -5,8 +5,6 @@ import pixi.core.sprites.Sprite;
 import pixi.extras.BitmapText.BitmapTextStyle;
 import pony.geom.Border;
 import pony.pixi.ETextStyle;
-import pony.pixi.UniversalText;
-import pony.time.DeltaTime;
 import pony.ui.gui.RubberLayoutCore;
 
 using pony.pixi.PixiExtends;

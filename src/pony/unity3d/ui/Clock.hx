@@ -1,9 +1,7 @@
 package pony.unity3d.ui;
 
-import pony.time.DeltaTime;
 import pony.time.DTimer;
 import pony.time.Time;
-import pony.time.TimeInterval;
 import unityengine.GUIText;
 import unityengine.MonoBehaviour;
 

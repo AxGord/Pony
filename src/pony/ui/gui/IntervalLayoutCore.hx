@@ -4,8 +4,6 @@ import pony.geom.Align;
 import pony.geom.Border;
 import pony.geom.GeomTools;
 
-using pony.Tools;
-
 /**
  * IntervalLayoutCore
  * @author AxGord <axgord@gmail.com>

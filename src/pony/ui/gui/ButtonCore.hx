@@ -1,6 +1,5 @@
 package pony.ui.gui;
 
-import pony.events.Signal0;
 import pony.events.Signal1;
 import pony.events.Signal2;
 import pony.magic.HasSignal;

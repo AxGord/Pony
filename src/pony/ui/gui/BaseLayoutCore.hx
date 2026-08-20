@@ -8,8 +8,6 @@ import pony.magic.HasSignal;
 import pony.Tasks;
 import pony.time.DeltaTime;
 
-using pony.Tools;
-
 /**
  * BaseLayoutCore
  * @author AxGord <axgord@gmail.com>

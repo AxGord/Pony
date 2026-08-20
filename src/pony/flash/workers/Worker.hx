@@ -9,7 +9,6 @@ import flash.system.WorkerState;
 import haxe.io.Bytes;
 import pony.events.Signal1;
 import pony.magic.HasSignal;
-import pony.Queue;
 import pony.time.DeltaTime;
 import pony.time.DTimer;
 

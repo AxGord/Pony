@@ -1,7 +1,6 @@
 package pony;
 
 import haxe.PosInfos;
-import pony.events.Event2;
 import pony.events.Signal2;
 
 /**

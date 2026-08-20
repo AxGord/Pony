@@ -1,9 +1,6 @@
 package ui;
 
 import massive.munit.Assert;
-import massive.munit.async.AsyncFactory;
-import massive.munit.util.Timer;
-import pony.events.Signal0;
 import pony.events.Signal1;
 import pony.magic.HasSignal;
 import pony.ui.gui.FocusManager;

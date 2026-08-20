@@ -7,7 +7,6 @@ import pony.Config;
 import pony.JsTools;
 import pony.events.Signal0;
 import pony.pixi.ui.SpinLoader;
-import pony.time.DeltaTime;
 import pony.ui.AssetManager;
 import pony.ui.xml.PixiXmlUi;
 

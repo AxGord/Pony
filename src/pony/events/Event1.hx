@@ -1,6 +1,5 @@
 package pony.events;
 
-import haxe.CallStack;
 import pony.Priority;
 
 /**

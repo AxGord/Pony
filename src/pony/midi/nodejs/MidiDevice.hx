@@ -4,7 +4,6 @@ import js.Node;
 import pony.midi.IMidiDevice;
 import pony.events.*;
 import pony.magic.HasSignal;
-import pony.midi.MidiCode;
 import pony.midi.MidiMessage;
 import pony.time.DT;
 

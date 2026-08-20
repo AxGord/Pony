@@ -43,8 +43,6 @@ import starling.display.DisplayObject;
 import starling.utils.HAlign;
 import starling.utils.VAlign;
 
-using pony.flash.FLExtends;
-
 /**
  * StarlingConverter
  * @author Maletin

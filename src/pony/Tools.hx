@@ -5,7 +5,6 @@ import haxe.Constraints.Function;
 import haxe.io.Bytes;
 import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
-import haxe.io.Eof;
 import haxe.Log;
 import pony.ds.KeyValue;
 import pony.ds.ROArray;

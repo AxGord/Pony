@@ -3,7 +3,6 @@ package remote.server;
 import haxe.io.BytesOutput;
 import pony.Pair;
 import pony.net.ISocketClient;
-import pony.net.SocketClient;
 import pony.sys.Process;
 
 /**

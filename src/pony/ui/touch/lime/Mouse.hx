@@ -4,7 +4,6 @@ import lime.app.Application;
 import lime.app.Event;
 import pony.time.DeltaTime;
 import pony.ui.touch.Mouse as M;
-import pony.ui.touch.MouseButton;
 
 /**
  * Lime Mouse

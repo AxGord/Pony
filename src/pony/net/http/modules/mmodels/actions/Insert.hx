@@ -7,7 +7,6 @@ import pony.net.http.modules.mmodels.Action;
 import pony.net.http.modules.mmodels.Model;
 import pony.net.http.modules.mmodels.ModelConnect;
 import pony.text.tpl.ITplPut;
-import pony.text.tpl.Tpl;
 import pony.text.tpl.TplData;
 
 using StringTools;

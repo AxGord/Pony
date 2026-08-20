@@ -2,7 +2,6 @@ package pony.net.http.modules.mmodels.actions;
 
 import pony.Pair;
 import pony.net.http.WebServer.EConnect;
-import pony.net.http.modules.mmodels.Model.ActResult;
 import pony.text.tpl.ITplPut;
 import pony.text.tpl.TplData;
 

@@ -1,9 +1,7 @@
 package;
 
 import haxe.io.BytesOutput;
-import js.Node;
 import pony.net.ISocketClient;
-import pony.net.SocketClient;
 import pony.net.SocketServer;
 
 using pony.Tools;

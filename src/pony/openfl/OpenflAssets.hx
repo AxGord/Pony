@@ -1,6 +1,5 @@
 package pony.openfl;
 
-import haxe.io.Bytes;
 import openfl.Assets;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;

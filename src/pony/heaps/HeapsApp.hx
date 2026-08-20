@@ -8,16 +8,13 @@ import haxe.Timer;
 import hxd.App;
 import hxd.SceneEvents.InteractiveScene;
 import hxd.Window;
-import pony.Config;
 import pony.color.UColor;
-import pony.events.Signal0;
 import pony.events.Signal1;
 import pony.geom.Point;
 import pony.geom.Rect;
 import pony.magic.HasLink;
 import pony.magic.HasSignal;
 import pony.time.DeltaTime;
-import pony.time.Time;
 import pony.ui.keyboard.Keyboard;
 #if js
 import js.html.Element;

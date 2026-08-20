@@ -6,7 +6,6 @@ import haxe.PosInfos;
 import pony.db.mysql.MySQL;
 import pony.fs.Dir;
 import pony.fs.File;
-import pony.magic.Classes;
 import pony.net.http.DefaultModulePack;
 import pony.net.http.HttpServer;
 import pony.net.http.modules.mmodels.DefaultActionsPack;

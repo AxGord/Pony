@@ -1,6 +1,5 @@
 package;
 
-import haxe.CallStack;
 import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
 import haxe.Log;
@@ -9,7 +8,6 @@ import pony.net.ISocketClient;
 import pony.net.SocketClient;
 import pony.net.SocketServer;
 import pony.tests.AsyncTests;
-import pony.Tools;
 
 using pony.Tools;
 

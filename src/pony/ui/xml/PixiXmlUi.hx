@@ -34,7 +34,6 @@ import pony.pixi.ui.ScrollBox;
 #if pixi_particles
 import pony.pixi.ui.Particles;
 #end
-import pony.geom.Rect;
 import pony.pixi.ui.Gradient;
 import pony.pixi.ui.HtmlContainer;
 import pony.pixi.ui.HtmlVideoUI;

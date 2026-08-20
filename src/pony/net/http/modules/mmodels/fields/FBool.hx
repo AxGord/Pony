@@ -1,6 +1,5 @@
 package pony.net.http.modules.mmodels.fields;
 
-import pony.db.mysql.Flags;
 import pony.db.mysql.Types;
 import pony.net.http.modules.mmodels.Field;
 

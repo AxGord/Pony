@@ -1,8 +1,6 @@
 package magic;
 
 import massive.munit.Assert;
-import massive.munit.async.AsyncFactory;
-import massive.munit.util.Timer;
 import pony.magic.HasLink;
 
 class HasLinkTest implements HasLink {

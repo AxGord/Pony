@@ -7,7 +7,6 @@ import pony.magic.HasLink;
 import pony.magic.HasSignal;
 import pony.ui.gui.ButtonCore;
 import pony.ui.gui.SliderCore;
-import pony.ui.touch.Touchable;
 
 /**
  * ScrollBoxBarCore

@@ -8,7 +8,6 @@ import pony.geom.Border;
 import pony.geom.Point;
 import pony.geom.Rect;
 import pony.time.DTimer;
-import pony.time.DeltaTime;
 import pony.time.Time;
 
 /**

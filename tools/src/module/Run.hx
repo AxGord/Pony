@@ -4,7 +4,6 @@ import pony.Fast;
 import types.BAConfig;
 import types.BASection;
 
-using StringTools;
 using pony.text.XmlTools;
 
 typedef RunConfig = {

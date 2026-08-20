@@ -1,6 +1,5 @@
 package pony.text.tpl;
 
-import pony.magic.Declarator;
 import pony.text.tpl.ITplPut;
 import pony.text.tpl.Parse;
 import pony.text.tpl.style.DefaultStyle;

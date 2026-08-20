@@ -3,7 +3,6 @@ package pony.net;
 import com.dongxiguo.protobuf.binaryFormat.LimitableBytesInput;
 import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
-import haxe.Timer;
 import pony.events.Signal0;
 import pony.magic.Declarator;
 import pony.Queue;

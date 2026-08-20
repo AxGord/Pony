@@ -14,9 +14,6 @@ import pony.flash.FLTools;
 import pony.flash.starling.displayFactory.DisplayFactory;
 import pony.flash.starling.displayFactory.NativeFlashDisplayFactory;
 import pony.time.DeltaTime;
-import pony.ui.touch.starling.touchManager.hitTestSources.NativeHitTestSource;
-import pony.ui.touch.starling.touchManager.InputMode;
-import pony.ui.touch.starling.touchManager.touchInputs.NativeFlashTouchInput;
 import pony.ui.touch.starling.touchManager.TouchManager;
 #if starling
 import starling.display.Sprite;

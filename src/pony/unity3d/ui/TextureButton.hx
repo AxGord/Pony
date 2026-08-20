@@ -2,7 +2,6 @@ package pony.unity3d.ui;
 
 import cs.NativeArray.NativeArray;
 import pony.events.Event;
-import pony.ui.gui.ButtonCore;
 import pony.unity3d.ui.TintButton;
 import unityengine.Texture;
 

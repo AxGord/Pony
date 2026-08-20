@@ -5,7 +5,6 @@ import pony.ds.ReadStream;
 import pony.ds.WriteStream;
 import pony.events.Signal0;
 import pony.events.Signal1;
-import pony.events.Signal2;
 
 /**
  * RPC Bytes Stream

@@ -8,7 +8,6 @@ import pony.magic.HasSignal;
 import pony.time.DeltaTime;
 import pony.time.Time;
 import pony.time.TimeInterval;
-import pony.ui.AssetManager;
 
 /**
  * PixiSound

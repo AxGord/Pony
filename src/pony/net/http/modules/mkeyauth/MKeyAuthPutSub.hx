@@ -2,7 +2,6 @@ package pony.net.http.modules.mkeyauth;
 
 import pony.net.http.modules.mlang.MLangConnect;
 import pony.text.tpl.ITplPut;
-import pony.text.tpl.TplData;
 import pony.text.tpl.TplPut;
 
 /**

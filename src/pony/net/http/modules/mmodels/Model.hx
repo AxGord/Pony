@@ -9,7 +9,6 @@ import pony.magic.SuperPuper;
 import pony.net.http.CPQ;
 import pony.net.http.modules.mmodels.fields.FInt;
 import pony.net.http.WebServer.EConnect;
-import pony.Pair;
 
 using pony.Tools;
 using Lambda;

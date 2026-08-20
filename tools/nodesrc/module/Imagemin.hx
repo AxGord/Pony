@@ -6,7 +6,7 @@ import pony.NPM;
 import pony.fs.Dir;
 import pony.fs.File;
 import types.ImageminConfig;
-import types.ImgFormat;
+import types.ImgFormat; // noqa: unused-import
 
 using pony.text.TextTools;
 

@@ -7,7 +7,6 @@ import pixi.core.math.shapes.Rectangle;
 import pony.color.UColor;
 import pony.geom.Border;
 import pony.geom.Point;
-import pony.ui.gui.ButtonCore;
 import pony.ui.gui.ButtonImgN;
 import pony.ui.gui.RubberLayoutCore;
 import pony.ui.touch.Touchable;

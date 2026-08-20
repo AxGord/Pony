@@ -1,7 +1,5 @@
 package create.targets;
 
-import sys.FileSystem;
-
 /**
  * Swf
  * @author AxGord <axgord@gmail.com>

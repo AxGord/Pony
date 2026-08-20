@@ -3,9 +3,7 @@ package pony.net.http.modules.mmodels.actions;
 import pony.net.http.modules.mmodels.Action;
 import pony.net.http.WebServer;
 import pony.Pair;
-import pony.Stream;
 import pony.text.tpl.ITplPut;
-import pony.text.tpl.Tpl;
 import pony.text.tpl.TplData;
 import pony.text.tpl.Valuator;
 

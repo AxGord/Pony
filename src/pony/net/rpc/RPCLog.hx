@@ -1,8 +1,6 @@
 package pony.net.rpc;
 
 import haxe.PosInfos;
-import pony.events.Signal0;
-import pony.events.Signal1;
 import pony.events.Signal2;
 
 /**

@@ -1,7 +1,6 @@
 package pony.js.node.serial;
 
 import pony.Logable;
-import pony.Pair;
 import pony.events.Signal2;
 import pony.js.node.serial.SerialPort;
 import pony.time.Timer;

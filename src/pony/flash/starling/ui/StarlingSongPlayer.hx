@@ -1,12 +1,7 @@
 package pony.flash.starling.ui;
 
-import pony.events.Signal1;
-import pony.flash.FLTools;
 import pony.flash.SongPlayerCore;
 import pony.time.DeltaTime;
-import pony.ui.touch.starling.touchManager.TouchEventType;
-import pony.ui.touch.starling.touchManager.TouchManager;
-import pony.ui.touch.starling.touchManager.TouchManagerEvent;
 import starling.display.DisplayObject;
 import starling.display.Image;
 import starling.display.Sprite;

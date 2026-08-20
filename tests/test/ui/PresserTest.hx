@@ -1,8 +1,6 @@
 package ui;
 
 import massive.munit.Assert;
-import massive.munit.async.AsyncFactory;
-import massive.munit.util.Timer;
 import pony.time.DeltaTime;
 import pony.ui.Presser;
 

@@ -5,18 +5,12 @@ import flash.display.DisplayObjectContainer;
 import flash.display.Sprite;
 import flash.geom.Rectangle;
 import flash.text.TextField;
-import haxe.CallStack;
 import pony.flash.FLStage;
 import pony.geom.Point.IntPoint;
-import pony.Pair;
-import pony.Pool;
-import pony.ui.gui.ButtonCore;
 import pony.ui.gui.TreeCore;
 #if tweenmax
 import com.greensock.TweenMax;
 #end
-
-using pony.flash.FLExtends;
 
 /**
  * Tree

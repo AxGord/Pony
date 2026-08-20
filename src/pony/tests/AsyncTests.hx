@@ -1,11 +1,9 @@
 package pony.tests;
 
-import haxe.CallStack;
 import haxe.Log;
 import haxe.PosInfos;
 import haxe.unit.TestCase;
 import haxe.unit.TestRunner;
-import pony.Pair;
 
 using pony.Tools;
 

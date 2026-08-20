@@ -11,7 +11,6 @@ import h2d.Graphics;
 import h2d.Object;
 import h2d.Tile;
 import h2d.TileGroup;
-import pony.geom.Point;
 import pony.magic.HasLink;
 
 /**

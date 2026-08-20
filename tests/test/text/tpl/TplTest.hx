@@ -1,8 +1,6 @@
 package text.tpl;
 
 import massive.munit.Assert;
-import massive.munit.async.AsyncFactory;
-import massive.munit.util.Timer;
 import pony.text.tpl.ITplPut;
 import pony.text.tpl.Tpl;
 import pony.text.tpl.TplData;

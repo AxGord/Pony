@@ -1,7 +1,5 @@
 package pony.pixi.ui.slices;
 
-using StringTools;
-
 /**
  * SliceTools
  * @author AxGord <axgord@gmail.com>

@@ -1,6 +1,5 @@
 package pony.ui.gui.slices;
 
-using StringTools;
 using pony.text.TextTools;
 
 /**

@@ -2,14 +2,12 @@ package pony.flash.starling.ui;
 
 import pony.flash.SongPlayerCore;
 import pony.geom.Point;
-import pony.time.DeltaTime;
 import pony.ui.gui.ButtonCore;
 import pony.ui.gui.SwitchableList;
 import starling.display.DisplayObject;
 import starling.display.Sprite;
 import starling.text.TextField;
 
-using pony.flash.starling.utils.StarlingUtils;
 using pony.Tools;
 
 /**

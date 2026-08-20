@@ -4,7 +4,6 @@ import haxe.io.Bytes;
 import haxe.io.BytesData;
 import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
-import haxe.Log;
 import haxe.PosInfos;
 import js.Error;
 import js.node.Buffer;

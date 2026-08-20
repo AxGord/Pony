@@ -1,8 +1,5 @@
 package pony.physics.nape;
 
-import haxe.io.Bytes;
-import haxe.io.BytesInput;
-import haxe.io.BytesOutput;
 import nape.geom.GeomPoly;
 import nape.geom.GeomPolyList;
 import nape.geom.Vec2;
@@ -10,8 +7,6 @@ import nape.phys.Body;
 import nape.shape.Polygon;
 import nape.shape.Shape;
 import nape.space.Space;
-import pony.Byte;
-import pony.geom.Point;
 import pony.geom.Rect;
 
 /**

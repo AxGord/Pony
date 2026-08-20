@@ -10,8 +10,6 @@ import pony.geom.Rect;
 import pony.pixi.HtmlContainerBase;
 import pony.time.DeltaTime;
 
-using pony.pixi.PixiExtends;
-
 /**
  * HtmlContainer
  * @author AxGord <axgord@gmail.com>

@@ -6,7 +6,6 @@ import nape.phys.Body;
 import nape.phys.BodyType;
 import nape.shape.Polygon;
 import nape.space.Space;
-import pony.geom.Point;
 import pony.geom.Rect;
 
 /**

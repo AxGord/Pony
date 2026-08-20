@@ -1,7 +1,5 @@
 package pony.text.tpl;
 
-import pony.text.tpl.Tpl;
-
 /**
  * ITplPut
  * @author AxGord

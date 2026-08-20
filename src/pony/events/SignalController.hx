@@ -1,7 +1,5 @@
 package pony.events;
 
-import pony.events.SignalController2;
-
 /**
  * SignalController
  * @author AxGord <axgord@gmail.com>

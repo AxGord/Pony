@@ -1,12 +1,10 @@
 package pony.unity3d.ui;
 
-import pony.color.Color;
 import pony.color.UColor;
 import pony.geom.Point;
 import pony.geom.Rect.IntRect;
 import pony.magic.Declarator;
 import pony.ui.gui.FontStyle;
-import pony.ui.gui.TextTableCore;
 import unityengine.GameObject;
 import unityengine.Object;
 import unityengine.Vector3;

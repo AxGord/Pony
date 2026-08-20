@@ -1,6 +1,5 @@
 import massive.munit.client.HTTPClient;
 import massive.munit.client.JUnitReportClient;
-import massive.munit.client.PrintClient;
 import massive.munit.client.RichPrintClient;
 import massive.munit.client.SummaryReportClient;
 import massive.munit.TestRunner;

@@ -5,8 +5,6 @@ import pony.Pair;
 import pony.fs.Unit;
 import types.BASection;
 
-using pony.text.TextTools;
-
 /**
  * Rename module
  * @author AxGord <axgord@gmail.com>

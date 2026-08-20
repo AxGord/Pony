@@ -1,6 +1,5 @@
 package pony.ui.gui;
 
-import pony.geom.Point;
 import pony.magic.Declarator;
 
 enum TreeElement {

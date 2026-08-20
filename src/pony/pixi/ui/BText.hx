@@ -7,8 +7,6 @@ import pixi.extras.BitmapText;
 import pixi.filters.blur.BlurFilter;
 import pony.geom.IWH;
 import pony.geom.Point;
-import pony.text.TextTools;
-import pony.time.DeltaTime;
 
 using StringTools;
 

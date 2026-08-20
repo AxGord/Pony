@@ -2,7 +2,6 @@ package pony.net.rpc;
 
 import haxe.io.Bytes;
 import haxe.io.BytesInput;
-import haxe.io.BytesOutput;
 import pony.events.Signal1;
 import pony.magic.HasSignal;
 

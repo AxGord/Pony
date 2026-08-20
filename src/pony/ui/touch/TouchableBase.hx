@@ -1,6 +1,5 @@
 package pony.ui.touch;
 
-import pony.events.Signal0;
 import pony.events.Signal1;
 import pony.geom.Direction;
 import pony.geom.Point;

@@ -13,12 +13,9 @@ import pony.geom.Border;
 import pony.magic.HasAbstract;
 import pony.openfl.Button;
 import pony.openfl.ui.AlignLayout;
-import pony.openfl.ui.BaseLayout;
 import pony.openfl.ui.IntervalLayout;
 import pony.openfl.ui.RubberLayout;
-import pony.openfl.ui.TLayout;
 import pony.ui.AssetManager;
-import pony.ui.gui.BaseLayoutCore;
 
 using Std;
 using StringTools;

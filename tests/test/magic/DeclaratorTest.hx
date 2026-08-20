@@ -2,8 +2,6 @@ package magic;
 
 import magic.DeclaratorTest.DeclaratorTestHelper;
 import massive.munit.Assert;
-import massive.munit.async.AsyncFactory;
-import massive.munit.util.Timer;
 import pony.magic.Declarator;
 
 class DeclaratorTest {

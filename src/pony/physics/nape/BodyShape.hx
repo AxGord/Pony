@@ -10,7 +10,6 @@ import nape.shape.Polygon;
 import nape.shape.Shape;
 import nape.space.Space;
 import pony.Byte;
-import pony.geom.Point;
 import pony.geom.Rect;
 
 /**

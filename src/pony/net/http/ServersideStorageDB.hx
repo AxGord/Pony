@@ -1,13 +1,11 @@
 package pony.net.http;
 
-import haxe.ds.IntMap;
 import haxe.Serializer;
 import haxe.Unserializer;
 import pony.db.DBV;
 import pony.db.mysql.Flags;
 import pony.db.mysql.Types;
 import pony.db.Table;
-import pony.Dictionary;
 import pony.magic.Declarator;
 import pony.Tools;
 

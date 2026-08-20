@@ -5,7 +5,6 @@ import js.html.CanvasElement;
 import pixi.core.display.DisplayObject;
 import pixi.core.sprites.Sprite;
 import pixi.core.textures.Texture;
-import pony.color.UColor;
 import pony.color.UColors;
 import pony.geom.IWH;
 import pony.geom.Point;

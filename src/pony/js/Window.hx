@@ -4,7 +4,6 @@ import js.Browser;
 import pony.events.Signal0;
 import pony.magic.Declarator;
 import pony.magic.HasSignal;
-import pony.time.DeltaTime;
 import pony.time.DTimer;
 import pony.time.Time;
 

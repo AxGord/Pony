@@ -3,8 +3,6 @@ package pony.pixi.ui;
 import pixi.core.Pixi;
 import pixi.core.display.Container;
 import pixi.core.sprites.Sprite;
-import pony.geom.Border;
-import pony.geom.Point;
 import pony.ui.gui.StepSliderCore;
 
 /**

@@ -1,6 +1,5 @@
 package pony.text.tpl;
 
-import haxe.xml.Fast;
 import pony.fs.Dir;
 import pony.fs.File;
 import pony.text.tpl.TplSystem;

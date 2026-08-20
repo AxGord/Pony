@@ -1,7 +1,6 @@
 package pony.text;
 
 using StringTools;
-using pony.Tools;
 
 /**
  * Word wrap
