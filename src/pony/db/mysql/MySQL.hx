@@ -25,7 +25,7 @@ pony.db.mysql.nodejs.MySQL
 #else
 pony.db.mysql.haxe.MySQL
 #end
-implements IMySQL /* implements Dynamic<Table> */ {
+implements IMySQL {
 	
 	private var tables:Map<String, Table> = new Map();
 	

@@ -1,0 +1,138 @@
+{
+	"resolutionLibs": [
+		"hxnodejs",
+		"hxbitmini",
+		"hx3compat",
+		"continuation"
+	],
+	"rules": {
+		"anon-type-dup": {
+			"enabled": true
+		},
+		"case-pattern-separator": {
+			"enabled": true
+		},
+		"collapse-nested-switch": {
+			"enabled": true
+		},
+		"cond-assign-merge": {
+			"enabled": true
+		},
+		"dead-binder-counter-loop": {
+			"enabled": true
+		},
+		"doc-coverage": {
+			"enabled": false
+		},
+		"explicit-local-type": {
+			"enabled": true
+		},
+		"field-init-in-constructor": {
+			"enabled": true
+		},
+		"hoist-branch-string-affix": {
+			"enabled": true
+		},
+		"hoist-embedded-assignment": {
+			"enabled": true
+		},
+		"import-order": {
+			"enabled": true
+		},
+		"join-override-chain": {
+			"enabled": true
+		},
+		"join-string-append": {
+			"enabled": true
+		},
+		"magic-number": {
+			"enabled": false
+		},
+		"misplaced-type-doc": {
+			"enabled": true
+		},
+		"no-underscore-prefix": {
+			"enabled": true
+		},
+		"orphan-accessor": {
+			"enabled": true
+		},
+		"oversized-type": {
+			"maxMembers": 100
+		},
+		"prefer-doc-comment": {
+			"enabled": true
+		},
+		"prefer-exists": {
+			"enabled": true
+		},
+		"prefer-for-in": {
+			"enabled": true
+		},
+		"prefer-foreach": {
+			"enabled": true
+		},
+		"prefer-keyvalue-loop": {
+			"enabled": true
+		},
+		"prefer-line-comment": {
+			"enabled": true
+		},
+		"prefer-lpad": {
+			"enabled": true
+		},
+		"prefer-typed-throw": {
+			"enabled": true
+		},
+		"redundant-ascription": {
+			"enabled": true
+		},
+		"redundant-cast-type": {
+			"enabled": true
+		},
+		"redundant-lambda-wrapper": {
+			"enabled": true
+		},
+		"redundant-map-exists": {
+			"enabled": true
+		},
+		"redundant-parens": {
+			"atoms": true,
+			"sameOperatorLeft": true,
+			"comparisonOperands": true
+		},
+		"redundant-property-access": {
+			"enabled": true
+		},
+		"redundant-replace-loop": {
+			"enabled": true
+		},
+		"redundant-tostring": {
+			"enabled": true
+		},
+		"redundant-trailing-comma": {
+			"enabled": true
+		},
+		"return-reassign-ternary": {
+			"enabled": true
+		},
+		"shorten-type-ref": {
+			"enabled": true
+		},
+		"static-constant": {
+			"enabled": true
+		},
+		"string-literal-dup": {
+			"enabled": false
+		},
+		"try-catch-null-guard": {
+			"enabled": true
+		},
+		"unused-public-member": {
+			"enabled": false
+		},
+		"while-true-condition": {
+			"enabled": true
+		}
+	}
+}

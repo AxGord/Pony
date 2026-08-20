@@ -75,7 +75,7 @@ class HttpServer {
 		for (k in fixedHeaders.keys()) res.setHeader(k, fixedHeaders[k]);
 		var multi: String = 'multipart/form-data';
 		var contentType: String = req.headers.field('content-type');
-		switch (req.method/*.toUpperCase()*/) {
+		switch (req.method) {
 			case 'POST' if (contentType.length >= multi.length && contentType.substr(0, multi.length) == multi):
 				var me = this;
 				var multiparty = Type.createInstance(multipartyForm(), []);

@@ -1,0 +1,37 @@
+# Compiler oracle for `hxq lint` (apqlint.json -> compilerOracle).
+#
+# Types the library on the two targets that build clean today: neko and nodejs.
+# Nothing is generated (--no-output) - this is a typecheck, not a build.
+#
+# The ignore lists mirror docgen/DocInclude.hx (a package is skipped on a target whose
+# backend it cannot reach), plus two entries docgen does not have:
+#   pony.physics.nape   - the nape haxelib is not a dependency of this repo
+#   pony.js.node.serial - reads NPM.serialport, which the NPM builder only emits for a
+#                         project whose package.json declares it
+#
+# hxml arguments cannot span lines, so each include list is one long line.
+
+# --- neko ---
+-cp src
+--no-output
+-lib hxbitmini
+-lib hx3compat
+-lib continuation
+-neko bin/lint-oracle.n
+# pony.ui.keyboard's neko branch is only target-supported when munit is defined
+-lib munit
+--macro include('pony', true, ['pony.openfl', 'pony.ui.touch.openfl', 'pony.ui.touch.lime', 'pony.ui.xml.OpenflXmlUi', 'pony.flash', 'pony.ui.touch.flash', 'pony.cs', 'pony.ui.touch.starling', 'pony.flash.starling', 'pony.pixi', 'pony.ui.touch.pixi', 'pony.ui.xml.PixiXmlUi', 'pony.heaps', 'pony.ui.touch.heaps', 'pony.ui.xml.HeapsXmlUi', 'pony.ui.keyboard.heaps', 'pony.cc', 'pony.unity3d', 'pony.ui.keyboard.unity', 'pony.html', 'pony.HtmlVideo', 'pony.js', 'pony.JsTools', 'pony.ui.keyboard.js', 'pony.nodejs', 'pony.sys.nodejs', 'pony.fs.nodejs', 'pony.midi', 'pony.NPM', 'pony.ui.keyboard', 'pony.net.http', 'pony.xr', 'pony.electron', 'pony.text.tpl.Templates', 'pony.text.tpl.TplSystem', 'pony.text.tpl.TplDir', 'pony.LangTable', 'pony.net.rpc.RPCFileTransport', 'pony.db', 'pony.net.Protobuf', 'pony.magic', 'pony.macro', 'pony.ui', 'pony.flash.GetFromStage', 'pony.flash.Exterface', 'pony.physics.nape'])
+
+--next
+
+# --- nodejs ---
+-cp src
+--no-output
+-lib hxbitmini
+-lib hx3compat
+-lib continuation
+-lib hxnodejs
+-D nodejs
+-js bin/lint-oracle.js
+--macro allowPackage('sys')
+--macro include('pony', true, ['pony.openfl', 'pony.ui.touch.openfl', 'pony.ui.touch.lime', 'pony.ui.xml.OpenflXmlUi', 'pony.flash', 'pony.ui.touch.flash', 'pony.cs', 'pony.ui.touch.starling', 'pony.flash.starling', 'pony.pixi', 'pony.ui.touch.pixi', 'pony.ui.xml.PixiXmlUi', 'pony.heaps', 'pony.ui.touch.heaps', 'pony.ui.xml.HeapsXmlUi', 'pony.ui.keyboard.heaps', 'pony.cc', 'pony.unity3d', 'pony.ui.keyboard.unity', 'pony.html', 'pony.HtmlVideo', 'pony.ui.keyboard', 'pony.net.http', 'pony.net.http.platform.php', 'pony.xr', 'pony.electron', 'pony.text.tpl.Templates', 'pony.text.tpl.TplSystem', 'pony.text.tpl.TplDir', 'pony.LangTable', 'pony.net.rpc.RPCFileTransport', 'pony.db', 'pony.net.Protobuf', 'pony.magic', 'pony.macro', 'pony.ui', 'pony.flash.GetFromStage', 'pony.flash.Exterface', 'pony.physics.nape', 'pony.js.node.serial'])

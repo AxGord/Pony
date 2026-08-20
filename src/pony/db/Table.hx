@@ -46,9 +46,10 @@ abstract Table(CTable) {
 
 /**
  * MySQL table, powerful instrument for work with database tables
+ * Dynamic field access is provided by Declarator, not by implements Dynamic<Table>
  * @author AxGord <axgord@gmail.com>
  */
-class CTable /* implements Dynamic < Table > */ implements Declarator implements Ninja
+class CTable implements Declarator implements Ninja
 {
 	#if macro // fix macro error
 	public function new(mysql:ISQL, table:String) {}
