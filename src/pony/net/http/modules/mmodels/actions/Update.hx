@@ -5,6 +5,7 @@ import pony.net.http.WebServer.EConnect;
 import pony.net.http.modules.mmodels.Model.ActResult;
 import pony.text.tpl.ITplPut;
 import pony.text.tpl.TplData;
+import pony.text.tpl.TplPut;
 
 using StringTools;
 using pony.text.TextTools;
@@ -93,7 +94,7 @@ class UpdateConnect extends ActionConnect implements ISubActionConnect {
 }
 
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
-class UpdatePut extends pony.text.tpl.TplPut<UpdateConnect, Dynamic> {
+class UpdatePut extends TplPut<UpdateConnect, Dynamic> {
 
 	@:async
 	override public function tag(name: String, content: TplData, arg: String, args: Map<String, String>, ?kid: ITplPut): String {
@@ -142,7 +143,7 @@ class UpdatePut extends pony.text.tpl.TplPut<UpdateConnect, Dynamic> {
 }
 
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
-class UpdatePutSub extends pony.text.tpl.TplPut<UpdateConnect, Dynamic> {
+class UpdatePutSub extends TplPut<UpdateConnect, Dynamic> {
 
 	@:async
 	override public function shortTag(name: String, arg: String, ?kid: ITplPut): String {
@@ -159,7 +160,7 @@ class UpdatePutSub extends pony.text.tpl.TplPut<UpdateConnect, Dynamic> {
 }
 
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
-class UpdatePutArg extends pony.text.tpl.TplPut<{ o: UpdateConnect, arg: String }, String> {
+class UpdatePutArg extends TplPut<{ o: UpdateConnect, arg: String }, String> {
 
 	@:async
 	override public function tag(name: String, content: TplData, arg: String, args: Map<String, String>, ?kid: ITplPut): String {

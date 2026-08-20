@@ -20,11 +20,11 @@ typedef TO = {
 @SuppressWarnings('checkstyle:MagicNumber')
 class Touch implements Declarator implements HasSignal {
 
-	private static inline var INIT_PRIORITY: Int = -2;
-	private static inline var LOCK_PRIORITY: Int = -1000;
-	private static inline var START_PRIORITY: Int = -9;
-	private static inline var MOVE_PRIORITY: Int = -8;
-	private static inline var END_PRIORITY: Int = -7;
+	private static inline final INIT_PRIORITY: Int = -2;
+	private static inline final LOCK_PRIORITY: Int = -1000;
+	private static inline final START_PRIORITY: Int = -9;
+	private static inline final MOVE_PRIORITY: Int = -8;
+	private static inline final END_PRIORITY: Int = -7;
 
 	@:auto public static var onMove: Signal1<TO>;
 	@:auto public static var onStart: Signal1<TO>;

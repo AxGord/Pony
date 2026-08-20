@@ -23,7 +23,7 @@ class TplTest {
 
 	@Test
 	public function test(): Void {
-		var t: Tpl = new Tpl(this, '123 < _ f=", ">%id%</_f>  e% qwe = "15%df% <_n2>weg</_n2>6" %');
+		final t: Tpl = new Tpl(this, '123 < _ f=", ">%id%</_f>  e% qwe = "15%df% <_n2>weg</_n2>6" %');
 		var flag: Bool = false;
 		t.gen(null, null, function(r: String): Void {
 			Assert.areEqual('123 0, 1, 2  e15df n26', r);
@@ -37,7 +37,7 @@ class TplTest {
 	@Test
 	public function dir(): Void {
 		final d: Dir = Tools.currentDir() + 'tpls';
-		var td: TplDir = new TplDir(d, this);
+		final td: TplDir = new TplDir(d, this);
 		var flag: Bool = false;
 		td.gen('index', null, null, (r: String) -> {
 			Assert.areEqual('hello world', r);

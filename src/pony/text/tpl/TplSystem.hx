@@ -86,7 +86,7 @@ class PagesPut extends TplPut<TplSystem, {}> {
 						return '';
 					}
 				}
-				var d: TplDir = a.includes;
+				final d: TplDir = a.includes;
 				if (d.exists(arg)) {
 					var c: String = null;
 					if (kid != null)

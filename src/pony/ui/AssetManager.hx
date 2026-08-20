@@ -338,7 +338,7 @@ class AssetManager implements HasLink {
 	public static function hashNameConvert(asset: String, hash: String): String {
 		if (hash.length == 0) return asset;
 		if (changedNames) {
-			var p: SPair<String> = asset.lastSplit('.');
+			final p: SPair<String> = asset.lastSplit('.');
 			return [p.a, hash, p.b].join('.');
 		} else {
 			return '$asset?$hash';

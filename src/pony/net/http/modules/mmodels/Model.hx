@@ -27,7 +27,7 @@ enum ActResult {
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
 class Model implements SuperPuper {
 
-	public var lang: String;
+	public var lang: String = 'en';
 	public var mm: MModels;
 	public var name: String;
 	public var columns: Map<String, pony.net.http.modules.mmodels.Field>;
@@ -39,7 +39,6 @@ class Model implements SuperPuper {
 	public var access: Map<String, String>;
 
 	public function new(mm: MModels, actionsClasses: Map<String, Dynamic>) {
-		lang = 'en';
 		name = Type.getClassName(Type.getClass(this));
 		name = name.substr(name.lastIndexOf('.') + 1);
 		this.mm = mm;

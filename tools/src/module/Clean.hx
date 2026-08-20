@@ -42,7 +42,7 @@ final class Clean extends CfgModule<CleanConfig> {
 	override private function runNode(cfg: CleanConfig): Void {
 		var keep: Array<String> = cfg.keepFiles;
 		if (cfg.keepHashed) {
-			final hashModule: Null<module.Hash> = modules.getModule(module.Hash);
+			final hashModule: Null<module.Hash> = modules.getModule(module.Hash); // noqa: shorten-type-ref
 			if (hashModule != null && hashModule.xml != null) {
 				final hashed: Array<String> = hashModule.getHashed();
 				keep = keep.concat(hashed).concat(hashed.map(function(f: String): String return '$f.bin'));

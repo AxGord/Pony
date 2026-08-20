@@ -1,3 +1,4 @@
+import pony.Pair;
 import pony.fs.Dir;
 
 /**
@@ -17,18 +18,18 @@ class Lines {
 	}
 
 	private static function tryShow(lang: String, ext: String): Void {
-		final p: pony.Pair<Int, Int> = getCount(ext);
+		final p: Pair<Int, Int> = getCount(ext);
 		if (p.b > 0) Sys.println('$lang files total lines count: ${p.a} in ${p.b} files');
 	}
 
-	private static function getCount(ext: String): pony.Pair<Int, Int> {
+	private static function getCount(ext: String): Pair<Int, Int> {
 		var count: Int = 0;
 		var files: Int = 0;
 		for (file in ('.': Dir).contentRecursiveFiles(ext)) {
 			files++;
 			count += file.content.split('\n').length;
 		}
-		return new pony.Pair(count, files);
+		return new Pair(count, files);
 	}
 
 }

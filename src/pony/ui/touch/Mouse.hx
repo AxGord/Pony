@@ -20,9 +20,9 @@ private typedef MouseEvent = {
  */
 class Mouse implements Declarator implements HasSignal {
 
-	private static inline var UP_PRIORITY: Int = -3;
-	private static inline var MOVE_PRIORITY: Int = -4;
-	private static inline var DOWN_PRIORITY: Int = -5;
+	private static inline final UP_PRIORITY: Int = -3;
+	private static inline final MOVE_PRIORITY: Int = -4;
+	private static inline final DOWN_PRIORITY: Int = -5;
 
 	@:auto public static var onMove: Signal2<Float, Float>;
 	@:auto public static var onLeftDown: Signal2<Float, Float>;

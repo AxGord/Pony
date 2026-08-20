@@ -365,7 +365,7 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 				if (attrs.div.isTrue()) {
 					final div = js.Browser.document.createDivElement();
 					if (attrs.src != null) {
-						div.innerHTML = pony.pixi.PixiAssets.text(attrs.src);
+						div.innerHTML = PixiAssets.text(attrs.src);
 					}
 					if (attrs.color != null) div.style.backgroundColor = attrs.color;
 					app.element.appendChild(div);

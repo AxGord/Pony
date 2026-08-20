@@ -109,7 +109,7 @@ class MonacoEditor extends pony.Logable {
 			tasks.add();
 			final l: LangLoaded = { name: lang.name, ext: lang.ext, tm: null, conf: null };
 			this.langs[lang.name] = l;
-			var st: Tasks = new Tasks(tasks.end);
+			final st: Tasks = new Tasks(tasks.end);
 			st.add();
 			readMonacoFile(lang.tm, (s: String) -> {
 				log(l.name + ' tm loaded');

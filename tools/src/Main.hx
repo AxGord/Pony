@@ -11,7 +11,7 @@ using pony.text.TextTools;
  */
 class Main {
 
-	private static var commands: Commands = new Commands();
+	private static final commands: Commands = new Commands();
 
 	private static function showLogo(): Void {
 		Sys.println(Utils.ansiForeground(haxe.Resource.getString('logo'), AnsiForeground.LightGray));

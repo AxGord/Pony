@@ -11,7 +11,7 @@ import pony.events.Signal1;
  * @author AxGord <axgord@gmail.com>
  */
 #if (haxe_ver >= 4.2) final #else @:final #end
-class RPCStream extends pony.net.rpc.RPCUnit<RPCStream> implements pony.net.rpc.IRPC {
+class RPCStream extends RPCUnit<RPCStream> implements IRPC {
 
 	@:auto public var onRead: Signal1<ReadStream<Bytes>>;
 	@:rpc public var onStreamData: Signal1<Bytes>;

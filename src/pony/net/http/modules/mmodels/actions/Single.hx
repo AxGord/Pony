@@ -45,7 +45,7 @@ final class SinglePut extends pony.text.tpl.TplPut<SingleConnect, CPQ> {
 	override public function tag(name: String, content: TplData, arg: String, args: Map<String, String>, ?kid: ITplPut): String {
 		if (Std.is(kid, SinglePutSub)) return @await parent.tag(name, content, arg, args, kid);
 		if (!a.checkAccess()) return '';
-		var mp: ModelPut = cast parent;
+		final mp: ModelPut = cast parent;
 		final f = arg == null ? 'id' : arg;
 		final v: String = mp.b == null ? null : Reflect.field(mp.b, f);
 		final cargs: Array<String> = if (a.hasPathArg)

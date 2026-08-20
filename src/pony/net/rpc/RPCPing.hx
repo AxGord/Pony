@@ -10,7 +10,7 @@ import pony.time.Timer;
  * @author AxGord <axgord@gmail.com>
  */
 #if (haxe_ver >= 4.2) final #else @:final #end
-class RPCPing extends pony.net.rpc.RPCUnit<RPCPing> implements pony.net.rpc.IRPC {
+class RPCPing extends RPCUnit<RPCPing> implements IRPC {
 
 	private static inline final REPEAR: Int = 5000;
 

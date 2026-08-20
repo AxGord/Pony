@@ -1,5 +1,6 @@
 package pony.net.rpc;
 
+import pony.text.TextTools;
 #if macro
 import haxe.macro.Context;
 import haxe.macro.Expr;
@@ -54,7 +55,7 @@ class RPCBuilder {
 			if (field.meta.checkMeta([':sub'])) switch field.kind {
 				case FieldType.FVar(TPath(t)):
 					final n = field.name;
-					final sn = ON + pony.text.TextTools.bigFirst(n);
+					final sn = ON + TextTools.bigFirst(n);
 
 					fields.push({ name: sn, access: [APrivate], pos: Context.currentPos(), kind: FVar(macro :Signal1<haxe.io.Bytes>), meta: [{ name: META, pos: Context.currentPos() }] });
 
@@ -104,7 +105,7 @@ class RPCBuilder {
 					}
 
 					final nf = n.substr(0, 2);
-					final en = 'e' + (nf == ON ? n.substr(2) : pony.text.TextTools.bigFirst(n));
+					final en = 'e' + (nf == ON ? n.substr(2) : TextTools.bigFirst(n));
 
 					{
 						final rn = nf == ON ? n.charAt(2).toLowerCase() + n.substr(3) : n;

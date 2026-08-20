@@ -27,13 +27,12 @@ class Tooltip {
 	private final _data: Map<IDisplayObject, Dynamic> = [];
 	private final _tooltip: IDisplayObject;
 
-	private var _container: IDisplayObjectContainer;
+	private final _container: IDisplayObjectContainer = #if starling untyped Starling.current.root #else untyped Lib.current #end;
 	private var _previousTarget: Dynamic;
 
 	public function new(tooltip: IDisplayObject) {
 		_tooltip = tooltip;
 
-		_container = #if starling untyped Starling.current.root #else untyped Lib.current #end;
 
 		_tooltip.visible = false;
 		_tooltip.setTouchable(false);

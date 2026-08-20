@@ -85,7 +85,7 @@ class BodyBase implements pony.magic.HasSignal implements pony.magic.HasLink imp
 		if (isStatic) return;
 		addListener(new BodyListener(CbEvent.WAKE, cbt, wakeHandler));
 		addListener(new BodyListener(CbEvent.SLEEP, cbt, sleepHandler));
-		pony.time.DeltaTime.update << updateHandler;
+		DeltaTime.update << updateHandler;
 	}
 
 	private function get_pos(): Point<Float> {
@@ -218,7 +218,7 @@ class BodyBase implements pony.magic.HasSignal implements pony.magic.HasLink imp
 		) {
 			angularVel = 0;
 			rotation = lookAtTarget;
-			pony.time.DeltaTime.update >> checkLookAtHandler;
+			DeltaTime.update >> checkLookAtHandler;
 		}
 	}
 

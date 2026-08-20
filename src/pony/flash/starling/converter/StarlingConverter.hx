@@ -153,7 +153,7 @@ class StarlingConverter {
 			starlingChild = getSpriteInternal(untyped source, coordinateSpace, disposeable);
 			starlingChild = new StarlingSongPlayer(untyped starlingChild);
 			untyped source.starlingBar = starlingChild;
-		} else if (Std.is(source, pony.flash.ui.Button)) // Button
+		} else if (Std.is(source, Button)) // Button
 		{
 			starlingChild = StarlingButton.builder(_atlasCreator, cast source, coordinateSpace, disposeable);
 		} else if (Std.is(source, flash.display.Sprite) && childrenWithNames(cast(source, flash.display.Sprite))) // Container

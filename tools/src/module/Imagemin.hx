@@ -29,7 +29,7 @@ class Imagemin extends NModule<ImageminConfig> {
 
 	#if (haxe_ver < 4.2) override #end
 	private function writeCfg(protocol: NProtocol, cfg: Array<ImageminConfig>): Void {
-		final hash: Null<module.Hash> = cast modules.getModule(module.Hash);
+		final hash: Null<module.Hash> = cast modules.getModule(module.Hash); // noqa: shorten-type-ref
 		if (hash != null && hash.xml != null) for (c in cfg) if (c.checkHash) c.ignore = c.ignore.concat(hash.getNotChangedUnits());
 		protocol.imageminRemote(cfg);
 	}

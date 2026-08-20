@@ -12,7 +12,7 @@ import pony.magic.HasSignal;
  */
 class DTimer implements HasSignal implements ITimer<DTimer> implements Declarator {
 
-	private static inline var MINIMAL_TIME_STEP: Float = 0.001;
+	private static inline final MINIMAL_TIME_STEP: Float = 0.001;
 
 	public var currentTime: Time;
 

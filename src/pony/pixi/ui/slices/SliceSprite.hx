@@ -16,7 +16,7 @@ class SliceSprite extends Sprite {
 	private final creep: Float;
 
 	private var inited: Bool = false;
-	private var images: Array<Sprite>;
+	private final images: Array<Sprite>;
 
 	public function new(data: Array<String>, ?useSpriteSheet: String, creep: Float = 0) {
 		super();

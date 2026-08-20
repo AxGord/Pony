@@ -9,10 +9,10 @@ using StringTools;
 
 #if (haxe_ver >= 4.2) enum #else @:enum #end abstract TweenType(Int) {
 
-	var Linear = 0;
-	var Square = 1;
-	var BackSquare = 2;
-	var Bezier = 3;
+	final Linear = 0;
+	final Square = 1;
+	final BackSquare = 2;
+	final Bezier = 3;
 
 	@:from public static function fromString(s: String): TweenType {
 		return switch s.trim().toLowerCase() {
@@ -32,8 +32,8 @@ using StringTools;
  */
 class Tween implements HasSignal implements Declarator {
 
-	private static inline var SECOND: UInt = 1000;
-	private static inline var HALF_SECOND: UInt = 500;
+	private static inline final SECOND: UInt = 1000;
+	private static inline final HALF_SECOND: UInt = 500;
 
 	@:auto public var onUpdate: Signal1<Float>;
 	@:auto public var onProgress: Signal1<Float>;

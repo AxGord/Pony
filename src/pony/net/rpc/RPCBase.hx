@@ -9,7 +9,7 @@ import hxbitmini.Serializer;
  * RPCBase
  * @author AxGord <axgord@gmail.com>
  */
-class RPCBase<T:pony.net.rpc.IRPC> {
+class RPCBase<T:IRPC> {
 
 	private var object(get, never): T;
 

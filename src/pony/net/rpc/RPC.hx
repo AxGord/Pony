@@ -2,6 +2,7 @@ package pony.net.rpc;
 
 import haxe.io.BytesOutput;
 import pony.magic.HasSignal;
+import pony.net.INet;
 
 /**
  * IRPC - Remove Procedure Call Build System
@@ -9,11 +10,11 @@ import pony.magic.HasSignal;
  * use with IRPC
  * @author AxGord <axgord@gmail.com>
  */
-class RPC<T:pony.net.rpc.IRPC> extends RPCBase<T> implements HasSignal {
+class RPC<T:IRPC> extends RPCBase<T> implements HasSignal {
 
-	public var socket: pony.net.INet;
+	public var socket: INet;
 
-	public function new(s: pony.net.INet) {
+	public function new(s: INet) {
 		super();
 		socket = s;
 		s.onData << dataHandler;

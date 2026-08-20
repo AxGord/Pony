@@ -101,7 +101,7 @@ class Utils {
 	}
 
 	public static function gitHash(file: String): Bytes {
-		var a: SPair<String> = TextTools.lastSplit(file, '/');
+		final a: SPair<String> = TextTools.lastSplit(file, '/');
 		final path: String = a.b == '' ? '' : a.a;
 		final file: String = a.b == '' ? a.a : a.b;
 		// var, not final: sw() is an inline abstract member that writes `this`

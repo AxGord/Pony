@@ -8,6 +8,7 @@ import pony.net.http.modules.mmodels.Model;
 import pony.net.http.modules.mmodels.ModelConnect;
 import pony.text.tpl.ITplPut;
 import pony.text.tpl.TplData;
+import pony.text.tpl.TplPut;
 
 using StringTools;
 using Lambda;
@@ -93,7 +94,7 @@ class InsertConnect extends ActionConnect {
  * @author AxGord <axgord@gmail.com>
  */
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
-class InsertPut extends pony.text.tpl.TplPut<InsertConnect, CPQ> {
+class InsertPut extends TplPut<InsertConnect, CPQ> {
 
 	@:async
 	override public function tag(name: String, content: TplData, arg: String, args: Map<String, String>, ?kid: ITplPut): String {
@@ -157,7 +158,7 @@ class InsertPut extends pony.text.tpl.TplPut<InsertConnect, CPQ> {
 }
 
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
-class InsertPutSub extends pony.text.tpl.TplPut<InsertConnect, CPQ> {
+class InsertPutSub extends TplPut<InsertConnect, CPQ> {
 
 	@:async
 	override public function tag(name: String, content: TplData, arg: String, args: Map<String, String>, ?kid: ITplPut): String {
@@ -169,7 +170,7 @@ class InsertPutSub extends pony.text.tpl.TplPut<InsertConnect, CPQ> {
 }
 
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
-class InsertPutArg extends pony.text.tpl.TplPut<{ o: InsertConnect, arg: String }, CPQ> {
+class InsertPutArg extends TplPut<{ o: InsertConnect, arg: String }, CPQ> {
 
 	@:async
 	override public function tag(name: String, content: TplData, arg: String, args: Map<String, String>, ?kid: ITplPut): String {

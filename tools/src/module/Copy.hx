@@ -42,7 +42,7 @@ using pony.text.TextTools;
 	}
 
 	private function copyDirs(data: Array<Pair<String, Null<String>>>, from: String, to: String, hash: Bool, addext: String): Void {
-		final hashModule: Null<module.Hash> = hash ? modules.getModule(module.Hash) : null;
+		final hashModule: Null<module.Hash> = hash ? modules.getModule(module.Hash) : null; // noqa: shorten-type-ref
 		for (d in data) {
 			final dir: Dir = from + d.a;
 			final filter: Null<String> = d.b;
@@ -70,7 +70,7 @@ using pony.text.TextTools;
 	}
 
 	private function copyUnits(data: Array<Pair<String, Null<String>>>, from: String, to: String, hash: Bool, addext: String): Void {
-		final hashModule: Null<module.Hash> = hash ? modules.getModule(module.Hash) : null;
+		final hashModule: Null<module.Hash> = hash ? modules.getModule(module.Hash) : null; // noqa: shorten-type-ref
 		for (p in data) {
 			final unit: Unit = from + p.a;
 			log('Copy file: $unit');

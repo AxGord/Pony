@@ -164,8 +164,8 @@ class Parse extends ParseBoy<TplContent> {
 		}
 		// END CHECK VARS
 
-		var o: Int = openPos();
-		var c: Int = closePos();
+		final o: Int = openPos();
+		final c: Int = closePos();
 
 		if (o >= c) {
 			if (o == c) {

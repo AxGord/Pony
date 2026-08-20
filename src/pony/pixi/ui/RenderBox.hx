@@ -4,6 +4,7 @@ import pixi.core.display.DisplayObject;
 import pixi.core.renderers.canvas.CanvasRenderer;
 import pixi.core.textures.RenderTexture;
 import pixi.core.textures.Texture;
+import pony.geom.IWH;
 import pony.geom.Point;
 import pony.pixi.App;
 
@@ -11,7 +12,7 @@ import pony.pixi.App;
  * RenderBox
  * @author AxGord <axgord@gmail.com>
  */
-class RenderBox extends pixi.core.sprites.Sprite implements pony.geom.IWH {
+class RenderBox extends pixi.core.sprites.Sprite implements IWH {
 
 	public var size(get, never): Point<Float>;
 
@@ -55,7 +56,7 @@ class RenderBox extends pixi.core.sprites.Sprite implements pony.geom.IWH {
 
 }
 
-class RenderContainer extends pixi.core.sprites.Sprite implements pony.geom.IWH {
+class RenderContainer extends pixi.core.sprites.Sprite implements IWH {
 
 	public var size(get, never): Point<Float>;
 

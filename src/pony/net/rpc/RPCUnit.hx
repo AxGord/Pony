@@ -9,7 +9,7 @@ import pony.magic.HasSignal;
  * RPCUnit
  * @author AxGord <axgord@gmail.com>
  */
-class RPCUnit<T:pony.net.rpc.IRPC> extends RPCBase<T> implements HasSignal {
+class RPCUnit<T:IRPC> extends RPCBase<T> implements HasSignal {
 
 	@:auto public var onData: Signal1<Bytes>;
 

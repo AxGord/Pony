@@ -1,4 +1,6 @@
+import pony.ZipTool;
 import sys.FileSystem;
+import sys.io.File;
 
 using StringTools;
 
@@ -101,7 +103,7 @@ class Haxelib {
 			Utils.error('$haxelibFile not exists');
 			return null;
 		}
-		final tdata: String = sys.io.File.getContent(haxelibFile);
+		final tdata: String = File.getContent(haxelibFile);
 		return haxe.Json.parse(tdata);
 	}
 
@@ -118,9 +120,9 @@ class Haxelib {
 	}
 
 	private static function upload(): Void {
-		final data: Array<String> = sys.io.File.getContent(listFile).split('\n');
+		final data: Array<String> = File.getContent(listFile).split('\n');
 		if (data.indexOf(haxelibFile) == -1) data.push(haxelibFile);
-		final zip: pony.ZipTool = new pony.ZipTool(outputFile, 0);
+		final zip: ZipTool = new ZipTool(outputFile, 0);
 		zip.onLog << Sys.println;
 		zip.onError << function(err: String) throw err;
 		zip.writeList(data).end();

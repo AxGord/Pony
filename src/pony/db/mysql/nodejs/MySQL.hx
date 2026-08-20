@@ -63,7 +63,7 @@ class MySQL extends SQLBase {
 	@:async public function action(q: String, ?actName: String, ?p: PosInfos): Bool {
 		var err;
 		var _;
-		var _ = @await query(q, p);
+		final _ = @await query(q, p);
 		if (err == null) return true;
 		error(actName == null ? '$err' : "Can't " + actName + ': ' + err.stack, p);
 		return false;

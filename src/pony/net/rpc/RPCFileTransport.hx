@@ -11,7 +11,7 @@ import pony.fs.FileWriteStream;
  * @author AxGord <axgord@gmail.com>
  */
 #if (haxe_ver >= 4.2) final #else @:final #end
-class RPCFileTransport extends pony.net.rpc.RPCUnit<RPCFileTransport> implements pony.net.rpc.IRPC {
+class RPCFileTransport extends RPCUnit<RPCFileTransport> implements IRPC {
 
 	@:sub public var stream: RPCStream;
 	@:rpc public var onFile: Signal1<String>;

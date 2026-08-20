@@ -36,14 +36,14 @@ import types.ServerConfig;
 		}
 		if (cfg.remote != null) {
 			tasks.add();
-			var remote: ServerRemote = new ServerRemote(cast cfg.remote);
+			final remote: ServerRemote = new ServerRemote(cast cfg.remote);
 			remote.onError << eError;
 			remote.onLog << eLog;
 			remote.init();
 		}
 		if (cfg.sniff != null) {
 			tasks.add();
-			var sniff: Sniff = new Sniff(cast cfg.sniff);
+			final sniff: Sniff = new Sniff(cast cfg.sniff);
 			sniff.onError << errorWithTime;
 			sniff.onLog << logWithTime;
 			sniff.init();

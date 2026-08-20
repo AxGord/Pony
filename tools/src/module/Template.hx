@@ -36,7 +36,7 @@ using pony.text.XmlTools;
 	}
 
 	override private function runNode(cfg: TemplateConfig): Void {
-		final hashModule: Null<module.Hash> = cast modules.getModule(module.Hash);
+		final hashModule: Null<module.Hash> = cast modules.getModule(module.Hash); // noqa: shorten-type-ref
 		final assetsHashFile: Null<STriple<String>> =
 			hashModule != null && hashModule.xml != null ? hashModule.getBuildResHashFile() : null;
 		final buildDate: String = Date.now().toString();

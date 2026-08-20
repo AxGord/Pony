@@ -4,6 +4,7 @@ import pony.Pair;
 import pony.net.http.WebServer.EConnect;
 import pony.text.tpl.ITplPut;
 import pony.text.tpl.TplData;
+import pony.text.tpl.TplPut;
 
 using StringTools;
 using pony.text.TextTools;
@@ -77,7 +78,7 @@ class DeleteConnect extends ActionConnect implements ISubActionConnect {
 }
 
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
-class DeletePut extends pony.text.tpl.TplPut<DeleteConnect, Dynamic> {
+class DeletePut extends TplPut<DeleteConnect, Dynamic> {
 
 	@:async
 	override public function shortTag(name: String, arg: String, ?kid: ITplPut): String {
@@ -116,7 +117,7 @@ class DeletePut extends pony.text.tpl.TplPut<DeleteConnect, Dynamic> {
 }
 
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
-class DeletePutSub extends pony.text.tpl.TplPut<DeleteConnect, Dynamic> {
+class DeletePutSub extends TplPut<DeleteConnect, Dynamic> {
 
 	@:async
 	override public function tag(name: String, content: TplData, arg: String, args: Map<String, String>, ?kid: ITplPut): String {

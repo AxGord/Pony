@@ -18,7 +18,7 @@ class NetDebug {
 	private static var trstr: String = '';
 
 	public static function client(name: String, ?host: String, port: Int = 60666): Void {
-		var c: SocketClient = new SocketClient(host, port);
+		final c: SocketClient = new SocketClient(host, port);
 		final old: (v:Dynamic, ?infos:Null<PosInfos>) -> Void = Log.trace;
 		Log.trace = function(d: Dynamic, ?p: PosInfos): Void {
 			old(d, p);

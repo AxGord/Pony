@@ -43,7 +43,7 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 		this.res = res;
 		this.req = req;
 		if (req.headers.hasField('accept-language')) {
-			var pb: ParseBoy<Void> = new ParseBoy<Void>(req.headers.field('accept-language'));
+			final pb: ParseBoy<Void> = new ParseBoy<Void>(req.headers.field('accept-language'));
 			var n: Int;
 			do {
 				n = pb.gt([',', ';']);

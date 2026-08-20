@@ -1,6 +1,7 @@
 package module;
 
 import pony.Fast;
+import pony.ZipTool;
 import types.BASection;
 
 /**
@@ -26,7 +27,7 @@ class Zip extends CfgModule<ZipConfig> {
 
 	override private function runNode(cfg: ZipConfig): Void {
 		log('Archive name: ${cfg.output}');
-		final zip: pony.ZipTool = new pony.ZipTool(
+		final zip: ZipTool = new ZipTool(
 			Utils.replaceBuildDate(cfg.output), cfg.prefix, cfg.compressLvl, cfg.root == null ? null : Utils.replaceBuildDate(cfg.root)
 		);
 		if (cfg.log) zip.onLog << log;
