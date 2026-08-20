@@ -39,10 +39,8 @@ class WebServer {
 		final cpq = new CPQ(connection, usercontent, tpl.get(defaults.template), defaults.lang);
 		for (m in modules) {
 			switch m.connect(cpq) {
-				case BREAK:
-					return;
-				case REG(obj):
-					cpq.modules[Type.getClassName(Type.getClass(obj))] = obj;
+				case BREAK: return;
+				case REG(obj): cpq.modules[Type.getClassName(Type.getClass(obj))] = obj;
 				case NOTREG:
 			}
 		}

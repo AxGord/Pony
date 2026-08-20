@@ -32,12 +32,7 @@ class ConfigBuilder {
 			final xcfg: Fast = xml.node.config;
 			if (xcfg.has.dep) for (f in xcfg.att.dep.split(','))
 				Context.registerModuleDependency(Context.getLocalModule(), StringTools.trim(f));
-			final cfg: PConfig = {
-				app: haxe.macro.Context.definedValue('app'),
-				debug: #if debug true #else false #end,
-				cordova: #if cordova true #else false #end,
-				path: ''
-			};
+			final cfg: PConfig = { app: haxe.macro.Context.definedValue('app'), debug: #if debug true #else false #end, cordova: #if cordova true #else false #end, path: '' };
 			final addedConfig: Array<String> = []; // Filter added configs because app define not set for completion server
 			new ReadXmlConfig(xcfg, cfg, function(cfg: PConfig): Void {
 				final type: ComplexType = switch cfg.type {
@@ -83,19 +78,15 @@ class ConfigBuilder {
 
 				final access = [APublic, AStatic];
 				switch cfg.type {
-					case CString, CInt, CFloat, CBool:
-						access.push(AInline);
+					case CString, CInt, CFloat, CBool: access.push(AInline);
 					case _:
 				}
 				final name: String = cfg.path + cfg.key;
 				if (addedConfig.contains(name)) return;
 				addedConfig.push(name);
-				fields.push({
-					name: name,
-					access: access,
-					pos: Context.currentPos(),
-					kind: FVar(type, value != null ? value : macro $a{map})
-				});
+				fields.push(
+					{ name: name, access: access, pos: Context.currentPos(), kind: FVar(type, value != null ? value : macro $a{map}) }
+				);
 			});
 		}
 		return fields;
@@ -167,12 +158,7 @@ private class ReadXmlConfig extends XmlConfigReader<PConfig> {
 					case _: throw 'Error';
 				};
 				map = [];
-				new ReadXmlConfig(xml, {
-					app: cfg.app,
-					debug: cfg.debug,
-					cordova: cfg.cordova,
-					path: ''
-				}, function(conf: PConfig) {
+				new ReadXmlConfig(xml, { app: cfg.app, debug: cfg.debug, cordova: cfg.cordova, path: '' }, function(conf: PConfig) {
 					if (mapType == null) mapType = conf.type;
 					if (stype == 'map' && mapType != conf.type) throw 'Type error';
 					map[conf.path + conf.key] = conf.value;
@@ -188,13 +174,20 @@ private class ReadXmlConfig extends XmlConfigReader<PConfig> {
 					case _: throw 'Type error';
 				}
 
-			case 'vars': CVars;
-			case 'int': CInt;
-			case 'float': CFloat;
-			case 'bool': CBool;
-			case 'string': CString;
-			case 'color': CColor;
-			case 'point': CPoint;
+			case 'vars':
+				CVars;
+			case 'int':
+				CInt;
+			case 'float':
+				CFloat;
+			case 'bool':
+				CBool;
+			case 'string':
+				CString;
+			case 'color':
+				CColor;
+			case 'point':
+				CPoint;
 
 			case _:
 				final nt: Int = xml.x.count();
@@ -222,34 +215,13 @@ private class ReadXmlConfig extends XmlConfigReader<PConfig> {
 
 		switch type {
 			case CIntMap, CFloatMap, CBoolMap, CStringMap, CColorMap, CPointMap:
-				onConfig({
-					app: cfg.app,
-					debug: cfg.debug,
-					cordova: cfg.cordova,
-					path: cfg.path,
-					key: xml.name,
-					map: map,
-					type: type
-				});
+				onConfig({ app: cfg.app, debug: cfg.debug, cordova: cfg.cordova, path: cfg.path, key: xml.name, map: map, type: type });
 
 			case CInt, CFloat, CBool, CString, CColor, CPoint:
-				onConfig({
-					app: cfg.app,
-					debug: cfg.debug,
-					cordova: cfg.cordova,
-					path: cfg.path,
-					key: xml.name,
-					value: v,
-					type: type
-				});
+				onConfig({ app: cfg.app, debug: cfg.debug, cordova: cfg.cordova, path: cfg.path, key: xml.name, value: v, type: type });
 
 			case CVars:
-				new ReadXmlConfig(xml, {
-					app: cfg.app,
-					debug: cfg.debug,
-					cordova: cfg.cordova,
-					path: cfg.path + xml.name + '_'
-				}, onConfig);
+				new ReadXmlConfig(xml, { app: cfg.app, debug: cfg.debug, cordova: cfg.cordova, path: cfg.path + xml.name + '_' }, onConfig);
 		}
 
 	}

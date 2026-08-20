@@ -24,10 +24,8 @@ class NinjaBuilder {
 
 		for (field in fields) {
 			switch field.kind {
-				case FVar(_):
-					vars.push(field.name);
-				case FFun(_) if (field.name == 'ninjaCreate'):
-					ninjaCreate = true;
+				case FVar(_): vars.push(field.name);
+				case FFun(_) if (field.name == 'ninjaCreate'): ninjaCreate = true;
 				case _:
 			}
 		}
@@ -37,8 +35,7 @@ class NinjaBuilder {
 		for (field in fields) switch field.kind {
 			case FFun(fun) if (check(field)):
 				for (e in extract(fun.expr)) switch e.expr {
-					case EBinop(OpAssign, { expr: EConst(CIdent(s)), pos: _ }, _) if (vars.indexOf(s) != -1):
-						used.push(s);
+					case EBinop(OpAssign, { expr: EConst(CIdent(s)), pos: _ }, _) if (vars.indexOf(s) != -1): used.push(s);
 					case _:
 				}
 			case _:
@@ -70,7 +67,8 @@ class NinjaBuilder {
 						}
 						na.push(macro return __obj__);
 						fun.expr = { expr: EBlock(na), pos: field.pos };
-					case _: throw 'error';
+					case _:
+						throw 'error';
 				}
 
 			case _:

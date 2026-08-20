@@ -35,19 +35,11 @@ typedef NpmConfig = {
 	public function init(): Void initSections(PRIORITY, BASection.Prepare);
 
 	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
-		new NpmReader(xml, {
-			debug: ac.debug,
-			app: ac.app,
-			before: false,
-			section: BASection.Prepare,
-			name: null,
-			main: null,
-			path: null,
-			autoinstall: false,
-			list: [],
-			allowCfg: true,
-			cordova: false
-		}, configHandler);
+		new NpmReader(
+			xml,
+			{ debug: ac.debug, app: ac.app, before: false, section: BASection.Prepare, name: null, main: null, path: null, autoinstall: false, list: [], allowCfg: true, cordova: false },
+			configHandler
+		);
 	}
 
 	override private function runNode(cfg: NpmConfig): Void {
@@ -56,13 +48,7 @@ typedef NpmConfig = {
 		cwd.sw();
 		if (cfg.name != null && cfg.main != null) {
 			final a: Array<String> = cfg.name.split('@');
-			File.saveContent(
-				PACKAGE, Json.stringify({
-					main: cfg.main,
-					name: a[0],
-					version: a.length > 1 ? a[1] : '0.0.1'
-				}, '\t')
-			);
+			File.saveContent(PACKAGE, Json.stringify({ main: cfg.main, name: a[0], version: a.length > 1 ? a[1] : '0.0.1' }, '\t'));
 		} else if (FileSystem.exists(PACKAGE)) {
 			Sys.command('npm', ['install']);
 		}
@@ -84,24 +70,18 @@ private class NpmReader extends BAReader<NpmConfig> {
 
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
-			case 'path':
-				cfg.path = val;
-			case 'autoinstall':
-				cfg.autoinstall = TextTools.isTrue(val);
+			case 'path': cfg.path = val;
+			case 'autoinstall': cfg.autoinstall = TextTools.isTrue(val);
 			case _:
 		}
 	}
 
 	override private function readNode(xml: Fast): Void {
 		switch xml.name {
-			case 'module':
-				cfg.list.push(new Triple(normalize(xml.innerData), xml.isTrue('dev'), !xml.isFalse('windows')));
-			case 'name':
-				cfg.name = normalize(xml.innerData);
-			case 'main':
-				cfg.main = normalize(xml.innerData);
-			case _:
-				super.readNode(xml);
+			case 'module': cfg.list.push(new Triple(normalize(xml.innerData), xml.isTrue('dev'), !xml.isFalse('windows')));
+			case 'name': cfg.name = normalize(xml.innerData);
+			case 'main': cfg.main = normalize(xml.innerData);
+			case _: super.readNode(xml);
 		}
 	}
 

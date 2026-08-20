@@ -18,17 +18,11 @@ class Wrapper extends CfgModule<WrapperConfig> {
 	public function init(): Void initSections(PRIORITY);
 
 	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
-		new WrapperReader(xml, {
-			debug: ac.debug,
-			app: ac.app,
-			before: false,
-			section: BASection.Build,
-			file: null,
-			pre: '',
-			post: '',
-			allowCfg: true,
-			cordova: false
-		}, configHandler);
+		new WrapperReader(
+			xml,
+			{ debug: ac.debug, app: ac.app, before: false, section: BASection.Build, file: null, pre: '', post: '', allowCfg: true, cordova: false },
+			configHandler
+		);
 	}
 
 	override private function runNode(cfg: WrapperConfig): Void {
@@ -56,14 +50,10 @@ private class WrapperReader extends BAReader<WrapperConfig> {
 
 	override private function readNode(xml: Fast): Void {
 		switch xml.name {
-			case 'file':
-				cfg.file = StringTools.trim(xml.innerData);
-			case 'pre':
-				cfg.pre = StringTools.trim(xml.innerData);
-			case 'post':
-				cfg.post = StringTools.trim(xml.innerData);
-			case _:
-				super.readNode(xml);
+			case 'file': cfg.file = StringTools.trim(xml.innerData);
+			case 'pre': cfg.pre = StringTools.trim(xml.innerData);
+			case 'post': cfg.post = StringTools.trim(xml.innerData);
+			case _: super.readNode(xml);
 		}
 	}
 

@@ -39,22 +39,19 @@ using pony.text.TextTools;
 			tasks.add();
 			final protocol: String = file.b.substr(0, 7);
 			switch protocol {
-				case 'https:/':
-					NPM.follow_redirects.https.get(file.b, { timeout: 7000 }, function(response: IncomingMessage): Void {
-						response.once('end', tasks.end);
-						response.pipe(Fs.createWriteStream(file.a));
-					}).on('error', function(e: Error) {
-						error('problem with request: ${e.message}');
-					});
-				case 'http://':
-					NPM.follow_redirects.http.get(file.b, { timeout: 7000 }, function(response: IncomingMessage): Void {
-						response.once('end', tasks.end);
-						response.pipe(Fs.createWriteStream(file.a));
-					}).on('error', function(e: Error) {
-						error('problem with request: ${e.message}');
-					});
-				case _:
-					error('Unsupported protocol: $protocol');
+				case 'https:/': NPM.follow_redirects.https.get(file.b, { timeout: 7000 }, function(response: IncomingMessage): Void {
+					response.once('end', tasks.end);
+					response.pipe(Fs.createWriteStream(file.a));
+				}).on('error', function(e: Error) {
+					error('problem with request: ${e.message}');
+				});
+				case 'http://': NPM.follow_redirects.http.get(file.b, { timeout: 7000 }, function(response: IncomingMessage): Void {
+					response.once('end', tasks.end);
+					response.pipe(Fs.createWriteStream(file.a));
+				}).on('error', function(e: Error) {
+					error('problem with request: ${e.message}');
+				});
+				case _: error('Unsupported protocol: $protocol');
 			}
 		}
 	}

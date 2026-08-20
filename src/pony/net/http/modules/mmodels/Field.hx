@@ -39,12 +39,7 @@ class Field {
 	}
 
 	public function create(): pony.db.mysql.Field {
-		return {
-			name: name,
-			type: type,
-			flags: notnull ? [Flags.NOT_NULL] : [],
-			length: len
-		};
+		return { name: name, type: type, flags: notnull ? [Flags.NOT_NULL] : [], length: len };
 	}
 
 }

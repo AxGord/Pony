@@ -21,12 +21,7 @@ class FBool extends Field {
 	}
 
 	override public function create(): pony.db.mysql.Field {
-		return {
-			name: name,
-			length: len,
-			type: type,
-			flags: []
-		};
+		return { name: name, length: len, type: type, flags: [] };
 	}
 
 }

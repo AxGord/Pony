@@ -38,8 +38,7 @@ class Config extends Section {
 				for (e in v.kv()) {
 					switch e.value {
 						case OrState.A(_):
-						case OrState.B(_):
-							allString = false;
+						case OrState.B(_): allString = false;
 					}
 					r.addChild(make(e));
 				}

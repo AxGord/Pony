@@ -35,19 +35,9 @@ class HasAbstractBuilder {
 				if (f.access.indexOf(AOverride) != -1) Context.error('You can\'t use abstract for override field ${f.name}', cCur.pos);
 				switch f.kind {
 					case FFun(fun):
-						fields.push({
-							kind: FFun({
-								expr: macro return throw 'not implemented',
-								args: fun.args,
-								params: fun.params,
-								ret: fun.ret
-							}),
-							access: f.access,
-							doc: f.doc,
-							meta: f.meta,
-							name: f.name,
-							pos: f.pos
-						});
+						fields.push({ kind: FFun(
+							{ expr: macro return throw 'not implemented', args: fun.args, params: fun.params, ret: fun.ret }
+						), access: f.access, doc: f.doc, meta: f.meta, name: f.name, pos: f.pos });
 					case _:
 						Context.error('${f.kind.getName()} can\'t be abstract', f.pos);
 				}

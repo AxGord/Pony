@@ -24,22 +24,11 @@ using pony.text.TextTools;
 	public function init(): Void initSections(PRIORITY, BASection.Prepare);
 
 	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
-		new LameReader(xml, {
-			debug: ac.debug,
-			app: ac.app,
-			before: false,
-			section: Prepare,
-			dirs: [],
-			units: [],
-			to: '',
-			from: '',
-			addext: '',
-			preset: null,
-			rm: false,
-			hash: false,
-			allowCfg: true,
-			cordova: false
-		}, configHandler);
+		new LameReader(
+			xml,
+			{ debug: ac.debug, app: ac.app, before: false, section: Prepare, dirs: [], units: [], to: '', from: '', addext: '', preset: null, rm: false, hash: false, allowCfg: true, cordova: false },
+			configHandler
+		);
 	}
 
 	override private function runNode(cfg: LameConfig): Void {
@@ -164,18 +153,12 @@ private typedef LameConfig = {
 
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
-			case 'to':
-				cfg.to += val;
-			case 'from':
-				cfg.from += val;
-			case 'hash':
-				cfg.hash = val.isTrue();
-			case 'addext':
-				cfg.addext = val;
-			case 'preset':
-				cfg.preset = val;
-			case 'rm':
-				cfg.rm = val.isTrue();
+			case 'to': cfg.to += val;
+			case 'from': cfg.from += val;
+			case 'hash': cfg.hash = val.isTrue();
+			case 'addext': cfg.addext = val;
+			case 'preset': cfg.preset = val;
+			case 'rm': cfg.rm = val.isTrue();
 			case _:
 		}
 	}

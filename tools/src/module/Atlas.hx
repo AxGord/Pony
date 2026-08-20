@@ -35,18 +35,11 @@ private typedef AtlasConfig = {
 	public function init(): Void initSections(PRIORITY, BASection.Prepare);
 
 	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
-		new AtlasReader(xml, {
-			debug: ac.debug,
-			app: ac.app,
-			before: false,
-			section: Prepare,
-			units: [],
-			from: '.',
-			filter: '.atlas',
-			deleteSource: true,
-			allowCfg: true,
-			cordova: false
-		}, configHandler);
+		new AtlasReader(
+			xml,
+			{ debug: ac.debug, app: ac.app, before: false, section: Prepare, units: [], from: '.', filter: '.atlas', deleteSource: true, allowCfg: true, cordova: false },
+			configHandler
+		);
 	}
 
 	override private function runNode(cfg: AtlasConfig): Void {
@@ -146,12 +139,9 @@ private class AtlasReader extends BAReader<AtlasConfig> {
 
 	override private function readNode(xml: Fast): Void {
 		switch xml.name {
-			case 'path':
-				selfCreate(xml);
-			case 'unit':
-				cfg.units.push(cfg.from.file(normalize(xml.innerData)));
-			case _:
-				super.readNode(xml);
+			case 'path': selfCreate(xml);
+			case 'unit': cfg.units.push(cfg.from.file(normalize(xml.innerData)));
+			case _: super.readNode(xml);
 		}
 	}
 
@@ -165,12 +155,9 @@ private class AtlasReader extends BAReader<AtlasConfig> {
 
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
-			case 'filter':
-				cfg.filter = val;
-			case 'from':
-				cfg.from += val;
-			case 'deleteSource':
-				cfg.deleteSource = !val.isFalse();
+			case 'filter': cfg.filter = val;
+			case 'from': cfg.from += val;
+			case 'deleteSource': cfg.deleteSource = !val.isFalse();
 			case _:
 		}
 	}

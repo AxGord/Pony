@@ -22,12 +22,7 @@ class FDate extends Field {
 	}
 
 	override public function create(): pony.db.mysql.Field {
-		return {
-			name: name,
-			length: len,
-			type: type,
-			flags: notnull ? [Flags.UNSIGNED, Flags.NOT_NULL] : [Flags.UNSIGNED]
-		};
+		return { name: name, length: len, type: type, flags: notnull ? [Flags.UNSIGNED, Flags.NOT_NULL] : [Flags.UNSIGNED] };
 	}
 
 }
@@ -44,10 +39,8 @@ class FDate extends Field {
 		final v = Date.fromTime(Std.int(Reflect.field(b, name)) * 1000);
 		if (content.length == 1)
 			switch content[0] {
-				case TplContent.Text(t) if (t != ''):
-					return DateTools.format(v, StringTools.replace(t, '$', '%'));
-				case _:
-					return v.toString();
+				case TplContent.Text(t) if (t != ''): return DateTools.format(v, StringTools.replace(t, '$', '%'));
+				case _: return v.toString();
 			}
 		else
 			return v.toString();

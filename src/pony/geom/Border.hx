@@ -22,12 +22,7 @@ abstract Border<T:Float>({
 		if (left == null) left = top;
 		if (right == null) right = left;
 		if (bottom == null) bottom = top;
-		this = {
-			top: top,
-			left: left,
-			right: right,
-			bottom: bottom
-		};
+		this = { top: top, left: left, right: right, bottom: bottom };
 	}
 
 	@:from #if (haxe_ver >= 4.2) extern #else @:extern #end
@@ -64,12 +59,8 @@ abstract Border<T:Float>({
 	public inline function mul(rhs: Float): Border<Float> return new Border(top * rhs, left * rhs, right * rhs, bottom * rhs);
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public inline function getRectFromSize(size: Point<T>): Rect<T> return {
-		x: left,
-		y: top,
-		width: size.x - left - right,
-		height: size.y - top - bottom
-	};
+	public inline function getRectFromSize(size: Point<T>): Rect<T>
+		return { x: left, y: top, width: size.x - left - right, height: size.y - top - bottom };
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function toInt(): Border<Int> return new Border(Std.int(top), Std.int(left), Std.int(right), Std.int(bottom));

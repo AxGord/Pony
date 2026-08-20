@@ -23,12 +23,7 @@ class FString extends Field {
 	}
 
 	override public function create(): pony.db.mysql.Field {
-		return {
-			name: name,
-			type: type,
-			length: len,
-			flags: notnull ? [Flags.NOT_NULL] : []
-		};
+		return { name: name, type: type, length: len, flags: notnull ? [Flags.NOT_NULL] : [] };
 	}
 
 }

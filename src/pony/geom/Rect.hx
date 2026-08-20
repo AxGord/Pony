@@ -22,12 +22,7 @@ abstract Rect<T:Float>(SimpleRect<T>) to SimpleRect<T> from SimpleRect<T> {
 	public var start(get, never): Point<T>;
 	public var end(get, never): Point<T>;
 
-	public inline function new(x: T, y: T, width: T, height: T) this = {
-		x: x,
-		y: y,
-		width: width,
-		height: height
-	};
+	public inline function new(x: T, y: T, width: T, height: T) this = { x: x, y: y, width: width, height: height };
 
 	private inline function get_x(): T return this.x;
 
@@ -60,33 +55,17 @@ abstract IntRect(SimpleRect<Int>) to SimpleRect<Int> from SimpleRect<Int> {
 	public var width(get, never): Int;
 	public var height(get, never): Int;
 
-	@:op(A + B) public static inline function add1(lhs: IntRect, rhs: Point<Int>): IntRect return {
-		x: lhs.getX() + rhs.x,
-		y: lhs.getY() + rhs.y,
-		width: lhs.getWidth(),
-		height: lhs.getHeight()
-	};
+	@:op(A + B) public static inline function add1(lhs: IntRect, rhs: Point<Int>): IntRect
+		return { x: lhs.getX() + rhs.x, y: lhs.getY() + rhs.y, width: lhs.getWidth(), height: lhs.getHeight() };
 
-	@:op(A + B) public static inline function add2(lhs: IntRect, rhs: IntPoint): IntRect return {
-		x: lhs.getX() + rhs.getX(),
-		y: lhs.getY() + rhs.getY(),
-		width: lhs.getWidth(),
-		height: lhs.getHeight()
-	};
+	@:op(A + B) public static inline function add2(lhs: IntRect, rhs: IntPoint): IntRect
+		return { x: lhs.getX() + rhs.getX(), y: lhs.getY() + rhs.getY(), width: lhs.getWidth(), height: lhs.getHeight() };
 
-	@:op(A - B) public static inline function m1(lhs: IntRect, rhs: Point<Int>): IntRect return {
-		x: lhs.getX() - rhs.x,
-		y: lhs.getY() - rhs.y,
-		width: lhs.getWidth(),
-		height: lhs.getHeight()
-	};
+	@:op(A - B) public static inline function m1(lhs: IntRect, rhs: Point<Int>): IntRect
+		return { x: lhs.getX() - rhs.x, y: lhs.getY() - rhs.y, width: lhs.getWidth(), height: lhs.getHeight() };
 
-	@:op(A - B) public static inline function m2(lhs: IntRect, rhs: IntPoint): IntRect return {
-		x: lhs.getX() - rhs.getX(),
-		y: lhs.getY() - rhs.getY(),
-		width: lhs.getWidth(),
-		height: lhs.getHeight()
-	};
+	@:op(A - B) public static inline function m2(lhs: IntRect, rhs: IntPoint): IntRect
+		return { x: lhs.getX() - rhs.getX(), y: lhs.getY() - rhs.getY(), width: lhs.getWidth(), height: lhs.getHeight() };
 
 	public inline function getX(): Int return this.x;
 

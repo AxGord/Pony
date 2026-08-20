@@ -36,13 +36,20 @@ final class MTplPutSub extends Valuator<MTplPut, TplSystem> {
 	override public function valu(name: String, arg: String): String {
 		final m: Manifest = b.manifest;
 		return switch (name) {
-			case 'name': b.name;
-			case 'title': sie(m, 'title', b.name);
-			case 'author': sie(m, 'author');
-			case 'email': sie(m, 'email');
-			case 'www': sie(m, 'www');
-			case 'license': sie(m, 'license');
-			case 'version': m != null && m.version != null ? m.version.major + '.' + m.version.minor : '';
+			case 'name':
+				b.name;
+			case 'title':
+				sie(m, 'title', b.name);
+			case 'author':
+				sie(m, 'author');
+			case 'email':
+				sie(m, 'email');
+			case 'www':
+				sie(m, 'www');
+			case 'license':
+				sie(m, 'license');
+			case 'version':
+				m != null && m.version != null ? m.version.major + '.' + m.version.minor : '';
 			case 'extends':
 				if (m != null && m._extends != null)
 					@await TplPut.manyEasy(m._extends, null, arg == null ? ', ' : arg);

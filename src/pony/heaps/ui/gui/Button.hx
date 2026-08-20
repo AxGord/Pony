@@ -60,16 +60,11 @@ import pony.ui.touch.Touchable;
 			}
 		} else {
 			switch nodes.length {
-				case 0:
-					throw 'Not supported';
-				case 1:
-					core.onVisual << visual1Handler;
-				case 2:
-					core.onVisual << visual2Handler;
-				case 3:
-					core.onVisual << visual3Handler;
-				case _:
-					core.onVisual << visualNHandler;
+				case 0: throw 'Not supported';
+				case 1: core.onVisual << visual1Handler;
+				case 2: core.onVisual << visual2Handler;
+				case 3: core.onVisual << visual3Handler;
+				case _: core.onVisual << visualNHandler;
 			}
 		}
 	}
@@ -81,12 +76,9 @@ import pony.ui.touch.Touchable;
 		} else {
 			cursor = Cursor.Button;
 			switch state {
-				case Default:
-					nodes[0].tint = DEFTINTV;
-				case Focus, Leave:
-					nodes[0].tint = OVERTINTV;
-				case Press:
-					nodes[0].tint = DOWNTINTV;
+				case Default: nodes[0].tint = DEFTINTV;
+				case Focus, Leave: nodes[0].tint = OVERTINTV;
+				case Press: nodes[0].tint = DOWNTINTV;
 			}
 		}
 	}

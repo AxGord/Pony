@@ -58,12 +58,7 @@ class HtmlVideo implements HasSignal implements HasLink {
 
 	private var position: HtmlVideoPlayProgress;
 
-	private var options: HtmlVideoOptions = {
-		bufferingTreshhold: 3,
-		retryDelay: 10000,
-		maxRetries: 4,
-		virtualPlay: true
-	};
+	private var options: HtmlVideoOptions = { bufferingTreshhold: 3, retryDelay: 10000, maxRetries: 4, virtualPlay: true };
 
 	public var videoElement(default, null): VideoElement;
 	public var style(get, never): CSSStyleDeclaration;

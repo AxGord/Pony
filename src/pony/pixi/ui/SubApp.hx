@@ -19,10 +19,9 @@ class SubApp extends HtmlContainer {
 
 	public function init(): Void {
 		element.style.pointerEvents = 'none';
-		subApp = new App(content, Std.int(targetRect.width), Std.int(targetRect.height), element, false, {
-			transparent: true,
-			forceCanvas: true
-		});
+		subApp = new App(
+			content, Std.int(targetRect.width), Std.int(targetRect.height), element, false, { transparent: true, forceCanvas: true }
+		);
 		htmlContainer.onResize << resizeHandler;
 	}
 

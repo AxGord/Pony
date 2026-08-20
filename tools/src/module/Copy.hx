@@ -23,21 +23,11 @@ using pony.text.TextTools;
 	public function init(): Void initSections(PRIORITY, BASection.Prepare);
 
 	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
-		new CopyReader(xml, {
-			debug: ac.debug,
-			app: ac.app,
-			before: false,
-			section: Prepare,
-			dirs: [],
-			units: [],
-			to: '',
-			from: '',
-			fromLib: null,
-			hash: false,
-			addext: '',
-			allowCfg: true,
-			cordova: false
-		}, configHandler);
+		new CopyReader(
+			xml,
+			{ debug: ac.debug, app: ac.app, before: false, section: Prepare, dirs: [], units: [], to: '', from: '', fromLib: null, hash: false, addext: '', allowCfg: true, cordova: false },
+			configHandler
+		);
 	}
 
 	override private function runNode(cfg: CopyConfig): Void {
@@ -112,14 +102,10 @@ private typedef CopyConfig = {
 
 	override private function readNode(xml: Fast): Void {
 		switch xml.name {
-			case 'path':
-				selfCreate(xml);
-			case 'dir':
-				cfg.dirs.push(new Pair(normalize(xml.innerData), xml.has.filter ? normalize(xml.att.filter) : null));
-			case 'unit':
-				cfg.units.push(new Pair(normalize(xml.innerData), xml.has.name ? xml.att.name : null));
-			case _:
-				super.readNode(xml);
+			case 'path': selfCreate(xml);
+			case 'dir': cfg.dirs.push(new Pair(normalize(xml.innerData), xml.has.filter ? normalize(xml.att.filter) : null));
+			case 'unit': cfg.units.push(new Pair(normalize(xml.innerData), xml.has.name ? xml.att.name : null));
+			case _: super.readNode(xml);
 		}
 	}
 
@@ -136,16 +122,11 @@ private typedef CopyConfig = {
 
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
-			case 'to':
-				cfg.to += val;
-			case 'from':
-				cfg.from += val;
-			case 'fromLib':
-				cfg.fromLib = val;
-			case 'hash':
-				cfg.hash = val.isTrue();
-			case 'addext':
-				cfg.addext = val;
+			case 'to': cfg.to += val;
+			case 'from': cfg.from += val;
+			case 'fromLib': cfg.fromLib = val;
+			case 'hash': cfg.hash = val.isTrue();
+			case 'addext': cfg.addext = val;
 			case _:
 		}
 	}

@@ -65,18 +65,12 @@ import pony.ui.xml.RepeatObject;
 	public function add(): Object {
 		final obj: Object = create(ro);
 		switch Type.typeof(parent) {
-			case TClass(AlignLayout):
-				cast(parent, AlignLayout).add(obj);
-			case TClass(BGLayout):
-				cast(parent, BGLayout).add(obj);
-			case TClass(IntervalLayout):
-				cast(parent, IntervalLayout).add(obj);
-			case TClass(RubberLayout):
-				cast(parent, RubberLayout).add(obj);
-			case TClass(Object):
-				parent.addChild(obj);
-			case _:
-				throw 'Wrong parent';
+			case TClass(AlignLayout): cast(parent, AlignLayout).add(obj);
+			case TClass(BGLayout): cast(parent, BGLayout).add(obj);
+			case TClass(IntervalLayout): cast(parent, IntervalLayout).add(obj);
+			case TClass(RubberLayout): cast(parent, RubberLayout).add(obj);
+			case TClass(Object): parent.addChild(obj);
+			case _: throw 'Wrong parent';
 		}
 		created.push(obj);
 		return obj;
@@ -86,18 +80,12 @@ import pony.ui.xml.RepeatObject;
 		final obj: Null<Object> = created.pop();
 		if (obj == null) return null;
 		switch Type.typeof(parent) {
-			case TClass(AlignLayout):
-				cast(parent, AlignLayout).rm(obj);
-			case TClass(BGLayout):
-				cast(parent, BGLayout).rm(obj);
-			case TClass(IntervalLayout):
-				cast(parent, IntervalLayout).rm(obj);
-			case TClass(RubberLayout):
-				cast(parent, RubberLayout).rm(obj);
-			case TClass(Object):
-				parent.removeChild(obj);
-			case _:
-				throw 'Wrong parent';
+			case TClass(AlignLayout): cast(parent, AlignLayout).rm(obj);
+			case TClass(BGLayout): cast(parent, BGLayout).rm(obj);
+			case TClass(IntervalLayout): cast(parent, IntervalLayout).rm(obj);
+			case TClass(RubberLayout): cast(parent, RubberLayout).rm(obj);
+			case TClass(Object): parent.removeChild(obj);
+			case _: throw 'Wrong parent';
 		}
 		return obj;
 	}

@@ -93,12 +93,7 @@ class MonacoEditor extends pony.Logable {
 	private function loadLangs(langs: Array<Lang>): Void {
 		if (langs != null) for (lang in langs) {
 			tasks.add();
-			final l: LangLoaded = {
-				name: lang.name,
-				ext: lang.ext,
-				tm: null,
-				conf: null
-			};
+			final l: LangLoaded = { name: lang.name, ext: lang.ext, tm: null, conf: null };
 			this.langs[lang.name] = l;
 			var st: Tasks = new Tasks(tasks.end);
 			st.add();
@@ -151,11 +146,7 @@ class MonacoEditor extends pony.Logable {
 	private function needLoadTheme(theme: String): Bool return [null, 'vs', 'vs-dark', 'hc-black'].indexOf(theme) == -1;
 
 	private function _init(): Void {
-		final registry = Type.createInstance(NPM.monaco_textmate.Registry, [
-			{
-				getGrammarDefinition: getGrammarDefinition
-			}
-		]);
+		final registry = Type.createInstance(NPM.monaco_textmate.Registry, [{ getGrammarDefinition: getGrammarDefinition }]);
 
 		final grammars = pony.JsTools.mapToJSMap([for (l in langs) l.name => 'source.' + l.ext]);
 		for (l in langs) {
@@ -173,10 +164,7 @@ class MonacoEditor extends pony.Logable {
 		log('get tm: ' + scopeName);
 		for (l in langs) {
 			if (scopeName == 'source.' + l.ext) {
-				return {
-					format: 'json',
-					content: l.tm
-				};
+				return { format: 'json', content: l.tm };
 			}
 		}
 		return null;
@@ -184,10 +172,7 @@ class MonacoEditor extends pony.Logable {
 
 	public function createEditor(container: Element, ?theme: String): IStandaloneCodeEditor {
 		log('create editor');
-		return monaco.editor.create(container, {
-			theme: theme == null ? 'vs-dark' : theme,
-			automaticLayout: true
-		});
+		return monaco.editor.create(container, { theme: theme == null ? 'vs-dark' : theme, automaticLayout: true });
 	}
 
 	public function createModel(value: String, ?lang: String): ITextModel {
@@ -197,12 +182,9 @@ class MonacoEditor extends pony.Logable {
 
 	public function create(container: Element, value: String, ?lang: String, ?theme: String): IStandaloneCodeEditor {
 		log('create $lang editor');
-		return monaco.editor.create(container, {
-			theme: theme == null ? 'vs-dark' : theme,
-			automaticLayout: true,
-			language: lang,
-			value: value
-		});
+		return monaco.editor.create(
+			container, { theme: theme == null ? 'vs-dark' : theme, automaticLayout: true, language: lang, value: value }
+		);
 	}
 
 }

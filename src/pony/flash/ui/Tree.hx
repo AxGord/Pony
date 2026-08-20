@@ -62,8 +62,7 @@ class Tree extends Sprite implements FLStage {
 
 		if (_header != null) {
 			switch (_header) {
-				case Group(text, _):
-					drawGroup(new IntPoint(0, 0), text);
+				case Group(text, _): drawGroup(new IntPoint(0, 0), text);
 				case _:
 			}
 		}
@@ -73,8 +72,7 @@ class Tree extends Sprite implements FLStage {
 		_header = header;
 		this.core = core;
 		switch (_header) {
-			case Group(text, _):
-				drawGroup(new IntPoint(0, 0), text);
+			case Group(text, _): drawGroup(new IntPoint(0, 0), text);
 			case _:
 		}
 		_xDisplacement = 50;

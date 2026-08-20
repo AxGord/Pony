@@ -21,17 +21,11 @@ class Move extends CfgModule<MoveConfig> {
 	public function init(): Void initSections(PRIORITY, BASection.Prepare);
 
 	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
-		new MoveReader(xml, {
-			debug: ac.debug,
-			app: ac.app,
-			before: false,
-			section: Prepare,
-			dirs: [],
-			units: [],
-			to: '',
-			allowCfg: true,
-			cordova: false
-		}, configHandler);
+		new MoveReader(
+			xml,
+			{ debug: ac.debug, app: ac.app, before: false, section: Prepare, dirs: [], units: [], to: '', allowCfg: true, cordova: false },
+			configHandler
+		);
 	}
 
 	override private function runNode(cfg: MoveConfig): Void {
@@ -74,12 +68,9 @@ private class MoveReader extends BAReader<MoveConfig> {
 
 	override private function readNode(xml: Fast): Void {
 		switch xml.name {
-			case 'dir':
-				cfg.dirs.push(StringTools.trim(xml.innerData));
-			case 'unit':
-				cfg.units.push(new Pair(StringTools.trim(xml.innerData), xml.has.name ? xml.att.name : null));
-			case _:
-				super.readNode(xml);
+			case 'dir': cfg.dirs.push(StringTools.trim(xml.innerData));
+			case 'unit': cfg.units.push(new Pair(StringTools.trim(xml.innerData), xml.has.name ? xml.att.name : null));
+			case _: super.readNode(xml);
 		}
 	}
 
@@ -93,10 +84,8 @@ private class MoveReader extends BAReader<MoveConfig> {
 
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
-			case 'filter':
-				cfg.filter = val;
-			case 'to':
-				cfg.to = val;
+			case 'filter': cfg.filter = val;
+			case 'to': cfg.to = val;
 			case _:
 		}
 	}

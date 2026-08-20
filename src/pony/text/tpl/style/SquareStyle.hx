@@ -8,26 +8,6 @@ import pony.text.tpl.TplData.TplStyle;
  */
 class SquareStyle {
 
-	public static var get: TplStyle = {
-		begin: '[',
-		end: ']',
-		endClose: '/]',
-		closeBegin: '[/',
-		closeEnd: ']',
-		shortBegin: '$',
-		shortEnd: '',
-		args: {
-			begin: '{',
-			end: '}',
-			delemiter: ',',
-			set: ':',
-			valueq: '"',
-			qalltime: false,
-			nonamearg: true
-		},
-		group: '>',
-		up: '^',
-		space: true
-	};
+	public static var get: TplStyle = { begin: '[', end: ']', endClose: '/]', closeBegin: '[/', closeEnd: ']', shortBegin: '$', shortEnd: '', args: { begin: '{', end: '}', delemiter: ',', set: ':', valueq: '"', qalltime: false, nonamearg: true }, group: '>', up: '^', space: true };
 
 }

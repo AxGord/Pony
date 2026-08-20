@@ -222,8 +222,7 @@ class Keyboard implements IKeyboard implements HasSignal {
 			case KeyCode.Print: k = Key.PrintScreen;
 			case KeyCode.Pause: k = Key.Pause;
 			case KeyCode.ScrollLock: k = Key.ScrollLock;
-			case KeyCode.Numlock:
-				k = Key.NumLock;
+			case KeyCode.Numlock: k = Key.NumLock;
 			// case KeyCode.KeypadEquals: Key.Equals;
 			case KeyCode.Minus: k = Key.Minus;
 			case KeyCode.BackQuote: k = Key.Tilde;
@@ -238,8 +237,7 @@ class Keyboard implements IKeyboard implements HasSignal {
 			case KeyCode.LeftWindows: k = Key.LeftWin;
 			case KeyCode.RightWindows: k = Key.RightWin;
 			case KeyCode.Plus: k = Key.Plus;
-			case KeyCode.Return:
-				k = Key.Enter;
+			case KeyCode.Return: k = Key.Enter;
 			// case _: null;
 		});
 		if (k != null) s.dispatch(k);

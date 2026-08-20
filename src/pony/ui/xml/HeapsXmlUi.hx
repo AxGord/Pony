@@ -57,23 +57,10 @@ using pony.text.TextTools;
  * @author AxGord <axgord@gmail.com>
  */
 #if !macro
-@:autoBuild(pony.ui.xml.XmlUiBuilder.build(pony.ui.AssetManager, {
-	node: h2d.Drawable,
-	rect: pony.heaps.ui.gui.NodeRect,
-	sw: pony.heaps.ui.gui.Switch,
-	line: h2d.Graphics,
-	circle: h2d.Graphics,
-	text: pony.heaps.ui.gui.DText,
-	simpleText: h2d.Text,
-	input: pony.heaps.ui.gui.ExtendedTextInput,
-	repeat: pony.heaps.ui.gui.Repeat,
-	image: pony.heaps.ui.gui.Node,
-	layout: pony.heaps.ui.gui.layout.TLayout,
-	button: pony.heaps.ui.gui.Button,
-	lightButton: pony.heaps.ui.gui.LightButton,
-	scrollBox: pony.heaps.ui.gui.ScrollBox,
-	slider: pony.heaps.ui.gui.StepSlider
-}))
+@:autoBuild(pony.ui.xml.XmlUiBuilder.build(
+	pony.ui.AssetManager,
+	{ node: h2d.Drawable, rect: pony.heaps.ui.gui.NodeRect, sw: pony.heaps.ui.gui.Switch, line: h2d.Graphics, circle: h2d.Graphics, text: pony.heaps.ui.gui.DText, simpleText: h2d.Text, input: pony.heaps.ui.gui.ExtendedTextInput, repeat: pony.heaps.ui.gui.Repeat, image: pony.heaps.ui.gui.Node, layout: pony.heaps.ui.gui.layout.TLayout, button: pony.heaps.ui.gui.Button, lightButton: pony.heaps.ui.gui.LightButton, scrollBox: pony.heaps.ui.gui.ScrollBox, slider: pony.heaps.ui.gui.StepSlider }
+))
 #end
 @:nullSafety(Strict)
 #if (haxe_ver >= 4.2) abstract #end
@@ -247,11 +234,12 @@ class HeapsXmlUi extends Object implements HasAbstract {
 		if (attrs.tween != null) {
 			final a: Array<String> = attrs.tween.trim().split(' ');
 			if (a[1] != 'pos') throw 'Not supported';
-			tweens.pushToMap(a[0], {
-				target: obj,
-				startPos: new Point<Float>(obj.x, obj.y),
-				endPos: new Point<Float>(parseAndScale(a[2]), parseAndScale(a[3]))
-			});
+			tweens.pushToMap(
+				a[0],
+				{ target: obj, startPos: new Point<Float>(
+					obj.x, obj.y
+				), endPos: new Point<Float>(parseAndScale(a[2]), parseAndScale(a[3])) }
+			);
 		}
 		setWatchers(obj, attrs);
 		return obj;
@@ -385,12 +373,7 @@ class HeapsXmlUi extends Object implements HasAbstract {
 					0;
 				final dx: Float = a.length > 0 ? Std.parseFloat(a.pop()) : 4;
 				final dy: Float = a.length > 0 ? Std.parseFloat(a.pop()) : dx;
-				t.dropShadow = {
-					dx: dx,
-					dy: dy,
-					color: color,
-					alpha: color.invertAlpha.af
-				};
+				t.dropShadow = { dx: dx, dy: dy, color: color, alpha: color.invertAlpha.af };
 			}
 		}
 		t.text = textTransform(putData(content), attrs.transform);
@@ -502,20 +485,13 @@ class HeapsXmlUi extends Object implements HasAbstract {
 
 	private function parseAndScaleWithoutNull(s: String): Float {
 		return switch s {
-			case AttrVal.stageWidth:
-				app.canvas.stageInitSize.x;
-			case AttrVal.stageHeight:
-				app.canvas.stageInitSize.y;
-			case AttrVal.dynWidth:
-				app.canvas.dynStage.width;
-			case AttrVal.dynHeight:
-				app.canvas.dynStage.height;
-			case AttrVal.dynX:
-				app.canvas.dynStage.x;
-			case AttrVal.dynY:
-				app.canvas.dynStage.y;
-			case _:
-				Std.parseFloat(s) * _scale;
+			case AttrVal.stageWidth: app.canvas.stageInitSize.x;
+			case AttrVal.stageHeight: app.canvas.stageInitSize.y;
+			case AttrVal.dynWidth: app.canvas.dynStage.width;
+			case AttrVal.dynHeight: app.canvas.dynStage.height;
+			case AttrVal.dynX: app.canvas.dynStage.x;
+			case AttrVal.dynY: app.canvas.dynStage.y;
+			case _: Std.parseFloat(s) * _scale;
 		}
 	}
 

@@ -30,12 +30,7 @@ class DeclaratorBuilder {
 						final n = f.name;
 						switch ComplexTypeTools.toString(t) {
 							case 'Int', 'Float' if (Tools.staticPlatform):
-								args.push({
-									name: n,
-									opt: false,
-									type: t,
-									value: macro $e
-								});
+								args.push({ name: n, opt: false, type: t, value: macro $e });
 								toNew.push(macro this.$n = $i{n});
 							case _:
 								args.push({ name: n, opt: e != null, type: t });
@@ -55,12 +50,7 @@ class DeclaratorBuilder {
 						final n = f.name;
 						switch ComplexTypeTools.toString(t) {
 							case 'Int', 'Float' if (Tools.staticPlatform):
-								args.push({
-									name: n,
-									opt: false,
-									type: t,
-									value: macro $e
-								});
+								args.push({ name: n, opt: false, type: t, value: macro $e });
 								toNew.push(macro this.$n = $i{n});
 							case _:
 								args.push({ name: n, opt: e != null, type: t });
@@ -88,10 +78,8 @@ class DeclaratorBuilder {
 		switch fInit.kind {
 			case FFun(k):
 				if (k.expr != null) switch k.expr.expr {
-					case EBlock(a):
-						toInit = toInit.concat(a);
-					case _:
-						toInit.push(k.expr);
+					case EBlock(a): toInit = toInit.concat(a);
+					case _: toInit.push(k.expr);
 				}
 				k.expr = macro $b{toInit};
 			case _:
@@ -112,10 +100,8 @@ class DeclaratorBuilder {
 				k.args = args.concat(k.args);
 
 				if (k.expr != null) switch k.expr.expr {
-					case EBlock(a):
-						toNew = toNew.concat(a);
-					case _:
-						toNew.push(k.expr);
+					case EBlock(a): toNew = toNew.concat(a);
+					case _: toNew.push(k.expr);
 				}
 
 				k.expr = macro $b{toNew};

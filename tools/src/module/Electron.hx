@@ -35,27 +35,11 @@ typedef ElectronConfig = {
 	public function init(): Void initSections(PRIORITY, BASection.Electron);
 
 	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
-		new ElectronReader(xml, {
-			debug: ac.debug,
-			app: ac.app,
-			before: false,
-			section: BASection.Electron,
-			allowCfg: true,
-			path: 'bin/',
-			pack: false,
-			cordova: false,
-			config: null,
-			name: null,
-			version: null,
-			author: null,
-			description: null,
-			artifactName: null,
-			productName: null,
-			copyright: null,
-			category: null,
-			os: [],
-			arch: []
-		}, configHandler);
+		new ElectronReader(
+			xml,
+			{ debug: ac.debug, app: ac.app, before: false, section: BASection.Electron, allowCfg: true, path: 'bin/', pack: false, cordova: false, config: null, name: null, version: null, author: null, description: null, artifactName: null, productName: null, copyright: null, category: null, os: [], arch: [] },
+			configHandler
+		);
 	}
 
 	override private function runNode(cfg: ElectronConfig): Void {
@@ -154,10 +138,8 @@ private class ElectronReader extends BAReader<ElectronConfig> {
 
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
-			case 'path':
-				cfg.path = val;
-			case 'pack':
-				cfg.pack = TextTools.isTrue(val);
+			case 'path': cfg.path = val;
+			case 'pack': cfg.pack = TextTools.isTrue(val);
 			case _:
 		}
 	}

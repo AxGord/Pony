@@ -11,10 +11,7 @@ abstract SPair<T>(Pair<T, T>) to Pair<T, T> from Pair<T, T> {
 
 	public inline function iterator(): Iterator<T> {
 		var i: UInt = 2;
-		return {
-			hasNext: function(): Bool return i > 0,
-			next: function(): T return i-- == 2 ? this.a : this.b
-		};
+		return { hasNext: function(): Bool return i > 0, next: function(): T return i-- == 2 ? this.a : this.b };
 	}
 
 }

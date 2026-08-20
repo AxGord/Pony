@@ -214,10 +214,8 @@ abstract Transform(Int) {
 								char = char == char.toLowerCase() ? ch.toLowerCase() : ch;
 						}
 						switch transform {
-							case uppercase:
-								char = char.toUpperCase();
-							case lowercase:
-								char = char.toLowerCase();
+							case uppercase: char = char.toUpperCase();
+							case lowercase: char = char.toLowerCase();
 							case none:
 						}
 						@:nullSafety(Off) var code: UInt = char.charCodeAt(0);

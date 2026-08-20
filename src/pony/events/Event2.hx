@@ -58,7 +58,8 @@ abstract Event2<T1, T2>(Priority<Listener2<T1, T2>>) from Priority<Listener2<T1,
 				a == b;
 			case [LNot2(_, a), LNot2(_, b)]:
 				a == b;
-			case _: false;
+			case _:
+				false;
 		}
 	}
 

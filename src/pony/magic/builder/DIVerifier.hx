@@ -82,14 +82,7 @@ typedef DIClassSummary = {
 	public static function beginClass(
 		typeName: String, pos: Position, ?superTypeName: String, usesProviderDirectly: Bool = false
 	): DIClassSummary {
-		final summary: DIClassSummary = {
-			typeName: typeName,
-			pos: pos,
-			superTypeName: superTypeName,
-			producers: [],
-			consumers: [],
-			usesProviderDirectly: usesProviderDirectly
-		};
+		final summary: DIClassSummary = { typeName: typeName, pos: pos, superTypeName: superTypeName, producers: [], consumers: [], usesProviderDirectly: usesProviderDirectly };
 		summaries[typeName] = summary;
 		if (!analyzerInstalled) {
 			analyzerInstalled = true;
@@ -320,22 +313,20 @@ typedef DIClassSummary = {
 			if (candidates.length == 0) continue;
 			if (candidates.length == 1) {
 				final producer: ProducerEntry = candidates[0];
-				recordResolution(verifiedClass, consumer.fieldName, {
-					ownerClass: levelClass,
-					fieldName: producer.fieldName,
-					scopeLevel: i,
-					fromRootExport: exports != null && !locals.contains(producer)
-				});
+				recordResolution(
+					verifiedClass, consumer.fieldName,
+					{ ownerClass: levelClass, fieldName: producer.fieldName, scopeLevel: i, fromRootExport: exports != null
+					&& !locals.contains(producer) }
+				);
 				return true;
 			}
 			final named: Null<ProducerEntry> = candidates.find(p -> p.fieldName == consumer.fieldName);
 			if (named != null) {
-				recordResolution(verifiedClass, consumer.fieldName, {
-					ownerClass: levelClass,
-					fieldName: named.fieldName,
-					scopeLevel: i,
-					fromRootExport: exports != null && !locals.contains(named)
-				});
+				recordResolution(
+					verifiedClass, consumer.fieldName,
+					{ ownerClass: levelClass, fieldName: named.fieldName, scopeLevel: i, fromRootExport: exports != null
+					&& !locals.contains(named) }
+				);
 				return true;
 			}
 			emitAmbiguityError(consumer, levelClass, candidates);

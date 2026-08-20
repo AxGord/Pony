@@ -138,10 +138,8 @@ class Model implements SuperPuper {
 			final r = value.connect(cpq, mc);
 			if (r.b != null) sub[k] = r.b;
 			switch r.a {
-				case BREAK:
-					return BREAK;
-				case REG(obj):
-					a[k] = cast obj;
+				case BREAK: return BREAK;
+				case REG(obj): a[k] = cast obj;
 				case NOTREG:
 			}
 		}

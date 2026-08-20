@@ -88,12 +88,9 @@ class CTable implements Declarator implements Ninja {
 	@:n public function whereData(data: WhereData): Table {
 		var w = ' WHERE ';
 		for (e in data) switch e {
-			case WhereElement.Text(s):
-				w += s;
-			case WhereElement.Value(s):
-				w += mysql.escape(s);
-			case WhereElement.Id(s):
-				w += mysql.escapeId(s);
+			case WhereElement.Text(s): w += s;
+			case WhereElement.Value(s): w += mysql.escape(s);
+			case WhereElement.Id(s): w += mysql.escapeId(s);
 		}
 		_where = w;
 	}

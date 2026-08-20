@@ -48,20 +48,11 @@ using pony.text.TextTools;
 	private function start(): Void error('Deprecated');
 
 	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
-		new HashReader(xml, {
-			debug: ac.debug,
-			app: ac.app,
-			before: false,
-			section: Prepare,
-			file: DEFAULT_FILE_NAME,
-			binary: true,
-			allowCfg: true,
-			root: '',
-			source: '',
-			build: null,
-			input: [],
-			cordova: false
-		}, configHandler);
+		new HashReader(
+			xml,
+			{ debug: ac.debug, app: ac.app, before: false, section: Prepare, file: DEFAULT_FILE_NAME, binary: true, allowCfg: true, root: '', source: '', build: null, input: [], cordova: false },
+			configHandler
+		);
 	}
 
 	override private function configHandler(cfg: HashConfig): Void {
@@ -264,25 +255,18 @@ private typedef HashConfig = {
 
 	override private function readNode(xml: Fast): Void {
 		switch xml.name {
-			case 'output':
-				cfg.file = normalize(xml.innerData);
-			case 'input':
-				cfg.input.push(normalize(xml.innerData));
-			case 'build':
-				cfg.build = normalize(xml.innerData);
-			case _:
-				super.readNode(xml);
+			case 'output': cfg.file = normalize(xml.innerData);
+			case 'input': cfg.input.push(normalize(xml.innerData));
+			case 'build': cfg.build = normalize(xml.innerData);
+			case _: super.readNode(xml);
 		}
 	}
 
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
-			case 'binary':
-				cfg.binary = !val.isFalse();
-			case 'root':
-				cfg.root = val;
-			case 'source':
-				cfg.source = val;
+			case 'binary': cfg.binary = !val.isFalse();
+			case 'root': cfg.root = val;
+			case 'source': cfg.source = val;
 			case _:
 		}
 	}

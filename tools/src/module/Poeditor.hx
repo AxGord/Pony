@@ -18,18 +18,11 @@ class Poeditor extends NModule<PoeditorConfig> {
 	public function init(): Void initSections(PRIORITY, BASection.Prepare);
 
 	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
-		new PoeditorReader(xml, {
-			debug: ac.debug,
-			app: ac.app,
-			before: false,
-			section: BASection.Prepare,
-			path: '',
-			id: null,
-			token: null,
-			list: null,
-			allowCfg: true,
-			cordova: false
-		}, configHandler);
+		new PoeditorReader(
+			xml,
+			{ debug: ac.debug, app: ac.app, before: false, section: BASection.Prepare, path: '', id: null, token: null, list: null, allowCfg: true, cordova: false },
+			configHandler
+		);
 	}
 
 	#if (haxe_ver < 4.2) override #end
@@ -52,16 +45,11 @@ private class PoeditorReader extends BAReader<PoeditorConfig> {
 
 	override private function readNode(xml: Fast): Void {
 		switch xml.name {
-			case 'path':
-				cfg.path = StringTools.trim(xml.innerData);
-			case 'id':
-				cfg.id = Std.parseInt(xml.innerData);
-			case 'token':
-				cfg.token = StringTools.trim(xml.innerData);
-			case 'list':
-				cfg.list = [for (x in xml.elements) StringTools.trim(x.innerData) => x.name];
-			case _:
-				super.readNode(xml);
+			case 'path': cfg.path = StringTools.trim(xml.innerData);
+			case 'id': cfg.id = Std.parseInt(xml.innerData);
+			case 'token': cfg.token = StringTools.trim(xml.innerData);
+			case 'list': cfg.list = [for (x in xml.elements) StringTools.trim(x.innerData) => x.name];
+			case _: super.readNode(xml);
 		}
 	}
 

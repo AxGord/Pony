@@ -36,8 +36,7 @@ class XmlUiBuilder {
 		}
 
 		final types = switch typesExpr.expr {
-			case EObjectDecl(ts):
-				[for (t in ts) t.field => exprToComplex(t.expr)];
+			case EObjectDecl(ts): [for (t in ts) t.field => exprToComplex(t.expr)];
 			case _: Context.error('Types list wrong type', typesExpr.pos);
 		}
 
@@ -48,10 +47,8 @@ class XmlUiBuilder {
 			if (submeta.checkMeta([':ui_types'])) {
 				final m = submeta.getMeta(':ui_types').params[0];
 				switch m.expr {
-					case EObjectDecl(ts):
-						for (t in ts) types[t.field] = exprToComplex(t.expr);
-					case _:
-						Context.error('Types list wrong type', m.pos);
+					case EObjectDecl(ts): for (t in ts) types[t.field] = exprToComplex(t.expr);
+					case _: Context.error('Types list wrong type', m.pos);
 				}
 			}
 		}
@@ -59,10 +56,8 @@ class XmlUiBuilder {
 		if (meta.checkMeta([':ui_types'])) {
 			final m = meta.getMeta(':ui_types').params[0];
 			switch m.expr {
-				case EObjectDecl(ts):
-					for (t in ts) types[t.field] = exprToComplex(t.expr);
-				case _:
-					Context.error('Types list wrong type', m.pos);
+				case EObjectDecl(ts): for (t in ts) types[t.field] = exprToComplex(t.expr);
+				case _: Context.error('Types list wrong type', m.pos);
 			}
 		}
 
@@ -104,42 +99,23 @@ class XmlUiBuilder {
 
 				addId(fields, xml, style, types);
 
-				final obj: Expr = {
-					expr: EObjectDecl([for (k in filters.keys()) { field: k, expr: mapToOExprObject(filters[k]) }]),
-					pos: Context.currentPos()
-				};
+				final obj: Expr = { expr: EObjectDecl([for (k in filters.keys()) { field: k, expr: mapToOExprObject(filters[k]) }]), pos: Context.currentPos() };
 				toConsructor = [];
-				fields.push({
-					name: '_createUI',
-					kind: FFun({
-						args: [],
-						ret: null,
-						expr: macro {
-							createFilters($obj);
-							var root = ${genExpr(xml, style)};
-							$a{toConsructor};
-							return root;
-						}
-					}),
-					pos: Context.currentPos(),
-					access: [#if (haxe_ver < 4.2) AOverride, #end APrivate]
-				});
+				fields.push({ name: '_createUI', kind: FFun({ args: [], ret: null, expr: macro {
+					createFilters($obj);
+					var root = ${genExpr(xml, style)};
+					$a{toConsructor};
+					return root;
+				} }), pos: Context.currentPos(), access: [#if (haxe_ver < 4.2) AOverride, #end APrivate] });
 				toConsructor = [];
 				final pathes: Array<String> = [];
 				getPathes(pathes, xml, style);
 				final pts: Array<String> = [];
 				for (p in pathes) if (pts.indexOf(p) == -1) pts.push(p);
 				final ps: Array<Expr> = [for (p in pts) macro $v{p}];
-				fields.push({
-					name: 'loadUI',
-					kind: FFun({
-						args: [{ name: 'cb', type: macro :Int -> Int -> Void }],
-						ret: null,
-						expr: macro ${assetManager}.load('', $a{ps}, cb)
-					}),
-					pos: Context.currentPos(),
-					access: [AStatic, APublic]
-				});
+				fields.push({ name: 'loadUI', kind: FFun({ args: [{ name: 'cb', type: macro :Int -> Int -> Void }], ret: null, expr: macro ${assetManager}.load(
+					'', $a{ps}, cb
+				) }), pos: Context.currentPos(), access: [AStatic, APublic] });
 			case _:
 				Context.error('Wrong ui type', meta.getMeta(':ui').params[0].pos);
 		}
@@ -248,10 +224,7 @@ class XmlUiBuilder {
 			}
 		];
 		final textContent: String = content.length == 0 && xml.x.firstChild() != null ? xml.innerData : '';
-		final obj: Expr = {
-			expr: EObjectDecl([for (k in attrs.keys()) { field: k, expr: macro $v{attrs[k]} }]),
-			pos: Context.currentPos()
-		};
+		final obj: Expr = { expr: EObjectDecl([for (k in attrs.keys()) { field: k, expr: macro $v{attrs[k]} }]), pos: Context.currentPos() };
 
 		if (name == 'tween') {
 			if (!xml.has.id) throw 'Not have id';
@@ -272,12 +245,7 @@ class XmlUiBuilder {
 
 		final expr: Expr = !inRepeat
 			? macro createUIElement($v{name}, $obj, $a{content}, $v{textContent})
-			: macro {
-				name: $v{name},
-				attrs: $obj,
-				content: ($a{content}: Array<Dynamic>),
-				textContent: textContent
-			};
+			: macro { name: $v{name}, attrs: $obj, content: ($a{content}: Array<Dynamic>), textContent: textContent };
 		return xml.has.id ? macro cast($i{prefix + xml.att.id} = cast ${expr}) : macro ${expr};
 	}
 
@@ -290,14 +258,10 @@ class XmlUiBuilder {
 			final att1: Bool = attrs[k] != null && attrs[k].charAt(0) == ',';
 			final att2: Bool = s.charAt(0) == ',';
 			attrs[k] = switch [att1, att2] {
-				case [false, false]:
-					s;
-				case [false, true]:
-					attrs[k] != null ? attrs[k] + s : s.substr(1).ltrim();
-				case [true, false]:
-					s + attrs[k];
-				case [true, true]:
-					StringTools.ltrim(attrs[k]) + s;
+				case [false, false]: s;
+				case [false, true]: attrs[k] != null ? attrs[k] + s : s.substr(1).ltrim();
+				case [true, false]: s + attrs[k];
+				case [true, true]: StringTools.ltrim(attrs[k]) + s;
 			}
 		}
 		return n;
@@ -313,12 +277,9 @@ class XmlUiBuilder {
 		var id: String = prefix;
 		if (xml.has.id) {
 			id = prefix + xml.att.id;
-			fields.push({
-				name: id,
-				kind: FProp('default', 'null', getType(xml.name, style, types)),
-				pos: Context.currentPos(),
-				access: [APublic]
-			});
+			fields.push(
+				{ name: id, kind: FProp('default', 'null', getType(xml.name, style, types)), pos: Context.currentPos(), access: [APublic] }
+			);
 			id += '_';
 		}
 		for (x in xml.elements) addId(fields, x, style, types, id);

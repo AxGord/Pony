@@ -39,18 +39,10 @@ class FLExtends {
 
 	public static function childrens(d: DisplayObjectContainer): Iterator<DisplayObject> {
 		final it: IntIterator = 0...d.numChildren;
-		return {
-			hasNext: it.hasNext,
-			next: function(): DisplayObject return d.getChildAt(it.next())
-		};
+		return { hasNext: it.hasNext, next: function(): DisplayObject return d.getChildAt(it.next()) };
 	}
 
-	public static function rect(r: Rectangle): Rect<Float> return {
-		x: r.x,
-		y: r.y,
-		width: r.width,
-		height: r.height
-	};
+	public static function rect(r: Rectangle): Rect<Float> return { x: r.x, y: r.y, width: r.width, height: r.height };
 
 	public static function border(rect: Rectangle, x: Float, ?y: Float): Rectangle {
 		final r = rect.clone();

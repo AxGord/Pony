@@ -17,8 +17,7 @@ using StringTools;
 		for (field in fields) if (field.meta != null) {
 			for (meta in field.meta) if (meta.name == ':hlNative' && meta.params != null && meta.params.length > 0) {
 				switch meta.params[0].expr {
-					case EConst(CString(s, k)) if (s.startsWith('?')):
-						meta.params[0] = macro $v{s.substr(1)};
+					case EConst(CString(s, k)) if (s.startsWith('?')): meta.params[0] = macro $v{s.substr(1)};
 					case _:
 				}
 			}

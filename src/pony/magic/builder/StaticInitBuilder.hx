@@ -22,19 +22,9 @@ class StaticInitBuilder {
 			}
 			f.kind.getParameters()[1] = null;
 		}
-		fields.push({
-			pos: Context.currentPos(),
-			name: '__init__',
-			meta: [],
-			doc: null,
-			access: [APrivate, AStatic, AInline],
-			kind: FFun({
-				ret: null,
-				params: [],
-				args: [],
-				expr: { expr: EBlock(exprs), pos: Context.currentPos() }
-			})
-		});
+		fields.push({ pos: Context.currentPos(), name: '__init__', meta: [], doc: null, access: [APrivate, AStatic, AInline], kind: FFun(
+			{ ret: null, params: [], args: [], expr: { expr: EBlock(exprs), pos: Context.currentPos() } }
+		) });
 		return fields;
 	}
 

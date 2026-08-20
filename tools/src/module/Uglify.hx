@@ -30,26 +30,11 @@ class Uglify extends NModule<UglifyConfig> {
 	}
 
 	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
-		new UglifyReader(xml, {
-			debug: ac.debug,
-			app: ac.app,
-			before: false,
-			section: BASection.Build,
-			sourcemap: {
-				input: null,
-				output: null,
-				url: null,
-				source: null,
-				offset: 0
-			},
-			mangle: false,
-			compress: false,
-			libcache: null,
-			output: '',
-			input: [],
-			allowCfg: true,
-			cordova: false
-		}, configHandler);
+		new UglifyReader(
+			xml,
+			{ debug: ac.debug, app: ac.app, before: false, section: BASection.Build, sourcemap: { input: null, output: null, url: null, source: null, offset: 0 }, mangle: false, compress: false, libcache: null, output: '', input: [], allowCfg: true, cordova: false },
+			configHandler
+		);
 	}
 
 	#if (haxe_ver < 4.2) override #end
@@ -66,13 +51,7 @@ private class UglifyReader extends BAReader<UglifyConfig> {
 	private function clean(): Void {
 		cfg.output = null;
 		cfg.input = [];
-		cfg.sourcemap = {
-			input: null,
-			output: null,
-			url: null,
-			source: null,
-			offset: 0
-		};
+		cfg.sourcemap = { input: null, output: null, url: null, source: null, offset: 0 };
 		cfg.mangle = false;
 		cfg.compress = false;
 		cfg.libcache = null;
@@ -80,8 +59,7 @@ private class UglifyReader extends BAReader<UglifyConfig> {
 
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
-			case 'libcache':
-				cfg.libcache = TextTools.isTrue(val) ? Uglify.CACHE_FILE : null;
+			case 'libcache': cfg.libcache = TextTools.isTrue(val) ? Uglify.CACHE_FILE : null;
 			case _:
 		}
 	}
@@ -95,13 +73,9 @@ private class UglifyReader extends BAReader<UglifyConfig> {
 			case 'sourcemap':
 				var offset: Null<Int> = xml.hasNode.offset ? Std.parseInt(xml.node.offset.innerData) : null;
 				if (offset == null) offset = 0;
-				cfg.sourcemap = {
-					input: normalize(xml.node.input.innerData),
-					output: normalize(xml.node.output.innerData),
-					url: normalize(xml.node.url.innerData),
-					source: normalize(xml.node.source.innerData),
-					offset: offset
-				};
+				cfg.sourcemap = { input: normalize(xml.node.input.innerData), output: normalize(xml.node.output.innerData), url: normalize(
+					xml.node.url.innerData
+				), source: normalize(xml.node.source.innerData), offset: offset };
 			case 'm', 'mangle':
 				cfg.mangle = true;
 			case 'c', 'compress':

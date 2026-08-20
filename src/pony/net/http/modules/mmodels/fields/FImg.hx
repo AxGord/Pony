@@ -22,12 +22,7 @@ class FImg extends Field {
 	}
 
 	override public function create(): pony.db.mysql.Field {
-		return {
-			name: name,
-			length: len,
-			type: type,
-			flags: notnull ? [Flags.NOT_NULL] : []
-		};
+		return { name: name, length: len, type: type, flags: notnull ? [Flags.NOT_NULL] : [] };
 	}
 
 	override public function htmlInput(cl: String, act: String, value: String, ?hidden: Null<Bool>): String {

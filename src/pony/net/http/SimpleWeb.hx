@@ -39,15 +39,7 @@ class SimpleWeb {
 
 		var db: MySQL = null;
 		if (config == null && Config.mysql != null && !Lambda.empty(Config.mysql)) {
-			config = {
-				host: Config.mysql['host'],
-				port: Std.parseInt(Config.mysql['port']),
-				user: Config.mysql['user'],
-				password: Config.mysql['password'],
-				database: Config.mysql['database'],
-				httpport: Config.port,
-				vk: getVKPair()
-			};
+			config = { host: Config.mysql['host'], port: Std.parseInt(Config.mysql['port']), user: Config.mysql['user'], password: Config.mysql['password'], database: Config.mysql['database'], httpport: Config.port, vk: getVKPair() };
 		}
 
 		if (config != null) {
@@ -55,11 +47,7 @@ class SimpleWeb {
 			db.onLog << Log.trace;
 			db.onError << Log.trace;
 		} else {
-			config = {
-				httpport: Config.port,
-				database: null,
-				vk: getVKPair()
-			};
+			config = { httpport: Config.port, database: null, vk: getVKPair() };
 		}
 
 		final modules: Array<IModule> = DefaultModulePack.create();

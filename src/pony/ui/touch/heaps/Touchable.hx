@@ -215,14 +215,10 @@ class Touchable extends TouchableBase {
 	#else
 	private function instanceMouseHandler(event: Event): Void {
 		switch event.kind {
-			case EOut:
-				leaveHandler();
-			case EOver:
-				enterHandler();
-			case ERelease:
-				globMouseUpLeftHandler();
-			case EPush:
-				down = true;
+			case EOut: leaveHandler();
+			case EOver: enterHandler();
+			case ERelease: globMouseUpLeftHandler();
+			case EPush: down = true;
 			case _:
 		}
 	}

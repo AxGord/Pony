@@ -132,17 +132,7 @@ class Haxelib {
 			Utils.error('$haxelibFile exists');
 			return;
 		}
-		final jdata = {
-			name: name,
-			url: '',
-			license: '',
-			tags: [],
-			description: '',
-			version: '0.0.1',
-			releasenote: 'Init',
-			contributors: [author],
-			dependencies: {}
-		};
+		final jdata = { name: name, url: '', license: '', tags: [], description: '', version: '0.0.1', releasenote: 'Init', contributors: [author], dependencies: {} };
 		saveJson(jdata);
 		Sys.println('Library $name created');
 	}

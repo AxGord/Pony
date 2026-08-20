@@ -43,8 +43,7 @@ using Lambda;
 		module.onLog << log;
 		list.push(module);
 		switch Type.getClass(module) {
-			case Build:
-				build = cast module;
+			case Build: build = cast module;
 			case _:
 		}
 	}

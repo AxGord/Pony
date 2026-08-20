@@ -67,23 +67,9 @@ class App extends SmartCanvas {
 		background = bg;
 		this.container = container;
 
-		final renderingOptions: ApplicationOptions = {
-			width: width,
-			height: height,
-			view: canvas,
-			backgroundColor: background,
-			resolution: 1,
-			antialias: false,
-			forceFXAA: false,
-			autoResize: false,
-			transparent: false,
-			clearBeforeRender: true,
-			preserveDrawingBuffer: false,
-			roundPixels: true,
-			#if forcecanvas
-			forceCanvas: true
-			#end
-		};
+		final renderingOptions: ApplicationOptions = { width: width, height: height, view: canvas, backgroundColor: background, resolution: 1, antialias: false, forceFXAA: false, autoResize: false, transparent: false, clearBeforeRender: true, preserveDrawingBuffer: false, roundPixels: true, #if forcecanvas
+		forceCanvas: true
+		#end };
 
 		if (ro != null) {
 			if (ro.antialias != null) renderingOptions.antialias = ro.antialias;

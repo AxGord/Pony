@@ -67,10 +67,8 @@ class UpdateConnect extends ActionConnect implements ISubActionConnect {
 		callCheck(ca, function(r: ActResult) {
 			storage[base.id] = { values: h, result: r };
 			switch r {
-				case ActResult.OK:
-					cpq.connection.endAction();
-				case _:
-					cpq.connection.endActionPrevPage();
+				case ActResult.OK: cpq.connection.endAction();
+				case _: cpq.connection.endActionPrevPage();
 			}
 		});
 		return true;
@@ -81,12 +79,9 @@ class UpdateConnect extends ActionConnect implements ISubActionConnect {
 		final r: ActResult = m == null ? null : m.result;
 		var st: String = null;
 		if (r != null) switch (r) {
-			case OK:
-				st = '';
-			case ERROR(e):
-				st = e.exists(arg) ? e.get(arg) : '';
-			case DBERROR:
-				st = 'DataBase error';
+			case OK: st = '';
+			case ERROR(e): st = e.exists(arg) ? e.get(arg) : '';
+			case DBERROR: st = 'DataBase error';
 		}
 		return st;
 	}

@@ -90,10 +90,8 @@ private typedef Export = { typeName: String, name: String };
 
 	private inline function callw(w: WCB, service: Dynamic): Void {
 		switch w {
-			case A(cb):
-				cb();
-			case B(cb):
-				cb(service);
+			case A(cb): cb();
+			case B(cb): cb(service);
 		}
 	}
 

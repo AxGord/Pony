@@ -68,19 +68,11 @@ final class Build extends CfgModule<BuildConfig> {
 	public inline function addFlag(flag: String): Void if (flags.indexOf(flag) == -1) flags.push(flag);
 
 	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
-		new BuildConfigReader(xml, {
-			debug: ac.debug,
-			app: ac.app,
-			before: false,
-			section: BASection.Build,
-			command: [],
-			haxeCompiler: HAXE,
-			winfix: false,
-			hxml: null,
-			runHxml: [],
-			allowCfg: true,
-			cordova: false
-		}, configHandler);
+		new BuildConfigReader(
+			xml,
+			{ debug: ac.debug, app: ac.app, before: false, section: BASection.Build, command: [], haxeCompiler: HAXE, winfix: false, hxml: null, runHxml: [], allowCfg: true, cordova: false },
+			configHandler
+		);
 	}
 
 	override private function runNode(cfg: BuildConfig): Void {
@@ -176,12 +168,7 @@ final class Build extends CfgModule<BuildConfig> {
 			}
 			s.close();
 			if (hasError) Utils.exit(1);
-			lastCompilationOptions = {
-				command: command,
-				debug: debug,
-				compiler: compiler,
-				winfix: winfix
-			};
+			lastCompilationOptions = { command: command, debug: debug, compiler: compiler, winfix: winfix };
 		} else {
 			final args: Array<String> = [];
 			for (c in command) {
@@ -281,26 +268,16 @@ private class BuildConfigReader extends BAReader<BuildConfig> {
 					'';
 				}
 				switch xml.name {
-					case HXML:
-						cfg.runHxml.push(d);
-					case 'd':
-						cfg.command.push(new SPair(D, xml.has.name ? normalize(xml.att.name) + '=' + d : d));
-					case 'm':
-						cfg.command.push(new SPair('--macro', d));
-					case 'i':
-						cfg.command.push(new SPair('--macro', 'include(\'$d\')'));
-					case 'k':
-						cfg.command.push(new SPair('--macro', 'keep(\'$d\')'));
-					case 'r':
-						cfg.command.push(new SPair('--run', d));
-					case 'cmd':
-						cfg.command.push(new SPair('--cmd', d));
-					case 'interp':
-						cfg.command.push(new SPair('--interp', ''));
-					case 'remap':
-						cfg.command.push(new SPair('--remap', d));
-					case a:
-						cfg.command.push(new SPair('-$a', d));
+					case HXML: cfg.runHxml.push(d);
+					case 'd': cfg.command.push(new SPair(D, xml.has.name ? normalize(xml.att.name) + '=' + d : d));
+					case 'm': cfg.command.push(new SPair('--macro', d));
+					case 'i': cfg.command.push(new SPair('--macro', 'include(\'$d\')'));
+					case 'k': cfg.command.push(new SPair('--macro', 'keep(\'$d\')'));
+					case 'r': cfg.command.push(new SPair('--run', d));
+					case 'cmd': cfg.command.push(new SPair('--cmd', d));
+					case 'interp': cfg.command.push(new SPair('--interp', ''));
+					case 'remap': cfg.command.push(new SPair('--remap', d));
+					case a: cfg.command.push(new SPair('-$a', d));
 				}
 			} else {
 				throw s;
@@ -319,12 +296,9 @@ private class BuildConfigReader extends BAReader<BuildConfig> {
 
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
-			case HAXE:
-				cfg.haxeCompiler = val;
-			case HXML:
-				cfg.hxml = val;
-			case 'winfix':
-				cfg.winfix = TextTools.isTrue(val);
+			case HAXE: cfg.haxeCompiler = val;
+			case HXML: cfg.hxml = val;
+			case 'winfix': cfg.winfix = TextTools.isTrue(val);
 			case _:
 		}
 	}

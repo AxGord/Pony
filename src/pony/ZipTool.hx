@@ -90,15 +90,9 @@ class ZipTool extends Logable {
 		log(f);
 		final stat: FileStat = FileSystem.stat(f);
 		final b: Bytes = File.getBytes(f);
-		final entry: Entry = {
-			fileName: root + file,
-			fileSize: stat.size,
-			fileTime: stat.mtime,
-			compressed: false,
-			dataSize: b.length,
-			data: b,
-			crc32: Crc32.make(b)
-		};
+		final entry: Entry = { fileName: root + file, fileSize: stat.size, fileTime: stat.mtime, compressed: false, dataSize: b.length, data: b, crc32: Crc32.make(
+			b
+		) };
 		if (compressLvl > 0) Tools.compress(entry, compressLvl);
 		writer.writeEntryHeader(entry);
 		fileOutput.writeFullBytes(entry.data, 0, entry.data.length);
@@ -134,15 +128,10 @@ class ZipTool extends Logable {
 			log(f);
 			final h: Array<String> = value;
 			final b: Bytes = File.getBytes(f);
-			final entry: Entry = {
-				fileName: file,
-				fileSize: Std.parseInt(h[1]),
-				fileTime: Date.fromTime(Std.parseFloat(h[0])),
-				compressed: false,
-				dataSize: b.length,
-				data: b,
-				crc32: h.length > 2 ? Std.parseInt(h[2]) : Crc32.make(b)
-			};
+			final entry: Entry = { fileName: file, fileSize: Std.parseInt(h[1]), fileTime: Date.fromTime(Std.parseFloat(h[0])), compressed: false, dataSize: b.length, data: b, crc32: h.length
+				> 2
+				? Std.parseInt(h[2])
+				: Crc32.make(b) };
 			if (compressLvl > 0) Tools.compress(entry, compressLvl);
 			writer.writeEntryHeader(entry);
 			fileOutput.writeFullBytes(entry.data, 0, entry.data.length);

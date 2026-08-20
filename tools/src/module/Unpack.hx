@@ -35,15 +35,10 @@ class Unpack extends Module {
 
 	#if (haxe_ver < 4.2) override #end
 	private function readConfig(ac: AppCfg): Void {
-		new UnpackReader(xml, {
-			debug: ac.debug,
-			app: ac.app,
-			before: false,
-			section: BASection.Unpack,
-			zips: [],
-			allowCfg: true,
-			cordova: false
-		}, configHandler);
+		new UnpackReader(
+			xml, { debug: ac.debug, app: ac.app, before: false, section: BASection.Unpack, zips: [], allowCfg: true, cordova: false },
+			configHandler
+		);
 	}
 
 	private function configHandler(cfg: UnpackConfig): Void {
@@ -95,12 +90,9 @@ private class UnpackReader extends BAReader<UnpackConfig> {
 	override private function readNode(xml: Fast): Void {
 		switch xml.name {
 			case 'zip':
-				cfg.zips.push({
-					path: try StringTools.trim(xml.innerData) catch (_: Any) '',
-					file: xml.att.file,
-					rm: xml.isTrue('rm'),
-					log: !xml.isFalse('log')
-				});
+				cfg.zips.push({ path: try StringTools.trim(xml.innerData) catch (_: Any) '', file: xml.att.file, rm: xml.isTrue('rm'), log: !xml.isFalse(
+					'log'
+				) });
 			case _:
 				super.readNode(xml);
 		}

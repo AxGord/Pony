@@ -24,22 +24,11 @@ using pony.text.TextTools;
 	public function init(): Void initSections(PRIORITY, BASection.Prepare);
 
 	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
-		new OggencReader(xml, {
-			debug: ac.debug,
-			app: ac.app,
-			before: false,
-			section: Prepare,
-			dirs: [],
-			units: [],
-			to: '',
-			from: '',
-			addext: '',
-			q: 3,
-			rm: false,
-			hash: false,
-			allowCfg: true,
-			cordova: false
-		}, configHandler);
+		new OggencReader(
+			xml,
+			{ debug: ac.debug, app: ac.app, before: false, section: Prepare, dirs: [], units: [], to: '', from: '', addext: '', q: 3, rm: false, hash: false, allowCfg: true, cordova: false },
+			configHandler
+		);
 	}
 
 	override private function runNode(cfg: OggencConfig): Void {
@@ -154,18 +143,12 @@ private typedef OggencConfig = {
 
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
-			case 'to':
-				cfg.to += val;
-			case 'from':
-				cfg.from += val;
-			case 'hash':
-				cfg.hash = val.isTrue();
-			case 'addext':
-				cfg.addext = val;
-			case 'rm':
-				cfg.rm = val.isTrue();
-			case 'q':
-				@:nullSafety(Off) cfg.q = Std.parseInt(val);
+			case 'to': cfg.to += val;
+			case 'from': cfg.from += val;
+			case 'hash': cfg.hash = val.isTrue();
+			case 'addext': cfg.addext = val;
+			case 'rm': cfg.rm = val.isTrue();
+			case 'q': @:nullSafety(Off) cfg.q = Std.parseInt(val);
 			case _:
 		}
 	}

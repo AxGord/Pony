@@ -30,8 +30,7 @@ class CueBuilder {
 		final meta = cl.get().meta.get();
 		var cueFile = null;
 		for (m in meta) switch m {
-			case { name: ':cue', params: [{ expr: EConst(CString(v)) }] }:
-				cueFile = v;
+			case { name: ':cue', params: [{ expr: EConst(CString(v)) }] }: cueFile = v;
 			case _:
 		}
 		if (cueFile == null) throw 'Error';
@@ -58,25 +57,17 @@ class CueBuilder {
 			for (i in 0...data.length) {
 				final title = data[i].a;
 				final t: Pair<Time, Time> = i != data.length - 1 ? { a: data[i].b, b: data[i + 1].b } : { a: data[i].b, b: 0 };
-				fields.push({
-					name: title,
-					access: [APublic, AStatic],
-					pos: Context.currentPos(),
-					kind: FVar(
-						macro :pony.time.TimeInterval,
-						{ expr: EBinop(OpInterval, macro $v{t.a}, macro $v{t.b}), pos: Context.currentPos() }
-					)
-				});
+				fields.push({ name: title, access: [APublic, AStatic], pos: Context.currentPos(), kind: FVar(
+					macro :pony.time.TimeInterval,
+					{ expr: EBinop(OpInterval, macro $v{t.a}, macro $v{t.b}), pos: Context.currentPos() }
+				) });
 				title => { min: t.a, max: t.b };
 			}
 		];
 
-		fields.push({
-			name: 'soundMap',
-			access: [APublic, AStatic],
-			pos: Context.currentPos(),
-			kind: FVar(macro :Map<String, pony.time.TimeInterval>, macro cast $v{map})
-		});
+		fields.push({ name: 'soundMap', access: [APublic, AStatic], pos: Context.currentPos(), kind: FVar(
+			macro :Map<String, pony.time.TimeInterval>, macro cast $v{map}
+		) });
 
 		return fields;
 	}

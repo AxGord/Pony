@@ -53,15 +53,12 @@ class PageScroller {
 		#if tweenmax
 		TweenMax.killTweensOf(this);
 		kineticDragged = true;
-		TweenMax.to(this, UniversalDrag.KINETIC_DRAG_DURATION, {
-			onUpdate: function(): Void {
-				kineticDragged = true;
-				dragScrollUpdate(null);
-			},
-			onComplete: function(): Void {
-				kineticDragged = false;
-			}
-		});
+		TweenMax.to(this, UniversalDrag.KINETIC_DRAG_DURATION, { onUpdate: function(): Void {
+			kineticDragged = true;
+			dragScrollUpdate(null);
+		}, onComplete: function(): Void {
+			kineticDragged = false;
+		} });
 		#end
 		activelyDragged = false;
 	}

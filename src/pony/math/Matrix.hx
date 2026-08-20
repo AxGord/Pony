@@ -14,20 +14,18 @@ abstract Matrix<T>(Array<Array<T>>) from Array<Array<T>> to Array<Array<T>> {
 	public function hor(d: Int): Matrix<T> {
 		return if (d > 0)
 			[
-				for (e in this) [
-					for (i in 0...e.length) if (i + d < e.length)
-						e[i + d]
-					else
-						e[i + d - e.length]
+				for (e in this) [for (i in 0...e.length) if (i + d < e.length)
+					e[i + d]
+				else
+					e[i + d - e.length]
 				]
 			];
 		else if (d < 0)
 			[
-				for (e in this) [
-					for (i in 0...e.length) if (i + d >= 0)
-						e[i + d]
-					else
-						e[i + d + e.length]
+				for (e in this) [for (i in 0...e.length) if (i + d >= 0)
+					e[i + d]
+				else
+					e[i + d + e.length]
 				]
 			];
 		else
@@ -83,37 +81,28 @@ abstract Matrix<T>(Array<Array<T>>) from Array<Array<T>> to Array<Array<T>> {
 	public function iterator(): Iterator<T> {
 		var x: UInt = 0;
 		var y: UInt = 0;
-		return {
-			hasNext: () -> x < this.length && y < this[x].length,
-			next: () -> {
-				final r: T = this[x++][y];
-				if (x >= this.length) {
-					x = 0;
-					y++;
-				}
-				r;
+		return { hasNext: () -> x < this.length && y < this[x].length, next: () -> {
+			final r: T = this[x++][y];
+			if (x >= this.length) {
+				x = 0;
+				y++;
 			}
-		}
+			r;
+		} }
 	}
 
 	#if (haxe_ver >= '4.0.0')
 	extern public inline function keyValueIterator(): KeyValueIterator<Point<UInt>, T> {
 		var x: UInt = 0;
 		var y: UInt = 0;
-		return {
-			hasNext: () -> x < this.length && y < this[x].length,
-			next: () -> {
-				final r: { key: Point<UInt>, value: T } = {
-					key: new Point(x, y),
-					value: this[x++][y]
-				}
-				if (x >= this.length) {
-					x = 0;
-					y++;
-				}
-				r;
+		return { hasNext: () -> x < this.length && y < this[x].length, next: () -> {
+			final r: { key: Point<UInt>, value: T } = { key: new Point(x, y), value: this[x++][y] }
+			if (x >= this.length) {
+				x = 0;
+				y++;
 			}
-		}
+			r;
+		} }
 	}
 	#end
 

@@ -67,30 +67,10 @@ using hugs.HUGSWrapper;
 	public static function brect(f: Vector3, r: IntRect, color: Color, border: Int, bcolor: Color): Array<GameObject> {
 		return [
 			rect(f, r, color),
-			rect(new Vector3(f.x, f.y, f.z + 1), {
-				x: r.x,
-				y: r.y,
-				width: border,
-				height: r.height
-			}, bcolor),
-			rect(new Vector3(f.x, f.y, f.z + 1), {
-				x: r.x,
-				y: r.y,
-				width: r.width,
-				height: border
-			}, bcolor),
-			rect(new Vector3(f.x, f.y, f.z + 1), {
-				x: r.x + r.width,
-				y: r.y,
-				width: border,
-				height: r.height
-			}, bcolor),
-			rect(new Vector3(f.x, f.y, f.z + 1), {
-				x: r.x,
-				y: r.y + r.height,
-				width: r.width,
-				height: border
-			}, bcolor)
+			rect(new Vector3(f.x, f.y, f.z + 1), { x: r.x, y: r.y, width: border, height: r.height }, bcolor),
+			rect(new Vector3(f.x, f.y, f.z + 1), { x: r.x, y: r.y, width: r.width, height: border }, bcolor),
+			rect(new Vector3(f.x, f.y, f.z + 1), { x: r.x + r.width, y: r.y, width: border, height: r.height }, bcolor),
+			rect(new Vector3(f.x, f.y, f.z + 1), { x: r.x, y: r.y + r.height, width: r.width, height: border }, bcolor)
 		];
 	}
 

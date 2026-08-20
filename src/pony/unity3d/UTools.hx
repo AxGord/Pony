@@ -26,11 +26,9 @@ import unityengine.Screen;
 			// Application.Quit();
 			return false;
 		}
-		var cfg: { quality: Int, width: Int, height: Int } = {
-			quality: Std.parseInt(args.quality),
-			width: Std.parseInt(args.width),
-			height: Std.parseInt(args.height)
-		};
+		var cfg: { quality: Int, width: Int, height: Int } = { quality: Std.parseInt(args.quality), width: Std.parseInt(args.width), height: Std.parseInt(
+			args.height
+		) };
 		QualitySettings.SetQualityLevel(cfg.quality);
 
 		if (cfg.width > 0 && cfg.height > 0)

@@ -32,14 +32,10 @@ class RemoteActionRunner extends Logable {
 	private function runNext(): Void {
 		if (commands.length > 0) {
 			switch cast commands.shift() {
-				case Get(file):
-					listen(new RemoteActionGet(protocol, file));
-				case Send(file):
-					listen(new RemoteActionSend(protocol, file));
-				case Exec(command):
-					listen(new RemoteActionExec(protocol, command));
-				case Command(command):
-					listen(new RemoteActionCommand(protocol, command));
+				case Get(file): listen(new RemoteActionGet(protocol, file));
+				case Send(file): listen(new RemoteActionSend(protocol, file));
+				case Exec(command): listen(new RemoteActionExec(protocol, command));
+				case Command(command): listen(new RemoteActionCommand(protocol, command));
 			}
 		} else {
 			onEnd();

@@ -11,10 +11,8 @@ class Generate {
 	public static function run(type: String, name: String): Void {
 		if (name == null) Utils.error('Name not set');
 		switch type {
-			case 'webmodels', 'web', 'w':
-				genWebModule(name);
-			case _:
-				Utils.error('Unknown type');
+			case 'webmodels', 'web', 'w': genWebModule(name);
+			case _: Utils.error('Unknown type');
 		}
 	}
 

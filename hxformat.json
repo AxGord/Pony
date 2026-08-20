@@ -25,6 +25,11 @@
 	},
 	"wrapping": {
 		"maxLineLength": 140,
+		"comprehensionCuddledOpen": true,
+		"objectLiteral": {
+			"defaultWrap": "ignore",
+			"rules": []
+		},
 		"functionSignature": {
 			"defaultWrap": "fillLineWithLeadingBreak",
 			"rules": [
@@ -177,6 +182,8 @@
 		"whileBody": "fitLine",
 		"functionBody": "fitLine",
 		"expressionIf": "next",
+		"caseBody": "fitLine",
+		"expressionCase": "fitLine",
 		"comprehensionFor": "same"
 	}
 }

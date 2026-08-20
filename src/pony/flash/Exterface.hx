@@ -62,13 +62,10 @@ class Exterface implements Dynamic<Exterface> implements pony.magic.HasSignal {
 		// var arr:Array<Expr> = [Context.makeExpr(args, Context.currentPos())];
 		// var ae:Expr = Context.makeExpr(arr, Context.currentPos());
 		// trace(ethis);
-		return {
-			expr: ECall(
-				{ expr: EField(ethis, '_trace'), pos: Context.currentPos() },
-				[Context.makeExpr(args.length, Context.currentPos())]
-			),
-			pos: Context.currentPos()
-		};
+		return { expr: ECall(
+			{ expr: EField(ethis, '_trace'), pos: Context.currentPos() },
+			[Context.makeExpr(args.length, Context.currentPos())]
+		), pos: Context.currentPos() };
 		#else
 		args.unshift(macro $ethis.name);
 		return macro flash.external.ExternalInterface.call($a{args});

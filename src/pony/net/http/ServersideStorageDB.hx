@@ -25,24 +25,9 @@ class ServersideStorageDB implements Declarator {
 
 	public function new(): Void {
 		table.prepare([
-			{
-				name: 'client',
-				length: 36,
-				type: Types.VARCHAR,
-				flags: [Flags.NOT_NULL]
-			},
-			{
-				name: 'key',
-				length: 36,
-				type: Types.VARCHAR,
-				flags: [Flags.NOT_NULL]
-			},
-			{
-				name: 'value',
-				length: 256,
-				type: Types.VARCHAR,
-				flags: [Flags.NOT_NULL]
-			}
+			{ name: 'client', length: 36, type: Types.VARCHAR, flags: [Flags.NOT_NULL] },
+			{ name: 'key', length: 36, type: Types.VARCHAR, flags: [Flags.NOT_NULL] },
+			{ name: 'value', length: 256, type: Types.VARCHAR, flags: [Flags.NOT_NULL] }
 		], function(r) if (!r) throw 'Can\'t prepare table for storage');
 	}
 

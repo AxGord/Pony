@@ -127,12 +127,9 @@ class Main {
 		final deny: Array<String> = [];
 		final allow: Array<String> = [];
 		for (a in args) switch a.charAt(0) {
-			case '-':
-				deny.push(a.substr(1));
-			case '+':
-				allow.push(a.substr(1));
-			case _:
-				nArgs.push(a);
+			case '-': deny.push(a.substr(1));
+			case '+': allow.push(a.substr(1));
+			case _: nArgs.push(a);
 		}
 		modules.deny = deny;
 		modules.allow = allow;

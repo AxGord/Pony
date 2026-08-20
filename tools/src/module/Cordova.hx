@@ -69,19 +69,11 @@ class Cordova extends CfgModule<CordovaConfig> {
 	}
 
 	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
-		new CordovaReader(xml, {
-			debug: ac.debug,
-			app: ac.app,
-			before: false,
-			section: BASection.Cordova,
-			name: null,
-			desc: null,
-			id: null,
-			versionBuildDate: false,
-			incrementAndroidVersionCode: false,
-			allowCfg: true,
-			cordova: false
-		}, configHandler);
+		new CordovaReader(
+			xml,
+			{ debug: ac.debug, app: ac.app, before: false, section: BASection.Cordova, name: null, desc: null, id: null, versionBuildDate: false, incrementAndroidVersionCode: false, allowCfg: true, cordova: false },
+			configHandler
+		);
 	}
 
 	override private function runNode(cfg: CordovaConfig): Void {
@@ -179,16 +171,11 @@ private class CordovaReader extends BAReader<CordovaConfig> {
 
 	override private function readNode(xml: Fast): Void {
 		switch xml.name {
-			case 'name':
-				cfg.name = normalize(xml.innerData);
-			case 'id':
-				cfg.id = normalize(xml.innerData);
-			case 'version':
-				cfg.versionBuildDate = XmlTools.isTrue(xml, 'buildDate');
-			case 'androidVersionCode':
-				cfg.incrementAndroidVersionCode = XmlTools.isTrue(xml, 'increment');
-			case _:
-				super.readNode(xml);
+			case 'name': cfg.name = normalize(xml.innerData);
+			case 'id': cfg.id = normalize(xml.innerData);
+			case 'version': cfg.versionBuildDate = XmlTools.isTrue(xml, 'buildDate');
+			case 'androidVersionCode': cfg.incrementAndroidVersionCode = XmlTools.isTrue(xml, 'increment');
+			case _: super.readNode(xml);
 		}
 	}
 

@@ -22,12 +22,7 @@ class FInt extends Field {
 	}
 
 	override public function create(): pony.db.mysql.Field {
-		return {
-			name: name,
-			length: len,
-			type: type,
-			flags: notnull ? [Flags.UNSIGNED, Flags.NOT_NULL] : [Flags.UNSIGNED]
-		};
+		return { name: name, length: len, type: type, flags: notnull ? [Flags.UNSIGNED, Flags.NOT_NULL] : [Flags.UNSIGNED] };
 	}
 
 }

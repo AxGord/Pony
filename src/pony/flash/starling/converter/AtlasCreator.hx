@@ -268,14 +268,10 @@ class AtlasCreator {
 				// TODO support for larger textures?
 				if (bufferRect.width > Atlas.size - 2 * _border) bufferRect.width = nonAlphaRect.width = Atlas.size - 2 * _border;
 				if (bufferRect.height > Atlas.size - 2 * _border) bufferRect.height = nonAlphaRect.height = Atlas.size - 2 * _border;
-				return {
-					nonAlphaRect: nonAlphaRect,
-					bitmapData: buffer,
-					bitmapDataRect: bufferRect,
-					restorationCallback: bitmapDataRestorationCallback.bind(
+				return
+					{ nonAlphaRect: nonAlphaRect, bitmapData: buffer, bitmapDataRect: bufferRect, restorationCallback: bitmapDataRestorationCallback.bind(
 						Std.int(rect.width + additionalSize * 2), Std.int(rect.height + additionalSize * 2), source, matrix
-					)
-				};
+					) };
 			}
 		}
 
@@ -460,15 +456,7 @@ private class TextureStorage {
 	public function add(a: Float, b: Float, c: Float, d: Float, filters: Dynamic, data: Dynamic, dPivot: Point): Void {
 		if (!_allowsAddition) return;
 
-		if (get(a, b, c, d, filters) == null) _textures.push({
-			a: a,
-			b: b,
-			c: c,
-			d: d,
-			filters: filters,
-			data: data,
-			dPivot: dPivot
-		});
+		if (get(a, b, c, d, filters) == null) _textures.push({ a: a, b: b, c: c, d: d, filters: filters, data: data, dPivot: dPivot });
 	}
 
 	public function get(a: Float, b: Float, c: Float, d: Float, filters: Dynamic): Dynamic {

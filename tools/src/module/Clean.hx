@@ -20,21 +20,11 @@ final class Clean extends CfgModule<CleanConfig> {
 	public function init(): Void initSections(PRIORITY, BASection.Prepare);
 
 	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
-		new CleanReader(xml, {
-			debug: ac.debug,
-			app: ac.app,
-			before: false,
-			section: Prepare,
-			dirs: [],
-			empty: [],
-			units: [],
-			keepFiles: [],
-			allowCfg: true,
-			rimraf: false,
-			md: false,
-			keepHashed: false,
-			cordova: false
-		}, configHandler);
+		new CleanReader(
+			xml,
+			{ debug: ac.debug, app: ac.app, before: false, section: Prepare, dirs: [], empty: [], units: [], keepFiles: [], allowCfg: true, rimraf: false, md: false, keepHashed: false, cordova: false },
+			configHandler
+		);
 	}
 
 	override private function runNode(cfg: CleanConfig): Void {
@@ -115,16 +105,11 @@ private class CleanReader extends BAReader<CleanConfig> {
 
 	override private function readNode(xml: Fast): Void {
 		switch xml.name {
-			case 'dir':
-				cfg.dirs.push(normalize(xml.innerData));
-			case 'empty':
-				cfg.empty.push(normalize(xml.innerData));
-			case 'unit':
-				cfg.units.push(normalize(xml.innerData));
-			case 'keep':
-				cfg.keepFiles.push(normalize(xml.innerData));
-			case _:
-				super.readNode(xml);
+			case 'dir': cfg.dirs.push(normalize(xml.innerData));
+			case 'empty': cfg.empty.push(normalize(xml.innerData));
+			case 'unit': cfg.units.push(normalize(xml.innerData));
+			case 'keep': cfg.keepFiles.push(normalize(xml.innerData));
+			case _: super.readNode(xml);
 		}
 	}
 
@@ -141,12 +126,9 @@ private class CleanReader extends BAReader<CleanConfig> {
 
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
-			case 'rimraf':
-				cfg.rimraf = TextTools.isTrue(val);
-			case 'md':
-				cfg.md = TextTools.isTrue(val);
-			case 'keepHashed':
-				cfg.keepHashed = TextTools.isTrue(val);
+			case 'rimraf': cfg.rimraf = TextTools.isTrue(val);
+			case 'md': cfg.md = TextTools.isTrue(val);
+			case 'keepHashed': cfg.keepHashed = TextTools.isTrue(val);
 			case _:
 		}
 	}

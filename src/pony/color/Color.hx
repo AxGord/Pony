@@ -87,12 +87,7 @@ abstract Color(ColorImpl) {
 	/**
 	 * Construct from ARGB values
 	 */
-	public inline function new(a: Int, r: Int, g: Int, b: Int) this = {
-		a: a,
-		r: r,
-		g: g,
-		b: b
-	};
+	public inline function new(a: Int, r: Int, g: Int, b: Int) this = { a: a, r: r, g: g, b: b };
 
 	/**
 	 * Build from RGB values

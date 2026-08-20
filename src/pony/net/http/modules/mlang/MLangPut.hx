@@ -15,35 +15,28 @@ final class MLangPut extends TplPut<MLangConnect, {}> {
 	@:async
 	override public function tag(name: String, content: TplData, arg: String, args: Map<String, String>, ?kid: ITplPut): String {
 		switch (name) {
-			case 'l':
-				{
-					if (args.exists('not'))
-						return a.cpq.lang == args['not'] ? '' : @await tplData(content);
-					else {
-						final d: String = kid != null ? @await kid.tplData(content) : @await tplData(content);
-						return l(d, args);
-					}
+			case 'l': {
+				if (args.exists('not'))
+					return a.cpq.lang == args['not'] ? '' : @await tplData(content);
+				else {
+					final d: String = kid != null ? @await kid.tplData(content) : @await tplData(content);
+					return l(d, args);
 				}
-			case 'languages':
-				{
-					return @await many(null, a.base.langTable.langs.keys(), MLangPutSub, content, arg);
-				}
-			case 'language':
-				return @await sub(this, a.cpq.lang, MLangPutSub, content);
-			case _:
-				return @await super.tag(name, content, arg, args, kid);
+			}
+			case 'languages': {
+				return @await many(null, a.base.langTable.langs.keys(), MLangPutSub, content, arg);
+			}
+			case 'language': return @await sub(this, a.cpq.lang, MLangPutSub, content);
+			case _: return @await super.tag(name, content, arg, args, kid);
 		}
 	}
 
 	@:async
 	override public function shortTag(name: String, arg: String, ?kid: ITplPut): String {
 		switch (name) {
-			case 'language':
-				return a.cpq.lang;
-			case 'languages':
-				return @await TplPut.manyEasy(null, a.base.langTable.langs.keys(), null, arg == null ? ', ' : arg);
-			case _:
-				return @await super.shortTag(name, arg, kid);
+			case 'language': return a.cpq.lang;
+			case 'languages': return @await TplPut.manyEasy(null, a.base.langTable.langs.keys(), null, arg == null ? ', ' : arg);
+			case _: return @await super.shortTag(name, arg, kid);
 		}
 	}
 

@@ -90,22 +90,16 @@ class ElectronApplication extends VSTraceHelper implements HasAbstract {
 
 	public function mapCreateWindow(map: Map<String, String>, ?id: String): BrowserWindow {
 		final frame: Bool = !TextTools.isFalse(map['frame']);
-		return createWindow(map['name'], id, {
-			width: Std.parseInt(map['width']),
-			height: Std.parseInt(map['height']),
-			frame: frame,
-			titleBarStyle: frame ? null : 'hiddenInset',
-			fullscreen: map.exists('fullscreen') ? TextTools.isTrue(map['fullscreen']) : null,
-			fullscreenable: true,
-			resizable: !TextTools.isFalse(map['resizable']),
-			minWidth: Std.parseInt(map['minWidth']),
-			minHeight: Std.parseInt(map['minHeight']),
-			backgroundColor: map['background'],
-			webPreferences: {
-				nodeIntegration: true,
-				contextIsolation: false
-			}
-		});
+		return createWindow(
+			map['name'], id,
+			{ width: Std.parseInt(map['width']), height: Std.parseInt(map['height']), frame: frame, titleBarStyle: frame
+				? null
+				: 'hiddenInset', fullscreen: map.exists('fullscreen')
+				? TextTools.isTrue(map['fullscreen'])
+				: null, fullscreenable: true, resizable: !TextTools.isFalse(map['resizable']), minWidth: Std.parseInt(map['minWidth']), minHeight: Std.parseInt(
+				map['minHeight']
+			), backgroundColor: map['background'], webPreferences: { nodeIntegration: true, contextIsolation: false } }
+		);
 	}
 
 	public inline function mapCloseWindow(map: Map<String, String>): Void return closeWindow(map['name']);

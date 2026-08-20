@@ -22,19 +22,9 @@ class StaticInitHandBuilder {
 			}
 			f.kind.getParameters()[1] = null;
 		}
-		fields.push({
-			pos: Context.currentPos(),
-			name: 'init',
-			meta: [],
-			doc: null,
-			access: [APublic, AStatic],
-			kind: FFun({
-				ret: null,
-				params: [],
-				args: [],
-				expr: { expr: EBlock(exprs), pos: Context.currentPos() }
-			})
-		});
+		fields.push({ pos: Context.currentPos(), name: 'init', meta: [], doc: null, access: [APublic, AStatic], kind: FFun(
+			{ ret: null, params: [], args: [], expr: { expr: EBlock(exprs), pos: Context.currentPos() } }
+		) });
 		return fields;
 	}
 

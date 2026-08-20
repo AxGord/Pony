@@ -172,19 +172,16 @@ typedef PriorityIds = Priority<{
 	public function iterator(): Iterator<T> {
 		final n: Int = counters.push(0) - 1;
 		final i: Int = 0;
-		return {
-			hasNext: function(): Bool {
-				if (counters == null) return false; // if destroy in iteration
-				if (counters.length < n) counters.push(i);
-				if (data.length > counters[n]) {
-					return true;
-				} else {
-					counters.splice(n, 1);
-					return false;
-				}
-			},
-			next: function(): T return data[counters[n]++]
-		};
+		return { hasNext: function(): Bool {
+			if (counters == null) return false; // if destroy in iteration
+			if (counters.length < n) counters.push(i);
+			if (data.length > counters[n]) {
+				return true;
+			} else {
+				counters.splice(n, 1);
+				return false;
+			}
+		}, next: function(): T return data[counters[n]++] };
 	}
 
 	/**

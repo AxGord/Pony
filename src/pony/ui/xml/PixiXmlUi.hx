@@ -63,45 +63,12 @@ using pony.pixi.PixiExtends;
  * @author AxGord <axgord@gmail.com>
  */
 #if !macro
-@:autoBuild(pony.ui.xml.XmlUiBuilder.build(pony.ui.AssetManager, {
-	free: pixi.core.sprites.Sprite,
-	mask: pony.pixi.ui.Mask,
-	vgrad: pony.pixi.ui.Gradient,
-	hgrad: pony.pixi.ui.Gradient,
-	spinloader: pony.pixi.ui.SpinLoader,
-	layout: pony.pixi.ui.TLayout,
-	zeroplace: pony.pixi.ui.ZeroPlace,
-	image: pixi.core.sprites.Sprite,
-	tile: pixi.extras.TilingSprite,
-	text: pony.pixi.ui.BText,
-	bar: pony.pixi.ui.Bar,
-	vscroll: pony.pixi.ui.ScrollBox,
-	progressbar: pony.pixi.ui.ProgressBar,
-	timebar: pony.pixi.ui.TimeBar,
-	button: pony.pixi.ui.Button,
-	rectbutton: pony.pixi.ui.RectButton,
-	autobutton: pony.pixi.ui.AutoButton,
-	fsbutton: pony.pixi.ui.FSButton,
-	lbutton: pony.pixi.ui.LabelButton,
-	textbox: pony.pixi.ui.TextBox,
-	rect: pixi.core.graphics.Graphics,
-	line: pixi.core.graphics.Graphics,
-	circle: pixi.core.graphics.Graphics,
-	textbutton: pony.pixi.ui.TextButton,
-	clip: pixi.extras.AnimatedSprite,
-	fastclip: pixi.core.sprites.Sprite,
-	slider: pony.pixi.ui.StepSlider,
-	slice: pony.pixi.ui.slices.SliceSprite,
-	video: pony.pixi.ui.HtmlVideoUI,
-	fsvideo: pony.pixi.ui.HtmlVideoUIFS,
-	html: pony.pixi.ui.HtmlContainer,
-	subapp: pony.pixi.ui.SubApp,
-	render: pony.pixi.ui.RenderBox,
-	drawshape: pony.pixi.ui.DrawShapeView,
-	#if pixi_particles
+@:autoBuild(pony.ui.xml.XmlUiBuilder.build(
+	pony.ui.AssetManager,
+	{ free: pixi.core.sprites.Sprite, mask: pony.pixi.ui.Mask, vgrad: pony.pixi.ui.Gradient, hgrad: pony.pixi.ui.Gradient, spinloader: pony.pixi.ui.SpinLoader, layout: pony.pixi.ui.TLayout, zeroplace: pony.pixi.ui.ZeroPlace, image: pixi.core.sprites.Sprite, tile: pixi.extras.TilingSprite, text: pony.pixi.ui.BText, bar: pony.pixi.ui.Bar, vscroll: pony.pixi.ui.ScrollBox, progressbar: pony.pixi.ui.ProgressBar, timebar: pony.pixi.ui.TimeBar, button: pony.pixi.ui.Button, rectbutton: pony.pixi.ui.RectButton, autobutton: pony.pixi.ui.AutoButton, fsbutton: pony.pixi.ui.FSButton, lbutton: pony.pixi.ui.LabelButton, textbox: pony.pixi.ui.TextBox, rect: pixi.core.graphics.Graphics, line: pixi.core.graphics.Graphics, circle: pixi.core.graphics.Graphics, textbutton: pony.pixi.ui.TextButton, clip: pixi.extras.AnimatedSprite, fastclip: pixi.core.sprites.Sprite, slider: pony.pixi.ui.StepSlider, slice: pony.pixi.ui.slices.SliceSprite, video: pony.pixi.ui.HtmlVideoUI, fsvideo: pony.pixi.ui.HtmlVideoUIFS, html: pony.pixi.ui.HtmlContainer, subapp: pony.pixi.ui.SubApp, render: pony.pixi.ui.RenderBox, drawshape: pony.pixi.ui.DrawShapeView, #if pixi_particles
 	particles: pony.pixi.ui.Particles
-	#end
-}))
+	#end }
+))
 #end
 #if (haxe_ver >= 4.2) abstract #end
 class PixiXmlUi extends LogableSprite implements HasAbstract {
@@ -248,10 +215,7 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 
 				clip.get();
 			case 'textbox':
-				final font = {
-					name: attrs.font,
-					size: parseAndScaleInt(attrs.size)
-				};
+				final font = { name: attrs.font, size: parseAndScaleInt(attrs.size) };
 				final text = textTransform(putData(textContent), attrs.transform);
 				final style = ETextStyle.BITMAP_TEXT_STYLE({ font: font, tint: UColor.fromString(attrs.color).rgb });
 				final s = PixiAssets.image(attrs.src, attrs.name);
@@ -259,10 +223,7 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 				new TextBox(s, text, style, scaleBorderInt(attrs.border), attrs.nocache.isTrue(), attrs.shadow.isTrue());
 			case 'text':
 				// var font = parseAndScaleInt(attrs.size) + 'px ' + attrs.font;
-				final font = {
-					name: attrs.font,
-					size: parseAndScaleInt(attrs.size)
-				};
+				final font = { name: attrs.font, size: parseAndScaleInt(attrs.size) };
 				final text = textTransform(putData(textContent), attrs.transform);
 				final style = { font: font, tint: UColor.fromString(attrs.color).rgb, align: cast attrs.align };
 				new BText(text, style, attrs.ansi, attrs.shadow.isTrue(), app);
@@ -336,12 +297,10 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 					attrs.shadow.isTrue(), attrs.invert.isTrue(), attrs.src.indexOf(',') != -1, parseAndScaleInt(attrs.creep)
 				);
 			case 'video':
-				final video = new HtmlVideoUI({
-					x: parseAndScale(attrs.x),
-					y: parseAndScale(attrs.y),
-					width: parseAndScale(attrs.w),
-					height: parseAndScale(attrs.h)
-				}, attrs.css, app, attrs.ceil.isTrue(), attrs.fixed.isTrue());
+				final video = new HtmlVideoUI(
+					{ x: parseAndScale(attrs.x), y: parseAndScale(attrs.y), width: parseAndScale(attrs.w), height: parseAndScale(attrs.h) },
+					attrs.css, app, attrs.ceil.isTrue(), attrs.fixed.isTrue()
+				);
 				final src = attrs.src;
 				if (src != null) video.video.loadVideo(src);
 				video;
@@ -353,12 +312,7 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 					fspos = a.length == 1 ? new Point<Float>(a[0], a[0]) : new Point<Float>(a[0], a[1]);
 				}
 				final video = new HtmlVideoUIFS(
-					{
-						x: parseAndScale(attrs.x),
-						y: parseAndScale(attrs.y),
-						width: parseAndScale(attrs.w),
-						height: parseAndScale(attrs.h)
-					},
+					{ x: parseAndScale(attrs.x), y: parseAndScale(attrs.y), width: parseAndScale(attrs.w), height: parseAndScale(attrs.h) },
 					attrs.fsborder != null ? (attrs.fsborder: Border<Float>) : null, fspos, attrs.css, attrs.fscss, attrs.transition, app,
 					attrs.clicktimeout, attrs.ceil.isTrue(), attrs.fixed.isTrue()
 				);
@@ -367,12 +321,10 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 				video;
 
 			case 'html':
-				final c = new HtmlContainer({
-					x: parseAndScale(attrs.x),
-					y: parseAndScale(attrs.y),
-					width: parseAndScale(attrs.w),
-					height: parseAndScale(attrs.h)
-				}, app, attrs.ceil.isTrue(), attrs.fixed.isTrue());
+				final c = new HtmlContainer(
+					{ x: parseAndScale(attrs.x), y: parseAndScale(attrs.y), width: parseAndScale(attrs.w), height: parseAndScale(attrs.h) },
+					app, attrs.ceil.isTrue(), attrs.fixed.isTrue()
+				);
 				if (attrs.div.isTrue()) {
 					final div = js.Browser.document.createDivElement();
 					if (attrs.src != null) {
@@ -386,12 +338,12 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 				c;
 
 			case 'subapp':
-				final c = new SubApp({
-					x: parseAndScaleInt(attrs.x),
-					y: parseAndScaleInt(attrs.y),
-					width: parseAndScaleInt(attrs.w),
-					height: parseAndScaleInt(attrs.h)
-				}, app, !attrs.ceil.isFalse(), attrs.fixed.isTrue());
+				final c = new SubApp(
+					{ x: parseAndScaleInt(attrs.x), y: parseAndScaleInt(attrs.y), width: parseAndScaleInt(attrs.w), height: parseAndScaleInt(
+						attrs.h
+					) },
+					app, !attrs.ceil.isFalse(), attrs.fixed.isTrue()
+				);
 				if (!attrs.div.isFalse()) {
 					final div = js.Browser.document.createDivElement();
 					if (attrs.color != null) div.style.backgroundColor = attrs.color;

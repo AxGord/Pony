@@ -28,14 +28,10 @@ using StringTools;
  * @author meerfolk<meerfolk@gmail.com>
  */
 #if !macro
-@:autoBuild(pony.ui.xml.XmlUiBuilder.build(pony.ui.AssetManager, {
-	free: openfl.display.Sprite,
-	image: openfl.display.Bitmap,
-	layout: pony.openfl.ui.TLayout,
-	ivlayout: pony.openfl.ui.IntervalLayout,
-	ihlayout: pony.openfl.ui.IntervalLayout,
-	text: openfl.text.TextField
-}))
+@:autoBuild(pony.ui.xml.XmlUiBuilder.build(
+	pony.ui.AssetManager,
+	{ free: openfl.display.Sprite, image: openfl.display.Bitmap, layout: pony.openfl.ui.TLayout, ivlayout: pony.openfl.ui.IntervalLayout, ihlayout: pony.openfl.ui.IntervalLayout, text: openfl.text.TextField }
+))
 #end
 #if (haxe_ver >= 4.2) abstract #end
 class OpenflXmlUi extends Sprite implements HasAbstract {
@@ -164,10 +160,8 @@ class OpenflXmlUi extends Sprite implements HasAbstract {
 		for (name in Reflect.fields(data)) {
 			final d = Reflect.field(data, name);
 			final f: BitmapFilter = switch Reflect.field(d, 'extends') {
-				case 'shadow':
-					new DropShadowFilter();
-				case _:
-					throw 'Unknown filter';
+				case 'shadow': new DropShadowFilter();
+				case _: throw 'Unknown filter';
 			}
 			for (n in Reflect.fields(d)) if (n != 'extends') Reflect.setProperty(f, n, Std.parseFloat(Reflect.field(d, n)));
 			FILTERS[name] = f;

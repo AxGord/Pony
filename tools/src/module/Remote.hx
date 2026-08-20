@@ -21,18 +21,11 @@ class Remote extends NModule<RemoteConfig> {
 	}
 
 	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
-		new RemoteConfigReader(xml, {
-			debug: ac.debug,
-			app: ac.app,
-			before: false,
-			section: BASection.Remote,
-			allowCfg: true,
-			host: null,
-			port: null,
-			key: null,
-			commands: [],
-			cordova: false
-		}, configHandler);
+		new RemoteConfigReader(
+			xml,
+			{ debug: ac.debug, app: ac.app, before: false, section: BASection.Remote, allowCfg: true, host: null, port: null, key: null, commands: [], cordova: false },
+			configHandler
+		);
 	}
 
 	#if (haxe_ver < 4.2) override #end
@@ -54,24 +47,16 @@ private class RemoteConfigReader extends BAReader<RemoteConfig> {
 
 	override private function readNode(xml: Fast): Void {
 		switch xml.name {
-			case 'host':
-				cfg.host = normalize(xml.innerData);
-			case 'port':
-				cfg.port = Std.parseInt(xml.innerData);
-			case 'key':
-				cfg.key = normalize(xml.innerData);
+			case 'host': cfg.host = normalize(xml.innerData);
+			case 'port': cfg.port = Std.parseInt(xml.innerData);
+			case 'key': cfg.key = normalize(xml.innerData);
 
-			case 'get':
-				cfg.commands.push(Get(normalize(xml.innerData)));
-			case 'send':
-				cfg.commands.push(Send(normalize(xml.innerData)));
-			case 'exec':
-				cfg.commands.push(Exec(normalize(xml.innerData)));
-			case 'command':
-				cfg.commands.push(Command(normalize(xml.innerData)));
+			case 'get': cfg.commands.push(Get(normalize(xml.innerData)));
+			case 'send': cfg.commands.push(Send(normalize(xml.innerData)));
+			case 'exec': cfg.commands.push(Exec(normalize(xml.innerData)));
+			case 'command': cfg.commands.push(Command(normalize(xml.innerData)));
 
-			case _:
-				super.readNode(xml);
+			case _: super.readNode(xml);
 		}
 	}
 

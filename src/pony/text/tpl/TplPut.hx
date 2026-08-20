@@ -169,14 +169,7 @@ class TplPut<T1, T2> implements ITplPut implements SuperPuper {
 		var name: String = null;
 		if (n.length > 1) {
 			name = n.shift();
-			content = [
-				Tag({
-					name: { name: n, up: 0 },
-					args: d.args,
-					arg: d.arg,
-					content: content
-				})
-			];
+			content = [Tag({ name: { name: n, up: 0 }, args: d.args, arg: d.arg, content: content })];
 
 		} else
 			name = n[0];

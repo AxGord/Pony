@@ -24,10 +24,8 @@ class PixiHtmlVideoFS extends PixiHtmlVideoBase {
 		if (fsRect == null) return;
 		normalRect = targetRect;
 		switch fsRect {
-			case A(border):
-				this.fsRect = border.getRectFromSize(app.resolution);
-			case B(rect):
-				this.fsRect = rect;
+			case A(border): this.fsRect = border.getRectFromSize(app.resolution);
+			case B(rect): this.fsRect = rect;
 		}
 		video.onClick << fullscreen.sw;
 		video.onHide || video.onEnd << fullscreen.disable;

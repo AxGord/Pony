@@ -53,12 +53,8 @@ class HtmlContainerBase implements HasSignal {
 	private function resizeHandler(): Void DeltaTime.fixedUpdate < _resizeHandler;
 
 	private function _resizeHandler(): Void {
-		lastRect = {
-			x: app.scale * (targetRect.x + targetPos.x + app.container.x / app.container.width),
-			y: app.scale * (targetRect.y + targetPos.y + app.container.y / app.container.height),
-			width: app.scale * targetRect.width,
-			height: app.scale * targetRect.height
-		};
+		lastRect = { x: app.scale * (targetRect.x + targetPos.x + app.container.x / app.container.width), y: app.scale * (targetRect.y
+			+ targetPos.y + app.container.y / app.container.height), width: app.scale * targetRect.width, height: app.scale * targetRect.height };
 		if (!fixed) {
 			lastRect.x += lastRect.width;
 			lastRect.y += lastRect.height;

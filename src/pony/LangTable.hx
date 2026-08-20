@@ -42,12 +42,9 @@ class LangTable {
 						for (e in s.substr(1).split(',')) {
 							final aa: Array<String> = e.split(':').map(StringTools.trim);
 							switch (aa[0]) {
-								case 'title':
-									li.title = aa[1];
-								case 'author':
-									li.author = aa[1];
-								case _:
-									throw 'Unknown attr ${aa[0]}';
+								case 'title': li.title = aa[1];
+								case 'author': li.author = aa[1];
+								case _: throw 'Unknown attr ${aa[0]}';
 							}
 						}
 					}

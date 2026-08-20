@@ -27,23 +27,11 @@ using pony.text.XmlTools;
 	public function init(): Void initSections(PRIORITY, Build);
 
 	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
-		new TemplateReader(xml, {
-			debug: ac.debug,
-			app: ac.app,
-			before: false,
-			section: Build,
-			to: '',
-			from: '',
-			title: '',
-			appFile: null,
-			appRm: true,
-			appPath: '',
-			hash: null,
-			units: [],
-			files: [],
-			cordova: false,
-			allowCfg: true
-		}, configHandler);
+		new TemplateReader(
+			xml,
+			{ debug: ac.debug, app: ac.app, before: false, section: Build, to: '', from: '', title: '', appFile: null, appRm: true, appPath: '', hash: null, units: [], files: [], cordova: false, allowCfg: true },
+			configHandler
+		);
 	}
 
 	override private function runNode(cfg: TemplateConfig): Void {
@@ -60,12 +48,11 @@ using pony.text.XmlTools;
 			final file: File = cfg.from + unit;
 			final content: Null<String> = file.content;
 			if (content == null) continue;
-			(((cfg.to + unit): File).withoutExt: File).content = new haxe.Template(content).execute({
-				title: cfg.title,
-				app: appFileName,
-				assetsHash: assetsHash,
-				buildDate: buildDate
-			}, { hash: hashMethod });
+			(((
+				cfg.to + unit
+			): File).withoutExt: File).content = new haxe.Template(content).execute(
+				{ title: cfg.title, app: appFileName, assetsHash: assetsHash, buildDate: buildDate }, { hash: hashMethod }
+			);
 		}
 		for (file in cfg.files) {
 			final f: File = cfg.from + file;
@@ -141,12 +128,9 @@ private typedef TemplateConfig = {
 
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
-			case 'to':
-				cfg.to = val;
-			case 'from':
-				cfg.from = val;
-			case 'hash':
-				cfg.hash = val;
+			case 'to': cfg.to = val;
+			case 'from': cfg.from = val;
+			case 'hash': cfg.hash = val;
 			case _:
 		}
 	}

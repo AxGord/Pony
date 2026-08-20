@@ -61,29 +61,18 @@ class GridCore {
 		slots = [for (_ in 0...cy) [for (_ in 0...cx) false]];
 	}
 
-	public inline function intRect(rect: Rect<Float>): Rect<Int> return {
-		x: Math.floor((rect.x + slotWidth / 2) / slotWidth),
-		y: Math.floor((rect.y + slotHeight / 2) / slotHeight),
-		width: Math.ceil((rect.width - gap) / slotWidth),
-		height: Math.ceil((rect.height - gap) / slotHeight)
-	};
+	public inline function intRect(rect: Rect<Float>): Rect<Int>
+		return { x: Math.floor((rect.x + slotWidth / 2) / slotWidth), y: Math.floor((rect.y + slotHeight / 2) / slotHeight), width: Math.ceil(
+			(rect.width - gap) / slotWidth
+		), height: Math.ceil((rect.height - gap) / slotHeight) };
 
-	public inline function intPoint(rect: Rect<Float>): Point<Int> return {
-		x: Math.floor((rect.x + slotWidth / 2) / slotWidth),
-		y: Math.floor((rect.y + slotHeight / 2) / slotHeight)
-	};
+	public inline function intPoint(rect: Rect<Float>): Point<Int>
+		return { x: Math.floor((rect.x + slotWidth / 2) / slotWidth), y: Math.floor((rect.y + slotHeight / 2) / slotHeight) };
 
-	public inline function floatRect(rect: Rect<Int>): Rect<Float> return {
-		x: rect.x * slotWidth,
-		y: rect.y * slotHeight,
-		width: slotWidth * rect.width,
-		height: slotHeight * rect.height
-	};
+	public inline function floatRect(rect: Rect<Int>): Rect<Float>
+		return { x: rect.x * slotWidth, y: rect.y * slotHeight, width: slotWidth * rect.width, height: slotHeight * rect.height };
 
-	public inline function floatPoint(rect: Point<Int>): Point<Float> return {
-		x: rect.x * slotWidth,
-		y: rect.y * slotHeight
-	};
+	public inline function floatPoint(rect: Point<Int>): Point<Float> return { x: rect.x * slotWidth, y: rect.y * slotHeight };
 
 	public dynamic function makeMark(y: Int, x: Int, state: Bool): Void {}
 

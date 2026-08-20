@@ -142,20 +142,14 @@ import pony.events.Listener1;
 		final ns = new Event2<T1, T2>();
 		var listener1: Listener1<T1> = cast null;
 		var listener2: Listener1<T2> = cast null;
-		listener1 = {
-			once: true,
-			listener: Listener1.Listener1Type.LFunction1(function(a: T1) {
-				s.remove(listener2);
-				s.add({ once: true, listener: Listener1.Listener1Type.LFunction1(ns.dispatch.bind(a)) });
-			})
-		};
-		listener2 = {
-			once: true,
-			listener: Listener1.Listener1Type.LFunction1(function(b: T2) {
-				remove(listener1);
-				add({ once: true, listener: Listener1.Listener1Type.LFunction1(ns.dispatch.bind(_, b)) });
-			})
-		};
+		listener1 = { once: true, listener: Listener1.Listener1Type.LFunction1(function(a: T1) {
+			s.remove(listener2);
+			s.add({ once: true, listener: Listener1.Listener1Type.LFunction1(ns.dispatch.bind(a)) });
+		}) };
+		listener2 = { once: true, listener: Listener1.Listener1Type.LFunction1(function(b: T2) {
+			remove(listener1);
+			add({ once: true, listener: Listener1.Listener1Type.LFunction1(ns.dispatch.bind(_, b)) });
+		}) };
 		add(listener1);
 		s.add(listener2);
 		return ns;

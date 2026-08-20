@@ -64,12 +64,7 @@ using pony.text.TextTools;
 		ftp = Type.createInstance(NPM.ftp, []);
 		ftp.on('ready', readyHandler);
 		ftp.on('error', errorHandler);
-		ftp.connect({
-			host: cfg.host,
-			port: cfg.port,
-			user: cfg.user,
-			password: cfg.pass
-		});
+		ftp.connect({ host: cfg.host, port: cfg.port, user: cfg.user, password: cfg.pass });
 	}
 
 	private function errorHandler(err: Error): Void {

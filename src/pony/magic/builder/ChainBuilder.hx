@@ -29,14 +29,9 @@ class ChainBuilder {
 		final a = cl.split('.');
 		final name = a.pop();
 
-		fields.push({
-			pos: Context.currentPos(),
-			name: 'list',
-			meta: [],
-			doc: null,
-			access: [APublic],
-			kind: FVar(TPath({ name: 'Array', pack: [], params: [TPType(TPath({ name: name, pack: a, params: [] }))] }))
-		});
+		fields.push({ pos: Context.currentPos(), name: 'list', meta: [], doc: null, access: [APublic], kind: FVar(
+			TPath({ name: 'Array', pack: [], params: [TPType(TPath({ name: name, pack: a, params: [] }))] })
+		) });
 
 		final exprs: Array<Expr> = [Context.parse('list = new Array<$cl>()', Context.currentPos())];
 		final list: Array<String> = [];
@@ -60,19 +55,9 @@ class ChainBuilder {
 		}
 		// trace(exprs);
 
-		fields.push({
-			pos: Context.currentPos(),
-			name: 'createChain',
-			meta: [],
-			doc: null,
-			access: [APublic],
-			kind: FFun({
-				ret: null,
-				params: [],
-				args: [],
-				expr: { expr: EBlock(exprs), pos: Context.currentPos() }
-			})
-		});
+		fields.push({ pos: Context.currentPos(), name: 'createChain', meta: [], doc: null, access: [APublic], kind: FFun(
+			{ ret: null, params: [], args: [], expr: { expr: EBlock(exprs), pos: Context.currentPos() } }
+		) });
 		#if display
 		} catch (_:Dynamic) {
 		}

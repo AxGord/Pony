@@ -145,13 +145,7 @@ using pony.text.TextTools;
 		return if (p != null) {
 			final params: Array<Dynamic> = ['color: darkred'];
 			if (p.customParams != null) params.concat(p.customParams);
-			{
-				fileName: p.fileName,
-				customParams: params,
-				methodName: p.methodName,
-				className: p.className,
-				lineNumber: p.lineNumber
-			};
+			{ fileName: p.fileName, customParams: params, methodName: p.methodName, className: p.className, lineNumber: p.lineNumber };
 		} else {
 			null;
 		}
@@ -215,13 +209,9 @@ using pony.text.TextTools;
 	}
 
 	public static inline function addToPosInfosFileName(v: String, p: Null<PosInfos>): Null<PosInfos> {
-		return p == null ? null : {
-			fileName: '$v ${p.fileName}',
-			customParams: p.customParams,
-			methodName: p.methodName,
-			className: p.className,
-			lineNumber: p.lineNumber
-		};
+		return p == null
+			? null
+			: { fileName: '$v ${p.fileName}', customParams: p.customParams, methodName: p.methodName, className: p.className, lineNumber: p.lineNumber };
 	}
 
 	public static function vscodePatchTrace(): Void {
@@ -246,13 +236,9 @@ using pony.text.TextTools;
 			null
 		else {
 			final r: SPair<String> = p.fileName.lastSplit(' ');
-			{
-				fileName: r.b != '' ? r.a + ' ' + l_replaceLibPath(r.b) : l_replaceLibPath(r.a),
-				customParams: p.customParams,
-				methodName: p.methodName,
-				className: p.className,
-				lineNumber: p.lineNumber
-			}
+			{ fileName: r.b != ''
+				? r.a + ' ' + l_replaceLibPath(r.b)
+				: l_replaceLibPath(r.a), customParams: p.customParams, methodName: p.methodName, className: p.className, lineNumber: p.lineNumber }
 		};
 	}
 

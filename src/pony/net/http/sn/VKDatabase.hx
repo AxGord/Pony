@@ -42,10 +42,7 @@ class VKDatabase {
 		HttpTools.getJson(url, function(r: VKDBResponse): Void {
 			if (r.response.count - offset > 1000) {
 				vkRequest(method, lang, country_id, region_id, function(nr: VKDB) {
-					cb({
-						count: r.response.count,
-						items: r.response.items.concat(nr.items)
-					});
+					cb({ count: r.response.count, items: r.response.items.concat(nr.items) });
 				}, offset + 1000);
 
 			} else {

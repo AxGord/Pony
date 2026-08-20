@@ -41,7 +41,8 @@ import pony.Priority;
 				a == b;
 			case [LBind2(_, a1, a2), LBind2(_, b1, b2)]:
 				a1 == b1 && a2 == b2;
-			case _: false;
+			case _:
+				false;
 		}
 	}
 

@@ -53,15 +53,10 @@ abstract Source(String) from String to String {
 	public function init(): Void initSections(PRIORITY, BASection.Prepare);
 
 	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
-		new HaxelibReader(xml, {
-			debug: ac.debug,
-			app: ac.app,
-			before: false,
-			section: BASection.Prepare,
-			list: [],
-			allowCfg: true,
-			cordova: false
-		}, configHandler);
+		new HaxelibReader(
+			xml, { debug: ac.debug, app: ac.app, before: false, section: BASection.Prepare, list: [], allowCfg: true, cordova: false },
+			configHandler
+		);
 	}
 
 	override private function runNode(cfg: HaxelibConfig): Void {
@@ -159,21 +154,21 @@ abstract Source(String) from String to String {
 			case 'lib':
 				final a: Array<String> = normalize(xml.innerData).split(' ');
 				@:nullSafety(Off) var name: String = a[0];
-				cfg.list.push({
-					name: name,
-					version: a[1],
-					git: xml.has.git ? normalize(xml.att.git) : null,
-					mute: xml.isTrue('mute'),
-					warning: !xml.isFalse('warning'),
-					pony: xml.has.pony ? normalize(xml.att.pony) : null,
-					haxe: xml.has.haxe ? normalize(xml.att.haxe) : null,
-					haxelib: xml.has.haxelib ? normalize(xml.att.haxelib) : null,
-					path: xml.has.path ? normalize(xml.att.path) : null,
-					parent: xml.has.parent ? normalize(xml.att.parent) : null,
-					y: xml.isTrue('y'),
-					commit: xml.has.commit ? normalize(xml.att.commit) : null,
-					keepDev: xml.isTrue('keepDev')
-				});
+				cfg.list.push({ name: name, version: a[1], git: xml.has.git
+					? normalize(xml.att.git)
+					: null, mute: xml.isTrue('mute'), warning: !xml.isFalse('warning'), pony: xml.has.pony
+					? normalize(xml.att.pony)
+					: null, haxe: xml.has.haxe
+					? normalize(xml.att.haxe)
+					: null, haxelib: xml.has.haxelib
+					? normalize(xml.att.haxelib)
+					: null, path: xml.has.path
+					? normalize(xml.att.path)
+					: null, parent: xml.has.parent
+					? normalize(xml.att.parent)
+					: null, y: xml.isTrue('y'), commit: xml.has.commit
+					? normalize(xml.att.commit)
+					: null, keepDev: xml.isTrue('keepDev') });
 			case _:
 				super.readNode(xml);
 		}

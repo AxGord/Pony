@@ -34,21 +34,15 @@ using Lambda;
 	}
 
 	public static function createInit(): Field {
-		return {
-			name: '__init__',
-			access: [AStatic, APrivate],
-			kind: FFun({ args: [], ret: ComplexType.TPath({ pack: [], name: 'Void' }), expr: null }),
-			pos: Context.currentPos()
-		};
+		return
+			{ name: '__init__', access: [AStatic, APrivate], kind: FFun(
+				{ args: [], ret: ComplexType.TPath({ pack: [], name: 'Void' }), expr: null }
+			), pos: Context.currentPos() };
 	}
 
 	public static function createNew(): Field {
-		return {
-			name: 'new',
-			access: [APublic],
-			kind: FFun({ args: [], ret: ComplexType.TPath({ pack: [], name: 'Void' }), expr: null }),
-			pos: Context.currentPos()
-		};
+		return
+			{ name: 'new', access: [APublic], kind: FFun({ args: [], ret: ComplexType.TPath({ pack: [], name: 'Void' }), expr: null }), pos: Context.currentPos() };
 	}
 
 	public static function patch(?newFields: ComplexType, ?methods: Map<String, Expr>, ?addToEnd: Map<String, Expr>): Array<Field> {
@@ -58,10 +52,8 @@ using Lambda;
 				final ex: Null<Expr> = methods[field.name];
 				if (ex != null) {
 					switch field.kind {
-						case FFun(f):
-							f.expr = ex;
-						case _:
-							Context.error('This is not method', field.pos);
+						case FFun(f): f.expr = ex;
+						case _: Context.error('This is not method', field.pos);
 					}
 				}
 			}
@@ -71,10 +63,8 @@ using Lambda;
 					switch field.kind {
 						case FFun(f):
 							switch f.expr.expr {
-								case EBlock(exprs):
-									exprs.push(ex);
-								case _:
-									Context.error('This is not block method', f.expr.pos);
+								case EBlock(exprs): exprs.push(ex);
+								case _: Context.error('This is not block method', f.expr.pos);
 							}
 						case _:
 							Context.error('This is not method', field.pos);
@@ -83,11 +73,9 @@ using Lambda;
 			}
 		}
 		switch newFields {
-			case TAnonymous(f):
-				fields = fields.concat(f);
+			case TAnonymous(f): fields = fields.concat(f);
 			case null:
-			case _:
-				Context.error('Wrong type', Context.currentPos());
+			case _: Context.error('Wrong type', Context.currentPos());
 		}
 		return fields;
 	}
@@ -106,21 +94,17 @@ using Lambda;
 	 */
 	public static function rewriteReturns(e: Expr, beforeReturn: Expr): Expr {
 		return switch e.expr {
-			case EReturn(null):
-				macro {
-					$beforeReturn;
-					return;
-				};
-			case EReturn(v):
-				macro {
-					final __r = $v;
-					$beforeReturn;
-					return __r;
-				};
-			case EFunction(_, _):
-				e;
-			case _:
-				haxe.macro.ExprTools.map(e, sub -> rewriteReturns(sub, beforeReturn));
+			case EReturn(null): macro {
+				$beforeReturn;
+				return;
+			};
+			case EReturn(v): macro {
+				final __r = $v;
+				$beforeReturn;
+				return __r;
+			};
+			case EFunction(_, _): e;
+			case _: haxe.macro.ExprTools.map(e, sub -> rewriteReturns(sub, beforeReturn));
 		};
 	}
 
@@ -130,8 +114,10 @@ using Lambda;
 	 */
 	public static function containsIdent(e: Expr, name: String): Bool {
 		return switch e.expr {
-			case EConst(CIdent(n)) if (n == name): true;
-			case EFunction(_, _): false;
+			case EConst(CIdent(n)) if (n == name):
+				true;
+			case EFunction(_, _):
+				false;
 			case _:
 				var found: Bool = false;
 				haxe.macro.ExprTools.iter(e, sub -> if (!found && containsIdent(sub, name)) found = true);

@@ -27,13 +27,7 @@ final class MVK implements IModule {
 
 	public function new(appid: Int, secret: String) {
 		this.appid = appid;
-		vk = Type.createInstance(sdk, [
-			{
-				appId: appid,
-				appSecret: secret,
-				secure: true
-			}
-		]);
+		vk = Type.createInstance(sdk, [{ appId: appid, appSecret: secret, secure: true }]);
 		final s = TextTools.includeFileFromCurrentDir('mvk.tpl');
 		new Tpl(MVKPrePut, appid, s).gen(null, null, function(r) buttonData = r);
 	}
@@ -61,10 +55,8 @@ final class MVKPrePut extends TplPut<Int, {}> {
 	@:async
 	override public function shortTag(name: String, arg: String, ?kid: ITplPut): String {
 		switch (name) {
-			case 'appid':
-				return '$a';
-			case _:
-				return @await super.shortTag(name, arg, kid);
+			case 'appid': return '$a';
+			case _: return @await super.shortTag(name, arg, kid);
 		}
 	}
 

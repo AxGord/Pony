@@ -37,10 +37,8 @@ class TextBox extends BaseLayout<RubberLayoutCore<Container>> {
 			layout.tasks.end();
 		});
 		switch style {
-			case ETextStyle.BITMAP_TEXT_STYLE(s):
-				add(obj = new BText(text, s, ansi, shadow, app));
-			case _:
-				throw 'Not supported';
+			case ETextStyle.BITMAP_TEXT_STYLE(s): add(obj = new BText(text, s, ansi, shadow, app));
+			case _: throw 'Not supported';
 		}
 	}
 

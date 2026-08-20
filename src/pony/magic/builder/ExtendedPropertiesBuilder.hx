@@ -31,25 +31,17 @@ class ExtendedPropertiesBuilder {
 				case FProp('_', s, t, e):
 					f.kind = FProp('get', s, t);
 					fs.push(f);
-					fs.push({
-						kind: FVar(t, e),
-						name: hprefix + f.name,
-						pos: f.pos,
-						access: f.access.indexOf(AStatic) != -1 ? [AStatic] : []
-					});
+					fs.push(
+						{ kind: FVar(t, e), name: hprefix + f.name, pos: f.pos, access: f.access.indexOf(AStatic) != -1 ? [AStatic] : [] }
+					);
 					repList.push(f.name);
 					final fn = 'get_${f.name}';
 					if (funs.indexOf(fn) == -1) {
-						fs.push({
-							kind: FFun({
-								args: [],
-								ret: t,
-								expr: macro return $i{hprefix + f.name}
-							}),
-							name: fn,
-							pos: f.pos,
-							access: f.access.indexOf(AStatic) != -1 ? [AStatic, APrivate, AInline] : [APrivate, AInline]
-						});
+						fs.push({ kind: FFun({ args: [], ret: t, expr: macro return $i{hprefix + f.name} }), name: fn, pos: f.pos, access: f.access.indexOf(
+							AStatic
+						) != -1
+							? [AStatic, APrivate, AInline]
+							: [APrivate, AInline] });
 					}
 				case _:
 					fs.push(f);
@@ -102,15 +94,12 @@ class ExtendedPropertiesBuilder {
 
 		e = ExprTools.map(
 			switch e.expr {
-				case EConst(CIdent(s)) if (curRepl.indexOf(s) != -1): {
-					pos: e.pos,
-					expr: EField({ pos: e.pos, expr: EConst(CIdent('this')) }, hprefix + s)
-				};
-				case EField({ pos: _, expr: EConst(CIdent('this')) }, s): {
-					pos: e.pos,
-					expr: EField({ pos: e.pos, expr: EConst(CIdent('this')) }, hprefix + s)
-				};
-				case _: { pos: e.pos, expr: e.expr };
+				case EConst(CIdent(s)) if (curRepl.indexOf(s) != -1):
+					{ pos: e.pos, expr: EField({ pos: e.pos, expr: EConst(CIdent('this')) }, hprefix + s) };
+				case EField({ pos: _, expr: EConst(CIdent('this')) }, s):
+					{ pos: e.pos, expr: EField({ pos: e.pos, expr: EConst(CIdent('this')) }, hprefix + s) };
+				case _:
+					{ pos: e.pos, expr: e.expr };
 			},
 			repl
 		);
@@ -129,44 +118,19 @@ class ExtendedPropertiesBuilder {
 				case FFun(fun) if (Tools.checkMeta(f.meta, pmeta)):
 					final access: Array<Access> = f.access.copy();
 					access.remove(AInline);
-					fs.push({
-						kind: FProp('get', 'never', fun.ret),
-						name: f.name,
-						pos: f.pos,
-						access: access
-					});
+					fs.push({ kind: FProp('get', 'never', fun.ret), name: f.name, pos: f.pos, access: access });
 					final access: Array<Access> = [];
 					if (f.access.indexOf(AStatic) != -1) access.push(AStatic);
 					if (f.access.indexOf(AInline) != -1) access.push(AInline);
-					fs.push({
-						kind: f.kind,
-						name: 'get_${f.name}',
-						pos: f.pos,
-						access: access
-					});
+					fs.push({ kind: f.kind, name: 'get_${f.name}', pos: f.pos, access: access });
 				case FVar(t, e) if (Tools.checkMeta(f.meta, pmeta)):
 					final access: Array<Access> = f.access.copy();
 					access.remove(AInline);
-					fs.push({
-						kind: FProp('get', 'never', t),
-						name: f.name,
-						pos: f.pos,
-						access: access
-					});
+					fs.push({ kind: FProp('get', 'never', t), name: f.name, pos: f.pos, access: access });
 					final access: Array<Access> = [];
 					if (f.access.indexOf(AStatic) != -1) access.push(AStatic);
 					if (f.access.indexOf(AInline) != -1) access.push(AInline);
-					fs.push({
-						kind: FFun({
-							args: [],
-							params: [],
-							ret: t,
-							expr: macro return $e
-						}),
-						name: 'get_${f.name}',
-						pos: f.pos,
-						access: access
-					});
+					fs.push({ kind: FFun({ args: [], params: [], ret: t, expr: macro return $e }), name: 'get_${f.name}', pos: f.pos, access: access });
 				case _:
 					fs.push(f);
 			}

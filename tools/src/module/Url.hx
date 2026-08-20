@@ -17,15 +17,9 @@ class Url extends CfgModule<UrlConfig> {
 	public function init(): Void initSections(PRIORITY, BASection.Build);
 
 	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
-		new UrlReader(xml, {
-			debug: ac.debug,
-			app: ac.app,
-			before: false,
-			section: Build,
-			url: [],
-			allowCfg: true,
-			cordova: false
-		}, configHandler);
+		new UrlReader(
+			xml, { debug: ac.debug, app: ac.app, before: false, section: Build, url: [], allowCfg: true, cordova: false }, configHandler
+		);
 	}
 
 	override private function runNode(cfg: UrlConfig): Void {
@@ -48,10 +42,8 @@ private class UrlReader extends BAReader<UrlConfig> {
 
 	override private function readNode(xml: Fast): Void {
 		switch xml.name {
-			case 'url':
-				cfg.url.push(StringTools.trim(xml.innerData));
-			case _:
-				super.readNode(xml);
+			case 'url': cfg.url.push(StringTools.trim(xml.innerData));
+			case _: super.readNode(xml);
 		}
 	}
 

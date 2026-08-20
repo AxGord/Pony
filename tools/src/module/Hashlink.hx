@@ -27,33 +27,11 @@ class Hashlink extends CfgModule<HashlinkConfig> {
 	public function init(): Void initSections(PRIORITY, BASection.Build);
 
 	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
-		new HashlinkReader(xml, {
-			debug: ac.debug,
-			app: ac.app,
-			before: false,
-			section: Build,
-			output: null,
-			hl: null,
-			main: null,
-			data: [],
-			libs: [],
-			title: null,
-			id: null,
-			version: null,
-			versionName: null,
-			storeFile: null,
-			storePassword: null,
-			keyAlias: null,
-			keyPassword: null,
-			abiFilters: null,
-			splitAbi: false,
-			roundIcon: true,
-			platformData: null,
-			orientation: null,
-			gcMarkThreshold: 0.2,
-			allowCfg: true,
-			cordova: false
-		}, configHandler);
+		new HashlinkReader(
+			xml,
+			{ debug: ac.debug, app: ac.app, before: false, section: Build, output: null, hl: null, main: null, data: [], libs: [], title: null, id: null, version: null, versionName: null, storeFile: null, storePassword: null, keyAlias: null, keyPassword: null, abiFilters: null, splitAbi: false, roundIcon: true, platformData: null, orientation: null, gcMarkThreshold: 0.2, allowCfg: true, cordova: false },
+			configHandler
+		);
 	}
 
 	override private function runNode(cfg: HashlinkConfig): Void {
@@ -101,10 +79,9 @@ class Hashlink extends CfgModule<HashlinkConfig> {
 				final buildGradle: File = outputApp.file('build.gradle');
 				final buildGradleTemplate: File = outputApp.file('build.gradle.tpl');
 				final abiFilters: String = cfg.abiFilters != null ? cfg.abiFilters : 'x86,x86_64,armeabi-v7a,arm64-v8a';
-				buildGradle.content = new Template(buildGradleTemplate.content).execute({
-					split: cfg.splitAbi,
-					abiInclude: abiFilters.split(',').map(TextTools.quote.bind(_, '"')).join(', ')
-				});
+				buildGradle.content = new Template(buildGradleTemplate.content).execute(
+					{ split: cfg.splitAbi, abiInclude: abiFilters.split(',').map(TextTools.quote.bind(_, '"')).join(', ') }
+				);
 				buildGradleTemplate.delete();
 
 				final outputSrc: Dir = outputApp + 'src';
@@ -112,22 +89,16 @@ class Hashlink extends CfgModule<HashlinkConfig> {
 
 				log('Orientation ${cfg.orientation}');
 
-				processTemplate(outputMain.file('AndroidManifest.xml'), {
-					id: cfg.id,
-					roundIcon: cfg.roundIcon,
-					fixedOrientation: cfg.orientation != null,
-					orientation: cfg.orientation
-				});
+				processTemplate(
+					outputMain.file('AndroidManifest.xml'),
+					{ id: cfg.id, roundIcon: cfg.roundIcon, fixedOrientation: cfg.orientation != null, orientation: cfg.orientation }
+				);
 
 				final patchedsdl: Dir = outputSrc + 'patchedsdl';
-				processTemplate(patchedsdl.file('SDLActivity.java'), {
-					autoOrientation: cfg.orientation == null
-				});
+				processTemplate(patchedsdl.file('SDLActivity.java'), { autoOrientation: cfg.orientation == null });
 
 				final patchedhl: Dir = outputSrc + 'patchedhl';
-				processTemplate(patchedhl.file('gc.c'), {
-					gcMarkThreshold: cfg.gcMarkThreshold
-				});
+				processTemplate(patchedhl.file('gc.c'), { gcMarkThreshold: cfg.gcMarkThreshold });
 
 				final gradleProps: Array<SPair<String>> = [
 					['org.gradle.jvmargs', '-Xmx2048m'],

@@ -91,10 +91,7 @@ class DrawShapePointer extends pony.Tumbler {
 	}
 
 	private function moveHandler(t: Touch): Void {
-		eDrawPoint.dispatch({
-			x: t.x - xbegin,
-			y: t.y - ybegin
-		}, t);
+		eDrawPoint.dispatch({ x: t.x - xbegin, y: t.y - ybegin }, t);
 	}
 
 	private function outHandler(t: Touch): Void {
@@ -121,12 +118,7 @@ class DrawShapePointer extends pony.Tumbler {
 	}
 
 	public function dataFromIntPoint(p: IntPoint): DrawShapePointerData {
-		return {
-			x: xbegin + p.x * snapCellSize.x,
-			y: ybegin + p.y * snapCellSize.y,
-			col: p.x,
-			row: p.y
-		};
+		return { x: xbegin + p.x * snapCellSize.x, y: ybegin + p.y * snapCellSize.y, col: p.x, row: p.y };
 	}
 
 	private function drawPointHandler(p: DrawShapePointerData, t: Touch): Void {

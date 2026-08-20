@@ -29,20 +29,11 @@ class Server extends NModule<ServerConfig> {
 	}
 
 	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
-		new ServerReader(xml, {
-			debug: ac.debug,
-			app: ac.app,
-			before: false,
-			section: BASection.Server,
-			allowCfg: true,
-			port: null,
-			path: null,
-			proxy: [],
-			haxe: null,
-			remote: null,
-			sniff: null,
-			cordova: false
-		}, configHandler);
+		new ServerReader(
+			xml,
+			{ debug: ac.debug, app: ac.app, before: false, section: BASection.Server, allowCfg: true, port: null, path: null, proxy: [], haxe: null, remote: null, sniff: null, cordova: false },
+			configHandler
+		);
 	}
 
 	#if (haxe_ver < 4.2) override #end
@@ -74,43 +65,23 @@ private class ServerReader extends BAReader<ServerConfig> {
 			case 'haxe':
 				cfg.haxe = Std.parseInt(xml.innerData);
 			case 'proxy':
-				new ProxyReader(xml, {
-					debug: cfg.debug,
-					app: cfg.app,
-					before: cfg.before,
-					section: cfg.section,
-					allowCfg: true,
-					target: null,
-					port: null,
-					slow: null,
-					cache: null,
-					cordova: false
-				}, proxyConfigHandler);
+				new ProxyReader(
+					xml,
+					{ debug: cfg.debug, app: cfg.app, before: cfg.before, section: cfg.section, allowCfg: true, target: null, port: null, slow: null, cache: null, cordova: false },
+					proxyConfigHandler
+				);
 			case 'remote':
-				new RemoteReader(xml, {
-					debug: cfg.debug,
-					app: cfg.app,
-					before: cfg.before,
-					section: cfg.section,
-					allowCfg: true,
-					port: null,
-					key: null,
-					allow: [],
-					commands: new Map(),
-					cordova: false
-				}, remoteConfigHandler);
+				new RemoteReader(
+					xml,
+					{ debug: cfg.debug, app: cfg.app, before: cfg.before, section: cfg.section, allowCfg: true, port: null, key: null, allow: [], commands: new Map(), cordova: false },
+					remoteConfigHandler
+				);
 			case 'sniff':
-				new SniffReader(xml, {
-					debug: cfg.debug,
-					app: cfg.app,
-					before: cfg.before,
-					section: cfg.section,
-					allowCfg: true,
-					serverPort: 0,
-					clientHost: null,
-					clientPort: 0,
-					cordova: false
-				}, sniffConfigHandler);
+				new SniffReader(
+					xml,
+					{ debug: cfg.debug, app: cfg.app, before: cfg.before, section: cfg.section, allowCfg: true, serverPort: 0, clientHost: null, clientPort: 0, cordova: false },
+					sniffConfigHandler
+				);
 			case _:
 				super.readNode(xml);
 		}
@@ -148,21 +119,16 @@ private class ProxyReader extends BAReader<BAProxyConfig> {
 
 	override private function readNode(xml: Fast): Void {
 		switch xml.name {
-			case 'target':
-				cfg.target = normalize(xml.innerData);
-			case 'port':
-				cfg.port = Std.parseInt(xml.innerData);
-			case _:
-				super.readNode(xml);
+			case 'target': cfg.target = normalize(xml.innerData);
+			case 'port': cfg.port = Std.parseInt(xml.innerData);
+			case _: super.readNode(xml);
 		}
 	}
 
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
-			case 'slow':
-				cfg.slow = Std.parseInt(val);
-			case 'cache':
-				cfg.cache = val;
+			case 'slow': cfg.slow = Std.parseInt(val);
+			case 'cache': cfg.cache = val;
 			case _:
 		}
 	}

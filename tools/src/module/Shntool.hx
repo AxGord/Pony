@@ -28,19 +28,11 @@ using StringTools;
 	public function init(): Void initSections(PRIORITY, BASection.Prepare);
 
 	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
-		new ShntoolReader(xml, {
-			debug: ac.debug,
-			app: ac.app,
-			before: false,
-			section: Prepare,
-			wav: [],
-			to: '',
-			from: '',
-			addext: '',
-			hash: false,
-			allowCfg: true,
-			cordova: false
-		}, configHandler);
+		new ShntoolReader(
+			xml,
+			{ debug: ac.debug, app: ac.app, before: false, section: Prepare, wav: [], to: '', from: '', addext: '', hash: false, allowCfg: true, cordova: false },
+			configHandler
+		);
 	}
 
 	override private function runNode(cfg: ShntoolConfig): Void {
@@ -121,18 +113,11 @@ private typedef WavConfig = {
 			case 'path':
 				selfCreate(xml);
 			case 'wav':
-				new WavReader(xml, {
-					debug: cfg.debug,
-					app: cfg.app,
-					before: cfg.before,
-					section: cfg.section,
-					allowCfg: true,
-					cordova: false,
-					output: 'sounds.wav',
-					cue: null,
-					dirs: [],
-					units: []
-				}, wavConfigHandler);
+				new WavReader(
+					xml,
+					{ debug: cfg.debug, app: cfg.app, before: cfg.before, section: cfg.section, allowCfg: true, cordova: false, output: 'sounds.wav', cue: null, dirs: [], units: [] },
+					wavConfigHandler
+				);
 			case _:
 				super.readNode(xml);
 		}
@@ -153,14 +138,10 @@ private typedef WavConfig = {
 
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
-			case 'to':
-				cfg.to += val;
-			case 'from':
-				cfg.from += val;
-			case 'hash':
-				cfg.hash = val.isTrue();
-			case 'addext':
-				cfg.addext = val;
+			case 'to': cfg.to += val;
+			case 'from': cfg.from += val;
+			case 'hash': cfg.hash = val.isTrue();
+			case 'addext': cfg.addext = val;
 			case _:
 		}
 	}
@@ -171,12 +152,9 @@ private typedef WavConfig = {
 
 	override private function readNode(xml: Fast): Void {
 		switch xml.name {
-			case 'dir':
-				cfg.dirs.push(new Pair(normalize(xml.innerData), xml.has.filter ? normalize(xml.att.filter) : '.wav'));
-			case 'unit':
-				cfg.units.push(normalize(xml.innerData));
-			case _:
-				super.readNode(xml);
+			case 'dir': cfg.dirs.push(new Pair(normalize(xml.innerData), xml.has.filter ? normalize(xml.att.filter) : '.wav'));
+			case 'unit': cfg.units.push(normalize(xml.innerData));
+			case _: super.readNode(xml);
 		}
 	}
 
@@ -190,10 +168,8 @@ private typedef WavConfig = {
 
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
-			case 'output':
-				cfg.output = val;
-			case 'cue':
-				cfg.cue = val;
+			case 'output': cfg.output = val;
+			case 'cue': cfg.cue = val;
 			case _:
 		}
 	}

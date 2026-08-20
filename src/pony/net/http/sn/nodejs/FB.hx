@@ -31,19 +31,9 @@ class FB implements IFB {
 				if (res == null || res.error != null)
 					null
 				else
-					{
-						id: res.id,
-						email: res.email,
-						first_name: res.first_name,
-						isMale: res.gender == 'male',
-						last_name: res.last_name,
-						name: res.name,
-						link: res.link,
-						locale: res.locale,
-						timezone: Std.parseInt(res.timezone),
-						updated_time: res.updated_time,
-						verified: res.verified == 'true'
-					}
+					{ id: res.id, email: res.email, first_name: res.first_name, isMale: res.gender == 'male', last_name: res.last_name, name: res.name, link: res.link, locale: res.locale, timezone: Std.parseInt(
+						res.timezone
+					), updated_time: res.updated_time, verified: res.verified == 'true' }
 			);
 		});
 	}

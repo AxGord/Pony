@@ -37,18 +37,11 @@ typedef RunConfig = {
 	}
 
 	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
-		new RunReader(xml, {
-			debug: ac.debug,
-			app: ac.app,
-			before: false,
-			section: BASection.Run,
-			path: null,
-			lib: null,
-			command: [],
-			haxelib: haxelib,
-			allowCfg: true,
-			cordova: false
-		}, configHandler);
+		new RunReader(
+			xml,
+			{ debug: ac.debug, app: ac.app, before: false, section: BASection.Run, path: null, lib: null, command: [], haxelib: haxelib, allowCfg: true, cordova: false },
+			configHandler
+		);
 	}
 
 	override private function runNode(cfg: RunConfig): Void {
@@ -104,10 +97,8 @@ typedef RunConfig = {
 
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
-			case 'path':
-				cfg.path = val;
-			case 'lib':
-				cfg.lib = val;
+			case 'path': cfg.path = val;
+			case 'lib': cfg.lib = val;
 			case _:
 		}
 	}
@@ -130,11 +121,7 @@ typedef RunConfig = {
 			case 'pony':
 				cfg.command.push({ cmd: 'haxelib run pony ${normalize(xml.innerData)}', path: getPath(xml), lib: getLib(xml) });
 			case 'formatter':
-				cfg.command.push({
-					cmd: 'haxelib run formatter -s ${normalize(xml.innerData)}',
-					path: getPath(xml),
-					lib: getLib(xml)
-				});
+				cfg.command.push({ cmd: 'haxelib run formatter -s ${normalize(xml.innerData)}', path: getPath(xml), lib: getLib(xml) });
 			case _:
 				super.readNode(xml);
 		}

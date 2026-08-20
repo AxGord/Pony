@@ -28,13 +28,7 @@ class Heaps {
 			'js' => defBaseUrl,
 			'android' => androidBaseUrl
 		]: ConfigOptions);
-		project.haxelib.addLib({
-			name: 'heaps',
-			version: 'git',
-			git: 'git@github.com:HeapsIO/heaps.git',
-			commit: 'd1d0008ccbad2f7f3ec802d8f4469bf82bce7f5f',
-			y: true
-		});
+		project.haxelib.addLib({ name: 'heaps', version: 'git', git: 'git@github.com:HeapsIO/heaps.git', commit: 'd1d0008ccbad2f7f3ec802d8f4469bf82bce7f5f', y: true });
 	}
 
 	public static function set(project: Project, ?second: Bool): Void {
@@ -43,35 +37,12 @@ class Heaps {
 		project.build.hxml = 'js';
 		project.build.appNode = 'js';
 		project.uglify.appNode = 'js';
-		project.haxelib.addLib({
-			name: 'hashlink',
-			version: 'git',
-			git: 'git@github.com:HaxeFoundation/hashlink.git',
-			commit: '1.12',
-			mute: true,
-			y: true
-		});
-		project.haxelib.addLib({
-			name: 'hldx',
-			parent: 'hashlink',
-			path: 'libs/directx/',
-			version: HLSDL_VERSION,
-			mute: true
-		});
-		project.haxelib.addLib({
-			name: 'hlsdl',
-			parent: 'hashlink',
-			path: 'libs/sdl/',
-			version: HLSDL_VERSION,
-			mute: true
-		});
-		project.haxelib.addLib({
-			name: 'hashlink',
-			parent: 'hashlink',
-			path: 'other/haxelib/',
-			version: 'dev',
-			mute: true
-		});
+		project.haxelib.addLib(
+			{ name: 'hashlink', version: 'git', git: 'git@github.com:HaxeFoundation/hashlink.git', commit: '1.12', mute: true, y: true }
+		);
+		project.haxelib.addLib({ name: 'hldx', parent: 'hashlink', path: 'libs/directx/', version: HLSDL_VERSION, mute: true });
+		project.haxelib.addLib({ name: 'hlsdl', parent: 'hashlink', path: 'libs/sdl/', version: HLSDL_VERSION, mute: true });
+		project.haxelib.addLib({ name: 'hashlink', parent: 'hashlink', path: 'other/haxelib/', version: 'dev', mute: true });
 		project.download.addLib('hlwin');
 		project.secondbuild.active = true;
 		project.secondbuild.appNode = 'win';

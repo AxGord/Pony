@@ -23,16 +23,11 @@ class Download extends NModule<DownloadConfig> {
 	public function init(): Void initSections(PRIORITY, BASection.Prepare);
 
 	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
-		new DownloadReader(xml, {
-			debug: ac.debug,
-			app: ac.app,
-			before: false,
-			section: BASection.Prepare,
-			path: '',
-			units: [],
-			allowCfg: true,
-			cordova: false
-		}, configHandler);
+		new DownloadReader(
+			xml,
+			{ debug: ac.debug, app: ac.app, before: false, section: BASection.Prepare, path: '', units: [], allowCfg: true, cordova: false },
+			configHandler
+		);
 	}
 
 	#if (haxe_ver < 4.2) override #end
@@ -53,8 +48,7 @@ private class DownloadReader extends BAReader<DownloadConfig> {
 
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
-			case 'path':
-				cfg.path += val;
+			case 'path': cfg.path += val;
 			case _:
 		}
 	}

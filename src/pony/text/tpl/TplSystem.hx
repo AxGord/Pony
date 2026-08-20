@@ -53,22 +53,15 @@ class TplSystem {
 	public static function parseManifest(f: File): Manifest {
 		final x: Fast = XmlTools.fast(f.content).node.manifest;
 		final g = function(n: String) return x.hasNode.resolve(n) ? StringTools.trim(x.node.resolve(n).innerData) : null;
-		return {
-			title: g('title'),
-			author: g('author'),
-			email: g('email'),
-			www: g('www'),
-			version: {
-				if (x.hasNode.resolve('version')) {
-					final v: Array<Int> = x.node.resolve('version').innerData.split('.').map(StringTools.trim).map(Std.parseInt);
-					{ major: v[0], minor: v[1] };
-				} else
-					null;
-			},
-			_extends: x.hasNode.resolve('extends') ? x.node.resolve('extends').innerData.split(',').map(StringTools.trim) : [],
-			license: g('license'),
-			language: g('language')
-		};
+		return { title: g('title'), author: g('author'), email: g('email'), www: g('www'), version: {
+			if (x.hasNode.resolve('version')) {
+				final v: Array<Int> = x.node.resolve('version').innerData.split('.').map(StringTools.trim).map(Std.parseInt);
+				{ major: v[0], minor: v[1] };
+			} else
+				null;
+		}, _extends: x.hasNode.resolve('extends')
+			? x.node.resolve('extends').innerData.split(',').map(StringTools.trim)
+			: [], license: g('license'), language: g('language') };
 	}
 
 }

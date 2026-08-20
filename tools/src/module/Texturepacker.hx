@@ -56,31 +56,11 @@ private typedef TPUnit = {
 	public function init(): Void initSections(PRIORITY, BASection.Prepare);
 
 	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
-		new Path(xml, {
-			app: ac.app,
-			debug: ac.debug,
-			before: false,
-			section: BASection.Prepare,
-			format: 'json png',
-			scale: 1,
-			quality: 1,
-			from: '',
-			to: '',
-			rotation: true,
-			input: [],
-			output: null,
-			allowCfg: false,
-			forceSquared: false,
-			extrude: 0,
-			padding: 0,
-			alpha: true,
-			multipack: false,
-			basicSortBy: null,
-			size: null,
-			pot: false,
-			clean: false,
-			cordova: false
-		}, configHandler);
+		new Path(
+			xml,
+			{ app: ac.app, debug: ac.debug, before: false, section: BASection.Prepare, format: 'json png', scale: 1, quality: 1, from: '', to: '', rotation: true, input: [], output: null, allowCfg: false, forceSquared: false, extrude: 0, padding: 0, alpha: true, multipack: false, basicSortBy: null, size: null, pot: false, clean: false, cordova: false },
+			configHandler
+		);
 	}
 
 	private function notChanged(key: String, dirs: Array<String>): Bool {
@@ -244,8 +224,7 @@ private typedef TPUnit = {
 			first = false;
 			if (unit.datascale == null) continue;
 			switch outExt {
-				case 'json':
-					pony.text.TextTools.betweenReplaceFile(datafile, '"scale": "', '",', Std.string(unit.datascale));
+				case 'json': pony.text.TextTools.betweenReplaceFile(datafile, '"scale": "', '",', Std.string(unit.datascale));
 				case _:
 			}
 		}
@@ -364,13 +343,10 @@ private class Path extends BAReader<TPConfig> {
 
 	override private function readNode(xml: Fast): Void {
 		switch xml.name {
-			case 'path':
-				selfCreate(xml);
-			case 'unit':
-				new Unit(xml, copyCfg(), onConfig);
+			case 'path': selfCreate(xml);
+			case 'unit': new Unit(xml, copyCfg(), onConfig);
 			case 'variant':
-			case _:
-				throw 'Unknown tag';
+			case _: throw 'Unknown tag';
 		}
 	}
 

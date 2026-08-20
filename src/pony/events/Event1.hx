@@ -34,20 +34,13 @@ import pony.Priority;
 
 	private static function compare<T1>(a: Listener1<T1>, b: Listener1<T1>): Bool {
 		return switch [a.listener, b.listener] {
-			case [LFunction0(a), LFunction0(b)]:
-				SignalTools.functionHashCompare(a, b);
-			case [LFunction1(a), LFunction1(b)]:
-				SignalTools.functionHashCompare(a, b);
-			case [LEvent0(a, _), LEvent0(b, _)]:
-				a == b;
-			case [LEvent1(a, _), LEvent1(b, _)]:
-				a == b;
-			case [LSub(_, a), LSub(_, b)]:
-				a == b;
-			case [LNot(_, a), LNot(_, b)]:
-				a == b;
-			case [LBind1(_, a1), LBind1(_, b1)]:
-				a1 == b1;
+			case [LFunction0(a), LFunction0(b)]: SignalTools.functionHashCompare(a, b);
+			case [LFunction1(a), LFunction1(b)]: SignalTools.functionHashCompare(a, b);
+			case [LEvent0(a, _), LEvent0(b, _)]: a == b;
+			case [LEvent1(a, _), LEvent1(b, _)]: a == b;
+			case [LSub(_, a), LSub(_, b)]: a == b;
+			case [LNot(_, a), LNot(_, b)]: a == b;
+			case [LBind1(_, a1), LBind1(_, b1)]: a1 == b1;
 			case _: false;
 		}
 	}

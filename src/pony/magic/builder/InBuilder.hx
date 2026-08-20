@@ -18,8 +18,7 @@ class InBuilder {
 	macro public static function build(): Array<Field> {
 		final fs: Array<Field> = Context.getBuildFields();
 		for (f in fs) switch f.kind {
-			case FFun(f):
-				f.expr = ExprTools.map(f.expr, repl);
+			case FFun(f): f.expr = ExprTools.map(f.expr, repl);
 			case _:
 		}
 		return fs;
@@ -34,8 +33,10 @@ class InBuilder {
 			case EIn(e1, e2):
 			#end
 			macro $e2.indexOf($e1) != -1;
-			case EFor(_, _): e;
-			case _: ExprTools.map(e, repl);
+			case EFor(_, _):
+				e;
+			case _:
+				ExprTools.map(e, repl);
 		};
 	}
 	#end

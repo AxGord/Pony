@@ -17,10 +17,8 @@ class OrTest {
 
 	private static function get<T>(or: Or<Array<T>, T>): T {
 		switch or {
-			case OrState.A(v):
-				return v[0];
-			case OrState.B(v):
-				return v;
+			case OrState.A(v): return v[0];
+			case OrState.B(v): return v;
 		}
 	}
 

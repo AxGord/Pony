@@ -35,12 +35,15 @@ final class MLangPutSub extends Valuator<MLangPut, String> {
 	@:async
 	override public function valu(name: String, arg: String): String {
 		return switch (name) {
-			case 'name': b;
-			case 'title': a.a.base.langTable.langs.get(b).title;
+			case 'name':
+				b;
+			case 'title':
+				a.a.base.langTable.langs.get(b).title;
 			case 'author':
 				final a: String = a.a.base.langTable.langs.get(b).author;
 				a != null ? a : '';
-			case _: null;
+			case _:
+				null;
 		}
 	}
 

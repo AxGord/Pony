@@ -57,8 +57,7 @@ class StarlingTree extends Sprite {
 
 		if (_header != null) {
 			switch (_header) {
-				case Group(text, _):
-					drawGroup(new IntPoint(0, 0), text);
+				case Group(text, _): drawGroup(new IntPoint(0, 0), text);
 				case _:
 			}
 		}

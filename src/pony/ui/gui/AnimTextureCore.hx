@@ -48,21 +48,15 @@ class AnimTextureCore extends AnimCore {
 		this.additionalSrc = additionalSrc;
 		if (additionalSrc == 1)
 			switch smooth {
-				case AnimSmoothMode.None:
-					onFrame << frameNoneOddHandler;
-				case AnimSmoothMode.Simple:
-					onFrame << frameSimpleOddHandler;
-				case AnimSmoothMode.Super:
-					onFrame << frameSuperOddHandler;
+				case AnimSmoothMode.None: onFrame << frameNoneOddHandler;
+				case AnimSmoothMode.Simple: onFrame << frameSimpleOddHandler;
+				case AnimSmoothMode.Super: onFrame << frameSuperOddHandler;
 			}
 		else
 			switch smooth {
-				case AnimSmoothMode.None:
-					onFrame << frameNoneHandler;
-				case AnimSmoothMode.Simple:
-					onFrame << frameSimpleHandler;
-				case AnimSmoothMode.Super:
-					onFrame << frameSuperHandler;
+				case AnimSmoothMode.None: onFrame << frameNoneHandler;
+				case AnimSmoothMode.Simple: onFrame << frameSimpleHandler;
+				case AnimSmoothMode.Super: onFrame << frameSuperHandler;
 			}
 	}
 

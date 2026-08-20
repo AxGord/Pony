@@ -56,10 +56,8 @@ final class MFBPrePut extends TplPut<String, {}> {
 	@:async
 	override public function shortTag(name: String, arg: String, ?kid: ITplPut): String {
 		switch (name) {
-			case 'appid':
-				return a;
-			case _:
-				return @await super.shortTag(name, arg, kid);
+			case 'appid': return a;
+			case _: return @await super.shortTag(name, arg, kid);
 		}
 	}
 

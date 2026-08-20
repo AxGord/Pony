@@ -36,38 +36,21 @@ class HasSignalBuilder {
 				final a = isStatic ? destrStatic : destr;
 				if (f.meta.checkMeta([':auto'])) {
 					flag = true;
-					fields.push({
-						name: eName,
-						access: ast.concat([APrivate]),
-						pos: f.pos,
-						kind: FVar(TPath(tp), { pos: f.pos, expr: ENew(tp, []) } // fail if use EReturn
-						)
-					});
-					fields.push({
-						name: 'get_${f.name}',
-						access: ast.concat([AInline, APrivate]),
-						meta: null,
-						pos: f.pos,
-						kind: FFun({ args: [], ret: null, expr: macro return $i{eName} })
-					});
+					fields.push({ name: eName, access: ast.concat([APrivate]), pos: f.pos, kind: FVar(
+						TPath(tp),
+						{ pos: f.pos, expr: ENew(tp, []) } // fail if use EReturn
+					) });
+					fields.push({ name: 'get_${f.name}', access: ast.concat([AInline, APrivate]), meta: null, pos: f.pos, kind: FFun(
+						{ args: [], ret: null, expr: macro return $i{eName} }
+					) });
 					a.push(macro $i{eName}.destroy());
 				} else if (f.meta.checkMeta([':lazy'])) {
 					flag = true;
-					fields.push({
-						name: eName,
-						access: ast.concat([APrivate]),
-						pos: f.pos,
-						kind: FVar(TPath(tp)),
-						meta: nullsafetyOff
-					});
+					fields.push({ name: eName, access: ast.concat([APrivate]), pos: f.pos, kind: FVar(TPath(tp)), meta: nullsafetyOff });
 					final ex: Expr = { pos: f.pos, expr: ENew(tp, []) };
-					fields.push({
-						name: 'get_${f.name}',
-						access: ast.concat([AInline, APrivate]),
-						meta: null,
-						pos: f.pos,
-						kind: FFun({ args: [], ret: null, expr: macro return $i{eName} == null ? $i{eName} = ${ex} : $i{eName} })
-					});
+					fields.push({ name: 'get_${f.name}', access: ast.concat([AInline, APrivate]), meta: null, pos: f.pos, kind: FFun(
+						{ args: [], ret: null, expr: macro return $i{eName} == null ? $i{eName} = ${ex} : $i{eName} }
+					) });
 					a.push(macro if ($i{eName} != null) $i{eName}.destroy());
 				}
 				if (flag) {
@@ -94,122 +77,71 @@ class HasSignalBuilder {
 				var setcontroll = false;
 				var notsave = false;
 				for (p in m.params) switch p.expr {
-					case EConst(CString('notlazy')):
-						lazy = false;
-					case EConst(CString('private')):
-						priv = true;
-					case EConst(CString('setcontroll')):
-						setcontroll = true;
-					case EConst(CString('notsave')):
-						notsave = true;
-					case _:
-						Context.error('Incorrect bindable parameter', f.pos);
+					case EConst(CString('notlazy')): lazy = false;
+					case EConst(CString('private')): priv = true;
+					case EConst(CString('setcontroll')): setcontroll = true;
+					case EConst(CString('notsave')): notsave = true;
+					case _: Context.error('Incorrect bindable parameter', f.pos);
 				}
 				final a: Array<Expr> = isStatic ? destrStatic : destr;
 				final eventName: String = 'e${TextTools.bigFirst(changeName)}';
 				final setterAccess: Access = f.access.indexOf(APrivate) == -1 ? APublic : APrivate;
-				fields.push({
-					name: changeName,
-					access: ast.concat([priv ? APrivate : APublic]),
-					pos: f.pos,
-					kind: FProp('get', 'never', TPath({ pack: pack, name: 'Signal2', params: [TPType(ttp), TPType(ttp)] }))
-				});
+				fields.push({ name: changeName, access: ast.concat([priv
+					? APrivate
+					: APublic]), pos: f.pos, kind: FProp(
+					'get', 'never', TPath({ pack: pack, name: 'Signal2', params: [TPType(ttp), TPType(ttp)] })
+				) });
 				if (lazy) {
-					fields.push({
-						name: 'set_${f.name}',
-						access: ast.concat([AInline, setterAccess]),
-						meta: null,
-						pos: f.pos,
-						kind: FFun(setcontroll
-							? {
-								args: [{ name: 'v', type: null }],
-								ret: null,
-								expr: macro return $i{eventName} == null || v != $i{f.name}
-									&& !$i{eventName}.dispatchWithFlag(v, $i{f.name}, $v{!notsave})
-									? $i{f.name} = v
-									: $i{f.name}
-							}
-							: {
-								args: [{ name: 'v', type: null }],
-								ret: null,
-								expr: macro {
-									if ($i{eventName} == null || v != $i{f.name}) {
-										var prev = $i{f.name};
-										$i{eventName}.dispatchWithFlag($i{f.name} = v, prev, $v{!notsave});
-									}
-									return $i{f.name};
+					fields.push({ name: 'set_${f.name}', access: ast.concat([AInline, setterAccess]), meta: null, pos: f.pos, kind: FFun(
+						setcontroll
+							? { args: [{ name: 'v', type: null }], ret: null, expr: macro return $i{eventName} == null || v != $i{f.name}
+								&& !$i{eventName}.dispatchWithFlag(v, $i{f.name}, $v{!notsave})
+								? $i{f.name} = v
+								: $i{f.name} }
+							: { args: [{ name: 'v', type: null }], ret: null, expr: macro {
+								if ($i{eventName} == null || v != $i{f.name}) {
+									var prev = $i{f.name};
+									$i{eventName}.dispatchWithFlag($i{f.name} = v, prev, $v{!notsave});
 								}
-							})
-					});
-					fields.push({
-						name: eventName,
-						access: ast.concat([APrivate]),
-						pos: f.pos,
-						kind: FVar(TPath(tp)),
-						meta: nullsafetyOff
-					});
-					fields.push({
-						name: 'get_$changeName',
-						access: ast.concat([AInline, APrivate]),
-						meta: null,
-						pos: f.pos,
-						kind: FFun({ args: [], ret: tps, expr: macro return $i{eventName} == null ? $i{eventName} = ${ex} : $i{eventName} })
-					});
+								return $i{f.name};
+							} }
+					) });
+					fields.push(
+						{ name: eventName, access: ast.concat([APrivate]), pos: f.pos, kind: FVar(TPath(tp)), meta: nullsafetyOff }
+					);
+					fields.push({ name: 'get_$changeName', access: ast.concat([AInline, APrivate]), meta: null, pos: f.pos, kind: FFun(
+						{ args: [], ret: tps, expr: macro return $i{eventName} == null ? $i{eventName} = ${ex} : $i{eventName} }
+					) });
 					a.push(macro if ($i{eventName} != null) $i{eventName}.destroy());
 					a.push(macro @:nullSafety(Off) $i{eventName} = null);
 				} else {
-					fields.push({
-						name: 'set_${f.name}',
-						access: ast.concat([AInline, setterAccess]),
-						meta: null,
-						pos: f.pos,
-						kind: FFun(setcontroll
-							? {
-								args: [{ name: 'v', type: null }],
-								ret: null,
-								expr: macro return v != $i{f.name}
-									&& !(untyped $i{changeName}: Event2<$ttp, $ttp>).dispatchWithFlag(v, $i{f.name}, $v{!notsave})
-									? $i{f.name} = v
-									: $i{f.name}
-							}
-							: {
-								args: [{ name: 'v', type: null }],
-								ret: null,
-								expr: macro {
-									if (v != $i{f.name}) {
-										var prev = $i{f.name};
-										(untyped $i{changeName}: Event2<$ttp, $ttp>).dispatchWithFlag($i{f.name} = v, prev, $v{!notsave});
-									}
-									return $i{f.name};
+					fields.push({ name: 'set_${f.name}', access: ast.concat([AInline, setterAccess]), meta: null, pos: f.pos, kind: FFun(
+						setcontroll
+							? { args: [{ name: 'v', type: null }], ret: null, expr: macro return v != $i{f.name}
+								&& !(untyped $i{changeName}: Event2<$ttp, $ttp>).dispatchWithFlag(v, $i{f.name}, $v{!notsave})
+								? $i{f.name} = v
+								: $i{f.name} }
+							: { args: [{ name: 'v', type: null }], ret: null, expr: macro {
+								if (v != $i{f.name}) {
+									var prev = $i{f.name};
+									(untyped $i{changeName}: Event2<$ttp, $ttp>).dispatchWithFlag($i{f.name} = v, prev, $v{!notsave});
 								}
-							})
-					});
-					fields.push({
-						name: eventName,
-						access: ast.concat([APrivate]),
-						pos: f.pos,
-						kind: FVar(TPath(tp), ex)
-					});
-					fields.push({
-						name: 'get_$changeName',
-						access: ast.concat([AInline, APrivate]),
-						meta: null,
-						pos: f.pos,
-						kind: FFun({ args: [], ret: tps, expr: macro return $i{eventName} })
-					});
+								return $i{f.name};
+							} }
+					) });
+					fields.push({ name: eventName, access: ast.concat([APrivate]), pos: f.pos, kind: FVar(TPath(tp), ex) });
+					fields.push({ name: 'get_$changeName', access: ast.concat([AInline, APrivate]), meta: null, pos: f.pos, kind: FFun(
+						{ args: [], ret: tps, expr: macro return $i{eventName} }
+					) });
 					a.push(macro $i{eventName}.destroy());
 					a.push(macro @:nullSafety(Off) $i{eventName} = null);
 				}
 			case _:
 		}
 		if (destrStatic.length > 0) {
-			fields.push({
-				name: 'destroyStaticSignals',
-				access: [APrivate, AStatic],
-				pos: Context.currentPos(),
-				meta: [],
-				kind: FFun({ args: [], ret: null, expr: macro $b{destrStatic} })
-			});
+			fields.push({ name: 'destroyStaticSignals', access: [APrivate, AStatic], pos: Context.currentPos(), meta: [], kind: FFun(
+				{ args: [], ret: null, expr: macro $b{destrStatic} }
+			) });
 		}
 		if (destr.length > 0) {
 			final acc = [APrivate];
@@ -225,13 +157,9 @@ class HasSignalBuilder {
 				}
 				if (b) break;
 			}
-			fields.push({
-				name: 'destroySignals',
-				access: acc,
-				pos: Context.currentPos(),
-				meta: [],
-				kind: FFun({ args: [], ret: null, expr: macro $b{destr} })
-			});
+			fields.push({ name: 'destroySignals', access: acc, pos: Context.currentPos(), meta: [], kind: FFun(
+				{ args: [], ret: null, expr: macro $b{destr} }
+			) });
 		}
 		return fields;
 	}

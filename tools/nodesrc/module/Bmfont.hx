@@ -40,19 +40,8 @@ import types.BmfontConfig;
 		// if (sys.FileSystem.exists(fntFile)) return; //todo check xml
 		log('Begin generation: ' + output);
 		NPM.msdf_bmfont_xml(
-			font.fullPath.first, {
-				filename: ofn,
-				charset: charset,
-				smartSize: true,
-				pot: false,
-				square: true,
-				fontSize: size,
-				fieldType: type,
-				outputType: format,
-				distanceRange: distance,
-				texturePadding: padding,
-				textureSize: [2048, 2048]
-			},
+			font.fullPath.first,
+			{ filename: ofn, charset: charset, smartSize: true, pot: false, square: true, fontSize: size, fieldType: type, outputType: format, distanceRange: distance, texturePadding: padding, textureSize: [2048, 2048] },
 			function(err: Any, textures: Array<{ filename: String, texture: Dynamic }>,
 				font: { filename: String, data: String, options: Dynamic }): Void {
 				log('End generation: ' + output);

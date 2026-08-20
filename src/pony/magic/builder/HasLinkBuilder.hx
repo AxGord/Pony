@@ -25,20 +25,12 @@ class HasLinkBuilder {
 
 						final access = [AInline, APrivate];
 						if (field.access.indexOf(AStatic) != -1) access.push(AStatic);
-						fields.push({
-							name: 'get_${field.name}',
-							access: access,
-							kind: FFun({
-								args: [],
-								ret: type,
-								expr: macro return ${expr}
-							}),
-							pos: field.pos,
-							#if (js||flash)
-							// for interfaces work only js or flash
-							meta: [{ name: ':extern', pos: field.pos }]
-							#end
-						});
+						fields.push({ name: 'get_${field.name}', access: access, kind: FFun(
+							{ args: [], ret: type, expr: macro return ${expr} }
+						), pos: field.pos, #if (js||flash)
+						// for interfaces work only js or flash
+						meta: [{ name: ':extern', pos: field.pos }]
+						#end });
 					}
 
 					if (set == 'link') {
@@ -46,20 +38,12 @@ class HasLinkBuilder {
 
 						final access = [AInline, APrivate];
 						if (field.access.indexOf(AStatic) != -1) access.push(AStatic);
-						fields.push({
-							name: 'set_${field.name}',
-							access: access,
-							kind: FFun({
-								args: [{ name: 'v', type: type }],
-								ret: type,
-								expr: macro return ${expr} = v
-							}),
-							pos: field.pos,
-							#if (js||flash)
-							// for interfaces work only js or flash
-							meta: [{ name: ':extern', pos: field.pos }]
-							#end
-						});
+						fields.push({ name: 'set_${field.name}', access: access, kind: FFun(
+							{ args: [{ name: 'v', type: type }], ret: type, expr: macro return ${expr} = v }
+						), pos: field.pos, #if (js||flash)
+						// for interfaces work only js or flash
+						meta: [{ name: ':extern', pos: field.pos }]
+						#end });
 					}
 
 					field.kind = FProp(get, set, type);

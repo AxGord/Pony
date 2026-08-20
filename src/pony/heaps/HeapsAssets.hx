@@ -385,12 +385,9 @@ using pony.text.TextTools;
 	public static function setFontType(font: Font, type: Null<String>): Void {
 		switch type {
 			case null:
-			case 'msdf':
-				font.type = SignedDistanceField(SDFChannel.MultiChannel, SDF_ALPHA, SDF_SMOOTHING);
-			case 'sdf':
-				font.type = SignedDistanceField(SDFChannel.Alpha, SDF_ALPHA, SDF_SMOOTHING);
-			case _:
-				throw 'Unsupported font type';
+			case 'msdf': font.type = SignedDistanceField(SDFChannel.MultiChannel, SDF_ALPHA, SDF_SMOOTHING);
+			case 'sdf': font.type = SignedDistanceField(SDFChannel.Alpha, SDF_ALPHA, SDF_SMOOTHING);
+			case _: throw 'Unsupported font type';
 		}
 	}
 

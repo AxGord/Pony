@@ -80,14 +80,8 @@ class MySQL extends SQLBase {
 	}
 
 	private static function parseFields(a: Array<Dynamic>): Array<Field> {
-		return [
-			for (e in a)
-				{
-					name: e.orgName,
-					type: e.type,
-					length: calcLen(e.type, e.length),
-					flags: parseFlags(e.flags)
-				}
+		return [for (e in a)
+			{ name: e.orgName, type: e.type, length: calcLen(e.type, e.length), flags: parseFlags(e.flags) }
 		];
 	}
 

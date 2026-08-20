@@ -15,12 +15,18 @@ class TableMacro {
 		switch expr.expr {
 			case EBinop(op, e1, e2):
 				final o = switch op {
-					case OpGt: '>';
-					case OpGte: '>=';
-					case OpLt: '<';
-					case OpLte: '<=';
-					case OpEq: '=';
-					case OpNotEq: '!=';
+					case OpGt:
+						'>';
+					case OpGte:
+						'>=';
+					case OpLt:
+						'<';
+					case OpLte:
+						'<=';
+					case OpEq:
+						'=';
+					case OpNotEq:
+						'!=';
 					case OpBoolAnd:
 						a = transExpr(e1, a);
 						a.push(genText(' AND ', expr.pos));
@@ -31,7 +37,8 @@ class TableMacro {
 						a.push(genText(' OR ', expr.pos));
 						a = transExpr(e2, a);
 						return a;
-					case _: throw 'Unknown operation $op';
+					case _:
+						throw 'Unknown operation $op';
 				}
 
 				a = a.concat(parseExpr(e1));
@@ -41,10 +48,8 @@ class TableMacro {
 				switch e2.expr {
 					case EConst(CIdent(s)) if (s == 'null'):
 						switch op {
-							case OpEq:
-								a.push(genText(' IS NULL', expr.pos));
-							case OpNotEq:
-								a.push(genText(' IS NOT NULL', expr.pos));
+							case OpEq: a.push(genText(' IS NULL', expr.pos));
+							case OpNotEq: a.push(genText(' IS NOT NULL', expr.pos));
 							case _: throw 'Not correct $op operator for null';
 						}
 					case _:
@@ -75,9 +80,11 @@ class TableMacro {
 								a.push(genText('$field LIKE $s', expr.pos));
 							case EConst(CString(s)):
 								a.push(genText('$field LIKE \'$s\'', expr.pos));
-							case _: throw 'error';
+							case _:
+								throw 'error';
 						}
-					case _: throw 'Unknown action';
+					case _:
+						throw 'Unknown action';
 				}
 
 			case _:
@@ -136,20 +143,15 @@ class TableMacro {
 					switch e2.expr {
 						case EConst(CIdent('null')):
 							switch op {
-								case OpEq:
-									a.push(genText(' IS NULL', e2.pos));
-								case OpNotEq:
-									a.push(genText(' IS NOT NULL', e2.pos));
+								case OpEq: a.push(genText(' IS NULL', e2.pos));
+								case OpNotEq: a.push(genText(' IS NOT NULL', e2.pos));
 								case _: throw 'Not correct $op operator for null';
 							}
 						case EBinop(subop, { expr: EConst(CIdent('null')) }, e2) if (subop == OpAnd || subop == OpOr):
 							switch op {
-								case OpEq:
-									a.push(genText(' IS NULL', e2.pos));
-								case OpNotEq:
-									a.push(genText(' IS NOT NULL', e2.pos));
-								case _:
-									throw 'Not correct $op operator for null';
+								case OpEq: a.push(genText(' IS NULL', e2.pos));
+								case OpNotEq: a.push(genText(' IS NOT NULL', e2.pos));
+								case _: throw 'Not correct $op operator for null';
 							}
 							a.push(genText(
 								switch subop {

@@ -56,13 +56,7 @@ class RPCBuilder {
 					final n = field.name;
 					final sn = ON + pony.text.TextTools.bigFirst(n);
 
-					fields.push({
-						name: sn,
-						access: [APrivate],
-						pos: Context.currentPos(),
-						kind: FVar(macro :Signal1<haxe.io.Bytes>),
-						meta: [{ name: META, pos: Context.currentPos() }]
-					});
+					fields.push({ name: sn, access: [APrivate], pos: Context.currentPos(), kind: FVar(macro :Signal1<haxe.io.Bytes>), meta: [{ name: META, pos: Context.currentPos() }] });
 
 					final en: Expr = { expr: ENew(t, []), pos: Context.currentPos() };
 					tonew.push(macro $i{n} = ${en});
@@ -77,8 +71,7 @@ class RPCBuilder {
 
 		for (field in fields) {
 			switch field.kind {
-				case FieldType.FFun(f) if (field.name == 'new'):
-					newf = f;
+				case FieldType.FFun(f) if (field.name == 'new'): newf = f;
 				case _:
 			}
 
@@ -87,21 +80,16 @@ class RPCBuilder {
 					field.meta = [{ name: ':auto', pos: Context.currentPos() }];
 					final n = field.name;
 					final flagName = n + 'RemoteCall';
-					fields.push({
-						name: flagName,
-						access: [APrivate],
-						pos: Context.currentPos(),
-						kind: FVar(macro :Bool, macro false),
-						meta: smeta
-					});
+					fields.push({ name: flagName, access: [APrivate], pos: Context.currentPos(), kind: FVar(
+						macro :Bool, macro false
+					), meta: smeta });
 
 					final args: Array<ComplexType> = [];
 					switch t {
 						case TPath(p):
 							for (param in p.params) {
 								switch param {
-									case TPType(t):
-										args.push(t);
+									case TPType(t): args.push(t);
 									case _:
 								}
 							}
@@ -110,13 +98,9 @@ class RPCBuilder {
 					}
 
 					for (arg in 0...args.length) {
-						fields.push({
-							name: n + '_' + arg,
-							access: [APrivate],
-							pos: Context.currentPos(),
-							kind: FVar(args[arg]),
-							meta: smeta
-						});
+						fields.push(
+							{ name: n + '_' + arg, access: [APrivate], pos: Context.currentPos(), kind: FVar(args[arg]), meta: smeta }
+						);
 					}
 
 					final nf = n.substr(0, 2);
@@ -129,54 +113,29 @@ class RPCBuilder {
 						ae.push(macro send());
 						for (arg in 0...args.length) ae.push(macro $i{n + '_' + arg} = null);
 						ae.push(macro $i{flagName} = false);
-						fields.push({
-							name: rn + 'Remote',
-							access: [APublic],
-							pos: Context.currentPos(),
-							kind: FFun({
-								args: [for (arg in 0...args.length) { name: 'arg$arg', type: args[arg] }],
-								ret: macro :Void,
-								expr: { expr: EBlock(ae), pos: Context.currentPos() }
-							})
-						});
+						fields.push({ name: rn + 'Remote', access: [APublic], pos: Context.currentPos(), kind: FFun({ args: [for (arg in 0...args.length) { name: 'arg$arg', type: args[arg] }], ret: macro :Void, expr: { expr: EBlock(
+							ae
+						), pos: Context.currentPos() } }) });
 					}
 					{
 						final rc: Array<Expr> = [macro $i{flagName} = false];
 						final ca: Array<Expr> = [];
 						for (arg in 0...args.length) {
-							rc.push({
-								expr: EVars([
-									{
-										name: 'arg$arg',
-										type: args[arg],
-										expr: macro $i{n + '_' + arg}
-									}
-								]),
-								pos: Context.currentPos()
-							});
+							rc.push({ expr: EVars([{ name: 'arg$arg', type: args[arg], expr: macro $i{n + '_' + arg} }]), pos: Context.currentPos() });
 							rc.push(macro $i{n + '_' + arg} = null);
 							ca.push(macro $i{'arg$arg'});
 						}
 
-						rc.push({
-							expr: ECall(macro $i{en}.dispatch, [for (arg in 0...args.length) macro $i{'arg$arg'}]),
-							pos: Context.currentPos()
-						});
+						rc.push({ expr: ECall(
+							macro $i{en}.dispatch, [for (arg in 0...args.length) macro $i{'arg$arg'}]
+						), pos: Context.currentPos() });
 						final bl = { expr: EBlock(rc), pos: Context.currentPos() };
 
 						final chname = n + 'RemoteCheck';
 						@SuppressWarnings('checkstyle:MagicNumber')
-						fields.push({
-							name: chname,
-							access: [APrivate, AInline #if (haxe_ver >= 4.2), AExtern #end],
-							pos: Context.currentPos(),
-							kind: FFun({
-								args: [],
-								ret: macro :Void,
-								expr: macro if ($i{flagName}) $bl
-							}),
-							meta: [#if (haxe_ver < 4.2) { name: ':extern', pos: Context.currentPos() } #end]
-						});
+						fields.push({ name: chname, access: [APrivate, AInline #if (haxe_ver >= 4.2), AExtern #end], pos: Context.currentPos(), kind: FFun(
+							{ args: [], ret: macro :Void, expr: macro if ($i{flagName}) $bl }
+						), meta: [#if (haxe_ver < 4.2) { name: ':extern', pos: Context.currentPos() } #end] });
 
 						checks.push(chname);
 					}
@@ -184,22 +143,14 @@ class RPCBuilder {
 				case FieldType.FFun(f) if (field.meta.checkMeta([META])):
 					final n = field.name;
 					final flagName = n + 'RemoteCall';
-					fields.push({
-						name: flagName,
-						access: [APrivate],
-						pos: Context.currentPos(),
-						kind: FVar(macro :Bool, macro false),
-						meta: smeta
-					});
+					fields.push({ name: flagName, access: [APrivate], pos: Context.currentPos(), kind: FVar(
+						macro :Bool, macro false
+					), meta: smeta });
 
 					for (arg in f.args) {
-						fields.push({
-							name: n + '_' + arg.name,
-							access: [APrivate],
-							pos: Context.currentPos(),
-							kind: FVar(arg.type),
-							meta: smeta
-						});
+						fields.push(
+							{ name: n + '_' + arg.name, access: [APrivate], pos: Context.currentPos(), kind: FVar(arg.type), meta: smeta }
+						);
 					}
 
 					{
@@ -208,31 +159,15 @@ class RPCBuilder {
 						ae.push(macro send());
 						for (arg in f.args) ae.push(macro $i{n + '_' + arg.name} = null);
 						ae.push(macro $i{flagName} = false);
-						fields.push({
-							name: n + 'Remote',
-							access: [APublic],
-							pos: Context.currentPos(),
-							kind: FFun({
-								args: f.args,
-								ret: f.ret,
-								expr: { expr: EBlock(ae), pos: Context.currentPos() }
-							})
-						});
+						fields.push({ name: n + 'Remote', access: [APublic], pos: Context.currentPos(), kind: FFun(
+							{ args: f.args, ret: f.ret, expr: { expr: EBlock(ae), pos: Context.currentPos() } }
+						) });
 					}
 					{
 						final rc: Array<Expr> = [macro $i{flagName} = false];
 						final ca: Array<Expr> = [];
 						for (arg in f.args) {
-							rc.push({
-								expr: EVars([
-									{
-										name: arg.name,
-										type: arg.type,
-										expr: macro $i{n + '_' + arg.name}
-									}
-								]),
-								pos: Context.currentPos()
-							});
+							rc.push({ expr: EVars([{ name: arg.name, type: arg.type, expr: macro $i{n + '_' + arg.name} }]), pos: Context.currentPos() });
 							rc.push(macro $i{n + '_' + arg.name} = null);
 							ca.push(macro $i{arg.name});
 						}
@@ -241,17 +176,9 @@ class RPCBuilder {
 
 						final chname = n + 'RemoteCheck';
 						@SuppressWarnings('checkstyle:MagicNumber')
-						fields.push({
-							name: chname,
-							access: [APrivate, AInline #if (haxe_ver >= 4.2), AExtern #end],
-							pos: Context.currentPos(),
-							kind: FFun({
-								args: [],
-								ret: macro :Void,
-								expr: macro if ($i{flagName}) $bl
-							}),
-							meta: [#if (haxe_ver < 4.2) { name: ':extern', pos: Context.currentPos() } #end]
-						});
+						fields.push({ name: chname, access: [APrivate, AInline #if (haxe_ver >= 4.2), AExtern #end], pos: Context.currentPos(), kind: FFun(
+							{ args: [], ret: macro :Void, expr: macro if ($i{flagName}) $bl }
+						), meta: [#if (haxe_ver < 4.2) { name: ':extern', pos: Context.currentPos() } #end] });
 
 						checks.push(chname);
 					}
@@ -259,30 +186,14 @@ class RPCBuilder {
 			}
 		}
 
-		fields.push({
-			name: 'checkRemoteCalls',
-			access: [APublic],
-			pos: Context.currentPos(),
-			kind: FFun({
-				args: [],
-				ret: macro :Void,
-				expr: { expr: EBlock([for (ch in checks) macro $i{ch}()]), pos: Context.currentPos() }
-			})
-		});
+		fields.push({ name: 'checkRemoteCalls', access: [APublic], pos: Context.currentPos(), kind: FFun(
+			{ args: [], ret: macro :Void, expr: { expr: EBlock([for (ch in checks) macro $i{ch}()]), pos: Context.currentPos() } }
+		) });
 
 		if (tonew.length > 0) {
 			if (newf == null) {
-				newf = {
-					args: [{ name: 'socket', type: macro :pony.net.INet }],
-					expr: macro super(socket),
-					ret: null
-				};
-				fields.push({
-					name: 'new',
-					access: [APublic],
-					kind: FFun(newf),
-					pos: Context.currentPos()
-				});
+				newf = { args: [{ name: 'socket', type: macro :pony.net.INet }], expr: macro super(socket), ret: null };
+				fields.push({ name: 'new', access: [APublic], kind: FFun(newf), pos: Context.currentPos() });
 			}
 			tonew.unshift(newf.expr);
 			newf.expr = { expr: EBlock(tonew), pos: Context.currentPos() };

@@ -18,21 +18,11 @@ class Ftp extends NModule<FtpConfig> {
 	public function init(): Void initSections(PRIORITY, BASection.Ftp);
 
 	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
-		new FtpReader(xml, {
-			debug: ac.debug,
-			app: ac.app,
-			before: false,
-			section: BASection.Ftp,
-			path: '',
-			user: 'anonymous',
-			pass: 'anonymous@',
-			host: 'host',
-			port: 21,
-			output: '',
-			input: [],
-			allowCfg: true,
-			cordova: false
-		}, configHandler);
+		new FtpReader(
+			xml,
+			{ debug: ac.debug, app: ac.app, before: false, section: BASection.Ftp, path: '', user: 'anonymous', pass: 'anonymous@', host: 'host', port: 21, output: '', input: [], allowCfg: true, cordova: false },
+			configHandler
+		);
 	}
 
 	#if (haxe_ver < 4.2) override #end
@@ -57,8 +47,7 @@ private class FtpReader extends BAReader<FtpConfig> {
 
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
-			case 'path':
-				cfg.path = val;
+			case 'path': cfg.path = val;
 			case _:
 		}
 	}

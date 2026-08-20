@@ -81,16 +81,11 @@ using pony.Tools;
 
 	private static function parseBuf(buf: String, n: Int): Int {
 		return switch buf {
-			case 'ms', 'millisecond', 'milliseconds':
-				n;
-			case 's', 'sec', 'second', 'seconds':
-				fromSeconds(n);
-			case 'm', 'min', 'minute', 'minutes':
-				fromMinutes(n);
-			case 'h', 'hour', 'hours':
-				fromHours(n);
-			case 'd', 'day', 'days':
-				fromDays(n);
+			case 'ms', 'millisecond', 'milliseconds': n;
+			case 's', 'sec', 'second', 'seconds': fromSeconds(n);
+			case 'm', 'min', 'minute', 'minutes': fromMinutes(n);
+			case 'h', 'hour', 'hours': fromHours(n);
+			case 'd', 'day', 'days': fromDays(n);
 			case _: 0;
 		}
 	}
@@ -99,12 +94,15 @@ using pony.Tools;
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function parseTime(d: Array<String>): Int {
 		return switch d.length {
-			case 1: fromSeconds(d[0] == '' ? 0 : d[0].parseInt());
-			case 2: fromSeconds(d[1] == '' ? 0 : d[1].parseInt()) + fromMinutes(d[0] == '' ? 0 : d[0].parseInt());
+			case 1:
+				fromSeconds(d[0] == '' ? 0 : d[0].parseInt());
+			case 2:
+				fromSeconds(d[1] == '' ? 0 : d[1].parseInt()) + fromMinutes(d[0] == '' ? 0 : d[0].parseInt());
 			case 3:
 				fromSeconds(d[2] == '' ? 0 : d[2].parseInt()) + fromMinutes(d[0] == '' ? 0 : d[1].parseInt())
 					+ fromHours(d[0] == '' ? 0 : d[0].parseInt());
-			case _: throw 'Invalid time format';
+			case _:
+				throw 'Invalid time format';
 		}
 	}
 

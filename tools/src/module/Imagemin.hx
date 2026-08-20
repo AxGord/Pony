@@ -20,24 +20,11 @@ class Imagemin extends NModule<ImageminConfig> {
 	public function init(): Void initSections(PRIORITY, BASection.Prepare);
 
 	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
-		new ImageminReader(xml, {
-			debug: ac.debug,
-			app: ac.app,
-			before: false,
-			section: BASection.Prepare,
-			from: '',
-			to: '',
-			recursive: false,
-			jpgq: 85,
-			webpq: 50,
-			webpfrompng: false,
-			jpgfrompng: false,
-			fast: false,
-			checkHash: false,
-			ignore: [],
-			allowCfg: false,
-			cordova: false
-		}, configHandler);
+		new ImageminReader(
+			xml,
+			{ debug: ac.debug, app: ac.app, before: false, section: BASection.Prepare, from: '', to: '', recursive: false, jpgq: 85, webpq: 50, webpfrompng: false, jpgfrompng: false, fast: false, checkHash: false, ignore: [], allowCfg: false, cordova: false },
+			configHandler
+		);
 	}
 
 	#if (haxe_ver < 4.2) override #end
@@ -70,40 +57,26 @@ private class ImageminReader extends BAReader<ImageminConfig> {
 
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
-			case 'from':
-				cfg.from += val;
-			case 'to':
-				cfg.to += val;
-			case 'recursive':
-				cfg.recursive = TextTools.isTrue(val);
-			case 'format':
-				cfg.format = val;
-			case 'pngq':
-				cfg.pngq = Std.parseInt(val);
-			case 'jpgq':
-				cfg.jpgq = Std.parseInt(val);
-			case 'webpq':
-				cfg.webpq = Std.parseInt(val);
-			case 'webpfrompng':
-				cfg.webpfrompng = TextTools.isTrue(val);
-			case 'jpgfrompng':
-				cfg.jpgfrompng = TextTools.isTrue(val);
-			case 'fast':
-				cfg.fast = TextTools.isTrue(val);
-			case 'checkHash':
-				cfg.checkHash = TextTools.isTrue(val);
+			case 'from': cfg.from += val;
+			case 'to': cfg.to += val;
+			case 'recursive': cfg.recursive = TextTools.isTrue(val);
+			case 'format': cfg.format = val;
+			case 'pngq': cfg.pngq = Std.parseInt(val);
+			case 'jpgq': cfg.jpgq = Std.parseInt(val);
+			case 'webpq': cfg.webpq = Std.parseInt(val);
+			case 'webpfrompng': cfg.webpfrompng = TextTools.isTrue(val);
+			case 'jpgfrompng': cfg.jpgfrompng = TextTools.isTrue(val);
+			case 'fast': cfg.fast = TextTools.isTrue(val);
+			case 'checkHash': cfg.checkHash = TextTools.isTrue(val);
 			case _:
 		}
 	}
 
 	override private function readNode(xml: Fast): Void {
 		switch xml.name {
-			case 'dir':
-				allowCreate(xml);
-			case 'path':
-				denyCreate(xml);
-			case _:
-				super.readNode(xml);
+			case 'dir': allowCreate(xml);
+			case 'path': denyCreate(xml);
+			case _: super.readNode(xml);
 		}
 	}
 

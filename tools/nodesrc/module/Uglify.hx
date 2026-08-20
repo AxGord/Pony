@@ -32,12 +32,9 @@ import types.UglifyConfig;
 				for (f in cfg.input) @:nullSafety(Off) Reflect.setField(inputContent, f.split('/').pop(), File.getContent(f));
 				var tries: Int = 3;
 				do {
-					final r = NPM.uglify_js.minify(inputContent, {
-						toplevel: true,
-						warnings: true,
-						mangle: cfg.mangle,
-						compress: untyped (cfg.compress ? {} : false)
-					});
+					final r = NPM.uglify_js.minify(
+						inputContent, { toplevel: true, warnings: true, mangle: cfg.mangle, compress: untyped (cfg.compress ? {} : false) }
+					);
 					libdata = r.code;
 				} while (libdata == null && --tries > 0);
 				if (libdata == null) {
@@ -52,17 +49,14 @@ import types.UglifyConfig;
 			final inputContent: Dynamic<String> = {};
 			for (f in cfg.input) @:nullSafety(Off) Reflect.setField(inputContent, f.split('/').pop(), File.getContent(f));
 
-			final r = NPM.uglify_js.minify(inputContent, {
-				toplevel: true,
-				warnings: true,
-				sourceMap: cfg.sourcemap.input == null ? null : {
-					content: File.getContent(cfg.sourcemap.input),
-					filename: cfg.sourcemap.source,
-					url: cfg.sourcemap.url
-				},
-				mangle: cfg.mangle,
-				compress: untyped cfg.compress ? {} : false
-			});
+			final r = NPM.uglify_js.minify(
+				inputContent,
+				{ toplevel: true, warnings: true, sourceMap: cfg.sourcemap.input == null
+					? null
+					: { content: File.getContent(cfg.sourcemap.input), filename: cfg.sourcemap.source, url: cfg.sourcemap.url }, mangle: cfg.mangle, compress: untyped cfg.compress
+					? {}
+					: false }
+			);
 			if (r.error != null) return error(r.error);
 			File.saveContent(cfg.output, r.code);
 			if (cfg.sourcemap.output != null) File.saveContent(cfg.sourcemap.output, patchMap(r.map, cfg.sourcemap.offset));

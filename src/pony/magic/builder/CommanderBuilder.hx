@@ -27,8 +27,7 @@ class CommanderBuilder {
 
 		try {
 			switch Context.getLocalClass().get().meta.extract(':file')[0].params[0].expr {
-				case EConst(CString(v)):
-					file = v;
+				case EConst(CString(v)): file = v;
 				case _:
 			}
 		} catch (_: Any) {}
@@ -83,15 +82,12 @@ class CommanderBuilder {
 
 			for (s in x.nodes.syn) values.push(macro $v{s.innerData});
 
-			cases.push({
-				values: values,
-				expr: switch x.nodes.arg.length {
-					case 0: macro $i{ed}.dispatch();
-					case 1: macro $i{ed}.dispatch(args != null ? args[0] : null);
-					case 2: macro args != null ? $i{ed}.dispatch(args[0], args[1]) : $i{ed}.dispatch(null, null);
-					case _: macro args != null ? $i{ed}.dispatch(args.shift(), args) : $i{ed}.dispatch(null, null);
-				}
-			});
+			cases.push({ values: values, expr: switch x.nodes.arg.length {
+				case 0: macro $i{ed}.dispatch();
+				case 1: macro $i{ed}.dispatch(args != null ? args[0] : null);
+				case 2: macro args != null ? $i{ed}.dispatch(args[0], args[1]) : $i{ed}.dispatch(null, null);
+				case _: macro args != null ? $i{ed}.dispatch(args.shift(), args) : $i{ed}.dispatch(null, null);
+			} });
 
 			final signalType: ComplexType = switch x.nodes.arg.length {
 				case 0: macro :pony.events.Signal0;
@@ -100,14 +96,7 @@ class CommanderBuilder {
 				case _: macro :pony.events.Signal2<String, Array<String>>;
 			}
 
-			fields.push({
-				name: 'on' + bcmd,
-				access: [APublic],
-				pos: Context.currentPos(),
-				kind: FVar(signalType),
-				meta: [{ name: ':auto', pos: Context.currentPos() }],
-				doc: h
-			});
+			fields.push({ name: 'on' + bcmd, access: [APublic], pos: Context.currentPos(), kind: FVar(signalType), meta: [{ name: ':auto', pos: Context.currentPos() }], doc: h });
 
 			final args: Array<FunctionArg> = switch x.nodes.arg.length {
 				case 0: [];
@@ -126,48 +115,25 @@ class CommanderBuilder {
 				case _: macro $i{ed}.dispatch(arg1, argN);
 			}
 
-			fields.push({
-				name: cmd,
-				access: [APublic, AInline],
-				pos: Context.currentPos(),
-				kind: FFun({
-					args: args,
-					ret: macro :Void,
-					expr: cbody
-				}),
-				doc: h
-			});
+			fields.push({ name: cmd, access: [APublic, AInline], pos: Context.currentPos(), kind: FFun(
+				{ args: args, ret: macro :Void, expr: cbody }
+			), doc: h });
 		}
 
 		final body: ExprDef = ESwitch(macro cmd, cases, macro error('Unknown command: ' + cmd));
 
-		fields.push({
-			name: 'runCommand',
-			access: [APublic, AOverride],
-			pos: Context.currentPos(),
-			kind: FFun({
-				args: [
-					{ name: 'cmd', type: macro :String },
-					{ name: 'args', type: macro :Array<String>, opt: true }
-				],
-				ret: macro :Void,
-				expr: { expr: body, pos: Context.currentPos() }
-			})
-		});
+		fields.push({ name: 'runCommand', access: [APublic, AOverride], pos: Context.currentPos(), kind: FFun({ args: [
+			{ name: 'cmd', type: macro :String },
+			{ name: 'args', type: macro :Array<String>, opt: true }
+		], ret: macro :Void, expr: { expr: body, pos: Context.currentPos() } }) });
 
-		fields.push({
-			name: 'helpData',
-			access: [APublic],
-			pos: Context.currentPos(),
-			kind: FProp('default', 'never', macro :Array<String>, macro $v{help})
-		});
+		fields.push({ name: 'helpData', access: [APublic], pos: Context.currentPos(), kind: FProp(
+			'default', 'never', macro :Array<String>, macro $v{help}
+		) });
 
-		fields.push({
-			name: 'helpAnsiData',
-			access: [APublic],
-			pos: Context.currentPos(),
-			kind: FProp('default', 'never', macro :Array<String>, macro $v{helpAnsi})
-		});
+		fields.push({ name: 'helpAnsiData', access: [APublic], pos: Context.currentPos(), kind: FProp(
+			'default', 'never', macro :Array<String>, macro $v{helpAnsi}
+		) });
 
 		return fields;
 	}

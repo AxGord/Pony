@@ -23,13 +23,7 @@ using pony.flash.FLExtends;
  */
 class StarlingButton extends Sprite {
 
-	public static var config = {
-		def: 1,
-		focus: 2,
-		press: 3,
-		zone: 4,
-		disabled: 5
-	};
+	public static var config = { def: 1, focus: 2, press: 3, zone: 4, disabled: 5 };
 
 	private final mc: Array<MovieClip>;
 

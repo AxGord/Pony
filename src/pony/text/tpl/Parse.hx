@@ -177,31 +177,16 @@ class Parse extends ParseBoy<TplContent> {
 			case 0:
 				final name: String = str();
 				final d: TplData = tagContent(name);
-				data.push(Tag({
-					name: parseName(name),
-					arg: null,
-					args: new Map<String, TplData>(),
-					content: d
-				}));
+				data.push(Tag({ name: parseName(name), arg: null, args: new Map<String, TplData>(), content: d }));
 				result = true;
 			case 1:
-				data.push(Tag({
-					name: parseName(str()),
-					arg: null,
-					args: new Map<String, TplData>(),
-					content: null
-				}));
+				data.push(Tag({ name: parseName(str()), arg: null, args: new Map<String, TplData>(), content: null }));
 				result = true;
 			case 2:
 				final name: String = str();
 				var a: { args: Map<String, TplData>, closedTag: Bool } = args();
 				final d: TplData = a.closedTag ? null : tagContent(name);
-				data.push(Tag({
-					name: parseName(name),
-					arg: null,
-					args: a.args,
-					content: d
-				}));
+				data.push(Tag({ name: parseName(name), arg: null, args: a.args, content: d }));
 			case 3:
 				final name: String = str();
 				switch (gt([s.end, s.endClose, s.args.valueq], true)) {
@@ -210,31 +195,17 @@ class Parse extends ParseBoy<TplContent> {
 							case 0:
 								final arg: TplData = parse(str(), s);
 								final d: TplData = tagContent(name);
-								data.push(Tag({
-									name: parseName(name),
-									arg: arg,
-									args: new Map<String, TplData>(),
-									content: d
-								}));
+								data.push(Tag({ name: parseName(name), arg: arg, args: new Map<String, TplData>(), content: d }));
 							case 1:
 								final arg: TplData = parse(str(), s);
-								data.push(Tag({
-									name: parseName(name),
-									arg: arg,
-									args: new Map<String, TplData>(),
-									content: null
-								}));
+								data.push(Tag({ name: parseName(name), arg: arg, args: new Map<String, TplData>(), content: null }));
 							case 2:
 								final arg: TplData = parse(str(), s);
 								var a: { args: Map<String, TplData>, closedTag: Bool } = args();
 								final d: TplData = a.closedTag ? null : tagContent(name);
-								data.push(Tag({
-									name: parseName(name),
-									arg: arg,
-									args: a.args,
-									content: d
-								}));
-							case _: throw 'Oops';
+								data.push(Tag({ name: parseName(name), arg: arg, args: a.args, content: d }));
+							case _:
+								throw 'Oops';
 						}
 					/*
 					case 0:
@@ -254,29 +225,15 @@ class Parse extends ParseBoy<TplContent> {
 						switch (gt([s.end, s.endClose, s.args.begin])) {
 							case 0:
 								final d: TplData = tagContent(name);
-								data.push(Tag({
-									name: parseName(name),
-									arg: arg,
-									args: new Map<String, TplData>(),
-									content: d
-								}));
+								data.push(Tag({ name: parseName(name), arg: arg, args: new Map<String, TplData>(), content: d }));
 							case 1:
-								data.push(Tag({
-									name: parseName(name),
-									arg: arg,
-									args: new Map<String, TplData>(),
-									content: null
-								}));
+								data.push(Tag({ name: parseName(name), arg: arg, args: new Map<String, TplData>(), content: null }));
 							case 2:
 								var a: { args: Map<String, TplData>, closedTag: Bool } = args();
 								final d: TplData = a.closedTag ? null : tagContent(name);
-								data.push(Tag({
-									name: parseName(name),
-									arg: arg,
-									args: a.args,
-									content: d
-								}));
-							case _: throw 'Oops';
+								data.push(Tag({ name: parseName(name), arg: arg, args: a.args, content: d }));
+							case _:
+								throw 'Oops';
 						}
 					case _:
 						throw 'Oops';
@@ -312,13 +269,15 @@ class Parse extends ParseBoy<TplContent> {
 										case 3:
 											args[n] = parse(str(), s);
 											return { args: args, closedTag: true };
-										case _: throw 'Oops';
+										case _:
+											throw 'Oops';
 									}
 								case 0:
 									if (gt([s.args.valueq]) == -1) throw 'Oops';
 									args[n] = parse(str(), s);
 
-								case _: throw 'Oops';
+								case _:
+									throw 'Oops';
 							}
 						case 1:
 							args[str()] = null;
@@ -334,7 +293,8 @@ class Parse extends ParseBoy<TplContent> {
 							args[str()] = null;
 							if (s.args.end != '') throw 'Oops';
 							return { args: args, closedTag: true };
-						case _: throw 'Oops';
+						case _:
+							throw 'Oops';
 					}
 				case 0:
 					if (gt([s.end]) == -1) throw 'Oops';

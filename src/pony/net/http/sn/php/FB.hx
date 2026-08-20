@@ -36,19 +36,13 @@ class FB implements IFB {
 				if (res == null || res.error != null)
 					null
 				else
-					{
-						id: res.getProperty('id'),
-						email: res.getProperty('email'),
-						first_name: res.getProperty('first_name'),
-						isMale: res.getProperty('gender') == 'male',
-						last_name: res.getProperty('last_name'),
-						name: res.getProperty('name'),
-						link: res.getProperty('link'),
-						locale: res.getProperty('locale'),
-						timezone: Std.parseInt(res.getProperty('timezone')),
-						updated_time: res.getProperty('updated_time'),
-						verified: res.getProperty('verified') == 'true'
-					}
+					{ id: res.getProperty('id'), email: res.getProperty('email'), first_name: res.getProperty('first_name'), isMale: res.getProperty(
+						'gender'
+					) == 'male', last_name: res.getProperty('last_name'), name: res.getProperty('name'), link: res.getProperty('link'), locale: res.getProperty(
+						'locale'
+					), timezone: Std.parseInt(res.getProperty('timezone')), updated_time: res.getProperty('updated_time'), verified: res.getProperty(
+						'verified'
+					) == 'true' }
 			);
 		});
 	}

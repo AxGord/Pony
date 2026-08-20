@@ -56,10 +56,8 @@ class HtmlVideoUIFS extends HtmlVideoUI {
 			normalRect = targetRect;
 			generateTransition(transition);
 			switch fsRect {
-				case A(border):
-					this.fsRect = border.getRectFromSize(app.stageInitSize.toFloat());
-				case B(rect):
-					this.fsRect = rect;
+				case A(border): this.fsRect = border.getRectFromSize(app.stageInitSize.toFloat());
+				case B(rect): this.fsRect = rect;
 			}
 			if (fsPos != null) {
 				this.fsRect.x += fsPos.x;

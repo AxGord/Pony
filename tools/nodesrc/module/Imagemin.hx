@@ -39,15 +39,13 @@ private typedef ImageminResult = Array<ImageminResultEntry>;
 			final files: Array<File> = cfg.recursive ? dir.contentRecursiveFiles(filter) : dir.files(filter);
 			for (file in files) {
 				tasks.add();
-				NPM.imagemin([file.first], {
-					plugins: [
-						// NPM.imagemin_jpegtran(),
-						// NPM.imagemin_jpeg_recompress(),
-						cfg.fast
-							? NPM.imagemin_jpegoptim({ progressive: true })
-							: NPM.imagemin_guetzli({ nomemlimit: true, quality: cfg.jpgq })
-					]
-				}).then(function(r: ImageminResult): Void {
+				NPM.imagemin([file.first], { plugins: [
+					// NPM.imagemin_jpegtran(),
+					// NPM.imagemin_jpeg_recompress(),
+					cfg.fast ? NPM.imagemin_jpegoptim({ progressive: true }) : NPM.imagemin_guetzli(
+						{ nomemlimit: true, quality: cfg.jpgq }
+					)
+				] }).then(function(r: ImageminResult): Void {
 					var p: String = file.first.substr(cfg.from.length);
 					p = p.substr(0, -4);
 					final n: String = cfg.to + p + '.$JPG';
@@ -75,12 +73,10 @@ private typedef ImageminResult = Array<ImageminResultEntry>;
 				pngpack(target, cfg.to);
 			} else {
 				final q: Float = @:nullSafety(Off) (cfg.pngq / 100);
-				NPM.imagemin(target, {
-					destination: cfg.to,
-					plugins: [
-						NPM.imagemin_pngquant({ quality: [Math.max(0, q - 0.1), Math.min(q + 0.1, 1)], speed: 1 })
-					]
-				}).then(_pngpack.bind(cfg.to));
+				NPM.imagemin(target, { destination: cfg.to, plugins: [
+					NPM.imagemin_pngquant({ quality: [Math.max(0, q - 0.1), Math.min(q + 0.1, 1)], speed: 1 })
+				] })
+					.then(_pngpack.bind(cfg.to));
 			}
 		}
 		if (formats.indexOf(WEBP) != -1 || (cfg.webpfrompng && formats.indexOf(PNG) != -1)) {
@@ -126,16 +122,11 @@ private typedef ImageminResult = Array<ImageminResultEntry>;
 				}
 			}
 			cformats.push(WEBP);
-			NPM.imagemin(from.addToStringsEnd('{' + cformats.join(',') + '}'), {
-				destination: cfg.to,
-				plugins: [
-					NPM.imagemin_webp({
-						nearLossless: cfg.webpq,
-						quality: cfg.webpq,
-						method: 6
-					})
-				]
-			}).then(completeHandler);
+			NPM.imagemin(
+				from.addToStringsEnd('{' + cformats.join(',') + '}'),
+				{ destination: cfg.to, plugins: [NPM.imagemin_webp({ nearLossless: cfg.webpq, quality: cfg.webpq, method: 6 })] }
+			)
+				.then(completeHandler);
 		}
 	}
 
@@ -145,10 +136,7 @@ private typedef ImageminResult = Array<ImageminResultEntry>;
 	}
 
 	private inline function pngpack(a: Array<String>, to: String): Void {
-		NPM.imagemin(a, {
-			destination: to,
-			plugins: [NPM.imagemin_zopfli({ more: true })]
-		}).then(completeHandler);
+		NPM.imagemin(a, { destination: to, plugins: [NPM.imagemin_zopfli({ more: true })] }).then(completeHandler);
 		// NPM.imagemin_pngcrush({reduce: true})
 		// NPM.imagemin_pngout({strategy: 0})
 		// NPM.imagemin_optipng({optimizationLevel: 7})

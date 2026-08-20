@@ -30,13 +30,9 @@ class MySQL extends SQLBase {
 		if (config.host == null) config.host = 'localhost';
 		if (config.user == null) config.user = 'root';
 		if (config.password == null) config.password = '';
-		connection = Mysql.connect({
-			host: config.host,
-			port: config.port,
-			user: config.user,
-			pass: config.password,
-			database: config.database
-		});
+		connection = Mysql.connect(
+			{ host: config.host, port: config.port, user: config.user, pass: config.password, database: config.database }
+		);
 		action('SET NAMES utf8', function(b: Bool) {
 			if (b) action(Const.createDB + config.database, 'create database', init);
 		});
@@ -82,14 +78,8 @@ class MySQL extends SQLBase {
 	}
 
 	private static function parseFields(a: Array<Dynamic>): Array<Field> {
-		return [
-			for (e in a)
-				{
-					name: e.Field,
-					type: parseType(e.Type),
-					length: parseLen(e.Type),
-					flags: parseFlags(e)
-				}
+		return [for (e in a)
+			{ name: e.Field, type: parseType(e.Type), length: parseLen(e.Type), flags: parseFlags(e) }
 		];
 	}
 
@@ -101,14 +91,10 @@ class MySQL extends SQLBase {
 		final flags: Array<Flags> = [];
 		for (f in Reflect.fields(o)) {
 			switch [f, Reflect.field(o, f)] {
-				case ['Key', 'PRI']:
-					flags.push(Flags.PRI_KEY);
-				case ['Extra', 'auto_increment']:
-					flags.push(Flags.AUTO_INCREMENT);
-				case ['Null', 'NO']:
-					flags.push(Flags.NOT_NULL);
-				case ['Type', v]:
-					if (v.split(' ')[1] == 'unsigned') flags.push(Flags.UNSIGNED);
+				case ['Key', 'PRI']: flags.push(Flags.PRI_KEY);
+				case ['Extra', 'auto_increment']: flags.push(Flags.AUTO_INCREMENT);
+				case ['Null', 'NO']: flags.push(Flags.NOT_NULL);
+				case ['Type', v]: if (v.split(' ')[1] == 'unsigned') flags.push(Flags.UNSIGNED);
 				case [_, _]:
 			}
 		}

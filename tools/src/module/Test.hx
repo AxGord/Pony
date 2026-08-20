@@ -17,16 +17,11 @@ class Test extends CfgModule<TestConfig> {
 	public function init(): Void initSections(PRIORITY);
 
 	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
-		new TestReader(xml, {
-			debug: ac.debug,
-			app: ac.app,
-			before: false,
-			section: BASection.Build,
-			path: null,
-			test: [],
-			allowCfg: true,
-			cordova: false
-		}, configHandler);
+		new TestReader(
+			xml,
+			{ debug: ac.debug, app: ac.app, before: false, section: BASection.Build, path: null, test: [], allowCfg: true, cordova: false },
+			configHandler
+		);
 	}
 
 	override private function runNode(cfg: TestConfig): Void {
@@ -52,10 +47,8 @@ private class TestReader extends BAReader<TestConfig> {
 
 	override private function readNode(xml: Fast): Void {
 		switch xml.name {
-			case 'test':
-				cfg.test.push(StringTools.trim(xml.innerData));
-			case _:
-				super.readNode(xml);
+			case 'test': cfg.test.push(StringTools.trim(xml.innerData));
+			case _: super.readNode(xml);
 		}
 	}
 
@@ -67,8 +60,7 @@ private class TestReader extends BAReader<TestConfig> {
 
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
-			case 'test':
-				cfg.path = val;
+			case 'test': cfg.path = val;
 			case _:
 		}
 	}

@@ -50,20 +50,13 @@ abstract Align(AlignType) from AlignType to AlignType {
 		var vert: Null<VAlign> = null;
 		for (v in s.split(' ')) if (v != '') {
 			switch v.toLowerCase() {
-				case 'left':
-					hor = HAlign.Left;
-				case 'center':
-					hor = HAlign.Center;
-				case 'right':
-					hor = HAlign.Right;
-				case 'top':
-					vert = VAlign.Top;
-				case 'middle':
-					vert = VAlign.Middle;
-				case 'bottom':
-					vert = VAlign.Bottom;
-				case _:
-					throw 'error';
+				case 'left': hor = HAlign.Left;
+				case 'center': hor = HAlign.Center;
+				case 'right': hor = HAlign.Right;
+				case 'top': vert = VAlign.Top;
+				case 'middle': vert = VAlign.Middle;
+				case 'bottom': vert = VAlign.Bottom;
+				case _: throw 'error';
 			}
 		}
 		return new Pair(vert, hor);

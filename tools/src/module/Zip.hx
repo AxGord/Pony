@@ -17,20 +17,11 @@ class Zip extends CfgModule<ZipConfig> {
 	public function init(): Void initSections(PRIORITY, BASection.Zip);
 
 	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
-		new ZipConfigReader(xml, {
-			debug: ac.debug,
-			app: ac.app,
-			before: false,
-			section: BASection.Zip,
-			input: [],
-			output: 'app.zip',
-			prefix: 'bin/',
-			compressLvl: 9,
-			log: true,
-			hash: null,
-			allowCfg: true,
-			cordova: false
-		}, configHandler);
+		new ZipConfigReader(
+			xml,
+			{ debug: ac.debug, app: ac.app, before: false, section: BASection.Zip, input: [], output: 'app.zip', prefix: 'bin/', compressLvl: 9, log: true, hash: null, allowCfg: true, cordova: false },
+			configHandler
+		);
 	}
 
 	override private function runNode(cfg: ZipConfig): Void {
@@ -92,8 +83,7 @@ private class ZipConfigReader extends BAReader<ZipConfig> {
 
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
-			case 'log':
-				cfg.log = !pony.text.TextTools.isFalse(val);
+			case 'log': cfg.log = !pony.text.TextTools.isFalse(val);
 			case _:
 		}
 	}

@@ -84,20 +84,13 @@ class Tools {
 		final eThis: Expr = macro $i{tempName};
 		for (e in el) {
 			final e = switch (e) {
-				case macro $i{s}($a{args}):
-					macro $eThis.$s($a{args});
-				case macro $i{s} = $e:
-					macro $eThis.$s = $e;
-				case macro $i{s} += $e:
-					macro $eThis.$s += $e;
-				case macro $i{s} -= $e:
-					macro $eThis.$s -= $e;
-				case macro $i{s} *= $e:
-					macro $eThis.$s *= $e;
-				case macro $i{s} /= $e:
-					macro $eThis.$s /= $e;
-				case _:
-					Context.error('Don\'t know what to do with ${e.toString()}', e.pos);
+				case macro $i{s}($a{args}): macro $eThis.$s($a{args});
+				case macro $i{s} = $e: macro $eThis.$s = $e;
+				case macro $i{s} += $e: macro $eThis.$s += $e;
+				case macro $i{s} -= $e: macro $eThis.$s -= $e;
+				case macro $i{s} *= $e: macro $eThis.$s *= $e;
+				case macro $i{s} /= $e: macro $eThis.$s /= $e;
+				case _: Context.error('Don\'t know what to do with ${e.toString()}', e.pos);
 			}
 			acc.push(e);
 		}
@@ -146,17 +139,13 @@ class Tools {
 		}
 		// a is Object on Unknown or Class instance
 		switch (Type.typeof(b)) {
-			case TInt, TFloat, TBool, TFunction, TEnum(_), TNull:
-				return false;
+			case TInt, TFloat, TBool, TFunction, TEnum(_), TNull: return false;
 			#if (haxe_ver >= 4.100)
-			case TObject:
-				if (Std.isOfType(b, Class)) return false;
+			case TObject: if (Std.isOfType(b, Class)) return false;
 			#else
-			case TObject:
-				if (Std.is(b, Class)) return false;
+			case TObject: if (Std.is(b, Class)) return false;
 			#end
-			case TClass(t):
-				if (t == Array) return false;
+			case TClass(t): if (t == Array) return false;
 			case TUnknown:
 		}
 		final fields: Array<String> = a.fields();
@@ -376,17 +365,11 @@ class Tools {
 
 	public static inline function bytesIterator(b: Bytes): Iterator<Byte> {
 		var i: Int = 0;
-		return {
-			hasNext: function(): Bool return i < b.length,
-			next: function(): Byte return b.get(i++)
-		};
+		return { hasNext: function(): Bool return i < b.length, next: function(): Byte return b.get(i++) };
 	}
 
 	public static inline function bytesInputIterator(b: BytesInput): Iterator<Byte> {
-		return {
-			hasNext: function(): Bool return b.position < b.length,
-			next: function(): Byte return b.readByte()
-		};
+		return { hasNext: function(): Bool return b.position < b.length, next: function(): Byte return b.readByte() };
 	}
 
 	macro public static function ifsw(e: Expr): Expr {
@@ -568,23 +551,17 @@ class ArrayTools {
 	public static function kv<T>(a: Array<T>): Iterator<KeyValue<Int, T>> {
 		var i: Int = 0;
 		final it: Iterator<T> = a.iterator();
-		return {
-			hasNext: it.hasNext,
-			next: function() {
-				final p: Pair<Int, T> = new Pair(i, it.next());
-				i++;
-				return p;
-			}
-		};
+		return { hasNext: it.hasNext, next: function() {
+			final p: Pair<Int, T> = new Pair(i, it.next());
+			i++;
+			return p;
+		} };
 	}
 
 	public static function pair<A, B>(a: Iterable<A>, b: Iterable<B>): Iterator<Pair<A, B>> {
 		final itA: Iterator<A> = a.iterator();
 		final itB: Iterator<B> = b.iterator();
-		return {
-			hasNext: function() return itA.hasNext() && itB.hasNext(),
-			next: function() return new Pair(itA.next(), itB.next())
-		};
+		return { hasNext: function() return itA.hasNext() && itB.hasNext(), next: function() return new Pair(itA.next(), itB.next()) };
 	}
 
 	public static inline function toBytes(a: Array<Int>): BytesOutput {
@@ -654,13 +631,10 @@ class MapTools {
 
 	public static function kv<K, T>(a: Map<K, T>): Iterator<KeyValue<K, T>> {
 		final it: Iterator<K> = a.keys();
-		return {
-			hasNext: it.hasNext,
-			next: function() {
-				final k: K = it.next();
-				return new Pair(k, a[k]);
-			}
-		};
+		return { hasNext: it.hasNext, next: function() {
+			final k: K = it.next();
+			return new Pair(k, a[k]);
+		} };
 	}
 
 	public static function toDynamic<T>(map: Map<String, T>): Dynamic<T> {

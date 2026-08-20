@@ -61,10 +61,8 @@ final class MModels implements IModule {
 		final connectList: Map<String, ModelConnect> = [];
 
 		for (k in list.keys()) switch (list[k].connect(cpq)) {
-			case BREAK:
-				return BREAK;
-			case REG(obj):
-				connectList[k] = cast obj;
+			case BREAK: return BREAK;
+			case REG(obj): connectList[k] = cast obj;
 			case NOTREG:
 		}
 
