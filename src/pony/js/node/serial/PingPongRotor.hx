@@ -11,16 +11,16 @@ import pony.time.Timer;
  */
 class PingPongRotor extends Tumbler {
 
-	@:auto public var onLoop:Signal0;
+	@:auto public var onLoop: Signal0;
 
-	private var rotor:Rotor;
-	private var onStop:Signal0;
-	private var onStart:Signal0;
-	private var startCheckTimer:Timer = new Timer(1000);
-	private var firstCheckTimer:Timer;
-	private var counter:Int = 3;
+	private var rotor: Rotor;
+	private var onStop: Signal0;
+	private var onStart: Signal0;
+	private var startCheckTimer: Timer = new Timer(1000);
+	private var firstCheckTimer: Timer;
+	private var counter: Int = 3;
 
-	public function new(rotor:Rotor, limit:LimitSwitch, maxSpeed:Bool = false, maxTime:Int = 10000) {
+	public function new(rotor: Rotor, limit: LimitSwitch, maxSpeed: Bool = false, maxTime: Int = 10000) {
 		super(false);
 		this.rotor = rotor;
 		rotor.max = maxSpeed;
@@ -37,11 +37,11 @@ class PingPongRotor extends Tumbler {
 		onDisable << resetCounter;
 	}
 
-	private function firstStopHandler():Void {
+	private function firstStopHandler(): Void {
 		firstCheckTimer.stop();
 	}
 
-	private function stopHandler():Void {
+	private function stopHandler(): Void {
 		rotor.reverse();
 		startCheckTimer.restart(0);
 		startCheckTimer.stop();
@@ -51,9 +51,9 @@ class PingPongRotor extends Tumbler {
 		}
 	}
 
-	private function resetCounter():Void counter = 2;
+	private function resetCounter(): Void counter = 2;
 
-	public function destroy():Void {
+	public function destroy(): Void {
 		startCheckTimer.destroy();
 		startCheckTimer = null;
 		firstCheckTimer.destroy();
@@ -66,8 +66,8 @@ class PingPongRotor extends Tumbler {
 		onStart = null;
 	}
 
-	private function destroySignal(s:Signal0):Void {
-		var e:Event0 = cast s;
+	private function destroySignal(s: Signal0): Void {
+		var e: Event0 = cast s;
 		e.destroy();
 	}
 

@@ -17,6 +17,7 @@ class Config extends Section {
 	public var options(default, null): ConfigOptions = new Map();
 	public var dep: Array<String> = [];
 	public var stringmapAllowed: Bool = true;
+
 	public function new() super('config');
 
 	#if (haxe_ver < 4.2) override #end
@@ -37,7 +38,8 @@ class Config extends Section {
 				for (e in v.kv()) {
 					switch e.value {
 						case OrState.A(_):
-						case OrState.B(_): allString = false;
+						case OrState.B(_):
+							allString = false;
 					}
 					r.addChild(make(e));
 				}

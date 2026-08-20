@@ -1,10 +1,8 @@
 package pony.heaps;
 
 import h2d.Tile;
-
 import hxd.res.Atlas;
 import hxd.res.Loader;
-
 import pony.ui.BinaryAtlas;
 
 using pony.text.TextTools;
@@ -22,12 +20,17 @@ using pony.text.TextTools;
 		basePath = basePath != null ? '$basePath/' : '';
 		var file: Tile = Loader.currentInstance.load(basePath + data.file).toTile();
 		var scale: Float = file.width / data.width;
-		@:nullSafety(Off) return [ for (key in data.contents.keys())
-			key => [ for (p in data.contents[key]) {
-				var t: Tile = file.sub(Std.int(p.x * scale), Std.int(p.y * scale), Std.int(p.w * scale), Std.int(p.h * scale), p.dx, p.dy);
-				if (scale != 1) t.scaleToSize(p.w, p.h);
-				{ t: t, width: p.origW, height: p.origH }
-			} ]
+		@:nullSafety(Off) return [
+			for (key in data.contents.keys())
+				key => [
+					for (p in data.contents[key]) {
+						var t: Tile = file.sub(
+							Std.int(p.x * scale), Std.int(p.y * scale), Std.int(p.w * scale), Std.int(p.h * scale), p.dx, p.dy
+						);
+						if (scale != 1) t.scaleToSize(p.w, p.h);
+						{ t: t, width: p.origW, height: p.origH }
+					}
+				]
 		];
 	}
 

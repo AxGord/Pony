@@ -11,13 +11,13 @@ import sys.io.File;
  * @author AxGord
  */
 class Cmd {
-	
+
 	/**
 	 * Include files marked as Always Compile
 	 * @param	file FD project file
 	 */
-	public static function fd(file:String):Void {
-		var x:Fast = new Fast(Xml.parse(File.getContent(file)));
+	public static function fd(file: String): Void {
+		var x: Fast = new Fast(Xml.parse(File.getContent(file)));
 		var cp = Context.getClassPath();
 		for (n in x.node.project.node.compileTargets.nodes.compile) {
 			var s = StringTools.replace(n.att.path, '\\', '/');
@@ -26,6 +26,6 @@ class Cmd {
 			Context.getModule(s.substr(0, s.length - 3));
 		}
 	}
-	
+
 }
 #end

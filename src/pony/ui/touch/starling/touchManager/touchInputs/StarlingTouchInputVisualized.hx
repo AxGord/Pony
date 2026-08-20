@@ -30,8 +30,7 @@ class StarlingTouchInputVisualized extends StarlingTouchInput {
 		for (i in 0...touches.length) {
 			var touch: Touch = touches[i];
 
-			if (touch == null)
-				return;
+			if (touch == null) return;
 
 			if (touch.phase == TouchPhase.BEGAN) {
 				addVisualizer(touch);
@@ -61,8 +60,7 @@ class StarlingTouchInputVisualized extends StarlingTouchInput {
 	}
 
 	private function moveVisualizer(touch: Touch): Void {
-		if (!_visualizers.exists(touch.id))
-			return;
+		if (!_visualizers.exists(touch.id)) return;
 
 		var tf = _visualizers.get(touch.id);
 
@@ -74,8 +72,7 @@ class StarlingTouchInputVisualized extends StarlingTouchInput {
 	}
 
 	private function destroyVisualizer(touch: Touch): Void {
-		if (!_visualizers.exists(touch.id))
-			return;
+		if (!_visualizers.exists(touch.id)) return;
 
 		var tf = _visualizers.get(touch.id);
 		untyped _displayObject.removeChild(tf);

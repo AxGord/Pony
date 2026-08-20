@@ -38,7 +38,7 @@ class Tree extends Sprite implements FLStage {
 	private var _xDisplacement: Int = 50;
 
 	private var _headerButton: Button;
-	private var _heightChangeCallback: Void->Void;
+	private var _heightChangeCallback: Void -> Void;
 	private var _nodesSprite: Sprite = new Sprite();
 
 	private var _bufferRect: Rectangle = new Rectangle();
@@ -57,8 +57,7 @@ class Tree extends Sprite implements FLStage {
 
 		this.core = core != null ? core : new TreeCore();
 
-		if (_header == null)
-			_xDisplacement = 0;
+		if (_header == null) _xDisplacement = 0;
 		addChild(_nodesSprite);
 
 		if (_header != null) {
@@ -109,14 +108,12 @@ class Tree extends Sprite implements FLStage {
 	private function updateNodesPosition(): Void {
 		var previous: Float = _headerButton != null ? _headerButton.height : 0;
 		for (node in _nodes) {
-			if (!Std.is(node, Tree))
-				node.visible = node.y + _nodesSprite.y >= -y;
+			if (!Std.is(node, Tree)) node.visible = node.y + _nodesSprite.y >= -y;
 			node.y = previous;
 			previous = node.y + (Std.is(node, Tree) ? untyped node.treeHeight() : node.height);
 		}
 
-		if (_heightChangeCallback != null)
-			_heightChangeCallback();
+		if (_heightChangeCallback != null) _heightChangeCallback();
 	}
 
 	public function setHeightChangeCallback(callback: Void -> Void): Void {
@@ -126,14 +123,16 @@ class Tree extends Sprite implements FLStage {
 	private function set_minimized(value: Bool): Bool {
 		minimized = value;
 
-		if (_headerButton != null)
-			_headerButton.core.mode = minimized ? 2 : 0;
+		if (_headerButton != null) _headerButton.core.mode = minimized ? 2 : 0;
 
 		var toY: Float = minimized ? -nodesSpriteBottom() : 0;
 		if (animated) {
 			#if tweenmax
 			TweenMax.killTweensOf(_nodesSprite);
-			TweenMax.to(_nodesSprite, basicAnimationTime + additionalAnimationTimePerPixel * nodesSpriteBottom(), {y: toY, onUpdate: updateNodesPosition});
+			TweenMax.to(
+				_nodesSprite, basicAnimationTime + additionalAnimationTimePerPixel * nodesSpriteBottom(),
+				{ y: toY, onUpdate: updateNodesPosition }
+			);
 			#end
 		} else {
 			_nodesSprite.y = toY;

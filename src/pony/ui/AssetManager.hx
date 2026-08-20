@@ -3,7 +3,6 @@ package pony.ui;
 import haxe.crypto.Base64;
 import haxe.io.Bytes;
 import haxe.rtti.Meta;
-
 import pony.Or;
 import pony.Tasks;
 import pony.events.Signal1;
@@ -11,18 +10,18 @@ import pony.magic.HasLink;
 import pony.math.MathTools;
 import pony.time.DeltaTime;
 import pony.ui.gui.slices.SliceTools;
-
 #if heaps
 import pony.heaps.HeapsAssets;
 #elseif pixijs
 import pony.pixi.PixiAssets;
+
+
 #elseif openfl
 import pony.openfl.OpenflAssets;
 #end
 
 using Lambda;
 using StringTools;
-
 using pony.text.TextTools;
 
 /**
@@ -114,14 +113,14 @@ class AssetManager implements HasLink {
 				load(assets, cb);
 			return;
 		}
-		var loaded:Array<Int> = [for (_ in 0...pathes.length) 0];
-		var totals:Array<Int> = [for (_ in 0...pathes.length) MAX_ASSET_PROGRESS];
-		var i:Int = 0;
-		var prevLoaded:Int = 0;
-		var prevTotals:Int = 0;
+		var loaded: Array<Int> = [for (_ in 0...pathes.length) 0];
+		var totals: Array<Int> = [for (_ in 0...pathes.length) MAX_ASSET_PROGRESS];
+		var i: Int = 0;
+		var prevLoaded: Int = 0;
+		var prevTotals: Int = 0;
 		for (path in pathes) {
-			var n:Int = i++;
-			load(path, assets, function(a:Int, t:Int) {
+			var n: Int = i++;
+			load(path, assets, function(a: Int, t: Int) {
 				loaded[n] = a;
 				totals[n] = t;
 				var loadedSum = sum(loaded);
@@ -138,9 +137,8 @@ class AssetManager implements HasLink {
 	public static function load(path: String = '', asset: Or<String, Array<String>>, cb: Int -> Int -> Void): Void {
 		switch asset {
 			case OrState.A(a):
-				var r:Array<String> = parseInterval(a);
-				if (r.length == 1)
-					r = SliceTools.getNames(r[0]);
+				var r: Array<String> = parseInterval(a);
+				if (r.length == 1) r = SliceTools.getNames(r[0]);
 				if (r.length > 1) asset = OrState.B(r);
 			case OrState.B(a):
 				if (a.length == 1)
@@ -161,8 +159,8 @@ class AssetManager implements HasLink {
 					a.push(cb);
 				} else {
 					globalLoad[asset] = [];
-					var called:Bool = false;
-					_load(asset, function(c:Int, t:Int) {
+					var called: Bool = false;
+					_load(asset, function(c: Int, t: Int) {
 						cb(c, t);
 						globalLoaded(asset, c, t);
 						called = true;
@@ -170,14 +168,14 @@ class AssetManager implements HasLink {
 					if (!called) cb(0, MAX_ASSET_PROGRESS);
 				}
 			case OrState.B(assets):
-				var loaded:Array<Int> = [for (_ in 0...assets.length) 0];
-				var totals:Array<Int> = [for (_ in 0...assets.length) MAX_ASSET_PROGRESS];
-				var i:Int = 0;
-				var prevLoaded:Int = 0;
-				var prevTotals:Int = 0;
+				var loaded: Array<Int> = [for (_ in 0...assets.length) 0];
+				var totals: Array<Int> = [for (_ in 0...assets.length) MAX_ASSET_PROGRESS];
+				var i: Int = 0;
+				var prevLoaded: Int = 0;
+				var prevTotals: Int = 0;
 				for (asset in assets) {
-					var n:Int = i++;
-					load(path, asset, function(c:Int, t:Int) {
+					var n: Int = i++;
+					load(path, asset, function(c: Int, t: Int) {
 						loaded[n] = c;
 						totals[n] = t;
 						var loadedSum = sum(loaded);
@@ -193,6 +191,7 @@ class AssetManager implements HasLink {
 	}
 
 	private static function sum(a: Array<Int>): Int return Lambda.fold(a, _sum, 0);
+
 	private static function _sum(v: Int, p: Int): Int return v + p;
 
 	private static function globalLoaded(asset: String, c: Int, t: Int): Void {
@@ -236,13 +235,13 @@ class AssetManager implements HasLink {
 			if (s != null)
 				@:nullSafety(Off) Reflect.getProperty(s, 'loadAllAssets')(true, p.b);
 			else
-				p.b(0, 0); //skip load
+				p.b(0, 0); // skip load
 		}
 		var s = Type.resolveClass(chs[chs.length - 1]);
 		if (s != null)
 			@:nullSafety(Off) Reflect.getProperty(s, 'loadAllAssets')(true, f);
 		else
-			f(0, 0); //skip load
+			f(0, 0); // skip load
 	}
 
 	public static function cbjoin(cb: Int -> Int -> Void): Pair<Int -> Int -> Void, Int -> Int -> Void> {
@@ -263,7 +262,7 @@ class AssetManager implements HasLink {
 		return new Pair(a, b);
 	}
 
-	public static function allCountWithChilds(cl:String, pathes:Array<String>, assets:Array<String>):Int {
+	public static function allCountWithChilds(cl: String, pathes: Array<String>, assets: Array<String>): Int {
 		var chs = Meta.getType(Type.resolveClass(cl)).assets_childs;
 		if (chs == null) {
 			return allCount(pathes, assets);
@@ -289,19 +288,23 @@ class AssetManager implements HasLink {
 		var check = function(c: Int, t: Int) last = c == t;
 		source(function(c: Int, t: Int) check(c, t));
 		DeltaTime.fixedUpdate < function() {
-			if (last) cb();
-			else check = function(c: Int, t: Int) if (c == t) cb();
+			if (last)
+				cb();
+			else
+				check = function(c: Int, t: Int) if (c == t) cb();
 		}
 	}
 
 	public static function loadList(count: Int, cb: Int -> Int -> Void): Array<Int -> Int -> Void> {
 		var totals: Array<Int> = [for (_ in 0...count) 1];
 		var currents: Array<Int> = [for (_ in 0...count) 0];
-		return [for (i in 0...count) function(c: Int, t: Int) {
-			currents[i] = c;
-			totals[i] = t;
-			cb(MathTools.arraySum(currents), MathTools.arraySum(totals));
-		}];
+		return [
+			for (i in 0...count) function(c: Int, t: Int) {
+				currents[i] = c;
+				totals[i] = t;
+				cb(MathTools.arraySum(currents), MathTools.arraySum(totals));
+			}
+		];
 	}
 
 	@:nullSafety(Off)
@@ -314,7 +317,7 @@ class AssetManager implements HasLink {
 		var sBegin: String = left.pop();
 		var sEnd: String = right.pop();
 		var end: Int = Std.parseInt(right.pop());
-		return [for (i in begin...end) sBegin + i + sEnd];
+		return [for (i in begin ... end) sBegin + i + sEnd];
 	}
 
 	public static inline function removeBase(path: String): String {
@@ -322,10 +325,10 @@ class AssetManager implements HasLink {
 	}
 
 	public static inline function _load(asset: String, cb: Int -> Int -> Void): Void {
-		var bytes: Null<Bytes> = units[
-			asset.endsWith('.atlas.bin') || asset.endsWith('.wav.bin') || asset.endsWith('.mp3.bin') || asset.endsWith('.ogg.bin') ?
-			asset.substr(0, -4) : asset
-		];
+		var bytes: Null<Bytes> = units[asset.endsWith('.atlas.bin') || asset.endsWith('.wav.bin') || asset.endsWith('.mp3.bin')
+			|| asset.endsWith('.ogg.bin')
+			? asset.substr(0, -4)
+			: asset];
 		__load(bytes == null ? asset : hashNameConvert(asset, Base64.urlEncode(bytes)), cb);
 	}
 
@@ -352,7 +355,6 @@ class AssetManager implements HasLink {
 	}
 
 	#if heaps
-
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public static inline function __load(asset: String, cb: Int -> Int -> Void): Void HeapsAssets.load(asset, cb);
 
@@ -386,7 +388,6 @@ class AssetManager implements HasLink {
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public static inline function spine(asset: String) return asset;
 	#elseif pixijs
-
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public static inline function __load(asset: String, cb: Int -> Int -> Void): Void
 		PixiAssets.load(asset, cb.bind(MAX_ASSET_PROGRESS, MAX_ASSET_PROGRESS));
@@ -424,10 +425,9 @@ class AssetManager implements HasLink {
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public static inline function bin(asset: String) return asset;
 	#elseif openfl
-
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public static inline function __load(asset: String, cb: Int -> Int -> Void): Void
-		OpenflAssets.load(asset, cb.bind(1MAX_ASSET_PROGRESS, MAX_ASSET_PROGRESS));
+		OpenflAssets.load(asset, cb.bind(1 MAX_ASSET_PROGRESS, MAX_ASSET_PROGRESS));
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public static inline function _reset(asset: String): Void trace('Reset: $asset');
@@ -455,9 +455,7 @@ class AssetManager implements HasLink {
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public static inline function bin(asset: String) return asset;
-
 	#else
-
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public static inline function __load(asset: String, cb: Int -> Int -> Void): Void trace('Load: $asset');
 
@@ -487,6 +485,6 @@ class AssetManager implements HasLink {
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public static inline function bin(asset: String) return asset;
-
 	#end
+
 }

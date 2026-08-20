@@ -4,7 +4,6 @@ import haxe.io.Bytes;
 import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
 import haxe.Timer;
-
 import pony.Logable;
 import pony.events.Signal0;
 import pony.events.Signal1;
@@ -58,7 +57,9 @@ import pony.magic.HasSignal;
 	public var logOutputData: Bool = false;
 	public var logInputData(default, set): Bool = false;
 
-	public function new(?host: String, port: Int, reconnect: Int = -1, tryCount: Int = 0, isWithLength: Bool = true, maxSize: Int = 1024) {
+	public function new(
+		?host: String, port: Int, reconnect: Int = -1, tryCount: Int = 0, isWithLength: Bool = true, maxSize: Int = 1024
+	) {
 		super();
 		if (host == null) host = '127.0.0.1';
 		this.host = host;
@@ -146,7 +147,6 @@ import pony.magic.HasSignal;
 	}
 
 	#if (!js || nodejs)
-
 	@:access(pony.net.SocketServer)
 	public function init(server: ISocketServer, id: Int): Void {
 		eData = new Event2<BytesInput, ISocketClient>();
@@ -175,7 +175,6 @@ import pony.magic.HasSignal;
 	}
 
 	public inline function send2other(data: BytesOutput): Void if (server != null) server.send2other(data, cast this);
-
 	#end
 
 	public dynamic function readLength(bi: BytesInput): UInt return bi.readInt32();
@@ -228,9 +227,12 @@ import pony.magic.HasSignal;
 			var i: Int = 0;
 			for (s in b.toHex().toUpperCase().split('')) {
 				if (++i != 1) {
-					if (i % (4 * 16) == 1) r += '\n';
-					else if (i % (4 * 4) == 1) r += '  ';
-					else if (i % 4 == 1) r += ' ';
+					if (i % (4 * 16) == 1)
+						r += '\n';
+					else if (i % (4 * 4) == 1)
+						r += '  ';
+					else if (i % 4 == 1)
+						r += ' ';
 				}
 				r += s;
 			}
@@ -241,8 +243,10 @@ import pony.magic.HasSignal;
 	public inline function set_logInputData(v: Bool): Bool {
 		if (v == logInputData) return v;
 		logInputData = v;
-		if (v) onData.add(logInputDataHandler, -1000);
-		else onData >> logInputDataHandler;
+		if (v)
+			onData.add(logInputDataHandler, -1000);
+		else
+			onData >> logInputDataHandler;
 		return v;
 	}
 

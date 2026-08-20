@@ -2,7 +2,6 @@ package pony.net;
 
 import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
-
 import pony.events.Event1;
 import pony.events.Event2;
 import pony.events.Signal0;
@@ -20,6 +19,7 @@ interface INet extends ILogable {
 	 * onAccept in a server
 	 */
 	var onConnect(get, null): Signal1<ISocketClient>;
+
 	private var eConnect: Event1<ISocketClient>;
 
 	var onOpen(get, null): Signal0;

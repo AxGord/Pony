@@ -4,18 +4,15 @@ import h2d.Anim;
 import h2d.Bitmap;
 import h2d.Font;
 import h2d.Tile;
-
 import haxe.Timer;
 import haxe.io.Bytes;
 import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
-
 import hxd.fmt.bfnt.FontParser;
 import hxd.res.Any;
 import hxd.res.Atlas;
 import hxd.res.Loader;
 import hxd.res.Sound;
-
 import pony.Fast;
 import pony.Pair;
 import pony.Queue.Queue1;
@@ -28,6 +25,7 @@ import pony.ui.gui.slices.SliceTools;
 using pony.text.TextTools;
 
 #if (haxe_ver >= 4.2) enum #else @:enum #end abstract Ext(String) to String {
+
 	var ATLAS = 'atlas';
 	#if hxbitmini
 	var BINATLAS = 'atlas.bin';
@@ -49,13 +47,16 @@ using pony.text.TextTools;
 	var MP3 = 'mp3';
 	var BINOGG = 'ogg.bin';
 	var OGG = 'ogg';
+
 }
 
 #if (haxe_ver >= 4.2) enum #else @:enum #end abstract HAError(String) to String {
+
 	var ERROR_NOT_SUPPORTED = 'Type not supported';
 	var ERROR_NAME_NOT_SET = 'Name not set';
 	var ERROR_NAME_SET = 'Name set';
 	var ERROR_NOT_LOADED = 'Asset not loaded';
+
 }
 
 /**
@@ -112,10 +113,7 @@ using pony.text.TextTools;
 					imgLoader.onLoaded = function(bytes: Bytes): Void {
 						if (hasError) return;
 						var img: Any = Any.fromBytes(imgFile, bytes);
-						atlases[asset] = new Pair(
-							@:privateAccess img.loader,
-							Any.fromBytes(realAsset, textBytes).to(Atlas)
-						);
+						atlases[asset] = new Pair(@:privateAccess img.loader, Any.fromBytes(realAsset, textBytes).to(Atlas));
 						finish();
 					}
 					loadAsset(imgLoader);
@@ -135,8 +133,7 @@ using pony.text.TextTools;
 						if (hasError) return;
 						var img: Any = Any.fromBytes(imgFile, bytes);
 						atlases[asset] = new Pair(
-							@:privateAccess img.loader,
-							cast Any.fromBytes(realAsset, textBytes).to(HeapsBinaryAtlas)
+							@:privateAccess img.loader, cast Any.fromBytes(realAsset, textBytes).to(HeapsBinaryAtlas)
 						);
 						finish();
 					}
@@ -180,7 +177,7 @@ using pony.text.TextTools;
 					imgLoader.onProgress = progressHandler;
 					imgLoader.onLoaded = function(imgbytes: Bytes): Void {
 						if (hasError) return;
-						var font:Font = FontParser.parse(fntbytes, realAsset, function(path: String): Tile {
+						var font: Font = FontParser.parse(fntbytes, realAsset, function(path: String): Tile {
 							return Any.fromBytes(path, imgbytes).toTile();
 						});
 						setFontType(font, type);
@@ -248,7 +245,7 @@ using pony.text.TextTools;
 		if (assetTotalSize > Native.BUFFER_SIZE)
 			DeltaTime.fixedUpdate < loadAssetStep; // Prepare before large asset
 		else #end
-			loadAssetStep();
+		loadAssetStep();
 	}
 
 	@:nullSafety(Off) private static function loadAssetStep(): Void {
@@ -313,11 +310,13 @@ using pony.text.TextTools;
 			#else
 			case ATLAS:
 			#end
-				if (name == null) throw ERROR_NAME_NOT_SET;
-				var p: Null<Pair<Loader, Atlas>> = atlases[asset];
-				if (p == null) throw ERROR_NOT_LOADED;
-				Loader.currentInstance = p.a;
-				p.b.get(name);
+			if (name == null)
+				throw ERROR_NAME_NOT_SET;
+			var p: Null<Pair<Loader, Atlas>> = atlases[asset];
+			if (p == null)
+				throw ERROR_NOT_LOADED;
+			Loader.currentInstance = p.a;
+			p.b.get(name);
 			case PNG, JPG, JPEG:
 				if (name != null) throw ERROR_NAME_SET;
 				if (!tiles.exists(asset)) throw ERROR_NOT_LOADED;
@@ -338,22 +337,23 @@ using pony.text.TextTools;
 			#else
 			case ATLAS:
 			#end
-				if (name != null) {
-					name = SliceTools.clean(name);
-				} else {
-					var classet: String = SliceTools.clean(asset);
-					if (classet == asset) return [texture(classet)];
-				}
-				if (name == null) throw ERROR_NAME_NOT_SET;
-				var p: Null<Pair<Loader, Atlas>> = atlases[asset];
-				if (p == null) throw ERROR_NOT_LOADED;
-				Loader.currentInstance = p.a;
-				p.b.getAnim(name);
+			if (name != null) {
+				name = SliceTools.clean(name);
+			} else {
+				var classet: String = SliceTools.clean(asset);
+				if (classet == asset) return [texture(classet)];
+			}
+			if (name == null)
+				throw ERROR_NAME_NOT_SET;
+			var p: Null<Pair<Loader, Atlas>> = atlases[asset];
+			if (p == null)
+				throw ERROR_NOT_LOADED;
+			Loader.currentInstance = p.a;
+			p.b.getAnim(name);
 			case PNG, JPG, JPEG:
 				if (name != null) throw ERROR_NAME_SET;
 				var assets: Array<String> = AssetManager.parseInterval(asset);
-				if (assets.length == 1)
-					assets = SliceTools.getNames(assets[0]);
+				if (assets.length == 1) assets = SliceTools.getNames(assets[0]);
 				[for (e in assets) texture(e)];
 			case _:
 				throw ERROR_NOT_SUPPORTED;

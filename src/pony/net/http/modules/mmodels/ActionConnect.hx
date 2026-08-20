@@ -28,8 +28,7 @@ class ActionConnect extends ModuleConnect<Action> {
 		this.model = model;
 		method = Reflect.field(model, base.name);
 		methodCheck = Reflect.field(model, base.name + 'Validate');
-		if (methodCheck == null)
-			methodCheck = Reflect.field(model, 'validate');
+		if (methodCheck == null) methodCheck = Reflect.field(model, 'validate');
 	}
 
 	private function initTpl(): Void {

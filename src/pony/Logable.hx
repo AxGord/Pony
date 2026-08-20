@@ -3,7 +3,6 @@ package pony;
 import haxe.Log;
 import haxe.PosInfos;
 import haxe.Timer;
-
 import pony.ILogable;
 import pony.SPair;
 import pony.events.Listener2;
@@ -12,7 +11,6 @@ import pony.magic.HasSignal;
 import pony.time.DTimer;
 
 using Lambda;
-
 using pony.Tools;
 using pony.text.TextTools;
 
@@ -185,6 +183,7 @@ using pony.text.TextTools;
 	}
 
 	public static function traceWithDate(v: String, ?p: PosInfos): Void Log.trace(v, addDateToPosInfosFileName(p));
+
 	public static function traceWithTime(v: String, ?p: PosInfos): Void Log.trace(v, addTimeToPosInfosFileName(p));
 
 	public static function traceErrorWithDate(v: String, ?p: PosInfos): Void {
@@ -242,7 +241,9 @@ using pony.text.TextTools;
 	}
 
 	private static inline function l_patchFileName(p: Null<PosInfos>): Null<PosInfos> {
-		return if (p == null) null else {
+		return if (p == null)
+			null
+		else {
 			var r: SPair<String> = p.fileName.lastSplit(' ');
 			{
 				fileName: r.b != '' ? r.a + ' ' + l_replaceLibPath(r.b) : l_replaceLibPath(r.a),
@@ -255,6 +256,7 @@ using pony.text.TextTools;
 	}
 
 	public static inline function formatPos(p: Null<PosInfos>): String return p != null ? '${p.fileName}:${p.lineNumber}:' : '';
+
 	public static inline function formatPosWithSpace(p: Null<PosInfos>): String return p != null ? formatPos(p) + ' ' : '';
 
 	public static function l_vscodeTrace(value: Dynamic, ?pos: PosInfos): Void {
@@ -345,7 +347,7 @@ using pony.text.TextTools;
 			error('Bench $name completed or not started');
 		} else {
 			l_benches.remove(name);
-			log('End bench: ' + name + ' ' + l_benchTime(time)  + MS, p);
+			log('End bench: ' + name + ' ' + l_benchTime(time) + MS, p);
 		}
 		#end
 	}

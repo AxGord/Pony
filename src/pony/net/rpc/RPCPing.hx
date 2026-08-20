@@ -58,13 +58,11 @@ class Watch implements HasListener {
 	@:listen(rpc.onPong)
 	private function pongHandler(): Void {
 		timer.update >> timerUpdateHandler;
-		if (!rpc.eDelayInfo.empty)
-			rpc.eDelayInfo.dispatch(now() - startTime);
+		if (!rpc.eDelayInfo.empty) rpc.eDelayInfo.dispatch(now() - startTime);
 	}
 
 	private function timerUpdateHandler(): Void {
-		if (!rpc.eDelayInfo.empty)
-			rpc.eDelayInfo.dispatch(now() - startTime);
+		if (!rpc.eDelayInfo.empty) rpc.eDelayInfo.dispatch(now() - startTime);
 	}
 
 	private function repeatHandler(): Void {

@@ -20,8 +20,8 @@ class Swf {
 	public static function adt(project: Project, cert: String): Void {
 		swf(project);
 		project.run.active = true;
-		project.run.command = 'adt -package -storetype pkcs12 -keystore $cert -storepass  -target bundle app $APP_XML ' +
-			project.build.getOutputFile();
+		project.run.command = 'adt -package -storetype pkcs12 -keystore $cert -storepass  -target bundle app $APP_XML '
+			+ project.build.getOutputFile();
 	}
 
 	public static function swc(project: Project): Void {
@@ -37,7 +37,7 @@ class Swf {
 
 	private static function share(project: Project): Void {
 		project.haxelib.active = true;
-		project.haxelib.addLib({name: 'pony', version: Utils.ponyHaxelibVersion});
+		project.haxelib.addLib({ name: 'pony', version: Utils.ponyHaxelibVersion });
 		project.build.active = true;
 		project.build.flags.push('fdb');
 		project.build.flags.push('swf-compress-level=9');

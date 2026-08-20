@@ -16,20 +16,20 @@ class Keyboard implements IKeyboard implements HasSignal {
 	private static var KEYDOWN: String = 'keydown';
 	private static var KEYUP: String = 'keyup';
 
-	@:auto public var down:Signal1<Key>;
-	@:auto public var up:Signal1<Key>;
-	@:auto public var input:Signal1<UInt>;
+	@:auto public var down: Signal1<Key>;
+	@:auto public var up: Signal1<Key>;
+	@:auto public var input: Signal1<UInt>;
 
 	public var preventDefault: Bool = true;
 
 	public function new() {}
 
-	public function enable():Void {
+	public function enable(): Void {
 		Browser.window.addEventListener(KEYDOWN, keyDownHandler, true);
 		Browser.window.addEventListener(KEYUP, keyUpHandler, true);
 	}
 
-	public function disable():Void {
+	public function disable(): Void {
 		Browser.window.removeEventListener(KEYDOWN, keyDownHandler, true);
 		Browser.window.removeEventListener(KEYUP, keyUpHandler, true);
 	}

@@ -40,8 +40,7 @@ class SmoothBarCore extends BarCore {
 	}
 
 	private function updateSmoothPercentTarget(p: Float): Void {
-		if (p != smoothPercent)
-			DeltaTime.fixedUpdate << updateSmoothPercent;
+		if (p != smoothPercent) DeltaTime.fixedUpdate << updateSmoothPercent;
 	}
 
 	private function updateSmoothPercent(dt: DT): Void {

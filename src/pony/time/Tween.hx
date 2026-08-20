@@ -6,6 +6,7 @@ import pony.magic.HasSignal;
 import pony.math.MathTools;
 
 #if (haxe_ver >= 4.2) enum #else @:enum #end abstract TweenType(Int) {
+
 	var Linear = 0;
 	var Square = 1;
 	var BackSquare = 2;
@@ -20,6 +21,7 @@ import pony.math.MathTools;
 			case _: throw 'Unsupported tween type';
 		};
 	}
+
 }
 
 /**
@@ -52,13 +54,8 @@ class Tween implements HasSignal implements Declarator {
 	private var skipTime: Float;
 
 	public function new(
-		type: TweenType = TweenType.Linear,
-		time: Time = 1000,
-		invert: Bool = false,
-		loop: Bool = false,
-		pingpong: Bool = false,
-		fixedTime: Bool = false,
-		?skipTime: Time
+		type: TweenType = TweenType.Linear, time: Time = 1000, invert: Bool = false, loop: Bool = false, pingpong: Bool = false,
+		fixedTime: Bool = false, ?skipTime: Time
 	) {
 		this.type = type;
 		this.time = time;
@@ -78,6 +75,7 @@ class Tween implements HasSignal implements Declarator {
 	}
 
 	private inline function get_time(): Time return 1000 / sr;
+
 	private inline function set_time(time: Time): Time return sr = 1000 / time;
 
 	private function progressHandler(v: Float): Void {
@@ -91,6 +89,7 @@ class Tween implements HasSignal implements Declarator {
 	}
 
 	private function invertInvert(): Void invert = !invert;
+
 	private function endPlay(): Void playing = false;
 
 	public function playForward(?dt: DT): Void {
@@ -136,12 +135,12 @@ class Tween implements HasSignal implements Declarator {
 		if (updateSignal == null) {
 			DeltaTime.fixedUpdate >> forward;
 			DeltaTime.update >> forward;
-			return; //todo: fix bug (check this)
+			return; // todo: fix bug (check this)
 		}
 		if (!playing) {
-			//trace('forward');
+			// trace('forward');
 			updateSignal >> forward;
-			return; //todo: fix bug (check this)
+			return; // todo: fix bug (check this)
 		}
 		progress += dt * sr;
 		if (progress >= 1) {
@@ -159,12 +158,12 @@ class Tween implements HasSignal implements Declarator {
 		if (updateSignal == null) {
 			DeltaTime.fixedUpdate >> backward;
 			DeltaTime.update >> backward;
-			return; //todo: fix bug (check this)
+			return; // todo: fix bug (check this)
 		}
 		if (!playing) {
-			//trace('backward');
+			// trace('backward');
 			updateSignal >> backward;
-			return; //todo: fix bug (check this)
+			return; // todo: fix bug (check this)
 		}
 		progress -= dt * sr;
 		if (progress <= 0) {

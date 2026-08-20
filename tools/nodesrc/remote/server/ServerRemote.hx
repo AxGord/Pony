@@ -4,7 +4,6 @@ import pony.Logable;
 import pony.Pair;
 import pony.net.ISocketClient;
 import pony.net.SocketServer;
-
 import types.RemoteServerConfig;
 
 /**
@@ -53,7 +52,9 @@ class ServerRemote extends Logable {
 	}
 
 	private function closeHandler(): Void instanse = null;
+
 	private function beginCommandHandler(): Void cmdLock = true;
+
 	private function endCommandHandler(): Void cmdLock = false;
 
 }

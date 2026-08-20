@@ -10,23 +10,23 @@ import pony.events.Signal1;
  */
 class BaseStream<T> implements HasSignal {
 
-	@:auto public var onData:Signal1<T>;
-	@:auto public var onEnd:Signal1<T>;
-	@:auto public var onError:Signal0;
+	@:auto public var onData: Signal1<T>;
+	@:auto public var onEnd: Signal1<T>;
+	@:auto public var onError: Signal0;
 
-	@:auto public var onGetData:Signal0;
-	@:auto public var onCancel:Signal0;
-	@:auto public var onComplete:Signal0;
+	@:auto public var onGetData: Signal0;
+	@:auto public var onCancel: Signal0;
+	@:auto public var onComplete: Signal0;
 
-	private var buffer:T;
-	private var sendNext:Bool = false;
-	private var dataRequested:Bool = false;
-	private var nextRequest:Bool = false;
-	private var ended:Bool = false;
+	private var buffer: T;
+	private var sendNext: Bool = false;
+	private var dataRequested: Bool = false;
+	private var nextRequest: Bool = false;
+	private var ended: Bool = false;
 
 	public function new() {}
 
-	public function next():Void {
+	public function next(): Void {
 		if (ended) return;
 		if (buffer != null) {
 			eData.dispatch(buffer);
@@ -40,14 +40,14 @@ class BaseStream<T> implements HasSignal {
 		}
 	}
 
-	public function cancel():Void {
+	public function cancel(): Void {
 		ended = true;
 		buffer = null;
 		eCancel.dispatch();
 		destroy();
 	}
 
-	public function data(d:T):Void {
+	public function data(d: T): Void {
 		if (ended) return;
 		dataRequested = false;
 		if (sendNext) {
@@ -65,19 +65,19 @@ class BaseStream<T> implements HasSignal {
 		}
 	}
 
-	public function end(b:T):Void {
+	public function end(b: T): Void {
 		ended = true;
 		eEnd.dispatch(b);
 	}
 
-	public function error():Void {
+	public function error(): Void {
 		ended = true;
 		buffer = null;
 		eError.dispatch();
 		destroy();
 	}
 
-	private function getData():Void {
+	private function getData(): Void {
 		if (!dataRequested) {
 			dataRequested = true;
 			eGetData.dispatch();
@@ -88,12 +88,12 @@ class BaseStream<T> implements HasSignal {
 		}
 	}
 
-	public function complete():Void {
+	public function complete(): Void {
 		eComplete.dispatch();
 		destroy();
 	}
 
-	private function destroy():Void {
+	private function destroy(): Void {
 		destroySignals();
 	}
 

@@ -4,19 +4,15 @@ import haxe.crypto.Base64;
 import haxe.crypto.Sha1;
 import haxe.io.Bytes;
 import haxe.xml.Printer;
-
 import hxbitmini.Serializable;
 import hxbitmini.Serializer;
-
 import pony.Fast;
 import pony.ds.STriple;
 import pony.fs.Dir;
 import pony.fs.File;
-
 import types.BASection;
 
 using StringTools;
-
 using pony.text.TextTools;
 
 /**
@@ -156,7 +152,7 @@ using pony.text.TextTools;
 	public function dirChanged(key: String, dirs: Array<String>, ?filter: String): Bool {
 		initHash();
 		key = pathKey(key);
-		var dirs: Array<Dir> = [ for (dir in dirs) dir ];
+		var dirs: Array<Dir> = [for (dir in dirs) dir];
 		dirs.sort(cast Dir.compareNames);
 		return compareStates(key, Sha1.make(DirState.fromDirs(dirs, filter)));
 	}
@@ -209,7 +205,7 @@ using pony.text.TextTools;
 	}
 
 	private function getLost(): Array<String> {
-		return [ for (key in units.keys()) if (!newUnits.exists(key)) root + key ];
+		return [for (key in units.keys()) if (!newUnits.exists(key)) root + key];
 	}
 
 	private function buildUnitsList(a: Iterator<String>): Array<String> {
@@ -238,12 +234,12 @@ using pony.text.TextTools;
 
 	private function new(dirs: Array<Dir>, filter: Null<String>) {
 		units = new Map<String, Bytes>();
-		for (dir in dirs)
-			for (file in dir.contentRecursiveFiles(filter, true)) if (file.name != '.DS_Store')
-				units[file.first] = Utils.gitHash(file.first);
+		for (dir in dirs) for (file in dir.contentRecursiveFiles(filter, true)) if (file.name != '.DS_Store')
+			units[file.first] = Utils.gitHash(file.first);
 	}
 
 	private inline function toBytes(): Bytes return new Serializer().serialize(this);
+
 	public static inline function fromDirs(dirs: Array<Dir>, filter: Null<String>): Bytes return new DirState(dirs, filter).toBytes();
 
 }
@@ -272,18 +268,25 @@ private typedef HashConfig = {
 
 	override private function readNode(xml: Fast): Void {
 		switch xml.name {
-			case 'output': cfg.file = normalize(xml.innerData);
-			case 'input': cfg.input.push(normalize(xml.innerData));
-			case 'build': cfg.build = normalize(xml.innerData);
-			case _: super.readNode(xml);
+			case 'output':
+				cfg.file = normalize(xml.innerData);
+			case 'input':
+				cfg.input.push(normalize(xml.innerData));
+			case 'build':
+				cfg.build = normalize(xml.innerData);
+			case _:
+				super.readNode(xml);
 		}
 	}
 
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
-			case 'binary': cfg.binary = !val.isFalse();
-			case 'root': cfg.root = val;
-			case 'source': cfg.source = val;
+			case 'binary':
+				cfg.binary = !val.isFalse();
+			case 'root':
+				cfg.root = val;
+			case 'source':
+				cfg.source = val;
 			case _:
 		}
 	}

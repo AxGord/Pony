@@ -51,14 +51,12 @@ class Mouse {
 	}
 
 	private static function downHandler(event: MouseEvent): Void {
-		if (M.checkDown(MouseButton.LEFT))
-			M.downHandler(event.stageX, event.stageY, MouseButton.LEFT);
+		if (M.checkDown(MouseButton.LEFT)) M.downHandler(event.stageX, event.stageY, MouseButton.LEFT);
 		tlock(event);
 	}
 
 	private static function upHandler(event: MouseEvent): Void {
-		if (M.checkUp(MouseButton.LEFT))
-			M.upHandler(event.stageX, event.stageY, MouseButton.LEFT);
+		if (M.checkUp(MouseButton.LEFT)) M.upHandler(event.stageX, event.stageY, MouseButton.LEFT);
 		tlock(event);
 	}
 
@@ -89,7 +87,7 @@ class Mouse {
 		Lib.current.stage.removeEventListener(MouseEvent.ROLL_OVER, lock, true);
 	}
 
-	public static function disableStd():Void {
+	public static function disableStd(): Void {
 		enabled = false;
 		Lib.current.stage.addEventListener(MouseEvent.CLICK, lock, true, LOCK_PRIORITY, true);
 		Lib.current.stage.addEventListener(MouseEvent.DOUBLE_CLICK, lock, true, LOCK_PRIORITY, true);

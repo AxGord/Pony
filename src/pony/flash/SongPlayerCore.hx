@@ -53,8 +53,7 @@ class SongPlayerCore implements HasSignal {
 	}
 
 	public function set_isPlay(b: Bool): Bool {
-		if (b == isPlay)
-			return b;
+		if (b == isPlay) return b;
 		isPlay = b;
 		if (b)
 			playSong();
@@ -64,8 +63,7 @@ class SongPlayerCore implements HasSignal {
 	}
 
 	public function set_isMute(b: Bool): Bool {
-		if (b == isMute)
-			return b;
+		if (b == isMute) return b;
 		if (b == true) {
 			pVol = volume;
 			volume = 0;
@@ -80,23 +78,20 @@ class SongPlayerCore implements HasSignal {
 	}
 
 	public function set_volume(v: Float): Float {
-		if (v == volume)
-			return v;
+		if (v == volume) return v;
 		if (isMute) {
 			pVol = v;
 			isMute = false;
 		} else {
 			volume = v;
 			eVolume.dispatch(v);
-			if (isPlay && channel != null)
-				channel.soundTransform = new SoundTransform(v);
+			if (isPlay && channel != null) channel.soundTransform = new SoundTransform(v);
 		}
 		return volume;
 	}
 
 	public function set_position(v: Float): Float {
-		if (v == position)
-			return v;
+		if (v == position) return v;
 		position = v;
 		ePosition.dispatch(v);
 		return v;
@@ -110,11 +105,9 @@ class SongPlayerCore implements HasSignal {
 
 	public function switchPlay(): Void isPlay = !isPlay;
 
-	public static function formatSong(song: SongInfo): String
-		return (song.author != null ? song.author + ' - ' : '') + song.title;
+	public static function formatSong(song: SongInfo): String return (song.author != null ? song.author + ' - ' : '') + song.title;
 
-	private function progressHandler(event: ProgressEvent): Void
-		eLoadprogress.dispatch(event.bytesLoaded / event.bytesTotal);
+	private function progressHandler(event: ProgressEvent): Void eLoadprogress.dispatch(event.bytesLoaded / event.bytesTotal);
 
 	private function soundComplete(event: Event): Void eComplete.dispatch();
 
@@ -130,7 +123,7 @@ class SongPlayerCore implements HasSignal {
 			sound.removeEventListener(ProgressEvent.PROGRESS, progressHandler);
 			try {
 				sound.close();
-			} catch (_:Dynamic) {}
+			} catch (_: Dynamic) {}
 		}
 		pTime = 0;
 		songTotal = song.length;
@@ -138,8 +131,7 @@ class SongPlayerCore implements HasSignal {
 		eTimeTextUpdate.dispatch(song.length.toString());
 		sound = new Sound(new URLRequest(song.file));
 		sound.addEventListener(ProgressEvent.PROGRESS, progressHandler);
-		if (isPlay)
-			playSong();
+		if (isPlay) playSong();
 	}
 
 	private function playSong(): Void {
@@ -171,9 +163,9 @@ class SongPlayerCore implements HasSignal {
 
 	private function update(): Void {
 		onPosition >> setPosition;
-		var t: String = (channel.position : Time).toString();
+		var t: String = (channel.position: Time).toString();
 		t += ' / ';
-		t += (songTotal : Time).toString();
+		t += (songTotal: Time).toString();
 		eTimeTextUpdate.dispatch(t);
 		ePosition.dispatch(channel.position / songTotal);
 		onPosition << setPosition;

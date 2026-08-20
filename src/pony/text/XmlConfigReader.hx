@@ -14,7 +14,7 @@ typedef BaseConfig = {
  * XmlConfigReader
  * @author AxGord <axgord@gmail.com>
  */
-@:nullSafety(Strict) class XmlConfigReader<T: BaseConfig> {
+@:nullSafety(Strict) class XmlConfigReader<T:BaseConfig> {
 
 	public var cfg: T;
 	private var onConfig: Null<T -> Void>;
@@ -27,7 +27,9 @@ typedef BaseConfig = {
 	}
 
 	private function readAttr(name: String, val: String): Void {}
+
 	private function readNode(xml: Fast): Void {}
+
 	private function end(): Void {}
 
 	private function readXml(xml: Fast): Void {
@@ -37,11 +39,9 @@ typedef BaseConfig = {
 			switch e.name {
 				case 'apps':
 					if (cfg.app != null) {
-						if (e.hasNode.resolve(cfg.app))
-							readXml(e.node.resolve(cfg.app));
+						if (e.hasNode.resolve(cfg.app)) readXml(e.node.resolve(cfg.app));
 					} else {
-						for (node in e.elements)
-							selfCreate(node);
+						for (node in e.elements) selfCreate(node);
 					}
 					locAllowEnd = false;
 				case 'debug':
@@ -56,7 +56,8 @@ typedef BaseConfig = {
 				case '_notcordova':
 					if (!cfg.cordova) readXml(e);
 					locAllowEnd = false;
-				case _: readNode(e);
+				case _:
+					readNode(e);
 			}
 		}
 		if (locAllowEnd && allowEnd) end();
@@ -74,11 +75,11 @@ typedef BaseConfig = {
 
 	private function copyCfg(): T return pony.Tools.clone(cfg);
 
-	private function _selfCreate<C: XmlConfigReader<T>>(xml: Fast, conf: T): C {
+	private function _selfCreate<C:XmlConfigReader<T>>(xml: Fast, conf: T): C {
 		allowEnd = false;
 		@:nullSafety(Off) return cast Type.createInstance(Type.getClass(this), [xml, conf, onConfig]);
 	}
 
-	private function selfCreate<C: XmlConfigReader<T>>(xml: Fast): C return _selfCreate(xml, copyCfg());
+	private function selfCreate<C:XmlConfigReader<T>>(xml: Fast): C return _selfCreate(xml, copyCfg());
 
 }

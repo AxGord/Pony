@@ -13,15 +13,15 @@ import haxe.macro.TypeTools;
  */
 class MegaSaveBuilder {
 
-	macro public static function build():Array<Field> {
-		var fields:Array<Field> = Context.getBuildFields();
-		var localName:String = Context.getLocalClass().toString();
+	macro public static function build(): Array<Field> {
+		var fields: Array<Field> = Context.getBuildFields();
+		var localName: String = Context.getLocalClass().toString();
 		for (field in fields) {
 			switch field.kind {
 				case FFun(fun):
 					var method = macro $v{'Catch error($localName.${field.name}): '};
 					if (fun.expr != null) switch [fun.expr.expr, fun.ret] {
-						case [EBlock(exprs), TPath({pack: [], name: 'Void'})], [EBlock(exprs), null]:
+						case [EBlock(exprs), TPath({ pack: [], name: 'Void' })], [EBlock(exprs), null]:
 							fun.expr = macro try $b{exprs} catch (err: Dynamic) haxe.Log.trace($method + err, null);
 						case [EBlock(exprs), _]:
 							fun.expr = macro try $b{exprs} catch (err: Dynamic) {

@@ -21,10 +21,8 @@ class RealClock extends Sprite implements FLStage {
 	}
 
 	private function init(): Void {
-		if (time != null)
-			RC.updateTime << function(s: String) time.text = s;
-		if (date != null)
-			RC.updateDate << function(s: String) date.text = s;
+		if (time != null) RC.updateTime << function(s: String) time.text = s;
+		if (date != null) RC.updateDate << function(s: String) date.text = s;
 	}
 
 }

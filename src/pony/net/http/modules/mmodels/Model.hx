@@ -15,7 +15,9 @@ using pony.Tools;
 using Lambda;
 
 enum ActResult {
-	OK; ERROR(e:Map<String, String>); DBERROR;
+	OK;
+	ERROR(e: Map<String, String>);
+	DBERROR;
 }
 
 /**
@@ -24,18 +26,19 @@ enum ActResult {
  */
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
 class Model implements SuperPuper {
-	public var lang:String;
-	public var mm:MModels;
-	public var name:String;
-	public var columns:Map<String, pony.net.http.modules.mmodels.Field>;
-	public var actions:Map<String, Action>;
-	public var db:Table;
-	public var cl:Class<ModelConnect>;
-	public var pathes:Map<String, Array<String>>;
-	public var activePathes:Map<String, {path:String, field:String}>;
-	public var access:Map<String, String>;
 
-	public function new(mm:MModels, actionsClasses:Map<String, Dynamic>) {
+	public var lang: String;
+	public var mm: MModels;
+	public var name: String;
+	public var columns: Map<String, pony.net.http.modules.mmodels.Field>;
+	public var actions: Map<String, Action>;
+	public var db: Table;
+	public var cl: Class<ModelConnect>;
+	public var pathes: Map<String, Array<String>>;
+	public var activePathes: Map<String, { path: String, field: String }>;
+	public var access: Map<String, String>;
+
+	public function new(mm: MModels, actionsClasses: Map<String, Dynamic>) {
 		lang = 'en';
 		name = Type.getClassName(Type.getClass(this));
 		name = name.substr(name.lastIndexOf('.') + 1);
@@ -43,7 +46,7 @@ class Model implements SuperPuper {
 		var n = Type.getClassName(Type.getClass(this)) + 'Connect';
 		cl = cast Type.resolveClass(n);
 		if (cl == null) throw "Can't resolve class (dce?): " + n;
-		var ma:Dynamic<Array<{name: String, type: String}>> = untyped cl.__methoArgs__;
+		var ma: Dynamic<Array<{ name: String, type: String }>> = untyped cl.__methoArgs__;
 
 		var o = untyped cl.__methoPathes__;
 		var o2 = untyped cl.__methoActivePathes__;
@@ -54,21 +57,20 @@ class Model implements SuperPuper {
 		access = [for (f in Reflect.fields(o)) f => Reflect.field(o, f)];
 
 		actions = new Map<String, Action>();
-		var fields:Dynamic = Meta.getFields(cl);
+		var fields: Dynamic = Meta.getFields(cl);
 		for (f in Reflect.fields(fields)) {
-			var ff:Dynamic = Reflect.field(fields, f);
-			for (sf in Reflect.fields(ff))
-				if (sf == 'action') {
-					actions.set(f, Type.createInstance(actionsClasses.get(Reflect.field(ff, sf)[0]), [this, f, Reflect.field(ma, f)]));
-				}
+			var ff: Dynamic = Reflect.field(fields, f);
+			for (sf in Reflect.fields(ff)) if (sf == 'action') {
+				actions.set(f, Type.createInstance(actionsClasses.get(Reflect.field(ff, sf)[0]), [this, f, Reflect.field(ma, f)]));
+			}
 		}
-		columns = new Map < String, pony.net.http.modules.mmodels.Field > ();
+		columns = new Map<String, pony.net.http.modules.mmodels.Field>();
 		columns['id'] = new FInt(10, true);
 		columns['id'].model = this;
 		columns['id'].name = 'id';
 		var cs = untyped Type.getClass(this).fields;
 		for (f in Reflect.fields(cs)) {
-			var c:pony.net.http.modules.mmodels.Field = Reflect.field(cs, f);
+			var c: pony.net.http.modules.mmodels.Field = Reflect.field(cs, f);
 			c.init(f, this);
 			columns.set(f, c);
 		}
@@ -78,14 +80,12 @@ class Model implements SuperPuper {
 		init();
 	}
 
-	private function init():Void {
-
-	}
+	private function init(): Void {}
 
 	@:async @:puper
-	public function prepare():Bool {
-		var a:Array<Field> = [
-			{name: 'id', type: Types.INT, flags: [Flags.UNSIGNED, Flags.NOT_NULL, Flags.PRI_KEY, Flags.AUTO_INCREMENT]}
+	public function prepare(): Bool {
+		var a: Array<Field> = [
+			{ name: 'id', type: Types.INT, flags: [Flags.UNSIGNED, Flags.NOT_NULL, Flags.PRI_KEY, Flags.AUTO_INCREMENT] }
 		];
 		for (c in columns.kv()) if (c.key != 'id') a.push(c.value.create());
 		return @await db.prepare(a);
@@ -125,21 +125,23 @@ class Model implements SuperPuper {
 			}
 		}, err);
 	}
-	*/
-	public static function err(e:Dynamic):Void {
+	 */
+	public static function err(e: Dynamic): Void {
 		throw e;
 	}
 
-	public function connect(cpq:CPQ):EConnect {
-		var mc:ModelConnect = Type.createInstance(cl, [this, cpq]);
+	public function connect(cpq: CPQ): EConnect {
+		var mc: ModelConnect = Type.createInstance(cl, [this, cpq]);
 		var a = new Map<String, ActionConnect>();
 		var sub = new Map<String, ISubActionConnect>();
 		for (k in actions.keys()) {
 			var r = actions[k].connect(cpq, mc);
 			if (r.b != null) sub[k] = r.b;
 			switch r.a {
-				case BREAK: return BREAK;
-				case REG(obj): a[k] = cast obj;
+				case BREAK:
+					return BREAK;
+				case REG(obj):
+					a[k] = cast obj;
 				case NOTREG:
 			}
 		}
@@ -148,6 +150,6 @@ class Model implements SuperPuper {
 		return REG(cast mc);
 	}
 
-	inline public static function dbr(r:Bool):ActResult return r ? OK : DBERROR;
+	inline public static function dbr(r: Bool): ActResult return r ? OK : DBERROR;
 
 }

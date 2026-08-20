@@ -11,24 +11,22 @@ import pony.text.tpl.ValuePut;
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
 class Valuator<C1, C2> extends TplPut<C1, C2> {
 
-	public function new(data:C1, datad:C2, parent:ITplPut = null) {
+	public function new(data: C1, datad: C2, parent: ITplPut = null) {
 		super(data, datad, parent);
 	}
 
 	@:async
-	override public function tag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String
-	{
-		var b:Null<Bool> = @await valuBool(name);
+	override public function tag(name: String, content: TplData, arg: String, args: Map<String, String>, ?kid: ITplPut): String {
+		var b: Null<Bool> = @await valuBool(name);
 		if (b != null) {
 			if (args.exists('!'))
 				return b ? '' : @await tplData(content);
 			else
 				return b ? @await tplData(content) : '';
 		} else {
-			var v:String = @await valu(name, arg);
+			var v: String = @await valu(name, arg);
 			if (v != null) {
-				if (args.exists('htmlEscape'))
-					v = StringTools.htmlEscape(v);
+				if (args.exists('htmlEscape')) v = StringTools.htmlEscape(v);
 				if (v == '') {
 					if (args.exists('!'))
 						return @await tplData(content);
@@ -44,9 +42,8 @@ class Valuator<C1, C2> extends TplPut<C1, C2> {
 	}
 
 	@:async
-	override public function shortTag(name:String, arg:String, ?kid:ITplPut):String
-	{
-		var v:String = @await valu(name, arg);
+	override public function shortTag(name: String, arg: String, ?kid: ITplPut): String {
+		var v: String = @await valu(name, arg);
 		if (v != null)
 			return v;
 		else
@@ -54,12 +51,12 @@ class Valuator<C1, C2> extends TplPut<C1, C2> {
 	}
 
 	@:async
-	public function valu(name:String, arg:String):String {
+	public function valu(name: String, arg: String): String {
 		return null;
 	}
 
 	@:async
-	public function valuBool(name:String):Null<Bool> {
+	public function valuBool(name: String): Null<Bool> {
 		return null;
 	}
 

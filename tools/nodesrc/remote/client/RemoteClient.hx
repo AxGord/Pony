@@ -66,7 +66,8 @@ class RemoteClient extends Logable {
 	}
 
 	private function actionsEndHandler(): Void end(0);
-	private function errorHandler():Void end(3);
+
+	private function errorHandler(): Void end(3);
 
 	private function end(code: Int = 0): Void {
 		if (protocol != null) {
@@ -77,7 +78,7 @@ class RemoteClient extends Logable {
 	}
 
 	private function zipLogHandler(b: Bytes): Void {
-		//File.saveBytes('log.txt', haxe.zip.Uncompress.run(b));
+		// File.saveBytes('log.txt', haxe.zip.Uncompress.run(b));
 		File.saveBytes('log.txt', b);
 	}
 

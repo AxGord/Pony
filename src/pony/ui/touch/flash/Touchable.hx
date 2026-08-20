@@ -51,8 +51,7 @@ class Touchable extends TouchableBase {
 				DeltaTime.fixedUpdate < Mouse.enableStd;
 			}
 		} else {
-			if (touchSupport && inputMode != null)
-				Multitouch.inputMode = inputMode;
+			if (touchSupport && inputMode != null) Multitouch.inputMode = inputMode;
 		}
 	}
 

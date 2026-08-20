@@ -5,6 +5,6 @@ package pony.magic;
  * @author AxGord <axgord@gmail.com>
  */
 #if !macro
-@:autoBuild(pony.magic.builder.InBuilder.build()) 
+@:autoBuild(pony.magic.builder.InBuilder.build())
 #end
-interface In { }
+interface In {}

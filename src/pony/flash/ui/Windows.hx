@@ -31,14 +31,13 @@ private class WindowsImpl {
 		map = new Map<String, Window>();
 		this.st = st;
 		var chs = [for (e in st.childrens()) e];
-		for (ch in chs)
-			if (Std.is(ch, Window)) {
-				var e: Window = cast ch;
-				map.set(e.name, e);
-				e.initm(cast this);
-				st.removeChild(e);
-				st.stage.addChild(e);
-			}
+		for (ch in chs) if (Std.is(ch, Window)) {
+			var e: Window = cast ch;
+			map.set(e.name, e);
+			e.initm(cast this);
+			st.removeChild(e);
+			st.stage.addChild(e);
+		}
 	}
 
 	@:nullSafety(Off) public inline function resolve(field: String): Window return map.get(field);

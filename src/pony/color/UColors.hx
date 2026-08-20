@@ -50,7 +50,7 @@ abstract UColors(Array<UColor>) from Array<UColor> to Array<UColor> {
 	@:from public static inline function fromIterableUInt(it: Iterable<UInt>): UColors return Lambda.array(it);
 
 	#if (flash && !doc_gen)
-	@:from public static inline function fromVector(a: flash.Vector<UInt>): UColors return [ for (i in 0...a.length) a[i] ];
+	@:from public static inline function fromVector(a: flash.Vector<UInt>): UColors return [for (i in 0...a.length) a[i]];
 	#end
 
 	@:from #if (haxe_ver >= 4.2) extern #else @:extern #end

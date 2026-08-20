@@ -2,10 +2,8 @@ package pony.html;
 
 import haxe.Log;
 import haxe.PosInfos;
-
 import js.Browser;
 import js.html.Element;
-
 import pony.ILogable;
 
 using StringTools;
@@ -25,7 +23,7 @@ private typedef LastLogMessageObj = {
 
 @:nullSafety(Strict) class HtmlLog {
 
-	public var visible(get, set):Bool;
+	public var visible(get, set): Bool;
 
 	public final container: Element;
 	private final origTrace: Null<Dynamic -> ?PosInfos -> Void>;
@@ -34,9 +32,8 @@ private typedef LastLogMessageObj = {
 	private var lastMessage: LastLogMessage = None;
 
 	public function new(
-		containerId: String = 'log', obj: ILogable = null,
-		handleTrace: Bool = true, handleGlobalError: Bool = true,
-		reverse: Bool = false, objLogs: Bool = false
+		containerId: String = 'log', obj: ILogable = null, handleTrace: Bool = true, handleGlobalError: Bool = true, reverse: Bool = false,
+		objLogs: Bool = false
 	) {
 		this.reverse = reverse;
 		origTrace = Log.trace;
@@ -56,20 +53,20 @@ private typedef LastLogMessageObj = {
 		if (handleGlobalError) Browser.window.onerror = windowsErrorHandler;
 	}
 
-	public inline function get_visible():Bool return container != null ? !container.hidden : false;
+	public inline function get_visible(): Bool return container != null ? !container.hidden : false;
 
-	public inline function set_visible(value:Bool):Bool {
+	public inline function set_visible(value: Bool): Bool {
 		if (container != null) container.hidden = !value;
 		return value;
 	}
 
-	public dynamic function traceFilter(pos:Null<PosInfos>):Bool return true;
+	public dynamic function traceFilter(pos: Null<PosInfos>): Bool return true;
 
 	public function traceHandler(v: Dynamic, ?p: PosInfos): Void {
 		if (!traceFilter(p)) return;
-		('$v'.startsWith('Catch error') ? errorHandler : logHandler)(
-			[Std.string(v)].concat(p != null && p.customParams != null ? p.customParams.map(Std.string) : []).join(', '), p
-		);
+		(
+			'$v'.startsWith('Catch error') ? errorHandler : logHandler
+		)([Std.string(v)].concat(p != null && p.customParams != null ? p.customParams.map(Std.string) : []).join(', '), p);
 		@:nullSafety(Off) origTrace(v, p);
 	}
 
@@ -89,9 +86,10 @@ private typedef LastLogMessageObj = {
 			case _:
 		}
 		lastMessage = Normal(current);
-		addToContainer(pos != null ?
-			'<p><span class="gray">${pos.fileName}:${pos.lineNumber}:</span> <span>$message</span>${renderCount(count)}</p>' :
-			'<p><span>$message</span>${renderCount(count)}</p>'
+		addToContainer(
+			pos != null
+				? '<p><span class="gray">${pos.fileName}:${pos.lineNumber}:</span> <span>$message</span>${renderCount(count)}</p>'
+				: '<p><span>$message</span>${renderCount(count)}</p>'
 		);
 	}
 
@@ -109,9 +107,10 @@ private typedef LastLogMessageObj = {
 			case _:
 		}
 		lastMessage = Error(current);
-		addToContainer(pos != null ?
-			'<p><span class="gray">${pos.fileName}:${pos.lineNumber}:</span> <span class="error">$message</span>${renderCount(count)}</p>' :
-			'<p><span class="error">$message</span>${renderCount(count)}</p>'
+		addToContainer(
+			pos != null
+				? '<p><span class="gray">${pos.fileName}:${pos.lineNumber}:</span> <span class="error">$message</span>${renderCount(count)}</p>'
+				: '<p><span class="error">$message</span>${renderCount(count)}</p>'
 		);
 	}
 
@@ -144,9 +143,9 @@ private typedef LastLogMessageObj = {
 
 	@:nullSafety(Off)
 	private static function equalMessageObj(a: LastLogMessageObj, b: LastLogMessageObj): Bool {
-		return a.text == b.text && (
-			(a.pos == null && b.pos == null) || (a.pos.lineNumber == b.pos.lineNumber && a.pos.fileName.allAfterLast(' ') == b.pos.fileName.allAfterLast(' '))
-		);
+		return a.text == b.text
+			&& ((a.pos == null && b.pos == null)
+				|| (a.pos.lineNumber == b.pos.lineNumber && a.pos.fileName.allAfterLast(' ') == b.pos.fileName.allAfterLast(' ')));
 	}
 
 }

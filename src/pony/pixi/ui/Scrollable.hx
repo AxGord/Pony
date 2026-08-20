@@ -10,28 +10,28 @@ import pony.ui.touch.pixi.Touchable;
  */
 class Scrollable extends Touchable {
 
-	public var pos(default, set):Int = 0;
-	private var totalSize:Float;
-	private var contentSize:Float;
-	private var startTPos:Float;
-	private var startTPosBefore:Int;
-	private var vert:Bool;
-	private var inited:Bool = false;
+	public var pos(default, set): Int = 0;
+	private var totalSize: Float;
+	private var contentSize: Float;
+	private var startTPos: Float;
+	private var startTPosBefore: Int;
+	private var vert: Bool;
+	private var inited: Bool = false;
 
-	public function new(obj:Container, totalSize:Float, vert:Bool) {
+	public function new(obj: Container, totalSize: Float, vert: Bool) {
 		super(obj);
 		this.totalSize = totalSize;
 		this.vert = vert;
 	}
 
-	public function updateContent(obj:Container):Void {
+	public function updateContent(obj: Container): Void {
 		if (vert)
 			_updateContent(obj.height);
 		else
 			_updateContent(obj.width);
 	}
 
-	public function _updateContent(size:Float):Void {
+	public function _updateContent(size: Float): Void {
 		if (!inited) {
 			inited = true;
 			onDown < beginMove;
@@ -42,15 +42,15 @@ class Scrollable extends Touchable {
 		updatePos();
 	}
 
-	public dynamic function onChangePosition(v:Int):Void {}
+	public dynamic function onChangePosition(v: Int): Void {}
 
-	private function mouseWheelHandler(delta:Int):Void scroll(Std.int(delta / 2));
+	private function mouseWheelHandler(delta: Int): Void scroll(Std.int(delta / 2));
 
-	public function scroll(delta:Int):Void pos += delta;
+	public function scroll(delta: Int): Void pos += delta;
 
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function set_pos(v:Int):Int {
+	private inline function set_pos(v: Int): Int {
 		if (v != pos) {
 			pos = v;
 			if (pos > 0) pos = 0;
@@ -60,14 +60,14 @@ class Scrollable extends Touchable {
 		return pos;
 	}
 
-	public function scrollToEnd():Void {
+	public function scrollToEnd(): Void {
 		pos = Std.int(totalSize - contentSize);
 		updatePos();
 	}
 
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function updatePos():Void {
+	private inline function updatePos(): Void {
 		if (vert)
 			obj.y = pos;
 		else
@@ -75,7 +75,7 @@ class Scrollable extends Touchable {
 		onChangePosition(pos);
 	}
 
-	private function beginMove(t:Touch):Void {
+	private function beginMove(t: Touch): Void {
 		startTPosBefore = pos;
 		startTPos = vert ? t.y : t.x;
 		t.onMove << move;
@@ -83,7 +83,7 @@ class Scrollable extends Touchable {
 		t.onOutUp < endMove;
 	}
 
-	private function endMove(t:Touch):Void {
+	private function endMove(t: Touch): Void {
 		t.onUp >> endMove;
 		t.onOutUp >> endMove;
 		t.onMove >> move;
@@ -91,6 +91,6 @@ class Scrollable extends Touchable {
 		onDown < beginMove;
 	}
 
-	private function move(t:Touch):Void pos = startTPosBefore - Std.int(startTPos - (vert ? t.y : t.x));
+	private function move(t: Touch): Void pos = startTPosBefore - Std.int(startTPos - (vert ? t.y : t.x));
 
 }

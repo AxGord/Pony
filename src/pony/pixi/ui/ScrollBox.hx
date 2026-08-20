@@ -25,16 +25,18 @@ using pony.pixi.PixiExtends;
  * @author AxGord <axgord@gmail.com>
  */
 class ScrollBox extends Sprite implements HasSignal implements IWH {
-	
-	public var size(get, never):Point<Float>;
 
-	private var vbar:Sprite;
-	private var hbar:Sprite;
-	private var content:Sprite = new Sprite();
-	private var core:ScrollBoxCore;
-	private var touchArea:Sprite = new Sprite();
+	public var size(get, never): Point<Float>;
 
-	public function new(w:Float, h:Float, vert:Bool = true, hor:Bool = false, color:UInt = 0, barsize:Float = 8, wheelSpeed:Float = 1) {
+	private var vbar: Sprite;
+	private var hbar: Sprite;
+	private var content: Sprite = new Sprite();
+	private var core: ScrollBoxCore;
+	private var touchArea: Sprite = new Sprite();
+
+	public function new(
+		w: Float, h: Float, vert: Bool = true, hor: Bool = false, color: UInt = 0, barsize: Float = 8, wheelSpeed: Float = 1
+	) {
 		super();
 		var tag = new Graphics();
 		tag.beginFill(0, 0);
@@ -50,7 +52,7 @@ class ScrollBox extends Sprite implements HasSignal implements IWH {
 		addChild(content);
 		content.mask = g;
 
-		var vbutton:ButtonCore = null;
+		var vbutton: ButtonCore = null;
 		if (vert) {
 			var gvbar = new Graphics();
 			gvbar.beginFill(color);
@@ -63,7 +65,7 @@ class ScrollBox extends Sprite implements HasSignal implements IWH {
 			vbutton.onVisual << vvisualHandler;
 		}
 
-		var hbutton:ButtonCore = null;
+		var hbutton: ButtonCore = null;
 		if (hor) {
 			var ghbar = new Graphics();
 			ghbar.beginFill(color);
@@ -94,46 +96,49 @@ class ScrollBox extends Sprite implements HasSignal implements IWH {
 		core.onMaskSize << maximizeTouchArea;
 	}
 
-	private function maximizeTouchArea(mw:Float, mh:Float):Void {
+	private function maximizeTouchArea(mw: Float, mh: Float): Void {
 		var b = content.getLocalBounds();
 		touchArea.scale.set(b.x + b.width, b.y + b.height);
 		if (touchArea.scale.x < mw) touchArea.scale.x = mw;
 		if (touchArea.scale.y < mh) touchArea.scale.y = mh;
 	}
 
-	private function vvisualHandler(_, state:ButtonState):Void {
+	private function vvisualHandler(_, state: ButtonState): Void {
 		vbar.alpha = state == ButtonState.Default ? 0.7 : 1;
 	}
 
-	private function hvisualHandler(_, state:ButtonState):Void {
+	private function hvisualHandler(_, state: ButtonState): Void {
 		hbar.alpha = state == ButtonState.Default ? 0.7 : 1;
 	}
 
-	private function showVBar():Void vbar.visible = true;
-	private function hideVBar():Void vbar.visible = false;
-	private function showHBar():Void hbar.visible = true;
-	private function hideHBar():Void hbar.visible = false;
+	private function showVBar(): Void vbar.visible = true;
 
-	public function add(c:DisplayObject):Void {
+	private function hideVBar(): Void vbar.visible = false;
+
+	private function showHBar(): Void hbar.visible = true;
+
+	private function hideHBar(): Void hbar.visible = false;
+
+	public function add(c: DisplayObject): Void {
 		content.addChild(c);
 		needUpdate();
 	}
 
-	public inline function needUpdate():Void {
+	public inline function needUpdate(): Void {
 		DeltaTime.fixedUpdate < update;
 	}
 
-	public function update():Void {
+	public function update(): Void {
 		touchArea.visible = false;
 		var b = content.getBounds();
 		core.content(b.x + b.width, b.y + b.height);
 		touchArea.visible = true;
 	}
 
-	private function get_size():Point<Float> return new Point<Float>(core.w, core.h);
+	private function get_size(): Point<Float> return new Point<Float>(core.w, core.h);
 
-	public function wait(fn:Void -> Void):Void fn();
+	public function wait(fn: Void -> Void): Void fn();
 
-	public function destroyIWH():Void destroy();
+	public function destroyIWH(): Void destroy();
 
 }

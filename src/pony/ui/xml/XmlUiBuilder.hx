@@ -29,7 +29,7 @@ class XmlUiBuilder {
 		var cl: ClassType = Context.getLocalClass().get();
 		var meta: Metadata = cl.meta.get();
 		if (!meta.checkMeta([':ui'])) {
-			cl.superClass.t; //run build for super class
+			cl.superClass.t; // run build for super class
 			return Context.getBuildFields();
 		}
 
@@ -39,7 +39,7 @@ class XmlUiBuilder {
 			case _: Context.error('Types list wrong type', typesExpr.pos);
 		}
 
-		types['tween'] = macro:pony.time.Tween;
+		types['tween'] = macro :pony.time.Tween;
 
 		if (cl.superClass != null) {
 			var submeta: Metadata = cl.superClass.t.get().meta.get();
@@ -48,7 +48,8 @@ class XmlUiBuilder {
 				switch m.expr {
 					case EObjectDecl(ts):
 						for (t in ts) types[t.field] = exprToComplex(t.expr);
-					case _: Context.error('Types list wrong type', m.pos);
+					case _:
+						Context.error('Types list wrong type', m.pos);
 				}
 			}
 		}
@@ -58,7 +59,8 @@ class XmlUiBuilder {
 			switch m.expr {
 				case EObjectDecl(ts):
 					for (t in ts) types[t.field] = exprToComplex(t.expr);
-				case _: Context.error('Types list wrong type', m.pos);
+				case _:
+					Context.error('Types list wrong type', m.pos);
 			}
 		}
 
@@ -66,13 +68,13 @@ class XmlUiBuilder {
 
 		var style: Style = new Map();
 		if (meta.checkMeta([':style'])) {
-			for (p in meta.getMeta(':style').params)
-				switch p.expr {
-					case EConst(CString(styleFile)):
-						var s = getStyle(styleFile);
-						for (k in s.keys()) style[k] = s[k];
-					case _: Context.error('Wrong style type', meta.getMeta(':style').params[0].pos);
-				}
+			for (p in meta.getMeta(':style').params) switch p.expr {
+				case EConst(CString(styleFile)):
+					var s = getStyle(styleFile);
+					for (k in s.keys()) style[k] = s[k];
+				case _:
+					Context.error('Wrong style type', meta.getMeta(':style').params[0].pos);
+			}
 		}
 
 		switch meta.getMeta(':ui').params[0].expr {
@@ -101,20 +103,24 @@ class XmlUiBuilder {
 				addId(fields, xml, style, types);
 
 				var obj: Expr = {
-					expr: EObjectDecl([ for (k in filters.keys()) { field: k, expr: mapToOExprObject(filters[k]) } ]),
+					expr: EObjectDecl([for (k in filters.keys()) { field: k, expr: mapToOExprObject(filters[k]) }]),
 					pos: Context.currentPos()
 				};
 				toConsructor = [];
 				fields.push({
 					name: '_createUI',
-					kind: FFun({args: [], ret: null, expr: macro {
-						createFilters($obj);
-						var root = ${genExpr(xml, style)};
-						$a{toConsructor};
-						return root;
-					}}),
+					kind: FFun({
+						args: [],
+						ret: null,
+						expr: macro {
+							createFilters($obj);
+							var root = ${genExpr(xml, style)};
+							$a{toConsructor};
+							return root;
+						}
+					}),
 					pos: Context.currentPos(),
-					access: [ #if (haxe_ver < 4.2) AOverride, #end APrivate ]
+					access: [#if (haxe_ver < 4.2) AOverride, #end APrivate]
 				});
 				toConsructor = [];
 				var pathes: Array<String> = [];
@@ -122,16 +128,24 @@ class XmlUiBuilder {
 				var pts: Array<String> = [];
 				for (p in pathes) if (pts.indexOf(p) == -1) pts.push(p);
 				var ps: Array<Expr> = [for (p in pts) macro $v{p}];
-				fields.push({ name: 'loadUI', kind: FFun({args: [{ name: 'cb', type: macro: Int -> Int -> Void }], ret: null,
-					expr: macro ${assetManager}.load('', $a{ps}, cb)}), pos: Context.currentPos(), access: [AStatic, APublic] });
-			case _: Context.error('Wrong ui type', meta.getMeta(':ui').params[0].pos);
+				fields.push({
+					name: 'loadUI',
+					kind: FFun({
+						args: [{ name: 'cb', type: macro :Int -> Int -> Void }],
+						ret: null,
+						expr: macro ${assetManager}.load('', $a{ps}, cb)
+					}),
+					pos: Context.currentPos(),
+					access: [AStatic, APublic]
+				});
+			case _:
+				Context.error('Wrong ui type', meta.getMeta(':ui').params[0].pos);
 		}
 
 		return fields;
 	}
 
 	#if macro
-
 	private static var gpath: String;
 
 	private static function exprToComplex(expr: Expr): ComplexType {
@@ -139,7 +153,7 @@ class XmlUiBuilder {
 	}
 
 	private static function mapToOExprObject(map: Map<String, String>): Dynamic {
-		return {expr: EObjectDecl([for (k in map.keys()) {field: k, expr: macro $v{map[k]}}]), pos: Context.currentPos()};
+		return { expr: EObjectDecl([for (k in map.keys()) { field: k, expr: macro $v{map[k]} }]), pos: Context.currentPos() };
 	}
 
 	private static function getXml(file: String): Fast {
@@ -147,7 +161,7 @@ class XmlUiBuilder {
 		try {
 			return new Fast(Xml.parse(File.getContent(StringTools.trim(file)))).elements.next();
 		} catch (e: haxe.xml.Parser.XmlParserException) {
-			return throw new Error(e.message, Context.makePosition({min: e.position, max: e.position + 1, file: file}));
+			return throw new Error(e.message, Context.makePosition({ min: e.position, max: e.position + 1, file: file }));
 		}
 	}
 
@@ -155,8 +169,8 @@ class XmlUiBuilder {
 		Context.registerModuleDependency(Context.getLocalModule(), file);
 		var xml: Fast = getXml(file);
 		var path: String = xml.has.path ? xml.att.path : '';
-		return [for (x in xml.elements) x.name =>
-			[for (a in x.x.attributes()) a => x.att.resolve(a)]
+		return [
+			for (x in xml.elements) x.name => [for (a in x.x.attributes()) a => x.att.resolve(a)]
 		];
 	}
 
@@ -164,8 +178,10 @@ class XmlUiBuilder {
 		Context.registerModuleDependency(Context.getLocalModule(), file);
 		var xml: Fast = getXml(file);
 		var path: String = xml.has.path ? xml.att.path : '';
-		return [for (x in xml.elements) x.name =>
-			[for (a in x.x.attributes()) a => (a == 'src' ? joinPathA(path, x.att.resolve(a)) : x.att.resolve(a))]
+		return [
+			for (x in xml.elements) x.name => [
+				for (a in x.x.attributes()) a => (a == 'src' ? joinPathA(path, x.att.resolve(a)) : x.att.resolve(a))
+			]
 		];
 	}
 
@@ -196,14 +212,11 @@ class XmlUiBuilder {
 			if (attrs.exists('path')) pathes.push(joinPath(path, attrs['path']));
 		}
 		if (xml.has.src) {
-			for (s in xml.att.src.split(','))
-				pathes.push(joinPath(path, StringTools.trim(s)));
+			for (s in xml.att.src.split(',')) pathes.push(joinPath(path, StringTools.trim(s)));
 		} else {
 			var attrs: Map<String, String> = new Map();
 			addStyle(xml.name, attrs, style);
-			if (attrs.exists('src'))
-				for (e in joinPathA(path, attrs['src']).split(','))
-					pathes.push(StringTools.ltrim(e));
+			if (attrs.exists('src')) for (e in joinPathA(path, attrs['src']).split(',')) pathes.push(StringTools.ltrim(e));
 		}
 		for (x in xml.elements) getPathes(pathes, x, style, path);
 	}
@@ -222,8 +235,7 @@ class XmlUiBuilder {
 
 		var attrs: Map<String, String> = new Map();
 		var name = addStyle(xml.name, attrs, style);
-		for (k in xml.x.attributes()) if (k != 'id')
-			attrs[k] = xml.att.resolve(k);
+		for (k in xml.x.attributes()) if (k != 'id') attrs[k] = xml.att.resolve(k);
 
 		if (attrs.exists('path')) path = joinPath(path, attrs['path']);
 		if (attrs.exists('src')) attrs['src'] = joinPathA(path, attrs['src']);
@@ -235,7 +247,7 @@ class XmlUiBuilder {
 			}
 		];
 		var textContent: String = content.length == 0 && xml.x.firstChild() != null ? xml.innerData : '';
-		var obj: Expr = { expr: EObjectDecl([for (k in attrs.keys()) {field: k, expr: macro $v{attrs[k]}}]), pos: Context.currentPos() };
+		var obj: Expr = { expr: EObjectDecl([for (k in attrs.keys()) { field: k, expr: macro $v{attrs[k]} }]), pos: Context.currentPos() };
 
 		if (name == 'tween') {
 			if (!xml.has.id) throw 'Not have id';
@@ -243,12 +255,8 @@ class XmlUiBuilder {
 			var id: String = prefix + xml.att.id;
 			toConsructor.push(macro {
 				$i{id} = new pony.time.Tween(
-					$v{xml.has.type ? xml.att.type : 'linear'},
-					$v{xml.has.time ? xml.att.time : '1s'},
-					$v{xml.isTrue('invert')},
-					$v{xml.isTrue('loop')},
-					$v{xml.isTrue('pingpong')},
-					$v{xml.isFalse('fixedTime')}
+					$v{xml.has.type ? xml.att.type : 'linear'}, $v{xml.has.time ? xml.att.time : '1s'}, $v{xml.isTrue('invert')},
+					$v{xml.isTrue('loop')}, $v{xml.isTrue('pingpong')}, $v{xml.isFalse('fixedTime')}
 				);
 				$i{id}.onUpdate << function(value: Float): Void {
 					var d = tweens[$v{id}];
@@ -258,10 +266,16 @@ class XmlUiBuilder {
 			return null;
 		}
 
-		var expr: Expr = !inRepeat ? macro createUIElement($v{name}, $obj, $a{content}, $v{textContent}) :
-			macro { name: $v{name}, attrs: $obj, content: ($a{content}: Array<Dynamic>), textContent: textContent };
+		var expr: Expr = !inRepeat
+			? macro createUIElement($v{name}, $obj, $a{content}, $v{textContent})
+			: macro {
+				name: $v{name},
+				attrs: $obj,
+				content: ($a{content}: Array<Dynamic>),
+				textContent: textContent
+			};
 		if (xml.has.id)
-			return macro cast ($i{prefix + xml.att.id} = cast ${expr});
+			return macro cast($i{prefix + xml.att.id} = cast ${expr});
 		else
 			return macro ${expr};
 	}
@@ -269,8 +283,7 @@ class XmlUiBuilder {
 	private static function addStyle(name: String, attrs: Map<String, String>, style: Style): String {
 		if (!style.exists(name)) return name;
 		var n: String = name;
-		if (style[name].exists('extends'))
-			n = addStyle(style[name]['extends'], attrs, style);
+		if (style[name].exists('extends')) n = addStyle(style[name]['extends'], attrs, style);
 		for (k in style[name].keys()) if (k != 'extends') {
 			var s: String = style[name][k];
 			var att1: Bool = attrs[k] != null && attrs[k].charAt(0) == ',';
@@ -289,7 +302,9 @@ class XmlUiBuilder {
 		return n;
 	}
 
-	private static function addId(fields: Array<Field>, xml: Fast, style: Style, types: Map<String, ComplexType>, prefix: String = ''): Void {
+	private static function addId(
+		fields: Array<Field>, xml: Fast, style: Style, types: Map<String, ComplexType>, prefix: String = ''
+	): Void {
 		if (xml.name == 'include') {
 			var xml = getXml(joinPath(gpath, xml.innerData));
 			addId(fields, xml, style, types, prefix);
@@ -298,8 +313,10 @@ class XmlUiBuilder {
 		if (xml.has.id) {
 			id = prefix + xml.att.id;
 			fields.push({
-				name: id, kind:FProp('default', 'null', getType(xml.name, style, types)),
-				pos: Context.currentPos(), access: [APublic]
+				name: id,
+				kind: FProp('default', 'null', getType(xml.name, style, types)),
+				pos: Context.currentPos(),
+				access: [APublic]
 			});
 			id += '_';
 		}
@@ -307,7 +324,8 @@ class XmlUiBuilder {
 	}
 
 	private static function getType(name: String, style: Style, types: Map<String, ComplexType>): ComplexType {
-		return if (types.exists(name)) types[name];
+		return if (types.exists(name))
+			types[name];
 		else if (style.exists(name))
 			getType(style[name]['extends'], style, types);
 		else
@@ -323,7 +341,6 @@ class XmlUiBuilder {
 		if (a.length > 0 && a.charCodeAt(a.length - 1) != '/'.code) a += '/';
 		return a + b;
 	}
-
 	#end
 
 }

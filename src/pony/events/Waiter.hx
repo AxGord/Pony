@@ -15,8 +15,10 @@ class Waiter {
 	}
 
 	public function wait(cb: Void -> Void): Void {
-		if (ready) cb();
-		else f.push(cb);
+		if (ready)
+			cb();
+		else
+			f.push(cb);
 	}
 
 	public function end(): Void {

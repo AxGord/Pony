@@ -41,8 +41,10 @@ class HtmlVideoUIFS extends HtmlVideoUI {
 	private var hideProcess: Bool = false;
 	private var showProcess: Bool = false;
 
-	public function new(targetRect: Rect<Float>, fsRect: Or<Border<Float>, Rect<Float>>, ?fsPos: Point<Float>, ?css: String, ?fscss: String,
-			?transition: String, ?app: pony.pixi.App, ?options: HtmlVideoOptions, ?clickTimeout: Time, ceil: Bool = false, fixed: Bool = false) {
+	public function new(
+		targetRect: Rect<Float>, fsRect: Or<Border<Float>, Rect<Float>>, ?fsPos: Point<Float>, ?css: String, ?fscss: String,
+		?transition: String, ?app: pony.pixi.App, ?options: HtmlVideoOptions, ?clickTimeout: Time, ceil: Bool = false, fixed: Bool = false
+	) {
 		if (css != null) {
 			css = JsTools.normalizeCss(css);
 			normalCss = css;
@@ -68,8 +70,7 @@ class HtmlVideoUIFS extends HtmlVideoUI {
 				listenClick();
 				clickTimer.complete << listenClick;
 			}
-			(video.loadProgress.changeRun - false - true)
-			|| video.onEnd << fullscreen.disable;
+			(video.loadProgress.changeRun - false - true) || video.onEnd << fullscreen.disable;
 			fullscreen.onEnable << openFullScreenHandler;
 			fullscreen.onDisable << closeFullScreenHandler;
 			video.style.cursor = 'pointer';
@@ -77,7 +78,8 @@ class HtmlVideoUIFS extends HtmlVideoUI {
 			if (fscss != null) {
 				fsCss = JsTools.normalizeCss(fscss);
 			}
-		} createShowAndHideTransitions();
+		}
+		createShowAndHideTransitions();
 	}
 
 	@SuppressWarnings('checkstyle:MagicNumber')
@@ -148,7 +150,7 @@ class HtmlVideoUIFS extends HtmlVideoUI {
 		var t = a.shift();
 		var r = [for (e in a) '$e $t'].join(', ');
 		transition = getTransition(r);
-		transitionDelay = DTimer.createFixedTimer((t : Time) + 10);
+		transitionDelay = DTimer.createFixedTimer((t: Time) + 10);
 		transitionDelay.complete << removeTransition;
 	}
 
@@ -176,8 +178,7 @@ class HtmlVideoUIFS extends HtmlVideoUI {
 		}
 	}
 
-	private function removeTransition(): Void
-		rmTransition(transition);
+	private function removeTransition(): Void rmTransition(transition);
 
 	private function removeHideTransition(): Void {
 		rmTransition(hideTransition);
@@ -235,8 +236,7 @@ class HtmlVideoUIFS extends HtmlVideoUI {
 			ncss = [];
 			var r = JsTools.splitCss(a);
 			for (e in css) {
-				if (r.indexOf(e) == -1)
-					ncss.push(e);
+				if (r.indexOf(e) == -1) ncss.push(e);
 			}
 		} else {
 			ncss = css;

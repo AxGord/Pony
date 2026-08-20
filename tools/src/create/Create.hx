@@ -58,25 +58,36 @@ class Create {
 
 	private static function setProjectConfig(project: Project, type: ProjectType): Void {
 		switch type {
-			case ProjectType.Server: create.targets.Server.set(project);
-			case ProjectType.Sniff: create.targets.Server.sniff(project);
-			case ProjectType.JS: create.targets.JS.set(project);
-			case ProjectType.Swf: create.targets.Swf.swf(project);
-			case ProjectType.Swc: create.targets.Swf.swc(project);
-			case ProjectType.Air: create.targets.Swf.adt(project, testSertFile);
-			case ProjectType.CC: create.targets.CC.set(project);
-			case ProjectType.Pixi, ProjectType.Pixixml: create.targets.Pixi.set(project);
+			case ProjectType.Server:
+				create.targets.Server.set(project);
+			case ProjectType.Sniff:
+				create.targets.Server.sniff(project);
+			case ProjectType.JS:
+				create.targets.JS.set(project);
+			case ProjectType.Swf:
+				create.targets.Swf.swf(project);
+			case ProjectType.Swc:
+				create.targets.Swf.swc(project);
+			case ProjectType.Air:
+				create.targets.Swf.adt(project, testSertFile);
+			case ProjectType.CC:
+				create.targets.CC.set(project);
+			case ProjectType.Pixi, ProjectType.Pixixml:
+				create.targets.Pixi.set(project);
 			case ProjectType.Pixielectron:
 				create.targets.Electron.set(project);
 				create.targets.Pixi.set(project, true);
 				setElectronSecondBuild(project);
-			case ProjectType.Heaps, ProjectType.Heapsxml: create.targets.Heaps.set(project);
+			case ProjectType.Heaps, ProjectType.Heapsxml:
+				create.targets.Heaps.set(project);
 			case ProjectType.Heapselectron:
 				create.targets.Electron.set(project);
 				create.targets.Heaps.setJs(project, true);
 				setElectronSecondBuild(project);
-			case ProjectType.Cordova: create.targets.Cordova.set(project);
-			case ProjectType.Node: create.targets.Node.set(project);
+			case ProjectType.Cordova:
+				create.targets.Cordova.set(project);
+			case ProjectType.Node:
+				create.targets.Node.set(project);
 			case ProjectType.Site:
 				FileSystem.createDirectory('src/models');
 				create.targets.Node.set(project);
@@ -90,7 +101,7 @@ class Create {
 					'database' => 'testdatabase'
 				]: ConfigOptions);
 				project.config.options['vk'] = new ConfigOptions();
-				project.haxelib.addLib({name: 'continuation'});
+				project.haxelib.addLib({ name: 'continuation' });
 			case ProjectType.Electron:
 				create.targets.Electron.set(project);
 				create.targets.JS.set(project, true);
@@ -99,8 +110,9 @@ class Create {
 				create.targets.Electron.set(project);
 				create.targets.JS.set(project, true);
 				setElectronSecondBuild(project);
-				project.haxelib.addLib({name: 'monaco-editor', version: '0.13.0'});
-			case ProjectType.Neko: create.targets.Neko.set(project);
+				project.haxelib.addLib({ name: 'monaco-editor', version: '0.13.0' });
+			case ProjectType.Neko:
+				create.targets.Neko.set(project);
 		}
 	}
 
@@ -114,17 +126,28 @@ class Create {
 			case ProjectType.Swf:
 				project.build.createEmptyMainhx();
 				if (vscAllow) VSCode.createFlash(project.build.outputPath, outputFile);
-			case ProjectType.Swc: if (vscAllow) VSCode.createExtensions(false, true);
-			case ProjectType.Air: createAirData(project, vscAllow);
-			case ProjectType.JS: createJsData(project, vscAllow);
-			case ProjectType.CC: createCCData(project, vscAllow);
-			case ProjectType.Pixi: createPixiData(project, vscAllow);
-			case ProjectType.Pixixml: createPixiXmlData(project, vscAllow);
-			case ProjectType.Pixielectron: createPixiElectronData(project, vscAllow);
-			case ProjectType.Heaps: createHeapsData(project, vscAllow);
-			case ProjectType.Heapsxml: createHeapsXmlData(project, vscAllow);
-			case ProjectType.Heapselectron: createHeapsElectronData(project, vscAllow);
-			case ProjectType.Cordova: createCordovaData(project, vscAllow);
+			case ProjectType.Swc:
+				if (vscAllow) VSCode.createExtensions(false, true);
+			case ProjectType.Air:
+				createAirData(project, vscAllow);
+			case ProjectType.JS:
+				createJsData(project, vscAllow);
+			case ProjectType.CC:
+				createCCData(project, vscAllow);
+			case ProjectType.Pixi:
+				createPixiData(project, vscAllow);
+			case ProjectType.Pixixml:
+				createPixiXmlData(project, vscAllow);
+			case ProjectType.Pixielectron:
+				createPixiElectronData(project, vscAllow);
+			case ProjectType.Heaps:
+				createHeapsData(project, vscAllow);
+			case ProjectType.Heapsxml:
+				createHeapsXmlData(project, vscAllow);
+			case ProjectType.Heapselectron:
+				createHeapsElectronData(project, vscAllow);
+			case ProjectType.Cordova:
+				createCordovaData(project, vscAllow);
 			case ProjectType.Node:
 				project.build.createEmptyMainhx();
 				if (vscAllow) VSCode.createNode(project.build.outputPath, outputFile);
@@ -147,9 +170,7 @@ class Create {
 
 	private static function createAirData(project: Project, vscAllow: Bool): Void {
 		project.build.createEmptyMainhx();
-		Template.gen('air/', [
-			create.targets.Swf.APP_XML => '::OUTPUT::' + create.targets.Swf.APP_XML
-		], [
+		Template.gen('air/', [create.targets.Swf.APP_XML => '::OUTPUT::' + create.targets.Swf.APP_XML], [
 			'OUTPUT' => project.build.outputPath,
 			'APP' => project.build.outputFile,
 			'EXT' => project.build.outputExt(),
@@ -242,17 +263,13 @@ class Create {
 		project.secondbuild.createMainhx('monacotemplate.hx.tpl');
 		if (vscAllow) VSCode.createElectron(project.build.outputPath);
 		genSecondBuildHtml(project);
-		create.targets.Node.createAndSaveNpmPackageToOutputDir(
-			project,
-			[
-				'monaco-editor' => '^0.13.0',
-				'monaco-editor-textmate' => '^1.0.1',
-				'monaco-loader' => '^0.8.2',
-				'monaco-textmate' => '^1.0.1',
-				'onigasm' => '^1.3.1'
-			],
-			electronVersion
-		);
+		create.targets.Node.createAndSaveNpmPackageToOutputDir(project, [
+			'monaco-editor' => '^0.13.0',
+			'monaco-editor-textmate' => '^1.0.1',
+			'monaco-loader' => '^0.8.2',
+			'monaco-textmate' => '^1.0.1',
+			'onigasm' => '^1.3.1'
+		], electronVersion);
 	}
 
 	private static function createSiteData(project: Project, vscAllow: Bool): Void {
@@ -291,7 +308,7 @@ class Create {
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function createDirs(a: Array<String>): Void for (d in a) FileSystem.createDirectory(d);
 
-	private static function saveTemplate(file:String, template:String, ?replaces: Map<String, String>):Void {
+	private static function saveTemplate(file: String, template: String, ?replaces: Map<String, String>): Void {
 		var data: String = Resource.getString(template);
 		if (replaces != null) for (key in replaces.keys()) data = StringTools.replace(data, '::$key::', replaces[key]);
 		File.saveContent(file, data);

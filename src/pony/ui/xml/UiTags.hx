@@ -2,6 +2,7 @@ package pony.ui.xml;
 
 #if (haxe_ver >= 4.2) enum #else @:enum #end
 abstract UiTags(String) from String {
+
 	var repeat = 'repeat';
 	var object = 'object';
 	var sw = 'sw';
@@ -18,4 +19,5 @@ abstract UiTags(String) from String {
 	var lightButton = 'lightButton';
 	var scrollBox = 'scrollBox';
 	var slider = 'slider';
+
 }

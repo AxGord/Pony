@@ -21,6 +21,7 @@ class FSButton extends Button {
 	}
 
 	private function fsEnableHandler(): Void core.bMode = true;
+
 	private function fsDisableHandler(): Void core.bMode = false;
 
 }

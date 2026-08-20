@@ -42,8 +42,7 @@ class UniversalDrag {
 	#end
 
 	public static function startUniversalDrag(dragged: IDisplayObject, lockCenter: Bool = false, bounds: Rectangle = null): Void {
-		if (_dragged != null)
-			stopUniversalDrag(_dragged);
+		if (_dragged != null) stopUniversalDrag(_dragged);
 
 		_dragged = dragged;
 
@@ -68,14 +67,12 @@ class UniversalDrag {
 		TouchManager.addListener(TouchManager.GLOBAL, onDrag, [TouchEventType.Move]);
 
 		#if tweenmax
-		if (_activeTween != null)
-			_activeTween.kill();
+		if (_activeTween != null) _activeTween.kill();
 		#end
 	}
 
 	private static function onDrag(e: TouchManagerEvent): Void {
-		if (e.touchID != _dragTouchId)
-			return;
+		if (e.touchID != _dragTouchId) return;
 
 		bufferPoint.x = e.globalX;
 		bufferPoint.y = e.globalY;
@@ -91,20 +88,15 @@ class UniversalDrag {
 
 	private static function toBounds(): Void {
 		if (_dragBounds != null) {
-			if (_dragged.x > _dragBounds.right)
-				_dragged.x = _dragBounds.right;
-			if (_dragged.y > _dragBounds.bottom)
-				_dragged.y = _dragBounds.bottom;
-			if (_dragged.x < _dragBounds.x)
-				_dragged.x = _dragBounds.x;
-			if (_dragged.y < _dragBounds.y)
-				_dragged.y = _dragBounds.y;
+			if (_dragged.x > _dragBounds.right) _dragged.x = _dragBounds.right;
+			if (_dragged.y > _dragBounds.bottom) _dragged.y = _dragBounds.bottom;
+			if (_dragged.x < _dragBounds.x) _dragged.x = _dragBounds.x;
+			if (_dragged.y < _dragBounds.y) _dragged.y = _dragBounds.y;
 		}
 	}
 
 	public static function stopUniversalDrag(dragged: IDisplayObject): Void {
-		if (_dragged != dragged)
-			return;
+		if (_dragged != dragged) return;
 
 		TouchManager.removeListener(TouchManager.GLOBAL, onDrag);
 
@@ -112,13 +104,11 @@ class UniversalDrag {
 	}
 
 	public static function stopUniversalDragKinetic(dragged: IDisplayObject): Void {
-		if (_dragged != dragged)
-			return;
+		if (_dragged != dragged) return;
 
 		TouchManager.removeListener(TouchManager.GLOBAL, onDrag);
 
-		if (_dragged == null)
-			return;
+		if (_dragged == null) return;
 
 		#if tweenmax
 		var prevX: Float = _dragged.x;
@@ -135,7 +125,7 @@ class UniversalDrag {
 		_dragged.x = prevX;
 		_dragged.y = prevY;
 
-		_activeTween = TweenMax.to(_dragged, KINETIC_DRAG_DURATION, {x: toX, y: toY});
+		_activeTween = TweenMax.to(_dragged, KINETIC_DRAG_DURATION, { x: toX, y: toY });
 		#end
 
 		_dragged = null;
@@ -150,7 +140,9 @@ class UniversalDrag {
 #if starling
 class UniversalDragStarling {
 
-	public static function startUniversalDrag(dragged: starling.display.DisplayObject, lockCenter: Bool = false, bounds: Rectangle = null): Void {
+	public static function startUniversalDrag(
+		dragged: starling.display.DisplayObject, lockCenter: Bool = false, bounds: Rectangle = null
+	): Void {
 		UniversalDrag.startUniversalDrag(cast dragged, lockCenter, bounds);
 	}
 
@@ -167,7 +159,9 @@ class UniversalDragStarling {
 
 class UniversalDragFlash {
 
-	public static function startUniversalDrag(dragged: flash.display.DisplayObject, lockCenter: Bool = false, bounds: Rectangle = null): Void {
+	public static function startUniversalDrag(
+		dragged: flash.display.DisplayObject, lockCenter: Bool = false, bounds: Rectangle = null
+	): Void {
 		UniversalDrag.startUniversalDrag(cast dragged, lockCenter, bounds);
 	}
 

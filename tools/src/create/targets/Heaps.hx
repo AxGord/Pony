@@ -51,9 +51,27 @@ class Heaps {
 			mute: true,
 			y: true
 		});
-		project.haxelib.addLib({name: 'hldx', parent: 'hashlink', path: 'libs/directx/', version: HLSDL_VERSION, mute: true});
-		project.haxelib.addLib({name: 'hlsdl', parent: 'hashlink', path: 'libs/sdl/', version: HLSDL_VERSION, mute: true});
-		project.haxelib.addLib({name: 'hashlink', parent: 'hashlink', path: 'other/haxelib/', version: 'dev', mute: true});
+		project.haxelib.addLib({
+			name: 'hldx',
+			parent: 'hashlink',
+			path: 'libs/directx/',
+			version: HLSDL_VERSION,
+			mute: true
+		});
+		project.haxelib.addLib({
+			name: 'hlsdl',
+			parent: 'hashlink',
+			path: 'libs/sdl/',
+			version: HLSDL_VERSION,
+			mute: true
+		});
+		project.haxelib.addLib({
+			name: 'hashlink',
+			parent: 'hashlink',
+			path: 'other/haxelib/',
+			version: 'dev',
+			mute: true
+		});
 		project.download.addLib('hlwin');
 		project.secondbuild.active = true;
 		project.secondbuild.appNode = 'win';

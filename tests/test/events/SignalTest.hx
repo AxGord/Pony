@@ -6,16 +6,14 @@ import massive.munit.async.AsyncFactory;
 import pony.events.*;
 import pony.Tools;
 
-class SignalTest
-{
+class SignalTest {
 
 	@Test
-	public function shortCuts():Void
-	{
-		var r:String;
+	public function shortCuts(): Void {
+		var r: String;
 		var e = new Event2();
-		var s:Signal2<String, String> = e;
-		s.add(function(name:String, end:String) r = 'ok, '+name+end);
+		var s: Signal2<String, String> = e;
+		s.add(function(name: String, end: String) r = 'ok, ' + name + end);
 		e.dispatch('men', '?');
 		Assert.areEqual(r, 'ok, men?');
 		e.dispatch('glass', '!');
@@ -24,11 +22,10 @@ class SignalTest
 	}
 
 	@Test
-	public function clearDispath():Void
-	{
-		var r:String;
+	public function clearDispath(): Void {
+		var r: String;
 		var e = new Event0();
-		var s:Signal0 = e;
+		var s: Signal0 = e;
 		s.add(function() r = 'ok');
 		e.dispatch();
 		Assert.areEqual(r, 'ok');
@@ -36,12 +33,12 @@ class SignalTest
 	}
 
 	@Test
-	public function remove():Void {
+	public function remove(): Void {
 
-		var c:Int = 0;
-		var f:Void->Void = function() c++;
+		var c: Int = 0;
+		var f: Void -> Void = function() c++;
 		var e = new Event0();
-		var s:Signal0 = e;
+		var s: Signal0 = e;
 		s.add(f);
 		e.dispatch();
 		e.dispatch();
@@ -51,11 +48,11 @@ class SignalTest
 	}
 
 	@Test
-	public function removeAll():Void {
-		var c:Int = 0;
+	public function removeAll(): Void {
+		var c: Int = 0;
 		var f = function() c++;
 		var e = new Event0();
-		var s:Signal0 = e;
+		var s: Signal0 = e;
 		s.add(f);
 		e.dispatch();
 		e.dispatch();
@@ -63,6 +60,7 @@ class SignalTest
 		e.dispatch();
 		Assert.areEqual(c, 2);
 	}
+
 	/*
 	@Test
 	public function returns():Void {
@@ -91,23 +89,23 @@ class SignalTest
 		Assert.isTrue(f);
 		Assert.isTrue(f2);
 	}
-	*/
+	 */
 	@Test
-	public function s0():Void {
-		var f:Bool = false;
+	public function s0(): Void {
+		var f: Bool = false;
 		var e = new Event0();
-		var s:Signal0 = e;
+		var s: Signal0 = e;
 		s.add(function() f = true);
 		e.dispatch();
 		Assert.isTrue(f);
 	}
 
 	@Test
-	public function sub():Void {
-		var f:Bool = false;
+	public function sub(): Void {
+		var f: Bool = false;
 		var e = new Event1();
-		var s:Signal1<Int> = e;
-		s.sub(3).add(function()f = true);
+		var s: Signal1<Int> = e;
+		s.sub(3).add(function() f = true);
 		e.dispatch(5);
 		Assert.isFalse(f);
 		e.dispatch(3);
@@ -115,16 +113,17 @@ class SignalTest
 	}
 
 	@Test
-	public function sub1():Void {
-		var f:Bool = false;
+	public function sub1(): Void {
+		var f: Bool = false;
 		var e = new Event2();
-		var s:Signal2<Int,Int> = e;
+		var s: Signal2<Int, Int> = e;
 		s.sub1(3).add(function() f = true);
-		e.dispatch(5,4);
+		e.dispatch(5, 4);
 		Assert.isFalse(f);
-		e.dispatch(3,4);
+		e.dispatch(3, 4);
 		Assert.isTrue(f);
 	}
+
 	/*
 	@Test
 	public function buildListener():Void {
@@ -359,10 +358,10 @@ class SignalTest
 		Assert.isTrue(a);
 		Assert.isTrue(b);
 	}
-	*/
+	 */
 
 	@Test
-	public function takeSubListener():Void {
+	public function takeSubListener(): Void {
 		var event: Event0 = new Event0();
 		var signal: Signal0 = event;
 		var subEvent: Event0 = new Event0();

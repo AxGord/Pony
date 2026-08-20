@@ -4,13 +4,10 @@ import h2d.Drawable;
 import h2d.Graphics;
 import h2d.Object;
 import h2d.Scene;
-
 import haxe.Timer;
-
 import hxd.App;
 import hxd.SceneEvents.InteractiveScene;
 import hxd.Window;
-
 import pony.Config;
 import pony.color.UColor;
 import pony.events.Signal0;
@@ -22,7 +19,6 @@ import pony.magic.HasSignal;
 import pony.time.DeltaTime;
 import pony.time.Time;
 import pony.ui.keyboard.Keyboard;
-
 #if js
 import js.html.Element;
 import pony.js.SmartCanvas;
@@ -59,7 +55,7 @@ import pony.js.SmartCanvas;
 	private var border: Null<Graphics>;
 	private var lastTick: Float = Timer.stamp();
 
-	public function new(?size: Point<Int>, ?color: UColor, #if js ?parentDom: Element, #end sizeUpdate: Bool = true) {
+	public function new(?size: Point<Int>, ?color: UColor #if js, ?parentDom: Element #end, sizeUpdate: Bool = true) {
 		#if js
 		Keyboard.preventDefault = false;
 		canvas = new SmartCanvas(size, parentDom);
@@ -98,7 +94,6 @@ import pony.js.SmartCanvas;
 	}
 
 	#if hl
-
 	override private function mainLoop(): Void {
 		#if debugTimes
 		systemTime = Timer.stamp() - lastTick - heapsTime - updateTime;
@@ -111,9 +106,7 @@ import pony.js.SmartCanvas;
 		heapsTime = Timer.stamp() - lastTick - updateTime;
 		#end
 	}
-
 	#elseif js
-
 	override private function mainLoop(): Void {
 		var now: Float = Timer.stamp();
 		var elapsed: Float = now - lastTick;
@@ -129,7 +122,6 @@ import pony.js.SmartCanvas;
 			#end
 		}
 	}
-
 	#end
 
 	override private function init(): Void eInit.dispatch(this);
@@ -157,7 +149,6 @@ import pony.js.SmartCanvas;
 	}
 
 	#if !js
-
 	private function sdlInitHandler(): Void {
 		@:privateAccess engine.window.addResizeEvent(windowResizeHandler);
 	}
@@ -165,7 +156,6 @@ import pony.js.SmartCanvas;
 	private function windowResizeHandler(): Void {
 		@:privateAccess canvas.setSize(engine.window.window.width, engine.window.window.height);
 	}
-
 	#end
 
 	private function set_sizeUpdate(b: Bool): Bool {

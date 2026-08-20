@@ -69,14 +69,10 @@ class HtmlVideo implements HasSignal implements HasLink {
 
 	public function new(?options: HtmlVideoOptions) {
 		if (options != null) {
-			if (options.bufferingTreshhold != null)
-				this.options.bufferingTreshhold = options.bufferingTreshhold;
-			if (options.retryDelay != null)
-				this.options.retryDelay = options.retryDelay;
-			if (options.maxRetries != null)
-				this.options.maxRetries = options.maxRetries;
-			if (options.virtualPlay != null)
-				this.options.virtualPlay = options.virtualPlay;
+			if (options.bufferingTreshhold != null) this.options.bufferingTreshhold = options.bufferingTreshhold;
+			if (options.retryDelay != null) this.options.retryDelay = options.retryDelay;
+			if (options.maxRetries != null) this.options.maxRetries = options.maxRetries;
+			if (options.virtualPlay != null) this.options.virtualPlay = options.virtualPlay;
 		}
 
 		createVideoElement();
@@ -181,14 +177,18 @@ class HtmlVideo implements HasSignal implements HasLink {
 	}
 
 	public function play(): Void if (options.virtualPlay) position.enable();
+
 	public function stop(): Void if (options.virtualPlay) position.disable();
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function set_startTime(v: Time): Time return position.start = v;
 
 	private function muteHandler(): Void videoElement.muted = true;
+
 	private function unmuteHandler(): Void if (loadProgress.run) videoElement.muted = false;
+
 	private function setActualMuted(): Void videoElement.muted = muted.enabled;
+
 	private function updateResultVisible(): Void resultVisible = visible.enabled && loadProgress.run;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
@@ -204,14 +204,16 @@ class HtmlVideo implements HasSignal implements HasLink {
 	private inline function get_style(): CSSStyleDeclaration return videoElement.style;
 
 	private function showHtmlElement(): Void videoElement.style.display = 'block';
+
 	private function hideHtmlElement(): Void videoElement.style.display = 'none';
+
 	private function videoClickHandler(): Void eClick.dispatch();
 
 	private function playVideo(): Void {
 		if (!loadProgress.run || loader.isPlaying) return;
 		try {
 			videoElement.play();
-		} catch (_:Any) {
+		} catch (_: Any) {
 			DTimer.fixedDelay(1000, playVideo);
 		}
 		if (!pony.JsTools.isMobile) videoElement.muted = muted.enabled;
@@ -258,8 +260,7 @@ class HtmlVideo implements HasSignal implements HasLink {
 		videoSource.addEventListener('error', videoSourceErrorHandler);
 		videoSource.src = url;
 		element.appendChild(videoSource);
-		if (!playingbefore)
-			element.load();
+		if (!playingbefore) element.load();
 		unloaded = false;
 		eLoad.dispatch();
 	}
@@ -270,8 +271,7 @@ class HtmlVideo implements HasSignal implements HasLink {
 		} else {
 			var playingbefore = isPlaying;
 			_unloadVideo();
-			if (playingbefore)
-				element.load();
+			if (playingbefore) element.load();
 		}
 	}
 
@@ -279,8 +279,7 @@ class HtmlVideo implements HasSignal implements HasLink {
 		eUnload.dispatch();
 		element.muted = true;
 		retryCount = 0;
-		if (unloaded)
-			return;
+		if (unloaded) return;
 		if (videoSource != null) {
 			videoSource.src = '';
 			videoSource.removeEventListener('error', videoSourceErrorHandler);
@@ -307,6 +306,7 @@ class HtmlVideo implements HasSignal implements HasLink {
 	}
 
 	public function qualityUp(): Void if (qualities != null && qualityIndex < qualities.length - 1) qualityIndex++;
+
 	public function qualityDown(): Void if (qualities != null && qualityIndex > 0) qualityIndex--;
 
 }
@@ -342,16 +342,17 @@ class HtmlVideo implements HasSignal implements HasLink {
 
 	public inline function dispathEnd(): Void eEnd.saveDispatch();
 
-	@:abstract private inline function get_elementCurrentTime(): Float return try element.currentTime catch (_:Any) 0;
+	@:abstract private inline function get_elementCurrentTime(): Float return try element.currentTime catch (_: Any) 0;
 
 	@:abstract private inline function set_elementCurrentTime(v: Float): Float {
 		try {
 			element.currentTime = v;
-		} catch (_:Any) {}
+		} catch (_: Any) {}
 		return v;
 	}
 
 	private function enableHandler(): Void timer.start();
+
 	private function disableHandler(): Void timer.stop();
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
@@ -463,8 +464,7 @@ class HtmlVideo implements HasSignal implements HasLink {
 	private function slowSpeedDetected(): Void {
 		onFullLoad >> endLoadHandler;
 		var time = (Date.now().getTime() - beginLoadTime) / 1000;
-		if (time - beginLoadTime > 10)
-			eQualityDown.dispatch();
+		if (time - beginLoadTime > 10) eQualityDown.dispatch();
 	}
 
 	private function endLoadHandler(): Void {

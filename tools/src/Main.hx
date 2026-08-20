@@ -1,5 +1,4 @@
 import module.Module;
-
 import pony.Fast;
 import pony.Tools;
 import pony.time.MainLoop;
@@ -19,8 +18,7 @@ class Main {
 		Sys.println('');
 		Sys.println('Command-Line Tools');
 		Sys.println(
-			Utils.ansiForeground('Library version: ', AnsiForeground.LightGray) +
-			Utils.ponyVersion + ' [' + Utils.getHaxelibVersion() + ']'
+			Utils.ansiForeground('Library version: ', AnsiForeground.LightGray) + Utils.ponyVersion + ' [' + Utils.getHaxelibVersion() + ']'
 		);
 		Sys.println(Utils.ansiForeground('Library path: ', AnsiForeground.LightGray) + Utils.libPath);
 		Sys.println(Utils.ansiForeground('Build date: ', AnsiForeground.LightGray) + Tools.getBuildDate());
@@ -135,9 +133,12 @@ class Main {
 		var deny: Array<String> = [];
 		var allow: Array<String> = [];
 		for (a in args) switch a.charAt(0) {
-			case '-': deny.push(a.substr(1));
-			case '+': allow.push(a.substr(1));
-			case _: nArgs.push(a);
+			case '-':
+				deny.push(a.substr(1));
+			case '+':
+				allow.push(a.substr(1));
+			case _:
+				nArgs.push(a);
 		}
 		modules.deny = deny;
 		modules.allow = allow;
@@ -165,8 +166,7 @@ class Main {
 			var arg: String = null;
 			while (args.length > 0) {
 				arg = args.shift();
-				if (arg == 'all')
-					break;
+				if (arg == 'all') break;
 				argsBefore.push(arg);
 			}
 			while (args.length > 0) {

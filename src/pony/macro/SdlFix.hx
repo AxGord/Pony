@@ -1,7 +1,6 @@
 package pony.macro;
 
 #if macro
-
 import haxe.macro.Context;
 import haxe.macro.Expr;
 
@@ -28,5 +27,4 @@ using StringTools;
 	}
 
 }
-
 #end

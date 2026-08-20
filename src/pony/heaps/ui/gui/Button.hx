@@ -4,15 +4,12 @@ import pony.time.TimeInterval;
 import pony.time.Tween;
 import h2d.Interactive;
 import h2d.Object;
-
 #if (heaps >= '2.0.0')
 import h3d.Vector4 as Vector;
 #else
 import h3d.Vector;
 #end
-
 import hxd.Cursor;
-
 import pony.geom.Point;
 import pony.geom.IWH;
 import pony.magic.HasLink;
@@ -58,15 +55,21 @@ import pony.ui.touch.Touchable;
 				case 1:
 					tween.onUpdate << tweenUpdateHandler;
 					core.onVisual << animVisual1Handler;
-				case _: throw 'Not supported';
+				case _:
+					throw 'Not supported';
 			}
 		} else {
 			switch nodes.length {
-				case 0: throw 'Not supported';
-				case 1: core.onVisual << visual1Handler;
-				case 2: core.onVisual << visual2Handler;
-				case 3: core.onVisual << visual3Handler;
-				case _: core.onVisual << visualNHandler;
+				case 0:
+					throw 'Not supported';
+				case 1:
+					core.onVisual << visual1Handler;
+				case 2:
+					core.onVisual << visual2Handler;
+				case 3:
+					core.onVisual << visual3Handler;
+				case _:
+					core.onVisual << visualNHandler;
 			}
 		}
 	}
@@ -158,15 +161,19 @@ import pony.ui.touch.Touchable;
 			tween.playForward();
 		} else if (prevState != state || cursor == Cursor.Default) {
 			cursor = Cursor.Button;
-			tween.range = new Pair<Float, Float>(nodes[0].tint.x, switch state {
-				case Default: 1;
-				case Focus, Leave: OVERTINT;
-				case Press: DOWNTINT;
-			});
-			@:nullSafety(Off) tween.time = prevState == Press ? anim.max : switch state {
-				case Focus, Press: anim.min;
-				case Default, Leave: anim.max;
-			}
+			tween.range = new Pair<Float, Float>(
+				nodes[0].tint.x, switch state {
+					case Default: 1;
+					case Focus, Leave: OVERTINT;
+					case Press: DOWNTINT;
+				}
+			);
+			@:nullSafety(Off) tween.time = prevState == Press
+				? anim.max
+				: switch state {
+					case Focus, Press: anim.min;
+					case Default, Leave: anim.max;
+				}
 			prevState = state;
 			tween.stopOnBegin();
 			tween.playForward();
@@ -177,7 +184,7 @@ import pony.ui.touch.Touchable;
 		nodes[0].tint = new Vector(v, v, v);
 	}
 
-	public function destroy():Void {
+	public function destroy(): Void {
 		core.destroy();
 		touchable.destroy();
 		@:nullSafety(Off) {
@@ -190,6 +197,7 @@ import pony.ui.touch.Touchable;
 	}
 
 	public function wait(cb: Void -> Void): Void cb();
+
 	public function destroyIWH(): Void destroy();
 
 }

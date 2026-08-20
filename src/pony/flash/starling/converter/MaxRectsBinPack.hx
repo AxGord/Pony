@@ -58,8 +58,7 @@ class MaxRectsBinPack {
 	}
 
 	private function count(n: Float): Float {
-		if (n >= 2)
-			return count(n / 2);
+		if (n >= 2) return count(n / 2);
 		return n;
 	}
 
@@ -83,8 +82,7 @@ class MaxRectsBinPack {
 				newNode = findPositionForNewNodeBestAreaFit(width, height, score1, score2);
 		}
 
-		if (newNode.height == 0)
-			return newNode;
+		if (newNode.height == 0) return newNode;
 
 		placeRectangle(newNode);
 		// trace(newNode);
@@ -164,8 +162,7 @@ class MaxRectsBinPack {
 	/// Computes the ratio of used surface area.
 	private function occupancy(): Float {
 		var usedSurfaceArea: Float = 0;
-		for (i in 0...usedRectangles.length)
-			usedSurfaceArea += usedRectangles[i].width * usedRectangles[i].height;
+		for (i in 0...usedRectangles.length) usedSurfaceArea += usedRectangles[i].width * usedRectangles[i].height;
 
 		return usedSurfaceArea / (binWidth * binHeight);
 	}
@@ -246,8 +243,10 @@ class MaxRectsBinPack {
 				flippedShortSideFit = cast Math.min(flippedLeftoverHoriz, flippedLeftoverVert);
 				flippedLongSideFit = cast Math.max(flippedLeftoverHoriz, flippedLeftoverVert);
 
-				if (flippedShortSideFit < bestShortSideFit
-					|| (flippedShortSideFit == bestShortSideFit && flippedLongSideFit < bestLongSideFit)) {
+				if (
+					flippedShortSideFit < bestShortSideFit
+					|| (flippedShortSideFit == bestShortSideFit && flippedLongSideFit < bestLongSideFit)
+				) {
 					bestNode.x = rect.x;
 					bestNode.y = rect.y;
 					bestNode.width = height;
@@ -261,7 +260,9 @@ class MaxRectsBinPack {
 		return bestNode;
 	}
 
-	private function findPositionForNewNodeBestLongSideFit(width: Int, height: Int, bestShortSideFit: Int, bestLongSideFit: Int): Rectangle {
+	private function findPositionForNewNodeBestLongSideFit(
+		width: Int, height: Int, bestShortSideFit: Int, bestLongSideFit: Int
+	): Rectangle {
 		var bestNode: Rectangle = new Rectangle();
 		// memset(&bestNode, 0, sizeof(Rectangle));
 		bestLongSideFit = MAX_VALUE;
@@ -363,18 +364,15 @@ class MaxRectsBinPack {
 
 	/// Returns 0 if the two Intervals i1 and i2 are disjoInt, or the length of their overlap otherwise.
 	private function commonIntervalLength(i1start: Int, i1end: Int, i2start: Int, i2end: Int): Int {
-		if (i1end < i2start || i2end < i1start)
-			return 0;
+		if (i1end < i2start || i2end < i1start) return 0;
 		return cast(Math.min(i1end, i2end) - Math.max(i1start, i2start));
 	}
 
 	private function contactPoIntScoreNode(x: Int, y: Int, width: Int, height: Int): Int {
 		var score: Int = 0;
 
-		if (x == 0 || x + width == binWidth)
-			score += height;
-		if (y == 0 || y + height == binHeight)
-			score += width;
+		if (x == 0 || x + width == binWidth) score += height;
+		if (y == 0 || y + height == binHeight) score += width;
 		var rect: Rectangle;
 		for (i in 0...usedRectangles.length) {
 			rect = usedRectangles[i];
@@ -423,10 +421,10 @@ class MaxRectsBinPack {
 
 	private function splitFreeNode(freeNode: Rectangle, usedNode: Rectangle): Bool {
 		// Test with SAT if the Rectangles even Intersect.
-		if (usedNode.x >= freeNode.x + freeNode.width
-			|| usedNode.x + usedNode.width <= freeNode.x
-			|| usedNode.y >= freeNode.y + freeNode.height
-			|| usedNode.y + usedNode.height <= freeNode.y)
+		if (
+			usedNode.x >= freeNode.x + freeNode.width || usedNode.x + usedNode.width <= freeNode.x
+			|| usedNode.y >= freeNode.y + freeNode.height || usedNode.y + usedNode.height <= freeNode.y
+		)
 			return false;
 		var newNode: Rectangle;
 		if (usedNode.x < freeNode.x + freeNode.width && usedNode.x + usedNode.width > freeNode.x) {

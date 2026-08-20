@@ -8,11 +8,11 @@ import create.section.Config;
  */
 class Electron {
 
-	public static function set(project:Project):Void {
+	public static function set(project: Project): Void {
 		Node.set(project);
 		project.build.main = 'Application';
 		project.config.active = true;
-		var defWindow:ConfigOptions = [
+		var defWindow: ConfigOptions = [
 			'name' => 'default',
 			'width' => '1280',
 			'height' => '1024',
@@ -20,11 +20,9 @@ class Electron {
 			'minHeight' => '512',
 			'background' => '#1A1A1A'
 		];
-		var windows:ConfigOptions = [
-			'default' => defWindow
-		];
+		var windows: ConfigOptions = ['default' => defWindow];
 		project.config.options['window'] = windows;
-		project.haxelib.addLib({name: 'electron', version: '19.0.4'});
+		project.haxelib.addLib({ name: 'electron', version: '19.0.4' });
 		project.npm.active = true;
 		project.npm.path = project.build.outputPath;
 	}

@@ -63,8 +63,7 @@ using pony.Tools;
 				var group: Pair<Array<T>, Array<Point<Float>>> = objGroups[i];
 				var s: Float = groupSize[i];
 				var positions: Array<IntPoint> = GeomTools.pointsCeil(GeomTools.center(
-					new Point(vert ? s : width, !vert ? s : height),
-					group.b, vert, border, padding,
+					new Point(vert ? s : width, !vert ? s : height), group.b, vert, border, padding,
 					new Pair(!vert ? align.vertical : VAlign.Middle, vert ? align.horizontal : HAlign.Center)
 				));
 				var xSetted: Bool = false;
@@ -91,9 +90,9 @@ using pony.Tools;
 				yd += !vert ? s : 0;
 			}
 		} else {
-			var positions: Array<IntPoint> = GeomTools.pointsCeil(GeomTools.center(
-				size, [ for (obj in objects) getObjSize(obj) ], vert, border, padding, align
-			));
+			var positions: Array<IntPoint> = GeomTools.pointsCeil(
+				GeomTools.center(size, [for (obj in objects) getObjSize(obj)], vert, border, padding, align)
+			);
 			for (p in objects.pair(positions)) {
 				setXpos(p.a, p.b.x);
 				setYpos(p.a, p.b.y);

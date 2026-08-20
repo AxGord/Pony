@@ -38,42 +38,36 @@ class App extends SmartCanvas {
 	/**
 	 * First pixi app
 	 */
-	public static var main:App;
+	public static var main: App;
 
 	/**
 	 * Pixi Application
 	 * Read-only
 	 */
-	public var app(default, null):pixi.core.Application;
-	public var isWebGL(default, null):Bool;
-	public var pauseDraw:Bool = false;
-	public var container(default, null):Sprite;
-	public var background(default, null):Int;
-	public var sizeUpdate(default, set):Bool;
-	private var ticker:Ticker;
-	private var renderPause:Bool = false;
-	private var backImgcontainer:Sprite;
-	private var border:Graphics;
+	public var app(default, null): pixi.core.Application;
+
+	public var isWebGL(default, null): Bool;
+	public var pauseDraw: Bool = false;
+	public var container(default, null): Sprite;
+	public var background(default, null): Int;
+	public var sizeUpdate(default, set): Bool;
+	private var ticker: Ticker;
+	private var renderPause: Bool = false;
+	private var backImgcontainer: Sprite;
+	private var border: Graphics;
 
 	/**
 	 * @param	smallDeviceQuality - 1 ideal, 2 - low, 3 - normal, 4 - good
 	 */
 	public function new(
-		container:Sprite,
-		width: Int,
-		height:Int,
-		?bg:UInt,
-		?parentDom:Element,
-		smallDeviceQuality:SmallDeviceQuality = SmallDeviceQuality.normal,
-		sizeUpdate:Bool = true,
-		?backImg:Sprite,
-		?ro:RenderOptions
+		container: Sprite, width: Int, height: Int, ?bg: UInt, ?parentDom: Element,
+		smallDeviceQuality: SmallDeviceQuality = SmallDeviceQuality.normal, sizeUpdate: Bool = true, ?backImg: Sprite, ?ro: RenderOptions
 	) {
 		super(new Point(width, height), parentDom, smallDeviceQuality);
 		background = bg;
 		this.container = container;
 
-		var renderingOptions:ApplicationOptions = {
+		var renderingOptions: ApplicationOptions = {
 			width: width,
 			height: height,
 			view: canvas,
@@ -92,19 +86,13 @@ class App extends SmartCanvas {
 		};
 
 		if (ro != null) {
-			if (ro.antialias != null)
-				renderingOptions.antialias = ro.antialias;
-			if (ro.forceFXAA != null)
-				renderingOptions.forceFXAA = ro.forceFXAA;
-			if (ro.roundPixels != null)
-				renderingOptions.roundPixels = ro.roundPixels;
-			if (ro.transparent != null)
-				renderingOptions.transparent = ro.transparent;
-			if (ro.clearBeforeRender != null)
-				renderingOptions.clearBeforeRender = ro.clearBeforeRender;
+			if (ro.antialias != null) renderingOptions.antialias = ro.antialias;
+			if (ro.forceFXAA != null) renderingOptions.forceFXAA = ro.forceFXAA;
+			if (ro.roundPixels != null) renderingOptions.roundPixels = ro.roundPixels;
+			if (ro.transparent != null) renderingOptions.transparent = ro.transparent;
+			if (ro.clearBeforeRender != null) renderingOptions.clearBeforeRender = ro.clearBeforeRender;
 			#if !forcecanvas
-			if (ro.forceCanvas != null)
-				renderingOptions.forceCanvas = ro.forceCanvas;
+			if (ro.forceCanvas != null) renderingOptions.forceCanvas = ro.forceCanvas;
 			#end
 		}
 
@@ -120,7 +108,7 @@ class App extends SmartCanvas {
 		if (main == null) {
 			main = this;
 			#if stats
-				pony.js.Perform.show(['UNKNOWN', 'WEBGL', 'CANVAS'][cast app.renderer.type]);
+			pony.js.Perform.show(['UNKNOWN', 'WEBGL', 'CANVAS'][cast app.renderer.type]);
 			#end
 		}
 		app.stop();
@@ -130,7 +118,7 @@ class App extends SmartCanvas {
 		this.sizeUpdate = sizeUpdate;
 	}
 
-	private function set_sizeUpdate(b:Bool):Bool {
+	private function set_sizeUpdate(b: Bool): Bool {
 		if (b != sizeUpdate) {
 			sizeUpdate = b;
 			if (!renderPause) {
@@ -145,7 +133,7 @@ class App extends SmartCanvas {
 
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function initTouch():Void {
+	private inline function initTouch(): Void {
 		if (!Mouse.inited) {
 			Mouse.reg(container);
 			Mouse.correction = correction;
@@ -156,11 +144,11 @@ class App extends SmartCanvas {
 		}
 	}
 
-	public function drawBorders(?color:UInt):Void {
+	public function drawBorders(?color: UInt): Void {
 		border = new Graphics();
 		border.beginFill(color == null ? background : color);
-		var w:Int = stageInitSize.x * 2;
-		var h:Int = stageInitSize.y * 2;
+		var w: Int = stageInitSize.x * 2;
+		var h: Int = stageInitSize.y * 2;
 		border.drawRect(-w, -h, w, h * 3);
 		border.drawRect(stageInitSize.x, -h, w, h * 3);
 		border.drawRect(-w, -h, w * 3, h);
@@ -168,13 +156,13 @@ class App extends SmartCanvas {
 		container.addChild(border);
 	}
 
-	public inline function borderup():Void {
+	public inline function borderup(): Void {
 		container.addChild(border);
 	}
 
-	private function render():Void if (!renderPause) app.render();
+	private function render(): Void if (!renderPause) app.render();
 
-	public function stageResizeHandler(ratio:Float, rect:Rect<Float>):Void {
+	public function stageResizeHandler(ratio: Float, rect: Rect<Float>): Void {
 		container.scale.set(ratio);
 		container.x = rect.x;
 		container.y = rect.y;
@@ -185,20 +173,18 @@ class App extends SmartCanvas {
 		}
 	}
 
-	private function correction(x:Float, y:Float):Point<Float> {
+	private function correction(x: Float, y: Float): Point<Float> {
 		return new Point((x - container.x) / container.width, (y - container.y) / container.height);
 	}
 
-	public function pauseRendering():Void {
+	public function pauseRendering(): Void {
 		renderPause = true;
-		if (sizeUpdate)
-			onStageResize >> stageResizeHandler;
+		if (sizeUpdate) onStageResize >> stageResizeHandler;
 	}
 
-	public function resumeRendering():Void {
+	public function resumeRendering(): Void {
 		renderPause = false;
-		if (sizeUpdate)
-			onStageResize << stageResizeHandler;
+		if (sizeUpdate) onStageResize << stageResizeHandler;
 	}
 
 }

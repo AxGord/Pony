@@ -50,7 +50,9 @@ class ConsoleView extends PrinterBase implements Printer {
 		sprite.addChild(background);
 
 		background.graphics.beginFill(0x002B36, 0.8);
-		background.graphics.drawRect(-backzone, -(backzone + FLTools.height / 3), FLTools.width + backzone * 2, FLTools.height / 3 + backzone);
+		background.graphics.drawRect(
+			-backzone, -(backzone + FLTools.height / 3), FLTools.width + backzone * 2, FLTools.height / 3 + backzone
+		);
 
 		textField = new TextField();
 		// textField.backgroundColor = 0x002B36;
@@ -73,14 +75,11 @@ class ConsoleView extends PrinterBase implements Printer {
 
 		// listen for scrolling
 		// textField.addEventListener(flash.events.Event.SCROLL, textScrolled);
-
 		// attach
 		// var current = flash.Lib.current;
 		// var stage = current.stage;
-
 		// stage.scaleMode = flash.display.StageScaleMode.NO_SCALE;
 		// stage.addEventListener(flash.events.Event.RESIZE, resize);
-
 		// resize(null);
 
 		slideCore = new SlideCore(FLTools.height / 3);
@@ -119,8 +118,7 @@ class ConsoleView extends PrinterBase implements Printer {
 	 * Scroll to the bottom of output if atBottom is true.
 	 */
 	function updateScroll(): Void {
-		if (atBottom)
-			textField.scrollV = textField.maxScrollV;
+		if (atBottom) textField.scrollV = textField.maxScrollV;
 	}
 
 	/**
@@ -148,8 +146,11 @@ class ConsoleView extends PrinterBase implements Printer {
 	}
 
 	public function attach(): Void flash.Lib.current.addChild(sprite);
+
 	public function remove(): Void flash.Lib.current.removeChild(sprite);
+
 	public inline function show(): Void slideCore.open();
+
 	public inline function hide(): Void slideCore.close();
 
 }

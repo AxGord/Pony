@@ -15,54 +15,53 @@ import pony.fs.FileWriteStream;
 #if (haxe_ver >= 4.2) final #else @:final #end
 class RPCFileTransport extends pony.net.rpc.RPCUnit<RPCFileTransport> implements pony.net.rpc.IRPC {
 
-	@:sub public var stream:RPCStream;
+	@:sub public var stream: RPCStream;
 
-	@:rpc public var onFile:Signal1<String>;
+	@:rpc public var onFile: Signal1<String>;
 
-	private var fileWrite:FileWriteStream;
-	private var readStream:ReadStream<Bytes>;
+	private var fileWrite: FileWriteStream;
+	private var readStream: ReadStream<Bytes>;
 
 	public function new() super();
 
-	public inline function enable():Void {
+	public inline function enable(): Void {
 		onFile << fileHandler;
 		stream.onRead << readHandler;
 	}
 
-	public inline function disable():Void {
+	public inline function disable(): Void {
 		onFile >> fileHandler;
 		stream.onRead >> readHandler;
 	}
 
-	public function sendFile(path:String, ?newPath:String):Void {
+	public function sendFile(path: String, ?newPath: String): Void {
 		if (newPath == null) newPath = path;
 		fileRemote(newPath);
-		var fs:FileReadStream = new FileReadStream(path);
+		var fs: FileReadStream = new FileReadStream(path);
 		stream.write(fs);
 	}
 
-	private function fileHandler(path:String):Void {
+	private function fileHandler(path: String): Void {
 		fileWrite = new FileWriteStream(changePath(path));
 		checkBegin();
 	}
 
-	private function readHandler(rs:ReadStream<Bytes>):Void {
+	private function readHandler(rs: ReadStream<Bytes>): Void {
 		readStream = rs;
 		checkBegin();
 	}
 
-	private function checkBegin():Void {
+	private function checkBegin(): Void {
 		if (readStream != null && fileWrite != null) {
 			fileWrite.pipe(readStream);
 			readStream = null;
 		}
 	}
 
-	public dynamic function changePath(path:String):String return path;
+	public dynamic function changePath(path: String): String return path;
 
-	public function cancel():Void {
-		if (fileWrite != null)
-			fileWrite.cancel();
+	public function cancel(): Void {
+		if (fileWrite != null) fileWrite.cancel();
 	}
 
 }

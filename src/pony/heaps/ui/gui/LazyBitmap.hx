@@ -78,8 +78,7 @@ import pony.time.Tween;
 
 	private function readyForShow(): Void {
 		visible = true;
-		if (anim != null)
-			anim.play();
+		if (anim != null) anim.play();
 	}
 
 	private function animHandler(v: Float): Void setAlpha(v * finalAlpha);

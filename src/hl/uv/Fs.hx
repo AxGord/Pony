@@ -20,32 +20,32 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
- package hl.uv;
+package hl.uv;
 
- enum abstract Event(Int) {
+enum abstract Event(Int) {
 	var Rename = 1;
 	var Change = 2;
 }
 
 @:hlNative("uv")
 class Fs extends Handle {
-	public function new(?loop : Loop, path : String, onContentChanged : Event -> Void) {
-		if(loop == null)
-			loop = Loop.getDefault();
+
+	public function new(?loop: Loop, path: String, onContentChanged: Event -> Void) {
+		if (loop == null) loop = Loop.getDefault();
 		super(fs_start_wrap(loop, (e) -> onContentChanged(cast(e, Event)), @:privateAccess path.toUtf8()));
 	}
 
 	public function stop() {
-		if(handle == null)
-			return;
+		if (handle == null) return;
 		fs_stop_wrap(handle);
 	}
 
-	static function fs_start_wrap(loop:Loop, cb : Int -> Void, path : hl.Bytes) : HandleData {
+	static function fs_start_wrap(loop: Loop, cb: Int -> Void, path: hl.Bytes): HandleData {
 		return null;
 	}
 
-	static function fs_stop_wrap(handle:HandleData) : Bool {
+	static function fs_stop_wrap(handle: HandleData): Bool {
 		return false;
 	}
+
 }

@@ -32,17 +32,26 @@ class JsDT implements HasSignal {
 	private static function init(): Void {
 		inited = true;
 		half = JsTools.isMobile;
-		if (Browser.window.requestAnimationFrame != null) raf = Browser.window.requestAnimationFrame;
-		else if (untyped Browser.window.mozRequestAnimationFrame != null) raf = untyped Browser.window.mozRequestAnimationFrame;
-		else if (untyped Browser.window.webkitRequestAnimationFrame != null) raf = untyped Browser.window.webkitRequestAnimationFrame;
-		else if (untyped Browser.window.msRequestAnimationFrame != null) raf = untyped Browser.window.msRequestAnimationFrame;
-		if (Browser.window.cancelAnimationFrame != null) caf = Browser.window.cancelAnimationFrame;
-		else if (untyped Browser.window.mozCancelAnimationFrame != null) caf = untyped Browser.window.mozCancelAnimationFrame;
-		else if (untyped Browser.window.webkitCancelAnimationFrame != null) caf = untyped Browser.window.webkitCancelAnimationFrame;
-		else if (untyped Browser.window.msCancelAnimationFrame != null) caf = untyped Browser.window.msCancelAnimationFrame;
+		if (Browser.window.requestAnimationFrame != null)
+			raf = Browser.window.requestAnimationFrame;
+		else if (untyped Browser.window.mozRequestAnimationFrame != null)
+			raf = untyped Browser.window.mozRequestAnimationFrame;
+		else if (untyped Browser.window.webkitRequestAnimationFrame != null)
+			raf = untyped Browser.window.webkitRequestAnimationFrame;
+		else if (untyped Browser.window.msRequestAnimationFrame != null)
+			raf = untyped Browser.window.msRequestAnimationFrame;
+		if (Browser.window.cancelAnimationFrame != null)
+			caf = Browser.window.cancelAnimationFrame;
+		else if (untyped Browser.window.mozCancelAnimationFrame != null)
+			caf = untyped Browser.window.mozCancelAnimationFrame;
+		else if (untyped Browser.window.webkitCancelAnimationFrame != null)
+			caf = untyped Browser.window.webkitCancelAnimationFrame;
+		else if (untyped Browser.window.msCancelAnimationFrame != null)
+			caf = untyped Browser.window.msCancelAnimationFrame;
 	}
 
-	private static dynamic function raf(cb:Float -> Void): Int return throw 'Not set';
+	private static dynamic function raf(cb: Float -> Void): Int return throw 'Not set';
+
 	private static dynamic function caf(id: Int): Void throw 'Not set';
 
 	private static function set_half(b: Bool): Bool {
@@ -91,8 +100,7 @@ class JsDT implements HasSignal {
 
 	private static function halfTick1(v: Float): Void {
 		tick(v);
-		if (allowHalfTick)
-			afid = raf(halfTick2);
+		if (allowHalfTick) afid = raf(halfTick2);
 	}
 
 	private static function halfTick2(v: Float): Void {
@@ -103,8 +111,7 @@ class JsDT implements HasSignal {
 	private static function fastTick(v: Float): Void {
 		tick(v);
 		eRender.dispatch();
-		if (allowFastTickAbort)
-			afid = raf(fastTick);
+		if (allowFastTickAbort) afid = raf(fastTick);
 	}
 
 	@SuppressWarnings('checkstyle:MagicNumber')

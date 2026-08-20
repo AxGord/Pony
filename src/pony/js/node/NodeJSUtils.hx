@@ -4,7 +4,6 @@ import haxe.io.Bytes;
 import haxe.io.BytesData;
 import haxe.io.Encoding;
 import haxe.io.UInt8Array;
-
 import js.Node;
 import js.lib.ArrayBuffer;
 import js.lib.Uint8Array;

@@ -15,7 +15,7 @@ import pony.flash.ui.Button;
 import pony.geom.Rect;
 import pony.ui.gui.ButtonCore;
 
-typedef Sigid = {d: EventDispatcher, n: String};
+typedef Sigid = { d: EventDispatcher, n: String };
 
 /**
  * Flash extends
@@ -45,18 +45,16 @@ class FLExtends {
 		};
 	}
 
-	public static function rect(r: Rectangle): Rect<Float>
-		return {
-			x: r.x,
-			y: r.y,
-			width: r.width,
-			height: r.height
-		};
+	public static function rect(r: Rectangle): Rect<Float> return {
+		x: r.x,
+		y: r.y,
+		width: r.width,
+		height: r.height
+	};
 
 	public static function border(rect: Rectangle, x: Float, ?y: Float): Rectangle {
 		var r = rect.clone();
-		if (y == null)
-			y = x;
+		if (y == null) y = x;
 		r.x += x;
 		r.y += y;
 		r.width -= x * 2;
@@ -64,8 +62,7 @@ class FLExtends {
 		return r;
 	}
 
-	public static inline function removeAllChild(d: DisplayObjectContainer): Void
-		while (d.numChildren > 0) d.removeChildAt(0);
+	public static inline function removeAllChild(d: DisplayObjectContainer): Void while (d.numChildren > 0) d.removeChildAt(0);
 
 	public static function toCenter(o: DisplayObject, width: Float, height: Float): Void {
 		var b = o.getBounds(Lib.current.stage);
@@ -75,11 +72,10 @@ class FLExtends {
 
 	public static function toScreenCenter(o: DisplayObject): Void toCenter(o, FLTools.width, FLTools.height);
 
-	public static inline function getTyped<T: DisplayObject>(o: DisplayObjectContainer, name: String, cl: Class<T>): T
+	public static inline function getTyped<T:DisplayObject>(o: DisplayObjectContainer, name: String, cl: Class<T>): T
 		return cast get(o, name);
 
-	public static inline function get(o: DisplayObjectContainer, name: String): DisplayObject
-		return untyped o[name];
+	public static inline function get(o: DisplayObjectContainer, name: String): DisplayObject return untyped o[name];
 
 	// inline public static function button(o:DisplayObjectContainer, name:String):ButtonCore return getTyped(o, name, Button).core;
 

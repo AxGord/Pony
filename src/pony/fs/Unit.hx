@@ -31,11 +31,13 @@ using StringTools;
 	}
 
 	private function get_parent(): Dir {
-		return [ for ( u in this ) {
-			var p: String = u.endsWith('/') ? u.substr(0, -1) : u;
-			var i: Int = p.lastIndexOf('/');
-			return i > 0 ? p.substr(0, i) : '';
-		} ];
+		return [
+			for (u in this) {
+				var p: String = u.endsWith('/') ? u.substr(0, -1) : u;
+				var i: Int = p.lastIndexOf('/');
+				return i > 0 ? p.substr(0, i) : '';
+			}
+		];
 	}
 
 	private function get_takeExists(): Array<String> {
@@ -63,9 +65,12 @@ using StringTools;
 		return false;
 	}
 
-	private inline function get_fullPath(): Unit return [ for (e in this) StringTools.replace(FileSystem.fullPath(e), '\\', '/') ];
+	private inline function get_fullPath(): Unit return [for (e in this) StringTools.replace(FileSystem.fullPath(e), '\\', '/')];
+
 	private inline function get_dir(): Dir return this;
+
 	private inline function get_file(): File return this;
+
 	private inline function get_first(): String return this.first;
 
 	private function get_firstExists(): Null<String> {
@@ -74,16 +79,27 @@ using StringTools;
 	}
 
 	@:op(A + B) public inline function addString(a: String): Unit return [for (e in this) e + (a.indexOf('/') == 0 ? '' : '/') + a];
+
 	@:from private static inline function fromString(s: String): Unit return s.split(';').map(StringTools.trim);
+
 	@:from public static inline function join(a: Array<Unit>): Unit return new Priority<String>(cast a);
+
 	@:from private static inline function fromPriority(p: Priority<String>): Unit return new Unit(p);
+
 	@:from private static inline function fromArray(a: Array<String>): Unit return new Priority(a.map(removeLastSlash));
+
 	@:to public inline function toString(): String return this.join('; ');
+
 	@:to public inline function split(): Array<Unit> return cast this.data;
+
 	@:to public inline function toPriority(): Priority<String> return this;
+
 	@:to public inline function toArray(): Array<String> return this.data;
+
 	public inline function wayStringIterator(): Iterator<String> return this.iterator();
+
 	public inline function addWay(way: String, priority: Int = 0): Void this.add(way, priority);
+
 	public inline function addWayArray(way: Array<String>, priority: Int = 0): Void this.addArray(way, priority);
 
 	public function iterator(): Iterator<Unit> {

@@ -2,7 +2,6 @@ package module;
 
 import pony.Fast;
 import pony.Pair;
-
 import types.BAConfig;
 import types.BASection;
 import types.ProxyConfig;
@@ -149,8 +148,10 @@ private class ProxyReader extends BAReader<BAProxyConfig> {
 
 	override private function readNode(xml: Fast): Void {
 		switch xml.name {
-			case 'target': cfg.target = normalize(xml.innerData);
-			case 'port': cfg.port = Std.parseInt(xml.innerData);
+			case 'target':
+				cfg.target = normalize(xml.innerData);
+			case 'port':
+				cfg.port = Std.parseInt(xml.innerData);
 			case _:
 				super.readNode(xml);
 		}
@@ -158,8 +159,10 @@ private class ProxyReader extends BAReader<BAProxyConfig> {
 
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
-			case 'slow': cfg.slow = Std.parseInt(val);
-			case 'cache': cfg.cache = val;
+			case 'slow':
+				cfg.slow = Std.parseInt(val);
+			case 'cache':
+				cfg.cache = val;
 			case _:
 		}
 	}

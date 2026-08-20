@@ -40,8 +40,7 @@ class ColorPicker extends Sprite implements HasSignal {
 		ratios = [for (i in 0...COLORS.length) part * i];
 		alphas = [for (_ in 0...COLORS.length) 1];
 
-		if (size != null)
-			draw(size.x, size.y);
+		if (size != null) draw(size.x, size.y);
 
 		touchable = new Touchable(this);
 		touchable.onDown < downHandler;
@@ -56,20 +55,14 @@ class ColorPicker extends Sprite implements HasSignal {
 	}
 
 	private function moveHandler(): Void {
-		if (bitmap == null)
-			return;
+		if (bitmap == null) return;
 		var px: Int = Std.int(mouseX);
 		var py: Int = Std.int(mouseY);
-		if (px < 0)
-			px = 0;
-		if (py < 0)
-			py = 0;
-		if (px >= bitmapData.width)
-			px = bitmapData.width - 1;
-		if (py >= bitmapData.height)
-			py = bitmapData.height - 1;
-		if (px == prevX && py == prevY)
-			return;
+		if (px < 0) px = 0;
+		if (py < 0) py = 0;
+		if (px >= bitmapData.width) px = bitmapData.width - 1;
+		if (py >= bitmapData.height) py = bitmapData.height - 1;
+		if (px == prevX && py == prevY) return;
 		prevX = px;
 		prevY = py;
 		marker.x = px;
@@ -87,8 +80,7 @@ class ColorPicker extends Sprite implements HasSignal {
 	}
 
 	private function drawMarker(color: UInt): Void {
-		if (color == markerColor)
-			return;
+		if (color == markerColor) return;
 		markerColor = color;
 		marker.graphics.clear();
 		marker.graphics.lineStyle(2, color);

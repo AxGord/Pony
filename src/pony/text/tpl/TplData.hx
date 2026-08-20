@@ -7,9 +7,9 @@ package pony.text.tpl;
 typedef TplData = Array<TplContent>;
 
 enum TplContent {
-	Text(t:String);
-	Tag(t:TplTag);
-	ShortTag(t:TplShortTag);
+	Text(t: String);
+	Tag(t: TplTag);
+	ShortTag(t: TplShortTag);
 }
 
 typedef TplTag = {
@@ -25,22 +25,22 @@ typedef TplShortTag = {
 };
 
 typedef TplTagName = {
-	up:Int,
-	name:Array<String>
+	up: Int,
+	name: Array<String>
 };
 
 typedef TplStyle = {
-	begin:String,
-	end:String,
-	endClose:String,
-	closeBegin:String,
-	closeEnd:String,
-	shortBegin:String,
-	shortEnd:String,
-	args:TplStyleArgs,
-	group:String,
-	up:String,
-	space:Bool
+	begin: String,
+	end: String,
+	endClose: String,
+	closeBegin: String,
+	closeEnd: String,
+	shortBegin: String,
+	shortEnd: String,
+	args: TplStyleArgs,
+	group: String,
+	up: String,
+	space: Bool
 };
 
 typedef TplStyleArgs = {

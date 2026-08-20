@@ -14,8 +14,7 @@ class PowerOfTwo {
 			var result: Int = 1;
 			number -= 0.000000001; // avoid floating point rounding errors
 
-			while (result < number)
-				result <<= 1;
+			while (result < number) result <<= 1;
 			return result;
 		}
 	}

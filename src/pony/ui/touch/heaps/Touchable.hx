@@ -82,11 +82,11 @@ class Touchable extends TouchableBase {
 		interactive.onOver = overHandler;
 		interactive.onOut = outHandler;
 		#if ios
-			interactive.onPush = delayedDownHandler;
-			interactive.onRelease = delayedUpHandler;
+		interactive.onPush = delayedDownHandler;
+		interactive.onRelease = delayedUpHandler;
 		#else
-			interactive.onPush = downHandler;
-			interactive.onRelease = upHandler;
+		interactive.onPush = downHandler;
+		interactive.onRelease = upHandler;
 		#end
 		interactive.onWheel = wheelHandler;
 		#if js
@@ -123,6 +123,7 @@ class Touchable extends TouchableBase {
 	}
 
 	override private function addWheel(): Void {}
+
 	override private function removeWheel(): Void {}
 
 	private function wheelHandler(event: Event): Void {
@@ -211,22 +212,24 @@ class Touchable extends TouchableBase {
 		else if (event.button == 2)
 			downRight = true;
 	}
-
 	#else
-
 	private function instanceMouseHandler(event: Event): Void {
 		switch event.kind {
-			case EOut: leaveHandler();
-			case EOver: enterHandler();
-			case ERelease: globMouseUpLeftHandler();
-			case EPush: down = true;
+			case EOut:
+				leaveHandler();
+			case EOver:
+				enterHandler();
+			case ERelease:
+				globMouseUpLeftHandler();
+			case EPush:
+				down = true;
 			case _:
 		}
 	}
-
 	#end
 
 	private inline function globMouseUpLeftHandler(): Void _globUpHandler(false);
+
 	private inline function globMouseUpRightHandler(): Void _globUpHandler(true);
 
 	private function globUpHandler(): Void {

@@ -1,13 +1,11 @@
 package pony.magic.builder;
+
 #if macro
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import haxe.macro.Compiler;
-
 import pony.Fast;
-
 import sys.io.File;
-
 import pony.text.TextTools;
 import pony.text.XmlConfigReader;
 import pony.text.XmlTools;
@@ -26,14 +24,12 @@ class ConfigBuilder {
 	macro public static function build(): Array<Field> {
 		Context.registerModuleDependency(Context.getLocalModule(), file);
 		var fields: Array<Field> = Context.getBuildFields();
-		if (!sys.FileSystem.exists(file))
-			return fields;
+		if (!sys.FileSystem.exists(file)) return fields;
 		var xml = XmlTools.fast(File.getContent(file)).node.project;
 		if (xml.hasNode.config) {
 			var xcfg: Fast = xml.node.config;
-			if (xcfg.has.dep)
-				for (f in xcfg.att.dep.split(','))
-					Context.registerModuleDependency(Context.getLocalModule(), StringTools.trim(f));
+			if (xcfg.has.dep) for (f in xcfg.att.dep.split(','))
+				Context.registerModuleDependency(Context.getLocalModule(), StringTools.trim(f));
 			var cfg: PConfig = {
 				app: haxe.macro.Context.definedValue('app'),
 				debug: #if debug true #else false #end,
@@ -43,18 +39,18 @@ class ConfigBuilder {
 			var addedConfig: Array<String> = []; // Filter added configs because app define not set for completion server
 			new ReadXmlConfig(xcfg, cfg, function(cfg: PConfig): Void {
 				var type: ComplexType = switch cfg.type {
-					case CString: macro:String;
-					case CInt: macro:Int;
-					case CFloat: macro:Float;
-					case CBool: macro:Bool;
-					case CColor: macro:pony.color.Color;
-					case CPoint: macro:pony.geom.Point<Int>;
-					case CStringMap: macro:Map<String, String>;
-					case CIntMap: macro:Map<String, Int>;
-					case CFloatMap: macro:Map<String, Float>;
-					case CBoolMap: macro:Map<String, Bool>;
-					case CColorMap: macro:Map<String, pony.color.Color>;
-					case CPointMap: macro:Map<String, pony.color.Color>;
+					case CString: macro :String;
+					case CInt: macro :Int;
+					case CFloat: macro :Float;
+					case CBool: macro :Bool;
+					case CColor: macro :pony.color.Color;
+					case CPoint: macro :pony.geom.Point<Int>;
+					case CStringMap: macro :Map<String, String>;
+					case CIntMap: macro :Map<String, Int>;
+					case CFloatMap: macro :Map<String, Float>;
+					case CBoolMap: macro :Map<String, Bool>;
+					case CColorMap: macro :Map<String, pony.color.Color>;
+					case CPointMap: macro :Map<String, pony.color.Color>;
 					case _: throw 'Error';
 				}
 
@@ -76,8 +72,8 @@ class ConfigBuilder {
 					case CFloatMap: [for (k in cfg.map.keys()) macro $v{k} => $v{Std.parseFloat(cfg.map[k])}];
 					case CBoolMap: [for (k in cfg.map.keys()) macro $v{k} => $v{TextTools.isTrue(cfg.map[k])}];
 					case CColorMap: [
-							for (k in cfg.map.keys()) macro $v{k} => $v{(pony.color.Color.fromString(cfg.value): Int)}
-						];
+						for (k in cfg.map.keys()) macro $v{k} => $v{(pony.color.Color.fromString(cfg.value): Int)}
+					];
 					case CPointMap: [
 						for (k in cfg.map.keys()) macro $v{k} => $v{(pony.geom.Point.fromString(cfg.value))}
 					];
@@ -151,14 +147,13 @@ private class ReadXmlConfig extends XmlConfigReader<PConfig> {
 					v = nv;
 				}
 			}
-		} catch (_:Any) {}
+		} catch (_: Any) {}
 
 		var stype: String = xml.has.type ? xml.att.type : null;
 
 		var map: Map<String, String> = null;
 
 		var type: ConfigTypes = switch stype {
-
 			case 'map', 'intmap', 'floatmap', 'boolmap', 'stringmap', 'pointmap':
 				var mapType: ConfigTypes = switch stype {
 					case 'map': null;
@@ -222,11 +217,9 @@ private class ReadXmlConfig extends XmlConfigReader<PConfig> {
 				} else {
 					throw 'Xml error';
 				}
-
 		}
 
 		switch type {
-
 			case CIntMap, CFloatMap, CBoolMap, CStringMap, CColorMap, CPointMap:
 				onConfig({
 					app: cfg.app,
@@ -256,7 +249,6 @@ private class ReadXmlConfig extends XmlConfigReader<PConfig> {
 					cordova: cfg.cordova,
 					path: cfg.path + xml.name + '_'
 				}, onConfig);
-
 		}
 
 	}

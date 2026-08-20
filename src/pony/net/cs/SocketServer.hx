@@ -83,7 +83,7 @@ class SocketServer extends SocketServerBase {
 				);
 				@:privateAccess cl.connect();
 				s.BeginAccept(new AsyncCallback(acceptCallback), ar.AsyncState);
-			} catch (ex:SocketException) {
+			} catch (ex: SocketException) {
 				closeConnection(cl);
 				error(ex.get_Message());
 			}

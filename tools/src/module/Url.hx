@@ -1,7 +1,6 @@
 package module;
 
 import pony.Fast;
-
 import types.BASection;
 
 /**
@@ -49,8 +48,10 @@ private class UrlReader extends BAReader<UrlConfig> {
 
 	override private function readNode(xml: Fast): Void {
 		switch xml.name {
-			case 'url': cfg.url.push(StringTools.trim(xml.innerData));
-			case _: super.readNode(xml);
+			case 'url':
+				cfg.url.push(StringTools.trim(xml.innerData));
+			case _:
+				super.readNode(xml);
 		}
 	}
 

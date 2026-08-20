@@ -1,21 +1,17 @@
 package module;
 
 import haxe.io.Eof;
-
 import module.Build.D;
 import module.Build.HAXE;
 import module.Build.HXML;
-
 import pony.Fast;
 import pony.SPair;
 import pony.text.TextTools;
-
 import sys.FileSystem;
 import sys.io.File;
 import sys.io.Process;
 import sys.net.Host;
 import sys.net.Socket;
-
 import types.BASection;
 
 using StringTools;
@@ -55,15 +51,20 @@ private typedef LastCompilationOptions = {
 	#if (haxe_ver < 4.2) override #end
 	public function init(): Void {
 		if (xml == null) return;
-		haxelib = modules.xml.hasNode.haxelib ?
-			[ for (e in modules.xml.node.haxelib.nodes.lib) if (!e.isTrue('mute')) StringTools.trim(e.innerData).split(' ').join(':') ] : [];
-		hideWarningLibs = modules.xml.hasNode.haxelib ?
-			[ for (e in modules.xml.node.haxelib.nodes.lib) if (e.isFalse('warning')) '/' + StringTools.trim(e.innerData).split(' ')[0] + '/' ] : [];
-		server = modules.xml.hasNode.server && modules.xml.node.server.hasNode.haxe && !TextTools.isTrue(Sys.getEnv('PONY_DISABLE_BUILD_SERVER'));
+		haxelib = modules.xml.hasNode.haxelib ? [for (e in modules.xml.node.haxelib.nodes.lib) if (!e.isTrue('mute')) StringTools.trim(
+			e.innerData
+		)
+			.split(' ')
+			.join(':')] : [];
+		hideWarningLibs = modules.xml.hasNode.haxelib ? [for (e in modules.xml.node.haxelib.nodes.lib) if (e.isFalse('warning')) '/'
+			+ StringTools.trim(e.innerData).split(' ')[0] + '/'] : [];
+		server = modules.xml.hasNode.server && modules.xml.node.server.hasNode.haxe
+			&& !TextTools.isTrue(Sys.getEnv('PONY_DISABLE_BUILD_SERVER'));
 		initSections(PRIORITY, BASection.Build);
 	}
 
 	public inline function addHaxelib(lib: String): Void if (postHaxelibs.indexOf(lib) == -1) postHaxelibs.push(lib);
+
 	public inline function addFlag(flag: String): Void if (flags.indexOf(flag) == -1) flags.push(flag);
 
 	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
@@ -96,16 +97,17 @@ private typedef LastCompilationOptions = {
 			} else {
 				runCompilation(cmd, cfg.debug, cfg.haxeCompiler, cfg.winfix && Utils.isWindows);
 			}
-		} else for (e in cfg.runHxml) {
-			var cmd: Array<SPair<String>> = [];
-			for (d in flags) cmd.push(new SPair(D, d));
-			for (l in postHaxelibs) cmd.push(new SPair(LIB, l));
-			if (cfg.app != null) cmd.push(new SPair(D, 'app=${cfg.app}'));
-			if (cfg.debug) cmd.push(new SPair('-debug', ''));
-			cmd = cmd.concat(cfg.command);
-			cmd.push(new SPair(e + '.$HXML', ''));
-			runCompilation(cmd, cfg.debug, cfg.haxeCompiler, cfg.winfix && Utils.isWindows);
-		}
+		} else
+			for (e in cfg.runHxml) {
+				var cmd: Array<SPair<String>> = [];
+				for (d in flags) cmd.push(new SPair(D, d));
+				for (l in postHaxelibs) cmd.push(new SPair(LIB, l));
+				if (cfg.app != null) cmd.push(new SPair(D, 'app=${cfg.app}'));
+				if (cfg.debug) cmd.push(new SPair('-debug', ''));
+				cmd = cmd.concat(cfg.command);
+				cmd.push(new SPair(e + '.$HXML', ''));
+				runCompilation(cmd, cfg.debug, cfg.haxeCompiler, cfg.winfix && Utils.isWindows);
+			}
 		checkCompilation();
 	}
 
@@ -179,7 +181,12 @@ private typedef LastCompilationOptions = {
 			}
 			s.close();
 			if (hasError) Utils.exit(1);
-			lastCompilationOptions = { command: command, debug: debug, compiler: compiler, winfix: winfix };
+			lastCompilationOptions = {
+				command: command,
+				debug: debug,
+				compiler: compiler,
+				winfix: winfix
+			};
 		} else {
 			var args: Array<String> = [];
 			for (c in command) {
@@ -214,7 +221,8 @@ private typedef LastCompilationOptions = {
 	}
 
 	private static inline function cmdPairToStr(p: SPair<String>): String return p.a + (p.b.length > 0 ? ' ' + p.b : '');
-	private static inline function cmdArrPairToArrStr(a: Array<SPair<String>>): Array<String> return [ for (c in a) cmdPairToStr(c) ];
+
+	private static inline function cmdArrPairToArrStr(a: Array<SPair<String>>): Array<String> return [for (c in a) cmdPairToStr(c)];
 
 	private function connectToHaxeServer(): Socket {
 		var port: Int = Std.parseInt(modules.xml.node.server.node.haxe.innerData);
@@ -318,9 +326,12 @@ private class BuildConfigReader extends BAReader<BuildConfig> {
 
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
-			case HAXE: cfg.haxeCompiler = val;
-			case HXML: cfg.hxml = val;
-			case 'winfix': cfg.winfix = TextTools.isTrue(val);
+			case HAXE:
+				cfg.haxeCompiler = val;
+			case HXML:
+				cfg.hxml = val;
+			case 'winfix':
+				cfg.winfix = TextTools.isTrue(val);
 			case _:
 		}
 	}

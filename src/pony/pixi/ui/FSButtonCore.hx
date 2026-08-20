@@ -14,19 +14,20 @@ class FSButtonCore {
 		App.main.element.addEventListener("msfullscreenchange", setFullScreenImage);
 		Browser.document.addEventListener("mozfullscreenchange", setFullScreenImage);
 	}
-	
-	dynamic public function onEnable():Void {}
-	dynamic public function onDisable():Void {}
-	
-	private function setFullScreenImage():Void {
+
+	dynamic public function onEnable(): Void {}
+
+	dynamic public function onDisable(): Void {}
+
+	private function setFullScreenImage(): Void {
 		if (JsTools.isFSE)
 			onEnable();
 		else
 			onDisable();
 	}
-	
-	public function fsOn():Void App.main.fullscreen();
-	
-	public function fsOff():Void JsTools.closeFS();
-	
+
+	public function fsOn(): Void App.main.fullscreen();
+
+	public function fsOff(): Void JsTools.closeFS();
+
 }

@@ -4,9 +4,9 @@ package pony;
  * Typed object pool
  * @author AxGord <axgord@gmail.com>
  */
-@:generic class TypedPool<T:
-#if (haxe_ver >= 3.30) haxe.Constraints.Constructible<Void -> Void> #else { function new(): Void; } #end
-> implements IPool<T> {
+@:generic class TypedPool<T:#if (haxe_ver >= 3.30)
+haxe.Constraints.Constructible<Void -> Void> #else { function new(): Void; } #end> implements IPool<T> {
+
 	public var list: Array<T> = [];
 	public var isDestroy(get, never): Bool;
 
@@ -41,7 +41,7 @@ package pony;
  * @author AxGord <axgord@gmail.com>
  */
 #if (haxe_ver >= 3.30)
-@:generic class TypedPool1<T: haxe.Constraints.Constructible<A1 -> Void>, A1> {
+@:generic class TypedPool1<T:haxe.Constraints.Constructible<A1 -> Void>, A1> {
 #else
 @:generic class TypedPool1<T: { function new(a1: A1): Void; }, A1> {
 #end
@@ -75,7 +75,6 @@ package pony;
 	}
 
 	public inline function get_isDestroy(): Bool return list == null;
-
 }
 
 /**
@@ -83,7 +82,7 @@ package pony;
  * @author AxGord <axgord@gmail.com>
  */
 #if (haxe_ver >= 3.30)
-@:generic class TypedPool2<T: haxe.Constraints.Constructible<A1 -> A2 -> Void>, A1, A2> {
+@:generic class TypedPool2<T:haxe.Constraints.Constructible<A1 -> A2 -> Void>, A1, A2> {
 #else
 @:generic class TypedPool2<T: {function new(a1: A1, a: A2): Void; }, A1, A2> {
 #end
@@ -120,5 +119,4 @@ package pony;
 	}
 
 	public inline function get_isDestroy(): Bool return list == null;
-
 }

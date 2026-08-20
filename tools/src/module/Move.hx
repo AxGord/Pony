@@ -5,7 +5,6 @@ import pony.Pair;
 import pony.fs.Dir;
 import pony.fs.File;
 import pony.fs.Unit;
-
 import types.BASection;
 
 /**
@@ -94,8 +93,10 @@ private class MoveReader extends BAReader<MoveConfig> {
 
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
-			case 'filter': cfg.filter = val;
-			case 'to': cfg.to = val;
+			case 'filter':
+				cfg.filter = val;
+			case 'to':
+				cfg.to = val;
 			case _:
 		}
 	}

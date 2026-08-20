@@ -45,15 +45,12 @@ class TextCoder {
 		var n: Int = 0;
 		var s: String = '';
 		for (i in 0...text.length) {
-			if (n >= key.length)
-				n = 0;
+			if (n >= key.length) n = 0;
 			var tp: Int = chars.indexOf(text.charAt(i));
 			var kp: Int = chars.indexOf(key.charAt(n));
 			var np: Int = tp + kp * mode;
-			if (np >= chars.length)
-				np -= chars.length;
-			if (np < 0)
-				np += chars.length;
+			if (np >= chars.length) np -= chars.length;
+			if (np < 0) np += chars.length;
 			s += chars.charAt(np);
 			n++;
 		}

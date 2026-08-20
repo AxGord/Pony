@@ -12,8 +12,7 @@ import pony.text.tpl.TplPut;
 @:final class MVKPut extends TplPut<MVKConnect, {}> {
 
 	@:async
-	override public function tag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String
-	{
+	override public function tag(name: String, content: TplData, arg: String, args: Map<String, String>, ?kid: ITplPut): String {
 		if (name == 'vkontakte') {
 			if (content == null) {
 				return Std.string(a.token);
@@ -24,5 +23,5 @@ import pony.text.tpl.TplPut;
 			return @await super.tag(name, content, arg, args, kid);
 		}
 	}
-	
+
 }

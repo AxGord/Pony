@@ -27,8 +27,10 @@ class TurningCore implements Declarator implements ExtendedProperties implements
 			minAngle -= maxAngle;
 
 			var mid: Angle = minAngle / 2;
-			if (v < minAngle && v > mid * 1.5) v = minAngle;
-			else if (v < mid * 0.5) v = 0;
+			if (v < minAngle && v > mid * 1.5)
+				v = minAngle;
+			else if (v < mid * 0.5)
+				v = 0;
 			else if (v >= mid * 0.5 && v <= mid * 1.5) {
 				minAngle += maxAngle;
 				v += maxAngle;

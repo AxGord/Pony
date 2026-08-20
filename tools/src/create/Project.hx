@@ -8,29 +8,29 @@ import create.section.*;
  */
 class Project {
 
-	public var run(default, null):Run = new Run();
-	public var server(default, null):Server = new Server();
-	public var config(default, null):Config = new Config();
-	public var download(default, null):Download = new Download();
-	public var haxelib(default, null):Haxelib = new Haxelib();
-	public var build(default, null):Build = new Build();
-	public var secondbuild(default, null):Build = new Build();
-	public var thirdbuild(default, null):Build = new Build();
-	public var fourthbuild(default, null):Build = new Build();
-	public var uglify(default, null):Uglify = new Uglify();
-	public var seconduglify(default, null):Uglify = new Uglify();
-	public var npm(default, null):Npm = new Npm();
-	public var url(default, null):Url = new Url();
-	public var cordova(default, null):Cordova = new Cordova();
-	public var electron(default, null):Electron = new Electron();
-	public var hashlink(default, null):Hashlink = new Hashlink();
+	public var run(default, null): Run = new Run();
+	public var server(default, null): Server = new Server();
+	public var config(default, null): Config = new Config();
+	public var download(default, null): Download = new Download();
+	public var haxelib(default, null): Haxelib = new Haxelib();
+	public var build(default, null): Build = new Build();
+	public var secondbuild(default, null): Build = new Build();
+	public var thirdbuild(default, null): Build = new Build();
+	public var fourthbuild(default, null): Build = new Build();
+	public var uglify(default, null): Uglify = new Uglify();
+	public var seconduglify(default, null): Uglify = new Uglify();
+	public var npm(default, null): Npm = new Npm();
+	public var url(default, null): Url = new Url();
+	public var cordova(default, null): Cordova = new Cordova();
+	public var electron(default, null): Electron = new Electron();
+	public var hashlink(default, null): Hashlink = new Hashlink();
 
-	public var name:String;
-	public var rname(get, never):String;
+	public var name: String;
+	public var rname(get, never): String;
 
-	public function new(name:String) this.name = name;
+	public function new(name: String) this.name = name;
 
-	public function result():Xml {
+	public function result(): Xml {
 		var root = Xml.createElement('project');
 		if (name != null) root.set('name', name);
 
@@ -112,15 +112,15 @@ class Project {
 		}
 	}
 
-	public function getMain():String {
+	public function getMain(): String {
 		return build.active ? build.getMainhx() : null;
 	}
 
-	public function getCps():Array<String> {
+	public function getCps(): Array<String> {
 		return [];
 	}
 
-	public function getLibs():Map<String, String> {
+	public function getLibs(): Map<String, String> {
 		var map = new Map<String, String>();
 		if (haxelib.active) {
 			for (lib in haxelib.libs) map[lib.name] = lib.version;
@@ -131,12 +131,12 @@ class Project {
 		return map;
 	}
 
-	public function setRun(cmd:String):Void {
+	public function setRun(cmd: String): Void {
 		run.active = true;
 		run.path = build.outputPath;
 		run.command = cmd + ' ' + build.outputFile;
 	}
 
-	private function get_rname():String return name == null ? 'App' : name;
+	private function get_rname(): String return name == null ? 'App' : name;
 
 }

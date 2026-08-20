@@ -16,13 +16,14 @@ import nape.geom.Vec2;
 @:forward()
 abstract NapeSpace(NapeSpaceBase) from NapeSpaceBase to NapeSpaceBase {
 
-	public inline function new(w:Float, h:Float, ?gravity:Point<Float>):Void {
+	public inline function new(w: Float, h: Float, ?gravity: Point<Float>): Void {
 		this = new NapeSpaceBase(w, h, gravity);
 	}
 
-	@:op(a.b) public inline function resolve(s:String):NapeGroup {
+	@:op(a.b) public inline function resolve(s: String): NapeGroup {
 		return this.resolve(s);
 	}
+
 }
 
 /**
@@ -31,18 +32,18 @@ abstract NapeSpace(NapeSpaceBase) from NapeSpaceBase to NapeSpaceBase {
  */
 class NapeSpaceBase {
 
-	public var space:Space;
-	public var minimalStep(default, null):Float;
-	private var skipVelIntegrations:Int;
-	public var width:Float;
-	public var height:Float;
-	public var minSide(get, never):Float;
-	public var maxSide(get, never):Float;
-	public var snap(get, never):Float;
-	public var limits:Rect<Float>;
-	private var groups:Map<String, NapeGroup> = new Map<String, NapeGroup>();
+	public var space: Space;
+	public var minimalStep(default, null): Float;
+	private var skipVelIntegrations: Int;
+	public var width: Float;
+	public var height: Float;
+	public var minSide(get, never): Float;
+	public var maxSide(get, never): Float;
+	public var snap(get, never): Float;
+	public var limits: Rect<Float>;
+	private var groups: Map<String, NapeGroup> = new Map<String, NapeGroup>();
 
-	public function new(w:Float, h:Float, ?gravity:Point<Float>, minimalStep:Float = 0.2, skipVelIntegrations:Int = 10) {
+	public function new(w: Float, h: Float, ?gravity: Point<Float>, minimalStep: Float = 0.2, skipVelIntegrations: Int = 10) {
 		this.width = w;
 		this.height = h;
 		limits = new Rect<Float>(0, 0, w, h);
@@ -53,73 +54,71 @@ class NapeSpaceBase {
 
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function get_minSide():Float return Math.min(width, height);
+	private inline function get_minSide(): Float return Math.min(width, height);
 
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function get_maxSide():Float return Math.max(width, height);
+	private inline function get_maxSide(): Float return Math.max(width, height);
 
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function get_snap():Float return minSide / 100;
+	private inline function get_snap(): Float return minSide / 100;
 
-	public function resolve(name:String):NapeGroup {
-		if (!groups.exists(name))
-			groups[name] = new NapeGroup(this);
+	public function resolve(name: String): NapeGroup {
+		if (!groups.exists(name)) groups[name] = new NapeGroup(this);
 		return groups[name];
 	}
 
-	public function play():Void {
+	public function play(): Void {
 		DeltaTime.update.add(update, 1);
 	}
 
-	public function pause():Void {
+	public function pause(): Void {
 		DeltaTime.update >> update;
 	}
 
-	public function update(dt:DT):Void {
-		var f:Float = dt;
-		var integrations:Int = Std.int(f / minimalStep);
-		var sumf:Float = minimalStep * integrations;
+	public function update(dt: DT): Void {
+		var f: Float = dt;
+		var integrations: Int = Std.int(f / minimalStep);
+		var sumf: Float = minimalStep * integrations;
 		f -= sumf;
 		if (integrations > 0) {
-			var vi:Int = Std.int(integrations / skipVelIntegrations);
+			var vi: Int = Std.int(integrations / skipVelIntegrations);
 			if (vi == 0) vi = 1;
 			space.step(sumf, vi, integrations);
 		}
-		if (f > 0)
-			space.step(f, 1, 1);
+		if (f > 0) space.step(f, 1, 1);
 	}
 
-	public function createBox(size:Point<Float>, isBullet:Bool = false):BodyBox {
+	public function createBox(size: Point<Float>, isBullet: Bool = false): BodyBox {
 		return new BodyBox(size, space, limits, false, isBullet);
 	}
 
-	public function createStaticBox(size:Point<Float>, isBullet:Bool = false):BodyBox {
+	public function createStaticBox(size: Point<Float>, isBullet: Bool = false): BodyBox {
 		return new BodyBox(size, space, limits, true, isBullet);
 	}
 
-	public function createRect(size:Rect<Float>, isBullet:Bool = false):BodyRect {
+	public function createRect(size: Rect<Float>, isBullet: Bool = false): BodyRect {
 		return new BodyRect(size, space, limits, false, isBullet);
 	}
 
-	public function createStaticRect(size:Rect<Float>, isBullet:Bool = false):BodyRect {
+	public function createStaticRect(size: Rect<Float>, isBullet: Bool = false): BodyRect {
 		return new BodyRect(size, space, limits, true, isBullet);
 	}
 
-	public function createCircle(r:Float, isBullet:Bool = false, isBullet:Bool = false):BodyCircle {
+	public function createCircle(r: Float, isBullet: Bool = false, isBullet: Bool = false): BodyCircle {
 		return new BodyCircle(r, space, limits, false, isBullet);
 	}
 
-	public function createStaticCircle(r:Float, pos:Point<Float>, isBullet:Bool = false):BodyCircle {
+	public function createStaticCircle(r: Float, pos: Point<Float>, isBullet: Bool = false): BodyCircle {
 		return new BodyCircle(r, pos, space, limits, true, isBullet);
 	}
 
-	public function createShape(data:Bytes, resolution:Float, isBullet:Bool = false):BodyShape {
+	public function createShape(data: Bytes, resolution: Float, isBullet: Bool = false): BodyShape {
 		return new BodyShape(data, resolution, space, limits, false, isBullet);
 	}
 
-	public function createBody(data:Body, ?anchor:Vec2, isStatic:Bool = false, isBullet:Bool = false):BodyBody {
+	public function createBody(data: Body, ?anchor: Vec2, isStatic: Bool = false, isBullet: Bool = false): BodyBody {
 		return new BodyBody(data, anchor, space, limits, isStatic, isBullet);
 	}
 

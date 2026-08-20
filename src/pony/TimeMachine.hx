@@ -8,51 +8,53 @@ import pony.Tools;
  */
 class TimeMachine<T> {
 
-	public var state(default, null):T;
-	public var canUndo(get, never):Bool;
-	private var states:Array<T> = [];
-	private var defaultState:T;
+	public var state(default, null): T;
+	public var canUndo(get, never): Bool;
+	private var states: Array<T> = [];
+	private var defaultState: T;
 
-	public function new(def:T) {
+	public function new(def: T) {
 		defaultState = def;
 		reset();
 	}
 
-	public dynamic function copy(o:T):T return Tools.clone(o);
+	public dynamic function copy(o: T): T return Tools.clone(o);
 
-	public function reset():Void {
+	public function reset(): Void {
 		state = copy(defaultState);
 		onState();
 	}
 
-	public function fullReset():Void {
+	public function fullReset(): Void {
 		var l = states.length > 0;
 		states = [];
 		reset();
 		if (l) onNotCanUndo();
 	}
 
-	public dynamic function onCanUndo():Void {}
-	public dynamic function onNotCanUndo():Void {}
-	public dynamic function onState():Void {}
+	public dynamic function onCanUndo(): Void {}
+
+	public dynamic function onNotCanUndo(): Void {}
+
+	public dynamic function onState(): Void {}
 
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function get_canUndo():Bool return states.length > 0;
+	private inline function get_canUndo(): Bool return states.length > 0;
 
-	public function push():Void {
+	public function push(): Void {
 		states.push(copy(state));
 		if (states.length == 1) onCanUndo();
 	}
 
-	public function undo():Void {
+	public function undo(): Void {
 		if (states.length == 0) return;
 		state = states.pop();
 		onState();
 		if (states.length == 0) onNotCanUndo();
 	}
 
-	public function clear():Void {
+	public function clear(): Void {
 		push();
 		reset();
 	}

@@ -20,11 +20,11 @@ import pony.ui.gui.TextTableCore;
  */
 class TextTable extends TextTableCore {
 
-	private var graphics:Graphics;
-	private var target:Sprite;
-	private var texts:Array<BitmapText>;
+	private var graphics: Graphics;
+	private var target: Sprite;
+	private var texts: Array<BitmapText>;
 
-	public function new(target:Sprite) {
+	public function new(target: Sprite) {
 		super();
 		this.target = target;
 		graphics = new Graphics();
@@ -32,12 +32,12 @@ class TextTable extends TextTableCore {
 		create();
 	}
 
-	private function create():Void {
+	private function create(): Void {
 		texts = [];
 	}
 
 	#if (haxe_ver < 4.2) override #end
-	private function drawBG(r:IntRect, color:UColor):Void {
+	private function drawBG(r: IntRect, color: UColor): Void {
 		if (color.a == 0xFF) return;
 		graphics.lineStyle();
 		graphics.beginFill(color.rgb, color.invertAlpha.af);
@@ -45,29 +45,33 @@ class TextTable extends TextTableCore {
 		graphics.endFill();
 	}
 
-	override private function drawLine(a:IntPoint, b:IntPoint, color:UColor, size:Int):Void {
+	override private function drawLine(a: IntPoint, b: IntPoint, color: UColor, size: Int): Void {
 		if (color.a == 0xFF) return;
 		graphics.lineStyle(size, color.rgb, color.invertAlpha.af);
 		var d = size / 2;
 		if (a.x == b.x) {
-			graphics.moveTo(a.x+d, a.y);
-			graphics.lineTo(b.x+d, b.y);
+			graphics.moveTo(a.x + d, a.y);
+			graphics.lineTo(b.x + d, b.y);
 		} else {
-			graphics.moveTo(a.x, a.y+d);
-			graphics.lineTo(b.x, b.y+d);
+			graphics.moveTo(a.x, a.y + d);
+			graphics.lineTo(b.x, b.y + d);
 		}
 	}
 
 	#if (haxe_ver < 4.2) override #end
-	private function drawText(point:IntRect, text:String, style:FontStyle):Void {
-		var t = new BitmapText(text, { font:style.size+'px ' + style.font, tint:style.color } );
+	private function drawText(point: IntRect, text: String, style: FontStyle): Void {
+		var t = new BitmapText(text, { font: style.size + 'px ' + style.font, tint: style.color });
 		var align = if (style.border != null && style.align == null)
 			new Pair(VAlign.Top, HAlign.Left);
 		else
 			style.align;
 
 		if (align != null) {
-			var pos = GeomTools.center(new Point<Float>(point.width, point.height), [new Point(t.width, t.height)], style.border, false, align)[0];
+			var pos = GeomTools.center(
+				new Point<Float>(point.width, point.height),
+				[new Point(t.width, t.height)],
+				style.border, false, align
+			)[0];
 			t.x = point.x + pos.x;
 			t.y = point.y + pos.y;
 		} else {
@@ -79,7 +83,7 @@ class TextTable extends TextTableCore {
 	}
 
 	#if (haxe_ver < 4.2) override #end
-	private function clear():Void {
+	private function clear(): Void {
 		for (t in texts) {
 			target.removeChild(t);
 			t.destroy();
@@ -88,7 +92,7 @@ class TextTable extends TextTableCore {
 		create();
 	}
 
-	public function destroy():Void {
+	public function destroy(): Void {
 		for (t in texts) {
 			target.removeChild(t);
 			t.destroy();

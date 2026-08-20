@@ -39,7 +39,7 @@ final class ROArrayIterator<T> {
 		hasNext = it.hasNext;
 	}
 
-	public inline function next(): {key: UInt, value: T} {
+	public inline function next(): { key: UInt, value: T } {
 		final n: UInt = it.next();
 		return { key: n, value: a[n] };
 	}

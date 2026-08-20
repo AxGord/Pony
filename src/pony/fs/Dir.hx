@@ -1,9 +1,7 @@
 package pony.fs;
 
 #if (sys || nodejs)
-
 import pony.Priority;
-
 import sys.FileSystem;
 
 using Lambda;
@@ -35,13 +33,12 @@ abstract Dir(Unit) from Unit {
 		var result: Map<String, Unit> = new Map<String, Unit>();
 		var flt: Array<String> = filter == null ? null : filter.split(' ');
 		for (d in this) {
-			if (d.exists)
-				for (e in FileSystem.readDirectory(d.first)) {
-					var np: String = d + '/' + e;
-					var isDir: Bool = try FileSystem.isDirectory(np) catch (_:Any) false;
-					if ((allowDir || !isDir) && (isDir || checkFilter(flt, e)) && !result.exists(e))
-						result[e] = [for (d in this.wayStringIterator()) d + '/$e'];
-				}
+			if (d.exists) for (e in FileSystem.readDirectory(d.first)) {
+				var np: String = d + '/' + e;
+				var isDir: Bool = try FileSystem.isDirectory(np) catch (_: Any) false;
+				if ((allowDir || !isDir) && (isDir || checkFilter(flt, e)) && !result.exists(e))
+					result[e] = [for (d in this.wayStringIterator()) d + '/$e'];
+			}
 		}
 		var r: Array<Unit> = [for (e in result) e];
 		if (sortByName) r.sort(compareNames);
@@ -59,14 +56,15 @@ abstract Dir(Unit) from Unit {
 	}
 
 	public function files(?filter: String, sortByName: Bool = false): Array<File> {
-		return [ for (u in content(filter, false, sortByName)) if (u.isFile) u ];
+		return [for (u in content(filter, false, sortByName)) if (u.isFile) u];
 	}
 
 	public function dirs(?filter: String, sortByName: Bool = false): Array<Dir> {
-		return [ for (u in content(filter, true, sortByName)) if (u.isDir) u ];
+		return [for (u in content(filter, true, sortByName)) if (u.isDir) u];
 	}
 
 	public inline function delete(): Void FileSystem.deleteDirectory(first);
+
 	private inline function get_first(): String return this.first;
 
 	private function get_size(): Int {
@@ -128,11 +126,17 @@ abstract Dir(Unit) from Unit {
 	}
 
 	public inline function create(): Void FileSystem.createDirectory(first);
+
 	public function file(name: String): File return addString(name);
+
 	@:to inline private function toUnit(): Unit return this;
+
 	@:to inline public function toString(): String return this.toString();
+
 	@:arrayAccess public inline function arrayAccess(key: Int): Dir return this[key];
+
 	public inline function iterator(): Iterator<Dir> return this.iterator();
+
 	@:op(A + B) inline public function addString(a: String): Unit return this.addString(a);
 
 	public static function compareNames(a: Unit, b: Unit): Int {

@@ -39,7 +39,7 @@ class DeltaTime implements HasSignal {
 		fixedDispatch();
 	}
 
-	private static var lastNow:Date;
+	private static var lastNow: Date;
 
 	inline private static function get_nowDate(): Date return lastNow;
 
@@ -49,11 +49,8 @@ class DeltaTime implements HasSignal {
 	}
 
 	private inline static function get(): Float return (openfl.Lib.getTimer() - t) / 1000;
-
 	#elseif !HUGS
-
 	#if sys
-
 	public static inline function tick(): Void {
 		var time: Float = Sys.time();
 		fixedValue = time - t;
@@ -64,9 +61,7 @@ class DeltaTime implements HasSignal {
 	private static inline function get_nowDate(): Date return Date.now();
 
 	private static inline function set(): Void t = Sys.time();
-
 	#else
-
 	public static inline function tick(): Void {
 		lastNow = Date.now();
 		var time: Float = lastNow.getTime();
@@ -83,9 +78,7 @@ class DeltaTime implements HasSignal {
 		lastNow = Date.now();
 		t = lastNow.getTime();
 	}
-
 	#end
-
 	#else
 	private static inline function get_nowDate(): Date return Date.now();
 	#end
@@ -93,7 +86,6 @@ class DeltaTime implements HasSignal {
 	public static inline function fixedDispatch(): Void eFixedUpdate.dispatch(fixedValue);
 
 	#if ((flash || openfl) && !munit)
-
 	private static var addListenerTimer: haxe.Timer;
 
 	private static function __init__(): Void {
@@ -123,7 +115,6 @@ class DeltaTime implements HasSignal {
 
 	private static function _tick(_): Void tick();
 	private static inline function _set(): Void set();
-
 	#elseif (nodejs && nodedt)
 	private static var imm: Dynamic;
 	private static function __init__(): Void {
@@ -161,11 +152,12 @@ class DeltaTime implements HasSignal {
 	}
 
 	private static function _takeListeners(): Void fixedUpdate.add(updateHandler);
+
 	private static function _lostListeners(): Void fixedUpdate.remove(updateHandler);
 
 	public static function skipUpdate(f: Void -> Void): Void DeltaTime.fixedUpdate < function() DeltaTime.fixedUpdate < f;
 
-	public static function skipFrames(n: Int, f:Void -> Void):Void {
+	public static function skipFrames(n: Int, f: Void -> Void): Void {
 		if (n == 0)
 			f();
 		else
@@ -186,8 +178,13 @@ class DeltaTime implements HasSignal {
 	 */
 	@SuppressWarnings('checkstyle:MagicNumber')
 	public static function testRun(time: Time = 60000): Void {
-		var sec:Float = time / 1000;
-		var d = if (sec < 100) 10 else if (sec < 1000) 50 else 100; // d > 100 sec - not normal lag
+		var sec: Float = time / 1000;
+		var d = if (sec < 100)
+			10
+		else if (sec < 1000)
+			50
+		else
+			100; // d > 100 sec - not normal lag
 		while (sec > 0) {
 			var r = Math.random() * d;
 			if (sec >= r)
@@ -201,4 +198,5 @@ class DeltaTime implements HasSignal {
 		}
 	}
 	#end
+
 }

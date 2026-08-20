@@ -19,9 +19,12 @@
 		this.hard = hard;
 		if (qn == null) qn = n;
 		if (q) switch Config.questionState(qn) {
-			case InstallQuestion.No: return;
-			case InstallQuestion.Yes: q = false;
-			case InstallQuestion.Say: q = true;
+			case InstallQuestion.No:
+				return;
+			case InstallQuestion.Yes:
+				q = false;
+			case InstallQuestion.Say:
+				q = true;
 		}
 		if (!q || question()) {
 			log('');

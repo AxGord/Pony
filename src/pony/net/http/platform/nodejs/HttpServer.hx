@@ -25,33 +25,33 @@ class HttpServer {
 	 * not start without the dependency. Assign it before the first such request to
 	 * substitute an implementation.
 	 */
-	public static var multipartyClass:Null<Class<Dynamic>> = null;
+	public static var multipartyClass: Null<Class<Dynamic>> = null;
 
-	public static var querystring:Dynamic = Node.require('querystring');
+	public static var querystring: Dynamic = Node.require('querystring');
 
-	private static var spdy(get, never):Dynamic;
+	private static var spdy(get, never): Dynamic;
 
-	private var server:Server;
-	private var spdyServer:Dynamic;
-	public var storage:ServersideStorage;
+	private var server: Server;
+	private var spdyServer: Dynamic;
+	public var storage: ServersideStorage;
 
 	/**
 	 * Whether to announce the listening address. A service that prints its own startup
 	 * line — or has that line parsed by a supervisor — wants this off, and cannot silence
 	 * a `trace` any other way.
 	 */
-	public var verbose:Bool = true;
-	public var fixedHeaders:Map<String, String> = ['Server' => 'PonyHttpServer'];
+	public var verbose: Bool = true;
 
-	inline private static function get_spdy():Dynamic return Node.require('spdy');
+	public var fixedHeaders: Map<String, String> = ['Server' => 'PonyHttpServer'];
 
-	private static function multipartyForm():Class<Dynamic> {
+	inline private static function get_spdy(): Dynamic return Node.require('spdy');
+
+	private static function multipartyForm(): Class<Dynamic> {
 		if (multipartyClass == null) multipartyClass = Node.require('multiparty').Form;
 		return multipartyClass;
 	}
 
-	public function new(host:String = null, port:Int = 80, ?spdyConf:Dynamic)
-	{
+	public function new(host: String = null, port: Int = 80, ?spdyConf: Dynamic) {
 		server = Http.createServer(listen);
 		server.on('error', errorHandler);
 		Node.process.nextTick(function() server.listen(port, host, createHandler));
@@ -69,9 +69,9 @@ class HttpServer {
 		}
 	}
 
-	private function listen(req:IncomingMessage, res:ServerResponse):Void {
-		//trace(req.method+': ' + req.url);
-		//trace(req.headers);
+	private function listen(req: IncomingMessage, res: ServerResponse): Void {
+		// trace(req.method+': ' + req.url);
+		// trace(req.headers);
 		for (k in fixedHeaders.keys()) res.setHeader(k, fixedHeaders[k]);
 		var multi: String = 'multipart/form-data';
 		var contentType: String = req.headers.field('content-type');
@@ -79,22 +79,22 @@ class HttpServer {
 			case 'POST' if (contentType.length >= multi.length && contentType.substr(0, multi.length) == multi):
 				var me = this;
 				var multiparty = Type.createInstance(multipartyForm(), []);
-				multiparty.parse(req, function(err, fields:Dynamic<Array<Dynamic>>, files:Dynamic<Array<Dynamic>>) {
+				multiparty.parse(req, function(err, fields: Dynamic<Array<Dynamic>>, files: Dynamic<Array<Dynamic>>) {
 					if (fields == null || files == null) {
 						res.end('error');
 					} else {
 						var host = if (req.headers.exists('host')) {
 							req.headers.get('host');
 						} else {
-							var a:Dynamic = untyped me.server.address();
+							var a: Dynamic = untyped me.server.address();
 							a.address + ':' + a.port;
 						}
-						var map:Map<String, String> = new Map();
+						var map: Map<String, String> = new Map();
 						for (k in fields.fields()) {
 							map[k] = fields.field(k)[0];
 						}
 						for (k in files.fields()) {
-							var f:Dynamic = files.field(k)[0];
+							var f: Dynamic = files.field(k)[0];
 							if (f.size > 0) map[k] = f.headers.field('content-type') + ':' + f.path;
 						}
 						me.request(new HttpConnection('http://' + host + req.url, me.storage, req, res, map));
@@ -105,20 +105,19 @@ class HttpServer {
 
 			case 'POST':
 				var me = this;
-				var s:String = '';
-				untyped req.addListener('data', function(d:String):Void {
+				var s: String = '';
+				untyped req.addListener('data', function(d: String): Void {
 					s += d;
 				});
-				untyped req.addListener('end', function(Void):Void {
+				untyped req.addListener('end', function(Void): Void {
 					var h = new Map<String, String>();
-					var o:Dynamic = querystring.parse(s);
-					for (f in o.fields())
-						h.set(f, o.field(f));
+					var o: Dynamic = querystring.parse(s);
+					for (f in o.fields()) h.set(f, o.field(f));
 
 					var host = if (req.headers.host != null) {
 						req.headers.host;
 					} else {
-						var a:Dynamic = untyped me.server.address();
+						var a: Dynamic = untyped me.server.address();
 						a.address + ':' + a.port;
 					}
 					me.request(new HttpConnection('http://' + host + req.url, me.storage, req, res, h));
@@ -129,7 +128,7 @@ class HttpServer {
 				var host = if (req.headers.exists('host')) {
 					req.headers.get('host');
 				} else {
-					var a:Dynamic = untyped this.server.address();
+					var a: Dynamic = untyped this.server.address();
 					a.address + ':' + a.port;
 				}
 				request(new HttpConnection('http://' + host + req.url, storage, req, res, new Map<String, String>()));
@@ -145,31 +144,32 @@ class HttpServer {
 		}
 	}
 
-	public dynamic function onOpen():Void {}
-	public dynamic function onError():Void {}
+	public dynamic function onOpen(): Void {}
 
-	private function createHandler():Void {
+	public dynamic function onError(): Void {}
+
+	private function createHandler(): Void {
 		if (verbose) {
-			var a:Dynamic = untyped server.address();
+			var a: Dynamic = untyped server.address();
 			trace('HTTP Server running at http://' + a.address + ':' + a.port);
 		}
 		onOpen();
 	}
 
-	private function createSpdyHandler():Void {
-		var a:Dynamic = untyped spdyServer.address();
+	private function createSpdyHandler(): Void {
+		var a: Dynamic = untyped spdyServer.address();
 		trace('SPDY Server running at http://' + a.address + ':' + a.port);
 		onOpen();
 	}
 
-	private function errorHandler():Void onError();
+	private function errorHandler(): Void onError();
 
-	public dynamic function request(connection:IHttpConnection):Void {
+	public dynamic function request(connection: IHttpConnection): Void {
 		connection.sendText('Welcome from Pony Http Server');
 	}
 
-	public function close(?cb:Void -> Void):Void {
-		Node.process.nextTick(cb); //How detect closed server???
+	public function close(?cb: Void -> Void): Void {
+		Node.process.nextTick(cb); // How detect closed server???
 		server.removeAllListeners();
 		server.close();
 		server.unref();

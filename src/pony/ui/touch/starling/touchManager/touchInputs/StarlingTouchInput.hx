@@ -32,8 +32,7 @@ class StarlingTouchInput {
 		for (i in 0...touches.length) {
 			var touch: Touch = touches[i];
 
-			if (touch == null)
-				return;
+			if (touch == null) return;
 
 			if (touch.phase == TouchPhase.BEGAN) {
 				TouchManager.down(touch.globalX, touch.globalY, InputMode.touchMode(), touch.id);

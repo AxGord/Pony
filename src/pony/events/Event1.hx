@@ -8,12 +8,11 @@ import pony.Priority;
  * @author AxGord <axgord@gmail.com>
  */
 @SuppressWarnings('checkstyle:MagicNumber')
-@:forward(
-	empty,
-	#if pony_experimental changeEmpty, #end
-	onTake,
-	onLost
-)
+#if pony_experimental
+@:forward(empty, changeEmpty, onTake, onLost)
+#else
+@:forward(empty, onTake, onLost)
+#end
 @:nullSafety(Strict) abstract Event1<T1>(Priority<Listener1<T1>>) from Priority<Listener1<T1>> to Priority<Listener1<T1>> {
 
 	public var self(get, never): Event1<T1>;
@@ -54,6 +53,7 @@ import pony.Priority;
 	}
 
 	@:op(a()) public inline function dispatch(a1: T1): Void dispatchWithFlag(a1, false);
+
 	public inline function saveDispatch(a1: T1): Void dispatchWithFlag(a1, true);
 
 	public function dispatchWithFlag(a1: T1, safe: Bool): Void {

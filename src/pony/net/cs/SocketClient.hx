@@ -91,7 +91,7 @@ class SocketClient extends SocketClientBase {
 		try {
 			client.Connect(host, port);
 			isConnected = true;
-		} catch (ex:SocketException) {
+		} catch (ex: SocketException) {
 			isConnected = false;
 			tryAgain();
 		}
@@ -118,8 +118,7 @@ class SocketClient extends SocketClientBase {
 		var size: Int = buffer.Length;
 		b_out.writeBytes(data.getBytes(), 0, size);
 		var b_in: BytesInput = new BytesInput(b_out.getBytes());
-		for (i in 0...b_in.length)
-			buffer[i] = b_in.readByte();
+		for (i in 0...b_in.length) buffer[i] = b_in.readByte();
 		client.BeginSend(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(sendCallback), client);
 	}
 
@@ -157,8 +156,7 @@ class SocketClient extends SocketClientBase {
 						isSet = false;
 						Synchro.lock(client, function() {
 							if (client != null && client.Connected)
-								client.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(receiveCallback),
-									this); // Костыль для убиения бага.
+								client.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(receiveCallback), this); // Костыль для убиения бага.
 						});
 
 					} else {
@@ -180,7 +178,7 @@ class SocketClient extends SocketClientBase {
 					}
 				} else {}
 
-			} catch (ex:Dynamic) {
+			} catch (ex: Dynamic) {
 				error(ex);
 			}
 		}

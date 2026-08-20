@@ -11,18 +11,19 @@ import pony.midi.devices.LaunchpadColor;
  */
 interface ILaunchpad extends ILogable {
 
-	var areaState(default, null):Matrix<LaunchpadColor>;
-	var topState(default, null):Array<LaunchpadColor>;
-	var rightState(default, null):Array<LaunchpadColor>;
+	var areaState(default, null): Matrix<LaunchpadColor>;
+	var topState(default, null): Array<LaunchpadColor>;
+	var rightState(default, null): Array<LaunchpadColor>;
 
-	var onArea(get, never):Signal2<IntPoint, Bool>;
-	var onTop(get, never):Signal2<Int, Bool>;
-	var onRight(get, never):Signal2<Int, Bool>;
+	var onArea(get, never): Signal2<IntPoint, Bool>;
+	var onTop(get, never): Signal2<Int, Bool>;
+	var onRight(get, never): Signal2<Int, Bool>;
 
-	function setAreaPoint(p:IntPoint, color:LaunchpadColor = AmberFull):Void;
-	function setMatrixCI(m:Matrix<Int>):Void;
-	function setMatrix(m:Matrix<LaunchpadColor>):Void;
-	function setTop(p:Int, color:LaunchpadColor = AmberFull):Void;
-	function setRight(p:Int, color:LaunchpadColor = AmberFull):Void;
-	function reset():Void;
+	function setAreaPoint(p: IntPoint, color: LaunchpadColor = AmberFull): Void;
+	function setMatrixCI(m: Matrix<Int>): Void;
+	function setMatrix(m: Matrix<LaunchpadColor>): Void;
+	function setTop(p: Int, color: LaunchpadColor = AmberFull): Void;
+	function setRight(p: Int, color: LaunchpadColor = AmberFull): Void;
+	function reset(): Void;
+
 }

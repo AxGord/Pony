@@ -109,7 +109,7 @@ import sys.io.Process;
 		endColor();
 	}
 
-	public static function exit(errCode:Int = 0): Void {
+	public static function exit(errCode: Int = 0): Void {
 		#if neko
 		if (Config.OS == Linux) Sys.sleep(0.3); // finish print messages
 		#end

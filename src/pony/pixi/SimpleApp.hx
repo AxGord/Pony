@@ -26,8 +26,9 @@ class SimpleApp extends Sprite {
 	private function init(): Void {
 		var preloader: Element = Browser.document.getElementById('preloader');
 		if (preloader != null) preloader.remove();
-		app = new App(this, Config.width, Config.height, Config.background,
-			parentDomId == null ? null : Browser.document.getElementById(parentDomId));
+		app = new App(
+			this, Config.width, Config.height, Config.background, parentDomId == null ? null : Browser.document.getElementById(parentDomId)
+		);
 	}
 
 }

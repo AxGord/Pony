@@ -10,10 +10,12 @@ import pony.events.Signal2;
 
 #if (haxe_ver >= 4.2) enum #else @:enum #end
 abstract SmallDeviceQuality(Int) to Int {
+
 	var ideal = 1;
 	var low = 2;
 	var normal = 3;
 	var good = 4;
+
 }
 
 /**
@@ -42,13 +44,9 @@ class SmartCanvas extends ElementResizeControl {
 	public var noScale: Bool = false;
 
 	public function new(
-		?size: Point<Int>,
-		?parentDom: Element,
-		smallDeviceQuality: SmallDeviceQuality = SmallDeviceQuality.ideal,
-		even: Bool = true
+		?size: Point<Int>, ?parentDom: Element, smallDeviceQuality: SmallDeviceQuality = SmallDeviceQuality.ideal, even: Bool = true
 	) {
-		if (parentDom == null)
-			parentDom = Browser.document.body;
+		if (parentDom == null) parentDom = Browser.document.body;
 		super(parentDom, even);
 		canvas = Browser.document.createCanvasElement();
 		canvas.style.position = 'static';
@@ -66,7 +64,9 @@ class SmartCanvas extends ElementResizeControl {
 	}
 
 	private function takeDynStageHandler(): Void onStageResize << dynStageResize;
+
 	private function lostDynStageHandler(): Void onStageResize >> dynStageResize;
+
 	private function dynStageResize(): Void eDynStageResize.dispatch(dynStage);
 
 	@SuppressWarnings('checkstyle:MagicNumber')
@@ -85,7 +85,9 @@ class SmartCanvas extends ElementResizeControl {
 	}
 
 	public dynamic function ratioMod(value: Float): Float return value;
+
 	public function fullscreen(): Void JsTools.fse(element);
+
 	public inline function updateSize(): Void setSize(width, height);
 
 	private function changeParentDomHandler(actual: Element, prev: Element): Void {
@@ -107,8 +109,7 @@ class SmartCanvas extends ElementResizeControl {
 
 	public function setSize(w: Int, h: Int): Void {
 		setCanvasSize(w, h);
-		if (stageInitSize != null)
-			setStageSize(w, h);
+		if (stageInitSize != null) setStageSize(w, h);
 	}
 
 	@SuppressWarnings('checkstyle:MagicNumber')
@@ -130,7 +131,7 @@ class SmartCanvas extends ElementResizeControl {
 			var hd = h / stageInitSize.y;
 			scale = wd > hd ? hd : wd;
 
-			ratio = (smallDeviceQuality: Int) <= 1 ? 1 :  smallDeviceQualityOffset + scale / smallDeviceQuality;
+			ratio = (smallDeviceQuality: Int) <= 1 ? 1 : smallDeviceQualityOffset + scale / smallDeviceQuality;
 			if (ratio > 1) ratio = 1;
 			ratio = ratioMod(ratio);
 

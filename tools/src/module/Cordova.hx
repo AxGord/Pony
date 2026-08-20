@@ -3,7 +3,6 @@ package module;
 import pony.Fast;
 import pony.fs.File;
 import pony.text.XmlTools;
-
 import types.BAConfig;
 import types.BASection;
 
@@ -42,6 +41,7 @@ class Cordova extends CfgModule<CordovaConfig> {
 	}
 
 	private function androidHandler(): Void modules.build.addFlag('android');
+
 	private function iphoneHandler(): Void modules.build.addFlag('iphone');
 
 	private function cordovaHandler(a: String, b: String): Void {
@@ -54,6 +54,7 @@ class Cordova extends CfgModule<CordovaConfig> {
 	}
 
 	private function androidBuildHandler(): Void addToRun(androidBuild);
+
 	private function iphoneBuildHandler(): Void addToRun(iphoneBuild);
 
 	private function androidBuild(): Void {
@@ -178,11 +179,16 @@ private class CordovaReader extends BAReader<CordovaConfig> {
 
 	override private function readNode(xml: Fast): Void {
 		switch xml.name {
-			case 'name': cfg.name = normalize(xml.innerData);
-			case 'id': cfg.id = normalize(xml.innerData);
-			case 'version': cfg.versionBuildDate = XmlTools.isTrue(xml, 'buildDate');
-			case 'androidVersionCode': cfg.incrementAndroidVersionCode = XmlTools.isTrue(xml, 'increment');
-			case _: super.readNode(xml);
+			case 'name':
+				cfg.name = normalize(xml.innerData);
+			case 'id':
+				cfg.id = normalize(xml.innerData);
+			case 'version':
+				cfg.versionBuildDate = XmlTools.isTrue(xml, 'buildDate');
+			case 'androidVersionCode':
+				cfg.incrementAndroidVersionCode = XmlTools.isTrue(xml, 'increment');
+			case _:
+				super.readNode(xml);
 		}
 	}
 

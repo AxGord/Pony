@@ -20,55 +20,50 @@ using hugs.HUGSWrapper;
  */
 @:nativeGen class MouseHelper extends MonoBehaviour {
 
-	public static var globalMiddleDown:Signal = new Signal();
-	public static var globalMiddleUp:Signal = new Signal();
-	public static var lock:LV<Int> = new LV(0);
-	public static var middleMousePressed:Bool = false;
-	private static var inited:Bool = false;
-	
+	public static var globalMiddleDown: Signal = new Signal();
+	public static var globalMiddleUp: Signal = new Signal();
+	public static var lock: LV<Int> = new LV(0);
+	public static var middleMousePressed: Bool = false;
+	private static var inited: Bool = false;
+
 	@:meta(UnityEngine.HideInInspector)
-	@:isVar public var overed(get,never):Bool;
+	@:isVar public var overed(get, never): Bool;
 	@:meta(UnityEngine.HideInInspector)
-	public var over:Signal0<MouseHelper>;
-	public var out:Signal0<MouseHelper>;
-	public var down:Signal0<MouseHelper>;
-	public var middleDown:Signal0<MouseHelper>;
-	public var middleUp:Signal0<MouseHelper>;
-	
+	public var over: Signal0<MouseHelper>;
+	public var out: Signal0<MouseHelper>;
+	public var down: Signal0<MouseHelper>;
+	public var middleDown: Signal0<MouseHelper>;
+	public var middleUp: Signal0<MouseHelper>;
+
 	@:meta(UnityEngine.HideInInspector)
-	private var _overed:Int = 0;
+	private var _overed: Int = 0;
 	@:meta(UnityEngine.HideInInspector)
-	private var ovr:MouseHelper;
+	private var ovr: MouseHelper;
 	@:meta(UnityEngine.HideInInspector)
-	private var ovrs:Int = 0;
-	
+	private var ovrs: Int = 0;
+
 	@:meta(UnityEngine.HideInInspector)
-	public var sub:Bool = false;
-	
-	public static function updateStatic():Void
-	{
-		if (Input.GetMouseButton(2))
-		{			
+	public var sub: Bool = false;
+
+	public static function updateStatic(): Void {
+		if (Input.GetMouseButton(2)) {
 			if (!middleMousePressed) {
 				middleMousePressed = true;
 				globalMiddleDown.dispatch();
 			}
-		}
-		else if (middleMousePressed) 
-		{
+		} else if (middleMousePressed) {
 			globalMiddleUp.dispatch();
-			middleMousePressed = false;			
+			middleMousePressed = false;
 		}
 	}
-	
-	public static function init():Void
-	{
-		if ( inited ) return;
+
+	public static function init(): Void {
+		if (inited) return;
 		inited = true;
-		DeltaTime.update.add(updateStatic);//todo: add if have listener
+		DeltaTime.update.add(updateStatic); // todo: add if have listener
 	}
-	
-	
+
+
 	private function new() {
 		super();
 		over = Signal.create(this);
@@ -79,19 +74,18 @@ using hugs.HUGSWrapper;
 		lock.add(resetOvrs);
 		lock.add(updateOverState);
 	}
-	
-	public function Start():Void {
+
+	public function Start(): Void {
 		init();
 		if (LoadScreen.lastLoader != null && !sub)
 			LoadScreen.lastLoader.addAction(ft);
 		else
 			ft();
 	}
-	
-	public function ft():Void {
-		if (renderer != null && collider == null)
-			gameObject.addTypedComponent(MeshCollider);
-		
+
+	public function ft(): Void {
+		if (renderer != null && collider == null) gameObject.addTypedComponent(MeshCollider);
+
 		for (e in gameObject.getComponentsInChildrenOfType(Transform)) {
 			if (e == transform) continue;
 			ovr = e.gameObject.getTypedComponent(MouseHelper);
@@ -105,43 +99,41 @@ using hugs.HUGSWrapper;
 			ovr.middleDown.add(middleDown.dispatchEvent);
 			ovr.middleUp.add(middleUp.dispatchEvent);
 		}
-		
+
 	}
-	
-	private function resetOvrs():Void {
+
+	private function resetOvrs(): Void {
 		if (overed) out.dispatch();
 		ovrs = 0;
 		_overed = 0;
 	}
-	
-	private function subOver():Void {
-		if (!overed)
-			over.dispatch();
+
+	private function subOver(): Void {
+		if (!overed) over.dispatch();
 		ovrs++;
 	}
-	
-	private function subOut():Void {
+
+	private function subOut(): Void {
 		ovrs--;
-		if (!overed)
-			out.dispatch();
+		if (!overed) out.dispatch();
 	}
-	
-	private function Update():Void {
+
+	private function Update(): Void {
 		if (lock.value > 0) return;
 		if (_overed == 0) return;
 		_overed--;
 		if (_overed == 0) updateOverState();
 	}
-	
-	private function OnMouseOver():Void {
+
+	private function OnMouseOver(): Void {
 		if (!enabled) return;
 		if (lock.value > 0) return;
 		if (_overed == 2) return;
 		_overed = 2;
 		updateOverState();
 	}
-	
-	private function updateOverState():Void {
+
+	private function updateOverState(): Void {
 		if (_overed == 2 && lock.value == 0) {
 			if (!overed) {
 				ovrs++;
@@ -158,11 +150,11 @@ using hugs.HUGSWrapper;
 			}
 		}
 	}
-	
-	private function OnMouseDown():Void {
-		if (overed)
-			down.dispatch();
+
+	private function OnMouseDown(): Void {
+		if (overed) down.dispatch();
 	}
-	
-	inline private function get_overed():Bool return ovrs > 0;
+
+	inline private function get_overed(): Bool return ovrs > 0;
+
 }

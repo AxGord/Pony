@@ -2,7 +2,6 @@ package pony.heaps.ui.gui.slices;
 
 import h2d.Object;
 import h2d.Tile;
-
 import pony.geom.Border;
 import pony.ui.gui.slices.SliceData;
 import pony.ui.gui.slices.SliceTools;
@@ -53,7 +52,6 @@ class Slice {
 					new NodeAnim(tiles, speed, delay, parent);
 				case _:
 					throw 'Not supported';
-
 			}
 		}
 	}

@@ -18,88 +18,81 @@ using hugs.HUGSWrapper;
  * @author BoBaH6eToH <freezedunk@gmail.com>
  */
 @:nativeGen class Wards extends MonoBehaviour implements IWards<Wards> {
-	
-	public var withRotation:Bool = true;
-	public var withTimeScale:Bool = true;
-	public var speed:Single = 200;
-	public var currentPos:Int = 0;
-	public var change(default, null):Signal1<Wards, Int>;
-	public var changed(default, null):Signal;
-	
-	public var target:GameObject;
-	public var wards:Array<Transform>;
-	private var toN:Null<Int>;
+
+	public var withRotation: Bool = true;
+	public var withTimeScale: Bool = true;
+	public var speed: Single = 200;
+	public var currentPos: Int = 0;
+	public var change(default, null): Signal1<Wards, Int>;
+	public var changed(default, null): Signal;
+
+	public var target: GameObject;
+	public var wards: Array<Transform>;
+	private var toN: Null<Int>;
 	@:meta(UnityEngine.HideInInspector)
-	private var toObj:Transform;
+	private var toObj: Transform;
 	@:meta(UnityEngine.HideInInspector)
-	private var rn:Single = 0;
-	
-	public function new():Void {
+	private var rn: Single = 0;
+
+	public function new(): Void {
 		super();
 		change = Signal.create(this);
 		change.add(changeHandler);
 		changed = new Signal(this);
 	}
-	
-	public function Start():Void 
-	{
+
+	public function Start(): Void {
 		if (target == null) target = gameObject.getChildGameObject('obj');
 		readWards();
 		goToCurrent();
 	}
-	
-	public function readWards():Void {
+
+	public function readWards(): Void {
 		wards = [];
 		for (i in 1...10000) {
-			var t:Transform = transform.Find(Std.string(i));
+			var t: Transform = transform.Find(Std.string(i));
 			if (t == null) break;
 			wards.push(t);
 		}
 	}
-	
-	public function changeHandler(n:Int):Void {
+
+	public function changeHandler(n: Int): Void {
 		if (n == currentPos) return;
 		currentPos = n;
 		toN = n;
 		toObj = wards[n];
 	}
-	
-	public function goToCurrent():Void {
+
+	public function goToCurrent(): Void {
 		if (currentPos >= wards.length) currentPos = wards.length - 1;
 		if (currentPos < 0) currentPos = 0;
 		toObj = wards[currentPos];
 	}
-	
-	inline public function goto(n:Int):Void change.dispatch(n);
-	
-	public function Update():Void 
-	{
+
+	inline public function goto(n: Int): Void change.dispatch(n);
+
+	public function Update(): Void {
 		if (toObj == null) return;
-		var dt:Single = withTimeScale ? Time.deltaTime : Time.fixedDeltaTime;
-		var p:Vector3 = toObj.position;
-		var r:Quaternion = toObj.rotation;
-		target.transform.position = Vector3.MoveTowards(target.transform.position, p, speed*dt);
-		if (withRotation)
-			target.transform.rotation = Quaternion.Slerp(target.transform.rotation, r, speed*(rn+=speed*2)*dt);
+		var dt: Single = withTimeScale ? Time.deltaTime : Time.fixedDeltaTime;
+		var p: Vector3 = toObj.position;
+		var r: Quaternion = toObj.rotation;
+		target.transform.position = Vector3.MoveTowards(target.transform.position, p, speed * dt);
+		if (withRotation) target.transform.rotation = Quaternion.Slerp(target.transform.rotation, r, speed * (rn += speed * 2) * dt);
 		if (target.transform.position == p) {
-			//currentPos = toN;
+			// currentPos = toN;
 			toN = null;
 			toObj = null;
 			rn = 0;
 			changed.dispatch(currentPos);
 		}
 	}
-	
-	public function goNext():Void 
-	{
-		if (currentPos < wards.length-1) 
-			goto(currentPos + 1);
+
+	public function goNext(): Void {
+		if (currentPos < wards.length - 1) goto(currentPos + 1);
 	}
-	
-	public function goPrev():Void
-	{
-		if (currentPos > 0) 
-			goto(currentPos - 1);
+
+	public function goPrev(): Void {
+		if (currentPos > 0) goto(currentPos - 1);
 	}
-	
+
 }

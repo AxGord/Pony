@@ -30,17 +30,24 @@ class DeclaratorBuilder {
 						var n = f.name;
 						switch ComplexTypeTools.toString(t) {
 							case 'Int' | 'Float' if (Tools.staticPlatform):
-								args.push( { name: n, opt: false, type: t, value: macro $e } );
+								args.push({
+									name: n,
+									opt: false,
+									type: t,
+									value: macro $e
+								});
 								toNew.push(macro this.$n = $i{n});
 							case _:
-								args.push( { name: n, opt: e != null, type: t } );
-								if (e == null) toNew.push(macro this.$n = $i {n} );
-								else toNew.push(macro this.$n = $i{n} != null ? $i{n} : $i{n} = $e);
+								args.push({ name: n, opt: e != null, type: t });
+								if (e == null)
+									toNew.push(macro this.$n = $i{n});
+								else
+									toNew.push(macro this.$n = $i{n} != null ? $i{n} : $i{n} = $e);
 						}
 
 					} else if (e != null) {
 						var t = Lambda.indexOf(f.access, AStatic) == -1 ? toNew : toInit;
-						t.push(macro $i { f.name } = $e);
+						t.push(macro $i{f.name} = $e);
 					}
 				case [FProp(g, s, t, e), _] if (s != 'set'):
 					f.kind = FProp(g, s, t, null);
@@ -48,16 +55,23 @@ class DeclaratorBuilder {
 						var n = f.name;
 						switch ComplexTypeTools.toString(t) {
 							case 'Int' | 'Float' if (Tools.staticPlatform):
-								args.push( { name: n, opt: false, type: t, value: macro $e } );
+								args.push({
+									name: n,
+									opt: false,
+									type: t,
+									value: macro $e
+								});
 								toNew.push(macro this.$n = $i{n});
 							case _:
-								args.push( { name: n, opt: e != null, type: t } );
-								if (e == null) toNew.push(macro this.$n = $i {n} );
-								else toNew.push(macro this.$n = $i{n} != null ? $i{n} : $i{n} = $e);
+								args.push({ name: n, opt: e != null, type: t });
+								if (e == null)
+									toNew.push(macro this.$n = $i{n});
+								else
+									toNew.push(macro this.$n = $i{n} != null ? $i{n} : $i{n} = $e);
 						}
 					} else if (e != null) {
 						var t = Lambda.indexOf(f.access, AStatic) == -1 ? toNew : toInit;
-						t.push(macro $i { f.name } = $e);
+						t.push(macro $i{f.name} = $e);
 					}
 				case [FFun(fun), '__init__']:
 					fInit = f;
@@ -74,11 +88,14 @@ class DeclaratorBuilder {
 		switch fInit.kind {
 			case FFun(k):
 				if (k.expr != null) switch k.expr.expr {
-					case EBlock(a): toInit = toInit.concat(a);
-					case _: toInit.push(k.expr);
+					case EBlock(a):
+						toInit = toInit.concat(a);
+					case _:
+						toInit.push(k.expr);
 				}
 				k.expr = macro $b{toInit};
-			case _: throw 'Error';
+			case _:
+				throw 'Error';
 		}
 
 		if (fNew == null) {
@@ -97,20 +114,25 @@ class DeclaratorBuilder {
 				k.args = args.concat(k.args);
 
 				if (k.expr != null) switch k.expr.expr {
-					case EBlock(a): toNew = toNew.concat(a);
-					case _: toNew.push(k.expr);
+					case EBlock(a):
+						toNew = toNew.concat(a);
+					case _:
+						toNew.push(k.expr);
 				}
 
 				k.expr = macro $b{toNew};
-			case _: throw 'Error';
+			case _:
+				throw 'Error';
 		}
 		return fields;
 	}
+
 	#if macro
-	private static function haveArgs(t:Type):Bool return switch t {
+	private static function haveArgs(t: Type): Bool return switch t {
 		case Type.TFun(args, _): args.length == 0;
 		case Type.TLazy(f): haveArgs(f());
 		case _: false;
 	}
 	#end
+
 }

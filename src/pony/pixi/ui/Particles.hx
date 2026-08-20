@@ -13,12 +13,12 @@ import pony.ui.AssetManager;
  */
 class Particles extends Sprite {
 
-	private var cfgurl:String;
-	private var imagesurl:Array<String>;
-	private var asset:String;
-	public var emitter:Emitter;
-	
-	public function new(cfgurl:String, imagesurl:Array<String>, ?asset:String) {
+	private var cfgurl: String;
+	private var imagesurl: Array<String>;
+	private var asset: String;
+	public var emitter: Emitter;
+
+	public function new(cfgurl: String, imagesurl: Array<String>, ?asset: String) {
 		super();
 		this.cfgurl = cfgurl;
 		this.imagesurl = imagesurl;
@@ -29,27 +29,24 @@ class Particles extends Sprite {
 			AssetManager.loadComplete(AssetManager.load.bind('', [cfgurl, asset]), loadHandler);
 		}
 	}
-	
-	private function loadHandler():Void {
+
+	private function loadHandler(): Void {
 		if (cfgurl == null) return;
-		var textures = asset == null ?
-			[for (e in imagesurl) AssetManager.texture(e)] :
-			[for (e in imagesurl) AssetManager.texture(asset, e)];
-		emitter = new Emitter(
-			this,
-			textures,
-			AssetManager.json(cfgurl)
-		);
+		var textures = asset == null
+			? [for (e in imagesurl) AssetManager.texture(e)]
+			: [for (e in imagesurl) AssetManager.texture(asset, e)];
+		emitter = new Emitter(this, textures, AssetManager.json(cfgurl));
 		play();
 		cfgurl = null;
 		imagesurl = null;
 		asset = null;
 	}
-	
-	public inline function play():Void DeltaTime.fixedUpdate << emitter.update;
-	public inline function stop():Void DeltaTime.fixedUpdate >> emitter.update;
-	
-	override public function destroy(?options:EitherType<Bool, DestroyOptions>):Void {
+
+	public inline function play(): Void DeltaTime.fixedUpdate << emitter.update;
+
+	public inline function stop(): Void DeltaTime.fixedUpdate >> emitter.update;
+
+	override public function destroy(?options: EitherType<Bool, DestroyOptions>): Void {
 		if (emitter != null) {
 			stop();
 			emitter.destroy();
@@ -61,5 +58,5 @@ class Particles extends Sprite {
 		}
 		super.destroy(options);
 	}
-	
+
 }

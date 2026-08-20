@@ -1,4 +1,3 @@
-
 package pony.heaps.ui.gui.layout;
 
 import h2d.Object;

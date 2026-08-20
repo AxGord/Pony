@@ -19,7 +19,7 @@ class Initialization {
 		Console.start();
 		try {
 			Console.defaultPrinter.remove();
-		} catch (_:Dynamic) {}
+		} catch (_: Dynamic) {}
 		Console.addPrinter(new FL_IDE_View());
 		mprnt = new ConsoleView();
 		Console.addPrinter(mprnt);

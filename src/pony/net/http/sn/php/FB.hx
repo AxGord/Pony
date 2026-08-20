@@ -8,14 +8,14 @@ import pony.net.http.sn.FBData;
  */
 class FB implements IFB {
 
-	public function new(appid:String, secret:String = '', sdk:String = "facebook-php-sdk-v4/autoload.php") {
+	public function new(appid: String, secret: String = '', sdk: String = "facebook-php-sdk-v4/autoload.php") {
 		var f = Sys.executablePath();
 		f = sys.FileSystem.fullPath(f).split('\\').slice(0, -1).join('/') + '/';
 		untyped __call__("require_once", f + sdk);
 		untyped __call__("\\Facebook\\FacebookSession::setDefaultApplication", appid, secret);
 	}
-	
-	inline public function api(token:String, r:String, cb:Dynamic->Void):Void {
+
+	inline public function api(token: String, r: String, cb: Dynamic -> Void): Void {
 		if (token == null) {
 			cb(null);
 			return;
@@ -26,13 +26,13 @@ class FB implements IFB {
 			var request = untyped __call__("new \\Facebook\\FacebookRequest", session, 'GET', r);
 			var response = request.execute();
 			graphObject = response.getGraphObject();
-		} catch (_:Dynamic) {}
+		} catch (_: Dynamic) {}
 		cb(graphObject);
 	}
-	
-	public function me(token:String, cb:FBData->Void):Void {
+
+	public function me(token: String, cb: FBData -> Void): Void {
 		api(token, '/me', function(res) {
-			if(res == null || res.error != null) {
+			if (res == null || res.error != null) {
 				cb(null);
 			} else {
 				cb({
@@ -51,5 +51,5 @@ class FB implements IFB {
 			}
 		});
 	}
-	
+
 }

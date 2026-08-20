@@ -1,11 +1,11 @@
 package pony.events;
 
 enum Listener0Type {
-	LFunction0( f: Void -> Void );
-	LFunction0c( f: SignalController0 -> Void );
-	LEvent0( s: Event0, ?safe: Bool );
-	LBind1( s: Event1<Dynamic>, v: Dynamic );
-	LBind2( s: Event2<Dynamic, Dynamic>, v1: Dynamic, v2: Dynamic );
+	LFunction0(f: Void -> Void);
+	LFunction0c(f: SignalController0 -> Void);
+	LEvent0(s: Event0, ?safe: Bool);
+	LBind1(s: Event1<Dynamic>, v: Dynamic);
+	LBind2(s: Event2<Dynamic, Dynamic>, v1: Dynamic, v2: Dynamic);
 }
 
 typedef Listener0Impl = {
@@ -25,12 +25,10 @@ typedef Listener0Impl = {
 	private static inline function f0<T1>(f: Void -> Void): Listener0 return { once: false, listener: LFunction0(cast f) };
 
 	@:from #if (haxe_ver >= 4.2) extern #else @:extern #end
-	private static inline function f0c<T1>(f: SignalController0 -> Void): Listener0
-		return { once: false, listener: LFunction0c(f) };
+	private static inline function f0c<T1>(f: SignalController0 -> Void): Listener0 return { once: false, listener: LFunction0c(f) };
 
 	@:from #if (haxe_ver >= 4.2) extern #else @:extern #end
-	private static inline function f0ca<T1>(f: SignalController -> Void): Listener0
-		return { once: false, listener: LFunction0c(cast f) };
+	private static inline function f0ca<T1>(f: SignalController -> Void): Listener0 return { once: false, listener: LFunction0c(cast f) };
 
 	@:from #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function s0<T1>(f: Event0): Listener0 return { once: false, listener: LEvent0(f) };

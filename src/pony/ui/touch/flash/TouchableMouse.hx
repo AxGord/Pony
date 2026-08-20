@@ -86,14 +86,18 @@ class TouchableMouse {
 
 	private function upHandler(_): Void {
 		_down = false;
-		if (!over) base.dispatchOutUp();
-		else base.dispatchUp();
+		if (!over)
+			base.dispatchOutUp();
+		else
+			base.dispatchUp();
 	}
 
 	private function globUpHandler(_): Void {
 		_down = false;
-		if (!over) base.dispatchOutUp();
-		else DeltaTime.fixedUpdate < up;
+		if (!over)
+			base.dispatchOutUp();
+		else
+			DeltaTime.fixedUpdate < up;
 	}
 
 	private function wheelHandler(e: MouseEvent): Void {
@@ -101,8 +105,10 @@ class TouchableMouse {
 	}
 
 	private function up(): Void {
-		if (!over) base.dispatchOutUp();
-		else base.dispatchUp();
+		if (!over)
+			base.dispatchOutUp();
+		else
+			base.dispatchUp();
 	}
 
 	private function leaveHandler(): Void {

@@ -83,7 +83,7 @@ class Touch implements Declarator implements HasSignal {
 	}
 
 	private static function moveHandler(e: TouchEvent): Void {
-		tMove[e.touchPointID] = {x:e.stageX, y:e.stageY, id:e.touchPointID};
+		tMove[e.touchPointID] = { x: e.stageX, y: e.stageY, id: e.touchPointID };
 		DeltaTime.fixedUpdate.once(moveDispatch, MOVE_PRIORITY);
 		tlock(e);
 	}
@@ -94,7 +94,7 @@ class Touch implements Declarator implements HasSignal {
 	}
 
 	private static function startHandler(e: TouchEvent): Void {
-		startStack.push({x:e.stageX, y:e.stageY, id:e.touchPointID});
+		startStack.push({ x: e.stageX, y: e.stageY, id: e.touchPointID });
 		DeltaTime.fixedUpdate.once(startDispatch, START_PRIORITY);
 		tlock(e);
 	}
@@ -105,7 +105,7 @@ class Touch implements Declarator implements HasSignal {
 	}
 
 	private static function endHandler(e: TouchEvent): Void {
-		endStack.push({x:e.stageX, y:e.stageY, id:e.touchPointID});
+		endStack.push({ x: e.stageX, y: e.stageY, id: e.touchPointID });
 		DeltaTime.fixedUpdate.once(endDispatch, END_PRIORITY);
 		tlock(e);
 	}

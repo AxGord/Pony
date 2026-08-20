@@ -1,7 +1,6 @@
 package geom;
 
 import massive.munit.Assert;
-
 import pony.geom.GeomTools;
 import pony.geom.Point;
 

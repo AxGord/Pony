@@ -35,7 +35,7 @@ private typedef Lang = {
 					if (lang.percentage == 100 && cfg.list.exists(lang.code)) {
 						tasks.add();
 						try {
-							lang.export({type: 'key_value_json'}).then(function(v) {
+							lang.export({ type: 'key_value_json' }).then(function(v) {
 								var file: String = cfg.path + cfg.list[lang.code] + '.json';
 								log('Update lang file: ' + file);
 								var f = Fs.createWriteStream(file);
@@ -44,7 +44,8 @@ private typedef Lang = {
 									response.pipe(f);
 								});
 							});
-						} catch (e: Any) error(e);
+						} catch (e: Any)
+							error(e);
 					}
 				}
 				tasks.end();

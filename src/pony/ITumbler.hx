@@ -8,11 +8,11 @@ import pony.events.Signal0;
  */
 interface ITumbler {
 
-	var onEnable:Signal0;
-	var onDisable:Signal0;
-	var enabled(default, set):Bool;
-	
-	function enable():Void;
-	function disable():Void;
-	
+	var onEnable: Signal0;
+	var onDisable: Signal0;
+	var enabled(default, set): Bool;
+
+	function enable(): Void;
+	function disable(): Void;
+
 }

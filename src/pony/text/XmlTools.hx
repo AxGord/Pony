@@ -12,7 +12,9 @@ class XmlTools {
 	public static inline var XML_REMSP_RIGHT: String = '{REMSP_RIGHT}';
 
 	public static inline function isTrue(x: Fast, name: String): Bool return x.has.resolve(name) && TextTools.isTrue(x.att.resolve(name));
+
 	public static inline function isFalse(x: Fast, name: String): Bool return x.has.resolve(name) && TextTools.isFalse(x.att.resolve(name));
+
 	public static inline function fast(text: String): Fast return new Fast(Xml.parse(text));
 
 	public static function document(xml: Xml): String {
@@ -49,8 +51,7 @@ class XmlTools {
 
 	public static function mapToNode(name: String, tag: String, map: Map<String, String>): Xml {
 		var r: Xml = Xml.createElement(name);
-		for (key in map.keys())
-			r.addChild(att(tag, key, map[key]));
+		for (key in map.keys()) r.addChild(att(tag, key, map[key]));
 		return r;
 	}
 

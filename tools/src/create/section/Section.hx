@@ -10,7 +10,7 @@ import pony.text.XmlTools;
 #if (haxe_ver >= 4.2) abstract #end
 class Section implements HasAbstract {
 
-	public var appNode:String = null;
+	public var appNode: String = null;
 	public var active: Bool = false;
 
 	private var xml: Xml;

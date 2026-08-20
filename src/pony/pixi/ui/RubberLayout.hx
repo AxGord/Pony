@@ -10,12 +10,14 @@ import pony.ui.gui.RubberLayoutCore;
  * @author AxGord <axgord@gmail.com>
  */
 class RubberLayout extends BaseLayout<RubberLayoutCore<Container>> {
-	
-	public function new(layoutWidth:Float, layoutHeight:Float, vert:Bool = false, ?border:Border<Int>, padding:Bool = true, ?align:Align) {
+
+	public function new(
+		layoutWidth: Float, layoutHeight: Float, vert: Bool = false, ?border: Border<Int>, padding: Bool = true, ?align: Align
+	) {
 		layout = new RubberLayoutCore<Container>(vert, border, padding, align);
 		layout.width = layoutWidth;
 		layout.height = layoutHeight;
 		super();
 	}
-	
+
 }

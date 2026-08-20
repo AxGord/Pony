@@ -11,28 +11,28 @@ import pony.magic.HasSignal;
  */
 class RPC<T:pony.net.rpc.IRPC> extends RPCBase<T> implements HasSignal {
 
-	public var socket:pony.net.INet;
+	public var socket: pony.net.INet;
 
-	public function new(s:pony.net.INet) {
+	public function new(s: pony.net.INet) {
 		super();
 		socket = s;
 		s.onData << dataHandler;
 		#if (!js || nodejs)
-			@SuppressWarnings('checkstyle:MagicNumber')
-			#if (haxe_ver >= 4.10)
+		@SuppressWarnings('checkstyle:MagicNumber')
+		#if (haxe_ver >= 4.10)
 			if (Std.isOfType(s, pony.net.SocketClient))
 			#else
 			if (Std.is(s, pony.net.SocketClient))
 			#end
-			{
-				var sc:pony.net.SocketClient = cast s;
-				sc.onConnect << sc.sendAllStack;
-			}
+		{
+			var sc: pony.net.SocketClient = cast s;
+			sc.onConnect << sc.sendAllStack;
+		}
 		#end
 	}
 
-	private function send():Void {
-		var bo:BytesOutput = new BytesOutput();
+	private function send(): Void {
+		var bo: BytesOutput = new BytesOutput();
 		bo.write(pack());
 		socket.send(bo);
 	}

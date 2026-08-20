@@ -12,7 +12,7 @@ import pony.Pair.Pair;
 
 using pony.Tools;
 
-typedef TableContent = Array < Array<String> > ;
+typedef TableContent = Array<Array<String>>;
 
 /**
  * TableCore
@@ -33,17 +33,40 @@ class TextTableCore implements HasAbstract {
 	}
 
 	private function drawLine(a: IntPoint, b: IntPoint, color: UColor, size: Int): Void {
-		if (a.x == b.x) drawBG({ x: a.x, y: a.y, width: size, height:  MathTools.cabs(b.y - a.y) }, color);
-		else drawBG({ x: a.x, y: a.y, width: MathTools.cabs(b.x - a.x), height: size }, color);
+		if (a.x == b.x)
+			drawBG({
+				x: a.x,
+				y: a.y,
+				width: size,
+				height: MathTools.cabs(b.y - a.y)
+			}, color);
+		else
+			drawBG({
+				x: a.x,
+				y: a.y,
+				width: MathTools.cabs(b.x - a.x),
+				height: size
+			}, color);
 	}
+
 	@:abstract private function drawBG(r: IntRect, color: UColor): Void;
+
 	@:abstract private function drawText(point: IntRect, text: String, style: FontStyle): Void;
+
 	@:abstract private function clear(): Void;
 
 	public dynamic function borderStyle(point: IntPoint, direct: Direction): Pair<Int, UColor> return new Pair(1, new UColor(0));
+
 	public dynamic function bgStyle(point: IntPoint): Pair<IntPoint, UColor> return new Pair({ x: 100, y: 20 }, new UColor(0xFFFFFFFF));
-	public dynamic function fontStyle(point: IntPoint): FontStyle
-		return { font: 'Arial', size: 14, color: 0, bold: false, italic: false, underline: false };
+
+	public dynamic function fontStyle(point: IntPoint): FontStyle return {
+		font: 'Arial',
+		size: 14,
+		color: 0,
+		bold: false,
+		italic: false,
+		underline: false
+	};
 
 	public function draw(): Void {
 		var rl: Int = data.length - 1;
@@ -60,18 +83,26 @@ class TextTableCore implements HasAbstract {
 				var left = borderStyle(point, Direction.Left);
 				var right = borderStyle(point, Direction.Right);
 				var bottom = borderStyle(point, Direction.Down);
-				drawLine( { x: dx, y: dy }, { x: dx + bg.a.x + left.a, y: dy }, top.b, top.a);
+				drawLine({ x: dx, y: dy }, { x: dx + bg.a.x + left.a, y: dy }, top.b, top.a);
 				dy += top.a;
-				drawLine( { x: dx, y: dy }, { x: dx, y: dy + bg.a.y }, left.b, left.a);
+				drawLine({ x: dx, y: dy }, { x: dx, y: dy + bg.a.y }, left.b, left.a);
 				dx += left.a;
-				drawBG( { x:dx, y:dy, width:bg.a.x, height:bg.a.y }, bg.b);
+				drawBG({
+					x: dx,
+					y: dy,
+					width: bg.a.x,
+					height: bg.a.y
+				}, bg.b);
 				var tf = fontStyle(point);
-				drawText({x: dx, y: dy, width:bg.a.x, height:bg.a.y }, c.value, tf);
-				if (cl == c.key)
-				drawLine( { x: dx + bg.a.x, y: dy - top.a }, { x: dx + bg.a.x, y: dy + bg.a.y }, right.b, right.a);
+				drawText({
+					x: dx,
+					y: dy,
+					width: bg.a.x,
+					height: bg.a.y
+				}, c.value, tf);
+				if (cl == c.key) drawLine({ x: dx + bg.a.x, y: dy - top.a }, { x: dx + bg.a.x, y: dy + bg.a.y }, right.b, right.a);
 				dy += bg.a.y;
-				if (rl == r.key)
-				drawLine( { x: dx - left.a, y: dy }, { x: dx + bg.a.x + right.a, y: dy }, bottom.b, bottom.a);
+				if (rl == r.key) drawLine({ x: dx - left.a, y: dy }, { x: dx + bg.a.x + right.a, y: dy }, bottom.b, bottom.a);
 				dx += bg.a.x;
 				if (dy > mdy) mdy = dy;
 			}

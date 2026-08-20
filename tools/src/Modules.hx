@@ -1,6 +1,5 @@
 import module.Build;
 import module.Module;
-
 import pony.Fast;
 import pony.Logable;
 import pony.text.XmlTools;
@@ -38,7 +37,7 @@ using Lambda;
 		if (xml == null) error(Utils.MAIN_FILE + ' not exists');
 	}
 
-	public function register<T: Module>(module: T): Void {
+	public function register<T:Module>(module: T): Void {
 		module.modules = this;
 		module.onError << error;
 		module.onLog << log;
@@ -79,8 +78,8 @@ using Lambda;
 	}
 
 	@SuppressWarnings('checkstyle:MagicNumber')
-	public function getModule<T: Module>(cls: Class<T>): Null<T> {
-		return cast list.find( function(m: Module): Bool return #if (haxe_ver >= 4.100) Std.isOfType(m, cls) #else Std.is(m, cls) #end );
+	public function getModule<T:Module>(cls: Class<T>): Null<T> {
+		return cast list.find(function(m: Module): Bool return #if (haxe_ver >= 4.100) Std.isOfType(m, cls) #else Std.is(m, cls) #end);
 	}
 
 }

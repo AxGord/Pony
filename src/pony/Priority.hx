@@ -115,8 +115,7 @@ typedef PriorityIds = Priority<{
 	 * @param	priority priority, smalest first, bigest last, default 0 (0 - normal priority).
 	 */
 	public function add(e: T, priority: Int = 0): Priority<T> {
-		if (!double && exists(e))
-			return this;
+		if (!double && exists(e)) return this;
 		if (lock) {
 			addStack.push(new Pair(e, priority));
 			return this;
@@ -287,7 +286,7 @@ typedef PriorityIds = Priority<{
 		var i: Int = 0;
 		for (k in a) {
 			@:nullSafety(Off) var j: Int = hash[k];
-			for (n in i...(i + j)) if (compare(data[n], e)) return k;
+			for (n in i ... (i + j)) if (compare(data[n], e)) return k;
 			i += j;
 		}
 		return null;
@@ -339,7 +338,10 @@ typedef PriorityIds = Priority<{
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function removeFunction(f: T -> Bool): Bool {
 		var e: Null<T> = search(f);
-		return if (e != null) remove(e); else false;
+		return if (e != null)
+			remove(e);
+		else
+			false;
 	}
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
@@ -429,7 +431,12 @@ typedef PriorityIds = Priority<{
 	 */
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function get_current(): T {
-		return if (counters[0] > length) data[0] else if (counters[0] < 1) data[length - 1] else data[counters[0] - 1];
+		return if (counters[0] > length)
+			data[0]
+		else if (counters[0] < 1)
+			data[length - 1]
+		else
+			data[counters[0] - 1];
 	}
 
 	/**
@@ -442,8 +449,7 @@ typedef PriorityIds = Priority<{
 			return null;
 		}
 		counters[0]--;
-		if (counters[0] < 1)
-			counters[0] = length;
+		if (counters[0] < 1) counters[0] = length;
 		return data[counters[0] - 1];
 	}
 
@@ -452,9 +458,7 @@ typedef PriorityIds = Priority<{
 	 */
 	private function get_min(): Int {
 		var n: Null<Int> = null;
-		for (k in hash.keys())
-			if (n == null || k < n)
-				n = k;
+		for (k in hash.keys()) if (n == null || k < n) n = k;
 		return n;
 	}
 
@@ -463,9 +467,7 @@ typedef PriorityIds = Priority<{
 	 */
 	private function get_max(): Int {
 		var n: Null<Int> = null;
-		for (k in hash.keys())
-			if (n == null || k > n)
-				n = k;
+		for (k in hash.keys()) if (n == null || k > n) n = k;
 		return n;
 	}
 
@@ -489,7 +491,7 @@ typedef PriorityIds = Priority<{
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public static inline function createIds(a: Array<String>): PriorityIds {
 		var i: Int = 0;
-		return new Priority([for (e in a) {id: i++, name: e}]);
+		return new Priority([for (e in a) { id: i++, name: e }]);
 	}
 
 }

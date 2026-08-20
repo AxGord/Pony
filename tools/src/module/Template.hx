@@ -2,13 +2,11 @@ package module;
 
 import haxe.crypto.Base64;
 import haxe.io.Bytes;
-
 import pony.Fast;
 import pony.ds.STriple;
 import pony.fs.File;
 
 using StringTools;
-
 using pony.Tools;
 using pony.text.XmlTools;
 
@@ -123,22 +121,29 @@ private typedef TemplateConfig = {
 
 	override private function readNode(xml: Fast): Void {
 		switch xml.name {
-			case 'title': cfg.title = normalize(xml.innerData);
+			case 'title':
+				cfg.title = normalize(xml.innerData);
 			case 'app':
 				cfg.appFile = normalize(xml.innerData);
 				cfg.appPath = xml.has.path ? normalize(xml.att.path) : '';
 				cfg.appRm = !xml.isFalse('rm');
-			case 'unit': cfg.units.push(normalize(xml.innerData));
-			case 'file': cfg.files.push(normalize(xml.innerData));
-			case _: super.readNode(xml);
+			case 'unit':
+				cfg.units.push(normalize(xml.innerData));
+			case 'file':
+				cfg.files.push(normalize(xml.innerData));
+			case _:
+				super.readNode(xml);
 		}
 	}
 
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
-			case 'to': cfg.to = val;
-			case 'from': cfg.from = val;
-			case 'hash': cfg.hash = val;
+			case 'to':
+				cfg.to = val;
+			case 'from':
+				cfg.from = val;
+			case 'hash':
+				cfg.hash = val;
 			case _:
 		}
 	}

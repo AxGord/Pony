@@ -14,19 +14,19 @@ using hugs.HUGSWrapper;
 
 class ParticlesManager extends MonoBehaviour {
 
-	private var playAfter:Float = 0;
-	private var stopAfter:Float = 0;
-	private var abortAfter:Float = 0;
-	
-	private var playOnAwake:Bool = true;
-	
-	private var playTimer:DTimer;
-	private var stopTimer:DTimer;
-	private var abortTimer:DTimer;
-	
-	private var comps:NativeArrayIterator<ParticlesController>;
-	
-	private function Start():Void {
+	private var playAfter: Float = 0;
+	private var stopAfter: Float = 0;
+	private var abortAfter: Float = 0;
+
+	private var playOnAwake: Bool = true;
+
+	private var playTimer: DTimer;
+	private var stopTimer: DTimer;
+	private var abortTimer: DTimer;
+
+	private var comps: NativeArrayIterator<ParticlesController>;
+
+	private function Start(): Void {
 		comps = getComponentsInChildrenOfType(ParticlesController);
 		abort();
 		if (playAfter > 0) {
@@ -43,34 +43,36 @@ class ParticlesManager extends MonoBehaviour {
 		}
 		if (playOnAwake) play();
 	}
-	
-	public function play(?dt:DT):Void {
-		if (playTimer != null) playTimer.start(dt);
-		else playNow(dt);
+
+	public function play(?dt: DT): Void {
+		if (playTimer != null)
+			playTimer.start(dt);
+		else
+			playNow(dt);
 	}
-	
-	public function playNow(?dt:DT):Void {
+
+	public function playNow(?dt: DT): Void {
 		abort();
 		comps.reset();
 		for (c in comps) c.play(dt);
-		
+
 		if (stopTimer != null) {
 			stopTimer.reset();
 			stopTimer.start(dt);
 		}
-		
+
 		if (abortTimer != null) {
 			abortTimer.reset();
 			abortTimer.start(dt);
 		}
 	}
-	
-	public function playSuperNow(?dt:DT):Void {
+
+	public function playSuperNow(?dt: DT): Void {
 		comps.reset();
 		for (c in comps) c.playNow(dt);
 	}
-	
-	public function stop():Void {
+
+	public function stop(): Void {
 		if (playTimer != null) {
 			playTimer.stop();
 			playTimer.reset();
@@ -79,12 +81,12 @@ class ParticlesManager extends MonoBehaviour {
 		comps.reset();
 		for (c in comps) c.stop();
 	}
-	
-	public function abort():Void {
+
+	public function abort(): Void {
 		if (abortTimer != null) abortTimer.stop();
 		stop();
 		comps.reset();
 		for (c in comps) c.abort();
 	}
-	
+
 }

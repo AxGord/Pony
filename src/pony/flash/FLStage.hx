@@ -52,7 +52,7 @@ class FLStageBuilder {
 							fields.push({
 								name: 'set_' + f.name,
 								kind: FFun({
-									args: [{name: 'v', type: t}],
+									args: [{ name: 'v', type: t }],
 									ret: t,
 									expr: macro return untyped this[$v{f.name}] = v,
 									params: []

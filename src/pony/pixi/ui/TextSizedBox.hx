@@ -16,13 +16,16 @@ import pony.ui.gui.RubberLayoutCore;
  */
 class TextSizedBox extends BaseLayout<RubberLayoutCore<Container>> {
 
-	public var text(get, set):String;
-	public var obj(default, null):BText;
-	public var noupdate:Bool = false;
+	public var text(get, set): String;
+	public var obj(default, null): BText;
+	public var noupdate: Bool = false;
 
-	private var nocache:Bool;
+	private var nocache: Bool;
 
-	public function new(w:Float, h:Float, text:String, style:ETextStyle, ?border:Border<Int>, ?align:Align, nocache:Bool=false, shadow:Bool = false) {
+	public function new(
+		w: Float, h: Float, text: String, style: ETextStyle, ?border: Border<Int>, ?align: Align, nocache: Bool = false,
+		shadow: Bool = false
+	) {
 		var f = align != null && align.horizontal != HAlign.Center;
 		this.nocache = nocache;
 		layout = new RubberLayoutCore(f, border, align);
@@ -36,19 +39,19 @@ class TextSizedBox extends BaseLayout<RubberLayoutCore<Container>> {
 				add(obj);
 			case ETextStyle.TEXT_STYLE(_):
 				throw 'Not supported';
-				//add(obj = new UniversalText(text, style));
-				//if (!nocache) obj.toContainer().cacheAsBitmap = true;
+			// add(obj = new UniversalText(text, style));
+			// if (!nocache) obj.toContainer().cacheAsBitmap = true;
 		}
 		layout.tasks.end();
 	}
 
-	private inline function get_text():String return obj.t;
+	private inline function get_text(): String return obj.t;
 
-	private function set_text(v:String):String {
+	private function set_text(v: String): String {
 		if (obj.t != v) {
-//			obj.toContainer().cacheAsBitmap = false;
-//			obj.text = v;
-//			if (!nocache) obj.toContainer().cacheAsBitmap = true;
+			//			obj.toContainer().cacheAsBitmap = false;
+			//			obj.text = v;
+			//			if (!nocache) obj.toContainer().cacheAsBitmap = true;
 			obj.t = v;
 			if (!noupdate) update();
 		}
@@ -57,17 +60,17 @@ class TextSizedBox extends BaseLayout<RubberLayoutCore<Container>> {
 
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function update():Void {
+	private inline function update(): Void {
 		layout.update();
 		_update();
 		DeltaTime.fixedUpdate < _update;
 	}
 
-	private inline function _update():Void {
+	private inline function _update(): Void {
 		DeltaTime.fixedUpdate < layout.update;
 	}
 
-	override function destroy(?options:haxe.extern.EitherType<Bool, DestroyOptions>):Void {
+	override function destroy(?options: haxe.extern.EitherType<Bool, DestroyOptions>): Void {
 		DeltaTime.fixedUpdate >> _update;
 		DeltaTime.fixedUpdate >> layout.update;
 		super.destroy(options);

@@ -49,15 +49,14 @@ class StarlingMusicPlayer extends StarlingSongPlayer {
 		visible = false;
 		super.init();
 		songClass = Type.getClass(song);
-		beginPoint = {x: song.x, y: song.y};
+		beginPoint = { x: song.x, y: song.y };
 		songHeight = song.height;
 		source.removeChild(song);
 		song = null;
 	}
 
 	public function loadPlaylist(pl: Array<SongInfo>): Void {
-		if (visible)
-			unloadPlaylist();
+		if (visible) unloadPlaylist();
 		visible = true;
 		currentList = pl;
 		var bcs: Array<ButtonCore> = [];
@@ -73,8 +72,10 @@ class StarlingMusicPlayer extends StarlingSongPlayer {
 			o.addChild(b);
 			bcs.push(b.core);
 
-			var t: TextField = new TextField(Std.int(_tTitle.width), Std.int(_tTitle.height), SongPlayerCore.formatSong(e), _tTitle.fontName,
-				_tTitle.fontSize, _tTitle.color, _tTitle.bold);
+			var t: TextField = new TextField(
+				Std.int(_tTitle.width), Std.int(_tTitle.height), SongPlayerCore.formatSong(e), _tTitle.fontName, _tTitle.fontSize,
+				_tTitle.color, _tTitle.bold
+			);
 			t.hAlign = _tTitle.hAlign;
 			t.vAlign = _tTitle.vAlign;
 			t.x = _tTitle.x;
@@ -82,8 +83,9 @@ class StarlingMusicPlayer extends StarlingSongPlayer {
 			t.touchable = false;
 			o.addChild(t);
 
-			var t: TextField = new TextField(Std.int(_tTime.width), Std.int(_tTime.height), e.length, _tTime.fontName, _tTime.fontSize, _tTime.color,
-				_tTime.bold);
+			var t: TextField = new TextField(
+				Std.int(_tTime.width), Std.int(_tTime.height), e.length, _tTime.fontName, _tTime.fontSize, _tTime.color, _tTime.bold
+			);
 			t.hAlign = _tTime.hAlign;
 			t.vAlign = _tTime.vAlign;
 			t.x = _tTime.x;

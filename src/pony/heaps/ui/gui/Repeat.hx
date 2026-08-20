@@ -29,7 +29,7 @@ import h2d.Object;
 	}
 
 	private function create(o: RepeatObject): Object {
-		return @:privateAccess ui.createUIElement(o.name, o.attrs, [ for (c in o.content) create(c) ], o.textContent);
+		return @:privateAccess ui.createUIElement(o.name, o.attrs, [for (c in o.content) create(c)], o.textContent);
 	}
 
 	private inline function get_count(): UInt return created.length;

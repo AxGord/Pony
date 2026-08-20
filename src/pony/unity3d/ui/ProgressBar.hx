@@ -12,22 +12,22 @@ using hugs.HUGSWrapper;
  */
 class ProgressBar extends MonoBehaviour implements IPercent {
 
-	public var percent(default, set):Float;
-	
-	private var full:Single;
-	
-	private function Start():Void {
+	public var percent(default, set): Float;
+
+	private var full: Single;
+
+	private function Start(): Void {
 		full = guiTexture.pixelInset.width;
 		set(0);
 	}
-	
-	public function set(progress:Float):Void {
+
+	public function set(progress: Float): Void {
 		guiTexture.pixelInset = new Rect(guiTexture.pixelInset.x, guiTexture.pixelInset.y, full * progress, guiTexture.pixelInset.height);
 	}
-	
-	inline private function set_percent(v:Float):Float {
+
+	inline private function set_percent(v: Float): Float {
 		set(v);
 		return v;
 	}
-	
+
 }

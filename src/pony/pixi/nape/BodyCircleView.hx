@@ -9,7 +9,7 @@ import pony.physics.nape.BodyCircle;
  */
 class BodyCircleView extends BodyBaseView<BodyCircle> {
 
-	override private function drawDebug(g:Graphics):Void {
+	override private function drawDebug(g: Graphics): Void {
 		g.drawCircle(core.radius, core.radius, core.radius);
 		g.moveTo(core.radius, core.radius);
 		g.lineTo(core.radius * 2, core.radius);

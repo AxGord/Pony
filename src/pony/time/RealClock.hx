@@ -28,11 +28,13 @@ class RealClock implements Declarator implements HasSignal {
 	}
 
 	private static function enableTime(): Void DeltaTime.fixedUpdate << updaterTime;
+
 	private static function disableTime(): Void DeltaTime.fixedUpdate >> updaterTime;
 
 	private static function updaterTime(): Void eUpdateTime.dispatch((DeltaTime.nowDate: Time).clock());
 
 	private static function enableDate(): Void DeltaTime.fixedUpdate << updaterDate;
+
 	private static function disableDate(): Void DeltaTime.fixedUpdate >> updaterDate;
 
 	private static function updaterDate(): Void {
@@ -45,7 +47,20 @@ class RealClock implements Declarator implements HasSignal {
 	public static inline function localeRus(): Void {
 		dateSep = ' ';
 		invertDate = true;
-		months = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+		months = [
+			'января',
+			'февраля',
+			'марта',
+			'апреля',
+			'мая',
+			'июня',
+			'июля',
+			'августа',
+			'сентября',
+			'октября',
+			'ноября',
+			'декабря'
+		];
 	}
 
 }

@@ -10,15 +10,7 @@ import pony.events.Listener2;
  * @author AxGord <axgord@gmail.com>
  */
 @SuppressWarnings('checkstyle:MagicNumber')
-@:forward(
-	empty,
-	min,
-	max,
-	change,
-	getPriority,
-	exists,
-	existsArray
-)
+@:forward(empty, min, max, change, getPriority, exists, existsArray)
 abstract Signal2<T1, T2>(Priority<Listener2<T1, T2>>) from Event2<T1, T2> from Priority<Listener2<T1, T2>> {
 
 	public function add(e: Listener2<T1, T2>, priority: Int = 0): Signal2<T1, T2> {
@@ -181,7 +173,7 @@ abstract Signal2<T1, T2>(Priority<Listener2<T1, T2>>) from Event2<T1, T2> from P
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function shift(): Signal1<T2> {
-		var s:Event1<T2> = new Event1<T2>();
+		var s: Event1<T2> = new Event1<T2>();
 		add(function(_, v) s.dispatch(v));
 		return s;
 	}
@@ -225,14 +217,14 @@ abstract Signal2<T1, T2>(Priority<Listener2<T1, T2>>) from Event2<T1, T2> from P
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function join(s: Signal2<T1, T2>): Signal2<T1, T2> {
-		add({ once: false, listener: LEvent2((untyped s: Event2 <T1, T2>), true) });
-		s.add({ once: false, listener: LEvent2((this: Event2 <T1, T2>), true) });
+		add({ once: false, listener: LEvent2((untyped s: Event2<T1, T2>), true) });
+		s.add({ once: false, listener: LEvent2((this: Event2<T1, T2>), true) });
 		return this;
 	}
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function unjoin(s: Signal2<T1, T2>): Signal2<T1, T2> {
-		remove((untyped s: Event2 <T1, T2>));
+		remove((untyped s: Event2<T1, T2>));
 		s.remove((this: Event2<T1, T2>));
 		return this;
 	}

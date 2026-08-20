@@ -1,17 +1,16 @@
-package ;
+package;
 
 import massive.munit.util.Timer;
 import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
 import pony.Tumbler;
 
-class TumblerTest 
-{
+class TumblerTest {
+
 	@Test
-	public function test():Void
-	{
-		var on:Bool = false;
-		var off:Bool = false;
+	public function test(): Void {
+		var on: Bool = false;
+		var off: Bool = false;
 		var t = new Tumbler();
 		t.onEnable.add(function() on = true);
 		t.onDisable.add(function() off = true);
@@ -22,5 +21,5 @@ class TumblerTest
 		Assert.isTrue(on);
 		Assert.isTrue(off);
 	}
-	
+
 }

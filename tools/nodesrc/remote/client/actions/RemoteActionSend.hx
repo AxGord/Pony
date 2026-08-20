@@ -18,6 +18,7 @@ class RemoteActionSend extends RemoteAction {
 	}
 
 	private function streamErrorHandler(): Void error('File stream error');
+
 	private function streamDataHandler(): Void Sys.print('.');
 
 	override public function destroy(): Void {

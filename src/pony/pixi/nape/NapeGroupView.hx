@@ -16,27 +16,27 @@ import pony.physics.nape.NapeGroup;
  */
 class NapeGroupView extends Sprite {
 
-	public var debugLines(default, set):DebugLineStyle;
+	public var debugLines(default, set): DebugLineStyle;
 
-	public var core(default, null):NapeGroup;
-	private var objects:Array<BodyBaseView<BodyBase>> = [];
+	public var core(default, null): NapeGroup;
+	private var objects: Array<BodyBaseView<BodyBase>> = [];
 
-	public function new(core:NapeGroup) {
+	public function new(core: NapeGroup) {
 		super();
 		this.core = core;
 	}
 
-	public function clear():Void {
+	public function clear(): Void {
 		for (o in objects.copy()) o.destroy();
 	}
 
-	private function set_debugLines(v:DebugLineStyle):DebugLineStyle {
+	private function set_debugLines(v: DebugLineStyle): DebugLineStyle {
 		debugLines = v;
 		for (e in objects) e.debugLines = v;
 		return v;
 	}
 
-	public function reg<S:BodyBase, T:BodyBaseView<S>>(obj:T):T {
+	public function reg<S:BodyBase, T:BodyBaseView<S>>(obj: T): T {
 		obj.debugLines = debugLines;
 		addChild(obj);
 		objects.push(cast obj);
@@ -47,35 +47,35 @@ class NapeGroupView extends Sprite {
 		return obj;
 	}
 
-	public function createBox(size:Point<Float>, isBullet:Bool = false):BodyBoxView {
+	public function createBox(size: Point<Float>, isBullet: Bool = false): BodyBoxView {
 		return reg(new BodyBoxView(core.createBox(size, isBullet)));
 	}
 
-	public function createStaticBox(size:Point<Float>, isBullet:Bool = false):BodyBoxView {
+	public function createStaticBox(size: Point<Float>, isBullet: Bool = false): BodyBoxView {
 		return reg(new BodyBoxView(core.createStaticBox(size, isBullet)));
 	}
 
-	public function createRect(size:Rect<Float>, isBullet:Bool = false):BodyRectView {
+	public function createRect(size: Rect<Float>, isBullet: Bool = false): BodyRectView {
 		return reg(new BodyRectView(core.createRect(size, isBullet)));
 	}
 
-	public function createStaticRect(size:Rect<Float>, isBullet:Bool = false):BodyRectView {
+	public function createStaticRect(size: Rect<Float>, isBullet: Bool = false): BodyRectView {
 		return reg(new BodyRectView(core.createStaticRect(size, isBullet)));
 	}
 
-	public function createCircle(r:Float, isBullet:Bool = false):BodyCircleView {
+	public function createCircle(r: Float, isBullet: Bool = false): BodyCircleView {
 		return reg(new BodyCircleView(core.createCircle(r, isBullet)));
 	}
 
-	public function createStaticCircle(r:Float, isBullet:Bool = false):BodyCircleView {
+	public function createStaticCircle(r: Float, isBullet: Bool = false): BodyCircleView {
 		return reg(new BodyCircleView(core.createStaticCircle(r, isBullet)));
 	}
 
-	public function createShape(data:Bytes, resolution:Float, isBullet:Bool = false):BodyShapeView {
+	public function createShape(data: Bytes, resolution: Float, isBullet: Bool = false): BodyShapeView {
 		return reg(new BodyShapeView(core.createShape(data, resolution, isBullet)));
 	}
 
-	public function createBody(data:Body, ?anchor:Vec2, isBullet:Bool = false, isStatic:Bool = false):BodyBodyView {
+	public function createBody(data: Body, ?anchor: Vec2, isBullet: Bool = false, isStatic: Bool = false): BodyBodyView {
 		return reg(new BodyBodyView(core.createBody(data, anchor, isBullet, isStatic)));
 	}
 

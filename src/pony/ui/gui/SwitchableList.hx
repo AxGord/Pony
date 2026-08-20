@@ -31,23 +31,23 @@ class SwitchableList implements IWards implements HasSignal {
 				a[i].disable();
 				a[i].mode = swto;
 			}
-			//select.listen(a[i].click.sub([0], [i]));
+			// select.listen(a[i].click.sub([0], [i]));
 			a[i].onClick.sub(0).bind1(i).add(eChange);
 			if (ret) a[i].onClick.sub(swto).bind1(i).add(changeRet);
 		}
 		change.add(setState, -1);
 	}
 
-	private function changeRet(): Void eChange.dispatch( -1 );
+	private function changeRet(): Void eChange.dispatch(-1);
 
 	private function setState(n: Int): Void {
 		if (state == n) return;
-		//if (list[state] != null) list[state].mode = 0;
+		// if (list[state] != null) list[state].mode = 0;
 		if (list[state] != null) {
 			list[state].enable();
 			list[state].mode = 0;
 		}
-		//if (list[n] != null) list[n].mode = swto;
+		// if (list[n] != null) list[n].mode = swto;
 		if (list[n] != null) {
 			list[n].disable();
 			list[n].mode = swto;
@@ -57,8 +57,11 @@ class SwitchableList implements IWards implements HasSignal {
 	}
 
 	public function next(): Void if (state + 1 < list.length) eChange.dispatch(state + 1);
+
 	public function prev(): Void if (state - 1 >= 0) eChange.dispatch(state - 1);
+
 	private inline function get_state(): Int return currentPos;
+
 	private inline function set_state(v: Int): Int return currentPos = v;
 
 }

@@ -1,4 +1,4 @@
-package ;
+package;
 
 import massive.munit.util.Timer;
 import massive.munit.Assert;
@@ -6,28 +6,25 @@ import massive.munit.async.AsyncFactory;
 import pony.time.DeltaTime;
 import pony.Loader;
 
+class LoaderTest {
 
-class LoaderTest 
-{
-	private var flag:Bool;
-	private var loader:Loader;
-	private var progress:Int;
-	
-	
+	private var flag: Bool;
+	private var loader: Loader;
+	private var progress: Int;
+
+
 	@Before
-	public function setup():Void
-	{
+	public function setup(): Void {
 		flag = false;
 		loader = new Loader();
 		loader.total++;
 		loader.onComplete.add(function() flag = true);
-		loader.onProgress.add(function(v:Float) progress = Math.floor(v * 100));
+		loader.onProgress.add(function(v: Float) progress = Math.floor(v * 100));
 		loader.init();
 	}
-	
+
 	@Test
-	public function basicLoad():Void
-	{
+	public function basicLoad(): Void {
 		DeltaTime.testRun(1);
 		Assert.isFalse(flag);
 		Assert.areEqual(progress, 0);
@@ -36,11 +33,10 @@ class LoaderTest
 		Assert.isTrue(flag);
 		Assert.areEqual(progress, 100);
 	}
-	
+
 	@Test
-	public function loadTasks():Void
-	{
-		var b:Bool = false;
+	public function loadTasks(): Void {
+		var b: Bool = false;
 		loader.addAction(function() b = true);
 		DeltaTime.testRun(1);
 		Assert.areEqual(progress, 50);
@@ -51,5 +47,5 @@ class LoaderTest
 		Assert.isTrue(flag);
 		Assert.areEqual(progress, 100);
 	}
-	
+
 }

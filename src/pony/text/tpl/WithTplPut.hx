@@ -5,5 +5,7 @@ package pony.text.tpl;
  * @author AxGord
  */
 interface WithTplPut<T> {
-	var tplPut:Class<T>;
+
+	var tplPut: Class<T>;
+
 }

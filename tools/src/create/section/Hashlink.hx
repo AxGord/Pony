@@ -17,7 +17,7 @@ class Hashlink extends Section {
 	public function new() super('hl');
 
 	#if (haxe_ver < 4.2) override #end
-	public function result():Xml {
+	public function result(): Xml {
 		init();
 		var r: Xml = add('release');
 		r.addChild('main'.node(outputDir + outputFile));

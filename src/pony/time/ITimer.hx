@@ -6,7 +6,7 @@ import pony.events.Signal1;
  * ITimer
  * @author AxGord <axgord@gmail.com>
  */
-interface ITimer<T: ITimer<Dynamic>> {
+interface ITimer<T:ITimer<Dynamic>> {
 
 	#if !flash
 	var update(get, never): Signal1<Time>;
@@ -17,8 +17,8 @@ interface ITimer<T: ITimer<Dynamic>> {
 	var currentTime: Time;
 	var repeatCount(default, set): Int;
 
-	//Have cs problem now:
-	//function start(?dt: DT): T;
+	// Have cs problem now:
+	// function start(?dt: DT): T;
 	function stop(): T;
 	function reset(): T;
 	function dispatchUpdate(): T;

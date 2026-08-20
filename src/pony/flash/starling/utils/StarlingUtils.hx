@@ -37,7 +37,7 @@ class StarlingUtils {
 
 			for (i in 0...xTextures) {
 				for (j in 0...yTextures) {
-					var textureSourceInit: Void->BitmapData = function(): BitmapData {
+					var textureSourceInit: Void -> BitmapData = function(): BitmapData {
 						var textureWidth: Int = (i == xTextures - 1) ? data.width - i * 2048 : 2048;
 						var textureHeight: Int = (j == yTextures - 1) ? data.height - j * 2048 : 2048;
 
@@ -82,8 +82,7 @@ class StarlingUtils {
 				disposeWithChildren(container.getChildAt(0));
 			}
 		}
-		if (Std.is(object, Image))
-			untyped object.texture.dispose();
+		if (Std.is(object, Image)) untyped object.texture.dispose();
 		if (Std.is(object, MovieClip)) {
 			var clip = cast(object, MovieClip);
 			for (i in 0...clip.numFrames) {
@@ -91,48 +90,39 @@ class StarlingUtils {
 			}
 		}
 
-		if (Std.is(object, Image) || Std.is(object, MovieClip))
-			untyped object.dispose();
+		if (Std.is(object, Image) || Std.is(object, MovieClip)) untyped object.dispose();
 	}
 
 	public static function enableChildrenTouchable(container: DisplayObjectContainer, enableContainerTouchable: Bool = true): Void {
-		if (enableContainerTouchable)
-			container.touchable = true;
+		if (enableContainerTouchable) container.touchable = true;
 		for (i in 0...container.numChildren) {
 			var child: DisplayObject = container.getChildAt(i);
 			child.touchable = true;
-			if (Std.is(child, DisplayObjectContainer))
-				enableChildrenTouchable(cast child);
+			if (Std.is(child, DisplayObjectContainer)) enableChildrenTouchable(cast child);
 		}
 	}
 
 	public static function alphaToUntouchable(container: starling.display.DisplayObjectContainer): Void {
 		for (i in 0...container.numChildren) {
 			var child: starling.display.DisplayObject = container.getChildAt(i);
-			if (!child.touchable)
-				child.alpha = 0.2;
-			if (Std.is(child, starling.display.DisplayObjectContainer))
-				alphaToUntouchable(cast child);
+			if (!child.touchable) child.alpha = 0.2;
+			if (Std.is(child, starling.display.DisplayObjectContainer)) alphaToUntouchable(cast child);
 		}
 	}
 
 	public static function playChildren(container: DisplayObjectContainer): Void {
 		for (i in 0...container.numChildren) {
 			var child: DisplayObject = container.getChildAt(i);
-			if (Std.is(child, MovieClip))
-				untyped child.play();
-			if (Std.is(child, DisplayObjectContainer))
-				playChildren(cast child);
+			if (Std.is(child, MovieClip)) untyped child.play();
+			if (Std.is(child, DisplayObjectContainer)) playChildren(cast child);
 		}
 	}
 
 	public static function setChildrenTextureSmoothing(container: DisplayObjectContainer, smoothing: String = "none"): Void {
 		for (i in 0...container.numChildren) {
 			var child: DisplayObject = container.getChildAt(i);
-			if (Std.is(child, Image))
-				cast(child, Image).smoothing = smoothing;
-			if (Std.is(child, DisplayObjectContainer))
-				setChildrenTextureSmoothing(cast child, smoothing);
+			if (Std.is(child, Image)) cast(child, Image).smoothing = smoothing;
+			if (Std.is(child, DisplayObjectContainer)) setChildrenTextureSmoothing(cast child, smoothing);
 		}
 	}
 
@@ -140,8 +130,7 @@ class StarlingUtils {
 		DeltaTime.fixedUpdate << function() {
 			for (e in Lib.current.childrens()) {
 				var o: IDisplayObject = untyped root.getChildByName(e.name);
-				if (o == null)
-					continue;
+				if (o == null) continue;
 				o.x = e.x;
 				o.y = e.y;
 				o.width = e.width;

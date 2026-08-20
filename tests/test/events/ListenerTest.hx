@@ -11,25 +11,26 @@ import massive.munit.async.AsyncFactory;
 import pony.events.Listener0;
 import pony.events.Listener1;
 
-enum L { A; B; C; }
+enum L {
+	A;
+	B;
+	C;
+}
 
-class ListenerTest 
-{
-	
-	private var tl:L = null;
-	
+class ListenerTest {
+
+	private var tl: L = null;
+
 	@Test
-	public function empty():Void
-	{
-		var b:Bool = false;
-		var l:Listener0 = function() b = true;
+	public function empty(): Void {
+		var b: Bool = false;
+		var l: Listener0 = function() b = true;
 		l.call(new SignalControllerInner0(null));
 		Assert.isTrue(b);
 	}
-	
+
 	@Test
-	public function arg():Void
-	{
+	public function arg(): Void {
 		var b: Bool = false;
 		var l: Listener1<Bool> = function(f: Bool, c: SignalController): Void {
 			b = !f;
@@ -43,17 +44,17 @@ class ListenerTest
 		Assert.isTrue(c.stop);
 		Assert.isFalse(b);
 	}
-	
+
 	@Test
-	public function enumTest():Void {
-		var l:Listener1<L> = enumHandler;
+	public function enumTest(): Void {
+		var l: Listener1<L> = enumHandler;
 		var c: SignalControllerInner1<L> = new SignalControllerInner1<L>(null);
 		l.call(L.B, c);
 		Assert.areEqual(tl, L.B);
 	}
-	
-	private function enumHandler(l:L):Void {
+
+	private function enumHandler(l: L): Void {
 		tl = l;
 	}
-	
+
 }

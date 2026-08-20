@@ -23,25 +23,25 @@ import pony.geom.Point;
 	 * Split text to bitmaps
 	 */
 	public function split(?parent: Object, ?pos: Point<Float>): Array<Bitmap> {
-		return [ for (gp in glyphsPoints) {
-			var b: Bitmap = new Bitmap(gp.b, parent);
-			b.color = color;
-			if (sdfShader != null) b.addShader(sdfShader);
-			(pos == null ? gp.a : gp.a + pos).setPosition(b);
-			b;
-		} ];
+		return [
+			for (gp in glyphsPoints) {
+				var b: Bitmap = new Bitmap(gp.b, parent);
+				b.color = color;
+				if (sdfShader != null) b.addShader(sdfShader);
+				(pos == null ? gp.a : gp.a + pos).setPosition(b);
+				b;
+			}
+		];
 	}
 
-	public inline function getFirstGlyphPos(?pos: Point<Float>): Point<Float>
-		return @:nullSafety(Off) glyphsPoints[0].a;
+	public inline function getFirstGlyphPos(?pos: Point<Float>): Point<Float> return @:nullSafety(Off) glyphsPoints[0].a;
 
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function get_glyphsPos(): Array<Point<Float>>
-		return [ for (gp in glyphsPoints) gp.a ];
+	private inline function get_glyphsPos(): Array<Point<Float>> return [for (gp in glyphsPoints) gp.a];
 
 	public inline function getGlyphsPos(?pos: Point<Float>): Array<Point<Float>>
-		return pos == null ? glyphsPos : [ for (gp in glyphsPoints) gp.a + pos ];
+		return pos == null ? glyphsPos : [for (gp in glyphsPoints) gp.a + pos];
 
 	/**
 	 * Copy from heaps
@@ -61,8 +61,10 @@ import pony.geom.Point;
 			case Center, Right, MultilineCenter, MultilineRight:
 				lines = [];
 				initGlyphs(text, false, false, lines);
-				var max: Int = if (align == MultilineCenter || align == MultilineRight) Math.ceil(calcWidth)
-					else realMaxWidth < 0 ? 0 : Math.ceil(realMaxWidth);
+				var max: Int = if (align == MultilineCenter || align == MultilineRight)
+					Math.ceil(calcWidth)
+				else
+					realMaxWidth < 0 ? 0 : Math.ceil(realMaxWidth);
 				var k: Int = align == Center || align == MultilineCenter ? 1 : 0;
 				for (i in 0...lines.length) lines[i] = (max - lines[i]) >> k;
 				@:nullSafety(Off) x = lines.shift();
@@ -92,7 +94,7 @@ import pony.geom.Point;
 				y += dl;
 				prevChar = -1;
 			} else {
-				if  (e != null) {
+				if (e != null) {
 					if (rebuild) {
 						glyphsPoints.push(new Pair(new Point(x + offs, y), e.t));
 						glyphs.add(x + offs, y, e.t);

@@ -31,10 +31,8 @@ class NativeHitTestSource implements IHitTestSource {
 	}
 
 	private function childUnderPoint(x: Float, y: Float, container: DisplayObjectContainer, testShape: Bool = true): Dynamic {
-		if (!container.mouseChildren && container.mouseEnabled && container.visible)
-			return container;
-		if ((!container.mouseChildren && !container.mouseEnabled) || !container.visible)
-			return null;
+		if (!container.mouseChildren && container.mouseEnabled && container.visible) return container;
+		if ((!container.mouseChildren && !container.mouseEnabled) || !container.visible) return null;
 		var i: Int = container.numChildren - 1;
 		while (i >= 0) {
 			var child: DisplayObject = container.getChildAt(i);
@@ -45,18 +43,15 @@ class NativeHitTestSource implements IHitTestSource {
 			if (child.hitTestPoint(x, y, testShape)) {
 				if (Std.is(child, DisplayObjectContainer)) {
 					var containerChild: Dynamic = childUnderPoint(x, y, cast child, testShape);
-					if (containerChild != null)
-						return containerChild;
+					if (containerChild != null) return containerChild;
 				} else if (Std.is(child, InteractiveObject)) {
-					if (untyped child.mouseEnabled && !isStaticTextField(child))
-						return child;
+					if (untyped child.mouseEnabled && !isStaticTextField(child)) return child;
 				}
 			}
 			i--;
 		}
 
-		if (container.mouseEnabled)
-			return container;
+		if (container.mouseEnabled) return container;
 		return null;
 	}
 
@@ -66,10 +61,8 @@ class NativeHitTestSource implements IHitTestSource {
 	}
 
 	public function parent(object: Dynamic): Dynamic {
-		if (!Std.is(object, flash.display.DisplayObject))
-			return null;
-		if (object == _container)
-			return null;
+		if (!Std.is(object, flash.display.DisplayObject)) return null;
+		if (object == _container) return null;
 		var objectsParent = object.parent;
 		return objectsParent;
 	}

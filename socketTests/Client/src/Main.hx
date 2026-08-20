@@ -1,4 +1,4 @@
-package ;
+package;
 
 import flash.display.StageAlign;
 import flash.display.StageScaleMode;
@@ -25,7 +25,7 @@ class Main {
 		cl.onConnect << function() {
 			trace('Connected');
 		};
-		cl.onData << function(data:BytesInput):Void {
+		cl.onData << function(data: BytesInput): Void {
 			trace(data.readStr());
 		}
 	}

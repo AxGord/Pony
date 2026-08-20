@@ -18,7 +18,8 @@ import pony.text.tpl.ITplPut;
 	private inline function set_token(t: String): String return cpq.connection.sessionStorage['vk_token'] = t;
 
 	private function request(f: String, args: Dynamic, cb: String -> Void): Void {
-		if (token == null) cb(null);
+		if (token == null)
+			cb(null);
 		else {
 			base.vk.setToken(token);
 			base.vk.request(f, args, cb);

@@ -10,7 +10,6 @@ import pixi.core.textures.Texture;
 import pixi.extras.BitmapText;
 import pixi.filters.blur.BlurFilter;
 import pixi.filters.colormatrix.ColorMatrixFilter;
-
 import pony.geom.Rect;
 
 /**
@@ -89,7 +88,12 @@ class PixiExtends {
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public static inline function getPonyRect(o: Container): Rect<Float> {
-		return { x: o.x, y: o.y, width: o.width, height: o.height };
+		return {
+			x: o.x,
+			y: o.y,
+			width: o.width,
+			height: o.height
+		};
 	}
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end

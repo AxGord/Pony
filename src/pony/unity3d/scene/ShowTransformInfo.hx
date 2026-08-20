@@ -9,13 +9,15 @@ import unityengine.Vector3;
  * @author AxGord <axgord@gmail.com>
  */
 @:nativeGen class ShowTransformInfo extends MonoBehaviour {
+
 	#if debug
-	public var infoRotation:Quaternion;
-	public var infoPosition:Vector3;
-	
-	public function Update():Void {
+	public var infoRotation: Quaternion;
+	public var infoPosition: Vector3;
+
+	public function Update(): Void {
 		infoRotation = transform.rotation;
 		infoPosition = transform.position;
 	}
 	#end
+
 }

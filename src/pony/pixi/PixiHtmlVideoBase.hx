@@ -9,9 +9,9 @@ import pony.HtmlVideo;
  */
 class PixiHtmlVideoBase extends HtmlContainerBase {
 
-	public var video:HtmlVideo;
+	public var video: HtmlVideo;
 
-	public function new(targetRect:pony.geom.Rect<Float>, ?app:App, ?options:HtmlVideoOptions) {
+	public function new(targetRect: pony.geom.Rect<Float>, ?app: App, ?options: HtmlVideoOptions) {
 		super(targetRect, app);
 		video = new HtmlVideo(options);
 		video.appendTo(this.app.parentDom);

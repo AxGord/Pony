@@ -37,6 +37,7 @@ class PopupManager<Popup> {
 	}
 
 	public dynamic function getPopup(type: Popup): IPopup return throw 'Method not set';
+
 	public dynamic function onClose(): Void {}
 
 	public function close(): Void {
@@ -53,7 +54,7 @@ class PopupManager<Popup> {
 		current.destroyPopup();
 		current = null;
 		onClose();
-		if (!wantFromList && list.length > 0 ) {
+		if (!wantFromList && list.length > 0) {
 			wantFromList = true;
 			DeltaTime.fixedUpdate < showFromList;
 		}

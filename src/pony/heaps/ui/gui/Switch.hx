@@ -24,6 +24,7 @@ import pony.ui.gui.SwitchCore;
 	}
 
 	private function openHandler(obj: Object): Void obj.visible = true;
+
 	private function closeHandler(obj: Object): Void obj.visible = false;
 
 }

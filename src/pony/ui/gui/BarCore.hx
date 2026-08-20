@@ -40,8 +40,11 @@ import pony.magic.HasSignal;
 	public function destroy(): Void destroySignals();
 
 	private function changePercentHandler(v: Float): Void pos = v * size;
+
 	private function changePosHandler(v: Float): Void percent = v / size;
-	private function changeValueHandler(v: Float): Void percent =  (v - min) / (max - min);
+
+	private function changeValueHandler(v: Float): Void percent = (v - min) / (max - min);
+
 	private function updateValue(v: Float): Void value = min + v * (max - min);
 
 	@SuppressWarnings('checkstyle:MagicNumber')

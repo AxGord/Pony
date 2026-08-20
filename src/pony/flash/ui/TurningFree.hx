@@ -25,10 +25,8 @@ class TurningFree extends Turning {
 	}
 
 	private function init(): Void {
-		if (lmin != null)
-			core.minAngle = lmin.rotation;
-		if (lmax != null)
-			core.maxAngle = lmax.rotation;
+		if (lmin != null) core.minAngle = lmin.rotation;
+		if (lmax != null) core.maxAngle = lmax.rotation;
 		core.currentAngle = handle.rotation;
 		handle.mouseEnabled = false;
 		var t = new Touchable(this);

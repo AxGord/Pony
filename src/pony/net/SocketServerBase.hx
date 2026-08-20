@@ -42,6 +42,7 @@ class SocketServerBase extends Logable {
 	}
 
 	private function beginString(): Void for (c in clients) c.onString << eString;
+
 	private function endString(): Void for (c in clients) c.onString >> eString;
 
 	private function addClient(): ISocketClient {

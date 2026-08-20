@@ -37,8 +37,7 @@ class Worker implements IWorkerGatePool implements HasSignal {
 		DeltaTime.fixedUpdate < bgWorker.start;
 		lw = new WorkerInput('log', this);
 		lw.request = function(s: String) {
-			if (eLog == null)
-				return;
+			if (eLog == null) return;
 			eLog.dispatch(s);
 			lw.result(1);
 		}
@@ -49,8 +48,7 @@ class Worker implements IWorkerGatePool implements HasSignal {
 		resultChannel.addEventListener(Event.CHANNEL_MESSAGE, function(event: Event): Void {
 			while (resultChannel.messageAvailable) {
 				var message: T2 = resultChannel.receive();
-				if (message != null)
-					response(message);
+				if (message != null) response(message);
 			}
 		});
 		bgWorker.setSharedProperty('request_' + name, resultChannel);
@@ -74,8 +72,7 @@ class Worker implements IWorkerGatePool implements HasSignal {
 		resultChannel.addEventListener(Event.CHANNEL_MESSAGE, function(event: Event): Void {
 			while (resultChannel.messageAvailable) {
 				var message: T1 = resultChannel.receive();
-				if (message != null)
-					request(message);
+				if (message != null) request(message);
 			}
 		});
 		bgWorker.setSharedProperty('request2_' + name, resultChannel);
@@ -106,8 +103,7 @@ class Worker implements IWorkerGatePool implements HasSignal {
 		// if (bgWorker.state == WorkerState.NEW) trace('new');
 		// if (bgWorker.state == WorkerState.RUNNING) trace('running');
 		// if (bgWorker.state == WorkerState.TERMINATED) trace('term');
-		if (bgWorker.state == WorkerState.RUNNING)
-			DTimer.fixedDelay(100, unlock);
+		if (bgWorker.state == WorkerState.RUNNING) DTimer.fixedDelay(100, unlock);
 	}
 
 	private function unlock(): Void {

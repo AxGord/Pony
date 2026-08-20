@@ -46,16 +46,16 @@ class SocketClient extends SocketClientBase {
 	private function updateHandler(): Void {
 		try {
 			while (true) buffer.writeByte(socket.input.readByte());
-		} catch (e:Error) {
+		} catch (e: Error) {
 			if (e != Error.Blocked)
 				error(e.getName());
 			else
 				processBuffer();
-		} catch (e:Eof) {
+		} catch (e: Eof) {
 			log('eof');
 			processBuffer();
 			close();
-		} catch (e:Any) {
+		} catch (e: Any) {
 			error(e);
 		}
 	}
@@ -69,6 +69,7 @@ class SocketClient extends SocketClientBase {
 	}
 
 	private function closeHandler(_): Void close();
+
 	public function send(data: BytesOutput): Void q.call(data);
 
 	private function _send(data: BytesOutput): Void {
@@ -77,7 +78,7 @@ class SocketClient extends SocketClientBase {
 		try {
 			socket.output.write(b);
 			socket.output.flush();
-		} catch (e:Dynamic) {
+		} catch (e: Dynamic) {
 			error(e);
 		}
 		DeltaTime.fixedUpdate < q.next;

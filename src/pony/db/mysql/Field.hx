@@ -5,8 +5,8 @@ package pony.db.mysql;
  * @author AxGord <axgord@gmail.com>
  */
 typedef Field = {
-	name:String,
+	name: String,
 	type: Types,
-	?length:Int,
-	?flags:Array < Flags >
+	?length: Int,
+	?flags: Array<Flags>
 }

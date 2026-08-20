@@ -31,48 +31,41 @@ import pony.math.MathTools;
  */
 class BodyBase implements pony.magic.HasSignal implements pony.magic.HasLink implements pony.magic.HasAbstract {
 
-	public static var BODYMAP:Map<Int, BodyBase> = new Map<Int, BodyBase>();
+	public static var BODYMAP: Map<Int, BodyBase> = new Map<Int, BodyBase>();
 
-	@:auto public var onDestroy:Signal0;
-	@:auto public var onPos:Signal2<Float, Float>;
-	@:auto public var onRotation:Signal1<Float>;
-	@:auto public var onOut:Signal0;
+	@:auto public var onDestroy: Signal0;
+	@:auto public var onPos: Signal2<Float, Float>;
+	@:auto public var onRotation: Signal1<Float>;
+	@:auto public var onOut: Signal0;
 
-	public var pos(get, set):Point<Float>;
-	public var angularVel(link, link):Float = body.angularVel;
-	public var rotation(link, link):Float = body.rotation;
+	public var pos(get, set): Point<Float>;
+	public var angularVel(link, link): Float = body.angularVel;
+	public var rotation(link, link): Float = body.rotation;
 
-	public var body(default, null):Body;
-	public var anchor:Vec2;
-	private var cbt:CbType;
-	private var addedListeners:Array<Listener> = [];
-	private var events0:Array<Event0> = [];
-	private var events1:Array<Event1<Int>> = [];
-	private var material:Material;
-	private var lookAtTarget:Float;
-	private var lookAtVelocity:Float;
-	private var lookAtDirrect:Int;
+	public var body(default, null): Body;
+	public var anchor: Vec2;
+	private var cbt: CbType;
+	private var addedListeners: Array<Listener> = [];
+	private var events0: Array<Event0> = [];
+	private var events1: Array<Event1<Int>> = [];
+	private var material: Material;
+	private var lookAtTarget: Float;
+	private var lookAtVelocity: Float;
+	private var lookAtDirrect: Int;
 
-	public var limits:Rect<Float>;
+	public var limits: Rect<Float>;
 
-	public var group(default, null):NapeGroup;
+	public var group(default, null): NapeGroup;
 
 	private var _space: Space;
 
 	private function new(
-		?pos:Point<Float>,
-		space:Space,
-		limits:Rect<Float>,
-		isStatic:Bool = false,
-		isBullet:Bool = false,
-		?pbody: Body,
-		?anchor: Vec2,
-		?group:NapeGroup
+		?pos: Point<Float>, space: Space, limits: Rect<Float>, isStatic: Bool = false, isBullet: Bool = false, ?pbody: Body, ?anchor: Vec2,
+		?group: NapeGroup
 	) {
 		this.limits = limits;
 		this.group = group;
-		if (anchor == null)
-			anchor = new Vec2();
+		if (anchor == null) anchor = new Vec2();
 		this.anchor = anchor;
 		if (pbody == null) {
 			body = new Body(isStatic ? BodyType.STATIC : isBullet ? BodyType.KINEMATIC : BodyType.DYNAMIC);
@@ -83,16 +76,14 @@ class BodyBase implements pony.magic.HasSignal implements pony.magic.HasLink imp
 			else if (isBullet)
 				body.type = BodyType.KINEMATIC;
 		}
-		if (pos != null)
-			body.position = new Vec2(pos.x - anchor.x, pos.y - anchor.y);
+		if (pos != null) body.position = new Vec2(pos.x - anchor.x, pos.y - anchor.y);
 		BODYMAP[body.id] = this;
 		body.isBullet = isBullet;
 		init();
 		body.space = space;
 		cbt = new CbType();
 		body.cbTypes.add(cbt);
-		if (group != null)
-			body.cbTypes.add(group.cbt);
+		if (group != null) body.cbTypes.add(group.cbt);
 		if (!isStatic) {
 			addListener(new BodyListener(CbEvent.WAKE, cbt, wakeHandler));
 			addListener(new BodyListener(CbEvent.SLEEP, cbt, sleepHandler));
@@ -100,17 +91,17 @@ class BodyBase implements pony.magic.HasSignal implements pony.magic.HasLink imp
 		}
 	}
 
-	public function getCacheId():Bytes return null;
+	public function getCacheId(): Bytes return null;
 
-	public inline function scale(x:Float, y:Float):Void {
+	public inline function scale(x: Float, y: Float): Void {
 		body.scaleShapes(x, y);
 	}
 
-	public inline function lookAt(x:Float, y:Float):Void {
+	public inline function lookAt(x: Float, y: Float): Void {
 		rotation = Math.atan2(y - pos.y, x - pos.x);
 	}
 
-	public function lookAtVelLin(x:Float, y:Float, vel:Float):Void {
+	public function lookAtVelLin(x: Float, y: Float, vel: Float): Void {
 		lookAtVelocity = vel;
 		lookAtTarget = Math.atan2(y - pos.y, x - pos.x);
 		// normalize rotation before look at with velocity
@@ -120,8 +111,10 @@ class BodyBase implements pony.magic.HasSignal implements pony.magic.HasLink imp
 			var nR: Bool = rotation < 0;
 			var nL: Bool = lookAtTarget < 0;
 			if (nR != nL) {
-				if (nR) lookAtTarget -= 2 * Math.PI;
-				else lookAtTarget += 2 * Math.PI;
+				if (nR)
+					lookAtTarget -= 2 * Math.PI;
+				else
+					lookAtTarget += 2 * Math.PI;
 			}
 		}
 		lookAtDirrect = lookAtTarget > rotation ? 1 : -1;
@@ -133,8 +126,9 @@ class BodyBase implements pony.magic.HasSignal implements pony.magic.HasLink imp
 		}
 	}
 
-	private function checkLookAtHandler():Void {
-		if ( (lookAtDirrect == 1 && lookAtTarget <= rotation + MathTools.DEG2RAD * angularVel)
+	private function checkLookAtHandler(): Void {
+		if (
+			(lookAtDirrect == 1 && lookAtTarget <= rotation + MathTools.DEG2RAD * angularVel)
 			|| (lookAtDirrect == -1 && lookAtTarget >= rotation + MathTools.DEG2RAD * angularVel)
 		) {
 			angularVel = 0;
@@ -143,64 +137,64 @@ class BodyBase implements pony.magic.HasSignal implements pony.magic.HasLink imp
 		}
 	}
 
-	public inline function lookAtPoint(p:Point<Float>):Void {
+	public inline function lookAtPoint(p: Point<Float>): Void {
 		lookAt(p.x, p.y);
 	}
 
-	public inline function setSpeed(v:Float):Void {
+	public inline function setSpeed(v: Float): Void {
 		body.velocity = new Vec2(v * Math.cos(rotation), v * Math.sin(rotation));
 	}
 
-	public inline function addSpeed(v:Float):Void {
+	public inline function addSpeed(v: Float): Void {
 		body.velocity = new Vec2(body.velocity.x + v * Math.cos(rotation), body.velocity.y + v * Math.sin(rotation));
 	}
 
-	private function addListener<T:Listener>(l:T):Void {
+	private function addListener<T:Listener>(l: T): Void {
 		addedListeners.push(l);
 		body.space.listeners.add(l);
 	}
 
-	private function createEvent0():Event0 {
+	private function createEvent0(): Event0 {
 		var e = new Event0();
 		events0.push(e);
 		return e;
 	}
 
-	private function createEvent1():Event1<Int> {
+	private function createEvent1(): Event1<Int> {
 		var e = new Event1<Int>();
 		events1.push(e);
 		return e;
 	}
 
-	@:abstract private function init():Void;
+	@:abstract private function init(): Void;
 
-	private function updateHandler():Void {
+	private function updateHandler(): Void {
 		ePos.dispatch(body.position.x - anchor.x, body.position.y - anchor.y);
 		eRotation.dispatch(body.rotation);
 		if (limits != null) {
 			var mx = body.bounds.width * 2;
 			var my = body.bounds.height * 2;
-			if (body.position.x < limits.x - mx
-			|| body.position.x > limits.width + mx
-			|| body.position.y < limits.y - my
-			|| body.position.y > limits.height + my)
+			if (
+				body.position.x < limits.x - mx || body.position.x > limits.width + mx || body.position.y < limits.y - my
+				|| body.position.y > limits.height + my
+			)
 				eOut.dispatch();
 		}
 	}
 
-	private function wakeHandler(_):Void {
+	private function wakeHandler(_): Void {
 		DeltaTime.update < _wake;
 	}
 
-	private function _wake():Void {
+	private function _wake(): Void {
 		DeltaTime.update << updateHandler;
 	}
 
-	private function sleepHandler(_):Void {
+	private function sleepHandler(_): Void {
 		DeltaTime.update < _sleep;
 	}
 
-	private function _sleep():Void {
+	private function _sleep(): Void {
 		DeltaTime.update >> updateHandler;
 	}
 
@@ -218,71 +212,55 @@ class BodyBase implements pony.magic.HasSignal implements pony.magic.HasLink imp
 		_sleep();
 	}
 
-	public function groupCollision<T:NapeGroup>(with:T):Signal1<Int> {
+	public function groupCollision<T:NapeGroup>(with: T): Signal1<Int> {
 		var e = createEvent1();
 		body.space.listeners.add(new InteractionListener(
-			CbEvent.BEGIN,
-			with.sensor ? InteractionType.SENSOR : InteractionType.COLLISION,
-			cbt,
-			with.cbt,
-			function(ic:InteractionCallback):Void e.dispatch(ic.int2.id)
+			CbEvent.BEGIN, with.sensor ? InteractionType.SENSOR : InteractionType.COLLISION, cbt, with.cbt,
+			function(ic: InteractionCallback): Void e.dispatch(ic.int2.id)
 		));
 		return e;
 	}
 
-	public function groupCollisionLost<T:NapeGroup>(with:T):Signal1<Int> {
+	public function groupCollisionLost<T:NapeGroup>(with: T): Signal1<Int> {
 		var e = createEvent1();
 		body.space.listeners.add(new InteractionListener(
-			CbEvent.END,
-			with.sensor ? InteractionType.SENSOR : InteractionType.COLLISION,
-			cbt,
-			with.cbt,
-			function(ic:InteractionCallback):Void e.dispatch(ic.int2.id)
+			CbEvent.END, with.sensor ? InteractionType.SENSOR : InteractionType.COLLISION, cbt, with.cbt,
+			function(ic: InteractionCallback): Void e.dispatch(ic.int2.id)
 		));
 		return e;
 	}
 
-	public function collision<T:BodyBase>(with:T):Signal0 {
+	public function collision<T:BodyBase>(with: T): Signal0 {
 		var e = createEvent0();
 		body.space.listeners.add(new InteractionListener(
-			CbEvent.BEGIN,
-			body.isBullet ? InteractionType.SENSOR : InteractionType.COLLISION,
-			cbt,
-			with.cbt,
-			function(_) e.dispatch()
+			CbEvent.BEGIN, body.isBullet ? InteractionType.SENSOR : InteractionType.COLLISION, cbt, with.cbt, function(_) e.dispatch()
 		));
 		return e;
 	}
 
-	public function collisionLost<T:BodyBase>(with:T):Signal0 {
+	public function collisionLost<T:BodyBase>(with: T): Signal0 {
 		var e = new Event0();
 		addListener(new InteractionListener(
-			CbEvent.END,
-			body.isBullet ? InteractionType.SENSOR : InteractionType.COLLISION,
-			cbt,
-			with.cbt,
-			function(_) e.dispatch()
+			CbEvent.END, body.isBullet ? InteractionType.SENSOR : InteractionType.COLLISION, cbt, with.cbt, function(_) e.dispatch()
 		));
 		return e;
 	}
 
-	private function get_pos():Point<Float> {
+	private function get_pos(): Point<Float> {
 		return new Point<Float>(body.position.x - anchor.x, body.position.y - anchor.y);
 	}
 
-	private function set_pos(p:Point<Float>):Point<Float> {
+	private function set_pos(p: Point<Float>): Point<Float> {
 		body.position.setxy(p.x + anchor.x, p.y + anchor.y);
 		ePos.dispatch(p.x, p.y);
 		return p;
 	}
 
-	public function destroy():Void {
+	public function destroy(): Void {
 		if (body == null) return;
 		DeltaTime.update >> updateHandler;
 		DeltaTime.update >> checkLookAtHandler;
-		if (body.space != null)
-			for (l in addedListeners)
-				body.space.listeners.remove(l);
+		if (body.space != null) for (l in addedListeners) body.space.listeners.remove(l);
 		addedListeners = null;
 		for (e in events0) e.destroy();
 		events0 = null;

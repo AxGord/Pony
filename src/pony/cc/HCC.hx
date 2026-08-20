@@ -22,6 +22,7 @@ import pony.time.DeltaTime;
 	}
 
 	public function load(): Void {}
+
 	public function start(): Void {}
 
 }

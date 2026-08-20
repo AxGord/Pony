@@ -80,7 +80,7 @@ import pony.magic.HasSignal;
 	 * uglify: <input>jslib/FileSaver.min.js</input>
 	 */
 	public static function save(bytes: Bytes, name: String = 'file'): Void {
-		var blob: Blob = new Blob([ bytes.getData() ], { type: 'application/octet-stream' });
+		var blob: Blob = new Blob([bytes.getData()], { type: 'application/octet-stream' });
 		Lib.global.saveAs(blob, name);
 	}
 

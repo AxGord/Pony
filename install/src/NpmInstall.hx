@@ -40,10 +40,12 @@
 		}
 		var c: String = cast cmds.shift();
 		if (Config.OS == TargetOS.Windows) {
-			var winmap: Map<String, String> = [ for (e in Config.settings.winnpm) {
-				var a = e.split('@');
-				a[0] => a[1];
-			} ];
+			var winmap: Map<String, String> = [
+				for (e in Config.settings.winnpm) {
+					var a = e.split('@');
+					a[0] => a[1];
+				}
+			];
 			listInstall(c, cmds, [
 				for (npm in Config.settings.npm) {
 					var n: String = npm.split('@')[0];

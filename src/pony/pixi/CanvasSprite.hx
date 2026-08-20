@@ -15,12 +15,12 @@ import pony.time.DeltaTime;
  * @author AxGord <axgord@gmail.com>
  */
 class CanvasSprite extends Sprite {
-	
-	private var sourse:Sprite;
-	private var size:Point<Int>;
-	private var offset:Point<Int>;
-	
-	public function new(sourse:Sprite, size:Point<Int>, ?offset:Point<Int>) {
+
+	private var sourse: Sprite;
+	private var size: Point<Int>;
+	private var offset: Point<Int>;
+
+	public function new(sourse: Sprite, size: Point<Int>, ?offset: Point<Int>) {
 		super();
 		this.size = size;
 		this.sourse = sourse;
@@ -34,21 +34,21 @@ class CanvasSprite extends Sprite {
 			sourse.y = offset.y;
 		}
 	}
-	
-	public function needRenderer():Void if (JsTools.agent != IE) DeltaTime.fixedUpdate < render;
-	
-	private function render():Void {
+
+	public function needRenderer(): Void if (JsTools.agent != IE) DeltaTime.fixedUpdate < render;
+
+	private function render(): Void {
 		if (children.length > 0) {
 			var sp = children[0];
 			removeChildAt(0);
 			sp.destroy(true);
 		}
 		addChild(sourse);
-		
+
 		var _renderer = new CanvasRenderer(size.x, size.y);
 		_renderer.transparent = true;
 		_renderer.render(this);
-		
+
 		removeChildAt(0);
 		var result = new Sprite(Texture.fromCanvas(_renderer.view));
 		if (offset != null) {
@@ -58,5 +58,5 @@ class CanvasSprite extends Sprite {
 		addChild(result);
 		_renderer.destroy();
 	}
-	
+
 }

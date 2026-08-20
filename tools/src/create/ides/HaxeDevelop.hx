@@ -9,7 +9,9 @@ import pony.text.XmlTools;
  */
 class HaxeDevelop {
 
-	public static function create(name:String, main:String, libs:Map<String, String>, cps:Array<String>, ponycmd:String = 'build'):Void {
+	public static function create(
+		name: String, main: String, libs: Map<String, String>, cps: Array<String>, ponycmd: String = 'build'
+	): Void {
 		if (name == null) return;
 		var fdname = name + '.hxproj';
 		if (!FileSystem.exists(fdname)) {
@@ -49,25 +51,16 @@ class HaxeDevelop {
 
 			root.addChild(Xml.createComment(' haxelib libraries '));
 			var libs = XmlTools.mapToNode('haxelib', 'library', [
-				for (lib in libs.keys()) 'name' => lib +
-					(
-					libs[lib] == null
-					? ''
-					: (':' + libs[lib])
-					)
+				for (lib in libs.keys()) 'name' => lib + (libs[lib] == null ? '' : (':' + libs[lib]))
 			]);
 			libs.addChild(Xml.createComment('example: <library name="..." />'));
 			root.addChild(libs);
 
 			root.addChild(Xml.createComment(' Class files to compile (other referenced classes will automatically be included) '));
-			root.addChild(XmlTools.mapToNode('compileTargets', 'compile', [
-				'path' => main
-			]));
+			root.addChild(XmlTools.mapToNode('compileTargets', 'compile', ['path' => main]));
 
 			root.addChild(Xml.createComment(' Paths to exclude from the Project Explorer tree '));
-			root.addChild(XmlTools.mapToNode('hiddenPaths', 'hidden', [
-				'path' => 'obj'
-			]));
+			root.addChild(XmlTools.mapToNode('hiddenPaths', 'hidden', ['path' => 'obj']));
 
 			root.addChild(Xml.createComment(' Executed before build '));
 			root.addChild(XmlTools.node('preBuildCommand', '$fcmd $(BuildConfig)'));

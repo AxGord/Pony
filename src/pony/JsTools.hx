@@ -16,19 +16,33 @@ import js.Error;
 #end
 
 enum UserAgent {
-	IE; Edge; Chrome; Safari; Firefox; Samsung; Unknown;
+	IE;
+	Edge;
+	Chrome;
+	Safari;
+	Firefox;
+	Samsung;
+	Unknown;
 }
 
 enum OS {
-	Windows; Macos; Linux(type:Linux); Android; Unknown; IOS;
+	Windows;
+	Macos;
+	Linux(type: Linux);
+	Android;
+	Unknown;
+	IOS;
 }
 
 enum Linux {
-	Ubuntu; Other;
+	Ubuntu;
+	Other;
 }
 
 enum ISA {
-	X32; X64; Unknown;
+	X32;
+	X64;
+	Unknown;
 }
 
 typedef JsMap<K, V> = {
@@ -91,20 +105,28 @@ class JsTools implements HasSignal {
 	public static function abortEvent(e: Event): Void e.preventDefault();
 
 	public static function get_webp(): Bool {
-		return _webp != null ? _webp : _webp =
-		cast(Browser.document.createElement('canvas'), CanvasElement).toDataURL('image/webp').indexOf('data:image/webp') == 0;
+		return _webp != null
+			? _webp
+			: _webp = cast(Browser.document.createElement('canvas'), CanvasElement).toDataURL('image/webp').indexOf('data:image/webp') == 0;
 	}
 
 	private static function get_agent(): UserAgent {
 		if (_agent != null) return _agent;
 		var ua: String = Browser.navigator.userAgent.toLowerCase();
-		_agent = if (ua.indexOf('msie') != -1 || ua.indexOf('trident/') > 0) IE;
-		else if (ua.indexOf('edge') != -1) Edge;
-		else if (ua.indexOf('samsung') != -1) Samsung;
-		else if (ua.indexOf('chrome') != -1) Chrome;
-		else if (ua.indexOf('safari') != -1 && ua.indexOf('android') == -1) Safari;
-		else if (ua.indexOf('firefox') != -1) Firefox;
-		else UserAgent.Unknown;
+		_agent = if (ua.indexOf('msie') != -1 || ua.indexOf('trident/') > 0)
+			IE;
+		else if (ua.indexOf('edge') != -1)
+			Edge;
+		else if (ua.indexOf('samsung') != -1)
+			Samsung;
+		else if (ua.indexOf('chrome') != -1)
+			Chrome;
+		else if (ua.indexOf('safari') != -1 && ua.indexOf('android') == -1)
+			Safari;
+		else if (ua.indexOf('firefox') != -1)
+			Firefox;
+		else
+			UserAgent.Unknown;
 		return _agent;
 	}
 
@@ -145,9 +167,12 @@ class JsTools implements HasSignal {
 	private static function get_isa(): ISA {
 		if (_isa != null) return _isa;
 		var ua: String = Browser.navigator.userAgent.toLowerCase();
-		_isa = if (ua.indexOf('x86_32') != -1 || ua.indexOf('x32') != -1) X32;
-		else if (ua.indexOf('x86_64') != -1 || ua.indexOf('x64') != -1) X64;
-		else ISA.Unknown;
+		_isa = if (ua.indexOf('x86_32') != -1 || ua.indexOf('x32') != -1)
+			X32;
+		else if (ua.indexOf('x86_64') != -1 || ua.indexOf('x64') != -1)
+			X64;
+		else
+			ISA.Unknown;
 		return _isa;
 	}
 
@@ -168,11 +193,8 @@ class JsTools implements HasSignal {
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public static inline function get_isFSE(): Bool {
 		return untyped {
-			Browser.document.fullscreenElement ||
-			Browser.document.mozFullScreen ||
-			Browser.document.mozFullscreenElement ||
-			Browser.document.webkitFullscreenElement ||
-			Browser.document.msFullscreenElement;
+			Browser.document.fullscreenElement || Browser.document.mozFullScreen || Browser.document.mozFullscreenElement
+				|| Browser.document.webkitFullscreenElement || Browser.document.msFullscreenElement;
 		};
 	}
 
@@ -239,20 +261,20 @@ class JsTools implements HasSignal {
 
 	public static function mapToJSMap<K, V>(map: Map<K, V>): JsMap<K, V> {
 		#if (haxe_ver >= '4.0.0')
-		var n:JsMap<K, V> = js.Syntax.code('new Map()');
+		var n: JsMap<K, V> = js.Syntax.code('new Map()');
 		#else
-		var n:JsMap<K, V> = untyped __js__('new Map()');
+		var n: JsMap<K, V> = untyped __js__('new Map()');
 		#end
 		for (k in map.keys()) n.set(k, map[k]);
 		return n;
 	}
 
-	public static function stringJSMapToMap<K: String, V: Any>(map: JsMap<K, V>): Map<K, V> {
-		return [ for (k in map.keys()) k => map.get(k) ];
+	public static function stringJSMapToMap<K:String, V:Any>(map: JsMap<K, V>): Map<K, V> {
+		return [for (k in map.keys()) k => map.get(k)];
 	}
 
-	public static function intJSMapToMap<K: Int, V: Any>(map: JsMap<K, V>): Map<K, V> {
-		return [ for (k in map.keys()) k => map.get(k) ];
+	public static function intJSMapToMap<K:Int, V:Any>(map: JsMap<K, V>): Map<K, V> {
+		return [for (k in map.keys()) k => map.get(k)];
 	}
 
 	public static inline function logBuildDate(): Void Browser.console.log('Build date: ' + Tools.getBuildDate());

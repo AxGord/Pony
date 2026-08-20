@@ -1,7 +1,6 @@
 package pony.ui.xml;
 
 import flash.text.TextFieldAutoSize;
-
 import openfl.display.DisplayObject;
 import openfl.display.Sprite;
 import openfl.filters.BitmapFilter;
@@ -9,7 +8,6 @@ import openfl.filters.DropShadowFilter;
 import openfl.geom.Point;
 import openfl.text.TextField;
 import openfl.text.TextFormat;
-
 import pony.geom.Align;
 import pony.geom.Border;
 import pony.magic.HasAbstract;
@@ -56,9 +54,7 @@ class OpenflXmlUi extends Sprite implements HasAbstract {
 					s.graphics.drawRect(0, 0, attrs.w.parseFloat(), attrs.h.parseFloat());
 					s.graphics.endFill();
 				}
-				for (e in content)
-					if (e != null)
-						s.addChild(e);
+				for (e in content) if (e != null) s.addChild(e);
 				s;
 			case 'image':
 				var b = AssetManager.image(attrs.src, name);
@@ -67,24 +63,22 @@ class OpenflXmlUi extends Sprite implements HasAbstract {
 				var align = Align.fromString(attrs.align);
 				if (attrs.iv != null) {
 					var l = new IntervalLayout(Std.parseInt(attrs.iv), true, cast Border.fromString(attrs.border), align);
-					for (e in content)
-						l.add(e);
+					for (e in content) l.add(e);
 					l;
 				} else if (attrs.ih != null) {
 					var l = new IntervalLayout(Std.parseInt(attrs.ih), false, cast Border.fromString(attrs.border), align);
-					for (e in content)
-						l.add(e);
+					for (e in content) l.add(e);
 					l;
 				} else if (attrs.w != null || attrs.h != null) {
-					var r = new RubberLayout(Std.parseFloat(attrs.w), Std.parseFloat(attrs.h), isTrue(attrs.vert),
-						cast Border.fromString(attrs.border), attrs.padding == null ? true : isTrue(attrs.padding), align);
-					for (e in content)
-						r.add(e);
+					var r = new RubberLayout(
+						Std.parseFloat(attrs.w), Std.parseFloat(attrs.h), isTrue(attrs.vert), cast Border.fromString(attrs.border),
+						attrs.padding == null ? true : isTrue(attrs.padding), align
+					);
+					for (e in content) r.add(e);
 					r;
 				} else {
 					var s = new AlignLayout(align);
-					for (e in content)
-						s.add(e);
+					for (e in content) s.add(e);
 					s;
 				}
 			/*case 'lbutton':
@@ -150,8 +144,8 @@ class OpenflXmlUi extends Sprite implements HasAbstract {
 
 	private function putData(c: String): String return c;
 
-	private function customUIElement(name: String, attrs: Dynamic<String>,
-			content: Array<Dynamic>): Dynamic throw 'Unknown component $name';
+	private function customUIElement(name: String, attrs: Dynamic<String>, content: Array<Dynamic>): Dynamic
+		throw 'Unknown component $name';
 
 	private static function splitAttr(s: String): Array<String> {
 		return s.split(',').map(StringTools.trim).map(function(v) return v == '' ? null : v);

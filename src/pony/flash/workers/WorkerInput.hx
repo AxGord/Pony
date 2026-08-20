@@ -16,8 +16,7 @@ class WorkerInput<T1, T2> implements Declarator {
 		result = gate._registerInput(name, _request);
 	}
 
-	private function _request(r: T1): Void
-		request(r);
+	private function _request(r: T1): Void request(r);
 
 	public dynamic function request(r: T1): Void {}
 

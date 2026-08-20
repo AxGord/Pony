@@ -2,9 +2,7 @@ package module;
 
 import pony.Fast;
 import pony.ds.Triple;
-
 import sys.FileSystem;
-
 import types.BASection;
 import types.DownloadConfig;
 
@@ -54,7 +52,8 @@ private class DownloadReader extends BAReader<DownloadConfig> {
 
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
-			case 'path': cfg.path += val;
+			case 'path':
+				cfg.path += val;
 			case _:
 		}
 	}
@@ -67,9 +66,7 @@ private class DownloadReader extends BAReader<DownloadConfig> {
 				var p: Triple<String, String, Bool> = if (xml.has.v) {
 					var v: String = xml.att.v;
 					new Triple(
-						StringTools.replace(url, '{v}', v),
-						xml.has.check ? StringTools.replace(xml.att.check, '{v}', v) : null,
-						update
+						StringTools.replace(url, '{v}', v), xml.has.check ? StringTools.replace(xml.att.check, '{v}', v) : null, update
 					);
 				} else {
 					new Triple(url, xml.has.check ? xml.att.check : null, update);

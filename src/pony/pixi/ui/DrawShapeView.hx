@@ -14,7 +14,6 @@ import pony.time.DeltaTime;
 // typedef DrawShapeStyle = {
 // 	snapWidth: Float
 // }
-
 /**
  * DrawShapeView
  * @author AxGord <axgord@gmail.com>
@@ -126,9 +125,13 @@ class DrawShapeView extends LogableSprite implements pony.geom.IWH {
 		var tg = new Graphics();
 		tg.beginFill(0, 0);
 		if (size.x > size.y)
-			tg.drawRect(dsp.xbegin - dsp.snapCellSize.x, -dsp.snapCellSize.y, size.y + dsp.snapCellSize.x * 2, size.y + dsp.snapCellSize.y * 2);
+			tg.drawRect(
+				dsp.xbegin - dsp.snapCellSize.x, -dsp.snapCellSize.y, size.y + dsp.snapCellSize.x * 2, size.y + dsp.snapCellSize.y * 2
+			);
 		else
-			tg.drawRect(-dsp.snapCellSize.x, dsp.ybegin - dsp.snapCellSize.y, size.x + dsp.snapCellSize.x * 2, size.x + dsp.snapCellSize.y * 2);
+			tg.drawRect(
+				-dsp.snapCellSize.x, dsp.ybegin - dsp.snapCellSize.y, size.x + dsp.snapCellSize.x * 2, size.x + dsp.snapCellSize.y * 2
+			);
 		touchArea.addChild(tg);
 	}
 
@@ -177,11 +180,9 @@ class DrawShapeView extends LogableSprite implements pony.geom.IWH {
 		startPoint.visible = true;
 	}
 
-	private function pathCancelHandler(): Void
-		startPoint.visible = false;
+	private function pathCancelHandler(): Void startPoint.visible = false;
 
-	private function clearPathLine(): Void
-		pathLine.clear();
+	private function clearPathLine(): Void pathLine.clear();
 
 	private function clearStore(): Void {
 		unfreeze();

@@ -6,7 +6,6 @@ import pony.ds.Triple;
 import pony.fs.Dir;
 import pony.fs.File;
 import pony.fs.Unit;
-
 import types.BASection;
 
 using pony.text.TextTools;
@@ -90,8 +89,8 @@ using pony.text.TextTools;
 	}
 
 	private function lameUnits(
-		data: Array<Triple<String, Null<String>, Null<String>>>, from: String, to: String,
-		hash: Bool, addext: String, preset: Null<String>, rm: Bool
+		data: Array<Triple<String, Null<String>, Null<String>>>, from: String, to: String, hash: Bool, addext: String,
+		preset: Null<String>, rm: Bool
 	): Void {
 		var hashModule: Null<module.Hash> = hash ? modules.getModule(module.Hash) : null;
 		for (p in data) {
@@ -135,14 +134,17 @@ private typedef LameConfig = {
 
 	override private function readNode(xml: Fast): Void {
 		switch xml.name {
-			case 'path': selfCreate(xml);
-			case 'dir': cfg.dirs.push(new Pair(normalize(xml.innerData), xml.has.filter ? normalize(xml.att.filter) : '.wav'));
-			case 'unit': cfg.units.push(new Triple(
-				normalize(xml.innerData),
-				xml.has.name ? normalize(xml.att.name) : null,
-				xml.has.hashFrom ? normalize(xml.att.hashFrom) : null
-			));
-			case _: super.readNode(xml);
+			case 'path':
+				selfCreate(xml);
+			case 'dir':
+				cfg.dirs.push(new Pair(normalize(xml.innerData), xml.has.filter ? normalize(xml.att.filter) : '.wav'));
+			case 'unit':
+				cfg.units.push(new Triple(
+					normalize(xml.innerData), xml.has.name ? normalize(xml.att.name) : null,
+					xml.has.hashFrom ? normalize(xml.att.hashFrom) : null
+				));
+			case _:
+				super.readNode(xml);
 		}
 	}
 
@@ -160,12 +162,18 @@ private typedef LameConfig = {
 
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
-			case 'to': cfg.to += val;
-			case 'from': cfg.from += val;
-			case 'hash': cfg.hash = val.isTrue();
-			case 'addext': cfg.addext = val;
-			case 'preset': cfg.preset = val;
-			case 'rm': cfg.rm = val.isTrue();
+			case 'to':
+				cfg.to += val;
+			case 'from':
+				cfg.from += val;
+			case 'hash':
+				cfg.hash = val.isTrue();
+			case 'addext':
+				cfg.addext = val;
+			case 'preset':
+				cfg.preset = val;
+			case 'rm':
+				cfg.rm = val.isTrue();
 			case _:
 		}
 	}

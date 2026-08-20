@@ -5,7 +5,6 @@ import pony.fs.Dir;
 import pony.fs.File;
 import pony.geom.Point;
 import pony.text.TextTools;
-
 import types.BAConfig;
 import types.BASection;
 
@@ -110,10 +109,12 @@ private typedef TPUnit = {
 			command.push('--format');
 			command.push(f);
 
-			var outExt = unit.ext != null ? unit.ext : switch f {
-				case 'phaser-json-array', 'phaser-json-hash', 'pixijs': 'json';
-				case _: f;
-			}
+			var outExt = unit.ext != null
+				? unit.ext
+				: switch f {
+					case 'phaser-json-array', 'phaser-json-hash', 'pixijs': 'json';
+					case _: f;
+				}
 
 			var datafile = unit.output + (first ? '' : '_$s') + '.' + outExt;
 			command.push('--data');
@@ -264,8 +265,7 @@ private typedef TPUnit = {
 			for (a in toList) {
 				for (b in toList) {
 					if (a.length > b.length) {
-						if (a.indexOf(b) == 0)
-							remList.remove(a);
+						if (a.indexOf(b) == 0) remList.remove(a);
 					}
 				}
 			}

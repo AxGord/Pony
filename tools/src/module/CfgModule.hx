@@ -2,7 +2,6 @@ package module;
 
 import pony.Fast;
 import pony.magic.HasAbstract;
-
 import types.BAConfig;
 import types.BASection;
 
@@ -55,6 +54,7 @@ class CfgModule<T:BAConfig> extends Module implements HasAbstract {
 	}
 
 	private function readNodeConfig(xml: Fast, ac: AppCfg): Void {}
+
 	private function runNode(cfg: T): Void {}
 
 }

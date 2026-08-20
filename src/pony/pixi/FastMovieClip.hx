@@ -21,24 +21,22 @@ using pony.pixi.PixiExtends;
 @SuppressWarnings('checkstyle:MagicNumber')
 class FastMovieClip extends AnimTextureCore {
 
-	private static var storage:Map<String, FastMovieClip> = new Map();
+	private static var storage: Map<String, FastMovieClip> = new Map();
 
-	private var pool:Array<Sprite> = [];
-	private var data:Array<Pair<Rectangle, Rectangle>>;
-	public var texture(default, null):Array<Texture>;
-	private var crop:Int;
+	private var pool: Array<Sprite> = [];
+	private var data: Array<Pair<Rectangle, Rectangle>>;
+	public var texture(default, null): Array<Texture>;
+	private var crop: Int;
 
 	public function new(
-		data:Or<Array<Texture>, Array<String>>,
-		frameTime:Time,
-		fixedTime:Bool = false,
-		smooth:AnimSmoothMode = AnimSmoothMode.None,
-		additionalSrc:UInt = 0,
-		crop:Int = 0
+		data: Or<Array<Texture>, Array<String>>, frameTime: Time, fixedTime: Bool = false, smooth: AnimSmoothMode = AnimSmoothMode.None,
+		additionalSrc: UInt = 0, crop: Int = 0
 	) {
 		super(frameTime, fixedTime, smooth, additionalSrc);
 		var data = converOr(data);
-		texture = data.splice(0, (smooth:Int) + additionalSrc + (additionalSrc == 1 && smooth == AnimSmoothMode.Simple && data.length % 2 == 1 ? 1 : 0));
+		texture = data.splice(
+			0, (smooth: Int) + additionalSrc + (additionalSrc == 1 && smooth == AnimSmoothMode.Simple && data.length % 2 == 1 ? 1 : 0)
+		);
 		this.crop = crop;
 		this.data = [for (t in texture) new Pair(t.trim, t.frame)];
 		for (t in data) {
@@ -48,12 +46,9 @@ class FastMovieClip extends AnimTextureCore {
 	}
 
 	public static function fromStorage(
-		data:Or<Array<Texture>, Array<String>>,
-		frameTime:Time,
-		fixedTime:Bool = false,
-		smooth:AnimSmoothMode = AnimSmoothMode.None,
-		crop:Int = 0
-	):FastMovieClip {
+		data: Or<Array<Texture>, Array<String>>, frameTime: Time, fixedTime: Bool = false, smooth: AnimSmoothMode = AnimSmoothMode.None,
+		crop: Int = 0
+	): FastMovieClip {
 		var n = idFromTexture(converOrFirst(data));
 		if (!storage.exists(n)) {
 			return storage[n] = new FastMovieClip(data, frameTime, fixedTime, smooth, crop);
@@ -63,16 +58,16 @@ class FastMovieClip extends AnimTextureCore {
 	}
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public static inline function fromSprite(s:Sprite):FastMovieClip return fromTexture(s.texture);
+	public static inline function fromSprite(s: Sprite): FastMovieClip return fromTexture(s.texture);
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public static inline function fromTexture(t:Texture):FastMovieClip return storage[idFromTexture(t)];
+	public static inline function fromTexture(t: Texture): FastMovieClip return storage[idFromTexture(t)];
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private static inline function idFromTexture(t:Texture):String return t.baseTexture.imageUrl + '_' + t.frame.x + '_' + t.frame.y;
+	private static inline function idFromTexture(t: Texture): String return t.baseTexture.imageUrl + '_' + t.frame.x + '_' + t.frame.y;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private static inline function converOr(data:Or<Array<Texture>, Array<String>>):Array<Texture> {
+	private static inline function converOr(data: Or<Array<Texture>, Array<String>>): Array<Texture> {
 		return switch data {
 			case OrState.A(t): t;
 			case OrState.B(s): [for (e in s) Texture.fromFrame(e)];
@@ -80,56 +75,59 @@ class FastMovieClip extends AnimTextureCore {
 	}
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private static inline function converOrFirst(data:Or<Array<Texture>, Array<String>>):Texture {
+	private static inline function converOrFirst(data: Or<Array<Texture>, Array<String>>): Texture {
 		return switch data {
 			case OrState.A(t): t[0];
 			case OrState.B(s): Texture.fromFrame(s[0]);
 		};
 	}
 
-	public function get():Sprite {
+	public function get(): Sprite {
 		return if (pool.length > 0) {
 			pool.pop();
 		} else {
-			if (additionalSrc == 0) switch smooth {
-				case AnimSmoothMode.None:
-					new Sprite(texture[0]);
-				case AnimSmoothMode.Simple:
-					var r = new FastMoviePlaySpriteSimple(texture, totalFrames);
-					timer.progress << r.progress;
-					onFrame.add(r.frame, -1);
-					r;
-				case AnimSmoothMode.Super:
-					var r = new FastMoviePlaySpriteSuper(texture, totalFrames);
-					timer.progress << r.progress;
-					onFrame.add(r.frame, -1);
-					r;
-			} else switch smooth {
-				case AnimSmoothMode.None:
-					var r = new FastMoviePlaySpriteNone(texture, totalFrames);
-					onFrame.add(r.frame, -1);
-					r;
-				case AnimSmoothMode.Simple:
-					var r = new FastMoviePlaySpriteOddSimple(texture, totalFrames);
-					timer.progress << r.progress;
-					onFrame.add(r.frame, -1);
-					r;
-				case AnimSmoothMode.Super:
-					var r = new FastMoviePlaySpriteOddSuper(texture, totalFrames);
-					timer.progress << r.progress;
-					onFrame.add(r.frame, -1);
-					r;
-			}
+			if (additionalSrc == 0)
+				switch smooth {
+					case AnimSmoothMode.None:
+						new Sprite(texture[0]);
+					case AnimSmoothMode.Simple:
+						var r = new FastMoviePlaySpriteSimple(texture, totalFrames);
+						timer.progress << r.progress;
+						onFrame.add(r.frame, -1);
+						r;
+					case AnimSmoothMode.Super:
+						var r = new FastMoviePlaySpriteSuper(texture, totalFrames);
+						timer.progress << r.progress;
+						onFrame.add(r.frame, -1);
+						r;
+				}
+			else
+				switch smooth {
+					case AnimSmoothMode.None:
+						var r = new FastMoviePlaySpriteNone(texture, totalFrames);
+						onFrame.add(r.frame, -1);
+						r;
+					case AnimSmoothMode.Simple:
+						var r = new FastMoviePlaySpriteOddSimple(texture, totalFrames);
+						timer.progress << r.progress;
+						onFrame.add(r.frame, -1);
+						r;
+					case AnimSmoothMode.Super:
+						var r = new FastMoviePlaySpriteOddSuper(texture, totalFrames);
+						timer.progress << r.progress;
+						onFrame.add(r.frame, -1);
+						r;
+				}
 		}
 	}
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public inline function ret(s:Sprite):Void pool.push(s);
+	public inline function ret(s: Sprite): Void pool.push(s);
 
 	#if (haxe_ver < 4.2) override #end
-	private function setTexture(n:Int, f:Int):Void setTextureFrame(texture[n], f);
+	private function setTexture(n: Int, f: Int): Void setTextureFrame(texture[n], f);
 
-	private function setTextureFrame(t:Texture, n:Int):Void {
+	private function setTextureFrame(t: Texture, n: Int): Void {
 		t.trim = data[n].a;
 		var r = data[n].b;
 		t.frame = r;
@@ -141,7 +139,7 @@ class FastMovieClip extends AnimTextureCore {
 		}
 	}
 
-	override public function destroy():Void {
+	override public function destroy(): Void {
 		super.destroy();
 
 		for (s in pool) s.destroy();
@@ -155,31 +153,32 @@ class FastMovieClip extends AnimTextureCore {
 	}
 
 	#if (haxe_ver < 4.2) override #end
-	private function get_totalFrames():Int return data.length;
+	private function get_totalFrames(): Int return data.length;
 
 }
 
 #if (haxe_ver >= 4.2) abstract #end
 class FastMoviePlaySprite extends Sprite implements HasAbstract {
 
-	private var count:Int;
-	private var sprites:Array<Sprite>;
+	private var count: Int;
+	private var sprites: Array<Sprite>;
 
-	public function new(texture:Array<Texture>, count:Int) {
+	public function new(texture: Array<Texture>, count: Int) {
 		this.count = count;
 		sprites = [for (t in texture) new Sprite(t)];
 		super();
 		frame(0);
 	}
 
-	public function pcenter():Void for (s in sprites) s.pivotCenter();
+	public function pcenter(): Void for (s in sprites) s.pivotCenter();
 
-	@:abstract public function frame(n:Int):Void;
-	@:abstract public function progress(v:Float):Void;
+	@:abstract public function frame(n: Int): Void;
+
+	@:abstract public function progress(v: Float): Void;
 
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function remAll():Void {
+	private inline function remAll(): Void {
 		while (children.length > 0) removeChildAt(0);
 	}
 
@@ -187,27 +186,27 @@ class FastMoviePlaySprite extends Sprite implements HasAbstract {
 
 class FastMoviePlaySpriteNone extends FastMoviePlaySprite {
 
-	public function new(texture:Array<Texture>, count:Int) {
+	public function new(texture: Array<Texture>, count: Int) {
 		super(texture, count);
 		addChild(sprites[0]);
 		addChild(sprites[1]);
 	}
 
 	#if (haxe_ver < 4.2) override #end
-	public function frame(n:Int):Void {
+	public function frame(n: Int): Void {
 		sprites[n % 2].visible = true;
 		sprites[1 - n % 2].visible = false;
 	}
 
 	#if (haxe_ver < 4.2) override #end
-	public function progress(v:Float):Void {}
+	public function progress(v: Float): Void {}
 
 }
 
 class FastMoviePlaySpriteSimple extends FastMoviePlaySprite {
 
 	#if (haxe_ver < 4.2) override #end
-	public function frame(n:Int):Void {
+	public function frame(n: Int): Void {
 		remAll();
 		addChild(sprites[n % 2]);
 		addChild(sprites[1 - n % 2]);
@@ -216,30 +215,29 @@ class FastMoviePlaySpriteSimple extends FastMoviePlaySprite {
 	}
 
 	#if (haxe_ver < 4.2) override #end
-	public function progress(v:Float):Void children[1].alpha = v;
+	public function progress(v: Float): Void children[1].alpha = v;
 
 }
 
 class FastMoviePlaySpriteOddSimple extends FastMoviePlaySprite {
 
 	#if (haxe_ver < 4.2) override #end
-	public function frame(n:Int):Void {
+	public function frame(n: Int): Void {
 		remAll();
-		for (e in MathTools.clipSmoothOddPlanSimple(n, count))
-			addChild(sprites[e]);
+		for (e in MathTools.clipSmoothOddPlanSimple(n, count)) addChild(sprites[e]);
 		children[0].alpha = 1;
 		children[1].alpha = 0;
 	}
 
 	#if (haxe_ver < 4.2) override #end
-	public function progress(v:Float):Void children[1].alpha = v;
+	public function progress(v: Float): Void children[1].alpha = v;
 
 }
 
 class FastMoviePlaySpriteSuper extends FastMoviePlaySprite {
 
 	#if (haxe_ver < 4.2) override #end
-	public function frame(n:Int):Void {
+	public function frame(n: Int): Void {
 		remAll();
 		for (i in 0...3) addChild(sprites[i]);
 		children[0].alpha = 0.5;
@@ -248,7 +246,7 @@ class FastMoviePlaySpriteSuper extends FastMoviePlaySprite {
 	}
 
 	#if (haxe_ver < 4.2) override #end
-	public function progress(v:Float):Void {
+	public function progress(v: Float): Void {
 		children[0].alpha = (1 - v) / 2;
 		children[2].alpha = v / 2;
 	}
@@ -258,17 +256,16 @@ class FastMoviePlaySpriteSuper extends FastMoviePlaySprite {
 class FastMoviePlaySpriteOddSuper extends FastMoviePlaySprite {
 
 	#if (haxe_ver < 4.2) override #end
-	public function frame(n:Int):Void {
+	public function frame(n: Int): Void {
 		remAll();
-		for (e in MathTools.clipSmoothOddPlan(n, count))
-			addChild(sprites[e]);
+		for (e in MathTools.clipSmoothOddPlan(n, count)) addChild(sprites[e]);
 		children[0].alpha = 0.5;
 		children[1].alpha = 1;
 		children[2].alpha = 0;
 	}
 
 	#if (haxe_ver < 4.2) override #end
-	public function progress(v:Float):Void {
+	public function progress(v: Float): Void {
 		children[0].alpha = (1 - v) / 2;
 		children[2].alpha = v / 2;
 	}

@@ -30,15 +30,14 @@ class MusicPlayer extends SongPlayer {
 		visible = false;
 		super.init();
 		songClass = Type.getClass(song);
-		beginPoint = {x: song.x, y: song.y};
+		beginPoint = { x: song.x, y: song.y };
 		songHeight = song.height;
 		removeChild(song);
 		song = null;
 	}
 
 	public function loadPlaylist(pl: Array<SongInfo>): Void {
-		if (visible)
-			unloadPlaylist();
+		if (visible) unloadPlaylist();
 		visible = true;
 		currentList = pl;
 		var bcs: Array<ButtonCore> = [];

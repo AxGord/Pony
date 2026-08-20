@@ -7,12 +7,12 @@ import pony.Interval;
 import pony.physics.Temp;
 import pony.physics.TempInterval;
 
-class TempTest 
-{
+class TempTest {
+
 	@Test
-	public function testExample():Void
-	{
-		var t:TempInterval = '5C...8C';
+	public function testExample(): Void {
+		var t: TempInterval = '5C...8C';
 		Assert.areEqual(t.mid.c, 6.5);
 	}
+
 }

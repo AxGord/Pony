@@ -2,9 +2,7 @@ package pony.electron;
 
 import electron.main.App;
 import electron.main.BrowserWindow;
-
 import js.Node;
-
 import pony.Tools;
 import pony.magic.HasAbstract;
 import pony.text.TextTools;
@@ -48,7 +46,9 @@ class ElectronApplication extends VSTraceHelper implements HasAbstract {
 	}
 
 	private function readyHandler(_): Void init();
+
 	private function init(): Void createMainWindow();
+
 	@:abstract private function createMainWindow(): Void;
 
 	public function createWindow(url: String, ?id: String, ?opt): BrowserWindow {

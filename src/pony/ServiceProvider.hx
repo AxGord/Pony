@@ -1,7 +1,6 @@
 package pony;
 
 import haxe.Exception;
-
 import pony.Or;
 import pony.magic.WR;
 
@@ -35,7 +34,7 @@ private typedef Export = { typeName: String, name: String };
 
 	public function load(typeNames: Array<String>, name: String, export: Bool = false): Void {
 		if (export) {
-			for (tn in typeNames) if (!isExported(tn, name)) exports.push({typeName: tn, name: name});
+			for (tn in typeNames) if (!isExported(tn, name)) exports.push({ typeName: tn, name: name });
 			if (parent != null)
 				parent.load(typeNames, name, true);
 			else
@@ -59,7 +58,7 @@ private typedef Export = { typeName: String, name: String };
 
 	public function register(typeNames: Array<String>, name: String, service: Dynamic, export: Bool = false): Void {
 		if (export) {
-			for (tn in typeNames) if (!isExported(tn, name)) exports.push({typeName: tn, name: name});
+			for (tn in typeNames) if (!isExported(tn, name)) exports.push({ typeName: tn, name: name });
 			if (parent != null)
 				parent.register(typeNames, name, service, true);
 			else
@@ -92,8 +91,10 @@ private typedef Export = { typeName: String, name: String };
 
 	private inline function callw(w: WCB, service: Dynamic): Void {
 		switch w {
-			case A(cb): cb();
-			case B(cb): cb(service);
+			case A(cb):
+				cb();
+			case B(cb):
+				cb(service);
 		}
 	}
 
@@ -138,7 +139,10 @@ private typedef Export = { typeName: String, name: String };
 			var firstName: Null<String> = null;
 			for (k => v in byName) {
 				count++;
-				if (count == 1) { only = v; firstName = k; }
+				if (count == 1) {
+					only = v;
+					firstName = k;
+				}
 				if (count > 1) break;
 			}
 			if (count == 1) return only;

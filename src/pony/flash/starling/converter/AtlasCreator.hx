@@ -45,8 +45,10 @@ class AtlasCreator {
 		_atlases.push(new Atlas());
 	}
 
-	public function addImage(source: flash.display.DisplayObject, coordinateSpace: flash.display.DisplayObject, disposeable: Bool, frame: Null<Int> = -1,
-			ignoreCache: Bool = false): Image {
+	public function addImage(
+		source: flash.display.DisplayObject, coordinateSpace: flash.display.DisplayObject, disposeable: Bool, frame: Null<Int> = -1,
+		ignoreCache: Bool = false
+	): Image {
 		var className: String = Type.getClassName(Type.getClass(source));
 
 		var result: Image;
@@ -76,7 +78,9 @@ class AtlasCreator {
 
 			var nonAlphaRect: Rectangle = drawResult.nonAlphaRect;
 
-			var textureBase: Dynamic = createTexture(drawResult.bitmapData, drawResult.bitmapDataRect, !disposeable, drawResult.restorationCallback);
+			var textureBase: Dynamic = createTexture(
+				drawResult.bitmapData, drawResult.bitmapDataRect, !disposeable, drawResult.restorationCallback
+			);
 
 			texture = new SubTexture(textureBase.texture, textureBase.addedTo, disposeable);
 
@@ -92,14 +96,12 @@ class AtlasCreator {
 		result.y = matrixPoint.y;
 		if (frame != -1) {
 			if (!_framesLoadedTextures.exists(className) || !_framesLoadedTextures[className].exists(frame)) {
-				if (!_framesLoadedTextures.exists(className))
-					_framesLoadedTextures[className] = new Map<Int, TextureStorage>();
+				if (!_framesLoadedTextures.exists(className)) _framesLoadedTextures[className] = new Map<Int, TextureStorage>();
 				_framesLoadedTextures[className][frame] = new TextureStorage();
 			}
 			_framesLoadedTextures[className][frame].add(matrix.a, matrix.b, matrix.c, matrix.d, source.filters, texture, dPivot);
 		} else {
-			if (!_loadedTextures.exists(className))
-				_loadedTextures.set(className, new TextureStorage());
+			if (!_loadedTextures.exists(className)) _loadedTextures.set(className, new TextureStorage());
 			_loadedTextures.get(className).add(matrix.a, matrix.b, matrix.c, matrix.d, source.filters, texture, dPivot);
 		}
 		return result;
@@ -134,9 +136,8 @@ class AtlasCreator {
 				source.gotoAndStop(i + 1); // Because first frame on a flash timeline is 1, not 0
 
 				// Sync childrens
-				for (ch in source.childrens())
-					if (Std.is(ch, flash.display.MovieClip))
-						cast(ch, flash.display.MovieClip).gotoAndStop(i + 1);
+				for (ch in source.childrens()) if (Std.is(ch, flash.display.MovieClip))
+					cast(ch, flash.display.MovieClip).gotoAndStop(i + 1);
 
 				rect = source.getBounds(coordinateSpace);
 				rectToInt(rect);
@@ -159,8 +160,10 @@ class AtlasCreator {
 
 				var nonAlphaRect: Rectangle = drawResult.nonAlphaRect;
 
-				var textureBase: Dynamic = createTexture(drawResult.bitmapData, drawResult.bitmapDataRect, !disposeable,
-					frameRestorationCallback.bind(source, i, drawResult.restorationCallback));
+				var textureBase: Dynamic = createTexture(
+					drawResult.bitmapData, drawResult.bitmapDataRect, !disposeable,
+					frameRestorationCallback.bind(source, i, drawResult.restorationCallback)
+				);
 
 				nonAlphaRect.x -= matrixPoint.x - rect.x;
 				nonAlphaRect.y -= matrixPoint.y - rect.y;
@@ -175,22 +178,17 @@ class AtlasCreator {
 			for (i in 0...rects.length) {
 				var currentRect: Rectangle = rects[i];
 
-				if (currentRect == null)
-					continue;
+				if (currentRect == null) continue;
 
 				if (maxRect == null) {
 					maxRect = rects[i].clone();
 					continue;
 				}
 
-				if (maxRect.top > currentRect.top)
-					maxRect.top = currentRect.top;
-				if (maxRect.left > currentRect.left)
-					maxRect.left = currentRect.left;
-				if (maxRect.bottom < currentRect.bottom)
-					maxRect.bottom = currentRect.bottom;
-				if (maxRect.right < currentRect.right)
-					maxRect.right = currentRect.right;
+				if (maxRect.top > currentRect.top) maxRect.top = currentRect.top;
+				if (maxRect.left > currentRect.left) maxRect.left = currentRect.left;
+				if (maxRect.bottom < currentRect.bottom) maxRect.bottom = currentRect.bottom;
+				if (maxRect.right < currentRect.right) maxRect.right = currentRect.right;
 			}
 
 			for (i in 0...addedTextures.length) {
@@ -198,7 +196,9 @@ class AtlasCreator {
 					textures.push(new SubTexture(Texture.fromColor(maxRect.width, maxRect.height, 0x0), maxRect, true, maxRect));
 				} else {
 					var currentRect: Rectangle = rects[i];
-					var frame: Rectangle = new Rectangle(maxRect.x - currentRect.x, maxRect.y - currentRect.y, maxRect.width, maxRect.height);
+					var frame: Rectangle = new Rectangle(
+						maxRect.x - currentRect.x, maxRect.y - currentRect.y, maxRect.width, maxRect.height
+					);
 					textures.push(new SubTexture(addedTextures[i], addedRects[i], disposeable, frame));
 				}
 
@@ -213,8 +213,7 @@ class AtlasCreator {
 		matrix = StarlingConverter.matrixCalculation(source, coordinateSpace);
 		var matrixPoint: Point = matrix.transformPoint(new Point(0, 0));
 
-		if (!_loadedTextures.exists(className))
-			_loadedTextures.set(className, new TextureStorage());
+		if (!_loadedTextures.exists(className)) _loadedTextures.set(className, new TextureStorage());
 		_loadedTextures.get(className).add(matrix.a, matrix.b, matrix.c, matrix.d, source.filters, textures, dPivot);
 
 		var clip: MovieClip = new MovieClip(textures, 60);
@@ -245,7 +244,9 @@ class AtlasCreator {
 		matrix.translate(additionalSize - rect.x, additionalSize - rect.y);
 
 		while (additionalSize < _additionalBufferSizeLimit) {
-			var buffer: BitmapData = ReusableBitmapData.getPowTwo(Std.int(rect.width + additionalSize * 2), Std.int(rect.height + additionalSize * 2));
+			var buffer: BitmapData = ReusableBitmapData.getPowTwo(
+				Std.int(rect.width + additionalSize * 2), Std.int(rect.height + additionalSize * 2)
+			);
 			buffer.draw(source, matrix, null, null, null, true);
 
 			var bufferRect: Rectangle = buffer.getColorBoundsRect(0xFF000000, 0x00000000, false);
@@ -254,9 +255,10 @@ class AtlasCreator {
 			nonAlphaRect.x -= additionalSize;
 			nonAlphaRect.y -= additionalSize;
 
-			if ((bufferRect.left == 0 || bufferRect.top == 0 || bufferRect.right == buffer.width || bufferRect.bottom == buffer.height)
-				&& bufferRect.width != 0
-				&& bufferRect.height != 0) {
+			if (
+				(bufferRect.left == 0 || bufferRect.top == 0 || bufferRect.right == buffer.width || bufferRect.bottom == buffer.height)
+				&& bufferRect.width != 0 && bufferRect.height != 0
+			) {
 				matrix.translate(additionalSize, additionalSize); // Works ONLY FOR x2!
 				additionalSize *= 2;
 
@@ -265,16 +267,15 @@ class AtlasCreator {
 				// matrix.translate(additionalSize, additionalSize);
 			} else {
 				// TODO support for larger textures?
-				if (bufferRect.width > Atlas.size - 2 * _border)
-					bufferRect.width = nonAlphaRect.width = Atlas.size - 2 * _border;
-				if (bufferRect.height > Atlas.size - 2 * _border)
-					bufferRect.height = nonAlphaRect.height = Atlas.size - 2 * _border;
+				if (bufferRect.width > Atlas.size - 2 * _border) bufferRect.width = nonAlphaRect.width = Atlas.size - 2 * _border;
+				if (bufferRect.height > Atlas.size - 2 * _border) bufferRect.height = nonAlphaRect.height = Atlas.size - 2 * _border;
 				return {
 					nonAlphaRect: nonAlphaRect,
 					bitmapData: buffer,
 					bitmapDataRect: bufferRect,
-					restorationCallback: bitmapDataRestorationCallback.bind(Std.int(rect.width + additionalSize * 2),
-						Std.int(rect.height + additionalSize * 2), source, matrix)
+					restorationCallback: bitmapDataRestorationCallback.bind(
+						Std.int(rect.width + additionalSize * 2), Std.int(rect.height + additionalSize * 2), source, matrix
+					)
 				};
 			}
 		}
@@ -290,12 +291,14 @@ class AtlasCreator {
 		return result;
 	}
 
-	private function frameRestorationCallback(source: flash.display.MovieClip, frame: Int, callback: Void->BitmapData): BitmapData {
+	private function frameRestorationCallback(source: flash.display.MovieClip, frame: Int, callback: Void -> BitmapData): BitmapData {
 		source.gotoAndStop(frame + 1);
 		return callback();
 	}
 
-	private function createTexture(bitmapData: BitmapData, area: Rectangle, toAtlas: Bool, restorationCallback: Void->BitmapData = null): Dynamic {
+	private function createTexture(
+		bitmapData: BitmapData, area: Rectangle, toAtlas: Bool, restorationCallback: Void -> BitmapData = null
+	): Dynamic {
 		if (toAtlas) {
 			var addedTo: Rectangle = _atlases[_atlases.length - 1].add(bitmapData, area, restorationCallback);
 			if (addedTo == null) {
@@ -303,7 +306,7 @@ class AtlasCreator {
 				addedTo = _atlases[_atlases.length - 1].add(bitmapData, area, restorationCallback);
 			}
 
-			return {texture: _atlases[_atlases.length - 1].texture, addedTo: addedTo};
+			return { texture: _atlases[_atlases.length - 1].texture, addedTo: addedTo };
 		} else {
 			area = area.clone();
 
@@ -321,7 +324,7 @@ class AtlasCreator {
 					var bmpd = restorationCallback();
 					texture.root.uploadBitmapData(bmpd);
 				}
-				return {texture: texture, addedTo: area};
+				return { texture: texture, addedTo: area };
 			} else {
 				var smallerBitmapData: BitmapData = ReusableBitmapData.getPowTwo(cast area.width, cast area.height);
 				smallerBitmapData.copyPixels(bitmapData, area, new Point(0, 0));
@@ -335,7 +338,7 @@ class AtlasCreator {
 					smallerBmpd.copyPixels(bmpd, area, new Point(0, 0));
 					texture.root.uploadBitmapData(smallerBmpd);
 				}
-				return {texture: texture, addedTo: area};
+				return { texture: texture, addedTo: area };
 			}
 		}
 		return null;
@@ -362,8 +365,7 @@ class AtlasCreator {
 		rect.right = Math.ceil(rect.right);
 	}
 
-	public static function getBorder(): Int
-		return _border;
+	public static function getBorder(): Int return _border;
 
 }
 
@@ -377,7 +379,7 @@ private class Atlas {
 	public var upToDate: Bool = false;
 	public var full: Bool = false;
 
-	private var _bitmapDataRestoration: Array<BitmapData->Void> = new Array<BitmapData->Void>();
+	private var _bitmapDataRestoration: Array<BitmapData -> Void> = new Array<BitmapData -> Void>();
 
 	public function new() {
 		// trace("NEW ATLAS CREATED");
@@ -385,9 +387,8 @@ private class Atlas {
 		texture.root.onRestore = textureRestore;
 	}
 
-	public function add(data: BitmapData, rect: Rectangle, restorationCallback: Void->BitmapData = null): Rectangle {
-		if (full)
-			return null;
+	public function add(data: BitmapData, rect: Rectangle, restorationCallback: Void -> BitmapData = null): Rectangle {
+		if (full) return null;
 
 		rect = rect.clone();
 
@@ -404,8 +405,7 @@ private class Atlas {
 		}
 
 		_bitmapDataRestoration.push(function(bmpd: BitmapData): Void {
-			if (restorationCallback != null)
-				bmpd.copyPixels(restorationCallback(), rect, placedRect.topLeft);
+			if (restorationCallback != null) bmpd.copyPixels(restorationCallback(), rect, placedRect.topLeft);
 		});
 
 		lastActiveAtlasBmpd.copyPixels(data, rect, placedRect.topLeft);
@@ -416,15 +416,13 @@ private class Atlas {
 	}
 
 	public function generate(finalize: Bool): Void {
-		if (upToDate)
-			return;
+		if (upToDate) return;
 
 		texture.root.uploadBitmapData(lastActiveAtlasBmpd);
 
 		upToDate = true;
 
-		if (finalize)
-			full = true;
+		if (finalize) full = true;
 	}
 
 	private function textureRestore(): Void {
@@ -464,32 +462,25 @@ private class TextureStorage {
 	}
 
 	public function add(a: Float, b: Float, c: Float, d: Float, filters: Dynamic, data: Dynamic, dPivot: Point): Void {
-		if (!_allowsAddition)
-			return;
+		if (!_allowsAddition) return;
 
-		if (get(a, b, c, d, filters) == null)
-			_textures.push({
-				a: a,
-				b: b,
-				c: c,
-				d: d,
-				filters: filters,
-				data: data,
-				dPivot: dPivot
-			});
+		if (get(a, b, c, d, filters) == null) _textures.push({
+			a: a,
+			b: b,
+			c: c,
+			d: d,
+			filters: filters,
+			data: data,
+			dPivot: dPivot
+		});
 	}
 
 	public function get(a: Float, b: Float, c: Float, d: Float, filters: Dynamic): Dynamic {
-		if (!_allowsAddition)
-			return null;
+		if (!_allowsAddition) return null;
 
 		for (i in 0..._textures.length) {
 			var texture: Dynamic = _textures[i];
-			if ((texture.a == a)
-				&& (texture.b == b)
-				&& (texture.c == c)
-				&& (texture.d == d)
-				&& (filtersEqual(texture.filters, filters)))
+			if ((texture.a == a) && (texture.b == b) && (texture.c == c) && (texture.d == d) && (filtersEqual(texture.filters, filters)))
 				return texture;
 		}
 
@@ -497,114 +488,68 @@ private class TextureStorage {
 	}
 
 	public function filtersEqual(a: Dynamic, b: Dynamic): Bool {
-		if (a.length != b.length)
-			return false;
+		if (a.length != b.length) return false;
 
 		for (i in 0...a.length) {
-			if (Type.getClass(a[i]) != Type.getClass(b[i]))
-				return false;
+			if (Type.getClass(a[i]) != Type.getClass(b[i])) return false;
 		}
 
 		for (i in 0...a.length) {
 			switch (Type.getClass(a[i])) {
 				case BevelFilter:
-					if (a[i].angle != b[i].angle)
-						return false;
-					if (a[i].blurX != b[i].blurX)
-						return false;
-					if (a[i].blurY != b[i].blurY)
-						return false;
-					if (a[i].distance != b[i].distance)
-						return false;
-					if (a[i].highlightAlpha != b[i].highlightAlpha)
-						return false;
-					if (a[i].highlightColor != b[i].highlightColor)
-						return false;
-					if (a[i].knockout != b[i].knockout)
-						return false;
-					if (a[i].quality != b[i].quality)
-						return false;
-					if (a[i].shadowAlpha != b[i].shadowAlpha)
-						return false;
-					if (a[i].shadowColor != b[i].shadowColor)
-						return false;
-					if (a[i].strength != b[i].strength)
-						return false;
-					if (a[i].type != b[i].type)
-						return false;
+					if (a[i].angle != b[i].angle) return false;
+					if (a[i].blurX != b[i].blurX) return false;
+					if (a[i].blurY != b[i].blurY) return false;
+					if (a[i].distance != b[i].distance) return false;
+					if (a[i].highlightAlpha != b[i].highlightAlpha) return false;
+					if (a[i].highlightColor != b[i].highlightColor) return false;
+					if (a[i].knockout != b[i].knockout) return false;
+					if (a[i].quality != b[i].quality) return false;
+					if (a[i].shadowAlpha != b[i].shadowAlpha) return false;
+					if (a[i].shadowColor != b[i].shadowColor) return false;
+					if (a[i].strength != b[i].strength) return false;
+					if (a[i].type != b[i].type) return false;
 				case BlurFilter:
-					if (a[i].blurX != b[i].blurX)
-						return false;
-					if (a[i].blurY != b[i].blurY)
-						return false;
-					if (a[i].quality != b[i].quality)
-						return false;
+					if (a[i].blurX != b[i].blurX) return false;
+					if (a[i].blurY != b[i].blurY) return false;
+					if (a[i].quality != b[i].quality) return false;
 				case ColorMatrixFilter:
 					for (j in 0...20) {
-						if (a[i].matrix[j] != b[i].matrix[j])
-							return false;
+						if (a[i].matrix[j] != b[i].matrix[j]) return false;
 					}
 				case ConvolutionFilter:
-					if (a[i].alpha != b[i].alpha)
-						return false;
-					if (a[i].bias != b[i].bias)
-						return false;
-					if (a[i].clamp != b[i].clamp)
-						return false;
-					if (a[i].color != b[i].color)
-						return false;
-					if (a[i].divisor != b[i].divisor)
-						return false;
-					if (a[i].matrixX != b[i].matrixX)
-						return false;
-					if (a[i].matrixY != b[i].matrixY)
-						return false;
-					if (a[i].preserveAlpha != b[i].preserveAlpha)
-						return false;
+					if (a[i].alpha != b[i].alpha) return false;
+					if (a[i].bias != b[i].bias) return false;
+					if (a[i].clamp != b[i].clamp) return false;
+					if (a[i].color != b[i].color) return false;
+					if (a[i].divisor != b[i].divisor) return false;
+					if (a[i].matrixX != b[i].matrixX) return false;
+					if (a[i].matrixY != b[i].matrixY) return false;
+					if (a[i].preserveAlpha != b[i].preserveAlpha) return false;
 					for (j in 0...Std.int(a[i].matrixX * a[i].matrixY)) {
-						if (a[i].matrix[j] != b[i].matrix[j])
-							return false;
+						if (a[i].matrix[j] != b[i].matrix[j]) return false;
 					}
 				case DropShadowFilter:
-					if (a[i].alpha != b[i].alpha)
-						return false;
-					if (a[i].angle != b[i].angle)
-						return false;
-					if (a[i].blurX != b[i].blurX)
-						return false;
-					if (a[i].blurY != b[i].blurY)
-						return false;
-					if (a[i].color != b[i].color)
-						return false;
-					if (a[i].distance != b[i].distance)
-						return false;
-					if (a[i].hideObject != b[i].hideObject)
-						return false;
-					if (a[i].inner != b[i].inner)
-						return false;
-					if (a[i].knockout != b[i].knockout)
-						return false;
-					if (a[i].quality != b[i].quality)
-						return false;
-					if (a[i].strength != b[i].strength)
-						return false;
+					if (a[i].alpha != b[i].alpha) return false;
+					if (a[i].angle != b[i].angle) return false;
+					if (a[i].blurX != b[i].blurX) return false;
+					if (a[i].blurY != b[i].blurY) return false;
+					if (a[i].color != b[i].color) return false;
+					if (a[i].distance != b[i].distance) return false;
+					if (a[i].hideObject != b[i].hideObject) return false;
+					if (a[i].inner != b[i].inner) return false;
+					if (a[i].knockout != b[i].knockout) return false;
+					if (a[i].quality != b[i].quality) return false;
+					if (a[i].strength != b[i].strength) return false;
 				case GlowFilter:
-					if (a[i].alpha != b[i].alpha)
-						return false;
-					if (a[i].blurX != b[i].blurX)
-						return false;
-					if (a[i].blurY != b[i].blurY)
-						return false;
-					if (a[i].color != b[i].color)
-						return false;
-					if (a[i].inner != b[i].inner)
-						return false;
-					if (a[i].knockout != b[i].knockout)
-						return false;
-					if (a[i].quality != b[i].quality)
-						return false;
-					if (a[i].strength != b[i].strength)
-						return false;
+					if (a[i].alpha != b[i].alpha) return false;
+					if (a[i].blurX != b[i].blurX) return false;
+					if (a[i].blurY != b[i].blurY) return false;
+					if (a[i].color != b[i].color) return false;
+					if (a[i].inner != b[i].inner) return false;
+					if (a[i].knockout != b[i].knockout) return false;
+					if (a[i].quality != b[i].quality) return false;
+					if (a[i].strength != b[i].strength) return false;
 				default:
 					return false;
 			}

@@ -10,12 +10,12 @@ import unityengine.Time;
  */
 @:nativeGen class PercentPosTransformer extends PercentPos {
 
-	public var defaultView:GameObject;
-	public var transformedView:GameObject;
-	
-	public var points:NativeArray<Single>;
-	
-	override public function set_percent(v:Float):Float {
+	public var defaultView: GameObject;
+	public var transformedView: GameObject;
+
+	public var points: NativeArray<Single>;
+
+	override public function set_percent(v: Float): Float {
 		v = super.set_percent(v);
 		var i = points.Length;
 		while (i-- > 0) if (nullPos + size * v > points[i]) {
@@ -23,8 +23,8 @@ import unityengine.Time;
 			transformedView.active = !defaultView.active;
 			break;
 		}
-		
+
 		return v;
 	}
-	
+
 }

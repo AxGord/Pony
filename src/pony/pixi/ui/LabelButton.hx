@@ -24,13 +24,8 @@ class LabelButton extends BaseLayout<RubberLayoutCore<Container>> {
 	private var dac: Float;
 
 	public function new(
-		imgs: ROArray<String>,
-		vert: Bool = false,
-		?border: Border<Int>,
-		padding: Bool = true,
-		?offset: Point<Float>,
-		?useSpriteSheet: String,
-		?dac: Float
+		imgs: ROArray<String>, vert: Bool = false, ?border: Border<Int>, padding: Bool = true, ?offset: Point<Float>,
+		?useSpriteSheet: String, ?dac: Float
 	) {
 		layout = new RubberLayoutCore<Container>(vert, border, padding);
 		layout.tasks.add();

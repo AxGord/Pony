@@ -21,7 +21,7 @@ class TimelineActions implements HasSignal {
 	private var stepSpeed: Array<Float>;
 	private var superSpeed: Float;
 
-	public function new(times: Array<Time>, speeds: Array<Float>, superSpeed: Float=10) {
+	public function new(times: Array<Time>, speeds: Array<Float>, superSpeed: Float = 10) {
 		stepSpeed = speeds;
 		this.superSpeed = superSpeed;
 		timeline = new Timeline(times, true);
@@ -29,7 +29,9 @@ class TimelineActions implements HasSignal {
 	}
 
 	public dynamic function setSpeed(v: Float): Void {}
+
 	public dynamic function pause(): Void {}
+
 	public dynamic function play(): Void {}
 
 	public inline function reset(): Void timeline.reset();
@@ -86,7 +88,7 @@ class TimelineActions implements HasSignal {
 			eStepBegin.dispatch(n);
 			eProccessEnd.dispatch();
 		}
-		eStepEnd.dispatch(n-1);
+		eStepEnd.dispatch(n - 1);
 	}
 
 }

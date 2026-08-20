@@ -19,8 +19,7 @@ class WordWrap {
 
 		var curLineLength: Int = 0;
 		var strBuilder: StringBuf = new StringBuf();
-		for (word in words)
-		{
+		for (word in words) {
 			// If adding the new word to the current line would be too long,
 			// then put it on a new line (and split it up if it's too long).
 			if (curLineLength + word.length > width) {

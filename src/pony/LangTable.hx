@@ -4,7 +4,6 @@ import pony.fs.Dir;
 import pony.fs.File;
 
 using Lambda;
-
 using pony.Tools;
 using pony.text.TextTools;
 
@@ -40,7 +39,7 @@ class LangTable {
 				if (lines[0].charAt(0) == '!') {
 					var s: String = lines.shift();
 					if (li == null) {
-						li = {title: f.shortName, author: null};
+						li = { title: f.shortName, author: null };
 						for (e in s.substr(1).split(',')) {
 							var aa: Array<String> = e.split(':').map(StringTools.trim);
 							switch (aa[0]) {
@@ -61,7 +60,7 @@ class LangTable {
 			if (li != null) {
 				langs.set(f.shortName, li);
 			} else {
-				langs.set(f.shortName, {title: f.shortName, author: null});
+				langs.set(f.shortName, { title: f.shortName, author: null });
 			}
 		}
 		/*

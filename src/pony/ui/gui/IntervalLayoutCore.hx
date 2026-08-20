@@ -28,21 +28,23 @@ using pony.Tools;
 	override public function update(): Void {
 		if (objects == null) return;
 		if (!ready) return;
-		var pos:Float = 0;
+		var pos: Float = 0;
 		if (vert) {
 			_w = 0;
 			pos = border.top;
-			var sizes = [for (obj in objects) {
-				var objSize = getObjSize(obj);
-				if (objSize != null) {
-					setYpos(obj, Std.int(pos));
-					pos += objSize.y + interval;
-					if (objSize.x > _w) _w = objSize.x;
-					objSize.x;
-				} else {
-					0;
+			var sizes = [
+				for (obj in objects) {
+					var objSize = getObjSize(obj);
+					if (objSize != null) {
+						setYpos(obj, Std.int(pos));
+						pos += objSize.y + interval;
+						if (objSize.x > _w) _w = objSize.x;
+						objSize.x;
+					} else {
+						0;
+					}
 				}
-			}];
+			];
 			if (objects.length > 0) pos -= interval;
 			_h = pos;
 			var hlist = GeomTools.halign(_align, _w, sizes);

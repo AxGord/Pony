@@ -21,17 +21,11 @@ import nape.geom.GeomPolyList;
 class BodyBody extends BodyBase {
 
 	public function new(
-		body:Body,
-		anchor:Vec2,
-		space:Space,
-		?limits:Rect<Float>,
-		isStatic:Bool = false,
-		isBullet:Bool = false,
-		?group:NapeGroup
+		body: Body, anchor: Vec2, space: Space, ?limits: Rect<Float>, isStatic: Bool = false, isBullet: Bool = false, ?group: NapeGroup
 	) {
 		super(space, limits, isStatic, isBullet, body, anchor, group);
 	}
 
-	override function init():Void {}
+	override function init(): Void {}
 
 }

@@ -17,7 +17,7 @@ class Keyboard implements Declarator implements HasSignal implements HasLink {
 
 	@:auto public static var down: Signal1<Key>;
 	@:auto public static var up: Signal1<Key>;
-	@:auto public static var input:Signal1<UInt>;
+	@:auto public static var input: Signal1<UInt>;
 	@:auto public static var press: Signal1<Key>;
 	@:auto public static var click: Signal1<Key>;
 
@@ -48,9 +48,10 @@ class Keyboard implements Declarator implements HasSignal implements HasLink {
 	}
 
 	private static function takeListeners(): Void if (haveListeners()) enable();
+
 	private static function lostListeners(): Void if (!haveListeners()) disable();
-	private static inline function haveListeners(): Bool
-		return !down.empty || !up.empty  || !press.empty || !click.empty;
+
+	private static inline function haveListeners(): Bool return !down.empty || !up.empty || !press.empty || !click.empty;
 
 	private static function downPress(k: Key): Void {
 		if (presser == null) presser = new Presser(_press);
@@ -62,7 +63,7 @@ class Keyboard implements Declarator implements HasSignal implements HasLink {
 
 	private static function _press(): Void for (k in pressedKeys) ePress.dispatch(k);
 
-	private static function upPress(k: Key):Void {
+	private static function upPress(k: Key): Void {
 		eUp.dispatch(k);
 		if (pressedKeys.indexOf(k) == -1) return;
 		eClick.dispatch(k);

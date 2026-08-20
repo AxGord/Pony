@@ -16,31 +16,29 @@ using hugs.HUGSWrapper;
  * @author BoBaH6eToH
  */
 @:nativeGen class Slice extends TooltipSaver {
-	
-	public var untransparentTexture:Material;
-	public var buttonForSlice:GameObject;
-	
-	private var buttonSlice:ButtonCore;
-	
-	private var childrenMaterials:Array<Material>;
-	
-	override private function Start() 
-	{
+
+	public var untransparentTexture: Material;
+	public var buttonForSlice: GameObject;
+
+	private var buttonSlice: ButtonCore;
+
+	private var childrenMaterials: Array<Material>;
+
+	override private function Start() {
 		super.Start();
 		childrenMaterials = [for (e in getComponentsInChildrenOfType(Renderer)) e.material];
 		buttonSlice = buttonForSlice.getTypedComponent(TintButton).core;
 		buttonSlice.click.add(click);
 	}
-	
-	inline private function click(mode:Int):Void 
-	{
+
+	inline private function click(mode: Int): Void {
 		if (mode == 2)
 			for (e in getComponentsInChildrenOfType(Renderer)) e.material = untransparentTexture;
 		else {
-			var i:Int = 0;
+			var i: Int = 0;
 			for (e in getComponentsInChildrenOfType(Renderer)) e.material = childrenMaterials[i++];
 		}
 		saveColors();
 	}
-	
+
 }

@@ -60,8 +60,10 @@ class AnimCore implements pony.magic.HasAbstract implements pony.magic.HasSignal
 	}
 
 	public function set_frame(n: Int): Int {
-		if (n < 0) n = 0;
-		else if (n > totalFrames) n = totalFrames;
+		if (n < 0)
+			n = 0;
+		else if (n > totalFrames)
+			n = totalFrames;
 		if (n != frame) {
 			frame = n;
 			eFrame.dispatch(n);

@@ -52,6 +52,7 @@ import remote.server.ServerRemote;
 	}
 
 	private function errorWithTime(s: String, ?p: PosInfos): Void error(now() + ' ' + s, p);
+
 	private function logWithTime(s: String, ?p: PosInfos): Void log(now() + ' ' + s, p);
 
 	private function now(): String {

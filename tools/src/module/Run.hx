@@ -1,7 +1,6 @@
 package module;
 
 import pony.Fast;
-
 import types.BAConfig;
 import types.BASection;
 
@@ -13,7 +12,7 @@ typedef RunConfig = {
 	?path: String,
 	?lib: String,
 	haxelib: Array<String>,
-	command: Array<{?path: String, ?lib: String, cmd: String}>,
+	command: Array<{ ?path: String, ?lib: String, cmd: String }>,
 }
 
 /**
@@ -31,8 +30,9 @@ typedef RunConfig = {
 
 	#if (haxe_ver < 4.2) override #end
 	public function init(): Void {
-		@:nullSafety(Off) haxelib = modules.xml != null && modules.xml.hasNode.haxelib ?
-			[ for (e in modules.xml.node.haxelib.nodes.lib) if (!e.isTrue('mute')) e.innerData.split(' ').join(':') ] : [];
+		@:nullSafety(Off) haxelib = modules.xml != null && modules.xml.hasNode.haxelib
+			? [for (e in modules.xml.node.haxelib.nodes.lib) if (!e.isTrue('mute')) e.innerData.split(' ').join(':')]
+			: [];
 		initSections(PRIORITY, BASection.Run);
 	}
 
@@ -54,7 +54,7 @@ typedef RunConfig = {
 	override private function runNode(cfg: RunConfig): Void {
 		var path: String = cfg.path != null ? cfg.path : '';
 		if (cfg.lib != null) {
-			final lib:String = cfg.lib;
+			final lib: String = cfg.lib;
 			log('Command in lib $lib');
 			var libPath: Null<String> = Utils.getLibPath(lib);
 			if (libPath == null) error('Lib $lib not found');
@@ -63,7 +63,7 @@ typedef RunConfig = {
 		for (cmd in cfg.command) {
 			var p: String = path + (cmd.path != null ? cmd.path : '');
 			if (cmd.lib != null) {
-				final lib:String = cmd.lib;
+				final lib: String = cmd.lib;
 				log('Command in lib $lib');
 				var libPath: Null<String> = Utils.getLibPath(lib);
 				if (libPath == null) error('Lib $lib not found');
@@ -93,7 +93,7 @@ typedef RunConfig = {
 
 	override private function readXml(xml: Fast): Void {
 		try {
-			cfg.command.push({cmd: normalize(xml.innerData)});
+			cfg.command.push({ cmd: normalize(xml.innerData) });
 			for (a in xml.x.attributes()) readAttr(a, normalize(xml.x.get(a)));
 			if (allowEnd) end();
 		} catch (e: Dynamic) {
@@ -103,8 +103,10 @@ typedef RunConfig = {
 
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
-			case 'path': cfg.path = val;
-			case 'lib': cfg.lib = val;
+			case 'path':
+				cfg.path = val;
+			case 'lib':
+				cfg.lib = val;
 			case _:
 		}
 	}
@@ -112,23 +114,25 @@ typedef RunConfig = {
 	override private function readNode(xml: Fast): Void {
 		switch xml.name {
 			case 'command':
-				cfg.command.push({cmd: normalize(xml.innerData), path: getPath(xml), lib: getLib(xml)});
+				cfg.command.push({ cmd: normalize(xml.innerData), path: getPath(xml), lib: getLib(xml) });
 			case 'haxe':
 				var cmd: Array<String> = ['haxe'];
 				if (xml.has.cp) cmd.push('-cp ' + normalize(xml.att.cp));
 				for (lib in cfg.haxelib) cmd.push('-lib ' + normalize(lib));
 				if (xml.has.d) for (d in normalize(xml.att.d).split(' ')) cmd.push('-D ' + d);
 				cmd.push('--run ' + normalize(xml.innerData));
-				cfg.command.push({cmd: cmd.join(' '), path: getPath(xml), lib: getLib(xml)});
+				cfg.command.push({ cmd: cmd.join(' '), path: getPath(xml), lib: getLib(xml) });
 			case 'lime':
-				cfg.command.push({cmd: 'haxelib run lime ' + normalize(xml.innerData), path: getPath(xml), lib: getLib(xml)});
+				cfg.command.push({ cmd: 'haxelib run lime ' + normalize(xml.innerData), path: getPath(xml), lib: getLib(xml) });
 			case 'ax3':
-				cfg.command.push({cmd: 'haxelib run ax3 ' + normalize(xml.innerData), path: getPath(xml), lib: getLib(xml)});
+				cfg.command.push({ cmd: 'haxelib run ax3 ' + normalize(xml.innerData), path: getPath(xml), lib: getLib(xml) });
 			case 'pony':
-				cfg.command.push({cmd: 'haxelib run pony ' + normalize(xml.innerData), path: getPath(xml), lib: getLib(xml)});
+				cfg.command.push({ cmd: 'haxelib run pony ' + normalize(xml.innerData), path: getPath(xml), lib: getLib(xml) });
 			case 'formatter':
 				cfg.command.push({
-					cmd: 'haxelib run formatter -s ' + normalize(xml.innerData), path: getPath(xml), lib: getLib(xml)
+					cmd: 'haxelib run formatter -s ' + normalize(xml.innerData),
+					path: getPath(xml),
+					lib: getLib(xml)
 				});
 			case _:
 				super.readNode(xml);
@@ -142,6 +146,5 @@ typedef RunConfig = {
 	private inline function getLib(xml: Fast): Null<String> {
 		return xml.has.lib ? normalize(xml.att.lib) : null;
 	}
-
 
 }

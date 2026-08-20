@@ -3,7 +3,6 @@ package pony.heaps.ui.gui;
 import h2d.Interactive;
 import h2d.Object;
 import h2d.col.Bounds;
-
 import pony.geom.Border;
 import pony.geom.Point;
 import pony.magic.HasLink;
@@ -28,12 +27,7 @@ import pony.ui.touch.Touchable;
 	@:nullSafety(Off) private var app: HeapsApp = null;
 
 	public function new(
-		?app: HeapsApp,
-		nodes: Array<Node>,
-		?size: Point<Int>,
-		?border: Border<Int>,
-		?parent: Object,
-		invert: Bool = false,
+		?app: HeapsApp, nodes: Array<Node>, ?size: Point<Int>, ?border: Border<Int>, ?parent: Object, invert: Bool = false,
 		draggable: Bool = true
 	) {
 		@:nullSafety(Off) var bg: Node = nodes.shift();
@@ -58,6 +52,7 @@ import pony.ui.touch.Touchable;
 	}
 
 	private function convertPos(p: Point<Float>): Point<Float> return globalToLocal(p);
+
 	private function trackClickHandler(t: Touch): Void sliderCore.stepMoveToPoint(t.point);
 
 	private function changeXHandler(v: Float): Void {

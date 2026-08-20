@@ -10,15 +10,7 @@ import pony.events.Listener1;
  * @author AxGord <axgord@gmail.com>
  */
 @SuppressWarnings('checkstyle:MagicNumber')
-@:forward(
-	empty,
-	min,
-	max,
-	change,
-	getPriority,
-	exists,
-	existsArray
-)
+@:forward(empty, min, max, change, getPriority, exists, existsArray)
 @:nullSafety(Strict) abstract Signal1<T1>(Priority<Listener1<T1>>) from Event1<T1> from Priority<Listener1<T1>> {
 
 	public function add(e: Listener1<T1>, priority: Int = 0): Signal1<T1> {
@@ -150,14 +142,20 @@ import pony.events.Listener1;
 		var ns = new Event2<T1, T2>();
 		var listener1: Listener1<T1> = cast null;
 		var listener2: Listener1<T2> = cast null;
-		listener1 = {once: true, listener: Listener1.Listener1Type.LFunction1(function(a: T1) {
-			s.remove(listener2);
-			s.add({ once: true, listener: Listener1.Listener1Type.LFunction1(ns.dispatch.bind(a))});
-		})};
-		listener2 = {once: true, listener: Listener1.Listener1Type.LFunction1(function(b: T2) {
-			remove(listener1);
-			add({ once: true, listener: Listener1.Listener1Type.LFunction1(ns.dispatch.bind(_, b))});
-		})};
+		listener1 = {
+			once: true,
+			listener: Listener1.Listener1Type.LFunction1(function(a: T1) {
+				s.remove(listener2);
+				s.add({ once: true, listener: Listener1.Listener1Type.LFunction1(ns.dispatch.bind(a)) });
+			})
+		};
+		listener2 = {
+			once: true,
+			listener: Listener1.Listener1Type.LFunction1(function(b: T2) {
+				remove(listener1);
+				add({ once: true, listener: Listener1.Listener1Type.LFunction1(ns.dispatch.bind(_, b)) });
+			})
+		};
 		add(listener1);
 		s.add(listener2);
 		return ns;
@@ -178,7 +176,7 @@ import pony.events.Listener1;
 			once(ns.dispatch.bind(_, b));
 			once(start);
 		}
-		start = function () {
+		start = function() {
 			once(listener1);
 			s.once(listener2);
 		}
@@ -189,12 +187,11 @@ import pony.events.Listener1;
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function convert0(f: Event0 -> T1 -> Void): Signal0 {
 		var ns = new Event0();
-		add({ once: false, listener: Listener1.Listener1Type.LFunction1(f.bind(ns))});
+		add({ once: false, listener: Listener1.Listener1Type.LFunction1(f.bind(ns)) });
 		return ns;
 	}
 
 	#if pony_experimental
-
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function convert1<ST1>(f: Event1<ST1> -> T1 -> Void): Pair<Signal1<ST1>, () -> Void> {
 		var event: Event1<ST1> = new Event1<ST1>();
@@ -216,22 +213,19 @@ import pony.events.Listener1;
 	public inline function mod1<ST1>(f: T1 -> ST1): Pair<Signal1<ST1>, () -> Void> {
 		return convert1(function(event: Event1<ST1>, v1: T1): Void event.dispatch(f(v1)));
 	}
-
 	#else
-
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function convert1<ST1>(f: Event1<ST1> -> T1 -> Void): Signal1<ST1> {
 		var ns = new Event1();
-		add({ once: false, listener: Listener1.Listener1Type.LFunction1(f.bind(ns))});
+		add({ once: false, listener: Listener1.Listener1Type.LFunction1(f.bind(ns)) });
 		return ns;
 	}
-
 	#end
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function convert2<ST1, ST2>(f: Event2<ST1, ST2> -> T1 -> Void): Signal2<ST1, ST2> {
 		var ns = new Event2();
-		add({ once: false, listener: Listener1.Listener1Type.LFunction1(f.bind(ns))});
+		add({ once: false, listener: Listener1.Listener1Type.LFunction1(f.bind(ns)) });
 		return ns;
 	}
 

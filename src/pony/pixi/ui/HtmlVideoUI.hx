@@ -25,6 +25,7 @@ class HtmlVideoUI extends HtmlContainer {
 	}
 
 	public inline function hide(): Void video.visible.disable();
+
 	public inline function show(): Void video.visible.enable();
 
 	@SuppressWarnings('checkstyle:MagicNumber')

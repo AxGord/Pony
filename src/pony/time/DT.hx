@@ -62,115 +62,115 @@ using Std;
 	@:to #if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function toTime(): Time return ms;
 
-	@:to public inline function toString():String return '${Std.int(ms * 100) / 100}';
+	@:to public inline function toString(): String return '${Std.int(ms * 100) / 100}';
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function get_fps  (): Float return 1 / this;
+	private inline function get_fps(): Float return 1 / this;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function get_ms   (): Float return this * 1000;
+	private inline function get_ms(): Float return this * 1000;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function get_sec  (): Float return this;
+	private inline function get_sec(): Float return this;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function get_min  (): Float return sec * 60;
+	private inline function get_min(): Float return sec * 60;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function get_hour (): Float return min * 60;
+	private inline function get_hour(): Float return min * 60;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function get_day  (): Float return hour * 24;
+	private inline function get_day(): Float return hour * 24;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function get__ms  (): Float return ms % 1;
+	private inline function get__ms(): Float return ms % 1;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function get__sec (): Float return sec % 1;
+	private inline function get__sec(): Float return sec % 1;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function get__min (): Float return min % 1;
+	private inline function get__min(): Float return min % 1;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function get__hour(): Float return hour % 1;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function get__day (): Float return day % 1;
+	private inline function get__day(): Float return day % 1;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function get_ms_  (): Int return ms.int();
+	private inline function get_ms_(): Int return ms.int();
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function get_sec_ (): Int return sec.int();
+	private inline function get_sec_(): Int return sec.int();
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function get_min_ (): Int return min.int();
+	private inline function get_min_(): Int return min.int();
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function get_hour_(): Int return hour.int();
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function get_day_ (): Int return day.int();
+	private inline function get_day_(): Int return day.int();
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function get_ms_sec_  (): Float return ms_ / 1000;
+	private inline function get_ms_sec_(): Float return ms_ / 1000;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function get_ms_sec   (): Float return ms_sec_ - sec_;
+	private inline function get_ms_sec(): Float return ms_sec_ - sec_;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function get_ms_min_  (): Float return ms_ / 1000 / 60;
+	private inline function get_ms_min_(): Float return ms_ / 1000 / 60;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function get_ms_min   (): Float return ms_min_ - min_;
+	private inline function get_ms_min(): Float return ms_min_ - min_;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function get_ms_hour_ (): Float return ms_ / 1000 / 60 / 60;
+	private inline function get_ms_hour_(): Float return ms_ / 1000 / 60 / 60;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function get_ms_hour  (): Float return ms_hour_ - hour_;
+	private inline function get_ms_hour(): Float return ms_hour_ - hour_;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function get_ms_day_  (): Float return ms_ / 1000 / 60 / 60 / 24;
+	private inline function get_ms_day_(): Float return ms_ / 1000 / 60 / 60 / 24;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function get_ms_day   (): Float return ms_day_ - day_;
+	private inline function get_ms_day(): Float return ms_day_ - day_;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function get_sec_min_ (): Float return sec_ / 60;
+	private inline function get_sec_min_(): Float return sec_ / 60;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function get_sec_min  (): Float return sec_min_ - min_;
+	private inline function get_sec_min(): Float return sec_min_ - min_;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function get_sec_hour_(): Float return hour_ / 60 / 60;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function get_sec_hour (): Float return sec_hour_ - min_;
+	private inline function get_sec_hour(): Float return sec_hour_ - min_;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function get_sec_day_ (): Float return hour_ / 60 / 60 / 24;
+	private inline function get_sec_day_(): Float return hour_ / 60 / 60 / 24;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function get_sec_day  (): Float return sec_day_ - min_;
+	private inline function get_sec_day(): Float return sec_day_ - min_;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function get_min_hour_(): Float return min_ / 60;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function get_min_hour (): Float return min_hour_ - hour_;
+	private inline function get_min_hour(): Float return min_hour_ - hour_;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function get_min_day_ (): Float return min_ / 60 / 24;
+	private inline function get_min_day_(): Float return min_ / 60 / 24;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function get_min_day  (): Float return min_hour_ - hour_;
+	private inline function get_min_day(): Float return min_hour_ - hour_;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function get_hour_day_(): Float return hour_ / 24;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function get_hour_day (): Float return hour_day_ - day_;
+	private inline function get_hour_day(): Float return hour_day_ - day_;
 
 	@:op(A + B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function add(a: DT, b: DT): DT return (a: Float) + (b: Float);
@@ -185,13 +185,13 @@ using Std;
 	private static inline function addFloat(a: DT, b: Float): DT return (a: Float) + b;
 
 	@:op(A + B) #if (haxe_ver >= 4.2) extern #else @:extern #end
-	private static inline function addToFloat(a: Float, b: DT):DT return a + (b: Float);
+	private static inline function addToFloat(a: Float, b: DT): DT return a + (b: Float);
 
 	@:op(A + B) #if (haxe_ver >= 4.2) extern #else @:extern #end
-	private static inline function addTime(a: DT, b: Time):DT return a + (b: DT);
+	private static inline function addTime(a: DT, b: Time): DT return a + (b: DT);
 
 	@:op(A + B) #if (haxe_ver >= 4.2) extern #else @:extern #end
-	private static inline function addToTime(a: Time, b: DT):DT return (a: DT) + b;
+	private static inline function addToTime(a: Time, b: DT): DT return (a: DT) + b;
 
 	@:op(A - B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function sub(a: DT, b: DT): DT return (a: Float) - (b: Float);
@@ -224,7 +224,7 @@ using Std;
 	private static inline function multiplyInt1(a: DT, b: Int): DT return (a: Float) * b;
 
 	@:op(A * B) #if (haxe_ver >= 4.2) extern #else @:extern #end
-	private static inline function multiplyInt2(a: Int, b: DT):DT return a * (b: Float);
+	private static inline function multiplyInt2(a: Int, b: DT): DT return a * (b: Float);
 
 	@:op(A / B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function divide(a: DT, b: Float): DT return ((a: Float) / b).int();
@@ -251,37 +251,37 @@ using Std;
 	private static inline function sbTime(a: DT, b: Time): Bool return a > (b: DT);
 
 	@:op(A > B) #if (haxe_ver >= 4.2) extern #else @:extern #end
-	private static inline function sbToTime(a: Time, b: DT):Bool return (a: DT) > b;
+	private static inline function sbToTime(a: Time, b: DT): Bool return (a: DT) > b;
 
 	@:op(A < B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function sm(a: DT, b: DT): Bool return (a: Float) < (b: Float);
 
 	@:op(A < B) #if (haxe_ver >= 4.2) extern #else @:extern #end
-	private static inline function smInt(a: DT, b: Int):Bool return (a: Float) < b;
+	private static inline function smInt(a: DT, b: Int): Bool return (a: Float) < b;
 
 	@:op(A < B) #if (haxe_ver >= 4.2) extern #else @:extern #end
-	private static inline function smToInt(a: Int, b: DT):Bool return a < (b: Float);
+	private static inline function smToInt(a: Int, b: DT): Bool return a < (b: Float);
 
 	@:op(A < B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function smFloat(a: DT, b: Float): Bool return (a: Float) < b;
 
 	@:op(A < B) #if (haxe_ver >= 4.2) extern #else @:extern #end
-	private static inline function smToFloat(a: Float, b: DT):Bool return a < (b: Float);
+	private static inline function smToFloat(a: Float, b: DT): Bool return a < (b: Float);
 
 	@:op(A < B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function smTime(a: DT, b: Time): Bool return a < (b: DT);
 
 	@:op(A < B) #if (haxe_ver >= 4.2) extern #else @:extern #end
-	private static inline function smToTime(a: Time, b: DT):Bool return (a: DT) < b;
+	private static inline function smToTime(a: Time, b: DT): Bool return (a: DT) < b;
 
 	@:op(A >= B) #if (haxe_ver >= 4.2) extern #else @:extern #end
-	private static inline function sbr(a: DT, b: DT):Bool return (a: Float) >= (b: Float);
+	private static inline function sbr(a: DT, b: DT): Bool return (a: Float) >= (b: Float);
 
 	@:op(A >= B) #if (haxe_ver >= 4.2) extern #else @:extern #end
-	private static inline function sbrInt(a: DT, b: Int):Bool return (a: Float) >= b;
+	private static inline function sbrInt(a: DT, b: Int): Bool return (a: Float) >= b;
 
 	@:op(A >= B) #if (haxe_ver >= 4.2) extern #else @:extern #end
-	private static inline function sbrToInt(a: Int, b: DT):Bool return a >= (b: Float);
+	private static inline function sbrToInt(a: Int, b: DT): Bool return a >= (b: Float);
 
 	@:op(A >= B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function sbrFloat(a: DT, b: Float): Bool return (a: Float) >= b;
@@ -305,7 +305,7 @@ using Std;
 	private static inline function smrToInt(a: Int, b: DT): Bool return a <= (b: Float);
 
 	@:op(A <= B) #if (haxe_ver >= 4.2) extern #else @:extern #end
-	private static inline function smrFloat(a: DT, b: Float):Bool return (a: Float) <= b;
+	private static inline function smrFloat(a: DT, b: Float): Bool return (a: Float) <= b;
 
 	@:op(A <= B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function smrToFloat(a: Float, b: DT): Bool return a <= (b: Float);

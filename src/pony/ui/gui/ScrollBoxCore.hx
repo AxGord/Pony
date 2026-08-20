@@ -44,9 +44,8 @@ import pony.ui.gui.SliderCore;
 	private var mh: Float;
 
 	public function new(
-		w: Float, h: Float,
-		?tArea: Touchable, ?tScrollerVert: ButtonCore, ?tScrollerHor: ButtonCore,
-		scrollSize: Float = DEFAULT_BAR_SIZE, wheelSpeed: Float = DEFAULT_WHEEL_SPEED
+		w: Float, h: Float, ?tArea: Touchable, ?tScrollerVert: ButtonCore, ?tScrollerHor: ButtonCore, scrollSize: Float = DEFAULT_BAR_SIZE,
+		wheelSpeed: Float = DEFAULT_WHEEL_SPEED
 	) {
 		this.tArea = tArea;
 		mw = w;
@@ -60,8 +59,7 @@ import pony.ui.gui.SliderCore;
 			barVert.onSize << function(a: Float, b: Float): Void eScrollVertSize.dispatch(b, a);
 			barVert.onContentPos << vertContentHandler;
 			barVert.onMaskSize << vertMaskSizeHandler;
-			if (tArea != null)
-				tArea.onWheel << barVert.wheelHandler;
+			if (tArea != null) tArea.onWheel << barVert.wheelHandler;
 			tScrollerVert.touch.onOver << disableContentDrag;
 			tScrollerVert.touch.onOut << enableContentDrag;
 			tScrollerVert.touch.onOutUp << enableContentDrag;
@@ -100,27 +98,21 @@ import pony.ui.gui.SliderCore;
 		return v;
 	}
 
-	public function disableContentDrag(): Void
-		if (tArea != null) @:nullSafety(Off) tArea.onDown >> areaDownHandler;
+	public function disableContentDrag(): Void if (tArea != null) @:nullSafety(Off) tArea.onDown >> areaDownHandler;
 
-	public function enableContentDrag(): Void
-		if (tArea != null) @:nullSafety(Off) tArea.onDown << areaDownHandler;
+	public function enableContentDrag(): Void if (tArea != null) @:nullSafety(Off) tArea.onDown << areaDownHandler;
 
 	private function areaDownHandler(t: Touch): Void {
 		t.onMove << areaMoveHandler;
 		t.onUp < areaUpHandler;
 		t.onOutUp < areaUpHandler;
-		if (barVert != null)
-			barVert.start(t.y);
-		if (barHor != null)
-			barHor.start(t.x);
+		if (barVert != null) barVert.start(t.y);
+		if (barHor != null) barHor.start(t.x);
 	}
 
 	private function areaMoveHandler(t: Touch): Void {
-		if (barVert != null)
-			barVert.move(t.y);
-		if (barHor != null)
-			barHor.move(t.x);
+		if (barVert != null) barVert.move(t.y);
+		if (barHor != null) barHor.move(t.x);
 	}
 
 	private function areaUpHandler(t: Touch): Void {
@@ -146,10 +138,8 @@ import pony.ui.gui.SliderCore;
 	}
 
 	public function content(cw: Float, ch: Float): Void {
-		if (barVert != null)
-			barVert.content(ch);
-		if (barHor != null)
-			barHor.content(cw);
+		if (barVert != null) barVert.content(ch);
+		if (barHor != null) barHor.content(cw);
 	}
 
 	private function vertContentHandler(p: Float): Void {

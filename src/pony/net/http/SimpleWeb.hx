@@ -27,8 +27,7 @@ class SimpleWeb {
 	#if php
 	private var trc: Array<Pair<Dynamic, PosInfos>> = [];
 
-	private function phpLog(v: Dynamic, ?p: PosInfos): Void
-		trc.push(new Pair(v, p));
+	private function phpLog(v: Dynamic, ?p: PosInfos): Void trc.push(new Pair(v, p));
 	#end
 
 	public function new(classes: Array<Class<Model>>, ?json: File, ?config: SiteConfig) {
@@ -69,7 +68,7 @@ class SimpleWeb {
 
 		var httpServer: HttpServer = new HttpServer(config.httpport);
 		var usercontent: String = 'usercontent';
-		(usercontent : Dir).create();
+		(usercontent: Dir).create();
 		var webServer: WebServer = new WebServer(['home', pony.Tools.ponyPath() + 'webdefaults'], usercontent, modules);
 		httpServer.request = webServer.connect;
 
@@ -77,8 +76,7 @@ class SimpleWeb {
 		httpServer.run(new pony.net.http.ServersideStorageDB(db.storage));
 		if (trc.length > 0) {
 			php.Lib.print('<hr><pre>');
-			for (p in trc)
-				php.Lib.println(p.b.fileName + ':' + p.b.lineNumber + ': ' + p.a);
+			for (p in trc) php.Lib.println(p.b.fileName + ':' + p.b.lineNumber + ': ' + p.a);
 		}
 		#end
 	}

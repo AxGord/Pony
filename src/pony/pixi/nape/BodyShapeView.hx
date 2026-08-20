@@ -11,13 +11,13 @@ import pony.physics.nape.BodyShape;
  */
 class BodyShapeView extends BodyBaseView<BodyShape> {
 
-	override private function drawDebug(g:Graphics):Void {
+	override private function drawDebug(g: Graphics): Void {
 		var bi = new BytesInput(core.sbytes);
-		var pb:Byte = bi.readByte();
-		var fp:Byte = bi.readByte();
+		var pb: Byte = bi.readByte();
+		var fp: Byte = bi.readByte();
 		g.moveTo(fp.a * core.resolution, fp.b * core.resolution);
 		while (bi.position < bi.length) {
-			var p:Byte = bi.readByte();
+			var p: Byte = bi.readByte();
 			g.lineTo(p.a * core.resolution, p.b * core.resolution);
 		}
 		g.lineTo(fp.a * core.resolution, fp.b * core.resolution);

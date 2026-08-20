@@ -11,10 +11,9 @@ import pony.text.tpl.TplSystem;
  */
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
 @:final class MTplPut extends TplPut<MTpl, CPQ> {
-	
+
 	@:async
-	override public function tag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String
-	{
+	override public function tag(name: String, content: TplData, arg: String, args: Map<String, String>, ?kid: ITplPut): String {
 		if (name == 'templates') {
 			return @await many(a.server.tpl, MTplPutSub, content, arg);
 		} else if (name == 'template')
@@ -22,14 +21,13 @@ import pony.text.tpl.TplSystem;
 		else
 			return @await super.tag(name, content, arg, args, kid);
 	}
-	
+
 	@:async
-	override public function shortTag(name:String, arg:String, ?kid:ITplPut):String
-	{
+	override public function shortTag(name: String, arg: String, ?kid: ITplPut): String {
 		switch (name) {
 			case 'static' if (arg != null):
 				#if php
-				return '/'+b.template._static[arg].firstExists;//todo: site directory
+				return '/' + b.template._static[arg].firstExists; // todo: site directory
 				#else
 				return '/tpl/${b.template.name}/$arg';
 				#end
@@ -41,7 +39,7 @@ import pony.text.tpl.TplSystem;
 				return @await super.shortTag(name, arg, kid);
 		}
 	}
-	
-	private static function getName(v:TplSystem, cb:String->Void):Void cb(v.name);
-	
+
+	private static function getName(v: TplSystem, cb: String -> Void): Void cb(v.name);
+
 }

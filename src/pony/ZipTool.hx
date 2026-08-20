@@ -7,10 +7,8 @@ import haxe.zip.Entry;
 import haxe.zip.Reader;
 import haxe.zip.Tools;
 import haxe.zip.Writer;
-
 import pony.ds.ROArray;
 import pony.text.TextTools;
-
 import sys.FileStat;
 import sys.FileSystem;
 import sys.io.File;
@@ -81,8 +79,7 @@ class ZipTool extends Logable {
 	}
 
 	public function writeDir(dir: String): ZipTool {
-		for (e in FileSystem.readDirectory(prefix + dir))
-			writeEntry(dir + (dir.substr(-1) == '/' ? '' : '/') + e);
+		for (e in FileSystem.readDirectory(prefix + dir)) writeEntry(dir + (dir.substr(-1) == '/' ? '' : '/') + e);
 		return this;
 	}
 
@@ -109,11 +106,7 @@ class ZipTool extends Logable {
 	}
 
 	public static function unpackFile(
-		file: String,
-		targetPath: String = '',
-		?extractFirstLevelDirs: Bool,
-		?filter: Array<String>,
-		?log: String -> Void
+		file: String, targetPath: String = '', ?extractFirstLevelDirs: Bool, ?filter: Array<String>, ?log: String -> Void
 	): Void {
 		var input: FileInput = File.read(file);
 		for (e in Reader.readZip(input)) {

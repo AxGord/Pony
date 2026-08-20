@@ -12,7 +12,7 @@ class DefaultModulePack {
 
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public static inline function create():Array<IModule> {
+	public static inline function create(): Array<IModule> {
 		return [
 			cast new MLang(),
 			cast new MTpl(),

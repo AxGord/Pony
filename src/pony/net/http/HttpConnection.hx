@@ -1,7 +1,6 @@
 package pony.net.http;
 
 import sys.FileSystem;
-
 import pony.fs.File;
 import pony.magic.HasAbstract;
 import pony.text.ParseBoy;
@@ -62,9 +61,13 @@ class HttpConnection implements HasAbstract {
 	public function endAction(): Void goto('/$url');
 
 	@:abstract public function endActionPrevPage(): Void;
+
 	@:abstract public function goto(url: String): Void;
+
 	@:abstract public function error(?message: String): Void;
+
 	@:abstract public function notfound(?message: String): Void;
+
 	@:abstract public function sendFile(file: File): Void;
 
 	private function parseData(pb: ParseBoy<Void>): Map<String, String> {
@@ -90,10 +93,8 @@ class HttpConnection implements HasAbstract {
 
 	public function mix(): Map<String, String> {
 		var h = new Map<String, String>();
-		for (k in params.keys())
-			h.set(k, params.get(k));
-		for (k in post.keys())
-			h.set(k, post.get(k));
+		for (k in params.keys()) h.set(k, params.get(k));
+		for (k in post.keys()) h.set(k, post.get(k));
 		return h;
 	}
 

@@ -17,16 +17,18 @@ class StepSliderCore extends SliderCore {
 	private var percentRound: Int = -1;
 	private var valueRound: Int = -1;
 
-	public function new(button: ButtonCore = null, size: Float, isVertical: Bool = false, invert: Bool = false, draggable: Bool = true) {
+	public function new(
+		button: ButtonCore = null, size: Float, isVertical: Bool = false, invert: Bool = false, draggable: Bool = true
+	) {
 		super(button, size, isVertical, invert, draggable);
 	}
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public static inline function create(
-		?button: ButtonCore, width: Float, height: Float, invert: Bool=false, draggable: Bool = true
+		?button: ButtonCore, width: Float, height: Float, invert: Bool = false, draggable: Bool = true
 	): StepSliderCore {
 		var isVert = height > width;
-		return new StepSliderCore(button, isVert ? height :  width, isVert, invert, draggable);
+		return new StepSliderCore(button, isVert ? height : width, isVert, invert, draggable);
 	}
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end

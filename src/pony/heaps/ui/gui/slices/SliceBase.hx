@@ -5,7 +5,6 @@ import h3d.Vector4 as Vector;
 #else
 import h3d.Vector;
 #end
-
 import h2d.Graphics;
 import h2d.Bitmap;
 import h2d.TileGroup;
@@ -50,8 +49,7 @@ import pony.magic.HasLink;
 			}
 			i++;
 		}
-		for (i in soloTexture)
-			solo[i] = new Bitmap(tiles[i], target);
+		for (i in soloTexture) solo[i] = new Bitmap(tiles[i], target);
 		for (i in wrap) {
 			var g: Graphics = new Graphics(target);
 			g.tileWrap = true;
@@ -92,10 +90,8 @@ import pony.magic.HasLink;
 
 	private function _drawTile(n: Int, x: Float = 0, y: Float = 0, ?w: Float, ?h: Float, flipx: Bool = false, flipy: Bool = false): Void {
 		var tile: Tile = tiles[n];
-		if (w == null)
-			w = tile.width;
-		if (h == null)
-			h = tile.height;
+		if (w == null) w = tile.width;
+		if (h == null) h = tile.height;
 		var wr: Null<Graphics> = wrap[n];
 		if (wr != null) {
 			wr.drawRect(0, 0, w, h);
@@ -114,14 +110,7 @@ import pony.magic.HasLink;
 			} else {
 				var id: Int = tile.getTexture().id;
 				@:nullSafety(Off) var g: TileGroup = groups[id];
-				g.addTransform(
-					flipx ? x + w : x,
-					flipy ? y + h : y,
-					flipx ? -sx : sx,
-					flipy ? -sy : sy,
-					0,
-					tile
-				);
+				g.addTransform(flipx ? x + w : x, flipy ? y + h : y, flipx ? -sx : sx, flipy ? -sy : sy, 0, tile);
 			}
 		}
 	}

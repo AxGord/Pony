@@ -2,7 +2,6 @@ package pony.heaps.sound;
 
 import hxd.snd.Channel;
 import hxd.snd.Effect;
-
 import pony.events.Signal1;
 import pony.magic.HasLink;
 import pony.magic.HasSignal;
@@ -82,8 +81,10 @@ import pony.time.TimeInterval;
 			start();
 	}
 
-	public inline function addEffect<T: Effect>(e: T): T return channel.addEffect(e);
-	public inline function getEffect<T: Effect>(etype: Class<T>): T return channel.getEffect(etype);
+	public inline function addEffect<T:Effect>(e: T): T return channel.addEffect(e);
+
+	public inline function getEffect<T:Effect>(etype: Class<T>): T return channel.getEffect(etype);
+
 	public inline function removeEffect(e: Effect) channel.removeEffect(e);
 
 	private inline function getMax(pos: TimeInterval): Int return (pos.max == 0 ? Std.int(channel.duration * 1000) : pos.max) - END_OFFSET;

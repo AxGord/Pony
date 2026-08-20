@@ -3,7 +3,6 @@ package pony.pixi.ui;
 import pixi.core.graphics.Graphics;
 import pixi.core.sprites.Sprite;
 import pixi.extras.BitmapText.BitmapTextStyle;
-
 import pony.color.UColor;
 import pony.geom.IWH;
 import pony.geom.Point;
@@ -28,7 +27,7 @@ class TextButton extends Sprite implements IWH {
 	public function new(color: Array<UColor>, text: String, font: String, ?ansi: String, line: Float = 0, linepos: Float = 0) {
 		super();
 		this.color = color;
-		btext = new BTextLow(text, {font: font, tint: color[0].rgb}, ansi, true);
+		btext = new BTextLow(text, { font: font, tint: color[0].rgb }, ansi, true);
 		btext.interactive = false;
 		btext.interactiveChildren = false;
 		addChild(btext);
@@ -69,8 +68,7 @@ class TextButton extends Sprite implements IWH {
 				g.visible = false;
 				addChild(g);
 				lines.push(g);
-				if (lines.length > 2)
-					break;
+				if (lines.length > 2) break;
 			}
 			prevline = lines[0];
 			prevline.visible = true;
@@ -82,8 +80,7 @@ class TextButton extends Sprite implements IWH {
 
 	private function imgHandler(n: Int): Void {
 		n--;
-		if (n > color.length)
-			n = color.length - 1;
+		if (n > color.length) n = color.length - 1;
 		btext.tint = color[n];
 
 		if (prevline != null) {

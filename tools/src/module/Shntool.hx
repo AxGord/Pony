@@ -9,7 +9,6 @@ import pony.Pair;
 import pony.fs.Dir;
 import pony.fs.File;
 import pony.fs.Unit;
-
 import types.BASection;
 
 using pony.text.TextTools;
@@ -121,7 +120,8 @@ private typedef WavConfig = {
 
 	override private function readNode(xml: Fast): Void {
 		switch xml.name {
-			case 'path': selfCreate(xml);
+			case 'path':
+				selfCreate(xml);
 			case 'wav':
 				new WavReader(xml, {
 					debug: cfg.debug,
@@ -135,7 +135,8 @@ private typedef WavConfig = {
 					dirs: [],
 					units: []
 				}, wavConfigHandler);
-			case _: super.readNode(xml);
+			case _:
+				super.readNode(xml);
 		}
 	}
 
@@ -154,10 +155,14 @@ private typedef WavConfig = {
 
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
-			case 'to': cfg.to += val;
-			case 'from': cfg.from += val;
-			case 'hash': cfg.hash = val.isTrue();
-			case 'addext': cfg.addext = val;
+			case 'to':
+				cfg.to += val;
+			case 'from':
+				cfg.from += val;
+			case 'hash':
+				cfg.hash = val.isTrue();
+			case 'addext':
+				cfg.addext = val;
 			case _:
 		}
 	}
@@ -168,9 +173,12 @@ private typedef WavConfig = {
 
 	override private function readNode(xml: Fast): Void {
 		switch xml.name {
-			case 'dir': cfg.dirs.push(new Pair(normalize(xml.innerData), xml.has.filter ? normalize(xml.att.filter) : '.wav'));
-			case 'unit': cfg.units.push(normalize(xml.innerData));
-			case _: super.readNode(xml);
+			case 'dir':
+				cfg.dirs.push(new Pair(normalize(xml.innerData), xml.has.filter ? normalize(xml.att.filter) : '.wav'));
+			case 'unit':
+				cfg.units.push(normalize(xml.innerData));
+			case _:
+				super.readNode(xml);
 		}
 	}
 
@@ -184,8 +192,10 @@ private typedef WavConfig = {
 
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
-			case 'output': cfg.output = val;
-			case 'cue': cfg.cue = val;
+			case 'output':
+				cfg.output = val;
+			case 'cue':
+				cfg.cue = val;
 			case _:
 		}
 	}

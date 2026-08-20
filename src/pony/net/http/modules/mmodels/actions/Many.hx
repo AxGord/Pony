@@ -19,9 +19,11 @@ using pony.Tools;
  * @author AxGord <axgord@gmail.com>
  */
 class Many extends Action {
-	override public function connect(cpq:CPQ, modelConnect:ModelConnect):Pair<EConnect, ISubActionConnect> {
+
+	override public function connect(cpq: CPQ, modelConnect: ModelConnect): Pair<EConnect, ISubActionConnect> {
 		return new Pair(REG(cast new ManyConnect(this, cpq, modelConnect)), null);
 	}
+
 }
 
 /**
@@ -29,12 +31,12 @@ class Many extends Action {
  * @author AxGord <axgord@gmail.com>
  */
 class ManyConnect extends ActionConnect {
-	
-	override public function tpl(parent:ITplPut):ITplPut {
+
+	override public function tpl(parent: ITplPut): ITplPut {
 		initTpl();
 		return new ManyPut(this, cpq, parent);
 	}
-	
+
 }
 
 /**
@@ -43,15 +45,14 @@ class ManyConnect extends ActionConnect {
  */
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
 class ManyPut extends pony.text.tpl.TplPut<ManyConnect, CPQ> {
-	
+
 	@:async
-	override public function tag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String
-	{
+	override public function tag(name: String, content: TplData, arg: String, args: Map<String, String>, ?kid: ITplPut): String {
 		if (!a.checkAccess()) return '';
-		
-		var mp:ModelPut = cast parent;
+
+		var mp: ModelPut = cast parent;
 		var f = arg == null ? 'id' : arg;
-		var a:Array<Dynamic> = @await a.call(mp.b == null ? [] : [Reflect.field(mp.b, f)]);
+		var a: Array<Dynamic> = @await a.call(mp.b == null ? [] : [Reflect.field(mp.b, f)]);
 		if (args.exists('!'))
 			return a.length == 0 ? @await parent.tplData(content) : '';
 		else {
@@ -61,42 +62,39 @@ class ManyPut extends pony.text.tpl.TplPut<ManyConnect, CPQ> {
 				return @await many(a, ManyPutSub, content, arg);
 		}
 	}
-	
+
 	@:async
-	private function div(arg:String, args:Map<String, String>, a:Array<Dynamic>):String {
-		var n:String = args.get('div') == null ? 'many' : args.get('div');
-		var na:Array<String> = [];
-		if (args.exists('cols')) for (e in a){
-			var s:String = '<div class="' + n + '">';
-			for (f in args.get('cols').split(',').map(StringTools.trim))
-				s += '<div class="' + f + '">'
-					+ @await html(e, f)
-					+ '</div>';
-			s += '</div>';
-			na.push(s);
-		} else for (e in a) {
-			var s:String = '<div class="' + n + '">';
-			for (f in Reflect.fields(e))
-				s += '<div class="' + f + '">'
-					+ @await html(e, f)
-					+ '</div>';
-			s += '</div>';
-			na.push(s);
-		}
+	private function div(arg: String, args: Map<String, String>, a: Array<Dynamic>): String {
+		var n: String = args.get('div') == null ? 'many' : args.get('div');
+		var na: Array<String> = [];
+		if (args.exists('cols'))
+			for (e in a) {
+				var s: String = '<div class="' + n + '">';
+				for (f in args.get('cols').split(',').map(StringTools.trim)) s += '<div class="' + f + '">' + @await html(e, f) + '</div>';
+				s += '</div>';
+				na.push(s);
+			}
+		else
+			for (e in a) {
+				var s: String = '<div class="' + n + '">';
+				for (f in Reflect.fields(e)) s += '<div class="' + f + '">' + @await html(e, f) + '</div>';
+				s += '</div>';
+				na.push(s);
+			}
 		return na.join(arg == null ? '' : arg);
 	}
-	
+
 	@:async
-	private function html(e:Dynamic, f:String):String {
+	private function html(e: Dynamic, f: String): String {
 		var c = a.base.model.columns[f];
 		if (c.tplPut != null) {
-			var o:Dynamic = Type.createInstance(c.tplPut, [c, e, this]);
+			var o: Dynamic = Type.createInstance(c.tplPut, [c, e, this]);
 			return @await o.html(f);
 		} else {
 			return Reflect.field(e, f);
 		}
 	}
-	
+
 }
 
 /**
@@ -105,10 +103,9 @@ class ManyPut extends pony.text.tpl.TplPut<ManyConnect, CPQ> {
  */
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
 @:final class ManyPutSub extends Valuator<ManyPut, Dynamic> {
-	
+
 	@:async
-	override public function tag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String
-	{
+	override public function tag(name: String, content: TplData, arg: String, args: Map<String, String>, ?kid: ITplPut): String {
 		if (a.a.model.subactions.exists(name)) {
 			return @await a.a.model.subactions[name].subtpl(parent, b).tag(name, content, arg, args, kid);
 		} else {
@@ -137,10 +134,9 @@ class ManyPut extends pony.text.tpl.TplPut<ManyConnect, CPQ> {
 			}
 		}
 	}
-	
+
 	@:async
-	override public function shortTag(name:String, arg:String, ?kid:ITplPut):String 
-	{
+	override public function shortTag(name: String, arg: String, ?kid: ITplPut): String {
 		if (a.a.model.subactions.exists(name)) {
 			return @await a.a.model.subactions[name].subtpl(parent, b).shortTag(name, arg, kid);
 		} else {
@@ -153,13 +149,13 @@ class ManyPut extends pony.text.tpl.TplPut<ManyConnect, CPQ> {
 				return @await super.shortTag(name, arg, kid);
 		}
 	}
-	
+
 	@:async
-	override public function valu(name:String, arg:String):String {
+	override public function valu(name: String, arg: String): String {
 		if (Reflect.hasField(b, name))
 			return Std.string(Reflect.field(b, name));
 		else
 			return null;
 	}
-	
+
 }

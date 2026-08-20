@@ -12,9 +12,9 @@ typedef FontStyle = {
 	font: String,
 	size: Float,
 	color: Color,
-	?bold : Bool,
-	?italic : Bool,
-	?underline : Bool,
-	?align:Align,
-	?border:Border<Int>
+	?bold: Bool,
+	?italic: Bool,
+	?underline: Bool,
+	?align: Align,
+	?border: Border<Int>
 }

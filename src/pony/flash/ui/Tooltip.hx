@@ -106,8 +106,7 @@ class Tooltip {
 	 * or you can use your own format by adding your own data set function to dataSetFunction variable of this Tooltip object.
 	 */
 	public function add(object: IDisplayObject, data: Dynamic): Void {
-		if (object == null)
-			throw "Can't add a tooltip to a null object";
+		if (object == null) throw "Can't add a tooltip to a null object";
 		_container.addChild(_tooltip);
 		_data.set(object, data);
 		TouchManager.addListener(object, listener);
@@ -138,14 +137,10 @@ class Tooltip {
 		var stageWidth: Float = FLTools.width;
 		var stageHeight: Float = FLTools.height;
 
-		if (_tooltip.x < distanceFromBorder)
-			_tooltip.x = distanceFromBorder;
-		if (_tooltip.y < distanceFromBorder)
-			_tooltip.y = distanceFromBorder;
-		if (_tooltip.x + rect.width > stageWidth - distanceFromBorder)
-			_tooltip.x = stageWidth - distanceFromBorder - rect.width;
-		if (_tooltip.y + rect.height > stageHeight - distanceFromBorder)
-			_tooltip.y = stageHeight - distanceFromBorder - rect.height;
+		if (_tooltip.x < distanceFromBorder) _tooltip.x = distanceFromBorder;
+		if (_tooltip.y < distanceFromBorder) _tooltip.y = distanceFromBorder;
+		if (_tooltip.x + rect.width > stageWidth - distanceFromBorder) _tooltip.x = stageWidth - distanceFromBorder - rect.width;
+		if (_tooltip.y + rect.height > stageHeight - distanceFromBorder) _tooltip.y = stageHeight - distanceFromBorder - rect.height;
 	}
 
 }

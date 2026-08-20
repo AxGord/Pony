@@ -6,17 +6,18 @@ package pony.sys.haxe;
  */
 class Process extends pony.Logable implements pony.sys.IProcess {
 
-	public var runned(default, null):Bool = false;
+	public var runned(default, null): Bool = false;
 
-	private var runCmd:String;
+	private var runCmd: String;
 
-	public function new(runCmd:String) {
+	public function new(runCmd: String) {
 		super();
 		this.runCmd = runCmd;
 	}
 
-	//todo
+	// todo
 	public function run(): Bool return false;
+
 	public function kill(): Bool return false;
 
 }

@@ -8,7 +8,6 @@ import pony.geom.Rect.IntRect;
 import pony.magic.Declarator;
 import pony.ui.gui.FontStyle;
 import pony.ui.gui.TextTableCore;
-
 import unityengine.GameObject;
 import unityengine.Object;
 import unityengine.Vector3;
@@ -38,8 +37,7 @@ import unityengine.Vector3;
 
 	#if (haxe_ver < 4.2) override #end
 	private function clear(): Void {
-		for (o in gos)
-			Object.Destroy(o);
+		for (o in gos) Object.Destroy(o);
 	}
 
 }

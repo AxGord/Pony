@@ -10,10 +10,10 @@ using hugs.HUGSWrapper;
  */
 @:nativeGen class TooltipSaver extends MonoBehaviour {
 
-	private var tooltips:Array<Tooltip>;
-	
-	private function Start():Void {
-		var tooltip:Tooltip = null;
+	private var tooltips: Array<Tooltip>;
+
+	private function Start(): Void {
+		var tooltip: Tooltip = null;
 		if (tooltip == null) tooltip = gameObject.getTypedComponent(Tooltip);
 		if (tooltip == null) tooltip = gameObject.getParentTypedComponent(Tooltip);
 		if (tooltip == null) {
@@ -21,9 +21,9 @@ using hugs.HUGSWrapper;
 		} else
 			tooltips = [tooltip];
 	}
-	
-	inline private function saveColors():Void {
+
+	inline private function saveColors(): Void {
 		for (e in tooltips) e.saveColors();
 	}
-	
+
 }

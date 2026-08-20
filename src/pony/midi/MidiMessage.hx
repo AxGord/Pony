@@ -5,5 +5,7 @@ package pony.midi;
  * @author AxGord
  */
 typedef MidiMessage = {
-	chanel:MidiCode, key:MidiCode, value:MidiCode
+	chanel: MidiCode,
+	key: MidiCode,
+	value: MidiCode
 }

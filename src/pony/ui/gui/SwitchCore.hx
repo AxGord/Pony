@@ -30,8 +30,10 @@ import pony.magic.HasSignal;
 	private inline function get_active(): Int return _active;
 
 	public function set_active(id: Int): Int {
-		if (id < 0) id = 0;
-		else if (id >= objects.length) id = objects.length;
+		if (id < 0)
+			id = 0;
+		else if (id >= objects.length)
+			id = objects.length;
 		if (active != id) {
 			closeActive();
 			_active = id;

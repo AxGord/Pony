@@ -102,9 +102,8 @@ using pony.Tools;
 			case 1: fromSeconds(d[0] == '' ? 0 : d[0].parseInt());
 			case 2: fromSeconds(d[1] == '' ? 0 : d[1].parseInt()) + fromMinutes(d[0] == '' ? 0 : d[0].parseInt());
 			case 3:
-				fromSeconds(d[2] == '' ? 0 : d[2].parseInt()) +
-				fromMinutes(d[0] == '' ? 0 : d[1].parseInt()) +
-				fromHours(d[0] == '' ? 0 : d[0].parseInt());
+				fromSeconds(d[2] == '' ? 0 : d[2].parseInt()) + fromMinutes(d[0] == '' ? 0 : d[1].parseInt())
+					+ fromHours(d[0] == '' ? 0 : d[0].parseInt());
 			default: throw 'Invalid time format';
 		}
 	}
@@ -150,8 +149,11 @@ using pony.Tools;
 	private inline function get_neg(): Bool return this < 0;
 
 	public static inline function fromDays(day: Int): Time return fromHours(day * 24);
+
 	public static inline function fromHours(hours: Int): Time return fromMinutes(hours * 60);
+
 	public static inline function fromMinutes(minutes: Int): Time return fromSeconds(minutes * 60);
+
 	public static inline function fromSeconds(seconds: Int): Time return seconds * 1000;
 
 	@:to #if (haxe_ver >= 4.2) extern #else @:extern #end
@@ -183,7 +185,8 @@ using pony.Tools;
 		} else {
 			if (minutes != 0) {
 				s += showMinSec();
-			} else if (seconds != 0) s += Math.abs(seconds);
+			} else if (seconds != 0)
+				s += Math.abs(seconds);
 		}
 		return s;
 	}
@@ -274,17 +277,22 @@ using pony.Tools;
 	private static inline function snrToInt(a: Int, b: Time): Bool return a != (b: Int);
 
 	private function get_minimalPoint(): Int {
-		return MathTools.cabs(
-			if (ms != 0) {
-				if (ms % 10 != 0) 1;
-				else if (ms % 100 != 0) 10;
-				else 100;
-			}
-			else if (seconds != 0) fromSeconds(1);
-			else if (minutes != 0) fromMinutes(1);
-			else if (hours != 0) fromHours(1);
-			else fromDays(1)
-		);
+		return MathTools.cabs(if (ms != 0) {
+			if (ms % 10 != 0)
+				1;
+			else if (ms % 100 != 0)
+				10;
+			else
+				100;
+		}
+		else if (seconds != 0)
+			fromSeconds(1);
+		else if (minutes != 0)
+			fromMinutes(1);
+		else if (hours != 0)
+			fromHours(1);
+		else
+			fromDays(1));
 	}
 
 	@:from

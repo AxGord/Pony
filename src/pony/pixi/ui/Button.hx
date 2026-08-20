@@ -36,32 +36,25 @@ class Button extends Sprite implements IWH {
 	public function new(imgs: ROArray<String>, ?offset: Point<Float>, ?useSpriteSheet: String) {
 		var imgs = imgs.copy();
 		wr = new WaitReady();
-		if (imgs[0] == null)
-			throw 'Need first img';
-		if (imgs[1] == null)
-			imgs[1] = imgs[2] != null ? imgs[2] : imgs[0];
-		if (imgs[2] == null)
-			imgs[2] = imgs[1];
+		if (imgs[0] == null) throw 'Need first img';
+		if (imgs[1] == null) imgs[1] = imgs[2] != null ? imgs[2] : imgs[0];
+		if (imgs[2] == null) imgs[2] = imgs[1];
 
 		var z = imgs.length > 3 ? imgs.splice(3, 1)[0] : null;
-		if (z == null)
-			z = imgs[0];
+		if (z == null) z = imgs[0];
 		hideDisabled = imgs[3] == null;
 		var i = 4;
 		while (i < imgs.length) {
-			if (imgs[i + 1] == null)
-				imgs[i + 1] = imgs[i + 2] != null ? imgs[i + 2] : imgs[i];
-			if (imgs[i + 2] == null)
-				imgs[i + 2] = imgs[i + 1];
+			if (imgs[i + 1] == null) imgs[i + 1] = imgs[i + 2] != null ? imgs[i + 2] : imgs[i];
+			if (imgs[i + 2] == null) imgs[i + 2] = imgs[i + 1];
 			i += 3;
 		}
 		list = [for (img in imgs) img == null ? null : getImg(img, useSpriteSheet)];
 		if (offset != null) {
-			for (e in list)
-				if (e != null) {
-					e.x = -offset.x;
-					e.y = -offset.y;
-				}
+			for (e in list) if (e != null) {
+				e.x = -offset.x;
+				e.y = -offset.y;
+			}
 		}
 		super();
 		zone = getInteractiveImg(z, useSpriteSheet);
@@ -81,14 +74,12 @@ class Button extends Sprite implements IWH {
 
 	public function setWidth(v: Float): Void {
 		zone.sliceWidth = v;
-		for (img in list)
-			img.sliceWidth = v;
+		for (img in list) img.sliceWidth = v;
 	}
 
 	public function setHeight(v: Float): Void {
 		zone.sliceHeight = v;
-		for (img in list)
-			img.sliceHeight = v;
+		for (img in list) img.sliceHeight = v;
 	}
 
 	@SuppressWarnings('checkstyle:MagicNumber')
@@ -105,6 +96,7 @@ class Button extends Sprite implements IWH {
 	}
 
 	private function disableHandler(): Void cursor = false;
+
 	private function enableHandler(): Void cursor = true;
 
 	public inline function wait(cb: Void -> Void): Void wr.wait(cb);
@@ -118,8 +110,7 @@ class Button extends Sprite implements IWH {
 		} else {
 			visible = true;
 		}
-		if (prev != -1)
-			removeChild(list[prev]);
+		if (prev != -1) removeChild(list[prev]);
 		addChild(list[prev = n - 1]);
 	}
 
@@ -139,9 +130,11 @@ class Button extends Sprite implements IWH {
 	}
 
 	private inline function get_cursor(): Bool return zone.buttonMode;
+
 	private inline function set_cursor(v: Bool): Bool return zone.buttonMode = v;
 
 	private inline function get_touchActive(): Bool return zone.interactive;
+
 	private inline function set_touchActive(v: Bool): Bool return zone.interactive = v;
 
 	public function destroyIWH(): Void destroy();

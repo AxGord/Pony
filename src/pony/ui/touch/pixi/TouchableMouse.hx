@@ -55,12 +55,12 @@ class TouchableMouse {
 
 	private function overHandler(_): Void {
 		over = true;
-		down ? base.dispatchOverDown() :  base.dispatchOver();
+		down ? base.dispatchOverDown() : base.dispatchOver();
 	}
 
 	private function outHandler(_): Void {
 		over = false;
-		down ? base.dispatchOutDown() :  base.dispatchOut();
+		down ? base.dispatchOutDown() : base.dispatchOut();
 	}
 
 	private function downHandler(e: InteractionEvent): Void {
@@ -83,8 +83,10 @@ class TouchableMouse {
 
 	private function globUpHandler(): Void {
 		_down = false;
-		if (!over) base.dispatchOutUp();
-		else base.dispatchUp();
+		if (!over)
+			base.dispatchOutUp();
+		else
+			base.dispatchUp();
 	}
 
 	private function leaveHandler(): Void {

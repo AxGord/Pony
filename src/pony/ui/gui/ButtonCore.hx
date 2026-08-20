@@ -7,7 +7,10 @@ import pony.magic.HasSignal;
 import pony.ui.touch.TouchableBase;
 
 enum ButtonState {
-	Default; Focus; Leave; Press;
+	Default;
+	Focus;
+	Leave;
+	Press;
 }
 
 /**
@@ -133,7 +136,9 @@ enum ButtonState {
 	}
 
 	public function setLowMode(m: Int): Void lowMode = m;
+
 	public function setState(s: ButtonState): Void state = s;
+
 	public function click(m: Int): Void eClick.saveDispatch(m);
 
 	public inline function reset(): Void {

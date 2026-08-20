@@ -12,7 +12,8 @@ class AutoFormula {
 	public function new(values: Map<Float, Float>) {
 		this.values = values;
 	}
-	//todo
+
+	// todo
 	/*
 	public function get(v:Float):Float {
 		var cur:Float;
@@ -39,5 +40,5 @@ class AutoFormula {
 			}
 		}
 	}
-	*/
+	 */
 }

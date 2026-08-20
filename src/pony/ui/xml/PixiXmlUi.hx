@@ -114,9 +114,9 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 	public var app(default, null): App;
 	private var tweens: TweenMap<Dynamic> = [];
 
-	private function createUIElement(name: String, attrs: Dynamic<String>, content: Array<Dynamic>, textContent: String):Dynamic {
+	private function createUIElement(name: String, attrs: Dynamic<String>, content: Array<Dynamic>, textContent: String): Dynamic {
 		if (attrs.reverse.isTrue()) content.reverse();
-		var obj:DisplayObject = switch name {
+		var obj: DisplayObject = switch name {
 			case 'free':
 				var s = new SizedSprite(new Point(parseAndScale(attrs.w), parseAndScale(attrs.h)));
 				for (e in content) s.addChild(e);
@@ -144,7 +144,7 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 				if (attrs.line != null) {
 					var a = attrs.line.split(' ');
 					if (a[0].charAt(0) == '#') a.unshift(a.pop());
-					var lsize:Float = parseAndScale(a[0]);
+					var lsize: Float = parseAndScale(a[0]);
 					var lcolor = UColor.fromString(a[1]);
 					g.lineStyle(lsize, lcolor.rgb, lcolor.invertAlpha.af);
 				} else {
@@ -162,7 +162,9 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 			case 'vgrad':
 				new Gradient(parseSizePointFloat(attrs), attrs.colors, true, app);
 			case 'spinloader':
-				new SpinLoader(parseAndScaleInt(attrs.trackRadius), parseAndScaleInt(attrs.circleRadius), attrs.color, parseFloat(attrs.spin), app);
+				new SpinLoader(
+					parseAndScaleInt(attrs.trackRadius), parseAndScaleInt(attrs.circleRadius), attrs.color, parseFloat(attrs.spin), app
+				);
 			case 'layout':
 				var align = Align.fromString(attrs.align);
 				if (attrs.src != null) {
@@ -179,12 +181,8 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 					l;
 				} else if (attrs.w != null || attrs.h != null) {
 					var r = new RubberLayout(
-						parseAndScale(attrs.w),
-						parseAndScale(attrs.h),
-						attrs.vert.isTrue(),
-						scaleBorderInt(attrs.border),
-						attrs.padding == null ? true : attrs.padding.isTrue(),
-						align
+						parseAndScale(attrs.w), parseAndScale(attrs.h), attrs.vert.isTrue(), scaleBorderInt(attrs.border),
+						attrs.padding == null ? true : attrs.padding.isTrue(), align
 					);
 					for (e in content) r.add(e);
 					r;
@@ -202,7 +200,9 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 			case 'tile':
 				new TilingSprite(PixiAssets.texture(attrs.src, attrs.name), parseAndScale(attrs.w), parseAndScale(attrs.h));
 			case 'mask':
-				var o = new Mask(parseAndScaleWithoutNull(attrs.w), parseAndScaleWithoutNull(attrs.h), parseAndScaleInt(attrs.radius), content.shift());
+				var o = new Mask(
+					parseAndScaleWithoutNull(attrs.w), parseAndScaleWithoutNull(attrs.h), parseAndScaleInt(attrs.radius), content.shift()
+				);
 				for (e in content) o.addChild(e);
 				o;
 			case 'slice':
@@ -214,7 +214,11 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 				var data = if (attrs.name != null) {
 					var a = attrs.name.split('|');
 					var p = a[1].split('...');
-					[for (n in new IntIterator(Std.parseInt(p[0]), Std.parseInt(p[1]))) a[0] + Tools.FloatTools._toFixed(n, 0, p[0].length) + a[2]];
+					[
+						for (n in new IntIterator(
+							Std.parseInt(p[0]), Std.parseInt(p[1])
+						)) a[0] + Tools.FloatTools._toFixed(n, 0, p[0].length) + a[2]
+					];
 				} else {
 					attrs.frames.split(',').map(StringTools.trim);
 				}
@@ -227,12 +231,18 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 				var data = if (attrs.name != null) {
 					var a = attrs.name.split('|');
 					var p = a[1].split('...');
-					[for (n in new IntIterator(Std.parseInt(p[0]), Std.parseInt(p[1]))) a[0] + Tools.FloatTools._toFixed(n, 0, p[0].length) + a[2]];
+					[
+						for (n in new IntIterator(
+							Std.parseInt(p[0]), Std.parseInt(p[1])
+						)) a[0] + Tools.FloatTools._toFixed(n, 0, p[0].length) + a[2]
+					];
 				} else {
 					attrs.frames.split(',').map(StringTools.trim);
 				}
 
-				var clip = FastMovieClip.fromStorage(data, Std.parseFloat(attrs.frameTime), attrs.fixedTime.isTrue(), attrs.smoothAnim, attrs.src.charCount(','));
+				var clip = FastMovieClip.fromStorage(
+					data, Std.parseFloat(attrs.frameTime), attrs.fixedTime.isTrue(), attrs.smoothAnim, attrs.src.charCount(',')
+				);
 				clip.loop = !attrs.loop.isFalse();
 				if (attrs.play.isTrue()) clip.play();
 
@@ -243,7 +253,7 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 					size: parseAndScaleInt(attrs.size)
 				};
 				var text = textTransform(putData(textContent), attrs.transform);
-				var style = ETextStyle.BITMAP_TEXT_STYLE({font: font, tint: UColor.fromString(attrs.color).rgb});
+				var style = ETextStyle.BITMAP_TEXT_STYLE({ font: font, tint: UColor.fromString(attrs.color).rgb });
 				var s = PixiAssets.image(attrs.src, attrs.name);
 				s.visible = !attrs.hidebg.isTrue();
 				new TextBox(s, text, style, scaleBorderInt(attrs.border), attrs.nocache.isTrue(), attrs.shadow.isTrue());
@@ -254,35 +264,26 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 					size: parseAndScaleInt(attrs.size)
 				};
 				var text = textTransform(putData(textContent), attrs.transform);
-				var style = {font: font, tint: UColor.fromString(attrs.color).rgb, align: cast attrs.align};
+				var style = { font: font, tint: UColor.fromString(attrs.color).rgb, align: cast attrs.align };
 				new BText(text, style, attrs.ansi, attrs.shadow.isTrue(), app);
 			case 'lbutton':
 				var b = new LabelButton(
-					splitAttr(attrs.skin),
-					attrs.vert.isTrue(),
-					scaleBorderInt(attrs.border),
-					!attrs.padding.isFalse(),
-					attrs.src, attrs.dac == null ? null : Std.parseFloat(attrs.dac)
+					splitAttr(attrs.skin), attrs.vert.isTrue(), scaleBorderInt(attrs.border), !attrs.padding.isFalse(), attrs.src,
+					attrs.dac == null ? null : Std.parseFloat(attrs.dac)
 				);
 				for (c in content) b.add(c);
-				if (attrs.w != null)
-					b.button.setWidth(parseAndScaleInt(attrs.w));
-				if (attrs.h != null)
-					b.button.setHeight(parseAndScaleInt(attrs.h));
+				if (attrs.w != null) b.button.setWidth(parseAndScaleInt(attrs.w));
+				if (attrs.h != null) b.button.setHeight(parseAndScaleInt(attrs.h));
 				b;
 			case 'button':
 				var b = new Button(splitAttr(attrs.skin), attrs.src);
-				if (attrs.w != null)
-					b.setWidth(parseAndScaleInt(attrs.w));
-				if (attrs.h != null)
-					b.setHeight(parseAndScaleInt(attrs.h));
+				if (attrs.w != null) b.setWidth(parseAndScaleInt(attrs.w));
+				if (attrs.h != null) b.setHeight(parseAndScaleInt(attrs.h));
 				b;
 			case 'rectbutton':
 				var b = new RectButton(
-					new Point(parseAndScaleInt(attrs.w), parseAndScaleInt(attrs.h)),
-					attrs.color.split(' ').map(UColor.fromString),
-					attrs.vert.isTrue(),
-					scaleBorderInt(attrs.border)
+					new Point(parseAndScaleInt(attrs.w), parseAndScaleInt(attrs.h)), attrs.color.split(' ').map(UColor.fromString),
+					attrs.vert.isTrue(), scaleBorderInt(attrs.border)
 				);
 				for (c in content) b.add(c);
 				b;
@@ -293,10 +294,7 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 			case 'slider':
 				var b = new StepSlider(
 					new LabelButton(splitAttr(attrs.skin), attrs.vert.isTrue(), scaleBorderInt(attrs.border), attrs.src),
-					parseAndScale(attrs.w),
-					parseAndScale(attrs.h),
-					attrs.invert.isTrue(),
-					!attrs.draggable.isFalse()
+					parseAndScale(attrs.w), parseAndScale(attrs.h), attrs.invert.isTrue(), !attrs.draggable.isFalse()
 				);
 				if (attrs.step != null) b.sliderCore.percentStep = Std.parseFloat(attrs.step);
 				for (c in content) b.add(c);
@@ -305,65 +303,37 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 				var font = parseAndScaleInt(attrs.size) + PX + attrs.font;
 				var text = textTransform(putData(textContent), attrs.transform);
 				new TextButton(
-					attrs.color.split(' ').map(UColor.fromString),
-					text, font, attrs.ansi,
-					parseAndScale(attrs.line),
+					attrs.color.split(' ').map(UColor.fromString), text, font, attrs.ansi, parseAndScale(attrs.line),
 					parseAndScale(attrs.linepos)
 				);
 			case 'bar':
 				var b = scaleBorderInt(attrs.border);
 				new Bar(
-					new Point(parseAndScaleInt(attrs.w), parseAndScaleInt(attrs.h)),
-					attrs.begin,
-					attrs.fill,
-					new Point(b.left, b.top),
-					attrs.invert.isTrue(),
-					attrs.src != null,
-					parseAndScaleInt(attrs.creep),
-					attrs.smooth.isTrue()
+					new Point(parseAndScaleInt(attrs.w), parseAndScaleInt(attrs.h)), attrs.begin, attrs.fill, new Point(b.left, b.top),
+					attrs.invert.isTrue(), attrs.src != null, parseAndScaleInt(attrs.creep), attrs.smooth.isTrue()
 				);
 			case 'vscroll':
 				var b = new ScrollBox(
-					parseAndScale(attrs.w),
-					parseAndScale(attrs.h),
-					true,
-					false,
-					attrs.color != null ? UColor.fromString(attrs.color) : 0,
-					attrs.bar != null ? parseAndScale(attrs.bar) : 8,
-					attrs.wheel != null ? parseAndScale(attrs.wheel) : 1
+					parseAndScale(attrs.w), parseAndScale(attrs.h), true, false, attrs.color != null ? UColor.fromString(attrs.color) : 0,
+					attrs.bar != null ? parseAndScale(attrs.bar) : 8, attrs.wheel != null ? parseAndScale(attrs.wheel) : 1
 				);
 				for (c in content) b.add(c);
 				b;
 			case 'progressbar':
 				var font = attrs.font == null ? null : parseAndScaleInt(attrs.size) + PX + attrs.font;
 				new ProgressBar(
-					attrs.bg,
-					attrs.begin,
-					attrs.fill,
-					attrs.anim,
-					attrs.animspeed == null ? null : (attrs.animspeed:Time),
+					attrs.bg, attrs.begin, attrs.fill, attrs.anim, attrs.animspeed == null ? null : (attrs.animspeed: Time),
 					scaleBorderInt(attrs.border),
-					font == null ? null : ETextStyle.BITMAP_TEXT_STYLE({font: font, tint: UColor.fromString(attrs.color).rgb}),
-					attrs.shadow.isTrue(),
-					attrs.invert.isTrue(),
-					font == null || attrs.src.indexOf(',') != -1,
-					parseAndScaleInt(attrs.creep),
-					attrs.smooth.isTrue()
+					font == null ? null : ETextStyle.BITMAP_TEXT_STYLE({ font: font, tint: UColor.fromString(attrs.color).rgb }),
+					attrs.shadow.isTrue(), attrs.invert.isTrue(), font == null || attrs.src.indexOf(',') != -1,
+					parseAndScaleInt(attrs.creep), attrs.smooth.isTrue()
 				);
 			case 'timebar':
 				var font = parseAndScaleInt(attrs.size) + PX + attrs.font;
 				new TimeBar(
-					attrs.bg,
-					attrs.begin,
-					attrs.fill,
-					attrs.anim,
-					attrs.animspeed == null ? null : (attrs.animspeed:Time),
-					scaleBorderInt(attrs.border),
-					ETextStyle.BITMAP_TEXT_STYLE({font: font, tint: UColor.fromString(attrs.color).rgb}),
-					attrs.shadow.isTrue(),
-					attrs.invert.isTrue(),
-					attrs.src.indexOf(',') != -1,
-					parseAndScaleInt(attrs.creep)
+					attrs.bg, attrs.begin, attrs.fill, attrs.anim, attrs.animspeed == null ? null : (attrs.animspeed: Time),
+					scaleBorderInt(attrs.border), ETextStyle.BITMAP_TEXT_STYLE({ font: font, tint: UColor.fromString(attrs.color).rgb }),
+					attrs.shadow.isTrue(), attrs.invert.isTrue(), attrs.src.indexOf(',') != -1, parseAndScaleInt(attrs.creep)
 				);
 			case 'video':
 				var video = new HtmlVideoUI({
@@ -373,12 +343,11 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 					height: parseAndScale(attrs.h)
 				}, attrs.css, app, attrs.ceil.isTrue(), attrs.fixed.isTrue());
 				var src = attrs.src;
-				if (src != null)
-					video.video.loadVideo(src);
+				if (src != null) video.video.loadVideo(src);
 				video;
 
 			case 'fsvideo':
-				var fspos:Point<Float> = null;
+				var fspos: Point<Float> = null;
 				if (attrs.fspos != null) {
 					var a = attrs.fspos.split(' ').map(Std.parseFloat);
 					if (a.length == 1) {
@@ -394,19 +363,11 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 						width: parseAndScale(attrs.w),
 						height: parseAndScale(attrs.h)
 					},
-					attrs.fsborder != null ? (attrs.fsborder:Border<Float>) : null,
-					fspos,
-					attrs.css,
-					attrs.fscss,
-					attrs.transition,
-					app,
-					attrs.clicktimeout,
-					attrs.ceil.isTrue(),
-					attrs.fixed.isTrue()
+					attrs.fsborder != null ? (attrs.fsborder: Border<Float>) : null, fspos, attrs.css, attrs.fscss, attrs.transition, app,
+					attrs.clicktimeout, attrs.ceil.isTrue(), attrs.fixed.isTrue()
 				);
 				var src = attrs.src;
-				if (src != null)
-					video.video.loadVideo(src);
+				if (src != null) video.video.loadVideo(src);
 				video;
 
 			case 'html':
@@ -421,8 +382,7 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 					if (attrs.src != null) {
 						div.innerHTML = pony.pixi.PixiAssets.text(attrs.src);
 					}
-					if (attrs.color != null)
-						div.style.backgroundColor = attrs.color;
+					if (attrs.color != null) div.style.backgroundColor = attrs.color;
 					app.element.appendChild(div);
 					c.targetStyle = div.style;
 					c.element = div;
@@ -438,8 +398,7 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 				}, app, !attrs.ceil.isFalse(), attrs.fixed.isTrue());
 				if (!attrs.div.isFalse()) {
 					var div = js.Browser.document.createDivElement();
-					if (attrs.color != null)
-						div.style.backgroundColor = attrs.color;
+					if (attrs.color != null) div.style.backgroundColor = attrs.color;
 					app.element.appendChild(div);
 					c.targetStyle = div.style;
 					c.element = div;
@@ -508,33 +467,33 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 			for (f in splitAttr(attrs.filters)) if (FILTERS.exists(f)) {
 				a.push(FILTERS[f]);
 				if (Std.is(FILTERS[f], GlowFilter)) {
-					var obj:Sprite = cast obj;
-					var g:GlowFilter = cast FILTERS[f];
+					var obj: Sprite = cast obj;
+					var g: GlowFilter = cast FILTERS[f];
 					var s = g.outerStrength + GLOW_FILTER_OFFSET;
-						var f:Void -> Void = null;
-						if (Std.is(obj, IWH)) {
-							f = function() {
-								if (obj.parent == null) {
-									DeltaTime.fixedUpdate >> f;
-									app.onResize >> f;
-								} else {
-									obj.setFilterArea(s);
-									var size = cast(obj, IWH).size;
-									obj.filterArea.width = size.x + s * 2;
-									obj.filterArea.height = size.y + s * 2;
-								}
+					var f: Void -> Void = null;
+					if (Std.is(obj, IWH)) {
+						f = function() {
+							if (obj.parent == null) {
+								DeltaTime.fixedUpdate >> f;
+								app.onResize >> f;
+							} else {
+								obj.setFilterArea(s);
+								var size = cast(obj, IWH).size;
+								obj.filterArea.width = size.x + s * 2;
+								obj.filterArea.height = size.y + s * 2;
 							}
-						} else {
-							f = function() {
-								if (obj.parent == null) {
-									DeltaTime.fixedUpdate >> f;
-									app.onResize >> f;
-								} else {
-									obj.setFilterArea(s);
-								}
-							}
-
 						}
+					} else {
+						f = function() {
+							if (obj.parent == null) {
+								DeltaTime.fixedUpdate >> f;
+								app.onResize >> f;
+							} else {
+								obj.setFilterArea(s);
+							}
+						}
+
+					}
 
 					if (attrs.dyn.isTrue()) {
 						DeltaTime.fixedUpdate << f;
@@ -567,7 +526,7 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 		return obj;
 	}
 
-	private static function textTransform(text:String, transform:String):String {
+	private static function textTransform(text: String, transform: String): String {
 		return switch transform {
 			case 'uppercase': text.toUpperCase();
 			case 'lowercase': text.toLowerCase();
@@ -577,76 +536,74 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function parseSizePointFloat(a:Dynamic<String>):Point<Float> {
+	private inline function parseSizePointFloat(a: Dynamic<String>): Point<Float> {
 		return new Point<Float>(parseAndScale(a.w), parseAndScale(a.h));
 	}
 
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function parseFloat(s:String):Float {
+	private inline function parseFloat(s: String): Float {
 		return s == null ? 0 : Std.parseFloat(s);
 	}
 
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function parseAndScaleWithoutNull(s:String):Float {
+	private inline function parseAndScaleWithoutNull(s: String): Float {
 		return Std.parseFloat(s) * SCALE;
 	}
 
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function parseAndScale(s:String):Float {
+	private inline function parseAndScale(s: String): Float {
 		return s == null ? 0 : parseAndScaleWithoutNull(s);
 	}
 
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function parseAndScaleInt(s:String):Int {
+	private inline function parseAndScaleInt(s: String): Int {
 		return s == null ? 0 : Std.int(Std.parseInt(s) * SCALE);
 	}
 
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function scaleBorderInt(s:String):Border<Int> return cast (Border.fromString(s) * SCALE);
+	private inline function scaleBorderInt(s: String): Border<Int> return cast(Border.fromString(s) * SCALE);
 
-	private function putData(c:String):String return c;
-	private function customUIElement(name:String, attrs:Dynamic<String>, content:Array<Dynamic>):Dynamic throw 'Unknown component $name';
+	private function putData(c: String): String return c;
 
-	private static function splitAttr(s:String):Array<String> {
-		return s.split(',').map(StringTools.trim).map(function(v):String return v == '' ? null : v);
+	private function customUIElement(name: String, attrs: Dynamic<String>, content: Array<Dynamic>): Dynamic
+		throw 'Unknown component $name';
+
+	private static function splitAttr(s: String): Array<String> {
+		return s.split(',').map(StringTools.trim).map(function(v): String return v == '' ? null : v);
 	}
 
-	@:abstract private function _createUI():DisplayObject;
+	@:abstract private function _createUI(): DisplayObject;
 
-	private function createUI(?app:App, scale:Float = 1):Void {
-		if (this.app == null)
-			this.app = app == null ? App.main : app;
+	private function createUI(?app: App, scale: Float = 1): Void {
+		if (this.app == null) this.app = app == null ? App.main : app;
 		SCALE = scale;
 		addChild(_createUI());
 	}
 
-	private function createFilters(data:Dynamic<Dynamic<String>>):Void {
+	private function createFilters(data: Dynamic<Dynamic<String>>): Void {
 
 		for (name in Reflect.fields(data)) {
-			var d:Dynamic<String> = Reflect.field(data, name);
+			var d: Dynamic<String> = Reflect.field(data, name);
 			if (d.nomobile.isTrue() && JsTools.isMobile) continue;
 
-			var f:Filter = switch Reflect.field(d, 'extends') {
-				//case 'shadow':
-					//new DropShadowFilter();
+			var f: Filter = switch Reflect.field(d, 'extends') {
+				// case 'shadow':
+				// new DropShadowFilter();
 				case 'glow':
 					new GlowFilter(
-							Std.parseInt(d.distance),
-							Std.parseFloat(d.outerStrength),
-							Std.parseFloat(d.innerStrength),
-							(d.color:UColor),
-							Std.parseFloat(d.quality)
-						);
+						Std.parseInt(d.distance), Std.parseFloat(d.outerStrength), Std.parseFloat(d.innerStrength), (d.color: UColor),
+						Std.parseFloat(d.quality)
+					);
 				case _:
 					throw 'Unknown filter';
 			}
 
-			//for (n in Reflect.fields(d)) if (n != 'extends')
+			// for (n in Reflect.fields(d)) if (n != 'extends')
 			//	Reflect.setProperty(f, n, Std.parseFloat(Reflect.field(d, n)));
 			FILTERS[name] = f;
 		}

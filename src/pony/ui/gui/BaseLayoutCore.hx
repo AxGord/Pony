@@ -60,7 +60,8 @@ using pony.Tools;
 		#end
 			tasks.add();
 			cast(o, IWH).wait(tasks.end);
-		} else load(o);
+		}
+		else load(o);
 		needUpdate();
 	}
 
@@ -80,11 +81,17 @@ using pony.Tools;
 	}
 
 	public dynamic function load(o: T): Void {}
+
 	public dynamic function destroyChild(o: T): Void {}
+
 	public dynamic function getSize(o: T): Point<Float> return throw 'Unknown type';
+
 	public dynamic function getSizeMod(o: T, p: Point<Float>): Point<Float> return p;
+
 	public dynamic function setXpos(o: T, v: Float): Void {}
+
 	public dynamic function setYpos(o: T, v: Float): Void {}
+
 	private function get_size(): Point<Float> return new Point(_w, _h);
 
 	private function tasksReady(): Void {
@@ -101,24 +108,28 @@ using pony.Tools;
 
 	public function wait(cb: Void -> Void): Void {
 		if (objects == null) return;
-		if (ready) cb();
+		if (ready)
+			cb();
 		else if (tasks.ready) {
 			tasksReady();
 			cb();
-		} else onReady < cb;
+		} else
+			onReady < cb;
 	}
 
 	public function update(): Void {}
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function getObjSize(o: T): Point<Float> {
-		return getSizeMod(o,
-			#if (haxe_ver >= 4.10)
-			Std.isOfType(o, IWH)
+		return getSizeMod(
+			o, #if (haxe_ver >= 4.10)
+				Std.isOfType(o, IWH)
 			#else
-			Std.is(o, IWH)
+				Std.is(o, IWH)
 			#end
-		? cast(o, IWH).size : getSize(o));
+				? cast(o, IWH).size
+				: getSize(o)
+		);
 	}
 
 	public function destroy(): Void {
@@ -128,9 +139,8 @@ using pony.Tools;
 			#else
 			if (Std.is(o, IWH))
 			#end
-				cast(o, IWH).destroyIWH();
-			else
-				destroyChild(o);
+			cast(o, IWH).destroyIWH();
+			else destroyChild(o);
 		}
 		@:nullSafety(Off) objects = null;
 

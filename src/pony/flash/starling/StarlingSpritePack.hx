@@ -25,8 +25,7 @@ class StarlingSpritePack extends Sprite {
 	}
 
 	public function set_currentFrame(frame: Int): Int {
-		if (frame < 0 || frame >= data.length)
-			throw 'Uncorrect frame';
+		if (frame < 0 || frame >= data.length) throw 'Uncorrect frame';
 		// trace(frame);
 		removeChild(data[currentFrame]);
 		addChild(data[frame]);
@@ -34,8 +33,9 @@ class StarlingSpritePack extends Sprite {
 		return frame;
 	}
 
-	public static function builder(_atlasCreator: AtlasCreator, source: DisplayObject, coordinateSpace: DisplayObject,
-			disposeable: Bool = false): starling.display.DisplayObject {
+	public static function builder(
+		_atlasCreator: AtlasCreator, source: DisplayObject, coordinateSpace: DisplayObject, disposeable: Bool = false
+	): starling.display.DisplayObject {
 		var m: SpritePack = cast source;
 		var a: Array<Image> = [];
 

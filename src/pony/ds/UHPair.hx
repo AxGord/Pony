@@ -31,11 +31,15 @@ import pony.geom.Point;
 	public inline function new(a: UInt, b: UInt) this = a * ASTEP + b;
 
 	public inline function get_a(): UInt return Std.int(this / ASTEP);
+
 	public inline function set_a(v: UInt): UInt return this = v * ASTEP + b;
+
 	public inline function get_b(): UInt return this % ASTEP;
+
 	public inline function set_b(v: UInt): UInt return this = a * ASTEP + v;
 
 	@:to public inline function toString(): String return @:nullSafety(Off) '($a, $b)';
+
 	@:to public inline function toPoint(): Point<UInt> return new Point<UInt>(a, b);
 
 }

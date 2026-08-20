@@ -6,14 +6,14 @@ package create.targets;
  */
 class CC {
 
-	public static function set(project:Project, ?second:Bool):Void {
+	public static function set(project: Project, ?second: Bool): Void {
 		project.server.active = true;
 		project.server.http = false;
 		project.server.httpPort = 7456;
 		project.server.haxe = true;
 		project.haxelib.active = true;
-		project.haxelib.addLib({name: 'pony', version: Utils.ponyHaxelibVersion});
-		project.haxelib.addLib({name: 'hcc', version: '2.0.3'});
+		project.haxelib.addLib({ name: 'pony', version: Utils.ponyHaxelibVersion });
+		project.haxelib.addLib({ name: 'hcc', version: '2.0.3' });
 
 		var build = !second ? project.build : project.secondbuild;
 		var uglify = !second ? project.uglify : project.seconduglify;

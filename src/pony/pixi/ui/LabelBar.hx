@@ -11,36 +11,30 @@ import pony.pixi.ui.TextSizedBox;
  */
 class LabelBar extends AnimBar {
 
-	public var text(get, set):String;
+	public var text(get, set): String;
 
-	private var label:TextSizedBox;
-	private var style:ETextStyle;
-	private var shadow:Bool;
-	private var labelInitVisible:Bool = true;
-	private var border:Border<Int>;
+	private var label: TextSizedBox;
+	private var style: ETextStyle;
+	private var shadow: Bool;
+	private var labelInitVisible: Bool = true;
+	private var border: Border<Int>;
 
 	public function new(
-		bg:String,
-		fillBegin:String,
-		fill:String,
-		?animation:String,
-		animationSpeed:Int = 2000,
-		?border:Border<Int>,
-		?style:ETextStyle,
-		shadow:Bool = false,
-		invert:Bool = false,
-		useSpriteSheet:Bool = false,
-		creep:Float = 0,
-		smooth:Bool = false
+		bg: String, fillBegin: String, fill: String, ?animation: String, animationSpeed: Int = 2000, ?border: Border<Int>,
+		?style: ETextStyle, shadow: Bool = false, invert: Bool = false, useSpriteSheet: Bool = false, creep: Float = 0,
+		smooth: Bool = false
 	) {
 		this.style = style;
 		this.shadow = shadow;
 		this.border = border;
-		super(bg, fillBegin, fill, animation, animationSpeed, border == null ? null : new Point(border.left, border.top), invert, useSpriteSheet, creep, smooth);
+		super(
+			bg, fillBegin, fill, animation, animationSpeed, border == null ? null : new Point(border.left, border.top), invert,
+			useSpriteSheet, creep, smooth
+		);
 		if (style != null) onReady < labelInit;
 	}
 
-	private function labelInit(p:Point<Int>):Void {
+	private function labelInit(p: Point<Int>): Void {
 		label = new TextSizedBox(p.x, p.y, '', style, border, true, shadow);
 		label.visible = labelInitVisible;
 		addChild(label);
@@ -49,13 +43,13 @@ class LabelBar extends AnimBar {
 
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function get_text():String return label == null ? null : label.text;
+	private inline function get_text(): String return label == null ? null : label.text;
 
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function set_text(s:String):String return label == null ? null : label.text = s;
+	private inline function set_text(s: String): String return label == null ? null : label.text = s;
 
-	override public function startAnimation():Void {
+	override public function startAnimation(): Void {
 		if (label == null)
 			labelInitVisible = false;
 		else
@@ -63,7 +57,7 @@ class LabelBar extends AnimBar {
 		super.startAnimation();
 	}
 
-	override public function stopAnimation():Void {
+	override public function stopAnimation(): Void {
 		if (label == null)
 			labelInitVisible = true;
 		else
@@ -71,7 +65,7 @@ class LabelBar extends AnimBar {
 		super.stopAnimation();
 	}
 
-	override public function destroy(?options:haxe.extern.EitherType<Bool, DestroyOptions>):Void {
+	override public function destroy(?options: haxe.extern.EitherType<Bool, DestroyOptions>): Void {
 		border = null;
 		style = null;
 		if (label != null) {
@@ -81,6 +75,6 @@ class LabelBar extends AnimBar {
 		super.destroy(options);
 	}
 
-	override public function destroyIWH():Void destroy();
+	override public function destroyIWH(): Void destroy();
 
 }

@@ -17,7 +17,7 @@ private enum DBVF {
  * @author AxGord
  */
 @SuppressWarnings('checkstyle:MagicNumber')
-abstract DBV({type: DBVT, ? val : Dynamic}) {
+abstract DBV({ type: DBVT, ?val: Dynamic }) {
 
 	public static var NULL(get, never): DBV;
 	public static var NOW(get, never): DBV;
@@ -37,18 +37,18 @@ abstract DBV({type: DBVT, ? val : Dynamic}) {
 	}
 
 	@:from #if (haxe_ver >= 4.2) extern #else @:extern #end
-	public static inline function fromInt(v: Int): DBV return new DBV({type: TInt, val: v});
+	public static inline function fromInt(v: Int): DBV return new DBV({ type: TInt, val: v });
 
 	@:from #if (haxe_ver >= 4.2) extern #else @:extern #end
-	public static inline function fromString(v: String): DBV return new DBV({type: TString, val: v});
+	public static inline function fromString(v: String): DBV return new DBV({ type: TString, val: v });
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private static inline function get_NOW(): DBV return new DBV({type: TFun(FNow)});
+	private static inline function get_NOW(): DBV return new DBV({ type: TFun(FNow) });
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private static inline function get_TIMESTAMP(): DBV return new DBV({type: TFun(FUnixTimeStamp)});
+	private static inline function get_TIMESTAMP(): DBV return new DBV({ type: TFun(FUnixTimeStamp) });
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private static inline function get_NULL(): DBV return new DBV({type: TNull});
+	private static inline function get_NULL(): DBV return new DBV({ type: TNull });
 
 }

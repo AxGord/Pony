@@ -29,11 +29,10 @@ class HasAbstractBuilder {
 		for (f in Context.getBuildFields()) {
 			if (f.meta.checkMeta(META)) {
 				#if (haxe_ver >= 4.2)
-					if (!f.access.contains(AAbstract)) f.access.push(AAbstract);
-					fields.push(f);
+				if (!f.access.contains(AAbstract)) f.access.push(AAbstract);
+				fields.push(f);
 				#else
-				if (f.access.indexOf(AOverride) != -1)
-					Context.error("You can't use abstract for override field " + f.name, cCur.pos);
+				if (f.access.indexOf(AOverride) != -1) Context.error("You can't use abstract for override field " + f.name, cCur.pos);
 				switch f.kind {
 					case FFun(fun):
 						fields.push({
@@ -58,7 +57,7 @@ class HasAbstractBuilder {
 			}
 		}
 		#if (haxe_ver < 4.2)
-		var fieldMap = [ for (f in fields) f.name => true ];
+		var fieldMap = [for (f in fields) f.name => true];
 		function loop(c: ClassType) {
 			for (f in c.fields.get()) {
 				if (f.meta.has(KEYWORD) || f.meta.has(PUBKEYWORD)) {

@@ -25,8 +25,7 @@ class GlowPulse {
 		this.speed = speed;
 	}
 
-	public function start(): Void
-		DeltaTime.fixedUpdate << update;
+	public function start(): Void DeltaTime.fixedUpdate << update;
 
 	public function stop(): Void {
 		targer.filters = [];

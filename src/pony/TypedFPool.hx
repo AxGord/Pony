@@ -6,7 +6,7 @@ package pony;
  */
 @:nullSafety(Strict) class TypedFPool<T> implements IPool<T> {
 
-	private var list:Array<T> = [];
+	private var list: Array<T> = [];
 	private var fn: Void -> T;
 
 	public function new(fn: Void -> T) this.fn = fn;

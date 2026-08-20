@@ -4,15 +4,12 @@ import h2d.Bitmap;
 import h2d.Tile;
 import h2d.Interactive;
 import h2d.Object;
-
 #if (heaps >= '2.0.0')
 import h3d.Vector4 as Vector;
 #else
 import h3d.Vector;
 #end
-
 import hxd.Cursor;
-
 import pony.geom.Border;
 import pony.geom.IWH;
 import pony.geom.Point;
@@ -75,7 +72,7 @@ class Node extends Object implements HasSignal implements HasLink implements INo
 
 	public function wait(cb: Void -> Void): Void cb();
 
-	public function destroy():Void {
+	public function destroy(): Void {
 		removeChildren();
 		changeWh.clear();
 		@:nullSafety(Off) wh = null;
@@ -91,8 +88,7 @@ class Node extends Object implements HasSignal implements HasLink implements INo
 			#else
 			if (Std.is(child, Bitmap)) {
 			#end
-				if (px != null || py != null)
-					cast(child, Bitmap).tile.setCenterRatio(px != null ? px : 0, py != null ? py : 0);
+				if (px != null || py != null) cast(child, Bitmap).tile.setCenterRatio(px != null ? px : 0, py != null ? py : 0);
 				child.rotation = degrees * Math.PI / 180;
 			}
 		}
@@ -112,7 +108,9 @@ class Node extends Object implements HasSignal implements HasLink implements INo
 	}
 
 	public function destroyIWH(): Void destroy();
+
 	public inline function show(): Void visible = true;
+
 	public inline function hide(): Void visible = false;
 
 }

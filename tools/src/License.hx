@@ -13,17 +13,17 @@ class License {
 	private static var LICENSE_OUTPUT_FILE: String = 'LICENSE';
 
 	public static function run(a: String, args: Array<String>): Void {
-		var file:File = LICENSE_OUTPUT_FILE;
+		var file: File = LICENSE_OUTPUT_FILE;
 		switch a {
 			case 'create':
 				create(args);
 			case 'remove':
-				for (file in ('.':Dir).contentRecursiveFiles('.hx')) {
-					var lines:Array<String> = file.content.split('\n');
-					var allowRemove:Bool = false;
-					var n:Int = 0;
+				for (file in ('.': Dir).contentRecursiveFiles('.hx')) {
+					var lines: Array<String> = file.content.split('\n');
+					var allowRemove: Bool = false;
+					var n: Int = 0;
 					while (n < lines.length) {
-						var c:String = StringTools.trim(lines[n]);
+						var c: String = StringTools.trim(lines[n]);
 						if (c == '/**') {
 							allowRemove = true;
 							break;
@@ -63,11 +63,11 @@ class License {
 				for (line in 0...data.length) data[line] = '* ' + data[line];
 				data.unshift('/**');
 				data.push('**/');
-				for (file in ('.':Dir).contentRecursiveFiles('.hx')) {
+				for (file in ('.': Dir).contentRecursiveFiles('.hx')) {
 					var fcontent = file.content;
-					var lines:Array<String> = fcontent.split('\n');
+					var lines: Array<String> = fcontent.split('\n');
 					if (StringTools.trim(lines[0]) == '/**') {
-						var n:Int = 0;
+						var n: Int = 0;
 						var error = true;
 						for (line in lines) {
 							n++;
@@ -157,7 +157,11 @@ class License {
 		if (email == null) email = '';
 		if (email != '') email = ' <$email>';
 		Template.gen(LICENSE_TEMPLATE_PATH, [tpl => LICENSE_OUTPUT_FILE], [
-			'COMPANY' => company, 'DATE' => '$date', 'author' => author, 'AUTHOR' => author.toUpperCase(), 'email' => email
+			'COMPANY' => company,
+			'DATE' => '$date',
+			'author' => author,
+			'AUTHOR' => author.toUpperCase(),
+			'email' => email
 		]);
 	}
 

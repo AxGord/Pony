@@ -5,11 +5,9 @@ import h2d.Object;
 import h2d.RenderContext;
 import h2d.TextInput;
 import h2d.Tile;
-
 import hxd.Event;
 import hxd.Key;
 import hxd.System;
-
 import pony.color.UColor;
 import pony.geom.IWH;
 import pony.geom.Point;
@@ -20,6 +18,7 @@ import pony.ui.keyboard.Keyboard;
 
 #if (haxe_ver >= 4.2) enum #else @:enum #end
 abstract Transform(Int) {
+
 	var uppercase = 1;
 	var none = 0;
 	var lowercase = -1;
@@ -31,6 +30,7 @@ abstract Transform(Int) {
 			case _: none;
 		}
 	}
+
 }
 
 /**
@@ -61,8 +61,10 @@ abstract Transform(Int) {
 		if (v == enabled) return v;
 		enabled = v;
 		interactive.visible = v;
-		if (!v) blur();
-		else if (lockFocus) focus();
+		if (!v)
+			blur();
+		else if (lockFocus)
+			focus();
 		return v;
 	}
 
@@ -70,8 +72,10 @@ abstract Transform(Int) {
 
 	public function set_lockFocus(v: Bool): Bool {
 		lockFocus = v;
-		if (v) focus();
-		else blur();
+		if (v)
+			focus();
+		else
+			blur();
 		return v;
 	}
 
@@ -146,93 +150,96 @@ abstract Transform(Int) {
 		if (!canEdit) {
 			nextChar = null;
 			super.handleKey(e);
-		} else switch [e.keyCode, isMod()] {
-			case [#if sys 0 #else null #end, _]: nextChar = String.fromCharCode(e.charCode);
-			case [Key.UP, _]:
-				var oldIndex: Int = cursorIndex;
-				var index: Int = text.lastIndexOf('\n', cursorIndex - 1);
-				cursorIndex = index != -1 ? MathTools.cmin(text.lastIndexOf('\n', index - 1) + (cursorIndex - index), index) : 0;
-				updateSelection(oldIndex);
-			case [Key.DOWN, _]:
-				var oldIndex: Int = cursorIndex;
-				var index: Int = text.indexOf('\n', cursorIndex);
-				if (index != -1) {
-					var prevIndex: Int = text.lastIndexOf('\n', cursorIndex - 1);
-					var lastIndex: Int = text.indexOf('\n', index + 1);
-					if (lastIndex == -1) lastIndex = text.length;
-					cursorIndex = MathTools.cmin(index + (cursorIndex - prevIndex), lastIndex);
-				} else {
-					cursorIndex = text.length;
-				}
-				updateSelection(oldIndex);
-			case [Key.Z, true]:
-				if (Key.isDown(Key.SHIFT))
+		} else
+			switch [e.keyCode, isMod()] {
+				case [#if sys 0 #else null #end, _]:
+					nextChar = String.fromCharCode(e.charCode);
+				case [Key.UP, _]:
+					var oldIndex: Int = cursorIndex;
+					var index: Int = text.lastIndexOf('\n', cursorIndex - 1);
+					cursorIndex = index != -1 ? MathTools.cmin(text.lastIndexOf('\n', index - 1) + (cursorIndex - index), index) : 0;
+					updateSelection(oldIndex);
+				case [Key.DOWN, _]:
+					var oldIndex: Int = cursorIndex;
+					var index: Int = text.indexOf('\n', cursorIndex);
+					if (index != -1) {
+						var prevIndex: Int = text.lastIndexOf('\n', cursorIndex - 1);
+						var lastIndex: Int = text.indexOf('\n', index + 1);
+						if (lastIndex == -1) lastIndex = text.length;
+						cursorIndex = MathTools.cmin(index + (cursorIndex - prevIndex), lastIndex);
+					} else {
+						cursorIndex = text.length;
+					}
+					updateSelection(oldIndex);
+				case [Key.Z, true]:
+					if (Key.isDown(Key.SHIFT))
+						doRedo();
+					else
+						doUndo();
+				case [Key.Y, true]:
 					doRedo();
-				else
-					doUndo();
-			case [Key.Y, true]:
-				doRedo();
-			case [Key.A, true]:
-				nextChar = null;
-				if (text != '') {
-					cursorIndex = text.length;
-					selectionRange = {start: 0, length: text.length};
-					selectionSize = 0;
-				}
-			case [Key.C, true]:
-				nextChar = null;
-				if (text != '' && selectionRange != null) writeSelectedToClipboard();
-			case [Key.X, true]:
-				nextChar = null;
-				if (canEdit && text != '' && selectionRange != null) {
-					writeSelectedToClipboard();
-					beforeChange();
-					cutSelection();
-					onChange();
-				}
-			case [Key.V, true]:
-				nextChar = null;
-				if (canEdit) readFromClipboard(writeText);
-			case [_, true]:
-				nextChar = null;
-			case _ if (Key.isDown(Key.CTRL)):
-				nextChar = null;
-			case _:
-				var textBeforeChange: String = text;
-				var changed: Bool = false;
-				if (nextChar != null) {
-					var char: String = nextChar;
-					if (onlyEn) {
-						var ch: String = String.fromCharCode(e.keyCode).toUpperCase();
-						if (@:nullSafety(Off) TextTools.letters['en'].indexOf(ch) != -1)
-							char = char == char.toLowerCase() ? ch.toLowerCase() : ch;
+				case [Key.A, true]:
+					nextChar = null;
+					if (text != '') {
+						cursorIndex = text.length;
+						selectionRange = { start: 0, length: text.length };
+						selectionSize = 0;
 					}
-					switch transform {
-						case uppercase: char = char.toUpperCase();
-						case lowercase: char = char.toLowerCase();
-						case none:
-					}
-					@:nullSafety(Off) var code: UInt = char.charCodeAt(0);
-					if (font.hasChar(code)) {
+				case [Key.C, true]:
+					nextChar = null;
+					if (text != '' && selectionRange != null) writeSelectedToClipboard();
+				case [Key.X, true]:
+					nextChar = null;
+					if (canEdit && text != '' && selectionRange != null) {
+						writeSelectedToClipboard();
 						beforeChange();
-						if (selectionRange != null) cutSelection();
-						text = text.substr(0, cursorIndex) + char + text.substr(cursorIndex);
-						cursorIndex++;
-						changed = true;
+						cutSelection();
+						onChange();
 					}
-				}
-				nextChar = null;
-				super.handleKey(e);
-				checkChangedText(textBeforeChange, changed);
-		}
+				case [Key.V, true]:
+					nextChar = null;
+					if (canEdit) readFromClipboard(writeText);
+				case [_, true]:
+					nextChar = null;
+				case _ if (Key.isDown(Key.CTRL)):
+					nextChar = null;
+				case _:
+					var textBeforeChange: String = text;
+					var changed: Bool = false;
+					if (nextChar != null) {
+						var char: String = nextChar;
+						if (onlyEn) {
+							var ch: String = String.fromCharCode(e.keyCode).toUpperCase();
+							if (@:nullSafety(Off) TextTools.letters['en'].indexOf(ch) != -1)
+								char = char == char.toLowerCase() ? ch.toLowerCase() : ch;
+						}
+						switch transform {
+							case uppercase:
+								char = char.toUpperCase();
+							case lowercase:
+								char = char.toLowerCase();
+							case none:
+						}
+						@:nullSafety(Off) var code: UInt = char.charCodeAt(0);
+						if (font.hasChar(code)) {
+							beforeChange();
+							if (selectionRange != null) cutSelection();
+							text = text.substr(0, cursorIndex) + char + text.substr(cursorIndex);
+							cursorIndex++;
+							changed = true;
+						}
+					}
+					nextChar = null;
+					super.handleKey(e);
+					checkChangedText(textBeforeChange, changed);
+			}
 	}
 
 	private function checkChangedText(textBeforeChange: String, changed: Bool): Void {
 		if (text.length > textBeforeChange.length) {
 			if (
-				(maxChars > 0 && text.length > maxChars) ||
-				(maxLines > 0 && getLinesCount() > maxLines) ||
-				(maxWidth != null && textWidth > maxWidth)
+				(maxChars > 0 && text.length > maxChars) || (maxLines > 0 && getLinesCount() > maxLines)
+				|| (maxWidth != null && textWidth > maxWidth)
 			) {
 				cursorIndex--;
 				text = textBeforeChange;
@@ -247,8 +254,9 @@ abstract Transform(Int) {
 		if (Key.isDown(Key.SHIFT)) {
 			if (cursorIndex == oldIndex) return;
 			if (selectionRange == null) {
-				selectionRange = oldIndex < cursorIndex ?
-					{ start : oldIndex, length : cursorIndex - oldIndex } : { start : cursorIndex, length : oldIndex - cursorIndex };
+				selectionRange = oldIndex < cursorIndex
+					? { start: oldIndex, length: cursorIndex - oldIndex }
+					: { start: cursorIndex, length: oldIndex - cursorIndex };
 			} else if (oldIndex == selectionRange.start) {
 				selectionRange.length += oldIndex - cursorIndex;
 				selectionRange.start = cursorIndex;
@@ -280,7 +288,7 @@ abstract Transform(Int) {
 			needFocus = false;
 			interactive.blur();
 			cursorIndex = -1;
-			selectionRange = {start: 0, length: 0};
+			selectionRange = { start: 0, length: 0 };
 		}
 	}
 
@@ -318,9 +326,9 @@ abstract Transform(Int) {
 				}
 
 				var selStart: Int = Math.floor(Math.max(0, selectionRange.start - lineOffset));
-				var selEnd: Int = Math.floor(Math.min(
-					line.length - selStart, selectionRange.length + selectionRange.start - lineOffset - selStart
-				));
+				var selEnd: Int = Math.floor(
+					Math.min(line.length - selStart, selectionRange.length + selectionRange.start - lineOffset - selStart)
+				);
 
 				selectionPos = calcTextWidth(line.substr(0, selStart));
 				selectionSize = calcTextWidth(line.substr(selStart, selEnd));
@@ -336,7 +344,7 @@ abstract Transform(Int) {
 				lineOffset += line.length;
 			}
 		}
-		var range: {start:Int, length:Int} = selectionRange;
+		var range: { start: Int, length: Int } = selectionRange;
 		@:nullSafety(Off) selectionRange = null;
 		super.draw(ctx);
 		selectionRange = range;
@@ -349,6 +357,7 @@ abstract Transform(Int) {
 	}
 
 	public function wait(cb: Void -> Void): Void cb();
+
 	private function get_size(): Point<Float> return new Point<Float>(textWidth * scaleX, textHeight * scaleY);
 
 	public function destroyIWH(): Void {
@@ -374,6 +383,7 @@ abstract Transform(Int) {
 	}
 
 	private static inline function isMacMod(): Bool return Key.isDown(Key.LEFT_WINDOW_KEY) || Key.isDown(Key.RIGHT_WINDOW_KEY);
+
 	private static inline function isOtherMod(): Bool return Key.isDown(Key.CTRL);
 
 	#if js

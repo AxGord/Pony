@@ -15,8 +15,7 @@ class ReusableBitmapData {
 	private var _cache: Map<Int, Map<Int, BitmapData>> = new Map<Int, Map<Int, BitmapData>>();
 
 	public function new() {
-		if (_instance != null)
-			throw 'Singletone creation error';
+		if (_instance != null) throw 'Singletone creation error';
 
 		var i: Int = 1;
 		while (i <= _sizeLimit) { // Starling texture size limit
@@ -29,15 +28,13 @@ class ReusableBitmapData {
 		width = PowerOfTwo.getNextPowerOfTwo(width);
 		height = PowerOfTwo.getNextPowerOfTwo(height);
 
-		if (width > _sizeLimit)
-			width = _sizeLimit;
-		if (height > _sizeLimit)
-			height = _sizeLimit;
+		if (width > _sizeLimit) width = _sizeLimit;
+		if (height > _sizeLimit) height = _sizeLimit;
 
 		var bmpd: BitmapData = null;
 		var cacheWidth = _instance._cache.get(width);
 		if (cacheWidth.exists(height))
-			// if (false)
+		// if (false)
 		{
 			bmpd = cacheWidth.get(height);
 			bmpd.fillRect(bmpd.rect, _fillColor);

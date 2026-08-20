@@ -37,7 +37,7 @@ class Touch implements Declarator implements HasSignal {
 		DeltaTime.fixedUpdate.once(initNow, -2);
 	}
 
-	public static function initNow():Void {
+	public static function initNow(): Void {
 		#if js
 		eCancle.onTake << Browser.document.addEventListener.bind('touchcancel', handleTouchEvent);
 		eCancle.onLost << Browser.document.removeEventListener.bind('touchcancel', handleTouchEvent);

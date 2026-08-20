@@ -20,11 +20,31 @@ class GridCore {
 	private var slots: Array<Array<Bool>>;
 
 	private static var searchWay: Array<IntPoint> = [
-		{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 0, y: 1 }, { x: -1, y: 0 }, { x: 0, y: -1 },
-		{ x: 1, y: 1 }, { x: -1, y: 1 }, { x: -1, y: -1 }, { x: 1, y: -1 },
-		{ x: 2, y: -1 }, { x: 2, y: 0 }, { x: 2, y: 1 }, { x: 2, y: 2 }, { x: 1, y: 2 }, { x: 0, y: 2 }, { x: -1, y: 2 },
-		{ x: -2, y: 2 }, { x: -2, y: 1 }, { x: -2, y: 0 }, { x: -2, y: -1}, { x: -2, y: -2 },
-		{ x: -1, y: -2 }, { x: 0, y: -2 }, { x: 1, y: -2 }, { x: -2, y: -2 }
+		{ x: 0, y: 0 },
+		{ x: 1, y: 0 },
+		{ x: 0, y: 1 },
+		{ x: -1, y: 0 },
+		{ x: 0, y: -1 },
+		{ x: 1, y: 1 },
+		{ x: -1, y: 1 },
+		{ x: -1, y: -1 },
+		{ x: 1, y: -1 },
+		{ x: 2, y: -1 },
+		{ x: 2, y: 0 },
+		{ x: 2, y: 1 },
+		{ x: 2, y: 2 },
+		{ x: 1, y: 2 },
+		{ x: 0, y: 2 },
+		{ x: -1, y: 2 },
+		{ x: -2, y: 2 },
+		{ x: -2, y: 1 },
+		{ x: -2, y: 0 },
+		{ x: -2, y: -1 },
+		{ x: -2, y: -2 },
+		{ x: -1, y: -2 },
+		{ x: 0, y: -2 },
+		{ x: 1, y: -2 },
+		{ x: -2, y: -2 }
 	];
 
 	public inline function new(width: Float, height: Float, gap: Float = 10) {
@@ -38,20 +58,20 @@ class GridCore {
 		totalHeight = height;
 		cx = Math.ceil(width / slotWidth) - 1;
 		cy = Math.ceil(height / slotHeight) - 1;
-		slots = [ for (_ in 0...cy) [ for (_ in 0...cx) false ] ];
+		slots = [for (_ in 0...cy) [for (_ in 0...cx) false]];
 	}
 
 	public inline function intRect(rect: Rect<Float>): Rect<Int> return {
-			x: Math.floor((rect.x + slotWidth / 2) / slotWidth),
-			y: Math.floor((rect.y + slotHeight / 2) / slotHeight),
-			width: Math.ceil((rect.width - gap) / slotWidth),
-			height: Math.ceil((rect.height - gap) / slotHeight)
-		};
+		x: Math.floor((rect.x + slotWidth / 2) / slotWidth),
+		y: Math.floor((rect.y + slotHeight / 2) / slotHeight),
+		width: Math.ceil((rect.width - gap) / slotWidth),
+		height: Math.ceil((rect.height - gap) / slotHeight)
+	};
 
 	public inline function intPoint(rect: Rect<Float>): Point<Int> return {
-			x: Math.floor((rect.x + slotWidth / 2) / slotWidth),
-			y: Math.floor((rect.y + slotHeight / 2) / slotHeight)
-		};
+		x: Math.floor((rect.x + slotWidth / 2) / slotWidth),
+		y: Math.floor((rect.y + slotHeight / 2) / slotHeight)
+	};
 
 	public inline function floatRect(rect: Rect<Int>): Rect<Float> return {
 		x: rect.x * slotWidth,
@@ -71,7 +91,7 @@ class GridCore {
 		markOff();
 		var r: Rect<Int> = intRect(rect);
 		if (isOut(r)) return;
-		for (i in r.y...r.y + r.height) for (j in r.x...r.x + r.width) makeMark(i, j, true);
+		for (i in r.y ... r.y + r.height) for (j in r.x ... r.x + r.width) makeMark(i, j, true);
 	}
 
 	public function markOff(): Void for (a in 0...cy) for (b in 0...cx) makeMark(a, b, false);
@@ -83,12 +103,13 @@ class GridCore {
 	public inline function isOutFloat(r: Rect<Float>): Bool return isOut(intRect(r));
 
 	public inline function gx(r: Rect<Int>): Float return r.x * slotWidth;
+
 	public inline function gy(r: Rect<Int>): Float return r.y * slotHeight;
 
 	public inline function takePos(rect: Rect<Float>, mark: Bool = true): Rect<Int> return takePosInt(intRect(rect), mark);
 
 	public function freePos(r: Rect<Int>): Void {
-		for (y in r.y...r.y + r.height) for (x in r.x...r.x + r.width) {
+		for (y in r.y ... r.y + r.height) for (x in r.x ... r.x + r.width) {
 			slots[y][x] = false;
 			makeMark(y, x, false);
 		}
@@ -99,13 +120,13 @@ class GridCore {
 			var r: Rect<Int> = start + d;
 			if (isOut(r)) continue;
 			var taked: Bool = false;
-			for (y in r.y...r.y + r.height) for (x in r.x...r.x + r.width) if (slots[y][x]) {
+			for (y in r.y ... r.y + r.height) for (x in r.x ... r.x + r.width) if (slots[y][x]) {
 				taked = true;
 				break;
 			}
 			if (taked) continue;
 
-			for (y in r.y...r.y + r.height) for (x in r.x...r.x + r.width) {
+			for (y in r.y ... r.y + r.height) for (x in r.x ... r.x + r.width) {
 				slots[y][x] = true;
 				if (mark) makeMark(y, x, true);
 			}

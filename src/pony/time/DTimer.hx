@@ -42,6 +42,7 @@ class DTimer implements HasSignal implements ITimer<DTimer> implements Declarato
 	}
 
 	private function takeProgress(): Void update.add(_progress);
+
 	private function lostProgress(): Void update.remove(_progress);
 
 	public function reset(): DTimer {
@@ -54,8 +55,7 @@ class DTimer implements HasSignal implements ITimer<DTimer> implements Declarato
 
 	public inline function start(?dt: DT): DTimer {
 		updateSignal.add(_update);
-		if ((dt: Null<Float>) != null)
-			@:nullSafety(Off) _update(dt);
+		if ((dt: Null<Float>) != null) @:nullSafety(Off) _update(dt);
 		return this;
 	}
 
@@ -147,6 +147,7 @@ class DTimer implements HasSignal implements ITimer<DTimer> implements Declarato
 		t.start(dt);
 		return t;
 	}
+
 	public static inline function fixedRepeat(time: Time, f: Listener1<DT>, ?dt: DT): DTimer {
 		var t: DTimer = DTimer.createFixedTimer(time, -1);
 		t.complete.add(f);
@@ -167,4 +168,5 @@ class DTimer implements HasSignal implements ITimer<DTimer> implements Declarato
 		t.start();
 		return t;
 	}
+
 }

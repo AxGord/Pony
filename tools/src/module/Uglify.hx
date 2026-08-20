@@ -2,9 +2,7 @@ package module;
 
 import pony.Fast;
 import pony.text.TextTools;
-
 import sys.FileSystem;
-
 import types.BASection;
 import types.UglifyConfig;
 
@@ -82,15 +80,18 @@ private class UglifyReader extends BAReader<UglifyConfig> {
 
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
-			case 'libcache': cfg.libcache = TextTools.isTrue(val) ? Uglify.CACHE_FILE : null;
+			case 'libcache':
+				cfg.libcache = TextTools.isTrue(val) ? Uglify.CACHE_FILE : null;
 			case _:
 		}
 	}
 
 	override private function readNode(xml: Fast): Void {
 		switch xml.name {
-			case 'output': cfg.output = normalize(xml.innerData);
-			case 'input': cfg.input.push(normalize(xml.innerData));
+			case 'output':
+				cfg.output = normalize(xml.innerData);
+			case 'input':
+				cfg.input.push(normalize(xml.innerData));
 			case 'sourcemap':
 				var offset: Null<Int> = xml.hasNode.offset ? Std.parseInt(xml.node.offset.innerData) : null;
 				if (offset == null) offset = 0;
@@ -101,10 +102,14 @@ private class UglifyReader extends BAReader<UglifyConfig> {
 					source: normalize(xml.node.source.innerData),
 					offset: offset
 				};
-			case 'm', 'mangle': cfg.mangle = true;
-			case 'c', 'compress': cfg.compress = true;
-			case 'libcache': cfg.libcache = Uglify.CACHE_FILE;
-			case _: super.readNode(xml);
+			case 'm', 'mangle':
+				cfg.mangle = true;
+			case 'c', 'compress':
+				cfg.compress = true;
+			case 'libcache':
+				cfg.libcache = Uglify.CACHE_FILE;
+			case _:
+				super.readNode(xml);
 		}
 	}
 

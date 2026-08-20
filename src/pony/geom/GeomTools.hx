@@ -10,10 +10,10 @@ import pony.geom.Point.IntPoint;
  */
 class GeomTools {
 
-	public static function inPoly<T: Float>(point: Point<T>, poly: Polygon<T>): Bool {
+	public static function inPoly<T:Float>(point: Point<T>, poly: Polygon<T>): Bool {
 		var xp = [];
 		var yp = [];
-		//Maybe use poly direct?
+		// Maybe use poly direct?
 		for (p in poly) {
 			xp.push(p.x);
 			yp.push(p.y);
@@ -23,9 +23,11 @@ class GeomTools {
 		var npol = xp.length;
 		var j = npol - 1;
 		var c = false;
-		for (i in 0...npol){
-			if ((((yp[i] <= y) && (y < yp[j])) || ((yp[j] <= y) && (y < yp[i]))) &&
-				(x > (xp[j] - xp[i]) * (y - yp[i]) / (yp[j] - yp[i]) + xp[i])) {
+		for (i in 0...npol) {
+			if (
+				(((yp[i] <= y) && (y < yp[j])) || ((yp[j] <= y) && (y < yp[i])))
+				&& (x > (xp[j] - xp[i]) * (y - yp[i]) / (yp[j] - yp[i]) + xp[i])
+			) {
 				c = !c;
 			}
 			j = i;
@@ -33,17 +35,17 @@ class GeomTools {
 		return c;
 	}
 
-	public static function countInPoly<T: Float>(points: Array<Point<T>>, poly: Polygon<T>): Int {
+	public static function countInPoly<T:Float>(points: Array<Point<T>>, poly: Polygon<T>): Int {
 		var i: Int = 0;
 		for (p in points) if (inPoly(p, poly)) i++;
 		return i;
 	}
 
-	public static inline function rectInPoly<T: Float>(rect: Rect<T>, poly: Polygon<T>): Int {
+	public static inline function rectInPoly<T:Float>(rect: Rect<T>, poly: Polygon<T>): Int {
 		return countInPoly(rectToPoints(rect), poly);
 	}
 
-	public static inline function rectToPoints<T: Float>(rect: Rect<T>): Array<Point<T>> {
+	public static inline function rectToPoints<T:Float>(rect: Rect<T>): Array<Point<T>> {
 		return [
 			new Point<T>(rect.x, rect.y),
 			new Point<T>(rect.x + rect.width, rect.y),
@@ -53,37 +55,41 @@ class GeomTools {
 	}
 
 	public static function center(
-		container: Point<Float>,
-		objects: Array<Point<Float>>,
-		vert: Bool = false,
-		?border: Border<Int>,
-		padding: Bool = true,
+		container: Point<Float>, objects: Array<Point<Float>>, vert: Bool = false, ?border: Border<Int>, padding: Bool = true,
 		?align: Align
 	): Array<Point<Float>> {
 		align = align != null ? align.defaultCenter : Align.createDefaultCenter();
-		var cfun = if (align != null)  {
-			if (vert) switch align.horizontal {
-				case HAlign.Left: begin;
-				case HAlign.Center: centerA;
-				case HAlign.Right: end;
-			} else switch align.vertical {
-				case VAlign.Top: begin;
-				case VAlign.Middle: centerA;
-				case VAlign.Bottom: end;
-			}
-		} else centerA;
+		var cfun = if (align != null) {
+			if (vert)
+				switch align.horizontal {
+					case HAlign.Left: begin;
+					case HAlign.Center: centerA;
+					case HAlign.Right: end;
+				}
+			else
+				switch align.vertical {
+					case VAlign.Top: begin;
+					case VAlign.Middle: centerA;
+					case VAlign.Bottom: end;
+				}
+		} else
+			centerA;
 		var _fc = !padding && objects.length > 1 ? centerC : centerB;
-		var fc =  if (align != null)  {
-			if (!vert) switch align.horizontal {
-				case HAlign.Left: begin;
-				case HAlign.Center: _fc;
-				case HAlign.Right: end;
-			} else switch align.vertical {
-				case VAlign.Top: begin;
-				case VAlign.Middle: _fc;
-				case VAlign.Bottom: end;
-			}
-		} else _fc;
+		var fc = if (align != null) {
+			if (!vert)
+				switch align.horizontal {
+					case HAlign.Left: begin;
+					case HAlign.Center: _fc;
+					case HAlign.Right: end;
+				}
+			else
+				switch align.vertical {
+					case VAlign.Top: begin;
+					case VAlign.Middle: _fc;
+					case VAlign.Bottom: end;
+				}
+		} else
+			_fc;
 
 		var fa = vert ? cfun : fc;
 		var fb = vert ? fc : cfun;
@@ -126,7 +132,7 @@ class GeomTools {
 		return r;
 	}
 
-	public static function begin(size: Float, objects: Array<Float>): Array<Float> return [ for (_ in objects) 0 ];
+	public static function begin(size: Float, objects: Array<Float>): Array<Float> return [for (_ in objects) 0];
 
 	public static function end(size: Float, objects: Array<Float>): Array<Float> {
 		if (size == -1) for (obj in objects) if (obj > size) size = obj;
@@ -154,4 +160,5 @@ class GeomTools {
 	}
 
 }
+
 // todo: abstract _Poly<T>(Pair<Array<T>>, Point<Array<T>>>)

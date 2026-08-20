@@ -8,16 +8,18 @@ import pony.time.DTimer;
  */
 @:nativeGen class Delay extends unityengine.MonoBehaviour {
 
-	public var script:unityengine.Behaviour;
-	public var delay:Float;
+	public var script: unityengine.Behaviour;
+	public var delay: Float;
 	@:meta(UnityEngine.HideInInspector)
-	private var timer:DTimer;
-	
-	public function OnEnable():Void timer = DTimer.delay(delay*1000, run);
-	private function run():Void script.enabled = true;
-	public function OnDisable():Void {
+	private var timer: DTimer;
+
+	public function OnEnable(): Void timer = DTimer.delay(delay * 1000, run);
+
+	private function run(): Void script.enabled = true;
+
+	public function OnDisable(): Void {
 		timer.destroy();
 		script.enabled = false;
 	}
-	
+
 }

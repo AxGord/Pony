@@ -1,7 +1,6 @@
 package pony.electron;
 
 import haxe.Log;
-
 import js.Node;
 
 /**
@@ -18,15 +17,15 @@ class VSTraceHelper extends pony.Logable {
 		onError << errorHandler;
 	}
 
-	private static function traceHandler(v:Any, ?p:haxe.PosInfos):Void {
+	private static function traceHandler(v: Any, ?p: haxe.PosInfos): Void {
 		Node.console.warn('\x1b[32m${p.fileName}:${p.lineNumber}: $v');
 	}
 
-	private static function logHandler(v:String, ?p:haxe.PosInfos):Void {
+	private static function logHandler(v: String, ?p: haxe.PosInfos): Void {
 		Node.console.warn('\x1b[34m${p.fileName}:${p.lineNumber}: $v');
 	}
 
-	private static function errorHandler(v:String, ?p:haxe.PosInfos):Void {
+	private static function errorHandler(v: String, ?p: haxe.PosInfos): Void {
 		Node.console.error('${p.fileName}:${p.lineNumber}: $v');
 	}
 

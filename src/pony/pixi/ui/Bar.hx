@@ -19,30 +19,24 @@ using pony.pixi.PixiExtends;
  * @author AxGord <axgord@gmail.com>
  */
 class Bar extends Sprite implements HasSignal implements IWH {
-	
-	public var core:SmoothBarCore;
-	@:auto public var onReady:Signal1<Point<Int>>;
-	
-	private var _wait:WaitReady = new WaitReady();
-	public var size(get, never):Point<Float>;
-	
-	private var barContainter:Sprite;
-	private var bg:Or<Sprite, Point<Int>>;
-	private var begin:Sprite;
-	private var end:Sprite;
-	private var fill:Sprite;
-	private var invert:Bool = false;
-	private var smooth:Bool;
+
+	public var core: SmoothBarCore;
+	@:auto public var onReady: Signal1<Point<Int>>;
+
+	private var _wait: WaitReady = new WaitReady();
+	public var size(get, never): Point<Float>;
+
+	private var barContainter: Sprite;
+	private var bg: Or<Sprite, Point<Int>>;
+	private var begin: Sprite;
+	private var end: Sprite;
+	private var fill: Sprite;
+	private var invert: Bool = false;
+	private var smooth: Bool;
 
 	public function new(
-		bg:Or<String, Point<Int>>,
-		fillBegin:String,
-		fill:String,
-		?offset:Point<Int>,
-		invert:Bool = false,
-		useSpriteSheet:Bool = false,
-		creep:Float = 0,
-		smooth:Bool = false
+		bg: Or<String, Point<Int>>, fillBegin: String, fill: String, ?offset: Point<Int>, invert: Bool = false,
+		useSpriteSheet: Bool = false, creep: Float = 0, smooth: Bool = false
 	) {
 		super();
 		this.invert = invert;
@@ -64,7 +58,7 @@ class Bar extends Sprite implements HasSignal implements IWH {
 		barContainter.addChild(begin);
 		this.fill = PixiAssets.cImage(fill, useSpriteSheet);
 		if (useSpriteSheet) TextureCut.apply(this.fill.texture, creep);
-		//this.fill.texture.baseTexture.scaleMode = 1;
+		// this.fill.texture.baseTexture.scaleMode = 1;
 		barContainter.addChild(this.fill);
 		if (useSpriteSheet)
 			DeltaTime.fixedUpdate < init;
@@ -74,20 +68,20 @@ class Bar extends Sprite implements HasSignal implements IWH {
 			this.fill.x = begin.x = offset.x;
 			this.fill.y = begin.y = offset.y;
 		}
-		
+
 		onReady.add(_wait.ready, 10);
 	}
-	
-	inline public function wait(cb:Void->Void):Void _wait.wait(cb);
-	
-	private function get_size():Point<Float> {
+
+	inline public function wait(cb: Void -> Void): Void _wait.wait(cb);
+
+	private function get_size(): Point<Float> {
 		return switch bg {
 			case OrState.A(v): new Point(v.width, v.height);
 			case OrState.B(v): cast v;
 		}
 	}
-	
-	private function init():Void {
+
+	private function init(): Void {
 		end = new Sprite(begin.texture);
 		end.x = begin.x;
 		end.y = begin.y;
@@ -113,23 +107,23 @@ class Bar extends Sprite implements HasSignal implements IWH {
 			core.changeX = changeXHandler;
 			core.changeY = changeYHandler;
 		}
-		
+
 		core.endInit();
 		eReady.dispatch(size);
 		eReady.destroy();
 	}
-	
-	private function changeXHandler(p:Float) {
+
+	private function changeXHandler(p: Float) {
 		fill.width = p;
 		end.x = fill.x + fill.width + begin.width;
 	}
-	
-	private function changeYHandler(p:Float) {
+
+	private function changeYHandler(p: Float) {
 		fill.height = p;
 		end.y = fill.y + fill.height + begin.height;
 	}
 
-	override public function destroy(?options:haxe.extern.EitherType<Bool, DestroyOptions>):Void {
+	override public function destroy(?options: haxe.extern.EitherType<Bool, DestroyOptions>): Void {
 		core.destroy();
 		core = null;
 		destroySignals();
@@ -153,7 +147,7 @@ class Bar extends Sprite implements HasSignal implements IWH {
 		}
 		super.destroy(options);
 	}
-	
-	public function destroyIWH():Void destroy();
-	
+
+	public function destroyIWH(): Void destroy();
+
 }

@@ -12,13 +12,13 @@ abstract STriple<T>(Triple<T, T, T>) to Triple<T, T, T> from Triple<T, T, T> {
 	public inline function iterator(): Iterator<T> {
 		var i: UInt = 3;
 		return {
-		hasNext: function(): Bool return i > 0,
-		next: function(): T return switch i-- {
-			case 3: this.a;
-			case 2: this.b;
-			case 1: this.c;
-			case _: throw 'There is no next item';
-		}
+			hasNext: function(): Bool return i > 0,
+			next: function(): T return switch i-- {
+				case 3: this.a;
+				case 2: this.b;
+				case 1: this.c;
+				case _: throw 'There is no next item';
+			}
 		};
 	}
 

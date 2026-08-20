@@ -1,7 +1,6 @@
 package module;
 
 import pony.Fast;
-
 import types.BASection;
 import types.PoeditorConfig;
 
@@ -53,11 +52,16 @@ private class PoeditorReader extends BAReader<PoeditorConfig> {
 
 	override private function readNode(xml: Fast): Void {
 		switch xml.name {
-			case 'path': cfg.path = StringTools.trim(xml.innerData);
-			case 'id': cfg.id = Std.parseInt(xml.innerData);
-			case 'token': cfg.token = StringTools.trim(xml.innerData);
-			case 'list': cfg.list = [for (x in xml.elements) StringTools.trim(x.innerData) => x.name];
-			case _: super.readNode(xml);
+			case 'path':
+				cfg.path = StringTools.trim(xml.innerData);
+			case 'id':
+				cfg.id = Std.parseInt(xml.innerData);
+			case 'token':
+				cfg.token = StringTools.trim(xml.innerData);
+			case 'list':
+				cfg.list = [for (x in xml.elements) StringTools.trim(x.innerData) => x.name];
+			case _:
+				super.readNode(xml);
 		}
 	}
 

@@ -16,7 +16,6 @@ class TooltipSource extends MovieClip implements IStarlingConvertible {
 #else
 class TooltipSource extends MovieClip {
 #end
-
 	public function new() {
 		super();
 		#if !starling
@@ -32,5 +31,4 @@ class TooltipSource extends MovieClip {
 		return result;
 	}
 	#end
-
 }

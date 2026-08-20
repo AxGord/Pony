@@ -117,12 +117,14 @@ class Keyboard implements IKeyboard implements HasSignal {
 
 	@:auto public var down: Signal1<Key>;
 	@:auto public var up: Signal1<Key>;
-	@:auto public var input:Signal1<UInt>;
+	@:auto public var input: Signal1<UInt>;
 
 	public var preventDefault: Bool = false;
 
 	public function new() {}
+
 	public inline function enable(): Void DeltaTime.fixedUpdate.add(update, -120);
+
 	public inline function disable(): Void DeltaTime.fixedUpdate.remove(update);
 
 	private function update(): Void {
@@ -132,13 +134,12 @@ class Keyboard implements IKeyboard implements HasSignal {
 				if (Input.GetKeyUp(k)) dispatchKey(up, k);
 			}
 		else
-			for (k in keys)
-				if (Input.GetKeyUp(k)) dispatchKey(up, k);
+			for (k in keys) if (Input.GetKeyUp(k)) dispatchKey(up, k);
 	}
 
-	private function dispatchKey(s: Signal1 < Keyboard, Key > , sk: KeyCode): Void {
-		var k:Key = null;
-		Tools.ifsw(switch sk {
+	private function dispatchKey(s: Signal1<Keyboard, Key>, sk: KeyCode): Void {
+		var k: Key = null;
+		Tools.ifsw( switch sk {
 			case KeyCode.A: k = Key.A;
 			case KeyCode.B: k = Key.B;
 			case KeyCode.C: k = Key.C;
@@ -221,8 +222,9 @@ class Keyboard implements IKeyboard implements HasSignal {
 			case KeyCode.Print: k = Key.PrintScreen;
 			case KeyCode.Pause: k = Key.Pause;
 			case KeyCode.ScrollLock: k = Key.ScrollLock;
-			case KeyCode.Numlock: k = Key.NumLock;
-			//case KeyCode.KeypadEquals: Key.Equals;
+			case KeyCode.Numlock:
+				k = Key.NumLock;
+			// case KeyCode.KeypadEquals: Key.Equals;
 			case KeyCode.Minus: k = Key.Minus;
 			case KeyCode.BackQuote: k = Key.Tilde;
 			case KeyCode.Period: k = Key.Dot;
@@ -236,9 +238,10 @@ class Keyboard implements IKeyboard implements HasSignal {
 			case KeyCode.LeftWindows: k = Key.LeftWin;
 			case KeyCode.RightWindows: k = Key.RightWin;
 			case KeyCode.Plus: k = Key.Plus;
-			case KeyCode.Return: k = Key.Enter;
+			case KeyCode.Return:
+				k = Key.Enter;
 			//
-			//case _: null;
+			// case _: null;
 		});
 		if (k != null) s.dispatch(k);
 	}

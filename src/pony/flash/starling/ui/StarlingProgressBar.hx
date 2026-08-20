@@ -38,9 +38,8 @@ class StarlingProgressBar extends Sprite {
 		return value = v;
 	}
 
-	private function set_auto(f: Void->Float): Void->Float {
-		if (auto == f)
-			return f;
+	private function set_auto(f: Void -> Float): Void -> Float {
+		if (auto == f) return f;
 		if (f == null) {
 			DeltaTime.fixedUpdate.remove(autoUpdate);
 		} else

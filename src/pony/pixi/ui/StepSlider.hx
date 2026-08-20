@@ -3,7 +3,6 @@ package pony.pixi.ui;
 import pixi.core.Pixi;
 import pixi.core.display.Container;
 import pixi.core.sprites.Sprite;
-
 import pony.geom.Border;
 import pony.geom.Point;
 import pony.ui.gui.StepSliderCore;
@@ -14,16 +13,10 @@ import pony.ui.gui.StepSliderCore;
  */
 class StepSlider extends Sprite {
 
-	public var sliderCore:StepSliderCore;
-	public var labelButton:LabelButton;
+	public var sliderCore: StepSliderCore;
+	public var labelButton: LabelButton;
 
-	public function new(
-		labelButton:LabelButton,
-		w:Float,
-		h:Float,
-		invert:Bool = false,
-		draggable:Bool = true
-	) {
+	public function new(labelButton: LabelButton, w: Float, h: Float, invert: Bool = false, draggable: Bool = true) {
 		super();
 		this.labelButton = labelButton;
 		addChild(labelButton);
@@ -32,9 +25,10 @@ class StepSlider extends Sprite {
 		sliderCore.changeY = changeYHandler;
 	}
 
-	private function changeXHandler(v:Float):Void labelButton.x = v;
-	private function changeYHandler(v:Float):Void labelButton.y = v;
+	private function changeXHandler(v: Float): Void labelButton.x = v;
 
-	public function add(obj:Container):Void labelButton.add(obj);
+	private function changeYHandler(v: Float): Void labelButton.y = v;
+
+	public function add(obj: Container): Void labelButton.add(obj);
 
 }

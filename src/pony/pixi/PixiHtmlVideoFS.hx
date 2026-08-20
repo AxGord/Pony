@@ -14,10 +14,12 @@ import pony.Tumbler;
 class PixiHtmlVideoFS extends PixiHtmlVideoBase {
 
 	public var fullscreen(default, null) = new Tumbler(false);
-	private var normalRect:Rect<Float>;
-	private var fsRect:Rect<Float>;
+	private var normalRect: Rect<Float>;
+	private var fsRect: Rect<Float>;
 
-	public function new(targetRect:Rect<Float>, fsRect:Or<Border<Float>, Rect<Float>>, ?app:App, ?options:HtmlVideoOptions) {
+	public function new(
+		targetRect: Rect<Float>, fsRect: Or<Border<Float>, Rect<Float>>, ?app: App, ?options: HtmlVideoOptions
+	) {
 		super(targetRect, app, options);
 		if (fsRect != null) {
 			this.normalRect = targetRect;
@@ -35,11 +37,11 @@ class PixiHtmlVideoFS extends PixiHtmlVideoBase {
 		}
 	}
 
-	public function openFullScreenHandler():Void {
+	public function openFullScreenHandler(): Void {
 		targetRect = fsRect;
 	}
 
-	public function closeFullScreenHandler():Void {
+	public function closeFullScreenHandler(): Void {
 		targetRect = normalRect;
 	}
 

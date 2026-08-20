@@ -9,14 +9,29 @@ import pony.geom.Point;
 @:forward(push, pop, length) @:nullSafety(Strict)
 abstract Matrix<T>(Array<Array<T>>) from Array<Array<T>> to Array<Array<T>> {
 
-	public function cut(x: Int, y: Int): Matrix<T> return [ for (i in 0...x) [ for (j in 0...y) this[i][j] ] ];
+	public function cut(x: Int, y: Int): Matrix<T> return [for (i in 0...x) [for (j in 0...y) this[i][j]]];
 
 	public function hor(d: Int): Matrix<T> {
 		return if (d > 0)
-			[ for (e in this) [ for (i in 0...e.length) if (i + d < e.length) e[i + d] else e[i + d - e.length] ] ];
+			[
+				for (e in this) [
+					for (i in 0...e.length) if (i + d < e.length)
+						e[i + d]
+					else
+						e[i + d - e.length]
+				]
+			];
 		else if (d < 0)
-			[ for (e in this) [ for (i in 0...e.length) if (i + d >= 0) e[i + d] else e[i + d + e.length] ] ];
-		else this;
+			[
+				for (e in this) [
+					for (i in 0...e.length) if (i + d >= 0)
+						e[i + d]
+					else
+						e[i + d + e.length]
+				]
+			];
+		else
+			this;
 	}
 
 	/**
@@ -48,9 +63,10 @@ abstract Matrix<T>(Array<Array<T>>) from Array<Array<T>> to Array<Array<T>> {
 	 * Creates a new List by applying function `f` to all matrix elements.
 	 * The order of elements is preserved.
 	**/
-	public function map<B>(f: T -> B): Matrix<B> return [ for (x in this) [ for (y in x) f(y) ] ];
+	public function map<B>(f: T -> B): Matrix<B> return [for (x in this) [for (y in x) f(y)]];
 
 	public inline function get(p: Point<Int>): T return this[p.x][p.y];
+
 	public inline function set(p: Point<Int>, value: T): T return this[p.x][p.y] = value;
 
 	public function indexOf(e: T): Null<Point<Int>> {
@@ -101,8 +117,7 @@ abstract Matrix<T>(Array<Array<T>>) from Array<Array<T>> to Array<Array<T>> {
 	}
 	#end
 
-	public static function create<T>(x: Int, y: Int, v: T): Matrix<T> return [ for (_ in 0...x) [ for (_ in 0...y) v ] ];
+	public static function create<T>(x: Int, y: Int, v: T): Matrix<T> return [for (_ in 0...x) [for (_ in 0...y) v]];
 
-	//todo: ver, rotate, math op
-
+	// todo: ver, rotate, math op
 }

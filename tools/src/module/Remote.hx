@@ -1,7 +1,6 @@
 package module;
 
 import pony.Fast;
-
 import types.BASection;
 import types.RemoteConfig;
 
@@ -16,7 +15,7 @@ class Remote extends NModule<RemoteConfig> {
 	public function new() super('remote');
 
 	#if (haxe_ver < 4.2) override #end
-	public function init():Void {
+	public function init(): Void {
 		if (xml == null) return;
 		initSections(PRIORITY, BASection.Remote);
 	}
@@ -53,18 +52,26 @@ private class RemoteConfigReader extends BAReader<RemoteConfig> {
 		cfg.commands = [];
 	}
 
-	override private function readNode(xml:Fast):Void {
+	override private function readNode(xml: Fast): Void {
 		switch xml.name {
-			case 'host': cfg.host = normalize(xml.innerData);
-			case 'port': cfg.port = Std.parseInt(xml.innerData);
-			case 'key': cfg.key = normalize(xml.innerData);
+			case 'host':
+				cfg.host = normalize(xml.innerData);
+			case 'port':
+				cfg.port = Std.parseInt(xml.innerData);
+			case 'key':
+				cfg.key = normalize(xml.innerData);
 
-			case 'get': cfg.commands.push(Get(normalize(xml.innerData)));
-			case 'send': cfg.commands.push(Send(normalize(xml.innerData)));
-			case 'exec': cfg.commands.push(Exec(normalize(xml.innerData)));
-			case 'command': cfg.commands.push(Command(normalize(xml.innerData)));
+			case 'get':
+				cfg.commands.push(Get(normalize(xml.innerData)));
+			case 'send':
+				cfg.commands.push(Send(normalize(xml.innerData)));
+			case 'exec':
+				cfg.commands.push(Exec(normalize(xml.innerData)));
+			case 'command':
+				cfg.commands.push(Command(normalize(xml.innerData)));
 
-			case _: super.readNode(xml);
+			case _:
+				super.readNode(xml);
 		}
 	}
 

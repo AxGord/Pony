@@ -27,8 +27,7 @@ class Grid extends Sprite {
 	public function init(core: GridCore): Void {
 		this.core = core;
 		core.setTotal(width, height);
-		for (_ in 0...numChildren)
-			removeChildAt(0);
+		for (_ in 0...numChildren) removeChildAt(0);
 		for (iy in 0...core.cy) {
 			var a: Array<GridSlot> = [];
 			for (ix in 0...core.cx) {

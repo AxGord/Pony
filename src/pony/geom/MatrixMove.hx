@@ -39,45 +39,44 @@ class MatrixMove {
 
 	public function up(): Void {
 		var prev: MatrixIndex = getIndex();
-		var index: MatrixIndex = {r: prev.r, c: prev.c};
+		var index: MatrixIndex = { r: prev.r, c: prev.c };
 		index.c++;
 		setToIndex(prev, index);
 	}
 
 	public function down(): Void {
 		var prev: MatrixIndex = getIndex();
-		var index: MatrixIndex = {r: prev.r, c: prev.c};
+		var index: MatrixIndex = { r: prev.r, c: prev.c };
 		index.c--;
 		setToIndex(prev, index);
 	}
 
 	public function right(): Void {
 		var prev: MatrixIndex = getIndex();
-		var index: MatrixIndex = {r: prev.r, c: prev.c};
+		var index: MatrixIndex = { r: prev.r, c: prev.c };
 		index.r++;
 		setToIndex(prev, index);
 	}
 
 	public function left(): Void {
 		var prev: MatrixIndex = getIndex();
-		var index: MatrixIndex = {r: prev.r, c: prev.c};
+		var index: MatrixIndex = { r: prev.r, c: prev.c };
 		index.r--;
 		setToIndex(prev, index);
 	}
 
 	private function getIndex(): MatrixIndex {
-		for (r in 0...moveMatrix.length) for (c in 0...moveMatrix[r].length)
-			if (Reflect.field(wards, 'currentPos') + 1 == moveMatrix[r][c])
-				return { r: r, c: c };
+		for (r in 0...moveMatrix.length) for (c in 0...moveMatrix[r].length) if (Reflect.field(wards, 'currentPos') + 1 == moveMatrix[r][c])
+			return { r: r, c: c };
 		return null;
 	}
 
 	private function setToIndex(prev: MatrixIndex, index: MatrixIndex): Void {
-		trySet(prev, index) && trySet(prev, { r: index.r, c: index.c - 1 } ) && trySet(prev, { r: index.r, c: index.c + 1 } ) &&
-		trySet(prev, { r: index.r - 1, c: index.c } ) && trySet(prev, { r: index.r + 1, c: index.c } );
+		trySet(prev, index) && trySet(prev, { r: index.r, c: index.c - 1 }) && trySet(prev, { r: index.r, c: index.c + 1 })
+			&& trySet(prev, { r: index.r - 1, c: index.c }) && trySet(prev, { r: index.r + 1, c: index.c });
 	}
 
-	private function trySet(prev: MatrixIndex, i: MatrixIndex):Bool {
+	private function trySet(prev: MatrixIndex, i: MatrixIndex): Bool {
 		if (i.c == prev.c && i.r == prev.r) return true;
 		if (moveMatrix[i.r] != null && moveMatrix[i.r][i.c] != null && moveMatrix[i.r][i.c] != 0) {
 			(untyped change: Event1<Int>).dispatch(moveMatrix[i.r][i.c] - 1);

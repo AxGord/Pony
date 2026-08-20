@@ -17,7 +17,7 @@ import pony.ui.touch.starling.touchManager.touchInputs.NativeFlashTouchInput;
  */
 class TouchManager {
 
-	public static var GLOBAL(default, never): Dynamic = {object: 'Global'};
+	public static var GLOBAL(default, never): Dynamic = { object: 'Global' };
 	public static inline var MOUSE_ID: Int = 0;
 
 	private static var _objects: ObjectMap<Dynamic, Array<TouchListener>> = new ObjectMap<Dynamic, Array<TouchListener>>();
@@ -35,13 +35,11 @@ class TouchManager {
 	private static var _lastDownEvent: TouchManagerEvent = null;
 
 	public static function init(): Void {
-		if (_initialized)
-			return;
+		if (_initialized) return;
 		_initialized = true;
 
 		#if flash
-		if (Multitouch.supportsTouchEvents)
-			Multitouch.inputMode = MultitouchInputMode.TOUCH_POINT;
+		if (Multitouch.supportsTouchEvents) Multitouch.inputMode = MultitouchInputMode.TOUCH_POINT;
 
 		InputMode.init();
 
@@ -66,35 +64,32 @@ class TouchManager {
 	}
 
 	public static function removeScreenByID(screenId: Int): Void {
-		if (_screens.length > screenId && screenId >= 0)
-			_screens.splice(screenId, 1);
+		if (_screens.length > screenId && screenId >= 0) _screens.splice(screenId, 1);
 	}
 
 	// Listeners:
 
-	public static function addListener(displayObject: Dynamic, listener: TouchManagerEvent->Void, types: Array<TouchEventType> = null): Void {
-		if (!_initialized)
-			init();
+	public static function addListener(
+		displayObject: Dynamic, listener: TouchManagerEvent -> Void, types: Array<TouchEventType> = null
+	): Void {
+		if (!_initialized) init();
 
 		var exists = _objects.exists(displayObject);
 
 		if (exists) {
 			var listenersArray = _objects.get(displayObject);
 			for (i in 0...listenersArray.length) {
-				if (listenersArray[i].listener == listener)
-					return;
+				if (listenersArray[i].listener == listener) return;
 			}
 		}
 
-		if (!exists)
-			_objects.set(displayObject, new Array<TouchListener>());
+		if (!exists) _objects.set(displayObject, new Array<TouchListener>());
 
 		_objects.get(displayObject).push(new TouchListener(listener, types));
 	}
 
-	public static function removeListener(displayObject: Dynamic, listener: TouchManagerEvent->Void): Void {
-		if (!_objects.exists(displayObject))
-			return;
+	public static function removeListener(displayObject: Dynamic, listener: TouchManagerEvent -> Void): Void {
+		if (!_objects.exists(displayObject)) return;
 
 		var listenersArray = _objects.get(displayObject);
 
@@ -105,8 +100,7 @@ class TouchManager {
 			}
 		}
 
-		if (listenersArray.length == 0)
-			_objects.remove(displayObject);
+		if (listenersArray.length == 0) _objects.remove(displayObject);
 	}
 
 	// Events:
@@ -125,8 +119,7 @@ class TouchManager {
 					break;
 				}
 			}
-			if (other == null)
-				return;
+			if (other == null) return;
 
 			touch.setPos(x, y);
 
@@ -139,8 +132,7 @@ class TouchManager {
 
 		// No gestures
 
-		if (touchInputMode && !_touches.exists(id))
-			return;
+		if (touchInputMode && !_touches.exists(id)) return;
 
 		var touch: Touch = touchInputMode ? _touches.get(id) : _mouse;
 
@@ -153,10 +145,8 @@ class TouchManager {
 		var activeObjectChain: Array<Dynamic> = getObjectChain(touch.active);
 
 		var maxLength: Int = newCurrentObjectChain.length;
-		if (currentObjectChain.length > maxLength)
-			maxLength = currentObjectChain.length;
-		if (activeObjectChain.length > maxLength)
-			maxLength = activeObjectChain.length;
+		if (currentObjectChain.length > maxLength) maxLength = currentObjectChain.length;
+		if (activeObjectChain.length > maxLength) maxLength = activeObjectChain.length;
 
 		dispatch(GLOBAL, Move, true, touch);
 
@@ -164,19 +154,19 @@ class TouchManager {
 
 			if (!touchInputMode && touch.active == null) {
 				if (!commonParent(newCurrentObjectChain, currentObjectChain, i)) {
-					if (currentObjectChain.length > i)
-						dispatch(currentObjectChain[i], mouseDown ? Out : HoverOut, false, touch);
-					if (newCurrentObjectChain.length > i)
-						dispatch(newCurrentObjectChain[i], mouseDown ? Over : Hover, true, touch);
+					if (currentObjectChain.length > i) dispatch(currentObjectChain[i], mouseDown ? Out : HoverOut, false, touch);
+					if (newCurrentObjectChain.length > i) dispatch(newCurrentObjectChain[i], mouseDown ? Over : Hover, true, touch);
 				}
 			} else {
-				if (commonParent(currentObjectChain, activeObjectChain, i)
-					&& !commonParent(newCurrentObjectChain, activeObjectChain, i)
-					&& activeObjectChain.length > i)
+				if (
+					commonParent(currentObjectChain, activeObjectChain, i) && !commonParent(newCurrentObjectChain, activeObjectChain, i)
+					&& activeObjectChain.length > i
+				)
 					dispatch(activeObjectChain[i], Out, false, touch);
-				if (!commonParent(currentObjectChain, activeObjectChain, i)
-					&& commonParent(newCurrentObjectChain, activeObjectChain, i)
-					&& activeObjectChain.length > i)
+				if (
+					!commonParent(currentObjectChain, activeObjectChain, i) && commonParent(newCurrentObjectChain, activeObjectChain, i)
+					&& activeObjectChain.length > i
+				)
 					dispatch(activeObjectChain[i], Over, false, touch);
 
 				if (activeObjectChain.length > i)
@@ -189,8 +179,7 @@ class TouchManager {
 
 	public static function down(x: Float, y: Float, touchInputMode: Bool, id: Int = MOUSE_ID): Void {
 		if (touchInputMode) {
-			if (_mouse.current != null)
-				dispatch(_mouse.current, HoverOut, false, _mouse);
+			if (_mouse.current != null) dispatch(_mouse.current, HoverOut, false, _mouse);
 
 			var touchObject: Dynamic = getObject(x, y);
 
@@ -207,8 +196,7 @@ class TouchManager {
 				// trace("Gesture");
 				var otherTouch: Touch = _touches.get(firstKey);
 
-				if (_gesture)
-					return; // TODO 3 points gestures?
+				if (_gesture) return; // TODO 3 points gestures?
 
 				_gesture = true;
 				_gestureTouches.set(firstKey, otherTouch);
@@ -261,8 +249,7 @@ class TouchManager {
 			dispatch(touch.active, GestureEnd, true, touch, 0);
 
 			for (key in _gestureTouches.keys()) {
-				if (key != id)
-					_touches.set(key, _gestureTouches.get(key));
+				if (key != id) _touches.set(key, _gestureTouches.get(key));
 				_gestureTouches.remove(key);
 
 			}
@@ -272,8 +259,7 @@ class TouchManager {
 			return;
 		}
 
-		if (touchInputMode && !_touches.exists(id))
-			return;
+		if (touchInputMode && !_touches.exists(id)) return;
 
 		var touch: Touch = touchInputMode ? _touches.get(id) : _mouse;
 
@@ -301,8 +287,9 @@ class TouchManager {
 
 	// Dispatching:
 
-	private static function dispatch(object: Dynamic, type: TouchEventType, mouseOver: Bool, touch: Touch, value: Float = 0,
-			gesture: TouchManagerGesture = null): Void {
+	private static function dispatch(
+		object: Dynamic, type: TouchEventType, mouseOver: Bool, touch: Touch, value: Float = 0, gesture: TouchManagerGesture = null
+	): Void {
 		if ((object != null) && (_objects.exists(object))) {
 			// trace("object = " + object + ", name = " + object.name + ", dispatching type = " + type + ", mouseOver = " + mouseOver);
 
@@ -328,10 +315,8 @@ class TouchManager {
 
 			var copy = listeners.copy();
 			for (i in 0...copy.length) {
-				if (listeners.indexOf(copy[i]) == -1)
-					continue;
-				if ((copy[i].types == null) || (copy[i].types.indexOf(type) != -1))
-					copy[i].listener(event);
+				if (listeners.indexOf(copy[i]) == -1) continue;
+				if ((copy[i].types == null) || (copy[i].types.indexOf(type) != -1)) copy[i].listener(event);
 			}
 		}
 	}
@@ -341,8 +326,7 @@ class TouchManager {
 	}
 
 	private static function commonParent(chainA: Array<Dynamic>, chainB: Array<Dynamic>, depth: Int): Bool {
-		if (chainA.length <= depth || chainB.length <= depth)
-			return false;
+		if (chainA.length <= depth || chainB.length <= depth) return false;
 		return chainA[depth] == chainB[depth];
 	}
 
@@ -379,8 +363,7 @@ class TouchManager {
 		while (i >= 0) {
 			object = getObjectOrContainer(_screens[i], x, y);
 
-			if (object != null)
-				return object;
+			if (object != null) return object;
 
 			i--;
 		}
@@ -414,16 +397,13 @@ class TouchManager {
 	private static function getObjectOrContainer(screen: IHitTestSource, x: Float, y: Float): Dynamic {
 		var object: Dynamic = screen.hitTest(x, y);
 
-		if (object == null)
-			return null;
+		if (object == null) return null;
 
-		if (_objects.exists(object))
-			return object;
+		if (_objects.exists(object)) return object;
 
 		while (object != null) {
 			object = screen.parent(object);
-			if (object != null && _objects.exists(object))
-				return object;
+			if (object != null && _objects.exists(object)) return object;
 		}
 
 		return null;
@@ -431,8 +411,7 @@ class TouchManager {
 
 	private static function firstKey(map: Map<Int, Touch>, object: Dynamic): Int {
 		for (key in map.keys()) {
-			if (map.get(key).active == object)
-				return key;
+			if (map.get(key).active == object) return key;
 		}
 
 		return -1;

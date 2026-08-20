@@ -44,8 +44,7 @@ class Window implements Declarator implements HasSignal {
 	}
 
 	private static function set_resizeEventName(name: String): String {
-		if (name == null)
-			name = DEFAULT_RESIZE_EVENT;
+		if (name == null) name = DEFAULT_RESIZE_EVENT;
 		if (name != resizeEventName) {
 			if (!eMomentalResize.empty) {
 				unlistenResizeEvent();
@@ -63,8 +62,7 @@ class Window implements Declarator implements HasSignal {
 	private static inline function get_resizeInterval(): Time return resizeTimer.time.max;
 
 	private static function set_resizeInterval(value: Time): Time {
-		if (value == null)
-			value = DEFAULT_RESIZE_INTERVAL;
+		if (value == null) value = DEFAULT_RESIZE_INTERVAL;
 		if (value != resizeTimer.time) {
 			resizeTimer.time = value;
 			resizeTimer.reset();
@@ -109,7 +107,9 @@ class Window implements Declarator implements HasSignal {
 	}
 
 	private static function browserResizeHandler(): Void eMomentalResize.dispatch();
+
 	private static function listenMomentalResize(): Void onMomentalResize << momentalResizeHandler;
+
 	private static function unlistenMomentalResize(): Void onMomentalResize >> momentalResizeHandler;
 
 	private static function momentalResizeHandler(): Void {

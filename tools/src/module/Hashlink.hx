@@ -6,7 +6,6 @@ import pony.ZipTool;
 import pony.fs.Dir;
 import pony.fs.File;
 import pony.fs.Unit;
-
 import types.BASection;
 
 using Lambda;
@@ -68,7 +67,7 @@ class Hashlink extends CfgModule<HashlinkConfig> {
 		if (cfg.output.b != null) {
 			if (cfg.output.b.isTrue()) {
 				log('Clear ' + output);
-				(output : Dir).deleteContent();
+				(output: Dir).deleteContent();
 			} else if (cfg.output.b.toLowerCase() == 'rimraf') {
 				log('Clear ' + output);
 				Utils.command('rimraf', [output]);

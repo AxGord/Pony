@@ -72,9 +72,12 @@ class Mouse implements Declarator implements HasSignal {
 	private static function downDispatch(): Void {
 		for (e in downStack) {
 			switch e.b {
-				case MouseButton.LEFT: eLeftDown.dispatch(e.x, e.y);
-				case MouseButton.MIDDLE: eMiddleDown.dispatch(e.x, e.y);
-				case MouseButton.RIGHT: eRightDown.dispatch(e.x, e.y);
+				case MouseButton.LEFT:
+					eLeftDown.dispatch(e.x, e.y);
+				case MouseButton.MIDDLE:
+					eMiddleDown.dispatch(e.x, e.y);
+				case MouseButton.RIGHT:
+					eRightDown.dispatch(e.x, e.y);
 			}
 		}
 		downStack = [];
@@ -103,9 +106,12 @@ class Mouse implements Declarator implements HasSignal {
 
 	private static function upDispatch(): Void {
 		for (e in upStack) switch e {
-			case MouseButton.LEFT: eLeftUp.dispatch(x, y);
-			case MouseButton.MIDDLE: eMiddleUp.dispatch(x, y);
-			case MouseButton.RIGHT: eRightUp.dispatch(x, y);
+			case MouseButton.LEFT:
+				eLeftUp.dispatch(x, y);
+			case MouseButton.MIDDLE:
+				eMiddleUp.dispatch(x, y);
+			case MouseButton.RIGHT:
+				eRightUp.dispatch(x, y);
 		}
 		upStack = [];
 	}

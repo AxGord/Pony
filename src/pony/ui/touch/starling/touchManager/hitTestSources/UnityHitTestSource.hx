@@ -32,8 +32,7 @@ class UnityHitTestSource implements IHitTestSource {
 	}
 
 	public function parent(object: Dynamic): Dynamic {
-		if (!Std.is(object, Transform))
-			return null;
+		if (!Std.is(object, Transform)) return null;
 		var objectsParent = object.parent;
 		return objectsParent;
 	}

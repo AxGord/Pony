@@ -19,7 +19,6 @@ class Window extends MovieClip implements IWindow {
 #else
 class Window extends MovieClip implements IWindow implements IStarlingConvertible {
 #end
-
 	private var st: Windows;
 
 	public inline function new() {
@@ -48,5 +47,4 @@ class Window extends MovieClip implements IWindow implements IStarlingConvertibl
 	public function convert(coordinateSpace: DisplayObject): starling.display.DisplayObject
 		return new StarlingWindow(untyped StarlingConverter.getSprite(cast this, coordinateSpace, false));
 	#end
-
 }

@@ -12,16 +12,16 @@ import unityengine.MonoBehaviour;
  * @author AxGord
  */
 @:nativeGen class Clock extends MonoBehaviour {
-	
-	public var timer:DTimer;
-	private var beginTime:String = '08:00:00';
-	
-	private function Start():Void {
+
+	public var timer: DTimer;
+	private var beginTime: String = '08:00:00';
+
+	private function Start(): Void {
 		timer = DTimer.clock(beginTime);
 		timer.update.add(showTimer);
 		timer.dispatchUpdate();
 	}
-	
-	private function showTimer(t:Time):Void guiText.text = t.clock();
-	
+
+	private function showTimer(t: Time): Void guiText.text = t.clock();
+
 }

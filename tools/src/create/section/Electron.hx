@@ -20,4 +20,5 @@ class Electron extends Section {
 		set('pack', 'true');
 		return xml;
 	}
+
 }

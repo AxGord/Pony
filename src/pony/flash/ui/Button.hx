@@ -16,7 +16,7 @@ using pony.flash.FLExtends;
 class Button extends MovieClip {
 
 	#if !starling
-	//public static var config = {def: 1, focus: 2, press: 3, zone: 4, disabled: 5};
+	// public static var config = {def: 1, focus: 2, press: 3, zone: 4, disabled: 5};
 
 	public var core(default, null): ButtonImgN;
 	public var bMode(get, set): Bool;
@@ -57,8 +57,8 @@ class Button extends MovieClip {
 	}
 
 	#if swc
-	private function addClickListener(fn: Void -> Void, priority:Int = 0): Void core.onClick.add(fn, priority);
-	private function addOnceClickListener(fn: Void -> Void, priority:Int = 0): Void core.onClick.once(fn, priority);
+	private function addClickListener(fn: Void -> Void, priority: Int = 0): Void core.onClick.add(fn, priority);
+	private function addOnceClickListener(fn: Void -> Void, priority: Int = 0): Void core.onClick.once(fn, priority);
 	private function removeClickListener(fn: Void -> Void): Void core.onClick.remove(fn);
 	@:setter(bMode) private function setBMode(value: Bool): Void bMode = value;
 	#end
@@ -81,15 +81,12 @@ class Button extends MovieClip {
 
 	public function switchMap(a: Array<Int>): Void core.switchMap(a);
 	public function bswitch(): Void core.bswitch();
-
 	#else
-
 	private var _sw: Array<Int>;
 	private var _bsw: Bool = false;
 
 	public function switchMap(v: Array<Int>): Void _sw = v;
 	public function bswitch(): Void _bsw = true;
-
 	#end
 
 }

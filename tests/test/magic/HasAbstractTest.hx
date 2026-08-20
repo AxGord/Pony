@@ -1,7 +1,6 @@
 package magic;
 
 import massive.munit.Assert;
-
 import pony.magic.HasAbstract;
 
 class HasAbstractTest {
@@ -17,7 +16,6 @@ class HasAbstractTest {
 }
 
 #if (haxe_ver >= 4.2) abstract #end
-
 class MyAbstractBaseClass implements HasAbstract {
 
 	public function new() {}

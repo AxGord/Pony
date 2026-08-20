@@ -72,6 +72,7 @@ import pony.ui.touch.Touchable;
 	}
 
 	public inline function startDrag(t: Touch): Void untyped (onStartDrag: Event1<Touch>).dispatch(t);
+
 	public inline function stopDrag(t: Touch): Void untyped (onStopDrag: Event1<Touch>).dispatch(t);
 
 	private function startXDragHandler(t: Touch): Void {
@@ -98,11 +99,19 @@ import pony.ui.touch.Touchable;
 
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function limit(p: Float): Float return if (p < 0) 0 else if (p > size) size else p;
+	private inline function limit(p: Float): Float return if (p < 0)
+		0
+	else if (p > size)
+		size
+	else
+		p;
 
 	public inline function wheel(v: Float): Void scroll(wheelSpeed * v);
+
 	public inline function scroll(v: Float): Void if (size >= 1) pos = limit(pos - v);
+
 	public inline function wheelValue(v: Float): Void scrollValue(-wheelSpeed * v);
+
 	public inline function scrollValue(v: Float): Void setPosValue(value - v);
 
 	public inline function update(): Void {
@@ -134,8 +143,7 @@ import pony.ui.touch.Touchable;
 			}
 			track = v;
 			if (v != null) {
-				if (trackStartPoint != null)
-					v.onDown << moveTo;
+				if (trackStartPoint != null) v.onDown << moveTo;
 				v.onDown << startDrag;
 				v.onUp << stopDrag;
 				v.onOutUp << stopDrag;

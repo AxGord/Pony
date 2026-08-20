@@ -3,7 +3,6 @@ package module;
 import pony.Fast;
 import pony.Pair;
 import pony.fs.Unit;
-
 import types.BASection;
 
 using pony.text.TextTools;
@@ -59,9 +58,12 @@ private typedef RenameConfig = {
 
 	override private function readNode(xml: Fast): Void {
 		switch xml.name {
-			case 'path': selfCreate(xml);
-			case 'unit': cfg.units.push(new Pair(normalize(xml.innerData), xml.att.from));
-			case _: super.readNode(xml);
+			case 'path':
+				selfCreate(xml);
+			case 'unit':
+				cfg.units.push(new Pair(normalize(xml.innerData), xml.att.from));
+			case _:
+				super.readNode(xml);
 		}
 	}
 
@@ -73,7 +75,8 @@ private typedef RenameConfig = {
 
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
-			case 'path': cfg.path += val;
+			case 'path':
+				cfg.path += val;
 			case _:
 		}
 	}

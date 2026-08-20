@@ -12,17 +12,17 @@ using pony.pixi.PixiExtends;
  * @author AxGord <axgord@gmail.com>
  */
 class BGLayout extends BaseLayout<RubberLayoutCore<Container>> {
-	
-	public function new(img:Sprite, vert:Bool = false, ?border:Border<Int>) {
+
+	public function new(img: Sprite, vert: Bool = false, ?border: Border<Int>) {
 		layout = new RubberLayoutCore<Container>(vert, border);
 		layout.tasks.add();
 		super();
 		addChild(img);
-		img.loaded(function(){
+		img.loaded(function() {
 			layout.width = img.width;
 			layout.height = img.height;
 			layout.tasks.end();
 		});
 	}
-	
+
 }

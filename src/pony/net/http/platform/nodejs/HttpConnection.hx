@@ -36,7 +36,9 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 	private var res: ServerResponse;
 	private var req: IncomingMessage;
 
-	public function new(url: String, storage: ServersideStorage, req: IncomingMessage, res: ServerResponse, post: Map<String, String>) {
+	public function new(
+		url: String, storage: ServersideStorage, req: IncomingMessage, res: ServerResponse, post: Map<String, String>
+	) {
 		super(url);
 		method = req.method;
 		this.post = post;
@@ -167,10 +169,10 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 	}
 
 	private function writeCookie(): Void {
-		var s:String = cookie.toString(host.split(':')[0]);
+		var s: String = cookie.toString(host.split(':')[0]);
 		if (s != '') {
 			res.setHeader('Set-Cookie', s);
-			//res.setHeader('Cookie Domain', host);
+			// res.setHeader('Cookie Domain', host);
 		}
 		end = true;
 	}

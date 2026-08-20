@@ -25,8 +25,7 @@ class ServersideStorage implements Declarator {
 	}
 
 	public function getClientByKey(key: String): Map<String, Dynamic> {
-		if (!clients.exists(key))
-			clients.set(key, new Map<String, Dynamic>());
+		if (!clients.exists(key)) clients.set(key, new Map<String, Dynamic>());
 		return clients.get(key);
 	}
 

@@ -12,7 +12,9 @@ import pony.ui.gui.IntervalLayoutCore;
 @:nullSafety(Strict)
 class IntervalLayout extends BaseLayout<IntervalLayoutCore<Object>> {
 
-	public function new(interval: Int, vert: Bool = false, ?border: Border<Int>, ?align: Align, limit: Float = 0, mask: Bool = false) {
+	public function new(
+		interval: Int, vert: Bool = false, ?border: Border<Int>, ?align: Align, limit: Float = 0, mask: Bool = false
+	) {
 		super(new IntervalLayoutCore<Object>(interval, vert, border, align, limit), mask);
 	}
 

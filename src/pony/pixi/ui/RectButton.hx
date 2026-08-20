@@ -18,14 +18,16 @@ import pony.color.UColor;
  */
 class RectButton extends BaseLayout<RubberLayoutCore<Container>> {
 
-	public var core(default, null):ButtonImgN;
-	public var touchActive(get, set):Bool;
-	public var cursor(get, set):Bool;
+	public var core(default, null): ButtonImgN;
+	public var touchActive(get, set): Bool;
+	public var cursor(get, set): Bool;
 
-	private var g:Graphics = new Graphics();
-	private var colors:Array<UColor>;
+	private var g: Graphics = new Graphics();
+	private var colors: Array<UColor>;
 
-	public function new(size:Point<Int>, colors:Array<UColor>, vert:Bool = false, ?border:Border<Int>, ?offset:Point<Float>) {
+	public function new(
+		size: Point<Int>, colors: Array<UColor>, vert: Bool = false, ?border: Border<Int>, ?offset: Point<Float>
+	) {
 		this.colors = colors;
 		layout = new RubberLayoutCore<Container>(vert, border);
 		layout.width = size.x;
@@ -40,7 +42,7 @@ class RectButton extends BaseLayout<RubberLayoutCore<Container>> {
 		cursor = true;
 	}
 
-	private function imgHandler(n:Int):Void {
+	private function imgHandler(n: Int): Void {
 		if (n == 4) {
 			visible = false;
 			return;
@@ -52,22 +54,27 @@ class RectButton extends BaseLayout<RubberLayoutCore<Container>> {
 			g.drawRect(0, 0, layout.size.x, layout.size.y);
 		}
 	}
-	
-	override public function add(obj:Container):Void {
+
+	override public function add(obj: Container): Void {
 		obj.interactive = false;
 		obj.interactiveChildren = false;
 		obj.hitArea = new Rectangle(0, 0, 0, 0);
 		super.add(obj);
 	}
-	
-	private function disableHandler():Void cursor = false;
-	private function enableHandler():Void cursor = true;
-	inline private function get_cursor():Bool return g.buttonMode;
-	inline private function set_cursor(v:Bool):Bool return g.buttonMode = v;
-	inline private function get_touchActive():Bool return g.interactive;
-	inline private function set_touchActive(v:Bool):Bool return g.interactive = v;
 
-	override function destroy(?options:haxe.extern.EitherType<Bool, DestroyOptions>):Void {
+	private function disableHandler(): Void cursor = false;
+
+	private function enableHandler(): Void cursor = true;
+
+	inline private function get_cursor(): Bool return g.buttonMode;
+
+	inline private function set_cursor(v: Bool): Bool return g.buttonMode = v;
+
+	inline private function get_touchActive(): Bool return g.interactive;
+
+	inline private function set_touchActive(v: Bool): Bool return g.interactive = v;
+
+	override function destroy(?options: haxe.extern.EitherType<Bool, DestroyOptions>): Void {
 		core.destroy();
 		core = null;
 		removeChild(g);

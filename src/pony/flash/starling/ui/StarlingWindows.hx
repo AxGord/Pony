@@ -9,8 +9,7 @@ import starling.display.DisplayObject;
 @:forward(blurOn, blurOff)
 abstract StarlingWindows(StarlingWindowsImpl) {
 
-	public inline function new(st: Sprite)
-		this = new StarlingWindowsImpl(st);
+	public inline function new(st: Sprite) this = new StarlingWindowsImpl(st);
 
 	@:arrayAccess public inline function get(key: String): StarlingWindow return this.resolve(key);
 
@@ -32,8 +31,7 @@ abstract StarlingWindows(StarlingWindowsImpl) {
 		var windows: Array<StarlingWindow> = [];
 		for (i in 0...st.numChildren) {
 			var child = st.getChildAt(i);
-			if (Std.is(child, StarlingWindow))
-				windows.push(cast child);
+			if (Std.is(child, StarlingWindow)) windows.push(cast child);
 		}
 		for (window in windows) {
 			map.set(window.name, window);

@@ -10,11 +10,10 @@ import pony.text.tpl.TplData;
  */
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
 class ActionPut extends pony.text.tpl.TplPut<Action, CPQ> {
-	
+
 	@:async
-	override public function tag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String
-	{
+	override public function tag(name: String, content: TplData, arg: String, args: Map<String, String>, ?kid: ITplPut): String {
 		return "I can't be showing";
 	}
-	
+
 }

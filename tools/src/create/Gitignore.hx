@@ -30,53 +30,45 @@ class Gitignore {
 		var result: Array<String> = OS.copy();
 		result.push('# Project files');
 		result.push(ROOT + BUILDS_DIR);
-		if (project.build.active && project.build.hxml != null)
-			result.push(ROOT + project.build.getHxmlFile());
-		if (project.secondbuild.active && project.secondbuild.hxml != null)
-			result.push(ROOT + project.secondbuild.getHxmlFile());
-		if (project.thirdbuild.active && project.thirdbuild.hxml != null)
-			result.push(ROOT + project.thirdbuild.getHxmlFile());
-		if (project.fourthbuild.active && project.fourthbuild.hxml != null)
-			result.push(ROOT + project.fourthbuild.getHxmlFile());
+		if (project.build.active && project.build.hxml != null) result.push(ROOT + project.build.getHxmlFile());
+		if (project.secondbuild.active && project.secondbuild.hxml != null) result.push(ROOT + project.secondbuild.getHxmlFile());
+		if (project.thirdbuild.active && project.thirdbuild.hxml != null) result.push(ROOT + project.thirdbuild.getHxmlFile());
+		if (project.fourthbuild.active && project.fourthbuild.hxml != null) result.push(ROOT + project.fourthbuild.getHxmlFile());
 		if (project.build.active) {
 			var output: String = project.build.output();
 			result.push(ROOT + output);
-			if (project.build.target == HaxeTargets.JS)
-				result.push(ROOT + output + MAP);
+			if (project.build.target == HaxeTargets.JS) result.push(ROOT + output + MAP);
 		}
 		if (project.secondbuild.active) {
 			var output: String = project.secondbuild.output();
 			result.push(ROOT + output);
-			if (project.secondbuild.target == HaxeTargets.JS)
-				result.push(ROOT + output + MAP);
+			if (project.secondbuild.target == HaxeTargets.JS) result.push(ROOT + output + MAP);
 		}
 		if (project.thirdbuild.active) {
 			var output: String = project.thirdbuild.output();
 			result.push(ROOT + output);
-			if (project.thirdbuild.target == HaxeTargets.JS)
-				result.push(ROOT + output + MAP);
+			if (project.thirdbuild.target == HaxeTargets.JS) result.push(ROOT + output + MAP);
 		}
 		if (project.fourthbuild.active) {
 			var output: String = project.fourthbuild.output();
 			result.push(ROOT + output);
-			if (project.fourthbuild.target == HaxeTargets.JS)
-				result.push(ROOT + output + MAP);
+			if (project.fourthbuild.target == HaxeTargets.JS) result.push(ROOT + output + MAP);
 		}
-		if (project.download.active && project.download.list.length > 0)
-			result.push(ROOT + project.download.path);
+		if (project.download.active && project.download.list.length > 0) result.push(ROOT + project.download.path);
 		if ((project.uglify.active && project.uglify.libcache) || (project.seconduglify.active && project.seconduglify.libcache))
 			result.push(ROOT + LIBCACHE);
 		switch type {
 			case ProjectType.Pixielectron, ProjectType.Electron, ProjectType.Monacoelectron:
 				result.push(ROOT + project.build.outputPath + NODE_MODULES);
 				result.push(ROOT + project.build.outputPath + PACKAGE_LOCK);
-			case ProjectType.Server: return;
+			case ProjectType.Server:
+				return;
 			case ProjectType.Air:
 				result.push(project.build.outputPath + project.build.outputFile + '.app'); // macos
 				result.push(project.build.outputPath + project.build.outputFile + '/'); // windows
 			case ProjectType.Heaps, ProjectType.Heapsxml:
-				if (project.hashlink.mac) result.push(ROOT + project.build.outputPath +  project.build.outputFile + '.app');
-				if (project.hashlink.win != null) result.push(ROOT + project.build.outputPath +  project.build.outputFile + '/');
+				if (project.hashlink.mac) result.push(ROOT + project.build.outputPath + project.build.outputFile + '.app');
+				if (project.hashlink.win != null) result.push(ROOT + project.build.outputPath + project.build.outputFile + '/');
 				if (project.hashlink.android != null) result.push(ROOT + project.build.outputPath + project.hashlink.android);
 			case _:
 		}

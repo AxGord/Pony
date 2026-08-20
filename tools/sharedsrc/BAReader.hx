@@ -10,7 +10,7 @@ import types.BASection;
  */
 @:nullSafety(Strict)
 #if (haxe_ver >= 4.2) abstract #end
-class BAReader<T: BAConfig> extends XmlConfigReader<T> implements HasAbstract {
+class BAReader<T:BAConfig> extends XmlConfigReader<T> implements HasAbstract {
 
 	override private function readNode(xml: Fast): Void {
 		switch xml.name {
@@ -22,19 +22,32 @@ class BAReader<T: BAConfig> extends XmlConfigReader<T> implements HasAbstract {
 				var cfg: T = copyCfg();
 				cfg.before = false;
 				_selfCreate(xml, cfg);
-			case 'server': createSection(xml, Server);
-			case 'prepare': createSection(xml, Prepare);
-			case 'build': createSection(xml, Build);
-			case 'cordova': createSection(xml, Cordova);
-			case 'android': createSection(xml, Android);
-			case 'iphone': createSection(xml, Iphone);
-			case 'electron': createSection(xml, Electron);
-			case 'run': createSection(xml, Run);
-			case 'zip': createSection(xml, Zip);
-			case 'ftp': createSection(xml, Ftp);
-			case 'hash': createSection(xml, Hash);
-			case 'remote': createSection(xml, Remote);
-			case 'unpack': createSection(xml, Unpack);
+			case 'server':
+				createSection(xml, Server);
+			case 'prepare':
+				createSection(xml, Prepare);
+			case 'build':
+				createSection(xml, Build);
+			case 'cordova':
+				createSection(xml, Cordova);
+			case 'android':
+				createSection(xml, Android);
+			case 'iphone':
+				createSection(xml, Iphone);
+			case 'electron':
+				createSection(xml, Electron);
+			case 'run':
+				createSection(xml, Run);
+			case 'zip':
+				createSection(xml, Zip);
+			case 'ftp':
+				createSection(xml, Ftp);
+			case 'hash':
+				createSection(xml, Hash);
+			case 'remote':
+				createSection(xml, Remote);
+			case 'unpack':
+				createSection(xml, Unpack);
 			/* case 'module':
 				var name = StringTools.trim(xml.innerData);
 				if (pony.text.XmlTools.isTrue(xml, after));
@@ -42,7 +55,8 @@ class BAReader<T: BAConfig> extends XmlConfigReader<T> implements HasAbstract {
 				else
 					cfg.runBefore.push(name); */
 
-			case _: throw 'Unknown tag: ${xml.name}';
+			case _:
+				throw 'Unknown tag: ${xml.name}';
 		}
 	}
 

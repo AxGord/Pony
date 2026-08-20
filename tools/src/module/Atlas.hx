@@ -6,7 +6,6 @@ import pony.fs.File;
 import pony.fs.Unit;
 import pony.ui.BinaryAtlas;
 import pony.ui.BinaryAtlasParams;
-
 import types.BASection;
 
 using StringTools;
@@ -166,9 +165,12 @@ private class AtlasReader extends BAReader<AtlasConfig> {
 
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
-			case 'filter': cfg.filter = val;
-			case 'from': cfg.from += val;
-			case 'deleteSource': cfg.deleteSource = !val.isFalse();
+			case 'filter':
+				cfg.filter = val;
+			case 'from':
+				cfg.from += val;
+			case 'deleteSource':
+				cfg.deleteSource = !val.isFalse();
 			case _:
 		}
 	}

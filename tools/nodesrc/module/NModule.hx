@@ -35,6 +35,7 @@ class NModule<T> extends Logable implements HasAbstract {
 	}
 
 	private function finishTasksHandler(): Void eFinish.dispatch();
+
 	@:abstract private function run(cfg: T): Void;
 
 }

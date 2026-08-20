@@ -1,7 +1,6 @@
 package remote.server;
 
 import haxe.io.BytesOutput;
-
 import pony.Pair;
 import pony.net.ISocketClient;
 import pony.net.SocketClient;
@@ -25,9 +24,11 @@ class ServerRemoteInstanse {
 	private var zipRLog: Bool = true;
 	private var packLog: Null<BytesOutput>;
 	private var activeProcess: Null<Process>;
-	private var activity: Void->Void;
+	private var activity: Void -> Void;
 
-	public function new(client: ISocketClient, key: String, commands: Map<String, Array<Pair<Bool, String>>>, allowForGet: Array<String>) {
+	public function new(
+		client: ISocketClient, key: String, commands: Map<String, Array<Pair<Bool, String>>>, allowForGet: Array<String>
+	) {
 		this.client = client;
 		this.key = key;
 		this.commands = commands;
@@ -47,6 +48,7 @@ class ServerRemoteInstanse {
 	}
 
 	private function warningHandler(): Void Sys.println('Problem with connection');
+
 	private function restoreHandler(): Void Sys.println('Connection restore');
 
 	private function closeHandler(): Void {
@@ -110,10 +112,8 @@ class ServerRemoteInstanse {
 
 	private function prlog(s: String): Void {
 		activity();
-		if (s.substr(-1) == '\n')
-			s = s.substr(0, -1);
-		if (s == '')
-			return;
+		if (s.substr(-1) == '\n') s = s.substr(0, -1);
+		if (s == '') return;
 		Sys.println(s);
 		if (zipRLog && packLog != null)
 			@:nullSafety(Off) packLog.writeString(s + '\n');
@@ -166,6 +166,7 @@ class ServerRemoteInstanse {
 	}
 
 	public dynamic function onBeginCommand(): Void {}
+
 	public dynamic function onEndCommand(): Void {}
 
 }

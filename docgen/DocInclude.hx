@@ -58,21 +58,76 @@ final exept: Map<String, Array<String>> = [
 function include(exeptList: Array<String>) Compiler.include('pony', true, [for (e in exeptList) for (cl in exept[e]) cl]);
 
 function cs() include([
-	'openfl', 'flash', 'starling', 'pixi', 'heaps', 'cc', 'unity', 'html', 'js', 'node', 'kb', 'http',
-	'xr', 'electron', 'fsdep', 'db', 'protobuf', 'magic', 'haxe3only'
+	'openfl',
+	'flash',
+	'starling',
+	'pixi',
+	'heaps',
+	'cc',
+	'unity',
+	'html',
+	'js',
+	'node',
+	'kb',
+	'http',
+	'xr',
+	'electron',
+	'fsdep',
+	'db',
+	'protobuf',
+	'magic',
+	'haxe3only'
 ]);
 
 function fl() include([
-	'openfl', 'starling', 'cs', 'pixi', 'heaps', 'cc', 'unity', 'html', 'js', 'node', 'http',
-	'xr', 'electron', 'fsdep', 'db', 'protobuf', 'magic', 'sys', 'haxe3only', 'mconsole', 'nape'
+	'openfl',
+	'starling',
+	'cs',
+	'pixi',
+	'heaps',
+	'cc',
+	'unity',
+	'html',
+	'js',
+	'node',
+	'http',
+	'xr',
+	'electron',
+	'fsdep',
+	'db',
+	'protobuf',
+	'magic',
+	'sys',
+	'haxe3only',
+	'mconsole',
+	'nape'
 ]);
 
 function neko() include([
-	'openfl', 'flash', 'cs', 'starling', 'pixi', 'heaps', 'cc', 'unity', 'html', 'js', 'node', 'kb', 'http',
-	'xr', 'electron', 'fsdep', 'db', 'protobuf', 'magic', 'haxe3only', 'ui'
+	'openfl',
+	'flash',
+	'cs',
+	'starling',
+	'pixi',
+	'heaps',
+	'cc',
+	'unity',
+	'html',
+	'js',
+	'node',
+	'kb',
+	'http',
+	'xr',
+	'electron',
+	'fsdep',
+	'db',
+	'protobuf',
+	'magic',
+	'haxe3only',
+	'ui'
 ]);
 
 function node() include([
-	'openfl', 'flash', 'cs', 'starling', 'pixi', 'heaps', 'cc', 'unity', 'html', 'kb',
-	'xr', 'electron', 'fsdep', 'db', 'protobuf', 'magic', 'haxe3only', 'ui', 'php', 'http'
+	'openfl',    'flash',    'cs', 'starling',     'pixi', 'heaps',        'cc', 'unity', 'html',   'kb',
+	    'xr', 'electron', 'fsdep',       'db', 'protobuf', 'magic', 'haxe3only',    'ui',  'php', 'http'
 ]);

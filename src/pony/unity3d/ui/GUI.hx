@@ -24,10 +24,10 @@ using hugs.HUGSWrapper;
  * @author AxGord <axgord@gmail.com>
  */
 @:nativeGen class GUI {
-	
-	static private var textures:Map<Int, Dynamic> = new Map<Int, Texture2D>();
 
-	public static function text(f:Vector3, point:IntPoint, text:String, style:FontStyle):GameObject {
+	static private var textures: Map<Int, Dynamic> = new Map<Int, Texture2D>();
+
+	public static function text(f: Vector3, point: IntPoint, text: String, style: FontStyle): GameObject {
 		var b = new GameObject();
 		b.name = 'gui_text';
 		b.transform.position = f;
@@ -46,11 +46,11 @@ using hugs.HUGSWrapper;
 		g.material.color = cast style.color;
 		return b;
 	}
-	
-	public static function rect(f:Vector3, r:IntRect, color:UColor):GameObject {
+
+	public static function rect(f: Vector3, r: IntRect, color: UColor): GameObject {
 		if (!textures.exists(color)) {
-			var t:Texture2D = new Texture2D(1, 1);
-			t.SetPixel(0,0,color);
+			var t: Texture2D = new Texture2D(1, 1);
+			t.SetPixel(0, 0, color);
 			t.Apply();
 			textures.set(color, t);
 		}
@@ -63,15 +63,35 @@ using hugs.HUGSWrapper;
 		g.pixelInset = new Rect(r.x, -r.y, r.width, -r.height);
 		return b;
 	}
-	
-	public static function brect(f:Vector3, r:IntRect, color:Color, border:Int, bcolor:Color):Array<GameObject> {
+
+	public static function brect(f: Vector3, r: IntRect, color: Color, border: Int, bcolor: Color): Array<GameObject> {
 		return [
 			rect(f, r, color),
-			rect(new Vector3(f.x, f.y, f.z+1), {x:r.x,y:r.y,width:border,height:r.height}, bcolor),
-			rect(new Vector3(f.x, f.y, f.z+1), {x:r.x,y:r.y,width:r.width,height:border}, bcolor),
-			rect(new Vector3(f.x, f.y, f.z+1), {x:r.x+r.width,y:r.y,width:border,height:r.height}, bcolor),
-			rect(new Vector3(f.x, f.y, f.z+1), {x:r.x,y:r.y+r.height,width:r.width,height:border}, bcolor),
+			rect(new Vector3(f.x, f.y, f.z + 1), {
+				x: r.x,
+				y: r.y,
+				width: border,
+				height: r.height
+			}, bcolor),
+			rect(new Vector3(f.x, f.y, f.z + 1), {
+				x: r.x,
+				y: r.y,
+				width: r.width,
+				height: border
+			}, bcolor),
+			rect(new Vector3(f.x, f.y, f.z + 1), {
+				x: r.x + r.width,
+				y: r.y,
+				width: border,
+				height: r.height
+			}, bcolor),
+			rect(new Vector3(f.x, f.y, f.z + 1), {
+				x: r.x,
+				y: r.y + r.height,
+				width: r.width,
+				height: border
+			}, bcolor),
 		];
 	}
-	
+
 }

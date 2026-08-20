@@ -2,7 +2,6 @@ package pony.text;
 
 import pony.math.MathTools;
 import pony.SPair;
-
 #if macro
 import haxe.macro.Context;
 import haxe.macro.Expr;
@@ -41,7 +40,9 @@ abstract AnsiForeground(UInt) to UInt {
 
 	public static inline var MODULE: String = 'pony.text.TextTools';
 	public static var letters: Map<String, String> = [
-		'en' => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'ru' => 'АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ', 'num' => '0123456789'
+		'en' => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+		'ru' => 'АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ',
+		'num' => '0123456789'
 	];
 	private static inline var FIRST_ANSI_ID: Int = 192;
 
@@ -159,11 +160,9 @@ abstract AnsiForeground(UInt) to UInt {
 	private static function getANSILetter(s: String, lang: String): String {
 		var l: Null<String> = letters[lang];
 		if (l == null) throw 'Not supported lang';
-		for (i in 0...l.length) if (l.charAt(i) == s)
-			return String.fromCharCode(i + FIRST_ANSI_ID);
+		for (i in 0...l.length) if (l.charAt(i) == s) return String.fromCharCode(i + FIRST_ANSI_ID);
 		l = l.toLowerCase();
-		for (i in 0...l.length) if (l.charAt(i) == s)
-			return String.fromCharCode(l.length + i + FIRST_ANSI_ID);
+		for (i in 0...l.length) if (l.charAt(i) == s) return String.fromCharCode(l.length + i + FIRST_ANSI_ID);
 		return s;
 	}
 
@@ -183,13 +182,14 @@ abstract AnsiForeground(UInt) to UInt {
 	}
 
 	public static inline function isTrue(s: String): Bool return return s != null && StringTools.trim(s.toLowerCase()) == 'true';
+
 	public static inline function isFalse(s: String): Bool return return s != null && StringTools.trim(s.toLowerCase()) == 'false';
 
 	public static function explode(s: String, delimiters: Array<String>): Array<String> {
 		var r: Array<String> = [s];
 		for (d in delimiters) {
 			var sr: Array<String> = [];
-			for ( e in r ) for ( se in e.split(d) ) if (se != '') sr.push(se);
+			for (e in r) for (se in e.split(d)) if (se != '') sr.push(se);
 			r = sr;
 		}
 		return r;
@@ -211,7 +211,7 @@ abstract AnsiForeground(UInt) to UInt {
 		var i: Int = MathTools.cmax(f.lastIndexOf('\\'), f.lastIndexOf('/'));
 		f = i != -1 ? f.substr(0, i) + '/' : '';
 		Context.registerModuleDependency(MODULE, f + file);
-		var s:String = sys.io.File.getContent(f + file);
+		var s: String = sys.io.File.getContent(f + file);
 		return macro $v{s};
 	}
 
@@ -219,15 +219,15 @@ abstract AnsiForeground(UInt) to UInt {
 		var f: String = Context.getPosInfos(Context.currentPos()).file;
 		var i: Int = MathTools.cmax(f.lastIndexOf('\\'), f.lastIndexOf('/'));
 		f = i != -1 ? f.substr(0, i) + '/' : '';
-		var s:String = sys.FileSystem.absolutePath(f + path + '/');
+		var s: String = sys.FileSystem.absolutePath(f + path + '/');
 		return macro $v{s};
 	}
 
 	macro public static function includeJson(file: String): Expr {
 		Context.registerModuleDependency(MODULE, file);
 		var s: String = sys.io.File.getContent(file);
-		haxe.Json.parse(s); //check
-		return macro haxe.Json.parse($v{s}); //todo: not parse on runtime
+		haxe.Json.parse(s); // check
+		return macro haxe.Json.parse($v{s}); // todo: not parse on runtime
 	}
 
 	macro public static function includeJsonFromCurrentDir(file: String): Expr {
@@ -235,9 +235,9 @@ abstract AnsiForeground(UInt) to UInt {
 		var i: Int = MathTools.cmax(f.lastIndexOf('\\'), f.lastIndexOf('/'));
 		f = i != -1 ? f.substr(0, i) + '/' : '';
 		Context.registerModuleDependency(MODULE, f + file);
-		var s:String = sys.io.File.getContent(f + file);
-		haxe.Json.parse(s); //check
-		return macro haxe.Json.parse($v{s}); //todo: not parse on runtime
+		var s: String = sys.io.File.getContent(f + file);
+		haxe.Json.parse(s); // check
+		return macro haxe.Json.parse($v{s}); // todo: not parse on runtime
 	}
 
 	public static inline function parsePercent(s: String): Float {
@@ -245,17 +245,18 @@ abstract AnsiForeground(UInt) to UInt {
 	}
 
 	public static inline function last(s: String): String return s.charAt(s.length - 1);
+
 	public static inline function setLast(s: String, ch: String): String return last(s) != ch ? s + ch : s;
 
 	public static function bigFirst(s: String): String return s.charAt(0).toUpperCase() + s.substr(1);
+
 	public static function smallFirst(s: String): String return s.charAt(0).toLowerCase() + s.substr(1);
 
 	public static function lines(s: String): Array<String> {
 		var a: Array<String> = s.split('\r\n');
 		if (a.length == 1) {
 			a = s.split('\r');
-			if (a.length == 1)
-				a = s.split('\n');
+			if (a.length == 1) a = s.split('\n');
 		}
 		return a;
 	}
@@ -301,9 +302,7 @@ abstract AnsiForeground(UInt) to UInt {
 	}
 
 	private static function detectTab(s: String): Null<String> {
-		for (t in ['    ', '		', '	', '  ', ' '])
-			if (s.substr(0, t.length) == t)
-				return t;
+		for (t in ['    ', '		', '	', '  ', ' ']) if (s.substr(0, t.length) == t) return t;
 		return null;
 	}
 
@@ -351,10 +350,12 @@ abstract AnsiForeground(UInt) to UInt {
 		return i == -1 ? new SPair(s, null) : new SPair(s.substr(0, i), s.substr(i + 1));
 	}
 
-	public static function addToStringsEnd(s: Array<String>, v: String): Array<String> return [ for (e in s) e + v ];
-	public static function addToStringsBegin(s: Array<String>, v: String):Array<String> return [ for (e in s) v + e ];
+	public static function addToStringsEnd(s: Array<String>, v: String): Array<String> return [for (e in s) e + v];
+
+	public static function addToStringsBegin(s: Array<String>, v: String): Array<String> return [for (e in s) v + e];
 
 	public static inline function quote(s: String, q: String = '"'): String return q + s + q;
+
 	public static inline function singleQuote(s: String): String return quote(s, "'");
 
 	public static inline function replaceInQuote(s: String, sub: String, by: String, q: String = '"'): String {
@@ -376,6 +377,7 @@ abstract AnsiForeground(UInt) to UInt {
 	}
 
 	public static inline function ansiForeground(s: String, c: AnsiForeground): String return '\x1b[${c}m$s\x1b[${AnsiForeground.Default}m';
+
 	public static inline function ansiUnderlined(s: String): String return '\x1b[4m$s\x1b[24m';
 
 	public static function replaceXmlAttr(src: String, attr: String, newval: String): String {
@@ -399,8 +401,11 @@ abstract AnsiForeground(UInt) to UInt {
 	}
 
 	public static inline function maxLength(a: String, b: String): Int return MathTools.cmax(a.length, b.length);
+
 	public static inline function minLength(a: String, b: String): Int return MathTools.cmin(a.length, b.length);
+
 	public static function getMaxLength(a: String, b: Int): Int return MathTools.cmax(a.length, b);
+
 	public static function getMinLength(a: String, b: Int): Int return MathTools.cmin(a.length, b);
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end

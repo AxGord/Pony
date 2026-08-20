@@ -10,15 +10,7 @@ import pony.events.Listener0;
  * @author AxGord <axgord@gmail.com>
  */
 @SuppressWarnings('checkstyle:MagicNumber')
-@:forward(
-	empty,
-	min,
-	max,
-	change,
-	getPriority,
-	exists,
-	existsArray
-)
+@:forward(empty, min, max, change, getPriority, exists, existsArray)
 @:access(pony.events.Listener0)
 @:nullSafety(Strict) abstract Signal0(Priority<Listener0>) from Event0 from Priority<Listener0> {
 
@@ -202,7 +194,7 @@ import pony.events.Listener0;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function join(s: Signal0): Signal0 {
-		add({ once: false, listener: LEvent0((untyped s:Event0), true) });
+		add({ once: false, listener: LEvent0((untyped s: Event0), true) });
 		s.add({ once: false, listener: LEvent0((this: Event0), true) });
 		return this;
 	}

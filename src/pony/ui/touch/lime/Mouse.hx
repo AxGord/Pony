@@ -12,6 +12,7 @@ import pony.ui.touch.MouseButton;
  */
 @SuppressWarnings('checkstyle:MagicNumber')
 class Mouse {
+
 	#if !notouch
 	private static var moveEvent: Event<Float -> Float -> Void>;
 	private static var downEvent: Event<Float -> Float -> lime.ui.MouseButton -> Void>;
@@ -56,10 +57,10 @@ class Mouse {
 	}
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private static inline function hackUp():Void {
+	private static inline function hackUp(): Void {
 		#if !notouch
 		upEvent = Application.current.window.onMouseUp;
-		var event :Event<Float -> Float -> Int -> Void> = new Event<Float -> Float -> Int -> Void>();
+		var event: Event<Float -> Float -> Int -> Void> = new Event<Float -> Float -> Int -> Void>();
 		untyped Application.current.window.onMouseUp = event;
 		#else
 		var event: Event<Float -> Float -> Int -> Void> = Application.current.window.onMouseUp;

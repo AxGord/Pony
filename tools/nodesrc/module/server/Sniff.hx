@@ -3,12 +3,10 @@ package module.server;
 import haxe.io.Bytes;
 import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
-
 import pony.Logable;
 import pony.net.ISocketClient;
 import pony.net.SocketClient;
 import pony.net.SocketServer;
-
 import types.SniffConfig;
 
 /**

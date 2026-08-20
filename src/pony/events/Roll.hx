@@ -64,27 +64,36 @@ private abstract SignalAndListener(PairType) {
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function enable(): Void {
 		switch this {
-			case S0(p): p.a << p.b;
-			case S1(p): p.a << p.b;
-			case S2(p): p.a << p.b;
+			case S0(p):
+				p.a << p.b;
+			case S1(p):
+				p.a << p.b;
+			case S2(p):
+				p.a << p.b;
 		}
 	}
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function disable(): Void {
 		switch this {
-			case S0(p): p.a >> p.b;
-			case S1(p): p.a >> p.b;
-			case S2(p): p.a >> p.b;
+			case S0(p):
+				p.a >> p.b;
+			case S1(p):
+				p.a >> p.b;
+			case S2(p):
+				p.a >> p.b;
 		}
 	}
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function once(): Void {
 		switch this {
-			case S0(p): p.a < p.b;
-			case S1(p): p.a < p.b;
-			case S2(p): p.a < p.b;
+			case S0(p):
+				p.a < p.b;
+			case S1(p):
+				p.a < p.b;
+			case S2(p):
+				p.a < p.b;
 		}
 	}
 
@@ -98,10 +107,12 @@ abstract Roll(Array<SignalAndListener>) from Array<SignalAndListener> {
 
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public inline function new(p:Array<SignalAndListener>) this = p;
+	public inline function new(p: Array<SignalAndListener>) this = p;
 
 	public function enable(): Void for (e in this) e.enable();
+
 	public function once(): Void for (e in this) e.once();
+
 	public function disable(): Void for (e in this) e.disable();
 
 }

@@ -34,8 +34,9 @@ class SimpleXmlApp extends PixiXmlUi {
 	}
 
 	private function createApp(): Void {
-		app = new App(this, Config.width, Config.height, Config.background,
-			parentDomId == null ? null : Browser.document.getElementById(parentDomId));
+		app = new App(
+			this, Config.width, Config.height, Config.background, parentDomId == null ? null : Browser.document.getElementById(parentDomId)
+		);
 	}
 
 	private function init(): Void {
@@ -54,8 +55,7 @@ class SimpleXmlApp extends PixiXmlUi {
 			preloader = new SpinLoader(m, Std.int(m / 10), Config.background.invert, 3, app);
 			preloader.position.set(Config.width / 2, Config.height / 2);
 			addChild(preloader);
-			if (app.isWebGL && GlowFilter != null)
-				preloader.filters = [ new GlowFilter(16, 1.5, 0, Config.background.invert, 0.1) ];
+			if (app.isWebGL && GlowFilter != null) preloader.filters = [new GlowFilter(16, 1.5, 0, Config.background.invert, 0.1)];
 			preloader.core.percent = 0.1;
 			preloader.core.changePercent - 1 << preloadedHandler;
 		} else {

@@ -22,8 +22,7 @@ class TouchManagerHandCursor {
 	public var enabled(default, set): Bool = true;
 
 	public function new(object: Dynamic) {
-		if (!_initialized)
-			init();
+		if (!_initialized) init();
 
 		_object = object;
 
@@ -31,21 +30,18 @@ class TouchManagerHandCursor {
 	}
 
 	private function onTouch(e: TouchManagerEvent): Void {
-		if (e.type == Hover)
-			setHandCursor(Mouse.cursor == MouseCursor.BUTTON);
+		if (e.type == Hover) setHandCursor(Mouse.cursor == MouseCursor.BUTTON);
 		setHandCursor(!(e.type == HoverOut || (e.type == Up && e.mouseOver == false)));
 	}
 
 	private function setHandCursor(hand: Bool): Void {
-		if (enabled)
-			_hand = hand;
+		if (enabled) _hand = hand;
 		_hoveringOver = hand;
 	}
 
 	public function set_enabled(value: Bool): Bool {
 		enabled = value;
-		if (_hoveringOver)
-			_hand = enabled;
+		if (_hoveringOver) _hand = enabled;
 		return enabled;
 	}
 

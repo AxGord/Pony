@@ -56,15 +56,11 @@ class StarlingTurningFree extends Sprite {
 
 		core.changeAngle << function(r: Angle) handle.rotation = (r - _handleInitAngleDeg) / 180 * Math.PI;
 
-		if (lmin != null)
-			lmin.visible = false;
-		if (lmax != null)
-			lmax.visible = false;
+		if (lmin != null) lmin.visible = false;
+		if (lmax != null) lmax.visible = false;
 
-		if (lmin != null)
-			core.minAngle = untyped flashSource.lmin.rotation;
-		if (lmax != null)
-			core.maxAngle = untyped flashSource.lmax.rotation;
+		if (lmin != null) core.minAngle = untyped flashSource.lmin.rotation;
+		if (lmax != null) core.maxAngle = untyped flashSource.lmax.rotation;
 		core.currentAngle = _handleInitAngleDeg;
 
 		TouchManager.addListener(this, onMove, [TouchEventType.Down, TouchEventType.Move]);
@@ -72,7 +68,7 @@ class StarlingTurningFree extends Sprite {
 
 	private function onMove(e: TouchManagerEvent): Void {
 		localToGlobal(_zero, _bufferPoint);
-		core.toPoint({x: e.globalX - _bufferPoint.x, y: e.globalY - _bufferPoint.y});
+		core.toPoint({ x: e.globalX - _bufferPoint.x, y: e.globalY - _bufferPoint.y });
 	}
 
 }

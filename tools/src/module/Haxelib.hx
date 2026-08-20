@@ -1,13 +1,10 @@
 package module;
 
 import haxe.io.Eof;
-
 import pony.Fast;
 import pony.Tools;
-
 import sys.FileSystem;
 import sys.io.Process;
-
 import types.BAConfig;
 import types.BASection;
 
@@ -35,8 +32,10 @@ typedef HaxelibConfig = {
 @SuppressWarnings('checkstyle:MagicNumber')
 #if (haxe_ver >= 4.2) enum #else @:enum #end
 abstract Source(String) from String to String {
+
 	var GIT = 'git';
 	var DEV = 'dev';
+
 }
 
 /**
@@ -70,10 +69,11 @@ abstract Source(String) from String to String {
 			if (lib.version == GIT && lib.git == null) continue;
 			if (lib.version == DEV && lib.path == null) continue;
 			if (!lib.keepDev) Utils.command('haxelib', ['dev', lib.name]);
-			var args: Array<String> =
-				lib.version == GIT ? @:nullSafety(Off) [GIT, lib.name, lib.git] :
-				lib.version == DEV && lib.path != null ? [DEV, lib.name, getLibPath(lib)] :
-				lib.version != null ? ['install', lib.name, lib.version] : ['install', lib.name];
+			var args: Array<String> = lib.version == GIT
+				? @:nullSafety(Off) [GIT, lib.name, lib.git]
+				: lib.version == DEV && lib.path != null
+					? [DEV, lib.name, getLibPath(lib)]
+					: lib.version != null ? ['install', lib.name, lib.version] : ['install', lib.name];
 			if (lib.version == GIT && lib.commit != null) args.push(lib.commit);
 			Sys.println('haxelib ' + args.join(' '));
 			var process: Process = new Process('haxelib', args);
@@ -96,9 +96,17 @@ abstract Source(String) from String to String {
 				var exceptions: Array<Null<String>> = [null, 'dev', 'git'];
 				if (!exceptions.contains(lib.version) && !exceptions.contains(Utils.ponyVersion) && lib.version != Utils.ponyVersion) {
 					// Build and run new version
-					Utils.command(
-						'haxelib', ['run', 'pony', 'install', '-code', '-code-insiders', '-npm', '-userpath', '-nodepath', '-ponypath']
-					);
+					Utils.command('haxelib', [
+						'run',
+						'pony',
+						'install',
+						'-code',
+						'-code-insiders',
+						'-npm',
+						'-userpath',
+						'-nodepath',
+						'-ponypath'
+					]);
 					Utils.command('haxelib', ['run', 'pony', 'prepare']);
 					Sys.exit(0);
 				}
@@ -133,7 +141,7 @@ abstract Source(String) from String to String {
 		}
 	}
 
-	private static inline function getLibPath(lib: {path: String, parent: Null<String>}): String {
+	private static inline function getLibPath(lib: { path: String, parent: Null<String> }): String {
 		return lib.parent != null ? Tools.libPath(lib.parent) + lib.path : lib.path;
 	}
 

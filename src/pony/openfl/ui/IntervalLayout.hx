@@ -11,8 +11,10 @@ import pony.openfl.ui.BaseLayout;
  * @author meerfolk<meerfolk@gmail.com>
  */
 class IntervalLayout extends BaseLayout<IntervalLayoutCore<DisplayObject>> {
-	public function new (interval : Int, vert : Bool = false, ?border:Border<Int>, ?align:Align) {
+
+	public function new(interval: Int, vert: Bool = false, ?border: Border<Int>, ?align: Align) {
 		layout = new IntervalLayoutCore<DisplayObject>(interval, vert, border, align);
 		super();
 	}
+
 }

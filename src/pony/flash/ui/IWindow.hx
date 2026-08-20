@@ -6,6 +6,6 @@ package pony.flash.ui;
 interface IWindow {
 
 	public function show(): Void;
-	// public function hide():Void;
 
+	// public function hide():Void;
 }

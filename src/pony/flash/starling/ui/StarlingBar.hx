@@ -35,8 +35,7 @@ class StarlingBar extends StarlingProgressBar implements HasSignal {
 		zone.alpha = 0;
 		zone.useHandCursor = true;
 		b = untyped source.getChildByName('b');
-		if (b != null)
-			b.touchable = false;
+		if (b != null) b.touchable = false;
 		TouchManager.addListener(zone, beginMove, [TouchEventType.Down]);
 	}
 
@@ -62,8 +61,7 @@ class StarlingBar extends StarlingProgressBar implements HasSignal {
 	}
 
 	override public function set_value(v: Float): Float {
-		if (value == v)
-			return v;
+		if (value == v) return v;
 		super.set_value(v);
 		eDynamic.dispatch(v);
 		if (b != null) {

@@ -31,7 +31,7 @@ class Touch implements Declarator implements HasSignal {
 
 	private static var obj: Container;
 
-	public  static var inited(default, null): Bool = false;
+	public static var inited(default, null): Bool = false;
 
 	public static function reg(obj: Container): Void {
 		if (Touch.obj == null) {
@@ -70,10 +70,10 @@ class Touch implements Declarator implements HasSignal {
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function pack(e: InteractionEvent): TouchObj {
 		var p = correction(e.data.global.x, e.data.global.y);
-		return { id: untyped e.data.identifier, x:p.x, y:p.y };
+		return { id: untyped e.data.identifier, x: p.x, y: p.y };
 	}
 
-	private static function moveHandler(e:InteractionEvent):Void {
+	private static function moveHandler(e: InteractionEvent): Void {
 		tMove[Std.string(untyped e.data.identifier)] = pack(e);
 		DeltaTime.fixedUpdate.once(moveDispatch, -8);
 	}

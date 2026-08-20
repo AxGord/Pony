@@ -7,7 +7,6 @@ import pony.Tools;
 import pony.events.Signal0;
 import pony.magic.HasAbstract;
 import pony.magic.HasLink;
-
 import types.BASection;
 
 /**
@@ -76,7 +75,9 @@ class Module extends Logable implements HasAbstract implements HasLink {
 	#end
 
 	private static function globalRunNextRun(fn: Void -> Void): Void fn();
+
 	public static function lockQueue(): Void GLOBALQUEUE.call(Tools.nullFunction0);
+
 	public static function unlockQueue(): Void GLOBALQUEUE.next();
 
 	private function addToRun(fn: Void -> Void): Void {
@@ -102,7 +103,9 @@ class Module extends Logable implements HasAbstract implements HasLink {
 	}
 
 	@:abstract public function init(): Void;
+
 	@:abstract private function runModule(before: Bool, section: BASection): Void;
+
 	@:abstract private function readConfig(ac: AppCfg): Void;
 
 	private function initSections(priority: Int, ?current: BASection): Void {
@@ -112,6 +115,7 @@ class Module extends Logable implements HasAbstract implements HasLink {
 	}
 
 	private function moduleBefore(section: BASection): Void runModule(true, section);
+
 	private function moduleAfter(section: BASection): Void runModule(false, section);
 
 	private function addConfigListener(): Void {
@@ -185,7 +189,7 @@ class Module extends Logable implements HasAbstract implements HasLink {
 	private function emptyConfig(): Void {
 		modules.checkXml();
 		removeConfigListener();
-		readConfig({debug: false, app: null});
+		readConfig({ debug: false, app: null });
 	}
 
 }

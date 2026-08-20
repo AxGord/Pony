@@ -58,7 +58,10 @@ class Initializer {
 		}
 	}
 
-	public function new(initCallback: IDisplayObjectContainer -> IDisplayObject -> Void, showStats: Bool = false, content: flash.display.DisplayObject = null) {
+	public function new(
+		initCallback: IDisplayObjectContainer -> IDisplayObject -> Void, showStats: Bool = false,
+		content: flash.display.DisplayObject = null
+	) {
 		_initCallback = initCallback;
 
 		Lib.current.stage.align = StageAlign.TOP_LEFT;
@@ -72,7 +75,7 @@ class Initializer {
 		FLTools.height = _initialHeight;
 		_aspectRatio = _initialWidth / _initialHeight;
 
-	#if starling
+		#if starling
 	_starlingCreator = new StarlingCreator(showStats);
 
 	_starlingCreator.starling.addEventListener(starling.events.Event.ROOT_CREATED, onRootCreated);
@@ -110,7 +113,6 @@ class Initializer {
 
 	updateLimiters();
 	#end
-
 		Lib.current.stage.addEventListener(Event.RESIZE, resizeStage);
 		resizeStage();
 

@@ -1,7 +1,6 @@
 package module;
 
 import pony.Fast;
-
 import types.BASection;
 import types.BmfontConfig;
 
@@ -78,8 +77,7 @@ private class BmfontReader extends BAReader<BmfontConfig> {
 				cfg.to = val;
 			case 'type':
 				cfg.type = val;
-				if (val == 'msdf' && cfg.padding == -1)
-					cfg.padding = 1;
+				if (val == 'msdf' && cfg.padding == -1) cfg.padding = 1;
 			case 'format':
 				cfg.format = val;
 			case 'distance':

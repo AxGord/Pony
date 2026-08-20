@@ -9,14 +9,14 @@ import types.*;
  */
 class Cordova extends Section {
 
-	public var title:String = null;
-	public var versionBuildDate:Bool = true;
-	public var androidVersionIncrement:Bool = true;
+	public var title: String = null;
+	public var versionBuildDate: Bool = true;
+	public var androidVersionIncrement: Bool = true;
 
 	public function new() super('cordova');
 
 	#if (haxe_ver < 4.2) override #end
-	public function result():Xml {
+	public function result(): Xml {
 		init();
 
 		if (title != null) add('id', 'org.apache.cordova.pony.' + StringTools.replace(title, ' ', ''));

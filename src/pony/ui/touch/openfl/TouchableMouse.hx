@@ -83,8 +83,10 @@ class TouchableMouse {
 
 	private function globUpHandler(_): Void {
 		_down = false;
-		if (!over) base.dispatchOutUp();
-		else base.dispatchUp();
+		if (!over)
+			base.dispatchOutUp();
+		else
+			base.dispatchUp();
 	}
 
 	private function leaveHandler(): Void {

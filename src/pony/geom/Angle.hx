@@ -23,13 +23,21 @@ abstract Angle(Float) to Float {
 	private inline function get_percent(): Float return this / MAX;
 
 	@:op(A + B) private static inline function add(a: Angle, b: Angle): Angle return (a: Float) + (b: Float);
+
 	@:op(A / B) private static inline function div(a: Angle, b: Angle): Angle return (a: Float) / (b: Float);
+
 	@:op(A * B) private static inline function mul(a: Angle, b: Angle): Angle return (a: Float) * (b: Float);
+
 	@:op(A - B) private static inline function sub(a: Angle, b: Angle): Angle return (a: Float) - (b: Float);
+
 	@:op(A > B) private static inline function gt(a: Angle, b: Angle): Bool return (a: Float) > (b: Float);
+
 	@:op(A >= B) private static inline function gte(a: Angle, b: Angle): Bool return (a: Float) >= (b: Float);
+
 	@:op(A < B) private static inline function lt(a: Angle, b: Angle): Bool return (a: Float) < (b: Float);
+
 	@:op(A <= B) private static inline function lte(a: Angle, b: Angle): Bool return (a: Float) <= (b: Float);
+
 	@:op(A % B) private static inline function mod(a: Angle, b: Angle): Angle return (a: Float) % (b: Float);
 
 }

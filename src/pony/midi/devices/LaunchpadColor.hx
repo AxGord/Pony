@@ -17,7 +17,7 @@ abstract LaunchpadColor(MidiCode) to MidiCode from MidiCode {
 	var GreenLow = 28;
 	var GreenFull = 60;
 
-	public static function fromIndex(index:Int):LaunchpadColor {
+	public static function fromIndex(index: Int): LaunchpadColor {
 		return switch index {
 			case 0: Off;
 			case 1: RedLow;

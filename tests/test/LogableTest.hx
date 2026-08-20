@@ -1,11 +1,10 @@
 import massive.munit.Assert;
-
 import pony.Logable;
 
 class LogableTest {
 
 	@Test
-	public function complex() :Void {
+	public function complex(): Void {
 		var first: Logable = new Logable('First');
 		var second: Logable = new Logable('Second');
 		second.listenErrorAndLog(first);

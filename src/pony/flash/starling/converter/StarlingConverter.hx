@@ -53,20 +53,23 @@ class StarlingConverter {
 
 	private static var _atlasCreator: AtlasCreator = new AtlasCreator();
 
-	public static function getObject(source: flash.display.DisplayObject, coordinateSpace: flash.display.DisplayObject,
-			disposeable: Bool = false): starling.display.DisplayObject {
+	public static function getObject(
+		source: flash.display.DisplayObject, coordinateSpace: flash.display.DisplayObject, disposeable: Bool = false
+	): starling.display.DisplayObject {
 		return getObjectInternal(source, coordinateSpace, disposeable, true);
 	}
 
-	private static function getObjectInternal(source: flash.display.DisplayObject, coordinateSpace: flash.display.DisplayObject, disposeable: Bool = false,
-			atlasGeneration: Bool): starling.display.DisplayObject {
+	private static function getObjectInternal(
+		source: flash.display.DisplayObject, coordinateSpace: flash.display.DisplayObject, disposeable: Bool = false, atlasGeneration: Bool
+	): starling.display.DisplayObject {
 		// trace("Converting " + source + " with a name " + source.name);
 
 		var starlingChild: starling.display.DisplayObject;
 		if (Std.is(source, flash.text.TextField) && hasName(source)) // Dynamic TextField
 		{
 			starlingChild = getStarlingTextField(cast(source, TextField), coordinateSpace);
-		} /*
+		}
+		/*
 			else if (Std.is(source, pony.flash.ui.ScrollBar)) // ScrollBar
 			{
 				starlingChild = getSpriteInternal(untyped source, coordinateSpace, disposeable);
@@ -129,21 +132,22 @@ class StarlingConverter {
 		}
 		// trace(source + " with a name " + source.name + " converted to " + starlingChild);
 
-		if (hasName(source))
-			starlingChild.name = source.name;
+		if (hasName(source)) starlingChild.name = source.name;
 
-		if (!disposeable && atlasGeneration)
-			_atlasCreator.generate();
+		if (!disposeable && atlasGeneration) _atlasCreator.generate();
 
 		return starlingChild;
 	}
 
-	public static function getSprite(source: flash.display.Sprite, coordinateSpace: flash.display.DisplayObject, disposeable: Bool): starling.display.Sprite {
+	public static function getSprite(
+		source: flash.display.Sprite, coordinateSpace: flash.display.DisplayObject, disposeable: Bool
+	): starling.display.Sprite {
 		return getSpriteInternal(source, coordinateSpace, disposeable, true);
 	}
 
-	private static function getSpriteInternal(source: flash.display.Sprite, coordinateSpace: flash.display.DisplayObject, disposeable: Bool,
-			atlasGeneration: Bool = false): starling.display.Sprite {
+	private static function getSpriteInternal(
+		source: flash.display.Sprite, coordinateSpace: flash.display.DisplayObject, disposeable: Bool, atlasGeneration: Bool = false
+	): starling.display.Sprite {
 		var result: starling.display.Sprite = new starling.display.Sprite();
 
 		// Pivot points for containers
@@ -152,7 +156,9 @@ class StarlingConverter {
 		result.pivotY = 0;
 
 		for (i in 0...untyped source.numChildren) {
-			var starlingChild: starling.display.DisplayObject = getObjectInternal(untyped source.getChildAt(i), coordinateSpace, disposeable, atlasGeneration);
+			var starlingChild: starling.display.DisplayObject = getObjectInternal(
+				untyped source.getChildAt(i), coordinateSpace, disposeable, atlasGeneration
+			);
 
 			result.addChild(starlingChild);
 
@@ -162,7 +168,6 @@ class StarlingConverter {
 		}
 
 		// Pivot point and zero point visualisation for containers
-
 		// var pivotQuad:Quad = new Quad(10, 10, 0xFF6600);
 		// pivotQuad.x = result.pivotX;
 		// pivotQuad.y = result.pivotY;
@@ -174,7 +179,9 @@ class StarlingConverter {
 		return result;
 	}
 
-	public static function getObjectWithNoParent(source: flash.display.DisplayObject, disposeable: Bool = false): starling.display.DisplayObject {
+	public static function getObjectWithNoParent(
+		source: flash.display.DisplayObject, disposeable: Bool = false
+	): starling.display.DisplayObject {
 		var sprite: flash.display.Sprite = new flash.display.Sprite();
 
 		sprite.addChild(source);
@@ -190,13 +197,16 @@ class StarlingConverter {
 		_atlasCreator.showAtlases();
 	}
 
-	private static function getStarlingTextField(source: flash.text.TextField, coordinateSpace: flash.display.DisplayObject): starling.text.TextField {
+	private static function getStarlingTextField(
+		source: flash.text.TextField, coordinateSpace: flash.display.DisplayObject
+	): starling.text.TextField {
 		var format: TextFormat = source.getTextFormat();
 
 		var selfRect: Rectangle = source.getBounds(source);
 
-		var result: starling.text.TextField = new starling.text.TextField(cast(selfRect.width, Int), cast(selfRect.height, Int), source.text, format.font,
-			format.size, format.color, format.bold);
+		var result: starling.text.TextField = new starling.text.TextField(
+			cast(selfRect.width, Int), cast(selfRect.height, Int), source.text, format.font, format.size, format.color, format.bold
+		);
 
 		result.vAlign = VAlign.TOP;
 
@@ -231,8 +241,7 @@ class StarlingConverter {
 	public static function childrenWithNames(clip: flash.display.Sprite): Bool {
 		for (i in 0...clip.numChildren) {
 			var child: flash.display.DisplayObject = clip.getChildAt(i);
-			if (hasName(child))
-				return true;
+			if (hasName(child)) return true;
 		}
 		return false;
 	}
@@ -241,8 +250,9 @@ class StarlingConverter {
 		return source.name.indexOf("instance") == -1;
 	}
 
-	private static function setPivotPointAndPosition(result: starling.display.DisplayObject, source: flash.display.DisplayObject,
-			coordinateSpace: flash.display.DisplayObject): Void {
+	private static function setPivotPointAndPosition(
+		result: starling.display.DisplayObject, source: flash.display.DisplayObject, coordinateSpace: flash.display.DisplayObject
+	): Void {
 		var rect: Rectangle = source.getBounds(coordinateSpace);
 
 		var matrix: Matrix = matrixCalculation(source, coordinateSpace);
@@ -256,7 +266,9 @@ class StarlingConverter {
 		result.y = matrixPoint.y;
 	}
 
-	public static function matrixCalculation(source: flash.display.DisplayObject, coordinateSpace: flash.display.DisplayObject): flash.geom.Matrix {
+	public static function matrixCalculation(
+		source: flash.display.DisplayObject, coordinateSpace: flash.display.DisplayObject
+	): flash.geom.Matrix {
 		var matrix: flash.geom.Matrix = source.transform.matrix.clone();
 		var parent: flash.display.DisplayObject = source.parent;
 		while (parent != coordinateSpace && parent != null) {

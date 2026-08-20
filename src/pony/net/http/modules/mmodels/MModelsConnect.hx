@@ -18,7 +18,7 @@ import pony.text.tpl.ITplPut;
 
 	#if (haxe_ver < 4.2) override #end
 	public function tpl(parent: ITplPut): ITplPut {
-		return new MModelsPut(this, [ for (k in list.keys()) k => list[k].tpl(parent) ], parent);
+		return new MModelsPut(this, [for (k in list.keys()) k => list[k].tpl(parent)], parent);
 	}
 
 }

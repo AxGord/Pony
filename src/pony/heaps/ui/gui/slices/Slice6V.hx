@@ -17,10 +17,7 @@ import pony.geom.Point;
 		tiles.insert(2, tiles[0]);
 		tiles.insert(5, tiles[3]);
 		tiles.insert(8, tiles[6]);
-		super(new Point(
-			tiles[0].width * 2 + tiles[1].width,
-			tiles[0].height + tiles[3].height + tiles[6].height
-			), parent);
+		super(new Point(tiles[0].width * 2 + tiles[1].width, tiles[0].height + tiles[3].height + tiles[6].height), parent);
 		b = new SliceBase(this, tiles, repeat ? [1, 3, 4, 5, 7] : null);
 		changeWh << drawTiles;
 		changeFlipx << SliceBase.unsupported;

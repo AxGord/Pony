@@ -13,19 +13,19 @@ abstract ThreadTasks(UInt) {
 	public inline function new() this = 0;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public inline function add(f:UInt -> Void):Void {
+	public inline function add(f: UInt -> Void): Void {
 		this++;
-		MainLoop.addThread(function():Void {
+		MainLoop.addThread(function(): Void {
 			f(this);
 			this--;
 		});
 	}
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public inline function wait():Void while (this > 0) Sys.sleep(0.1);
+	public inline function wait(): Void while (this > 0) Sys.sleep(0.1);
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public static inline function multyTask(count:Int, f:UInt -> Void):Void {
+	public static inline function multyTask(count: Int, f: UInt -> Void): Void {
 		if (count == 1) {
 			f(1);
 		} else if (count > 1) {
@@ -39,15 +39,15 @@ abstract ThreadTasks(UInt) {
 
 class ThreadTasksWhile {
 
-	private var states:Array<Bool> = [];
-	private var waits:Array<Bool> = [];
-	private var endedCount:Int = 0;
-	public var error:Bool = false;
+	private var states: Array<Bool> = [];
+	private var waits: Array<Bool> = [];
+	private var endedCount: Int = 0;
+	public var error: Bool = false;
 
 	public function new() {}
 
-	public function add(f:(Void -> Void) -> (Void -> Void) -> Bool):Void {
-		var id:Int = states.length;
+	public function add(f: (Void -> Void) -> (Void -> Void) -> Bool): Void {
+		var id: Int = states.length;
 		states.push(false);
 		waits.push(false);
 		function lock() states[id] = true;
@@ -61,14 +61,14 @@ class ThreadTasksWhile {
 			lock();
 			endwait();
 		}
-		MainLoop.addThread(function():Void {
+		MainLoop.addThread(function(): Void {
 			waitandsleep();
 
 			try {
 				while (f(lock, unlock)) {
 					waitandsleep();
 				}
-			} catch (err:Any) {
+			} catch (err: Any) {
 				trace(err);
 				error = true;
 			}
@@ -79,12 +79,12 @@ class ThreadTasksWhile {
 	}
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public inline function ended():Bool return error || states.length == endedCount;
+	public inline function ended(): Bool return error || states.length == endedCount;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public inline function wait():Void while (!ended()) Sys.sleep(0.01);
+	public inline function wait(): Void while (!ended()) Sys.sleep(0.01);
 
-	public static function multyTask(count:Int, f:(Void -> Void) -> (Void -> Void) -> Bool):Void {
+	public static function multyTask(count: Int, f: (Void -> Void) -> (Void -> Void) -> Bool): Void {
 		if (count == 1) {
 			while (f(Tools.nullFunction0, Tools.nullFunction0)) {}
 		} else if (count > 1) {

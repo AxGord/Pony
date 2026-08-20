@@ -4,12 +4,10 @@ package pony.net.nodejs;
 import haxe.io.Bytes;
 import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
-
 import js.Node;
 import js.node.Buffer;
 import js.node.Net;
 import js.node.net.Socket;
-
 import pony.Queue;
 import pony.net.SocketClientBase;
 

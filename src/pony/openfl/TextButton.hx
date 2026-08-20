@@ -10,9 +10,9 @@ import openfl.text.TextFormat;
  */
 class TextButton extends Button {
 
-	private var tf:TextField;
-	
-	public function new(states:Array<String>, text:String, ?format:TextFormat, w:Float=0, h:Float=0) {
+	private var tf: TextField;
+
+	public function new(states: Array<String>, text: String, ?format: TextFormat, w: Float = 0, h: Float = 0) {
 		super(states);
 		tf = new TextField();
 		tf.autoSize = TextFieldAutoSize.LEFT;
@@ -24,10 +24,10 @@ class TextButton extends Button {
 		tf.mouseEnabled = false;
 		addChild(tf);
 	}
-	
-	override function change(img:Int):Void {
+
+	override function change(img: Int): Void {
 		super.change(img);
 		tf.visible = img != 4;
 	}
-	
+
 }

@@ -14,14 +14,14 @@ import pony.physics.nape.BodyBody;
  */
 class BodyBodyView extends BodyBaseView<BodyBody> {
 
-	override private function drawDebug(g:Graphics):Void {
-		var shapes:ShapeList = core.body.shapes;
+	override private function drawDebug(g: Graphics): Void {
+		var shapes: ShapeList = core.body.shapes;
 		for (i in 0...shapes.length) {
-			var sh:Shape = shapes.at(i);
+			var sh: Shape = shapes.at(i);
 			var v = sh.castPolygon.localVerts;
-			var first:Vec2 = null;
+			var first: Vec2 = null;
 			for (j in 0...v.length) {
-				var p:Vec2 = v.at(j);
+				var p: Vec2 = v.at(j);
 				if (first == null) {
 					first = p;
 					g.moveTo(p.x, p.y);

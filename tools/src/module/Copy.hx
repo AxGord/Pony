@@ -5,7 +5,6 @@ import pony.Pair;
 import pony.fs.Dir;
 import pony.fs.File;
 import pony.fs.Unit;
-
 import types.BASection;
 
 using pony.text.TextTools;
@@ -42,9 +41,9 @@ using pony.text.TextTools;
 	}
 
 	override private function runNode(cfg: CopyConfig): Void {
-		var from:String = cfg.from;
+		var from: String = cfg.from;
 		if (cfg.fromLib != null) {
-			var path:Null<String> = Utils.getLibPath(cfg.fromLib);
+			var path: Null<String> = Utils.getLibPath(cfg.fromLib);
 			if (path == null) error('Lib ${cfg.fromLib} not found');
 			from = '$path$from';
 		}
@@ -113,10 +112,14 @@ private typedef CopyConfig = {
 
 	override private function readNode(xml: Fast): Void {
 		switch xml.name {
-			case 'path': selfCreate(xml);
-			case 'dir': cfg.dirs.push(new Pair(normalize(xml.innerData), xml.has.filter ? normalize(xml.att.filter) : null));
-			case 'unit': cfg.units.push(new Pair(normalize(xml.innerData), xml.has.name ? xml.att.name : null));
-			case _: super.readNode(xml);
+			case 'path':
+				selfCreate(xml);
+			case 'dir':
+				cfg.dirs.push(new Pair(normalize(xml.innerData), xml.has.filter ? normalize(xml.att.filter) : null));
+			case 'unit':
+				cfg.units.push(new Pair(normalize(xml.innerData), xml.has.name ? xml.att.name : null));
+			case _:
+				super.readNode(xml);
 		}
 	}
 
@@ -133,11 +136,16 @@ private typedef CopyConfig = {
 
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
-			case 'to': cfg.to += val;
-			case 'from': cfg.from += val;
-			case 'fromLib': cfg.fromLib = val;
-			case 'hash': cfg.hash = val.isTrue();
-			case 'addext': cfg.addext = val;
+			case 'to':
+				cfg.to += val;
+			case 'from':
+				cfg.from += val;
+			case 'fromLib':
+				cfg.fromLib = val;
+			case 'hash':
+				cfg.hash = val.isTrue();
+			case 'addext':
+				cfg.addext = val;
 			case _:
 		}
 	}

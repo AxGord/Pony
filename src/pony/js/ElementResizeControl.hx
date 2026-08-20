@@ -51,11 +51,9 @@ class ElementResizeControl implements HasSignal {
 	private function unlistenResize(): Void Window.onResize >> resizeHandler;
 
 	public function resizeHandler(): Void {
-		for (i in 0...element.childElementCount)
-			element.children.item(i).hidden = true;
+		for (i in 0...element.childElementCount) element.children.item(i).hidden = true;
 		eResize.dispatch(width, height);
-		for (i in 0...element.childElementCount)
-			element.children.item(i).hidden = false;
+		for (i in 0...element.childElementCount) element.children.item(i).hidden = false;
 	}
 
 }

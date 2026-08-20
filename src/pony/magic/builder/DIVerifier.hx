@@ -1,7 +1,6 @@
 package pony.magic.builder;
 
 #if macro
-
 import haxe.macro.Context;
 import haxe.macro.Expr.Position;
 
@@ -138,9 +137,10 @@ typedef DIClassSummary = {
 		final parentsOf: Map<String, Array<String>> = buildParentMap();
 		final subclassesOf: Map<String, Array<String>> = buildSubclassMap();
 		final rootExports: Map<String, Array<ProducerEntry>> = collectRootExports(parentsOf);
-		for (typeName => summary in summaries)
-			if (hasInstantiationParent(typeName, parentsOf) || !hasSubclassesInRegistry(typeName, subclassesOf))
-				verifyClass(summary, parentsOf, rootExports);
+		for (typeName => summary in summaries) if (
+			hasInstantiationParent(typeName, parentsOf) || !hasSubclassesInRegistry(typeName, subclassesOf)
+		)
+			verifyClass(summary, parentsOf, rootExports);
 	}
 
 	private static function buildParentMap(): Map<String, Array<String>> {
@@ -261,8 +261,8 @@ typedef DIClassSummary = {
 		final mergedConsumers: Array<ConsumerEntry> = collectMergedConsumers(summary);
 		if (mergedConsumers.length == 0) return;
 		final paths: Array<Array<String>> = enumeratePaths(summary.typeName, parentsOf);
-		for (consumer in mergedConsumers) for (path in paths)
-			if (!checkConsumerOnPath(summary.typeName, consumer, path, rootExports)) break;
+		for (consumer in mergedConsumers) for (path in paths) if (!checkConsumerOnPath(summary.typeName, consumer, path, rootExports))
+			break;
 	}
 
 	private static function collectMergedConsumers(summary: DIClassSummary): Array<ConsumerEntry> {
@@ -290,10 +290,7 @@ typedef DIClassSummary = {
 	}
 
 	private static function walkPaths(
-		typeName: String,
-		parentsOf: Map<String, Array<String>>,
-		acc: Array<String>,
-		out: Array<Array<String>>
+		typeName: String, parentsOf: Map<String, Array<String>>, acc: Array<String>, out: Array<Array<String>>
 	): Void {
 		final next: Array<String> = acc.concat([typeName]);
 		final parents: Null<Array<String>> = parentsOf[typeName];
@@ -312,8 +309,7 @@ typedef DIClassSummary = {
 	 * Records the resolved producer ref into the `resolutions` table for Level 2.
 	 */
 	private static function checkConsumerOnPath(
-		verifiedClass: String, consumer: ConsumerEntry, path: Array<String>,
-		rootExports: Map<String, Array<ProducerEntry>>
+		verifiedClass: String, consumer: ConsumerEntry, path: Array<String>, rootExports: Map<String, Array<ProducerEntry>>
 	): Bool {
 		final lastIndex: Int = path.length - 1;
 		for (i in 0...path.length) {
@@ -321,9 +317,7 @@ typedef DIClassSummary = {
 			final locals: Array<ProducerEntry> = mergedLocalProducers(levelClass);
 			final exports: Null<Array<ProducerEntry>> = i == lastIndex ? rootExports[levelClass] : null;
 			final levelProducers: Array<ProducerEntry> = exports != null ? locals.concat(exports) : locals;
-			final candidates: Array<ProducerEntry> = levelProducers.filter(
-				p -> p.producerTypeNames.contains(consumer.consumerTypeName)
-			);
+			final candidates: Array<ProducerEntry> = levelProducers.filter(p -> p.producerTypeNames.contains(consumer.consumerTypeName));
 			if (candidates.length == 0) continue;
 			if (candidates.length == 1) {
 				final producer: ProducerEntry = candidates[0];
@@ -378,12 +372,11 @@ typedef DIClassSummary = {
 		Context.error(msg, consumer.pos);
 	}
 
-	private static function emitAmbiguityError(
-		consumer: ConsumerEntry, atClass: String, candidates: Array<ProducerEntry>
-	): Void {
+	private static function emitAmbiguityError(consumer: ConsumerEntry, atClass: String, candidates: Array<ProducerEntry>): Void {
 		if (markErrored(consumer.pos)) return;
 		final names: String = candidates.map(p -> '"${p.fieldName}"').join(', ');
-		final msg: String = 'DI: ambiguous service "${consumer.consumerTypeName}" at scope of $atClass — field name "${consumer.fieldName}" matches none of {$names}';
+		final msg: String =
+			'DI: ambiguous service "${consumer.consumerTypeName}" at scope of $atClass — field name "${consumer.fieldName}" matches none of {$names}';
 		Context.error(msg, consumer.pos);
 	}
 
@@ -392,7 +385,7 @@ typedef DIClassSummary = {
 	 * (dedupe across multi-path verification).
 	 */
 	private static function markErrored(pos: Position): Bool {
-		final info: {file: String, min: Int, max: Int} = Context.getPosInfos(pos);
+		final info: { file: String, min: Int, max: Int } = Context.getPosInfos(pos);
 		final key: String = '${info.file}:${info.min}:${info.max}';
 		if (erroredPositions.contains(key)) return true;
 		erroredPositions.push(key);
@@ -406,7 +399,9 @@ typedef DIClassSummary = {
 	 */
 	private static function recordResolution(className: String, fieldName: String, ref: Null<ResolvedRef>): Void {
 		final existing: Null<Map<String, Null<ResolvedRef>>> = resolutions[className];
-		final classMap: Map<String, Null<ResolvedRef>> = if (existing != null) existing else {
+		final classMap: Map<String, Null<ResolvedRef>> = if (existing != null)
+			existing
+		else {
 			final fresh: Map<String, Null<ResolvedRef>> = [];
 			resolutions[className] = fresh;
 			fresh;
@@ -426,5 +421,4 @@ typedef DIClassSummary = {
 	}
 
 }
-
 #end

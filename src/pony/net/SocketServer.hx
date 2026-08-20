@@ -7,13 +7,8 @@ import haxe.io.BytesOutput;
  * @author AxGord <axgord@gmail.com>
  */
 #if (!js || nodejs)
-class SocketServer
-	#if nodejs extends pony.net.nodejs.SocketServer
-	#elseif cs extends pony.net.cs.SocketServer
-	#elseif neko extends pony.net.neko.SocketServer
-	#else extends pony.net.SocketServerBase
-	#end
-#if !flash implements ISocketServer #end {
+class SocketServer #if nodejs extends pony.net.nodejs.SocketServer #elseif cs extends pony.net.cs.SocketServer  #elseif neko extends pony.net.neko.SocketServer  #else extends pony.net.SocketServerBase #end
+		#if !flash implements ISocketServer #end {
 
 	#if !flash
 	public function new(host: String = '0.0.0.0', port: Int, isWithLength: Bool = true, maxSize: Int = 1024) {
@@ -30,8 +25,10 @@ class SocketServer
 	}
 
 	override public function destroy(): Void {
-		if (opened) super.destroy();
-		else if (onOpen != null) onOpen << destroy;
+		if (opened)
+			super.destroy();
+		else if (onOpen != null)
+			onOpen << destroy;
 	}
 
 }

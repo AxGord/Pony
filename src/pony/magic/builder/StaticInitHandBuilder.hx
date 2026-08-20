@@ -11,26 +11,31 @@ import haxe.macro.Expr.Field;
  * @author AxGord <axgord@gmail.com>
  */
 class StaticInitHandBuilder {
-	
-	macro public static function build():Array<Field> {
-		var fields:Array<Field> = Context.getBuildFields();
-		var exprs:Array<Expr> = [];
+
+	macro public static function build(): Array<Field> {
+		var fields: Array<Field> = Context.getBuildFields();
+		var exprs: Array<Expr> = [];
 		for (f in fields) if (f.access.indexOf(AInline) == -1) {
 			if (f.kind.getParameters()[1] != null) {
-				var ex = { expr: f.kind.getParameters()[1].expr, pos:Context.currentPos() };
+				var ex = { expr: f.kind.getParameters()[1].expr, pos: Context.currentPos() };
 				exprs.push(macro $i{f.name} = $e{ex});
 			}
 			f.kind.getParameters()[1] = null;
 		}
-		fields.push( {
+		fields.push({
 			pos: Context.currentPos(),
 			name: 'init',
 			meta: [],
 			doc: null,
 			access: [APublic, AStatic],
-			kind: FFun({ret: null, params: [], args: [], expr: {expr:EBlock(exprs), pos: Context.currentPos()}})
+			kind: FFun({
+				ret: null,
+				params: [],
+				args: [],
+				expr: { expr: EBlock(exprs), pos: Context.currentPos() }
+			})
 		});
 		return fields;
 	}
-	
+
 }

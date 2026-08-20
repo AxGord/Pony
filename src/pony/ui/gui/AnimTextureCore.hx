@@ -17,11 +17,12 @@ abstract AnimSmoothMode(Int) to Int from Int {
 	@:from public static function fromString(s: String): AnimSmoothMode {
 		return if (s == null)
 			None;
-		else switch StringTools.trim(s).toLowerCase() {
-			case 'simple': Simple;
-			case 'super': Super;
-			case _: None;
-		}
+		else
+			switch StringTools.trim(s).toLowerCase() {
+				case 'simple': Simple;
+				case 'super': Super;
+				case _: None;
+			}
 	}
 
 }
@@ -36,20 +37,31 @@ class AnimTextureCore extends AnimCore {
 	private var smooth: AnimSmoothMode;
 	private var additionalSrc: UInt;
 
-	public function new(frameTime: Time, fixedTime: Bool = false, smooth: AnimSmoothMode = AnimSmoothMode.None, additionalSrc: UInt = 0) {
+	public function new(
+		frameTime: Time, fixedTime: Bool = false, smooth: AnimSmoothMode = AnimSmoothMode.None, additionalSrc: UInt = 0
+	) {
 		if (additionalSrc > 1) throw 'Not supported';
 		super(frameTime, fixedTime);
 		this.smooth = smooth;
 		this.additionalSrc = additionalSrc;
-		if (additionalSrc == 1) switch smooth {
-			case AnimSmoothMode.None: onFrame << frameNoneOddHandler;
-			case AnimSmoothMode.Simple: onFrame << frameSimpleOddHandler;
-			case AnimSmoothMode.Super: onFrame << frameSuperOddHandler;
-		} else switch smooth {
-			case AnimSmoothMode.None: onFrame << frameNoneHandler;
-			case AnimSmoothMode.Simple: onFrame << frameSimpleHandler;
-			case AnimSmoothMode.Super: onFrame << frameSuperHandler;
-		}
+		if (additionalSrc == 1)
+			switch smooth {
+				case AnimSmoothMode.None:
+					onFrame << frameNoneOddHandler;
+				case AnimSmoothMode.Simple:
+					onFrame << frameSimpleOddHandler;
+				case AnimSmoothMode.Super:
+					onFrame << frameSuperOddHandler;
+			}
+		else
+			switch smooth {
+				case AnimSmoothMode.None:
+					onFrame << frameNoneHandler;
+				case AnimSmoothMode.Simple:
+					onFrame << frameSimpleHandler;
+				case AnimSmoothMode.Super:
+					onFrame << frameSuperHandler;
+			}
 	}
 
 	private function frameNoneHandler(n: Int): Void {

@@ -3,7 +3,6 @@ package pony.heaps.ui.gui;
 import h2d.Anim;
 import h2d.Object;
 import h2d.Tile;
-
 import pony.geom.Point;
 import pony.time.DTimer;
 import pony.time.Time;

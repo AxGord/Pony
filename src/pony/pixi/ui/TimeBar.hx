@@ -14,21 +14,12 @@ import pony.time.TimeInterval;
  */
 class TimeBar extends LabelBar {
 
-	public var timer:DTimer;
-	private var ignoreBeginAnimation:Bool = false;
+	public var timer: DTimer;
+	private var ignoreBeginAnimation: Bool = false;
 
 	public function new(
-		bg:String,
-		fillBegin:String,
-		fill:String,
-		?animation:String,
-		animationSpeed:Int = 2000,
-		?border:Border<Int>,
-		?style:ETextStyle,
-		shadow:Bool = false,
-		invert:Bool = false,
-		useSpriteSheet:Bool = false,
-		creep:Float = 0
+		bg: String, fillBegin: String, fill: String, ?animation: String, animationSpeed: Int = 2000, ?border: Border<Int>,
+		?style: ETextStyle, shadow: Bool = false, invert: Bool = false, useSpriteSheet: Bool = false, creep: Float = 0
 	) {
 		labelInitVisible = false;
 		super(bg, fillBegin, fill, animation, animationSpeed, border, style, shadow, invert, useSpriteSheet, creep);
@@ -36,7 +27,7 @@ class TimeBar extends LabelBar {
 		onReady < timerInit;
 	}
 
-	private function timerInit(p:Point<Int>):Void {
+	private function timerInit(p: Point<Int>): Void {
 		timer.progress << progressHandler;
 		timer.update << updateHandler;
 		timer.complete.add(startAnimation, -10);
@@ -44,10 +35,11 @@ class TimeBar extends LabelBar {
 		if (!ignoreBeginAnimation) startAnimation();
 	}
 
-	private function progressHandler(p:Float):Void core.percent = p;
-	private function updateHandler(t:Time):Void text = t.showMinSec();
+	private function progressHandler(p: Float): Void core.percent = p;
 
-	public function start(t:TimeInterval, ?cur:Time):Void {
+	private function updateHandler(t: Time): Void text = t.showMinSec();
+
+	public function start(t: TimeInterval, ?cur: Time): Void {
 		ignoreBeginAnimation = true;
 		stopAnimation();
 		timer.time = t;
@@ -58,13 +50,13 @@ class TimeBar extends LabelBar {
 
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public inline function pause():Void timer.stop();
+	public inline function pause(): Void timer.stop();
 
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public inline function play():Void timer.start();
+	public inline function play(): Void timer.start();
 
-	override public function destroy(?options:haxe.extern.EitherType<Bool, DestroyOptions>):Void {
+	override public function destroy(?options: haxe.extern.EitherType<Bool, DestroyOptions>): Void {
 		timer.destroy();
 		timer = null;
 		super.destroy(options);

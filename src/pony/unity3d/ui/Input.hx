@@ -19,24 +19,24 @@ using hugs.HUGSWrapper;
  */
 class Input extends TextureButton implements IFocus {
 
-	public static var caretTime:Float = 0.5;
-	private static var ct:Float = 0;
-	private static var cb:Bool = false;
+	public static var caretTime: Float = 0.5;
+	private static var ct: Float = 0;
+	private static var cb: Bool = false;
 
-	public var text:String;
-	public var vtext:String;
-	public var max:Int = 0;
-	public var focusPriority(default,null):Int = 0;
-	public var focusGroup(default,null):String = '';
-	public var focus(default,null):Signal1<Dynamic,Bool>;
-	public var changed(default,null):Signal;
+	public var text: String;
+	public var vtext: String;
+	public var max: Int = 0;
+	public var focusPriority(default, null): Int = 0;
+	public var focusGroup(default, null): String = '';
+	public var focus(default, null): Signal1<Dynamic, Bool>;
+	public var changed(default, null): Signal;
 
-	public var selected(default, null):Bool;
+	public var selected(default, null): Bool;
 
-	public var x(get, set):Int;
-	public var y(get, set):Int;
+	public var x(get, set): Int;
+	public var y(get, set): Int;
 
-	private var gt(get, never):GUIText;
+	private var gt(get, never): GUIText;
 
 	public function new() {
 		super();
@@ -46,13 +46,13 @@ class Input extends TextureButton implements IFocus {
 		core.click.sub(0).add(focus.saveDispatch);
 	}
 
-	private function onFocus(b:Bool):Void {
+	private function onFocus(b: Bool): Void {
 		selected = b;
 		core.mode = b ? 2 : 0;
 		if (!b) gt.text = vtext = text;
 	}
 
-	override private function Start():Void {
+	override private function Start(): Void {
 		super.Start();
 		if (text == null || text == '')
 			vtext = text = gt.text;
@@ -61,9 +61,9 @@ class Input extends TextureButton implements IFocus {
 		FocusManager.reg(this);
 	}
 
-	private inline function get_gt():GUIText return this.getComponentInChildrenOfType(GUIText);
+	private inline function get_gt(): GUIText return this.getComponentInChildrenOfType(GUIText);
 
-	override private function Update():Void {
+	override private function Update(): Void {
 		super.Update();
 		if (selected) {
 			for (ch in unityengine.Input.inputString) {
@@ -78,19 +78,19 @@ class Input extends TextureButton implements IFocus {
 				else if (max == 0 || vtext.length < max)
 					vtext += ch;
 			}
-			//draw
+			// draw
 			ct += Time.deltaTime;
 			if (ct >= caretTime) {
 				ct -= caretTime;
 				cb = !cb;
 			}
 			gt.text = cb ? vtext + '|' : vtext;
-		}// else gt.text = text;
+		} // else gt.text = text;
 	}
 
-	inline private function get_y():Int return Math.ceil(guiTexture.pixelInset.y);
+	inline private function get_y(): Int return Math.ceil(guiTexture.pixelInset.y);
 
-	private function set_y(v:Int):Int {
+	private function set_y(v: Int): Int {
 		if (y != v) {
 			gt.pixelOffset = new Vector2(gt.pixelOffset.x, gt.pixelOffset.y - y + v);
 			guiTexture.pixelInset = new Rect(guiTexture.pixelInset.x, v, guiTexture.pixelInset.width, guiTexture.pixelInset.height);
@@ -98,9 +98,9 @@ class Input extends TextureButton implements IFocus {
 		return v;
 	}
 
-	inline private function get_x():Int return Math.ceil(guiTexture.pixelInset.x);
+	inline private function get_x(): Int return Math.ceil(guiTexture.pixelInset.x);
 
-	private function set_x(v:Int):Int {
+	private function set_x(v: Int): Int {
 		if (x != v) {
 			gt.pixelOffset = new Vector2(gt.pixelOffset.x - x + v, gt.pixelOffset.y);
 			guiTexture.pixelInset = new Rect(v, guiTexture.pixelInset.y, guiTexture.pixelInset.width, guiTexture.pixelInset.height);
@@ -108,5 +108,6 @@ class Input extends TextureButton implements IFocus {
 		return v;
 	}
 
-	public function setText(t:String):Void gt.text = text = vtext = t;
+	public function setText(t: String): Void gt.text = text = vtext = t;
+
 }

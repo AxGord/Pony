@@ -13,21 +13,20 @@ import pony.geom.Point;
  */
 class RenderBox extends pixi.core.sprites.Sprite implements pony.geom.IWH {
 
-	public var size(get, never):Point<Float>;
+	public var size(get, never): Point<Float>;
 
-	private var container:RenderContainer;
-	private var renderTexture:RenderTexture;
-	private var app:App;
+	private var container: RenderContainer;
+	private var renderTexture: RenderTexture;
+	private var app: App;
 
-	public function new(w:Float, h:Float, ?app:App, ?canvas:Bool) {
+	public function new(w: Float, h: Float, ?app: App, ?canvas: Bool) {
 		this.app = app == null ? App.main : app;
-		if (!canvas)
-			renderTexture = RenderTexture.create(w, h);
+		if (!canvas) renderTexture = RenderTexture.create(w, h);
 		super(renderTexture);
 		container = new RenderContainer(new Point(w, h));
 	}
 
-	public function update():Void {
+	public function update(): Void {
 		if (renderTexture != null) {
 			app.app.renderer.render(container, renderTexture, true);
 		} else {
@@ -41,15 +40,15 @@ class RenderBox extends pixi.core.sprites.Sprite implements pony.geom.IWH {
 
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public inline function addElement(obj:DisplayObject):Void container.addChild(obj);
+	public inline function addElement(obj: DisplayObject): Void container.addChild(obj);
 
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function get_size():Point<Float> return container.size;
+	private inline function get_size(): Point<Float> return container.size;
 
-	public function wait(f:Void -> Void):Void container.wait(f);
+	public function wait(f: Void -> Void): Void container.wait(f);
 
-	public function destroyIWH():Void {
+	public function destroyIWH(): Void {
 		container.destroyIWH();
 		destroy();
 	}
@@ -58,21 +57,21 @@ class RenderBox extends pixi.core.sprites.Sprite implements pony.geom.IWH {
 
 class RenderContainer extends pixi.core.sprites.Sprite implements pony.geom.IWH {
 
-	public var size(get, never):Point<Float>;
+	public var size(get, never): Point<Float>;
 
-	private var _size:Point<Float>;
+	private var _size: Point<Float>;
 
-	public function new(size:Point<Float>) {
+	public function new(size: Point<Float>) {
 		super();
 		_size = size;
 	}
 
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function get_size():Point<Float> return _size;
+	private inline function get_size(): Point<Float> return _size;
 
-	public function wait(f:Void -> Void):Void f();
+	public function wait(f: Void -> Void): Void f();
 
-	public function destroyIWH():Void destroy();
+	public function destroyIWH(): Void destroy();
 
 }

@@ -8,6 +8,6 @@ import pixi.extras.BitmapText.BitmapTextStyle;
  * @author AxGord <axgord@gmail.com>
  */
 enum ETextStyle {
-	TEXT_STYLE(style:TextStyle);
-	BITMAP_TEXT_STYLE(style:BitmapTextStyle);
+	TEXT_STYLE(style: TextStyle);
+	BITMAP_TEXT_STYLE(style: BitmapTextStyle);
 }

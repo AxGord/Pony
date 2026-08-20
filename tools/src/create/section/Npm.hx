@@ -9,15 +9,14 @@ import types.*;
  */
 class Npm extends Section {
 
-	public var path:String;
+	public var path: String;
 
 	public function new() super('npm');
 
 	#if (haxe_ver < 4.2) override #end
-	public function result():Xml {
+	public function result(): Xml {
 		init();
-		if (path != null)
-			set('path', path);
+		if (path != null) set('path', path);
 		return xml;
 	}
 

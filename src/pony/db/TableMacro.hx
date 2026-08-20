@@ -1,4 +1,4 @@
-package pony.db ;
+package pony.db;
 
 #if macro
 import haxe.macro.Expr;
@@ -11,7 +11,7 @@ import haxe.macro.Printer;
  */
 class TableMacro {
 
-	static public function transExpr(expr:Expr, a:Array<Expr>):Array<Expr> {
+	static public function transExpr(expr: Expr, a: Array<Expr>): Array<Expr> {
 		switch expr.expr {
 			case EBinop(op, e1, e2):
 				var o = switch op {
@@ -36,7 +36,7 @@ class TableMacro {
 
 				a = a.concat(parseExpr(e1));
 
-				//var field = takeFieldName(e1);
+				// var field = takeFieldName(e1);
 
 				switch e2.expr {
 					case EConst(CIdent(s)) if (s == 'null'):
@@ -62,7 +62,7 @@ class TableMacro {
 				transExpr(e, a);
 				return a;
 
-			case ECall({expr:EField(e, act), pos:_}, p):
+			case ECall({ expr: EField(e, act), pos: _ }, p):
 				switch act {
 					case 'like':
 						if (p.length != 1) throw 'Need 1 argument';
@@ -80,31 +80,32 @@ class TableMacro {
 					case _: throw 'Unknown action';
 				}
 
-			case _: throw 'Unknown operation ' + Std.string(expr.expr);
+			case _:
+				throw 'Unknown operation ' + Std.string(expr.expr);
 		}
 		return a;
 	}
 
-	static private function genText(s:String, p:Position):Expr {
-		var e:Expr = {expr: EConst(CString(s)), pos: p};
+	static private function genText(s: String, p: Position): Expr {
+		var e: Expr = { expr: EConst(CString(s)), pos: p };
 		return macro pony.db.Table.WhereElement.Text($e);
 	}
 
-	static private function takeFieldName(e:Expr):String {
+	static private function takeFieldName(e: Expr): String {
 		return switch e.expr {
 			case EConst(CIdent(s)): '`$s`';
 			case _: throw 'Not correct field $e';
 		}
 	}
 
-	static private var printer:Printer = new Printer();
+	static private var printer: Printer = new Printer();
 
-	static private function parseExpr(e:Expr):Array<Expr> {
-		var a:Array<Expr> = [];
+	static private function parseExpr(e: Expr): Array<Expr> {
+		var a: Array<Expr> = [];
 		switch e.expr {
 			case EConst(CIdent(s)):
 				if (s.charAt(0) == '$') {
-					var v:Expr = {expr: EConst(CIdent(s.substr(1))), pos: e.pos};
+					var v: Expr = { expr: EConst(CIdent(s.substr(1))), pos: e.pos };
 					a.push(macro pony.db.Table.WhereElement.Value($v));
 				} else {
 					a.push(genText('`$s`', e.pos));
@@ -118,7 +119,7 @@ class TableMacro {
 				try {
 					var v = ExprTools.getValue(e);
 					a.push(genText(Std.string(v), e.pos));
-				} catch (_:Dynamic) {
+				} catch (_: Dynamic) {
 					var o = switch op {
 						case OpGt: '>';
 						case OpGte: '>=';
@@ -141,20 +142,23 @@ class TableMacro {
 									a.push(genText(' IS NOT NULL', e2.pos));
 								case _: throw 'Not correct $op operator for null';
 							}
-						case EBinop(subop, {expr: EConst(CIdent('null'))}, e2) if (subop == OpAnd || subop == OpOr):
-
+						case EBinop(subop, { expr: EConst(CIdent('null')) }, e2) if (subop == OpAnd || subop == OpOr):
 							switch op {
 								case OpEq:
 									a.push(genText(' IS NULL', e2.pos));
 								case OpNotEq:
 									a.push(genText(' IS NOT NULL', e2.pos));
-								case _: throw 'Not correct $op operator for null';
+								case _:
+									throw 'Not correct $op operator for null';
 							}
-							a.push(genText(switch subop {
-								case OpBoolAnd, OpAnd: ' AND ';
-								case OpBoolOr, OpOr: ' OR ';
-								case _: throw 'Unknown operation ' + op;
-							}, e.pos));
+							a.push(genText(
+								switch subop {
+									case OpBoolAnd, OpAnd: ' AND ';
+									case OpBoolOr, OpOr: ' OR ';
+									case _: throw 'Unknown operation ' + op;
+								},
+								e.pos
+							));
 							a = a.concat(parseExpr(e2));
 
 						case _:
@@ -172,7 +176,8 @@ class TableMacro {
 				a.push(genText(')', e.pos));
 				return a;
 
-			case _: throw 'Can\'t parse $e';
+			case _:
+				throw 'Can\'t parse $e';
 		}
 		return a;
 	}

@@ -12,8 +12,7 @@ import pony.text.tpl.TplPut;
 @:final class MVKPutSub extends TplPut<MVKConnect, {}> {
 
 	@:async
-	override public function tag(name:String, content:TplData, arg:String, args:Map<String, String>, ?kid:ITplPut):String
-	{
+	override public function tag(name: String, content: TplData, arg: String, args: Map<String, String>, ?kid: ITplPut): String {
 		if (name == 'ready') {
 			var token = a.token;
 			if (args.exists('!')) {
@@ -26,18 +25,17 @@ import pony.text.tpl.TplPut;
 				if (token == null) {
 					return '';
 				} else {
-					return @await sub(a, null, MVKPutSub, content);	
+					return @await sub(a, null, MVKPutSub, content);
 				}
 			}
-			
+
 		} else {
 			return @await super.tag(name, content, arg, args, kid);
 		}
 	}
-	
+
 	@:async
-	override public function shortTag(name:String, arg:String, ?kid:ITplPut):String
-	{
+	override public function shortTag(name: String, arg: String, ?kid: ITplPut): String {
 		return switch (name) {
 			case 'token': Std.string(a.token);
 			case 'button': a.token != null ? '' : a.base.buttonData;
@@ -46,5 +44,5 @@ import pony.text.tpl.TplPut;
 			default: @await super.shortTag(name, arg, kid);
 		}
 	}
-	
+
 }

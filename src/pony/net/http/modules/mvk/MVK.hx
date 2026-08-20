@@ -18,30 +18,32 @@ import pony.text.tpl.TplPut;
  */
 @:final class MVK implements IModule {
 
-	static private var sdk:Class<Dynamic> = Node.require('vksdk');
+	static private var sdk: Class<Dynamic> = Node.require('vksdk');
 
-	public var server:WebServer;
-	public var buttonData:String;
-	public var appid:Int;
+	public var server: WebServer;
+	public var buttonData: String;
+	public var appid: Int;
 
-	public var vk:Dynamic;
+	public var vk: Dynamic;
 
-	public function new(appid:Int, secret:String) {
+	public function new(appid: Int, secret: String) {
 		this.appid = appid;
-		vk = Type.createInstance(sdk, [{
-			appId     : appid,
-			appSecret : secret,
-			secure    : true
-		}]);
+		vk = Type.createInstance(sdk, [
+			{
+				appId: appid,
+				appSecret: secret,
+				secure: true
+			}
+		]);
 		var s = TextTools.includeFileFromCurrentDir('mvk.tpl');
 		new Tpl(MVKPrePut, appid, s).gen(null, null, function(r) buttonData = r);
 	}
 
-	public function init(dir:Dir, server:WebServer):Void {
+	public function init(dir: Dir, server: WebServer): Void {
 		this.server = server;
 	}
 
-	public function connect(cpq:CPQ):EConnect {
+	public function connect(cpq: CPQ): EConnect {
 		if (cpq.connection.params.exists('vkauth')) {
 			cpq.connection.sessionStorage.set('vk_token', cpq.connection.params['vkauth']);
 			cpq.connection.params.remove('vkauth');
@@ -55,10 +57,10 @@ import pony.text.tpl.TplPut;
 }
 
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
-@:final class MVKPrePut extends TplPut<Int,{}> {
+@:final class MVKPrePut extends TplPut<Int, {}> {
+
 	@:async
-	override public function shortTag(name:String, arg:String, ?kid:ITplPut):String
-	{
+	override public function shortTag(name: String, arg: String, ?kid: ITplPut): String {
 		switch (name) {
 			case 'appid':
 				return Std.string(a);
@@ -66,4 +68,5 @@ import pony.text.tpl.TplPut;
 				return @await super.shortTag(name, arg, kid);
 		}
 	}
+
 }

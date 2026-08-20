@@ -52,6 +52,7 @@ class Timer implements ITimer<Timer> implements Declarator implements HasSignal 
 	#end
 
 	private function takeProgress(): Void update.add(_progress);
+
 	private function lostProgress(): Void update.remove(_progress);
 
 	private function lUpdate(): Void if (time != null) start();
@@ -89,8 +90,10 @@ class Timer implements ITimer<Timer> implements Declarator implements HasSignal 
 
 	private function _complite(): Void {
 		eComplete.dispatch(0);
-		if (repeatCount == 0) stop();
-		else if (repeatCount > 0) repeatCount--;
+		if (repeatCount == 0)
+			stop();
+		else if (repeatCount > 0)
+			repeatCount--;
 	}
 
 	private function _update(): Void {
@@ -98,16 +101,19 @@ class Timer implements ITimer<Timer> implements Declarator implements HasSignal 
 			currentTime -= _frequency;
 		} else {
 			currentTime += _frequency;
-			if (currentTime >= time.max) while (currentTime >= time.max) {
-				currentTime -= time.length;
-				dispatchUpdate();
-				eComplete.dispatch(0);
-				if (repeatCount == 0) {
-					stop();
-					break;
+			if (currentTime >= time.max)
+				while (currentTime >= time.max) {
+					currentTime -= time.length;
+					dispatchUpdate();
+					eComplete.dispatch(0);
+					if (repeatCount == 0) {
+						stop();
+						break;
+					} else if (repeatCount > 0)
+						repeatCount--;
 				}
-				else if (repeatCount > 0) repeatCount--;
-			} else dispatchUpdate();
+			else
+				dispatchUpdate();
 		}
 	}
 
@@ -139,7 +145,7 @@ class Timer implements ITimer<Timer> implements Declarator implements HasSignal 
 
 	private function _progress(): Void eProgress.dispatch(time.percent(currentTime));
 
-	public static inline function delay(time: Time, f:Void -> Void): Timer {
+	public static inline function delay(time: Time, f: Void -> Void): Timer {
 		var t: Timer = new Timer(time);
 		t.complete.once(f);
 		t.complete.once(t.destroy);

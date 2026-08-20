@@ -4,7 +4,6 @@ import pony.Fast;
 import pony.fs.Dir;
 import pony.fs.Unit;
 import pony.text.TextTools;
-
 import types.BASection;
 
 /**
@@ -116,11 +115,16 @@ private class CleanReader extends BAReader<CleanConfig> {
 
 	override private function readNode(xml: Fast): Void {
 		switch xml.name {
-			case 'dir': cfg.dirs.push(normalize(xml.innerData));
-			case 'empty': cfg.empty.push(normalize(xml.innerData));
-			case 'unit': cfg.units.push(normalize(xml.innerData));
-			case 'keep': cfg.keepFiles.push(normalize(xml.innerData));
-			case _: super.readNode(xml);
+			case 'dir':
+				cfg.dirs.push(normalize(xml.innerData));
+			case 'empty':
+				cfg.empty.push(normalize(xml.innerData));
+			case 'unit':
+				cfg.units.push(normalize(xml.innerData));
+			case 'keep':
+				cfg.keepFiles.push(normalize(xml.innerData));
+			case _:
+				super.readNode(xml);
 		}
 	}
 
@@ -137,9 +141,12 @@ private class CleanReader extends BAReader<CleanConfig> {
 
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
-			case 'rimraf': cfg.rimraf = TextTools.isTrue(val);
-			case 'md': cfg.md = TextTools.isTrue(val);
-			case 'keepHashed': cfg.keepHashed = TextTools.isTrue(val);
+			case 'rimraf':
+				cfg.rimraf = TextTools.isTrue(val);
+			case 'md':
+				cfg.md = TextTools.isTrue(val);
+			case 'keepHashed':
+				cfg.keepHashed = TextTools.isTrue(val);
 			case _:
 		}
 	}

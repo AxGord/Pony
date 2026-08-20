@@ -1,7 +1,6 @@
 package ui;
 
 import massive.munit.Assert;
-
 import pony.events.Signal1;
 import pony.magic.HasSignal;
 import pony.ui.keyboard.Key;
@@ -78,7 +77,7 @@ class KeyboardTestHelper implements IKeyboard implements HasSignal {
 	@:auto public var down: Signal1<Key>;
 	@:auto public var up: Signal1<Key>;
 	@:auto public var input: Signal1<UInt>;
-	
+
 	public var preventDefault: Bool = true;
 
 	public function new() disable();

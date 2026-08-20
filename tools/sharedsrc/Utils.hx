@@ -1,12 +1,10 @@
 import haxe.Json;
 import haxe.io.Bytes;
 import haxe.xml.Parser.XmlParserException;
-
 import pony.Fast;
 import pony.SPair;
 import pony.text.TextTools;
 import pony.text.XmlTools;
-
 import sys.FileSystem;
 import sys.io.File;
 import sys.io.Process;
@@ -45,11 +43,12 @@ class Utils {
 		return s.substring(s.indexOf('[') + 1, s.length - 1);
 	}
 
-	public static function getLibPath(lib:String): Null<String> {
+	public static function getLibPath(lib: String): Null<String> {
 		return new sys.io.Process('haxelib', ['path', lib]).stdout.readLine();
 	}
 
 	private static inline function get_isWindows(): Bool return Sys.systemName() == 'Windows';
+
 	private static inline function get_isLinux(): Bool return Sys.systemName() == 'Linux';
 
 	public static function path(s: String): String return StringTools.replace(StringTools.replace(s, '/', PD), '\\', PD);
@@ -69,7 +68,7 @@ class Utils {
 			app = a;
 			break;
 		}
-		return {app: app, debug: debug};
+		return { app: app, debug: debug };
 	}
 
 	public static function dirIsGit(path: String): Bool {
@@ -135,8 +134,9 @@ class Utils {
 
 	public static function exit(errCode: Int = 0): Void {
 		#if neko
+		// give linux time to finish printing messages
 		@SuppressWarnings('checkstyle:MagicNumber')
-		if (isLinux) Sys.sleep(0.3); // finish print messages
+		if (isLinux) Sys.sleep(0.3);
 		#end
 		Sys.exit(errCode);
 	}
@@ -157,6 +157,7 @@ class Utils {
 	}
 
 	public static function saveXML(file: String, xml: Xml): Void File.saveContent(file, XmlTools.document(xml));
+
 	public static function savePonyProject(xml: Xml): Void saveXML(MAIN_FILE, xml);
 
 	public static function get_ponyVersion(): String {
@@ -170,6 +171,7 @@ class Utils {
 	}
 
 	public static function get_ponyHaxelibVersion(): String return getHaxelibVersion().split(':')[0];
+
 	public static function getPath(file: String): String return file.substr(0, file.lastIndexOf('/') + 1);
 
 	public static function createPath(file: String): Void {
@@ -239,7 +241,7 @@ class Utils {
 
 	public static function saveHashes(file: String, map: Map<String, Array<String>>): Void {
 		hashesCache[file] = map;
-		File.saveContent(file, [ for (k in map.keys()) k + ':' + map[k].join(',') ].join('\n'));
+		File.saveContent(file, [for (k in map.keys()) k + ':' + map[k].join(',')].join('\n'));
 	}
 
 	public static function getBuildString(onlyNumbers: Bool = false, nosec: Bool = false): String {

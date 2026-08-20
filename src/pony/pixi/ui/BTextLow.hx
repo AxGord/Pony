@@ -11,35 +11,34 @@ import pony.text.TextTools;
  */
 class BTextLow extends BitmapText implements IWH {
 
-	public var t(get, set):String;
-	public var size(get, never):Point<Float>;
-	private var ansi:String;
-	public var nocache(default, null):Bool;
+	public var t(get, set): String;
+	public var size(get, never): Point<Float>;
+	private var ansi: String;
+	public var nocache(default, null): Bool;
 
-	public function new(text:String, ?style:BitmapTextStyle, ?ansi:String, nocache:Bool = false) {
+	public function new(text: String, ?style: BitmapTextStyle, ?ansi: String, nocache: Bool = false) {
 		this.ansi = ansi;
 		this.nocache = nocache;
 		if (text == null) text = ' ';
-		if (ansi != null)
-			text = TextTools.convertToANSI(text, ansi);
+		if (ansi != null) text = TextTools.convertToANSI(text, ansi);
 		try {
 			super(text, style);
-		} catch (_:Any) {
+		} catch (_: Any) {
 			throw 'Font error: ' + style.font;
 		}
 		if (!this.nocache) cacheAsBitmap = true;
 
 	}
 
-	private function get_size():Point<Float> return new Point(textWidth, textHeight);
+	private function get_size(): Point<Float> return new Point(textWidth, textHeight);
 
-	public function wait(cb:Void -> Void):Void cb();
+	public function wait(cb: Void -> Void): Void cb();
 
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public inline function get_t():String return text;
+	public inline function get_t(): String return text;
 
-	public function set_t(s:String):String {
+	public function set_t(s: String): String {
 		if (!nocache) cacheAsBitmap = false;
 		if (s == null) s = ' ';
 		if (ansi != null)
@@ -50,6 +49,6 @@ class BTextLow extends BitmapText implements IWH {
 		return s;
 	}
 
-	public function destroyIWH():Void destroy();
+	public function destroyIWH(): Void destroy();
 
 }

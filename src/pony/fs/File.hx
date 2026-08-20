@@ -71,9 +71,13 @@ using pony.text.TextTools;
 	}
 
 	private inline function get_name(): String return this.name;
+
 	private inline function get_shortName(): String return name.split('.')[0];
+
 	private inline function get_first(): String return this.first;
+
 	private inline function get_ext(): String return cast Path.extension(first);
+
 	private inline function get_withoutExt(): String return Path.withoutExtension(first);
 
 	public inline function copyToFile(to: Unit): Void {
@@ -114,24 +118,30 @@ using pony.text.TextTools;
 	private inline function get_fullPath(): Unit return this.fullPath;
 
 	private inline function get_fullDir(): Dir {
-		return [ for (e in this.wayStringIterator()) {
-			var r: Null<String> = e.allBeforeLastWithNull('/');
-			r != null ? (r: String) : '.';
-		} ];
+		return [
+			for (e in this.wayStringIterator()) {
+				var r: Null<String> = e.allBeforeLastWithNull('/');
+				r != null ? (r: String) : '.';
+			}
+		];
 	}
 
 	public function delete(): Void {
 		try {
 			for (e in this) FileSystem.deleteFile(e.first);
-		} catch (_:Dynamic) {
+		} catch (_: Dynamic) {
 			throw "Can't delete file: " + name;
 		}
 	}
 
 	@:to inline private function toUnit(): Unit return this;
+
 	@:to inline public function toString(): String return this.toString();
+
 	@:to inline public function toArray(): Array<String> return this.toArray();
+
 	@:arrayAccess public inline function arrayAccess(key: Int): File return this[key];
+
 	public inline function iterator(): Iterator<File> return this.iterator();
 
 }

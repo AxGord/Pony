@@ -16,8 +16,7 @@ class NativeFlashDisplayFactory implements IDisplayFactory {
 	private static var _instance: NativeFlashDisplayFactory = new NativeFlashDisplayFactory();
 
 	public function new() {
-		if (_instance != null)
-			throw 'Singletone creation error';
+		if (_instance != null) throw 'Singletone creation error';
 	}
 
 	public static function getInstance(): NativeFlashDisplayFactory {

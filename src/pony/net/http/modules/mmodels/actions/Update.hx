@@ -64,7 +64,7 @@ class UpdateConnect extends ActionConnect implements ISubActionConnect {
 				}
 		}
 		callCheck(ca, function(r: ActResult) {
-			storage.set(base.id, {values: h, result: r});
+			storage.set(base.id, { values: h, result: r });
 			switch r {
 				case ActResult.OK:
 					cpq.connection.endAction();
@@ -79,18 +79,17 @@ class UpdateConnect extends ActionConnect implements ISubActionConnect {
 		var m = storage.get(base.id);
 		var r: ActResult = m == null ? null : m.result;
 		var st: String = null;
-		if (r != null)
-			switch (r) {
-				case OK:
+		if (r != null) switch (r) {
+			case OK:
+				st = '';
+			case ERROR(e):
+				if (e.exists(arg))
+					st = e.get(arg);
+				else
 					st = '';
-				case ERROR(e):
-					if (e.exists(arg))
-						st = e.get(arg);
-					else
-						st = '';
-				case DBERROR:
-					st = 'DataBase error';
-			}
+			case DBERROR:
+				st = 'DataBase error';
+		}
 		return st;
 	}
 
@@ -105,14 +104,12 @@ class UpdatePut extends pony.text.tpl.TplPut<UpdateConnect, Dynamic> {
 
 	@:async
 	override public function tag(name: String, content: TplData, arg: String, args: Map<String, String>, ?kid: ITplPut): String {
-		if (!a.checkAccess())
-			return '';
+		if (!a.checkAccess()) return '';
 		if (content == null || args.exists('auto')) {
 			var fixList = [];
-			if (args != null && args.exists('fix'))
-				fixList = args.get('fix').split(',');
+			if (args != null && args.exists('fix')) fixList = args.get('fix').split(',');
 			var r: String = '';
-			var ma: Map<Int, {values: Map<String, String>, result: ActResult}> = cast a.storage;
+			var ma: Map<Int, { values: Map<String, String>, result: ActResult }> = cast a.storage;
 			var m = ma.get(a.base.id);
 			if (m == null)
 				for (k in a.base.args.keys()) {
@@ -124,9 +121,9 @@ class UpdatePut extends pony.text.tpl.TplPut<UpdateConnect, Dynamic> {
 					r += inputE(k, m.values.exists(k) ? m.values.get(k) : '', fixList.indexOf(k) != -1);
 				}
 			a.clr();
-			return '<form action="" method="POST">' +
-				(content != null ? '<div class="capition">' + @await tplData(content) + '</div>' : '') +
-				r + '<button>Send</button> <a href="" class="action">Clear</a></form>';
+			return '<form action="" method="POST">'
+				+ (content != null ? '<div class="capition">' + @await tplData(content) + '</div>' : '') + r
+				+ '<button>Send</button> <a href="" class="action">Clear</a></form>';
 		} else {
 			trace(name);
 			trace('------------');
@@ -137,13 +134,10 @@ class UpdatePut extends pony.text.tpl.TplPut<UpdateConnect, Dynamic> {
 	}
 
 	private function inputE(name: String, value: String, fix: Bool): String {
-		if (a.base.model.columns.get(name).hid)
-			return input(name, null, value);
+		if (a.base.model.columns.get(name).hid) return input(name, null, value);
 		var s: String = a.st(name);
-		if (s == null)
-			return '<label>' + name.bigFirst() + input(name, null, value) + '</label>';
-		if (s == '')
-			return '<label>' + name.bigFirst() + input(name, 'ok', fix ? value : '') + '</label>';
+		if (s == null) return '<label>' + name.bigFirst() + input(name, null, value) + '</label>';
+		if (s == '') return '<label>' + name.bigFirst() + input(name, 'ok', fix ? value : '') + '</label>';
 		return '<label>' + name.bigFirst() + input(name, 'error', value) + '<div>' + s + '</div>' + '</label>';
 	}
 
@@ -167,7 +161,7 @@ class UpdatePutSub extends pony.text.tpl.TplPut<UpdateConnect, Dynamic> {
 	@:async
 	override public function tag(name: String, content: TplData, arg: String, args: Map<String, String>, ?kid: ITplPut): String {
 		if (a.base.args.exists(name)) {
-			return @await sub({o: a, arg: name}, Reflect.field(b, name), UpdatePutArg, content);
+			return @await sub({ o: a, arg: name }, Reflect.field(b, name), UpdatePutArg, content);
 		} else
 			return @await super.tag(name, content, arg, args, kid);
 	}
@@ -175,7 +169,7 @@ class UpdatePutSub extends pony.text.tpl.TplPut<UpdateConnect, Dynamic> {
 }
 
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
-class UpdatePutArg extends pony.text.tpl.TplPut<{o: UpdateConnect, arg: String}, String> {
+class UpdatePutArg extends pony.text.tpl.TplPut<{ o: UpdateConnect, arg: String }, String> {
 
 	@:async
 	override public function tag(name: String, content: TplData, arg: String, args: Map<String, String>, ?kid: ITplPut): String {

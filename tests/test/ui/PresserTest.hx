@@ -6,11 +6,10 @@ import massive.munit.async.AsyncFactory;
 import pony.time.DeltaTime;
 import pony.ui.Presser;
 
-class PresserTest 
-{	
+class PresserTest {
+
 	@Test
-	public function delta():Void
-	{
+	public function delta(): Void {
 		var c = 0;
 		var p = new Presser(function() c++);
 		Assert.areEqual(c, 0);
@@ -22,5 +21,5 @@ class PresserTest
 		DeltaTime.testRun(600);
 		Assert.areEqual(c, 4);
 	}
-	
+
 }

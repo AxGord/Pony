@@ -3,13 +3,11 @@ package pony.heaps.ui.gui;
 import h2d.Font;
 import h2d.Object;
 import h2d.Text;
-
 #if (heaps >= '2.0.0')
 import h3d.Vector4 as Vector;
 #else
 import h3d.Vector;
 #end
-
 import pony.color.UColor;
 import pony.geom.IWH;
 import pony.geom.Point;
@@ -26,10 +24,9 @@ import pony.geom.Point;
 	private var normalColor: Vector = Vector.fromColor(0xFFFFFFFF);
 	private var disabledColor: Vector = Vector.fromColor(0x70707070);
 
-	public function new(font: Font, ?disabledColor: UColor, disable: Bool = false, ?parent: Object ) {
+	public function new(font: Font, ?disabledColor: UColor, disable: Bool = false, ?parent: Object) {
 		super(font, parent);
-		if (disabledColor != null)
-			this.disabledColor = Vector.fromColor(disabledColor.invertAlpha.argb);
+		if (disabledColor != null) this.disabledColor = Vector.fromColor(disabledColor.invertAlpha.argb);
 		if (disable) this.disable();
 	}
 
@@ -42,6 +39,7 @@ import pony.geom.Point;
 	}
 
 	public inline function enable(): Void enabled = true;
+
 	public inline function disable(): Void enabled = false;
 
 	override private function set_textColor(c: Int): Int {
@@ -51,7 +49,9 @@ import pony.geom.Point;
 	}
 
 	public function wait(cb: Void -> Void): Void cb();
+
 	private function get_size(): Point<Float> return new Point<Float>(textWidth * scaleX, textHeight * scaleY);
+
 	public function destroyIWH(): Void {}
 
 }

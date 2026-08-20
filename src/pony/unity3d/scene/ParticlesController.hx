@@ -10,17 +10,17 @@ import unityengine.MonoBehaviour;
  * @author AxGord
  */
 class ParticlesController extends MonoBehaviour {
-	
-	private var playAfter:Float = 0;
-	private var stopAfter:Float = 0;
-	private var abortAfter:Float = 0;
-	
-	private var playOnAwake:Bool = true;
-	
-	private var playTimer:DTimer;
-	private var stopTimer:DTimer;
-	private var abortTimer:DTimer;
-	
+
+	private var playAfter: Float = 0;
+	private var stopAfter: Float = 0;
+	private var abortAfter: Float = 0;
+
+	private var playOnAwake: Bool = true;
+
+	private var playTimer: DTimer;
+	private var stopTimer: DTimer;
+	private var abortTimer: DTimer;
+
 	private function Start() {
 		abort();
 		if (playAfter > 0) {
@@ -37,43 +37,51 @@ class ParticlesController extends MonoBehaviour {
 		}
 		if (playOnAwake) play();
 	}
-	
-	public function play(?dt:DT) {
-		if (playTimer != null) playTimer.start(dt);
-		else playNow(dt);
+
+	public function play(?dt: DT) {
+		if (playTimer != null)
+			playTimer.start(dt);
+		else
+			playNow(dt);
 	}
-	
-	public function playNow(?dt:DT) {
+
+	public function playNow(?dt: DT) {
 		abort();
-		if (particleSystem != null) particleSystem.Play();
-		else particleEmitter.emit = true;
-		
+		if (particleSystem != null)
+			particleSystem.Play();
+		else
+			particleEmitter.emit = true;
+
 		if (stopTimer != null) {
 			stopTimer.reset();
 			stopTimer.start(dt);
 		}
-		
+
 		if (abortTimer != null) {
 			abortTimer.reset();
 			abortTimer.start(dt);
 		}
 	}
-	
+
 	public function stop() {
 		if (playTimer != null) {
 			playTimer.stop();
 			playTimer.reset();
 		}
 		if (stopTimer != null) stopTimer.stop();
-		if (particleSystem != null) particleSystem.Stop();
-		else particleEmitter.emit = false;
+		if (particleSystem != null)
+			particleSystem.Stop();
+		else
+			particleEmitter.emit = false;
 	}
-	
+
 	public function abort() {
 		if (abortTimer != null) abortTimer.stop();
 		stop();
-		if (particleSystem != null) particleSystem.Clear();
-		else particleEmitter.ClearParticles();
+		if (particleSystem != null)
+			particleSystem.Clear();
+		else
+			particleEmitter.ClearParticles();
 	}
-	
+
 }

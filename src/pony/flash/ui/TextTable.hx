@@ -36,8 +36,7 @@ class TextTable extends TextTableCore {
 		area.addChild(shape);
 	}
 
-	private inline function get_g(): Graphics
-		return shape.graphics;
+	private inline function get_g(): Graphics return shape.graphics;
 
 	#if (haxe_ver < 4.2) override #end
 	private function drawBG(r: IntRect, color: UColor): Void {

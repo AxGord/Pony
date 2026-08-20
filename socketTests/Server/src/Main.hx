@@ -1,4 +1,4 @@
-package ;
+package;
 
 import pony.net.ISocketClient;
 import haxe.io.BytesOutput;
@@ -17,7 +17,7 @@ class Main {
 
 	static function main() {
 		var s = new SocketServer(13579);
-		s.onConnect << function(cl:ISocketClient):Void {
+		s.onConnect << function(cl: ISocketClient): Void {
 			var bo = new BytesOutput();
 			bo.writeStr('Hello man!');
 			cl.send(bo);

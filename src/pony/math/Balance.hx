@@ -12,7 +12,8 @@ abstract Balance(Array<Float>) from Array<Float> {
 	}
 
 	@:arrayAccess public function arrayWrite<T>(key: Int, value: Float): Float {
-		if (value > 1) throw 'value can\'t be > 1';
+		if (value > 1)
+			throw 'value can\'t be > 1';
 		else if (value == 1) {
 			for (i in 0...this.length) if (key != i) this[i] = 0;
 			this[key] = value;
@@ -36,9 +37,7 @@ abstract Balance(Array<Float>) from Array<Float> {
 
 	private function getSum(a: Int, b: Int): Float {
 		var sum: Float = 0;
-		for (i in 0...this.length)
-			if (i != a && i != b)
-				sum += this[i];
+		for (i in 0...this.length) if (i != a && i != b) sum += this[i];
 		return sum;
 	}
 

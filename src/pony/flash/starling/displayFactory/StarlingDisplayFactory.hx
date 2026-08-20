@@ -16,8 +16,7 @@ class StarlingDisplayFactory implements IDisplayFactory {
 	private static var _instance: StarlingDisplayFactory = new StarlingDisplayFactory();
 
 	public function new() {
-		if (_instance != null)
-			throw 'Singletone creation error';
+		if (_instance != null) throw 'Singletone creation error';
 	}
 
 	public static function getInstance(): StarlingDisplayFactory {

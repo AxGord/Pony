@@ -87,7 +87,12 @@ abstract Color(ColorImpl) {
 	/**
 	 * Construct from ARGB values
 	 */
-	public inline function new(a: Int, r: Int, g: Int, b: Int) this = {a: a, r: r, g: g, b: b};
+	public inline function new(a: Int, r: Int, g: Int, b: Int) this = {
+		a: a,
+		r: r,
+		g: g,
+		b: b
+	};
 
 	/**
 	 * Build from RGB values
@@ -122,14 +127,17 @@ abstract Color(ColorImpl) {
 	}
 
 	private static inline function lim(v: Int): Int {
-		if (v > MAX_CHANNEL) v = MAX_CHANNEL;
-		else if (v < -MAX_CHANNEL) v = -MAX_CHANNEL;
+		if (v > MAX_CHANNEL)
+			v = MAX_CHANNEL;
+		else if (v < -MAX_CHANNEL)
+			v = -MAX_CHANNEL;
 		return v;
 	}
 
 	private inline function _invert(v: Int): Int return MAX_CHANNEL - v;
 
 	private inline function get_invertAlpha(): Color return fromARGBSave(_invert(a), r, g, b);
+
 	private inline function get_invert(): Color return fromARGBSave(a, _invert(r), _invert(g), _invert(b));
 
 	@:from private static inline function fromUInt(v: UInt): Color return fromUColor(new UColor(v));
@@ -140,18 +148,25 @@ abstract Color(ColorImpl) {
 	@:to public inline function toUColor(): UColor return UColor.fromARGBSave(a, r, g, b);
 
 	@:to private inline function get_argb(): UInt return toUColor();
+
 	private inline function get_rgb(): UInt return toUColor().rgb;
 
 	private inline function get_power(): Int return r + g + b;
 
 	private inline function get_a(): Int return this.a;
+
 	private inline function get_r(): Int return this.r;
+
 	private inline function get_g(): Int return this.g;
+
 	private inline function get_b(): Int return this.b;
 
 	private inline function get_af(): Float return a / MAX_CHANNEL;
+
 	private inline function get_rf(): Float return r / MAX_CHANNEL;
+
 	private inline function get_gf(): Float return g / MAX_CHANNEL;
+
 	private inline function get_bf(): Float return b / MAX_CHANNEL;
 
 	/**

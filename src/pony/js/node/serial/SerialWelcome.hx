@@ -14,16 +14,16 @@ import haxe.io.BytesInput;
  */
 class SerialWelcome implements Declarator implements HasSignal {
 
-	@:auto public var onWelcome:Signal2<String, SerialPort>;
+	@:auto public var onWelcome: Signal2<String, SerialPort>;
 
-	@:arg private var serial:SerialPort;
-	@:arg private var welcome:Array<String>;
-	private var buf:String = '';
-	private var maxLength:Int;
-	private var delay:Timer;
-	private var welcomeMessage:String;
+	@:arg private var serial: SerialPort;
+	@:arg private var welcome: Array<String>;
+	private var buf: String = '';
+	private var maxLength: Int;
+	private var delay: Timer;
+	private var welcomeMessage: String;
 
-	public function new(?delay:Time) {
+	public function new(?delay: Time) {
 		if (delay != null) {
 			this.delay = new Timer(delay);
 			this.delay.complete << connect;
@@ -32,14 +32,14 @@ class SerialWelcome implements Declarator implements HasSignal {
 		maxLength = TextTools.arrayMaxLength(welcome);
 	}
 
-	private function connect():Void {
+	private function connect(): Void {
 		eWelcome.dispatch(welcomeMessage, serial);
 		destroy();
 	}
 
-	private function dataHandler(s:String):Void {
+	private function dataHandler(s: String): Void {
 		buf += s;
-		var needDestroy:Bool = false;
+		var needDestroy: Bool = false;
 		for (w in welcome) {
 			if (buf.length >= w.length) {
 				if (buf.indexOf(w) != -1) {
@@ -57,7 +57,7 @@ class SerialWelcome implements Declarator implements HasSignal {
 		if (needDestroy) destroy();
 	}
 
-	public function destroy():Void {
+	public function destroy(): Void {
 		buf = null;
 		welcome = null;
 		serial.onString >> dataHandler;

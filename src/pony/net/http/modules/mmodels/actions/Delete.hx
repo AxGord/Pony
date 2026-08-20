@@ -86,12 +86,10 @@ class DeletePut extends pony.text.tpl.TplPut<DeleteConnect, Dynamic> {
 
 	@:async
 	override public function tag(name: String, content: TplData, arg: String, args: Map<String, String>, ?kid: ITplPut): String {
-		if (!a.checkAccess())
-			return '';
+		if (!a.checkAccess()) return '';
 		if (content == null || args.exists('auto')) {
 			var fixList = [];
-			if (args.exists('fix'))
-				fixList = args.get('fix').split(',');
+			if (args.exists('fix')) fixList = args.get('fix').split(',');
 			var r: String = '';
 			var ma: Map<Int, Dynamic> = a.storage;
 			var m = ma.get(a.base.id);

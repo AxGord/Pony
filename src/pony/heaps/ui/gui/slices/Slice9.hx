@@ -14,10 +14,7 @@ import pony.geom.Point;
 	private var b: SliceBase;
 
 	public function new(tiles: Array<Tile>, repeat: Bool = false, ?parent: Object) {
-		super(new Point(
-			GUIUtils.tilesWidthSum(tiles.slice(0, 3)),
-			tiles[0].height + tiles[3].height + tiles[6].height
-			), parent);
+		super(new Point(GUIUtils.tilesWidthSum(tiles.slice(0, 3)), tiles[0].height + tiles[3].height + tiles[6].height), parent);
 		b = new SliceBase(this, tiles, repeat ? [1, 3, 4, 5, 7] : null);
 		changeWh << drawTiles;
 		changeFlipx << SliceBase.unsupported;

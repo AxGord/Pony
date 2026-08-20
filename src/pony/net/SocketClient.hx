@@ -12,13 +12,8 @@ import pony.events.Signal2;
  * @author AxGord <axgord@gmail.com>
  */
 #if (!js || nodejs || openfl)
-@:nullSafety(Strict) class SocketClient
-	#if nodejs extends pony.net.nodejs.SocketClient
-	#elseif cs extends pony.net.cs.SocketClient
-	#elseif flash extends pony.net.flash.SocketClient
-	#elseif openfl extends pony.net.openfl.SocketClient
-	#elseif neko extends pony.net.neko.SocketClient
-#end implements ISocketClient {
+@:nullSafety(Strict) class SocketClient #if nodejs extends pony.net.nodejs.SocketClient #elseif cs extends pony.net.cs.SocketClient  #elseif flash extends pony.net.flash.SocketClient  #elseif openfl extends pony.net.openfl.SocketClient  #elseif neko extends pony.net.neko.SocketClient #end
+		implements ISocketClient {
 
 	private static inline var DEFAULT_LEN_BLOCK_SIZE: Int = 4;
 
@@ -38,7 +33,8 @@ import pony.events.Signal2;
 		super.sharedInit();
 	}
 
-	#if !cs // Not working for CS
+	#if !cs
+	// Not working for CS
 	public dynamic function writeLength(bo: BytesOutput, length: UInt): Void bo.writeInt32(length);
 	#end
 
@@ -86,6 +82,7 @@ import pony.events.Signal2;
 	}
 
 	public function sendStack(): Void if (stack.length > 0) @:nullSafety(Off) send(stack.shift());
+
 	public function sendAllStack(): Void while (stack.length > 0) @:nullSafety(Off) send(stack.shift());
 
 	public inline function setTaskb(prefix: Bytes, ?len: Int64): Signal2<BytesInput, ISocketClient> {

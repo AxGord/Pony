@@ -5,13 +5,10 @@ import haxe.macro.Context;
 import haxe.macro.Expr;
 import haxe.macro.Type.ClassType;
 import haxe.macro.TypeTools;
-
 import pony.magic.builder.DIVerifier;
 
 using Lambda;
-
 using haxe.macro.ComplexTypeTools;
-
 using pony.macro.Tools;
 #end
 
@@ -23,7 +20,6 @@ using pony.macro.Tools;
 final class DIBuilder {
 
 	#if macro
-
 	private static inline final UNEXPECTED_ERROR: String = 'Unexpected error';
 	private static inline final DI: String = 'pony.magic.DI';
 	private static inline final WR: String = 'pony.magic.WR';
@@ -33,7 +29,6 @@ final class DIBuilder {
 	private static inline final SHARE: String = ':share';
 	private static inline final USE: String = ':use';
 	private static inline final LEGACY_SERVICE: String = ':service';
-
 	#end
 
 	macro public static function build(): Array<Field> {
@@ -48,8 +43,7 @@ final class DIBuilder {
 		final ctp: TypePath = @:privateAccess TypeTools.toTypePath(localClass, []);
 		final ct: ComplexType = TPath(ctp);
 		final fields: Array<Field> = Context.getBuildFields();
-		final diSuperTypeName: Null<String> = isExt && localClass.superClass != null
-			? typeNameOf(localClass.superClass.t.get()) : null;
+		final diSuperTypeName: Null<String> = isExt && localClass.superClass != null ? typeNameOf(localClass.superClass.t.get()) : null;
 		var constuctor: Null<Field> = fields.find(f -> f.name == 'new');
 		if (constuctor == null) {
 			if (Context.getLocalClass().get().superClass == null) {
@@ -74,9 +68,7 @@ final class DIBuilder {
 				break;
 			case _:
 		}
-		final diSummary: DIClassSummary = DIVerifier.beginClass(
-			typeNameOf(localClass), localClass.pos, diSuperTypeName, usesProvider
-		);
+		final diSummary: DIClassSummary = DIVerifier.beginClass(typeNameOf(localClass), localClass.pos, diSuperTypeName, usesProvider);
 		final destructor: Null<Field> = fields.find(f -> f.name == 'destroy' || f.name == 'destroyAsync');
 		if (destructor != null) {
 			if (isAsync && destructor.name != 'destroyAsync')
@@ -103,22 +95,19 @@ final class DIBuilder {
 		// Pre-scan: collect @:own producers for local var optimization in createFast calls.
 		// ownNonDIVars — non-DI types (L2 optimization).
 		// ownStaticDIVars — L3-eligible DI types (no @:share, no WR, no provider refs).
-		final ownNonDIVars: Map<String, {varName: String, typeNames: Array<String>}> = [];
-		final ownStaticDIVars: Map<String, {varName: String, typeNames: Array<String>}> = [];
+		final ownNonDIVars: Map<String, { varName: String, typeNames: Array<String> }> = [];
+		final ownStaticDIVars: Map<String, { varName: String, typeNames: Array<String> }> = [];
 		for (field in fields) switch field.kind {
-			case FVar(t, {expr: ENew(tp, _)}) if (
-				t != null && field.meta.getMeta(OWN) != null
-				&& field.meta.getMeta(SHARE) == null && field.meta.getMeta(USE) == null
-			):
+			case FVar(t, {
+				expr: ENew(tp, _)
+			}) if (t != null && field.meta.getMeta(OWN) != null && field.meta.getMeta(SHARE) == null && field.meta.getMeta(USE) == null):
 				switch TPath(tp).toType() {
 					case TInst(inst, _) if (!checkDI(inst)):
 						ownNonDIVars[field.name] = {
 							varName: '_di_${field.name}',
 							typeNames: collectAssignableTypeNames(inst)
 						};
-					case TInst(inst, _) if (
-						checkDI(inst) && !checkWR(inst) && DIVerifier.isStaticEligible(typeNameOf(inst.get()))
-					):
+					case TInst(inst, _) if (checkDI(inst) && !checkWR(inst) && DIVerifier.isStaticEligible(typeNameOf(inst.get()))):
 						ownStaticDIVars[field.name] = {
 							varName: '_di_${field.name}',
 							typeNames: collectAssignableTypeNames(inst)
@@ -127,10 +116,10 @@ final class DIBuilder {
 				}
 			case _:
 		}
-		final depDescriptors: Array<{paramName: String, type: ComplexType}> = [];
+		final depDescriptors: Array<{ paramName: String, type: ComplexType }> = [];
 		// L3-stage4: @:own static-eligible DI fields passed as constructor params.
 		// Unlike depDescriptors (@:use, external input), these are self-created in load().
-		final ownStaticDepDescriptors: Array<{paramName: String, type: ComplexType}> = [];
+		final ownStaticDepDescriptors: Array<{ paramName: String, type: ComplexType }> = [];
 		for (field in fields) switch field.kind {
 			case FVar(t, e) if (t != null):
 				if (field.meta.getMeta(LEGACY_SERVICE) != null)
@@ -148,9 +137,9 @@ final class DIBuilder {
 					final blocked: Null<String> = instanceReference(e, fields, constuctor);
 					if (blocked != null)
 						Context.error(
-							'DI: @:${ownMeta != null ? "own" : "share"} initializer is evaluated in the generated ' +
-							'static load(), so it cannot use "$blocked". Depend on another service with @:use, ' +
-							'or build from a static, a constant or a literal.',
+							'DI: @:${ownMeta != null ? "own" : "share"} initializer is evaluated in the generated '
+							+ 'static load(), so it cannot use "$blocked". Depend on another service with @:use, '
+							+ 'or build from a static, a constant or a literal.',
 							field.pos
 						);
 				}
@@ -163,8 +152,10 @@ final class DIBuilder {
 					Context.error('DI: field "${field.name}" shadows parent field. Rename or remove.', field.pos);
 				if (useMeta != null) {
 					final depParamName: String = '_di_${field.name}';
-					depDescriptors.push({paramName: depParamName, type: t});
-					blocks.unshift(macro $i{field.name} = $i{depParamName} != null ? $i{depParamName} : provider.get($v{fieldTypeName}, $v{field.name}));
+					depDescriptors.push({ paramName: depParamName, type: t });
+					blocks.unshift(
+						macro $i{field.name} = $i{depParamName} != null ? $i{depParamName} : provider.get($v{fieldTypeName}, $v{field.name})
+					);
 					DIVerifier.addConsumer(diSummary, {
 						fieldName: field.name,
 						consumerTypeName: fieldTypeName,
@@ -177,7 +168,9 @@ final class DIBuilder {
 							if (!depIsStatic) {
 								creates.push(macro tasks.add());
 								if (inst.get().interfaces.exists(f -> f.t.toString() == WR))
-									creates.push(macro provider.waitReady($v{fieldTypeName}, $v{field.name}, instance -> instance.waitReady(tasks.end)));
+									creates.push(macro provider.waitReady(
+										$v{fieldTypeName}, $v{field.name}, instance -> instance.waitReady(tasks.end)
+									));
 								else
 									creates.push(macro provider.waitReady($v{fieldTypeName}, $v{field.name}, tasks.end));
 							}
@@ -189,8 +182,12 @@ final class DIBuilder {
 					final isOwnStaticDI: Bool = ownStaticDIVars.exists(field.name);
 					if (isOwnStaticDI) {
 						final depParamName: String = '_di_${field.name}';
-						ownStaticDepDescriptors.push({paramName: depParamName, type: t});
-						blocks.unshift(macro $i{field.name} = $i{depParamName} != null ? $i{depParamName} : provider.get($v{fieldTypeName}, $v{field.name}));
+						ownStaticDepDescriptors.push({ paramName: depParamName, type: t });
+						blocks.unshift(
+							macro $i{field.name} = $i{depParamName} != null
+								? $i{depParamName}
+								: provider.get($v{fieldTypeName}, $v{field.name})
+						);
 					} else {
 						blocks.unshift(macro $i{field.name} = provider.get($v{fieldTypeName}, $v{field.name}));
 					}
@@ -220,43 +217,51 @@ final class DIBuilder {
 								pos: field.pos
 							});
 							function checkExpr(expr: Expr): Expr {
-								return importService ? macro if (!provider.existsInParents($v{primaryTypeName}, $v{field.name})) $expr : expr;
+								return importService ? macro if (!provider.existsInParents(
+									$v{primaryTypeName}, $v{field.name}
+								)) $expr : expr;
 							}
 							switch t.toType() {
 								case TInst(inst, _) if (checkDI(inst)):
 									final childIsAsync: Bool = checkAsyncDestroy(inst);
 									if (childIsAsync && !isAsync)
-										Context.error('Service "${field.name}" implements AsyncDestroy, but this class does not. Add `implements pony.magic.AsyncDestroy` to this class.', field.pos);
+										Context.error(
+											'Service "${field.name}" implements AsyncDestroy, but this class does not. Add `implements pony.magic.AsyncDestroy` to this class.',
+											field.pos
+										);
 									// L3: skip provider.load for static-eligible DI children; declare local var instead.
-									final staticDIVar: Null<{varName: String, typeNames: Array<String>}> = ownStaticDIVars[field.name];
+									final staticDIVar: Null<{ varName: String, typeNames: Array<String> }> = ownStaticDIVars[field.name];
 									if (staticDIVar != null)
 										loads.push({
-											expr: EVars([{
-												name: staticDIVar.varName,
-												type: TPath({pack: [], name: 'Null', params: [TPType(t)]}),
-												expr: macro null,
-												isFinal: false
-											}]),
+											expr: EVars([
+												{
+													name: staticDIVar.varName,
+													type: TPath({ pack: [], name: 'Null', params: [TPType(t)] }),
+													expr: macro null,
+													isFinal: false
+												}
+											]),
 											pos: Context.currentPos()
 										})
 									else
-										loads.push(checkExpr(macro provider.load($v{producerTypeNames}, $v{field.name}, $v{exportService})));
+										loads.push(
+											checkExpr(macro provider.load($v{producerTypeNames}, $v{field.name}, $v{exportService}))
+										);
 									if (childIsAsync) {
-										destroysAsync.unshift(importService && exportService ?
-											macro if (provider.isExported($v{primaryTypeName}, $v{field.name})) {
+										destroysAsync.unshift(importService && exportService
+											? macro if (provider.isExported($v{primaryTypeName}, $v{field.name})) {
 												tasks.add();
 												$i{field.name}.destroyAsync(function(): Void tasks.end());
 											}
 											: macro {
 												tasks.add();
 												$i{field.name}.destroyAsync(function(): Void tasks.end());
-											}
-										);
+											});
 									} else {
-										destroys.unshift(importService && exportService ?
-											macro if (provider.isExported($v{primaryTypeName}, $v{field.name})) $i{field.name}.destroy()
-											: macro $i{field.name}.destroy()
-										);
+										destroys.unshift(importService && exportService ? macro if (provider.isExported(
+											$v{primaryTypeName}, $v{field.name}
+										))
+											$i{field.name}.destroy() : macro $i{field.name}.destroy());
 									}
 									creates.push(checkExpr(macro tasks.add()));
 									// L3: for static-eligible DI children, store instance in local var.
@@ -284,44 +289,55 @@ final class DIBuilder {
 												switch callTarget.expr {
 													case EField(obj, _):
 														callTarget.expr = EField(obj, 'createFast');
-													case _: throw UNEXPECTED_ERROR;
+													case _:
+														throw UNEXPECTED_ERROR;
 												}
 												var insertIdx: Int = 1;
 												for (consumer in childConsumers) {
-													final matchedVar: Null<String> = resolveLocalVar(consumer, ownNonDIVars, ownStaticDIVars);
-													params.insert(insertIdx, matchedVar != null
-														? macro $i{matchedVar}
-														: macro provider.get($v{consumer.consumerTypeName}, $v{consumer.fieldName})
+													final matchedVar: Null<String> = resolveLocalVar(
+														consumer, ownNonDIVars, ownStaticDIVars
+													);
+													params.insert(
+														insertIdx,
+														matchedVar != null
+															? macro $i{matchedVar}
+															: macro provider.get($v{consumer.consumerTypeName}, $v{consumer.fieldName})
 													);
 													insertIdx++;
 												}
 											}
 											for (arg in args) params.push(arg);
-										case _: throw UNEXPECTED_ERROR;
+										case _:
+											throw UNEXPECTED_ERROR;
 									}
 									creates.push(checkExpr(cr));
 								case _:
-									final localVar: Null<{varName: String, typeNames: Array<String>}> = ownNonDIVars[field.name];
+									final localVar: Null<{ varName: String, typeNames: Array<String> }> = ownNonDIVars[field.name];
 									if (localVar != null) {
 										loads.push({
-											expr: EVars([{
-												name: localVar.varName,
-												type: t,
-												expr: e,
-												isFinal: true
-											}]),
+											expr: EVars([
+												{
+													name: localVar.varName,
+													type: t,
+													expr: e,
+													isFinal: true
+												}
+											]),
 											pos: Context.currentPos()
 										});
 										loads.push(checkExpr(macro provider.register(
 											$v{producerTypeNames}, $v{field.name}, $i{localVar.varName}, $v{exportService}
 										)));
 									} else {
-										loads.push(checkExpr(macro provider.register(
-											$v{producerTypeNames}, $v{field.name}, $e, $v{exportService}
-										)));
+										loads.push(
+											checkExpr(
+												macro provider.register($v{producerTypeNames}, $v{field.name}, $e, $v{exportService})
+											)
+										);
 									}
 							}
-						case _: throw 'Not supported';
+						case _:
+							throw 'Not supported';
 					}
 					field.kind = FVar(t, null);
 				}
@@ -331,8 +347,7 @@ final class DIBuilder {
 		// it to user destroy) so builder order becomes irrelevant and async classes compose cleanly.
 		if (hasListener) destroys.unshift(macro unlisten());
 		// L3-stage3: self is static-eligible when all conditions met.
-		final selfIsStatic: Bool = !usesProvider && !isAsync
-			&& DIVerifier.isStaticEligible(typeNameOf(localClass));
+		final selfIsStatic: Bool = !usesProvider && !isAsync && DIVerifier.isStaticEligible(typeNameOf(localClass));
 		switch constuctor.kind {
 			case FFun(fun):
 				fun.expr = fun.expr.replaceToBlock();
@@ -370,8 +385,10 @@ final class DIBuilder {
 					}
 				}).fields.pop();
 				switch create.kind {
-					case FFun(f): for (arg in fun.args) f.args.push(arg);
-					case _: throw UNEXPECTED_ERROR;
+					case FFun(f):
+						for (arg in fun.args) f.args.push(arg);
+					case _:
+						throw UNEXPECTED_ERROR;
 				}
 				// trace(new haxe.macro.Printer().printField(create));
 				fields.unshift(load);
@@ -394,13 +411,15 @@ final class DIBuilder {
 						switch e.expr {
 							case ENew(_, params):
 								for (dep in depDescriptors) params.push(macro $i{dep.paramName});
-								for (dep in ownStaticDepDescriptors) params.push({expr: EConst(CIdent(dep.paramName)), pos: Context.currentPos()});
+								for (dep in ownStaticDepDescriptors)
+									params.push({ expr: EConst(CIdent(dep.paramName)), pos: Context.currentPos() });
 								for (arg in fun.args) params.push(macro $i{arg.name});
 							case _:
 								throw UNEXPECTED_ERROR;
 						}
 						e;
-					} else macro null; // unused
+					} else
+						macro null; // unused
 					// L3-stage3+4: static-eligible classes skip provider.sub() and inline load
 					// body into createFast so @:own static local vars are in scope for nwFast.
 					// Loads (var declarations) go before Tasks so closures can capture them.
@@ -408,10 +427,14 @@ final class DIBuilder {
 					final createFast: Field = if (selfIsStatic) {
 						// L3-stage5: when no async work remains (no non-EVars loads, no creates),
 						// skip Tasks wrapper entirely and call cb synchronously.
-						final hasNonEVarLoads: Bool = loads.exists(e -> switch e.expr { case EVars(_): false; case _: true; });
+						final hasNonEVarLoads: Bool = loads.exists(e -> switch e.expr {
+							case EVars(_): false;
+							case _: true;
+						});
 						final body: Array<Expr> = [macro final provider: pony.ServiceProvider = cast serviceProvider];
 						for (e in loads) switch e.expr {
-							case EVars(_): body.push(e);
+							case EVars(_):
+								body.push(e);
 							case _:
 						}
 						if (!hasNonEVarLoads && creates.length == 0) {
@@ -421,7 +444,8 @@ final class DIBuilder {
 							body.push(macro tasks.add());
 							for (e in loads) switch e.expr {
 								case EVars(_):
-								case _: body.push(e);
+								case _:
+									body.push(e);
 							}
 							for (e in creates) body.push(e);
 							body.push(macro tasks.end());
@@ -432,13 +456,16 @@ final class DIBuilder {
 						switch f.kind {
 							case FFun(fun):
 								fun.expr = macro $b{body};
-							case _: throw UNEXPECTED_ERROR;
+							case _:
+								throw UNEXPECTED_ERROR;
 						}
 						f;
 					} else {
 						(macro class {
 							public static function createFast(?serviceProvider: pony.ServiceProvider, cb: $ct -> Void): Void {
-								final provider: pony.ServiceProvider = serviceProvider != null ? serviceProvider.sub() : new pony.ServiceProvider();
+								final provider: pony.ServiceProvider = serviceProvider != null
+									? serviceProvider.sub()
+									: new pony.ServiceProvider();
 								load(provider, () -> cb($nwFast));
 							}
 						}).fields.pop();
@@ -447,16 +474,17 @@ final class DIBuilder {
 						case FFun(f):
 							var depIdx: Int = 1;
 							for (dep in depDescriptors) {
-								f.args.insert(depIdx, {name: dep.paramName, type: dep.type});
+								f.args.insert(depIdx, { name: dep.paramName, type: dep.type });
 								depIdx++;
 							}
 							for (arg in fun.args) f.args.push(arg);
-						case _: throw UNEXPECTED_ERROR;
+						case _:
+							throw UNEXPECTED_ERROR;
 					}
 					fields.unshift(createFast);
 				}
 
-				fun.args.unshift(switch (macro function(provider: pony.ServiceProvider) {}).expr {
+				fun.args.unshift( switch (macro function(provider: pony.ServiceProvider) {}).expr {
 					case EFunction(_, v): v.args.pop();
 					case _: throw UNEXPECTED_ERROR;
 				});
@@ -464,7 +492,7 @@ final class DIBuilder {
 				for (dep in depDescriptors) {
 					fun.args.insert(depArgIdx, {
 						name: dep.paramName,
-						type: TPath({pack: [], name: 'Null', params: [TPType(dep.type)]}),
+						type: TPath({ pack: [], name: 'Null', params: [TPType(dep.type)] }),
 						value: macro null
 					});
 					depArgIdx++;
@@ -473,7 +501,7 @@ final class DIBuilder {
 				for (dep in ownStaticDepDescriptors) {
 					fun.args.insert(depArgIdx, {
 						name: dep.paramName,
-						type: TPath({pack: [], name: 'Null', params: [TPType(dep.type)]}),
+						type: TPath({ pack: [], name: 'Null', params: [TPType(dep.type)] }),
 						value: macro null
 					});
 					depArgIdx++;
@@ -485,14 +513,15 @@ final class DIBuilder {
 							lines.unshift(macro this.provider = provider);
 						} else {
 							for (line in lines) switch line.expr {
-								case ECall({expr: EConst(CIdent('super'))}, params):
+								case ECall({ expr: EConst(CIdent('super')) }, params):
 									params.unshift(macro provider);
 								case _:
 							}
 						}
 					case _: throw UNEXPECTED_ERROR;
 				}
-			case _: throw UNEXPECTED_ERROR;
+			case _:
+				throw UNEXPECTED_ERROR;
 		}
 		// A class counts as having children if it declares services, extends a DI parent,
 		// or has async children routed through destroysAsync. Leaves (no children) skip
@@ -532,7 +561,7 @@ final class DIBuilder {
 		if (needsGuard) fields.push({
 			name: guardFieldName,
 			access: [APrivate],
-			kind: FVar(macro: Bool, macro false),
+			kind: FVar(macro :Bool, macro false),
 			pos: Context.currentPos()
 		});
 		// Framework-owned idempotency: user can write `if (something) return;` freely, the guard
@@ -541,7 +570,10 @@ final class DIBuilder {
 		final guardPrefix: Expr = if (needsGuard) {
 			if (isAsync)
 				macro {
-					if ($i{guardFieldName}) { cb(); return; }
+					if ($i{guardFieldName}) {
+						cb();
+						return;
+					}
 					$i{guardFieldName} = true;
 				};
 			else
@@ -549,50 +581,68 @@ final class DIBuilder {
 					if ($i{guardFieldName}) return;
 					$i{guardFieldName} = true;
 				};
-		} else macro {};
-		if (destructor != null) switch destructor.kind {
-			case FFun(fun):
-				if (isAsync && !hasChildren) {
-					// Async leaf: user owns destroyAsync and cb. Only inject unlisten() for HasListener
-					// so subscriptions are released before user's async work begins.
-					if (hasListener) {
+		} else
+			macro {};
+		if (destructor != null)
+			switch destructor.kind {
+				case FFun(fun):
+					if (isAsync && !hasChildren) {
+						// Async leaf: user owns destroyAsync and cb. Only inject unlisten() for HasListener
+						// so subscriptions are released before user's async work begins.
+						if (hasListener) {
+							fun.expr = fun.expr.replaceToBlock();
+							switch fun.expr.expr {
+								case EBlock(lines):
+									lines.unshift(macro unlisten());
+								case _:
+									throw UNEXPECTED_ERROR;
+							}
+						}
+					} else {
+						// rewriteReturns inserts teardown before every `return` in user body so early
+						// returns still trigger cleanup (C1 fix). The trailing push handles fall-through.
 						fun.expr = fun.expr.replaceToBlock();
+						fun.expr = pony.macro.Tools.rewriteReturns(fun.expr, teardownExpr);
 						switch fun.expr.expr {
-							case EBlock(lines): lines.unshift(macro unlisten());
+							case EBlock(lines):
+								lines.unshift(guardPrefix);
+								lines.push(teardownExpr);
 							case _: throw UNEXPECTED_ERROR;
 						}
 					}
-				} else {
-					// rewriteReturns inserts teardown before every `return` in user body so early
-					// returns still trigger cleanup (C1 fix). The trailing push handles fall-through.
-					fun.expr = fun.expr.replaceToBlock();
-					fun.expr = pony.macro.Tools.rewriteReturns(fun.expr, teardownExpr);
-					switch fun.expr.expr {
-						case EBlock(lines):
-							lines.unshift(guardPrefix);
-							lines.push(teardownExpr);
-						case _: throw UNEXPECTED_ERROR;
-					}
-				}
-			case _: throw UNEXPECTED_ERROR;
-		} else {
+				case _:
+					throw UNEXPECTED_ERROR;
+			}
+		else {
 			if (isAsync) {
 				if (isExt)
 					fields.push((macro class {
-						override public function destroyAsync(cb: () -> Void): Void { $guardPrefix; $teardownExpr; }
+						override public function destroyAsync(cb: () -> Void): Void {
+							$guardPrefix;
+							$teardownExpr;
+						}
 					}).fields.pop());
 				else
 					fields.push((macro class {
-						public function destroyAsync(cb: () -> Void): Void { $guardPrefix; $teardownExpr; }
+						public function destroyAsync(cb: () -> Void): Void {
+							$guardPrefix;
+							$teardownExpr;
+						}
 					}).fields.pop());
 			} else {
 				if (isExt)
 					fields.push((macro class {
-						override public function destroy(): Void { $guardPrefix; $teardownExpr; }
+						override public function destroy(): Void {
+							$guardPrefix;
+							$teardownExpr;
+						}
 					}).fields.pop());
 				else
 					fields.push((macro class {
-						public function destroy(): Void { $guardPrefix; $teardownExpr; }
+						public function destroy(): Void {
+							$guardPrefix;
+							$teardownExpr;
+						}
 					}).fields.pop());
 			}
 		}
@@ -603,7 +653,6 @@ final class DIBuilder {
 	}
 
 	#if macro
-
 	private static function checkDI(inst: haxe.macro.Type.Ref<ClassType>): Bool {
 		final type: ClassType = inst.get();
 		return type.interfaces.exists(f -> f.t.toString() == DI) || (type.superClass != null && checkDI(type.superClass.t));
@@ -611,7 +660,8 @@ final class DIBuilder {
 
 	private static function checkAsyncDestroy(inst: haxe.macro.Type.Ref<ClassType>): Bool {
 		final type: ClassType = inst.get();
-		return type.interfaces.exists(f -> f.t.toString() == ASYNC_DESTROY) || (type.superClass != null && checkAsyncDestroy(type.superClass.t));
+		return type.interfaces.exists(f -> f.t.toString() == ASYNC_DESTROY)
+			|| (type.superClass != null && checkAsyncDestroy(type.superClass.t));
 	}
 
 	/**
@@ -664,7 +714,9 @@ final class DIBuilder {
 			if (e.containsIdent(f.name)) return f.name;
 		}
 		switch constuctor.kind {
-			case FFun(fun): for (arg in fun.args) if (e.containsIdent(arg.name)) return arg.name;
+			case FFun(fun):
+				for (arg in fun.args) if (e.containsIdent(arg.name))
+					return arg.name;
 			case _:
 		}
 		return null;
@@ -677,9 +729,8 @@ final class DIBuilder {
 	 * multiple matches disambiguate by field name, no match returns null.
 	 */
 	private static function resolveLocalVar(
-		consumer: ConsumerEntry,
-		ownNonDIVars: Map<String, {varName: String, typeNames: Array<String>}>,
-		ownStaticDIVars: Map<String, {varName: String, typeNames: Array<String>}>
+		consumer: ConsumerEntry, ownNonDIVars: Map<String, { varName: String, typeNames: Array<String> }>,
+		ownStaticDIVars: Map<String, { varName: String, typeNames: Array<String> }>
 	): Null<String> {
 		var matched: Null<String> = null;
 		var count: Int = 0;
@@ -700,7 +751,6 @@ final class DIBuilder {
 		final type: ClassType = inst.get();
 		return type.interfaces.exists(f -> f.t.toString() == WR) || (type.superClass != null && checkWR(type.superClass.t));
 	}
-
 	#end
 
 }

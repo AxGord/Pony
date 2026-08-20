@@ -28,10 +28,14 @@ class Config {
 	}
 
 	public static function questionState(name: String): InstallQuestion {
-		return if (!INSTALL) InstallQuestion.Say;
-		else if (ARGS.indexOf('-' + name) != -1) InstallQuestion.No;
-		else if (ARGS.indexOf('+' + name) != -1) InstallQuestion.Yes;
-		else InstallQuestion.Say;
+		return if (!INSTALL)
+			InstallQuestion.Say;
+		else if (ARGS.indexOf('-' + name) != -1)
+			InstallQuestion.No;
+		else if (ARGS.indexOf('+' + name) != -1)
+			InstallQuestion.Yes;
+		else
+			InstallQuestion.Say;
 	}
 
 }

@@ -8,10 +8,12 @@ import pony.geom.Rect;
 
 #if (haxe_ver >= 4.2) enum #else @:enum #end
 abstract SmallDeviceQuality(Int) to Int {
+
 	var ideal = 1;
 	var low = 2;
 	var normal = 3;
 	var good = 4;
+
 }
 
 @:nullSafety(Off) @:final class SmartCanvas implements HasSignal {
@@ -46,7 +48,9 @@ abstract SmallDeviceQuality(Int) to Int {
 	}
 
 	private function takeDynStageHandler(): Void onStageResize << dynStageResize;
+
 	private function lostDynStageHandler(): Void onStageResize >> dynStageResize;
+
 	private function dynStageResize(): Void eDynStageResize.dispatch(dynStage);
 
 	public inline function set_smallDeviceQuality(q: SmallDeviceQuality): SmallDeviceQuality {
@@ -71,6 +75,7 @@ abstract SmallDeviceQuality(Int) to Int {
 	}
 
 	public inline function updateSize(): Void {}
+
 	public dynamic function ratioMod(value: Float): Float return value;
 
 	@SuppressWarnings('checkstyle:MagicNumber')
@@ -85,7 +90,7 @@ abstract SmallDeviceQuality(Int) to Int {
 			var hd = h / stageInitSize.y;
 			scale = wd > hd ? hd : wd;
 
-			ratio = (smallDeviceQuality: Int) <= 1 ? 1 :  smallDeviceQualityOffset + scale / smallDeviceQuality;
+			ratio = (smallDeviceQuality: Int) <= 1 ? 1 : smallDeviceQualityOffset + scale / smallDeviceQuality;
 			if (ratio > 1) ratio = 1;
 			ratio = ratioMod(ratio);
 

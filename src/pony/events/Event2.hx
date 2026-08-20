@@ -7,12 +7,11 @@ import pony.Priority;
  * @author AxGord <axgord@gmail.com>
  */
 @SuppressWarnings('checkstyle:MagicNumber')
-@:forward(
-	empty,
-	#if pony_experimental changeEmpty, #end
-	onTake,
-	onLost
-)
+#if pony_experimental
+@:forward(empty, changeEmpty, onTake, onLost)
+#else
+@:forward(empty, onTake, onLost)
+#end
 @:access(pony.events.Listener1)
 abstract Event2<T1, T2>(Priority<Listener2<T1, T2>>) from Priority<Listener2<T1, T2>> to Priority<Listener2<T1, T2>> {
 
@@ -64,6 +63,7 @@ abstract Event2<T1, T2>(Priority<Listener2<T1, T2>>) from Priority<Listener2<T1,
 	}
 
 	@:op(a()) public inline function dispatch(a1: T1, a2: T2): Void dispatchWithFlag(a1, a2, false);
+
 	public inline function saveDispatch(a1: T1, a2: T2): Void dispatchWithFlag(a1, a2, true);
 
 	public function dispatchWithFlag(a1: T1, a2: T2, safe: Bool): Void {
@@ -117,7 +117,7 @@ abstract Event2<T1, T2>(Priority<Listener2<T1, T2>>) from Priority<Listener2<T1,
 	}
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public inline function sub2(a2:T2, priority:Int = 0): Event1<T1> {
+	public inline function sub2(a2: T2, priority: Int = 0): Event1<T1> {
 		var e: Event1<T1> = new Event1<T1>();
 		(e: Signal1<T1>).add(Listener1.f1(dispatch.bind(_, a2)), priority);
 		return e;

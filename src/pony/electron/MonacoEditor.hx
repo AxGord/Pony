@@ -4,10 +4,8 @@ import monaco.Editor.IStandaloneCodeEditor;
 import monaco.Editor.IStandaloneThemeData;
 import monaco.Editor.ITextModel;
 import monaco.Languages.LanguageConfiguration;
-
 import js.html.Element;
 import js.node.Fs;
-
 import pony.NPM;
 import pony.events.Signal0;
 import pony.Tasks;
@@ -53,11 +51,8 @@ class MonacoEditor extends pony.Logable {
 	private var langs: Map<String, LangLoaded> = new Map<String, LangLoaded>();
 
 	private function new(
-		home: String = 'monaco/',
-		modulesPath: String = '',
-		onigasm: String = 'node_modules/onigasm/lib/onigasm.wasm',
-		?themes: Array<String>,
-		?langs: Array<Lang>
+		home: String = 'monaco/', modulesPath: String = '', onigasm: String = 'node_modules/onigasm/lib/onigasm.wasm',
+		?themes: Array<String>, ?langs: Array<Lang>
 	) {
 		super();
 
@@ -80,53 +75,50 @@ class MonacoEditor extends pony.Logable {
 	}
 
 	private function loadThemes(themes: Array<String>): Void {
-		if (themes != null)
-			for (theme in themes)
-				if (needLoadTheme(theme)) {
-					tasks.add();
-					readMonacoFile(theme + '.theme.json', function(s: String): Void {
-						try {
-							this.themes[theme] = haxe.Json.parse(s);
-							log(theme + ' theme loaded');
-							tasks.end();
-						} catch (e:js.Error) {
-							error(e.message);
-						}
-					});
+		if (themes != null) for (theme in themes) if (needLoadTheme(theme)) {
+			tasks.add();
+			readMonacoFile(theme + '.theme.json', function(s: String): Void {
+				try {
+					this.themes[theme] = haxe.Json.parse(s);
+					log(theme + ' theme loaded');
+					tasks.end();
+				} catch (e: js.Error) {
+					error(e.message);
 				}
+			});
+		}
 	}
 
 	private function loadLangs(langs: Array<Lang>): Void {
-		if (langs != null)
-			for (lang in langs) {
-				tasks.add();
-				var l: LangLoaded = {
-					name: lang.name,
-					ext: lang.ext,
-					tm: null,
-					conf: null
-				};
-				this.langs[lang.name] = l;
-				var st: Tasks = new Tasks(tasks.end);
+		if (langs != null) for (lang in langs) {
+			tasks.add();
+			var l: LangLoaded = {
+				name: lang.name,
+				ext: lang.ext,
+				tm: null,
+				conf: null
+			};
+			this.langs[lang.name] = l;
+			var st: Tasks = new Tasks(tasks.end);
+			st.add();
+			readMonacoFile(lang.tm, function(s: String): Void {
+				log(l.name + ' tm loaded');
+				l.tm = s;
+				st.end();
+			});
+			if (lang.conf != null) {
 				st.add();
-				readMonacoFile(lang.tm, function(s: String): Void {
-					log(l.name + ' tm loaded');
-					l.tm = s;
-					st.end();
+				readMonacoFile(lang.conf, function(s: String): Void {
+					try {
+						l.conf = haxe.Json.parse(s);
+						log(l.name + ' conf loaded');
+						st.end();
+					} catch (e: js.Error) {
+						error(e.message);
+					}
 				});
-				if (lang.conf != null) {
-					st.add();
-					readMonacoFile(lang.conf, function(s: String): Void {
-						try {
-							l.conf = haxe.Json.parse(s);
-							log(l.name + ' conf loaded');
-							st.end();
-						} catch (e:js.Error) {
-							error(e.message);
-						}
-					});
-				}
 			}
+		}
 	}
 
 	private function readMonacoFile(file: String, cb: String -> Void): Void {
@@ -168,14 +160,12 @@ class MonacoEditor extends pony.Logable {
 
 		var grammars = pony.JsTools.mapToJSMap([for (l in langs) l.name => 'source.' + l.ext]);
 		for (l in langs) {
-			monaco.languages.register({id: l.name, extensions: [l.ext]});
-			if (l.conf != null)
-				monaco.languages.setLanguageConfiguration(l.name, l.conf);
+			monaco.languages.register({ id: l.name, extensions: [l.ext] });
+			if (l.conf != null) monaco.languages.setLanguageConfiguration(l.name, l.conf);
 		}
 		NPM.monaco_editor_textmate.wireTmGrammars(monaco, registry, grammars);
 
-		for (k in themes.keys())
-			monaco.editor.defineTheme(k, themes[k]);
+		for (k in themes.keys()) monaco.editor.defineTheme(k, themes[k]);
 
 		log('monaco ready');
 	}

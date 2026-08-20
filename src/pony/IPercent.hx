@@ -6,6 +6,6 @@ package pony;
  */
 interface IPercent {
 
-	var percent(default, set):Float;
-	
+	var percent(default, set): Float;
+
 }

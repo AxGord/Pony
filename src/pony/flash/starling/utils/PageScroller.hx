@@ -32,8 +32,7 @@ class PageScroller {
 		_page = page;
 		_pageAreaHeight = pageAreaHeight;
 		_scrollBar.update.add(function(p: Float): Void {
-			if (!dragged)
-				page.y = -p;
+			if (!dragged) page.y = -p;
 		});
 		TouchManager.addListener(page, scrollListener, [TouchEventType.MouseWheel]);
 		// TouchManager.addListener(_scrollBar, scrollListener, [TouchEventType.MouseWheel]);
@@ -55,12 +54,15 @@ class PageScroller {
 		#if tweenmax
 		TweenMax.killTweensOf(this);
 		kineticDragged = true;
-		TweenMax.to(this, UniversalDrag.KINETIC_DRAG_DURATION, {onUpdate: function(): Void {
-			kineticDragged = true;
-			dragScrollUpdate(null);
-		}, onComplete: function(): Void {
+		TweenMax.to(this, UniversalDrag.KINETIC_DRAG_DURATION, {
+			onUpdate: function(): Void {
+				kineticDragged = true;
+				dragScrollUpdate(null);
+			},
+			onComplete: function(): Void {
 				kineticDragged = false;
-			}});
+			}
+		});
 		#end
 		activelyDragged = false;
 	}
@@ -77,8 +79,7 @@ class PageScroller {
 	}
 
 	private function scrollListener(e: TouchManagerEvent): Void {
-		if (!dragged)
-			_scrollBar.position -= e.value * 15;
+		if (!dragged) _scrollBar.position -= e.value * 15;
 	}
 
 	private function dSize(): Int {

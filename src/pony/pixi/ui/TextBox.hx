@@ -17,27 +17,21 @@ using pony.pixi.PixiExtends;
  */
 class TextBox extends BaseLayout<RubberLayoutCore<Container>> {
 
-	public var text(get, set):String;
-	public var obj(default, null):BText;
-	
-	private var nocache:Bool;
-	
+	public var text(get, set): String;
+	public var obj(default, null): BText;
+
+	private var nocache: Bool;
+
 	public function new(
-		image:Sprite,
-		text:String,
-		style:ETextStyle,
-		?ansi:String,
-		?border:Border<Int>,
-		nocache:Bool = false,
-		shadow:Bool = false,
-		?app:App
+		image: Sprite, text: String, style: ETextStyle, ?ansi: String, ?border: Border<Int>, nocache: Bool = false, shadow: Bool = false,
+		?app: App
 	) {
 		this.nocache = nocache;
 		layout = new RubberLayoutCore(border);
 		layout.tasks.add();
 		super();
 		addChild(image);
-		image.loaded(function(){
+		image.loaded(function() {
 			layout.width = image.width;
 			layout.height = image.height;
 			layout.tasks.end();
@@ -49,15 +43,15 @@ class TextBox extends BaseLayout<RubberLayoutCore<Container>> {
 				throw 'Not supported';
 		}
 	}
-	
-	inline private function get_text():String return obj.t;
-	
-	private function set_text(v:String):String {
+
+	inline private function get_text(): String return obj.t;
+
+	private function set_text(v: String): String {
 		if (v != obj.t) {
 			obj.t = v;
 			layout.update();
 		}
 		return v;
 	}
-	
+
 }

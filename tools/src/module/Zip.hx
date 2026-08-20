@@ -1,7 +1,6 @@
 package module;
 
 import pony.Fast;
-
 import types.BASection;
 
 /**
@@ -37,10 +36,7 @@ class Zip extends CfgModule<ZipConfig> {
 	override private function runNode(cfg: ZipConfig): Void {
 		log('Archive name: ${cfg.output}');
 		var zip = new pony.ZipTool(
-			Utils.replaceBuildDate(cfg.output),
-			cfg.prefix,
-			cfg.compressLvl,
-			cfg.root == null ? null : Utils.replaceBuildDate(cfg.root)
+			Utils.replaceBuildDate(cfg.output), cfg.prefix, cfg.compressLvl, cfg.root == null ? null : Utils.replaceBuildDate(cfg.root)
 		);
 		if (cfg.log) zip.onLog << log;
 		zip.onError << function(err: String) throw err;
@@ -65,15 +61,21 @@ private class ZipConfigReader extends BAReader<ZipConfig> {
 
 	override private function readNode(xml: Fast): Void {
 		switch xml.name {
-			case 'input': cfg.input.push(normalize(xml.innerData));
-			case 'output': cfg.output = normalize(xml.innerData);
-			case 'prefix': cfg.prefix = normalize(xml.innerData);
-			case 'compress': cfg.compressLvl = Std.parseInt(xml.innerData);
-			case 'hash': cfg.hash = normalize(xml.innerData);
+			case 'input':
+				cfg.input.push(normalize(xml.innerData));
+			case 'output':
+				cfg.output = normalize(xml.innerData);
+			case 'prefix':
+				cfg.prefix = normalize(xml.innerData);
+			case 'compress':
+				cfg.compressLvl = Std.parseInt(xml.innerData);
+			case 'hash':
+				cfg.hash = normalize(xml.innerData);
 			case 'root':
 				cfg.root = normalize(xml.innerData);
 				if (cfg.root == '') cfg.root = null;
-			case _: super.readNode(xml);
+			case _:
+				super.readNode(xml);
 		}
 	}
 
@@ -90,7 +92,8 @@ private class ZipConfigReader extends BAReader<ZipConfig> {
 
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
-			case 'log': cfg.log = !pony.text.TextTools.isFalse(val);
+			case 'log':
+				cfg.log = !pony.text.TextTools.isFalse(val);
 			case _:
 		}
 	}

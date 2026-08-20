@@ -28,14 +28,14 @@ class VSCode {
 
 		if (air) {
 			tasks.push({
-				runOptions: {runOn: auto ? 'folderOpen' : 'default'},
+				runOptions: { runOn: auto ? 'folderOpen' : 'default' },
 				label: PRELAUNCH_TASK,
 				type: 'shell',
 				command: 'pony $ponycmd debug',
 				problemMatcher: matcher
 			});
 			tasks.push({
-				runOptions: {runOn: auto ? 'folderOpen' : 'default'},
+				runOptions: { runOn: auto ? 'folderOpen' : 'default' },
 				label: 'bundle',
 				type: 'shell',
 				command: 'pony run',
@@ -47,7 +47,7 @@ class VSCode {
 			});
 		} else if (heaps) {
 			tasks.push({
-				runOptions: {runOn: auto ? 'folderOpen' : 'default'},
+				runOptions: { runOn: auto ? 'folderOpen' : 'default' },
 				label: 'launch emulator',
 				type: 'shell',
 				command: "emulator '@'`emulator -list-avds`",
@@ -61,7 +61,7 @@ class VSCode {
 				}
 			});
 			tasks.push({
-				runOptions: {runOn: auto ? 'folderOpen' : 'default'},
+				runOptions: { runOn: auto ? 'folderOpen' : 'default' },
 				label: PRELAUNCH_TASK,
 				type: 'shell',
 				command: 'pony $ponycmd js debug',
@@ -69,7 +69,7 @@ class VSCode {
 				problemMatcher: matcher
 			});
 			tasks.push({
-				runOptions: {runOn: auto ? 'folderOpen' : 'default'},
+				runOptions: { runOn: auto ? 'folderOpen' : 'default' },
 				label: 'win debug',
 				type: 'shell',
 				command: 'pony $ponycmd win debug',
@@ -77,7 +77,7 @@ class VSCode {
 				problemMatcher: matcher
 			});
 			tasks.push({
-				runOptions: {runOn: auto ? 'folderOpen' : 'default'},
+				runOptions: { runOn: auto ? 'folderOpen' : 'default' },
 				label: 'mac debug',
 				type: 'shell',
 				command: 'pony $ponycmd mac debug',
@@ -85,7 +85,7 @@ class VSCode {
 				problemMatcher: matcher
 			});
 			tasks.push({
-				runOptions: {runOn: auto ? 'folderOpen' : 'default'},
+				runOptions: { runOn: auto ? 'folderOpen' : 'default' },
 				label: 'android debug',
 				type: 'shell',
 				command: 'pony $ponycmd android debug',
@@ -93,7 +93,7 @@ class VSCode {
 				problemMatcher: matcher
 			});
 			tasks.push({
-				runOptions: {runOn: auto ? 'folderOpen' : 'default'},
+				runOptions: { runOn: auto ? 'folderOpen' : 'default' },
 				label: 'js release',
 				type: 'shell',
 				command: 'pony $ponycmd js release',
@@ -101,7 +101,7 @@ class VSCode {
 				problemMatcher: matcher
 			});
 			tasks.push({
-				runOptions: {runOn: auto ? 'folderOpen' : 'default'},
+				runOptions: { runOn: auto ? 'folderOpen' : 'default' },
 				label: 'win release',
 				type: 'shell',
 				command: 'pony $ponycmd win release',
@@ -109,7 +109,7 @@ class VSCode {
 				problemMatcher: matcher
 			});
 			tasks.push({
-				runOptions: {runOn: auto ? 'folderOpen' : 'default'},
+				runOptions: { runOn: auto ? 'folderOpen' : 'default' },
 				label: 'mac release',
 				type: 'shell',
 				command: 'pony $ponycmd mac release',
@@ -117,7 +117,7 @@ class VSCode {
 				problemMatcher: matcher
 			});
 			tasks.push({
-				runOptions: {runOn: auto ? 'folderOpen' : 'default'},
+				runOptions: { runOn: auto ? 'folderOpen' : 'default' },
 				label: 'android release',
 				type: 'shell',
 				command: 'pony $ponycmd android release',
@@ -126,7 +126,7 @@ class VSCode {
 			});
 		} else if (ponycmd != null) {
 			tasks.push({
-				runOptions: {runOn: auto ? 'folderOpen' : 'default'},
+				runOptions: { runOn: auto ? 'folderOpen' : 'default' },
 				label: PRELAUNCH_TASK,
 				type: 'shell',
 				command: 'pony $ponycmd debug',
@@ -157,24 +157,23 @@ class VSCode {
 			label: 'prepare',
 			type: 'shell',
 			command: 'pony prepare',
-			runOptions: {runOn: 'default'},
+			runOptions: { runOn: 'default' },
 			group: 'build'
 		});
 
-		if (server)
-			tasks.push({
-				label: 'server',
-				type: 'shell',
-				command: 'pony server',
-				isBackground: true,
-				runOptions: {runOn: 'folderOpen'},
-				presentation: {
-					echo: false,
-					reveal: 'silent',
-					focus: false,
-					panel: 'dedicated'
-				}
-			});
+		if (server) tasks.push({
+			label: 'server',
+			type: 'shell',
+			command: 'pony server',
+			isBackground: true,
+			runOptions: { runOn: 'folderOpen' },
+			presentation: {
+				echo: false,
+				reveal: 'silent',
+				focus: false,
+				panel: 'dedicated'
+			}
+		});
 
 		var data = {
 			version: '2.0.0',
@@ -194,7 +193,7 @@ class VSCode {
 			data.push('bowlerhatllc.vscode-swf-debug');
 			data.push('lonewolf.vscode-astools');
 		}
-		Utils.saveJson('.vscode/extensions.json', {recommendations: data});
+		Utils.saveJson('.vscode/extensions.json', { recommendations: data });
 	}
 
 	public static function createHeaps(httpPort: Int, output: String, app: String): Void {
@@ -442,7 +441,7 @@ class VSCode {
 					},
 					preLaunchTask: PRELAUNCH_TASK,
 					internalConsoleOptions: 'neverOpen'
-				} : Dynamic),
+				}: Dynamic),
 				({
 					name: renderConfName,
 					type: 'chrome',
@@ -451,7 +450,7 @@ class VSCode {
 					webRoot: resultDir,
 					timeout: 20000,
 					internalConsoleOptions: 'openOnSessionStart'
-				} : Dynamic),
+				}: Dynamic),
 				({
 					name: onlyRenderConfName,
 					type: 'chrome',
@@ -466,7 +465,7 @@ class VSCode {
 					windows: {
 						runtimeExecutable: electronExecutable + '.cmd'
 					},
-				} : Dynamic)
+				}: Dynamic)
 			],
 			compounds: [
 				{

@@ -4,7 +4,6 @@ import h2d.Mask;
 import h2d.Object;
 import h2d.RenderContext;
 import h2d.col.Bounds;
-
 import pony.geom.IWH;
 import pony.geom.Point;
 import pony.magic.HasLink;
@@ -16,7 +15,7 @@ import pony.ui.gui.BaseLayoutCore;
  * @author AxGord <axgord@gmail.com>
  */
 @:nullSafety(Strict)
-class BaseLayout<T: BaseLayoutCore<Object>> extends Object implements IWH implements HasLink implements HasSignal {
+class BaseLayout<T:BaseLayoutCore<Object>> extends Object implements IWH implements HasLink implements HasSignal {
 
 	@:bindable public var wh: Point<Float> = new Point<Float>(0, 0);
 	@:bindable public var flipx: Bool = false;
@@ -69,6 +68,7 @@ class BaseLayout<T: BaseLayoutCore<Object>> extends Object implements IWH implem
 	}
 
 	private function setXpos(obj: Object, v: Float): Void obj.x = v;
+
 	private function setYpos(obj: Object, v: Float): Void obj.y = v;
 
 	public function wait(cb: Void -> Void): Void layout.wait(cb);
@@ -102,6 +102,7 @@ class BaseLayout<T: BaseLayoutCore<Object>> extends Object implements IWH implem
 	}
 
 	public inline function show(): Void visible = true;
+
 	public inline function hide(): Void visible = false;
 
 	private static inline function canAdd(obj: Object): Bool {

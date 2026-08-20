@@ -20,16 +20,17 @@ import haxe.io.Bytes;
  */
 @:abstract class BodyBaseView<T:BodyBase> extends Sprite implements pony.magic.HasAbstract implements pony.magic.HasSignal {
 
-	public static var DEBUG_CACHE(default, null):Map<String, Pair<Point<Float>, RenderTexture>> = new Map<String, Pair<Point<Float>, RenderTexture>>();
+	public static var DEBUG_CACHE(default, null): Map<String, Pair<Point<Float>, RenderTexture>> =
+		new Map<String, Pair<Point<Float>, RenderTexture>>();
 
-	public static var LIST(default, null):Map<Int, BodyBaseView<T>> = new Map<Int, BodyBaseView<T>>();
+	public static var LIST(default, null): Map<Int, BodyBaseView<T>> = new Map<Int, BodyBaseView<T>>();
 
-	@:auto public var onOut:Signal1<BodyBaseView<T>>;
-	public var core(default, null):T;
-	public var debugLines(default, set):DebugLineStyle;
-	private var debugView:Sprite;
+	@:auto public var onOut: Signal1<BodyBaseView<T>>;
+	public var core(default, null): T;
+	public var debugLines(default, set): DebugLineStyle;
+	private var debugView: Sprite;
 
-	public function new(core:T) {
+	public function new(core: T) {
 		super();
 		this.core = core;
 		LIST[core.body.id] = this;
@@ -40,26 +41,25 @@ import haxe.io.Bytes;
 		core.onDestroy < destroy.bind(null);
 	}
 
-	public inline function addView(s:Sprite):Void {
-		if (s.parent != null)
-			parent.removeChild(s); 
+	public inline function addView(s: Sprite): Void {
+		if (s.parent != null) parent.removeChild(s);
 		addChildAt(s, 0);
 		s.position.set(-core.anchor.x, -core.anchor.y);
 	}
 
-	public inline function addViewAndPos(s:Sprite):Void {
+	public inline function addViewAndPos(s: Sprite): Void {
 		core.pos = new Point(s.x, s.y);
 		addView(s);
 	}
 
-	private function out():Void eOut.dispatch(this);
+	private function out(): Void eOut.dispatch(this);
 
-	public function scl(x:Float, y:Float):Void {
+	public function scl(x: Float, y: Float): Void {
 		scale.set(x, y);
 		core.scale(x, y);
 	}
 
-	private function set_debugLines(v:DebugLineStyle):DebugLineStyle {
+	private function set_debugLines(v: DebugLineStyle): DebugLineStyle {
 		if (debugLines != null) {
 			removeChild(debugView);
 			debugView.destroy();
@@ -67,16 +67,14 @@ import haxe.io.Bytes;
 		}
 		debugLines = v;
 		if (v != null) {
-			if (v.pivotColor == null)
-				v.pivotColor = v.color;
-			if (v.pivotSize == null)
-				v.pivotSize = v.size;
-			var cid:Bytes = core.getCacheId();
+			if (v.pivotColor == null) v.pivotColor = v.color;
+			if (v.pivotSize == null) v.pivotSize = v.size;
+			var cid: Bytes = core.getCacheId();
 			if (cid != null) {
-				var cids:String = cid.toHex();
-				var ct:Pair<Point<Float>, RenderTexture> = DEBUG_CACHE[cids];
+				var cids: String = cid.toHex();
+				var ct: Pair<Point<Float>, RenderTexture> = DEBUG_CACHE[cids];
 				if (ct == null) {
-					var g:Graphics = new Graphics();
+					var g: Graphics = new Graphics();
 					g.lineStyle(v.size, v.color);
 					drawDebug(g);
 					var p = new Point(g.x, g.y);
@@ -96,7 +94,7 @@ import haxe.io.Bytes;
 			} else {
 				debugView = new Sprite();
 				addChild(debugView);
-				var g:Graphics = new Graphics();
+				var g: Graphics = new Graphics();
 				debugView.addChild(g);
 				g.lineStyle(v.size, v.color);
 				drawDebug(g);
@@ -106,17 +104,17 @@ import haxe.io.Bytes;
 		return v;
 	}
 
-	@:abstract private function drawDebug(g:Graphics):Void;
+	@:abstract private function drawDebug(g: Graphics): Void;
 
-	private function posHandler(px:Float, py:Float):Void {
+	private function posHandler(px: Float, py: Float): Void {
 		position.set(px + core.anchor.x, py + core.anchor.y);
 	}
 
-	private function rotationHandler(r:Float):Void {
+	private function rotationHandler(r: Float): Void {
 		rotation = r;
 	}
 
-	override public function destroy(?options:EitherType<Bool, DestroyOptions>):Void {
+	override public function destroy(?options: EitherType<Bool, DestroyOptions>): Void {
 		if (core == null) return;
 		LIST.remove(core.body.id);
 		var c = core;
@@ -130,9 +128,10 @@ import haxe.io.Bytes;
 		destroySignals();
 		super.destroy(options);
 	}
-	
-	public static function clearCache():Void {
+
+	public static function clearCache(): Void {
 		for (e in DEBUG_CACHE) e.b.destroy();
 		DEBUG_CACHE = new Map<String, Pair<Point<Float>, RenderTexture>>();
 	}
+
 }

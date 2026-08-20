@@ -2,9 +2,7 @@ package module;
 
 import pony.net.SocketServer;
 import pony.time.DTimer;
-
 import sys.io.Process;
-
 import types.BAConfig;
 
 /**
@@ -72,7 +70,7 @@ class NModule<T:BAConfig> extends CfgModule<T> {
 		protocol.log.onError >> eError;
 	}
 
-	private function runProcess():Void {
+	private function runProcess(): Void {
 		if (process != null) return;
 		timeout.reset();
 		timeout.start();

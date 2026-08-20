@@ -44,8 +44,11 @@ class SocketClient extends SocketClientBase {
 	private function securityErrorHandler(_): Void {}
 
 	private function ioErrorHandler(event: IOErrorEvent): Void error(event.text);
+
 	private function closeHandler(_): Void close();
+
 	private function connectHandler(_): Void connect();
+
 	public function send(data: BytesOutput): Void q.call(data);
 
 	private function _send(data: BytesOutput): Void {
@@ -65,7 +68,7 @@ class SocketClient extends SocketClientBase {
 		super.close();
 		try {
 			socket.close();
-		} catch (_:Dynamic) {}
+		} catch (_: Dynamic) {}
 	}
 
 	private function socketDataHandler(_): Void {

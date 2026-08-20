@@ -9,7 +9,6 @@ import haxe.io.BytesOutput;
 interface ISocketClient extends INet {
 
 	#if !flash
-
 	#if (!js || nodejs)
 	var server(default, null): ISocketServer;
 	function send2other(data: BytesOutput): Void;
@@ -23,7 +22,6 @@ interface ISocketClient extends INet {
 	var logInputData(default, set): Bool;
 
 	function reconnect(): Void;
-
 	#end
 
 }

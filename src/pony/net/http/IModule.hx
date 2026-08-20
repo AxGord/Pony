@@ -8,6 +8,8 @@ import pony.net.http.WebServer;
  * @author AxGord
  */
 interface IModule {
-	function connect(cpq:CPQ):EConnect;
-	function init(dir:Dir, server:WebServer):Void;
+
+	function connect(cpq: CPQ): EConnect;
+	function init(dir: Dir, server: WebServer): Void;
+
 }

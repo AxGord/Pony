@@ -6,5 +6,7 @@ import pony.text.tpl.ITplPut;
  * @author AxGord <axgord@gmail.com>
  */
 interface ISubActionConnect {
-  function subtpl(parent:ITplPut, data:Dynamic):ITplPut;
+
+	function subtpl(parent: ITplPut, data: Dynamic): ITplPut;
+
 }

@@ -4,7 +4,8 @@ import pony.magic.Declarator;
 import pony.math.MathTools;
 
 typedef PosLen = {
-	pos: Int, len: Int
+	pos: Int,
+	len: Int
 }
 
 /**
@@ -35,6 +36,7 @@ class ParseBoy<T> implements Declarator {
 	 * Result data. Use functions:  push, pop, beginContent, endContent.
 	 */
 	public var data: Array<T> = [];
+
 	private var stack: Array<Array<T>> = [];
 
 	/**
@@ -65,7 +67,7 @@ class ParseBoy<T> implements Declarator {
 			}
 			return null;
 		} else
-			return {pos: t.indexOf(v, pos), len: v.length};
+			return { pos: t.indexOf(v, pos), len: v.length };
 	}
 
 	/**
@@ -76,11 +78,11 @@ class ParseBoy<T> implements Declarator {
 	 */
 	public function gt(a: Array<String>, nospace: Bool = false): Int {
 		beforeGoto = pos;
-		var r:Int = -1;
-		var ipos:Int = MathTools.MAX_INT;
+		var r: Int = -1;
+		var ipos: Int = MathTools.MAX_INT;
 
 		if (nospace) {
-			for (i in pos...t.length) {
+			for (i in pos ... t.length) {
 				if (t.charAt(i) != ' ') {
 					r = -2;
 					ipos = i;
@@ -93,12 +95,11 @@ class ParseBoy<T> implements Declarator {
 		for (n in 0...a.length) {
 			if (a[n] == null) continue;
 			var io: PosLen = indexOf(a[n]);
-			if (io != null)
-				if (io.pos <= ipos) {
-					r = n;
-					ipos = io.pos;
-					lengthGoto = io.len;
-				}
+			if (io != null) if (io.pos <= ipos) {
+				r = n;
+				ipos = io.pos;
+				lengthGoto = io.len;
+			}
 		}
 		if (r != -1) {
 			pos = ipos + lengthGoto;
@@ -114,8 +115,7 @@ class ParseBoy<T> implements Declarator {
 	}
 
 	public function skipSpace(): Void {
-		if (space)
-			while (pos < t.length && t.charAt(pos) == ' ') pos++;
+		if (space) while (pos < t.length && t.charAt(pos) == ' ') pos++;
 	}
 
 	public function beginContent(): Void {
@@ -135,7 +135,7 @@ class ParseBoy<T> implements Declarator {
 		return data.pop();
 	}
 
-	//Next only for T == String
+	// Next only for T == String
 
 	public inline function pushStr(): Int {
 		return push(cast str());

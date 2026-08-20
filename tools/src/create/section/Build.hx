@@ -1,12 +1,9 @@
 package create.section;
 
 import haxe.Resource;
-
 import pony.text.XmlTools;
-
 import sys.FileSystem;
 import sys.io.File;
-
 import types.HaxeTargets;
 
 /**
@@ -34,7 +31,9 @@ class Build extends Section {
 	public function new() super('build');
 
 	public function addLib(name: String, ?version: String): Void libs[name] = version;
+
 	public function getHxmlFile(): String return hxml + HXML;
+
 	public function getDep(): Array<String> return hxml != null ? [getHxmlFile()] : [];
 
 	#if (haxe_ver < 4.2) override #end
@@ -87,6 +86,7 @@ class Build extends Section {
 	}
 
 	public function output(): String return outputPath + getOutputFile();
+
 	public function getOutputFile(): String return outputFile + outputExt();
 
 	public function outputExt(): String {
@@ -116,6 +116,7 @@ class Build extends Section {
 	public function getMainhxPath(): String return cps[0];
 
 	public function getMainhx(): String return gethx(main);
+
 	public function gethx(name: String): String return getMainhxPath() + '/' + name + '.hx';
 
 	public function createMainhx(template: String, ?replaces: Map<String, String>): Void {
@@ -127,15 +128,14 @@ class Build extends Section {
 		Utils.createEmptyMainFile(getMainhx());
 	}
 
-	private function createFile(file:String, template: String, ?replaces: Map<String, String>): Void {
+	private function createFile(file: String, template: String, ?replaces: Map<String, String>): Void {
 		var data: String = Resource.getString(template);
 		if (replaces != null) for (key in replaces.keys()) data = StringTools.replace(data, '::$key::', replaces[key]);
 		File.saveContent(file, data);
 	}
 
 	public function createOutputPathIfNeed(): Void {
-		if (!outputPathExists())
-			FileSystem.createDirectory(outputPath);
+		if (!outputPathExists()) FileSystem.createDirectory(outputPath);
 	}
 
 	public function outputPathExists(): Bool {
@@ -147,8 +147,7 @@ class Build extends Section {
 	}
 
 	public function createPathToMainhxIfNeed(): Void {
-		if (!pathToMainhxExists())
-			createPathToMainhx();
+		if (!pathToMainhxExists()) createPathToMainhx();
 	}
 
 	public function createPathToMainhx(): Void {

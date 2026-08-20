@@ -8,7 +8,7 @@ import hxbitmini.Serializer;
  * RPCBase
  * @author AxGord <axgord@gmail.com>
  */
-class RPCBase<T: pony.net.rpc.IRPC> {
+class RPCBase<T:pony.net.rpc.IRPC> {
 
 	private var serializer: Serializer = new Serializer();
 	private var object(get, never): T;
@@ -19,27 +19,27 @@ class RPCBase<T: pony.net.rpc.IRPC> {
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function get_object(): T return cast this;
 
-	private function dataHandler(b: BytesInput):Void {
+	private function dataHandler(b: BytesInput): Void {
 		serializer.setInput(b.readAll(), 0);
 		var clidx: Int = object.getCLID();
-		if (@:privateAccess serializer.convert != null && @:privateAccess serializer.convert[clidx] != null ) {
+		if (@:privateAccess serializer.convert != null && @:privateAccess serializer.convert[clidx] != null) {
 			var conv = @:privateAccess serializer.convert[clidx];
-			if ( conv.hadCID ) {
+			if (conv.hadCID) {
 				var realIdx = serializer.getCLID();
-				if ( conv.hasCID ) {
+				if (conv.hasCID) {
 					var c = @:privateAccess cast Serializer.CL_BYID[realIdx];
 					clidx = (c: Dynamic).__clid;
 				}
 			}
 		} else {
-			if (@:privateAccess Serializer.CLIDS[clidx] != 0 ) {
+			if (@:privateAccess Serializer.CLIDS[clidx] != 0) {
 				var realIdx = serializer.getCLID();
 				var c = @:privateAccess cast Serializer.CL_BYID[realIdx];
-				if ( @:privateAccess serializer.convert != null ) clidx = (c: Dynamic).__clid; // real class convert
+				if (@:privateAccess serializer.convert != null) clidx = (c: Dynamic).__clid; // real class convert
 			}
 		}
 		object.unserializeInit();
-		if (@:privateAccess serializer.convert != null && @:privateAccess serializer.convert[clidx] != null )
+		if (@:privateAccess serializer.convert != null && @:privateAccess serializer.convert[clidx] != null)
 			@:privateAccess serializer.convertRef(object, @:privateAccess serializer.convert[clidx]);
 		else
 			object.unserialize(serializer);

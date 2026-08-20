@@ -6,7 +6,6 @@ import pony.ds.Triple;
 import pony.fs.Dir;
 import pony.fs.File;
 import pony.fs.Unit;
-
 import types.BASection;
 
 using pony.text.TextTools;
@@ -56,9 +55,7 @@ using pony.text.TextTools;
 		return s.substr(0, -3) + 'ogg';
 	}
 
-	private function oggencDirs(
-		data: Array<Pair<String, Null<String>>>, from: Dir, to: Dir, hash: Bool, addext: String, q: UInt
-	): Void {
+	private function oggencDirs(data: Array<Pair<String, Null<String>>>, from: Dir, to: Dir, hash: Bool, addext: String, q: UInt): Void {
 		var hashModule: Null<module.Hash> = hash ? modules.getModule(module.Hash) : null;
 		for (d in data) {
 			var dir: Dir = from + d.a;
@@ -127,14 +124,17 @@ private typedef OggencConfig = {
 
 	override private function readNode(xml: Fast): Void {
 		switch xml.name {
-			case 'path': selfCreate(xml);
-			case 'dir': cfg.dirs.push(new Pair(normalize(xml.innerData), xml.has.filter ? normalize(xml.att.filter) : 'wav'));
-			case 'unit': cfg.units.push(new Triple(
-				normalize(xml.innerData),
-				xml.has.name ? normalize(xml.att.name) : null,
-				xml.has.hashFrom ? normalize(xml.att.hashFrom) : null
-			));
-			case _: super.readNode(xml);
+			case 'path':
+				selfCreate(xml);
+			case 'dir':
+				cfg.dirs.push(new Pair(normalize(xml.innerData), xml.has.filter ? normalize(xml.att.filter) : 'wav'));
+			case 'unit':
+				cfg.units.push(new Triple(
+					normalize(xml.innerData), xml.has.name ? normalize(xml.att.name) : null,
+					xml.has.hashFrom ? normalize(xml.att.hashFrom) : null
+				));
+			case _:
+				super.readNode(xml);
 		}
 	}
 
@@ -152,12 +152,18 @@ private typedef OggencConfig = {
 
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
-			case 'to': cfg.to += val;
-			case 'from': cfg.from += val;
-			case 'hash': cfg.hash = val.isTrue();
-			case 'addext': cfg.addext = val;
-			case 'rm': cfg.rm = val.isTrue();
-			case 'q': @:nullSafety(Off) cfg.q = Std.parseInt(val);
+			case 'to':
+				cfg.to += val;
+			case 'from':
+				cfg.from += val;
+			case 'hash':
+				cfg.hash = val.isTrue();
+			case 'addext':
+				cfg.addext = val;
+			case 'rm':
+				cfg.rm = val.isTrue();
+			case 'q':
+				@:nullSafety(Off) cfg.q = Std.parseInt(val);
 			case _:
 		}
 	}

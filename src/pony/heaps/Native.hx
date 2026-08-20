@@ -10,7 +10,6 @@ import hl.Bytes;
 #if mobile @:hlNative('pony') #end final class Native {
 
 	#if mobile
-
 	public static inline var BUFFER_SIZE: Int = 1024 * 1000;
 
 	private static inline var SIZE_LEN: UInt = 4;
@@ -24,7 +23,7 @@ import hl.Bytes;
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public static inline function getAsset(name: String): Void {
-		assetBytesAvailable =  get_asset(@:privateAccess name.toUtf8());
+		assetBytesAvailable = get_asset(@:privateAccess name.toUtf8());
 	}
 
 	@SuppressWarnings('checkstyle:MagicNumber')
@@ -43,7 +42,6 @@ import hl.Bytes;
 	public static inline function finishGetAsset(): Void finish_get_asset();
 
 	private static function get_internal_storage_path(): Bytes return null;
-
 	#end
 
 	@SuppressWarnings('checkstyle:MagicNumber')
@@ -61,13 +59,11 @@ import hl.Bytes;
 	}
 
 	#if sys
-
 	private static function get_sdl_error(): Bytes return null;
 
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public static inline function getSdlError(): String return @:privateAccess String.fromUTF8(get_sdl_error());
-
 	#end
 
 }

@@ -1,13 +1,10 @@
 package pony.heaps;
 
 import haxe.crypto.Base64;
-
 import h2d.Tile;
-
 import hxd.Res;
 import hxd.res.Any;
 import hxd.res.Loader;
-
 import pony.heaps.fs.FS;
 
 /**

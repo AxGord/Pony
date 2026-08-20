@@ -4,7 +4,6 @@ package pony.magic.builder;
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import haxe.macro.Type;
-
 import pony.ds.Triple;
 
 using pony.macro.Tools;
@@ -65,13 +64,11 @@ class HasListenerBuilder {
 						final cond: Null<Expr> = m.params.shift();
 						if (expr != null) {
 							if (cond != null) {
-								listen.push(isOnce ?
-									macro if ($cond) $expr.once($i{field.name}) :
-									macro if ($cond) $expr.add($i{field.name})
-								);
+								listen.push(isOnce ? macro if ($cond) $expr.once($i{field.name}) : macro if ($cond)
+									$expr.add($i{field.name}));
 								unlisten.push(macro if ($cond) $expr.remove($i{field.name}));
 								switch cond.expr {
-									case EBinop(_, { expr: EField({expr: EConst(CIdent(parent))}, s, _) }, _):
+									case EBinop(_, { expr: EField({ expr: EConst(CIdent(parent)) }, s, _) }, _):
 										final name: String = 'change${s.bigFirst()}';
 										final listenerName: String = '${parent}_${name}Handler';
 										listen.push(macro $i{parent}.$name.add($i{listenerName}));
@@ -83,15 +80,13 @@ class HasListenerBuilder {
 											handler = new Triple({ name: s, type: type }, { name: prevName, type: type }, []);
 											handlers[listenerName] = handler;
 										}
-										handler.c.push(
-											macro if ($cond) {
-												$i{s} = $i{prevName};
-												if (!($cond)) $e{isOnce ? macro $expr.once($i{field.name}) : macro $expr.add($i{field.name})};
-											} else {
-												$i{s} = $i{prevName};
-												if (!($cond)) $expr.remove($i{field.name});
-											}
-										);
+										handler.c.push(macro if ($cond) {
+											$i{s} = $i{prevName};
+											if (!($cond)) $e{isOnce ? macro $expr.once($i{field.name}) : macro $expr.add($i{field.name})};
+										} else {
+											$i{s} = $i{prevName};
+											if (!($cond)) $expr.remove($i{field.name});
+										});
 
 									case EBinop(_, { expr: EConst(CIdent(s)) }, _), EConst(CIdent(s)):
 										final name: String = 'change${s.bigFirst()}';
@@ -105,15 +100,13 @@ class HasListenerBuilder {
 											handler = new Triple({ name: s, type: type }, { name: prevName, type: type }, []);
 											handlers[listenerName] = handler;
 										}
-										handler.c.push(
-											macro if ($cond) {
-												final $s = $i{prevName}; // Set $s for check condition with prev value
-												if (!$cond) $e{isOnce ? macro $expr.once($i{field.name}) : macro $expr.add($i{field.name})};
-											} else {
-												final $s = $i{prevName}; // Set $s for check condition with prev value
-												if ($cond) $expr.remove($i{field.name});
-											}
-										);
+										handler.c.push(macro if ($cond) {
+											final $s = $i{prevName}; // Set $s for check condition with prev value
+											if (!$cond) $e{isOnce ? macro $expr.once($i{field.name}) : macro $expr.add($i{field.name})};
+										} else {
+											final $s = $i{prevName}; // Set $s for check condition with prev value
+											if ($cond) $expr.remove($i{field.name});
+										});
 									case _:
 										throw 'Unsupported const';
 								}
@@ -198,7 +191,7 @@ class HasListenerBuilder {
 
 	#if macro
 	private static function checkDestroy(ct: ClassType): Bool {
-		var sc: Null<{t:Ref<ClassType>, params:Array<Type>}> = ct.superClass;
+		var sc: Null<{ t: Ref<ClassType>, params: Array<Type> }> = ct.superClass;
 		if (sc != null) {
 			for (f in sc.t.get().fields.get()) if (f.name == 'destroy') return true;
 			return checkDestroy(sc.t.get());

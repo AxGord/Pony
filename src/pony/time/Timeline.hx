@@ -28,8 +28,10 @@ class Timeline implements Declarator implements HasSignal {
 		if (isPlay) return;
 		if (currentStep >= data.length) return;
 		isPlay = true;
-		if (timer == null) timer = DTimer.fixedDelay(data[currentStep] - currentTime, endStep, dt + lastdt);
-		else timer.start(dt + lastdt);
+		if (timer == null)
+			timer = DTimer.fixedDelay(data[currentStep] - currentTime, endStep, dt + lastdt);
+		else
+			timer.start(dt + lastdt);
 		lastdt = 0;
 	}
 
@@ -63,8 +65,10 @@ class Timeline implements Declarator implements HasSignal {
 		pauseOnStep = true;
 		var l: Listener1<Int> = null;
 		l = function(n: Int): Void {
-			if (n < step) play();
-			else onStep >> l;
+			if (n < step)
+				play();
+			else
+				onStep >> l;
 		}
 		onStep << l;
 		play(dt);

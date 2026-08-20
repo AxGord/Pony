@@ -1,8 +1,9 @@
 package pony.unity3d;
 
 import pony.ui.gui.ButtonCore;
-//import pony.unity3d.ui.TintButton;
-//import pony.unity3d.ui.Button;
+
+// import pony.unity3d.ui.TintButton;
+// import pony.unity3d.ui.Button;
 import unityengine.GameObject;
 import unityengine.Component;
 
@@ -15,9 +16,9 @@ using hugs.HUGSWrapper;
  */
 @:nativeGen class StaticAccess {
 
-	inline static public function component<T:Component>(gameObject:String, cl:Class<T>):T {
+	inline static public function component<T:Component>(gameObject: String, cl: Class<T>): T {
 		#if debug
-		var g:GameObject = GameObject.Find(gameObject);
+		var g: GameObject = GameObject.Find(gameObject);
 		if (g == null) {
 			trace('Can\'t find $gameObject game object');
 			throw null;
@@ -32,8 +33,7 @@ using hugs.HUGSWrapper;
 		return GameObject.Find(gameObject).getTypedComponent(cl);
 		#end
 	}
-	
-	//inline static public function tintButton(gameObject:String):ButtonCore return component(gameObject, TintButton).core;
-	//inline static public function button(gameObject:String):ButtonCore return component(gameObject, Button).core;
-	
+
+	// inline static public function tintButton(gameObject:String):ButtonCore return component(gameObject, TintButton).core;
+	// inline static public function button(gameObject:String):ButtonCore return component(gameObject, Button).core;
 }

@@ -1,14 +1,11 @@
 package module;
 
 import haxe.Json;
-
 import pony.Fast;
 import pony.ds.Triple;
 import pony.text.TextTools;
-
 import sys.FileSystem;
 import sys.io.File;
-
 import types.BAConfig;
 import types.BASection;
 
@@ -58,11 +55,13 @@ typedef NpmConfig = {
 		cwd.sw();
 		if (cfg.name != null && cfg.main != null) {
 			var a: Array<String> = cfg.name.split('@');
-			File.saveContent(PACKAGE, Json.stringify({
-				main: cfg.main,
-				name: a[0],
-				version: a.length > 1 ? a[1] : '0.0.1'
-			}, '\t'));
+			File.saveContent(
+				PACKAGE, Json.stringify({
+					main: cfg.main,
+					name: a[0],
+					version: a.length > 1 ? a[1] : '0.0.1'
+				}, '\t')
+			);
 		} else if (FileSystem.exists(PACKAGE)) {
 			Sys.command('npm', ['install']);
 		}
@@ -84,8 +83,10 @@ private class NpmReader extends BAReader<NpmConfig> {
 
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
-			case 'path': cfg.path = val;
-			case 'autoinstall': cfg.autoinstall = TextTools.isTrue(val);
+			case 'path':
+				cfg.path = val;
+			case 'autoinstall':
+				cfg.autoinstall = TextTools.isTrue(val);
 			case _:
 		}
 	}

@@ -8,8 +8,8 @@ import pony.physics.nape.BodyBox;
  * @author AxGord <axgord@gmail.com>
  */
 class BodyBoxView extends BodyBaseView<BodyBox> {
-	
-	override function drawDebug(g:Graphics):Void {
+
+	override function drawDebug(g: Graphics): Void {
 		g.drawRect(0, 0, core.size.x, core.size.y);
 		g.position.set(-core.size.x / 2, -core.size.x / 2);
 	}

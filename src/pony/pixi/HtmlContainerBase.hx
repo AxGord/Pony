@@ -33,7 +33,9 @@ class HtmlContainerBase implements HasSignal {
 	private var fixed: Bool;
 	private var haveTransform: Bool;
 
-	public function new(targetRect: Rect<Float>, ?app: App, ?targetStyle: CSSStyleDeclaration, ceil: Bool = false, fixed: Bool = false) {
+	public function new(
+		targetRect: Rect<Float>, ?app: App, ?targetStyle: CSSStyleDeclaration, ceil: Bool = false, fixed: Bool = false
+	) {
 		this.targetRect = targetRect;
 		this.ceil = ceil;
 		this.fixed = fixed;
@@ -47,6 +49,7 @@ class HtmlContainerBase implements HasSignal {
 	}
 
 	private function scrollHandler(): Void DeltaTime.fixedUpdate < resize;
+
 	private function resizeHandler(): Void DeltaTime.fixedUpdate < _resizeHandler;
 
 	private function _resizeHandler(): Void {
@@ -100,13 +103,11 @@ class HtmlContainerBase implements HasSignal {
 	}
 
 	private function set_targetRect(v: Rect<Float>): Rect<Float> {
-		if (targetRect == null
-			|| v.x != targetRect.x || v.y != targetRect.y
-			|| v.width != targetRect.width || v.height != targetRect.height
+		if (
+			targetRect == null || v.x != targetRect.x || v.y != targetRect.y || v.width != targetRect.width || v.height != targetRect.height
 		) {
 			targetRect = v;
-			if (targetStyle != null)
-				resizeHandler();
+			if (targetStyle != null) resizeHandler();
 		}
 		return v;
 	}

@@ -37,8 +37,7 @@ class Bar extends MovieClip implements FLStage implements HasSignal {
 	}
 
 	public function set_value(v: Float): Float {
-		if (value == v)
-			return v;
+		if (value == v) return v;
 		eDynamic.dispatch(v);
 		eComplete.dispatch(v);
 		bar.width = v * total;

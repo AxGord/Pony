@@ -13,23 +13,29 @@ using pony.text.TextTools;
  * @author AxGord <axgord@gmail.com>
  */
 class XmlRequest extends Logable<XmlRequest> implements ICanBeCopied<XmlRequest> {
-	
-	public var modules:Map<String, IXRModule>;
-	
-	public function new(modules:Array<IXRModule>) {
-		this.modules = [ for (m in modules) Type.getClassName(Type.getClass(m)).split('.').last().toLowerCase() => m ];
+
+	public var modules: Map<String, IXRModule>;
+
+	public function new(modules: Array<IXRModule>) {
+		this.modules = [
+			for (m in modules) Type.getClassName(Type.getClass(m)).split('.').last().toLowerCase() => m
+		];
 		super();
 	}
-	
-	public function copy():XmlRequest {
+
+	public function copy(): XmlRequest {
 		var o = new XmlRequest([]);
-		o.modules = [ for (m in modules.mkv()) m.key => (Std.is(m.value, ICanBeCopied) ? untyped m.value.copy() : m.value) ];
+		o.modules = [
+			for (m in modules.mkv()) m.key => (Std.is(m.value, ICanBeCopied) ? untyped m.value.copy() : m.value)
+		];
 		o.error.add(error, 1);
 		o.log.add(log);
 		return o;
 	}
-	
-	inline public function run(x:Fast, initModules:Array < Class<Dynamic>->IXRModule->Void >, result:Dynamic->Void, ?gxr:XmlRequest->Void):Void {
+
+	inline public function run(
+		x: Fast, initModules: Array<Class<Dynamic> -> IXRModule -> Void>, result: Dynamic -> Void, ?gxr: XmlRequest -> Void
+	): Void {
 		var xr = copy();
 		if (gxr != null) gxr(xr);
 		for (m in xr.modules.mkv()) if (Std.is(m.value, ICanBeCopied)) for (im in initModules) im(Type.getClass(m.value), m.value);
@@ -38,42 +44,49 @@ class XmlRequest extends Logable<XmlRequest> implements ICanBeCopied<XmlRequest>
 			_error('Empty');
 			return;
 		}
-		function next(v:Dynamic):Void if (it.hasNext()) xr._run(it.next(), next) else result(v);
+		function next(v: Dynamic): Void if (it.hasNext())
+			xr._run(it.next(), next)
+		else
+			result(v);
 		xr._run(it.next(), next);
 	}
-	
-	public function _run(x:Fast, result:Dynamic->Void):Void {
+
+	public function _run(x: Fast, result: Dynamic -> Void): Void {
 		if (!modules.exists(x.name)) {
 			_error('Unknown module: ' + x.name);
 		} else
 			modules[x.name].run(this, x, result);
 	}
-	
-	public function rf(x:Fast, result:Dynamic->Void):Void {
+
+	public function rf(x: Fast, result: Dynamic -> Void): Void {
 		var it = x.elements;
 		if (it.hasNext()) {
 			var e = it.next();
-			if (it.hasNext()) _error('Not single node');
-			else _run(e, result);
+			if (it.hasNext())
+				_error('Not single node');
+			else
+				_run(e, result);
 		} else {
-			var d:String = try {
+			var d: String = try {
 				x.innerData;
-			} catch (_:Dynamic) null;
+			} catch (_: Dynamic) null;
 			try {
-				if (d == null) result(null);
+				if (d == null)
+					result(null);
 				else {
 					if (d.charAt(0) == '%' && d.last() == '%') {
 						var d = d.substr(1, d.length - 2);
-						var m:V = cast modules['v'];
+						var m: V = cast modules['v'];
 						result(m.values[d]);
 					} else
 						result(d);
 				}
-			} catch (e:Dynamic) _error(e);
+			} catch (e: Dynamic)
+				_error(e);
 		}
 	}
-	
-	public function ab(x:Fast, result:Dynamic->Dynamic->Void):Void {
+
+	public function ab(x: Fast, result: Dynamic -> Dynamic -> Void): Void {
 		var it = x.elements;
 		if (it.hasNext()) {
 			var e = it.next();
@@ -82,30 +95,31 @@ class XmlRequest extends Logable<XmlRequest> implements ICanBeCopied<XmlRequest>
 				return;
 			}
 			var e2 = it.next();
-			if (it.hasNext()) _error('Not two node');
+			if (it.hasNext())
+				_error('Not two node');
 			else {
-				var ready:Bool = false;
-				var r:Dynamic = null;
-				_run(e, function(d:Dynamic) {
+				var ready: Bool = false;
+				var r: Dynamic = null;
+				_run(e, function(d: Dynamic) {
 					if (ready) {
 						result(d, r);
 					} else {
 						r = d;
 						ready = true;
 					}
-				} );
-				_run(e2, function(d:Dynamic) {
+				});
+				_run(e2, function(d: Dynamic) {
 					if (ready) {
 						result(r, d);
 					} else {
 						r = d;
 						ready = true;
 					}
-				} );
+				});
 			}
 		} else {
 			_error('Not two node');
 		}
 	}
-	
+
 }

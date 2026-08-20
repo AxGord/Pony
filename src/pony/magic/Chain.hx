@@ -9,7 +9,7 @@ package pony.magic;
 #end
 interface Chain<T> {
 
-	var list:Array<T>;
-	function createChain():Void;
-	
+	var list: Array<T>;
+	function createChain(): Void;
+
 }

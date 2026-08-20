@@ -34,16 +34,14 @@ class WorkerUnit implements HasAbstract implements IWorkerGatePool {
 			_log.request('error!');
 		}
 	 */
-	private function log(s: String, ?p: PosInfos): Void
-		_log.request((p != null ? p.fileName + ':' + p.lineNumber + ': ' : '') + s);
+	private function log(s: String, ?p: PosInfos): Void _log.request((p != null ? p.fileName + ':' + p.lineNumber + ': ' : '') + s);
 
 	public function _registerOutput<T1, T2>(name: String, response: T2 -> Void, unlock: Void -> Void): T1 -> Void {
 		var commandChannel: MessageChannel = Worker.current.getSharedProperty('response2_' + name);
 		commandChannel.addEventListener(Event.CHANNEL_MESSAGE, function(event: Event): Void {
 			while (commandChannel.messageAvailable) {
 				var message: T2 = commandChannel.receive();
-				if (message != null)
-					response(message);
+				if (message != null) response(message);
 			}
 		});
 		var resultChannel: MessageChannel = Worker.current.getSharedProperty('request2_' + name);
@@ -64,8 +62,7 @@ class WorkerUnit implements HasAbstract implements IWorkerGatePool {
 		commandChannel.addEventListener(Event.CHANNEL_MESSAGE, function(event: Event): Void {
 			while (commandChannel.messageAvailable) {
 				var message: T1 = commandChannel.receive();
-				if (message != null)
-					request(message);
+				if (message != null) request(message);
 			}
 		});
 		var resultChannel: MessageChannel = Worker.current.getSharedProperty('request_' + name);

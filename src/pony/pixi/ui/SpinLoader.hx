@@ -17,24 +17,24 @@ import pony.ui.gui.SmoothBarCore;
  */
 class SpinLoader extends Sprite implements IWH {
 
-	public var core(default, null):SmoothBarCore;
-	public var size(get, never):Point<Float>;
+	public var core(default, null): SmoothBarCore;
+	public var size(get, never): Point<Float>;
 
-	private var _size:Point<Float>;
-	private var app:App;
-	private var renderTexture:RenderTexture;
-	private var graphics:Graphics = new Graphics();
-	private var trackRadius:Int;
-	private var circleRadius:Int;
-	private var steps:Int;
-	private var prevStep:Int = 0;
-	private var pulse:Tween = new Tween(1...0, TweenType.Square, 1000, false, true, true, true);
-	private var spin:Float;
+	private var _size: Point<Float>;
+	private var app: App;
+	private var renderTexture: RenderTexture;
+	private var graphics: Graphics = new Graphics();
+	private var trackRadius: Int;
+	private var circleRadius: Int;
+	private var steps: Int;
+	private var prevStep: Int = 0;
+	private var pulse: Tween = new Tween(1...0, TweenType.Square, 1000, false, true, true, true);
+	private var spin: Float;
 
-	public function new(trackRadius:Int, circleRadius:Int, color:UColor, spin:Float = 0, ?app:App) {
+	public function new(trackRadius: Int, circleRadius: Int, color: UColor, spin: Float = 0, ?app: App) {
 		steps = Std.int(trackRadius / Math.sqrt(circleRadius) * 3);
 		core = new SmoothBarCore(steps);
-		var w:Int = (trackRadius + circleRadius) * 2;
+		var w: Int = (trackRadius + circleRadius) * 2;
 		_size = new Point<Float>(w, w);
 		this.app = app == null ? App.main : app;
 		this.trackRadius = trackRadius;
@@ -59,30 +59,37 @@ class SpinLoader extends Sprite implements IWH {
 		}
 	}
 
-	private function stopSpinHandler():Void DeltaTime.fixedUpdate >> spinHandler;
-	private function spinHandler(v:Float):Void rotation += v * spin;
-	private function get_size():Point<Float> return spin != 0 ? new Point<Float>(0, 0) : _size;
-	public function wait(cb:Void -> Void):Void cb();
-	public function destroyIWH():Void destroy();
-	private function pulseHandler(v:Float):Void alpha = v;
-	public inline function startPulse():Void pulse.play();
-	public inline function stopPulse():Void pulse.stopOnBegin();
+	private function stopSpinHandler(): Void DeltaTime.fixedUpdate >> spinHandler;
 
-	private function changeHandler(v:Float):Void {
-		var current:Int = Std.int(v);
-		for (i in prevStep...current) draw(i / steps);
+	private function spinHandler(v: Float): Void rotation += v * spin;
+
+	private function get_size(): Point<Float> return spin != 0 ? new Point<Float>(0, 0) : _size;
+
+	public function wait(cb: Void -> Void): Void cb();
+
+	public function destroyIWH(): Void destroy();
+
+	private function pulseHandler(v: Float): Void alpha = v;
+
+	public inline function startPulse(): Void pulse.play();
+
+	public inline function stopPulse(): Void pulse.stopOnBegin();
+
+	private function changeHandler(v: Float): Void {
+		var current: Int = Std.int(v);
+		for (i in prevStep ... current) draw(i / steps);
 		if (current != v) draw(v / steps);
 		prevStep = current;
 	}
 
-	private inline function draw(n:Float):Void {
-		var angle:Float = n * Math.PI * 2;
+	private inline function draw(n: Float): Void {
+		var angle: Float = n * Math.PI * 2;
 		graphics.x = trackRadius * Math.cos(angle) + trackRadius + circleRadius;
 		graphics.y = trackRadius * Math.sin(angle) + trackRadius + circleRadius;
 		app.app.renderer.render(graphics, renderTexture, false);
 	}
 
-	override public function destroy(?options:haxe.extern.EitherType<Bool, DestroyOptions>):Void {
+	override public function destroy(?options: haxe.extern.EitherType<Bool, DestroyOptions>): Void {
 		DeltaTime.fixedUpdate >> spinHandler;
 		renderTexture.destroy(true);
 		renderTexture = null;

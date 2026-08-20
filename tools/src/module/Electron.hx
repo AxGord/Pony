@@ -2,7 +2,6 @@ package module;
 
 import pony.Fast;
 import pony.text.TextTools;
-
 import types.BAConfig;
 import types.BASection;
 
@@ -133,6 +132,7 @@ typedef ElectronConfig = {
 }
 
 private class ElectronReader extends BAReader<ElectronConfig> {
+
 	private static var SUPPORTED_OS: Array<String> = ['m', 'mac', 'macos', 'l', 'linux', 'w', 'win', 'windows'];
 	private static var SUPPORTED_ARCH: Array<String> = ['x64', 'ia32', 'armv7l', 'arm64', 'universal'];
 
@@ -155,8 +155,10 @@ private class ElectronReader extends BAReader<ElectronConfig> {
 
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
-			case 'path': cfg.path = val;
-			case 'pack': cfg.pack = TextTools.isTrue(val);
+			case 'path':
+				cfg.path = val;
+			case 'pack':
+				cfg.pack = TextTools.isTrue(val);
 			case _:
 		}
 	}
@@ -170,14 +172,22 @@ private class ElectronReader extends BAReader<ElectronConfig> {
 					if (xml.has.replaceSpace) name = name.replace(' ', xml.att.replaceSpace);
 				}
 				cfg.name = name;
-			case 'version': cfg.version = normalizeWithNull(xml.innerData);
-			case 'author': cfg.author = normalizeWithNull(xml.innerData);
-			case 'description': cfg.description = normalizeWithNull(xml.innerData);
-			case 'artifactName': cfg.artifactName = normalizeWithNull(xml.innerData);
-			case 'productName': cfg.productName = normalizeWithNull(xml.innerData);
-			case 'copyright': cfg.copyright = normalizeWithNull(xml.innerData);
-			case 'category': cfg.category = normalizeWithNull(xml.innerData);
-			case 'config': cfg.config = normalizeWithNull(xml.innerData);
+			case 'version':
+				cfg.version = normalizeWithNull(xml.innerData);
+			case 'author':
+				cfg.author = normalizeWithNull(xml.innerData);
+			case 'description':
+				cfg.description = normalizeWithNull(xml.innerData);
+			case 'artifactName':
+				cfg.artifactName = normalizeWithNull(xml.innerData);
+			case 'productName':
+				cfg.productName = normalizeWithNull(xml.innerData);
+			case 'copyright':
+				cfg.copyright = normalizeWithNull(xml.innerData);
+			case 'category':
+				cfg.category = normalizeWithNull(xml.innerData);
+			case 'config':
+				cfg.config = normalizeWithNull(xml.innerData);
 			case 'os':
 				var os: Null<String> = normalizeWithNull(xml.innerData);
 				if (os != null) {

@@ -6,11 +6,11 @@ package create.targets;
  */
 class Neko {
 
-	public static function set(project:Project):Void {
+	public static function set(project: Project): Void {
 		project.server.active = true;
 		project.server.haxe = true;
 		project.haxelib.active = true;
-		project.haxelib.addLib({name: 'pony', version: Utils.ponyHaxelibVersion});
+		project.haxelib.addLib({ name: 'pony', version: Utils.ponyHaxelibVersion });
 		project.build.active = true;
 		project.build.target = types.HaxeTargets.Neko;
 		project.setRun('neko');

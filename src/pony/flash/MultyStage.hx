@@ -59,8 +59,7 @@ import flash.display.Stage;
 	public static inline function iterator(): Iterator<Stage> return stages.iterator();
 
 	#if swc
-	private static function applyfn(applyListener: Stage -> Void, removeListener: Stage -> Void): Void
-		apply(applyListener, removeListener);
+	private static function applyfn(applyListener: Stage -> Void, removeListener: Stage -> Void): Void apply(applyListener, removeListener);
 	private static function cancelfn(applyListener: Stage -> Void, removeListener: Stage -> Void): Void
 		cancel(applyListener, removeListener);
 	private static function addAddListener(listener: Stage -> Void): Void onAdd << listener;

@@ -1,7 +1,6 @@
 package module;
 
 import pony.Fast;
-
 import types.BASection;
 
 /**
@@ -53,8 +52,10 @@ private class TestReader extends BAReader<TestConfig> {
 
 	override private function readNode(xml: Fast): Void {
 		switch xml.name {
-			case 'test': cfg.test.push(StringTools.trim(xml.innerData));
-			case _: super.readNode(xml);
+			case 'test':
+				cfg.test.push(StringTools.trim(xml.innerData));
+			case _:
+				super.readNode(xml);
 		}
 	}
 
@@ -66,7 +67,8 @@ private class TestReader extends BAReader<TestConfig> {
 
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
-			case 'test': cfg.path = val;
+			case 'test':
+				cfg.path = val;
 			case _:
 		}
 	}

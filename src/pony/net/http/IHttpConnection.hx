@@ -9,40 +9,40 @@ import pony.fs.File;
  */
 interface IHttpConnection {
 
-	var method:String;
-	var post:Map<String, String>;
-	var fullUrl:String;
-	var url:String;
-	var params:Map<String, String>;
-	var sessionStorage:Map<String, Dynamic>;
-	var host:String;
-	var protocol:String;
-	var languages:Array<String>;
-	var cookie:Cookie;
-	var end:Bool;
-	
+	var method: String;
+	var post: Map<String, String>;
+	var fullUrl: String;
+	var url: String;
+	var params: Map<String, String>;
+	var sessionStorage: Map<String, Dynamic>;
+	var host: String;
+	var protocol: String;
+	var languages: Array<String>;
+	var cookie: Cookie;
+	var end: Bool;
+
 	#if nodejs
 	/** Sends a JSON body; `status` carries the API's failure codes. **/
-	function sendJson(text:String, status:Int = 200):Void;
+	function sendJson(text: String, status: Int = 200): Void;
 
 	/**
 	 * Turns this response into a Server-Sent Events stream. Declared for nodejs only: on
 	 * other targets a response is produced and finished in one step, and there is nothing
 	 * to hold open.
 	 */
-	function openEventStream():EventStream;
+	function openEventStream(): EventStream;
 	#end
 
-	function sendFile(file:File):Void;
-	function sendBytes(bytes:Bytes):Void;
-	function sendFileOrIndexHtml(path:String):Void;
-	function endAction():Void;
-	function goto(url:String):Void;
-	function endActionPrevPage():Void;
-	function error(?message:String):Void;
-	function notfound(?message:String):Void;
-	function sendHtml(text:String):Void;
-	function sendText(text:String):Void;
-	function mix():Map<String, String>;
-	
+	function sendFile(file: File): Void;
+	function sendBytes(bytes: Bytes): Void;
+	function sendFileOrIndexHtml(path: String): Void;
+	function endAction(): Void;
+	function goto(url: String): Void;
+	function endActionPrevPage(): Void;
+	function error(?message: String): Void;
+	function notfound(?message: String): Void;
+	function sendHtml(text: String): Void;
+	function sendText(text: String): Void;
+	function mix(): Map<String, String>;
+
 }

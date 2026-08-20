@@ -66,8 +66,11 @@ import pony.TypedPool;
 	}
 
 	private function downHandlerWaitClick(): Void onUp < eClick;
+
 	private function outUpHandlerStopWaitClick(): Void onUp >> eClick;
+
 	private function downRightHandlerWaitClick(): Void onRightUp < eRightClick;
+
 	private function outUpRightHandlerStopWaitClick(): Void onRightUp >> eRightClick;
 
 	private function addSwipe(): Void {
@@ -113,8 +116,7 @@ import pony.TypedPool;
 				return;
 			}
 		}
-		if (swipeTimer.repeatCount == 0)
-			cancleSwipeAndListenDown();
+		if (swipeTimer.repeatCount == 0) cancleSwipeAndListenDown();
 	}
 
 	private function cancleSwipeAndListenDown(): Void {
@@ -150,6 +152,7 @@ import pony.TypedPool;
 	}
 
 	private function listenWheel(): Void Mouse.onWheel << eWheel;
+
 	private function unlistenWheel(): Void Mouse.onWheel >> eWheel;
 
 	private function eTapTake(): Void {
@@ -244,8 +247,7 @@ import pony.TypedPool;
 
 	public function getTouch(id: UInt = 0): Touch {
 		var t: Null<Touch> = touches[id];
-		if (t == null)
-			touches[id] = t = touchPool.get();
+		if (t == null) touches[id] = t = touchPool.get();
 		return t;
 	}
 
@@ -253,7 +255,7 @@ import pony.TypedPool;
 		removeTouch(id);
 	}
 
-	private function dispatchOutDown(id: UInt = 0, right:  Bool = false, safe: Bool = false): Void {
+	private function dispatchOutDown(id: UInt = 0, right: Bool = false, safe: Bool = false): Void {
 		var t: Null<Touch> = touches[id];
 		if (t == null) return;
 		@:privateAccess t.eOutDown.dispatch(t);
@@ -263,7 +265,7 @@ import pony.TypedPool;
 			eOutDown.dispatchWithFlag(t, safe);
 	}
 
-	private function dispatchOverDown(id: UInt = 0, right:  Bool = false, safe: Bool = false): Void {
+	private function dispatchOverDown(id: UInt = 0, right: Bool = false, safe: Bool = false): Void {
 		var t: Null<Touch> = touches[id];
 		if (t != null)
 			@:privateAccess t.eOverDown.dispatch(t);
@@ -298,8 +300,7 @@ import pony.TypedPool;
 
 	private static function dispatchMove(id: UInt = 0, x: Float, y: Float): Void {
 		var t: Null<Touch> = touches[id];
-		if (t != null)
-			@:privateAccess t.eMove.dispatch(t.set(x, y));
+		if (t != null) @:privateAccess t.eMove.dispatch(t.set(x, y));
 	}
 
 	private static function removeTouch(id: UInt): Void {

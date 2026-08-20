@@ -20,8 +20,7 @@ class InputMode {
 	private static var _ignoreMouseMoveTimeMills: Int = 200;
 
 	public static function init(): Void {
-		if (_initialized)
-			return;
+		if (_initialized) return;
 
 		if (Multitouch.supportsTouchEvents) {
 			Lib.current.stage.addEventListener(flash.events.TouchEvent.TOUCH_BEGIN, touchBegins);
@@ -67,8 +66,7 @@ class InputMode {
 	#end
 
 	private static function checkInitialized(): Void {
-		if (!_initialized)
-			throw "Call InputMode.init() before usage (before any user input)";
+		if (!_initialized) throw "Call InputMode.init() before usage (before any user input)";
 	}
 
 }

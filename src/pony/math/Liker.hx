@@ -40,8 +40,10 @@ class Liker implements Declarator {
 				}
 				i++;
 			} catch (e: Dynamic) {
-				if (error == null) throw e;
-				else error(e);
+				if (error == null)
+					throw e;
+				else
+					error(e);
 			}
 			if (i >= base.length) {
 				ok(id);

@@ -10,23 +10,24 @@ import pony.net.http.sn.IFB;
  */
 class FB implements IFB {
 
-	public var fb:Dynamic;
-	
-	public function new(appid:String, secret:String = '') {
+	public var fb: Dynamic;
+
+	public function new(appid: String, secret: String = '') {
 		fb = Node.require('fb');
 	}
-	
-	inline public function api(token:String, r:String, cb:Dynamic->Void):Void {
-		if (token == null) cb(null);
+
+	inline public function api(token: String, r: String, cb: Dynamic -> Void): Void {
+		if (token == null)
+			cb(null);
 		else {
 			fb.setAccessToken(token);
 			fb.api(r, cb);
 		}
 	}
-	
-	public function me(token:String, cb:FBData->Void):Void {
+
+	public function me(token: String, cb: FBData -> Void): Void {
 		api(token, '/me', function(res) {
-			if(res == null || res.error != null) {
+			if (res == null || res.error != null) {
 				cb(null);
 			} else {
 				cb({
@@ -45,5 +46,5 @@ class FB implements IFB {
 			}
 		});
 	}
-	
+
 }

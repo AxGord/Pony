@@ -26,6 +26,7 @@ class RemoteActionRunner extends Logable {
 	}
 
 	public dynamic function onEnd(): Void {}
+
 	public function run(): Void runNext();
 
 	private function runNext(): Void {

@@ -25,7 +25,9 @@ class StarlingCreator {
 		Starling.multitouchEnabled = true;
 
 		// starling = new Starling(StarlingStarter, Lib.current.stage, null, null, "auto", "auto");
-		starling = new Starling(StarlingStarter, Lib.current.stage, new Rectangle(0, 0, _stage.stageWidth, _stage.stageHeight), null, "auto", "auto");
+		starling = new Starling(
+			StarlingStarter, Lib.current.stage, new Rectangle(0, 0, _stage.stageWidth, _stage.stageHeight), null, "auto", "auto"
+		);
 
 		_initialWidth = _stage.stageWidth;
 		_initialHeight = _stage.stageHeight;

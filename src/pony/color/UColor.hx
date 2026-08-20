@@ -114,6 +114,7 @@ abstract UColor(UInt) from UInt to UInt {
 		b = lim(b);
 		return fromRGB(r, g, b);
 	}
+
 	/**
 	 * Safely building from ARGB values
 	 */
@@ -138,32 +139,41 @@ abstract UColor(UInt) from UInt to UInt {
 	private inline function _invert(v: UInt): UInt return Color.MAX_CHANNEL - v;
 
 	private inline function get_invertAlpha(): UColor return fromARGB(_invert(a), r, g, b);
+
 	private inline function get_invert(): UColor return fromARGB(a, _invert(r), _invert(g), _invert(b));
 
 	private inline function get_argb(): UInt return this;
+
 	private inline function get_rgb(): UInt return this & Color.WHITE;
 
 	private inline function get_power(): UInt return r + g + b;
 
 	private inline function get_a(): UInt return (this >> POS_ALPHA) & Color.MAX_CHANNEL;
+
 	private inline function get_r(): UInt return (this >> POS_RED) & Color.MAX_CHANNEL;
+
 	private inline function get_g(): UInt return (this >> POS_GREEN) & Color.MAX_CHANNEL;
+
 	private inline function get_b(): UInt return this & Color.MAX_CHANNEL;
+
 	private inline function get_af(): Float return a / Color.MAX_CHANNEL;
+
 	private inline function get_rf(): Float return r / Color.MAX_CHANNEL;
+
 	private inline function get_gf(): Float return g / Color.MAX_CHANNEL;
+
 	private inline function get_bf(): Float return b / Color.MAX_CHANNEL;
 
-	//Haxe fail!
+	// Haxe fail!
 	/*
 	@:op(A + B) inline static private function addToString(a:String, b:UColor):UColor return a+b.toString();
 	@:op(A + B) inline static private function addToString2(a:UColor, b:String):UColor return a.toString()+b;
-	*/
-
+	 */
 	/**
 	 * First color subtract second color
 	 */
 	@:op(A - B) private static inline function sub(a: UColor, b: UColor): Color return Color.sub(a, b);
+
 	/**
 	 * Colors sum
 	 */
@@ -175,8 +185,11 @@ abstract UColor(UInt) from UInt to UInt {
 	#end
 
 	@:op(A > B) private static inline function gt(a: UColor, b: UColor): Bool return a.power > b.power;
+
 	@:op(A >= B) private static inline function gte(a: UColor, b: UColor): Bool return a.power >= b.power;
+
 	@:op(A < B) private static inline function lt(a: UColor, b: UColor): Bool return a.power < b.power;
+
 	@:op(A <= B) private static inline function lte(a: UColor, b: UColor): Bool return a.power <= b.power;
 
 	/**
@@ -209,31 +222,32 @@ abstract UColor(UInt) from UInt to UInt {
 	 */
 	@:from public static function fromString(s: String): UColor {
 		s = StringTools.trim(s);
-		return new UColor(
-			if (s.substr(0, 1) == '#') {
-				s = s.substr(1);
-				s.length == 3 ? Std.parseInt('0x' + s.charAt(0) + '0' + s.charAt(1) + '0' + s.charAt(2) + '0') : Std.parseInt('0x' + s);
-			} else if (s.substr(0, 3) == 'rgb') {
-				s = StringTools.ltrim(s.substr(3));
-				if (StringTools.startsWith(s, '(') && StringTools.endsWith(s, ')')) {
-					var d = s.substr(1, s.length - 2).split(',').map(Std.parseInt);
-					if (d.length != 3) throw 'Color params error';
-					fromRGB(d[0], d[1], d[2]);
-				} else throw 'Color syntax error';
-			} else if (s.substr(0, 4) == 'argb') {
-				s = StringTools.ltrim(s.substr(4));
-				if (StringTools.startsWith(s, '(') && StringTools.endsWith(s, ')')) {
-					var d = s.substr(1, s.length - 2).split(',').map(Std.parseInt);
-					if (d.length != 4) throw 'Color params error';
-					fromARGB(d[0], d[1], d[2], d[3]);
-				} else throw 'Color syntax error';
-			} else switch s {
+		return new UColor(if (s.substr(0, 1) == '#') {
+			s = s.substr(1);
+			s.length == 3 ? Std.parseInt('0x' + s.charAt(0) + '0' + s.charAt(1) + '0' + s.charAt(2) + '0') : Std.parseInt('0x' + s);
+		} else if (s.substr(0, 3) == 'rgb') {
+			s = StringTools.ltrim(s.substr(3));
+			if (StringTools.startsWith(s, '(') && StringTools.endsWith(s, ')')) {
+				var d = s.substr(1, s.length - 2).split(',').map(Std.parseInt);
+				if (d.length != 3) throw 'Color params error';
+				fromRGB(d[0], d[1], d[2]);
+			} else
+				throw 'Color syntax error';
+		} else if (s.substr(0, 4) == 'argb') {
+			s = StringTools.ltrim(s.substr(4));
+			if (StringTools.startsWith(s, '(') && StringTools.endsWith(s, ')')) {
+				var d = s.substr(1, s.length - 2).split(',').map(Std.parseInt);
+				if (d.length != 4) throw 'Color params error';
+				fromARGB(d[0], d[1], d[2], d[3]);
+			} else
+				throw 'Color syntax error';
+		} else
+			switch s {
 				case 'red': Color.RED;
 				case 'green': Color.GREEN;
 				case 'blue': Color.BLUE;
 				case _: throw 'Unknown color';
-			}
-		);
+			});
 	}
 
 }

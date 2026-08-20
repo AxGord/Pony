@@ -21,7 +21,7 @@ import pony.Logable;
  * Entry point for Pony Tools Node Module
  * @author AxGord <axgord@gmail.com>
  */
- #if (haxe_ver >= 4.2) final #else @:final #end
+#if (haxe_ver >= 4.2) final #else @:final #end
 class NMain extends Logable {
 
 	private static inline var SEND_TIMEOUT: Int = 300;
@@ -53,14 +53,22 @@ class NMain extends Logable {
 		rpc.onRemote << remoteHandler;
 	}
 
-	private function errorHandler(err: Error):Void error(err.stack);
+	private function errorHandler(err: Error): Void error(err.stack);
+
 	private function bmfontHandler(cfg: Array<BmfontConfig>): Void listen(cast new module.Bmfont(cfg));
+
 	private function imageminHandler(cfg: Array<ImageminConfig>): Void listen(cast new module.Imagemin(cfg));
+
 	private function poeditorHandler(cfg: Array<PoeditorConfig>): Void listen(cast new module.Poeditor(cfg));
+
 	private function ftpHandler(cfg: Array<FtpConfig>): Void listen(cast new module.Ftp(cfg));
+
 	private function serverHandler(cfg: Array<ServerConfig>): Void listen(cast new module.server.Server(cfg));
+
 	private function uglifyHandler(cfg: Array<UglifyConfig>): Void listen(cast new module.Uglify(cfg));
+
 	private function downloadHandler(cfg: Array<DownloadConfig>): Void listen(cast new module.Download(cfg));
+
 	private function remoteHandler(cfg: Array<RemoteConfig>): Void listen(cast new module.Remote(cfg));
 
 	private function listen(m: NModule<Any>): Void {

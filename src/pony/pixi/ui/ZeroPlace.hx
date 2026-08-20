@@ -13,5 +13,5 @@ class ZeroPlace extends BaseLayout<ZeroPlaceCore<Container>> {
 		layout = new ZeroPlaceCore<Container>();
 		super();
 	}
-	
+
 }

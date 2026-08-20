@@ -15,7 +15,7 @@ using pony.macro.Tools;
 @:nullSafety(Strict) final class WRBuilder {
 
 	macro public static function build(): Array<Field> {
-		return Tools.patch(macro: {
+		return Tools.patch(macro :{
 
 			private var _waitReady: pony.events.WaitReady = new pony.events.WaitReady();
 

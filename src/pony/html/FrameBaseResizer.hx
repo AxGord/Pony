@@ -11,23 +11,23 @@ import pony.events.Signal0;
  */
 class FrameBaseResizer implements pony.magic.HasSignal implements pony.magic.HasAbstract {
 
-	@:auto public var onResize:Signal0;
+	@:auto public var onResize: Signal0;
 
-	private var frameA:Element;
-	private var frameB:Element;
-	private var resizer:Element;
+	private var frameA: Element;
+	private var frameB: Element;
+	private var resizer: Element;
 
-	private var startMousePos:Int;
-	private var startSize:Int;
-	private var frameAMin:Int;
-	private var frameBMin:Int;
+	private var startMousePos: Int;
+	private var startSize: Int;
+	private var frameAMin: Int;
+	private var frameBMin: Int;
 
-	private var sizeA(get, never):Int;
-	private var sizeB(get, never):Int;
-	private var posA(never, set):Int;
-	private var posB(never, set):Int;
+	private var sizeA(get, never): Int;
+	private var sizeB(get, never): Int;
+	private var posA(never, set): Int;
+	private var posB(never, set): Int;
 
-	private function new(frameA:String, resizer:String, frameB:String, frameAMin:Int, frameBMin:Int) {
+	private function new(frameA: String, resizer: String, frameB: String, frameAMin: Int, frameBMin: Int) {
 		this.frameA = Browser.document.getElementById(frameA);
 		this.frameB = Browser.document.getElementById(frameB);
 		this.resizer = Browser.document.getElementById(resizer);
@@ -39,39 +39,42 @@ class FrameBaseResizer implements pony.magic.HasSignal implements pony.magic.Has
 		posB = sizeA;
 	}
 
-	@:abstract private function get_sizeA():Int;
-	@:abstract private function get_sizeB():Int;
-	@:abstract private function set_posA(v:Int):Int;
-	@:abstract private function set_posB(v:Int):Int;
-	@:abstract private function getMousePos(e:MouseEvent):Int;
+	@:abstract private function get_sizeA(): Int;
 
-	private function mouseDownHandler(e:MouseEvent):Void {
+	@:abstract private function get_sizeB(): Int;
+
+	@:abstract private function set_posA(v: Int): Int;
+
+	@:abstract private function set_posB(v: Int): Int;
+
+	@:abstract private function getMousePos(e: MouseEvent): Int;
+
+	private function mouseDownHandler(e: MouseEvent): Void {
 		startMousePos = getMousePos(e);
 		startSize = sizeA;
 		Browser.window.addEventListener('mousemove', mouseMoveHandler);
 	}
 
-	private function mouseMoveHandler(e:MouseEvent):Void {
+	private function mouseMoveHandler(e: MouseEvent): Void {
 		resize(startSize + (startMousePos - getMousePos(e)));
 		e.stopPropagation();
 	}
 
-	private function mouseUpHandler(e:MouseEvent):Void {
+	private function mouseUpHandler(e: MouseEvent): Void {
 		Browser.window.removeEventListener('mousemove', mouseMoveHandler);
 	}
 
-	private function resize(nh:Int):Void {
-		if (nh < this.frameAMin)
-			nh = this.frameAMin;
+	private function resize(nh: Int): Void {
+		if (nh < this.frameAMin) nh = this.frameAMin;
 		if (nh != sizeA) {
 			posB = nh;
 			checkB(nh);
 		}
 	}
 
-	private function update():Void checkB(sizeA);
+	private function update(): Void checkB(sizeA);
 
-	private function checkB(nh:Int):Void {
+	private function checkB(nh: Int): Void {
 		if (sizeB < frameBMin) {
 			posB = 0;
 			nh = sizeB - frameBMin;

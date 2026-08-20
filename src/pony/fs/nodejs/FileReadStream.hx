@@ -20,6 +20,7 @@ import pony.ds.WriteStream;
 class FileReadStream extends ReadStream<Bytes> {
 
 	private static inline var DEFAULT_BLOCK_SIZE: Int = 4 * 1024 * 1024; // 4 mb
+
 	private var writeStream: WriteStream<Bytes>;
 	private var fd: Int;
 	private var buffer: Buffer;
@@ -59,7 +60,7 @@ class FileReadStream extends ReadStream<Bytes> {
 		if (err == null) {
 			size = cast stats.size;
 			buffer = new Buffer(stats.blksize == null ? DEFAULT_BLOCK_SIZE : stats.blksize);
-			var b:BytesOutput = new BytesOutput();
+			var b: BytesOutput = new BytesOutput();
 			b.writeFloat(size);
 			writeStream.data(b.getBytes());
 		} else {
@@ -68,9 +69,8 @@ class FileReadStream extends ReadStream<Bytes> {
 	}
 
 	private function read(): Void {
-		var len:Int = buffer.length;
-		if (position + len > size)
-			len = size - position;
+		var len: Int = buffer.length;
+		if (position + len > size) len = size - position;
 		Fs.read(fd, buffer, 0, len, position, readHandler);
 		position += len;
 
@@ -84,7 +84,7 @@ class FileReadStream extends ReadStream<Bytes> {
 	private function readHandler(err: Error, bytesRead: Int, buffer: Buffer): Void {
 		if (stop) return;
 		if (err == null) {
-			var b:Bytes = Bytes.ofData(buffer.buffer.slice(0, bytesRead));
+			var b: Bytes = Bytes.ofData(buffer.buffer.slice(0, bytesRead));
 			if (readLast)
 				writeStream.end(b);
 			else

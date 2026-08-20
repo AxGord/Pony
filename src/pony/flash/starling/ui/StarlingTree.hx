@@ -24,7 +24,7 @@ class StarlingTree extends Sprite {
 	private var _xDisplacement: Int = 50;
 
 	private var _headerButton: StarlingButton;
-	private var _heightChangeCallback: Void->Void;
+	private var _heightChangeCallback: Void -> Void;
 	private var _nodesSprite: Sprite = new Sprite();
 
 	private var _bufferRect: Rectangle = new Rectangle();
@@ -52,8 +52,7 @@ class StarlingTree extends Sprite {
 
 		this.core = core != null ? core : new TreeCore();
 
-		if (_header == null)
-			_xDisplacement = 0;
+		if (_header == null) _xDisplacement = 0;
 		addChild(_nodesSprite);
 
 		if (_header != null) {
@@ -95,29 +94,28 @@ class StarlingTree extends Sprite {
 		var previous: Float = _headerButton != null ? _headerButton.height : 0;
 		for (node in _nodes) {
 			node.y = node.visible ? previous : 0;
-			if (node.visible)
-				previous = node.y + (Std.is(node, StarlingTree) ? untyped node.treeHeight() : node.height);
+			if (node.visible) previous = node.y + (Std.is(node, StarlingTree) ? untyped node.treeHeight() : node.height);
 		}
 
-		if (_heightChangeCallback != null)
-			_heightChangeCallback();
+		if (_heightChangeCallback != null) _heightChangeCallback();
 	}
 
-	public function setHeightChangeCallback(callback: Void->Void): Void {
+	public function setHeightChangeCallback(callback: Void -> Void): Void {
 		_heightChangeCallback = callback;
 	}
 
 	private function set_minimized(value: Bool): Bool {
 		minimized = value;
 
-		if (_headerButton != null)
-			_headerButton.core.mode = minimized ? 2 : 0;
+		if (_headerButton != null) _headerButton.core.mode = minimized ? 2 : 0;
 
 		var toY: Float = minimized ? -_nodesSprite.height : 0;
 		if (animated) {
 			#if tweenmax
-			TweenMax.to(_nodesSprite, Tree.basicAnimationTime + Tree.additionalAnimationTimePerPixel * _nodesSprite.height,
-				{y: toY, onUpdate: updateNodesPosition});
+			TweenMax.to(
+				_nodesSprite, Tree.basicAnimationTime + Tree.additionalAnimationTimePerPixel * _nodesSprite.height,
+				{ y: toY, onUpdate: updateNodesPosition }
+			);
 			#end
 		} else {
 			_nodesSprite.y = toY;
@@ -137,7 +135,7 @@ class StarlingTree extends Sprite {
 		return animated;
 	}
 
-	private function drawUnit(p: IntPoint, text: String, func: Void->Void): Void {
+	private function drawUnit(p: IntPoint, text: String, func: Void -> Void): Void {
 		var button: StarlingButton = cast getNewObject(unit);
 
 		button.core.onClick.add(func);
