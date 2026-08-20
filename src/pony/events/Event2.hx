@@ -7,11 +7,7 @@ import pony.Priority;
  * @author AxGord <axgord@gmail.com>
  */
 @SuppressWarnings('checkstyle:MagicNumber')
-#if pony_experimental
-@:forward(empty, changeEmpty, onTake, onLost)
-#else
-@:forward(empty, onTake, onLost)
-#end
+@:forward(empty, #if pony_experimental changeEmpty, #end onTake, onLost)
 @:access(pony.events.Listener1)
 abstract Event2<T1, T2>(Priority<Listener2<T1, T2>>) from Priority<Listener2<T1, T2>> to Priority<Listener2<T1, T2>> {
 

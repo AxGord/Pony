@@ -56,7 +56,7 @@ import pony.js.SmartCanvas;
 	private var border: Null<Graphics>;
 	private var lastTick: Float = Timer.stamp();
 
-	public function new(?size: Point<Int>, ?color: UColor #if js, ?parentDom: Element #end, sizeUpdate: Bool = true) {
+	public function new(?size: Point<Int>, ?color: UColor, #if js ?parentDom: Element, #end sizeUpdate: Bool = true) {
 		#if js
 		Keyboard.preventDefault = false;
 		canvas = new SmartCanvas(size, parentDom);

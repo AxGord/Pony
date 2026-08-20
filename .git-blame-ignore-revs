@@ -1,2 +1,5 @@
 # Tree-wide reformat with the canonical hxq formatter config.
 f1eb9d776a3aeda4a8257c2ecaa0b7545847ef18
+
+# Switch arms, object literals and comprehensions collapsed onto one line.
+37d0bf0404ba876c871e00e7da272e52feec4a63
