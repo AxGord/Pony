@@ -120,7 +120,7 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 		if (attrs.reverse.isTrue()) content.reverse();
 		final obj: DisplayObject = switch name {
 			case 'free':
-				final s = new SizedSprite(new Point(parseAndScale(attrs.w), parseAndScale(attrs.h)));
+				final s: SizedSprite = new SizedSprite(new Point(parseAndScale(attrs.w), parseAndScale(attrs.h)));
 				for (e in content) s.addChild(e);
 				s;
 			case 'rect':
@@ -170,31 +170,33 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 			case 'layout':
 				final align = Align.fromString(attrs.align);
 				if (attrs.src != null) {
-					final l = new BGLayout(PixiAssets.image(attrs.src, attrs.name), attrs.vert.isTrue(), scaleBorderInt(attrs.border));
+					final l: BGLayout = new BGLayout(
+						PixiAssets.image(attrs.src, attrs.name), attrs.vert.isTrue(), scaleBorderInt(attrs.border)
+					);
 					for (e in content) l.add(e);
 					l;
 				} else if (attrs.iv != null) {
-					final l = new IntervalLayout(parseAndScaleInt(attrs.iv), true, scaleBorderInt(attrs.border), align);
+					final l: IntervalLayout = new IntervalLayout(parseAndScaleInt(attrs.iv), true, scaleBorderInt(attrs.border), align);
 					for (e in content) l.add(e);
 					l;
 				} else if (attrs.ih != null) {
-					final l = new IntervalLayout(parseAndScaleInt(attrs.ih), false, scaleBorderInt(attrs.border), align);
+					final l: IntervalLayout = new IntervalLayout(parseAndScaleInt(attrs.ih), false, scaleBorderInt(attrs.border), align);
 					for (e in content) l.add(e);
 					l;
 				} else if (attrs.w != null || attrs.h != null) {
-					final r = new RubberLayout(
+					final r: RubberLayout = new RubberLayout(
 						parseAndScale(attrs.w), parseAndScale(attrs.h), attrs.vert.isTrue(), scaleBorderInt(attrs.border),
 						attrs.padding == null ? true : attrs.padding.isTrue(), align
 					);
 					for (e in content) r.add(e);
 					r;
 				} else {
-					final s = new AlignLayout(align, scaleBorderInt(attrs.border));
+					final s: AlignLayout = new AlignLayout(align, scaleBorderInt(attrs.border));
 					for (e in content) s.add(e);
 					s;
 				}
 			case 'zeroplace':
-				final s = new ZeroPlace();
+				final s: ZeroPlace = new ZeroPlace();
 				for (e in content) s.add(e);
 				s;
 			case 'image':
@@ -202,7 +204,7 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 			case 'tile':
 				new TilingSprite(PixiAssets.texture(attrs.src, attrs.name), parseAndScale(attrs.w), parseAndScale(attrs.h));
 			case 'mask':
-				final o = new Mask(
+				final o: Mask = new Mask(
 					parseAndScaleWithoutNull(attrs.w), parseAndScaleWithoutNull(attrs.h), parseAndScaleInt(attrs.radius), content.shift()
 				);
 				for (e in content) o.addChild(e);
@@ -263,7 +265,7 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 				final style = { font: font, tint: UColor.fromString(attrs.color).rgb, align: cast attrs.align };
 				new BText(text, style, attrs.ansi, attrs.shadow.isTrue(), app);
 			case 'lbutton':
-				final b = new LabelButton(
+				final b: LabelButton = new LabelButton(
 					splitAttr(attrs.skin), attrs.vert.isTrue(), scaleBorderInt(attrs.border), !attrs.padding.isFalse(), attrs.src,
 					attrs.dac == null ? null : Std.parseFloat(attrs.dac)
 				);
@@ -272,12 +274,12 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 				if (attrs.h != null) b.button.setHeight(parseAndScaleInt(attrs.h));
 				b;
 			case 'button':
-				final b = new Button(splitAttr(attrs.skin), attrs.src);
+				final b: Button = new Button(splitAttr(attrs.skin), attrs.src);
 				if (attrs.w != null) b.setWidth(parseAndScaleInt(attrs.w));
 				if (attrs.h != null) b.setHeight(parseAndScaleInt(attrs.h));
 				b;
 			case 'rectbutton':
-				final b = new RectButton(
+				final b: RectButton = new RectButton(
 					new Point(parseAndScaleInt(attrs.w), parseAndScaleInt(attrs.h)), attrs.color.split(' ').map(UColor.fromString),
 					attrs.vert.isTrue(), scaleBorderInt(attrs.border)
 				);
@@ -288,7 +290,7 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 			case 'fsbutton':
 				new FSButton(splitAttr(attrs.skin), attrs.src);
 			case 'slider':
-				final b = new StepSlider(
+				final b: StepSlider = new StepSlider(
 					new LabelButton(splitAttr(attrs.skin), attrs.vert.isTrue(), scaleBorderInt(attrs.border), attrs.src),
 					parseAndScale(attrs.w), parseAndScale(attrs.h), attrs.invert.isTrue(), !attrs.draggable.isFalse()
 				);
@@ -309,7 +311,7 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 					attrs.invert.isTrue(), attrs.src != null, parseAndScaleInt(attrs.creep), attrs.smooth.isTrue()
 				);
 			case 'vscroll':
-				final b = new ScrollBox(
+				final b: ScrollBox = new ScrollBox(
 					parseAndScale(attrs.w), parseAndScale(attrs.h), true, false, attrs.color != null ? UColor.fromString(attrs.color) : 0,
 					attrs.bar != null ? parseAndScale(attrs.bar) : 8, attrs.wheel != null ? parseAndScale(attrs.wheel) : 1
 				);
@@ -332,7 +334,7 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 					attrs.shadow.isTrue(), attrs.invert.isTrue(), attrs.src.indexOf(',') != -1, parseAndScaleInt(attrs.creep)
 				);
 			case 'video':
-				final video = new HtmlVideoUI(
+				final video: HtmlVideoUI = new HtmlVideoUI(
 					{ x: parseAndScale(attrs.x), y: parseAndScale(attrs.y), width: parseAndScale(attrs.w), height: parseAndScale(attrs.h) },
 					attrs.css, app, attrs.ceil.isTrue(), attrs.fixed.isTrue()
 				);
@@ -346,7 +348,7 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 					final a = attrs.fspos.split(' ').map(Std.parseFloat);
 					fspos = a.length == 1 ? new Point<Float>(a[0], a[0]) : new Point<Float>(a[0], a[1]);
 				}
-				final video = new HtmlVideoUIFS(
+				final video: HtmlVideoUIFS = new HtmlVideoUIFS(
 					{ x: parseAndScale(attrs.x), y: parseAndScale(attrs.y), width: parseAndScale(attrs.w), height: parseAndScale(attrs.h) },
 					attrs.fsborder != null ? (attrs.fsborder: Border<Float>) : null, fspos, attrs.css, attrs.fscss, attrs.transition, app,
 					attrs.clicktimeout, attrs.ceil.isTrue(), attrs.fixed.isTrue()
@@ -356,7 +358,7 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 				video;
 
 			case 'html':
-				final c = new HtmlContainer(
+				final c: HtmlContainer = new HtmlContainer(
 					{ x: parseAndScale(attrs.x), y: parseAndScale(attrs.y), width: parseAndScale(attrs.w), height: parseAndScale(attrs.h) },
 					app, attrs.ceil.isTrue(), attrs.fixed.isTrue()
 				);
@@ -373,7 +375,7 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 				c;
 
 			case 'subapp':
-				final c = new SubApp(
+				final c: SubApp = new SubApp(
 					{ x: parseAndScaleInt(attrs.x), y: parseAndScaleInt(attrs.y), width: parseAndScaleInt(attrs.w), height: parseAndScaleInt(
 						attrs.h
 					) },
@@ -390,13 +392,13 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 				c;
 
 			case 'render':
-				final r = new RenderBox(parseAndScale(attrs.w), parseAndScale(attrs.h), attrs.canvas.isTrue());
+				final r: RenderBox = new RenderBox(parseAndScale(attrs.w), parseAndScale(attrs.h), attrs.canvas.isTrue());
 				for (c in content) r.addElement(c);
 				r.update();
 				r;
 
 			case 'drawshape':
-				final ds = new DrawShapeView(new Point<Int>(parseAndScaleInt(attrs.w), parseAndScaleInt(attrs.h)));
+				final ds: DrawShapeView = new DrawShapeView(new Point<Int>(parseAndScaleInt(attrs.w), parseAndScaleInt(attrs.h)));
 				if (attrs.enabled.isTrue()) ds.enable();
 				ds.onLog << log;
 				ds.onError << error;

@@ -52,7 +52,7 @@ class SliceTools {
 	}
 
 	private static function slice(name: String, n: Int, letter: String = ''): Array<String> {
-		final s = name.split('{slice$n$letter}');
+		final s: Array<String> = name.split('{slice$n$letter}');
 		return [for (i in 0...n) s[0] + i + s[1]];
 	}
 

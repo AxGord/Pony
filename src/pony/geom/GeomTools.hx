@@ -31,11 +31,11 @@ class GeomTools {
 			xp.push(p.x);
 			yp.push(p.y);
 		}
-		final x = point.x;
-		final y = point.y;
-		final npol = xp.length;
-		var j = npol - 1;
-		var c = false;
+		final x: T = point.x;
+		final y: T = point.y;
+		final npol: Int = xp.length;
+		var j: Int = npol - 1;
+		var c: Bool = false;
 		for (i in 0...npol) {
 			if (
 				(((yp[i] <= y) && (y < yp[j])) || ((yp[j] <= y) && (y < yp[i])))
@@ -59,7 +59,7 @@ class GeomTools {
 		?align: Align
 	): Array<Point<Float>> {
 		align = align != null ? align.defaultCenter : Align.createDefaultCenter();
-		final cfun = if (align != null) {
+		final cfun: (size:Float, objects:Array<Float>) -> Array<Float> = if (align != null) {
 			if (vert)
 				switch align.horizontal {
 					case HAlign.Left: begin;
@@ -74,8 +74,8 @@ class GeomTools {
 				}
 		} else
 			centerA;
-		final _fc = !padding && objects.length > 1 ? centerC : centerB;
-		final fc = if (align != null) {
+		final _fc: (size:Float, objects:Array<Float>) -> Array<Float> = !padding && objects.length > 1 ? centerC : centerB;
+		final fc: (size:Float, objects:Array<Float>) -> Array<Float> = if (align != null) {
 			if (vert)
 				switch align.vertical {
 					case VAlign.Top: begin;
@@ -91,13 +91,13 @@ class GeomTools {
 		} else
 			_fc;
 
-		final fa = vert ? cfun : fc;
-		final fb = vert ? fc : cfun;
+		final fa: (size:Float, objects:Array<Float>) -> Array<Float> = vert ? cfun : fc;
+		final fb: (size:Float, objects:Array<Float>) -> Array<Float> = vert ? fc : cfun;
 		if (border == null) border = 0;
-		final w = container.x - (border.left + border.right);
-		final h = container.y - (border.top + border.bottom);
-		final a = fa(w, [for (obj in objects) obj.x]);
-		final b = fb(h, [for (obj in objects) obj.y]);
+		final w: Float = container.x - (border.left + border.right);
+		final h: Float = container.y - (border.top + border.bottom);
+		final a: Array<Float> = fa(w, [for (obj in objects) obj.x]);
+		final b: Array<Float> = fb(h, [for (obj in objects) obj.y]);
 		return [for (i in 0...a.length) new Point(a[i] + border.left, b[i] + border.top)];
 	}
 

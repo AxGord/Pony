@@ -3,6 +3,7 @@ package pony.ui.touch.pixi;
 import js.Browser;
 import pixi.core.display.Container;
 import pixi.interaction.InteractionEvent;
+import pony.geom.Point;
 import pony.ui.touch.pixi.Touch;
 
 /**
@@ -71,7 +72,7 @@ class TouchableTouch {
 		over = true;
 		down = true;
 		base.dispatchOver(untyped e.data.identifier);
-		final p = Touch.correction(untyped e.data.global.x, e.data.global.y);
+		final p: Point<Float> = Touch.correction(untyped e.data.global.x, e.data.global.y);
 		base.dispatchDown(untyped e.data.identifier, p.x, p.y);
 	}
 

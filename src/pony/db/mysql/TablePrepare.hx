@@ -56,7 +56,7 @@ class TablePrepare {
 			while (again) {
 				again = false;
 				for (f in remote.kv()) if (!map.exists(f.value.name)) {
-					final name = mysql.escapeId(f.value.name);
+					final name: () -> Void = mysql.escapeId(f.value.name);
 					if (!@await mysql.action('ALTER TABLE $table DROP $name', 'drop table field')) return false;
 					remote = remote.delete(f.key);
 					again = true;
@@ -80,8 +80,8 @@ class TablePrepare {
 				again = false;
 				for (f in remote.kv()) {
 					if (map[f.value.name] != f.key) {
-						final i = map[f.value.name];
-						final postfix = i == 0 ? ' FIRST' : ' AFTER ${mysql.escapeId(fields[i - 1].name)}';
+						final i: Null<Int> = map[f.value.name];
+						final postfix: () -> Void = i == 0 ? ' FIRST' : ' AFTER ${mysql.escapeId(fields[i - 1].name)}';
 						if (!@await mysql.action(alter(fields[i], f.value) + postfix, 'move table field')) return false;
 						remote = remote.swap(i, f.key);
 						remote[i] = fields[i];
@@ -93,8 +93,8 @@ class TablePrepare {
 			// Update
 			mysql.log('Search fields for update');
 			for (_ in 0...fields.length) {
-				final f = fields.shift();
-				final r = remote.shift();
+				final f: () -> Void = fields.shift();
+				final r: () -> Void = remote.shift();
 				if (r == null) return false;
 				var ef: Bool = false;
 				for (fl in f.flags) if (!r.flags.exists(fl)) ef = true;
@@ -106,17 +106,17 @@ class TablePrepare {
 	}
 
 	public function alter(f: Field, r: Field): String {
-		final name = mysql.escapeId(f.name);
-		final name2 = mysql.escapeId(r.name);
-		var flags = f.flags.copy();
-		final i = flags.indexOf(PRI_KEY);
+		final name: String = mysql.escapeId(f.name);
+		final name2: String = mysql.escapeId(r.name);
+		var flags: Array<Flags> = f.flags.copy();
+		final i: Int = flags.indexOf(PRI_KEY);
 		if (r.flags.indexOf(PRI_KEY) != -1 && i != -1) flags = flags.delete(i); // Don't add primary key if him exists
 		return 'ALTER TABLE $table CHANGE $name2 $name ${f.type.toString()}${decorateLength(f.length)} ${Flags.array2string(flags)}';
 	}
 
 	public function alterAdd(f: Field): String {
-		final name = mysql.escapeId(f.name);
-		final flags = f.flags.copy();
+		final name: String = mysql.escapeId(f.name);
+		final flags: Array<Flags> = f.flags.copy();
 		return 'ALTER TABLE $table ADD $name ${f.type.toString()}${decorateLength(f.length)} ${Flags.array2string(flags)}';
 	}
 

@@ -49,7 +49,7 @@ class RotorsObj {
 	}
 
 	public function push(): Void {
-		final bo = new BytesOutput();
+		final bo: BytesOutput = new BytesOutput();
 		for (r in rotors) r.writeState(bo);
 		serial.write(bo);
 	}

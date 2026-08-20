@@ -9,7 +9,7 @@ import pony.net.http.sn.FBData;
 class FB implements IFB {
 
 	public function new(appid: String, secret: String = '', sdk: String = 'facebook-php-sdk-v4/autoload.php') {
-		var f = Sys.executablePath();
+		var f: String = Sys.executablePath();
 		f = sys.FileSystem.fullPath(f).split('\\').slice(0, -1).join('/') + '/';
 		untyped __call__('require_once', f + sdk);
 		untyped __call__('\\Facebook\\FacebookSession::setDefaultApplication', appid, secret);

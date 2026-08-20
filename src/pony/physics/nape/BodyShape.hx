@@ -41,10 +41,10 @@ class BodyShape extends BodyBase {
 	}
 
 	override private function init(): Void {
-		final cid = getCacheId().toHex();
+		final cid: String = getCacheId().toHex();
 		var cpolygons: GeomPolyList = CACHE[cid];
 		if (cpolygons == null) {
-			final bi = new BytesInput(sbytes);
+			final bi: BytesInput = new BytesInput(sbytes);
 			final pb: Byte = bi.readByte();
 			final a: Array<Vec2> = [
 				while (bi.position < bi.length) {

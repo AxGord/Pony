@@ -59,8 +59,8 @@ class SmoothBarCore extends BarCore {
 	}
 
 	private function updateSmoothPercent(dt: DT): Void {
-		final d = percent - smoothPercent;
-		var n = smoothPercent + dt * d * (1000 / 200);
+		final d: Float = percent - smoothPercent;
+		var n: DT = smoothPercent + dt * d * (1000 / 200);
 		if (d > 0) {
 			if (n >= percent - 0.001) {
 				n = percent;
@@ -77,7 +77,7 @@ class SmoothBarCore extends BarCore {
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public static inline function create(width: Float, height: Float, invert: Bool = false): SmoothBarCore {
-		final isVert = height > width;
+		final isVert: Bool = height > width;
 		return new SmoothBarCore(isVert ? height : width, isVert, invert);
 	}
 

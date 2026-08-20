@@ -28,7 +28,7 @@ final class MFB implements IModule {
 		fb = new FB(appid, secret);
 		#end
 		this.appid = appid;
-		final s = TextTools.includeFileFromCurrentDir('mfb.tpl');
+		final s: String = TextTools.includeFileFromCurrentDir('mfb.tpl');
 		new Tpl(MFBPrePut, appid, s).gen(null, null, function(r) buttonData = r);
 	}
 

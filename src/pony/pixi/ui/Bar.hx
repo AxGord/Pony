@@ -114,7 +114,7 @@ class Bar extends Sprite implements HasSignal implements IWH {
 		end.y = begin.y;
 
 		barContainter.addChild(end);
-		final size = switch bg {
+		final size: Point<Int> = switch bg {
 			case OrState.A(v): new Point<Int>(Std.int(v.width), Std.int(v.height));
 			case OrState.B(v): v;
 		}

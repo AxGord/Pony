@@ -31,9 +31,9 @@ class PixiAssets {
 	}
 
 	public static function load(asset: String, cb: Void -> Void): Void {
-		final loader = new Loader();
+		final loader: Loader = new Loader();
 
-		final sp = asset.split('(spine)');
+		final sp: Array<String> = asset.split('(spine)');
 		if (sp.length > 1) {
 			loadSpine(sp.join(''), (d: SkeletonData) -> {
 				spines[asset] = d;
@@ -44,7 +44,7 @@ class PixiAssets {
 
 		if (['.mp3', '.wav', '.ogg'].indexOf(asset.substr(-4)) != -1) {
 			if (!sounds.exists(asset)) {
-				final s = new PixiSound();
+				final s: PixiSound = new PixiSound();
 				sounds[asset] = s;
 				loader.add(asset, AssetManager.getPath(asset), { loadType: 2 }, s.loadHandler);
 			}
@@ -84,7 +84,7 @@ class PixiAssets {
 	}
 
 	public static function loadSpine(asset: String, cb: SkeletonData -> Void): Void {
-		final loader = new Loader();
+		final loader: Loader = new Loader();
 		loader.add(asset, AssetManager.getPath(asset));
 		loader.load(function(_, resources) {
 			cb(Reflect.field(resources, asset).spineData);

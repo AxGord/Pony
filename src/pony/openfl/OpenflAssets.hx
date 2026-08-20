@@ -73,7 +73,7 @@ class OpenflAssets {
 	public static function bytesToBitmapData(bytes: ByteArray, ok: BitmapData -> Void, ?error: Dynamic -> Void): Void {
 		if (error == null) error = Tools.errorFunction;
 		try {
-			final loader = new Loader();
+			final loader: Loader = new Loader();
 			var removeEvents: Void -> Void = null;
 			function errorHandler(e: IOErrorEvent): Void {
 				removeEvents();

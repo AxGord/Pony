@@ -33,7 +33,7 @@ class VKDatabase {
 	public static function vkRequest(
 		method: VKDBMethod, ?lang: String, ?country_id: Null<Int>, ?region_id: Null<Int>, ?code: String, cb: VKDB -> Void, offset: Int = 0
 	): Void {
-		var url = 'http://api.vk.com/method/database.$method?v=5.30&need_all=1&count=1000';
+		var url: String = 'http://api.vk.com/method/database.$method?v=5.30&need_all=1&count=1000';
 		if (lang != null) url += '&lang=$lang';
 		if (country_id != null) url += '&country_id=$country_id';
 		if (region_id != null) url += '&region_id=$region_id';
@@ -52,7 +52,7 @@ class VKDatabase {
 	}
 
 	public static function getCountry(id: Int, cb: String -> Void): Void {
-		final url = 'http://api.vk.com/method/database.getCountriesById?v=5.30&country_ids=$id';
+		final url: String = 'http://api.vk.com/method/database.getCountriesById?v=5.30&country_ids=$id';
 		HttpTools.getJson(url, function(r: VKDBShortResponse) cb(r.response[0].title));
 	}
 
@@ -69,7 +69,7 @@ class VKDatabase {
 	}
 
 	public static function getCity(id: Int, cb: String -> Void): Void {
-		final url = 'http://api.vk.com/method/database.getCitiesById?v=5.30&city_ids=$id';
+		final url: String = 'http://api.vk.com/method/database.getCitiesById?v=5.30&city_ids=$id';
 		HttpTools.getJson(url, function(r: VKDBShortResponse) cb(r.response[0].title));
 	}
 

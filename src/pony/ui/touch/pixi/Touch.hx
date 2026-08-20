@@ -68,7 +68,7 @@ class Touch implements Declarator implements HasSignal {
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function pack(e: InteractionEvent): TouchObj {
-		final p = correction(e.data.global.x, e.data.global.y);
+		final p: Point<Float> = correction(e.data.global.x, e.data.global.y);
 		return { id: untyped e.data.identifier, x: p.x, y: p.y };
 	}
 

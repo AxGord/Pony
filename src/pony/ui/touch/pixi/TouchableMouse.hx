@@ -2,6 +2,7 @@ package pony.ui.touch.pixi;
 
 import pixi.core.display.Container;
 import pixi.interaction.InteractionEvent;
+import pony.geom.Point;
 import pony.ui.touch.Mouse;
 
 /**
@@ -61,7 +62,7 @@ class TouchableMouse {
 			base.dispatchOver();
 		}
 		_down = true;
-		final p = pony.ui.touch.pixi.Mouse.correction(e.data.global.x, e.data.global.y);
+		final p: Point<Float> = pony.ui.touch.pixi.Mouse.correction(e.data.global.x, e.data.global.y);
 		base.dispatchDown(0, p.x, p.y);
 	}
 

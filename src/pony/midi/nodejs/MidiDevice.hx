@@ -58,7 +58,7 @@ class MidiDevice implements IMidiDevice implements HasSignal {
 	public static function list(): Array<String> return [for (i in 0...preCore.getPortCount()) preCore.getPortName(i)];
 
 	public static function listWithName(name: String): Map<Int, String> {
-		final m = new Map<Int, String>();
+		final m: Map<Int, String> = new Map<Int, String>();
 		for (i in 0...preCore.getPortCount()) {
 			final n: String = preCore.getPortName(i);
 			if (n.indexOf(name) != -1) m[i] = n;

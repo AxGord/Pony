@@ -122,10 +122,10 @@ import pony.TypedPool;
 	}
 
 	private function checkSwipe(): Void {
-		final x = swipePoint.x - swipeTouch.x;
-		final y = swipePoint.y - swipeTouch.y;
-		final ax = Math.abs(x);
-		final ay = Math.abs(y);
+		final x: Float = swipePoint.x - swipeTouch.x;
+		final y: Float = swipePoint.y - swipeTouch.y;
+		final ax: Float = Math.abs(x);
+		final ay: Float = Math.abs(y);
 		if (ax > ay) {
 			if (ax >= SWIPE_STEP) {
 				onUp >> eClick;

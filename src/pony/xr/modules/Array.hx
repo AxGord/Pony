@@ -1,5 +1,6 @@
 package pony.xr.modules;
 
+import haxe.xml.Access;
 import haxe.xml.Fast;
 
 /**
@@ -10,8 +11,8 @@ class Array implements IXRModule {
 	public function new() {}
 
 	public function run(xr: XmlRequest, x: Fast, result: Dynamic -> Void): Void {
-		final a = [for (e in x.elements) e];
-		var counter = 0;
+		final a: Array<Access> = [for (e in x.elements) e];
+		var counter: Int = 0;
 		final r = [];
 		for (i in 0...a.length) {
 			xr._run(a[i], (v: Dynamic) -> {

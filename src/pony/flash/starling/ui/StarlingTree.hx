@@ -68,7 +68,7 @@ class StarlingTree extends Sprite {
 		for (n in core.nodes) {
 			switch (n) {
 				case Group(text, t):
-					final subTree = new StarlingTree(_flashSource, n, t);
+					final subTree: StarlingTree = new StarlingTree(_flashSource, n, t);
 					subTree.draw();
 					subTree.x = _xDisplacement;
 					subTree.y = this.height;

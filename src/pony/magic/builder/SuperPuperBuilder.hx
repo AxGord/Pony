@@ -1,5 +1,6 @@
 package pony.magic.builder;
 
+import haxe.macro.Expr.MetadataEntry;
 #if macro
 import haxe.macro.Context;
 import haxe.macro.Expr;
@@ -17,12 +18,12 @@ class SuperPuperBuilder {
 
 	macro public static function build(): Array<Field> {
 		final fields: Array<Field> = Context.getBuildFields();
-		var lvl = 0;
+		var lvl: Int = 0;
 		var sup = Context.getLocalClass().get().superClass;
 		while (sup != null) {
 			lvl++;
 			for (field in sup.t.get().fields.get()) {
-				final f = fields.find(checkName.bind(field.name));
+				final f: Null<haxe.macro.Expr.Field> = fields.find(checkName.bind(field.name));
 				if (f == null) continue;
 				if (field.meta.has(':puper'))
 					f.meta.push({ name: ':puper', pos: f.pos, params: field.meta.extract(':puper')[0].params });
@@ -44,13 +45,13 @@ class SuperPuperBuilder {
 		}
 
 		for (field in fields) if (field.meta.checkMeta([':puper', 'puper'])) {
-			final meta = field.meta.filter(m -> m.name != ':puper' && m.name != 'puper');
+			final meta: Array<MetadataEntry> = field.meta.filter(m -> m.name != ':puper' && m.name != 'puper');
 			fields.push({ name: 'super${lvl}_${field.name}', access: [APrivate], pos: field.pos, kind: field.kind, meta: meta });
 			switch field.kind {
 				case FFun(fun):
 					convertSuper(fun.expr, field.name, detectMethodLvl(field.name, lvl));
-					final args = [for (arg in fun.args) macro $i{arg.name}];
-					final expr = macro return @await $i{'super${lvl}_' + field.name}($a{args});
+					final args: Array<haxe.macro.Expr> = [for (arg in fun.args) macro $i{arg.name}];
+					final expr: haxe.macro.Expr = macro return @await $i{'super${lvl}_' + field.name}($a{args});
 					field.kind = FFun({ args: fun.args, ret: fun.ret, expr: expr, params: fun.params });
 				case _:
 					throw 'Only functions can be puper!';

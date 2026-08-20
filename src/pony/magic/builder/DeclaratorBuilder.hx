@@ -27,7 +27,7 @@ class DeclaratorBuilder {
 				case [FVar(t, e), _] if (Lambda.indexOf(f.access, AInline) == -1):
 					f.kind = FVar(t, null);
 					if (Tools.checkMeta(f.meta, [':arg', 'arg'])) {
-						final n = f.name;
+						final n: String = f.name;
 						switch ComplexTypeTools.toString(t) {
 							case 'Int', 'Float' if (Tools.staticPlatform):
 								args.push({ name: n, opt: false, type: t, value: macro $e });
@@ -41,13 +41,13 @@ class DeclaratorBuilder {
 						}
 
 					} else if (e != null) {
-						final t = Lambda.indexOf(f.access, AStatic) == -1 ? toNew : toInit;
+						final t: Array<haxe.macro.Expr> = Lambda.indexOf(f.access, AStatic) == -1 ? toNew : toInit;
 						t.push(macro $i{f.name} = $e);
 					}
 				case [FProp(g, s, t, e), _] if (s != 'set'):
 					f.kind = FProp(g, s, t, null);
 					if (Tools.checkMeta(f.meta, [':arg', 'arg'])) {
-						final n = f.name;
+						final n: String = f.name;
 						switch ComplexTypeTools.toString(t) {
 							case 'Int', 'Float' if (Tools.staticPlatform):
 								args.push({ name: n, opt: false, type: t, value: macro $e });
@@ -60,7 +60,7 @@ class DeclaratorBuilder {
 									macro this.$n = $i{n} != null ? $i{n} : $i{n} = $e);
 						}
 					} else if (e != null) {
-						final t = Lambda.indexOf(f.access, AStatic) == -1 ? toNew : toInit;
+						final t: Array<haxe.macro.Expr> = Lambda.indexOf(f.access, AStatic) == -1 ? toNew : toInit;
 						t.push(macro $i{f.name} = $e);
 					}
 				case [FFun(_), '__init__']:

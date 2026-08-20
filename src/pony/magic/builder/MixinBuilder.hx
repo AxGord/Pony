@@ -1,5 +1,7 @@
 package pony.magic.builder;
 
+import haxe.macro.Type.ClassType;
+import haxe.macro.Type.Ref;
 #if macro
 import haxe.macro.Context;
 import haxe.macro.Expr;
@@ -19,7 +21,7 @@ class MixinBuilder {
 
 	macro public static function build(): Array<Field> {
 		final fields: Array<Field> = Context.getBuildFields();
-		final local = Context.getLocalClass();
+		final local: Null<Ref<ClassType>> = Context.getLocalClass();
 		final localName: String = local.toString();
 		if (ready.indexOf(localName) != -1) return fields;
 		ready.push(localName);

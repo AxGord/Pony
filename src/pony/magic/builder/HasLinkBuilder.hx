@@ -1,5 +1,6 @@
 package pony.magic.builder;
 
+import haxe.macro.Expr.Access;
 #if macro
 import haxe.macro.Context;
 import haxe.macro.Expr;
@@ -23,7 +24,7 @@ class HasLinkBuilder {
 					if (get == 'link') {
 						get = 'get';
 
-						final access = [AInline, APrivate];
+						final access: Array<Access> = [AInline, APrivate];
 						if (field.access.indexOf(AStatic) != -1) access.push(AStatic);
 						fields.push({ name: 'get_${field.name}', access: access, kind: FFun(
 							{ args: [], ret: type, expr: macro return ${expr} }
@@ -36,7 +37,7 @@ class HasLinkBuilder {
 					if (set == 'link') {
 						set = 'set';
 
-						final access = [AInline, APrivate];
+						final access: Array<Access> = [AInline, APrivate];
 						if (field.access.indexOf(AStatic) != -1) access.push(AStatic);
 						fields.push({ name: 'set_${field.name}', access: access, kind: FFun(
 							{ args: [{ name: 'v', type: type }], ret: type, expr: macro return ${expr} = v }

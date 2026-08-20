@@ -92,7 +92,7 @@ class LangTable {
 		final i: Int = h[from].indexOf(s);
 		if (i == -1) return text;
 		if (!h.exists(to)) to = defaultLang;
-		final a = h[to];
+		final a: Null<Array<String>> = h[to];
 		final r: String = a[i];
 		return s == text ? r : r.smallFirst();
 	}

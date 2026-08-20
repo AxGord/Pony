@@ -47,7 +47,7 @@ class StarlingButton extends Sprite {
 	}
 
 	public inline function clone(): StarlingButton {
-		final b = new StarlingButton(mc, _framerate);
+		final b: StarlingButton = new StarlingButton(mc, _framerate);
 		b.x = x;
 		b.y = y;
 		return b;
@@ -89,7 +89,7 @@ class StarlingButton extends Sprite {
 
 		var mc: flash.display.MovieClip = cast source;
 		final movies: Array<starling.display.MovieClip> = [];
-		var j = 0;
+		var j: Int = 0;
 		for (i in 1...mc.totalFrames + 1) {
 			mc.gotoAndStop(i);
 			var clip: starling.display.MovieClip = null;
@@ -120,7 +120,7 @@ class StarlingButton extends Sprite {
 			}
 			movies.push(clip);
 		}
-		final starlingChild = new StarlingButton(movies, 60);
+		final starlingChild: StarlingButton = new StarlingButton(movies, 60);
 
 		final a = @:privateAccess source._sw;
 		if (a != null) starlingChild.core.switchMap(a);

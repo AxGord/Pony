@@ -7,6 +7,7 @@ import monaco.Editor.IStandaloneCodeEditor;
 import monaco.Editor.IStandaloneThemeData;
 import monaco.Editor.ITextModel;
 import monaco.Languages.LanguageConfiguration;
+import pony.JsTools.JsMap;
 import pony.NPM;
 import pony.Tasks;
 import pony.events.Signal0;
@@ -161,7 +162,7 @@ class MonacoEditor extends pony.Logable {
 	private function _init(): Void {
 		final registry = Type.createInstance(NPM.monaco_textmate.Registry, [{ getGrammarDefinition: getGrammarDefinition }]);
 
-		final grammars = pony.JsTools.mapToJSMap([for (l in langs) l.name => 'source.' + l.ext]);
+		final grammars: JsMap<String, String> = pony.JsTools.mapToJSMap([for (l in langs) l.name => 'source.' + l.ext]);
 		for (l in langs) {
 			monaco.languages.register({ id: l.name, extensions: [l.ext] });
 			if (l.conf != null) monaco.languages.setLanguageConfiguration(l.name, l.conf);

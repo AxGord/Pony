@@ -15,7 +15,7 @@ using pony.text.TextTools;
 class Delete extends Action {
 
 	override public function connect(cpq: CPQ, modelConnect: ModelConnect): Pair<EConnect, ISubActionConnect> {
-		final obj = new DeleteConnect(this, cpq, modelConnect);
+		final obj: DeleteConnect = new DeleteConnect(this, cpq, modelConnect);
 		return new Pair(REG(cast obj), cast obj);
 	}
 

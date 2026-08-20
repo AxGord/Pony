@@ -1,5 +1,6 @@
 package pony.xr.modules;
 
+import haxe.xml.Access;
 import haxe.xml.Fast;
 
 using Reflect;
@@ -13,8 +14,8 @@ class Object implements IXRModule {
 	public function new() {}
 
 	public function run(xr: XmlRequest, x: Fast, result: Dynamic -> Void): Void {
-		final a = [for (e in x.elements) e];
-		var counter = 0;
+		final a: Array<Access> = [for (e in x.elements) e];
+		var counter: Int = 0;
 		final r: Dynamic = {};
 		for (i in 0...a.length) {
 			if (a[i].name != 'e' || !a[i].has.n) {

@@ -1,5 +1,6 @@
 package pony.magic.builder;
 
+import haxe.macro.Expr.Position;
 #if macro
 import haxe.macro.Context;
 import haxe.macro.Expr;
@@ -14,7 +15,7 @@ class ChainBuilder {
 
 	macro public static function build(): Array<Field> {
 		final fields: Array<Field> = Context.getBuildFields();
-		final ch = Type.getClassName(Chain);
+		final ch: String = Type.getClassName(Chain);
 		var cl: String = null;
 		for (i in Context.getLocalClass().get().interfaces) {
 			if (i.t.toString() == ch) {
@@ -26,8 +27,8 @@ class ChainBuilder {
 		#if display
 		try {
 		#end
-		final a = cl.split('.');
-		final name = a.pop();
+		final a: Array<String> = cl.split('.');
+		final name: Null<String> = a.pop();
 
 		fields.push({ pos: Context.currentPos(), name: 'list', meta: [], doc: null, access: [APublic], kind: FVar(
 			TPath({ name: 'Array', pack: [], params: [TPType(TPath({ name: name, pack: a, params: [] }))] })

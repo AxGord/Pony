@@ -84,7 +84,7 @@ class PixiExtends {
 	}
 
 	public static function loadedList(a: Array<Sprite>, f: Void -> Void): Void {
-		var i = a.length;
+		var i: Int = a.length;
 		if (i == 0)
 			f();
 		else

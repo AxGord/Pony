@@ -93,7 +93,7 @@ class MySQL extends SQLBase {
 		final c = Reflect.copy(config);
 		Reflect.deleteField(c, 'database');
 		connection = mysqlClass.createConnection(c);
-		final err = @await connection.connect();
+		final err: pony.db.mysql.nodejs.NodeMySQL.NodeMySQL_Connection = @await connection.connect();
 		if (err != null) {
 			error('Error connecting: ' + err.stack);
 			return;

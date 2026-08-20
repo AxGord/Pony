@@ -25,7 +25,7 @@ class HasAbstractBuilder {
 
 	macro public static function build(): Array<Field> {
 		final fields: Array<Field> = [];
-		final cCur = Context.getLocalClass().get();
+		final cCur: haxe.macro.Type.ClassType = Context.getLocalClass().get();
 		for (f in Context.getBuildFields()) {
 			if (f.meta.checkMeta(META)) {
 				#if (haxe_ver >= 4.2)

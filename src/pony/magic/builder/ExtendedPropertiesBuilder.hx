@@ -37,7 +37,7 @@ class ExtendedPropertiesBuilder {
 						{ kind: FVar(t, e), name: hprefix + f.name, pos: f.pos, access: f.access.indexOf(AStatic) != -1 ? [AStatic] : [] }
 					);
 					repList.push(f.name);
-					final fn = 'get_${f.name}';
+					final fn: String = 'get_${f.name}';
 					if (funs.indexOf(fn) == -1) {
 						fs.push({ kind: FFun({ args: [], ret: t, expr: macro return $i{hprefix + f.name} }), name: fn, pos: f.pos, access: f.access.indexOf(
 							AStatic
@@ -93,7 +93,7 @@ class ExtendedPropertiesBuilder {
 	private static inline function lvlused(): Array<String> return used.exists(lvl) ? used[lvl] : [];
 
 	private static function repl(e: Expr): Expr {
-		final curRepl = repList.copy();
+		final curRepl: Array<String> = repList.copy();
 		for (a in used) for (b in a) curRepl.remove(b);
 
 		switch e.expr {

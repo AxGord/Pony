@@ -49,17 +49,17 @@ class TextTableCore implements HasAbstract {
 			for (c in r.value.kv()) {
 				var dy: Int = sdy;
 				final point: IntPoint = { x: c.key, y: r.key };
-				final bg = bgStyle(point);
-				final top = borderStyle(point, Direction.Up);
-				final left = borderStyle(point, Direction.Left);
-				final right = borderStyle(point, Direction.Right);
-				final bottom = borderStyle(point, Direction.Down);
+				final bg: pony.Pair<IntPoint, UColor> = bgStyle(point);
+				final top: pony.Pair<Int, UColor> = borderStyle(point, Direction.Up);
+				final left: pony.Pair<Int, UColor> = borderStyle(point, Direction.Left);
+				final right: pony.Pair<Int, UColor> = borderStyle(point, Direction.Right);
+				final bottom: pony.Pair<Int, UColor> = borderStyle(point, Direction.Down);
 				drawLine({ x: dx, y: dy }, { x: dx + bg.a.x + left.a, y: dy }, top.b, top.a);
 				dy += top.a;
 				drawLine({ x: dx, y: dy }, { x: dx, y: dy + bg.a.y }, left.b, left.a);
 				dx += left.a;
 				drawBG({ x: dx, y: dy, width: bg.a.x, height: bg.a.y }, bg.b);
-				final tf = fontStyle(point);
+				final tf: FontStyle = fontStyle(point);
 				drawText({ x: dx, y: dy, width: bg.a.x, height: bg.a.y }, c.value, tf);
 				if (cl == c.key) drawLine({ x: dx + bg.a.x, y: dy - top.a }, { x: dx + bg.a.x, y: dy + bg.a.y }, right.b, right.a);
 				dy += bg.a.y;

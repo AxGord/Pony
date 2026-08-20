@@ -56,22 +56,24 @@ class OpenflXmlUi extends Sprite implements HasAbstract {
 			case 'layout':
 				final align = Align.fromString(attrs.align);
 				if (attrs.iv != null) {
-					final l = new IntervalLayout(Std.parseInt(attrs.iv), true, cast Border.fromString(attrs.border), align);
+					final l: IntervalLayout = new IntervalLayout(Std.parseInt(attrs.iv), true, cast Border.fromString(attrs.border), align);
 					for (e in content) l.add(e);
 					l;
 				} else if (attrs.ih != null) {
-					final l = new IntervalLayout(Std.parseInt(attrs.ih), false, cast Border.fromString(attrs.border), align);
+					final l: IntervalLayout = new IntervalLayout(
+						Std.parseInt(attrs.ih), false, cast Border.fromString(attrs.border), align
+					);
 					for (e in content) l.add(e);
 					l;
 				} else if (attrs.w != null || attrs.h != null) {
-					final r = new RubberLayout(
+					final r: RubberLayout = new RubberLayout(
 						Std.parseFloat(attrs.w), Std.parseFloat(attrs.h), isTrue(attrs.vert), cast Border.fromString(attrs.border),
 						attrs.padding == null ? true : isTrue(attrs.padding), align
 					);
 					for (e in content) r.add(e);
 					r;
 				} else {
-					final s = new AlignLayout(align);
+					final s: AlignLayout = new AlignLayout(align);
 					for (e in content) s.add(e);
 					s;
 				}

@@ -30,9 +30,9 @@ class HasSignalBuilder {
 				// Context.error('Incorrect signal name: ${f.name}', f.pos);
 				final isStatic = f.access.indexOf(AStatic) != -1;
 				final ast = !isStatic ? [] : [AStatic];
-				final eName = 'e${TextTools.bigFirst(f.name.substr(on ? 2 : 0))}';
+				final eName: String = 'e${TextTools.bigFirst(f.name.substr(on ? 2 : 0))}';
 				final tp = { name: 'Event${p.name.substr(6)}', pack: pack, params: p.params };
-				var flag = false;
+				var flag: Bool = false;
 				final a = isStatic ? destrStatic : destr;
 				if (f.meta.checkMeta([':auto'])) {
 					flag = true;
@@ -62,7 +62,7 @@ class HasSignalBuilder {
 			case FVar(TPath(p), val) if (f.meta.checkMeta([':bindable', 'bindable'])):
 				final isStatic = f.access.indexOf(AStatic) != -1;
 				final ast = !isStatic ? [] : [AStatic];
-				final changeName = 'change${TextTools.bigFirst(f.name)}';
+				final changeName: String = 'change${TextTools.bigFirst(f.name)}';
 				f.kind = FProp('default', 'set', TPath(p), val);
 				final ttp = TPath(p);
 				final tp = { pack: pack, name: 'Event2', params: [TPType(ttp), TPType(ttp)] };
@@ -72,10 +72,10 @@ class HasSignalBuilder {
 				var m = f.meta.getMeta(':bindable');
 				if (m == null) m = f.meta.getMeta('bindable');
 
-				var lazy = true;
-				var priv = false;
-				var setcontroll = false;
-				var notsave = false;
+				var lazy: Bool = true;
+				var priv: Bool = false;
+				var setcontroll: Bool = false;
+				var notsave: Bool = false;
 				for (p in m.params) switch p.expr {
 					case EConst(CString('notlazy')): lazy = false;
 					case EConst(CString('private')): priv = true;
@@ -145,7 +145,7 @@ class HasSignalBuilder {
 		}
 		if (destr.length > 0) {
 			final acc = [APrivate];
-			var b = false;
+			var b: Bool = false;
 			var cl = Context.getLocalClass().get();
 			while (cl.superClass != null) {
 				cl = cl.superClass.t.get();

@@ -50,7 +50,7 @@ class TextButton extends Sprite implements IWH {
 				var pos: Float = 0;
 				var step: Bool = false;
 				while (pos <= size.x) {
-					var end = false;
+					var end: Bool = false;
 					if (pos == size.x) {
 						end = true;
 					}

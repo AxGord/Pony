@@ -53,7 +53,7 @@ final class MModels implements IModule {
 		}
 
 		final post: Map<String, String> = cpq.connection.mix();
-		final h = new Map<String, Map<String, Map<String, String>>>();
+		final h: Map<String, Map<String, Map<String, String>>> = new Map<String, Map<String, Map<String, String>>>();
 		for (k in post.keys()) {
 			final a: Array<String> = k.split('.');
 			if (a.length == 3) {

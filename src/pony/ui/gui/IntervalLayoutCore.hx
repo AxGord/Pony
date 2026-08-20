@@ -3,6 +3,7 @@ package pony.ui.gui;
 import pony.geom.Align;
 import pony.geom.Border;
 import pony.geom.GeomTools;
+import pony.geom.Point;
 
 /**
  * IntervalLayoutCore
@@ -30,9 +31,9 @@ import pony.geom.GeomTools;
 		if (vert) {
 			_w = 0;
 			pos = border.top;
-			final sizes = [
+			final sizes: Array<Float> = [
 				for (obj in objects) {
-					final objSize = getObjSize(obj);
+					final objSize: Point<Float> = getObjSize(obj);
 					if (objSize != null) {
 						setYpos(obj, Std.int(pos));
 						pos += objSize.y + interval;
@@ -45,7 +46,7 @@ import pony.geom.GeomTools;
 			];
 			if (objects.length > 0) pos -= interval;
 			_h = pos;
-			final hlist = GeomTools.halign(_align, _w, sizes);
+			final hlist: Array<Float> = GeomTools.halign(_align, _w, sizes);
 			for (i in 0...hlist.length) setXpos(objects[i], Std.int(hlist[i]) + border.left);
 		} else {
 			_h = 0;
@@ -57,7 +58,7 @@ import pony.geom.GeomTools;
 			var objGroup: Array<T> = [];
 			var objSizes: Array<Float> = [];
 			for (obj in objects) {
-				final objSize = getObjSize(obj);
+				final objSize: Point<Float> = getObjSize(obj);
 				if (objSize != null) {
 					if (limit != 0 && pos + objSize.x > limit - border.right) {
 						pos = border.left;
@@ -84,8 +85,8 @@ import pony.geom.GeomTools;
 			_h += maxvsize;
 			objGroups.push(new Pair(objSizes, objGroup));
 			for (i => g in objGroups) {
-				final vp = vPositions[i];
-				final vlist = GeomTools.valign(_align, _h, g.a);
+				final vp: Float = vPositions[i];
+				final vlist: Array<Float> = GeomTools.valign(_align, _h, g.a);
 				for (i in 0...vlist.length) setYpos(g.b[i], Std.int(vlist[i]) + border.top + vp);
 			}
 		}

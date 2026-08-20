@@ -36,7 +36,7 @@ class WebServer {
 	public function connect(connection: IHttpConnection): Void {
 		if (connection.end) return;
 		if (connection.url != '' && sendStatic(connection)) return;
-		final cpq = new CPQ(connection, usercontent, tpl.get(defaults.template), defaults.lang);
+		final cpq: CPQ = new CPQ(connection, usercontent, tpl.get(defaults.template), defaults.lang);
 		for (m in modules) {
 			switch m.connect(cpq) {
 				case BREAK: return;

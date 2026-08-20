@@ -260,7 +260,7 @@ class HtmlVideo implements HasSignal implements HasLink {
 		if (unloaded) {
 			_unloadVideo();
 		} else {
-			final playingbefore = isPlaying;
+			final playingbefore: Bool = isPlaying;
 			_unloadVideo();
 			if (playingbefore) element.load();
 		}
@@ -271,7 +271,7 @@ class HtmlVideo implements HasSignal implements HasLink {
 			url = url.replace('{quality}', qualities[qualityIndex]);
 			url = url.replace('/quality/', '/' + qualities[qualityIndex] + '/');
 		}
-		final playingbefore = isPlaying;
+		final playingbefore: Bool = isPlaying;
 		_unloadVideo();
 		videoSource = cast js.Browser.document.createElement('source'); // must play from <source> not .src coz mobile browsers are retarded
 		videoSource.addEventListener('error', videoSourceErrorHandler);
@@ -388,7 +388,7 @@ class HtmlVideo implements HasSignal implements HasLink {
 
 	private function progressHandler(): Void {
 		if (total == null && element.duration > 0) {
-			final t = Time.fromSeconds(Std.int(element.duration));
+			final t: Time = Time.fromSeconds(Std.int(element.duration));
 			if (start >= t) {
 				eEnd.dispatch();
 			} else {
@@ -465,14 +465,14 @@ class HtmlVideo implements HasSignal implements HasLink {
 
 	private function slowSpeedDetected(): Void {
 		onFullLoad >> endLoadHandler;
-		final time = (Date.now().getTime() - beginLoadTime) / 1000;
+		final time: Float = (Date.now().getTime() - beginLoadTime) / 1000;
 		if (time - beginLoadTime > 10) eQualityDown.dispatch();
 	}
 
 	private function endLoadHandler(): Void {
 		onDisable >> slowSpeedDetected;
-		final time = (Date.now().getTime() - beginLoadTime) / 1000;
-		final p = element.duration / time;
+		final time: Float = (Date.now().getTime() - beginLoadTime) / 1000;
+		final p: Float = element.duration / time;
 		// trace('Test results: ', p, element.duration, time);
 		if (p > qualityUpSpeed)
 			eQualityUp.dispatch();

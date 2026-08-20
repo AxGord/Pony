@@ -61,7 +61,7 @@ abstract Signal2<T1, T2>(Priority<Listener2<T1, T2>>) from Event2<T1, T2> from P
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function convert0(f: Event0 -> T1 -> T2 -> Void): Signal0 {
-		final ns = new Event0();
+		final ns: Event0 = new Event0();
 		this.add(f.bind(ns));
 		return ns;
 	}
@@ -75,7 +75,7 @@ abstract Signal2<T1, T2>(Priority<Listener2<T1, T2>>) from Event2<T1, T2> from P
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function convert2<ST1, ST2>(f: Event2<ST1, ST2> -> T1 -> T2 -> Void): Signal2<ST1, ST2> {
-		final ns = new Event2<ST1, ST2>();
+		final ns: Event2<ST1, ST2> = new Event2<ST1, ST2>();
 		this.add(f.bind(ns));
 		return ns;
 	}
@@ -136,7 +136,7 @@ abstract Signal2<T1, T2>(Priority<Listener2<T1, T2>>) from Event2<T1, T2> from P
 				return sig;
 			case _:
 		}
-		final s = new Event0();
+		final s: Event0 = new Event0();
 		add({ once: once, listener: LSub(s, a1, a2) }, priority);
 		return s;
 	}
@@ -148,7 +148,7 @@ abstract Signal2<T1, T2>(Priority<Listener2<T1, T2>>) from Event2<T1, T2> from P
 				return sig;
 			case _:
 		}
-		final s = new Event1<T2>();
+		final s: Event1<T2> = new Event1<T2>();
 		add({ once: once, listener: LSub1(s, a1) }, priority);
 		return s;
 	}
@@ -160,7 +160,7 @@ abstract Signal2<T1, T2>(Priority<Listener2<T1, T2>>) from Event2<T1, T2> from P
 				return sig;
 			case _:
 		}
-		final s = new Event1<T1>();
+		final s: Event1<T1> = new Event1<T1>();
 		add({ once: once, listener: LSub2(s, a2) }, priority);
 		return s;
 	}

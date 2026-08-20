@@ -21,9 +21,9 @@ class DB implements IXRModule implements ICanBeCopied<DB> {
 	public inline function copy(): DB return new DB(source);
 
 	public function run(xr: XmlRequest, x: Fast, result: Dynamic -> Void): Void {
-		var n = x.has.n ? x.att.n : 'default';
-		var table = x.has.table ? x.att.table : table;
-		var mode = x.has.mode ? x.att.mode : 'stream';
+		var n: String = x.has.n ? x.att.n : 'default';
+		var table: String = x.has.table ? x.att.table : table;
+		var mode: String = x.has.mode ? x.att.mode : 'stream';
 		// todo
 	}
 

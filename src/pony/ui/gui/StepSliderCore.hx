@@ -74,7 +74,7 @@ class StepSliderCore extends SliderCore {
 	public static inline function create(
 		?button: ButtonCore, width: Float, height: Float, invert: Bool = false, draggable: Bool = true
 	): StepSliderCore {
-		final isVert = height > width;
+		final isVert: Bool = height > width;
 		return new StepSliderCore(button, isVert ? height : width, isVert, invert, draggable);
 	}
 

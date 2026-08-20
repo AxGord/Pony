@@ -77,10 +77,10 @@ class TouchManager {
 	public static function addListener(displayObject: Dynamic, listener: TouchManagerEvent -> Void, ?types: Array<TouchEventType>): Void {
 		if (!_initialized) init();
 
-		final exists = _objects.exists(displayObject);
+		final exists: Bool = _objects.exists(displayObject);
 
 		if (exists) {
-			final listenersArray = _objects.get(displayObject);
+			final listenersArray: Null<Array<TouchListener>> = _objects.get(displayObject);
 			for (i in 0...listenersArray.length) {
 				if (listenersArray[i].listener == listener) return;
 			}
@@ -94,7 +94,7 @@ class TouchManager {
 	public static function removeListener(displayObject: Dynamic, listener: TouchManagerEvent -> Void): Void {
 		if (!_objects.exists(displayObject)) return;
 
-		final listenersArray = _objects.get(displayObject);
+		final listenersArray: Null<Array<TouchListener>> = _objects.get(displayObject);
 
 		for (i in 0...listenersArray.length) {
 			if (listenersArray[i].listener == listener) {
@@ -290,7 +290,7 @@ class TouchManager {
 		if (object == null || !_objects.exists(object)) return;
 		// trace("object = " + object + ", name = " + object.name + ", dispatching type = " + type + ", mouseOver = " + mouseOver);
 
-		final event = new TouchManagerEvent();
+		final event: TouchManagerEvent = new TouchManagerEvent();
 		event.type = type;
 		event.mouseOver = mouseOver;
 		event.globalX = touch.currentX;
@@ -308,9 +308,9 @@ class TouchManager {
 			_lastDownEvent = event;
 		}
 
-		final listeners = _objects.get(object);
+		final listeners: Null<Array<TouchListener>> = _objects.get(object);
 
-		final copy = listeners.copy();
+		final copy: Array<TouchListener> = listeners.copy();
 		for (i in 0...copy.length) if (listeners.indexOf(copy[i]) != -1 && ((copy[i].types == null) || (copy[i].types.indexOf(type) != -1)))
 			copy[i].listener(event);
 	}

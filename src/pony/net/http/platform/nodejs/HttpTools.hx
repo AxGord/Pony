@@ -11,7 +11,7 @@ class HttpTools {
 	public static function get(url: String, cb: String -> Void): Void {
 		Node.http.get(Node.url.parse(url), function(res) {
 			if (res.statusCode == 200) {
-				var r = '';
+				var r: String = '';
 				res.on('data', function(chunk) r += chunk);
 				res.on('end', function() cb(r));
 			} else {

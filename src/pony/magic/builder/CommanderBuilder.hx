@@ -66,7 +66,7 @@ class CommanderBuilder {
 			}
 
 			if (h != null) {
-				var shelp = '';
+				var shelp: String = '';
 				if (x.nodes.syn.length > 0) shelp = '(' + [for (s in x.nodes.syn) StringTools.trim(s.innerData)].join(', ') + ') ';
 				help.push(cmd + ' ' + shelp + '\n\t' + h);
 				helpAnsi.push(

@@ -22,7 +22,7 @@ class ButtonImgN extends ButtonCore {
 			eImg.dispatch(4);
 			return;
 		}
-		var n = switch state {
+		var n: Int = switch state {
 			case Default: 1;
 			case Focus: 2;
 			case Press: 3;

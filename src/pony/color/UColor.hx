@@ -200,7 +200,7 @@ abstract UColor(UInt) from UInt to UInt {
 		} else if (s.substr(0, 3) == 'rgb') {
 			s = s.substr(3).ltrim();
 			if (s.startsWith('(') && s.endsWith(')')) {
-				final d = s.substr(1, s.length - 2).split(',').map(Std.parseInt);
+				final d: Array<Null<Int>> = s.substr(1, s.length - 2).split(',').map(Std.parseInt);
 				if (d.length != 3) throw 'Color params error';
 				fromRGB(d[0], d[1], d[2]);
 			} else
@@ -208,7 +208,7 @@ abstract UColor(UInt) from UInt to UInt {
 		} else if (s.substr(0, 4) == 'argb') {
 			s = s.substr(4).ltrim();
 			if (s.startsWith('(') && s.endsWith(')')) {
-				final d = s.substr(1, s.length - 2).split(',').map(Std.parseInt);
+				final d: Array<Null<Int>> = s.substr(1, s.length - 2).split(',').map(Std.parseInt);
 				if (d.length != 4) throw 'Color params error';
 				fromARGB(d[0], d[1], d[2], d[3]);
 			} else

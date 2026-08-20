@@ -77,7 +77,7 @@ class NapeSpaceViewBase extends Sprite implements pony.magic.HasLink {
 
 	public function resolve(name: String): NapeGroupView {
 		if (groups.exists(name)) return groups[name];
-		final g = new NapeGroupView(core.resolve(name));
+		final g: NapeGroupView = new NapeGroupView(core.resolve(name));
 		g.debugLines = debugLines;
 		groups[name] = g;
 		addChild(g);

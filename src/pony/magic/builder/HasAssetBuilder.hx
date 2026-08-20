@@ -1,5 +1,8 @@
 package pony.magic.builder;
 
+import haxe.macro.Expr.ExprDef;
+import haxe.macro.Expr.Position;
+import haxe.macro.Type.MetaAccess;
 #if macro
 import haxe.macro.Context;
 import haxe.macro.Expr;
@@ -94,7 +97,7 @@ class HasAssetBuilder {
 
 	private static function addMethods(fields: Array<Field>, f: String, vs: String): Void {
 		if (vs.length > 0) vs += '/';
-		final v = macro $v{vs};
+		final v: haxe.macro.Expr = macro $v{vs};
 		fields.push({ name: f == 'def' ? 'loadAsset' : 'loadAsset_$f', access: [APublic, AStatic], kind: FieldType.FFun({ args: [
 			{ name: 'asset', type: macro :pony.Or<Int, Array<Int>>, opt: false },
 			{ name: 'cb', type: macro :Int -> Int -> Void }
@@ -192,11 +195,11 @@ class HasAssetBuilder {
 				case EConst(CIdent(s)):
 					switch Context.getType(s) {
 						case TInst(cl, _):
-							final m = cl.get().meta;
+							final m: MetaAccess = cl.get().meta;
 							parentPathes = getPatches(m.get(), cl);
-							final e = { expr: EConst(CString(clss.toString())), pos: Context.currentPos() };
+							final e: { pos: Position, expr: ExprDef } = { expr: EConst(CString(clss.toString())), pos: Context.currentPos() };
 							if (m.has('assets_childs')) {
-								final a = m.get().find(v -> v.name == 'assets_childs').params;
+								final a: Null<Array<haxe.macro.Expr>> = m.get().find(v -> v.name == 'assets_childs').params;
 								a.push(e);
 								m.remove('assets_childs');
 								m.add('assets_childs', a, Context.currentPos());
@@ -210,11 +213,11 @@ class HasAssetBuilder {
 					final name: String = pack + '.' + field;
 					for (f in Context.getModule(name)) switch f {
 						case TInst(t, _) if (t.toString() == name):
-							final m = t.get().meta;
+							final m: MetaAccess = t.get().meta;
 							parentPathes = getPatches(m.get(), t);
-							final e = { expr: EConst(CString(clss.toString())), pos: Context.currentPos() };
+							final e: { pos: Position, expr: ExprDef } = { expr: EConst(CString(clss.toString())), pos: Context.currentPos() };
 							if (m.has('assets_childs')) {
-								final a = m.get().find(v -> v.name == 'assets_childs').params;
+								final a: Null<Array<haxe.macro.Expr>> = m.get().find(v -> v.name == 'assets_childs').params;
 								a.push(e);
 								m.remove('assets_childs');
 								m.add('assets_childs', a, Context.currentPos());

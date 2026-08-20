@@ -61,7 +61,7 @@ class ActionConnect extends ModuleConnect<Action> {
 
 	public function callCheck(args: Array<Dynamic>, cb: ActResult -> Void): Void {
 		if (methodCheck != null) {
-			final r = _callCheck(args);
+			final r: Errors = _callCheck(args);
 			if (r.empty()) {
 				call(args, (b: Bool) -> cb(b ? OK : DBERROR));
 			} else {
@@ -74,14 +74,14 @@ class ActionConnect extends ModuleConnect<Action> {
 	private function initTpl(): Void {
 		if (tplInited) return;
 		tplInited = true;
-		final p = model.base.activePathes[base.name];
+		final p: Null<{ path: String, field: String }> = model.base.activePathes[base.name];
 		if (p != null) {
 			activePathTarget = p.field == null ? 'id' : p.field;
 			final apath: String = p.path;
 			if (apath != null) {
-				final q = [cpq.page].concat(cpq.query);
-				var takeNext = false;
-				var i = 0;
+				final q: Array<String> = [cpq.page].concat(cpq.query);
+				var takeNext: Bool = false;
+				var i: Int = 0;
 				for (e in q) {
 					if (e != '') actionPathQuery = null;
 					if (apath == '' && i > 1) break;
@@ -97,9 +97,9 @@ class ActionConnect extends ModuleConnect<Action> {
 		}
 		if (model.base.pathes[base.name] != null) for (path in model.base.pathes[base.name]) {
 			hasPathArg = true;
-			final q = [cpq.page].concat(cpq.query);
-			var takeNext = false;
-			var i = 0;
+			final q: Array<String> = [cpq.page].concat(cpq.query);
+			var takeNext: Bool = false;
+			var i: Int = 0;
 			for (e in q) {
 				if (e != '') pathQuery = null;
 				if (path == '' && i > 1) break;

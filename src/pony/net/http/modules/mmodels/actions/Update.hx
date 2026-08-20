@@ -16,7 +16,7 @@ using pony.text.TextTools;
 class Update extends Action {
 
 	override public function connect(cpq: CPQ, modelConnect: ModelConnect): Pair<EConnect, ISubActionConnect> {
-		final obj = new UpdateConnect(this, cpq, modelConnect);
+		final obj: UpdateConnect = new UpdateConnect(this, cpq, modelConnect);
 		return new Pair(REG(cast obj), cast obj);
 	}
 
@@ -103,7 +103,7 @@ class UpdatePut extends pony.text.tpl.TplPut<UpdateConnect, Dynamic> {
 			if (args != null && args.exists('fix')) fixList = args['fix'].split(',');
 			var r: String = '';
 			final ma: Map<Int, { values: Map<String, String>, result: ActResult }> = cast a.storage;
-			final m = ma[a.base.id];
+			final m: Null<{ values: Map<String, String>, result: ActResult }> = ma[a.base.id];
 			if (m == null)
 				for (k in a.base.args.keys()) {
 					r += inputE(k, Reflect.field(b, k), fixList.indexOf(k) != -1);

@@ -17,7 +17,7 @@ class FString extends Field {
 
 	override public function htmlInput(cl: String, act: String, value: String, ?hidden: Null<Bool>): String {
 		if (hidden == null) hidden = hid;
-		final h = hidden ? 'type="hidden" ' : 'type="text" ';
+		final h: String = hidden ? 'type="hidden" ' : 'type="text" ';
 		return '<input ' + h + (cl != null ? 'class="' + cl + '" ' : '') + 'name="' + model.name + '.' + act + '.' + name + '" value="'
 			+ value + '"/>';
 	}

@@ -44,7 +44,7 @@ class StarlingMusicPlayer extends StarlingSongPlayer {
 		visible = true;
 		currentList = pl;
 		final bcs: Array<ButtonCore> = [];
-		var i = 0;
+		var i: Int = 0;
 		for (e in pl) {
 			var o: Sprite = new Sprite(); // Type.createInstance(songClass, []);
 			o.x = beginPoint.x;

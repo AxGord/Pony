@@ -1,5 +1,7 @@
 package pony.db;
 
+import haxe.macro.Expr.ExprDef;
+import haxe.macro.Expr.Position;
 import pony.magic.Declarator;
 import pony.magic.Ninja;
 #if macro
@@ -86,7 +88,7 @@ class CTable implements Declarator implements Ninja {
 	 * Data for query 'where', helper for where function
 	 */
 	@:n public function whereData(data: WhereData): Table {
-		var w = ' WHERE ';
+		var w: String = ' WHERE ';
 		for (e in data) switch e {
 			case WhereElement.Text(s): w += s;
 			case WhereElement.Value(s): w += mysql.escape(s);
@@ -162,8 +164,8 @@ class CTable implements Declarator implements Ninja {
 	 * Insert data to table
 	 */
 	public function insert(data: Map<String, DBV>, cb: Bool -> Void, ?p: PosInfos): Void {
-		final keys = [for (f in data.keys()) mysql.escapeId(f)];
-		final values = [for (d in data) d.get(mysql.escape)];
+		final keys: Array<String> = [for (f in data.keys()) mysql.escapeId(f)];
+		final values: Array<String> = [for (d in data) d.get(mysql.escape)];
 		mysql.action('INSERT INTO $table (' + keys.join(', ') + ') VALUES (' + values.join(', ') + ')', 'insert', p, cb);
 	}
 
@@ -171,7 +173,7 @@ class CTable implements Declarator implements Ninja {
 	 * Update data it table
 	 */
 	public function update(data: Map<String, DBV>, cb: Bool -> Void, ?p: PosInfos): Void {
-		final set = [for (f in data.keys()) mysql.escapeId(f) + '=' + data[f].get(mysql.escape)];
+		final set: Array<String> = [for (f in data.keys()) mysql.escapeId(f) + '=' + data[f].get(mysql.escape)];
 		mysql.action('UPDATE $table SET ' + set.join(', ') + _where, cb);
 	}
 
@@ -179,7 +181,7 @@ class CTable implements Declarator implements Ninja {
 	 * Delete selected rows from table
 	 */
 	public function delete(cb: Bool -> Void, ?p: PosInfos): Void {
-		final q = 'DELETE FROM $table' + _where + order + (_limit == null ? '' : ' LIMIT $_begin, $_limit');
+		final q: String = 'DELETE FROM $table' + _where + order + (_limit == null ? '' : ' LIMIT $_begin, $_limit');
 		mysql.query(q, p, (err: Dynamic, fields: Dynamic, _) -> {
 			if (err != null) {
 				_error(err);
@@ -207,8 +209,8 @@ class CTable implements Declarator implements Ninja {
 		if (args.length != 2) throw 'need one argument';
 		final e: Expr = args.pop();
 		final th: Expr = args.pop();
-		final a = TableMacro.transExpr(e, []);
-		final ex = { expr: EArrayDecl(a), pos: th.pos };
+		final a: Array<haxe.macro.Expr> = TableMacro.transExpr(e, []);
+		final ex: { pos: Position, expr: ExprDef } = { expr: EArrayDecl(a), pos: th.pos };
 		return macro $th.whereData($ex);
 	}
 

@@ -20,7 +20,7 @@ class TreeCore implements Declarator {
 	public var nodes(default, null): Array<TreeElement> = [];
 
 	public function addGroup(text: String): TreeCore {
-		final t = new TreeCore(lvl + 1, this);
+		final t: TreeCore = new TreeCore(lvl + 1, this);
 		nodes.push(Group(text, t));
 		return t;
 	}

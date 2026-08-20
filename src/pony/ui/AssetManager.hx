@@ -126,8 +126,8 @@ class AssetManager implements HasLink {
 			load(path, assets, (a: Int, t: Int) -> {
 				loaded[n] = a;
 				totals[n] = t;
-				final loadedSum = sum(loaded);
-				final totalSum = sum(totals);
+				final loadedSum: Int = sum(loaded);
+				final totalSum: Int = sum(totals);
 				if (loadedSum != prevLoaded || totalSum != prevTotals) {
 					prevLoaded = loadedSum;
 					prevTotals = totalSum;
@@ -181,8 +181,8 @@ class AssetManager implements HasLink {
 					load(path, asset, (c: Int, t: Int) -> {
 						loaded[n] = c;
 						totals[n] = t;
-						final loadedSum = sum(loaded);
-						final totalSum = sum(totals);
+						final loadedSum: Int = sum(loaded);
+						final totalSum: Int = sum(totals);
 						if (loadedSum != prevLoaded || totalSum != prevTotals) {
 							prevLoaded = loadedSum;
 							prevTotals = totalSum;
@@ -224,15 +224,15 @@ class AssetManager implements HasLink {
 			loadPack(pathes, assets, cb);
 			return;
 		}
-		final p = cbjoin(cb);
+		final p: pony.Pair<(Int, Int) -> Void, (Int, Int) -> Void> = cbjoin(cb);
 		loadPack(pathes, assets, p.a);
 		loadChildPack(chs, p.b);
 	}
 
 	private static function loadChildPack(chs: Array<Dynamic>, cb: Int -> Int -> Void): Void {
-		var f = cb;
+		var f: Int -> Int -> Void = cb;
 		for (i in 0...(chs.length - 1)) {
-			final p = cbjoin(f);
+			final p: pony.Pair<(Int, Int) -> Void, (Int, Int) -> Void> = cbjoin(f);
 			f = p.a;
 			final s = Type.resolveClass(chs[i]);
 			if (s != null)
@@ -288,7 +288,7 @@ class AssetManager implements HasLink {
 
 	public static function loadComplete(source: (Int -> Int -> Void) -> Void, cb: Void -> Void): Void {
 		var last: Bool = true;
-		var check = function(c: Int, t: Int) last = c == t;
+		var check: (c:Int, t:Int) -> Void = function(c: Int, t: Int) last = c == t;
 		source((c: Int, t: Int) -> check(c, t));
 		DeltaTime.fixedUpdate < function() {
 			if (last)

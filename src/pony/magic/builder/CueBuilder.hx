@@ -2,6 +2,9 @@ package pony.magic.builder;
 
 using StringTools;
 
+import haxe.macro.Expr.Metadata;
+import haxe.macro.Type.ClassType;
+import haxe.macro.Type.Ref;
 #if macro
 import haxe.macro.Context;
 import haxe.macro.Expr;
@@ -27,8 +30,8 @@ class CueBuilder {
 	#end
 
 	macro public static function build(): Array<Field> {
-		final cl = Context.getLocalClass();
-		final meta = cl.get().meta.get();
+		final cl: Null<Ref<ClassType>> = Context.getLocalClass();
+		final meta: Metadata = cl.get().meta.get();
 		var cueFile = null;
 		for (m in meta) switch m {
 			case { name: ':cue', params: [{ expr: EConst(CString(v)) }] }: cueFile = v;
@@ -36,7 +39,7 @@ class CueBuilder {
 		}
 		if (cueFile == null) throw 'Error';
 		Context.registerModuleDependency(Context.getLocalModule(), cueFile);
-		final cue = File.getContent(cueFile);
+		final cue: String = File.getContent(cueFile);
 		final map: Map<String, Map<String, Array<String>>> = TextTools.tabParser(cue);
 		final data: Array<Pair<String, Int>> = [];
 		for (e in map.iterator().next()) {

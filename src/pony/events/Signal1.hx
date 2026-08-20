@@ -66,7 +66,7 @@ import pony.events.Listener1;
 				return sig;
 			case _:
 		}
-		final s = new Event0();
+		final s: Event0 = new Event0();
 		add({ once: once, listener: LSub(s, a1) }, priority);
 		return s;
 	}
@@ -139,7 +139,7 @@ import pony.events.Listener1;
 	}
 
 	@:op(A & B) public function andOnce<T2>(s: Signal1<T2>): Signal2<T1, T2> {
-		final ns = new Event2<T1, T2>();
+		final ns: Event2<T1, T2> = new Event2<T1, T2>();
 		var listener1: Listener1<T1> = cast null;
 		var listener2: Listener1<T2> = cast null;
 		listener1 = { once: true, listener: Listener1.Listener1Type.LFunction1(function(a: T1) {
@@ -156,7 +156,7 @@ import pony.events.Listener1;
 	}
 
 	@:op(A && B) public function and<T2>(s: Signal1<T2>): Signal2<T1, T2> {
-		final ns = new Event2<T1, T2>();
+		final ns: Event2<T1, T2> = new Event2<T1, T2>();
 		var start: Void -> Void = cast null;
 		var listener1: Listener1<T1> = cast null;
 		var listener2: Listener1<T2> = cast null;
@@ -180,7 +180,7 @@ import pony.events.Listener1;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function convert0(f: Event0 -> T1 -> Void): Signal0 {
-		final ns = new Event0();
+		final ns: Event0 = new Event0();
 		add({ once: false, listener: Listener1.Listener1Type.LFunction1(f.bind(ns)) });
 		return ns;
 	}

@@ -428,21 +428,21 @@ class HeapsXmlUi extends Object implements HasAbstract {
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function createLayout(attrs: Dynamic<String>, content: Array<Dynamic>): Object {
 		return if (attrs.src != null) {
-			final l = new BGLayout(
+			final l: BGLayout = new BGLayout(
 				HeapsAssets.image(attrs.src, attrs.name), attrs.vert.isTrue(), scaleBorderInt(attrs.border), attrs.mask.isTrue()
 			);
 			for (e in content) l.add(e);
 			l;
 		} else if (attrs.iv != null || attrs.ih != null) {
 			final vert = attrs.iv != null;
-			final l = new IntervalLayout(
+			final l: IntervalLayout = new IntervalLayout(
 				parseAndScaleInt(vert ? attrs.iv : attrs.ih), vert, scaleBorderInt(attrs.border), attrs.align,
 				parseAndScaleInt(attrs.limit), attrs.mask.isTrue()
 			);
 			for (e in content) l.add(e);
 			l;
 		} else if (attrs.w != null || attrs.h != null) {
-			final r = new RubberLayout(
+			final r: RubberLayout = new RubberLayout(
 				parseAndScale(attrs.w), parseAndScale(attrs.h), attrs.vert.isTrue(), scaleBorderInt(attrs.border),
 				attrs.padding == null ? true : attrs.padding.isTrue(), attrs.align, attrs.limit.isTrue(), attrs.mask.isTrue()
 			);

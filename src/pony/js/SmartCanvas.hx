@@ -104,8 +104,8 @@ class SmartCanvas extends ElementResizeControl {
 			ratio = 1;
 			rect = new Rect((w - stageInitSize.x) / 2, (h - stageInitSize.y) / 2, w, h);
 		} else {
-			final wd = w / stageInitSize.x;
-			final hd = h / stageInitSize.y;
+			final wd: Float = w / stageInitSize.x;
+			final hd: Float = h / stageInitSize.y;
 			scale = wd > hd ? hd : wd;
 
 			ratio = (smallDeviceQuality: Int) <= 1 ? 1 : smallDeviceQualityOffset + scale / smallDeviceQuality;

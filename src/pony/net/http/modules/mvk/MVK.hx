@@ -26,7 +26,7 @@ final class MVK implements IModule {
 	public function new(appid: Int, secret: String) {
 		this.appid = appid;
 		vk = Type.createInstance(sdk, [{ appId: appid, appSecret: secret, secure: true }]);
-		final s = TextTools.includeFileFromCurrentDir('mvk.tpl');
+		final s: String = TextTools.includeFileFromCurrentDir('mvk.tpl');
 		new Tpl(MVKPrePut, appid, s).gen(null, null, function(r) buttonData = r);
 	}
 

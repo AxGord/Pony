@@ -16,7 +16,7 @@ class TableMacro {
 	public static function transExpr(expr: Expr, a: Array<Expr>): Array<Expr> {
 		switch expr.expr {
 			case EBinop(op, e1, e2):
-				final o = switch op {
+				final o: String = switch op {
 					case OpGt:
 						'>';
 					case OpGte:
@@ -73,7 +73,7 @@ class TableMacro {
 				switch act {
 					case 'like':
 						if (p.length != 1) throw 'Need 1 argument';
-						final field = takeFieldName(e);
+						final field: String = takeFieldName(e);
 						switch p[0].expr {
 							case EConst(CIdent(s)):
 								a.push(genText('$field LIKE ', expr.pos));
@@ -127,7 +127,7 @@ class TableMacro {
 					final v = ExprTools.getValue(e);
 					a.push(genText('$v', e.pos));
 				} catch (_: Dynamic) {
-					final o = switch op {
+					final o: String = switch op {
 						case OpGt: '>';
 						case OpGte: '>=';
 						case OpLt: '<';

@@ -105,7 +105,7 @@ private typedef TPUnit = {
 
 			final tExt: String = s == 'png8' ? 'png' : s;
 
-			final sheetfile = '${unit.output}.$tExt';
+			final sheetfile: String = '${unit.output}.$tExt';
 			command.push('--sheet');
 			command.push(sheetfile);
 

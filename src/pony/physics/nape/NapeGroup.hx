@@ -32,7 +32,7 @@ class NapeGroup {
 	}
 
 	public function collision(with: NapeGroup): Signal2<BodyBase, BodyBase> {
-		final e = new Event2<BodyBase, BodyBase>();
+		final e: Event2<BodyBase, BodyBase> = new Event2<BodyBase, BodyBase>();
 		space.listeners.add(
 			new InteractionListener(
 				CbEvent.BEGIN, sensor ? InteractionType.SENSOR : InteractionType.COLLISION, cbt, with.cbt,

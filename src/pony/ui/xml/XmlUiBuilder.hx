@@ -35,7 +35,7 @@ class XmlUiBuilder {
 			return Context.getBuildFields();
 		}
 
-		final types = switch typesExpr.expr {
+		final types: haxe.ds.Map<String, haxe.macro.Expr.ComplexType> = switch typesExpr.expr {
 			case EObjectDecl(ts): [for (t in ts) t.field => exprToComplex(t.expr)];
 			case _: Context.error('Types list wrong type', typesExpr.pos);
 		}
@@ -45,7 +45,7 @@ class XmlUiBuilder {
 		if (cl.superClass != null) {
 			final submeta: Metadata = cl.superClass.t.get().meta.get();
 			if (submeta.checkMeta([':ui_types'])) {
-				final m = submeta.getMeta(':ui_types').params[0];
+				final m: haxe.macro.Expr = submeta.getMeta(':ui_types').params[0];
 				switch m.expr {
 					case EObjectDecl(ts): for (t in ts) types[t.field] = exprToComplex(t.expr);
 					case _: Context.error('Types list wrong type', m.pos);
@@ -54,7 +54,7 @@ class XmlUiBuilder {
 		}
 
 		if (meta.checkMeta([':ui_types'])) {
-			final m = meta.getMeta(':ui_types').params[0];
+			final m: haxe.macro.Expr = meta.getMeta(':ui_types').params[0];
 			switch m.expr {
 				case EObjectDecl(ts): for (t in ts) types[t.field] = exprToComplex(t.expr);
 				case _: Context.error('Types list wrong type', m.pos);
@@ -67,7 +67,7 @@ class XmlUiBuilder {
 		if (meta.checkMeta([':style'])) {
 			for (p in meta.getMeta(':style').params) switch p.expr {
 				case EConst(CString(styleFile)):
-					final s = getStyle(styleFile);
+					final s: pony.ui.xml.XmlUiBuilder.Style = getStyle(styleFile);
 					for (k => value in s) style[k] = value;
 				case _:
 					Context.error('Wrong style type', meta.getMeta(':style').params[0].pos);
@@ -76,15 +76,15 @@ class XmlUiBuilder {
 
 		switch meta.getMeta(':ui').params[0].expr {
 			case EConst(CString(uiFile)):
-				final ps = uiFile.split('/');
+				final ps: Array<String> = uiFile.split('/');
 				ps.pop();
 				gpath = ps.join('/');
-				final xml = getXml(uiFile);
+				final xml: pony.Fast = getXml(uiFile);
 
 				final filters: Style = [];
 				if (xml.has.filters) {
 					for (f in parseAttr(xml.att.filters)) {
-						final s = getFilters(joinPath(gpath, f));
+						final s: pony.ui.xml.XmlUiBuilder.Style = getFilters(joinPath(gpath, f));
 						for (k => value in s) filters[k] = value;
 					}
 					xml.x.remove('filters');
@@ -92,7 +92,7 @@ class XmlUiBuilder {
 
 				if (xml.has.style) {
 					for (f in parseAttr(xml.att.style)) {
-						final s = getStyle(joinPath(gpath, f));
+						final s: pony.ui.xml.XmlUiBuilder.Style = getStyle(joinPath(gpath, f));
 						for (k => value in s) style[k] = value;
 					}
 				}
@@ -177,7 +177,7 @@ class XmlUiBuilder {
 	private static function getPathes(pathes: Array<String>, xml: Fast, style: Style, path: String = ''): Void {
 		if (xml.name == 'include') {
 			if (xml.has.path) path = joinPath(path, xml.att.path);
-			final xml = getXml(joinPath(gpath, xml.innerData));
+			final xml: pony.Fast = getXml(joinPath(gpath, xml.innerData));
 			getPathes(pathes, xml, style, path);
 			return;
 		}
@@ -203,7 +203,7 @@ class XmlUiBuilder {
 		switch xml.name {
 			case 'include':
 				if (xml.has.path) path = joinPath(path, xml.att.path);
-				final xml = getXml(joinPath(gpath, xml.innerData));
+				final xml: pony.Fast = getXml(joinPath(gpath, xml.innerData));
 				return genExpr(xml, style, prefix, path, repeat);
 			case 'repeat':
 				repeat = true;
@@ -211,7 +211,7 @@ class XmlUiBuilder {
 		}
 
 		final attrs: Map<String, String> = [];
-		final name = addStyle(xml.name, attrs, style);
+		final name: String = addStyle(xml.name, attrs, style);
 		for (k in xml.x.attributes()) if (k != 'id') attrs[k] = xml.att.resolve(k);
 
 		if (attrs.exists('path')) path = joinPath(path, attrs['path']);
@@ -271,7 +271,7 @@ class XmlUiBuilder {
 		fields: Array<Field>, xml: Fast, style: Style, types: Map<String, ComplexType>, prefix: String = ''
 	): Void {
 		if (xml.name == 'include') {
-			final xml = getXml(joinPath(gpath, xml.innerData));
+			final xml: pony.Fast = getXml(joinPath(gpath, xml.innerData));
 			addId(fields, xml, style, types, prefix);
 		}
 		var id: String = prefix;

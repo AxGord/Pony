@@ -53,11 +53,11 @@ class Liker implements Declarator {
 		if (base.length != data.length) throw 'data != base data';
 		var k: Float = 0;
 		for (i => a in data) {
-			final b = base[i];
+			final b: Float = base[i];
 			if (a == b) {
 				k += 1;
 			} else if (a > b) {
-				final r = a - b;
+				final r: Float = a - b;
 				if (r < max)
 					k += 1 - r / max;
 				else

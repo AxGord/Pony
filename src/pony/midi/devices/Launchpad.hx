@@ -89,16 +89,16 @@ class Launchpad extends Logable implements ILaunchpad {
 	private function midiHandler(m: MidiMessage): Void {
 		switch m.chanel {
 			case 144:
-				final i = rightBlock.indexOf(m.key);
+				final i: Int = rightBlock.indexOf(m.key);
 				if (i != -1)
 					eRight.dispatch(i, m.value == 127);
 				else {
-					final p = area.indexOf(m.key);
+					final p: Null<pony.geom.Point<Int>> = area.indexOf(m.key);
 					if (p == null) return error('Unknown button');
 					eArea.dispatch(p, m.value == 127);
 				}
 			case 176:
-				final i = topBlock.indexOf(m.key);
+				final i: Int = topBlock.indexOf(m.key);
 				if (i == -1) return error('Unknown button');
 				eTop.dispatch(i, m.value == 127);
 			case _:

@@ -244,7 +244,7 @@ final class DIBuilder {
 									creates.push(checkExpr(macro tasks.add()));
 									// L3: for static-eligible DI children, store instance in local var.
 									// Register kept for create() backward compat; createFast skips it.
-									final cr = if (staticDIVar != null)
+									final cr: haxe.macro.Expr = if (staticDIVar != null)
 										macro $i{t.toString()}.create(provider, instance -> {
 											$i{staticDIVar.varName} = instance;
 											provider.register($v{producerTypeNames}, $v{field.name}, instance, $v{exportService});

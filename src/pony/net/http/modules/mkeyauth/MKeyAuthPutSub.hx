@@ -14,10 +14,10 @@ final class MKeyAuthPutSub extends TplPut<MKeyAuthConnect, ITplPut> {
 	@:async
 	override public function shortTag(name: String, arg: String, ?kid: ITplPut): String {
 		if (name == 'logout') {
-			final url = '?${MKeyAuth.PARAM}';
+			final url: String = '?${MKeyAuth.PARAM}';
 			if (arg == 'a') {
 				final lang: MLangConnect = cast a.cpq.modules['MLang'];
-				var text = 'Logout';
+				var text: String = 'Logout';
 				if (lang != null) text = lang.translate('en', text);
 				return '<a href="$url">$text</a>';
 			} else {

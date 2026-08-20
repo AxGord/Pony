@@ -26,7 +26,7 @@ class Button extends Sprite {
 				else if (created.exists(s))
 					created[s];
 				else {
-					final b = new SBitmap(s);
+					final b: SBitmap = new SBitmap(s);
 					addChild(b);
 					b.visible = false;
 					created[s] = b;

@@ -59,12 +59,12 @@ class FastMovieClip extends AnimTextureCore {
 					case AnimSmoothMode.None:
 						new Sprite(texture[0]);
 					case AnimSmoothMode.Simple:
-						final r = new FastMoviePlaySpriteSimple(texture, totalFrames);
+						final r: FastMoviePlaySpriteSimple = new FastMoviePlaySpriteSimple(texture, totalFrames);
 						timer.progress << r.progress;
 						onFrame.add(r.frame, -1);
 						r;
 					case AnimSmoothMode.Super:
-						final r = new FastMoviePlaySpriteSuper(texture, totalFrames);
+						final r: FastMoviePlaySpriteSuper = new FastMoviePlaySpriteSuper(texture, totalFrames);
 						timer.progress << r.progress;
 						onFrame.add(r.frame, -1);
 						r;
@@ -72,16 +72,16 @@ class FastMovieClip extends AnimTextureCore {
 			else
 				switch smooth {
 					case AnimSmoothMode.None:
-						final r = new FastMoviePlaySpriteNone(texture, totalFrames);
+						final r: FastMoviePlaySpriteNone = new FastMoviePlaySpriteNone(texture, totalFrames);
 						onFrame.add(r.frame, -1);
 						r;
 					case AnimSmoothMode.Simple:
-						final r = new FastMoviePlaySpriteOddSimple(texture, totalFrames);
+						final r: FastMoviePlaySpriteOddSimple = new FastMoviePlaySpriteOddSimple(texture, totalFrames);
 						timer.progress << r.progress;
 						onFrame.add(r.frame, -1);
 						r;
 					case AnimSmoothMode.Super:
-						final r = new FastMoviePlaySpriteOddSuper(texture, totalFrames);
+						final r: FastMoviePlaySpriteOddSuper = new FastMoviePlaySpriteOddSuper(texture, totalFrames);
 						timer.progress << r.progress;
 						onFrame.add(r.frame, -1);
 						r;
@@ -126,7 +126,7 @@ class FastMovieClip extends AnimTextureCore {
 		data: Or<Array<Texture>, Array<String>>, frameTime: Time, fixedTime: Bool = false, smooth: AnimSmoothMode = AnimSmoothMode.None,
 		crop: Int = 0
 	): FastMovieClip {
-		final n = idFromTexture(converOrFirst(data));
+		final n: String = idFromTexture(converOrFirst(data));
 		return !storage.exists(n) ? storage[n] = new FastMovieClip(data, frameTime, fixedTime, smooth, crop) : storage[n];
 	}
 

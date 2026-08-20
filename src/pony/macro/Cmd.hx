@@ -18,9 +18,9 @@ class Cmd {
 	 */
 	public static function fd(file: String): Void {
 		final x: Fast = new Fast(Xml.parse(File.getContent(file)));
-		final cp = Context.getClassPath();
+		final cp: Array<String> = Context.getClassPath();
 		for (n in x.node.project.node.compileTargets.nodes.compile) {
-			var s = StringTools.replace(n.att.path, '\\', '/');
+			var s: String = StringTools.replace(n.att.path, '\\', '/');
 			for (e in cp) s = StringTools.replace(s, e, '');
 			s = StringTools.replace(s, '/', '.');
 			Context.getModule(s.substr(0, s.length - 3));

@@ -121,8 +121,8 @@ abstract Dir(Unit) from Unit {
 	}
 
 	public function createWays(): Void {
-		final a = first.split('/');
-		var d = a.shift();
+		final a: Array<String> = first.split('/');
+		var d: Null<String> = a.shift();
 		for (e in a) {
 			d += '/' + e;
 			if (!FileSystem.exists(d)) FileSystem.createDirectory(d);

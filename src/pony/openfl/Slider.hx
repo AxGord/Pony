@@ -27,7 +27,7 @@ class Slider<T:SliderType> extends Sprite {
 		super();
 		addChild(bg);
 		addChild(b);
-		final isVert = bg.height > bg.width;
+		final isVert: Bool = bg.height > bg.width;
 		core = new T(b.core, (isVert ? bg.height : bg.width) + sizeFix, isVert, invert, draggable);
 		core.changeX = function(v: Float) b.x = Std.int(v + bFix);
 		core.changeY = function(v: Float) b.y = Std.int(v + bFix);

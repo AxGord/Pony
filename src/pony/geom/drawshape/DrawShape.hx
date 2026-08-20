@@ -165,13 +165,13 @@ class DrawShape extends pony.Logable #if pony_experimental implements pony.magic
 		if (eq3(p1.x, p2.x, targetPointData.col)) return true;
 		if (eq3(p1.y, p2.y, targetPointData.row)) return true;
 
-		final r1 = p1.x - p1.y;
-		final r2 = p2.x - p2.y;
-		final r3 = targetPointData.col - targetPointData.row;
+		final r1: Int = p1.x - p1.y;
+		final r2: Int = p2.x - p2.y;
+		final r3: Int = targetPointData.col - targetPointData.row;
 		if (eq3(r1, r2, r3)) return true;
-		final r1b = p1.x + p1.y;
-		final r2b = p2.x + p2.y;
-		final r3b = targetPointData.col + targetPointData.row;
+		final r1b: Int = p1.x + p1.y;
+		final r2b: Int = p2.x + p2.y;
+		final r3b: Int = targetPointData.col + targetPointData.row;
 		if (eq3(r1, r2, r3)) return true;
 		for (i in 1...Std.int(pointer.snapCellCounts.x / 2)) {
 			if ((r2 - r1) * i == r3 - r2 && (r2b - r1b) * i == r3b - r2b) return true;
@@ -240,7 +240,7 @@ class DrawShape extends pony.Logable #if pony_experimental implements pony.magic
 	}
 
 	private function writeShapePoint(): Void {
-		final p = new IntPoint(downPointData.col, downPointData.row);
+		final p: IntPoint = new IntPoint(downPointData.col, downPointData.row);
 		log('Write shape point: $p');
 		shape.push(p);
 	}
@@ -287,7 +287,7 @@ class DrawShape extends pony.Logable #if pony_experimental implements pony.magic
 	}
 
 	private function shapeToBytes(e: Event1<Bytes>, p: Array<IntPoint>): Void {
-		final b = new BytesOutput();
+		final b: BytesOutput = new BytesOutput();
 		for (v in p) b.writeByte(Byte.create(v.x, v.y));
 		log('Bytes size: ${b.length}');
 		e.dispatch(b.getBytes());

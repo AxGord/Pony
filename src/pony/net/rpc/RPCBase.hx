@@ -2,6 +2,7 @@ package pony.net.rpc;
 
 import haxe.io.Bytes;
 import haxe.io.BytesInput;
+import hxbitmini.Convert;
 import hxbitmini.Serializer;
 
 /**
@@ -28,16 +29,16 @@ class RPCBase<T:pony.net.rpc.IRPC> {
 		serializer.setInput(b.readAll(), 0);
 		var clidx: Int = object.getCLID();
 		if (@:privateAccess serializer.convert != null && @:privateAccess serializer.convert[clidx] != null) {
-			final conv = @:privateAccess serializer.convert[clidx];
+			final conv: Convert = @:privateAccess serializer.convert[clidx];
 			if (conv.hadCID) {
-				final realIdx = serializer.getCLID();
+				final realIdx: Int = serializer.getCLID();
 				if (conv.hasCID) {
 					final c = @:privateAccess cast Serializer.CL_BYID[realIdx];
 					clidx = (c: Dynamic).__clid;
 				}
 			}
 		} else if (@:privateAccess Serializer.CLIDS[clidx] != 0) {
-			final realIdx = serializer.getCLID();
+			final realIdx: Int = serializer.getCLID();
 			final c = @:privateAccess cast Serializer.CL_BYID[realIdx];
 			if (@:privateAccess serializer.convert != null) clidx = (c: Dynamic).__clid; // real class convert
 		}

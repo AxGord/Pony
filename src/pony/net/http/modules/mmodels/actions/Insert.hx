@@ -104,7 +104,7 @@ class InsertPut extends pony.text.tpl.TplPut<InsertConnect, CPQ> {
 			var r: String = '';
 			var hasFile: Bool = false;
 			final ma: Map<Int, { values: Map<String, String>, result: ActResult }> = cast a.storage;
-			final m = ma[a.base.id];
+			final m: Null<{ values: Map<String, String>, result: ActResult }> = ma[a.base.id];
 			if (m == null)
 				for (k in a.base.args.keys()) {
 					r += inputE(k, '', fixList.indexOf(k) != -1);
@@ -194,7 +194,7 @@ class InsertPutArg extends pony.text.tpl.TplPut<{ o: InsertConnect, arg: String 
 		}
 		if (name == 'value') {
 			final ma: Map<Int, { values: Map<String, String>, result: ActResult }> = b.connection.sessionStorage.get('modelsActions');
-			final m = ma[a.o.base.id];
+			final m: Null<{ values: Map<String, String>, result: ActResult }> = ma[a.o.base.id];
 			if (m == null)
 				return '';
 			else {
@@ -208,7 +208,7 @@ class InsertPutArg extends pony.text.tpl.TplPut<{ o: InsertConnect, arg: String 
 
 	private function st(): String {
 		final ma: Map<Int, { values: Map<String, String>, result: ActResult }> = b.connection.sessionStorage.get('modelsActions');
-		final m = ma[a.o.base.id];
+		final m: Null<{ values: Map<String, String>, result: ActResult }> = ma[a.o.base.id];
 		final r: ActResult = m == null ? null : m.result;
 		var st: String = null;
 		if (r != null) switch (r) {

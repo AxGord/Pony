@@ -229,7 +229,7 @@ class FLTools {
 	public static function base64ToBitmapDataAsync(base64: String, ok: BitmapData -> Void, ?error: Dynamic -> Void): Void {
 		if (error == null) error = Tools.errorFunction;
 		base64 = {
-			final s = base64.split(',');
+			final s: Array<String> = base64.split(',');
 			s.length == 1 ? s[0] : s[1];
 		}; // Remove header
 		try {
@@ -241,7 +241,7 @@ class FLTools {
 	public static function bytesToBitmapData(bytes: Bytes, ok: BitmapData -> Void, ?error: Dynamic -> Void): Void {
 		if (error == null) error = Tools.errorFunction;
 		try {
-			final loader = new Loader();
+			final loader: Loader = new Loader();
 			var removeEvents: Void -> Void = null;
 			function errorHandler(e: IOErrorEvent): Void {
 				removeEvents();

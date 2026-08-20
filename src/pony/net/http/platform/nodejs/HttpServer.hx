@@ -1,5 +1,6 @@
 package pony.net.http.platform.nodejs;
 
+import haxe.extern.EitherType;
 import js.Node;
 import js.node.Fs;
 import js.node.Http;
@@ -89,13 +90,13 @@ class HttpServer {
 		final contentType: String = req.headers.field('content-type');
 		switch (req.method) {
 			case 'POST' if (contentType.length >= multi.length && contentType.substr(0, multi.length) == multi):
-				final me = this;
+				final me: HttpServer = this;
 				final multiparty = Type.createInstance(multipartyForm(), []);
 				multiparty.parse(req, function(err, fields: Dynamic<Array<Dynamic>>, files: Dynamic<Array<Dynamic>>) {
 					if (fields == null || files == null) {
 						res.end('error');
 					} else {
-						final host = if (req.headers.exists('host')) {
+						final host: String = if (req.headers.exists('host')) {
 							req.headers.get('host');
 						} else {
 							final a: Dynamic = untyped me.server.address();
@@ -116,17 +117,17 @@ class HttpServer {
 				return;
 
 			case 'POST':
-				final me = this;
+				final me: HttpServer = this;
 				var s: String = '';
 				untyped req.addListener('data', function(d: String): Void {
 					s += d;
 				});
 				untyped req.addListener('end', function(Void): Void {
-					final h = new Map<String, String>();
+					final h: Map<String, String> = new Map<String, String>();
 					final o: Dynamic = querystring.parse(s);
 					for (f in o.fields()) h.set(f, o.field(f));
 
-					final host = if (req.headers.host != null) {
+					final host: String = if (req.headers.host != null) {
 						req.headers.host;
 					} else {
 						final a: Dynamic = untyped me.server.address();
@@ -137,7 +138,7 @@ class HttpServer {
 				return;
 
 			case 'GET':
-				final host = if (req.headers.exists('host')) {
+				final host: Null<EitherType<String, Array<String>>> = if (req.headers.exists('host')) {
 					req.headers.get('host');
 				} else {
 					final a: Dynamic = untyped server.address();

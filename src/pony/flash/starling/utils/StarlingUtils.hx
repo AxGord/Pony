@@ -75,14 +75,14 @@ class StarlingUtils {
 	public static function disposeWithChildren(object: DisplayObject): Void {
 		object.removeFromParent(true);
 		if (Std.is(object, DisplayObjectContainer)) {
-			final container = cast(object, DisplayObjectContainer);
+			final container: DisplayObjectContainer = cast(object, DisplayObjectContainer);
 			while (container.numChildren > 0) {
 				disposeWithChildren(container.getChildAt(0));
 			}
 		}
 		if (Std.is(object, Image)) untyped object.texture.dispose();
 		if (Std.is(object, MovieClip)) {
-			final clip = cast(object, MovieClip);
+			final clip: MovieClip = cast(object, MovieClip);
 			for (i in 0...clip.numFrames) {
 				clip.getFrameTexture(i).dispose();
 			}

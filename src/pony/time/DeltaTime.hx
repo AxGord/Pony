@@ -168,7 +168,7 @@ class DeltaTime implements HasSignal {
 	}
 
 	public static function notInstant(cb: Void -> Void): Void -> Void {
-		var instant = true;
+		var instant: Bool = true;
 		DeltaTime.fixedUpdate < function() instant = false;
 		return function() instant ? DeltaTime.fixedUpdate < cb : cb();
 	}
@@ -181,14 +181,14 @@ class DeltaTime implements HasSignal {
 	@SuppressWarnings('checkstyle:MagicNumber')
 	public static function testRun(time: Time = 60000): Void {
 		var sec: Float = time / 1000;
-		final d = if (sec < 100)
+		final d: Int = if (sec < 100)
 			10
 		else if (sec < 1000)
 			50
 		else
 			100; // d > 100 sec - not normal lag
 		while (sec > 0) {
-			var r = Math.random() * d;
+			var r: Float = Math.random() * d;
 			if (sec >= r)
 				sec -= r;
 			else {

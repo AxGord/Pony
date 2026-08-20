@@ -3,6 +3,7 @@ package pony.ui.gui;
 import pony.geom.Align;
 import pony.geom.Border;
 import pony.geom.GeomTools;
+import pony.geom.Point;
 
 using pony.Tools;
 
@@ -33,11 +34,11 @@ using pony.Tools;
 		} else {
 			if (align.horizontal != null) {
 				_w = 0;
-				final sizesX = [
+				final sizesX: Array<Float> = [
 					for (obj in objects) {
-						final os = getObjSize(obj);
+						final os: Point<Float> = getObjSize(obj);
 						if (os != null) {
-							final s = os.x;
+							final s: Float = os.x;
 							if (s > _w) _w = s;
 							s;
 						} else {
@@ -49,20 +50,20 @@ using pony.Tools;
 			} else {
 				_w = 0;
 				for (obj in objects) {
-					final os = getObjSize(obj);
+					final os: Point<Float> = getObjSize(obj);
 					if (os != null) {
-						final s = os.x;
+						final s: Float = os.x;
 						if (s > _w) _w = s;
 					}
 				}
 			}
 			if (align.vertical != null) {
 				_h = 0;
-				final sizesY = [
+				final sizesY: Array<Float> = [
 					for (obj in objects) {
-						final os = getObjSize(obj);
+						final os: Point<Float> = getObjSize(obj);
 						if (os != null) {
-							final s = os.y;
+							final s: Float = os.y;
 							if (s > _h) _h = s;
 							s;
 						} else {
@@ -74,9 +75,9 @@ using pony.Tools;
 			} else {
 				_h = 0;
 				for (obj in objects) {
-					final os = getObjSize(obj);
+					final os: Point<Float> = getObjSize(obj);
 					if (os != null) {
-						final s = os.y;
+						final s: Float = os.y;
 						if (s > _h) _h = s;
 					} else {
 						0;

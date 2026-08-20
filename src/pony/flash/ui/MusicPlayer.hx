@@ -30,7 +30,7 @@ class MusicPlayer extends SongPlayer {
 		visible = true;
 		currentList = pl;
 		final bcs: Array<ButtonCore> = [];
-		var i = 0;
+		var i: Int = 0;
 		for (e in pl) {
 			final o: MovieClip = Type.createInstance(songClass, []);
 			o.x = beginPoint.x;

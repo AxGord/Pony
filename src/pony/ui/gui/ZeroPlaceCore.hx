@@ -24,8 +24,8 @@ class ZeroPlaceCore<T> extends BaseLayoutCore<T> {
 				_w = 0;
 				_h = 0;
 				for (obj in objects) {
-					final sw = getObjSize(obj).x;
-					final sh = getObjSize(obj).y;
+					final sw: Float = getObjSize(obj).x;
+					final sh: Float = getObjSize(obj).y;
 					if (sw > _w) _w = sw;
 					if (sh > _h) _h = sh;
 					setXpos(obj, -sw / 2);

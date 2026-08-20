@@ -104,7 +104,7 @@ import pony.pixi.App;
 	override public function destroy(?options: EitherType<Bool, DestroyOptions>): Void {
 		if (core == null) return;
 		LIST.remove(core.body.id);
-		final c = core;
+		final c: T = core;
 		core = null;
 		c.destroy();
 		if (debugView != null) {

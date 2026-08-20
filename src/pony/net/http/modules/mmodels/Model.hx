@@ -9,6 +9,7 @@ import pony.magic.SuperPuper;
 import pony.net.http.CPQ;
 import pony.net.http.modules.mmodels.fields.FInt;
 import pony.net.http.WebServer.EConnect;
+import pony.Pair;
 
 using pony.Tools;
 using Lambda;
@@ -42,7 +43,7 @@ class Model implements SuperPuper {
 		name = Type.getClassName(Type.getClass(this));
 		name = name.substr(name.lastIndexOf('.') + 1);
 		this.mm = mm;
-		final n = '${Type.getClassName(Type.getClass(this))}Connect';
+		final n: String = '${Type.getClassName(Type.getClass(this))}Connect';
 		cl = cast Type.resolveClass(n);
 		if (cl == null) throw "Can't resolve class (dce?): " + n;
 		final ma: Dynamic<Array<{ name: String, type: String }>> = untyped cl.__methoArgs__;
@@ -90,10 +91,10 @@ class Model implements SuperPuper {
 
 	public function connect(cpq: CPQ): EConnect {
 		final mc: ModelConnect = Type.createInstance(cl, [this, cpq]);
-		final a = new Map<String, ActionConnect>();
-		final sub = new Map<String, ISubActionConnect>();
+		final a: Map<String, ActionConnect> = new Map<String, ActionConnect>();
+		final sub: Map<String, ISubActionConnect> = new Map<String, ISubActionConnect>();
 		for (k => value in actions) {
-			final r = value.connect(cpq, mc);
+			final r: Pair<EConnect, ISubActionConnect> = value.connect(cpq, mc);
 			if (r.b != null) sub[k] = r.b;
 			switch r.a {
 				case BREAK: return BREAK;

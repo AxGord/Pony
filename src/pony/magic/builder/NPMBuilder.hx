@@ -2,6 +2,7 @@ package pony.magic.builder;
 
 using StringTools;
 
+import haxe.macro.Expr.Access;
 #if macro
 import haxe.macro.Context;
 import haxe.macro.Expr;
@@ -27,14 +28,14 @@ class NPMBuilder {
 
 	@SuppressWarnings('checkstyle:MagicNumber')
 	macro public static function build(): Array<Field> {
-		final access = [APublic, AStatic];
-		final faccess = [APrivate, AStatic, AInline #if (haxe_ver >= 4.2), AExtern #end];
+		final access: Array<Access> = [APublic, AStatic];
+		final faccess: Array<Access> = [APrivate, AStatic, AInline #if (haxe_ver >= 4.2), AExtern #end];
 		Context.registerModuleDependency(Context.getLocalModule(), file);
 		final fields: Array<Field> = Context.getBuildFields();
 		if (!sys.FileSystem.exists(file)) return fields;
-		final xml = XmlTools.fast(File.getContent(file)).node.project;
+		final xml: haxe.xml.Access = XmlTools.fast(File.getContent(file)).node.project;
 		if (xml.hasNode.npm) {
-			final npm = xml.node.npm;
+			final npm: haxe.xml.Access = xml.node.npm;
 			for (module in npm.nodes.module) {
 				final req: String = module.innerData;
 				final name: String = module.has.name ? module.att.name : filterName(req);

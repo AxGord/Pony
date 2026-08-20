@@ -1,5 +1,6 @@
 package pony.xr;
 
+import haxe.xml.Access;
 import haxe.xml.Fast;
 import pony.ICanBeCopied;
 import pony.Logable;
@@ -26,10 +27,10 @@ class XmlRequest extends Logable<XmlRequest> implements ICanBeCopied<XmlRequest>
 	public inline function run(
 		x: Fast, initModules: Array<Class<Dynamic> -> IXRModule -> Void>, result: Dynamic -> Void, ?gxr: XmlRequest -> Void
 	): Void {
-		final xr = copy();
+		final xr: XmlRequest = copy();
 		if (gxr != null) gxr(xr);
 		for (m in xr.modules.mkv()) if (Std.is(m.value, ICanBeCopied)) for (im in initModules) im(Type.getClass(m.value), m.value);
-		final it = x.elements;
+		final it: { next: () -> Access, hasNext: () -> Bool } = x.elements;
 		if (!it.hasNext()) {
 			_error('Empty');
 			return;
@@ -42,7 +43,7 @@ class XmlRequest extends Logable<XmlRequest> implements ICanBeCopied<XmlRequest>
 	}
 
 	public function copy(): XmlRequest {
-		final o = new XmlRequest([]);
+		final o: XmlRequest = new XmlRequest([]);
 		o.modules = [
 			for (m in modules.mkv()) m.key => (Std.is(m.value, ICanBeCopied) ? untyped m.value.copy() : m.value)
 		];
@@ -60,9 +61,9 @@ class XmlRequest extends Logable<XmlRequest> implements ICanBeCopied<XmlRequest>
 	}
 
 	public function rf(x: Fast, result: Dynamic -> Void): Void {
-		final it = x.elements;
+		final it: { next: () -> Access, hasNext: () -> Bool } = x.elements;
 		if (it.hasNext()) {
-			final e = it.next();
+			final e: Access = it.next();
 			if (it.hasNext())
 				_error('Not single node');
 			else
@@ -75,7 +76,7 @@ class XmlRequest extends Logable<XmlRequest> implements ICanBeCopied<XmlRequest>
 				if (d == null)
 					result(null);
 				else if (d.charAt(0) == '%' && d.last() == '%') {
-					final d = d.substr(1, d.length - 2);
+					final d: String = d.substr(1, d.length - 2);
 					final m: V = cast modules['v'];
 					result(m.values[d]);
 				} else
@@ -86,14 +87,14 @@ class XmlRequest extends Logable<XmlRequest> implements ICanBeCopied<XmlRequest>
 	}
 
 	public function ab(x: Fast, result: Dynamic -> Dynamic -> Void): Void {
-		final it = x.elements;
+		final it: { next: () -> Access, hasNext: () -> Bool } = x.elements;
 		if (it.hasNext()) {
-			final e = it.next();
+			final e: Access = it.next();
 			if (!it.hasNext()) {
 				_error('Not two node');
 				return;
 			}
-			final e2 = it.next();
+			final e2: Access = it.next();
 			if (it.hasNext())
 				_error('Not two node');
 			else {

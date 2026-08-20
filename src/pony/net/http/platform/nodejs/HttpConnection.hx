@@ -70,7 +70,7 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 	#if (haxe_ver < 4.2) override #end
 	public function sendFile(file: File): Void {
 		writeCookie();
-		final f = file.firstExists;
+		final f: String = file.firstExists;
 		Fs.stat(f, (err: Error, stat: Stats) -> {
 			if (err != null) {
 				error(err.name);

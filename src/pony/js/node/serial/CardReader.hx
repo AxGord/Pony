@@ -43,7 +43,7 @@ class CardReader implements HasSignal {
 		final endIndex: Int = buf.indexOf('\n');
 		if (endIndex != -1) {
 			keyopened = false;
-			var s = buf.substr(0, endIndex);
+			var s: String = buf.substr(0, endIndex);
 			s = StringTools.replace(s, ' ', '');
 			eKey.dispatch(s);
 			buf = buf.substr(endIndex + 1);

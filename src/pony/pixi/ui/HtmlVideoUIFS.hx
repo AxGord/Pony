@@ -162,7 +162,7 @@ class HtmlVideoUIFS extends HtmlVideoUI {
 
 	private function generateTransition(tr: String): Void {
 		if (tr == null) return;
-		final a = tr.split(' ');
+		final a: Array<String> = tr.split(' ');
 		final t = a.shift();
 		final r = [for (e in a) '$e $t'].join(', ');
 		transition = getTransition(r);

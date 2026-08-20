@@ -1,5 +1,6 @@
 package pony.xr.modules;
 
+import haxe.xml.Access;
 import haxe.xml.Fast;
 
 /**
@@ -15,8 +16,8 @@ class Op implements IXRModule {
 			case 'sqrt':
 				xr.rf(x, function(v: Dynamic) result(Math.sqrt(number(v))));
 			case 'sum', '+':
-				final a = [for (e in x.elements) e];
-				var counter = 0;
+				final a: Array<Access> = [for (e in x.elements) e];
+				var counter: Int = 0;
 				var sum: Float = 0;
 				for (i in 0...a.length) {
 					xr._run(a[i], (v: Dynamic) -> {
@@ -31,8 +32,8 @@ class Op implements IXRModule {
 			case '/':
 				xr.ab(x, function(a: Dynamic, b: Dynamic) result(a / b));
 			case '*':
-				final a = [for (e in x.elements) e];
-				var counter = 0;
+				final a: Array<Access> = [for (e in x.elements) e];
+				var counter: Int = 0;
 				var sum: Float = 0;
 				for (i in 0...a.length) {
 					xr._run(a[i], (v: Dynamic) -> {

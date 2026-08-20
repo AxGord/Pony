@@ -34,7 +34,7 @@ abstract Interval<T:Dynamic>(Pair<T, T>) {
 	public static inline function create<V>(min: V, max: V): Interval<V> return new Pair<V, V>(min, max);
 
 	@:from public static inline function fromString(s: String): Interval<String> {
-		final a = s.split('...');
+		final a: Array<String> = s.split('...');
 		return a.length > 1 ? create(StringTools.trim(a[0]), StringTools.trim(a[1])) : create(null, StringTools.trim(a[0]));
 	}
 

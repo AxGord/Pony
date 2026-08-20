@@ -12,7 +12,7 @@ import pony.physics.nape.BodyShape;
 class BodyShapeView extends BodyBaseView<BodyShape> {
 
 	override private function drawDebug(g: Graphics): Void {
-		final bi = new BytesInput(core.sbytes);
+		final bi: BytesInput = new BytesInput(core.sbytes);
 		final pb: Byte = bi.readByte();
 		final fp: Byte = bi.readByte();
 		g.moveTo(fp.a * core.resolution, fp.b * core.resolution);

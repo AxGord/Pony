@@ -1,5 +1,6 @@
 package pony.flash;
 
+import haxe.macro.Expr.MetadataEntry;
 #if macro
 import haxe.macro.Context;
 import haxe.macro.Expr;
@@ -22,9 +23,9 @@ class FLStageBuilder {
 	macro public static function build(): Array<Field> {
 		final fields: Array<Field> = Context.getBuildFields();
 		for (f in fields) {
-			final m = f.meta.getMeta('stage', true);
+			final m: MetadataEntry = f.meta.getMeta('stage', true);
 			if (m == null) continue;
-			var allowSet = false;
+			var allowSet: Bool = false;
 			for (p in m.params) switch p.expr {
 				case EConst(CIdent('set')): allowSet = true;
 				case _:

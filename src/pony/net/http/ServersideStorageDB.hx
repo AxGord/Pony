@@ -53,7 +53,7 @@ class ServersideStorageDB implements Declarator {
 
 	public function save(): Void {
 		for (k => value1 in client) if (orig.exists(k)) {
-			final s = Serializer.run(value1);
+			final s: String = Serializer.run(value1);
 			if (s != orig[k]) table.where(client == $key && key == $k).update(['value' => (s: DBV)], function(r) if (!r) throw 'Can\'t '
 			+ 'save ' + 'storage');
 		} else {

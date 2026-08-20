@@ -1,5 +1,7 @@
 package pony.magic.builder;
 
+import haxe.macro.Expr.ExprDef;
+import haxe.macro.Expr.Position;
 #if macro
 import haxe.macro.ComplexTypeTools;
 import haxe.macro.Expr;
@@ -43,14 +45,16 @@ class NinjaBuilder {
 
 		for (field in fields) switch field.kind {
 			case FFun(fun) if (check(field)):
-				final a = extract(fun.expr);
+				final a: Array<haxe.macro.Expr> = extract(fun.expr);
 				switch Context.getLocalType().toComplexType() {
 					case TPath(p):
 						final nowUsed = [];
 						final na = [];
 						for (e in a) switch e.expr {
 							case EBinop(OpAssign, { expr: EConst(CIdent(s)), pos: _ }, e2) if (used.indexOf(s) != -1):
-								final e1 = { expr: EField({ expr: EConst(CIdent('__obj__')), pos: e2.pos }, s), pos: e2.pos };
+								final e1: { pos: Position, expr: ExprDef } = { expr: EField(
+									{ expr: EConst(CIdent('__obj__')), pos: e2.pos }, s
+								), pos: e2.pos };
 								na.push(macro $e1 = $e2);
 								nowUsed.push(s);
 							case _:
@@ -61,8 +65,12 @@ class NinjaBuilder {
 						else
 							macro var __obj__ = new $p());
 						for (u in used) if (nowUsed.indexOf(u) == -1) {
-							final e1 = { expr: EField({ expr: EConst(CIdent('__obj__')), pos: field.pos }, u), pos: field.pos };
-							final e2 = { expr: EField({ expr: EConst(CIdent('this')), pos: field.pos }, u), pos: field.pos };
+							final e1: { pos: Position, expr: ExprDef } = { expr: EField(
+								{ expr: EConst(CIdent('__obj__')), pos: field.pos }, u
+							), pos: field.pos };
+							final e2: { pos: Position, expr: ExprDef } = { expr: EField(
+								{ expr: EConst(CIdent('this')), pos: field.pos }, u
+							), pos: field.pos };
 							na.push(macro $e1 = $e2);
 						}
 						na.push(macro return __obj__);

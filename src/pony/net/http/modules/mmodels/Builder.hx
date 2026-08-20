@@ -1,5 +1,6 @@
 package pony.net.http.modules.mmodels;
 
+import haxe.macro.Type.ClassType;
 #if macro
 import haxe.macro.Expr;
 import haxe.macro.Context;
@@ -17,7 +18,7 @@ class Builder {
 
 	macro public static function build(): Array<Field> {
 		final fields: Array<Field> = Context.getBuildFields();
-		final cur = Context.getLocalClass().get();
+		final cur: ClassType = Context.getLocalClass().get();
 		if (cur.name == 'Model') return fields;
 		for (f in fields) switch (f.name) {
 			case 'many', 'insert', 'single', 'update', 'delete': if (!f.meta.exists(m -> m.name == 'action'))

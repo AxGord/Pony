@@ -29,7 +29,7 @@ class TurningFree extends Turning {
 		if (lmax != null) core.maxAngle = lmax.rotation;
 		core.currentAngle = handle.rotation;
 		handle.mouseEnabled = false;
-		final t = new Touchable(this);
+		final t: Touchable = new Touchable(this);
 		t.onDown << downHandler;
 	}
 

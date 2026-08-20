@@ -1,6 +1,7 @@
 package pony.net.http.platform.js;
 
 import js.Browser;
+import js.html.Element;
 import js.html.Node;
 import pony.Queue;
 
@@ -25,7 +26,7 @@ class HttpTools {
 			cb(r);
 			getJsonQueue.next();
 		});
-		final script = Browser.document.createElement('SCRIPT');
+		final script: Element = Browser.document.createElement('SCRIPT');
 		url += '&callback=ponyCallbackFunc';
 		untyped script.src = url;
 		snode = Browser.document.getElementsByTagName('head')[0].appendChild(script);

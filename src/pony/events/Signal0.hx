@@ -27,7 +27,7 @@ import pony.events.Listener0;
 
 	@:op(A || B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function or(s: Signal0): Signal0 {
-		final ns = new Event0();
+		final ns: Event0 = new Event0();
 		add(ns);
 		s.add(ns);
 		return ns;
@@ -35,7 +35,7 @@ import pony.events.Listener0;
 
 	@:op(A | B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function orOnce(s: Signal0): Signal0 {
-		final ns = new Event0();
+		final ns: Event0 = new Event0();
 		once(ns);
 		s.once(ns);
 		return ns;
@@ -53,7 +53,7 @@ import pony.events.Listener0;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function convert0(f: Event0 -> Void): Signal0 {
-		final ns = new Event0();
+		final ns: Event0 = new Event0();
 		add(Listener0.f0(f.bind(ns)));
 		return ns;
 	}
@@ -106,7 +106,7 @@ import pony.events.Listener0;
 	}
 
 	@:op(A & B) public function andOnce(s: Signal0): Signal0 {
-		final ns = new Event0();
+		final ns: Event0 = new Event0();
 		var listener1: Listener0 = cast null;
 		var listener2: Listener0 = cast null;
 		listener1 = Listener0.f0(() -> {
@@ -123,7 +123,7 @@ import pony.events.Listener0;
 	}
 
 	@:op(A && B) public function and(s: Signal0): Signal0 {
-		final ns = new Event0();
+		final ns: Event0 = new Event0();
 		var start: Listener0 = cast null;
 		var listener1: Listener0 = cast null;
 		var listener2: Listener0 = cast null;
@@ -206,7 +206,7 @@ import pony.events.Listener0;
 
 	@:from #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function fromSignal1<T1>(s: Signal1<T1>): Signal0 {
-		final ns = new Event0();
+		final ns: Event0 = new Event0();
 		s.add(ns);
 		return ns;
 	}

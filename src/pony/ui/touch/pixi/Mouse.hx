@@ -60,17 +60,17 @@ class Mouse {
 	}
 
 	private static function downHandler(e: InteractionEvent): Void {
-		final p = correction(e.data.global.x, e.data.global.y);
+		final p: Point<Float> = correction(e.data.global.x, e.data.global.y);
 		M.downHandler(p.x, p.y, untyped e.data.originalEvent.button);
 	}
 
 	private static function upHandler(e: InteractionEvent): Void {
-		final p = correction(e.data.global.x, e.data.global.y);
+		final p: Point<Float> = correction(e.data.global.x, e.data.global.y);
 		M.upHandler(p.x, p.y, untyped e.data.originalEvent.button);
 	}
 
 	private static function moveHandler(e: InteractionEvent): Void {
-		final p = correction(e.data.global.x, e.data.global.y);
+		final p: Point<Float> = correction(e.data.global.x, e.data.global.y);
 		M.moveHandler(p.x, p.y);
 	}
 
