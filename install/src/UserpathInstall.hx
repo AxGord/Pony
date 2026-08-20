@@ -93,7 +93,7 @@ class UserpathInstall extends BaseInstall {
 				if (c.indexOf(ENVKEY) == -1) {
 					File.saveContent(pFile, '$c\n' + data.join('\n'));
 				} else {
-					final d1 = c.split('$ENVKEY=');
+					final d1: Array<String> = c.split('$ENVKEY=');
 					final d2: Array<String> = d1[1].split('\n');
 					d2.shift();
 					final s: String = '${d1[0] + ENVKEY}=$BIN\n' + d2.join('\n');
