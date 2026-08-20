@@ -16,7 +16,7 @@ class HttpTools {
 
 	public static function getJson(url: String, cb: Dynamic -> Void): Void getJsonQueue.call(url, cb);
 
-	private static inline function regcb(cb: Dynamic -> Void) untyped Browser.window.ponyCallbackFunc = cb;
+	private static inline function regcb(cb: Dynamic -> Void): Void untyped Browser.window.ponyCallbackFunc = cb;
 
 	private static function _getJson(url: String, cb: Dynamic -> Void): Void {
 		regcb((r: Dynamic) -> {

@@ -45,22 +45,22 @@ class ExtendedPropertiesTestHelper implements ExtendedProperties {
 
 	@prop public inline function value(): Int return 3;
 
-	public function tget() return p;
+	public function tget(): Int return p;
 
-	public function vget(p: Int = 3) return p;
+	public function vget(p: Int = 3): Int return p;
 
-	public function tvget(p: Int = 3) return this.p;
+	public function tvget(p: Int = 3): Int return this.p;
 
-	public function dget() {
+	public function dget(): Int {
 		return (12: Int);
 	}
 
-	public function fget() {
+	public function fget(): Int {
 		function p(v) return v;
 		return p(55);
 	}
 
-	public function ffget() {
+	public function ffget(): Int {
 		function f(p) return p;
 		return f(25);
 	}

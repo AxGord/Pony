@@ -59,7 +59,7 @@ import pony.time.TimeInterval;
 
 	public inline function getEffect<T:Effect>(etype: Class<T>): T return channel.getEffect(etype);
 
-	public inline function removeEffect(e: Effect) channel.removeEffect(e);
+	public inline function removeEffect(e: Effect): Void channel.removeEffect(e);
 
 	public function play(pos: TimeInterval, loop: Bool, volume: Float): Void {
 		completed = false;
@@ -79,7 +79,7 @@ import pony.time.TimeInterval;
 		eComplete.dispatch(this);
 	}
 
-	private inline function start() channel.position = timer.time.min.totalMs / 1000;
+	private inline function start(): Void channel.position = timer.time.min.totalMs / 1000;
 
 	private inline function getMax(pos: TimeInterval): Int return (pos.max == 0 ? Std.int(channel.duration * 1000) : pos.max) - END_OFFSET;
 

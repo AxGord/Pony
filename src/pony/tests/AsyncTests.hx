@@ -38,7 +38,7 @@ class AsyncTests extends TestCase {
 		assertList.push({ a: a, b: b, pos: infos });
 	}
 
-	public static function setFlag(n: Int, ?infos: PosInfos) {
+	public static function setFlag(n: Int, ?infos: PosInfos): Void {
 		#if cs
 		pony.cs.Synchro.lock(isRead, function() {
 		#end
