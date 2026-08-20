@@ -52,7 +52,7 @@ typedef NpmConfig = {
 
 	override private function runNode(cfg: NpmConfig): Void {
 		// var, not final: sw() is an inline abstract member that writes `this`
-		var cwd = new Cwd(cfg.path, true); // noqa: prefer-final
+		var cwd: Cwd = new Cwd(cfg.path, true); // noqa: prefer-final
 		cwd.sw();
 		if (cfg.name != null && cfg.main != null) {
 			final a: Array<String> = cfg.name.split('@');

@@ -17,7 +17,7 @@ class Lines {
 	}
 
 	private static function tryShow(lang: String, ext: String): Void {
-		final p = getCount(ext);
+		final p: pony.Pair<Int, Int> = getCount(ext);
 		if (p.b > 0) Sys.println('$lang files total lines count: ${p.a} in ${p.b} files');
 	}
 

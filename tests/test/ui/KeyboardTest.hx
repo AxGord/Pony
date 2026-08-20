@@ -26,8 +26,8 @@ class KeyboardTest {
 
 	@Test
 	public function down(): Void {
-		var kb = false;
-		var kc = false;
+		var kb: Bool = false;
+		var kc: Bool = false;
 		Keyboard.down.sub(Key.B).add(function() kb = true);
 		Keyboard.down.sub(Key.C).add(function() kc = true);
 		helper._down(Key.B);
@@ -40,8 +40,8 @@ class KeyboardTest {
 
 	@Test
 	public function up(): Void {
-		var kb = false;
-		var kc = false;
+		var kb: Bool = false;
+		var kc: Bool = false;
 		Keyboard.up.sub(Key.B).add(function() kb = true);
 		Keyboard.up.sub(Key.C).add(function() kc = true);
 		helper._up(Key.B);
@@ -54,8 +54,8 @@ class KeyboardTest {
 
 	@Test
 	public function click(): Void {
-		var kb = false;
-		var kc = false;
+		var kb: Bool = false;
+		var kc: Bool = false;
 		Keyboard.click.sub(Key.B).add(function() kb = true);
 		Keyboard.click.sub(Key.C).add(function() kc = true);
 		helper._down(Key.B);

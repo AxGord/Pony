@@ -39,7 +39,7 @@ class Main {
 		#end
 		trace('Zero part');
 		var serv: SocketServer = null;
-		final cl = new SocketClient(13579, 100);
+		final cl: SocketClient = new SocketClient(13579, 100);
 
 		cl.onLog << Log.trace;
 		cl.onError << Log.trace;
@@ -63,14 +63,14 @@ class Main {
 
 	private static function firstTest(): Void {
 		trace('First part');
-		final server = createServer(6001);
+		final server: SocketServer = createServer(6001);
 		for (i in 0...partCount) Timer.delay(createClient.bind(i), delay + delay * i);
 
 		AsyncTests.wait(0...blockCount, function() {
 			trace('Second part');
 			server.destroy();
 
-			final server = createServer(6002);
+			final server: SocketServer = createServer(6002);
 			for (i in blockCount ... blockCount + partCount) Timer.delay(createClient.bind(i), delay + delay * (i - blockCount));
 
 			AsyncTests.wait(blockCount ... testCount, function() {
@@ -83,14 +83,14 @@ class Main {
 
 	private static function createServer(aPort: Int): SocketServer {
 		port = aPort;
-		final server = new SocketServer(aPort);
+		final server: SocketServer = new SocketServer(aPort);
 
 		server.onConnect << function(cl: ISocketClient): Void {
 			cl.sendString('hi world');
 		}
 
 		server.onData << function(bi: BytesInput): Void {
-			final i = bi.readInt32();
+			final i: Int = bi.readInt32();
 			AsyncTests.equals('hello user', bi.readStr());
 			AsyncTests.setFlag(partCount + i);
 		}
@@ -99,10 +99,10 @@ class Main {
 	}
 
 	private static function createClient(i: Int): SocketClient {
-		var client = new SocketClient(port);
+		var client: SocketClient = new SocketClient(port);
 		client.onString < function(s: String) {
 			AsyncTests.equals(s, 'hi world');
-			final bo = new BytesOutput();
+			final bo: BytesOutput = new BytesOutput();
 			bo.writeInt32(i);
 			bo.writeStr('hello user');
 			client.send(bo);

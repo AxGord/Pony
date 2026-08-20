@@ -116,13 +116,13 @@ private typedef TPUnit = {
 					case _: f;
 				}
 
-			final datafile = '${unit.output + (first ? '' : '_$s')}.$outExt';
+			final datafile: String = '${unit.output + (first ? '' : '_$s')}.$outExt';
 			command.push('--data');
 			command.push(datafile);
 
 			final tExt: String = s == 'png8' ? 'png' : s;
 
-			final sheetfile = '${unit.output}.$tExt';
+			final sheetfile: String = '${unit.output}.$tExt';
 			command.push('--sheet');
 			command.push(sheetfile);
 

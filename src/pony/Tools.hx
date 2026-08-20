@@ -123,8 +123,8 @@ class Tools {
 			case TEnum(t):
 				if (t != Type.getEnum(b)) return false;
 				if (Type.enumIndex(a) != Type.enumIndex(b)) return false;
-				final a = Type.enumParameters(a);
-				final b = Type.enumParameters(b);
+				final a: Array<Dynamic> = Type.enumParameters(a);
+				final b: Array<Dynamic> = Type.enumParameters(b);
 				if (a.length != b.length) return false;
 				for (i in 0...a.length) if (!equal(a[i], b[i], maxDepth - 1)) return false;
 				return true;
@@ -431,7 +431,7 @@ class Tools {
 	public static function parsePrefixObjects(a: Dynamic<String>, delimiter: String = '_'): Dynamic<Dynamic> {
 		final result: Dynamic<Dynamic> = {};
 		for (f in a.fields()) {
-			final d = f.split(delimiter);
+			final d: Array<String> = f.split(delimiter);
 			var obj: Dynamic<Dynamic> = result;
 			for (i in 0...d.length - 1) {
 				if (obj.hasField(d[i])) {
@@ -581,7 +581,7 @@ class ArrayTools {
 		return {
 			hasNext: it.hasNext,
 			next: function() {
-				final p = new Pair(i, it.next());
+				final p: Pair<Int, T> = new Pair(i, it.next());
 				i++;
 				return p;
 			}
@@ -622,11 +622,11 @@ class ArrayTools {
 			return swap(array, b, a);
 		else if (a == b)
 			return array;
-		final v1 = array[a];
-		final v2 = array[b];
-		final p1 = a == 0 ? [] : array.slice(0, a);
-		final p2 = array.slice(a + 1, b);
-		final p3 = array.slice(b + 1);
+		final v1: T = array[a];
+		final v2: T = array[b];
+		final p1: Array<T> = a == 0 ? [] : array.slice(0, a);
+		final p2: Array<T> = array.slice(a + 1, b);
+		final p3: Array<T> = array.slice(b + 1);
 		p1.push(v2);
 		p2.push(v1);
 		return p1.concat(p2).concat(p3);

@@ -47,7 +47,7 @@ class Build extends Section {
 			prepare.addChild(XmlTools.node(targetKey(), output()));
 			for (cp in cps) prepare.addChild(XmlTools.node('cp', cp));
 			for (name in libs.keys()) {
-				final v = libs[name];
+				final v: Null<String> = libs[name];
 				prepare.addChild(XmlTools.node('lib', v == null ? name : '$name:$v'));
 			}
 			if (dce != null) prepare.addChild(XmlTools.node('dce', dce));
@@ -72,7 +72,7 @@ class Build extends Section {
 			add(targetKey(), output());
 			for (cp in cps) add('cp', cp);
 			for (name in libs.keys()) {
-				final v = libs[name];
+				final v: Null<String> = libs[name];
 				add('lib', v == null ? name : '$name $v');
 			}
 			if (dce != null) add('dce', dce);

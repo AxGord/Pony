@@ -26,7 +26,7 @@ class TplTest {
 	@Test
 	public function test(): Void {
 		final t: Tpl = new Tpl(this, '123 < _ f=", ">%id%</_f>  e% qwe = "15%df% <_n2>weg</_n2>6" %');
-		var flag = false;
+		var flag: Bool = false;
 		t.gen(null, null, function(r: String): Void {
 			Assert.areEqual('123 0, 1, 2  e15df n26', r);
 			flag = true;
@@ -40,7 +40,7 @@ class TplTest {
 	public function dir(): Void {
 		final d: Dir = '${Tools.currentDir()}tpls';
 		final td: TplDir = new TplDir(d, this);
-		var flag = false;
+		var flag: Bool = false;
 		td.gen('index', null, null, function(r: String): Void {
 			Assert.areEqual('hello world', r);
 			flag = true;
@@ -53,8 +53,8 @@ class TplTest {
 		final d: Dir = '${Tools.currentDir()}system';
 		final s: TplSystem = new TplSystem(d, this);
 		// s.gen('index', null, function(r:String) trace(r));
-		var first = false;
-		var second = false;
+		var first: Bool = false;
+		var second: Bool = false;
 		s.gen('index', null, function(r: String): Void {
 			Assert.areEqual('hello world :=> * ^world^ *, world, ^world^ <= world => 123, world, ^world^ <= in folder world', r);
 			first = true;

@@ -10,7 +10,7 @@ class DTimerTest {
 
 	@Test
 	public function delay(): Void {
-		var ok = false;
+		var ok: Bool = false;
 		DTimer.delay('01:00', function() ok = true);
 		DeltaTime.testRun('02:00');
 		Assert.isTrue(ok);
@@ -18,7 +18,7 @@ class DTimerTest {
 
 	@Test
 	public function repeat(): Void {
-		var c = 0;
+		var c: Int = 0;
 		DTimer.repeat('30sec', function() c++);
 		DeltaTime.testRun('01:50');
 		Assert.areEqual(c, 3);
@@ -26,8 +26,8 @@ class DTimerTest {
 
 	@Test
 	public function backTimerShort(): Void {
-		var c = 0;
-		final t = DTimer.createTimer('2sec...5sec', 3);
+		var c: Int = 0;
+		final t: DTimer = DTimer.createTimer('2sec...5sec', 3);
 		t.complete << function() c++;
 		t.start();
 		DeltaTime.testRun('10sec');
@@ -36,8 +36,8 @@ class DTimerTest {
 
 	@Test
 	public function backTimerLong(): Void {
-		var c = 0;
-		final t = DTimer.createTimer('2sec...5sec', 3);
+		var c: Int = 0;
+		final t: DTimer = DTimer.createTimer('2sec...5sec', 3);
 		t.complete << function() c++;
 		t.start();
 		DeltaTime.testRun('10h');

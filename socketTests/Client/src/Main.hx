@@ -21,7 +21,7 @@ class Main {
 		stage.align = StageAlign.TOP_LEFT;
 		// entry point
 
-		final cl = new SocketClient(13579, 300);
+		final cl: SocketClient = new SocketClient(13579, 300);
 		cl.onConnect << function() {
 			trace('Connected');
 		};

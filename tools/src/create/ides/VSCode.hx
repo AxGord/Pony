@@ -175,7 +175,7 @@ class VSCode {
 			}
 		});
 
-		final data = {
+		final data: { version: String, tasks: Array<Any> } = {
 			version: '2.0.0',
 			tasks: tasks
 		};
@@ -411,7 +411,7 @@ class VSCode {
 	}
 
 	private static function saveConfig(configurations: Array<Any>): Void {
-		final data = {
+		final data: { version: String, configurations: Array<Any> } = {
 			version: '0.2.0',
 			configurations: configurations
 		};

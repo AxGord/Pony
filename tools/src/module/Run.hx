@@ -70,7 +70,7 @@ typedef RunConfig = {
 				p = '$libPath$p';
 			}
 			// var, not final: sw() is an inline abstract member that writes `this`
-			var cwd = new Cwd(p); // noqa: prefer-final
+			var cwd: Cwd = new Cwd(p); // noqa: prefer-final
 			if (p != '') cwd.sw();
 
 			final args = cmd.cmd.split(' ');

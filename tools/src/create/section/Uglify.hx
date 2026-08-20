@@ -27,17 +27,17 @@ class Uglify extends Section {
 		if (libcache) set('libcache', 'true');
 
 		if (c || m || releaseLibs.length > 0) {
-			final release = Xml.createElement('release');
+			final release: Xml = Xml.createElement('release');
 			if (c) release.addChild(Xml.createElement('c'));
 			if (m) release.addChild(Xml.createElement('m'));
 			for (lib in releaseLibs) release.addChild(XmlTools.node('input', lib));
 			xml.addChild(release);
 		}
 
-		final debug = Xml.createElement('debug');
+		final debug: Xml = Xml.createElement('debug');
 		for (lib in debugLibs) debug.addChild(XmlTools.node('input', lib));
 
-		final sm = Xml.createElement('sourcemap');
+		final sm: Xml = Xml.createElement('sourcemap');
 		sm.addChild(XmlTools.node('input', '$outputPath$outputFile.map'));
 		sm.addChild(XmlTools.node('output', '$outputPath$outputFile.map'));
 		sm.addChild(XmlTools.node('url', '$outputFile.map'));

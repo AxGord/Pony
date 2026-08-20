@@ -11,7 +11,7 @@ class TumblerTest {
 	public function test(): Void {
 		var on: Bool = false;
 		var off: Bool = false;
-		final t = new Tumbler();
+		final t: Tumbler = new Tumbler();
 		t.onEnable.add(function() on = true);
 		t.onDisable.add(function() off = true);
 		t.enabled = false;

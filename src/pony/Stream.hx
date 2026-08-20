@@ -29,7 +29,7 @@ class Stream<T> {
 	public inline function errorListener(v: Dynamic): Void error(v);
 
 	public function map<R>(f: T -> R): Stream<R> {
-		final s = new Stream<R>();
+		final s: Stream<R> = new Stream<R>();
 		take(function(v: T) s.dataListener(f(v)), s.endListener, s.errorListener);
 		return s;
 	}

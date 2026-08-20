@@ -1,6 +1,7 @@
 package create.targets;
 
 import pony.fs.Dir;
+import pony.fs.Unit;
 import pony.text.TextTools;
 
 /**
@@ -19,7 +20,7 @@ class Cordova {
 		project.build.outputPath = 'www/';
 		project.server.httpPath = 'www/';
 
-		final c = ('.': Dir).content();
+		final c: Array<Unit> = ('.': Dir).content();
 		if (c.length == 1 && c[0].name == DSS) {
 			Sys.println('Remove $DSS');
 			c[0].delete(); // Can't create cordova if dir have .DS_Store

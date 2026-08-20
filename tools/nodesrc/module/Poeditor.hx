@@ -38,7 +38,7 @@ private typedef Lang = {
 							lang.export({ type: 'key_value_json' }).then(function(v) {
 								final file: String = '${cfg.path + cfg.list[lang.code]}.json';
 								log('Update lang file: $file');
-								final f = Fs.createWriteStream(file);
+								final f: Dynamic = Fs.createWriteStream(file);
 								Https.get(v, function(response: IncomingMessage) {
 									response.once('end', tasks.end);
 									response.pipe(f);

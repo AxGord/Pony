@@ -99,7 +99,7 @@ class ServerRemoteInstanse {
 	}
 
 	private function getInitFileHandler(): Void {
-		final file = 'init.zip';
+		final file: String = 'init.zip';
 		Sys.println('Send file: $file');
 		protocol.file.sendFile(file);
 	}

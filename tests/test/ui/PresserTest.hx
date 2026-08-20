@@ -10,8 +10,8 @@ class PresserTest {
 
 	@Test
 	public function delta(): Void {
-		var c = 0;
-		final p = new Presser(function() c++);
+		var c: Int = 0;
+		final p: Presser = new Presser(function() c++);
 		Assert.areEqual(c, 0);
 		DeltaTime.testRun(550);
 		Assert.areEqual(c, 1);

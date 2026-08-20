@@ -30,7 +30,7 @@ abstract ThreadTasks(UInt) {
 			f(1);
 		} else if (count > 1) {
 			// var, not final: add() is an inline abstract member that writes `this`
-			var t = new ThreadTasks(); // noqa: prefer-final
+			var t: ThreadTasks = new ThreadTasks(); // noqa: prefer-final
 			while (count-- > 0) t.add(f);
 			t.wait();
 		}
@@ -89,7 +89,7 @@ class ThreadTasksWhile {
 		if (count == 1) {
 			while (f(Tools.nullFunction0, Tools.nullFunction0)) {}
 		} else if (count > 1) {
-			final t = new ThreadTasksWhile();
+			final t: ThreadTasksWhile = new ThreadTasksWhile();
 			while (count-- > 0) t.add(f);
 			t.wait();
 			if (t.error) Sys.exit(1);

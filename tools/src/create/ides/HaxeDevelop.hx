@@ -13,11 +13,11 @@ class HaxeDevelop {
 		name: String, main: String, libs: Map<String, String>, cps: Array<String>, ponycmd: String = 'build'
 	): Void {
 		if (name == null) return;
-		final fdname = '$name.hxproj';
+		final fdname: String = '$name.hxproj';
 		if (!FileSystem.exists(fdname)) {
-			final fcmd = 'build.cmd';
+			final fcmd: String = 'build.cmd';
 
-			final root = Xml.createElement('project');
+			final root: Xml = Xml.createElement('project');
 			root.set('version', '2');
 
 			root.addChild(Xml.createComment(' Output SWF options '));
@@ -35,7 +35,7 @@ class HaxeDevelop {
 			]));
 
 			root.addChild(Xml.createComment(' Other classes to be compiled into your SWF '));
-			final clp = XmlTools.mapToNode('classpaths', 'class', [for (cp in cps) 'path' => cp]);
+			final clp: Xml = XmlTools.mapToNode('classpaths', 'class', [for (cp in cps) 'path' => cp]);
 			clp.addChild(Xml.createComment('example: <class path="..." />'));
 			root.addChild(clp);
 
@@ -50,7 +50,7 @@ class HaxeDevelop {
 			]));
 
 			root.addChild(Xml.createComment(' haxelib libraries '));
-			final libs = XmlTools.mapToNode('haxelib', 'library', [
+			final libs: Xml = XmlTools.mapToNode('haxelib', 'library', [
 				for (lib in libs.keys()) 'name' => lib + (libs[lib] == null ? '' : ':${libs[lib]}')
 			]);
 			libs.addChild(Xml.createComment('example: <library name="..." />'));

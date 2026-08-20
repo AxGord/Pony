@@ -49,7 +49,7 @@ private class Library {
 	}
 
 	public function xml(): Xml {
-		final unit = Xml.createElement('unit');
+		final unit: Xml = Xml.createElement('unit');
 		unit.set('url', url);
 		if (version != null) unit.set('v', version);
 		if (check != null) unit.set('check', check);

@@ -1,3 +1,5 @@
+import haxe.io.Bytes;
+import haxe.io.Input;
 import sys.FileSystem;
 import sys.io.File;
 import sys.io.Process;
@@ -51,12 +53,12 @@ class UserpathInstall extends BaseInstall {
 				return;
 			}
 
-			final stdout = new Process('cmd.exe', ['/C', 'install\\user_path.cmd']).stdout;
-			final data = stdout.readAll();
-			final path = StringTools.trim(data.toString());
+			final stdout: Input = new Process('cmd.exe', ['/C', 'install\\user_path.cmd']).stdout;
+			final data: Bytes = stdout.readAll();
+			final path: String = StringTools.trim(data.toString());
 
 			if (path != '') {
-				final np = '${path + (path.substr(-1) == ';' ? '' : ';')}%$ENVKEY%';
+				final np: String = '${path + (path.substr(-1) == ';' ? '' : ';')}%$ENVKEY%';
 				setx('PATH', np);
 				setx(ENVKEY, BIN);
 			} else {
@@ -74,7 +76,7 @@ class UserpathInstall extends BaseInstall {
 		final data: Array<String> = ['export $ENVKEY=$BIN', 'export PATH=$$PATH:$$$ENVKEY'];
 
 		if (installNodePath && Utils.nodeExists) {
-			final line = 'export NODE_PATH=${Utils.npmPath}';
+			final line: String = 'export NODE_PATH=${Utils.npmPath}';
 			if (installPonyPath) {
 				data.unshift(line);
 			} else {
@@ -86,14 +88,14 @@ class UserpathInstall extends BaseInstall {
 
 		for (pFile in pFiles) {
 			if (FileSystem.exists(pFile)) {
-				final c = File.getContent(pFile);
+				final c: String = File.getContent(pFile);
 				if (c.indexOf(ENVKEY) == -1) {
 					File.saveContent(pFile, '$c\n' + data.join('\n'));
 				} else {
 					final d1 = c.split('$ENVKEY=');
-					final d2 = d1[1].split('\n');
+					final d2: Array<String> = d1[1].split('\n');
 					d2.shift();
-					final s = '${d1[0] + ENVKEY}=$BIN\n' + d2.join('\n');
+					final s: Dynamic = '${d1[0] + ENVKEY}=$BIN\n' + d2.join('\n');
 					File.saveContent(pFile, s);
 				}
 			} else {
@@ -105,7 +107,7 @@ class UserpathInstall extends BaseInstall {
 	public static function saveNpmLine(line: String, pFiles: Array<String>): Void {
 		for (pFile in pFiles) {
 			if (FileSystem.exists(pFile)) {
-				final c = File.getContent(pFile);
+				final c: String = File.getContent(pFile);
 				if (c.indexOf(line) == -1) {
 					File.saveContent(pFile, '$c\n$line\n');
 				}

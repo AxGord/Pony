@@ -16,10 +16,10 @@ class Haxelib {
 	public static function run(command: String, args: Array<String>): Void {
 		switch command {
 			case 'submit':
-				final a = args.shift();
+				final a: Null<String> = args.shift();
 				submit(a, args.join(' '));
 			case 'create':
-				final a = args.shift();
+				final a: Null<String> = args.shift();
 				create(a, args.join(' '));
 			case 'micro':
 				upver(2, args.join(' '));
@@ -38,7 +38,7 @@ class Haxelib {
 
 	private static function upver(index: Int, desc: String): Void {
 		final jdata = getData();
-		final ver = parseVersion(jdata.version);
+		final ver: Array<Int> = parseVersion(jdata.version);
 		ver[index]++;
 		for (i in index + 1...ver.length) ver[i] = 0;
 		_submit(jdata, ver.join('.'), desc);
@@ -49,7 +49,7 @@ class Haxelib {
 			Utils.error('$haxelibFile not exists');
 			return null;
 		}
-		final tdata = sys.io.File.getContent(haxelibFile);
+		final tdata: String = sys.io.File.getContent(haxelibFile);
 		final jdata = haxe.Json.parse(tdata);
 		return jdata;
 	}
@@ -67,8 +67,8 @@ class Haxelib {
 			return;
 		}
 
-		final oldver = parseVersion(jdata.version);
-		final newver = parseVersion(version);
+		final oldver: Array<Int> = parseVersion(jdata.version);
+		final newver: Array<Int> = parseVersion(version);
 
 		if (!(newver[0] > oldver[0] || newver[1] > oldver[1] || newver[2] > oldver[2])) {
 			Utils.error('Wrong new version');
@@ -95,9 +95,9 @@ class Haxelib {
 	}
 
 	private static function upload(): Void {
-		final data = sys.io.File.getContent(listFile).split('\n');
+		final data: Array<String> = sys.io.File.getContent(listFile).split('\n');
 		if (data.indexOf(haxelibFile) == -1) data.push(haxelibFile);
-		final zip = new pony.ZipTool(outputFile, 0);
+		final zip: pony.ZipTool = new pony.ZipTool(outputFile, 0);
 		zip.onLog << Sys.println;
 		zip.onError << function(err: String) throw err;
 		zip.writeList(data).end();

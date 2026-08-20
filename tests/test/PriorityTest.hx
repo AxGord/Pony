@@ -233,7 +233,7 @@ class PriorityTest {
 	public function many(): Void {
 		final p: Priority<Int> = new Priority<Int>();
 		for (i in 0...500) p.add(i, 10000 + i);
-		var i = 0;
+		var i: Int = 0;
 		for (e in p) Assert.areEqual(e, i++);
 	}
 

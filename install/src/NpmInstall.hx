@@ -42,7 +42,7 @@
 		if (Config.OS == TargetOS.Windows) {
 			final winmap: Map<String, String> = [
 				for (e in Config.settings.winnpm) {
-					final a = e.split('@');
+					final a: Array<String> = e.split('@');
 					a[0] => a[1];
 				}
 			];

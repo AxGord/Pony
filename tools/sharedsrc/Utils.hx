@@ -73,7 +73,7 @@ class Utils {
 
 	public static function dirIsGit(path: String): Bool {
 		// var, not final: sw() is an inline abstract member that writes `this`
-		var cwd = new Cwd(path); // noqa: prefer-final
+		var cwd: Cwd = new Cwd(path); // noqa: prefer-final
 		cwd.sw();
 		final r: Bool = try {
 			final p: Process = new Process('git', ['rev-parse', '--is-inside-work-tree']);
@@ -92,7 +92,7 @@ class Utils {
 		final path: String = a.b == '' ? '' : a.a;
 		final file: String = a.b == '' ? a.a : a.b;
 		// var, not final: sw() is an inline abstract member that writes `this`
-		var cwd = new Cwd(path); // noqa: prefer-final
+		var cwd: Cwd = new Cwd(path); // noqa: prefer-final
 		cwd.sw();
 		final p: Process = new Process('git', ['hash-object', file]);
 		var s: String = '';
@@ -144,9 +144,9 @@ class Utils {
 	}
 
 	public static function saveJson(file: String, jdata: Any): Void {
-		var tdata = haxe.Json.stringify(jdata, '\n');
+		var tdata: String = haxe.Json.stringify(jdata, '\n');
 		while (true) {
-			final ndata = StringTools.replace(tdata, '\n\n', '\n');
+			final ndata: String = StringTools.replace(tdata, '\n\n', '\n');
 			if (ndata == tdata) {
 				tdata = ndata;
 				break;

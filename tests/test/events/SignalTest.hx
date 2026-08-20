@@ -24,7 +24,7 @@ class SignalTest {
 	@Test
 	public function clearDispath(): Void {
 		var r: String;
-		final e = new Event0();
+		final e: Event0 = new Event0();
 		final s: Signal0 = e;
 		s.add(function() r = 'ok');
 		e.dispatch();
@@ -37,7 +37,7 @@ class SignalTest {
 
 		var c: Int = 0;
 		final f: Void -> Void = function() c++;
-		final e = new Event0();
+		final e: Event0 = new Event0();
 		final s: Signal0 = e;
 		s.add(f);
 		e.dispatch();
@@ -50,8 +50,8 @@ class SignalTest {
 	@Test
 	public function removeAll(): Void {
 		var c: Int = 0;
-		final f = function() c++;
-		final e = new Event0();
+		final f: () -> Void = function() c++;
+		final e: Event0 = new Event0();
 		final s: Signal0 = e;
 		s.add(f);
 		e.dispatch();
@@ -93,7 +93,7 @@ class SignalTest {
 	@Test
 	public function s0(): Void {
 		var f: Bool = false;
-		final e = new Event0();
+		final e: Event0 = new Event0();
 		final s: Signal0 = e;
 		s.add(function() f = true);
 		e.dispatch();

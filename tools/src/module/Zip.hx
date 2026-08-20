@@ -35,7 +35,7 @@ class Zip extends CfgModule<ZipConfig> {
 
 	override private function runNode(cfg: ZipConfig): Void {
 		log('Archive name: ${cfg.output}');
-		final zip = new pony.ZipTool(
+		final zip: pony.ZipTool = new pony.ZipTool(
 			Utils.replaceBuildDate(cfg.output), cfg.prefix, cfg.compressLvl, cfg.root == null ? null : Utils.replaceBuildDate(cfg.root)
 		);
 		if (cfg.log) zip.onLog << log;

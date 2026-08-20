@@ -11,7 +11,7 @@ class PoolTest {
 	@Test
 	public function testTypedPool(): Void {
 		Obj.counter = 0;
-		final p = new TypedPool<Obj>();
+		final p: TypedPool<Obj> = new TypedPool<Obj>();
 		final a: Obj = p.get();
 		Assert.areEqual(a.id, 0);
 		final b: Obj = p.get();
@@ -24,7 +24,7 @@ class PoolTest {
 	@Test
 	public function testDynPool(): Void {
 		Obj.counter = 0;
-		final p = new Pool<Obj>(Obj);
+		final p: Pool<Obj> = new Pool<Obj>(Obj);
 		final a: Obj = p.get();
 		Assert.areEqual(a.id, 0);
 		final b: Obj = p.get();

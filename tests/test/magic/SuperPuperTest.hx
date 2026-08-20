@@ -9,7 +9,7 @@ class SuperPuperTest {
 
 	@Test
 	public function testExample(): Void {
-		final obj = new SecondChildClass();
+		final obj: SecondChildClass = new SecondChildClass();
 		var result = null;
 		obj.test('Hello', function(r) result = r);
 		Assert.areEqual(result, 'Hello world!');

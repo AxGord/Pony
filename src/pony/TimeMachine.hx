@@ -26,7 +26,7 @@ class TimeMachine<T> {
 	}
 
 	public function fullReset(): Void {
-		final l = states.length > 0;
+		final l: Bool = states.length > 0;
 		states = [];
 		reset();
 		if (l) onNotCanUndo();

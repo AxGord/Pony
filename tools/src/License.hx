@@ -34,7 +34,7 @@ class License {
 						}
 					}
 					if (allowRemove) {
-						var error = true;
+						var error: Bool = true;
 						for (line in lines) {
 							n++;
 							if (StringTools.trim(line) == '**/') {
@@ -59,16 +59,16 @@ class License {
 						return;
 					}
 				}
-				final data = file.content.split('\n');
+				final data: Array<String> = file.content.split('\n');
 				for (line in 0...data.length) data[line] = '* ${data[line]}';
 				data.unshift('/**');
 				data.push('**/');
 				for (file in ('.': Dir).contentRecursiveFiles('.hx')) {
-					final fcontent = file.content;
+					final fcontent: String = file.content;
 					final lines: Array<String> = fcontent.split('\n');
 					if (StringTools.trim(lines[0]) == '/**') {
 						var n: Int = 0;
-						var error = true;
+						var error: Bool = true;
 						for (line in lines) {
 							n++;
 							if (StringTools.trim(line) == '**/') {
@@ -80,7 +80,7 @@ class License {
 							Utils.error('Unclosed comment in $file!');
 							return;
 						}
-						var flag = true;
+						var flag: Bool = true;
 						if (data.length == n) {
 							for (i in 0...n) {
 								if (data[i] != lines[i]) {
@@ -92,7 +92,7 @@ class License {
 							flag = false;
 						}
 						if (!flag) {
-							var ok = false;
+							var ok: Bool = false;
 							for (line in lines) {
 								if (line.toLowerCase().indexOf('copyright') != -1) {
 									ok = true;

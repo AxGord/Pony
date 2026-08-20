@@ -10,7 +10,7 @@ class TextToolsTest {
 
 	@Test
 	public function testTab(): Void {
-		final data = 'lvl1
+		final data: String = 'lvl1
 		lvl2
 		lvl2b';
 		final r: Map<String, Dynamic> = TextTools.tabParser(data);

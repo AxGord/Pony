@@ -29,7 +29,7 @@ import types.ServerConfig;
 		}
 		if (@:nullSafety(Off) (cfg.haxe != null)) {
 			tasks.add();
-			final haxe = new Haxe(cast cfg.haxe);
+			final haxe: Haxe = new Haxe(cast cfg.haxe);
 			haxe.onError << eError;
 			haxe.onLog << eLog;
 			haxe.init();
