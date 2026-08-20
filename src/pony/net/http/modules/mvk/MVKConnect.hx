@@ -20,9 +20,7 @@ final class MVKConnect extends ModuleConnect<MVK> {
 	public function getCurrentUser(cb: Dynamic -> Void): Void request('users.get', {}, cb);
 
 	public function getId(cb: Int -> Void): Void {
-		getCurrentUser(function(r: Dynamic<Array<Dynamic>>) {
-			cb(r.response[0].id);
-		});
+		getCurrentUser((r: Dynamic<Array<Dynamic>>) -> cb(r.response[0].id));
 	}
 
 	private function request(f: String, args: Dynamic, cb: String -> Void): Void {

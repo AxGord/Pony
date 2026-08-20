@@ -63,12 +63,12 @@ class ActionConnect extends ModuleConnect<Action> {
 		if (methodCheck != null) {
 			final r = _callCheck(args);
 			if (r.empty()) {
-				call(args, function(b: Bool) cb(b ? OK : DBERROR));
+				call(args, (b: Bool) -> cb(b ? OK : DBERROR));
 			} else {
 				cb(ERROR(r.result));
 			}
 		} else
-			call(args, function(b: Bool) cb(b ? OK : DBERROR));
+			call(args, (b: Bool) -> cb(b ? OK : DBERROR));
 	}
 
 	private function initTpl(): Void {

@@ -205,7 +205,7 @@ import pony.events.Listener1;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function mod1<ST1>(f: T1 -> ST1): Pair<Signal1<ST1>, () -> Void> {
-		return convert1(function(event: Event1<ST1>, v1: T1): Void event.dispatch(f(v1)));
+		return convert1((event: Event1<ST1>, v1: T1) -> event.dispatch(f(v1)));
 	}
 	#else
 	#if (haxe_ver >= 4.2) extern #else @:extern #end

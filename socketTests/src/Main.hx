@@ -53,7 +53,7 @@ class Main {
 
 		}
 
-		Timer.delay(function() serv = new SocketServer(13579), 100);
+		Timer.delay(() -> serv = new SocketServer(13579), 100);
 
 		#if cs
 		while (!finish) Sys.sleep(2);
@@ -66,14 +66,14 @@ class Main {
 		final server: SocketServer = createServer(6001);
 		for (i in 0...partCount) Timer.delay(createClient.bind(i), delay + delay * i);
 
-		AsyncTests.wait(0...blockCount, function() {
+		AsyncTests.wait(0...blockCount, () -> {
 			trace('Second part');
 			server.destroy();
 
 			final server: SocketServer = createServer(6002);
 			for (i in blockCount ... blockCount + partCount) Timer.delay(createClient.bind(i), delay + delay * (i - blockCount));
 
-			AsyncTests.wait(blockCount ... testCount, function() {
+			AsyncTests.wait(blockCount ... testCount, () -> {
 				server.destroy();
 				finish = true;
 			});

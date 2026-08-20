@@ -31,7 +31,7 @@ class LabelButton extends BaseLayout<RubberLayoutCore<Container>> {
 		super();
 		button = new Button(imgs, offset, useSpriteSheet);
 		addChild(button);
-		button.wait(function() {
+		button.wait(() -> {
 			layout.width = button.size.x;
 			layout.height = button.size.y;
 			layout.tasks.end();

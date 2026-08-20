@@ -45,7 +45,7 @@ class Worker implements IWorkerGatePool implements HasSignal {
 
 	public function _registerOutput<T1, T2>(name: String, response: T2 -> Void, unlock: Void -> Void): T1 -> Void {
 		var resultChannel: MessageChannel = bgWorker.createMessageChannel(flash.system.Worker.current);
-		resultChannel.addEventListener(Event.CHANNEL_MESSAGE, function(event: Event): Void {
+		resultChannel.addEventListener(Event.CHANNEL_MESSAGE, (event: Event) -> {
 			while (resultChannel.messageAvailable) {
 				final message: T2 = resultChannel.receive();
 				if (message != null) response(message);
@@ -69,7 +69,7 @@ class Worker implements IWorkerGatePool implements HasSignal {
 
 	public function _registerInput<T1, T2>(name: String, request: T1 -> Void): T2 -> Void {
 		var resultChannel: MessageChannel = bgWorker.createMessageChannel(flash.system.Worker.current);
-		resultChannel.addEventListener(Event.CHANNEL_MESSAGE, function(event: Event): Void {
+		resultChannel.addEventListener(Event.CHANNEL_MESSAGE, (event: Event) -> {
 			while (resultChannel.messageAvailable) {
 				final message: T1 = resultChannel.receive();
 				if (message != null) request(message);

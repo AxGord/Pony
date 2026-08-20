@@ -9,7 +9,7 @@ class SuperPuperTest {
 	public function testExample(): Void {
 		final obj: SecondChildClass = new SecondChildClass();
 		var result = null;
-		obj.test('Hello', function(r) result = r);
+		obj.test('Hello', r -> result = r);
 		Assert.areEqual(result, 'Hello world!');
 	}
 
@@ -18,7 +18,7 @@ class SuperPuperTest {
 final class SecondChildClass extends ChildClass {
 
 	override public function test(arg: String, cb: String -> Void): Void {
-		addSpace(arg, function(s) super.test(s, cb));
+		addSpace(arg, s -> super.test(s, cb));
 	}
 
 	private function addSpace(arg: String, cb: String -> Void): Void cb(arg + ' ');
@@ -28,7 +28,7 @@ final class SecondChildClass extends ChildClass {
 class ChildClass extends BaseClass {
 
 	override public function test(arg: String, cb: String -> Void): Void {
-		addWorld(arg, function(s) super.test(s, cb));
+		addWorld(arg, s -> super.test(s, cb));
 	}
 
 	private function addWorld(arg: String, cb: String -> Void): Void cb(arg + 'world');

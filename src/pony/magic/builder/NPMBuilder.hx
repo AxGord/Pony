@@ -38,7 +38,7 @@ class NPMBuilder {
 			for (module in npm.nodes.module) {
 				final req: String = module.innerData;
 				final name: String = module.has.name ? module.att.name : filterName(req);
-				if (fields.exists(function(f: Field) return f.name == name)) continue;
+				if (fields.exists((f: Field) -> f.name == name)) continue;
 				fields.push({ name: name, access: access, pos: Context.currentPos(), kind: FProp('get', 'never', macro :Dynamic, null) });
 				fields.push({ name: 'get_$name', access: faccess, meta: [#if (haxe_ver < 4.2) { name: ':extern', pos: Context.currentPos() } #end], pos: Context.currentPos(), kind: FFun(
 					{ args: [], ret: macro :Dynamic, expr: macro return js.Node.require($v{req}) }

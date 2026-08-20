@@ -32,7 +32,7 @@ class PageScroller {
 		_scrollBar = scrollBar;
 		_page = page;
 		_pageAreaHeight = pageAreaHeight;
-		_scrollBar.update.add(function(p: Float): Void {
+		_scrollBar.update.add((p: Float) -> {
 			if (!dragged) page.y = -p;
 		});
 		TouchManager.addListener(page, scrollListener, [TouchEventType.MouseWheel]);

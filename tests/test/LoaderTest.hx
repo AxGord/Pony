@@ -34,7 +34,7 @@ class LoaderTest {
 	@Test
 	public function loadTasks(): Void {
 		var b: Bool = false;
-		loader.addAction(function() b = true);
+		loader.addAction(() -> b = true);
 		DeltaTime.testRun(1);
 		Assert.areEqual(progress, 50);
 		Assert.isTrue(b);

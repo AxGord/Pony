@@ -21,7 +21,7 @@ class Object implements IXRModule {
 				xr._error('Wrong tag');
 				return;
 			}
-			xr.rf(a[i], function(v: Dynamic) {
+			xr.rf(a[i], (v: Dynamic) -> {
 				r.setField(a[i].att.n, v);
 				if (++counter == a.length) {
 					result(r);

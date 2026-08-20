@@ -148,7 +148,7 @@ class TplPut<T1, T2> implements ITplPut implements SuperPuper {
 
 	@:async
 	public function many(?d: Iterable<Dynamic>, ?i: Iterator<Dynamic>, cl: Dynamic, content: TplData, ?delemiter: String): String {
-		return @await manyEasy(d, i, function(e: Dynamic, cb: String -> Void): Void return sub(this, e, cl, content, cb), delemiter);
+		return @await manyEasy(d, i, (e: Dynamic, cb: String -> Void) -> sub(this, e, cl, content, cb), delemiter);
 	}
 
 	/*

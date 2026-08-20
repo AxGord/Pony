@@ -50,7 +50,7 @@ class CueBuilder {
 			title = title.replace('/', '_').replace(' ', '_');
 			data.push(new Pair(title, Time.fromString(time)));
 		}
-		data.sort(function(a, b) return a.b - b.b);
+		data.sort((a, b) -> a.b - b.b);
 
 		final fields: Array<Field> = Context.getBuildFields();
 

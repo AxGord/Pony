@@ -18,7 +18,7 @@ class HttpTools {
 	private static inline function regcb(cb: Dynamic -> Void) untyped Browser.window.ponyCallbackFunc = cb;
 
 	private static function _getJson(url: String, cb: Dynamic -> Void): Void {
-		regcb(function(r: Dynamic) {
+		regcb((r: Dynamic) -> {
 			Browser.document.getElementsByTagName('head')[0].removeChild(snode);
 			snode = null;
 			regcb(null);

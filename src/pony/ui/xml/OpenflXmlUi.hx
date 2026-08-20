@@ -163,7 +163,7 @@ class OpenflXmlUi extends Sprite implements HasAbstract {
 	private static inline function isTrue(s: String): Bool return s != null && s.toLowerCase() == 'true';
 
 	private static function splitAttr(s: String): Array<String> {
-		return s.split(',').map(StringTools.trim).map(function(v) return v == '' ? null : v);
+		return s.split(',').map(StringTools.trim).map(v -> v == '' ? null : v);
 	}
 
 }

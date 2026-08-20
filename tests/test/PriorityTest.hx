@@ -107,8 +107,8 @@ class PriorityTest {
 
 	@Test
 	public function search(): Void {
-		Assert.isTrue(p2.existsFunction(function(o: Int) return o == 2));
-		Assert.isFalse(p2.existsFunction(function(o: Int) return o == -8));
+		Assert.isTrue(p2.existsFunction((o: Int) -> o == 2));
+		Assert.isFalse(p2.existsFunction((o: Int) -> o == -8));
 	}
 
 	@Test

@@ -157,7 +157,7 @@ using pony.text.TextTools;
 			name = name != null ? ': ' + name : '';
 			log('Begin async bench' + name, p);
 			final time: Float = Timer.stamp();
-			f(function(): Void log('End async bench' + name + ' ' + l_benchTime(time) + MS, p));
+			f(() -> log('End async bench' + name + ' ' + l_benchTime(time) + MS, p));
 		}
 		#else
 		f(Tools.nullFunction0);

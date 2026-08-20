@@ -36,6 +36,6 @@ final class MFBConnect extends ModuleConnect<MFB> {
 			});
 	}
 
-	public function getId(cb: String -> Void): Void getBaseData(function(d) cb(d == null ? '0' : d.id));
+	public function getId(cb: String -> Void): Void getBaseData(d -> cb(d == null ? '0' : d.id));
 
 }

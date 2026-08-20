@@ -9,7 +9,7 @@ class FS implements FileSystem {
 
 	public function new(list: Array<String>) this.list = list;
 
-	public function getRoot(): FileEntry return new RootEntry(list.filter(function(e: String) return e.indexOf('/') == -1));
+	public function getRoot(): FileEntry return new RootEntry(list.filter((e: String) -> e.indexOf('/') == -1));
 
 	public function get(path: String): FileEntry return new BinEntity(path);
 

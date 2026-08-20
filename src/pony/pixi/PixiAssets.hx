@@ -35,7 +35,7 @@ class PixiAssets {
 
 		final sp = asset.split('(spine)');
 		if (sp.length > 1) {
-			loadSpine(sp.join(''), function(d: SkeletonData) {
+			loadSpine(sp.join(''), (d: SkeletonData) -> {
 				spines[asset] = d;
 				cb();
 			});

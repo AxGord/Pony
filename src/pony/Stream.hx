@@ -21,7 +21,7 @@ class Stream<T> {
 
 	public function map<R>(f: T -> R): Stream<R> {
 		final s: Stream<R> = new Stream<R>();
-		take(function(v: T) s.dataListener(f(v)), s.endListener, s.errorListener);
+		take((v: T) -> s.dataListener(f(v)), s.endListener, s.errorListener);
 		return s;
 	}
 
@@ -54,10 +54,10 @@ class Stream<T> {
 		take = locked;
 	}
 
-	public function atake(d: T -> Void, ?compl: Dynamic -> Void): Void take(d, function() {
+	public function atake(d: T -> Void, ?compl: Dynamic -> Void): Void take(d, () -> {
 		compl(null);
 		compl = Tools.nullFunction1;
-	}, function(e: Dynamic) {
+	}, (e: Dynamic) -> {
 		compl(e);
 		compl = Tools.nullFunction1;
 	});

@@ -91,7 +91,7 @@ class MonacoEditor extends pony.Logable {
 	private function loadThemes(themes: Array<String>): Void {
 		if (themes != null) for (theme in themes) if (needLoadTheme(theme)) {
 			tasks.add();
-			readMonacoFile(theme + '.theme.json', function(s: String): Void {
+			readMonacoFile(theme + '.theme.json', (s: String) -> {
 				try {
 					this.themes[theme] = Json.parse(s);
 					log(theme + ' theme loaded');
@@ -110,14 +110,14 @@ class MonacoEditor extends pony.Logable {
 			this.langs[lang.name] = l;
 			var st: Tasks = new Tasks(tasks.end);
 			st.add();
-			readMonacoFile(lang.tm, function(s: String): Void {
+			readMonacoFile(lang.tm, (s: String) -> {
 				log(l.name + ' tm loaded');
 				l.tm = s;
 				st.end();
 			});
 			if (lang.conf == null) continue;
 			st.add();
-			readMonacoFile(lang.conf, function(s: String): Void {
+			readMonacoFile(lang.conf, (s: String) -> {
 				try {
 					l.conf = Json.parse(s);
 					log(l.name + ' conf loaded');
@@ -130,7 +130,7 @@ class MonacoEditor extends pony.Logable {
 	}
 
 	private function readMonacoFile(file: String, cb: String -> Void): Void {
-		Fs.readFile(monacoDir + file, 'utf-8', function(err: js.Error, s: String): Void {
+		Fs.readFile(monacoDir + file, 'utf-8', (err: js.Error, s: String) -> {
 			if (err != null)
 				error(err.message);
 			else

@@ -19,7 +19,7 @@ class TimerTest {
 		var count: Int = 0;
 		final handler: Void -> Void = asyncFactory.createHandler(this, function() Assert.areEqual(count, 1), 1000);
 		new massive.munit.util.Timer(30).run = handler;
-		Timer.delay(10, function() count++);
+		Timer.delay(10, () -> count++);
 	}
 
 	@AsyncTest

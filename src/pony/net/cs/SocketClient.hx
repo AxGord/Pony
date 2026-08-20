@@ -103,7 +103,7 @@ class SocketClient extends SocketClientBase {
 	}
 
 	public function send(data: BytesOutput): Void {
-		Synchro.lock(sendQueue, function() sendQueue.call(data));
+		Synchro.lock(sendQueue, () -> sendQueue.call(data));
 	}
 
 	/*
@@ -172,7 +172,7 @@ class SocketClient extends SocketClientBase {
 			eventSend.Reset();
 			final s: Socket = cast ar.AsyncState;
 			s.EndSend(ar);
-			Synchro.lock(sendQueue, function() sendQueue.next());
+			Synchro.lock(sendQueue, () -> sendQueue.next());
 		}
 		eventSend.Set();
 	}
@@ -199,7 +199,7 @@ class SocketClient extends SocketClientBase {
 						final buffer: NativeArray<UInt8> = new NativeArray(4);
 						receiveBuffer = buffer;
 						isSet = false;
-						Synchro.lock(client, function() {
+						Synchro.lock(client, () -> {
 							if (client != null && client.Connected)
 								client.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(receiveCallback), this); // Костыль для убиения бага.
 						});
@@ -215,7 +215,7 @@ class SocketClient extends SocketClientBase {
 						}
 						receiveBuffer = buffer;
 						isSet = true;
-						Synchro.lock(client, function() {
+						Synchro.lock(client, () -> {
 							if (client != null && client.Connected)
 								client.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(receiveCallback), this);
 						});

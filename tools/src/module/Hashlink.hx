@@ -61,7 +61,7 @@ class Hashlink extends CfgModule<HashlinkConfig> {
 		switch cfg.hl {
 			case 'mac':
 				final runhl: String = Utils.libPath + 'redist/runhl.app.zip';
-				ZipTool.unpackFile(runhl, output, true, ignoreLibs, function(s: String): Void log(s));
+				ZipTool.unpackFile(runhl, output, true, ignoreLibs, (s: String) -> log(s));
 				output += 'Contents/';
 				final o: String = output;
 				output += 'Resources/';
@@ -134,7 +134,7 @@ class Hashlink extends CfgModule<HashlinkConfig> {
 
 				((outputRes + 'values/strings.xml'): File).content = '<resources><string name="app_name">${cfg.title}</string></resources>';
 			case _:
-				ZipTool.unpackFile(cfg.hl, output, true, ignoreLibs, function(s: String): Void log(s));
+				ZipTool.unpackFile(cfg.hl, output, true, ignoreLibs, (s: String) -> log(s));
 		}
 		final dataOutput: String = output + (cfg.hl == 'android' ? 'app/src/main/assets/' : '');
 		for (d in cfg.data) {

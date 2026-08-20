@@ -196,7 +196,7 @@ class HasAssetBuilder {
 							parentPathes = getPatches(m.get(), cl);
 							final e = { expr: EConst(CString(clss.toString())), pos: Context.currentPos() };
 							if (m.has('assets_childs')) {
-								final a = m.get().find(function(v) return v.name == 'assets_childs').params;
+								final a = m.get().find(v -> v.name == 'assets_childs').params;
 								a.push(e);
 								m.remove('assets_childs');
 								m.add('assets_childs', a, Context.currentPos());
@@ -214,7 +214,7 @@ class HasAssetBuilder {
 							parentPathes = getPatches(m.get(), t);
 							final e = { expr: EConst(CString(clss.toString())), pos: Context.currentPos() };
 							if (m.has('assets_childs')) {
-								final a = m.get().find(function(v) return v.name == 'assets_childs').params;
+								final a = m.get().find(v -> v.name == 'assets_childs').params;
 								a.push(e);
 								m.remove('assets_childs');
 								m.add('assets_childs', a, Context.currentPos());

@@ -68,7 +68,7 @@ class ODBC extends SQLBase {
 	 */
 	public function stream(q: String, ?p: PosInfos): Stream<Dynamic> {
 		final s = new Stream();
-		query(q, p, function(_, res: Array<Dynamic>, _): Void s.putIterable(res));
+		query(q, p, (_, res: Array<Dynamic>, _) -> s.putIterable(res));
 		return s;
 	}
 

@@ -32,7 +32,7 @@ class LikerTest {
 	@Test
 	public function async(): Void {
 		var r: Int = -2;
-		instance.likeAsync([0.2, 0.42, 0.1], function(id: Int) r = id);
+		instance.likeAsync([0.2, 0.42, 0.1], (id: Int) -> r = id);
 		Assert.areEqual(r, -2);
 		DeltaTime.fixedValue = 1;
 		for (_ in 0...5) {

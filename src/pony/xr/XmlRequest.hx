@@ -99,7 +99,7 @@ class XmlRequest extends Logable<XmlRequest> implements ICanBeCopied<XmlRequest>
 			else {
 				var ready: Bool = false;
 				var r: Dynamic = null;
-				_run(e, function(d: Dynamic) {
+				_run(e, (d: Dynamic) -> {
 					if (ready) {
 						result(d, r);
 					} else {
@@ -107,7 +107,7 @@ class XmlRequest extends Logable<XmlRequest> implements ICanBeCopied<XmlRequest>
 						ready = true;
 					}
 				});
-				_run(e2, function(d: Dynamic) {
+				_run(e2, (d: Dynamic) -> {
 					if (ready) {
 						result(r, d);
 					} else {

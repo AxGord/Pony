@@ -395,7 +395,7 @@ private class Atlas {
 			return null;
 		}
 
-		_bitmapDataRestoration.push(function(bmpd: BitmapData): Void {
+		_bitmapDataRestoration.push((bmpd: BitmapData) -> {
 			if (restorationCallback != null) bmpd.copyPixels(restorationCallback(), rect, placedRect.topLeft);
 		});
 
@@ -420,12 +420,8 @@ private class Atlas {
 		var debugImage: Image = new Image(texture);
 		debugImage.touchable = true;
 		untyped Starling.current.root.addChild(debugImage);
-		TouchManager.addListener(debugImage, function(_): Void {
-			debugImage.startUniversalDrag();
-		}, [TouchEventType.Down]);
-		TouchManager.addListener(debugImage, function(_): Void {
-			debugImage.stopUniversalDrag();
-		}, [TouchEventType.Up]);
+		TouchManager.addListener(debugImage, _ -> debugImage.startUniversalDrag(), [TouchEventType.Down]);
+		TouchManager.addListener(debugImage, _ -> debugImage.stopUniversalDrag(), [TouchEventType.Up]);
 	}
 
 	private function textureRestore(): Void {

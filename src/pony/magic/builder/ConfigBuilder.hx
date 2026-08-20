@@ -34,7 +34,7 @@ class ConfigBuilder {
 				Context.registerModuleDependency(Context.getLocalModule(), StringTools.trim(f));
 			final cfg: PConfig = { app: haxe.macro.Context.definedValue('app'), debug: #if debug true #else false #end, cordova: #if cordova true #else false #end, path: '' };
 			final addedConfig: Array<String> = []; // Filter added configs because app define not set for completion server
-			new ReadXmlConfig(xcfg, cfg, function(cfg: PConfig): Void {
+			new ReadXmlConfig(xcfg, cfg, (cfg: PConfig) -> {
 				final type: ComplexType = switch cfg.type {
 					case CString: macro :String;
 					case CInt: macro :Int;
@@ -158,7 +158,7 @@ private class ReadXmlConfig extends XmlConfigReader<PConfig> {
 					case _: throw 'Error';
 				};
 				map = [];
-				new ReadXmlConfig(xml, { app: cfg.app, debug: cfg.debug, cordova: cfg.cordova, path: '' }, function(conf: PConfig) {
+				new ReadXmlConfig(xml, { app: cfg.app, debug: cfg.debug, cordova: cfg.cordova, path: '' }, (conf: PConfig) -> {
 					if (mapType == null) mapType = conf.type;
 					if (stype == 'map' && mapType != conf.type) throw 'Type error';
 					map[conf.path + conf.key] = conf.value;

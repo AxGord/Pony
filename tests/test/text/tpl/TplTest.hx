@@ -39,7 +39,7 @@ class TplTest {
 		final d: Dir = Tools.currentDir() + 'tpls';
 		var td: TplDir = new TplDir(d, this);
 		var flag: Bool = false;
-		td.gen('index', null, null, function(r: String): Void {
+		td.gen('index', null, null, (r: String) -> {
 			Assert.areEqual('hello world', r);
 			flag = true;
 		});

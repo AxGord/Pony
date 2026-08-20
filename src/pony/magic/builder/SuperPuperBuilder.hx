@@ -44,7 +44,7 @@ class SuperPuperBuilder {
 		}
 
 		for (field in fields) if (field.meta.checkMeta([':puper', 'puper'])) {
-			final meta = field.meta.filter(function(m) return m.name != ':puper' && m.name != 'puper');
+			final meta = field.meta.filter(m -> m.name != ':puper' && m.name != 'puper');
 			fields.push({ name: 'super${lvl}_${field.name}', access: [APrivate], pos: field.pos, kind: field.kind, meta: meta });
 			switch field.kind {
 				case FFun(fun):

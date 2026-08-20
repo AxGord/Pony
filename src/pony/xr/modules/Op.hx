@@ -19,7 +19,7 @@ class Op implements IXRModule {
 				var counter = 0;
 				var sum: Float = 0;
 				for (i in 0...a.length) {
-					xr._run(a[i], function(v: Dynamic) {
+					xr._run(a[i], (v: Dynamic) -> {
 						sum += number(v);
 						if (++counter == a.length) {
 							result(sum);
@@ -35,7 +35,7 @@ class Op implements IXRModule {
 				var counter = 0;
 				var sum: Float = 0;
 				for (i in 0...a.length) {
-					xr._run(a[i], function(v: Dynamic) {
+					xr._run(a[i], (v: Dynamic) -> {
 						if (counter == 0)
 							sum = number(v);
 						else

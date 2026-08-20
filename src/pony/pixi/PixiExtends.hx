@@ -88,7 +88,7 @@ class PixiExtends {
 		if (i == 0)
 			f();
 		else
-			for (s in a) loaded(s, function() if (--i == 0) f());
+			for (s in a) loaded(s, () -> if (--i == 0) f());
 	}
 
 	public static function childLevel(s: Sprite, lvl: Int): Sprite {

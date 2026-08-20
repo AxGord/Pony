@@ -88,7 +88,7 @@ import pony.events.Listener0;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function trace(?message: String, priority: Int = 0, ?pos: PosInfos): Void {
-		this.add(Listener0.f0(function() Log.trace(message, pos)), priority);
+		this.add(Listener0.f0(() -> Log.trace(message, pos)), priority);
 	}
 
 	public function add(e: Listener0, priority: Int = 0): Signal0 {
@@ -109,11 +109,11 @@ import pony.events.Listener0;
 		final ns = new Event0();
 		var listener1: Listener0 = cast null;
 		var listener2: Listener0 = cast null;
-		listener1 = Listener0.f0(function() {
+		listener1 = Listener0.f0(() -> {
 			s.remove(listener2);
 			s.once(ns);
 		});
-		listener2 = Listener0.f0(function() {
+		listener2 = Listener0.f0(() -> {
 			this.remove(listener1);
 			once(ns);
 		});

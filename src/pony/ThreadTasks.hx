@@ -15,7 +15,7 @@ abstract ThreadTasks(UInt) {
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function add(f: UInt -> Void): Void {
 		this++;
-		MainLoop.addThread(function(): Void {
+		MainLoop.addThread(() -> {
 			f(this);
 			this--;
 		});
@@ -70,7 +70,7 @@ class ThreadTasksWhile {
 			lock();
 			endwait();
 		}
-		MainLoop.addThread(function(): Void {
+		MainLoop.addThread(() -> {
 			waitandsleep();
 
 			try {

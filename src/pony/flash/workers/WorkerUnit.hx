@@ -29,7 +29,7 @@ class WorkerUnit implements HasAbstract implements IWorkerGatePool {
 
 	public function _registerOutput<T1, T2>(name: String, response: T2 -> Void, unlock: Void -> Void): T1 -> Void {
 		var commandChannel: MessageChannel = Worker.current.getSharedProperty('response2_' + name);
-		commandChannel.addEventListener(Event.CHANNEL_MESSAGE, function(event: Event): Void {
+		commandChannel.addEventListener(Event.CHANNEL_MESSAGE, (event: Event) -> {
 			while (commandChannel.messageAvailable) {
 				final message: T2 = commandChannel.receive();
 				if (message != null) response(message);
@@ -50,7 +50,7 @@ class WorkerUnit implements HasAbstract implements IWorkerGatePool {
 
 	public function _registerInput<T1, T2>(name: String, request: T1 -> Void): T2 -> Void {
 		var commandChannel: MessageChannel = Worker.current.getSharedProperty('response_' + name);
-		commandChannel.addEventListener(Event.CHANNEL_MESSAGE, function(event: Event): Void {
+		commandChannel.addEventListener(Event.CHANNEL_MESSAGE, (event: Event) -> {
 			while (commandChannel.messageAvailable) {
 				final message: T1 = commandChannel.receive();
 				if (message != null) request(message);

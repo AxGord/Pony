@@ -126,7 +126,7 @@ class CTable implements Declarator implements Ninja {
 	 * Get result for current query
 	 */
 	public function get(cb: Array<Dynamic> -> Void, ?p: PosInfos): Void {
-		mysql.query(genGetQuery(), p, function(err: Dynamic, fields: Dynamic, _): Void {
+		mysql.query(genGetQuery(), p, (err: Dynamic, fields: Dynamic, _) -> {
 			if (err != null) {
 				_error(err);
 				mysql.error(err);
@@ -180,7 +180,7 @@ class CTable implements Declarator implements Ninja {
 	 */
 	public function delete(cb: Bool -> Void, ?p: PosInfos): Void {
 		final q = 'DELETE FROM $table' + _where + order + (_limit == null ? '' : ' LIMIT $_begin, $_limit');
-		mysql.query(q, p, function(err: Dynamic, fields: Dynamic, _): Void {
+		mysql.query(q, p, (err: Dynamic, fields: Dynamic, _) -> {
 			if (err != null) {
 				_error(err);
 				mysql.error(err);

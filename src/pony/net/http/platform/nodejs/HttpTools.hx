@@ -21,7 +21,7 @@ class HttpTools {
 	}
 
 	public static function getJson(url: String, cb: Dynamic -> Void): Void {
-		get(url, function(s: String) cb(Node.json.parse(s)));
+		get(url, (s: String) -> cb(Node.json.parse(s)));
 	}
 
 }

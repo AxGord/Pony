@@ -14,7 +14,7 @@ class Array implements IXRModule {
 		var counter = 0;
 		final r = [];
 		for (i in 0...a.length) {
-			xr._run(a[i], function(v: Dynamic) {
+			xr._run(a[i], (v: Dynamic) -> {
 				r[i] = v;
 				if (++counter == a.length) {
 					result(r);

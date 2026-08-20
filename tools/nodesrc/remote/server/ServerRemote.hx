@@ -33,7 +33,7 @@ class ServerRemote extends Logable {
 	}
 
 	public function init(): Void {
-		logf(function() return 'Remote Server running at ${port}');
+		logf(() -> 'Remote Server running at ${port}');
 		socket = new SocketServer(port);
 		socket.onConnect << connectHandler;
 	}

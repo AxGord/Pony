@@ -35,12 +35,12 @@ class OpenflAssets {
 			return;
 		}
 		asset = AssetManager.baseUrl + asset;
-		loadBytes(asset, function(b: ByteArray) {
-			bytesToBitmapData(b, function(bd: BitmapData) {
+		loadBytes(
+			asset, (b: ByteArray) -> bytesToBitmapData(b, (bd: BitmapData) -> {
 				assets[asset] = new Bitmap(bd);
 				cb();
-			});
-		});
+			})
+		);
 	}
 
 	public static function loadBytes(url: String, ok: ByteArray -> Void, ?error: Dynamic -> Void): Void {

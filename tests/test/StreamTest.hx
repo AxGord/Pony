@@ -10,7 +10,7 @@ class StreamTest {
 		final a: Array<Bool> = [false, false, false];
 		var e: Bool = false;
 		final s: Stream<Int> = new Stream<Int>();
-		s.take(function(d: Int) a[d] = true, function() e = true);
+		s.take((d: Int) -> a[d] = true, function() e = true);
 		s.dataListener(0);
 		s.dataListener(1);
 		Assert.isTrue(a[0]);
@@ -31,7 +31,7 @@ class StreamTest {
 		s.dataListener(1);
 		s.dataListener(2);
 		s.endListener();
-		s.take(function(d: Int) a[d] = true, function() e = true);
+		s.take((d: Int) -> a[d] = true, function() e = true);
 		Assert.isTrue(a[0]);
 		Assert.isTrue(a[1]);
 		Assert.isTrue(a[2]);
@@ -43,7 +43,7 @@ class StreamTest {
 		final a: Array<Bool> = [false, false, false];
 		var e: Bool = false;
 		final s: Stream<Int> = new Stream<Int>();
-		s.map(function(n) return n - 1).take(function(d: Int) a[d] = true, function() e = true);
+		s.map(n -> n - 1).take(function(d: Int) a[d] = true, function() e = true);
 		s.dataListener(1);
 		s.dataListener(2);
 		Assert.isTrue(a[0]);

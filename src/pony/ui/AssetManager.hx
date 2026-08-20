@@ -50,10 +50,12 @@ class AssetManager implements HasLink {
 		final url: Null<String> = Tools.getHashFileWithHash();
 		if (url != null) {
 			final url: String = url;
-			load('', url, function(c: Int, t: Int): Void if (c == t) {
-				units = Hash.fromBytes(bin(url.allBefore('?'))).units;
-				cb();
-			});
+			load(
+				'', url, (c: Int, t: Int) -> if (c == t) {
+					units = Hash.fromBytes(bin(url.allBefore('?'))).units;
+					cb();
+				}
+			);
 		} else {
 			cb();
 		}
@@ -68,10 +70,12 @@ class AssetManager implements HasLink {
 		if (url != null) {
 			changedNames = true;
 			final url: String = url;
-			load('', url, function(c: Int, t: Int): Void if (c == t) {
-				units = Hash.fromBytes(bin(extractHash(url).a)).units;
-				cb();
-			});
+			load(
+				'', url, (c: Int, t: Int) -> if (c == t) {
+					units = Hash.fromBytes(bin(extractHash(url).a)).units;
+					cb();
+				}
+			);
 		} else {
 			cb();
 		}
@@ -119,7 +123,7 @@ class AssetManager implements HasLink {
 		var prevTotals: Int = 0;
 		for (path in pathes) {
 			final n: Int = i++;
-			load(path, assets, function(a: Int, t: Int) {
+			load(path, assets, (a: Int, t: Int) -> {
 				loaded[n] = a;
 				totals[n] = t;
 				final loadedSum = sum(loaded);
@@ -159,7 +163,7 @@ class AssetManager implements HasLink {
 				} else {
 					globalLoad[asset] = [];
 					var called: Bool = false;
-					_load(asset, function(c: Int, t: Int) {
+					_load(asset, (c: Int, t: Int) -> {
 						cb(c, t);
 						globalLoaded(asset, c, t);
 						called = true;
@@ -174,7 +178,7 @@ class AssetManager implements HasLink {
 				var prevTotals: Int = 0;
 				for (asset in assets) {
 					final n: Int = i++;
-					load(path, asset, function(c: Int, t: Int) {
+					load(path, asset, (c: Int, t: Int) -> {
 						loaded[n] = c;
 						totals[n] = t;
 						final loadedSum = sum(loaded);
@@ -285,7 +289,7 @@ class AssetManager implements HasLink {
 	public static function loadComplete(source: (Int -> Int -> Void) -> Void, cb: Void -> Void): Void {
 		var last: Bool = true;
 		var check = function(c: Int, t: Int) last = c == t;
-		source(function(c: Int, t: Int) check(c, t));
+		source((c: Int, t: Int) -> check(c, t));
 		DeltaTime.fixedUpdate < function() {
 			if (last)
 				cb();
