@@ -34,7 +34,6 @@ class StarlingDisplayFactory implements IDisplayFactory {
 	public function createMovieClip(): IMovieClip {
 		// return cast new MovieClip();
 		throw 'Starling movieclip creation not implemented yet';
-		return null;
 	}
 
 }

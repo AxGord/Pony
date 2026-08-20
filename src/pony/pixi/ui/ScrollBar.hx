@@ -63,7 +63,7 @@ class ScrollBar extends Sprite {
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function updatePos(): Void {
 		onChangePosition(pos);
-		var p = (pos / (totalSize - contentSize));
+		var p = pos / (totalSize - contentSize);
 		var v = (totalSize - bar.core.pos) * p;
 		if (vert)
 			bar.y = v;

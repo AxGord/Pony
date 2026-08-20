@@ -45,7 +45,7 @@ import pony.text.tpl.TplSystem.Manifest;
 		var m: Manifest = a.cpq.template.manifest;
 		var from: String = args.exists('from')
 			? args.get('from')
-			: (m != null && m.language != null ? m.language : a.base.server.defaults.lang);
+			: m != null && m.language != null ? m.language : a.base.server.defaults.lang;
 		var to: String = args.exists('to') ? args.get('to') : a.cpq.lang;
 		return a.base.langTable.translate(from, to, d);
 	}

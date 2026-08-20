@@ -21,7 +21,7 @@ class BodyCircle extends BodyBase {
 	public function new(
 		r: Float, ?pos: Point<Float>, space: Space, ?limits: Rect<Float>, isStatic: Bool = false, isBullet: Bool = false, ?group: NapeGroup
 	) {
-		this.radius = r;
+		radius = r;
 		super(pos, space, limits, isStatic, isBullet, group);
 	}
 

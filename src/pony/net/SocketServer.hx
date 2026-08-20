@@ -1,12 +1,12 @@
 package pony.net;
 
-import haxe.io.BytesOutput;
-
 /**
  * SocketServer
  * @author AxGord <axgord@gmail.com>
  */
 #if (!js || nodejs)
+import haxe.io.BytesOutput;
+
 class SocketServer #if nodejs extends pony.net.nodejs.SocketServer #elseif cs extends pony.net.cs.SocketServer  #elseif neko extends pony.net.neko.SocketServer  #else extends pony.net.SocketServerBase #end
 		#if !flash implements ISocketServer #end {
 

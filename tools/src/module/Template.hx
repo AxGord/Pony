@@ -61,7 +61,7 @@ using pony.text.XmlTools;
 				title: cfg.title,
 				app: appFileName,
 				assetsHash: assetsHash,
-				buildDate: buildDate,
+				buildDate: buildDate
 			}, { hash: hashMethod });
 		}
 		for (file in cfg.files) {

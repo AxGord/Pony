@@ -5,10 +5,15 @@
 		"hxnodejs",
 		"hxbitmini",
 		"hx3compat",
-		"continuation"
+		"continuation",
+		"mconsole",
+		"munit"
 	],
 	"rules": {
 		"unused-public-member": {
+			"enabled": false
+		},
+		"duplicate-case": {
 			"enabled": false
 		},
 		"redundant-parens": {

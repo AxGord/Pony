@@ -12,8 +12,6 @@ import flash.Lib;
 import flash.ui.Multitouch;
 import flash.ui.MultitouchInputMode;
 import pony.flash.FLTools;
-import pony.flash.starling.displayFactory.DisplayFactory.IDisplayObject;
-import pony.flash.starling.displayFactory.DisplayFactory.IDisplayObjectContainer;
 import pony.flash.starling.displayFactory.NativeFlashDisplayFactory;
 import pony.time.DeltaTime;
 import pony.ui.touch.starling.touchManager.hitTestSources.NativeHitTestSource;
@@ -67,7 +65,7 @@ class Initializer {
 		Lib.current.stage.align = StageAlign.TOP_LEFT;
 		Lib.current.stage.scaleMode = StageScaleMode.NO_SCALE;
 
-		_content = (content != null) ? untyped content : untyped Lib.current;
+		_content = content != null ? untyped content : untyped Lib.current;
 
 		_initialWidth = FLTools.width != -1 ? Std.int(FLTools.width) : Lib.current.stage.stageWidth;
 		_initialHeight = FLTools.height != -1 ? Std.int(FLTools.height) : Lib.current.stage.stageHeight;

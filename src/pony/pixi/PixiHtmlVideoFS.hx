@@ -22,7 +22,7 @@ class PixiHtmlVideoFS extends PixiHtmlVideoBase {
 	) {
 		super(targetRect, app, options);
 		if (fsRect != null) {
-			this.normalRect = targetRect;
+			normalRect = targetRect;
 			switch fsRect {
 				case A(border):
 					this.fsRect = border.getRectFromSize(app.resolution);

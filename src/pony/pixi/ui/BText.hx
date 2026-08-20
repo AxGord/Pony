@@ -88,7 +88,6 @@ class BText extends Sprite implements IWH {
 		} else {
 			removeChild(renderSprite);
 			renderSprite.destroy();
-			var b: Int = shadow ? SHADOW_OFFSET * 2 : NORMAL_OFFSET * 2;
 			createSize = lastGeneratedSize;
 			_size = current.size;
 		}

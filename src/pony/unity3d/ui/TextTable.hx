@@ -2,7 +2,6 @@ package pony.unity3d.ui;
 
 import pony.color.Color;
 import pony.color.UColor;
-import pony.geom.Point.IntPoint;
 import pony.geom.Point;
 import pony.geom.Rect.IntRect;
 import pony.magic.Declarator;

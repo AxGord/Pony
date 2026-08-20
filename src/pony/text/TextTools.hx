@@ -308,7 +308,7 @@ abstract AnsiForeground(UInt) to UInt {
 
 	public static function removeQuotes(s: String): String {
 		var f: String = s.charAt(0);
-		return (f == '"' || f == "'") ? s.substring(1, s.length - 1) : s;
+		return f == '"' || f == "'" ? s.substring(1, s.length - 1) : s;
 	}
 
 	public static function betweenReplace(text: String, begin: String, end: String, value: String): Null<String> {

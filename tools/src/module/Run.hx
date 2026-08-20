@@ -12,7 +12,7 @@ typedef RunConfig = {
 	?path: String,
 	?lib: String,
 	haxelib: Array<String>,
-	command: Array<{ ?path: String, ?lib: String, cmd: String }>,
+	command: Array<{ ?path: String, ?lib: String, cmd: String }>
 }
 
 /**

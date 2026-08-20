@@ -15,7 +15,7 @@ final exept: Map<String, Array<String>> = [
 	'pixi' => [
 		'pony.pixi',
 		'pony.ui.touch.pixi',
-		'pony.ui.xml.PixiXmlUi',
+		'pony.ui.xml.PixiXmlUi'
 	],
 	'heaps' => [
 		'pony.heaps',

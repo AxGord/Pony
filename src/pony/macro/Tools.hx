@@ -93,7 +93,7 @@ import haxe.macro.Expr;
 
 	public static function replaceToBlock(e: Expr): Expr {
 		return switch e.expr {
-			case EBlock(block): e;
+			case EBlock(_): e;
 			case _: macro $b{[e]};
 		}
 	}

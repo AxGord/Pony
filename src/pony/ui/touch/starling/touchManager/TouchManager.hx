@@ -465,8 +465,8 @@ private class Touch {
 
 		var dt: Float = speedListTime[listsLength - 1] - speedListTime[0];
 
-		speedX = (dt == 0) ? 0 : (speedListX[listsLength - 1] - speedListX[0]) / dt;
-		speedY = (dt == 0) ? 0 : (speedListY[listsLength - 1] - speedListY[0]) / dt;
+		speedX = dt == 0 ? 0 : (speedListX[listsLength - 1] - speedListX[0]) / dt;
+		speedY = dt == 0 ? 0 : (speedListY[listsLength - 1] - speedListY[0]) / dt;
 	}
 
 }

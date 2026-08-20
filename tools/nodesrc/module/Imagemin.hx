@@ -118,7 +118,7 @@ private typedef ImageminResult = Array<ImageminResultEntry>;
 						log(nf);
 						nf.createWays();
 						nf.content = StringTools.replace(
-							(@:nullSafety(Off) (f.content: String)), '"' + ef.name + '"', '"' + f.shortName + '.$WEBP"'
+							@:nullSafety(Off) (f.content: String), '"' + ef.name + '"', '"' + f.shortName + '.$WEBP"'
 						);
 					}
 				}

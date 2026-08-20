@@ -57,7 +57,7 @@ class NativeHitTestSource implements IHitTestSource {
 
 	private inline function isStaticTextField(child: DisplayObject): Bool {
 		// If it's a textfield with no name, then it's static textfield
-		return (child.name.indexOf("instance") != -1 && Std.is(child, TextField));
+		return child.name.indexOf("instance") != -1 && Std.is(child, TextField);
 	}
 
 	public function parent(object: Dynamic): Dynamic {

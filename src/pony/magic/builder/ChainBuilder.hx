@@ -14,7 +14,7 @@ class ChainBuilder {
 
 	macro public static function build(): Array<Field> {
 		var fields: Array<Field> = Context.getBuildFields();
-		var ch = (Type.getClassName(Chain));
+		var ch = Type.getClassName(Chain);
 		var cl: String = null;
 		for (i in Context.getLocalClass().get().interfaces) {
 			if (i.t.toString() == ch) {

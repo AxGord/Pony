@@ -240,7 +240,6 @@ class Keyboard implements IKeyboard implements HasSignal {
 			case KeyCode.Plus: k = Key.Plus;
 			case KeyCode.Return:
 				k = Key.Enter;
-			//
 			// case _: null;
 		});
 		if (k != null) s.dispatch(k);

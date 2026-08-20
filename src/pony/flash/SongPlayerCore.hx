@@ -64,7 +64,7 @@ class SongPlayerCore implements HasSignal {
 
 	public function set_isMute(b: Bool): Bool {
 		if (b == isMute) return b;
-		if (b == true) {
+		if (b) {
 			pVol = volume;
 			volume = 0;
 			isMute = true;

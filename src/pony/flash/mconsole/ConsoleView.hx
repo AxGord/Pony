@@ -133,7 +133,7 @@ class ConsoleView extends PrinterBase implements Printer {
 			case blue: 0x248bd2;
 			case green: 0x859900;
 			case yellow: 0xb58900;
-			case red: 0xdc322f;
+			case red: 0xdc322f; // noqa: unused-case-binder
 		};
 
 		var start = textField.text.length;

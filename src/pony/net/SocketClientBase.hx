@@ -64,7 +64,7 @@ import pony.magic.HasSignal;
 		if (host == null) host = '127.0.0.1';
 		this.host = host;
 		this.port = port;
-		this.reconnectDelay = reconnect;
+		reconnectDelay = reconnect;
 		this.tryCount = tryCount;
 		this.maxSize = maxSize;
 		this.isWithLength = isWithLength;
@@ -164,8 +164,8 @@ import pony.magic.HasSignal;
 
 		sharedInit();
 		this.server = server;
-		this.maxSize = server.maxSize;
-		this.isWithLength = server.isWithLength;
+		maxSize = server.maxSize;
+		isWithLength = server.isWithLength;
 		this.id = id;
 
 		waitNext = 0;

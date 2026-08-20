@@ -23,7 +23,7 @@ class HasSignalBuilder {
 		var destr: Array<Expr> = [];
 
 		for (f in fields) switch f.kind {
-			case FProp(g, s, TPath(p), _) if (p.name.substr(0, 6) == 'Signal' && f.meta.checkMeta([':auto', ':lazy'])):
+			case FProp(_, _, TPath(p), _) if (p.name.substr(0, 6) == 'Signal' && f.meta.checkMeta([':auto', ':lazy'])):
 				Context.error(f.name + " - can't be property", f.pos);
 			case FVar(TPath(p), _) if (p.name.substr(0, 6) == 'Signal'):
 				var on = !(f.name.substr(0, 2) != 'on' && f.name.charAt(3).toLowerCase() == f.name.charAt(3));
@@ -33,7 +33,7 @@ class HasSignalBuilder {
 				var eName = 'e' + TextTools.bigFirst(f.name.substr(on ? 2 : 0));
 				var tp = { name: 'Event' + p.name.substr(6), pack: pack, params: p.params };
 				var flag = false;
-				var a = (isStatic ? destrStatic : destr);
+				var a = isStatic ? destrStatic : destr;
 				if (f.meta.checkMeta([':auto'])) {
 					flag = true;
 					fields.push({

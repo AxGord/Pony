@@ -368,7 +368,7 @@ class SignalTest {
 		var subSignal: Signal0 = subEvent;
 		signal << subEvent;
 		Assert.isTrue(event.empty);
-		function testfun() {};
+		function testfun() {}
 		subSignal << testfun;
 		Assert.isFalse(event.empty);
 		subSignal >> testfun;

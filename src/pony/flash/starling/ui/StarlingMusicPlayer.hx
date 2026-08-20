@@ -5,7 +5,6 @@ import starling.display.Sprite;
 import starling.display.DisplayObject;
 import starling.text.TextField;
 import pony.flash.SongPlayerCore;
-import pony.flash.SongPlayerCore.SongInfo;
 import pony.geom.Point;
 import pony.ui.gui.ButtonCore;
 import pony.ui.gui.SwitchableList;

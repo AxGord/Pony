@@ -45,7 +45,7 @@ class ExtendedPropertiesTestHelper implements ExtendedProperties {
 		p = 4;
 	}
 
-	public function tget() return this.p;
+	public function tget() return p;
 
 	public function vget(p: Int = 3) return p;
 

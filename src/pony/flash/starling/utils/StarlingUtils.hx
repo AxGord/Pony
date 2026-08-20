@@ -5,7 +5,6 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.Lib;
 import pony.flash.starling.displayFactory.DisplayFactory;
-import pony.flash.starling.displayFactory.DisplayFactory.IDisplayObject;
 import pony.time.DeltaTime;
 import starling.display.DisplayObject;
 import starling.display.DisplayObjectContainer;
@@ -38,8 +37,8 @@ class StarlingUtils {
 			for (i in 0...xTextures) {
 				for (j in 0...yTextures) {
 					var textureSourceInit: Void -> BitmapData = function(): BitmapData {
-						var textureWidth: Int = (i == xTextures - 1) ? data.width - i * 2048 : 2048;
-						var textureHeight: Int = (j == yTextures - 1) ? data.height - j * 2048 : 2048;
+						var textureWidth: Int = i == xTextures - 1 ? data.width - i * 2048 : 2048;
+						var textureHeight: Int = j == yTextures - 1 ? data.height - j * 2048 : 2048;
 
 						var bmpd: BitmapData = ReusableBitmapData.getPowTwo(textureWidth, textureHeight);
 

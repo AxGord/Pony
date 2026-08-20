@@ -98,7 +98,7 @@ typedef ElectronConfig = {
 
 			for (os in cfg.os) {
 				args.push((os.length > 1 ? '-' : '') + '-$os');
-				if ((os == 'l' || os == 'linux')) {
+				if (os == 'l' || os == 'linux') {
 					linux = true;
 					if (cfg.pack) args.push('appImage');
 				}

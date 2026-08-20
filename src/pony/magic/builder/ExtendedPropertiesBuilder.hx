@@ -119,9 +119,7 @@ class ExtendedPropertiesBuilder {
 		lvl--;
 		return e;
 	}
-	#end
 
-	#if macro
 	static private var pmeta = [':toProp', 'toProp', ':prop', 'prop'];
 	#end
 

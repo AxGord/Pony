@@ -76,8 +76,8 @@ class SmartCanvas extends ElementResizeControl {
 	}
 
 	public inline function set_smallDeviceQuality(q: SmallDeviceQuality): SmallDeviceQuality {
-		if (this.smallDeviceQuality != q) {
-			this.smallDeviceQuality = q;
+		if (smallDeviceQuality != q) {
+			smallDeviceQuality = q;
 			smallDeviceQualityOffset = 1 - 1 / q;
 			setSize(width, height);
 		}

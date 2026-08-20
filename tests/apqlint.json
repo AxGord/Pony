@@ -3,7 +3,9 @@
 		"hxnodejs",
 		"hxbitmini",
 		"hx3compat",
-		"continuation"
+		"continuation",
+		"mconsole",
+		"munit"
 	],
 	"rules": {
 		"anon-type-dup": {
@@ -22,6 +24,9 @@
 			"enabled": true
 		},
 		"doc-coverage": {
+			"enabled": false
+		},
+		"duplicate-case": {
 			"enabled": false
 		},
 		"explicit-local-type": {

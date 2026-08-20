@@ -27,7 +27,7 @@ class NapeGroup {
 
 	public function new(ns: NapeSpace) {
 		this.ns = ns;
-		this.space = ns.space;
+		space = ns.space;
 	}
 
 	public function collision(with: NapeGroup): Signal2<BodyBase, BodyBase> {

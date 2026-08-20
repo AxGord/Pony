@@ -239,8 +239,6 @@ typedef PriorityIds = Priority<{
 
 	/**
 	 * Set this function for custom compare priority elements
-	 * @param	a
-	 * @param	b
 	 */
 	public dynamic function compare(a: T, b: T): Bool return a == b;
 

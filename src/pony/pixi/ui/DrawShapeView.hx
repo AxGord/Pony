@@ -69,7 +69,7 @@ class DrawShapeView extends LogableSprite implements pony.geom.IWH {
 		addChild(tmpDrawLayer);
 		addChild(pointerLayer);
 
-		this.touchable = new Touchable(touchArea);
+		touchable = new Touchable(touchArea);
 
 		mainLayer.interactive = false;
 		tmpDrawLayer.interactive = false;

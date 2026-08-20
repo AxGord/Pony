@@ -29,7 +29,7 @@ private typedef Export = { typeName: String, name: String };
 
 	public function new(?parent: ServiceProvider) {
 		this.parent = parent;
-		this.byType = [];
+		byType = [];
 	}
 
 	public function load(typeNames: Array<String>, name: String, export: Bool = false): Void {

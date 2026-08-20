@@ -1,14 +1,14 @@
 package pony.db.mysql;
 
-import pony.db.ISQL;
-
-using pony.Tools;
-
 /**
  * TablePrepare
  * @author AxGord <axgord@gmail.com>
  */
 #if !macro
+import pony.db.ISQL;
+
+using pony.Tools;
+
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
 class TablePrepare {
 

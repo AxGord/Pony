@@ -114,8 +114,8 @@ class TplPut<T1, T2> implements ITplPut implements SuperPuper {
 	}
 
 	private static function killSpaceRight(s: String): String {
-		var n: Int = (s.lastIndexOf('\n'));
-		var r: Int = (s.lastIndexOf('\r'));
+		var n: Int = s.lastIndexOf('\n');
+		var r: Int = s.lastIndexOf('\r');
 		if (n == -1) {
 			if (r == -1)
 				return s;
@@ -135,8 +135,8 @@ class TplPut<T1, T2> implements ITplPut implements SuperPuper {
 	}
 
 	private static function killSpaceLeft(s: String): String {
-		var n: Int = (s.indexOf('\n'));
-		var r: Int = (s.indexOf('\r'));
+		var n: Int = s.indexOf('\n');
+		var r: Int = s.indexOf('\r');
 		if (n == -1) {
 			if (r == -1)
 				return s;
@@ -280,7 +280,7 @@ class TplPut<T1, T2> implements ITplPut implements SuperPuper {
 			} else if (i.hasNext())
 				r += killSpaceRight(killSpaceLeft(@await func(e)));
 			else
-				r += (killSpaceLeft(@await func(e)));
+				r += killSpaceLeft(@await func(e));
 			return r;
 		} else {
 			var r: String = '';
@@ -288,7 +288,7 @@ class TplPut<T1, T2> implements ITplPut implements SuperPuper {
 			for (e in i) {
 				if (f) {
 					f = false;
-					r += (@await func(e));
+					r += @await func(e);
 				} else
 					r += delemiter + (killSpaceLeft(@await func(e)));
 			}

@@ -48,7 +48,7 @@ class StarlingTouchInputVisualized extends StarlingTouchInput {
 
 	private function addVisualizer(touch: Touch): Void {
 		if (!_visualizers.exists(touch.id)) {
-			var tf: TextField = new TextField(200, 50, ("" + touch.id));
+			var tf: TextField = new TextField(200, 50, "" + touch.id);
 			tf.border = true;
 			tf.touchable = false;
 			untyped _displayObject.addChild(tf);

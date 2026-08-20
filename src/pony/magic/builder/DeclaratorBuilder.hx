@@ -73,9 +73,9 @@ class DeclaratorBuilder {
 						var t = Lambda.indexOf(f.access, AStatic) == -1 ? toNew : toInit;
 						t.push(macro $i{f.name} = $e);
 					}
-				case [FFun(fun), '__init__']:
+				case [FFun(_), '__init__']:
 					fInit = f;
-				case [FFun(fun), 'new']:
+				case [FFun(_), 'new']:
 					fNew = f;
 				case _:
 			}
@@ -99,7 +99,7 @@ class DeclaratorBuilder {
 		}
 
 		if (fNew == null) {
-			var s = (Context.getLocalClass().get().superClass);
+			var s = Context.getLocalClass().get().superClass;
 			if (s != null) {
 				if (haveArgs(s.t.get().constructor.get().type)) {
 					toNew.push(macro super());

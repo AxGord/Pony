@@ -51,7 +51,7 @@ class HtmlVideoUIFS extends HtmlVideoUI {
 		}
 		super(targetRect, css, app, options, ceil, fixed);
 		if (fsRect != null) {
-			this.normalRect = targetRect;
+			normalRect = targetRect;
 			generateTransition(transition);
 			switch fsRect {
 				case A(border):

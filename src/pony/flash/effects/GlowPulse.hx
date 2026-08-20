@@ -21,7 +21,7 @@ class GlowPulse {
 
 	public function new(color: Int = 0xFF0000, size: Int = 30, strength: Int = 2, speed: Float = 1) {
 		filter = new GlowFilter(color, 1, size, size, 0);
-		this.maxStrength = strength;
+		maxStrength = strength;
 		this.speed = speed;
 	}
 

@@ -90,7 +90,7 @@ using hugs.HUGSWrapper;
 				y: r.y + r.height,
 				width: r.width,
 				height: border
-			}, bcolor),
+			}, bcolor)
 		];
 	}
 

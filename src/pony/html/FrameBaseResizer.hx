@@ -65,7 +65,7 @@ class FrameBaseResizer implements pony.magic.HasSignal implements pony.magic.Has
 	}
 
 	private function resize(nh: Int): Void {
-		if (nh < this.frameAMin) nh = this.frameAMin;
+		if (nh < frameAMin) nh = frameAMin;
 		if (nh != sizeA) {
 			posB = nh;
 			checkB(nh);

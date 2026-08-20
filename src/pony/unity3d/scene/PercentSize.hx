@@ -30,7 +30,7 @@ class PercentSize extends MonoBehaviour implements IPercent {
 			transform.localScale = new Vector3(transform.localScale.x, v * initValue, transform.localScale.z);
 			if (zeroInCenter)
 				transform.localPosition = new Vector3(
-					transform.localPosition.x, initPos - (v < 1 ? ((1 - v) * initValue) / d : 0), transform.localPosition.z
+					transform.localPosition.x, initPos - (v < 1 ? (1 - v) * initValue / d : 0), transform.localPosition.z
 				);
 		} else {
 			renderer.enabled = false;

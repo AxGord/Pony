@@ -50,13 +50,13 @@ class StarlingBar extends StarlingProgressBar implements HasSignal {
 	}
 
 	private function touchHandler(e: TouchManagerEvent): Void {
-		var p = (source.globalToLocal(new Point(e.globalX, e.globalY)));
+		var p = source.globalToLocal(new Point(e.globalX, e.globalY));
 		p.x = p.x + 1.5;
 		if (p.x < 0)
 			p.x = 0;
 		else if (p.x > total)
 			p.x = total;
-		value = (p.x) / total;
+		value = p.x / total;
 
 	}
 

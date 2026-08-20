@@ -173,7 +173,6 @@ class DeltaTime implements HasSignal {
 	#if (munit || dox || tink_unittest)
 	/**
 	 * For unit tests
-	 * @param	time
 	 * @see pony.time.Time
 	 */
 	@SuppressWarnings('checkstyle:MagicNumber')

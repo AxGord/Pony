@@ -44,8 +44,8 @@ class NapeSpaceBase {
 	private var groups: Map<String, NapeGroup> = new Map<String, NapeGroup>();
 
 	public function new(w: Float, h: Float, ?gravity: Point<Float>, minimalStep: Float = 0.2, skipVelIntegrations: Int = 10) {
-		this.width = w;
-		this.height = h;
+		width = w;
+		height = h;
 		limits = new Rect<Float>(0, 0, w, h);
 		space = new Space(gravity != null ? Vec2.weak(gravity.x, gravity.y) : null);
 		this.minimalStep = minimalStep;

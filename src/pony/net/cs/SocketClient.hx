@@ -80,8 +80,8 @@ class SocketClient extends SocketClientBase {
 		isRunning = true;
 		host = aHost;
 		port = aPort;
-		this.reconnectDelay = aReconnect;
-		this.isWithLength = aIsWithLength;
+		reconnectDelay = aReconnect;
+		isWithLength = aIsWithLength;
 		client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 		client.NoDelay = true; // One should never forget that this may cause troubles in future.
 		super(host, port, reconnectDelay, aIsWithLength);
@@ -152,7 +152,7 @@ class SocketClient extends SocketClientBase {
 						// Need to fix somehow. Fixed by adding a thread into destroy.
 						eData.dispatch(b_in, cast this);
 						var buffer: NativeArray<UInt8> = new NativeArray(4);
-						this.receiveBuffer = buffer;
+						receiveBuffer = buffer;
 						isSet = false;
 						Synchro.lock(client, function() {
 							if (client != null && client.Connected)
@@ -168,7 +168,7 @@ class SocketClient extends SocketClientBase {
 							buffer = new NativeArray(255);
 							eData.dispatch(b_in, cast this); // This will work uncorrect if length of datagramm is greater than 255.
 						}
-						this.receiveBuffer = buffer;
+						receiveBuffer = buffer;
 						isSet = true;
 						Synchro.lock(client, function() {
 							if (client != null && client.Connected)

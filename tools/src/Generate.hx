@@ -23,7 +23,7 @@ class Generate {
 			WEB_MODEL_TEMPLATE_PATH, [
 				'Model.hx' => '$WEB_MODELS_PATH::NAME::.hx',
 				'Template.tpl' => '$WEB_PAGES_PATH::name::.tpl',
-				'RMTemplate.tpl' => '${WEB_PAGES_PATH}rm::name::.tpl',
+				'RMTemplate.tpl' => '${WEB_PAGES_PATH}rm::name::.tpl'
 			],
 			[
 				'NAME' => name,

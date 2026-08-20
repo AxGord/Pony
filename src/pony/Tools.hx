@@ -106,10 +106,7 @@ class Tools {
 	/**
 	 * Compare two value
 	 * @author	deep <system.grand@gmail.com>
-	 * @param	a
-	 * @param	b
 	 * @param	maxDepth -1 - infinity depth
-	 * @return
 	 */
 	public static function equal(a: Dynamic, b: Dynamic, maxDepth: Int = 1): Bool {
 		if (a == b) return true;
@@ -247,8 +244,6 @@ class Tools {
 
 	/**
 	 * @author BoBaH6eToH
-	 * @param	b
-	 * @return
 	 */
 	public static function cut(inp: BytesInput): BytesInput {
 		var out: BytesOutput = new BytesOutput();
@@ -488,7 +483,7 @@ class Tools {
 
 	public static function hexToBytes(hex: String): Bytes {
 		var output: BytesOutput = new BytesOutput();
-		for (i in 0...Std.int(hex.length / 2)) output.writeByte(Std.parseInt(('0x' + hex.substr(i * 2, 2))));
+		for (i in 0...Std.int(hex.length / 2)) output.writeByte(Std.parseInt('0x' + hex.substr(i * 2, 2)));
 		return output.getBytes();
 	}
 
@@ -808,9 +803,6 @@ class FloatTools {
 
 	/**
 	 * todo: negative numbers
-	 * @param	ex
-	 * @param	mask
-	 * @return
 	 */
 	macro public static function toFixed(ex: Expr, mask: String): Expr {
 		var s: String = if (mask.indexOf('.') != -1)

@@ -282,7 +282,6 @@ class AtlasCreator {
 
 		throw 'Object $source is too big';
 
-		return null;
 	}
 
 	private function bitmapDataRestorationCallback(sizeX: Int, sizeY: Int, source: DisplayObject, matrix: Matrix): BitmapData {

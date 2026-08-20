@@ -464,7 +464,7 @@ class VSCode {
 					runtimeArgs: [output, '--remote-debugging-port=$port'],
 					windows: {
 						runtimeExecutable: electronExecutable + '.cmd'
-					},
+					}
 				}: Dynamic)
 			],
 			compounds: [

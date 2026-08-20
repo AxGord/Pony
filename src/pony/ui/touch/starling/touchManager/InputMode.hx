@@ -57,7 +57,7 @@ class InputMode {
 
 	#if !disableMouseInput
 	private static function mouseInput(_): Void {
-		if ((_activeTouchesCounter == 0) && (_touchMode) && (Timer.stamp() * 1000 >= _ignoreMouseMoveUntil)) {
+		if ((_activeTouchesCounter == 0) && _touchMode && (Timer.stamp() * 1000 >= _ignoreMouseMoveUntil)) {
 			// trace("MOUSE MODE");
 
 			_touchMode = false;

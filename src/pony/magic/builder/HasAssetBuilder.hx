@@ -309,7 +309,7 @@ class HasAssetBuilder {
 				case EField({ expr: EConst(CIdent(pack)) }, field):
 					var name: String = pack + '.' + field;
 					for (f in Context.getModule(name)) switch f {
-						case TInst(t, params) if (t.toString() == name):
+						case TInst(t, _) if (t.toString() == name):
 							var m = t.get().meta;
 							parentPathes = getPatches(m.get(), t);
 							var e = { expr: EConst(CString(clss.toString())), pos: Context.currentPos() };
@@ -382,7 +382,7 @@ class HasAssetBuilder {
 				case EField({ expr: EConst(CIdent(pack)) }, field):
 					var name: String = pack + '.' + field;
 					for (f in Context.getModule(name)) switch f {
-						case TInst(t, params) if (t.toString() == name):
+						case TInst(t, _) if (t.toString() == name):
 							parentPrefix = getPrefix(t.get().meta.get());
 							break;
 						case _:

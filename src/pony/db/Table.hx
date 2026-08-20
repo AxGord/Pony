@@ -54,8 +54,7 @@ class CTable implements Declarator implements Ninja {
 	// fix macro error
 	public function new(mysql: ISQL, table: String) {}
 	public function resolve(s: String) return new Table(null, null);
-	#end
-	#if !macro
+	#else
 	@:arg public var mysql(default, null): ISQL;
 	@:arg private var table: String;
 	private var _select: Array<String> = [];

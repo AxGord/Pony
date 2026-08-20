@@ -45,7 +45,7 @@ class SerialWelcome implements Declarator implements HasSignal {
 				if (buf.indexOf(w) != -1) {
 					welcomeMessage = w;
 					if (delay != null)
-						this.delay.start();
+						delay.start();
 					else
 						connect();
 					return;

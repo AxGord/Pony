@@ -28,8 +28,8 @@ import pony.time.Tween;
 	public function new(asset: String, ?name: String, anim: Bool = false, hidden: Bool = false, ?parent: Object) {
 		super(parent);
 		this.asset = asset;
-		this.aname = name;
-		this.needAnim = anim;
+		aname = name;
+		needAnim = anim;
 		finalVisible = !hidden;
 		if (!hidden) init();
 	}

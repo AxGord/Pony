@@ -60,7 +60,7 @@ class ConfigBuilder {
 					case CFloat: Context.makeExpr(Std.parseFloat(cfg.value), Context.currentPos());
 					case CBool: Context.makeExpr(TextTools.isTrue(cfg.value), Context.currentPos());
 					case CColor: Context.makeExpr((pony.color.Color.fromString(cfg.value): Int), Context.currentPos());
-					case CPoint: Context.makeExpr((pony.geom.Point.fromString(cfg.value)), Context.currentPos());
+					case CPoint: Context.makeExpr(pony.geom.Point.fromString(cfg.value), Context.currentPos());
 					case CStringMap, CIntMap, CFloatMap, CPointMap: null;
 					case _: throw 'Error';
 				}

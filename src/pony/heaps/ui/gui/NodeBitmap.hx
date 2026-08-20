@@ -41,7 +41,7 @@ import pony.geom.Point;
 		if (flipx) bitmap.scaleX = -bitmap.scaleX;
 		bitmap.scaleY = h / bitmap.tile.height;
 		if (flipy) bitmap.scaleY = -bitmap.scaleY;
-		bitmap.setPosition((flipx ? w : 0) + border.left, (flipy ? h : 0 + border.top));
+		bitmap.setPosition((flipx ? w : 0) + border.left, flipy ? h : 0 + border.top);
 	}
 
 	private function updateColor(v: Vector): Void {
