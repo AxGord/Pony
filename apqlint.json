@@ -1,4 +1,5 @@
 {
+	"languageVersion": "4.0",
 	"compilerOracle": "lint-oracle.hxml",
 	"compilerOracleServer": false,
 	"resolutionLibs": [
@@ -11,24 +12,6 @@
 	],
 	"rules": {
 		"unused-public-member": {
-			"enabled": false
-		},
-		"duplicate-case": {
-			"enabled": false
-		},
-		"prefer-null-coalescing": {
-			"enabled": false
-		},
-		"prefer-safe-nav": {
-			"enabled": false
-		},
-		"catch-dynamic": {
-			"enabled": false
-		},
-		"fold-adjacent-string-literals": {
-			"enabled": false
-		},
-		"prefer-interpolation": {
 			"enabled": false
 		},
 		"redundant-parens": {
