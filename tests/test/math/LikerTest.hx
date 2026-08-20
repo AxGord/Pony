@@ -6,7 +6,7 @@ import pony.time.DeltaTime;
 
 class LikerTest {
 
-	var instance: Liker;
+	private var instance: Liker;
 
 	@BeforeClass
 	public function beforeClass(): Void {

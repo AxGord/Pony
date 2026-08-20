@@ -2,10 +2,10 @@ package pony.flash.ui;
 
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
+import pony.flash.FLStage;
 import pony.math.MathTools;
 import pony.time.DeltaTime;
 import pony.ui.gui.StepSliderCore;
-import pony.flash.FLStage;
 
 /**
  * StepSlider

@@ -1,10 +1,10 @@
 package module;
 
 import js.node.Fs;
-import pony.fs.File;
-import pony.text.TextTools;
 import pony.Fast;
 import pony.NPM;
+import pony.fs.File;
+import pony.text.TextTools;
 import types.BmfontConfig;
 
 /**

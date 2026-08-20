@@ -1,9 +1,9 @@
 package pony.ui;
 
-import pony.time.ITimer;
-import pony.time.DTimer;
-import pony.time.Time;
 import pony.time.DT;
+import pony.time.DTimer;
+import pony.time.ITimer;
+import pony.time.Time;
 
 /**
  * Presser

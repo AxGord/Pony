@@ -1,10 +1,10 @@
 package module;
 
-import types.UglifyConfig;
 import module.NModule;
 import pony.NPM;
 import sys.FileSystem;
 import sys.io.File;
+import types.UglifyConfig;
 
 /**
  * Uglify Pony Tools Node Module

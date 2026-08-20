@@ -1,8 +1,8 @@
 package pony.js.node.serial;
 
 import pony.events.Signal1;
-import pony.magic.HasSignal;
 import pony.magic.Declarator;
+import pony.magic.HasSignal;
 
 /**
  * LimitSwitch

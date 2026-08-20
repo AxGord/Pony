@@ -1,6 +1,6 @@
 import pony.Fast;
-import pony.text.XmlConfigReader;
 import pony.magic.HasAbstract;
+import pony.text.XmlConfigReader;
 import types.BAConfig;
 import types.BASection;
 

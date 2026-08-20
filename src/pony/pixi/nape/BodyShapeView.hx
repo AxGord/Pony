@@ -1,7 +1,7 @@
 package pony.pixi.nape;
 
-import pixi.core.graphics.Graphics;
 import haxe.io.BytesInput;
+import pixi.core.graphics.Graphics;
 import pony.Byte;
 import pony.physics.nape.BodyShape;
 

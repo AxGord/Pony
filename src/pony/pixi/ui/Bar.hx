@@ -72,7 +72,7 @@ class Bar extends Sprite implements HasSignal implements IWH {
 		onReady.add(_wait.ready, 10);
 	}
 
-	inline public function wait(cb: Void -> Void): Void _wait.wait(cb);
+	public inline function wait(cb: Void -> Void): Void _wait.wait(cb);
 
 	private function get_size(): Point<Float> {
 		return switch bg {
@@ -113,12 +113,12 @@ class Bar extends Sprite implements HasSignal implements IWH {
 		eReady.destroy();
 	}
 
-	private function changeXHandler(p: Float) {
+	private function changeXHandler(p: Float): Void {
 		fill.width = p;
 		end.x = fill.x + fill.width + begin.width;
 	}
 
-	private function changeYHandler(p: Float) {
+	private function changeYHandler(p: Float): Void {
 		fill.height = p;
 		end.y = fill.y + fill.height + begin.height;
 	}

@@ -37,6 +37,6 @@ class Cookie {
 			return oldCookie[name];
 	}
 
-	inline public function set(name: String, value: String): Void newCookie.set(name, value);
+	public inline function set(name: String, value: String): Void newCookie.set(name, value);
 
 }

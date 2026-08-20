@@ -13,12 +13,12 @@ class Slice2H extends Slice3H {
 		super(data, useSpriteSheet, creep);
 	}
 
-	override function init(): Void {
+	override private function init(): Void {
 		super.init();
 		images[2].flipX();
 	}
 
-	override function update(): Void {
+	override private function update(): Void {
 		if (!inited) return;
 		super.update();
 		images[2].flipXpos();

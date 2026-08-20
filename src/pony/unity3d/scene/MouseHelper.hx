@@ -1,13 +1,13 @@
 package pony.unity3d.scene;
 
-import pony.events.Signal0;
-import pony.time.DeltaTime;
 import pony.events.LV;
 import pony.events.Signal;
+import pony.events.Signal0;
+import pony.time.DeltaTime;
 import pony.unity3d.ui.LoadScreen;
 import unityengine.BoxCollider;
-import unityengine.MeshCollider;
 import unityengine.Input;
+import unityengine.MeshCollider;
 import unityengine.MonoBehaviour;
 import unityengine.Transform;
 
@@ -155,6 +155,6 @@ using hugs.HUGSWrapper;
 		if (overed) down.dispatch();
 	}
 
-	inline private function get_overed(): Bool return ovrs > 0;
+	private inline function get_overed(): Bool return ovrs > 0;
 
 }

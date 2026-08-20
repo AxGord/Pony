@@ -2,9 +2,9 @@ package pony.heaps;
 
 import pony.events.Signal1;
 import pony.events.Signal2;
-import pony.magic.HasSignal;
 import pony.geom.Point;
 import pony.geom.Rect;
+import pony.magic.HasSignal;
 
 #if (haxe_ver >= 4.2) enum #else @:enum #end
 abstract SmallDeviceQuality(Int) to Int {

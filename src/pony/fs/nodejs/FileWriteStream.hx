@@ -2,9 +2,9 @@ package pony.fs.nodejs;
 
 import haxe.io.Bytes;
 import haxe.io.BytesOutput;
+import js.node.Buffer;
 import js.node.Fs;
 import js.node.fs.Stats;
-import js.node.Buffer;
 #if (haxe_ver >= '4.0.0')
 import js.lib.Error;
 #else

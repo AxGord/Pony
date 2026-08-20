@@ -1,13 +1,13 @@
 package pony.geom.drawshape;
 
-import pony.geom.Rect;
-import pony.ui.touch.Touchable;
-import pony.ui.touch.Touch;
-import pony.geom.Point;
 import pony.events.Signal0;
 import pony.events.Signal1;
 import pony.events.Signal2;
+import pony.geom.Point;
+import pony.geom.Rect;
 import pony.time.DeltaTime;
+import pony.ui.touch.Touch;
+import pony.ui.touch.Touchable;
 
 /**
  * DrawShapePointer

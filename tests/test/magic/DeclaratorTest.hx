@@ -1,9 +1,9 @@
 package magic;
 
 import magic.DeclaratorTest.DeclaratorTestHelper;
-import massive.munit.util.Timer;
 import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
+import massive.munit.util.Timer;
 import pony.magic.Declarator;
 
 class DeclaratorTest {
@@ -36,10 +36,10 @@ class DeclaratorTest {
 
 class DeclaratorTestHelper implements Declarator {
 
-	static public var a: String = 'hello';
-	static public var b: String;
+	public static var a: String = 'hello';
+	public static var b: String;
 
-	static public function __init__(): Void b = a;
+	public static function __init__(): Void b = a;
 
 	@:arg private var i: Int;
 	@:arg private var j: Int = 3;

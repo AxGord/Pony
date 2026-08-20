@@ -41,14 +41,14 @@ class DeltaTime implements HasSignal {
 
 	private static var lastNow: Date;
 
-	inline private static function get_nowDate(): Date return lastNow;
+	private static inline function get_nowDate(): Date return lastNow;
 
-	private inline static function set(): Void {
+	private static inline function set(): Void {
 		t = openfl.Lib.getTimer();
 		lastNow = Date.fromTime(t);
 	}
 
-	private inline static function get(): Float return (openfl.Lib.getTimer() - t) / 1000;
+	private static inline function get(): Float return (openfl.Lib.getTimer() - t) / 1000;
 	#elseif !HUGS
 	#if sys
 	public static inline function tick(): Void {

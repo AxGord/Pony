@@ -36,8 +36,8 @@ import pony.flash.ui.TurningFree;
 	import pony.starling.ui.StarlingTree;
 	import pony.starling.ui.StarlingTurningFree;
  */
-import pony.flash.ui.Button;
 import pony.flash.starling.ui.StarlingButton;
+import pony.flash.ui.Button;
 import starling.core.Starling;
 import starling.display.DisplayObject;
 import starling.utils.HAlign;

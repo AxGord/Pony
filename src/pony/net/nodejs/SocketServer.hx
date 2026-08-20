@@ -4,8 +4,8 @@ package pony.net.nodejs;
 import js.node.Net;
 import js.node.net.Server;
 import js.node.net.Socket;
-import pony.net.SocketServerBase;
 import pony.net.SocketClient;
+import pony.net.SocketServerBase;
 
 /**
  * SocketServer

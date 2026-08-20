@@ -2,8 +2,8 @@ package pony.ui.touch.starling.touchManager.touchInputs;
 
 import pony.time.DeltaTime;
 import pony.ui.touch.starling.touchManager.TouchManager;
-import unityengine.Vector3;
 import unityengine.Input;
+import unityengine.Vector3;
 
 /**
  * UnityTouchInput

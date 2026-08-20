@@ -25,7 +25,7 @@ class TextButton extends Button {
 		addChild(tf);
 	}
 
-	override function change(img: Int): Void {
+	override private function change(img: Int): Void {
 		super.change(img);
 		tf.visible = img != 4;
 	}

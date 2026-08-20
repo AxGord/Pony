@@ -1,8 +1,8 @@
 package pony.js.node.serial;
 
+import haxe.io.BytesInput;
 import pony.events.Signal1;
 import pony.magic.HasSignal;
-import haxe.io.BytesInput;
 
 /**
  * CardReader

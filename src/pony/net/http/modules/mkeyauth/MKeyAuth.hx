@@ -9,8 +9,8 @@ import pony.net.http.WebServer.EConnect;
  */
 final class MKeyAuth implements IModule {
 
-	inline public static final PARAM: String = 'authkey';
-	inline public static final SESSION: String = 'keyAuthed';
+	public static inline final PARAM: String = 'authkey';
+	public static inline final SESSION: String = 'keyAuthed';
 
 	private var keys: Array<String>;
 	public var server: WebServer;

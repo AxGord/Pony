@@ -1,8 +1,8 @@
 package pony.js;
 
 import js.html.Element;
-import pony.magic.HasSignal;
 import pony.events.Signal2;
+import pony.magic.HasSignal;
 import pony.time.DeltaTime;
 
 /**

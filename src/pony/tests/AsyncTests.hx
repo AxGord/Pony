@@ -25,18 +25,18 @@ class AsyncTests extends TestCase {
 	private static var counter: Int = 0;
 	private static var lock: Bool;
 
-	static public function init(count: Int): Void {
+	public static function init(count: Int): Void {
 		if (testCount != 0) throw 'Second init';
 		Log.trace('$dec Begin tests ($count) $dec');
 		testCount = count;
 		isRead = [for (i in 0...count) i => false];
 	}
 
-	static public inline function equals<T>(a: T, b: T, ?infos: PosInfos): Void {
+	public static inline function equals<T>(a: T, b: T, ?infos: PosInfos): Void {
 		assertList.push({ a: a, b: b, pos: infos });
 	}
 
-	static public function setFlag(n: Int, ?infos: PosInfos) {
+	public static function setFlag(n: Int, ?infos: PosInfos) {
 		#if cs
 		pony.cs.Synchro.lock(isRead, function() {
 		#end
@@ -63,12 +63,12 @@ class AsyncTests extends TestCase {
 		#end
 	}
 
-	public function testRun() {
+	public function testRun(): Void {
 		for (e in assertList) assertEquals(e.a, e.b, e.pos);
 		complite = true;
 	}
 
-	static public function finish(?infos: PosInfos): Void {
+	public static function finish(?infos: PosInfos): Void {
 		if (!complite) throw 'Tests not complited: ' + {
 			final a = [for (k in isRead.keys()) if (!isRead[k]) k];
 			a;
@@ -76,7 +76,7 @@ class AsyncTests extends TestCase {
 		Log.trace('$dec All tests finished $dec', infos);
 	}
 
-	static public function wait(it: IntIterator, cb: Void -> Void): Void {
+	public static function wait(it: IntIterator, cb: Void -> Void): Void {
 		if (checkWait(it)) {
 			cb();
 		} else {
@@ -84,12 +84,12 @@ class AsyncTests extends TestCase {
 		}
 	}
 
-	static private function checkWait(it: IntIterator): Bool {
+	private static function checkWait(it: IntIterator): Bool {
 		for (i in it.copy()) if (!isRead[i]) return false;
 		return true;
 	}
 
-	static private function checkWaitList(): Void {
+	private static function checkWaitList(): Void {
 		for (e in waitList) if (checkWait(e.it)) {
 			e.cb();
 			waitList.remove(e);

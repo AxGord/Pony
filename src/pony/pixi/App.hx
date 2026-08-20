@@ -5,20 +5,20 @@ import js.html.CanvasElement;
 import js.html.Element;
 import pixi.core.Application.ApplicationOptions;
 import pixi.core.Pixi.RendererType;
+import pixi.core.graphics.Graphics;
 import pixi.core.sprites.Sprite;
 import pixi.core.ticker.Ticker;
-import pixi.core.graphics.Graphics;
 import pony.events.Signal0;
 import pony.events.Signal1;
 import pony.geom.Point;
 import pony.geom.Rect;
+import pony.js.SmartCanvas;
 import pony.magic.HasSignal;
 import pony.time.DTimer;
 import pony.time.JsDT;
 import pony.time.Time;
 import pony.ui.touch.pixi.Mouse;
 import pony.ui.touch.pixi.Touch;
-import pony.js.SmartCanvas;
 
 typedef RenderOptions = {
 	?antialias: Bool,

@@ -1,14 +1,14 @@
 package pony;
 
-import pony.ds.ROArray;
-import pony.ds.KeyValue;
-import haxe.Constraints.Function;
 import haxe.CallStack;
+import haxe.Constraints.Function;
 import haxe.io.Bytes;
 import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
 import haxe.io.Eof;
 import haxe.Log;
+import pony.ds.KeyValue;
+import pony.ds.ROArray;
 #if macro
 import haxe.macro.Context;
 import haxe.macro.Expr;
@@ -16,8 +16,8 @@ import haxe.macro.Expr;
 using haxe.macro.Tools;
 #end
 
-import pony.text.TextTools;
 import pony.math.MathTools;
+import pony.text.TextTools;
 
 using Reflect;
 using Lambda;

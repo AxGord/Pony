@@ -19,7 +19,7 @@ class Slice4 extends Slice9 {
 		super(data, useSpriteSheet, creep);
 	}
 
-	override function init(): Void {
+	override private function init(): Void {
 		super.init();
 		images[2].flipX();
 		images[5].flipX();
@@ -27,7 +27,7 @@ class Slice4 extends Slice9 {
 		for (i in 6...9) images[i].flipY();
 	}
 
-	override function updateWidth(): Void {
+	override private function updateWidth(): Void {
 		if (!inited) return;
 		super.updateWidth();
 		images[2].flipXpos();
@@ -35,7 +35,7 @@ class Slice4 extends Slice9 {
 		images[8].flipXpos();
 	}
 
-	override function updateHeight(): Void {
+	override private function updateHeight(): Void {
 		if (!inited) return;
 		super.updateHeight();
 		for (i in 6...9) images[i].flipYpos();

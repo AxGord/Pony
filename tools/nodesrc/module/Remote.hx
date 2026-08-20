@@ -1,7 +1,7 @@
 package module;
 
-import types.RemoteConfig;
 import remote.client.RemoteClient;
+import types.RemoteConfig;
 
 /**
  * Remote Pony Tools Node Module

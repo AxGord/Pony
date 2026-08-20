@@ -2,8 +2,8 @@ package pony.ui.keyboard.flash;
 
 import flash.display.Stage;
 import flash.events.KeyboardEvent;
-import pony.flash.MultyStage;
 import pony.events.Signal1;
+import pony.flash.MultyStage;
 import pony.magic.HasSignal;
 import pony.ui.keyboard.IKeyboard;
 import pony.ui.keyboard.Key;

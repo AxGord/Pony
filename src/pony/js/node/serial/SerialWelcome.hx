@@ -1,12 +1,12 @@
 package pony.js.node.serial;
 
-import pony.text.TextTools;
-import pony.events.Signal2;
-import pony.magic.HasSignal;
-import pony.magic.Declarator;
-import pony.time.Timer;
-import pony.time.Time;
 import haxe.io.BytesInput;
+import pony.events.Signal2;
+import pony.magic.Declarator;
+import pony.magic.HasSignal;
+import pony.text.TextTools;
+import pony.time.Time;
+import pony.time.Timer;
 
 /**
  * SerialWelcome

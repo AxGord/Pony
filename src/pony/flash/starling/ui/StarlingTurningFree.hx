@@ -3,11 +3,11 @@ package pony.flash.starling.ui;
 import flash.geom.Point;
 import pony.geom.Angle;
 import pony.ui.gui.TurningCore;
-import starling.display.Sprite;
-import starling.display.DisplayObject;
 import pony.ui.touch.starling.touchManager.TouchEventType;
 import pony.ui.touch.starling.touchManager.TouchManager;
 import pony.ui.touch.starling.touchManager.TouchManagerEvent;
+import starling.display.DisplayObject;
+import starling.display.Sprite;
 
 /**
  * TurningStarling

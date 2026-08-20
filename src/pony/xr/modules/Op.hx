@@ -50,6 +50,6 @@ class Op implements IXRModule {
 		}
 	}
 
-	inline public static function number(v: Dynamic): Float return Std.is(v, String) ? Std.parseFloat(v) : v;
+	public static inline function number(v: Dynamic): Float return Std.is(v, String) ? Std.parseFloat(v) : v;
 
 }

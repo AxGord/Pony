@@ -1,8 +1,8 @@
 package pony.ui.touch;
 
 import pony.events.Signal1;
-import pony.magic.HasSignal;
 import pony.geom.Point;
+import pony.magic.HasSignal;
 
 /**
  * Touch

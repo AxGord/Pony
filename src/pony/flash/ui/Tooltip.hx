@@ -1,8 +1,8 @@
 package pony.flash.ui;
 
-import pony.flash.starling.displayFactory.DisplayFactory;
 import flash.geom.Point;
 import flash.Lib;
+import pony.flash.starling.displayFactory.DisplayFactory;
 import pony.ui.touch.starling.touchManager.TouchEventType;
 import pony.ui.touch.starling.touchManager.TouchManager;
 import pony.ui.touch.starling.touchManager.TouchManagerEvent;

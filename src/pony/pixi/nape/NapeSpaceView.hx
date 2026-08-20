@@ -1,18 +1,18 @@
 package pony.pixi.nape;
 
 import haxe.io.Bytes;
-import pony.ui.touch.Touchable;
+import nape.geom.Vec2;
+import nape.phys.Body;
+import nape.space.Space;
+import pixi.core.graphics.Graphics;
+import pixi.core.sprites.Sprite;
 import pony.geom.Point;
 import pony.geom.Rect;
 import pony.physics.nape.BodyBase;
 import pony.physics.nape.BodyShape;
 import pony.physics.nape.DebugLineStyle;
 import pony.physics.nape.NapeSpace;
-import nape.space.Space;
-import nape.phys.Body;
-import nape.geom.Vec2;
-import pixi.core.sprites.Sprite;
-import pixi.core.graphics.Graphics;
+import pony.ui.touch.Touchable;
 
 /**
  * NapeSpaceView

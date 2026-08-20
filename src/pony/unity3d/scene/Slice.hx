@@ -24,14 +24,14 @@ using hugs.HUGSWrapper;
 
 	private var childrenMaterials: Array<Material>;
 
-	override private function Start() {
+	override private function Start(): Void {
 		super.Start();
 		childrenMaterials = [for (e in getComponentsInChildrenOfType(Renderer)) e.material];
 		buttonSlice = buttonForSlice.getTypedComponent(TintButton).core;
 		buttonSlice.click.add(click);
 	}
 
-	inline private function click(mode: Int): Void {
+	private inline function click(mode: Int): Void {
 		if (mode == 2)
 			for (e in getComponentsInChildrenOfType(Renderer)) e.material = untransparentTexture;
 		else {

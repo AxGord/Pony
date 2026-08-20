@@ -1,9 +1,9 @@
 package module;
 
-import pony.magic.HasAbstract;
 import pony.Logable;
 import pony.Tasks;
 import pony.events.Signal0;
+import pony.magic.HasAbstract;
 
 /**
  * NModule - base class for Pony Tools Node Modules

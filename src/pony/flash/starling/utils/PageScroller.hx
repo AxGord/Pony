@@ -1,8 +1,8 @@
 package pony.flash.starling.utils;
 
-import pony.flash.ui.Bar;
 import flash.geom.Rectangle;
 import pony.flash.starling.displayFactory.DisplayFactory;
+import pony.flash.ui.Bar;
 import pony.ui.touch.starling.touchManager.TouchEventType;
 import pony.ui.touch.starling.touchManager.TouchManager;
 import pony.ui.touch.starling.touchManager.TouchManagerEvent;

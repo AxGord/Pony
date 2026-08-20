@@ -7,8 +7,8 @@ import pixi.loaders.Loader;
 import pixi.loaders.Resource;
 import pixi.plugins.spine.Spine;
 import pixi.plugins.spine.core.SkeletonData;
-import pony.ui.AssetManager;
 import pony.JsTools;
+import pony.ui.AssetManager;
 
 /**
  * PixiAssets

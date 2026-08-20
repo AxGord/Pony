@@ -2,10 +2,10 @@ import haxe.io.Bytes;
 import pony.events.Signal0;
 import pony.events.Signal1;
 import pony.events.Signal2;
-import pony.net.rpc.RPC;
 import pony.net.rpc.IRPC;
-import pony.net.rpc.RPCLog;
+import pony.net.rpc.RPC;
 import pony.net.rpc.RPCFileTransport;
+import pony.net.rpc.RPCLog;
 import pony.net.rpc.RPCPing;
 
 /**

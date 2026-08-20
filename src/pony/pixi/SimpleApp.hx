@@ -3,8 +3,8 @@ package pony.pixi;
 import js.Browser;
 import js.html.Element;
 import pixi.core.sprites.Sprite;
-import pony.JsTools;
 import pony.Config;
+import pony.JsTools;
 
 /**
  * Simple Pixi.js Application

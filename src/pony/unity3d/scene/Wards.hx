@@ -69,7 +69,7 @@ using hugs.HUGSWrapper;
 		toObj = wards[currentPos];
 	}
 
-	inline public function goto(n: Int): Void change.dispatch(n);
+	public inline function goto(n: Int): Void change.dispatch(n);
 
 	public function Update(): Void {
 		if (toObj == null) return;

@@ -44,7 +44,7 @@ using hugs.HUGSWrapper;
 		needChangeRot = !(openRotation.x == 0 && openRotation.y == 0 && openRotation.z == 0);
 	}
 
-	inline private function get_open(): Bool return _open;
+	private inline function get_open(): Bool return _open;
 
 	public function set_open(to: Bool): Bool {
 		if (_open == to) return to;
@@ -70,7 +70,7 @@ using hugs.HUGSWrapper;
 		if (needChangeRot) transform.rotation = startRotation;
 	}
 
-	inline public function change(): Void open = !open;
+	public inline function change(): Void open = !open;
 
 	public function syncWith(d: Door): Void {
 		eOpen << d.silentOpen;

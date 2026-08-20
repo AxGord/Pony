@@ -1,8 +1,8 @@
 package pony.ui.gui;
 
 import pony.events.Signal1;
-import pony.ui.touch.TouchableBase;
 import pony.ui.gui.ButtonCore;
+import pony.ui.touch.TouchableBase;
 
 /**
  * ButtonImgN

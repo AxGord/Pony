@@ -1,16 +1,16 @@
 package pony.pixi.ui;
 
-import pixi.core.math.shapes.Rectangle;
-import pixi.core.graphics.Graphics;
 import pixi.core.display.Container;
 import pixi.core.display.DisplayObject.DestroyOptions;
-import pony.ui.gui.RubberLayoutCore;
-import pony.ui.gui.ButtonCore;
-import pony.ui.gui.ButtonImgN;
-import pony.ui.touch.Touchable;
+import pixi.core.graphics.Graphics;
+import pixi.core.math.shapes.Rectangle;
+import pony.color.UColor;
 import pony.geom.Border;
 import pony.geom.Point;
-import pony.color.UColor;
+import pony.ui.gui.ButtonCore;
+import pony.ui.gui.ButtonImgN;
+import pony.ui.gui.RubberLayoutCore;
+import pony.ui.touch.Touchable;
 
 /**
  * RectButton
@@ -66,15 +66,15 @@ class RectButton extends BaseLayout<RubberLayoutCore<Container>> {
 
 	private function enableHandler(): Void cursor = true;
 
-	inline private function get_cursor(): Bool return g.buttonMode;
+	private inline function get_cursor(): Bool return g.buttonMode;
 
-	inline private function set_cursor(v: Bool): Bool return g.buttonMode = v;
+	private inline function set_cursor(v: Bool): Bool return g.buttonMode = v;
 
-	inline private function get_touchActive(): Bool return g.interactive;
+	private inline function get_touchActive(): Bool return g.interactive;
 
-	inline private function set_touchActive(v: Bool): Bool return g.interactive = v;
+	private inline function set_touchActive(v: Bool): Bool return g.interactive = v;
 
-	override function destroy(?options: haxe.extern.EitherType<Bool, DestroyOptions>): Void {
+	override public function destroy(?options: haxe.extern.EitherType<Bool, DestroyOptions>): Void {
 		core.destroy();
 		core = null;
 		removeChild(g);

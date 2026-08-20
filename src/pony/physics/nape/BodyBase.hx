@@ -1,20 +1,20 @@
 package pony.physics.nape;
 
 import haxe.io.Bytes;
+import nape.callbacks.BodyCallback;
+import nape.callbacks.BodyListener;
+import nape.callbacks.CbEvent;
+import nape.callbacks.CbType;
+import nape.callbacks.InteractionCallback;
+import nape.callbacks.InteractionListener;
+import nape.callbacks.InteractionType;
+import nape.callbacks.Listener;
+import nape.dynamics.InteractionFilter;
+import nape.geom.Vec2;
 import nape.phys.Body;
 import nape.phys.BodyType;
 import nape.phys.Material;
 import nape.space.Space;
-import nape.callbacks.CbType;
-import nape.callbacks.CbEvent;
-import nape.callbacks.BodyListener;
-import nape.callbacks.BodyCallback;
-import nape.callbacks.InteractionListener;
-import nape.callbacks.InteractionType;
-import nape.callbacks.InteractionCallback;
-import nape.callbacks.Listener;
-import nape.dynamics.InteractionFilter;
-import nape.geom.Vec2;
 import pony.events.Event0;
 import pony.events.Event1;
 import pony.events.Signal0;
@@ -22,8 +22,8 @@ import pony.events.Signal1;
 import pony.events.Signal2;
 import pony.geom.Point;
 import pony.geom.Rect;
-import pony.time.DeltaTime;
 import pony.math.MathTools;
+import pony.time.DeltaTime;
 
 /**
  * BodyBase

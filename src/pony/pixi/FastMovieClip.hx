@@ -4,13 +4,13 @@ import pixi.core.math.shapes.Rectangle;
 import pixi.core.sprites.Sprite;
 import pixi.core.textures.Texture;
 import pony.Or;
+import pony.magic.HasAbstract;
+import pony.math.MathTools;
 import pony.time.DT;
 import pony.time.DTimer;
 import pony.time.DeltaTime;
 import pony.time.Time;
 import pony.ui.gui.AnimTextureCore;
-import pony.math.MathTools;
-import pony.magic.HasAbstract;
 
 using pony.pixi.PixiExtends;
 

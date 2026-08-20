@@ -2,10 +2,10 @@ package pony.ui.gui;
 
 import pony.events.Signal1;
 import pony.events.Signal2;
-import pony.time.Time;
-import pony.time.DTimer;
-import pony.time.DT;
 import pony.math.MathTools;
+import pony.time.DT;
+import pony.time.DTimer;
+import pony.time.Time;
 
 /**
  * AnimCore

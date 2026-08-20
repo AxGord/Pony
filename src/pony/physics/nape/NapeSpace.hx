@@ -1,13 +1,13 @@
 package pony.physics.nape;
 
 import haxe.io.Bytes;
+import nape.geom.Vec2;
+import nape.phys.Body;
+import nape.space.Space;
 import pony.geom.Point;
 import pony.geom.Rect;
 import pony.time.DeltaTime;
 import pony.time.DT;
-import nape.phys.Body;
-import nape.space.Space;
-import nape.geom.Vec2;
 
 /**
  * NapeSpace

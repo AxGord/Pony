@@ -38,9 +38,9 @@ class Download extends Section {
 
 private class Library {
 
-	final url: String;
-	final version: String;
-	final check: String;
+	private final url: String;
+	private final version: String;
+	private final check: String;
 
 	public function new(url: String, ?version: String, ?check: String) {
 		this.url = url;

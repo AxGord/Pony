@@ -1,8 +1,8 @@
 package pony.ui.keyboard.unity;
 
+import pony.events.Signal1;
 import pony.magic.HasSignal;
 import pony.time.DeltaTime;
-import pony.events.Signal1;
 import pony.ui.keyboard.IKeyboard;
 import pony.ui.keyboard.Key;
 import unityengine.Input;

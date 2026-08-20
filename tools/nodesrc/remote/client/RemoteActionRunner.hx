@@ -1,12 +1,12 @@
 package remote.client;
 
 import pony.Logable;
-import types.RemoteConfig;
 import remote.client.actions.RemoteAction;
+import remote.client.actions.RemoteActionCommand;
+import remote.client.actions.RemoteActionExec;
 import remote.client.actions.RemoteActionGet;
 import remote.client.actions.RemoteActionSend;
-import remote.client.actions.RemoteActionExec;
-import remote.client.actions.RemoteActionCommand;
+import types.RemoteConfig;
 
 /**
  * RemoteActionRunner

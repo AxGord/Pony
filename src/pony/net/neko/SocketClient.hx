@@ -5,12 +5,12 @@ import haxe.io.Bytes;
 import haxe.io.BytesData;
 import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
-import haxe.io.Error;
 import haxe.io.Eof;
-import sys.net.Socket;
-import sys.net.Host;
+import haxe.io.Error;
 import pony.net.SocketClientBase;
 import pony.time.DeltaTime;
+import sys.net.Host;
+import sys.net.Socket;
 
 /**
  * SocketClient

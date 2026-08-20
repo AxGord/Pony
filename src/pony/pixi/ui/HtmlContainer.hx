@@ -4,10 +4,10 @@ import js.html.CSSStyleDeclaration;
 import js.html.Element;
 import pixi.core.display.DisplayObject;
 import pixi.core.sprites.Sprite;
-import pony.pixi.HtmlContainerBase;
-import pony.geom.Rect;
-import pony.geom.Point;
 import pony.geom.IWH;
+import pony.geom.Point;
+import pony.geom.Rect;
+import pony.pixi.HtmlContainerBase;
 import pony.time.DeltaTime;
 
 using pony.pixi.PixiExtends;

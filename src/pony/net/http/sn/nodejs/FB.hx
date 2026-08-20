@@ -16,7 +16,7 @@ class FB implements IFB {
 		fb = Node.require('fb');
 	}
 
-	inline public function api(token: String, r: String, cb: Dynamic -> Void): Void {
+	public inline function api(token: String, r: String, cb: Dynamic -> Void): Void {
 		if (token == null)
 			cb(null);
 		else {

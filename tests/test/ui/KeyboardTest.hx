@@ -3,13 +3,13 @@ package ui;
 import massive.munit.Assert;
 import pony.events.Signal1;
 import pony.magic.HasSignal;
+import pony.ui.keyboard.IKeyboard;
 import pony.ui.keyboard.Key;
 import pony.ui.keyboard.Keyboard;
-import pony.ui.keyboard.IKeyboard;
 
 class KeyboardTest {
 
-	var helper: KeyboardTestHelper;
+	private var helper: KeyboardTestHelper;
 
 	@Before
 	public function setup(): Void {

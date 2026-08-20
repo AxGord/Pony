@@ -59,7 +59,7 @@ class LabelButton extends BaseLayout<RubberLayoutCore<Container>> {
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function get_core(): ButtonCore return button.core;
 
-	override function destroy(?options: EitherType<Bool, DestroyOptions>): Void {
+	override public function destroy(?options: EitherType<Bool, DestroyOptions>): Void {
 		removeChild(button);
 		button.destroy();
 		button = null;

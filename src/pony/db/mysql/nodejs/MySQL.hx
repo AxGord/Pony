@@ -1,12 +1,12 @@
 package pony.db.mysql.nodejs;
 
 #if nodejs
-import pony.db.SQLBase;
 import haxe.PosInfos;
 import js.Node;
 import pony.db.ISQL;
 import pony.db.mysql.Config;
 import pony.db.mysql.nodejs.NodeMySQL;
+import pony.db.SQLBase;
 import pony.events.WaitReady;
 import pony.Logable;
 import pony.Stream;
@@ -71,7 +71,7 @@ class MySQL extends SQLBase {
 	/**
 	 * MySQL query
 	 */
-	inline public function query(q: String, ?p: PosInfos, cb: Dynamic -> Dynamic -> Array<Field> -> Void): Void {
+	public inline function query(q: String, ?p: PosInfos, cb: Dynamic -> Dynamic -> Array<Field> -> Void): Void {
 		connection.query(q, function(err: Dynamic, res: Dynamic, f: Array<Dynamic>) {
 			if (err) error(err);
 			final fields: Array<Field> = f == null ? null : parseFields(f);
@@ -119,12 +119,12 @@ class MySQL extends SQLBase {
 	/**
 	 * Escape id (for fields, tables, databases)
 	 */
-	inline public function escapeId(s: String): String return connection.escapeId(s);
+	public inline function escapeId(s: String): String return connection.escapeId(s);
 
 	/**
 	 * Escape (for values)
 	 */
-	inline public function escape(s: String): String return connection.escape(s);
+	public inline function escape(s: String): String return connection.escape(s);
 
 
 	/**

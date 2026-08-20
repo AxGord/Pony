@@ -16,12 +16,12 @@ class Dictionary<K, V> {
 
 	public var maxDepth: Int;
 
-	inline public function new(maxDepth: Int = 1) {
+	public inline function new(maxDepth: Int = 1) {
 		this.maxDepth = maxDepth;
 		clear();
 	}
 
-	inline public function getIndex(k: K): Int return ks.superIndexOf(k, maxDepth);
+	public inline function getIndex(k: K): Int return ks.superIndexOf(k, maxDepth);
 
 	public function set(k: K, v: V): Int {
 		final i: Int = getIndex(k);
@@ -42,7 +42,7 @@ class Dictionary<K, V> {
 			return vs[i];
 	}
 
-	inline public function exists(k: K): Bool return getIndex(k) != -1;
+	public inline function exists(k: K): Bool return getIndex(k) != -1;
 
 	public function remove(k: K): Bool {
 		final i: Int = getIndex(k);
@@ -53,19 +53,19 @@ class Dictionary<K, V> {
 			return false;
 	}
 
-	inline public function removeIndex(i: Int): Void {
+	public inline function removeIndex(i: Int): Void {
 		ks.splice(i, 1);
 		vs.splice(i, 1);
 	}
 
-	inline public function clear(): Void {
+	public inline function clear(): Void {
 		ks = [];
 		vs = [];
 	}
 
-	inline public function iterator(): Iterator<V> return vs.iterator();
+	public inline function iterator(): Iterator<V> return vs.iterator();
 
-	inline public function keys(): Iterator<K> return ks.iterator();
+	public inline function keys(): Iterator<K> return ks.iterator();
 
 	public function toString(): String {
 		final a: Array<String> = [for (k in keys()) '$k: ${get(k)}'];
@@ -86,8 +86,8 @@ class Dictionary<K, V> {
 		return ks[i];
 	}
 
-	inline public function getValueIndex(v: V): Int return vs.indexOf(v);
+	public inline function getValueIndex(v: V): Int return vs.indexOf(v);
 
-	inline private function get_count(): Int return ks.length;
+	private inline function get_count(): Int return ks.length;
 
 }

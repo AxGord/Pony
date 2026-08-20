@@ -129,15 +129,15 @@ abstract Dir(Unit) from Unit {
 
 	public function file(name: String): File return addString(name);
 
-	@:to inline private function toUnit(): Unit return this;
+	@:to private inline function toUnit(): Unit return this;
 
-	@:to inline public function toString(): String return this.toString();
+	@:to public inline function toString(): String return this.toString();
 
 	@:arrayAccess public inline function arrayAccess(key: Int): Dir return this[key];
 
 	public inline function iterator(): Iterator<Dir> return this.iterator();
 
-	@:op(A + B) inline public function addString(a: String): Unit return this.addString(a);
+	@:op(A + B) public inline function addString(a: String): Unit return this.addString(a);
 
 	public static function compareNames(a: Unit, b: Unit): Int {
 		final an: String = a.name.toLowerCase();

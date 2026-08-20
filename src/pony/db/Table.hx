@@ -65,23 +65,23 @@ class CTable implements Declarator implements Ninja {
 	private var _where: String = '';
 	private var _error: String -> Void = Tools.nullFunction1;
 
-	inline private function ninjaCreate(): Table return new Table(mysql, table);
+	private inline function ninjaCreate(): Table return new Table(mysql, table);
 	/**
 	 * Error hander
 	 */
-	@:n inline public function error(f: String -> Void): Table _error = f;
+	@:n public inline function error(f: String -> Void): Table _error = f;
 	/**
 	 * Select fields for query
 	 */
-	@:n inline public function selectArray(a: Array<String>): Table _select = a;
+	@:n public inline function selectArray(a: Array<String>): Table _select = a;
 	/**
 	 * Order asc for field
 	 */
-	@:n inline public function asc(field: String): Table order = ' ORDER BY ${mysql.escapeId(field)} ASC';
+	@:n public inline function asc(field: String): Table order = ' ORDER BY ${mysql.escapeId(field)} ASC';
 	/**
 	 * Order desc for field
 	 */
-	@:n inline public function desc(field: String): Table order = ' ORDER BY ${mysql.escapeId(field)} DESC';
+	@:n public inline function desc(field: String): Table order = ' ORDER BY ${mysql.escapeId(field)} DESC';
 	/**
 	 * Data for query 'where', helper for where function
 	 */
@@ -100,19 +100,19 @@ class CTable implements Declarator implements Ninja {
 	/**
 	 * Query limit
 	 */
-	@:n inline public function limit(n: Int): Table _limit = n;
+	@:n public inline function limit(n: Int): Table _limit = n;
 	/**
 	 * Starting element for query return
 	 */
-	@:n inline public function begin(n: Int): Table _begin = n;
+	@:n public inline function begin(n: Int): Table _begin = n;
 	/**
 	 * Set page number, use limit for set elements count per page
 	 */
-	inline public function page(n: Int): Table return begin(_limit * n);
+	public inline function page(n: Int): Table return begin(_limit * n);
 	/**
 	 * Select single field for query
 	 */
-	@:n inline public function resolve(s: String): Table {
+	@:n public inline function resolve(s: String): Table {
 		_select = [s];
 		solo = true;
 	}
@@ -145,7 +145,7 @@ class CTable implements Declarator implements Ninja {
 		limit(1).get(function(r: Array<Dynamic>) cb(r[0]));
 	}
 
-	inline private function genGetQuery(): String
+	private inline function genGetQuery(): String
 		return 'SELECT ${_select.length == 0 ? '*' : _select.map(mysql.escapeId).join(', ')} FROM $table$_where$order'
 			+ (_limit == null ? '' : ' LIMIT $_begin, $_limit');
 
@@ -153,12 +153,12 @@ class CTable implements Declarator implements Ninja {
 	 * Prepare this table
 	 * @param fields - table configuration
 	 */
-	inline public function prepare(fields: Array<Field>, cb: Bool -> Void): Void new TablePrepare(mysql, table).prepare(fields, cb);
+	public inline function prepare(fields: Array<Field>, cb: Bool -> Void): Void new TablePrepare(mysql, table).prepare(fields, cb);
 
 	/**
 	 * Clear this table
 	 */
-	inline public function clear(cb: Bool -> Void, ?p: PosInfos): Void mysql.action('TRUNCATE TABLE $table', 'clear table', p, cb);
+	public inline function clear(cb: Bool -> Void, ?p: PosInfos): Void mysql.action('TRUNCATE TABLE $table', 'clear table', p, cb);
 
 	/**
 	 * Insert data to table

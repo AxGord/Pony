@@ -1,11 +1,11 @@
 package pony.flash.starling.displayFactory;
 
-import starling.display.Sprite;
-import starling.text.TextField;
-import starling.display.MovieClip;
 import pony.flash.starling.displayFactory.DisplayFactory.IDisplayObjectContainer;
 import pony.flash.starling.displayFactory.DisplayFactory.IMovieClip;
 import pony.flash.starling.displayFactory.DisplayFactory.ITextField;
+import starling.display.MovieClip;
+import starling.display.Sprite;
+import starling.text.TextField;
 
 /**
  * StarlingDisplayFactory

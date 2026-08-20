@@ -1,20 +1,20 @@
 package pony.heaps.ui.gui;
 
-import hxd.Cursor;
-import h2d.Interactive;
 import h2d.Graphics;
+import h2d.Interactive;
 import h2d.Mask;
 import h2d.Object;
-import pony.time.DeltaTime;
+import hxd.Cursor;
 import pony.color.UColor;
 import pony.color.UColors;
-import pony.geom.Orientation;
 import pony.geom.IWH;
+import pony.geom.Orientation;
 import pony.geom.Point;
 import pony.magic.HasSignal;
+import pony.time.DeltaTime;
+import pony.ui.gui.ButtonCore;
 import pony.ui.gui.ScrollBoxCore;
 import pony.ui.touch.Touchable;
-import pony.ui.gui.ButtonCore;
 
 /**
  * ScrollBox

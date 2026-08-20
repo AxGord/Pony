@@ -1,19 +1,19 @@
 package pony.js.node.serial;
 
-import js.node.Buffer;
-import js.Error;
 import haxe.io.Bytes;
 import haxe.io.BytesData;
 import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
 import haxe.Log;
 import haxe.PosInfos;
+import js.Error;
+import js.node.Buffer;
 import pony.events.Signal0;
 import pony.events.Signal1;
 import pony.magic.Declarator;
+import pony.NPM;
 import pony.Queue;
 import pony.time.Timer;
-import pony.NPM;
 
 using Lambda;
 

@@ -1,12 +1,12 @@
 package pony.pixi.ui;
 
+import pixi.core.display.DisplayObject.DestroyOptions;
 import pixi.core.graphics.Graphics;
 import pixi.core.sprites.Sprite;
 import pixi.core.textures.RenderTexture;
-import pixi.core.display.DisplayObject.DestroyOptions;
+import pony.color.UColor;
 import pony.geom.IWH;
 import pony.geom.Point;
-import pony.color.UColor;
 import pony.time.DeltaTime;
 import pony.time.Tween;
 import pony.ui.gui.SmoothBarCore;

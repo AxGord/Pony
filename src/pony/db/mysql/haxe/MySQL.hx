@@ -1,10 +1,10 @@
 package pony.db.mysql.haxe;
 
 #if (cpp || neko || php)
-import pony.db.SQLBase;
 import haxe.PosInfos;
 import pony.db.ISQL;
 import pony.db.mysql.Config;
+import pony.db.SQLBase;
 import pony.Logable;
 import pony.Stream;
 import sys.db.Connection;
@@ -63,7 +63,7 @@ class MySQL extends SQLBase {
 	/**
 	 * MySQL query
 	 */
-	inline public function query(q: String, ?p: PosInfos, cb: Dynamic -> Dynamic -> Array<Field> -> Void): Void {
+	public inline function query(q: String, ?p: PosInfos, cb: Dynamic -> Dynamic -> Array<Field> -> Void): Void {
 		log(q, p);
 		var f = null;
 		var r = null;
@@ -93,11 +93,11 @@ class MySQL extends SQLBase {
 		];
 	}
 
-	inline private static function parseLen(s: String): Int return Std.parseInt(s.split('(')[1].substr(0, -1));
+	private static inline function parseLen(s: String): Int return Std.parseInt(s.split('(')[1].substr(0, -1));
 
-	inline private static function parseType(s: String): String return Types.fromString(s.split('(')[0]);
+	private static inline function parseType(s: String): String return Types.fromString(s.split('(')[0]);
 
-	inline private static function parseFlags(o: Dynamic<String>): Array<Flags> {
+	private static inline function parseFlags(o: Dynamic<String>): Array<Flags> {
 		final flags: Array<Flags> = [];
 		for (f in Reflect.fields(o)) {
 			switch [f, Reflect.field(o, f)] {
@@ -133,12 +133,12 @@ class MySQL extends SQLBase {
 	/**
 	 * Escape id (for fields, tables, databases)
 	 */
-	inline public function escapeId(s: String): String return '`${connection.escape(s)}`';
+	public inline function escapeId(s: String): String return '`${connection.escape(s)}`';
 
 	/**
 	 * Escape (for values)
 	 */
-	inline public function escape(s: String): String return connection.quote(s);
+	public inline function escape(s: String): String return connection.quote(s);
 
 
 	/**

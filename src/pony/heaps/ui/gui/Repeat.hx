@@ -1,12 +1,12 @@
 package pony.heaps.ui.gui;
 
-import pony.ui.xml.HeapsXmlUi;
-import pony.ui.xml.RepeatObject;
+import h2d.Object;
 import pony.heaps.ui.gui.layout.AlignLayout;
 import pony.heaps.ui.gui.layout.BGLayout;
 import pony.heaps.ui.gui.layout.IntervalLayout;
 import pony.heaps.ui.gui.layout.RubberLayout;
-import h2d.Object;
+import pony.ui.xml.HeapsXmlUi;
+import pony.ui.xml.RepeatObject;
 
 /**
  * Repeat

@@ -1,16 +1,16 @@
 package pony.pixi.ui;
 
-import pixi.core.sprites.Sprite;
-import pixi.core.display.DisplayObject;
-import pixi.core.textures.Texture;
-import js.html.CanvasElement;
 import js.Browser;
-import pony.pixi.App;
+import js.html.CanvasElement;
+import pixi.core.display.DisplayObject;
+import pixi.core.sprites.Sprite;
+import pixi.core.textures.Texture;
+import pony.color.UColor;
+import pony.color.UColors;
 import pony.geom.IWH;
 import pony.geom.Point;
-import pony.color.UColors;
-import pony.color.UColor;
 import pony.magic.HasLink;
+import pony.pixi.App;
 
 /**
  * Gradient

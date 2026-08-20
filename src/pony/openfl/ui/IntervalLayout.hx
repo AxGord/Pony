@@ -3,8 +3,8 @@ package pony.openfl.ui;
 import openfl.display.DisplayObject;
 import pony.geom.Align;
 import pony.geom.Border;
-import pony.ui.gui.IntervalLayoutCore;
 import pony.openfl.ui.BaseLayout;
+import pony.ui.gui.IntervalLayoutCore;
 
 /**
  * IntervalLayout

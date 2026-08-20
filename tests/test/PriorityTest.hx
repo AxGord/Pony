@@ -1,8 +1,8 @@
 package;
 
-import massive.munit.util.Timer;
 import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
+import massive.munit.util.Timer;
 import pony.Priority;
 
 /**
@@ -10,9 +10,9 @@ import pony.Priority;
 */
 class PriorityTest {
 
-	var p1: Priority<Int>;
-	var p2: Priority<Int>;
-	var p3: Priority<Int>;
+	private var p1: Priority<Int>;
+	private var p2: Priority<Int>;
+	private var p3: Priority<Int>;
 
 	@Before
 	public function setup(): Void {

@@ -35,16 +35,16 @@ class Fs extends Handle {
 		super(fs_start_wrap(loop, (e) -> onContentChanged(cast(e, Event)), @:privateAccess path.toUtf8()));
 	}
 
-	public function stop() {
+	public function stop(): Void {
 		if (handle == null) return;
 		fs_stop_wrap(handle);
 	}
 
-	static function fs_start_wrap(loop: Loop, cb: Int -> Void, path: hl.Bytes): HandleData {
+	private static function fs_start_wrap(loop: Loop, cb: Int -> Void, path: hl.Bytes): HandleData {
 		return null;
 	}
 
-	static function fs_stop_wrap(handle: HandleData): Bool {
+	private static function fs_stop_wrap(handle: HandleData): Bool {
 		return false;
 	}
 

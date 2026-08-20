@@ -1,7 +1,7 @@
 package pony.pixi;
 
-import pony.pixi.App;
 import pony.HtmlVideo;
+import pony.pixi.App;
 
 /**
  * PixiHtmlVideoBase

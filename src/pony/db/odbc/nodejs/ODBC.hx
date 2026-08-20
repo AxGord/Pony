@@ -18,7 +18,7 @@ using StringTools;
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
 class ODBC extends SQLBase {
 
-	static private final constructor: Void -> Dynamic = Node.require('odbc');
+	private static final constructor: Void -> Dynamic = Node.require('odbc');
 
 	private var db: Dynamic;
 
@@ -28,7 +28,7 @@ class ODBC extends SQLBase {
 		db.open(connectionString, open);
 	}
 
-	private function open(err: Dynamic) {
+	private function open(err: Dynamic): Void {
 		if (err != null)
 			_error(err);
 		else
@@ -51,7 +51,7 @@ class ODBC extends SQLBase {
 	/**
 	 * MySQL query
 	 */
-	inline public function query(q: String, ?p: PosInfos, cb: Dynamic -> Dynamic -> Array<Field> -> Void): Void {
+	public inline function query(q: String, ?p: PosInfos, cb: Dynamic -> Dynamic -> Array<Field> -> Void): Void {
 		db.query(q, function(err: Dynamic, res: Dynamic, f: Array<Dynamic>) {
 			if (err)
 				_error(err);
@@ -73,12 +73,12 @@ class ODBC extends SQLBase {
 	/**
 	 * Escape id (for fields, tables, databases)
 	 */
-	inline public function escapeId(s: String): String return s.replace('`', '');
+	public inline function escapeId(s: String): String return s.replace('`', '');
 
 	/**
 	 * Escape (for values)
 	 */
-	inline public function escape(s: String): String return '\'${s.replace("'", '')}\'';
+	public inline function escape(s: String): String return '\'${s.replace("'", '')}\'';
 
 	/**
 	 * Close connection and destroy object

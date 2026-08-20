@@ -1,9 +1,9 @@
 package magic;
 
 import magic.NinjaTest.NinjaClass;
-import massive.munit.util.Timer;
 import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
+import massive.munit.util.Timer;
 import pony.magic.Ninja;
 
 class NinjaTest {

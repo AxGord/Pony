@@ -1,8 +1,8 @@
 package;
 
-import pony.net.ISocketClient;
 import haxe.io.BytesOutput;
 import js.Node;
+import pony.net.ISocketClient;
 import pony.net.SocketClient;
 import pony.net.SocketServer;
 
@@ -15,7 +15,7 @@ using pony.Tools;
 
 class Main {
 
-	static function main() {
+	private static function main(): Void {
 		final s = new SocketServer(13579);
 		s.onConnect << function(cl: ISocketClient): Void {
 			final bo = new BytesOutput();

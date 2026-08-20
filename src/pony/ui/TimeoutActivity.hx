@@ -1,15 +1,15 @@
 package pony.ui;
 
-import pony.magic.Declarator;
-import pony.events.SignalControllerInner0;
 import pony.events.Listener0;
 import pony.events.Signal0;
+import pony.events.SignalControllerInner0;
+import pony.magic.Declarator;
 import pony.magic.HasSignal;
-import pony.ui.touch.Mouse;
-import pony.ui.touch.Touchable;
-import pony.ui.keyboard.Keyboard;
 import pony.time.DTimer;
 import pony.time.Time;
+import pony.ui.keyboard.Keyboard;
+import pony.ui.touch.Mouse;
+import pony.ui.touch.Touchable;
 
 /**
  * TimeoutActivity

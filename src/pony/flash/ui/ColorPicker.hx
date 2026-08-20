@@ -2,10 +2,10 @@ package pony.flash.ui;
 
 import flash.display.*;
 import flash.geom.Matrix;
-import pony.magic.HasSignal;
-import pony.ui.touch.Touchable;
-import pony.ui.touch.Touch;
 import pony.geom.Point;
+import pony.magic.HasSignal;
+import pony.ui.touch.Touch;
+import pony.ui.touch.Touchable;
 
 /**
  * ColorPicker

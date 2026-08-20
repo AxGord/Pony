@@ -1,14 +1,14 @@
 package create;
 
-import pony.Tools;
-import haxe.Resource;
-import create.section.Config.ConfigOptions;
-import create.ides.VSCode;
 import create.ides.HaxeDevelop;
+import create.ides.VSCode;
+import create.section.Config.ConfigOptions;
+import haxe.Resource;
+import pony.Tools;
 import sys.FileSystem;
 import sys.io.File;
-import types.ProjectType;
 import types.HaxeTargets;
+import types.ProjectType;
 
 /**
  * Create

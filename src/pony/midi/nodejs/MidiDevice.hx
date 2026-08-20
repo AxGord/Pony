@@ -3,10 +3,10 @@ package pony.midi.nodejs;
 import js.Node;
 import pony.midi.IMidiDevice;
 import pony.events.*;
+import pony.magic.HasSignal;
 import pony.midi.MidiCode;
 import pony.midi.MidiMessage;
 import pony.time.DT;
-import pony.magic.HasSignal;
 
 /**
  * Midi
@@ -21,7 +21,7 @@ class MidiDevice implements IMidiDevice implements HasSignal {
 
 	private static var firstCreated: Bool = false;
 
-	inline public static function count(): Int return preCore.getPortCount();
+	public static inline function count(): Int return preCore.getPortCount();
 
 	public static function list(): Array<String> return [for (i in 0...preCore.getPortCount()) preCore.getPortName(i)];
 
@@ -68,7 +68,7 @@ class MidiDevice implements IMidiDevice implements HasSignal {
 		});
 	}
 
-	inline public function send(m: MidiMessage): Void output.sendMessage([m.chanel, m.key, m.value]);
+	public inline function send(m: MidiMessage): Void output.sendMessage([m.chanel, m.key, m.value]);
 
 	public function destroy(): Void {
 		input.closePort();

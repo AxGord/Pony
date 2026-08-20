@@ -24,13 +24,13 @@ class VirtualLaunchpad extends Logable implements ILaunchpad {
 		reset();
 	}
 
-	inline public function setAreaPoint(p: IntPoint, color: LaunchpadColor = AmberFull): Void {
+	public inline function setAreaPoint(p: IntPoint, color: LaunchpadColor = AmberFull): Void {
 		if (areaState.get(p) != color) {
 			areaState.set(p, color);
 		}
 	}
 
-	inline public function setMatrixCI(m: Matrix<Int>): Void setMatrix(m.map(LaunchpadColor.fromIndex));
+	public inline function setMatrixCI(m: Matrix<Int>): Void setMatrix(m.map(LaunchpadColor.fromIndex));
 
 	public function setMatrix(m: Matrix<LaunchpadColor>): Void {
 		m = m.cut(8, 8);

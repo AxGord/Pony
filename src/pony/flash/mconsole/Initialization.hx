@@ -1,7 +1,7 @@
 package pony.flash.mconsole;
 
-import flash.events.KeyboardEvent;
 import flash.Lib;
+import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 import flash.system.Capabilities;
 

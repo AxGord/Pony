@@ -1,10 +1,10 @@
 package text.tpl;
 
-import massive.munit.util.Timer;
 import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
-import pony.text.tpl.Tpl;
+import massive.munit.util.Timer;
 import pony.text.tpl.ITplPut;
+import pony.text.tpl.Tpl;
 import pony.text.tpl.TplData;
 import pony.text.tpl.TplPut;
 #if neko

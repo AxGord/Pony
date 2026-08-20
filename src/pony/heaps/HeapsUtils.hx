@@ -1,7 +1,7 @@
 package pony.heaps;
 
-import haxe.crypto.Base64;
 import h2d.Tile;
+import haxe.crypto.Base64;
 import hxd.Res;
 import hxd.res.Any;
 import hxd.res.Loader;

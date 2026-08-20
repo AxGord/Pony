@@ -5,11 +5,11 @@ import pony.db.mysql.Field;
 import pony.db.mysql.Flags;
 import pony.db.mysql.Types;
 import pony.db.Table;
+import pony.magic.SuperPuper;
 import pony.net.http.CPQ;
+import pony.net.http.modules.mmodels.fields.FInt;
 import pony.net.http.WebServer.EConnect;
 import pony.Pair;
-import pony.net.http.modules.mmodels.fields.FInt;
-import pony.magic.SuperPuper;
 
 using pony.Tools;
 using Lambda;
@@ -149,6 +149,6 @@ class Model implements SuperPuper {
 		return REG(cast mc);
 	}
 
-	inline public static function dbr(r: Bool): ActResult return r ? OK : DBERROR;
+	public static inline function dbr(r: Bool): ActResult return r ? OK : DBERROR;
 
 }

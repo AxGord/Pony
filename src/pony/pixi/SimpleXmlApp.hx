@@ -2,14 +2,14 @@ package pony.pixi;
 
 import js.Browser;
 import js.html.Element;
+import pixi.filters.extras.GlowFilter;
 import pony.Config;
 import pony.JsTools;
-import pony.time.DeltaTime;
 import pony.events.Signal0;
-import pony.ui.AssetManager;
 import pony.pixi.ui.SpinLoader;
+import pony.time.DeltaTime;
+import pony.ui.AssetManager;
 import pony.ui.xml.PixiXmlUi;
-import pixi.filters.extras.GlowFilter;
 
 /**
  * Simple Xml Pixi.js Application

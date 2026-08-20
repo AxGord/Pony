@@ -1,14 +1,14 @@
 package pony.text.tpl;
 
 import pony.Fast;
-import pony.fs.Unit;
-import pony.text.tpl.Tpl;
-import pony.text.tpl.TplData.TplStyle;
-import pony.text.tpl.WithTplPut;
-import pony.text.tpl.TplDir;
 import pony.fs.Dir;
 import pony.fs.File;
+import pony.fs.Unit;
 import pony.text.XmlTools;
+import pony.text.tpl.Tpl;
+import pony.text.tpl.TplData.TplStyle;
+import pony.text.tpl.TplDir;
+import pony.text.tpl.WithTplPut;
 
 using pony.Tools;
 

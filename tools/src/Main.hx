@@ -11,9 +11,9 @@ using pony.text.TextTools;
  */
 class Main {
 
-	static final commands: Commands = new Commands();
+	private static final commands: Commands = new Commands();
 
-	static function showLogo(): Void {
+	private static function showLogo(): Void {
 		Sys.println(Utils.ansiForeground(haxe.Resource.getString('logo'), AnsiForeground.LightGray));
 		Sys.println('');
 		Sys.println('Command-Line Tools');
@@ -28,12 +28,12 @@ class Main {
 		Utils.exit();
 	}
 
-	static function showHelp(): Void {
+	private static function showHelp(): Void {
 		Sys.println('\n' + (Utils.isWindows ? commands.helpData.join('\n\n') : commands.helpAnsiData.join('\n\n')) + '\n');
 		Utils.exit();
 	}
 
-	static function trySubProjects(args: Array<String>): Bool {
+	private static function trySubProjects(args: Array<String>): Bool {
 		if (args[0] != 'haxelib' && args.indexOf('all') != -1) {
 			runSubProjects(args);
 			return true;
@@ -42,7 +42,7 @@ class Main {
 		}
 	}
 
-	static function tryOtherPath(args: Array<String>): Bool {
+	private static function tryOtherPath(args: Array<String>): Bool {
 		final expath: String = new String(@:privateAccess Sys.sys_exe_path());
 		var p: String = Utils.path(expath);
 		p = p.substr(0, p.lastIndexOf(Utils.PD) + 1);
@@ -56,7 +56,7 @@ class Main {
 		}
 	}
 
-	static function main(): Void {
+	private static function main(): Void {
 		final startTime: Float = Sys.time();
 		final args: Array<String> = Sys.args();
 		if (trySubProjects(args) || tryOtherPath(args)) return;
@@ -83,7 +83,7 @@ class Main {
 		Sys.println('Total time: ${Std.int((Sys.time() - startTime) * 1000) / 1000}');
 	}
 
-	static function registerCommands(): Void {
+	private static function registerCommands(): Void {
 		commands.onNothing < showLogo;
 		commands.onHelp < showHelp;
 		commands.onCreate < create.Create.run;
@@ -94,7 +94,7 @@ class Main {
 		commands.onGenerate << Generate.run;
 	}
 
-	static function registerModules(modules: Modules): Void {
+	private static function registerModules(modules: Modules): Void {
 		modules.register(new module.Haxelib());
 		modules.register(new module.Npm());
 		modules.register(new module.Texturepacker());
@@ -128,7 +128,7 @@ class Main {
 		modules.register(new module.Run());
 	}
 
-	static function setGroupsPerm(args: Array<String>, modules: Modules): Array<String> {
+	private static function setGroupsPerm(args: Array<String>, modules: Modules): Array<String> {
 		final nArgs: Array<String> = [];
 		final deny: Array<String> = [];
 		final allow: Array<String> = [];
@@ -145,14 +145,14 @@ class Main {
 		return nArgs;
 	}
 
-	static function addCfg(?a: Array<String>, args: AppCfg): Array<String> {
+	private static function addCfg(?a: Array<String>, args: AppCfg): Array<String> {
 		if (a == null) a = [];
 		if (args.app != null) a.push(args.app);
 		if (args.debug) a.push('debug');
 		return a;
 	}
 
-	static function runSubProjects(args: Array<String>): Void {
+	private static function runSubProjects(args: Array<String>): Void {
 		final xml: Fast = Utils.getXml();
 		if (xml == null) {
 			Utils.error('${Utils.MAIN_FILE} not exists');
@@ -178,7 +178,7 @@ class Main {
 		}
 	}
 
-	static function searchApps(x: Fast): Array<String> {
+	private static function searchApps(x: Fast): Array<String> {
 		var apps: Array<String> = [];
 		if (x.hasNode.apps) {
 			for (node in x.node.apps.elements) apps.push(node.name);

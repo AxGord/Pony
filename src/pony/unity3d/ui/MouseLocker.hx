@@ -17,7 +17,7 @@ import unityengine.Vector3;
 	@:meta(UnityEngine.HideInInspector)
 	private var prevState: Bool = false;
 
-	private function Update() {
+	private function Update(): Void {
 		final h = !panel
 			? guiTexture.HitTest(new Vector3(Input.mousePosition.x - Fixed2dCamera.begin, Input.mousePosition.y))
 			: guiTexture.HitTest(new Vector3(Input.mousePosition.x + (Screen.width - Fixed2dCamera.begin) / 2, Input.mousePosition.y));

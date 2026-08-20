@@ -1,9 +1,9 @@
 package pony.net.http;
 
-import sys.FileSystem;
 import pony.fs.File;
 import pony.magic.HasAbstract;
 import pony.text.ParseBoy;
+import sys.FileSystem;
 
 /**
  * HttpConnection

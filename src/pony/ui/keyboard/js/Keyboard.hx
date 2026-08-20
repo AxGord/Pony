@@ -1,7 +1,7 @@
 package pony.ui.keyboard.js;
 
-import js.html.KeyboardEvent;
 import js.Browser;
+import js.html.KeyboardEvent;
 import pony.events.Signal1;
 import pony.magic.HasSignal;
 import pony.ui.keyboard.IKeyboard;

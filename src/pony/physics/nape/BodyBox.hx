@@ -1,13 +1,13 @@
 package pony.physics.nape;
 
-import haxe.io.BytesOutput;
 import haxe.io.Bytes;
-import pony.geom.Point;
-import pony.geom.Rect;
+import haxe.io.BytesOutput;
 import nape.phys.Body;
 import nape.phys.BodyType;
-import nape.space.Space;
 import nape.shape.Polygon;
+import nape.space.Space;
+import pony.geom.Point;
+import pony.geom.Rect;
 
 /**
  * BodyBox
@@ -24,7 +24,7 @@ class BodyBox extends BodyBase {
 		super(space, limits, isStatic, isBullet, group);
 	}
 
-	override function init(): Void {
+	override private function init(): Void {
 		final sh = new Polygon(Polygon.box(size.x, size.y), material);
 		sh.sensorEnabled = body.isBullet;
 		body.shapes.add(sh);

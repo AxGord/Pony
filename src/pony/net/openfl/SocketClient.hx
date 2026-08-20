@@ -10,9 +10,9 @@ import haxe.io.Bytes;
 import haxe.io.BytesData;
 import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
+import openfl.utils.ByteArray;
 import pony.net.SocketClientBase;
 import pony.time.DeltaTime;
-import openfl.utils.ByteArray;
 
 /**
  * SocketClient

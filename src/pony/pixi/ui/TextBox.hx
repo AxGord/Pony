@@ -44,7 +44,7 @@ class TextBox extends BaseLayout<RubberLayoutCore<Container>> {
 		}
 	}
 
-	inline private function get_text(): String return obj.t;
+	private inline function get_text(): String return obj.t;
 
 	private function set_text(v: String): String {
 		if (v != obj.t) {

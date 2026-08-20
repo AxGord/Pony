@@ -1,12 +1,12 @@
 package pony.ui.touch.flash;
 
-import flash.events.MouseEvent;
 import flash.display.Stage;
+import flash.events.MouseEvent;
 import flash.Lib;
 import pony.time.DeltaTime;
 import pony.ui.touch.Mouse as M;
-import pony.ui.touch.MouseButton;
 import pony.flash.MultyStage;
+import pony.ui.touch.MouseButton;
 
 /**
  * Flash Mouse

@@ -17,14 +17,14 @@ class Slice6H extends Slice9 {
 		super(data, useSpriteSheet, creep);
 	}
 
-	override function init(): Void {
+	override private function init(): Void {
 		super.init();
 		images[2].flipX();
 		images[5].flipX();
 		images[8].flipX();
 	}
 
-	override function updateWidth(): Void {
+	override private function updateWidth(): Void {
 		if (!inited) return;
 		super.updateWidth();
 		images[2].flipXpos();

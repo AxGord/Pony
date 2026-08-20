@@ -6,22 +6,22 @@ package pony;
  */
 abstract Byte(Int) from Int to Int {
 
-	inline public static final b0001 = 1;
-	inline public static final b0010 = 2;
-	inline public static final b0100 = 4;
-	inline public static final b1000 = 8;
+	public static inline final b0001: Int = 1;
+	public static inline final b0010: Int = 2;
+	public static inline final b0100: Int = 4;
+	public static inline final b1000: Int = 8;
 
 	public var a(get, never): Int;
 	public var b(get, never): Int;
 
-	inline private function get_a(): Int return this >> 4;
+	private inline function get_a(): Int return this >> 4;
 
-	inline private function get_b(): Int return this & 0xF;
+	private inline function get_b(): Int return this & 0xF;
 
-	inline static public function create(a: Int, b: Int): Byte return (a << 4) + b;
+	public static inline function create(a: Int, b: Int): Byte return (a << 4) + b;
 
-	inline public function chechSumWith(b: Byte): Byte return (this + (b: Int)) & 0xFF;
+	public inline function chechSumWith(b: Byte): Byte return (this + (b: Int)) & 0xFF;
 
-	@:to inline public function toString(): String return '0x${StringTools.hex(this)}';
+	@:to public inline function toString(): String return '0x${StringTools.hex(this)}';
 
 }

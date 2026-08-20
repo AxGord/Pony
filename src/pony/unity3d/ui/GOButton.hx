@@ -2,8 +2,8 @@ package pony.unity3d.ui;
 
 import cs.NativeArray.NativeArray;
 import pony.events.Event;
-import pony.unity3d.ui.TextureButton;
 import pony.ui.gui.ButtonCore;
+import pony.unity3d.ui.TextureButton;
 import unityengine.GameObject;
 
 /**
@@ -18,7 +18,7 @@ import unityengine.GameObject;
 
 	private var glast: GameObject;
 
-	override function Start(): Void {
+	override private function Start(): Void {
 
 		core.changeVisual.add(goRestore);
 

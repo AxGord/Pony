@@ -1,14 +1,14 @@
 package pony.electron;
 
+import js.html.Element;
+import js.node.Fs;
 import monaco.Editor.IStandaloneCodeEditor;
 import monaco.Editor.IStandaloneThemeData;
 import monaco.Editor.ITextModel;
 import monaco.Languages.LanguageConfiguration;
-import js.html.Element;
-import js.node.Fs;
 import pony.NPM;
-import pony.events.Signal0;
 import pony.Tasks;
+import pony.events.Signal0;
 import pony.events.Waiter;
 
 typedef Lang = LangBase<String>;

@@ -11,7 +11,7 @@ class Errors {
 
 	public function new() {}
 
-	public inline function test(cond: Bool, message: String) {
+	public inline function test(cond: Bool, message: String): Void {
 		if (cond && !result.exists(arg)) set(message);
 	}
 

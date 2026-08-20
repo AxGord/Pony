@@ -1,7 +1,7 @@
 package pony.heaps.ui.gui;
 
-import pony.geom.Point;
 import pony.events.Signal2;
+import pony.geom.Point;
 
 /**
  * INode

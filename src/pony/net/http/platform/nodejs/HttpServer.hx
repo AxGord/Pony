@@ -44,7 +44,7 @@ class HttpServer {
 
 	public var fixedHeaders: Map<String, String> = ['Server' => 'PonyHttpServer'];
 
-	inline private static function get_spdy(): Dynamic return Node.require('spdy');
+	private static inline function get_spdy(): Dynamic return Node.require('spdy');
 
 	private static function multipartyForm(): Class<Dynamic> {
 		if (multipartyClass == null) multipartyClass = Node.require('multiparty').Form;

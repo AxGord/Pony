@@ -1,21 +1,21 @@
 package pony.unity3d.ui;
 
+import hugs.HUGS;
 import pony.color.Color;
 import pony.color.UColor;
+import pony.geom.Point.IntPoint;
 import pony.geom.Rect.IntRect;
-import unityengine.Vector3;
-import unityengine.Vector2;
-import unityengine.GUITexture;
+import pony.ui.gui.FontStyle;
+import unityengine.Font;
 import unityengine.GUIText;
+import unityengine.GUITexture;
 import unityengine.GameObject;
 import unityengine.Object;
 import unityengine.Rect;
-import unityengine.Texture2D;
 import unityengine.Resources;
-import unityengine.Font;
-import pony.geom.Point.IntPoint;
-import pony.ui.gui.FontStyle;
-import hugs.HUGS;
+import unityengine.Texture2D;
+import unityengine.Vector2;
+import unityengine.Vector3;
 
 using hugs.HUGSWrapper;
 
@@ -25,7 +25,7 @@ using hugs.HUGSWrapper;
  */
 @:nativeGen class GUI {
 
-	static private final textures: Map<Int, Dynamic> = [];
+	private static final textures: Map<Int, Dynamic> = [];
 
 	public static function text(f: Vector3, point: IntPoint, text: String, style: FontStyle): GameObject {
 		final b = new GameObject();

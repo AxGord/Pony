@@ -1,17 +1,17 @@
 package pony.heaps.ui.gui;
 
-import pony.time.TimeInterval;
-import pony.time.Tween;
 import h2d.Interactive;
 import h2d.Object;
+import pony.time.TimeInterval;
+import pony.time.Tween;
 #if (heaps >= '2.0.0')
 import h3d.Vector4 as Vector;
 #else
 import h3d.Vector;
 #end
 import hxd.Cursor;
-import pony.geom.Point;
 import pony.geom.IWH;
+import pony.geom.Point;
 import pony.magic.HasLink;
 import pony.ui.gui.ButtonCore;
 import pony.ui.touch.Touchable;

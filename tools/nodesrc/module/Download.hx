@@ -6,10 +6,10 @@ import js.lib.Error;
 #else
 import js.Error;
 #end
-import js.node.http.IncomingMessage;
 import js.node.Fs;
-import sys.FileSystem;
+import js.node.http.IncomingMessage;
 import pony.Pair;
+import sys.FileSystem;
 import types.DownloadConfig;
 
 using pony.text.TextTools;

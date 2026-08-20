@@ -1,7 +1,7 @@
 package pony.unity3d;
 
-import unityengine.MonoBehaviour;
 import unityengine.Camera;
+import unityengine.MonoBehaviour;
 import unityengine.Rect;
 import unityengine.Screen;
 
@@ -14,7 +14,7 @@ import unityengine.Screen;
 	public var size: Int = 100;
 	public var mainCamera: Camera;
 
-	public function Start() {
+	public function Start(): Void {
 		Fixed2dCamera.obj = this;
 		Fixed2dCamera.SIZE = size;
 		Fixed2dCamera.exists = true;

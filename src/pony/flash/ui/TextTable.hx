@@ -1,11 +1,11 @@
 package pony.flash.ui;
 
+import flash.display.CapsStyle;
 import flash.display.DisplayObjectContainer;
 import flash.display.Graphics;
-import flash.display.Shape;
-import flash.display.LineScaleMode;
-import flash.display.CapsStyle;
 import flash.display.JointStyle;
+import flash.display.LineScaleMode;
+import flash.display.Shape;
 import flash.text.TextField;
 import flash.text.TextFormat;
 import pony.color.Color;

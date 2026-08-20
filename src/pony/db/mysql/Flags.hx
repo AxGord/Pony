@@ -46,8 +46,8 @@ abstract Flags(Int) to Int from Int {
 	}
 
 	// inline public static function array2string(a:Array<Flags>):String return a.map(toStr.get).join(' ');//hate this :(
-	inline public static function array2string(a: Array<Flags>): String return a.map(_array2string).join(' ');
+	public static inline function array2string(a: Array<Flags>): String return a.map(_array2string).join(' ');
 
-	inline private static function _array2string(f: Flags): String return f.toString();
+	private static inline function _array2string(f: Flags): String return f.toString();
 
 }

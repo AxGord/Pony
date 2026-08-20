@@ -1,11 +1,11 @@
 package pony.pixi.nape;
 
 import haxe.io.Bytes;
+import nape.geom.Vec2;
+import nape.phys.Body;
 import pixi.core.sprites.Sprite;
 import pony.geom.Point;
 import pony.geom.Rect;
-import nape.phys.Body;
-import nape.geom.Vec2;
 import pony.physics.nape.BodyBase;
 import pony.physics.nape.DebugLineStyle;
 import pony.physics.nape.NapeGroup;

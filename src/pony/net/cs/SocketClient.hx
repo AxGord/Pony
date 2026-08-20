@@ -3,24 +3,24 @@ package pony.net.cs;
 #if cs
 import cs.NativeArray.NativeArray;
 import cs.StdTypes.UInt8;
-import cs.system.IAsyncResult;
 import cs.system.AsyncCallback;
+import cs.system.IAsyncResult;
 import cs.system.net.IPAddress;
-import cs.system.net.sockets.SocketInformation;
-import cs.system.net.sockets.Socket;
 import cs.system.net.sockets.AddressFamily;
-import cs.system.net.sockets.SocketType;
 import cs.system.net.sockets.ProtocolType;
-import cs.system.net.sockets.SocketFlags;
+import cs.system.net.sockets.Socket;
 import cs.system.net.sockets.SocketException;
-import cs.system.threading.Thread;
+import cs.system.net.sockets.SocketFlags;
+import cs.system.net.sockets.SocketInformation;
+import cs.system.net.sockets.SocketType;
 import cs.system.threading.ManualResetEvent;
+import cs.system.threading.Thread;
 import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
+import haxe.Timer; // Use HUGS for this
 import pony.cs.Synchro;
 import pony.net.SocketClientBase;
 import pony.Queue.Queue;
-import haxe.Timer; // Use HUGS for this
 
 /**
  * SocketClient
@@ -76,7 +76,7 @@ class SocketClient extends SocketClientBase {
 	**/
 	private var isConnected: Bool = false;
 
-	public override function new(aHost: String = '127.0.0.1', aPort: Int, aReconnect: Int = -1, aIsWithLength: Bool = true) {
+	override public function new(aHost: String = '127.0.0.1', aPort: Int, aReconnect: Int = -1, aIsWithLength: Bool = true) {
 		isRunning = true;
 		host = aHost;
 		port = aPort;
@@ -87,7 +87,7 @@ class SocketClient extends SocketClientBase {
 		super(host, port, reconnectDelay, aIsWithLength);
 	}
 
-	public override function open(): Void {
+	override public function open(): Void {
 		try {
 			client.Connect(host, port);
 			isConnected = true;

@@ -1,8 +1,8 @@
 package create;
 
 import sys.io.File;
-import types.ProjectType;
 import types.HaxeTargets;
+import types.ProjectType;
 
 class Gitignore {
 

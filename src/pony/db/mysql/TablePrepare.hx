@@ -15,7 +15,7 @@ class TablePrepare {
 	private final mysql: ISQL;
 	private final table: String;
 
-	inline public function new(mysql: ISQL, table: String) {
+	public inline function new(mysql: ISQL, table: String) {
 		this.mysql = mysql;
 		this.table = table;
 	}
@@ -106,15 +106,15 @@ class TablePrepare {
 		return true;
 	}
 
-	static private function chk1(f: Field, r: Field): Bool return f.type == r.type && f.flags.equal(r.flags) && f.length == r.length;
+	private static function chk1(f: Field, r: Field): Bool return f.type == r.type && f.flags.equal(r.flags) && f.length == r.length;
 
-	static private function chk2(f: Field, r: Field): Bool return f.type == r.type && f.flags.equal(r.flags);
+	private static function chk2(f: Field, r: Field): Bool return f.type == r.type && f.flags.equal(r.flags);
 
-	static private function chk3(f: Field, r: Field): Bool return f.type == r.type && f.length == r.length;
+	private static function chk3(f: Field, r: Field): Bool return f.type == r.type && f.length == r.length;
 
-	static private function chk4(f: Field, r: Field): Bool return f.type == r.type || f.flags.equal(r.flags);
+	private static function chk4(f: Field, r: Field): Bool return f.type == r.type || f.flags.equal(r.flags);
 
-	static private function chk5(f: Field, r: Field): Bool return f.length == r.length;
+	private static function chk5(f: Field, r: Field): Bool return f.length == r.length;
 
 	@:async private function renameTableFields(
 		fields: Array<Field>, remote: Array<Field>, remMap: Map<String, Int>, free: Array<Field>, chk: Field -> Field -> Bool
@@ -145,7 +145,7 @@ class TablePrepare {
 		return 'ALTER TABLE $table ADD $name ${f.type.toString()}${decorateLength(f.length)} ${Flags.array2string(flags)}';
 	}
 
-	inline private static function decorateLength(len: Null<Int>): String return len != null ? '($len)' : '';
+	private static inline function decorateLength(len: Null<Int>): String return len != null ? '($len)' : '';
 
 	private static function makeFieldsMap(fields: Array<Field>): Map<String, Int> return [for (f in fields.kv()) f.value.name => f.key];
 

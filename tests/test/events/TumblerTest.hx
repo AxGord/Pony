@@ -1,14 +1,14 @@
 package events;
 
-import pony.Tumbler;
-import massive.munit.util.Timer;
 import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
+import massive.munit.util.Timer;
+import pony.Tumbler;
 
 class TumblerTest {
 
 	@Test
-	public function testDisable() {
+	public function testDisable(): Void {
 		var flag: Bool = false;
 		final t: Tumbler = new Tumbler();
 		t.onDisable << function() flag = true;
@@ -17,7 +17,7 @@ class TumblerTest {
 	}
 
 	@Test
-	public function testEnable() {
+	public function testEnable(): Void {
 		var flag: Bool = false;
 		final t: Tumbler = new Tumbler(false);
 		t.onEnable << function() flag = true;
@@ -26,7 +26,7 @@ class TumblerTest {
 	}
 
 	@Test
-	public function testSet() {
+	public function testSet(): Void {
 		var flag: Bool = false;
 		var flag2: Bool = false;
 		final t: Tumbler = new Tumbler();

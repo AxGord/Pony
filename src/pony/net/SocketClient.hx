@@ -27,7 +27,7 @@ import pony.events.Signal2;
 	private var taskDataLength: Int64 = -1;
 	private var taskBuffer: Null<BytesOutput>;
 
-	override function sharedInit(): Void {
+	override private function sharedInit(): Void {
 		writeLengthSize = DEFAULT_LEN_BLOCK_SIZE;
 		stack = [];
 		super.sharedInit();

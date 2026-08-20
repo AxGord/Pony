@@ -1,16 +1,16 @@
 package pony.flash;
 
+import flash.Lib;
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
-import flash.display.InteractiveObject;
-import flash.events.Event;
-import flash.events.EventDispatcher;
-import flash.geom.Rectangle;
-import flash.Lib;
 import flash.display.GradientType;
 import flash.display.Graphics;
+import flash.display.InteractiveObject;
 import flash.display.SpreadMethod;
+import flash.events.Event;
+import flash.events.EventDispatcher;
 import flash.geom.Matrix;
+import flash.geom.Rectangle;
 import pony.flash.ui.Button;
 import pony.geom.Rect;
 import pony.ui.gui.ButtonCore;

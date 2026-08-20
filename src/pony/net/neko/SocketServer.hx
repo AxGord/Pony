@@ -1,11 +1,11 @@
 package pony.net.neko;
 
 #if neko
-import sys.net.Socket;
-import sys.net.Host;
-import haxe.io.Error;
 import haxe.io.Eof;
+import haxe.io.Error;
 import pony.time.DeltaTime;
+import sys.net.Host;
+import sys.net.Socket;
 
 /**
  * SocketServer

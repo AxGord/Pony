@@ -4,9 +4,9 @@ import h2d.Bitmap;
 import h2d.Object;
 import h2d.Tile;
 import pony.geom.Point;
-import pony.ui.AssetManager;
 import pony.time.DeltaTime;
 import pony.time.Tween;
+import pony.ui.AssetManager;
 
 /**
  * LazyBitmap

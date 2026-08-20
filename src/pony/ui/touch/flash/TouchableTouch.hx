@@ -1,12 +1,12 @@
 package pony.ui.touch.flash;
 
-import flash.display.Stage;
 import flash.display.DisplayObject;
+import flash.display.Stage;
 import flash.events.Event;
 import flash.events.TouchEvent;
 import flash.Lib;
-import pony.ui.touch.flash.Touch;
 import pony.flash.FLTools;
+import pony.ui.touch.flash.Touch;
 
 /**
  * Flash TouchableTouch

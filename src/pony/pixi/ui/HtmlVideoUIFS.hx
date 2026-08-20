@@ -1,15 +1,15 @@
 package pony.pixi.ui;
 
-import pony.JsTools;
 import pony.HtmlVideo;
-import pony.geom.Rect;
-import pony.geom.Border;
-import pony.geom.Point;
+import pony.JsTools;
 import pony.Or;
 import pony.Tumbler;
+import pony.geom.Border;
+import pony.geom.Point;
+import pony.geom.Rect;
+import pony.time.DTimer;
 import pony.time.DeltaTime;
 import pony.time.Time;
-import pony.time.DTimer;
 
 /**
  * HtmlVideoUIFS

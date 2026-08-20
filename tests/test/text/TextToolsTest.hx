@@ -1,8 +1,8 @@
 package text;
 
-import massive.munit.util.Timer;
 import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
+import massive.munit.util.Timer;
 
 using pony.text.TextTools;
 

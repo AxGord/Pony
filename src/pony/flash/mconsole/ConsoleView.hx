@@ -1,9 +1,9 @@
 package pony.flash.mconsole;
 
-import haxe.PosInfos;
 import flash.display.Sprite;
 import flash.text.TextField;
 import flash.text.TextFormat;
+import haxe.PosInfos;
 import mconsole.Printer;
 import pony.ui.gui.SlideCore;
 
@@ -21,18 +21,18 @@ class ConsoleView extends PrinterBase implements Printer {
 	/**
 	 * The background color of the log panel.
 	 */
-	var background: Sprite;
+	private var background: Sprite;
 
 	/**
 	 * The log output text field.
 	 */
-	var textField: TextField;
+	private var textField: TextField;
 
 	/**
 	 * Is the panel currently scrolled to the bottom? When true, new messages will
 	 * automatically scroll to the bottom.
 	 */
-	var atBottom: Bool;
+	private var atBottom: Bool;
 
 	private var slideCore: SlideCore;
 
@@ -95,7 +95,7 @@ class ConsoleView extends PrinterBase implements Printer {
 	/**
 	 * Resize the log panel when the stage resizes.
 	 */
-	function resize(_): Void {
+	private function resize(_): Void {
 		final stage = flash.Lib.current.stage;
 
 		background.width = stage.stageWidth;
@@ -110,14 +110,14 @@ class ConsoleView extends PrinterBase implements Printer {
 	/**
 	 * When the log output scrolls, evaluate atBottom.
 	 */
-	function textScrolled(_): Void {
+	private function textScrolled(_): Void {
 		atBottom = textField.scrollV == textField.maxScrollV;
 	}
 
 	/**
 	 * Scroll to the bottom of output if atBottom is true.
 	 */
-	function updateScroll(): Void {
+	private function updateScroll(): Void {
 		if (atBottom) textField.scrollV = textField.maxScrollV;
 	}
 

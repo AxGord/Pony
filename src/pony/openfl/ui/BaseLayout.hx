@@ -4,9 +4,9 @@ import openfl.display.DisplayObject;
 import openfl.display.DisplayObjectContainer;
 import openfl.display.Sprite;
 import openfl.text.TextField;
-import pony.ui.gui.BaseLayoutCore;
 import pony.geom.IWH;
 import pony.geom.Point;
+import pony.ui.gui.BaseLayoutCore;
 
 /**
  * BaseLayout
@@ -61,7 +61,7 @@ class BaseLayout<T:BaseLayoutCore<DisplayObject>> extends Sprite implements IWH 
 
 	private static function getSizeMod(o: DisplayObject, p: Point<Float>): Point<Float> return new Point(p.x * o.scaleX, p.y * o.scaleY);
 
-	inline private function get_size(): Point<Float> return layout.size;
+	private inline function get_size(): Point<Float> return layout.size;
 
 	public function destroy(): Void {
 		layout.destroy();

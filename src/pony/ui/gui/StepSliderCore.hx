@@ -55,14 +55,14 @@ class StepSliderCore extends SliderCore {
 
 	override private function moveHandler(t: Touch): Void setStepPos(detectPos(t.point));
 
-	override function changePosHandler(v: Float): Void {
+	override private function changePosHandler(v: Float): Void {
 		if (percentRound == -1)
 			super.changePosHandler(v);
 		else
 			percent = MathTools.roundTo(v / size, percentRound);
 	}
 
-	override function updateValue(v: Float): Void {
+	override private function updateValue(v: Float): Void {
 		if (valueRound == -1)
 			super.updateValue(v);
 		else

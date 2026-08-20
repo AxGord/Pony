@@ -1,14 +1,14 @@
 package;
 
-import pony.net.ISocketClient;
 import haxe.CallStack;
 import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
 import haxe.Log;
 import haxe.Timer;
-import pony.tests.AsyncTests;
+import pony.net.ISocketClient;
 import pony.net.SocketClient;
 import pony.net.SocketServer;
+import pony.tests.AsyncTests;
 import pony.Tools;
 
 using pony.Tools;
@@ -20,20 +20,20 @@ using pony.Tools;
 
 class Main {
 
-	static inline final testCount: Int = 400;
+	private static inline final testCount: Int = 400;
 	#if cs
-	static inline final delay: Int = 3;
+	private static inline final delay: Int = 3;
 	#elseif nodejs
-	static inline final delay: Int = 1;
+	private static inline final delay: Int = 1;
 	#end
-	static var port: Int = 16003;
+	private static var port: Int = 16003;
 
-	static final partCount: Int = Std.int(testCount / 4);
-	static final blockCount: Int = Std.int(testCount / 2);
+	private static final partCount: Int = Std.int(testCount / 4);
+	private static final blockCount: Int = Std.int(testCount / 2);
 
-	static var finish: Bool = false;
+	private static var finish: Bool = false;
 
-	static function main() {
+	private static function main(): Void {
 		#if (nodejs && debug)
 		js.Node.require('source-map-support').install();
 		#end
@@ -61,7 +61,7 @@ class Main {
 		#end
 	}
 
-	static function firstTest(): Void {
+	private static function firstTest(): Void {
 		trace('First part');
 		final server = createServer(6001);
 		for (i in 0...partCount) Timer.delay(createClient.bind(i), delay + delay * i);
@@ -81,7 +81,7 @@ class Main {
 
 	}
 
-	static function createServer(aPort: Int): SocketServer {
+	private static function createServer(aPort: Int): SocketServer {
 		port = aPort;
 		final server = new SocketServer(aPort);
 
@@ -98,7 +98,7 @@ class Main {
 		return server;
 	}
 
-	static function createClient(i: Int): SocketClient {
+	private static function createClient(i: Int): SocketClient {
 		var client = new SocketClient(port);
 		client.onString < function(s: String) {
 			AsyncTests.equals(s, 'hi world');

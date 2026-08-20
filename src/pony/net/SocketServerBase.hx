@@ -1,8 +1,8 @@
 package pony.net;
 
+import haxe.io.Bytes;
 import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
-import haxe.io.Bytes;
 import pony.events.Signal0;
 import pony.events.Signal1;
 import pony.events.Signal2;

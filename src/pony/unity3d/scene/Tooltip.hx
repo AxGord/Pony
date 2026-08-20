@@ -4,11 +4,11 @@ import pony.time.DeltaTime;
 import pony.ui.touch.starling.touchManager.TouchEventType;
 import pony.ui.touch.starling.touchManager.TouchManager;
 import pony.ui.touch.starling.touchManager.TouchManagerEvent;
+import pony.unity3d.Tooltip;
 import pony.unity3d.scene.MouseHelper;
 import unityengine.BoxCollider;
 import unityengine.Color;
 import unityengine.MonoBehaviour;
-import pony.unity3d.Tooltip;
 import unityengine.Texture;
 import unityengine.Transform;
 

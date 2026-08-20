@@ -1,10 +1,10 @@
 package pony.pixi.nape;
 
+import haxe.io.BytesInput;
 import nape.geom.Vec2;
 import nape.shape.Shape;
 import nape.shape.ShapeList;
 import pixi.core.graphics.Graphics;
-import haxe.io.BytesInput;
 import pony.Byte;
 import pony.physics.nape.BodyBody;
 

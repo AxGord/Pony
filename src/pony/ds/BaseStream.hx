@@ -1,8 +1,8 @@
 package pony.ds;
 
-import pony.magic.HasSignal;
 import pony.events.Signal0;
 import pony.events.Signal1;
+import pony.magic.HasSignal;
 
 /**
  * BaseStream

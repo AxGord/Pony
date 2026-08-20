@@ -1,12 +1,12 @@
 package pony.js;
 
+import js.Browser;
 import js.html.CanvasElement;
 import js.html.Element;
-import js.Browser;
-import pony.geom.Point;
-import pony.geom.Rect;
 import pony.events.Signal1;
 import pony.events.Signal2;
+import pony.geom.Point;
+import pony.geom.Rect;
 
 #if (haxe_ver >= 4.2) enum #else @:enum #end
 abstract SmallDeviceQuality(Int) to Int {

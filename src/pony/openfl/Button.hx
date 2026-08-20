@@ -1,8 +1,8 @@
 package pony.openfl;
 
 import openfl.display.Sprite;
-import pony.ui.touch.Touchable;
 import pony.ui.gui.ButtonImgN;
+import pony.ui.touch.Touchable;
 
 /**
  * Button

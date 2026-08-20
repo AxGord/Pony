@@ -1,7 +1,7 @@
-import massive.munit.client.PrintClient;
-import massive.munit.client.RichPrintClient;
 import massive.munit.client.HTTPClient;
 import massive.munit.client.JUnitReportClient;
+import massive.munit.client.PrintClient;
+import massive.munit.client.RichPrintClient;
 import massive.munit.client.SummaryReportClient;
 import massive.munit.TestRunner;
 #if js
@@ -14,7 +14,7 @@ import js.Lib;
  */
 class TestMain {
 
-	static function main() {
+	private static function main(): Void {
 		new TestMain();
 	}
 
@@ -42,7 +42,7 @@ class TestMain {
 		updates the background color and closes the current browser
 		for flash and html targets (useful for continous integration servers)
 	 */
-	function completionHandler(successful: Bool): Void {
+	private function completionHandler(successful: Bool): Void {
 		try {
 			#if flash
 			flash.external.ExternalInterface.call('testResult', successful);

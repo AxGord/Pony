@@ -1,9 +1,9 @@
 package pony.heaps.ui.gui.layout;
 
 import h2d.Object;
-import pony.geom.Point;
 import pony.geom.Align;
 import pony.geom.Border;
+import pony.geom.Point;
 import pony.ui.gui.RubberLayoutCore;
 
 /**

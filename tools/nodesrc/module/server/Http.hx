@@ -1,8 +1,8 @@
 package module.server;
 
+import pony.Logable;
 import pony.net.http.IHttpConnection;
 import pony.net.http.platform.nodejs.HttpServer;
-import pony.Logable;
 
 /**
  * Http Server submodule

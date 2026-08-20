@@ -1,11 +1,11 @@
 package pony.pixi.ui;
 
-import pixi.core.textures.RenderTexture;
-import pixi.core.textures.Texture;
 import pixi.core.display.DisplayObject;
 import pixi.core.renderers.canvas.CanvasRenderer;
-import pony.pixi.App;
+import pixi.core.textures.RenderTexture;
+import pixi.core.textures.Texture;
 import pony.geom.Point;
+import pony.pixi.App;
 
 /**
  * RenderBox

@@ -5,7 +5,7 @@ import pony.ui.gui.ButtonCore;
 
 class ButtonCoreTest {
 
-	var instance: ButtonCore;
+	private var instance: ButtonCore;
 
 	@Before
 	public function setup(): Void {

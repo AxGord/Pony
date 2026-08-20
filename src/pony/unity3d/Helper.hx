@@ -18,15 +18,15 @@ using hugs.HUGSWrapper;
  */
 @:nativeGen class Helper extends MonoBehaviour {
 
-	static public var main: MonoBehaviour;
+	public static var main: MonoBehaviour;
 	#if touchscript
-	static public var touchDown: Bool;
-	static public var doubleDown: Bool;
-	static public var touchDX: Float = 0;
-	static public var touchDY: Float = 0;
+	public static var touchDown: Bool;
+	public static var doubleDown: Bool;
+	public static var touchDX: Float = 0;
+	public static var touchDY: Float = 0;
 
-	static private var prevX: Float = 0;
-	static private var prevY: Float = 0;
+	private static var prevX: Float = 0;
+	private static var prevY: Float = 0;
 	#end
 
 	public function new() {
@@ -43,7 +43,7 @@ using hugs.HUGSWrapper;
 	}
 
 	#if touchscript
-	static private function down(_, _): Void {
+	private static function down(_, _): Void {
 		// trace('down');
 		prevX = Input.mousePosition.x;
 		prevY = Input.mousePosition.y;
@@ -51,7 +51,7 @@ using hugs.HUGSWrapper;
 		touchDown = true;
 	}
 
-	static private function up(_, _): Void {
+	private static function up(_, _): Void {
 		// trace('up');
 		doubleDown = false;
 		touchDown = false;

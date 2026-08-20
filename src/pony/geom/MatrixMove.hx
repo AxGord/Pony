@@ -1,10 +1,10 @@
 package pony.geom;
 
-import pony.events.Signal1;
 import pony.events.Event1;
+import pony.events.Signal1;
 import pony.geom.IWards;
-import pony.ui.keyboard.Keyboard;
 import pony.ui.keyboard.Key;
+import pony.ui.keyboard.Keyboard;
 
 typedef Matrix = Array<Array<Null<Int>>>;
 

@@ -33,7 +33,7 @@ class XmlRequest extends Logable<XmlRequest> implements ICanBeCopied<XmlRequest>
 		return o;
 	}
 
-	inline public function run(
+	public inline function run(
 		x: Fast, initModules: Array<Class<Dynamic> -> IXRModule -> Void>, result: Dynamic -> Void, ?gxr: XmlRequest -> Void
 	): Void {
 		final xr = copy();

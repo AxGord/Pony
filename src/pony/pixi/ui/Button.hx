@@ -3,14 +3,14 @@ package pony.pixi.ui;
 import pixi.core.display.DisplayObject.DestroyOptions;
 import pixi.core.sprites.Sprite;
 import pixi.core.textures.Texture;
+import pony.ds.ROArray;
+import pony.events.WaitReady;
 import pony.geom.IWH;
 import pony.geom.Point;
-import pony.ds.ROArray;
 import pony.pixi.ui.slices.SliceSprite;
 import pony.pixi.ui.slices.SliceTools;
 import pony.ui.gui.ButtonImgN;
 import pony.ui.touch.Touchable;
-import pony.events.WaitReady;
 
 using pony.pixi.PixiExtends;
 

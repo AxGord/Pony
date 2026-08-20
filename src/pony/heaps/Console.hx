@@ -1,8 +1,8 @@
 package pony.heaps;
 
+import h2d.Object;
 import haxe.Log;
 import haxe.PosInfos;
-import h2d.Object;
 import hxd.res.DefaultFont;
 
 /**

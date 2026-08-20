@@ -1,8 +1,8 @@
 package pony.ui.touch.starling.touchManager.hitTestSources;
 
 import flash.geom.Point;
-import starling.display.DisplayObjectContainer;
 import starling.core.Starling;
+import starling.display.DisplayObjectContainer;
 
 /**
  * ...

@@ -1,10 +1,10 @@
 package pony.net.rpc;
 
-import haxe.io.BytesOutput;
-import haxe.io.BytesInput;
 import haxe.io.Bytes;
-import pony.magic.HasSignal;
+import haxe.io.BytesInput;
+import haxe.io.BytesOutput;
 import pony.events.Signal1;
+import pony.magic.HasSignal;
 
 /**
  * RPCUnit

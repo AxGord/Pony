@@ -12,7 +12,7 @@ import haxe.macro.Expr;
 
 	public static var staticPlatform: Bool = Context.defined('cs') || Context.defined('flash') || Context.defined('java');
 
-	public inline static function argsArray(func: Expr, args: Array<Expr>): Expr {
+	public static inline function argsArray(func: Expr, args: Array<Expr>): Expr {
 		args.shift();
 		return macro $e{func}($a{[[$a{args}]]});
 	}

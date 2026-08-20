@@ -2,9 +2,9 @@ package pony.js.node.serial;
 
 import haxe.io.BytesOutput;
 import pony.Tumbler;
-import pony.time.DeltaTime;
-import pony.events.Signal0;
 import pony.ds.ROArray;
+import pony.events.Signal0;
+import pony.time.DeltaTime;
 
 enum abstract RotorMode(Int) to Int {
 	var Off = 1;

@@ -6,17 +6,17 @@ import openfl.display.Bitmap;
 import openfl.display.BitmapData;
 import openfl.display.DisplayObject;
 import openfl.display.DisplayObjectContainer;
-import openfl.display.Sprite;
 import openfl.display.Loader;
+import openfl.display.Sprite;
 import openfl.errors.Error;
 import openfl.events.Event;
 import openfl.events.IOErrorEvent;
 import openfl.net.URLLoader;
+import openfl.net.URLLoaderDataFormat;
 import openfl.net.URLRequest;
 import openfl.system.LoaderContext;
 import openfl.utils.ByteArray;
 import pony.ui.AssetManager;
-import openfl.net.URLLoaderDataFormat;
 
 /**
  * OpenflAssets
@@ -24,11 +24,11 @@ import openfl.net.URLLoaderDataFormat;
  */
 class OpenflAssets {
 
-	static final assets: Map<String, DisplayObject> = [];
-	static var loader: Loader;
+	private static final assets: Map<String, DisplayObject> = [];
+	private static var loader: Loader;
 
-	static var loadCompleteHandler: Void -> Void;
-	static var assetName: String;
+	private static var loadCompleteHandler: Void -> Void;
+	private static var assetName: String;
 
 	public static function load(asset: String, cb: Void -> Void): Void {
 		if (Assets.exists(asset)) {

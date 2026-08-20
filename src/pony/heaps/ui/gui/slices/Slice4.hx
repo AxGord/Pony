@@ -1,7 +1,7 @@
 package pony.heaps.ui.gui.slices;
 
-import h2d.Tile;
 import h2d.Object;
+import h2d.Tile;
 import pony.geom.Point;
 
 /**

@@ -2,24 +2,24 @@ package pony.net.cs;
 
 #if cs
 import cs.NativeArray.NativeArray;
-import cs.system.IAsyncResult;
 import cs.system.AsyncCallback;
-import cs.system.net.IPEndPoint;
+import cs.system.IAsyncResult;
 import cs.system.net.IPAddress;
-import cs.system.net.sockets.Socket;
-import cs.system.net.sockets.SocketFlags;
-import cs.system.net.sockets.SocketException;
+import cs.system.net.IPEndPoint;
 import cs.system.net.sockets.AddressFamily;
-import cs.system.net.sockets.SocketType;
 import cs.system.net.sockets.ProtocolType;
+import cs.system.net.sockets.Socket;
+import cs.system.net.sockets.SocketException;
+import cs.system.net.sockets.SocketFlags;
+import cs.system.net.sockets.SocketType;
 import cs.system.threading.ManualResetEvent;
 import cs.system.threading.Thread;
 import cs.types.UInt8;
 import haxe.io.Bytes;
 import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
-import pony.net.SocketClient;
 import pony.cs.Synchro;
+import pony.net.SocketClient;
 import pony.Queue.Queue;
 
 /**
@@ -53,7 +53,7 @@ class SocketServer extends SocketServerBase {
 	**/
 	private var isRunning: Bool;
 
-	public override function new(aHost: String, aPort: Int) {
+	override public function new(aHost: String, aPort: Int) {
 		super();
 		port = aPort;
 		final ep: IPEndPoint = new IPEndPoint(IPAddress.Parse(aHost), port);

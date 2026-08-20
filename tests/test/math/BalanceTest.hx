@@ -1,10 +1,10 @@
 package math;
 
-import massive.munit.util.Timer;
 import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
-import pony.math.Balance;
+import massive.munit.util.Timer;
 import pony.Tools;
+import pony.math.Balance;
 import pony.math.MathTools;
 
 class BalanceTest {

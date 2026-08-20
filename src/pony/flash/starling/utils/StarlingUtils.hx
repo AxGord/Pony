@@ -11,8 +11,8 @@ import starling.display.DisplayObjectContainer;
 import starling.display.Image;
 import starling.display.MovieClip;
 import starling.display.Sprite;
-import starling.textures.Texture;
 import starling.textures.SubTexture;
+import starling.textures.Texture;
 
 using pony.flash.FLExtends;
 

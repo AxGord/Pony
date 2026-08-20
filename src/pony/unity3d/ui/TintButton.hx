@@ -3,8 +3,8 @@ package pony.unity3d.ui;
 import pony.events.Event;
 import pony.ui.gui.ButtonCore;
 import unityengine.Color;
-import unityengine.Texture;
 import unityengine.GameObject;
+import unityengine.Texture;
 
 /**
  * Tint Button
@@ -20,7 +20,7 @@ import unityengine.GameObject;
 	@:meta(UnityEngine.HideInInspector)
 	private var sclr: Color;
 
-	override function Start(): Void {
+	override private function Start(): Void {
 		super.Start();
 		sclr = guiTexture.color;
 

@@ -8,9 +8,9 @@ import h2d.Drawable;
 import h2d.Interactive;
 import hxd.Event;
 import hxd.Window;
-import pony.time.DeltaTime;
-import pony.heaps.HeapsApp;
 import pony.geom.Point;
+import pony.heaps.HeapsApp;
+import pony.time.DeltaTime;
 
 /**
  * Heaps Touchable

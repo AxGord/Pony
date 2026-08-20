@@ -26,7 +26,7 @@ class InBuilder {
 	}
 
 	#if macro
-	static public function repl(e: Expr): Expr {
+	public static function repl(e: Expr): Expr {
 		return switch e.expr {
 			#if (haxe_ver >= "4.0.0")
 			case EBinop(OpIn, e1, e2):

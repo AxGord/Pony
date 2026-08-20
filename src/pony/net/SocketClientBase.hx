@@ -1,16 +1,16 @@
 package pony.net;
 
+import haxe.Timer;
 import haxe.io.Bytes;
 import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
-import haxe.Timer;
 import pony.Logable;
-import pony.events.Signal0;
-import pony.events.Signal1;
-import pony.events.Signal2;
 import pony.events.Event0;
 import pony.events.Event1;
 import pony.events.Event2;
+import pony.events.Signal0;
+import pony.events.Signal1;
+import pony.events.Signal2;
 import pony.magic.HasSignal;
 
 /**

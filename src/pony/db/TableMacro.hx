@@ -11,7 +11,7 @@ import haxe.macro.Printer;
  */
 class TableMacro {
 
-	static public function transExpr(expr: Expr, a: Array<Expr>): Array<Expr> {
+	public static function transExpr(expr: Expr, a: Array<Expr>): Array<Expr> {
 		switch expr.expr {
 			case EBinop(op, e1, e2):
 				final o = switch op {
@@ -86,21 +86,21 @@ class TableMacro {
 		return a;
 	}
 
-	static private function genText(s: String, p: Position): Expr {
+	private static function genText(s: String, p: Position): Expr {
 		final e: Expr = { expr: EConst(CString(s)), pos: p };
 		return macro pony.db.Table.WhereElement.Text($e);
 	}
 
-	static private function takeFieldName(e: Expr): String {
+	private static function takeFieldName(e: Expr): String {
 		return switch e.expr {
 			case EConst(CIdent(s)): '`$s`';
 			case _: throw 'Not correct field $e';
 		}
 	}
 
-	static private final printer: Printer = new Printer();
+	private static final printer: Printer = new Printer();
 
-	static private function parseExpr(e: Expr): Array<Expr> {
+	private static function parseExpr(e: Expr): Array<Expr> {
 		var a: Array<Expr> = [];
 		switch e.expr {
 			case EConst(CIdent(s)):

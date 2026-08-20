@@ -1,18 +1,18 @@
 package pony.physics.nape;
 
 import haxe.io.Bytes;
+import nape.callbacks.CbEvent;
+import nape.callbacks.CbType;
 import nape.callbacks.InteractionCallback;
+import nape.callbacks.InteractionListener;
+import nape.callbacks.InteractionType;
+import nape.geom.Vec2;
+import nape.phys.Body;
+import nape.space.Space;
+import pony.events.Event2;
+import pony.events.Signal2;
 import pony.geom.Point;
 import pony.geom.Rect;
-import pony.events.Signal2;
-import pony.events.Event2;
-import nape.callbacks.CbEvent;
-import nape.callbacks.InteractionType;
-import nape.callbacks.InteractionListener;
-import nape.space.Space;
-import nape.phys.Body;
-import nape.geom.Vec2;
-import nape.callbacks.CbType;
 
 /**
  * NapeGroup

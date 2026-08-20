@@ -1,10 +1,10 @@
 package pony.heaps.ui.gui;
 
 import h2d.Bitmap;
+import h2d.Font.FontChar;
 import h2d.Object;
 import h2d.Text;
 import h2d.Tile;
-import h2d.Font.FontChar;
 import hxd.Math;
 import pony.Pair;
 import pony.geom.Point;

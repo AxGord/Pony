@@ -1,15 +1,15 @@
 package events;
 
-import pony.events.SignalControllerInner1;
-import pony.events.SignalController1;
-import pony.events.SignalController0;
-import pony.events.SignalController;
-import pony.events.SignalControllerInner0;
-import massive.munit.util.Timer;
 import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
+import massive.munit.util.Timer;
 import pony.events.Listener0;
 import pony.events.Listener1;
+import pony.events.SignalController;
+import pony.events.SignalController0;
+import pony.events.SignalController1;
+import pony.events.SignalControllerInner0;
+import pony.events.SignalControllerInner1;
 
 enum L {
 	A;

@@ -1,22 +1,22 @@
 package pony;
 
 import js.html.CSSStyleDeclaration;
-import js.html.VideoElement;
-import js.html.SourceElement;
 import js.html.DOMElement;
+import js.html.SourceElement;
+import js.html.VideoElement;
 #if (haxe_ver >= 4)
 import js.lib.Error;
 #else
 import js.Error;
 #end
 import pony.events.Signal0;
-import pony.time.DTimer;
-import pony.Tumbler;
-import pony.Percent;
 import pony.JsTools;
-import pony.time.Time;
-import pony.magic.HasSignal;
 import pony.magic.HasLink;
+import pony.magic.HasSignal;
+import pony.Percent;
+import pony.time.DTimer;
+import pony.time.Time;
+import pony.Tumbler;
 
 typedef HtmlVideoOptions = {
 	?bufferingTreshhold: Int,

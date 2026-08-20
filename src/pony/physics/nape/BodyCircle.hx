@@ -1,14 +1,14 @@
 package pony.physics.nape;
 
-import haxe.io.BytesOutput;
 import haxe.io.Bytes;
-import pony.geom.Point;
-import pony.geom.Rect;
+import haxe.io.BytesOutput;
 import nape.phys.Body;
 import nape.phys.BodyType;
-import nape.space.Space;
-import nape.shape.Polygon;
 import nape.shape.Circle;
+import nape.shape.Polygon;
+import nape.space.Space;
+import pony.geom.Point;
+import pony.geom.Rect;
 
 /**
  * BodyCircle

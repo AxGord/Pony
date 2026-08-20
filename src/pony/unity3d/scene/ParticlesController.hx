@@ -21,7 +21,7 @@ class ParticlesController extends MonoBehaviour {
 	private var stopTimer: DTimer;
 	private var abortTimer: DTimer;
 
-	private function Start() {
+	private function Start(): Void {
 		abort();
 		if (playAfter > 0) {
 			playTimer = DTimer.createTimer(Time.fromFloat(playAfter * 1000));
@@ -38,14 +38,14 @@ class ParticlesController extends MonoBehaviour {
 		if (playOnAwake) play();
 	}
 
-	public function play(?dt: DT) {
+	public function play(?dt: DT): Void {
 		if (playTimer != null)
 			playTimer.start(dt);
 		else
 			playNow(dt);
 	}
 
-	public function playNow(?dt: DT) {
+	public function playNow(?dt: DT): Void {
 		abort();
 		if (particleSystem != null)
 			particleSystem.Play();
@@ -63,7 +63,7 @@ class ParticlesController extends MonoBehaviour {
 		}
 	}
 
-	public function stop() {
+	public function stop(): Void {
 		if (playTimer != null) {
 			playTimer.stop();
 			playTimer.reset();
@@ -75,7 +75,7 @@ class ParticlesController extends MonoBehaviour {
 			particleEmitter.emit = false;
 	}
 
-	public function abort() {
+	public function abort(): Void {
 		if (abortTimer != null) abortTimer.stop();
 		stop();
 		if (particleSystem != null)

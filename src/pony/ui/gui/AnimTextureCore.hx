@@ -1,7 +1,7 @@
 package pony.ui.gui;
 
-import pony.time.Time;
 import pony.math.MathTools;
+import pony.time.Time;
 
 /**
  * AnimSmoothMode

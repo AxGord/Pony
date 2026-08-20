@@ -1,6 +1,5 @@
 package pony.ui.xml;
 
-import hxd.Cursor;
 import h2d.Drawable;
 import h2d.Font;
 import h2d.Graphics;
@@ -10,6 +9,7 @@ import h2d.filter.DropShadow;
 import h2d.filter.Filter;
 import h2d.filter.Group;
 import h2d.filter.Outline;
+import hxd.Cursor;
 #if (heaps >= '2.0.0')
 import h3d.Vector4 as Vector;
 #else
@@ -22,7 +22,6 @@ import pony.geom.Border;
 import pony.geom.Orientation;
 import pony.geom.Point;
 import pony.geom.Rect;
-import pony.time.TimeInterval;
 import pony.heaps.HeapsApp;
 import pony.heaps.HeapsAssets;
 import pony.heaps.ui.gui.Button;
@@ -44,6 +43,7 @@ import pony.heaps.ui.gui.layout.RubberLayout;
 import pony.heaps.ui.gui.layout.TLayout;
 import pony.heaps.ui.gui.slices.Slice;
 import pony.magic.HasAbstract;
+import pony.time.TimeInterval;
 import pony.ui.gui.ScrollBoxCore;
 import pony.ui.xml.AttrVal;
 import pony.ui.xml.UiTags;

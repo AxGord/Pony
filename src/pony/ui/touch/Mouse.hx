@@ -43,15 +43,15 @@ class Mouse implements Declarator implements HasSignal {
 	private static var upStack: Array<Int> = [];
 
 	#if pixijs
-	inline public static function init(): Void pony.ui.touch.pixi.Mouse.init();
+	public static inline function init(): Void pony.ui.touch.pixi.Mouse.init();
 	#elseif flash
-	inline public static function init(): Void pony.ui.touch.flash.Mouse.init();
-	inline public static function enableStd(): Void pony.ui.touch.flash.Mouse.enableStd();
-	inline public static function disableStd(): Void pony.ui.touch.flash.Mouse.disableStd();
+	public static inline function init(): Void pony.ui.touch.flash.Mouse.init();
+	public static inline function enableStd(): Void pony.ui.touch.flash.Mouse.enableStd();
+	public static inline function disableStd(): Void pony.ui.touch.flash.Mouse.disableStd();
 	#elseif lime
-	inline public static function init(): Void pony.ui.touch.lime.Mouse.init();
-	inline public static function enableStd(): Void pony.ui.touch.lime.Mouse.enableStd();
-	inline public static function disableStd(): Void pony.ui.touch.lime.Mouse.disableStd();
+	public static inline function init(): Void pony.ui.touch.lime.Mouse.init();
+	public static inline function enableStd(): Void pony.ui.touch.lime.Mouse.enableStd();
+	public static inline function disableStd(): Void pony.ui.touch.lime.Mouse.disableStd();
 	#end
 
 	public static function moveHandler(x: Float, y: Float): Void {

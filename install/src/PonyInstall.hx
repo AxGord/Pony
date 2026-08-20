@@ -1,6 +1,6 @@
 import haxe.io.Eof;
-import sys.io.Process;
 import sys.FileSystem;
+import sys.io.Process;
 
 /**
  * PonyInstall

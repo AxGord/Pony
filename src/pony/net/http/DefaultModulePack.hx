@@ -1,8 +1,8 @@
 package pony.net.http;
 
+import pony.net.http.modules.mlang.MLang;
 import pony.net.http.modules.mlink.MLink;
 import pony.net.http.modules.mtpl.MTpl;
-import pony.net.http.modules.mlang.MLang;
 
 /**
  * DefaultModulePack

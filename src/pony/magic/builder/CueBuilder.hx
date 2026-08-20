@@ -20,8 +20,8 @@ using pony.macro.Tools;
 class CueBuilder {
 
 	#if macro
-	inline private static final INDEX: String = 'INDEX';
-	inline private static final TITLE: String = 'TITLE ';
+	private static inline final INDEX: String = 'INDEX';
+	private static inline final TITLE: String = 'TITLE ';
 	#end
 	macro public static function build(): Array<Field> {
 		final cl = Context.getLocalClass();

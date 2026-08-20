@@ -22,7 +22,7 @@ using hugs.HUGSWrapper;
 			tooltips = [tooltip];
 	}
 
-	inline private function saveColors(): Void {
+	private inline function saveColors(): Void {
 		for (e in tooltips) e.saveColors();
 	}
 

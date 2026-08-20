@@ -1,18 +1,18 @@
 package pony.pixi.nape;
 
-import pixi.core.textures.RenderTexture;
+import haxe.extern.EitherType;
+import haxe.io.Bytes;
+import pixi.core.display.DisplayObject;
 import pixi.core.graphics.Graphics;
 import pixi.core.sprites.Sprite;
-import pixi.core.display.DisplayObject;
-import haxe.extern.EitherType;
+import pixi.core.textures.RenderTexture;
+import pony.Pair;
+import pony.events.Signal1;
 import pony.geom.Point;
 import pony.geom.Rect;
-import pony.events.Signal1;
 import pony.physics.nape.BodyBase;
 import pony.physics.nape.DebugLineStyle;
 import pony.pixi.App;
-import pony.Pair;
-import haxe.io.Bytes;
 
 /**
  * BodyBaseView

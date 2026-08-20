@@ -5,12 +5,12 @@ import h3d.Vector4 as Vector;
 #else
 import h3d.Vector;
 #end
-import h2d.Graphics;
 import h2d.Bitmap;
-import h2d.TileGroup;
-import h2d.Tile;
 import h2d.Drawable;
+import h2d.Graphics;
 import h2d.Object;
+import h2d.Tile;
+import h2d.TileGroup;
 import pony.geom.Point;
 import pony.magic.HasLink;
 

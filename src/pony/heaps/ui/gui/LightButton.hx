@@ -1,12 +1,12 @@
 package pony.heaps.ui.gui;
 
-import hxd.Cursor;
-import h2d.Object;
 import h2d.Interactive;
+import h2d.Object;
+import hxd.Cursor;
 import pony.color.UColors;
 import pony.geom.Point;
-import pony.ui.touch.Touchable;
 import pony.ui.gui.ButtonCore;
+import pony.ui.touch.Touchable;
 
 /**
  * LightButton

@@ -1,16 +1,16 @@
 package magic;
 
-import massive.munit.util.Timer;
 import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
+import massive.munit.util.Timer;
 import pony.magic.ExtendedProperties;
 
 class ExtendedPropertiesTest {
 
-	var o: ExtendedPropertiesTestHelper;
+	private var o: ExtendedPropertiesTestHelper;
 
 	@Before
-	public function setup() {
+	public function setup(): Void {
 		o = new ExtendedPropertiesTestHelper();
 	}
 
@@ -66,6 +66,6 @@ class ExtendedPropertiesTestHelper implements ExtendedProperties {
 		return f(25);
 	}
 
-	@prop inline public function value(): Int return 3;
+	@prop public inline function value(): Int return 3;
 
 }

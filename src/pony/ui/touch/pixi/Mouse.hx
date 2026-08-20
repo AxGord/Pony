@@ -1,7 +1,7 @@
 package pony.ui.touch.pixi;
 
-import js.html.AddEventListenerOptions;
 import js.Browser;
+import js.html.AddEventListenerOptions;
 import pixi.core.display.Container;
 import pixi.interaction.InteractionEvent;
 import pony.geom.Point;

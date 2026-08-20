@@ -1,7 +1,7 @@
 package pony.heaps.ui.gui.layout;
 
-import h2d.Object;
 import h2d.Bitmap;
+import h2d.Object;
 import pony.geom.Border;
 import pony.ui.gui.RubberLayoutCore;
 

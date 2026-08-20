@@ -5,9 +5,9 @@ import pony.events.Signal2;
 import pony.geom.Point.IntPoint;
 import pony.Logable;
 import pony.math.Matrix;
+import pony.midi.devices.LaunchpadColor;
 import pony.midi.MidiCode;
 import pony.midi.MidiDevice;
-import pony.midi.devices.LaunchpadColor;
 import pony.midi.MidiMessage;
 
 /**
@@ -31,9 +31,9 @@ class Launchpad extends Logable implements ILaunchpad {
 
 	private static var topBlock(default, never): Array<MidiCode> = [for (i in 104...112) i];
 
-	inline public static function list(): Map<Int, String> return MidiDevice.listWithName('Launchpad');
+	public static inline function list(): Map<Int, String> return MidiDevice.listWithName('Launchpad');
 
-	inline public static function count(): Int return MidiDevice.countWithName('Launchpad');
+	public static inline function count(): Int return MidiDevice.countWithName('Launchpad');
 
 	private var midi: MidiDevice;
 	public var areaState(default, null): Matrix<LaunchpadColor>;
@@ -80,14 +80,14 @@ class Launchpad extends Logable implements ILaunchpad {
 		}
 	}
 
-	inline public function setAreaPoint(p: IntPoint, color: LaunchpadColor = AmberFull): Void {
+	public inline function setAreaPoint(p: IntPoint, color: LaunchpadColor = AmberFull): Void {
 		if (areaState.get(p) != color) {
 			midi.send({ chanel: 144, key: area.get(p), value: color });
 			areaState.set(p, color);
 		}
 	}
 
-	inline public function setMatrixCI(m: Matrix<Int>): Void setMatrix(m.map(LaunchpadColor.fromIndex));
+	public inline function setMatrixCI(m: Matrix<Int>): Void setMatrix(m.map(LaunchpadColor.fromIndex));
 
 	public function setMatrix(m: Matrix<LaunchpadColor>): Void {
 		m = m.cut(8, 8);

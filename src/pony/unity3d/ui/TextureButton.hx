@@ -2,9 +2,9 @@ package pony.unity3d.ui;
 
 import cs.NativeArray.NativeArray;
 import pony.events.Event;
+import pony.ui.gui.ButtonCore;
 import pony.unity3d.ui.TintButton;
 import unityengine.Texture;
-import pony.ui.gui.ButtonCore;
 
 using hugs.HUGSWrapper;
 
@@ -18,7 +18,7 @@ using hugs.HUGSWrapper;
 	private var overs: NativeArray<Texture>;
 	private var press: NativeArray<Texture>;
 
-	override function Start(): Void {
+	override private function Start(): Void {
 
 		for (i in 0...overs.Length) if (overs[i] != null) {
 			core.changeVisual.sub(Focus, i).add(txset.bind(overs[i]));

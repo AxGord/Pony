@@ -2,8 +2,8 @@ package pony.flash.ui;
 
 import flash.display.BlendMode;
 import flash.display.MovieClip;
-import flash.filters.BlurFilter;
 import flash.display.StageQuality;
+import flash.filters.BlurFilter;
 import flash.Lib;
 
 using pony.flash.FLTools;

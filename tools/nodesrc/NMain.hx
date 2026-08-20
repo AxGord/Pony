@@ -1,21 +1,21 @@
-import types.RemoteConfig;
 import js.Node;
+import types.RemoteConfig;
 #if (haxe_ver >= 4.000)
 import js.lib.Error;
 #else
 import js.Error;
 #end
 import module.NModule;
-import types.ImageminConfig;
-import types.PoeditorConfig;
-import types.FtpConfig;
-import types.UglifyConfig;
-import types.DownloadConfig;
-import types.BmfontConfig;
-import types.ServerConfig;
+import pony.Logable;
 import pony.net.SocketClient;
 import pony.NPM;
-import pony.Logable;
+import types.BmfontConfig;
+import types.DownloadConfig;
+import types.FtpConfig;
+import types.ImageminConfig;
+import types.PoeditorConfig;
+import types.ServerConfig;
+import types.UglifyConfig;
 
 /**
  * Entry point for Pony Tools Node Module

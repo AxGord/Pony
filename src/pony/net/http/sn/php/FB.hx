@@ -15,7 +15,7 @@ class FB implements IFB {
 		untyped __call__('\\Facebook\\FacebookSession::setDefaultApplication', appid, secret);
 	}
 
-	inline public function api(token: String, r: String, cb: Dynamic -> Void): Void {
+	public inline function api(token: String, r: String, cb: Dynamic -> Void): Void {
 		if (token == null) {
 			cb(null);
 			return;

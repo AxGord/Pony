@@ -53,7 +53,7 @@ import pony.time.TimeInterval;
 
 	public inline function equal(pos: TimeInterval): Bool return !completed && timer.time.min == pos.min && timer.time.max == getMax(pos);
 
-	public function play(pos: TimeInterval, loop: Bool, volume: Float) {
+	public function play(pos: TimeInterval, loop: Bool, volume: Float): Void {
 		completed = false;
 		this.loop = loop;
 		timer.time = TimeInterval.create(pos.min, getMax(pos));
@@ -66,7 +66,7 @@ import pony.time.TimeInterval;
 
 	private inline function start() channel.position = timer.time.min.totalMs / 1000;
 
-	public function stop() {
+	public function stop(): Void {
 		completed = true;
 		timer.stop();
 		channel.pause = true;

@@ -1,7 +1,7 @@
 package pony.pixi.ui;
 
-import pony.ui.gui.BaseLayoutCore;
 import pixi.core.display.Container;
+import pony.ui.gui.BaseLayoutCore;
 
 /**
  * TLayout

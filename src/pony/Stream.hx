@@ -11,7 +11,7 @@ class Stream<T> {
 	private var complite(default, null): Bool = false;
 	private var fail(default, null): Dynamic = null;
 
-	inline public function new() result = new List<T>();
+	public inline function new() result = new List<T>();
 
 	dynamic private function data(v: T): Void result.push(v);
 
@@ -22,11 +22,11 @@ class Stream<T> {
 
 	dynamic private function error(v: Dynamic): Void fail = v;
 
-	inline public function dataListener(v: T): Void data(v);
+	public inline function dataListener(v: T): Void data(v);
 
-	inline public function endListener(): Void end();
+	public inline function endListener(): Void end();
 
-	inline public function errorListener(v: Dynamic): Void error(v);
+	public inline function errorListener(v: Dynamic): Void error(v);
 
 	public function map<R>(f: T -> R): Stream<R> {
 		final s = new Stream<R>();
@@ -73,7 +73,7 @@ class Stream<T> {
 
 	private function locked(d: T -> Void, ?compl: Void -> Void, ?err: Dynamic -> Void): Void throw 'Stream locked';
 
-	inline private function destroy(): Void {
+	private inline function destroy(): Void {
 		fail = null;
 		data = Tools.nullFunction1;
 		error = Tools.errorFunction;
@@ -85,6 +85,6 @@ class Stream<T> {
 		return this;
 	}
 
-	inline static public function fromArray<T>(a: Array<T>): Stream<T> return new Stream().putIterable(a);
+	public static inline function fromArray<T>(a: Array<T>): Stream<T> return new Stream().putIterable(a);
 
 }

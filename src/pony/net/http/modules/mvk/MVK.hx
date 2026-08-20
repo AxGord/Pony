@@ -2,10 +2,10 @@ package pony.net.http.modules.mvk;
 
 import js.Node;
 import pony.fs.Dir;
+import pony.net.http.CPQ;
 import pony.net.http.IModule;
 import pony.net.http.WebServer;
 import pony.net.http.sn.FB;
-import pony.net.http.CPQ;
 import pony.text.TextTools;
 import pony.text.tpl.ITplPut;
 import pony.text.tpl.Tpl;
@@ -17,7 +17,7 @@ import pony.text.tpl.TplPut;
  */
 final class MVK implements IModule {
 
-	static private final sdk: Class<Dynamic> = Node.require('vksdk');
+	private static final sdk: Class<Dynamic> = Node.require('vksdk');
 
 	public var server: WebServer;
 	public var buttonData: String;

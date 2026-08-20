@@ -1,8 +1,9 @@
 package pony.pixi.ui;
 
 import pixi.core.Pixi;
-import pixi.core.graphics.Graphics;
 import pixi.core.display.DisplayObject;
+import pixi.core.graphics.Graphics;
+import pixi.core.math.shapes.Rectangle;
 import pixi.core.sprites.Sprite;
 import pony.Or;
 import pony.events.Signal1;
@@ -11,12 +12,11 @@ import pony.geom.IWH;
 import pony.geom.Point;
 import pony.magic.HasSignal;
 import pony.time.DeltaTime;
-import pony.ui.gui.SmoothBarCore;
-import pony.ui.touch.Touchable;
-import pony.ui.gui.ScrollBoxCore;
 import pony.ui.gui.ButtonCore;
+import pony.ui.gui.ScrollBoxCore;
+import pony.ui.gui.SmoothBarCore;
 import pony.ui.touch.Touch;
-import pixi.core.math.shapes.Rectangle;
+import pony.ui.touch.Touchable;
 
 using pony.pixi.PixiExtends;
 

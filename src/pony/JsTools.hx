@@ -1,7 +1,5 @@
 package pony;
 
-import pony.magic.HasSignal;
-import pony.events.Signal0;
 import haxe.Constraints.Function;
 import js.Browser;
 import js.Lib;
@@ -9,6 +7,8 @@ import js.html.CanvasElement;
 import js.html.DOMElement;
 import js.html.DivElement;
 import js.html.Event;
+import pony.events.Signal0;
+import pony.magic.HasSignal;
 #if (haxe_ver >= '4.0.0')
 import js.lib.Error;
 #else

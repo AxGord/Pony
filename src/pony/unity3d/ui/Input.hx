@@ -7,9 +7,9 @@ import pony.ui.gui.IFocus;
 import pony.unity3d.ui.TextureButton;
 import pony.unity3d.ui.TintButton;
 import unityengine.GUIText;
+import unityengine.Rect;
 import unityengine.Time;
 import unityengine.Vector2;
-import unityengine.Rect;
 
 using hugs.HUGSWrapper;
 
@@ -88,7 +88,7 @@ class Input extends TextureButton implements IFocus {
 		} // else gt.text = text;
 	}
 
-	inline private function get_y(): Int return Math.ceil(guiTexture.pixelInset.y);
+	private inline function get_y(): Int return Math.ceil(guiTexture.pixelInset.y);
 
 	private function set_y(v: Int): Int {
 		if (y != v) {
@@ -98,7 +98,7 @@ class Input extends TextureButton implements IFocus {
 		return v;
 	}
 
-	inline private function get_x(): Int return Math.ceil(guiTexture.pixelInset.x);
+	private inline function get_x(): Int return Math.ceil(guiTexture.pixelInset.x);
 
 	private function set_x(v: Int): Int {
 		if (x != v) {

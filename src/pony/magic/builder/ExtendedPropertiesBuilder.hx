@@ -16,7 +16,7 @@ using Lambda;
 class ExtendedPropertiesBuilder {
 
 	#if macro
-	inline private static final hprefix: String = '_';
+	private static inline final hprefix: String = '_';
 	private static var used: Map<Int, Array<String>>;
 	private static final repList: Array<String> = [];
 	private static var lvl: Int;
@@ -69,7 +69,7 @@ class ExtendedPropertiesBuilder {
 	}
 
 	#if macro
-	inline private static function lvlused(): Array<String> return used.exists(lvl) ? used[lvl] : [];
+	private static inline function lvlused(): Array<String> return used.exists(lvl) ? used[lvl] : [];
 
 	private static function repl(e: Expr): Expr {
 		final curRepl = repList.copy();
@@ -119,10 +119,10 @@ class ExtendedPropertiesBuilder {
 		return e;
 	}
 
-	static private final pmeta = [':toProp', 'toProp', ':prop', 'prop'];
+	private static final pmeta = [':toProp', 'toProp', ':prop', 'prop'];
 	#end
 
-	macro static public function f2p(): Array<Field> {
+	macro public static function f2p(): Array<Field> {
 		final fs: Array<Field> = [];
 		for (f in Context.getBuildFields()) {
 			switch f.kind {

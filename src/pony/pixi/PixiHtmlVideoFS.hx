@@ -1,11 +1,11 @@
 package pony.pixi;
 
-import pony.pixi.App;
 import pony.HtmlVideo;
-import pony.geom.Rect;
-import pony.geom.Border;
 import pony.Or;
 import pony.Tumbler;
+import pony.geom.Border;
+import pony.geom.Rect;
+import pony.pixi.App;
 
 /**
  * PixiHtmlVideoFS

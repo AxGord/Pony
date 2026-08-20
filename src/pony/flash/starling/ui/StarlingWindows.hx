@@ -1,7 +1,7 @@
 package pony.flash.starling.ui;
 
-import starling.display.Sprite;
 import starling.display.DisplayObject;
+import starling.display.Sprite;
 
 /**
  * StarlingWindows

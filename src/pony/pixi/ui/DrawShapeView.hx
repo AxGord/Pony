@@ -1,15 +1,15 @@
 package pony.pixi.ui;
 
-import pony.ui.touch.Touchable;
+import pixi.core.graphics.Graphics;
+import pixi.core.sprites.Sprite;
+import pony.events.Signal1;
+import pony.events.Signal2;
 import pony.geom.Point;
 import pony.geom.drawshape.DrawShape;
 import pony.geom.drawshape.DrawShapePointer;
 import pony.geom.drawshape.DrawShapePointerData;
-import pony.events.Signal1;
-import pony.events.Signal2;
-import pixi.core.graphics.Graphics;
-import pixi.core.sprites.Sprite;
 import pony.time.DeltaTime;
+import pony.ui.touch.Touchable;
 
 // typedef DrawShapeStyle = {
 // 	snapWidth: Float

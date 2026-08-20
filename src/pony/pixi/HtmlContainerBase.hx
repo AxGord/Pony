@@ -1,8 +1,8 @@
 package pony.pixi;
 
-import js.html.DOMRect;
-import js.html.CSSStyleDeclaration;
 import js.Browser;
+import js.html.CSSStyleDeclaration;
+import js.html.DOMRect;
 import pony.Tumbler;
 import pony.events.Signal1;
 import pony.geom.Point;

@@ -3,11 +3,11 @@ package pony.ui.gui;
 import pony.events.Signal0;
 import pony.events.Signal1;
 import pony.events.Signal2;
-import pony.magic.HasSignal;
 import pony.magic.HasLink;
-import pony.ui.touch.Touchable;
+import pony.magic.HasSignal;
 import pony.ui.gui.ButtonCore;
 import pony.ui.gui.SliderCore;
+import pony.ui.touch.Touchable;
 
 /**
  * ScrollBoxBarCore

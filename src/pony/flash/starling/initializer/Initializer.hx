@@ -1,6 +1,5 @@
 package pony.flash.starling.initializer;
 
-import pony.flash.starling.displayFactory.DisplayFactory;
 import flash.display.Bitmap;
 import flash.display.BitmapData;
 import flash.display.DisplayObject;
@@ -12,6 +11,7 @@ import flash.Lib;
 import flash.ui.Multitouch;
 import flash.ui.MultitouchInputMode;
 import pony.flash.FLTools;
+import pony.flash.starling.displayFactory.DisplayFactory;
 import pony.flash.starling.displayFactory.NativeFlashDisplayFactory;
 import pony.time.DeltaTime;
 import pony.ui.touch.starling.touchManager.hitTestSources.NativeHitTestSource;

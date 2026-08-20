@@ -1,10 +1,10 @@
 package pony.flash;
 
-import pony.events.Signal1;
+import flash.display.Stage;
 import pony.events.Listener1;
+import pony.events.Signal1;
 import pony.events.SignalControllerInner1;
 import pony.magic.HasSignal;
-import flash.display.Stage;
 
 /**
  * MultyStage

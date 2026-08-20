@@ -1,8 +1,8 @@
 package pony;
 
 import haxe.PosInfos;
-import pony.events.Signal2;
 import pony.events.Event2;
+import pony.events.Signal2;
 
 /**
  * Logable interface

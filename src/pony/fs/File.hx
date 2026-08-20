@@ -134,11 +134,11 @@ using pony.text.TextTools;
 		}
 	}
 
-	@:to inline private function toUnit(): Unit return this;
+	@:to private inline function toUnit(): Unit return this;
 
-	@:to inline public function toString(): String return this.toString();
+	@:to public inline function toString(): String return this.toString();
 
-	@:to inline public function toArray(): Array<String> return this.toArray();
+	@:to public inline function toArray(): Array<String> return this.toArray();
 
 	@:arrayAccess public inline function arrayAccess(key: Int): File return this[key];
 

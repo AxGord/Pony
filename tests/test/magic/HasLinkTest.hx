@@ -1,14 +1,14 @@
 package magic;
 
-import massive.munit.util.Timer;
 import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
+import massive.munit.util.Timer;
 import pony.magic.HasLink;
 
 class HasLinkTest implements HasLink {
 
-	static var index: Int;
-	static var visualIndex(link, never): String = '${index + 1}';
+	private static var index: Int;
+	private static var visualIndex(link, never): String = '${index + 1}';
 
 	@Test
 	public function test(): Void {

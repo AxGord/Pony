@@ -16,7 +16,7 @@ using hugs.HUGSWrapper;
  */
 @:nativeGen class StaticAccess {
 
-	inline static public function component<T:Component>(gameObject: String, cl: Class<T>): T {
+	public static inline function component<T:Component>(gameObject: String, cl: Class<T>): T {
 		#if debug
 		var g: GameObject = GameObject.Find(gameObject);
 		if (g == null) {

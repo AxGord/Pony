@@ -6,13 +6,13 @@ import js.lib.Error;
 import js.Error;
 #end
 import js.Node;
-import sys.FileSystem;
-import pony.events.Signal0;
 import pony.Logable;
-import pony.fs.File;
-import pony.fs.Dir;
 import pony.NPM;
 import pony.ds.ROArray;
+import pony.events.Signal0;
+import pony.fs.Dir;
+import pony.fs.File;
+import sys.FileSystem;
 import types.FtpConfig;
 
 using pony.text.TextTools;

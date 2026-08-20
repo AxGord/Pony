@@ -1,7 +1,7 @@
 package pony.flash.starling;
 
-import flash.display.DisplayObject;
 import flash.display.BitmapData;
+import flash.display.DisplayObject;
 import pony.flash.FLTools;
 import pony.flash.starling.converter.AtlasCreator;
 import starling.display.Image;

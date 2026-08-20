@@ -2,6 +2,8 @@ package pony.text;
 
 import pony.math.MathTools;
 import pony.SPair;
+import sys.FileSystem;
+import sys.io.File;
 #if macro
 import haxe.macro.Context;
 import haxe.macro.Expr;
@@ -196,12 +198,12 @@ abstract AnsiForeground(UInt) to UInt {
 
 	macro public static function includeFile(file: String): Expr {
 		Context.registerModuleDependency(MODULE, file);
-		final s: String = sys.io.File.getContent(file);
+		final s: String = File.getContent(file);
 		return macro $v{s};
 	}
 
 	macro public static function includePath(path: String = '.'): Expr {
-		final s: String = sys.FileSystem.absolutePath('$path/');
+		final s: String = FileSystem.absolutePath('$path/');
 		return macro $v{s};
 	}
 
@@ -210,7 +212,7 @@ abstract AnsiForeground(UInt) to UInt {
 		final i: Int = MathTools.cmax(f.lastIndexOf('\\'), f.lastIndexOf('/'));
 		f = i != -1 ? '${f.substr(0, i)}/' : '';
 		Context.registerModuleDependency(MODULE, f + file);
-		final s: String = sys.io.File.getContent(f + file);
+		final s: String = File.getContent(f + file);
 		return macro $v{s};
 	}
 
@@ -218,13 +220,13 @@ abstract AnsiForeground(UInt) to UInt {
 		var f: String = Context.getPosInfos(Context.currentPos()).file;
 		final i: Int = MathTools.cmax(f.lastIndexOf('\\'), f.lastIndexOf('/'));
 		f = i != -1 ? '${f.substr(0, i)}/' : '';
-		final s: String = sys.FileSystem.absolutePath('${f + path}/');
+		final s: String = FileSystem.absolutePath('${f + path}/');
 		return macro $v{s};
 	}
 
 	macro public static function includeJson(file: String): Expr {
 		Context.registerModuleDependency(MODULE, file);
-		final s: String = sys.io.File.getContent(file);
+		final s: String = File.getContent(file);
 		haxe.Json.parse(s); // check
 		return macro haxe.Json.parse($v{s}); // todo: not parse on runtime
 	}
@@ -234,7 +236,7 @@ abstract AnsiForeground(UInt) to UInt {
 		final i: Int = MathTools.cmax(f.lastIndexOf('\\'), f.lastIndexOf('/'));
 		f = i != -1 ? '${f.substr(0, i)}/' : '';
 		Context.registerModuleDependency(MODULE, f + file);
-		final s: String = sys.io.File.getContent(f + file);
+		final s: String = File.getContent(f + file);
 		haxe.Json.parse(s); // check
 		return macro haxe.Json.parse($v{s}); // todo: not parse on runtime
 	}

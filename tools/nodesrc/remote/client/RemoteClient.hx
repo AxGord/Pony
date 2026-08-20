@@ -1,11 +1,11 @@
 package remote.client;
 
+import haxe.PosInfos;
+import haxe.io.Bytes;
 import pony.Logable;
 import pony.events.Signal1;
 import pony.net.SocketClient;
 import sys.io.File;
-import haxe.io.Bytes;
-import haxe.PosInfos;
 import types.RemoteConfig;
 
 /**

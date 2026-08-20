@@ -70,7 +70,7 @@ class TextSizedBox extends BaseLayout<RubberLayoutCore<Container>> {
 		DeltaTime.fixedUpdate < layout.update;
 	}
 
-	override function destroy(?options: haxe.extern.EitherType<Bool, DestroyOptions>): Void {
+	override public function destroy(?options: haxe.extern.EitherType<Bool, DestroyOptions>): Void {
 		DeltaTime.fixedUpdate >> _update;
 		DeltaTime.fixedUpdate >> layout.update;
 		super.destroy(options);

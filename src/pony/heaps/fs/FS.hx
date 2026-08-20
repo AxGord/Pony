@@ -1,7 +1,7 @@
 package pony.heaps.fs;
 
-import hxd.fs.FileSystem;
 import hxd.fs.FileEntry;
+import hxd.fs.FileSystem;
 
 class FS implements FileSystem {
 

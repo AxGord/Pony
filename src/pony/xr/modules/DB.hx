@@ -16,9 +16,9 @@ class DB implements IXRModule implements ICanBeCopied<DB> {
 		this.source = source;
 	}
 
-	inline public function setTable(name: String): Void table = source.resolve(name);
+	public inline function setTable(name: String): Void table = source.resolve(name);
 
-	inline public function copy(): DB return new DB(source);
+	public inline function copy(): DB return new DB(source);
 
 	public function run(xr: XmlRequest, x: Fast, result: Dynamic -> Void): Void {
 		var n = x.has.n ? x.att.n : 'default';

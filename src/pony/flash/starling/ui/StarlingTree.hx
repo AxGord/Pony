@@ -1,13 +1,13 @@
 package pony.flash.starling.ui;
 
 import flash.geom.Rectangle;
+import pony.flash.starling.converter.StarlingConverter;
 import pony.flash.ui.Button;
 import pony.flash.ui.Tree;
 import pony.geom.Point.IntPoint;
 import pony.ui.gui.TreeCore;
 import starling.display.DisplayObject;
 import starling.display.Sprite;
-import pony.flash.starling.converter.StarlingConverter;
 #if tweenmax
 import com.greensock.TweenMax;
 #end

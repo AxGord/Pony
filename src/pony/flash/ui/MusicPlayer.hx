@@ -2,12 +2,12 @@ package pony.flash.ui;
 
 import flash.display.MovieClip;
 import flash.text.TextField;
+import pony.flash.SongPlayerCore;
 import pony.flash.ui.Button;
 import pony.flash.ui.SongPlayer;
 import pony.geom.Point;
 import pony.ui.gui.ButtonCore;
 import pony.ui.gui.SwitchableList;
-import pony.flash.SongPlayerCore;
 
 /**
  * MusicPlayer

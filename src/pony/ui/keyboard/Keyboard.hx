@@ -2,8 +2,8 @@ package pony.ui.keyboard;
 
 import pony.events.Signal1;
 import pony.magic.Declarator;
-import pony.magic.HasSignal;
 import pony.magic.HasLink;
+import pony.magic.HasSignal;
 import pony.ui.keyboard.IKeyboard;
 import pony.ui.keyboard.Key;
 

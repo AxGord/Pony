@@ -1,10 +1,10 @@
 package;
 
-import massive.munit.util.Timer;
 import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
-import pony.time.DeltaTime;
+import massive.munit.util.Timer;
 import pony.Loader;
+import pony.time.DeltaTime;
 
 class LoaderTest {
 

@@ -1,8 +1,8 @@
 package pony.ui.gui;
 
+import pony.color.Color;
 import pony.geom.Align;
 import pony.geom.Border;
-import pony.color.Color;
 
 /**
  * FontStyle

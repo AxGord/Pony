@@ -5,13 +5,13 @@ import js.lib.Error;
 #else
 import js.Error;
 #end
+import haxe.io.Bytes;
 import js.Node;
 import js.node.Buffer;
 import js.node.Fs;
 import js.node.fs.Stats;
 import js.node.http.IncomingMessage;
 import js.node.http.ServerResponse;
-import haxe.io.Bytes;
 import pony.fs.File;
 import pony.net.http.Cookie;
 import pony.net.http.EventStream;

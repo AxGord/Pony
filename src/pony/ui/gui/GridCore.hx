@@ -1,7 +1,7 @@
 package pony.ui.gui;
 
-import pony.geom.Rect;
 import pony.geom.Point;
+import pony.geom.Rect;
 
 /**
  * GridCore
