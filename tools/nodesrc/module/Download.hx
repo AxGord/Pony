@@ -26,7 +26,7 @@ using pony.text.TextTools;
 
 		for (unit in cfg.units) {
 			final file: String = cfg.path + unit.a.split('/').pop();
-			var needDownload: Bool = false;
+			var needDownload: Bool;
 			if (unit.b != null && FileSystem.exists(file)) {
 				needDownload = sys.io.File.getContent(file).indexOf(unit.b) == -1;
 			} else {

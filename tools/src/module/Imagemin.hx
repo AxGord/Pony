@@ -68,7 +68,6 @@ private class ImageminReader extends BAReader<ImageminConfig> {
 			case 'jpgfrompng': cfg.jpgfrompng = TextTools.isTrue(val);
 			case 'fast': cfg.fast = TextTools.isTrue(val);
 			case 'checkHash': cfg.checkHash = TextTools.isTrue(val);
-			case _:
 		}
 	}
 

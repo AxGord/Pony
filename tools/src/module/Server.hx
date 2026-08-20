@@ -129,7 +129,6 @@ private class ProxyReader extends BAReader<BAProxyConfig> {
 		switch name {
 			case 'slow': cfg.slow = Std.parseInt(val);
 			case 'cache': cfg.cache = val;
-			case _:
 		}
 	}
 

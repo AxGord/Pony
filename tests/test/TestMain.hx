@@ -14,7 +14,7 @@ import js.Lib;
 class TestMain {
 
 	public function new() {
-		final suites: Array<Class<massive.munit.TestSuite>> = new Array<Class<massive.munit.TestSuite>>();
+		final suites: Array<Class<massive.munit.TestSuite>> = [];
 		suites.push(TestSuite);
 
 		#if MCOVER

@@ -50,7 +50,6 @@ class BaseLayout<T:BaseLayoutCore<DisplayObject>> extends Sprite implements IWH 
 		if (!Std.is(obj, DisplayObject)) return;
 		var s: DisplayObject = cast obj;
 		removeChild(s);
-		s = null;
 	}
 
 	private function setXpos(obj: DisplayObject, v: Float): Void obj.x = v;

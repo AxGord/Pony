@@ -64,12 +64,11 @@ class BText extends Sprite implements IWH {
 		if (current.size.x == 0 || current.size.y == 0) {
 			destroyIfExists();
 			current.destroy();
-			current = null;
 			return s;
 		}
 		final changeTexture: Bool = !app.isWebGL || _size == null || current.size.x > _size.x || current.size.y > _size.y;
 		// !app.isWebGL force create new texture, coz prev can'n be cleaned on some devices
-		var createSize: Point<Float> = null;
+		var createSize: Point<Float>;
 		if (changeTexture) {
 			destroyIfExists();
 			_size = createSize = current.size;
@@ -89,7 +88,6 @@ class BText extends Sprite implements IWH {
 		}
 		app.app.renderer.render(current, renderTexture, !changeTexture);
 		current.destroy();
-		current = null;
 		renderSprite = new Sprite(renderTexture);
 		if (shadow) {
 			renderSprite.tint = 0;

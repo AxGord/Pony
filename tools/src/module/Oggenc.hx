@@ -149,7 +149,6 @@ private typedef OggencConfig = {
 			case 'addext': cfg.addext = val;
 			case 'rm': cfg.rm = val.isTrue();
 			case 'q': @:nullSafety(Off) cfg.q = Std.parseInt(val);
-			case _:
 		}
 	}
 

@@ -91,7 +91,7 @@ class SocketServer extends SocketServerBase {
 			final cl: SocketClient = clInit();
 			cl.client = s.EndAccept(ar);
 			cl.client.NoDelay = true; // One should never forget that this may cause troubles in future.
-			Synchro.lock(clients, () -> clients.push(cl));
+			Synchro.lock(clients, clients.push.bind(cl));
 			try {
 				cl.receiveBuffer = new NativeArray(4);
 				cl.isSet = false;
@@ -110,7 +110,7 @@ class SocketServer extends SocketServerBase {
 
 	private function closeConnection(cl: SocketClient): Void {
 		cl.client.Close();
-		Synchro.lock(clients, () -> clients.remove(cl));
+		Synchro.lock(clients, clients.remove.bind(cl));
 	}
 
 	private function clInit(): SocketClient {

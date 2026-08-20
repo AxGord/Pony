@@ -31,7 +31,7 @@ class ReusableBitmapData {
 		if (width > _sizeLimit) width = _sizeLimit;
 		if (height > _sizeLimit) height = _sizeLimit;
 
-		var bmpd: BitmapData = null;
+		var bmpd: BitmapData;
 		final cacheWidth = _instance._cache[width];
 		if (cacheWidth.exists(height))
 		// if (false)

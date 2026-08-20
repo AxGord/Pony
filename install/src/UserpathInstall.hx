@@ -5,6 +5,8 @@ import sys.io.File;
 import sys.io.Process;
 import Config.*;
 
+using StringTools;
+
 /**
  * UserpathInstall
  * @author AxGord <axgord@gmail.com>
@@ -54,7 +56,7 @@ class UserpathInstall extends BaseInstall {
 
 			final stdout: Input = new Process('cmd.exe', ['/C', 'install\\user_path.cmd']).stdout;
 			final data: Bytes = stdout.readAll();
-			final path: String = StringTools.trim(data.toString());
+			final path: String = data.toString().trim();
 
 			if (path != '') {
 				final np: String = path + (path.substr(-1) == ';' ? '' : ';') + '%$ENVKEY%';

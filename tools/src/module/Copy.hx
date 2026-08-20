@@ -127,7 +127,6 @@ private typedef CopyConfig = {
 			case 'fromLib': cfg.fromLib = val;
 			case 'hash': cfg.hash = val.isTrue();
 			case 'addext': cfg.addext = val;
-			case _:
 		}
 	}
 

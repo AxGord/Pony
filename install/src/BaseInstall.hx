@@ -58,7 +58,7 @@
 
 	private function question(): Bool {
 		if (allEnabled) return true;
-		var r: Int = -1;
+		var r: Int;
 		do {
 			log('');
 			log('Do you want install $n? (y/n/a/q)');

@@ -57,9 +57,9 @@ class AtlasCreator {
 		final matrix = StarlingConverter.matrixCalculation(source, coordinateSpace);
 		final matrixPoint: Point = matrix.transformPoint(new Point(0, 0));
 
-		var texture: Texture = null;
+		var texture: Texture;
 		var preloadedTextures: Dynamic = null;
-		var dPivot: Point = null;
+		var dPivot: Point;
 		if (frame != -1) {
 			if (!ignoreCache && _framesLoadedTextures.exists(className) && _framesLoadedTextures[className].exists(frame)) {
 				preloadedTextures = _framesLoadedTextures[className][frame].get(matrix.a, matrix.b, matrix.c, matrix.d, source.filters);
@@ -106,7 +106,7 @@ class AtlasCreator {
 	}
 
 	public function addClip(source: flash.display.MovieClip, coordinateSpace: flash.display.DisplayObject, disposeable: Bool): MovieClip {
-		var textures: Vector<Texture> = null;
+		var textures: Vector<Texture>;
 
 		source.gotoAndStop(1);
 		var maxRect: Rectangle = null;
@@ -335,7 +335,6 @@ class AtlasCreator {
 			texture.root.uploadBitmapData(smallerBmpd);
 		}
 		return { texture: texture, addedTo: area };
-		return null;
 	}
 
 	public static function getBorder(): Int return _border;
@@ -430,7 +429,6 @@ private class Atlas {
 			_bitmapDataRestoration[i](bitmapData);
 		}
 		texture.root.uploadBitmapData(bitmapData);
-		bitmapData = null;
 	}
 
 }

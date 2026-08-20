@@ -86,7 +86,6 @@ private class MoveReader extends BAReader<MoveConfig> {
 		switch name {
 			case 'filter': cfg.filter = val;
 			case 'to': cfg.to = val;
-			case _:
 		}
 	}
 

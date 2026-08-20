@@ -103,7 +103,7 @@ class SocketClient extends SocketClientBase {
 	}
 
 	public function send(data: BytesOutput): Void {
-		Synchro.lock(sendQueue, () -> sendQueue.call(data));
+		Synchro.lock(sendQueue, sendQueue.call.bind(data));
 	}
 
 	/*

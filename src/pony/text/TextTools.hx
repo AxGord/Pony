@@ -390,7 +390,7 @@ abstract AnsiForeground(UInt) to UInt {
 		final q2: String = "'";
 		var oq: Int = src.indexOf(q1, i);
 		final oq2: Int = src.indexOf(q2, i);
-		var q: Null<String> = null;
+		var q: Null<String>;
 		if (oq2 != -1 && oq2 < oq) {
 			oq = oq2;
 			q = q2;

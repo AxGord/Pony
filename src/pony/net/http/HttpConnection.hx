@@ -59,9 +59,9 @@ class HttpConnection implements HasAbstract {
 	@:abstract public function sendFile(file: File): Void;
 
 	public function mix(): Map<String, String> {
-		final h: Map<String, String> = new Map<String, String>();
-		for (k => value in params) h.set(k, value);
-		for (k => value in post) h.set(k, value);
+		final h: Map<String, String> = [];
+		for (k => value in params) h[k] = value;
+		for (k => value in post) h[k] = value;
 		return h;
 	}
 
@@ -93,20 +93,20 @@ class HttpConnection implements HasAbstract {
 	}
 
 	private function parseData(pb: ParseBoy<Void>): Map<String, String> {
-		final params: Map<String, String> = new Map<String, String>();
+		final params: Map<String, String> = [];
 		var loop: Bool = true;
 		while (loop) {
 			switch (pb.gt(['=', '&'])) {
 				case 0:
 					final v: String = pb.str();
 					if (pb.gt(['&']) == -1) loop = false;
-					params.set(v, pb.str());
+					params[v] = pb.str();
 				case 1:
 					final p: String = pb.str();
-					if (p != '') params.set(p, null);
+					if (p != '') params[p] = null;
 				case _:
 					final p: String = pb.str();
-					if (p != '') params.set(p, null);
+					if (p != '') params[p] = null;
 					loop = false;
 			}
 		}

@@ -183,8 +183,8 @@ class DrawShape extends pony.Logable #if pony_experimental implements pony.magic
 	}
 
 	private function store(t: Touch): Void {
-		var psh: IntPoint = null;
-		var sh: IntPoint = null;
+		var psh: IntPoint;
+		var sh: IntPoint;
 		if (shape.length > 1) {
 
 			if (shape.length > 2 && shape[0].x == targetPointData.col && shape[0].y == targetPointData.row) {

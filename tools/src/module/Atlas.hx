@@ -158,7 +158,6 @@ private class AtlasReader extends BAReader<AtlasConfig> {
 			case 'filter': cfg.filter = val;
 			case 'from': cfg.from += val;
 			case 'deleteSource': cfg.deleteSource = !val.isFalse();
-			case _:
 		}
 	}
 

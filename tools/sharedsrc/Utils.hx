@@ -159,7 +159,7 @@ class Utils {
 	public static function saveJson(file: String, jdata: Any): Void {
 		var tdata: String = Json.stringify(jdata, '\n');
 		while (true) {
-			final ndata: String = StringTools.replace(tdata, '\n\n', '\n');
+			final ndata: String = tdata.replace('\n\n', '\n');
 			if (ndata == tdata) {
 				tdata = ndata;
 				break;

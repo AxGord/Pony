@@ -123,9 +123,9 @@ class HttpServer {
 					s += d;
 				});
 				untyped req.addListener('end', function(Void): Void {
-					final h: Map<String, String> = new Map<String, String>();
+					final h: Map<String, String> = [];
 					final o: Dynamic = querystring.parse(s);
-					for (f in o.fields()) h.set(f, o.field(f));
+					for (f in o.fields()) h[f] = o.field(f);
 
 					final host: String = if (req.headers.host != null) {
 						req.headers.host;

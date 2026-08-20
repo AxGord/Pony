@@ -124,7 +124,7 @@ class Project {
 	}
 
 	public function getLibs(): Map<String, String> {
-		final map: Map<String, String> = new Map<String, String>();
+		final map: Map<String, String> = [];
 		if (haxelib.active) {
 			for (lib in haxelib.libs) map[lib.name] = lib.version;
 		}

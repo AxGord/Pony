@@ -85,7 +85,6 @@ private class ZipConfigReader extends BAReader<ZipConfig> {
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
 			case 'log': cfg.log = !pony.text.TextTools.isFalse(val);
-			case _:
 		}
 	}
 

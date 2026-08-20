@@ -23,7 +23,6 @@ class Synchro {
 			func();
 		} catch (_: Dynamic) {
 			Monitor.Exit(obj);
-			isSynchred = false;
 			return false;
 		}
 		if (!isSynchred) return false;
@@ -43,7 +42,6 @@ class Synchro {
 			func();
 		} catch (_: Dynamic) {
 			m.ReleaseMutex();
-			isSynchred = false;
 			return false;
 		}
 		if (!isSynchred) return false;

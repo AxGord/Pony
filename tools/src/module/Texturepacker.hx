@@ -337,7 +337,6 @@ private class Path extends BAReader<TPConfig> {
 			case 'size':
 				final a: Array<Int> = val.split(' ').map(Std.parseInt);
 				cfg.size = a.length == 1 ? new Point(a[0], a[0]) : new Point(a[0], a[1]);
-			case _:
 		}
 	}
 

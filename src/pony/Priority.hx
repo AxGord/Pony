@@ -245,8 +245,7 @@ typedef PriorityIds = Priority<{
 	public inline function existsFunction(f: T -> Bool): Bool return data.exists(f);
 
 	public function existsArray(a: Array<T>): Bool {
-		for (e in a) if (exists(e)) return true;
-		return false;
+		return a.exists(e -> exists(e));
 	}
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end

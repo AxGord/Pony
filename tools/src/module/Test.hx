@@ -61,7 +61,6 @@ private class TestReader extends BAReader<TestConfig> {
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
 			case 'test': cfg.path = val;
-			case _:
 		}
 	}
 

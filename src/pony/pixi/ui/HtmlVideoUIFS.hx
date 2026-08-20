@@ -221,7 +221,7 @@ class HtmlVideoUIFS extends HtmlVideoUI {
 
 	private function switchCss(a: String, b: String): Void {
 		final css = JsTools.splitCss(video.style.cssText);
-		var ncss: Array<String> = null;
+		var ncss: Array<String>;
 		if (a != null) {
 			ncss = [];
 			final r = JsTools.splitCss(a);

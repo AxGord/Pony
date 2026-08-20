@@ -27,7 +27,7 @@ import pony.geom.Point;
 	override public function update(): Void {
 		if (objects == null) return;
 		if (!ready) return;
-		var pos: Float = 0;
+		var pos: Float;
 		if (vert) {
 			_w = 0;
 			pos = border.top;

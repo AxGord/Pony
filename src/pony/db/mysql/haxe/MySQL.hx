@@ -33,9 +33,7 @@ class MySQL extends SQLBase {
 		connection = Mysql.connect(
 			{ host: config.host, port: config.port, user: config.user, pass: config.password, database: config.database }
 		);
-		action('SET NAMES utf8', (b: Bool) -> {
-			if (b) action(Const.createDB + config.database, 'create database', init);
-		});
+		action('SET NAMES utf8', (b: Bool) -> if (b) action(Const.createDB + config.database, 'create database', init));
 
 	}
 

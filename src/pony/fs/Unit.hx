@@ -48,21 +48,18 @@ using StringTools;
 	private inline function get_name(): String return cast this.first.split('/').pop();
 
 	private function get_exists(): Bool {
-		for (e in this) if (FileSystem.exists(e)) return true;
-		return false;
+		return Lambda.exists(this, e -> FileSystem.exists(e));
 	}
 
 	private function get_isDir(): Bool {
-		for (e in this) if (FileSystem.exists(e) && FileSystem.isDirectory(e)) return true;
-		return false;
+		return Lambda.exists(this, e -> FileSystem.exists(e) && FileSystem.isDirectory(e));
 	}
 
 	private function get_isFile(): Bool {
-		for (e in this) if (FileSystem.exists(e) && !FileSystem.isDirectory(e)) return true;
-		return false;
+		return Lambda.exists(this, e -> FileSystem.exists(e) && !FileSystem.isDirectory(e));
 	}
 
-	private inline function get_fullPath(): Unit return [for (e in this) StringTools.replace(FileSystem.fullPath(e), '\\', '/')];
+	private inline function get_fullPath(): Unit return [for (e in this) FileSystem.fullPath(e).replace('\\', '/')];
 
 	private inline function get_dir(): Dir return this;
 

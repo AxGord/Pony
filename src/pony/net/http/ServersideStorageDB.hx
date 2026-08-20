@@ -37,7 +37,6 @@ class ServersideStorageDB implements Declarator {
 			return getClientByKey(k);
 		}
 		return getClientByKey(key);
-		return null;
 	}
 
 	public function getClientByKey(key: String): Map<String, Dynamic> {

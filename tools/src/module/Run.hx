@@ -106,7 +106,6 @@ typedef RunConfig = {
 		switch name {
 			case 'path': cfg.path = val;
 			case 'lib': cfg.lib = val;
-			case _:
 		}
 	}
 

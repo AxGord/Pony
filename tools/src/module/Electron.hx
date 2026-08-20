@@ -140,7 +140,6 @@ private class ElectronReader extends BAReader<ElectronConfig> {
 		switch name {
 			case 'path': cfg.path = val;
 			case 'pack': cfg.pack = TextTools.isTrue(val);
-			case _:
 		}
 	}
 

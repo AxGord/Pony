@@ -4,6 +4,8 @@ import haxe.Exception;
 import pony.Or;
 import pony.magic.WR;
 
+using Lambda;
+
 private typedef WCB = Or<() -> Void, WR -> Void>;
 
 private typedef Export = { typeName: String, name: String };
@@ -20,7 +22,7 @@ private typedef Export = { typeName: String, name: String };
  */
 @:nullSafety(Strict) final class ServiceProvider {
 
-	// typeName -> (name -> instance). One instance may appear under multiple typeNames.
+	/** typeName -> (name -> instance). One instance may appear under multiple typeNames. */
 	private final byType: Map<String, Map<String, Dynamic>> = [];
 
 	// typeName -> (name -> pending callbacks). Acts both as the "loading" marker and the waiter list.
@@ -78,8 +80,7 @@ private typedef Export = { typeName: String, name: String };
 	}
 
 	public function isExported(typeName: String, name: String): Bool {
-		for (e in exports) if (e.typeName == typeName && e.name == name) return true;
-		return false;
+		return exports.exists(e -> e.typeName == typeName && e.name == name);
 	}
 
 	@:nullSafety(Off) public function get<T>(typeName: String, name: String): T {

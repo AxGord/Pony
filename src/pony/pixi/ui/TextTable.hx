@@ -8,7 +8,6 @@ import pony.geom.Align.HAlign;
 import pony.geom.Align.VAlign;
 import pony.geom.GeomTools;
 import pony.geom.Point;
-import pony.geom.Point.IntPoint;
 import pony.geom.Rect.IntRect;
 import pony.Pair;
 import pony.ui.gui.FontStyle;

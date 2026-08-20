@@ -1,6 +1,7 @@
 import pony.fs.Dir;
 import pony.fs.File;
 
+using StringTools;
 using pony.Tools;
 
 /**
@@ -37,7 +38,7 @@ class License {
 					var error: Bool = true;
 					for (line in lines) {
 						n++;
-						if (StringTools.trim(line) != '**/') continue;
+						if (line.trim() != '**/') continue;
 						error = false;
 						break;
 					}
@@ -69,7 +70,7 @@ class License {
 						var error: Bool = true;
 						for (line in lines) {
 							n++;
-							if (StringTools.trim(line) != '**/') continue;
+							if (line.trim() != '**/') continue;
 							error = false;
 							break;
 						}

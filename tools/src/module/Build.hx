@@ -14,6 +14,7 @@ import sys.net.Host;
 import sys.net.Socket;
 import types.BASection;
 
+using Lambda;
 using StringTools;
 using pony.text.XmlTools;
 
@@ -237,8 +238,7 @@ final class Build extends CfgModule<BuildConfig> {
 	}
 
 	private function checkWarning(s: String): Bool {
-		if (s.toUpperCase().indexOf('WARNING') != -1) for (lib in hideWarningLibs) if (s.indexOf(lib) != -1) return true;
-		return false;
+		return s.toUpperCase().indexOf('WARNING') != -1 && hideWarningLibs.exists(lib -> s.indexOf(lib) != -1);
 	}
 
 	private static inline function cmdPairToStr(p: SPair<String>): String return p.a + (p.b.length > 0 ? ' ' + p.b : '');
@@ -302,7 +302,6 @@ private class BuildConfigReader extends BAReader<BuildConfig> {
 			case HAXE: cfg.haxeCompiler = val;
 			case HXML: cfg.hxml = val;
 			case 'winfix': cfg.winfix = TextTools.isTrue(val);
-			case _:
 		}
 	}
 

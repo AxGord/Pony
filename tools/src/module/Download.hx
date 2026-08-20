@@ -49,7 +49,6 @@ private class DownloadReader extends BAReader<DownloadConfig> {
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
 			case 'path': cfg.path += val;
-			case _:
 		}
 	}
 

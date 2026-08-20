@@ -72,7 +72,6 @@ private class NpmReader extends BAReader<NpmConfig> {
 		switch name {
 			case 'path': cfg.path = val;
 			case 'autoinstall': cfg.autoinstall = TextTools.isTrue(val);
-			case _:
 		}
 	}
 

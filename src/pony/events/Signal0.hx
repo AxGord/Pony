@@ -88,7 +88,7 @@ import pony.events.Listener0;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function trace(?message: String, priority: Int = 0, ?pos: PosInfos): Void {
-		this.add(Listener0.f0(() -> Log.trace(message, pos)), priority);
+		this.add(Listener0.f0(Log.trace.bind(message, pos)), priority);
 	}
 
 	public function add(e: Listener0, priority: Int = 0): Signal0 {

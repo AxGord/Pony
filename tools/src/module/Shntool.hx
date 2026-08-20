@@ -142,7 +142,6 @@ private typedef WavConfig = {
 			case 'from': cfg.from += val;
 			case 'hash': cfg.hash = val.isTrue();
 			case 'addext': cfg.addext = val;
-			case _:
 		}
 	}
 
@@ -170,7 +169,6 @@ private typedef WavConfig = {
 		switch name {
 			case 'output': cfg.output = val;
 			case 'cue': cfg.cue = val;
-			case _:
 		}
 	}
 

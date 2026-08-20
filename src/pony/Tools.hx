@@ -560,8 +560,7 @@ class ArrayTools {
 	public static inline function last<T:Dynamic>(a: Array<T>): T return a[a.length - 1];
 
 	public static function thereIs<T>(a: Iterable<Array<T>>, b: Array<T>): Bool {
-		for (e in a) if (Tools.equal(e, b)) return true;
-		return false;
+		return a.exists(e -> Tools.equal(e, b));
 	}
 
 	public static function kv<T>(a: Array<T>): Iterator<KeyValue<Int, T>> {

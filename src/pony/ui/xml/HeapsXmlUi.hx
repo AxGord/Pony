@@ -259,7 +259,7 @@ class HeapsXmlUi extends Object implements HasAbstract {
 	}
 
 	private function getWhPoint(v: String): Point<Float> {
-		v = StringTools.trim(v);
+		v = v.trim();
 		return switch v {
 			case AttrVal.stage:
 				app.canvas.stageInitSize.toFloat();
@@ -410,7 +410,7 @@ class HeapsXmlUi extends Object implements HasAbstract {
 				else if (a[a.length - 1].charAt(0) == '#')
 					@:nullSafety(Off) color = a.pop();
 				var d: Null<Int> = null;
-				var angle: Float = 0;
+				var angle: Float;
 				if (a.length > 0) d = Std.parseInt(cast a.pop());
 				if (a.length > 0) {
 					@:nullSafety(Off) angle = Std.parseInt(a.pop()) / 180 * Math.PI;
@@ -517,7 +517,7 @@ class HeapsXmlUi extends Object implements HasAbstract {
 	private function getFont(attrs: Dynamic<String>): Font {
 		final name: String = attrs.src;
 		final size: Int = parseAndScaleInt(attrs.size);
-		var font: Null<Font> = null;
+		var font: Null<Font>;
 		if (name == null) {
 			font = DefaultFont.get();
 			if (size != 0) font = font.clone();
@@ -545,7 +545,7 @@ class HeapsXmlUi extends Object implements HasAbstract {
 	}
 
 	private static function splitAttrMapFn(s: String): Null<String> {
-		s = StringTools.trim(s);
+		s = s.trim();
 		return s == '' ? null : s;
 	}
 

@@ -61,7 +61,6 @@ private class UglifyReader extends BAReader<UglifyConfig> {
 	override private function readAttr(name: String, val: String): Void {
 		switch name {
 			case 'libcache': cfg.libcache = TextTools.isTrue(val) ? Uglify.CACHE_FILE : null;
-			case _:
 		}
 	}
 

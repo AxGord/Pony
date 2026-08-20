@@ -159,7 +159,6 @@ private typedef LameConfig = {
 			case 'addext': cfg.addext = val;
 			case 'preset': cfg.preset = val;
 			case 'rm': cfg.rm = val.isTrue();
-			case _:
 		}
 	}
 

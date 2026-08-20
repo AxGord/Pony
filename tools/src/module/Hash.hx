@@ -270,7 +270,6 @@ private typedef HashConfig = {
 			case 'binary': cfg.binary = !val.isFalse();
 			case 'root': cfg.root = val;
 			case 'source': cfg.source = val;
-			case _:
 		}
 	}
 

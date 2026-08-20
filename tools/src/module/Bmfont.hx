@@ -83,7 +83,6 @@ private class BmfontReader extends BAReader<BmfontConfig> {
 				cfg.distance = Std.parseInt(val);
 			case 'padding':
 				cfg.padding = Std.parseInt(val);
-			case _:
 		}
 	}
 

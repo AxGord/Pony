@@ -154,7 +154,7 @@ class Main {
 			for (app in apps) if (uapps.indexOf(app) == -1) uapps.push(app);
 			final argsBefore: Array<String> = [];
 			final argsAfter: Array<String> = [];
-			var arg: String = null;
+			var arg: String;
 			while (args.length > 0) {
 				arg = args.shift();
 				if (arg == 'all') break;

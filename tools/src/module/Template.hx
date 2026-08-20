@@ -6,6 +6,7 @@ import pony.Fast;
 import pony.ds.STriple;
 import pony.fs.File;
 
+using Lambda;
 using StringTools;
 using pony.Tools;
 using pony.text.XmlTools;
@@ -60,7 +61,7 @@ using pony.text.XmlTools;
 			f.copyToDir(cfg.to);
 			if (cfg.hash != null) usedFiles[file] = Utils.gitHash(f.first);
 		}
-		if (cfg.hash != null && Lambda.count(usedFiles) > 0) ((cfg.to + cfg.hash): File).bytes = new pony.ui.Hash(usedFiles).toBytes();
+		if (cfg.hash != null && usedFiles.count() > 0) ((cfg.to + cfg.hash): File).bytes = new pony.ui.Hash(usedFiles).toBytes();
 	}
 
 	private function hashFile(from: String, to: String, rm: Bool, resolve: String -> Dynamic, fileName: String): String {
@@ -132,7 +133,6 @@ private typedef TemplateConfig = {
 			case 'to': cfg.to = val;
 			case 'from': cfg.from = val;
 			case 'hash': cfg.hash = val;
-			case _:
 		}
 	}
 

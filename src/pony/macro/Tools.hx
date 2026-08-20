@@ -29,8 +29,7 @@ using Lambda;
 	}
 
 	public static function checkMeta(a: Metadata, an: Array<String>): Bool {
-		for (n in an) if (getMeta(a, n) != null) return true;
-		return false;
+		return an.exists(n -> getMeta(a, n) != null);
 	}
 
 	public static function createInit(): Field {

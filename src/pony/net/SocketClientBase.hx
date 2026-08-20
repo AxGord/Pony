@@ -181,8 +181,8 @@ import pony.magic.HasSignal;
 
 	private function joinData(bi: BytesInput): Void {
 		if (isWithLength) {
-			var size: UInt = 0;
-			var len: UInt = 0;
+			var size: UInt;
+			var len: UInt;
 
 			if (waitNext > 0) {
 				size = waitNext;

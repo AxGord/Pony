@@ -3,6 +3,8 @@ package pony.js.node.serial;
 import pony.events.Signal1;
 import pony.magic.HasSignal;
 
+using StringTools;
+
 /**
  * CardReader
  * RFID-RC522
@@ -44,7 +46,7 @@ class CardReader implements HasSignal {
 		if (endIndex != -1) {
 			keyopened = false;
 			var s: String = buf.substr(0, endIndex);
-			s = StringTools.replace(s, ' ', '');
+			s = s.replace(' ', '');
 			eKey.dispatch(s);
 			buf = buf.substr(endIndex + 1);
 		}

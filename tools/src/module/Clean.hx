@@ -129,7 +129,6 @@ private class CleanReader extends BAReader<CleanConfig> {
 			case 'rimraf': cfg.rimraf = TextTools.isTrue(val);
 			case 'md': cfg.md = TextTools.isTrue(val);
 			case 'keepHashed': cfg.keepHashed = TextTools.isTrue(val);
-			case _:
 		}
 	}
 
