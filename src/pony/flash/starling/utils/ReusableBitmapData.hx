@@ -8,9 +8,9 @@ import flash.display.BitmapData;
  */
 class ReusableBitmapData {
 
-	private static final _instance: ReusableBitmapData = new ReusableBitmapData();
 	private static inline final _sizeLimit: Int = 4096;
 	private static inline final _fillColor: Int = 0x0;
+	private static final _instance: ReusableBitmapData = new ReusableBitmapData();
 
 	private final _cache: Map<Int, Map<Int, BitmapData>> = [];
 

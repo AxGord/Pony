@@ -8,6 +8,9 @@ package pony.db.mysql;
 #if (haxe_ver >= 4.2) enum #else @:enum #end
 abstract Flags(Int) to Int from Int {
 
+	public static var toStr: Map<Int, String>;
+	public static var fromStr: Map<String, Int>;
+
 	// Manually extracted from mysql-5.5.23/include/mysql_com.h
 	final NOT_NULL = 1; /* Field can't be NULL */
 	final PRI_KEY = 2; /* Field is part of a primary key */
@@ -29,11 +32,12 @@ abstract Flags(Int) to Int from Int {
 
 	@:to public function toString(): String return toStr[this];
 
+	// inline public static function array2string(a:Array<Flags>):String return a.map(toStr.get).join(' ');//hate this :(
+	public static inline function array2string(a: Array<Flags>): String return a.map(_array2string).join(' ');
+
 	@:from public static function fromString(s: String): Flags return fromStr[s];
 
-	public static var toStr: Map<Int, String>;
-
-	public static var fromStr: Map<String, Int>;
+	private static inline function _array2string(f: Flags): String return f.toString();
 
 	private static function __init__(): Void {
 		toStr = [
@@ -44,10 +48,5 @@ abstract Flags(Int) to Int from Int {
 		];
 		fromStr = [for (k in toStr.keys()) toStr[k] => k];
 	}
-
-	// inline public static function array2string(a:Array<Flags>):String return a.map(toStr.get).join(' ');//hate this :(
-	public static inline function array2string(a: Array<Flags>): String return a.map(_array2string).join(' ');
-
-	private static inline function _array2string(f: Flags): String return f.toString();
 
 }

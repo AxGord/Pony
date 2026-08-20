@@ -6,9 +6,10 @@ package pony.time;
  */
 class MainLoop {
 
+	public static var lastTick(default, null): Float;
+
 	private static inline final SLEEP_TIME: Float = 1 / 62;
 
-	public static var lastTick(default, null): Float;
 	private static var _stop: Bool = false;
 
 	public static inline function init(): Void {
@@ -18,6 +19,8 @@ class MainLoop {
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public static inline function getTime(): Float return Sys.time();
+
+	public static inline function stop(): Void _stop = true;
 
 	public static function start(): Void {
 		var nt: Float;
@@ -31,7 +34,5 @@ class MainLoop {
 			DeltaTime.fixedDispatch();
 		}
 	}
-
-	public static inline function stop(): Void _stop = true;
 
 }

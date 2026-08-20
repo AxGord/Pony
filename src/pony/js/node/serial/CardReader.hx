@@ -16,12 +16,18 @@ class CardReader implements HasSignal {
 	@:auto public var onKey: Signal1<String>;
 
 	private final signal: Signal1<String>;
+
 	private var buf: String = '';
 	private var keyopened: Bool = false;
 
 	public function new(signal: Signal1<String>) {
 		this.signal = signal;
 		signal << dataHandler;
+	}
+
+	public function destroy(): Void {
+		signal >> dataHandler;
+		destroySignals();
 	}
 
 	private function dataHandler(s: String): Void {
@@ -42,11 +48,6 @@ class CardReader implements HasSignal {
 			eKey.dispatch(s);
 			buf = buf.substr(endIndex + 1);
 		}
-	}
-
-	public function destroy(): Void {
-		signal >> dataHandler;
-		destroySignals();
 	}
 
 }

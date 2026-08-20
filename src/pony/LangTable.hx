@@ -18,10 +18,10 @@ typedef LangInfo = {
  */
 class LangTable {
 
+	public var langs: Map<String, LangInfo> = [];
+
 	// private var h:Hash < Array<String> > ;
 	private final defaultLang: String;
-
-	public var langs: Map<String, LangInfo> = [];
 
 	private var h: Map<String, Array<String>>;
 

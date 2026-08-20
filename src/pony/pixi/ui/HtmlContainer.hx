@@ -17,14 +17,16 @@ import pony.time.DeltaTime;
 @SuppressWarnings('checkstyle:MagicNumber')
 class HtmlContainer extends Sprite implements IWH {
 
-	public var element: Element;
+	public var hidden(default, set): Bool = false;
+	public var htmlContainer(default, null): HtmlContainerBase;
+
 	public var size(get, never): Point<Float>;
 	public var targetStyle(get, set): CSSStyleDeclaration;
 
-	public var htmlContainer(default, null): HtmlContainerBase;
-	public var hidden(default, set): Bool = false;
+	public var element: Element;
 
 	private var targetRect(get, set): Rect<Float>;
+
 	private final _size: Point<Float>;
 
 	public function new(targetRect: Rect<Float>, ?app: App, ceil: Bool = false, fixed: Bool = false) {
@@ -48,20 +50,6 @@ class HtmlContainer extends Sprite implements IWH {
 		return value;
 	}
 
-	public function wait(f: Void -> Void): Void f();
-
-	public function posUpdate(): Void {
-		var gx: Float = 0;
-		var gy: Float = 0;
-		var p: DisplayObject = parent;
-		while (p.parent.parent != null) {
-			gx += p.x;
-			gy += p.y;
-			p = p.parent;
-		}
-		htmlContainer.targetPos = new Point(gx, gy);
-	}
-
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function get_targetStyle(): CSSStyleDeclaration return htmlContainer.targetStyle;
 
@@ -76,6 +64,20 @@ class HtmlContainer extends Sprite implements IWH {
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function get_size(): Point<Float> return _size;
+
+	public function wait(f: Void -> Void): Void f();
+
+	public function posUpdate(): Void {
+		var gx: Float = 0;
+		var gy: Float = 0;
+		var p: DisplayObject = parent;
+		while (p.parent.parent != null) {
+			gx += p.x;
+			gy += p.y;
+			p = p.parent;
+		}
+		htmlContainer.targetPos = new Point(gx, gy);
+	}
 
 	public function destroyIWH(): Void destroy();
 

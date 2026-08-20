@@ -75,10 +75,46 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 	private static inline final PX: String = 'px ';
 	private static inline final GLOW_FILTER_OFFSET: Int = 2;
 
-	private final FILTERS: Map<String, Filter> = [];
-	private var SCALE: Float = 1;
 	public var app(default, null): App;
+
+	private final FILTERS: Map<String, Filter> = [];
 	private final tweens: TweenMap<Dynamic> = [];
+
+	private var SCALE: Float = 1;
+
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function parseSizePointFloat(a: Dynamic<String>): Point<Float> {
+		return new Point<Float>(parseAndScale(a.w), parseAndScale(a.h));
+	}
+
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function parseFloat(s: String): Float {
+		return s == null ? 0 : Std.parseFloat(s);
+	}
+
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function parseAndScaleWithoutNull(s: String): Float {
+		return Std.parseFloat(s) * SCALE;
+	}
+
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function parseAndScale(s: String): Float {
+		return s == null ? 0 : parseAndScaleWithoutNull(s);
+	}
+
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function parseAndScaleInt(s: String): Int {
+		return s == null ? 0 : Std.int(Std.parseInt(s) * SCALE);
+	}
+
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function scaleBorderInt(s: String): Border<Int> return cast(Border.fromString(s) * SCALE);
 
 	private function createUIElement(name: String, attrs: Dynamic<String>, content: Array<Dynamic>, textContent: String): Dynamic {
 		if (attrs.reverse.isTrue()) content.reverse();
@@ -467,56 +503,10 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 		return obj;
 	}
 
-	private static function textTransform(text: String, transform: String): String {
-		return switch transform {
-			case 'uppercase': text.toUpperCase();
-			case 'lowercase': text.toLowerCase();
-			case _: text;
-		}
-	}
-
-	@SuppressWarnings('checkstyle:MagicNumber')
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function parseSizePointFloat(a: Dynamic<String>): Point<Float> {
-		return new Point<Float>(parseAndScale(a.w), parseAndScale(a.h));
-	}
-
-	@SuppressWarnings('checkstyle:MagicNumber')
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function parseFloat(s: String): Float {
-		return s == null ? 0 : Std.parseFloat(s);
-	}
-
-	@SuppressWarnings('checkstyle:MagicNumber')
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function parseAndScaleWithoutNull(s: String): Float {
-		return Std.parseFloat(s) * SCALE;
-	}
-
-	@SuppressWarnings('checkstyle:MagicNumber')
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function parseAndScale(s: String): Float {
-		return s == null ? 0 : parseAndScaleWithoutNull(s);
-	}
-
-	@SuppressWarnings('checkstyle:MagicNumber')
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function parseAndScaleInt(s: String): Int {
-		return s == null ? 0 : Std.int(Std.parseInt(s) * SCALE);
-	}
-
-	@SuppressWarnings('checkstyle:MagicNumber')
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function scaleBorderInt(s: String): Border<Int> return cast(Border.fromString(s) * SCALE);
-
 	private function putData(c: String): String return c;
 
 	private function customUIElement(name: String, attrs: Dynamic<String>, content: Array<Dynamic>): Dynamic
 		throw 'Unknown component $name';
-
-	private static function splitAttr(s: String): Array<String> {
-		return s.split(',').map(StringTools.trim).map(function(v): String return v == '' ? null : v);
-	}
 
 	@:abstract private function _createUI(): DisplayObject;
 
@@ -549,6 +539,18 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 			FILTERS[name] = f;
 		}
 
+	}
+
+	private static function textTransform(text: String, transform: String): String {
+		return switch transform {
+			case 'uppercase': text.toUpperCase();
+			case 'lowercase': text.toLowerCase();
+			case _: text;
+		}
+	}
+
+	private static function splitAttr(s: String): Array<String> {
+		return s.split(',').map(StringTools.trim).map(function(v): String return v == '' ? null : v);
 	}
 
 }

@@ -17,10 +17,11 @@ using StringTools;
  */
 class Create {
 
-	private static var outputFile: String = 'app';
 	private static final formatFile: String = 'hxformat.json';
 	private static final testSertFile: String = 'testcert.p12';
 	private static final electronVersion: Map<String, String> = ['electron' => '^19.0.6', 'electron-builder' => '^23.1.0'];
+
+	private static var outputFile: String = 'app';
 
 	public static function run(sType: String, name: String): Void {
 		// todo: create remote key@host:port
@@ -40,6 +41,69 @@ class Create {
 		copyFromPony(formatFile);
 		Utils.command('pony', ['prepare']);
 	}
+
+	public static function createProjectData(project: Project, type: ProjectType): Void {
+		final vscAllow: Bool = VSCode.allowCreate;
+		if (vscAllow) VSCode.createDir();
+		switch type {
+			case ProjectType.Neko:
+				project.build.createEmptyMainhx();
+				if (vscAllow) VSCode.createExtensions();
+			case ProjectType.Swf:
+				project.build.createEmptyMainhx();
+				if (vscAllow) VSCode.createFlash(project.build.outputPath, outputFile);
+			case ProjectType.Swc:
+				if (vscAllow) VSCode.createExtensions(false, true);
+			case ProjectType.Air:
+				createAirData(project, vscAllow);
+			case ProjectType.JS:
+				createJsData(project, vscAllow);
+			case ProjectType.CC:
+				createCCData(project, vscAllow);
+			case ProjectType.Pixi:
+				createPixiData(project, vscAllow);
+			case ProjectType.Pixixml:
+				createPixiXmlData(project, vscAllow);
+			case ProjectType.Pixielectron:
+				createPixiElectronData(project, vscAllow);
+			case ProjectType.Heaps:
+				createHeapsData(project, vscAllow);
+			case ProjectType.Heapsxml:
+				createHeapsXmlData(project, vscAllow);
+			case ProjectType.Heapselectron:
+				createHeapsElectronData(project, vscAllow);
+			case ProjectType.Cordova:
+				createCordovaData(project, vscAllow);
+			case ProjectType.Node:
+				project.build.createEmptyMainhx();
+				if (vscAllow) VSCode.createNode(project.build.outputPath, outputFile);
+			case ProjectType.Site:
+				createSiteData(project, vscAllow);
+			case ProjectType.Electron:
+				createElectronData(project, vscAllow);
+			case ProjectType.Monacoelectron:
+				createMonacoElectronData(project, vscAllow);
+			case ProjectType.Server, ProjectType.Sniff:
+				if (vscAllow) VSCode.create(null);
+				return;
+			case _:
+		}
+		final ponycmd: String = type == ProjectType.Neko ? 'run' : 'build';
+		if (vscAllow) VSCode.create(ponycmd, type == ProjectType.CC, project.server.active);
+		if (project.name != null) HaxeDevelop.create(project.name, project.getMain(), project.getLibs(), project.getCps(), ponycmd);
+		Gitignore.create(project, type);
+	}
+
+	public static function createIndexHtml(project: Project): Void {
+		project.build.createOutputFile('index.html', 'template.html', [
+			'TITLE' => project.rname,
+			'APP' => project.build.getOutputFile()
+		]);
+	}
+
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function createDirs(a: Array<String>): Void for (d in a) FileSystem.createDirectory(d);
 
 	private static function copyFromPony(file: String, ?to: String): Void {
 		File.copy(Tools.ponyPath() + file, Sys.getCwd() + (to != null ? to + file : file));
@@ -115,58 +179,6 @@ class Create {
 			case ProjectType.Neko:
 				create.targets.Neko.set(project);
 		}
-	}
-
-	public static function createProjectData(project: Project, type: ProjectType): Void {
-		final vscAllow: Bool = VSCode.allowCreate;
-		if (vscAllow) VSCode.createDir();
-		switch type {
-			case ProjectType.Neko:
-				project.build.createEmptyMainhx();
-				if (vscAllow) VSCode.createExtensions();
-			case ProjectType.Swf:
-				project.build.createEmptyMainhx();
-				if (vscAllow) VSCode.createFlash(project.build.outputPath, outputFile);
-			case ProjectType.Swc:
-				if (vscAllow) VSCode.createExtensions(false, true);
-			case ProjectType.Air:
-				createAirData(project, vscAllow);
-			case ProjectType.JS:
-				createJsData(project, vscAllow);
-			case ProjectType.CC:
-				createCCData(project, vscAllow);
-			case ProjectType.Pixi:
-				createPixiData(project, vscAllow);
-			case ProjectType.Pixixml:
-				createPixiXmlData(project, vscAllow);
-			case ProjectType.Pixielectron:
-				createPixiElectronData(project, vscAllow);
-			case ProjectType.Heaps:
-				createHeapsData(project, vscAllow);
-			case ProjectType.Heapsxml:
-				createHeapsXmlData(project, vscAllow);
-			case ProjectType.Heapselectron:
-				createHeapsElectronData(project, vscAllow);
-			case ProjectType.Cordova:
-				createCordovaData(project, vscAllow);
-			case ProjectType.Node:
-				project.build.createEmptyMainhx();
-				if (vscAllow) VSCode.createNode(project.build.outputPath, outputFile);
-			case ProjectType.Site:
-				createSiteData(project, vscAllow);
-			case ProjectType.Electron:
-				createElectronData(project, vscAllow);
-			case ProjectType.Monacoelectron:
-				createMonacoElectronData(project, vscAllow);
-			case ProjectType.Server, ProjectType.Sniff:
-				if (vscAllow) VSCode.create(null);
-				return;
-			case _:
-		}
-		final ponycmd: String = type == ProjectType.Neko ? 'run' : 'build';
-		if (vscAllow) VSCode.create(ponycmd, type == ProjectType.CC, project.server.active);
-		if (project.name != null) HaxeDevelop.create(project.name, project.getMain(), project.getLibs(), project.getCps(), ponycmd);
-		Gitignore.create(project, type);
 	}
 
 	private static function createAirData(project: Project, vscAllow: Bool): Void {
@@ -291,23 +303,12 @@ class Create {
 		if (vscAllow) VSCode.createNode(project.build.outputPath, outputFile);
 	}
 
-	public static function createIndexHtml(project: Project): Void {
-		project.build.createOutputFile('index.html', 'template.html', [
-			'TITLE' => project.rname,
-			'APP' => project.build.getOutputFile()
-		]);
-	}
-
 	private static function genSecondBuildHtml(project: Project): Void {
 		project.build.createOutputFile('default.html', 'template.html', [
 			'TITLE' => project.rname,
 			'APP' => project.secondbuild.getOutputFile()
 		]);
 	}
-
-	@SuppressWarnings('checkstyle:MagicNumber')
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private static inline function createDirs(a: Array<String>): Void for (d in a) FileSystem.createDirectory(d);
 
 	private static function saveTemplate(file: String, template: String, ?replaces: Map<String, String>): Void {
 		var data: String = Resource.getString(template);

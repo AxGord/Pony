@@ -24,6 +24,18 @@ private typedef ImageminResult = Array<ImageminResultEntry>;
  */
 @:nullSafety(Strict) final class Imagemin extends NModule<ImageminConfig> {
 
+	private inline function pngpack(a: Array<String>, to: String): Void {
+		NPM.imagemin(a, { destination: to, plugins: [NPM.imagemin_zopfli({ more: true })] }).then(completeHandler);
+		// NPM.imagemin_pngcrush({reduce: true})
+		// NPM.imagemin_pngout({strategy: 0})
+		// NPM.imagemin_optipng({optimizationLevel: 7})
+	}
+
+	private inline function _pngpack(to: String, r: ImageminResult): Void {
+		for (e in r) log('${e.sourcePath} => ${e.destinationPath}');
+		pngpack(r.map(getPath), to);
+	}
+
 	#if (haxe_ver < 4.2) override #end
 	private function run(cfg: ImageminConfig): Void {
 		final from: Array<String> = cfg.from.split(',').map(StringTools.trim).addToStringsEnd('*.');
@@ -133,18 +145,6 @@ private typedef ImageminResult = Array<ImageminResultEntry>;
 	private function completeHandler(r: ImageminResult): Void {
 		for (e in r) log('${e.sourcePath} => ${e.destinationPath}');
 		tasks.end();
-	}
-
-	private inline function pngpack(a: Array<String>, to: String): Void {
-		NPM.imagemin(a, { destination: to, plugins: [NPM.imagemin_zopfli({ more: true })] }).then(completeHandler);
-		// NPM.imagemin_pngcrush({reduce: true})
-		// NPM.imagemin_pngout({strategy: 0})
-		// NPM.imagemin_optipng({optimizationLevel: 7})
-	}
-
-	private inline function _pngpack(to: String, r: ImageminResult): Void {
-		for (e in r) log('${e.sourcePath} => ${e.destinationPath}');
-		pngpack(r.map(getPath), to);
 	}
 
 	private static inline function getPath(e: ImageminResultEntry): String return e.destinationPath;

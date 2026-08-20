@@ -13,8 +13,9 @@ import pony.text.tpl.TplData;
 class Tpl {
 
 	private final data: TplData;
-	private var c: Class<ITplPut>;
 	private final o: Dynamic;
+
+	private var c: Class<ITplPut>;
 
 	public function new(?c: Class<ITplPut>, o: Dynamic, t: String, ?s: TplStyle) {
 		this.c = c;

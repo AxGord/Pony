@@ -30,9 +30,10 @@ class ZipTool extends Logable {
 	private final output: String;
 	private final prefix: String;
 	private final compressLvl: Int;
-	private var root: String;
 	private final fileOutput: Output;
 	private final writer: Writer;
+
+	private var root: String;
 
 	public function new(output: String = '', prefix: String = '', compressLvl: Int = 9, ?root: String) {
 		super();
@@ -99,6 +100,25 @@ class ZipTool extends Logable {
 		return this;
 	}
 
+	public function writeHash(hash: Map<String, Array<String>>): ZipTool {
+		if (hash == null) return this;
+		for (file => value in hash) {
+			final f: String = prefix + file;
+			if (allowList != null && allowList.indexOf(f) == -1) continue;
+			log(f);
+			final h: Array<String> = value;
+			final b: Bytes = File.getBytes(f);
+			final entry: Entry = { fileName: file, fileSize: Std.parseInt(h[1]), fileTime: Date.fromTime(Std.parseFloat(h[0])), compressed: false, dataSize: b.length, data: b, crc32: h.length
+				> 2
+				? Std.parseInt(h[2])
+				: Crc32.make(b) };
+			if (compressLvl > 0) Tools.compress(entry, compressLvl);
+			writer.writeEntryHeader(entry);
+			fileOutput.writeFullBytes(entry.data, 0, entry.data.length);
+		}
+		return this;
+	}
+
 	public static function unpackFile(
 		file: String, targetPath: String = '', ?extractFirstLevelDirs: Bool, ?filter: Array<String>, ?log: String -> Void
 	): Void {
@@ -118,25 +138,6 @@ class ZipTool extends Logable {
 			File.saveBytes(f, Reader.unzip(e));
 		}
 		input.close();
-	}
-
-	public function writeHash(hash: Map<String, Array<String>>): ZipTool {
-		if (hash == null) return this;
-		for (file => value in hash) {
-			final f: String = prefix + file;
-			if (allowList != null && allowList.indexOf(f) == -1) continue;
-			log(f);
-			final h: Array<String> = value;
-			final b: Bytes = File.getBytes(f);
-			final entry: Entry = { fileName: file, fileSize: Std.parseInt(h[1]), fileTime: Date.fromTime(Std.parseFloat(h[0])), compressed: false, dataSize: b.length, data: b, crc32: h.length
-				> 2
-				? Std.parseInt(h[2])
-				: Crc32.make(b) };
-			if (compressLvl > 0) Tools.compress(entry, compressLvl);
-			writer.writeEntryHeader(entry);
-			fileOutput.writeFullBytes(entry.data, 0, entry.data.length);
-		}
-		return this;
 	}
 
 }

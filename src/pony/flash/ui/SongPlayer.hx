@@ -12,6 +12,8 @@ import pony.time.DeltaTime;
 class SongPlayer extends MovieClip implements FLStage {
 
 	#if !starling
+	public var core: SongPlayerCore;
+
 	@:stage private var playBar: Bar;
 	@:stage private var loadProgress: ProgressBar;
 	@:stage private var bPlay: Button;
@@ -19,8 +21,6 @@ class SongPlayer extends MovieClip implements FLStage {
 	@:stage private var bMute: Button;
 	@:stage private var volume: Bar;
 	@:stage private var tTime: TextField;
-
-	public var core: SongPlayerCore;
 
 	public function new() {
 		super();

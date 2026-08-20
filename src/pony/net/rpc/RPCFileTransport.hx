@@ -14,7 +14,6 @@ import pony.fs.FileWriteStream;
 class RPCFileTransport extends pony.net.rpc.RPCUnit<RPCFileTransport> implements pony.net.rpc.IRPC {
 
 	@:sub public var stream: RPCStream;
-
 	@:rpc public var onFile: Signal1<String>;
 
 	private var fileWrite: FileWriteStream;
@@ -39,6 +38,12 @@ class RPCFileTransport extends pony.net.rpc.RPCUnit<RPCFileTransport> implements
 		stream.write(fs);
 	}
 
+	public dynamic function changePath(path: String): String return path;
+
+	public function cancel(): Void {
+		if (fileWrite != null) fileWrite.cancel();
+	}
+
 	private function fileHandler(path: String): Void {
 		fileWrite = new FileWriteStream(changePath(path));
 		checkBegin();
@@ -53,12 +58,6 @@ class RPCFileTransport extends pony.net.rpc.RPCUnit<RPCFileTransport> implements
 		if (readStream == null || fileWrite == null) return;
 		fileWrite.pipe(readStream);
 		readStream = null;
-	}
-
-	public dynamic function changePath(path: String): String return path;
-
-	public function cancel(): Void {
-		if (fileWrite != null) fileWrite.cancel();
 	}
 
 }

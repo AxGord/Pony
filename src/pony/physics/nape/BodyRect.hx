@@ -23,12 +23,6 @@ class BodyRect extends BodyBase {
 		super(space, limits, isStatic, isBullet, group);
 	}
 
-	override private function init(): Void {
-		final sh = new Polygon(Polygon.rect(size.x, size.y, size.width, size.height), material);
-		sh.sensorEnabled = body.isBullet;
-		body.shapes.add(sh);
-	}
-
 	override public function getCacheId(): Bytes {
 		final b: BytesOutput = new BytesOutput();
 		b.writeByte(0x02); // shape code
@@ -37,6 +31,12 @@ class BodyRect extends BodyBase {
 		b.writeInt32(Std.int(size.width * 1000));
 		b.writeInt32(Std.int(size.height * 1000));
 		return b.getBytes();
+	}
+
+	override private function init(): Void {
+		final sh = new Polygon(Polygon.rect(size.x, size.y, size.width, size.height), material);
+		sh.sensorEnabled = body.isBullet;
+		body.shapes.add(sh);
 	}
 
 }

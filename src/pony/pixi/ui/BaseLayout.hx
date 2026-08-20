@@ -18,6 +18,7 @@ using pony.pixi.PixiExtends;
 class BaseLayout<T:BaseLayoutCore<Container>> extends Sprite implements IWH {
 
 	public var layout(default, null): T;
+
 	public var size(get, never): Point<Float>;
 
 	public function new() {
@@ -28,6 +29,8 @@ class BaseLayout<T:BaseLayoutCore<Container>> extends Sprite implements IWH {
 		layout.setXpos = setXpos;
 		layout.setYpos = setYpos;
 	}
+
+	private inline function get_size(): Point<Float> return visible ? layout.size : new Point<Float>(0, 0);
 
 	public function add(obj: Container): Void {
 		addChild(obj);
@@ -49,6 +52,16 @@ class BaseLayout<T:BaseLayoutCore<Container>> extends Sprite implements IWH {
 		layout.remove(obj);
 	}
 
+	public function wait(cb: Void -> Void): Void layout.wait(cb);
+
+	override public function destroy(?options: haxe.extern.EitherType<Bool, DestroyOptions>): Void {
+		layout.destroy();
+		layout = null;
+		super.destroy(options);
+	}
+
+	public function destroyIWH(): Void destroy();
+
 	private function load(obj: Container): Void {
 		if (!Std.is(obj, Sprite)) return;
 		layout.tasks.add();
@@ -66,8 +79,6 @@ class BaseLayout<T:BaseLayoutCore<Container>> extends Sprite implements IWH {
 
 	private function setYpos(obj: Container, v: Float): Void obj.y = v;
 
-	public function wait(cb: Void -> Void): Void layout.wait(cb);
-
 	private function getSize(o: Container): Point<Float> {
 		return Std.is(o, BitmapText)
 			? new Point(untyped o.textWidth, untyped o.textHeight)
@@ -76,15 +87,5 @@ class BaseLayout<T:BaseLayoutCore<Container>> extends Sprite implements IWH {
 
 	private static function getSizeMod(o: Container, p: Point<Float>): Point<Float>
 		return p == null ? null : new Point(p.x * o.scale.x, p.y * o.scale.y);
-
-	private inline function get_size(): Point<Float> return visible ? layout.size : new Point<Float>(0, 0);
-
-	override public function destroy(?options: haxe.extern.EitherType<Bool, DestroyOptions>): Void {
-		layout.destroy();
-		layout = null;
-		super.destroy(options);
-	}
-
-	public function destroyIWH(): Void destroy();
 
 }

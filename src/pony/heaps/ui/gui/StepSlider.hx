@@ -16,10 +16,11 @@ import pony.ui.touch.Touchable;
  */
 @:nullSafety(Strict) class StepSlider extends Node implements HasLink {
 
+	public var valueStep(default, set): Float = 0;
 	public var button(default, null): Button;
 	public var sliderCore(default, null): StepSliderCore;
 	public var bg(default, null): Node;
-	public var valueStep(default, set): Float = 0;
+
 	public var useTouchPos(link, link): Bool = sliderCore.useTouchPos;
 
 	private var sliderX: Float = 0;
@@ -51,6 +52,12 @@ import pony.ui.touch.Touchable;
 		(track.onUp || track.onOutUp) << sliderCore.stopDrag;
 	}
 
+	public function set_valueStep(v: Float): Float {
+		valueStep = v;
+		sliderCore.valueStep = v;
+		return v;
+	}
+
 	private function convertPos(p: Point<Float>): Point<Float> return globalToLocal(p);
 
 	private function trackClickHandler(t: Touch): Void sliderCore.stepMoveToPoint(t.point);
@@ -63,12 +70,6 @@ import pony.ui.touch.Touchable;
 	private function changeYHandler(v: Float): Void {
 		sliderY = v;
 		button.y = v;
-	}
-
-	public function set_valueStep(v: Float): Float {
-		valueStep = v;
-		sliderCore.valueStep = v;
-		return v;
 	}
 
 }

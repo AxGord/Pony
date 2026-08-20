@@ -16,6 +16,33 @@ private abstract SignalAndListener(PairType) {
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function new(p: PairType) this = p;
 
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function enable(): Void {
+		switch this {
+			case S0(p): p.a << p.b;
+			case S1(p): p.a << p.b;
+			case S2(p): p.a << p.b;
+		}
+	}
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function disable(): Void {
+		switch this {
+			case S0(p): p.a >> p.b;
+			case S1(p): p.a >> p.b;
+			case S2(p): p.a >> p.b;
+		}
+	}
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function once(): Void {
+		switch this {
+			case S0(p): p.a < p.b;
+			case S1(p): p.a < p.b;
+			case S2(p): p.a < p.b;
+		}
+	}
+
 	@:from #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function s0(p: Pair<Signal0, Listener0>): SignalAndListener {
 		return new SignalAndListener(S0(p));
@@ -59,33 +86,6 @@ private abstract SignalAndListener(PairType) {
 	@:from #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function s2e<T1, T2>(p: Pair<Signal2<T1, T2>, Event2<T1, T2>>): SignalAndListener {
 		return s2(new Pair(p.a, (p.b: Listener2<T1, T2>)));
-	}
-
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public inline function enable(): Void {
-		switch this {
-			case S0(p): p.a << p.b;
-			case S1(p): p.a << p.b;
-			case S2(p): p.a << p.b;
-		}
-	}
-
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public inline function disable(): Void {
-		switch this {
-			case S0(p): p.a >> p.b;
-			case S1(p): p.a >> p.b;
-			case S2(p): p.a >> p.b;
-		}
-	}
-
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public inline function once(): Void {
-		switch this {
-			case S0(p): p.a < p.b;
-			case S1(p): p.a < p.b;
-			case S2(p): p.a < p.b;
-		}
 	}
 
 }

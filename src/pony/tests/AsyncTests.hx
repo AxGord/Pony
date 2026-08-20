@@ -15,11 +15,15 @@ using pony.Tools;
 class AsyncTests extends TestCase {
 
 	public static var isRead: Map<Int, Bool>;
+
 	private static final assertList: List<{ a: Dynamic, b: Dynamic, pos: PosInfos }> = new List();
+
 	private static var testCount: Int = 0;
 	private static var complite: Bool = false;
+
 	private static final dec: String = '----------';
 	private static final waitList: List<{ it: IntIterator, cb: Void -> Void }> = new List<{ it: IntIterator, cb: Void -> Void }>();
+
 	private static var counter: Int = 0;
 	private static var lock: Bool;
 

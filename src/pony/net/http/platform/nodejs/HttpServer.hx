@@ -30,10 +30,6 @@ class HttpServer {
 
 	private static var spdy(get, never): Dynamic;
 
-	private var server: Server;
-	private var spdyServer: Dynamic;
-	public var storage: ServersideStorage;
-
 	/**
 	 * Whether to announce the listening address. A service that prints its own startup
 	 * line — or has that line parsed by a supervisor — wants this off, and cannot silence
@@ -42,13 +38,10 @@ class HttpServer {
 	public var verbose: Bool = true;
 
 	public var fixedHeaders: Map<String, String> = ['Server' => 'PonyHttpServer'];
+	public var storage: ServersideStorage;
 
-	private static inline function get_spdy(): Dynamic return Node.require('spdy');
-
-	private static function multipartyForm(): Class<Dynamic> {
-		if (multipartyClass == null) multipartyClass = Node.require('multiparty').Form;
-		return multipartyClass;
-	}
+	private var server: Server;
+	private var spdyServer: Dynamic;
 
 	public function new(?host: String, port: Int = 80, ?spdyConf: Dynamic) {
 		server = Http.createServer(listen);
@@ -63,6 +56,29 @@ class HttpServer {
 		), ca: Fs.readFileSync(Node.__dirname + '/keys/spdy-csr.pem') };
 
 		spdyServer = spdy.createServer(options, listen).listen(spdyConf.hasField('port') ? spdyConf.port : 443, createSpdyHandler);
+	}
+
+	private static inline function get_spdy(): Dynamic return Node.require('spdy');
+
+	public dynamic function onOpen(): Void {}
+
+	public dynamic function onError(): Void {}
+
+	public dynamic function request(connection: IHttpConnection): Void {
+		connection.sendText('Welcome from Pony Http Server');
+	}
+
+	public function close(?cb: Void -> Void): Void {
+		Node.process.nextTick(cb); // How detect closed server???
+		server.removeAllListeners();
+		server.close();
+		server.unref();
+		server = null;
+		if (spdyServer != null) {
+			spdyServer.close();
+			spdyServer = null;
+		}
+		storage = null;
 	}
 
 	private function listen(req: IncomingMessage, res: ServerResponse): Void {
@@ -140,10 +156,6 @@ class HttpServer {
 		}
 	}
 
-	public dynamic function onOpen(): Void {}
-
-	public dynamic function onError(): Void {}
-
 	private function createHandler(): Void {
 		if (verbose) {
 			final a: Dynamic = untyped server.address();
@@ -160,21 +172,9 @@ class HttpServer {
 
 	private function errorHandler(): Void onError();
 
-	public dynamic function request(connection: IHttpConnection): Void {
-		connection.sendText('Welcome from Pony Http Server');
-	}
-
-	public function close(?cb: Void -> Void): Void {
-		Node.process.nextTick(cb); // How detect closed server???
-		server.removeAllListeners();
-		server.close();
-		server.unref();
-		server = null;
-		if (spdyServer != null) {
-			spdyServer.close();
-			spdyServer = null;
-		}
-		storage = null;
+	private static function multipartyForm(): Class<Dynamic> {
+		if (multipartyClass == null) multipartyClass = Node.require('multiparty').Form;
+		return multipartyClass;
 	}
 
 }

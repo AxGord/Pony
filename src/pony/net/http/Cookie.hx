@@ -6,8 +6,9 @@ package pony.net.http;
  */
 class Cookie {
 
-	private var oldCookie: Map<String, String> = [];
 	private final newCookie: Map<String, String> = [];
+
+	private var oldCookie: Map<String, String> = [];
 
 	public function new(?cookie: String, ?mapCookie: Map<String, String>) {
 		if (cookie != null) {
@@ -21,6 +22,8 @@ class Cookie {
 			oldCookie = mapCookie;
 	}
 
+	public inline function set(name: String, value: String): Void newCookie.set(name, value);
+
 	public function toString(?domain: String): String {
 		// domain = domain != null ? 'domain=$domain' : '';
 		var s: String = '';
@@ -33,7 +36,5 @@ class Cookie {
 	public function get(name: String): String {
 		return newCookie.exists(name) ? newCookie[name] : oldCookie[name];
 	}
-
-	public inline function set(name: String, value: String): Void newCookie.set(name, value);
 
 }

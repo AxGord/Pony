@@ -10,46 +10,36 @@ using hugs.HUGSWrapper;
  */
 @:nativeGen class CameraManaging extends unityengine.MonoBehaviour {
 
-	public var target: unityengine.Transform;
-
-	private var distance: Float = 10.0;
-
 	private static inline final distanceX: Float = 0;
-
-	private var xActualSpeed: Float = 0.0;
-	private var yActualSpeed: Float = 0.0;
-
 	private static inline final xConstSpeed: Float = 250.0;
 	private static inline final yConstSpeed: Float = 125.0;
-
 	private static inline final xDempf: Float = 0.95;
 	private static inline final yDempf: Float = 0.95;
-
 	private static inline final yMinLimit: Int = -20;
 	private static inline final yMaxLimit: Int = 80;
-
 	private static inline final maxDist: Float = 200;
 	private static inline final minDist: Float = 30;
 	private static inline final zoomSpeed: Float = 5;
+	private static inline final isInerted: Bool = false;
+	private static inline final liveUpdate: Bool = false;
+
+	public var target: unityengine.Transform;
 
 	private final keyZoomUp: unityengine.KeyCode = unityengine.KeyCode.KeypadPlus;
 	private final keyZoomOut: unityengine.KeyCode = unityengine.KeyCode.KeypadMinus;
-
 	private final keyTurnUp: unityengine.KeyCode = unityengine.KeyCode.UpArrow;
 	private final keyTurnDown: unityengine.KeyCode = unityengine.KeyCode.DownArrow;
 	private final keyTurnLeft: unityengine.KeyCode = unityengine.KeyCode.LeftArrow;
 	private final keyTurnRight: unityengine.KeyCode = unityengine.KeyCode.RightArrow;
 
-	private var isInverted: Bool;
-
-	private static inline final isInerted: Bool = false;
-
-	private static inline final liveUpdate: Bool = false;
-
+	private var distance: Float = 10.0;
+	private var xActualSpeed: Float = 0.0;
+	private var yActualSpeed: Float = 0.0;
 	@:meta(UnityEngine.HideInInspector)
 	private var x: Float = 0.0;
 	@:meta(UnityEngine.HideInInspector)
 	private var y: Float = 0.0;
+	private var isInverted: Bool;
 	@:meta(UnityEngine.HideInInspector)
 	private var vector: unityengine.Vector3;
 
@@ -58,7 +48,6 @@ using hugs.HUGSWrapper;
 		if (angle > 360) angle += 360;
 		return unityengine.Mathf.Clamp(angle, min, max);
 	}
-
 
 	private function Start(): Void {
 		final angles: unityengine.Vector3 = this.transform.eulerAngles;

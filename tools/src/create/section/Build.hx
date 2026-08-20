@@ -100,14 +100,6 @@ class Build extends Section {
 		}
 	}
 
-	private function targetKey(): String {
-		return switch target {
-			case HaxeTargets.Swc: 'swf';
-			case HaxeTargets.HLC: 'hl';
-			case t: t;
-		}
-	}
-
 	public function createOutputFile(file: String, template: String, ?replaces: Map<String, String>): Void {
 		createOutputPathIfNeed();
 		createFile(outputPath + file, template, replaces);
@@ -126,12 +118,6 @@ class Build extends Section {
 
 	public function createEmptyMainhx(): Void {
 		Utils.createEmptyMainFile(getMainhx());
-	}
-
-	private function createFile(file: String, template: String, ?replaces: Map<String, String>): Void {
-		var data: String = Resource.getString(template);
-		if (replaces != null) for (key => value in replaces) data = data.replace('::$key::', value);
-		File.saveContent(file, data);
 	}
 
 	public function createOutputPathIfNeed(): Void {
@@ -156,6 +142,20 @@ class Build extends Section {
 
 	public function pathToMainhxExists(): Bool {
 		return FileSystem.exists(getMainhxPath());
+	}
+
+	private function targetKey(): String {
+		return switch target {
+			case HaxeTargets.Swc: 'swf';
+			case HaxeTargets.HLC: 'hl';
+			case t: t;
+		}
+	}
+
+	private function createFile(file: String, template: String, ?replaces: Map<String, String>): Void {
+		var data: String = Resource.getString(template);
+		if (replaces != null) for (key => value in replaces) data = data.replace('::$key::', value);
+		File.saveContent(file, data);
 	}
 
 }

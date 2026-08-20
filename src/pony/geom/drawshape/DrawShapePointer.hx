@@ -15,6 +15,11 @@ class DrawShapePointer extends pony.Tumbler {
 
 	private static inline final PRIORITY: Int = -10;
 
+	public var xbegin(default, null): Float = 0;
+	public var ybegin(default, null): Float = 0;
+	public var snapCellCounts(default, null): Point<Int> = new Point<Int>(12, 12);
+	public var snapCellSize(default, null): Point<Float>;
+
 	@:auto public var onDrawPoint: Signal2<DrawShapePointerData, Touch>;
 	@:auto public var onHidePoint: Signal1<Touch>;
 	@:auto public var onDownPoint: Signal2<DrawShapePointerData, Touch>;
@@ -23,12 +28,7 @@ class DrawShapePointer extends pony.Tumbler {
 
 	private var width: Float;
 	private var height: Float;
-	public var xbegin(default, null): Float = 0;
-	public var ybegin(default, null): Float = 0;
-	public var snapCellCounts(default, null): Point<Int> = new Point<Int>(12, 12);
-	public var snapCellSize(default, null): Point<Float>;
 	private var downPointData: DrawShapePointerData;
-
 	private var lastTouch: Touch;
 
 	public function new(touchable: Touchable, width: Float, height: Float, ?snapCellCounts: Point<Int>) {
@@ -52,6 +52,8 @@ class DrawShapePointer extends pony.Tumbler {
 		onDisable << disableHandler;
 	}
 
+	public inline function hidePoint(t: Touch): Void eHidePoint.dispatch(t);
+
 	public function drawSnap(): Array<Pair<Bool, Rect<Float>>> {
 		final r: Array<Pair<Bool, Rect<Float>>> = [
 			for (x in 0...snapCellCounts.x + 1) new Pair(
@@ -66,6 +68,10 @@ class DrawShapePointer extends pony.Tumbler {
 
 	public function convertPoint(p: IntPoint): Point<Float> {
 		return new Point(xbegin + p.x * snapCellSize.x, ybegin + p.y * snapCellSize.y);
+	}
+
+	public function dataFromIntPoint(p: IntPoint): DrawShapePointerData {
+		return { x: xbegin + p.x * snapCellSize.x, y: ybegin + p.y * snapCellSize.y, col: p.x, row: p.y };
 	}
 
 	private function enableHandler(): Void {
@@ -99,8 +105,6 @@ class DrawShapePointer extends pony.Tumbler {
 		touchable.onOver < overHandler;
 	}
 
-	public inline function hidePoint(t: Touch): Void eHidePoint.dispatch(t);
-
 	private function magnet(p: DrawShapePointerData, t: Touch): Bool {
 		if (
 			p.x > -snapCellSize.x / 2 && p.y > -snapCellSize.y / 2 && p.x < width + snapCellSize.x / 2 && p.y < height + snapCellSize.y / 2
@@ -113,10 +117,6 @@ class DrawShapePointer extends pony.Tumbler {
 		}
 		hidePoint(t);
 		return true;
-	}
-
-	public function dataFromIntPoint(p: IntPoint): DrawShapePointerData {
-		return { x: xbegin + p.x * snapCellSize.x, y: ybegin + p.y * snapCellSize.y, col: p.x, row: p.y };
 	}
 
 	private function drawPointHandler(p: DrawShapePointerData, t: Touch): Void {

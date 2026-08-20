@@ -542,6 +542,23 @@ class ArrayTools {
 		return r;
 	}
 
+	public static inline function toBytes(a: Array<Int>): BytesOutput {
+		final b: BytesOutput = new BytesOutput();
+		for (e in a) b.writeByte(e);
+		return b;
+	}
+
+	/**
+	 * Randomize
+	 * Warning: This function modifies original array
+	 */
+	public static inline function randomize<T>(a: Array<T>): Array<T> {
+		a.sort(randomizeSort);
+		return a;
+	}
+
+	public static inline function last<T:Dynamic>(a: Array<T>): T return a[a.length - 1];
+
 	public static function thereIs<T>(a: Iterable<Array<T>>, b: Array<T>): Bool {
 		for (e in a) if (Tools.equal(e, b)) return true;
 		return false;
@@ -562,26 +579,6 @@ class ArrayTools {
 		final itB: Iterator<B> = b.iterator();
 		return { hasNext: function() return itA.hasNext() && itB.hasNext(), next: function() return new Pair(itA.next(), itB.next()) };
 	}
-
-	public static inline function toBytes(a: Array<Int>): BytesOutput {
-		final b: BytesOutput = new BytesOutput();
-		for (e in a) b.writeByte(e);
-		return b;
-	}
-
-	/**
-	 * Randomize
-	 * Warning: This function modifies original array
-	 */
-	public static inline function randomize<T>(a: Array<T>): Array<T> {
-		a.sort(randomizeSort);
-		return a;
-	}
-
-	@SuppressWarnings('checkstyle:MagicNumber')
-	private static function randomizeSort(_: Dynamic, _: Dynamic): Int return Math.random() > 0.5 ? 1 : -1;
-
-	public static inline function last<T:Dynamic>(a: Array<T>): T return a[a.length - 1];
 
 	public static function swap<T>(array: Array<T>, a: Int, b: Int): Array<T> {
 		if (a > b) return swap(array, b, a);
@@ -623,29 +620,13 @@ class ArrayTools {
 		return sum;
 	}
 
+	@SuppressWarnings('checkstyle:MagicNumber')
+	private static function randomizeSort(_: Dynamic, _: Dynamic): Int return Math.random() > 0.5 ? 1 : -1;
+
 }
 
 @SuppressWarnings('checkstyle:MagicNumber')
 class MapTools {
-
-	public static function kv<K, T>(a: Map<K, T>): Iterator<KeyValue<K, T>> {
-		final it: Iterator<K> = a.keys();
-		return { hasNext: it.hasNext, next: function() {
-			final k: K = it.next();
-			return new Pair(k, a[k]);
-		} };
-	}
-
-	public static function toDynamic<T>(map: Map<String, T>): Dynamic<T> {
-		final r: Dynamic<T> = {};
-		for (e in kv(map)) r.setField(e.key, e.value);
-		return r;
-	}
-
-	public static function toMap<T>(d: Dynamic<T>): Map<String, T> {
-		final fields: Array<String> = d.fields();
-		return [for (field in fields) field => d.field(field)];
-	}
 
 	public static inline function pushToMap<K, T>(map: Map<K, Array<T>>, key: K, value: T): Bool {
 		final element: Null<Array<T>> = map[key];
@@ -691,28 +672,6 @@ class MapTools {
 		return true;
 	}
 
-	public static function minMaxKey<T>(map: Map<Int, T>): SPair<Int> {
-		var max: Int = 0;
-		var min: Int = MathTools.MAX_INT;
-		for (len in map.keys()) {
-			max = MathTools.cmax(max, len);
-			min = MathTools.cmin(min, len);
-		}
-		return new SPair<Int>(min, max);
-	}
-
-	public static function minKey<T>(map: Map<Int, T>): Int {
-		var min: Int = MathTools.MAX_INT;
-		for (len in map.keys()) min = MathTools.cmin(min, len);
-		return min;
-	}
-
-	public static function maxKey<T>(map: Map<Int, T>): Int {
-		var max: Int = 0;
-		for (len in map.keys()) max = MathTools.cmax(max, len);
-		return max;
-	}
-
 	public static inline function mapCalcCount<K, T>(map: Map<K, T>, fn: K -> T -> UInt): UInt {
 		var r: UInt = 0;
 		#if (haxe_ver >= 4.000)
@@ -748,6 +707,47 @@ class MapTools {
 	}
 
 	public static inline function keysArray<T>(m: Map<T, Any>): Array<T> return [for (k in m.keys()) k];
+
+	public static function kv<K, T>(a: Map<K, T>): Iterator<KeyValue<K, T>> {
+		final it: Iterator<K> = a.keys();
+		return { hasNext: it.hasNext, next: function() {
+			final k: K = it.next();
+			return new Pair(k, a[k]);
+		} };
+	}
+
+	public static function toDynamic<T>(map: Map<String, T>): Dynamic<T> {
+		final r: Dynamic<T> = {};
+		for (e in kv(map)) r.setField(e.key, e.value);
+		return r;
+	}
+
+	public static function toMap<T>(d: Dynamic<T>): Map<String, T> {
+		final fields: Array<String> = d.fields();
+		return [for (field in fields) field => d.field(field)];
+	}
+
+	public static function minMaxKey<T>(map: Map<Int, T>): SPair<Int> {
+		var max: Int = 0;
+		var min: Int = MathTools.MAX_INT;
+		for (len in map.keys()) {
+			max = MathTools.cmax(max, len);
+			min = MathTools.cmin(min, len);
+		}
+		return new SPair<Int>(min, max);
+	}
+
+	public static function minKey<T>(map: Map<Int, T>): Int {
+		var min: Int = MathTools.MAX_INT;
+		for (len in map.keys()) min = MathTools.cmin(min, len);
+		return min;
+	}
+
+	public static function maxKey<T>(map: Map<Int, T>): Int {
+		var max: Int = 0;
+		for (len in map.keys()) max = MathTools.cmax(max, len);
+		return max;
+	}
 
 }
 

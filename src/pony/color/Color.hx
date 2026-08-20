@@ -89,6 +89,51 @@ abstract Color(ColorImpl) {
 	 */
 	public inline function new(a: Int, r: Int, g: Int, b: Int) this = { a: a, r: r, g: g, b: b };
 
+	private inline function get_invertAlpha(): Color return fromARGBSave(_invert(a), r, g, b);
+
+	private inline function get_invert(): Color return fromARGBSave(a, _invert(r), _invert(g), _invert(b));
+
+	@:to private inline function get_argb(): UInt return toUColor();
+
+	private inline function get_rgb(): UInt return toUColor().rgb;
+
+	private inline function get_power(): Int return r + g + b;
+
+	private inline function get_a(): Int return this.a;
+
+	private inline function get_r(): Int return this.r;
+
+	private inline function get_g(): Int return this.g;
+
+	private inline function get_b(): Int return this.b;
+
+	private inline function get_af(): Float return a / MAX_CHANNEL;
+
+	private inline function get_rf(): Float return r / MAX_CHANNEL;
+
+	private inline function get_gf(): Float return g / MAX_CHANNEL;
+
+	private inline function get_bf(): Float return b / MAX_CHANNEL;
+
+	@:to public inline function toUColor(): UColor return UColor.fromARGBSave(a, r, g, b);
+
+	/**
+	 * Convert color to string
+	 */
+	@:to public inline function toString(): String return toUColor();
+
+	// @:op(A + B) inline static public function add1(a: UColor, b: Color): Color
+	// 	return UColor.fromARGBSave(a.a + b.a, a.r + b.r, a.g + b.g, a.b + b.b);
+	// @:op(A + B) inline static public function add2(a: Color, b: UColor): Color
+	// 	return UColor.fromARGBSave(a.a + b.a, a.r + b.r, a.g + b.g, a.b + b.b);
+
+	/**
+	 * Apply bright to this color
+	 */
+	public inline function bright(v: Int): Color return fromARGBSave(a, r + v, g + v, b + v);
+
+	private inline function _invert(v: Int): Int return MAX_CHANNEL - v;
+
 	/**
 	 * Build from RGB values
 	 */
@@ -98,6 +143,23 @@ abstract Color(ColorImpl) {
 	 * Build from ARGB values
 	 */
 	public static inline function fromARGB(a: Int, r: Int, g: Int, b: Int): Color return new Color(a, r, g, b);
+
+	/**
+	 * Build color from string
+	 */
+	@:from public static inline function fromString(s: String): Color return UColor.fromString(s);
+
+	/**
+	 * First color subtract second color
+	 */
+	@:op(A - B) public static inline function sub(a: Color, b: Color): Color
+		return fromARGBSave(a.a - b.a, a.r - b.r, a.g - b.g, a.b - b.b);
+
+	/**
+	 * Colors sum
+	 */
+	@:op(A + B) public static inline function add(a: Color, b: Color): Color
+		return fromARGBSave(a.a + b.a, a.r + b.r, a.g + b.g, a.b + b.b);
 
 	/**
 	 * Safely building from RGB values
@@ -129,71 +191,9 @@ abstract Color(ColorImpl) {
 		return v;
 	}
 
-	private inline function _invert(v: Int): Int return MAX_CHANNEL - v;
-
-	private inline function get_invertAlpha(): Color return fromARGBSave(_invert(a), r, g, b);
-
-	private inline function get_invert(): Color return fromARGBSave(a, _invert(r), _invert(g), _invert(b));
-
 	@:from private static inline function fromUInt(v: UInt): Color return fromUColor(new UColor(v));
 
 	@:from private static inline function fromUColor(v: UColor): Color
 		return new Color(Std.int(v.a), Std.int(v.r), Std.int(v.g), Std.int(v.b));
-
-	@:to public inline function toUColor(): UColor return UColor.fromARGBSave(a, r, g, b);
-
-	@:to private inline function get_argb(): UInt return toUColor();
-
-	private inline function get_rgb(): UInt return toUColor().rgb;
-
-	private inline function get_power(): Int return r + g + b;
-
-	private inline function get_a(): Int return this.a;
-
-	private inline function get_r(): Int return this.r;
-
-	private inline function get_g(): Int return this.g;
-
-	private inline function get_b(): Int return this.b;
-
-	private inline function get_af(): Float return a / MAX_CHANNEL;
-
-	private inline function get_rf(): Float return r / MAX_CHANNEL;
-
-	private inline function get_gf(): Float return g / MAX_CHANNEL;
-
-	private inline function get_bf(): Float return b / MAX_CHANNEL;
-
-	/**
-	 * Convert color to string
-	 */
-	@:to public inline function toString(): String return toUColor();
-
-	/**
-	 * Build color from string
-	 */
-	@:from public static inline function fromString(s: String): Color return UColor.fromString(s);
-
-	/**
-	 * First color subtract second color
-	 */
-	@:op(A - B) public static inline function sub(a: Color, b: Color): Color
-		return fromARGBSave(a.a - b.a, a.r - b.r, a.g - b.g, a.b - b.b);
-
-	/**
-	 * Colors sum
-	 */
-	@:op(A + B) public static inline function add(a: Color, b: Color): Color
-		return fromARGBSave(a.a + b.a, a.r + b.r, a.g + b.g, a.b + b.b);
-
-	// @:op(A + B) inline static public function add1(a: UColor, b: Color): Color
-	// 	return UColor.fromARGBSave(a.a + b.a, a.r + b.r, a.g + b.g, a.b + b.b);
-	// @:op(A + B) inline static public function add2(a: Color, b: UColor): Color
-	// 	return UColor.fromARGBSave(a.a + b.a, a.r + b.r, a.g + b.g, a.b + b.b);
-
-	/**
-	 * Apply bright to this color
-	 */
-	public inline function bright(v: Int): Color return fromARGBSave(a, r + v, g + v, b + v);
 
 }

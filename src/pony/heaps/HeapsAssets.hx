@@ -28,9 +28,6 @@ using pony.text.TextTools;
 #if (haxe_ver >= 4.2) enum #else @:enum #end abstract Ext(String) to String {
 
 	final ATLAS = 'atlas';
-	#if hxbitmini
-	final BINATLAS = 'atlas.bin';
-	#end
 	final PNG = 'png';
 	final JPG = 'jpg';
 	final JPEG = 'jpeg';
@@ -48,6 +45,10 @@ using pony.text.TextTools;
 	final MP3 = 'mp3';
 	final BINOGG = 'ogg.bin';
 	final OGG = 'ogg';
+
+	#if hxbitmini
+	final BINATLAS = 'atlas.bin';
+	#end
 
 }
 
@@ -72,6 +73,7 @@ using pony.text.TextTools;
 	@:auto public static var onError: Signal1<String>;
 
 	private static var hasError: Bool = false;
+
 	private static final atlases: Map<String, Pair<Loader, Atlas>> = [];
 	private static final tiles: Map<String, Tile> = [];
 	private static final fonts: Map<String, Font> = [];
@@ -81,6 +83,7 @@ using pony.text.TextTools;
 
 	#if sys
 	private static final queue: Queue1<BinaryLoader> = new Queue1(getAsset);
+
 	private static var lastAssetTime: Float = 0;
 	private static var assetLoader: Null<BinaryLoader>;
 	#end

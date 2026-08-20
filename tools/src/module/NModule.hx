@@ -16,29 +16,11 @@ class NModule<T:BAConfig> extends CfgModule<T> {
 	private static inline final PORT_TRIES: Int = 1000;
 	private static final NODE_PATH: String = 'NODE_PATH';
 
+	private static var port: Int = Utils.NPORT;
+	private static var timeout: DTimer = DTimer.createFixedTimer(60000);
 	private static var server: Null<SocketServer>;
 	private static var protocol: Null<NProtocol>;
 	private static var process: Null<Process>;
-	private static var port: Int = Utils.NPORT;
-	private static var timeout: DTimer = DTimer.createFixedTimer(60000);
-
-	@SuppressWarnings('checkstyle:MagicNumber')
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private static inline function initServer(): Void {
-		if (server != null) return;
-		timeout.complete << Utils.error.bind('Timeout');
-		var n: Int = 0;
-		while (true) {
-			try {
-				server = new SocketServer(port);
-				break;
-			} catch (_: Any) {
-				if (n++ > PORT_TRIES) Utils.error('Can\'t create socket server');
-				port++;
-			}
-		}
-		protocol = @:nullSafety(Off) new NProtocol(server);
-	}
 
 	@:nullSafety(Off) override private function run(cfg: Array<T>): Void {
 		listenServer();
@@ -90,5 +72,23 @@ class NModule<T:BAConfig> extends CfgModule<T> {
 	}
 
 	@:abstract private function writeCfg(protol: NProtocol, cfg: Array<T>): Void;
+
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function initServer(): Void {
+		if (server != null) return;
+		timeout.complete << Utils.error.bind('Timeout');
+		var n: Int = 0;
+		while (true) {
+			try {
+				server = new SocketServer(port);
+				break;
+			} catch (_: Any) {
+				if (n++ > PORT_TRIES) Utils.error('Can\'t create socket server');
+				port++;
+			}
+		}
+		protocol = @:nullSafety(Off) new NProtocol(server);
+	}
 
 }

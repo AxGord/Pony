@@ -57,6 +57,51 @@ class StarlingConverter {
 		return getObjectInternal(source, coordinateSpace, disposeable, true);
 	}
 
+	public static function getSprite(
+		source: flash.display.Sprite, coordinateSpace: flash.display.DisplayObject, disposeable: Bool
+	): starling.display.Sprite {
+		return getSpriteInternal(source, coordinateSpace, disposeable, true);
+	}
+
+	public static function getObjectWithNoParent(
+		source: flash.display.DisplayObject, disposeable: Bool = false
+	): starling.display.DisplayObject {
+		var sprite: flash.display.Sprite = new flash.display.Sprite();
+
+		sprite.addChild(source);
+
+		return getObject(source, sprite, disposeable);
+	}
+
+	public static function getBorder(): Int {
+		return AtlasCreator.getBorder();
+	}
+
+	public static function showAtlases(): Void {
+		_atlasCreator.showAtlases();
+	}
+
+	public static function childrenWithNames(clip: flash.display.Sprite): Bool {
+		for (i in 0...clip.numChildren) {
+			final child: flash.display.DisplayObject = clip.getChildAt(i);
+			if (hasName(child)) return true;
+		}
+		return false;
+	}
+
+	public static function matrixCalculation(
+		source: flash.display.DisplayObject, coordinateSpace: flash.display.DisplayObject
+	): flash.geom.Matrix {
+		final matrix: flash.geom.Matrix = source.transform.matrix.clone();
+		var parent: flash.display.DisplayObject = source.parent;
+		while (parent != coordinateSpace && parent != null) {
+			matrix.concat(parent.transform.matrix);
+			parent = parent.parent;
+		}
+
+		return matrix;
+	}
+
 	private static function getObjectInternal(
 		source: flash.display.DisplayObject, coordinateSpace: flash.display.DisplayObject, disposeable: Bool = false, atlasGeneration: Bool
 	): starling.display.DisplayObject {
@@ -137,12 +182,6 @@ class StarlingConverter {
 		return starlingChild;
 	}
 
-	public static function getSprite(
-		source: flash.display.Sprite, coordinateSpace: flash.display.DisplayObject, disposeable: Bool
-	): starling.display.Sprite {
-		return getSpriteInternal(source, coordinateSpace, disposeable, true);
-	}
-
 	private static function getSpriteInternal(
 		source: flash.display.Sprite, coordinateSpace: flash.display.DisplayObject, disposeable: Bool, atlasGeneration: Bool = false
 	): starling.display.Sprite {
@@ -175,24 +214,6 @@ class StarlingConverter {
 		// result.addChild(zeroQuad);
 
 		return result;
-	}
-
-	public static function getObjectWithNoParent(
-		source: flash.display.DisplayObject, disposeable: Bool = false
-	): starling.display.DisplayObject {
-		var sprite: flash.display.Sprite = new flash.display.Sprite();
-
-		sprite.addChild(source);
-
-		return getObject(source, sprite, disposeable);
-	}
-
-	public static function getBorder(): Int {
-		return AtlasCreator.getBorder();
-	}
-
-	public static function showAtlases(): Void {
-		_atlasCreator.showAtlases();
 	}
 
 	private static function getStarlingTextField(
@@ -233,14 +254,6 @@ class StarlingConverter {
 		return result;
 	}
 
-	public static function childrenWithNames(clip: flash.display.Sprite): Bool {
-		for (i in 0...clip.numChildren) {
-			final child: flash.display.DisplayObject = clip.getChildAt(i);
-			if (hasName(child)) return true;
-		}
-		return false;
-	}
-
 	private static function hasName(source: flash.display.DisplayObject): Bool {
 		return source.name.indexOf('instance') == -1;
 	}
@@ -259,19 +272,6 @@ class StarlingConverter {
 
 		result.x = matrixPoint.x;
 		result.y = matrixPoint.y;
-	}
-
-	public static function matrixCalculation(
-		source: flash.display.DisplayObject, coordinateSpace: flash.display.DisplayObject
-	): flash.geom.Matrix {
-		final matrix: flash.geom.Matrix = source.transform.matrix.clone();
-		var parent: flash.display.DisplayObject = source.parent;
-		while (parent != coordinateSpace && parent != null) {
-			matrix.concat(parent.transform.matrix);
-			parent = parent.parent;
-		}
-
-		return matrix;
 	}
 
 }

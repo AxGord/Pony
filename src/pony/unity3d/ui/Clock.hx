@@ -11,9 +11,9 @@ import unityengine.MonoBehaviour;
  */
 @:nativeGen class Clock extends MonoBehaviour {
 
-	public var timer: DTimer;
-
 	private static final beginTime: String = '08:00:00';
+
+	public var timer: DTimer;
 
 	private function Start(): Void {
 		timer = DTimer.clock(beginTime);

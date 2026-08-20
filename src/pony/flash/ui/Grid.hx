@@ -12,9 +12,9 @@ import pony.ui.gui.GridCore;
  */
 class Grid extends Sprite {
 
-	private final slots: Array<Array<GridSlot>>;
-
 	public var core: GridCore;
+
+	private final slots: Array<Array<GridSlot>>;
 
 	public function new() {
 		super();

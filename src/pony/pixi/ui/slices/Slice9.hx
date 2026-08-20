@@ -6,6 +6,18 @@ package pony.pixi.ui.slices;
  */
 class Slice9 extends SliceSprite {
 
+	override private function set_sliceWidth(v: Float): Float {
+		sliceWidth = v;
+		updateWidth();
+		return v;
+	}
+
+	override private function set_sliceHeight(v: Float): Float {
+		sliceHeight = v;
+		updateHeight();
+		return v;
+	}
+
 	override private function init(): Void {
 		images[1].x = images[0].width - creep;
 		images[3].y = images[0].height - creep;
@@ -14,12 +26,6 @@ class Slice9 extends SliceSprite {
 		if (sliceWidth == null) sliceWidth = images[0].width + images[1].width + images[2].width;
 		if (sliceHeight == null) sliceHeight = images[0].height + images[3].height + images[6].height;
 		super.init();
-	}
-
-	override private function set_sliceWidth(v: Float): Float {
-		sliceWidth = v;
-		updateWidth();
-		return v;
 	}
 
 	private function updateWidth(): Void {
@@ -31,12 +37,6 @@ class Slice9 extends SliceSprite {
 		images[7].width = images[1].width;
 		images[7].x = images[1].x;
 		images[8].x = images[2].x;
-	}
-
-	override private function set_sliceHeight(v: Float): Float {
-		sliceHeight = v;
-		updateHeight();
-		return v;
 	}
 
 	private function updateHeight(): Void {

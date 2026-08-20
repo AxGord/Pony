@@ -22,9 +22,14 @@ using pony.text.TextTools;
 @:nullSafety(Strict) class Hash extends CfgModule<HashConfig> {
 
 	public static inline final DEFAULT_FILE_NAME: String = 'hash.bin';
+
 	private static inline final PRIORITY: Int = 40;
 
 	public var runCleanAfter: Bool = false;
+
+	private final newUnits: Map<String, Bytes> = [];
+	private final notChangedUnits: Array<String> = [];
+
 	private var updated: Bool = false;
 	private var file: File = DEFAULT_FILE_NAME;
 	private var binary: Bool = true;
@@ -33,16 +38,48 @@ using pony.text.TextTools;
 	private var build: Null<String> = null;
 	private var inited: Bool = false;
 	private var units: Map<String, Bytes> = [];
-	private final newUnits: Map<String, Bytes> = [];
-	private final notChangedUnits: Array<String> = [];
 
 	public function new() super('hash');
+
+	public inline function getNotChangedUnits(): Array<String> return buildUnitsList(notChangedUnits.iterator());
 
 	#if (haxe_ver < 4.2) override #end
 	public function init(): Void {
 		initSections(PRIORITY, BASection.Prepare);
 		modules.commands.onHash < start;
 		if (xml != null) modules.commands.onBuild.once(addToRun.bind(buildCompleteHandler), 100);
+	}
+
+	public function dirChanged(key: String, dirs: Array<String>, ?filter: String): Bool {
+		initHash();
+		key = pathKey(key);
+		final dirs: Array<Dir> = [for (dir in dirs) dir];
+		dirs.sort(cast Dir.compareNames);
+		return compareStates(key, Sha1.make(DirState.fromDirs(dirs, filter)));
+	}
+
+	public function fileChanged(key: String, unit: File): Bool {
+		if (unit.name == '.DS_Store') return false;
+		initHash();
+		final bytes: Null<Bytes> = Utils.gitHash(unit);
+		return bytes == null || compareStates(pathKey(key), bytes);
+	}
+
+	public function getHashed(): Array<String> {
+		initHash();
+		final r: Array<String> = buildUnitsList(units.keys());
+		log('Keep $file');
+		r.push(file.first);
+		return r;
+	}
+
+	public function getBuildResHashFile(): Null<STriple<String>> {
+		return build != null ? @:nullSafety(Off) new STriple<String>(file.fullDir, build, file.name) : null;
+	}
+
+	private inline function pathKey(key: String): String {
+		if (key.startsWith(root)) key = key.substr(root.length);
+		return key.startsWith(source) ? key.substr(source.length) : key;
 	}
 
 	private function start(): Void error('Deprecated');
@@ -134,26 +171,6 @@ using pony.text.TextTools;
 		if (bytes != null) units = pony.ui.Hash.fromBytes(bytes).units;
 	}
 
-	private inline function pathKey(key: String): String {
-		if (key.startsWith(root)) key = key.substr(root.length);
-		return key.startsWith(source) ? key.substr(source.length) : key;
-	}
-
-	public function dirChanged(key: String, dirs: Array<String>, ?filter: String): Bool {
-		initHash();
-		key = pathKey(key);
-		final dirs: Array<Dir> = [for (dir in dirs) dir];
-		dirs.sort(cast Dir.compareNames);
-		return compareStates(key, Sha1.make(DirState.fromDirs(dirs, filter)));
-	}
-
-	public function fileChanged(key: String, unit: File): Bool {
-		if (unit.name == '.DS_Store') return false;
-		initHash();
-		final bytes: Null<Bytes> = Utils.gitHash(unit);
-		return bytes == null || compareStates(pathKey(key), bytes);
-	}
-
 	override private function runNode(cfg: HashConfig): Void {
 		for (input in cfg.input) {
 			final f: File = (root: Dir).file(input);
@@ -184,14 +201,6 @@ using pony.text.TextTools;
 		return changed;
 	}
 
-	public function getHashed(): Array<String> {
-		initHash();
-		final r: Array<String> = buildUnitsList(units.keys());
-		log('Keep $file');
-		r.push(file.first);
-		return r;
-	}
-
 	private function getLost(): Array<String> {
 		return [for (key in units.keys()) if (!newUnits.exists(key)) root + key];
 	}
@@ -205,12 +214,6 @@ using pony.text.TextTools;
 			r.push(root + key + '.bin');
 		}
 		return r;
-	}
-
-	public inline function getNotChangedUnits(): Array<String> return buildUnitsList(notChangedUnits.iterator());
-
-	public function getBuildResHashFile(): Null<STriple<String>> {
-		return build != null ? @:nullSafety(Off) new STriple<String>(file.fullDir, build, file.name) : null;
 	}
 
 }

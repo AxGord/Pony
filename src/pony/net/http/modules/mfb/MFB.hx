@@ -17,7 +17,6 @@ import pony.text.tpl.TplPut;
 final class MFB implements IModule {
 
 	public var fb: FB;
-
 	public var appid: String;
 	public var server: WebServer;
 	public var buttonData: String;

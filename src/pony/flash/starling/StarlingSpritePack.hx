@@ -14,9 +14,9 @@ import starling.textures.Texture;
  */
 class StarlingSpritePack extends Sprite {
 
-	private final data: Array<Image>;
-
 	public var currentFrame(default, set): Int = 0;
+
+	private final data: Array<Image>;
 
 	public function new(a: Array<Image>) {
 		super();

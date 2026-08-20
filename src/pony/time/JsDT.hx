@@ -11,8 +11,9 @@ import pony.magic.HasSignal;
  */
 class JsDT implements HasSignal {
 
+	public static var inited(default, null): Bool = false;
+	public static var rareTime: Int = 10000;
 	@:auto public static var onRender: Signal0;
-
 	public static var half(default, set): Bool;
 
 	/**
@@ -20,14 +21,73 @@ class JsDT implements HasSignal {
 	 */
 	public static var halfMobile(never, set): Bool;
 
-	public static var inited(default, null): Bool = false;
-
 	private static var afid: Int = -1;
 	private static var ms: Float = 0;
 	private static var allowFastTickAbort: Bool = false;
 	private static var allowHalfTick: Bool = false;
 	private static var blurId: Int;
-	public static var rareTime: Int = 10000;
+
+	private static function set_half(b: Bool): Bool {
+		if (!inited) {
+			init();
+			return half = b;
+		}
+		if (half != b) {
+			half = b;
+			if (afid != -1) {
+				stop();
+				start();
+			}
+		}
+		return b;
+	}
+
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function set_halfMobile(b: Bool): Bool {
+		if (JsTools.isMobile) half = b;
+		return half;
+	}
+
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function stop(): Void {
+		caf(afid);
+		afid = -1;
+		if (half)
+			allowFastTickAbort = false;
+		else
+			allowHalfTick = false;
+	}
+
+	public static function start(): Void {
+		if (!inited) init();
+		if (half) {
+			allowHalfTick = true;
+			afid = raf(halfTick1);
+		} else {
+			allowFastTickAbort = true;
+			afid = raf(fastTick);
+		}
+	}
+
+	public static function blur(): Void {
+		stop();
+		blurId = Browser.window.setInterval(rareTick, rareTime);
+	}
+
+	public static function focus(): Void {
+		Browser.window.clearInterval(blurId);
+		start();
+	}
+
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function tick(v: Float): Void {
+		DeltaTime.fixedValue = (v - ms) / 1000;
+		ms = v;
+		DeltaTime.fixedDispatch();
+	}
 
 	private static function init(): Void {
 		inited = true;
@@ -54,50 +114,6 @@ class JsDT implements HasSignal {
 
 	private static dynamic function caf(id: Int): Void throw 'Not set';
 
-	private static function set_half(b: Bool): Bool {
-		if (!inited) {
-			init();
-			return half = b;
-		}
-		if (half != b) {
-			half = b;
-			if (afid != -1) {
-				stop();
-				start();
-			}
-		}
-		return b;
-	}
-
-	@SuppressWarnings('checkstyle:MagicNumber')
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private static inline function set_halfMobile(b: Bool): Bool {
-		if (JsTools.isMobile) half = b;
-		return half;
-	}
-
-	public static function start(): Void {
-		if (!inited) init();
-		if (half) {
-			allowHalfTick = true;
-			afid = raf(halfTick1);
-		} else {
-			allowFastTickAbort = true;
-			afid = raf(fastTick);
-		}
-	}
-
-	@SuppressWarnings('checkstyle:MagicNumber')
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public static inline function stop(): Void {
-		caf(afid);
-		afid = -1;
-		if (half)
-			allowFastTickAbort = false;
-		else
-			allowHalfTick = false;
-	}
-
 	private static function halfTick1(v: Float): Void {
 		tick(v);
 		if (allowHalfTick) afid = raf(halfTick2);
@@ -112,24 +128,6 @@ class JsDT implements HasSignal {
 		tick(v);
 		eRender.dispatch();
 		if (allowFastTickAbort) afid = raf(fastTick);
-	}
-
-	@SuppressWarnings('checkstyle:MagicNumber')
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private static inline function tick(v: Float): Void {
-		DeltaTime.fixedValue = (v - ms) / 1000;
-		ms = v;
-		DeltaTime.fixedDispatch();
-	}
-
-	public static function blur(): Void {
-		stop();
-		blurId = Browser.window.setInterval(rareTick, rareTime);
-	}
-
-	public static function focus(): Void {
-		Browser.window.clearInterval(blurId);
-		start();
 	}
 
 	private static function rareTick(): Void {

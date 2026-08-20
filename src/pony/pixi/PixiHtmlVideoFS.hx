@@ -14,6 +14,7 @@ import pony.pixi.App;
 class PixiHtmlVideoFS extends PixiHtmlVideoBase {
 
 	public var fullscreen(default, null) = new Tumbler(false);
+
 	private var normalRect: Rect<Float>;
 	private var fsRect: Rect<Float>;
 

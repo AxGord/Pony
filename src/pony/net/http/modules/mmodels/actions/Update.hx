@@ -34,6 +34,10 @@ class UpdateConnect extends ActionConnect implements ISubActionConnect {
 		return cpq.connection.sessionStorage.get('modelsActions');
 	}
 
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function clr(): Void storage.remove(base.id);
+
 	public function subtpl(parent: ITplPut, data: Dynamic): ITplPut {
 		return new UpdatePut(this, data, parent);
 	}
@@ -85,10 +89,6 @@ class UpdateConnect extends ActionConnect implements ISubActionConnect {
 		}
 		return st;
 	}
-
-	@SuppressWarnings('checkstyle:MagicNumber')
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public inline function clr(): Void storage.remove(base.id);
 
 }
 

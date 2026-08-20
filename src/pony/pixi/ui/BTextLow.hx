@@ -11,10 +11,12 @@ import pony.text.TextTools;
  */
 class BTextLow extends BitmapText implements IWH {
 
+	public var nocache(default, null): Bool;
+
 	public var t(get, set): String;
 	public var size(get, never): Point<Float>;
+
 	private final ansi: String;
-	public var nocache(default, null): Bool;
 
 	public function new(text: String, ?style: BitmapTextStyle, ?ansi: String, nocache: Bool = false) {
 		this.ansi = ansi;
@@ -32,8 +34,6 @@ class BTextLow extends BitmapText implements IWH {
 
 	private function get_size(): Point<Float> return new Point(textWidth, textHeight);
 
-	public function wait(cb: Void -> Void): Void cb();
-
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function get_t(): String return text;
@@ -45,6 +45,8 @@ class BTextLow extends BitmapText implements IWH {
 		if (!nocache) cacheAsBitmap = true;
 		return s;
 	}
+
+	public function wait(cb: Void -> Void): Void cb();
 
 	public function destroyIWH(): Void destroy();
 

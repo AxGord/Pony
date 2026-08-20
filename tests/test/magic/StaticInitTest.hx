@@ -23,8 +23,8 @@ class StaticInitTest {
 class SimpleStaticClass implements StaticInit {
 
 	public static var someField: String = 'Hello';
-	public static var emptyField: String;
 	public static var fromGet: String = getStr('wo');
+	public static var emptyField: String;
 
 	private static function getStr(s: String): String return s + 'rld';
 
@@ -33,8 +33,8 @@ class SimpleStaticClass implements StaticInit {
 class SimpleStaticClass2 implements StaticInit {
 
 	public static var someField: String = 'Hi';
-	public static var emptyField: String;
 	public static var fromGet: String = getStr('m');
+	public static var emptyField: String;
 
 	private static function getStr(s: String): String return s + 'an';
 

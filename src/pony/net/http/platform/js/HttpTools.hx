@@ -10,12 +10,12 @@ import pony.Queue;
  */
 class HttpTools {
 
-	private static var snode: Node;
 	private static var getJsonQueue: Queue<String -> (Dynamic -> Void) -> Void> = new Queue(_getJson);
-
-	private static inline function regcb(cb: Dynamic -> Void) untyped Browser.window.ponyCallbackFunc = cb;
+	private static var snode: Node;
 
 	public static function getJson(url: String, cb: Dynamic -> Void): Void getJsonQueue.call(url, cb);
+
+	private static inline function regcb(cb: Dynamic -> Void) untyped Browser.window.ponyCallbackFunc = cb;
 
 	private static function _getJson(url: String, cb: Dynamic -> Void): Void {
 		regcb(function(r: Dynamic) {

@@ -45,14 +45,14 @@ import pony.magic.HasSignal;
 	 */
 	public function open(): Void input.click();
 
-	private function dialogHandler(event: Event): Void {
-		readFile(untyped event.target.files[0]);
-	}
-
 	private inline function readFile(file: File): Void {
 		var reader: FileReader = new FileReader();
 		reader.readAsArrayBuffer(file);
 		reader.onload = loadHandler.bind(file.name);
+	}
+
+	private function dialogHandler(event: Event): Void {
+		readFile(untyped event.target.files[0]);
 	}
 
 	private function dragenterHandler(event: Event): Void {

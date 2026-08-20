@@ -18,20 +18,22 @@ abstract SmallDeviceQuality(Int) to Int {
 
 @:nullSafety(Off) final class SmartCanvas implements HasSignal {
 
-	@:auto public var onStageResize: Signal2<Float, Rect<Float>>;
-	@:auto public var onDynStageResize: Signal1<Rect<Float>>;
-
-	public var width(default, null): Int;
-	public var height(default, null): Int;
 	public var stageWidth(default, null): Int = 0;
 	public var stageHeight(default, null): Int = 0;
+	public var width(default, null): Int;
+	public var height(default, null): Int;
 	public var stageInitSize(default, null): Point<Int>;
 	public var scale(default, null): Float;
 	public var ratio(default, null): Float;
-	public var dynStage(get, never): Rect<Float>;
-	public var rect: Rect<Float>;
-	public var noScale: Bool = false;
 	public var smallDeviceQuality(default, set): SmallDeviceQuality;
+
+	public var dynStage(get, never): Rect<Float>;
+
+	public var noScale: Bool = false;
+	@:auto public var onStageResize: Signal2<Float, Rect<Float>>;
+	@:auto public var onDynStageResize: Signal1<Rect<Float>>;
+	public var rect: Rect<Float>;
+
 	private var smallDeviceQualityOffset: Float;
 
 	public function new(?size: Point<UInt>, smallDeviceQuality: SmallDeviceQuality = SmallDeviceQuality.ideal) {
@@ -47,12 +49,6 @@ abstract SmallDeviceQuality(Int) to Int {
 		eDynStageResize.onLost << lostDynStageHandler;
 	}
 
-	private function takeDynStageHandler(): Void onStageResize << dynStageResize;
-
-	private function lostDynStageHandler(): Void onStageResize >> dynStageResize;
-
-	private function dynStageResize(): Void eDynStageResize.dispatch(dynStage);
-
 	public inline function set_smallDeviceQuality(q: SmallDeviceQuality): SmallDeviceQuality {
 		if (smallDeviceQuality != q) {
 			smallDeviceQuality = q;
@@ -66,12 +62,6 @@ abstract SmallDeviceQuality(Int) to Int {
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function get_dynStage(): Rect<Float> {
 		return new Rect(-rect.x, -rect.y, width / scale, height / scale);
-	}
-
-	private function setSize(w: Int, h: Int): Void {
-		width = w;
-		height = h;
-		if (stageInitSize != null) setStageSize(w, h);
 	}
 
 	public inline function updateSize(): Void {}
@@ -107,6 +97,18 @@ abstract SmallDeviceQuality(Int) to Int {
 			rect = new Rect(xr, yr, wr, hr);
 		}
 		eStageResize.dispatch(ratio, rect);
+	}
+
+	private function takeDynStageHandler(): Void onStageResize << dynStageResize;
+
+	private function lostDynStageHandler(): Void onStageResize >> dynStageResize;
+
+	private function dynStageResize(): Void eDynStageResize.dispatch(dynStage);
+
+	private function setSize(w: Int, h: Int): Void {
+		width = w;
+		height = h;
+		if (stageInitSize != null) setStageSize(w, h);
 	}
 
 }

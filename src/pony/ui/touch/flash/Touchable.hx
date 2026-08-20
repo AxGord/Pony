@@ -16,20 +16,62 @@ import pony.ui.touch.TouchableBase;
  */
 class Touchable extends TouchableBase {
 
-	private static inline final SWITCH_TO_MOUSE_DELAY: UInt = 500;
-
 	@:bindable public static var touchMode: Bool = false;
 	public static var onAnyTouch(default, null): Signal1<TO>;
 	public static var touchSupport(get, null): Bool;
+
+	private static inline final SWITCH_TO_MOUSE_DELAY: UInt = 500;
 
 	private static var inited: Bool = false;
 	private static var needSw: Bool = false;
 	private static var wait: Bool = false;
 
+	private var obj: DisplayObject;
+	private var touch: TouchableTouch;
+	private var mouse: TouchableMouse;
+
+	public function new(obj: DisplayObject) {
+		super();
+		this.obj = obj;
+		init();
+		if (touchMode)
+			touch = new TouchableTouch(obj, this);
+		else
+			mouse = new TouchableMouse(obj, this);
+		changeTouchMode - true << toTouch;
+		changeTouchMode - false << toMouse;
+	}
+
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function get_touchSupport(): Bool {
 		return #if touchsim true #else Multitouch.supportsTouchEvents #end;
+	}
+
+	override public function destroy(): Void {
+		changeTouchMode - true >> toTouch;
+		changeTouchMode - false >> toMouse;
+		obj = null;
+		if (touchMode) {
+			touch.destroy();
+			touch = null;
+		} else {
+			mouse.destroy();
+			mouse = null;
+		}
+		super.destroy();
+	}
+
+	private function toTouch(): Void {
+		mouse.destroy();
+		mouse = null;
+		touch = new TouchableTouch(obj, this);
+	}
+
+	private function toMouse(): Void {
+		touch.destroy();
+		touch = null;
+		mouse = new TouchableMouse(obj, this);
 	}
 
 	public static function init(?inputMode: MultitouchInputMode): Void {
@@ -90,48 +132,6 @@ class Touchable extends TouchableBase {
 
 	private static function touchHandler(): Void {
 		needSw = false;
-	}
-
-	private var obj: DisplayObject;
-	private var touch: TouchableTouch;
-	private var mouse: TouchableMouse;
-
-	public function new(obj: DisplayObject) {
-		super();
-		this.obj = obj;
-		init();
-		if (touchMode)
-			touch = new TouchableTouch(obj, this);
-		else
-			mouse = new TouchableMouse(obj, this);
-		changeTouchMode - true << toTouch;
-		changeTouchMode - false << toMouse;
-	}
-
-	override public function destroy(): Void {
-		changeTouchMode - true >> toTouch;
-		changeTouchMode - false >> toMouse;
-		obj = null;
-		if (touchMode) {
-			touch.destroy();
-			touch = null;
-		} else {
-			mouse.destroy();
-			mouse = null;
-		}
-		super.destroy();
-	}
-
-	private function toTouch(): Void {
-		mouse.destroy();
-		mouse = null;
-		touch = new TouchableTouch(obj, this);
-	}
-
-	private function toMouse(): Void {
-		touch.destroy();
-		touch = null;
-		mouse = new TouchableMouse(obj, this);
 	}
 
 }

@@ -21,7 +21,6 @@ final class MVK implements IModule {
 	public var server: WebServer;
 	public var buttonData: String;
 	public var appid: Int;
-
 	public var vk: Dynamic;
 
 	public function new(appid: Int, secret: String) {

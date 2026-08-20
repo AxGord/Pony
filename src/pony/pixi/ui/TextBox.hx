@@ -15,8 +15,9 @@ using pony.pixi.PixiExtends;
  */
 class TextBox extends BaseLayout<RubberLayoutCore<Container>> {
 
-	public var text(get, set): String;
 	public var obj(default, null): BText;
+
+	public var text(get, set): String;
 
 	private final nocache: Bool;
 

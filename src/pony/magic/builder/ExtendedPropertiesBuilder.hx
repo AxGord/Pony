@@ -17,8 +17,10 @@ class ExtendedPropertiesBuilder {
 
 	#if macro
 	private static inline final hprefix: String = '_';
-	private static var used: Map<Int, Array<String>>;
 	private static final repList: Array<String> = [];
+	private static final pmeta = [':toProp', 'toProp', ':prop', 'prop'];
+
+	private static var used: Map<Int, Array<String>>;
 	private static var lvl: Int;
 	#end
 
@@ -56,6 +58,33 @@ class ExtendedPropertiesBuilder {
 			case FVar(_, e) if (e != null):
 				e.expr = ExprTools.map(e, repl).expr;
 			case _:
+		}
+		return fs;
+	}
+
+	macro public static function f2p(): Array<Field> {
+		final fs: Array<Field> = [];
+		for (f in Context.getBuildFields()) {
+			switch f.kind {
+				case FFun(fun) if (Tools.checkMeta(f.meta, pmeta)):
+					final access: Array<Access> = f.access.copy();
+					access.remove(AInline);
+					fs.push({ kind: FProp('get', 'never', fun.ret), name: f.name, pos: f.pos, access: access });
+					final access: Array<Access> = [];
+					if (f.access.indexOf(AStatic) != -1) access.push(AStatic);
+					if (f.access.indexOf(AInline) != -1) access.push(AInline);
+					fs.push({ kind: f.kind, name: 'get_${f.name}', pos: f.pos, access: access });
+				case FVar(t, e) if (Tools.checkMeta(f.meta, pmeta)):
+					final access: Array<Access> = f.access.copy();
+					access.remove(AInline);
+					fs.push({ kind: FProp('get', 'never', t), name: f.name, pos: f.pos, access: access });
+					final access: Array<Access> = [];
+					if (f.access.indexOf(AStatic) != -1) access.push(AStatic);
+					if (f.access.indexOf(AInline) != -1) access.push(AInline);
+					fs.push({ kind: FFun({ args: [], params: [], ret: t, expr: macro return $e }), name: 'get_${f.name}', pos: f.pos, access: access });
+				case _:
+					fs.push(f);
+			}
 		}
 		return fs;
 	}
@@ -107,35 +136,6 @@ class ExtendedPropertiesBuilder {
 		lvl--;
 		return e;
 	}
-
-	private static final pmeta = [':toProp', 'toProp', ':prop', 'prop'];
 	#end
-
-	macro public static function f2p(): Array<Field> {
-		final fs: Array<Field> = [];
-		for (f in Context.getBuildFields()) {
-			switch f.kind {
-				case FFun(fun) if (Tools.checkMeta(f.meta, pmeta)):
-					final access: Array<Access> = f.access.copy();
-					access.remove(AInline);
-					fs.push({ kind: FProp('get', 'never', fun.ret), name: f.name, pos: f.pos, access: access });
-					final access: Array<Access> = [];
-					if (f.access.indexOf(AStatic) != -1) access.push(AStatic);
-					if (f.access.indexOf(AInline) != -1) access.push(AInline);
-					fs.push({ kind: f.kind, name: 'get_${f.name}', pos: f.pos, access: access });
-				case FVar(t, e) if (Tools.checkMeta(f.meta, pmeta)):
-					final access: Array<Access> = f.access.copy();
-					access.remove(AInline);
-					fs.push({ kind: FProp('get', 'never', t), name: f.name, pos: f.pos, access: access });
-					final access: Array<Access> = [];
-					if (f.access.indexOf(AStatic) != -1) access.push(AStatic);
-					if (f.access.indexOf(AInline) != -1) access.push(AInline);
-					fs.push({ kind: FFun({ args: [], params: [], ret: t, expr: macro return $e }), name: 'get_${f.name}', pos: f.pos, access: access });
-				case _:
-					fs.push(f);
-			}
-		}
-		return fs;
-	}
 
 }

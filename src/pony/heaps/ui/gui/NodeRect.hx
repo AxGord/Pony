@@ -18,9 +18,11 @@ import pony.geom.Point;
 @:nullSafety final class NodeRect extends Node {
 
 	public var graphics: Graphics;
+
 	private final round: Float;
-	private var color: Null<UColor>;
 	private final lineStyle: Null<Pair<UColor, Float>>;
+
+	private var color: Null<UColor>;
 
 	public function new(
 		size: Point<Float>, ?lineStyle: Pair<UColor, Float>, ?color: UColor, round: Float = 0, ?parent: Object
@@ -35,6 +37,18 @@ import pony.geom.Point;
 		changeFlipy << changeFlipyHandler;
 		changeTint << updateColor;
 		updateSize();
+	}
+
+	override public function destroy(): Void {
+		super.destroy();
+		graphics.clear();
+		@:nullSafety(Off) graphics = null;
+	}
+
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function updatePosition(): Void {
+		graphics.setPosition(flipx ? w : 0, flipy ? h : 0);
 	}
 
 	private function updateSize(): Void {
@@ -59,18 +73,6 @@ import pony.geom.Point;
 	private function changeFlipyHandler(flip: Bool): Void {
 		graphics.scaleY = flip ? -1 : 1;
 		updatePosition();
-	}
-
-	@SuppressWarnings('checkstyle:MagicNumber')
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function updatePosition(): Void {
-		graphics.setPosition(flipx ? w : 0, flipy ? h : 0);
-	}
-
-	override public function destroy(): Void {
-		super.destroy();
-		graphics.clear();
-		@:nullSafety(Off) graphics = null;
 	}
 
 }

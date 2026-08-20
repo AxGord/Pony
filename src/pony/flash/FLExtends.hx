@@ -37,6 +37,13 @@ class FLExtends {
 	 */
 	public static inline function v(f: Void -> Void): Dynamic return function(Void) f();
 
+	public static inline function removeAllChild(d: DisplayObjectContainer): Void while (d.numChildren > 0) d.removeChildAt(0);
+
+	public static inline function getTyped<T:DisplayObject>(o: DisplayObjectContainer, name: String, cl: Class<T>): T
+		return cast get(o, name);
+
+	public static inline function get(o: DisplayObjectContainer, name: String): DisplayObject return untyped o[name];
+
 	public static function childrens(d: DisplayObjectContainer): Iterator<DisplayObject> {
 		final it: IntIterator = 0...d.numChildren;
 		return { hasNext: it.hasNext, next: function(): DisplayObject return d.getChildAt(it.next()) };
@@ -54,8 +61,6 @@ class FLExtends {
 		return r;
 	}
 
-	public static inline function removeAllChild(d: DisplayObjectContainer): Void while (d.numChildren > 0) d.removeChildAt(0);
-
 	public static function toCenter(o: DisplayObject, width: Float, height: Float): Void {
 		final b = o.getBounds(Lib.current.stage);
 		o.x = width / 2 - (o.width / 2 - (o.x - b.x));
@@ -63,11 +68,6 @@ class FLExtends {
 	}
 
 	public static function toScreenCenter(o: DisplayObject): Void toCenter(o, FLTools.width, FLTools.height);
-
-	public static inline function getTyped<T:DisplayObject>(o: DisplayObjectContainer, name: String, cl: Class<T>): T
-		return cast get(o, name);
-
-	public static inline function get(o: DisplayObjectContainer, name: String): DisplayObject return untyped o[name];
 
 	// inline public static function button(o:DisplayObjectContainer, name:String):ButtonCore return getTyped(o, name, Button).core;
 

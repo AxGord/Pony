@@ -15,6 +15,7 @@ typedef ConfigOptions = Map<String, Or<String, ConfigOptions>>;
 class Config extends Section {
 
 	public var options(default, null): ConfigOptions = [];
+
 	public var dep: Array<String> = [];
 	public var stringmapAllowed: Bool = true;
 

@@ -87,6 +87,14 @@ class ConsoleView extends PrinterBase implements Printer {
 		sprite.visible = false;
 	}
 
+	public inline function show(): Void slideCore.open();
+
+	public inline function hide(): Void slideCore.close();
+
+	public function attach(): Void flash.Lib.current.addChild(sprite);
+
+	public function remove(): Void flash.Lib.current.removeChild(sprite);
+
 	private function update(v: Float, opened: Bool, closed: Bool): Void {
 		sprite.y = v;
 		sprite.visible = !closed;
@@ -144,13 +152,5 @@ class ConsoleView extends PrinterBase implements Printer {
 
 		// textField.scrollV = textField.maxScrollV;
 	}
-
-	public function attach(): Void flash.Lib.current.addChild(sprite);
-
-	public function remove(): Void flash.Lib.current.removeChild(sprite);
-
-	public inline function show(): Void slideCore.open();
-
-	public inline function hide(): Void slideCore.close();
 
 }

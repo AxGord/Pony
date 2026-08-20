@@ -12,8 +12,9 @@ final class MKeyAuth implements IModule {
 	public static inline final PARAM: String = 'authkey';
 	public static inline final SESSION: String = 'keyAuthed';
 
-	private var keys: Array<String>;
 	public var server: WebServer;
+
+	private var keys: Array<String>;
 
 	public function new(keys: Array<String>) this.keys = keys;
 

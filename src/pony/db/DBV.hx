@@ -26,6 +26,15 @@ abstract DBV({ type: DBVT, ?val: Dynamic }) {
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function new(v) this = v;
 
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function get_NOW(): DBV return new DBV({ type: TFun(FNow) });
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function get_TIMESTAMP(): DBV return new DBV({ type: TFun(FUnixTimeStamp) });
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function get_NULL(): DBV return new DBV({ type: TNull });
+
 	public function get(f: String -> String): String {
 		return switch this.type {
 			case TString: f(this.val);
@@ -41,14 +50,5 @@ abstract DBV({ type: DBVT, ?val: Dynamic }) {
 
 	@:from #if (haxe_ver >= 4.2) extern #else @:extern #end
 	public static inline function fromString(v: String): DBV return new DBV({ type: TString, val: v });
-
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private static inline function get_NOW(): DBV return new DBV({ type: TFun(FNow) });
-
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private static inline function get_TIMESTAMP(): DBV return new DBV({ type: TFun(FUnixTimeStamp) });
-
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private static inline function get_NULL(): DBV return new DBV({ type: TNull });
 
 }

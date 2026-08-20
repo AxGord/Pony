@@ -25,7 +25,6 @@ class MaxRectsBinPack {
 	public var binWidth: Int = 0;
 	public var binHeight: Int = 0;
 	public var allowRotations: Bool = false;
-
 	public var usedRectangles: Vector<Rectangle> = new Vector<Rectangle>();
 	public var freeRectangles: Vector<Rectangle> = new Vector<Rectangle>();
 
@@ -38,29 +37,6 @@ class MaxRectsBinPack {
 
 	public function new(width: Int, height: Int, rotations: Bool = true) {
 		init(width, height, rotations);
-	}
-
-	private function init(width: Int, height: Int, rotations: Bool = true): Void {
-		// if( count(width) % 1 != 0 ||count(height) % 1 != 0)
-		//    throw new Error("Must be 2,4,8,16,32,...512,1024,...");
-		binWidth = width;
-		binHeight = height;
-		allowRotations = rotations;
-
-		final n: Rectangle = new Rectangle();
-		n.x = 0;
-		n.y = 0;
-		n.width = width;
-		n.height = height;
-
-		usedRectangles.length = 0;
-
-		freeRectangles.length = 0;
-		freeRectangles.push(n);
-	}
-
-	private function count(n: Float): Float {
-		return n >= 2 ? count(n / 2) : n;
 	}
 
 	/**
@@ -88,6 +64,29 @@ class MaxRectsBinPack {
 		placeRectangle(newNode);
 		// trace(newNode);
 		return newNode;
+	}
+
+	private function init(width: Int, height: Int, rotations: Bool = true): Void {
+		// if( count(width) % 1 != 0 ||count(height) % 1 != 0)
+		//    throw new Error("Must be 2,4,8,16,32,...512,1024,...");
+		binWidth = width;
+		binHeight = height;
+		allowRotations = rotations;
+
+		final n: Rectangle = new Rectangle();
+		n.x = 0;
+		n.y = 0;
+		n.width = width;
+		n.height = height;
+
+		usedRectangles.length = 0;
+
+		freeRectangles.length = 0;
+		freeRectangles.push(n);
+	}
+
+	private function count(n: Float): Float {
+		return n >= 2 ? count(n / 2) : n;
 	}
 
 	private function insert2(rectangles: Vector<Rectangle>, dst: Vector<Rectangle>, method: Int): Void {

@@ -29,6 +29,16 @@ class SocketClient extends SocketClientBase {
 		_init();
 	}
 
+	public function send(data: BytesOutput): Void q.call(data);
+
+	override public function close(): Void {
+		DeltaTime.fixedUpdate >> updateHandler;
+		super.close();
+		try {
+			socket.close();
+		} catch (_: Dynamic) {}
+	}
+
 	private function _init(): Void {
 		q = new Queue(_send);
 		socket.setBlocking(false);
@@ -70,8 +80,6 @@ class SocketClient extends SocketClientBase {
 
 	private function closeHandler(_): Void close();
 
-	public function send(data: BytesOutput): Void q.call(data);
-
 	private function _send(data: BytesOutput): Void {
 		final b: Bytes = data.getBytes();
 		logBytes('Send data', b);
@@ -82,14 +90,6 @@ class SocketClient extends SocketClientBase {
 			error(e);
 		}
 		DeltaTime.fixedUpdate < q.next;
-	}
-
-	override public function close(): Void {
-		DeltaTime.fixedUpdate >> updateHandler;
-		super.close();
-		try {
-			socket.close();
-		} catch (_: Dynamic) {}
 	}
 
 }

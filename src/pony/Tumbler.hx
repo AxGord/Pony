@@ -9,9 +9,9 @@ import pony.magic.HasSignal;
  */
 class Tumbler implements HasSignal {
 
+	@:bindable public var enabled: Bool = true;
 	public var onEnable: Signal0;
 	public var onDisable: Signal0;
-	@:bindable public var enabled: Bool = true;
 
 	public function new(enabled: Bool = true) {
 		this.enabled = enabled;
@@ -23,8 +23,8 @@ class Tumbler implements HasSignal {
 
 	public inline function disable(): Void enabled = false;
 
-	public function sw(): Void enabled = !enabled;
-
 	public inline function setEnabled(v: Bool): Void enabled = v;
+
+	public function sw(): Void enabled = !enabled;
 
 }

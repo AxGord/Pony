@@ -14,16 +14,19 @@ import pony.ui.AssetManager;
  */
 @:nullSafety class LazyBitmap extends Bitmap {
 
-	private final asset: String;
-	private final aname: Null<String>;
-	private final needAnim: Bool;
-	private var anim: Null<Tween>;
 	public var finalAlpha(default, set): Float = 1;
 	public var finalVisible(default, set): Bool = false;
 	public var offset(default, set): Point<Float> = 0;
-	public var posWithOffset(get, set): Point<Float>;
 	public var posWitoutOffset(default, null): Point<Float> = 0;
+
+	public var posWithOffset(get, set): Point<Float>;
+
+	private final asset: String;
+	private final aname: Null<String>;
+	private final needAnim: Bool;
+
 	private var inited: Bool = false;
+	private var anim: Null<Tween>;
 
 	public function new(asset: String, ?name: String, anim: Bool = false, hidden: Bool = false, ?parent: Object) {
 		super(parent);
@@ -50,6 +53,30 @@ import pony.ui.AssetManager;
 		return p;
 	}
 
+	private inline function set_finalAlpha(v: Float): Float {
+		finalAlpha = v;
+		if (anim == null) setAlpha(v);
+		return v;
+	}
+
+	private inline function set_finalVisible(v: Bool): Bool {
+		visible = v && alpha != 0;
+		finalVisible = v;
+		if (v && !inited) init();
+		return v;
+	}
+
+	public inline function setAlpha(v: Float): Void {
+		visible = finalVisible && v != 0;
+		alpha = v;
+	}
+
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function setTile(): Void {
+		tile = AssetManager.texture(asset, aname);
+	}
+
 	private function init(): Void {
 		inited = true;
 		if (AssetManager.isLoaded(asset)) {
@@ -63,12 +90,6 @@ import pony.ui.AssetManager;
 			}
 			AssetManager.loadComplete(AssetManager.load.bind('', asset), loadedHandler);
 		}
-	}
-
-	@SuppressWarnings('checkstyle:MagicNumber')
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function setTile(): Void {
-		tile = AssetManager.texture(asset, aname);
 	}
 
 	private function loadedHandler(): Void {
@@ -87,24 +108,6 @@ import pony.ui.AssetManager;
 		if (anim == null) return;
 		anim.destroy();
 		anim = null;
-	}
-
-	private inline function set_finalAlpha(v: Float): Float {
-		finalAlpha = v;
-		if (anim == null) setAlpha(v);
-		return v;
-	}
-
-	public inline function setAlpha(v: Float): Void {
-		visible = finalVisible && v != 0;
-		alpha = v;
-	}
-
-	private inline function set_finalVisible(v: Bool): Bool {
-		visible = v && alpha != 0;
-		finalVisible = v;
-		if (v && !inited) init();
-		return v;
 	}
 
 }

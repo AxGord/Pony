@@ -19,14 +19,13 @@ class HtmlContainerBase implements HasSignal {
 	public static inline final POSITION: String = 'absolute';
 	public static inline final POSITION_FIXED: String = 'fixed';
 
-	@:auto public var onResize: Signal1<Rect<Float>>;
-
+	public var targetPos(default, set): Point<Float> = new Point(.0, .0);
 	public var app(default, null): App;
-
 	public var targetStyle(default, set): CSSStyleDeclaration;
 	public var targetRect(default, set): Rect<Float>;
-	public var targetPos(default, set): Point<Float> = new Point(.0, .0);
+
 	public var posUpdater: Tumbler = new Tumbler(true);
+	@:auto public var onResize: Signal1<Rect<Float>>;
 
 	private var lastRect: Rect<Float> = null;
 	private var ceil: Bool;
@@ -47,44 +46,6 @@ class HtmlContainerBase implements HasSignal {
 		final style: CSSStyleDeclaration = Browser.window.getComputedStyle(app.element);
 		haveTransform = style.transform != 'none';
 	}
-
-	private function scrollHandler(): Void DeltaTime.fixedUpdate < resize;
-
-	private function resizeHandler(): Void DeltaTime.fixedUpdate < _resizeHandler;
-
-	private function _resizeHandler(): Void {
-		lastRect = { x: app.scale * (targetRect.x + targetPos.x + app.container.x / app.container.width), y: app.scale * (targetRect.y
-			+ targetPos.y + app.container.y / app.container.height), width: app.scale * targetRect.width, height: app.scale * targetRect.height };
-		if (!fixed) {
-			lastRect.x += lastRect.width;
-			lastRect.y += lastRect.height;
-		}
-		resize();
-	}
-
-	public function resize(): Void {
-		if (!posUpdater.enabled) return;
-		if (fixed) {
-			if (haveTransform) {
-				targetStyle.top = px(lastRect.y);
-				targetStyle.left = px(lastRect.x);
-			} else {
-				final b: DOMRect = app.element.getBoundingClientRect();
-				targetStyle.top = px(b.top + lastRect.y);
-				targetStyle.left = px(b.left + lastRect.x);
-			}
-		} else {
-			targetStyle.bottom = px(app.element.clientHeight - lastRect.y);
-			targetStyle.right = px(app.element.clientWidth - lastRect.x);
-		}
-		targetStyle.width = px(lastRect.width);
-		targetStyle.height = px(lastRect.height);
-		eResize.dispatch(lastRect);
-	}
-
-	@SuppressWarnings('checkstyle:MagicNumber')
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function px(v: Float): String return (ceil ? Std.int(v) : v) + 'px';
 
 	private function set_targetStyle(s: CSSStyleDeclaration): CSSStyleDeclaration {
 		targetStyle = s;
@@ -114,6 +75,44 @@ class HtmlContainerBase implements HasSignal {
 			resizeHandler();
 		}
 		return v;
+	}
+
+	public function resize(): Void {
+		if (!posUpdater.enabled) return;
+		if (fixed) {
+			if (haveTransform) {
+				targetStyle.top = px(lastRect.y);
+				targetStyle.left = px(lastRect.x);
+			} else {
+				final b: DOMRect = app.element.getBoundingClientRect();
+				targetStyle.top = px(b.top + lastRect.y);
+				targetStyle.left = px(b.left + lastRect.x);
+			}
+		} else {
+			targetStyle.bottom = px(app.element.clientHeight - lastRect.y);
+			targetStyle.right = px(app.element.clientWidth - lastRect.x);
+		}
+		targetStyle.width = px(lastRect.width);
+		targetStyle.height = px(lastRect.height);
+		eResize.dispatch(lastRect);
+	}
+
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function px(v: Float): String return (ceil ? Std.int(v) : v) + 'px';
+
+	private function scrollHandler(): Void DeltaTime.fixedUpdate < resize;
+
+	private function resizeHandler(): Void DeltaTime.fixedUpdate < _resizeHandler;
+
+	private function _resizeHandler(): Void {
+		lastRect = { x: app.scale * (targetRect.x + targetPos.x + app.container.x / app.container.width), y: app.scale * (targetRect.y
+			+ targetPos.y + app.container.y / app.container.height), width: app.scale * targetRect.width, height: app.scale * targetRect.height };
+		if (!fixed) {
+			lastRect.x += lastRect.width;
+			lastRect.y += lastRect.height;
+		}
+		resize();
 	}
 
 }

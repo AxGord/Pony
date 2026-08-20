@@ -18,19 +18,16 @@ class StarlingTurningFree extends Sprite {
 	private static var _id: Int = 0;
 
 	public var id: Int = _id++;
+	public var core: TurningCore;
 
+	private final _zero: Point = new Point(0, 0);
+	private final _bufferPoint: Point = new Point(0, 0);
 	private final _source: Sprite;
-
 	private final handle: DisplayObject;
 	private final lmin: DisplayObject;
 	private final lmax: DisplayObject;
 	private final button: StarlingButton;
-
 	private final _handleInitAngleDeg: Float;
-	private final _zero: Point = new Point(0, 0);
-	private final _bufferPoint: Point = new Point(0, 0);
-
-	public var core: TurningCore;
 
 	public function new(source: Sprite, core: TurningCore, flashSource: flash.display.Sprite) {
 		super();

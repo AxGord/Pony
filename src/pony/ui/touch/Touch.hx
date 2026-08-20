@@ -11,6 +11,11 @@ import pony.magic.HasSignal;
 @SuppressWarnings('checkstyle:MagicNumber')
 @:nullSafety class Touch implements HasSignal {
 
+	public var x(default, null): Float = 0;
+	public var y(default, null): Float = 0;
+
+	public var point(get, never): Point<Float>;
+
 	@:auto public var onOver: Signal1<Touch>;
 	@:auto public var onOut: Signal1<Touch>;
 	@:auto public var onOutUp: Signal1<Touch>;
@@ -20,11 +25,10 @@ import pony.magic.HasSignal;
 	@:auto public var onUp: Signal1<Touch>;
 	@:auto public var onMove: Signal1<Touch>;
 
-	public var x(default, null): Float = 0;
-	public var y(default, null): Float = 0;
-	public var point(get, never): Point<Float>;
-
 	public function new() {}
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function get_point(): Point<Float> return new Point<Float>(x, y);
 
 	public function clear(): Void {
 		onOver.clear();
@@ -43,8 +47,5 @@ import pony.magic.HasSignal;
 		y = newY;
 		return this;
 	}
-
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function get_point(): Point<Float> return new Point<Float>(x, y);
 
 }

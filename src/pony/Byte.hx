@@ -20,10 +20,10 @@ abstract Byte(Int) from Int to Int {
 
 	private inline function get_b(): Int return this & 0xF;
 
-	public static inline function create(a: Int, b: Int): Byte return (a << 4) + b;
-
 	public inline function chechSumWith(b: Byte): Byte return (this + (b: Int)) & 0xFF;
 
 	@:to public inline function toString(): String return '0x${this.hex()}';
+
+	public static inline function create(a: Int, b: Int): Byte return (a << 4) + b;
 
 }

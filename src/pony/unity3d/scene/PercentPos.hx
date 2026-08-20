@@ -22,11 +22,6 @@ class PercentPos extends MonoBehaviour implements IPercent {
 	@:meta(UnityEngine.HideInInspector)
 	private var size: Float;
 
-	private function Start(): Void {
-		initPos = transform.localPosition.y;
-		size = Math.abs(nullPos > initPos ? nullPos - initPos : initPos - nullPos);
-	}
-
 	public function set_percent(v: Float): Float {
 		if (v > 1) v = 1;
 		if (v < 0) v = 0;
@@ -42,6 +37,11 @@ class PercentPos extends MonoBehaviour implements IPercent {
 		//	renderer.enabled = false;
 		// }
 		return percent = v;
+	}
+
+	private function Start(): Void {
+		initPos = transform.localPosition.y;
+		size = Math.abs(nullPos > initPos ? nullPos - initPos : initPos - nullPos);
 	}
 
 }

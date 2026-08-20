@@ -20,18 +20,18 @@ using pony.pixi.PixiExtends;
  */
 class Bar extends Sprite implements HasSignal implements IWH {
 
+	public var size(get, never): Point<Float>;
+
 	public var core: SmoothBarCore;
 	@:auto public var onReady: Signal1<Point<Int>>;
 
 	private var _wait: WaitReady = new WaitReady();
-	public var size(get, never): Point<Float>;
-
+	private var invert: Bool = false;
 	private var barContainter: Sprite;
 	private var bg: Or<Sprite, Point<Int>>;
 	private var begin: Sprite;
 	private var end: Sprite;
 	private var fill: Sprite;
-	private var invert: Bool = false;
 	private var smooth: Bool;
 
 	public function new(
@@ -72,14 +72,41 @@ class Bar extends Sprite implements HasSignal implements IWH {
 		onReady.add(_wait.ready, 10);
 	}
 
-	public inline function wait(cb: Void -> Void): Void _wait.wait(cb);
-
 	private function get_size(): Point<Float> {
 		return switch bg {
 			case OrState.A(v): new Point(v.width, v.height);
 			case OrState.B(v): cast v;
 		}
 	}
+
+	public inline function wait(cb: Void -> Void): Void _wait.wait(cb);
+
+	override public function destroy(?options: haxe.extern.EitherType<Bool, DestroyOptions>): Void {
+		core.destroy();
+		core = null;
+		destroySignals();
+		switch bg {
+			case OrState.A(v):
+				removeChild(v);
+				v.destroy();
+			case _:
+		}
+		bg = null;
+		removeChild(begin);
+		begin.destroy();
+		begin = null;
+		removeChild(fill);
+		fill.destroy();
+		fill = null;
+		if (end != null) {
+			removeChild(end);
+			end.destroy();
+			end = null;
+		}
+		super.destroy(options);
+	}
+
+	public function destroyIWH(): Void destroy();
 
 	private function init(): Void {
 		end = new Sprite(begin.texture);
@@ -122,32 +149,5 @@ class Bar extends Sprite implements HasSignal implements IWH {
 		fill.height = p;
 		end.y = fill.y + fill.height + begin.height;
 	}
-
-	override public function destroy(?options: haxe.extern.EitherType<Bool, DestroyOptions>): Void {
-		core.destroy();
-		core = null;
-		destroySignals();
-		switch bg {
-			case OrState.A(v):
-				removeChild(v);
-				v.destroy();
-			case _:
-		}
-		bg = null;
-		removeChild(begin);
-		begin.destroy();
-		begin = null;
-		removeChild(fill);
-		fill.destroy();
-		fill = null;
-		if (end != null) {
-			removeChild(end);
-			end.destroy();
-			end = null;
-		}
-		super.destroy(options);
-	}
-
-	public function destroyIWH(): Void destroy();
 
 }

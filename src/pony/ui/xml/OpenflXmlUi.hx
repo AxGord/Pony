@@ -34,8 +34,9 @@ using StringTools;
 class OpenflXmlUi extends Sprite implements HasAbstract {
 
 	private final FILTERS: Map<String, BitmapFilter> = [];
-	private var SCALE: Float = 1;
 	private final tweens: TweenMap<Dynamic> = [];
+
+	private var SCALE: Float = 1;
 
 	public function createUIElement(name: String, attrs: Dynamic<String>, content: Array<Dynamic>, textContent: String): Dynamic {
 		final obj: DisplayObject = switch name {
@@ -140,12 +141,6 @@ class OpenflXmlUi extends Sprite implements HasAbstract {
 	private function customUIElement(name: String, attrs: Dynamic<String>, content: Array<Dynamic>): Dynamic
 		throw 'Unknown component $name';
 
-	private static function splitAttr(s: String): Array<String> {
-		return s.split(',').map(StringTools.trim).map(function(v) return v == '' ? null : v);
-	}
-
-	private static inline function isTrue(s: String): Bool return s != null && s.toLowerCase() == 'true';
-
 	@:abstract private function _createUI(): DisplayObject;
 
 	private function createUI(): Void {
@@ -163,6 +158,12 @@ class OpenflXmlUi extends Sprite implements HasAbstract {
 			for (n in Reflect.fields(d)) if (n != 'extends') Reflect.setProperty(f, n, Std.parseFloat(Reflect.field(d, n)));
 			FILTERS[name] = f;
 		}
+	}
+
+	private static inline function isTrue(s: String): Bool return s != null && s.toLowerCase() == 'true';
+
+	private static function splitAttr(s: String): Array<String> {
+		return s.split(',').map(StringTools.trim).map(function(v) return v == '' ? null : v);
 	}
 
 }

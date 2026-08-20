@@ -13,10 +13,11 @@ import pony.ui.AssetManager;
  */
 class Particles extends Sprite {
 
+	public var emitter: Emitter;
+
 	private var cfgurl: String;
 	private var imagesurl: Array<String>;
 	private var asset: String;
-	public var emitter: Emitter;
 
 	public function new(cfgurl: String, imagesurl: Array<String>, ?asset: String) {
 		super();
@@ -24,18 +25,6 @@ class Particles extends Sprite {
 		this.imagesurl = imagesurl;
 		this.asset = asset;
 		AssetManager.loadComplete(AssetManager.load.bind('', asset == null ? [cfgurl].concat(imagesurl) : [cfgurl, asset]), loadHandler);
-	}
-
-	private function loadHandler(): Void {
-		if (cfgurl == null) return;
-		final textures = asset == null
-			? [for (e in imagesurl) AssetManager.texture(e)]
-			: [for (e in imagesurl) AssetManager.texture(asset, e)];
-		emitter = new Emitter(this, textures, AssetManager.json(cfgurl));
-		play();
-		cfgurl = null;
-		imagesurl = null;
-		asset = null;
 	}
 
 	public inline function play(): Void DeltaTime.fixedUpdate << emitter.update;
@@ -53,6 +42,18 @@ class Particles extends Sprite {
 			asset = null;
 		}
 		super.destroy(options);
+	}
+
+	private function loadHandler(): Void {
+		if (cfgurl == null) return;
+		final textures = asset == null
+			? [for (e in imagesurl) AssetManager.texture(e)]
+			: [for (e in imagesurl) AssetManager.texture(asset, e)];
+		emitter = new Emitter(this, textures, AssetManager.json(cfgurl));
+		play();
+		cfgurl = null;
+		imagesurl = null;
+		asset = null;
 	}
 
 }

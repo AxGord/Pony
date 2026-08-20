@@ -30,18 +30,24 @@ import pony.js.SmartCanvas;
 	public static var instance: Null<HeapsApp>;
 	public static var s2dReady(get, never): Bool;
 	public static var fps(get, set): Float;
+
 	public static inline final FPS_COMPENSATION: Float = 1.05;
+
 	private static var fpsInterval: Float = 1 / (hxd.Timer.wantedFPS * FPS_COMPENSATION);
 
 	@:auto public var onInit: Signal1<HeapsApp>;
+
 	public var noScale(link, link): Bool = canvas.noScale;
+
 	public var sizeUpdate(default, set): Bool = false;
+
 	public var canvas: SmartCanvas;
 
 	#if debugTimes
 	public var heapsTime: Float = 0;
 	public var systemTime: Float = 0;
 	public var updateTime: Float = 0;
+
 	#if js
 	private var lastHashlinkTime: Float = 0;
 	#end

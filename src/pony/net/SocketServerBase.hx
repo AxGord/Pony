@@ -14,21 +14,17 @@ import pony.Logable;
  */
 class SocketServerBase extends Logable {
 
-	@:auto public var onData: Signal2<BytesInput, ISocketClient>;
-	@:auto public var onString: Signal2<String, ISocketClient>;
-
-	@:auto public var onConnect: Signal1<ISocketClient>;
-	@:auto public var onOpen: Signal0;
-
-	@:auto public var onClose: Signal0;
-	@:auto public var onDisconnect: Signal1<ISocketClient>;
-
+	public var clients(default, null): Array<ISocketClient> = [];
 	public var opened(default, null): Bool;
 
-	public var clients(default, null): Array<ISocketClient> = [];
 	public var isAbleToSend: Bool = false;
-
 	public var isWithLength: Bool = true;
+	@:auto public var onData: Signal2<BytesInput, ISocketClient>;
+	@:auto public var onString: Signal2<String, ISocketClient>;
+	@:auto public var onConnect: Signal1<ISocketClient>;
+	@:auto public var onOpen: Signal0;
+	@:auto public var onClose: Signal0;
+	@:auto public var onDisconnect: Signal1<ISocketClient>;
 	public var maxSize: Int;
 
 	private function new() {
@@ -40,21 +36,6 @@ class SocketServerBase extends Logable {
 		onOpen < function() opened = true;
 		onConnect < function() isAbleToSend = true;
 	}
-
-	private function beginString(): Void for (c in clients) c.onString << eString;
-
-	private function endString(): Void for (c in clients) c.onString >> eString;
-
-	private function addClient(): ISocketClient {
-		final cl: SocketClient = Type.createEmptyInstance(SocketClient);
-		@:privateAccess cl.logPrefix = '';
-		listenErrorAndLog(cl);
-		cl.init(cast this, clients.length);
-		clients.push(cl);
-		return cl;
-	}
-
-	private function removeClient(cl: ISocketClient): Void clients.remove(cl);
 
 	/**
 	 * Sends a data to all the clients.
@@ -87,5 +68,20 @@ class SocketServerBase extends Logable {
 		opened = false;
 		super.destroy();
 	}
+
+	private function beginString(): Void for (c in clients) c.onString << eString;
+
+	private function endString(): Void for (c in clients) c.onString >> eString;
+
+	private function addClient(): ISocketClient {
+		final cl: SocketClient = Type.createEmptyInstance(SocketClient);
+		@:privateAccess cl.logPrefix = '';
+		listenErrorAndLog(cl);
+		cl.init(cast this, clients.length);
+		clients.push(cl);
+		return cl;
+	}
+
+	private function removeClient(cl: ISocketClient): Void clients.remove(cl);
 
 }

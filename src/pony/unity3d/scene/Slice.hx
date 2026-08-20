@@ -21,15 +21,7 @@ using hugs.HUGSWrapper;
 	public var buttonForSlice: GameObject;
 
 	private var buttonSlice: ButtonCore;
-
 	private var childrenMaterials: Array<Material>;
-
-	override private function Start(): Void {
-		super.Start();
-		childrenMaterials = [for (e in getComponentsInChildrenOfType(Renderer)) e.material];
-		buttonSlice = buttonForSlice.getTypedComponent(TintButton).core;
-		buttonSlice.click.add(click);
-	}
 
 	private inline function click(mode: Int): Void {
 		if (mode == 2)
@@ -39,6 +31,13 @@ using hugs.HUGSWrapper;
 			for (e in getComponentsInChildrenOfType(Renderer)) e.material = childrenMaterials[i++];
 		}
 		saveColors();
+	}
+
+	override private function Start(): Void {
+		super.Start();
+		childrenMaterials = [for (e in getComponentsInChildrenOfType(Renderer)) e.material];
+		buttonSlice = buttonForSlice.getTypedComponent(TintButton).core;
+		buttonSlice.click.add(click);
 	}
 
 }

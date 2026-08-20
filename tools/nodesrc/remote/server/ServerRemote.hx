@@ -15,12 +15,13 @@ import types.RemoteServerConfig;
 class ServerRemote extends Logable {
 
 	private final port: UInt;
-	private var socket: Null<SocketServer>;
 	private final key: Null<String>;
 	private final commands: Map<String, Array<Pair<Bool, String>>>;
-	private var instanse: Null<ServerRemoteInstanse>;
-	private var cmdLock: Bool = false;
 	private final allowForGet: Array<String>;
+
+	private var cmdLock: Bool = false;
+	private var socket: Null<SocketServer>;
+	private var instanse: Null<ServerRemoteInstanse>;
 
 	public function new(cfg: RemoteServerConfig) {
 		super();

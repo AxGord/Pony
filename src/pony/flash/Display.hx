@@ -18,10 +18,12 @@ abstract DisplayObject(DisplayObject_) from DisplayObject_ to DisplayObject_ {
 	public var alpha(get, set): Float;
 	public var height(get, set): Float;
 	public var name(get, set): String;
+
 	// public var parent(get, set):IDisplayObjectContainer;
 	public var rotation(get, set): Float; // Degrees / Rads!!!
 	public var scaleX(get, set): Float;
 	public var scaleY(get, set): Float;
+
 	// public var stage(get, set):IDisplayObjectContainer;
 	public var visible(get, set): Bool;
 	public var width(get, set): Float;
@@ -29,10 +31,6 @@ abstract DisplayObject(DisplayObject_) from DisplayObject_ to DisplayObject_ {
 	public var y(get, set): Float;
 
 	public inline function new(obj) this = obj;
-
-	public inline function getTypedChildByName<T>(name: String, cl: Class<T>): T return untyped this.getChildByName(name);
-
-	@:arrayAccess public inline function getChildByName(name: String): DisplayObject return getTypedChildByName(name, DisplayObject_);
 
 	public inline function get_alpha(): Float return this.alpha;
 
@@ -73,5 +71,9 @@ abstract DisplayObject(DisplayObject_) from DisplayObject_ to DisplayObject_ {
 	public inline function get_y(): Float return this.y;
 
 	public inline function set_y(a: Float): Float return this.y = a;
+
+	public inline function getTypedChildByName<T>(name: String, cl: Class<T>): T return untyped this.getChildByName(name);
+
+	@:arrayAccess public inline function getChildByName(name: String): DisplayObject return getTypedChildByName(name, DisplayObject_);
 
 }

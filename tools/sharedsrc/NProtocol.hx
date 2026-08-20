@@ -9,7 +9,6 @@ import types.*;
 class NProtocol extends RPC<NProtocol> implements IRPC {
 
 	@:sub public var log: RPCLog;
-
 	@:rpc public var onRemote: Signal1<Array<RemoteConfig>>;
 	@:rpc public var onBmfont: Signal1<Array<BmfontConfig>>;
 	@:rpc public var onImagemin: Signal1<Array<ImageminConfig>>;

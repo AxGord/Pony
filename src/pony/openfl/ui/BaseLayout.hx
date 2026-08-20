@@ -15,6 +15,7 @@ import pony.ui.gui.BaseLayoutCore;
 class BaseLayout<T:BaseLayoutCore<DisplayObject>> extends Sprite implements IWH {
 
 	public var layout(default, null): T;
+
 	public var size(get, never): Point<Float>;
 
 	public function new() {
@@ -25,9 +26,18 @@ class BaseLayout<T:BaseLayoutCore<DisplayObject>> extends Sprite implements IWH 
 		layout.setYpos = setYpos;
 	}
 
+	private inline function get_size(): Point<Float> return layout.size;
+
 	public function add(obj: DisplayObject): Void {
 		addChild(obj);
 		layout.add(obj);
+	}
+
+	public function wait(cb: Void -> Void): Void layout.wait(cb);
+
+	public function destroy(): Void {
+		layout.destroy();
+		// super.destroy();
 	}
 
 	private function load(obj: DisplayObject): Void {
@@ -47,8 +57,6 @@ class BaseLayout<T:BaseLayoutCore<DisplayObject>> extends Sprite implements IWH 
 
 	private function setYpos(obj: DisplayObject, v: Float): Void obj.y = v;
 
-	public function wait(cb: Void -> Void): Void layout.wait(cb);
-
 	private function getSize(o: DisplayObject): Point<Float> {
 		// return if (Std.is(o, TextField))
 		// 	new Point(untyped o.textWidth, untyped o.textHeight);
@@ -58,12 +66,5 @@ class BaseLayout<T:BaseLayoutCore<DisplayObject>> extends Sprite implements IWH 
 	}
 
 	private static function getSizeMod(o: DisplayObject, p: Point<Float>): Point<Float> return new Point(p.x * o.scaleX, p.y * o.scaleY);
-
-	private inline function get_size(): Point<Float> return layout.size;
-
-	public function destroy(): Void {
-		layout.destroy();
-		// super.destroy();
-	}
 
 }

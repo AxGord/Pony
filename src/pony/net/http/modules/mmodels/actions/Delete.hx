@@ -29,6 +29,10 @@ class DeleteConnect extends ActionConnect implements ISubActionConnect {
 		return cpq.connection.sessionStorage.get('modelsActions');
 	}
 
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function clr(): Void storage.remove(base.id);
+
 	public function subtpl(parent: ITplPut, data: Dynamic): ITplPut {
 		return new DeletePut(this, data, parent);
 	}
@@ -69,10 +73,6 @@ class DeleteConnect extends ActionConnect implements ISubActionConnect {
 		});
 		return true;
 	}
-
-	@SuppressWarnings('checkstyle:MagicNumber')
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public inline function clr(): Void storage.remove(base.id);
 
 }
 

@@ -29,29 +29,23 @@ import pony.ui.touch.starling.touchManager.hitTestSources.StarlingHitTestSource;
  */
 class Initializer {
 
+	private final _initialWidth: Int = FLTools.width != -1 ? Std.int(FLTools.width) : Lib.current.stage.stageWidth;
+	private final _initialHeight: Int = FLTools.height != -1 ? Std.int(FLTools.height) : Lib.current.stage.stageHeight;
+	private final _initCallback: IDisplayObjectContainer -> IDisplayObject -> Void;
+	private final _aspectRatio: Float;
+
 	private var _sprite: IDisplayObjectContainer;
 	private var _content: IDisplayObject;
 
-	private final _initCallback: IDisplayObjectContainer -> IDisplayObject -> Void;
-
-	private final _initialWidth: Int = FLTools.width != -1 ? Std.int(FLTools.width) : Lib.current.stage.stageWidth;
-	private final _initialHeight: Int = FLTools.height != -1 ? Std.int(FLTools.height) : Lib.current.stage.stageHeight;
-	private final _aspectRatio: Float;
-
 	#if starling
-	private var _starlingCreator: StarlingCreator;
 	private final _viewLimiterA: Quad = new Quad(1, 1, Lib.current.stage.color);
 	private final _viewLimiterB: Quad = new Quad(1, 1, Lib.current.stage.color);
+
+	private var _starlingCreator: StarlingCreator;
 	#else
 	private final _viewLimiterA: Bitmap = new Bitmap(new BitmapData(1, 1, false, Lib.current.stage.color));
 	private final _viewLimiterB: Bitmap = new Bitmap(new BitmapData(1, 1, false, Lib.current.stage.color));
 	#end
-
-	public static function init(initCallback: IDisplayObjectContainer -> IDisplayObject -> Void): Void {
-		DeltaTime.fixedUpdate < function() {
-			new Initializer(initCallback, #if debug true #else false #end);
-		}
-	}
 
 	public function new(
 		initCallback: IDisplayObjectContainer -> IDisplayObject -> Void, showStats: Bool = false, ?content: flash.display.DisplayObject
@@ -148,6 +142,12 @@ class Initializer {
 		_viewLimiterA.height = smallerWidth ? (stage.stageHeight - stage.stageWidth / _aspectRatio) / 2 : stage.height;
 		_viewLimiterB.width = smallerWidth ? stage.stageWidth : (stage.stageWidth - stage.stageHeight * _aspectRatio) / 2;
 		_viewLimiterB.height = smallerWidth ? (stage.stageHeight - stage.stageWidth / _aspectRatio) / 2 : stage.height;
+	}
+
+	public static function init(initCallback: IDisplayObjectContainer -> IDisplayObject -> Void): Void {
+		DeltaTime.fixedUpdate < function() {
+			new Initializer(initCallback, #if debug true #else false #end);
+		}
 	}
 
 }

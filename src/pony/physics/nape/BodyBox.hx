@@ -24,18 +24,18 @@ class BodyBox extends BodyBase {
 		super(space, limits, isStatic, isBullet, group);
 	}
 
-	override private function init(): Void {
-		final sh = new Polygon(Polygon.box(size.x, size.y), material);
-		sh.sensorEnabled = body.isBullet;
-		body.shapes.add(sh);
-	}
-
 	override public function getCacheId(): Bytes {
 		final b: BytesOutput = new BytesOutput();
 		b.writeByte(0x01); // shape code
 		b.writeInt32(Std.int(size.x * 1000));
 		b.writeInt32(Std.int(size.y * 1000));
 		return b.getBytes();
+	}
+
+	override private function init(): Void {
+		final sh = new Polygon(Polygon.box(size.x, size.y), material);
+		sh.sensorEnabled = body.isBullet;
+		body.shapes.add(sh);
 	}
 
 }

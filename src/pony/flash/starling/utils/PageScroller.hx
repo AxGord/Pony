@@ -18,13 +18,15 @@ using pony.flash.starling.displayFactory.DisplayListStaticExtentions;
  */
 class PageScroller {
 
-	private final _pageAreaHeight: Int;
-	private var pageHeight: Int;
-	private var kineticDragged: Bool = false;
-	private var activelyDragged: Bool = false;
 	private var dragged(get, null): Bool;
+
+	private final _pageAreaHeight: Int;
 	private final _scrollBar: Bar;
 	private final _page: IDisplayObject;
+
+	private var kineticDragged: Bool = false;
+	private var activelyDragged: Bool = false;
+	private var pageHeight: Int;
 
 	public function new(pageAreaHeight: Int, scrollBar: Bar, page: IDisplayObject) {
 		_scrollBar = scrollBar;
@@ -40,6 +42,16 @@ class PageScroller {
 		TouchManager.addListener(page, onAreaDrag, [TouchEventType.Down]);
 		TouchManager.addListener(page, dragScrollUpdate, [TouchEventType.Move]);
 		TouchManager.addListener(page, onAreaStopDrag, [TouchEventType.Up]);
+	}
+
+	private function get_dragged(): Bool {
+		return kineticDragged || activelyDragged;
+	}
+
+	public function setPageSize(size: Float): Void {
+		pageHeight = Std.int(size);
+		_scrollBar.total = size;
+		_scrollBar.position = 0;
 	}
 
 	private function onAreaDrag(e: TouchManagerEvent): Void {
@@ -75,16 +87,6 @@ class PageScroller {
 
 	private function dSize(): Int {
 		return Std.int(pageHeight - _pageAreaHeight < 0 ? 0 : pageHeight - _pageAreaHeight);
-	}
-
-	public function setPageSize(size: Float): Void {
-		pageHeight = Std.int(size);
-		_scrollBar.total = size;
-		_scrollBar.position = 0;
-	}
-
-	private function get_dragged(): Bool {
-		return kineticDragged || activelyDragged;
 	}
 
 }

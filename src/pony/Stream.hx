@@ -7,20 +7,11 @@ package pony;
  */
 class Stream<T> {
 
-	private var result(default, null): List<T>;
 	private var complite(default, null): Bool = false;
 	private var fail(default, null): Dynamic = null;
+	private var result(default, null): List<T>;
 
 	public inline function new() result = new List<T>();
-
-	dynamic private function data(v: T): Void result.push(v);
-
-	dynamic private function end(): Void {
-		complite = true;
-		destroy();
-	}
-
-	dynamic private function error(v: Dynamic): Void fail = v;
 
 	public inline function dataListener(v: T): Void data(v);
 
@@ -71,7 +62,11 @@ class Stream<T> {
 		compl = Tools.nullFunction1;
 	});
 
-	private function locked(d: T -> Void, ?compl: Void -> Void, ?err: Dynamic -> Void): Void throw 'Stream locked';
+	public function putIterable(a: Iterable<T>): Stream<T> {
+		for (e in a) dataListener(e);
+		endListener();
+		return this;
+	}
 
 	private inline function destroy(): Void {
 		fail = null;
@@ -79,11 +74,16 @@ class Stream<T> {
 		error = Tools.errorFunction;
 	}
 
-	public function putIterable(a: Iterable<T>): Stream<T> {
-		for (e in a) dataListener(e);
-		endListener();
-		return this;
+	dynamic private function data(v: T): Void result.push(v);
+
+	dynamic private function end(): Void {
+		complite = true;
+		destroy();
 	}
+
+	dynamic private function error(v: Dynamic): Void fail = v;
+
+	private function locked(d: T -> Void, ?compl: Void -> Void, ?err: Dynamic -> Void): Void throw 'Stream locked';
 
 	public static inline function fromArray<T>(a: Array<T>): Stream<T> return new Stream().putIterable(a);
 

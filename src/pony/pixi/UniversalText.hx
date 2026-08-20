@@ -33,14 +33,6 @@ abstract UniversalText(EUniversalText) from EUniversalText to EUniversalText {
 		}
 	}
 
-	@:to #if (haxe_ver >= 4.2) extern #else @:extern #end
-	public function toContainer(): Container {
-		return switch this {
-			case TEXT(t): cast t;
-			case BITMAP_TEXT(t): cast t;
-		}
-	}
-
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private function get_text(): String {
 		return switch this {
@@ -150,6 +142,14 @@ abstract UniversalText(EUniversalText) from EUniversalText to EUniversalText {
 		return switch this {
 			case TEXT(t): t.height = v;
 			case BITMAP_TEXT(t): t.textHeight = v;
+		}
+	}
+
+	@:to #if (haxe_ver >= 4.2) extern #else @:extern #end
+	public function toContainer(): Container {
+		return switch this {
+			case TEXT(t): cast t;
+			case BITMAP_TEXT(t): cast t;
 		}
 	}
 

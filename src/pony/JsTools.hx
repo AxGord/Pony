@@ -64,7 +64,6 @@ class JsTools implements HasSignal {
 	public static var agent(get, never): UserAgent;
 	public static var os(get, never): OS;
 	public static var isa(get, never): ISA;
-
 	public static var isMobile(get, never): Bool;
 	public static var isFSE(get, never): Bool;
 	public static var webp(get, never): Bool;
@@ -78,34 +77,7 @@ class JsTools implements HasSignal {
 	private static var _os: OS;
 	private static var _isa: ISA;
 	private static var _webp: Null<Bool>;
-
 	private static var logFunction: Function;
-
-	private static function __init__(): Void {
-		onDocReady.clear();
-		eDocReady.onTake < regDocReady;
-	}
-
-	private static function regDocReady(): Void {
-		Lib.global.docReady(eDocReady.dispatch);
-	}
-
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public static inline function removeEval(): Void {
-		untyped window.eval = evalHandler;
-	}
-
-	private static function evalHandler(): Void {
-		throw new Error('Sorry, this app does not support window.eval().');
-	}
-
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public static inline function disableDrop(): Void {
-		Browser.document.ondragover = abortEvent;
-		Browser.document.ondrop = abortEvent;
-	}
-
-	public static function abortEvent(e: Event): Void e.preventDefault();
 
 	public static function get_webp(): Bool {
 		return _webp != null
@@ -182,17 +154,32 @@ class JsTools implements HasSignal {
 	}
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public static inline function remove(el: DOMElement): Void {
-		agent == IE ? el.parentNode.removeChild(el) : el.remove();
-	}
-
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public static inline function get_isFSE(): Bool {
 		return untyped {
 			Browser.document.fullscreenElement || Browser.document.mozFullScreen || Browser.document.mozFullscreenElement
 				|| Browser.document.webkitFullscreenElement || Browser.document.msFullscreenElement;
 		};
 	}
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function removeEval(): Void {
+		untyped window.eval = evalHandler;
+	}
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function disableDrop(): Void {
+		Browser.document.ondragover = abortEvent;
+		Browser.document.ondrop = abortEvent;
+	}
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function remove(el: DOMElement): Void {
+		agent == IE ? el.parentNode.removeChild(el) : el.remove();
+	}
+
+	public static inline function logBuildDate(): Void Browser.console.log('Build date: ' + Tools.getBuildDate());
+
+	public static function abortEvent(e: Event): Void e.preventDefault();
 
 	public static function closeFS(): Void {
 		untyped {
@@ -233,12 +220,6 @@ class JsTools implements HasSignal {
 		Browser.window.oncontextmenu = contextMenuHandler;
 	}
 
-	private static function contextMenuHandler(event: Event): Bool {
-		event.preventDefault();
-		event.stopPropagation();
-		return false;
-	}
-
 	public static function normalizeCss(s: String): String {
 		var n: DivElement = Browser.document.createDivElement();
 		n.style.cssText = s;
@@ -249,10 +230,6 @@ class JsTools implements HasSignal {
 		final a: Array<String> = s.split(';');
 		a.pop();
 		return a.map(splitCssReturnDelimiter);
-	}
-
-	private static function splitCssReturnDelimiter(s: String): String {
-		return s.ltrim() + ';';
 	}
 
 	public static function mapToJSMap<K, V>(map: Map<K, V>): JsMap<K, V> {
@@ -269,6 +246,27 @@ class JsTools implements HasSignal {
 		return [for (k in map.keys()) k => map.get(k)];
 	}
 
-	public static inline function logBuildDate(): Void Browser.console.log('Build date: ' + Tools.getBuildDate());
+	private static function __init__(): Void {
+		onDocReady.clear();
+		eDocReady.onTake < regDocReady;
+	}
+
+	private static function regDocReady(): Void {
+		Lib.global.docReady(eDocReady.dispatch);
+	}
+
+	private static function evalHandler(): Void {
+		throw new Error('Sorry, this app does not support window.eval().');
+	}
+
+	private static function contextMenuHandler(event: Event): Bool {
+		event.preventDefault();
+		event.stopPropagation();
+		return false;
+	}
+
+	private static function splitCssReturnDelimiter(s: String): String {
+		return s.ltrim() + ';';
+	}
 
 }

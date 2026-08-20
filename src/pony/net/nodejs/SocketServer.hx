@@ -22,16 +22,16 @@ class SocketServer extends SocketServerBase {
 		server.listen(port, host, eOpen.dispatch);
 	}
 
-	private function connectionHandler(c: Socket): Void {
-		final cl: SocketClient = cast addClient();
-		cl.nodejsInit(c);
-		@:privateAccess cl.connect();
-	}
-
 	override public function destroy(): Void {
 		super.destroy();
 		server.close(null);
 		server = null;
+	}
+
+	private function connectionHandler(c: Socket): Void {
+		final cl: SocketClient = cast addClient();
+		cl.nodejsInit(c);
+		@:privateAccess cl.connect();
 	}
 
 }

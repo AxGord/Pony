@@ -19,6 +19,49 @@ class Touchable extends TouchableBase {
 	private static var needSw: Bool = false;
 	private static var wait: Bool = false;
 
+	private var obj: Container;
+	private var touch: TouchableTouch;
+	private var mouse: TouchableMouse;
+
+	public function new(obj: Container) {
+		init();
+		super();
+		this.obj = obj;
+		obj.interactive = true;
+		if (touchMode)
+			touch = new TouchableTouch(obj, this);
+		else
+			mouse = new TouchableMouse(obj, this);
+		changeTouchMode - true << toTouch;
+		changeTouchMode - false << toMouse;
+	}
+
+	override public function destroy(): Void {
+		changeTouchMode - true >> toTouch;
+		changeTouchMode - false >> toMouse;
+		obj = null;
+		if (touchMode) {
+			touch.destroy();
+			touch = null;
+		} else {
+			mouse.destroy();
+			mouse = null;
+		}
+		super.destroy();
+	}
+
+	private function toTouch(): Void {
+		mouse.destroy();
+		mouse = null;
+		touch = new TouchableTouch(obj, this);
+	}
+
+	private function toMouse(): Void {
+		touch.destroy();
+		touch = null;
+		mouse = new TouchableMouse(obj, this);
+	}
+
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function init(): Void {
@@ -65,49 +108,6 @@ class Touchable extends TouchableBase {
 
 	private static function touchHandler(): Void {
 		needSw = false;
-	}
-
-	private var obj: Container;
-	private var touch: TouchableTouch;
-	private var mouse: TouchableMouse;
-
-	public function new(obj: Container) {
-		init();
-		super();
-		this.obj = obj;
-		obj.interactive = true;
-		if (touchMode)
-			touch = new TouchableTouch(obj, this);
-		else
-			mouse = new TouchableMouse(obj, this);
-		changeTouchMode - true << toTouch;
-		changeTouchMode - false << toMouse;
-	}
-
-	override public function destroy(): Void {
-		changeTouchMode - true >> toTouch;
-		changeTouchMode - false >> toMouse;
-		obj = null;
-		if (touchMode) {
-			touch.destroy();
-			touch = null;
-		} else {
-			mouse.destroy();
-			mouse = null;
-		}
-		super.destroy();
-	}
-
-	private function toTouch(): Void {
-		mouse.destroy();
-		mouse = null;
-		touch = new TouchableTouch(obj, this);
-	}
-
-	private function toMouse(): Void {
-		touch.destroy();
-		touch = null;
-		mouse = new TouchableMouse(obj, this);
 	}
 
 }

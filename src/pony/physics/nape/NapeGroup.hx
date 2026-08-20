@@ -21,9 +21,10 @@ import pony.geom.Rect;
 class NapeGroup {
 
 	public var cbt: CbType = new CbType();
+	public var sensor: Bool = true;
+
 	private final space: Space;
 	private final ns: NapeSpace;
-	public var sensor: Bool = true;
 
 	public function new(ns: NapeSpace) {
 		this.ns = ns;

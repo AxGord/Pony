@@ -32,16 +32,6 @@ class SliceTools {
 			SliceData.Not(name);
 	}
 
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private static inline function check(name: String, n: Int, letter: String = ''): Bool {
-		return name.indexOf('{slice$n$letter}') != -1;
-	}
-
-	private static function slice(name: String, n: Int, letter: String = ''): Array<String> {
-		final s = name.split('{slice$n$letter}');
-		return [for (i in 0...n) s[0] + i + s[1]];
-	}
-
 	public static function getSliceSpriteFromData(data: SliceData, ?useSpriteSheet: String, creep: Float = 0): SliceSprite {
 		return switch data {
 			case SliceData.Hor2(a): new Slice2H(a, useSpriteSheet, creep);
@@ -54,6 +44,16 @@ class SliceTools {
 			case SliceData.Nine(a): new Slice9(a, useSpriteSheet, creep);
 			case SliceData.Not(s): new SliceSprite([s], useSpriteSheet);
 		}
+	}
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function check(name: String, n: Int, letter: String = ''): Bool {
+		return name.indexOf('{slice$n$letter}') != -1;
+	}
+
+	private static function slice(name: String, n: Int, letter: String = ''): Array<String> {
+		final s = name.split('{slice$n$letter}');
+		return [for (i in 0...n) s[0] + i + s[1]];
 	}
 
 }

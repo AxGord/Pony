@@ -20,10 +20,9 @@ import pony.time.DeltaTime;
 @:access(pony.ui.touch.Mouse)
 class Touchable extends TouchableBase {
 
-	private static var inited: Bool = false;
-
 	public static var down(default, null): Bool = false;
 	public static var downRight(default, null): Bool = false;
+
 	private static final MOUSEMOVE: String = 'mousemove';
 	private static final MOUSEUP: String = 'mouseup';
 	private static final MOUSEDOWN: String = 'mousedown';
@@ -34,40 +33,17 @@ class Touchable extends TouchableBase {
 	private static final TOUCHCANCEL: String = 'touchcancel';
 	private static final CLICK: String = 'click';
 
+	private static var inited: Bool = false;
 	private static var lastPos: Point<Float> = new Point<Float>(0, 0);
 
-	public static function init(): Void {
-		if (inited) return;
-		inited = true;
-		Window.getInstance().addEventTarget(globMouseMove);
-	}
-
-	private static inline function setLastPos(event: Event): Void
-		lastPos = @:nullSafety(Off) HeapsApp.instance.globalToLocal(event.relX, event.relY);
-
-	private static function globMouseMove(event: Event): Void {
-		if (HeapsApp.s2dReady) switch event.kind {
-			case EPush:
-				setLastPos(event);
-			case EMove:
-				setLastPos(event);
-				TouchableBase.dispatchMove(getTouchId(event), lastPos.x, lastPos.y);
-			case EWheel:
-				Mouse.eWheel.dispatch(convertWheel(event));
-			case _:
-		}
-	}
-
-	private static inline function convertWheel(event: Event): Float return event.wheelDelta * #if js 1 #else -0.1 #end;
-
-	private static inline function getTouchId(event: Event): UInt return #if js event.touchId == null ? 0 : #end event.touchId;
+	public var interactive(default, null): Interactive;
 
 	public var propagateOver: Bool = false;
 	public var propagateOut: Bool = false;
 	public var propagateDown: Bool = false;
 	public var propagateUp: Bool = false;
 	public var propagateWheel: Bool = false;
-	public var interactive(default, null): Interactive;
+
 	private var over: Bool = false;
 	private var outover: Bool = false;
 	private var _down: Null<Bool> = null;
@@ -121,6 +97,10 @@ class Touchable extends TouchableBase {
 		interactive.remove();
 		@:nullSafety(Off) interactive = null;
 	}
+
+	private inline function globMouseUpLeftHandler(): Void _globUpHandler(false);
+
+	private inline function globMouseUpRightHandler(): Void _globUpHandler(true);
 
 	override private function addWheel(): Void {}
 
@@ -182,52 +162,6 @@ class Touchable extends TouchableBase {
 		_globUpHandler(getTouchId(event), right);
 	}
 
-	#if js
-	private function globTapHandler(event: MouseEvent): Void {
-		if (!denyUp && !down && _down != true && over) {
-			_down = true;
-			dispatchDown(0, lastPos.x, lastPos.y, false);
-			_down = false;
-			_globUpHandler(false);
-			denyDown = true;
-		}
-		DeltaTime.fixedUpdate < unlockDown;
-	}
-
-	private function unlockDown(): Void {
-		denyDown = false;
-		globMouseUpLeftHandler();
-	}
-
-	private function globMouseUpHandler(event: MouseEvent): Void {
-		if (event.button == 0)
-			globMouseUpLeftHandler();
-		else if (event.button == 2)
-			globMouseUpRightHandler();
-	}
-
-	private function globMouseDownHandler(event: MouseEvent): Void {
-		if (event.button == 0)
-			down = true;
-		else if (event.button == 2)
-			downRight = true;
-	}
-	#else
-	private function instanceMouseHandler(event: Event): Void {
-		switch event.kind {
-			case EOut: leaveHandler();
-			case EOver: enterHandler();
-			case ERelease: globMouseUpLeftHandler();
-			case EPush: down = true;
-			case _:
-		}
-	}
-	#end
-
-	private inline function globMouseUpLeftHandler(): Void _globUpHandler(false);
-
-	private inline function globMouseUpRightHandler(): Void _globUpHandler(true);
-
 	private function globUpHandler(): Void {
 		globMouseUpLeftHandler();
 		touchUp();
@@ -278,6 +212,74 @@ class Touchable extends TouchableBase {
 		if (_down == null || !_down) return;
 		_down = null;
 		dispatchOutUp();
+	}
+
+	#if js
+	private function globTapHandler(event: MouseEvent): Void {
+		if (!denyUp && !down && _down != true && over) {
+			_down = true;
+			dispatchDown(0, lastPos.x, lastPos.y, false);
+			_down = false;
+			_globUpHandler(false);
+			denyDown = true;
+		}
+		DeltaTime.fixedUpdate < unlockDown;
+	}
+
+	private function unlockDown(): Void {
+		denyDown = false;
+		globMouseUpLeftHandler();
+	}
+
+	private function globMouseUpHandler(event: MouseEvent): Void {
+		if (event.button == 0)
+			globMouseUpLeftHandler();
+		else if (event.button == 2)
+			globMouseUpRightHandler();
+	}
+
+	private function globMouseDownHandler(event: MouseEvent): Void {
+		if (event.button == 0)
+			down = true;
+		else if (event.button == 2)
+			downRight = true;
+	}
+	#else
+	private function instanceMouseHandler(event: Event): Void {
+		switch event.kind {
+			case EOut: leaveHandler();
+			case EOver: enterHandler();
+			case ERelease: globMouseUpLeftHandler();
+			case EPush: down = true;
+			case _:
+		}
+	}
+	#end
+
+	public static function init(): Void {
+		if (inited) return;
+		inited = true;
+		Window.getInstance().addEventTarget(globMouseMove);
+	}
+
+	private static inline function setLastPos(event: Event): Void
+		lastPos = @:nullSafety(Off) HeapsApp.instance.globalToLocal(event.relX, event.relY);
+
+	private static inline function convertWheel(event: Event): Float return event.wheelDelta * #if js 1 #else -0.1 #end;
+
+	private static inline function getTouchId(event: Event): UInt return #if js event.touchId == null ? 0 : #end event.touchId;
+
+	private static function globMouseMove(event: Event): Void {
+		if (HeapsApp.s2dReady) switch event.kind {
+			case EPush:
+				setLastPos(event);
+			case EMove:
+				setLastPos(event);
+				TouchableBase.dispatchMove(getTouchId(event), lastPos.x, lastPos.y);
+			case EWheel:
+				Mouse.eWheel.dispatch(convertWheel(event));
+			case _:
+		}
 	}
 
 }

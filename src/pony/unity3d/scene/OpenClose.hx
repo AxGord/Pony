@@ -14,17 +14,18 @@ using hugs.HUGSWrapper;
  */
 @:nativeGen class OpenClose extends MonoBehaviour implements HasSignal {
 
-	public var openPos: Vector3;
-	public var openRotation: Quaternion;
 	@:meta(UnityEngine.HideInInspector)
 	public var open(default, set): Bool = false;
+
+	public var openPos: Vector3;
+	public var openRotation: Quaternion;
 	@:auto public var onOpen: Signal0;
 	@:auto public var onClose: Signal0;
+
 	@:meta(UnityEngine.HideInInspector)
 	private var startPos: Vector3;
 	@:meta(UnityEngine.HideInInspector)
 	private var startRotation: Quaternion;
-
 	@:meta(UnityEngine.HideInInspector)
 	private var needChangePos: Bool;
 	@:meta(UnityEngine.HideInInspector)
@@ -33,16 +34,6 @@ using hugs.HUGSWrapper;
 	public function new() {
 		super();
 	}
-
-	private function Start(): Void {
-		startPos = transform.position;
-		startRotation = transform.rotation;
-		// if (openPos.x == 0 && openPos.y == 0 && openPos.z == 0) openPos = startPos;
-		needChangePos = openPos.x != 0 || openPos.y != 0 || openPos.z != 0;
-		// if (openRotation.x == 0 && openRotation.y == 0 && openRotation.z == 0) openRotation = startRotation;
-		needChangeRot = openRotation.x != 0 || openRotation.y != 0 || openRotation.z != 0;
-	}
-
 
 	public function set_open(to: Bool): Bool {
 		if (open == to) return to;
@@ -56,6 +47,8 @@ using hugs.HUGSWrapper;
 		return to;
 	}
 
+	public inline function change(): Void open = !open;
+
 	public function silentOpen(): Void {
 		@:bypassAccessor open = true;
 		if (needChangePos) transform.position = openPos;
@@ -67,8 +60,6 @@ using hugs.HUGSWrapper;
 		if (needChangePos) transform.position = startPos;
 		if (needChangeRot) transform.rotation = startRotation;
 	}
-
-	public inline function change(): Void open = !open;
 
 	public function syncWith(d: Door): Void {
 		eOpen << d.silentOpen;
@@ -82,6 +73,15 @@ using hugs.HUGSWrapper;
 		eClose >> d.silentClose;
 		d.eOpen >> silentOpen;
 		d.eClose >> silentClose;
+	}
+
+	private function Start(): Void {
+		startPos = transform.position;
+		startRotation = transform.rotation;
+		// if (openPos.x == 0 && openPos.y == 0 && openPos.z == 0) openPos = startPos;
+		needChangePos = openPos.x != 0 || openPos.y != 0 || openPos.z != 0;
+		// if (openRotation.x == 0 && openRotation.y == 0 && openRotation.z == 0) openRotation = startRotation;
+		needChangeRot = openRotation.x != 0 || openRotation.y != 0 || openRotation.z != 0;
 	}
 
 }

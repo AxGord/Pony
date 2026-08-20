@@ -23,37 +23,23 @@ import pony.magic.HasSignal;
 @:nullSafety(Strict)
 class Node extends Object implements HasSignal implements HasLink implements INode implements IWH {
 
-	@:nullSafety(Off) @:bindable public var wh: Point<Float>;
-	@:bindable public var flipx: Bool = false;
-	@:bindable public var flipy: Bool = false;
+	public var interactive(default, null): Null<Interactive>;
+
 	public var w(link, set): Float = wh.x;
 	public var h(link, set): Float = wh.y;
 	public var size(get, never): Point<Float>;
+
+	@:bindable public var flipx: Bool = false;
+	@:bindable public var flipy: Bool = false;
 	@:bindable public var tint: Vector = new Vector(1, 1, 1, 1);
-	public var interactive(default, null): Null<Interactive>;
+	@:nullSafety(Off) @:bindable public var wh: Point<Float>;
+
 	private final border: Border<Int>;
 
 	public function new(size: Point<Float>, ?border: Border<Int>, ?parent: Object) {
 		super(parent);
 		wh = size;
 		this.border = border == null ? 0 : border;
-	}
-
-	public function makeInteractive(?cursor: Cursor): Void {
-		interactive = new Interactive(w, h, this);
-		interactive.cursor = cursor;
-		changeWh << setInteractiveSize;
-	}
-
-	public function unmakeInteractive(): Void {
-		changeWh >> setInteractiveSize;
-		interactive.remove();
-		interactive = null;
-	}
-
-	@:nullSafety(Off) private function setInteractiveSize(wh: Point<Float>): Void {
-		interactive.width = wh.x;
-		interactive.height = wh.y;
 	}
 
 	private inline function get_size(): Point<Float> {
@@ -68,6 +54,22 @@ class Node extends Object implements HasSignal implements HasLink implements INo
 	public inline function set_h(v: Float): Float {
 		if (v != h) wh = new Point(w, v);
 		return v;
+	}
+
+	public inline function show(): Void visible = true;
+
+	public inline function hide(): Void visible = false;
+
+	public function makeInteractive(?cursor: Cursor): Void {
+		interactive = new Interactive(w, h, this);
+		interactive.cursor = cursor;
+		changeWh << setInteractiveSize;
+	}
+
+	public function unmakeInteractive(): Void {
+		changeWh >> setInteractiveSize;
+		interactive.remove();
+		interactive = null;
 	}
 
 	public function wait(cb: Void -> Void): Void cb();
@@ -109,8 +111,9 @@ class Node extends Object implements HasSignal implements HasLink implements INo
 
 	public function destroyIWH(): Void destroy();
 
-	public inline function show(): Void visible = true;
-
-	public inline function hide(): Void visible = false;
+	@:nullSafety(Off) private function setInteractiveSize(wh: Point<Float>): Void {
+		interactive.width = wh.x;
+		interactive.height = wh.y;
+	}
 
 }

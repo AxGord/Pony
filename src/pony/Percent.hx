@@ -3,12 +3,13 @@ package pony;
 @SuppressWarnings('checkstyle:MagicNumber')
 class Percent implements pony.magic.HasSignal {
 
-	@:bindable public var percent: Float = 0;
-	@:bindable public var full: Bool = false;
-	@:bindable public var run: Bool = false;
 	public var current(default, set): Float = 0;
 	public var total(default, set): Float = -1;
 	public var allow(default, set): Float = 1;
+
+	@:bindable public var percent: Float = 0;
+	@:bindable public var full: Bool = false;
+	@:bindable public var run: Bool = false;
 
 	public function new(allow: Float = 1, total: Float = -1) {
 		this.allow = allow;

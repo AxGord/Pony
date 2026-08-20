@@ -28,12 +28,12 @@ class StarlingWindow extends Sprite implements IWindow {
 		init();
 	}
 
-	private function init(): Void {}
-
 	public function show(): Void {
 		st.blurOn();
 		visible = true;
 	}
+
+	private function init(): Void {}
 
 	private function hide(): Void {
 		st.blurOff();

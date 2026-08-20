@@ -8,16 +8,16 @@ package remote.client.actions;
 #if (haxe_ver >= 4.2) final #else @:final #end
 class RemoteActionCommand extends RemoteAction {
 
+	override public function destroy(): Void {
+		super.destroy();
+		protocol.onCommandComplete >> end;
+	}
+
 	#if (haxe_ver < 4.2) override #end
 	private function run(data: String): Void {
 		logData(data);
 		protocol.onCommandComplete < end;
 		protocol.commandRemote(data);
-	}
-
-	override public function destroy(): Void {
-		super.destroy();
-		protocol.onCommandComplete >> end;
 	}
 
 }

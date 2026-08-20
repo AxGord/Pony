@@ -10,7 +10,6 @@ class LoaderTest {
 	private var loader: Loader;
 	private var progress: Int;
 
-
 	@Before
 	public function setup(): Void {
 		flag = false;

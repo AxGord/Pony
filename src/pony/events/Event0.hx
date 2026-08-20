@@ -22,29 +22,32 @@ import pony.Priority;
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function get_self(): Event0 return this;
 
-	private static function real(l: Listener0): Bool {
-		final e: Null<Priority<Any>> = l.event;
-		return e == null || !e.empty;
-	}
-
-	private static function compare<T1>(a: Listener0, b: Listener0): Bool {
-		return switch [a.listener, b.listener] {
-			case [LFunction0(a), LFunction0(b)]:
-				SignalTools.functionHashCompare(a, b);
-			case [LEvent0(a, _), LEvent0(b, _)]:
-				a == b;
-			case [LBind1(_, a), LBind1(_, b)]:
-				a == b;
-			case [LBind2(_, a1, a2), LBind2(_, b1, b2)]:
-				a1 == b1 && a2 == b2;
-			case _:
-				false;
-		}
-	}
-
 	@:op(a()) public inline function dispatch(): Void dispatchWithFlag(false);
 
 	public inline function saveDispatch(): Void dispatchWithFlag(true);
+
+	@:op(A && B)
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function and(s: Event0): Event0 {
+		final e: Event0 = new Event0();
+		(e: Signal0) << self << s;
+		return e;
+	}
+
+	@:op(A & B)
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function andOnce(s: Event0): Event0 {
+		final e: Event0 = new Event0();
+		(e: Signal0) << self << s << (e: Signal0).clear;
+		return e;
+	}
+
+	public inline function destroy(): Void {
+		if (this != null) {
+			(this: Signal0).clear();
+			this.destroy();
+		}
+	}
 
 	public function dispatchWithFlag(safe: Bool): Void {
 		if (this == null || this.isDestroy() || (safe && this.counters.length > 1)) return;
@@ -69,26 +72,23 @@ import pony.Priority;
 		this.lock = false;
 	}
 
-	@:op(A && B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public inline function and(s: Event0): Event0 {
-		final e: Event0 = new Event0();
-		(e: Signal0) << self << s;
-		return e;
+	private static function real(l: Listener0): Bool {
+		final e: Null<Priority<Any>> = l.event;
+		return e == null || !e.empty;
 	}
 
-	@:op(A & B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public inline function andOnce(s: Event0): Event0 {
-		final e: Event0 = new Event0();
-		(e: Signal0) << self << s << (e: Signal0).clear;
-		return e;
-	}
-
-	public inline function destroy(): Void {
-		if (this != null) {
-			(this: Signal0).clear();
-			this.destroy();
+	private static function compare<T1>(a: Listener0, b: Listener0): Bool {
+		return switch [a.listener, b.listener] {
+			case [LFunction0(a), LFunction0(b)]:
+				SignalTools.functionHashCompare(a, b);
+			case [LEvent0(a, _), LEvent0(b, _)]:
+				a == b;
+			case [LBind1(_, a), LBind1(_, b)]:
+				a == b;
+			case [LBind2(_, a1, a2), LBind2(_, b1, b2)]:
+				a1 == b1 && a2 == b2;
+			case _:
+				false;
 		}
 	}
 

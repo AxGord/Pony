@@ -11,11 +11,14 @@ import pony.time.DeltaTime;
  */
 class ElementResizeControl implements HasSignal {
 
-	@:auto public var onResize: Signal2<Int, Int>;
-	@:bindable public var element: Element;
 	public var width(get, never): Int;
 	public var height(get, never): Int;
+
+	@:auto public var onResize: Signal2<Int, Int>;
+	@:bindable public var element: Element;
+
 	private final even: Bool;
+
 	private var initCheckCounter: Int = 0;
 
 	public function new(element: Element, even: Bool = true) {
@@ -33,6 +36,12 @@ class ElementResizeControl implements HasSignal {
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function get_height(): Int return makeEven(element.clientHeight);
 
+	public function resizeHandler(): Void {
+		for (i in 0...element.childElementCount) element.children.item(i).hidden = true;
+		eResize.dispatch(width, height);
+		for (i in 0...element.childElementCount) element.children.item(i).hidden = false;
+	}
+
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function makeEven(v: Int): Int return even ? v - v % 2 : v;
@@ -49,11 +58,5 @@ class ElementResizeControl implements HasSignal {
 	}
 
 	private function unlistenResize(): Void Window.onResize >> resizeHandler;
-
-	public function resizeHandler(): Void {
-		for (i in 0...element.childElementCount) element.children.item(i).hidden = true;
-		eResize.dispatch(width, height);
-		for (i in 0...element.childElementCount) element.children.item(i).hidden = false;
-	}
 
 }

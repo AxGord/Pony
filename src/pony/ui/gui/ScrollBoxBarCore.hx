@@ -14,19 +14,21 @@ import pony.ui.gui.SliderCore;
  */
 @:nullSafety(Strict) class ScrollBoxBarCore implements HasSignal implements HasLink {
 
+	public var totalA(default, set): Float = 0;
+	public var totalB(default, set): Float = 0;
+	public var c(default, null): Null<Float>;
+
+	public var pos(link, set): Float = slider.pos;
+
 	@:auto public var onHide: Signal0;
 	@:auto public var onPos: Signal2<Float, Float>;
 	@:auto public var onSize: Signal2<Float, Float>;
 	@:auto public var onContentPos: Signal1<Float>;
 	@:auto public var onMaskSize: Signal1<Float>;
 
-	public var pos(link, set): Float = slider.pos;
-
-	public var c(default, null): Null<Float>;
 	private final slider: SliderCore;
 	private final scrollPanelSize: Float;
-	public var totalA(default, set): Float = 0;
-	public var totalB(default, set): Float = 0;
+
 	private var scrollerSize: Float = 0;
 	private var startPoint: Float = 0;
 
@@ -86,14 +88,14 @@ import pony.ui.gui.SliderCore;
 		}
 	}
 
-	private function posHandler(pos: Float): Void ePos.dispatch(pos, totalB - scrollPanelSize);
-
-	private function valueHandler(v: Float): Void eContentPos.dispatch(-v);
-
 	public function wheelHandler(delta: Float): Void slider.wheelValue(delta);
 
 	public function start(p: Float): Void startPoint = slider.value + p;
 
 	public function move(p: Float): Void slider.setPosValue(startPoint - p);
+
+	private function posHandler(pos: Float): Void ePos.dispatch(pos, totalB - scrollPanelSize);
+
+	private function valueHandler(v: Float): Void eContentPos.dispatch(-v);
 
 }

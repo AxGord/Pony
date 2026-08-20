@@ -18,17 +18,17 @@ using pony.flash.starling.displayFactory.DisplayListStaticExtentions;
  */
 class Tooltip {
 
-	private final _tooltip: IDisplayObject;
-	private var _container: IDisplayObjectContainer;
-	private final _data: Map<IDisplayObject, Dynamic> = [];
+	public static var instance: Tooltip = null;
 
-	private var _previousTarget: Dynamic;
-
-	public var dataSetFunction: IDisplayObject -> Dynamic -> Void;
 	public var distanceFromMouse: Float = 15;
 	public var distanceFromBorder: Float = 15;
+	public var dataSetFunction: IDisplayObject -> Dynamic -> Void;
 
-	public static var instance: Tooltip = null;
+	private final _data: Map<IDisplayObject, Dynamic> = [];
+	private final _tooltip: IDisplayObject;
+
+	private var _container: IDisplayObjectContainer;
+	private var _previousTarget: Dynamic;
 
 	public function new(tooltip: IDisplayObject) {
 		_tooltip = tooltip;
@@ -38,6 +38,19 @@ class Tooltip {
 		_tooltip.visible = false;
 		_tooltip.setTouchable(false);
 		dataSetFunction = defaultDataSet;
+	}
+
+	/**
+	 * Tooltip.add adds a tooltip to an object. Data can be either String or {text:String, longText:String},
+	 * or you can use your own format by adding your own data set function to dataSetFunction variable of this Tooltip object.
+	 * @param data can be either String or {text:String, longText:String},
+	 * or you can use your own format by adding your own data set function to dataSetFunction variable of this Tooltip object.
+	 */
+	public function add(object: IDisplayObject, data: Dynamic): Void {
+		if (object == null) throw "Can't add a tooltip to a null object";
+		_container.addChild(_tooltip);
+		_data[object] = data;
+		TouchManager.addListener(object, listener);
 	}
 
 	private function defaultDataSet(tooltip: IDisplayObject, data: Dynamic): Void {
@@ -83,28 +96,6 @@ class Tooltip {
 
 	}
 
-	/**
-	 * Tooltip.addDefault adds a tooltip with a style provided by an instance of TooltipSource class. Data can be either String or {text:String, longText:String}
-	 * @param data can be either String or {text:String, longText:String}
-	 */
-	public static function addDefault(object: IDisplayObject, data: Dynamic): Void {
-		if (instance == null) throw 'Set tooltip style first';
-		instance.add(object, data);
-	}
-
-	/**
-	 * Tooltip.add adds a tooltip to an object. Data can be either String or {text:String, longText:String},
-	 * or you can use your own format by adding your own data set function to dataSetFunction variable of this Tooltip object.
-	 * @param data can be either String or {text:String, longText:String},
-	 * or you can use your own format by adding your own data set function to dataSetFunction variable of this Tooltip object.
-	 */
-	public function add(object: IDisplayObject, data: Dynamic): Void {
-		if (object == null) throw "Can't add a tooltip to a null object";
-		_container.addChild(_tooltip);
-		_data[object] = data;
-		TouchManager.addListener(object, listener);
-	}
-
 	private function listener(e: TouchManagerEvent): Void {
 		switch (e.type) {
 			case TouchEventType.Hover:
@@ -134,6 +125,15 @@ class Tooltip {
 		if (_tooltip.y < distanceFromBorder) _tooltip.y = distanceFromBorder;
 		if (_tooltip.x + rect.width > stageWidth - distanceFromBorder) _tooltip.x = stageWidth - distanceFromBorder - rect.width;
 		if (_tooltip.y + rect.height > stageHeight - distanceFromBorder) _tooltip.y = stageHeight - distanceFromBorder - rect.height;
+	}
+
+	/**
+	 * Tooltip.addDefault adds a tooltip with a style provided by an instance of TooltipSource class. Data can be either String or {text:String, longText:String}
+	 * @param data can be either String or {text:String, longText:String}
+	 */
+	public static function addDefault(object: IDisplayObject, data: Dynamic): Void {
+		if (instance == null) throw 'Set tooltip style first';
+		instance.add(object, data);
 	}
 
 }

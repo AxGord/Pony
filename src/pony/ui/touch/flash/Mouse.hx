@@ -31,40 +31,6 @@ class Mouse {
 		disableStd();
 	}
 
-	private static function listenStage(stage: Stage): Void {
-		stage.addEventListener(MouseEvent.MOUSE_MOVE, moveHandler, false, EVENTS_PRIORITY, true);
-		stage.addEventListener(MouseEvent.MOUSE_DOWN, downHandler, false, EVENTS_PRIORITY, true);
-		stage.addEventListener(MouseEvent.MOUSE_UP, upHandler, false, EVENTS_PRIORITY, true);
-		stage.addEventListener(MouseEvent.MOUSE_WHEEL, wheelHandler, false, EVENTS_PRIORITY, true);
-	}
-
-	private static function unlistenStage(stage: Stage): Void {
-		stage.removeEventListener(MouseEvent.MOUSE_MOVE, moveHandler, false);
-		stage.removeEventListener(MouseEvent.MOUSE_DOWN, downHandler, false);
-		stage.removeEventListener(MouseEvent.MOUSE_UP, upHandler, false);
-		stage.removeEventListener(MouseEvent.MOUSE_WHEEL, wheelHandler, false);
-	}
-
-	private static function moveHandler(event: MouseEvent): Void {
-		M.moveHandler(event.stageX, event.stageY);
-		tlock(event);
-	}
-
-	private static function downHandler(event: MouseEvent): Void {
-		if (M.checkDown(MouseButton.LEFT)) M.downHandler(event.stageX, event.stageY, MouseButton.LEFT);
-		tlock(event);
-	}
-
-	private static function upHandler(event: MouseEvent): Void {
-		if (M.checkUp(MouseButton.LEFT)) M.upHandler(event.stageX, event.stageY, MouseButton.LEFT);
-		tlock(event);
-	}
-
-	private static function wheelHandler(event: MouseEvent): Void {
-		@:privateAccess M.eWheel.dispatch(event.delta);
-		tlock(event);
-	}
-
 	public static function enableStd(): Void {
 		enabled = true;
 		Lib.current.stage.removeEventListener(MouseEvent.CLICK, lock, true);
@@ -109,10 +75,44 @@ class Mouse {
 		Lib.current.stage.addEventListener(MouseEvent.ROLL_OVER, lock, true, LOCK_PRIORITY, true);
 	}
 
-	private static function lock(event: MouseEvent): Void event.stopImmediatePropagation();
-
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function tlock(event: MouseEvent): Void if (!enabled) event.stopImmediatePropagation();
+
+	private static function listenStage(stage: Stage): Void {
+		stage.addEventListener(MouseEvent.MOUSE_MOVE, moveHandler, false, EVENTS_PRIORITY, true);
+		stage.addEventListener(MouseEvent.MOUSE_DOWN, downHandler, false, EVENTS_PRIORITY, true);
+		stage.addEventListener(MouseEvent.MOUSE_UP, upHandler, false, EVENTS_PRIORITY, true);
+		stage.addEventListener(MouseEvent.MOUSE_WHEEL, wheelHandler, false, EVENTS_PRIORITY, true);
+	}
+
+	private static function unlistenStage(stage: Stage): Void {
+		stage.removeEventListener(MouseEvent.MOUSE_MOVE, moveHandler, false);
+		stage.removeEventListener(MouseEvent.MOUSE_DOWN, downHandler, false);
+		stage.removeEventListener(MouseEvent.MOUSE_UP, upHandler, false);
+		stage.removeEventListener(MouseEvent.MOUSE_WHEEL, wheelHandler, false);
+	}
+
+	private static function moveHandler(event: MouseEvent): Void {
+		M.moveHandler(event.stageX, event.stageY);
+		tlock(event);
+	}
+
+	private static function downHandler(event: MouseEvent): Void {
+		if (M.checkDown(MouseButton.LEFT)) M.downHandler(event.stageX, event.stageY, MouseButton.LEFT);
+		tlock(event);
+	}
+
+	private static function upHandler(event: MouseEvent): Void {
+		if (M.checkUp(MouseButton.LEFT)) M.upHandler(event.stageX, event.stageY, MouseButton.LEFT);
+		tlock(event);
+	}
+
+	private static function wheelHandler(event: MouseEvent): Void {
+		@:privateAccess M.eWheel.dispatch(event.delta);
+		tlock(event);
+	}
+
+	private static function lock(event: MouseEvent): Void event.stopImmediatePropagation();
 
 }

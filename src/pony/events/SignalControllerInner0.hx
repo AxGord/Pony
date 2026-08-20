@@ -7,6 +7,7 @@ package pony.events;
 @:nullSafety(Strict) class SignalControllerInner0 {
 
 	public var signal(default, null): Signal0;
+
 	public var stop: Bool = false;
 	@:nullSafety(Off) public var listener: Listener0;
 

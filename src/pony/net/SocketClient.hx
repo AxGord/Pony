@@ -17,26 +17,40 @@ import pony.events.Signal2;
 
 	private static inline var DEFAULT_LEN_BLOCK_SIZE: Int = 4;
 
+	public var writeLengthSize: UInt = DEFAULT_LEN_BLOCK_SIZE;
 	@:auto public var onTask: Signal2<Null<BytesInput>, ISocketClient>;
 	@:auto public var onTaskError: Signal1<ISocketClient>;
 
-	public var writeLengthSize: UInt = DEFAULT_LEN_BLOCK_SIZE;
-
 	private var stack: Array<BytesOutput> = [];
-	private var taskPrefix: Null<BytesInput>;
 	private var taskDataLength: Int64 = -1;
+	private var taskPrefix: Null<BytesInput>;
 	private var taskBuffer: Null<BytesOutput>;
 
-	override private function sharedInit(): Void {
-		writeLengthSize = DEFAULT_LEN_BLOCK_SIZE;
-		stack = [];
-		super.sharedInit();
+	public inline function setTaskb(prefix: Bytes, ?len: Int64): Signal2<BytesInput, ISocketClient> {
+		final bo: BytesOutput = new BytesOutput();
+		bo.write(prefix);
+		return setTask(bo, len);
 	}
 
-	#if !cs
-	// Not working for CS
-	public dynamic function writeLength(bo: BytesOutput, length: UInt): Void bo.writeInt32(length);
-	#end
+	public inline function setTask(?prefix: BytesOutput, ?len: Int64): Signal2<BytesInput, ISocketClient> {
+		taskBuffer = new BytesOutput();
+		taskPrefix = prefix == null ? null : new BytesInput(prefix.getBytes());
+		// ?? cannot replace this: Int64 needs the ternary's per-branch typing
+		taskDataLength = len == null ? 0 : len; // noqa: prefer-null-coalescing
+		onData << taskDataHandler;
+		return onTask;
+	}
+
+	public inline function removeTask(): Void {
+		taskBuffer = null;
+		taskPrefix = null;
+		taskDataLength = -1;
+		onData >> taskDataHandler;
+	}
+
+	public inline function sendSetTaskSym(b: Bytes, len: UInt = 0): Signal2<BytesInput, ISocketClient> {
+		return sendSetTask(b, b, len);
+	}
 
 	override public function send(data: BytesOutput): Void {
 		if (!opened) {
@@ -85,26 +99,33 @@ import pony.events.Signal2;
 
 	public function sendAllStack(): Void while (stack.length > 0) @:nullSafety(Off) send(stack.shift());
 
-	public inline function setTaskb(prefix: Bytes, ?len: Int64): Signal2<BytesInput, ISocketClient> {
-		final bo: BytesOutput = new BytesOutput();
-		bo.write(prefix);
-		return setTask(bo, len);
+	public function sendSetTask(out: Bytes, ?prefix: Bytes, len: UInt = 0): Signal2<BytesInput, ISocketClient> {
+		final ob: BytesOutput = new BytesOutput();
+		ob.write(out);
+		send(ob);
+		if (prefix != null) {
+			final pb: BytesOutput = new BytesOutput();
+			pb.write(prefix);
+			return setTask(pb, len);
+		} else {
+			return setTask(len);
+		}
 	}
 
-	public inline function setTask(?prefix: BytesOutput, ?len: Int64): Signal2<BytesInput, ISocketClient> {
-		taskBuffer = new BytesOutput();
-		taskPrefix = prefix == null ? null : new BytesInput(prefix.getBytes());
-		// ?? cannot replace this: Int64 needs the ternary's per-branch typing
-		taskDataLength = len == null ? 0 : len; // noqa: prefer-null-coalescing
-		onData << taskDataHandler;
-		return onTask;
+	#if !cs
+	// Not working for CS
+	public dynamic function writeLength(bo: BytesOutput, length: UInt): Void bo.writeInt32(length);
+	#end
+
+	private inline function taskError(): Void {
+		removeTask();
+		eTaskError.dispatch(this);
 	}
 
-	public inline function removeTask(): Void {
-		taskBuffer = null;
-		taskPrefix = null;
-		taskDataLength = -1;
-		onData >> taskDataHandler;
+	override private function sharedInit(): Void {
+		writeLengthSize = DEFAULT_LEN_BLOCK_SIZE;
+		stack = [];
+		super.sharedInit();
 	}
 
 	private function taskDataHandler(bi: BytesInput): Void {
@@ -135,28 +156,6 @@ import pony.events.Signal2;
 				taskDataHandler(new BytesInput(b.readAll()));
 			}
 		}
-	}
-
-	private inline function taskError(): Void {
-		removeTask();
-		eTaskError.dispatch(this);
-	}
-
-	public function sendSetTask(out: Bytes, ?prefix: Bytes, len: UInt = 0): Signal2<BytesInput, ISocketClient> {
-		final ob: BytesOutput = new BytesOutput();
-		ob.write(out);
-		send(ob);
-		if (prefix != null) {
-			final pb: BytesOutput = new BytesOutput();
-			pb.write(prefix);
-			return setTask(pb, len);
-		} else {
-			return setTask(len);
-		}
-	}
-
-	public inline function sendSetTaskSym(b: Bytes, len: UInt = 0): Signal2<BytesInput, ISocketClient> {
-		return sendSetTask(b, b, len);
 	}
 
 }

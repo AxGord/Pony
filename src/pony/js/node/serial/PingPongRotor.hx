@@ -13,12 +13,12 @@ class PingPongRotor extends Tumbler {
 
 	@:auto public var onLoop: Signal0;
 
+	private var startCheckTimer: Timer = new Timer(1000);
+	private var counter: Int = 3;
 	private var rotor: Rotor;
 	private var onStop: Signal0;
 	private var onStart: Signal0;
-	private var startCheckTimer: Timer = new Timer(1000);
 	private var firstCheckTimer: Timer;
-	private var counter: Int = 3;
 
 	public function new(rotor: Rotor, limit: LimitSwitch, maxSpeed: Bool = false, maxTime: Int = 10000) {
 		super(false);
@@ -37,6 +37,19 @@ class PingPongRotor extends Tumbler {
 		onDisable << resetCounter;
 	}
 
+	public function destroy(): Void {
+		startCheckTimer.destroy();
+		startCheckTimer = null;
+		firstCheckTimer.destroy();
+		firstCheckTimer = null;
+		destroySignals();
+		destroySignal(onStart);
+		destroySignal(onStop);
+		rotor = null;
+		onStop = null;
+		onStart = null;
+	}
+
 	private function firstStopHandler(): Void {
 		firstCheckTimer.stop();
 	}
@@ -52,19 +65,6 @@ class PingPongRotor extends Tumbler {
 	}
 
 	private function resetCounter(): Void counter = 2;
-
-	public function destroy(): Void {
-		startCheckTimer.destroy();
-		startCheckTimer = null;
-		firstCheckTimer.destroy();
-		firstCheckTimer = null;
-		destroySignals();
-		destroySignal(onStart);
-		destroySignal(onStop);
-		rotor = null;
-		onStop = null;
-		onStart = null;
-	}
 
 	private function destroySignal(s: Signal0): Void {
 		final e: Event0 = cast s;

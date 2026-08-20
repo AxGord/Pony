@@ -36,16 +36,17 @@ using pony.text.TextTools;
 
 @:nullSafety(Strict) @:final private class FtpInstance extends Logable {
 
-	private static inline final DELAY_TIMEOUT: Int = 2000;
-
 	public static var ignore(default, null): ROArray<String> = ['.DS_Store', '.Spotlight-V100', '.Trashes', 'ehthumbs.db', 'Thumbs.db'];
+
+	private static inline final DELAY_TIMEOUT: Int = 2000;
 
 	@:auto public var onComplete: Signal0;
 
+	private final input: Array<String> = [];
 	private final ftp: Dynamic;
 	private final path: String;
-	private final input: Array<String> = [];
 	private final output: String;
+
 	@:nullSafety(Off) private var inputIterator: Iterator<String>;
 	@:nullSafety(Off) private var fileIterator: Iterator<File>;
 

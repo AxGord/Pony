@@ -31,8 +31,6 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 	private static var _send(get, never): Dynamic;
 	private static var __send: Dynamic;
 
-	private static inline function get__send(): Dynamic return __send != null ? __send : __send = Node.require('send');
-
 	private var res: ServerResponse;
 	private var req: IncomingMessage;
 
@@ -67,9 +65,7 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 		rePost();
 	}
 
-	private function langPush(s: String): Void {
-		if (s != '' && Lambda.indexOf(languages, s) == -1) languages.push(s);
-	}
+	private static inline function get__send(): Dynamic return __send != null ? __send : __send = Node.require('send');
 
 	#if (haxe_ver < 4.2) override #end
 	public function sendFile(file: File): Void {
@@ -111,12 +107,6 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 		res.end(t);
 		end = true;
 	}
-
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function setLength(t: String): Void return res.setHeader('Content-Length', Std.string(Buffer.byteLength(t, 'utf8')));
-
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function setHtmlUtf8(): Void res.setHeader('Content-Type', 'text/html; charset=UTF-8');
 
 	#if (haxe_ver < 4.2) override #end
 	public function endActionPrevPage(): Void goto(req.headers.field('referer'));
@@ -166,6 +156,16 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 		setLength(text);
 		res.end(text);
 		end = true;
+	}
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function setLength(t: String): Void return res.setHeader('Content-Length', Std.string(Buffer.byteLength(t, 'utf8')));
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function setHtmlUtf8(): Void res.setHeader('Content-Type', 'text/html; charset=UTF-8');
+
+	private function langPush(s: String): Void {
+		if (s != '' && Lambda.indexOf(languages, s) == -1) languages.push(s);
 	}
 
 	private function writeCookie(): Void {

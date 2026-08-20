@@ -12,6 +12,8 @@ abstract Angle(Float) to Float {
 
 	public inline function new(v) this = v;
 
+	private inline function get_percent(): Float return this / MAX;
+
 	@:from private static inline function fromFloat(v: Float): Angle {
 		v = v % MAX;
 		if (v < 0) v += MAX;
@@ -19,8 +21,6 @@ abstract Angle(Float) to Float {
 	}
 
 	@:from private static inline function fromInt(v: Int): Angle return fromFloat(v);
-
-	private inline function get_percent(): Float return this / MAX;
 
 	@:op(A + B) private static inline function add(a: Angle, b: Angle): Angle return (a: Float) + (b: Float);
 

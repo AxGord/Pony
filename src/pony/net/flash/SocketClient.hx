@@ -33,6 +33,15 @@ class SocketClient extends SocketClientBase {
 		socket.addEventListener(SecurityErrorEvent.SECURITY_ERROR, securityErrorHandler);
 	}
 
+	public function send(data: BytesOutput): Void q.call(data);
+
+	override public function close(): Void {
+		super.close();
+		try {
+			socket.close();
+		} catch (_: Dynamic) {}
+	}
+
 	// private function skipOutputProgressHandler():Void outputProgressHandler(null);
 
 	private function outputProgressHandler(_): Void {
@@ -48,8 +57,6 @@ class SocketClient extends SocketClientBase {
 
 	private function connectHandler(_): Void connect();
 
-	public function send(data: BytesOutput): Void q.call(data);
-
 	private function _send(data: BytesOutput): Void {
 		socket.addEventListener('outputProgress', outputProgressHandler);
 		final b: Bytes = data.getBytes();
@@ -61,13 +68,6 @@ class SocketClient extends SocketClientBase {
 		} catch (e: Dynamic) {
 			error(e);
 		}
-	}
-
-	override public function close(): Void {
-		super.close();
-		try {
-			socket.close();
-		} catch (_: Dynamic) {}
 	}
 
 	private function socketDataHandler(_): Void {

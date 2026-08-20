@@ -12,10 +12,11 @@ using pony.math.MathTools;
  */
 class Smooth implements HasSignal {
 
-	@:auto public var onUpdate: Signal1<Float>;
-
 	public var value(default, null): Null<Float> = null;
+
+	@:auto public var onUpdate: Signal1<Float>;
 	public var time: Float;
+
 	private var vals: Array<Float>;
 	private var dtsum: Float;
 	private var last: Null<Float>;
@@ -36,6 +37,12 @@ class Smooth implements HasSignal {
 		last = v;
 	}
 
+	public function reset(): Void {
+		vals = [];
+		value = 0;
+		eUpdate.dispatch(value);
+	}
+
 	private function tick(dt: Float): Void {
 		dtsum += dt;
 		if (dtsum < time) return;
@@ -50,12 +57,6 @@ class Smooth implements HasSignal {
 		}
 		value = vals.arithmeticMean();
 		vals = [];
-		eUpdate.dispatch(value);
-	}
-
-	public function reset(): Void {
-		vals = [];
-		value = 0;
 		eUpdate.dispatch(value);
 	}
 

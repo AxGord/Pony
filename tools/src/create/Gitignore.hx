@@ -16,7 +16,6 @@ class Gitignore {
 		'ehthumbs.db',
 		'Thumbs.db'
 	];
-
 	private static final GITIGNORE: String = '.gitignore';
 	private static final NODE_MODULES: String = 'node_modules/';
 	private static final PACKAGE_LOCK: String = 'package-lock.json';

@@ -31,6 +31,18 @@ final class NodeRepeat extends Node {
 		updateSize();
 	}
 
+	override public function destroy(): Void {
+		super.destroy();
+		graphics.clear();
+		@:nullSafety(Off) graphics = null;
+	}
+
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function updatePosition(): Void {
+		graphics.setPosition(flipx ? x + w : x, flipy ? y + w : y);
+	}
+
 	private function updateSize(): Void {
 		graphics.clear();
 		graphics.drawRect(0, 0, w, h);
@@ -49,18 +61,6 @@ final class NodeRepeat extends Node {
 	private function changeFlipyHandler(flip: Bool): Void {
 		graphics.scaleY = flip ? -1 : 1;
 		updatePosition();
-	}
-
-	@SuppressWarnings('checkstyle:MagicNumber')
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function updatePosition(): Void {
-		graphics.setPosition(flipx ? x + w : x, flipy ? y + w : y);
-	}
-
-	override public function destroy(): Void {
-		super.destroy();
-		graphics.clear();
-		@:nullSafety(Off) graphics = null;
 	}
 
 }

@@ -30,12 +30,6 @@ import pony.Queue.Queue;
 class SocketClient extends SocketClientBase {
 
 	/**
-	 * A client socket used to begin and end asynchronous operations.
-	**/
-	@:allow(pony.net.cs.SocketServer)
-	private var client: Socket;
-
-	/**
 	 * Indicates if a client sended first or second datagramm; the first one is being sended if isSet is false, true instead.
 	**/
 	@:allow(pony.net.cs.SocketServer)
@@ -46,12 +40,6 @@ class SocketClient extends SocketClientBase {
 	**/
 	@:allow(pony.net.cs.SocketServer)
 	private var receiveBuffer: NativeArray<UInt8> = new NativeArray(4);
-
-	/**
-	 * A queue using to synchronize sending.
-	**/
-	@:allow(pony.net.cs.SocketServer)
-	private var sendQueue: Queue<BytesOutput -> Void>;
 
 	/**
 	 * An event that signals if send callback ends. Using in destroy function.
@@ -66,15 +54,27 @@ class SocketClient extends SocketClientBase {
 	private var eventReceive: ManualResetEvent = new ManualResetEvent(true);
 
 	/**
+	 * A flag that indicates if client is connected.
+	**/
+	private var isConnected: Bool = false;
+
+	/**
+	 * A client socket used to begin and end asynchronous operations.
+	**/
+	@:allow(pony.net.cs.SocketServer)
+	private var client: Socket;
+
+	/**
+	 * A queue using to synchronize sending.
+	**/
+	@:allow(pony.net.cs.SocketServer)
+	private var sendQueue: Queue<BytesOutput -> Void>;
+
+	/**
 	 * A flag that indicates if send-receive process is running.
 	**/
 	@:allow(pony.net.cs.SocketServer)
 	private var isRunning: Bool;
-
-	/**
-	 * A flag that indicates if client is connected.
-	**/
-	private var isConnected: Bool = false;
 
 	override public function new(aHost: String = '127.0.0.1', aPort: Int, aReconnect: Int = -1, aIsWithLength: Bool = true) {
 		isRunning = true;
@@ -102,12 +102,58 @@ class SocketClient extends SocketClientBase {
 		Timer.delay(begin, 20); // and begin take data after some delay
 	}
 
-	private function begin(): Void {
-		client.BeginReceive(receiveBuffer, 0, receiveBuffer.Length, SocketFlags.None, new AsyncCallback(receiveCallback), this);
-	}
-
 	public function send(data: BytesOutput): Void {
 		Synchro.lock(sendQueue, function() sendQueue.call(data));
+	}
+
+	/*
+		public override function destroy():Void
+		{
+			isRunning = false;
+			var destrThread:Thread = new Thread(new cs.system.threading.ThreadStart(function()
+			{
+				eventReceive.WaitOne();
+				eventSend.WaitOne();
+				//trace("Client's close traced."); This one isn't traced. Need to fix. "three-fourth-fixed", see commetary below. Seems to be completely fixed, but there's one more bug.
+				Synchro.lock(client, function()
+				{
+					var flag:Bool = true;
+					try
+					{
+						client.Shutdown(cs.system.net.sockets.SocketShutdown.Both);
+						client.Disconnect(false);//These two strings may cause a crash. Use them at your own risk - or just comment so as "trace(ex);" above too. The problem is: when Close
+												 //having been executed, receive callback tries to execute one more time (although it hasn't to) and crashes the program because client becomes
+												 //null. To prevent this trying to receive I added the Shutdown and Disconnect but they don't work the way it should - or I misunderstood their
+												 //working.
+												 //There were a few time when Disconnect raised an exception as if it waits for client to be alive but one is not. It's really strange behaviour
+												 //because client must be alive - Close isn't called at the time Disconnect is. It looks like Disconnect is called twice for one client. The temporary
+												 //solve of this problem is just not to use Disconnect and swallow the exception raising because of it.
+												 //By now there's no need in commenting something because execption raised by Disconnect is caught by using try-catch block and Close executes anyhow.
+												 //But it isn't the best way to solve the problem, though.
+												 //By now client is locked so there is no race condition anymore, fixed.
+					}
+					catch(ex:Dynamic)
+					{
+						flag = false;
+						client.Close();
+					}
+					if (flag) client.Close();
+				} );
+
+				destroy();
+			}));
+			destrThread.IsBackground = true;
+			destrThread.Start();
+		}
+	 */
+
+	override public function destroy(): Void {
+		isRunning = false;
+		super.destroy();
+	}
+
+	private function begin(): Void {
+		client.BeginReceive(receiveBuffer, 0, receiveBuffer.Length, SocketFlags.None, new AsyncCallback(receiveCallback), this);
 	}
 
 	@:allow(pony.net.cs.SocketServer)
@@ -183,52 +229,6 @@ class SocketClient extends SocketClientBase {
 		}
 		// trace(isRunning); //This trace, being uncommented, comletely burns program to the ground. Although it doesn't do, fixed somehow.
 		eventReceive.Set();
-	}
-
-	/*
-		public override function destroy():Void
-		{
-			isRunning = false;
-			var destrThread:Thread = new Thread(new cs.system.threading.ThreadStart(function()
-			{
-				eventReceive.WaitOne();
-				eventSend.WaitOne();
-				//trace("Client's close traced."); This one isn't traced. Need to fix. "three-fourth-fixed", see commetary below. Seems to be completely fixed, but there's one more bug.
-				Synchro.lock(client, function()
-				{
-					var flag:Bool = true;
-					try
-					{
-						client.Shutdown(cs.system.net.sockets.SocketShutdown.Both);
-						client.Disconnect(false);//These two strings may cause a crash. Use them at your own risk - or just comment so as "trace(ex);" above too. The problem is: when Close
-												 //having been executed, receive callback tries to execute one more time (although it hasn't to) and crashes the program because client becomes
-												 //null. To prevent this trying to receive I added the Shutdown and Disconnect but they don't work the way it should - or I misunderstood their
-												 //working.
-												 //There were a few time when Disconnect raised an exception as if it waits for client to be alive but one is not. It's really strange behaviour
-												 //because client must be alive - Close isn't called at the time Disconnect is. It looks like Disconnect is called twice for one client. The temporary
-												 //solve of this problem is just not to use Disconnect and swallow the exception raising because of it.
-												 //By now there's no need in commenting something because execption raised by Disconnect is caught by using try-catch block and Close executes anyhow.
-												 //But it isn't the best way to solve the problem, though.
-												 //By now client is locked so there is no race condition anymore, fixed.
-					}
-					catch(ex:Dynamic)
-					{
-						flag = false;
-						client.Close();
-					}
-					if (flag) client.Close();
-				} );
-
-				destroy();
-			}));
-			destrThread.IsBackground = true;
-			destrThread.Start();
-		}
-	 */
-
-	override public function destroy(): Void {
-		isRunning = false;
-		super.destroy();
 	}
 
 	override function close(): Void {

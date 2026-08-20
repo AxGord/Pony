@@ -21,8 +21,6 @@ class RemoteAction extends Logable implements HasAbstract {
 
 	public dynamic function onEnd(): Void {}
 
-	@:abstract private function run(data: String): Void;
-
 	public function end(): Void {
 		onEnd();
 		destroy();
@@ -31,5 +29,7 @@ class RemoteAction extends Logable implements HasAbstract {
 	private inline function logData(data: String): Void {
 		log(Type.getClassName(@:nullSafety(Off) Type.getClass(this)) + ': ' + data);
 	}
+
+	@:abstract private function run(data: String): Void;
 
 }

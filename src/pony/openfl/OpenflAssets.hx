@@ -24,8 +24,8 @@ import pony.ui.AssetManager;
 class OpenflAssets {
 
 	private static final assets: Map<String, DisplayObject> = [];
-	private static var loader: Loader;
 
+	private static var loader: Loader;
 	private static var loadCompleteHandler: Void -> Void;
 	private static var assetName: String;
 

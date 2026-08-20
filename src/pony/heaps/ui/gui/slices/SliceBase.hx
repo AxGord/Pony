@@ -23,6 +23,7 @@ final class SliceBase implements HasLink {
 	private final tiles: Array<Tile>;
 	private final groups: Map<Int, TileGroup> = [];
 	private final solo: Map<Int, Bitmap> = [];
+
 	private var wrap: Map<Int, Graphics> = [];
 
 	public var twsum(link, never): Float = GUIUtils.tilesWidthSum(tiles);

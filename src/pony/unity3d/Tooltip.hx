@@ -28,47 +28,24 @@ using pony.math.MathTools;
 @:nativeGen class Tooltip {
 
 	public static var panelMode: Bool = false;
-
 	public static var limitBorder: Float = 50;
 	public static var border: Single = 5;
+	public static var defaultColorMod: LV<Color> = new LV(null);
+	public static var panel: Bool = false;
 	public static var textObject: GameObject;
+	public static var r: Rect;
+	public static var lr: Rect;
+	public static var texture: Texture;
+
+	private static inline final distanceToLong: Float = 5;
+
+	private static var longTextDY: Float = 0;
 	private static var textureObject: GameObject;
 	private static var guiTextObject: GUIText;
 	private static var guiTextureObject: GUITexture;
-	public static var r: Rect;
-	public static var lr: Rect;
-
 	private static var longTextObject: GameObject;
 	private static var guiLongTextObject: GUIText;
-
-	public static var texture: Texture;
-	public static var defaultColorMod: LV<Color> = new LV(null);
-	public static var panel: Bool = false;
-
 	private static var target: Dynamic;
-	private static var longTextDY: Float = 0;
-	private static inline final distanceToLong: Float = 5;
-
-	private static function init(): Void {
-
-		textureObject = new GameObject('GUIText Tooltip Texture');
-		guiTextureObject = cast textureObject.AddComponent('GUITexture');
-		guiTextureObject.texture = texture;
-
-		textObject = new GameObject('GUIText Tooltip');
-		textObject.transform.position = new Vector3(0.5, 0.5);
-		guiTextObject = cast textObject.AddComponent('GUIText');
-		guiTextObject.material.color = new Color(0, 0, 0);
-		// guiTextObject.font = cast Resources.Load('ARIAL');
-		guiTextObject.fontSize = 14;
-
-		longTextObject = new GameObject('GUIText Tooltip Long');
-		longTextObject.transform.position = new Vector3(0.5, 0.5);
-		guiLongTextObject = cast longTextObject.AddComponent('GUIText');
-		guiLongTextObject.material.color = new Color(0, 0, 0);
-		guiLongTextObject.fontSize = 10;
-
-	}
 
 	public static function showText(text: String, bigText: String, obj: Dynamic, layer: Null<Int>, panel: Bool = false): Void {
 		if (panelMode) panel = true;
@@ -123,6 +100,37 @@ using pony.math.MathTools;
 		}
 	}
 
+	public static function hideText(obj: Dynamic): Void {
+		if (target != obj) return;
+		if (textObject == null) return;
+		guiTextObject.enabled = false;
+		guiTextureObject.enabled = false;
+		guiLongTextObject.enabled = false;
+		DeltaTime.update.remove(moveText);
+		DeltaTime.update.remove(moveTextPanel);
+	}
+
+	private static function init(): Void {
+
+		textureObject = new GameObject('GUIText Tooltip Texture');
+		guiTextureObject = cast textureObject.AddComponent('GUITexture');
+		guiTextureObject.texture = texture;
+
+		textObject = new GameObject('GUIText Tooltip');
+		textObject.transform.position = new Vector3(0.5, 0.5);
+		guiTextObject = cast textObject.AddComponent('GUIText');
+		guiTextObject.material.color = new Color(0, 0, 0);
+		// guiTextObject.font = cast Resources.Load('ARIAL');
+		guiTextObject.fontSize = 14;
+
+		longTextObject = new GameObject('GUIText Tooltip Long');
+		longTextObject.transform.position = new Vector3(0.5, 0.5);
+		guiLongTextObject = cast longTextObject.AddComponent('GUIText');
+		guiLongTextObject.material.color = new Color(0, 0, 0);
+		guiLongTextObject.fontSize = 10;
+
+	}
+
 	private static function moveTextPanel(): Void {
 		textObject.transform.position = new Vector3(
 			1 - (Screen.width - Input.mousePosition.x + r.width / 2) / Fixed2dCamera.SIZE,
@@ -149,16 +157,6 @@ using pony.math.MathTools;
 		textureObject.transform.position = new Vector3(x, y, 499);
 		y -= longTextDY / Screen.height;
 		longTextObject.transform.position = new Vector3(x, y, 500);
-	}
-
-	public static function hideText(obj: Dynamic): Void {
-		if (target != obj) return;
-		if (textObject == null) return;
-		guiTextObject.enabled = false;
-		guiTextureObject.enabled = false;
-		guiLongTextObject.enabled = false;
-		DeltaTime.update.remove(moveText);
-		DeltaTime.update.remove(moveTextPanel);
 	}
 
 }

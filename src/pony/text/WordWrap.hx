@@ -11,7 +11,6 @@ class WordWrap {
 	public static var newLine: Int = '\n'.charCodeAt(0);
 	public static var def: Int = '-'.charCodeAt(0);
 	public static var space: Int = ' '.charCodeAt(0);
-
 	public static var splitChars: Array<String> = [' ', '-', '\t'];
 
 	public static function wordWrap(str: String, width: Int): String {

@@ -16,11 +16,10 @@ class Keyboard implements IKeyboard implements HasSignal {
 	private static final KEYDOWN: String = 'keydown';
 	private static final KEYUP: String = 'keyup';
 
+	public var preventDefault: Bool = true;
 	@:auto public var down: Signal1<Key>;
 	@:auto public var up: Signal1<Key>;
 	@:auto public var input: Signal1<UInt>;
-
-	public var preventDefault: Bool = true;
 
 	public function new() {}
 

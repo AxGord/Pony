@@ -19,6 +19,7 @@ class RemoteClient extends Logable {
 
 	private final cfg: RemoteConfig;
 	private final commands: Array<RemoteCommand>;
+
 	private var protocol: Null<RemoteProtocol>;
 
 	public function new(cfg: RemoteConfig) {

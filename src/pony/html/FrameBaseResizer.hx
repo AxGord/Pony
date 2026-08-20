@@ -13,19 +13,19 @@ class FrameBaseResizer implements pony.magic.HasSignal implements pony.magic.Has
 
 	@:auto public var onResize: Signal0;
 
+	private var posA(never, set): Int;
+	private var posB(never, set): Int;
+
+	private var sizeA(get, never): Int;
+	private var sizeB(get, never): Int;
+
 	private var frameA: Element;
 	private var frameB: Element;
 	private var resizer: Element;
-
 	private var startMousePos: Int;
 	private var startSize: Int;
 	private var frameAMin: Int;
 	private var frameBMin: Int;
-
-	private var sizeA(get, never): Int;
-	private var sizeB(get, never): Int;
-	private var posA(never, set): Int;
-	private var posB(never, set): Int;
 
 	private function new(frameA: String, resizer: String, frameB: String, frameAMin: Int, frameBMin: Int) {
 		this.frameA = Browser.document.getElementById(frameA);

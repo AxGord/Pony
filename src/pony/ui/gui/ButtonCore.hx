@@ -19,12 +19,13 @@ enum ButtonState {
 @:nullSafety(Strict) class ButtonCore extends Tumbler implements HasSignal {
 
 	public var touch(default, null): TouchableBase;
-	@:auto public var onClick: Signal1<Int>;
-	@:auto public var onVisual: Signal2<Int, ButtonState>;
+
 	@:bindable public var lowMode: Int = 0;
 	@:bindable public var mode: Int = 0;
 	@:bindable public var bMode: Bool = false;
 	@:bindable public var state: ButtonState = Default;
+	@:auto public var onClick: Signal1<Int>;
+	@:auto public var onVisual: Signal2<Int, ButtonState>;
 
 	private var modeBeforeDisable: Int = 1;
 
@@ -72,48 +73,22 @@ enum ButtonState {
 
 	public inline function sendVisual(): Void eVisual.dispatch(mode, state);
 
-	public function destroy(): Void {
-		touch.destroy();
-		destroySignals();
-	}
-
-	private function allowChangeMode(): Void changeMode << changeModeHandler;
-
-	private function disallowChangeMode(): Void changeMode >> changeModeHandler;
-
-	private function changeModeHandler(v: Int): Void {
-		lowMode = v != 0 ? v + 1 : v;
-		bMode = v == 1;
-	}
-
-	@SuppressWarnings('checkstyle:MagicNumber')
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function enableOverDown(): Void {
-		touch.onOverDown << overDownHandler;
-		touch.onOutDown << outDownHandler;
-	}
-
-	@SuppressWarnings('checkstyle:MagicNumber')
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function disableOverDown(): Void {
-		touch.onOverDown >> overDownHandler;
-		touch.onOutDown >> outDownHandler;
-	}
-
-	private function overDownHandler(): Void {
-		eVisual.dispatch(lowMode, Press);
-	}
-
-	private function outDownHandler(): Void {
-		eVisual.dispatch(lowMode, Leave);
-	}
-
 	public inline function switchMap(a: Array<Int>): Void {
 		onClick << function(v) mode = a[v];
 	}
 
 	public inline function bswitch(): Void {
 		onClick << function() bMode = !bMode;
+	}
+
+	public inline function reset(): Void {
+		lowMode = 0;
+		state = Default;
+	}
+
+	public function destroy(): Void {
+		touch.destroy();
+		destroySignals();
 	}
 
 	public function join(b: ButtonCore): Void {
@@ -140,9 +115,35 @@ enum ButtonState {
 
 	public function click(m: Int): Void eClick.saveDispatch(m);
 
-	public inline function reset(): Void {
-		lowMode = 0;
-		state = Default;
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function enableOverDown(): Void {
+		touch.onOverDown << overDownHandler;
+		touch.onOutDown << outDownHandler;
+	}
+
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function disableOverDown(): Void {
+		touch.onOverDown >> overDownHandler;
+		touch.onOutDown >> outDownHandler;
+	}
+
+	private function allowChangeMode(): Void changeMode << changeModeHandler;
+
+	private function disallowChangeMode(): Void changeMode >> changeModeHandler;
+
+	private function changeModeHandler(v: Int): Void {
+		lowMode = v != 0 ? v + 1 : v;
+		bMode = v == 1;
+	}
+
+	private function overDownHandler(): Void {
+		eVisual.dispatch(lowMode, Press);
+	}
+
+	private function outDownHandler(): Void {
+		eVisual.dispatch(lowMode, Leave);
 	}
 
 }

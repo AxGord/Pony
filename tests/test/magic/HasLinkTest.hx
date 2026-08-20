@@ -5,8 +5,8 @@ import pony.magic.HasLink;
 
 class HasLinkTest implements HasLink {
 
-	private static var index: Int;
 	private static var visualIndex(link, never): String = '${index + 1}';
+	private static var index: Int;
 
 	@Test
 	public function test(): Void {

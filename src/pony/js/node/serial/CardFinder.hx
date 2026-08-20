@@ -39,29 +39,6 @@ class CardFinder implements HasSignal {
 		ppRotor.enable();
 	}
 
-	private function isBusy(ignoreBusy: Bool = false): Bool {
-		if (ignoreBusy) {
-			cancel();
-			return false;
-		}
-		if (!ppRotor.enabled) return false;
-		eBusy.dispatch();
-		return true;
-	}
-
-	private function findHandler(key: String): Void {
-		keyHandler(key);
-		if (key != findTarget) return;
-		final count: Int = scanList.length;
-		cancelFind();
-		eFind.dispatch(count, key);
-	}
-
-	private function findFailedHandler(): Void {
-		cancelFind();
-		eNotFind.dispatch();
-	}
-
 	public function cancelFind(): Void {
 		ppRotor.onLoop >> findFailedHandler;
 		reader.onKey >> findHandler;
@@ -90,17 +67,6 @@ class CardFinder implements HasSignal {
 		ppRotor.enable();
 	}
 
-	private function keyHandler(key: String): Void {
-		scanList.remove(key);
-		scanList.push(key);
-	}
-
-	private function scanFinishHandler(): Void {
-		final list: Array<String> = scanList;
-		cancelScan();
-		eList.dispatch(list);
-	}
-
 	public function destroy(): Void {
 		cancel();
 		limit.destroy();
@@ -111,6 +77,40 @@ class CardFinder implements HasSignal {
 		reader.destroy();
 		reader = null;
 		destroySignals();
+	}
+
+	private function isBusy(ignoreBusy: Bool = false): Bool {
+		if (ignoreBusy) {
+			cancel();
+			return false;
+		}
+		if (!ppRotor.enabled) return false;
+		eBusy.dispatch();
+		return true;
+	}
+
+	private function findHandler(key: String): Void {
+		keyHandler(key);
+		if (key != findTarget) return;
+		final count: Int = scanList.length;
+		cancelFind();
+		eFind.dispatch(count, key);
+	}
+
+	private function findFailedHandler(): Void {
+		cancelFind();
+		eNotFind.dispatch();
+	}
+
+	private function keyHandler(key: String): Void {
+		scanList.remove(key);
+		scanList.push(key);
+	}
+
+	private function scanFinishHandler(): Void {
+		final list: Array<String> = scanList;
+		cancelScan();
+		eList.dispatch(list);
 	}
 
 }

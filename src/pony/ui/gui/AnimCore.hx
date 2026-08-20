@@ -13,12 +13,14 @@ import pony.time.Time;
 #if (haxe_ver >= 4.2) abstract #end
 class AnimCore implements pony.magic.HasAbstract implements pony.magic.HasSignal {
 
+	public var frame(default, set): Int = 0;
+
+	public var totalFrames(get, never): Int;
+
+	public var loop: Bool = true;
 	@:auto public var onFrame: Signal1<Int>;
 	@:auto public var onFrameUpdate: Signal2<Int, DT>;
 	@:auto public var onComplete: Signal1<DT>;
-	public var totalFrames(get, never): Int;
-	public var frame(default, set): Int = 0;
-	public var loop: Bool = true;
 
 	private var timer: DTimer;
 
@@ -27,19 +29,19 @@ class AnimCore implements pony.magic.HasAbstract implements pony.magic.HasSignal
 		timer.complete << tick;
 	}
 
-	private function tick(dt: DT): Void {
-		if (frame >= totalFrames - 1) {
-			if (!loop) {
-				stop();
-				eComplete.dispatch(dt);
-				return;
-			}
-			frame = 0;
-		} else {
-			frame++;
+	public function set_frame(n: Int): Int {
+		if (n < 0)
+			n = 0;
+		else if (n > totalFrames)
+			n = totalFrames;
+		if (n != frame) {
+			frame = n;
+			eFrame.dispatch(n);
 		}
-		eFrameUpdate.dispatch(frame, dt);
+		return n;
 	}
+
+	@:abstract private function get_totalFrames(): Int;
 
 	public inline function play(dt: DT = 0): Void timer.start(dt);
 
@@ -58,24 +60,24 @@ class AnimCore implements pony.magic.HasAbstract implements pony.magic.HasSignal
 		stop();
 	}
 
-	public function set_frame(n: Int): Int {
-		if (n < 0)
-			n = 0;
-		else if (n > totalFrames)
-			n = totalFrames;
-		if (n != frame) {
-			frame = n;
-			eFrame.dispatch(n);
-		}
-		return n;
-	}
-
-	@:abstract private function get_totalFrames(): Int;
-
 	public function destroy(): Void {
 		timer.destroy();
 		timer = null;
 		destroySignals();
+	}
+
+	private function tick(dt: DT): Void {
+		if (frame >= totalFrames - 1) {
+			if (!loop) {
+				stop();
+				eComplete.dispatch(dt);
+				return;
+			}
+			frame = 0;
+		} else {
+			frame++;
+		}
+		eFrameUpdate.dispatch(frame, dt);
 	}
 
 }

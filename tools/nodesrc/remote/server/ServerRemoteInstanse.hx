@@ -14,16 +14,17 @@ import pony.sys.Process;
 class ServerRemoteInstanse {
 
 	private final client: ISocketClient;
-	private var currentCommand: String = '';
-	private var currentCommandN: Int = -1;
 	private final key: String;
 	private final protocol: RemoteProtocol;
-	private var commands: Map<String, Array<Pair<Bool, String>>> = [];
 	private final allowForGet: Array<String>;
+	private final activity: Void -> Void;
+
+	private var currentCommand: String = '';
+	private var currentCommandN: Int = -1;
+	private var commands: Map<String, Array<Pair<Bool, String>>> = [];
 	private var zipRLog: Bool = true;
 	private var packLog: Null<BytesOutput>;
 	private var activeProcess: Null<Process>;
-	private final activity: Void -> Void;
 
 	public function new(
 		client: ISocketClient, key: String, commands: Map<String, Array<Pair<Bool, String>>>, allowForGet: Array<String>
@@ -45,6 +46,10 @@ class ServerRemoteInstanse {
 		else
 			protocol.onAuth < authHandler;
 	}
+
+	public dynamic function onBeginCommand(): Void {}
+
+	public dynamic function onEndCommand(): Void {}
 
 	private function warningHandler(): Void Sys.println('Problem with connection');
 
@@ -163,9 +168,5 @@ class ServerRemoteInstanse {
 		// log('Child exited with code $code');
 		protocol.commandCompleteRemote(currentCommand, code);
 	}
-
-	public dynamic function onBeginCommand(): Void {}
-
-	public dynamic function onEndCommand(): Void {}
 
 }

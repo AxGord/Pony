@@ -14,8 +14,8 @@ import hxd.res.DefaultFont;
 	public static inline final DEFAULT_FONT_SIZE: UInt = 28;
 	public static inline final DEFAULT_TRACE_COLOR: UInt = 0xBBBBFF;
 
-	@:nullSafety(Off) private var origTrace: Dynamic -> ?PosInfos -> Void;
 	private var traceColor: Int = -1;
+	@:nullSafety(Off) private var origTrace: Dynamic -> ?PosInfos -> Void;
 
 	public function new(?font: h2d.Font, size: UInt = DEFAULT_FONT_SIZE, ?parent: Object) {
 		if (font == null) {

@@ -55,6 +55,24 @@ abstract IntRect(SimpleRect<Int>) to SimpleRect<Int> from SimpleRect<Int> {
 	public var width(get, never): Int;
 	public var height(get, never): Int;
 
+	private inline function get_x(): Int return this.x;
+
+	private inline function get_y(): Int return this.y;
+
+	private inline function get_width(): Int return this.width;
+
+	private inline function get_height(): Int return this.height;
+
+	public inline function getX(): Int return this.x;
+
+	public inline function getY(): Int return this.y;
+
+	public inline function getWidth(): Int return this.width;
+
+	public inline function getHeight(): Int return this.height;
+
+	@:to public inline function toRect(): Rect<Int> return cast this;
+
 	@:op(A + B) public static inline function add1(lhs: IntRect, rhs: Point<Int>): IntRect
 		return { x: lhs.getX() + rhs.x, y: lhs.getY() + rhs.y, width: lhs.getWidth(), height: lhs.getHeight() };
 
@@ -66,24 +84,6 @@ abstract IntRect(SimpleRect<Int>) to SimpleRect<Int> from SimpleRect<Int> {
 
 	@:op(A - B) public static inline function m2(lhs: IntRect, rhs: IntPoint): IntRect
 		return { x: lhs.getX() - rhs.getX(), y: lhs.getY() - rhs.getY(), width: lhs.getWidth(), height: lhs.getHeight() };
-
-	public inline function getX(): Int return this.x;
-
-	public inline function getY(): Int return this.y;
-
-	public inline function getWidth(): Int return this.width;
-
-	public inline function getHeight(): Int return this.height;
-
-	private inline function get_x(): Int return this.x;
-
-	private inline function get_y(): Int return this.y;
-
-	private inline function get_width(): Int return this.width;
-
-	private inline function get_height(): Int return this.height;
-
-	@:to public inline function toRect(): Rect<Int> return cast this;
 
 	@:from public static inline function fromRect(p: Rect<Int>): IntRect return cast p;
 

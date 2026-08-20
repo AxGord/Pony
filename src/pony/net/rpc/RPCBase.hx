@@ -10,14 +10,19 @@ import hxbitmini.Serializer;
  */
 class RPCBase<T:pony.net.rpc.IRPC> {
 
-	private final serializer: Serializer = new Serializer();
 	private var object(get, never): T;
+
+	private final serializer: Serializer = new Serializer();
 
 	public function new() {}
 
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function get_object(): T return cast this;
+
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function pack(): Bytes return serializer.serialize(object);
 
 	private function dataHandler(b: BytesInput): Void {
 		serializer.setInput(b.readAll(), 0);
@@ -43,9 +48,5 @@ class RPCBase<T:pony.net.rpc.IRPC> {
 			object.unserialize(serializer);
 		object.checkRemoteCalls();
 	}
-
-	@SuppressWarnings('checkstyle:MagicNumber')
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function pack(): Bytes return serializer.serialize(object);
 
 }

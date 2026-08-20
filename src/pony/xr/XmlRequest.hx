@@ -23,16 +23,6 @@ class XmlRequest extends Logable<XmlRequest> implements ICanBeCopied<XmlRequest>
 		super();
 	}
 
-	public function copy(): XmlRequest {
-		final o = new XmlRequest([]);
-		o.modules = [
-			for (m in modules.mkv()) m.key => (Std.is(m.value, ICanBeCopied) ? untyped m.value.copy() : m.value)
-		];
-		o.error.add(error, 1);
-		o.log.add(log);
-		return o;
-	}
-
 	public inline function run(
 		x: Fast, initModules: Array<Class<Dynamic> -> IXRModule -> Void>, result: Dynamic -> Void, ?gxr: XmlRequest -> Void
 	): Void {
@@ -49,6 +39,16 @@ class XmlRequest extends Logable<XmlRequest> implements ICanBeCopied<XmlRequest>
 		else
 			result(v);
 		xr._run(it.next(), next);
+	}
+
+	public function copy(): XmlRequest {
+		final o = new XmlRequest([]);
+		o.modules = [
+			for (m in modules.mkv()) m.key => (Std.is(m.value, ICanBeCopied) ? untyped m.value.copy() : m.value)
+		];
+		o.error.add(error, 1);
+		o.log.add(log);
+		return o;
 	}
 
 	public function _run(x: Fast, result: Dynamic -> Void): Void {

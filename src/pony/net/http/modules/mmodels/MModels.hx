@@ -38,17 +38,6 @@ final class MModels implements IModule {
 		db.connected.wait(dbReady);
 	}
 
-
-	private function dbReady(): Void {
-		trace('connected to db');
-		prepare(function() trace('created'));
-	}
-
-	@:async
-	private function prepare(): Void {
-		for (m in list) @await m.prepare();
-	}
-
 	public function init(dir: Dir, server: WebServer): Void {}
 
 	public function connect(cpq: CPQ): EConnect {
@@ -75,6 +64,16 @@ final class MModels implements IModule {
 		}
 		for (k in h.keys()) if (list.exists(k)) if (connectList[k].action(h.get(k))) return BREAK;
 		return REG(cast new MModelsConnect(this, cpq, connectList));
+	}
+
+	private function dbReady(): Void {
+		trace('connected to db');
+		prepare(function() trace('created'));
+	}
+
+	@:async
+	private function prepare(): Void {
+		for (m in list) @await m.prepare();
 	}
 
 }

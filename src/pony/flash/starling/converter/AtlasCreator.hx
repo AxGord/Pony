@@ -31,15 +31,13 @@ using pony.flash.starling.displayFactory.DisplayListStaticExtentions;
  */
 class AtlasCreator {
 
-	private final _atlases: Array<Atlas> = [];
-
+	private static inline final _border: Int = 1;
+	private static inline final _additionalBufferSize: Int = 20;
+	private static inline final _additionalBufferSizeLimit: Int = 1024;
 	private static final _loadedTextures: Map<String, TextureStorage> = initStorageMap();
 	private static final _framesLoadedTextures: Map<String, Map<Int, TextureStorage>> = [];
 
-	private static inline final _border: Int = 1;
-
-	private static inline final _additionalBufferSize: Int = 20;
-	private static inline final _additionalBufferSizeLimit: Int = 1024;
+	private final _atlases: Array<Atlas> = [];
 
 	public function new() {
 		_atlases.push(new Atlas());
@@ -232,6 +230,10 @@ class AtlasCreator {
 		}
 	}
 
+	public function generate(): Void {
+		_atlases[_atlases.length - 1].generate(false);
+	}
+
 	private function draw(source: flash.display.DisplayObject, coordinateSpace: flash.display.DisplayObject): Dynamic {
 		var additionalSize: Int = _additionalBufferSize;
 
@@ -336,9 +338,7 @@ class AtlasCreator {
 		return null;
 	}
 
-	public function generate(): Void {
-		_atlases[_atlases.length - 1].generate(false);
-	}
+	public static function getBorder(): Int return _border;
 
 	private static function initStorageMap(): Map<String, TextureStorage> {
 		final result: Map<String, TextureStorage> = [];
@@ -357,13 +357,12 @@ class AtlasCreator {
 		rect.right = Math.ceil(rect.right);
 	}
 
-	public static function getBorder(): Int return _border;
-
 }
 
 private class Atlas {
 
 	public static var size: Int = 2048;
+
 	private static var lastActiveAtlasBmpd: BitmapData;
 
 	public var pack: MaxRectsBinPack = new MaxRectsBinPack(size, size, false);
@@ -417,15 +416,6 @@ private class Atlas {
 		if (finalize) full = true;
 	}
 
-	private function textureRestore(): Void {
-		var bitmapData = ReusableBitmapData.getPowTwo(size, size);
-		for (i in 0..._bitmapDataRestoration.length) {
-			_bitmapDataRestoration[i](bitmapData);
-		}
-		texture.root.uploadBitmapData(bitmapData);
-		bitmapData = null;
-	}
-
 	public function drawOnScreen(): Void {
 		var debugImage: Image = new Image(texture);
 		debugImage.touchable = true;
@@ -438,12 +428,21 @@ private class Atlas {
 		}, [TouchEventType.Up]);
 	}
 
+	private function textureRestore(): Void {
+		var bitmapData = ReusableBitmapData.getPowTwo(size, size);
+		for (i in 0..._bitmapDataRestoration.length) {
+			_bitmapDataRestoration[i](bitmapData);
+		}
+		texture.root.uploadBitmapData(bitmapData);
+		bitmapData = null;
+	}
+
 }
 
 private class TextureStorage {
 
-	private final _allowsAddition: Bool;
 	private final _textures: Array<Dynamic> = [];
+	private final _allowsAddition: Bool;
 
 	public function new(allowsAddition: Bool = true) {
 		_allowsAddition = allowsAddition;

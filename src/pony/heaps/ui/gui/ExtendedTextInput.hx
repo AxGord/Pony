@@ -41,11 +41,13 @@ abstract Transform(Int) {
 
 	public var enabled(default, set): Bool = true;
 	public var lockFocus(default, set): Bool = false;
+
+	public var size(get, never): Point<Float>;
+
 	public var onlyEn: Bool = false;
 	public var transform: Transform = none;
 	public var maxChars: UInt = 0;
 	public var maxLines: UInt = 0;
-	public var size(get, never): Point<Float>;
 
 	private var nextChar: Null<String> = null;
 	private var needFocus: Bool = false;
@@ -68,8 +70,6 @@ abstract Transform(Int) {
 		return v;
 	}
 
-	private inline function getLinesCount(): UInt return getAllLines().length;
-
 	public function set_lockFocus(v: Bool): Bool {
 		lockFocus = v;
 		if (v)
@@ -79,12 +79,69 @@ abstract Transform(Int) {
 		return v;
 	}
 
+	private function get_size(): Point<Float> return new Point<Float>(textWidth * scaleX, textHeight * scaleY);
+
+	public inline function setCursorParams(y: Float, h: Float, ?color: Null<UColor>): Void {
+		cursorTile.dy = y;
+		if (color != null) selectionTile = Tile.fromColor(color, 0, hxd.Math.ceil(font.lineHeight), color.invertAlpha.af);
+		selectionTile.dy = y;
+		selectionTile.setSize(0, textHeight + h);
+		cursorTile.setSize(cursorTile.width, textHeight + h);
+	}
+
+	public inline function blur(): Void {
+		if (!lockFocus || !enabled) {
+			needFocus = false;
+			interactive.blur();
+			cursorIndex = -1;
+			selectionRange = { start: 0, length: 0 };
+		}
+	}
+
 	override public function focus(): Void {
 		if (enabled) {
 			super.focus();
 			needFocus = true;
 			DeltaTime.skipUpdate(focusNow);
 			DeltaTime.skipFrames(4, focusNow); // focus bugfix
+		}
+	}
+
+	public function clear(): Void {
+		undo.resize(0);
+		redo.resize(0);
+		text = '';
+	}
+
+	public function wait(cb: Void -> Void): Void cb();
+
+	public function destroyIWH(): Void {
+		enabled = false;
+		clear();
+		remove();
+	}
+
+	private inline function getLinesCount(): UInt return getAllLines().length;
+
+	private inline function writeSelectedToClipboard(): Void {
+		writeToClipboard(getSelectedText());
+	}
+
+	private inline function doUndo(): Void {
+		nextChar = null;
+		if (undo.length > 0 && canEdit) {
+			redo.push(curHistoryState());
+			@:nullSafety(Off) setState(undo.pop());
+			onChange();
+		}
+	}
+
+	private inline function doRedo(): Void {
+		nextChar = null;
+		if (redo.length > 0 && canEdit) {
+			undo.push(curHistoryState());
+			@:nullSafety(Off) setState(redo.pop());
+			onChange();
 		}
 	}
 
@@ -113,10 +170,6 @@ abstract Transform(Int) {
 		handleKey(event);
 	}
 
-	private inline function writeSelectedToClipboard(): Void {
-		writeToClipboard(getSelectedText());
-	}
-
 	private function writeText(t: String): Void {
 		if (t != null && t.length > 0) {
 			beforeChange();
@@ -125,24 +178,6 @@ abstract Transform(Int) {
 			text = text.substr(0, cursorIndex) + t + text.substr(cursorIndex);
 			cursorIndex += t.length;
 			checkChangedText(before, true);
-		}
-	}
-
-	private inline function doUndo(): Void {
-		nextChar = null;
-		if (undo.length > 0 && canEdit) {
-			redo.push(curHistoryState());
-			@:nullSafety(Off) setState(undo.pop());
-			onChange();
-		}
-	}
-
-	private inline function doRedo(): Void {
-		nextChar = null;
-		if (redo.length > 0 && canEdit) {
-			undo.push(curHistoryState());
-			@:nullSafety(Off) setState(redo.pop());
-			onChange();
 		}
 	}
 
@@ -273,23 +308,6 @@ abstract Transform(Int) {
 		}
 	}
 
-	public inline function setCursorParams(y: Float, h: Float, ?color: Null<UColor>): Void {
-		cursorTile.dy = y;
-		if (color != null) selectionTile = Tile.fromColor(color, 0, hxd.Math.ceil(font.lineHeight), color.invertAlpha.af);
-		selectionTile.dy = y;
-		selectionTile.setSize(0, textHeight + h);
-		cursorTile.setSize(cursorTile.width, textHeight + h);
-	}
-
-	public inline function blur(): Void {
-		if (!lockFocus || !enabled) {
-			needFocus = false;
-			interactive.blur();
-			cursorIndex = -1;
-			selectionRange = { start: 0, length: 0 };
-		}
-	}
-
 	override private function sync(ctx: RenderContext): Void {
 		super.sync(ctx);
 		if (maxLines > 0) interactive.height = font.lineHeight * maxLines;
@@ -345,22 +363,6 @@ abstract Transform(Int) {
 		@:nullSafety(Off) selectionRange = null;
 		super.draw(ctx);
 		selectionRange = range;
-	}
-
-	public function clear(): Void {
-		undo.resize(0);
-		redo.resize(0);
-		text = '';
-	}
-
-	public function wait(cb: Void -> Void): Void cb();
-
-	private function get_size(): Point<Float> return new Point<Float>(textWidth * scaleX, textHeight * scaleY);
-
-	public function destroyIWH(): Void {
-		enabled = false;
-		clear();
-		remove();
 	}
 
 	private static inline function readFromClipboard(cb: String -> Void): Void {

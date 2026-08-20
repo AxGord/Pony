@@ -16,8 +16,10 @@ import pony.ui.gui.RubberLayoutCore;
  */
 class TextSizedBox extends BaseLayout<RubberLayoutCore<Container>> {
 
-	public var text(get, set): String;
 	public var obj(default, null): BText;
+
+	public var text(get, set): String;
+
 	public var noupdate: Bool = false;
 
 	private final nocache: Bool;
@@ -58,6 +60,12 @@ class TextSizedBox extends BaseLayout<RubberLayoutCore<Container>> {
 		return v;
 	}
 
+	override public function destroy(?options: haxe.extern.EitherType<Bool, DestroyOptions>): Void {
+		DeltaTime.fixedUpdate >> _update;
+		DeltaTime.fixedUpdate >> layout.update;
+		super.destroy(options);
+	}
+
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function update(): Void {
@@ -68,12 +76,6 @@ class TextSizedBox extends BaseLayout<RubberLayoutCore<Container>> {
 
 	private inline function _update(): Void {
 		DeltaTime.fixedUpdate < layout.update;
-	}
-
-	override public function destroy(?options: haxe.extern.EitherType<Bool, DestroyOptions>): Void {
-		DeltaTime.fixedUpdate >> _update;
-		DeltaTime.fixedUpdate >> layout.update;
-		super.destroy(options);
 	}
 
 }

@@ -17,16 +17,18 @@ import pony.time.TimeInterval;
 
 	private static inline final END_OFFSET: Int = 64;
 
-	@:auto public var onComplete: Signal1<ChannelController>;
+	public var pause(default, set): Bool = false;
+	public var loop(default, null): Bool = false;
 
 	public var mute(link, link): Bool = channel.mute;
 	public var effects(link, link): Array<Effect> = channel.effects;
-	public var pause(default, set): Bool = false;
 	public var timeLeft(link, never): Time = timer.time.max - timer.currentTime;
-	public var loop(default, null): Bool = false;
 
-	private final channel: Channel;
+	@:auto public var onComplete: Signal1<ChannelController>;
+
 	private final timer: DTimer = DTimer.createFixedTimer(0);
+	private final channel: Channel;
+
 	private var completed: Bool = true;
 
 	public function new(channel: Channel) {
@@ -53,6 +55,12 @@ import pony.time.TimeInterval;
 
 	public inline function equal(pos: TimeInterval): Bool return !completed && timer.time.min == pos.min && timer.time.max == getMax(pos);
 
+	public inline function addEffect<T:Effect>(e: T): T return channel.addEffect(e);
+
+	public inline function getEffect<T:Effect>(etype: Class<T>): T return channel.getEffect(etype);
+
+	public inline function removeEffect(e: Effect) channel.removeEffect(e);
+
 	public function play(pos: TimeInterval, loop: Bool, volume: Float): Void {
 		completed = false;
 		this.loop = loop;
@@ -64,8 +72,6 @@ import pony.time.TimeInterval;
 		pause = false;
 	}
 
-	private inline function start() channel.position = timer.time.min.totalMs / 1000;
-
 	public function stop(): Void {
 		completed = true;
 		timer.stop();
@@ -73,19 +79,15 @@ import pony.time.TimeInterval;
 		eComplete.dispatch(this);
 	}
 
+	private inline function start() channel.position = timer.time.min.totalMs / 1000;
+
+	private inline function getMax(pos: TimeInterval): Int return (pos.max == 0 ? Std.int(channel.duration * 1000) : pos.max) - END_OFFSET;
+
 	private function completeHandler(): Void {
 		if (timer.repeatCount == 0)
 			stop();
 		else
 			start();
 	}
-
-	public inline function addEffect<T:Effect>(e: T): T return channel.addEffect(e);
-
-	public inline function getEffect<T:Effect>(etype: Class<T>): T return channel.getEffect(etype);
-
-	public inline function removeEffect(e: Effect) channel.removeEffect(e);
-
-	private inline function getMax(pos: TimeInterval): Int return (pos.max == 0 ? Std.int(channel.duration * 1000) : pos.max) - END_OFFSET;
 
 }

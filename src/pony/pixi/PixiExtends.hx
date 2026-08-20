@@ -24,14 +24,6 @@ class PixiExtends {
 		PixiExtendsTexture.loaded(s.texture, f);
 	}
 
-	public static function loadedList(a: Array<Sprite>, f: Void -> Void): Void {
-		var i = a.length;
-		if (i == 0)
-			f();
-		else
-			for (s in a) loaded(s, function() if (--i == 0) f());
-	}
-
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public static inline function darkness(c: ColorMatrixFilter, v: Float): Void {
 		c.matrix = [v, 0, 0, 0, 0, 0, v, 0, 0, 0, 0, 0, v, 0, 0, 1];
@@ -56,11 +48,6 @@ class PixiExtends {
 		final b = new BlurFilter();
 		b.passes = 3;
 		return b;
-	}
-
-	public static function childLevel(s: Sprite, lvl: Int): Sprite {
-		for (_ in 0...lvl) s = cast s.getChildAt(0);
-		return s;
 	}
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
@@ -94,6 +81,19 @@ class PixiExtends {
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public static inline function pivotCenter(s: Container): Void {
 		s.pivot.set(s.width / 2, s.height / 2);
+	}
+
+	public static function loadedList(a: Array<Sprite>, f: Void -> Void): Void {
+		var i = a.length;
+		if (i == 0)
+			f();
+		else
+			for (s in a) loaded(s, function() if (--i == 0) f());
+	}
+
+	public static function childLevel(s: Sprite, lvl: Int): Sprite {
+		for (_ in 0...lvl) s = cast s.getChildAt(0);
+		return s;
 	}
 
 }

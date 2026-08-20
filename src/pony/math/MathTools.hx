@@ -25,22 +25,6 @@ class MathTools {
 	public static var DEG2RAD: Float = Math.PI / 180;
 	public static var RAD2DEG: Float = 180 / Math.PI;
 
-	public static function arithmeticMean(a: Iterable<Float>): Float {
-		var s: Float = 0;
-		var count: UInt = 0;
-		for (e in a) {
-			count++;
-			s += e;
-		}
-		return s / count;
-	}
-
-	public static function arraySum<T:Float>(a: Iterable<T>): T {
-		var s: T = cast 0;
-		for (e in a) s += e;
-		return s;
-	}
-
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public static inline function percentCalc(p: Float, min: Float, max: Float): Float return (max - min) * p + min;
 
@@ -111,6 +95,24 @@ class MathTools {
 		return a.length < 2 ? 0 : a[1].length;
 	}
 
+	public static inline function lerp(start: Float, end: Float, t: Float): Float return start * (1 - t) + end * t;
+
+	public static function arithmeticMean(a: Iterable<Float>): Float {
+		var s: Float = 0;
+		var count: UInt = 0;
+		for (e in a) {
+			count++;
+			s += e;
+		}
+		return s / count;
+	}
+
+	public static function arraySum<T:Float>(a: Iterable<T>): T {
+		var s: T = cast 0;
+		for (e in a) s += e;
+		return s;
+	}
+
 	public static function range(a: Float, b: Float): Float {
 		var max: Float = Math.max(a, b);
 		var min: Float = Math.min(a, b);
@@ -173,7 +175,5 @@ class MathTools {
 		p.pop();
 		return p;
 	}
-
-	public static inline function lerp(start: Float, end: Float, t: Float): Float return start * (1 - t) + end * t;
 
 }

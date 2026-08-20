@@ -11,15 +11,15 @@ import pony.text.tpl.ITplPut;
  */
 class Field {
 
+	public var hid(default, null): Bool;
+
+	public var isFile: Bool = false;
+	public var tplPut: Class<ITplPut> = null;
 	public var name: String;
 	public var model: Model;
 	public var type: Types;
 	public var notnull: Bool;
 	public var len: Int;
-	public var hid(default, null): Bool;
-	public var isFile: Bool = false;
-
-	public var tplPut: Class<ITplPut> = null;
 
 	public function new(?len: Int, ?hid: Bool) {
 		type = Types.TEXT;

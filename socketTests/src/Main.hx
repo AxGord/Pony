@@ -19,11 +19,13 @@ using pony.Tools;
 class Main {
 
 	private static inline final testCount: Int = 400;
+
 	#if cs
 	private static inline final delay: Int = 3;
 	#elseif nodejs
 	private static inline final delay: Int = 1;
 	#end
+
 	private static var port: Int = 16003;
 
 	private static final partCount: Int = Std.int(testCount / 4);

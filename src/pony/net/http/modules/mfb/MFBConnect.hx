@@ -13,12 +13,12 @@ final class MFBConnect extends ModuleConnect<MFB> {
 
 	private var data: FBData;
 
-	#if (haxe_ver < 4.2) override #end
-	public function tpl(parent: ITplPut): ITplPut return new MFBPut(this, null, parent);
-
 	private inline function get_token(): String return cpq.connection.sessionStorage['fb_token'];
 
 	private inline function set_token(t: String): String return cpq.connection.sessionStorage['fb_token'] = t;
+
+	#if (haxe_ver < 4.2) override #end
+	public function tpl(parent: ITplPut): ITplPut return new MFBPut(this, null, parent);
 
 	public function getBaseData(cb: FBData -> Void): Void {
 		if (data != null) {

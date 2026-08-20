@@ -40,12 +40,20 @@ abstract ThreadTasks(UInt) {
 
 class ThreadTasksWhile {
 
-	private final states: Array<Bool> = [];
-	private final waits: Array<Bool> = [];
-	private var endedCount: Int = 0;
 	public var error: Bool = false;
 
+	private final states: Array<Bool> = [];
+	private final waits: Array<Bool> = [];
+
+	private var endedCount: Int = 0;
+
 	public function new() {}
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function ended(): Bool return error || states.length == endedCount;
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function wait(): Void while (!ended()) Sys.sleep(0.01);
 
 	public function add(f: (Void -> Void) -> (Void -> Void) -> Bool): Void {
 		final id: Int = states.length;
@@ -78,12 +86,6 @@ class ThreadTasksWhile {
 			unlock();
 		});
 	}
-
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public inline function ended(): Bool return error || states.length == endedCount;
-
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public inline function wait(): Void while (!ended()) Sys.sleep(0.01);
 
 	public static function multyTask(count: Int, f: (Void -> Void) -> (Void -> Void) -> Bool): Void {
 		if (count == 1) {

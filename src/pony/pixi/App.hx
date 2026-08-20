@@ -42,12 +42,14 @@ class App extends SmartCanvas {
 	public var app(default, null): pixi.core.Application;
 
 	public var isWebGL(default, null): Bool;
-	public var pauseDraw: Bool = false;
 	public var container(default, null): Sprite;
 	public var background(default, null): Int;
 	public var sizeUpdate(default, set): Bool;
-	private var ticker: Ticker;
+
+	public var pauseDraw: Bool = false;
+
 	private var renderPause: Bool = false;
+	private var ticker: Ticker;
 	private var backImgcontainer: Sprite;
 	private var border: Graphics;
 
@@ -112,16 +114,8 @@ class App extends SmartCanvas {
 		return b;
 	}
 
-	@SuppressWarnings('checkstyle:MagicNumber')
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function initTouch(): Void {
-		if (!Mouse.inited) {
-			Mouse.reg(container);
-			Mouse.correction = correction;
-		}
-		if (Touch.inited) return;
-		Touch.reg(container);
-		Touch.correction = correction;
+	public inline function borderup(): Void {
+		container.addChild(border);
 	}
 
 	public function drawBorders(?color: UInt): Void {
@@ -136,12 +130,6 @@ class App extends SmartCanvas {
 		container.addChild(border);
 	}
 
-	public inline function borderup(): Void {
-		container.addChild(border);
-	}
-
-	private function render(): Void if (!renderPause) app.render();
-
 	public function stageResizeHandler(ratio: Float, rect: Rect<Float>): Void {
 		container.scale.set(ratio);
 		container.x = rect.x;
@@ -152,10 +140,6 @@ class App extends SmartCanvas {
 		backImgcontainer.height = rect.height / stageInitSize.y;
 	}
 
-	private function correction(x: Float, y: Float): Point<Float> {
-		return new Point((x - container.x) / container.width, (y - container.y) / container.height);
-	}
-
 	public function pauseRendering(): Void {
 		renderPause = true;
 		if (sizeUpdate) onStageResize >> stageResizeHandler;
@@ -164,6 +148,24 @@ class App extends SmartCanvas {
 	public function resumeRendering(): Void {
 		renderPause = false;
 		if (sizeUpdate) onStageResize << stageResizeHandler;
+	}
+
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function initTouch(): Void {
+		if (!Mouse.inited) {
+			Mouse.reg(container);
+			Mouse.correction = correction;
+		}
+		if (Touch.inited) return;
+		Touch.reg(container);
+		Touch.correction = correction;
+	}
+
+	private function render(): Void if (!renderPause) app.render();
+
+	private function correction(x: Float, y: Float): Point<Float> {
+		return new Point((x - container.x) / container.width, (y - container.y) / container.height);
 	}
 
 }

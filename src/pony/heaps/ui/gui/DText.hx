@@ -19,6 +19,7 @@ import pony.geom.Point;
 @:nullSafety class DText extends Text implements IWH {
 
 	public var enabled(default, set): Bool = true;
+
 	public var size(get, never): Point<Float>;
 
 	private var normalColor: Vector = Vector.fromColor(0xFFFFFFFF);
@@ -38,19 +39,19 @@ import pony.geom.Point;
 		return v;
 	}
 
-	public inline function enable(): Void enabled = true;
-
-	public inline function disable(): Void enabled = false;
-
 	override private function set_textColor(c: Int): Int {
 		normalColor = Vector.fromColor((c: UColor).invertAlpha.argb);
 		if (enabled) color = normalColor;
 		return c;
 	}
 
-	public function wait(cb: Void -> Void): Void cb();
-
 	private function get_size(): Point<Float> return new Point<Float>(textWidth * scaleX, textHeight * scaleY);
+
+	public inline function enable(): Void enabled = true;
+
+	public inline function disable(): Void enabled = false;
+
+	public function wait(cb: Void -> Void): Void cb();
 
 	public function destroyIWH(): Void {}
 

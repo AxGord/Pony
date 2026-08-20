@@ -12,16 +12,15 @@ import pony.text.tpl.ITplPut;
  */
 class ActionConnect extends ModuleConnect<Action> {
 
-	private var method: Dynamic;
-	private var methodCheck: Dynamic;
-
-	public var model: ModelConnect;
 	public var pathQuery: String = '';
 	public var actionPathQuery: String = '';
 	public var hasPathArg: Bool = false;
+	public var model: ModelConnect;
 	public var activePathTarget: String;
 
 	private var tplInited: Bool = false;
+	private var method: Dynamic;
+	private var methodCheck: Dynamic;
 
 	public function new(base: Action, cpq: CPQ, model: ModelConnect) {
 		super(base, cpq);
@@ -29,6 +28,47 @@ class ActionConnect extends ModuleConnect<Action> {
 		method = Reflect.field(model, base.name);
 		methodCheck = Reflect.field(model, base.name + 'Validate');
 		if (methodCheck == null) methodCheck = Reflect.field(model, 'validate');
+	}
+
+	public function checkActivePath(data: Dynamic): Bool {
+		return Reflect.field(data, activePathTarget) == actionPathQuery;
+	}
+
+	#if (haxe_ver < 4.2) override #end
+	public function tpl(parent: ITplPut): ITplPut {
+		return new ActionPut(base, cpq, parent);
+	}
+
+	public function runAction(h: Map<String, String>): Bool {
+		return checkAccess() && action(h);
+	}
+
+	public function action(h: Map<String, String>): Bool {
+		return false;
+	}
+
+	public function call(args: Array<Dynamic>, cb: Dynamic -> Void): Void {
+		Reflect.callMethod(model, method, args.concat([cb]));
+	}
+
+	public function _callCheck(args: Array<Dynamic>): Errors {
+		return Reflect.callMethod(model, methodCheck, args);
+	}
+
+	public function checkAccess(): Bool {
+		return !model.base.access.exists(base.name) || Reflect.callMethod(model, Reflect.field(model, model.base.access[base.name]), []);
+	}
+
+	public function callCheck(args: Array<Dynamic>, cb: ActResult -> Void): Void {
+		if (methodCheck != null) {
+			final r = _callCheck(args);
+			if (r.empty()) {
+				call(args, function(b: Bool) cb(b ? OK : DBERROR));
+			} else {
+				cb(ERROR(r.result));
+			}
+		} else
+			call(args, function(b: Bool) cb(b ? OK : DBERROR));
 	}
 
 	private function initTpl(): Void {
@@ -72,47 +112,6 @@ class ActionConnect extends ModuleConnect<Action> {
 				}
 			}
 		}
-	}
-
-	public function checkActivePath(data: Dynamic): Bool {
-		return Reflect.field(data, activePathTarget) == actionPathQuery;
-	}
-
-	#if (haxe_ver < 4.2) override #end
-	public function tpl(parent: ITplPut): ITplPut {
-		return new ActionPut(base, cpq, parent);
-	}
-
-	public function runAction(h: Map<String, String>): Bool {
-		return checkAccess() && action(h);
-	}
-
-	public function action(h: Map<String, String>): Bool {
-		return false;
-	}
-
-	public function call(args: Array<Dynamic>, cb: Dynamic -> Void): Void {
-		Reflect.callMethod(model, method, args.concat([cb]));
-	}
-
-	public function _callCheck(args: Array<Dynamic>): Errors {
-		return Reflect.callMethod(model, methodCheck, args);
-	}
-
-	public function checkAccess(): Bool {
-		return !model.base.access.exists(base.name) || Reflect.callMethod(model, Reflect.field(model, model.base.access[base.name]), []);
-	}
-
-	public function callCheck(args: Array<Dynamic>, cb: ActResult -> Void): Void {
-		if (methodCheck != null) {
-			final r = _callCheck(args);
-			if (r.empty()) {
-				call(args, function(b: Bool) cb(b ? OK : DBERROR));
-			} else {
-				cb(ERROR(r.result));
-			}
-		} else
-			call(args, function(b: Bool) cb(b ? OK : DBERROR));
 	}
 
 }

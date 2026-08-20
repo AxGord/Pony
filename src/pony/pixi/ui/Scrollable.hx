@@ -11,17 +11,31 @@ import pony.ui.touch.pixi.Touchable;
 class Scrollable extends Touchable {
 
 	public var pos(default, set): Int = 0;
+
 	private final totalSize: Float;
+	private final vert: Bool;
+
+	private var inited: Bool = false;
 	private var contentSize: Float;
 	private var startTPos: Float;
 	private var startTPosBefore: Int;
-	private final vert: Bool;
-	private var inited: Bool = false;
 
 	public function new(obj: Container, totalSize: Float, vert: Bool) {
 		super(obj);
 		this.totalSize = totalSize;
 		this.vert = vert;
+	}
+
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function set_pos(v: Int): Int {
+		if (v != pos) {
+			pos = v;
+			if (pos > 0) pos = 0;
+			if (pos < totalSize - contentSize) pos = Std.int(totalSize - contentSize);
+			updatePos();
+		}
+		return pos;
 	}
 
 	public function updateContent(obj: Container): Void {
@@ -41,21 +55,7 @@ class Scrollable extends Touchable {
 
 	public dynamic function onChangePosition(v: Int): Void {}
 
-	private function mouseWheelHandler(delta: Int): Void scroll(Std.int(delta / 2));
-
 	public function scroll(delta: Int): Void pos += delta;
-
-	@SuppressWarnings('checkstyle:MagicNumber')
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function set_pos(v: Int): Int {
-		if (v != pos) {
-			pos = v;
-			if (pos > 0) pos = 0;
-			if (pos < totalSize - contentSize) pos = Std.int(totalSize - contentSize);
-			updatePos();
-		}
-		return pos;
-	}
 
 	public function scrollToEnd(): Void {
 		pos = Std.int(totalSize - contentSize);
@@ -71,6 +71,8 @@ class Scrollable extends Touchable {
 			obj.x = pos;
 		onChangePosition(pos);
 	}
+
+	private function mouseWheelHandler(delta: Int): Void scroll(Std.int(delta / 2));
 
 	private function beginMove(t: Touch): Void {
 		startTPosBefore = pos;

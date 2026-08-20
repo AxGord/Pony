@@ -108,11 +108,6 @@ class SliceTools {
 		return index(name, n, letter) != -1;
 	}
 
-	private static function slice(name: String, n: Int, letter: String = ''): Array<String> {
-		final s: Array<String> = name.split('{slice$n$letter}');
-		return [for (i in 0...n) s[0] + i + s[1]];
-	}
-
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function index(name: String, n: Int, letter: String = ''): Int {
 		return name.indexOf('{slice$n$letter}');
@@ -138,6 +133,11 @@ class SliceTools {
 		} else {
 			return SliceData.Anim();
 		}
+	}
+
+	private static function slice(name: String, n: Int, letter: String = ''): Array<String> {
+		final s: Array<String> = name.split('{slice$n$letter}');
+		return [for (i in 0...n) s[0] + i + s[1]];
 	}
 
 }

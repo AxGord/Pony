@@ -17,25 +17,11 @@ class TouchableTouch {
 
 	private static var inited: Bool = false;
 
-	public static function init(): Void {
-		if (inited) return;
-		inited = true;
-		FLTools.getStage(getStageHandler);
-	}
-
-	private static function getStageHandler(stage: Stage): Void {
-		stage.addEventListener(TouchEvent.TOUCH_MOVE, globalTouchMoveHandler, false, 0, true);
-	}
-
-	private static function globalTouchMoveHandler(e: TouchEvent): Void {
-		TouchableBase.dispatchMove(e.touchPointID, e.stageX, e.stageY);
-	}
-
-	private var obj: DisplayObject;
-	private var base: TouchableBase;
 	private var touchId: Int = -1;
 	private var over: Bool = false;
 	private var down: Bool = false;
+	private var obj: DisplayObject;
+	private var base: TouchableBase;
 
 	public function new(obj: DisplayObject, base: TouchableBase) {
 		init();
@@ -48,11 +34,6 @@ class TouchableTouch {
 		else
 			obj.addEventListener(Event.ADDED_TO_STAGE, addedToStageHandler, false, 0, true);
 		Touch.onEnd << touchEndHandler;
-	}
-
-	private function addedToStageHandler(_): Void {
-		obj.removeEventListener(Event.ADDED_TO_STAGE, addedToStageHandler);
-		obj.stage.addEventListener(TouchEvent.TOUCH_MOVE, touchGlobalMoveHandler, false, 0, true);
 	}
 
 	public function destroy(): Void {
@@ -68,12 +49,6 @@ class TouchableTouch {
 		base = null;
 	}
 
-	private function isLock(t: Int): Bool {
-		if (!isNotLock(t)) return true;
-		touchId = t;
-		return false;
-	}
-
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function unlock(t: Int): Void touchId = -1;
@@ -81,6 +56,17 @@ class TouchableTouch {
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function isNotLock(t: Int): Bool return touchId == -1 || touchId == t;
+
+	private function addedToStageHandler(_): Void {
+		obj.removeEventListener(Event.ADDED_TO_STAGE, addedToStageHandler);
+		obj.stage.addEventListener(TouchEvent.TOUCH_MOVE, touchGlobalMoveHandler, false, 0, true);
+	}
+
+	private function isLock(t: Int): Bool {
+		if (!isNotLock(t)) return true;
+		touchId = t;
+		return false;
+	}
 
 	private function touchBeginHandler(e: TouchEvent): Void {
 		if (isLock(e.touchPointID)) return;
@@ -132,6 +118,20 @@ class TouchableTouch {
 		base.dispatchOutDown(id);
 		base.dispatchOutUp(id);
 		unlock(id);
+	}
+
+	public static function init(): Void {
+		if (inited) return;
+		inited = true;
+		FLTools.getStage(getStageHandler);
+	}
+
+	private static function getStageHandler(stage: Stage): Void {
+		stage.addEventListener(TouchEvent.TOUCH_MOVE, globalTouchMoveHandler, false, 0, true);
+	}
+
+	private static function globalTouchMoveHandler(e: TouchEvent): Void {
+		TouchableBase.dispatchMove(e.touchPointID, e.stageX, e.stageY);
 	}
 
 }

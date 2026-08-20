@@ -21,16 +21,16 @@ using pony.pixi.PixiExtends;
 class Button extends Sprite implements IWH {
 
 	public var core(default, null): ButtonImgN;
+
 	public var size(get, never): Point<Float>;
-
-	private final hideDisabled: Bool;
-
 	public var touchActive(get, set): Bool;
 	public var cursor(get, set): Bool;
 
+	private final hideDisabled: Bool;
+
+	private var prev: Int = 0;
 	private var list: Array<SliceSprite>;
 	private var zone: SliceSprite;
-	private var prev: Int = 0;
 	private var wr: WaitReady;
 
 	public function new(imgs: ROArray<String>, ?offset: Point<Float>, ?useSpriteSheet: String) {
@@ -72,6 +72,18 @@ class Button extends Sprite implements IWH {
 		addChild(list[0]);
 	}
 
+	private inline function get_size(): Point<Float> return new Point(zone.sliceWidth, zone.sliceHeight);
+
+	private inline function get_cursor(): Bool return zone.buttonMode;
+
+	private inline function set_cursor(v: Bool): Bool return zone.buttonMode = v;
+
+	private inline function get_touchActive(): Bool return zone.interactive;
+
+	private inline function set_touchActive(v: Bool): Bool return zone.interactive = v;
+
+	public inline function wait(cb: Void -> Void): Void wr.wait(cb);
+
 	public function setWidth(v: Float): Void {
 		zone.sliceWidth = v;
 		for (img in list) img.sliceWidth = v;
@@ -80,37 +92,6 @@ class Button extends Sprite implements IWH {
 	public function setHeight(v: Float): Void {
 		zone.sliceHeight = v;
 		for (img in list) img.sliceHeight = v;
-	}
-
-	@SuppressWarnings('checkstyle:MagicNumber')
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private static inline function getInteractiveImg(img: String, useSpriteSheet: String): SliceSprite {
-		return SliceTools.getSliceSprite(img, useSpriteSheet);
-	}
-
-	private static function getImg(img: String, useSpriteSheet: String): SliceSprite {
-		final s = getInteractiveImg(img, useSpriteSheet);
-		s.interactive = false;
-		s.interactiveChildren = false;
-		return s;
-	}
-
-	private function disableHandler(): Void cursor = false;
-
-	private function enableHandler(): Void cursor = true;
-
-	public inline function wait(cb: Void -> Void): Void wr.wait(cb);
-
-	private inline function get_size(): Point<Float> return new Point(zone.sliceWidth, zone.sliceHeight);
-
-	private function imgHandler(n: Int): Void {
-		if (n == 4 && hideDisabled) {
-			visible = false;
-			return;
-		}
-		visible = true;
-		if (prev != -1) removeChild(list[prev]);
-		addChild(list[prev = n - 1]);
 	}
 
 	override public function destroy(?options: haxe.extern.EitherType<Bool, DestroyOptions>): Void {
@@ -128,14 +109,33 @@ class Button extends Sprite implements IWH {
 		super.destroy(options);
 	}
 
-	private inline function get_cursor(): Bool return zone.buttonMode;
-
-	private inline function set_cursor(v: Bool): Bool return zone.buttonMode = v;
-
-	private inline function get_touchActive(): Bool return zone.interactive;
-
-	private inline function set_touchActive(v: Bool): Bool return zone.interactive = v;
-
 	public function destroyIWH(): Void destroy();
+
+	private function disableHandler(): Void cursor = false;
+
+	private function enableHandler(): Void cursor = true;
+
+	private function imgHandler(n: Int): Void {
+		if (n == 4 && hideDisabled) {
+			visible = false;
+			return;
+		}
+		visible = true;
+		if (prev != -1) removeChild(list[prev]);
+		addChild(list[prev = n - 1]);
+	}
+
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function getInteractiveImg(img: String, useSpriteSheet: String): SliceSprite {
+		return SliceTools.getSliceSprite(img, useSpriteSheet);
+	}
+
+	private static function getImg(img: String, useSpriteSheet: String): SliceSprite {
+		final s = getInteractiveImg(img, useSpriteSheet);
+		s.interactive = false;
+		s.interactiveChildren = false;
+		return s;
+	}
 
 }

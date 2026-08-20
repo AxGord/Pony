@@ -18,7 +18,6 @@ class RPCPing extends pony.net.rpc.RPCUnit<RPCPing> implements pony.net.rpc.IRPC
 	@:auto public var onRestore: Signal0;
 	@:auto public var onLostConnection: Signal0;
 	@:auto public var onDelayInfo: Signal1<Float>;
-
 	@:rpc public var onPing: Signal0;
 	@:rpc public var onPong: Signal0;
 
@@ -37,9 +36,10 @@ class RPCPing extends pony.net.rpc.RPCUnit<RPCPing> implements pony.net.rpc.IRPC
 class Watch implements HasListener {
 
 	private final rpc: RPCPing;
+	private final timer: Timer;
+
 	private var silent: Bool = false;
 	private var ping: Bool = true;
-	private final timer: Timer;
 	private var startTime: Float = now();
 
 	public function new(rpc: RPCPing, repeatTime: Int) {
@@ -53,6 +53,14 @@ class Watch implements HasListener {
 		timer.update >> timerUpdateHandler;
 		timer.stop();
 		rpc.eLostConnection.dispatch();
+	}
+
+	@:listen(rpc.onPong)
+	public function activity(): Void {
+		timer.reset();
+		if (silent && !ping) rpc.eRestore.dispatch();
+		silent = false;
+		ping = true;
 	}
 
 	@:listen(rpc.onPong)
@@ -83,14 +91,6 @@ class Watch implements HasListener {
 			}
 			rpc.pingRemote();
 		}
-	}
-
-	@:listen(rpc.onPong)
-	public function activity(): Void {
-		timer.reset();
-		if (silent && !ping) rpc.eRestore.dispatch();
-		silent = false;
-		ping = true;
 	}
 
 	private static inline function now(): Float return haxe.Timer.stamp();

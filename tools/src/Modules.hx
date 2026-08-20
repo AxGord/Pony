@@ -12,10 +12,12 @@ using Lambda;
  */
 @:nullSafety(Strict) class Modules extends Logable {
 
-	public var xml(get, never): Null<Fast>;
-	public var commands(default, null): Commands;
 	public var deny(default, set): Array<String> = [];
 	public var allow(default, set): Array<String> = [];
+	public var commands(default, null): Commands;
+
+	public var xml(get, never): Null<Fast>;
+
 	public var list: Array<Module> = [];
 	public var build: Null<Build>;
 
@@ -31,6 +33,22 @@ using Lambda;
 	private function get_xml(): Null<Fast> {
 		if (_xml == null) _xml = Utils.getXml();
 		return _xml;
+	}
+
+	public function set_deny(list: Array<String>): Array<String> {
+		if (list.length > 0) deny = list;
+		return deny;
+	}
+
+	public function set_allow(list: Array<String>): Array<String> {
+		if (list.length > 0) allow = list;
+		return allow;
+	}
+
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function getNode(name: String): Fast {
+		return @:nullSafety(Off) XmlTools.getNode(xml, name);
 	}
 
 	public function checkXml(): Void {
@@ -50,22 +68,6 @@ using Lambda;
 
 	public function init(): Void {
 		for (m in list) m.init();
-	}
-
-	@SuppressWarnings('checkstyle:MagicNumber')
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public inline function getNode(name: String): Fast {
-		return @:nullSafety(Off) XmlTools.getNode(xml, name);
-	}
-
-	public function set_deny(list: Array<String>): Array<String> {
-		if (list.length > 0) deny = list;
-		return deny;
-	}
-
-	public function set_allow(list: Array<String>): Array<String> {
-		if (list.length > 0) allow = list;
-		return allow;
 	}
 
 	public function checkAllowGroups(groups: Null<Array<String>>): Bool {

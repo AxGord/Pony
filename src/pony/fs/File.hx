@@ -80,6 +80,17 @@ using pony.text.TextTools;
 
 	private inline function get_withoutExt(): String return Path.withoutExtension(first);
 
+	private inline function get_fullPath(): Unit return this.fullPath;
+
+	private inline function get_fullDir(): Dir {
+		return [
+			for (e in this.wayStringIterator()) {
+				final r: Null<String> = e.allBeforeLastWithNull('/');
+				r != null ? (r: String) : '.';
+			}
+		];
+	}
+
 	public inline function copyToFile(to: Unit): Void {
 		final to: File = to.file;
 		to.createWays();
@@ -104,6 +115,14 @@ using pony.text.TextTools;
 		SysFile.copy(from.first, first);
 	}
 
+	@:to public inline function toString(): String return this.toString();
+
+	@:to public inline function toArray(): Array<String> return this.toArray();
+
+	@:arrayAccess public inline function arrayAccess(key: Int): File return this[key];
+
+	public inline function iterator(): Iterator<File> return this.iterator();
+
 	public function createWays(): Void {
 		for (e in fullDir) {
 			final a: Array<String> = e.first.split('/');
@@ -115,17 +134,6 @@ using pony.text.TextTools;
 		}
 	}
 
-	private inline function get_fullPath(): Unit return this.fullPath;
-
-	private inline function get_fullDir(): Dir {
-		return [
-			for (e in this.wayStringIterator()) {
-				final r: Null<String> = e.allBeforeLastWithNull('/');
-				r != null ? (r: String) : '.';
-			}
-		];
-	}
-
 	public function delete(): Void {
 		try {
 			for (e in this) FileSystem.deleteFile(e.first);
@@ -135,14 +143,6 @@ using pony.text.TextTools;
 	}
 
 	@:to private inline function toUnit(): Unit return this;
-
-	@:to public inline function toString(): String return this.toString();
-
-	@:to public inline function toArray(): Array<String> return this.toArray();
-
-	@:arrayAccess public inline function arrayAccess(key: Int): File return this[key];
-
-	public inline function iterator(): Iterator<File> return this.iterator();
 
 }
 #end

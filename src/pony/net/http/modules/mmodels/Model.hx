@@ -79,8 +79,6 @@ class Model implements SuperPuper {
 		init();
 	}
 
-	private function init(): Void {}
-
 	@:async @:puper
 	public function prepare(): Bool {
 		final a: Array<Field> = [
@@ -89,6 +87,28 @@ class Model implements SuperPuper {
 		for (c in columns.kv()) if (c.key != 'id') a.push(c.value.create());
 		return @await db.prepare(a);
 	}
+
+	public function connect(cpq: CPQ): EConnect {
+		final mc: ModelConnect = Type.createInstance(cl, [this, cpq]);
+		final a = new Map<String, ActionConnect>();
+		final sub = new Map<String, ISubActionConnect>();
+		for (k => value in actions) {
+			final r = value.connect(cpq, mc);
+			if (r.b != null) sub[k] = r.b;
+			switch r.a {
+				case BREAK: return BREAK;
+				case REG(obj): a[k] = cast obj;
+				case NOTREG:
+			}
+		}
+		mc.actions = a;
+		mc.subactions = sub;
+		return REG(cast mc);
+	}
+
+	private function init(): Void {}
+
+	public static inline function dbr(r: Bool): ActResult return r ? OK : DBERROR;
 
 	/*
 	public function update():Void {
@@ -128,25 +148,5 @@ class Model implements SuperPuper {
 	public static function err(e: Dynamic): Void {
 		throw e;
 	}
-
-	public function connect(cpq: CPQ): EConnect {
-		final mc: ModelConnect = Type.createInstance(cl, [this, cpq]);
-		final a = new Map<String, ActionConnect>();
-		final sub = new Map<String, ISubActionConnect>();
-		for (k => value in actions) {
-			final r = value.connect(cpq, mc);
-			if (r.b != null) sub[k] = r.b;
-			switch r.a {
-				case BREAK: return BREAK;
-				case REG(obj): a[k] = cast obj;
-				case NOTREG:
-			}
-		}
-		mc.actions = a;
-		mc.subactions = sub;
-		return REG(cast mc);
-	}
-
-	public static inline function dbr(r: Bool): ActResult return r ? OK : DBERROR;
 
 }

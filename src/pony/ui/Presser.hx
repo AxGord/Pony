@@ -17,7 +17,6 @@ import pony.time.Time;
 
 	private var firstTimer: Null<ITimer<Dynamic>>;
 	private var secondTimer: Null<ITimer<Dynamic>>;
-
 	private var callBack: Void -> Void;
 
 	public function new(callBack: Void -> Void) {
@@ -29,6 +28,18 @@ import pony.time.Time;
 			firstTimer = pony.time.Timer.delay(pressFirstDelay, firstTickClassic);
 			#end
 		}
+	}
+
+	public function destroy(): Void {
+		if (firstTimer != null) {
+			firstTimer.destroy();
+			firstTimer = null;
+		}
+		if (secondTimer != null) {
+			secondTimer.destroy();
+			secondTimer = null;
+		}
+		@:nullSafety(Off) callBack = null;
 	}
 
 	private function firstTickDelta(dt: DT): Void {
@@ -44,17 +55,5 @@ import pony.time.Time;
 		callBack();
 	}
 	#end
-
-	public function destroy(): Void {
-		if (firstTimer != null) {
-			firstTimer.destroy();
-			firstTimer = null;
-		}
-		if (secondTimer != null) {
-			secondTimer.destroy();
-			secondTimer = null;
-		}
-		@:nullSafety(Off) callBack = null;
-	}
 
 }

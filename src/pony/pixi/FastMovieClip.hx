@@ -20,10 +20,12 @@ class FastMovieClip extends AnimTextureCore {
 
 	private static final storage: Map<String, FastMovieClip> = [];
 
+	public var texture(default, null): Array<Texture>;
+
+	private final crop: Int;
+
 	private var pool: Array<Sprite> = [];
 	private var data: Array<Pair<Rectangle, Rectangle>>;
-	public var texture(default, null): Array<Texture>;
-	private final crop: Int;
 
 	public function new(
 		data: Or<Array<Texture>, Array<String>>, frameTime: Time, fixedTime: Bool = false, smooth: AnimSmoothMode = AnimSmoothMode.None,
@@ -42,38 +44,11 @@ class FastMovieClip extends AnimTextureCore {
 		}
 	}
 
-	public static function fromStorage(
-		data: Or<Array<Texture>, Array<String>>, frameTime: Time, fixedTime: Bool = false, smooth: AnimSmoothMode = AnimSmoothMode.None,
-		crop: Int = 0
-	): FastMovieClip {
-		final n = idFromTexture(converOrFirst(data));
-		return !storage.exists(n) ? storage[n] = new FastMovieClip(data, frameTime, fixedTime, smooth, crop) : storage[n];
-	}
+	#if (haxe_ver < 4.2) override #end
+	private function get_totalFrames(): Int return data.length;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public static inline function fromSprite(s: Sprite): FastMovieClip return fromTexture(s.texture);
-
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public static inline function fromTexture(t: Texture): FastMovieClip return storage[idFromTexture(t)];
-
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private static inline function idFromTexture(t: Texture): String return t.baseTexture.imageUrl + '_' + t.frame.x + '_' + t.frame.y;
-
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private static inline function converOr(data: Or<Array<Texture>, Array<String>>): Array<Texture> {
-		return switch data {
-			case OrState.A(t): t;
-			case OrState.B(s): [for (e in s) Texture.fromFrame(e)];
-		};
-	}
-
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private static inline function converOrFirst(data: Or<Array<Texture>, Array<String>>): Texture {
-		return switch data {
-			case OrState.A(t): t[0];
-			case OrState.B(s): Texture.fromFrame(s[0]);
-		};
-	}
+	public inline function ret(s: Sprite): Void pool.push(s);
 
 	public function get(): Sprite {
 		return if (pool.length > 0) {
@@ -114,8 +89,18 @@ class FastMovieClip extends AnimTextureCore {
 		}
 	}
 
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public inline function ret(s: Sprite): Void pool.push(s);
+	override public function destroy(): Void {
+		super.destroy();
+
+		for (s in pool) s.destroy();
+		pool = null;
+
+		final n = texture[0].baseTexture.imageUrl;
+		storage.remove(n);
+		for (t in texture) t.destroy(true);
+		texture = null;
+		data = null;
+	}
 
 	#if (haxe_ver < 4.2) override #end
 	private function setTexture(n: Int, f: Int): Void setTextureFrame(texture[n], f);
@@ -131,21 +116,38 @@ class FastMovieClip extends AnimTextureCore {
 		}
 	}
 
-	override public function destroy(): Void {
-		super.destroy();
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function fromSprite(s: Sprite): FastMovieClip return fromTexture(s.texture);
 
-		for (s in pool) s.destroy();
-		pool = null;
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function fromTexture(t: Texture): FastMovieClip return storage[idFromTexture(t)];
 
-		final n = texture[0].baseTexture.imageUrl;
-		storage.remove(n);
-		for (t in texture) t.destroy(true);
-		texture = null;
-		data = null;
+	public static function fromStorage(
+		data: Or<Array<Texture>, Array<String>>, frameTime: Time, fixedTime: Bool = false, smooth: AnimSmoothMode = AnimSmoothMode.None,
+		crop: Int = 0
+	): FastMovieClip {
+		final n = idFromTexture(converOrFirst(data));
+		return !storage.exists(n) ? storage[n] = new FastMovieClip(data, frameTime, fixedTime, smooth, crop) : storage[n];
 	}
 
-	#if (haxe_ver < 4.2) override #end
-	private function get_totalFrames(): Int return data.length;
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function idFromTexture(t: Texture): String return t.baseTexture.imageUrl + '_' + t.frame.x + '_' + t.frame.y;
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function converOr(data: Or<Array<Texture>, Array<String>>): Array<Texture> {
+		return switch data {
+			case OrState.A(t): t;
+			case OrState.B(s): [for (e in s) Texture.fromFrame(e)];
+		};
+	}
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private static inline function converOrFirst(data: Or<Array<Texture>, Array<String>>): Texture {
+		return switch data {
+			case OrState.A(t): t[0];
+			case OrState.B(s): Texture.fromFrame(s[0]);
+		};
+	}
 
 }
 

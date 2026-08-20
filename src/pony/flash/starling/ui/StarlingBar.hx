@@ -18,12 +18,11 @@ import starling.textures.TextureSmoothing;
  */
 class StarlingBar extends StarlingProgressBar implements HasSignal {
 
-	private final zone: DisplayObject;
-	private final b: DisplayObject;
-
 	@:auto public var onDynamic: Signal1<Float>;
 	@:auto public var onComplete: Signal1<Float>;
 
+	private final zone: DisplayObject;
+	private final b: DisplayObject;
 	private final source: Sprite;
 
 	public function new(source: Sprite) {
@@ -36,6 +35,20 @@ class StarlingBar extends StarlingProgressBar implements HasSignal {
 		b = untyped source.getChildByName('b');
 		if (b != null) b.touchable = false;
 		TouchManager.addListener(zone, beginMove, [TouchEventType.Down]);
+	}
+
+	override public function set_value(v: Float): Float {
+		if (value == v) return v;
+		super.set_value(v);
+		eDynamic.dispatch(v);
+		if (b != null) {
+			b.x = bar.width - b.width / 2;
+			if (b.x < 0)
+				b.x = 0;
+			else if (b.x > total)
+				b.x = total;
+		}
+		return v;
 	}
 
 	private function beginMove(e: TouchManagerEvent): Void {
@@ -57,20 +70,6 @@ class StarlingBar extends StarlingProgressBar implements HasSignal {
 			p.x = total;
 		value = p.x / total;
 
-	}
-
-	override public function set_value(v: Float): Float {
-		if (value == v) return v;
-		super.set_value(v);
-		eDynamic.dispatch(v);
-		if (b != null) {
-			b.x = bar.width - b.width / 2;
-			if (b.x < 0)
-				b.x = 0;
-			else if (b.x > total)
-				b.x = total;
-		}
-		return v;
 	}
 
 }

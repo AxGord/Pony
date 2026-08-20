@@ -16,18 +16,18 @@ class ProgressBar extends MonoBehaviour implements IPercent {
 
 	private var full: Single;
 
-	private function Start(): Void {
-		full = guiTexture.pixelInset.width;
-		set(0);
+	private inline function set_percent(v: Float): Float {
+		set(v);
+		return v;
 	}
 
 	public function set(progress: Float): Void {
 		guiTexture.pixelInset = new Rect(guiTexture.pixelInset.x, guiTexture.pixelInset.y, full * progress, guiTexture.pixelInset.height);
 	}
 
-	private inline function set_percent(v: Float): Float {
-		set(v);
-		return v;
+	private function Start(): Void {
+		full = guiTexture.pixelInset.width;
+		set(0);
 	}
 
 }

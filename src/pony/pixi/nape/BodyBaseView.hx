@@ -20,12 +20,13 @@ import pony.pixi.App;
 @:abstract class BodyBaseView<T:BodyBase> extends Sprite implements pony.magic.HasAbstract implements pony.magic.HasSignal {
 
 	public static var DEBUG_CACHE(default, null): Map<String, Pair<Point<Float>, RenderTexture>> = [];
-
 	public static var LIST(default, null): Map<Int, BodyBaseView<T>> = [];
 
-	@:auto public var onOut: Signal1<BodyBaseView<T>>;
 	public var core(default, null): T;
 	public var debugLines(default, set): DebugLineStyle;
+
+	@:auto public var onOut: Signal1<BodyBaseView<T>>;
+
 	private var debugView: Sprite;
 
 	public function new(core: T) {
@@ -37,24 +38,6 @@ import pony.pixi.App;
 		core.onRotation << rotationHandler;
 		core.onOut << out;
 		core.onDestroy < destroy.bind(null);
-	}
-
-	public inline function addView(s: Sprite): Void {
-		if (s.parent != null) parent.removeChild(s);
-		addChildAt(s, 0);
-		s.position.set(-core.anchor.x, -core.anchor.y);
-	}
-
-	public inline function addViewAndPos(s: Sprite): Void {
-		core.pos = new Point(s.x, s.y);
-		addView(s);
-	}
-
-	private function out(): Void eOut.dispatch(this);
-
-	public function scl(x: Float, y: Float): Void {
-		scale.set(x, y);
-		core.scale(x, y);
 	}
 
 	private function set_debugLines(v: DebugLineStyle): DebugLineStyle {
@@ -102,14 +85,20 @@ import pony.pixi.App;
 		return v;
 	}
 
-	@:abstract private function drawDebug(g: Graphics): Void;
-
-	private function posHandler(px: Float, py: Float): Void {
-		position.set(px + core.anchor.x, py + core.anchor.y);
+	public inline function addView(s: Sprite): Void {
+		if (s.parent != null) parent.removeChild(s);
+		addChildAt(s, 0);
+		s.position.set(-core.anchor.x, -core.anchor.y);
 	}
 
-	private function rotationHandler(r: Float): Void {
-		rotation = r;
+	public inline function addViewAndPos(s: Sprite): Void {
+		core.pos = new Point(s.x, s.y);
+		addView(s);
+	}
+
+	public function scl(x: Float, y: Float): Void {
+		scale.set(x, y);
+		core.scale(x, y);
 	}
 
 	override public function destroy(?options: EitherType<Bool, DestroyOptions>): Void {
@@ -125,6 +114,18 @@ import pony.pixi.App;
 		}
 		destroySignals();
 		super.destroy(options);
+	}
+
+	private function out(): Void eOut.dispatch(this);
+
+	@:abstract private function drawDebug(g: Graphics): Void;
+
+	private function posHandler(px: Float, py: Float): Void {
+		position.set(px + core.anchor.x, py + core.anchor.y);
+	}
+
+	private function rotationHandler(r: Float): Void {
+		rotation = r;
 	}
 
 	public static function clearCache(): Void {

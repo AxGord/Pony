@@ -41,15 +41,15 @@ abstract NapeSpaceView(NapeSpaceViewBase) from NapeSpaceViewBase to NapeSpaceVie
  */
 class NapeSpaceViewBase extends Sprite implements pony.magic.HasLink {
 
+	public var debugLines(default, set): DebugLineStyle;
+	public var core(default, null): NapeSpace;
+	public var touchable(default, null): Touchable;
+
 	public var play(link, never): Void -> Void = core.play;
 	public var pause(link, never): Void -> Void = core.pause;
-	public var debugLines(default, set): DebugLineStyle;
 
-	public var core(default, null): NapeSpace;
 	private var objects: Array<BodyBaseView<BodyBase>> = [];
 	private var groups: Map<String, NapeGroupView> = [];
-
-	public var touchable(default, null): Touchable;
 
 	public function new(w: Float, h: Float, ?gravity: Point<Float>) {
 		super();
@@ -61,6 +61,13 @@ class NapeSpaceViewBase extends Sprite implements pony.magic.HasLink {
 		mask = bgm;
 		interactive = false;
 		interactiveChildren = false;
+	}
+
+	private function set_debugLines(v: DebugLineStyle): DebugLineStyle {
+		debugLines = v;
+		for (e in objects) e.debugLines = v;
+		for (g in groups) g.debugLines = v;
+		return v;
 	}
 
 	public function clear(): Void {
@@ -92,13 +99,6 @@ class NapeSpaceViewBase extends Sprite implements pony.magic.HasLink {
 		g.interactive = true;
 		touchable = new Touchable(g);
 		return g;
-	}
-
-	private function set_debugLines(v: DebugLineStyle): DebugLineStyle {
-		debugLines = v;
-		for (e in objects) e.debugLines = v;
-		for (g in groups) g.debugLines = v;
-		return v;
 	}
 
 	public function reg<S:BodyBase, T:BodyBaseView<S>>(obj: T): T {

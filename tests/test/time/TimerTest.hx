@@ -22,8 +22,6 @@ class TimerTest {
 		Timer.delay(10, function() count++);
 	}
 
-	private function empty(): Void null;
-
 	@AsyncTest
 	public function repeat(asyncFactory: AsyncFactory): Void {
 		var c: Int = 0;
@@ -33,6 +31,8 @@ class TimerTest {
 		t.start();
 		new massive.munit.util.Timer(1500).run = handler;
 	}
+
+	private function empty(): Void null;
 
 	/* Munit problem?
 		@AsyncTest

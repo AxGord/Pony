@@ -8,16 +8,15 @@ import pony.text.XmlTools;
  */
 class Uglify extends Section {
 
-	public var outputPath: String;
-	public var outputFile: String;
 	public var mapOffset: Int = 0;
 	public var c: Bool = true;
 	public var m: Bool = true;
 	public var libcache: Bool = true;
-
 	public var debugLibs: Array<String> = [];
 	public var releaseLibs: Array<String> = [];
 	public var libs: Array<String> = [];
+	public var outputPath: String;
+	public var outputFile: String;
 
 	public function new() super('uglify');
 

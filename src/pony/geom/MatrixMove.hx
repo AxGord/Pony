@@ -19,10 +19,10 @@ typedef MatrixIndex = {
  */
 class MatrixMove {
 
+	public var change: Signal1<Int>;
+
 	private final moveMatrix: Matrix;
 	private final wards: IWards;
-
-	public var change: Signal1<Int>;
 
 	public function new(moveMatrix: Matrix, wards: IWards) {
 		this.moveMatrix = moveMatrix;

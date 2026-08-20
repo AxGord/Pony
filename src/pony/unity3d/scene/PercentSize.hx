@@ -13,16 +13,12 @@ using hugs.HUGSWrapper;
 class PercentSize extends MonoBehaviour implements IPercent {
 
 	public var percent(default, set): Float = 1;
+
 	public var zeroInCenter: Bool = true;
 	public var d: Float = 2;
 
 	private var initValue: Float;
 	private var initPos: Float;
-
-	private function Start(): Void {
-		initValue = transform.lossyScale.y;
-		initPos = transform.localPosition.y;
-	}
 
 	public function set_percent(v: Float): Float {
 		if (v > 0) {
@@ -36,6 +32,11 @@ class PercentSize extends MonoBehaviour implements IPercent {
 			renderer.enabled = false;
 		}
 		return percent = v;
+	}
+
+	private function Start(): Void {
+		initValue = transform.lossyScale.y;
+		initPos = transform.localPosition.y;
 	}
 
 }

@@ -19,15 +19,15 @@ class FSButtonCore {
 
 	dynamic public function onDisable(): Void {}
 
+	public function fsOn(): Void App.main.fullscreen();
+
+	public function fsOff(): Void JsTools.closeFS();
+
 	private function setFullScreenImage(): Void {
 		if (JsTools.isFSE)
 			onEnable();
 		else
 			onDisable();
 	}
-
-	public function fsOn(): Void App.main.fullscreen();
-
-	public function fsOff(): Void JsTools.closeFS();
 
 }

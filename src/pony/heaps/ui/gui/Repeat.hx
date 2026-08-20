@@ -14,11 +14,13 @@ import pony.ui.xml.RepeatObject;
  */
 @:nullSafety(Strict) class Repeat extends Object {
 
-	public var count(get, set): UInt;
 	public var created(default, null): Array<Object> = [];
+
+	public var count(get, set): UInt;
 
 	private final ui: HeapsXmlUi;
 	private final ro: RepeatObject;
+
 	private var targetCount: UInt = 0;
 
 	public function new(ui: HeapsXmlUi, ro: RepeatObject, count: UInt = 0) {
@@ -26,10 +28,6 @@ import pony.ui.xml.RepeatObject;
 		this.ui = ui;
 		this.ro = ro;
 		@:nullSafety(Off) this.count = count;
-	}
-
-	private function create(o: RepeatObject): Object {
-		return @:privateAccess ui.createUIElement(o.name, o.attrs, [for (c in o.content) create(c)], o.textContent);
 	}
 
 	private inline function get_count(): UInt return created.length;
@@ -40,26 +38,6 @@ import pony.ui.xml.RepeatObject;
 			update();
 		}
 		return v;
-	}
-
-	override private function onAdd(): Void {
-		super.onAdd();
-		targetCount = count;
-		update();
-	}
-
-	override private function onRemove(): Void {
-		super.onRemove();
-		while (count > 0) rm();
-	}
-
-	private function update(): Void {
-		if (parent != null) {
-			if (count < targetCount)
-				while (count < targetCount) add();
-			else
-				while (count > targetCount) rm();
-		}
 	}
 
 	public function add(): Object {
@@ -88,6 +66,30 @@ import pony.ui.xml.RepeatObject;
 			case _: throw 'Wrong parent';
 		}
 		return obj;
+	}
+
+	private function create(o: RepeatObject): Object {
+		return @:privateAccess ui.createUIElement(o.name, o.attrs, [for (c in o.content) create(c)], o.textContent);
+	}
+
+	override private function onAdd(): Void {
+		super.onAdd();
+		targetCount = count;
+		update();
+	}
+
+	override private function onRemove(): Void {
+		super.onRemove();
+		while (count > 0) rm();
+	}
+
+	private function update(): Void {
+		if (parent != null) {
+			if (count < targetCount)
+				while (count < targetCount) add();
+			else
+				while (count > targetCount) rm();
+		}
 	}
 
 }

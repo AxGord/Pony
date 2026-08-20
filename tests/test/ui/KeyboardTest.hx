@@ -74,20 +74,19 @@ class KeyboardTest {
 
 class KeyboardTestHelper implements IKeyboard implements HasSignal {
 
+	public var preventDefault: Bool = true;
 	@:auto public var down: Signal1<Key>;
 	@:auto public var up: Signal1<Key>;
 	@:auto public var input: Signal1<UInt>;
 
-	public var preventDefault: Bool = true;
-
 	public function new() disable();
-
-	public function enable(): Void {} // down.silent = false;
-
-	public function disable(): Void {} // down.silent = true;
 
 	public inline function _up(k: Key): Void eUp.dispatch(k);
 
 	public inline function _down(k: Key): Void eDown.dispatch(k);
+
+	public function enable(): Void {} // down.silent = false;
+
+	public function disable(): Void {} // down.silent = true;
 
 }

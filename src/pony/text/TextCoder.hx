@@ -12,6 +12,7 @@ class TextCoder {
 
 	private final key: String;
 	private final allowLowercase: Bool;
+
 	private var chars: String;
 
 	public function new(key: String, ?allowLowercase: Bool, ?allowSymbols: Bool) {

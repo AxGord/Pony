@@ -13,10 +13,11 @@ class LabelBar extends AnimBar {
 
 	public var text(get, set): String;
 
+	private final shadow: Bool;
+
+	private var labelInitVisible: Bool = true;
 	private var label: TextSizedBox;
 	private var style: ETextStyle;
-	private final shadow: Bool;
-	private var labelInitVisible: Bool = true;
 	private var border: Border<Int>;
 
 	public function new(
@@ -32,13 +33,6 @@ class LabelBar extends AnimBar {
 			useSpriteSheet, creep, smooth
 		);
 		if (style != null) onReady < labelInit;
-	}
-
-	private function labelInit(p: Point<Int>): Void {
-		label = new TextSizedBox(p.x, p.y, '', style, border, true, shadow);
-		label.visible = labelInitVisible;
-		addChild(label);
-		style = null;
 	}
 
 	@SuppressWarnings('checkstyle:MagicNumber')
@@ -76,5 +70,12 @@ class LabelBar extends AnimBar {
 	}
 
 	override public function destroyIWH(): Void destroy();
+
+	private function labelInit(p: Point<Int>): Void {
+		label = new TextSizedBox(p.x, p.y, '', style, border, true, shadow);
+		label.visible = labelInitVisible;
+		addChild(label);
+		style = null;
+	}
 
 }

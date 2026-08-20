@@ -9,16 +9,6 @@ import pony.geom.Rect;
  */
 class GridCore {
 
-	public var slotWidth(default, null): Float;
-	public var slotHeight(default, null): Float;
-	public var gap: Float;
-	public var cx(default, null): Int;
-	public var cy(default, null): Int;
-	public var totalWidth(default, null): Float;
-	public var totalHeight(default, null): Float;
-
-	private var slots: Array<Array<Bool>>;
-
 	private static final searchWay: Array<IntPoint> = [
 		{ x: 0, y: 0 },
 		{ x: 1, y: 0 },
@@ -47,6 +37,17 @@ class GridCore {
 		{ x: -2, y: -2 }
 	];
 
+	public var slotWidth(default, null): Float;
+	public var slotHeight(default, null): Float;
+	public var cx(default, null): Int;
+	public var cy(default, null): Int;
+	public var totalWidth(default, null): Float;
+	public var totalHeight(default, null): Float;
+
+	public var gap: Float;
+
+	private var slots: Array<Array<Bool>>;
+
 	public inline function new(width: Float, height: Float, gap: Float = 10) {
 		slotWidth = width;
 		slotHeight = height;
@@ -74,17 +75,6 @@ class GridCore {
 
 	public inline function floatPoint(rect: Point<Int>): Point<Float> return { x: rect.x * slotWidth, y: rect.y * slotHeight };
 
-	public dynamic function makeMark(y: Int, x: Int, state: Bool): Void {}
-
-	public function mark(rect: Rect<Float>): Void {
-		markOff();
-		final r: Rect<Int> = intRect(rect);
-		if (isOut(r)) return;
-		for (i in r.y ... r.y + r.height) for (j in r.x ... r.x + r.width) makeMark(i, j, true);
-	}
-
-	public function markOff(): Void for (a in 0...cy) for (b in 0...cx) makeMark(a, b, false);
-
 	public inline function isOut(r: Rect<Int>): Bool return r.x < 0 || r.x + r.width >= cx || r.y < 0 || r.y + r.height >= cy;
 
 	public inline function isOutPoint(r: Point<Int>): Bool return r.x < 0 || r.x >= cx || r.y < 0 || r.y >= cy;
@@ -96,6 +86,17 @@ class GridCore {
 	public inline function gy(r: Rect<Int>): Float return r.y * slotHeight;
 
 	public inline function takePos(rect: Rect<Float>, mark: Bool = true): Rect<Int> return takePosInt(intRect(rect), mark);
+
+	public dynamic function makeMark(y: Int, x: Int, state: Bool): Void {}
+
+	public function mark(rect: Rect<Float>): Void {
+		markOff();
+		final r: Rect<Int> = intRect(rect);
+		if (isOut(r)) return;
+		for (i in r.y ... r.y + r.height) for (j in r.x ... r.x + r.width) makeMark(i, j, true);
+	}
+
+	public function markOff(): Void for (a in 0...cy) for (b in 0...cx) makeMark(a, b, false);
 
 	public function freePos(r: Rect<Int>): Void {
 		for (y in r.y ... r.y + r.height) for (x in r.x ... r.x + r.width) {

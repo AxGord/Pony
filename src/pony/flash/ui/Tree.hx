@@ -28,9 +28,10 @@ class Tree extends Sprite implements FLStage {
 
 	#if !starling
 	private var _header: TreeElement;
-	private final _nodes: Array<DisplayObject> = [];
-	private var _xDisplacement: Int = 50;
 
+	private final _nodes: Array<DisplayObject> = [];
+
+	private var _xDisplacement: Int = 50;
 	private var _headerButton: Button;
 	private var _heightChangeCallback: Void -> Void;
 	private var _nodesSprite: Sprite = new Sprite();

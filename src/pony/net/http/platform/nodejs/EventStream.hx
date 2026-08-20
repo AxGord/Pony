@@ -24,10 +24,10 @@ import pony.magic.HasSignal;
 
 	private static inline final OK: Int = 200;
 
+	public var closed(default, null): Bool = false;
+
 	/** Fires when the client disconnects; the stream is unusable afterwards. */
 	@:auto public var onClose: Signal0;
-
-	public var closed(default, null): Bool = false;
 
 	private var res: Null<ServerResponse>;
 

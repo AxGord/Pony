@@ -17,7 +17,6 @@ import pony.time.DeltaTime;
 	public static var visible(default, set): Bool = true;
 
 	public static var SIZE: Int = 0;
-
 	public static var obj: Fixed2dCameraU;
 
 	private static function set_visible(v: Bool): Bool {

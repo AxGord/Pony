@@ -13,17 +13,6 @@ class Initialization {
 
 	public static var mprnt: ConsoleView;
 
-	public static function init(): Void {
-		Console.start();
-		try {
-			Console.defaultPrinter.remove();
-		} catch (_: Dynamic) {}
-		Console.addPrinter(new FL_IDE_View());
-		mprnt = new ConsoleView();
-		Console.addPrinter(mprnt);
-		mprnt.attach();
-	}
-
 	public static inline function rightClick(): Void {
 		if (MouseEvent.RIGHT_MOUSE_DOWN != null)
 			Lib.current.stage.buildSignal(MouseEvent.RIGHT_MOUSE_DOWN).sw(Initialization.mprnt.show, Initialization.mprnt.hide);
@@ -33,6 +22,17 @@ class Initialization {
 
 	public static inline function anyKey(): Void {
 		Lib.current.stage.buildSignal(KeyboardEvent.KEY_DOWN).sw(Initialization.mprnt.show, Initialization.mprnt.hide);
+	}
+
+	public static function init(): Void {
+		Console.start();
+		try {
+			Console.defaultPrinter.remove();
+		} catch (_: Dynamic) {}
+		Console.addPrinter(new FL_IDE_View());
+		mprnt = new ConsoleView();
+		Console.addPrinter(mprnt);
+		mprnt.attach();
 	}
 
 }

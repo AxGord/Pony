@@ -19,10 +19,6 @@ class StarlingDisplayFactory implements IDisplayFactory {
 		if (_instance != null) throw 'Singletone creation error';
 	}
 
-	public static function getInstance(): StarlingDisplayFactory {
-		return _instance;
-	}
-
 	public function createSprite(): IDisplayObjectContainer {
 		return cast new Sprite();
 	}
@@ -34,6 +30,10 @@ class StarlingDisplayFactory implements IDisplayFactory {
 	public function createMovieClip(): IMovieClip {
 		// return cast new MovieClip();
 		throw 'Starling movieclip creation not implemented yet';
+	}
+
+	public static function getInstance(): StarlingDisplayFactory {
+		return _instance;
 	}
 
 }

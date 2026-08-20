@@ -16,25 +16,14 @@ import pony.ui.gui.SwitchableList;
 class MusicPlayer extends SongPlayer {
 
 	#if !starling
-	@:stage(set) private var song: MovieClip;
+	private final songList: List<MovieClip> = new List();
 
+	@:stage(set) private var song: MovieClip;
 	private var songClass: Class<MovieClip>;
 	private var beginPoint: Point<Float>;
 	private var songHeight: Float;
 	private var sw: SwitchableList;
-
-	private final songList: List<MovieClip> = new List();
 	private var currentList: Array<SongInfo>;
-
-	override private function init(): Void {
-		visible = false;
-		super.init();
-		songClass = Type.getClass(song);
-		beginPoint = { x: song.x, y: song.y };
-		songHeight = song.height;
-		removeChild(song);
-		song = null;
-	}
 
 	public function loadPlaylist(pl: Array<SongInfo>): Void {
 		if (visible) unloadPlaylist();
@@ -71,6 +60,16 @@ class MusicPlayer extends SongPlayer {
 
 	public function unloadPlaylist(): Void {
 		visible = false;
+	}
+
+	override private function init(): Void {
+		visible = false;
+		super.init();
+		songClass = Type.getClass(song);
+		beginPoint = { x: song.x, y: song.y };
+		songHeight = song.height;
+		removeChild(song);
+		song = null;
 	}
 	#end
 

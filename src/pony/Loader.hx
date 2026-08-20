@@ -14,16 +14,15 @@ class Loader implements HasSignal {
 
 	@:auto public var onProgress: Signal1<Float>;
 	@:auto public var onComplete: Signal0;
-
 	public var intensivity: Int;
 	public var beginWait: Int;
 
 	private final actions: List<Void -> Void> = new List<Void -> Void>();
+
 	private var totalActions(default, null): Int = 0;
 
 	public var total: Int = 0;
 	public var complites: Int = 0;
-
 	public var loaded: Bool = false;
 
 	public function new(intensivity: Int = 10, beginWait: Int = 0) {

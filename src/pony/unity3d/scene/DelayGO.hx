@@ -10,12 +10,11 @@ import pony.time.DTimer;
 
 	public var go: unityengine.GameObject;
 	public var delay: Float;
+
 	@:meta(UnityEngine.HideInInspector)
 	private var timer: DTimer;
 
 	public function OnEnable(): Void timer = DTimer.delay(delay * 1000, run);
-
-	private function run(): Void go.active = true;
 
 	public function OnDisable(): Void {
 		timer.destroy();
@@ -23,5 +22,7 @@ import pony.time.DTimer;
 			go.active = false;
 		} catch (_: Dynamic) {}
 	}
+
+	private function run(): Void go.active = true;
 
 }

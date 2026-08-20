@@ -6,8 +6,8 @@ package pony.tests;
  */
 class Errors {
 
-	public var arg: String;
 	public var result: Map<String, String> = [];
+	public var arg: String;
 
 	public function new() {}
 

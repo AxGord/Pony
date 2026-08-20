@@ -10,10 +10,10 @@ import pony.magic.HasSignal;
 class Perform implements HasSignal {
 
 	#if perf.js
+	@:auto public static var onStats: Signal0;
+
 	private static inline final SHOW_ALPHA: String = '0.8';
 	private static inline final HIDE_ALPHA: String = '0.1';
-
-	@:auto public static var onStats: Signal0;
 	#end
 
 	@SuppressWarnings('checkstyle:MagicNumber')

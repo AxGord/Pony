@@ -13,10 +13,6 @@ import js.Lib;
  */
 class TestMain {
 
-	private static function main(): Void {
-		new TestMain();
-	}
-
 	public function new() {
 		final suites: Array<Class<massive.munit.TestSuite>> = new Array<Class<massive.munit.TestSuite>>();
 		suites.push(TestSuite);
@@ -53,6 +49,10 @@ class TestMain {
 		}
 		// if run from outside browser can get error which we can ignore
 		catch (e: Dynamic) {}
+	}
+
+	private static function main(): Void {
+		new TestMain();
 	}
 
 }

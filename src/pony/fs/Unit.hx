@@ -47,8 +47,6 @@ using StringTools;
 
 	private inline function get_name(): String return cast this.first.split('/').pop();
 
-	public inline function rename(to: Unit): Void FileSystem.rename(first, to.first);
-
 	private function get_exists(): Bool {
 		for (e in this) if (FileSystem.exists(e)) return true;
 		return false;
@@ -77,15 +75,9 @@ using StringTools;
 		return null;
 	}
 
+	public inline function rename(to: Unit): Void FileSystem.rename(first, to.first);
+
 	@:op(A + B) public inline function addString(a: String): Unit return [for (e in this) e + (a.indexOf('/') == 0 ? '' : '/') + a];
-
-	@:from private static inline function fromString(s: String): Unit return s.split(';').map(StringTools.trim);
-
-	@:from public static inline function join(a: Array<Unit>): Unit return new Priority<String>(cast a);
-
-	@:from private static inline function fromPriority(p: Priority<String>): Unit return new Unit(p);
-
-	@:from private static inline function fromArray(a: Array<String>): Unit return new Priority(a.map(removeLastSlash));
 
 	@:to public inline function toString(): String return this.join('; ');
 
@@ -100,11 +92,6 @@ using StringTools;
 	public inline function addWay(way: String, priority: Int = 0): Void this.add(way, priority);
 
 	public inline function addWayArray(way: Array<String>, priority: Int = 0): Void this.addArray(way, priority);
-
-	public function iterator(): Iterator<Unit> {
-		final it: Iterator<String> = this.iterator();
-		return { hasNext: it.hasNext, next: function(): Unit return it.next() };
-	}
 
 	@:arrayAccess public inline function arrayAccess(key: Int): Unit return this.data[key];
 
@@ -123,6 +110,19 @@ using StringTools;
 		else
 			file.delete();
 	}
+
+	public function iterator(): Iterator<Unit> {
+		final it: Iterator<String> = this.iterator();
+		return { hasNext: it.hasNext, next: function(): Unit return it.next() };
+	}
+
+	@:from public static inline function join(a: Array<Unit>): Unit return new Priority<String>(cast a);
+
+	@:from private static inline function fromString(s: String): Unit return s.split(';').map(StringTools.trim);
+
+	@:from private static inline function fromPriority(p: Priority<String>): Unit return new Unit(p);
+
+	@:from private static inline function fromArray(a: Array<String>): Unit return new Priority(a.map(removeLastSlash));
 
 	private static function removeLastSlash(v: String): String return v.substr(-1) == '/' ? removeLastSlash(v.substr(0, -1)) : v;
 

@@ -26,6 +26,9 @@ typedef SongInfo = {
 class SongPlayerCore implements HasSignal {
 
 	public var isPlay(default, set): Bool = false;
+	public var volume(default, set): Float = 0.8;
+	public var isMute(default, set): Bool = false;
+	public var position(default, set): Float = 0;
 
 	@:auto public var onComplete: Signal0;
 	@:auto public var onPlay: Signal0;
@@ -38,15 +41,11 @@ class SongPlayerCore implements HasSignal {
 	@:auto public var onPosition: Signal1<Float>;
 	@:auto public var onLoadprogress: Signal1<Float>;
 
-	public var volume(default, set): Float = 0.8;
-	public var isMute(default, set): Bool = false;
-	public var position(default, set): Float = 0;
-
-	private var sound: Sound;
-	private var channel: SoundChannel;
 	private var pTime: Float = 0;
 	private var pVol: Float = 0;
 	private var songTotal: Float = 0;
+	private var sound: Sound;
+	private var channel: SoundChannel;
 
 	public function new() {
 		onPosition << setPosition;
@@ -105,12 +104,6 @@ class SongPlayerCore implements HasSignal {
 
 	public function switchPlay(): Void isPlay = !isPlay;
 
-	public static function formatSong(song: SongInfo): String return (song.author != null ? song.author + ' - ' : '') + song.title;
-
-	private function progressHandler(event: ProgressEvent): Void eLoadprogress.dispatch(event.bytesLoaded / event.bytesTotal);
-
-	private function soundComplete(event: Event): Void eComplete.dispatch();
-
 	public function loadSong(song: SongInfo): Void {
 		position = 0;
 		eLoadprogress.dispatch(0);
@@ -133,6 +126,10 @@ class SongPlayerCore implements HasSignal {
 		sound.addEventListener(ProgressEvent.PROGRESS, progressHandler);
 		if (isPlay) playSong();
 	}
+
+	private function progressHandler(event: ProgressEvent): Void eLoadprogress.dispatch(event.bytesLoaded / event.bytesTotal);
+
+	private function soundComplete(event: Event): Void eComplete.dispatch();
 
 	private function playSong(): Void {
 		channel = sound.play(pTime);
@@ -169,5 +166,7 @@ class SongPlayerCore implements HasSignal {
 		ePosition.dispatch(channel.position / songTotal);
 		onPosition << setPosition;
 	}
+
+	public static function formatSong(song: SongInfo): String return (song.author != null ? song.author + ' - ' : '') + song.title;
 
 }

@@ -13,6 +13,7 @@ class Button extends Sprite {
 	public var core(default, null): ButtonImgN;
 
 	private final states: Array<SBitmap>;
+
 	private var zone: SBitmap;
 
 	public function new(states: Array<String>) {

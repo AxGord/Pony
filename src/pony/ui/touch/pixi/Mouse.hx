@@ -14,11 +14,11 @@ import pony.ui.touch.Mouse as M;
 @:access(pony.ui.touch.Mouse)
 class Mouse {
 
+	public static var inited(default, null): Bool = false;
+
 	private static final wheelListenOptions: AddEventListenerOptions = { passive: false };
 
 	private static var obj: Container;
-
-	public static var inited(default, null): Bool = false;
 
 	public static function reg(obj: Container): Void {
 		if (Mouse.obj != null) return;
@@ -48,6 +48,8 @@ class Mouse {
 		M.eLeave.onLost << function() obj.removeListener('mouseupoutside', upoutsideHandler);
 	}
 
+	public static dynamic function correction(x: Float, y: Float): Point<Float> return new Point(x, y);
+
 	private static function wheelHandler(e: Dynamic): Void {
 		M.eWheel.dispatch(if (e.wheelDelta == null)
 			e.deltaY > 0 ? -120 : 120
@@ -73,7 +75,5 @@ class Mouse {
 	}
 
 	private static function upoutsideHandler(_): Void M.eLeave.dispatch();
-
-	public static dynamic function correction(x: Float, y: Float): Point<Float> return new Point(x, y);
 
 }

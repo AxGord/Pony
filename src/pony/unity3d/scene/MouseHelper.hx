@@ -24,10 +24,14 @@ using hugs.HUGSWrapper;
 	public static var globalMiddleUp: Signal = new Signal();
 	public static var lock: LV<Int> = new LV(0);
 	public static var middleMousePressed: Bool = false;
+
 	private static var inited: Bool = false;
 
 	@:meta(UnityEngine.HideInInspector)
 	@:isVar public var overed(get, never): Bool;
+
+	@:meta(UnityEngine.HideInInspector)
+	public var sub: Bool = false;
 	@:meta(UnityEngine.HideInInspector)
 	public var over: Signal0<MouseHelper>;
 	public var out: Signal0<MouseHelper>;
@@ -38,31 +42,9 @@ using hugs.HUGSWrapper;
 	@:meta(UnityEngine.HideInInspector)
 	private var _overed: Int = 0;
 	@:meta(UnityEngine.HideInInspector)
-	private var ovr: MouseHelper;
-	@:meta(UnityEngine.HideInInspector)
 	private var ovrs: Int = 0;
-
 	@:meta(UnityEngine.HideInInspector)
-	public var sub: Bool = false;
-
-	public static function updateStatic(): Void {
-		if (Input.GetMouseButton(2)) {
-			if (!middleMousePressed) {
-				middleMousePressed = true;
-				globalMiddleDown.dispatch();
-			}
-		} else if (middleMousePressed) {
-			globalMiddleUp.dispatch();
-			middleMousePressed = false;
-		}
-	}
-
-	public static function init(): Void {
-		if (inited) return;
-		inited = true;
-		DeltaTime.update.add(updateStatic); // todo: add if have listener
-	}
-
+	private var ovr: MouseHelper;
 
 	private function new() {
 		super();
@@ -74,6 +56,8 @@ using hugs.HUGSWrapper;
 		lock.add(resetOvrs);
 		lock.add(updateOverState);
 	}
+
+	private inline function get_overed(): Bool return ovrs > 0;
 
 	public function Start(): Void {
 		init();
@@ -152,6 +136,22 @@ using hugs.HUGSWrapper;
 		if (overed) down.dispatch();
 	}
 
-	private inline function get_overed(): Bool return ovrs > 0;
+	public static function updateStatic(): Void {
+		if (Input.GetMouseButton(2)) {
+			if (!middleMousePressed) {
+				middleMousePressed = true;
+				globalMiddleDown.dispatch();
+			}
+		} else if (middleMousePressed) {
+			globalMiddleUp.dispatch();
+			middleMousePressed = false;
+		}
+	}
+
+	public static function init(): Void {
+		if (inited) return;
+		inited = true;
+		DeltaTime.update.add(updateStatic); // todo: add if have listener
+	}
 
 }

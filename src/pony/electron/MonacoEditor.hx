@@ -36,20 +36,16 @@ class MonacoEditor extends pony.Logable {
 
 	public static var instance(default, null): MonacoEditor;
 
-	public static function init(home: String = 'monaco/', modulesPath: String = '', ?themes: Array<String>, ?langs: Array<Lang>): Void {
-		instance = new MonacoEditor(home, modulesPath, themes, langs);
-	}
-
-	@:auto public var onInit: Signal0;
 	public var inited(default, null): Waiter = new Waiter();
-
 	public var monaco(default, null): Monaco;
 
+	@:auto public var onInit: Signal0;
+
+	private final themes: Map<String, IStandaloneThemeData> = [];
+	private final langs: Map<String, LangLoaded> = [];
 	private final tasks: Tasks;
 	private final wmodule: String;
 	private final monacoDir: String;
-	private final themes: Map<String, IStandaloneThemeData> = [];
-	private final langs: Map<String, LangLoaded> = [];
 
 	private function new(
 		home: String = 'monaco/', modulesPath: String = '', onigasm: String = 'node_modules/onigasm/lib/onigasm.wasm',
@@ -73,6 +69,23 @@ class MonacoEditor extends pony.Logable {
 
 		loadThemes(themes);
 		loadLangs(langs);
+	}
+
+	public function createEditor(container: Element, ?theme: String): IStandaloneCodeEditor {
+		log('create editor');
+		return monaco.editor.create(container, { theme: theme == null ? 'vs-dark' : theme, automaticLayout: true });
+	}
+
+	public function createModel(value: String, ?lang: String): ITextModel {
+		log('create $lang model');
+		return monaco.editor.createModel(value, lang);
+	}
+
+	public function create(container: Element, value: String, ?lang: String, ?theme: String): IStandaloneCodeEditor {
+		log('create $lang editor');
+		return monaco.editor.create(
+			container, { theme: theme == null ? 'vs-dark' : theme, automaticLayout: true, language: lang, value: value }
+		);
 	}
 
 	private function loadThemes(themes: Array<String>): Void {
@@ -170,21 +183,8 @@ class MonacoEditor extends pony.Logable {
 		return null;
 	}
 
-	public function createEditor(container: Element, ?theme: String): IStandaloneCodeEditor {
-		log('create editor');
-		return monaco.editor.create(container, { theme: theme == null ? 'vs-dark' : theme, automaticLayout: true });
-	}
-
-	public function createModel(value: String, ?lang: String): ITextModel {
-		log('create $lang model');
-		return monaco.editor.createModel(value, lang);
-	}
-
-	public function create(container: Element, value: String, ?lang: String, ?theme: String): IStandaloneCodeEditor {
-		log('create $lang editor');
-		return monaco.editor.create(
-			container, { theme: theme == null ? 'vs-dark' : theme, automaticLayout: true, language: lang, value: value }
-		);
+	public static function init(home: String = 'monaco/', modulesPath: String = '', ?themes: Array<String>, ?langs: Array<Lang>): Void {
+		instance = new MonacoEditor(home, modulesPath, themes, langs);
 	}
 
 }

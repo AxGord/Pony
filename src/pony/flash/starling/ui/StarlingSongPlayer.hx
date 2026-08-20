@@ -14,6 +14,8 @@ import starling.textures.TextureSmoothing;
  */
 class StarlingSongPlayer extends Sprite {
 
+	public var core: SongPlayerCore;
+
 	private final playBar: StarlingBar;
 	private final loadProgress: StarlingProgressBar;
 	private final bPlay: StarlingButton;
@@ -21,8 +23,6 @@ class StarlingSongPlayer extends Sprite {
 	private final bMute: StarlingButton;
 	private final volume: StarlingBar;
 	private final tTime: TextField;
-
-	public var core: SongPlayerCore;
 
 	public function new(source: Sprite) {
 		super();

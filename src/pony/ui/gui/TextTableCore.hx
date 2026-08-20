@@ -32,19 +32,6 @@ class TextTableCore implements HasAbstract {
 		return d;
 	}
 
-	private function drawLine(a: IntPoint, b: IntPoint, color: UColor, size: Int): Void {
-		if (a.x == b.x)
-			drawBG({ x: a.x, y: a.y, width: size, height: MathTools.cabs(b.y - a.y) }, color);
-		else
-			drawBG({ x: a.x, y: a.y, width: MathTools.cabs(b.x - a.x), height: size }, color);
-	}
-
-	@:abstract private function drawBG(r: IntRect, color: UColor): Void;
-
-	@:abstract private function drawText(point: IntRect, text: String, style: FontStyle): Void;
-
-	@:abstract private function clear(): Void;
-
 	public dynamic function borderStyle(point: IntPoint, direct: Direction): Pair<Int, UColor> return new Pair(1, new UColor(0));
 
 	public dynamic function bgStyle(point: IntPoint): Pair<IntPoint, UColor> return new Pair({ x: 100, y: 20 }, new UColor(0xFFFFFFFF));
@@ -83,5 +70,18 @@ class TextTableCore implements HasAbstract {
 			sdy = mdy;
 		}
 	}
+
+	private function drawLine(a: IntPoint, b: IntPoint, color: UColor, size: Int): Void {
+		if (a.x == b.x)
+			drawBG({ x: a.x, y: a.y, width: size, height: MathTools.cabs(b.y - a.y) }, color);
+		else
+			drawBG({ x: a.x, y: a.y, width: MathTools.cabs(b.x - a.x), height: size }, color);
+	}
+
+	@:abstract private function drawBG(r: IntRect, color: UColor): Void;
+
+	@:abstract private function drawText(point: IntRect, text: String, style: FontStyle): Void;
+
+	@:abstract private function clear(): Void;
 
 }

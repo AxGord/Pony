@@ -60,6 +60,10 @@ class AnimTextureCore extends AnimCore {
 			}
 	}
 
+	#if (haxe_ver < 4.2)
+	private function get_totalFrames(): Int return throw 'abstract';
+	#end
+
 	private function frameNoneHandler(n: Int): Void {
 		setTexture(0, n);
 	}
@@ -89,9 +93,5 @@ class AnimTextureCore extends AnimCore {
 	}
 
 	@:abstract private function setTexture(n: Int, f: Int): Void;
-
-	#if (haxe_ver < 4.2)
-	private function get_totalFrames(): Int return throw 'abstract';
-	#end
 
 }

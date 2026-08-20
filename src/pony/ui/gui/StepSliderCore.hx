@@ -11,9 +11,11 @@ import pony.ui.touch.Touch;
 @SuppressWarnings('checkstyle:MagicNumber')
 class StepSliderCore extends SliderCore {
 
-	public var posStep: Float = 0;
 	public var percentStep(get, set): Float;
 	public var valueStep(get, set): Float;
+
+	public var posStep: Float = 0;
+
 	private var percentRound: Int = -1;
 	private var valueRound: Int = -1;
 
@@ -21,14 +23,6 @@ class StepSliderCore extends SliderCore {
 		?button: ButtonCore, size: Float, isVertical: Bool = false, invert: Bool = false, draggable: Bool = true
 	) {
 		super(button, size, isVertical, invert, draggable);
-	}
-
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public static inline function create(
-		?button: ButtonCore, width: Float, height: Float, invert: Bool = false, draggable: Bool = true
-	): StepSliderCore {
-		final isVert = height > width;
-		return new StepSliderCore(button, isVert ? height : width, isVert, invert, draggable);
 	}
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
@@ -53,6 +47,13 @@ class StepSliderCore extends SliderCore {
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function get_valueStep(): Float return percentStep * (max - min);
 
+	public inline function setStepPos(p: Float): Void pos = limit(posStep == 0 ? p : (Math.round(p / posStep) * posStep));
+
+	public inline function stepMoveToPoint(t: Point<Float>): Void {
+		if (trackStartPoint != null) startPoint = -trackStartPoint;
+		setStepPos(detectPos(t));
+	}
+
 	override private function moveHandler(t: Touch): Void setStepPos(detectPos(t.point));
 
 	override private function changePosHandler(v: Float): Void {
@@ -69,11 +70,12 @@ class StepSliderCore extends SliderCore {
 			value = MathTools.roundTo(min + v * (max - min), valueRound);
 	}
 
-	public inline function setStepPos(p: Float): Void pos = limit(posStep == 0 ? p : (Math.round(p / posStep) * posStep));
-
-	public inline function stepMoveToPoint(t: Point<Float>): Void {
-		if (trackStartPoint != null) startPoint = -trackStartPoint;
-		setStepPos(detectPos(t));
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function create(
+		?button: ButtonCore, width: Float, height: Float, invert: Bool = false, draggable: Bool = true
+	): StepSliderCore {
+		final isVert = height > width;
+		return new StepSliderCore(button, isVert ? height : width, isVert, invert, draggable);
 	}
 
 }

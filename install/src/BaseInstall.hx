@@ -33,6 +33,27 @@
 		}
 	}
 
+	private inline function log(s: String): Void Sys.println(s);
+
+	private inline function graylog(s: String): Void {
+		Utils.beginColor(90);
+		Sys.println(s);
+		Utils.endColor();
+	}
+
+	private inline function cmd(c: String, a: Array<String>): Void hard ? hardCmd(c, a) : softCmd(c, a);
+
+	private inline function softCmd(c: String, a: Array<String>): Void {
+		log([c].concat(a).join(' '));
+		Sys.command(c, a);
+	}
+
+	private inline function hardCmd(c: String, a: Array<String>): Void {
+		log([c].concat(a).join(' '));
+		final r: Int = Sys.command(c, a);
+		if (r != 0) Utils.exit(r);
+	}
+
 	private function run(): Void {}
 
 	private function question(): Bool {
@@ -72,27 +93,6 @@
 				cmd(c, a.concat(e.split(' ')).concat(opt));
 			}
 		}
-	}
-
-	private inline function log(s: String): Void Sys.println(s);
-
-	private inline function graylog(s: String): Void {
-		Utils.beginColor(90);
-		Sys.println(s);
-		Utils.endColor();
-	}
-
-	private inline function cmd(c: String, a: Array<String>): Void hard ? hardCmd(c, a) : softCmd(c, a);
-
-	private inline function softCmd(c: String, a: Array<String>): Void {
-		log([c].concat(a).join(' '));
-		Sys.command(c, a);
-	}
-
-	private inline function hardCmd(c: String, a: Array<String>): Void {
-		log([c].concat(a).join(' '));
-		final r: Int = Sys.command(c, a);
-		if (r != 0) Utils.exit(r);
 	}
 
 }

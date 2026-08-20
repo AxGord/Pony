@@ -32,6 +32,14 @@ class BodyShape extends BodyBase {
 		super(space, limits, isStatic, isBullet, group);
 	}
 
+	override public function getCacheId(): Bytes {
+		final b: BytesOutput = new BytesOutput();
+		b.writeByte(0x00); // shape code
+		b.writeInt32(Std.int(resolution * 1000));
+		b.write(sbytes);
+		return b.getBytes();
+	}
+
 	override private function init(): Void {
 		final cid = getCacheId().toHex();
 		var cpolygons: GeomPolyList = CACHE[cid];
@@ -52,14 +60,6 @@ class BodyShape extends BodyBase {
 			p.sensorEnabled = body.isBullet;
 			body.shapes.add(p);
 		}
-	}
-
-	override public function getCacheId(): Bytes {
-		final b: BytesOutput = new BytesOutput();
-		b.writeByte(0x00); // shape code
-		b.writeInt32(Std.int(resolution * 1000));
-		b.write(sbytes);
-		return b.getBytes();
 	}
 
 }

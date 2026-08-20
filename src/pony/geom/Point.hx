@@ -55,6 +55,31 @@ abstract Point<T:Float>(PointImpl<T>) from PointImpl<T> to PointImpl<T> {
 
 	@:to public inline function toFloat(): Point<Float> return cast this;
 
+	@:op(A == B) public inline function compare(b: Point<T>): Bool return x == b.x && y == b.y;
+
+	public inline function minMax(b: Point<T>): Point<T> return new Point<T>(this.x < b.x ? this.x : b.x, this.y > b.y ? this.y : b.y);
+
+	public inline function min(b: Point<T>): Point<T> return new Point<T>(this.x < b.x ? this.x : b.x, this.y < b.y ? this.y : b.y);
+
+	public inline function max(b: Point<T>): Point<T> return new Point<T>(this.x > b.x ? this.x : b.x, this.y > b.y ? this.y : b.y);
+
+	public inline function setXY(obj: ObjWithPointForSet): Void {
+		obj.x = x;
+		obj.y = y;
+	}
+
+	public inline function setPosition(obj: ObjWithSetPosition): Void obj.setPosition(x, y);
+
+	@:op(A > B) private inline function gt(b: Point<T>): Bool return x > b.x || y > b.y;
+
+	@:op(A >= B) private inline function gte(b: Point<T>): Bool return x >= b.x || y >= b.y;
+
+	@:op(A < B) private inline function lt(b: Point<T>): Bool return x < b.x || y < b.y;
+
+	@:op(A <= B) private inline function lte(b: Point<T>): Bool return x <= b.x || y <= b.y;
+
+	@:op(-A) private inline function neg(): Point<T> return new Point(-this.x, -this.y);
+
 	@:to public static inline function toInt(p: Point<Float>): Point<Int> return new Point(Std.int(p.x), Std.int(p.y));
 
 	@:to public static inline function toUHPair(p: Point<UInt>): UHPair return new UHPair(p.x, p.y);
@@ -95,32 +120,7 @@ abstract Point<T:Float>(PointImpl<T>) from PointImpl<T> to PointImpl<T> {
 
 	@:op(A - B) public static inline function sub1<T:Float>(lhs: Point<T>, rhs: T): Point<T> return { x: lhs.x - rhs, y: lhs.y - rhs };
 
-	@:op(A == B) public inline function compare(b: Point<T>): Bool return x == b.x && y == b.y;
-
-	@:op(A > B) private inline function gt(b: Point<T>): Bool return x > b.x || y > b.y;
-
-	@:op(A >= B) private inline function gte(b: Point<T>): Bool return x >= b.x || y >= b.y;
-
-	@:op(A < B) private inline function lt(b: Point<T>): Bool return x < b.x || y < b.y;
-
-	@:op(A <= B) private inline function lte(b: Point<T>): Bool return x <= b.x || y <= b.y;
-
-	@:op(-A) private inline function neg(): Point<T> return new Point(-this.x, -this.y);
-
-	public inline function minMax(b: Point<T>): Point<T> return new Point<T>(this.x < b.x ? this.x : b.x, this.y > b.y ? this.y : b.y);
-
-	public inline function min(b: Point<T>): Point<T> return new Point<T>(this.x < b.x ? this.x : b.x, this.y < b.y ? this.y : b.y);
-
-	public inline function max(b: Point<T>): Point<T> return new Point<T>(this.x > b.x ? this.x : b.x, this.y > b.y ? this.y : b.y);
-
 	public static inline function random(): Point<Float> return new Point<Float>(Math.random(), Math.random());
-
-	public inline function setXY(obj: ObjWithPointForSet): Void {
-		obj.x = x;
-		obj.y = y;
-	}
-
-	public inline function setPosition(obj: ObjWithSetPosition): Void obj.setPosition(x, y);
 
 	@:from public static inline function ofObj(obj: ObjWithPoint): Point<Float> return new Point<Float>(obj.x, obj.y);
 
@@ -139,8 +139,10 @@ abstract Point<T:Float>(PointImpl<T>) from PointImpl<T> to PointImpl<T> {
 	}
 
 	#if (heaps && !macro)
-	@:keep private function keepHackForHeaps(): Any return new h2d.Object().setPosition;
 	@:to public inline function toHeapsPoint(): h2d.col.Point return new h2d.col.Point(x, y);
+
+	@:keep private function keepHackForHeaps(): Any return new h2d.Object().setPosition;
+
 	@:from public static inline function fromHeapsPoint(p: h2d.col.Point): Point<Float> return new Point<Float>(p.x, p.y);
 	#end
 
@@ -159,6 +161,25 @@ abstract IntPoint(PointImpl<Int>) to PointImpl<Int> from PointImpl<Int> {
 
 	public function new(x: Int, y: Int) this = { x: x, y: y };
 
+	private inline function get_x(): Int return this.x;
+
+	private inline function get_y(): Int return this.y;
+
+	public inline function getX(): Int return this.x;
+
+	public inline function getY(): Int return this.y;
+
+	public inline function setXY(obj: ObjWithPointForSet): Void {
+		obj.x = x;
+		obj.y = y;
+	}
+
+	public inline function setPosition(obj: ObjWithSetPosition): Void obj.setPosition(x, y);
+
+	public function toString(): String return '(${this.x}, ${this.y})';
+
+	@:op(A == B) private inline function equal(b: IntPoint): Bool return x == b.x && y == b.y;
+
 	@:op(A + B) public static inline function add1(lhs: IntPoint, rhs: Point<Int>): IntPoint
 		return { x: lhs.getX() + rhs.x, y: lhs.getY() + rhs.y };
 
@@ -171,17 +192,7 @@ abstract IntPoint(PointImpl<Int>) to PointImpl<Int> from PointImpl<Int> {
 	@:op(A - B) public static inline function m2(lhs: IntPoint, rhs: IntPoint): IntPoint
 		return { x: lhs.getX() - rhs.getX(), y: lhs.getY() - rhs.getY() };
 
-	private inline function get_x(): Int return this.x;
-
-	private inline function get_y(): Int return this.y;
-
-	public inline function getX(): Int return this.x;
-
-	public inline function getY(): Int return this.y;
-
 	@:from public static inline function fromRect(r: Rect<Int>): IntPoint return { x: r.x, y: r.y };
-
-	@:op(A == B) private inline function equal(b: IntPoint): Bool return x == b.x && y == b.y;
 
 	@:from public static function fromDirection(d: Direction): IntPoint {
 		return switch d {
@@ -196,14 +207,5 @@ abstract IntPoint(PointImpl<Int>) to PointImpl<Int> from PointImpl<Int> {
 	@:from public static function fromIntIterator(it: IntIterator): IntPoint {
 		return new IntPoint(@:privateAccess it.min, @:privateAccess it.max);
 	}
-
-	public inline function setXY(obj: ObjWithPointForSet): Void {
-		obj.x = x;
-		obj.y = y;
-	}
-
-	public inline function setPosition(obj: ObjWithSetPosition): Void obj.setPosition(x, y);
-
-	public function toString(): String return '(${this.x}, ${this.y})';
 
 }

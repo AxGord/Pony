@@ -73,7 +73,16 @@ typedef DIClassSummary = {
 	private static final summaries: Map<String, DIClassSummary> = [];
 	private static final erroredPositions: Array<String> = [];
 	private static final resolutions: Map<String, Map<String, Null<ResolvedRef>>> = [];
+
 	private static var analyzerInstalled: Bool = false;
+
+	public static inline function addProducer(summary: DIClassSummary, entry: ProducerEntry): Void {
+		summary.producers.push(entry);
+	}
+
+	public static inline function addConsumer(summary: DIClassSummary, entry: ConsumerEntry): Void {
+		summary.consumers.push(entry);
+	}
 
 	/**
 	 * Create the summary for `typeName`. The first call installs the `onAfterTyping`
@@ -89,14 +98,6 @@ typedef DIClassSummary = {
 			Context.onAfterTyping(_ -> analyze());
 		}
 		return summary;
-	}
-
-	public static inline function addProducer(summary: DIClassSummary, entry: ProducerEntry): Void {
-		summary.producers.push(entry);
-	}
-
-	public static inline function addConsumer(summary: DIClassSummary, entry: ConsumerEntry): Void {
-		summary.consumers.push(entry);
 	}
 
 	/** Returns the class's own consumers (not merged with super chain). */
@@ -123,6 +124,24 @@ typedef DIClassSummary = {
 		if (summary.producers.exists(p -> p.kind == Share)) return false;
 		final superName: Null<String> = summary.superTypeName;
 		return superName == null || isStaticEligible(superName);
+	}
+
+	private static inline function getOrCreateBucket(map: Map<String, Array<String>>, key: String): Array<String> {
+		final existing: Null<Array<String>> = map[key];
+		if (existing != null) return existing;
+		final fresh: Array<String> = [];
+		map[key] = fresh;
+		return fresh;
+	}
+
+	private static inline function hasSubclassesInRegistry(typeName: String, subclassesOf: Map<String, Array<String>>): Bool {
+		final subs: Null<Array<String>> = subclassesOf[typeName];
+		return subs != null && subs.length > 0;
+	}
+
+	private static inline function hasInstantiationParent(typeName: String, parentsOf: Map<String, Array<String>>): Bool {
+		final parents: Null<Array<String>> = parentsOf[typeName];
+		return parents != null && parents.length > 0;
 	}
 
 	private static function analyze(): Void {
@@ -155,24 +174,6 @@ typedef DIClassSummary = {
 			getOrCreateBucket(result, parent).push(typeName);
 		}
 		return result;
-	}
-
-	private static inline function getOrCreateBucket(map: Map<String, Array<String>>, key: String): Array<String> {
-		final existing: Null<Array<String>> = map[key];
-		if (existing != null) return existing;
-		final fresh: Array<String> = [];
-		map[key] = fresh;
-		return fresh;
-	}
-
-	private static inline function hasSubclassesInRegistry(typeName: String, subclassesOf: Map<String, Array<String>>): Bool {
-		final subs: Null<Array<String>> = subclassesOf[typeName];
-		return subs != null && subs.length > 0;
-	}
-
-	private static inline function hasInstantiationParent(typeName: String, parentsOf: Map<String, Array<String>>): Bool {
-		final parents: Null<Array<String>> = parentsOf[typeName];
-		return parents != null && parents.length > 0;
 	}
 
 	/**

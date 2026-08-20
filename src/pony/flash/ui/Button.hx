@@ -17,6 +17,7 @@ class Button extends MovieClip {
 	// public static var config = {def: 1, focus: 2, press: 3, zone: 4, disabled: 5};
 
 	public var core(default, null): ButtonImgN;
+
 	public var bMode(get, set): Bool;
 
 	private final zone: Button;

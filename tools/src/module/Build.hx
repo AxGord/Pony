@@ -34,19 +34,26 @@ final class Build extends CfgModule<BuildConfig> {
 	public static inline final HAXE: String = 'haxe';
 	public static inline final HXML: String = 'hxml';
 	public static inline final D: String = '-D';
+
 	private static inline final PRIORITY: Int = 1;
 	private static inline final TIMEOUT: Int = 5;
 	private static inline final LIB: String = '-lib';
 
 	private var flags(default, null): Array<String> = [];
+
+	private final postHaxelibs: Array<String> = [];
+
+	private var server: Bool = false;
 	private var haxelib: Array<String>;
 	private var hideWarningLibs: Array<String>;
-	private final postHaxelibs: Array<String> = [];
-	private var server: Bool = false;
 	private var lastCompilationOptions: LastCompilationOptions;
 	private var tryCounter: Int;
 
 	public function new() super('build');
+
+	public inline function addHaxelib(lib: String): Void if (postHaxelibs.indexOf(lib) == -1) postHaxelibs.push(lib);
+
+	public inline function addFlag(flag: String): Void if (flags.indexOf(flag) == -1) flags.push(flag);
 
 	#if (haxe_ver < 4.2) override #end
 	public function init(): Void {
@@ -62,10 +69,6 @@ final class Build extends CfgModule<BuildConfig> {
 			&& !TextTools.isTrue(Sys.getEnv('PONY_DISABLE_BUILD_SERVER'));
 		initSections(PRIORITY, BASection.Build);
 	}
-
-	public inline function addHaxelib(lib: String): Void if (postHaxelibs.indexOf(lib) == -1) postHaxelibs.push(lib);
-
-	public inline function addFlag(flag: String): Void if (flags.indexOf(flag) == -1) flags.push(flag);
 
 	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
 		new BuildConfigReader(
@@ -200,10 +203,6 @@ final class Build extends CfgModule<BuildConfig> {
 		}
 	}
 
-	private static inline function cmdPairToStr(p: SPair<String>): String return p.a + (p.b.length > 0 ? ' ' + p.b : '');
-
-	private static inline function cmdArrPairToArrStr(a: Array<SPair<String>>): Array<String> return [for (c in a) cmdPairToStr(c)];
-
 	private function connectToHaxeServer(): Socket {
 		final port: Int = Std.parseInt(modules.xml.node.server.node.haxe.innerData);
 		while (true) try {
@@ -241,6 +240,10 @@ final class Build extends CfgModule<BuildConfig> {
 		if (s.toUpperCase().indexOf('WARNING') != -1) for (lib in hideWarningLibs) if (s.indexOf(lib) != -1) return true;
 		return false;
 	}
+
+	private static inline function cmdPairToStr(p: SPair<String>): String return p.a + (p.b.length > 0 ? ' ' + p.b : '');
+
+	private static inline function cmdArrPairToArrStr(a: Array<SPair<String>>): Array<String> return [for (c in a) cmdPairToStr(c)];
 
 }
 

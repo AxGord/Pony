@@ -21,11 +21,12 @@ class ScrollBox extends Sprite implements HasSignal implements IWH {
 
 	public var size(get, never): Point<Float>;
 
+	private final core: ScrollBoxCore;
+
+	private var content: Sprite = new Sprite();
+	private var touchArea: Sprite = new Sprite();
 	private var vbar: Sprite;
 	private var hbar: Sprite;
-	private var content: Sprite = new Sprite();
-	private final core: ScrollBoxCore;
-	private var touchArea: Sprite = new Sprite();
 
 	public function new(
 		w: Float, h: Float, vert: Bool = true, hor: Bool = false, color: UInt = 0, barsize: Float = 8, wheelSpeed: Float = 1
@@ -89,6 +90,28 @@ class ScrollBox extends Sprite implements HasSignal implements IWH {
 		core.onMaskSize << maximizeTouchArea;
 	}
 
+	private function get_size(): Point<Float> return new Point<Float>(core.w, core.h);
+
+	public inline function needUpdate(): Void {
+		DeltaTime.fixedUpdate < update;
+	}
+
+	public function add(c: DisplayObject): Void {
+		content.addChild(c);
+		needUpdate();
+	}
+
+	public function update(): Void {
+		touchArea.visible = false;
+		final b = content.getBounds();
+		core.content(b.x + b.width, b.y + b.height);
+		touchArea.visible = true;
+	}
+
+	public function wait(fn: Void -> Void): Void fn();
+
+	public function destroyIWH(): Void destroy();
+
 	private function maximizeTouchArea(mw: Float, mh: Float): Void {
 		final b = content.getLocalBounds();
 		touchArea.scale.set(b.x + b.width, b.y + b.height);
@@ -111,27 +134,5 @@ class ScrollBox extends Sprite implements HasSignal implements IWH {
 	private function showHBar(): Void hbar.visible = true;
 
 	private function hideHBar(): Void hbar.visible = false;
-
-	public function add(c: DisplayObject): Void {
-		content.addChild(c);
-		needUpdate();
-	}
-
-	public inline function needUpdate(): Void {
-		DeltaTime.fixedUpdate < update;
-	}
-
-	public function update(): Void {
-		touchArea.visible = false;
-		final b = content.getBounds();
-		core.content(b.x + b.width, b.y + b.height);
-		touchArea.visible = true;
-	}
-
-	private function get_size(): Point<Float> return new Point<Float>(core.w, core.h);
-
-	public function wait(fn: Void -> Void): Void fn();
-
-	public function destroyIWH(): Void destroy();
 
 }

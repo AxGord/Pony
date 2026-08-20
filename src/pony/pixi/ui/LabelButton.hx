@@ -16,8 +16,9 @@ import pony.ui.gui.RubberLayoutCore;
  */
 class LabelButton extends BaseLayout<RubberLayoutCore<Container>> {
 
-	public var core(get, never): ButtonCore;
 	public var button(default, null): Button;
+
+	public var core(get, never): ButtonCore;
 
 	private var dac: Float;
 
@@ -41,9 +42,9 @@ class LabelButton extends BaseLayout<RubberLayoutCore<Container>> {
 		core.onEnable << enableHandler;
 	}
 
-	private function disableHandler(): Void for (o in layout.objects) o.alpha = dac;
-
-	private function enableHandler(): Void for (o in layout.objects) o.alpha = 1;
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function get_core(): ButtonCore return button.core;
 
 	override public function add(obj: Container): Void {
 		obj.interactive = false;
@@ -52,15 +53,15 @@ class LabelButton extends BaseLayout<RubberLayoutCore<Container>> {
 		super.add(obj);
 	}
 
-	@SuppressWarnings('checkstyle:MagicNumber')
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function get_core(): ButtonCore return button.core;
-
 	override public function destroy(?options: EitherType<Bool, DestroyOptions>): Void {
 		removeChild(button);
 		button.destroy();
 		button = null;
 		super.destroy(options);
 	}
+
+	private function disableHandler(): Void for (o in layout.objects) o.alpha = dac;
+
+	private function enableHandler(): Void for (o in layout.objects) o.alpha = 1;
 
 }

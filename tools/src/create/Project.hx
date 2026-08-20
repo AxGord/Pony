@@ -25,10 +25,13 @@ class Project {
 	public var electron(default, null): Electron = new Electron();
 	public var hashlink(default, null): Hashlink = new Hashlink();
 
-	public var name: String;
 	public var rname(get, never): String;
 
+	public var name: String;
+
 	public function new(name: String) this.name = name;
+
+	private function get_rname(): String return name == null ? 'App' : name;
 
 	public function result(): Xml {
 		final root = Xml.createElement('project');
@@ -136,7 +139,5 @@ class Project {
 		run.path = build.outputPath;
 		run.command = cmd + ' ' + build.outputFile;
 	}
-
-	private function get_rname(): String return name == null ? 'App' : name;
 
 }

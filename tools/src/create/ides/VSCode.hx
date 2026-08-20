@@ -8,11 +8,11 @@ import sys.FileSystem;
  */
 class VSCode {
 
+	public static var allowCreate(get, never): Bool;
+
 	private static inline final PRELAUNCH_TASK: String = 'default';
 	private static inline final ANDROID_TASK: String = 'pony android';
 	private static inline final IPHONE_TASK: String = 'pony iphone';
-
-	public static var allowCreate(get, never): Bool;
 
 	private static var cordova: Bool = false;
 	private static var air: Bool = false;
@@ -155,18 +155,6 @@ class VSCode {
 		createExtensions(true);
 	}
 
-	private static function chromeConfig(httpPort: Int): Array<Any> {
-		final launch: String = 'Launch Chrome';
-		return [
-			{ type: 'chrome', request: 'launch', name: launch, url: 'http://localhost:$httpPort', webRoot: "${workspaceRoot}", preLaunchTask: PRELAUNCH_TASK, internalConsoleOptions: 'openOnSessionStart', breakOnLoad: true }
-		];
-	}
-
-	private static function saveConfig(configurations: Array<Any>): Void {
-		final data = { version: '0.2.0', configurations: configurations };
-		Utils.saveJson('.vscode/launch.json', data);
-	}
-
 	public static function createElectron(output: String): Void {
 		final confNamePrefix: String = 'Electron: ';
 		final mainConfName: String = confNamePrefix + 'Main';
@@ -184,6 +172,18 @@ class VSCode {
 		], compounds: [{ name: confNamePrefix + 'All', configurations: [mainConfName, renderConfName] }] };
 		Utils.saveJson('.vscode/launch.json', data);
 		createExtensions(true);
+	}
+
+	private static function chromeConfig(httpPort: Int): Array<Any> {
+		final launch: String = 'Launch Chrome';
+		return [
+			{ type: 'chrome', request: 'launch', name: launch, url: 'http://localhost:$httpPort', webRoot: "${workspaceRoot}", preLaunchTask: PRELAUNCH_TASK, internalConsoleOptions: 'openOnSessionStart', breakOnLoad: true }
+		];
+	}
+
+	private static function saveConfig(configurations: Array<Any>): Void {
+		final data = { version: '0.2.0', configurations: configurations };
+		Utils.saveJson('.vscode/launch.json', data);
 	}
 
 }

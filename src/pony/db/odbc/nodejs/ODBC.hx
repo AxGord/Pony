@@ -28,26 +28,6 @@ class ODBC extends SQLBase {
 		db.open(connectionString, open);
 	}
 
-	private function open(err: Dynamic): Void {
-		if (err != null)
-			_error(err);
-		else
-			connected.ready();
-	}
-
-
-	/**
-	 * Make action, query with boolean result
-	 */
-	@:async public function action(q: String, ?actName: String, ?p: PosInfos): Bool {
-		var err;
-		var _;
-		var _ = @await query(q, p);
-		if (err == null) return true;
-		_error(actName == null ? Std.string(err) : "Can't " + actName + ': ' + err.stack, p);
-		return false;
-	}
-
 	/**
 	 * MySQL query
 	 */
@@ -62,15 +42,6 @@ class ODBC extends SQLBase {
 	}
 
 	/**
-	 * Query with stream
-	 */
-	public function stream(q: String, ?p: PosInfos): Stream<Dynamic> {
-		final s = new Stream();
-		query(q, p, function(_, res: Array<Dynamic>, _): Void s.putIterable(res));
-		return s;
-	}
-
-	/**
 	 * Escape id (for fields, tables, databases)
 	 */
 	public inline function escapeId(s: String): String return s.replace('`', '');
@@ -81,11 +52,39 @@ class ODBC extends SQLBase {
 	public inline function escape(s: String): String return "'" + s.replace("'", '') + "'";
 
 	/**
+	 * Make action, query with boolean result
+	 */
+	@:async public function action(q: String, ?actName: String, ?p: PosInfos): Bool {
+		var err;
+		var _;
+		var _ = @await query(q, p);
+		if (err == null) return true;
+		_error(actName == null ? Std.string(err) : "Can't " + actName + ': ' + err.stack, p);
+		return false;
+	}
+
+	/**
+	 * Query with stream
+	 */
+	public function stream(q: String, ?p: PosInfos): Stream<Dynamic> {
+		final s = new Stream();
+		query(q, p, function(_, res: Array<Dynamic>, _): Void s.putIterable(res));
+		return s;
+	}
+
+	/**
 	 * Close connection and destroy object
 	 */
 	public function destroy(): Void {
 		db.close();
 		db = null;
+	}
+
+	private function open(err: Dynamic): Void {
+		if (err != null)
+			_error(err);
+		else
+			connected.ready();
 	}
 
 }

@@ -8,6 +8,7 @@ package pony;
 
 	public var busy(default, null): Bool;
 	public var call(default, null): T;
+
 	public var hasNext(get, never): Bool;
 
 	private var list: List<Array<Dynamic>>;
@@ -20,6 +21,19 @@ package pony;
 		call = Reflect.makeVarArgs(_call);
 	}
 
+	private inline function get_hasNext(): Bool return list.length > 0;
+
+	public inline function next(): Void hasNext ? @:nullSafety(Off) cm(list.pop()) : busy = false;
+
+	public inline function destroy(): Void {
+		list.clear();
+		busy = true;
+		@:nullSafety(Off) call = null;
+		@:nullSafety(Off) method = null;
+	}
+
+	private inline function cm(args: Array<Dynamic>): Void @:nullSafety(Off) Reflect.callMethod(null, cast method, args);
+
 	private function _call(a: Array<Dynamic>): Void {
 		if (!busy) {
 			busy = true;
@@ -27,19 +41,6 @@ package pony;
 		} else {
 			list.add(a);
 		}
-	}
-
-	private inline function get_hasNext(): Bool return list.length > 0;
-
-	public inline function next(): Void hasNext ? @:nullSafety(Off) cm(list.pop()) : busy = false;
-
-	private inline function cm(args: Array<Dynamic>): Void @:nullSafety(Off) Reflect.callMethod(null, cast method, args);
-
-	public inline function destroy(): Void {
-		list.clear();
-		busy = true;
-		@:nullSafety(Off) call = null;
-		@:nullSafety(Off) method = null;
 	}
 
 }
@@ -60,11 +61,6 @@ package pony;
 		count = busy ? 1 : 0;
 	}
 
-	public function call(): Void {
-		if (count == 0) method();
-		count++;
-	}
-
 	private inline function get_hasNext(): Bool return count > 1;
 
 	public inline function next(): Void {
@@ -77,6 +73,11 @@ package pony;
 		@:nullSafety(Off) method = null;
 	}
 
+	public function call(): Void {
+		if (count == 0) method();
+		count++;
+	}
+
 }
 
 /**
@@ -86,6 +87,7 @@ package pony;
 @:nullSafety(Strict) class Queue1<T1> {
 
 	public var busy(default, null): Bool;
+
 	public var hasNext(get, never): Bool;
 
 	private var list: List<T1>;
@@ -97,15 +99,6 @@ package pony;
 		list = new List();
 	}
 
-	public function call(a1: T1): Void {
-		if (!busy) {
-			busy = true;
-			method(a1);
-		} else {
-			list.add(a1);
-		}
-	}
-
 	private inline function get_hasNext(): Bool return list.length > 0;
 
 	public inline function next(): Void hasNext ? @:nullSafety(Off) method(list.pop()) : busy = false;
@@ -114,6 +107,15 @@ package pony;
 		list.clear();
 		busy = true;
 		@:nullSafety(Off) method = null;
+	}
+
+	public function call(a1: T1): Void {
+		if (!busy) {
+			busy = true;
+			method(a1);
+		} else {
+			list.add(a1);
+		}
 	}
 
 }

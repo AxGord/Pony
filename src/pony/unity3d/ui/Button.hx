@@ -22,12 +22,11 @@ using hugs.HUGSWrapper;
 	public var defaultMode: Int = 0;
 	public var panel: Bool = true;
 	public var tooltip: String = '';
-	private var autoSwith: NativeArray<Int>;
-
 	public var core: ButtonCore;
 
 	@:meta(UnityEngine.HideInInspector)
 	private var prevState: Bool = false;
+	private var autoSwith: NativeArray<Int>;
 
 	public function new() {
 		super();

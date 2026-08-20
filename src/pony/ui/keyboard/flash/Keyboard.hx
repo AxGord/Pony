@@ -15,11 +15,10 @@ import pony.ui.keyboard.Keyboard;
  */
 class Keyboard implements IKeyboard implements HasSignal {
 
+	public var preventDefault: Bool = false;
 	@:auto public var down: Signal1<Key>;
 	@:auto public var up: Signal1<Key>;
 	@:auto public var input: Signal1<UInt>;
-
-	public var preventDefault: Bool = false;
 
 	public function new() {}
 

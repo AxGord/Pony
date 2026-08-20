@@ -37,10 +37,10 @@ import pony.magic.HasSignal;
 	@:lazy public var onConnect: Signal1<ISocketClient>;
 
 	public var opened(default, null): Bool = false;
-
 	public var id(default, null): Int = -1;
 	public var host(default, null): String;
 	public var port(default, null): Int;
+
 	public var isWithLength: Bool;
 	public var tryCount: Int;
 	public var sendTimeout: Int = -1;
@@ -51,10 +51,10 @@ import pony.magic.HasSignal;
 	// For big data
 	private var waitNext: UInt = 0;
 	private var waitBuf: BytesOutput = new BytesOutput();
-
 	private var tryCounter: Int = 0;
 
 	public var logOutputData: Bool = false;
+
 	public var logInputData(default, set): Bool = false;
 
 	public function new(

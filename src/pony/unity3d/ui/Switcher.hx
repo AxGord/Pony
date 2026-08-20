@@ -21,6 +21,10 @@ using hugs.HUGSWrapper;
 		select = new Signal();
 	}
 
+	public function set(name: String): Void {
+		sw(Lambda.indexOf(names, name));
+	}
+
 	private function Start(): Void {
 		final a: NativeArrayIterator<TintButton> = getComponentsInChildrenOfType(TintButton);
 		names = [for (e in a) e.name];
@@ -30,9 +34,5 @@ using hugs.HUGSWrapper;
 	}
 
 	private function sw(n: Int): Void select.dispatch(names[n]);
-
-	public function set(name: String): Void {
-		sw(Lambda.indexOf(names, name));
-	}
 
 }

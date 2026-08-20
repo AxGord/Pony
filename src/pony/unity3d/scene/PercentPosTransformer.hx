@@ -12,7 +12,6 @@ import unityengine.Time;
 
 	public var defaultView: GameObject;
 	public var transformedView: GameObject;
-
 	public var points: NativeArray<Single>;
 
 	override public function set_percent(v: Float): Float {

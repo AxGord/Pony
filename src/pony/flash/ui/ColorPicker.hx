@@ -20,16 +20,14 @@ class ColorPicker extends Sprite implements HasSignal {
 
 	@:bindable public var color: UInt;
 
+	private final marker: Sprite = new Sprite();
 	private final ratios: Array<Float>;
 	private final alphas: Array<Float>;
+	private final touchable: Touchable;
 
+	private var markerColor: UInt = 1;
 	private var bitmapData: BitmapData;
 	private var bitmap: Bitmap;
-
-	private final marker: Sprite = new Sprite();
-	private var markerColor: UInt = 1;
-
-	private final touchable: Touchable;
 	private var prevX: Int;
 	private var prevY: Int;
 
@@ -44,6 +42,39 @@ class ColorPicker extends Sprite implements HasSignal {
 
 		touchable = new Touchable(this);
 		touchable.onDown < downHandler;
+	}
+
+	public inline function removeMarker(): Void {
+		markerColor = 1;
+		marker.graphics.clear();
+	}
+
+	public inline function clear(): Void {
+		if (bitmap == null) return;
+		removeChild(bitmap);
+		bitmapData.dispose();
+	}
+
+	public function draw(w: UInt, h: UInt): Void {
+		clear();
+		removeMarker();
+		final m: Matrix = new Matrix();
+		m.createGradientBox(w, h);
+		graphics.beginGradientFill(GradientType.LINEAR, COLORS, alphas, ratios, m);
+		graphics.drawRect(0, 0, w, h);
+
+		final m: Matrix = new Matrix();
+		m.createGradientBox(w, h, Math.PI / 2);
+		graphics.beginGradientFill(GradientType.LINEAR, BRIGHTESS_COLORS, BRIGHTESS_ALPHAS, BRIGHTESS_PARTS, m);
+		graphics.drawRect(0, 0, w, h);
+		graphics.endFill();
+
+		bitmapData = new BitmapData(w, h, true, 0);
+		bitmapData.draw(this);
+		graphics.clear();
+		bitmap = new Bitmap(bitmapData);
+		addChild(bitmap);
+		addChild(marker);
 	}
 
 	private function downHandler(t: Touch): Void {
@@ -85,39 +116,6 @@ class ColorPicker extends Sprite implements HasSignal {
 		marker.graphics.clear();
 		marker.graphics.lineStyle(2, color);
 		marker.graphics.drawCircle(0, 0, 2);
-	}
-
-	public inline function removeMarker(): Void {
-		markerColor = 1;
-		marker.graphics.clear();
-	}
-
-	public inline function clear(): Void {
-		if (bitmap == null) return;
-		removeChild(bitmap);
-		bitmapData.dispose();
-	}
-
-	public function draw(w: UInt, h: UInt): Void {
-		clear();
-		removeMarker();
-		final m: Matrix = new Matrix();
-		m.createGradientBox(w, h);
-		graphics.beginGradientFill(GradientType.LINEAR, COLORS, alphas, ratios, m);
-		graphics.drawRect(0, 0, w, h);
-
-		final m: Matrix = new Matrix();
-		m.createGradientBox(w, h, Math.PI / 2);
-		graphics.beginGradientFill(GradientType.LINEAR, BRIGHTESS_COLORS, BRIGHTESS_ALPHAS, BRIGHTESS_PARTS, m);
-		graphics.drawRect(0, 0, w, h);
-		graphics.endFill();
-
-		bitmapData = new BitmapData(w, h, true, 0);
-		bitmapData.draw(this);
-		graphics.clear();
-		bitmap = new Bitmap(bitmapData);
-		addChild(bitmap);
-		addChild(marker);
 	}
 
 }

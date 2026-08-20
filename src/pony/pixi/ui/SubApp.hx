@@ -9,8 +9,9 @@ import pony.geom.Rect;
  */
 class SubApp extends HtmlContainer {
 
-	public var content: Sprite = new Sprite();
 	public var subApp(default, null): App;
+
+	public var content: Sprite = new Sprite();
 
 	public function new(targetRect: Rect<Int>, ?app: App, ceil: Bool = false, fixed: Bool = false) {
 		super(targetRect.toFloat(), app, ceil, fixed);

@@ -11,7 +11,6 @@ class TouchManagerGesture {
 	public var rotation: Float;
 	public var scale: Float;
 	public var angle: Float;
-
 	public var centerX: Float;
 	public var centerY: Float;
 

@@ -12,9 +12,10 @@ import types.UglifyConfig;
  */
 class Uglify extends NModule<UglifyConfig> {
 
+	public static var CACHE_FILE: String = 'libcache.js';
+
 	private static inline final PRIORITY: Int = 3;
 	private static inline final REMOVE_CACHE_PRIORITY: Int = -120;
-	public static var CACHE_FILE: String = 'libcache.js';
 
 	public function new() super('uglify');
 

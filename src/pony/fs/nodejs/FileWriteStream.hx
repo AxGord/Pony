@@ -16,15 +16,24 @@ import pony.ds.WriteStream;
  */
 class FileWriteStream extends WriteStream<Bytes> {
 
+	private final path: String;
+
+	private var position: Int = 0;
 	private var size: Float;
 	private var fd: Int;
-	private final path: String;
-	private var position: Int = 0;
 
 	public function new(path: String) {
 		super();
 		this.path = path;
 		readStream.onData < getSize;
+	}
+
+	public function cancel(): Void {
+		try {
+			Fs.closeSync(fd);
+			Fs.unlinkSync(path);
+		} catch (_: Any) {}
+		readStream.cancel();
 	}
 
 	private function getSize(b: Bytes): Void {
@@ -83,14 +92,6 @@ class FileWriteStream extends WriteStream<Bytes> {
 		} else {
 			readStream.complete();
 		}
-	}
-
-	public function cancel(): Void {
-		try {
-			Fs.closeSync(fd);
-			Fs.unlinkSync(path);
-		} catch (_: Any) {}
-		readStream.cancel();
 	}
 
 }

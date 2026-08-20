@@ -13,16 +13,15 @@ class BaseStream<T> implements HasSignal {
 	@:auto public var onData: Signal1<T>;
 	@:auto public var onEnd: Signal1<T>;
 	@:auto public var onError: Signal0;
-
 	@:auto public var onGetData: Signal0;
 	@:auto public var onCancel: Signal0;
 	@:auto public var onComplete: Signal0;
 
-	private var buffer: T;
 	private var sendNext: Bool = false;
 	private var dataRequested: Bool = false;
 	private var nextRequest: Bool = false;
 	private var ended: Bool = false;
+	private var buffer: T;
 
 	public function new() {}
 
@@ -76,6 +75,11 @@ class BaseStream<T> implements HasSignal {
 		destroy();
 	}
 
+	public function complete(): Void {
+		eComplete.dispatch();
+		destroy();
+	}
+
 	private function getData(): Void {
 		if (!dataRequested) {
 			dataRequested = true;
@@ -85,11 +89,6 @@ class BaseStream<T> implements HasSignal {
 		} else {
 			nextRequest = true;
 		}
-	}
-
-	public function complete(): Void {
-		eComplete.dispatch();
-		destroy();
 	}
 
 	private function destroy(): Void {

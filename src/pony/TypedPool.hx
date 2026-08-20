@@ -7,10 +7,13 @@ package pony;
 @:generic class TypedPool<T:#if (haxe_ver >= 3.30)
 haxe.Constraints.Constructible<Void -> Void> #else { function new(): Void; } #end> implements IPool<T> {
 
-	public var list: Array<T> = [];
 	public var isDestroy(get, never): Bool;
 
+	public var list: Array<T> = [];
+
 	public inline function new() {}
+
+	public inline function get_isDestroy(): Bool return list == null;
 
 	#if (!flash && !debug)
 	inline
@@ -31,8 +34,6 @@ haxe.Constraints.Constructible<Void -> Void> #else { function new(): Void; } #en
 	public function destroy(): Void {
 		list = null;
 	}
-
-	public inline function get_isDestroy(): Bool return list == null;
 
 }
 

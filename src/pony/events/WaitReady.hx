@@ -13,15 +13,15 @@ abstract WaitReady(Null<Array<Void -> Void>>) {
 	public inline function new() this = [];
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function get_isReady(): Bool return this == null;
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function ready(): Void {
 		if (this == null) return;
 		final l: Array<Void -> Void> = this;
 		this = null;
 		for (f in l) f();
 	}
-
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public inline function get_isReady(): Bool return this == null;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function wait(cb: Void -> Void): Void isReady ? cb() : this.push(cb);

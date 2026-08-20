@@ -12,14 +12,16 @@ class DeltaTime implements HasSignal {
 
 	@:lazy public static var update: Signal1<DT>;
 	@:lazy public static var fixedUpdate: Signal1<DT>;
-
 	public static var speed: Float = 1;
 	public static var value: Float = 0;
+
 	private static var t: Float;
+
 	public static var nowDate(get, never): Date;
 
 	#if (HUGS && !WITHOUTUNITY)
 	public static var fixedValue(get, never): Float;
+
 	private static inline function get_fixedValue(): Float return unityengine.Time.deltaTime;
 	#else
 	public static var fixedValue: Float = 0;
@@ -117,6 +119,7 @@ class DeltaTime implements HasSignal {
 	private static inline function _set(): Void set();
 	#elseif (nodejs && nodedt)
 	private static var imm: Dynamic;
+
 	private static function __init__(): Void {
 		createSignals();
 		eFixedUpdate.onTake << _ftakeListeners;

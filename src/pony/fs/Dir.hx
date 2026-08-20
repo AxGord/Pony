@@ -23,9 +23,25 @@ abstract Dir(Unit) from Unit {
 		this = v;
 	}
 
-	private static function checkFilter(filter: Array<String>, unit: String): Bool {
-		return filter == null || filter.exists(f -> unit.substr(-f.length) == f);
+	private inline function get_first(): String return this.first;
+
+	private function get_size(): Int {
+		var result: Int = 0;
+		for (f in contentRecursiveFiles()) result += f.size;
+		return result;
 	}
+
+	public inline function delete(): Void FileSystem.deleteDirectory(first);
+
+	public inline function create(): Void FileSystem.createDirectory(first);
+
+	@:to public inline function toString(): String return this.toString();
+
+	@:arrayAccess public inline function arrayAccess(key: Int): Dir return this[key];
+
+	public inline function iterator(): Iterator<Dir> return this.iterator();
+
+	@:op(A + B) public inline function addString(a: String): Unit return this.addString(a);
 
 	public function content(?filter: String, allowDir: Bool = false, sortByName: Bool = false): Array<Unit> {
 		final result: Map<String, Unit> = [];
@@ -59,16 +75,6 @@ abstract Dir(Unit) from Unit {
 
 	public function dirs(?filter: String, sortByName: Bool = false): Array<Dir> {
 		return [for (u in content(filter, true, sortByName)) if (u.isDir) u];
-	}
-
-	public inline function delete(): Void FileSystem.deleteDirectory(first);
-
-	private inline function get_first(): String return this.first;
-
-	private function get_size(): Int {
-		var result: Int = 0;
-		for (f in contentRecursiveFiles()) result += f.size;
-		return result;
 	}
 
 	public function contentRecursiveFiles(?filter: String, sortByName: Bool = false): Array<File> {
@@ -123,19 +129,9 @@ abstract Dir(Unit) from Unit {
 		}
 	}
 
-	public inline function create(): Void FileSystem.createDirectory(first);
-
 	public function file(name: String): File return addString(name);
 
 	@:to private inline function toUnit(): Unit return this;
-
-	@:to public inline function toString(): String return this.toString();
-
-	@:arrayAccess public inline function arrayAccess(key: Int): Dir return this[key];
-
-	public inline function iterator(): Iterator<Dir> return this.iterator();
-
-	@:op(A + B) public inline function addString(a: String): Unit return this.addString(a);
 
 	public static function compareNames(a: Unit, b: Unit): Int {
 		final an: String = a.name.toLowerCase();
@@ -146,6 +142,10 @@ abstract Dir(Unit) from Unit {
 			1
 		else
 			-1;
+	}
+
+	private static function checkFilter(filter: Array<String>, unit: String): Bool {
+		return filter == null || filter.exists(f -> unit.substr(-f.length) == f);
 	}
 
 }

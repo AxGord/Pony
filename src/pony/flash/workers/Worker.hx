@@ -24,6 +24,7 @@ class Worker implements IWorkerGatePool implements HasSignal {
 
 	private var bgWorker: flash.system.Worker;
 	private var lock: Bool = true;
+
 	private final unlockers: List<Void -> Void> = new List<Void -> Void>();
 
 	@:auto public var log: Signal1<String>;

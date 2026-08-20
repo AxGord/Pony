@@ -21,20 +21,17 @@ class UniversalDrag {
 
 	public static inline final KINETIC_DRAG_DURATION: Float = 0.7;
 
-	private static var _dragged: IDisplayObject;
-	private static var _dragBounds: Rectangle;
-
-	private static var _xSpeed: Float;
-	private static var _ySpeed: Float;
-
 	private static inline final SPEED_MP: Float = 350;
 	private static inline final SPEED_POW: Float = 1.4;
 
 	private static var _startX: Float = 0;
 	private static var _startY: Float = 0;
-
 	private static var _dragTouchId: Int = -1;
 	private static var bufferPoint: Point = new Point(0, 0);
+	private static var _dragged: IDisplayObject;
+	private static var _dragBounds: Rectangle;
+	private static var _xSpeed: Float;
+	private static var _ySpeed: Float;
 
 	#if tweenmax
 	private static var _activeTween: TweenMax;
@@ -68,29 +65,6 @@ class UniversalDrag {
 		#if tweenmax
 		if (_activeTween != null) _activeTween.kill();
 		#end
-	}
-
-	private static function onDrag(e: TouchManagerEvent): Void {
-		if (e.touchID != _dragTouchId) return;
-
-		bufferPoint.x = e.globalX;
-		bufferPoint.y = e.globalY;
-		bufferPoint = _dragged.parent.globalToLocal(bufferPoint);
-		_dragged.x = bufferPoint.x + _startX;
-		_dragged.y = bufferPoint.y + _startY;
-
-		_xSpeed = e.speedX;
-		_ySpeed = e.speedY;
-
-		toBounds();
-	}
-
-	private static function toBounds(): Void {
-		if (_dragBounds == null) return;
-		if (_dragged.x > _dragBounds.right) _dragged.x = _dragBounds.right;
-		if (_dragged.y > _dragBounds.bottom) _dragged.y = _dragBounds.bottom;
-		if (_dragged.x < _dragBounds.x) _dragged.x = _dragBounds.x;
-		if (_dragged.y < _dragBounds.y) _dragged.y = _dragBounds.y;
 	}
 
 	public static function stopUniversalDrag(dragged: IDisplayObject): Void {
@@ -127,6 +101,29 @@ class UniversalDrag {
 		#end
 
 		_dragged = null;
+	}
+
+	private static function onDrag(e: TouchManagerEvent): Void {
+		if (e.touchID != _dragTouchId) return;
+
+		bufferPoint.x = e.globalX;
+		bufferPoint.y = e.globalY;
+		bufferPoint = _dragged.parent.globalToLocal(bufferPoint);
+		_dragged.x = bufferPoint.x + _startX;
+		_dragged.y = bufferPoint.y + _startY;
+
+		_xSpeed = e.speedX;
+		_ySpeed = e.speedY;
+
+		toBounds();
+	}
+
+	private static function toBounds(): Void {
+		if (_dragBounds == null) return;
+		if (_dragged.x > _dragBounds.right) _dragged.x = _dragBounds.right;
+		if (_dragged.y > _dragBounds.bottom) _dragged.y = _dragBounds.bottom;
+		if (_dragged.x < _dragBounds.x) _dragged.x = _dragBounds.x;
+		if (_dragged.y < _dragBounds.y) _dragged.y = _dragBounds.y;
 	}
 
 	private static function sign(value: Float): Int {

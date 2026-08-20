@@ -22,27 +22,45 @@ import pony.Priority;
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function get_self(): Event1<T1> return this;
 
-	private static function real<T1>(l: Listener1<T1>): Bool {
-		final e: Null<Priority<Any>> = l.event;
-		return e == null || !e.empty;
-	}
-
-	private static function compare<T1>(a: Listener1<T1>, b: Listener1<T1>): Bool {
-		return switch [a.listener, b.listener] {
-			case [LFunction0(a), LFunction0(b)]: SignalTools.functionHashCompare(a, b);
-			case [LFunction1(a), LFunction1(b)]: SignalTools.functionHashCompare(a, b);
-			case [LEvent0(a, _), LEvent0(b, _)]: a == b;
-			case [LEvent1(a, _), LEvent1(b, _)]: a == b;
-			case [LSub(_, a), LSub(_, b)]: a == b;
-			case [LNot(_, a), LNot(_, b)]: a == b;
-			case [LBind1(_, a1), LBind1(_, b1)]: a1 == b1;
-			case _: false;
-		}
-	}
-
 	@:op(a()) public inline function dispatch(a1: T1): Void dispatchWithFlag(a1, false);
 
 	public inline function saveDispatch(a1: T1): Void dispatchWithFlag(a1, true);
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function sub(a1: T1, priority: Int = 0): Event0 {
+		final e: Event0 = new Event0();
+		(e: Signal0).add(dispatch.bind(a1), priority);
+		return e;
+	}
+
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function subOnce(a1: T1, priority: Int = 0): Event0 {
+		final e: Event0 = new Event0();
+		(e: Signal0).once(dispatch.bind(a1), priority);
+		return e;
+	}
+
+	@:op(A && B)
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function and(s: Event1<T1>): Event1<T1> {
+		final e: Event1<T1> = new Event1<T1>();
+		(e: Signal1<T1>) << self << s;
+		return e;
+	}
+
+	@:op(A & B) #if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function andOnce(s: Event1<T1>): Event1<T1> {
+		final e: Event1<T1> = new Event1<T1>();
+		(e: Signal1<T1>) << self << s << (e: Signal1<T1>).clear;
+		return e;
+	}
+
+	public inline function destroy(): Void {
+		if (this != null) {
+			(this: Signal1<T1>).clear();
+			this.destroy();
+		}
+	}
 
 	public function dispatchWithFlag(a1: T1, safe: Bool): Void {
 		if (this == null || this.isDestroy() || (safe && this.counters.length > 1)) return;
@@ -67,45 +85,27 @@ import pony.Priority;
 		this.lock = false;
 	}
 
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public inline function sub(a1: T1, priority: Int = 0): Event0 {
-		final e: Event0 = new Event0();
-		(e: Signal0).add(dispatch.bind(a1), priority);
-		return e;
-	}
-
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public inline function subOnce(a1: T1, priority: Int = 0): Event0 {
-		final e: Event0 = new Event0();
-		(e: Signal0).once(dispatch.bind(a1), priority);
-		return e;
-	}
-
 	@:op(A - B)
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function sub_op(a1: T1): Event0 {
 		return sub(a1);
 	}
 
-	@:op(A && B)
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public inline function and(s: Event1<T1>): Event1<T1> {
-		final e: Event1<T1> = new Event1<T1>();
-		(e: Signal1<T1>) << self << s;
-		return e;
+	private static function real<T1>(l: Listener1<T1>): Bool {
+		final e: Null<Priority<Any>> = l.event;
+		return e == null || !e.empty;
 	}
 
-	@:op(A & B) #if (haxe_ver >= 4.2) extern #else @:extern #end
-	public inline function andOnce(s: Event1<T1>): Event1<T1> {
-		final e: Event1<T1> = new Event1<T1>();
-		(e: Signal1<T1>) << self << s << (e: Signal1<T1>).clear;
-		return e;
-	}
-
-	public inline function destroy(): Void {
-		if (this != null) {
-			(this: Signal1<T1>).clear();
-			this.destroy();
+	private static function compare<T1>(a: Listener1<T1>, b: Listener1<T1>): Bool {
+		return switch [a.listener, b.listener] {
+			case [LFunction0(a), LFunction0(b)]: SignalTools.functionHashCompare(a, b);
+			case [LFunction1(a), LFunction1(b)]: SignalTools.functionHashCompare(a, b);
+			case [LEvent0(a, _), LEvent0(b, _)]: a == b;
+			case [LEvent1(a, _), LEvent1(b, _)]: a == b;
+			case [LSub(_, a), LSub(_, b)]: a == b;
+			case [LNot(_, a), LNot(_, b)]: a == b;
+			case [LBind1(_, a1), LBind1(_, b1)]: a1 == b1;
+			case _: false;
 		}
 	}
 

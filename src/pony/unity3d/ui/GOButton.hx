@@ -14,7 +14,6 @@ import unityengine.GameObject;
 	private var goDefs: NativeArray<GameObject>;
 	private var goOvers: NativeArray<GameObject>;
 	private var goPress: NativeArray<GameObject>;
-
 	private var glast: GameObject;
 
 	override private function Start(): Void {

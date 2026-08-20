@@ -25,6 +25,7 @@ class CueBuilder {
 	private static inline final INDEX: String = 'INDEX';
 	private static inline final TITLE: String = 'TITLE ';
 	#end
+
 	macro public static function build(): Array<Field> {
 		final cl = Context.getLocalClass();
 		final meta = cl.get().meta.get();

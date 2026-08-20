@@ -17,11 +17,6 @@ class NetDebug {
 
 	private static var trstr: String = '';
 
-	#if !flash
-	public static inline function server(port: Int = 60666): Void
-		new SocketServer(port).onData << function(d: BytesInput) Log.trace(d.readStr(), null);
-	#end
-
 	public static function client(name: String, ?host: String, port: Int = 60666): Void {
 		var c: SocketClient = new SocketClient(host, port);
 		final old: (v:Dynamic, ?infos:Null<PosInfos>) -> Void = Log.trace;
@@ -37,5 +32,10 @@ class NetDebug {
 			c.send(b);
 		}
 	}
+
+	#if !flash
+	public static inline function server(port: Int = 60666): Void
+		new SocketServer(port).onData << function(d: BytesInput) Log.trace(d.readStr(), null);
+	#end
 
 }

@@ -17,9 +17,10 @@ class TimelineActions implements HasSignal {
 	@:auto public var onStepEnd: Signal1<Int>;
 
 	private final timeline: Timeline;
-	private var toStep: Int = 0;
 	private final stepSpeed: Array<Float>;
 	private final superSpeed: Float;
+
+	private var toStep: Int = 0;
 
 	public function new(times: Array<Time>, speeds: Array<Float>, superSpeed: Float = 10) {
 		stepSpeed = speeds;
@@ -28,18 +29,13 @@ class TimelineActions implements HasSignal {
 		timeline.onStep << timelineStepHandler;
 	}
 
+	public inline function reset(): Void timeline.reset();
+
 	public dynamic function setSpeed(v: Float): Void {}
 
 	public dynamic function pause(): Void {}
 
 	public dynamic function play(): Void {}
-
-	public inline function reset(): Void timeline.reset();
-
-	private function fast(): Void {
-		setSpeed(superSpeed);
-		play();
-	}
 
 	public function jumpTo(n: Int): Void {
 		if (!timeline.isPlay && n == timeline.currentStep) {
@@ -78,6 +74,11 @@ class TimelineActions implements HasSignal {
 	}
 
 	private inline function setSpeedForStep(n: Int): Void stepSpeed[n] == 0 ? pause() : setSpeed(stepSpeed[n]);
+
+	private function fast(): Void {
+		setSpeed(superSpeed);
+		play();
+	}
 
 	private function timelineStepHandler(n: Int): Void {
 		if (n > toStep) {

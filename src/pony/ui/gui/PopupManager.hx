@@ -8,13 +8,17 @@ import pony.time.DeltaTime;
  */
 class PopupManager<Popup> {
 
-	private var list: Array<Popup> = [];
-	private var current: IPopup;
-	private var wantFromList: Bool = false;
-
 	public var onStartClose: Void -> Void;
 
+	private var list: Array<Popup> = [];
+	private var wantFromList: Bool = false;
+	private var current: IPopup;
+
 	public function new() {}
+
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function clearList(): Void list = [];
 
 	public function showPopup(type: Popup): Void {
 		if (current == null && !wantFromList) {
@@ -29,11 +33,6 @@ class PopupManager<Popup> {
 		list = [];
 		endClose();
 		_showPopup(type);
-	}
-
-	private function _showPopup(type: Popup): Void {
-		current = getPopup(type);
-		current.onClose = close;
 	}
 
 	public dynamic function getPopup(type: Popup): IPopup return throw 'Method not set';
@@ -59,6 +58,11 @@ class PopupManager<Popup> {
 		DeltaTime.fixedUpdate < showFromList;
 	}
 
+	private function _showPopup(type: Popup): Void {
+		current = getPopup(type);
+		current.onClose = close;
+	}
+
 	private function abortFromList(): Bool {
 		if (!wantFromList) return false;
 		wantFromList = false;
@@ -70,9 +74,5 @@ class PopupManager<Popup> {
 		wantFromList = false;
 		_showPopup(list.shift());
 	}
-
-	@SuppressWarnings('checkstyle:MagicNumber')
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public inline function clearList(): Void list = [];
 
 }

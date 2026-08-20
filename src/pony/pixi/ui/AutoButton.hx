@@ -20,22 +20,11 @@ class AutoButton extends Sprite implements IWH {
 	private static var LIGHT_FILTER: Array<Filter>;
 	private static var DARK_FILTER: Array<Filter>;
 
-	private static function __init__(): Void {
-		final f = new ColorMatrixFilter();
-		f.kodachrome(true);
-		LIGHT_FILTER = [f];
-		final f = new ColorMatrixFilter();
-		f.desaturate(true);
-		GRAY_FILTER = [f];
-		final f = new ColorMatrixFilter();
-		f.vintage(true);
-		DARK_FILTER = [f];
-	}
+	public var core(default, null): ButtonCore;
 
 	public var size(get, never): Point<Float>;
-	private final _size: Point<Float>;
 
-	public var core(default, null): ButtonCore;
+	private final _size: Point<Float>;
 	private final img: Sprite;
 
 	public function new(s: Sprite) {
@@ -48,6 +37,12 @@ class AutoButton extends Sprite implements IWH {
 		core = new ButtonCore(new Touchable(this));
 		core.onVisual << visualHandler;
 	}
+
+	private function get_size(): Point<Float> return _size;
+
+	public function wait(cb: Void -> Void): Void cb();
+
+	public function destroyIWH(): Void destroy();
 
 	private function visualHandler(mode: Int, state: ButtonState): Void {
 		if (mode == 1) {
@@ -70,10 +65,16 @@ class AutoButton extends Sprite implements IWH {
 		}
 	}
 
-	private function get_size(): Point<Float> return _size;
-
-	public function wait(cb: Void -> Void): Void cb();
-
-	public function destroyIWH(): Void destroy();
+	private static function __init__(): Void {
+		final f = new ColorMatrixFilter();
+		f.kodachrome(true);
+		LIGHT_FILTER = [f];
+		final f = new ColorMatrixFilter();
+		f.desaturate(true);
+		GRAY_FILTER = [f];
+		final f = new ColorMatrixFilter();
+		f.vintage(true);
+		DARK_FILTER = [f];
+	}
 
 }

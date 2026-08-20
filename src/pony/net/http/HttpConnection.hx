@@ -13,19 +13,20 @@ import sys.FileSystem;
 class HttpConnection implements HasAbstract {
 
 	private static inline final indexFileShort: String = 'index.htm';
+
 	private static inline var indexFile: String = indexFileShort + 'l';
 
+	public var sessionStorage: Map<String, Dynamic> = [];
+	public var languages: Array<String> = [];
+	public var end: Bool = false;
 	public var method: String;
 	public var post: Map<String, String>;
 	public var fullUrl: String;
 	public var url: String;
 	public var params: Map<String, String>;
-	public var sessionStorage: Map<String, Dynamic> = [];
 	public var host: String;
 	public var protocol: String;
-	public var languages: Array<String> = [];
 	public var cookie: Cookie;
-	public var end: Bool = false;
 
 	public function new(fullUrl: String) {
 		// trace(fullUrl);
@@ -45,16 +46,6 @@ class HttpConnection implements HasAbstract {
 		}
 	}
 
-	private function rePost(): Void {
-		if (method == 'POST' && params.exists('re')) {
-			sessionStorage['post'] = post;
-			endAction();
-		} else if (sessionStorage.exists('post')) {
-			post = sessionStorage['post'];
-			sessionStorage.remove('post');
-		}
-	}
-
 	public function endAction(): Void goto('/$url');
 
 	@:abstract public function endActionPrevPage(): Void;
@@ -66,27 +57,6 @@ class HttpConnection implements HasAbstract {
 	@:abstract public function notfound(?message: String): Void;
 
 	@:abstract public function sendFile(file: File): Void;
-
-	private function parseData(pb: ParseBoy<Void>): Map<String, String> {
-		final params = new Map<String, String>();
-		var loop: Bool = true;
-		while (loop) {
-			switch (pb.gt(['=', '&'])) {
-				case 0:
-					final v: String = pb.str();
-					if (pb.gt(['&']) == -1) loop = false;
-					params.set(v, pb.str());
-				case 1:
-					final p: String = pb.str();
-					if (p != '') params.set(p, null);
-				case _:
-					final p: String = pb.str();
-					if (p != '') params.set(p, null);
-					loop = false;
-			}
-		}
-		return params;
-	}
 
 	public function mix(): Map<String, String> {
 		final h = new Map<String, String>();
@@ -110,6 +80,37 @@ class HttpConnection implements HasAbstract {
 		} else {
 			notfound();
 		}
+	}
+
+	private function rePost(): Void {
+		if (method == 'POST' && params.exists('re')) {
+			sessionStorage['post'] = post;
+			endAction();
+		} else if (sessionStorage.exists('post')) {
+			post = sessionStorage['post'];
+			sessionStorage.remove('post');
+		}
+	}
+
+	private function parseData(pb: ParseBoy<Void>): Map<String, String> {
+		final params = new Map<String, String>();
+		var loop: Bool = true;
+		while (loop) {
+			switch (pb.gt(['=', '&'])) {
+				case 0:
+					final v: String = pb.str();
+					if (pb.gt(['&']) == -1) loop = false;
+					params.set(v, pb.str());
+				case 1:
+					final p: String = pb.str();
+					if (p != '') params.set(p, null);
+				case _:
+					final p: String = pb.str();
+					if (p != '') params.set(p, null);
+					loop = false;
+			}
+		}
+		return params;
 	}
 
 }

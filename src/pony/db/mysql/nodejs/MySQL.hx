@@ -35,6 +35,59 @@ class MySQL extends SQLBase {
 		init(config, Tools.nullFunction0);
 	}
 
+	/**
+	 * MySQL query
+	 */
+	public inline function query(q: String, ?p: PosInfos, cb: Dynamic -> Dynamic -> Array<Field> -> Void): Void {
+		connection.query(q, function(err: Dynamic, res: Dynamic, f: Array<Dynamic>) {
+			if (err) error(err);
+			final fields: Array<Field> = f == null ? null : parseFields(f);
+			cb(err, res, fields);
+		});
+		log(q, p);
+	}
+
+	/**
+	 * Escape id (for fields, tables, databases)
+	 */
+	public inline function escapeId(s: String): String return connection.escapeId(s);
+
+	/**
+	 * Escape (for values)
+	 */
+	public inline function escape(s: String): String return connection.escape(s);
+
+	/**
+	 * Make action, query with boolean result
+	 */
+	@:async public function action(q: String, ?actName: String, ?p: PosInfos): Bool {
+		var err;
+		var _;
+		var _ = @await query(q, p);
+		if (err == null) return true;
+		error(actName == null ? Std.string(err) : "Can't " + actName + ': ' + err.stack, p);
+		return false;
+	}
+
+	/**
+	 * Query with stream
+	 */
+	public function stream(q: String, ?p: PosInfos): Stream<Dynamic> {
+		final s = new Stream();
+		connection.query(q).on('error', errorHandler).on('error', s.errorListener).on('result', s.dataListener).on('end', s.endListener);
+		log(q, p);
+		return s;
+	}
+
+	/**
+	 * Close connection and destroy object
+	 */
+	override public function destroy(): Void {
+		super.destroy();
+		connection.end();
+		connection = null;
+	}
+
 	@:async private function init(config: Config): Void {
 		final db = config.database;
 		final c = Reflect.copy(config);
@@ -55,28 +108,15 @@ class MySQL extends SQLBase {
 
 	}
 
-	/**
-	 * Make action, query with boolean result
-	 */
-	@:async public function action(q: String, ?actName: String, ?p: PosInfos): Bool {
-		var err;
-		var _;
-		var _ = @await query(q, p);
-		if (err == null) return true;
-		error(actName == null ? Std.string(err) : "Can't " + actName + ': ' + err.stack, p);
-		return false;
-	}
+	private function errorHandler(e: Dynamic): Void error(e);
 
-	/**
-	 * MySQL query
-	 */
-	public inline function query(q: String, ?p: PosInfos, cb: Dynamic -> Dynamic -> Array<Field> -> Void): Void {
-		connection.query(q, function(err: Dynamic, res: Dynamic, f: Array<Dynamic>) {
-			if (err) error(err);
-			final fields: Array<Field> = f == null ? null : parseFields(f);
-			cb(err, res, fields);
-		});
-		log(q, p);
+	@:async private function prepareDatabase(database: String): Bool {
+		if (!@await action(Const.createDB + database + Const.createDBPostfix, 'create database')) return false;
+
+		final err = @await connection.changeUser({ database: database });
+		if (err == null) return true;
+		error("Can't open database: " + err.stack);
+		return false;
 	}
 
 	private static function parseFields(a: Array<Dynamic>): Array<Field> {
@@ -94,47 +134,6 @@ class MySQL extends SQLBase {
 
 	private static function parseFlags(f: Int): Array<Flags> {
 		return [for (k in Flags.toStr.keys()) if (f & k != 0) k];
-	}
-
-	/**
-	 * Query with stream
-	 */
-	public function stream(q: String, ?p: PosInfos): Stream<Dynamic> {
-		final s = new Stream();
-		connection.query(q).on('error', errorHandler).on('error', s.errorListener).on('result', s.dataListener).on('end', s.endListener);
-		log(q, p);
-		return s;
-	}
-
-	private function errorHandler(e: Dynamic): Void error(e);
-
-	/**
-	 * Escape id (for fields, tables, databases)
-	 */
-	public inline function escapeId(s: String): String return connection.escapeId(s);
-
-	/**
-	 * Escape (for values)
-	 */
-	public inline function escape(s: String): String return connection.escape(s);
-
-
-	/**
-	 * Close connection and destroy object
-	 */
-	override public function destroy(): Void {
-		super.destroy();
-		connection.end();
-		connection = null;
-	}
-
-	@:async private function prepareDatabase(database: String): Bool {
-		if (!@await action(Const.createDB + database + Const.createDBPostfix, 'create database')) return false;
-
-		final err = @await connection.changeUser({ database: database });
-		if (err == null) return true;
-		error("Can't open database: " + err.stack);
-		return false;
 	}
 
 }

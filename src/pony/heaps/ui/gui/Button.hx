@@ -31,10 +31,12 @@ import pony.ui.touch.Touchable;
 	public var core(default, null): ButtonCore;
 	public var touchable(default, null): Touchable;
 	public var nodes(default, null): Array<Node>;
+
 	public var size(link, never): Point<Float> = nodes[0].size;
 
 	private final tween: Tween = new Tween(300, false, false, false, true);
 	private final anim: Null<TimeInterval>;
+
 	private var prevState: ButtonState = ButtonState.Default;
 
 	public function new(nodes: Array<Node>, ?anim: TimeInterval, ?parent: Object) {
@@ -68,6 +70,22 @@ import pony.ui.touch.Touchable;
 			}
 		}
 	}
+
+	public function destroy(): Void {
+		core.destroy();
+		touchable.destroy();
+		@:nullSafety(Off) {
+			core = null;
+			touchable = null;
+			nodes = null;
+		}
+		removeChildren();
+		remove();
+	}
+
+	public function wait(cb: Void -> Void): Void cb();
+
+	public function destroyIWH(): Void destroy();
 
 	private function visual1Handler(mode: Int, state: ButtonState): Void {
 		if (mode == 1) {
@@ -175,21 +193,5 @@ import pony.ui.touch.Touchable;
 	private function tweenUpdateHandler(v: Float): Void {
 		nodes[0].tint = new Vector(v, v, v);
 	}
-
-	public function destroy(): Void {
-		core.destroy();
-		touchable.destroy();
-		@:nullSafety(Off) {
-			core = null;
-			touchable = null;
-			nodes = null;
-		}
-		removeChildren();
-		remove();
-	}
-
-	public function wait(cb: Void -> Void): Void cb();
-
-	public function destroyIWH(): Void destroy();
 
 }

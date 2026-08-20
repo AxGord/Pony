@@ -26,22 +26,22 @@ class SmartCanvas extends ElementResizeControl {
 
 	private static inline final PX: String = 'px';
 
-	@:auto public var onStageResize: Signal2<Float, Rect<Float>>;
-	@:auto public var onDynStageResize: Signal1<Rect<Float>>;
-
-	public var canvas(default, null): CanvasElement;
 	public var stageWidth(default, null): Int = 0;
 	public var stageHeight(default, null): Int = 0;
+	public var canvas(default, null): CanvasElement;
 	public var stageInitSize(default, null): Point<Int>;
 	public var scale(default, null): Float;
 	public var ratio(default, null): Float;
-	public var dynStage(get, never): Rect<Float>;
-	public var rect: Rect<Float>;
-
 	public var smallDeviceQuality(default, set): SmallDeviceQuality;
-	private var smallDeviceQualityOffset: Float;
+
+	public var dynStage(get, never): Rect<Float>;
 
 	public var noScale: Bool = false;
+	@:auto public var onStageResize: Signal2<Float, Rect<Float>>;
+	@:auto public var onDynStageResize: Signal1<Rect<Float>>;
+	public var rect: Rect<Float>;
+
+	private var smallDeviceQualityOffset: Float;
 
 	public function new(
 		?size: Point<Int>, ?parentDom: Element, smallDeviceQuality: SmallDeviceQuality = SmallDeviceQuality.ideal, even: Bool = true
@@ -63,12 +63,6 @@ class SmartCanvas extends ElementResizeControl {
 		eDynStageResize.onLost << lostDynStageHandler;
 	}
 
-	private function takeDynStageHandler(): Void onStageResize << dynStageResize;
-
-	private function lostDynStageHandler(): Void onStageResize >> dynStageResize;
-
-	private function dynStageResize(): Void eDynStageResize.dispatch(dynStage);
-
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function get_dynStage(): Rect<Float> {
@@ -84,28 +78,11 @@ class SmartCanvas extends ElementResizeControl {
 		return q;
 	}
 
-	public dynamic function ratioMod(value: Float): Float return value;
-
 	public inline function fullscreen(): Void JsTools.fse(element);
 
 	public inline function updateSize(): Void setSize(width, height);
 
-	private function changeParentDomHandler(actual: Element, prev: Element): Void {
-		prev.removeChild(canvas);
-		actual.appendChild(canvas);
-		resizeHandler();
-	}
-
-	private function syncSize(): Void {
-		changeElement << changeParentDomHandler;
-		onResize << setSize;
-		updateSize();
-	}
-
-	private function unsyncSize(): Void {
-		changeElement >> changeParentDomHandler;
-		onResize >> setSize;
-	}
+	public dynamic function ratioMod(value: Float): Float return value;
 
 	public function setSize(w: Int, h: Int): Void {
 		setCanvasSize(w, h);
@@ -148,6 +125,29 @@ class SmartCanvas extends ElementResizeControl {
 			rect = new Rect(xr, yr, wr, hr);
 		}
 		eStageResize.dispatch(ratio, rect);
+	}
+
+	private function takeDynStageHandler(): Void onStageResize << dynStageResize;
+
+	private function lostDynStageHandler(): Void onStageResize >> dynStageResize;
+
+	private function dynStageResize(): Void eDynStageResize.dispatch(dynStage);
+
+	private function changeParentDomHandler(actual: Element, prev: Element): Void {
+		prev.removeChild(canvas);
+		actual.appendChild(canvas);
+		resizeHandler();
+	}
+
+	private function syncSize(): Void {
+		changeElement << changeParentDomHandler;
+		onResize << setSize;
+		updateSize();
+	}
+
+	private function unsyncSize(): Void {
+		changeElement >> changeParentDomHandler;
+		onResize >> setSize;
 	}
 
 }

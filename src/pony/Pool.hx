@@ -6,8 +6,8 @@ package pony;
  */
 class Pool<T> implements IPool<T> {
 
-	private var cl: Class<T>;
 	private var list: List<T> = new List<T>();
+	private var cl: Class<T>;
 
 	public function new(cl: Class<T>) this.cl = cl;
 

@@ -8,6 +8,9 @@ package pony.db.mysql;
 #if (haxe_ver >= 4.2) enum #else @:enum #end
 abstract Types(Int) to Int from Int {
 
+	public static var toStr: Map<Int, String>;
+	public static var fromStr: Map<String, Int>;
+
 	// Manually extracted from mysql-5.5.23/include/mysql_com.h
 	// some more info here: http://dev.mysql.com/doc/refman/5.5/en/c-api-prepared-statement-type-codes.html
 	final DECIMAL = 0x00; // aka DECIMAL (http://dev.mysql.com/doc/refman/5.0/en/precision-math-decimal-changes.html)
@@ -41,10 +44,6 @@ abstract Types(Int) to Int from Int {
 	@:to public function toString(): String return toStr[this];
 
 	@:from public static function fromString(s: String): Types return fromStr[s.toUpperCase()];
-
-	public static var toStr: Map<Int, String>;
-
-	public static var fromStr: Map<String, Int>;
 
 	static function __init__(): Void {
 		toStr = [

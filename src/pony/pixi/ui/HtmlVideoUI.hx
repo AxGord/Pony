@@ -10,6 +10,7 @@ import pony.geom.Rect;
 class HtmlVideoUI extends HtmlContainer {
 
 	public var video(default, null): HtmlVideo;
+
 	public var muted(get, set): Bool;
 
 	public function new(
@@ -24,10 +25,6 @@ class HtmlVideoUI extends HtmlContainer {
 		htmlContainer.posUpdater.enabled = video.resultVisible;
 	}
 
-	public inline function hide(): Void video.visible.disable();
-
-	public inline function show(): Void video.visible.enable();
-
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function get_muted(): Bool return video.muted.enabled;
@@ -35,5 +32,9 @@ class HtmlVideoUI extends HtmlContainer {
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function set_muted(v: Bool): Bool return video.muted.enabled = v;
+
+	public inline function hide(): Void video.visible.disable();
+
+	public inline function show(): Void video.visible.enable();
 
 }

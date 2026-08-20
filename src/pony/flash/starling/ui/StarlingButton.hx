@@ -25,15 +25,14 @@ class StarlingButton extends Sprite {
 
 	public static var config = { def: 1, focus: 2, press: 3, zone: 4, disabled: 5 };
 
-	private final mc: Array<MovieClip>;
-
 	public var core: ButtonImgN;
 
-	private var _handCursor: TouchManagerHandCursor;
+	private final mc: Array<MovieClip>;
 	private final _hitArea: Rectangle;
-
 	private final _framerate: Int;
+
 	private var prev: Int = -1;
+	private var _handCursor: TouchManagerHandCursor;
 
 	public function new(textures: Array<MovieClip>, framerate: Int) {
 		super();
@@ -45,17 +44,6 @@ class StarlingButton extends Sprite {
 		core = new ButtonImgN(new Touchable(this));
 		core.onImg << imgHandler;
 		useHandCursor = true;
-	}
-
-	private function imgHandler(img: Int): Void {
-		if (img == 4) {
-			useHandCursor = false;
-			gotoAndStop(5);
-			return;
-		}
-		useHandCursor = true;
-
-		gotoAndStop(img > 4 ? img + 1 : img);
 	}
 
 	public inline function clone(): StarlingButton {
@@ -74,6 +62,17 @@ class StarlingButton extends Sprite {
 			this
 		else
 			null;
+	}
+
+	private function imgHandler(img: Int): Void {
+		if (img == 4) {
+			useHandCursor = false;
+			gotoAndStop(5);
+			return;
+		}
+		useHandCursor = true;
+
+		gotoAndStop(img > 4 ? img + 1 : img);
 	}
 
 	private function gotoAndStop(frame: Int): Void {

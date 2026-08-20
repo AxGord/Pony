@@ -28,11 +28,12 @@ typedef Manifest = {
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
 class TplSystem {
 
-	private final pages: TplDir;
-	public var includes: TplDir;
 	public var manifest: Manifest = null;
+	public var includes: TplDir;
 	public var name: String;
 	public var _static: Map<String, File>;
+
+	private final pages: TplDir;
 
 	public function new(dir: Dir, ?c: Class<ITplPut>, o: Dynamic, ?s: TplStyle) {
 		name = (dir: Unit).name;
@@ -41,12 +42,12 @@ class TplSystem {
 		_static = [for (e in ((dir + 'static'): Dir).contentRecursiveFiles()) e.name => e];
 	}
 
+	public inline function exists(n: String): Bool return pages.exists(n);
+
 	@:async
 	public function gen(n: String, ?d: Dynamic): String {
 		return @await pages.gen(n, d, new PagesPut(this, null, null));
 	}
-
-	public inline function exists(n: String): Bool return pages.exists(n);
 
 	public static function parseManifest(f: File): Manifest {
 		final x: Fast = XmlTools.fast(f.content).node.manifest;

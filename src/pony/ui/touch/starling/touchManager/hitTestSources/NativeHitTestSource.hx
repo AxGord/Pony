@@ -13,6 +13,7 @@ import flash.text.TextField;
 class NativeHitTestSource implements IHitTestSource {
 
 	private final _container: DisplayObjectContainer;
+
 	private var _point: Point = new Point();
 
 	public function new(container: DisplayObjectContainer) {
@@ -28,6 +29,20 @@ class NativeHitTestSource implements IHitTestSource {
 		// Should work with all the projects initialized with Initializer class, but not tested in other situations.
 		_point = _container.getChildAt(0).globalToLocal(_point);
 		return childUnderPoint(_point.x, _point.y, _container);
+	}
+
+	public function parent(object: Dynamic): Dynamic {
+		return if (!Std.is(object, flash.display.DisplayObject))
+			null
+		else if (object == _container)
+			null
+		else
+			object.parent;
+	}
+
+	private inline function isStaticTextField(child: DisplayObject): Bool {
+		// If it's a textfield with no name, then it's static textfield
+		return child.name.indexOf('instance') != -1 && Std.is(child, TextField);
 	}
 
 	private function childUnderPoint(x: Float, y: Float, container: DisplayObjectContainer, testShape: Bool = true): Dynamic {
@@ -51,20 +66,6 @@ class NativeHitTestSource implements IHitTestSource {
 		}
 
 		return container.mouseEnabled ? container : null;
-	}
-
-	private inline function isStaticTextField(child: DisplayObject): Bool {
-		// If it's a textfield with no name, then it's static textfield
-		return child.name.indexOf('instance') != -1 && Std.is(child, TextField);
-	}
-
-	public function parent(object: Dynamic): Dynamic {
-		return if (!Std.is(object, flash.display.DisplayObject))
-			null
-		else if (object == _container)
-			null
-		else
-			object.parent;
 	}
 
 }

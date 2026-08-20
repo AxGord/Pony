@@ -26,6 +26,14 @@ class RenderBox extends pixi.core.sprites.Sprite implements pony.geom.IWH {
 		container = new RenderContainer(new Point(w, h));
 	}
 
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function get_size(): Point<Float> return container.size;
+
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function addElement(obj: DisplayObject): Void container.addChild(obj);
+
 	public function update(): Void {
 		if (renderTexture != null) {
 			app.app.renderer.render(container, renderTexture, true);
@@ -37,14 +45,6 @@ class RenderBox extends pixi.core.sprites.Sprite implements pony.geom.IWH {
 			texture = Texture.fromCanvas(renderer.view);
 		}
 	}
-
-	@SuppressWarnings('checkstyle:MagicNumber')
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public inline function addElement(obj: DisplayObject): Void container.addChild(obj);
-
-	@SuppressWarnings('checkstyle:MagicNumber')
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function get_size(): Point<Float> return container.size;
 
 	public function wait(f: Void -> Void): Void container.wait(f);
 

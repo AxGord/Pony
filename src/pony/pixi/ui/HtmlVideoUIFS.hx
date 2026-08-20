@@ -16,8 +16,16 @@ import pony.time.Time;
  */
 class HtmlVideoUIFS extends HtmlVideoUI {
 
-	public var fullscreen(default, null) = new Tumbler(false);
+	private static inline final showAnimTime: Time = 500;
+	private static inline final hideAnimTime: Time = 200;
 
+	public var fullscreen(default, null) = new Tumbler(false);
+	public var hideTransitionDelay(default, null): DTimer;
+	public var showTransitionDelay(default, null): DTimer;
+
+	private var fsHold: Bool = false;
+	private var hideProcess: Bool = false;
+	private var showProcess: Bool = false;
 	private var normalRect: Rect<Float>;
 	private var fsRect: Rect<Float>;
 	private var normalPos: Point<Float>;
@@ -26,21 +34,8 @@ class HtmlVideoUIFS extends HtmlVideoUI {
 	private var transition: String;
 	private var transitionDelay: DTimer;
 	private var hideTransition: String;
-
-	public var hideTransitionDelay(default, null): DTimer;
-
 	private var showTransition: String;
-
-	public var showTransitionDelay(default, null): DTimer;
-
 	private var clickTimer: DTimer;
-
-	private static inline final showAnimTime: Time = 500;
-	private static inline final hideAnimTime: Time = 200;
-
-	private var fsHold: Bool = false;
-	private var hideProcess: Bool = false;
-	private var showProcess: Bool = false;
 
 	public function new(
 		targetRect: Rect<Float>, fsRect: Or<Border<Float>, Rect<Float>>, ?fsPos: Point<Float>, ?css: String, ?fscss: String,
@@ -81,6 +76,46 @@ class HtmlVideoUIFS extends HtmlVideoUI {
 		createShowAndHideTransitions();
 	}
 
+	public inline function animHide(): Void {
+		if (fsHold) return;
+		hideTransitionDelay.complete >> _animShow;
+		if (showProcess)
+			showTransitionDelay.complete < _animHide;
+		else
+			_animHide();
+	}
+
+	public inline function animShow(): Void {
+		if (fsHold) return;
+		showTransitionDelay.complete >> _animHide;
+		if (hideProcess)
+			hideTransitionDelay.complete < _animShow;
+		else
+			_animShow();
+	}
+
+	public function openFullScreenHandler(): Void {
+		fsHold = true;
+		addTransition();
+		normalPos = htmlContainer.targetPos;
+		htmlContainer.targetPos = new Point<Float>(0, 0);
+		targetRect = fsRect;
+		if (transition == null)
+			_openFullScreenHandler();
+		else
+			transitionDelay.complete < _openFullScreenHandler;
+	}
+
+	public function closeFullScreenHandler(): Void {
+		fsHold = true;
+		addTransition();
+		transitionDelay.complete < _closeFullScreenHandler;
+		htmlContainer.targetPos = normalPos;
+		normalPos = null;
+		targetRect = normalRect;
+		switchCss(fsCss, normalCss);
+	}
+
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function createShowAndHideTransitions(): Void {
@@ -94,15 +129,6 @@ class HtmlVideoUIFS extends HtmlVideoUI {
 		showTransitionDelay.complete << video.enableTouch;
 	}
 
-	public inline function animHide(): Void {
-		if (fsHold) return;
-		hideTransitionDelay.complete >> _animShow;
-		if (showProcess)
-			showTransitionDelay.complete < _animHide;
-		else
-			_animHide();
-	}
-
 	private inline function _animHide(): Void {
 		if (fsHold) return;
 		hideTransitionDelay.complete >> _animShow;
@@ -112,13 +138,10 @@ class HtmlVideoUIFS extends HtmlVideoUI {
 		video.style.opacity = '0';
 	}
 
-	public inline function animShow(): Void {
-		if (fsHold) return;
-		showTransitionDelay.complete >> _animHide;
-		if (hideProcess)
-			hideTransitionDelay.complete < _animShow;
-		else
-			_animShow();
+	private inline function listenClick(): Void video.onClick < clickHandler;
+
+	private inline function getTransition(r: String): String {
+		return JsTools.normalizeCss('transition: ' + r + '; -webkit-transition: ' + r + ';');
 	}
 
 	private function _animShow(): Void {
@@ -131,16 +154,10 @@ class HtmlVideoUIFS extends HtmlVideoUI {
 		video.style.opacity = '1';
 	}
 
-	private inline function listenClick(): Void video.onClick < clickHandler;
-
 	private function clickHandler(): Void {
 		fullscreen.sw();
 		clickTimer.reset();
 		clickTimer.start();
-	}
-
-	private inline function getTransition(r: String): String {
-		return JsTools.normalizeCss('transition: ' + r + '; -webkit-transition: ' + r + ';');
 	}
 
 	private function generateTransition(tr: String): Void {
@@ -193,31 +210,9 @@ class HtmlVideoUIFS extends HtmlVideoUI {
 		video.style.cssText = ncss.join('');
 	}
 
-	public function openFullScreenHandler(): Void {
-		fsHold = true;
-		addTransition();
-		normalPos = htmlContainer.targetPos;
-		htmlContainer.targetPos = new Point<Float>(0, 0);
-		targetRect = fsRect;
-		if (transition == null)
-			_openFullScreenHandler();
-		else
-			transitionDelay.complete < _openFullScreenHandler;
-	}
-
 	private function _openFullScreenHandler(): Void {
 		switchCss(normalCss, fsCss);
 		fsHold = false;
-	}
-
-	public function closeFullScreenHandler(): Void {
-		fsHold = true;
-		addTransition();
-		transitionDelay.complete < _closeFullScreenHandler;
-		htmlContainer.targetPos = normalPos;
-		normalPos = null;
-		targetRect = normalRect;
-		switchCss(fsCss, normalCss);
 	}
 
 	private function _closeFullScreenHandler(): Void {

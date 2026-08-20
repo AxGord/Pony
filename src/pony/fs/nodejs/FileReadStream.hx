@@ -23,13 +23,14 @@ class FileReadStream extends ReadStream<Bytes> {
 	private static inline final DEFAULT_BLOCK_SIZE: Int = 4 * 1024 * 1024;
 
 	private final writeStream: WriteStream<Bytes>;
+	private final path: String;
+
+	private var position: Int = 0;
+	private var stop: Bool = false;
+	private var readLast: Bool = false;
 	private var fd: Int;
 	private var buffer: Buffer;
 	private var size: Int;
-	private var position: Int = 0;
-	private var stop: Bool = false;
-	private final path: String;
-	private var readLast: Bool = false;
 
 	public function new(path: String) {
 		this.path = path;

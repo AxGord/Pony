@@ -18,6 +18,7 @@ typedef Lib = {
 @:nullSafety(Strict) class Haxelib extends Section {
 
 	public var libs(default, null): Array<Lib> = [];
+
 	public var mute: Bool = false;
 
 	public function new() super('haxelib');

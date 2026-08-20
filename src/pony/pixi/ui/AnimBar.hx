@@ -34,12 +34,6 @@ class AnimBar extends Bar {
 		}
 	}
 
-	private function animInit(): Void addChildAt(animation, children.length);
-
-	private function animUpdate(alp: Float): Void animation.alpha = alp;
-
-	private function animUpdate2(alp: Float): Void begin.alpha = fill.alpha = end.alpha = alp;
-
 	public function startAnimation(): Void {
 		if (animation != null) animation.visible = true;
 		tween.play();
@@ -64,5 +58,11 @@ class AnimBar extends Bar {
 		}
 		super.destroy(options);
 	}
+
+	private function animInit(): Void addChildAt(animation, children.length);
+
+	private function animUpdate(alp: Float): Void animation.alpha = alp;
+
+	private function animUpdate2(alp: Float): Void begin.alpha = fill.alpha = end.alpha = alp;
 
 }

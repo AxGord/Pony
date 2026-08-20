@@ -19,21 +19,22 @@ using hugs.HUGSWrapper;
 class Input extends TextureButton implements IFocus {
 
 	public static var caretTime: Float = 0.5;
+
 	private static var ct: Float = 0;
 	private static var cb: Bool = false;
 
-	public var text: String;
-	public var vtext: String;
-	public var max: Int = 0;
 	public var focusPriority(default, null): Int = 0;
 	public var focusGroup(default, null): String = '';
 	public var focus(default, null): Signal1<Dynamic, Bool>;
 	public var changed(default, null): Signal;
-
 	public var selected(default, null): Bool;
 
 	public var x(get, set): Int;
 	public var y(get, set): Int;
+
+	public var max: Int = 0;
+	public var text: String;
+	public var vtext: String;
 
 	private var gt(get, never): GUIText;
 
@@ -44,6 +45,30 @@ class Input extends TextureButton implements IFocus {
 		focus.add(onFocus);
 		core.click.sub(0).add(focus.saveDispatch);
 	}
+
+	private inline function get_gt(): GUIText return this.getComponentInChildrenOfType(GUIText);
+
+	private inline function get_y(): Int return Math.ceil(guiTexture.pixelInset.y);
+
+	private function set_y(v: Int): Int {
+		if (y != v) {
+			gt.pixelOffset = new Vector2(gt.pixelOffset.x, gt.pixelOffset.y - y + v);
+			guiTexture.pixelInset = new Rect(guiTexture.pixelInset.x, v, guiTexture.pixelInset.width, guiTexture.pixelInset.height);
+		}
+		return v;
+	}
+
+	private inline function get_x(): Int return Math.ceil(guiTexture.pixelInset.x);
+
+	private function set_x(v: Int): Int {
+		if (x != v) {
+			gt.pixelOffset = new Vector2(gt.pixelOffset.x - x + v, gt.pixelOffset.y);
+			guiTexture.pixelInset = new Rect(v, guiTexture.pixelInset.y, guiTexture.pixelInset.width, guiTexture.pixelInset.height);
+		}
+		return v;
+	}
+
+	public function setText(t: String): Void gt.text = text = vtext = t;
 
 	private function onFocus(b: Bool): Void {
 		selected = b;
@@ -59,8 +84,6 @@ class Input extends TextureButton implements IFocus {
 			gt.text = vtext = text;
 		FocusManager.reg(this);
 	}
-
-	private inline function get_gt(): GUIText return this.getComponentInChildrenOfType(GUIText);
 
 	override private function Update(): Void {
 		super.Update();
@@ -86,27 +109,5 @@ class Input extends TextureButton implements IFocus {
 			gt.text = cb ? '$vtext|' : vtext;
 		} // else gt.text = text;
 	}
-
-	private inline function get_y(): Int return Math.ceil(guiTexture.pixelInset.y);
-
-	private function set_y(v: Int): Int {
-		if (y != v) {
-			gt.pixelOffset = new Vector2(gt.pixelOffset.x, gt.pixelOffset.y - y + v);
-			guiTexture.pixelInset = new Rect(guiTexture.pixelInset.x, v, guiTexture.pixelInset.width, guiTexture.pixelInset.height);
-		}
-		return v;
-	}
-
-	private inline function get_x(): Int return Math.ceil(guiTexture.pixelInset.x);
-
-	private function set_x(v: Int): Int {
-		if (x != v) {
-			gt.pixelOffset = new Vector2(gt.pixelOffset.x - x + v, gt.pixelOffset.y);
-			guiTexture.pixelInset = new Rect(v, guiTexture.pixelInset.y, guiTexture.pixelInset.width, guiTexture.pixelInset.height);
-		}
-		return v;
-	}
-
-	public function setText(t: String): Void gt.text = text = vtext = t;
 
 }

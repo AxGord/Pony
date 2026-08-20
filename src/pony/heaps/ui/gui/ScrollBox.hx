@@ -23,9 +23,10 @@ import pony.ui.touch.Touchable;
 
 	public static inline final DEFAULT_BAR_COLOR: UColor = 0;
 
-	public var size(get, never): Point<Float>;
 	public var core(default, null): ScrollBoxCore;
 	public var content(default, null): Object;
+
+	public var size(get, never): Point<Float>;
 
 	public function new(
 		size: Point<UInt>, orientation: Orientation = Orientation.Any, ?barColor: UColors, barSize: UInt = ScrollBoxCore.DEFAULT_BAR_SIZE,
@@ -57,19 +58,19 @@ import pony.ui.touch.Touchable;
 		core.onContentPos << content.setPosition;
 	}
 
+	private function get_size(): Point<Float> return new Point<Float>(core.w, core.h);
+
 	public inline function add(object: Object): Void {
 		content.addChild(object);
 		needUpdate();
 	}
 
+	public inline function needUpdate(): Void DeltaTime.fixedUpdate < update;
+
 	public function update(): Void {
 		final b: h2d.col.Bounds = content.getBounds();
 		core.content(b.x + b.width, b.y + b.height);
 	}
-
-	public inline function needUpdate(): Void DeltaTime.fixedUpdate < update;
-
-	private function get_size(): Point<Float> return new Point<Float>(core.w, core.h);
 
 	public function wait(fn: Void -> Void): Void fn();
 

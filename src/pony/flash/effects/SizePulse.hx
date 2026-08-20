@@ -18,7 +18,6 @@ class SizePulse {
 	private final mid: Bool;
 
 	private var d: Int = 1;
-
 	private var bRect: Rectangle;
 
 	public function new(size: Float = 1.2, speed: Float = 1, mid: Bool = false) {

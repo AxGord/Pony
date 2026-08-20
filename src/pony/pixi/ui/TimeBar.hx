@@ -15,6 +15,7 @@ import pony.time.TimeInterval;
 class TimeBar extends LabelBar {
 
 	public var timer: DTimer;
+
 	private var ignoreBeginAnimation: Bool = false;
 
 	public function new(
@@ -25,6 +26,29 @@ class TimeBar extends LabelBar {
 		super(bg, fillBegin, fill, animation, animationSpeed, border, style, shadow, invert, useSpriteSheet, creep);
 		timer = DTimer.createFixedTimer(null);
 		onReady < timerInit;
+	}
+
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function pause(): Void timer.stop();
+
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function play(): Void timer.start();
+
+	public function start(t: TimeInterval, ?cur: Time): Void {
+		ignoreBeginAnimation = true;
+		stopAnimation();
+		timer.time = t;
+		timer.reset();
+		if (cur != null) timer.currentTime = cur;
+		timer.start();
+	}
+
+	override public function destroy(?options: haxe.extern.EitherType<Bool, DestroyOptions>): Void {
+		timer.destroy();
+		timer = null;
+		super.destroy(options);
 	}
 
 	private function timerInit(p: Point<Int>): Void {
@@ -38,28 +62,5 @@ class TimeBar extends LabelBar {
 	private function progressHandler(p: Float): Void core.percent = p;
 
 	private function updateHandler(t: Time): Void text = t.showMinSec();
-
-	public function start(t: TimeInterval, ?cur: Time): Void {
-		ignoreBeginAnimation = true;
-		stopAnimation();
-		timer.time = t;
-		timer.reset();
-		if (cur != null) timer.currentTime = cur;
-		timer.start();
-	}
-
-	@SuppressWarnings('checkstyle:MagicNumber')
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public inline function pause(): Void timer.stop();
-
-	@SuppressWarnings('checkstyle:MagicNumber')
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public inline function play(): Void timer.start();
-
-	override public function destroy(?options: haxe.extern.EitherType<Bool, DestroyOptions>): Void {
-		timer.destroy();
-		timer = null;
-		super.destroy(options);
-	}
 
 }

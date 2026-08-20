@@ -7,6 +7,7 @@ package pony.events;
 class Waiter {
 
 	public var ready: Bool = false;
+
 	private var f: List<Void -> Void> = new List<Void -> Void>();
 
 	@:deprecated('Please use WairReady')

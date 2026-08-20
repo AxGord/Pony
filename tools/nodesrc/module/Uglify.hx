@@ -14,6 +14,19 @@ import types.UglifyConfig;
 
 	private static final MAP_EXT: String = '.map';
 
+	public function patchMapFile(file: String, offset: Int): Void {
+		if (offset == 0) return;
+		File.saveContent(file, patchMap(File.getContent(file), offset));
+	}
+
+	public function patchMap(content: String, offset: Int): String {
+		if (offset == 0) return content;
+		log('Offset map: $offset');
+		final originalMap = NPM.convert_source_map.fromJSON(content).toObject();
+		final offsettedMap = NPM.offset_sourcemap_lines(originalMap, offset);
+		return NPM.convert_source_map.fromObject(offsettedMap).toJSON();
+	}
+
 	#if (haxe_ver < 4.2) override #end
 	private function run(cfg: UglifyConfig): Void {
 		if (cfg.input.length == 0) throw 'Not inputs';
@@ -61,19 +74,6 @@ import types.UglifyConfig;
 			File.saveContent(cfg.output, r.code);
 			if (cfg.sourcemap.output != null) File.saveContent(cfg.sourcemap.output, patchMap(r.map, cfg.sourcemap.offset));
 		}
-	}
-
-	public function patchMapFile(file: String, offset: Int): Void {
-		if (offset == 0) return;
-		File.saveContent(file, patchMap(File.getContent(file), offset));
-	}
-
-	public function patchMap(content: String, offset: Int): String {
-		if (offset == 0) return content;
-		log('Offset map: $offset');
-		final originalMap = NPM.convert_source_map.fromJSON(content).toObject();
-		final offsettedMap = NPM.offset_sourcemap_lines(originalMap, offset);
-		return NPM.convert_source_map.fromObject(offsettedMap).toJSON();
 	}
 
 }

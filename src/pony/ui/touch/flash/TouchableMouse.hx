@@ -14,22 +14,14 @@ import pony.ui.touch.TouchableBase;
 @:access(pony.ui.touch.TouchableBase)
 class TouchableMouse {
 
-	private static var inited: Bool = false;
 	public static var down(default, null): Bool = false;
 
-	public static function init(): Void {
-		if (inited) return;
-		inited = true;
-		Mouse.onMove << TouchableBase.dispatchMove.bind(0);
-		Mouse.onLeftDown << function() down = true;
-		Mouse.onLeftUp << function() down = false;
-		Mouse.onLeave << function() down = false;
-	}
+	private static var inited: Bool = false;
 
-	private var obj: DisplayObject;
-	private var base: TouchableBase;
 	private var over: Bool = false;
 	private var _down: Bool = false;
+	private var obj: DisplayObject;
+	private var base: TouchableBase;
 	private var overBeforeCheck: Bool;
 
 	public function new(obj: DisplayObject, base: TouchableBase) {
@@ -48,11 +40,6 @@ class TouchableMouse {
 		Mouse.onLeave << leaveHandler;
 	}
 
-	private function addedToStageHandler(_): Void {
-		obj.removeEventListener(Event.ADDED_TO_STAGE, addedToStageHandler);
-		obj.stage.addEventListener(MouseEvent.MOUSE_UP, globUpHandler, false, 0, true);
-	}
-
 	public function destroy(): Void {
 		leaveHandler();
 		obj.removeEventListener(MouseEvent.MOUSE_OVER, overHandler);
@@ -67,6 +54,11 @@ class TouchableMouse {
 		Mouse.onLeave >> leaveHandler;
 		obj = null;
 		base = null;
+	}
+
+	private function addedToStageHandler(_): Void {
+		obj.removeEventListener(Event.ADDED_TO_STAGE, addedToStageHandler);
+		obj.stage.addEventListener(MouseEvent.MOUSE_UP, globUpHandler, false, 0, true);
 	}
 
 	private function overHandler(_): Void {
@@ -119,6 +111,15 @@ class TouchableMouse {
 		if (!_down) return;
 		_down = false;
 		base.dispatchOutUp();
+	}
+
+	public static function init(): Void {
+		if (inited) return;
+		inited = true;
+		Mouse.onMove << TouchableBase.dispatchMove.bind(0);
+		Mouse.onLeftDown << function() down = true;
+		Mouse.onLeftUp << function() down = false;
+		Mouse.onLeave << function() down = false;
 	}
 
 }

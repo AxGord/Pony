@@ -32,16 +32,19 @@ abstract NapeSpace(NapeSpaceBase) from NapeSpaceBase to NapeSpaceBase {
  */
 class NapeSpaceBase {
 
-	public var space: Space;
 	public var minimalStep(default, null): Float;
-	private final skipVelIntegrations: Int;
-	public var width: Float;
-	public var height: Float;
+
 	public var minSide(get, never): Float;
 	public var maxSide(get, never): Float;
 	public var snap(get, never): Float;
+
+	public var space: Space;
+	public var width: Float;
+	public var height: Float;
 	public var limits: Rect<Float>;
+
 	private final groups: Map<String, NapeGroup> = [];
+	private final skipVelIntegrations: Int;
 
 	public function new(w: Float, h: Float, ?gravity: Point<Float>, minimalStep: Float = 0.2, skipVelIntegrations: Int = 10) {
 		width = w;

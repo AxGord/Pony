@@ -23,6 +23,13 @@ class SocketServer extends pony.net.SocketServerBase {
 		DeltaTime.fixedUpdate << waitNewConnection;
 	}
 
+	override public function destroy(): Void {
+		DeltaTime.fixedUpdate >> waitNewConnection;
+		super.destroy();
+		server.close();
+		server = null;
+	}
+
 	private function waitNewConnection(): Void {
 		try {
 			final client: Socket = server.accept();
@@ -33,13 +40,6 @@ class SocketServer extends pony.net.SocketServerBase {
 		} catch (e: Any) {
 			error(e);
 		}
-	}
-
-	override public function destroy(): Void {
-		DeltaTime.fixedUpdate >> waitNewConnection;
-		super.destroy();
-		server.close();
-		server = null;
 	}
 
 }

@@ -20,16 +20,31 @@ private typedef Export = { typeName: String, name: String };
  */
 @:nullSafety(Strict) final class ServiceProvider {
 
-	private final parent: Null<ServiceProvider>;
 	// typeName -> (name -> instance). One instance may appear under multiple typeNames.
 	private final byType: Map<String, Map<String, Dynamic>> = [];
+
 	// typeName -> (name -> pending callbacks). Acts both as the "loading" marker and the waiter list.
 	private final waits: Map<String, Map<String, Array<WCB>>> = [];
 	private final exports: Array<Export> = [];
+	private final parent: Null<ServiceProvider>;
 
 	public function new(?parent: ServiceProvider) {
 		this.parent = parent;
 	}
+
+	public inline function exists(typeName: String, name: String): Bool {
+		return existsInCurrent(typeName, name) || existsInParents(typeName, name);
+	}
+
+	public inline function existsInParents(typeName: String, name: String): Bool {
+		return !isExported(typeName, name) && parent != null && parent.exists(typeName, name);
+	}
+
+	public inline function waitReady(typeName: String, name: String, ?cb: () -> Void, ?wcb: WR -> Void): Void {
+		waitReadyWcb(typeName, name, toWcb(cb, wcb));
+	}
+
+	public inline function sub(): ServiceProvider return new ServiceProvider(this);
 
 	public function load(typeNames: Array<String>, name: String, export: Bool = false): Void {
 		if (export) {
@@ -43,18 +58,6 @@ private typedef Export = { typeName: String, name: String };
 		}
 	}
 
-	private function loadLocal(typeNames: Array<String>, name: String): Void {
-		for (tn in typeNames) {
-			var byName: Null<Map<String, Array<WCB>>> = waits[tn];
-			if (byName == null) {
-				byName = [];
-				waits[tn] = byName;
-			}
-			if (byName.exists(name)) throw new Exception('Second load: type=$tn name=$name');
-			byName[name] = [];
-		}
-	}
-
 	public function register(typeNames: Array<String>, name: String, service: Dynamic, export: Bool = false): Void {
 		if (export) {
 			for (tn in typeNames) if (!isExported(tn, name)) exports.push({ typeName: tn, name: name });
@@ -65,55 +68,6 @@ private typedef Export = { typeName: String, name: String };
 		} else {
 			registerLocal(typeNames, name, service);
 		}
-	}
-
-	private function registerLocal(typeNames: Array<String>, name: String, service: Dynamic): Void {
-		for (tn in typeNames) {
-			var byName: Null<Map<String, Dynamic>> = byType[tn];
-			if (byName == null) {
-				byName = [];
-				byType[tn] = byName;
-			}
-			byName[name] = service;
-			// Fire pending waiters for this (type, name).
-			final waitersByName: Null<Map<String, Array<WCB>>> = waits[tn];
-			if (waitersByName != null) {
-				final w: Null<Array<WCB>> = waitersByName[name];
-				if (w != null) {
-					for (wcb in w) callw(wcb, service);
-					waitersByName.remove(name);
-					if (!waitersByName.iterator().hasNext()) waits.remove(tn);
-				}
-			}
-		}
-	}
-
-	private inline function callw(w: WCB, service: Dynamic): Void {
-		switch w {
-			case A(cb): cb();
-			case B(cb): cb(service);
-		}
-	}
-
-	private inline function toWcb(?cb: () -> Void, ?wcb: WR -> Void): WCB {
-		return if (cb != null) {
-			if (wcb != null)
-				throw new Exception('Only one callback allowed');
-			else
-				A(cb);
-		} else if (wcb != null) {
-			B(wcb);
-		} else {
-			throw new Exception('Callback not set');
-		};
-	}
-
-	public inline function exists(typeName: String, name: String): Bool {
-		return existsInCurrent(typeName, name) || existsInParents(typeName, name);
-	}
-
-	public inline function existsInParents(typeName: String, name: String): Bool {
-		return !isExported(typeName, name) && parent != null && parent.exists(typeName, name);
 	}
 
 	public function existsInCurrent(typeName: String, name: String): Bool {
@@ -153,8 +107,63 @@ private typedef Export = { typeName: String, name: String };
 		return parent.get(typeName, name);
 	}
 
-	public inline function waitReady(typeName: String, name: String, ?cb: () -> Void, ?wcb: WR -> Void): Void {
-		waitReadyWcb(typeName, name, toWcb(cb, wcb));
+	public function destroy(): Void {
+		exports.resize(0);
+		byType.clear();
+		waits.clear();
+	}
+
+	private inline function callw(w: WCB, service: Dynamic): Void {
+		switch w {
+			case A(cb): cb();
+			case B(cb): cb(service);
+		}
+	}
+
+	private inline function toWcb(?cb: () -> Void, ?wcb: WR -> Void): WCB {
+		return if (cb != null) {
+			if (wcb != null)
+				throw new Exception('Only one callback allowed');
+			else
+				A(cb);
+		} else if (wcb != null) {
+			B(wcb);
+		} else {
+			throw new Exception('Callback not set');
+		};
+	}
+
+	private function loadLocal(typeNames: Array<String>, name: String): Void {
+		for (tn in typeNames) {
+			var byName: Null<Map<String, Array<WCB>>> = waits[tn];
+			if (byName == null) {
+				byName = [];
+				waits[tn] = byName;
+			}
+			if (byName.exists(name)) throw new Exception('Second load: type=$tn name=$name');
+			byName[name] = [];
+		}
+	}
+
+	private function registerLocal(typeNames: Array<String>, name: String, service: Dynamic): Void {
+		for (tn in typeNames) {
+			var byName: Null<Map<String, Dynamic>> = byType[tn];
+			if (byName == null) {
+				byName = [];
+				byType[tn] = byName;
+			}
+			byName[name] = service;
+			// Fire pending waiters for this (type, name).
+			final waitersByName: Null<Map<String, Array<WCB>>> = waits[tn];
+			if (waitersByName != null) {
+				final w: Null<Array<WCB>> = waitersByName[name];
+				if (w != null) {
+					for (wcb in w) callw(wcb, service);
+					waitersByName.remove(name);
+					if (!waitersByName.iterator().hasNext()) waits.remove(tn);
+				}
+			}
+		}
 	}
 
 	private function waitReadyWcb(typeName: String, name: String, wcb: WCB): Void {
@@ -174,14 +183,6 @@ private typedef Export = { typeName: String, name: String };
 		} else {
 			throw new Exception('Service not exists: type=$typeName name=$name');
 		}
-	}
-
-	public inline function sub(): ServiceProvider return new ServiceProvider(this);
-
-	public function destroy(): Void {
-		exports.resize(0);
-		byType.clear();
-		waits.clear();
 	}
 
 }

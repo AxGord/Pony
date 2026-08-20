@@ -25,16 +25,9 @@ class Launchpad extends Logable implements ILaunchpad {
 		[for (i in 96...104) i],
 		[for (i in 112...120) i]
 	];
-
 	private static var rightBlock(default, never): Array<MidiCode> = [8, 24, 40, 56, 72, 88, 104, 120];
-
 	private static var topBlock(default, never): Array<MidiCode> = [for (i in 104...112) i];
 
-	public static inline function list(): Map<Int, String> return MidiDevice.listWithName('Launchpad');
-
-	public static inline function count(): Int return MidiDevice.countWithName('Launchpad');
-
-	private var midi: MidiDevice;
 	public var areaState(default, null): Matrix<LaunchpadColor>;
 	public var topState(default, null): Array<LaunchpadColor>;
 	public var rightState(default, null): Array<LaunchpadColor>;
@@ -42,6 +35,8 @@ class Launchpad extends Logable implements ILaunchpad {
 	@:auto public var onArea: Signal2<IntPoint, Bool>;
 	@:auto public var onTop: Signal2<Int, Bool>;
 	@:auto public var onRight: Signal2<Int, Bool>;
+
+	private var midi: MidiDevice;
 
 	public function new(id: Int = 0) {
 		super();
@@ -57,26 +52,6 @@ class Launchpad extends Logable implements ILaunchpad {
 		if (midi == null) throw 'Launchpad not found';
 		reset();
 		midi.on << midiHandler;
-	}
-
-	private function midiHandler(m: MidiMessage): Void {
-		switch m.chanel {
-			case 144:
-				final i = rightBlock.indexOf(m.key);
-				if (i != -1)
-					eRight.dispatch(i, m.value == 127);
-				else {
-					final p = area.indexOf(m.key);
-					if (p == null) return error('Unknown button');
-					eArea.dispatch(p, m.value == 127);
-				}
-			case 176:
-				final i = topBlock.indexOf(m.key);
-				if (i == -1) return error('Unknown button');
-				eTop.dispatch(i, m.value == 127);
-			case _:
-				return error('Unknown button');
-		}
 	}
 
 	public inline function setAreaPoint(p: IntPoint, color: LaunchpadColor = AmberFull): Void {
@@ -110,6 +85,30 @@ class Launchpad extends Logable implements ILaunchpad {
 		topState = [for (_ in 0...8) Off];
 		rightState = [for (_ in 0...8) Off];
 	}
+
+	private function midiHandler(m: MidiMessage): Void {
+		switch m.chanel {
+			case 144:
+				final i = rightBlock.indexOf(m.key);
+				if (i != -1)
+					eRight.dispatch(i, m.value == 127);
+				else {
+					final p = area.indexOf(m.key);
+					if (p == null) return error('Unknown button');
+					eArea.dispatch(p, m.value == 127);
+				}
+			case 176:
+				final i = topBlock.indexOf(m.key);
+				if (i == -1) return error('Unknown button');
+				eTop.dispatch(i, m.value == 127);
+			case _:
+				return error('Unknown button');
+		}
+	}
+
+	public static inline function list(): Map<Int, String> return MidiDevice.listWithName('Launchpad');
+
+	public static inline function count(): Int return MidiDevice.countWithName('Launchpad');
 
 	public static function createAll(): Array<Launchpad> return [for (i in 0...count()) new Launchpad(i)];
 

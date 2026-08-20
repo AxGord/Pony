@@ -19,9 +19,9 @@ class SizedSprite extends Sprite implements IWH {
 		super();
 	}
 
-	public function wait(cb: Void -> Void): Void cb();
-
 	private function get_size(): Point<Float> return _size;
+
+	public function wait(cb: Void -> Void): Void cb();
 
 	public function destroyIWH(): Void destroy();
 

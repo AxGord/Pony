@@ -21,7 +21,6 @@ class DrawShapeView extends LogableSprite implements pony.geom.IWH {
 
 	public static inline final SNAP_LINE_WIDTH: Int = 4;
 	public static inline final SNAP_LINE_COLOR: Int = 0x2F2F2F;
-
 	public static inline final LINE_WIDTH: Int = 4;
 	public static inline final LINE_PROCESS_COLOR: Int = 0xFFFFFF;
 	public static inline final LINE_SHAPE_COLOR: Int = 0x82AAF7;

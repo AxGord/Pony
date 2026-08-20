@@ -13,23 +13,16 @@ class ProgressBar extends MovieClip {
 
 	#if !starling
 	@:isVar public var auto(default, set): Null<Void -> Float> = null;
+	@:isVar public var value(default, set): Float = 0;
 
 	@SuppressWarnings('checkstyle:MagicNumber')
 	@:nullSafety(Off) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private var bar: MovieClip;
-
 	private var total: Float = 0;
-
-	@:isVar public var value(default, set): Float = 0;
 
 	public function new() {
 		super();
 		DeltaTime.fixedUpdate.once(init, -1);
-	}
-
-	private function init(): Void {
-		total = bar.width;
-		bar.width = 0;
 	}
 
 	public function set_value(v: Float): Float {
@@ -44,6 +37,11 @@ class ProgressBar extends MovieClip {
 		else
 			DeltaTime.fixedUpdate.add(autoUpdate);
 		return auto = f;
+	}
+
+	private function init(): Void {
+		total = bar.width;
+		bar.width = 0;
 	}
 
 	private function autoUpdate(): Void {

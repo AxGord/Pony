@@ -15,37 +15,15 @@ class MidiDevice implements IMidiDevice implements HasSignal {
 
 	private static final midiInputClass: Class<Dynamic> = Node.require('midi').input;
 	private static final midiOutputClass: Class<Dynamic> = Node.require('midi').output;
-
 	private static final preCore: Dynamic = Type.createInstance(midiInputClass, []);
 
 	private static var firstCreated: Bool = false;
 
-	public static inline function count(): Int return preCore.getPortCount();
+	@:auto public var on: Signal2<MidiMessage, DT>;
 
-	public static function list(): Array<String> return [for (i in 0...preCore.getPortCount()) preCore.getPortName(i)];
-
-	public static function listWithName(name: String): Map<Int, String> {
-		final m = new Map<Int, String>();
-		for (i in 0...preCore.getPortCount()) {
-			final n: String = preCore.getPortName(i);
-			if (n.indexOf(name) != -1) m[i] = n;
-		}
-		return m;
-	}
-
-	public static function countWithName(name: String): Int {
-		var c: Int = 0;
-		for (i in 0...preCore.getPortCount()) {
-			final n: String = preCore.getPortName(i);
-			if (n.indexOf(name) != -1) c++;
-		}
-		return c;
-	}
-
-	private var input: Dynamic;
 	private final output: Dynamic;
 
-	@:auto public var on: Signal2<MidiMessage, DT>;
+	private var input: Dynamic;
 
 	public function new(id: Int) {
 		input = firstCreated ? Type.createInstance(midiInputClass, []) : preCore;
@@ -73,6 +51,28 @@ class MidiDevice implements IMidiDevice implements HasSignal {
 		input.closePort();
 		destroySignals();
 		input = null;
+	}
+
+	public static inline function count(): Int return preCore.getPortCount();
+
+	public static function list(): Array<String> return [for (i in 0...preCore.getPortCount()) preCore.getPortName(i)];
+
+	public static function listWithName(name: String): Map<Int, String> {
+		final m = new Map<Int, String>();
+		for (i in 0...preCore.getPortCount()) {
+			final n: String = preCore.getPortName(i);
+			if (n.indexOf(name) != -1) m[i] = n;
+		}
+		return m;
+	}
+
+	public static function countWithName(name: String): Int {
+		var c: Int = 0;
+		for (i in 0...preCore.getPortCount()) {
+			final n: String = preCore.getPortName(i);
+			if (n.indexOf(name) != -1) c++;
+		}
+		return c;
 	}
 
 }

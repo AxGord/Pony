@@ -21,14 +21,13 @@ class StarlingTree extends Sprite {
 	private final _flashSource: flash.display.Sprite;
 	private final _header: TreeElement;
 	private final _nodes: Array<DisplayObject> = [];
-	private var _xDisplacement: Int = 50;
 
+	private var _xDisplacement: Int = 50;
 	private var _headerButton: StarlingButton;
 	private var _heightChangeCallback: Void -> Void;
 	private var _nodesSprite: Sprite = new Sprite();
 
 	private final _bufferRect: Rectangle = new Rectangle();
-
 	private final group: Button;
 	private final unit: Button;
 	private final groupText: flash.display.Sprite;

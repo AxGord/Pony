@@ -17,7 +17,9 @@ typedef BaseConfig = {
 @:nullSafety(Strict) class XmlConfigReader<T:BaseConfig> {
 
 	public var cfg: T;
+
 	private final onConfig: Null<T -> Void>;
+
 	private var allowEnd: Bool = true;
 
 	public function new(xml: Null<Fast>, cfg: T, ?onConfig: T -> Void) {
@@ -25,6 +27,8 @@ typedef BaseConfig = {
 		this.onConfig = onConfig;
 		if (xml != null) readXml(xml);
 	}
+
+	private inline function copyCfg(): T return pony.Tools.clone(cfg);
 
 	private function readAttr(name: String, val: String): Void {}
 
@@ -72,8 +76,6 @@ typedef BaseConfig = {
 		s = s.trim();
 		return s.startsWith('$') ? @:nullSafety(Off) Sys.getEnv(s.substr(1)) : s;
 	}
-
-	private inline function copyCfg(): T return pony.Tools.clone(cfg);
 
 	private function _selfCreate<C:XmlConfigReader<T>>(xml: Fast, conf: T): C {
 		allowEnd = false;

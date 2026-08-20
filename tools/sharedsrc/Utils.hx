@@ -20,25 +20,40 @@ class Utils {
 	public static inline final MAIN_FILE: String = 'pony.xml';
 	public static inline final NPORT: Int = 48654;
 
-	private static inline final SRC: String = 'src';
-
 	public static var isWindows(get, never): Bool;
 	public static var isLinux(get, never): Bool;
 	public static var PD(default, null): String;
 	public static var toolsPath(default, null): String;
 	public static var libPath(default, null): String;
-
 	public static var ponyVersion(get, never): String;
 	public static var ponyHaxelibVersion(get, never): String;
-	private static var _ponyVersion: String;
+
+	private static inline final SRC: String = 'src';
 	private static final hashesCache: Map<String, Map<String, Array<String>>> = [];
 
-	private static function __init__(): Void {
-		PD = isWindows ? '\\' : '/';
-		libPath = pony.Tools.ponyPath();
-		libPath = path(libPath);
-		toolsPath = libPath + 'tools' + PD + 'bin' + PD;
+	private static var _ponyVersion: String;
+
+	private static inline function get_isWindows(): Bool return Sys.systemName() == 'Windows';
+
+	private static inline function get_isLinux(): Bool return Sys.systemName() == 'Linux';
+
+	public static function get_ponyVersion(): String {
+		if (_ponyVersion != null) {
+			return _ponyVersion;
+		}
+		final file: String = libPath + 'haxelib.json';
+		final data: Dynamic = Json.parse(File.getContent(file));
+		return _ponyVersion = data.version;
 	}
+
+	public static function get_ponyHaxelibVersion(): String return getHaxelibVersion().split(':')[0];
+
+	public static inline function savePonyProject(xml: Xml): Void saveXML(MAIN_FILE, xml);
+
+	public static inline function ansiForeground(s: String, c: AnsiForeground): String
+		return isWindows ? s : TextTools.ansiForeground(s, c);
+
+	public static inline function ansiUnderlined(s: String): String return isWindows ? s : TextTools.ansiUnderlined(s);
 
 	public static function getHaxelibVersion(): String {
 		final s: String = new Process('haxelib', ['list', 'pony']).stdout.readLine();
@@ -48,10 +63,6 @@ class Utils {
 	public static function getLibPath(lib: String): Null<String> {
 		return new Process('haxelib', ['path', lib]).stdout.readLine();
 	}
-
-	private static inline function get_isWindows(): Bool return Sys.systemName() == 'Windows';
-
-	private static inline function get_isLinux(): Bool return Sys.systemName() == 'Linux';
 
 	public static function path(s: String): String return s.replace('/', PD).replace('\\', PD);
 
@@ -161,19 +172,6 @@ class Utils {
 
 	public static function saveXML(file: String, xml: Xml): Void File.saveContent(file, XmlTools.document(xml));
 
-	public static inline function savePonyProject(xml: Xml): Void saveXML(MAIN_FILE, xml);
-
-	public static function get_ponyVersion(): String {
-		if (_ponyVersion != null) {
-			return _ponyVersion;
-		}
-		final file: String = libPath + 'haxelib.json';
-		final data: Dynamic = Json.parse(File.getContent(file));
-		return _ponyVersion = data.version;
-	}
-
-	public static function get_ponyHaxelibVersion(): String return getHaxelibVersion().split(':')[0];
-
 	public static function getPath(file: String): String return file.substr(0, file.lastIndexOf('/') + 1);
 
 	public static function createPath(file: String): Void {
@@ -201,11 +199,6 @@ class Utils {
 		content.push('}\n');
 		createHaxeFile(file, content);
 	}
-
-	public static inline function ansiForeground(s: String, c: AnsiForeground): String
-		return isWindows ? s : TextTools.ansiForeground(s, c);
-
-	public static inline function ansiUnderlined(s: String): String return isWindows ? s : TextTools.ansiUnderlined(s);
 
 	#if neko
 	public static function runNode(name: String, ?args: Array<String>): Int {
@@ -264,5 +257,12 @@ class Utils {
 
 	public static inline function replaceBuildDateIfNotNull(s: Null<String>): Null<String> return s != null ? replaceBuildDate(s) : null;
 	#end
+
+	private static function __init__(): Void {
+		PD = isWindows ? '\\' : '/';
+		libPath = pony.Tools.ponyPath();
+		libPath = path(libPath);
+		toolsPath = libPath + 'tools' + PD + 'bin' + PD;
+	}
 
 }

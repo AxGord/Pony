@@ -12,15 +12,15 @@ using hugs.HUGSWrapper;
 
 	private var tooltips: Array<Tooltip>;
 
+	private inline function saveColors(): Void {
+		for (e in tooltips) e.saveColors();
+	}
+
 	private function Start(): Void {
 		var tooltip: Tooltip = null;
 		if (tooltip == null) tooltip = gameObject.getTypedComponent(Tooltip);
 		if (tooltip == null) tooltip = gameObject.getParentTypedComponent(Tooltip);
 		tooltips = tooltip == null ? gameObject.getComponentsInChildrenOfType(Tooltip).haxeArray() : [tooltip];
-	}
-
-	private inline function saveColors(): Void {
-		for (e in tooltips) e.saveColors();
 	}
 
 }

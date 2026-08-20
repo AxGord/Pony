@@ -17,6 +17,12 @@ import pony.ui.touch.Touchable;
 	public static inline final DEFAULT_BAR_SIZE: UInt = 8;
 	public static inline final DEFAULT_WHEEL_SPEED: Float = 100;
 
+	public var w(default, set): Float = 0;
+	public var h(default, set): Float = 0;
+
+	public var vertPos(link, link): Float = barVert.pos;
+	public var horPos(link, link): Float = barVert.pos;
+
 	@:auto public var onScrollVertPos: Signal2<Float, Float>;
 	@:auto public var onScrollVertSize: Signal2<Float, Float>;
 	@:auto public var onHideScrollVert: Signal0;
@@ -26,18 +32,12 @@ import pony.ui.touch.Touchable;
 	@:auto public var onContentPos: Signal2<Float, Float>;
 	@:auto public var onMaskSize: Signal2<Float, Float>;
 
-	public var w(default, set): Float = 0;
-	public var h(default, set): Float = 0;
-
-	public var vertPos(link, link): Float = barVert.pos;
-	public var horPos(link, link): Float = barVert.pos;
-
 	private final tArea: Null<Touchable>;
-	@:nullSafety(Off) private var barVert: ScrollBoxBarCore;
-	@:nullSafety(Off) private var barHor: ScrollBoxBarCore;
 
 	private var cx: Float = 0;
 	private var cy: Float = 0;
+	@:nullSafety(Off) private var barVert: ScrollBoxBarCore;
+	@:nullSafety(Off) private var barHor: ScrollBoxBarCore;
 	private var mw: Float;
 	private var mh: Float;
 
@@ -100,6 +100,23 @@ import pony.ui.touch.Touchable;
 
 	public function enableContentDrag(): Void if (tArea != null) @:nullSafety(Off) tArea.onDown << areaDownHandler;
 
+	public function content(cw: Float, ch: Float): Void {
+		if (barVert != null) barVert.content(ch);
+		if (barHor != null) barHor.content(cw);
+	}
+
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function updateMaskSize(): Void {
+		eMaskSize.dispatch(mw, mh);
+	}
+
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function updateContentPos(): Void {
+		eContentPos.dispatch(cx, cy);
+	}
+
 	private function areaDownHandler(t: Touch): Void {
 		t.onMove << areaMoveHandler;
 		t.onUp < areaUpHandler;
@@ -129,17 +146,6 @@ import pony.ui.touch.Touchable;
 		updateMaskSize();
 	}
 
-	@SuppressWarnings('checkstyle:MagicNumber')
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function updateMaskSize(): Void {
-		eMaskSize.dispatch(mw, mh);
-	}
-
-	public function content(cw: Float, ch: Float): Void {
-		if (barVert != null) barVert.content(ch);
-		if (barHor != null) barHor.content(cw);
-	}
-
 	private function vertContentHandler(p: Float): Void {
 		cy = p;
 		updateContentPos();
@@ -148,12 +154,6 @@ import pony.ui.touch.Touchable;
 	private function horContentHandler(p: Float): Void {
 		cx = p;
 		updateContentPos();
-	}
-
-	@SuppressWarnings('checkstyle:MagicNumber')
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function updateContentPos(): Void {
-		eContentPos.dispatch(cx, cy);
 	}
 
 }

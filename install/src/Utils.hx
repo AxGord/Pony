@@ -60,27 +60,7 @@ import sys.io.Process;
 
 	private static inline function get_isSuper(): Bool return userId == 0;
 
-	private static inline function processLine(process: String, args: Array<String>): String {
-		return new Process(process, args).stdout.readLine();
-	}
-
-	private static inline function processInt(process: String, args: Array<String>): Int {
-		return try {
-			Std.parseInt(processLine(process, args));
-		} catch (err: Dynamic) {
-			-1;
-		}
-	}
-
 	public static inline function cmdExists(c: String): Bool return cmdExistsa(c, ['-v']);
-
-	public static function cmdExistsa(c: String, a: Array<String>): Bool {
-		beginColor(90);
-		Sys.print(c + ' ');
-		final r: Bool = Sys.command(c, a) == 0;
-		endColor();
-		return r;
-	}
 
 	public static inline function beginColor(c: Int): Void if (Config.OS != Windows) Sys.print('\x1b[${c}m');
 
@@ -96,6 +76,14 @@ import sys.io.Process;
 
 	public static inline function getPerm(dir: String): Int {
 		return processInt('sudo', Config.OS == TargetOS.Mac ? ['stat', '-f', '%A', dir] : ['stat', '-c', '%a', dir]);
+	}
+
+	public static function cmdExistsa(c: String, a: Array<String>): Bool {
+		beginColor(90);
+		Sys.print(c + ' ');
+		final r: Bool = Sys.command(c, a) == 0;
+		endColor();
+		return r;
 	}
 
 	public static function setPerm(dir: String, v: Int, r: Bool = false): Void {
@@ -114,6 +102,18 @@ import sys.io.Process;
 		if (Config.OS == Linux) Sys.sleep(0.3); // finish print messages
 		#end
 		Sys.exit(errCode);
+	}
+
+	private static inline function processLine(process: String, args: Array<String>): String {
+		return new Process(process, args).stdout.readLine();
+	}
+
+	private static inline function processInt(process: String, args: Array<String>): Int {
+		return try {
+			Std.parseInt(processLine(process, args));
+		} catch (err: Dynamic) {
+			-1;
+		}
 	}
 
 }

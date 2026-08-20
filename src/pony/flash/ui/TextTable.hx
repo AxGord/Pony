@@ -19,9 +19,11 @@ import pony.ui.gui.TextTableCore;
  */
 class TextTable extends TextTableCore {
 
-	private final area: DisplayObjectContainer;
-	private var shape: Shape;
 	private var g(get, never): Graphics;
+
+	private final area: DisplayObjectContainer;
+
+	private var shape: Shape;
 
 	public function new(area: DisplayObjectContainer) {
 		super();
@@ -29,12 +31,12 @@ class TextTable extends TextTableCore {
 		createShape();
 	}
 
+	private inline function get_g(): Graphics return shape.graphics;
+
 	private inline function createShape(): Void {
 		shape = new Shape();
 		area.addChild(shape);
 	}
-
-	private inline function get_g(): Graphics return shape.graphics;
 
 	#if (haxe_ver < 4.2) override #end
 	private function drawBG(r: IntRect, color: UColor): Void {

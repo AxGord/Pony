@@ -26,6 +26,7 @@ private typedef LastLogMessageObj = {
 	public var visible(get, set): Bool;
 
 	public final container: Element;
+
 	private final origTrace: Null<Dynamic -> ?PosInfos -> Void> = Log.trace;
 	private final reverse: Bool;
 
@@ -59,6 +60,8 @@ private typedef LastLogMessageObj = {
 		return value;
 	}
 
+	public inline function print(message: String): Void addLogToContainer(message, null);
+
 	public dynamic function traceFilter(pos: Null<PosInfos>): Bool return true;
 
 	public function traceHandler(v: Dynamic, ?p: PosInfos): Void {
@@ -68,8 +71,6 @@ private typedef LastLogMessageObj = {
 		)(['$v'].concat(p != null && p.customParams != null ? p.customParams.map(Std.string) : []).join(', '), p);
 		@:nullSafety(Off) origTrace(v, p);
 	}
-
-	public inline function print(message: String): Void addLogToContainer(message, null);
 
 	public function addLogToContainer(message: String, count: Int = 1, ?pos: PosInfos): Void {
 		if (container == null) return;
@@ -114,6 +115,15 @@ private typedef LastLogMessageObj = {
 		);
 	}
 
+	private inline function addToContainer(s: String): Void {
+		if (container != null) {
+			if (reverse)
+				container.innerHTML = s + container.innerHTML;
+			else
+				container.innerHTML += s;
+		}
+	}
+
 	private function logHandler(message: String, ?pos: PosInfos): Void {
 		addLogToContainer(message, Logable.addTimeToPosInfosFileName(pos));
 	}
@@ -126,15 +136,6 @@ private typedef LastLogMessageObj = {
 		lastMessage = None;
 		addToContainer('<p><span class="error">Fatal error</span></p>');
 		return false;
-	}
-
-	private inline function addToContainer(s: String): Void {
-		if (container != null) {
-			if (reverse)
-				container.innerHTML = s + container.innerHTML;
-			else
-				container.innerHTML += s;
-		}
 	}
 
 	private static function renderCount(count: UInt): String {

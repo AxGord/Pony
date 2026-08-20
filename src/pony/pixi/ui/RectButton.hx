@@ -18,11 +18,13 @@ import pony.ui.touch.Touchable;
 class RectButton extends BaseLayout<RubberLayoutCore<Container>> {
 
 	public var core(default, null): ButtonImgN;
+
 	public var touchActive(get, set): Bool;
 	public var cursor(get, set): Bool;
 
-	private var g: Graphics = new Graphics();
 	private final colors: Array<UColor>;
+
+	private var g: Graphics = new Graphics();
 
 	public function new(
 		size: Point<Int>, colors: Array<UColor>, vert: Bool = false, ?border: Border<Int>, ?offset: Point<Float>
@@ -41,6 +43,32 @@ class RectButton extends BaseLayout<RubberLayoutCore<Container>> {
 		cursor = true;
 	}
 
+	private inline function get_cursor(): Bool return g.buttonMode;
+
+	private inline function set_cursor(v: Bool): Bool return g.buttonMode = v;
+
+	private inline function get_touchActive(): Bool return g.interactive;
+
+	private inline function set_touchActive(v: Bool): Bool return g.interactive = v;
+
+	override public function add(obj: Container): Void {
+		obj.interactive = false;
+		obj.interactiveChildren = false;
+		obj.hitArea = new Rectangle(0, 0, 0, 0);
+		super.add(obj);
+	}
+
+	override public function destroy(?options: haxe.extern.EitherType<Bool, DestroyOptions>): Void {
+		core.destroy();
+		core = null;
+		removeChild(g);
+		g.destroy();
+		g = null;
+		layout.destroy();
+		layout = null;
+		super.destroy(options);
+	}
+
 	private function imgHandler(n: Int): Void {
 		if (n == 4) {
 			visible = false;
@@ -53,34 +81,8 @@ class RectButton extends BaseLayout<RubberLayoutCore<Container>> {
 		g.drawRect(0, 0, layout.size.x, layout.size.y);
 	}
 
-	override public function add(obj: Container): Void {
-		obj.interactive = false;
-		obj.interactiveChildren = false;
-		obj.hitArea = new Rectangle(0, 0, 0, 0);
-		super.add(obj);
-	}
-
 	private function disableHandler(): Void cursor = false;
 
 	private function enableHandler(): Void cursor = true;
-
-	private inline function get_cursor(): Bool return g.buttonMode;
-
-	private inline function set_cursor(v: Bool): Bool return g.buttonMode = v;
-
-	private inline function get_touchActive(): Bool return g.interactive;
-
-	private inline function set_touchActive(v: Bool): Bool return g.interactive = v;
-
-	override public function destroy(?options: haxe.extern.EitherType<Bool, DestroyOptions>): Void {
-		core.destroy();
-		core = null;
-		removeChild(g);
-		g.destroy();
-		g = null;
-		layout.destroy();
-		layout = null;
-		super.destroy(options);
-	}
 
 }

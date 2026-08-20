@@ -10,8 +10,8 @@ import starling.display.DisplayObjectContainer;
  */
 class StarlingHitTestSource implements IHitTestSource {
 
-	private final _container: DisplayObjectContainer;
 	private final _point: Point = new Point();
+	private final _container: DisplayObjectContainer;
 
 	public function new(container: DisplayObjectContainer) {
 		_container = container;

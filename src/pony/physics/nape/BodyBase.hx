@@ -33,30 +33,28 @@ class BodyBase implements pony.magic.HasSignal implements pony.magic.HasLink imp
 
 	public static var BODYMAP: Map<Int, BodyBase> = [];
 
+	public var body(default, null): Body;
+	public var group(default, null): NapeGroup;
+
+	public var angularVel(link, link): Float = body.angularVel;
+	public var rotation(link, link): Float = body.rotation;
+	public var pos(get, set): Point<Float>;
+
 	@:auto public var onDestroy: Signal0;
 	@:auto public var onPos: Signal2<Float, Float>;
 	@:auto public var onRotation: Signal1<Float>;
 	@:auto public var onOut: Signal0;
-
-	public var pos(get, set): Point<Float>;
-	public var angularVel(link, link): Float = body.angularVel;
-	public var rotation(link, link): Float = body.rotation;
-
-	public var body(default, null): Body;
 	public var anchor: Vec2;
-	private var cbt: CbType;
+	public var limits: Rect<Float>;
+
 	private var addedListeners: Array<Listener> = [];
 	private var events0: Array<Event0> = [];
 	private var events1: Array<Event1<Int>> = [];
+	private var cbt: CbType;
 	private var material: Material;
 	private var lookAtTarget: Float;
 	private var lookAtVelocity: Float;
 	private var lookAtDirrect: Int;
-
-	public var limits: Rect<Float>;
-
-	public var group(default, null): NapeGroup;
-
 	private var _space: Space;
 
 	private function new(
@@ -90,7 +88,15 @@ class BodyBase implements pony.magic.HasSignal implements pony.magic.HasLink imp
 		pony.time.DeltaTime.update << updateHandler;
 	}
 
-	public function getCacheId(): Bytes return null;
+	private function get_pos(): Point<Float> {
+		return new Point<Float>(body.position.x - anchor.x, body.position.y - anchor.y);
+	}
+
+	private function set_pos(p: Point<Float>): Point<Float> {
+		body.position.setxy(p.x + anchor.x, p.y + anchor.y);
+		ePos.dispatch(p.x, p.y);
+		return p;
+	}
 
 	public inline function scale(x: Float, y: Float): Void {
 		body.scaleShapes(x, y);
@@ -99,6 +105,20 @@ class BodyBase implements pony.magic.HasSignal implements pony.magic.HasLink imp
 	public inline function lookAt(x: Float, y: Float): Void {
 		rotation = Math.atan2(y - pos.y, x - pos.x);
 	}
+
+	public inline function lookAtPoint(p: Point<Float>): Void {
+		lookAt(p.x, p.y);
+	}
+
+	public inline function setSpeed(v: Float): Void {
+		body.velocity = new Vec2(v * Math.cos(rotation), v * Math.sin(rotation));
+	}
+
+	public inline function addSpeed(v: Float): Void {
+		body.velocity = new Vec2(body.velocity.x + v * Math.cos(rotation), body.velocity.y + v * Math.sin(rotation));
+	}
+
+	public function getCacheId(): Bytes return null;
 
 	public function lookAtVelLin(x: Float, y: Float, vel: Float): Void {
 		lookAtVelocity = vel;
@@ -122,77 +142,6 @@ class BodyBase implements pony.magic.HasSignal implements pony.magic.HasLink imp
 		if (lookAtDirrect == 0) return;
 		DeltaTime.update.add(checkLookAtHandler, 2);
 		checkLookAtHandler();
-	}
-
-	private function checkLookAtHandler(): Void {
-		if (
-			(lookAtDirrect == 1 && lookAtTarget <= rotation + MathTools.DEG2RAD * angularVel)
-			|| (lookAtDirrect == -1 && lookAtTarget >= rotation + MathTools.DEG2RAD * angularVel)
-		) {
-			angularVel = 0;
-			rotation = lookAtTarget;
-			pony.time.DeltaTime.update >> checkLookAtHandler;
-		}
-	}
-
-	public inline function lookAtPoint(p: Point<Float>): Void {
-		lookAt(p.x, p.y);
-	}
-
-	public inline function setSpeed(v: Float): Void {
-		body.velocity = new Vec2(v * Math.cos(rotation), v * Math.sin(rotation));
-	}
-
-	public inline function addSpeed(v: Float): Void {
-		body.velocity = new Vec2(body.velocity.x + v * Math.cos(rotation), body.velocity.y + v * Math.sin(rotation));
-	}
-
-	private function addListener<T:Listener>(l: T): Void {
-		addedListeners.push(l);
-		body.space.listeners.add(l);
-	}
-
-	private function createEvent0(): Event0 {
-		final e = new Event0();
-		events0.push(e);
-		return e;
-	}
-
-	private function createEvent1(): Event1<Int> {
-		final e = new Event1<Int>();
-		events1.push(e);
-		return e;
-	}
-
-	@:abstract private function init(): Void;
-
-	private function updateHandler(): Void {
-		ePos.dispatch(body.position.x - anchor.x, body.position.y - anchor.y);
-		eRotation.dispatch(body.rotation);
-		if (limits == null) return;
-		final mx = body.bounds.width * 2;
-		final my = body.bounds.height * 2;
-		if (
-			body.position.x < limits.x - mx || body.position.x > limits.width + mx || body.position.y < limits.y - my
-			|| body.position.y > limits.height + my
-		)
-			eOut.dispatch();
-	}
-
-	private function wakeHandler(_): Void {
-		DeltaTime.update < _wake;
-	}
-
-	private function _wake(): Void {
-		DeltaTime.update << updateHandler;
-	}
-
-	private function sleepHandler(_): Void {
-		DeltaTime.update < _sleep;
-	}
-
-	private function _sleep(): Void {
-		DeltaTime.update >> updateHandler;
 	}
 
 	public function wake(): Void {
@@ -243,16 +192,6 @@ class BodyBase implements pony.magic.HasSignal implements pony.magic.HasLink imp
 		return e;
 	}
 
-	private function get_pos(): Point<Float> {
-		return new Point<Float>(body.position.x - anchor.x, body.position.y - anchor.y);
-	}
-
-	private function set_pos(p: Point<Float>): Point<Float> {
-		body.position.setxy(p.x + anchor.x, p.y + anchor.y);
-		ePos.dispatch(p.x, p.y);
-		return p;
-	}
-
 	public function destroy(): Void {
 		if (body == null) return;
 		DeltaTime.update >> updateHandler;
@@ -270,6 +209,65 @@ class BodyBase implements pony.magic.HasSignal implements pony.magic.HasLink imp
 		body = null;
 		eDestroy.dispatch();
 		destroySignals();
+	}
+
+	private function checkLookAtHandler(): Void {
+		if (
+			(lookAtDirrect == 1 && lookAtTarget <= rotation + MathTools.DEG2RAD * angularVel)
+			|| (lookAtDirrect == -1 && lookAtTarget >= rotation + MathTools.DEG2RAD * angularVel)
+		) {
+			angularVel = 0;
+			rotation = lookAtTarget;
+			pony.time.DeltaTime.update >> checkLookAtHandler;
+		}
+	}
+
+	private function addListener<T:Listener>(l: T): Void {
+		addedListeners.push(l);
+		body.space.listeners.add(l);
+	}
+
+	private function createEvent0(): Event0 {
+		final e = new Event0();
+		events0.push(e);
+		return e;
+	}
+
+	private function createEvent1(): Event1<Int> {
+		final e = new Event1<Int>();
+		events1.push(e);
+		return e;
+	}
+
+	@:abstract private function init(): Void;
+
+	private function updateHandler(): Void {
+		ePos.dispatch(body.position.x - anchor.x, body.position.y - anchor.y);
+		eRotation.dispatch(body.rotation);
+		if (limits == null) return;
+		final mx = body.bounds.width * 2;
+		final my = body.bounds.height * 2;
+		if (
+			body.position.x < limits.x - mx || body.position.x > limits.width + mx || body.position.y < limits.y - my
+			|| body.position.y > limits.height + my
+		)
+			eOut.dispatch();
+	}
+
+	private function wakeHandler(_): Void {
+		DeltaTime.update < _wake;
+	}
+
+	private function _wake(): Void {
+		DeltaTime.update << updateHandler;
+	}
+
+	private function sleepHandler(_): Void {
+		DeltaTime.update < _sleep;
+	}
+
+	private function _sleep(): Void {
+		DeltaTime.update >> updateHandler;
 	}
 
 }

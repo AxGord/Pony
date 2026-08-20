@@ -20,7 +20,6 @@ import pony.TypedPool;
 	private static inline final SWIPE_STEP: UInt = 4;
 	private static inline final SWIPE_REPEATS: UInt = 8;
 	private static inline final TAP_DELAY: Time = 300;
-
 	private static final touches: Map<UInt, Touch> = [];
 	private static final touchPool: TypedPool<Touch> = new TypedPool<Touch>();
 
@@ -63,6 +62,33 @@ import pony.TypedPool;
 		eSwipe.onTake << addSwipe;
 		eSwipe.onLost << removeSwipe;
 	}
+
+	private static inline function get_touchScreen(): Bool return #if ios true; #else false; #end
+
+	public inline function retTouch(id: UInt = 0): Void {
+		removeTouch(id);
+	}
+
+	public function destroy(): Void {
+		unlistenWheel();
+		if (tapTimer != null) eTapLost();
+		eTap.onTake >> eTapTake;
+		eTap.onLost >> eTapLost;
+		destroySignals();
+	}
+
+	/**
+	 * Use this method if object has moved
+	 */
+	public function check(): Void {}
+
+	public function getTouch(id: UInt = 0): Touch {
+		var t: Null<Touch> = touches[id];
+		if (t == null) touches[id] = t = touchPool.get();
+		return t;
+	}
+
+	private inline function dispatchOutUpListener(id: UInt): Void dispatchOutUp(id);
 
 	private function downHandlerWaitClick(): Void onUp < eClick;
 
@@ -196,19 +222,6 @@ import pony.TypedPool;
 		@:nullSafety(Off) tapTouch = null;
 	}
 
-	public function destroy(): Void {
-		unlistenWheel();
-		if (tapTimer != null) eTapLost();
-		eTap.onTake >> eTapTake;
-		eTap.onLost >> eTapLost;
-		destroySignals();
-	}
-
-	/**
-	 * Use this method if object has moved
-	 */
-	public function check(): Void {}
-
 	private function dispatchDown(id: UInt = 0, x: Float, y: Float, right: Bool = false, safe: Bool = false): Void {
 		var t: Null<Touch> = touches[id];
 		if (t != null)
@@ -242,16 +255,6 @@ import pony.TypedPool;
 		eOver.dispatchWithFlag(t, safe);
 	}
 
-	public function getTouch(id: UInt = 0): Touch {
-		var t: Null<Touch> = touches[id];
-		if (t == null) touches[id] = t = touchPool.get();
-		return t;
-	}
-
-	public inline function retTouch(id: UInt = 0): Void {
-		removeTouch(id);
-	}
-
 	private function dispatchOutDown(id: UInt = 0, right: Bool = false, safe: Bool = false): Void {
 		final t: Null<Touch> = touches[id];
 		if (t == null) return;
@@ -282,8 +285,6 @@ import pony.TypedPool;
 		removeTouch(id);
 	}
 
-	private inline function dispatchOutUpListener(id: UInt): Void dispatchOutUp(id);
-
 	private function dispatchOutUp(id: UInt = 0, right: Bool = false, safe: Bool = false): Void {
 		final t: Null<Touch> = touches[id];
 		if (t == null) return;
@@ -308,7 +309,5 @@ import pony.TypedPool;
 		touchPool.ret(t);
 		touches.remove(id);
 	}
-
-	private static inline function get_touchScreen(): Bool return #if ios true; #else false; #end
 
 }

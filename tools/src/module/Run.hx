@@ -77,6 +77,14 @@ typedef RunConfig = {
 
 @:nullSafety(Strict) private class RunReader extends BAReader<RunConfig> {
 
+	private inline function getPath(xml: Fast): Null<String> {
+		return xml.has.path ? normalize(xml.att.path) : null;
+	}
+
+	private inline function getLib(xml: Fast): Null<String> {
+		return xml.has.lib ? normalize(xml.att.lib) : null;
+	}
+
 	#if (haxe_ver < 4.2) override #end
 	private function clean(): Void {
 		cfg.path = null;
@@ -124,14 +132,6 @@ typedef RunConfig = {
 			case _:
 				super.readNode(xml);
 		}
-	}
-
-	private inline function getPath(xml: Fast): Null<String> {
-		return xml.has.path ? normalize(xml.att.path) : null;
-	}
-
-	private inline function getLib(xml: Fast): Null<String> {
-		return xml.has.lib ? normalize(xml.att.lib) : null;
 	}
 
 }

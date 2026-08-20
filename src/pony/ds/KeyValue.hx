@@ -15,8 +15,8 @@ abstract KeyValue<Key, Value>(Pair<Key, Value>) {
 
 	private inline function get_value(): Value return this.b;
 
-	@:from private static inline function fromPair<A, B>(p: Pair<A, B>): KeyValue<A, B> return new KeyValue<A, B>(p);
-
 	@:to private inline function toPair(): Pair<Key, Value> return this;
+
+	@:from private static inline function fromPair<A, B>(p: Pair<A, B>): KeyValue<A, B> return new KeyValue<A, B>(p);
 
 }

@@ -9,20 +9,17 @@ using StringTools;
 #if (haxe_ver >= 4.2) enum #else @:enum #end
 abstract Orientation(UInt) to UInt {
 
-	@SuppressWarnings('checkstyle:MagicNumber')
-	public var None = 0x0000;
-
-	@SuppressWarnings('checkstyle:MagicNumber')
-	public var Horizontal = 0x0011;
-
-	@SuppressWarnings('checkstyle:MagicNumber')
-	public var Vertical = 0x1100;
-
-	@SuppressWarnings('checkstyle:MagicNumber')
-	public var Any = 0x1111;
-
 	public var isHorizontal(get, never): Bool;
 	public var isVertical(get, never): Bool;
+
+	@SuppressWarnings('checkstyle:MagicNumber')
+	public var None = 0x0000;
+	@SuppressWarnings('checkstyle:MagicNumber')
+	public var Horizontal = 0x0011;
+	@SuppressWarnings('checkstyle:MagicNumber')
+	public var Vertical = 0x1100;
+	@SuppressWarnings('checkstyle:MagicNumber')
+	public var Any = 0x1111;
 
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end

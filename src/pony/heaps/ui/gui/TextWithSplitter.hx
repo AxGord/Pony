@@ -19,6 +19,15 @@ import pony.geom.Point;
 
 	private var glyphsPoints: Array<Pair<Point<Float>, Tile>> = [];
 
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function get_glyphsPos(): Array<Point<Float>> return [for (gp in glyphsPoints) gp.a];
+
+	public inline function getFirstGlyphPos(?pos: Point<Float>): Point<Float> return @:nullSafety(Off) glyphsPoints[0].a;
+
+	public inline function getGlyphsPos(?pos: Point<Float>): Array<Point<Float>>
+		return pos == null ? glyphsPos : [for (gp in glyphsPoints) gp.a + pos];
+
 	/**
 	 * Split text to bitmaps
 	 */
@@ -33,15 +42,6 @@ import pony.geom.Point;
 			}
 		];
 	}
-
-	public inline function getFirstGlyphPos(?pos: Point<Float>): Point<Float> return @:nullSafety(Off) glyphsPoints[0].a;
-
-	@SuppressWarnings('checkstyle:MagicNumber')
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function get_glyphsPos(): Array<Point<Float>> return [for (gp in glyphsPoints) gp.a];
-
-	public inline function getGlyphsPos(?pos: Point<Float>): Array<Point<Float>>
-		return pos == null ? glyphsPos : [for (gp in glyphsPoints) gp.a + pos];
 
 	/**
 	 * Copy from heaps

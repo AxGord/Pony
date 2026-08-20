@@ -27,7 +27,6 @@ class Cordova extends CfgModule<CordovaConfig> {
 	private static inline final AVC: String = 'android-versionCode';
 	private static inline final OPEN_WIDGET_TAG: String = '<widget';
 	private static inline final CLOSE_WIDGET_TAG: String = '</widget>';
-
 	private static final configFile: File = 'config.xml';
 
 	public function new() super('cordova');

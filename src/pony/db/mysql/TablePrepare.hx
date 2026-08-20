@@ -106,30 +106,6 @@ class TablePrepare {
 		return true;
 	}
 
-	private static function chk1(f: Field, r: Field): Bool return f.type == r.type && f.flags.equal(r.flags) && f.length == r.length;
-
-	private static function chk2(f: Field, r: Field): Bool return f.type == r.type && f.flags.equal(r.flags);
-
-	private static function chk3(f: Field, r: Field): Bool return f.type == r.type && f.length == r.length;
-
-	private static function chk4(f: Field, r: Field): Bool return f.type == r.type || f.flags.equal(r.flags);
-
-	private static function chk5(f: Field, r: Field): Bool return f.length == r.length;
-
-	@:async private function renameTableFields(
-		fields: Array<Field>, remote: Array<Field>, remMap: Map<String, Int>, free: Array<Field>, chk: Field -> Field -> Bool
-	): Array<Field> {
-		for (f in fields) if (!remMap.exists(f.name)) for (r in free) if (chk(f, r)) {
-			if (!@await mysql.action(alter(f, r), 'rename table field')) return null;
-			free.remove(r);
-			final i = remote.indexOf(r);
-			remMap.remove(r.name);
-			remMap[f.name] = i;
-			remote[i].copyFields(f);
-		}
-		return free;
-	}
-
 	public function alter(f: Field, r: Field): String {
 		final name = mysql.escapeId(f.name);
 		final name2 = mysql.escapeId(r.name);
@@ -145,7 +121,31 @@ class TablePrepare {
 		return 'ALTER TABLE $table ADD $name ' + f.type.toString() + decorateLength(f.length) + ' ' + Flags.array2string(flags);
 	}
 
+	@:async private function renameTableFields(
+		fields: Array<Field>, remote: Array<Field>, remMap: Map<String, Int>, free: Array<Field>, chk: Field -> Field -> Bool
+	): Array<Field> {
+		for (f in fields) if (!remMap.exists(f.name)) for (r in free) if (chk(f, r)) {
+			if (!@await mysql.action(alter(f, r), 'rename table field')) return null;
+			free.remove(r);
+			final i = remote.indexOf(r);
+			remMap.remove(r.name);
+			remMap[f.name] = i;
+			remote[i].copyFields(f);
+		}
+		return free;
+	}
+
 	private static inline function decorateLength(len: Null<Int>): String return len != null ? '($len)' : '';
+
+	private static function chk1(f: Field, r: Field): Bool return f.type == r.type && f.flags.equal(r.flags) && f.length == r.length;
+
+	private static function chk2(f: Field, r: Field): Bool return f.type == r.type && f.flags.equal(r.flags);
+
+	private static function chk3(f: Field, r: Field): Bool return f.type == r.type && f.length == r.length;
+
+	private static function chk4(f: Field, r: Field): Bool return f.type == r.type || f.flags.equal(r.flags);
+
+	private static function chk5(f: Field, r: Field): Bool return f.length == r.length;
 
 	private static function makeFieldsMap(fields: Array<Field>): Map<String, Int> return [for (f in fields.kv()) f.value.name => f.key];
 

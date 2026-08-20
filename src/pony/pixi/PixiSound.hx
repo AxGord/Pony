@@ -20,13 +20,11 @@ class PixiSound implements HasSignal {
 	private static inline final loopEnd: Float = 6.000;
 
 	@:auto public var onEnd: Signal0;
-	@:auto private var onEndTrack: Signal0;
-
 	public var core: Audio;
 
-	private var waitTime: Time;
-
 	private var _volume: Float = 0;
+	@:auto private var onEndTrack: Signal0;
+	private var waitTime: Time;
 
 	public function new() {}
 
@@ -35,13 +33,6 @@ class PixiSound implements HasSignal {
 		_stop();
 		onEnd << endHandler;
 		DeltaTime.fixedUpdate << _loopUpdate;
-	}
-
-	private function _loopUpdate(): Void {
-		if (core.currentTime > core.duration - loopEnd) {
-			core.currentTime = shift;
-			eEndTrack.dispatch();
-		}
 	}
 
 	public function playInterval(v: TimeInterval, ?cb: Void -> Void): Void {
@@ -62,36 +53,7 @@ class PixiSound implements HasSignal {
 		_play();
 	}
 
-	private function timeUpdate(): Void {
-		if (core.currentTime * 1000 + shift + ending >= waitTime.totalMs) {
-			dispatchEnd();
-		}
-	}
-
-	private inline function dispatchEnd(): Void eEnd.dispatch();
-
 	public function stop(): Void waitTime == null ? dispatchEnd() : endHandler();
-
-	private function endHandler(): Void {
-		DeltaTime.fixedUpdate >> timeUpdate;
-		_stop();
-	}
-
-	private function _play(): Void {
-		if (JsTools.isMobile) {
-			core.volume = _volume;
-		} else {
-			core.play();
-		}
-	}
-
-	private function _stop(): Void {
-		if (JsTools.isMobile) {
-			core.volume = 0;
-		} else {
-			core.pause();
-		}
-	}
 
 	public function isPlay(): Bool {
 		return JsTools.isMobile ? core.volume != 0 : !core.paused;
@@ -115,6 +77,42 @@ class PixiSound implements HasSignal {
 
 	public function enabled(): Bool {
 		return _volume == 1;
+	}
+
+	private inline function dispatchEnd(): Void eEnd.dispatch();
+
+	private function _loopUpdate(): Void {
+		if (core.currentTime > core.duration - loopEnd) {
+			core.currentTime = shift;
+			eEndTrack.dispatch();
+		}
+	}
+
+	private function timeUpdate(): Void {
+		if (core.currentTime * 1000 + shift + ending >= waitTime.totalMs) {
+			dispatchEnd();
+		}
+	}
+
+	private function endHandler(): Void {
+		DeltaTime.fixedUpdate >> timeUpdate;
+		_stop();
+	}
+
+	private function _play(): Void {
+		if (JsTools.isMobile) {
+			core.volume = _volume;
+		} else {
+			core.play();
+		}
+	}
+
+	private function _stop(): Void {
+		if (JsTools.isMobile) {
+			core.volume = 0;
+		} else {
+			core.pause();
+		}
 	}
 
 }

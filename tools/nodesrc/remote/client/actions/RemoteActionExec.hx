@@ -12,6 +12,12 @@ class RemoteActionExec extends RemoteAction {
 
 	@:nullSafety(Off) private var process: Process;
 
+	override public function destroy(): Void {
+		super.destroy();
+		process.destroy();
+		@:nullSafety(Off) process = null;
+	}
+
 	#if (haxe_ver < 4.2) override #end
 	private function run(data: String): Void {
 		logData(data);
@@ -20,12 +26,6 @@ class RemoteActionExec extends RemoteAction {
 		process.onError < error;
 		process.onLog << log;
 		process.run();
-	}
-
-	override public function destroy(): Void {
-		super.destroy();
-		process.destroy();
-		@:nullSafety(Off) process = null;
 	}
 
 }

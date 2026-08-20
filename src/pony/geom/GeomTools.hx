@@ -10,6 +10,19 @@ import pony.geom.Point.IntPoint;
  */
 class GeomTools {
 
+	public static inline function rectInPoly<T:Float>(rect: Rect<T>, poly: Polygon<T>): Int {
+		return countInPoly(rectToPoints(rect), poly);
+	}
+
+	public static inline function rectToPoints<T:Float>(rect: Rect<T>): Array<Point<T>> {
+		return [
+			new Point<T>(rect.x, rect.y),
+			new Point<T>(rect.x + rect.width, rect.y),
+			new Point<T>(rect.x + rect.width, rect.y + rect.height),
+			new Point<T>(rect.x, rect.y + rect.height)
+		];
+	}
+
 	public static function inPoly<T:Float>(point: Point<T>, poly: Polygon<T>): Bool {
 		final xp = [];
 		final yp = [];
@@ -39,19 +52,6 @@ class GeomTools {
 		var i: Int = 0;
 		for (p in points) if (inPoly(p, poly)) i++;
 		return i;
-	}
-
-	public static inline function rectInPoly<T:Float>(rect: Rect<T>, poly: Polygon<T>): Int {
-		return countInPoly(rectToPoints(rect), poly);
-	}
-
-	public static inline function rectToPoints<T:Float>(rect: Rect<T>): Array<Point<T>> {
-		return [
-			new Point<T>(rect.x, rect.y),
-			new Point<T>(rect.x + rect.width, rect.y),
-			new Point<T>(rect.x + rect.width, rect.y + rect.height),
-			new Point<T>(rect.x, rect.y + rect.height)
-		];
 	}
 
 	public static function center(

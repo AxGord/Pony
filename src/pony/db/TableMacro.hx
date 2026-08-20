@@ -11,6 +11,8 @@ import haxe.macro.Printer;
  */
 class TableMacro {
 
+	private static final printer: Printer = new Printer();
+
 	public static function transExpr(expr: Expr, a: Array<Expr>): Array<Expr> {
 		switch expr.expr {
 			case EBinop(op, e1, e2):
@@ -104,8 +106,6 @@ class TableMacro {
 			case _: throw 'Not correct field $e';
 		}
 	}
-
-	private static final printer: Printer = new Printer();
 
 	private static function parseExpr(e: Expr): Array<Expr> {
 		var a: Array<Expr> = [];

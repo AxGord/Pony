@@ -39,6 +39,12 @@ class InsertConnect extends ActionConnect {
 		return cpq.connection.sessionStorage.get('modelsActions');
 	}
 
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function clr(): Void {
+		storage.remove(base.id);
+	}
+
 	override public function tpl(parent: ITplPut): ITplPut {
 		return new InsertPut(this, cpq, parent);
 	}
@@ -78,12 +84,6 @@ class InsertConnect extends ActionConnect {
 			}
 		});
 		return true;
-	}
-
-	@SuppressWarnings('checkstyle:MagicNumber')
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public inline function clr(): Void {
-		storage.remove(base.id);
 	}
 
 }
@@ -171,19 +171,6 @@ class InsertPutSub extends pony.text.tpl.TplPut<InsertConnect, CPQ> {
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
 class InsertPutArg extends pony.text.tpl.TplPut<{ o: InsertConnect, arg: String }, CPQ> {
 
-	private function st(): String {
-		final ma: Map<Int, { values: Map<String, String>, result: ActResult }> = b.connection.sessionStorage.get('modelsActions');
-		final m = ma[a.o.base.id];
-		final r: ActResult = m == null ? null : m.result;
-		var st: String = null;
-		if (r != null) switch (r) {
-			case OK: st = '';
-			case ERROR(e): st = e.exists(a.arg) ? e.get(a.arg) : '';
-			case DBERROR: st = 'DataBase error';
-		}
-		return st;
-	}
-
 	@:async
 	override public function tag(name: String, content: TplData, arg: String, args: Map<String, String>, ?kid: ITplPut): String {
 		switch (name) {
@@ -217,6 +204,19 @@ class InsertPutArg extends pony.text.tpl.TplPut<{ o: InsertConnect, arg: String 
 		} else {
 			return @await super.shortTag(name, arg, kid);
 		}
+	}
+
+	private function st(): String {
+		final ma: Map<Int, { values: Map<String, String>, result: ActResult }> = b.connection.sessionStorage.get('modelsActions');
+		final m = ma[a.o.base.id];
+		final r: ActResult = m == null ? null : m.result;
+		var st: String = null;
+		if (r != null) switch (r) {
+			case OK: st = '';
+			case ERROR(e): st = e.exists(a.arg) ? e.get(a.arg) : '';
+			case DBERROR: st = 'DataBase error';
+		}
+		return st;
 	}
 
 }

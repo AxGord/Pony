@@ -17,8 +17,8 @@ import pony.physics.nape.NapeGroup;
 class NapeGroupView extends Sprite {
 
 	public var debugLines(default, set): DebugLineStyle;
-
 	public var core(default, null): NapeGroup;
+
 	private final objects: Array<BodyBaseView<BodyBase>> = [];
 
 	public function new(core: NapeGroup) {
@@ -26,14 +26,14 @@ class NapeGroupView extends Sprite {
 		this.core = core;
 	}
 
-	public function clear(): Void {
-		for (o in objects.copy()) o.destroy();
-	}
-
 	private function set_debugLines(v: DebugLineStyle): DebugLineStyle {
 		debugLines = v;
 		for (e in objects) e.debugLines = v;
 		return v;
+	}
+
+	public function clear(): Void {
+		for (o in objects.copy()) o.destroy();
 	}
 
 	public function reg<S:BodyBase, T:BodyBaseView<S>>(obj: T): T {

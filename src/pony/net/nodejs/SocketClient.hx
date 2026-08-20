@@ -19,12 +19,23 @@ using pony.js.node.NodeJSUtils;
  */
 @:nullSafety(Strict) class SocketClient extends SocketClientBase {
 
+	private var socket: Null<Socket>;
+	@:nullSafety(Off) private var q: Queue<BytesOutput -> Void>;
+
 	#if !nodedt
 	private static var SEND_TIMEOUT: Int = Std.int(1000 / 60);
 	#end
 
-	private var socket: Null<Socket>;
-	@:nullSafety(Off) private var q: Queue<BytesOutput -> Void>;
+	override public function close(): Void {
+		super.close();
+		if (socket != null) {
+			socket.end();
+			@:nullSafety(Off) socket.destroy();
+			socket = null;
+		}
+	}
+
+	public function send(data: BytesOutput): Void q.call(data);
 
 	override private function open(): Void {
 		super.open();
@@ -43,17 +54,6 @@ using pony.js.node.NodeJSUtils;
 		s.on('end', close);
 		s.on('error', error.bind('socket error'));
 	}
-
-	override public function close(): Void {
-		super.close();
-		if (socket != null) {
-			socket.end();
-			@:nullSafety(Off) socket.destroy();
-			socket = null;
-		}
-	}
-
-	public function send(data: BytesOutput): Void q.call(data);
 
 	private function _send(data: BytesOutput): Void {
 		if (socket == null) return;

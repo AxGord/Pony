@@ -26,39 +26,16 @@ using hugs.HUGSWrapper;
 	public var bigText: String = '';
 	public var colorMod: Color;
 	public var texture: Texture;
+
+	@:meta(UnityEngine.HideInInspector)
+	private var lighted: Bool = false;
 	private var savedColors: Array<Color>;
 	private var savedColorsNames: Array<String>;
-
 	@:meta(UnityEngine.HideInInspector)
 	private var subs: Bool;
 	private var subObjects: Array<Transform>;
 	@:meta(UnityEngine.HideInInspector)
 	private var ovr: MouseHelper;
-	@:meta(UnityEngine.HideInInspector)
-	private var lighted: Bool = false;
-
-	private function Start(): Void {
-		if (colorMod == null || (colorMod.r == 0 && colorMod.g == 0 && colorMod.b == 0)) {
-			if (pony.unity3d.Tooltip.defaultColorMod.value != null)
-				colorMod = pony.unity3d.Tooltip.defaultColorMod.value;
-			else
-				pony.unity3d.Tooltip.defaultColorMod.add(onDCL);
-		} else
-			pony.unity3d.Tooltip.defaultColorMod.value = colorMod;
-		if (pony.unity3d.Tooltip.texture == null) pony.unity3d.Tooltip.texture = texture;
-
-		final it: NativeArrayIterator<Transform> = cast gameObject.getComponentsInChildrenOfType(Transform);
-		subObjects = [for (e in it) if (e != transform && e.renderer != null) e];
-		subs = subObjects.length > 0;
-		if (!subs) {
-			subObjects = [transform];
-		}
-
-		TouchManager.addListener(this.transform, over, [TouchEventType.Hover, TouchEventType.Over, TouchEventType.Down]);
-		TouchManager.addListener(this.transform, out, [TouchEventType.HoverOut, TouchEventType.Out]);
-
-		saveColors();
-	}
 
 	public function saveColors(): Void {
 		savedColors = [];
@@ -72,33 +49,11 @@ using hugs.HUGSWrapper;
 		}
 	}
 
-	private function onDCL(cl: Color): Void {
-		colorMod = cl;
-	}
-
-	private function over(e: TouchManagerEvent): Void {
-		try {
-			if (unityengine.Input.GetMouseButton(2))
-				pony.unity3d.Tooltip.showText(text, bigText, this, gameObject.layer);
-			else
-				pony.unity3d.Tooltip.showText(text, '', this, gameObject.layer);
-			lightUp();
-		} catch (_: Dynamic) {}
-	}
-
 	public function out(_): Void {
 		try {
 			pony.unity3d.Tooltip.hideText(this);
 			lightDown();
 		} catch (_: Dynamic) {}
-	}
-
-	private function pressOut(): Void {
-		pony.unity3d.Tooltip.showText(text, '', this, gameObject.layer);
-	}
-
-	private function press(): Void {
-		pony.unity3d.Tooltip.showText(text, bigText, this, gameObject.layer);
 	}
 
 	public function lightUp(): Void {
@@ -123,6 +78,51 @@ using hugs.HUGSWrapper;
 				i++;
 			} catch (_: Dynamic) {}
 		}
+	}
+
+	private function Start(): Void {
+		if (colorMod == null || (colorMod.r == 0 && colorMod.g == 0 && colorMod.b == 0)) {
+			if (pony.unity3d.Tooltip.defaultColorMod.value != null)
+				colorMod = pony.unity3d.Tooltip.defaultColorMod.value;
+			else
+				pony.unity3d.Tooltip.defaultColorMod.add(onDCL);
+		} else
+			pony.unity3d.Tooltip.defaultColorMod.value = colorMod;
+		if (pony.unity3d.Tooltip.texture == null) pony.unity3d.Tooltip.texture = texture;
+
+		final it: NativeArrayIterator<Transform> = cast gameObject.getComponentsInChildrenOfType(Transform);
+		subObjects = [for (e in it) if (e != transform && e.renderer != null) e];
+		subs = subObjects.length > 0;
+		if (!subs) {
+			subObjects = [transform];
+		}
+
+		TouchManager.addListener(this.transform, over, [TouchEventType.Hover, TouchEventType.Over, TouchEventType.Down]);
+		TouchManager.addListener(this.transform, out, [TouchEventType.HoverOut, TouchEventType.Out]);
+
+		saveColors();
+	}
+
+	private function onDCL(cl: Color): Void {
+		colorMod = cl;
+	}
+
+	private function over(e: TouchManagerEvent): Void {
+		try {
+			if (unityengine.Input.GetMouseButton(2))
+				pony.unity3d.Tooltip.showText(text, bigText, this, gameObject.layer);
+			else
+				pony.unity3d.Tooltip.showText(text, '', this, gameObject.layer);
+			lightUp();
+		} catch (_: Dynamic) {}
+	}
+
+	private function pressOut(): Void {
+		pony.unity3d.Tooltip.showText(text, '', this, gameObject.layer);
+	}
+
+	private function press(): Void {
+		pony.unity3d.Tooltip.showText(text, bigText, this, gameObject.layer);
 	}
 
 }

@@ -12,9 +12,9 @@ import pony.ui.gui.TurningCore;
  */
 class Turning extends Sprite implements FLStage {
 
-	@:stage private var handle: MovieClip;
-
 	public var core: TurningCore;
+
+	@:stage private var handle: MovieClip;
 
 	public function new() {
 		super();

@@ -33,15 +33,17 @@ class ExtendedPropertiesTest {
 
 class ExtendedPropertiesTestHelper implements ExtendedProperties {
 
-	@prop public var g: Int = p;
-
 	public var p(_, never): Int;
 
-	public function get_p(): Int return p + 3;
+	@prop public var g: Int = p;
 
 	public function new() {
 		p = 4;
 	}
+
+	public function get_p(): Int return p + 3;
+
+	@prop public inline function value(): Int return 3;
 
 	public function tget() return p;
 
@@ -62,7 +64,5 @@ class ExtendedPropertiesTestHelper implements ExtendedProperties {
 		function f(p) return p;
 		return f(25);
 	}
-
-	@prop public inline function value(): Int return 3;
 
 }

@@ -8,6 +8,14 @@ package remote.client.actions;
 #if (haxe_ver >= 4.2) final #else @:final #end
 class RemoteActionGet extends RemoteAction {
 
+	override public function destroy(): Void {
+		super.destroy();
+		protocol.file.disable();
+		protocol.file.stream.onStreamEnd >> end;
+		protocol.file.stream.onStreamData >> streamDataHandler;
+		protocol.file.stream.onError >> streamErrorHandler;
+	}
+
 	#if (haxe_ver < 4.2) override #end
 	private function run(data: String): Void {
 		logData(data);
@@ -21,13 +29,5 @@ class RemoteActionGet extends RemoteAction {
 	private function streamErrorHandler(): Void error('File stream error');
 
 	private function streamDataHandler(): Void Sys.print('.');
-
-	override public function destroy(): Void {
-		super.destroy();
-		protocol.file.disable();
-		protocol.file.stream.onStreamEnd >> end;
-		protocol.file.stream.onStreamData >> streamDataHandler;
-		protocol.file.stream.onError >> streamErrorHandler;
-	}
 
 }

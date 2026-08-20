@@ -13,10 +13,10 @@ import pony.text.tpl.ITplPut;
 #end
 class ModelConnect extends ModuleConnect<Model> {
 
-	private final db: Table;
-
 	public var actions: Map<String, ActionConnect>;
 	public var subactions: Map<String, ISubActionConnect>;
+
+	private final db: Table;
 
 	private function new(base: Model, cpq: CPQ) {
 		super(base, cpq);

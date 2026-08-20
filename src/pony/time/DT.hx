@@ -10,19 +10,16 @@ using Std;
 @:nullSafety(Strict) abstract DT(Float) from Float to Float {
 
 	public var fps(get, never): Float;
-
 	public var ms(get, never): Float;
 	public var sec(get, never): Float;
 	public var min(get, never): Float;
 	public var hour(get, never): Float;
 	public var day(get, never): Float;
-
 	public var _ms(get, never): Float;
 	public var _sec(get, never): Float;
 	public var _min(get, never): Float;
 	public var _hour(get, never): Float;
 	public var _day(get, never): Float;
-
 	public var ms_sec(get, never): Float;
 	public var ms_sec_(get, never): Float;
 	public var ms_min(get, never): Float;
@@ -32,7 +29,6 @@ using Std;
 	public var ms_day(get, never): Float;
 	public var ms_day_(get, never): Float;
 	public var ms_(get, never): Int;
-
 	public var sec_min(get, never): Float;
 	public var sec_min_(get, never): Float;
 	public var sec_hour(get, never): Float;
@@ -40,29 +36,18 @@ using Std;
 	public var sec_day(get, never): Float;
 	public var sec_day_(get, never): Float;
 	public var sec_(get, never): Int;
-
 	public var min_hour(get, never): Float;
 	public var min_hour_(get, never): Float;
 	public var min_day(get, never): Float;
 	public var min_day_(get, never): Float;
 	public var min_(get, never): Int;
-
 	public var hour_day(get, never): Float;
 	public var hour_day_(get, never): Float;
 	public var hour_(get, never): Int;
-
 	public var day_(get, never): Int;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function new(v: Float) this = v;
-
-	@:from #if (haxe_ver >= 4.2) extern #else @:extern #end
-	public static inline function fromTime(v: Time): DT return new DT(v / 1000);
-
-	@:to #if (haxe_ver >= 4.2) extern #else @:extern #end
-	public inline function toTime(): Time return ms;
-
-	@:to public inline function toString(): String return '${Std.int(ms * 100) / 100}';
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function get_fps(): Float return 1 / this;
@@ -171,6 +156,14 @@ using Std;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function get_hour_day(): Float return hour_day_ - day_;
+
+	@:to #if (haxe_ver >= 4.2) extern #else @:extern #end
+	public inline function toTime(): Time return ms;
+
+	@:to public inline function toString(): String return '${Std.int(ms * 100) / 100}';
+
+	@:from #if (haxe_ver >= 4.2) extern #else @:extern #end
+	public static inline function fromTime(v: Time): DT return new DT(v / 1000);
 
 	@:op(A + B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function add(a: DT, b: DT): DT return (a: Float) + (b: Float);

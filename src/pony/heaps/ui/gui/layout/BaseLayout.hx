@@ -20,10 +20,14 @@ class BaseLayout<T:BaseLayoutCore<Object>> extends Object implements IWH impleme
 	@:bindable public var wh: Point<Float> = new Point<Float>(0, 0);
 	@:bindable public var flipx: Bool = false;
 	@:bindable public var flipy: Bool = false;
+
 	public var w(link, set): Float = wh.x;
 	public var h(link, set): Float = wh.y;
+
 	public var layout(default, null): T;
+
 	public var size(get, never): Point<Float>;
+
 	public var mask: Bool;
 
 	public function new(layout: T, mask: Bool = false) {

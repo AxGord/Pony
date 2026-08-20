@@ -6,13 +6,13 @@ class Hashlink extends Section {
 
 	public var buildName: String = 'app';
 	public var buildDir: String = 'builds/';
-	public var outputDir: String;
-	public var outputFile: String;
 	public var assets: String = 'assets/';
-	public var libs: String;
-	public var win: String;
 	public var mac: Bool = true;
 	public var android: String = 'android/';
+	public var outputDir: String;
+	public var outputFile: String;
+	public var libs: String;
+	public var win: String;
 
 	public function new() super('hl');
 
@@ -61,12 +61,6 @@ class Hashlink extends Section {
 		return xml;
 	}
 
-	private function getOutputXml(name: String): Xml {
-		final output: Xml = 'output'.node(buildDir + name);
-		output.set('clean', '${true}');
-		return output;
-	}
-
 	public function needClean(): Bool return android != null;
 
 	public function getClean(): Xml {
@@ -83,6 +77,12 @@ class Hashlink extends Section {
 		androidNode.addChild(dir);
 		dir.set('rimraf', '${true}');
 		return clean;
+	}
+
+	private function getOutputXml(name: String): Xml {
+		final output: Xml = 'output'.node(buildDir + name);
+		output.set('clean', '${true}');
+		return output;
 	}
 
 }

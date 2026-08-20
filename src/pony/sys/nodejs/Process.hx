@@ -9,13 +9,13 @@ import pony.events.Signal1;
  */
 class Process extends pony.Logable implements pony.sys.IProcess implements pony.magic.HasSignal {
 
-	@:auto public var onComplete: Signal1<Int>;
-
 	public var runned(default, null): Bool = false;
 
+	@:auto public var onComplete: Signal1<Int>;
+
+	private var waitEnd: Bool = false;
 	private var runCmd: String;
 	private var keep: Bool;
-	private var waitEnd: Bool = false;
 	private var process: js.node.child_process.ChildProcess;
 
 	public function new(runCmd: String, keep: Bool = false) {
@@ -40,6 +40,12 @@ class Process extends pony.Logable implements pony.sys.IProcess implements pony.
 		process.removeAllListeners();
 		process = null;
 		return true;
+	}
+
+	override public function destroy(): Void {
+		kill();
+		super.destroy();
+		runCmd = null;
 	}
 
 	private function runProccess(): Void {
@@ -69,12 +75,6 @@ class Process extends pony.Logable implements pony.sys.IProcess implements pony.
 			runned = false;
 			eComplete.dispatch(code);
 		}
-	}
-
-	override public function destroy(): Void {
-		kill();
-		super.destroy();
-		runCmd = null;
 	}
 
 	public static function stderr(v: String): Void {

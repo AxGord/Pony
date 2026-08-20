@@ -17,22 +17,31 @@ import pony.ui.touch.starling.touchManager.touchInputs.NativeFlashTouchInput;
  */
 class TouchManager {
 
-	public static var GLOBAL(default, never): Dynamic = { object: 'Global' };
 	public static inline final MOUSE_ID: Int = 0;
 
+	public static var GLOBAL(default, never): Dynamic = { object: 'Global' };
+
 	private static final _objects: ObjectMap<Dynamic, Array<TouchListener>> = new ObjectMap<Dynamic, Array<TouchListener>>();
-
 	private static final _mouse: Touch = new Touch();
-
 	private static final _touches: Map<Int, Touch> = [];
+	private static final _gestureTouches: Map<Int, Touch> = [];
+	private static final _screens: Array<IHitTestSource> = [];
 
 	private static var _gesture: Bool = false;
-	private static final _gestureTouches: Map<Int, Touch> = [];
-
-	private static final _screens: Array<IHitTestSource> = [];
 	private static var _initialized: Bool = false;
-
 	private static var _lastDownEvent: TouchManagerEvent = null;
+
+	public static inline function removeScreen(hitTest: IHitTestSource): Void {
+		_screens.remove(hitTest);
+	}
+
+	public static inline function mouseWheel(d: Float): Void {
+		dispatch(_mouse.current, MouseWheel, true, _mouse, d);
+	}
+
+	public static inline function getLastDownEvent(): TouchManagerEvent {
+		return _lastDownEvent;
+	}
 
 	public static function init(): Void {
 		if (_initialized) return;
@@ -57,10 +66,6 @@ class TouchManager {
 		} else {
 			_screens.insert(pos, hitTest);
 		}
-	}
-
-	public static inline function removeScreen(hitTest: IHitTestSource): Void {
-		_screens.remove(hitTest);
 	}
 
 	public static function removeScreenByID(screenId: Int): Void {
@@ -277,10 +282,6 @@ class TouchManager {
 		}
 	}
 
-	public static inline function mouseWheel(d: Float): Void {
-		dispatch(_mouse.current, MouseWheel, true, _mouse, d);
-	}
-
 	// Dispatching:
 
 	private static function dispatch(
@@ -312,10 +313,6 @@ class TouchManager {
 		final copy = listeners.copy();
 		for (i in 0...copy.length) if (listeners.indexOf(copy[i]) != -1 && ((copy[i].types == null) || (copy[i].types.indexOf(type) != -1)))
 			copy[i].listener(event);
-	}
-
-	public static inline function getLastDownEvent(): TouchManagerEvent {
-		return _lastDownEvent;
 	}
 
 	private static function commonParent(chainA: Array<Dynamic>, chainB: Array<Dynamic>, depth: Int): Bool {
@@ -413,25 +410,21 @@ class TouchManager {
 
 private class Touch {
 
-	public var active: Dynamic;
-	public var current: Dynamic;
-
-	public var id: Int;
-
-	public var currentX: Float;
-	public var currentY: Float;
-
-	public var previousX: Float;
-	public var previousY: Float;
+	private static inline final SPEED_LIST_MAX_SIZE: Int = 5;
 
 	public var speedX: Float = 0;
 	public var speedY: Float = 0;
+	public var active: Dynamic;
+	public var current: Dynamic;
+	public var id: Int;
+	public var currentX: Float;
+	public var currentY: Float;
+	public var previousX: Float;
+	public var previousY: Float;
 
 	private final speedListX: Array<Float> = [];
 	private final speedListY: Array<Float> = [];
 	private final speedListTime: Array<Float> = [];
-
-	private static inline final SPEED_LIST_MAX_SIZE: Int = 5;
 
 	public function new() {}
 

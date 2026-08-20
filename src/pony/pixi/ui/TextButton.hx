@@ -15,12 +15,15 @@ import pony.ui.touch.pixi.Touchable;
  */
 class TextButton extends Sprite implements IWH {
 
-	public var core: ButtonImgN;
-	public var text(get, set): String;
 	public var btext(default, null): BTextLow;
+
+	public var text(get, set): String;
 	public var size(get, never): Point<Float>;
 
+	public var core: ButtonImgN;
+
 	private final color: Array<UColor>;
+
 	private var lines: Array<Graphics>;
 	private var prevline: Graphics;
 
@@ -76,20 +79,6 @@ class TextButton extends Sprite implements IWH {
 		core.onImg << imgHandler;
 	}
 
-	private function imgHandler(n: Int): Void {
-		n--;
-		if (n > color.length) n = color.length - 1;
-		btext.tint = color[n];
-
-		if (prevline != null) {
-			prevline.visible = false;
-			prevline = null;
-		}
-		if (lines[n] == null) return;
-		lines[n].visible = true;
-		prevline = lines[n];
-	}
-
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function get_text(): String return btext.text;
@@ -103,5 +92,19 @@ class TextButton extends Sprite implements IWH {
 	public inline function wait(cb: Void -> Void): Void btext.wait(cb);
 
 	public function destroyIWH(): Void destroy();
+
+	private function imgHandler(n: Int): Void {
+		n--;
+		if (n > color.length) n = color.length - 1;
+		btext.tint = color[n];
+
+		if (prevline != null) {
+			prevline.visible = false;
+			prevline = null;
+		}
+		if (lines[n] == null) return;
+		lines[n].visible = true;
+		prevline = lines[n];
+	}
 
 }

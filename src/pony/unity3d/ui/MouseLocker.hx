@@ -14,6 +14,7 @@ import unityengine.Vector3;
 @:nativeGen class MouseLocker extends MonoBehaviour {
 
 	public var panel: Bool = false;
+
 	@:meta(UnityEngine.HideInInspector)
 	private var prevState: Bool = false;
 

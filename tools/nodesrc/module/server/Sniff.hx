@@ -27,6 +27,13 @@ import types.SniffConfig;
 
 	public function init(): Void log('Sniff $cfg');
 
+	private inline function convertBytes(bi: BytesInput): BytesOutput {
+		final bo: BytesOutput = new BytesOutput();
+		final bt: Bytes = bi.readAll();
+		bo.write(bt);
+		return bo;
+	}
+
 	private function socketServerConnectHandler(a: ISocketClient): Void {
 		log('>> Connect');
 		a.logInputData = true;
@@ -42,12 +49,5 @@ import types.SniffConfig;
 	}
 
 	private function convertAndSend(client: ISocketClient, bi: BytesInput): Void client.send(convertBytes(bi));
-
-	private inline function convertBytes(bi: BytesInput): BytesOutput {
-		final bo: BytesOutput = new BytesOutput();
-		final bt: Bytes = bi.readAll();
-		bo.write(bt);
-		return bo;
-	}
 
 }

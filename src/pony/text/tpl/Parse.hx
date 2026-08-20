@@ -14,11 +14,6 @@ class Parse extends ParseBoy<TplContent> {
 
 	public static var VAR_SYMBOLS: String = 'qwertyuiopasdfghjklzxcvbnm1234567890-';
 
-	public static function parse(t: String, s: TplStyle): TplData {
-		final o: Parse = new Parse(t, s);
-		return o.data;
-	}
-
 	private final s: TplStyle;
 
 	public function new(t: String, s: TplStyle) {
@@ -44,6 +39,81 @@ class Parse extends ParseBoy<TplContent> {
 		this.s = s;
 		super(t, s.space);
 		searchOpen();
+	}
+
+	private inline function tag(): Bool {
+		var result: Bool = false;
+		skipSpace();
+		switch (gt([s.end, s.endClose, s.args.begin, s.args.set])) {
+			case 0:
+				final name: String = str();
+				final d: TplData = tagContent(name);
+				data.push(Tag({ name: parseName(name), arg: null, args: new Map<String, TplData>(), content: d }));
+				result = true;
+			case 1:
+				data.push(Tag({ name: parseName(str()), arg: null, args: new Map<String, TplData>(), content: null }));
+				result = true;
+			case 2:
+				final name: String = str();
+				var a: { args: Map<String, TplData>, closedTag: Bool } = args();
+				final d: TplData = a.closedTag ? null : tagContent(name);
+				data.push(Tag({ name: parseName(name), arg: null, args: a.args, content: d }));
+			case 3:
+				final name: String = str();
+				switch (gt([s.end, s.endClose, s.args.valueq], true)) {
+					case -2:
+						switch (gt([s.end, s.endClose, s.args.begin])) {
+							case 0:
+								final arg: TplData = parse(str(), s);
+								final d: TplData = tagContent(name);
+								data.push(Tag({ name: parseName(name), arg: arg, args: new Map<String, TplData>(), content: d }));
+							case 1:
+								final arg: TplData = parse(str(), s);
+								data.push(Tag({ name: parseName(name), arg: arg, args: new Map<String, TplData>(), content: null }));
+							case 2:
+								final arg: TplData = parse(str(), s);
+								var a: { args: Map<String, TplData>, closedTag: Bool } = args();
+								final d: TplData = a.closedTag ? null : tagContent(name);
+								data.push(Tag({ name: parseName(name), arg: arg, args: a.args, content: d }));
+							case _:
+								throw 'Oops';
+						}
+					/*
+					case 0:
+						if (s.args.qalltime)
+							throw '["] - not found';
+						var st:String = str();
+						var arg:TplData = parse(st, s);
+						var d:TplData = tagContent(name);
+						data.push(Tag({name: parseName(name), arg: arg, args: new Hash<TplData>(), content: d}));
+
+					case 1:
+						throw 'todo';
+					 */
+					case 2:
+						if (gt([s.args.valueq]) == -1) throw '["] - not closed';
+						final arg: TplData = parse(str(), s);
+						switch (gt([s.end, s.endClose, s.args.begin])) {
+							case 0:
+								final d: TplData = tagContent(name);
+								data.push(Tag({ name: parseName(name), arg: arg, args: new Map<String, TplData>(), content: d }));
+							case 1:
+								data.push(Tag({ name: parseName(name), arg: arg, args: new Map<String, TplData>(), content: null }));
+							case 2:
+								var a: { args: Map<String, TplData>, closedTag: Bool } = args();
+								final d: TplData = a.closedTag ? null : tagContent(name);
+								data.push(Tag({ name: parseName(name), arg: arg, args: a.args, content: d }));
+							case _:
+								throw 'Oops';
+						}
+					case _:
+						throw 'Oops';
+				}
+				result = true;
+			case _:
+				trace('end tag');
+		}
+		return result;
 	}
 
 	private function searchOpen(closed: Bool = false): Void {
@@ -169,81 +239,6 @@ class Parse extends ParseBoy<TplContent> {
 		return { up: lvl, name: a };
 	}
 
-	private inline function tag(): Bool {
-		var result: Bool = false;
-		skipSpace();
-		switch (gt([s.end, s.endClose, s.args.begin, s.args.set])) {
-			case 0:
-				final name: String = str();
-				final d: TplData = tagContent(name);
-				data.push(Tag({ name: parseName(name), arg: null, args: new Map<String, TplData>(), content: d }));
-				result = true;
-			case 1:
-				data.push(Tag({ name: parseName(str()), arg: null, args: new Map<String, TplData>(), content: null }));
-				result = true;
-			case 2:
-				final name: String = str();
-				var a: { args: Map<String, TplData>, closedTag: Bool } = args();
-				final d: TplData = a.closedTag ? null : tagContent(name);
-				data.push(Tag({ name: parseName(name), arg: null, args: a.args, content: d }));
-			case 3:
-				final name: String = str();
-				switch (gt([s.end, s.endClose, s.args.valueq], true)) {
-					case -2:
-						switch (gt([s.end, s.endClose, s.args.begin])) {
-							case 0:
-								final arg: TplData = parse(str(), s);
-								final d: TplData = tagContent(name);
-								data.push(Tag({ name: parseName(name), arg: arg, args: new Map<String, TplData>(), content: d }));
-							case 1:
-								final arg: TplData = parse(str(), s);
-								data.push(Tag({ name: parseName(name), arg: arg, args: new Map<String, TplData>(), content: null }));
-							case 2:
-								final arg: TplData = parse(str(), s);
-								var a: { args: Map<String, TplData>, closedTag: Bool } = args();
-								final d: TplData = a.closedTag ? null : tagContent(name);
-								data.push(Tag({ name: parseName(name), arg: arg, args: a.args, content: d }));
-							case _:
-								throw 'Oops';
-						}
-					/*
-					case 0:
-						if (s.args.qalltime)
-							throw '["] - not found';
-						var st:String = str();
-						var arg:TplData = parse(st, s);
-						var d:TplData = tagContent(name);
-						data.push(Tag({name: parseName(name), arg: arg, args: new Hash<TplData>(), content: d}));
-
-					case 1:
-						throw 'todo';
-					 */
-					case 2:
-						if (gt([s.args.valueq]) == -1) throw '["] - not closed';
-						final arg: TplData = parse(str(), s);
-						switch (gt([s.end, s.endClose, s.args.begin])) {
-							case 0:
-								final d: TplData = tagContent(name);
-								data.push(Tag({ name: parseName(name), arg: arg, args: new Map<String, TplData>(), content: d }));
-							case 1:
-								data.push(Tag({ name: parseName(name), arg: arg, args: new Map<String, TplData>(), content: null }));
-							case 2:
-								var a: { args: Map<String, TplData>, closedTag: Bool } = args();
-								final d: TplData = a.closedTag ? null : tagContent(name);
-								data.push(Tag({ name: parseName(name), arg: arg, args: a.args, content: d }));
-							case _:
-								throw 'Oops';
-						}
-					case _:
-						throw 'Oops';
-				}
-				result = true;
-			case _:
-				trace('end tag');
-		}
-		return result;
-	}
-
 	private function args(): { args: Map<String, TplData>, closedTag: Bool } {
 		final args: Map<String, TplData> = [];
 		while (true) {
@@ -340,6 +335,11 @@ class Parse extends ParseBoy<TplContent> {
 		final p: Int = pos - lengthGoto;
 		pos = beforeGoto;
 		return p;
+	}
+
+	public static function parse(t: String, s: TplStyle): TplData {
+		final o: Parse = new Parse(t, s);
+		return o.data;
 	}
 
 }

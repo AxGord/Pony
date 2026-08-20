@@ -25,7 +25,9 @@ abstract Interval<T:Dynamic>(Pair<T, T>) {
 
 	private inline function get_range(): Float return MathTools.range(min, max);
 
-	@:from private static inline function fromPair<V>(p: Pair<V, V>): Interval<V> return new Interval<V>(p);
+	@:to public inline function toString(): String return '$min ... $max';
+
+	public inline function includes(v: T): Bool return (v: Float) >= (min: Float) && (v: Float) <= (max: Float);
 
 	@:to private inline function toPair(): Pair<T, T> return this;
 
@@ -36,12 +38,10 @@ abstract Interval<T:Dynamic>(Pair<T, T>) {
 		return a.length > 1 ? create(StringTools.trim(a[0]), StringTools.trim(a[1])) : create(null, StringTools.trim(a[0]));
 	}
 
-	@:to public inline function toString(): String return '$min ... $max';
+	@:from private static inline function fromPair<V>(p: Pair<V, V>): Interval<V> return new Interval<V>(p);
 
 	@:from private static inline function fromInterator(it: IntIterator): Interval<Int> return create(it.field('min'), it.field('max'));
 
 	@:from private static inline function fromInteratorF(it: IntIterator): Interval<Float> return create(it.field('min'), it.field('max'));
-
-	public inline function includes(v: T): Bool return (v: Float) >= (min: Float) && (v: Float) <= (max: Float);
 
 }

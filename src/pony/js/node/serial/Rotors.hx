@@ -48,14 +48,14 @@ class RotorsObj {
 		];
 	}
 
-	private function updateHandler(): Void {
-		DeltaTime.fixedUpdate < push;
-	}
-
 	public function push(): Void {
 		final bo = new BytesOutput();
 		for (r in rotors) r.writeState(bo);
 		serial.write(bo);
+	}
+
+	private function updateHandler(): Void {
+		DeltaTime.fixedUpdate < push;
 	}
 
 }
@@ -65,10 +65,9 @@ class Rotor extends Tumbler {
 	public static inline final HALF: Int = 130;
 	public static inline final MAX: Int = 255;
 
-	@:auto public var onUpdate: Signal0;
-
 	@:bindable public var back: Bool = false;
 	@:bindable public var max: Bool = false;
+	@:auto public var onUpdate: Signal0;
 
 	public function new() {
 		super(false);

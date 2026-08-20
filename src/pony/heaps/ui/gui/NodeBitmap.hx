@@ -36,6 +36,11 @@ final class NodeBitmap extends Node {
 		changeTint << updateColor;
 	}
 
+	override public function destroy(): Void {
+		super.destroy();
+		@:nullSafety(Off) bitmap = null;
+	}
+
 	private function updateScales(): Void {
 		bitmap.scaleX = w / bitmap.tile.width;
 		if (flipx) bitmap.scaleX = -bitmap.scaleX;
@@ -46,11 +51,6 @@ final class NodeBitmap extends Node {
 
 	private function updateColor(v: Vector): Void {
 		bitmap.color = v;
-	}
-
-	override public function destroy(): Void {
-		super.destroy();
-		@:nullSafety(Off) bitmap = null;
 	}
 
 }

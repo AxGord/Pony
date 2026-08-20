@@ -32,6 +32,18 @@ class TextTable extends TextTableCore {
 		create();
 	}
 
+	public function destroy(): Void {
+		for (t in texts) {
+			target.removeChild(t);
+			t.destroy();
+		}
+		texts = null;
+		target.removeChild(graphics);
+		graphics.destroy();
+		graphics = null;
+		target = null;
+	}
+
 	private function create(): Void {
 		texts = [];
 	}
@@ -87,18 +99,6 @@ class TextTable extends TextTableCore {
 		}
 		graphics.clear();
 		create();
-	}
-
-	public function destroy(): Void {
-		for (t in texts) {
-			target.removeChild(t);
-			t.destroy();
-		}
-		texts = null;
-		target.removeChild(graphics);
-		graphics.destroy();
-		graphics = null;
-		target = null;
 	}
 
 }

@@ -17,14 +17,14 @@ import pony.ui.xml.PixiXmlUi;
 @:ui('app.xml')
 class SimpleXmlApp extends PixiXmlUi {
 
-	@:auto private var onLoaded: Signal0;
-	private final parentDomId: String;
-	private var preloader: SpinLoader;
-	private var momentalLoad: Bool = false;
-
 	private static final assetsForLoadPath: String = '';
 
 	private final assetsForLoad: Array<String> = null;
+	private final parentDomId: String;
+
+	private var momentalLoad: Bool = false;
+	@:auto private var onLoaded: Signal0;
+	private var preloader: SpinLoader;
 
 	public function new(?parentDomId: String) {
 		super();

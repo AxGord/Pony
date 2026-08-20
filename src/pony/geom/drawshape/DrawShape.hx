@@ -24,8 +24,14 @@ class DrawShape extends pony.Logable #if pony_experimental implements pony.magic
 	@:auto public var onPathDrawRemove: Signal0;
 	@:auto public var onStoreDraw: Signal2<DrawShapePointerData, DrawShapePointerData>;
 	@:auto public var onStoreClear: Signal0;
-
 	@:auto public var onFinishShape: Signal1<Array<IntPoint>>;
+
+	private var shape: Array<IntPoint> = [];
+	private var pointer: DrawShapePointer;
+	private var downPointData: DrawShapePointerData;
+	private var downPointTouch: Touch;
+	private var targetPointData: DrawShapePointerData;
+	private var targetPointTouch: Touch;
 
 	#if pony_experimental
 	@:auto public var onDrawFinishShape: Signal1<Array<Point<Float>>>;
@@ -34,15 +40,9 @@ class DrawShape extends pony.Logable #if pony_experimental implements pony.magic
 	#else
 	public var onDrawFinishShape(default, null): Signal1<Array<Point<Float>>>;
 	public var onDrawFinishPolygon(default, null): Signal1<Array<Float>>;
+
 	public var onFinishBinary: Signal1<Bytes>;
 	#end
-
-	private var pointer: DrawShapePointer;
-	private var downPointData: DrawShapePointerData;
-	private var downPointTouch: Touch;
-	private var targetPointData: DrawShapePointerData;
-	private var targetPointTouch: Touch;
-	private var shape: Array<IntPoint> = [];
 
 	public function new(pointer: DrawShapePointer) {
 		super();
@@ -53,55 +53,6 @@ class DrawShape extends pony.Logable #if pony_experimental implements pony.magic
 		onFinishBinary = onFinishShape.convert1(shapeToBytes);
 		#end
 	}
-
-	#if pony_experimental
-	@:listen(onFinishShape, eDrawFinishShape.empty == false)
-	private function drawFinishShape(points: Array<IntPoint>): Void {
-		eDrawFinishShape.dispatch(points.map(pointer.convertPoint));
-	}
-
-	@:listen(onDrawFinishShape, eDrawFinishPolygon.empty == false)
-	private function drawFinishPolygon(points: Array<Point<Float>>): Void {
-		final result: Array<Float> = [];
-		for (v in points) {
-			result.push(v.x);
-			result.push(v.y);
-		}
-		result.push(points[0].x);
-		result.push(points[0].y);
-		eDrawFinishPolygon.dispatch(result);
-	}
-
-	@:listen(onFinishShape, eFinishBinary.empty == false)
-	private function finishBinary(points: Array<IntPoint>): Void {
-		final b: BytesOutput = new BytesOutput();
-		for (v in points) b.writeByte(Byte.create(v.x, v.y));
-		log('Bytes size: ${b.length}');
-		eFinishBinary.dispatch(b.getBytes());
-	}
-	#else
-	private function convertPoints(e: Event1<Array<Point<Float>>>, p: Array<IntPoint>): Void {
-		e.dispatch(p.map(pointer.convertPoint));
-	}
-
-	private function pointsToPolygon(e: Event1<Array<Float>>, p: Array<Point<Float>>): Void {
-		final r: Array<Float> = [];
-		for (v in p) {
-			r.push(v.x);
-			r.push(v.y);
-		}
-		r.push(p[0].x);
-		r.push(p[0].y);
-		e.dispatch(r);
-	}
-
-	private function shapeToBytes(e: Event1<Bytes>, p: Array<IntPoint>): Void {
-		final b = new BytesOutput();
-		for (v in p) b.writeByte(Byte.create(v.x, v.y));
-		log('Bytes size: ${b.length}');
-		e.dispatch(b.getBytes());
-	}
-	#end
 
 	public function reset(): Void {
 		shape = [];
@@ -119,6 +70,15 @@ class DrawShape extends pony.Logable #if pony_experimental implements pony.magic
 		removeDrawListeners();
 		removeStartListeners();
 	}
+
+	#if pony_experimental
+	override public function destroy(): Void {
+		unlisten();
+		super.destroy();
+	}
+	#end
+
+	private inline function eq3<T>(a: T, b: T, c: T): Bool return a == b && b == c;
 
 	private function stopListenDownTouch(): Void {
 		if (downPointTouch != null) {
@@ -222,8 +182,6 @@ class DrawShape extends pony.Logable #if pony_experimental implements pony.magic
 		return false;
 	}
 
-	private inline function eq3<T>(a: T, b: T, c: T): Bool return a == b && b == c;
-
 	private function store(t: Touch): Void {
 		var psh: IntPoint = null;
 		var sh: IntPoint = null;
@@ -288,9 +246,51 @@ class DrawShape extends pony.Logable #if pony_experimental implements pony.magic
 	}
 
 	#if pony_experimental
-	override public function destroy(): Void {
-		unlisten();
-		super.destroy();
+	@:listen(onFinishShape, eDrawFinishShape.empty == false)
+	private function drawFinishShape(points: Array<IntPoint>): Void {
+		eDrawFinishShape.dispatch(points.map(pointer.convertPoint));
+	}
+
+	@:listen(onDrawFinishShape, eDrawFinishPolygon.empty == false)
+	private function drawFinishPolygon(points: Array<Point<Float>>): Void {
+		final result: Array<Float> = [];
+		for (v in points) {
+			result.push(v.x);
+			result.push(v.y);
+		}
+		result.push(points[0].x);
+		result.push(points[0].y);
+		eDrawFinishPolygon.dispatch(result);
+	}
+
+	@:listen(onFinishShape, eFinishBinary.empty == false)
+	private function finishBinary(points: Array<IntPoint>): Void {
+		final b: BytesOutput = new BytesOutput();
+		for (v in points) b.writeByte(Byte.create(v.x, v.y));
+		log('Bytes size: ${b.length}');
+		eFinishBinary.dispatch(b.getBytes());
+	}
+	#else
+	private function convertPoints(e: Event1<Array<Point<Float>>>, p: Array<IntPoint>): Void {
+		e.dispatch(p.map(pointer.convertPoint));
+	}
+
+	private function pointsToPolygon(e: Event1<Array<Float>>, p: Array<Point<Float>>): Void {
+		final r: Array<Float> = [];
+		for (v in p) {
+			r.push(v.x);
+			r.push(v.y);
+		}
+		r.push(p[0].x);
+		r.push(p[0].y);
+		e.dispatch(r);
+	}
+
+	private function shapeToBytes(e: Event1<Bytes>, p: Array<IntPoint>): Void {
+		final b = new BytesOutput();
+		for (v in p) b.writeByte(Byte.create(v.x, v.y));
+		log('Bytes size: ${b.length}');
+		e.dispatch(b.getBytes());
 	}
 	#end
 

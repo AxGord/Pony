@@ -19,10 +19,6 @@ class NativeFlashDisplayFactory implements IDisplayFactory {
 		if (_instance != null) throw 'Singletone creation error';
 	}
 
-	public static function getInstance(): NativeFlashDisplayFactory {
-		return _instance;
-	}
-
 	public function createSprite(): IDisplayObjectContainer {
 		return cast new Sprite();
 	}
@@ -37,6 +33,10 @@ class NativeFlashDisplayFactory implements IDisplayFactory {
 
 	public function createMovieClip(): IMovieClip {
 		return cast new MovieClip();
+	}
+
+	public static function getInstance(): NativeFlashDisplayFactory {
+		return _instance;
 	}
 
 }

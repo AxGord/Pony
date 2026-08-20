@@ -19,6 +19,7 @@ using hugs.HUGSWrapper;
 @:nativeGen class Helper extends MonoBehaviour {
 
 	public static var main: MonoBehaviour;
+
 	#if touchscript
 	public static var touchDown: Bool;
 	public static var doubleDown: Bool;
@@ -42,22 +43,6 @@ using hugs.HUGSWrapper;
 		#end
 	}
 
-	#if touchscript
-	private static function down(_, _): Void {
-		// trace('down');
-		prevX = Input.mousePosition.x;
-		prevY = Input.mousePosition.y;
-		if (touchDown) doubleDown = true;
-		touchDown = true;
-	}
-
-	private static function up(_, _): Void {
-		// trace('up');
-		doubleDown = false;
-		touchDown = false;
-	}
-	#end
-
 	/*
 	private function log(v:Dynamic, ?pos:PosInfos):Void {
 
@@ -75,6 +60,22 @@ using hugs.HUGSWrapper;
 	}
 	#else
 	private function Update(): Void DeltaTime.fixedDispatch();
+	#end
+
+	#if touchscript
+	private static function down(_, _): Void {
+		// trace('down');
+		prevX = Input.mousePosition.x;
+		prevY = Input.mousePosition.y;
+		if (touchDown) doubleDown = true;
+		touchDown = true;
+	}
+
+	private static function up(_, _): Void {
+		// trace('up');
+		doubleDown = false;
+		touchDown = false;
+	}
 	#end
 
 }

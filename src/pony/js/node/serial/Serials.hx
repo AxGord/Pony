@@ -11,11 +11,11 @@ class Serials extends Logable {
 
 	@:auto public var onConnect: Signal2<String, SerialPort>;
 
-	private var list: Map<String, SerialId>;
-	private var cfg: SerialPortConfig;
 	private var founded: Array<String> = [];
 	private var created: Array<String> = [];
 	private var timer: Timer = new Timer('3s', -1);
+	private var list: Map<String, SerialId>;
+	private var cfg: SerialPortConfig;
 
 	public function new(list: Map<String, SerialId>, ?cfg: SerialPortConfig) {
 		super();
@@ -25,6 +25,17 @@ class Serials extends Logable {
 		this.cfg = cfg;
 		timer.complete << updateList;
 		Timer.delay(100, updateList);
+	}
+
+	public function destroy(): Void {
+		// todo destroy created serial ports?
+		destroySignals();
+		timer.destroy();
+		timer = null;
+		list = [];
+		founded = [];
+		created = [];
+		cfg = null;
 	}
 
 	private function updateList(): Void {
@@ -66,17 +77,6 @@ class Serials extends Logable {
 		created.remove(port.id.comName);
 		port.destroy();
 		updateTimerState();
-	}
-
-	public function destroy(): Void {
-		// todo destroy created serial ports?
-		destroySignals();
-		timer.destroy();
-		timer = null;
-		list = [];
-		founded = [];
-		created = [];
-		cfg = null;
 	}
 
 }

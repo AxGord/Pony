@@ -13,18 +13,26 @@ import pony.time.DeltaTime;
 class Bar extends MovieClip implements FLStage implements HasSignal {
 
 	#if !starling
-	@:stage private var bar: MovieClip;
-
-	private var total: Float;
-
 	public var value(default, set): Float = 0;
+
 	@:auto public var onComplete: Signal1<Float>;
 	@:auto public var onDynamic: Signal1<Float>;
+
+	@:stage private var bar: MovieClip;
+	private var total: Float;
 
 	public function new() {
 		super();
 		DeltaTime.fixedUpdate.once(init, -1);
 		addEventListener(MouseEvent.CLICK, clickHandler);
+	}
+
+	public function set_value(v: Float): Float {
+		if (value == v) return v;
+		eDynamic.dispatch(v);
+		eComplete.dispatch(v);
+		bar.width = v * total;
+		return value = v;
 	}
 
 	private function clickHandler(_): Void {
@@ -34,14 +42,6 @@ class Bar extends MovieClip implements FLStage implements HasSignal {
 	private function init(): Void {
 		total = width;
 		bar.width = 0;
-	}
-
-	public function set_value(v: Float): Float {
-		if (value == v) return v;
-		eDynamic.dispatch(v);
-		eComplete.dispatch(v);
-		bar.width = v * total;
-		return value = v;
 	}
 	#end
 

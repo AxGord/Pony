@@ -14,23 +14,12 @@ class TouchableTouch {
 
 	private static var inited: Bool = false;
 
-	public static function init(): Void {
-		if (inited) return;
-		inited = true;
-		Touch.init();
-		Touch.onMove << globalTouchMoveHandler;
-	}
-
-	private static function globalTouchMoveHandler(e: TouchObj): Void {
-		TouchableBase.dispatchMove(e.id, e.x, e.y);
-	}
-
-	private var obj: Container;
-	private var base: TouchableBase;
 	private var touchId: Null<UInt> = null;
 	private var over: Bool = false;
 	private var down: Bool = false;
 	private var needCancle: Bool = false;
+	private var obj: Container;
+	private var base: TouchableBase;
 
 	public function new(obj: Container, base: TouchableBase) {
 		init();
@@ -44,8 +33,6 @@ class TouchableTouch {
 		Browser.window.addEventListener('orientationchange', orientationchangeHandler, true);
 	}
 
-	private function orientationchangeHandler(): Void lost(touchId);
-
 	public function destroy(): Void {
 		if (touchId != null) lost(touchId);
 		obj.removeListener('touchstart', touchBeginHandler);
@@ -58,6 +45,16 @@ class TouchableTouch {
 		base = null;
 	}
 
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function unlock(t: UInt): Void touchId = null;
+
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function isNotLock(t: UInt): Bool return touchId == null || touchId == t;
+
+	private function orientationchangeHandler(): Void lost(touchId);
+
 	private function outsideHandler(e: InteractionEvent): Void {
 		if (isLock(untyped e.data.identifier)) return;
 		lost(untyped e.data.identifier);
@@ -68,14 +65,6 @@ class TouchableTouch {
 		touchId = t;
 		return false;
 	}
-
-	@SuppressWarnings('checkstyle:MagicNumber')
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function unlock(t: UInt): Void touchId = null;
-
-	@SuppressWarnings('checkstyle:MagicNumber')
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function isNotLock(t: UInt): Bool return touchId == null || touchId == t;
 
 	private function touchBeginHandler(e: InteractionEvent): Void {
 		if (isLock(untyped e.data.identifier)) return;
@@ -139,6 +128,17 @@ class TouchableTouch {
 		base.dispatchOutDown(id);
 		base.dispatchOutUp(id);
 		unlock(id);
+	}
+
+	public static function init(): Void {
+		if (inited) return;
+		inited = true;
+		Touch.init();
+		Touch.onMove << globalTouchMoveHandler;
+	}
+
+	private static function globalTouchMoveHandler(e: TouchObj): Void {
+		TouchableBase.dispatchMove(e.id, e.x, e.y);
 	}
 
 }

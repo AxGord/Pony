@@ -17,6 +17,8 @@ abstract Temp(Float) {
 
 	private inline function get_c(): Float return this - 273.15;
 
+	@:to private inline function toString(): String return c + 'C';
+
 	@:from public static inline function fromK(k: Float): Temp return new Temp(k);
 
 	public static inline function fromC(c: Float): Temp return new Temp(c + 273.15);
@@ -31,7 +33,5 @@ abstract Temp(Float) {
 			case _: throw 'Unknown temp measure';
 		}
 	}
-
-	@:to private inline function toString(): String return c + 'C';
 
 }

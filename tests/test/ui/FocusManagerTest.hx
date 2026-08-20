@@ -22,9 +22,10 @@ class FocusManagerTest {
 
 class Element implements IFocus implements HasSignal {
 
-	@:auto public var onFocus: Signal1<Bool>;
 	public var focusPriority(default, null): Int = 0;
 	public var focusGroup(default, null): String = 'default';
+
+	@:auto public var onFocus: Signal1<Bool>;
 
 	public function new() {
 		FocusManager.reg(this);

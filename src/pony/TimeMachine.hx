@@ -9,14 +9,21 @@ import pony.Tools;
 class TimeMachine<T> {
 
 	public var state(default, null): T;
+
 	public var canUndo(get, never): Bool;
-	private var states: Array<T> = [];
+
 	private final defaultState: T;
+
+	private var states: Array<T> = [];
 
 	public function new(def: T) {
 		defaultState = def;
 		reset();
 	}
+
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function get_canUndo(): Bool return states.length > 0;
 
 	public dynamic function copy(o: T): T return Tools.clone(o);
 
@@ -37,10 +44,6 @@ class TimeMachine<T> {
 	public dynamic function onNotCanUndo(): Void {}
 
 	public dynamic function onState(): Void {}
-
-	@SuppressWarnings('checkstyle:MagicNumber')
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function get_canUndo(): Bool return states.length > 0;
 
 	public function push(): Void {
 		states.push(copy(state));

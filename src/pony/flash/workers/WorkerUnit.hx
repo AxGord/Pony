@@ -27,15 +27,6 @@ class WorkerUnit implements HasAbstract implements IWorkerGatePool {
 		// Lib.current.stage.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, handleGlobalErrors);
 	}
 
-	/*
-		private function handleGlobalErrors( evt : UncaughtErrorEvent ):Void
-		{
-			evt.preventDefault();
-			_log.request('error!');
-		}
-	 */
-	private function log(s: String, ?p: PosInfos): Void _log.request((p != null ? p.fileName + ':' + p.lineNumber + ': ' : '') + s);
-
 	public function _registerOutput<T1, T2>(name: String, response: T2 -> Void, unlock: Void -> Void): T1 -> Void {
 		var commandChannel: MessageChannel = Worker.current.getSharedProperty('response2_' + name);
 		commandChannel.addEventListener(Event.CHANNEL_MESSAGE, function(event: Event): Void {
@@ -74,5 +65,14 @@ class WorkerUnit implements HasAbstract implements IWorkerGatePool {
 		}
 		return cb;
 	}
+
+	/*
+		private function handleGlobalErrors( evt : UncaughtErrorEvent ):Void
+		{
+			evt.preventDefault();
+			_log.request('error!');
+		}
+	 */
+	private function log(s: String, ?p: PosInfos): Void _log.request((p != null ? p.fileName + ':' + p.lineNumber + ': ' : '') + s);
 
 }

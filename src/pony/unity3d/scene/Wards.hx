@@ -19,20 +19,21 @@ using hugs.HUGSWrapper;
  */
 @:nativeGen class Wards extends MonoBehaviour implements IWards<Wards> {
 
+	public var change(default, null): Signal1<Wards, Int>;
+	public var changed(default, null): Signal;
+
 	public var withRotation: Bool = true;
 	public var withTimeScale: Bool = true;
 	public var speed: Single = 200;
 	public var currentPos: Int = 0;
-	public var change(default, null): Signal1<Wards, Int>;
-	public var changed(default, null): Signal;
-
 	public var target: GameObject;
 	public var wards: Array<Transform>;
+
+	@:meta(UnityEngine.HideInInspector)
+	private var rn: Single = 0;
 	private var toN: Null<Int>;
 	@:meta(UnityEngine.HideInInspector)
 	private var toObj: Transform;
-	@:meta(UnityEngine.HideInInspector)
-	private var rn: Single = 0;
 
 	public function new(): Void {
 		super();
@@ -40,6 +41,8 @@ using hugs.HUGSWrapper;
 		change.add(changeHandler);
 		changed = new Signal(this);
 	}
+
+	public inline function goto(n: Int): Void change.dispatch(n);
 
 	public function Start(): Void {
 		if (target == null) target = gameObject.getChildGameObject('obj');
@@ -68,8 +71,6 @@ using hugs.HUGSWrapper;
 		if (currentPos < 0) currentPos = 0;
 		toObj = wards[currentPos];
 	}
-
-	public inline function goto(n: Int): Void change.dispatch(n);
 
 	public function Update(): Void {
 		if (toObj == null) return;

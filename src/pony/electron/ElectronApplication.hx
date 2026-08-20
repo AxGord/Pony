@@ -46,11 +46,7 @@ class ElectronApplication extends VSTraceHelper implements HasAbstract {
 		App.commandLine.appendSwitch('disable-software-rasterizer');
 	}
 
-	private function readyHandler(_): Void init();
-
-	private function init(): Void createMainWindow();
-
-	@:abstract private function createMainWindow(): Void;
+	public inline function mapCloseWindow(map: Map<String, String>): Void return closeWindow(map['name']);
 
 	public function createWindow(url: String, ?id: String, ?opt): BrowserWindow {
 		if (id == null) id = url;
@@ -78,16 +74,6 @@ class ElectronApplication extends VSTraceHelper implements HasAbstract {
 		windows.remove(id);
 	}
 
-	private function closeAllHandler(_): Void {
-		log('All windows closed, exit');
-		App.quit();
-	}
-
-	private function activateHandler(_): Void {
-		log('Activate');
-		if (windows.count() == 0) createMainWindow();
-	}
-
 	public function mapCreateWindow(map: Map<String, String>, ?id: String): BrowserWindow {
 		final frame: Bool = !TextTools.isFalse(map['frame']);
 		return createWindow(
@@ -102,6 +88,20 @@ class ElectronApplication extends VSTraceHelper implements HasAbstract {
 		);
 	}
 
-	public inline function mapCloseWindow(map: Map<String, String>): Void return closeWindow(map['name']);
+	private function readyHandler(_): Void init();
+
+	private function init(): Void createMainWindow();
+
+	@:abstract private function createMainWindow(): Void;
+
+	private function closeAllHandler(_): Void {
+		log('All windows closed, exit');
+		App.quit();
+	}
+
+	private function activateHandler(_): Void {
+		log('Activate');
+		if (windows.count() == 0) createMainWindow();
+	}
 
 }

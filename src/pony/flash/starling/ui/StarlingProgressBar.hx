@@ -14,11 +14,10 @@ import starling.textures.TextureSmoothing;
 class StarlingProgressBar extends Sprite {
 
 	@:isVar public var auto(default, set): Void -> Float;
+	@:isVar public var value(default, set): Float;
 
 	private final bar: DisplayObject;
 	private final total: Float;
-
-	@:isVar public var value(default, set): Float;
 
 	public function new(source: Sprite) {
 		super();

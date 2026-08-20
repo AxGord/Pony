@@ -18,8 +18,9 @@ using pony.text.XmlTools;
 
 	private static inline final PRIORITY: Int = 6;
 
-	private var hash: Null<String> = null;
 	private final usedFiles: Map<String, Bytes> = [];
+
+	private var hash: Null<String> = null;
 
 	public function new() super('template');
 

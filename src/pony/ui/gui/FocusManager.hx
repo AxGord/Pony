@@ -9,8 +9,6 @@ import pony.Priority;
  */
 class FocusManager {
 
-	private static final list: Map<String, Priority<IFocus>> = [];
-
 	/**
 	 * Current focused element.
 	 */
@@ -20,6 +18,18 @@ class FocusManager {
 	 * Priority list for current group.
 	 */
 	public static var p(get, never): Priority<IFocus>;
+
+	private static final list: Map<String, Priority<IFocus>> = [];
+
+	private static inline function get_p(): Priority<IFocus> return list[current.focusGroup];
+
+	/**
+	 * Select group.
+	 * @param	name group name.
+	 */
+	public static inline function selectGroup(name: String = ''): Void {
+		list[name].first.focus();
+	}
 
 	/**
 	 * Register element for focus control.
@@ -45,23 +55,6 @@ class FocusManager {
 		o.onFocus + o >> newFocus;
 	}
 
-	private static function newFocus(b: Bool, o: IFocus): Void {
-		if (b) {
-			if (current != null) current.unfocus();
-			current = o;
-			p.reloop(o);
-		} else if (current == o)
-			current = null;
-	}
-
-	/**
-	 * Select group.
-	 * @param	name group name.
-	 */
-	public static inline function selectGroup(name: String = ''): Void {
-		list[name].first.focus();
-	}
-
 	/**
 	 * Select next element in current group.
 	 * @return current focused element.
@@ -84,6 +77,13 @@ class FocusManager {
 		return e;
 	}
 
-	private static inline function get_p(): Priority<IFocus> return list[current.focusGroup];
+	private static function newFocus(b: Bool, o: IFocus): Void {
+		if (b) {
+			if (current != null) current.unfocus();
+			current = o;
+			p.reloop(o);
+		} else if (current == o)
+			current = null;
+	}
 
 }

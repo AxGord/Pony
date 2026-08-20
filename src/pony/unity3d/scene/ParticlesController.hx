@@ -14,29 +14,11 @@ class ParticlesController extends MonoBehaviour {
 	private static inline final playAfter: Float = 0;
 	private static inline final stopAfter: Float = 0;
 	private static inline final abortAfter: Float = 0;
-
 	private static inline final playOnAwake: Bool = true;
 
 	private var playTimer: DTimer;
 	private var stopTimer: DTimer;
 	private var abortTimer: DTimer;
-
-	private function Start(): Void {
-		abort();
-		if (playAfter > 0) {
-			playTimer = DTimer.createTimer(Time.fromFloat(playAfter * 1000));
-			playTimer.complite << playNow;
-		}
-		if (stopAfter > 0) {
-			stopTimer = DTimer.createTimer(Time.fromFloat(stopAfter * 1000));
-			stopTimer.complite << stop;
-		}
-		if (abortAfter > 0) {
-			abortTimer = DTimer.createTimer(Time.fromFloat(abortAfter * 1000));
-			abortTimer.complite << abort;
-		}
-		if (playOnAwake) play();
-	}
 
 	public function play(?dt: DT): Void {
 		if (playTimer != null)
@@ -81,6 +63,23 @@ class ParticlesController extends MonoBehaviour {
 			particleSystem.Clear();
 		else
 			particleEmitter.ClearParticles();
+	}
+
+	private function Start(): Void {
+		abort();
+		if (playAfter > 0) {
+			playTimer = DTimer.createTimer(Time.fromFloat(playAfter * 1000));
+			playTimer.complite << playNow;
+		}
+		if (stopAfter > 0) {
+			stopTimer = DTimer.createTimer(Time.fromFloat(stopAfter * 1000));
+			stopTimer.complite << stop;
+		}
+		if (abortAfter > 0) {
+			abortTimer = DTimer.createTimer(Time.fromFloat(abortAfter * 1000));
+			abortTimer.complite << abort;
+		}
+		if (playOnAwake) play();
 	}
 
 }

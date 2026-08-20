@@ -16,21 +16,18 @@ using pony.Tools;
  */
 class StarlingMusicPlayer extends StarlingSongPlayer {
 
-	private var song: DisplayObject;
+	private final songList: List<DisplayObject> = new List();
 	private final _b: StarlingButton;
 	private final _tTitle: TextField;
 	private final _tTime: TextField;
+	private final source: Sprite;
 
+	private var song: DisplayObject;
 	private var songClass: Class<DisplayObject>;
-
 	private var beginPoint: Point<Float>;
 	private var songHeight: Float;
 	private var sw: SwitchableList;
-
-	private final songList: List<DisplayObject> = new List();
 	private var currentList: Array<SongInfo>;
-
-	private final source: Sprite;
 
 	override public function new(source: Sprite) {
 		super(source);
@@ -40,16 +37,6 @@ class StarlingMusicPlayer extends StarlingSongPlayer {
 		_tTitle = untyped song.getChildByName('tTitle');
 		_tTime = untyped song.getChildByName('tTime');
 
-	}
-
-	override private function init(): Void {
-		visible = false;
-		super.init();
-		songClass = Type.getClass(song);
-		beginPoint = { x: song.x, y: song.y };
-		songHeight = song.height;
-		source.removeChild(song);
-		song = null;
 	}
 
 	public function loadPlaylist(pl: Array<SongInfo>): Void {
@@ -116,6 +103,16 @@ class StarlingMusicPlayer extends StarlingSongPlayer {
 
 	public function unloadPlaylist(): Void {
 		visible = false;
+	}
+
+	override private function init(): Void {
+		visible = false;
+		super.init();
+		songClass = Type.getClass(song);
+		beginPoint = { x: song.x, y: song.y };
+		songHeight = song.height;
+		source.removeChild(song);
+		song = null;
 	}
 
 }

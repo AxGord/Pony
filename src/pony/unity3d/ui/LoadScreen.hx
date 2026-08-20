@@ -21,21 +21,30 @@ using hugs.HUGSWrapper;
 	public static var lastLoader: Loader = null;
 
 	public var fastLoad: Bool = false;
+	public var loader: Loader;
 
 	private var background: Texture;
 	private var main: Texture;
-
 	private var bgTextureObject: GameObject;
 	private var mainTextureObject: GameObject;
 	private var up: GameObject;
-
 	private var progress: ProgressBar;
-	public var loader: Loader;
 
 	public function new() {
 		super();
 		loader = new Loader(1, 100);
 		LoadScreen.lastLoader = loader;
+	}
+
+	public function end(): Void {
+		Fixed2dCamera.visible = true;
+		if (bgTextureObject != null) Object.Destroy(bgTextureObject);
+		if (mainTextureObject != null) Object.Destroy(mainTextureObject);
+		if (progress != null) {
+			loader.onProgress.remove(progress.set);
+			Object.Destroy(progress.gameObject);
+		}
+		if (up != null) Object.Destroy(up);
 	}
 
 	private function Start(): Void {
@@ -66,17 +75,6 @@ using hugs.HUGSWrapper;
 		}
 		loader.onComplete.once(end);
 		loader.init(fastLoad);
-	}
-
-	public function end(): Void {
-		Fixed2dCamera.visible = true;
-		if (bgTextureObject != null) Object.Destroy(bgTextureObject);
-		if (mainTextureObject != null) Object.Destroy(mainTextureObject);
-		if (progress != null) {
-			loader.onProgress.remove(progress.set);
-			Object.Destroy(progress.gameObject);
-		}
-		if (up != null) Object.Destroy(up);
 	}
 
 }

@@ -30,6 +30,7 @@ abstract ROArray<T>(Array<T>) from Array<T> to Iterable<T> {
 final class ROArrayIterator<T> {
 
 	public var hasNext: Void -> Bool;
+
 	private final a: ROArray<T>;
 	private final it: Iterator<UInt>;
 

@@ -30,12 +30,12 @@ typedef TripleImpl<A, B, C> = {
 
 	private inline function set_c(v: C): C return this.c = v;
 
-	@:from private static inline function fromObj<A, B, C>(o: TripleImpl<A, B, C>): Triple<A, B, C> return cast o;
-
 	@:to public inline function toObj(): { a: A, b: B, c: C } return this;
 
-	@:from private static inline function fromArray<T>(a: Array<T>): Triple<T, T, T> return new Triple(a[0], a[1], a[2]);
-
 	public inline function toString(): String return 'a: $a; b: $b; c: $c';
+
+	@:from private static inline function fromObj<A, B, C>(o: TripleImpl<A, B, C>): Triple<A, B, C> return cast o;
+
+	@:from private static inline function fromArray<T>(a: Array<T>): Triple<T, T, T> return new Triple(a[0], a[1], a[2]);
 
 }

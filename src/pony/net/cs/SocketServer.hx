@@ -29,16 +29,6 @@ import pony.Queue.Queue;
 class SocketServer extends SocketServerBase {
 
 	/**
-	 * A server socket used to begin and end asynchronous operations.
-	**/
-	private var server: Socket;
-
-	/**
-	 * A number o port to set an end point.
-	**/
-	private var port: Int;
-
-	/**
 	 * An event that signals if accept callback ends. Using in destroy function.
 	**/
 	private var eventAccept: ManualResetEvent = new ManualResetEvent(true);
@@ -47,6 +37,16 @@ class SocketServer extends SocketServerBase {
 	 * An event that signals if receive callback ends. Using in destroy function.
 	**/
 	private var eventReceive: ManualResetEvent = new ManualResetEvent(true);
+
+	/**
+	 * A server socket used to begin and end asynchronous operations.
+	**/
+	private var server: Socket;
+
+	/**
+	 * A number o port to set an end point.
+	**/
+	private var port: Int;
 
 	/**
 	 * A flag that indicates if send-receive process is running.
@@ -65,6 +65,23 @@ class SocketServer extends SocketServerBase {
 		for (i in 0...1) {
 			server.BeginAccept(new AsyncCallback(acceptCallback), server);
 		}
+	}
+
+	override public function destroy(): Void {
+		super.destroy();
+		isRunning = false;
+		final destrThread: Thread = new Thread(new cs.system.threading.ThreadStart(function() {
+			eventReceive.WaitOne();
+			// trace("Server's close traced.");
+			// The events DO guarantee that executing callbacks finish correct and
+			// DO NOT guarantee that next callbacks will execute so it may cause a loss of data;
+			eventAccept.WaitOne();
+			server.Close();
+			// to prevent this situation there is a Sys.sleep(1) that makes main thread to wait for other threads to finish its executing.
+			// There's no more need in the Sys.sleep(1).
+		}));
+		destrThread.IsBackground = true;
+		destrThread.Start();
 	}
 
 	private function acceptCallback(ar: IAsyncResult): Void {
@@ -104,23 +121,6 @@ class SocketServer extends SocketServerBase {
 		cl.eventReceive = new ManualResetEvent(true);
 		cl.eventSend = new ManualResetEvent(true);
 		return cl;
-	}
-
-	override public function destroy(): Void {
-		super.destroy();
-		isRunning = false;
-		final destrThread: Thread = new Thread(new cs.system.threading.ThreadStart(function() {
-			eventReceive.WaitOne();
-			// trace("Server's close traced.");
-			// The events DO guarantee that executing callbacks finish correct and
-			// DO NOT guarantee that next callbacks will execute so it may cause a loss of data;
-			eventAccept.WaitOne();
-			server.Close();
-			// to prevent this situation there is a Sys.sleep(1) that makes main thread to wait for other threads to finish its executing.
-			// There's no more need in the Sys.sleep(1).
-		}));
-		destrThread.IsBackground = true;
-		destrThread.Start();
 	}
 
 }

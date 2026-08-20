@@ -13,13 +13,21 @@ class Section implements HasAbstract {
 	public var appNode: String = null;
 	public var active: Bool = false;
 
+	private final name: String;
+
 	private var xml: Xml;
 	private var root: Xml;
 	private var apps: Xml;
-	private final name: String;
 
 	public function new(name: String) {
 		this.name = name;
+	}
+
+	@:abstract public function result(): Xml;
+
+	public function addTo(s: Section): Void {
+		result();
+		s.apps.addChild(xml);
 	}
 
 	private function init(): Void {
@@ -33,13 +41,6 @@ class Section implements HasAbstract {
 		} else {
 			xml = root;
 		}
-	}
-
-	@:abstract public function result(): Xml;
-
-	public function addTo(s: Section): Void {
-		result();
-		s.apps.addChild(xml);
 	}
 
 	private function add(name: String, ?value: String): Xml {

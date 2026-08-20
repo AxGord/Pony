@@ -7,7 +7,6 @@ using StringTools;
 class Config {
 
 	public static var settings(default, null): Settings;
-
 	public static var ENVKEY: String;
 	public static var OS: TargetOS;
 	public static var PD: String;

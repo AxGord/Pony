@@ -19,6 +19,18 @@ final class Clean extends CfgModule<CleanConfig> {
 	#if (haxe_ver < 4.2) override #end
 	public function init(): Void initSections(PRIORITY, BASection.Prepare);
 
+	public function deleteUnits(data: Array<String>): Void {
+		for (unit in data) {
+			final u: Unit = unit;
+			if (u.exists) {
+				log('Delete file: $u');
+				u.delete();
+			} else {
+				log('Skip delete file: $u (file not exists)');
+			}
+		}
+	}
+
 	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
 		new CleanReader(
 			xml,
@@ -72,18 +84,6 @@ final class Clean extends CfgModule<CleanConfig> {
 				} else if (content.length == 0) {
 					dir.delete();
 				}
-			}
-		}
-	}
-
-	public function deleteUnits(data: Array<String>): Void {
-		for (unit in data) {
-			final u: Unit = unit;
-			if (u.exists) {
-				log('Delete file: $u');
-				u.delete();
-			} else {
-				log('Skip delete file: $u (file not exists)');
 			}
 		}
 	}

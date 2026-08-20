@@ -38,23 +38,6 @@ class Haxelib {
 		}
 	}
 
-	private static function upver(index: Int, desc: String): Void {
-		final jdata = getData();
-		final ver: Array<Int> = parseVersion(jdata.version);
-		ver[index]++;
-		for (i in index + 1...ver.length) ver[i] = 0;
-		_submit(jdata, ver.join('.'), desc);
-	}
-
-	private static function getData(): Dynamic {
-		if (!libexists()) {
-			Utils.error('$haxelibFile not exists');
-			return null;
-		}
-		final tdata: String = sys.io.File.getContent(haxelibFile);
-		return haxe.Json.parse(tdata);
-	}
-
 	public static function submit(version: String, desc: String): Void {
 		if (version == null) {
 			Utils.error('Please, set version');
@@ -79,11 +62,50 @@ class Haxelib {
 		_submit(jdata, version, desc);
 	}
 
-	private static function getVersion(): String return getData().version;
+	public static function create(name: String, author: String): Void {
+		if (name == null) {
+			Utils.error('Please, set lib name (first arg)');
+			return;
+		}
+		if (author == null) {
+			Utils.error('Please, set lib author (second arg)');
+			return;
+		}
+		if (libexists()) {
+			Utils.error('$haxelibFile exists');
+			return;
+		}
+		final jdata = { name: name, url: '', license: '', tags: [], description: '', version: '0.0.1', releasenote: 'Init', contributors: [author], dependencies: {} };
+		saveJson(jdata);
+		Sys.println('Library $name created');
+	}
 
 	private static inline function updateReadme(version: String): Void {
 		pony.text.TextTools.betweenReplaceFile(readmeFile, badgeVersionBegin, badgeVersionEnd, version);
 	}
+
+	private static inline function libexists(): Bool return FileSystem.exists(haxelibFile);
+
+	private static inline function saveJson(jdata: Dynamic): Void Utils.saveJson(haxelibFile, jdata);
+
+	private static function upver(index: Int, desc: String): Void {
+		final jdata = getData();
+		final ver: Array<Int> = parseVersion(jdata.version);
+		ver[index]++;
+		for (i in index + 1...ver.length) ver[i] = 0;
+		_submit(jdata, ver.join('.'), desc);
+	}
+
+	private static function getData(): Dynamic {
+		if (!libexists()) {
+			Utils.error('$haxelibFile not exists');
+			return null;
+		}
+		final tdata: String = sys.io.File.getContent(haxelibFile);
+		return haxe.Json.parse(tdata);
+	}
+
+	private static function getVersion(): String return getData().version;
 
 	private static function _submit(jdata: Dynamic, version: String, desc: String): Void {
 		updateReadme(version);
@@ -118,27 +140,5 @@ class Haxelib {
 	}
 
 	private static function parseVersion(s: String): Array<Int> return s.split('.').map(Std.parseInt);
-
-	public static function create(name: String, author: String): Void {
-		if (name == null) {
-			Utils.error('Please, set lib name (first arg)');
-			return;
-		}
-		if (author == null) {
-			Utils.error('Please, set lib author (second arg)');
-			return;
-		}
-		if (libexists()) {
-			Utils.error('$haxelibFile exists');
-			return;
-		}
-		final jdata = { name: name, url: '', license: '', tags: [], description: '', version: '0.0.1', releasenote: 'Init', contributors: [author], dependencies: {} };
-		saveJson(jdata);
-		Sys.println('Library $name created');
-	}
-
-	private static inline function libexists(): Bool return FileSystem.exists(haxelibFile);
-
-	private static inline function saveJson(jdata: Dynamic): Void Utils.saveJson(haxelibFile, jdata);
 
 }

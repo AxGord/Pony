@@ -89,6 +89,67 @@ abstract UColor(UInt) from UInt to UInt {
 	 */
 	public inline function new(v: UInt) this = v;
 
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function get_alternative(): UColor return power > HALF_POWER ? 0 : Color.WHITE;
+
+	private inline function get_invertAlpha(): UColor return fromARGB(_invert(a), r, g, b);
+
+	private inline function get_invert(): UColor return fromARGB(a, _invert(r), _invert(g), _invert(b));
+
+	private inline function get_argb(): UInt return this;
+
+	private inline function get_rgb(): UInt return this & Color.WHITE;
+
+	private inline function get_power(): UInt return r + g + b;
+
+	private inline function get_a(): UInt return (this >> POS_ALPHA) & Color.MAX_CHANNEL;
+
+	private inline function get_r(): UInt return (this >> POS_RED) & Color.MAX_CHANNEL;
+
+	private inline function get_g(): UInt return (this >> POS_GREEN) & Color.MAX_CHANNEL;
+
+	private inline function get_b(): UInt return this & Color.MAX_CHANNEL;
+
+	private inline function get_af(): Float return a / Color.MAX_CHANNEL;
+
+	private inline function get_rf(): Float return r / Color.MAX_CHANNEL;
+
+	private inline function get_gf(): Float return g / Color.MAX_CHANNEL;
+
+	private inline function get_bf(): Float return b / Color.MAX_CHANNEL;
+
+	/**
+	 * Convert color to string
+	 */
+	@:to public inline function toString(): String return '#' + this.hex(8);
+
+	/**
+	 * Convert color to string with alpha
+	 */
+	public inline function toStringWithoutAlpha(): String return '#' + rgb.hex(6);
+
+	/**
+	 * Convert color to rgba string with inverted alpha
+	 */
+	public inline function toRGBAIString(): String return 'rgba(${r}, ${g}, ${b}, ${invertAlpha.af})';
+
+	/**
+	 * Convert color to rgba string
+	 */
+	public inline function toRGBAString(): String return 'rgba(${r}, ${g}, ${b}, ${af})';
+
+	/**
+	 * Convert color to rgb string
+	 */
+	public inline function toRGBString(): String return 'rgb(${r}, ${g}, ${b})';
+
+	#if (HUGS && !WITHOUTUNITY)
+	@:to public inline function toUnity(): unityengine.Color return new unityengine.Color(rf, gf, bf, 1 - af);
+	#end
+
+	private inline function _invert(v: UInt): UInt return Color.MAX_CHANNEL - v;
+
 	/**
 	 * Build from RGB values
 	 */
@@ -128,96 +189,6 @@ abstract UColor(UInt) from UInt to UInt {
 		return fromARGB(a, r, g, b);
 	}
 
-	@SuppressWarnings('checkstyle:MagicNumber')
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function get_alternative(): UColor return power > HALF_POWER ? 0 : Color.WHITE;
-
-	private static inline function lim(v: Int): UInt {
-		if (v > Color.MAX_CHANNEL) v = Color.MAX_CHANNEL;
-		return v < 0x00 ? 0x00 : v;
-	}
-
-	private inline function _invert(v: UInt): UInt return Color.MAX_CHANNEL - v;
-
-	private inline function get_invertAlpha(): UColor return fromARGB(_invert(a), r, g, b);
-
-	private inline function get_invert(): UColor return fromARGB(a, _invert(r), _invert(g), _invert(b));
-
-	private inline function get_argb(): UInt return this;
-
-	private inline function get_rgb(): UInt return this & Color.WHITE;
-
-	private inline function get_power(): UInt return r + g + b;
-
-	private inline function get_a(): UInt return (this >> POS_ALPHA) & Color.MAX_CHANNEL;
-
-	private inline function get_r(): UInt return (this >> POS_RED) & Color.MAX_CHANNEL;
-
-	private inline function get_g(): UInt return (this >> POS_GREEN) & Color.MAX_CHANNEL;
-
-	private inline function get_b(): UInt return this & Color.MAX_CHANNEL;
-
-	private inline function get_af(): Float return a / Color.MAX_CHANNEL;
-
-	private inline function get_rf(): Float return r / Color.MAX_CHANNEL;
-
-	private inline function get_gf(): Float return g / Color.MAX_CHANNEL;
-
-	private inline function get_bf(): Float return b / Color.MAX_CHANNEL;
-
-	// Haxe fail!
-	/*
-	@:op(A + B) inline static private function addToString(a:String, b:UColor):UColor return a+b.toString();
-	@:op(A + B) inline static private function addToString2(a:UColor, b:String):UColor return a.toString()+b;
-	 */
-	/**
-	 * First color subtract second color
-	 */
-	@:op(A - B) private static inline function sub(a: UColor, b: UColor): Color return Color.sub(a, b);
-
-	/**
-	 * Colors sum
-	 */
-	@:op(A + B) private static inline function add(a: UColor, b: UColor): UColor
-		return fromARGB(a.a + b.a, a.r + b.r, a.g + b.g, a.b + b.b);
-
-	#if (HUGS && !WITHOUTUNITY)
-	@:to public inline function toUnity(): unityengine.Color return new unityengine.Color(rf, gf, bf, 1 - af);
-	#end
-
-	@:op(A > B) private static inline function gt(a: UColor, b: UColor): Bool return a.power > b.power;
-
-	@:op(A >= B) private static inline function gte(a: UColor, b: UColor): Bool return a.power >= b.power;
-
-	@:op(A < B) private static inline function lt(a: UColor, b: UColor): Bool return a.power < b.power;
-
-	@:op(A <= B) private static inline function lte(a: UColor, b: UColor): Bool return a.power <= b.power;
-
-	/**
-	 * Convert color to string
-	 */
-	@:to public inline function toString(): String return '#' + this.hex(8);
-
-	/**
-	 * Convert color to string with alpha
-	 */
-	public inline function toStringWithoutAlpha(): String return '#' + rgb.hex(6);
-
-	/**
-	 * Convert color to rgba string with inverted alpha
-	 */
-	public inline function toRGBAIString(): String return 'rgba(${r}, ${g}, ${b}, ${invertAlpha.af})';
-
-	/**
-	 * Convert color to rgba string
-	 */
-	public inline function toRGBAString(): String return 'rgba(${r}, ${g}, ${b}, ${af})';
-
-	/**
-	 * Convert color to rgb string
-	 */
-	public inline function toRGBString(): String return 'rgb(${r}, ${g}, ${b})';
-
 	/**
 	 * Build color from string
 	 */
@@ -250,5 +221,34 @@ abstract UColor(UInt) from UInt to UInt {
 				case _: throw 'Unknown color';
 			});
 	}
+
+	private static inline function lim(v: Int): UInt {
+		if (v > Color.MAX_CHANNEL) v = Color.MAX_CHANNEL;
+		return v < 0x00 ? 0x00 : v;
+	}
+
+	// Haxe fail!
+	/*
+	@:op(A + B) inline static private function addToString(a:String, b:UColor):UColor return a+b.toString();
+	@:op(A + B) inline static private function addToString2(a:UColor, b:String):UColor return a.toString()+b;
+	 */
+	/**
+	 * First color subtract second color
+	 */
+	@:op(A - B) private static inline function sub(a: UColor, b: UColor): Color return Color.sub(a, b);
+
+	/**
+	 * Colors sum
+	 */
+	@:op(A + B) private static inline function add(a: UColor, b: UColor): UColor
+		return fromARGB(a.a + b.a, a.r + b.r, a.g + b.g, a.b + b.b);
+
+	@:op(A > B) private static inline function gt(a: UColor, b: UColor): Bool return a.power > b.power;
+
+	@:op(A >= B) private static inline function gte(a: UColor, b: UColor): Bool return a.power >= b.power;
+
+	@:op(A < B) private static inline function lt(a: UColor, b: UColor): Bool return a.power < b.power;
+
+	@:op(A <= B) private static inline function lte(a: UColor, b: UColor): Bool return a.power <= b.power;
 
 }

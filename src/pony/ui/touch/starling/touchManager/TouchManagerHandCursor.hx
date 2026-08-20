@@ -16,10 +16,11 @@ class TouchManagerHandCursor {
 	private static var _currentHand: Bool = false;
 	private static var _initialized: Bool = false;
 
-	private final _object: Dynamic;
-	private var _hoveringOver: Bool = false;
-
 	public var enabled(default, set): Bool = true;
+
+	private final _object: Dynamic;
+
+	private var _hoveringOver: Bool = false;
 
 	public function new(object: Dynamic) {
 		if (!_initialized) init();
@@ -27,6 +28,16 @@ class TouchManagerHandCursor {
 		_object = object;
 
 		TouchManager.addListener(_object, onTouch);
+	}
+
+	public function set_enabled(value: Bool): Bool {
+		enabled = value;
+		if (_hoveringOver) _hand = enabled;
+		return enabled;
+	}
+
+	public function dispose(): Void {
+		TouchManager.removeListener(_object, onTouch);
 	}
 
 	private function onTouch(e: TouchManagerEvent): Void {
@@ -39,12 +50,6 @@ class TouchManagerHandCursor {
 		_hoveringOver = hand;
 	}
 
-	public function set_enabled(value: Bool): Bool {
-		enabled = value;
-		if (_hoveringOver) _hand = enabled;
-		return enabled;
-	}
-
 	private static function init(): Void {
 		_initialized = true;
 
@@ -55,10 +60,6 @@ class TouchManagerHandCursor {
 		if (_hand == _currentHand) return;
 		_currentHand = _hand;
 		Mouse.cursor = _hand ? MouseCursor.BUTTON : MouseCursor.AUTO;
-	}
-
-	public function dispose(): Void {
-		TouchManager.removeListener(_object, onTouch);
 	}
 
 }

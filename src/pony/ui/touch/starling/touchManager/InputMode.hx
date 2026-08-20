@@ -11,13 +11,12 @@ import haxe.Timer;
  */
 class InputMode {
 
-	private static var _initialized: Bool = false;
+	private static inline final _ignoreMouseMoveTimeMills: Int = 200;
 
+	private static var _initialized: Bool = false;
 	private static var _touchMode: Bool = false;
 	private static var _activeTouchesCounter: Int = 0;
-
 	private static var _ignoreMouseMoveUntil: Float = 0;
-	private static inline final _ignoreMouseMoveTimeMills: Int = 200;
 
 	public static function init(): Void {
 		if (_initialized) return;
@@ -55,6 +54,10 @@ class InputMode {
 		}
 	}
 
+	private static function checkInitialized(): Void {
+		if (!_initialized) throw 'Call InputMode.init() before usage (before any user input)';
+	}
+
 	#if !disableMouseInput
 	private static function mouseInput(_): Void {
 		if ((_activeTouchesCounter == 0) && _touchMode && (Timer.stamp() * 1000 >= _ignoreMouseMoveUntil)) {
@@ -64,9 +67,5 @@ class InputMode {
 		}
 	}
 	#end
-
-	private static function checkInitialized(): Void {
-		if (!_initialized) throw 'Call InputMode.init() before usage (before any user input)';
-	}
 
 }

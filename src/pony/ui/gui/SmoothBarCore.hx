@@ -13,13 +13,6 @@ class SmoothBarCore extends BarCore {
 	@:bindable public var smoothPercent: Float = 0;
 	@:bindable public var smoothPos: Float = 0;
 
-	@SuppressWarnings('checkstyle:MagicNumber')
-	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public static inline function create(width: Float, height: Float, invert: Bool = false): SmoothBarCore {
-		final isVert = height > width;
-		return new SmoothBarCore(isVert ? height : width, isVert, invert);
-	}
-
 	public function new(size: Float, isVertical: Bool = false, invert: Bool = false) {
 		super(size, isVertical, invert);
 		changeSmooth - true << enableSmoothPercent;
@@ -30,6 +23,28 @@ class SmoothBarCore extends BarCore {
 			changeSmoothPos << function(v) smoothChangeX(inv(v));
 		}
 	}
+
+	/**
+	 * Use this method for connect view
+	 */
+	public dynamic function smoothChangeX(v: Float): Void {}
+
+	/**
+	 * Use this method for connect view
+	 */
+	public dynamic function smoothChangeY(v: Float): Void {}
+
+	override public function endInit(): Void {
+		super.endInit();
+		if (isVertical)
+			smoothChangeY(inv(0));
+		else
+			smoothChangeX(inv(0));
+	}
+
+	@SuppressWarnings('checkstyle:MagicNumber')
+	#if (haxe_ver >= 4.2) extern #else @:extern #end
+	private inline function changeSmoothPercentHandler(v: Float): Void smoothPos = v * size;
 
 	private function enableSmoothPercent(): Void {
 		changePercent << updateSmoothPercentTarget;
@@ -61,24 +76,9 @@ class SmoothBarCore extends BarCore {
 
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function changeSmoothPercentHandler(v: Float): Void smoothPos = v * size;
-
-	/**
-	 * Use this method for connect view
-	 */
-	public dynamic function smoothChangeX(v: Float): Void {}
-
-	/**
-	 * Use this method for connect view
-	 */
-	public dynamic function smoothChangeY(v: Float): Void {}
-
-	override public function endInit(): Void {
-		super.endInit();
-		if (isVertical)
-			smoothChangeY(inv(0));
-		else
-			smoothChangeX(inv(0));
+	public static inline function create(width: Float, height: Float, invert: Bool = false): SmoothBarCore {
+		final isVert = height > width;
+		return new SmoothBarCore(isVert ? height : width, isVert, invert);
 	}
 
 }
