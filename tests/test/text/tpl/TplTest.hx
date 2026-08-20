@@ -19,7 +19,7 @@ class TplTest {
 	public var tplPut: Class<ITplPut>;
 
 	@Before
-	public function setup(): Void {
+	public inline function setup(): Void {
 		tplPut = Ttt;
 	}
 

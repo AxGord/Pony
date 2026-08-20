@@ -249,7 +249,7 @@ import pony.TypedPool;
 		return t;
 	}
 
-	public function retTouch(id: UInt = 0): Void {
+	public inline function retTouch(id: UInt = 0): Void {
 		removeTouch(id);
 	}
 
@@ -283,7 +283,7 @@ import pony.TypedPool;
 		removeTouch(id);
 	}
 
-	private function dispatchOutUpListener(id: UInt): Void dispatchOutUp(id);
+	private inline function dispatchOutUpListener(id: UInt): Void dispatchOutUp(id);
 
 	private function dispatchOutUp(id: UInt = 0, right: Bool = false, safe: Bool = false): Void {
 		final t: Null<Touch> = touches[id];

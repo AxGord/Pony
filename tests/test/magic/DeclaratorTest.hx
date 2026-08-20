@@ -39,7 +39,7 @@ class DeclaratorTestHelper implements Declarator {
 	public static var a: String = 'hello';
 	public static var b: String;
 
-	public static function __init__(): Void b = a;
+	public static inline function __init__(): Void b = a;
 
 	@:arg private var i: Int;
 	@:arg private var j: Int = 3;

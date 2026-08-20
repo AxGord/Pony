@@ -1,3 +1,4 @@
+import haxe.Exception;
 import sys.FileSystem;
 
 using StringTools;
@@ -81,7 +82,7 @@ class Haxelib {
 
 	private static function getVersion(): String return getData().version;
 
-	private static function updateReadme(version: String): Void {
+	private static inline function updateReadme(version: String): Void {
 		pony.text.TextTools.betweenReplaceFile(readmeFile, badgeVersionBegin, badgeVersionEnd, version);
 	}
 
@@ -114,7 +115,7 @@ class Haxelib {
 			Utils.command('git', ['add', '--all']);
 			Utils.command('git', ['commit', '-a', '-m', message]);
 			Utils.command('git', ['push']);
-		} catch (e: Dynamic) {}
+		} catch (e: Exception) {}
 	}
 
 	private static function parseVersion(s: String): Array<Int> return s.split('.').map(Std.parseInt);

@@ -1,5 +1,6 @@
 package module;
 
+import haxe.Exception;
 import pony.net.SocketServer;
 import pony.time.DTimer;
 import sys.io.Process;
@@ -32,7 +33,7 @@ class NModule<T:BAConfig> extends CfgModule<T> {
 			try {
 				server = new SocketServer(port);
 				break;
-			} catch (_: Any) {
+			} catch (_: Exception) {
 				if (n++ > PORT_TRIES) Utils.error('Can\'t create socket server');
 				port++;
 			}

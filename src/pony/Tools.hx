@@ -2,6 +2,7 @@ package pony;
 
 import haxe.CallStack;
 import haxe.Constraints.Function;
+import haxe.Exception;
 import haxe.io.Bytes;
 import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
@@ -116,7 +117,7 @@ class Tools {
 			case TInt, TFloat, TBool, TNull:
 				return false;
 			case TFunction:
-				return try Reflect.compareMethods(a, b) catch (_: Dynamic) false;
+				return try Reflect.compareMethods(a, b) catch (_: Exception) false;
 			case TEnum(t):
 				if (t != Type.getEnum(b)) return false;
 				if (Type.enumIndex(a) != Type.enumIndex(b)) return false;
@@ -246,7 +247,7 @@ class Tools {
 		while (true) {
 			try {
 				cur = inp.readByte();
-			} catch (_: Dynamic) {
+			} catch (_: Exception) {
 				break;
 			}
 			if (cur == 0) {
@@ -468,7 +469,7 @@ class Tools {
 	}
 
 	public static function readStr(b: BytesInput): String {
-		return try b.readString(b.readInt32()) catch (_: Dynamic) null;
+		return try b.readString(b.readInt32()) catch (_: Exception) null;
 	}
 
 	public static function hexToBytes(hex: String): Bytes {

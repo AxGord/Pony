@@ -1,5 +1,6 @@
 package module;
 
+import haxe.Exception;
 import pony.Fast;
 import pony.SPair;
 import pony.ZipTool;
@@ -232,7 +233,7 @@ private class HashlinkReader extends BAReader<HashlinkConfig> {
 				var data: String = '';
 				try {
 					data = normalize(xml.innerData);
-				} catch (e: Dynamic) {}
+				} catch (e: Exception) {}
 				cfg.data.push(new SPair(normalize(xml.att.from), data));
 				cfg.roundIcon = !xml.isFalse('roundIcon');
 			case 'lib':

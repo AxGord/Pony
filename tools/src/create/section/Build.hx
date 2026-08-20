@@ -34,7 +34,7 @@ class Build extends Section {
 
 	public function addLib(name: String, ?version: String): Void libs[name] = version;
 
-	public function getHxmlFile(): String return hxml + HXML;
+	public inline function getHxmlFile(): String return hxml + HXML;
 
 	public function getDep(): Array<String> return hxml != null ? [getHxmlFile()] : [];
 
@@ -117,7 +117,7 @@ class Build extends Section {
 
 	public function getMainhxPath(): String return cps[0];
 
-	public function getMainhx(): String return gethx(main);
+	public inline function getMainhx(): String return gethx(main);
 
 	public function gethx(name: String): String return '${getMainhxPath()}/$name.hx';
 
@@ -140,11 +140,11 @@ class Build extends Section {
 		if (!outputPathExists()) FileSystem.createDirectory(outputPath);
 	}
 
-	public function outputPathExists(): Bool {
+	public inline function outputPathExists(): Bool {
 		return FileSystem.exists(outputPath);
 	}
 
-	public function createOutputPath(): Void {
+	public inline function createOutputPath(): Void {
 		FileSystem.createDirectory(outputPath);
 	}
 

@@ -200,7 +200,7 @@ class Create {
 		createIndexHtml(project);
 	}
 
-	private static function createPixiData(project: Project, vscAllow: Bool): Void {
+	private static inline function createPixiData(project: Project, vscAllow: Bool): Void {
 		createPixiProjectsData(project, vscAllow, 'pixitemplate.hx.tpl');
 	}
 
@@ -225,7 +225,7 @@ class Create {
 		if (project.hashlink.android != null) copyFromTools(testSertFile, project.build.outputPath);
 	}
 
-	private static function createHeapsData(project: Project, vscAllow: Bool): Void {
+	private static inline function createHeapsData(project: Project, vscAllow: Bool): Void {
 		createHeapsProjectsData(project, vscAllow, 'heapstemplate.hx.tpl');
 	}
 

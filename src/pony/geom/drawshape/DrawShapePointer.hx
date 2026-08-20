@@ -104,7 +104,7 @@ class DrawShapePointer extends pony.Tumbler {
 		touchable.onOver < overHandler;
 	}
 
-	public function hidePoint(t: Touch): Void eHidePoint.dispatch(t);
+	public inline function hidePoint(t: Touch): Void eHidePoint.dispatch(t);
 
 	private function magnet(p: DrawShapePointerData, t: Touch): Bool {
 		if (

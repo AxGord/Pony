@@ -86,7 +86,7 @@ class SmartCanvas extends ElementResizeControl {
 
 	public dynamic function ratioMod(value: Float): Float return value;
 
-	public function fullscreen(): Void JsTools.fse(element);
+	public inline function fullscreen(): Void JsTools.fse(element);
 
 	public inline function updateSize(): Void setSize(width, height);
 

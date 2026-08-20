@@ -297,7 +297,7 @@ using pony.text.TextTools;
 		}
 		try {
 			Reflect.callMethod(js.Browser.console, method, prms);
-		} catch (_: Any) {}
+		} catch (_: haxe.Exception) {}
 	}
 	#end
 

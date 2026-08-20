@@ -1,5 +1,6 @@
 package pony.fs.nodejs;
 
+import haxe.Exception;
 import haxe.io.Bytes;
 import haxe.io.BytesOutput;
 import js.node.Buffer;
@@ -92,7 +93,7 @@ class FileWriteStream extends WriteStream<Bytes> {
 		try {
 			Fs.closeSync(fd);
 			Fs.unlinkSync(path);
-		} catch (_: Any) {}
+		} catch (_: Exception) {}
 		readStream.cancel();
 	}
 

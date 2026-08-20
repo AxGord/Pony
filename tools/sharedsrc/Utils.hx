@@ -1,3 +1,4 @@
+import haxe.Exception;
 import haxe.Json;
 import haxe.io.Bytes;
 import haxe.xml.Parser.XmlParserException;
@@ -82,7 +83,7 @@ class Utils {
 			final line: String = p.stdout.readLine();
 			p.close();
 			TextTools.isTrue(line);
-		} catch (err) {
+		} catch (err: Exception) {
 			false;
 		}
 		cwd.sw();
@@ -103,7 +104,7 @@ class Utils {
 				final ch: String = p.stdout.readString(1);
 				if (ch == null || ch == '\n') break;
 				s += ch;
-			} catch (err) {
+			} catch (err: Exception) {
 				break;
 			}
 		}
@@ -161,7 +162,7 @@ class Utils {
 
 	public static function saveXML(file: String, xml: Xml): Void File.saveContent(file, XmlTools.document(xml));
 
-	public static function savePonyProject(xml: Xml): Void saveXML(MAIN_FILE, xml);
+	public static inline function savePonyProject(xml: Xml): Void saveXML(MAIN_FILE, xml);
 
 	public static function get_ponyVersion(): String {
 		if (_ponyVersion != null) {

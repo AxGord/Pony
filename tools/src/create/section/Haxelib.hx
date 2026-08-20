@@ -22,7 +22,7 @@ typedef Lib = {
 
 	public function new() super('haxelib');
 
-	public function addLib(lib: Lib): Void libs.push(lib);
+	public inline function addLib(lib: Lib): Void libs.push(lib);
 
 	#if (haxe_ver < 4.2) override #end
 	public function result(): Xml {

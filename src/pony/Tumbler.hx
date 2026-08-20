@@ -19,12 +19,12 @@ class Tumbler implements HasSignal {
 		onDisable = changeEnabled - false;
 	}
 
-	public function enable(): Void enabled = true;
+	public inline function enable(): Void enabled = true;
 
-	public function disable(): Void enabled = false;
+	public inline function disable(): Void enabled = false;
 
 	public function sw(): Void enabled = !enabled;
 
-	public function setEnabled(v: Bool): Void enabled = v;
+	public inline function setEnabled(v: Bool): Void enabled = v;
 
 }

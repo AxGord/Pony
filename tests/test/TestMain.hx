@@ -1,3 +1,4 @@
+import haxe.Exception;
 import massive.munit.client.HTTPClient;
 import massive.munit.client.JUnitReportClient;
 import massive.munit.client.PrintClient;
@@ -53,7 +54,7 @@ class TestMain {
 			#end
 		}
 		// if run from outside browser can get error which we can ignore
-		catch (e: Dynamic) {}
+		catch (e: Exception) {}
 	}
 
 }

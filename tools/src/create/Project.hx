@@ -137,6 +137,6 @@ class Project {
 		run.command = '$cmd ${build.outputFile}';
 	}
 
-	private function get_rname(): String return name == null ? 'App' : name;
+	private inline function get_rname(): String return name == null ? 'App' : name;
 
 }

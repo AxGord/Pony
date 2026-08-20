@@ -222,7 +222,7 @@ class DrawShape extends pony.Logable #if pony_experimental implements pony.magic
 		return false;
 	}
 
-	private function eq3<T>(a: T, b: T, c: T): Bool return a == b && b == c;
+	private inline function eq3<T>(a: T, b: T, c: T): Bool return a == b && b == c;
 
 	private function store(t: Touch): Void {
 		var psh: IntPoint = null;

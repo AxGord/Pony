@@ -86,8 +86,8 @@ class KeyboardTestHelper implements IKeyboard implements HasSignal {
 
 	public function disable(): Void {} // down.silent = true;
 
-	public function _up(k: Key): Void eUp.dispatch(k);
+	public inline function _up(k: Key): Void eUp.dispatch(k);
 
-	public function _down(k: Key): Void eDown.dispatch(k);
+	public inline function _down(k: Key): Void eDown.dispatch(k);
 
 }

@@ -59,7 +59,7 @@ class TouchManager {
 		}
 	}
 
-	public static function removeScreen(hitTest: IHitTestSource): Void {
+	public static inline function removeScreen(hitTest: IHitTestSource): Void {
 		_screens.remove(hitTest);
 	}
 
@@ -277,7 +277,7 @@ class TouchManager {
 		}
 	}
 
-	public static function mouseWheel(d: Float): Void {
+	public static inline function mouseWheel(d: Float): Void {
 		dispatch(_mouse.current, MouseWheel, true, _mouse, d);
 	}
 
@@ -314,7 +314,7 @@ class TouchManager {
 			copy[i].listener(event);
 	}
 
-	public static function getLastDownEvent(): TouchManagerEvent {
+	public static inline function getLastDownEvent(): TouchManagerEvent {
 		return _lastDownEvent;
 	}
 

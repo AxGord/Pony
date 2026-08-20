@@ -73,7 +73,7 @@ typedef BaseConfig = {
 		return s.startsWith('$') ? @:nullSafety(Off) Sys.getEnv(s.substr(1)) : s;
 	}
 
-	private function copyCfg(): T return pony.Tools.clone(cfg);
+	private inline function copyCfg(): T return pony.Tools.clone(cfg);
 
 	private function _selfCreate<C:XmlConfigReader<T>>(xml: Fast, conf: T): C {
 		allowEnd = false;

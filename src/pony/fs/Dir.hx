@@ -35,7 +35,7 @@ abstract Dir(Unit) from Unit {
 		for (d in this) {
 			if (d.exists) for (e in FileSystem.readDirectory(d.first)) {
 				final np: String = '$d/$e';
-				final isDir: Bool = try FileSystem.isDirectory(np) catch (_: Any) false;
+				final isDir: Bool = try FileSystem.isDirectory(np) catch (_: haxe.Exception) false;
 				if ((allowDir || !isDir) && (isDir || checkFilter(flt, e)) && !result.exists(e))
 					result[e] = [for (d in this.wayStringIterator()) '$d/$e'];
 			}

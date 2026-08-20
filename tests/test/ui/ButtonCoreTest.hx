@@ -8,7 +8,7 @@ class ButtonCoreTest {
 	private var instance: ButtonCore;
 
 	@Before
-	public function setup(): Void {
+	public inline function setup(): Void {
 		// todo: need toucheble test object
 		// instance = new ButtonCore();
 	}

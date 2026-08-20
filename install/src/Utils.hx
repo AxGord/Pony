@@ -1,3 +1,4 @@
+import haxe.Exception;
 import sys.io.Process;
 
 /**
@@ -67,7 +68,7 @@ import sys.io.Process;
 	private static inline function processInt(process: String, args: Array<String>): Int {
 		return try {
 			Std.parseInt(processLine(process, args));
-		} catch (err: Dynamic) {
+		} catch (err: Exception) {
 			-1;
 		}
 	}
@@ -89,7 +90,7 @@ import sys.io.Process;
 	public static inline function md(dir: String): Int {
 		try {
 			@:nullSafety(Off) return isSuper ? new Process('mkdir', [dir]).exitCode() : new Process('sudo', ['mkdir', dir]).exitCode();
-		} catch (err: Dynamic) {
+		} catch (err: Exception) {
 			return -1;
 		}
 	}

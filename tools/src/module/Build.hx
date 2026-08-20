@@ -1,5 +1,6 @@
 package module;
 
+import haxe.Exception;
 import haxe.io.Eof;
 import module.Build.D;
 import module.Build.HAXE;
@@ -133,7 +134,7 @@ final class Build extends CfgModule<BuildConfig> {
 				final tpf: String = '${Utils.libPath}src/pony/heaps/HeapsAssets.hx';
 				log('Update $tpf');
 				File.saveContent(tpf, File.getContent(tpf));
-			} catch (e: Dynamic) {
+			} catch (e: Exception) {
 				error('Update failed');
 			}
 			tryCounter = 3;
@@ -277,7 +278,7 @@ private class BuildConfigReader extends BAReader<BuildConfig> {
 			if (s.substr(0, UT.length) == UT) {
 				final d: String = try {
 					normalize(xml.innerData);
-				} catch (_: Dynamic) {
+				} catch (_: Exception) {
 					'';
 				}
 				switch xml.name {

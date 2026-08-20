@@ -20,7 +20,7 @@ class VSCode {
 
 	private static function get_allowCreate(): Bool return !FileSystem.exists('.vscode');
 
-	public static function createDir(): Void FileSystem.createDirectory('.vscode');
+	public static inline function createDir(): Void FileSystem.createDirectory('.vscode');
 
 	public static function create(ponycmd: String, auto: Bool = false, server: Bool = true): Void {
 		final tasks: Array<Any> = [];
