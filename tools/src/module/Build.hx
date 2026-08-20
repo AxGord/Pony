@@ -103,7 +103,7 @@ final class Build extends CfgModule<BuildConfig> {
 				if (cfg.app != null) cmd.push(new SPair(D, 'app=${cfg.app}'));
 				if (cfg.debug) cmd.push(new SPair('-debug', ''));
 				cmd = cmd.concat(cfg.command);
-				cmd.push(new SPair('$e.$HXML', ''));
+				cmd.push(new SPair(e + '.$HXML', ''));
 				runCompilation(cmd, cfg.debug, cfg.haxeCompiler, cfg.winfix && Utils.isWindows);
 			}
 		checkCompilation();
@@ -130,7 +130,7 @@ final class Build extends CfgModule<BuildConfig> {
 		}
 		if (debug && server && compiler == HAXE && !winfix) {
 			try { // Fix compilation server error
-				final tpf: String = '${Utils.libPath}src/pony/heaps/HeapsAssets.hx';
+				final tpf: String = Utils.libPath + 'src/pony/heaps/HeapsAssets.hx';
 				log('Update $tpf');
 				File.saveContent(tpf, File.getContent(tpf));
 			} catch (e: Dynamic) {
@@ -139,9 +139,9 @@ final class Build extends CfgModule<BuildConfig> {
 			tryCounter = 3;
 			final s: Socket = connectToHaxeServer();
 			final d: String = Sys.getCwd();
-			s.write('--cwd $d$newline');
+			s.write('--cwd ' + d + newline);
 			for (c in cmdArrPairToArrStr(command)) {
-				Sys.print('$c ');
+				Sys.print(c + ' ');
 				s.write(c + newline);
 			}
 			Sys.println('');
@@ -151,7 +151,7 @@ final class Build extends CfgModule<BuildConfig> {
 			try {
 				r = s.read();
 			} catch (e: Any) {
-				compilationServerError('$e');
+				compilationServerError(Std.string(e));
 				return;
 			}
 			var inWarning: Bool = false;
@@ -191,7 +191,7 @@ final class Build extends CfgModule<BuildConfig> {
 			if (winfix) {
 				Utils.command(compiler, args);
 			} else {
-				Sys.println('$compiler ${args.join(' ')}');
+				Sys.println(compiler + ' ' + args.join(' '));
 				final process: Process = new Process(compiler, args);
 				try {
 					var inWarning: Bool = false;
@@ -213,7 +213,7 @@ final class Build extends CfgModule<BuildConfig> {
 		}
 	}
 
-	private static inline function cmdPairToStr(p: SPair<String>): String return p.a + (p.b.length > 0 ? ' ${p.b}' : '');
+	private static inline function cmdPairToStr(p: SPair<String>): String return p.a + (p.b.length > 0 ? ' ' + p.b : '');
 
 	private static inline function cmdArrPairToArrStr(a: Array<SPair<String>>): Array<String> return [for (c in a) cmdPairToStr(c)];
 
@@ -224,7 +224,7 @@ final class Build extends CfgModule<BuildConfig> {
 			s.connect(new Host('127.0.0.1'), port);
 			return s;
 		} catch (e: Any) {
-			compilationServerError('$e');
+			compilationServerError(Std.string(e));
 		}
 		return null;
 	}
@@ -284,7 +284,7 @@ private class BuildConfigReader extends BAReader<BuildConfig> {
 					case HXML:
 						cfg.runHxml.push(d);
 					case 'd':
-						cfg.command.push(new SPair(D, xml.has.name ? '${normalize(xml.att.name)}=$d' : d));
+						cfg.command.push(new SPair(D, xml.has.name ? normalize(xml.att.name) + '=' + d : d));
 					case 'm':
 						cfg.command.push(new SPair('--macro', d));
 					case 'i':

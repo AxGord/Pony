@@ -23,6 +23,6 @@ class ProgressBar extends LabelBar {
 		core.changePercent << setLabel;
 	}
 
-	private function setLabel(v: Float): Void text = '${Std.int(v * 100)}%';
+	private function setLabel(v: Float): Void text = Std.int(v * 100) + '%';
 
 }

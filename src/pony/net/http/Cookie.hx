@@ -25,7 +25,7 @@ class Cookie {
 		// domain = domain != null ? 'domain=$domain' : '';
 		var s: String = '';
 		for (k => value in newCookie) {
-			s += '$k=${value};'; // + ';HttpOnly;$domain';
+			s += k + '=' + value + ';'; // + ';HttpOnly;$domain';
 		}
 		return s;
 	}

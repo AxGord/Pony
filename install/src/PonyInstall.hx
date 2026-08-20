@@ -2,6 +2,8 @@ import haxe.io.Eof;
 import sys.FileSystem;
 import sys.io.Process;
 
+using Lambda;
+
 /**
  * PonyInstall
  * @author AxGord <axgord@gmail.com>
@@ -36,7 +38,7 @@ class PonyInstall extends BaseInstall {
 		final newline: String = '\n';
 		final compiler: String = 'haxe';
 		final args: Array<String> = ['--cwd', Config.SRC, 'build.hxml'];
-		Sys.println('$compiler ${args.join(' ')}');
+		Sys.println(compiler + ' ' + args.join(' '));
 		final r: Int = if (Config.OS == TargetOS.Windows) {
 			Sys.command(compiler, args);
 		} else {
@@ -64,12 +66,11 @@ class PonyInstall extends BaseInstall {
 		Utils.beginColor(32);
 		Sys.println('Compilation complete');
 		Utils.endColor();
-		FileSystem.deleteFile('${Config.BIN}pony.n');
+		FileSystem.deleteFile(Config.BIN + 'pony.n');
 	}
 
 	private function checkWarning(s: String): Bool {
-		if (s.toUpperCase().indexOf('WARNING') != -1) for (lib in Config.settings.hideWarnings) if (s.indexOf(lib) != -1) return true;
-		return false;
+		return s.toUpperCase().indexOf('WARNING') != -1 && Config.settings.hideWarnings.exists(lib -> s.indexOf(lib) != -1);
 	}
 
 }

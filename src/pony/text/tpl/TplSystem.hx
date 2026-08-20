@@ -38,9 +38,9 @@ class TplSystem {
 
 	public function new(dir: Dir, ?c: Class<ITplPut>, o: Dynamic, ?s: TplStyle) {
 		name = (dir: Unit).name;
-		pages = new TplDir('${dir}pages', c, o, s);
-		includes = new TplDir('${dir}includes', TplPut, null, s);
-		_static = [for (e in ('${dir}static': Dir).contentRecursiveFiles()) e.name => e];
+		pages = new TplDir(dir + 'pages', c, o, s);
+		includes = new TplDir(dir + 'includes', TplPut, null, s);
+		_static = [for (e in ((dir + 'static'): Dir).contentRecursiveFiles()) e.name => e];
 	}
 
 	@:async
@@ -82,30 +82,26 @@ class PagesPut extends TplPut<TplSystem, {}> {
 	override public function tag(name: String, content: TplData, arg: String, args: Map<String, String>, ?kid: ITplPut): String {
 		switch (name) {
 			case 'htmlEscape':
-				{
-					return StringTools.htmlEscape(@await kid.tplData(content));
-				}
+				return StringTools.htmlEscape(@await kid.tplData(content));
 			case 'include':
-				{
-					arg = StringTools.replace(arg, '-', '/');
-					if (args.exists('once')) {
-						if (Lambda.indexOf(included, arg) == -1) {
-							included.push(arg);
-						} else {
-							return '';
-						}
+				arg = StringTools.replace(arg, '-', '/');
+				if (args.exists('once')) {
+					if (Lambda.indexOf(included, arg) == -1) {
+						included.push(arg);
+					} else {
+						return '';
 					}
-					final d: TplDir = a.includes;
-					if (d.exists(arg)) {
-						var c: String = null;
-						if (kid != null)
-							c = @await kid.tplData(content);
-						else
-							c = @await tplData(content);
-						return @await d.gen(arg, null, new IncludePut({ content: c, args: args }, null, kid));
-					} else
-						return '! Not found include $arg !';
 				}
+				var d: TplDir = a.includes;
+				if (d.exists(arg)) {
+					var c: String = null;
+					if (kid != null)
+						c = @await kid.tplData(content);
+					else
+						c = @await tplData(content);
+					return @await d.gen(arg, null, new IncludePut({ content: c, args: args }, null, kid));
+				} else
+					return '! Not found include ' + arg + ' !';
 			case _:
 				return @await super.tag(name, content, arg, args, kid);
 		}

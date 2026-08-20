@@ -10,6 +10,7 @@ import pony.text.tpl.ITplPut;
 import pony.text.tpl.Tpl;
 import pony.text.tpl.TplData;
 
+using StringTools;
 using Lambda;
 using pony.text.TextTools;
 
@@ -51,7 +52,7 @@ class InsertConnect extends ActionConnect {
 		}
 
 		final ca: Array<Dynamic> = [];
-		for (k in base.args.keys()) {
+		for (k => value in base.args) {
 			final v: String = h[k];
 			if (Std.is(v, Array)) {
 				cpq.connection.error('Array not supported');
@@ -60,13 +61,13 @@ class InsertConnect extends ActionConnect {
 			if (v == null)
 				ca.push(null);
 			else
-				switch (base.args.get(k)) {
+				switch (value) {
 					case 'String':
-						ca.push(StringTools.trim(v));
+						ca.push(v.trim());
 					case 'Int':
 						ca.push(Std.parseInt(v));
 					case _:
-						cpq.connection.error('Type ${base.args.get(k)} not supported');
+						cpq.connection.error('Type ' + value + ' not supported');
 						return true;
 				}
 		}
@@ -119,21 +120,22 @@ class InsertPut extends pony.text.tpl.TplPut<InsertConnect, CPQ> {
 				}
 			a.clr();
 			final f = hasFile ? ' enctype="multipart/form-data"' : '';
-			return
-				'<form action="" method="POST"$f>${content != null ? '<div class="capition">' + @await tplData(content) + '</div>' : ''}'
-					+ '$r<button>Send</button> <a href="" class="action">Clear</a></form>';
-		} else {
-			final r: String = @await sub(a, b, InsertPutSub, content);
-			a.clr();
-			return r;
+			return '<form action="" method="POST"$f>'
+				+ (content != null ? '<div class="capition">' + @await tplData(content) + '</div>' : '') + r
+				+ '<button>Send</button> <a href="" class="action">Clear</a></form>';
 		}
+		final r: String = @await sub(a, b, InsertPutSub, content);
+		a.clr();
+		return r;
 	}
 
 	private function inputE(name: String, value: String, fix: Bool): String {
 		final s: String = st(name);
-		if (s == null) return '<label>${name.bigFirst()}${input(name, null, value)}</label>';
-		if (s == '') return '<label>${name.bigFirst()}${input(name, 'ok', fix ? value : '')}</label>';
-		return '<label>${name.bigFirst()}${input(name, 'error', value)}<div>$s</div></label>';
+		return s == null
+			? '<label>' + name.bigFirst() + input(name, null, value) + '</label>'
+			: s == ''
+				? '<label>' + name.bigFirst() + input(name, 'ok', fix ? value : '') + '</label>'
+				: '<label>' + name.bigFirst() + input(name, 'error', value) + '<div>' + s + '</div>' + '</label>';
 	}
 
 	private function input(name: String, cl: String, value: String): String {
@@ -151,10 +153,7 @@ class InsertPut extends pony.text.tpl.TplPut<InsertConnect, CPQ> {
 			case OK:
 				st = '';
 			case ERROR(e):
-				if (e.exists(arg))
-					st = e.get(arg);
-				else
-					st = '';
+				st = e.exists(arg) ? e.get(arg) : '';
 			case DBERROR:
 				st = 'DataBase error';
 		}
@@ -168,10 +167,9 @@ class InsertPutSub extends pony.text.tpl.TplPut<InsertConnect, CPQ> {
 
 	@:async
 	override public function tag(name: String, content: TplData, arg: String, args: Map<String, String>, ?kid: ITplPut): String {
-		if (a.base.args.exists(name)) {
-			return @await sub({ o: a, arg: name }, b, InsertPutArg, content);
-		} else
-			return @await super.tag(name, content, arg, args, kid);
+		return a.base.args.exists(name)
+			? @await sub({ o: a, arg: name }, b, InsertPutArg, content)
+			: @await super.tag(name, content, arg, args, kid);
 	}
 
 }
@@ -188,10 +186,7 @@ class InsertPutArg extends pony.text.tpl.TplPut<{ o: InsertConnect, arg: String 
 			case OK:
 				st = '';
 			case ERROR(e):
-				if (e.exists(a.arg))
-					st = e.get(a.arg);
-				else
-					st = '';
+				st = e.exists(a.arg) ? e.get(a.arg) : '';
 			case DBERROR:
 				st = 'DataBase error';
 		}
@@ -217,11 +212,9 @@ class InsertPutArg extends pony.text.tpl.TplPut<{ o: InsertConnect, arg: String 
 	override public function shortTag(name: String, arg: String, ?kid: ITplPut): String {
 		if (name == 'error') {
 			final s = st();
-			if (s != null)
-				return s;
-			else
-				return '';
-		} else if (name == 'value') {
+			return s != null ? s : '';
+		}
+		if (name == 'value') {
 			final ma: Map<Int, { values: Map<String, String>, result: ActResult }> = b.connection.sessionStorage.get('modelsActions');
 			final m = ma[a.o.base.id];
 			if (m == null)

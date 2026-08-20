@@ -33,8 +33,8 @@ typedef HaxelibConfig = {
 #if (haxe_ver >= 4.2) enum #else @:enum #end
 abstract Source(String) from String to String {
 
-	final GIT = 'git';
-	final DEV = 'dev';
+	private final GIT: String = 'git';
+	private final DEV: String = 'dev';
 
 }
 
@@ -69,26 +69,26 @@ abstract Source(String) from String to String {
 			if (lib.version == GIT && lib.git == null) continue;
 			if (lib.version == DEV && lib.path == null) continue;
 			if (!lib.keepDev) Utils.command('haxelib', ['dev', lib.name]);
-			final args: Array<String> = lib.version == GIT
-				? @:nullSafety(Off) [GIT, lib.name, lib.git]
-				: lib.version == DEV && lib.path != null
-					? [DEV, lib.name, getLibPath(lib)]
-					: lib.version != null ? ['install', lib.name, lib.version] : ['install', lib.name];
+			final args: Array<String> = if (lib.version == GIT)
+				@:nullSafety(Off) [GIT, lib.name, lib.git]
+			else if (lib.version == DEV && lib.path != null)
+				[DEV, lib.name, getLibPath(lib)] else if (lib.version != null)
+				['install', lib.name, lib.version] else
+				['install', lib.name];
 			if (lib.version == GIT && lib.commit != null) args.push(lib.commit);
-			Sys.println('haxelib ${args.join(' ')}');
+			Sys.println('haxelib ' + args.join(' '));
 			final process: Process = new Process('haxelib', args);
 			try {
 				while (true) {
 					final ch = process.stdout.readString(1);
 					Sys.print(ch);
-					if (ch == '?') {
-						process.stdin.writeString(lib.y ? 'y\n' : 'n\n');
-						Sys.println(lib.y ? 'y\n' : 'n\n');
-					}
+					if (ch != '?') continue;
+					process.stdin.writeString(lib.y ? 'y\n' : 'n\n');
+					Sys.println(lib.y ? 'y\n' : 'n\n');
 				}
 			} catch (e: Eof) {}
 			try {
-				while (true) Sys.stderr().writeString('${process.stderr.readLine()}\n');
+				while (true) Sys.stderr().writeString(process.stderr.readLine() + '\n');
 			} catch (e: Eof) {}
 			@:nullSafety(Off) var r: Int = process.exitCode();
 			if (r > 0) error('haxelib error $r');
@@ -115,7 +115,7 @@ abstract Source(String) from String to String {
 					final path: String = Tools.libPath(lib.name);
 					log('Lib installed to $path');
 					var cwd: Cwd = new Cwd(path);
-					final pony: String = '${path}pony.xml';
+					final pony: String = path + 'pony.xml';
 					if (FileSystem.exists(pony)) {
 						cwd.sw();
 						Utils.command('haxelib', ['run', 'pony', 'prepare']);

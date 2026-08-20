@@ -24,9 +24,7 @@ abstract Dir(Unit) from Unit {
 	}
 
 	private static function checkFilter(filter: Array<String>, unit: String): Bool {
-		if (filter == null) return true;
-		for (f in filter) if (unit.substr(-f.length) == f) return true;
-		return false;
+		return filter == null || filter.exists(f -> unit.substr(-f.length) == f);
 	}
 
 	public function content(?filter: String, allowDir: Bool = false, sortByName: Bool = false): Array<Unit> {
@@ -34,10 +32,10 @@ abstract Dir(Unit) from Unit {
 		final flt: Array<String> = filter == null ? null : filter.split(' ');
 		for (d in this) {
 			if (d.exists) for (e in FileSystem.readDirectory(d.first)) {
-				final np: String = '$d/$e';
+				final np: String = d + '/' + e;
 				final isDir: Bool = try FileSystem.isDirectory(np) catch (_: Any) false;
 				if ((allowDir || !isDir) && (isDir || checkFilter(flt, e)) && !result.exists(e))
-					result[e] = [for (d in this.wayStringIterator()) '$d/$e'];
+					result[e] = [for (d in this.wayStringIterator()) d + '/$e'];
 			}
 		}
 		final r: Array<Unit> = [for (e in result) e];
@@ -104,7 +102,7 @@ abstract Dir(Unit) from Unit {
 	}
 
 	public function moveTo(to: Dir, ?filter: String): Void {
-		to = '${FileSystem.absolutePath(to.first)}/${this.name}';
+		to = FileSystem.absolutePath(to.first) + '/' + this.name;
 		if (filter == null) {
 			to.createWays();
 			this.rename(to);
@@ -120,7 +118,7 @@ abstract Dir(Unit) from Unit {
 		final a = first.split('/');
 		var d = a.shift();
 		for (e in a) {
-			d += '/$e';
+			d += '/' + e;
 			if (!FileSystem.exists(d)) FileSystem.createDirectory(d);
 		}
 	}

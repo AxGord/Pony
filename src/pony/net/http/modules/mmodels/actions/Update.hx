@@ -6,6 +6,7 @@ import pony.net.http.modules.mmodels.Model.ActResult;
 import pony.text.tpl.ITplPut;
 import pony.text.tpl.TplData;
 
+using StringTools;
 using pony.text.TextTools;
 
 /**
@@ -44,7 +45,7 @@ class UpdateConnect extends ActionConnect implements ISubActionConnect {
 		}
 
 		final ca: Array<Dynamic> = [];
-		for (k in base.args.keys()) {
+		for (k => value in base.args) {
 			final v: String = h[k];
 			if (Std.is(v, Array)) {
 				cpq.connection.error('Array not supported');
@@ -53,13 +54,13 @@ class UpdateConnect extends ActionConnect implements ISubActionConnect {
 			if (v == null)
 				ca.push(null);
 			else
-				switch (base.args.get(k)) {
+				switch (value) {
 					case 'String':
-						ca.push(StringTools.trim(v));
+						ca.push(v.trim());
 					case 'Int':
 						ca.push(Std.parseInt(v));
 					case _:
-						cpq.connection.error('Type ${base.args.get(k)} not supported');
+						cpq.connection.error('Type ' + value + ' not supported');
 						return true;
 				}
 		}
@@ -83,10 +84,7 @@ class UpdateConnect extends ActionConnect implements ISubActionConnect {
 			case OK:
 				st = '';
 			case ERROR(e):
-				if (e.exists(arg))
-					st = e.get(arg);
-				else
-					st = '';
+				st = e.exists(arg) ? e.get(arg) : '';
 			case DBERROR:
 				st = 'DataBase error';
 		}
@@ -121,23 +119,25 @@ class UpdatePut extends pony.text.tpl.TplPut<UpdateConnect, Dynamic> {
 					r += inputE(k, m.values.exists(k) ? m.values.get(k) : '', fixList.indexOf(k) != -1);
 				}
 			a.clr();
-			return '<form action="" method="POST">${content != null ? '<div class="capition">' + @await tplData(content) + '</div>' : ''}'
-				+ '$r<button>Send</button> <a href="" class="action">Clear</a></form>';
-		} else {
-			trace(name);
-			trace('------------');
-			final r: String = @await sub(a, b, UpdatePutSub, content);
-			a.clr();
-			return r;
+			return '<form action="" method="POST">'
+				+ (content != null ? '<div class="capition">' + @await tplData(content) + '</div>' : '') + r
+				+ '<button>Send</button> <a href="" class="action">Clear</a></form>';
 		}
+		trace(name);
+		trace('------------');
+		final r: String = @await sub(a, b, UpdatePutSub, content);
+		a.clr();
+		return r;
 	}
 
 	private function inputE(name: String, value: String, fix: Bool): String {
 		if (a.base.model.columns.get(name).hid) return input(name, null, value);
 		final s: String = a.st(name);
-		if (s == null) return '<label>${name.bigFirst()}${input(name, null, value)}</label>';
-		if (s == '') return '<label>${name.bigFirst()}${input(name, 'ok', fix ? value : '')}</label>';
-		return '<label>${name.bigFirst()}${input(name, 'error', value)}<div>$s</div></label>';
+		return s == null
+			? '<label>' + name.bigFirst() + input(name, null, value) + '</label>'
+			: s == ''
+				? '<label>' + name.bigFirst() + input(name, 'ok', fix ? value : '') + '</label>'
+				: '<label>' + name.bigFirst() + input(name, 'error', value) + '<div>' + s + '</div>' + '</label>';
 	}
 
 	private function input(name: String, cl: String, value: String): String {
@@ -151,18 +151,14 @@ class UpdatePutSub extends pony.text.tpl.TplPut<UpdateConnect, Dynamic> {
 
 	@:async
 	override public function shortTag(name: String, arg: String, ?kid: ITplPut): String {
-		if (a.base.args.exists(name))
-			return '${Reflect.field(b, name)}';
-		else
-			return @await super.shortTag(name, arg, kid);
+		return a.base.args.exists(name) ? Std.string(Reflect.field(b, name)) : @await super.shortTag(name, arg, kid);
 	}
 
 	@:async
 	override public function tag(name: String, content: TplData, arg: String, args: Map<String, String>, ?kid: ITplPut): String {
-		if (a.base.args.exists(name)) {
-			return @await sub({ o: a, arg: name }, Reflect.field(b, name), UpdatePutArg, content);
-		} else
-			return @await super.tag(name, content, arg, args, kid);
+		return a.base.args.exists(name)
+			? @await sub({ o: a, arg: name }, Reflect.field(b, name), UpdatePutArg, content)
+			: @await super.tag(name, content, arg, args, kid);
 	}
 
 }
@@ -189,27 +185,21 @@ class UpdatePutArg extends pony.text.tpl.TplPut<{ o: UpdateConnect, arg: String 
 	override public function shortTag(name: String, arg: String, ?kid: ITplPut): String {
 		switch (name) {
 			case 'error':
-				{
-					final s = a.o.st(a.arg);
-					if (s != null)
-						return s;
-					else
-						return '';
-				}
+				final s = a.o.st(a.arg);
+				if (s != null)
+					return s;
+				else
+					return '';
 			case 'value':
-				{
-					final ma: Map<Int, Dynamic> = a.o.cpq.connection.sessionStorage.get('modelsActions');
-					final m = ma[a.o.base.id];
-					if (m == null) {
-						return b;
-					} else {
-						return m.values.exists(a.arg) ? m.values.get(a.arg) : b;
-					}
+				final ma: Map<Int, Dynamic> = a.o.cpq.connection.sessionStorage.get('modelsActions');
+				final m = ma[a.o.base.id];
+				if (m == null) {
+					return b;
+				} else {
+					return m.values.exists(a.arg) ? m.values.get(a.arg) : b;
 				}
 			case _:
-				{
-					return @await super.shortTag(name, arg, kid);
-				}
+				return @await super.shortTag(name, arg, kid);
 		}
 	}
 

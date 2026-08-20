@@ -18,9 +18,9 @@ class ElectronApplication extends VSTraceHelper implements HasAbstract {
 
 	public var windows(default, null): Map<String, BrowserWindow> = [];
 
-	private final windowsPath: String;
-	private final windowsExt: String;
-	private final macnoexit: Bool;
+	private var windowsPath: String;
+	private var windowsExt: String;
+	private var macnoexit: Bool;
 
 	private function new(
 		windowsPath: String = '', windowsExt: String = '.html', macnoexit: Bool = false, disableHardwareAcceleration: Bool = false
@@ -30,8 +30,8 @@ class ElectronApplication extends VSTraceHelper implements HasAbstract {
 		this.windowsExt = windowsExt;
 		this.macnoexit = macnoexit && Node.process.platform == 'darwin';
 		Node.process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true';
-		log('Build date: ${Tools.getBuildDate()}');
-		log('Platform: ${Node.process.platform}');
+		log('Build date: ' + Tools.getBuildDate());
+		log('Platform: ' + Node.process.platform);
 		if (this.macnoexit) log('Mac OS keep opened');
 		App.on('ready', readyHandler);
 		if (this.macnoexit) {
@@ -65,9 +65,9 @@ class ElectronApplication extends VSTraceHelper implements HasAbstract {
 			windows.remove(id);
 			log('Close window: $id ($url)');
 		});
-		var path: String = '${js.Node.__dirname}/$windowsPath$url$windowsExt';
+		var path: String = Node.__dirname + '/' + windowsPath + url + windowsExt;
 		path = sys.FileSystem.absolutePath(path);
-		win.loadURL('file://$path');
+		win.loadURL('file://' + path);
 		// win.webContents.openDevTools();
 		return win;
 	}

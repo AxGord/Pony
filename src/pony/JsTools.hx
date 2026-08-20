@@ -110,10 +110,7 @@ class JsTools implements HasSignal {
 	public static function get_webp(): Bool {
 		return _webp != null
 			? _webp
-			: (
-				_webp = cast(Browser.document.createElement('canvas'), CanvasElement).toDataURL('image/webp')
-					.indexOf('data:image/webp') == 0
-			);
+			: _webp = cast(Browser.document.createElement('canvas'), CanvasElement).toDataURL('image/webp').indexOf('data:image/webp') == 0;
 	}
 
 	private static function get_agent(): UserAgent {
@@ -232,7 +229,7 @@ class JsTools implements HasSignal {
 		untyped Browser.console.log = logFunction;
 	}
 
-	public static inline function disableContextMenuGlobal(): Void {
+	public static function disableContextMenuGlobal(): Void {
 		Browser.window.oncontextmenu = contextMenuHandler;
 	}
 
@@ -255,7 +252,7 @@ class JsTools implements HasSignal {
 	}
 
 	private static function splitCssReturnDelimiter(s: String): String {
-		return '${s.ltrim()};';
+		return s.ltrim() + ';';
 	}
 
 	public static function mapToJSMap<K, V>(map: Map<K, V>): JsMap<K, V> {
@@ -272,6 +269,6 @@ class JsTools implements HasSignal {
 		return [for (k in map.keys()) k => map.get(k)];
 	}
 
-	public static inline function logBuildDate(): Void Browser.console.log('Build date: ${Tools.getBuildDate()}');
+	public static inline function logBuildDate(): Void Browser.console.log('Build date: ' + Tools.getBuildDate());
 
 }

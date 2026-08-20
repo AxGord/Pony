@@ -16,8 +16,8 @@ class FBool extends Field {
 	}
 
 	override public function htmlInput(cl: String, act: String, value: String, ?hidden: Null<Bool>): String {
-		return '<input ${cl != null ? 'class="' + cl + '" ' : ''}name="${model.name}.$act.$name" type="checkbox" value="on" '
-			+ '${value != 'on' ? '' : 'checked'}/>';
+		return '<input ' + (cl != null ? 'class="' + cl + '" ' : '') + 'name="' + model.name + '.' + act + '.' + name
+			+ '" type="checkbox" value="on" ' + (value != 'on' ? '' : 'checked') + '/>';
 	}
 
 	override public function create(): pony.db.mysql.Field {

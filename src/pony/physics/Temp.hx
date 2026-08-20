@@ -23,7 +23,7 @@ abstract Temp(Float) {
 
 	@:from public static function fromString(s: String): Temp {
 		s = s.trim();
-		final ch = s.substr(s.length - 1).toLowerCase();
+		final ch: String = s.substr(s.length - 1).toLowerCase();
 		final v: Float = Std.parseFloat(s.substr(0, s.length - 1));
 		return switch ch {
 			case 'c': fromC(v);
@@ -32,6 +32,6 @@ abstract Temp(Float) {
 		}
 	}
 
-	@:to private inline function toString(): String return '${c}C';
+	@:to private inline function toString(): String return c + 'C';
 
 }

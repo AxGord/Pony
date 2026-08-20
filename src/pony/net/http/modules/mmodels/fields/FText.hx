@@ -4,8 +4,6 @@ import pony.net.http.modules.mmodels.Field;
 import pony.text.tpl.ITplPut;
 import pony.text.tpl.TplData;
 
-using StringTools;
-
 /**
  * FText
  * @author AxGord <axgord@gmail.com>
@@ -20,7 +18,8 @@ class FText extends Field {
 	}
 
 	override public function htmlInput(cl: String, act: String, value: String, ?hidden: Null<Bool>): String {
-		return '<textarea ${cl != null ? 'class="' + cl + '" ' : ''}name="${model.name}.$act.$name">$value</textarea>';
+		return '<textarea ' + (cl != null ? 'class="' + cl + '" ' : '') + 'name="' + model.name + '.' + act + '.' + name + '">' + value
+			+ '</textarea>';
 	}
 
 }
@@ -34,10 +33,7 @@ class FText extends Field {
 
 	@:async
 	override public function tag(name: String, content: TplData, arg: String, args: Map<String, String>, ?kid: ITplPut): String {
-		if (args.exists('noesc'))
-			return Reflect.field(b, name);
-		else
-			return @await html(name);
+		return args.exists('noesc') ? Reflect.field(b, name) : @await html(name);
 	}
 
 	@:async
@@ -47,7 +43,7 @@ class FText extends Field {
 
 	@:async
 	public function html(f: String): String {
-		return StringTools.replace('${Reflect.field(b, f)}'.htmlEscape(), '\r\n', '<br/>');
+		return StringTools.replace(StringTools.htmlEscape(Std.string(Reflect.field(b, f))), '\r\n', '<br/>');
 	}
 
 }

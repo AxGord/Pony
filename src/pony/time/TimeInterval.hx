@@ -30,14 +30,14 @@ abstract TimeInterval(TimeIntervalImpl) {
 
 	@:from private static inline function fromInterator(it: IntIterator): TimeInterval return create(it.field('min'), it.field('max'));
 
-	@:to public inline function toString(): String return '${(min: String)} ... ${(max: String)}';
+	@:to public inline function toString(): String return (min: String) + ' ... ' + (max: String);
 
 	@:from private static inline function fromNullString(time: Null<String>): Null<TimeInterval> {
 		return time != null ? fromString(time) : null;
 	}
 
 	@:from private static function fromString(time: String): TimeInterval {
-		final a = time.split('...');
+		final a: Array<String> = time.split('...');
 		return a.length > 1 ? new TimeInterval({ min: a[0], max: a[1] }) : fromTime(a[0]);
 	}
 

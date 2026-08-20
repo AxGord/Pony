@@ -8,6 +8,7 @@ import pony.geom.Align.HAlign;
 import pony.geom.Align.VAlign;
 import pony.geom.GeomTools;
 import pony.geom.Point;
+import pony.geom.Point.IntPoint;
 import pony.geom.Rect.IntRect;
 import pony.Pair;
 import pony.ui.gui.FontStyle;
@@ -59,7 +60,7 @@ class TextTable extends TextTableCore {
 
 	#if (haxe_ver < 4.2) override #end
 	private function drawText(point: IntRect, text: String, style: FontStyle): Void {
-		final t = new BitmapText(text, { font: '${style.size}px ${style.font}', tint: style.color });
+		final t = new BitmapText(text, { font: style.size + 'px ' + style.font, tint: style.color });
 		final align = style.border != null && style.align == null ? new Pair(VAlign.Top, HAlign.Left) : style.align;
 
 		if (align != null) {

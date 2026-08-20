@@ -164,16 +164,16 @@ using pony.Tools;
 
 	#if !macro
 	@:to public function toString(): String {
-		var s = '';
+		var s: String = '';
 		if (this < 0) s += '-';
-		if (days != 0) s += '${Math.abs(days)} ';
+		if (days != 0) s += Math.abs(days) + ' ';
 		s += clock();
-		if (ms != 0) s += '.${Math.abs(ms).toFixed('000')}';
+		if (ms != 0) s += '.' + Math.abs(ms).toFixed('000');
 		return s == '' ? '0' : s;
 	}
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public inline function showMinSec(): String return '${print(minutes)}:${print(seconds)}';
+	public inline function showMinSec(): String return print(minutes) + ':' + print(seconds);
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function showSec(): String return print(totalSeconds);
@@ -181,7 +181,7 @@ using pony.Tools;
 	public function clock(autoHide: Bool = false): String {
 		var s: String = '';
 		if (hours != 0 || !autoHide) {
-			s += '${print(hours)}:${showMinSec()}';
+			s += print(hours) + ':' + showMinSec();
 		} else {
 			if (minutes != 0) {
 				s += showMinSec();

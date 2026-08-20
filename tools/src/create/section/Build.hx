@@ -34,7 +34,7 @@ class Build extends Section {
 
 	public function addLib(name: String, ?version: String): Void libs[name] = version;
 
-	public inline function getHxmlFile(): String return hxml + HXML;
+	public function getHxmlFile(): String return hxml + HXML;
 
 	public function getDep(): Array<String> return hxml != null ? [getHxmlFile()] : [];
 
@@ -48,8 +48,7 @@ class Build extends Section {
 			if (main != null) prepare.addChild(XmlTools.node('main', main));
 			prepare.addChild(XmlTools.node(targetKey(), output()));
 			for (cp in cps) prepare.addChild(XmlTools.node('cp', cp));
-			for (name => value in libs) {
-				final v: Null<String> = value;
+			for (name => v in libs) {
 				prepare.addChild(XmlTools.node('lib', v == null ? name : '$name:$v'));
 			}
 			if (dce != null) prepare.addChild(XmlTools.node('dce', dce));
@@ -73,8 +72,7 @@ class Build extends Section {
 			add('main', main);
 			add(targetKey(), output());
 			for (cp in cps) add('cp', cp);
-			for (name => value in libs) {
-				final v: Null<String> = value;
+			for (name => v in libs) {
 				add('lib', v == null ? name : '$name $v');
 			}
 			if (dce != null) add('dce', dce);
@@ -117,9 +115,9 @@ class Build extends Section {
 
 	public function getMainhxPath(): String return cps[0];
 
-	public inline function getMainhx(): String return gethx(main);
+	public function getMainhx(): String return gethx(main);
 
-	public function gethx(name: String): String return '${getMainhxPath()}/$name.hx';
+	public function gethx(name: String): String return getMainhxPath() + '/' + name + '.hx';
 
 	public function createMainhx(template: String, ?replaces: Map<String, String>): Void {
 		createPathToMainhxIfNeed();
@@ -140,11 +138,11 @@ class Build extends Section {
 		if (!outputPathExists()) FileSystem.createDirectory(outputPath);
 	}
 
-	public inline function outputPathExists(): Bool {
+	public function outputPathExists(): Bool {
 		return FileSystem.exists(outputPath);
 	}
 
-	public inline function createOutputPath(): Void {
+	public function createOutputPath(): Void {
 		FileSystem.createDirectory(outputPath);
 	}
 

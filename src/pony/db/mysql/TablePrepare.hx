@@ -21,16 +21,17 @@ class TablePrepare {
 	}
 
 	@:async public function prepare(fields: Array<Field>): Bool {
-		mysql.log('prepare table $table');
+		mysql.log('prepare table ' + table);
 		mysql.hack = table;
-		var err, _, remote = @await mysql.query('SELECT * FROM $table LIMIT 0');
+		var err;
+		var _;
+		var remote = @await mysql.query('SELECT * FROM $table LIMIT 0');
 		if (err != null) { // Create table
-			final cr: Array<String> = [];
-			for (f in fields) {
-				final name = mysql.escapeId(f.name);
-				cr.push('$name ${f.type.toString()}${decorateLength(f.length)} ${Flags.array2string(f.flags)}');
-			}
-			if (!@await mysql.action('CREATE TABLE $table (${cr.join(', ')})', 'create table')) return false;
+			final cr: Array<String> = [
+				for (f in fields) mysql.escapeId(f.name) + ' ' + f.type.toString() + decorateLength(f.length) + ' '
+					+ Flags.array2string(f.flags)
+			];
+			if (!@await mysql.action('CREATE TABLE $table (' + cr.join(', ') + ')', 'create table')) return false;
 		} else { // Update table
 			final map: Map<String, Int> = makeFieldsMap(fields);
 			{ // Rename
@@ -81,7 +82,7 @@ class TablePrepare {
 				for (f in remote.kv()) {
 					if (map[f.value.name] != f.key) {
 						final i = map[f.value.name];
-						final postfix = i == 0 ? ' FIRST' : ' AFTER ${mysql.escapeId(fields[i - 1].name)}';
+						final postfix = i == 0 ? ' FIRST' : ' AFTER ' + mysql.escapeId(fields[i - 1].name);
 						if (!@await mysql.action(alter(fields[i], f.value) + postfix, 'move table field')) return false;
 						remote = remote.swap(i, f.key);
 						remote[i] = fields[i];
@@ -98,9 +99,8 @@ class TablePrepare {
 				if (r == null) return false;
 				var ef: Bool = false;
 				for (fl in f.flags) if (!r.flags.exists(fl)) ef = true;
-				if (ef || f.type != r.type || (f.length != null && f.type != Types.TEXT && f.length != r.length)) {
-					if (!@await mysql.action(alter(f, r), 'update table field')) return false;
-				}
+				if (!ef && f.type == r.type && (f.length == null || f.type == Types.TEXT || f.length == r.length)) continue;
+				if (!@await mysql.action(alter(f, r), 'update table field')) return false;
 			}
 		}
 		return true;
@@ -136,13 +136,13 @@ class TablePrepare {
 		var flags = f.flags.copy();
 		final i = flags.indexOf(PRI_KEY);
 		if (r.flags.indexOf(PRI_KEY) != -1 && i != -1) flags = flags.delete(i); // Don't add primary key if him exists
-		return 'ALTER TABLE $table CHANGE $name2 $name ${f.type.toString()}${decorateLength(f.length)} ${Flags.array2string(flags)}';
+		return 'ALTER TABLE $table CHANGE $name2 $name ' + f.type.toString() + decorateLength(f.length) + ' ' + Flags.array2string(flags);
 	}
 
 	public function alterAdd(f: Field): String {
 		final name = mysql.escapeId(f.name);
 		final flags = f.flags.copy();
-		return 'ALTER TABLE $table ADD $name ${f.type.toString()}${decorateLength(f.length)} ${Flags.array2string(flags)}';
+		return 'ALTER TABLE $table ADD $name ' + f.type.toString() + decorateLength(f.length) + ' ' + Flags.array2string(flags);
 	}
 
 	private static inline function decorateLength(len: Null<Int>): String return len != null ? '($len)' : '';

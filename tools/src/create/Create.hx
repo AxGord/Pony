@@ -33,7 +33,7 @@ class Create {
 			}
 		}
 		if (type == null) Utils.error('Wrong app type');
-		if (FileSystem.exists(Utils.MAIN_FILE)) Utils.error('${Utils.MAIN_FILE} exists');
+		if (FileSystem.exists(Utils.MAIN_FILE)) Utils.error(Utils.MAIN_FILE + ' exists');
 		final project: Project = new Project(name);
 		setProjectConfig(project, type);
 		Utils.savePonyProject(project.result());
@@ -172,7 +172,7 @@ class Create {
 
 	private static function createAirData(project: Project, vscAllow: Bool): Void {
 		project.build.createEmptyMainhx();
-		Template.gen('air/', [create.targets.Swf.APP_XML => '::OUTPUT::${create.targets.Swf.APP_XML}'], [
+		Template.gen('air/', [create.targets.Swf.APP_XML => '::OUTPUT::' + create.targets.Swf.APP_XML], [
 			'OUTPUT' => project.build.outputPath,
 			'APP' => project.build.outputFile,
 			'EXT' => project.build.outputExt(),
@@ -200,7 +200,7 @@ class Create {
 		createIndexHtml(project);
 	}
 
-	private static inline function createPixiData(project: Project, vscAllow: Bool): Void {
+	private static function createPixiData(project: Project, vscAllow: Bool): Void {
 		createPixiProjectsData(project, vscAllow, 'pixitemplate.hx.tpl');
 	}
 
@@ -225,7 +225,7 @@ class Create {
 		if (project.hashlink.android != null) copyFromTools(testSertFile, project.build.outputPath);
 	}
 
-	private static inline function createHeapsData(project: Project, vscAllow: Bool): Void {
+	private static function createHeapsData(project: Project, vscAllow: Bool): Void {
 		createHeapsProjectsData(project, vscAllow, 'heapstemplate.hx.tpl');
 	}
 
@@ -278,7 +278,7 @@ class Create {
 		final path: String = project.build.getMainhxPath();
 		createDirs([
 			path,
-			'${path}models',
+			path + 'models',
 			'bin/home/',
 			'bin/home/language/',
 			'bin/home/templates/',

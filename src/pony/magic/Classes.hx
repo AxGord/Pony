@@ -18,8 +18,8 @@ class Classes {
 	macro public static function dir(pack: String, dir: String): Expr {
 		var f: String = Context.getPosInfos(Context.currentPos()).file;
 		final d: String = Sys.systemName() == 'Windows' ? '\\' : '/';
-		f = '${sys.FileSystem.fullPath(f).split(d).slice(0, -1).join('/')}/';
-		final d: String = '${f + dir}/';
+		f = sys.FileSystem.fullPath(f).split(d).slice(0, -1).join('/') + '/';
+		final d: String = f + dir + '/';
 		final list: Array<Expr> = [];
 		final p: Array<String> = (pack != '' ? pack.split('.') : []).concat(dir.split('/'));
 		for (e in FileSystem.readDirectory(d)) if (e.substr(-3) == '.hx') {

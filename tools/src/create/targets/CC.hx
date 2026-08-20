@@ -26,7 +26,7 @@ class CC {
 		uglify.c = false;
 		uglify.m = false;
 		project.url.active = true;
-		project.url.list.push('http://localhost:${project.server.httpPort}/update-db');
+		project.url.list.push('http://localhost:' + project.server.httpPort + '/update-db');
 	}
 
 }

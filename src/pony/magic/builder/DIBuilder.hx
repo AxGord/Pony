@@ -226,8 +226,7 @@ final class DIBuilder {
 									final childIsAsync: Bool = checkAsyncDestroy(inst);
 									if (childIsAsync && !isAsync)
 										Context.error(
-											'Service "${field.name}" implements AsyncDestroy, but this class does not. Add `implements '
-											+ 'pony.magic.AsyncDestroy` to this class.',
+											'Service "${field.name}" implements AsyncDestroy, but this class does not. Add `implements pony.magic.AsyncDestroy` to this class.',
 											field.pos
 										);
 									// L3: skip provider.load for static-eligible DI children; declare local var instead.
@@ -558,7 +557,7 @@ final class DIBuilder {
 		// their own flag because a shared inherited flag would block super.destroy() chain:
 		// when child.destroy sets the flag before calling super, parent.destroy's own guard
 		// check would see the flag set and early-return, skipping parent's cleanup.
-		final guardFieldName: String = '__diDestroyed_${localClass.name}';
+		final guardFieldName: String = '__diDestroyed_' + localClass.name;
 		if (needsGuard) fields.push({
 			name: guardFieldName,
 			access: [APrivate],
@@ -683,7 +682,7 @@ final class DIBuilder {
 	private static function typeNameOf(c: ClassType): String {
 		final segs: Array<String> = c.module.split('.');
 		final lastSeg: String = segs[segs.length - 1];
-		return c.name == lastSeg ? c.module : '${c.module}.${c.name}';
+		return c.name == lastSeg ? c.module : (c.module + '.' + c.name);
 	}
 
 	private static function complexTypeName(t: ComplexType): String {

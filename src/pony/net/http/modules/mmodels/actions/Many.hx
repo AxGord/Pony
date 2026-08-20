@@ -53,14 +53,12 @@ class ManyPut extends pony.text.tpl.TplPut<ManyConnect, CPQ> {
 		final mp: ModelPut = cast parent;
 		final f = arg == null ? 'id' : arg;
 		final a: Array<Dynamic> = @await a.call(mp.b == null ? [] : [Reflect.field(mp.b, f)]);
-		if (args.exists('!'))
-			return a.length == 0 ? @await parent.tplData(content) : '';
-		else {
-			if (args.exists('div')) {
-				return @await div(arg, args, a);
-			} else
-				return @await many(a, ManyPutSub, content, arg);
-		}
+		return if (args.exists('!'))
+			a.length == 0 ? @await parent.tplData(content) : ''
+		else if (args.exists('div'))
+			@await div(arg, args, a)
+		else
+			@await many(a, ManyPutSub, content, arg);
 	}
 
 	@:async
@@ -69,15 +67,15 @@ class ManyPut extends pony.text.tpl.TplPut<ManyConnect, CPQ> {
 		final na: Array<String> = [];
 		if (args.exists('cols'))
 			for (e in a) {
-				var s: String = '<div class="$n">';
-				for (f in args['cols'].split(',').map(StringTools.trim)) s += '<div class="$f">${@await html(e, f) + '</div>'}';
+				var s: String = '<div class="' + n + '">';
+				for (f in args['cols'].split(',').map(StringTools.trim)) s += '<div class="' + f + '">' + @await html(e, f) + '</div>';
 				s += '</div>';
 				na.push(s);
 			}
 		else
 			for (e in a) {
-				var s: String = '<div class="$n">';
-				for (f in Reflect.fields(e)) s += '<div class="$f">${@await html(e, f) + '</div>'}';
+				var s: String = '<div class="' + n + '">';
+				for (f in Reflect.fields(e)) s += '<div class="' + f + '">' + @await html(e, f) + '</div>';
 				s += '</div>';
 				na.push(s);
 			}
@@ -87,12 +85,9 @@ class ManyPut extends pony.text.tpl.TplPut<ManyConnect, CPQ> {
 	@:async
 	private function html(e: Dynamic, f: String): String {
 		final c = a.base.model.columns[f];
-		if (c.tplPut != null) {
-			final o: Dynamic = Type.createInstance(c.tplPut, [c, e, this]);
-			return @await o.html(f);
-		} else {
-			return Reflect.field(e, f);
-		}
+		if (c.tplPut == null) return Reflect.field(e, f);
+		final o: Dynamic = Type.createInstance(c.tplPut, [c, e, this]);
+		return @await o.html(f);
 	}
 
 }
@@ -108,54 +103,37 @@ final class ManyPutSub extends Valuator<ManyPut, Dynamic> {
 	override public function tag(name: String, content: TplData, arg: String, args: Map<String, String>, ?kid: ITplPut): String {
 		if (a.a.model.subactions.exists(name)) {
 			return @await a.a.model.subactions[name].subtpl(parent, b).tag(name, content, arg, args, kid);
-		} else {
-			if (name == 'selected') {
-				final f1 = a.a.checkActivePath(b);
-				final f2 = !args.exists('!');
-				if ((f1 && f2) || (!f1 && !f2))
-					return @await tplData(content);
-				else
-					return '';
-			} else {
-				if (!a.a.base.model.columns.exists(name)) {
-					final sm = a.b.getModule(MModelsConnect).list[name];
-					if (sm != null) {
-						return @await sm.tpl(this).tplData(content);
-					} else {
-						return '%$name%';
-					}
-				}
-				final c = a.a.base.model.columns[name];
-				if (c != null && c.tplPut != null) {
-					final o = Type.createInstance(c.tplPut, [c, b, this]);
-					return @await o.tag(name, content, arg, args, kid);
-				} else
-					return @await super.tag(name, content, arg, args, kid);
-			}
 		}
+		if (name == 'selected') {
+			final f1 = a.a.checkActivePath(b);
+			final f2 = !args.exists('!');
+			return (f1 && f2) || (!f1 && !f2) ? @await tplData(content) : '';
+		}
+		if (!a.a.base.model.columns.exists(name)) {
+			final sm = a.b.getModule(MModelsConnect).list[name];
+			return sm != null ? @await sm.tpl(this).tplData(content) : '%$name%';
+		}
+		final c = a.a.base.model.columns[name];
+		if (c == null || c.tplPut == null) return @await super.tag(name, content, arg, args, kid);
+		final o = Type.createInstance(c.tplPut, [c, b, this]);
+		return @await o.tag(name, content, arg, args, kid);
 	}
 
 	@:async
 	override public function shortTag(name: String, arg: String, ?kid: ITplPut): String {
 		if (a.a.model.subactions.exists(name)) {
 			return @await a.a.model.subactions[name].subtpl(parent, b).shortTag(name, arg, kid);
-		} else {
-			if (!a.a.base.model.columns.exists(name)) return '%$name%';
-			final c = a.a.base.model.columns[name];
-			if (c != null && c.tplPut != null) {
-				final o = Type.createInstance(c.tplPut, [c, b, this]);
-				return @await o.shortTag(name, arg, kid);
-			} else
-				return @await super.shortTag(name, arg, kid);
 		}
+		if (!a.a.base.model.columns.exists(name)) return '%$name%';
+		final c = a.a.base.model.columns[name];
+		if (c == null || c.tplPut == null) return @await super.shortTag(name, arg, kid);
+		final o = Type.createInstance(c.tplPut, [c, b, this]);
+		return @await o.shortTag(name, arg, kid);
 	}
 
 	@:async
 	override public function valu(name: String, arg: String): String {
-		if (Reflect.hasField(b, name))
-			return '${Reflect.field(b, name)}';
-		else
-			return null;
+		return Reflect.hasField(b, name) ? Std.string(Reflect.field(b, name)) : null;
 	}
 
 }

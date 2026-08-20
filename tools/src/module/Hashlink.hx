@@ -1,5 +1,6 @@
 package module;
 
+import haxe.Template;
 import pony.Fast;
 import pony.SPair;
 import pony.ZipTool;
@@ -66,10 +67,10 @@ class Hashlink extends CfgModule<HashlinkConfig> {
 		}
 		if (cfg.output.b != null) {
 			if (cfg.output.b.isTrue()) {
-				log('Clear $output');
+				log('Clear ' + output);
 				(output: Dir).deleteContent();
 			} else if (cfg.output.b.toLowerCase() == 'rimraf') {
-				log('Clear $output');
+				log('Clear ' + output);
 				Utils.command('rimraf', [output]);
 			}
 		}
@@ -81,33 +82,33 @@ class Hashlink extends CfgModule<HashlinkConfig> {
 		output = output.setLast('/');
 		switch cfg.hl {
 			case 'mac':
-				final runhl: String = '${Utils.libPath}redist/runhl.app.zip';
+				final runhl: String = Utils.libPath + 'redist/runhl.app.zip';
 				ZipTool.unpackFile(runhl, output, true, ignoreLibs, function(s: String): Void log(s));
 				output += 'Contents/';
 				final o: String = output;
 				output += 'Resources/';
 				if (!Utils.isWindows) {
-					Utils.command('chmod', ['+x', '${o}MacOS/runhl']);
-					Utils.command('chmod', ['+x', '${output}hl']);
+					Utils.command('chmod', ['+x', o + 'MacOS/runhl']);
+					Utils.command('chmod', ['+x', output + 'hl']);
 				}
 			case 'android':
 				Utils.createPath(output);
 				final outputDir: Dir = output;
-				final template: Dir = '${Utils.toolsPath}heaps_android/';
+				final template: Dir = Utils.toolsPath + 'heaps_android/';
 				template.copyTo(output);
 
-				final outputApp: Dir = '${outputDir}app';
+				final outputApp: Dir = outputDir + 'app';
 				final buildGradle: File = outputApp.file('build.gradle');
 				final buildGradleTemplate: File = outputApp.file('build.gradle.tpl');
 				final abiFilters: String = cfg.abiFilters != null ? cfg.abiFilters : 'x86,x86_64,armeabi-v7a,arm64-v8a';
-				buildGradle.content = new haxe.Template(buildGradleTemplate.content).execute({
+				buildGradle.content = new Template(buildGradleTemplate.content).execute({
 					split: cfg.splitAbi,
 					abiInclude: abiFilters.split(',').map(TextTools.quote.bind(_, '"')).join(', ')
 				});
 				buildGradleTemplate.delete();
 
-				final outputSrc: Dir = '${outputApp}src';
-				final outputMain: Dir = '${outputSrc}main';
+				final outputSrc: Dir = outputApp + 'src';
+				final outputMain: Dir = outputSrc + 'main';
 
 				log('Orientation ${cfg.orientation}');
 
@@ -118,12 +119,12 @@ class Hashlink extends CfgModule<HashlinkConfig> {
 					orientation: cfg.orientation
 				});
 
-				final patchedsdl: Dir = '${outputSrc}patchedsdl';
+				final patchedsdl: Dir = outputSrc + 'patchedsdl';
 				processTemplate(patchedsdl.file('SDLActivity.java'), {
 					autoOrientation: cfg.orientation == null
 				});
 
-				final patchedhl: Dir = '${outputSrc}patchedhl';
+				final patchedhl: Dir = outputSrc + 'patchedhl';
 				processTemplate(patchedhl.file('gc.c'), {
 					gcMarkThreshold: cfg.gcMarkThreshold
 				});
@@ -133,7 +134,7 @@ class Hashlink extends CfgModule<HashlinkConfig> {
 					['APPLICATION_ID', cfg.id],
 					['VERSION_CODE', cfg.version],
 					['VERSION_NAME', cfg.versionName],
-					['RELEASE_STORE_FILE', '../../../${cfg.storeFile}'],
+					['RELEASE_STORE_FILE', '../../../' + cfg.storeFile],
 					['RELEASE_STORE_PASSWORD', cfg.storePassword],
 					['RELEASE_KEY_ALIAS', cfg.keyAlias],
 					['RELEASE_KEY_PASSWORD', cfg.keyPassword]
@@ -143,11 +144,11 @@ class Hashlink extends CfgModule<HashlinkConfig> {
 					for (p in gradleProps) '${p.a}=${p.b}'
 				].join('\n');
 
-				final outputRes: Dir = '${outputMain}res';
+				final outputRes: Dir = outputMain + 'res';
 
 				if (cfg.platformData != null) {
 					final platformData: Dir = cfg.platformData;
-					final resSrc: Dir = '${platformData}res';
+					final resSrc: Dir = platformData + 'res';
 					if (resSrc.exists) {
 						log('Remove default icon');
 						for (dir in outputRes.dirs()) {
@@ -160,7 +161,7 @@ class Hashlink extends CfgModule<HashlinkConfig> {
 					platformData.copyTo(outputMain);
 				}
 
-				('${outputRes}values/strings.xml': File).content = '<resources><string name="app_name">${cfg.title}</string></resources>';
+				((outputRes + 'values/strings.xml'): File).content = '<resources><string name="app_name">${cfg.title}</string></resources>';
 			case _:
 				ZipTool.unpackFile(cfg.hl, output, true, ignoreLibs, function(s: String): Void log(s));
 		}
@@ -170,7 +171,7 @@ class Hashlink extends CfgModule<HashlinkConfig> {
 			if (u.exists)
 				u.copyTo(dataOutput + d.b);
 			else
-				error('data $u not found');
+				error('data ' + u + ' not found');
 		}
 		if (cfg.hl == 'android') {
 			var cwd: Cwd = new Cwd(output);
@@ -187,9 +188,9 @@ class Hashlink extends CfgModule<HashlinkConfig> {
 	}
 
 	private function processTemplate(file: File, context: Dynamic): Void {
-		final templateFile: File = '${file.first}.tpl';
+		final templateFile: File = file.first + '.tpl';
 		log('processTemplate $templateFile -> $file');
-		file.content = new haxe.Template(templateFile.content).execute(context);
+		file.content = new Template(templateFile.content).execute(context);
 		templateFile.delete();
 	}
 

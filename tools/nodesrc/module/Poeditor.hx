@@ -2,7 +2,6 @@ package module;
 
 import js.node.Fs;
 import js.node.Https;
-import js.node.fs.WriteStream;
 import js.node.http.IncomingMessage;
 import pony.NPM;
 import pony.fs.Dir;
@@ -31,14 +30,14 @@ private typedef Lang = {
 		client.projects.get(cfg.id).then(function(project) {
 			project.languages.list().then(function(languages: Array<Lang>) {
 				for (i => lang in languages) {
-					log('Check lang: ${lang.name}');
+					log('Check lang: ' + lang.name);
 					if (lang.percentage == 100 && cfg.list.exists(lang.code)) {
 						tasks.add();
 						try {
 							lang.export({ type: 'key_value_json' }).then(function(v) {
-								final file: String = '${cfg.path + cfg.list[lang.code]}.json';
-								log('Update lang file: $file');
-								final f: WriteStream = Fs.createWriteStream(file);
+								final file: String = cfg.path + cfg.list[lang.code] + '.json';
+								log('Update lang file: ' + file);
+								final f: Dynamic = Fs.createWriteStream(file);
 								Https.get(v, function(response: IncomingMessage) {
 									response.once('end', tasks.end);
 									response.pipe(f);

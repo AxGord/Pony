@@ -23,12 +23,12 @@ class NetDebug {
 	#end
 
 	public static function client(name: String, ?host: String, port: Int = 60666): Void {
-		final c: SocketClient = new SocketClient(host, port);
-		final old = Log.trace;
+		var c: SocketClient = new SocketClient(host, port);
+		final old: (v:Dynamic, ?infos:Null<PosInfos>) -> Void = Log.trace;
 		Log.trace = function(d: Dynamic, ?p: PosInfos): Void {
 			old(d, p);
 			if (trstr != '') trstr += '\n';
-			trstr += '$name => ${p == null ? '' : p.fileName + ':' + p.lineNumber + ': '}$d';
+			trstr += name + ' => ' + (p == null ? '' : p.fileName + ':' + p.lineNumber + ': ') + Std.string(d);
 		}
 		DeltaTime.fixedUpdate << function(): Void if (trstr != '') {
 			final b: BytesOutput = new BytesOutput();

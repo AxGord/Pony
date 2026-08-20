@@ -58,7 +58,7 @@ class HtmlVideo implements HasSignal implements HasLink {
 
 	private var position: HtmlVideoPlayProgress;
 
-	private final options: HtmlVideoOptions = {
+	private var options: HtmlVideoOptions = {
 		bufferingTreshhold: 3,
 		retryDelay: 10000,
 		maxRetries: 4,
@@ -218,7 +218,7 @@ class HtmlVideo implements HasSignal implements HasLink {
 		} catch (_: Any) {
 			DTimer.fixedDelay(1000, playVideo);
 		}
-		if (!pony.JsTools.isMobile) videoElement.muted = muted.enabled;
+		if (!JsTools.isMobile) videoElement.muted = muted.enabled;
 	}
 
 }
@@ -254,7 +254,7 @@ class HtmlVideo implements HasSignal implements HasLink {
 	public function loadVideo(url: String): Void {
 		if (qualities != null) {
 			url = url.replace('{quality}', qualities[qualityIndex]);
-			url = url.replace('/quality/', '/${qualities[qualityIndex]}/');
+			url = url.replace('/quality/', '/' + qualities[qualityIndex] + '/');
 		}
 		final playingbefore = isPlaying;
 		_unloadVideo();

@@ -1,10 +1,10 @@
 package pony.db.odbc.nodejs;
 
 #if nodejs
-import pony.db.SQLBase;
 import haxe.PosInfos;
 import js.Node;
 import pony.db.mysql.Field;
+import pony.db.SQLBase;
 import pony.Logable;
 
 using StringTools;
@@ -40,12 +40,12 @@ class ODBC extends SQLBase {
 	 * Make action, query with boolean result
 	 */
 	@:async public function action(q: String, ?actName: String, ?p: PosInfos): Bool {
-		var err, _, _ = @await query(q, p);
-		if (err != null) {
-			_error(actName == null ? '$err' : 'Can\'t $actName: ${err.stack}', p);
-			return false;
-		} else
-			return true;
+		var err;
+		var _;
+		var _ = @await query(q, p);
+		if (err == null) return true;
+		_error(actName == null ? Std.string(err) : "Can't " + actName + ': ' + err.stack, p);
+		return false;
 	}
 
 	/**
@@ -78,7 +78,7 @@ class ODBC extends SQLBase {
 	/**
 	 * Escape (for values)
 	 */
-	public inline function escape(s: String): String return '\'${s.replace("'", '')}\'';
+	public inline function escape(s: String): String return "'" + s.replace("'", '') + "'";
 
 	/**
 	 * Close connection and destroy object

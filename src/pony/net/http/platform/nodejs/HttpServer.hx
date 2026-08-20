@@ -60,9 +60,9 @@ class HttpServer {
 		if (spdyConf == null) return;
 		trace(spdyConf);
 		final options = {
-			key: Fs.readFileSync('${Node.__dirname}/keys/spdy-key.pem'),
-			cert: Fs.readFileSync('${Node.__dirname}/keys/spdy-cert.pem'),
-			ca: Fs.readFileSync('${Node.__dirname}/keys/spdy-csr.pem')
+			key: Fs.readFileSync(Node.__dirname + '/keys/spdy-key.pem'),
+			cert: Fs.readFileSync(Node.__dirname + '/keys/spdy-cert.pem'),
+			ca: Fs.readFileSync(Node.__dirname + '/keys/spdy-csr.pem')
 		};
 
 		spdyServer = spdy.createServer(options, listen).listen(spdyConf.hasField('port') ? spdyConf.port : 443, createSpdyHandler);
@@ -86,7 +86,7 @@ class HttpServer {
 							req.headers.get('host');
 						} else {
 							final a: Dynamic = untyped me.server.address();
-							'${a.address}:${a.port}';
+							a.address + ':' + a.port;
 						}
 						final map: Map<String, String> = [];
 						for (k in fields.fields()) {
@@ -94,9 +94,9 @@ class HttpServer {
 						}
 						for (k in files.fields()) {
 							final f: Dynamic = files.field(k)[0];
-							if (f.size > 0) map[k] = '${f.headers.field('content-type')}:${f.path}';
+							if (f.size > 0) map[k] = f.headers.field('content-type') + ':' + f.path;
 						}
-						me.request(new HttpConnection('http://$host${req.url}', me.storage, req, res, map));
+						me.request(new HttpConnection('http://' + host + req.url, me.storage, req, res, map));
 					}
 				});
 
@@ -117,9 +117,9 @@ class HttpServer {
 						req.headers.host;
 					} else {
 						final a: Dynamic = untyped me.server.address();
-						'${a.address}:${a.port}';
+						a.address + ':' + a.port;
 					}
-					me.request(new HttpConnection('http://$host${req.url}', me.storage, req, res, h));
+					me.request(new HttpConnection('http://' + host + req.url, me.storage, req, res, h));
 				});
 				return;
 
@@ -128,9 +128,9 @@ class HttpServer {
 					req.headers.get('host');
 				} else {
 					final a: Dynamic = untyped server.address();
-					'${a.address}:${a.port}';
+					a.address + ':' + a.port;
 				}
-				request(new HttpConnection('http://$host${req.url}', storage, req, res, new Map<String, String>()));
+				request(new HttpConnection('http://' + host + req.url, storage, req, res, new Map<String, String>()));
 			case 'OPTIONS':
 				res.setHeader('Allow', 'POST, GET');
 				res.end();
@@ -150,14 +150,14 @@ class HttpServer {
 	private function createHandler(): Void {
 		if (verbose) {
 			final a: Dynamic = untyped server.address();
-			trace('HTTP Server running at http://${a.address}:${a.port}');
+			trace('HTTP Server running at http://' + a.address + ':' + a.port);
 		}
 		onOpen();
 	}
 
 	private function createSpdyHandler(): Void {
 		final a: Dynamic = untyped spdyServer.address();
-		trace('SPDY Server running at http://${a.address}:${a.port}');
+		trace('SPDY Server running at http://' + a.address + ':' + a.port);
 		onOpen();
 	}
 

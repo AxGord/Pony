@@ -53,7 +53,7 @@ class CTable implements Declarator implements Ninja {
 	#if macro
 	// fix macro error
 	public function new(mysql: ISQL, table: String) {}
-	public function resolve(s: String) return new Table(null, null);
+	public function resolve(s: String): pony.db.Table return new Table(null, null);
 	#else
 	@:arg public var mysql(default, null): ISQL;
 	@:arg private var table: String;
@@ -77,11 +77,11 @@ class CTable implements Declarator implements Ninja {
 	/**
 	 * Order asc for field
 	 */
-	@:n public inline function asc(field: String): Table order = ' ORDER BY ${mysql.escapeId(field)} ASC';
+	@:n public inline function asc(field: String): Table order = ' ORDER BY ' + mysql.escapeId(field) + ' ASC';
 	/**
 	 * Order desc for field
 	 */
-	@:n public inline function desc(field: String): Table order = ' ORDER BY ${mysql.escapeId(field)} DESC';
+	@:n public inline function desc(field: String): Table order = ' ORDER BY ' + mysql.escapeId(field) + ' DESC';
 	/**
 	 * Data for query 'where', helper for where function
 	 */
@@ -146,8 +146,9 @@ class CTable implements Declarator implements Ninja {
 	}
 
 	private inline function genGetQuery(): String
-		return 'SELECT ${_select.length == 0 ? '*' : _select.map(mysql.escapeId).join(', ')} FROM $table$_where$order'
-			+ (_limit == null ? '' : ' LIMIT $_begin, $_limit');
+		return 'SELECT ' + (
+			_select.length == 0 ? '*' : _select.map(mysql.escapeId).join(', ')
+		) + ' FROM $table' + _where + order + (_limit == null ? '' : ' LIMIT $_begin, $_limit');
 
 	/**
 	 * Prepare this table
@@ -166,22 +167,22 @@ class CTable implements Declarator implements Ninja {
 	public function insert(data: Map<String, DBV>, cb: Bool -> Void, ?p: PosInfos): Void {
 		final keys = [for (f in data.keys()) mysql.escapeId(f)];
 		final values = [for (d in data) d.get(mysql.escape)];
-		mysql.action('INSERT INTO $table (${keys.join(', ')}) VALUES (${values.join(', ')})', 'insert', p, cb);
+		mysql.action('INSERT INTO $table (' + keys.join(', ') + ') VALUES (' + values.join(', ') + ')', 'insert', p, cb);
 	}
 
 	/**
 	 * Update data it table
 	 */
 	public function update(data: Map<String, DBV>, cb: Bool -> Void, ?p: PosInfos): Void {
-		final set = [for (f in data.keys()) '${mysql.escapeId(f)}=${data[f].get(mysql.escape)}'];
-		mysql.action('UPDATE $table SET ${set.join(', ')}$_where', cb);
+		final set = [for (f in data.keys()) mysql.escapeId(f) + '=' + data[f].get(mysql.escape)];
+		mysql.action('UPDATE $table SET ' + set.join(', ') + _where, cb);
 	}
 
 	/**
 	 * Delete selected rows from table
 	 */
 	public function delete(cb: Bool -> Void, ?p: PosInfos): Void {
-		final q = 'DELETE FROM $table$_where$order${_limit == null ? '' : ' LIMIT $_begin, $_limit'}';
+		final q = 'DELETE FROM $table' + _where + order + (_limit == null ? '' : ' LIMIT $_begin, $_limit');
 		mysql.query(q, p, function(err: Dynamic, fields: Dynamic, _): Void {
 			if (err != null) {
 				_error(err);

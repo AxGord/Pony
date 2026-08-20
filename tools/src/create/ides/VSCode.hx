@@ -20,7 +20,7 @@ class VSCode {
 
 	private static function get_allowCreate(): Bool return !FileSystem.exists('.vscode');
 
-	public static inline function createDir(): Void FileSystem.createDirectory('.vscode');
+	public static function createDir(): Void FileSystem.createDirectory('.vscode');
 
 	public static function create(ponycmd: String, auto: Bool = false, server: Bool = true): Void {
 		final tasks: Array<Any> = [];
@@ -175,7 +175,7 @@ class VSCode {
 			}
 		});
 
-		final data: { version: String, tasks: Array<Any> } = {
+		final data = {
 			version: '2.0.0',
 			tasks: tasks
 		};
@@ -202,16 +202,16 @@ class VSCode {
 			{
 				name: 'MacOS (HashLink SDL)',
 				type: 'hl',
-				program: '$${workspaceFolder}/$output$app.hl',
-				cwd: '$${workspaceFolder}/$output',
+				program: "${workspaceFolder}/" + '$output$app.hl',
+				cwd: "${workspaceFolder}/" + output,
 				request: 'launch',
 				preLaunchTask: 'mac debug'
 			},
 			{
 				name: 'Windows (HashLink DirectX)',
 				type: 'hl',
-				program: '$${workspaceFolder}/$output$app.hl',
-				cwd: '$${workspaceFolder}/$output',
+				program: "${workspaceFolder}/" + '$output$app.hl',
+				cwd: "${workspaceFolder}/" + output,
 				request: 'launch',
 				preLaunchTask: 'win debug'
 			},
@@ -283,8 +283,8 @@ class VSCode {
 				type: 'node',
 				request: 'launch',
 				name: 'Launch Program',
-				program: '$${workspaceFolder}/$output/$app',
-				cwd: '$${workspaceFolder}/$output',
+				program: "${workspaceFolder}/" + output + '/' + app,
+				cwd: "${workspaceFolder}/" + output,
 				preLaunchTask: PRELAUNCH_TASK,
 				console: 'internalConsole',
 				internalConsoleOptions: 'openOnSessionStart'
@@ -411,7 +411,7 @@ class VSCode {
 	}
 
 	private static function saveConfig(configurations: Array<Any>): Void {
-		final data: { version: String, configurations: Array<Any> } = {
+		final data = {
 			version: '0.2.0',
 			configurations: configurations
 		};
@@ -420,11 +420,11 @@ class VSCode {
 
 	public static function createElectron(output: String): Void {
 		final confNamePrefix: String = 'Electron: ';
-		final mainConfName: String = '${confNamePrefix}Main';
-		final renderConfName: String = '${confNamePrefix}Renderer';
-		final onlyRenderConfName: String = '${confNamePrefix}Only Renderer';
-		final resultDir: String = '$${workspaceFolder}/$output';
-		final electronExecutable: String = '${resultDir}node_modules/.bin/electron';
+		final mainConfName: String = confNamePrefix + 'Main';
+		final renderConfName: String = confNamePrefix + 'Renderer';
+		final onlyRenderConfName: String = confNamePrefix + 'Only Renderer';
+		final resultDir: String = "${workspaceFolder}/" + output;
+		final electronExecutable: String = resultDir + 'node_modules/.bin/electron';
 		final port: Int = 9222;
 		final data = {
 			version: '0.2.0',
@@ -437,7 +437,7 @@ class VSCode {
 					runtimeExecutable: electronExecutable,
 					runtimeArgs: [output, '--remote-debugging-port=$port'],
 					windows: {
-						runtimeExecutable: '$electronExecutable.cmd'
+						runtimeExecutable: electronExecutable + '.cmd'
 					},
 					preLaunchTask: PRELAUNCH_TASK,
 					internalConsoleOptions: 'neverOpen'
@@ -463,13 +463,13 @@ class VSCode {
 					runtimeExecutable: electronExecutable,
 					runtimeArgs: [output, '--remote-debugging-port=$port'],
 					windows: {
-						runtimeExecutable: '$electronExecutable.cmd'
+						runtimeExecutable: electronExecutable + '.cmd'
 					}
 				}: Dynamic)
 			],
 			compounds: [
 				{
-					name: '${confNamePrefix}All',
+					name: confNamePrefix + 'All',
 					configurations: [mainConfName, renderConfName]
 				}
 			]

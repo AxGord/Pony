@@ -60,7 +60,7 @@ class FastMovieClip extends AnimTextureCore {
 	public static inline function fromTexture(t: Texture): FastMovieClip return storage[idFromTexture(t)];
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private static inline function idFromTexture(t: Texture): String return '${t.baseTexture.imageUrl}_${t.frame.x}_${t.frame.y}';
+	private static inline function idFromTexture(t: Texture): String return t.baseTexture.imageUrl + '_' + t.frame.x + '_' + t.frame.y;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function converOr(data: Or<Array<Texture>, Array<String>>): Array<Texture> {
@@ -155,8 +155,8 @@ class FastMovieClip extends AnimTextureCore {
 #if (haxe_ver >= 4.2) abstract #end
 class FastMoviePlaySprite extends Sprite implements HasAbstract {
 
-	private final count: Int;
-	private final sprites: Array<Sprite>;
+	private var count: Int;
+	private var sprites: Array<Sprite>;
 
 	public function new(texture: Array<Texture>, count: Int) {
 		this.count = count;

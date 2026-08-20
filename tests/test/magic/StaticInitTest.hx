@@ -26,7 +26,7 @@ class SimpleStaticClass implements StaticInit {
 	public static var emptyField: String;
 	public static var fromGet: String = getStr('wo');
 
-	private static function getStr(s: String): String return '${s}rld';
+	private static function getStr(s: String): String return s + 'rld';
 
 }
 
@@ -36,7 +36,7 @@ class SimpleStaticClass2 implements StaticInit {
 	public static var emptyField: String;
 	public static var fromGet: String = getStr('m');
 
-	private static function getStr(s: String): String return '${s}an';
+	private static function getStr(s: String): String return s + 'an';
 
 }
 

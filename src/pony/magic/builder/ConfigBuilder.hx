@@ -141,7 +141,7 @@ private class ReadXmlConfig extends XmlConfigReader<PConfig> {
 					if (xml.has.def) {
 						v = normalize(xml.att.def);
 					} else {
-						Sys.println('Warning: Not exists env: $v');
+						Sys.println('Warning: Not exists env: ' + v);
 						v = '';
 					}
 				} else {
@@ -205,9 +205,9 @@ private class ReadXmlConfig extends XmlConfigReader<PConfig> {
 						CString;
 					else if (TextTools.isTrue(v) || v.toLowerCase().trim() == 'false')
 						CBool;
-					else if ('${Std.parseInt(v)}' == v)
+					else if (Std.string(Std.parseInt(v)) == v)
 						CInt;
-					else if ('${Std.parseFloat(v)}' == v)
+					else if (Std.string(Std.parseFloat(v)) == v)
 						CFloat;
 					else if (v.charAt(0) == '#')
 						CColor;
@@ -248,7 +248,7 @@ private class ReadXmlConfig extends XmlConfigReader<PConfig> {
 					app: cfg.app,
 					debug: cfg.debug,
 					cordova: cfg.cordova,
-					path: '${cfg.path + xml.name}_'
+					path: cfg.path + xml.name + '_'
 				}, onConfig);
 		}
 

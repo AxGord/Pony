@@ -193,7 +193,7 @@ class XmlUiBuilder {
 	private static function exprToTypeString(expr: Expr): String {
 		return switch expr.expr {
 			case EConst(CIdent(s)): s;
-			case EField(e, field): '${exprToTypeString(e)}.$field';
+			case EField(e, field): exprToTypeString(e) + '.' + field;
 			case _: Context.error('Wrong expr type', expr.pos);
 		}
 	}
@@ -243,7 +243,7 @@ class XmlUiBuilder {
 
 		final content: Array<Expr> = [
 			for (x in xml.elements) {
-				final e: Null<Expr> = genExpr(x, style, prefix + (xml.has.id ? '${xml.att.id}_' : ''), path, repeat);
+				final e: Null<Expr> = genExpr(x, style, prefix + (xml.has.id ? xml.att.id + '_' : ''), path, repeat);
 				if (e != null) e;
 			}
 		];
@@ -330,7 +330,7 @@ class XmlUiBuilder {
 		else if (style.exists(name))
 			getType(style[name]['extends'], style, types);
 		else
-			Context.error('Unknown type $name', Context.currentPos());
+			Context.error('Unknown type ' + name, Context.currentPos());
 	}
 
 	private static function joinPathA(a: String, b: String): String {

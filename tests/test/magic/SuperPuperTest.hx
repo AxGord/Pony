@@ -23,7 +23,7 @@ final class SecondChildClass extends ChildClass {
 		addSpace(arg, function(s) super.test(s, cb));
 	}
 
-	private function addSpace(arg: String, cb: String -> Void): Void cb('$arg ');
+	private function addSpace(arg: String, cb: String -> Void): Void cb(arg + ' ');
 
 }
 
@@ -33,7 +33,7 @@ class ChildClass extends BaseClass {
 		addWorld(arg, function(s) super.test(s, cb));
 	}
 
-	private function addWorld(arg: String, cb: String -> Void): Void cb('${arg}world');
+	private function addWorld(arg: String, cb: String -> Void): Void cb(arg + 'world');
 
 }
 
@@ -42,7 +42,7 @@ class BaseClass implements SuperPuper {
 	public function new() {}
 
 	@:puper public function test(arg: String, cb: String -> Void): Void {
-		cb('$arg!');
+		cb(arg + '!');
 	}
 
 }

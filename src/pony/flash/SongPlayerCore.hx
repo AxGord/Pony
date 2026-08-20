@@ -105,7 +105,7 @@ class SongPlayerCore implements HasSignal {
 
 	public function switchPlay(): Void isPlay = !isPlay;
 
-	public static function formatSong(song: SongInfo): String return (song.author != null ? '${song.author} - ' : '') + song.title;
+	public static function formatSong(song: SongInfo): String return (song.author != null ? song.author + ' - ' : '') + song.title;
 
 	private function progressHandler(event: ProgressEvent): Void eLoadprogress.dispatch(event.bytesLoaded / event.bytesTotal);
 
@@ -164,7 +164,7 @@ class SongPlayerCore implements HasSignal {
 	private function update(): Void {
 		onPosition >> setPosition;
 		var t: String = (channel.position: Time).toString();
-		t += ' / ${(songTotal: Time).toString()}';
+		t += ' / ' + (songTotal: Time).toString();
 		eTimeTextUpdate.dispatch(t);
 		ePosition.dispatch(channel.position / songTotal);
 		onPosition << setPosition;

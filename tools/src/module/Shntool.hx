@@ -83,7 +83,7 @@ using StringTools;
 						var name: String = a[0].substr(cfg.from.length);
 						name = name.substr(0, -4);
 						if (name == '') break;
-						result += '\tTRACK $index AUDIO\n\t\tTITLE "$name"\n\t\tINDEX 01 $time\n';
+						result += '\tTRACK $index AUDIO\n' + '\t\tTITLE "${name}"\n' + '\t\tINDEX 01 $time\n';
 						time += Time.fromString(a[1]);
 						index++;
 					}
@@ -91,7 +91,7 @@ using StringTools;
 				@:nullSafety(Off) (wav.cue: File).content = result;
 			}
 			FileSystem.rename('joined.wav', cfg.to + wav.output);
-			log('${cfg.to + wav.output} - created');
+			log(cfg.to + wav.output + ' - created');
 		}
 	}
 

@@ -25,6 +25,12 @@
 		"catch-dynamic": {
 			"enabled": false
 		},
+		"fold-adjacent-string-literals": {
+			"enabled": false
+		},
+		"prefer-interpolation": {
+			"enabled": false
+		},
 		"redundant-parens": {
 			"atoms": true,
 			"sameOperatorLeft": true,

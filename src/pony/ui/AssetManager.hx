@@ -41,8 +41,8 @@ class AssetManager implements HasLink {
 	public static var baseUrl: String = '';
 	public static var local: String = '';
 	private static var units: Map<String, Bytes> = [];
-	private static final loadedAssets: Array<String> = [];
-	private static final globalLoad: Map<String, Array<Int -> Int -> Void>> = [];
+	private static var loadedAssets: Array<String> = [];
+	private static var globalLoad: Map<String, Array<Int -> Int -> Void>> = [];
 	private static var changedNames: Bool = false;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
@@ -108,7 +108,7 @@ class AssetManager implements HasLink {
 			return;
 		} else if (pathes.length == 1) {
 			if (pathes[0] != '')
-				load([for (a in assets) '${pathes[0]}/$a'], cb);
+				load([for (a in assets) pathes[0] + '/' + a], cb);
 			else
 				load(assets, cb);
 			return;
@@ -148,7 +148,7 @@ class AssetManager implements HasLink {
 		}
 		switch asset {
 			case OrState.A(asset):
-				asset = (path == '' ? '' : path.charAt(path.length - 1) == '/' ? path : '$path/') + asset;
+				asset = (path == '' ? '' : path.charAt(path.length - 1) == '/' ? path : path + '/') + asset;
 				if (loadedAssets.indexOf(asset) != -1) {
 					cb(MAX_ASSET_PROGRESS, MAX_ASSET_PROGRESS);
 					return;
@@ -335,7 +335,7 @@ class AssetManager implements HasLink {
 	public static function hashNameConvert(asset: String, hash: String): String {
 		if (hash.length == 0) return asset;
 		if (changedNames) {
-			final p: SPair<String> = asset.lastSplit('.');
+			var p: SPair<String> = asset.lastSplit('.');
 			return [p.a, hash, p.b].join('.');
 		} else {
 			return '$asset?$hash';
@@ -463,28 +463,28 @@ class AssetManager implements HasLink {
 	public static inline function _reset(asset: String): Void trace('Reset: $asset');
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public static inline function image(asset: String, ?name: String) return asset;
+	public static inline function image(asset: String, ?name: String): String return asset;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public static inline function texture(asset: String, ?name: String) return asset;
+	public static inline function texture(asset: String, ?name: String): String return asset;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public static inline function animation(asset: String, ?name: String) return asset;
+	public static inline function animation(asset: String, ?name: String): String return asset;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public static inline function clip(asset: String, ?name: String) return asset;
+	public static inline function clip(asset: String, ?name: String): String return asset;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public static inline function sound(asset: String) return asset;
+	public static inline function sound(asset: String): String return asset;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public static inline function spine(asset: String) return asset;
+	public static inline function spine(asset: String): String return asset;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public static inline function font(asset: String) return asset;
+	public static inline function font(asset: String): String return asset;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public static inline function bin(asset: String) return asset;
+	public static inline function bin(asset: String): String return asset;
 	#end
 
 }

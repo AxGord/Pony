@@ -39,12 +39,12 @@ class Exterface implements Dynamic<Exterface> implements pony.magic.HasSignal {
 
 	public static function regLog(): Void {
 		#if !debug
-		Log.trace = function(m: Dynamic, ?p: PosInfos): Void get.log.call('${p.fileName}:${p.lineNumber}: $m');
+		Log.trace = function(m: Dynamic, ?p: PosInfos): Void get.log.call(p.fileName + ':' + p.lineNumber + ': ' + m);
 		#end
 	}
 
 	public function resolve(field: String): Exterface {
-		final s: String = (name != null ? '$name.' : '') + field;
+		final s: String = (name != null ? name + '.' : '') + field;
 		return map.exists(s) ? map[s] : new Exterface(s);
 	}
 

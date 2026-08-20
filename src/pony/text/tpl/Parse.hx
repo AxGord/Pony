@@ -51,19 +51,19 @@ class Parse extends ParseBoy<TplContent> {
 
 		// BEGIN CHECK VARS
 		gt([s.shortBegin]);
-		final p_sh = pos;
+		final p_sh: Int = pos;
 		pos = beforeGoto;
 		gt([s.begin]);
-		final p_nrml = pos;
+		final p_nrml: Int = pos;
 		pos = beforeGoto;
 
 		if (p_sh < p_nrml) {
-			final bef = pos;
+			final bef: Int = pos;
 			pos = p_sh;
 			switch gt([s.args.set, s.shortEnd]) {
 				case 0:
 					var r: Bool = false;
-					final name = StringTools.trim(str());
+					final name: String = StringTools.trim(str());
 					for (i in 0...name.length) {
 						if (VAR_SYMBOLS.indexOf(name.charAt(i)) == -1) {
 							beforeGoto = bef;
@@ -76,7 +76,7 @@ class Parse extends ParseBoy<TplContent> {
 					pos = !r ? bef : p_sh;
 				case 1:
 					var r: Bool = false;
-					final name = StringTools.trim(str());
+					final name: String = StringTools.trim(str());
 					for (i in 0...name.length) {
 						if (VAR_SYMBOLS.indexOf(name.charAt(i)) == -1) {
 							beforeGoto = bef;
@@ -108,7 +108,7 @@ class Parse extends ParseBoy<TplContent> {
 			// push(Text(t.substr(pos, (t.length - pos) - (t.length - o))));
 			// pos = o;
 			gt([s.closeEnd]);
-			throw 'Closed not opened tag [${t.substr(c, pos - c)}]';
+			throw 'Closed not opened tag [' + t.substr(c, pos - c) + ']';
 		}
 		switch (gt([s.begin, s.shortBegin])) {
 			case 0:
@@ -359,14 +359,14 @@ class Parse extends ParseBoy<TplContent> {
 	}
 
 	private function closeTag(name: String): Void {
-		if (gt([s.closeBegin]) == -1) throw 'Tag $name is not closed';
+		if (gt([s.closeBegin]) == -1) throw 'Tag ' + name + ' is not closed';
 		data.push(Text(str()));
 		skipSpace();
-		if (gt([s.closeEnd]) == -1) throw 'Tag $name is not closed';
+		if (gt([s.closeEnd]) == -1) throw 'Tag ' + name + ' is not closed';
 		if (s.space) {
-			if (str().trim() != name) throw 'Close tag ${str().trim()}, but close tag has be $name';
+			if (str().trim() != name) throw 'Close tag ' + str().trim() + ', but close tag has be ' + name;
 		} else if (str() != name)
-			throw 'Close tag ${str()}, but close tag has be $name';
+			throw 'Close tag ' + str() + ', but close tag has be ' + name;
 	}
 
 	private function openPos(): Int {

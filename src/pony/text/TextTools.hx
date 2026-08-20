@@ -2,8 +2,6 @@ package pony.text;
 
 import pony.math.MathTools;
 import pony.SPair;
-import sys.FileSystem;
-import sys.io.File;
 
 using StringTools;
 using Lambda;
@@ -202,35 +200,35 @@ abstract AnsiForeground(UInt) to UInt {
 
 	macro public static function includeFile(file: String): Expr {
 		Context.registerModuleDependency(MODULE, file);
-		final s: String = File.getContent(file);
+		final s: String = sys.io.File.getContent(file);
 		return macro $v{s};
 	}
 
 	macro public static function includePath(path: String = '.'): Expr {
-		final s: String = FileSystem.absolutePath('$path/');
+		final s: String = sys.FileSystem.absolutePath(path + '/');
 		return macro $v{s};
 	}
 
 	macro public static function includeFileFromCurrentDir(file: String): Expr {
 		var f: String = Context.getPosInfos(Context.currentPos()).file;
 		final i: Int = MathTools.cmax(f.lastIndexOf('\\'), f.lastIndexOf('/'));
-		f = i != -1 ? '${f.substr(0, i)}/' : '';
+		f = i != -1 ? f.substr(0, i) + '/' : '';
 		Context.registerModuleDependency(MODULE, f + file);
-		final s: String = File.getContent(f + file);
+		final s: String = sys.io.File.getContent(f + file);
 		return macro $v{s};
 	}
 
 	macro public static function includePathFromCurrentDir(path: String = '.'): Expr {
 		var f: String = Context.getPosInfos(Context.currentPos()).file;
 		final i: Int = MathTools.cmax(f.lastIndexOf('\\'), f.lastIndexOf('/'));
-		f = i != -1 ? '${f.substr(0, i)}/' : '';
-		final s: String = FileSystem.absolutePath('${f + path}/');
+		f = i != -1 ? f.substr(0, i) + '/' : '';
+		final s: String = sys.FileSystem.absolutePath(f + path + '/');
 		return macro $v{s};
 	}
 
 	macro public static function includeJson(file: String): Expr {
 		Context.registerModuleDependency(MODULE, file);
-		final s: String = File.getContent(file);
+		final s: String = sys.io.File.getContent(file);
 		haxe.Json.parse(s); // check
 		return macro haxe.Json.parse($v{s}); // todo: not parse on runtime
 	}
@@ -238,9 +236,9 @@ abstract AnsiForeground(UInt) to UInt {
 	macro public static function includeJsonFromCurrentDir(file: String): Expr {
 		var f: String = Context.getPosInfos(Context.currentPos()).file;
 		final i: Int = MathTools.cmax(f.lastIndexOf('\\'), f.lastIndexOf('/'));
-		f = i != -1 ? '${f.substr(0, i)}/' : '';
+		f = i != -1 ? f.substr(0, i) + '/' : '';
 		Context.registerModuleDependency(MODULE, f + file);
-		final s: String = File.getContent(f + file);
+		final s: String = sys.io.File.getContent(f + file);
 		haxe.Json.parse(s); // check
 		return macro haxe.Json.parse($v{s}); // todo: not parse on runtime
 	}
@@ -328,7 +326,7 @@ abstract AnsiForeground(UInt) to UInt {
 	#if (neko || nodejs || php)
 	public static function betweenReplaceFile(file: String, begin: String, end: String, value: String): Void {
 		if (sys.FileSystem.exists(file)) {
-			final text = betweenReplace(sys.io.File.getContent(file), begin, end, value);
+			final text: Null<String> = betweenReplace(sys.io.File.getContent(file), begin, end, value);
 			if (text != null) sys.io.File.saveContent(file, text);
 		}
 	}
@@ -341,11 +339,11 @@ abstract AnsiForeground(UInt) to UInt {
 			var l: Int = len;
 			while (len > 0) {
 				if (text.charAt(l) == ' ') {
-					return '${text.substr(0, l)}\n${text.substr(l + 1)}';
+					return text.substr(0, l) + '\n' + text.substr(l + 1);
 				}
 				l--;
 			}
-			return '${text.substr(0, len)}\n${text.substr(len)}';
+			return text.substr(0, len) + '\n' + text.substr(len);
 		}
 	}
 

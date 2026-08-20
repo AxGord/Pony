@@ -39,7 +39,7 @@ import sys.io.Process;
 	}
 
 	private static function get_npmPath(): String {
-		if (_npmPath == null) _npmPath = '${processLine('npm', ['prefix', '-g'])}/lib/node_modules';
+		if (_npmPath == null) _npmPath = processLine('npm', ['prefix', '-g']) + '/lib/node_modules';
 		return _npmPath;
 	}
 
@@ -49,7 +49,7 @@ import sys.io.Process;
 	}
 
 	private static function get_homeNpm(): String {
-		if (_homeNpm == null) _homeNpm = '$homePath/.npm';
+		if (_homeNpm == null) _homeNpm = homePath + '/.npm';
 		return _homeNpm;
 	}
 
@@ -76,7 +76,7 @@ import sys.io.Process;
 
 	public static function cmdExistsa(c: String, a: Array<String>): Bool {
 		beginColor(90);
-		Sys.print('$c ');
+		Sys.print(c + ' ');
 		final r: Bool = Sys.command(c, a) == 0;
 		endColor();
 		return r;
@@ -103,7 +103,7 @@ import sys.io.Process;
 		Sys.println('Set perm $v for $dir');
 		final a: Array<String> = ['chmod'];
 		if (r) a.push('-R');
-		a.push('$v');
+		a.push(Std.string(v));
 		a.push(dir);
 		Sys.command('sudo', a);
 		endColor();

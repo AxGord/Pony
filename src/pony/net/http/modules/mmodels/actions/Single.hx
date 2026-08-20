@@ -47,21 +47,23 @@ final class SinglePut extends pony.text.tpl.TplPut<SingleConnect, CPQ> {
 	override public function tag(name: String, content: TplData, arg: String, args: Map<String, String>, ?kid: ITplPut): String {
 		if (Std.is(kid, SinglePutSub)) return @await parent.tag(name, content, arg, args, kid);
 		if (!a.checkAccess()) return '';
-		final mp: ModelPut = cast parent;
+		var mp: ModelPut = cast parent;
 		final f = arg == null ? 'id' : arg;
 		final v: String = mp.b == null ? null : Reflect.field(mp.b, f);
-		final cargs: Array<String> = a.hasPathArg ? (v == null ? [a.pathQuery] : [v]) : v == null ? [] : [v];
+		final cargs: Array<String> = if (a.hasPathArg)
+			(v == null ? [a.pathQuery] : [v])
+		else if (v == null)
+			[] else
+			[v];
 		final a: Dynamic = @await a.call(cargs);
-		if (args.exists('!')) {
-			return a == null ? @await mp.tplData(content) : '';
-		} else {
-			if (a == null)
-				return '';
-			else if (args.exists('div')) {
-				return @await div(arg, args, a);
-			} else
-				return @await sub(this, a, SinglePutSub, content);
-		}
+		return if (args.exists('!'))
+			a == null ? @await mp.tplData(content) : ''
+		else if (a == null)
+			''
+		else if (args.exists('div'))
+			@await div(arg, args, a)
+		else
+			@await sub(this, a, SinglePutSub, content);
 	}
 
 	@:async
@@ -69,13 +71,13 @@ final class SinglePut extends pony.text.tpl.TplPut<SingleConnect, CPQ> {
 		final n: String = args['div'] == null ? 'single' : args['div'];
 		final na: Array<String> = [];
 		if (args.exists('cols')) {
-			var s: String = '<div class="$n">';
-			for (f in args['cols'].split(',').map(StringTools.trim)) s += '<div class="$f">${@await html(e, f) + '</div>'}';
+			var s: String = '<div class="' + n + '">';
+			for (f in args['cols'].split(',').map(StringTools.trim)) s += '<div class="' + f + '">' + @await html(e, f) + '</div>';
 			s += '</div>';
 			na.push(s);
 		} else {
-			var s: String = '<div class="$n">';
-			for (f in Reflect.fields(e)) s += '<div class="$f">${@await html(e, f) + '</div>'}';
+			var s: String = '<div class="' + n + '">';
+			for (f in Reflect.fields(e)) s += '<div class="' + f + '">' + @await html(e, f) + '</div>';
 			s += '</div>';
 			na.push(s);
 		}
@@ -85,12 +87,9 @@ final class SinglePut extends pony.text.tpl.TplPut<SingleConnect, CPQ> {
 	@:async
 	private function html(e: Dynamic, f: String): String {
 		final c = a.base.model.columns[f];
-		if (c.tplPut != null) {
-			final o: Dynamic = Type.createInstance(c.tplPut, [c, e, this]);
-			return @await o.html(f);
-		} else {
-			return Reflect.field(e, f);
-		}
+		if (c.tplPut == null) return Reflect.field(e, f);
+		final o: Dynamic = Type.createInstance(c.tplPut, [c, e, this]);
+		return @await o.html(f);
 	}
 
 }
@@ -102,36 +101,27 @@ class SinglePutSub extends Valuator<SinglePut, Dynamic> {
 	override public function tag(name: String, content: TplData, arg: String, args: Map<String, String>, ?kid: ITplPut): String {
 		if (a.a.model.subactions.exists(name)) {
 			return @await a.a.model.subactions[name].subtpl(parent, b).tag(name, content, arg, args, kid);
-		} else {
-			final c = a.a.base.model.columns[name];
-			if (c != null && c.tplPut != null) {
-				final o = Type.createInstance(c.tplPut, [c, b, this]);
-				return @await o.tag(name, content, arg, args, kid);
-			} else
-				return @await super1_tag(name, content, arg, args, kid);
 		}
+		final c = a.a.base.model.columns[name];
+		if (c == null || c.tplPut == null) return @await super1_tag(name, content, arg, args, kid);
+		final o = Type.createInstance(c.tplPut, [c, b, this]);
+		return @await o.tag(name, content, arg, args, kid);
 	}
 
 	@:async
 	override public function shortTag(name: String, arg: String, ?kid: ITplPut): String {
 		if (a.a.model.subactions.exists(name)) {
 			return @await a.a.model.subactions[name].subtpl(parent, b).shortTag(name, arg, kid);
-		} else {
-			final c = a.a.base.model.columns[name];
-			if (c != null && c.tplPut != null) {
-				final o = Type.createInstance(c.tplPut, [c, b, this]);
-				return @await o.shortTag(name, arg, kid);
-			} else
-				return @await super1_shortTag(name, arg, kid);
 		}
+		final c = a.a.base.model.columns[name];
+		if (c == null || c.tplPut == null) return @await super1_shortTag(name, arg, kid);
+		final o = Type.createInstance(c.tplPut, [c, b, this]);
+		return @await o.shortTag(name, arg, kid);
 	}
 
 	@:async
 	override public function valu(name: String, arg: String): String {
-		if (Reflect.hasField(b, name))
-			return '${Reflect.field(b, name)}';
-		else
-			return null;
+		return Reflect.hasField(b, name) ? Std.string(Reflect.field(b, name)) : null;
 	}
 
 }

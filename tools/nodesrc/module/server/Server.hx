@@ -36,14 +36,14 @@ import types.ServerConfig;
 		}
 		if (cfg.remote != null) {
 			tasks.add();
-			final remote: ServerRemote = new ServerRemote(cast cfg.remote);
+			var remote: ServerRemote = new ServerRemote(cast cfg.remote);
 			remote.onError << eError;
 			remote.onLog << eLog;
 			remote.init();
 		}
 		if (cfg.sniff != null) {
 			tasks.add();
-			final sniff: Sniff = new Sniff(cast cfg.sniff);
+			var sniff: Sniff = new Sniff(cast cfg.sniff);
 			sniff.onError << errorWithTime;
 			sniff.onLog << logWithTime;
 			sniff.init();
@@ -51,9 +51,9 @@ import types.ServerConfig;
 		tasks.end();
 	}
 
-	private function errorWithTime(s: String, ?p: PosInfos): Void error('${now()} $s', p);
+	private function errorWithTime(s: String, ?p: PosInfos): Void error(now() + ' ' + s, p);
 
-	private function logWithTime(s: String, ?p: PosInfos): Void log('${now()} $s', p);
+	private function logWithTime(s: String, ?p: PosInfos): Void log(now() + ' ' + s, p);
 
 	private function now(): String {
 		final d: Date = Date.now();

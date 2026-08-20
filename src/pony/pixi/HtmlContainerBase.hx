@@ -29,9 +29,9 @@ class HtmlContainerBase implements HasSignal {
 	public var posUpdater: Tumbler = new Tumbler(true);
 
 	private var lastRect: Rect<Float> = null;
-	private final ceil: Bool;
-	private final fixed: Bool;
-	private final haveTransform: Bool;
+	private var ceil: Bool;
+	private var fixed: Bool;
+	private var haveTransform: Bool;
 
 	public function new(
 		targetRect: Rect<Float>, ?app: App, ?targetStyle: CSSStyleDeclaration, ceil: Bool = false, fixed: Bool = false
@@ -88,7 +88,7 @@ class HtmlContainerBase implements HasSignal {
 
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function px(v: Float): String return '${ceil ? Std.int(v) : v}px';
+	private inline function px(v: Float): String return (ceil ? Std.int(v) : v) + 'px';
 
 	private function set_targetStyle(s: CSSStyleDeclaration): CSSStyleDeclaration {
 		targetStyle = s;

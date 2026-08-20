@@ -24,12 +24,12 @@
 				Utils.md(Utils.npmPath);
 				Utils.md(Utils.homeNpm);
 			} else {
-				graylog('Npm path: ${Utils.npmPath}');
+				graylog('Npm path: ' + Utils.npmPath);
 				Utils.md(Utils.npmPath);
 				perm = Utils.getPerm(Utils.npmPath);
 				graylog('Npm dir perm $perm');
 				if (perm == PRIV_ALL) perm = -1;
-				graylog('Home npm path: ${Utils.npmPath}');
+				graylog('Home npm path: ' + Utils.npmPath);
 				Utils.md(Utils.homeNpm);
 				homeperm = Utils.getPerm(Utils.homeNpm);
 				graylog('Home npm dir perm $homeperm');
@@ -49,7 +49,7 @@
 			listInstall(c, cmds, [
 				for (npm in Config.settings.npm) {
 					final n: String = npm.split('@')[0];
-					winmap.exists(n) ? '$n@${winmap[n]}' : npm;
+					winmap.exists(n) ? n + '@' + winmap[n] : npm;
 				}
 			]);
 		} else {

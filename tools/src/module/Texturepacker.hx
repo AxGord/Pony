@@ -84,7 +84,8 @@ private typedef TPUnit = {
 	}
 
 	private function notChanged(key: String, dirs: Array<String>): Bool {
-		final hash: Null<module.Hash> = cast modules.getModule(module.Hash);
+		// module.Hash must stay qualified: a different Hash is in scope here
+		final hash: Null<module.Hash> = cast modules.getModule(module.Hash); // noqa: shorten-type-ref
 		return hash != null && hash.xml != null && !hash.dirChanged(key, dirs, '.png');
 	}
 
@@ -92,7 +93,7 @@ private typedef TPUnit = {
 		final unit: TPUnit = cfg;
 		unit.input = [for (e in cfg.input) cfg.from + e];
 		unit.output = cfg.to + cfg.output;
-		if (notChanged('${cfg.output}.${cfg.ext}', unit.input)) return;
+		if (notChanged(cfg.output + '.' + cfg.ext, unit.input)) return;
 		if (cfg.clean) haveClean = true;
 
 		final format = unit.format.split(' ');
@@ -118,13 +119,13 @@ private typedef TPUnit = {
 					case _: f;
 				}
 
-			final datafile: String = '${unit.output + (first ? '' : '_$s')}.$outExt';
+			final datafile = unit.output + (first ? '' : '_$s') + '.' + outExt;
 			command.push('--data');
 			command.push(datafile);
 
 			final tExt: String = s == 'png8' ? 'png' : s;
 
-			final sheetfile: String = '${unit.output}.$tExt';
+			final sheetfile = unit.output + '.' + tExt;
 			command.push('--sheet');
 			command.push(sheetfile);
 
@@ -136,7 +137,7 @@ private typedef TPUnit = {
 
 			if (unit.scale != 1) {
 				command.push('--scale');
-				command.push('${unit.scale}');
+				command.push(Std.string(unit.scale));
 
 				command.push('--scale-mode');
 				command.push('Smooth');
@@ -160,7 +161,7 @@ private typedef TPUnit = {
 					}
 				case 'jpg':
 					command.push('--jpg-quality');
-					command.push('${Std.int(unit.quality * 100)}');
+					command.push(Std.string(Std.int(unit.quality * 100)));
 				case _:
 			}
 
@@ -208,27 +209,27 @@ private typedef TPUnit = {
 				final a: Array<String> = unit.trim.split(' ');
 				if (a.length == 2) {
 					final v: Null<Int> = Std.parseInt(a[0]);
-					if (v != null && '$v' == a[0]) {
+					if (v != null && Std.string(v) == a[0]) {
 						command.push('--trim-mode');
 						command.push(a[1]);
 						command.push('--trim-threshold');
-						command.push('$v');
+						command.push(Std.string(v));
 					} else {
 						final v: Null<Int> = Std.parseInt(a[1]);
 						command.push('--trim-mode');
 						command.push(a[0]);
 						if (v != null) {
 							command.push('--trim-threshold');
-							command.push('$v');
+							command.push(Std.string(v));
 						}
 					}
 				} else if (a.length == 1) {
 					final v: Null<Int> = Std.parseInt(a[0]);
-					if (v != null && '$v' == a[0]) {
+					if (v != null && Std.string(v) == a[0]) {
 						command.push('--trim-mode');
 						command.push('Trim');
 						command.push('--trim-threshold');
-						command.push('$v');
+						command.push(Std.string(v));
 					} else {
 						command.push('--trim-mode');
 						command.push(a[0]);
@@ -240,15 +241,13 @@ private typedef TPUnit = {
 
 			Utils.command('TexturePacker', command, licence != null ? [licence] : null);
 
-			if (unit.datascale != null) {
-				switch outExt {
-					case 'json':
-						pony.text.TextTools.betweenReplaceFile(datafile, '"scale": "', '",', '${unit.datascale}');
-					case _:
-				}
-			}
-
 			first = false;
+			if (unit.datascale == null) continue;
+			switch outExt {
+				case 'json':
+					pony.text.TextTools.betweenReplaceFile(datafile, '"scale": "', '",', Std.string(unit.datascale));
+				case _:
+			}
 		}
 	}
 
@@ -262,29 +261,25 @@ private typedef TPUnit = {
 	}
 
 	private function clean(): Void {
-		if (haveClean) {
-			final remList: Array<String> = toList.copy();
-			for (a in toList) {
-				for (b in toList) {
-					if (a.length > b.length) {
-						if (a.indexOf(b) == 0) remList.remove(a);
-					}
+		if (!haveClean) return;
+		final remList: Array<String> = toList.copy();
+		for (a in toList) {
+			for (b in toList) {
+				if (a.length > b.length && a.indexOf(b) == 0) remList.remove(a);
+			}
+		}
+
+		log('Clean pathes: ' + remList.join(', '));
+		log('Ignores: ' + ignoreList.join(', '));
+
+		for (p in remList) {
+			final d: Dir = p;
+			for (f in d.contentRecursiveFiles()) {
+				if (ignoreList.indexOf(f.first) == -1) {
+					log('Delete file: ' + f.first);
+					f.delete();
 				}
 			}
-
-			log('Clean pathes: ${remList.join(', ')}');
-			log('Ignores: ${ignoreList.join(', ')}');
-
-			for (p in remList) {
-				final d: Dir = p;
-				for (f in d.contentRecursiveFiles()) {
-					if (ignoreList.indexOf(f.first) == -1) {
-						log('Delete file: ${f.first}');
-						f.delete();
-					}
-				}
-			}
-
 		}
 	}
 

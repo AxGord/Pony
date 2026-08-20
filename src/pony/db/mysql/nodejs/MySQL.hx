@@ -22,7 +22,7 @@ using pony.Tools;
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
 class MySQL extends SQLBase {
 
-	private static final mysqlClass: NodeMySQL = Node.require('mysql');
+	private static var mysqlClass: NodeMySQL = Node.require('mysql');
 
 	private var connection: NodeMySQL_Connection;
 
@@ -42,17 +42,16 @@ class MySQL extends SQLBase {
 		connection = mysqlClass.createConnection(c);
 		final err = @await connection.connect();
 		if (err != null) {
-			error('Error connecting: ${err.stack}');
+			error('Error connecting: ' + err.stack);
 			return;
 		}
 		final h = config.host == null ? 'localhost' : config.host;
-		final p = config.port == null ? '' : ':${config.port}';
+		final p = config.port == null ? '' : ':' + config.port;
 		log('Connected to $h$p');
 
-		if (@await prepareDatabase(db)) {
-			log('Database $db ready');
-			connected.ready();
-		}
+		if (!@await prepareDatabase(db)) return;
+		log('Database $db ready');
+		connected.ready();
 
 	}
 
@@ -60,12 +59,12 @@ class MySQL extends SQLBase {
 	 * Make action, query with boolean result
 	 */
 	@:async public function action(q: String, ?actName: String, ?p: PosInfos): Bool {
-		var err, _, _ = @await query(q, p);
-		if (err != null) {
-			error(actName == null ? '$err' : 'Can\'t $actName: ${err.stack}', p);
-			return false;
-		} else
-			return true;
+		var err;
+		var _;
+		var _ = @await query(q, p);
+		if (err == null) return true;
+		error(actName == null ? Std.string(err) : "Can't " + actName + ': ' + err.stack, p);
+		return false;
 	}
 
 	/**
@@ -100,8 +99,7 @@ class MySQL extends SQLBase {
 	}
 
 	private static function parseFlags(f: Int): Array<Flags> {
-		final r = [for (k in Flags.toStr.keys()) if (f & k != 0) k];
-		return r;
+		return [for (k in Flags.toStr.keys()) if (f & k != 0) k];
 	}
 
 	/**
@@ -140,12 +138,9 @@ class MySQL extends SQLBase {
 		if (!@await action(Const.createDB + database + Const.createDBPostfix, 'create database')) return false;
 
 		final err = @await connection.changeUser({ database: database });
-		if (err != null) {
-			error('Can\'t open database: ${err.stack}');
-			return false;
-		}
-
-		return true;
+		if (err == null) return true;
+		error("Can't open database: " + err.stack);
+		return false;
 	}
 
 }

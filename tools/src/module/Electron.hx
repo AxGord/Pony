@@ -97,11 +97,10 @@ typedef ElectronConfig = {
 			var linux: Bool = false;
 
 			for (os in cfg.os) {
-				args.push('${os.length > 1 ? '-' : ''}-$os');
-				if (os == 'l' || os == 'linux') {
-					linux = true;
-					if (cfg.pack) args.push('appImage');
-				}
+				args.push((os.length > 1 ? '-' : '') + '-$os');
+				if (os != 'l' && os != 'linux') continue;
+				linux = true;
+				if (cfg.pack) args.push('appImage');
 			}
 
 			if (linux && cfg.category != null) {

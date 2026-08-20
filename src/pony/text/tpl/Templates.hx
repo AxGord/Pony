@@ -15,9 +15,9 @@ class Templates {
 
 	public function new(dir: Dir, ?c: Class<ITplPut>, o: Dynamic) {
 		list = [];
-		final td: Dir = '${dir}templates';
+		final td: Dir = dir + 'templates';
 		for (d in td.dirs()) {
-			final mf: File = '${d}manifest.xml';
+			final mf: File = d + 'manifest.xml';
 			if (mf.exists) {
 				final manifest: Manifest = TplSystem.parseManifest(mf);
 				if (manifest.title == null) manifest.title = d.name;

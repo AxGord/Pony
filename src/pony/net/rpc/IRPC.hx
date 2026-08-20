@@ -86,7 +86,7 @@ class RPCBuilder {
 				case FieldType.FVar(t):
 					field.meta = [{ name: ':auto', pos: Context.currentPos() }];
 					final n = field.name;
-					final flagName = '${n}RemoteCall';
+					final flagName = n + 'RemoteCall';
 					fields.push({
 						name: flagName,
 						access: [APrivate],
@@ -111,7 +111,7 @@ class RPCBuilder {
 
 					for (arg in 0...args.length) {
 						fields.push({
-							name: '${n}_$arg',
+							name: n + '_' + arg,
 							access: [APrivate],
 							pos: Context.currentPos(),
 							kind: FVar(args[arg]),
@@ -120,7 +120,7 @@ class RPCBuilder {
 					}
 
 					final nf = n.substr(0, 2);
-					final en = 'e${nf == ON ? n.substr(2) : pony.text.TextTools.bigFirst(n)}';
+					final en = 'e' + (nf == ON ? n.substr(2) : pony.text.TextTools.bigFirst(n));
 
 					{
 						final rn = nf == ON ? n.charAt(2).toLowerCase() + n.substr(3) : n;
@@ -130,7 +130,7 @@ class RPCBuilder {
 						for (arg in 0...args.length) ae.push(macro $i{n + '_' + arg} = null);
 						ae.push(macro $i{flagName} = false);
 						fields.push({
-							name: '${rn}Remote',
+							name: rn + 'Remote',
 							access: [APublic],
 							pos: Context.currentPos(),
 							kind: FFun({
@@ -164,7 +164,7 @@ class RPCBuilder {
 						});
 						final bl = { expr: EBlock(rc), pos: Context.currentPos() };
 
-						final chname = '${n}RemoteCheck';
+						final chname = n + 'RemoteCheck';
 						@SuppressWarnings('checkstyle:MagicNumber')
 						fields.push({
 							name: chname,
@@ -183,7 +183,7 @@ class RPCBuilder {
 
 				case FieldType.FFun(f) if (field.meta.checkMeta([META])):
 					final n = field.name;
-					final flagName = '${n}RemoteCall';
+					final flagName = n + 'RemoteCall';
 					fields.push({
 						name: flagName,
 						access: [APrivate],
@@ -194,7 +194,7 @@ class RPCBuilder {
 
 					for (arg in f.args) {
 						fields.push({
-							name: '${n}_${arg.name}',
+							name: n + '_' + arg.name,
 							access: [APrivate],
 							pos: Context.currentPos(),
 							kind: FVar(arg.type),
@@ -209,7 +209,7 @@ class RPCBuilder {
 						for (arg in f.args) ae.push(macro $i{n + '_' + arg.name} = null);
 						ae.push(macro $i{flagName} = false);
 						fields.push({
-							name: '${n}Remote',
+							name: n + 'Remote',
 							access: [APublic],
 							pos: Context.currentPos(),
 							kind: FFun({
@@ -239,7 +239,7 @@ class RPCBuilder {
 						rc.push({ expr: ECall(macro $i{n}, ca), pos: Context.currentPos() });
 						final bl = { expr: EBlock(rc), pos: Context.currentPos() };
 
-						final chname = '${n}RemoteCheck';
+						final chname = n + 'RemoteCheck';
 						@SuppressWarnings('checkstyle:MagicNumber')
 						fields.push({
 							name: chname,

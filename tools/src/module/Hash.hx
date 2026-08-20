@@ -33,8 +33,8 @@ using pony.text.TextTools;
 	private var build: Null<String> = null;
 	private var inited: Bool = false;
 	private var units: Map<String, Bytes> = [];
-	private var newUnits: Map<String, Bytes> = [];
-	private var notChangedUnits: Array<String> = [];
+	private final newUnits: Map<String, Bytes> = [];
+	private final notChangedUnits: Array<String> = [];
 
 	public function new() super('hash');
 
@@ -83,7 +83,7 @@ using pony.text.TextTools;
 				if (file.first == this.file.first) continue;
 				var u: Null<Bytes> = units[f];
 				if (u == null && f.endsWith('.bin')) u = units[f.substr(0, -4)];
-				if (u == null && f.endsWith('.png')) u = units['${f.substr(0, -4)}.atlas'];
+				if (u == null && f.endsWith('.png')) u = units[f.substr(0, -4) + '.atlas'];
 				if (u != null && f.endsWith('.fnt')) {
 					var image: String = '';
 					@:nullSafety(Off) var data: String = file.content;
@@ -118,7 +118,7 @@ using pony.text.TextTools;
 							if (fileIndex != -1) {
 								fileIndex += filePattern.length;
 								final endIndex: Int = data.indexOf('\n', fileIndex);
-								newContent = '${data.substr(0, fileIndex)}"$newFontName"${data.substr(endIndex)}';
+								newContent = data.substr(0, fileIndex) + '"$newFontName"' + data.substr(endIndex);
 							}
 						}
 					}
@@ -145,8 +145,7 @@ using pony.text.TextTools;
 
 	private inline function pathKey(key: String): String {
 		if (key.startsWith(root)) key = key.substr(root.length);
-		if (key.startsWith(source)) key = key.substr(source.length);
-		return key;
+		return key.startsWith(source) ? key.substr(source.length) : key;
 	}
 
 	public function dirChanged(key: String, dirs: Array<String>, ?filter: String): Bool {
@@ -161,7 +160,7 @@ using pony.text.TextTools;
 		if (unit.name == '.DS_Store') return false;
 		initHash();
 		final bytes: Null<Bytes> = Utils.gitHash(unit);
-		return bytes == null ? true : compareStates(pathKey(key), bytes);
+		return bytes == null || compareStates(pathKey(key), bytes);
 	}
 
 	override private function runNode(cfg: HashConfig): Void {
@@ -172,14 +171,12 @@ using pony.text.TextTools;
 		}
 		final lost: Array<String> = getLost();
 		if (lost.length > 0) updated = true;
-		if (updated) {
-			log('Write hash to $file');
-			file.bytes = new pony.ui.Hash(newUnits).toBytes();
-			if (runCleanAfter) {
-				final cleanModule: Null<Clean> = modules.getModule(Clean);
-				if (cleanModule != null) cleanModule.deleteUnits(lost);
-			}
-		}
+		if (!updated) return;
+		log('Write hash to ' + file);
+		file.bytes = new pony.ui.Hash(newUnits).toBytes();
+		if (!runCleanAfter) return;
+		final cleanModule: Null<Clean> = modules.getModule(Clean);
+		if (cleanModule != null) cleanModule.deleteUnits(lost);
 	}
 
 	private function compareStates(key: String, newState: Bytes): Bool {
@@ -212,10 +209,9 @@ using pony.text.TextTools;
 		final r: Array<String> = [];
 		for (key in a) {
 			r.push(root + key);
-			if (key.endsWith('.atlas')) {
-				r.push('${root + key.substr(0, -5)}png');
-				r.push('${root + key}.bin');
-			}
+			if (!key.endsWith('.atlas')) continue;
+			r.push(root + key.substr(0, -5) + 'png');
+			r.push(root + key + '.bin');
 		}
 		return r;
 	}

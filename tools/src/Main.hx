@@ -11,20 +11,20 @@ using pony.text.TextTools;
  */
 class Main {
 
-	private static final commands: Commands = new Commands();
+	private static var commands: Commands = new Commands();
 
 	private static function showLogo(): Void {
 		Sys.println(Utils.ansiForeground(haxe.Resource.getString('logo'), AnsiForeground.LightGray));
 		Sys.println('');
 		Sys.println('Command-Line Tools');
 		Sys.println(
-			'${Utils.ansiForeground('Library version: ', AnsiForeground.LightGray) + Utils.ponyVersion} [${Utils.getHaxelibVersion()}]'
+			Utils.ansiForeground('Library version: ', AnsiForeground.LightGray) + Utils.ponyVersion + ' [' + Utils.getHaxelibVersion() + ']'
 		);
 		Sys.println(Utils.ansiForeground('Library path: ', AnsiForeground.LightGray) + Utils.libPath);
 		Sys.println(Utils.ansiForeground('Build date: ', AnsiForeground.LightGray) + Tools.getBuildDate());
 		Sys.println(Utils.ansiUnderlined('https://github.com/AxGord/Pony'));
 		Sys.println(Utils.ansiUnderlined('http://lib.haxe.org/p/pony'));
-		Sys.println('Type:${Utils.ansiForeground('pony help', AnsiForeground.LightCyan).quote().quote(' ')}- for help');
+		Sys.println('Type:' + Utils.ansiForeground('pony help', AnsiForeground.LightCyan).quote().quote(' ') + '- for help');
 		Utils.exit();
 	}
 
@@ -44,7 +44,7 @@ class Main {
 		var p: String = Utils.path(expath);
 		p = p.substr(0, p.lastIndexOf(Utils.PD) + 1);
 		if (p == Utils.toolsPath) return false;
-		var pony: String = '${Utils.toolsPath}pony';
+		var pony: String = Utils.toolsPath + 'pony';
 		if (Utils.isWindows) pony += '.exe';
 		Utils.exit(Sys.command(pony, args));
 		return true;
@@ -74,7 +74,7 @@ class Main {
 			MainLoop.start();
 		}
 
-		Sys.println('Total time: ${Std.int((Sys.time() - startTime) * 1000) / 1000}');
+		Sys.println('Total time: ' + Std.int((Sys.time() - startTime) * 1000) / 1000);
 	}
 
 	private static function registerCommands(): Void {
@@ -149,7 +149,7 @@ class Main {
 	private static function runSubProjects(args: Array<String>): Void {
 		final xml: Fast = Utils.getXml();
 		if (xml == null) {
-			Utils.error('${Utils.MAIN_FILE} not exists');
+			Utils.error(Utils.MAIN_FILE + ' not exists');
 		} else {
 			final startTime = Sys.time();
 			final apps: Array<String> = searchApps(xml.node.build);
@@ -168,7 +168,7 @@ class Main {
 				argsAfter.push(arg);
 			}
 			for (app in uapps) Utils.command('pony', argsBefore.concat([app]).concat(argsAfter));
-			Sys.println('All total time: ${Std.int((Sys.time() - startTime) * 1000) / 1000}');
+			Sys.println('All total time: ' + Std.int((Sys.time() - startTime) * 1000) / 1000);
 		}
 	}
 

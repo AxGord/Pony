@@ -59,13 +59,14 @@ using pony.text.TextTools;
 	}
 
 	private function replaceExt(s: String): String {
-		return '${s.substr(0, -3)}mp3';
+		return s.substr(0, -3) + 'mp3';
 	}
 
 	private function lameDirs(
 		data: Array<Pair<String, Null<String>>>, from: Dir, to: Dir, hash: Bool, addext: String, preset: Null<String>
 	): Void {
-		final hashModule: Null<module.Hash> = hash ? modules.getModule(module.Hash) : null;
+		// module.Hash must stay qualified: a different Hash is in scope here
+		final hashModule: Null<module.Hash> = hash ? modules.getModule(module.Hash) : null; // noqa: shorten-type-ref
 		for (d in data) {
 			final dir: Dir = from + d.a;
 			final filter: Null<String> = d.b;
@@ -92,7 +93,8 @@ using pony.text.TextTools;
 		data: Array<Triple<String, Null<String>, Null<String>>>, from: String, to: String, hash: Bool, addext: String,
 		preset: Null<String>, rm: Bool
 	): Void {
-		final hashModule: Null<module.Hash> = hash ? modules.getModule(module.Hash) : null;
+		// module.Hash must stay qualified: a different Hash is in scope here
+		final hashModule: Null<module.Hash> = hash ? modules.getModule(module.Hash) : null; // noqa: shorten-type-ref
 		for (p in data) {
 			final unit: Unit = from + p.a;
 			log('Lame file: $unit');

@@ -18,23 +18,23 @@ final class MLang implements IModule {
 
 	public function init(dir: Dir, server: WebServer): Void {
 		this.server = server;
-		langTable = new LangTable('${dir}language', server.defaults.lang);
+		langTable = new LangTable(dir + 'language', server.defaults.lang);
 	}
 
 	public function connect(cpq: CPQ): EConnect {
 		if (cpq.connection.params.exists('language')) {
-			final tc: String = cpq.connection.params['language'];
+			final tc: String = cpq.connection.params.get('language');
 			if (langTable.langs.exists(tc)) {
-				cpq.connection.sessionStorage['language'] = tc;
+				cpq.connection.sessionStorage.set('language', tc);
 				cpq.connection.params.remove('language');
 				cpq.connection.endAction();
 			} else {
-				cpq.connection.error('Not exists language: $tc');
+				cpq.connection.error('Not exists language: ' + tc);
 			}
 			return BREAK;
 		}
 		if (cpq.connection.params.exists('tryLanguage'))
-			cpq.lang = cpq.connection.params['tryLanguage'];
+			cpq.lang = cpq.connection.params.get('tryLanguage');
 		else {
 			final st: Map<String, Dynamic> = cpq.connection.sessionStorage;
 			if (st.exists('language'))

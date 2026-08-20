@@ -15,28 +15,21 @@ final class MTplPutSub extends Valuator<MTplPut, TplSystem> {
 
 	@:async
 	override public function tag(name: String, content: TplData, arg: String, args: Map<String, String>, ?kid: ITplPut): String {
-		if (name == 'selected')
-			return @await super.tag(name, content, arg, args, kid);
-		else {
-			final r = @await valu(name, arg);
-			if (r != null) {
-				if (content != null) {
-					return @await super.tag(name, content, arg, args, kid);
-				} else
-					return r;
-			} else {
-				return @await parentTag(name, content, arg, args, kid);
-			}
-		}
+		if (name == 'selected') return @await super.tag(name, content, arg, args, kid);
+		final r = @await valu(name, arg);
+		return if (r == null)
+			@await parentTag(name, content, arg, args, kid)
+		else if (content != null)
+			@await super.tag(name, content, arg, args, kid)
+		else
+			r;
 	}
 
 	@:async
 	override public function valuBool(name: String): Bool {
-		if (name == 'selected') {
-			final c: CPQ = a.b;
-			return c.template == b;
-		} else
-			return null;
+		if (name != 'selected') return null;
+		final c: CPQ = a.b;
+		return c.template == b;
 	}
 
 	@:async
@@ -49,7 +42,7 @@ final class MTplPutSub extends Valuator<MTplPut, TplSystem> {
 			case 'email': sie(m, 'email');
 			case 'www': sie(m, 'www');
 			case 'license': sie(m, 'license');
-			case 'version': m != null && m.version != null ? '${m.version.major}.${m.version.minor}' : '';
+			case 'version': m != null && m.version != null ? m.version.major + '.' + m.version.minor : '';
 			case 'extends':
 				if (m != null && m._extends != null)
 					@await TplPut.manyEasy(m._extends, null, arg == null ? ', ' : arg);

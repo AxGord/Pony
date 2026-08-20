@@ -27,7 +27,7 @@ enum ActResult {
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
 class Model implements SuperPuper {
 
-	public var lang: String = 'en';
+	public var lang: String;
 	public var mm: MModels;
 	public var name: String;
 	public var columns: Map<String, pony.net.http.modules.mmodels.Field>;
@@ -39,12 +39,13 @@ class Model implements SuperPuper {
 	public var access: Map<String, String>;
 
 	public function new(mm: MModels, actionsClasses: Map<String, Dynamic>) {
+		lang = 'en';
 		name = Type.getClassName(Type.getClass(this));
 		name = name.substr(name.lastIndexOf('.') + 1);
 		this.mm = mm;
-		final n = '${Type.getClassName(Type.getClass(this))}Connect';
+		final n = Type.getClassName(Type.getClass(this)) + 'Connect';
 		cl = cast Type.resolveClass(n);
-		if (cl == null) throw 'Can\'t resolve class (dce?): $n';
+		if (cl == null) throw "Can't resolve class (dce?): " + n;
 		final ma: Dynamic<Array<{ name: String, type: String }>> = untyped cl.__methoArgs__;
 
 		final o = untyped cl.__methoPathes__;
@@ -133,8 +134,8 @@ class Model implements SuperPuper {
 		final mc: ModelConnect = Type.createInstance(cl, [this, cpq]);
 		final a = new Map<String, ActionConnect>();
 		final sub = new Map<String, ISubActionConnect>();
-		for (k in actions.keys()) {
-			final r = actions[k].connect(cpq, mc);
+		for (k => value in actions) {
+			final r = value.connect(cpq, mc);
 			if (r.b != null) sub[k] = r.b;
 			switch r.a {
 				case BREAK:
