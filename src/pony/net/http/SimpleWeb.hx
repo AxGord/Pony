@@ -74,10 +74,9 @@ class SimpleWeb {
 
 		#if php
 		httpServer.run(new pony.net.http.ServersideStorageDB(db.storage));
-		if (trc.length > 0) {
-			php.Lib.print('<hr><pre>');
-			for (p in trc) php.Lib.println('${p.b.fileName}:${p.b.lineNumber}: ${p.a}');
-		}
+		if (trc.length <= 0) return;
+		php.Lib.print('<hr><pre>');
+		for (p in trc) php.Lib.println('${p.b.fileName}:${p.b.lineNumber}: ${p.a}');
 		#end
 	}
 

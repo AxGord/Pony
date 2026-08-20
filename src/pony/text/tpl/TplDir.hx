@@ -20,15 +20,14 @@ class TplDir {
 				var brk: Bool = false;
 				for (d in dir) {
 					final l: Int = d.toString().length;
-					if (e.toString().substr(0, l) == d.toString()) {
-						var k = e.toString().substr(l + 1);
-						if (k.length > 0) k += '/';
-						final n: String = f.shortName;
-						if (n == '') break; // skip empty name
-						h[k + n] = new Tpl(c, o, f.content);
-						brk = true;
-						break;
-					}
+					if (e.toString().substr(0, l) != d.toString()) continue;
+					var k = e.toString().substr(l + 1);
+					if (k.length > 0) k += '/';
+					final n: String = f.shortName;
+					if (n == '') break; // skip empty name
+					h[k + n] = new Tpl(c, o, f.content);
+					brk = true;
+					break;
 				}
 				if (brk) break;
 			}

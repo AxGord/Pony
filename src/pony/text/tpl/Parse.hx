@@ -95,20 +95,20 @@ class Parse extends ParseBoy<TplContent> {
 		}
 		// END CHECK VARS
 
-		var o: Int = openPos(), c: Int = closePos();
+		var o: Int = openPos();
+		var c: Int = closePos();
 
 		if (o >= c) {
 			if (o == c) {
 				if (closed) throw 'Not closed tag';
 				pushEndText();
 				return;
-			} else {
-				if (closed) return;
-				// push(Text(t.substr(pos, (t.length - pos) - (t.length - o))));
-				// pos = o;
-				gt([s.closeEnd]);
-				throw 'Closed not opened tag [${t.substr(c, pos - c)}]';
 			}
+			if (closed) return;
+			// push(Text(t.substr(pos, (t.length - pos) - (t.length - o))));
+			// pos = o;
+			gt([s.closeEnd]);
+			throw 'Closed not opened tag [${t.substr(c, pos - c)}]';
 		}
 		switch (gt([s.begin, s.shortBegin])) {
 			case 0:
@@ -365,9 +365,8 @@ class Parse extends ParseBoy<TplContent> {
 		if (gt([s.closeEnd]) == -1) throw 'Tag $name is not closed';
 		if (s.space) {
 			if (str().trim() != name) throw 'Close tag ${str().trim()}, but close tag has be $name';
-		} else {
-			if (str() != name) throw 'Close tag ${str()}, but close tag has be $name';
-		}
+		} else if (str() != name)
+			throw 'Close tag ${str()}, but close tag has be $name';
 	}
 
 	private function openPos(): Int {

@@ -10,6 +10,8 @@ import pony.geom.Point;
 import pony.text.TextTools;
 import pony.time.DeltaTime;
 
+using StringTools;
+
 /**
  * Text
  * @author AxGord <axgord@gmail.com>
@@ -59,7 +61,7 @@ class BText extends Sprite implements IWH {
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function safeSet(s: String): Void {
-		t = StringTools.replace(s, ' ', '').length == 0 ? null : s;
+		t = s.replace(' ', '').length == 0 ? null : s;
 	}
 
 	public function set_t(s: String): String {
@@ -70,7 +72,7 @@ class BText extends Sprite implements IWH {
 			return s;
 		}
 		t = s;
-		s = StringTools.replace(s, '\\n', '\n');
+		s = s.replace('\\n', '\n');
 		var current: BTextLow = new BTextLow(s, style, ansi, true);
 		if (current.size.x == 0 || current.size.y == 0) {
 			destroyIfExists();
@@ -150,14 +152,13 @@ class BText extends Sprite implements IWH {
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function destroyIfExists(): Void {
-		if (renderSprite != null) {
-			_size = null;
-			removeChild(renderSprite);
-			renderSprite.destroy(true);
-			renderSprite = null;
-			renderTexture.destroy(true);
-			renderTexture = null;
-		}
+		if (renderSprite == null) return;
+		_size = null;
+		removeChild(renderSprite);
+		renderSprite.destroy(true);
+		renderSprite = null;
+		renderTexture.destroy(true);
+		renderTexture = null;
 	}
 
 	private function set_color(v: Null<UInt>): Null<UInt> {

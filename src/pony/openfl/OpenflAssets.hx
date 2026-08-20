@@ -103,22 +103,13 @@ class OpenflAssets {
 
 	public static function image(asset: String): Bitmap {
 		if (Assets.exists(asset)) {
-			try {
-				return cast new Bitmap(Assets.getBitmapData(asset));
-			} catch (e: Error) {
-				return null;
-			}
+			return try cast new Bitmap(Assets.getBitmapData(asset)) catch (e: Error) null;
 		}
 		asset = AssetManager.baseUrl + asset;
 		if (assets.exists(asset)) {
-			try {
-				return cast assets[asset];
-			} catch (e: Error) {
-				return null;
-			}
-		} else {
-			return null;
+			return try cast assets[asset] catch (e: Error) null;
 		}
+		return null;
 	}
 
 	/*public static function image(asset:String, ?name:String):Sprite {

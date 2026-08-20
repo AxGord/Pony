@@ -59,8 +59,7 @@ using pony.Tools;
 			var xd: Float = 0;
 			var yd: Float = 0;
 			var lastPositions: Null<Array<Point<Float>>> = null;
-			for (i in 0...objGroups.length) {
-				final group: Pair<Array<T>, Array<Point<Float>>> = objGroups[i];
+			for (i => group in objGroups) {
 				final s: Float = groupSize[i];
 				final positions: Array<IntPoint> = GeomTools.pointsCeil(GeomTools.center(
 					new Point(vert ? s : width, !vert ? s : height), group.b, vert, border, padding,

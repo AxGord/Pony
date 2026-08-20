@@ -1,5 +1,7 @@
 package pony.physics;
 
+using StringTools;
+
 /**
  * Temp
  * @author AxGord <axgord@gmail.com>
@@ -20,7 +22,7 @@ abstract Temp(Float) {
 	public static inline function fromC(c: Float): Temp return new Temp(c + 273.15);
 
 	@:from public static function fromString(s: String): Temp {
-		s = StringTools.trim(s);
+		s = s.trim();
 		final ch = s.substr(s.length - 1).toLowerCase();
 		final v: Float = Std.parseFloat(s.substr(0, s.length - 1));
 		return switch ch {

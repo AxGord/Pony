@@ -76,17 +76,17 @@ class GeomTools {
 			centerA;
 		final _fc = !padding && objects.length > 1 ? centerC : centerB;
 		final fc = if (align != null) {
-			if (!vert)
-				switch align.horizontal {
-					case HAlign.Left: begin;
-					case HAlign.Center: _fc;
-					case HAlign.Right: end;
-				}
-			else
+			if (vert)
 				switch align.vertical {
 					case VAlign.Top: begin;
 					case VAlign.Middle: _fc;
 					case VAlign.Bottom: end;
+				}
+			else
+				switch align.horizontal {
+					case HAlign.Left: begin;
+					case HAlign.Center: _fc;
+					case HAlign.Right: end;
 				}
 		} else
 			_fc;

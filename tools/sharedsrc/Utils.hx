@@ -9,6 +9,8 @@ import sys.FileSystem;
 import sys.io.File;
 import sys.io.Process;
 
+using StringTools;
+
 /**
  * Share
  * @author AxGord <axgord@gmail.com>
@@ -51,11 +53,11 @@ class Utils {
 
 	private static inline function get_isLinux(): Bool return Sys.systemName() == 'Linux';
 
-	public static function path(s: String): String return StringTools.replace(StringTools.replace(s, '/', PD), '\\', PD);
+	public static function path(s: String): String return s.replace('/', PD).replace('\\', PD);
 
 	public static function command(name: String, args: Array<String>, ?hide: Array<String>): Void {
 		var s: String = '$name ${args.join(' ')}';
-		if (hide != null) for (h in hide) s = StringTools.replace(s, h, TextTools.repeat('*', h.length));
+		if (hide != null) for (h in hide) s = s.replace(h, TextTools.repeat('*', h.length));
 		Sys.println(s);
 		final r: Int = Sys.command(name, args);
 		if (r > 0) error('$name error $r');
@@ -146,13 +148,12 @@ class Utils {
 	public static function saveJson(file: String, jdata: Any): Void {
 		var tdata: String = haxe.Json.stringify(jdata, '\n');
 		while (true) {
-			final ndata: String = StringTools.replace(tdata, '\n\n', '\n');
+			final ndata: String = tdata.replace('\n\n', '\n');
 			if (ndata == tdata) {
 				tdata = ndata;
 				break;
-			} else {
-				tdata = ndata;
 			}
+			tdata = ndata;
 		}
 		File.saveContent(file, tdata);
 		Sys.println('$file saved');
@@ -165,11 +166,10 @@ class Utils {
 	public static function get_ponyVersion(): String {
 		if (_ponyVersion != null) {
 			return _ponyVersion;
-		} else {
-			final file: String = '${libPath}haxelib.json';
-			final data: Dynamic = Json.parse(File.getContent(file));
-			return _ponyVersion = data.version;
 		}
+		final file: String = '${libPath}haxelib.json';
+		final data: Dynamic = Json.parse(File.getContent(file));
+		return _ponyVersion = data.version;
 	}
 
 	public static function get_ponyHaxelibVersion(): String return getHaxelibVersion().split(':')[0];
@@ -248,19 +248,18 @@ class Utils {
 
 	public static function getBuildString(onlyNumbers: Bool = false, nosec: Bool = false): String {
 		var date: String = Date.now().toString();
-		date = StringTools.replace(date, ' ', onlyNumbers ? '' : '_');
-		date = StringTools.replace(date, ':', onlyNumbers ? '' : '-');
-		if (onlyNumbers) date = StringTools.replace(date, '-', '');
+		date = date.replace(' ', onlyNumbers ? '' : '_');
+		date = date.replace(':', onlyNumbers ? '' : '-');
+		if (onlyNumbers) date = date.replace('-', '');
 		@SuppressWarnings('checkstyle:MagicNumber')
 		if (nosec) date = date.substr(0, -2);
 		return date;
 	}
 
 	public static inline function replaceBuildDate(s: String): String {
-		var str: String = StringTools.replace(s, '{buildDate}', getBuildString());
-		str = StringTools.replace(str, '{buildDate:onlyNumbers}', getBuildString(true));
-		str = StringTools.replace(str, '{buildDate:onlyNumbers,nosec}', getBuildString(true, true));
-		return str;
+		var str: String = s.replace('{buildDate}', getBuildString());
+		str = str.replace('{buildDate:onlyNumbers}', getBuildString(true));
+		return str.replace('{buildDate:onlyNumbers,nosec}', getBuildString(true, true));
 	}
 
 	public static inline function replaceBuildDateIfNotNull(s: Null<String>): Null<String> return s != null ? replaceBuildDate(s) : null;

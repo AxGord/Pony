@@ -4,6 +4,8 @@ import pony.net.http.modules.mmodels.Field;
 import pony.text.tpl.ITplPut;
 import pony.text.tpl.TplData;
 
+using StringTools;
+
 /**
  * FText
  * @author AxGord <axgord@gmail.com>
@@ -45,7 +47,7 @@ class FText extends Field {
 
 	@:async
 	public function html(f: String): String {
-		return StringTools.replace(StringTools.htmlEscape('${Reflect.field(b, f)}'), '\r\n', '<br/>');
+		return StringTools.replace('${Reflect.field(b, f)}'.htmlEscape(), '\r\n', '<br/>');
 	}
 
 }

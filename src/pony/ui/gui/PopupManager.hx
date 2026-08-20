@@ -54,20 +54,16 @@ class PopupManager<Popup> {
 		current.destroyPopup();
 		current = null;
 		onClose();
-		if (!wantFromList && list.length > 0) {
-			wantFromList = true;
-			DeltaTime.fixedUpdate < showFromList;
-		}
+		if (wantFromList || list.length <= 0) return;
+		wantFromList = true;
+		DeltaTime.fixedUpdate < showFromList;
 	}
 
 	private function abortFromList(): Bool {
-		if (wantFromList) {
-			wantFromList = false;
-			DeltaTime.fixedUpdate >> showFromList;
-			return true;
-		} else {
-			return false;
-		}
+		if (!wantFromList) return false;
+		wantFromList = false;
+		DeltaTime.fixedUpdate >> showFromList;
+		return true;
 	}
 
 	private function showFromList(): Void {

@@ -4,6 +4,10 @@ import pony.math.MathTools;
 import pony.SPair;
 import sys.FileSystem;
 import sys.io.File;
+
+using StringTools;
+using Lambda;
+
 #if macro
 import haxe.macro.Context;
 import haxe.macro.Expr;
@@ -183,9 +187,9 @@ abstract AnsiForeground(UInt) to UInt {
 		return r;
 	}
 
-	public static inline function isTrue(s: String): Bool return return s != null && StringTools.trim(s.toLowerCase()) == 'true';
+	public static inline function isTrue(s: String): Bool return return s != null && s.toLowerCase().trim() == 'true';
 
-	public static inline function isFalse(s: String): Bool return return s != null && StringTools.trim(s.toLowerCase()) == 'false';
+	public static inline function isFalse(s: String): Bool return return s != null && s.toLowerCase().trim() == 'false';
 
 	public static function explode(s: String, delimiters: Array<String>): Array<String> {
 		var r: Array<String> = [s];
@@ -265,7 +269,7 @@ abstract AnsiForeground(UInt) to UInt {
 	public static function tabParser(s: String, ?tab: String): Dynamic {
 		final a: Array<String> = s.split('\n');
 		var name: String = @:nullSafety(Off) StringTools.trim(a.shift());
-		if (a.length == 0) return StringTools.trim(name);
+		if (a.length == 0) return name.trim();
 		final section: Map<String, Dynamic> = [];
 		var entry: Array<String> = [];
 		final arr: Array<String> = [];
@@ -276,14 +280,14 @@ abstract AnsiForeground(UInt) to UInt {
 			} else {
 				var data: Null<Dynamic> = null;
 				if (entry.length == 0) {
-					data = StringTools.trim(e);
+					data = e.trim();
 					arr.push(name);
 				} else {
 					data = tabParser(entry.join('\n'), tab);
 					section[name] = data;
 					entry = [];
 				}
-				name = StringTools.trim(e);
+				name = e.trim();
 			}
 		}
 		if (arr.length > 0) {
@@ -303,8 +307,7 @@ abstract AnsiForeground(UInt) to UInt {
 	}
 
 	private static function detectTab(s: String): Null<String> {
-		for (t in ['    ', '		', '	', '  ', ' ']) if (s.substr(0, t.length) == t) return t;
-		return null;
+		return (['    ', '		', '	', '  ', ' ']).find(t -> s.substr(0, t.length) == t);
 	}
 
 	public static function removeQuotes(s: String): String {
@@ -360,15 +363,15 @@ abstract AnsiForeground(UInt) to UInt {
 	public static inline function singleQuote(s: String): String return quote(s, "'");
 
 	public static inline function replaceInQuote(s: String, sub: String, by: String, q: String = '"'): String {
-		return StringTools.replace(s, quote(sub, q), quote(by, q));
+		return s.replace(quote(sub, q), quote(by, q));
 	}
 
 	public static inline function replaceInSingleQuote(s: String, sub: String, by: String): String {
-		return StringTools.replace(s, singleQuote(sub), singleQuote(by));
+		return s.replace(singleQuote(sub), singleQuote(by));
 	}
 
 	public static inline function charCount(s: String, char: String): Int {
-		return charCodeCount(s, StringTools.fastCodeAt(char, 0));
+		return charCodeCount(s, char.fastCodeAt(0));
 	}
 
 	public static function charCodeCount(s: String, char: Int): Int {
@@ -410,10 +413,10 @@ abstract AnsiForeground(UInt) to UInt {
 	public static function getMinLength(a: String, b: Int): Int return MathTools.cmin(a.length, b);
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public static inline function arrayMaxLength(a: Array<String>): Int return Lambda.fold(a, getMaxLength, 0);
+	public static inline function arrayMaxLength(a: Array<String>): Int return a.fold(getMaxLength, 0);
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public static inline function arrayMinLength(a: Array<String>): Int return Lambda.fold(a, getMinLength, MathTools.MAX_INT);
+	public static inline function arrayMinLength(a: Array<String>): Int return a.fold(getMinLength, MathTools.MAX_INT);
 
 	/**
 	 * Checks a string contains b string symbols

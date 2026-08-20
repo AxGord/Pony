@@ -67,14 +67,9 @@ class PageScroller {
 	}
 
 	private function dragScrollUpdate(e: TouchManagerEvent): Void {
-		if (dragged) {
-			final dHeight: Int = dSize();
-			if (dHeight == 0) {
-				_scrollBar.setPositionPercent(0);
-			} else {
-				_scrollBar.setPositionPercent(-_page.y / dHeight);
-			}
-		}
+		if (!dragged) return;
+		final dHeight: Int = dSize();
+		_scrollBar.setPositionPercent(dHeight == 0 ? 0 : -_page.y / dHeight);
 	}
 
 	private function scrollListener(e: TouchManagerEvent): Void {

@@ -138,10 +138,9 @@ class App extends SmartCanvas {
 			Mouse.reg(container);
 			Mouse.correction = correction;
 		}
-		if (!Touch.inited) {
-			Touch.reg(container);
-			Touch.correction = correction;
-		}
+		if (Touch.inited) return;
+		Touch.reg(container);
+		Touch.correction = correction;
 	}
 
 	public function drawBorders(?color: UInt): Void {
@@ -167,10 +166,9 @@ class App extends SmartCanvas {
 		container.x = rect.x;
 		container.y = rect.y;
 		app.renderer.resize(rect.width, rect.height);
-		if (backImgcontainer != null) {
-			backImgcontainer.width = rect.width / stageInitSize.x;
-			backImgcontainer.height = rect.height / stageInitSize.y;
-		}
+		if (backImgcontainer == null) return;
+		backImgcontainer.width = rect.width / stageInitSize.x;
+		backImgcontainer.height = rect.height / stageInitSize.y;
 	}
 
 	private function correction(x: Float, y: Float): Point<Float> {

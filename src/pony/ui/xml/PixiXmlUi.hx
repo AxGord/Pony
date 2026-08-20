@@ -350,11 +350,7 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 				var fspos: Point<Float> = null;
 				if (attrs.fspos != null) {
 					final a = attrs.fspos.split(' ').map(Std.parseFloat);
-					if (a.length == 1) {
-						fspos = new Point<Float>(a[0], a[0]);
-					} else {
-						fspos = new Point<Float>(a[0], a[1]);
-					}
+					fspos = a.length == 1 ? new Point<Float>(a[0], a[0]) : new Point<Float>(a[0], a[1]);
 				}
 				final video = new HtmlVideoUIFS(
 					{
@@ -437,10 +433,7 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 			final a = attrs.pivot.split(' ');
 			final w = cast(obj, Sprite).width;
 			final h = cast(obj, Sprite).height;
-			if (a.length == 1)
-				obj.pivot.set(Std.parseFloat(a[0]) * w, Std.parseFloat(a[0]) * h);
-			else
-				obj.pivot.set(Std.parseFloat(a[0]) * w, Std.parseFloat(a[1]) * h);
+			obj.pivot.set(Std.parseFloat(a[0]) * w, a.length == 1 ? Std.parseFloat(a[0]) * h : Std.parseFloat(a[1]) * h);
 		}
 
 		if (attrs.notouch.isTrue()) {
@@ -471,8 +464,8 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 					var g: GlowFilter = cast FILTERS[f];
 					final s = g.outerStrength + GLOW_FILTER_OFFSET;
 					var f: Void -> Void = null;
-					if (Std.is(obj, IWH)) {
-						f = function() {
+					f = Std.is(obj, IWH)
+						? function() {
 							if (obj.parent == null) {
 								DeltaTime.fixedUpdate >> f;
 								app.onResize >> f;
@@ -483,17 +476,14 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 								obj.filterArea.height = size.y + s * 2;
 							}
 						}
-					} else {
-						f = function() {
+						: function() {
 							if (obj.parent == null) {
 								DeltaTime.fixedUpdate >> f;
 								app.onResize >> f;
 							} else {
 								obj.setFilterArea(s);
 							}
-						}
-
-					}
+						};
 
 					if (attrs.dyn.isTrue()) {
 						DeltaTime.fixedUpdate << f;

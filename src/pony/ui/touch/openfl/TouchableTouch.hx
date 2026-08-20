@@ -55,11 +55,9 @@ class TouchableTouch {
 	}
 
 	private function isLock(t: Int): Bool {
-		if (isNotLock(t)) {
-			touchId = t;
-			return false;
-		} else
-			return true;
+		if (!isNotLock(t)) return true;
+		touchId = t;
+		return false;
 	}
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end

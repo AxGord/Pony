@@ -27,23 +27,19 @@ class Process extends pony.Logable implements pony.sys.IProcess implements pony.
 	public function run(): Bool {
 		if (runned) {
 			return false;
-		} else {
-			runned = true;
-			runProccess();
-			return true;
 		}
+		runned = true;
+		runProccess();
+		return true;
 	}
 
 	public function kill(): Bool {
-		if (runned) {
-			runned = false;
-			process.kill();
-			process.removeAllListeners();
-			process = null;
-			return true;
-		} else {
-			return false;
-		}
+		if (!runned) return false;
+		runned = false;
+		process.kill();
+		process.removeAllListeners();
+		process = null;
+		return true;
 	}
 
 	private function runProccess(): Void {
@@ -64,15 +60,14 @@ class Process extends pony.Logable implements pony.sys.IProcess implements pony.
 	}
 
 	private function endProcess(code: Int): Void {
-		if (waitEnd) {
-			waitEnd = false;
-			if (code != null && code > 0) error('Child ($runCmd) exited with code $code');
-			if (keep) {
-				if (runned) runProccess();
-			} else {
-				runned = false;
-				eComplete.dispatch(code);
-			}
+		if (!waitEnd) return;
+		waitEnd = false;
+		if (code != null && code > 0) error('Child ($runCmd) exited with code $code');
+		if (keep) {
+			if (runned) runProccess();
+		} else {
+			runned = false;
+			eComplete.dispatch(code);
 		}
 	}
 

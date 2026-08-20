@@ -1,5 +1,6 @@
 package pony.text;
 
+using StringTools;
 using pony.Tools;
 
 /**
@@ -38,7 +39,7 @@ class WordWrap {
 					strBuilder.addChar(newLine);
 				}
 				// Remove leading whitespace from the word so the new line starts flush to the left.
-				word = StringTools.ltrim(word);
+				word = word.ltrim();
 			}
 			strBuilder.add(word);
 			strBuilder.addChar(space);

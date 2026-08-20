@@ -196,10 +196,10 @@ private class RemoteReader extends BAReader<BARemoteServerConfig> {
 			case 'commands':
 				for (node in xml.elements) {
 					final d: Pair<Bool, String> = new Pair(!node.isFalse('zipLog'), normalize(node.innerData));
-					if (!cfg.commands.exists(node.name))
-						cfg.commands[node.name] = [d];
-					else
+					if (cfg.commands.exists(node.name))
 						cfg.commands[node.name].push(d);
+					else
+						cfg.commands[node.name] = [d];
 				}
 			case _:
 				super.readNode(xml);

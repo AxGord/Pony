@@ -46,13 +46,12 @@ class RectButton extends BaseLayout<RubberLayoutCore<Container>> {
 		if (n == 4) {
 			visible = false;
 			return;
-		} else {
-			visible = true;
-			g.clear();
-			if (n > colors.length) n = colors.length;
-			g.beginFill(colors[n - 1].rgb, colors[n - 1].invertAlpha.af);
-			g.drawRect(0, 0, layout.size.x, layout.size.y);
 		}
+		visible = true;
+		g.clear();
+		if (n > colors.length) n = colors.length;
+		g.beginFill(colors[n - 1].rgb, colors[n - 1].invertAlpha.af);
+		g.drawRect(0, 0, layout.size.x, layout.size.y);
 	}
 
 	override public function add(obj: Container): Void {

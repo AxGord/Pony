@@ -1,5 +1,7 @@
 package pony.color;
 
+using StringTools;
+
 /**
  * UColor
  * Can be only positive
@@ -132,8 +134,7 @@ abstract UColor(UInt) from UInt to UInt {
 
 	private static inline function lim(v: Int): UInt {
 		if (v > Color.MAX_CHANNEL) v = Color.MAX_CHANNEL;
-		if (v < 0x00) v = 0x00;
-		return v;
+		return v < 0x00 ? 0x00 : v;
 	}
 
 	private inline function _invert(v: UInt): UInt return Color.MAX_CHANNEL - v;
@@ -195,12 +196,12 @@ abstract UColor(UInt) from UInt to UInt {
 	/**
 	 * Convert color to string
 	 */
-	@:to public inline function toString(): String return '#${StringTools.hex(this, 8)}';
+	@:to public inline function toString(): String return '#${this.hex(8)}';
 
 	/**
 	 * Convert color to string with alpha
 	 */
-	public inline function toStringWithoutAlpha(): String return '#${StringTools.hex(rgb, 6)}';
+	public inline function toStringWithoutAlpha(): String return '#${rgb.hex(6)}';
 
 	/**
 	 * Convert color to rgba string with inverted alpha
@@ -221,21 +222,21 @@ abstract UColor(UInt) from UInt to UInt {
 	 * Build color from string
 	 */
 	@:from public static function fromString(s: String): UColor {
-		s = StringTools.trim(s);
+		s = s.trim();
 		return new UColor(if (s.substr(0, 1) == '#') {
 			s = s.substr(1);
 			s.length == 3 ? Std.parseInt('0x${s.charAt(0)}0${s.charAt(1)}0${s.charAt(2)}0') : Std.parseInt('0x$s');
 		} else if (s.substr(0, 3) == 'rgb') {
-			s = StringTools.ltrim(s.substr(3));
-			if (StringTools.startsWith(s, '(') && StringTools.endsWith(s, ')')) {
+			s = s.substr(3).ltrim();
+			if (s.startsWith('(') && s.endsWith(')')) {
 				final d = s.substr(1, s.length - 2).split(',').map(Std.parseInt);
 				if (d.length != 3) throw 'Color params error';
 				fromRGB(d[0], d[1], d[2]);
 			} else
 				throw 'Color syntax error';
 		} else if (s.substr(0, 4) == 'argb') {
-			s = StringTools.ltrim(s.substr(4));
-			if (StringTools.startsWith(s, '(') && StringTools.endsWith(s, ')')) {
+			s = s.substr(4).ltrim();
+			if (s.startsWith('(') && s.endsWith(')')) {
 				final d = s.substr(1, s.length - 2).split(',').map(Std.parseInt);
 				if (d.length != 4) throw 'Color params error';
 				fromARGB(d[0], d[1], d[2], d[3]);

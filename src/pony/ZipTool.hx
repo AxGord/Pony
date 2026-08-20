@@ -128,11 +128,11 @@ class ZipTool extends Logable {
 
 	public function writeHash(hash: Map<String, Array<String>>): ZipTool {
 		if (hash == null) return this;
-		for (file in hash.keys()) {
+		for (file => value in hash) {
 			final f: String = prefix + file;
 			if (allowList != null && allowList.indexOf(f) == -1) continue;
 			log(f);
-			final h: Array<String> = hash[file];
+			final h: Array<String> = value;
 			final b: Bytes = File.getBytes(f);
 			final entry: Entry = {
 				fileName: file,

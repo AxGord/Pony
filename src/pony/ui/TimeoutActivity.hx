@@ -72,38 +72,34 @@ class TimeoutActivity implements Declarator implements HasSignal {
 	}
 
 	public function idle(): Void {
-		if (!sleep) {
-			sleep = true;
-			timer.stop();
-			eIdle.dispatch();
-		}
+		if (sleep) return;
+		sleep = true;
+		timer.stop();
+		eIdle.dispatch();
 	}
 
 	public function wakeup(): Void {
 		timer.reset();
-		if (sleep) {
-			sleep = false;
-			timer.start();
-			eWakeup.dispatch();
-		}
+		if (!sleep) return;
+		sleep = false;
+		timer.start();
+		eWakeup.dispatch();
 	}
 
 	public function applyIdle(listener: Listener0): Void {
 		onIdle << listener;
-		if (sleep) {
-			final c: SignalControllerInner0 = new SignalControllerInner0(onIdle);
-			listener.call(c);
-			c.destroy();
-		}
+		if (!sleep) return;
+		final c: SignalControllerInner0 = new SignalControllerInner0(onIdle);
+		listener.call(c);
+		c.destroy();
 	}
 
 	public function applyWakeup(listener: Listener0): Void {
 		onWakeup << listener;
-		if (!sleep) {
-			final c: SignalControllerInner0 = new SignalControllerInner0(onWakeup);
-			listener.call(c);
-			c.destroy();
-		}
+		if (sleep) return;
+		final c: SignalControllerInner0 = new SignalControllerInner0(onWakeup);
+		listener.call(c);
+		c.destroy();
 	}
 
 	public function destroy(): Void {

@@ -14,19 +14,25 @@ final class MLangPut extends TplPut<MLangConnect, {}> {
 
 	@:async
 	override public function tag(name: String, content: TplData, arg: String, args: Map<String, String>, ?kid: ITplPut): String {
-		if (name == 'l') {
-			if (args.exists('not'))
-				return a.cpq.lang == args['not'] ? '' : @await tplData(content);
-			else {
-				final d: String = kid != null ? @await kid.tplData(content) : @await tplData(content);
-				return l(d, args);
-			}
-		} else if (name == 'languages') {
-			return @await many(null, a.base.langTable.langs.keys(), MLangPutSub, content, arg);
-		} else if (name == 'language')
-			return @await sub(this, a.cpq.lang, MLangPutSub, content);
-		else
-			return @await super.tag(name, content, arg, args, kid);
+		switch (name) {
+			case 'l':
+				{
+					if (args.exists('not'))
+						return a.cpq.lang == args['not'] ? '' : @await tplData(content);
+					else {
+						final d: String = kid != null ? @await kid.tplData(content) : @await tplData(content);
+						return l(d, args);
+					}
+				}
+			case 'languages':
+				{
+					return @await many(null, a.base.langTable.langs.keys(), MLangPutSub, content, arg);
+				}
+			case 'language':
+				return @await sub(this, a.cpq.lang, MLangPutSub, content);
+			case _:
+				return @await super.tag(name, content, arg, args, kid);
+		}
 	}
 
 	@:async

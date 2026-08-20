@@ -4,6 +4,8 @@ import pony.text.tpl.Tpl;
 import pony.text.tpl.TplPut;
 import pony.text.tpl.ValuePut;
 
+using StringTools;
+
 /**
  * Valuator
  * @author AxGord
@@ -26,7 +28,7 @@ class Valuator<C1, C2> extends TplPut<C1, C2> {
 		} else {
 			var v: String = @await valu(name, arg);
 			if (v != null) {
-				if (args.exists('htmlEscape')) v = StringTools.htmlEscape(v);
+				if (args.exists('htmlEscape')) v = v.htmlEscape();
 				if (v == '') {
 					if (args.exists('!'))
 						return @await tplData(content);

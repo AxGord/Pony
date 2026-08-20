@@ -6,6 +6,8 @@ import sys.FileSystem;
 import sys.io.File;
 import types.HaxeTargets;
 
+using StringTools;
+
 /**
  * Build
  * @author AxGord <axgord@gmail.com>
@@ -46,8 +48,8 @@ class Build extends Section {
 			if (main != null) prepare.addChild(XmlTools.node('main', main));
 			prepare.addChild(XmlTools.node(targetKey(), output()));
 			for (cp in cps) prepare.addChild(XmlTools.node('cp', cp));
-			for (name in libs.keys()) {
-				final v: Null<String> = libs[name];
+			for (name => value in libs) {
+				final v: Null<String> = value;
 				prepare.addChild(XmlTools.node('lib', v == null ? name : '$name:$v'));
 			}
 			if (dce != null) prepare.addChild(XmlTools.node('dce', dce));
@@ -60,7 +62,7 @@ class Build extends Section {
 				if (a.length > 0) d.set('name', a.pop());
 			}
 			for (m in macros) prepare.addChild(XmlTools.node('m', m));
-			for (key in args.keys()) prepare.addChild(XmlTools.node(key, args[key]));
+			for (key => value in args) prepare.addChild(XmlTools.node(key, value));
 
 			xml.addChild(prepare);
 
@@ -71,15 +73,15 @@ class Build extends Section {
 			add('main', main);
 			add(targetKey(), output());
 			for (cp in cps) add('cp', cp);
-			for (name in libs.keys()) {
-				final v: Null<String> = libs[name];
+			for (name => value in libs) {
+				final v: Null<String> = value;
 				add('lib', v == null ? name : '$name $v');
 			}
 			if (dce != null) add('dce', dce);
 			if (analyzerOptimize) add('d', 'analyzer-optimize');
 			if (esVersion != null) add('d', 'js-es$esVersion');
 			for (name in flags) add('d', name);
-			for (key in args.keys()) add(key, args[key]);
+			for (key => value in args) add(key, value);
 		}
 
 		return root;
@@ -130,7 +132,7 @@ class Build extends Section {
 
 	private function createFile(file: String, template: String, ?replaces: Map<String, String>): Void {
 		var data: String = Resource.getString(template);
-		if (replaces != null) for (key in replaces.keys()) data = StringTools.replace(data, '::$key::', replaces[key]);
+		if (replaces != null) for (key => value in replaces) data = data.replace('::$key::', value);
 		File.saveContent(file, data);
 	}
 

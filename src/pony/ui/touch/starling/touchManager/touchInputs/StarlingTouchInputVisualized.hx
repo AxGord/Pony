@@ -40,9 +40,8 @@ class StarlingTouchInputVisualized extends StarlingTouchInput {
 				destroyVisualizer(touch);
 			}
 
-			if ((touch.phase == TouchPhase.MOVED) || ((touch.phase == TouchPhase.HOVER) && (!InputMode.touchMode()))) {
-				moveVisualizer(touch);
-			}
+			if (touch.phase != TouchPhase.MOVED && (touch.phase != TouchPhase.HOVER || InputMode.touchMode())) continue;
+			moveVisualizer(touch);
 		}
 	}
 

@@ -49,16 +49,11 @@ class Unpack extends Module {
 	private function configHandler(cfg: UnpackConfig): Void {
 		if (cfg.zips.length == 0) return;
 		if (cfg.before) {
-			if (beforeZips.exists(cfg.section))
-				beforeZips[cfg.section] = beforeZips[cfg.section].concat(cfg.zips);
-			else
-				beforeZips[cfg.section] = cfg.zips;
-		} else {
-			if (afterZips.exists(cfg.section))
-				afterZips[cfg.section] = afterZips[cfg.section].concat(cfg.zips);
-			else
-				afterZips[cfg.section] = cfg.zips;
-		}
+			beforeZips[cfg.section] = beforeZips.exists(cfg.section) ? beforeZips[cfg.section].concat(cfg.zips) : cfg.zips;
+		} else if (afterZips.exists(cfg.section))
+			afterZips[cfg.section] = afterZips[cfg.section].concat(cfg.zips);
+		else
+			afterZips[cfg.section] = cfg.zips;
 	}
 
 	private function before(section: BASection): Void {
@@ -76,10 +71,9 @@ class Unpack extends Module {
 	private function unzip(c: ZipConfig): Void {
 		log('Unzip: ${c.file}');
 		pony.ZipTool.unpackFile(c.file, c.path, c.log ? function(s: String) log(s) : null);
-		if (c.rm) {
-			log('Delete: ${c.file}');
-			sys.FileSystem.deleteFile(c.file);
-		}
+		if (!c.rm) return;
+		log('Delete: ${c.file}');
+		sys.FileSystem.deleteFile(c.file);
 	}
 
 }

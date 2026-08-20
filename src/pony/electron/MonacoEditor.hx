@@ -106,18 +106,17 @@ class MonacoEditor extends pony.Logable {
 				l.tm = s;
 				st.end();
 			});
-			if (lang.conf != null) {
-				st.add();
-				readMonacoFile(lang.conf, function(s: String): Void {
-					try {
-						l.conf = haxe.Json.parse(s);
-						log('${l.name} conf loaded');
-						st.end();
-					} catch (e: js.Error) {
-						error(e.message);
-					}
-				});
-			}
+			if (lang.conf == null) continue;
+			st.add();
+			readMonacoFile(lang.conf, function(s: String): Void {
+				try {
+					l.conf = haxe.Json.parse(s);
+					log('${l.name} conf loaded');
+					st.end();
+				} catch (e: js.Error) {
+					error(e.message);
+				}
+			});
 		}
 	}
 
@@ -151,8 +150,7 @@ class MonacoEditor extends pony.Logable {
 	private function needLoadTheme(theme: String): Bool return [null, 'vs', 'vs-dark', 'hc-black'].indexOf(theme) == -1;
 
 	private function _init(): Void {
-		final registryClass = NPM.monaco_textmate.Registry;
-		final registry = Type.createInstance(registryClass, [
+		final registry = Type.createInstance(NPM.monaco_textmate.Registry, [
 			{
 				getGrammarDefinition: getGrammarDefinition
 			}
@@ -165,7 +163,7 @@ class MonacoEditor extends pony.Logable {
 		}
 		NPM.monaco_editor_textmate.wireTmGrammars(monaco, registry, grammars);
 
-		for (k in themes.keys()) monaco.editor.defineTheme(k, themes[k]);
+		for (k => value in themes) monaco.editor.defineTheme(k, value);
 
 		log('monaco ready');
 	}

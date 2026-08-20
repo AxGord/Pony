@@ -52,11 +52,10 @@ class SpinLoader extends Sprite implements IWH {
 
 		pulse.onUpdate << pulseHandler;
 
-		if (spin != 0) {
-			anchor.set(0.5);
-			DeltaTime.fixedUpdate << spinHandler;
-			core.changeSmoothPercent - 1 << stopSpinHandler;
-		}
+		if (spin == 0) return;
+		anchor.set(0.5);
+		DeltaTime.fixedUpdate << spinHandler;
+		core.changeSmoothPercent - 1 << stopSpinHandler;
 	}
 
 	private function stopSpinHandler(): Void DeltaTime.fixedUpdate >> spinHandler;

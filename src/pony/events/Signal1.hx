@@ -78,7 +78,7 @@ import pony.events.Listener1;
 	@:op(A -= B) #if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function removeSub(a1: T1): Bool return this.remove({ once: false, listener: LSub(cast null, a1) });
 
-	public function bind1<T2>(a1: T2, priority: Int = 0, _once: Bool = false): Signal2<T1, T2> {
+	public function bind1<T2>(a1: T2, priority: Int = 0, once: Bool = false): Signal2<T1, T2> {
 		for (e in this) switch e.listener {
 			case LBind1(sig, val) if (val == a1):
 				this.brk();
@@ -86,7 +86,7 @@ import pony.events.Listener1;
 			case _:
 		}
 		final s = new Event2();
-		add({ once: _once, listener: LBind1(s, a1) }, priority);
+		add({ once: once, listener: LBind1(s, a1) }, priority);
 		return s;
 	}
 

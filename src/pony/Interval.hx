@@ -33,10 +33,7 @@ abstract Interval<T:Dynamic>(Pair<T, T>) {
 
 	@:from public static inline function fromString(s: String): Interval<String> {
 		final a = s.split('...');
-		if (a.length > 1)
-			return create(StringTools.trim(a[0]), StringTools.trim(a[1]));
-		else
-			return create(null, StringTools.trim(a[0]));
+		return a.length > 1 ? create(StringTools.trim(a[0]), StringTools.trim(a[1])) : create(null, StringTools.trim(a[0]));
 	}
 
 	@:to public inline function toString(): String return '$min ... $max';

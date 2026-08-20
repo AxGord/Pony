@@ -84,11 +84,7 @@ class ActionConnect extends ModuleConnect<Action> {
 	}
 
 	public function runAction(h: Map<String, String>): Bool {
-		if (checkAccess()) {
-			return action(h);
-		} else {
-			return false;
-		}
+		return checkAccess() && action(h);
 	}
 
 	public function action(h: Map<String, String>): Bool {
@@ -104,11 +100,7 @@ class ActionConnect extends ModuleConnect<Action> {
 	}
 
 	public function checkAccess(): Bool {
-		if (model.base.access.exists(base.name)) {
-			return Reflect.callMethod(model, Reflect.field(model, model.base.access[base.name]), []);
-		} else {
-			return true;
-		}
+		return !model.base.access.exists(base.name) || Reflect.callMethod(model, Reflect.field(model, model.base.access[base.name]), []);
 	}
 
 	public function callCheck(args: Array<Dynamic>, cb: ActResult -> Void): Void {

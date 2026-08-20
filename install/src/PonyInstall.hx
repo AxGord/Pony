@@ -23,8 +23,7 @@ class PonyInstall extends BaseInstall {
 		log('Prepare for compile pony');
 		if (FileSystem.exists(Config.BIN)) {
 			Utils.beginColor(90);
-			for (e in FileSystem.readDirectory(Config.BIN)) {
-				if (e == 'testcert.p12') continue;
+			for (e in FileSystem.readDirectory(Config.BIN)) if (e != 'testcert.p12') {
 				final f: String = Config.BIN + e;
 				if (FileSystem.isDirectory(f)) continue;
 				log('Delete: $e');
@@ -47,10 +46,8 @@ class PonyInstall extends BaseInstall {
 				while (true) {
 					final line: String = process.stderr.readLine();
 					if (inWarning) {
-						if (line == '' || line.charAt(0) == ' ')
-							continue;
-						else
-							inWarning = false;
+						if (line == '' || line.charAt(0) == ' ') continue;
+						inWarning = false;
 					}
 					if (checkWarning(line))
 						inWarning = true;

@@ -147,11 +147,7 @@ class Tree extends Sprite implements FLStage {
 	}
 
 	private function set_animated(value: Bool): Bool {
-		#if tweenmax
-		animated = value;
-		#else
-		animated = false;
-		#end
+		animated = #if tweenmax value #else false #end;
 
 		return animated;
 	}

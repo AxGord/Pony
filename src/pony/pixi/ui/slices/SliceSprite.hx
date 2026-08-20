@@ -20,25 +20,14 @@ class SliceSprite extends Sprite {
 	public function new(data: Array<String>, ?useSpriteSheet: String, creep: Float = 0) {
 		super();
 		this.creep = creep;
-		if (useSpriteSheet != null)
-			images = [for (e in data) PixiAssets.image(useSpriteSheet, e)];
-		else
-			images = [for (e in data) PixiAssets.image(e)];
+		images = useSpriteSheet != null ? [for (e in data) PixiAssets.image(useSpriteSheet, e)] : [for (e in data) PixiAssets.image(e)];
 		images.loadedList(init);
 	}
 
 	private function init(): Void {
 		inited = true;
-		if (sliceWidth != null) {
-			sliceWidth = sliceWidth;
-		} else {
-			sliceWidth = images[0].width;
-		}
-		if (sliceHeight != null) {
-			sliceHeight = sliceHeight;
-		} else {
-			sliceHeight = images[0].height;
-		}
+		sliceWidth = sliceWidth != null ? sliceWidth : images[0].width;
+		sliceHeight = sliceHeight != null ? sliceHeight : images[0].height;
 		for (img in images) addChild(img);
 	}
 

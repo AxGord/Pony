@@ -41,10 +41,7 @@ class BTextLow extends BitmapText implements IWH {
 	public function set_t(s: String): String {
 		if (!nocache) cacheAsBitmap = false;
 		if (s == null) s = ' ';
-		if (ansi != null)
-			text = TextTools.convertToANSI(s, ansi);
-		else
-			text = s;
+		text = ansi != null ? TextTools.convertToANSI(s, ansi) : s;
 		if (!nocache) cacheAsBitmap = true;
 		return s;
 	}

@@ -18,9 +18,8 @@ class ServersideStorage implements Declarator {
 			final k: String = Random.randomString();
 			cookie.set(keyName, k);
 			return getClientByKey(k);
-		} else {
-			return getClientByKey(key);
 		}
+		return getClientByKey(key);
 		return null;
 	}
 

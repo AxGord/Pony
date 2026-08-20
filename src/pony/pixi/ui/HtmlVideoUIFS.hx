@@ -100,10 +100,10 @@ class HtmlVideoUIFS extends HtmlVideoUI {
 	public inline function animHide(): Void {
 		if (fsHold) return;
 		hideTransitionDelay.complete >> _animShow;
-		if (!showProcess)
-			_animHide();
-		else
+		if (showProcess)
 			showTransitionDelay.complete < _animHide;
+		else
+			_animHide();
 	}
 
 	private inline function _animHide(): Void {
@@ -118,10 +118,10 @@ class HtmlVideoUIFS extends HtmlVideoUI {
 	public inline function animShow(): Void {
 		if (fsHold) return;
 		showTransitionDelay.complete >> _animHide;
-		if (!hideProcess)
-			_animShow();
-		else
+		if (hideProcess)
 			hideTransitionDelay.complete < _animShow;
+		else
+			_animShow();
 	}
 
 	private function _animShow(): Void {
@@ -157,27 +157,24 @@ class HtmlVideoUIFS extends HtmlVideoUI {
 	}
 
 	private function addTransition(): Void {
-		if (transition != null) {
-			video.style.cssText += transition;
-			transitionDelay.reset();
-			transitionDelay.start();
-		}
+		if (transition == null) return;
+		video.style.cssText += transition;
+		transitionDelay.reset();
+		transitionDelay.start();
 	}
 
 	private function addShowTransition(): Void {
-		if (showTransition != null) {
-			video.style.cssText += showTransition;
-			showTransitionDelay.reset();
-			showTransitionDelay.start();
-		}
+		if (showTransition == null) return;
+		video.style.cssText += showTransition;
+		showTransitionDelay.reset();
+		showTransitionDelay.start();
 	}
 
 	private function addHideTransition(): Void {
-		if (hideTransition != null) {
-			video.style.cssText += hideTransition;
-			hideTransitionDelay.reset();
-			hideTransitionDelay.start();
-		}
+		if (hideTransition == null) return;
+		video.style.cssText += hideTransition;
+		hideTransitionDelay.reset();
+		hideTransitionDelay.start();
 	}
 
 	private function removeTransition(): Void rmTransition(transition);
@@ -242,11 +239,7 @@ class HtmlVideoUIFS extends HtmlVideoUI {
 		} else {
 			ncss = css;
 		}
-		if (b != null) {
-			video.style.cssText = ncss.join('') + b;
-		} else {
-			video.style.cssText = ncss.join('');
-		}
+		video.style.cssText = b != null ? ncss.join('') + b : ncss.join('');
 	}
 
 }

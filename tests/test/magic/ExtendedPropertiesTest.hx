@@ -52,8 +52,7 @@ class ExtendedPropertiesTestHelper implements ExtendedProperties {
 	public function tvget(p: Int = 3) return this.p;
 
 	public function dget() {
-		final p: Int = 12;
-		return p;
+		return (12: Int);
 	}
 
 	public function fget() {

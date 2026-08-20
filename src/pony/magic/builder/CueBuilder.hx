@@ -1,5 +1,7 @@
 package pony.magic.builder;
 
+using StringTools;
+
 #if macro
 import haxe.macro.Context;
 import haxe.macro.Expr;
@@ -45,7 +47,7 @@ class CueBuilder {
 				if (v.substr(0, TITLE.length) == TITLE) title = TextTools.removeQuotes(v.substr(TITLE.length));
 			}
 			if (title == null || time == null) throw 'Error';
-			title = StringTools.replace(StringTools.replace(title, '/', '_'), ' ', '_');
+			title = title.replace('/', '_').replace(' ', '_');
 			data.push(new Pair(title, Time.fromString(time)));
 		}
 		data.sort(function(a, b) return a.b - b.b);

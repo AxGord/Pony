@@ -84,11 +84,10 @@ class BodyBase implements pony.magic.HasSignal implements pony.magic.HasLink imp
 		cbt = new CbType();
 		body.cbTypes.add(cbt);
 		if (group != null) body.cbTypes.add(group.cbt);
-		if (!isStatic) {
-			addListener(new BodyListener(CbEvent.WAKE, cbt, wakeHandler));
-			addListener(new BodyListener(CbEvent.SLEEP, cbt, sleepHandler));
-			pony.time.DeltaTime.update << updateHandler;
-		}
+		if (isStatic) return;
+		addListener(new BodyListener(CbEvent.WAKE, cbt, wakeHandler));
+		addListener(new BodyListener(CbEvent.SLEEP, cbt, sleepHandler));
+		pony.time.DeltaTime.update << updateHandler;
 	}
 
 	public function getCacheId(): Bytes return null;
@@ -120,10 +119,9 @@ class BodyBase implements pony.magic.HasSignal implements pony.magic.HasLink imp
 		lookAtDirrect = lookAtTarget > rotation ? 1 : -1;
 		if (lookAtTarget == rotation) lookAtDirrect = 0;
 		angularVel = lookAtDirrect * vel;
-		if (lookAtDirrect != 0) {
-			DeltaTime.update.add(checkLookAtHandler, 2);
-			checkLookAtHandler();
-		}
+		if (lookAtDirrect == 0) return;
+		DeltaTime.update.add(checkLookAtHandler, 2);
+		checkLookAtHandler();
 	}
 
 	private function checkLookAtHandler(): Void {
@@ -171,15 +169,14 @@ class BodyBase implements pony.magic.HasSignal implements pony.magic.HasLink imp
 	private function updateHandler(): Void {
 		ePos.dispatch(body.position.x - anchor.x, body.position.y - anchor.y);
 		eRotation.dispatch(body.rotation);
-		if (limits != null) {
-			final mx = body.bounds.width * 2;
-			final my = body.bounds.height * 2;
-			if (
-				body.position.x < limits.x - mx || body.position.x > limits.width + mx || body.position.y < limits.y - my
-				|| body.position.y > limits.height + my
-			)
-				eOut.dispatch();
-		}
+		if (limits == null) return;
+		final mx = body.bounds.width * 2;
+		final my = body.bounds.height * 2;
+		if (
+			body.position.x < limits.x - mx || body.position.x > limits.width + mx || body.position.y < limits.y - my
+			|| body.position.y > limits.height + my
+		)
+			eOut.dispatch();
 	}
 
 	private function wakeHandler(_): Void {

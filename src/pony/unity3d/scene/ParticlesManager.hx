@@ -61,10 +61,9 @@ class ParticlesManager extends MonoBehaviour {
 			stopTimer.start(dt);
 		}
 
-		if (abortTimer != null) {
-			abortTimer.reset();
-			abortTimer.start(dt);
-		}
+		if (abortTimer == null) return;
+		abortTimer.reset();
+		abortTimer.start(dt);
 	}
 
 	public function playSuperNow(?dt: DT): Void {
@@ -77,13 +76,13 @@ class ParticlesManager extends MonoBehaviour {
 			playTimer.stop();
 			playTimer.reset();
 		}
-		if (stopTimer != null) stopTimer.stop();
+		stopTimer?.stop();
 		comps.reset();
 		for (c in comps) c.stop();
 	}
 
 	public function abort(): Void {
-		if (abortTimer != null) abortTimer.stop();
+		abortTimer?.stop();
 		stop();
 		comps.reset();
 		for (c in comps) c.abort();

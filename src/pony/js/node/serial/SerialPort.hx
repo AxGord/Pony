@@ -122,17 +122,15 @@ class SerialPort extends Logable implements Declarator {
 			sp.open(function(err: Error) {
 				if (err != null && err.message != 'Port is opening') {
 					error('Error opening port: ${err.message}');
+				} else if (cfg.notWaitFirstMessage) {
+					sp.drain(function(err: Dynamic) {
+						if (err == null)
+							haxe.Timer.delay(openHandler, 1000);
+						else
+							error('Error opening port: $err');
+					});
 				} else {
-					if (cfg.notWaitFirstMessage) {
-						sp.drain(function(err: Dynamic) {
-							if (err == null)
-								haxe.Timer.delay(openHandler, 1000);
-							else
-								error('Error opening port: $err');
-						});
-					} else {
-						sp.once('data', openHandler);
-					}
+					sp.once('data', openHandler);
 				}
 			});
 			sp.on('error', error);
@@ -159,14 +157,17 @@ class SerialPort extends Logable implements Declarator {
 	* Check a field in b
 	*/
 	public static function checkPort(a: SerialId, b: SerialId): Bool {
-		if (a.comName != null) if (a.comName != b.comName) return false;
-		if (a.manufacturer != null) if (a.manufacturer != b.manufacturer) return false;
-		if (a.serialNumber != null) if (a.serialNumber != b.serialNumber) return false;
-		if (a.pnpId != null) if (a.pnpId != b.pnpId) return false;
-		if (a.locationId != null) if (a.locationId != b.locationId) return false;
-		if (a.vendorId != null) if (a.vendorId != b.vendorId) return false;
-		if (a.productId != null) if (a.productId != b.productId) return false;
-		return true;
+		if (a.comName != null && a.comName != b.comName) return false;
+		if (a.manufacturer != null && a.manufacturer != b.manufacturer) return false;
+		if (a.serialNumber != null && a.serialNumber != b.serialNumber) return false;
+		if (a.pnpId != null && a.pnpId != b.pnpId) return false;
+		if (a.locationId != null && a.locationId != b.locationId) return false;
+		return if (a.vendorId != null && a.vendorId != b.vendorId)
+			false
+		else if (a.productId != null && a.productId != b.productId)
+			false
+		else
+			true;
 	}
 
 	private function reconnect(): Void {
@@ -179,10 +180,9 @@ class SerialPort extends Logable implements Declarator {
 	}
 
 	private function _reconnect(): Void {
-		if (id != null) {
-			log('SerialPort ${id.comName} have problem, reconnect after 5sec...');
-			lastDelay = Timer.delay('5s', connect);
-		}
+		if (id == null) return;
+		log('SerialPort ${id.comName} have problem, reconnect after 5sec...');
+		lastDelay = Timer.delay('5s', connect);
 	}
 
 	private function readData(b: BytesData): Void {
@@ -190,12 +190,9 @@ class SerialPort extends Logable implements Declarator {
 	}
 
 	private function check(): Bool {
-		if (connected)
-			return false;
-		else {
-			error('Serial port not ready');
-			return true;
-		}
+		if (connected) return false;
+		error('Serial port not ready');
+		return true;
 	}
 
 	public function writeAsync(b: BytesOutput, ok: Void -> Void, ?error: String -> ?PosInfos -> Void): Void {
@@ -219,7 +216,7 @@ class SerialPort extends Logable implements Declarator {
 
 	public function write(b: BytesOutput): Void {
 		if (check()) return;
-		if (q != null) q.call(b);
+		q?.call(b);
 	}
 
 	private function _write(b: BytesOutput): Void {
@@ -233,10 +230,9 @@ class SerialPort extends Logable implements Declarator {
 		sp = null;
 		id = null;
 		cfg == null;
-		if (lastDelay != null) {
-			lastDelay.destroy();
-			lastDelay = null;
-		}
+		if (lastDelay == null) return;
+		lastDelay.destroy();
+		lastDelay = null;
 	}
 
 }

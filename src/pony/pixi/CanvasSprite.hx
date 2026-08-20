@@ -29,10 +29,9 @@ class CanvasSprite extends Sprite {
 			addChild(sourse);
 			return;
 		}
-		if (offset != null) {
-			sourse.x = offset.x;
-			sourse.y = offset.y;
-		}
+		if (offset == null) return;
+		sourse.x = offset.x;
+		sourse.y = offset.y;
 	}
 
 	public function needRenderer(): Void if (JsTools.agent != IE) DeltaTime.fixedUpdate < render;
@@ -45,18 +44,18 @@ class CanvasSprite extends Sprite {
 		}
 		addChild(sourse);
 
-		final _renderer = new CanvasRenderer(size.x, size.y);
-		_renderer.transparent = true;
-		_renderer.render(this);
+		final renderer = new CanvasRenderer(size.x, size.y);
+		renderer.transparent = true;
+		renderer.render(this);
 
 		removeChildAt(0);
-		final result = new Sprite(Texture.fromCanvas(_renderer.view));
+		final result = new Sprite(Texture.fromCanvas(renderer.view));
 		if (offset != null) {
 			result.x = -offset.x;
 			result.y = -offset.y;
 		}
 		addChild(result);
-		_renderer.destroy();
+		renderer.destroy();
 	}
 
 }

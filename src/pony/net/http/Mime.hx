@@ -1,5 +1,7 @@
 package pony.net.http;
 
+using StringTools;
+
 /**
  * Mime
  * @author AxGord
@@ -729,7 +731,7 @@ class Mime {
 	/** `ofPath` plus the UTF-8 charset for text formats — what a `Content-Type` header wants. **/
 	public static function contentType(path: String): String {
 		final type: String = ofPath(path);
-		return StringTools.startsWith(type, 'text/') || TEXTUAL.indexOf(type) != -1 ? '$type; charset=utf-8' : type;
+		return type.startsWith('text/') || TEXTUAL.indexOf(type) != -1 ? '$type; charset=utf-8' : type;
 	}
 
 }

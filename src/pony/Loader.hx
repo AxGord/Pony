@@ -33,13 +33,12 @@ class Loader implements HasSignal {
 	}
 
 	public function init(fastLoad: Bool = false): Void {
-		if (!fastLoad) {
-			if (beginWait == 0)
-				begin();
-			else
-				DeltaTime.fixedUpdate.add(wait);
-		} else
+		if (fastLoad)
 			fastEnd();
+		else if (beginWait == 0)
+			begin();
+		else
+			DeltaTime.fixedUpdate.add(wait);
 	}
 
 	private function fast(): Void {
@@ -69,12 +68,14 @@ class Loader implements HasSignal {
 				break;
 			#end
 		}
-		if (totalActions == 0)
-			eProgress.dispatch(counterPercent());
-		else if (total == 0)
-			eProgress.dispatch(listPercent());
-		else
-			eProgress.dispatch((listPercent() + counterPercent()) / 2);
+		eProgress.dispatch(
+			if (totalActions == 0)
+				counterPercent()
+			else if (total == 0)
+				listPercent()
+			else
+				(listPercent() + counterPercent()) / 2
+		);
 		if (actions.length == 0 && complites == total) eComplete.dispatch();
 	}
 

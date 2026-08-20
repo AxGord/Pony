@@ -317,8 +317,7 @@ abstract Transform(Int) {
 			final lines: Array<String> = getAllLines();
 			var lineOffset: Int = 0;
 
-			for (i in 0...lines.length) {
-				final line: String = lines[i];
+			for (i => line in lines) {
 				final selEnd: UInt = line.length;
 				if (selectionRange.start > lineOffset + line.length || selectionRange.start + selectionRange.length < lineOffset) {
 					lineOffset += line.length;

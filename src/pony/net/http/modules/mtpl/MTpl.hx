@@ -29,15 +29,14 @@ final class MTpl implements IModule {
 				cpq.connection.error('Not exists template: $tc');
 			}
 			return BREAK;
-		} else {
-			if (cpq.connection.params.exists('tryTemplate')) {
-				cpq.template = server.tpl.get(cpq.connection.params['tryTemplate']);
-			} else {
-				final st: Map<String, Dynamic> = cpq.connection.sessionStorage;
-				if (st.exists('template')) cpq.template = server.tpl.get(st['template']);
-			}
-			return REG(cast new MTplConnect(this, cpq));
 		}
+		if (cpq.connection.params.exists('tryTemplate')) {
+			cpq.template = server.tpl.get(cpq.connection.params['tryTemplate']);
+		} else {
+			final st: Map<String, Dynamic> = cpq.connection.sessionStorage;
+			if (st.exists('template')) cpq.template = server.tpl.get(st['template']);
+		}
+		return REG(cast new MTplConnect(this, cpq));
 
 	}
 

@@ -42,7 +42,7 @@ class SimpleXmlApp extends PixiXmlUi {
 
 	private function init(): Void {
 		final dpreloader: Element = Browser.document.getElementById('preloader');
-		if (dpreloader != null) dpreloader.remove();
+		dpreloader?.remove();
 		createApp();
 		if (assetsForLoad == null) {
 			loadUI(preloadProgressHandler);
@@ -51,7 +51,9 @@ class SimpleXmlApp extends PixiXmlUi {
 			loadUI(pair.a);
 			AssetManager.load(assetsForLoadPath, assetsForLoad, pair.b);
 		}
-		if (!momentalLoad) {
+		if (momentalLoad) {
+			eLoaded.dispatch();
+		} else {
 			final m: Int = Std.int(Math.min(Config.width, Config.height) / 20);
 			preloader = new SpinLoader(m, Std.int(m / 10), Config.background.invert, 3, app);
 			preloader.position.set(Config.width / 2, Config.height / 2);
@@ -59,8 +61,6 @@ class SimpleXmlApp extends PixiXmlUi {
 			if (app.isWebGL && GlowFilter != null) preloader.filters = [new GlowFilter(16, 1.5, 0, Config.background.invert, 0.1)];
 			preloader.core.percent = 0.1;
 			preloader.core.changePercent - 1 << preloadedHandler;
-		} else {
-			eLoaded.dispatch();
 		}
 	}
 

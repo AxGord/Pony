@@ -25,10 +25,7 @@ class Scrollable extends Touchable {
 	}
 
 	public function updateContent(obj: Container): Void {
-		if (vert)
-			_updateContent(obj.height);
-		else
-			_updateContent(obj.width);
+		_updateContent(vert ? obj.height : obj.width);
 	}
 
 	public function _updateContent(size: Float): Void {

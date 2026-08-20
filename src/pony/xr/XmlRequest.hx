@@ -52,10 +52,11 @@ class XmlRequest extends Logable<XmlRequest> implements ICanBeCopied<XmlRequest>
 	}
 
 	public function _run(x: Fast, result: Dynamic -> Void): Void {
-		if (!modules.exists(x.name)) {
-			_error('Unknown module: ${x.name}');
-		} else
+		if (modules.exists(x.name))
 			modules[x.name].run(this, x, result);
+		else {
+			_error('Unknown module: ${x.name}');
+		}
 	}
 
 	public function rf(x: Fast, result: Dynamic -> Void): Void {
@@ -73,14 +74,12 @@ class XmlRequest extends Logable<XmlRequest> implements ICanBeCopied<XmlRequest>
 			try {
 				if (d == null)
 					result(null);
-				else {
-					if (d.charAt(0) == '%' && d.last() == '%') {
-						final d = d.substr(1, d.length - 2);
-						final m: V = cast modules['v'];
-						result(m.values[d]);
-					} else
-						result(d);
-				}
+				else if (d.charAt(0) == '%' && d.last() == '%') {
+					final d = d.substr(1, d.length - 2);
+					final m: V = cast modules['v'];
+					result(m.values[d]);
+				} else
+					result(d);
 			} catch (e: Dynamic)
 				_error(e);
 		}

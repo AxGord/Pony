@@ -43,12 +43,10 @@ class CardFinder implements HasSignal {
 		if (ignoreBusy) {
 			cancel();
 			return false;
-		} else if (ppRotor.enabled) {
-			eBusy.dispatch();
-			return true;
-		} else {
-			return false;
 		}
+		if (!ppRotor.enabled) return false;
+		eBusy.dispatch();
+		return true;
 	}
 
 	private function findHandler(key: String): Void {

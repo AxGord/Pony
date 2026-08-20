@@ -202,10 +202,9 @@ class AtlasCreator {
 					textures.push(new SubTexture(addedTextures[i], addedRects[i], disposeable, frame));
 				}
 
-				if (dPivot == null) {
-					source.gotoAndStop(i + 1);
-					dPivot = new Point(_border - maxRect.x, _border - maxRect.y);
-				}
+				if (dPivot != null) continue;
+				source.gotoAndStop(i + 1);
+				dPivot = new Point(_border - maxRect.x, _border - maxRect.y);
 			}
 		}
 
@@ -306,40 +305,38 @@ class AtlasCreator {
 			}
 
 			return { texture: _atlases[_atlases.length - 1].texture, addedTo: addedTo };
-		} else {
-			area = area.clone();
-
-			area.top -= AtlasCreator.getBorder();
-			area.left -= AtlasCreator.getBorder();
-			area.bottom += AtlasCreator.getBorder();
-			area.right += AtlasCreator.getBorder();
-
-			var texture: Texture = null;
-
-			if (area.width > bitmapData.width * 0.5 && area.height > bitmapData.height * 0.5) {
-				// Can't place it in a smaller bitmapData
-				texture = Texture.fromBitmapData(bitmapData, false);
-				texture.root.onRestore = function(): Void {
-					final bmpd = restorationCallback();
-					texture.root.uploadBitmapData(bmpd);
-				}
-				return { texture: texture, addedTo: area };
-			} else {
-				var smallerBitmapData: BitmapData = ReusableBitmapData.getPowTwo(cast area.width, cast area.height);
-				smallerBitmapData.copyPixels(bitmapData, area, new Point(0, 0));
-
-				texture = Texture.fromBitmapData(smallerBitmapData, false);
-				area.x = area.y = 0;
-
-				texture.root.onRestore = function(): Void {
-					final bmpd = restorationCallback();
-					var smallerBmpd: BitmapData = ReusableBitmapData.getPowTwo(cast area.width, cast area.height);
-					smallerBmpd.copyPixels(bmpd, area, new Point(0, 0));
-					texture.root.uploadBitmapData(smallerBmpd);
-				}
-				return { texture: texture, addedTo: area };
-			}
 		}
+		area = area.clone();
+
+		area.top -= AtlasCreator.getBorder();
+		area.left -= AtlasCreator.getBorder();
+		area.bottom += AtlasCreator.getBorder();
+		area.right += AtlasCreator.getBorder();
+
+		var texture: Texture = null;
+
+		if (area.width > bitmapData.width * 0.5 && area.height > bitmapData.height * 0.5) {
+			// Can't place it in a smaller bitmapData
+			texture = Texture.fromBitmapData(bitmapData, false);
+			texture.root.onRestore = function(): Void {
+				final bmpd = restorationCallback();
+				texture.root.uploadBitmapData(bmpd);
+			}
+			return { texture: texture, addedTo: area };
+		}
+		var smallerBitmapData: BitmapData = ReusableBitmapData.getPowTwo(cast area.width, cast area.height);
+		smallerBitmapData.copyPixels(bitmapData, area, new Point(0, 0));
+
+		texture = Texture.fromBitmapData(smallerBitmapData, false);
+		area.x = area.y = 0;
+
+		texture.root.onRestore = function(): Void {
+			final bmpd = restorationCallback();
+			var smallerBmpd: BitmapData = ReusableBitmapData.getPowTwo(cast area.width, cast area.height);
+			smallerBmpd.copyPixels(bmpd, area, new Point(0, 0));
+			texture.root.uploadBitmapData(smallerBmpd);
+		}
+		return { texture: texture, addedTo: area };
 		return null;
 	}
 
@@ -477,8 +474,7 @@ private class TextureStorage {
 	public function get(a: Float, b: Float, c: Float, d: Float, filters: Dynamic): Dynamic {
 		if (!_allowsAddition) return null;
 
-		for (i in 0..._textures.length) {
-			final texture: Dynamic = _textures[i];
+		for (i => texture in _textures) {
 			if ((texture.a == a) && (texture.b == b) && (texture.c == c) && (texture.d == d) && (filtersEqual(texture.filters, filters)))
 				return texture;
 		}

@@ -21,20 +21,19 @@ class PixiHtmlVideoFS extends PixiHtmlVideoBase {
 		targetRect: Rect<Float>, fsRect: Or<Border<Float>, Rect<Float>>, ?app: App, ?options: HtmlVideoOptions
 	) {
 		super(targetRect, app, options);
-		if (fsRect != null) {
-			normalRect = targetRect;
-			switch fsRect {
-				case A(border):
-					this.fsRect = border.getRectFromSize(app.resolution);
-				case B(rect):
-					this.fsRect = rect;
-			}
-			video.onClick << fullscreen.sw;
-			video.onHide || video.onEnd << fullscreen.disable;
-			fullscreen.onEnable << openFullScreenHandler;
-			fullscreen.onDisable << closeFullScreenHandler;
-			video.style.cursor = 'pointer';
+		if (fsRect == null) return;
+		normalRect = targetRect;
+		switch fsRect {
+			case A(border):
+				this.fsRect = border.getRectFromSize(app.resolution);
+			case B(rect):
+				this.fsRect = rect;
 		}
+		video.onClick << fullscreen.sw;
+		video.onHide || video.onEnd << fullscreen.disable;
+		fullscreen.onEnable << openFullScreenHandler;
+		fullscreen.onDisable << closeFullScreenHandler;
+		video.style.cursor = 'pointer';
 	}
 
 	public function openFullScreenHandler(): Void {

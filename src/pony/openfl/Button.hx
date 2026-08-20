@@ -55,9 +55,8 @@ class Button extends Sprite {
 		if (img == 3 && states[img] == null) {
 			zone.visible = false;
 			return;
-		} else {
-			zone.visible = true;
 		}
+		zone.visible = true;
 		if (img >= states.length) img = states.length - 1;
 		while (states[img] == null) img--;
 		states[img].visible = true;

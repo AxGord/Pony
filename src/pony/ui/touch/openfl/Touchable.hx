@@ -27,13 +27,7 @@ class Touchable extends TouchableBase {
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function get_touchSupport(): Bool {
-		#if touchsim
-		return true;
-		#elseif notouch
-		return false;
-		#else
-		return Multitouch.supportsTouchEvents;
-		#end
+		return #if touchsim true #elseif notouch false #else Multitouch.supportsTouchEvents #end;
 	}
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end

@@ -14,12 +14,16 @@ final class MTplPut extends TplPut<MTpl, CPQ> {
 
 	@:async
 	override public function tag(name: String, content: TplData, arg: String, args: Map<String, String>, ?kid: ITplPut): String {
-		if (name == 'templates') {
-			return @await many(a.server.tpl, MTplPutSub, content, arg);
-		} else if (name == 'template')
-			return @await sub(this, b.template, MTplPutSub, content);
-		else
-			return @await super.tag(name, content, arg, args, kid);
+		switch (name) {
+			case 'templates':
+				{
+					return @await many(a.server.tpl, MTplPutSub, content, arg);
+				}
+			case 'template':
+				return @await sub(this, b.template, MTplPutSub, content);
+			case _:
+				return @await super.tag(name, content, arg, args, kid);
+		}
 	}
 
 	@:async

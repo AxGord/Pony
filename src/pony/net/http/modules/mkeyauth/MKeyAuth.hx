@@ -22,23 +22,20 @@ final class MKeyAuth implements IModule {
 	}
 
 	public function connect(cpq: CPQ): EConnect {
-		if (cpq.connection.params.exists(PARAM)) {
-			final key: String = cpq.connection.params[PARAM];
-			if (key == null) {
-				cpq.connection.sessionStorage[SESSION] = false;
-				cpq.connection.params.remove(PARAM);
-				cpq.connection.endAction();
-			} else if (keys.indexOf(key) != -1) {
-				cpq.connection.sessionStorage[SESSION] = true;
-				cpq.connection.params.remove(PARAM);
-				cpq.connection.endAction();
-			} else {
-				cpq.connection.error('Access error');
-			}
-			return BREAK;
+		if (!cpq.connection.params.exists(PARAM)) return REG(cast new MKeyAuthConnect(this, cpq));
+		final key: String = cpq.connection.params[PARAM];
+		if (key == null) {
+			cpq.connection.sessionStorage[SESSION] = false;
+			cpq.connection.params.remove(PARAM);
+			cpq.connection.endAction();
+		} else if (keys.indexOf(key) != -1) {
+			cpq.connection.sessionStorage[SESSION] = true;
+			cpq.connection.params.remove(PARAM);
+			cpq.connection.endAction();
 		} else {
-			return REG(cast new MKeyAuthConnect(this, cpq));
+			cpq.connection.error('Access error');
 		}
+		return BREAK;
 	}
 
 }

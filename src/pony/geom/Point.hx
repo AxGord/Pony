@@ -2,6 +2,8 @@ package pony.geom;
 
 import pony.ds.UHPair;
 
+using StringTools;
+
 typedef PointImpl<T> = {
 	x: T,
 	y: T
@@ -127,14 +129,13 @@ abstract Point<T:Float>(PointImpl<T>) from PointImpl<T> to PointImpl<T> {
 	@:from public static inline function ofInt(v: Int): Point<Int> return new Point<Int>(v, v);
 
 	@:from public static inline function fromString(s: String): Point<Int> {
-		s = StringTools.trim(s);
+		s = s.trim();
 		var index: Int = -1;
 		for (char in [' ', ',', ';', 'x']) {
 			index = s.indexOf(char);
 			if (index != -1) break;
 		}
-		if (index == -1) return Std.parseInt(s);
-		return new Point<Int>(Std.parseInt(s.substr(0, index)), Std.parseInt(s.substr(index + 1)));
+		return index == -1 ? Std.parseInt(s) : new Point<Int>(Std.parseInt(s.substr(0, index)), Std.parseInt(s.substr(index + 1)));
 	}
 
 	#if (heaps && !macro)

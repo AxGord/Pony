@@ -7,6 +7,8 @@ import pony.Tools;
 import pony.magic.HasAbstract;
 import pony.text.TextTools;
 
+using Lambda;
+
 /**
  * ElectronApplication
  * @author AxGord <axgord@gmail.com>
@@ -32,17 +34,16 @@ class ElectronApplication extends VSTraceHelper implements HasAbstract {
 		log('Platform: ${Node.process.platform}');
 		if (this.macnoexit) log('Mac OS keep opened');
 		App.on('ready', readyHandler);
-		if (!this.macnoexit) {
-			App.on('window-all-closed', closeAllHandler);
-		} else {
+		if (this.macnoexit) {
 			App.on('window-all-closed', Tools.nullFunction1);
 			App.on('activate', activateHandler);
+		} else {
+			App.on('window-all-closed', closeAllHandler);
 		}
-		if (disableHardwareAcceleration) {
-			log('Disable Hardware Acceleration');
-			App.disableHardwareAcceleration();
-			App.commandLine.appendSwitch('disable-software-rasterizer');
-		}
+		if (!disableHardwareAcceleration) return;
+		log('Disable Hardware Acceleration');
+		App.disableHardwareAcceleration();
+		App.commandLine.appendSwitch('disable-software-rasterizer');
 	}
 
 	private function readyHandler(_): Void init();
@@ -84,7 +85,7 @@ class ElectronApplication extends VSTraceHelper implements HasAbstract {
 
 	private function activateHandler(_): Void {
 		log('Activate');
-		if (Lambda.count(windows) == 0) createMainWindow();
+		if (windows.count() == 0) createMainWindow();
 	}
 
 	public function mapCreateWindow(map: Map<String, String>, ?id: String): BrowserWindow {

@@ -126,7 +126,7 @@ class Project {
 			for (lib in haxelib.libs) map[lib.name] = lib.version;
 		}
 		if (build.active) {
-			for (lib in build.libs.keys()) map[lib] = build.libs[lib];
+			for (lib => value in build.libs) map[lib] = value;
 		}
 		return map;
 	}

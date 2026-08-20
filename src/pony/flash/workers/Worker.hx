@@ -54,10 +54,10 @@ class Worker implements IWorkerGatePool implements HasSignal {
 		bgWorker.setSharedProperty('request_$name', resultChannel);
 		var bgWorkerCommandChannel: MessageChannel = flash.system.Worker.current.createMessageChannel(bgWorker);
 		bgWorker.setSharedProperty('response_$name', bgWorkerCommandChannel);
-		if (!lock)
-			unlock();
-		else
+		if (lock)
 			unlockers.add(unlock);
+		else
+			unlock();
 		function cb(a: T1): Void {
 			if (MessageChannelState.OPEN == cast bgWorkerCommandChannel.state)
 				bgWorkerCommandChannel.send(a);

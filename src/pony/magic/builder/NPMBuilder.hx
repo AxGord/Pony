@@ -1,5 +1,7 @@
 package pony.magic.builder;
 
+using StringTools;
+
 #if macro
 import haxe.macro.Context;
 import haxe.macro.Expr;
@@ -62,7 +64,7 @@ class NPMBuilder {
 	#if macro
 	private static function filterName(s: String): String {
 		s = s.split('@')[0];
-		for (r in replaces) s = StringTools.replace(s, r, '_');
+		for (r in replaces) s = s.replace(r, '_');
 		return s;
 	}
 	#end

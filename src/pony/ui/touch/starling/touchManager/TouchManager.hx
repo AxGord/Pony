@@ -111,9 +111,9 @@ class TouchManager {
 			final touch: Touch = _gestureTouches[id];
 			var other: Touch = null;
 
-			for (key in _gestureTouches.keys()) {
+			for (key => value in _gestureTouches) {
 				if (key != id) {
-					other = _gestureTouches[key];
+					other = value;
 					break;
 				}
 			}
@@ -286,35 +286,32 @@ class TouchManager {
 	private static function dispatch(
 		object: Dynamic, type: TouchEventType, mouseOver: Bool, touch: Touch, value: Float = 0, ?gesture: TouchManagerGesture
 	): Void {
-		if ((object != null) && (_objects.exists(object))) {
-			// trace("object = " + object + ", name = " + object.name + ", dispatching type = " + type + ", mouseOver = " + mouseOver);
+		if (object == null || !_objects.exists(object)) return;
+		// trace("object = " + object + ", name = " + object.name + ", dispatching type = " + type + ", mouseOver = " + mouseOver);
 
-			final event = new TouchManagerEvent();
-			event.type = type;
-			event.mouseOver = mouseOver;
-			event.globalX = touch.currentX;
-			event.globalY = touch.currentY;
-			event.previousGlobalX = touch.previousX;
-			event.previousGlobalY = touch.previousY;
-			event.value = value;
-			event.gesture = gesture;
-			event.speedX = touch.speedX;
-			event.speedY = touch.speedY;
-			event.touchID = touch.id;
-			event.target = object;
+		final event = new TouchManagerEvent();
+		event.type = type;
+		event.mouseOver = mouseOver;
+		event.globalX = touch.currentX;
+		event.globalY = touch.currentY;
+		event.previousGlobalX = touch.previousX;
+		event.previousGlobalY = touch.previousY;
+		event.value = value;
+		event.gesture = gesture;
+		event.speedX = touch.speedX;
+		event.speedY = touch.speedY;
+		event.touchID = touch.id;
+		event.target = object;
 
-			if (event.type == Down) {
-				_lastDownEvent = event;
-			}
-
-			final listeners = _objects.get(object);
-
-			final copy = listeners.copy();
-			for (i in 0...copy.length) {
-				if (listeners.indexOf(copy[i]) == -1) continue;
-				if ((copy[i].types == null) || (copy[i].types.indexOf(type) != -1)) copy[i].listener(event);
-			}
+		if (event.type == Down) {
+			_lastDownEvent = event;
 		}
+
+		final listeners = _objects.get(object);
+
+		final copy = listeners.copy();
+		for (i in 0...copy.length) if (listeners.indexOf(copy[i]) != -1 && ((copy[i].types == null) || (copy[i].types.indexOf(type) != -1)))
+			copy[i].listener(event);
 	}
 
 	public static function getLastDownEvent(): TouchManagerEvent {
@@ -322,8 +319,7 @@ class TouchManager {
 	}
 
 	private static function commonParent(chainA: Array<Dynamic>, chainB: Array<Dynamic>, depth: Int): Bool {
-		if (chainA.length <= depth || chainB.length <= depth) return false;
-		return chainA[depth] == chainB[depth];
+		return chainA.length > depth && chainB.length > depth && chainA[depth] == chainB[depth];
 	}
 
 	private static function calculateGesture(touch: Touch, other: Touch): TouchManagerGesture {
@@ -406,8 +402,8 @@ class TouchManager {
 	}
 
 	private static function firstKey(map: Map<Int, Touch>, object: Dynamic): Int {
-		for (key in map.keys()) {
-			if (map[key].active == object) return key;
+		for (key => value in map) {
+			if (value.active == object) return key;
 		}
 
 		return -1;

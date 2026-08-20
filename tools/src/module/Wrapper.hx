@@ -35,13 +35,12 @@ class Wrapper extends CfgModule<WrapperConfig> {
 		final file = cfg.file;
 		final pre = cfg.pre;
 		final post = cfg.post;
-		if (cfg.file != null && (pre != '' || post != '')) {
-			Sys.println('Apply wrapper to $file');
-			var data = File.getContent(file);
-			if (pre != null) data = pre + data;
-			if (post != null) data = data + post;
-			File.saveContent(file, data);
-		}
+		if (cfg.file == null || pre == '' && post == '') return;
+		Sys.println('Apply wrapper to $file');
+		var data = File.getContent(file);
+		if (pre != null) data = pre + data;
+		if (post != null) data = data + post;
+		File.saveContent(file, data);
 	}
 
 }

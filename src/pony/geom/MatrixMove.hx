@@ -78,11 +78,9 @@ class MatrixMove {
 
 	private function trySet(prev: MatrixIndex, i: MatrixIndex): Bool {
 		if (i.c == prev.c && i.r == prev.r) return true;
-		if (moveMatrix[i.r] != null && moveMatrix[i.r][i.c] != null && moveMatrix[i.r][i.c] != 0) {
-			(untyped change: Event1<Int>).dispatch(moveMatrix[i.r][i.c] - 1);
-			return false;
-		} else
-			return true;
+		if (moveMatrix[i.r] == null || (moveMatrix[i.r][i.c] == null || moveMatrix[i.r][i.c] == 0)) return true;
+		(untyped change: Event1<Int>).dispatch(moveMatrix[i.r][i.c] - 1);
+		return false;
 	}
 
 }

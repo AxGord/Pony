@@ -1,5 +1,7 @@
 package pony.ui.xml;
 
+using StringTools;
+
 #if macro
 import pony.Fast;
 import pony.text.TextTools;
@@ -71,7 +73,7 @@ class XmlUiBuilder {
 			for (p in meta.getMeta(':style').params) switch p.expr {
 				case EConst(CString(styleFile)):
 					final s = getStyle(styleFile);
-					for (k in s.keys()) style[k] = s[k];
+					for (k => value in s) style[k] = value;
 				case _:
 					Context.error('Wrong style type', meta.getMeta(':style').params[0].pos);
 			}
@@ -88,7 +90,7 @@ class XmlUiBuilder {
 				if (xml.has.filters) {
 					for (f in parseAttr(xml.att.filters)) {
 						final s = getFilters(joinPath(gpath, f));
-						for (k in s.keys()) filters[k] = s[k];
+						for (k => value in s) filters[k] = value;
 					}
 					xml.x.remove('filters');
 				}
@@ -96,7 +98,7 @@ class XmlUiBuilder {
 				if (xml.has.style) {
 					for (f in parseAttr(xml.att.style)) {
 						final s = getStyle(joinPath(gpath, f));
-						for (k in s.keys()) style[k] = s[k];
+						for (k => value in s) style[k] = value;
 					}
 				}
 
@@ -158,11 +160,10 @@ class XmlUiBuilder {
 
 	private static function getXml(file: String): Fast {
 		Context.registerModuleDependency(Context.getLocalModule(), file);
-		try {
-			return new Fast(Xml.parse(File.getContent(StringTools.trim(file)))).elements.next();
-		} catch (e: haxe.xml.Parser.XmlParserException) {
-			return throw new Error(e.message, Context.makePosition({ min: e.position, max: e.position + 1, file: file }));
-		}
+		return
+			try new Fast(Xml.parse(File.getContent(file.trim()))).elements.next() catch (e: haxe.xml.Parser.XmlParserException) throw new Error(
+				e.message, Context.makePosition({ min: e.position, max: e.position + 1, file: file })
+			);
 	}
 
 	private static function getFilters(file: String): Style {
@@ -277,10 +278,7 @@ class XmlUiBuilder {
 				content: ($a{content}: Array<Dynamic>),
 				textContent: textContent
 			};
-		if (xml.has.id)
-			return macro cast($i{prefix + xml.att.id} = cast ${expr});
-		else
-			return macro ${expr};
+		return xml.has.id ? macro cast($i{prefix + xml.att.id} = cast ${expr}) : macro ${expr};
 	}
 
 	private static function addStyle(name: String, attrs: Map<String, String>, style: Style): String {
@@ -295,7 +293,7 @@ class XmlUiBuilder {
 				case [false, false]:
 					s;
 				case [false, true]:
-					attrs[k] != null ? attrs[k] + s : StringTools.ltrim(s.substr(1));
+					attrs[k] != null ? attrs[k] + s : s.substr(1).ltrim();
 				case [true, false]:
 					s + attrs[k];
 				case [true, true]:

@@ -44,15 +44,13 @@ class NativeHitTestSource implements IHitTestSource {
 				if (Std.is(child, DisplayObjectContainer)) {
 					final containerChild: Dynamic = childUnderPoint(x, y, cast child, testShape);
 					if (containerChild != null) return containerChild;
-				} else if (Std.is(child, InteractiveObject)) {
-					if (untyped child.mouseEnabled && !isStaticTextField(child)) return child;
-				}
+				} else if (Std.is(child, InteractiveObject) && untyped child.mouseEnabled && !isStaticTextField(child))
+					return child;
 			}
 			i--;
 		}
 
-		if (container.mouseEnabled) return container;
-		return null;
+		return container.mouseEnabled ? container : null;
 	}
 
 	private inline function isStaticTextField(child: DisplayObject): Bool {
@@ -61,10 +59,12 @@ class NativeHitTestSource implements IHitTestSource {
 	}
 
 	public function parent(object: Dynamic): Dynamic {
-		if (!Std.is(object, flash.display.DisplayObject)) return null;
-		if (object == _container) return null;
-		final objectsParent = object.parent;
-		return objectsParent;
+		return if (!Std.is(object, flash.display.DisplayObject))
+			null
+		else if (object == _container)
+			null
+		else
+			object.parent;
 	}
 
 }

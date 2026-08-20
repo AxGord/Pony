@@ -29,8 +29,7 @@ private typedef Lang = {
 		final client: Dynamic = Type.createInstance(NPM.poeditor_client, [cfg.token]);
 		client.projects.get(cfg.id).then(function(project) {
 			project.languages.list().then(function(languages: Array<Lang>) {
-				for (i in 0...languages.length) {
-					final lang: Lang = languages[i];
+				for (i => lang in languages) {
 					log('Check lang: ${lang.name}');
 					if (lang.percentage == 100 && cfg.list.exists(lang.code)) {
 						tasks.add();

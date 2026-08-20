@@ -232,22 +232,22 @@ final class DIBuilder {
 										);
 									// L3: skip provider.load for static-eligible DI children; declare local var instead.
 									final staticDIVar: Null<{ varName: String, typeNames: Array<String> }> = ownStaticDIVars[field.name];
-									if (staticDIVar != null)
-										loads.push({
-											expr: EVars([
-												{
-													name: staticDIVar.varName,
-													type: TPath({ pack: [], name: 'Null', params: [TPType(t)] }),
-													expr: macro null,
-													isFinal: false
-												}
-											]),
-											pos: Context.currentPos()
-										})
-									else
-										loads.push(
+									loads.push(
+										if (staticDIVar != null)
+											{
+												expr: EVars([
+													{
+														name: staticDIVar.varName,
+														type: TPath({ pack: [], name: 'Null', params: [TPType(t)] }),
+														expr: macro null,
+														isFinal: false
+													}
+												]),
+												pos: Context.currentPos()
+											}
+										else
 											checkExpr(macro provider.load($v{producerTypeNames}, $v{field.name}, $v{exportService}))
-										);
+									);
 									if (childIsAsync) {
 										destroysAsync.unshift(importService && exportService
 											? macro if (provider.isExported($v{primaryTypeName}, $v{field.name})) {
@@ -510,14 +510,14 @@ final class DIBuilder {
 				switch fun.expr.expr {
 					case EBlock(lines):
 						for (block in blocks) lines.unshift(block);
-						if (!isExt) {
-							lines.unshift(macro this.provider = provider);
-						} else {
+						if (isExt) {
 							for (line in lines) switch line.expr {
 								case ECall({ expr: EConst(CIdent('super')) }, params):
 									params.unshift(macro provider);
 								case _:
 							}
+						} else {
+							lines.unshift(macro this.provider = provider);
 						}
 					case _: throw UNEXPECTED_ERROR;
 				}
@@ -553,7 +553,7 @@ final class DIBuilder {
 		// Async leaves have no framework teardown (user owns the body), so there is nothing
 		// to guard against re-running — skip the guard to avoid polluting user's destroyAsync
 		// with a flag that would also swallow their own early-return logic.
-		final needsGuard: Bool = !(isAsync && !hasChildren);
+		final needsGuard: Bool = !isAsync || hasChildren;
 		// Guard field is unique per class level (__diDestroyed_<ClassName>). Subclasses need
 		// their own flag because a shared inherited flag would block super.destroy() chain:
 		// when child.destroy sets the flag before calling super, parent.destroy's own guard
@@ -614,39 +614,34 @@ final class DIBuilder {
 				case _:
 					throw UNEXPECTED_ERROR;
 			}
-		else {
-			if (isAsync) {
-				if (isExt)
-					fields.push((macro class {
-						override public function destroyAsync(cb: () -> Void): Void {
-							$guardPrefix;
-							$teardownExpr;
-						}
-					}).fields.pop());
-				else
-					fields.push((macro class {
-						public function destroyAsync(cb: () -> Void): Void {
-							$guardPrefix;
-							$teardownExpr;
-						}
-					}).fields.pop());
-			} else {
-				if (isExt)
-					fields.push((macro class {
-						override public function destroy(): Void {
-							$guardPrefix;
-							$teardownExpr;
-						}
-					}).fields.pop());
-				else
-					fields.push((macro class {
-						public function destroy(): Void {
-							$guardPrefix;
-							$teardownExpr;
-						}
-					}).fields.pop());
-			}
-		}
+		else if (isAsync) {
+			fields.push(isExt
+				? (macro class {
+					override public function destroyAsync(cb: () -> Void): Void {
+						$guardPrefix;
+						$teardownExpr;
+					}
+				}).fields.pop()
+				: (macro class {
+					public function destroyAsync(cb: () -> Void): Void {
+						$guardPrefix;
+						$teardownExpr;
+					}
+				}).fields.pop());
+		} else if (isExt)
+			fields.push((macro class {
+				override public function destroy(): Void {
+					$guardPrefix;
+					$teardownExpr;
+				}
+			}).fields.pop());
+		else
+			fields.push((macro class {
+				public function destroy(): Void {
+					$guardPrefix;
+					$teardownExpr;
+				}
+			}).fields.pop());
 		if (!isExt) fields.unshift((macro class {
 			private final provider: pony.ServiceProvider;
 		}).fields.pop());
@@ -710,10 +705,8 @@ final class DIBuilder {
 	private static function instanceReference(e: Null<Expr>, fields: Array<Field>, constuctor: Field): Null<String> {
 		if (e == null) return null;
 		if (e.containsIdent('this')) return 'this';
-		for (f in fields) {
-			if (f.name == 'new' || (f.access != null && f.access.contains(AStatic))) continue;
-			if (e.containsIdent(f.name)) return f.name;
-		}
+		for (f in fields) if (f.name != 'new' && (f.access == null || !f.access.contains(AStatic)) && e.containsIdent(f.name))
+			return f.name;
 		switch constuctor.kind {
 			case FFun(fun):
 				for (arg in fun.args) if (e.containsIdent(arg.name))

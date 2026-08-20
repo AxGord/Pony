@@ -52,9 +52,8 @@ class ServersideStorageDB implements Declarator {
 			final k: String = Tools.randomString();
 			cookie.set(keyName, k);
 			return getClientByKey(k);
-		} else {
-			return getClientByKey(key);
 		}
+		return getClientByKey(key);
 		return null;
 	}
 
@@ -70,16 +69,16 @@ class ServersideStorageDB implements Declarator {
 	}
 
 	public function save(): Void {
-		for (k in client.keys()) if (!orig.exists(k)) {
+		for (k => value1 in client) if (orig.exists(k)) {
+			final s = Serializer.run(value1);
+			if (s != orig[k]) table.where(client == $key && key == $k).update(['value' => (s: DBV)], function(r) if (!r) throw 'Can\'t '
+			+ 'save ' + 'storage');
+		} else {
 			table.insert([
 				'client' => (key: DBV),
 				'key' => (k: DBV),
-				'value' => (Serializer.run(client[k]): DBV)
+				'value' => (Serializer.run(value1): DBV)
 			], function(r) if (!r) throw 'Can\'t save storage');
-		} else {
-			final s = Serializer.run(client[k]);
-			if (s != orig[k]) table.where(client == $key && key == $k).update(['value' => (s: DBV)], function(r) if (!r) throw 'Can\'t '
-			+ 'save ' + 'storage');
 		}
 	}
 

@@ -187,22 +187,29 @@ class UpdatePutArg extends pony.text.tpl.TplPut<{ o: UpdateConnect, arg: String 
 
 	@:async
 	override public function shortTag(name: String, arg: String, ?kid: ITplPut): String {
-		if (name == 'error') {
-			final s = a.o.st(a.arg);
-			if (s != null)
-				return s;
-			else
-				return '';
-		} else if (name == 'value') {
-			final ma: Map<Int, Dynamic> = a.o.cpq.connection.sessionStorage.get('modelsActions');
-			final m = ma[a.o.base.id];
-			if (m == null) {
-				return b;
-			} else {
-				return m.values.exists(a.arg) ? m.values.get(a.arg) : b;
-			}
-		} else {
-			return @await super.shortTag(name, arg, kid);
+		switch (name) {
+			case 'error':
+				{
+					final s = a.o.st(a.arg);
+					if (s != null)
+						return s;
+					else
+						return '';
+				}
+			case 'value':
+				{
+					final ma: Map<Int, Dynamic> = a.o.cpq.connection.sessionStorage.get('modelsActions');
+					final m = ma[a.o.base.id];
+					if (m == null) {
+						return b;
+					} else {
+						return m.values.exists(a.arg) ? m.values.get(a.arg) : b;
+					}
+				}
+			case _:
+				{
+					return @await super.shortTag(name, arg, kid);
+				}
 		}
 	}
 

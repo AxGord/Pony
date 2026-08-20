@@ -32,10 +32,9 @@ class SizePulse {
 			DeltaTime.fixedUpdate << updateToBig;
 		else
 			DeltaTime.fixedUpdate << updateToSmall;
-		if (mid) {
-			bRect = new Rectangle(targer.x, targer.y, targer.width, targer.height);
-			DeltaTime.fixedUpdate << updateMid;
-		}
+		if (!mid) return;
+		bRect = new Rectangle(targer.x, targer.y, targer.width, targer.height);
+		DeltaTime.fixedUpdate << updateMid;
 	}
 
 	public function stop(): Void {
@@ -43,13 +42,12 @@ class SizePulse {
 			DeltaTime.fixedUpdate >> updateToBig;
 		else
 			DeltaTime.fixedUpdate >> updateToSmall;
-		if (mid) {
-			DeltaTime.fixedUpdate >> updateMid;
-			targer.scaleX = 1;
-			targer.scaleY = 1;
-			targer.x = bRect.x;
-			targer.y = bRect.y;
-		}
+		if (!mid) return;
+		DeltaTime.fixedUpdate >> updateMid;
+		targer.scaleX = 1;
+		targer.scaleY = 1;
+		targer.x = bRect.x;
+		targer.y = bRect.y;
 	}
 
 	public function updateToBig(dt: DT): Void {

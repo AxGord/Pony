@@ -30,8 +30,7 @@ class Liker implements Declarator {
 		var id: Int = -1;
 		var k: Float = 0;
 		var i: Int = 0;
-		var f: Void -> Void = null;
-		f = function() {
+		function f() {
 			try {
 				final r: Float = likek(base[i], data);
 				if (r > k) {
@@ -40,24 +39,20 @@ class Liker implements Declarator {
 				}
 				i++;
 			} catch (e: Dynamic) {
-				if (error == null)
-					throw e;
-				else
-					error(e);
+				if (error == null) throw e;
+				error(e);
 			}
-			if (i >= base.length) {
-				ok(id);
-				DeltaTime.fixedUpdate.remove(f);
-			}
-		};
+			if (i < base.length) return;
+			ok(id);
+			DeltaTime.fixedUpdate.remove(f);
+		}
 		DeltaTime.fixedUpdate.add(f);
 	}
 
 	public function likek(base: Array<Float>, data: Array<Float>): Float {
 		if (base.length != data.length) throw 'data != base data';
 		var k: Float = 0;
-		for (i in 0...data.length) {
-			final a = data[i];
+		for (i => a in data) {
 			final b = base[i];
 			if (a == b) {
 				k += 1;

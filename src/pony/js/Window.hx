@@ -46,13 +46,13 @@ class Window implements Declarator implements HasSignal {
 	private static function set_resizeEventName(name: String): String {
 		if (name == null) name = DEFAULT_RESIZE_EVENT;
 		if (name != resizeEventName) {
-			if (!eMomentalResize.empty) {
+			if (eMomentalResize.empty) {
+				resizeEventName = name;
+			} else {
 				unlistenResizeEvent();
 				resizeEventName = name;
 				listenResizeEvent();
 				eMomentalResize.dispatch();
-			} else {
-				resizeEventName = name;
 			}
 		}
 		return name;

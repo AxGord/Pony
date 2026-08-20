@@ -28,7 +28,7 @@ class DeltaTime implements HasSignal {
 	#if !((flash || openfl) || HUGS)
 	public static inline function init(?signal: Signal0): Void {
 		set();
-		if (signal != null) signal.add(tick);
+		signal?.add(tick);
 	}
 	#end
 

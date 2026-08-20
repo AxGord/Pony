@@ -27,13 +27,14 @@ class CPQ implements Declarator {
 				query = u;
 				tpl('$n/index');
 				return;
-			} else if (template.exists(n)) {
+			}
+			if (template.exists(n)) {
 				page = n;
 				query = u;
 				tpl(n);
 				return;
-			} else
-				u.unshift(a.pop());
+			}
+			u.unshift(a.pop());
 		}
 		if (template.exists('index')) {
 			query = u;

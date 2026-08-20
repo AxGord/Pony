@@ -85,8 +85,7 @@ using pony.Tools;
 			vPositions.push(_h);
 			_h += maxvsize;
 			objGroups.push(new Pair(objSizes, objGroup));
-			for (i in 0...objGroups.length) {
-				final g = objGroups[i];
+			for (i => g in objGroups) {
 				final vp = vPositions[i];
 				final vlist = GeomTools.valign(_align, _h, g.a);
 				for (i in 0...vlist.length) setYpos(g.b[i], Std.int(vlist[i]) + border.top + vp);

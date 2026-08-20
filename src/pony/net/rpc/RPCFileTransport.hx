@@ -52,16 +52,15 @@ class RPCFileTransport extends pony.net.rpc.RPCUnit<RPCFileTransport> implements
 	}
 
 	private function checkBegin(): Void {
-		if (readStream != null && fileWrite != null) {
-			fileWrite.pipe(readStream);
-			readStream = null;
-		}
+		if (readStream == null || fileWrite == null) return;
+		fileWrite.pipe(readStream);
+		readStream = null;
 	}
 
 	public dynamic function changePath(path: String): String return path;
 
 	public function cancel(): Void {
-		if (fileWrite != null) fileWrite.cancel();
+		fileWrite?.cancel();
 	}
 
 }

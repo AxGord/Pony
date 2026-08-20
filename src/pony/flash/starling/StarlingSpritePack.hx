@@ -34,7 +34,7 @@ class StarlingSpritePack extends Sprite {
 	}
 
 	public static function builder(
-		_atlasCreator: AtlasCreator, source: DisplayObject, coordinateSpace: DisplayObject, disposeable: Bool = false
+		atlasCreator: AtlasCreator, source: DisplayObject, coordinateSpace: DisplayObject, disposeable: Bool = false
 	): starling.display.DisplayObject {
 		final m: SpritePack = cast source;
 		final a: Array<Image> = [];

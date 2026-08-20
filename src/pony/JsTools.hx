@@ -9,6 +9,9 @@ import js.html.DivElement;
 import js.html.Event;
 import pony.events.Signal0;
 import pony.magic.HasSignal;
+
+using StringTools;
+
 #if (haxe_ver >= '4.0.0')
 import js.lib.Error;
 #else
@@ -140,10 +143,7 @@ class JsTools implements HasSignal {
 		} else if (ua.indexOf('macintosh') != -1) {
 			_os = Macos;
 		} else if (ua.indexOf('linux') != -1) {
-			if (ua.indexOf('ubuntu') != -1)
-				_os = Linux(Ubuntu);
-			else
-				_os = Linux(Other);
+			_os = ua.indexOf('ubuntu') != -1 ? Linux(Ubuntu) : Linux(Other);
 		} else {
 			final iDevices: Array<String> = [
 				'iPad Simulator',
@@ -178,11 +178,7 @@ class JsTools implements HasSignal {
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function get_isMobile(): Bool {
-		#if simmobile
-		return true;
-		#else
-		return untyped Browser.window.orientation != null;
-		#end
+		return #if simmobile true #else untyped Browser.window.orientation != null #end;
 	}
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
@@ -256,16 +252,12 @@ class JsTools implements HasSignal {
 	}
 
 	private static function splitCssReturnDelimiter(s: String): String {
-		return '${StringTools.ltrim(s)};';
+		return '${s.ltrim()};';
 	}
 
 	public static function mapToJSMap<K, V>(map: Map<K, V>): JsMap<K, V> {
-		#if (haxe_ver >= '4.0.0')
-		final n: JsMap<K, V> = js.Syntax.code('new Map()');
-		#else
-		final n: JsMap<K, V> = untyped __js__('new Map()');
-		#end
-		for (k in map.keys()) n.set(k, map[k]);
+		final n: JsMap<K, V> = #if (haxe_ver >= '4.0.0') js.Syntax.code('new Map()') #else untyped __js__('new Map()') #end;
+		for (k => value in map) n.set(k, value);
 		return n;
 	}
 

@@ -25,19 +25,13 @@ class TextCoder {
 	public function encode(text: String): String {
 		if (!allowLowercase) text = text.toUpperCase();
 		final s: String = core(text);
-		if (text == core(s, -1))
-			return s;
-		else
-			return null;
+		return text == core(s, -1) ? s : null;
 	}
 
 	public function decode(text: String, k = null): String {
 		if (!allowLowercase) text = text.toUpperCase();
 		final s: String = core(text, -1);
-		if (text == core(s))
-			return s;
-		else
-			return null;
+		return text == core(s) ? s : null;
 	}
 
 	private function core(text: String, mode: Int = 1): String {

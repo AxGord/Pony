@@ -210,14 +210,11 @@ class StarlingConverter {
 
 		result.vAlign = VAlign.TOP;
 
-		switch (format.align) {
-			case TextFormatAlign.CENTER:
-				result.hAlign = HAlign.CENTER;
-			case TextFormatAlign.RIGHT:
-				result.hAlign = HAlign.RIGHT;
-			case _:
-				result.hAlign = HAlign.LEFT;
-		}
+		result.hAlign = switch format.align {
+			case TextFormatAlign.CENTER: HAlign.CENTER;
+			case TextFormatAlign.RIGHT: HAlign.RIGHT;
+			case _: HAlign.LEFT;
+		};
 
 		final matrix: flash.geom.Matrix = source.transform.matrix.clone();
 

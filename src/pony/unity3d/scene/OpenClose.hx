@@ -17,8 +17,7 @@ using hugs.HUGSWrapper;
 	public var openPos: Vector3;
 	public var openRotation: Quaternion;
 	@:meta(UnityEngine.HideInInspector)
-	public var open(get, set): Bool;
-	private var _open: Bool = false;
+	public var open(default, set): Bool = false;
 	@:auto public var onOpen: Signal0;
 	@:auto public var onClose: Signal0;
 	@:meta(UnityEngine.HideInInspector)
@@ -39,15 +38,14 @@ using hugs.HUGSWrapper;
 		startPos = transform.position;
 		startRotation = transform.rotation;
 		// if (openPos.x == 0 && openPos.y == 0 && openPos.z == 0) openPos = startPos;
-		needChangePos = !(openPos.x == 0 && openPos.y == 0 && openPos.z == 0);
+		needChangePos = openPos.x != 0 || openPos.y != 0 || openPos.z != 0;
 		// if (openRotation.x == 0 && openRotation.y == 0 && openRotation.z == 0) openRotation = startRotation;
-		needChangeRot = !(openRotation.x == 0 && openRotation.y == 0 && openRotation.z == 0);
+		needChangeRot = openRotation.x != 0 || openRotation.y != 0 || openRotation.z != 0;
 	}
 
-	private inline function get_open(): Bool return _open;
 
 	public function set_open(to: Bool): Bool {
-		if (_open == to) return to;
+		if (open == to) return to;
 		if (to) {
 			silentOpen();
 			eOpen.dispatch();
@@ -59,13 +57,13 @@ using hugs.HUGSWrapper;
 	}
 
 	public function silentOpen(): Void {
-		_open = true;
+		@:bypassAccessor open = true;
 		if (needChangePos) transform.position = openPos;
 		if (needChangeRot) transform.rotation = openRotation;
 	}
 
 	public function silentClose(): Void {
-		_open = false;
+		@:bypassAccessor open = false;
 		if (needChangePos) transform.position = startPos;
 		if (needChangeRot) transform.rotation = startRotation;
 	}

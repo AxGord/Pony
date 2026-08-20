@@ -31,12 +31,10 @@ class RPCBase<T:pony.net.rpc.IRPC> {
 					clidx = (c: Dynamic).__clid;
 				}
 			}
-		} else {
-			if (@:privateAccess Serializer.CLIDS[clidx] != 0) {
-				final realIdx = serializer.getCLID();
-				final c = @:privateAccess cast Serializer.CL_BYID[realIdx];
-				if (@:privateAccess serializer.convert != null) clidx = (c: Dynamic).__clid; // real class convert
-			}
+		} else if (@:privateAccess Serializer.CLIDS[clidx] != 0) {
+			final realIdx = serializer.getCLID();
+			final c = @:privateAccess cast Serializer.CL_BYID[realIdx];
+			if (@:privateAccess serializer.convert != null) clidx = (c: Dynamic).__clid; // real class convert
 		}
 		object.unserializeInit();
 		if (@:privateAccess serializer.convert != null && @:privateAccess serializer.convert[clidx] != null)

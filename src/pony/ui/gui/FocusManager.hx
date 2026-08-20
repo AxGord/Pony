@@ -47,12 +47,11 @@ class FocusManager {
 
 	private static function newFocus(b: Bool, o: IFocus): Void {
 		if (b) {
-			if (current != null) current.unfocus();
+			current?.unfocus();
 			current = o;
 			p.reloop(o);
-		} else {
-			if (current == o) current = null;
-		}
+		} else if (current == o)
+			current = null;
 	}
 
 	/**

@@ -34,10 +34,9 @@ class Touch implements Declarator implements HasSignal {
 	public static var inited(default, null): Bool = false;
 
 	public static function reg(obj: Container): Void {
-		if (Touch.obj == null) {
-			Touch.obj = obj;
-			if (inited) _init();
-		}
+		if (Touch.obj != null) return;
+		Touch.obj = obj;
+		if (inited) _init();
 	}
 
 	public static function init(): Void {

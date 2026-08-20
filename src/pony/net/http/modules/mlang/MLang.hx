@@ -32,22 +32,21 @@ final class MLang implements IModule {
 				cpq.connection.error('Not exists language: $tc');
 			}
 			return BREAK;
-		} else {
-			if (cpq.connection.params.exists('tryLanguage'))
-				cpq.lang = cpq.connection.params['tryLanguage'];
+		}
+		if (cpq.connection.params.exists('tryLanguage'))
+			cpq.lang = cpq.connection.params['tryLanguage'];
+		else {
+			final st: Map<String, Dynamic> = cpq.connection.sessionStorage;
+			if (st.exists('language'))
+				cpq.lang = st['language'];
 			else {
-				final st: Map<String, Dynamic> = cpq.connection.sessionStorage;
-				if (st.exists('language'))
-					cpq.lang = st['language'];
-				else {
-					for (l in cpq.connection.languages) if (langTable.langs.exists(l)) {
-						cpq.lang = l;
-						break;
-					}
+				for (l in cpq.connection.languages) if (langTable.langs.exists(l)) {
+					cpq.lang = l;
+					break;
 				}
 			}
-			return REG(cast new MLangConnect(this, cpq));
 		}
+		return REG(cast new MLangConnect(this, cpq));
 	}
 
 }

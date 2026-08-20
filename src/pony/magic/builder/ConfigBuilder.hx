@@ -1,5 +1,7 @@
 package pony.magic.builder;
 
+using StringTools;
+
 #if macro
 import haxe.macro.Context;
 import haxe.macro.Expr;
@@ -49,8 +51,7 @@ class ConfigBuilder {
 					case CIntMap: macro :Map<String, Int>;
 					case CFloatMap: macro :Map<String, Float>;
 					case CBoolMap: macro :Map<String, Bool>;
-					case CColorMap: macro :Map<String, pony.color.Color>;
-					case CPointMap: macro :Map<String, pony.color.Color>;
+					case CColorMap, CPointMap: macro :Map<String, pony.color.Color>;
 					case _: throw 'Error';
 				}
 
@@ -202,7 +203,7 @@ private class ReadXmlConfig extends XmlConfigReader<PConfig> {
 				} else if (nt == 1) {
 					if (v == null)
 						CString;
-					else if (TextTools.isTrue(v) || StringTools.trim(v.toLowerCase()) == 'false')
+					else if (TextTools.isTrue(v) || v.toLowerCase().trim() == 'false')
 						CBool;
 					else if ('${Std.parseInt(v)}' == v)
 						CInt;

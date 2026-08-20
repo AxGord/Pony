@@ -241,19 +241,17 @@ class Touchable extends TouchableBase {
 		denyUp = true;
 		DeltaTime.fixedUpdate < unlockUp;
 		if (right) {
-			if (!over) {
-				if (_downRight != null) dispatchOutUp(id, true);
-			} else {
+			if (over) {
 				dispatchUp(id, true);
-			}
+			} else if (_downRight != null)
+				dispatchOutUp(id, true);
 			_downRight = null;
 			downRight = false;
 		} else {
-			if (!over) {
-				if (_down != null) dispatchOutUp(id);
-			} else {
+			if (over) {
 				dispatchUp(id);
-			}
+			} else if (_down != null)
+				dispatchOutUp(id);
 			_down = null;
 			down = false;
 		}
@@ -264,18 +262,16 @@ class Touchable extends TouchableBase {
 	private function globDownHandler(): Void down = true;
 
 	private function leaveHandler(): Void {
-		if (over) {
-			outover = true;
-			over = false;
-		}
+		if (!over) return;
+		outover = true;
+		over = false;
 	}
 
 	private function enterHandler(): Void {
-		if (outover) {
-			outover = false;
-			over = true;
-			dispatchOver();
-		}
+		if (!outover) return;
+		outover = false;
+		over = true;
+		dispatchOver();
 	}
 
 	private function touchUp(): Void {
@@ -283,10 +279,9 @@ class Touchable extends TouchableBase {
 			_down != null && _down ? dispatchOutDown() : dispatchOut();
 			over = false;
 		}
-		if (_down != null && _down) {
-			_down = null;
-			dispatchOutUp();
-		}
+		if (_down == null || !_down) return;
+		_down = null;
+		dispatchOutUp();
 	}
 
 }

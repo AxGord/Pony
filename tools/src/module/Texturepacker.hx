@@ -8,6 +8,8 @@ import pony.text.TextTools;
 import types.BAConfig;
 import types.BASection;
 
+using StringTools;
+
 private typedef TPConfig = {
 	> BAConfig,
 	> TPUnit,
@@ -347,7 +349,7 @@ private class Path extends BAReader<TPConfig> {
 			case 'rotation':
 				cfg.rotation = !TextTools.isFalse(val);
 			case 'trim':
-				cfg.trim = StringTools.trim(val);
+				cfg.trim = val.trim();
 			case 'clean':
 				cfg.clean = TextTools.isTrue(val);
 			case 'alpha':

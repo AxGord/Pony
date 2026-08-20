@@ -23,45 +23,44 @@ class FLStageBuilder {
 		final fields: Array<Field> = Context.getBuildFields();
 		for (f in fields) {
 			final m = f.meta.getMeta('stage', true);
-			if (m != null) {
-				var allowSet = false;
-				for (p in m.params) switch p.expr {
-					case EConst(CIdent('set')):
-						allowSet = true;
-					case _:
-				}
-				switch (f.kind) {
-					case FVar(t, _):
-						f.kind = FProp('get', allowSet ? 'set' : 'never', t);
+			if (m == null) continue;
+			var allowSet = false;
+			for (p in m.params) switch p.expr {
+				case EConst(CIdent('set')):
+					allowSet = true;
+				case _:
+			}
+			switch (f.kind) {
+				case FVar(t, _):
+					f.kind = FProp('get', allowSet ? 'set' : 'never', t);
+					fields.push({
+						name: 'get_${f.name}',
+						kind: FFun({
+							args: [],
+							ret: t,
+							#if openfl
+							expr: macro return untyped getChild($v{f.name}),
+							#else
+							expr: macro return untyped this.getChildByName($v{f.name}),
+							#end
+							params: []
+						}),
+						pos: f.pos,
+						access: [AInline, APrivate]
+					});
+					if (allowSet) // Only flash!
 						fields.push({
-							name: 'get_${f.name}',
+							name: 'set_${f.name}',
 							kind: FFun({
-								args: [],
+								args: [{ name: 'v', type: t }],
 								ret: t,
-								#if openfl
-								expr: macro return untyped getChild($v{f.name}),
-								#else
-								expr: macro return untyped this.getChildByName($v{f.name}),
-								#end
+								expr: macro return untyped this[$v{f.name}] = v,
 								params: []
 							}),
 							pos: f.pos,
 							access: [AInline, APrivate]
 						});
-						if (allowSet) // Only flash!
-							fields.push({
-								name: 'set_${f.name}',
-								kind: FFun({
-									args: [{ name: 'v', type: t }],
-									ret: t,
-									expr: macro return untyped this[$v{f.name}] = v,
-									params: []
-								}),
-								pos: f.pos,
-								access: [AInline, APrivate]
-							});
-					case _:
-				}
+				case _:
 			}
 		}
 		return fields;

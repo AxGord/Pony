@@ -81,10 +81,9 @@ class Launchpad extends Logable implements ILaunchpad {
 	}
 
 	public inline function setAreaPoint(p: IntPoint, color: LaunchpadColor = AmberFull): Void {
-		if (areaState.get(p) != color) {
-			midi.send({ chanel: 144, key: area.get(p), value: color });
-			areaState.set(p, color);
-		}
+		if (areaState.get(p) == color) return;
+		midi.send({ chanel: 144, key: area.get(p), value: color });
+		areaState.set(p, color);
 	}
 
 	public inline function setMatrixCI(m: Matrix<Int>): Void setMatrix(m.map(LaunchpadColor.fromIndex));
@@ -95,17 +94,15 @@ class Launchpad extends Logable implements ILaunchpad {
 	}
 
 	public function setTop(p: Int, color: LaunchpadColor = AmberFull): Void {
-		if (topState[p] != color) {
-			midi.send({ chanel: 176, key: topBlock[p], value: color });
-			topState[p] = color;
-		}
+		if (topState[p] == color) return;
+		midi.send({ chanel: 176, key: topBlock[p], value: color });
+		topState[p] = color;
 	}
 
 	public function setRight(p: Int, color: LaunchpadColor = AmberFull): Void {
-		if (rightState[p] != color) {
-			midi.send({ chanel: 144, key: rightBlock[p], value: color });
-			rightState[p] = color;
-		}
+		if (rightState[p] == color) return;
+		midi.send({ chanel: 144, key: rightBlock[p], value: color });
+		rightState[p] = color;
 	}
 
 	public function reset(): Void {

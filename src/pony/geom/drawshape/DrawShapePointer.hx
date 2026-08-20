@@ -115,10 +115,9 @@ class DrawShapePointer extends pony.Tumbler {
 			p.x = xbegin + p.col * snapCellSize.x;
 			p.y = ybegin + p.row * snapCellSize.y;
 			return false;
-		} else {
-			hidePoint(t);
-			return true;
 		}
+		hidePoint(t);
+		return true;
 	}
 
 	public function dataFromIntPoint(p: IntPoint): DrawShapePointerData {

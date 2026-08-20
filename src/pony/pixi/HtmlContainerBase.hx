@@ -69,13 +69,13 @@ class HtmlContainerBase implements HasSignal {
 	public function resize(): Void {
 		if (!posUpdater.enabled) return;
 		if (fixed) {
-			if (!haveTransform) {
+			if (haveTransform) {
+				targetStyle.top = px(lastRect.y);
+				targetStyle.left = px(lastRect.x);
+			} else {
 				final b: DOMRect = app.element.getBoundingClientRect();
 				targetStyle.top = px(b.top + lastRect.y);
 				targetStyle.left = px(b.left + lastRect.x);
-			} else {
-				targetStyle.top = px(lastRect.y);
-				targetStyle.left = px(lastRect.x);
 			}
 		} else {
 			targetStyle.bottom = px(app.element.clientHeight - lastRect.y);

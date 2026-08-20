@@ -52,7 +52,9 @@ import pony.ui.AssetManager;
 
 	private function init(): Void {
 		inited = true;
-		if (!AssetManager.isLoaded(asset)) {
+		if (AssetManager.isLoaded(asset)) {
+			setTile();
+		} else {
 			if (needAnim) {
 				anim = new Tween(TweenType.Bezier, 300);
 				anim.onProgress << animHandler;
@@ -60,8 +62,6 @@ import pony.ui.AssetManager;
 				setAlpha(0);
 			}
 			AssetManager.loadComplete(AssetManager.load.bind('', asset), loadedHandler);
-		} else {
-			setTile();
 		}
 	}
 
@@ -78,16 +78,15 @@ import pony.ui.AssetManager;
 
 	private function readyForShow(): Void {
 		visible = true;
-		if (anim != null) anim.play();
+		anim?.play();
 	}
 
 	private function animHandler(v: Float): Void setAlpha(v * finalAlpha);
 
 	private function animCompleteHandler(): Void {
-		if (anim != null) {
-			anim.destroy();
-			anim = null;
-		}
+		if (anim == null) return;
+		anim.destroy();
+		anim = null;
 	}
 
 	private inline function set_finalAlpha(v: Float): Float {

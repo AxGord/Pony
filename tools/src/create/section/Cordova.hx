@@ -3,6 +3,8 @@ package create.section;
 import pony.text.XmlTools;
 import types.*;
 
+using StringTools;
+
 /**
  * Cordova
  * @author AxGord <axgord@gmail.com>
@@ -19,7 +21,7 @@ class Cordova extends Section {
 	public function result(): Xml {
 		init();
 
-		if (title != null) add('id', 'org.apache.cordova.pony.${StringTools.replace(title, ' ', '')}');
+		if (title != null) add('id', 'org.apache.cordova.pony.${title.replace(' ', '')}');
 
 		if (versionBuildDate) {
 			final version: Xml = Xml.createElement('version');

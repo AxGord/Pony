@@ -49,7 +49,8 @@ class SerialWelcome implements Declarator implements HasSignal {
 					else
 						connect();
 					return;
-				} else if (buf.length > maxLength) {
+				}
+				if (buf.length > maxLength) {
 					needDestroy = true;
 				}
 			}

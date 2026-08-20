@@ -59,7 +59,7 @@ class HasAssetBuilder {
 		if (patchesFields == null) Context.error('Wrong parent class', cl.get().pos);
 		addBaseFields(fields, names, list, patchesFields);
 		addBaseMethods(fields, cl);
-		for (f in patchesFields.keys()) addMethods(fields, f, patchesFields[f]);
+		for (f => value in patchesFields) addMethods(fields, f, value);
 		return fields;
 	}
 
@@ -295,13 +295,13 @@ class HasAssetBuilder {
 							final m = cl.get().meta;
 							parentPathes = getPatches(m.get(), cl);
 							final e = { expr: EConst(CString(clss.toString())), pos: Context.currentPos() };
-							if (!m.has('assets_childs')) {
-								m.add('assets_childs', [e], Context.currentPos());
-							} else {
+							if (m.has('assets_childs')) {
 								final a = m.get().find(function(v) return v.name == 'assets_childs').params;
 								a.push(e);
 								m.remove('assets_childs');
 								m.add('assets_childs', a, Context.currentPos());
+							} else {
+								m.add('assets_childs', [e], Context.currentPos());
 							}
 						case _:
 							Context.error('Wrong assets_parent type', parent.pos);
@@ -313,13 +313,13 @@ class HasAssetBuilder {
 							final m = t.get().meta;
 							parentPathes = getPatches(m.get(), t);
 							final e = { expr: EConst(CString(clss.toString())), pos: Context.currentPos() };
-							if (!m.has('assets_childs')) {
-								m.add('assets_childs', [e], Context.currentPos());
-							} else {
+							if (m.has('assets_childs')) {
 								final a = m.get().find(function(v) return v.name == 'assets_childs').params;
 								a.push(e);
 								m.remove('assets_childs');
 								m.add('assets_childs', a, Context.currentPos());
+							} else {
+								m.add('assets_childs', [e], Context.currentPos());
 							}
 							break;
 						case _:
@@ -352,16 +352,16 @@ class HasAssetBuilder {
 		}
 
 		final result: Map<String, String> = [];
-		for (pk in parentPathes.keys()) {
+		for (pk => value in parentPathes) {
 			if (patchesFields.iterator().hasNext()) {
 				final prefix: String = pk == 'def' ? '' : '${pk}_';
-				var path: String = parentPathes[pk];
+				var path: String = value;
 				if (path.length > 0) path += '/';
-				for (k in patchesFields.keys()) {
-					result[prefix + k] = path + patchesFields[k];
+				for (k => value in patchesFields) {
+					result[prefix + k] = path + value;
 				}
 			} else {
-				result[pk] = parentPathes[pk];
+				result[pk] = value;
 			}
 		}
 		return result;

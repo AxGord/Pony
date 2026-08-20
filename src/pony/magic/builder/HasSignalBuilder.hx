@@ -26,7 +26,7 @@ class HasSignalBuilder {
 			case FProp(_, _, TPath(p), _) if (p.name.substr(0, 6) == 'Signal' && f.meta.checkMeta([':auto', ':lazy'])):
 				Context.error('${f.name} - can\'t be property', f.pos);
 			case FVar(TPath(p), _) if (p.name.substr(0, 6) == 'Signal'):
-				final on = !(f.name.substr(0, 2) != 'on' && f.name.charAt(3).toLowerCase() == f.name.charAt(3));
+				final on = f.name.substr(0, 2) == 'on' || f.name.charAt(3).toLowerCase() != f.name.charAt(3);
 				// Context.error('Incorrect signal name: ${f.name}', f.pos);
 				final isStatic = f.access.indexOf(AStatic) != -1;
 				final ast = !isStatic ? [] : [AStatic];

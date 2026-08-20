@@ -23,19 +23,17 @@ final class MFBConnect extends ModuleConnect<MFB> {
 	public function getBaseData(cb: FBData -> Void): Void {
 		if (data != null) {
 			cb(data);
-		} else {
-			if (token == null) {
-				cb(null);
-			} else
-				base.fb.me(token, function(d: FBData) {
-					if (d == null) {
-						token = null;
-						cpq.connection.endAction();
-						return;
-					} else
-						cb(data = d);
-				});
-		}
+		} else if (token == null) {
+			cb(null);
+		} else
+			base.fb.me(token, function(d: FBData) {
+				if (d == null) {
+					token = null;
+					cpq.connection.endAction();
+					return;
+				}
+				cb(data = d);
+			});
 	}
 
 	public function getId(cb: String -> Void): Void getBaseData(function(d) cb(d == null ? '0' : d.id));

@@ -30,11 +30,11 @@ class RenderBox extends pixi.core.sprites.Sprite implements pony.geom.IWH {
 		if (renderTexture != null) {
 			app.app.renderer.render(container, renderTexture, true);
 		} else {
-			final _renderer = new CanvasRenderer(size.x, size.y);
-			_renderer.clearBeforeRender = true;
-			_renderer.transparent = true;
-			_renderer.render(container);
-			texture = Texture.fromCanvas(_renderer.view);
+			final renderer = new CanvasRenderer(size.x, size.y);
+			renderer.clearBeforeRender = true;
+			renderer.transparent = true;
+			renderer.render(container);
+			texture = Texture.fromCanvas(renderer.view);
 		}
 	}
 

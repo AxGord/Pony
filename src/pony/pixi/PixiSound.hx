@@ -95,20 +95,15 @@ class PixiSound implements HasSignal {
 	}
 
 	public function isPlay(): Bool {
-		if (JsTools.isMobile) {
-			return core.volume != 0;
-		} else {
-			return !core.paused;
-		}
+		return JsTools.isMobile ? core.volume != 0 : !core.paused;
 	}
 
 	public function enable(): Void {
 		if (enabled()) return;
 		_volume = 1;
-		if (JsTools.isMobile) {
-			trace('ENABLE');
-			core.play();
-		}
+		if (!JsTools.isMobile) return;
+		trace('ENABLE');
+		core.play();
 	}
 
 	public function disable(): Void {

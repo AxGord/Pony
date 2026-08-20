@@ -109,8 +109,8 @@ class Timer implements ITimer<Timer> implements Declarator implements HasSignal 
 					if (repeatCount == 0) {
 						stop();
 						break;
-					} else if (repeatCount > 0)
-						repeatCount--;
+					}
+					if (repeatCount > 0) repeatCount--;
 				}
 			else
 				dispatchUpdate();

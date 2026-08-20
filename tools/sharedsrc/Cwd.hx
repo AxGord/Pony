@@ -16,11 +16,10 @@ abstract Cwd(String) from String to String {
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function sw(): Void {
-		if (this != null) {
-			final p: String = Sys.getCwd();
-			Sys.setCwd(this);
-			this = p;
-		}
+		if (this == null) return;
+		final p: String = Sys.getCwd();
+		Sys.setCwd(this);
+		this = p;
 	}
 
 }

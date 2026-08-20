@@ -24,10 +24,10 @@ class Classes {
 		final p: Array<String> = (pack != '' ? pack.split('.') : []).concat(dir.split('/'));
 		for (e in FileSystem.readDirectory(d)) if (e.substr(-3) == '.hx') {
 			var ex: Expr = null;
-			for (s in p) if (ex == null)
-				ex = { expr: EConst(CIdent(s)), pos: Context.currentPos() };
-			else
-				ex = { expr: EField(ex, s), pos: Context.currentPos() };
+			for (s in p)
+				ex = ex == null
+					? { expr: EConst(CIdent(s)), pos: Context.currentPos() }
+					: { expr: EField(ex, s), pos: Context.currentPos() };
 			// trace(e.substr(0, e.length-3));
 			ex = { expr: EField(ex, e.substr(0, e.length - 3)), pos: Context.currentPos() };
 			list.push(ex);

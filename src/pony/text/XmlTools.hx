@@ -51,7 +51,7 @@ class XmlTools {
 
 	public static function mapToNode(name: String, tag: String, map: Map<String, String>): Xml {
 		final r: Xml = Xml.createElement(name);
-		for (key in map.keys()) r.addChild(att(tag, key, map[key]));
+		for (key => value in map) r.addChild(att(tag, key, value));
 		return r;
 	}
 

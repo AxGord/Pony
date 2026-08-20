@@ -78,13 +78,12 @@ using hugs.HUGSWrapper;
 		final r: Quaternion = toObj.rotation;
 		target.transform.position = Vector3.MoveTowards(target.transform.position, p, speed * dt);
 		if (withRotation) target.transform.rotation = Quaternion.Slerp(target.transform.rotation, r, speed * (rn += speed * 2) * dt);
-		if (target.transform.position == p) {
-			// currentPos = toN;
-			toN = null;
-			toObj = null;
-			rn = 0;
-			changed.dispatch(currentPos);
-		}
+		if (target.transform.position != p) return;
+		// currentPos = toN;
+		toN = null;
+		toObj = null;
+		rn = 0;
+		changed.dispatch(currentPos);
 	}
 
 	public function goNext(): Void {

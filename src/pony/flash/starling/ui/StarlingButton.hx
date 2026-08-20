@@ -73,11 +73,13 @@ class StarlingButton extends Sprite {
 
 	override public function hitTest(localPoint: Point, forTouch: Bool = false): DisplayObject {
 		// on a touch test, invisible or untouchable objects cause the test to fail
-		if (forTouch && (!visible || !touchable)) return null;
-
 		// otherwise, check bounding box
-		if (_hitArea.containsPoint(localPoint)) return this;
-		return null;
+		return if (forTouch && (!visible || !touchable))
+			null
+		else if (_hitArea.containsPoint(localPoint))
+			this
+		else
+			null;
 	}
 
 	private function gotoAndStop(frame: Int): Void {
@@ -89,7 +91,7 @@ class StarlingButton extends Sprite {
 	}
 
 	public static function builder(
-		_atlasCreator: AtlasCreator, source: Button, coordinateSpace: flash.display.DisplayObject, disposeable: Bool = false
+		atlasCreator: AtlasCreator, source: Button, coordinateSpace: flash.display.DisplayObject, disposeable: Bool = false
 	): starling.display.DisplayObject {
 
 		var mc: flash.display.MovieClip = cast source;
@@ -106,7 +108,7 @@ class StarlingButton extends Sprite {
 				var str = null;
 				for (i in 1...m.totalFrames + 1) {
 					m.gotoAndStop(i);
-					final im = _atlasCreator.addImage(source, coordinateSpace, disposeable, j++);
+					final im = atlasCreator.addImage(source, coordinateSpace, disposeable, j++);
 					v.push(im.texture);
 					if (str == null) str = im.transformationMatrix;
 				}
@@ -118,7 +120,7 @@ class StarlingButton extends Sprite {
 				break;
 			}
 			if (clip == null) {
-				final im = _atlasCreator.addImage(source, coordinateSpace, disposeable, j++);
+				final im = atlasCreator.addImage(source, coordinateSpace, disposeable, j++);
 				v.push(im.texture);
 				clip = new starling.display.MovieClip(v, 60);
 				clip.transformationMatrix = im.transformationMatrix;

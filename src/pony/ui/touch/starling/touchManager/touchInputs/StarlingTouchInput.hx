@@ -42,9 +42,8 @@ class StarlingTouchInput {
 				TouchManager.up(touch.globalX, touch.globalY, InputMode.touchMode(), touch.id);
 			}
 
-			if ((touch.phase == TouchPhase.MOVED) || ((touch.phase == TouchPhase.HOVER) && (!InputMode.touchMode()))) {
-				TouchManager.move(touch.globalX, touch.globalY, InputMode.touchMode(), touch.id);
-			}
+			if (touch.phase != TouchPhase.MOVED && (touch.phase != TouchPhase.HOVER || InputMode.touchMode())) continue;
+			TouchManager.move(touch.globalX, touch.globalY, InputMode.touchMode(), touch.id);
 		}
 	}
 

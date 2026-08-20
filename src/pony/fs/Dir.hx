@@ -31,7 +31,7 @@ abstract Dir(Unit) from Unit {
 
 	public function content(?filter: String, allowDir: Bool = false, sortByName: Bool = false): Array<Unit> {
 		final result: Map<String, Unit> = [];
-		final flt: Array<String> = filter == null ? null : filter.split(' ');
+		final flt: Array<String> = filter?.split(' ');
 		for (d in this) {
 			if (d.exists) for (e in FileSystem.readDirectory(d.first)) {
 				final np: String = '$d/$e';
@@ -142,7 +142,12 @@ abstract Dir(Unit) from Unit {
 	public static function compareNames(a: Unit, b: Unit): Int {
 		final an: String = a.name.toLowerCase();
 		final bn: String = b.name.toLowerCase();
-		return an == bn ? 0 : an > bn ? 1 : -1;
+		return if (an == bn)
+			0
+		else if (an > bn)
+			1
+		else
+			-1;
 	}
 
 }

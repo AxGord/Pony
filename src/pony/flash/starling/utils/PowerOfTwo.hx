@@ -10,13 +10,11 @@ class PowerOfTwo {
 	public static function getNextPowerOfTwo(number: Float): Int {
 		if (Std.is(number, Int) && number > 0 && (cast(number, Int) & (cast(number, Int) - 1)) == 0) // see: http://goo.gl/D9kPj
 			return cast number;
-		else {
-			var result: Int = 1;
-			number -= 0.000000001; // avoid floating point rounding errors
+		var result: Int = 1;
+		number -= 0.000000001; // avoid floating point rounding errors
 
-			while (result < number) result <<= 1;
-			return result;
-		}
+		while (result < number) result <<= 1;
+		return result;
 	}
 
 }

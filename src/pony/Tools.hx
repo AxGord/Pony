@@ -19,6 +19,7 @@ using haxe.macro.Tools;
 import pony.math.MathTools;
 import pony.text.TextTools;
 
+using StringTools;
 using Reflect;
 using Lambda;
 
@@ -115,11 +116,7 @@ class Tools {
 			case TInt, TFloat, TBool, TNull:
 				return false;
 			case TFunction:
-				try {
-					return Reflect.compareMethods(a, b);
-				} catch (_: Dynamic) {
-					return false;
-				}
+				return try Reflect.compareMethods(a, b) catch (_: Dynamic) false;
 			case TEnum(t):
 				if (t != Type.getEnum(b)) return false;
 				if (Type.enumIndex(a) != Type.enumIndex(b)) return false;
@@ -163,12 +160,8 @@ class Tools {
 			case TUnknown:
 		}
 		final fields: Array<String> = a.fields();
-		if (fields.length == b.fields().length) {
-			if (fields.length == 0) return true;
-			for (f in fields) if (!b.hasField(f) || !equal(a.field(f), b.field(f), maxDepth - 1)) return false;
-			return true;
-		}
-		return false;
+		return fields.length == b.fields().length
+			&& (fields.length == 0 || fields.foreach(f -> b.hasField(f) && equal(a.field(f), b.field(f), maxDepth - 1)));
 	}
 
 	public static function clone<T:Dynamic>(obj: T): T {
@@ -285,10 +278,10 @@ class Tools {
 	private static function getUsedLibs(): Map<String, String> {
 		final d: Map<String, String> = Context.getDefines();
 		final r: Map<String, String> = [];
-		for (k in d.keys()) {
+		for (k => value in d) {
 			var prev: String = null;
 			for (line in new sys.io.Process('haxelib', ['path', k]).stdout.readAll().toString().split('\n')) {
-				if (prev != null && line == '-D $k=${d[k]}') {
+				if (prev != null && line == '-D $k=${value}') {
 					r[k] = prev;
 					break;
 				}
@@ -354,11 +347,11 @@ class Tools {
 		final o: String = Std.string(js.node.ChildProcess.execSync('haxelib path $lib'));
 		final lines: Array<String> = o.split('\n');
 		do
-			libPath = lines.shift() while (libPath == null || StringTools.startsWith(libPath, '-'));
+			libPath = lines.shift() while (libPath == null || libPath.startsWith('-'));
 		#elseif neko
 		final out: haxe.io.Input = new sys.io.Process('haxelib', ['path', lib]).stdout;
 		do
-			libPath = out.readLine() while (libPath == null || StringTools.startsWith(libPath, '-'));
+			libPath = out.readLine() while (libPath == null || libPath.startsWith('-'));
 		#else
 		throw 'Not supported';
 		#end
@@ -375,7 +368,7 @@ class Tools {
 				if (libPath.substr(-src.length) == src) libPath = libPath.substr(0, -src.length);
 			}
 		}
-		return StringTools.endsWith(libPath, '\\') ? libPath : TextTools.setLast(libPath, pd);
+		return libPath.endsWith('\\') ? libPath : TextTools.setLast(libPath, pd);
 	}
 	#end
 
@@ -475,10 +468,7 @@ class Tools {
 	}
 
 	public static function readStr(b: BytesInput): String {
-		try {
-			return b.readString(b.readInt32());
-		} catch (_: Dynamic)
-			return null;
+		return try b.readString(b.readInt32()) catch (_: Dynamic) null;
 	}
 
 	public static function hexToBytes(hex: String): Bytes {
@@ -618,10 +608,8 @@ class ArrayTools {
 	public static inline function last<T:Dynamic>(a: Array<T>): T return a[a.length - 1];
 
 	public static function swap<T>(array: Array<T>, a: Int, b: Int): Array<T> {
-		if (a > b)
-			return swap(array, b, a);
-		else if (a == b)
-			return array;
+		if (a > b) return swap(array, b, a);
+		if (a == b) return array;
 		final v1: T = array[a];
 		final v2: T = array[b];
 		final p1: Array<T> = a == 0 ? [] : array.slice(0, a);
@@ -691,20 +679,16 @@ class MapTools {
 		if (element == null) {
 			map[key] = [value];
 			return true;
-		} else {
-			@:nullSafety(Off) map[key].push(value);
-			return false;
 		}
+		@:nullSafety(Off) map[key].push(value);
+		return false;
 	}
 
 	public static inline function pushToMapIfExists<K, T>(map: Map<K, Array<T>>, key: K, value: T): Bool {
 		final element: Null<Array<T>> = map[key];
-		if (element != null) {
-			map[key].push(value);
-			return true;
-		} else {
-			return false;
-		}
+		if (element == null) return false;
+		map[key].push(value);
+		return true;
 	}
 
 	public static inline function addToMap<A, B:Int, T>(map: Map<A, Map<B, T>>, a: A, b: B, value: T): Bool {
@@ -712,10 +696,9 @@ class MapTools {
 		if (element == null) {
 			map[a] = [b => value];
 			return true;
-		} else {
-			map[a][b] = value;
-			return false;
 		}
+		map[a][b] = value;
+		return false;
 	}
 
 	public static inline function addToMapStr<A, T>(map: Map<A, Map<String, T>>, a: A, b: String, value: T): Bool {
@@ -723,20 +706,16 @@ class MapTools {
 		if (element == null) {
 			map[a] = [b => value];
 			return true;
-		} else {
-			@:nullSafety(Off) map[a][b] = value;
-			return false;
 		}
+		@:nullSafety(Off) map[a][b] = value;
+		return false;
 	}
 
 	public static inline function addToMapIfExists<A, B, T>(map: Map<A, Map<B, T>>, a: A, b: B, value: T): Bool {
 		final element: Null<Map<B, T>> = map[a];
-		if (element != null) {
-			map[a][b] = value;
-			return true;
-		} else {
-			return false;
-		}
+		if (element == null) return false;
+		map[a][b] = value;
+		return true;
 	}
 
 	public static function minMaxKey<T>(map: Map<Int, T>): SPair<Int> {
@@ -766,7 +745,7 @@ class MapTools {
 		#if (haxe_ver >= 4.000)
 		for (k => v in map) r += fn(k, v);
 		#else
-		for (k in map.keys()) r += fn(k, map[k]);
+		for (k => value in map) r += fn(k, value);
 		#end
 		return r;
 	}
@@ -781,7 +760,7 @@ class MapTools {
 		#if (haxe_ver >= 4.000)
 		for (k => v in b) a[k] = v;
 		#else
-		for (k in b.keys()) a[k] = b[k];
+		for (k => value in b) a[k] = value;
 		#end
 	}
 
@@ -831,10 +810,9 @@ class FloatTools {
 		v = Math.floor(v * p) / p;
 		final s: String = '$v';
 		final a: Array<String> = s.split('.');
-		if (a.length <= 1)
-			return (begin == -1 ? '' : s) + d + TextTools.repeat(endS, n);
-		else
-			return (begin == -1 ? '' : a[0]) + d + a[1] + TextTools.repeat(endS, n - a[1].length);
+		return a.length <= 1
+			? (begin == -1 ? '' : s) + d + TextTools.repeat(endS, n)
+			: (begin == -1 ? '' : a[0]) + d + a[1] + TextTools.repeat(endS, n - a[1].length);
 	}
 
 }

@@ -1,3 +1,5 @@
+using StringTools;
+
 /**
  * Config
  * @author AxGord <axgord@gmail.com>
@@ -20,7 +22,7 @@ class Config {
 		OS = TargetOS.createByName(Sys.systemName());
 		PD = OS == Windows ? '\\' : '/';
 		SRC = '${Sys.getCwd()}tools';
-		SRC = StringTools.replace(SRC, '/', PD);
+		SRC = SRC.replace('/', PD);
 		BIN = '${SRC + PD}bin$PD';
 		ARGS = Sys.args();
 		INSTALL = ARGS[0] == 'install';

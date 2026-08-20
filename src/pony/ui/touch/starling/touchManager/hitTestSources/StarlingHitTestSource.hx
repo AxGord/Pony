@@ -25,10 +25,12 @@ class StarlingHitTestSource implements IHitTestSource {
 	}
 
 	public function parent(object: Dynamic): Dynamic {
-		if (!Std.is(object, starling.display.DisplayObject)) return null;
-		if (object == _container) return null;
-		final objectsParent = object.parent;
-		return objectsParent;
+		return if (!Std.is(object, starling.display.DisplayObject))
+			null
+		else if (object == _container)
+			null
+		else
+			object.parent;
 	}
 
 }

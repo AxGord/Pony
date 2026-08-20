@@ -73,8 +73,7 @@ class SocketServerBase extends Logable {
 	 */
 	public function send2other(data: BytesOutput, exception: ISocketClient): Void {
 		final bs: Bytes = data.getBytes();
-		for (c in clients) {
-			if (c == exception) continue;
+		for (c in clients) if (c != exception) {
 			final b: BytesOutput = new BytesOutput();
 			b.write(bs);
 			c.send(b);

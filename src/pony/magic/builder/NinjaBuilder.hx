@@ -59,10 +59,10 @@ class NinjaBuilder {
 							case _:
 								na.push(e);
 						}
-						if (ninjaCreate)
-							na.unshift(macro var __obj__ = ninjaCreate());
+						na.unshift(if (ninjaCreate)
+							macro var __obj__ = ninjaCreate()
 						else
-							na.unshift(macro var __obj__ = new $p());
+							macro var __obj__ = new $p());
 						for (u in used) if (nowUsed.indexOf(u) == -1) {
 							final e1 = { expr: EField({ expr: EConst(CIdent('__obj__')), pos: field.pos }, u), pos: field.pos };
 							final e2 = { expr: EField({ expr: EConst(CIdent('this')), pos: field.pos }, u), pos: field.pos };

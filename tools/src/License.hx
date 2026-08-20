@@ -1,6 +1,7 @@
 import pony.fs.Dir;
 import pony.fs.File;
 
+using StringTools;
 using pony.Tools;
 
 /**
@@ -27,28 +28,26 @@ class License {
 						if (c == '/**') {
 							allowRemove = true;
 							break;
-						} else if (c.length > 0) {
+						}
+						if (c.length > 0) {
 							break;
-						} else {
-							n++;
 						}
+						n++;
 					}
-					if (allowRemove) {
-						var error: Bool = true;
-						for (line in lines) {
-							n++;
-							if (StringTools.trim(line) == '**/') {
-								error = false;
-								break;
-							}
-						}
-						if (error) {
-							Sys.println('Unclosed comment in $file!');
-							continue;
-						}
-						Sys.println('Remove license from file $file');
-						file.content = lines.slice(n).join('\n');
+					if (!allowRemove) continue;
+					var error: Bool = true;
+					for (line in lines) {
+						n++;
+						if (line.trim() != '**/') continue;
+						error = false;
+						break;
 					}
+					if (error) {
+						Sys.println('Unclosed comment in $file!');
+						continue;
+					}
+					Sys.println('Remove license from file $file');
+					file.content = lines.slice(n).join('\n');
 				}
 
 			case 'update':
@@ -71,10 +70,9 @@ class License {
 						var error: Bool = true;
 						for (line in lines) {
 							n++;
-							if (StringTools.trim(line) == '**/') {
-								error = false;
-								break;
-							}
+							if (line.trim() != '**/') continue;
+							error = false;
+							break;
 						}
 						if (error) {
 							Utils.error('Unclosed comment in $file!');

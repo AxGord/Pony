@@ -107,9 +107,8 @@ class Button extends Sprite implements IWH {
 		if (n == 4 && hideDisabled) {
 			visible = false;
 			return;
-		} else {
-			visible = true;
 		}
+		visible = true;
 		if (prev != -1) removeChild(list[prev]);
 		addChild(list[prev = n - 1]);
 	}

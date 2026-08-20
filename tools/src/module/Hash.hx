@@ -101,7 +101,7 @@ using pony.text.TextTools;
 							image = image.substr(0, image.indexOf('\n'));
 						}
 					}
-					image = StringTools.replace(image, '"', '');
+					image = image.replace('"', '');
 					final path: Null<String> = f.allBefore('/');
 					final imgU: Null<Bytes> = units[path != null ? '$path/$image' : image];
 					if (imgU != null) {

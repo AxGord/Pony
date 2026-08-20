@@ -42,13 +42,12 @@ class RemoteClient extends Logable {
 			error('Not setted port or host');
 			eComplete.dispatch(1);
 			return null;
-		} else {
-			final client: SocketClient = new SocketClient(host, port);
-			client.onDisconnect < disconnectHandler;
-			final p: RemoteProtocol = new RemoteProtocol(client);
-			if (key != null) p.authRemote(key);
-			return p;
 		}
+		final client: SocketClient = new SocketClient(host, port);
+		client.onDisconnect < disconnectHandler;
+		final p: RemoteProtocol = new RemoteProtocol(client);
+		if (key != null) p.authRemote(key);
+		return p;
 	}
 
 	public function disconnectHandler(): Void {

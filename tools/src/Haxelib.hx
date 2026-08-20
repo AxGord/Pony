@@ -1,5 +1,7 @@
 import sys.FileSystem;
 
+using StringTools;
+
 /**
  * Haxelib
  * @author AxGord <axgord@gmail.com>
@@ -50,8 +52,7 @@ class Haxelib {
 			return null;
 		}
 		final tdata: String = sys.io.File.getContent(haxelibFile);
-		final jdata = haxe.Json.parse(tdata);
-		return jdata;
+		return haxe.Json.parse(tdata);
 	}
 
 	public static function submit(version: String, desc: String): Void {
@@ -109,7 +110,7 @@ class Haxelib {
 	private static function git(version: String, desc: String): Void {
 		if (!FileSystem.exists('.git')) return;
 		try {
-			final message: String = StringTools.rtrim('Update haxelib v $version. $desc');
+			final message: String = 'Update haxelib v $version. $desc'.rtrim();
 			Utils.command('git', ['add', '--all']);
 			Utils.command('git', ['commit', '-a', '-m', message]);
 			Utils.command('git', ['push']);

@@ -90,8 +90,8 @@ class HttpConnection implements HasAbstract {
 
 	public function mix(): Map<String, String> {
 		final h = new Map<String, String>();
-		for (k in params.keys()) h.set(k, params[k]);
-		for (k in post.keys()) h.set(k, post[k]);
+		for (k => value in params) h.set(k, value);
+		for (k => value in post) h.set(k, value);
 		return h;
 	}
 

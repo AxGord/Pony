@@ -6,6 +6,7 @@ import sys.FileSystem;
 import types.BASection;
 import types.DownloadConfig;
 
+using StringTools;
 using pony.text.XmlTools;
 
 /**
@@ -65,9 +66,7 @@ private class DownloadReader extends BAReader<DownloadConfig> {
 				final update: Bool = xml.isTrue('update');
 				final p: Triple<String, String, Bool> = if (xml.has.v) {
 					final v: String = xml.att.v;
-					new Triple(
-						StringTools.replace(url, '{v}', v), xml.has.check ? StringTools.replace(xml.att.check, '{v}', v) : null, update
-					);
+					new Triple(url.replace('{v}', v), xml.has.check ? StringTools.replace(xml.att.check, '{v}', v) : null, update);
 				} else {
 					new Triple(url, xml.has.check ? xml.att.check : null, update);
 				}

@@ -105,8 +105,7 @@ typedef PriorityIds = Priority<{
 	}
 
 	private function checkEmpty(): Bool {
-		for (e in data) if (real(e)) return false;
-		return true;
+		return data.foreach(e -> !(real(e)));
 	}
 
 	/**
@@ -124,7 +123,7 @@ typedef PriorityIds = Priority<{
 		final hv: Null<Int> = hash[priority];
 		final s: Int = hv ?? 0;
 		var c: Int = 0;
-		for (k in hash.keys()) if (k < priority) @:nullSafety(Off) c += hash[k];
+		for (k => value in hash) if (k < priority) @:nullSafety(Off) c += value;
 		c += s;
 		data.insert(c, e);
 		for (k in 0...counters.length) if (c < counters[k]) counters[k]++;

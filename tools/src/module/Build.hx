@@ -113,10 +113,9 @@ final class Build extends CfgModule<BuildConfig> {
 		name += '.$HXML';
 		final s: String = cmdArrPairToArrStr(commands).join('\n');
 		final prev: String = FileSystem.exists(name) ? File.getContent(name) : null;
-		if (prev != s) {
-			if (FileSystem.exists(Uglify.CACHE_FILE)) FileSystem.deleteFile(Uglify.CACHE_FILE);
-			File.saveContent(name, s);
-		}
+		if (prev == s) return;
+		if (FileSystem.exists(Uglify.CACHE_FILE)) FileSystem.deleteFile(Uglify.CACHE_FILE);
+		File.saveContent(name, s);
 	}
 
 	private function runCompilation(command: Array<SPair<String>>, debug: Bool, compiler: String, winfix: Bool): Void {
@@ -166,10 +165,8 @@ final class Build extends CfgModule<BuildConfig> {
 						if (!firstOutput && !inWarning) writeError('');
 					case v:
 						if (inWarning) {
-							if (v == ' '.code)
-								continue;
-							else
-								inWarning = false;
+							if (v == ' '.code) continue;
+							inWarning = false;
 						}
 						if (checkWarning(line))
 							inWarning = true;
@@ -201,10 +198,8 @@ final class Build extends CfgModule<BuildConfig> {
 					while (true) {
 						final line: String = process.stderr.readLine();
 						if (inWarning) {
-							if (line == '' || line.startsWith(' '))
-								continue;
-							else
-								inWarning = false;
+							if (line == '' || line.startsWith(' ')) continue;
+							inWarning = false;
 						}
 						if (checkWarning(line))
 							inWarning = true;

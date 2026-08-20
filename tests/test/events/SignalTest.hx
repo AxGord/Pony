@@ -36,7 +36,7 @@ class SignalTest {
 	public function remove(): Void {
 
 		var c: Int = 0;
-		final f: Void -> Void = function() c++;
+		function f() c++;
 		final e: Event0 = new Event0();
 		final s: Signal0 = e;
 		s.add(f);
@@ -50,7 +50,7 @@ class SignalTest {
 	@Test
 	public function removeAll(): Void {
 		var c: Int = 0;
-		final f: () -> Void = function() c++;
+		function f() c++;
 		final e: Event0 = new Event0();
 		final s: Signal0 = e;
 		s.add(f);

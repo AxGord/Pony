@@ -34,26 +34,20 @@ class Main {
 	}
 
 	private static function trySubProjects(args: Array<String>): Bool {
-		if (args[0] != 'haxelib' && args.indexOf('all') != -1) {
-			runSubProjects(args);
-			return true;
-		} else {
-			return false;
-		}
+		if (args[0] == 'haxelib' || args.indexOf('all') == -1) return false;
+		runSubProjects(args);
+		return true;
 	}
 
 	private static function tryOtherPath(args: Array<String>): Bool {
 		final expath: String = new String(@:privateAccess Sys.sys_exe_path());
 		var p: String = Utils.path(expath);
 		p = p.substr(0, p.lastIndexOf(Utils.PD) + 1);
-		if (p != Utils.toolsPath) {
-			var pony: String = '${Utils.toolsPath}pony';
-			if (Utils.isWindows) pony += '.exe';
-			Utils.exit(Sys.command(pony, args));
-			return true;
-		} else {
-			return false;
-		}
+		if (p == Utils.toolsPath) return false;
+		var pony: String = '${Utils.toolsPath}pony';
+		if (Utils.isWindows) pony += '.exe';
+		Utils.exit(Sys.command(pony, args));
+		return true;
 	}
 
 	private static function main(): Void {

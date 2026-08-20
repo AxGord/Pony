@@ -59,72 +59,70 @@ class HasListenerBuilder {
 				for (m in meta) {
 					final isListen: Bool = m.name == ':listen';
 					final isOnce: Bool = m.name == ':listenOnce';
-					if (isListen || isOnce) {
-						final expr: Null<Expr> = m.params.shift();
-						final cond: Null<Expr> = m.params.shift();
-						if (expr != null) {
-							if (cond != null) {
-								listen.push(isOnce ? macro if ($cond) $expr.once($i{field.name}) : macro if ($cond)
-									$expr.add($i{field.name}));
-								unlisten.push(macro if ($cond) $expr.remove($i{field.name}));
-								switch cond.expr {
-									case EBinop(_, { expr: EField({ expr: EConst(CIdent(parent)) }, s, _) }, _):
-										final name: String = 'change${s.bigFirst()}';
-										final listenerName: String = '${parent}_${name}Handler';
-										listen.push(macro $i{parent}.$name.add($i{listenerName}));
-										unlisten.push(macro $i{parent}.$name.remove($i{listenerName}));
-										final prevName: String = 'prev${s.bigFirst()}';
-										var handler: Null<Handler> = handlers[listenerName];
-										if (handler == null) {
-											final type: ComplexType = getType(s);
-											handler = new Triple({ name: s, type: type }, { name: prevName, type: type }, []);
-											handlers[listenerName] = handler;
-										}
-										handler.c.push(macro if ($cond) {
-											$i{s} = $i{prevName};
-											if (!($cond)) $e{isOnce ? macro $expr.once($i{field.name}) : macro $expr.add($i{field.name})};
-										} else {
-											$i{s} = $i{prevName};
-											if (!($cond)) $expr.remove($i{field.name});
-										});
+					if (!isListen && !isOnce) continue;
+					final expr: Null<Expr> = m.params.shift();
+					final cond: Null<Expr> = m.params.shift();
+					if (expr != null) {
+						if (cond != null) {
+							listen.push(isOnce ? macro if ($cond) $expr.once($i{field.name}) : macro if ($cond) $expr.add($i{field.name}));
+							unlisten.push(macro if ($cond) $expr.remove($i{field.name}));
+							switch cond.expr {
+								case EBinop(_, { expr: EField({ expr: EConst(CIdent(parent)) }, s, _) }, _):
+									final name: String = 'change${s.bigFirst()}';
+									final listenerName: String = '${parent}_${name}Handler';
+									listen.push(macro $i{parent}.$name.add($i{listenerName}));
+									unlisten.push(macro $i{parent}.$name.remove($i{listenerName}));
+									final prevName: String = 'prev${s.bigFirst()}';
+									var handler: Null<Handler> = handlers[listenerName];
+									if (handler == null) {
+										final type: ComplexType = getType(s);
+										handler = new Triple({ name: s, type: type }, { name: prevName, type: type }, []);
+										handlers[listenerName] = handler;
+									}
+									handler.c.push(macro if ($cond) {
+										$i{s} = $i{prevName};
+										if (!($cond)) $e{isOnce ? macro $expr.once($i{field.name}) : macro $expr.add($i{field.name})};
+									} else {
+										$i{s} = $i{prevName};
+										if (!($cond)) $expr.remove($i{field.name});
+									});
 
-									case EBinop(_, { expr: EConst(CIdent(s)) }, _), EConst(CIdent(s)):
-										final name: String = 'change${s.bigFirst()}';
-										final listenerName: String = '${name}Handler';
-										listen.push(macro $i{name}.add($i{listenerName}));
-										unlisten.push(macro $i{name}.remove($i{listenerName}));
-										final prevName: String = 'prev${s.bigFirst()}';
-										var handler: Null<Handler> = handlers[listenerName];
-										if (handler == null) {
-											final type: ComplexType = getType(s);
-											handler = new Triple({ name: s, type: type }, { name: prevName, type: type }, []);
-											handlers[listenerName] = handler;
-										}
-										handler.c.push(macro if ($cond) {
-											final $s = $i{prevName}; // Set $s for check condition with prev value
-											if (!$cond) $e{isOnce ? macro $expr.once($i{field.name}) : macro $expr.add($i{field.name})};
-										} else {
-											final $s = $i{prevName}; // Set $s for check condition with prev value
-											if ($cond) $expr.remove($i{field.name});
-										});
-									case _:
-										throw 'Unsupported const';
-								}
-							} else {
-								listen.push(isOnce ? macro $expr.once($i{field.name}) : macro $expr.add($i{field.name}));
-								// Null-guard: @:auto signals on the listened object may have been
-								// destroyed (eName = null) by an earlier teardown step before this
-								// unlisten() runs (e.g. owner.close() destroys the socket, then
-								// owner.destroy() generates the unlisten). @:auto getter does not
-								// recreate the signal, so a direct .remove on null would crash.
-								unlisten.push(macro {
-									final s = $expr;
-									if (s != null) s.remove($i{field.name});
-								});
+								case EBinop(_, { expr: EConst(CIdent(s)) }, _), EConst(CIdent(s)):
+									final name: String = 'change${s.bigFirst()}';
+									final listenerName: String = '${name}Handler';
+									listen.push(macro $i{name}.add($i{listenerName}));
+									unlisten.push(macro $i{name}.remove($i{listenerName}));
+									final prevName: String = 'prev${s.bigFirst()}';
+									var handler: Null<Handler> = handlers[listenerName];
+									if (handler == null) {
+										final type: ComplexType = getType(s);
+										handler = new Triple({ name: s, type: type }, { name: prevName, type: type }, []);
+										handlers[listenerName] = handler;
+									}
+									handler.c.push(macro if ($cond) {
+										final $s = $i{prevName}; // Set $s for check condition with prev value
+										if (!$cond) $e{isOnce ? macro $expr.once($i{field.name}) : macro $expr.add($i{field.name})};
+									} else {
+										final $s = $i{prevName}; // Set $s for check condition with prev value
+										if ($cond) $expr.remove($i{field.name});
+									});
+								case _:
+									throw 'Unsupported const';
 							}
 						} else {
-							throw 'Expr not set';
+							listen.push(isOnce ? macro $expr.once($i{field.name}) : macro $expr.add($i{field.name}));
+							// Null-guard: @:auto signals on the listened object may have been
+							// destroyed (eName = null) by an earlier teardown step before this
+							// unlisten() runs (e.g. owner.close() destroys the socket, then
+							// owner.destroy() generates the unlisten). @:auto getter does not
+							// recreate the signal, so a direct .remove on null would crash.
+							unlisten.push(macro {
+								final s = $expr;
+								if (s != null) s.remove($i{field.name});
+							});
 						}
+					} else {
+						throw 'Expr not set';
 					}
 				}
 			case _:
@@ -192,18 +190,14 @@ class HasListenerBuilder {
 	#if macro
 	private static function checkDestroy(ct: ClassType): Bool {
 		final sc: Null<{ t: Ref<ClassType>, params: Array<Type> }> = ct.superClass;
-		if (sc != null) {
-			for (f in sc.t.get().fields.get()) if (f.name == 'destroy') return true;
-			return checkDestroy(sc.t.get());
-		} else {
-			return false;
-		}
+		if (sc == null) return false;
+		for (f in sc.t.get().fields.get()) if (f.name == 'destroy') return true;
+		return checkDestroy(sc.t.get());
 	}
 
 	private static function checkDI(ct: ClassType): Bool {
 		for (i in ct.interfaces) if (i.t.toString() == 'pony.magic.DI') return true;
-		if (ct.superClass != null) return checkDI(ct.superClass.t.get());
-		return false;
+		return ct.superClass != null && checkDI(ct.superClass.t.get());
 	}
 	#end
 

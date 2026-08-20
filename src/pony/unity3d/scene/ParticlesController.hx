@@ -57,10 +57,9 @@ class ParticlesController extends MonoBehaviour {
 			stopTimer.start(dt);
 		}
 
-		if (abortTimer != null) {
-			abortTimer.reset();
-			abortTimer.start(dt);
-		}
+		if (abortTimer == null) return;
+		abortTimer.reset();
+		abortTimer.start(dt);
 	}
 
 	public function stop(): Void {
@@ -68,7 +67,7 @@ class ParticlesController extends MonoBehaviour {
 			playTimer.stop();
 			playTimer.reset();
 		}
-		if (stopTimer != null) stopTimer.stop();
+		stopTimer?.stop();
 		if (particleSystem != null)
 			particleSystem.Stop();
 		else
@@ -76,7 +75,7 @@ class ParticlesController extends MonoBehaviour {
 	}
 
 	public function abort(): Void {
-		if (abortTimer != null) abortTimer.stop();
+		abortTimer?.stop();
 		stop();
 		if (particleSystem != null)
 			particleSystem.Clear();

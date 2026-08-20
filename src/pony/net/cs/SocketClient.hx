@@ -95,12 +95,11 @@ class SocketClient extends SocketClientBase {
 			isConnected = false;
 			tryAgain();
 		}
-		if (isConnected) {
-			sendQueue = new Queue(_send);
-			isSet = false;
-			Timer.delay(connect, 10); // allow add listener first
-			Timer.delay(begin, 20); // and begin take data after some delay
-		}
+		if (!isConnected) return;
+		sendQueue = new Queue(_send);
+		isSet = false;
+		Timer.delay(connect, 10); // allow add listener first
+		Timer.delay(begin, 20); // and begin take data after some delay
 	}
 
 	private function begin(): Void {

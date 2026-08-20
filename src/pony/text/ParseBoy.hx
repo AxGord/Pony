@@ -46,28 +46,27 @@ class ParseBoy<T> implements Declarator {
 	 * @see indexOf
 	 */
 	public function indexOf(v: String): PosLen {
-		if (space) {
-			var n: Int = 0, i: Int = pos, lc: Int = 0;
-			while (i < t.length) {
-				final c: String = t.charAt(i);
-				if (c == v.charAt(n)) {
-					if (n >= v.length - 1) {
-						lc++;
-						return { pos: i - lc + 1, len: lc };
-					} else {
-						n++;
-						lc++;
-					}
-				} else if (c != ' ') {
-					i -= n;
-					lc = n = 0;
-				} else if (n != 0)
+		if (!space) return { pos: t.indexOf(v, pos), len: v.length };
+		var n: Int = 0;
+		var i: Int = pos;
+		var lc: Int = 0;
+		while (i < t.length) {
+			final c: String = t.charAt(i);
+			if (c == v.charAt(n)) {
+				if (n >= v.length - 1) {
 					lc++;
-				i++;
-			}
-			return null;
-		} else
-			return { pos: t.indexOf(v, pos), len: v.length };
+					return { pos: i - lc + 1, len: lc };
+				}
+				n++;
+				lc++;
+			} else if (c != ' ') {
+				i -= n;
+				lc = n = 0;
+			} else if (n != 0)
+				lc++;
+			i++;
+		}
+		return null;
 	}
 
 	/**
@@ -92,14 +91,12 @@ class ParseBoy<T> implements Declarator {
 			}
 		}
 
-		for (n in 0...a.length) {
-			if (a[n] == null) continue;
+		for (n in 0...a.length) if (a[n] != null) {
 			final io: PosLen = indexOf(a[n]);
-			if (io != null) if (io.pos <= ipos) {
-				r = n;
-				ipos = io.pos;
-				lengthGoto = io.len;
-			}
+			if (io == null || io.pos > ipos) continue;
+			r = n;
+			ipos = io.pos;
+			lengthGoto = io.len;
 		}
 		if (r != -1) {
 			pos = ipos + lengthGoto;

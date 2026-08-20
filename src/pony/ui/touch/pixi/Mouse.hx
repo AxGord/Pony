@@ -21,10 +21,9 @@ class Mouse {
 	public static var inited(default, null): Bool = false;
 
 	public static function reg(obj: Container): Void {
-		if (Mouse.obj == null) {
-			Mouse.obj = obj;
-			if (inited) _init();
-		}
+		if (Mouse.obj != null) return;
+		Mouse.obj = obj;
+		if (inited) _init();
 	}
 
 	public static function init(): Void {
@@ -50,10 +49,10 @@ class Mouse {
 	}
 
 	private static function wheelHandler(e: Dynamic): Void {
-		if (e.wheelDelta == null)
-			M.eWheel.dispatch(e.deltaY > 0 ? -120 : 120);
+		M.eWheel.dispatch(if (e.wheelDelta == null)
+			e.deltaY > 0 ? -120 : 120
 		else
-			M.eWheel.dispatch(e.wheelDelta);
+			e.wheelDelta);
 		e.returnValue = false;
 		e.preventDefault();
 	}

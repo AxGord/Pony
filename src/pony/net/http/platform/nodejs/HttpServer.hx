@@ -57,22 +57,21 @@ class HttpServer {
 		Node.process.nextTick(function() server.listen(port, host, createHandler));
 		storage = new ServersideStorage();
 
-		if (spdyConf != null) {
-			trace(spdyConf);
-			final options = {
-				key: Fs.readFileSync('${Node.__dirname}/keys/spdy-key.pem'),
-				cert: Fs.readFileSync('${Node.__dirname}/keys/spdy-cert.pem'),
-				ca: Fs.readFileSync('${Node.__dirname}/keys/spdy-csr.pem')
-			};
+		if (spdyConf == null) return;
+		trace(spdyConf);
+		final options = {
+			key: Fs.readFileSync('${Node.__dirname}/keys/spdy-key.pem'),
+			cert: Fs.readFileSync('${Node.__dirname}/keys/spdy-cert.pem'),
+			ca: Fs.readFileSync('${Node.__dirname}/keys/spdy-csr.pem')
+		};
 
-			spdyServer = spdy.createServer(options, listen).listen(spdyConf.hasField('port') ? spdyConf.port : 443, createSpdyHandler);
-		}
+		spdyServer = spdy.createServer(options, listen).listen(spdyConf.hasField('port') ? spdyConf.port : 443, createSpdyHandler);
 	}
 
 	private function listen(req: IncomingMessage, res: ServerResponse): Void {
 		// trace(req.method+': ' + req.url);
 		// trace(req.headers);
-		for (k in fixedHeaders.keys()) res.setHeader(k, fixedHeaders[k]);
+		for (k => value in fixedHeaders) res.setHeader(k, value);
 		final multi: String = 'multipart/form-data';
 		final contentType: String = req.headers.field('content-type');
 		switch (req.method) {

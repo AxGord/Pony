@@ -16,10 +16,7 @@ using hugs.HUGSWrapper;
 		var tooltip: Tooltip = null;
 		if (tooltip == null) tooltip = gameObject.getTypedComponent(Tooltip);
 		if (tooltip == null) tooltip = gameObject.getParentTypedComponent(Tooltip);
-		if (tooltip == null) {
-			tooltips = gameObject.getComponentsInChildrenOfType(Tooltip).haxeArray();
-		} else
-			tooltips = [tooltip];
+		tooltips = tooltip == null ? gameObject.getComponentsInChildrenOfType(Tooltip).haxeArray() : [tooltip];
 	}
 
 	private inline function saveColors(): Void {

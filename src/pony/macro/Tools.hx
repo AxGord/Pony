@@ -4,6 +4,8 @@ package pony.macro;
 import haxe.macro.Context;
 import haxe.macro.Expr;
 
+using Lambda;
+
 /**
  * Macro Tools
  * @author AxGord
@@ -23,8 +25,7 @@ import haxe.macro.Expr;
 
 	public static function getMeta(a: Metadata, n: String, addHidding: Bool = false): MetadataEntry {
 		if (a == null) return null;
-		for (e in a) if (e.name == n || (addHidding && e.name == ':$n')) return e;
-		return null;
+		return a.find(e -> e.name == n || (addHidding && e.name == ':$n'));
 	}
 
 	public static function checkMeta(a: Metadata, an: Array<String>): Bool {

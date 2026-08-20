@@ -56,11 +56,7 @@ class LangTable {
 
 			}
 			h[f.shortName] = a;
-			if (li != null) {
-				langs[f.shortName] = li;
-			} else {
-				langs[f.shortName] = { title: f.shortName, author: null };
-			}
+			langs[f.shortName] = li != null ? li : { title: f.shortName, author: null };
 		}
 		// new Files<Array<String>>(dir, 'txt', function(f:File):Array<String> {
 		// 	var li:LangInfo = null;

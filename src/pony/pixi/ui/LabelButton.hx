@@ -37,11 +37,10 @@ class LabelButton extends BaseLayout<RubberLayoutCore<Container>> {
 			layout.height = button.size.y;
 			layout.tasks.end();
 		});
-		if (dac != null) {
-			this.dac = dac;
-			core.onDisable << disableHandler;
-			core.onEnable << enableHandler;
-		}
+		if (dac == null) return;
+		this.dac = dac;
+		core.onDisable << disableHandler;
+		core.onEnable << enableHandler;
 	}
 
 	private function disableHandler(): Void for (o in layout.objects) o.alpha = dac;

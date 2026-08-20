@@ -54,29 +54,29 @@ class WebServer {
 		if (u.exists) {
 			connection.sendFile(u);
 			return true;
-		} else {
-			final a: Array<String> = connection.url.split('/');
-			if (a[0] == 'tpl') {
-				a.shift();
-				final t: String = a.shift();
-				final p: String = a.join('/');
-				if (!tpl.exists(t))
-					connection.error('Not exists template: $t');
-				else if (!tpl.get(t)._static.exists(p))
-					connection.error('Not found');
-				else
-					connection.sendFile(tpl.get(t)._static.get(p));
-				return true;
-			} else if (a[0] == usercontent) {
-				a.shift();
-				final p: String = a.join('/');
-				final u: Unit = '$usercontent/$p';
-				if (u.exists)
-					connection.sendFile(u);
-				else
-					connection.error('Not found');
-				return true;
-			}
+		}
+		final a: Array<String> = connection.url.split('/');
+		if (a[0] == 'tpl') {
+			a.shift();
+			final t: String = a.shift();
+			final p: String = a.join('/');
+			if (!tpl.exists(t))
+				connection.error('Not exists template: $t');
+			else if (tpl.get(t)._static.exists(p))
+				connection.sendFile(tpl.get(t)._static.get(p));
+			else
+				connection.error('Not found');
+			return true;
+		}
+		if (a[0] == usercontent) {
+			a.shift();
+			final p: String = a.join('/');
+			final u: Unit = '$usercontent/$p';
+			if (u.exists)
+				connection.sendFile(u);
+			else
+				connection.error('Not found');
+			return true;
 		}
 		return false;
 	}

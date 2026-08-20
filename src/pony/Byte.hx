@@ -1,5 +1,7 @@
 package pony;
 
+using StringTools;
+
 /**
  * Byte
  * @author AxGord <axgord@gmail.com>
@@ -22,6 +24,6 @@ abstract Byte(Int) from Int to Int {
 
 	public inline function chechSumWith(b: Byte): Byte return (this + (b: Int)) & 0xFF;
 
-	@:to public inline function toString(): String return '0x${StringTools.hex(this)}';
+	@:to public inline function toString(): String return '0x${this.hex()}';
 
 }

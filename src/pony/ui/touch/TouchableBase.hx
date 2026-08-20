@@ -108,13 +108,11 @@ import pony.TypedPool;
 				cancleSwipeAndListenDown();
 				return;
 			}
-		} else if (ax < ay) {
-			if (ay >= SWIPE_STEP) {
-				onUp >> eClick;
-				eSwipe.dispatch(y > 0 ? Direction.Up : Direction.Down);
-				cancleSwipeAndListenDown();
-				return;
-			}
+		} else if (ax < ay && ay >= SWIPE_STEP) {
+			onUp >> eClick;
+			eSwipe.dispatch(y > 0 ? Direction.Up : Direction.Down);
+			cancleSwipeAndListenDown();
+			return;
 		}
 		if (swipeTimer.repeatCount == 0) cancleSwipeAndListenDown();
 	}

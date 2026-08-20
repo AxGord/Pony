@@ -1,5 +1,6 @@
 package pony.color;
 
+using Lambda;
 using pony.math.MathTools;
 using Std;
 
@@ -42,12 +43,12 @@ abstract UColors(Array<UColor>) from Array<UColor> to Array<UColor> {
 	/**
 	 * Build from iterable colors
 	 */
-	@:from public static inline function fromIterable(it: Iterable<UColor>): UColors return Lambda.array(it);
+	@:from public static inline function fromIterable(it: Iterable<UColor>): UColors return it.array();
 
 	/**
 	 * Build from iterable UInt
 	 */
-	@:from public static inline function fromIterableUInt(it: Iterable<UInt>): UColors return Lambda.array(it);
+	@:from public static inline function fromIterableUInt(it: Iterable<UInt>): UColors return it.array();
 
 	#if (flash && !doc_gen)
 	@:from public static inline function fromVector(a: flash.Vector<UInt>): UColors return [for (i in 0...a.length) a[i]];

@@ -22,6 +22,7 @@ import pony.time.DeltaTime;
 import pony.ui.AssetManager;
 import pony.ui.gui.slices.SliceTools;
 
+using StringTools;
 using pony.text.TextTools;
 
 #if (haxe_ver >= 4.2) enum #else @:enum #end abstract Ext(String) to String {
@@ -204,7 +205,7 @@ using pony.text.TextTools;
 				loader.onProgress = progressHandler;
 				loader.onLoaded = function(bytes: Bytes): Void {
 					if (hasError) return;
-					asset = StringTools.replace(asset, '@', '');
+					asset = asset.replace('@', '');
 					bins[asset] = bytes;
 					finish();
 				}
@@ -377,7 +378,7 @@ using pony.text.TextTools;
 	}
 
 	public static inline function bin(asset: String): Bytes {
-		asset = StringTools.replace(asset, '@', '');
+		asset = asset.replace('@', '');
 		return cast bins[asset];
 	}
 

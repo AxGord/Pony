@@ -1,6 +1,8 @@
 import sys.FileSystem;
 import sys.io.File;
 
+using StringTools;
+
 /**
  * Template
  * @author AxGord <axgord@gmail.com>
@@ -11,8 +13,8 @@ class Template {
 
 	public static function gen(path: String, files: Map<String, String>, vars: Map<String, String>): Void {
 		path = Utils.toolsPath + TEMPLATE_PATH + path;
-		for (file in files.keys()) {
-			final out: String = replaceVars(files[file], vars);
+		for (file => value in files) {
+			final out: String = replaceVars(value, vars);
 			if (FileSystem.exists(out)) {
 				Sys.println('File exists, skip: $out');
 			} else {
@@ -28,7 +30,7 @@ class Template {
 	}
 
 	public static function replaceVars(content: String, vars: Map<String, String>): String {
-		for (k in vars.keys()) content = StringTools.replace(content, '::$k::', vars[k]);
+		for (k => value in vars) content = content.replace('::$k::', value);
 		return content;
 	}
 

@@ -24,11 +24,9 @@ using hugs.HUGSWrapper;
 			throw null;
 		}
 		final c = g.getTypedComponent(cl);
-		if (c == null) {
-			trace('Can\'t find component ${Type.getClassName(cl)} in $gameObject game object');
-			throw null;
-		}
-		return c;
+		if (c != null) return c;
+		trace('Can\'t find component ${Type.getClassName(cl)} in $gameObject game object');
+		throw null;
 		#else
 		return GameObject.Find(gameObject).getTypedComponent(cl);
 		#end

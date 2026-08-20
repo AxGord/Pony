@@ -3,6 +3,8 @@ package pony.ui.gui;
 import pony.math.MathTools;
 import pony.time.Time;
 
+using StringTools;
+
 /**
  * AnimSmoothMode
  * @author AxGord <axgord@gmail.com>
@@ -18,7 +20,7 @@ abstract AnimSmoothMode(Int) to Int from Int {
 		return if (s == null)
 			None;
 		else
-			switch StringTools.trim(s).toLowerCase() {
+			switch s.trim().toLowerCase() {
 				case 'simple': Simple;
 				case 'super': Super;
 				case _: None;
@@ -79,17 +81,17 @@ class AnimTextureCore extends AnimCore {
 
 	private function frameSimpleOddHandler(n: Int): Void {
 		final map: Map<Int, Int> = MathTools.clipSmoothOddSimple(n, totalFrames);
-		for (k in map.keys()) setTexture(k, map[k]);
+		for (k => value in map) setTexture(k, value);
 	}
 
 	private function frameSuperHandler(n: Int): Void {
 		final map: Map<Int, Int> = MathTools.clipSmooth(n, totalFrames);
-		for (k in map.keys()) setTexture(k, map[k]);
+		for (k => value in map) setTexture(k, value);
 	}
 
 	private function frameSuperOddHandler(n: Int): Void {
 		final map: Map<Int, Int> = MathTools.clipSmoothOdd(n, totalFrames);
-		for (k in map.keys()) setTexture(k, map[k]);
+		for (k => value in map) setTexture(k, value);
 	}
 
 	@:abstract private function setTexture(n: Int, f: Int): Void;

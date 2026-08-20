@@ -24,17 +24,14 @@ class Cookie {
 	public function toString(?domain: String): String {
 		// domain = domain != null ? 'domain=$domain' : '';
 		var s: String = '';
-		for (k in newCookie.keys()) {
-			s += '$k=${newCookie[k]};'; // + ';HttpOnly;$domain';
+		for (k => value in newCookie) {
+			s += '$k=${value};'; // + ';HttpOnly;$domain';
 		}
 		return s;
 	}
 
 	public function get(name: String): String {
-		if (newCookie.exists(name))
-			return newCookie[name];
-		else
-			return oldCookie[name];
+		return newCookie.exists(name) ? newCookie[name] : oldCookie[name];
 	}
 
 	public inline function set(name: String, value: String): Void newCookie.set(name, value);

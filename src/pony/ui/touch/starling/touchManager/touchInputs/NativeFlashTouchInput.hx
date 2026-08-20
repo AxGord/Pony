@@ -30,10 +30,9 @@ class NativeFlashTouchInput {
 	}
 
 	private function onUp(e: MouseEvent): Void {
-		if (!InputMode.touchMode()) {
-			TouchManager.up(e.stageX, e.stageY, false);
-			TouchManager.move(e.stageX, e.stageY, false);
-		}
+		if (InputMode.touchMode()) return;
+		TouchManager.up(e.stageX, e.stageY, false);
+		TouchManager.move(e.stageX, e.stageY, false);
 	}
 
 	private function onDown(e: MouseEvent): Void {

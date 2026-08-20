@@ -58,10 +58,8 @@ class TextButton extends Sprite implements IWH {
 						g.moveTo(pos, size.y);
 						pos += 10;
 					}
-					if (end)
-						break;
-					else if (pos > size.x)
-						pos = size.x;
+					if (end) break;
+					if (pos > size.x) pos = size.x;
 					step = !step;
 				}
 				g.y = linepos;
@@ -87,10 +85,9 @@ class TextButton extends Sprite implements IWH {
 			prevline.visible = false;
 			prevline = null;
 		}
-		if (lines[n] != null) {
-			lines[n].visible = true;
-			prevline = lines[n];
-		}
+		if (lines[n] == null) return;
+		lines[n].visible = true;
+		prevline = lines[n];
 	}
 
 	@SuppressWarnings('checkstyle:MagicNumber')

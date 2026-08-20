@@ -312,8 +312,7 @@ typedef DIClassSummary = {
 		verifiedClass: String, consumer: ConsumerEntry, path: Array<String>, rootExports: Map<String, Array<ProducerEntry>>
 	): Bool {
 		final lastIndex: Int = path.length - 1;
-		for (i in 0...path.length) {
-			final levelClass: String = path[i];
+		for (i => levelClass in path) {
 			final locals: Array<ProducerEntry> = mergedLocalProducers(levelClass);
 			final exports: Null<Array<ProducerEntry>> = i == lastIndex ? rootExports[levelClass] : null;
 			final levelProducers: Array<ProducerEntry> = exports != null ? locals.concat(exports) : locals;

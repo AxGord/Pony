@@ -46,8 +46,7 @@ abstract Border<T:Float>({
 	private inline function get_bottom(): T return this.bottom;
 
 	@:from public static function fromString(v: String): Border<Float> {
-		if (v == null || v == '') return new Border<Float>(0);
-		return fromArray(v.split(' ').map(Std.parseFloat));
+		return v == null || v == '' ? new Border<Float>(0) : fromArray(v.split(' ').map(Std.parseFloat));
 	}
 
 	@:from public static function fromArray<T:Float>(v: Array<T>): Border<T> {

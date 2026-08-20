@@ -38,10 +38,7 @@ abstract TimeInterval(TimeIntervalImpl) {
 
 	@:from private static function fromString(time: String): TimeInterval {
 		final a = time.split('...');
-		if (a.length > 1)
-			return new TimeInterval({ min: a[0], max: a[1] });
-		else
-			return fromTime(a[0]);
+		return a.length > 1 ? new TimeInterval({ min: a[0], max: a[1] }) : fromTime(a[0]);
 	}
 
 	@:from private static inline function fromTime(time: Time): TimeInterval return new TimeInterval({ min: 0, max: time });
@@ -59,11 +56,10 @@ abstract TimeInterval(TimeIntervalImpl) {
 			final t: Float = time - min;
 			final m: Float = max - min;
 			return t / m;
-		} else {
-			final t: Float = time - max;
-			final m: Float = min - max;
-			return t / m;
 		}
+		final t: Float = time - max;
+		final m: Float = min - max;
+		return t / m;
 	}
 
 	private inline function get_minimalPoint(): Time return MathTools.cmin(min.minimalPoint, max.minimalPoint);

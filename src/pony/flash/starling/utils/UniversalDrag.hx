@@ -66,7 +66,7 @@ class UniversalDrag {
 		TouchManager.addListener(TouchManager.GLOBAL, onDrag, [TouchEventType.Move]);
 
 		#if tweenmax
-		if (_activeTween != null) _activeTween.kill();
+		_activeTween?.kill();
 		#end
 	}
 
@@ -86,12 +86,11 @@ class UniversalDrag {
 	}
 
 	private static function toBounds(): Void {
-		if (_dragBounds != null) {
-			if (_dragged.x > _dragBounds.right) _dragged.x = _dragBounds.right;
-			if (_dragged.y > _dragBounds.bottom) _dragged.y = _dragBounds.bottom;
-			if (_dragged.x < _dragBounds.x) _dragged.x = _dragBounds.x;
-			if (_dragged.y < _dragBounds.y) _dragged.y = _dragBounds.y;
-		}
+		if (_dragBounds == null) return;
+		if (_dragged.x > _dragBounds.right) _dragged.x = _dragBounds.right;
+		if (_dragged.y > _dragBounds.bottom) _dragged.y = _dragBounds.bottom;
+		if (_dragged.x < _dragBounds.x) _dragged.x = _dragBounds.x;
+		if (_dragged.y < _dragBounds.y) _dragged.y = _dragBounds.y;
 	}
 
 	public static function stopUniversalDrag(dragged: IDisplayObject): Void {

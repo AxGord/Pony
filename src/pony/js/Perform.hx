@@ -32,11 +32,7 @@ class Perform implements HasSignal {
 			for (e in elements) e.style.opacity = e.style.opacity != HIDE_ALPHA ? HIDE_ALPHA : SHOW_ALPHA;
 		}
 		for (e in elements) {
-			#if !debug
-			e.style.opacity = HIDE_ALPHA;
-			#else
-			e.style.opacity = SHOW_ALPHA;
-			#end
+			e.style.opacity = #if !debug HIDE_ALPHA #else SHOW_ALPHA #end;
 			e.onclick = change;
 		}
 		#end

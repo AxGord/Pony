@@ -6,6 +6,8 @@ import pony.text.XmlTools;
 import types.BAConfig;
 import types.BASection;
 
+using StringTools;
+
 typedef CordovaConfig = {
 	> BAConfig,
 	name: String,
@@ -47,10 +49,9 @@ class Cordova extends CfgModule<CordovaConfig> {
 	private function cordovaHandler(a: String, b: String): Void {
 		modules.build.addHaxelib('cordova');
 		final cfg: AppCfg = Utils.parseArgs([a, b]);
-		if (cfg.debug) {
-			modules.commands.onAndroid >> androidBuildHandler;
-			modules.commands.onIphone >> iphoneBuildHandler;
-		}
+		if (!cfg.debug) return;
+		modules.commands.onAndroid >> androidBuildHandler;
+		modules.commands.onIphone >> iphoneBuildHandler;
 	}
 
 	private function androidBuildHandler(): Void addToRun(androidBuild);
@@ -94,7 +95,7 @@ class Cordova extends CfgModule<CordovaConfig> {
 		var wline: Int = 0;
 		var wfounded: Bool = false;
 		for (s in contentLines) {
-			s = StringTools.trim(s);
+			s = s.trim();
 			if (s.substr(0, OPEN_WIDGET_TAG.length) == OPEN_WIDGET_TAG) {
 				if (s.substr(-1) != '>') {
 					error('Widget tag close on other line, please fix $configFile');
@@ -158,10 +159,9 @@ class Cordova extends CfgModule<CordovaConfig> {
 			}
 		}
 
-		if (changes) {
-			configFile.content = content;
-			log('$configFile updated');
-		}
+		if (!changes) return;
+		configFile.content = content;
+		log('$configFile updated');
 	}
 
 }

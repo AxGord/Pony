@@ -6,6 +6,8 @@ import pony.events.Signal2;
 import pony.js.node.serial.SerialPort;
 import pony.time.Timer;
 
+using Lambda;
+
 class Serials extends Logable {
 
 	@:auto public var onConnect: Signal2<String, SerialPort>;
@@ -45,7 +47,7 @@ class Serials extends Logable {
 	}
 
 	private function updateTimerState(): Void {
-		if (founded.length < Lambda.count(list)) {
+		if (founded.length < list.count()) {
 			timer.reset();
 			timer.start();
 		} else {

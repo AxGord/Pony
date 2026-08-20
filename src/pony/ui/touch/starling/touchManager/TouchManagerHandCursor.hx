@@ -31,7 +31,7 @@ class TouchManagerHandCursor {
 
 	private function onTouch(e: TouchManagerEvent): Void {
 		if (e.type == Hover) setHandCursor(Mouse.cursor == MouseCursor.BUTTON);
-		setHandCursor(!(e.type == HoverOut || (e.type == Up && !e.mouseOver)));
+		setHandCursor(e.type != HoverOut && (e.type != Up || e.mouseOver));
 	}
 
 	private function setHandCursor(hand: Bool): Void {
@@ -52,10 +52,9 @@ class TouchManagerHandCursor {
 	}
 
 	private static function onEnterFrame(e: Event): Void {
-		if (_hand != _currentHand) {
-			_currentHand = _hand;
-			Mouse.cursor = _hand ? MouseCursor.BUTTON : MouseCursor.AUTO;
-		}
+		if (_hand == _currentHand) return;
+		_currentHand = _hand;
+		Mouse.cursor = _hand ? MouseCursor.BUTTON : MouseCursor.AUTO;
 	}
 
 	public function dispose(): Void {

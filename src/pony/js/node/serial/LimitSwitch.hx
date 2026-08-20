@@ -33,14 +33,11 @@ class LimitSwitch implements Declarator implements HasSignal {
 
 	private function extract(buf: String, key: String): Int {
 		var index: Int = buf.indexOf(key);
-		if (index != -1) {
-			var v: String = buf.substr(index + key.length);
-			index = v.indexOf(END);
-			v = v.substr(0, index);
-			return Std.parseInt(v);
-		} else {
-			return null;
-		}
+		if (index == -1) return null;
+		var v: String = buf.substr(index + key.length);
+		index = v.indexOf(END);
+		v = v.substr(0, index);
+		return Std.parseInt(v);
 	}
 
 	public function destroy(): Void {

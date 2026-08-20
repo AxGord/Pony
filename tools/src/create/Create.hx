@@ -10,6 +10,8 @@ import sys.io.File;
 import types.HaxeTargets;
 import types.ProjectType;
 
+using StringTools;
+
 /**
  * Create
  * @author AxGord <axgord@gmail.com>
@@ -310,7 +312,7 @@ class Create {
 
 	private static function saveTemplate(file: String, template: String, ?replaces: Map<String, String>): Void {
 		var data: String = Resource.getString(template);
-		if (replaces != null) for (key in replaces.keys()) data = StringTools.replace(data, '::$key::', replaces[key]);
+		if (replaces != null) for (key => value in replaces) data = data.replace('::$key::', value);
 		File.saveContent(file, data);
 	}
 

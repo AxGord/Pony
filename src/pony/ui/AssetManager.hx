@@ -92,8 +92,8 @@ class AssetManager implements HasLink {
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public static inline function getPath(asset: String): String {
-		asset = StringTools.replace(asset, '@', '');
-		return baseUrl + StringTools.replace(asset, '{local}', local);
+		asset = asset.replace('@', '');
+		return baseUrl + asset.replace('{local}', local);
 	}
 
 	public static dynamic function monitor(current: Int, total: Int): Void {}
@@ -190,7 +190,7 @@ class AssetManager implements HasLink {
 		}
 	}
 
-	private static function sum(a: Array<Int>): Int return Lambda.fold(a, _sum, 0);
+	private static function sum(a: Array<Int>): Int return a.fold(_sum, 0);
 
 	private static function _sum(v: Int, p: Int): Int return v + p;
 

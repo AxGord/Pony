@@ -64,11 +64,9 @@ class TouchableTouch {
 	}
 
 	private function isLock(t: UInt): Bool {
-		if (isNotLock(t)) {
-			touchId = t;
-			return false;
-		} else
-			return true;
+		if (!isNotLock(t)) return true;
+		touchId = t;
+		return false;
 	}
 
 	@SuppressWarnings('checkstyle:MagicNumber')
@@ -117,11 +115,9 @@ class TouchableTouch {
 				base.dispatchOutDown(id);
 				if (needCancle) lost(id);
 			}
-		} else {
-			if (c) {
-				over = true;
-				base.dispatchOverDown(id);
-			}
+		} else if (c) {
+			over = true;
+			base.dispatchOverDown(id);
 		}
 	}
 
@@ -129,10 +125,10 @@ class TouchableTouch {
 		if (touchId == id) {
 			lost(id);
 		} else if (!isNotLock(id) && down) {
-			if (!over)
-				lost(id);
-			else
+			if (over)
 				needCancle = true;
+			else
+				lost(id);
 		}
 	}
 

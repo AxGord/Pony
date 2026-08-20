@@ -10,6 +10,8 @@ import pixi.plugins.spine.core.SkeletonData;
 import pony.JsTools;
 import pony.ui.AssetManager;
 
+using StringTools;
+
 /**
  * PixiAssets
  * @author AxGord <axgord@gmail.com>
@@ -57,10 +59,7 @@ class PixiAssets {
 			asset = webpReplace(asset);
 			if (!jsons.exists(asset)) {
 				loader.add(asset, AssetManager.getPath(asset), { loadType: 0 }, function(r: Resource): Void {
-					if (asset.substr(-4) == 'json')
-						jsons[asset] = r.data;
-					else
-						jsons[asset] = Json.parse(r.data);
+					jsons[asset] = asset.substr(-4) == 'json' ? r.data : Json.parse(r.data);
 				});
 			}
 		} else {
@@ -71,19 +70,17 @@ class PixiAssets {
 	}
 
 	public static function linuxReplace(asset: String): String {
-		if (JsTools.os.equals(OS.Linux(Ubuntu)) || JsTools.os.equals(OS.Linux(Other)))
-			return StringTools.replace(asset, '{linux}', '_linux');
-		else
-			return StringTools.replace(asset, '{linux}', '');
+		return JsTools.os.equals(OS.Linux(Ubuntu)) || JsTools.os.equals(OS.Linux(Other))
+			? asset.replace('{linux}', '_linux')
+			: asset.replace('{linux}', '');
 	}
 
 	public static function webpReplace(asset: String): String {
-		asset = StringTools.replace(asset, '{webp}', JsTools.webp ? '_webp' : '');
-		asset = StringTools.replace(asset, '{webp|png}', JsTools.webp ? 'webp' : 'png');
-		asset = StringTools.replace(asset, '{png|webp}', JsTools.webp ? 'webp' : 'png');
-		asset = StringTools.replace(asset, '{webp|jpg}', JsTools.webp ? 'webp' : 'jpg');
-		asset = StringTools.replace(asset, '{jpg|webp}', JsTools.webp ? 'webp' : 'jpg');
-		return asset;
+		asset = asset.replace('{webp}', JsTools.webp ? '_webp' : '');
+		asset = asset.replace('{webp|png}', JsTools.webp ? 'webp' : 'png');
+		asset = asset.replace('{png|webp}', JsTools.webp ? 'webp' : 'png');
+		asset = asset.replace('{webp|jpg}', JsTools.webp ? 'webp' : 'jpg');
+		return asset.replace('{jpg|webp}', JsTools.webp ? 'webp' : 'jpg');
 	}
 
 	public static function loadSpine(asset: String, cb: SkeletonData -> Void): Void {

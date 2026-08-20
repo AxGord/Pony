@@ -39,10 +39,10 @@ class DeclaratorBuilder {
 								toNew.push(macro this.$n = $i{n});
 							case _:
 								args.push({ name: n, opt: e != null, type: t });
-								if (e == null)
-									toNew.push(macro this.$n = $i{n});
+								toNew.push(if (e == null)
+									macro this.$n = $i{n}
 								else
-									toNew.push(macro this.$n = $i{n} != null ? $i{n} : $i{n} = $e);
+									macro this.$n = $i{n} != null ? $i{n} : $i{n} = $e);
 						}
 
 					} else if (e != null) {
@@ -64,10 +64,10 @@ class DeclaratorBuilder {
 								toNew.push(macro this.$n = $i{n});
 							case _:
 								args.push({ name: n, opt: e != null, type: t });
-								if (e == null)
-									toNew.push(macro this.$n = $i{n});
+								toNew.push(if (e == null)
+									macro this.$n = $i{n}
 								else
-									toNew.push(macro this.$n = $i{n} != null ? $i{n} : $i{n} = $e);
+									macro this.$n = $i{n} != null ? $i{n} : $i{n} = $e);
 						}
 					} else if (e != null) {
 						final t = Lambda.indexOf(f.access, AStatic) == -1 ? toNew : toInit;
@@ -100,10 +100,8 @@ class DeclaratorBuilder {
 
 		if (fNew == null) {
 			final s = Context.getLocalClass().get().superClass;
-			if (s != null) {
-				if (haveArgs(s.t.get().constructor.get().type)) {
-					toNew.push(macro super());
-				}
+			if (s != null && haveArgs(s.t.get().constructor.get().type)) {
+				toNew.push(macro super());
 			}
 
 			fNew = Tools.createNew();

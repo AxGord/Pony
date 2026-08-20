@@ -51,11 +51,9 @@ class SmoothBarCore extends BarCore {
 				n = percent;
 				DeltaTime.fixedUpdate >> updateSmoothPercent;
 			}
-		} else {
-			if (n <= percent + 0.001) {
-				n = percent;
-				DeltaTime.fixedUpdate >> updateSmoothPercent;
-			}
+		} else if (n <= percent + 0.001) {
+			n = percent;
+			DeltaTime.fixedUpdate >> updateSmoothPercent;
 		}
 		smoothPercent = n;
 		changeSmoothPercentHandler(smoothPercent);

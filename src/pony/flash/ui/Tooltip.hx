@@ -33,11 +33,7 @@ class Tooltip {
 	public function new(tooltip: IDisplayObject) {
 		_tooltip = tooltip;
 
-		#if starling
-		_container = untyped Starling.current.root;
-		#else
-		_container = untyped Lib.current;
-		#end
+		_container = #if starling untyped Starling.current.root #else untyped Lib.current #end;
 
 		_tooltip.visible = false;
 		_tooltip.setTouchable(false);
@@ -83,7 +79,7 @@ class Tooltip {
 		if (longBackground != null && longTextField != null) {
 			longBackground.height = longBgExtraHeight - longBackground.y + longTextField.getTextHeight() + longTextField.y;
 		}
-		longBackground.visible = !(longTextField == null || longTextField.text == '');
+		longBackground.visible = longTextField != null && longTextField.text != '';
 
 	}
 

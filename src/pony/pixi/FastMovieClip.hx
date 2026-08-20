@@ -50,11 +50,7 @@ class FastMovieClip extends AnimTextureCore {
 		crop: Int = 0
 	): FastMovieClip {
 		final n = idFromTexture(converOrFirst(data));
-		if (!storage.exists(n)) {
-			return storage[n] = new FastMovieClip(data, frameTime, fixedTime, smooth, crop);
-		} else {
-			return storage[n];
-		}
+		return !storage.exists(n) ? storage[n] = new FastMovieClip(data, frameTime, fixedTime, smooth, crop) : storage[n];
 	}
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
@@ -132,10 +128,9 @@ class FastMovieClip extends AnimTextureCore {
 		final r = data[n].b;
 		t.frame = r;
 		if (crop > 0) {
-			if (t.trim == null)
-				t.trim = new Rectangle(-crop, -crop, r.width + crop * 2, r.height + crop * 2);
-			else
-				t.trim = new Rectangle(t.trim.x - crop, t.trim.y - crop, t.trim.width + crop * 2, t.trim.height + crop * 2);
+			t.trim = t.trim == null
+				? new Rectangle(-crop, -crop, r.width + crop * 2, r.height + crop * 2)
+				: new Rectangle(t.trim.x - crop, t.trim.y - crop, t.trim.width + crop * 2, t.trim.height + crop * 2);
 		}
 	}
 

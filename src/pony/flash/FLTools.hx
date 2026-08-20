@@ -93,16 +93,15 @@ class FLTools {
 		if (Lib.current != null && Lib.current.stage != null) {
 			cb(Lib.current.stage);
 			return null;
-		} else {
-			final timer: Timer = new Timer(100);
-			timer.run = function() {
-				if (Lib.current != null && Lib.current.stage != null) {
-					timer.stop();
-					cb(Lib.current.stage);
-				}
-			}
-			return timer;
 		}
+		final timer: Timer = new Timer(100);
+		timer.run = function() {
+			if (Lib.current != null && Lib.current.stage != null) {
+				timer.stop();
+				cb(Lib.current.stage);
+			}
+		}
+		return timer;
 	}
 
 	#if !openfl

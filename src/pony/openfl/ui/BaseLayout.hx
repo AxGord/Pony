@@ -31,18 +31,16 @@ class BaseLayout<T:BaseLayoutCore<DisplayObject>> extends Sprite implements IWH 
 	}
 
 	private function load(obj: DisplayObject): Void {
-		if (Std.is(obj, Sprite)) {
-			layout.tasks.add();
-			layout.tasks.end();
-		}
+		if (!Std.is(obj, Sprite)) return;
+		layout.tasks.add();
+		layout.tasks.end();
 	}
 
 	private function destroyChild(obj: DisplayObject): Void {
-		if (Std.is(obj, DisplayObject)) {
-			var s: DisplayObject = cast obj;
-			removeChild(s);
-			s = null;
-		}
+		if (!Std.is(obj, DisplayObject)) return;
+		var s: DisplayObject = cast obj;
+		removeChild(s);
+		s = null;
 	}
 
 	private function setXpos(obj: DisplayObject, v: Float): Void obj.x = v;

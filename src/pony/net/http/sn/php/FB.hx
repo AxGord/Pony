@@ -32,23 +32,24 @@ class FB implements IFB {
 
 	public function me(token: String, cb: FBData -> Void): Void {
 		api(token, '/me', function(res) {
-			if (res == null || res.error != null) {
-				cb(null);
-			} else {
-				cb({
-					id: res.getProperty('id'),
-					email: res.getProperty('email'),
-					first_name: res.getProperty('first_name'),
-					isMale: res.getProperty('gender') == 'male',
-					last_name: res.getProperty('last_name'),
-					name: res.getProperty('name'),
-					link: res.getProperty('link'),
-					locale: res.getProperty('locale'),
-					timezone: Std.parseInt(res.getProperty('timezone')),
-					updated_time: res.getProperty('updated_time'),
-					verified: res.getProperty('verified') == 'true'
-				});
-			}
+			cb(
+				if (res == null || res.error != null)
+					null
+				else
+					{
+						id: res.getProperty('id'),
+						email: res.getProperty('email'),
+						first_name: res.getProperty('first_name'),
+						isMale: res.getProperty('gender') == 'male',
+						last_name: res.getProperty('last_name'),
+						name: res.getProperty('name'),
+						link: res.getProperty('link'),
+						locale: res.getProperty('locale'),
+						timezone: Std.parseInt(res.getProperty('timezone')),
+						updated_time: res.getProperty('updated_time'),
+						verified: res.getProperty('verified') == 'true'
+					}
+			);
 		});
 	}
 

@@ -18,6 +18,8 @@ import pony.time.DTimer;
 import pony.time.Time;
 import pony.Tumbler;
 
+using StringTools;
+
 typedef HtmlVideoOptions = {
 	?bufferingTreshhold: Int,
 	?retryDelay: Int,
@@ -251,8 +253,8 @@ class HtmlVideo implements HasSignal implements HasLink {
 
 	public function loadVideo(url: String): Void {
 		if (qualities != null) {
-			url = StringTools.replace(url, '{quality}', qualities[qualityIndex]);
-			url = StringTools.replace(url, '/quality/', '/${qualities[qualityIndex]}/');
+			url = url.replace('{quality}', qualities[qualityIndex]);
+			url = url.replace('/quality/', '/${qualities[qualityIndex]}/');
 		}
 		final playingbefore = isPlaying;
 		_unloadVideo();
@@ -293,10 +295,9 @@ class HtmlVideo implements HasSignal implements HasLink {
 	private function videoSourceErrorHandler(e: Error): Void DTimer.fixedDelay(retryDelay, retryConnect);
 
 	private function retryConnect(): Void {
-		if (videoSource != null && retryCount < maxRetries) {
-			loadVideo(videoSource.src);
-			retryCount++;
-		}
+		if (videoSource == null || retryCount >= maxRetries) return;
+		loadVideo(videoSource.src);
+		retryCount++;
 	}
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
@@ -391,10 +392,9 @@ class HtmlVideo implements HasSignal implements HasLink {
 	}
 
 	private function endedHandler(): Void {
-		if (!ended) {
-			ended = true;
-			eEnd.dispatch();
-		}
+		if (ended) return;
+		ended = true;
+		eEnd.dispatch();
 	}
 
 	public function reset(): Void {
@@ -407,10 +407,9 @@ class HtmlVideo implements HasSignal implements HasLink {
 
 	private function tick(): Void {
 		position += 1000;
-		if (!pony.math.MathTools.approximately(position.totalSeconds, progress.current, 3)) {
-			progress.current = elementCurrentTime = position.totalSeconds;
-			eSync.dispatch();
-		}
+		if (pony.math.MathTools.approximately(position.totalSeconds, progress.current, 3)) return;
+		progress.current = elementCurrentTime = position.totalSeconds;
+		eSync.dispatch();
 	}
 
 }

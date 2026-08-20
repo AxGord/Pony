@@ -50,18 +50,16 @@ class BaseLayout<T:BaseLayoutCore<Container>> extends Sprite implements IWH {
 	}
 
 	private function load(obj: Container): Void {
-		if (Std.is(obj, Sprite)) {
-			layout.tasks.add();
-			cast(obj, Sprite).loaded(layout.tasks.end);
-		}
+		if (!Std.is(obj, Sprite)) return;
+		layout.tasks.add();
+		cast(obj, Sprite).loaded(layout.tasks.end);
 	}
 
 	private function destroyChild(obj: Container): Void {
-		if (Std.is(obj, DisplayObject)) {
-			final s: DisplayObject = cast obj;
-			removeChild(s);
-			s.destroy();
-		}
+		if (!Std.is(obj, DisplayObject)) return;
+		final s: DisplayObject = cast obj;
+		removeChild(s);
+		s.destroy();
 	}
 
 	private function setXpos(obj: Container, v: Float): Void obj.x = v;
@@ -71,10 +69,9 @@ class BaseLayout<T:BaseLayoutCore<Container>> extends Sprite implements IWH {
 	public function wait(cb: Void -> Void): Void layout.wait(cb);
 
 	private function getSize(o: Container): Point<Float> {
-		return if (Std.is(o, BitmapText))
-			new Point(untyped o.textWidth, untyped o.textHeight);
-		else
-			new Point(o.width * o.scale.x, o.height * o.scale.y);
+		return Std.is(o, BitmapText)
+			? new Point(untyped o.textWidth, untyped o.textHeight)
+			: new Point(o.width * o.scale.x, o.height * o.scale.y);
 	}
 
 	private static function getSizeMod(o: Container, p: Point<Float>): Point<Float>

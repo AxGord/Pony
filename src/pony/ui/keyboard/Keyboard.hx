@@ -68,10 +68,9 @@ class Keyboard implements Declarator implements HasSignal implements HasLink {
 		if (pressedKeys.indexOf(k) == -1) return;
 		eClick.dispatch(k);
 		pressedKeys.remove(k);
-		if (pressedKeys.length == 0) {
-			presser.destroy();
-			presser = null;
-		}
+		if (pressedKeys.length != 0) return;
+		presser.destroy();
+		presser = null;
 	}
 
 	private static function inputPress(k: UInt): Void {
@@ -90,7 +89,7 @@ class Keyboard implements Declarator implements HasSignal implements HasLink {
 	private static function disable(): Void {
 		if (!_enabled || km == null) return;
 		_enabled = false;
-		if (presser != null) presser.destroy();
+		presser?.destroy();
 		pressedKeys = [];
 		km.up.clear();
 		km.down.clear();

@@ -25,9 +25,7 @@ class DisplayListStaticExtentions {
 		#if starling
 		if (Std.is(object, starling.display.DisplayObject)) return StarlingStaticExtentions.getTouchable(cast object);
 		#end
-		if (Std.is(object, flash.display.DisplayObject)) return FlashStaticExtentions.getTouchable(cast object);
-
-		return false;
+		return Std.is(object, flash.display.DisplayObject) && FlashStaticExtentions.getTouchable(cast object);
 	}
 
 	public static function startUniversalDrag(dragged: IDisplayObject, lockCenter: Bool = false, ?bounds: Rectangle): Void {
@@ -46,18 +44,14 @@ class DisplayListStaticExtentions {
 		#if starling
 		if (Std.is(textField, starling.text.TextField)) return StarlingStaticExtentions.getTextWidth(cast textField);
 		#end
-		if (Std.is(textField, flash.text.TextField)) return FlashStaticExtentions.getTextWidth(cast textField);
-
-		return 0;
+		return Std.is(textField, flash.text.TextField) ? FlashStaticExtentions.getTextWidth(cast textField) : 0;
 	}
 
 	public static function getTextHeight(textField: ITextField): Float {
 		#if starling
 		if (Std.is(textField, starling.text.TextField)) return StarlingStaticExtentions.getTextHeight(cast textField);
 		#end
-		if (Std.is(textField, flash.text.TextField)) return FlashStaticExtentions.getTextHeight(cast textField);
-
-		return 0;
+		return Std.is(textField, flash.text.TextField) ? FlashStaticExtentions.getTextHeight(cast textField) : 0;
 	}
 
 	public static function gotoAndPlay(clip: IMovieClip, frame: Int): Void {
@@ -128,9 +122,7 @@ class FlashStaticExtentions {
 	}
 
 	public static function getTouchable(object: flash.display.DisplayObject): Bool {
-		if (Std.is(object, flash.display.InteractiveObject)) return cast(object, flash.display.InteractiveObject).mouseEnabled;
-
-		return false;
+		return Std.is(object, flash.display.InteractiveObject) && cast(object, flash.display.InteractiveObject).mouseEnabled;
 	}
 
 	public static function startUniversalDrag(dragged: flash.display.DisplayObject, lockCenter: Bool = false, ?bounds: Rectangle): Void {

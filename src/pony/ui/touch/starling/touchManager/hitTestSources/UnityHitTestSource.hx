@@ -24,17 +24,11 @@ class UnityHitTestSource implements IHitTestSource {
 		final vHit = new RaycastHit();
 		final vRay: Ray = _camera.ScreenPointToRay(new Vector3(x, y, 0));
 		// if(Physics.Raycast(vRay, vHit, 1000))
-		if (Physics.Raycast(vRay, vHit)) {
-			return vHit.transform;
-		}
-
-		return null;
+		return Physics.Raycast(vRay, vHit) ? vHit.transform : null;
 	}
 
 	public function parent(object: Dynamic): Dynamic {
-		if (!Std.is(object, Transform)) return null;
-		final objectsParent = object.parent;
-		return objectsParent;
+		return !Std.is(object, Transform) ? null : object.parent;
 	}
 
 }

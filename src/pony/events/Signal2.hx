@@ -38,10 +38,9 @@ abstract Signal2<T1, T2>(Priority<Listener2<T1, T2>>) from Event2<T1, T2> from P
 
 	private inline function unlistenSubChange(l: Listener2<T1, T2>): Void {
 		final e: Null<Priority<Any>> = l.event;
-		if (e != null) {
-			@:privateAccess e.onLost.directRemove(this.changeReals);
-			@:privateAccess e.onTake.directRemove(this.changeReals);
-		}
+		if (e == null) return;
+		@:privateAccess e.onLost.directRemove(this.changeReals);
+		@:privateAccess e.onTake.directRemove(this.changeReals);
 	}
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end

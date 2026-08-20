@@ -93,10 +93,9 @@ class ColorPicker extends Sprite implements HasSignal {
 	}
 
 	public inline function clear(): Void {
-		if (bitmap != null) {
-			removeChild(bitmap);
-			bitmapData.dispose();
-		}
+		if (bitmap == null) return;
+		removeChild(bitmap);
+		bitmapData.dispose();
 	}
 
 	public function draw(w: UInt, h: UInt): Void {

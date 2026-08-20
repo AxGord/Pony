@@ -156,17 +156,7 @@ using hugs.HUGSWrapper;
 			transform.Translate(unityengine.Vector3.forward.mul(m));
 		}
 		#else
-		if (!isInverted) {
-			if (unityengine.Input.GetAxis('Mouse ScrollWheel') < 0 && distance < maxDist) {
-				distance += zoomSpeed;
-				this.transform.Translate(unityengine.Vector3.forward.mul(-zoomSpeed));
-			}
-
-			if (unityengine.Input.GetAxis('Mouse ScrollWheel') > 0 && distance > minDist) {
-				distance -= zoomSpeed;
-				transform.Translate(unityengine.Vector3.forward.mul(zoomSpeed));
-			}
-		} else {
+		if (isInverted) {
 
 			if (unityengine.Input.GetAxis('Mouse ScrollWheel') < 0 && distance > minDist) {
 				distance -= zoomSpeed;
@@ -176,6 +166,16 @@ using hugs.HUGSWrapper;
 			if (unityengine.Input.GetAxis('Mouse ScrollWheel') > 0 && distance < maxDist) {
 				distance += zoomSpeed;
 				transform.Translate(unityengine.Vector3.forward.mul(-zoomSpeed));
+			}
+		} else {
+			if (unityengine.Input.GetAxis('Mouse ScrollWheel') < 0 && distance < maxDist) {
+				distance += zoomSpeed;
+				this.transform.Translate(unityengine.Vector3.forward.mul(-zoomSpeed));
+			}
+
+			if (unityengine.Input.GetAxis('Mouse ScrollWheel') > 0 && distance > minDist) {
+				distance -= zoomSpeed;
+				transform.Translate(unityengine.Vector3.forward.mul(zoomSpeed));
 			}
 		}
 		#end

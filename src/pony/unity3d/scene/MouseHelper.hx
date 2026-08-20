@@ -86,8 +86,7 @@ using hugs.HUGSWrapper;
 	public function ft(): Void {
 		if (renderer != null && collider == null) gameObject.addTypedComponent(MeshCollider);
 
-		for (e in gameObject.getComponentsInChildrenOfType(Transform)) {
-			if (e == transform) continue;
+		for (e in gameObject.getComponentsInChildrenOfType(Transform)) if (e != transform) {
 			ovr = e.gameObject.getTypedComponent(MouseHelper);
 			if (ovr == null) {
 				ovr = e.gameObject.addTypedComponent(MouseHelper);
@@ -141,13 +140,11 @@ using hugs.HUGSWrapper;
 				globalMiddleDown.add(middleDown.dispatchEvent);
 				globalMiddleUp.add(middleUp.dispatchEvent);
 			}
-		} else {
-			if (overed) {
-				ovrs--;
-				out.dispatch();
-				globalMiddleDown.remove(middleDown.dispatchEvent);
-				globalMiddleUp.remove(middleUp.dispatchEvent);
-			}
+		} else if (overed) {
+			ovrs--;
+			out.dispatch();
+			globalMiddleDown.remove(middleDown.dispatchEvent);
+			globalMiddleUp.remove(middleUp.dispatchEvent);
 		}
 	}
 

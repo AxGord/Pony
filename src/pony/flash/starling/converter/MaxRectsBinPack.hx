@@ -60,8 +60,7 @@ class MaxRectsBinPack {
 	}
 
 	private function count(n: Float): Float {
-		if (n >= 2) return count(n / 2);
-		return n;
+		return n >= 2 ? count(n / 2) : n;
 	}
 
 	/**
@@ -102,12 +101,11 @@ class MaxRectsBinPack {
 				final score1: Int = 0;
 				final score2: Int = 0;
 				final newNode: Rectangle = scoreRectangle(cast rectangles[i].width, cast rectangles[i].height, method, score1, score2);
-				if (score1 < bestScore1 || (score1 == bestScore1 && score2 < bestScore2)) {
-					bestScore1 = score1;
-					bestScore2 = score2;
-					bestNode = newNode;
-					bestRectangleIndex = i;
-				}
+				if (score1 >= bestScore1 && (score1 != bestScore1 || score2 >= bestScore2)) continue;
+				bestScore1 = score1;
+				bestScore2 = score2;
+				bestNode = newNode;
+				bestRectangleIndex = i;
 			}
 			if (bestRectangleIndex == -1) return;
 			placeRectangle(bestNode);
@@ -366,8 +364,7 @@ class MaxRectsBinPack {
 
 	/// Returns 0 if the two Intervals i1 and i2 are disjoInt, or the length of their overlap otherwise.
 	private function commonIntervalLength(i1start: Int, i1end: Int, i2start: Int, i2end: Int): Int {
-		if (i1end < i2start || i2end < i1start) return 0;
-		return cast(Math.min(i1end, i2end) - Math.max(i1start, i2start));
+		return i1end < i2start || i2end < i1start ? 0 : cast(Math.min(i1end, i2end) - Math.max(i1start, i2start));
 	}
 
 	private function contactPoIntScoreNode(x: Int, y: Int, width: Int, height: Int): Int {

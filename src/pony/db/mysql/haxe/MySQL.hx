@@ -48,14 +48,14 @@ class MySQL extends SQLBase {
 	/**
 	 * Make action, query with boolean result
 	 */
-	public function action(q: String, ?actName: String, ?p: PosInfos, _result: Bool -> Void): Void {
+	public function action(q: String, ?actName: String, ?p: PosInfos, result: Bool -> Void): Void {
 		log(q, p);
 		try {
 			connection.request(q);
-			_result(true);
+			result(true);
 		} catch (err: Dynamic) {
 			error(actName == null ? '$err' : 'Can\'t $actName: $err', p);
-			_result(false);
+			result(false);
 		}
 
 	}

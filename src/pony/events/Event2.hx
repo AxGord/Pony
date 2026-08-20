@@ -74,10 +74,9 @@ abstract Event2<T1, T2>(Priority<Listener2<T1, T2>>) from Priority<Listener2<T1,
 			if (this.isDestroy()) return;
 			if (e.once) this.remove(e);
 			e.call(a1, a2, controller, safe);
-			if (controller.stop) {
-				this.brk();
-				break;
-			}
+			if (!controller.stop) continue;
+			this.brk();
+			break;
 		}
 		this.lock = false;
 	}
@@ -145,10 +144,9 @@ abstract Event2<T1, T2>(Priority<Listener2<T1, T2>>) from Priority<Listener2<T1,
 	}
 
 	public inline function destroy(): Void {
-		if (this != null) {
-			(this: Signal2<T1, T2>).clear();
-			this.destroy();
-		}
+		if (this == null) return;
+		(this: Signal2<T1, T2>).clear();
+		this.destroy();
 	}
 
 }

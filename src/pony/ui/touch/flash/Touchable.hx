@@ -29,15 +29,13 @@ class Touchable extends TouchableBase {
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function get_touchSupport(): Bool {
-		#if touchsim
-		return true;
-		#else
-		return Multitouch.supportsTouchEvents;
-		#end
+		return #if touchsim true #else Multitouch.supportsTouchEvents #end;
 	}
 
 	public static function init(?inputMode: MultitouchInputMode): Void {
-		if (!inited) {
+		if (inited) {
+			if (touchSupport && inputMode != null) Multitouch.inputMode = inputMode;
+		} else {
 			inited = true;
 			Mouse.init();
 			if (touchSupport) {
@@ -50,8 +48,6 @@ class Touchable extends TouchableBase {
 			} else {
 				DeltaTime.fixedUpdate < Mouse.enableStd;
 			}
-		} else {
-			if (touchSupport && inputMode != null) Multitouch.inputMode = inputMode;
 		}
 	}
 

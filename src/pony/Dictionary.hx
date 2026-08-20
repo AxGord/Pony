@@ -28,29 +28,23 @@ class Dictionary<K, V> {
 		if (i != -1) {
 			vs[i] = v;
 			return i;
-		} else {
-			ks.push(k);
-			return vs.push(v);
 		}
+		ks.push(k);
+		return vs.push(v);
 	}
 
 	public function get(k: K): V {
 		final i: Int = getIndex(k);
-		if (i == -1)
-			return null;
-		else
-			return vs[i];
+		return i == -1 ? null : vs[i];
 	}
 
 	public inline function exists(k: K): Bool return getIndex(k) != -1;
 
 	public function remove(k: K): Bool {
 		final i: Int = getIndex(k);
-		if (i != -1) {
-			removeIndex(i);
-			return true;
-		} else
-			return false;
+		if (i == -1) return false;
+		removeIndex(i);
+		return true;
 	}
 
 	public inline function removeIndex(i: Int): Void {
@@ -74,16 +68,14 @@ class Dictionary<K, V> {
 
 	public function removeValue(v: V): Void {
 		final i: Int = getValueIndex(v);
-		if (i != -1) {
-			ks.splice(i, 1);
-			vs.splice(i, 1);
-		}
+		if (i == -1) return;
+		ks.splice(i, 1);
+		vs.splice(i, 1);
 	}
 
 	public function getKey(v: V): K {
 		final i: Int = getValueIndex(v);
-		if (i == -1) return null;
-		return ks[i];
+		return i == -1 ? null : ks[i];
 	}
 
 	public inline function getValueIndex(v: V): Int return vs.indexOf(v);

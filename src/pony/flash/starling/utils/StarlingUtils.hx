@@ -36,7 +36,7 @@ class StarlingUtils {
 
 			for (i in 0...xTextures) {
 				for (j in 0...yTextures) {
-					final textureSourceInit: Void -> BitmapData = function(): BitmapData {
+					function textureSourceInit(): BitmapData {
 						final textureWidth: Int = i == xTextures - 1 ? data.width - i * 2048 : 2048;
 						final textureHeight: Int = j == yTextures - 1 ? data.height - j * 2048 : 2048;
 
@@ -51,7 +51,6 @@ class StarlingUtils {
 
 						return bmpd;
 					}
-
 					var texture: Texture = Texture.fromBitmapData(textureSourceInit(), mipMaps);
 					texture.root.onRestore = function(): Void {
 						texture.root.uploadBitmapData(textureSourceInit());

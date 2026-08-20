@@ -23,16 +23,15 @@ class Section implements HasAbstract {
 	}
 
 	private function init(): Void {
-		if (root == null) {
-			root = Xml.createElement(name);
-			if (appNode != null) {
-				apps = Xml.createElement('apps');
-				root.addChild(apps);
-				xml = Xml.createElement(appNode);
-				apps.addChild(xml);
-			} else {
-				xml = root;
-			}
+		if (root != null) return;
+		root = Xml.createElement(name);
+		if (appNode != null) {
+			apps = Xml.createElement('apps');
+			root.addChild(apps);
+			xml = Xml.createElement(appNode);
+			apps.addChild(xml);
+		} else {
+			xml = root;
 		}
 	}
 

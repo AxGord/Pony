@@ -32,11 +32,11 @@ class BaseStream<T> implements HasSignal {
 			eData.dispatch(buffer);
 			buffer = null;
 			getData();
-		} else if (!sendNext) {
+		} else if (sendNext) {
+			throw 'So fast';
+		} else {
 			sendNext = true;
 			getData();
-		} else {
-			throw 'So fast';
 		}
 	}
 
@@ -59,10 +59,9 @@ class BaseStream<T> implements HasSignal {
 			throw 'So fast';
 		}
 
-		if (nextRequest) {
-			nextRequest = false;
-			getData();
-		}
+		if (!nextRequest) return;
+		nextRequest = false;
+		getData();
 	}
 
 	public function end(b: T): Void {
@@ -81,10 +80,10 @@ class BaseStream<T> implements HasSignal {
 		if (!dataRequested) {
 			dataRequested = true;
 			eGetData.dispatch();
-		} else if (!nextRequest) {
-			nextRequest = true;
-		} else {
+		} else if (nextRequest) {
 			throw 'So fast';
+		} else {
+			nextRequest = true;
 		}
 	}
 

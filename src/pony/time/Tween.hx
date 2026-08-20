@@ -5,6 +5,8 @@ import pony.magic.Declarator;
 import pony.magic.HasSignal;
 import pony.math.MathTools;
 
+using StringTools;
+
 #if (haxe_ver >= 4.2) enum #else @:enum #end abstract TweenType(Int) {
 
 	var Linear = 0;
@@ -13,7 +15,7 @@ import pony.math.MathTools;
 	var Bezier = 3;
 
 	@:from public static function fromString(s: String): TweenType {
-		return switch StringTools.trim(s).toLowerCase() {
+		return switch s.trim().toLowerCase() {
 			case 'linear': Linear;
 			case 'square': Square;
 			case 'backsquare': BackSquare;
@@ -65,9 +67,8 @@ class Tween implements HasSignal implements Declarator {
 		if (pingpong) {
 			if (skipTime == null) skipTime = time / HALF_SECOND;
 			onComplete << invertInvert;
-		} else {
-			if (skipTime == null) skipTime = time / SECOND;
-		}
+		} else if (skipTime == null)
+			skipTime = time / SECOND;
 		this.skipTime = skipTime;
 		onComplete << endPlay;
 		if (loop) onComplete << play;
@@ -119,15 +120,14 @@ class Tween implements HasSignal implements Declarator {
 		}
 		if (invert) {
 			if (progress == 0) progress = 1;
-		} else {
-			if (progress == 1) progress = 0;
-		}
-		if (!invert) {
-			updateSignal << forward;
-			if ((dt: Null<Float>) != null) forward(dt);
-		} else {
+		} else if (progress == 1)
+			progress = 0;
+		if (invert) {
 			updateSignal << backward;
 			if ((dt: Null<Float>) != null) backward(dt);
+		} else {
+			updateSignal << forward;
+			if ((dt: Null<Float>) != null) forward(dt);
 		}
 	}
 

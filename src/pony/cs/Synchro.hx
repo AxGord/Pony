@@ -26,11 +26,9 @@ class Synchro {
 			isSynchred = false;
 			return false;
 		}
-		if (isSynchred) {
-			Monitor.Exit(obj);
-			return true;
-		} else
-			return false;
+		if (!isSynchred) return false;
+		Monitor.Exit(obj);
+		return true;
 	}
 
 	/**
@@ -48,11 +46,9 @@ class Synchro {
 			isSynchred = false;
 			return false;
 		}
-		if (isSynchred) {
-			m.ReleaseMutex();
-			return true;
-		} else
-			return false;
+		if (!isSynchred) return false;
+		m.ReleaseMutex();
+		return true;
 	}
 
 }
