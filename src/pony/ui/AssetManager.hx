@@ -40,9 +40,9 @@ class AssetManager implements HasLink {
 
 	public static var baseUrl: String = '';
 	public static var local: String = '';
-	private static var units: Map<String, Bytes> = new Map<String, Bytes>();
+	private static var units: Map<String, Bytes> = [];
 	private static var loadedAssets: Array<String> = [];
-	private static var globalLoad: Map<String, Array<Int -> Int -> Void>> = new Map();
+	private static var globalLoad: Map<String, Array<Int -> Int -> Void>> = [];
 	private static var changedNames: Bool = false;
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
@@ -108,7 +108,7 @@ class AssetManager implements HasLink {
 			return;
 		} else if (pathes.length == 1) {
 			if (pathes[0] != '')
-				load([for (a in assets) pathes[0] + '/' + a], cb);
+				load([for (a in assets) '${pathes[0]}/$a'], cb);
 			else
 				load(assets, cb);
 			return;
@@ -148,7 +148,7 @@ class AssetManager implements HasLink {
 		}
 		switch asset {
 			case OrState.A(asset):
-				asset = (path == '' ? '' : path.charAt(path.length - 1) == '/' ? path : path + '/') + asset;
+				asset = (path == '' ? '' : path.charAt(path.length - 1) == '/' ? path : '$path/') + asset;
 				if (loadedAssets.indexOf(asset) != -1) {
 					cb(MAX_ASSET_PROGRESS, MAX_ASSET_PROGRESS);
 					return;

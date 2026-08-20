@@ -34,7 +34,7 @@ class FLStageBuilder {
 					case FVar(t, _):
 						f.kind = FProp('get', allowSet ? 'set' : 'never', t);
 						fields.push({
-							name: 'get_' + f.name,
+							name: 'get_${f.name}',
 							kind: FFun({
 								args: [],
 								ret: t,
@@ -50,7 +50,7 @@ class FLStageBuilder {
 						});
 						if (allowSet) // Only flash!
 							fields.push({
-								name: 'set_' + f.name,
+								name: 'set_${f.name}',
 								kind: FFun({
 									args: [{ name: 'v', type: t }],
 									ret: t,

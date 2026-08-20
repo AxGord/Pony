@@ -109,7 +109,7 @@ class PixiXmlUi extends LogableSprite implements HasAbstract {
 	private static inline var PX: String = 'px ';
 	private static inline var GLOW_FILTER_OFFSET: Int = 2;
 
-	private var FILTERS: Map<String, Filter> = new Map();
+	private var FILTERS: Map<String, Filter> = [];
 	private var SCALE: Float = 1;
 	public var app(default, null): App;
 	private var tweens: TweenMap<Dynamic> = [];

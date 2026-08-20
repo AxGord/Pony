@@ -19,7 +19,7 @@ import nape.geom.GeomPolyList;
  */
 class BodyShape extends BodyBase {
 
-	public static var CACHE: Map<String, GeomPolyList> = new Map<String, GeomPolyList>();
+	public static var CACHE: Map<String, GeomPolyList> = [];
 
 	public var sbytes(default, null): Bytes;
 	public var resolution(default, null): Float;

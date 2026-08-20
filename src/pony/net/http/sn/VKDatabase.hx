@@ -67,7 +67,7 @@ class VKDatabase {
 					return;
 				}
 			}
-			cb(Std.string(id));
+			cb('$id');
 		});
 	}
 

@@ -13,7 +13,7 @@ package pony;
 
 	public inline function get(): T {
 		var v: Null<T> = list.pop();
-		return v == null ? fn() : v;
+		return v ?? fn();
 	}
 
 	public inline function ret(obj: T): Void list.push(obj);

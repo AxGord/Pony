@@ -22,7 +22,7 @@ import pony.Logable;
 	}
 
 	private function connectHandler(connection: IHttpConnection): Void {
-		log('Http get: ' + connection.url);
+		log('Http get: ${connection.url}');
 		connection.sendFileOrIndexHtml(path + connection.url);
 	}
 

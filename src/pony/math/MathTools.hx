@@ -102,12 +102,12 @@ class MathTools {
 
 	public static inline function float1000(v: Float): Float return intTo(v, 3);
 
-	public static inline function formatPercent(v: Float): String return float100(v * 100) + '%';
+	public static inline function formatPercent(v: Float): String return '${float100(v * 100)}%';
 
-	public static inline function lengthBeforeComma(v: Float): Int return Std.string(v).split('.')[0].length;
+	public static inline function lengthBeforeComma(v: Float): Int return '$v'.split('.')[0].length;
 
 	public static inline function lengthAfterComma(v: Float): Int {
-		var a: Array<String> = Std.string(v).split('.');
+		var a: Array<String> = '$v'.split('.');
 		return a.length < 2 ? 0 : a[1].length;
 	}
 
@@ -121,7 +121,7 @@ class MathTools {
 	}
 
 	public static function shortValue(value: Int): String {
-		var s: String = Std.string(value);
+		var s: String = '$value';
 		var count: Int = Std.int((s.length - 1) / 3);
 		var sub: String = s.substr(0, s.length - 3 * count);
 		return sub + switch count {

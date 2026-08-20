@@ -8,7 +8,7 @@ import pony.text.tpl.TplPut;
  * MVKPutSub
  * @author AxGord <axgord@gmail.com>
  */
-@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
+@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
 @:final class MVKPutSub extends TplPut<MVKConnect, {}> {
 
 	@:async
@@ -37,11 +37,11 @@ import pony.text.tpl.TplPut;
 	@:async
 	override public function shortTag(name: String, arg: String, ?kid: ITplPut): String {
 		return switch (name) {
-			case 'token': Std.string(a.token);
+			case 'token': '${a.token}';
 			case 'button': a.token != null ? '' : a.base.buttonData;
-			case 'appid': Std.string(a.base.appid);
-			case 'id': Std.string(@await a.getId());
-			default: @await super.shortTag(name, arg, kid);
+			case 'appid': '${a.base.appid}';
+			case 'id': '${@await a.getId()}';
+			case _: @await super.shortTag(name, arg, kid);
 		}
 	}
 

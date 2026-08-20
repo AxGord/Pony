@@ -41,7 +41,7 @@ class NapeSpaceBase {
 	public var maxSide(get, never): Float;
 	public var snap(get, never): Float;
 	public var limits: Rect<Float>;
-	private var groups: Map<String, NapeGroup> = new Map<String, NapeGroup>();
+	private var groups: Map<String, NapeGroup> = [];
 
 	public function new(w: Float, h: Float, ?gravity: Point<Float>, minimalStep: Float = 0.2, skipVelIntegrations: Int = 10) {
 		width = w;

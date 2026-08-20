@@ -79,7 +79,7 @@ class NModule<T:BAConfig> extends CfgModule<T> {
 			env = new Process('npm', ['root', '-g']).stdout.readLine();
 			Sys.putEnv(NODE_PATH, env);
 		}
-		process = Utils.asyncRunNode('pony', [Std.string(port)]);
+		process = Utils.asyncRunNode('pony', ['$port']);
 		Module.onEndQueue < finishHandler;
 	}
 

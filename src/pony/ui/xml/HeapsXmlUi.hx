@@ -80,7 +80,7 @@ using pony.text.TextTools;
 class HeapsXmlUi extends Object implements HasAbstract {
 
 	private static inline var HALF: Float = 0.5;
-	private static var fonts: Map<String, Font> = new Map();
+	private static var fonts: Map<String, Font> = [];
 	private static var DYNS: Array<AttrVal> = [dynX, dynY, dynWidth, dynHeight, dyn];
 
 	private var _scale: Float = 1;

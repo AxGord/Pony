@@ -11,7 +11,7 @@ import openfl.display.PixelSnapping;
  */
 class SBitmap extends Bitmap {
 
-	public function new(path: String, pixelSnapping: PixelSnapping = null, smoothing: Bool = true) {
+	public function new(path: String, ?pixelSnapping: PixelSnapping, smoothing: Bool = true) {
 		super(Assets.getBitmapData(path), pixelSnapping == null ? PixelSnapping.AUTO : pixelSnapping, smoothing);
 	}
 

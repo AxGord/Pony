@@ -57,8 +57,7 @@ class Initializer {
 	}
 
 	public function new(
-		initCallback: IDisplayObjectContainer -> IDisplayObject -> Void, showStats: Bool = false,
-		content: flash.display.DisplayObject = null
+		initCallback: IDisplayObjectContainer -> IDisplayObject -> Void, showStats: Bool = false, ?content: flash.display.DisplayObject
 	) {
 		_initCallback = initCallback;
 
@@ -117,7 +116,7 @@ class Initializer {
 		_initCallback(_sprite, _content);
 	}
 
-	private function resizeStage(e: Event = null): Void {
+	private function resizeStage(?e: Event): Void {
 		var stage = Lib.current.stage;
 		var smallerWidth: Bool = stage.stageWidth / stage.stageHeight < _aspectRatio;
 

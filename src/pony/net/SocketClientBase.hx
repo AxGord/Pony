@@ -93,7 +93,7 @@ import pony.magic.HasSignal;
 		}
 		#if ((!dox && HUGS) || nodejs || flash)
 		else if (reconnectDelay > 0) {
-			log('Reconnect after ' + reconnectDelay + ' ms');
+			log('Reconnect after $reconnectDelay ms');
 			Timer.delay(reopen, reconnectDelay);
 		}
 		#end

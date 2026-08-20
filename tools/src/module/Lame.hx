@@ -59,7 +59,7 @@ using pony.text.TextTools;
 	}
 
 	private function replaceExt(s: String): String {
-		return s.substr(0, -3) + 'mp3';
+		return '${s.substr(0, -3)}mp3';
 	}
 
 	private function lameDirs(

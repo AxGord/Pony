@@ -25,7 +25,7 @@ using hugs.HUGSWrapper;
 		}
 		var c = g.getTypedComponent(cl);
 		if (c == null) {
-			trace('Can\'t find component ' + Type.getClassName(cl) + ' in $gameObject game object');
+			trace('Can\'t find component ${Type.getClassName(cl)} in $gameObject game object');
 			throw null;
 		}
 		return c;

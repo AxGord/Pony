@@ -137,7 +137,7 @@ class ConsoleView extends PrinterBase implements Printer {
 		};
 
 		var start = textField.text.length;
-		textField.appendText(line + '\n');
+		textField.appendText('$line\n');
 		textField.setTextFormat(format, start, textField.text.length);
 
 		updateScroll();

@@ -23,7 +23,7 @@ import pony.net.http.WebServer.EConnect;
 
 	public function connect(cpq: CPQ): EConnect {
 		if (cpq.connection.params.exists(PARAM)) {
-			var key: String = cpq.connection.params.get(PARAM);
+			var key: String = cpq.connection.params[PARAM];
 			if (key == null) {
 				cpq.connection.sessionStorage[SESSION] = false;
 				cpq.connection.params.remove(PARAM);

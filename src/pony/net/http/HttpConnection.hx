@@ -31,7 +31,7 @@ class HttpConnection implements HasAbstract {
 		// trace(fullUrl);
 		end = false;
 		languages = [];
-		sessionStorage = new Map<String, Dynamic>();
+		sessionStorage = [];
 		this.fullUrl = fullUrl;
 		var pb: ParseBoy<Void> = new ParseBoy<Void>(fullUrl);
 		pb.gt(['://']);
@@ -44,16 +44,16 @@ class HttpConnection implements HasAbstract {
 			params = parseData(pb);
 		} else {
 			url = pb.str();
-			params = new Map<String, String>();
+			params = [];
 		}
 	}
 
 	private function rePost(): Void {
 		if (method == 'POST' && params.exists('re')) {
-			sessionStorage.set('post', post);
+			sessionStorage['post'] = post;
 			endAction();
 		} else if (sessionStorage.exists('post')) {
-			post = sessionStorage.get('post');
+			post = sessionStorage['post'];
 			sessionStorage.remove('post');
 		}
 	}
@@ -82,7 +82,7 @@ class HttpConnection implements HasAbstract {
 				case 1:
 					var p: String = pb.str();
 					if (p != '') params.set(p, null);
-				default:
+				case _:
 					var p: String = pb.str();
 					if (p != '') params.set(p, null);
 					loop = false;
@@ -93,8 +93,8 @@ class HttpConnection implements HasAbstract {
 
 	public function mix(): Map<String, String> {
 		var h = new Map<String, String>();
-		for (k in params.keys()) h.set(k, params.get(k));
-		for (k in post.keys()) h.set(k, post.get(k));
+		for (k in params.keys()) h.set(k, params[k]);
+		for (k in post.keys()) h.set(k, post[k]);
 		return h;
 	}
 

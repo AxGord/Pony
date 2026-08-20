@@ -24,7 +24,7 @@ enum ActResult {
  * Model
  * @author AxGord <axgord@gmail.com>
  */
-@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
+@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
 class Model implements SuperPuper {
 
 	public var lang: String;
@@ -43,9 +43,9 @@ class Model implements SuperPuper {
 		name = Type.getClassName(Type.getClass(this));
 		name = name.substr(name.lastIndexOf('.') + 1);
 		this.mm = mm;
-		var n = Type.getClassName(Type.getClass(this)) + 'Connect';
+		var n = '${Type.getClassName(Type.getClass(this))}Connect';
 		cl = cast Type.resolveClass(n);
-		if (cl == null) throw "Can't resolve class (dce?): " + n;
+		if (cl == null) throw 'Can\'t resolve class (dce?): $n';
 		var ma: Dynamic<Array<{ name: String, type: String }>> = untyped cl.__methoArgs__;
 
 		var o = untyped cl.__methoPathes__;
@@ -56,15 +56,15 @@ class Model implements SuperPuper {
 		var o = untyped cl.__methoAccess__;
 		access = [for (f in Reflect.fields(o)) f => Reflect.field(o, f)];
 
-		actions = new Map<String, Action>();
+		actions = [];
 		var fields: Dynamic = Meta.getFields(cl);
 		for (f in Reflect.fields(fields)) {
 			var ff: Dynamic = Reflect.field(fields, f);
 			for (sf in Reflect.fields(ff)) if (sf == 'action') {
-				actions.set(f, Type.createInstance(actionsClasses.get(Reflect.field(ff, sf)[0]), [this, f, Reflect.field(ma, f)]));
+				actions[f] = Type.createInstance(actionsClasses[Reflect.field(ff, sf)[0]], [this, f, Reflect.field(ma, f)]);
 			}
 		}
-		columns = new Map<String, pony.net.http.modules.mmodels.Field>();
+		columns = [];
 		columns['id'] = new FInt(10, true);
 		columns['id'].model = this;
 		columns['id'].name = 'id';
@@ -72,7 +72,7 @@ class Model implements SuperPuper {
 		for (f in Reflect.fields(cs)) {
 			var c: pony.net.http.modules.mmodels.Field = Reflect.field(cs, f);
 			c.init(f, this);
-			columns.set(f, c);
+			columns[f] = c;
 		}
 
 		db = mm.db.resolve(name);

@@ -8,7 +8,7 @@ import pony.text.tpl.TplPut;
  * MKeyAuthPut
  * @author AxGord <axgord@gmail.com>
  */
-@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
+@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
 @:final class MKeyAuthPut extends TplPut<MKeyAuthConnect, {}> {
 
 	@:async

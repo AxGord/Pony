@@ -81,17 +81,17 @@ using pony.Tools;
 
 	private static function parseBuf(buf: String, n: Int): Int {
 		return switch buf {
-			case 'ms' | 'millisecond' | 'milliseconds':
+			case 'ms', 'millisecond', 'milliseconds':
 				n;
-			case 's' | 'sec' | 'second' | 'seconds':
+			case 's', 'sec', 'second', 'seconds':
 				fromSeconds(n);
-			case 'm' | 'min' | 'minute' | 'minutes':
+			case 'm', 'min', 'minute', 'minutes':
 				fromMinutes(n);
-			case 'h' | 'hour' | 'hours':
+			case 'h', 'hour', 'hours':
 				fromHours(n);
-			case 'd' | 'day' | 'days':
+			case 'd', 'day', 'days':
 				fromDays(n);
-			default: 0;
+			case _: 0;
 		}
 	}
 
@@ -104,7 +104,7 @@ using pony.Tools;
 			case 3:
 				fromSeconds(d[2] == '' ? 0 : d[2].parseInt()) + fromMinutes(d[0] == '' ? 0 : d[1].parseInt())
 					+ fromHours(d[0] == '' ? 0 : d[0].parseInt());
-			default: throw 'Invalid time format';
+			case _: throw 'Invalid time format';
 		}
 	}
 
@@ -166,14 +166,14 @@ using pony.Tools;
 	@:to public function toString(): String {
 		var s = '';
 		if (this < 0) s += '-';
-		if (days != 0) s += Math.abs(days) + ' ';
+		if (days != 0) s += '${Math.abs(days)} ';
 		s += clock();
-		if (ms != 0) s += '.' + Math.abs(ms).toFixed('000');
+		if (ms != 0) s += '.${Math.abs(ms).toFixed('000')}';
 		return s == '' ? '0' : s;
 	}
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public inline function showMinSec(): String return print(minutes) + ':' + print(seconds);
+	public inline function showMinSec(): String return '${print(minutes)}:${print(seconds)}';
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function showSec(): String return print(totalSeconds);
@@ -181,7 +181,7 @@ using pony.Tools;
 	public function clock(autoHide: Bool = false): String {
 		var s: String = '';
 		if (hours != 0 || !autoHide) {
-			s += print(hours) + ':' + showMinSec();
+			s += '${print(hours)}:${showMinSec()}';
 		} else {
 			if (minutes != 0) {
 				s += showMinSec();

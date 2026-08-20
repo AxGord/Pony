@@ -83,7 +83,7 @@ using pony.text.TextTools;
 				if (file.first == this.file.first) continue;
 				var u: Null<Bytes> = units[f];
 				if (u == null && f.endsWith('.bin')) u = units[f.substr(0, -4)];
-				if (u == null && f.endsWith('.png')) u = units[f.substr(0, -4) + '.atlas'];
+				if (u == null && f.endsWith('.png')) u = units['${f.substr(0, -4)}.atlas'];
 				if (u != null && f.endsWith('.fnt')) {
 					var image: String = '';
 					@:nullSafety(Off) var data: String = file.content;
@@ -118,7 +118,7 @@ using pony.text.TextTools;
 							if (fileIndex != -1) {
 								fileIndex += filePattern.length;
 								var endIndex: Int = data.indexOf('\n', fileIndex);
-								newContent = data.substr(0, fileIndex) + '"$newFontName"' + data.substr(endIndex);
+								newContent = '${data.substr(0, fileIndex)}"$newFontName"${data.substr(endIndex)}';
 							}
 						}
 					}
@@ -173,7 +173,7 @@ using pony.text.TextTools;
 		var lost: Array<String> = getLost();
 		if (lost.length > 0) updated = true;
 		if (updated) {
-			log('Write hash to ' + file);
+			log('Write hash to $file');
 			file.bytes = new pony.ui.Hash(newUnits).toBytes();
 			if (runCleanAfter) {
 				var cleanModule: Null<Clean> = modules.getModule(Clean);
@@ -213,8 +213,8 @@ using pony.text.TextTools;
 		for (key in a) {
 			r.push(root + key);
 			if (key.endsWith('.atlas')) {
-				r.push(root + key.substr(0, -5) + 'png');
-				r.push(root + key + '.bin');
+				r.push('${root + key.substr(0, -5)}png');
+				r.push('${root + key}.bin');
 			}
 		}
 		return r;
@@ -233,7 +233,7 @@ using pony.text.TextTools;
 	@:s public var units: Map<String, Bytes>;
 
 	private function new(dirs: Array<Dir>, filter: Null<String>) {
-		units = new Map<String, Bytes>();
+		units = [];
 		for (dir in dirs) for (file in dir.contentRecursiveFiles(filter, true)) if (file.name != '.DS_Store')
 			units[file.first] = Utils.gitHash(file.first);
 	}

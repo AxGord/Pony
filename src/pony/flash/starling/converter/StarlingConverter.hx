@@ -215,7 +215,7 @@ class StarlingConverter {
 				result.hAlign = HAlign.CENTER;
 			case TextFormatAlign.RIGHT:
 				result.hAlign = HAlign.RIGHT;
-			default:
+			case _:
 				result.hAlign = HAlign.LEFT;
 		}
 
@@ -247,7 +247,7 @@ class StarlingConverter {
 	}
 
 	private static function hasName(source: flash.display.DisplayObject): Bool {
-		return source.name.indexOf("instance") == -1;
+		return source.name.indexOf('instance') == -1;
 	}
 
 	private static function setPivotPointAndPosition(

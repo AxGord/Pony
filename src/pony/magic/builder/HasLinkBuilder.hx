@@ -26,7 +26,7 @@ class HasLinkBuilder {
 						var access = [AInline, APrivate];
 						if (field.access.indexOf(AStatic) != -1) access.push(AStatic);
 						fields.push({
-							name: 'get_' + field.name,
+							name: 'get_${field.name}',
 							access: access,
 							kind: FFun({
 								args: [],
@@ -47,7 +47,7 @@ class HasLinkBuilder {
 						var access = [AInline, APrivate];
 						if (field.access.indexOf(AStatic) != -1) access.push(AStatic);
 						fields.push({
-							name: 'set_' + field.name,
+							name: 'set_${field.name}',
 							access: access,
 							kind: FFun({
 								args: [{ name: 'v', type: type }],

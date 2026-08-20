@@ -67,7 +67,7 @@ typedef PriorityIds = Priority<{
 
 	public var data(default, null): Array<T> = [];
 
-	private var hash: Map<Int, Int> = new Map<Int, Int>();
+	private var hash: Map<Int, Int> = [];
 
 	private var addStack: Array<Pair<T, Int>> = [];
 
@@ -121,14 +121,14 @@ typedef PriorityIds = Priority<{
 			return this;
 		}
 		var needOnTake: Bool = real(e) && empty;
-		var hv: Null<Int> = hash.get(priority);
-		var s: Int = hv != null ? hv : 0;
+		var hv: Null<Int> = hash[priority];
+		var s: Int = hv ?? 0;
 		var c: Int = 0;
-		for (k in hash.keys()) if (k < priority) @:nullSafety(Off) c += hash.get(k);
+		for (k in hash.keys()) if (k < priority) @:nullSafety(Off) c += hash[k];
 		c += s;
 		data.insert(c, e);
 		for (k in 0...counters.length) if (c < counters[k]) counters[k]++;
-		hash.set(priority, s + 1);
+		hash[priority] = s + 1;
 		if (needOnTake) {
 			empty = false;
 			#if (!macro)
@@ -215,7 +215,7 @@ typedef PriorityIds = Priority<{
 	 */
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function _clear(): Priority<T> {
-		hash = new Map<Int, Int>();
+		hash = [];
 		data = [];
 		counters = [0];
 		addStack = [];
@@ -297,8 +297,7 @@ typedef PriorityIds = Priority<{
 	 */
 	public function remove(e: T): Bool {
 		if (lock) {
-			var ns: Array<Pair<T, Int>> = [];
-			for (st in addStack) if (!compare(st.a, e)) ns.push(st);
+			final ns: Array<Pair<T, Int>> = [for (st in addStack) if (!compare(st.a, e)) st];
 			addStack = ns;
 		}
 
@@ -312,12 +311,12 @@ typedef PriorityIds = Priority<{
 		var a: Array<Int> = [for (k in hash.keys()) k];
 		a.sort(asort);
 		for (k in a) {
-			@:nullSafety(Off) var n: Int = hash.get(k);
+			@:nullSafety(Off) var n: Int = hash[k];
 			if (i > 0) {
 				i -= n;
 			} else {
 				if (n > 1)
-					hash.set(k, n - 1);
+					hash[k] = n - 1;
 				else
 					hash.remove(k);
 				break;
@@ -355,8 +354,8 @@ typedef PriorityIds = Priority<{
 	 */
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	public inline function repriority(priority: Int = 0): Void {
-		hash = new Map<Int, Int>();
-		hash.set(priority, data.length);
+		hash = [];
+		hash[priority] = data.length;
 	}
 
 	/**

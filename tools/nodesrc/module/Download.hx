@@ -35,7 +35,7 @@ using pony.text.TextTools;
 			if (needDownload) downloadList.push(new Pair(file, unit.a));
 		}
 		for (file in downloadList) {
-			log('Download ' + file.b);
+			log('Download ${file.b}');
 			tasks.add();
 			var protocol: String = file.b.substr(0, 7);
 			switch protocol {
@@ -44,14 +44,14 @@ using pony.text.TextTools;
 						response.once('end', tasks.end);
 						response.pipe(Fs.createWriteStream(file.a));
 					}).on('error', function(e: Error) {
-						error('problem with request: ' + e.message);
+						error('problem with request: ${e.message}');
 					});
 				case 'http://':
 					NPM.follow_redirects.http.get(file.b, { timeout: 7000 }, function(response: IncomingMessage): Void {
 						response.once('end', tasks.end);
 						response.pipe(Fs.createWriteStream(file.a));
 					}).on('error', function(e: Error) {
-						error('problem with request: ' + e.message);
+						error('problem with request: ${e.message}');
 					});
 				case _:
 					error('Unsupported protocol: $protocol');

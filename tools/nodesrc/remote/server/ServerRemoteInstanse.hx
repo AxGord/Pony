@@ -19,7 +19,7 @@ class ServerRemoteInstanse {
 	private var currentCommandN: Int = -1;
 	private var key: String;
 	private var protocol: RemoteProtocol;
-	private var commands: Map<String, Array<Pair<Bool, String>>> = new Map();
+	private var commands: Map<String, Array<Pair<Bool, String>>> = [];
 	private var allowForGet: Array<String>;
 	private var zipRLog: Bool = true;
 	private var packLog: Null<BytesOutput>;
@@ -116,7 +116,7 @@ class ServerRemoteInstanse {
 		if (s == '') return;
 		Sys.println(s);
 		if (zipRLog && packLog != null)
-			@:nullSafety(Off) packLog.writeString(s + '\n');
+			@:nullSafety(Off) packLog.writeString('$s\n');
 		else
 			protocol.log.log(s);
 	}

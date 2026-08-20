@@ -53,11 +53,11 @@ private typedef AtlasConfig = {
 		for (unit in cfg.units) {
 			if (unit.isFile) {
 				var file: File = unit;
-				convert(file, file + '.bin');
+				convert(file, '$file.bin');
 				if (cfg.deleteSource) file.delete();
 			} else {
 				for (file in (unit: Dir).contentRecursiveFiles(cfg.filter)) {
-					convert(file, file + '.bin');
+					convert(file, '$file.bin');
 					if (cfg.deleteSource) file.delete();
 				}
 			}
@@ -120,7 +120,7 @@ private typedef AtlasConfig = {
 						@:nullSafety(Off) index = Std.parseInt(v);
 						if (index < 0) index = 0;
 					case _:
-						error('Unknown prop ' + prop[0]);
+						error('Unknown prop ${prop[0]}');
 				}
 			}
 			// offset is bottom-relative

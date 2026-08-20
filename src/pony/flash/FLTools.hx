@@ -195,7 +195,7 @@ class FLTools {
 	public static inline function setTrace(): Void haxe.Log.trace = myTrace;
 
 	private static function myTrace(v: Dynamic, ?pos: haxe.PosInfos): Void {
-		untyped __global__['trace'](pos.className + '#' + pos.methodName + '(' + pos.lineNumber + '):', v);
+		untyped __global__['trace']('${pos.className}#${pos.methodName}(${pos.lineNumber}):', v);
 	}
 
 	public static function makeBigBorders(color: Int = 0x666666): Void {
@@ -226,7 +226,7 @@ class FLTools {
 
 	#if macro
 	private static function asCopy(file: String, from: String, to: String): Void {
-		file = '/' + file + '.as';
+		file = '/$file.as';
 		if (!FileSystem.exists(to + file)) File.copy(from + file, to + file);
 	}
 	#else

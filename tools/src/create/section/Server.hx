@@ -22,10 +22,10 @@ class Server extends Section {
 		init();
 		if (http) {
 			add('path', httpPath);
-			add('port', Std.string(httpPort));
+			add('port', '$httpPort');
 		}
 		if (haxe) {
-			add('haxe', Std.string(haxePort));
+			add('haxe', '$haxePort');
 		}
 		if (sniff) {
 			var sniff: Xml = Xml.createElement('sniff');

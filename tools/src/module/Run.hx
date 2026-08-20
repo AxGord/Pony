@@ -117,20 +117,20 @@ typedef RunConfig = {
 				cfg.command.push({ cmd: normalize(xml.innerData), path: getPath(xml), lib: getLib(xml) });
 			case 'haxe':
 				var cmd: Array<String> = ['haxe'];
-				if (xml.has.cp) cmd.push('-cp ' + normalize(xml.att.cp));
-				for (lib in cfg.haxelib) cmd.push('-lib ' + normalize(lib));
-				if (xml.has.d) for (d in normalize(xml.att.d).split(' ')) cmd.push('-D ' + d);
-				cmd.push('--run ' + normalize(xml.innerData));
+				if (xml.has.cp) cmd.push('-cp ${normalize(xml.att.cp)}');
+				for (lib in cfg.haxelib) cmd.push('-lib ${normalize(lib)}');
+				if (xml.has.d) for (d in normalize(xml.att.d).split(' ')) cmd.push('-D $d');
+				cmd.push('--run ${normalize(xml.innerData)}');
 				cfg.command.push({ cmd: cmd.join(' '), path: getPath(xml), lib: getLib(xml) });
 			case 'lime':
-				cfg.command.push({ cmd: 'haxelib run lime ' + normalize(xml.innerData), path: getPath(xml), lib: getLib(xml) });
+				cfg.command.push({ cmd: 'haxelib run lime ${normalize(xml.innerData)}', path: getPath(xml), lib: getLib(xml) });
 			case 'ax3':
-				cfg.command.push({ cmd: 'haxelib run ax3 ' + normalize(xml.innerData), path: getPath(xml), lib: getLib(xml) });
+				cfg.command.push({ cmd: 'haxelib run ax3 ${normalize(xml.innerData)}', path: getPath(xml), lib: getLib(xml) });
 			case 'pony':
-				cfg.command.push({ cmd: 'haxelib run pony ' + normalize(xml.innerData), path: getPath(xml), lib: getLib(xml) });
+				cfg.command.push({ cmd: 'haxelib run pony ${normalize(xml.innerData)}', path: getPath(xml), lib: getLib(xml) });
 			case 'formatter':
 				cfg.command.push({
-					cmd: 'haxelib run formatter -s ' + normalize(xml.innerData),
+					cmd: 'haxelib run formatter -s ${normalize(xml.innerData)}',
 					path: getPath(xml),
 					lib: getLib(xml)
 				});

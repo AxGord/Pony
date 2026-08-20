@@ -26,7 +26,7 @@ abstract StarlingWindows(StarlingWindowsImpl) {
 	private var st: Sprite;
 
 	public function new(st: Sprite) {
-		map = new Map<String, StarlingWindow>();
+		map = [];
 		this.st = st;
 		var windows: Array<StarlingWindow> = [];
 		for (i in 0...st.numChildren) {
@@ -34,7 +34,7 @@ abstract StarlingWindows(StarlingWindowsImpl) {
 			if (Std.is(child, StarlingWindow)) windows.push(cast child);
 		}
 		for (window in windows) {
-			map.set(window.name, window);
+			map[window.name] = window;
 			window.initm(cast this);
 			// TODO With this code buttons don't work. Either fix it or always place windows on top of everything else
 			// st.removeChild(window);
@@ -42,7 +42,7 @@ abstract StarlingWindows(StarlingWindowsImpl) {
 		}
 	}
 
-	@:nullSafety(Off) public inline function resolve(field: String): StarlingWindow return map.get(field);
+	@:nullSafety(Off) public inline function resolve(field: String): StarlingWindow return map[field];
 
 	public function blurOn(): Void {
 		// var filter = new BlurFilter();

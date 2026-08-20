@@ -10,7 +10,7 @@ import pony.text.tpl.ITplPut;
  * Tpl
  * @author AxGord
  */
-@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
+@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
 class Tpl {
 
 	private var data: TplData;

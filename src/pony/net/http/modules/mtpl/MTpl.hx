@@ -20,21 +20,21 @@ import pony.net.http.WebServer;
 
 	public function connect(cpq: CPQ): EConnect {
 		if (cpq.connection.params.exists('template')) {
-			var tc: String = cpq.connection.params.get('template');
+			var tc: String = cpq.connection.params['template'];
 			if (server.tpl.exists(tc)) {
-				cpq.connection.sessionStorage.set('template', tc);
+				cpq.connection.sessionStorage['template'] = tc;
 				cpq.connection.params.remove('template');
 				cpq.connection.endAction();
 			} else {
-				cpq.connection.error('Not exists template: ' + tc);
+				cpq.connection.error('Not exists template: $tc');
 			}
 			return BREAK;
 		} else {
 			if (cpq.connection.params.exists('tryTemplate')) {
-				cpq.template = server.tpl.get(cpq.connection.params.get('tryTemplate'));
+				cpq.template = server.tpl.get(cpq.connection.params['tryTemplate']);
 			} else {
 				var st: Map<String, Dynamic> = cpq.connection.sessionStorage;
-				if (st.exists('template')) cpq.template = server.tpl.get(st.get('template'));
+				if (st.exists('template')) cpq.template = server.tpl.get(st['template']);
 			}
 			return REG(cast new MTplConnect(this, cpq));
 		}

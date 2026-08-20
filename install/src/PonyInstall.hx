@@ -37,7 +37,7 @@ class PonyInstall extends BaseInstall {
 		var newline: String = '\n';
 		var compiler: String = 'haxe';
 		var args: Array<String> = ['--cwd', Config.SRC, 'build.hxml'];
-		Sys.println(compiler + ' ' + args.join(' '));
+		Sys.println('$compiler ${args.join(' ')}');
 		var r: Int = if (Config.OS == TargetOS.Windows) {
 			Sys.command(compiler, args);
 		} else {
@@ -67,7 +67,7 @@ class PonyInstall extends BaseInstall {
 		Utils.beginColor(32);
 		Sys.println('Compilation complete');
 		Utils.endColor();
-		FileSystem.deleteFile(Config.BIN + 'pony.n');
+		FileSystem.deleteFile('${Config.BIN}pony.n');
 	}
 
 	private function checkWarning(s: String): Bool {

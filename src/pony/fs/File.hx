@@ -109,7 +109,7 @@ using pony.text.TextTools;
 			var a: Array<String> = e.first.split('/');
 			var d: String = cast a.shift();
 			for (e in a) {
-				d += '/' + e;
+				d += '/$e';
 				if (!FileSystem.exists(d)) FileSystem.createDirectory(d);
 			}
 		}
@@ -130,7 +130,7 @@ using pony.text.TextTools;
 		try {
 			for (e in this) FileSystem.deleteFile(e.first);
 		} catch (_: Dynamic) {
-			throw "Can't delete file: " + name;
+			throw 'Can\'t delete file: $name';
 		}
 	}
 

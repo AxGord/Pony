@@ -41,7 +41,7 @@ abstract Align(AlignType) from AlignType to AlignType {
 	private inline function get_horizontal(): HAlign return this.b;
 
 	private inline function get_defaultCenter(): Align {
-		return new Pair(vertical == null ? VAlign.Middle : vertical, horizontal == null ? HAlign.Center : horizontal);
+		return new Pair(vertical ?? VAlign.Middle, horizontal ?? HAlign.Center);
 	}
 
 	@:from public static inline function fromString(s: String): Null<Align> {

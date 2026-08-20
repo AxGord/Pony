@@ -61,7 +61,7 @@ class PriorityTest {
 		var prev: Null<Int> = null;
 		for (e in p) {
 			if (prev != null && prev > e)
-				Assert.fail('Prev > now: ' + prev + ', ' + e);
+				Assert.fail('Prev > now: $prev, $e');
 			else
 				prev = e;
 		}
@@ -77,7 +77,7 @@ class PriorityTest {
 		var prev: Null<Int> = null;
 		for (e in p) {
 			if (prev != null && prev > e)
-				Assert.fail('Prev > now: ' + prev + ', ' + e);
+				Assert.fail('Prev > now: $prev, $e');
 			else
 				prev = e;
 		}

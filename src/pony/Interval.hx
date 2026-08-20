@@ -39,7 +39,7 @@ abstract Interval<T:Dynamic>(Pair<T, T>) {
 			return create(null, StringTools.trim(a[0]));
 	}
 
-	@:to inline public function toString(): String return min + ' ... ' + max;
+	@:to inline public function toString(): String return '$min ... $max';
 
 	@:from inline private static function fromInterator(it: IntIterator): Interval<Int> return create(it.field('min'), it.field('max'));
 

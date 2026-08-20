@@ -63,11 +63,10 @@ using hugs.HUGSWrapper;
 		var angles: unityengine.Vector3 = this.transform.eulerAngles;
 		x = angles.y;
 		y = angles.x;
-		/*
-		if (target.rigidbody != null && target.rigidbody.active) 
-		{
-			target.rigidbody.freezeRotation = true;
-		}*/
+		// if (target.rigidbody != null && target.rigidbody.active)
+		// {
+		// 	target.rigidbody.freezeRotation = true;
+		// }
 	}
 
 	private function LateUpdate(): Void {
@@ -81,8 +80,8 @@ using hugs.HUGSWrapper;
 		}
 		#else
 		if (target.gameObject.active && unityengine.Input.GetMouseButton(1)) {
-			xActualSpeed = unityengine.Input.GetAxis("Mouse X") * xConstSpeed;
-			yActualSpeed = -unityengine.Input.GetAxis("Mouse Y") * yConstSpeed;
+			xActualSpeed = unityengine.Input.GetAxis('Mouse X') * xConstSpeed;
+			yActualSpeed = -unityengine.Input.GetAxis('Mouse Y') * yConstSpeed;
 			x += xActualSpeed * 0.02;
 			y += yActualSpeed * 0.02;
 			changed = true;
@@ -157,23 +156,23 @@ using hugs.HUGSWrapper;
 		}
 		#else
 		if (!isInverted) {
-			if (unityengine.Input.GetAxis("Mouse ScrollWheel") < 0 && distance < maxDist) {
+			if (unityengine.Input.GetAxis('Mouse ScrollWheel') < 0 && distance < maxDist) {
 				distance += zoomSpeed;
 				this.transform.Translate(unityengine.Vector3.forward.mul(-zoomSpeed));
 			}
 
-			if (unityengine.Input.GetAxis("Mouse ScrollWheel") > 0 && distance > minDist) {
+			if (unityengine.Input.GetAxis('Mouse ScrollWheel') > 0 && distance > minDist) {
 				distance -= zoomSpeed;
 				transform.Translate(unityengine.Vector3.forward.mul(zoomSpeed));
 			}
 		} else {
 
-			if (unityengine.Input.GetAxis("Mouse ScrollWheel") < 0 && distance > minDist) {
+			if (unityengine.Input.GetAxis('Mouse ScrollWheel') < 0 && distance > minDist) {
 				distance -= zoomSpeed;
 				this.transform.Translate(unityengine.Vector3.forward.mul(zoomSpeed));
 			}
 
-			if (unityengine.Input.GetAxis("Mouse ScrollWheel") > 0 && distance < maxDist) {
+			if (unityengine.Input.GetAxis('Mouse ScrollWheel') > 0 && distance < maxDist) {
 				distance += zoomSpeed;
 				transform.Translate(unityengine.Vector3.forward.mul(-zoomSpeed));
 			}

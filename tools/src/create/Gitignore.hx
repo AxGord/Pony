@@ -64,11 +64,11 @@ class Gitignore {
 			case ProjectType.Server:
 				return;
 			case ProjectType.Air:
-				result.push(project.build.outputPath + project.build.outputFile + '.app'); // macos
-				result.push(project.build.outputPath + project.build.outputFile + '/'); // windows
+				result.push('${project.build.outputPath + project.build.outputFile}.app'); // macos
+				result.push('${project.build.outputPath + project.build.outputFile}/'); // windows
 			case ProjectType.Heaps, ProjectType.Heapsxml:
-				if (project.hashlink.mac) result.push(ROOT + project.build.outputPath + project.build.outputFile + '.app');
-				if (project.hashlink.win != null) result.push(ROOT + project.build.outputPath + project.build.outputFile + '/');
+				if (project.hashlink.mac) result.push('${ROOT + project.build.outputPath + project.build.outputFile}.app');
+				if (project.hashlink.win != null) result.push('${ROOT + project.build.outputPath + project.build.outputFile}/');
 				if (project.hashlink.android != null) result.push(ROOT + project.build.outputPath + project.hashlink.android);
 			case _:
 		}

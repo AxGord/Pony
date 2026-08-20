@@ -51,9 +51,9 @@ class Worker implements IWorkerGatePool implements HasSignal {
 				if (message != null) response(message);
 			}
 		});
-		bgWorker.setSharedProperty('request_' + name, resultChannel);
+		bgWorker.setSharedProperty('request_$name', resultChannel);
 		var bgWorkerCommandChannel: MessageChannel = flash.system.Worker.current.createMessageChannel(bgWorker);
-		bgWorker.setSharedProperty('response_' + name, bgWorkerCommandChannel);
+		bgWorker.setSharedProperty('response_$name', bgWorkerCommandChannel);
 		if (!lock)
 			unlock();
 		else
@@ -75,10 +75,10 @@ class Worker implements IWorkerGatePool implements HasSignal {
 				if (message != null) request(message);
 			}
 		});
-		bgWorker.setSharedProperty('request2_' + name, resultChannel);
+		bgWorker.setSharedProperty('request2_$name', resultChannel);
 
 		var bgWorkerCommandChannel: MessageChannel = flash.system.Worker.current.createMessageChannel(bgWorker);
-		bgWorker.setSharedProperty('response2_' + name, bgWorkerCommandChannel);
+		bgWorker.setSharedProperty('response2_$name', bgWorkerCommandChannel);
 
 		function cb(a: T2): Void {
 			if (MessageChannelState.OPEN == cast bgWorkerCommandChannel.state) {

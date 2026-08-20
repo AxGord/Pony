@@ -10,14 +10,14 @@ class Cookie {
 	private var newCookie: Map<String, String>;
 
 	public function new(?cookie: String, ?mapCookie: Map<String, String>) {
-		newCookie = new Map<String, String>();
-		oldCookie = new Map<String, String>();
+		newCookie = [];
+		oldCookie = [];
 		if (cookie != null) {
 			var a: Array<String> = cookie.split(';');
 			for (e in a) {
 				var kv: Array<String> = e.split('=').map(StringTools.trim);
 				// todo: fix double cookie problem
-				oldCookie.set(kv[0], kv[1]);
+				oldCookie[kv[0]] = kv[1];
 			}
 		} else if (mapCookie != null)
 			oldCookie = mapCookie;
@@ -27,16 +27,16 @@ class Cookie {
 		// domain = domain != null ? 'domain=$domain' : '';
 		var s: String = '';
 		for (k in newCookie.keys()) {
-			s += k + '=' + newCookie.get(k) + ';'; // + ';HttpOnly;$domain';
+			s += '$k=${newCookie[k]};'; // + ';HttpOnly;$domain';
 		}
 		return s;
 	}
 
 	public function get(name: String): String {
 		if (newCookie.exists(name))
-			return newCookie.get(name);
+			return newCookie[name];
 		else
-			return oldCookie.get(name);
+			return oldCookie[name];
 	}
 
 	inline public function set(name: String, value: String): Void newCookie.set(name, value);

@@ -59,7 +59,7 @@ class TextTable extends TextTableCore {
 
 	#if (haxe_ver < 4.2) override #end
 	private function drawText(point: IntRect, text: String, style: FontStyle): Void {
-		var t = new BitmapText(text, { font: style.size + 'px ' + style.font, tint: style.color });
+		var t = new BitmapText(text, { font: '${style.size}px ${style.font}', tint: style.color });
 		var align = if (style.border != null && style.align == null)
 			new Pair(VAlign.Top, HAlign.Left);
 		else

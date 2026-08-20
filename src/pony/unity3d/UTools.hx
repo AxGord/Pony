@@ -59,16 +59,16 @@ import unityengine.Screen;
 
 	public static function getArgs(?vs: Array<String>, ?ks: Dynamic<String>): Dynamic {
 		var r: Dynamic = {};
-		var vls: Map<String, String> = new Map<String, String>();
+		var vls: Map<String, String> = [];
 		if (ks != null) for (f in Reflect.fields(ks)) {
 			Reflect.setField(r, f, false);
-			vls.set('-' + Reflect.field(ks, f), f);
+			vls['-${Reflect.field(ks, f)}'] = f;
 		}
 		var pvs: Array<String> = [];
 		if (vs != null) {
 			for (v in vs) {
 				Reflect.setField(r, v, null);
-				pvs.push('-' + v);
+				pvs.push('-$v');
 			}
 		}
 		var a: NativeArray<String> = cs.system.Environment.GetCommandLineArgs();
@@ -80,14 +80,14 @@ import unityengine.Screen;
 				Reflect.setField(r, a[i].substr(1), a[i + 1]);
 				skip = true;
 			} else if (vls.exists(a[i])) {
-				Reflect.setField(r, vls.get(a[i]), true);
+				Reflect.setField(r, vls[a[i]], true);
 			}
 		}
 		return r;
 	}
 
 	public static function compEnabled(g: GameObject, name: String, enabled: Bool): Bool {
-		var c: Behaviour = cast(g.GetComponent(name), Behaviour);
+		var c: Behaviour = cast g.GetComponent(name);
 		if (c != null) c.enabled = enabled;
 		return enabled;
 	}

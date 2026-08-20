@@ -131,7 +131,7 @@ class Cordova extends CfgModule<CordovaConfig> {
 		if (cfg.incrementAndroidVersionCode) {
 			var currentVersion: Int = widgetLineXml.has.resolve(AVC) ? Std.parseInt(widgetLineXml.att.resolve(AVC)) : 0;
 			currentVersion++;
-			widgetLineXml.x.set(AVC, Std.string(currentVersion));
+			widgetLineXml.x.set(AVC, '$currentVersion');
 			widgetLineChanged = true;
 		}
 

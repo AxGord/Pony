@@ -69,7 +69,7 @@ import pony.geom.Point;
 				for (i in 0...lines.length) lines[i] = (max - lines[i]) >> k;
 				@:nullSafety(Off) x = lines.shift();
 				xMin = x;
-			default:
+			case _:
 		}
 		var dl: Float = font.lineHeight + lineSpacing;
 		var calcLines: Bool = !handleAlign && !rebuild && lines != null;

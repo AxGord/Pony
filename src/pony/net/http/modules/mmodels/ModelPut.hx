@@ -8,7 +8,7 @@ import pony.text.tpl.TplPut;
  * ModelPut
  * @author AxGord <axgord@gmail.com>
  */
-@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
+@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
 class ModelPut extends TplPut<ModelConnect, Dynamic> {
 
 	private var list: Map<String, ITplPut>;
@@ -21,7 +21,7 @@ class ModelPut extends TplPut<ModelConnect, Dynamic> {
 	@:async
 	override public function tag(name: String, content: TplData, arg: String, args: Map<String, String>, ?kid: ITplPut): String {
 		if (list.exists(name))
-			return @await list.get(name).tag(name, content, arg, args, kid);
+			return @await list[name].tag(name, content, arg, args, kid);
 		else
 			return @await super.tag(name, content, arg, args, kid);
 	}

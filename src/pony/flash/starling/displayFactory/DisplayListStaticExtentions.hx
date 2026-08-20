@@ -30,7 +30,7 @@ class DisplayListStaticExtentions {
 		return false;
 	}
 
-	public static function startUniversalDrag(dragged: IDisplayObject, lockCenter: Bool = false, bounds: Rectangle = null): Void {
+	public static function startUniversalDrag(dragged: IDisplayObject, lockCenter: Bool = false, ?bounds: Rectangle): Void {
 		UniversalDrag.startUniversalDrag(dragged, lockCenter, bounds);
 	}
 
@@ -87,9 +87,7 @@ class StarlingStaticExtentions {
 		return object.touchable;
 	}
 
-	public static function startUniversalDrag(
-		dragged: starling.display.DisplayObject, lockCenter: Bool = false, bounds: Rectangle = null
-	): Void {
+	public static function startUniversalDrag(dragged: starling.display.DisplayObject, lockCenter: Bool = false, ?bounds: Rectangle): Void {
 		UniversalDrag.startUniversalDrag(cast dragged, lockCenter, bounds);
 	}
 
@@ -135,9 +133,7 @@ class FlashStaticExtentions {
 		return false;
 	}
 
-	public static function startUniversalDrag(
-		dragged: flash.display.DisplayObject, lockCenter: Bool = false, bounds: Rectangle = null
-	): Void {
+	public static function startUniversalDrag(dragged: flash.display.DisplayObject, lockCenter: Bool = false, ?bounds: Rectangle): Void {
 		UniversalDrag.startUniversalDrag(cast dragged, lockCenter, bounds);
 	}
 

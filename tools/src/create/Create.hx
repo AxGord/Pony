@@ -31,7 +31,7 @@ class Create {
 			}
 		}
 		if (type == null) Utils.error('Wrong app type');
-		if (FileSystem.exists(Utils.MAIN_FILE)) Utils.error(Utils.MAIN_FILE + ' exists');
+		if (FileSystem.exists(Utils.MAIN_FILE)) Utils.error('${Utils.MAIN_FILE} exists');
 		var project: Project = new Project(name);
 		setProjectConfig(project, type);
 		Utils.savePonyProject(project.result());
@@ -170,7 +170,7 @@ class Create {
 
 	private static function createAirData(project: Project, vscAllow: Bool): Void {
 		project.build.createEmptyMainhx();
-		Template.gen('air/', [create.targets.Swf.APP_XML => '::OUTPUT::' + create.targets.Swf.APP_XML], [
+		Template.gen('air/', [create.targets.Swf.APP_XML => '::OUTPUT::${create.targets.Swf.APP_XML}'], [
 			'OUTPUT' => project.build.outputPath,
 			'APP' => project.build.outputFile,
 			'EXT' => project.build.outputExt(),
@@ -276,7 +276,7 @@ class Create {
 		var path: String = project.build.getMainhxPath();
 		createDirs([
 			path,
-			path + 'models',
+			'${path}models',
 			'bin/home/',
 			'bin/home/language/',
 			'bin/home/templates/',

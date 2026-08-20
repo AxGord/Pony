@@ -38,7 +38,7 @@ class MySQL extends SQLBase {
 			database: config.database
 		});
 		action('SET NAMES utf8', function(b: Bool) {
-			if (b) action(Const.createDB + config.database, "create database", init);
+			if (b) action(Const.createDB + config.database, 'create database', init);
 		});
 
 	}
@@ -54,7 +54,7 @@ class MySQL extends SQLBase {
 			connection.request(q);
 			_result(true);
 		} catch (err: Dynamic) {
-			error(actName == null ? Std.string(err) : "Can't " + actName + ': ' + Std.string(err), p);
+			error(actName == null ? '$err' : 'Can\'t $actName: $err', p);
 			_result(false);
 		}
 
@@ -133,7 +133,7 @@ class MySQL extends SQLBase {
 	/**
 	 * Escape id (for fields, tables, databases)
 	 */
-	inline public function escapeId(s: String): String return '`' + connection.escape(s) + '`';
+	inline public function escapeId(s: String): String return '`${connection.escape(s)}`';
 
 	/**
 	 * Escape (for values)

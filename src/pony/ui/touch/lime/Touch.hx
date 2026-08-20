@@ -23,7 +23,7 @@ class Touch implements Declarator implements HasSignal {
 	@:auto public static var onEnd: Signal1<T>;
 	@:auto public static var onCancle: Signal1<Int>;
 
-	private static var tMove: Map<Int, T> = new Map<Int, T>();
+	private static var tMove: Map<Int, T> = [];
 
 	private static var startStack: Array<T> = [];
 	private static var endStack: Array<T> = [];
@@ -93,7 +93,7 @@ class Touch implements Declarator implements HasSignal {
 
 	private static function moveDispatch(): Void {
 		for (t in tMove) eMove.dispatch(t);
-		tMove = new Map();
+		tMove = [];
 	}
 
 	private static function startHandler(t: T): Void {

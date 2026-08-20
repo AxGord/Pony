@@ -46,13 +46,13 @@ private typedef Export = { typeName: String, name: String };
 
 	private function loadLocal(typeNames: Array<String>, name: String): Void {
 		for (tn in typeNames) {
-			var byName: Null<Map<String, Array<WCB>>> = waits.get(tn);
+			var byName: Null<Map<String, Array<WCB>>> = waits[tn];
 			if (byName == null) {
 				byName = [];
-				waits.set(tn, byName);
+				waits[tn] = byName;
 			}
 			if (byName.exists(name)) throw new Exception('Second load: type=$tn name=$name');
-			byName.set(name, []);
+			byName[name] = [];
 		}
 	}
 
@@ -70,16 +70,16 @@ private typedef Export = { typeName: String, name: String };
 
 	private function registerLocal(typeNames: Array<String>, name: String, service: Dynamic): Void {
 		for (tn in typeNames) {
-			var byName: Null<Map<String, Dynamic>> = byType.get(tn);
+			var byName: Null<Map<String, Dynamic>> = byType[tn];
 			if (byName == null) {
 				byName = [];
-				byType.set(tn, byName);
+				byType[tn] = byName;
 			}
-			byName.set(name, service);
+			byName[name] = service;
 			// Fire pending waiters for this (type, name).
-			final waitersByName: Null<Map<String, Array<WCB>>> = waits.get(tn);
+			final waitersByName: Null<Map<String, Array<WCB>>> = waits[tn];
 			if (waitersByName != null) {
-				final w: Null<Array<WCB>> = waitersByName.get(name);
+				final w: Null<Array<WCB>> = waitersByName[name];
 				if (w != null) {
 					for (wcb in w) callw(wcb, service);
 					waitersByName.remove(name);
@@ -120,9 +120,9 @@ private typedef Export = { typeName: String, name: String };
 	}
 
 	public function existsInCurrent(typeName: String, name: String): Bool {
-		final byName: Null<Map<String, Dynamic>> = byType.get(typeName);
+		final byName: Null<Map<String, Dynamic>> = byType[typeName];
 		if (byName != null && byName.exists(name)) return true;
-		final waitersByName: Null<Map<String, Array<WCB>>> = waits.get(typeName);
+		final waitersByName: Null<Map<String, Array<WCB>>> = waits[typeName];
 		return waitersByName != null && waitersByName.exists(name);
 	}
 
@@ -132,7 +132,7 @@ private typedef Export = { typeName: String, name: String };
 	}
 
 	@:nullSafety(Off) public function get<T>(typeName: String, name: String): T {
-		final byName: Null<Map<String, Dynamic>> = byType.get(typeName);
+		final byName: Null<Map<String, Dynamic>> = byType[typeName];
 		if (byName != null) {
 			var count: Int = 0;
 			var only: Null<Dynamic> = null;
@@ -147,7 +147,7 @@ private typedef Export = { typeName: String, name: String };
 			}
 			if (count == 1) return only;
 			if (count > 1) {
-				final exact: Null<Dynamic> = byName.get(name);
+				final exact: Null<Dynamic> = byName[name];
 				if (exact != null) return exact;
 				throw new Exception('Ambiguous service: type=$typeName has multiple entries, name="$name" matches none');
 			}
@@ -161,9 +161,9 @@ private typedef Export = { typeName: String, name: String };
 	}
 
 	private function waitReadyWcb(typeName: String, name: String, wcb: WCB): Void {
-		final waitersByName: Null<Map<String, Array<WCB>>> = waits.get(typeName);
+		final waitersByName: Null<Map<String, Array<WCB>>> = waits[typeName];
 		if (waitersByName != null) {
-			final w: Null<Array<WCB>> = waitersByName.get(name);
+			final w: Null<Array<WCB>> = waitersByName[name];
 			if (w != null) {
 				w.push(wcb);
 				return;

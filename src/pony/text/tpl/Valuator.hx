@@ -8,10 +8,10 @@ import pony.text.tpl.ValuePut;
  * Valuator
  * @author AxGord
  */
-@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
+@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
 class Valuator<C1, C2> extends TplPut<C1, C2> {
 
-	public function new(data: C1, datad: C2, parent: ITplPut = null) {
+	public function new(data: C1, datad: C2, ?parent: ITplPut) {
 		super(data, datad, parent);
 	}
 

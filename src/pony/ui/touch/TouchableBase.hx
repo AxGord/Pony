@@ -22,7 +22,7 @@ import pony.TypedPool;
 	private static inline var SWIPE_REPEATS: UInt = 8;
 	private static inline var TAP_DELAY: Time = 300;
 
-	private static var touches: Map<UInt, Touch> = new Map<UInt, Touch>();
+	private static var touches: Map<UInt, Touch> = [];
 	private static var touchPool: TypedPool<Touch> = new TypedPool<Touch>();
 
 	@:auto public var onOver: Signal1<Touch>;

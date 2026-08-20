@@ -22,6 +22,6 @@ abstract Byte(Int) from Int to Int {
 
 	inline public function chechSumWith(b: Byte): Byte return (this + (b: Int)) & 0xFF;
 
-	@:to inline public function toString(): String return '0x' + StringTools.hex(this);
+	@:to inline public function toString(): String return '0x${StringTools.hex(this)}';
 
 }

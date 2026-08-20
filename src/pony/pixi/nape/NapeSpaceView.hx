@@ -47,7 +47,7 @@ class NapeSpaceViewBase extends Sprite implements pony.magic.HasLink {
 
 	public var core(default, null): NapeSpace;
 	private var objects: Array<BodyBaseView<BodyBase>> = [];
-	private var groups: Map<String, NapeGroupView> = new Map<String, NapeGroupView>();
+	private var groups: Map<String, NapeGroupView> = [];
 
 	public var touchable(default, null): Touchable;
 

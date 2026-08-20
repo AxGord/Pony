@@ -66,7 +66,7 @@ class XmlUiBuilder {
 
 		var fields: Array<Field> = Context.getBuildFields();
 
-		var style: Style = new Map();
+		var style: Style = [];
 		if (meta.checkMeta([':style'])) {
 			for (p in meta.getMeta(':style').params) switch p.expr {
 				case EConst(CString(styleFile)):
@@ -84,7 +84,7 @@ class XmlUiBuilder {
 				gpath = ps.join('/');
 				var xml = getXml(uiFile);
 
-				var filters: Style = new Map();
+				var filters: Style = [];
 				if (xml.has.filters) {
 					for (f in parseAttr(xml.att.filters)) {
 						var s = getFilters(joinPath(gpath, f));
@@ -192,7 +192,7 @@ class XmlUiBuilder {
 	private static function exprToTypeString(expr: Expr): String {
 		return switch expr.expr {
 			case EConst(CIdent(s)): s;
-			case EField(e, field): exprToTypeString(e) + '.' + field;
+			case EField(e, field): '${exprToTypeString(e)}.$field';
 			case _: Context.error('Wrong expr type', expr.pos);
 		}
 	}
@@ -207,14 +207,14 @@ class XmlUiBuilder {
 		if (xml.has.path) {
 			path = joinPath(path, xml.att.path);
 		} else {
-			var attrs: Map<String, String> = new Map();
+			var attrs: Map<String, String> = [];
 			addStyle(xml.name, attrs, style);
 			if (attrs.exists('path')) pathes.push(joinPath(path, attrs['path']));
 		}
 		if (xml.has.src) {
 			for (s in xml.att.src.split(',')) pathes.push(joinPath(path, StringTools.trim(s)));
 		} else {
-			var attrs: Map<String, String> = new Map();
+			var attrs: Map<String, String> = [];
 			addStyle(xml.name, attrs, style);
 			if (attrs.exists('src')) for (e in joinPathA(path, attrs['src']).split(',')) pathes.push(StringTools.ltrim(e));
 		}
@@ -233,7 +233,7 @@ class XmlUiBuilder {
 			case _:
 		}
 
-		var attrs: Map<String, String> = new Map();
+		var attrs: Map<String, String> = [];
 		var name = addStyle(xml.name, attrs, style);
 		for (k in xml.x.attributes()) if (k != 'id') attrs[k] = xml.att.resolve(k);
 
@@ -242,7 +242,7 @@ class XmlUiBuilder {
 
 		var content: Array<Expr> = [
 			for (x in xml.elements) {
-				var e: Null<Expr> = genExpr(x, style, prefix + (xml.has.id ? xml.att.id + '_' : ''), path, repeat);
+				var e: Null<Expr> = genExpr(x, style, prefix + (xml.has.id ? '${xml.att.id}_' : ''), path, repeat);
 				if (e != null) e;
 			}
 		];
@@ -329,7 +329,7 @@ class XmlUiBuilder {
 		else if (style.exists(name))
 			getType(style[name]['extends'], style, types);
 		else
-			Context.error('Unknown type ' + name, Context.currentPos());
+			Context.error('Unknown type $name', Context.currentPos());
 	}
 
 	private static function joinPathA(a: String, b: String): String {

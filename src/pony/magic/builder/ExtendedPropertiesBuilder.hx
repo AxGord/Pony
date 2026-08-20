@@ -25,8 +25,7 @@ class ExtendedPropertiesBuilder {
 	macro public static function hidden(): Array<Field> {
 		var fields: Array<Field> = Context.getBuildFields();
 		var fs: Array<Field> = [];
-		var funs: Array<String> = [];
-		for (f in fields) if (f.kind.match(FFun(_))) funs.push(f.name);
+		final funs: Array<String> = [for (f in fields) if (f.kind.match(FFun(_))) f.name];
 		for (f in fields) {
 			switch f.kind {
 				case FProp('_', s, t, e):
@@ -39,7 +38,7 @@ class ExtendedPropertiesBuilder {
 						access: f.access.indexOf(AStatic) != -1 ? [AStatic] : []
 					});
 					repList.push(f.name);
-					var fn = 'get_' + f.name;
+					var fn = 'get_${f.name}';
 					if (funs.indexOf(fn) == -1) {
 						fs.push({
 							kind: FFun({
@@ -56,11 +55,11 @@ class ExtendedPropertiesBuilder {
 					fs.push(f);
 			}
 		}
-		used = new Map();
+		used = [];
 		for (f in fs) switch f.kind {
 			case FFun(f):
 				lvl = 0;
-				used.set(lvl, [for (a in f.args) a.name]);
+				used[lvl] = [for (a in f.args) a.name];
 				f.expr = ExprTools.map(f.expr, repl);
 			case FVar(_, e) if (e != null):
 				e.expr = ExprTools.map(e, repl).expr;
@@ -70,7 +69,7 @@ class ExtendedPropertiesBuilder {
 	}
 
 	#if macro
-	inline private static function lvlused(): Array<String> return used.exists(lvl) ? used.get(lvl) : [];
+	inline private static function lvlused(): Array<String> return used.exists(lvl) ? used[lvl] : [];
 
 	private static function repl(e: Expr): Expr {
 		var curRepl = repList.copy();
@@ -80,7 +79,7 @@ class ExtendedPropertiesBuilder {
 			case EVars(args):
 				var a: Array<String> = lvlused();
 				for (arg in args) if (repList.indexOf(arg.name) != -1) a.push(arg.name);
-				used.set(lvl, a);
+				used[lvl] = a;
 			#if (haxe_ver >= 4)
 			case EFunction(FNamed(name), f):
 			#else
@@ -88,7 +87,7 @@ class ExtendedPropertiesBuilder {
 			#end
 				var a: Array<String> = lvlused();
 				if (name != null) a.push(name);
-				used.set(lvl, a);
+				used[lvl] = a;
 			case _:
 		}
 		lvl++;
@@ -97,7 +96,7 @@ class ExtendedPropertiesBuilder {
 			case EFunction(_, f):
 				var a: Array<String> = lvlused();
 				for (arg in f.args) if (repList.indexOf(arg.name) != -1) a.push(arg.name);
-				used.set(lvl, a);
+				used[lvl] = a;
 			case _:
 		}
 
@@ -141,7 +140,7 @@ class ExtendedPropertiesBuilder {
 					if (f.access.indexOf(AInline) != -1) access.push(AInline);
 					fs.push({
 						kind: f.kind,
-						name: 'get_' + f.name,
+						name: 'get_${f.name}',
 						pos: f.pos,
 						access: access
 					});
@@ -164,7 +163,7 @@ class ExtendedPropertiesBuilder {
 							ret: t,
 							expr: macro return $e
 						}),
-						name: 'get_' + f.name,
+						name: 'get_${f.name}',
 						pos: f.pos,
 						access: access
 					});

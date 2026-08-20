@@ -25,7 +25,7 @@ using hugs.HUGSWrapper;
  */
 @:nativeGen class GUI {
 
-	static private var textures: Map<Int, Dynamic> = new Map<Int, Texture2D>();
+	static private var textures: Map<Int, Dynamic> = [];
 
 	public static function text(f: Vector3, point: IntPoint, text: String, style: FontStyle): GameObject {
 		var b = new GameObject();
@@ -52,12 +52,12 @@ using hugs.HUGSWrapper;
 			var t: Texture2D = new Texture2D(1, 1);
 			t.SetPixel(0, 0, color);
 			t.Apply();
-			textures.set(color, t);
+			textures[color] = t;
 		}
 		var b = new GameObject();
 		b.name = 'gui_rect';
 		var g = b.addTypedComponent(GUITexture);
-		b.guiTexture.texture = textures.get(color);
+		b.guiTexture.texture = textures[color];
 		b.transform.position = f;
 		b.transform.localScale = new Vector3(0, 0, 0);
 		g.pixelInset = new Rect(r.x, -r.y, r.width, -r.height);

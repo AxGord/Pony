@@ -77,11 +77,11 @@ class CTable implements Declarator implements Ninja {
 	/**
 	 * Order asc for field
 	 */
-	@:n inline public function asc(field: String): Table order = ' ORDER BY ' + mysql.escapeId(field) + ' ASC';
+	@:n inline public function asc(field: String): Table order = ' ORDER BY ${mysql.escapeId(field)} ASC';
 	/**
 	 * Order desc for field
 	 */
-	@:n inline public function desc(field: String): Table order = ' ORDER BY ' + mysql.escapeId(field) + ' DESC';
+	@:n inline public function desc(field: String): Table order = ' ORDER BY ${mysql.escapeId(field)} DESC';
 	/**
 	 * Data for query 'where', helper for where function
 	 */
@@ -146,9 +146,8 @@ class CTable implements Declarator implements Ninja {
 	}
 
 	inline private function genGetQuery(): String
-		return 'SELECT ' + (
-			_select.length == 0 ? '*' : _select.map(mysql.escapeId).join(', ')
-		) + ' FROM $table' + _where + order + (_limit == null ? '' : ' LIMIT $_begin, $_limit');
+		return 'SELECT ${(_select.length == 0 ? '*' : _select.map(mysql.escapeId).join(', '))} FROM $table$_where$order'
+			+ (_limit == null ? '' : ' LIMIT $_begin, $_limit');
 
 	/**
 	 * Prepare this table
@@ -167,22 +166,22 @@ class CTable implements Declarator implements Ninja {
 	public function insert(data: Map<String, DBV>, cb: Bool -> Void, ?p: PosInfos): Void {
 		var keys = [for (f in data.keys()) mysql.escapeId(f)];
 		var values = [for (d in data) d.get(mysql.escape)];
-		mysql.action('INSERT INTO $table (' + keys.join(', ') + ') VALUES (' + values.join(', ') + ')', 'insert', p, cb);
+		mysql.action('INSERT INTO $table (${keys.join(', ')}) VALUES (${values.join(', ')})', 'insert', p, cb);
 	}
 
 	/**
 	 * Update data it table
 	 */
 	public function update(data: Map<String, DBV>, cb: Bool -> Void, ?p: PosInfos): Void {
-		var set = [for (f in data.keys()) mysql.escapeId(f) + '=' + data[f].get(mysql.escape)];
-		mysql.action('UPDATE $table SET ' + set.join(', ') + _where, cb);
+		var set = [for (f in data.keys()) '${mysql.escapeId(f)}=${data[f].get(mysql.escape)}'];
+		mysql.action('UPDATE $table SET ${set.join(', ')}$_where', cb);
 	}
 
 	/**
 	 * Delete selected rows from table
 	 */
 	public function delete(cb: Bool -> Void, ?p: PosInfos): Void {
-		var q = 'DELETE FROM $table' + _where + order + (_limit == null ? '' : ' LIMIT $_begin, $_limit');
+		var q = 'DELETE FROM $table$_where$order${(_limit == null ? '' : ' LIMIT $_begin, $_limit')}';
 		mysql.query(q, p, function(err: Dynamic, fields: Dynamic, _): Void {
 			if (err != null) {
 				_error(err);

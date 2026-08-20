@@ -19,7 +19,7 @@ class Cordova extends Section {
 	public function result(): Xml {
 		init();
 
-		if (title != null) add('id', 'org.apache.cordova.pony.' + StringTools.replace(title, ' ', ''));
+		if (title != null) add('id', 'org.apache.cordova.pony.${StringTools.replace(title, ' ', '')}');
 
 		if (versionBuildDate) {
 			var version = Xml.createElement('version');
@@ -40,7 +40,7 @@ class Cordova extends Section {
 
 		if (title != null) {
 			var debug = Xml.createElement('debug');
-			debug.addChild(XmlTools.node('name', title + ' Debug'));
+			debug.addChild(XmlTools.node('name', '$title Debug'));
 			xml.addChild(debug);
 		}
 

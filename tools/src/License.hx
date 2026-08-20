@@ -60,7 +60,7 @@ class License {
 					}
 				}
 				var data = file.content.split('\n');
-				for (line in 0...data.length) data[line] = '* ' + data[line];
+				for (line in 0...data.length) data[line] = '* ${data[line]}';
 				data.unshift('/**');
 				data.push('**/');
 				for (file in ('.': Dir).contentRecursiveFiles('.hx')) {
@@ -104,12 +104,12 @@ class License {
 								file.content = data.concat(lines.slice(n)).join('\n');
 							} else {
 								Sys.println('Add license in file $file');
-								file.content = data.join('\n') + '\n' + fcontent;
+								file.content = data.join('\n') + '\n$fcontent';
 							}
 						}
 					} else {
 						Sys.println('Add license in file $file');
-						file.content = data.join('\n') + '\n' + fcontent;
+						file.content = data.join('\n') + '\n$fcontent';
 					}
 				}
 			case _:
@@ -128,7 +128,7 @@ class License {
 				if (all.length < 2) Utils.error('Email not set');
 				var a: Array<String> = all[0].split(' ');
 				var b: Array<String> = all[1].split(' ');
-				var email: String = a.pop() + '@' + b.shift();
+				var email: String = '${a.pop()}@${b.shift()}';
 				var author: String = a.join(' ');
 				var company: String = b.join(' ');
 				genLicense('closed.txt', author, email, company);

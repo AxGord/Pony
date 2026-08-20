@@ -42,7 +42,7 @@ class Uglify extends Section {
 		sm.addChild(XmlTools.node('output', '$outputPath$outputFile.map'));
 		sm.addChild(XmlTools.node('url', '$outputFile.map'));
 		sm.addChild(XmlTools.node('source', outputFile));
-		if (mapOffset != null) sm.addChild(XmlTools.node('offset', Std.string(mapOffset)));
+		if (mapOffset != null) sm.addChild(XmlTools.node('offset', '$mapOffset'));
 		debug.addChild(sm);
 
 		xml.addChild(debug);

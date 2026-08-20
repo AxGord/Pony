@@ -13,7 +13,7 @@ class SignalTest {
 		var r: String;
 		var e = new Event2();
 		var s: Signal2<String, String> = e;
-		s.add(function(name: String, end: String) r = 'ok, ' + name + end);
+		s.add(function(name: String, end: String) r = 'ok, $name$end');
 		e.dispatch('men', '?');
 		Assert.areEqual(r, 'ok, men?');
 		e.dispatch('glass', '!');

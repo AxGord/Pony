@@ -36,7 +36,7 @@ class FDate extends Field {
  * CDatePut
  * @author AxGord <axgord@gmail.com>
  */
-@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
+@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
 @:keep class CDatePut extends pony.text.tpl.TplPut<FDate, Dynamic> {
 
 	@:async

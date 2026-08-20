@@ -71,12 +71,12 @@ using pony.text.TextTools;
 	@:auto public static var onError: Signal1<String>;
 
 	private static var hasError: Bool = false;
-	private static var atlases: Map<String, Pair<Loader, Atlas>> = new Map();
-	private static var tiles: Map<String, Tile> = new Map();
-	private static var fonts: Map<String, Font> = new Map();
-	private static var texts: Map<String, String> = new Map();
-	private static var bins: Map<String, Bytes> = new Map();
-	private static var sounds: Map<String, Sound> = new Map();
+	private static var atlases: Map<String, Pair<Loader, Atlas>> = [];
+	private static var tiles: Map<String, Tile> = [];
+	private static var fonts: Map<String, Font> = [];
+	private static var texts: Map<String, String> = [];
+	private static var bins: Map<String, Bytes> = [];
+	private static var sounds: Map<String, Sound> = [];
 
 	#if sys
 	private static var queue: Queue1<BinaryLoader> = new Queue1(getAsset);
@@ -290,7 +290,7 @@ using pony.text.TextTools;
 		@:nullSafety(Off) var ext: String = a.pop();
 		var preExt: Null<String> = a.pop();
 		if (preExt != null && ['atlas', 'wav', 'mp3', 'ogg'].indexOf(preExt) == -1) preExt = a.pop();
-		if (a.length > 0 && preExt != null) ext = preExt + '.' + ext;
+		if (a.length > 0 && preExt != null) ext = '$preExt.$ext';
 		return ext;
 	}
 

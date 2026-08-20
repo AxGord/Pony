@@ -48,7 +48,7 @@ using hugs.HUGSWrapper;
 
 	private function out(): Void Tooltip.hideText(this);
 
-	private function over(): Void Tooltip.showText(tooltip, "", this, gameObject.layer, true);
+	private function over(): Void Tooltip.showText(tooltip, '', this, gameObject.layer, true);
 
 	#if !touchscript
 	private function Update(): Void {

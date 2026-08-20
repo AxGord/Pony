@@ -14,10 +14,10 @@ class Build extends Section {
 
 	private static var HXML: String = '.hxml';
 
-	public var libs: Map<String, String> = new Map();
+	public var libs: Map<String, String> = [];
 	public var flags: Array<String> = [];
 	public var macros: Array<String> = [];
-	public var args: Map<String, String> = new Map();
+	public var args: Map<String, String> = [];
 	public var target: HaxeTargets = null;
 	public var outputFile: String = 'app';
 	public var outputPath: String = 'bin/';
@@ -117,7 +117,7 @@ class Build extends Section {
 
 	public function getMainhx(): String return gethx(main);
 
-	public function gethx(name: String): String return getMainhxPath() + '/' + name + '.hx';
+	public function gethx(name: String): String return '${getMainhxPath()}/$name.hx';
 
 	public function createMainhx(template: String, ?replaces: Map<String, String>): Void {
 		createPathToMainhxIfNeed();

@@ -52,7 +52,7 @@ class InsertConnect extends ActionConnect {
 
 		var ca: Array<Dynamic> = [];
 		for (k in base.args.keys()) {
-			var v: String = h.get(k);
+			var v: String = h[k];
 			if (Std.is(v, Array)) {
 				cpq.connection.error('Array not supported');
 				return true;
@@ -65,13 +65,13 @@ class InsertConnect extends ActionConnect {
 						ca.push(StringTools.trim(v));
 					case 'Int':
 						ca.push(Std.parseInt(v));
-					default:
-						cpq.connection.error('Type ' + base.args.get(k) + ' not supported');
+					case _:
+						cpq.connection.error('Type ${base.args.get(k)} not supported');
 						return true;
 				}
 		}
 		callCheck(ca, function(r: ActResult) {
-			ma.set(base.id, { values: h, result: r });
+			ma[base.id] = { values: h, result: r };
 			switch r {
 				case ActResult.OK:
 					cpq.connection.endAction();
@@ -102,11 +102,11 @@ class InsertPut extends pony.text.tpl.TplPut<InsertConnect, CPQ> {
 		if (!a.checkAccess()) return '';
 		if (content == null || args.exists('auto')) {
 			var fixList = [];
-			if (args.exists('fix')) fixList = args.get('fix').split(',');
+			if (args.exists('fix')) fixList = args['fix'].split(',');
 			var r: String = '';
 			var hasFile: Bool = false;
 			var ma: Map<Int, { values: Map<String, String>, result: ActResult }> = cast a.storage;
-			var m = ma.get(a.base.id);
+			var m = ma[a.base.id];
 			if (m == null)
 				for (k in a.base.args.keys()) {
 					r += inputE(k, '', fixList.indexOf(k) != -1);
@@ -120,7 +120,7 @@ class InsertPut extends pony.text.tpl.TplPut<InsertConnect, CPQ> {
 			a.clr();
 			var f = hasFile ? ' enctype="multipart/form-data"' : '';
 			return '<form action="" method="POST"$f>'
-				+ (content != null ? '<div class="capition">' + @await tplData(content) + '</div>' : '') + r
+				+ '${(content != null ? '<div class="capition">' + @await tplData(content) + '</div>' : '')}$r'
 				+ '<button>Send</button> <a href="" class="action">Clear</a></form>';
 		} else {
 			var r: String = @await sub(a, b, InsertPutSub, content);
@@ -131,9 +131,9 @@ class InsertPut extends pony.text.tpl.TplPut<InsertConnect, CPQ> {
 
 	private function inputE(name: String, value: String, fix: Bool): String {
 		var s: String = st(name);
-		if (s == null) return '<label>' + name.bigFirst() + input(name, null, value) + '</label>';
-		if (s == '') return '<label>' + name.bigFirst() + input(name, 'ok', fix ? value : '') + '</label>';
-		return '<label>' + name.bigFirst() + input(name, 'error', value) + '<div>' + s + '</div>' + '</label>';
+		if (s == null) return '<label>${name.bigFirst()}${input(name, null, value)}</label>';
+		if (s == '') return '<label>${name.bigFirst()}${input(name, 'ok', fix ? value : '')}</label>';
+		return '<label>${name.bigFirst()}${input(name, 'error', value)}<div>$s</div></label>';
 	}
 
 	private function input(name: String, cl: String, value: String): String {
@@ -144,7 +144,7 @@ class InsertPut extends pony.text.tpl.TplPut<InsertConnect, CPQ> {
 
 	private function st(arg: String): String {
 		var ma: Map<Int, Dynamic> = b.connection.sessionStorage.get('modelsActions');
-		var m = ma.get(a.base.id);
+		var m = ma[a.base.id];
 		var r: ActResult = m == null ? null : m.result;
 		var st: String = null;
 		if (r != null) switch (r) {
@@ -181,7 +181,7 @@ class InsertPutArg extends pony.text.tpl.TplPut<{ o: InsertConnect, arg: String 
 
 	private function st(): String {
 		var ma: Map<Int, { values: Map<String, String>, result: ActResult }> = b.connection.sessionStorage.get('modelsActions');
-		var m = ma.get(a.o.base.id);
+		var m = ma[a.o.base.id];
 		var r: ActResult = m == null ? null : m.result;
 		var st: String = null;
 		if (r != null) switch (r) {
@@ -208,7 +208,7 @@ class InsertPutArg extends pony.text.tpl.TplPut<{ o: InsertConnect, arg: String 
 			case 'error':
 				var s = st();
 				return s != null && s != '' ? @await tplData(content) : '';
-			default:
+			case _:
 				return @await super.tag(name, content, arg, args, kid);
 		}
 	}
@@ -223,7 +223,7 @@ class InsertPutArg extends pony.text.tpl.TplPut<{ o: InsertConnect, arg: String 
 				return '';
 		} else if (name == 'value') {
 			var ma: Map<Int, { values: Map<String, String>, result: ActResult }> = b.connection.sessionStorage.get('modelsActions');
-			var m = ma.get(a.o.base.id);
+			var m = ma[a.o.base.id];
 			if (m == null)
 				return '';
 			else {

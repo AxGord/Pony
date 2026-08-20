@@ -46,14 +46,14 @@ using hugs.HUGSWrapper;
 		Fixed2dCamera.visible = false;
 
 		if (background != null) {
-			bgTextureObject = new GameObject("GUITexture LoadScreen Background");
+			bgTextureObject = new GameObject('GUITexture LoadScreen Background');
 			var guiTextureObject: GUITexture = cast bgTextureObject.AddComponent('GUITexture');
 			guiTextureObject.texture = background;
 			bgTextureObject.transform.position = new Vector3(0.5, 0.5, 100);
 		}
 
 		if (main != null) {
-			mainTextureObject = new GameObject("GUITexture LoadScreen Main");
+			mainTextureObject = new GameObject('GUITexture LoadScreen Main');
 			var mguiTextureObject: GUITexture = cast mainTextureObject.AddComponent('GUITexture');
 			mguiTextureObject.texture = main;
 			mguiTextureObject.transform.localScale = new Vector3(0, 0);

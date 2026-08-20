@@ -22,7 +22,7 @@ abstract MySQL(CMySQL) {
 class CMySQL extends #if nodejs
 pony.db.mysql.nodejs.MySQL #else pony.db.mysql.haxe.MySQL #end implements IMySQL {
 
-	private var tables: Map<String, Table> = new Map();
+	private var tables: Map<String, Table> = [];
 
 	/**
 	 * Select table

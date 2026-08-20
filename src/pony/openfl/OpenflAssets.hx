@@ -24,7 +24,7 @@ import openfl.net.URLLoaderDataFormat;
  */
 class OpenflAssets {
 
-	static var assets: Map<String, DisplayObject> = new Map<String, DisplayObject>();
+	static var assets: Map<String, DisplayObject> = [];
 	static var loader: Loader;
 
 	static var loadCompleteHandler: Void -> Void;
@@ -38,7 +38,7 @@ class OpenflAssets {
 		asset = AssetManager.baseUrl + asset;
 		loadBytes(asset, function(b: ByteArray) {
 			bytesToBitmapData(b, function(bd: BitmapData) {
-				assets.set(asset, new Bitmap(bd));
+				assets[asset] = new Bitmap(bd);
 				cb();
 			});
 		});
@@ -104,7 +104,7 @@ class OpenflAssets {
 	public static function image(asset: String): Bitmap {
 		if (Assets.exists(asset)) {
 			try {
-				return cast(new Bitmap(Assets.getBitmapData(asset)), Bitmap);
+				return cast new Bitmap(Assets.getBitmapData(asset));
 			} catch (e: Error) {
 				return null;
 			}
@@ -112,7 +112,7 @@ class OpenflAssets {
 		asset = AssetManager.baseUrl + asset;
 		if (assets.exists(asset)) {
 			try {
-				return cast(assets.get(asset), Bitmap);
+				return cast assets[asset];
 			} catch (e: Error) {
 				return null;
 			}

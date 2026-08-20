@@ -7,7 +7,7 @@ import pony.text.tpl.TplPut;
  * ValuePut
  * @author AxGord
  */
-@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
+@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
 class ValuePut extends TplPut<String, {}> {
 
 	@:async

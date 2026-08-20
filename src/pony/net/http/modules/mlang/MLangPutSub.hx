@@ -8,7 +8,7 @@ import pony.text.tpl.Valuator;
  * MLangPutSub
  * @author AxGord <axgord@gmail.com>
  */
-@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
+@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
 @:final class MLangPutSub extends Valuator<MLangPut, String> {
 
 	@:async
@@ -40,7 +40,7 @@ import pony.text.tpl.Valuator;
 			case 'author':
 				var a: String = a.a.base.langTable.langs.get(b).author;
 				a != null ? a : '';
-			default: null;
+			case _: null;
 		}
 	}
 

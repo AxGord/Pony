@@ -70,7 +70,7 @@ class SocketServer extends SocketServerBase {
 	private function acceptCallback(ar: IAsyncResult): Void {
 		if (isRunning) {
 			eventAccept.Reset();
-			var s: Socket = cast(ar.AsyncState, Socket);
+			var s: Socket = cast ar.AsyncState;
 			var cl: SocketClient = clInit();
 			cl.client = s.EndAccept(ar);
 			cl.client.NoDelay = true; // One should never forget that this may cause troubles in future.

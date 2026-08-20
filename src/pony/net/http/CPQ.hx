@@ -15,17 +15,17 @@ class CPQ implements Declarator {
 	public var query: Array<String> = [];
 	@:arg public var template: TplSystem;
 	@:arg public var lang: String;
-	public var modules: Map<String, ModuleConnect<IModule>> = new Map<String, ModuleConnect<IModule>>();
+	public var modules: Map<String, ModuleConnect<IModule>> = [];
 
 	public function run(): Void {
 		var a: Array<String> = connection.url.split('/');
 		var u: Array<String> = [];
 		while (a.length != 0) {
 			var n: String = a.join('/');
-			if (template.exists(n + '/index')) {
+			if (template.exists('$n/index')) {
 				page = n;
 				query = u;
-				tpl(n + '/index');
+				tpl('$n/index');
 				return;
 			} else if (template.exists(n)) {
 				page = n;

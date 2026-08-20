@@ -24,7 +24,7 @@ class BTextLow extends BitmapText implements IWH {
 		try {
 			super(text, style);
 		} catch (_: Any) {
-			throw 'Font error: ' + style.font;
+			throw 'Font error: ${style.font}';
 		}
 		if (!this.nocache) cacheAsBitmap = true;
 

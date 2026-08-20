@@ -29,7 +29,9 @@ class MaxRectsBinPack {
 	public var usedRectangles: Vector<Rectangle> = new Vector<Rectangle>();
 	public var freeRectangles: Vector<Rectangle> = new Vector<Rectangle>();
 
-	private var score1: Int = 0; // Unused in this function. We don't need to know the score after finding the position.
+	/** Unused in this function. We don't need to know the score after finding the position. */
+	private var score1: Int = 0;
+
 	private var score2: Int = 0;
 	private var bestShortSideFit: Int;
 	private var bestLongSideFit: Int;

@@ -32,7 +32,7 @@ class HasAbstractBuilder {
 				if (!f.access.contains(AAbstract)) f.access.push(AAbstract);
 				fields.push(f);
 				#else
-				if (f.access.indexOf(AOverride) != -1) Context.error("You can't use abstract for override field " + f.name, cCur.pos);
+				if (f.access.indexOf(AOverride) != -1) Context.error('You can\'t use abstract for override field ${f.name}', cCur.pos);
 				switch f.kind {
 					case FFun(fun):
 						fields.push({
@@ -49,7 +49,7 @@ class HasAbstractBuilder {
 							pos: f.pos
 						});
 					case _:
-						Context.error(f.kind.getName() + " can't be abstract", f.pos);
+						Context.error('${f.kind.getName()} can\'t be abstract', f.pos);
 				}
 				#end
 			} else {
@@ -62,7 +62,7 @@ class HasAbstractBuilder {
 			for (f in c.fields.get()) {
 				if (f.meta.has(KEYWORD) || f.meta.has(PUBKEYWORD)) {
 					if (!fieldMap.exists(f.name)) {
-						Context.error('Missing implementation for abstract field ' + f.name, cCur.pos);
+						Context.error('Missing implementation for abstract field ${f.name}', cCur.pos);
 					}
 				} else {
 					fieldMap.set(f.name, true);

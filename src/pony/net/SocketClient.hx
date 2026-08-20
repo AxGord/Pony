@@ -94,7 +94,8 @@ import pony.events.Signal2;
 	public inline function setTask(?prefix: BytesOutput, ?len: Int64): Signal2<BytesInput, ISocketClient> {
 		taskBuffer = new BytesOutput();
 		taskPrefix = prefix == null ? null : new BytesInput(prefix.getBytes());
-		taskDataLength = len == null ? 0 : len;
+		// ?? cannot replace this: Int64 needs the ternary's per-branch typing
+		taskDataLength = len == null ? 0 : len; // noqa: prefer-null-coalescing
 		onData << taskDataHandler;
 		return onTask;
 	}

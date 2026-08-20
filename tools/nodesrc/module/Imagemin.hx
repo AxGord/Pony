@@ -27,9 +27,9 @@ private typedef ImageminResult = Array<ImageminResultEntry>;
 	#if (haxe_ver < 4.2) override #end
 	private function run(cfg: ImageminConfig): Void {
 		var from: Array<String> = cfg.from.split(',').map(StringTools.trim).addToStringsEnd('*.');
-		log('From: ' + from);
+		log('From: $from');
 		var formats: Array<String> = cfg.format == null ? [JPG, PNG, WEBP] : @:nullSafety(Off) cfg.format.split(',').map(StringTools.trim);
-		log('Formats: ' + formats.join(', '));
+		log('Formats: ${formats.join(', ')}');
 		if (formats.indexOf(JPG) != -1 || (cfg.jpgfrompng && formats.indexOf(PNG) != -1)) {
 			var dir: Dir = cfg.from;
 			var filter: String = '.$JPG';
@@ -48,7 +48,7 @@ private typedef ImageminResult = Array<ImageminResultEntry>;
 				}).then(function(r: ImageminResult): Void {
 					var p: String = file.first.substr(cfg.from.length);
 					p = p.substr(0, -4);
-					var n: String = cfg.to + p + '.$JPG';
+					var n: String = '${cfg.to + p}.$JPG';
 					Utils.createPath(n);
 					var b: Bytes = Bytes.ofData(r[0].data);
 					sys.io.File.saveBytes(n, b);
@@ -91,12 +91,12 @@ private typedef ImageminResult = Array<ImageminResultEntry>;
 				for (file in from) {
 					var d: Dir = file.substr(0, -2);
 					for (f in d.files(ext)) {
-						var ef: File = (f.fullDir + f.shortName).first + '.$PNG';
+						var ef: File = '${(f.fullDir + f.shortName).first}.$PNG';
 						if (!ef.exists) continue;
-						var nf: File = cfg.to + f.shortName + '_$WEBP' + ext;
+						var nf: File = '${cfg.to + f.shortName}_$WEBP$ext';
 						nf.createWays();
-						var shn: String = f.shortName + '.$WEBP';
-						log(f.name + ': ' + ef.name + ' -> ' + shn);
+						var shn: String = '${f.shortName}.$WEBP';
+						log('${f.name}: ${ef.name} -> $shn');
 						nf.content = (
 							@:nullSafety(Off)
 							(f.content: String)
@@ -111,20 +111,18 @@ private typedef ImageminResult = Array<ImageminResultEntry>;
 				for (file in from) {
 					var d: Dir = file.substr(0, -2);
 					for (f in d.files(ext)) {
-						var ef: File = (f.fullDir + f.shortName).first + '.$e';
+						var ef: File = '${(f.fullDir + f.shortName).first}.$e';
 						log('Generate $WEBP json, check file: $f, $ef');
 						if (!ef.exists) continue;
-						var nf: File = cfg.to + f.shortName + '_$WEBP' + ext;
+						var nf: File = '${cfg.to + f.shortName}_$WEBP$ext';
 						log(nf);
 						nf.createWays();
-						nf.content = StringTools.replace(
-							@:nullSafety(Off) (f.content: String), '"' + ef.name + '"', '"' + f.shortName + '.$WEBP"'
-						);
+						nf.content = StringTools.replace(@:nullSafety(Off) (f.content: String), '"${ef.name}"', '"${f.shortName}.$WEBP"');
 					}
 				}
 			}
 			cformats.push(WEBP);
-			NPM.imagemin(from.addToStringsEnd('{' + cformats.join(',') + '}'), {
+			NPM.imagemin(from.addToStringsEnd('{${cformats.join(',')}}'), {
 				destination: cfg.to,
 				plugins: [
 					NPM.imagemin_webp({

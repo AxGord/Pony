@@ -17,8 +17,8 @@ class Action {
 	public function new(model: Model, name: String, args: Array<{ name: String, type: String }>) {
 		this.model = model;
 		this.name = name;
-		this.args = new Map<String, String>();
-		for (a in args) this.args.set(a.name, a.type);
+		this.args = [];
+		for (a in args) this.args[a.name] = a.type;
 		id = model.mm.lastActionId++;
 	}
 

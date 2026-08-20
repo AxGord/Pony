@@ -19,7 +19,7 @@ class HttpTools {
 
 	private static function _getJson(url: String, cb: Dynamic -> Void): Void {
 		regcb(function(r: Dynamic) {
-			Browser.document.getElementsByTagName("head")[0].removeChild(snode);
+			Browser.document.getElementsByTagName('head')[0].removeChild(snode);
 			snode = null;
 			regcb(null);
 			cb(r);
@@ -28,7 +28,7 @@ class HttpTools {
 		var script = Browser.document.createElement('SCRIPT');
 		url += '&callback=ponyCallbackFunc';
 		untyped script.src = url;
-		snode = Browser.document.getElementsByTagName("head")[0].appendChild(script);
+		snode = Browser.document.getElementsByTagName('head')[0].appendChild(script);
 	}
 
 }

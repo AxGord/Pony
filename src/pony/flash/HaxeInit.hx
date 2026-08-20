@@ -66,14 +66,14 @@ import flash.Lib;
 
 	private static inline function initMath(): Void {
 		untyped {
-			Math.NaN = __global__["Number"].NaN;
-			Math.NEGATIVE_INFINITY = __global__["Number"].NEGATIVE_INFINITY;
-			Math.POSITIVE_INFINITY = __global__["Number"].POSITIVE_INFINITY;
+			Math.NaN = __global__['Number'].NaN;
+			Math.NEGATIVE_INFINITY = __global__['Number'].NEGATIVE_INFINITY;
+			Math.POSITIVE_INFINITY = __global__['Number'].POSITIVE_INFINITY;
 			Math.isFinite = function(i) {
-				return __global__["isFinite"](i);
+				return __global__['isFinite'](i);
 			};
 			Math.isNaN = function(i) {
-				return __global__["isNaN"](i);
+				return __global__['isNaN'](i);
 			};
 		}
 	}

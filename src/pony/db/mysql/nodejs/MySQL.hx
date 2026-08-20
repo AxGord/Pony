@@ -42,11 +42,11 @@ class MySQL extends SQLBase {
 		connection = mysqlClass.createConnection(c);
 		var err = @await connection.connect();
 		if (err != null) {
-			error('Error connecting: ' + err.stack);
+			error('Error connecting: ${err.stack}');
 			return;
 		}
 		var h = config.host == null ? 'localhost' : config.host;
-		var p = config.port == null ? '' : ':' + config.port;
+		var p = config.port == null ? '' : ':${config.port}';
 		log('Connected to $h$p');
 
 		if (@await prepareDatabase(db)) {
@@ -62,7 +62,7 @@ class MySQL extends SQLBase {
 	@:async public function action(q: String, ?actName: String, ?p: PosInfos): Bool {
 		var err, _, _ = @await query(q, p);
 		if (err != null) {
-			error(actName == null ? Std.string(err) : "Can't " + actName + ': ' + err.stack, p);
+			error(actName == null ? '$err' : 'Can\'t $actName: ${err.stack}', p);
 			return false;
 		} else
 			return true;
@@ -100,8 +100,7 @@ class MySQL extends SQLBase {
 	}
 
 	private static function parseFlags(f: Int): Array<Flags> {
-		var r = [];
-		for (k in Flags.toStr.keys()) if (f & k != 0) r.push(k);
+		final r = [for (k in Flags.toStr.keys()) if (f & k != 0) k];
 		return r;
 	}
 
@@ -138,11 +137,11 @@ class MySQL extends SQLBase {
 	}
 
 	@:async private function prepareDatabase(database: String): Bool {
-		if (!@await action(Const.createDB + database + Const.createDBPostfix, "create database")) return false;
+		if (!@await action(Const.createDB + database + Const.createDBPostfix, 'create database')) return false;
 
 		var err = @await connection.changeUser({ database: database });
 		if (err != null) {
-			error("Can't open database: " + err.stack);
+			error('Can\'t open database: ${err.stack}');
 			return false;
 		}
 

@@ -85,11 +85,11 @@ class HtmlVideoUIFS extends HtmlVideoUI {
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function createShowAndHideTransitions(): Void {
-		hideTransition = getTransition('opacity ' + hideAnimTime.totalMs + 'ms');
+		hideTransition = getTransition('opacity ${hideAnimTime.totalMs}ms');
 		hideTransitionDelay = DTimer.createFixedTimer(hideAnimTime);
 		hideTransitionDelay.complete << removeHideTransition;
 		hideTransitionDelay.complete << hide;
-		showTransition = getTransition('opacity ' + showAnimTime.totalMs + 'ms ease-in');
+		showTransition = getTransition('opacity ${showAnimTime.totalMs}ms ease-in');
 		showTransitionDelay = DTimer.createFixedTimer(showAnimTime);
 		showTransitionDelay.complete << removeShowTransition;
 		showTransitionDelay.complete << video.enableTouch;
@@ -141,7 +141,7 @@ class HtmlVideoUIFS extends HtmlVideoUI {
 	}
 
 	private inline function getTransition(r: String): String {
-		return JsTools.normalizeCss('transition: ' + r + '; -webkit-transition: ' + r + ';');
+		return JsTools.normalizeCss('transition: $r; -webkit-transition: $r;');
 	}
 
 	private function generateTransition(tr: String): Void {
@@ -193,8 +193,7 @@ class HtmlVideoUIFS extends HtmlVideoUI {
 	private function rmTransition(tr: String): Void {
 		var css = JsTools.splitCss(video.style.cssText);
 		var t = JsTools.splitCss(tr);
-		var ncss: Array<String> = [];
-		for (e in css) if (t.indexOf(e) == -1) ncss.push(e);
+		final ncss: Array<String> = [for (e in css) if (t.indexOf(e) == -1) e];
 		video.style.cssText = ncss.join('');
 	}
 

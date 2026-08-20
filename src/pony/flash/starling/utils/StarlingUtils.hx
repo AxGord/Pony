@@ -117,7 +117,7 @@ class StarlingUtils {
 		}
 	}
 
-	public static function setChildrenTextureSmoothing(container: DisplayObjectContainer, smoothing: String = "none"): Void {
+	public static function setChildrenTextureSmoothing(container: DisplayObjectContainer, smoothing: String = 'none'): Void {
 		for (i in 0...container.numChildren) {
 			var child: DisplayObject = container.getChildAt(i);
 			if (Std.is(child, Image)) cast(child, Image).smoothing = smoothing;

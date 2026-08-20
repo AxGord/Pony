@@ -77,7 +77,7 @@ abstract AnsiForeground(UInt) to UInt {
 
 	public static function allAfter(str: String, delimiter: String, ?startIndex: Int): String {
 		var r: Null<String> = allAfterWithNull(str, delimiter, startIndex);
-		return r != null ? r : str;
+		return r ?? str;
 	}
 
 	public static inline function allAfterLastWithNull(str: String, delimiter: String, ?startIndex: Int): Null<String> {
@@ -87,7 +87,7 @@ abstract AnsiForeground(UInt) to UInt {
 
 	public static function allAfterLast(str: String, delimiter: String, ?startIndex: Int): String {
 		var r: Null<String> = allAfterLastWithNull(str, delimiter, startIndex);
-		return r != null ? r : str;
+		return r ?? str;
 	}
 
 	public static inline function allBeforeWithNull(str: String, delimiter: String, ?startIndex: Int): Null<String> {
@@ -97,7 +97,7 @@ abstract AnsiForeground(UInt) to UInt {
 
 	public static function allBefore(str: String, delimiter: String, ?startIndex: Int): String {
 		var r: Null<String> = allBeforeWithNull(str, delimiter, startIndex);
-		return r != null ? r : str;
+		return r ?? str;
 	}
 
 	public static inline function allBeforeLastWithNull(str: String, delimiter: String, ?startIndex: Int): Null<String> {
@@ -107,7 +107,7 @@ abstract AnsiForeground(UInt) to UInt {
 
 	public static function allBeforeLast(str: String, delimiter: String, ?startIndex: Int): String {
 		var r: Null<String> = allBeforeLastWithNull(str, delimiter, startIndex);
-		return r != null ? r : str;
+		return r ?? str;
 	}
 
 	public static inline function extract(str: String, begin: String, end: String): Null<String> {
@@ -188,8 +188,7 @@ abstract AnsiForeground(UInt) to UInt {
 	public static function explode(s: String, delimiters: Array<String>): Array<String> {
 		var r: Array<String> = [s];
 		for (d in delimiters) {
-			var sr: Array<String> = [];
-			for (e in r) for (se in e.split(d)) if (se != '') sr.push(se);
+			final sr: Array<String> = [for (e in r) for (se in e.split(d)) if (se != '') se];
 			r = sr;
 		}
 		return r;
@@ -202,14 +201,14 @@ abstract AnsiForeground(UInt) to UInt {
 	}
 
 	macro public static function includePath(path: String = '.'): Expr {
-		var s: String = sys.FileSystem.absolutePath(path + '/');
+		var s: String = sys.FileSystem.absolutePath('$path/');
 		return macro $v{s};
 	}
 
 	macro public static function includeFileFromCurrentDir(file: String): Expr {
 		var f: String = Context.getPosInfos(Context.currentPos()).file;
 		var i: Int = MathTools.cmax(f.lastIndexOf('\\'), f.lastIndexOf('/'));
-		f = i != -1 ? f.substr(0, i) + '/' : '';
+		f = i != -1 ? '${f.substr(0, i)}/' : '';
 		Context.registerModuleDependency(MODULE, f + file);
 		var s: String = sys.io.File.getContent(f + file);
 		return macro $v{s};
@@ -218,8 +217,8 @@ abstract AnsiForeground(UInt) to UInt {
 	macro public static function includePathFromCurrentDir(path: String = '.'): Expr {
 		var f: String = Context.getPosInfos(Context.currentPos()).file;
 		var i: Int = MathTools.cmax(f.lastIndexOf('\\'), f.lastIndexOf('/'));
-		f = i != -1 ? f.substr(0, i) + '/' : '';
-		var s: String = sys.FileSystem.absolutePath(f + path + '/');
+		f = i != -1 ? '${f.substr(0, i)}/' : '';
+		var s: String = sys.FileSystem.absolutePath('${f + path}/');
 		return macro $v{s};
 	}
 
@@ -233,7 +232,7 @@ abstract AnsiForeground(UInt) to UInt {
 	macro public static function includeJsonFromCurrentDir(file: String): Expr {
 		var f: String = Context.getPosInfos(Context.currentPos()).file;
 		var i: Int = MathTools.cmax(f.lastIndexOf('\\'), f.lastIndexOf('/'));
-		f = i != -1 ? f.substr(0, i) + '/' : '';
+		f = i != -1 ? '${f.substr(0, i)}/' : '';
 		Context.registerModuleDependency(MODULE, f + file);
 		var s: String = sys.io.File.getContent(f + file);
 		haxe.Json.parse(s); // check
@@ -265,7 +264,7 @@ abstract AnsiForeground(UInt) to UInt {
 		var a: Array<String> = s.split('\n');
 		var name: String = @:nullSafety(Off) StringTools.trim(a.shift());
 		if (a.length == 0) return StringTools.trim(name);
-		var section: Map<String, Dynamic> = new Map<String, Dynamic>();
+		var section: Map<String, Dynamic> = [];
 		var entry: Array<String> = [];
 		var arr: Array<String> = [];
 		for (e in a) {
@@ -337,11 +336,11 @@ abstract AnsiForeground(UInt) to UInt {
 			var l: Int = len;
 			while (len > 0) {
 				if (text.charAt(l) == ' ') {
-					return text.substr(0, l) + '\n' + text.substr(l + 1);
+					return '${text.substr(0, l)}\n${text.substr(l + 1)}';
 				}
 				l--;
 			}
-			return text.substr(0, len) + '\n' + text.substr(len);
+			return '${text.substr(0, len)}\n${text.substr(len)}';
 		}
 	}
 

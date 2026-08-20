@@ -13,7 +13,7 @@ class Pool<T> implements IPool<T> {
 
 	public inline function get(): T {
 		var v: Null<T> = list.pop();
-		return v == null ? Type.createInstance(cl, []) : v;
+		return v ?? Type.createInstance(cl, []);
 	}
 
 	public inline function ret(obj: T): Void list.push(obj);

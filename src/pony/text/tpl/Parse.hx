@@ -24,24 +24,23 @@ class Parse extends ParseBoy<TplContent> {
 
 	public function new(t: String, s: TplStyle) {
 		/////
-		/* todo:
-			{type: TplData, content: ParseEnum([
-				{type: TplTag, content: ParseType([
-					'<_',
-					{type: TplTagName, content: ParseAll() },
-					[
-						['="', { type: TplData, content: ParseRecursive() }, '"'],
-						['=', { type: TplData, content: ParseRecursive() } ]
-					],
-					[' ', { type: Hash<TplData>, content: ParseHash(' ', {type: String, ParseAll()}, '=', {type: TplData, ParseQ(ParseRecursive(), '"')}) } ],
-					'/>'
-				]) },
-				{type: TplShortTag, content: ParseType([
-					'%', {type: TplTagName, content: ParseAll()}, ['=', {type: TplData, content: ParseQ(ParseRecursive(), '"')}], '%'
-				]) },
-				{type: String, content: ParseAll()}
-			])};
-		*/
+		// todo:
+		// {type: TplData, content: ParseEnum([
+		// 	{type: TplTag, content: ParseType([
+		// 		'<_',
+		// 		{type: TplTagName, content: ParseAll() },
+		// 		[
+		// 			['="', { type: TplData, content: ParseRecursive() }, '"'],
+		// 			['=', { type: TplData, content: ParseRecursive() } ]
+		// 		],
+		// 		[' ', { type: Hash<TplData>, content: ParseHash(' ', {type: String, ParseAll()}, '=', {type: TplData, ParseQ(ParseRecursive(), '"')}) } ],
+		// 		'/>'
+		// 	]) },
+		// 	{type: TplShortTag, content: ParseType([
+		// 		'%', {type: TplTagName, content: ParseAll()}, ['=', {type: TplData, content: ParseQ(ParseRecursive(), '"')}], '%'
+		// 	]) },
+		// 	{type: String, content: ParseAll()}
+		// ])};
 		////
 		this.s = s;
 		super(t, s.space);
@@ -108,7 +107,7 @@ class Parse extends ParseBoy<TplContent> {
 				// push(Text(t.substr(pos, (t.length - pos) - (t.length - o))));
 				// pos = o;
 				gt([s.closeEnd]);
-				throw 'Closed not opened tag [' + t.substr(c, pos - c) + ']';
+				throw 'Closed not opened tag [${t.substr(c, pos - c)}]';
 			}
 		}
 		switch (gt([s.begin, s.shortBegin])) {
@@ -132,14 +131,14 @@ class Parse extends ParseBoy<TplContent> {
 								data.push(ShortTag({ name: parseName(name), arg: parse(str(), s) }));
 								if (gt([s.shortEnd]) == -1)
 									throw 'Oops';
-							default:
+							case _:
 								throw 'Oops';
 						}
-					default:
+					case _:
 						throw 'Oops';
 				}
 				searchOpen(closed);
-			default:
+			case _:
 		}
 
 	}
@@ -235,7 +234,7 @@ class Parse extends ParseBoy<TplContent> {
 									args: a.args,
 									content: d
 								}));
-							default: throw 'Oops';
+							case _: throw 'Oops';
 						}
 					/*
 					case 0:
@@ -277,20 +276,20 @@ class Parse extends ParseBoy<TplContent> {
 									args: a.args,
 									content: d
 								}));
-							default: throw 'Oops';
+							case _: throw 'Oops';
 						}
-					default:
+					case _:
 						throw 'Oops';
 				}
 				result = true;
-			default:
+			case _:
 				trace('end tag');
 		}
 		return result;
 	}
 
 	private function args(): { args: Map<String, TplData>, closedTag: Bool } {
-		var args: Map<String, TplData> = new Map<String, TplData>();
+		var args: Map<String, TplData> = [];
 		while (true) {
 			switch (gt([s.args.end, s.end, s.endClose], true)) {
 				case -2:
@@ -301,41 +300,41 @@ class Parse extends ParseBoy<TplContent> {
 								case -2:
 									switch (gt([s.args.delemiter, s.end, s.args.end, s.endClose])) {
 										case 0:
-											args.set(n, parse(str(), s));
+											args[n] = parse(str(), s);
 										case 1:
-											args.set(n, parse(str(), s));
+											args[n] = parse(str(), s);
 											if (s.args.end != '') throw 'Oops';
 											break;
 										case 2:
-											args.set(n, parse(str(), s));
+											args[n] = parse(str(), s);
 											if (gt([s.args.valueq]) == -1)
 												throw 'Oops';
 										case 3:
-											args.set(n, parse(str(), s));
+											args[n] = parse(str(), s);
 											return { args: args, closedTag: true };
-										default: throw 'Oops';
+										case _: throw 'Oops';
 									}
 								case 0:
 									if (gt([s.args.valueq]) == -1) throw 'Oops';
-									args.set(n, parse(str(), s));
+									args[n] = parse(str(), s);
 
-								default: throw 'Oops';
+								case _: throw 'Oops';
 							}
 						case 1:
-							args.set(str(), null);
+							args[str()] = null;
 						case 2:
-							args.set(str(), null);
+							args[str()] = null;
 							if (gt([s.end]) == -1)
 								throw 'Oops';
 						case 3:
-							args.set(str(), null);
+							args[str()] = null;
 							if (s.args.end != '') throw 'Oops';
 							break;
 						case 4:
-							args.set(str(), null);
+							args[str()] = null;
 							if (s.args.end != '') throw 'Oops';
 							return { args: args, closedTag: true };
-						default: throw 'Oops';
+						case _: throw 'Oops';
 					}
 				case 0:
 					if (gt([s.end]) == -1) throw 'Oops';
@@ -360,14 +359,14 @@ class Parse extends ParseBoy<TplContent> {
 	}
 
 	private function closeTag(name: String): Void {
-		if (gt([s.closeBegin]) == -1) throw 'Tag ' + name + ' is not closed';
+		if (gt([s.closeBegin]) == -1) throw 'Tag $name is not closed';
 		data.push(Text(str()));
 		skipSpace();
-		if (gt([s.closeEnd]) == -1) throw 'Tag ' + name + ' is not closed';
+		if (gt([s.closeEnd]) == -1) throw 'Tag $name is not closed';
 		if (s.space) {
-			if (str().trim() != name) throw 'Close tag ' + str().trim() + ', but close tag has be ' + name;
+			if (str().trim() != name) throw 'Close tag ${str().trim()}, but close tag has be $name';
 		} else {
-			if (str() != name) throw 'Close tag ' + str() + ', but close tag has be ' + name;
+			if (str() != name) throw 'Close tag ${str()}, but close tag has be $name';
 		}
 	}
 

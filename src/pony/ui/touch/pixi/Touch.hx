@@ -25,7 +25,7 @@ class Touch implements Declarator implements HasSignal {
 	@:auto public static var onEnd: Signal1<TouchObj>;
 	@:auto public static var onCancle: Signal1<UInt>;
 
-	private static var tMove: Map<String, TouchObj> = new Map<String, TouchObj>();
+	private static var tMove: Map<String, TouchObj> = [];
 	private static var startStack: Array<TouchObj> = [];
 	private static var endStack: Array<TouchObj> = [];
 
@@ -74,13 +74,13 @@ class Touch implements Declarator implements HasSignal {
 	}
 
 	private static function moveHandler(e: InteractionEvent): Void {
-		tMove[Std.string(untyped e.data.identifier)] = pack(e);
+		tMove['${untyped e.data.identifier}'] = pack(e);
 		DeltaTime.fixedUpdate.once(moveDispatch, -8);
 	}
 
 	private static function moveDispatch(): Void {
 		for (t in tMove) eMove.dispatch(t);
-		tMove = new Map<String, TouchObj>();
+		tMove = [];
 	}
 
 	private static function startHandler(e: InteractionEvent): Void {

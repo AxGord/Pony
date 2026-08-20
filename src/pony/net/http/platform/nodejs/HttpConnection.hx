@@ -53,10 +53,10 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 				if (s.substr(0, 2) == 'q=') continue;
 				var a: Array<String> = s.toLowerCase().split('-');
 				if (a.length == 1) {
-					langPush(a[0] + '-' + a[0]);
+					langPush('${a[0]}-${a[0]}');
 					langPush(a[0]);
 				} else {
-					langPush(a[0] + '-' + a[1]);
+					langPush('${a[0]}-${a[1]}');
 					langPush(a[1]);
 					langPush(a[0]);
 				}

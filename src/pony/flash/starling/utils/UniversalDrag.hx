@@ -40,7 +40,7 @@ class UniversalDrag {
 	private static var _activeTween: TweenMax;
 	#end
 
-	public static function startUniversalDrag(dragged: IDisplayObject, lockCenter: Bool = false, bounds: Rectangle = null): Void {
+	public static function startUniversalDrag(dragged: IDisplayObject, lockCenter: Bool = false, ?bounds: Rectangle): Void {
 		if (_dragged != null) stopUniversalDrag(_dragged);
 
 		_dragged = dragged;
@@ -139,9 +139,7 @@ class UniversalDrag {
 #if starling
 class UniversalDragStarling {
 
-	public static function startUniversalDrag(
-		dragged: starling.display.DisplayObject, lockCenter: Bool = false, bounds: Rectangle = null
-	): Void {
+	public static function startUniversalDrag(dragged: starling.display.DisplayObject, lockCenter: Bool = false, ?bounds: Rectangle): Void {
 		UniversalDrag.startUniversalDrag(cast dragged, lockCenter, bounds);
 	}
 
@@ -158,9 +156,7 @@ class UniversalDragStarling {
 
 class UniversalDragFlash {
 
-	public static function startUniversalDrag(
-		dragged: flash.display.DisplayObject, lockCenter: Bool = false, bounds: Rectangle = null
-	): Void {
+	public static function startUniversalDrag(dragged: flash.display.DisplayObject, lockCenter: Bool = false, ?bounds: Rectangle): Void {
 		UniversalDrag.startUniversalDrag(cast dragged, lockCenter, bounds);
 	}
 

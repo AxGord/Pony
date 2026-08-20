@@ -35,7 +35,7 @@ class Hashlink extends Section {
 		if (mac) {
 			var m: Xml = 'mac'.node();
 			a.addChild(m);
-			m.addChild(getOutputXml(buildName + '.app'));
+			m.addChild(getOutputXml('$buildName.app'));
 			m.addChild('hl'.node('mac'));
 			m.addChild(Xml.createComment(d.toString()));
 		}
@@ -45,7 +45,7 @@ class Hashlink extends Section {
 			var d: Xml = 'data'.node();
 			d.set('from', outputDir + assets);
 			m.addChild(Xml.createComment(d.toString()));
-			m.addChild('output'.node(outputDir + 'android'));
+			m.addChild('output'.node('${outputDir}android'));
 			m.addChild('hl'.node('android'));
 			m.addChild('title'.node('Pony App'));
 			m.addChild('id'.node('io.github.axgord.pony'));

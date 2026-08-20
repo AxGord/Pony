@@ -8,13 +8,13 @@ import pony.text.tpl.Valuator;
  * MLinkPutSub
  * @author AxGord <axgord@gmail.com>
  */
-@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
+@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
 @:final class MLinkPutSub extends Valuator<MLinkPut, String> {
 
 	@:async
 	override public function valuBool(name: String): Bool {
 		if (name == 'selected') {
-			return a.a.cpq.page == b || a.a.cpq.page == b + '/';
+			return a.a.cpq.page == b || a.a.cpq.page == '$b/';
 		} else
 			return null;
 	}
@@ -35,8 +35,8 @@ import pony.text.tpl.Valuator;
 	@:async
 	override public function valu(name: String, arg: String): String {
 		return switch (name) {
-			case 'v': '/' + b;
-			default: null;
+			case 'v': '/$b';
+			case _: null;
 		}
 	}
 

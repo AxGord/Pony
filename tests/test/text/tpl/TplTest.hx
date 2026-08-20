@@ -38,7 +38,7 @@ class TplTest {
 	#if neko
 	@Test
 	public function dir(): Void {
-		var d: Dir = Tools.currentDir() + 'tpls';
+		var d: Dir = '${Tools.currentDir()}tpls';
 		var td: TplDir = new TplDir(d, this);
 		var flag = false;
 		td.gen('index', null, null, function(r: String): Void {
@@ -50,7 +50,7 @@ class TplTest {
 
 	@Test
 	public function system(): Void {
-		var d: Dir = Tools.currentDir() + 'system';
+		var d: Dir = '${Tools.currentDir()}system';
 		var s: TplSystem = new TplSystem(d, this);
 		// s.gen('index', null, function(r:String) trace(r));
 		var first = false;
@@ -73,14 +73,13 @@ typedef TData = {
 	?username: String
 };
 
-@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
+@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
 class Ttt extends TplPut<TData, {}> {
 
 	@:async
 	override public function tag(name: String, content: TplData, arg: String, args: Map<String, String>, ?kid: ITplPut): String {
 		if (name == 'f') {
-			var r: Array<String> = [];
-			for (i in 0...3) r.push(@await sub({ id: i }, null, Ttt, content));
+			final r: Array<String> = [for (i in 0...3) @await sub({ id: i }, null, Ttt, content)];
 			return r.join(arg == null ? '' : arg);
 		} else
 			return @await super.tag(name, content, arg, args, kid);
@@ -91,7 +90,7 @@ class Ttt extends TplPut<TData, {}> {
 		if (name == 'username')
 			return 'world';
 		else if (name == 'id')
-			return Std.string(a.id);
+			return '${a.id}';
 		else if (parent == null)
 			return arg == null ? name : arg;
 		else

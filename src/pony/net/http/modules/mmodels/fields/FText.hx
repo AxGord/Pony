@@ -18,8 +18,7 @@ class FText extends Field {
 	}
 
 	override public function htmlInput(cl: String, act: String, value: String, ?hidden: Null<Bool>): String {
-		return '<textarea ' + (cl != null ? 'class="' + cl + '" ' : '') + 'name="' + model.name + '.' + act + '.' + name + '">' + value
-			+ '</textarea>';
+		return '<textarea ${(cl != null ? 'class="' + cl + '" ' : '')}name="${model.name}.$act.$name">$value</textarea>';
 	}
 
 }
@@ -28,7 +27,7 @@ class FText extends Field {
  * CTextPut
  * @author AxGord <axgord@gmail.com>
  */
-@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
+@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
 @:keep class CTextPut extends pony.text.tpl.TplPut<FText, Dynamic> {
 
 	@:async
@@ -46,7 +45,7 @@ class FText extends Field {
 
 	@:async
 	public function html(f: String): String {
-		return StringTools.replace(StringTools.htmlEscape(Std.string(Reflect.field(b, f))), '\r\n', '<br/>');
+		return StringTools.replace(StringTools.htmlEscape('${Reflect.field(b, f)}'), '\r\n', '<br/>');
 	}
 
 }

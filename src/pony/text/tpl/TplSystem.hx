@@ -27,7 +27,7 @@ typedef Manifest = {
  * TplSystem
  * @author AxGord
  */
-@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
+@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
 class TplSystem {
 
 	private var pages: TplDir;
@@ -39,9 +39,9 @@ class TplSystem {
 	public function new(dir: Dir, ?c: Class<ITplPut>, o: Dynamic, ?s: TplStyle) {
 		manifest = null;
 		name = (dir: Unit).name;
-		pages = new TplDir(dir + 'pages', c, o, s);
-		includes = new TplDir(dir + 'includes', TplPut, null, s);
-		_static = [for (e in ((dir + 'static'): Dir).contentRecursiveFiles()) e.name => e];
+		pages = new TplDir('${dir}pages', c, o, s);
+		includes = new TplDir('${dir}includes', TplPut, null, s);
+		_static = [for (e in (('${dir}static'): Dir).contentRecursiveFiles()) e.name => e];
 	}
 
 	@:async
@@ -74,7 +74,7 @@ class TplSystem {
 
 }
 
-@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
+@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
 class PagesPut extends TplPut<TplSystem, {}> {
 
 	private var included: List<String> = new List<String>();
@@ -101,7 +101,7 @@ class PagesPut extends TplPut<TplSystem, {}> {
 					c = @await tplData(content);
 				return @await d.gen(arg, null, new IncludePut({ content: c, args: args }, null, kid));
 			} else
-				return "! Not found include " + arg + " !";
+				return '! Not found include $arg !';
 		} else
 			return @await super.tag(name, content, arg, args, kid);
 	}
@@ -116,7 +116,7 @@ class PagesPut extends TplPut<TplSystem, {}> {
 
 }
 
-@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
+@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
 class IncludePut extends TplPut<{ content: String, args: Map<String, String> }, {}> {
 
 	@:async

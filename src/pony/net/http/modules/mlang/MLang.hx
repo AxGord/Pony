@@ -18,27 +18,27 @@ import pony.net.http.WebServer;
 
 	public function init(dir: Dir, server: WebServer): Void {
 		this.server = server;
-		langTable = new LangTable(dir + 'language', server.defaults.lang);
+		langTable = new LangTable('${dir}language', server.defaults.lang);
 	}
 
 	public function connect(cpq: CPQ): EConnect {
 		if (cpq.connection.params.exists('language')) {
-			var tc: String = cpq.connection.params.get('language');
+			var tc: String = cpq.connection.params['language'];
 			if (langTable.langs.exists(tc)) {
-				cpq.connection.sessionStorage.set('language', tc);
+				cpq.connection.sessionStorage['language'] = tc;
 				cpq.connection.params.remove('language');
 				cpq.connection.endAction();
 			} else {
-				cpq.connection.error('Not exists language: ' + tc);
+				cpq.connection.error('Not exists language: $tc');
 			}
 			return BREAK;
 		} else {
 			if (cpq.connection.params.exists('tryLanguage'))
-				cpq.lang = cpq.connection.params.get('tryLanguage');
+				cpq.lang = cpq.connection.params['tryLanguage'];
 			else {
 				var st: Map<String, Dynamic> = cpq.connection.sessionStorage;
 				if (st.exists('language'))
-					cpq.lang = st.get('language');
+					cpq.lang = st['language'];
 				else {
 					for (l in cpq.connection.languages) if (langTable.langs.exists(l)) {
 						cpq.lang = l;

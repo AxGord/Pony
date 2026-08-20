@@ -125,7 +125,7 @@ class HasAssetBuilder {
 		if (vs.length > 0) vs += '/';
 		var v = macro $v{vs};
 		fields.push({
-			name: f == 'def' ? 'loadAsset' : 'loadAsset_' + f,
+			name: f == 'def' ? 'loadAsset' : 'loadAsset_$f',
 			access: [APublic, AStatic],
 			kind: FieldType.FFun({
 				args: [
@@ -144,7 +144,7 @@ class HasAssetBuilder {
 			pos: Context.currentPos()
 		});
 		fields.push({ // todo: childs
-			name: f == 'def' ? 'loadAssets' : 'loadAssets_' + f,
+			name: f == 'def' ? 'loadAssets' : 'loadAssets_$f',
 			access: [APublic, AStatic],
 			kind: FieldType.FFun({
 				args: [{ name: 'cb', type: macro :Int -> Int -> Void }],
@@ -154,7 +154,7 @@ class HasAssetBuilder {
 			pos: Context.currentPos()
 		});
 		fields.push({
-			name: f == 'def' ? 'asset' : 'asset_' + f,
+			name: f == 'def' ? 'asset' : 'asset_$f',
 			access: [APublic, AStatic],
 			kind: FieldType.FFun({
 				args: [{ name: 'asset', type: macro :Int }],
@@ -165,7 +165,7 @@ class HasAssetBuilder {
 		});
 
 		fields.push({
-			name: f == 'def' ? 'assetName' : 'assetName_' + f,
+			name: f == 'def' ? 'assetName' : 'assetName_$f',
 			access: [APublic, AStatic],
 			kind: FieldType.FFun({
 				args: [{ name: 'asset', type: macro :Int }],
@@ -176,7 +176,7 @@ class HasAssetBuilder {
 		});
 
 		fields.push({
-			name: f == 'def' ? 'assetValue' : 'assetValue_' + f,
+			name: f == 'def' ? 'assetValue' : 'assetValue_$f',
 			access: [APublic, AStatic],
 			kind: FieldType.FFun({
 				args: [{ name: 'asset', type: macro :Int }],
@@ -186,7 +186,7 @@ class HasAssetBuilder {
 			pos: Context.currentPos()
 		});
 		fields.push({
-			name: f == 'def' ? 'image' : 'image_' + f,
+			name: f == 'def' ? 'image' : 'image_$f',
 			access: [APublic, AStatic],
 			kind: FieldType.FFun({
 				args: [{ name: 'asset', type: macro :Int }],
@@ -196,7 +196,7 @@ class HasAssetBuilder {
 			pos: Context.currentPos()
 		});
 		fields.push({
-			name: f == 'def' ? 'spine' : 'spine_' + f,
+			name: f == 'def' ? 'spine' : 'spine_$f',
 			access: [APublic, AStatic],
 			kind: FieldType.FFun({
 				args: [{ name: 'asset', type: macro :Int }],
@@ -207,7 +207,7 @@ class HasAssetBuilder {
 		});
 
 		fields.push({
-			name: f == 'def' ? 'sound' : 'sound_' + f,
+			name: f == 'def' ? 'sound' : 'sound_$f',
 			access: [APublic, AStatic],
 			kind: FieldType.FFun({
 				args: [{ name: 'asset', type: macro :Int }],
@@ -218,7 +218,7 @@ class HasAssetBuilder {
 		});
 
 		fields.push({
-			name: f == 'def' ? 'getTexture' : 'getTexture_' + f,
+			name: f == 'def' ? 'getTexture' : 'getTexture_$f',
 			access: [APublic, AStatic],
 			kind: FieldType.FFun({
 				args: [{ name: 'asset', type: macro :Int }],
@@ -229,7 +229,7 @@ class HasAssetBuilder {
 		});
 
 		fields.push({
-			name: f == 'def' ? 'font' : 'font_' + f,
+			name: f == 'def' ? 'font' : 'font_$f',
 			access: [APublic, AStatic],
 			kind: FieldType.FFun({
 				args: [{ name: 'asset', type: macro :Int }],
@@ -240,7 +240,7 @@ class HasAssetBuilder {
 		});
 
 		fields.push({
-			name: f == 'def' ? 'animation' : 'animation_' + f,
+			name: f == 'def' ? 'animation' : 'animation_$f',
 			access: [APublic, AStatic],
 			kind: FieldType.FFun({
 				args: [{ name: 'asset', type: macro :Int }],
@@ -251,7 +251,7 @@ class HasAssetBuilder {
 		});
 
 		fields.push({
-			name: f == 'def' ? 'clip' : 'clip_' + f,
+			name: f == 'def' ? 'clip' : 'clip_$f',
 			access: [APublic, AStatic],
 			kind: FieldType.FFun({
 				args: [{ name: 'asset', type: macro :Int }],
@@ -262,7 +262,7 @@ class HasAssetBuilder {
 		});
 
 		fields.push({
-			name: f == 'def' ? 'text' : 'text_' + f,
+			name: f == 'def' ? 'text' : 'text_$f',
 			access: [APublic, AStatic],
 			kind: FieldType.FFun({
 				args: [{ name: 'asset', type: macro :Int }],
@@ -273,7 +273,7 @@ class HasAssetBuilder {
 		});
 
 		fields.push({
-			name: f == 'def' ? 'bin' : 'bin_' + f,
+			name: f == 'def' ? 'bin' : 'bin_$f',
 			access: [APublic, AStatic],
 			kind: FieldType.FFun({
 				args: [{ name: 'asset', type: macro :Int }],
@@ -307,7 +307,7 @@ class HasAssetBuilder {
 							Context.error('Wrong assets_parent type', parent.pos);
 					}
 				case EField({ expr: EConst(CIdent(pack)) }, field):
-					var name: String = pack + '.' + field;
+					var name: String = '$pack.$field';
 					for (f in Context.getModule(name)) switch f {
 						case TInst(t, _) if (t.toString() == name):
 							var m = t.get().meta;
@@ -329,7 +329,7 @@ class HasAssetBuilder {
 			}
 		}
 
-		var patchesFields: Map<String, String> = new Map();
+		var patchesFields: Map<String, String> = [];
 		if (meta.checkMeta([':assets_path'])) {
 			var patches: Expr = meta.getMeta(':assets_path').params[0];
 			switch patches.expr {
@@ -351,10 +351,10 @@ class HasAssetBuilder {
 			return patchesFields.iterator().hasNext() ? patchesFields : null;
 		}
 
-		var result: Map<String, String> = new Map();
+		var result: Map<String, String> = [];
 		for (pk in parentPathes.keys()) {
 			if (patchesFields.iterator().hasNext()) {
-				var prefix: String = pk == 'def' ? '' : pk + '_';
+				var prefix: String = pk == 'def' ? '' : '${pk}_';
 				var path: String = parentPathes[pk];
 				if (path.length > 0) path += '/';
 				for (k in patchesFields.keys()) {
@@ -380,7 +380,7 @@ class HasAssetBuilder {
 							Context.error('Wrong assets_parent type', parent.pos);
 					}
 				case EField({ expr: EConst(CIdent(pack)) }, field):
-					var name: String = pack + '.' + field;
+					var name: String = '$pack.$field';
 					for (f in Context.getModule(name)) switch f {
 						case TInst(t, _) if (t.toString() == name):
 							parentPrefix = getPrefix(t.get().meta.get());
@@ -405,7 +405,7 @@ class HasAssetBuilder {
 	}
 
 	private static function getAssetName(meta: Metadata, colon: Bool = false): String {
-		var p: Expr = meta.getMeta((colon ? ':' : '') + 'asset').params[0];
+		var p: Expr = meta.getMeta('${(colon ? ':' : '')}asset').params[0];
 		return switch p.expr {
 			case EConst(CString(s)):
 				s;

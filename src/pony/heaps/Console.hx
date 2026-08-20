@@ -54,7 +54,7 @@ import hxd.res.DefaultFont;
 	private function traceHandler(v: Dynamic, ?p: PosInfos): Void {
 		origTrace(v, p);
 		log(
-			p == null ? v : '${p.fileName}:${p.lineNumber}: $v' + (p.customParams != null ? ', ' + p.customParams.join(', ') : ''),
+			p == null ? v : '${p.fileName}:${p.lineNumber}: $v${(p.customParams != null ? ', ' + p.customParams.join(', ') : '')}',
 			traceColor
 		);
 	}

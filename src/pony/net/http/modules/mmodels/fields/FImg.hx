@@ -31,13 +31,12 @@ class FImg extends Field {
 	}
 
 	override public function htmlInput(cl: String, act: String, value: String, ?hidden: Null<Bool>): String {
-		return '<input ' + (cl != null ? 'class="' + cl + '" ' : '') + 'name="' + model.name + '.' + act + '.' + name
-			+ '" type="file" value="' + value + '"/>';
+		return '<input ${(cl != null ? 'class="' + cl + '" ' : '')}name="${model.name}.$act.$name" type="file" value="$value"/>';
 	}
 
 }
 
-@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
+@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
 @:keep class FImgPut extends pony.text.tpl.TplPut<FImg, Dynamic> {
 
 	@:async
@@ -52,21 +51,21 @@ class FImg extends Field {
 
 	@:async
 	public function html(f: String): String {
-		return '<img src="' + get(f) + '" width="200px"/>';
+		return '<img src="${get(f)}" width="200px"/>';
 	}
 
-	private function get(f: String): String return '/usercontent/' + Reflect.field(b, f);
+	private function get(f: String): String return '/usercontent/${Reflect.field(b, f)}';
 
 }
 
-@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
+@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
 @:keep class FImgPutSub extends pony.text.tpl.Valuator<FImgPut, String> {
 
 	@:async
 	override public function valu(name: String, arg: String): String {
 		return switch name {
 			case 'orig': b;
-			case 'small': 'small_' + b;
+			case 'small': 'small_$b';
 			case 'html': '<img src="$b"/>';
 			case _: null;
 		}

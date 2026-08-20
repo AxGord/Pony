@@ -23,7 +23,9 @@ abstract TempInterval(Interval<Temp>) from Interval<Temp> to Interval<Temp> {
 	inline public function new(v: Interval<Temp>) this = v;
 
 	@:from inline private static function fromStringInterval(it: Interval<String>): TempInterval {
-		return new Interval<Temp>(new Pair<Temp, Temp>(it.min == null ? Math.NEGATIVE_INFINITY : it.min, it.max));
+		// ?? cannot replace this: Temp reads Float and String through separate @:from, one per branch
+		final min: Temp = it.min == null ? Math.NEGATIVE_INFINITY : it.min; // noqa: prefer-null-coalescing
+		return new Interval<Temp>(new Pair<Temp, Temp>(min, it.max));
 	}
 
 	@:to inline private function toStringInterval(): Interval<String> return new Interval<String>(new Pair<String, String>(min, max));

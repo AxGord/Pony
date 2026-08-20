@@ -20,7 +20,7 @@ class Tooltip {
 
 	private var _tooltip: IDisplayObject;
 	private var _container: IDisplayObjectContainer;
-	private var _data: Map<IDisplayObject, Dynamic> = new Map<IDisplayObject, Dynamic>();
+	private var _data: Map<IDisplayObject, Dynamic> = [];
 
 	private var _previousTarget: Dynamic;
 
@@ -105,7 +105,7 @@ class Tooltip {
 	public function add(object: IDisplayObject, data: Dynamic): Void {
 		if (object == null) throw "Can't add a tooltip to a null object";
 		_container.addChild(_tooltip);
-		_data.set(object, data);
+		_data[object] = data;
 		TouchManager.addListener(object, listener);
 	}
 
@@ -114,14 +114,14 @@ class Tooltip {
 			case TouchEventType.Hover:
 				_tooltip.visible = true;
 				if (_previousTarget != e.target) {
-					defaultDataSet(_tooltip, _data.get(e.target));
+					defaultDataSet(_tooltip, _data[e.target]);
 					_previousTarget = e.target;
 				}
 				place(e.globalX, e.globalY);
 
 			case TouchEventType.HoverOut:
 				_tooltip.visible = false;
-			default:
+			case _:
 		}
 	}
 

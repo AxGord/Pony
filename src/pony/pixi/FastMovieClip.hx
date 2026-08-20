@@ -21,7 +21,7 @@ using pony.pixi.PixiExtends;
 @SuppressWarnings('checkstyle:MagicNumber')
 class FastMovieClip extends AnimTextureCore {
 
-	private static var storage: Map<String, FastMovieClip> = new Map();
+	private static var storage: Map<String, FastMovieClip> = [];
 
 	private var pool: Array<Sprite> = [];
 	private var data: Array<Pair<Rectangle, Rectangle>>;
@@ -64,7 +64,7 @@ class FastMovieClip extends AnimTextureCore {
 	public static inline function fromTexture(t: Texture): FastMovieClip return storage[idFromTexture(t)];
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private static inline function idFromTexture(t: Texture): String return t.baseTexture.imageUrl + '_' + t.frame.x + '_' + t.frame.y;
+	private static inline function idFromTexture(t: Texture): String return '${t.baseTexture.imageUrl}_${t.frame.x}_${t.frame.y}';
 
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private static inline function converOr(data: Or<Array<Texture>, Array<String>>): Array<Texture> {

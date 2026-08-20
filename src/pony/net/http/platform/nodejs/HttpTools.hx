@@ -12,8 +12,8 @@ class HttpTools {
 		Node.http.get(Node.url.parse(url), function(res) {
 			if (res.statusCode == 200) {
 				var r = '';
-				res.on("data", function(chunk) r += chunk);
-				res.on("end", function() cb(r));
+				res.on('data', function(chunk) r += chunk);
+				res.on('end', function() cb(r));
 			} else {
 				cb(null);
 			}

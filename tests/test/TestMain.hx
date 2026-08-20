@@ -45,9 +45,9 @@ class TestMain {
 	function completionHandler(successful: Bool): Void {
 		try {
 			#if flash
-			flash.external.ExternalInterface.call("testResult", successful);
+			flash.external.ExternalInterface.call('testResult', successful);
 			#elseif js
-			js.Lib.eval("testResult(" + successful + ");");
+			js.Lib.eval('testResult($successful);');
 			#elseif sys
 			Sys.exit(0);
 			#end

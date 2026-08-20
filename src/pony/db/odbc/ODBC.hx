@@ -11,7 +11,7 @@ import pony.db.Table;
 class ODBC extends #if nodejs
 pony.db.odbc.nodejs.ODBC #end implements ISQL implements Dynamic<Table> {
 
-	private var tables: Map<String, Table> = new Map();
+	private var tables: Map<String, Table> = [];
 
 	/**
 	 * Select table

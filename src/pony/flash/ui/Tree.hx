@@ -48,7 +48,7 @@ class Tree extends Sprite implements FLStage {
 	public var minimized(default, set): Bool;
 	public var animated(default, set): Bool = false;
 
-	public function new(header: TreeElement = null, core: TreeCore = null) {
+	public function new(?header: TreeElement, ?core: TreeCore) {
 		super();
 
 		removeChildren();
@@ -64,7 +64,7 @@ class Tree extends Sprite implements FLStage {
 			switch (_header) {
 				case Group(text, t):
 					drawGroup(new IntPoint(0, 0), text);
-				default:
+				case _:
 			}
 		}
 	}
@@ -75,7 +75,7 @@ class Tree extends Sprite implements FLStage {
 		switch (_header) {
 			case Group(text, t):
 				drawGroup(new IntPoint(0, 0), text);
-			default:
+			case _:
 		}
 		_xDisplacement = 50;
 	}

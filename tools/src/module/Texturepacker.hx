@@ -90,7 +90,7 @@ private typedef TPUnit = {
 		var unit: TPUnit = cfg;
 		unit.input = [for (e in cfg.input) cfg.from + e];
 		unit.output = cfg.to + cfg.output;
-		if (notChanged(cfg.output + '.' + cfg.ext, unit.input)) return;
+		if (notChanged('${cfg.output}.${cfg.ext}', unit.input)) return;
 		if (cfg.clean) haveClean = true;
 
 		var format = unit.format.split(' ');
@@ -116,13 +116,13 @@ private typedef TPUnit = {
 					case _: f;
 				}
 
-			var datafile = unit.output + (first ? '' : '_$s') + '.' + outExt;
+			var datafile = '${unit.output + (first ? '' : '_$s')}.$outExt';
 			command.push('--data');
 			command.push(datafile);
 
 			var tExt: String = s == 'png8' ? 'png' : s;
 
-			var sheetfile = unit.output + '.' + tExt;
+			var sheetfile = '${unit.output}.$tExt';
 			command.push('--sheet');
 			command.push(sheetfile);
 
@@ -134,7 +134,7 @@ private typedef TPUnit = {
 
 			if (unit.scale != 1) {
 				command.push('--scale');
-				command.push(Std.string(unit.scale));
+				command.push('${unit.scale}');
 
 				command.push('--scale-mode');
 				command.push('Smooth');
@@ -158,7 +158,7 @@ private typedef TPUnit = {
 					}
 				case 'jpg':
 					command.push('--jpg-quality');
-					command.push(Std.string(Std.int(unit.quality * 100)));
+					command.push('${Std.int(unit.quality * 100)}');
 				case _:
 			}
 
@@ -206,27 +206,27 @@ private typedef TPUnit = {
 				var a: Array<String> = unit.trim.split(' ');
 				if (a.length == 2) {
 					var v: Null<Int> = Std.parseInt(a[0]);
-					if (v != null && Std.string(v) == a[0]) {
+					if (v != null && '$v' == a[0]) {
 						command.push('--trim-mode');
 						command.push(a[1]);
 						command.push('--trim-threshold');
-						command.push(Std.string(v));
+						command.push('$v');
 					} else {
 						var v: Null<Int> = Std.parseInt(a[1]);
 						command.push('--trim-mode');
 						command.push(a[0]);
 						if (v != null) {
 							command.push('--trim-threshold');
-							command.push(Std.string(v));
+							command.push('$v');
 						}
 					}
 				} else if (a.length == 1) {
 					var v: Null<Int> = Std.parseInt(a[0]);
-					if (v != null && Std.string(v) == a[0]) {
+					if (v != null && '$v' == a[0]) {
 						command.push('--trim-mode');
 						command.push('Trim');
 						command.push('--trim-threshold');
-						command.push(Std.string(v));
+						command.push('$v');
 					} else {
 						command.push('--trim-mode');
 						command.push(a[0]);
@@ -241,7 +241,7 @@ private typedef TPUnit = {
 			if (unit.datascale != null) {
 				switch outExt {
 					case 'json':
-						pony.text.TextTools.betweenReplaceFile(datafile, '"scale": "', '",', Std.string(unit.datascale));
+						pony.text.TextTools.betweenReplaceFile(datafile, '"scale": "', '",', '${unit.datascale}');
 					case _:
 				}
 			}
@@ -270,14 +270,14 @@ private typedef TPUnit = {
 				}
 			}
 
-			log('Clean pathes: ' + remList.join(', '));
-			log('Ignores: ' + ignoreList.join(', '));
+			log('Clean pathes: ${remList.join(', ')}');
+			log('Ignores: ${ignoreList.join(', ')}');
 
 			for (p in remList) {
 				var d: Dir = p;
 				for (f in d.contentRecursiveFiles()) {
 					if (ignoreList.indexOf(f.first) == -1) {
-						log('Delete file: ' + f.first);
+						log('Delete file: ${f.first}');
 						f.delete();
 					}
 				}

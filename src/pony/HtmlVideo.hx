@@ -252,7 +252,7 @@ class HtmlVideo implements HasSignal implements HasLink {
 	public function loadVideo(url: String): Void {
 		if (qualities != null) {
 			url = StringTools.replace(url, '{quality}', qualities[qualityIndex]);
-			url = StringTools.replace(url, '/quality/', '/' + qualities[qualityIndex] + '/');
+			url = StringTools.replace(url, '/quality/', '/${qualities[qualityIndex]}/');
 		}
 		var playingbefore = isPlaying;
 		_unloadVideo();

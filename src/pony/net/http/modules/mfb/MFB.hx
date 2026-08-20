@@ -22,7 +22,7 @@ import pony.text.tpl.TplPut;
 	public var server: WebServer;
 	public var buttonData: String;
 
-	public function new(appid: String, secret: String = '', phpsdk: String = "facebook-php-sdk-v4/autoload.php") {
+	public function new(appid: String, secret: String = '', phpsdk: String = 'facebook-php-sdk-v4/autoload.php') {
 		#if php
 		fb = new FB(appid, secret, phpsdk);
 		#else
@@ -39,7 +39,7 @@ import pony.text.tpl.TplPut;
 
 	public function connect(cpq: CPQ): EConnect {
 		if (cpq.connection.params.exists('fbauth')) {
-			cpq.connection.sessionStorage.set('fb_token', cpq.connection.params['fbauth']);
+			cpq.connection.sessionStorage['fb_token'] = cpq.connection.params['fbauth'];
 			cpq.connection.params.remove('fbauth');
 			cpq.connection.endAction();
 			return BREAK;
@@ -50,7 +50,7 @@ import pony.text.tpl.TplPut;
 
 }
 
-@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
+@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
 @:final class MFBPrePut extends TplPut<String, {}> {
 
 	@:async

@@ -9,7 +9,7 @@ import pony.Random;
  */
 class ServersideStorage implements Declarator {
 
-	public var clients: Map<String, Map<String, Dynamic>> = new Map<String, Map<String, Dynamic>>();
+	public var clients: Map<String, Map<String, Dynamic>> = [];
 	@:arg private var keyName: String = 'PonyKey';
 
 	public function getClient(cookie: Cookie): Map<String, Dynamic> {
@@ -25,8 +25,8 @@ class ServersideStorage implements Declarator {
 	}
 
 	public function getClientByKey(key: String): Map<String, Dynamic> {
-		if (!clients.exists(key)) clients.set(key, new Map<String, Dynamic>());
-		return clients.get(key);
+		if (!clients.exists(key)) clients[key] = new Map<String, Dynamic>();
+		return clients[key];
 	}
 
 }

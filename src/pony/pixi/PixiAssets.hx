@@ -16,10 +16,10 @@ import pony.JsTools;
  */
 class PixiAssets {
 
-	private static var sounds: Map<String, PixiSound> = new Map();
-	private static var spines: Map<String, SkeletonData> = new Map();
-	private static var texts: Map<String, String> = new Map();
-	private static var jsons: Map<String, Dynamic> = new Map();
+	private static var sounds: Map<String, PixiSound> = [];
+	private static var spines: Map<String, SkeletonData> = [];
+	private static var texts: Map<String, String> = [];
+	private static var jsons: Map<String, Dynamic> = [];
 
 	public static function reset(asset: String): Void {
 		sounds.remove(asset);

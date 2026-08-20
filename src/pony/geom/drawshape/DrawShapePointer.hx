@@ -55,12 +55,11 @@ class DrawShapePointer extends pony.Tumbler {
 	}
 
 	public function drawSnap(): Array<Pair<Bool, Rect<Float>>> {
-		var r: Array<Pair<Bool, Rect<Float>>> = [];
-		for (x in 0...snapCellCounts.x + 1) {
-			r.push(
-				new Pair(x % 4 == 0, new Rect<Float>(xbegin + x * snapCellSize.x, ybegin, xbegin + x * snapCellSize.x, ybegin + height))
-			);
-		}
+		final r: Array<Pair<Bool, Rect<Float>>> = [
+			for (x in 0...snapCellCounts.x + 1) new Pair(
+				x % 4 == 0, new Rect<Float>(xbegin + x * snapCellSize.x, ybegin, xbegin + x * snapCellSize.x, ybegin + height)
+			)
+		];
 		for (y in 0...snapCellCounts.y + 1) {
 			r.push(new Pair(y % 4 == 0, new Rect<Float>(xbegin, ybegin + y * snapCellSize.y, xbegin + width, ybegin + y * snapCellSize.y)));
 		}

@@ -125,7 +125,7 @@ class SocketClient extends SocketClientBase {
 	private function sendCallback(ar: IAsyncResult): Void {
 		if (isRunning) {
 			eventSend.Reset();
-			var s: Socket = cast(ar.AsyncState, Socket);
+			var s: Socket = cast ar.AsyncState;
 			s.EndSend(ar);
 			Synchro.lock(sendQueue, function() sendQueue.next());
 		}

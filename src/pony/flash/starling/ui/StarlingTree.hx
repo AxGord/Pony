@@ -39,7 +39,7 @@ class StarlingTree extends Sprite {
 	public var minimized(default, set): Bool;
 	public var animated(default, set): Bool = false;
 
-	public function new(flashSource: flash.display.Sprite, header: TreeElement = null, core: TreeCore = null) {
+	public function new(flashSource: flash.display.Sprite, ?header: TreeElement, ?core: TreeCore) {
 		super();
 
 		_flashSource = flashSource;
@@ -59,7 +59,7 @@ class StarlingTree extends Sprite {
 			switch (_header) {
 				case Group(text, t):
 					drawGroup(new IntPoint(0, 0), text);
-				default:
+				case _:
 			}
 		}
 

@@ -43,7 +43,7 @@ class ManyConnect extends ActionConnect {
  * ManyPut
  * @author AxGord <axgord@gmail.com>
  */
-@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
+@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
 class ManyPut extends pony.text.tpl.TplPut<ManyConnect, CPQ> {
 
 	@:async
@@ -65,19 +65,19 @@ class ManyPut extends pony.text.tpl.TplPut<ManyConnect, CPQ> {
 
 	@:async
 	private function div(arg: String, args: Map<String, String>, a: Array<Dynamic>): String {
-		var n: String = args.get('div') == null ? 'many' : args.get('div');
+		var n: String = args['div'] == null ? 'many' : args['div'];
 		var na: Array<String> = [];
 		if (args.exists('cols'))
 			for (e in a) {
-				var s: String = '<div class="' + n + '">';
-				for (f in args.get('cols').split(',').map(StringTools.trim)) s += '<div class="' + f + '">' + @await html(e, f) + '</div>';
+				var s: String = '<div class="$n">';
+				for (f in args['cols'].split(',').map(StringTools.trim)) s += '<div class="$f">${@await html(e, f) + '</div>'}';
 				s += '</div>';
 				na.push(s);
 			}
 		else
 			for (e in a) {
-				var s: String = '<div class="' + n + '">';
-				for (f in Reflect.fields(e)) s += '<div class="' + f + '">' + @await html(e, f) + '</div>';
+				var s: String = '<div class="$n">';
+				for (f in Reflect.fields(e)) s += '<div class="$f">${@await html(e, f) + '</div>'}';
 				s += '</div>';
 				na.push(s);
 			}
@@ -101,7 +101,7 @@ class ManyPut extends pony.text.tpl.TplPut<ManyConnect, CPQ> {
  * ManyPutSub
  * @author AxGord <axgord@gmail.com>
  */
-@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
+@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
 @:final class ManyPutSub extends Valuator<ManyPut, Dynamic> {
 
 	@:async
@@ -153,7 +153,7 @@ class ManyPut extends pony.text.tpl.TplPut<ManyConnect, CPQ> {
 	@:async
 	override public function valu(name: String, arg: String): String {
 		if (Reflect.hasField(b, name))
-			return Std.string(Reflect.field(b, name));
+			return '${Reflect.field(b, name)}';
 		else
 			return null;
 	}

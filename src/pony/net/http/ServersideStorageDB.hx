@@ -60,8 +60,8 @@ class ServersideStorageDB implements Declarator {
 
 	public function getClientByKey(key: String): Map<String, Dynamic> {
 		this.key = key;
-		client = new Map<String, Dynamic>();
-		orig = new Map<String, Dynamic>();
+		client = [];
+		orig = [];
 		table.select('key', 'value').where(client == $key).get(function(d) {
 			client = [for (e in d) e.key => Unserializer.run(e.value)];
 			orig = [for (e in d) e.key => e.value];
@@ -78,7 +78,8 @@ class ServersideStorageDB implements Declarator {
 			], function(r) if (!r) throw 'Can\'t save storage');
 		} else {
 			var s = Serializer.run(client[k]);
-			if (s != orig[k]) table.where(client == $key && key == $k).update(['value' => (s: DBV)], function(r) if (!r) throw 'Can\'t save storage');
+			if (s != orig[k]) table.where(client == $key && key == $k).update(['value' => (s: DBV)], function(r) if (!r) throw 'Can\'t '
+			+ 'save ' + 'storage');
 		}
 	}
 

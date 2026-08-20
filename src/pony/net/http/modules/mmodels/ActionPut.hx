@@ -8,7 +8,7 @@ import pony.text.tpl.TplData;
  * ActionPut
  * @author AxGord <axgord@gmail.com>
  */
-@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
+@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
 class ActionPut extends pony.text.tpl.TplPut<Action, CPQ> {
 
 	@:async

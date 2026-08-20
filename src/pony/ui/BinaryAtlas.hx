@@ -14,7 +14,7 @@ import hxbitmini.Serializer;
 	@:s public var width: Int;
 	@:s public var contents: Map<String, Array<BinaryAtlasParams>>;
 
-	public function new() contents = new Map<String, Array<BinaryAtlasParams>>();
+	public function new() contents = [];
 
 	public inline function toBytes(): Bytes return new Serializer().serialize(this);
 

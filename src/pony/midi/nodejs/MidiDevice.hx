@@ -53,7 +53,7 @@ class MidiDevice implements IMidiDevice implements HasSignal {
 		firstCreated = true;
 		output = Type.createInstance(midiOutputClass, []);
 		var name = input.getPortName(id);
-		trace('Open midi: ' + name + '($id)');
+		trace('Open midi: $name($id)');
 		input.openPort(id);
 		for (i in 0...output.getPortCount()) {
 			if (name.indexOf(output.getPortName(i)) == 0) {

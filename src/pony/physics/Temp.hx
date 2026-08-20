@@ -30,6 +30,6 @@ abstract Temp(Float) {
 		}
 	}
 
-	@:to inline private function toString(): String return c + 'C';
+	@:to inline private function toString(): String return '${c}C';
 
 }

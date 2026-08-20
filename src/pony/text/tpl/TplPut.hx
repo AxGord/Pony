@@ -10,7 +10,7 @@ import pony.text.tpl.TplData.TplTag;
  * TplPut
  * @author AxGord
  */
-@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
+@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
 class TplPut<T1, T2> implements ITplPut implements SuperPuper {
 
 	public var a: T1;
@@ -160,8 +160,8 @@ class TplPut<T1, T2> implements ITplPut implements SuperPuper {
 
 	@:async
 	public function tplTag(d: TplTag): String {
-		var na: Map<String, String> = new Map<String, String>();
-		if (d.args.iterator().hasNext()) for (k in d.args.keys()) na.set(k, @await tplData(d.args.get(k)));
+		var na: Map<String, String> = [];
+		if (d.args.iterator().hasNext()) for (k in d.args.keys()) na[k] = @await tplData(d.args[k]);
 
 		var arg: String = @await tplData(d.arg);
 		var content: TplData = d.content;
@@ -195,7 +195,7 @@ class TplPut<T1, T2> implements ITplPut implements SuperPuper {
 			@await shortTag(name, arg);
 		else {
 			var r: String = @await parentTag(name, content, arg, args, kid);
-			if (r == '%' + name + '%')
+			if (r == '%$name%')
 				@await shortTag(name, arg);
 			else
 				r;
@@ -210,7 +210,7 @@ class TplPut<T1, T2> implements ITplPut implements SuperPuper {
 	 */
 	@:async
 	private inline function parentTag(name: String, content: TplData, arg: String, args: Map<String, String>, ?kid: ITplPut): String {
-		return @await parent.tag(name, content, arg, args, kid == null ? this : kid);
+		return @await parent.tag(name, content, arg, args, kid ?? this);
 	}
 
 	@:async
@@ -240,14 +240,14 @@ class TplPut<T1, T2> implements ITplPut implements SuperPuper {
 	@:async @:puper
 	public function shortTag(name: String, arg: String, ?kid: ITplPut): String {
 		if (parent == null)
-			return '%' + name + '%';
+			return '%$name%';
 		else
 			return @await parentShortTag(name, arg, kid);
 	}
 
 	@:async
 	private function parentShortTag(name: String, arg: String, ?kid: ITplPut): String {
-		return @await parent.shortTag(name, arg, kid == null ? this : kid);
+		return @await parent.shortTag(name, arg, kid ?? this);
 	}
 
 	@:async
@@ -260,7 +260,7 @@ class TplPut<T1, T2> implements ITplPut implements SuperPuper {
 		return @await manyEasy(d, i, function(e: Dynamic, cb: String -> Void): Void return sub(this, e, cl, content, cb), delemiter);
 	}
 
-	private static function getString(v: Dynamic, cb: String -> Void): Void cb(Std.string(v));
+	private static function getString(v: Dynamic, cb: String -> Void): Void cb('$v');
 
 	@:async
 	public static function manyEasy(

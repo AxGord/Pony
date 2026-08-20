@@ -70,8 +70,7 @@ class AsyncTests extends TestCase {
 
 	static public function finish(?infos: PosInfos): Void {
 		if (!complite) throw 'Tests not complited: ' + {
-			var a = [];
-			for (k in isRead.keys()) if (!isRead[k]) a.push(k);
+			final a = [for (k in isRead.keys()) if (!isRead[k]) k];
 			a;
 		};
 		Log.trace('$dec All tests finished $dec', infos);

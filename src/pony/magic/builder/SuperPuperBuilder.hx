@@ -56,7 +56,7 @@ class SuperPuperBuilder {
 		for (field in fields) if (field.meta.checkMeta([':puper', 'puper'])) {
 			var meta = field.meta.filter(function(m) return m.name != ':puper' && m.name != 'puper');
 			fields.push({
-				name: 'super${lvl}_' + field.name,
+				name: 'super${lvl}_${field.name}',
 				access: [APrivate],
 				pos: field.pos,
 				kind: field.kind,
@@ -96,7 +96,7 @@ class SuperPuperBuilder {
 		if (lvl == -1) return;
 		switch expr.expr {
 			case ECall({ expr: EField({ expr: EConst(CIdent('super')), pos: _ }, fName), pos: pos }, args):
-				expr.expr = ECall({ expr: EConst(CIdent('super${lvl}_' + fName)), pos: pos }, args);
+				expr.expr = ECall({ expr: EConst(CIdent('super${lvl}_$fName')), pos: pos }, args);
 
 			case _:
 				ExprTools.iter(expr, convertSuper.bind(_, fName, lvl));

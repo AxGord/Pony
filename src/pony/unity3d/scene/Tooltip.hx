@@ -82,7 +82,7 @@ using hugs.HUGSWrapper;
 			if (unityengine.Input.GetMouseButton(2))
 				pony.unity3d.Tooltip.showText(text, bigText, this, gameObject.layer);
 			else
-				pony.unity3d.Tooltip.showText(text, "", this, gameObject.layer);
+				pony.unity3d.Tooltip.showText(text, '', this, gameObject.layer);
 			lightUp();
 		} catch (_: Dynamic) {}
 	}
@@ -95,7 +95,7 @@ using hugs.HUGSWrapper;
 	}
 
 	private function pressOut(): Void {
-		pony.unity3d.Tooltip.showText(text, "", this, gameObject.layer);
+		pony.unity3d.Tooltip.showText(text, '', this, gameObject.layer);
 	}
 
 	private function press(): Void {

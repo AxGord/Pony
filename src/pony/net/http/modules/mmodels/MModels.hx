@@ -15,7 +15,7 @@ using Lambda;
  * MModels
  * @author AxGord <axgord@gmail.com>
  */
-@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
+@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
 @:final class MModels implements IModule {
 
 	public var lastActionId: Int;
@@ -31,11 +31,11 @@ using Lambda;
 			var n: String = Type.getClassName(cl);
 			actionsH.set(n.substr(n.lastIndexOf('.') + 1), cl);
 		}
-		list = new Map<String, Model>();
+		list = [];
 		for (m in models) {
 			var n: String = Type.getClassName(m);
 			n = n.substr(n.lastIndexOf('.') + 1);
-			if (!list.exists(n)) list.set(n, Type.createInstance(m, [this, actionsH]));
+			if (!list.exists(n)) list[n] = Type.createInstance(m, [this, actionsH]);
 		}
 
 		db.connected.wait(dbReady);
@@ -56,9 +56,9 @@ using Lambda;
 
 	public function connect(cpq: CPQ): EConnect {
 		if (!cpq.connection.sessionStorage.exists('modelsActions'))
-			cpq.connection.sessionStorage.set('modelsActions', new Map<Int, Dynamic>());
+			cpq.connection.sessionStorage['modelsActions'] = new Map<Int, Dynamic>();
 
-		var connectList: Map<String, ModelConnect> = new Map();
+		var connectList: Map<String, ModelConnect> = [];
 
 		for (k in list.keys()) switch (list[k].connect(cpq)) {
 			case BREAK:
@@ -75,7 +75,7 @@ using Lambda;
 			if (a.length == 3) {
 				if (!h.exists(a[0])) h.set(a[0], new Map<String, Map<String, String>>());
 				if (!h.get(a[0]).exists(a[1])) h.get(a[0]).set(a[1], new Map<String, String>());
-				h.get(a[0]).get(a[1]).set(a[2], post.get(k));
+				h.get(a[0]).get(a[1]).set(a[2], post[k]);
 			}
 		}
 		for (k in h.keys()) if (list.exists(k)) if (connectList[k].action(h.get(k))) return BREAK;

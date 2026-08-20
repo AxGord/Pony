@@ -25,7 +25,7 @@ import types.SniffConfig;
 		server.onConnect << socketServerConnectHandler;
 	}
 
-	public function init(): Void log('Sniff ' + Std.string(cfg));
+	public function init(): Void log('Sniff $cfg');
 
 	private function socketServerConnectHandler(a: ISocketClient): Void {
 		log('>> Connect');

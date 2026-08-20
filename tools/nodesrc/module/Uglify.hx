@@ -46,7 +46,7 @@ import sys.io.File;
 				}
 				File.saveContent(cfg.libcache, libdata);
 			}
-			File.saveContent(lastFile, libdata + '\n' + lastContent);
+			File.saveContent(lastFile, '$libdata\n$lastContent');
 			patchMapFile(lastFile + MAP_EXT, 1 + cfg.sourcemap.offset);
 		} else {
 			var inputContent: Dynamic<String> = {};

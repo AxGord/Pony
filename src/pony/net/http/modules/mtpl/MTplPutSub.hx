@@ -10,7 +10,7 @@ import pony.text.tpl.Valuator;
  * MTplPutSub
  * @author AxGord <axgord@gmail.com>
  */
-@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
+@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
 @:final class MTplPutSub extends Valuator<MTplPut, TplSystem> {
 
 	@:async
@@ -49,13 +49,13 @@ import pony.text.tpl.Valuator;
 			case 'email': sie(m, 'email');
 			case 'www': sie(m, 'www');
 			case 'license': sie(m, 'license');
-			case 'version': m != null && m.version != null ? m.version.major + '.' + m.version.minor : '';
+			case 'version': m != null && m.version != null ? '${m.version.major}.${m.version.minor}' : '';
 			case 'extends':
 				if (m != null && m._extends != null)
 					@await TplPut.manyEasy(m._extends, null, arg == null ? ', ' : arg);
 				else
 					'';
-			default:
+			case _:
 				null;
 		}
 	}

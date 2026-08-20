@@ -195,12 +195,12 @@ abstract UColor(UInt) from UInt to UInt {
 	/**
 	 * Convert color to string
 	 */
-	@:to public inline function toString(): String return '#' + StringTools.hex(this, 8);
+	@:to public inline function toString(): String return '#${StringTools.hex(this, 8)}';
 
 	/**
 	 * Convert color to string with alpha
 	 */
-	public inline function toStringWithoutAlpha(): String return '#' + StringTools.hex(rgb, 6);
+	public inline function toStringWithoutAlpha(): String return '#${StringTools.hex(rgb, 6)}';
 
 	/**
 	 * Convert color to rgba string with inverted alpha
@@ -224,7 +224,7 @@ abstract UColor(UInt) from UInt to UInt {
 		s = StringTools.trim(s);
 		return new UColor(if (s.substr(0, 1) == '#') {
 			s = s.substr(1);
-			s.length == 3 ? Std.parseInt('0x' + s.charAt(0) + '0' + s.charAt(1) + '0' + s.charAt(2) + '0') : Std.parseInt('0x' + s);
+			s.length == 3 ? Std.parseInt('0x${s.charAt(0)}0${s.charAt(1)}0${s.charAt(2)}0') : Std.parseInt('0x$s');
 		} else if (s.substr(0, 3) == 'rgb') {
 			s = StringTools.ltrim(s.substr(3));
 			if (StringTools.startsWith(s, '(') && StringTools.endsWith(s, ')')) {

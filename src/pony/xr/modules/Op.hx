@@ -46,7 +46,7 @@ class Op implements IXRModule {
 					});
 				}
 			case _:
-				xr._error('Unknown operation ' + x.att.n);
+				xr._error('Unknown operation ${x.att.n}');
 		}
 	}
 

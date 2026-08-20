@@ -41,8 +41,7 @@ using StringTools;
 	}
 
 	private function get_takeExists(): Array<String> {
-		var a: Array<String> = [];
-		for (e in this) if (FileSystem.exists(e)) a.push(e);
+		final a: Array<String> = [for (e in this) if (FileSystem.exists(e)) e];
 		return a;
 	}
 

@@ -34,13 +34,13 @@ class ZipTool extends Logable {
 	private var fileOutput: Output;
 	private var writer: Writer;
 
-	public function new(output: String = '', prefix: String = '', compressLvl: Int = 9, root: String = null) {
+	public function new(output: String = '', prefix: String = '', compressLvl: Int = 9, ?root: String) {
 		super();
 		this.output = output;
 		this.prefix = prefix;
 		this.compressLvl = compressLvl;
 		if (root != null && root.charAt(root.length - 1) != '/') root += '/';
-		this.root = root == null ? '' : root;
+		this.root = root ?? '';
 		var a: Array<String> = output.split('/');
 		a.pop();
 		if (a.length > 0) FileSystem.createDirectory(a.join('/'));
@@ -63,7 +63,7 @@ class ZipTool extends Logable {
 	public function writeEntry(entry: String): ZipTool {
 		if (needIgnore(entry)) return this;
 		if (!FileSystem.exists(prefix + entry)) {
-			error('File not exists: ' + prefix + entry);
+			error('File not exists: $prefix$entry');
 			return this;
 		}
 		if (FileSystem.isDirectory(prefix + entry))

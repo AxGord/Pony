@@ -29,13 +29,13 @@ class Utils {
 	public static var ponyVersion(get, never): String;
 	public static var ponyHaxelibVersion(get, never): String;
 	private static var _ponyVersion: String;
-	private static var hashesCache: Map<String, Map<String, Array<String>>> = new Map();
+	private static var hashesCache: Map<String, Map<String, Array<String>>> = [];
 
 	private static function __init__(): Void {
 		PD = isWindows ? '\\' : '/';
 		libPath = pony.Tools.ponyPath();
 		libPath = path(libPath);
-		toolsPath = libPath + 'tools' + PD + 'bin' + PD;
+		toolsPath = '${libPath}tools${PD}bin$PD';
 	}
 
 	public static function getHaxelibVersion(): String {
@@ -54,7 +54,7 @@ class Utils {
 	public static function path(s: String): String return StringTools.replace(StringTools.replace(s, '/', PD), '\\', PD);
 
 	public static function command(name: String, args: Array<String>, ?hide: Array<String>): Void {
-		var s: String = name + ' ' + args.join(' ');
+		var s: String = '$name ${args.join(' ')}';
 		if (hide != null) for (h in hide) s = StringTools.replace(s, h, TextTools.repeat('*', h.length));
 		Sys.println(s);
 		var r: Int = Sys.command(name, args);
@@ -125,7 +125,7 @@ class Utils {
 
 	public static function error(message: String, errCode: Int = 1): Void {
 		#if neko
-		Sys.stderr().writeString(message + '\n');
+		Sys.stderr().writeString('$message\n');
 		#else
 		Sys.println(message);
 		#end
@@ -164,7 +164,7 @@ class Utils {
 		if (_ponyVersion != null) {
 			return _ponyVersion;
 		} else {
-			var file: String = libPath + 'haxelib.json';
+			var file: String = '${libPath}haxelib.json';
 			var data: Dynamic = Json.parse(File.getContent(file));
 			return _ponyVersion = data.version;
 		}
@@ -209,8 +209,8 @@ class Utils {
 	public static function runNode(name: String, ?args: Array<String>): Int {
 		if (args == null) args = [];
 		Sys.println('Run: $name.js');
-		var jsFile: String = toolsPath + name + '.js';
-		if (!FileSystem.exists(jsFile)) error(jsFile + ' - not founded');
+		var jsFile: String = '${toolsPath + name}.js';
+		if (!FileSystem.exists(jsFile)) error('$jsFile - not founded');
 		var a: Array<String> = [jsFile];
 		for (e in args) a.push(e);
 		return Sys.command('node', a);
@@ -223,15 +223,15 @@ class Utils {
 
 	public static function asyncRunNode(name: String, ?args: Array<String>): Process {
 		Sys.println('Async run: $name.js');
-		var jsFile: String = toolsPath + name + '.js';
-		if (!FileSystem.exists(jsFile)) error(jsFile + ' - not founded');
+		var jsFile: String = '${toolsPath + name}.js';
+		if (!FileSystem.exists(jsFile)) error('$jsFile - not founded');
 		return new Process('node', [jsFile].concat(args));
 	}
 
 	public static function getHashes(file: String): Map<String, Array<String>> {
 		if (hashesCache.exists(file)) return hashesCache[file];
 		var c: String = FileSystem.exists(file) ? File.getContent(file) : '';
-		var m: Map<String, Array<String>> = new Map<String, Array<String>>();
+		var m: Map<String, Array<String>> = [];
 		for (e in c.split('\n')) {
 			var a: Array<String> = e.split(':');
 			if (a.length > 1) m[a[0]] = a[1].split(',');
@@ -241,7 +241,7 @@ class Utils {
 
 	public static function saveHashes(file: String, map: Map<String, Array<String>>): Void {
 		hashesCache[file] = map;
-		File.saveContent(file, [for (k in map.keys()) k + ':' + map[k].join(',')].join('\n'));
+		File.saveContent(file, [for (k in map.keys()) '$k:${map[k].join(',')}'].join('\n'));
 	}
 
 	public static function getBuildString(onlyNumbers: Bool = false, nosec: Bool = false): String {

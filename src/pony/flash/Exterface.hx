@@ -21,7 +21,7 @@ class Exterface implements Dynamic<Exterface> implements pony.magic.HasSignal {
 	@:auto public var signal: Signal2<Dynamic, Dynamic>;
 
 	public static var get: Exterface = new Exterface();
-	private static var map: Map<String, Exterface> = new Map<String, Exterface>();
+	private static var map: Map<String, Exterface> = [];
 
 	private function new(?name: String) {
 		if (name != null) {
@@ -31,7 +31,7 @@ class Exterface implements Dynamic<Exterface> implements pony.magic.HasSignal {
 			#else
 			ExternalInterface.addCallback(name, Reflect.makeVarArgs(dispatchArgs));
 			#end
-			map.set(name, this);
+			map[name] = this;
 		}
 	}
 
@@ -39,13 +39,13 @@ class Exterface implements Dynamic<Exterface> implements pony.magic.HasSignal {
 
 	public static function regLog(): Void {
 		#if !debug
-		Log.trace = function(m: Dynamic, ?p: PosInfos): Void get.log.call(p.fileName + ':' + p.lineNumber + ': ' + m);
+		Log.trace = function(m: Dynamic, ?p: PosInfos): Void get.log.call('${p.fileName}:${p.lineNumber}: $m');
 		#end
 	}
 
 	public function resolve(field: String): Exterface {
-		var s: String = (name != null ? name + '.' : '') + field;
-		return map.exists(s) ? map.get(s) : new Exterface(s);
+		var s: String = (name != null ? '$name.' : '') + field;
+		return map.exists(s) ? map[s] : new Exterface(s);
 	}
 
 	public function callEmpty(): Void {

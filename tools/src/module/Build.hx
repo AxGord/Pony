@@ -85,8 +85,7 @@ private typedef LastCompilationOptions = {
 
 	override private function runNode(cfg: BuildConfig): Void {
 		if (cfg.runHxml.length == 0) {
-			var cmd: Array<SPair<String>> = [];
-			for (l in haxelib) cmd.push(new SPair(LIB, l));
+			var cmd: Array<SPair<String>> = [for (l in haxelib) new SPair(LIB, l)];
 			for (d in flags) cmd.push(new SPair(D, d));
 			for (l in postHaxelibs) cmd.push(new SPair(LIB, l));
 			if (cfg.app != null) cmd.push(new SPair(D, 'app=${cfg.app}'));
@@ -99,13 +98,12 @@ private typedef LastCompilationOptions = {
 			}
 		} else
 			for (e in cfg.runHxml) {
-				var cmd: Array<SPair<String>> = [];
-				for (d in flags) cmd.push(new SPair(D, d));
+				var cmd: Array<SPair<String>> = [for (d in flags) new SPair(D, d)];
 				for (l in postHaxelibs) cmd.push(new SPair(LIB, l));
 				if (cfg.app != null) cmd.push(new SPair(D, 'app=${cfg.app}'));
 				if (cfg.debug) cmd.push(new SPair('-debug', ''));
 				cmd = cmd.concat(cfg.command);
-				cmd.push(new SPair(e + '.$HXML', ''));
+				cmd.push(new SPair('$e.$HXML', ''));
 				runCompilation(cmd, cfg.debug, cfg.haxeCompiler, cfg.winfix && Utils.isWindows);
 			}
 		checkCompilation();
@@ -133,7 +131,7 @@ private typedef LastCompilationOptions = {
 		}
 		if (debug && server && compiler == HAXE && !winfix) {
 			try { // Fix compilation server error
-				var tpf: String = Utils.libPath + 'src/pony/heaps/HeapsAssets.hx';
+				var tpf: String = '${Utils.libPath}src/pony/heaps/HeapsAssets.hx';
 				log('Update $tpf');
 				File.saveContent(tpf, File.getContent(tpf));
 			} catch (e: Dynamic) {
@@ -142,9 +140,9 @@ private typedef LastCompilationOptions = {
 			tryCounter = 3;
 			var s: Socket = connectToHaxeServer();
 			var d: String = Sys.getCwd();
-			s.write('--cwd ' + d + newline);
+			s.write('--cwd $d$newline');
 			for (c in cmdArrPairToArrStr(command)) {
-				Sys.print(c + ' ');
+				Sys.print('$c ');
 				s.write(c + newline);
 			}
 			Sys.println('');
@@ -154,7 +152,7 @@ private typedef LastCompilationOptions = {
 			try {
 				r = s.read();
 			} catch (e: Any) {
-				compilationServerError(Std.string(e));
+				compilationServerError('$e');
 				return;
 			}
 			var inWarning: Bool = false;
@@ -196,7 +194,7 @@ private typedef LastCompilationOptions = {
 			if (winfix) {
 				Utils.command(compiler, args);
 			} else {
-				Sys.println(compiler + ' ' + args.join(' '));
+				Sys.println('$compiler ${args.join(' ')}');
 				var process: Process = new Process(compiler, args);
 				try {
 					var inWarning: Bool = false;
@@ -220,7 +218,7 @@ private typedef LastCompilationOptions = {
 		}
 	}
 
-	private static inline function cmdPairToStr(p: SPair<String>): String return p.a + (p.b.length > 0 ? ' ' + p.b : '');
+	private static inline function cmdPairToStr(p: SPair<String>): String return p.a + (p.b.length > 0 ? ' ${p.b}' : '');
 
 	private static inline function cmdArrPairToArrStr(a: Array<SPair<String>>): Array<String> return [for (c in a) cmdPairToStr(c)];
 
@@ -231,7 +229,7 @@ private typedef LastCompilationOptions = {
 			s.connect(new Host('127.0.0.1'), port);
 			return s;
 		} catch (e: Any) {
-			compilationServerError(Std.string(e));
+			compilationServerError('$e');
 		}
 		return null;
 	}
@@ -291,7 +289,7 @@ private class BuildConfigReader extends BAReader<BuildConfig> {
 					case HXML:
 						cfg.runHxml.push(d);
 					case 'd':
-						cfg.command.push(new SPair(D, xml.has.name ? normalize(xml.att.name) + '=' + d : d));
+						cfg.command.push(new SPair(D, xml.has.name ? '${normalize(xml.att.name)}=$d' : d));
 					case 'm':
 						cfg.command.push(new SPair('--macro', d));
 					case 'i':

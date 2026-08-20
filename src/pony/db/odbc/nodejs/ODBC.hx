@@ -42,7 +42,7 @@ class ODBC extends SQLBase {
 	@:async public function action(q: String, ?actName: String, ?p: PosInfos): Bool {
 		var err, _, _ = @await query(q, p);
 		if (err != null) {
-			_error(actName == null ? Std.string(err) : "Can't " + actName + ': ' + err.stack, p);
+			_error(actName == null ? '$err' : 'Can\'t $actName: ${err.stack}', p);
 			return false;
 		} else
 			return true;
@@ -78,7 +78,7 @@ class ODBC extends SQLBase {
 	/**
 	 * Escape (for values)
 	 */
-	inline public function escape(s: String): String return "'" + s.replace("'", '') + "'";
+	inline public function escape(s: String): String return '\'${s.replace("'", '')}\'';
 
 	/**
 	 * Close connection and destroy object

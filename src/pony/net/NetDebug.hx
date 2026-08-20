@@ -28,7 +28,7 @@ class NetDebug {
 		Log.trace = function(d: Dynamic, ?p: PosInfos): Void {
 			old(d, p);
 			if (trstr != '') trstr += '\n';
-			trstr += name + ' => ' + (p == null ? '' : p.fileName + ':' + p.lineNumber + ': ') + Std.string(d);
+			trstr += '$name => ${(p == null ? '' : p.fileName + ':' + p.lineNumber + ': ')}$d';
 		}
 		DeltaTime.fixedUpdate << function(): Void if (trstr != '') {
 			var b: BytesOutput = new BytesOutput();

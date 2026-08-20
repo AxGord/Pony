@@ -9,7 +9,7 @@ import pony.text.tpl.TplSystem;
  * MTplPut
  * @author AxGord <axgord@gmail.com>
  */
-@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
+@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
 @:final class MTplPut extends TplPut<MTpl, CPQ> {
 
 	@:async
@@ -27,7 +27,7 @@ import pony.text.tpl.TplSystem;
 		switch (name) {
 			case 'static' if (arg != null):
 				#if php
-				return '/' + b.template._static[arg].firstExists; // todo: site directory
+				return '/${b.template._static[arg].firstExists}'; // todo: site directory
 				#else
 				return '/tpl/${b.template.name}/$arg';
 				#end
@@ -35,7 +35,7 @@ import pony.text.tpl.TplSystem;
 				return b.template.name;
 			case 'templates':
 				return @await TplPut.manyEasy(a.server.tpl, getName, arg == null ? ', ' : arg);
-			default:
+			case _:
 				return @await super.shortTag(name, arg, kid);
 		}
 	}

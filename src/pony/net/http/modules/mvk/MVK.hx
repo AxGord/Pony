@@ -44,7 +44,7 @@ import pony.text.tpl.TplPut;
 
 	public function connect(cpq: CPQ): EConnect {
 		if (cpq.connection.params.exists('vkauth')) {
-			cpq.connection.sessionStorage.set('vk_token', cpq.connection.params['vkauth']);
+			cpq.connection.sessionStorage['vk_token'] = cpq.connection.params['vkauth'];
 			cpq.connection.params.remove('vkauth');
 			cpq.connection.endAction();
 			return BREAK;
@@ -55,14 +55,14 @@ import pony.text.tpl.TplPut;
 
 }
 
-@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
+@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
 @:final class MVKPrePut extends TplPut<Int, {}> {
 
 	@:async
 	override public function shortTag(name: String, arg: String, ?kid: ITplPut): String {
 		switch (name) {
 			case 'appid':
-				return Std.string(a);
+				return '$a';
 			case _:
 				return @await super.shortTag(name, arg, kid);
 		}

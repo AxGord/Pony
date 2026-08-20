@@ -29,7 +29,7 @@ class WebServer {
 		this.defaults = defaults != null ? defaults : { template: 'Default', lang: 'en' };
 		this.modules = modules;
 		tpl = new Templates(dir, WebServerPut, this);
-		_static = dir + 'static';
+		_static = '${dir}static';
 		for (m in modules) m.init(dir, this);
 	}
 
@@ -61,7 +61,7 @@ class WebServer {
 				var t: String = a.shift();
 				var p: String = a.join('/');
 				if (!tpl.exists(t))
-					connection.error('Not exists template: ' + t);
+					connection.error('Not exists template: $t');
 				else if (!tpl.get(t)._static.exists(p))
 					connection.error('Not found');
 				else
@@ -70,7 +70,7 @@ class WebServer {
 			} else if (a[0] == usercontent) {
 				a.shift();
 				var p: String = a.join('/');
-				var u: Unit = usercontent + '/' + p;
+				var u: Unit = '$usercontent/$p';
 				if (u.exists)
 					connection.sendFile(u);
 				else

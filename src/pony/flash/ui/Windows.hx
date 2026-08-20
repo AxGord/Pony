@@ -28,19 +28,19 @@ private class WindowsImpl {
 	private var st: MovieClip;
 
 	public function new(st: MovieClip) {
-		map = new Map<String, Window>();
+		map = [];
 		this.st = st;
 		var chs = [for (e in st.childrens()) e];
 		for (ch in chs) if (Std.is(ch, Window)) {
 			var e: Window = cast ch;
-			map.set(e.name, e);
+			map[e.name] = e;
 			e.initm(cast this);
 			st.removeChild(e);
 			st.stage.addChild(e);
 		}
 	}
 
-	@:nullSafety(Off) public inline function resolve(field: String): Window return map.get(field);
+	@:nullSafety(Off) public inline function resolve(field: String): Window return map[field];
 
 	public function blurOn(): Void {
 		var filter = new BlurFilter();
@@ -49,7 +49,7 @@ private class WindowsImpl {
 			case StageQuality.LOW:
 			case StageQuality.MEDIUM:
 				Lib.current.alpha = 0.05;
-			default:
+			case _:
 				Lib.current.filters = [filter];
 				Lib.current.alpha = 0.05;
 		}

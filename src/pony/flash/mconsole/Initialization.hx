@@ -30,7 +30,7 @@ class Initialization {
 		if (MouseEvent.RIGHT_MOUSE_DOWN != null)
 			Lib.current.stage.buildSignal(MouseEvent.RIGHT_MOUSE_DOWN).sw(Initialization.mprnt.show, Initialization.mprnt.hide);
 		else
-			Console.warn('Rigth click not support in ' + Capabilities.version);
+			Console.warn('Rigth click not support in ${Capabilities.version}');
 	}
 
 	public static inline function anyKey(): Void {

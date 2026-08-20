@@ -99,7 +99,7 @@ class Module extends Logable implements HasAbstract implements HasLink {
 	}
 
 	private function end(): Void {
-		log('Complete $xname, time: ' + Std.int((Sys.time() - startTime) * 1000) / 1000);
+		log('Complete $xname, time: ${Std.int((Sys.time() - startTime) * 1000) / 1000}');
 	}
 
 	@:abstract public function init(): Void;

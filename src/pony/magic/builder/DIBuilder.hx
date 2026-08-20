@@ -132,12 +132,12 @@ final class DIBuilder {
 				if (presentCount > 1)
 					Context.error('DI: field has multiple service attributes. Pick one of @:own, @:share, @:use.', field.pos);
 				if ((ownMeta != null || shareMeta != null) && e == null)
-					Context.error('DI: @:${ownMeta != null ? "own" : "share"} requires an initializer.', field.pos);
+					Context.error('DI: @:${ownMeta != null ? 'own' : 'share'} requires an initializer.', field.pos);
 				if (ownMeta != null || shareMeta != null) {
 					final blocked: Null<String> = instanceReference(e, fields, constuctor);
 					if (blocked != null)
 						Context.error(
-							'DI: @:${ownMeta != null ? "own" : "share"} initializer is evaluated in the generated '
+							'DI: @:${ownMeta != null ? 'own' : 'share'} initializer is evaluated in the generated '
 							+ 'static load(), so it cannot use "$blocked". Depend on another service with @:use, '
 							+ 'or build from a static, a constant or a literal.',
 							field.pos
@@ -226,7 +226,8 @@ final class DIBuilder {
 									final childIsAsync: Bool = checkAsyncDestroy(inst);
 									if (childIsAsync && !isAsync)
 										Context.error(
-											'Service "${field.name}" implements AsyncDestroy, but this class does not. Add `implements pony.magic.AsyncDestroy` to this class.',
+											'Service "${field.name}" implements AsyncDestroy, but this class does not. Add `implements '
+											+ 'pony.magic.AsyncDestroy` to this class.',
 											field.pos
 										);
 									// L3: skip provider.load for static-eligible DI children; declare local var instead.
@@ -557,7 +558,7 @@ final class DIBuilder {
 		// their own flag because a shared inherited flag would block super.destroy() chain:
 		// when child.destroy sets the flag before calling super, parent.destroy's own guard
 		// check would see the flag set and early-return, skipping parent's cleanup.
-		final guardFieldName: String = '__diDestroyed_' + localClass.name;
+		final guardFieldName: String = '__diDestroyed_${localClass.name}';
 		if (needsGuard) fields.push({
 			name: guardFieldName,
 			access: [APrivate],
@@ -675,7 +676,7 @@ final class DIBuilder {
 		function add(c: ClassType): Void {
 			final name: String = typeNameOf(c);
 			if (visited.exists(name)) return;
-			visited.set(name, true);
+			visited[name] = true;
 			result.push(name);
 			for (i in c.interfaces) add(i.t.get());
 			if (c.superClass != null) add(c.superClass.t.get());
@@ -687,7 +688,7 @@ final class DIBuilder {
 	private static function typeNameOf(c: ClassType): String {
 		final segs: Array<String> = c.module.split('.');
 		final lastSeg: String = segs[segs.length - 1];
-		return c.name == lastSeg ? c.module : (c.module + '.' + c.name);
+		return c.name == lastSeg ? c.module : ('${c.module}.${c.name}');
 	}
 
 	private static function complexTypeName(t: ComplexType): String {

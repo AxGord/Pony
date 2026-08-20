@@ -66,7 +66,7 @@ class InputMode {
 	#end
 
 	private static function checkInitialized(): Void {
-		if (!_initialized) throw "Call InputMode.init() before usage (before any user input)";
+		if (!_initialized) throw 'Call InputMode.init() before usage (before any user input)';
 	}
 
 }

@@ -69,14 +69,14 @@ class SimpleWeb {
 		var httpServer: HttpServer = new HttpServer(config.httpport);
 		var usercontent: String = 'usercontent';
 		(usercontent: Dir).create();
-		var webServer: WebServer = new WebServer(['home', pony.Tools.ponyPath() + 'webdefaults'], usercontent, modules);
+		var webServer: WebServer = new WebServer(['home', '${pony.Tools.ponyPath()}webdefaults'], usercontent, modules);
 		httpServer.request = webServer.connect;
 
 		#if php
 		httpServer.run(new pony.net.http.ServersideStorageDB(db.storage));
 		if (trc.length > 0) {
 			php.Lib.print('<hr><pre>');
-			for (p in trc) php.Lib.println(p.b.fileName + ':' + p.b.lineNumber + ': ' + p.a);
+			for (p in trc) php.Lib.println('${p.b.fileName}:${p.b.lineNumber}: ${p.a}');
 		}
 		#end
 	}

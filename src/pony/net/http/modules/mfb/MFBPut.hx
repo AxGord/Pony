@@ -8,14 +8,14 @@ import pony.text.tpl.TplPut;
  * MFBPut
  * @author AxGord <axgord@gmail.com>
  */
-@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
+@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
 @:final class MFBPut extends TplPut<MFBConnect, {}> {
 
 	@:async
 	override public function tag(name: String, content: TplData, arg: String, args: Map<String, String>, ?kid: ITplPut): String {
 		if (name == 'facebook') {
 			if (content == null) {
-				return Std.string(a.token);
+				return '${a.token}';
 			} else {
 				return @await sub(a, null, MFBPutSub, content);
 			}

@@ -84,7 +84,7 @@ class Input extends TextureButton implements IFocus {
 				ct -= caretTime;
 				cb = !cb;
 			}
-			gt.text = cb ? vtext + '|' : vtext;
+			gt.text = cb ? '$vtext|' : vtext;
 		} // else gt.text = text;
 	}
 

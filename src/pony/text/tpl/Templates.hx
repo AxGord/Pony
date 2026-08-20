@@ -14,10 +14,10 @@ class Templates {
 	private var list: Map<String, TplSystem>;
 
 	public function new(dir: Dir, ?c: Class<ITplPut>, o: Dynamic) {
-		list = new Map<String, TplSystem>();
-		var td: Dir = dir + 'templates';
+		list = [];
+		var td: Dir = '${dir}templates';
 		for (d in td.dirs()) {
-			var mf: File = d + 'manifest.xml';
+			var mf: File = '${d}manifest.xml';
 			if (mf.exists) {
 				var manifest: Manifest = TplSystem.parseManifest(mf);
 				if (manifest.title == null) manifest.title = d.name;
@@ -29,15 +29,15 @@ class Templates {
 				// trace(d);
 				var ts: TplSystem = new TplSystem(d, c, o);
 				ts.manifest = manifest;
-				list.set(d.name, ts);
+				list[d.name] = ts;
 			} else
-				list.set(d.name, new TplSystem(d, c, o));
+				list[d.name] = new TplSystem(d, c, o);
 		}
 	}
 
 	public inline function exists(key: String): Bool return list.exists(key);
 
-	public inline function get(key: String): TplSystem return list.get(key);
+	public inline function get(key: String): TplSystem return list[key];
 
 	public inline function iterator(): Iterator<TplSystem> {
 		return list.iterator();

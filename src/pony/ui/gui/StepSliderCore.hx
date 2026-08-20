@@ -18,7 +18,7 @@ class StepSliderCore extends SliderCore {
 	private var valueRound: Int = -1;
 
 	public function new(
-		button: ButtonCore = null, size: Float, isVertical: Bool = false, invert: Bool = false, draggable: Bool = true
+		?button: ButtonCore, size: Float, isVertical: Bool = false, invert: Bool = false, draggable: Bool = true
 	) {
 		super(button, size, isVertical, invert, draggable);
 	}

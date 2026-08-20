@@ -9,7 +9,7 @@ import pony.ICanBeCopied;
  */
 class V implements IXRModule implements ICanBeCopied<V> {
 
-	public var values: Map<String, Dynamic> = new Map();
+	public var values: Map<String, Dynamic> = [];
 
 	public function new() {}
 

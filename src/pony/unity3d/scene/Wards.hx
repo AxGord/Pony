@@ -50,7 +50,7 @@ using hugs.HUGSWrapper;
 	public function readWards(): Void {
 		wards = [];
 		for (i in 1...10000) {
-			var t: Transform = transform.Find(Std.string(i));
+			var t: Transform = transform.Find('$i');
 			if (t == null) break;
 			wards.push(t);
 		}

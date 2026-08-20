@@ -104,7 +104,7 @@ class SerialPort extends Logable implements Declarator {
 	}
 
 	private function logPortsHandler(ports: Array<SerialId>): Void {
-		for (port in ports) log(Std.string(port));
+		for (port in ports) log('$port');
 	}
 
 	private static function tracePortsHandler(ports: Array<SerialId>): Void {
@@ -114,21 +114,21 @@ class SerialPort extends Logable implements Declarator {
 	private function connectHandler(ports: Array<SerialId>): Void {
 		var e: SerialId = ports.find(findPort);
 		if (e == null) return error("Can't find device");
-		log('Connect to ' + e.comName);
+		log('Connect to ${e.comName}');
 		try {
 			var fcfg: SerialPortFullConfig = cast cfg;
 			fcfg.disconnectedCallback = reconnect;
 			sp = Type.createInstance(NPM.serialport, [e.comName, fcfg, false]);
 			sp.open(function(err: Error) {
 				if (err != null && err.message != 'Port is opening') {
-					error('Error opening port: ' + err.message);
+					error('Error opening port: ${err.message}');
 				} else {
 					if (cfg.notWaitFirstMessage) {
 						sp.drain(function(err: Dynamic) {
 							if (err == null)
 								haxe.Timer.delay(openHandler, 1000);
 							else
-								error('Error opening port: ' + err);
+								error('Error opening port: $err');
 						});
 					} else {
 						sp.once('data', openHandler);
@@ -139,7 +139,7 @@ class SerialPort extends Logable implements Declarator {
 			sp.on('close', closeHandler);
 			sp.on('data', readData);
 		} catch (err: Dynamic) {
-			error(Std.string(err));
+			error('$err');
 		}
 	}
 

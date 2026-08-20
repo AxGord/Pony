@@ -202,16 +202,16 @@ class VSCode {
 			{
 				name: 'MacOS (HashLink SDL)',
 				type: 'hl',
-				program: "${workspaceFolder}/" + '$output$app.hl',
-				cwd: "${workspaceFolder}/" + output,
+				program: '$${workspaceFolder}/$output$app.hl',
+				cwd: '$${workspaceFolder}/$output',
 				request: 'launch',
 				preLaunchTask: 'mac debug'
 			},
 			{
 				name: 'Windows (HashLink DirectX)',
 				type: 'hl',
-				program: "${workspaceFolder}/" + '$output$app.hl',
-				cwd: "${workspaceFolder}/" + output,
+				program: '$${workspaceFolder}/$output$app.hl',
+				cwd: '$${workspaceFolder}/$output',
 				request: 'launch',
 				preLaunchTask: 'win debug'
 			},
@@ -283,8 +283,8 @@ class VSCode {
 				type: 'node',
 				request: 'launch',
 				name: 'Launch Program',
-				program: "${workspaceFolder}/" + output + '/' + app,
-				cwd: "${workspaceFolder}/" + output,
+				program: '$${workspaceFolder}/$output/$app',
+				cwd: '$${workspaceFolder}/$output',
 				preLaunchTask: PRELAUNCH_TASK,
 				console: 'internalConsole',
 				internalConsoleOptions: 'openOnSessionStart'
@@ -302,90 +302,90 @@ class VSCode {
 		cordova = true;
 		saveConfig(chromeConfig(httpPort).concat([
 			{
-				"name": "Run Android on device",
-				"preLaunchTask": "pony android",
-				"type": "cordova",
-				"request": "launch",
-				"platform": "android",
-				"target": "device",
+				"name": 'Run Android on device',
+				"preLaunchTask": 'pony android',
+				"type": 'cordova',
+				"request": 'launch',
+				"platform": 'android',
+				"target": 'device',
 				"port": 9222,
 				"sourceMaps": true,
 				"cwd": "${workspaceFolder}",
 				"ionicLiveReload": false
 			},
 			{
-				"name": "Run iOS on device",
-				"preLaunchTask": "pony iphone",
-				"type": "cordova",
-				"request": "launch",
-				"platform": "ios",
-				"target": "device",
+				"name": 'Run iOS on device',
+				"preLaunchTask": 'pony iphone',
+				"type": 'cordova',
+				"request": 'launch',
+				"platform": 'ios',
+				"target": 'device',
 				"port": 9220,
 				"sourceMaps": true,
 				"cwd": "${workspaceFolder}",
 				"ionicLiveReload": false
 			},
 			{
-				"name": "Attach to running android on device",
-				"type": "cordova",
-				"request": "attach",
-				"platform": "android",
-				"target": "device",
+				"name": 'Attach to running android on device',
+				"type": 'cordova',
+				"request": 'attach',
+				"platform": 'android',
+				"target": 'device',
 				"port": 9222,
 				"sourceMaps": true,
 				"cwd": "${workspaceFolder}"
 			},
 			{
-				"name": "Attach to running iOS on device",
-				"type": "cordova",
-				"request": "attach",
-				"platform": "ios",
-				"target": "device",
+				"name": 'Attach to running iOS on device',
+				"type": 'cordova',
+				"request": 'attach',
+				"platform": 'ios',
+				"target": 'device',
 				"port": 9220,
 				"sourceMaps": true,
 				"cwd": "${workspaceFolder}"
 			},
 			{
-				"name": "Run Android on emulator",
-				"type": "cordova",
-				"request": "launch",
-				"preLaunchTask": "pony android",
-				"platform": "android",
-				"target": "emulator",
+				"name": 'Run Android on emulator',
+				"type": 'cordova',
+				"request": 'launch',
+				"preLaunchTask": 'pony android',
+				"platform": 'android',
+				"target": 'emulator',
 				"port": 9223,
 				"sourceMaps": true,
 				"cwd": "${workspaceFolder}",
 				"ionicLiveReload": false
 			},
 			{
-				"name": "Run iOS on simulator",
-				"type": "cordova",
-				"request": "launch",
-				"preLaunchTask": "pony iphone",
-				"platform": "ios",
-				"target": "emulator",
+				"name": 'Run iOS on simulator',
+				"type": 'cordova',
+				"request": 'launch',
+				"preLaunchTask": 'pony iphone',
+				"platform": 'ios',
+				"target": 'emulator',
 				"port": 9220,
 				"sourceMaps": true,
 				"cwd": "${workspaceFolder}",
 				"ionicLiveReload": false,
-				"runArguments": ["--target=iPhone-6"]
+				"runArguments": ['--target=iPhone-6']
 			},
 			{
-				"name": "Attach to running android on emulator",
-				"type": "cordova",
-				"request": "attach",
-				"platform": "android",
-				"target": "emulator",
+				"name": 'Attach to running android on emulator',
+				"type": 'cordova',
+				"request": 'attach',
+				"platform": 'android',
+				"target": 'emulator',
 				"port": 9222,
 				"sourceMaps": true,
 				"cwd": "${workspaceFolder}"
 			},
 			{
-				"name": "Attach to running iOS on simulator",
-				"type": "cordova",
-				"request": "attach",
-				"platform": "ios",
-				"target": "emulator",
+				"name": 'Attach to running iOS on simulator',
+				"type": 'cordova',
+				"request": 'attach',
+				"platform": 'ios',
+				"target": 'emulator',
 				"port": 9220,
 				"sourceMaps": true,
 				"cwd": "${workspaceFolder}"
@@ -420,11 +420,11 @@ class VSCode {
 
 	public static function createElectron(output: String): Void {
 		var confNamePrefix: String = 'Electron: ';
-		var mainConfName: String = confNamePrefix + 'Main';
-		var renderConfName: String = confNamePrefix + 'Renderer';
-		var onlyRenderConfName: String = confNamePrefix + 'Only Renderer';
-		var resultDir: String = "${workspaceFolder}/" + output;
-		var electronExecutable: String = resultDir + 'node_modules/.bin/electron';
+		var mainConfName: String = '${confNamePrefix}Main';
+		var renderConfName: String = '${confNamePrefix}Renderer';
+		var onlyRenderConfName: String = '${confNamePrefix}Only Renderer';
+		var resultDir: String = '$${workspaceFolder}/$output';
+		var electronExecutable: String = '${resultDir}node_modules/.bin/electron';
 		var port: Int = 9222;
 		var data = {
 			version: '0.2.0',
@@ -437,7 +437,7 @@ class VSCode {
 					runtimeExecutable: electronExecutable,
 					runtimeArgs: [output, '--remote-debugging-port=$port'],
 					windows: {
-						runtimeExecutable: electronExecutable + '.cmd'
+						runtimeExecutable: '$electronExecutable.cmd'
 					},
 					preLaunchTask: PRELAUNCH_TASK,
 					internalConsoleOptions: 'neverOpen'
@@ -463,13 +463,13 @@ class VSCode {
 					runtimeExecutable: electronExecutable,
 					runtimeArgs: [output, '--remote-debugging-port=$port'],
 					windows: {
-						runtimeExecutable: electronExecutable + '.cmd'
+						runtimeExecutable: '$electronExecutable.cmd'
 					}
 				}: Dynamic)
 			],
 			compounds: [
 				{
-					name: confNamePrefix + 'All',
+					name: '${confNamePrefix}All',
 					configurations: [mainConfName, renderConfName]
 				}
 			]

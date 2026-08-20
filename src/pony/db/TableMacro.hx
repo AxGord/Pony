@@ -31,7 +31,7 @@ class TableMacro {
 						a.push(genText(' OR ', expr.pos));
 						a = transExpr(e2, a);
 						return a;
-					case _: throw 'Unknown operation ' + op;
+					case _: throw 'Unknown operation $op';
 				}
 
 				a = a.concat(parseExpr(e1));
@@ -81,7 +81,7 @@ class TableMacro {
 				}
 
 			case _:
-				throw 'Unknown operation ' + Std.string(expr.expr);
+				throw 'Unknown operation ${expr.expr}';
 		}
 		return a;
 	}
@@ -118,7 +118,7 @@ class TableMacro {
 			case EBinop(op, e1, e2):
 				try {
 					var v = ExprTools.getValue(e);
-					a.push(genText(Std.string(v), e.pos));
+					a.push(genText('$v', e.pos));
 				} catch (_: Dynamic) {
 					var o = switch op {
 						case OpGt: '>';
@@ -129,7 +129,7 @@ class TableMacro {
 						case OpNotEq: '!=';
 						case OpBoolAnd, OpAnd: 'AND';
 						case OpBoolOr, OpOr: 'OR';
-						case _: throw 'Unknown operation ' + op;
+						case _: throw 'Unknown operation $op';
 					}
 					a = a.concat(parseExpr(e1));
 
@@ -155,7 +155,7 @@ class TableMacro {
 								switch subop {
 									case OpBoolAnd, OpAnd: ' AND ';
 									case OpBoolOr, OpOr: ' OR ';
-									case _: throw 'Unknown operation ' + op;
+									case _: throw 'Unknown operation $op';
 								},
 								e.pos
 							));

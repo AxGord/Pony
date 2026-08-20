@@ -12,7 +12,7 @@ import pony.text.tpl.TplData.TplStyle;
 @:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
 class TplDir {
 
-	private var h: Map<String, Tpl> = new Map<String, Tpl>();
+	private var h: Map<String, Tpl> = [];
 
 	public function new(dir: Dir, ?c: Class<ITplPut>, o: Dynamic, ?s: TplStyle) {
 		for (f in dir.contentRecursiveFiles('.tpl')) {

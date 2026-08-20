@@ -76,7 +76,7 @@ class DrawShape extends pony.Logable #if pony_experimental implements pony.magic
 	private function finishBinary(points: Array<IntPoint>): Void {
 		var b: BytesOutput = new BytesOutput();
 		for (v in points) b.writeByte(Byte.create(v.x, v.y));
-		log('Bytes size: ' + b.length);
+		log('Bytes size: ${b.length}');
 		eFinishBinary.dispatch(b.getBytes());
 	}
 	#else
@@ -98,7 +98,7 @@ class DrawShape extends pony.Logable #if pony_experimental implements pony.magic
 	private function shapeToBytes(e: Event1<Bytes>, p: Array<IntPoint>): Void {
 		var b = new BytesOutput();
 		for (v in p) b.writeByte(Byte.create(v.x, v.y));
-		log('Bytes size: ' + b.length);
+		log('Bytes size: ${b.length}');
 		e.dispatch(b.getBytes());
 	}
 	#end

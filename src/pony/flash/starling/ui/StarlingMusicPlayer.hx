@@ -37,7 +37,7 @@ class StarlingMusicPlayer extends StarlingSongPlayer {
 	override public function new(source: Sprite) {
 		super(source);
 		this.source = source;
-		song = untyped source.getChildByName("song");
+		song = untyped source.getChildByName('song');
 		_b = untyped song.getChildByName('b');
 		_tTitle = untyped song.getChildByName('tTitle');
 		_tTime = untyped song.getChildByName('tTime');
@@ -92,19 +92,16 @@ class StarlingMusicPlayer extends StarlingSongPlayer {
 			t.touchable = false;
 			o.addChild(t);
 
-			/*
-
-				//var b:StarlingButton = untyped o.b;
-				var b:StarlingButton = untyped o.getChildByName('b');
-				trace(b);
-				bcs.push(b.core);
-				var t:TextField = untyped o.tTitle;
-				t.text = SongPlayerCore.formatSong(e);
-				//t.mouseEnabled = false;
-				var t:TextField = untyped o.tTime;
-				t.text = e.length;
-				//t.mouseEnabled = false;
-			 */
+			// //var b:StarlingButton = untyped o.b;
+			// var b:StarlingButton = untyped o.getChildByName('b');
+			// trace(b);
+			// bcs.push(b.core);
+			// var t:TextField = untyped o.tTitle;
+			// t.text = SongPlayerCore.formatSong(e);
+			// //t.mouseEnabled = false;
+			// var t:TextField = untyped o.tTime;
+			// t.text = e.length;
+			// //t.mouseEnabled = false;
 
 			i++;
 		}

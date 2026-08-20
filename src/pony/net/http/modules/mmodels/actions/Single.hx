@@ -40,7 +40,7 @@ class SingleConnect extends ActionConnect {
  * SinglePut
  * @author AxGord <axgord@gmail.com>
  */
-@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
+@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
 @:final class SinglePut extends pony.text.tpl.TplPut<SingleConnect, CPQ> {
 
 	@:async
@@ -66,16 +66,16 @@ class SingleConnect extends ActionConnect {
 
 	@:async
 	private function div(arg: String, args: Map<String, String>, e: Dynamic): String {
-		var n: String = args.get('div') == null ? 'single' : args.get('div');
+		var n: String = args['div'] == null ? 'single' : args['div'];
 		var na: Array<String> = [];
 		if (args.exists('cols')) {
-			var s: String = '<div class="' + n + '">';
-			for (f in args.get('cols').split(',').map(StringTools.trim)) s += '<div class="' + f + '">' + @await html(e, f) + '</div>';
+			var s: String = '<div class="$n">';
+			for (f in args['cols'].split(',').map(StringTools.trim)) s += '<div class="$f">${@await html(e, f) + '</div>'}';
 			s += '</div>';
 			na.push(s);
 		} else {
-			var s: String = '<div class="' + n + '">';
-			for (f in Reflect.fields(e)) s += '<div class="' + f + '">' + @await html(e, f) + '</div>';
+			var s: String = '<div class="$n">';
+			for (f in Reflect.fields(e)) s += '<div class="$f">${@await html(e, f) + '</div>'}';
 			s += '</div>';
 			na.push(s);
 		}
@@ -95,7 +95,7 @@ class SingleConnect extends ActionConnect {
 
 }
 
-@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
+@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
 class SinglePutSub extends Valuator<SinglePut, Dynamic> {
 
 	@:async
@@ -129,7 +129,7 @@ class SinglePutSub extends Valuator<SinglePut, Dynamic> {
 	@:async
 	override public function valu(name: String, arg: String): String {
 		if (Reflect.hasField(b, name))
-			return Std.string(Reflect.field(b, name));
+			return '${Reflect.field(b, name)}';
 		else
 			return null;
 	}

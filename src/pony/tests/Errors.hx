@@ -10,7 +10,7 @@ class Errors {
 	public var result: Map<String, String>;
 
 	public function new() {
-		result = new Map<String, String>();
+		result = [];
 	}
 
 	public inline function test(cond: Bool, message: String) {
@@ -18,7 +18,7 @@ class Errors {
 	}
 
 	public inline function set(message: String): Void {
-		result.set(arg, message);
+		result[arg] = message;
 	}
 
 	public inline function empty(): Bool return !result.iterator().hasNext();

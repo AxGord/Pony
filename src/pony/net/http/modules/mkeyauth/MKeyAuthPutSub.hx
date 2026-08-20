@@ -9,13 +9,13 @@ import pony.text.tpl.TplPut;
  * MKeyAuthPutSub
  * @author AxGord <axgord@gmail.com>
  */
-@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
+@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
 @:final class MKeyAuthPutSub extends TplPut<MKeyAuthConnect, ITplPut> {
 
 	@:async
 	override public function shortTag(name: String, arg: String, ?kid: ITplPut): String {
 		if (name == 'logout') {
-			var url = '?' + MKeyAuth.PARAM;
+			var url = '?${MKeyAuth.PARAM}';
 			if (arg == 'a') {
 				var lang: MLangConnect = cast a.cpq.modules['MLang'];
 				var text = 'Logout';

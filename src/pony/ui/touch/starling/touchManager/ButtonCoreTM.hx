@@ -36,7 +36,7 @@ class ButtonCoreTM extends ButtonCore {
 				core.mouseOver(false);
 			case HoverOut:
 				core.mouseOut();
-			default:
+			case _:
 		}
 	}
 

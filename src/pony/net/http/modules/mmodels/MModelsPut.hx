@@ -8,7 +8,7 @@ import pony.text.tpl.TplPut;
  * MModelsPut
  * @author AxGord <axgord@gmail.com>
  */
-@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
+@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
 @:final class MModelsPut extends TplPut<MModelsConnect, Map<String, ITplPut>> {
 
 	@:async

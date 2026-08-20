@@ -24,14 +24,14 @@ class HasSignalBuilder {
 
 		for (f in fields) switch f.kind {
 			case FProp(_, _, TPath(p), _) if (p.name.substr(0, 6) == 'Signal' && f.meta.checkMeta([':auto', ':lazy'])):
-				Context.error(f.name + " - can't be property", f.pos);
+				Context.error('${f.name} - can\'t be property', f.pos);
 			case FVar(TPath(p), _) if (p.name.substr(0, 6) == 'Signal'):
 				var on = !(f.name.substr(0, 2) != 'on' && f.name.charAt(3).toLowerCase() == f.name.charAt(3));
 				// Context.error('Incorrect signal name: ${f.name}', f.pos);
 				var isStatic = f.access.indexOf(AStatic) != -1;
 				var ast = !isStatic ? [] : [AStatic];
-				var eName = 'e' + TextTools.bigFirst(f.name.substr(on ? 2 : 0));
-				var tp = { name: 'Event' + p.name.substr(6), pack: pack, params: p.params };
+				var eName = 'e${TextTools.bigFirst(f.name.substr(on ? 2 : 0))}';
+				var tp = { name: 'Event${p.name.substr(6)}', pack: pack, params: p.params };
 				var flag = false;
 				var a = isStatic ? destrStatic : destr;
 				if (f.meta.checkMeta([':auto'])) {
@@ -44,7 +44,7 @@ class HasSignalBuilder {
 						)
 					});
 					fields.push({
-						name: 'get_' + f.name,
+						name: 'get_${f.name}',
 						access: ast.concat([AInline, APrivate]),
 						meta: null,
 						pos: f.pos,
@@ -62,7 +62,7 @@ class HasSignalBuilder {
 					});
 					var ex: Expr = { pos: f.pos, expr: ENew(tp, []) };
 					fields.push({
-						name: 'get_' + f.name,
+						name: 'get_${f.name}',
 						access: ast.concat([AInline, APrivate]),
 						meta: null,
 						pos: f.pos,
@@ -79,7 +79,7 @@ class HasSignalBuilder {
 			case FVar(TPath(p), val) if (f.meta.checkMeta([':bindable', 'bindable'])):
 				var isStatic = f.access.indexOf(AStatic) != -1;
 				var ast = !isStatic ? [] : [AStatic];
-				var changeName = 'change' + TextTools.bigFirst(f.name);
+				var changeName = 'change${TextTools.bigFirst(f.name)}';
 				f.kind = FProp('default', 'set', TPath(p), val);
 				var ttp = TPath(p);
 				var tp = { pack: pack, name: 'Event2', params: [TPType(ttp), TPType(ttp)] };
@@ -106,7 +106,7 @@ class HasSignalBuilder {
 						Context.error('Incorrect bindable parameter', f.pos);
 				}
 				var a: Array<Expr> = isStatic ? destrStatic : destr;
-				var eventName: String = 'e' + TextTools.bigFirst(changeName);
+				var eventName: String = 'e${TextTools.bigFirst(changeName)}';
 				var setterAccess: Access = f.access.indexOf(APrivate) == -1 ? APublic : APrivate;
 				fields.push({
 					name: changeName,
@@ -116,7 +116,7 @@ class HasSignalBuilder {
 				});
 				if (lazy) {
 					fields.push({
-						name: 'set_' + f.name,
+						name: 'set_${f.name}',
 						access: ast.concat([AInline, setterAccess]),
 						meta: null,
 						pos: f.pos,
@@ -149,7 +149,7 @@ class HasSignalBuilder {
 						meta: nullsafetyOff
 					});
 					fields.push({
-						name: 'get_' + changeName,
+						name: 'get_$changeName',
 						access: ast.concat([AInline, APrivate]),
 						meta: null,
 						pos: f.pos,
@@ -159,7 +159,7 @@ class HasSignalBuilder {
 					a.push(macro @:nullSafety(Off) $i{eventName} = null);
 				} else {
 					fields.push({
-						name: 'set_' + f.name,
+						name: 'set_${f.name}',
 						access: ast.concat([AInline, setterAccess]),
 						meta: null,
 						pos: f.pos,
@@ -191,7 +191,7 @@ class HasSignalBuilder {
 						kind: FVar(TPath(tp), ex)
 					});
 					fields.push({
-						name: 'get_' + changeName,
+						name: 'get_$changeName',
 						access: ast.concat([AInline, APrivate]),
 						meta: null,
 						pos: f.pos,

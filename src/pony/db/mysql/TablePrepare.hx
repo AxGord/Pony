@@ -21,16 +21,16 @@ class TablePrepare {
 	}
 
 	@:async public function prepare(fields: Array<Field>): Bool {
-		mysql.log('prepare table ' + table);
+		mysql.log('prepare table $table');
 		mysql.hack = table;
 		var err, _, remote = @await mysql.query('SELECT * FROM $table LIMIT 0');
 		if (err != null) { // Create table
 			var cr: Array<String> = [];
 			for (f in fields) {
 				var name = mysql.escapeId(f.name);
-				cr.push(name + ' ' + f.type.toString() + decorateLength(f.length) + ' ' + Flags.array2string(f.flags));
+				cr.push('$name ${f.type.toString()}${decorateLength(f.length)} ${Flags.array2string(f.flags)}');
 			}
-			if (!@await mysql.action('CREATE TABLE $table (' + cr.join(', ') + ')', 'create table')) return false;
+			if (!@await mysql.action('CREATE TABLE $table (${cr.join(', ')})', 'create table')) return false;
 		} else { // Update table
 			var map: Map<String, Int> = makeFieldsMap(fields);
 			{ // Rename
@@ -40,16 +40,14 @@ class TablePrepare {
 				for (f in fields) if (remMap.exists(f.name)) free = free.delete(remMap[f.name]);
 				free = @await renameTableFields(fields, remote, remMap, free, chk1);
 				if (free == null) return false;
-				/*
-				free = @await renameTableFields(fields, remote, remMap, free, chk2);
-				if (free == null) return false;
-				free = @await renameTableFields(fields, remote, remMap, free, chk3);
-				if (free == null) return false;
-				free = @await renameTableFields(fields, remote, remMap, free, chk4);
-				if (free == null) return false;
-				free = @await renameTableFields(fields, remote, remMap, free, chk5);
-				if (free == null) return false;
-				 */
+				// free = @await renameTableFields(fields, remote, remMap, free, chk2);
+				// if (free == null) return false;
+				// free = @await renameTableFields(fields, remote, remMap, free, chk3);
+				// if (free == null) return false;
+				// free = @await renameTableFields(fields, remote, remMap, free, chk4);
+				// if (free == null) return false;
+				// free = @await renameTableFields(fields, remote, remMap, free, chk5);
+				// if (free == null) return false;
 			}
 
 			var again: Bool = true;
@@ -83,7 +81,7 @@ class TablePrepare {
 				for (f in remote.kv()) {
 					if (map[f.value.name] != f.key) {
 						var i = map[f.value.name];
-						var postfix = i == 0 ? ' FIRST' : ' AFTER ' + mysql.escapeId(fields[i - 1].name);
+						var postfix = i == 0 ? ' FIRST' : ' AFTER ${mysql.escapeId(fields[i - 1].name)}';
 						if (!@await mysql.action(alter(fields[i], f.value) + postfix, 'move table field')) return false;
 						remote = remote.swap(i, f.key);
 						remote[i] = fields[i];
@@ -138,13 +136,13 @@ class TablePrepare {
 		var flags = f.flags.copy();
 		var i = flags.indexOf(PRI_KEY);
 		if (r.flags.indexOf(PRI_KEY) != -1 && i != -1) flags = flags.delete(i); // Don't add primary key if him exists
-		return 'ALTER TABLE $table CHANGE $name2 $name ' + f.type.toString() + decorateLength(f.length) + ' ' + Flags.array2string(flags);
+		return 'ALTER TABLE $table CHANGE $name2 $name ${f.type.toString()}${decorateLength(f.length)} ${Flags.array2string(flags)}';
 	}
 
 	public function alterAdd(f: Field): String {
 		var name = mysql.escapeId(f.name);
 		var flags = f.flags.copy();
-		return 'ALTER TABLE $table ADD $name ' + f.type.toString() + decorateLength(f.length) + ' ' + Flags.array2string(flags);
+		return 'ALTER TABLE $table ADD $name ${f.type.toString()}${decorateLength(f.length)} ${Flags.array2string(flags)}';
 	}
 
 	inline private static function decorateLength(len: Null<Int>): String return len != null ? '($len)' : '';

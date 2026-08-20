@@ -45,7 +45,7 @@ class UpdateConnect extends ActionConnect implements ISubActionConnect {
 
 		var ca: Array<Dynamic> = [];
 		for (k in base.args.keys()) {
-			var v: String = h.get(k);
+			var v: String = h[k];
 			if (Std.is(v, Array)) {
 				cpq.connection.error('Array not supported');
 				return true;
@@ -58,13 +58,13 @@ class UpdateConnect extends ActionConnect implements ISubActionConnect {
 						ca.push(StringTools.trim(v));
 					case 'Int':
 						ca.push(Std.parseInt(v));
-					default:
-						cpq.connection.error('Type ' + base.args.get(k) + ' not supported');
+					case _:
+						cpq.connection.error('Type ${base.args.get(k)} not supported');
 						return true;
 				}
 		}
 		callCheck(ca, function(r: ActResult) {
-			storage.set(base.id, { values: h, result: r });
+			storage[base.id] = { values: h, result: r };
 			switch r {
 				case ActResult.OK:
 					cpq.connection.endAction();
@@ -76,7 +76,7 @@ class UpdateConnect extends ActionConnect implements ISubActionConnect {
 	}
 
 	public function st(arg: String): String {
-		var m = storage.get(base.id);
+		var m = storage[base.id];
 		var r: ActResult = m == null ? null : m.result;
 		var st: String = null;
 		if (r != null) switch (r) {
@@ -107,10 +107,10 @@ class UpdatePut extends pony.text.tpl.TplPut<UpdateConnect, Dynamic> {
 		if (!a.checkAccess()) return '';
 		if (content == null || args.exists('auto')) {
 			var fixList = [];
-			if (args != null && args.exists('fix')) fixList = args.get('fix').split(',');
+			if (args != null && args.exists('fix')) fixList = args['fix'].split(',');
 			var r: String = '';
 			var ma: Map<Int, { values: Map<String, String>, result: ActResult }> = cast a.storage;
-			var m = ma.get(a.base.id);
+			var m = ma[a.base.id];
 			if (m == null)
 				for (k in a.base.args.keys()) {
 					r += inputE(k, Reflect.field(b, k), fixList.indexOf(k) != -1);
@@ -121,9 +121,9 @@ class UpdatePut extends pony.text.tpl.TplPut<UpdateConnect, Dynamic> {
 					r += inputE(k, m.values.exists(k) ? m.values.get(k) : '', fixList.indexOf(k) != -1);
 				}
 			a.clr();
-			return '<form action="" method="POST">'
-				+ (content != null ? '<div class="capition">' + @await tplData(content) + '</div>' : '') + r
-				+ '<button>Send</button> <a href="" class="action">Clear</a></form>';
+			return
+				'<form action="" method="POST">${(content != null ? '<div class="capition">' + @await tplData(content) + '</div>' : '')}'
+					+ '$r<button>Send</button> <a href="" class="action">Clear</a></form>';
 		} else {
 			trace(name);
 			trace('------------');
@@ -136,9 +136,9 @@ class UpdatePut extends pony.text.tpl.TplPut<UpdateConnect, Dynamic> {
 	private function inputE(name: String, value: String, fix: Bool): String {
 		if (a.base.model.columns.get(name).hid) return input(name, null, value);
 		var s: String = a.st(name);
-		if (s == null) return '<label>' + name.bigFirst() + input(name, null, value) + '</label>';
-		if (s == '') return '<label>' + name.bigFirst() + input(name, 'ok', fix ? value : '') + '</label>';
-		return '<label>' + name.bigFirst() + input(name, 'error', value) + '<div>' + s + '</div>' + '</label>';
+		if (s == null) return '<label>${name.bigFirst()}${input(name, null, value)}</label>';
+		if (s == '') return '<label>${name.bigFirst()}${input(name, 'ok', fix ? value : '')}</label>';
+		return '<label>${name.bigFirst()}${input(name, 'error', value)}<div>$s</div></label>';
 	}
 
 	private function input(name: String, cl: String, value: String): String {
@@ -153,7 +153,7 @@ class UpdatePutSub extends pony.text.tpl.TplPut<UpdateConnect, Dynamic> {
 	@:async
 	override public function shortTag(name: String, arg: String, ?kid: ITplPut): String {
 		if (a.base.args.exists(name))
-			return Std.string(Reflect.field(b, name));
+			return '${Reflect.field(b, name)}';
 		else
 			return @await super.shortTag(name, arg, kid);
 	}
@@ -181,7 +181,7 @@ class UpdatePutArg extends pony.text.tpl.TplPut<{ o: UpdateConnect, arg: String 
 			case 'error':
 				var s = a.o.st(a.arg);
 				return s != null && s != '' ? @await tplData(content) : '';
-			default:
+			case _:
 				return @await super.tag(name, content, arg, args, kid);
 		}
 	}
@@ -196,7 +196,7 @@ class UpdatePutArg extends pony.text.tpl.TplPut<{ o: UpdateConnect, arg: String 
 				return '';
 		} else if (name == 'value') {
 			var ma: Map<Int, Dynamic> = a.o.cpq.connection.sessionStorage.get('modelsActions');
-			var m = ma.get(a.o.base.id);
+			var m = ma[a.o.base.id];
 			if (m == null) {
 				return b;
 			} else {

@@ -40,7 +40,7 @@ using StringTools;
 #if (haxe_ver >= 4.2) abstract #end
 class OpenflXmlUi extends Sprite implements HasAbstract {
 
-	private var FILTERS: Map<String, BitmapFilter> = new Map();
+	private var FILTERS: Map<String, BitmapFilter> = [];
 	private var SCALE: Float = 1;
 	private var tweens: TweenMap<Dynamic> = [];
 

@@ -51,18 +51,18 @@ using pony.math.MathTools;
 
 	private static function init(): Void {
 
-		textureObject = new GameObject("GUIText Tooltip Texture");
+		textureObject = new GameObject('GUIText Tooltip Texture');
 		guiTextureObject = cast textureObject.AddComponent('GUITexture');
 		guiTextureObject.texture = texture;
 
-		textObject = new GameObject("GUIText Tooltip");
+		textObject = new GameObject('GUIText Tooltip');
 		textObject.transform.position = new Vector3(0.5, 0.5);
 		guiTextObject = cast textObject.AddComponent('GUIText');
 		guiTextObject.material.color = new Color(0, 0, 0);
 		// guiTextObject.font = cast Resources.Load('ARIAL');
 		guiTextObject.fontSize = 14;
 
-		longTextObject = new GameObject("GUIText Tooltip Long");
+		longTextObject = new GameObject('GUIText Tooltip Long');
 		longTextObject.transform.position = new Vector3(0.5, 0.5);
 		guiLongTextObject = cast longTextObject.AddComponent('GUIText');
 		guiLongTextObject.material.color = new Color(0, 0, 0);
@@ -70,7 +70,7 @@ using pony.math.MathTools;
 
 	}
 
-	public static function showText(text: String, bigText: String, obj: Dynamic, layer: Null<Int>, ?panel: Bool = false): Void {
+	public static function showText(text: String, bigText: String, obj: Dynamic, layer: Null<Int>, panel: Bool = false): Void {
 		if (panelMode) panel = true;
 		target = obj;
 		if (textObject == null) {
@@ -87,7 +87,7 @@ using pony.math.MathTools;
 		guiTextureObject.enabled = true;
 
 
-		guiTextObject.text = WordWrap.wordWrap(text, bigText == "" ? 30 : 50);
+		guiTextObject.text = WordWrap.wordWrap(text, bigText == '' ? 30 : 50);
 
 		// formatGuiTextArea(guiTextObject, 100);
 
@@ -99,7 +99,7 @@ using pony.math.MathTools;
 		var rectWidth: Float = r.width;
 		var rectHeight: Float = r.height;
 
-		if (bigText != "") {
+		if (bigText != '') {
 			guiLongTextObject.enabled = true;
 			guiLongTextObject.text = WordWrap.wordWrap(bigText, 75);
 			lr = guiLongTextObject.GetScreenRect();

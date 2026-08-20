@@ -29,7 +29,7 @@ abstract DBV({ type: DBVT, ?val: Dynamic }) {
 	public function get(f: String -> String): String {
 		return switch this.type {
 			case TString: f(this.val);
-			case TInt: Std.string(this.val);
+			case TInt: '${this.val}';
 			case TFun(FNow): 'NOW()';
 			case TFun(FUnixTimeStamp): 'UNIX_TIMESTAMP()';
 			case TNull: 'NULL';

@@ -32,7 +32,7 @@ private typedef LastLogMessageObj = {
 	private var lastMessage: LastLogMessage = None;
 
 	public function new(
-		containerId: String = 'log', obj: ILogable = null, handleTrace: Bool = true, handleGlobalError: Bool = true, reverse: Bool = false,
+		containerId: String = 'log', ?obj: ILogable, handleTrace: Bool = true, handleGlobalError: Bool = true, reverse: Bool = false,
 		objLogs: Bool = false
 	) {
 		this.reverse = reverse;
@@ -66,7 +66,7 @@ private typedef LastLogMessageObj = {
 		if (!traceFilter(p)) return;
 		(
 			'$v'.startsWith('Catch error') ? errorHandler : logHandler
-		)([Std.string(v)].concat(p != null && p.customParams != null ? p.customParams.map(Std.string) : []).join(', '), p);
+		)(['$v'].concat(p != null && p.customParams != null ? p.customParams.map(Std.string) : []).join(', '), p);
 		@:nullSafety(Off) origTrace(v, p);
 	}
 
@@ -109,7 +109,8 @@ private typedef LastLogMessageObj = {
 		lastMessage = Error(current);
 		addToContainer(
 			pos != null
-				? '<p><span class="gray">${pos.fileName}:${pos.lineNumber}:</span> <span class="error">$message</span>${renderCount(count)}</p>'
+				? '<p><span class="gray">${pos.fileName}:${pos.lineNumber}:</span> <span class="error">$message</span>'
+					+ '${renderCount(count)}</p>'
 				: '<p><span class="error">$message</span>${renderCount(count)}</p>'
 		);
 	}

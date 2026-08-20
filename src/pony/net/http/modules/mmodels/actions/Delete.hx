@@ -41,7 +41,7 @@ class DeleteConnect extends ActionConnect implements ISubActionConnect {
 
 		var ca: Array<Dynamic> = [];
 		for (k in base.args.keys()) {
-			var v: String = h.get(k);
+			var v: String = h[k];
 			if (Std.is(v, Array)) {
 				cpq.connection.error('Array not supported');
 				return true;
@@ -54,8 +54,8 @@ class DeleteConnect extends ActionConnect implements ISubActionConnect {
 						ca.push(StringTools.trim(v));
 					case 'Int':
 						ca.push(Std.parseInt(v));
-					default:
-						cpq.connection.error('Type ' + base.args.get(k) + ' not supported');
+					case _:
+						cpq.connection.error('Type ${base.args.get(k)} not supported');
 						return true;
 				}
 		}
@@ -89,10 +89,10 @@ class DeletePut extends pony.text.tpl.TplPut<DeleteConnect, Dynamic> {
 		if (!a.checkAccess()) return '';
 		if (content == null || args.exists('auto')) {
 			var fixList = [];
-			if (args.exists('fix')) fixList = args.get('fix').split(',');
+			if (args.exists('fix')) fixList = args['fix'].split(',');
 			var r: String = '';
 			var ma: Map<Int, Dynamic> = a.storage;
-			var m = ma.get(a.base.id);
+			var m = ma[a.base.id];
 			if (m == null)
 				for (k in a.base.args.keys()) {
 					r += input(k, Reflect.field(b, k));
@@ -102,7 +102,7 @@ class DeletePut extends pony.text.tpl.TplPut<DeleteConnect, Dynamic> {
 					r += input(k, m.values.exists(k) ? m.values.get(k) : '');
 				}
 			a.clr();
-			return '<form action="" method="POST">$r<button>' + (content != null ? @await tplData(content) : 'Delete') + '</button></form>';
+			return '<form action="" method="POST">$r<button>${(content != null ? @await tplData(content) : 'Delete')}</button></form>';
 		} else {
 			var r: String = @await sub(a, b, DeletePutSub, content);
 			a.clr();

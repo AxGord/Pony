@@ -22,9 +22,9 @@ import pony.magic.HasLink;
 @:final class SliceBase implements HasLink {
 
 	private var tiles: Array<Tile>;
-	private var groups: Map<Int, TileGroup> = new Map();
-	private var solo: Map<Int, Bitmap> = new Map();
-	private var wrap: Map<Int, Graphics> = new Map();
+	private var groups: Map<Int, TileGroup> = [];
+	private var solo: Map<Int, Bitmap> = [];
+	private var wrap: Map<Int, Graphics> = [];
 
 	public var twsum(link, never): Float = GUIUtils.tilesWidthSum(tiles);
 	public var thsum(link, never): Float = GUIUtils.tilesHeightSum(tiles);
@@ -34,7 +34,7 @@ import pony.magic.HasLink;
 	public function new(target: Object, tiles: Array<Tile>, ?wrap: Array<Int>) {
 		this.tiles = tiles;
 		if (wrap == null) wrap = [];
-		var soloTexture: Map<Int, Int> = new Map();
+		var soloTexture: Map<Int, Int> = [];
 		var i: Int = 0;
 		for (t in tiles) {
 			var id: Int = t.getTexture().id;

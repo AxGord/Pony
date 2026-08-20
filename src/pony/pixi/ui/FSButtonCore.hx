@@ -9,10 +9,10 @@ import js.Browser;
 class FSButtonCore {
 
 	public function new() {
-		App.main.element.addEventListener("fullscreenchange", setFullScreenImage);
-		App.main.element.addEventListener("webkitfullscreenchange", setFullScreenImage);
-		App.main.element.addEventListener("msfullscreenchange", setFullScreenImage);
-		Browser.document.addEventListener("mozfullscreenchange", setFullScreenImage);
+		App.main.element.addEventListener('fullscreenchange', setFullScreenImage);
+		App.main.element.addEventListener('webkitfullscreenchange', setFullScreenImage);
+		App.main.element.addEventListener('msfullscreenchange', setFullScreenImage);
+		Browser.document.addEventListener('mozfullscreenchange', setFullScreenImage);
 	}
 
 	dynamic public function onEnable(): Void {}

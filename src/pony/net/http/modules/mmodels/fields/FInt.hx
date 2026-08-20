@@ -9,7 +9,7 @@ import pony.db.mysql.Types;
  */
 class FInt extends Field {
 
-	public function new(?len: Int = 10, hid: Bool = false) {
+	public function new(len: Int = 10, hid: Bool = false) {
 		super(len, hid);
 		type = Types.INT;
 	}
@@ -17,8 +17,7 @@ class FInt extends Field {
 	override public function htmlInput(cl: String, act: String, value: String, ?hidden: Null<Bool>): String {
 		if (hidden == null) hidden = hid;
 		var t = hidden ? 'type="hidden"' : 'type="text"';
-		return '<input ' + t + (cl != null ? ' class="' + cl + '"' : '') + ' name="' + model.name + '.' + act + '.' + name + '" value="'
-			+ value + '"/>';
+		return '<input $t${(cl != null ? ' class="' + cl + '"' : '')} name="${model.name}.$act.$name" value="$value"/>';
 	}
 
 	override public function create(): pony.db.mysql.Field {

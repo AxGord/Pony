@@ -47,12 +47,10 @@ class PixiSound implements HasSignal {
 
 	public function playInterval(v: TimeInterval, ?cb: Void -> Void): Void {
 		if (core == null || !enabled()) return;
-		/*
-		if (isPlay()) {
-			onEnd < playInterval.bind(v, cb);
-			return;
-		}
-		 */
+		// if (isPlay()) {
+		// 	onEnd < playInterval.bind(v, cb);
+		// 	return;
+		// }
 		if (cb != null) onEnd < cb;
 		core.currentTime = v.min / 1000 + shift;
 		waitTime = v.max;

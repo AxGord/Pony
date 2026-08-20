@@ -17,7 +17,7 @@ class Button extends Sprite {
 
 	public function new(states: Array<String>) {
 		super();
-		var created: Map<String, SBitmap> = new Map();
+		var created: Map<String, SBitmap> = [];
 		this.states = [
 			for (s in states) {
 				if (s == null)

@@ -75,7 +75,7 @@ abstract Source(String) from String to String {
 					? [DEV, lib.name, getLibPath(lib)]
 					: lib.version != null ? ['install', lib.name, lib.version] : ['install', lib.name];
 			if (lib.version == GIT && lib.commit != null) args.push(lib.commit);
-			Sys.println('haxelib ' + args.join(' '));
+			Sys.println('haxelib ${args.join(' ')}');
 			var process: Process = new Process('haxelib', args);
 			try {
 				while (true) {
@@ -88,7 +88,7 @@ abstract Source(String) from String to String {
 				}
 			} catch (e: Eof) {}
 			try {
-				while (true) Sys.stderr().writeString(process.stderr.readLine() + '\n');
+				while (true) Sys.stderr().writeString('${process.stderr.readLine()}\n');
 			} catch (e: Eof) {}
 			@:nullSafety(Off) var r: Int = process.exitCode();
 			if (r > 0) error('haxelib error $r');
@@ -115,7 +115,7 @@ abstract Source(String) from String to String {
 					var path: String = Tools.libPath(lib.name);
 					log('Lib installed to $path');
 					var cwd: Cwd = new Cwd(path);
-					var pony: String = path + 'pony.xml';
+					var pony: String = '${path}pony.xml';
 					if (FileSystem.exists(pony)) {
 						cwd.sw();
 						Utils.command('haxelib', ['run', 'pony', 'prepare']);

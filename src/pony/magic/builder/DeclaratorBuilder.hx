@@ -29,7 +29,7 @@ class DeclaratorBuilder {
 					if (Tools.checkMeta(f.meta, [':arg', 'arg'])) {
 						var n = f.name;
 						switch ComplexTypeTools.toString(t) {
-							case 'Int' | 'Float' if (Tools.staticPlatform):
+							case 'Int', 'Float' if (Tools.staticPlatform):
 								args.push({
 									name: n,
 									opt: false,
@@ -54,7 +54,7 @@ class DeclaratorBuilder {
 					if (Tools.checkMeta(f.meta, [':arg', 'arg'])) {
 						var n = f.name;
 						switch ComplexTypeTools.toString(t) {
-							case 'Int' | 'Float' if (Tools.staticPlatform):
+							case 'Int', 'Float' if (Tools.staticPlatform):
 								args.push({
 									name: n,
 									opt: false,

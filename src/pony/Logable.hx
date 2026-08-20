@@ -36,7 +36,7 @@ using pony.text.TextTools;
 	public var errorActive(get, never): Bool;
 
 	private var logPrefix: String;
-	private var l_benches: Map<String, Float> = new Map<String, Float>();
+	private var l_benches: Map<String, Float> = [];
 
 	public function new(?prefix: String) {
 		logPrefix = prefix == null ? '' : prefix + DLM;
@@ -237,7 +237,7 @@ using pony.text.TextTools;
 	private static inline function l_replaceLibPath(path: String): String {
 		var p: SPair<String> = path.firstSplit('/');
 		var lib: Null<String> = l_usedLibs[p.a];
-		return (lib != null ? lib : './') + path;
+		return (lib ?? './') + path;
 	}
 
 	private static inline function l_patchFileName(p: Null<PosInfos>): Null<PosInfos> {
@@ -246,7 +246,7 @@ using pony.text.TextTools;
 		else {
 			var r: SPair<String> = p.fileName.lastSplit(' ');
 			{
-				fileName: r.b != '' ? r.a + ' ' + l_replaceLibPath(r.b) : l_replaceLibPath(r.a),
+				fileName: r.b != '' ? '${r.a} ${l_replaceLibPath(r.b)}' : l_replaceLibPath(r.a),
 				customParams: p.customParams,
 				methodName: p.methodName,
 				className: p.className,
@@ -257,7 +257,7 @@ using pony.text.TextTools;
 
 	public static inline function formatPos(p: Null<PosInfos>): String return p != null ? '${p.fileName}:${p.lineNumber}:' : '';
 
-	public static inline function formatPosWithSpace(p: Null<PosInfos>): String return p != null ? formatPos(p) + ' ' : '';
+	public static inline function formatPosWithSpace(p: Null<PosInfos>): String return p != null ? '${formatPos(p)} ' : '';
 
 	public static function l_vscodeTrace(value: Dynamic, ?pos: PosInfos): Void {
 		#if js
@@ -289,7 +289,7 @@ using pony.text.TextTools;
 			prms.unshift('\x1b[2m$place\x1b[0m');
 			#else
 			prms.unshift('color: gray');
-			prms.unshift('%c' + place);
+			prms.unshift('%c$place');
 			#end
 		} else {
 			prms.unshift(place);
@@ -305,11 +305,11 @@ using pony.text.TextTools;
 		if (!logActive) {
 			f();
 		} else {
-			name = name != null ? ': ' + name : '';
-			log('Begin bench' + name, p);
+			name = name != null ? ': $name' : '';
+			log('Begin bench$name', p);
 			var time: Float = Timer.stamp();
 			f();
-			log('End bench' + name + ' ' + l_benchTime(time) + MS, p);
+			log('End bench$name ${l_benchTime(time)}$MS', p);
 		}
 		#else
 		f();
@@ -321,10 +321,10 @@ using pony.text.TextTools;
 		if (!logActive) {
 			f(Tools.nullFunction0);
 		} else {
-			name = name != null ? ': ' + name : '';
-			log('Begin async bench' + name, p);
+			name = name != null ? ': $name' : '';
+			log('Begin async bench$name', p);
 			var time: Float = Timer.stamp();
-			f(function(): Void log('End async bench' + name + ' ' + l_benchTime(time) + MS, p));
+			f(function(): Void log('End async bench$name ${l_benchTime(time)}$MS', p));
 		}
 		#else
 		f(Tools.nullFunction0);
@@ -334,7 +334,7 @@ using pony.text.TextTools;
 	public inline function benchStart(name: String, ?p: PosInfos): Void {
 		#if !disableLogs
 		if (!logActive) return;
-		log('Begin bench: ' + name, p);
+		log('Begin bench: $name', p);
 		l_benches[name] = Timer.stamp();
 		#end
 	}
@@ -347,7 +347,7 @@ using pony.text.TextTools;
 			error('Bench $name completed or not started');
 		} else {
 			l_benches.remove(name);
-			log('End bench: ' + name + ' ' + l_benchTime(time) + MS, p);
+			log('End bench: $name ${l_benchTime(time)}$MS', p);
 		}
 		#end
 	}

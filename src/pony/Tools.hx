@@ -70,7 +70,7 @@ class Tools {
 	 */
 	public static inline function nore<T:{ var length(default, null): Int; }>(v: T): Bool return v == null || v.length == 0;
 
-	public static inline function or<T>(v1: Null<T>, v2: T): T return v1 == null ? v2 : v1;
+	public static inline function or<T>(v1: Null<T>, v2: T): T return v1 ?? v2;
 
 	/**
 	 * with
@@ -96,7 +96,7 @@ class Tools {
 				case macro $i{s} /= $e:
 					macro $eThis.$s /= $e;
 				case _:
-					Context.error("Don't know what to do with " + e.toString(), e.pos);
+					Context.error('Don\'t know what to do with ${e.toString()}', e.pos);
 			}
 			acc.push(e);
 		}
@@ -338,7 +338,7 @@ class Tools {
 		if (path == null) return macro null;
 		var asset: String = StringTools.startsWith(path.b, path.a) ? path.b.substr(path.a.length) : path.b;
 		var version: String = haxe.crypto.Base64.urlEncode(haxe.crypto.Sha1.make(sys.io.File.getBytes(path.b)));
-		var r: String = asset + '?' + version;
+		var r: String = '$asset?$version';
 		return macro $v{r};
 	}
 
@@ -404,7 +404,7 @@ class Tools {
 					var cond: Expr = { expr: EBinop(OpEq, ex, c.values[0]), pos: Context.currentPos() };
 					d.push(macro if ($cond) ${c.expr});
 				}
-			default:
+			case _:
 				throw 'This is not switch';
 		}
 		return { expr: EBlock(d), pos: Context.currentPos() };
@@ -483,7 +483,7 @@ class Tools {
 
 	public static function hexToBytes(hex: String): Bytes {
 		var output: BytesOutput = new BytesOutput();
-		for (i in 0...Std.int(hex.length / 2)) output.writeByte(Std.parseInt('0x' + hex.substr(i * 2, 2)));
+		for (i in 0...Std.int(hex.length / 2)) output.writeByte(Std.parseInt('0x${hex.substr(i * 2, 2)}'));
 		return output.getBytes();
 	}
 
@@ -538,9 +538,9 @@ class Tools {
 		#elseif (js || flash)
 		return untyped f.length;
 		#elseif cpp
-		return Std.parseInt(Std.string(f).substr(10));
+		return Std.parseInt('$f'.substr(10));
 		#elseif neko
-		return Std.parseInt(Std.string(f).split(':')[1]);
+		return Std.parseInt('$f'.split(':')[1]);
 		#else
 		return throw 'Function not work for current platform';
 		#end
@@ -787,12 +787,12 @@ class MapTools {
 
 	public static inline function getOrEmptyMap<K:Int, A:Int, B>(map: Map<K, Map<A, B>>, k: K): Map<A, B> {
 		var r: Null<Map<A, B>> = map[k];
-		return r == null ? new Map<A, B>() : r;
+		return r ?? new Map<A, B>();
 	}
 
 	public static inline function getOrEmptyArray<K:Int, B>(map: Map<K, ROArray<B>>, k: K): ROArray<B> {
 		var r: Null<ROArray<B>> = map[k];
-		return r == null ? [] : r;
+		return r ?? [];
 	}
 
 	public static inline function keysArray<T>(m: Map<T, Any>): Array<T> return [for (k in m.keys()) k];
@@ -825,11 +825,11 @@ class FloatTools {
 			var d: Int = begin - a[0].length;
 			return TextTools.repeat(beginS, d) + s;
 		}
-		if (n == 0) return Std.string(Std.int(v));
+		if (n == 0) return '${Std.int(v)}';
 		@SuppressWarnings('checkstyle:MagicNumber')
 		var p: Float = Math.pow(10, n);
 		v = Math.floor(v * p) / p;
-		var s: String = Std.string(v);
+		var s: String = '$v';
 		var a: Array<String> = s.split('.');
 		if (a.length <= 1)
 			return (begin == -1 ? '' : s) + d + TextTools.repeat(endS, n);

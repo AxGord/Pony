@@ -27,7 +27,7 @@ enum abstract Event(Int) {
 	var Change = 2;
 }
 
-@:hlNative("uv")
+@:hlNative('uv')
 class Fs extends Handle {
 
 	public function new(?loop: Loop, path: String, onContentChanged: Event -> Void) {

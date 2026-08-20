@@ -375,8 +375,8 @@ typedef DIClassSummary = {
 	private static function emitAmbiguityError(consumer: ConsumerEntry, atClass: String, candidates: Array<ProducerEntry>): Void {
 		if (markErrored(consumer.pos)) return;
 		final names: String = candidates.map(p -> '"${p.fieldName}"').join(', ');
-		final msg: String =
-			'DI: ambiguous service "${consumer.consumerTypeName}" at scope of $atClass — field name "${consumer.fieldName}" matches none of {$names}';
+		final msg: String = 'DI: ambiguous service "${consumer.consumerTypeName}" at scope of $atClass — field name "${consumer.fieldName}'
+			+ '" matches none of {$names}';
 		Context.error(msg, consumer.pos);
 	}
 

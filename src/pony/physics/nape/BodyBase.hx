@@ -31,7 +31,7 @@ import pony.math.MathTools;
  */
 class BodyBase implements pony.magic.HasSignal implements pony.magic.HasLink implements pony.magic.HasAbstract {
 
-	public static var BODYMAP: Map<Int, BodyBase> = new Map<Int, BodyBase>();
+	public static var BODYMAP: Map<Int, BodyBase> = [];
 
 	@:auto public var onDestroy: Signal0;
 	@:auto public var onPos: Signal2<Float, Float>;

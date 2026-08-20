@@ -25,11 +25,11 @@ class UserpathInstall extends BaseInstall {
 				if (installPonyPath) windowsPonyUserpath();
 			case Mac:
 				var home: String = Sys.getEnv('HOME');
-				writeProfileFiles([home + '/.bash_profile', home + '/.zshrc']);
+				writeProfileFiles(['$home/.bash_profile', '$home/.zshrc']);
 				log('Type "source ~/.bash_profile" for finish install');
 			case Linux:
 				var home: String = Sys.getEnv('HOME');
-				var pfile: String = home + '/.profile';
+				var pfile: String = '$home/.profile';
 				writeProfileFiles([pfile]);
 				log('Type "source ~/.profile" for finish install');
 		}
@@ -37,7 +37,7 @@ class UserpathInstall extends BaseInstall {
 
 	private inline function windowsNodeUserpath(): Void {
 		if (Sys.getEnv('NODE_PATH') == null) {
-			var modulespath: String = Sys.getEnv('appdata') + PD + 'npm' + PD + 'node_modules';
+			var modulespath: String = '${Sys.getEnv('appdata') + PD}npm${PD}node_modules';
 			setx('NODE_PATH', modulespath);
 		}
 	}
@@ -46,7 +46,7 @@ class UserpathInstall extends BaseInstall {
 		var envPath: String = Sys.getEnv(ENVKEY);
 		if (envPath == null) {
 			var user: String = Sys.getEnv('USERPROFILE') + PD;
-			if (FileSystem.exists(user + 'pony_user_path_bak.txt')) {
+			if (FileSystem.exists('${user}pony_user_path_bak.txt')) {
 				Sys.println('Error: path ready');
 				return;
 			}
@@ -56,7 +56,7 @@ class UserpathInstall extends BaseInstall {
 			var path = StringTools.trim(data.toString());
 
 			if (path != '') {
-				var np = path + (path.substr(-1) == ';' ? '' : ';') + '%$ENVKEY%';
+				var np = '${path + (path.substr(-1) == ';' ? '' : ';')}%$ENVKEY%';
 				setx('PATH', np);
 				setx(ENVKEY, BIN);
 			} else {
@@ -71,7 +71,7 @@ class UserpathInstall extends BaseInstall {
 	private inline function setx(v: String, p: String): Void cmd('setx', [v, p]);
 
 	private function writeProfileFiles(pFiles: Array<String>): Void {
-		var data: Array<String> = ['export $ENVKEY=$BIN', "export PATH=$PATH:$" + ENVKEY];
+		var data: Array<String> = ['export $ENVKEY=$BIN', 'export PATH=$$PATH:$$$ENVKEY'];
 
 		if (installNodePath && Utils.nodeExists) {
 			var line = 'export NODE_PATH=${Utils.npmPath}';
@@ -88,12 +88,12 @@ class UserpathInstall extends BaseInstall {
 			if (FileSystem.exists(pFile)) {
 				var c = File.getContent(pFile);
 				if (c.indexOf(ENVKEY) == -1) {
-					File.saveContent(pFile, c + '\n' + data.join('\n'));
+					File.saveContent(pFile, '$c\n' + data.join('\n'));
 				} else {
 					var d1 = c.split('$ENVKEY=');
 					var d2 = d1[1].split('\n');
 					d2.shift();
-					var s = d1[0] + ENVKEY + '=' + BIN + '\n' + d2.join('\n');
+					var s = '${d1[0] + ENVKEY}=$BIN\n' + d2.join('\n');
 					File.saveContent(pFile, s);
 				}
 			} else {
@@ -107,10 +107,10 @@ class UserpathInstall extends BaseInstall {
 			if (FileSystem.exists(pFile)) {
 				var c = File.getContent(pFile);
 				if (c.indexOf(line) == -1) {
-					File.saveContent(pFile, c + '\n' + line + '\n');
+					File.saveContent(pFile, '$c\n$line\n');
 				}
 			} else {
-				File.saveContent(pFile, line + '\n');
+				File.saveContent(pFile, '$line\n');
 			}
 		}
 	}

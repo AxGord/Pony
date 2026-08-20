@@ -8,7 +8,7 @@ import pony.text.tpl.TplPut;
  * WebServerPut
  * @author AxGord <axgord@gmail.com>
  */
-@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(":async"))
+@:build(com.dongxiguo.continuation.Continuation.cpsByMeta(':async'))
 @:final class WebServerPut extends TplPut<WebServer, CPQ> {
 
 	private var t: ITplPut;

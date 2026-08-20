@@ -52,12 +52,10 @@ class BaseLayout<T:BaseLayoutCore<DisplayObject>> extends Sprite implements IWH 
 	public function wait(cb: Void -> Void): Void layout.wait(cb);
 
 	private function getSize(o: DisplayObject): Point<Float> {
-		/*
-		return if (Std.is(o, TextField))
-			new Point(untyped o.textWidth, untyped o.textHeight);
-		else
-			new Point(o.width, o.height);
-		 */
+		// return if (Std.is(o, TextField))
+		// 	new Point(untyped o.textWidth, untyped o.textHeight);
+		// else
+		// 	new Point(o.width, o.height);
 		return new Point(o.width, o.height);
 	}
 

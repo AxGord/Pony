@@ -20,10 +20,9 @@ import haxe.io.Bytes;
  */
 @:abstract class BodyBaseView<T:BodyBase> extends Sprite implements pony.magic.HasAbstract implements pony.magic.HasSignal {
 
-	public static var DEBUG_CACHE(default, null): Map<String, Pair<Point<Float>, RenderTexture>> =
-		new Map<String, Pair<Point<Float>, RenderTexture>>();
+	public static var DEBUG_CACHE(default, null): Map<String, Pair<Point<Float>, RenderTexture>> = [];
 
-	public static var LIST(default, null): Map<Int, BodyBaseView<T>> = new Map<Int, BodyBaseView<T>>();
+	public static var LIST(default, null): Map<Int, BodyBaseView<T>> = [];
 
 	@:auto public var onOut: Signal1<BodyBaseView<T>>;
 	public var core(default, null): T;
@@ -131,7 +130,7 @@ import haxe.io.Bytes;
 
 	public static function clearCache(): Void {
 		for (e in DEBUG_CACHE) e.b.destroy();
-		DEBUG_CACHE = new Map<String, Pair<Point<Float>, RenderTexture>>();
+		DEBUG_CACHE = [];
 	}
 
 }

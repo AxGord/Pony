@@ -47,7 +47,7 @@ class Process extends pony.Logable implements pony.sys.IProcess implements pony.
 	}
 
 	private function runProccess(): Void {
-		log('Run: ' + runCmd);
+		log('Run: $runCmd');
 		waitEnd = true;
 		process = ChildProcess.exec(runCmd, execHandler);
 		// var s = getPidsFile();

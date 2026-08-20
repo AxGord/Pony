@@ -33,12 +33,12 @@ import types.BmfontConfig;
 		if (padding == -1) padding = 0;
 		tasks.add();
 		@:nullSafety(Off) var short: String = font.shortName;
-		var ofn: String = output != null ? output : short + '_' + size;
-		var fntFile: File = to + ofn + '.fnt';
+		var ofn: String = output != null ? output : '${short}_$size';
+		var fntFile: File = '${to + ofn}.fnt';
 		var convertToFnt: Bool = format == 'fnt';
 		if (convertToFnt) format = 'xml';
 		// if (sys.FileSystem.exists(fntFile)) return; //todo check xml
-		log('Begin generation: ' + output);
+		log('Begin generation: $output');
 		NPM.msdf_bmfont_xml(
 			font.fullPath.first, {
 				filename: ofn,
@@ -55,20 +55,20 @@ import types.BmfontConfig;
 			},
 			function(err: Any, textures: Array<{ filename: String, texture: Dynamic }>,
 				font: { filename: String, data: String, options: Dynamic }): Void {
-				log('End generation: ' + output);
+				log('End generation: $output');
 				if (err != null) {
 					error(err);
 					tasks.end();
 					return;
 				}
-				for (t in textures) Fs.writeFileSync(to + ofn + '.png', t.texture);
+				for (t in textures) Fs.writeFileSync('${to + ofn}.png', t.texture);
 				var f: String = face == null ? ofn : face;
 				var data: String = StringTools.replace(font.data, '<info face="$short"', '<info face="$f"');
-				if (lineHeight != null) data = TextTools.replaceXmlAttr(data, 'lineHeight', @:nullSafety(Off) Std.string(lineHeight));
+				if (lineHeight != null) data = TextTools.replaceXmlAttr(data, 'lineHeight', @:nullSafety(Off) '$lineHeight');
 				if (convertToFnt) data = xmlToFnt(data);
 				fntFile.content = data;
 				log('');
-				log(to + ofn + '.fnt');
+				log('${to + ofn}.fnt');
 				tasks.end();
 			}
 		);
@@ -87,11 +87,11 @@ import types.BmfontConfig;
 	}
 
 	private static function printNodes(x: Fast, name: String): String {
-		return [for (n in x.nodes.resolve(name)) name + ' ' + printAttrs(n)].join('\n');
+		return [for (n in x.nodes.resolve(name)) '$name ${printAttrs(n)}'].join('\n');
 	}
 
 	private static function printAttrs(x: Fast): String {
-		return [for (a in x.x.attributes()) if (a != 'charset' && a != 'char') a + '=' + x.att.resolve(a)].join(' ');
+		return [for (a in x.x.attributes()) if (a != 'charset' && a != 'char') '$a=${x.att.resolve(a)}'].join(' ');
 	}
 
 }

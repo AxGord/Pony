@@ -72,7 +72,7 @@ class Serials extends Logable {
 		destroySignals();
 		timer.destroy();
 		timer = null;
-		list = new Map();
+		list = [];
 		founded = [];
 		created = [];
 		cfg = null;

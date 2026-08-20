@@ -31,10 +31,10 @@ using pony.flash.starling.displayFactory.DisplayListStaticExtentions;
  */
 class AtlasCreator {
 
-	private var _atlases: Array<Atlas> = new Array<Atlas>();
+	private var _atlases: Array<Atlas> = [];
 
 	private static var _loadedTextures: Map<String, TextureStorage> = initStorageMap();
-	private static var _framesLoadedTextures: Map<String, Map<Int, TextureStorage>> = new Map<String, Map<Int, TextureStorage>>();
+	private static var _framesLoadedTextures: Map<String, Map<Int, TextureStorage>> = [];
 
 	private static var _border: Int = 1;
 
@@ -67,7 +67,7 @@ class AtlasCreator {
 				preloadedTextures = _framesLoadedTextures[className][frame].get(matrix.a, matrix.b, matrix.c, matrix.d, source.filters);
 			}
 		} else if (!ignoreCache && _loadedTextures.exists(className)) {
-			preloadedTextures = _loadedTextures.get(className).get(matrix.a, matrix.b, matrix.c, matrix.d, source.filters);
+			preloadedTextures = _loadedTextures[className].get(matrix.a, matrix.b, matrix.c, matrix.d, source.filters);
 		}
 		if (preloadedTextures != null) {
 			texture = preloadedTextures.data;
@@ -101,8 +101,8 @@ class AtlasCreator {
 			}
 			_framesLoadedTextures[className][frame].add(matrix.a, matrix.b, matrix.c, matrix.d, source.filters, texture, dPivot);
 		} else {
-			if (!_loadedTextures.exists(className)) _loadedTextures.set(className, new TextureStorage());
-			_loadedTextures.get(className).add(matrix.a, matrix.b, matrix.c, matrix.d, source.filters, texture, dPivot);
+			if (!_loadedTextures.exists(className)) _loadedTextures[className] = new TextureStorage();
+			_loadedTextures[className].add(matrix.a, matrix.b, matrix.c, matrix.d, source.filters, texture, dPivot);
 		}
 		return result;
 	}
@@ -120,7 +120,7 @@ class AtlasCreator {
 		var dPivot: Point = null;
 
 		if (_loadedTextures.exists(className)) {
-			preloadedTextures = _loadedTextures.get(className).get(matrix.a, matrix.b, matrix.c, matrix.d, source.filters);
+			preloadedTextures = _loadedTextures[className].get(matrix.a, matrix.b, matrix.c, matrix.d, source.filters);
 		}
 		if (preloadedTextures != null) {
 			textures = preloadedTextures.data;
@@ -128,9 +128,9 @@ class AtlasCreator {
 			// trace("Using existing textures");
 		} else {
 			textures = new Vector<Texture>();
-			var rects: Array<Rectangle> = new Array<Rectangle>();
-			var addedRects: Array<Rectangle> = new Array<Rectangle>();
-			var addedTextures: Array<Texture> = new Array<Texture>();
+			var rects: Array<Rectangle> = [];
+			var addedRects: Array<Rectangle> = [];
+			var addedTextures: Array<Texture> = [];
 
 			for (i in 0...source.totalFrames) {
 				source.gotoAndStop(i + 1); // Because first frame on a flash timeline is 1, not 0
@@ -213,8 +213,8 @@ class AtlasCreator {
 		matrix = StarlingConverter.matrixCalculation(source, coordinateSpace);
 		var matrixPoint: Point = matrix.transformPoint(new Point(0, 0));
 
-		if (!_loadedTextures.exists(className)) _loadedTextures.set(className, new TextureStorage());
-		_loadedTextures.get(className).add(matrix.a, matrix.b, matrix.c, matrix.d, source.filters, textures, dPivot);
+		if (!_loadedTextures.exists(className)) _loadedTextures[className] = new TextureStorage();
+		_loadedTextures[className].add(matrix.a, matrix.b, matrix.c, matrix.d, source.filters, textures, dPivot);
 
 		var clip: MovieClip = new MovieClip(textures, 60);
 
@@ -296,7 +296,7 @@ class AtlasCreator {
 	}
 
 	private function createTexture(
-		bitmapData: BitmapData, area: Rectangle, toAtlas: Bool, restorationCallback: Void -> BitmapData = null
+		bitmapData: BitmapData, area: Rectangle, toAtlas: Bool, ?restorationCallback: Void -> BitmapData
 	): Dynamic {
 		if (toAtlas) {
 			var addedTo: Rectangle = _atlases[_atlases.length - 1].add(bitmapData, area, restorationCallback);
@@ -348,11 +348,11 @@ class AtlasCreator {
 	}
 
 	private static function initStorageMap(): Map<String, TextureStorage> {
-		var result: Map<String, TextureStorage> = new Map<String, TextureStorage>();
-		result.set("flash.display.MovieClip", new TextureStorage(false));
-		result.set("flash.text.StaticText", new TextureStorage(false));
-		result.set("flash.text.TextField", new TextureStorage(false));
-		result.set("flash.display.Shape", new TextureStorage(false));
+		var result: Map<String, TextureStorage> = [];
+		result['flash.display.MovieClip'] = new TextureStorage(false);
+		result['flash.text.StaticText'] = new TextureStorage(false);
+		result['flash.text.TextField'] = new TextureStorage(false);
+		result['flash.display.Shape'] = new TextureStorage(false);
 
 		return result;
 	}
@@ -378,7 +378,7 @@ private class Atlas {
 	public var upToDate: Bool = false;
 	public var full: Bool = false;
 
-	private var _bitmapDataRestoration: Array<BitmapData -> Void> = new Array<BitmapData -> Void>();
+	private var _bitmapDataRestoration: Array<BitmapData -> Void> = [];
 
 	public function new() {
 		// trace("NEW ATLAS CREATED");
@@ -386,7 +386,7 @@ private class Atlas {
 		texture.root.onRestore = textureRestore;
 	}
 
-	public function add(data: BitmapData, rect: Rectangle, restorationCallback: Void -> BitmapData = null): Rectangle {
+	public function add(data: BitmapData, rect: Rectangle, ?restorationCallback: Void -> BitmapData): Rectangle {
 		if (full) return null;
 
 		rect = rect.clone();
@@ -450,7 +450,7 @@ private class Atlas {
 private class TextureStorage {
 
 	private var _allowsAddition: Bool;
-	private var _textures: Array<Dynamic> = new Array<Dynamic>();
+	private var _textures: Array<Dynamic> = [];
 
 	public function new(allowsAddition: Bool = true) {
 		_allowsAddition = allowsAddition;
@@ -549,7 +549,7 @@ private class TextureStorage {
 					if (a[i].knockout != b[i].knockout) return false;
 					if (a[i].quality != b[i].quality) return false;
 					if (a[i].strength != b[i].strength) return false;
-				default:
+				case _:
 					return false;
 			}
 		}

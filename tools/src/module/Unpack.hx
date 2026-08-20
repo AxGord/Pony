@@ -13,8 +13,8 @@ class Unpack extends Module {
 
 	private static inline var PRIORITY: Int = 6;
 
-	private var beforeZips: Map<BASection, Array<ZipConfig>> = new Map();
-	private var afterZips: Map<BASection, Array<ZipConfig>> = new Map();
+	private var beforeZips: Map<BASection, Array<ZipConfig>> = [];
+	private var afterZips: Map<BASection, Array<ZipConfig>> = [];
 
 	public function new() super('unpack');
 
@@ -74,10 +74,10 @@ class Unpack extends Module {
 	}
 
 	private function unzip(c: ZipConfig): Void {
-		log('Unzip: ' + c.file);
+		log('Unzip: ${c.file}');
 		pony.ZipTool.unpackFile(c.file, c.path, c.log ? function(s: String) log(s) : null);
 		if (c.rm) {
-			log('Delete: ' + c.file);
+			log('Delete: ${c.file}');
 			sys.FileSystem.deleteFile(c.file);
 		}
 	}

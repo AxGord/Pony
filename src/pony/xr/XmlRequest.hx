@@ -53,7 +53,7 @@ class XmlRequest extends Logable<XmlRequest> implements ICanBeCopied<XmlRequest>
 
 	public function _run(x: Fast, result: Dynamic -> Void): Void {
 		if (!modules.exists(x.name)) {
-			_error('Unknown module: ' + x.name);
+			_error('Unknown module: ${x.name}');
 		} else
 			modules[x.name].run(this, x, result);
 	}

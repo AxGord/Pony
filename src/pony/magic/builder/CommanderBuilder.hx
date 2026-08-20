@@ -60,24 +60,20 @@ class CommanderBuilder {
 			var bcmd: String = pony.text.TextTools.bigFirst(cmd);
 
 			if (x.nodes.arg.length > 0) {
-				h = h == null ? '' : h + '.\n\t';
-				h += 'Arguments:\n\t\t' + [for (a in x.nodes.arg) getHelp(a)].join('\n\t\t');
-				hAnsi = hAnsi == null ? '' : hAnsi + '.\n\t';
-				hAnsi += 'Arguments:'.ansiForeground(AnsiForeground.DarkGray) + '\n\t\t' + [for (a in x.nodes.arg) getHelp(a)].join(
-					'\n\t\t'
+				h = (h == null ? '' : '$h.\n\t') + ('Arguments:\n\t\t' + [for (a in x.nodes.arg) getHelp(a)].join('\n\t\t'));
+				hAnsi = (hAnsi == null ? '' : '$hAnsi.\n\t') + (
+					'${'Arguments:'.ansiForeground(AnsiForeground.DarkGray)}\n\t\t' + [for (a in x.nodes.arg) getHelp(a)].join('\n\t\t')
 				);
 			}
 
 			if (h != null) {
 				var shelp = '';
-				if (x.nodes.syn.length > 0) shelp = '(' + [for (s in x.nodes.syn) StringTools.trim(s.innerData)].join(', ') + ') ';
-				help.push(cmd + ' ' + shelp + '\n\t' + h);
-				helpAnsi.push(
-					cmd.ansiForeground(AnsiForeground.LightCyan) + ' ' + shelp.ansiForeground(AnsiForeground.DarkGray) + '\n\t' + hAnsi
-				);
+				if (x.nodes.syn.length > 0) shelp = '(${[for (s in x.nodes.syn) StringTools.trim(s.innerData)].join(', ')}) ';
+				help.push('$cmd $shelp\n\t$h');
+				helpAnsi.push('${cmd.ansiForeground(AnsiForeground.LightCyan)} ${shelp.ansiForeground(AnsiForeground.DarkGray)}\n\t$hAnsi');
 			}
 
-			var ed: String = 'e' + bcmd;
+			var ed: String = 'e$bcmd';
 
 			var values: Array<Expr> = [macro $v{cmd}];
 
@@ -103,7 +99,7 @@ class CommanderBuilder {
 			}
 
 			fields.push({
-				name: 'on' + bcmd,
+				name: 'on$bcmd',
 				access: [APublic],
 				pos: Context.currentPos(),
 				kind: FVar(signalType),
