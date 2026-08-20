@@ -108,9 +108,12 @@ class JsTools implements HasSignal {
 	public static function abortEvent(e: Event): Void e.preventDefault();
 
 	public static function get_webp(): Bool {
-		return _webp ?? (
-			_webp = cast(Browser.document.createElement('canvas'), CanvasElement).toDataURL('image/webp').indexOf('data:image/webp') == 0
-		);
+		return _webp != null
+			? _webp
+			: (
+				_webp = cast(Browser.document.createElement('canvas'), CanvasElement).toDataURL('image/webp')
+					.indexOf('data:image/webp') == 0
+			);
 	}
 
 	private static function get_agent(): UserAgent {

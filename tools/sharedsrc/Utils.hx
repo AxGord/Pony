@@ -1,4 +1,3 @@
-import haxe.Exception;
 import haxe.Json;
 import haxe.io.Bytes;
 import haxe.xml.Parser.XmlParserException;
@@ -83,7 +82,7 @@ class Utils {
 			final line: String = p.stdout.readLine();
 			p.close();
 			TextTools.isTrue(line);
-		} catch (err: Exception) {
+		} catch (err) {
 			false;
 		}
 		cwd.sw();
@@ -104,7 +103,7 @@ class Utils {
 				final ch: String = p.stdout.readString(1);
 				if (ch == null || ch == '\n') break;
 				s += ch;
-			} catch (err: Exception) {
+			} catch (err) {
 				break;
 			}
 		}

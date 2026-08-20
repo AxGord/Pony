@@ -89,7 +89,7 @@ class SocketClient extends SocketClientBase {
 		super.close();
 		try {
 			socket.close();
-		} catch (_: haxe.Exception) {}
+		} catch (_: Dynamic) {}
 	}
 
 }

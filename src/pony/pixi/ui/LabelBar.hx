@@ -43,7 +43,7 @@ class LabelBar extends AnimBar {
 
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function get_text(): String return label?.text;
+	private inline function get_text(): String return label == null ? null : label.text;
 
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end

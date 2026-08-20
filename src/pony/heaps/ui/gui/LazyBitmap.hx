@@ -78,7 +78,7 @@ import pony.ui.AssetManager;
 
 	private function readyForShow(): Void {
 		visible = true;
-		anim?.play();
+		if (anim != null) anim.play();
 	}
 
 	private function animHandler(v: Float): Void setAlpha(v * finalAlpha);

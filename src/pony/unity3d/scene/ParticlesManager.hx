@@ -76,13 +76,13 @@ class ParticlesManager extends MonoBehaviour {
 			playTimer.stop();
 			playTimer.reset();
 		}
-		stopTimer?.stop();
+		if (stopTimer != null) stopTimer.stop();
 		comps.reset();
 		for (c in comps) c.stop();
 	}
 
 	public function abort(): Void {
-		abortTimer?.stop();
+		if (abortTimer != null) abortTimer.stop();
 		stop();
 		comps.reset();
 		for (c in comps) c.abort();

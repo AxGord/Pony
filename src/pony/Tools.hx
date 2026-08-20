@@ -2,7 +2,6 @@ package pony;
 
 import haxe.CallStack;
 import haxe.Constraints.Function;
-import haxe.Exception;
 import haxe.io.Bytes;
 import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
@@ -72,7 +71,7 @@ class Tools {
 	 */
 	public static inline function nore<T:{ var length(default, null): Int; }>(v: T): Bool return v == null || v.length == 0;
 
-	public static inline function or<T>(v1: Null<T>, v2: T): T return v1 ?? v2;
+	public static inline function or<T>(v1: Null<T>, v2: T): T return v1 != null ? v1 : v2;
 
 	/**
 	 * with
@@ -117,7 +116,7 @@ class Tools {
 			case TInt, TFloat, TBool, TNull:
 				return false;
 			case TFunction:
-				return try Reflect.compareMethods(a, b) catch (_: Exception) false;
+				return try Reflect.compareMethods(a, b) catch (_: Dynamic) false;
 			case TEnum(t):
 				if (t != Type.getEnum(b)) return false;
 				if (Type.enumIndex(a) != Type.enumIndex(b)) return false;
@@ -247,7 +246,7 @@ class Tools {
 		while (true) {
 			try {
 				cur = inp.readByte();
-			} catch (_: Exception) {
+			} catch (_: Dynamic) {
 				break;
 			}
 			if (cur == 0) {
@@ -469,7 +468,7 @@ class Tools {
 	}
 
 	public static function readStr(b: BytesInput): String {
-		return try b.readString(b.readInt32()) catch (_: Exception) null;
+		return try b.readString(b.readInt32()) catch (_: Dynamic) null;
 	}
 
 	public static function hexToBytes(hex: String): Bytes {
@@ -767,12 +766,12 @@ class MapTools {
 
 	public static inline function getOrEmptyMap<K:Int, A:Int, B>(map: Map<K, Map<A, B>>, k: K): Map<A, B> {
 		final r: Null<Map<A, B>> = map[k];
-		return r ?? new Map<A, B>();
+		return r != null ? r : new Map<A, B>();
 	}
 
 	public static inline function getOrEmptyArray<K:Int, B>(map: Map<K, ROArray<B>>, k: K): ROArray<B> {
 		final r: Null<ROArray<B>> = map[k];
-		return r ?? [];
+		return r != null ? r : [];
 	}
 
 	public static inline function keysArray<T>(m: Map<T, Any>): Array<T> return [for (k in m.keys()) k];

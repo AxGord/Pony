@@ -16,6 +16,15 @@
 		"duplicate-case": {
 			"enabled": false
 		},
+		"prefer-null-coalescing": {
+			"enabled": false
+		},
+		"prefer-safe-nav": {
+			"enabled": false
+		},
+		"catch-dynamic": {
+			"enabled": false
+		},
 		"redundant-parens": {
 			"atoms": true,
 			"sameOperatorLeft": true,

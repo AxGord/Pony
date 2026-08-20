@@ -121,7 +121,7 @@ typedef PriorityIds = Priority<{
 		}
 		final needOnTake: Bool = real(e) && empty;
 		final hv: Null<Int> = hash[priority];
-		final s: Int = hv ?? 0;
+		final s: Int = hv != null ? hv : 0;
 		var c: Int = 0;
 		for (k => value in hash) if (k < priority) @:nullSafety(Off) c += value;
 		c += s;

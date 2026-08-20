@@ -129,7 +129,7 @@ using pony.text.TextTools;
 	public function delete(): Void {
 		try {
 			for (e in this) FileSystem.deleteFile(e.first);
-		} catch (_: haxe.Exception) {
+		} catch (_: Dynamic) {
 			throw 'Can\'t delete file: $name';
 		}
 	}

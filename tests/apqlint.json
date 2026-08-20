@@ -8,6 +8,26 @@
 		"munit"
 	],
 	"rules": {
+		"unused-public-member": {
+			"enabled": false
+		},
+		"duplicate-case": {
+			"enabled": false
+		},
+		"prefer-null-coalescing": {
+			"enabled": false
+		},
+		"prefer-safe-nav": {
+			"enabled": false
+		},
+		"catch-dynamic": {
+			"enabled": false
+		},
+		"redundant-parens": {
+			"atoms": true,
+			"sameOperatorLeft": true,
+			"comparisonOperands": true
+		},
 		"anon-type-dup": {
 			"enabled": true
 		},
@@ -24,9 +44,6 @@
 			"enabled": true
 		},
 		"doc-coverage": {
-			"enabled": false
-		},
-		"duplicate-case": {
 			"enabled": false
 		},
 		"explicit-local-type": {
@@ -101,11 +118,6 @@
 		"redundant-map-exists": {
 			"enabled": true
 		},
-		"redundant-parens": {
-			"atoms": true,
-			"sameOperatorLeft": true,
-			"comparisonOperands": true
-		},
 		"redundant-property-access": {
 			"enabled": true
 		},
@@ -132,9 +144,6 @@
 		},
 		"try-catch-null-guard": {
 			"enabled": true
-		},
-		"unused-public-member": {
-			"enabled": false
 		},
 		"while-true-condition": {
 			"enabled": true

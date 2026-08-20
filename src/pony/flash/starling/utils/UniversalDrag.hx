@@ -66,7 +66,7 @@ class UniversalDrag {
 		TouchManager.addListener(TouchManager.GLOBAL, onDrag, [TouchEventType.Move]);
 
 		#if tweenmax
-		_activeTween?.kill();
+		if (_activeTween != null) _activeTween.kill();
 		#end
 	}
 

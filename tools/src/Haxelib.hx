@@ -1,4 +1,3 @@
-import haxe.Exception;
 import sys.FileSystem;
 
 using StringTools;
@@ -115,7 +114,7 @@ class Haxelib {
 			Utils.command('git', ['add', '--all']);
 			Utils.command('git', ['commit', '-a', '-m', message]);
 			Utils.command('git', ['push']);
-		} catch (e: Exception) {}
+		} catch (e: Dynamic) {}
 	}
 
 	private static function parseVersion(s: String): Array<Int> return s.split('.').map(Std.parseInt);

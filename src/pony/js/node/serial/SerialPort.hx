@@ -216,7 +216,7 @@ class SerialPort extends Logable implements Declarator {
 
 	public function write(b: BytesOutput): Void {
 		if (check()) return;
-		q?.call(b);
+		if (q != null) q.call(b);
 	}
 
 	private function _write(b: BytesOutput): Void {

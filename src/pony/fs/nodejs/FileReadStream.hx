@@ -60,7 +60,7 @@ class FileReadStream extends ReadStream<Bytes> {
 		if (stop) return;
 		if (err == null) {
 			size = cast stats.size;
-			buffer = new Buffer(stats.blksize ?? DEFAULT_BLOCK_SIZE);
+			buffer = new Buffer(stats.blksize != null ? stats.blksize : DEFAULT_BLOCK_SIZE);
 			final b: BytesOutput = new BytesOutput();
 			b.writeFloat(size);
 			writeStream.data(b.getBytes());

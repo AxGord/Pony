@@ -2,6 +2,7 @@ package module;
 
 import js.node.Fs;
 import js.node.Https;
+import js.node.fs.WriteStream;
 import js.node.http.IncomingMessage;
 import pony.NPM;
 import pony.fs.Dir;
@@ -37,7 +38,7 @@ private typedef Lang = {
 							lang.export({ type: 'key_value_json' }).then(function(v) {
 								final file: String = '${cfg.path + cfg.list[lang.code]}.json';
 								log('Update lang file: $file');
-								final f: Dynamic = Fs.createWriteStream(file);
+								final f: WriteStream = Fs.createWriteStream(file);
 								Https.get(v, function(response: IncomingMessage) {
 									response.once('end', tasks.end);
 									response.pipe(f);

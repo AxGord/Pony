@@ -1,6 +1,5 @@
 package module;
 
-import haxe.Exception;
 import pony.Fast;
 import types.BAConfig;
 import types.BASection;
@@ -98,7 +97,7 @@ typedef RunConfig = {
 			cfg.command.push({ cmd: normalize(xml.innerData) });
 			for (a in xml.x.attributes()) readAttr(a, normalize(xml.x.get(a)));
 			if (allowEnd) end();
-		} catch (e: Exception) {
+		} catch (e: Dynamic) {
 			super.readXml(xml);
 		}
 	}

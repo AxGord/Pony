@@ -210,7 +210,7 @@ class TplPut<T1, T2> implements ITplPut implements SuperPuper {
 	 */
 	@:async
 	private inline function parentTag(name: String, content: TplData, arg: String, args: Map<String, String>, ?kid: ITplPut): String {
-		return @await parent.tag(name, content, arg, args, kid ?? this);
+		return @await parent.tag(name, content, arg, args, kid != null ? kid : this);
 	}
 
 	@:async
@@ -247,7 +247,7 @@ class TplPut<T1, T2> implements ITplPut implements SuperPuper {
 
 	@:async
 	private function parentShortTag(name: String, arg: String, ?kid: ITplPut): String {
-		return @await parent.shortTag(name, arg, kid ?? this);
+		return @await parent.shortTag(name, arg, kid != null ? kid : this);
 	}
 
 	@:async

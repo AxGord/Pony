@@ -96,7 +96,7 @@ class UserpathInstall extends BaseInstall {
 					final d1 = c.split('$ENVKEY=');
 					final d2: Array<String> = d1[1].split('\n');
 					d2.shift();
-					final s: Dynamic = '${d1[0] + ENVKEY}=$BIN\n' + d2.join('\n');
+					final s: String = '${d1[0] + ENVKEY}=$BIN\n' + d2.join('\n');
 					File.saveContent(pFile, s);
 				}
 			} else {

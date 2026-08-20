@@ -60,7 +60,7 @@ class RPCFileTransport extends pony.net.rpc.RPCUnit<RPCFileTransport> implements
 	public dynamic function changePath(path: String): String return path;
 
 	public function cancel(): Void {
-		fileWrite?.cancel();
+		if (fileWrite != null) fileWrite.cancel();
 	}
 
 }

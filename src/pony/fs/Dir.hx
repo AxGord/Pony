@@ -31,11 +31,11 @@ abstract Dir(Unit) from Unit {
 
 	public function content(?filter: String, allowDir: Bool = false, sortByName: Bool = false): Array<Unit> {
 		final result: Map<String, Unit> = [];
-		final flt: Array<String> = filter?.split(' ');
+		final flt: Array<String> = filter == null ? null : filter.split(' ');
 		for (d in this) {
 			if (d.exists) for (e in FileSystem.readDirectory(d.first)) {
 				final np: String = '$d/$e';
-				final isDir: Bool = try FileSystem.isDirectory(np) catch (_: haxe.Exception) false;
+				final isDir: Bool = try FileSystem.isDirectory(np) catch (_: Any) false;
 				if ((allowDir || !isDir) && (isDir || checkFilter(flt, e)) && !result.exists(e))
 					result[e] = [for (d in this.wayStringIterator()) '$d/$e'];
 			}

@@ -1,6 +1,5 @@
 package module;
 
-import haxe.Exception;
 import pony.Fast;
 import types.BASection;
 
@@ -97,7 +96,7 @@ private class UnpackReader extends BAReader<UnpackConfig> {
 		switch xml.name {
 			case 'zip':
 				cfg.zips.push({
-					path: try StringTools.trim(xml.innerData) catch (_: Exception) '',
+					path: try StringTools.trim(xml.innerData) catch (_: Any) '',
 					file: xml.att.file,
 					rm: xml.isTrue('rm'),
 					log: !xml.isFalse('log')

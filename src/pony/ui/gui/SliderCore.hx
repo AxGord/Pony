@@ -60,7 +60,7 @@ import pony.ui.touch.Touchable;
 
 	override public function destroy(): Void {
 		destroySignals();
-		button?.destroy();
+		if (button != null) button.destroy();
 	}
 
 	private function stopDragHandler(t: Touch): Void {

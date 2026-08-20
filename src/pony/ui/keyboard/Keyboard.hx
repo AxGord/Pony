@@ -89,7 +89,7 @@ class Keyboard implements Declarator implements HasSignal implements HasLink {
 	private static function disable(): Void {
 		if (!_enabled || km == null) return;
 		_enabled = false;
-		presser?.destroy();
+		if (presser != null) presser.destroy();
 		pressedKeys = [];
 		km.up.clear();
 		km.down.clear();

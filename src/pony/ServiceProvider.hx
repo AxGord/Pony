@@ -168,7 +168,7 @@ private typedef Export = { typeName: String, name: String };
 				return;
 			}
 		}
-		final service: Null<Dynamic> = try get(typeName, name) catch (_: Exception) null;
+		final service: Null<Dynamic> = try get(typeName, name) catch (_: Dynamic) null;
 		if (service != null) {
 			callw(wcb, service);
 		} else if (parent != null) {

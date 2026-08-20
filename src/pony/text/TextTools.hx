@@ -83,7 +83,7 @@ abstract AnsiForeground(UInt) to UInt {
 
 	public static function allAfter(str: String, delimiter: String, ?startIndex: Int): String {
 		final r: Null<String> = allAfterWithNull(str, delimiter, startIndex);
-		return r ?? str;
+		return r != null ? r : str;
 	}
 
 	public static inline function allAfterLastWithNull(str: String, delimiter: String, ?startIndex: Int): Null<String> {
@@ -93,7 +93,7 @@ abstract AnsiForeground(UInt) to UInt {
 
 	public static function allAfterLast(str: String, delimiter: String, ?startIndex: Int): String {
 		final r: Null<String> = allAfterLastWithNull(str, delimiter, startIndex);
-		return r ?? str;
+		return r != null ? r : str;
 	}
 
 	public static inline function allBeforeWithNull(str: String, delimiter: String, ?startIndex: Int): Null<String> {
@@ -103,7 +103,7 @@ abstract AnsiForeground(UInt) to UInt {
 
 	public static function allBefore(str: String, delimiter: String, ?startIndex: Int): String {
 		final r: Null<String> = allBeforeWithNull(str, delimiter, startIndex);
-		return r ?? str;
+		return r != null ? r : str;
 	}
 
 	public static inline function allBeforeLastWithNull(str: String, delimiter: String, ?startIndex: Int): Null<String> {
@@ -113,7 +113,7 @@ abstract AnsiForeground(UInt) to UInt {
 
 	public static function allBeforeLast(str: String, delimiter: String, ?startIndex: Int): String {
 		final r: Null<String> = allBeforeLastWithNull(str, delimiter, startIndex);
-		return r ?? str;
+		return r != null ? r : str;
 	}
 
 	public static inline function extract(str: String, begin: String, end: String): Null<String> {

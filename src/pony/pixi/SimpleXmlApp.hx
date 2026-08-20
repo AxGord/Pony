@@ -42,7 +42,7 @@ class SimpleXmlApp extends PixiXmlUi {
 
 	private function init(): Void {
 		final dpreloader: Element = Browser.document.getElementById('preloader');
-		dpreloader?.remove();
+		if (dpreloader != null) dpreloader.remove();
 		createApp();
 		if (assetsForLoad == null) {
 			loadUI(preloadProgressHandler);

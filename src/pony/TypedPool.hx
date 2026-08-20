@@ -17,7 +17,7 @@ haxe.Constraints.Constructible<Void -> Void> #else { function new(): Void; } #en
 	#end
 	public function get(): T {
 		final v: Null<T> = list.pop();
-		return v ?? new T();
+		return v != null ? v : new T();
 	}
 
 	#if !flash
@@ -58,7 +58,7 @@ haxe.Constraints.Constructible<Void -> Void> #else { function new(): Void; } #en
 	#end
 	public function get(): T {
 		final v: Null<T> = list.pop();
-		return v ?? new T(a1);
+		return v != null ? v : new T(a1);
 	}
 
 	#if !flash
@@ -101,7 +101,7 @@ haxe.Constraints.Constructible<Void -> Void> #else { function new(): Void; } #en
 	#end
 	public function get(): T {
 		final v: Null<T> = list.pop();
-		return v ?? new T(a1, a2);
+		return v != null ? v : new T(a1, a2);
 	}
 
 	#if !flash

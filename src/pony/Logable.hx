@@ -238,7 +238,7 @@ using pony.text.TextTools;
 	private static inline function l_replaceLibPath(path: String): String {
 		final p: SPair<String> = path.firstSplit('/');
 		final lib: Null<String> = l_usedLibs[p.a];
-		return (lib ?? './') + path;
+		return (lib != null ? lib : './') + path;
 	}
 
 	private static inline function l_patchFileName(p: Null<PosInfos>): Null<PosInfos> {
@@ -297,7 +297,7 @@ using pony.text.TextTools;
 		}
 		try {
 			Reflect.callMethod(js.Browser.console, method, prms);
-		} catch (_: haxe.Exception) {}
+		} catch (_: Any) {}
 	}
 	#end
 
