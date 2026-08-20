@@ -88,7 +88,7 @@ class Ttt extends TplPut<TData, {}> {
 		if (name == 'username')
 			return 'world';
 		else if (name == 'id')
-			return Std.string(a.id);
+			return '${a.id}';
 		else if (parent == null)
 			return arg == null ? name : arg;
 		else

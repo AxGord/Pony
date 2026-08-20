@@ -31,7 +31,7 @@ class ElectronApplication extends VSTraceHelper implements HasAbstract {
 		this.macnoexit = macnoexit && Node.process.platform == 'darwin';
 		Node.process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true';
 		log('Build date: ' + Tools.getBuildDate());
-		log('Platform: ' + Node.process.platform);
+		log('Platform: ${Node.process.platform}');
 		if (this.macnoexit) log('Mac OS keep opened');
 		App.on('ready', readyHandler);
 		if (this.macnoexit) {
@@ -61,9 +61,9 @@ class ElectronApplication extends VSTraceHelper implements HasAbstract {
 			windows.remove(id);
 			log('Close window: $id ($url)');
 		});
-		var path: String = Node.__dirname + '/' + windowsPath + url + windowsExt;
+		var path: String = '${Node.__dirname}/$windowsPath$url$windowsExt';
 		path = sys.FileSystem.absolutePath(path);
-		win.loadURL('file://' + path);
+		win.loadURL('file://$path');
 		// win.webContents.openDevTools();
 		return win;
 	}

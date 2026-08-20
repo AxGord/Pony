@@ -129,10 +129,10 @@ class UpdatePut extends pony.text.tpl.TplPut<UpdateConnect, Dynamic> {
 		if (a.base.model.columns.get(name).hid) return input(name, null, value);
 		final s: String = a.st(name);
 		return s == null
-			? '<label>' + name.bigFirst() + input(name, null, value) + '</label>'
+			? '<label>${name.bigFirst()}${input(name, null, value)}</label>'
 			: s == ''
-				? '<label>' + name.bigFirst() + input(name, 'ok', fix ? value : '') + '</label>'
-				: '<label>' + name.bigFirst() + input(name, 'error', value) + '<div>' + s + '</div>' + '</label>';
+				? '<label>${name.bigFirst()}${input(name, 'ok', fix ? value : '')}</label>'
+				: '<label>${name.bigFirst()}${input(name, 'error', value)}<div>$s</div></label>';
 	}
 
 	private function input(name: String, cl: String, value: String): String {
@@ -146,7 +146,7 @@ class UpdatePutSub extends pony.text.tpl.TplPut<UpdateConnect, Dynamic> {
 
 	@:async
 	override public function shortTag(name: String, arg: String, ?kid: ITplPut): String {
-		return a.base.args.exists(name) ? Std.string(Reflect.field(b, name)) : @await super.shortTag(name, arg, kid);
+		return a.base.args.exists(name) ? '${Reflect.field(b, name)}' : @await super.shortTag(name, arg, kid);
 	}
 
 	@:async

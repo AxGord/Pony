@@ -222,7 +222,7 @@ class FLTools {
 
 	#if macro
 	private static function asCopy(file: String, from: String, to: String): Void {
-		file = '/' + file + '.as';
+		file = '/$file.as';
 		if (!FileSystem.exists(to + file)) File.copy(from + file, to + file);
 	}
 	#else

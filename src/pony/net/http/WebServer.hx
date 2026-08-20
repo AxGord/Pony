@@ -59,7 +59,7 @@ class WebServer {
 			final t: String = a.shift();
 			final p: String = a.join('/');
 			if (!tpl.exists(t))
-				connection.error('Not exists template: ' + t);
+				connection.error('Not exists template: $t');
 			else if (tpl.get(t)._static.exists(p))
 				connection.sendFile(tpl.get(t)._static.get(p));
 			else
@@ -69,7 +69,7 @@ class WebServer {
 		if (a[0] == usercontent) {
 			a.shift();
 			final p: String = a.join('/');
-			final u: Unit = usercontent + '/' + p;
+			final u: Unit = '$usercontent/$p';
 			if (u.exists)
 				connection.sendFile(u);
 			else

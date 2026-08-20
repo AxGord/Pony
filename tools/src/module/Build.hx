@@ -98,7 +98,7 @@ final class Build extends CfgModule<BuildConfig> {
 				if (cfg.app != null) cmd.push(new SPair(D, 'app=${cfg.app}'));
 				if (cfg.debug) cmd.push(new SPair('-debug', ''));
 				cmd = cmd.concat(cfg.command);
-				cmd.push(new SPair(e + '.$HXML', ''));
+				cmd.push(new SPair('$e.$HXML', ''));
 				runCompilation(cmd, cfg.debug, cfg.haxeCompiler, cfg.winfix && Utils.isWindows);
 			}
 		checkCompilation();
@@ -134,7 +134,7 @@ final class Build extends CfgModule<BuildConfig> {
 			tryCounter = 3;
 			final s: Socket = connectToHaxeServer();
 			final d: String = Sys.getCwd();
-			s.write('--cwd ' + d + newline);
+			s.write('--cwd $d$newline');
 			for (c in cmdArrPairToArrStr(command)) {
 				Sys.print(c + ' ');
 				s.write(c + newline);
@@ -146,7 +146,7 @@ final class Build extends CfgModule<BuildConfig> {
 			try {
 				r = s.read();
 			} catch (e: Any) {
-				compilationServerError(Std.string(e));
+				compilationServerError('$e');
 				return;
 			}
 			var inWarning: Bool = false;
@@ -181,7 +181,7 @@ final class Build extends CfgModule<BuildConfig> {
 			if (winfix) {
 				Utils.command(compiler, args);
 			} else {
-				Sys.println(compiler + ' ' + args.join(' '));
+				Sys.println('$compiler ${args.join(' ')}');
 				final process: Process = new Process(compiler, args);
 				try {
 					var inWarning: Bool = false;
@@ -210,7 +210,7 @@ final class Build extends CfgModule<BuildConfig> {
 			s.connect(new Host('127.0.0.1'), port);
 			return s;
 		} catch (e: Any) {
-			compilationServerError(Std.string(e));
+			compilationServerError('$e');
 		}
 		return null;
 	}
@@ -272,7 +272,7 @@ private class BuildConfigReader extends BAReader<BuildConfig> {
 				}
 				switch xml.name {
 					case HXML: cfg.runHxml.push(d);
-					case 'd': cfg.command.push(new SPair(D, xml.has.name ? normalize(xml.att.name) + '=' + d : d));
+					case 'd': cfg.command.push(new SPair(D, xml.has.name ? '${normalize(xml.att.name)}=$d' : d));
 					case 'm': cfg.command.push(new SPair('--macro', d));
 					case 'i': cfg.command.push(new SPair('--macro', 'include(\'$d\')'));
 					case 'k': cfg.command.push(new SPair('--macro', 'keep(\'$d\')'));

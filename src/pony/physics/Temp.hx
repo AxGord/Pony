@@ -17,7 +17,7 @@ abstract Temp(Float) {
 
 	private inline function get_c(): Float return this - 273.15;
 
-	@:to private inline function toString(): String return c + 'C';
+	@:to private inline function toString(): String return '${c}C';
 
 	@:from public static inline function fromK(k: Float): Temp return new Temp(k);
 

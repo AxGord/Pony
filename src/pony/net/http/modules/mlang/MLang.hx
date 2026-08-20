@@ -29,7 +29,7 @@ final class MLang implements IModule {
 				cpq.connection.params.remove('language');
 				cpq.connection.endAction();
 			} else {
-				cpq.connection.error('Not exists language: ' + tc);
+				cpq.connection.error('Not exists language: $tc');
 			}
 			return BREAK;
 		}

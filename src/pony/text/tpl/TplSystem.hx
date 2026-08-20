@@ -93,7 +93,7 @@ class PagesPut extends TplPut<TplSystem, {}> {
 						c = @await tplData(content);
 					return @await d.gen(arg, null, new IncludePut({ content: c, args: args }, null, kid));
 				} else
-					return '! Not found include ' + arg + ' !';
+					return '! Not found include $arg !';
 			case _:
 				return @await super.tag(name, content, arg, args, kid);
 		}

@@ -17,12 +17,12 @@ class FrameHResizer extends FrameBaseResizer {
 	override private function get_sizeB(): Int return frameB.clientHeight;
 
 	override private function set_posA(v: Int): Int {
-		frameA.style.height = v + 'px';
+		frameA.style.height = '${v}px';
 		return v;
 	}
 
 	override private function set_posB(v: Int): Int {
-		frameB.style.bottom = v + 'px';
+		frameB.style.bottom = '${v}px';
 		resizer.style.bottom = v - (resizer.clientHeight / 2) + 'px';
 		return v;
 	}

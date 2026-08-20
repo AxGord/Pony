@@ -51,9 +51,9 @@ class HttpServer {
 
 		if (spdyConf == null) return;
 		trace(spdyConf);
-		final options = { key: Fs.readFileSync(Node.__dirname + '/keys/spdy-key.pem'), cert: Fs.readFileSync(
-			Node.__dirname + '/keys/spdy-cert.pem'
-		), ca: Fs.readFileSync(Node.__dirname + '/keys/spdy-csr.pem') };
+		final options = { key: Fs.readFileSync('${Node.__dirname}/keys/spdy-key.pem'), cert: Fs.readFileSync(
+			'${Node.__dirname}/keys/spdy-cert.pem'
+		), ca: Fs.readFileSync('${Node.__dirname}/keys/spdy-csr.pem') };
 
 		spdyServer = spdy.createServer(options, listen).listen(spdyConf.hasField('port') ? spdyConf.port : 443, createSpdyHandler);
 	}

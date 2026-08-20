@@ -59,8 +59,8 @@ class CommanderBuilder {
 			final bcmd: String = pony.text.TextTools.bigFirst(cmd);
 
 			if (x.nodes.arg.length > 0) {
-				h = (h == null ? '' : h + '.\n\t') + ('Arguments:\n\t\t' + [for (a in x.nodes.arg) getHelp(a)].join('\n\t\t'));
-				hAnsi = (hAnsi == null ? '' : hAnsi + '.\n\t') + (
+				h = (h == null ? '' : '$h.\n\t') + ('Arguments:\n\t\t' + [for (a in x.nodes.arg) getHelp(a)].join('\n\t\t'));
+				hAnsi = (hAnsi == null ? '' : '$hAnsi.\n\t') + (
 					'Arguments:'.ansiForeground(AnsiForeground.DarkGray) + '\n\t\t' + [for (a in x.nodes.arg) getHelp(a)].join('\n\t\t')
 				);
 			}
@@ -74,7 +74,7 @@ class CommanderBuilder {
 				);
 			}
 
-			final ed: String = 'e' + bcmd;
+			final ed: String = 'e$bcmd';
 
 			final values: Array<Expr> = [macro $v{cmd}];
 

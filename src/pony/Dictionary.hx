@@ -66,7 +66,7 @@ class Dictionary<K, V> {
 
 	public function toString(): String {
 		final a: Array<String> = [for (k in keys()) k + ': ' + get(k)];
-		return '[' + a.join(', ') + ']';
+		return '[${a.join(', ')}]';
 	}
 
 	public function removeValue(v: V): Void {

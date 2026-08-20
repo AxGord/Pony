@@ -41,7 +41,7 @@ class Utils {
 		if (_ponyVersion != null) {
 			return _ponyVersion;
 		}
-		final file: String = libPath + 'haxelib.json';
+		final file: String = '${libPath}haxelib.json';
 		final data: Dynamic = Json.parse(File.getContent(file));
 		return _ponyVersion = data.version;
 	}
@@ -67,7 +67,7 @@ class Utils {
 	public static function path(s: String): String return s.replace('/', PD).replace('\\', PD);
 
 	public static function command(name: String, args: Array<String>, ?hide: Array<String>): Void {
-		var s: String = name + ' ' + args.join(' ');
+		var s: String = '$name ${args.join(' ')}';
 		if (hide != null) for (h in hide) s = s.replace(h, TextTools.repeat('*', h.length));
 		Sys.println(s);
 		final r: Int = Sys.command(name, args);
@@ -140,7 +140,7 @@ class Utils {
 
 	public static function error(message: String, errCode: Int = 1): Void {
 		#if neko
-		Sys.stderr().writeString(message + '\n');
+		Sys.stderr().writeString('$message\n');
 		#else
 		Sys.println(message);
 		#end
@@ -204,8 +204,8 @@ class Utils {
 	public static function runNode(name: String, ?args: Array<String>): Int {
 		if (args == null) args = [];
 		Sys.println('Run: $name.js');
-		final jsFile: String = toolsPath + name + '.js';
-		if (!FileSystem.exists(jsFile)) error(jsFile + ' - not founded');
+		final jsFile: String = '${toolsPath + name}.js';
+		if (!FileSystem.exists(jsFile)) error('$jsFile - not founded');
 		final a: Array<String> = [jsFile];
 		for (e in args) a.push(e);
 		return Sys.command('node', a);
@@ -218,8 +218,8 @@ class Utils {
 
 	public static function asyncRunNode(name: String, ?args: Array<String>): Process {
 		Sys.println('Async run: $name.js');
-		final jsFile: String = toolsPath + name + '.js';
-		if (!FileSystem.exists(jsFile)) error(jsFile + ' - not founded');
+		final jsFile: String = '${toolsPath + name}.js';
+		if (!FileSystem.exists(jsFile)) error('$jsFile - not founded');
 		return new Process('node', [jsFile].concat(args));
 	}
 
@@ -262,7 +262,7 @@ class Utils {
 		PD = isWindows ? '\\' : '/';
 		libPath = pony.Tools.ponyPath();
 		libPath = path(libPath);
-		toolsPath = libPath + 'tools' + PD + 'bin' + PD;
+		toolsPath = '${libPath}tools${PD}bin$PD';
 	}
 
 }

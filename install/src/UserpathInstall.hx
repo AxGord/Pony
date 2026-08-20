@@ -27,11 +27,11 @@ class UserpathInstall extends BaseInstall {
 				if (installPonyPath) windowsPonyUserpath();
 			case Mac:
 				final home: String = Sys.getEnv('HOME');
-				writeProfileFiles([home + '/.bash_profile', home + '/.zshrc']);
+				writeProfileFiles(['$home/.bash_profile', '$home/.zshrc']);
 				log('Type "source ~/.bash_profile" for finish install');
 			case Linux:
 				final home: String = Sys.getEnv('HOME');
-				final pfile: String = home + '/.profile';
+				final pfile: String = '$home/.profile';
 				writeProfileFiles([pfile]);
 				log('Type "source ~/.profile" for finish install');
 		}
@@ -47,7 +47,7 @@ class UserpathInstall extends BaseInstall {
 		final envPath: String = Sys.getEnv(ENVKEY);
 		if (envPath == null) {
 			final user: String = Sys.getEnv('USERPROFILE') + PD;
-			if (FileSystem.exists(user + 'pony_user_path_bak.txt')) {
+			if (FileSystem.exists('${user}pony_user_path_bak.txt')) {
 				Sys.println('Error: path ready');
 				return;
 			}
@@ -89,7 +89,7 @@ class UserpathInstall extends BaseInstall {
 			if (FileSystem.exists(pFile)) {
 				final c: String = File.getContent(pFile);
 				if (c.indexOf(ENVKEY) == -1) {
-					File.saveContent(pFile, c + '\n' + data.join('\n'));
+					File.saveContent(pFile, '$c\n' + data.join('\n'));
 				} else {
 					final d1: Array<String> = c.split('$ENVKEY=');
 					final d2: Array<String> = d1[1].split('\n');
@@ -108,10 +108,10 @@ class UserpathInstall extends BaseInstall {
 			if (FileSystem.exists(pFile)) {
 				final c: String = File.getContent(pFile);
 				if (c.indexOf(line) == -1) {
-					File.saveContent(pFile, c + '\n' + line + '\n');
+					File.saveContent(pFile, '$c\n$line\n');
 				}
 			} else {
-				File.saveContent(pFile, line + '\n');
+				File.saveContent(pFile, '$line\n');
 			}
 		}
 	}

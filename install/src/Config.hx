@@ -20,9 +20,9 @@ class Config {
 		ENVKEY = settings.envkey;
 		OS = TargetOS.createByName(Sys.systemName());
 		PD = OS == Windows ? '\\' : '/';
-		SRC = Sys.getCwd() + 'tools';
+		SRC = '${Sys.getCwd()}tools';
 		SRC = SRC.replace('/', PD);
-		BIN = SRC + PD + 'bin' + PD;
+		BIN = '${SRC + PD}bin$PD';
 		ARGS = Sys.args();
 		INSTALL = ARGS[0] == 'install';
 		if (INSTALL) ARGS.shift();
@@ -31,9 +31,9 @@ class Config {
 	public static function questionState(name: String): InstallQuestion {
 		return if (!INSTALL)
 			InstallQuestion.Say;
-		else if (ARGS.indexOf('-' + name) != -1)
+		else if (ARGS.indexOf('-$name') != -1)
 			InstallQuestion.No;
-		else if (ARGS.indexOf('+' + name) != -1)
+		else if (ARGS.indexOf('+$name') != -1)
 			InstallQuestion.Yes;
 		else
 			InstallQuestion.Say;

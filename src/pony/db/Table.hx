@@ -77,11 +77,11 @@ class CTable implements Declarator implements Ninja {
 	/**
 	 * Order asc for field
 	 */
-	@:n public inline function asc(field: String): Table order = ' ORDER BY ' + mysql.escapeId(field) + ' ASC';
+	@:n public inline function asc(field: String): Table order = ' ORDER BY ${mysql.escapeId(field)} ASC';
 	/**
 	 * Order desc for field
 	 */
-	@:n public inline function desc(field: String): Table order = ' ORDER BY ' + mysql.escapeId(field) + ' DESC';
+	@:n public inline function desc(field: String): Table order = ' ORDER BY ${mysql.escapeId(field)} DESC';
 	/**
 	 * Data for query 'where', helper for where function
 	 */

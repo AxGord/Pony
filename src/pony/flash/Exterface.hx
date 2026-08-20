@@ -44,7 +44,7 @@ class Exterface implements Dynamic<Exterface> implements pony.magic.HasSignal {
 	}
 
 	public function resolve(field: String): Exterface {
-		final s: String = (name != null ? name + '.' : '') + field;
+		final s: String = (name != null ? '$name.' : '') + field;
 		return map.exists(s) ? map[s] : new Exterface(s);
 	}
 

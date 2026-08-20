@@ -151,7 +151,7 @@ class AssetManager implements HasLink {
 		}
 		switch asset {
 			case OrState.A(asset):
-				asset = (path == '' ? '' : path.charAt(path.length - 1) == '/' ? path : path + '/') + asset;
+				asset = (path == '' ? '' : path.charAt(path.length - 1) == '/' ? path : '$path/') + asset;
 				if (loadedAssets.indexOf(asset) != -1) {
 					cb(MAX_ASSET_PROGRESS, MAX_ASSET_PROGRESS);
 					return;

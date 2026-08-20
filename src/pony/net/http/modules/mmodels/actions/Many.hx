@@ -64,14 +64,14 @@ class ManyPut extends pony.text.tpl.TplPut<ManyConnect, CPQ> {
 		final na: Array<String> = [];
 		if (args.exists('cols'))
 			for (e in a) {
-				var s: String = '<div class="' + n + '">';
+				var s: String = '<div class="$n">';
 				for (f in args['cols'].split(',').map(StringTools.trim)) s += '<div class="' + f + '">' + @await html(e, f) + '</div>';
 				s += '</div>';
 				na.push(s);
 			}
 		else
 			for (e in a) {
-				var s: String = '<div class="' + n + '">';
+				var s: String = '<div class="$n">';
 				for (f in Reflect.fields(e)) s += '<div class="' + f + '">' + @await html(e, f) + '</div>';
 				s += '</div>';
 				na.push(s);
@@ -130,7 +130,7 @@ final class ManyPutSub extends Valuator<ManyPut, Dynamic> {
 
 	@:async
 	override public function valu(name: String, arg: String): String {
-		return Reflect.hasField(b, name) ? Std.string(Reflect.field(b, name)) : null;
+		return Reflect.hasField(b, name) ? '${Reflect.field(b, name)}' : null;
 	}
 
 }

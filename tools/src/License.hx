@@ -101,12 +101,12 @@ class License {
 								file.content = data.concat(lines.slice(n)).join('\n');
 							} else {
 								Sys.println('Add license in file $file');
-								file.content = data.join('\n') + '\n' + fcontent;
+								file.content = data.join('\n') + '\n$fcontent';
 							}
 						}
 					} else {
 						Sys.println('Add license in file $file');
-						file.content = data.join('\n') + '\n' + fcontent;
+						file.content = data.join('\n') + '\n$fcontent';
 					}
 				}
 			case _:
@@ -125,7 +125,7 @@ class License {
 				if (all.length < 2) Utils.error('Email not set');
 				final a: Array<String> = all[0].split(' ');
 				final b: Array<String> = all[1].split(' ');
-				final email: String = a.pop() + '@' + b.shift();
+				final email: String = '${a.pop()}@${b.shift()}';
 				final author: String = a.join(' ');
 				final company: String = b.join(' ');
 				genLicense('closed.txt', author, email, company);

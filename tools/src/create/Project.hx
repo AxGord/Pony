@@ -137,7 +137,7 @@ class Project {
 	public function setRun(cmd: String): Void {
 		run.active = true;
 		run.path = build.outputPath;
-		run.command = cmd + ' ' + build.outputFile;
+		run.command = '$cmd ${build.outputFile}';
 	}
 
 }

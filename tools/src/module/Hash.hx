@@ -111,7 +111,7 @@ using pony.text.TextTools;
 				if (file.first == this.file.first) continue;
 				var u: Null<Bytes> = units[f];
 				if (u == null && f.endsWith('.bin')) u = units[f.substr(0, -4)];
-				if (u == null && f.endsWith('.png')) u = units[f.substr(0, -4) + '.atlas'];
+				if (u == null && f.endsWith('.png')) u = units['${f.substr(0, -4)}.atlas'];
 				if (u != null && f.endsWith('.fnt')) {
 					var image: String = '';
 					@:nullSafety(Off) var data: String = file.content;
@@ -146,7 +146,7 @@ using pony.text.TextTools;
 							if (fileIndex != -1) {
 								fileIndex += filePattern.length;
 								final endIndex: Int = data.indexOf('\n', fileIndex);
-								newContent = data.substr(0, fileIndex) + '"$newFontName"' + data.substr(endIndex);
+								newContent = '${data.substr(0, fileIndex)}"$newFontName"${data.substr(endIndex)}';
 							}
 						}
 					}
@@ -210,8 +210,8 @@ using pony.text.TextTools;
 		for (key in a) {
 			r.push(root + key);
 			if (!key.endsWith('.atlas')) continue;
-			r.push(root + key.substr(0, -5) + 'png');
-			r.push(root + key + '.bin');
+			r.push('${root + key.substr(0, -5)}png');
+			r.push('${root + key}.bin');
 		}
 		return r;
 	}

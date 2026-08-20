@@ -27,7 +27,7 @@ class RemoteAction extends Logable implements HasAbstract {
 	}
 
 	private inline function logData(data: String): Void {
-		log(Type.getClassName(@:nullSafety(Off) Type.getClass(this)) + ': ' + data);
+		log('${Type.getClassName(@:nullSafety(Off) Type.getClass(this))}: $data');
 	}
 
 	@:abstract private function run(data: String): Void;

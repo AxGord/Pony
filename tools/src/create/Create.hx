@@ -289,7 +289,7 @@ class Create {
 		final path: String = project.build.getMainhxPath();
 		createDirs([
 			path,
-			path + 'models',
+			'${path}models',
 			'bin/home/',
 			'bin/home/language/',
 			'bin/home/templates/',

@@ -69,12 +69,12 @@ final class SinglePut extends pony.text.tpl.TplPut<SingleConnect, CPQ> {
 		final n: String = args['div'] == null ? 'single' : args['div'];
 		final na: Array<String> = [];
 		if (args.exists('cols')) {
-			var s: String = '<div class="' + n + '">';
+			var s: String = '<div class="$n">';
 			for (f in args['cols'].split(',').map(StringTools.trim)) s += '<div class="' + f + '">' + @await html(e, f) + '</div>';
 			s += '</div>';
 			na.push(s);
 		} else {
-			var s: String = '<div class="' + n + '">';
+			var s: String = '<div class="$n">';
 			for (f in Reflect.fields(e)) s += '<div class="' + f + '">' + @await html(e, f) + '</div>';
 			s += '</div>';
 			na.push(s);
@@ -119,7 +119,7 @@ class SinglePutSub extends Valuator<SinglePut, Dynamic> {
 
 	@:async
 	override public function valu(name: String, arg: String): String {
-		return Reflect.hasField(b, name) ? Std.string(Reflect.field(b, name)) : null;
+		return Reflect.hasField(b, name) ? '${Reflect.field(b, name)}' : null;
 	}
 
 }

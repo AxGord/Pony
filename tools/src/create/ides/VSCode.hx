@@ -100,7 +100,7 @@ class VSCode {
 		saveConfig(chromeConfig(httpPort).concat([
 			{ name: 'MacOS (HashLink SDL)', type: 'hl', program: "${workspaceFolder}/" + '$output$app.hl', cwd: "${workspaceFolder}/"
 			+ output, request: 'launch', preLaunchTask: 'mac debug' },
-			{ name: 'Windows (HashLink DirectX)', type: 'hl', program: "${workspaceFolder}/" + '$output$app.hl', cwd: "${workspaceFolder}/"
+			{ name: 'Windows (HashLink DirectX)', type: 'hl', program: '$${workspaceFolder}/$output$app.hl', cwd: "${workspaceFolder}/"
 			+ output, request: 'launch', preLaunchTask: 'win debug' },
 			{ name: 'Android launch debug build', type: 'android', request: 'launch', preLaunchTask: 'android debug', appSrcRoot: "${workspaceRoot}/bin/android/app/src/main", apkFile: "${workspaceRoot}/bin/android/app/build/outputs/apk/debug/app-debug.apk", adbPort: 5037, "trace": true },
 			{ name: 'Android launch release build', type: 'android', request: 'launch', preLaunchTask: 'android release', appSrcRoot: "${workspaceRoot}/bin/android/app/src/main", apkFile: "${workspaceRoot}/bin/android/app/build/outputs/apk/release/app-release.apk", adbPort: 5037, "trace": true }
@@ -129,7 +129,7 @@ class VSCode {
 
 	public static function createNode(output: String, app: String): Void {
 		saveConfig([
-			{ type: 'node', request: 'launch', name: 'Launch Program', program: "${workspaceFolder}/" + output + '/' + app, cwd: "${workspaceFolder}/"
+			{ type: 'node', request: 'launch', name: 'Launch Program', program: '$${workspaceFolder}/$output/$app', cwd: "${workspaceFolder}/"
 			+ output, preLaunchTask: PRELAUNCH_TASK, console: 'internalConsole', internalConsoleOptions: 'openOnSessionStart' }
 		]);
 		createExtensions(false);
@@ -157,11 +157,11 @@ class VSCode {
 
 	public static function createElectron(output: String): Void {
 		final confNamePrefix: String = 'Electron: ';
-		final mainConfName: String = confNamePrefix + 'Main';
-		final renderConfName: String = confNamePrefix + 'Renderer';
-		final onlyRenderConfName: String = confNamePrefix + 'Only Renderer';
-		final resultDir: String = "${workspaceFolder}/" + output;
-		final electronExecutable: String = resultDir + 'node_modules/.bin/electron';
+		final mainConfName: String = '${confNamePrefix}Main';
+		final renderConfName: String = '${confNamePrefix}Renderer';
+		final onlyRenderConfName: String = '${confNamePrefix}Only Renderer';
+		final resultDir: String = '$${workspaceFolder}/$output';
+		final electronExecutable: String = '${resultDir}node_modules/.bin/electron';
 		final port: Int = 9222;
 		final data = { version: '0.2.0', configurations: [
 			({ type: 'node', request: 'launch', name: mainConfName, protocol: 'inspector', runtimeExecutable: electronExecutable, runtimeArgs: [output, '--remote-debugging-port=$port'], windows: { runtimeExecutable: electronExecutable
@@ -169,7 +169,7 @@ class VSCode {
 			({ name: renderConfName, type: 'chrome', request: 'attach', port: port, webRoot: resultDir, timeout: 20000, internalConsoleOptions: 'openOnSessionStart' }: Dynamic),
 			({ name: onlyRenderConfName, type: 'chrome', request: 'launch', port: port, webRoot: resultDir, timeout: 20000, internalConsoleOptions: 'openOnSessionStart', preLaunchTask: PRELAUNCH_TASK, runtimeExecutable: electronExecutable, runtimeArgs: [output, '--remote-debugging-port=$port'], windows: { runtimeExecutable: electronExecutable
 				+ '.cmd' } }: Dynamic)
-		], compounds: [{ name: confNamePrefix + 'All', configurations: [mainConfName, renderConfName] }] };
+		], compounds: [{ name: '${confNamePrefix}All', configurations: [mainConfName, renderConfName] }] };
 		Utils.saveJson('.vscode/launch.json', data);
 		createExtensions(true);
 	}

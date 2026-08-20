@@ -266,7 +266,7 @@ class JsTools implements HasSignal {
 	}
 
 	private static function splitCssReturnDelimiter(s: String): String {
-		return s.ltrim() + ';';
+		return '${s.ltrim()};';
 	}
 
 }

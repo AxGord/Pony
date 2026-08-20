@@ -291,7 +291,7 @@ class XmlUiBuilder {
 		else if (style.exists(name))
 			getType(style[name]['extends'], style, types);
 		else
-			Context.error('Unknown type ' + name, Context.currentPos());
+			Context.error('Unknown type $name', Context.currentPos());
 	}
 
 	private static function joinPathA(a: String, b: String): String {

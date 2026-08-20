@@ -129,10 +129,10 @@ class InsertPut extends pony.text.tpl.TplPut<InsertConnect, CPQ> {
 	private function inputE(name: String, value: String, fix: Bool): String {
 		final s: String = st(name);
 		return s == null
-			? '<label>' + name.bigFirst() + input(name, null, value) + '</label>'
+			? '<label>${name.bigFirst()}${input(name, null, value)}</label>'
 			: s == ''
-				? '<label>' + name.bigFirst() + input(name, 'ok', fix ? value : '') + '</label>'
-				: '<label>' + name.bigFirst() + input(name, 'error', value) + '<div>' + s + '</div>' + '</label>';
+				? '<label>${name.bigFirst()}${input(name, 'ok', fix ? value : '')}</label>'
+				: '<label>${name.bigFirst()}${input(name, 'error', value)}<div>$s</div></label>';
 	}
 
 	private function input(name: String, cl: String, value: String): String {

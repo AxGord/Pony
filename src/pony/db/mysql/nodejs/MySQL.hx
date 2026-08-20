@@ -65,7 +65,7 @@ class MySQL extends SQLBase {
 		var _;
 		var _ = @await query(q, p);
 		if (err == null) return true;
-		error(actName == null ? Std.string(err) : "Can't " + actName + ': ' + err.stack, p);
+		error(actName == null ? '$err' : "Can't " + actName + ': ' + err.stack, p);
 		return false;
 	}
 
@@ -99,7 +99,7 @@ class MySQL extends SQLBase {
 			return;
 		}
 		final h = config.host == null ? 'localhost' : config.host;
-		final p = config.port == null ? '' : ':' + config.port;
+		final p = config.port == null ? '' : ':${config.port}';
 		log('Connected to $h$p');
 
 		if (!@await prepareDatabase(db)) return;

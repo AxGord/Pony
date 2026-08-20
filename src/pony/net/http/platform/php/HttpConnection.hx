@@ -33,7 +33,7 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 		php.Web.setHeader('Expires', '0');
 		php.Web.setHeader('Cache-Control', 'must-revalidate, post-check=0, pre-check=0');
 		php.Web.setHeader('Pragma', 'public');
-		php.Web.setHeader('Content-Length', Std.string(file.size));
+		php.Web.setHeader('Content-Length', '${file.size}');
 		untyped __call__('readfile', file.firstExists);
 		untyped __call__('exit');
 	}
@@ -44,7 +44,7 @@ class HttpConnection extends pony.net.http.HttpConnection implements IHttpConnec
 
 	override public function endAction(): Void {
 		writeCookie();
-		php.Web.setHeader('Location', '/' + url);
+		php.Web.setHeader('Location', '/$url');
 		php.Web.setHeader('Cache-Control', 'private');
 		php.Web.setReturnCode(302);
 		php.Lib.print('<html><body><a href=".">Click here</a></body></html>');

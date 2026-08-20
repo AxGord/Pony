@@ -167,6 +167,6 @@ class SongPlayerCore implements HasSignal {
 		onPosition << setPosition;
 	}
 
-	public static function formatSong(song: SongInfo): String return (song.author != null ? song.author + ' - ' : '') + song.title;
+	public static function formatSong(song: SongInfo): String return (song.author != null ? '${song.author} - ' : '') + song.title;
 
 }

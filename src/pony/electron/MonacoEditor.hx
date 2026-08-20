@@ -91,10 +91,10 @@ class MonacoEditor extends pony.Logable {
 	private function loadThemes(themes: Array<String>): Void {
 		if (themes != null) for (theme in themes) if (needLoadTheme(theme)) {
 			tasks.add();
-			readMonacoFile(theme + '.theme.json', (s: String) -> {
+			readMonacoFile('$theme.theme.json', (s: String) -> {
 				try {
 					this.themes[theme] = Json.parse(s);
-					log(theme + ' theme loaded');
+					log('$theme theme loaded');
 					tasks.end();
 				} catch (e: js.Error) {
 					error(e.message);
@@ -174,7 +174,7 @@ class MonacoEditor extends pony.Logable {
 	}
 
 	private function getGrammarDefinition(scopeName: String): GrammarDef {
-		log('get tm: ' + scopeName);
+		log('get tm: $scopeName');
 		for (l in langs) {
 			if (scopeName == 'source.' + l.ext) {
 				return { format: 'json', content: l.tm };

@@ -45,10 +45,10 @@ class Hashlink extends CfgModule<HashlinkConfig> {
 		}
 		if (cfg.output.b != null) {
 			if (cfg.output.b.isTrue()) {
-				log('Clear ' + output);
+				log('Clear $output');
 				(output: Dir).deleteContent();
 			} else if (cfg.output.b.toLowerCase() == 'rimraf') {
-				log('Clear ' + output);
+				log('Clear $output');
 				Utils.command('rimraf', [output]);
 			}
 		}
@@ -66,8 +66,8 @@ class Hashlink extends CfgModule<HashlinkConfig> {
 				final o: String = output;
 				output += 'Resources/';
 				if (!Utils.isWindows) {
-					Utils.command('chmod', ['+x', o + 'MacOS/runhl']);
-					Utils.command('chmod', ['+x', output + 'hl']);
+					Utils.command('chmod', ['+x', '${o}MacOS/runhl']);
+					Utils.command('chmod', ['+x', '${output}hl']);
 				}
 			case 'android':
 				Utils.createPath(output);
@@ -105,7 +105,7 @@ class Hashlink extends CfgModule<HashlinkConfig> {
 					['APPLICATION_ID', cfg.id],
 					['VERSION_CODE', cfg.version],
 					['VERSION_NAME', cfg.versionName],
-					['RELEASE_STORE_FILE', '../../../' + cfg.storeFile],
+					['RELEASE_STORE_FILE', '../../../${cfg.storeFile}'],
 					['RELEASE_STORE_PASSWORD', cfg.storePassword],
 					['RELEASE_KEY_ALIAS', cfg.keyAlias],
 					['RELEASE_KEY_PASSWORD', cfg.keyPassword]
@@ -159,7 +159,7 @@ class Hashlink extends CfgModule<HashlinkConfig> {
 	}
 
 	private function processTemplate(file: File, context: Dynamic): Void {
-		final templateFile: File = file.first + '.tpl';
+		final templateFile: File = '${file.first}.tpl';
 		log('processTemplate $templateFile -> $file');
 		file.content = new Template(templateFile.content).execute(context);
 		templateFile.delete();

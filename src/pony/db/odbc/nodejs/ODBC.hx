@@ -49,7 +49,7 @@ class ODBC extends SQLBase {
 	/**
 	 * Escape (for values)
 	 */
-	public inline function escape(s: String): String return "'" + s.replace("'", '') + "'";
+	public inline function escape(s: String): String return '\'${s.replace("'", '')}\'';
 
 	/**
 	 * Make action, query with boolean result
@@ -59,7 +59,7 @@ class ODBC extends SQLBase {
 		var _;
 		var _ = @await query(q, p);
 		if (err == null) return true;
-		_error(actName == null ? Std.string(err) : "Can't " + actName + ': ' + err.stack, p);
+		_error(actName == null ? '$err' : "Can't " + actName + ': ' + err.stack, p);
 		return false;
 	}
 

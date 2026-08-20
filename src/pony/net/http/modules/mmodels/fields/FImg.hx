@@ -47,10 +47,10 @@ class FImg extends Field {
 
 	@:async
 	public function html(f: String): String {
-		return '<img src="' + get(f) + '" width="200px"/>';
+		return '<img src="${get(f)}" width="200px"/>';
 	}
 
-	private function get(f: String): String return '/usercontent/' + Reflect.field(b, f);
+	private function get(f: String): String return '/usercontent/${Reflect.field(b, f)}';
 
 }
 

@@ -50,7 +50,7 @@ class MySQL extends SQLBase {
 			connection.request(q);
 			result(true);
 		} catch (err: Dynamic) {
-			error(actName == null ? Std.string(err) : "Can't " + actName + ': ' + Std.string(err), p);
+			error(actName == null ? '$err' : 'Can\'t $actName: $err', p);
 			result(false);
 		}
 
@@ -119,7 +119,7 @@ class MySQL extends SQLBase {
 	/**
 	 * Escape id (for fields, tables, databases)
 	 */
-	public inline function escapeId(s: String): String return '`' + connection.escape(s) + '`';
+	public inline function escapeId(s: String): String return '`${connection.escape(s)}`';
 
 	/**
 	 * Escape (for values)

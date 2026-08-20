@@ -24,7 +24,7 @@ class Main {
 		Sys.println(Utils.ansiForeground('Build date: ', AnsiForeground.LightGray) + Tools.getBuildDate());
 		Sys.println(Utils.ansiUnderlined('https://github.com/AxGord/Pony'));
 		Sys.println(Utils.ansiUnderlined('http://lib.haxe.org/p/pony'));
-		Sys.println('Type:' + Utils.ansiForeground('pony help', AnsiForeground.LightCyan).quote().quote(' ') + '- for help');
+		Sys.println('Type:${Utils.ansiForeground('pony help', AnsiForeground.LightCyan).quote().quote(' ')}- for help');
 		Utils.exit();
 	}
 

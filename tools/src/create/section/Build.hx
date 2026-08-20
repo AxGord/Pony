@@ -109,7 +109,7 @@ class Build extends Section {
 
 	public function getMainhx(): String return gethx(main);
 
-	public function gethx(name: String): String return getMainhxPath() + '/' + name + '.hx';
+	public function gethx(name: String): String return '${getMainhxPath()}/$name.hx';
 
 	public function createMainhx(template: String, ?replaces: Map<String, String>): Void {
 		createPathToMainhxIfNeed();

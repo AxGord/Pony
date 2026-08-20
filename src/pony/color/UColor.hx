@@ -196,7 +196,7 @@ abstract UColor(UInt) from UInt to UInt {
 		s = s.trim();
 		return new UColor(if (s.substr(0, 1) == '#') {
 			s = s.substr(1);
-			s.length == 3 ? Std.parseInt('0x' + s.charAt(0) + '0' + s.charAt(1) + '0' + s.charAt(2) + '0') : Std.parseInt('0x' + s);
+			s.length == 3 ? Std.parseInt('0x${s.charAt(0)}0${s.charAt(1)}0${s.charAt(2)}0') : Std.parseInt('0x$s');
 		} else if (s.substr(0, 3) == 'rgb') {
 			s = s.substr(3).ltrim();
 			if (s.startsWith('(') && s.endsWith(')')) {

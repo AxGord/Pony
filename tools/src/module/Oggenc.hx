@@ -41,7 +41,7 @@ using pony.text.TextTools;
 	}
 
 	private function replaceExt(s: String): String {
-		return s.substr(0, -3) + 'ogg';
+		return '${s.substr(0, -3)}ogg';
 	}
 
 	private function oggencDirs(data: Array<Pair<String, Null<String>>>, from: Dir, to: Dir, hash: Bool, addext: String, q: UInt): Void {

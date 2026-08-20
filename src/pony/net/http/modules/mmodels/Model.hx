@@ -42,7 +42,7 @@ class Model implements SuperPuper {
 		name = Type.getClassName(Type.getClass(this));
 		name = name.substr(name.lastIndexOf('.') + 1);
 		this.mm = mm;
-		final n = Type.getClassName(Type.getClass(this)) + 'Connect';
+		final n = '${Type.getClassName(Type.getClass(this))}Connect';
 		cl = cast Type.resolveClass(n);
 		if (cl == null) throw "Can't resolve class (dce?): " + n;
 		final ma: Dynamic<Array<{ name: String, type: String }>> = untyped cl.__methoArgs__;

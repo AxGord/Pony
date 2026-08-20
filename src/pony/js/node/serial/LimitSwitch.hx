@@ -13,8 +13,8 @@ class LimitSwitch implements Declarator implements HasSignal {
 	private static var LIMIT_SWITCH: String = 'LimitSwitch';
 	private static var END: String = ';';
 
-	private static var LSW1: String = LIMIT_SWITCH + '1_';
-	private static var LSW2: String = LIMIT_SWITCH + '2_';
+	private static var LSW1: String = '${LIMIT_SWITCH}1_';
+	private static var LSW2: String = '${LIMIT_SWITCH}2_';
 
 	@:bindable public var state1: Bool = false;
 	@:bindable public var state2: Bool = false;

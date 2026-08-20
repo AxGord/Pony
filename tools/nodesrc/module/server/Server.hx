@@ -51,9 +51,9 @@ import types.ServerConfig;
 		tasks.end();
 	}
 
-	private function errorWithTime(s: String, ?p: PosInfos): Void error(now() + ' ' + s, p);
+	private function errorWithTime(s: String, ?p: PosInfos): Void error('${now()} $s', p);
 
-	private function logWithTime(s: String, ?p: PosInfos): Void log(now() + ' ' + s, p);
+	private function logWithTime(s: String, ?p: PosInfos): Void log('${now()} $s', p);
 
 	private function now(): String {
 		final d: Date = Date.now();

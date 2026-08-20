@@ -95,7 +95,7 @@ class HasAssetBuilder {
 	private static function addMethods(fields: Array<Field>, f: String, vs: String): Void {
 		if (vs.length > 0) vs += '/';
 		final v = macro $v{vs};
-		fields.push({ name: f == 'def' ? 'loadAsset' : 'loadAsset_' + f, access: [APublic, AStatic], kind: FieldType.FFun({ args: [
+		fields.push({ name: f == 'def' ? 'loadAsset' : 'loadAsset_$f', access: [APublic, AStatic], kind: FieldType.FFun({ args: [
 			{ name: 'asset', type: macro :pony.Or<Int, Array<Int>>, opt: false },
 			{ name: 'cb', type: macro :Int -> Int -> Void }
 		], ret: macro :Void, expr: macro pony.ui.AssetManager.load(
@@ -106,7 +106,7 @@ class HasAssetBuilder {
 			cb
 		) }), pos: Context.currentPos() });
 		fields.push({ // todo: childs
-			name: f == 'def' ? 'loadAssets' : 'loadAssets_' + f,
+			name: f == 'def' ? 'loadAssets' : 'loadAssets_$f',
 			access: [APublic, AStatic],
 			kind: FieldType.FFun({ args: [{ name: 'cb', type: macro :Int -> Int -> Void }], ret: macro :Void, expr: macro pony.ui.AssetManager.load(
 				$v, ASSETS_LIST, cb
@@ -121,13 +121,13 @@ class HasAssetBuilder {
 
 		fields.push({ name: f == 'def'
 			? 'assetName'
-			: 'assetName_' + f, access: [APublic, AStatic], kind: FieldType.FFun(
+			: 'assetName_$f', access: [APublic, AStatic], kind: FieldType.FFun(
 			{ args: [{ name: 'asset', type: macro :Int }], ret: macro :Null<String>, expr: macro return ASSETS_NAMES[asset] }
 		), pos: Context.currentPos() });
 
 		fields.push({ name: f == 'def'
 			? 'assetValue'
-			: 'assetValue_' + f, access: [APublic, AStatic], kind: FieldType.FFun(
+			: 'assetValue_$f', access: [APublic, AStatic], kind: FieldType.FFun(
 			{ args: [{ name: 'asset', type: macro :Int }], ret: macro :String, expr: macro return $v + ASSETS_LIST[asset] }
 		), pos: Context.currentPos() });
 		fields.push({ name: f == 'def'

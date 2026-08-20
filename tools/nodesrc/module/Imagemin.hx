@@ -39,11 +39,11 @@ private typedef ImageminResult = Array<ImageminResultEntry>;
 	#if (haxe_ver < 4.2) override #end
 	private function run(cfg: ImageminConfig): Void {
 		final from: Array<String> = cfg.from.split(',').map(StringTools.trim).addToStringsEnd('*.');
-		log('From: ' + from);
+		log('From: $from');
 		final formats: Array<String> = cfg.format == null
 			? [JPG, PNG, WEBP]
 			: @:nullSafety(Off) cfg.format.split(',').map(StringTools.trim);
-		log('Formats: ' + formats.join(', '));
+		log('Formats: ${formats.join(', ')}');
 		if (formats.indexOf(JPG) != -1 || (cfg.jpgfrompng && formats.indexOf(PNG) != -1)) {
 			final dir: Dir = cfg.from;
 			var filter: String = '.$JPG';
@@ -60,7 +60,7 @@ private typedef ImageminResult = Array<ImageminResultEntry>;
 				] }).then(function(r: ImageminResult): Void {
 					var p: String = file.first.substr(cfg.from.length);
 					p = p.substr(0, -4);
-					final n: String = cfg.to + p + '.$JPG';
+					final n: String = '${cfg.to + p}.$JPG';
 					Utils.createPath(n);
 					final b: Bytes = Bytes.ofData(r[0].data);
 					sys.io.File.saveBytes(n, b);
@@ -128,14 +128,14 @@ private typedef ImageminResult = Array<ImageminResultEntry>;
 						log(nf);
 						nf.createWays();
 						nf.content = StringTools.replace(
-							@:nullSafety(Off) (f.content: String), '"' + ef.name + '"', '"' + f.shortName + '.$WEBP"'
+							@:nullSafety(Off) (f.content: String), '"${ef.name}"', '"' + f.shortName + '.$WEBP"'
 						);
 					}
 				}
 			}
 			cformats.push(WEBP);
 			NPM.imagemin(
-				from.addToStringsEnd('{' + cformats.join(',') + '}'),
+				from.addToStringsEnd('{${cformats.join(',')}}'),
 				{ destination: cfg.to, plugins: [NPM.imagemin_webp({ nearLossless: cfg.webpq, quality: cfg.webpq, method: 6 })] }
 			)
 				.then(completeHandler);

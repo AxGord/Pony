@@ -119,11 +119,11 @@ class HtmlVideoUIFS extends HtmlVideoUI {
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
 	private inline function createShowAndHideTransitions(): Void {
-		hideTransition = getTransition('opacity ' + hideAnimTime.totalMs + 'ms');
+		hideTransition = getTransition('opacity ${hideAnimTime.totalMs}ms');
 		hideTransitionDelay = DTimer.createFixedTimer(hideAnimTime);
 		hideTransitionDelay.complete << removeHideTransition;
 		hideTransitionDelay.complete << hide;
-		showTransition = getTransition('opacity ' + showAnimTime.totalMs + 'ms ease-in');
+		showTransition = getTransition('opacity ${showAnimTime.totalMs}ms ease-in');
 		showTransitionDelay = DTimer.createFixedTimer(showAnimTime);
 		showTransitionDelay.complete << removeShowTransition;
 		showTransitionDelay.complete << video.enableTouch;
@@ -141,7 +141,7 @@ class HtmlVideoUIFS extends HtmlVideoUI {
 	private inline function listenClick(): Void video.onClick < clickHandler;
 
 	private inline function getTransition(r: String): String {
-		return JsTools.normalizeCss('transition: ' + r + '; -webkit-transition: ' + r + ';');
+		return JsTools.normalizeCss('transition: $r; -webkit-transition: $r;');
 	}
 
 	private function _animShow(): Void {
