@@ -37,7 +37,7 @@
 [![Donate PayPal](https://img.shields.io/badge/Donate-PayPal-green.svg?style=flat-square)](https://paypal.me/axgorde)
 
 <br/><br/>
-<p align="center"><img width="65%" src="https://raw.githubusercontent.com/AxGord/Pony/haxe3/logo/pony_logo_hor.svg"/></p>
+<p align="center"><img width="65%" src="https://raw.githubusercontent.com/AxGord/Pony/HEAD/logo/pony_logo_hor.svg"/></p>
 <br/>
 
 Pony is a set of tools for developing, preparing, building, testing and publishing projects.
