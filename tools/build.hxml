@@ -9,6 +9,7 @@
 -D message.reporting=pretty
 -lib pony
 -lib hxbitmini:1.1.0
+-lib format:3.8.0
 --macro keep('hxbitmini.Schema')
 -resource resources/logo.txt@logo
 -resource resources/template.html@template.html

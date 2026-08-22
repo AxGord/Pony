@@ -45,6 +45,7 @@ private typedef TPUnit = {
 @:nullSafety(Strict) class Texturepacker extends CfgModule<TPConfig> {
 
 	private static inline final PRIORITY: Int = 3;
+	private static inline final LIBGDX: String = 'libgdx';
 
 	private var ignoreList: Array<String> = [];
 	private var toList: Array<String> = [];
@@ -91,6 +92,13 @@ private typedef TPUnit = {
 
 			command.push('--format');
 			command.push(f);
+
+			// TexturePacker 8 writes a libgdx atlas that heaps' hxd.res.Atlas cannot parse
+			// ("Unknown prop bounds"); the legacy layout is the one it reads.
+			if (f == LIBGDX) {
+				command.push('--libgdx-legacy-output');
+				command.push('true');
+			}
 
 			final outExt = unit.ext != null
 				? unit.ext

@@ -55,7 +55,8 @@ asynchronous because a service may implement `WR` and finish initialising after 
 constructor returns.
 
 Construction order follows dependencies, not declaration order — a service written last
-is built first if something above it needs it.
+is built first if something above it needs it. Owned services depending on each other in a
+cycle are a compile error naming the path (`a -> b -> a`), not a runtime surprise.
 
 ## Two rules that are easy to trip over
 

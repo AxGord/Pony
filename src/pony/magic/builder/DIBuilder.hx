@@ -10,6 +10,14 @@ import pony.magic.builder.DIVerifier;
 using Lambda;
 using haxe.macro.ComplexTypeTools;
 using pony.macro.Tools;
+
+/** Creation of one owned DI child: what it needs, and the expressions that build it. */
+private typedef ChildCreate = {
+	field: String,
+	deps: Array<String>,
+	exprs: Array<Expr>,
+	pos: Position
+};
 #end
 
 /**
@@ -35,6 +43,9 @@ final class DIBuilder {
 		final localClass: ClassType = Context.getLocalClass().get();
 		final isExt: Bool = !localClass.interfaces.exists(f -> f.t.toString() == DI);
 		final superIsAsync: Bool = localClass.superClass != null && checkAsyncDestroy(localClass.superClass.t);
+		// A non-DI super class may still own a destroy() — the generated one has to override it
+		// and chain into it, or the class does not compile at all.
+		final superHasDestroy: Bool = !isExt && localClass.superClass != null && checkDestroy(localClass.superClass.t.get());
 		// Auto-promote to async if super is async: a sync child cannot destroy an async parent correctly.
 		final isAsync: Bool = localClass.interfaces.exists(f -> f.t.toString() == ASYNC_DESTROY) || superIsAsync;
 		// Direct interface check only — inherited HasListener is handled via super.destroy() chain,
@@ -77,6 +88,9 @@ final class DIBuilder {
 		}
 		final loads: Array<Expr> = [];
 		final creates: Array<Expr> = [];
+		// Creation of owned DI children, one group per field, emitted after the loop in dependency
+		// order rather than declaration order — see sortChildCreates.
+		final childCreates: Array<ChildCreate> = [];
 		final blocks: Array<Expr> = [];
 		final destroys: Array<Expr> = [];
 		final destroysAsync: Array<Expr> = [];
@@ -89,6 +103,7 @@ final class DIBuilder {
 			else
 				destroys.push(macro super.destroy());
 		} else {
+			if (superHasDestroy) destroys.push(macro super.destroy());
 			destroys.push(macro provider.destroy());
 		}
 		// Pre-scan: collect @:own producers for local var optimization in createFast calls.
@@ -241,7 +256,8 @@ final class DIBuilder {
 										))
 											$i{field.name}.destroy() : macro $i{field.name}.destroy());
 									}
-									creates.push(checkExpr(macro tasks.add()));
+									final childExprs: Array<Expr> = [checkExpr(macro tasks.add())];
+									final childDeps: Array<String> = [];
 									// L3: for static-eligible DI children, store instance in local var.
 									// Register kept for create() backward compat; createFast skips it.
 									final cr: haxe.macro.Expr = if (staticDIVar != null)
@@ -273,6 +289,12 @@ final class DIBuilder {
 													final matchedVar: Null<String> = resolveLocalVar(
 														consumer, ownNonDIVars, ownStaticDIVars
 													);
+													// A dep read out of a load-local var is only filled in by the create of
+													// the field owning that var, so this child has to run after it. Vars from
+													// ownNonDIVars are already assigned in loads() and constrain nothing.
+													if (matchedVar != null)
+														for (depField => info in ownStaticDIVars)
+															if (info.varName == matchedVar) childDeps.push(depField);
 													params.insert(
 														insertIdx,
 														matchedVar != null
@@ -286,7 +308,8 @@ final class DIBuilder {
 										case _:
 											throw UNEXPECTED_ERROR;
 									}
-									creates.push(checkExpr(cr));
+									childExprs.push(checkExpr(cr));
+									childCreates.push({ field: field.name, deps: childDeps, exprs: childExprs, pos: field.pos });
 								case _:
 									final localVar: Null<{ varName: String, typeNames: Array<String> }> = ownNonDIVars[field.name];
 									if (localVar != null) {
@@ -309,6 +332,7 @@ final class DIBuilder {
 				}
 			case _:
 		}
+		for (group in sortChildCreates(childCreates)) for (e in group.exprs) creates.push(e);
 		// DIBuilder owns the unlisten() call in teardown (rather than HasListenerBuilder prepending
 		// it to user destroy) so builder order becomes irrelevant and async classes compose cleanly.
 		if (hasListener) destroys.unshift(macro unlisten());
@@ -587,13 +611,16 @@ final class DIBuilder {
 					$teardownExpr;
 				}
 			}).fields.pop());
-		else
-			fields.push((macro class {
+		else {
+			final destructorField: Field = (macro class {
 				public function destroy(): Void {
 					$guardPrefix;
 					$teardownExpr;
 				}
-			}).fields.pop());
+			}).fields.pop();
+			if (superHasDestroy) destructorField.access.push(AOverride);
+			fields.push(destructorField);
+		}
 		if (!isExt) fields.unshift((macro class {
 			private final provider: pony.ServiceProvider;
 		}).fields.pop());
@@ -604,6 +631,11 @@ final class DIBuilder {
 	private static function checkDI(inst: haxe.macro.Type.Ref<ClassType>): Bool {
 		final type: ClassType = inst.get();
 		return type.interfaces.exists(f -> f.t.toString() == DI) || (type.superClass != null && checkDI(type.superClass.t));
+	}
+
+	private static function checkDestroy(type: ClassType): Bool {
+		for (f in type.fields.get()) if (f.name == 'destroy') return true;
+		return type.superClass != null && checkDestroy(type.superClass.t.get());
 	}
 
 	private static function checkAsyncDestroy(inst: haxe.macro.Type.Ref<ClassType>): Bool {
@@ -674,6 +706,42 @@ final class DIBuilder {
 	 * Mirrors ServiceProvider.get resolution: single type match returns directly,
 	 * multiple matches disambiguate by field name, no match returns null.
 	 */
+	/**
+	 * Orders owned DI children so a producer is created before whoever reads its load-local var.
+	 * Depth-first over the fields in declaration order, so a graph without such dependencies keeps
+	 * the order it was written in.
+	 */
+	private static function sortChildCreates(groups: Array<ChildCreate>): Array<ChildCreate> {
+		final byField: Map<String, ChildCreate> = [];
+		for (group in groups) byField[group.field] = group;
+		final ordered: Array<ChildCreate> = [];
+		final done: Array<String> = [];
+		final path: Array<String> = [];
+		for (group in groups) visitChild(group, byField, ordered, done, path);
+		return ordered;
+	}
+
+	private static function visitChild(
+		group: ChildCreate, byField: Map<String, ChildCreate>, ordered: Array<ChildCreate>, done: Array<String>,
+		path: Array<String>
+	): Void {
+		if (done.contains(group.field)) return;
+		if (path.contains(group.field)) {
+			Context.error(
+				'DI: circular dependency between owned services: ${path.join(' -> ')} -> ${group.field}', group.pos
+			);
+			return;
+		}
+		path.push(group.field);
+		for (dep in group.deps) {
+			final producer: Null<ChildCreate> = byField[dep];
+			if (producer != null) visitChild(producer, byField, ordered, done, path);
+		}
+		path.pop();
+		done.push(group.field);
+		ordered.push(group);
+	}
+
 	private static function resolveLocalVar(
 		consumer: ConsumerEntry, ownNonDIVars: Map<String, { varName: String, typeNames: Array<String> }>,
 		ownStaticDIVars: Map<String, { varName: String, typeNames: Array<String> }>

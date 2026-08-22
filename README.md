@@ -100,8 +100,11 @@ Manual
     * [Prepare sections](//github.com/AxGord/Pony/wiki/Prepare-sections)
     * [Build sections](//github.com/AxGord/Pony/wiki/Build-sections)
     * [Post build sections](//github.com/AxGord/Pony/wiki/Post-build-sections)
+    * [Spritesheet section](docs/spritesheet.md)
 
 * [Dependency injection](docs/DI.md)
+
+* [Declarative listeners](docs/listen.md)
 
 * [Net](//github.com/AxGord/Pony/wiki/Net)
     * [RPC](//github.com/AxGord/Pony/wiki/RPC)

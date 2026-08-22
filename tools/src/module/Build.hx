@@ -81,12 +81,12 @@ final class Build extends CfgModule<BuildConfig> {
 
 	override private function runNode(cfg: BuildConfig): Void {
 		if (cfg.runHxml.length == 0) {
-			var cmd: Array<SPair<String>> = [for (l in haxelib) new SPair(LIB, l)];
+			var cmd: Array<SPair<String>> = [for (l in haxelib) new SPair(LIB, cfg.hxml != null ? rmDev(l) : l)];
 			for (d in flags) cmd.push(new SPair(D, d));
-			for (l in postHaxelibs) cmd.push(new SPair(LIB, l));
+			for (l in postHaxelibs) cmd.push(new SPair(LIB, cfg.hxml != null ? rmDev(l) : l));
 			if (cfg.app != null) cmd.push(new SPair(D, 'app=${cfg.app}'));
 			if (cfg.debug) cmd.push(new SPair('-debug', ''));
-			cmd = cmd.concat(cfg.command);
+			cmd = cmd.concat(cfg.hxml != null ? cfg.command.map(rmDevFromLibs) : cfg.command);
 			if (cfg.hxml != null) {
 				saveHxml(cfg.hxml, cmd);
 			} else {
@@ -244,6 +244,13 @@ final class Build extends CfgModule<BuildConfig> {
 	private static inline function cmdPairToStr(p: SPair<String>): String return p.a + (p.b.length > 0 ? ' ' + p.b : '');
 
 	private static inline function cmdArrPairToArrStr(a: Array<SPair<String>>): Array<String> return [for (c in a) cmdPairToStr(c)];
+
+	private static inline function rmDev(s: String): String {
+		final i: Int = s.indexOf(':dev');
+		return i == -1 ? s : s.substr(0, i);
+	}
+
+	private static function rmDevFromLibs(p: SPair<String>): SPair<String> return p.a == LIB ? new SPair(LIB, rmDev(p.b)) : p;
 
 }
 

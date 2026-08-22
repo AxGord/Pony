@@ -10,8 +10,8 @@ import create.section.Download;
 class Heaps {
 
 	public static var HLSDL_VERSION: String = 'dev';
-	public static var WIN_HL_VERSION: String = 'hl_ver:1.12.0';
-	public static var HL_VERSION: String = 'hl_ver:1.12.0';
+	public static var WIN_HL_VERSION: String = 'hl_ver:1.16.0';
+	public static var HL_VERSION: String = 'hl_ver:1.16.0';
 
 	public static function setJs(project: Project, ?second: Bool): Void {
 		JS.set(project, second);
@@ -28,7 +28,8 @@ class Heaps {
 			'js' => defBaseUrl,
 			'android' => androidBaseUrl
 		]: ConfigOptions);
-		project.haxelib.addLib({ name: 'heaps', version: 'git', git: 'git@github.com:HeapsIO/heaps.git', commit: 'd1d0008ccbad2f7f3ec802d8f4469bf82bce7f5f', y: true });
+		project.haxelib.addLib({ name: 'heaps', version: '2.1.0' });
+		project.haxelib.addLib({ name: 'domkit', version: '0.3.0' }); // Flow.hx dependency bug
 	}
 
 	public static function set(project: Project, ?second: Bool): Void {
@@ -38,7 +39,7 @@ class Heaps {
 		project.build.appNode = 'js';
 		project.uglify.appNode = 'js';
 		project.haxelib.addLib(
-			{ name: 'hashlink', version: 'git', git: 'git@github.com:HaxeFoundation/hashlink.git', commit: '1.12', mute: true, y: true }
+			{ name: 'hashlink', version: 'git', git: 'git@github.com:HaxeFoundation/hashlink.git', commit: '1.16', mute: true, y: true }
 		);
 		project.haxelib.addLib({ name: 'hldx', parent: 'hashlink', path: 'libs/directx/', version: HLSDL_VERSION, mute: true });
 		project.haxelib.addLib({ name: 'hlsdl', parent: 'hashlink', path: 'libs/sdl/', version: HLSDL_VERSION, mute: true });

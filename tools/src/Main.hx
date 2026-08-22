@@ -91,6 +91,7 @@ class Main {
 	private static function registerModules(modules: Modules): Void {
 		modules.register(new module.Haxelib());
 		modules.register(new module.Npm());
+		modules.register(new module.Spritesheet());
 		modules.register(new module.Texturepacker());
 		modules.register(new module.Build());
 		modules.register(new module.Cordova());

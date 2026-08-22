@@ -53,7 +53,7 @@ class Build extends Section {
 			}
 			if (dce != null) prepare.addChild(XmlTools.node('dce', dce));
 			if (analyzerOptimize) prepare.addChild(XmlTools.node('d', 'analyzer-optimize'));
-			prepare.addChild(XmlTools.node('d', 'js-es$esVersion'));
+			if (esVersion != null) prepare.addChild(XmlTools.node('d', 'js-es$esVersion'));
 			for (name in flags) {
 				final a: Array<String> = name.split(':').map(StringTools.trim);
 				final d: Xml = XmlTools.node('d', a.pop());
