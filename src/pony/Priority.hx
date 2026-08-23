@@ -185,10 +185,18 @@ typedef PriorityIds = Priority<{
 	}
 
 	/**
-	 * Call this method if you use break
+	 * Call this method if you use break.
+	 *
+	 * Drops the cursor `iterator()` pushed for the loop being abandoned — the LAST one, since
+	 * iterators nest as a stack. It used to clear every cursor above index 0, which also threw
+	 * away the cursor of any loop this one was nested inside: that loop's `hasNext` then read
+	 * `counters[n]` past the end of the array and quietly reported no more elements. Breaking
+	 * out of a lookup inside a `dispatch` therefore truncated the dispatch itself. Index 0 is
+	 * not an iterator cursor — `loop()` and `backLoop()` keep their position there — so it
+	 * stays.
 	 */
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	public inline function brk(): Void if (counters != null) counters.splice(1, counters.length);
+	public inline function brk(): Void if (counters != null && counters.length > 1) counters.pop();
 
 	/**
 	 * Remove all elements

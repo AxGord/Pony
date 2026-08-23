@@ -45,7 +45,7 @@ import pony.geom.Point;
 		return c;
 	}
 
-	private function get_size(): Point<Float> return new Point<Float>(textWidth * scaleX, textHeight * scaleY);
+	private function get_size(): Point<Float> return GUIUtils.textSize(this) * new Point<Float>(scaleX, scaleY);
 
 	public inline function enable(): Void enabled = true;
 

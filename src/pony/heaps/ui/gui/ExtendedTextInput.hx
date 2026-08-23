@@ -79,7 +79,7 @@ abstract Transform(Int) {
 		return v;
 	}
 
-	private function get_size(): Point<Float> return new Point<Float>(textWidth * scaleX, textHeight * scaleY);
+	private function get_size(): Point<Float> return GUIUtils.textSize(this) * new Point<Float>(scaleX, scaleY);
 
 	public inline function setCursorParams(y: Float, h: Float, ?color: Null<UColor>): Void {
 		cursorTile.dy = y;

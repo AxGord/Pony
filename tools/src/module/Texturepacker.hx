@@ -21,6 +21,7 @@ private typedef TPConfig = {
 private typedef TPUnit = {
 	format: String,
 	scale: Float,
+	scaleMode: String,
 	?datascale: Float,
 	quality: Float,
 	input: Array<String>,
@@ -59,7 +60,7 @@ private typedef TPUnit = {
 	override private function readNodeConfig(xml: Fast, ac: AppCfg): Void {
 		new Path(
 			xml,
-			{ app: ac.app, debug: ac.debug, before: false, section: BASection.Prepare, format: 'json png', scale: 1, quality: 1, from: '', to: '', rotation: true, input: [], output: null, allowCfg: false, forceSquared: false, extrude: 0, padding: 0, alpha: true, multipack: false, basicSortBy: null, size: null, pot: false, clean: false, cordova: false },
+			{ app: ac.app, debug: ac.debug, before: false, section: BASection.Prepare, format: 'json png', scale: 1, scaleMode: 'Smooth', quality: 1, from: '', to: '', rotation: true, input: [], output: null, allowCfg: false, forceSquared: false, extrude: 0, padding: 0, alpha: true, multipack: false, basicSortBy: null, size: null, pot: false, clean: false, cordova: false },
 			configHandler
 		);
 	}
@@ -127,8 +128,9 @@ private typedef TPUnit = {
 				command.push('--scale');
 				command.push('${unit.scale}');
 
+				// Smooth by default; pixel art needs Fast, which is TexturePacker's nearest neighbour.
 				command.push('--scale-mode');
-				command.push('Smooth');
+				command.push(unit.scaleMode);
 			}
 
 			command.push(unit.rotation ? '--enable-rotation' : '--disable-rotation');
@@ -278,6 +280,7 @@ private class Path extends BAReader<TPConfig> {
 	private function clean(): Void {
 		cfg.format = 'json png';
 		cfg.scale = 1;
+		cfg.scaleMode = 'Smooth';
 		cfg.quality = 1;
 		cfg.from = '';
 		cfg.to = '';
@@ -312,6 +315,8 @@ private class Path extends BAReader<TPConfig> {
 				cfg.format = val;
 			case 'scale':
 				cfg.scale = cfg.scale * Std.parseFloat(val);
+			case 'scaleMode':
+				cfg.scaleMode = val;
 			case 'datascale':
 				cfg.datascale = Std.parseFloat(val);
 			case 'quality':

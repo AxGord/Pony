@@ -3,9 +3,11 @@ package pony.heaps.ui.gui.layout;
 import h2d.Mask;
 import h2d.Object;
 import h2d.RenderContext;
+import h2d.Text;
 import h2d.col.Bounds;
 import pony.geom.IWH;
 import pony.geom.Point;
+import pony.heaps.ui.gui.GUIUtils;
 import pony.magic.HasLink;
 import pony.magic.HasSignal;
 import pony.ui.gui.BaseLayoutCore;
@@ -78,6 +80,8 @@ class BaseLayout<T:BaseLayoutCore<Object>> extends Object implements IWH impleme
 	public function wait(cb: Void -> Void): Void layout.wait(cb);
 
 	private function _getSize(o: Object): Point<Float> {
+		// A text's bounds are the ink of the string it holds right now — measure its box instead.
+		if (Std.isOfType(o, Text)) return GUIUtils.textSize(cast o);
 		final b: Bounds = o.getBounds(this);
 		return new Point(b.width, b.height);
 	}

@@ -246,6 +246,31 @@ class PriorityTest {
 	}
 
 	@Test
+	public function brkInsideIteration(): Void {
+		final visited: Array<Int> = [];
+		for (e in p2) {
+			visited.push(e);
+			for (inner in p2) if (inner == 1) {
+				p2.brk();
+				break;
+			}
+		}
+		Assert.areEqual('1,2,3,4,5,6', visited.join(','));
+		Assert.areEqual(1, p2.counters.length);
+	}
+
+	@Test
+	public function brkKeepsLoopCursor(): Void {
+		Assert.areEqual(1, p2.loop());
+		Assert.areEqual(2, p2.loop());
+		for (e in p2) {
+			p2.brk();
+			break;
+		}
+		Assert.areEqual(3, p2.loop());
+	}
+
+	@Test
 	public function someProblemWithRemoveElementFromHash(): Void {
 		final p: Priority<String> = new Priority<String>();
 		p.add('E', 50);

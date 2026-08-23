@@ -1,4 +1,5 @@
 import pony.Fast;
+import pony.geom.Point;
 import pony.magic.HasAbstract;
 import pony.text.XmlConfigReader;
 import types.BAConfig;
@@ -81,6 +82,37 @@ class BAReader<T:BAConfig> extends XmlConfigReader<T> implements HasAbstract {
 		final cfg: T = copyCfg();
 		cfg.allowCfg = false;
 		_selfCreate(xml, cfg);
+	}
+
+	/**
+	 * Reads a `WxH` or `W H` pair; a lone number is a square.
+	 */
+	private static function parseWh(val: String): Point<Int> {
+		final a: Array<String> = val.split(val.indexOf('x') != -1 ? 'x' : ' ');
+		final w: Int = parseSide(a[0]);
+		return new Point<Int>(w, a.length > 1 ? parseSide(a[1]) : w);
+	}
+
+	/**
+	 * One side of a size. An empty string is zero, which every caller reads as "not set"; anything
+	 * else that is not a plain number throws, because the alternative is a config typo silently
+	 * meaning "not set" and the build going on to produce the wrong size.
+	 */
+	private static function parseSide(val: String): Int {
+		if (val == '') return 0;
+		final v: Null<Int> = Std.parseInt(val);
+		if (v == null || '$v' != val) throw 'Bad size: "$val"';
+		return v;
+	}
+
+	/**
+	 * A `<unit>`'s own size, falling back to the size inherited from the enclosing scope.
+	 */
+	private function readSize(xml: Fast, fallback: Point<Int>): Point<Int> {
+		if (xml.has.wh) return parseWh(normalize(xml.att.wh));
+		final w: Int = xml.has.w ? parseSide(normalize(xml.att.w)) : fallback.x;
+		final h: Int = xml.has.h ? parseSide(normalize(xml.att.h)) : fallback.y;
+		return new Point<Int>(w, h);
 	}
 
 }

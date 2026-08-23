@@ -16,5 +16,5 @@ enum SliceData {
 	Vert6(?a: Array<String>);
 	Hor6(?a: Array<String>);
 	Nine(?a: Array<String>);
-	Anim(?speed: Float, ?delay: Time, ?a: Array<String>);
+	Anim(?speed: Float, ?delay: Time, ?rest: Int, ?boost: Float, ?maxSpeed: Float, ?a: Array<String>);
 }

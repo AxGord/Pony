@@ -125,8 +125,8 @@ private typedef SpritesheetConfig = {
 			case 'unit': cfg.units.push({
 				input: normalize(xml.innerData),
 				output: xml.has.to ? normalize(xml.att.to) : normalize(xml.innerData),
-				size: readSize(xml),
-				count: xml.has.count ? parseSide(normalize(xml.att.count)) : cfg.count,
+				size: readSize(xml, cfg.size),
+				count: xml.has.count ? BAReader.parseSide(normalize(xml.att.count)) : cfg.count,
 				colorKey: xml.has.colorKey ? normalize(xml.att.colorKey) : cfg.colorKey
 			});
 			case _: super.readNode(xml);
@@ -147,30 +147,12 @@ private typedef SpritesheetConfig = {
 		switch name {
 			case 'from': cfg.from += val;
 			case 'to': cfg.to += val;
-			case 'wh': cfg.size = parseWh(val);
-			case 'w': cfg.size = new Point<Int>(parseSide(val), cfg.size.y);
-			case 'h': cfg.size = new Point<Int>(cfg.size.x, parseSide(val));
-			case 'count': cfg.count = parseSide(val);
+			case 'wh': cfg.size = BAReader.parseWh(val);
+			case 'w': cfg.size = new Point<Int>(BAReader.parseSide(val), cfg.size.y);
+			case 'h': cfg.size = new Point<Int>(cfg.size.x, BAReader.parseSide(val));
+			case 'count': cfg.count = BAReader.parseSide(val);
 			case 'colorKey': cfg.colorKey = val;
 		}
-	}
-
-	private function readSize(xml: Fast): Point<Int> {
-		if (xml.has.wh) return parseWh(normalize(xml.att.wh));
-		final w: Int = xml.has.w ? parseSide(normalize(xml.att.w)) : cfg.size.x;
-		final h: Int = xml.has.h ? parseSide(normalize(xml.att.h)) : cfg.size.y;
-		return new Point<Int>(w, h);
-	}
-
-	private function parseWh(val: String): Point<Int> {
-		final a: Array<String> = val.split(val.indexOf('x') != -1 ? 'x' : ' ');
-		final w: Int = parseSide(a[0]);
-		return new Point<Int>(w, a.length > 1 ? parseSide(a[1]) : w);
-	}
-
-	private function parseSide(val: String): Int {
-		final v: Null<Int> = Std.parseInt(val);
-		return v != null ? v : 0;
 	}
 
 }

@@ -9,13 +9,13 @@ It runs in the `prepare` section at priority 2 — before `<texturepacker>` (3),
 it writes are already on disk when the packer walks the input directory.
 
 ```xml
-<spritesheet group="assets" from="assets_pack/" to="assets_source/frames/">
+<spritesheet group="assets" from="assets_source/sheets/" to="assets_built/frames/">
 	<unit wh="82 66" to="horse/run" colorKey="#FFFFFF">horse_run_cycle.png</unit>
 	<unit wh="32 32" to="coin/gold">coin_gold.png</unit>
 </spritesheet>
 ```
 
-writes `assets_source/frames/horse/run_0.png` … `run_4.png` and `coin/gold_0.png` … `gold_7.png`.
+writes `assets_built/frames/horse/run_0.png` … `run_4.png` and `coin/gold_0.png` … `gold_7.png`.
 
 The `_<index>` suffix is what a libgdx atlas folds back into a single region with frame
 indices, which is what `pony.ui.AssetManager.animation` reads.
@@ -30,7 +30,7 @@ in every other module.
 |-----------|---------|
 | `from`    | Prefix for input paths (accumulates through nesting). |
 | `to`      | Prefix for output paths (accumulates through nesting). |
-| `wh`      | Cell size — `"82 66"` or `"82x66"`. A single number means a square cell. |
+| `wh`      | Cell size — `"82 66"` or `"82x66"`. A single number means a square cell. A value that is not a plain number ends the build rather than reading as zero. |
 | `w`, `h`  | Cell size one side at a time. |
 | `count`   | How many frames to write. Omit to take the whole grid. |
 | `colorKey`| Backdrop color to erase, e.g. `"#FFFFFF"`. Any pixel matching it exactly becomes fully transparent. |
@@ -42,7 +42,8 @@ follows that order — so `count` trims the tail of a sheet whose last row is pa
 `colorKey` matches exact pixel values, so it suits pixel art drawn on a flat backdrop and not
 an anti-aliased render, where the halo around each edge is a different color on every pixel.
 
-Only 32-bit PNG in, 32-bit PNG out, no scaling or trimming: an alpha-trimming pass belongs
-to the packer, which knows the atlas layout. Keep `trim="None"` on `<texturepacker>` when the
+Only 32-bit PNG in, 32-bit PNG out, no scaling or trimming: scaling is
+[`<resize>`](resize.md), and an alpha-trimming pass belongs to the packer, which knows the
+atlas layout. Keep `trim="None"` on `<texturepacker>` when the
 frames are animation cells — trimming each cell to its own alpha bounds is exactly what makes
 an animation wobble.

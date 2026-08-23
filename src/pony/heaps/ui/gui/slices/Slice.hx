@@ -21,7 +21,7 @@ class Slice {
 				case 0: throw 'Tiles not found';
 				case 1 if (repeat): new NodeRepeat(tiles[0], parent);
 				case 1: new NodeBitmap(tiles[0], border, parent);
-				case _: new NodeAnim(tiles, parent);
+				case _: new NodeAnim(tiles, border, parent);
 			}
 		} else {
 			return switch SliceTools.getType(src) {
@@ -35,7 +35,7 @@ class Slice {
 				case Hor6(): new Slice6H(tiles, repeat, parent);
 				case Vert6(): new Slice6V(tiles, repeat, parent);
 				case Nine(): new Slice9(tiles, repeat, parent);
-				case Anim(speed, delay): new NodeAnim(tiles, speed, delay, parent);
+				case Anim(speed, delay, rest, boost, maxSpeed): new NodeAnim(tiles, speed, delay, rest, boost, maxSpeed, border, parent);
 				case _: throw 'Not supported';
 			}
 		}
