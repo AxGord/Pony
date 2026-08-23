@@ -27,8 +27,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "NodeJS bytesToBuffer bugfix for all node versions. Logable verbose bugfix.",
-"version": "1.9.12",
+"releasenote": "Update Heaps version. Bugfixes and other improvements.",
+"version": "1.10.0",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }
