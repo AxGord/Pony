@@ -45,6 +45,7 @@ abstract SmallDeviceQuality(Int) to Int {
 		rect = new Rect<Float>(0, 0, size.x, size.y);
 		width = size.x;
 		height = size.y;
+		this.smallDeviceQuality = smallDeviceQuality;
 		eDynStageResize.onTake << takeDynStageHandler;
 		eDynStageResize.onLost << lostDynStageHandler;
 	}
