@@ -112,6 +112,7 @@ class Main {
 		modules.register(new module.Imagemin());
 		modules.register(new module.Lame());
 		modules.register(new module.Oggenc());
+		modules.register(new module.Ffmpeg());
 		modules.register(new module.Shntool());
 		modules.register(new module.Atlas());
 		modules.register(new module.Poeditor());
