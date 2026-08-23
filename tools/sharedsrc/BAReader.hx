@@ -85,33 +85,47 @@ class BAReader<T:BAConfig> extends XmlConfigReader<T> implements HasAbstract {
 	}
 
 	/**
-	 * Reads a `WxH` or `W H` pair; a lone number is a square.
+	 * Reads a `WxH` or `W H` pair; a lone number is a square. A pair with an empty half — which is
+	 * what a doubled separator produces — is a typo and throws, rather than reading as a side that
+	 * was never set.
 	 */
-	private static function parseWh(val: String): Point<Int> {
+	private static function parseWh(val: String, ?name: String): Point<Int> {
 		final a: Array<String> = val.split(val.indexOf('x') != -1 ? 'x' : ' ');
-		final w: Int = parseSide(a[0]);
-		return new Point<Int>(w, a.length > 1 ? parseSide(a[1]) : w);
+		if (a.length == 1) {
+			final w: Int = parseSide(a[0], name);
+			return new Point<Int>(w, w);
+		}
+		if (a.length > 2 || a[0] == '' || a[1] == '') throw badSize(val, name);
+		return new Point<Int>(parseSide(a[0], name), parseSide(a[1], name));
 	}
 
 	/**
 	 * One side of a size. An empty string is zero, which every caller reads as "not set"; anything
-	 * else that is not a plain number throws, because the alternative is a config typo silently
-	 * meaning "not set" and the build going on to produce the wrong size.
+	 * else that is not a plain non-negative number throws, because the alternative is a config typo
+	 * silently meaning "not set" and the build going on to produce the wrong size.
 	 */
-	private static function parseSide(val: String): Int {
+	private static function parseSide(val: String, ?name: String): Int {
 		if (val == '') return 0;
 		final v: Null<Int> = Std.parseInt(val);
-		if (v == null || '$v' != val) throw 'Bad size: "$val"';
+		if (v == null || v < 0 || '$v' != val) throw badSize(val, name);
 		return v;
+	}
+
+	/**
+	 * The throw surfaces as an uncaught exception with a stack trace and no XML around it, so the
+	 * attribute name is the only thing telling the reader which knob in pony.xml to go and look at.
+	 */
+	private static inline function badSize(val: String, ?name: String): String {
+		return name == null ? 'Bad size: "$val"' : 'Bad $name: "$val"';
 	}
 
 	/**
 	 * A `<unit>`'s own size, falling back to the size inherited from the enclosing scope.
 	 */
 	private function readSize(xml: Fast, fallback: Point<Int>): Point<Int> {
-		if (xml.has.wh) return parseWh(normalize(xml.att.wh));
-		final w: Int = xml.has.w ? parseSide(normalize(xml.att.w)) : fallback.x;
-		final h: Int = xml.has.h ? parseSide(normalize(xml.att.h)) : fallback.y;
+		if (xml.has.wh) return parseWh(normalize(xml.att.wh), 'wh');
+		final w: Int = xml.has.w ? parseSide(normalize(xml.att.w), 'w') : fallback.x;
+		final h: Int = xml.has.h ? parseSide(normalize(xml.att.h), 'h') : fallback.y;
 		return new Point<Int>(w, h);
 	}
 

@@ -126,7 +126,7 @@ private typedef SpritesheetConfig = {
 				input: normalize(xml.innerData),
 				output: xml.has.to ? normalize(xml.att.to) : normalize(xml.innerData),
 				size: readSize(xml, cfg.size),
-				count: xml.has.count ? BAReader.parseSide(normalize(xml.att.count)) : cfg.count,
+				count: xml.has.count ? BAReader.parseSide(normalize(xml.att.count), 'count') : cfg.count,
 				colorKey: xml.has.colorKey ? normalize(xml.att.colorKey) : cfg.colorKey
 			});
 			case _: super.readNode(xml);
@@ -147,10 +147,10 @@ private typedef SpritesheetConfig = {
 		switch name {
 			case 'from': cfg.from += val;
 			case 'to': cfg.to += val;
-			case 'wh': cfg.size = BAReader.parseWh(val);
-			case 'w': cfg.size = new Point<Int>(BAReader.parseSide(val), cfg.size.y);
-			case 'h': cfg.size = new Point<Int>(cfg.size.x, BAReader.parseSide(val));
-			case 'count': cfg.count = BAReader.parseSide(val);
+			case 'wh': cfg.size = BAReader.parseWh(val, name);
+			case 'w': cfg.size = new Point<Int>(BAReader.parseSide(val, name), cfg.size.y);
+			case 'h': cfg.size = new Point<Int>(cfg.size.x, BAReader.parseSide(val, name));
+			case 'count': cfg.count = BAReader.parseSide(val, name);
 			case 'colorKey': cfg.colorKey = val;
 		}
 	}

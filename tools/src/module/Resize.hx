@@ -7,6 +7,7 @@ import format.png.Writer;
 import haxe.io.Bytes;
 import pony.Fast;
 import pony.fs.Dir;
+import pony.fs.File as FsFile;
 import pony.geom.Point;
 import sys.io.File;
 import sys.io.FileInput;
@@ -26,7 +27,9 @@ import types.BASection;
 	private static inline final PRIORITY: Int = 2;
 	private static inline final CHANNELS: Int = 4;
 	private static inline final HALF: Float = 0.5;
-	private static inline final PNG: String = 'png';
+
+	/** Matched as a plain suffix by `Dir`, so the dot is what keeps a file named `weirdpng` out. */
+	private static inline final PNG_EXT: String = '.png';
 
 	public function new() super('resize');
 
@@ -70,10 +73,15 @@ import types.BASection;
 			error('Directory not found: $from');
 			return;
 		}
-		for (file in dir.contentRecursiveFiles(PNG)) {
-			final path: String = file.first.substr(from.length);
-			resample(from + path, to + path, unit.size);
+		final files: Array<FsFile> = dir.contentRecursiveFiles(PNG_EXT);
+		if (files.length == 0) {
+			error('No PNG under $from');
+			return;
 		}
+		// Cut to a path relative to the walked root, so an empty `to` writes beside the sources
+		// instead of at the filesystem root.
+		final cut: Int = from == '' ? 0 : from.length + 1;
+		for (file in files) resample(file.first, join(to, file.first.substr(cut)), unit.size);
 	}
 
 	/**
@@ -119,6 +127,8 @@ import types.BASection;
 	private static inline function trimSlash(path: String): String {
 		return path.charAt(path.length - 1) == '/' ? path.substr(0, path.length - 1) : path;
 	}
+
+	private static inline function join(dir: String, path: String): String return dir == '' ? path : '$dir/$path';
 
 }
 
@@ -170,9 +180,9 @@ private typedef ResizeConfig = {
 		switch name {
 			case 'from': cfg.from += val;
 			case 'to': cfg.to += val;
-			case 'wh': cfg.size = BAReader.parseWh(val);
-			case 'w': cfg.size = new Point<Int>(BAReader.parseSide(val), cfg.size.y);
-			case 'h': cfg.size = new Point<Int>(cfg.size.x, BAReader.parseSide(val));
+			case 'wh': cfg.size = BAReader.parseWh(val, name);
+			case 'w': cfg.size = new Point<Int>(BAReader.parseSide(val, name), cfg.size.y);
+			case 'h': cfg.size = new Point<Int>(cfg.size.x, BAReader.parseSide(val, name));
 		}
 	}
 
