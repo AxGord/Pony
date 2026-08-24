@@ -17,6 +17,7 @@ import pony.magic.HasSignal;
 import pony.time.DeltaTime;
 import pony.ui.keyboard.Keyboard;
 #if js
+import js.Browser;
 import js.html.Element;
 import pony.js.SmartCanvas;
 #end
@@ -64,7 +65,14 @@ import pony.js.SmartCanvas;
 		Keyboard.preventDefault = false;
 		canvas = new SmartCanvas(size, parentDom);
 		canvas.canvas.setAttribute('propagateKeyEvents', 'false');
+		// `true` is globalEvents: every heaps listener goes on the window. In an iframe, which is how
+		// itch.io serves a game, that loses both the keys and the finger, hence the two lines below.
 		@:privateAccess Window.inst = new Window(canvas.canvas, true);
+		// Empty on purpose: Safari sends touches only to an element with a listener of its own, and
+		// fakes a mousedown/mouseup pair at the lift otherwise, so a held finger reads as a tap.
+		canvas.canvas.addEventListener('touchstart', _ -> {});
+		// The page around keeps the focus, and heaps cancels the mousedown that would hand it over.
+		Browser.window.addEventListener('pointerdown', _ -> if (!Browser.document.hasFocus()) Browser.window.focus());
 		#else
 		canvas = new SmartCanvas(size);
 		onInit < sdlInitHandler;

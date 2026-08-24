@@ -27,8 +27,8 @@
 "contributors": [
 "AxGord"
 ],
-"releasenote": "Update Heaps version. Bugfixes and other improvements.",
-"version": "1.10.0",
+"releasenote": "Fix input in an iframe: keys need focus, touches need the canvas",
+"version": "1.10.1",
 "url": "https://github.com/AxGord/Pony",
 "dependencies": {}
 }
