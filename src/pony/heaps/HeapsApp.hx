@@ -73,6 +73,8 @@ import pony.js.SmartCanvas;
 		canvas.canvas.addEventListener('touchstart', _ -> {});
 		// The page around keeps the focus, and heaps cancels the mousedown that would hand it over.
 		Browser.window.addEventListener('pointerdown', _ -> if (!Browser.document.hasFocus()) Browser.window.focus());
+		AudioSessionKeeper.init();
+		initMediaSession();
 		#else
 		canvas = new SmartCanvas(size);
 		onInit < sdlInitHandler;
@@ -210,5 +212,24 @@ import pony.js.SmartCanvas;
 		return @:privateAccess new Point(s2d.interactiveCamera.screenXToCamera(x, y), s2d.interactiveCamera.screenYToCamera(x, y));
 
 	private static inline function get_s2dReady(): Bool return instance != null && instance.s2d != null;
+
+
+	#if js
+	/**
+	 * The playback session AudioSessionKeeper asks for also puts the page into Now Playing, where
+	 * Safari otherwise shows the host name. Everything it needs the document already declares, so
+	 * nothing is configured here: `<title>`, `<meta name="author">` and `<link rel="icon">`.
+	 */
+	private static function initMediaSession(): Void {
+		final author: Null<Element> = Browser.document.querySelector('meta[name="author"]');
+		final icon: Null<Element> = Browser.document.querySelector('link[rel~="icon"]');
+		final artist: String = author != null ? author.getAttribute('content') ?? '' : '';
+		final iconHref: String = icon != null ? icon.getAttribute('href') ?? '' : '';
+		js.Syntax.code(
+			'if (navigator.mediaSession && window.MediaMetadata) navigator.mediaSession.metadata = new MediaMetadata({0})',
+			{ title: Browser.document.title, artist: artist, artwork: iconHref == '' ? [] : [{ src: iconHref }] }
+		);
+	}
+	#end
 
 }
