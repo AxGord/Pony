@@ -106,6 +106,8 @@ Manual
 
 * [Declarative listeners](docs/listen.md)
 
+* [Audio session (js)](docs/audio-session.md)
+
 * [Net](//github.com/AxGord/Pony/wiki/Net)
     * [RPC](//github.com/AxGord/Pony/wiki/RPC)
 
