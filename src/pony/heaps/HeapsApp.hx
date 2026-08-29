@@ -71,8 +71,7 @@ import pony.js.SmartCanvas;
 		// itch.io serves a game, that loses both the keys and the finger, hence the two lines below.
 		@:privateAccess Window.inst = new Window(canvas.canvas, true);
 		suppressTouchDefaults(canvas.canvas);
-		// The page around keeps the focus, and heaps cancels the mousedown that would hand it over.
-		Browser.window.addEventListener('pointerdown', _ -> if (!Browser.document.hasFocus()) Browser.window.focus());
+		takeFocusFromPage();
 		AudioSessionKeeper.init();
 		initMediaSession();
 		#else
@@ -237,6 +236,27 @@ import pony.js.SmartCanvas;
 	}
 
 	private static function preventHandler(event: Event): Void event.preventDefault();
+
+	/**
+	 * With every heaps listener on the window, the game hears nothing until the frame holds the
+	 * focus, and the page around is what has it. A click cannot hand it over by itself — heaps
+	 * cancels the `mousedown` whose default action IS the transfer — so it is taken explicitly.
+	 *
+	 * The portal's own fullscreen button is a click in that PAGE, which the frame never sees: the
+	 * element put into fullscreen belongs to the page's document, so no `fullscreenchange` arrives
+	 * here and `document.fullscreenElement` stays null. Measured in a cross-origin frame, the ONLY
+	 * trace of it inside is the resize, which is what the second listener waits for — without it
+	 * the keyboard is dead until the player clicks, which reads as the game being broken by
+	 * fullscreen. A frame may focus itself with no user activation of its own, so nothing gates it.
+	 */
+	private static function takeFocusFromPage(): Void {
+		Browser.window.addEventListener('pointerdown', takeFocusHandler);
+		// A page of its own already holds the focus, and a resize there is the user working in
+		// another window — taking it then would take it from them.
+		if (Browser.window != Browser.window.top) Browser.window.addEventListener('resize', takeFocusHandler);
+	}
+
+	private static function takeFocusHandler(): Void if (!Browser.document.hasFocus()) Browser.window.focus();
 
 	/**
 	 * The playback session AudioSessionKeeper asks for also puts the page into Now Playing, where
