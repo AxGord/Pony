@@ -358,7 +358,7 @@ using pony.text.TextTools;
 				if (name != null) throw ERROR_NAME_SET;
 				var assets: Array<String> = AssetManager.parseInterval(asset);
 				if (assets.length == 1) assets = SliceTools.getNames(assets[0]);
-				[for (e in assets) texture(e)];
+				[ for (e in assets) texture(e) ];
 			case _:
 				throw ERROR_NOT_SUPPORTED;
 		};

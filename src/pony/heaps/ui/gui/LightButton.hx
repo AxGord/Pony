@@ -23,7 +23,7 @@ import pony.ui.touch.Touchable;
 
 	public function new(size: Point<UInt>, colors: UColors, ?parent: Object) {
 		super(size.x, size.y, parent);
-		this.colors = [for (color in colors) color.invertAlpha];
+		this.colors = [ for (color in colors) color.invertAlpha ];
 		if (colors.length > 0) backgroundColor = this.colors[0];
 		touchable = new Touchable(@:nullSafety(Off) this);
 		touchable.propagateWheel = true;

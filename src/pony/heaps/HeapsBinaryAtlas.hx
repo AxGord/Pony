@@ -22,15 +22,13 @@ using pony.text.TextTools;
 		final scale: Float = file.width / data.width;
 		@:nullSafety(Off) return [
 			for (key in data.contents.keys())
-				key => [
-					for (p in data.contents[key]) {
-						var t: Tile = file.sub(
-							Std.int(p.x * scale), Std.int(p.y * scale), Std.int(p.w * scale), Std.int(p.h * scale), p.dx, p.dy
-						);
-						if (scale != 1) t.scaleToSize(p.w, p.h);
-						{ t: t, width: p.origW, height: p.origH }
-					}
-				]
+				key => [ for (p in data.contents[key]) {
+					var t: Tile = file.sub(
+						Std.int(p.x * scale), Std.int(p.y * scale), Std.int(p.w * scale), Std.int(p.h * scale), p.dx, p.dy
+					);
+					if (scale != 1) t.scaleToSize(p.w, p.h);
+					{ t: t, width: p.origW, height: p.origH }
+				} ]
 		];
 	}
 

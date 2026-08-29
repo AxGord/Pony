@@ -21,26 +21,24 @@ import pony.geom.Point;
 
 	@SuppressWarnings('checkstyle:MagicNumber')
 	#if (haxe_ver >= 4.2) extern #else @:extern #end
-	private inline function get_glyphsPos(): Array<Point<Float>> return [for (gp in glyphsPoints) gp.a];
+	private inline function get_glyphsPos(): Array<Point<Float>> return [ for (gp in glyphsPoints) gp.a ];
 
 	public inline function getFirstGlyphPos(?pos: Point<Float>): Point<Float> return @:nullSafety(Off) glyphsPoints[0].a;
 
 	public inline function getGlyphsPos(?pos: Point<Float>): Array<Point<Float>>
-		return pos == null ? glyphsPos : [for (gp in glyphsPoints) gp.a + pos];
+		return pos == null ? glyphsPos : [ for (gp in glyphsPoints) gp.a + pos ];
 
 	/**
 	 * Split text to bitmaps
 	 */
 	public function split(?parent: Object, ?pos: Point<Float>): Array<Bitmap> {
-		return [
-			for (gp in glyphsPoints) {
-				var b: Bitmap = new Bitmap(gp.b, parent);
-				b.color = color;
-				if (sdfShader != null) b.addShader(sdfShader);
-				(pos == null ? gp.a : gp.a + pos).setPosition(b);
-				b;
-			}
-		];
+		return [ for (gp in glyphsPoints) {
+			var b: Bitmap = new Bitmap(gp.b, parent);
+			b.color = color;
+			if (sdfShader != null) b.addShader(sdfShader);
+			(pos == null ? gp.a : gp.a + pos).setPosition(b);
+			b;
+		} ];
 	}
 
 	/**

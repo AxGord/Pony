@@ -18,10 +18,13 @@ abstract CDBHeapsImages(Dynamic) {
 	#if (haxe_ver >= '4.0.0')
 	public inline function keyValueIterator(): KeyValueIterator<String, Tile> {
 		final it: Iterator<String> = this.fields().iterator();
-		return { hasNext: it.hasNext, next: () -> {
-			final key: String = it.next();
-			return { key: key, value: get(key) };
-		} };
+		return {
+			hasNext: it.hasNext,
+			next: () -> {
+				final key: String = it.next();
+				return { key: key, value: get(key) };
+			}
+		};
 	}
 	#end
 

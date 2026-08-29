@@ -69,7 +69,7 @@ import pony.ui.xml.RepeatObject;
 	}
 
 	private function create(o: RepeatObject): Object {
-		return @:privateAccess ui.createUIElement(o.name, o.attrs, [for (c in o.content) create(c)], o.textContent);
+		return @:privateAccess ui.createUIElement(o.name, o.attrs, [ for (c in o.content) create(c) ], o.textContent);
 	}
 
 	override private function onAdd(): Void {
