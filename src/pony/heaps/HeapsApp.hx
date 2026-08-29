@@ -18,7 +18,9 @@ import pony.time.DeltaTime;
 import pony.ui.keyboard.Keyboard;
 #if js
 import js.Browser;
+import js.html.CanvasElement;
 import js.html.Element;
+import js.html.Event;
 import pony.js.SmartCanvas;
 #end
 
@@ -68,9 +70,7 @@ import pony.js.SmartCanvas;
 		// `true` is globalEvents: every heaps listener goes on the window. In an iframe, which is how
 		// itch.io serves a game, that loses both the keys and the finger, hence the two lines below.
 		@:privateAccess Window.inst = new Window(canvas.canvas, true);
-		// Empty on purpose: Safari sends touches only to an element with a listener of its own, and
-		// fakes a mousedown/mouseup pair at the lift otherwise, so a held finger reads as a tap.
-		canvas.canvas.addEventListener('touchstart', _ -> {});
+		suppressTouchDefaults(canvas.canvas);
 		// The page around keeps the focus, and heaps cancels the mousedown that would hand it over.
 		Browser.window.addEventListener('pointerdown', _ -> if (!Browser.document.hasFocus()) Browser.window.focus());
 		AudioSessionKeeper.init();
@@ -215,6 +215,29 @@ import pony.js.SmartCanvas;
 
 
 	#if js
+	/**
+	 * Safari delivers touches only to an element carrying a touch listener of its OWN, and heaps
+	 * puts every listener on the window, so the canvas needs its own three. They are not empty:
+	 * the `preventDefault` heaps calls inside its `onTouchStart` sits on a WINDOW listener, where
+	 * the browser defaults to passive and ignores it, and an unprevented touch is what makes iOS
+	 * synthesise a `mousedown`/`mouseup` pair at the LIFT. Heaps turns that pair into an
+	 * `EPush`/`ERelease` a millisecond apart, so a finger held long enough for the game to settle
+	 * fires a phantom click when it comes off.
+	 *
+	 * `touchAction` states the same thing declaratively, and that is not belt and braces:
+	 * `preventDefault` is a main-thread answer the compositor waits for on a timeout, and across
+	 * the process boundary of a cross-origin iframe — how itch.io serves a build — a busy frame
+	 * loses that race and the gesture starts anyway. Hit testing reads `touchAction` without
+	 * asking the page at all.
+	 */
+	private static function suppressTouchDefaults(canvas: CanvasElement): Void {
+		canvas.style.touchAction = 'none';
+		for (name in ['touchstart', 'touchmove', 'touchend'])
+			canvas.addEventListener(name, preventHandler, { passive: false });
+	}
+
+	private static function preventHandler(event: Event): Void event.preventDefault();
+
 	/**
 	 * The playback session AudioSessionKeeper asks for also puts the page into Now Playing, where
 	 * Safari otherwise shows the host name. Everything it needs the document already declares, so
